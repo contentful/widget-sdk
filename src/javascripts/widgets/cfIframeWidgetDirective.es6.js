@@ -98,36 +98,32 @@ registerDirective('cfIframeWidget', [
 
         // RECEIVING EVENTS FROM THE EXTENSION:
 
-        extensionApi.registerHandler('callSpaceMethod', (methodName, args) => {
-          return spaceContext.cma[methodName](...args).then(
-            entity => {
-              try {
-                maybeTrackEntryAction(methodName, args, entity);
-              } catch (err) {
-                // Just catch, failing to track should not
-                // demonstrate itself outside.
-              }
-
-              return entity;
-            },
-            ({ code, body }) => {
-              const err = new Error('Request failed.');
-              Object.assign(err, { code, data: body });
-              return Promise.reject(err);
-            }
-          );
+        extensionApi.registerHandler('callSpaceMethod', async (methodName, args) => {
+          try {
+            const entity = await spaceContext.cma[methodName](...args);
+            maybeTrackEntryAction(methodName, args, entity);
+            return entity;
+          } catch ({ code, body }) {
+            const err = new Error('Request failed.');
+            throw Object.assign(err, { code, data: body });
+          }
         });
 
         function maybeTrackEntryAction(methodName, args, entity) {
-          if (get(entity, ['sys', 'type']) !== 'Entry') {
-            return;
-          }
+          try {
+            if (get(entity, ['sys', 'type']) !== 'Entry') {
+              return;
+            }
 
-          if (methodName === 'createEntry') {
-            trackEntryAction('create', args[0], entity);
-          } else if (methodName === 'publishEntry') {
-            const contentTypeId = get(args[0], ['sys', 'contentType', 'sys', 'id']);
-            trackEntryAction('publish', contentTypeId, entity);
+            if (methodName === 'createEntry') {
+              trackEntryAction('create', args[0], entity);
+            } else if (methodName === 'publishEntry') {
+              const contentTypeId = get(args[0], ['sys', 'contentType', 'sys', 'id']);
+              trackEntryAction('publish', contentTypeId, entity);
+            }
+          } catch (err) {
+            // Just catch and ignore, failing to track should not
+            // demonstrate itself outside.
           }
         }
 
@@ -147,35 +143,39 @@ registerDirective('cfIframeWidget', [
           iframe.setAttribute('height', height);
         });
 
-        extensionApi.registerHandler('openDialog', (type, options) => {
+        extensionApi.registerHandler('openDialog', async (type, options) => {
           if (type === 'entitySelector') {
             return entitySelector.openFromExtension(options);
           } else {
-            return Promise.reject(new Error('Unknown dialog type.'));
+            throw new Error('Unknown dialog type.');
           }
         });
 
-        extensionApi.registerPathHandler('setValue', (path, value) => {
-          return doc
-            .setValueAt(path, value)
-            .catch(makeShareJSErrorHandler(ERROR_MESSAGES.MFAILUPDATE));
+        extensionApi.registerPathHandler('setValue', async (path, value) => {
+          try {
+            await doc.setValueAt(path, value);
+            return value;
+          } catch (err) {
+            throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
+          }
         });
 
-        extensionApi.registerPathHandler('removeValue', path => {
-          return doc
-            .removeValueAt(path)
-            .catch(makeShareJSErrorHandler(ERROR_MESSAGES.MFAILREMOVAL));
+        extensionApi.registerPathHandler('removeValue', async path => {
+          try {
+            await doc.removeValueAt(path);
+          } catch (err) {
+            throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
+          }
         });
 
-        function makeShareJSErrorHandler(message) {
-          return e => {
-            const data = {};
-            if (e && e.message) {
-              data.shareJSCode = e.message;
-            }
+        function makeShareJSError(shareJSError, message) {
+          const data = {};
+          if (shareJSError && shareJSError.message) {
+            data.shareJSCode = shareJSError.message;
+          }
 
-            return Promise.reject({ code: ERROR_CODES.EBADUPDATE, message, data });
-          };
+          const error = new Error(message);
+          return Object.assign(error, { code: ERROR_CODES.EBADUPDATE, data });
         }
 
         extensionApi.registerHandler('setInvalid', (isInvalid, localeCode) => {
