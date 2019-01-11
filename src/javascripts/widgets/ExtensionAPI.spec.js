@@ -65,7 +65,6 @@ describe('ExtensionAPI', () => {
             id: 'FID-public',
             locale: 'LOCALE',
             value: 'VALUE',
-            isDisabled: false,
             type: 'FIELD-TYPE',
             validations: 'VALIDATIONS'
           },
@@ -89,7 +88,7 @@ describe('ExtensionAPI', () => {
     });
   });
 
-  describe('#sendFieldValueChange()', () => {
+  describe('#update()', () => {
     it('sends "valueChanged" message and translates internal to public paths', () => {
       const api = createAPI({
         fields: [{ id: 'FID-internal', apiName: 'FID-public' }],
@@ -99,9 +98,28 @@ describe('ExtensionAPI', () => {
         }
       });
 
-      api.sendFieldValueChange('FID-internal', 'LC-internal', 'VALUE');
+      api.update(['fields', 'FID-internal', 'LC-internal'], {
+        fields: { 'FID-internal': { 'LC-internal': 'VALUE' } }
+      });
+
       expect(api.channel.send).toBeCalledTimes(1);
       expect(api.channel.send).toBeCalledWith('valueChanged', ['FID-public', 'LC-public', 'VALUE']);
+    });
+
+    it('ignores changes of non-field properties', () => {
+      const api = createAPI();
+
+      api.update(['sys', 'yolo'], { sys: { yolo: true } });
+
+      expect(api.channel.send).not.toBeCalled();
+    });
+
+    it('ignores unknown fields', () => {
+      const api = createAPI();
+
+      api.update(['fields', 'UNKNOWN'], { fields: { UNKNOWN: {} } });
+
+      expect(api.channel.send).not.toBeCalled();
     });
   });
 

@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, difference } from 'lodash';
 import createIDMap from './IDMap.es6';
 
 const REQUIRED_CONFIG_KEYS = [
@@ -26,6 +26,11 @@ export default function API(config) {
       throw new Error(`Required configuration option "${key}" missing`);
     }
   });
+
+  const extraKeys = difference(Object.keys(config), REQUIRED_CONFIG_KEYS);
+  if (extraKeys.length > 0) {
+    throw new Error(`Extra configuration options ${extraKeys.join(', ')} provided`);
+  }
 
   this.idMap = createIDMap(this.fields, this.locales.available);
 }
@@ -57,7 +62,6 @@ API.prototype.connect = function() {
       id: current.field.apiName,
       locale: current.locale.code,
       value: get(entryData, ['fields', current.field.id, current.locale.internal_code]),
-      isDisabled: !!current.isDisabled,
       type: current.field.type,
       validations: current.field.validations
     },
@@ -94,10 +98,58 @@ API.prototype.send = function(...args) {
   this.channel.send(...args);
 };
 
-// Translates the internal IDs to public ones and sends a `valueChanged` message.
-API.prototype.sendFieldValueChange = function(fieldId, internalLocaleCode, value) {
+/**
+ * Retrieves a changed document path and a snapshot of the document
+ * at the moment of the change. The change is sent to the Extension.
+ *
+ * If `locale` is not given it retrieves the localization object
+ * for the field and sends an update for each locale.
+ *
+ * Similarly, if `fieldId` is not given it sends an update for
+ * every field and locale.
+ */
+API.prototype.update = function(path, docSnapshot) {
+  const [fieldsSegment, fieldId, internalLocaleCode] = path;
+
+  // We need to update only if fields were modified or the whole document
+  // was swapped (path length is 0 in this case).
+  const shouldUpdate = fieldsSegment === 'fields' || typeof fieldsSegment === 'undefined';
+  if (!shouldUpdate) {
+    return;
+  }
+
+  if (!fieldId) {
+    this.fields.forEach(field => this.updateFieldLocales(field.id, docSnapshot));
+  } else if (!internalLocaleCode) {
+    this.updateFieldLocales(fieldId, docSnapshot);
+  } else {
+    this.updateFieldLocaleValue(fieldId, internalLocaleCode, docSnapshot);
+  }
+};
+
+API.prototype.updateFieldLocales = function(fieldId, docSnapshot) {
+  const field = this.fields.find(field => field.id === fieldId);
+
+  // We might receive changes from other uses on fields that we
+  // do not yet know about. We silently ignore them.
+  if (!field) {
+    return;
+  }
+
+  const { locales } = this;
+  const fieldLocales = field.localized ? locales.available : [locales.default];
+
+  fieldLocales.forEach(locale => {
+    this.updateFieldLocaleValue(fieldId, locale.internal_code, docSnapshot);
+  });
+};
+
+API.prototype.updateFieldLocaleValue = function(fieldId, internalLocaleCode, docSnapshot) {
+  const value = get(docSnapshot, ['fields', fieldId, internalLocaleCode]);
+
   const apiName = this.idMap.field.toPublic[fieldId];
   const locale = this.idMap.locale.toPublic[internalLocaleCode];
+
   this.channel.send('valueChanged', [apiName, locale, value]);
 };
 

@@ -5,6 +5,7 @@ describe('cfIframeWidget directive', function() {
     this.widgetAPI = {
       registerHandler: sinon.stub(),
       send: sinon.stub(),
+      update: sinon.stub(),
       destroy: sinon.stub(),
       connect: sinon.stub()
     };
@@ -107,7 +108,6 @@ describe('cfIframeWidget directive', function() {
   describe('field value changes', function() {
     beforeEach(function() {
       this.scope = this.compile().scope;
-      this.widgetAPI.sendFieldValueChange = sinon.stub();
     });
 
     it('sends localized field value change', function() {
@@ -115,10 +115,9 @@ describe('cfIframeWidget directive', function() {
       this.otDoc.changes.emit(['fields', 'FIELD', 'LOCALE']);
       this.$apply();
       sinon.assert.calledWithExactly(
-        this.widgetAPI.sendFieldValueChange,
-        'FIELD',
-        'LOCALE',
-        'VALUE'
+        this.widgetAPI.update,
+        ['fields', 'FIELD', 'LOCALE'],
+        sinon.match.has('fields', sinon.match.has('FIELD', sinon.match.has('LOCALE', 'VALUE')))
       );
     });
 
@@ -135,36 +134,28 @@ describe('cfIframeWidget directive', function() {
       });
       this.otDoc.changes.emit(['fields', 'FIELD']);
       this.$apply();
+
       sinon.assert.calledWithExactly(
-        this.widgetAPI.sendFieldValueChange,
-        'FIELD',
-        'LOC A',
-        'VAL A'
-      );
-      sinon.assert.calledWithExactly(
-        this.widgetAPI.sendFieldValueChange,
-        'FIELD',
-        'LOC B',
-        'VAL B'
-      );
-      sinon.assert.calledWithExactly(
-        this.widgetAPI.sendFieldValueChange,
-        'FIELD',
-        'LOC C',
-        undefined
+        this.widgetAPI.update,
+        ['fields', 'FIELD'],
+        sinon.match.has(
+          'fields',
+          sinon.match.has(
+            'FIELD',
+            sinon.match({
+              'LOC A': 'VAL A',
+              'LOC B': 'VAL B',
+              'LOC C': undefined
+            })
+          )
+        )
       );
     });
 
     it('does not send field value changes if path does not start with "fields"', function() {
       this.otDoc.changes.emit(['NOT fields', 'FIELD']);
       this.$apply();
-      sinon.assert.notCalled(this.widgetAPI.sendFieldValueChange);
-    });
-
-    it('ignores unknown fields', function() {
-      this.otDoc.changes.emit(['fields', 'UNKNOWN']);
-      this.$apply();
-      sinon.assert.notCalled(this.widgetAPI.sendFieldValueChange);
+      sinon.assert.notCalled(this.widgetAPI.update);
     });
   });
 
@@ -185,12 +176,11 @@ describe('cfIframeWidget directive', function() {
       sinon.assert.calledWithExactly(this.otDoc.setValueAt, ['internal', 'path'], 'VAL');
     });
 
-    it('rejects with API error code when update fails', function() {
+    it('rejects with API error code when update fails', async function() {
       this.otDoc.setValueAt.rejects();
       const handler = this.widgetAPI.registerHandler.withArgs('setValue').args[0][1];
       const errored = sinon.stub();
-      handler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VAL').catch(errored);
-      this.$apply();
+      await handler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VAL').catch(errored);
       sinon.assert.calledWithExactly(errored, sinon.match({ code: 'ENTRY UPDATE FAILED' }));
     });
   });
