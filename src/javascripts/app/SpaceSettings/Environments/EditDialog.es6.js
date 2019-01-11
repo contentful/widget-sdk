@@ -10,6 +10,7 @@ import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
 import render from './EditDialogView.es6';
 import { getModule } from 'NgRegistry.es6';
 
+import { isValidResourceId } from 'data/utils.es6';
 const logger = getModule('logger');
 const { open: openDialog } = getModule('modalDialog');
 
@@ -116,9 +117,6 @@ const reduce = makeReducer({
   }
 });
 
-// Regular expression to validate IDs against
-const ID_REGEXP = /^[a-zA-Z0-9._-]{1,64}$/;
-
 /**
  * Object with validations for the different fields. The values are
  * functions that take the field value and return an error if the field
@@ -129,7 +127,7 @@ const validations = {
     if (!value || !value.trim()) {
       return EMPTY_FIELD_ERROR_MESSAGE;
     }
-    if (!value.match(ID_REGEXP)) {
+    if (!isValidResourceId(value)) {
       return INVALID_ID_CHARACTER_ERROR_MESSAGE;
     }
   }

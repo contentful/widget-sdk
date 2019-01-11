@@ -1,6 +1,7 @@
 import { registerFactory, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as stringUtils from 'utils/StringUtils.es6';
+import { isValidResourceId } from 'data/utils.es6';
 
 /**
  * @ngdoc service
@@ -125,8 +126,6 @@ registerFactory('contentTypeEditor/metadataDialog', [
 registerController('ContentTypeMetadataController', [
   '$scope',
   $scope => {
-    const ID_REGEXP = /^[a-zA-Z0-9-_.]*$/;
-
     const newContentTypeFormState = {
       idFieldTouched: false,
       idFieldRequiredMessage: '',
@@ -148,13 +147,13 @@ registerController('ContentTypeMetadataController', [
           message: 'A content type with this ID already exists',
           validator: value => !_.includes(contentTypeIds, value)
         },
-        format: {
-          message: 'Please use only letters, numbers and underscores',
-          validator: value => ID_REGEXP.test(value)
-        },
         length: {
           message: 'Please shorten the text so it’s no longer than 64 characters',
           validator: value => value.length <= 64
+        },
+        format: {
+          message: 'Please use only letters, numbers and underscores',
+          validator: value => !value || isValidResourceId(value)
         }
       };
 
