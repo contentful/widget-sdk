@@ -8,6 +8,7 @@ import { toInternalFieldType } from 'widgets/FieldTypes.es6';
 import WidgetParametersForm from 'widgets/WidgetParametersForm.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import getDefaultWidgetId from 'widgets/DefaultWidget.es6';
+import * as fieldFactory from 'services/fieldFactory.es6';
 
 /**
  * @ngdoc service
@@ -55,7 +56,6 @@ registerController('FieldDialogController', [
   '$timeout',
   'spaceContext',
   'fieldDecorator',
-  'fieldFactory',
   'validationDecorator',
   'analyticsEvents/customWidgets',
   function FieldDialogController(
@@ -63,7 +63,6 @@ registerController('FieldDialogController', [
     $timeout,
     spaceContext,
     fieldDecorator,
-    fieldFactory,
     validations,
     trackCustomWidgets
   ) {

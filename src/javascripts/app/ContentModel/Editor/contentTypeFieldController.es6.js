@@ -1,4 +1,5 @@
 import { registerController, registerFactory } from 'NgRegistry.es6';
+import * as fieldFactory from 'services/fieldFactory.es6';
 
 /**
  * @ngdoc type
@@ -6,10 +7,9 @@ import { registerController, registerFactory } from 'NgRegistry.es6';
  */
 registerController('ContentTypeFieldController', [
   '$scope',
-  'fieldFactory',
   'ContentTypeFieldController/dialogs',
   'fieldDecorator',
-  function($scope, fieldFactory, dialogs, { isTitleType }) {
+  function($scope, dialogs, { isTitleType }) {
     const controller = this;
 
     $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);

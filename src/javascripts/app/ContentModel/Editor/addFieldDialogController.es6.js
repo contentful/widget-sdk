@@ -2,6 +2,7 @@ import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as random from 'utils/Random.es6';
 import * as stringUtils from 'utils/StringUtils.es6';
+import * as fieldFactory from 'services/fieldFactory.es6';
 
 /**
  * @ngdoc type
@@ -19,17 +20,9 @@ registerController('AddFieldDialogController', [
   '$scope',
   '$controller',
   '$q',
-  'fieldFactory',
   'fieldDecorator',
   'fieldErrorMessageBuilder',
-  function AddFieldDialogController(
-    $scope,
-    $controller,
-    $q,
-    fieldFactory,
-    fieldDecorator,
-    buildMessage,
-  ) {
+  function AddFieldDialogController($scope, $controller, $q, fieldDecorator, buildMessage) {
     $scope.viewState = $controller('ViewStateController', {
       $scope: $scope,
       defaultState: 'fieldSelection'

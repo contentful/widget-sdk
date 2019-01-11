@@ -1,17 +1,12 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
+import { getLabel as getFieldLabel } from 'services/fieldFactory.es6';
 
 registerFactory('analyticsEvents/customWidgets', [
   'spaceContext',
-  'fieldFactory',
   'analytics/Analytics.es6',
-  (spaceContext, fieldFactory, Analytics) => {
-    const { getLabel: getFieldLabel } = fieldFactory;
-
-    return {
-      selected: selected,
-      rendered: rendered
-    };
+  (spaceContext, Analytics) => {
+    return { selected, rendered };
 
     function selected(widgetLink, field, ct) {
       trackEventIfCustom('modelling:custom_extension_selected', widgetLink, field, {
