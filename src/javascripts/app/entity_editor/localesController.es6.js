@@ -1,5 +1,8 @@
 import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
+import React from 'react';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
+import LocaleSelectDialog from './LocaleSelectDialog.es6';
 
 /**
  * @ngdoc type
@@ -10,8 +13,7 @@ import _ from 'lodash';
  */
 registerController('entityEditor/LocalesController', [
   'TheLocaleStore',
-  'modalDialog',
-  function(localeStore, modalDialog) {
+  function(localeStore) {
     const controller = this;
     const availableLocales = localeStore.getPrivateLocales();
 
@@ -26,21 +28,23 @@ registerController('entityEditor/LocalesController', [
      * Executing this command will open a dialog that allows the user to
      * select the active locales.
      */
-    controller.changeActive = function() {
+    controller.changeActive = async function() {
       const locales = getLocalesWithActiveFlag(availableLocales);
-      modalDialog
-        .open({
-          template: 'locale_select_dialog',
-          noBackgroundClose: true,
-          scopeData: {
-            locales: locales
-          }
-        })
-        .promise.then(function() {
-          const active = _.filter(locales, 'active');
-          localeStore.setActiveLocales(active);
-          refreshActiveLocales();
-        });
+
+      const onUpdate = locales => {
+        const activeLocales = locales.filter(locale => locale.active);
+        localeStore.setActiveLocales(activeLocales);
+        refreshActiveLocales();
+      };
+
+      await ModalLauncher.open(({ onClose, isShown }) => (
+        <LocaleSelectDialog
+          initialLocales={locales}
+          isShown={isShown}
+          onClose={onClose}
+          onUpdate={onUpdate}
+        />
+      ));
     };
 
     /**
