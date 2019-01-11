@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import getDatasets from './getDatasets.es6';
+import { getDatasets } from './datasets.es6';
 import { ORG_MEMBERSHIPS } from 'redux/dataSets.es6';
 
 export default state => {

@@ -24,6 +24,7 @@ export default connect(
   },
   dispatch => ({
     goBack: () => dispatch({ type: 'NAVIGATION_BACK' }),
+    removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } }),
     editTeam: teamId => dispatch({ type: 'EDIT_TEAM', payload: { teamId } })
   })
 )(
@@ -34,6 +35,7 @@ export default connect(
       onReady: PropTypes.func.isRequired,
       users: PropTypes.objectOf(UserPropType),
       goBack: PropTypes.func.isRequired,
+      removeTeam: PropTypes.func.isRequired,
       editTeam: PropTypes.func.isRequired
     };
 
@@ -50,7 +52,7 @@ export default connect(
     }
 
     render() {
-      const { team, loading, goBack, editTeam } = this.props;
+      const { team, loading, goBack, editTeam, removeTeam } = this.props;
       const creator = team && team.sys.createdBy;
 
       return !loading && team ? (
@@ -75,12 +77,12 @@ export default connect(
                       <div className="team-card_description">
                         {team.description.split('\n').reduce((acc, cur, idx) => {
                           if (cur === '') {
-                            return [...acc, <br key="1" />, <br key="2" />];
+                            return [...acc, <br key={`${idx}-1`} />, <br key={`${idx}-2`} />];
                           }
                           if (idx === 0) {
                             return [...acc, cur];
                           }
-                          return [...acc, <br key="1" />, cur];
+                          return [...acc, <br key={idx} />, cur];
                         }, [])}
                       </div>
                     )}
@@ -97,6 +99,9 @@ export default connect(
                     <dd>{getUserName(creator)}</dd>
                   </dl>
                 </section>
+                <Button size="small" buttonType="negative" onClick={() => removeTeam(team.sys.id)}>
+                  Delete team
+                </Button>
               </div>
               <div className="user-details__content">
                 <TeamMemberships />

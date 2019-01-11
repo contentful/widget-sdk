@@ -6,7 +6,7 @@ import { getCurrentTeam, getTeams } from '../selectors/teams.es6';
 import { TEAM_MEMBERSHIPS, TEAMS } from '../dataSets.es6';
 import addCurrentTeamToMembership from 'redux/utils/addCurrentTeamToMembership.es6';
 import removeFromDataset from './utils/removeFromDataset.es6';
-import getDatasets from 'redux/selectors/getDatasets.es6';
+import { getDatasets } from 'redux/selectors/datasets.es6';
 import TeamForm from 'app/OrganizationSettings/Teams/TeamForm.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { isTaken } from 'utils/ServerErrorUtils.es6';

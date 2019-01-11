@@ -1,5 +1,5 @@
 import { eq, flow, get } from 'lodash/fp';
-import getDatasets from './getDatasets.es6';
+import { getDatasets } from './datasets.es6';
 import { TEAM_MEMBERSHIPS } from '../dataSets.es6';
 import { getCurrentTeam } from './teams.es6';
 import getOptimistic from 'redux/selectors/getOptimistic.es6';

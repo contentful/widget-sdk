@@ -80,7 +80,7 @@ export default class TeamForm extends React.Component {
             countCharacters
             textInputProps={{
               placeholder: `The Mighty Ducks is a series of three live-action films that revolve around a Twin Cities ice hockey team, composed of young players that stick together throughout various challenges.`,
-              maxLength: 120,
+              maxLength: 800,
               rows: 3
             }}
             extraClassNames={'vertical-form-field-rythm-dense'}

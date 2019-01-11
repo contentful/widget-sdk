@@ -1,5 +1,6 @@
 import {
   set,
+  get,
   update,
   map,
   keyBy,
@@ -11,8 +12,10 @@ import {
   omitAll
 } from 'lodash/fp';
 import qs from 'qs';
+import getOrgId from '../selectors/getOrgId.es6';
 import { getPath } from '../selectors/location.es6';
 import ROUTES from '../routes.es6';
+import { TEAMS } from '../dataSets.es6';
 
 const viewToObject = flow(
   map('filter'),
@@ -33,7 +36,7 @@ const updateLocationQuery = updater =>
     )
   );
 
-export default (state = null, { type, payload }, globalState) => {
+export default (state = null, { type, payload, meta }, globalState) => {
   switch (type) {
     case 'LOCATION_CHANGED':
       return payload.location;
@@ -45,6 +48,16 @@ export default (state = null, { type, payload }, globalState) => {
     }
     case 'UPDATE_SEARCH_TERM': {
       return updateLocationQuery(set('searchTerm', payload.newSearchTerm))(state);
+    }
+    case 'REMOVE_FROM_DATASET': {
+      if (get('pending', meta) && get('dataset', payload) === TEAMS) {
+        return set(
+          'pathname',
+          ROUTES.organization.children.teams.build({ orgId: getOrgId(globalState) }),
+          state
+        );
+      }
+      return state;
     }
     case 'NAVIGATION_BACK': {
       const match = ROUTES.organization.children.teams.children.team.test(getPath(globalState));

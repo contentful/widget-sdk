@@ -1,7 +1,7 @@
 import { ModalConfirm, Notification } from '@contentful/forma-36-react-components';
 import React from 'react';
 import getOrgId from 'redux/selectors/getOrgId.es6';
-import getDatasets from 'redux/selectors/getDatasets.es6';
+import { getDatasets } from 'redux/selectors/datasets.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 export default async function(
@@ -39,16 +39,14 @@ export default async function(
     return;
   }
 
-  dispatch({ type: 'REMOVE_FROM_DATASET_CONFIRMED', payload: { id, dataset } });
-
+  const type = 'REMOVE_FROM_DATASET';
   try {
+    dispatch({ type, payload: { id, dataset }, meta: { pending: true } });
     await sendRemoveRequest(service, item);
+    dispatch({ type, payload: { id, dataset } });
     Notification.success(successMessage(item));
   } catch (e) {
+    dispatch({ type, payload: e, error: true, meta: { item, dataset } });
     Notification.error(errorMessage(item));
-    dispatch({
-      type: 'ADD_TO_DATASET',
-      payload: { item, dataset }
-    });
   }
 }

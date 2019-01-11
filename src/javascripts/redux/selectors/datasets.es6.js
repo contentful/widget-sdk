@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 
 import getOrgId from './getOrgId.es6';
 
-const getRawDatasets = state => get(state, ['datasets', getOrgId(state)], {});
+const getRawDatasets = state => get(state, ['datasets', 'payload', getOrgId(state)], {});
 
 function resolveLinks(datasets) {
   return entity =>
@@ -24,7 +24,9 @@ function resolveLinks(datasets) {
     );
 }
 
-export default createSelector(
+export const getDatasets = createSelector(
   [getRawDatasets],
   datasets => mapValues(mapValues(resolveLinks(datasets)), datasets)
 );
+
+export const getMeta = state => get(state, ['datasets', 'meta', getOrgId(state)]);
