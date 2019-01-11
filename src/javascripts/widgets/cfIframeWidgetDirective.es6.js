@@ -124,20 +124,28 @@ registerDirective('cfIframeWidget', [
         });
 
         function maybeTrackEntryAction(methodName, args, entity) {
-          let contentType;
-          if (methodName === 'createEntry') {
-            contentType = spaceContext.publishedCTs.get(args[0]);
-          } else if (methodName === 'publishEntry') {
-            contentType = spaceContext.publishedCTs.get(args[0].sys.contentType.sys.id);
+          if (get(entity, ['sys', 'type']) !== 'Entry') {
+            return;
           }
 
-          if (get(entity, ['sys', 'type']) === 'Entry' && contentType) {
-            Analytics.track(`entry:${methodName}`, {
-              eventOrigin: 'ui-extension',
-              contentType,
-              response: { data: entity }
-            });
+          if (methodName === 'createEntry') {
+            trackEntryAction('create', args[0], entity);
+          } else if (methodName === 'publishEntry') {
+            const contentTypeId = get(args[0], ['sys', 'contentType', 'sys', 'id']);
+            trackEntryAction('publish', contentTypeId, entity);
           }
+        }
+
+        function trackEntryAction(action, contentTypeId, data) {
+          Analytics.track(`entry:${action}`, {
+            eventOrigin: 'ui-extension',
+            // Stub content type object:
+            contentType: {
+              sys: { id: contentTypeId, type: 'ContentType' },
+              fields: []
+            },
+            response: { data }
+          });
         }
 
         extensionApi.registerHandler('setHeight', height => {
