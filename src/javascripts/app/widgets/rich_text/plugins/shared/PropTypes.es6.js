@@ -9,5 +9,7 @@ export const MarkPropTypes = {
 export const NodePropTypes = {
   attributes: PropTypes.object.isRequired,
   children: PropTypes.node.isRequired,
-  type: PropTypes.string.isRequired
+  node: PropTypes.shape({
+    type: PropTypes.string.isRequired
+  }).isRequired
 };

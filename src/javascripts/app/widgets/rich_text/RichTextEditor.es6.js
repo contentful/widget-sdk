@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { getModule } from 'NgRegistry.es6';
+const debounce = getModule('debounce');
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import { noop } from 'lodash';
+import { List, is } from 'immutable';
 import cn from 'classnames';
 
 import deepEqual from 'fast-deep-equal';
@@ -19,7 +22,7 @@ import { BLOCKS } from '@contentful/rich-text-types';
 
 import Toolbar from './Toolbar/index.es6';
 
-const createValue = contentfulDocument => {
+const createSlateValue = contentfulDocument => {
   const document = toSlatejsDocument({
     document: contentfulDocument,
     schema
@@ -32,7 +35,7 @@ const createValue = contentfulDocument => {
   return value;
 };
 
-const initialValue = createValue(emptyDoc);
+const emptySlateValue = createSlateValue(emptyDoc);
 
 export default class RichTextEditor extends React.Component {
   static propTypes = {
@@ -50,12 +53,12 @@ export default class RichTextEditor extends React.Component {
   };
 
   state = {
-    lastOperations: [],
+    lastOperations: List(),
     isEmbedDropdownOpen: false,
     value:
       this.props.value && this.props.value.nodeType === BLOCKS.DOCUMENT
-        ? createValue(this.props.value)
-        : initialValue,
+        ? createSlateValue(this.props.value)
+        : emptySlateValue,
     hasFocus: false
   };
 
@@ -68,26 +71,39 @@ export default class RichTextEditor extends React.Component {
 
   onChange = change => {
     const { value, operations } = change;
-    const lastOperations = operations.filter(isRelevantOperation).toJS();
 
-    this.setState({ value, lastOperations });
+    this.setState({
+      value,
+      lastOperations: operations.filter(isRelevantOperation)
+    });
   };
 
-  componentDidUpdate({ value: prevCfDoc }) {
-    const { value: contentfulDoc, isDisabled, onChange } = this.props;
-    const isIncomingChange = () => !deepEqual(contentfulDoc, prevCfDoc);
-    const contentIsUpdated = this.state.lastOperations.length > 0;
-    if (!isDisabled && contentIsUpdated) {
-      this.setState({ lastOperations: [] });
-      onChange(
-        toContentfulDocument({
-          document: this.state.value.document.toJSON(),
-          schema
-        })
-      );
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.props.isDisabled !== nextProps.isDisabled) {
+      return true;
+    }
+    if (is(this.state.value, nextState.value) && this.props.value === nextProps.value) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  callOnChange = debounce(() => {
+    const doc = toContentfulDocument({
+      document: this.state.value.document.toJSON(),
+      schema
+    });
+    this.props.onChange(doc);
+  }, 500);
+  componentDidUpdate(prevProps) {
+    const isIncomingChange = () => !deepEqual(prevProps.value, this.props.value);
+    const isDocumentChanged = !this.state.lastOperations.isEmpty();
+
+    if (!this.props.isDisabled && isDocumentChanged) {
+      this.setState({ lastOperations: List() }, () => this.callOnChange());
     } else if (isIncomingChange()) {
       this.setState({
-        value: createValue(contentfulDoc)
+        value: createSlateValue(this.props.value)
       });
     }
   }

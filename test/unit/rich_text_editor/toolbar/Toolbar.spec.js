@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import { parseHotkey } from 'is-hotkey';
-import { mapValues, forEach, upperFirst } from 'lodash';
+import { mapValues, forEach, upperFirst, identity } from 'lodash';
 
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import { actionOrigin } from 'app/widgets/rich_text/plugins/shared/PluginApi.es6';
@@ -63,7 +63,8 @@ describe('Toolbar', () => {
             // Guards us from accidentally changing analytic actions without whitelisting them:
             throw new Error(`Unexpected logger.logWarn() call with message: ${message}`);
           }
-        }
+        },
+        debounce: identity
       }
     });
 
@@ -74,7 +75,6 @@ describe('Toolbar', () => {
       track: sinon.stub()
     });
 
-    // TODO: Test RichTextEditor without any HOCs here and test HOC separately.
     const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index.es6');
 
     this.field = setupWidgetApi(this.$inject('mocks/widgetApi'), mockDocument).field;

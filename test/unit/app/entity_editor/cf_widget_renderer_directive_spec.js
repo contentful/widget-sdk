@@ -1,3 +1,6 @@
+import { identity } from 'lodash';
+import sinon from 'sinon';
+
 describe('cfWidgetRenderer Directive', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
@@ -6,6 +9,7 @@ describe('cfWidgetRenderer Directive', () => {
           return '/spaceHref/' + params.contentTypeId;
         }
       });
+      $provide.value('debounce', identity);
     });
 
     this.widget = {};
@@ -48,6 +52,7 @@ describe('cfWidgetRenderer Directive', () => {
     const el = this.compile();
     el.trigger('focusout');
     this.$apply();
+
     sinon.assert.calledOnce(this.fieldLocale.setActive);
     sinon.assert.calledWith(this.fieldLocale.setActive, false);
   });
@@ -57,6 +62,7 @@ describe('cfWidgetRenderer Directive', () => {
     const el = this.compile();
     el.trigger('focusout');
     this.$apply();
+
     sinon.assert.calledOnce(this.fieldLocale.revalidate);
   });
 });

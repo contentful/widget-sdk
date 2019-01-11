@@ -1,6 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
+import { identity } from 'lodash';
 import * as sinon from 'test/helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
@@ -27,7 +28,12 @@ describe('RichTextEditor', () => {
 
     this.entity = ENTRY;
 
-    stubAll({ isolatedSystem: this.system });
+    stubAll({
+      isolatedSystem: this.system,
+      angularStubs: {
+        debounce: identity
+      }
+    });
 
     this.system.set('detect-browser', {
       detect: () => ({ name: 'ie' })
