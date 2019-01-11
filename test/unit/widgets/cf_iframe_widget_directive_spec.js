@@ -4,6 +4,7 @@ describe('cfIframeWidget directive', function() {
   beforeEach(function() {
     this.widgetAPI = {
       registerHandler: sinon.stub(),
+      registerPathHandler: sinon.stub(),
       send: sinon.stub(),
       update: sinon.stub(),
       destroy: sinon.stub(),
@@ -78,7 +79,7 @@ describe('cfIframeWidget directive', function() {
   describe('"setInvalid" handler', function() {
     it('dispatches call to setInvalid on field controller', function() {
       this.scope = this.compile().scope;
-      this.setInvalidHandler = this.widgetAPI.registerHandler.args[5][1];
+      this.setInvalidHandler = this.widgetAPI.registerHandler.args[3][1];
       this.setInvalidHandler(true, 'en-public');
       sinon.assert.calledWithExactly(this.scope.fieldController.setInvalid, 'en-public', true);
     });
@@ -87,7 +88,7 @@ describe('cfIframeWidget directive', function() {
   describe('"setActive" handler', function() {
     it('dispatches call to setActive on field locale', function() {
       this.scope = this.compile().scope;
-      this.setActiveHandler = this.widgetAPI.registerHandler.args[6][1];
+      this.setActiveHandler = this.widgetAPI.registerHandler.args[4][1];
       this.setActiveHandler(true);
       sinon.assert.calledWithExactly(this.scope.fieldLocale.setActive, true);
     });
@@ -160,25 +161,28 @@ describe('cfIframeWidget directive', function() {
   });
 
   describe('"setValue" handler', function() {
-    beforeEach(function() {
-      this.scope = this.compile().scope;
-      this.widgetAPI.buildDocPath = sinon
-        .stub()
-        .withArgs('PUBLIC FIELD', 'PUBLIC LOCALE')
-        .returns(['internal', 'path']);
-
-      this.otDoc.setValueAt = sinon.stub().resolves();
-    });
-
     it('delegates with path translated path to "otDoc"', function() {
-      const handler = this.widgetAPI.registerHandler.withArgs('setValue').args[0][1];
+      let handler;
+      this.widgetAPI.registerPathHandler.withArgs('setValue').callsFake((_, fn) => {
+        handler = (field, locale, val) => {
+          if (field === 'PUBLIC FIELD' && locale === 'PUBLIC LOCALE') {
+            fn(['fields', 'internal', 'path'], val);
+          }
+        };
+      });
+
+      this.scope = this.compile().scope;
+      this.otDoc.setValueAt = sinon.stub().resolves();
+
       handler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VAL');
-      sinon.assert.calledWithExactly(this.otDoc.setValueAt, ['internal', 'path'], 'VAL');
+
+      sinon.assert.calledWithExactly(this.otDoc.setValueAt, ['fields', 'internal', 'path'], 'VAL');
     });
 
     it('rejects with API error code when update fails', async function() {
-      this.otDoc.setValueAt.rejects();
-      const handler = this.widgetAPI.registerHandler.withArgs('setValue').args[0][1];
+      this.scope = this.compile().scope;
+      this.otDoc.setValueAt = sinon.stub().rejects();
+      const handler = this.widgetAPI.registerPathHandler.withArgs('setValue').args[0][1];
       const errored = sinon.stub();
       await handler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VAL').catch(errored);
       sinon.assert.calledWithExactly(errored, sinon.match({ code: 'ENTRY UPDATE FAILED' }));

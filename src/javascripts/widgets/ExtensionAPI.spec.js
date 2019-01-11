@@ -3,7 +3,7 @@ import ExtensionAPI from './ExtensionAPI.es6';
 describe('ExtensionAPI', () => {
   const createAPI = extraConfig => {
     return new ExtensionAPI({
-      channel: { connect: jest.fn(), send: jest.fn() },
+      channel: { connect: jest.fn(), destroy: jest.fn(), send: jest.fn(), handlers: {} },
       current: { field: {}, locale: {} },
       fields: [],
       locales: { available: [], default: {} },
@@ -88,6 +88,59 @@ describe('ExtensionAPI', () => {
     });
   });
 
+  describe('#registerHandler()', () => {
+    it('registers a channel handler', () => {
+      const api = createAPI();
+
+      const handlerStub = jest.fn(() => 'RESULT');
+      api.registerHandler('test', handlerStub);
+
+      const result = api.channel.handlers.test('x', 'y', 'z');
+      expect(result).toBe('RESULT');
+      expect(handlerStub).toBeCalledTimes(1);
+      expect(handlerStub).toBeCalledWith('x', 'y', 'z');
+    });
+  });
+
+  describe('#registerPathHandler()', () => {
+    it('registers a channel handler translating paths to internal IDs', () => {
+      const api = createAPI({
+        fields: [{ id: 'FID-internal', apiName: 'FID-public' }],
+        locales: {
+          available: [{ code: 'LC-public', internal_code: 'LC-internal', default: true }],
+          default: { code: 'LC-public', internal_code: 'LC-internal', default: true }
+        }
+      });
+
+      const handlerStub = jest.fn(() => 'RESULT');
+      api.registerPathHandler('test', handlerStub);
+
+      const result = api.channel.handlers.test('FID-public', 'LC-public', 'test');
+      expect(result).toBe('RESULT');
+      expect(handlerStub).toBeCalledTimes(1);
+      expect(handlerStub).toBeCalledWith(['fields', 'FID-internal', 'LC-internal'], 'test');
+    });
+  });
+
+  describe('#destroy()', () => {
+    it('kills the channel', () => {
+      const api = createAPI();
+      api.destroy();
+      expect(api.channel.destroy).toBeCalledTimes(1);
+    });
+  });
+
+  describe('#send()', () => {
+    it('sends a channel message', () => {
+      const api = createAPI();
+
+      api.send(1, 2, 3);
+
+      expect(api.channel.send).toBeCalledTimes(1);
+      expect(api.channel.send).toBeCalledWith(1, 2, 3);
+    });
+  });
+
   describe('#update()', () => {
     it('sends "valueChanged" message and translates internal to public paths', () => {
       const api = createAPI({
@@ -120,21 +173,6 @@ describe('ExtensionAPI', () => {
       api.update(['fields', 'UNKNOWN'], { fields: { UNKNOWN: {} } });
 
       expect(api.channel.send).not.toBeCalled();
-    });
-  });
-
-  describe('#buildDocPath()', () => {
-    it('translates public paths to internal', () => {
-      const api = createAPI({
-        fields: [{ id: 'FID-internal', apiName: 'FID-public' }],
-        locales: {
-          available: [{ code: 'LC-public', internal_code: 'LC-internal', default: true }],
-          default: { code: 'LC-public', internal_code: 'LC-internal', default: true }
-        }
-      });
-
-      const path = api.buildDocPath('FID-public', 'LC-public');
-      expect(path).toEqual(['fields', 'FID-internal', 'LC-internal']);
     });
   });
 });

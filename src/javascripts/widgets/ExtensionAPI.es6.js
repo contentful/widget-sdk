@@ -90,6 +90,19 @@ API.prototype.registerHandler = function(name, fn) {
   this.channel.handlers[name] = fn;
 };
 
+/**
+ * Registers a handler that expects to receive a path.
+ * It makes sure that handler is called with internal IDs.
+ */
+API.prototype.registerPathHandler = function(name, fn) {
+  this.registerHandler(name, (apiName, localeCode, ...args) => {
+    const internalId = this.idMap.field.toInternal[apiName];
+    const internalLocaleCode = this.idMap.locale.toInternal[localeCode];
+
+    return fn(['fields', internalId, internalLocaleCode], ...args);
+  });
+};
+
 API.prototype.destroy = function() {
   this.channel.destroy();
 };
@@ -151,20 +164,4 @@ API.prototype.updateFieldLocaleValue = function(fieldId, internalLocaleCode, doc
   const locale = this.idMap.locale.toPublic[internalLocaleCode];
 
   this.channel.send('valueChanged', [apiName, locale, value]);
-};
-
-/**
- * Return an array that represents the path for the internal ShareJS
- * document.
- *
- * It translates public field IDs (the `apiName`) to internal IDs and
- * public locale codes to internal ones.
- *
- * `api.buildDocPath('title', 'en_US')` -> `['fields', 'fg3sigk', 'en_US_2']`
- */
-API.prototype.buildDocPath = function(apiName, localeCode) {
-  const internalID = this.idMap.field.toInternal[apiName];
-  const internalLocaleCode = this.idMap.locale.toInternal[localeCode];
-
-  return ['fields', internalID, internalLocaleCode];
 };

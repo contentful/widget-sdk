@@ -5,14 +5,11 @@ import * as PathUtils from 'utils/Path.es6';
 import Channel from './WidgetIFrameChannel.es6';
 import ExtensionAPI from './ExtensionAPI.es6';
 
-const ERRORS = {
-  codes: {
-    EBADUPDATE: 'ENTRY UPDATE FAILED'
-  },
-  messages: {
-    MFAILUPDATE: 'Could not update entry field',
-    MFAILREMOVAL: 'Could not remove value for field'
-  }
+const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
+
+const ERROR_MESSAGES = {
+  MFAILUPDATE: 'Could not update entry field',
+  MFAILREMOVAL: 'Could not remove value for field'
 };
 
 /**
@@ -160,21 +157,28 @@ registerDirective('cfIframeWidget', [
           }
         });
 
-        extensionApi.registerHandler('setValue', (apiName, localeCode, value) => {
-          const path = extensionApi.buildDocPath(apiName, localeCode);
-
+        extensionApi.registerPathHandler('setValue', (path, value) => {
           return doc
             .setValueAt(path, value)
-            .catch(makeShareJSErrorHandler(ERRORS.codes.EBADUPDATE, ERRORS.messages.MFAILUPDATE));
+            .catch(makeShareJSErrorHandler(ERROR_MESSAGES.MFAILUPDATE));
         });
 
-        extensionApi.registerHandler('removeValue', (apiName, localeCode) => {
-          const path = extensionApi.buildDocPath(apiName, localeCode);
-
+        extensionApi.registerPathHandler('removeValue', path => {
           return doc
             .removeValueAt(path)
-            .catch(makeShareJSErrorHandler(ERRORS.codes.EBADUPDATE, ERRORS.messages.MFAILREMOVAL));
+            .catch(makeShareJSErrorHandler(ERROR_MESSAGES.MFAILREMOVAL));
         });
+
+        function makeShareJSErrorHandler(message) {
+          return e => {
+            const data = {};
+            if (e && e.message) {
+              data.shareJSCode = e.message;
+            }
+
+            return Promise.reject({ code: ERROR_CODES.EBADUPDATE, message, data });
+          };
+        }
 
         extensionApi.registerHandler('setInvalid', (isInvalid, localeCode) => {
           scope.fieldController.setInvalid(localeCode, isInvalid);
@@ -183,17 +187,6 @@ registerDirective('cfIframeWidget', [
         extensionApi.registerHandler('setActive', isActive => {
           scope.fieldLocale.setActive(isActive);
         });
-
-        function makeShareJSErrorHandler(code, message) {
-          return e => {
-            const data = {};
-            if (e && e.message) {
-              data.shareJSCode = e.message;
-            }
-
-            return Promise.reject({ code, message, data });
-          };
-        }
 
         // IFRAME SETUP:
 
