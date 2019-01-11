@@ -4,6 +4,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
+import { Button } from '@contentful/forma-36-react-components';
 
 import { Team as TeamPropType, User as UserPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { getTeams, getCurrentTeam } from 'redux/selectors/teams.es6';
@@ -22,7 +23,8 @@ export default connect(
     };
   },
   dispatch => ({
-    goBack: () => dispatch({ type: 'NAVIGATION_BACK' })
+    goBack: () => dispatch({ type: 'NAVIGATION_BACK' }),
+    editTeam: teamId => dispatch({ type: 'EDIT_TEAM', payload: { teamId } })
   })
 )(
   class TeamDetail extends React.Component {
@@ -31,7 +33,8 @@ export default connect(
       loading: PropTypes.bool,
       onReady: PropTypes.func.isRequired,
       users: PropTypes.objectOf(UserPropType),
-      goBack: PropTypes.func.isRequired
+      goBack: PropTypes.func.isRequired,
+      editTeam: PropTypes.func.isRequired
     };
 
     componentDidMount() {
@@ -47,7 +50,7 @@ export default connect(
     }
 
     render() {
-      const { team, loading, goBack } = this.props;
+      const { team, loading, goBack, editTeam } = this.props;
       const creator = team && team.sys.createdBy;
 
       return !loading && team ? (
@@ -66,15 +69,24 @@ export default connect(
             <div className="user-details">
               <div className="user-details__sidebar">
                 <section className="user-details__profile-section">
-                  <div className="user-card">
-                    <div>
-                      <h2 className="user-card__name">{team.name}</h2>
-                      {team.description && (
-                        <p style={{ margin: '10px 0 0' }} className="user-card__email">
-                          {team.description}
-                        </p>
-                      )}
-                    </div>
+                  <div className="team-card">
+                    <h2 className="team-card__name">{team.name}</h2>
+                    {team.description && (
+                      <div className="team-card_description">
+                        {team.description.split('\n').reduce((acc, cur, idx) => {
+                          if (cur === '') {
+                            return [...acc, <br key="1" />, <br key="2" />];
+                          }
+                          if (idx === 0) {
+                            return [...acc, cur];
+                          }
+                          return [...acc, <br key="1" />, cur];
+                        }, [])}
+                      </div>
+                    )}
+                    <Button size="small" buttonType="muted" onClick={() => editTeam(team.sys.id)}>
+                      Edit team details
+                    </Button>
                   </div>
                 </section>
                 <section className="user-details__profile-section">
