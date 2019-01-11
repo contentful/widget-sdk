@@ -4,7 +4,6 @@ import { Notification, Modal } from '@contentful/forma-36-react-components';
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
 import { getCurrentTeam, getTeams } from '../selectors/teams.es6';
 import { TEAM_MEMBERSHIPS, TEAMS } from '../dataSets.es6';
-import addCurrentTeamToMembership from 'redux/utils/addCurrentTeamToMembership.es6';
 import removeFromDataset from './utils/removeFromDataset.es6';
 import { getDatasets } from 'redux/selectors/datasets.es6';
 import TeamForm from 'app/OrganizationSettings/Teams/TeamForm.es6';
@@ -105,10 +104,9 @@ export default ({ dispatch, getState }) => next => async action => {
         teamId,
         action.payload.orgMembership
       );
-      const membershipWithTeam = addCurrentTeamToMembership(state, newTeamMembership);
       dispatch({
         type: 'ADD_TO_DATASET',
-        payload: { item: membershipWithTeam, dataset: TEAM_MEMBERSHIPS }
+        payload: { item: newTeamMembership, dataset: TEAM_MEMBERSHIPS }
       });
       break;
     }

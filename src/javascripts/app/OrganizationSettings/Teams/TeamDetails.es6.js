@@ -2,26 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
 import { Button } from '@contentful/forma-36-react-components';
 
 import { Team as TeamPropType, User as UserPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { getTeams, getCurrentTeam } from 'redux/selectors/teams.es6';
-import { getUsers } from 'redux/selectors/users.es6';
 import Workbench from 'app/common/Workbench.es6';
 import Icon from 'ui/Components/Icon.es6';
 
 import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
 
 export default connect(
-  state => {
-    const teams = getTeams(state);
-    return {
-      loading: isEmpty(teams) || isEmpty(getUsers(state)),
-      team: isEmpty(teams) ? undefined : teams[getCurrentTeam(state)]
-    };
-  },
+  state => ({
+    team: getTeams(state)[getCurrentTeam(state)]
+  }),
   dispatch => ({
     goBack: () => dispatch({ type: 'NAVIGATION_BACK' }),
     removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } }),
@@ -32,30 +26,17 @@ export default connect(
     static propTypes = {
       team: TeamPropType,
       loading: PropTypes.bool,
-      onReady: PropTypes.func.isRequired,
       users: PropTypes.objectOf(UserPropType),
       goBack: PropTypes.func.isRequired,
       removeTeam: PropTypes.func.isRequired,
       editTeam: PropTypes.func.isRequired
     };
 
-    componentDidMount() {
-      if (!this.props.loading) {
-        this.props.onReady();
-      }
-    }
-
-    componentDidUpdate(prevProps) {
-      if (prevProps.loading && !this.props.loading) {
-        this.props.onReady();
-      }
-    }
-
     render() {
-      const { team, loading, goBack, editTeam, removeTeam } = this.props;
+      const { team, goBack, editTeam, removeTeam } = this.props;
       const creator = team && team.sys.createdBy;
 
-      return !loading && team ? (
+      return (
         <Workbench className="organization-users-page" testId="organization-team-page">
           <Workbench.Header>
             <div className="breadcrumbs-widget">
@@ -109,7 +90,7 @@ export default connect(
             </div>
           </Workbench.Content>
         </Workbench>
-      ) : null;
+      );
     }
   }
 );

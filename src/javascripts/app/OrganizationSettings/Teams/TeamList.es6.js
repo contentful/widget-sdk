@@ -30,13 +30,8 @@ export default connect(
   class TeamList extends React.Component {
     static propTypes = {
       teams: PropTypes.arrayOf(TeamPropType).isRequired,
-      submitNewTeam: PropTypes.func.isRequired,
-      onReady: PropTypes.func.isRequired
+      submitNewTeam: PropTypes.func.isRequired
     };
-
-    componentDidMount() {
-      this.props.onReady();
-    }
 
     addTeam = () =>
       ModalLauncher.open(({ onClose, isShown }) => (

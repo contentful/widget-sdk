@@ -12,6 +12,7 @@ export default function createTeamService(orgId) {
     update,
     remove,
     getTeamMemberships,
+    getAllTeamMemberships,
     createTeamMembership,
     removeTeamMembership
   };
@@ -64,6 +65,17 @@ export default function createTeamService(orgId) {
       {
         method: 'DELETE',
         path: ['teams', teamId]
+      },
+      ALPHA_HEADER
+    );
+  }
+
+  function getAllTeamMemberships(query) {
+    return endpoint(
+      {
+        method: 'GET',
+        path: ['team_memberships'],
+        query
       },
       ALPHA_HEADER
     );
