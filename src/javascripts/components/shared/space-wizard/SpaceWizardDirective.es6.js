@@ -4,8 +4,9 @@ registerDirective('cfSpaceWizard', [
   '$state',
   '$rootScope',
   'redux/store.es6',
+  'analytics/Analytics.es6',
   'redux/actions/spaceWizard/actionCreators.es6',
-  ($state, $rootScope, { default: ReduxStore }, actionCreators) => {
+  ($state, $rootScope, { default: ReduxStore }, Analytics, actionCreators) => {
     const { reset: resetActionCreator } = actionCreators;
     return {
       link: function($scope) {
@@ -26,8 +27,14 @@ registerDirective('cfSpaceWizard', [
               $scope.dialog.confirm();
             }
           },
-          onSpaceCreated: function(newSpace) {
-            $state.go('spaces.detail', { spaceId: newSpace.sys.id });
+          onSpaceCreated: async function(newSpace, template) {
+            await $state.go('spaces.detail', { spaceId: newSpace.sys.id });
+
+            const spaceCreateEventData = template
+              ? { templateName: template.name, entityAutomationScope: { scope: 'space_template' } }
+              : { templateName: 'Blank' };
+
+            Analytics.track('space:create', spaceCreateEventData);
           },
           onTemplateCreated: function() {
             // Picked up by the learn page which then refreshes itself

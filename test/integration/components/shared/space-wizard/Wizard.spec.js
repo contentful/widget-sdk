@@ -462,13 +462,9 @@ describe('Space Wizard', function() {
 
         await this.awaitStateUpdate();
 
-        this.assertArgument(this.stubs.track, 7, 'space:create', {
-          templateName: 'Blank'
-        });
-
         this.assertArgument(
           this.stubs.track,
-          8,
+          7,
           'space_wizard:space_create',
           this.createTrackingData({
             spaceId: this.newSpace.sys.id
@@ -495,14 +491,6 @@ describe('Space Wizard', function() {
             targetSpaceTemplateId: 'My awesome template!'
           })
         );
-
-        // Template information on submission
-        this.assertArgument(this.stubs.track, 7, 'space:create', {
-          templateName: 'My awesome template!',
-          entityAutomationScope: {
-            scope: 'space_template'
-          }
-        });
       });
     });
 
