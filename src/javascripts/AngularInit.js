@@ -219,7 +219,6 @@ angular
       ngRequire('services/batchPerformer.es6');
       ngRequire('components/tabs/listActionsController.es6');
       ngRequire('data/document/status.es6');
-      ngRequire('data/editing_interfaces/assetInterface.es6');
       ngRequire('data/streamHashSet.es6');
       ngRequire('debug/XHR/cfMockXhrConsoleDirective.es6');
       ngRequire('directives/bindHtmlCompileDirective.es6');
