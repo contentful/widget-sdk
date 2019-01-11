@@ -1,5 +1,6 @@
 import { toPlainObject, memoize, mapKeys } from 'lodash';
 import DataLoader from 'dataloader';
+import { isValidResourceId } from 'data/utils.es6';
 
 /**
  * Takes a client instance and returns an object with identical interface.
@@ -106,13 +107,19 @@ export function batchEntityFetcher({ getResources, resourceContext, _maxBatchSiz
 
 export function newEntityBatchLoaderFn({ getResources, newEntityNotFoundError }) {
   return entityIds => {
-    const query = { 'sys.id[in]': entityIds.join(',') };
+    // Filter out IDs >64 chars (and otherwise invalid IDs) as multiple IDs >64
+    // chars might result in a weird 504 CMA response before we hit the ~8000
+    // character url limit that causes a proper 414 response.
+    const validIds = entityIds.filter(isValidResourceId);
+    const loading = validIds.length
+      ? getResources({ 'sys.id[in]': validIds.join(',') })
+      : Promise.resolve({ items: [] });
     // Can't implement as `async` to ensure a faulty `getResources` implementation
     // immediately throws instead of rejecting.
-    return getResources(query).then(handleSuccess, handleError);
+    return loading.then(handleSuccess, handleError);
 
-    function handleSuccess(response) {
-      const entitiesByIds = mapKeys(response.items, entity => entity.sys.id);
+    function handleSuccess({ items }) {
+      const entitiesByIds = mapKeys(items, entity => entity.sys.id);
       return entityIds.map(id => entitiesByIds[id] || newEntityNotFoundError(id));
     }
 
