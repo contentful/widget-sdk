@@ -1,13 +1,13 @@
 import { get, difference } from 'lodash';
 import createIDMap from './IDMap.es6';
+import * as PublicContentType from './PublicContentType.es6';
 
 const REQUIRED_CONFIG_KEYS = [
   'channel', // Instance of `ExtensionIFrameChannel`
   'current', // `{ field, locale }` for a field-locale pair rendering an extension.
-  'fields', // `fields` property of the API ContentType entity. Using internal IDs.
   'locales', // `{ available, default }` with all private locales and the default.
-  'entryData', // API Entry entity. Using internal IDs.
-  'contentTypeData', // API ContentType entity. Using public IDs.
+  'entryData', // API Entry entity. Using internal IDs (ShareJS format).
+  'contentTypeData', // API ContentType entity. Using internal IDs (ShareJS format).
   'spaceMembership', // API SpaceMembership entity.
   'parameters' // UI Extension parameters.
 ];
@@ -31,6 +31,8 @@ export default class ExtensionAPI {
       throw new Error(`Extra configuration options ${extraKeys.join(', ')} provided`);
     }
 
+    this.fields = this.contentTypeData.fields || [];
+    this.contentTypeData = PublicContentType.fromInternal(this.contentTypeData);
     this.idMap = createIDMap(this.fields, this.locales.available);
   }
 
@@ -69,7 +71,7 @@ export default class ExtensionAPI {
         const values = entryData.fields[field.id];
 
         return {
-          id: field.apiName,
+          id: field.apiName || field.id,
           localized: field.localized,
           locales: fieldLocales.map(locale => locale.code),
           values: this.idMap.locale.valuesToPublic(values)

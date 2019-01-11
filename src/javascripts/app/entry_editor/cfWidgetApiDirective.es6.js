@@ -2,6 +2,7 @@ import { registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as Navigator from 'states/Navigator.es6';
+import * as PublicContentType from 'widgets/PublicContentType.es6';
 
 /**
  * @deprecated Use and extend the new `app/widgets/WidgetApi/buildWidgetApi.es6.js` instead.
@@ -14,7 +15,6 @@ import * as Navigator from 'states/Navigator.es6';
  * @scope.requires {object} locale
  * @scope.requires {object} otSubDoc
  * @scope.requires {object} fields
- * @scope.requires {object} transformedContentTypeData
  * @scope.requires {object} widget
  * @scope.requires {object} fieldController
  * @scope.requires {object} state
@@ -51,7 +51,7 @@ registerController('WidgetApiController', [
       available: getAvailableLocaleCodes()
     };
 
-    this.contentType = $scope.transformedContentTypeData;
+    this.contentType = PublicContentType.fromInternal($scope.entityInfo.contentType);
 
     // Collection of APIs that are not exposed by the extensions API.
     this._internal = {};

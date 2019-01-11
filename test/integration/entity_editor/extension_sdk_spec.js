@@ -71,8 +71,7 @@ describe('Extension SDK', () => {
       },
       fieldController: {
         setInvalid: sinon.spy()
-      },
-      transformedContentTypeData: {}
+      }
     };
 
     this.setup = () => {

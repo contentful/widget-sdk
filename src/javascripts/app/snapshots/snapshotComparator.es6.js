@@ -20,7 +20,7 @@ registerDirective('cfSnapshotComparator', () => ({
   template: JST.snapshot_comparator(),
   restrict: 'E',
   controller: 'SnapshotComparatorController'
-}))
+}));
 
 registerController('SnapshotComparatorController', [
   '$scope',
@@ -30,7 +30,6 @@ registerController('SnapshotComparatorController', [
   'spaceContext',
   'SnapshotComparatorController/snapshotDoc',
   'EntityEditor/DataFields',
-  'data/ContentTypes',
   'data/Entries',
   'command',
   'analyticsEvents/versioning',
@@ -43,7 +42,6 @@ registerController('SnapshotComparatorController', [
     spaceContext,
     SnapshotDoc,
     DataFields,
-    ContentTypes,
     Entries,
     Command,
     trackVersioning,
@@ -86,7 +84,6 @@ registerController('SnapshotComparatorController', [
     $scope.otDoc = SnapshotDoc.create(_.get($scope, 'entry.data', {}));
     $scope.snapshotDoc = SnapshotDoc.create(snapshotData);
     $scope.fields = DataFields.create(ctData.fields, $scope.otDoc);
-    $scope.transformedContentTypeData = ContentTypes.internalToPublic(ctData);
 
     $scope.goToSnapshot = goToSnapshot;
     $scope.close = close;
@@ -153,14 +150,16 @@ registerController('SnapshotComparatorController', [
       return $q.reject(error);
     }
   }
-])
+]);
 
 registerController('SnapshotFieldController', [
   '$scope',
   'TheLocaleStore',
   function($scope, localeStore) {
     const field = $scope.widget.field;
-    const locales = field.localized ? localeStore.getPrivateLocales() : [localeStore.getDefaultLocale()];
+    const locales = field.localized
+      ? localeStore.getPrivateLocales()
+      : [localeStore.getDefaultLocale()];
 
     $scope.field = field;
     $scope.locales = _.filter(locales, localeStore.isLocaleActive);
@@ -169,7 +168,7 @@ registerController('SnapshotFieldController', [
 
     this.setInvalid = _.noop;
   }
-])
+]);
 
 registerController('SnapshotComparisonController', [
   '$scope',

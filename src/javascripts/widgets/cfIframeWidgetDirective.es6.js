@@ -44,7 +44,6 @@ registerDirective('cfIframeWidget', [
       link: function(scope, element) {
         const appDomain = `app.${Config.domain}`;
         const doc = scope.docImpl || scope.otDoc;
-        const fields = scope.entityInfo.contentType.fields || [];
 
         const current = {
           field: scope.widget.field,
@@ -66,9 +65,8 @@ registerDirective('cfIframeWidget', [
           channel,
           spaceMembership: spaceContext.space.data.spaceMembership,
           parameters,
-          fields,
           entryData: doc.getValueAt([]),
-          contentTypeData: scope.transformedContentTypeData,
+          contentTypeData: scope.entityInfo.contentType,
           current,
           locales
         });

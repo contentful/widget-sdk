@@ -10,11 +10,7 @@ import _ from 'lodash';
  * Content Type data.
  */
 registerFactory('data/ContentTypes', () => {
-  return {
-    assureDisplayField: assureDisplayField,
-    assureName: assureName,
-    internalToPublic: internalToPublic
-  };
+  return { assureDisplayField, assureName };
 
   /**
    * @ngdoc method
@@ -109,43 +105,5 @@ registerFactory('data/ContentTypes', () => {
 
   function isDisplayField(field) {
     return _.includes(['Symbol', 'Text'], field.type) && !field.disabled;
-  }
-
-  /**
-   * @ngdoc method
-   * @name data/ContentTypes#internalToPublic
-   * @description
-   * Return the public representation of a Content Type from the
-   * internal one.
-   *
-   * The internal represenation is that received from the API with the
-   * 'X-Contentful-Skip-Transformation' header and the public one is
-   * that received without the header.
-   *
-   * @param {API.ContentType} data
-   * @returns {API.ContentTypeExternal}
-   */
-  function internalToPublic(data) {
-    const result = {};
-
-    result.name = data.name;
-    result.sys = data.sys;
-    result.description = data.description;
-    result.fields = _.map(data.fields, field => {
-      const newField = _.assign({}, field);
-
-      newField.id = newField.apiName || newField.id;
-
-      // set displayField id correctly
-      if (field.id === data.displayField) {
-        result.displayField = field.apiName || field.id;
-      }
-
-      delete newField.apiName;
-
-      return newField;
-    });
-
-    return result;
   }
 });

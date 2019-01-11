@@ -39,8 +39,11 @@ describe('cfWidgetApi directive', () => {
           errors$: K.createMockProperty()
         },
         editorContext: {},
-        fields: {},
-        transformedContentTypeData: {},
+        entityInfo: {
+          contentType: {
+            fields: []
+          }
+        },
         state: { registerUnpublishedReferencesWarning: _.noop }
       });
 

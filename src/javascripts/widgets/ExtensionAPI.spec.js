@@ -5,7 +5,6 @@ describe('ExtensionAPI', () => {
     return new ExtensionAPI({
       channel: { connect: jest.fn(), destroy: jest.fn(), send: jest.fn(), handlers: {} },
       current: { field: {}, locale: {} },
-      fields: [],
       locales: { available: [], default: {} },
       entryData: { fields: {} },
       contentTypeData: {},
@@ -37,7 +36,6 @@ describe('ExtensionAPI', () => {
             internal_code: 'LOCALE-internal'
           }
         },
-        fields: [{ id: 'FID-internal', apiName: 'FID-public', localized: false }],
         locales: {
           available: [
             { code: 'LOCALE', internal_code: 'LOCALE-internal', default: true },
@@ -53,7 +51,9 @@ describe('ExtensionAPI', () => {
             }
           }
         },
-        contentTypeData: 'CT'
+        contentTypeData: {
+          fields: [{ id: 'FID-internal', apiName: 'FID-public', localized: false }]
+        }
       });
 
       api.connect();
@@ -82,7 +82,9 @@ describe('ExtensionAPI', () => {
           },
           parameters: expect.any(Object),
           entry: { sys: { id: 'test' }, fields: expect.any(Object) },
-          contentType: 'CT'
+          contentType: {
+            fields: [{ id: 'FID-public', localized: false }]
+          }
         })
       );
     });
@@ -105,10 +107,12 @@ describe('ExtensionAPI', () => {
   describe('#registerPathHandler()', () => {
     it('registers a channel handler translating paths to internal IDs', () => {
       const api = createAPI({
-        fields: [{ id: 'FID-internal', apiName: 'FID-public' }],
         locales: {
           available: [{ code: 'LC-public', internal_code: 'LC-internal', default: true }],
           default: { code: 'LC-public', internal_code: 'LC-internal', default: true }
+        },
+        contentTypeData: {
+          fields: [{ id: 'FID-internal', apiName: 'FID-public' }]
         }
       });
 
@@ -144,10 +148,12 @@ describe('ExtensionAPI', () => {
   describe('#update()', () => {
     it('sends "valueChanged" message and translates internal to public paths', () => {
       const api = createAPI({
-        fields: [{ id: 'FID-internal', apiName: 'FID-public' }],
         locales: {
           available: [{ code: 'LC-public', internal_code: 'LC-internal', default: true }],
           default: { code: 'LC-public', internal_code: 'LC-internal', default: true }
+        },
+        contentTypeData: {
+          fields: [{ id: 'FID-internal', apiName: 'FID-public' }]
         }
       });
 
