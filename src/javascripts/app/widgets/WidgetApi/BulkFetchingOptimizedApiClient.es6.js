@@ -1,6 +1,17 @@
 import { toPlainObject, memoize, mapKeys } from 'lodash';
 import DataLoader from 'dataloader';
 import { isValidResourceId } from 'data/utils.es6';
+import { detect as detectBrowser } from 'detect-browser';
+import { apiUrl } from 'Config.es6';
+
+const MAX_URL_LENGTH = detectBrowser().name === 'ie' ? 2000 : 8000;
+const MAX_ID_LENGTH = 64;
+const MAX_LENGTH_ID = 'X'.repeat(MAX_ID_LENGTH);
+const WORST_CASE_URL = encodeURI(
+  apiUrl(`/spaces/${MAX_LENGTH_ID}/environments/${MAX_LENGTH_ID}/content_types?sys.id[in]=`)
+);
+const URL_IDS_PORTION_LENGTH = MAX_URL_LENGTH - WORST_CASE_URL.length;
+const MAX_BATCH_SIZE = Math.floor((URL_IDS_PORTION_LENGTH + 1) / (MAX_ID_LENGTH + 1)); // +1 for ','
 
 /**
  * Takes a client instance and returns an object with identical interface.
@@ -17,22 +28,19 @@ export const getOptimizedApiClient = memoize(cma => {
   return {
     ...toPlainObject(cma),
 
-    getContentType: batchEntityFetcher({
+    getContentType: newBatchEntityFetcher({
       getResources: query => cma.getContentTypes(query),
-      resourceContext: newResourceContext('ContentType'),
-      maxBatchSize: 1000 // API's max. CTs are small and can be fetched all at once.
+      resourceContext: newResourceContext('ContentType')
     }),
 
-    getAsset: batchEntityFetcher({
+    getAsset: newBatchEntityFetcher({
       getResources: query => cma.getAssets(query),
-      resourceContext: newResourceContext('Asset'),
-      maxBatchSize: 200
+      resourceContext: newResourceContext('Asset')
     }),
 
-    getEntry: batchEntityFetcher({
+    getEntry: newBatchEntityFetcher({
       getResources: query => cma.getEntries(query),
-      resourceContext: newResourceContext('Entry'),
-      maxBatchSize: 40 // Entries can be huge, avoid 8mb response payload limit.
+      resourceContext: newResourceContext('Entry')
     })
   };
 });
@@ -42,12 +50,14 @@ export const getOptimizedApiClient = memoize(cma => {
  * @param {string} options.resourceContext.type API resource type, e.g. 'Entry'
  * @param {string} options.resourceContext.envId
  * @param {string} options.resourceContext.spaceId
- * @param {number} options.maxBatchSize
  * @returns {function}
  */
-export function batchEntityFetcher({ getResources, resourceContext, _maxBatchSize }) {
+export function newBatchEntityFetcher({ getResources, resourceContext }) {
   const batchLoaderFn = newEntityBatchLoaderFn({ getResources, newEntityNotFoundError });
-  const loader = new DataLoader(batchLoaderFn);
+  // TODO: This is way too pessimistic, in the real world, 99% of IDs should be
+  //  significantly shorter than 64 chars (mostly 32 chars). Optimize by calculating
+  //  batch size dynamically (might require a DataLoader contribution).
+  const loader = new DataLoader(batchLoaderFn, { maxBatchSize: MAX_BATCH_SIZE });
   return id =>
     loader
       .load(id)
@@ -71,7 +81,8 @@ export function batchEntityFetcher({ getResources, resourceContext, _maxBatchSiz
    * Builds a CMA `NotFound` error as the Data.APIClient would return it.
    *
    * NOTE: Alternatively, we could do a separate CMA call to the .getResource() fn
-   * to get an 'original' API error.
+   * to get an 'original' API error. We could also use `contentful-errors` to
+   * construct this and other errors if necessary.
    *
    * @returns {Error}
    */

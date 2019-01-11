@@ -77,11 +77,12 @@ describe('states/deeplink/utils.es6', () => {
 
   describe('#getSpaceInfo', () => {
     it('checks value in the store', function*() {
+      this.storeGet.reset();
       this.storeGet.returns('some_id');
       this.getSpaces.resolves([{ sys: { id: 'some_id' } }]);
       yield* this.utils.getSpaceInfo();
 
-      expect(this.storeGet.calledOnce).toBe(true);
+      sinon.assert.callCount(this.storeGet, 1);
     });
 
     it('returns spaceId from the store', function*() {

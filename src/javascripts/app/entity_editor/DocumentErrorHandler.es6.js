@@ -12,13 +12,13 @@ export default function init($scope, docError$) {
   });
   K.onValueScope($scope, forbidden.take(1), ({ error }) => {
     if (error === 'internal-server-error') {
-      ReloadNotification.trigger('Due to a server error, we could not process this document')
+      ReloadNotification.trigger('Due to a server error, we could not process this document');
     } else {
-    ReloadNotification.trigger(
-      'Due to an authentication error, we could not process this editing ' +
-        'operation. Please reload the application and try again',
-      'Editing denied'
-    );
+      ReloadNotification.trigger(
+        'Due to an authentication error, we could not process this editing ' +
+          'operation. Please reload the application and try again',
+        'Editing denied'
+      );
     }
   });
 }

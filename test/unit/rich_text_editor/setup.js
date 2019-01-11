@@ -37,6 +37,10 @@ export const stubAll = async ({ isolatedSystem, angularStubs = {} }) => {
 
   const getModuleStub = sinon.stub();
   getModuleStub
+    .withArgs('environment')
+    .returns({
+      settings: {}
+    })
     .withArgs('spaceContext')
     .returns({
       cma: {

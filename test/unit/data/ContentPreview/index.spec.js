@@ -1,7 +1,8 @@
 describe('data/ContentPreview', () => {
   beforeEach(function() {
     this.environment = {
-      env: 'production'
+      env: 'production',
+      apiUrl: () => ''
     };
   });
 

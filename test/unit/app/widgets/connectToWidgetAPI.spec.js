@@ -8,14 +8,10 @@ describe('connectToWidgetAPI', () => {
   beforeEach(async function() {
     module('contentful/test');
     this.system = createIsolatedSystem();
-    this.system.set('entitySelector', {});
     this.system.set('search/EntitySelector/Config.es6', {});
-    this.system.set('AngularComponent', {});
-    this.system.set('modalDialog', { open: sinon.stub() });
-    this.system.set('navigation/SlideInNavigator', {
-      goToSlideInEntity: sinon.stub()
+    this.system.set('app/widgets/WidgetApi/BulkFetchingOptimizedApiClient.es6', {
+      getOptimizedApiClient: v => v
     });
-    this.system = createIsolatedSystem();
 
     const getModuleStub = sinon.stub();
     getModuleStub
