@@ -5,6 +5,10 @@ $home-width = 820px
   overflow-y: auto
   overflow-x: hidden
 
+  &__container-practitioner
+    background: url('/app/images/practitioner-home-bg.png') no-repeat
+    background-size: cover
+
   &__container
     background-image: url('/app/images/home-bg.png')
     background-size: 1280px auto
@@ -145,11 +149,10 @@ $home-width = 820px
       color: $colors.text-light
       text-decoration: underline
 .widget-container
-  background: url('/app/images/practitioner-home-bg.png') no-repeat
-  background-size: cover
   width: 100%
   height 100%
   display: flex
+  align-content: flex-start
   flex-wrap: wrap
   padding: 20px
   &__row
@@ -168,7 +171,7 @@ $home-width = 820px
   justify-content: center
   display: flex
   flex-wrap: wrap
-  margin: 55px
+  margin-top: 55px
   &__header
     color: $colors.text-dark
     font-family: "Avenir Next W01"
@@ -189,4 +192,25 @@ $home-width = 820px
     font-weight: 600
   &__org-name
     font-style: italic
-  
+.concept-video-widget
+  padding: 0
+  width: 939px
+  margin: auto
+  margin-top: 70px
+  &__header
+    font-size: 16px
+    border-bottom: 1px solid $colors.element-mid
+    padding: 22px 27px
+    margin: 0
+  &__content
+    margin: 35px 27px
+    display: flex
+    flex-wrap: nowrap
+    justify-content: space-between
+  &__copy
+    width: 364px
+  &__copy p
+    color: $colors.text-mid
+    font-family: "Avenir Next W01"
+    font-size: 14px
+    line-height: 21px

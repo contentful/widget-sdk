@@ -2,11 +2,18 @@ import { h } from 'utils/legacy-html-hyperscript/index.es6';
 
 export default function template() {
   return h('.home', { 'cf-ui-sticky-container': true }, [
-    h('react-component', {
-      ngIf: 'isAuthorOrEditor && !readOnlySpace',
-      name: 'app/home/AuthorEditorSpaceHome.es6',
-      props: 'spaceHomeProps'
-    }),
+    h(
+      '.home__container-practitioner',
+      {
+        ngIf: 'isAuthorOrEditor && !readOnlySpace'
+      },
+      [
+        h('react-component', {
+          name: 'app/home/AuthorEditorSpaceHome.es6',
+          props: 'spaceHomeProps'
+        })
+      ]
+    ),
     h('.home__container', { ngIf: 'isSpaceAdmin && !readOnlySpace' }, [
       h('.home__content', [
         h('cf-welcome'),

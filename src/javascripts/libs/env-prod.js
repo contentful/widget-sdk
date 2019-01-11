@@ -110,5 +110,6 @@ window.libs = [
   ['sum-types/caseof-eq', require('sum-types/caseof-eq')],
   ['react-sticky-el', require('react-sticky-el')],
   ['detect-browser', require('detect-browser')],
-  ['mitt', require('mitt')]
+  ['mitt', require('mitt')],
+  ['react-player', require('react-player')]
 ];
