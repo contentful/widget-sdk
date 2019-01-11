@@ -73,7 +73,7 @@ in the [Test module][module:test].
 
 ### Async/await
 
-You can use async/await code in your tests, both in setup and in tests itself. They behave the same as generators, feel free to choose what you prefer more.
+You can use async/await code in your tests, both in setup and in tests itself. It is recommended that you use this approach rather than generators.
 
 ~~~js
 beforeEach(async function () {
@@ -90,7 +90,7 @@ It supports both native and $q-based promises – for Angular ones it does `$roo
 
 ### Generators (deprecated)
 
-You can write asynchronous tests using generator functions. This pattern is deprecated as using `async/await` should cover the use case for waiting for asynchronous code.
+You can write asynchronous tests using generator functions. This pattern is deprecated as using `async/await` should cover the use case for waiting for asynchronous code. If you come across a test using generators you should update it to support async/await.
 
 ~~~js
 beforeEach(function* () {
@@ -190,8 +190,7 @@ beforeEach(function () {
 
 ### Testing directives
 
-Directives can be compiled and tested with the
-[`$compile` helper][service:helpers].
+Directives can be compiled and tested with the `$compile` helper.
 
 ~~~js
 it('renders', function () {
@@ -280,10 +279,7 @@ the specific property, and then rewrite the import.
 
 #### Angular
 
-The method to mock a dependency depends on if the dependency is either Angular
-or non-Angular.
-
-##### Angular dependency
+<!-- ##### Angular dependency -->
 
 You can provide it via `$provide.constant` when initially defining `module('contentful/test')`.
 
@@ -291,7 +287,12 @@ You can provide it via `$provide.constant` when initially defining `module('cont
 module('contentful/test', $provide => {
   $provide.constant('myFactory', {
     // ...
-  })
+  });
+
+  // Same is true for ES6 files
+  $provide.constant('utils/random.es6', {
+    // ...
+  });
 })
 ~~~
 
@@ -307,11 +308,24 @@ const { registerFactory } = this.$inject('NgRegistry.es6');
 const originalMyFactory = this.$inject('myFactory');
 originalMyFactory.property = {};
 registerFactory('myFactory', () => originalMyFactory);
-
 ~~~
 
-*NOTE*: You must provide a function when registering anything other than a constant. If you provide an
+You can register a constant using the `registerConstant` helper to do the above for an ES6 module.
+
+~~~js
+module('contentful/test');
+
+const { registerConstant } = this.$inject('NgRegistry.es6');
+const randomUtils = this.$inject('utils/random.es6');
+randomUtils.property = {};
+registerConstant('utils/randomUtils.es6', randomUtils);
+~~~
+
+*NOTE*: You must provide a function when registering anything other than a constant or value. If you provide an
 object directly, Angular will error.
+
+<!--
+This will be true once the tests are migrated to use SystemJS, but this isn't true right now.
 
 ##### ES6 dependency
 
@@ -333,6 +347,7 @@ module('contentful/test');
 
 const myFactory = this.$inject('myFactory');
 ~~~
+ -->
 
 #### ES6 Modules
 
@@ -350,7 +365,7 @@ system.set('utils/AwesomeUtils.es6', {
 const myModule = await system.import('app/myModule.es6');
 ~~~
 
-To mock a single module property, import it and overwrite it.
+To mock a single module property, import it and overwrite it before you import the tested module.
 
 ~~~js
 const system = createIsolatedSystem();
@@ -362,7 +377,6 @@ system.set('utils/AwesomeUtils.es6', AwesomeUtils);
 
 const myModule = await system.import('app/myModule.es6');
 ~~~
-
 
 ##### Angular dependency
 
@@ -439,8 +453,6 @@ it('tests my component', function () {
   ui.find('my-input').setValue('hello')
 })
 ~~~
-
-This technique is fairly new and requires extending.
 
 ### Within an isolated SystemJS context
 
