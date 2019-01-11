@@ -111,7 +111,7 @@ export class SidebarContentPreviewContainer extends Component {
     }
 
     const { selectedContentPreview } = this.state;
-    const dataForTracking = this.props;
+    const { dataForTracking } = this.props;
 
     const contentTypeId = selectedContentPreview.contentType;
     const contentTypeName = get(this.props.contentType, 'name', '<UNPUBLISHED CONTENT TYPE>');

@@ -84,10 +84,11 @@
         <react-component name="@contentful/forma-36-react-components/Pill" props="locales.buildPillProps(locale)"></react-component>
     <react-component name="@contentful/forma-36-react-components/TextLink" props="locales.buildChangeLocaleProps()">Change</react-component>
 
-
-  div(ng-if="data.isEntry && data.isMasterEnvironment")
-    h2.entity-sidebar__heading Versions
-    cf-snapshot-sidebar-list
+  react-component(
+    ng-if="data.isEntry && data.isMasterEnvironment"
+    name="app/EntitySidebar/VersionsWidget/VersionsWidgetContainer.es6"
+    props="{emitter: emitter}"
+  )
 
   react-component(
     name="app/EntitySidebar/UsersWidget/UsersWidgetContainer.es6"

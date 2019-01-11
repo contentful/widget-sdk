@@ -49,7 +49,7 @@ registerDirective('cfEntitySidebar', [
               entry,
               contentType: $scope.entityInfo.contentType,
               dataForTracking: {
-                locales: $scope.locales,
+                locales: $scope.locales.active,
                 fromState: $state.current.name,
                 entryId: $scope.entityInfo.id
               }
@@ -68,6 +68,27 @@ registerDirective('cfEntitySidebar', [
           });
         });
 
+        const initializeVersions = once(() => {
+          const notifyUpdate = entrySys => {
+            $scope.emitter.emit(SidebarEventTypes.UPDATED_VERSIONS_WIDGET, {
+              entrySys
+            });
+          };
+
+          const publishedVersion$ = $scope.otDoc.sysProperty
+            .map(sys => sys.publishedVersion)
+            .skipDuplicates();
+
+          const updateStream$ = K.combineProperties(
+            [$scope.otDoc.sysProperty, publishedVersion$],
+            sys => ({ sys })
+          );
+
+          K.onValue(updateStream$, ({ sys }) => {
+            notifyUpdate(sys);
+          });
+        });
+
         $scope.emitter.on(SidebarEventTypes.WIDGET_REGISTERED, name => {
           switch (name) {
             case SidebarWidgetTypes.INCOMING_LINKS:
@@ -78,6 +99,9 @@ registerDirective('cfEntitySidebar', [
               break;
             case SidebarWidgetTypes.USERS:
               initializeUsers();
+              break;
+            case SidebarWidgetTypes.VERSIONS:
+              initializeVersions();
               break;
           }
         });
