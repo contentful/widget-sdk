@@ -1,6 +1,6 @@
-import Channel from './WidgetIFrameChannel.es6';
+import Channel from './ExtensionIFrameChannel.es6';
 
-describe('WidgetIFrameChannel', () => {
+describe('ExtensionIFrameChannel', () => {
   const makeChannel = () => {
     let messageListener;
     const addEventListenerStub = jest.fn((event, listener) => {

@@ -2,7 +2,7 @@ import { get, difference } from 'lodash';
 import createIDMap from './IDMap.es6';
 
 const REQUIRED_CONFIG_KEYS = [
-  'channel', // Instance of `WidgetIFrameChannel`
+  'channel', // Instance of `ExtensionIFrameChannel`
   'current', // `{ field, locale }` for a field-locale pair rendering an extension.
   'fields', // `fields` property of the API ContentType entity. Using internal IDs.
   'locales', // `{ available, default }` with all private locales and the default.

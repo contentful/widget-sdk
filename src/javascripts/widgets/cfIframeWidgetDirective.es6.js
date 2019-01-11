@@ -2,7 +2,7 @@ import { registerDirective } from 'NgRegistry.es6';
 import { get } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as PathUtils from 'utils/Path.es6';
-import Channel from './WidgetIFrameChannel.es6';
+import Channel from './ExtensionIFrameChannel.es6';
 import ExtensionAPI from './ExtensionAPI.es6';
 
 const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
