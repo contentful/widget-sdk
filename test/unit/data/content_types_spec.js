@@ -88,22 +88,4 @@ describe('data/ContentTypes', () => {
       expect(ct.displayField).toEqual(null);
     });
   });
-
-  describe('#assureName', () => {
-    beforeEach(function() {
-      this.assureName = this.$inject('data/ContentTypes').assureName;
-    });
-
-    it('sets missing name to "Untitled"', function() {
-      const ct = { name: '' };
-      this.assureName(ct);
-      expect(ct.name).toEqual('Untitled');
-    });
-
-    it('retains existing name', function() {
-      const ct = { name: 'NAME' };
-      this.assureName(ct);
-      expect(ct.name).toEqual('NAME');
-    });
-  });
 });

@@ -10,24 +10,7 @@ import _ from 'lodash';
  * Content Type data.
  */
 registerFactory('data/ContentTypes', () => {
-  return { assureDisplayField, assureName };
-
-  /**
-   * @ngdoc method
-   * @name data/ContentTypes#assureDisplayField
-   * @description
-   * If the 'name' property on the Content Type data is not set, set it
-   * to 'Untitled'.
-   *
-   * This is required for legacy Content Types. The API requires new Content Types to have a name.
-   *
-   * @param {API.ContentType} data
-   */
-  function assureName(contentTypeData) {
-    if (!contentTypeData.name) {
-      contentTypeData.name = 'Untitled';
-    }
-  }
+  return { assureDisplayField };
 
   /**
    * @ngdoc method

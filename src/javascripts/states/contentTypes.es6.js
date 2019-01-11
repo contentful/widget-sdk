@@ -58,19 +58,9 @@ registerFactory('states/contentTypes', [
         resolve: {
           contentType: [
             '$stateParams',
-            'data/ContentTypes',
             'spaceContext',
-            ($stateParams, ctHelpers, spaceContext) => {
-              const space = spaceContext.space;
-              return space.getContentType($stateParams.contentTypeId).then(ct => {
-                // Some legacy content types do not have a name. If it is
-                // missing we set it to 'Untitled' so we can display
-                // something in the UI. Note that the API requires new
-                // Content Types to have a name.
-                ctHelpers.assureName(ct.data);
-                return ct;
-              });
-            }
+            ($stateParams, spaceContext) =>
+              spaceContext.space.getContentType($stateParams.contentTypeId)
           ],
           publishedContentType: [
             'contentType',
