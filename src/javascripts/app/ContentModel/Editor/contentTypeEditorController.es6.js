@@ -1,6 +1,7 @@
 import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import validation from '@contentful/validation';
+import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField.es6';
 
 /**
  * @ngdoc type
@@ -22,7 +23,6 @@ registerController('ContentTypeEditorController', [
   'navigation/confirmLeaveEditor',
   'contentTypeEditor/metadataDialog',
   'access_control/AccessChecker',
-  'data/ContentTypes',
   'editingInterfaces/helpers',
   'analytics/Analytics.es6',
   'app/ContentModel/Editor/Actions.es6',
@@ -36,7 +36,6 @@ registerController('ContentTypeEditorController', [
     leaveConfirmator,
     metadataDialog,
     accessChecker,
-    ctHelpers,
     eiHelpers,
     Analytics,
     { default: createActions }
@@ -96,7 +95,7 @@ registerController('ContentTypeEditorController', [
 
     $scope.$watch('contentType.data.fields.length', length => {
       $scope.hasFields = length > 0;
-      ctHelpers.assureDisplayField($scope.contentType.data);
+      assureDisplayField($scope.contentType.data);
       setDirtyState();
       $scope.data.fieldsUsed = length;
     });

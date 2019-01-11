@@ -79,7 +79,6 @@ angular
       ngRequire('components/field_dialog/validationDecorator.es6');
       ngRequire('components/field_dialog/fieldDialog.es6');
       ngRequire('app/ContentModel/Editor/metadataDialog.es6');
-      ngRequire('data/contentTypes.es6');
       ngRequire('app/ContentModel/Editor/contentTypeEditorController.es6');
       ngRequire('app/ContentModel/Editor/contentTypeEditorDirective.es6');
       ngRequire('utils/encoder.es6');
