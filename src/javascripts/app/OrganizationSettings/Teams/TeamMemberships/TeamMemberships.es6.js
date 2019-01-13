@@ -53,8 +53,7 @@ export default connect(state => ({
     render() {
       const { memberships, teamName } = this.props;
       const { showingForm } = this.state;
-      const loading = memberships === undefined;
-      const empty = !loading && memberships.length === 0 && !showingForm;
+      const empty = memberships.length === 0 && !showingForm;
       return (
         <React.Fragment>
           {/* TODO: move these styles to a CSS class  */}
@@ -63,7 +62,7 @@ export default connect(state => ({
             <h3 style={{ marginBottom: 30 }}>Team Members</h3>
             {!showingForm && !empty && <AddTeamMemberButton onClick={this.toggleForm} />}
           </header>
-          {!loading && !empty ? (
+          {!empty ? (
             <Table>
               <TableHead>
                 <TableRow>
@@ -86,7 +85,6 @@ export default connect(state => ({
             </Table>
           ) : (
             <EmptyPlaceholder
-              loading={loading}
               title={`Team ${teamName} has no members 🐚`}
               text="They’re not gonna magically appear."
               button={<AddTeamMemberButton onClick={this.toggleForm} />}

@@ -12,10 +12,14 @@ const EmptyPlaceholder = ({ loading, title, text, button }) => (
 );
 
 EmptyPlaceholder.propTypes = {
-  loading: PropTypes.bool.isRequired,
+  loading: PropTypes.bool,
   title: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
   button: PropTypes.element
+};
+
+EmptyPlaceholder.defaultProps = {
+  loading: false
 };
 
 export default EmptyPlaceholder;

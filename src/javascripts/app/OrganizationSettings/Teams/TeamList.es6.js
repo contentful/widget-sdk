@@ -12,6 +12,7 @@ import {
   TableCell,
   Modal
 } from '@contentful/forma-36-react-components';
+import Placeholder from 'app/common/Placeholder.es6.js';
 import { getTeamListWithOptimistic } from 'redux/selectors/teams.es6';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
@@ -57,22 +58,34 @@ export default connect(
           </Workbench.Header>
           <Workbench.Content>
             <section style={{ padding: '1em 2em 2em' }}>
-              <Table data-test-id="organization-teams-page">
-                <TableHead>
-                  <TableRow data-test-id="team-details-row">
-                    <TableCell width="300" data-test-id="team-name">
-                      Name
-                    </TableCell>
-                    <TableCell data-test-id="team-description">Description</TableCell>
-                    <TableCell />
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {teams.map(team => (
-                    <TeamListRow team={team} key={team.sys.id} />
-                  ))}
-                </TableBody>
-              </Table>
+              {teams.length > 0 ? (
+                <Table data-test-id="organization-teams-page">
+                  <TableHead>
+                    <TableRow data-test-id="team-details-row">
+                      <TableCell width="300" data-test-id="team-name">
+                        Name
+                      </TableCell>
+                      <TableCell data-test-id="team-description">Description</TableCell>
+                      <TableCell />
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {teams.map(team => (
+                      <TeamListRow team={team} key={team.sys.id} />
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <Placeholder
+                  title="Increased user visibility with teams"
+                  text="Everyone in a team can see other members of that team."
+                  button={
+                    <Button size="small" buttonType="primary" onClick={this.addTeam}>
+                      New team
+                    </Button>
+                  }
+                />
+              )}
             </section>
           </Workbench.Content>
         </Workbench>
