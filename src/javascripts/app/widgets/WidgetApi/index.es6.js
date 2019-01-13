@@ -7,7 +7,6 @@ import WidgetAPIContext from './WidgetApiContext.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const $rootScope = getModule('$rootScope');
-const $location = getModule('$location');
 
 export default function connectToWidgetAPI(Component) {
   return class extends React.Component {
@@ -19,14 +18,14 @@ export default function connectToWidgetAPI(Component) {
     state = {
       value: this.props.field.getValue(),
       isDisabled: true,
-      currentUrl: $location.absUrl()
+      currentUrl: window.location
     };
     UNSAFE_componentWillMount() {
       this.offDisabledState = this.props.field.onIsDisabledChanged(this.handleDisabledChanges);
       this.offValueChanged = this.props.field.onValueChanged(this.handleIncomingChanges);
 
-      this.offLocationChanged = $rootScope.$on('$locationChangeSuccess', (_, currentUrl) => {
-        this.setState({ currentUrl });
+      this.offLocationChanged = $rootScope.$on('$locationChangeSuccess', () => {
+        this.setState({ currentUrl: { ...window.location } });
       });
     }
     componentWillUnmount() {

@@ -17,6 +17,9 @@ const newMockWidgetAPI = (entity, contentType) => {
         .stub()
         .withArgs(contentType.sys.id)
         .returns(Promise.resolve(contentType))
+    },
+    currentUrl: {
+      pathname: ''
     }
   };
 };
@@ -53,7 +56,7 @@ describe('FetchEntity', () => {
       });
     });
 
-    FetchEntity = this.$inject('app/widgets/rich_text/plugins/shared/FetchEntity/FetchEntity.es6')
+    FetchEntity = this.$inject('app/widgets/rich_text/plugins/shared/FetchEntity/index.es6')
       .default;
     RequestStatus = this.$inject('app/widgets/rich_text/plugins/shared/RequestStatus.es6').default;
 
