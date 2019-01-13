@@ -8,6 +8,7 @@ import { Button } from '@contentful/forma-36-react-components';
 import { Team as TeamPropType, User as UserPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { getTeams, getCurrentTeam } from 'redux/selectors/teams.es6';
 import Workbench from 'app/common/Workbench.es6';
+import Placeholder from 'app/common/Placeholder.es6';
 import Icon from 'ui/Components/Icon.es6';
 
 import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
@@ -25,7 +26,6 @@ export default connect(
   class TeamDetail extends React.Component {
     static propTypes = {
       team: TeamPropType,
-      loading: PropTypes.bool,
       users: PropTypes.objectOf(UserPropType),
       goBack: PropTypes.func.isRequired,
       removeTeam: PropTypes.func.isRequired,
@@ -49,45 +49,56 @@ export default connect(
             <Workbench.Title>Teams</Workbench.Title>
           </Workbench.Header>
           <Workbench.Content>
-            <div className="user-details">
-              <div className="user-details__sidebar">
-                <section className="user-details__profile-section">
-                  <div className="team-card">
-                    <h2 className="team-card__name">{team.name}</h2>
-                    {team.description && (
-                      <div className="team-card_description">
-                        {team.description.split('\n').reduce((acc, cur, idx) => {
-                          if (cur === '') {
-                            return [...acc, <br key={`${idx}-1`} />, <br key={`${idx}-2`} />];
-                          }
-                          if (idx === 0) {
-                            return [...acc, cur];
-                          }
-                          return [...acc, <br key={idx} />, cur];
-                        }, [])}
-                      </div>
-                    )}
-                    <Button size="small" buttonType="muted" onClick={() => editTeam(team.sys.id)}>
-                      Edit team details
-                    </Button>
-                  </div>
-                </section>
-                <section className="user-details__profile-section">
-                  <dl className="definition-list">
-                    <dt>Created at</dt>
-                    <dd>{moment(team.sys.createdAt).format('MMMM DD, YYYY')}</dd>
-                    <dt>Created by</dt>
-                    <dd>{getUserName(creator)}</dd>
-                  </dl>
-                </section>
-                <Button size="small" buttonType="negative" onClick={() => removeTeam(team.sys.id)}>
-                  Delete team
-                </Button>
+            {team ? (
+              <div className="user-details">
+                <div className="user-details__sidebar">
+                  <section className="user-details__profile-section">
+                    <div className="team-card">
+                      <h2 className="team-card__name">{team.name}</h2>
+                      {team.description && (
+                        <div className="team-card_description">
+                          {team.description.split('\n').reduce((acc, cur, idx) => {
+                            if (cur === '') {
+                              return [...acc, <br key={`${idx}-1`} />, <br key={`${idx}-2`} />];
+                            }
+                            if (idx === 0) {
+                              return [...acc, cur];
+                            }
+                            return [...acc, <br key={idx} />, cur];
+                          }, [])}
+                        </div>
+                      )}
+                      <Button size="small" buttonType="muted" onClick={() => editTeam(team.sys.id)}>
+                        Edit team details
+                      </Button>
+                    </div>
+                  </section>
+                  <section className="user-details__profile-section">
+                    <dl className="definition-list">
+                      <dt>Created at</dt>
+                      <dd>{moment(team.sys.createdAt).format('MMMM DD, YYYY')}</dd>
+                      <dt>Created by</dt>
+                      <dd>{getUserName(creator)}</dd>
+                    </dl>
+                  </section>
+                  <Button
+                    size="small"
+                    buttonType="negative"
+                    onClick={() => removeTeam(team.sys.id)}>
+                    Delete team
+                  </Button>
+                </div>
+                <div className="user-details__content">
+                  <TeamMemberships />
+                </div>
               </div>
-              <div className="user-details__content">
-                <TeamMemberships />
-              </div>
-            </div>
+            ) : (
+              <Placeholder
+                title="The team you were looking for was not found 🔎"
+                text="It might have been deleted or you lost permission to see it"
+                button={<Button onClick={goBack}>Go to team list</Button>}
+              />
+            )}
           </Workbench.Content>
         </Workbench>
       );

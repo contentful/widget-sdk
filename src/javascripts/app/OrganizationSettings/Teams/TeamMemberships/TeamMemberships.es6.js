@@ -10,7 +10,7 @@ import {
   TableRow,
   Button
 } from '@contentful/forma-36-react-components';
-import EmptyPlaceholder from 'app/common/EmptyPlaceholder.es6';
+import Placeholder from 'app/common/Placeholder.es6';
 import getCurrentTeamMemberships from 'redux/selectors/getCurrentTeamMemberships.es6';
 import { getCurrentTeam, getTeams } from 'redux/selectors/teams.es6';
 import { TeamMembership as TeamMembershiPropType } from 'app/OrganizationSettings/PropTypes.es6';
@@ -84,7 +84,7 @@ export default connect(state => ({
               </TableBody>
             </Table>
           ) : (
-            <EmptyPlaceholder
+            <Placeholder
               title={`Team ${teamName} has no members 🐚`}
               text="They’re not gonna magically appear."
               button={<AddTeamMemberButton onClick={this.toggleForm} />}

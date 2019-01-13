@@ -6,7 +6,24 @@ const querystring = require('querystring');
 // We use a sandbox with only this e-mail in it.
 const DOMAIN = 'sandbox4c2481fd73904fc983d4526ea869f597.mailgun.org';
 const API_KEY = '85be5437fb63d71aec4a8f99eff1022d-6b60e603-8a27e1dd';
-const TARGET_MAIL = 'team-extensibility+apps@contentful.com';
+
+const TARGET_MAILS = {
+  extensibility: 'team-extensibility+apps@contentful.com',
+  bizVel: 'squad-hejo@contentful.com'
+};
+
+const getMailText = ({ feeback, userId, organizationId, teamId, agreed = false }) =>
+  `
+  ${feeback || 'No feedback provided'}${agreed &&
+    `
+    <br />
+    <br />
+    User agreed to be contacted.
+    user: https://admin.contentful.com/admin/users/${userId}
+    organization: https://admin.contentful.com/admin/organizations/${organizationId}
+    team: https://admin.contentful.com/admin/teams/${teamId}
+  `}
+`;
 
 module.exports = {
   apiVersion: 1,
@@ -21,9 +38,9 @@ module.exports = {
 
     const params = {
       from: `feedback@${DOMAIN}`,
-      to: TARGET_MAIL,
+      to: TARGET_MAILS[req.body.target],
       subject: `[Feedback] ${req.body.about || 'Apps'}`,
-      text: req.body.feedback || 'No feedback provided'
+      text: getMailText(req.body)
     };
 
     const res = await dependencies.fetch(url, {

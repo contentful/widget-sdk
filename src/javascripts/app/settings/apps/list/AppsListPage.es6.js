@@ -116,7 +116,7 @@ export default class AppsListPage extends Component {
         <Button disabled={optedIn} onClick={this.optIn} icon={optedIn ? 'CheckCircle' : undefined}>
           {optedIn ? 'Apps enabled' : 'Enable alpha feature'}
         </Button>
-        <AppsFeedback about="Apps" type="Button" />
+        <AppsFeedback target="extensibility" about="Apps" type="Button" />
       </Note>
     );
   }

@@ -31,7 +31,7 @@ import {
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
-import EmptyPlaceholder from 'app/common/EmptyPlaceholder.es6';
+import Placeholder from 'app/common/Placeholder.es6';
 import { getFilters, getSearchTerm } from 'redux/selectors/filters.es6';
 import { getLastActivityDate } from '../UserUtils.es6';
 import {
@@ -315,7 +315,7 @@ class UsersList extends React.Component {
                 />
               </div>
             ) : (
-              <EmptyPlaceholder
+              <Placeholder
                 loading={loading}
                 title="No users found 🧐"
                 text="Check your spelling or try changing the filters"

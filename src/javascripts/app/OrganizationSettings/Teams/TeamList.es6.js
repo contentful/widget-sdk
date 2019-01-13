@@ -12,7 +12,7 @@ import {
   TableCell,
   Modal
 } from '@contentful/forma-36-react-components';
-import Placeholder from 'app/common/Placeholder.es6.js';
+import Placeholder from 'app/common/Placeholder.es6';
 import { getTeamListWithOptimistic } from 'redux/selectors/teams.es6';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';

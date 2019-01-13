@@ -10,7 +10,8 @@ export default class AppsFeedback extends Component {
   static propTypes = {
     about: PropTypes.string.isRequired,
     type: PropTypes.string,
-    label: PropTypes.string
+    label: PropTypes.string,
+    target: PropTypes.string.isRequired
   };
 
   send = async feedback => {
@@ -19,7 +20,7 @@ export default class AppsFeedback extends Component {
     const res = await client.call('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ feedback, about: this.props.about })
+      body: JSON.stringify({ feedback, about: this.props.about, target: this.props.target })
     });
 
     if (res.ok) {
