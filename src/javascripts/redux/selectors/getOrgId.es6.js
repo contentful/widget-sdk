@@ -1,3 +1,4 @@
+import { get, pickBy, find, defaultTo, flow } from 'lodash/fp';
 import { getPath } from './location.es6';
 import ROUTES from '../routes.es6';
 
@@ -8,7 +9,23 @@ export default state => {
   }
   const params = ROUTES.organization.partialTest(path);
   if (params === null) {
-    return null;
+    const spaceId = get('spaceId', ROUTES.space.partialTest(path));
+    if (!spaceId) {
+      return null;
+    }
+    const spacesByOrgId = get('token.spaces', state);
+    if (!spacesByOrgId) {
+      return null;
+    }
+    return flow(
+      get('token.spaces'),
+      defaultTo({}),
+      // token.spaces is an object with orgIds as keys and an array of spaces as value
+      pickBy(find({ sys: { id: spaceId } })),
+      Object.keys,
+      get(0),
+      defaultTo(null)
+    )(state);
   }
   return params.orgId;
 };

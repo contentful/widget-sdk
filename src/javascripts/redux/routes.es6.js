@@ -18,6 +18,9 @@ const ROUTES = {
         }
       }
     }
+  },
+  space: {
+    path: '/spaces/:spaceId'
   }
 };
 
@@ -32,7 +35,7 @@ function addParser(route, parentPath) {
   }
 }
 
-Object.values(ROUTES).forEach(addParser);
+Object.values(ROUTES).forEach(route => addParser(route));
 
 export function getRequiredDataSets(path, routes = ROUTES) {
   if (!path) {

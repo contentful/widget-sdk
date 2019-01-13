@@ -19,6 +19,7 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import TeamForm from './TeamForm.es6';
 import TeamListRow from './TeamListRow.es6';
+import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
 
 export default connect(
   state => ({
@@ -58,6 +59,7 @@ export default connect(
           </Workbench.Header>
           <Workbench.Content>
             <section style={{ padding: '1em 2em 2em' }}>
+              <ExperimentalFeatureNote />
               {teams.length > 0 ? (
                 <Table data-test-id="organization-teams-page">
                   <TableHead>

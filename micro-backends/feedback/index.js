@@ -9,20 +9,23 @@ const API_KEY = '85be5437fb63d71aec4a8f99eff1022d-6b60e603-8a27e1dd';
 
 const TARGET_MAILS = {
   extensibility: 'team-extensibility+apps@contentful.com',
-  bizVel: 'squad-hejo@contentful.com'
+  bizVel: 'squad-hejo+feedback@contentful.com'
 };
 
-const getMailText = ({ feeback, userId, organizationId, teamId, agreed = false }) =>
+const getMailText = ({ feedback, userId, organizationId, teamId, canBeContacted = false }) => `
+${feedback || 'No feedback provided'}${canBeContacted &&
   `
-  ${feeback || 'No feedback provided'}${agreed &&
-    `
-    <br />
-    <br />
-    User agreed to be contacted.
-    user: https://admin.contentful.com/admin/users/${userId}
-    organization: https://admin.contentful.com/admin/organizations/${organizationId}
-    team: https://admin.contentful.com/admin/teams/${teamId}
-  `}
+
+
+User agreed to be contacted.
+user: https://admin.contentful.com/admin/users/${userId}
+${
+    organizationId
+      ? `organization: https://admin.contentful.com/admin/organizations/${organizationId}`
+      : ''
+  }
+${teamId ? `team: https://admin.contentful.com/admin/teams/${teamId}` : ''}
+`}
 `;
 
 module.exports = {

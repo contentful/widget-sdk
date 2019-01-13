@@ -37,7 +37,7 @@ export const getMeta = state => get(state, ['datasets', 'meta', getOrgId(state)]
 export const getDataSetsToLoad = state => {
   const requiredDatasets = getRequiredDataSets(getPath(state));
   const datasetsMeta = getMeta(state);
-  return requiredDatasets.filter(datatset => !get([datatset, 'pending'], datasetsMeta));
+  return requiredDatasets.filter(datatset => !get(datasetsMeta, [datatset, 'pending']));
 };
 
 export const isLoadingMissingDatasets = state => {

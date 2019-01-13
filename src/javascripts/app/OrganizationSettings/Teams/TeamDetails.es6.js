@@ -10,6 +10,7 @@ import { getTeams, getCurrentTeam } from 'redux/selectors/teams.es6';
 import Workbench from 'app/common/Workbench.es6';
 import Placeholder from 'app/common/Placeholder.es6';
 import Icon from 'ui/Components/Icon.es6';
+import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
 
 import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
 
@@ -49,6 +50,7 @@ export default connect(
             <Workbench.Title>Teams</Workbench.Title>
           </Workbench.Header>
           <Workbench.Content>
+            <ExperimentalFeatureNote />
             {team ? (
               <div className="user-details">
                 <div className="user-details__sidebar">

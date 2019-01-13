@@ -11,7 +11,7 @@ import {
   Button
 } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder.es6';
-import getCurrentTeamMemberships from 'redux/selectors/getCurrentTeamMemberships.es6';
+import getCurrentTeamMembershipList from 'redux/selectors/getCurrentTeamMembershipList.es6';
 import { getCurrentTeam, getTeams } from 'redux/selectors/teams.es6';
 import { TeamMembership as TeamMembershiPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import TeamMembershipForm from './TeamMembershipForm.es6';
@@ -33,7 +33,7 @@ class AddTeamMemberButton extends React.Component {
 }
 
 export default connect(state => ({
-  memberships: getCurrentTeamMemberships(state),
+  memberships: getCurrentTeamMembershipList(state),
   teamName: get(getTeams(state), [getCurrentTeam(state), 'name'], undefined)
 }))(
   class TeamMemberships extends React.Component {
@@ -73,6 +73,7 @@ export default connect(state => ({
                 </TableRow>
               </TableHead>
               <TableBody>
+                {showingForm && <TeamMembershipForm close={this.toggleForm} />}
                 {memberships.map(membership =>
                   membership.sys.id === 'placeholder' ? (
                     <TeamMembershipRowPlaceholder key={membership.sys.id} />
@@ -80,7 +81,6 @@ export default connect(state => ({
                     <TeamMembershipRow membership={membership} key={membership.sys.id} />
                   )
                 )}
-                {showingForm && <TeamMembershipForm close={this.toggleForm} />}
               </TableBody>
             </Table>
           ) : (

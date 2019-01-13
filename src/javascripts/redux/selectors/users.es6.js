@@ -6,3 +6,5 @@ export const getUsers = flow(
   getDatasets,
   get(USERS)
 );
+
+export const getCurrentUser = flow(get('token.user'));

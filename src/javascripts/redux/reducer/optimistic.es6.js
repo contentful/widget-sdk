@@ -24,6 +24,9 @@ export default (state = {}, { type, payload }) => {
     case 'SUBMIT_NEW_TEAM_FAILED': {
       return update(TEAMS, drop(1), state);
     }
+    case 'SUBMIT_NEW_TEAM_MEMBERSHIP_FAILED': {
+      return update(TEAM_MEMBERSHIPS, drop(1), state);
+    }
     case 'ADD_TO_DATASET': {
       return update(payload.dataset, drop(1), state);
     }

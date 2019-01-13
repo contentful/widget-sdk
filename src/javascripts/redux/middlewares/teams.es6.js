@@ -9,6 +9,7 @@ import { getDatasets } from 'redux/selectors/datasets.es6';
 import TeamForm from 'app/OrganizationSettings/Teams/TeamForm.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { isTaken } from 'utils/ServerErrorUtils.es6';
+import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
 
 export default ({ dispatch, getState }) => next => async action => {
   switch (action.type) {
@@ -100,14 +101,24 @@ export default ({ dispatch, getState }) => next => async action => {
       next(action);
       const service = createTeamService(getOrgId(state));
       const teamId = getCurrentTeam(state);
-      const newTeamMembership = await service.createTeamMembership(
-        teamId,
-        action.payload.orgMembership
-      );
-      dispatch({
-        type: 'ADD_TO_DATASET',
-        payload: { item: newTeamMembership, dataset: TEAM_MEMBERSHIPS }
-      });
+      const { orgMembership } = action.payload;
+      const user = getOrgMemberships(state)[orgMembership].sys.user;
+      try {
+        const newTeamMembership = await service.createTeamMembership(teamId, orgMembership);
+        dispatch({
+          type: 'ADD_TO_DATASET',
+          payload: { item: newTeamMembership, dataset: TEAM_MEMBERSHIPS }
+        });
+        Notification.success(`User ${user.firstName} ${user.lastName} successfully added to team`);
+      } catch (e) {
+        dispatch({
+          type: 'SUBMIT_NEW_TEAM_MEMBERSHIP_FAILED',
+          error: true,
+          payload: e,
+          meta: { orgMembership }
+        });
+        Notification.error(`Could not add ${user.firstName} ${user.lastName} to team`);
+      }
       break;
     }
     case 'REMOVE_TEAM_MEMBERSHIP': {
