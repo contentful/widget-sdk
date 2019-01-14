@@ -5,6 +5,7 @@ import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils
 import { go } from 'states/Navigator.es6';
 
 import * as actionCreators from 'redux/actions/spaceWizard/actionCreators.es6';
+import * as Analytics from 'analytics/Analytics.es6';
 
 import TemplateSelector from 'components/shared/space-wizard/TemplateSelector.es6';
 import ProgressScreen from 'components/shared/space-wizard/ProgressScreen.es6';
@@ -88,14 +89,20 @@ class EnterpriseSpaceWizard extends React.Component {
     }
   }
 
-  handleSpaceCreated(newSpace) {
+  async handleSpaceCreated(newSpace) {
     const { template } = this.props.newSpaceMeta;
     template && this.reposition();
 
-    return go({
+    await go({
       path: ['spaces', 'detail'],
       params: { spaceId: newSpace.sys.id }
     });
+
+    const spaceCreateEventData = template
+      ? { templateName: template.name, entityAutomationScope: { scope: 'space_template' } }
+      : { templateName: 'Blank' };
+
+    Analytics.track('space:create', spaceCreateEventData);
   }
 
   static handleTemplateCreated() {
