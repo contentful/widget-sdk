@@ -18,14 +18,14 @@ const MAX_BATCH_SIZE = Math.floor((URL_IDS_PORTION_LENGTH + 1) / (MAX_ID_LENGTH 
 
 /**
  * Takes a client instance and returns an object with identical interface.
- * Wraps all getResource() calls for fetching a single resource in a function that does
- * one batch request to the getResources() equivalent once per tick instead of calling
- * getResource() immediately.
+ * Wraps all getResource() calls for fetching a single resource in a function that
+ * does one batch request to the getResources() equivalent once per tick instead of
+ * calling getResource() immediately.
  *
  * @param {Data.APIClient} cma
  * @returns {Object} With same interface as `cma`.
  */
-export const getOptimizedApiClient = memoize(cma => {
+export const getBatchingApiClient = memoize(cma => {
   const { spaceId, envId } = cma;
   const newResourceContext = type => ({ type, spaceId, envId });
   return {
@@ -152,7 +152,7 @@ export function newEntityBatchLoaderFn({ getResources, newEntityNotFoundError })
       };
       // Though not expected, let's keep an eye on 504s and other potential weird
       // stuff that we don't know about.
-      const message = 'BulkFetchingOptimizedApiClient: Failed bulk fetching entities';
+      const message = 'BatchingApiClient: Failed bulk fetching entities';
       logger.logServerError(message, { error, data });
     }
   };

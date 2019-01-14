@@ -26,7 +26,7 @@ describe('newBatchEntityFetcher() invoking new DataLoader() `maxBatchSize` optio
     const DataLoader = require('dataloader');
     const {
       newBatchEntityFetcher
-    } = require('app/widgets/WidgetApi/BulkFetchingOptimizedApiClient.es6');
+    } = require('app/widgets/WidgetApi/BatchingApiClient.es6');
     newBatchEntityFetcher({
       getResources: () => {},
       resourceContext: {}

@@ -1,5 +1,5 @@
 import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDialog.es6';
-import { getOptimizedApiClient } from 'app/widgets/WidgetApi/BulkFetchingOptimizedApiClient.es6';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
@@ -40,7 +40,7 @@ export default function buildWidgetApi({ field, entry, features, currentUrl }) {
     /**
      * @see https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md#extensionspace
      */
-    space: getOptimizedApiClient(spaceContext.cma),
+    space: getBatchingApiClient(spaceContext.cma),
     /**
      * @see https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md#extensiondialogs
      */

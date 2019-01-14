@@ -9,8 +9,8 @@ describe('connectToWidgetAPI', () => {
     module('contentful/test');
     this.system = createIsolatedSystem();
     this.system.set('search/EntitySelector/Config.es6', {});
-    this.system.set('app/widgets/WidgetApi/BulkFetchingOptimizedApiClient.es6', {
-      getOptimizedApiClient: v => v
+    this.system.set('app/widgets/WidgetApi/BatchingApiClient.es6', {
+      getBatchingApiClient: v => v
     });
 
     const getModuleStub = sinon.stub();

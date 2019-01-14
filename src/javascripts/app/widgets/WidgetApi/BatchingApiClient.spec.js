@@ -2,7 +2,7 @@ import nextTick from '../../../../../test/helpers/flushPromises';
 import {
   newBatchEntityFetcher,
   newEntityBatchLoaderFn
-} from 'app/widgets/WidgetApi/BulkFetchingOptimizedApiClient.es6';
+} from 'app/widgets/WidgetApi/BatchingApiClient.es6';
 import * as logger from 'ng/logger';
 
 jest.mock('Config.es6', () => ({ apiUrl: v => `https://api.some-domain.com/${v}` }));

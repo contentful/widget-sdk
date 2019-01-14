@@ -101,6 +101,7 @@ export default function createBridge({
 
   async function callSpaceMethod(methodName, args) {
     try {
+      // TODO: Use `getBatchingApiClient(spaceContext.cma)`
       const entity = await spaceContext.cma[methodName](...args);
       maybeTrackEntryAction(methodName, args, entity);
       return entity;
