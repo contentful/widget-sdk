@@ -19,8 +19,11 @@ export default class Channel {
     this.iframe = iframe;
     this.win = win;
     this.id = random.id();
-    this.handlers = {};
     this.messageQueue = [];
+
+    this.handlers = {
+      setHeight: val => iframe.setAttribute('height', val)
+    };
 
     this.messageListener = ({ data }) => {
       if (data.source === this.id) {
