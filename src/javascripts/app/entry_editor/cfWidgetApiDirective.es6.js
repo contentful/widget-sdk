@@ -2,7 +2,7 @@ import { registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as Navigator from 'states/Navigator.es6';
-import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient.es6';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index.es6';
 import * as PublicContentType from 'widgets/PublicContentType.es6';
 
 /**

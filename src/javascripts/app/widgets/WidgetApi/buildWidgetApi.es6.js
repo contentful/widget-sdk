@@ -1,5 +1,5 @@
 import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDialog.es6';
-import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient.es6';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');

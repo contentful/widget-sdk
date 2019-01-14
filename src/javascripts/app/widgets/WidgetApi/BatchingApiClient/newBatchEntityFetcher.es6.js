@@ -1,11 +1,7 @@
-import { toPlainObject, memoize, mapKeys } from 'lodash';
 import DataLoader from 'dataloader';
-import { isValidResourceId } from 'data/utils.es6';
 import { detect as detectBrowser } from 'detect-browser';
 import { apiUrl } from 'Config.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const logger = getModule('logger');
+import newEntityBatchLoaderFn from './newEntityBatchLoaderFn.es6';
 
 const MAX_URL_LENGTH = detectBrowser().name === 'ie' ? 2000 : 8000;
 const MAX_ID_LENGTH = 64;
@@ -17,45 +13,13 @@ const URL_IDS_PORTION_LENGTH = MAX_URL_LENGTH - WORST_CASE_URL.length;
 const MAX_BATCH_SIZE = Math.floor((URL_IDS_PORTION_LENGTH + 1) / (MAX_ID_LENGTH + 1)); // +1 for ','
 
 /**
- * Takes a client instance and returns an object with identical interface.
- * Wraps all getResource() calls for fetching a single resource in a function that
- * does one batch request to the getResources() equivalent once per tick instead of
- * calling getResource() immediately.
- *
- * @param {Data.APIClient} cma
- * @returns {Object} With same interface as `cma`.
- */
-export const getBatchingApiClient = memoize(cma => {
-  const { spaceId, envId } = cma;
-  const newResourceContext = type => ({ type, spaceId, envId });
-  return {
-    ...toPlainObject(cma),
-
-    getContentType: newBatchEntityFetcher({
-      getResources: query => cma.getContentTypes(query),
-      resourceContext: newResourceContext('ContentType')
-    }),
-
-    getAsset: newBatchEntityFetcher({
-      getResources: query => cma.getAssets(query),
-      resourceContext: newResourceContext('Asset')
-    }),
-
-    getEntry: newBatchEntityFetcher({
-      getResources: query => cma.getEntries(query),
-      resourceContext: newResourceContext('Entry')
-    })
-  };
-});
-
-/**
  * @param {function} options.getResources
  * @param {string} options.resourceContext.type API resource type, e.g. 'Entry'
  * @param {string} options.resourceContext.envId
  * @param {string} options.resourceContext.spaceId
  * @returns {function}
  */
-export function newBatchEntityFetcher({ getResources, resourceContext }) {
+export default function newBatchEntityFetcher({ getResources, resourceContext }) {
   const batchLoaderFn = newEntityBatchLoaderFn({ getResources, newEntityNotFoundError });
   // TODO: This is way too pessimistic, in the real world, 99% of IDs should be
   //  significantly shorter than 64 chars (mostly 32 chars). Optimize by calculating
@@ -117,43 +81,4 @@ export function newBatchEntityFetcher({ getResources, resourceContext }) {
       requestId: 'web-app__batchEntityFetcher'
     };
   }
-}
-
-export function newEntityBatchLoaderFn({ getResources, newEntityNotFoundError }) {
-  return entityIds => {
-    // Filter out IDs >64 chars (and otherwise invalid IDs) as multiple IDs >64
-    // chars might result in a weird 504 CMA response before we hit the ~8000
-    // character url limit that causes a proper 414 response.
-    const validIds = entityIds.filter(isValidResourceId);
-    const loading = validIds.length
-      ? getResources({ 'sys.id[in]': validIds.join(',') })
-      : Promise.resolve({ items: [] });
-    // Can't implement as `async` to ensure a faulty `getResources` implementation
-    // immediately throws instead of rejecting.
-    return loading.then(handleSuccess, handleError);
-
-    function handleSuccess({ items }) {
-      const entitiesByIds = mapKeys(items, entity => entity.sys.id);
-      return entityIds.map(id => entitiesByIds[id] || newEntityNotFoundError(id));
-    }
-
-    function handleError(error) {
-      logError(error);
-      return entityIds.map(() => error);
-    }
-
-    function logError(error) {
-      // Add some redundant computed info (this stuff is already available in `error`)
-      // just in case Bugsnag trims any of this info because of its length.
-      const data = {
-        requestedIds: validIds,
-        requestedIdsCount: validIds.length,
-        requestedIdsCharacterCount: validIds.join('').length
-      };
-      // Though not expected, let's keep an eye on 504s and other potential weird
-      // stuff that we don't know about.
-      const message = 'BatchingApiClient: Failed bulk fetching entities';
-      logger.logServerError(message, { error, data });
-    }
-  };
 }

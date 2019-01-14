@@ -24,13 +24,13 @@ describe('newBatchEntityFetcher() invoking new DataLoader() `maxBatchSize` optio
 
   function expectMaxBatchSize(maxBatchSize) {
     const DataLoader = require('dataloader');
-    const {
-      newBatchEntityFetcher
-    } = require('app/widgets/WidgetApi/BatchingApiClient.es6');
+    const { default: newBatchEntityFetcher } = require('./newBatchEntityFetcher.es6');
+
     newBatchEntityFetcher({
       getResources: () => {},
       resourceContext: {}
     });
+
     expect(DataLoader).toHaveBeenCalledTimes(1);
     expect(DataLoader).toHaveBeenCalledWith(
       expect.any(Function),
