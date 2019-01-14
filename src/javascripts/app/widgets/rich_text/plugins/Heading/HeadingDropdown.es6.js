@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BLOCKS } from '@contentful/rich-text-types';
 import { Dropdown, DropdownList, Button } from '@contentful/forma-36-react-components';
-import { haveBlocks } from '../shared/UtilHave.es6';
 
 export const blockTitles = {
   [BLOCKS.HEADING_1]: 'Heading 1',
@@ -23,13 +22,10 @@ class HeadingDropdown extends Component {
     disabled: PropTypes.bool,
     onClose: PropTypes.func,
     onToggle: PropTypes.func,
-    change: PropTypes.object
+    currentBlockType: PropTypes.object
   };
-
   getStyleNameForChange = () => {
-    const currentStyle = Object.keys(blockTitles).find(key => haveBlocks(this.props.change, key));
-
-    return blockTitles[currentStyle] || blockTitles[BLOCKS.PARAGRAPH];
+    return blockTitles[this.props.currentBlockType] || blockTitles[BLOCKS.PARAGRAPH];
   };
 
   render() {
