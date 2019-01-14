@@ -46,7 +46,11 @@ export default class Hyperlink extends React.Component {
     const uri = node.data.get('uri');
     const href = isUrl(uri) ? uri : 'javascript:void(0)';
     return (
-      <Tooltip content={tooltip} extraClassNames="rich-text__hyperlink-container" maxWidth="auto">
+      <Tooltip
+        content={tooltip}
+        extraClassNames="rich-text__tooltip-container"
+        targetWrapperClassName="rich-text__hyperlink-wrapper"
+        maxWidth="auto">
         {hasRealHyperlinkInSlateSupport() ? (
           <TextLink
             href={href} // Allows user to open uri link in new tab.

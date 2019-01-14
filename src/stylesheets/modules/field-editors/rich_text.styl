@@ -235,10 +235,17 @@
     font-size: inherit;
 
     span
-      user-select: none
+      user-select: none;
 
-  .rich-text__hyperlink-container
-    position relative
+  .rich-text__tooltip-container
+    display: inline;
+    position: relative;
+
+  .rich-text__hyperlink-wrapper
+    display: inline;
+    a
+     font-size: 16px;
+
 
   .rich-text__hyperlink
     display: inline!important; // inline-block causing issues in Slate

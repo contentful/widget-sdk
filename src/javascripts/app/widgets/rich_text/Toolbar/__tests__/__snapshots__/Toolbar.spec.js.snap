@@ -514,7 +514,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       setRef={[Function]}
                     >
                       <span
-                        className="Tooltip__TooltipContainer___3YlPf"
+                        className="Tooltip__Tooltip__target-wrapper___Mtw42"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onMouseLeave={[Function]}
@@ -727,7 +727,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       setRef={[Function]}
                     >
                       <span
-                        className="Tooltip__TooltipContainer___3YlPf"
+                        className="Tooltip__Tooltip__target-wrapper___Mtw42"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onMouseLeave={[Function]}
@@ -940,7 +940,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       setRef={[Function]}
                     >
                       <span
-                        className="Tooltip__TooltipContainer___3YlPf"
+                        className="Tooltip__Tooltip__target-wrapper___Mtw42"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onMouseLeave={[Function]}
@@ -1153,7 +1153,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       setRef={[Function]}
                     >
                       <span
-                        className="Tooltip__TooltipContainer___3YlPf"
+                        className="Tooltip__Tooltip__target-wrapper___Mtw42"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onMouseLeave={[Function]}
@@ -1366,7 +1366,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                     setRef={[Function]}
                   >
                     <span
-                      className="Tooltip__TooltipContainer___3YlPf"
+                      className="Tooltip__Tooltip__target-wrapper___Mtw42"
                       onBlur={[Function]}
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
@@ -1590,7 +1590,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       setRef={[Function]}
                     >
                       <span
-                        className="Tooltip__TooltipContainer___3YlPf"
+                        className="Tooltip__Tooltip__target-wrapper___Mtw42"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onMouseLeave={[Function]}
@@ -1803,7 +1803,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       setRef={[Function]}
                     >
                       <span
-                        className="Tooltip__TooltipContainer___3YlPf"
+                        className="Tooltip__Tooltip__target-wrapper___Mtw42"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onMouseLeave={[Function]}
@@ -2032,7 +2032,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       setRef={[Function]}
                     >
                       <span
-                        className="Tooltip__TooltipContainer___3YlPf"
+                        className="Tooltip__Tooltip__target-wrapper___Mtw42"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onMouseLeave={[Function]}
@@ -2245,7 +2245,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       setRef={[Function]}
                     >
                       <span
-                        className="Tooltip__TooltipContainer___3YlPf"
+                        className="Tooltip__Tooltip__target-wrapper___Mtw42"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onMouseLeave={[Function]}
