@@ -1,7 +1,7 @@
 .snapshot-comparator__presenter(
   ng-class="{ 'x--dir-rtl': methods.shouldDisplayRtl(locale.code) }")
   div(ng-if="hasValue && widget.custom")
-    | TODO: render custom extension here
+    <react-component name="widgets/ExtensionIFrameRenderer.es6" props="extensionProps" />
 
   div(
     ng-if="hasValue && !widget.custom"

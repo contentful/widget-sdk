@@ -3,6 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import * as K from 'utils/kefir.es6';
 import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
+import createBridge from 'widgets/SnapshotExtensionBridge.es6';
 
 /**
  * @ngdoc directive
@@ -17,28 +18,38 @@ import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
 registerDirective('cfSnapshotPresenter', [
   'utils/LaunchDarkly/index.es6',
   'utils/locales.es6',
-  (LD, localesUtils) => {
-    const { isRtlLocale } = localesUtils;
-
+  'spaceContext',
+  'TheLocaleStore',
+  'Config.es6',
+  (LD, { isRtlLocale }, spaceContext, TheLocaleStore, Config) => {
     return {
       restrict: 'E',
       template: JST.cf_snapshot_presenter(),
       controller: [
         '$scope',
         $scope => {
-          const field = $scope.widget.field;
+          const { field, custom, src, srcdoc } = $scope.widget;
           $scope.type = getFieldType(field);
           $scope.linkType = _.get(field, 'linkType', _.get(field, 'items.linkType'));
 
           const entry = _.get($scope, ['entry', 'data'], {});
           const snapshot = _.get($scope, ['snapshot', 'snapshot'], {});
-          const entity = $scope.version === 'current' ? entry : snapshot;
-          $scope.value = _.get(entity, ['fields', field.id, $scope.locale.internal_code]);
+          $scope.entity = $scope.version === 'current' ? entry : snapshot;
+          $scope.value = _.get($scope.entity, ['fields', field.id, $scope.locale.internal_code]);
           $scope.hasValue = !isEmpty($scope.value);
 
           $scope.methods = {
             shouldDisplayRtl: _.constant(false)
           };
+
+          if (custom) {
+            $scope.extensionProps = {
+              bridge: createBridge({ $scope, spaceContext, TheLocaleStore }),
+              src,
+              srcdoc,
+              appDomain: `app.${Config.domain}`
+            };
+          }
 
           LD.onFeatureFlag($scope, RTL_SUPPORT_FEATURE_FLAG, isEnabled => {
             // By default, all entity fields should be displayed as LTR unless the

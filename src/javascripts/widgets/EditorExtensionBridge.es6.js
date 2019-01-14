@@ -129,8 +129,6 @@ export default function createBridge({
   }
 
   function install(api) {
-    $scope.$on('$destroy', () => api.destroy());
-
     $scope.$watch(
       () => $scope.fieldLocale.access.disabled,
       isDisabled => api.send('isDisabledChanged', [isDisabled])

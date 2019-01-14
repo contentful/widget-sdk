@@ -24,7 +24,7 @@ export default class WidgetRenderWarning extends React.Component {
       getData: PropTypes.func.isRequired,
       apply: PropTypes.func.isRequired,
       install: PropTypes.func.isRequired
-    }),
+    }).isRequired,
     src: PropTypes.string,
     srcdoc: PropTypes.string,
     appDomain: PropTypes.string.isRequired

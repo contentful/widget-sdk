@@ -13,7 +13,6 @@ describe('EditorExtensionBridge', () => {
   const makeBridge = () => {
     const stubs = {
       apply: jest.fn(),
-      on: jest.fn(),
       watch: jest.fn(),
       sysProperty: createMockProperty({ id: 'test', initial: true }),
       changes: createMockProperty([]),
@@ -29,7 +28,7 @@ describe('EditorExtensionBridge', () => {
     const bridge = createBridge({
       $rootScope: { $apply: stubs.apply },
       $scope: {
-        $on: stubs.on,
+        $on: () => {},
         $watch: stubs.watch,
         $applyAsync: () => {},
         otDoc: {
@@ -104,20 +103,6 @@ describe('EditorExtensionBridge', () => {
   });
 
   describe('#install()', () => {
-    it('destroys the API when the scope is destroyed', () => {
-      const [bridge, stubs] = makeBridge();
-      const api = makeStubbedApi();
-      bridge.install(api);
-
-      const onCall = stubs.on.mock.calls[0];
-      expect(onCall[0]).toBe('$destroy');
-      expect(typeof onCall[1]).toBe('function');
-      expect(api.destroy).not.toBeCalled();
-
-      onCall[1]();
-      expect(api.destroy).toBeCalledTimes(1);
-    });
-
     it('notifies when the disabled status is changed', () => {
       const [bridge, stubs] = makeBridge();
       const api = makeStubbedApi();
