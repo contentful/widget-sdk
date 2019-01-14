@@ -98,7 +98,7 @@ window.libs = [
   ['sanitize-html', require('sanitize-html')],
   ['scroll-into-view', require('scroll-into-view')],
   ['slate', require('slate')],
-  ['slate-edit-list', require('slate-edit-list')],
+  ['slate-edit-list', require('@guestbell/slate-edit-list')],
   ['slate-react', require('slate-react')],
   ['slate-trailing-block', require('slate-trailing-block')],
   ['slate-html-serializer', require('slate-html-serializer')],
