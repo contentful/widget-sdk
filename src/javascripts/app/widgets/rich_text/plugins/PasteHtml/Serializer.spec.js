@@ -14,7 +14,7 @@ describe('HTML', () => {
   testFactory(
     `bold`,
     `<b>Text</b>`.trim(),
-    document({}, block(BLOCKS.PARAGRAPH, {}, text({}, leaf(`Text`, mark(MARKS.BOLD)))))
+    document({}, block(BLOCKS.PARAGRAPH, {}, text({}, leaf(`Text111`, mark(MARKS.BOLD)))))
   );
 
   testFactory(
@@ -78,7 +78,7 @@ describe('HTML', () => {
     document({}, block(BLOCKS.PARAGRAPH, {}, text({}, leaf('Herren'))))
   );
 
-  testFactory('hr', `<hr />`.trim(), document({}, block(BLOCKS.HR, { isVoid: true }, emptyText())));
+  testFactory('hr', `<hr />`.trim(), document({}, block(BLOCKS.HR, {}, emptyText())));
 
   testFactory(
     'quote',
@@ -143,7 +143,7 @@ describe('HTML', () => {
                 text({}, leaf('Mix flour, baking powder, sugar, and salt.'))
               )
             ),
-            block(BLOCKS.LIST_ITEM, {}, block(BLOCKS.HR, { isVoid: true }, emptyText()))
+            block(BLOCKS.LIST_ITEM, {}, block(BLOCKS.HR, {}, emptyText()))
           )
         )
       );
@@ -275,7 +275,7 @@ describe('Google Docs', () => {
         {},
         text(
           {},
-          leaf('Sehr geehrte '),
+          leaf('Sehr geehrte222 '),
           leaf('Damen', mark(MARKS.BOLD), mark(MARKS.ITALIC)),
           leaf(' und Herren')
         )

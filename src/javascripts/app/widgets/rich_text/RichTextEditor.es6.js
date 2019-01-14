@@ -68,6 +68,8 @@ export default class RichTextEditor extends React.Component {
     hasFocus: false
   };
 
+  editor = React.createRef();
+
   slatePlugins = buildPlugins(
     newPluginAPI({
       widgetAPI: this.props.widgetAPI,
@@ -113,7 +115,6 @@ export default class RichTextEditor extends React.Component {
       });
     }
   }
-
   render() {
     const classNames = cn('rich-text', {
       'rich-text--enabled': !this.props.isDisabled
@@ -123,23 +124,26 @@ export default class RichTextEditor extends React.Component {
       <div className={classNames}>
         {this.props.showToolbar && (
           <StickyToolbarWrapper isDisabled={this.props.isDisabled}>
-            <Toolbar
-              change={this.state.value.change()}
-              onChange={this.onChange}
-              isDisabled={this.props.isDisabled}
-              permissions={this.props.widgetAPI.permissions}
-              richTextAPI={newPluginAPI({
-                widgetAPI: this.props.widgetAPI,
-                onAction: this.props.onAction
-              })}
-            />
+            {this.editor.current && (
+              <Toolbar
+                change={this.editor.current}
+                onChange={this.onChange}
+                isDisabled={this.props.isDisabled}
+                permissions={this.props.widgetAPI.permissions}
+                richTextAPI={newPluginAPI({
+                  widgetAPI: this.props.widgetAPI,
+                  onAction: this.props.onAction
+                })}
+              />
+            )}
           </StickyToolbarWrapper>
         )}
+
         <Editor
           data-test-id="editor"
           value={this.state.value}
+          ref={this.editor}
           onChange={this.onChange}
-          onPaste={this.onPaste}
           plugins={this.slatePlugins}
           readOnly={this.props.isDisabled}
           schema={schema}
@@ -168,7 +172,7 @@ function isRelevantOperation(op) {
       throw newUnhandledOpError(op);
     }
   } else if (op.type === 'set_value') {
-    if (op.properties.schema) {
+    if (op.properties.schema || op.properties.data) {
       return false;
     } else {
       throw newUnhandledOpError(op);

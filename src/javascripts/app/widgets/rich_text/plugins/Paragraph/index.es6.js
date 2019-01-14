@@ -5,16 +5,18 @@ import CommonNode from '../shared/NodeDecorator.es6';
 
 const plugin = (type, tagName, tagProps, hotkey) => {
   return {
-    renderNode: props => {
+    renderNode: (props, _editor, next) => {
       if (props.node.type === type) {
         return CommonNode(tagName, tagProps)(props);
       }
+      return next();
     },
-    onKeyDown: (e, change) => {
+    onKeyDown: (e, editor, next) => {
       if (isHotkey(hotkey, e)) {
-        change.call(applyChange, type);
-        return false;
+        editor.call(applyChange, type);
+        return;
       }
+      return next();
     }
   };
 };

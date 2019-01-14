@@ -9,6 +9,7 @@ import { stubAll, setupWidgetApi, createSandbox, ENTRY } from './setup';
 import { document, block, text } from './helpers';
 
 import { BLOCKS } from '@contentful/rich-text-types';
+import flushPromises from 'test/helpers/flushPromises';
 
 const supportedToolbarIcons = [BLOCKS.UL_LIST, BLOCKS.OL_LIST, BLOCKS.QUOTE];
 
@@ -40,7 +41,7 @@ describe('RichTextEditor', () => {
     });
 
     this.system.set('app/widgets/rich_text/withTracking.es6', {
-      default: component => component
+      default: identity
     });
 
     const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index.es6');
@@ -72,6 +73,11 @@ describe('RichTextEditor', () => {
   });
 
   it('renders toolbar', function() {
+    // TODO: Refactor this mess
+    this.widgetApi.fieldProperties.isDisabled$.set(false);
+    this.widgetApi.fieldProperties.isDisabled$.set(true);
+    this.wrapper.update();
+    
     const el = this.wrapper.find('[data-test-id="toolbar"]').first();
     expect(el.length).toEqual(1);
   });

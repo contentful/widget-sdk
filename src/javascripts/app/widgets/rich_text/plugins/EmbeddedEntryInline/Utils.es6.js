@@ -5,7 +5,6 @@ import { newConfigFromRichTextField } from 'search/EntitySelector/Config.es6';
 const createInlineNode = id => ({
   type: INLINES.EMBEDDED_ENTRY,
   object: 'inline',
-  isVoid: true,
   data: {
     target: {
       sys: {
@@ -19,7 +18,7 @@ const createInlineNode = id => ({
 
 const insertInline = (change, entryId) => {
   if (haveInlines(change, INLINES.EMBEDDED_ENTRY)) {
-    change.setInline(createInlineNode(entryId));
+    change.setInlines(createInlineNode(entryId));
   } else {
     change.insertInline(createInlineNode(entryId));
   }
@@ -30,7 +29,7 @@ const insertInline = (change, entryId) => {
 export const hasOnlyInlineEntryInSelection = change => {
   const inlines = change.value.inlines;
   const selection = change.value.selection;
-  if (inlines.size === 1 && selection.startKey === selection.endKey) {
+  if (inlines.size === 1 && selection.start.key === selection.end.key) {
     return inlines.get(0).type === INLINES.EMBEDDED_ENTRY;
   }
 };

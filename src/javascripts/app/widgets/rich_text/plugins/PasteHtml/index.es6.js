@@ -8,14 +8,14 @@ import serializer from './Serializer.es6';
  */
 export const PasteHtmlPlugin = () => {
   return {
-    onPaste(event, change) {
+    onPaste(event, editor, next) {
       const transfer = getEventTransfer(event);
-      if (transfer.type != 'html') {
-        return;
+      if (transfer.type !== 'html') {
+        return next();
       }
       const { document } = serializer.deserialize(transfer.html);
-      change.insertFragment(document);
-      return true;
+      editor.insertFragment(document);
+      return;
     }
   };
 };

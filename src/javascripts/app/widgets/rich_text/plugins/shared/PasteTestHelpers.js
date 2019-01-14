@@ -11,7 +11,7 @@ export const document = (props, ...nodes) => {
 };
 
 export const block = (type, props, ...nodes) => {
-  const defaultProps = { isVoid: false, data: {} };
+  const defaultProps = { data: {} };
   return {
     type,
     object: 'block',
@@ -22,7 +22,7 @@ export const block = (type, props, ...nodes) => {
 };
 
 export const inline = (type, props, ...nodes) => {
-  const defaultProps = { isVoid: false };
+  const defaultProps = {  };
   return {
     type,
     object: 'inline',
@@ -62,7 +62,6 @@ export const emptyParagraph = () => {
   return {
     type: BLOCKS.PARAGRAPH,
     object: 'block',
-    isVoid: false,
     data: {},
     nodes: [emptyText()]
   };

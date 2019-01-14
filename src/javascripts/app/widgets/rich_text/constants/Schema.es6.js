@@ -1,5 +1,4 @@
 import { fromPairs } from 'lodash';
-import { Schema } from 'slate';
 import {
   BLOCKS,
   INLINES,
@@ -12,7 +11,7 @@ const mapVoidTypes = nodeTypes => {
   return fromPairs(nodeTypes.map(nodeType => [nodeType, { isVoid: true }]));
 };
 
-export default Schema.fromJSON({
+export default {
   document: {
     nodes: [
       {
@@ -99,12 +98,9 @@ export default Schema.fromJSON({
           types: CONTAINERS[BLOCKS.QUOTE]
         }
       ],
-      normalize: (change, reason, context) => {
-        switch (reason) {
-          case 'child_type_invalid': {
-            change.unwrapBlockByKey(context.node.key, BLOCKS.QUOTE);
-            return;
-          }
+      normalize: (change, error) => {
+        if (error.code === 'child_type_invalid') {
+          return change.unwrapBlockByKey(error.child.key, BLOCKS.QUOTE);
         }
       }
     }
@@ -135,4 +131,4 @@ export default Schema.fromJSON({
       isVoid: true
     }
   }
-});
+};

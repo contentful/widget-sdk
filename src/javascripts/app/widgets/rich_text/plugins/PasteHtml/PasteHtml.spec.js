@@ -1,5 +1,5 @@
 import { PasteHtmlPlugin } from './index.es6';
-import { Value, Document, Block, Text } from 'slate';
+import { Value, Document, Block, Text, Editor } from 'slate';
 import {
   document,
   block,
@@ -33,21 +33,26 @@ describe('PasteHtml Plugin', () => {
 
   it('parses html', () => {
     const event = createPasteHtmlEvent('<b>Text</b>');
-    const change = emptyInitialValue.change();
-    const result = plugin.onPaste(event, change);
+    const editor = new Editor({value: emptyInitialValue});
+    const next = jest.fn();
+    const result = plugin.onPaste(event, editor, next);
 
-    expect(result).toBeTruthy();
-    expect(change.value.document.toJSON()).toEqual(
+    expect(result).toBeUndefined();
+    expect(next).not.toHaveBeenCalled();
+    expect(editor.value.document.toJSON()).toEqual(
       document({}, block(BLOCKS.PARAGRAPH, {}, text({}, leaf(`Text`, mark(MARKS.BOLD)))))
     );
   });
 
   it('ignores raw text', () => {
     const event = createPasteEvent('text/plain', 'text');
-    const change = emptyInitialValue.change();
-    const result = plugin.onPaste(event, change);
+    const editor = new Editor({value: emptyInitialValue});
+    const next = jest.fn();
 
+    const result = plugin.onPaste(event, editor, next);
+
+    expect(next).toHaveBeenCalled();
     expect(result).toBeUndefined();
-    expect(change.value.document.toJSON()).toEqual(emptyInitialValue.document.toJSON());
+    expect(editor.value.document.toJSON()).toEqual(emptyInitialValue.document.toJSON());
   });
 });

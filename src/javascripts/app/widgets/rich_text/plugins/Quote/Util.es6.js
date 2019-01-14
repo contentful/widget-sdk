@@ -3,11 +3,11 @@ import { BLOCKS } from '@contentful/rich-text-types';
 const getParent = change => {
   const range = change.value.selection;
 
-  if (!range.startKey) {
+  if (!range.start.key) {
     return null;
   }
 
-  const startBlock = change.value.document.getClosestBlock(range.startKey);
+  const startBlock = change.value.document.getClosestBlock(range.start.key);
 
   return change.value.document.getParent(startBlock.key);
 };

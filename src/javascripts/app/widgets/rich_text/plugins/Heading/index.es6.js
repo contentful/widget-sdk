@@ -5,39 +5,34 @@ import { toggleChange } from '../shared/BlockToggleDecorator.es6';
 import CommonNode from '../shared/NodeDecorator.es6';
 
 const newPlugin = (defaultType, tagName, hotkey) => ({ type = defaultType, richTextAPI }) => ({
-  renderNode: props => {
+  renderNode: (props, _editor, next) => {
     if (props.node.type === type) {
       return CommonNode(tagName, { className: 'cf-slate-heading' })(props);
     }
+    return next();
   },
-  onKeyDown: (e, change) => {
+  onKeyDown: (e, editor, next) => {
     if (isHotkey('enter', e)) {
-      const currentBlock = change.value.blocks.get(0);
+      const currentBlock = editor.value.blocks.get(0);
       if (currentBlock.type === type) {
-        return handleReturnKey();
+        const { value } = editor;
+
+        if (value.selection.start.offset === 0) {
+          const initialRange = value.selection;
+          editor.splitBlock().setBlocksAtRange(initialRange, BLOCKS.PARAGRAPH);
+        } else {
+          editor.splitBlock().setBlocks(BLOCKS.PARAGRAPH);
+        }
+
+        return;
       }
     } else if (isHotkey(hotkey, e)) {
-      return handleHotkey();
-    }
-
-    function handleReturnKey() {
-      const { value } = change;
-
-      if (value.selection.startOffset === 0) {
-        const initialRange = value.selection;
-        change.splitBlock().setBlocksAtRange(initialRange, BLOCKS.PARAGRAPH);
-      } else {
-        change.splitBlock().setBlocks(BLOCKS.PARAGRAPH);
-      }
-      return change;
-    }
-
-    function handleHotkey() {
-      const isActive = toggleChange(change, type);
+      const isActive = toggleChange(editor, type);
       const actionName = isActive ? 'insert' : 'remove';
       richTextAPI.logAction(actionName, { origin: actionOrigin.SHORTCUT, nodeType: type });
-      return false;
+      return;
     }
+    return next();
   }
 });
 

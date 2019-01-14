@@ -37,8 +37,8 @@ export default ({
       e.preventDefault();
 
       const isActive = applyChange(change, type);
-      const actionName = isActive ? 'insert' : 'remove';
       onToggle(change);
+      const actionName = isActive ? 'insert' : 'remove';
       logAction(actionName, { origin: actionOrigin.TOOLBAR, nodeType: type });
     };
 

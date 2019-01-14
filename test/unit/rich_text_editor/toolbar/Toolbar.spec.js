@@ -16,6 +16,7 @@ import flushPromises from '../../../helpers/flushPromises';
 const triggerToolbarIcon = async (wrapper, iconName) => {
   await flushPromises();
   const toolbarIcon = getWithId(wrapper, `toolbar-toggle-${iconName}`);
+
   // TODO: EMBED_ASSET case only works with `click`.
   toolbarIcon
     .find('button')
@@ -77,7 +78,8 @@ describe('Toolbar', () => {
 
     const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index.es6');
 
-    this.field = setupWidgetApi(this.$inject('mocks/widgetApi'), mockDocument).field;
+    const fieldApi = setupWidgetApi(this.$inject('mocks/widgetApi'), mockDocument);
+    this.field = fieldApi.field;
 
     this.props = {
       field: this.field,
@@ -97,6 +99,9 @@ describe('Toolbar', () => {
 
     this.mount = (props = this.props) => {
       this.wrapper = Enzyme.mount(<RichTextEditor {...props} />, { attachTo: this.sandbox });
+      fieldApi.fieldProperties.isDisabled$.set(true);
+      fieldApi.fieldProperties.isDisabled$.set(false);
+      this.wrapper.update();
     };
 
     const embedEntity = async (entity, nodeType) => {
@@ -107,7 +112,7 @@ describe('Toolbar', () => {
 
     this.editorApi = {};
     this.editorApi.focus = () => this.editorNode.getDOMNode().click();
-    this.editorApi.clickIcon = async type => await triggerToolbarIcon(this.wrapper, type);
+    this.editorApi.clickIcon = type => triggerToolbarIcon(this.wrapper, type);
     this.editorApi.embedEntryBlock = entry => embedEntity(entry, BLOCKS.EMBEDDED_ENTRY);
     this.editorApi.embedInlineEntry = entry => embedEntity(entry, INLINES.EMBEDDED_ENTRY);
     this.editorApi.embedAssetBlock = asset => embedEntity(asset, BLOCKS.EMBEDDED_ASSET);
@@ -188,7 +193,7 @@ describe('Toolbar', () => {
       this.openHyperlinkDialog.returns(Promise.resolve({ text: 'a hyperlink', ...dialogData }));
       const { target, uri } = dialogData;
       const expectedLinkData = target ? { target } : { uri };
-
+      // await flushPromises();
       await editor.clickIcon(INLINES.HYPERLINK);
       await flushPromises();
 
@@ -570,7 +575,7 @@ describe('Toolbar', () => {
         await flushPromises();
         await editor.typeText('a');
 
-        expect(this.field.getValue()).toEqual(document(block(heading, {}, text('a'))));
+        expect(this.field.getValue()).toEqual(document(block(heading, {}, text('a')), EMPTY_PARAGRAPH));
       });
     });
 
@@ -587,7 +592,7 @@ describe('Toolbar', () => {
       it(`inserts ${heading} with ${shortcut}`, async function({ editor }) {
         await editor.pressKeys(shortcut).typeText('a');
 
-        expect(this.field.getValue()).toEqual(document(block(heading, {}, text('a'))));
+        expect(this.field.getValue()).toEqual(document(block(heading, {}, text('a')), EMPTY_PARAGRAPH));
       });
     });
   });

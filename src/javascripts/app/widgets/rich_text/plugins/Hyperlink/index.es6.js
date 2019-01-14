@@ -12,7 +12,7 @@ const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
 export default ToolbarIcon;
 
 export const HyperlinkPlugin = ({ richTextAPI: { widgetAPI, logAction } }) => ({
-  renderNode: props => {
+  renderNode: (props, _editor, next) => {
     if (isHyperlink(props.node.type)) {
       return (
         <Hyperlink
@@ -23,7 +23,7 @@ export const HyperlinkPlugin = ({ richTextAPI: { widgetAPI, logAction } }) => ({
             if (mayEditLink(editor.value)) {
               const logViewportAction = (name, data) =>
                 logAction(name, { origin: actionOrigin.VIEWPORT, ...data });
-              asyncChange(editor, newChange =>
+              return asyncChange(editor, newChange =>
                 editLink(newChange, widgetAPI.dialogs.createHyperlink, logViewportAction)
               );
             }
@@ -31,27 +31,31 @@ export const HyperlinkPlugin = ({ richTextAPI: { widgetAPI, logAction } }) => ({
         />
       );
     }
+    return next();
   },
-  onKeyDown: (event, change, editor) => {
+  onKeyDown: (event, editor, next) => {
     const hotkey = ['mod+k'];
 
-    if (isHotkey(hotkey, event) && hasOnlyHyperlinkInlines(change.value)) {
+    if (isHotkey(hotkey, event) && hasOnlyHyperlinkInlines(editor.value)) {
       const logShortcutAction = (name, data) =>
         logAction(name, { origin: actionOrigin.SHORTCUT, ...data });
-      const changeFn = mayEditLink(change.value) ? editLink : toggleLink;
+      const changeFn = mayEditLink(editor.value) ? editLink : toggleLink;
       asyncChange(editor, newChange =>
         changeFn(newChange, widgetAPI.dialogs.createHyperlink, logShortcutAction)
       );
+      return;
     }
+    return next();
   },
-  validateNode: node => {
+  normalizeNode: (node, editor, next) => {
     if (isHyperlink(node.type) && node.getInlines().size > 0) {
-      return change => {
+      return () => {
         node
           .getInlines()
-          .forEach(inlineNode => change.unwrapInlineByKey(inlineNode.key, node.type));
+          .forEach(inlineNode => editor.unwrapInlineByKey(inlineNode.key, node.type));
       };
     }
+    next();
   }
 });
 

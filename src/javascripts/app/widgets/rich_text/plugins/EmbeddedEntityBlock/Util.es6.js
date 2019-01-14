@@ -45,7 +45,6 @@ export async function selectEntityAndInsert(nodeType, widgetAPI, change, logActi
 const createNode = (nodeType, entity) => ({
   type: nodeType,
   object: 'block',
-  isVoid: true,
   data: {
     target: {
       sys: {

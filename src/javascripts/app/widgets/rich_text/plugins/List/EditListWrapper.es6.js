@@ -1,5 +1,5 @@
 import { BLOCKS } from '@contentful/rich-text-types';
-import EditList from 'slate-edit-list';
+import EditList from '@guestbell/slate-edit-list';
 
 export default opt => {
   return EditList({

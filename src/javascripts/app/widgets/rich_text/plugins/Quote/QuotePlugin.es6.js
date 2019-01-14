@@ -10,21 +10,24 @@ const newPlugin = (defaultType, tagName, hotkey) => ({
   richTextAPI: { logAction }
 }) => {
   return {
-    renderNode: props => {
+    renderNode: (props, _editor, next) => {
       if (props.node.type === type) {
         return commonNode(tagName)(props);
       }
+      return next();
     },
-    onKeyDown: (e, change) => {
+    onKeyDown: (e, editor, next) => {
       if (isHotkey(hotkey, e)) {
-        const isActive = applyChange(change);
+        const isActive = applyChange(editor);
         const actionName = isActive ? 'insert' : 'remove';
         logAction(actionName, { origin: actionOrigin.SHORTCUT, nodeType: type });
-        return false;
+        return;
       }
-      if (isHotkey('Backspace', e) && isSelectionInQuote(change) && !haveTextInSomeBlocks(change)) {
-        change.unwrapBlock(BLOCKS.QUOTE);
+      if (isHotkey('Backspace', e) && isSelectionInQuote(editor) && !haveTextInSomeBlocks(editor)) {
+        editor.unwrapBlock(BLOCKS.QUOTE).delete();
+        return;
       }
+      return next();
     }
   };
 };

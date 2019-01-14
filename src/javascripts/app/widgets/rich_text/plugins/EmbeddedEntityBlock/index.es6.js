@@ -16,24 +16,28 @@ export const EmbeddedEntityBlockPlugin = ({
   hotkey
 }) => {
   return {
-    renderNode: props => {
+    renderNode: (props, _editor, next) => {
       if (props.node.type === nodeType) {
         return <EntityLinkBlock {...props} {...props.attributes} />;
       }
+      return next();
     },
-    onKeyDown(e, change, editor) {
+    onKeyDown(e, editor, next) {
       if (hotkey && isHotkey(hotkey, e)) {
         const logShortcutAction = (name, data) =>
           logAction(name, { origin: actionOrigin.SHORTCUT, ...data });
         asyncChange(editor, newChange =>
           selectEntityAndInsert(nodeType, widgetAPI, newChange, logShortcutAction)
         );
+        return;
       }
       if (isHotkey('enter', e)) {
-        if (hasBlockOfType(change, nodeType)) {
-          return change.insertBlock(BLOCKS.PARAGRAPH).focus();
+        if (hasBlockOfType(editor, nodeType)) {
+          editor.insertBlock(BLOCKS.PARAGRAPH).focus();
+          return;
         }
       }
+      return next();
     }
   };
 };
