@@ -15,9 +15,10 @@ export default class GreetingWidget extends React.Component {
         </div>
         <p className="greeting-widget__copy">
           Use this Space to create the content you want to appear on the{' '}
-          <span className="greeting-widget__org-name">{this.props.orgName}</span> website.
+          <span className="greeting-widget__italic">{this.props.orgName}</span> website.
           <br />
-          Go to the Content tab to get started, or learn about working with Contentful below.
+          Go to the <span className="greeting-widget__italic">Content</span> tab to get started, or
+          learn about working with Contentful below.
         </p>
       </div>
     );
