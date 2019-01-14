@@ -49,6 +49,8 @@ describe('Extension SDK', () => {
     this.scope = {
       widget: {
         field,
+        custom: true,
+        template: '<cf-iframe-widget />',
         srcdoc:
           '<!doctype html>' +
           '<script src="/base/node_modules/contentful-ui-extensions-sdk/dist/cf-extension-api.js"></script>'
@@ -76,7 +78,7 @@ describe('Extension SDK', () => {
 
     this.setup = () => {
       return new Promise((resolve, reject) => {
-        const el = this.$compile('<cf-iframe-widget>', this.scope);
+        const el = this.$compile('<cf-widget-renderer />', this.scope);
         this.scope = el.scope();
         const iframe = el.find('iframe')[0];
         iframe.removeAttribute('sandbox');
