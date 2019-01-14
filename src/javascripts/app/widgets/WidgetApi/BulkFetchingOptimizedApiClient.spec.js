@@ -1,12 +1,16 @@
-import flushPromises from '../../../../../test/helpers/flushPromises';
+import nextTick from '../../../../../test/helpers/flushPromises';
 import {
   newBatchEntityFetcher,
   newEntityBatchLoaderFn
 } from 'app/widgets/WidgetApi/BulkFetchingOptimizedApiClient.es6';
+import * as logger from 'ng/logger';
 
 jest.mock('Config.es6', () => ({ apiUrl: v => `https://api.some-domain.com/${v}` }));
 jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'not-ie' })
+}));
+jest.mock('ng/logger', () => ({
+  logServerError: jest.fn()
 }));
 
 const PENDING = new Promise(() => {});
@@ -47,7 +51,7 @@ describe('newBatchEntityFetcher({ getResources, resourceContext }) -> fetchEntit
     it('happens in the next tick', async () => {
       fetch('ID');
       expect(getResources).not.toHaveBeenCalled();
-      await flushPromises();
+      await nextTick();
       expect(getResources).toHaveBeenCalledTimes(1);
     });
 
@@ -145,6 +149,7 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
   let getResources, newEntityNotFoundError, entityBatchLoaderFn;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     getResources = jest.fn();
     newEntityNotFoundError = () => {
       throw new Error('Unexpected call during test');
@@ -271,6 +276,20 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
       const ids = ['ID_1', 'ID_2', 'ID_3'];
       const errors = await entityBatchLoaderFn(ids);
       expect(errors).toEqual([CLIENT_ERROR, CLIENT_ERROR, CLIENT_ERROR]);
+    });
+
+    it('logs server error to `logger.logServerError()`', async () => {
+      const validIds = ['ID', 'ANOTHER_ID'];
+      await entityBatchLoaderFn([...validIds, INVALID_LONG_ID]);
+      expect(logger.logServerError).toHaveBeenCalledTimes(1);
+      expect(logger.logServerError).toHaveBeenCalledWith(expect.any(String), {
+        error: CLIENT_ERROR,
+        data: {
+          requestedIds: validIds, // INVALID_LONG_ID not expected to be in here.
+          requestedIdsCount: 2,
+          requestedIdsCharacterCount: 12
+        }
+      });
     });
   });
 

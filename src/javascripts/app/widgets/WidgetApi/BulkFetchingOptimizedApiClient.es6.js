@@ -3,6 +3,9 @@ import DataLoader from 'dataloader';
 import { isValidResourceId } from 'data/utils.es6';
 import { detect as detectBrowser } from 'detect-browser';
 import { apiUrl } from 'Config.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const logger = getModule('logger');
 
 const MAX_URL_LENGTH = detectBrowser().name === 'ie' ? 2000 : 8000;
 const MAX_ID_LENGTH = 64;
@@ -135,7 +138,22 @@ export function newEntityBatchLoaderFn({ getResources, newEntityNotFoundError })
     }
 
     function handleError(error) {
+      logError(error);
       return entityIds.map(() => error);
+    }
+
+    function logError(error) {
+      // Add some redundant computed info (this stuff is already available in `error`)
+      // just in case Bugsnag trims any of this info because of its length.
+      const data = {
+        requestedIds: validIds,
+        requestedIdsCount: validIds.length,
+        requestedIdsCharacterCount: validIds.join('').length
+      };
+      // Though not expected, let's keep an eye on 504s and other potential weird
+      // stuff that we don't know about.
+      const message = 'BulkFetchingOptimizedApiClient: Failed bulk fetching entities';
+      logger.logServerError(message, { error, data });
     }
   };
 }
