@@ -35,42 +35,19 @@ registerDirective('cfIframeWidget', [
       link: function(scope, element) {
         const appDomain = `app.${Config.domain}`;
 
-        const current = {
-          field: scope.widget.field,
-          locale: scope.locale
-        };
-        const locales = {
-          available: TheLocaleStore.getPrivateLocales(),
-          default: TheLocaleStore.getDefaultLocale()
-        };
-        const parameters = {
-          instance: scope.widget.settings || {},
-          installation: scope.widget.installationParameterValues || {}
-        };
-
         const bridge = createBridge({
           $rootScope,
           $scope: scope,
+          spaceContext,
+          TheLocaleStore,
           entitySelector,
-          cma: spaceContext.cma,
           Analytics
         });
 
         const iframe = element[0].querySelector('iframe');
         const channel = new Channel(iframe, $window, bridge.apply);
-
-        const extensionApi = new ExtensionAPI({
-          channel,
-          spaceMembership: spaceContext.space.data.spaceMembership,
-          parameters,
-          entryData: scope.otDoc.getValueAt([]),
-          contentTypeData: scope.entityInfo.contentType,
-          current,
-          locales
-        });
-
+        const extensionApi = new ExtensionAPI({ channel, ...bridge.getData() });
         bridge.install(extensionApi);
-
         initializeIframe();
 
         function initializeIframe() {

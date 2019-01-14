@@ -12,15 +12,45 @@ const ERROR_MESSAGES = {
 // This module, given editor-specific Angular dependencies
 // as listed below, returns a framework-agnostic interface:
 //
+// - `getData` returns an object of static data to be used
+//   in the `ExtensionAPI` constructor.
 // - `install` takes an instance of `ExtensionAPI`, registrs
 //   handlers and notifies it about changes.
 // - `apply` takes a function to be executed in the Angular
 //   context (using `$rootScope.$apply`).
-export default function createBridge({ $rootScope, $scope, entitySelector, cma, Analytics }) {
+export default function createBridge({
+  $rootScope,
+  $scope,
+  spaceContext,
+  TheLocaleStore,
+  entitySelector,
+  Analytics
+}) {
   return {
+    getData,
     install,
     apply: fn => $rootScope.$apply(fn)
   };
+
+  function getData() {
+    return {
+      spaceMembership: spaceContext.space.data.spaceMembership,
+      current: {
+        field: $scope.widget.field,
+        locale: $scope.locale
+      },
+      locales: {
+        available: TheLocaleStore.getPrivateLocales(),
+        default: TheLocaleStore.getDefaultLocale()
+      },
+      entryData: $scope.otDoc.getValueAt([]),
+      contentTypeData: $scope.entityInfo.contentType,
+      parameters: {
+        instance: $scope.widget.settings || {},
+        installation: $scope.widget.installationParameterValues || {}
+      }
+    };
+  }
 
   async function setValue(path, value) {
     try {
@@ -59,7 +89,7 @@ export default function createBridge({ $rootScope, $scope, entitySelector, cma, 
 
   async function callSpaceMethod(methodName, args) {
     try {
-      const entity = await cma[methodName](...args);
+      const entity = await spaceContext.cma[methodName](...args);
       maybeTrackEntryAction(methodName, args, entity);
       return entity;
     } catch ({ code, body }) {

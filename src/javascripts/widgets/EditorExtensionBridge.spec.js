@@ -43,10 +43,26 @@ describe('EditorExtensionBridge', () => {
         fieldLocale: {
           errors$: stubs.errors,
           setActive: stubs.setActive
+        },
+        widget: {
+          field: 'FIELD',
+          settings: 'SETTINGS',
+          installationParameterValues: 'INSTALLATION PARAMS'
+        },
+        locale: { code: 'pl' },
+        entityInfo: {
+          contentType: 'CONTENT TYPE'
         }
       },
-      entitySelector: { openFromExtension: stubs.openFromExtension },
-      cma: { updateEntry: stubs.updateEntry }
+      spaceContext: {
+        cma: { updateEntry: stubs.updateEntry },
+        space: { data: { spaceMembership: 'MEMBERSHIP ' } }
+      },
+      TheLocaleStore: {
+        getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
+        getDefaultLocale: () => ({ code: 'pl' })
+      },
+      entitySelector: { openFromExtension: stubs.openFromExtension }
     });
 
     return [bridge, stubs];
@@ -58,6 +74,21 @@ describe('EditorExtensionBridge', () => {
     send: jest.fn(),
     update: jest.fn(),
     destroy: jest.fn()
+  });
+
+  describe('#getData()', () => {
+    it('returns ExtensionAPI data', () => {
+      const [bridge] = makeBridge();
+
+      expect(bridge.getData()).toEqual({
+        contentTypeData: 'CONTENT TYPE',
+        current: { field: 'FIELD', locale: { code: 'pl' } },
+        entryData: { fields: {}, sys: {} },
+        locales: { available: [{ code: 'pl' }, { code: 'en' }], default: { code: 'pl' } },
+        parameters: { installation: 'INSTALLATION PARAMS', instance: 'SETTINGS' },
+        spaceMembership: 'MEMBERSHIP '
+      });
+    });
   });
 
   describe('#apply()', () => {
