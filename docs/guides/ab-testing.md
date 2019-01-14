@@ -119,11 +119,11 @@ Therefore, for your flag on `Staging` environment on LD, please make sure you ad
 
 ### Enabling flags
 
-To QA manually, you can pass the flag name using a query parameter to our webapp. The parameter is called `ui_enable_flags` and accepts a list of LaunchDarkly test/flag names (you can pass multiple separating them by comma). Example: `ui_enable_flags=feature-ps-12-2017-author-onboarding-help`
+To QA manually, you can pass the flag name using a query parameter to our webapp. The parameter is called `ui_enable_flags` and accepts a list of LaunchDarkly test/flag names (you can pass multiple separating them by comma). Example: `ui_enable_flags=feature-dl-05-2018-modern-stack-onboarding`
 
 ### Disabling flags
 
-Similar to enabling flags, you can disable specific flags by passing a flag using the query parameter called `ui_disable_flags`. It accepts a list of LaunchDarkly test/flag names in the same way as in the enabling flags. This will automatically return `false` for all specified flags. Example: `ui_disable_flags=feature-ps-12-2017-author-onboarding-help`
+Similar to enabling flags, you can disable specific flags by passing a flag using the query parameter called `ui_disable_flags`. It accepts a list of LaunchDarkly test/flag names in the same way as in the enabling flags. This will automatically return `false` for all specified flags. Example: `ui_disable_flags=feature-dl-05-2018-modern-stack-onboarding`
 
 ## Running the test
 

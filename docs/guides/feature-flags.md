@@ -16,7 +16,7 @@ We use [LaunchDarkly][launch-darkly-app] for feature flags as well as [A/B tests
 3. Navigate to `Feature Flags` section
 4. Click `New +` button on the top right corner to create a new test
 5. Type in a descriptive human readable name for your test (e.g., `Author Onboarding: Authors Help`)
-6. Type in a value for key which follows the following format: `feature-teamname-mm-yyyy-test-name` (e.g., `feature-ps-12-2017-author-onboarding-help`)
+6. Type in a value for key which follows the following format: `feature-teamname-mm-yyyy-test-name` (e.g., `feature-dl-05-2018-modern-stack-onboarding`)
 7. In the `Description` box, enter a link to your feature wiki document
 8. Add tags if you want to help group flags together
 9. Under `What kind of flag is this?` choose `Boolean`
@@ -42,7 +42,7 @@ angular.module('contentful')
   var template = require('myCfDirectiveTemplate').default
   var LD = require('utils/LaunchDarkly')
   var track = require('analytics/Analytics');
-  var flagName = 'feature-ps-12-2017-author-onboarding-help'
+  var flagName = 'feature-dl-05-2018-modern-stack-onboarding'
 
   return {
     template,
@@ -81,11 +81,11 @@ If automated tests do not exist for your feature, then in your flag on `Staging`
 
 ### Enabling flags
 
-To QA manually, you can pass the flag name using a query parameter to our webapp. The parameter is called `ui_enable_flags` and accepts a list of LaunchDarkly test/flag names. Example: `ui_enable_flags=feature-ps-12-2017-author-onboarding-help`
+To QA manually, you can pass the flag name using a query parameter to our webapp. The parameter is called `ui_enable_flags` and accepts a list of LaunchDarkly test/flag names. Example: `ui_enable_flags=feature-dl-05-2018-modern-stack-onboarding`
 
 ### Disabling flags
 
-Similar to enabling flags, you can disable specific flags by passing a flag using the query parameter called `ui_disable_flags`. It accepts a list of LaunchDarkly test/flag names in the same way as in the enabling flags. This will automatically return `false` for all specified flags. Example: `ui_disable_flags=feature-ps-12-2017-author-onboarding-help`
+Similar to enabling flags, you can disable specific flags by passing a flag using the query parameter called `ui_disable_flags`. It accepts a list of LaunchDarkly test/flag names in the same way as in the enabling flags. This will automatically return `false` for all specified flags. Example: `ui_disable_flags=feature-dl-05-2018-modern-stack-onboarding`
 
 ## Running
 
