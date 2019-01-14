@@ -50,7 +50,6 @@ describe('Extension SDK', () => {
       widget: {
         field,
         custom: true,
-        template: '<cf-iframe-widget />',
         srcdoc:
           '<!doctype html>' +
           '<script src="/base/node_modules/contentful-ui-extensions-sdk/dist/cf-extension-api.js"></script>'
