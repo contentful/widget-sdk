@@ -128,7 +128,6 @@ angular
       ngRequire('app/widgets/datetime/data.es6');
       ngRequire('app/snapshots/cfSnapshotPresenter.es6');
       ngRequire('app/snapshots/cfSnapshotSelector.es6');
-      ngRequire('app/snapshots/snapshotDoc.es6');
       ngRequire('app/snapshots/snapshotComparator.es6');
       ngRequire('app/widgets/selectionController.es6');
       ngRequire('app/widgets/cfBooleanEditorDirective.es6');

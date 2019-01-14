@@ -1,6 +1,6 @@
 mixin snapshot-dt
   react-component(
-    name="components/shared/RelativeDateTime/index.es6" 
+    name="components/shared/RelativeDateTime/index.es6"
     props="{value: snapshot.sys.createdAt}"
   )
 
@@ -20,17 +20,18 @@ mixin snapshot-overlays(version)
     span Field will be restored to this version
   .snapshot-comparator__overlay-identical(ng-if="!canRestore")
 
-mixin snapshot-value(doc, version)
+mixin snapshot-value(version)
+  - attrs = {};
+  - attrs["ng-init"] = "version = '" + version + "'";
+  - attrs["document-property"] = version === 'snapshot' ? 'snapshotDoc' : '';
   .snapshot-comparator__cell(
-    ng-if="showOnlyDifferences ? isDifferent : true"
-    ng-controller="FieldLocaleController as fieldLocale"
-    document-property!=doc)
+    ng-if="showOnlyDifferences ? isDifferent : true")&attributes(attrs)
       .snapshot-comparator__cell__radio
         input(type="radio" ng-model="selected" value!=version)
       .snapshot-comparator__cell__presenter
         .snapshot-comparator__field-title
           div
-            | {{ field.name }}
+            | {{ widget.field.name }}
             span(ng-if="locales.length > 1") &#32;&ndash; {{locale.name}}
           .entity-editor__no-permission-info(ng-if="isDisabled")
             cf-icon(name="lock")

@@ -1,10 +1,10 @@
 .snapshot-comparator__presenter(
   ng-class="{ 'x--dir-rtl': methods.shouldDisplayRtl(locale.code) }")
-  div(ng-if="hasValue && isCustom")
-    cf-widget-renderer(cf-widget-api)
+  div(ng-if="hasValue && widget.custom")
+    | TODO: render custom extension here
 
   div(
-    ng-if="hasValue && !isCustom"
+    ng-if="hasValue && !widget.custom"
     ng-switch="type")
 
     div.x--directed(ng-switch-when="Symbol")

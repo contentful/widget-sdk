@@ -4,10 +4,6 @@
  * @name Document
  * @description
  * Used to edit an entry or asset through ShareJS
- *
- * The 'SnapshotComparatorController/snapshotDoc' module also provides
- * an implementation for the interface defined here. Any changes must
- * be synced across these implementations
  */
 
 import { get, memoize, cloneDeep } from 'lodash';

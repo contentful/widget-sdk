@@ -22,9 +22,8 @@ import DocumentStatusCode from 'data/document/statusCode.es6';
  */
 registerController('FieldLocaleController', [
   '$scope',
-  '$attrs',
   'spaceContext',
-  function($scope, $attrs, spaceContext) {
+  function($scope, spaceContext) {
     const controller = this;
     const field = $scope.widget.field;
     const locale = $scope.locale;
@@ -38,10 +37,7 @@ registerController('FieldLocaleController', [
     const EDITABLE = { editable: true };
     const DISCONNECTED = { disconnected: true, disabled: true };
 
-    // TODO We should remove the dependency on $attrs. This was the
-    // source of a bug.
-    $scope.docImpl = $scope[$attrs.documentProperty || 'otDoc'];
-    controller.doc = createFieldLocaleDoc($scope.docImpl, field.id, locale.internal_code);
+    controller.doc = createFieldLocaleDoc($scope.otDoc, field.id, locale.internal_code);
 
     // Provided by the entry and asset controllers
     const editorContext = $scope.editorContext;
@@ -195,12 +191,9 @@ registerController('FieldLocaleController', [
       }
     };
 
-    const editingAllowed = $scope.docImpl.permissions.canEditFieldLocale(
-      field.apiName,
-      locale.code
-    );
+    const editingAllowed = $scope.otDoc.permissions.canEditFieldLocale(field.apiName, locale.code);
 
-    const documentStatus$ = $scope.docImpl.status$ || K.constant();
+    const documentStatus$ = $scope.otDoc.status$ || K.constant();
 
     /**
      * @ngdoc property
@@ -221,7 +214,7 @@ registerController('FieldLocaleController', [
     controller.access$ =
       // TODO move this to FieldLocaleDocument
       K.combine(
-        [documentStatus$, $scope.docImpl.state.isConnected$, controller.doc.collaborators],
+        [documentStatus$, $scope.otDoc.state.isConnected$, controller.doc.collaborators],
         (status, isConnected, collaborators) => {
           if (field.disabled) {
             return EDITING_DISABLED;

@@ -28,10 +28,14 @@ registerDirective('cfSnapshotPresenter', [
         $scope => {
           const field = $scope.widget.field;
           $scope.type = getFieldType(field);
-          $scope.value = $scope.fieldLocale.doc.get();
-          $scope.hasValue = !isEmpty($scope.value);
-          $scope.isCustom = $scope.widget.custom;
           $scope.linkType = _.get(field, 'linkType', _.get(field, 'items.linkType'));
+
+          const entry = _.get($scope, ['entry', 'data'], {});
+          const snapshot = _.get($scope, ['snapshot', 'snapshot'], {});
+          const entity = $scope.version === 'current' ? entry : snapshot;
+          $scope.value = _.get(entity, ['fields', field.id, $scope.locale.internal_code]);
+          $scope.hasValue = !isEmpty($scope.value);
+
           $scope.methods = {
             shouldDisplayRtl: _.constant(false)
           };
