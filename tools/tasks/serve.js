@@ -4,7 +4,7 @@ const { TEMPLATES_SRC } = require('./templates');
 
 const STYLESHEETS_SRC = 'src/stylesheets/**/*';
 
-gulp.task('serve', ['js/sharejs'], function() {
+gulp.task('serve', function() {
   const configName = process.env.UI_CONFIG || 'development';
   const watchFiles = !process.env.NO_WATCHING;
 

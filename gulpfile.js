@@ -12,7 +12,6 @@ require('./tools/tasks/all');
 require('./tools/tasks/clean');
 require('./tools/tasks/copy');
 require('./tools/tasks/js');
-require('./tools/tasks/js-sharejs');
 require('./tools/tasks/prepare-tests');
 require('./tools/tasks/serve');
 require('./tools/tasks/stylesheets');
