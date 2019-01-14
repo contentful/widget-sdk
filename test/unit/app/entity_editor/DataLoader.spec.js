@@ -161,16 +161,23 @@ describe('app/entity_editor/DataLoader.es6', () => {
     });
 
     it('builds field controls from asset editor interface', function*() {
-      const assetEditorInterface = this.$inject('data/editingInterfaces/asset');
       yield this.loadAsset('EID');
       sinon.assert.calledWith(
         this.$inject('widgets/WidgetRenderable.es6').default,
-        assetEditorInterface.widgets
+        sinon.match([
+          sinon.match({ fieldId: 'title', widgetId: 'singleLine', field: sinon.match.has('id') }),
+          sinon.match({
+            fieldId: 'description',
+            widgetId: 'singleLine',
+            field: sinon.match.has('id')
+          }),
+          sinon.match({ fieldId: 'file', widgetId: 'fileEditor', field: sinon.match.has('id') })
+        ])
       );
     });
 
     it('only adds specified properties', function*() {
-      const data = yield this.loadEntry('EID');
+      const data = yield this.loadAsset('EID');
       expect(Object.keys(data)).toEqual([
         'entity',
         'contentType',

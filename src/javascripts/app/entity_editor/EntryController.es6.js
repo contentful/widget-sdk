@@ -24,7 +24,6 @@ const localeStore = getModule('TheLocaleStore');
 const $state = getModule('$state');
 const logger = getModule('logger');
 const DataFields = getModule('EntityEditor/DataFields');
-const ContentTypes = getModule('data/ContentTypes');
 
 /**
  * @ngdoc type
@@ -230,5 +229,4 @@ export default async function create($scope, entryId) {
   const contentTypeData = entityInfo.contentType;
   const fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
-  $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
 }

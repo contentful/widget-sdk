@@ -1,7 +1,16 @@
 import { registerDirective } from 'NgRegistry.es6';
-import _ from 'lodash';
+import { get } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as PathUtils from 'utils/Path.es6';
+import Channel from './ExtensionIFrameChannel.es6';
+import ExtensionAPI from './ExtensionAPI.es6';
+
+const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
+
+const ERROR_MESSAGES = {
+  MFAILUPDATE: 'Could not update entry field',
+  MFAILREMOVAL: 'Could not remove value for field'
+};
 
 /**
  * @ngdoc directive
@@ -20,122 +29,177 @@ import * as PathUtils from 'utils/Path.es6';
  *   Provided by FieldLocaleController
  */
 registerDirective('cfIframeWidget', [
-  '$q',
-  'fieldFactory',
+  '$window',
+  '$rootScope',
   'spaceContext',
-  'widgets/API',
   'Config.es6',
-  ($q, fieldFactory, spaceContext, WidgetAPI, Config) => {
-    const ERRORS = {
-      codes: {
-        EBADUPDATE: 'ENTRY UPDATE FAILED'
-      },
-      messages: {
-        MFAILUPDATE: 'Could not update entry field',
-        MFAILREMOVAL: 'Could not remove value for field'
-      }
-    };
-
+  'TheLocaleStore',
+  'entitySelector',
+  'analytics/Analytics.es6',
+  ($window, $rootScope, spaceContext, Config, TheLocaleStore, entitySelector, Analytics) => {
     return {
       restrict: 'E',
       template:
         '<iframe style="width:100%" allowfullscreen msallowfullscreen sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>',
       link: function(scope, element) {
         const appDomain = `app.${Config.domain}`;
-
         const doc = scope.docImpl || scope.otDoc;
-        const entityInfo = scope.entityInfo;
 
-        const fields = entityInfo.contentType.fields;
-        const fieldsById = _.transform(
-          fields,
-          (fieldsById, field) => {
-            fieldsById[field.id] = field;
-          },
-          {}
-        );
-
+        const current = {
+          field: scope.widget.field,
+          locale: scope.locale
+        };
+        const locales = {
+          available: TheLocaleStore.getPrivateLocales(),
+          default: TheLocaleStore.getDefaultLocale()
+        };
         const parameters = {
           instance: scope.widget.settings || {},
           installation: scope.widget.installationParameterValues || {}
         };
 
-        const widgetAPI = new WidgetAPI(
-          spaceContext.cma,
-          spaceContext.space.data.spaceMembership,
+        const iframe = element[0].querySelector('iframe');
+        const channel = new Channel(iframe, $window, cb => $rootScope.$apply(cb));
+
+        const extensionApi = new ExtensionAPI({
+          channel,
+          spaceMembership: spaceContext.space.data.spaceMembership,
           parameters,
-          fields,
-          doc.getValueAt([]),
-          scope.transformedContentTypeData,
-          // TODO the isDisabled property is only required for <v2.1 of the
-          // extension SDK. We should remove it
-          {
-            field: scope.widget.field,
-            locale: scope.locale,
-            isDisabled: scope.fieldLocale.access.disabled
-          },
-          element[0].querySelector('iframe')
+          entryData: doc.getValueAt([]),
+          contentTypeData: scope.entityInfo.contentType,
+          current,
+          locales
+        });
+
+        // SENDING EVENTS TO THE EXTENSION:
+
+        scope.$on('$destroy', () => extensionApi.destroy());
+
+        scope.$watch(
+          () => scope.fieldLocale.access.disabled,
+          isDisabled => {
+            extensionApi.send('isDisabledChanged', [isDisabled]);
+          }
         );
 
-        scope.$on('$destroy', () => {
-          widgetAPI.destroy();
+        K.onValueScope(scope, doc.sysProperty, sys => {
+          extensionApi.send('sysChanged', [sys]);
         });
 
-        widgetAPI.registerHandler('setValue', (apiName, localeCode, value) => {
-          const path = widgetAPI.buildDocPath(apiName, localeCode);
-
-          return doc
-            .setValueAt(path, value)
-            .catch(makeErrorHandler(ERRORS.codes.EBADUPDATE, ERRORS.messages.MFAILUPDATE));
+        K.onValueScope(scope, scope.fieldLocale.errors$, errors => {
+          extensionApi.send('schemaErrorsChanged', [errors || []]);
         });
 
-        widgetAPI.registerHandler('removeValue', (apiName, localeCode) => {
-          const path = widgetAPI.buildDocPath(apiName, localeCode);
+        K.onValueScope(
+          scope,
+          doc.changes.filter(path => PathUtils.isAffecting(path, ['fields'])),
+          path => extensionApi.update(path, doc.getValueAt([]))
+        );
 
-          return doc
-            .removeValueAt(path)
-            .catch(makeErrorHandler(ERRORS.codes.EBADUPDATE, ERRORS.messages.MFAILREMOVAL));
+        // RECEIVING EVENTS FROM THE EXTENSION:
+
+        extensionApi.registerHandler('callSpaceMethod', async (methodName, args) => {
+          try {
+            const entity = await spaceContext.cma[methodName](...args);
+            maybeTrackEntryAction(methodName, args, entity);
+            return entity;
+          } catch ({ code, body }) {
+            const err = new Error('Request failed.');
+            throw Object.assign(err, { code, data: body });
+          }
         });
 
-        widgetAPI.registerHandler('setInvalid', (isInvalid, localeCode) => {
+        function maybeTrackEntryAction(methodName, args, entity) {
+          try {
+            if (get(entity, ['sys', 'type']) !== 'Entry') {
+              return;
+            }
+
+            if (methodName === 'createEntry') {
+              trackEntryAction('create', args[0], entity);
+            } else if (methodName === 'publishEntry') {
+              const contentTypeId = get(args[0], ['sys', 'contentType', 'sys', 'id']);
+              trackEntryAction('publish', contentTypeId, entity);
+            }
+          } catch (err) {
+            // Just catch and ignore, failing to track should not
+            // demonstrate itself outside.
+          }
+        }
+
+        function trackEntryAction(action, contentTypeId, data) {
+          Analytics.track(`entry:${action}`, {
+            eventOrigin: 'ui-extension',
+            // Stub content type object:
+            contentType: {
+              sys: { id: contentTypeId, type: 'ContentType' },
+              fields: []
+            },
+            response: { data }
+          });
+        }
+
+        extensionApi.registerHandler('setHeight', height => {
+          iframe.setAttribute('height', height);
+        });
+
+        extensionApi.registerHandler('openDialog', async (type, options) => {
+          if (type === 'entitySelector') {
+            return entitySelector.openFromExtension(options);
+          } else {
+            throw new Error('Unknown dialog type.');
+          }
+        });
+
+        extensionApi.registerPathHandler('setValue', async (path, value) => {
+          try {
+            await doc.setValueAt(path, value);
+            return value;
+          } catch (err) {
+            throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
+          }
+        });
+
+        extensionApi.registerPathHandler('removeValue', async path => {
+          try {
+            await doc.removeValueAt(path);
+          } catch (err) {
+            throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
+          }
+        });
+
+        function makeShareJSError(shareJSError, message) {
+          const data = {};
+          if (shareJSError && shareJSError.message) {
+            data.shareJSCode = shareJSError.message;
+          }
+
+          const error = new Error(message);
+          return Object.assign(error, { code: ERROR_CODES.EBADUPDATE, data });
+        }
+
+        extensionApi.registerHandler('setInvalid', (isInvalid, localeCode) => {
           scope.fieldController.setInvalid(localeCode, isInvalid);
         });
 
-        widgetAPI.registerHandler('setActive', isActive => {
+        extensionApi.registerHandler('setActive', isActive => {
           scope.fieldLocale.setActive(isActive);
         });
 
-        initializeIframe();
+        // IFRAME SETUP:
 
-        function makeErrorHandler(code, msg) {
-          return e => {
-            if (e && e.message) {
-              e = e.message;
-            }
-            return $q.reject({
-              code: code,
-              message: msg,
-              data: {
-                shareJSCode: e
-              }
-            });
-          };
-        }
+        initializeIframe();
 
         function initializeIframe() {
           const $iframe = element.find('iframe');
-          const src = scope.widget.src;
-          const srcdoc = scope.widget.srcdoc;
+          const { src, srcdoc } = scope.widget;
 
           $iframe.one('load', () => {
-            scope.$applyAsync(() => {
-              widgetAPI.connect();
-            });
+            scope.$applyAsync(() => extensionApi.connect());
           });
 
           if (src && !isAppDomain(src)) {
-            const sandbox = $iframe.attr('sandbox') + ' allow-same-origin';
-            $iframe.attr('sandbox', sandbox);
+            $iframe.attr('sandbox', `${$iframe.attr('sandbox')} allow-same-origin`);
             $iframe.attr('src', src);
           } else if (srcdoc) {
             $iframe.attr('srcdoc', srcdoc);
@@ -151,77 +215,6 @@ registerDirective('cfIframeWidget', [
           } else {
             return false;
           }
-        }
-
-        K.onValueScope(scope, doc.sysProperty, sys => {
-          widgetAPI.send('sysChanged', [sys]);
-        });
-
-        K.onValueScope(scope, scope.fieldLocale.errors$, errors => {
-          errors = errors || [];
-          widgetAPI.send('schemaErrorsChanged', [errors]);
-        });
-
-        const fieldChanges = doc.changes.filter(path => PathUtils.isAffecting(path, ['fields']));
-
-        K.onValueScope(scope, fieldChanges, path => {
-          updateWidgetValue(path[1], path[2]);
-        });
-
-        // Send a message when the disabled status of the field changes
-        scope.$watch(isEditingDisabled, isDisabled => {
-          widgetAPI.send('isDisabledChanged', [isDisabled]);
-        });
-
-        // Retrieve whether field is disabled or not
-        function isEditingDisabled() {
-          return scope.fieldLocale.access.disabled;
-        }
-
-        /**
-         * Retrieves the field value at the given path from the document
-         * and sends it to the widget.
-         *
-         * If `locale` is not given it retrieves the localization object
-         * for the field and sends an update for each locale.
-         *
-         * Similarly, if `fieldId` is not given it sends an update for
-         * every field and locale.
-         */
-        function updateWidgetValue(fieldId, locale) {
-          if (!fieldId) {
-            updateWidgetFields();
-          } else if (!locale) {
-            updateWidgetLocales(fieldId);
-          } else {
-            updateWidgetLocaleValue(fieldId, locale);
-          }
-        }
-
-        function updateWidgetFields() {
-          _.forEach(fields, field => {
-            updateWidgetLocales(field.id);
-          });
-        }
-
-        function updateWidgetLocales(fieldId) {
-          const field = fieldsById[fieldId];
-
-          // We might receive changes from other uses on fields that we
-          // do not yet know about. We silently ignore them.
-          if (!field) {
-            return;
-          }
-
-          const locales = fieldFactory.getLocaleCodes(field);
-          _.forEach(locales, locale => {
-            updateWidgetLocaleValue(fieldId, locale);
-          });
-        }
-
-        function updateWidgetLocaleValue(fieldId, locale) {
-          const value = doc.getValueAt(['fields', fieldId, locale]);
-          widgetAPI.sendFieldValueChange(fieldId, locale, value);
         }
       }
     };

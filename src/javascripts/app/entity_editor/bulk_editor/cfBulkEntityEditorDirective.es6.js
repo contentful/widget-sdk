@@ -182,7 +182,6 @@ registerController('InlineEditingController/editor', [
   '$controller',
   'spaceContext',
   'EntityEditor/DataFields',
-  'data/ContentTypes',
   'TheLocaleStore',
   'app/entity_editor/Validator.es6',
   'app/entity_editor/DocumentErrorHandler.es6',
@@ -191,7 +190,6 @@ registerController('InlineEditingController/editor', [
     $controller,
     spaceContext,
     DataFields,
-    ContentTypes,
     localeStore,
     Validator,
     { default: initDocErrorHandler }
@@ -258,6 +256,5 @@ registerController('InlineEditingController/editor', [
      */
     const fields = entityInfo.contentType.fields;
     $scope.fields = DataFields.create(fields, $scope.otDoc);
-    $scope.transformedContentTypeData = ContentTypes.internalToPublic(entityInfo.contentType);
   }
 ]);

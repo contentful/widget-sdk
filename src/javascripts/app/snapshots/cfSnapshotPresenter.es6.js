@@ -30,7 +30,7 @@ registerDirective('cfSnapshotPresenter', [
           $scope.type = getFieldType(field);
           $scope.value = $scope.fieldLocale.doc.get();
           $scope.hasValue = !isEmpty($scope.value);
-          $scope.isCustom = ($scope.widget.template || '').indexOf('cf-iframe-widget') > -1;
+          $scope.isCustom = $scope.widget.custom;
           $scope.linkType = _.get(field, 'linkType', _.get(field, 'items.linkType'));
           $scope.methods = {
             shouldDisplayRtl: _.constant(false)

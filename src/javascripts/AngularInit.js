@@ -44,7 +44,6 @@ angular
       ngRequire('services/localeStore.es6');
       ngRequire('data/userCache.es6');
       ngRequire('services/editingInterfacesHelpers.es6');
-      ngRequire('services/fieldFactory.es6');
       ngRequire('data/editing_interfaces/transformer.es6');
       ngRequire('data/editingInterfaces.es6');
       ngRequire('data/apiClient.es6');
@@ -80,7 +79,6 @@ angular
       ngRequire('components/field_dialog/validationDecorator.es6');
       ngRequire('components/field_dialog/fieldDialog.es6');
       ngRequire('app/ContentModel/Editor/metadataDialog.es6');
-      ngRequire('data/contentTypes.es6');
       ngRequire('app/ContentModel/Editor/contentTypeEditorController.es6');
       ngRequire('app/ContentModel/Editor/contentTypeEditorDirective.es6');
       ngRequire('utils/encoder.es6');
@@ -220,7 +218,6 @@ angular
       ngRequire('services/batchPerformer.es6');
       ngRequire('components/tabs/listActionsController.es6');
       ngRequire('data/document/status.es6');
-      ngRequire('data/editing_interfaces/assetInterface.es6');
       ngRequire('data/streamHashSet.es6');
       ngRequire('debug/XHR/cfMockXhrConsoleDirective.es6');
       ngRequire('directives/bindHtmlCompileDirective.es6');
@@ -284,7 +281,6 @@ angular
       ngRequire('ui/onScrollDirective.es6');
       ngRequire('ui/setScrollDirective.es6');
       ngRequire('ui/sortable.es6');
-      ngRequire('widgets/api.es6');
       ngRequire('widgets/cfIframeWidgetDirective.es6');
     }
   ]);

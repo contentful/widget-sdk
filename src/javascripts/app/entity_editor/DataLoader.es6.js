@@ -5,9 +5,18 @@ import { deepFreeze } from 'utils/Freeze.es6';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache.es6';
 import buildRenderables from 'widgets/WidgetRenderable.es6';
 import { getModule } from 'NgRegistry.es6';
+import { assetContentType } from 'legacy-client';
 
-const assetEditorInterface = getModule('data/editingInterfaces/asset');
 const TheLocaleStore = getModule('TheLocaleStore');
+
+const assetControls = [
+  { fieldId: 'title', widgetId: 'singleLine' },
+  { fieldId: 'description', widgetId: 'singleLine' },
+  { fieldId: 'file', widgetId: 'fileEditor' }
+].map(control => {
+  const field = assetContentType.data.fields.find(f => f.id === control.fieldId);
+  return { ...control, field };
+});
 
 /**
  * @ngdoc service
@@ -159,10 +168,7 @@ function makeAssetLoader(spaceContext) {
       return null;
     },
     getFieldControls: function() {
-      const renderable = buildRenderables(
-        assetEditorInterface.widgets,
-        spaceContext.widgets.getAll()
-      );
+      const renderable = buildRenderables(assetControls, spaceContext.widgets.getAll());
       return Promise.resolve(renderable);
     },
     getOpenDoc: makeDocOpener(spaceContext)
@@ -178,9 +184,14 @@ function makeDocOpener(spaceContext) {
 }
 
 function makeEntityInfo(entity, contentType) {
+  const { type } = entity.data.sys;
+  if (type === 'Asset') {
+    contentType = assetContentType;
+  }
+
   return deepFreeze({
     id: entity.data.sys.id,
-    type: entity.data.sys.type,
+    type,
     contentTypeId: contentType ? contentType.data.sys.id : null,
     // TODO Normalize CT data if this property is used by more advanced
     // services like the 'Document' controller and the 'cfEntityField'
