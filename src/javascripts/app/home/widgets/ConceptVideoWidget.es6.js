@@ -21,6 +21,18 @@ export default class SpaceHome extends React.Component {
       error
     });
 
+  componentDidMount = () => {
+    window._wq = window._wq || [];
+    window._wq.push({
+      id: '_all',
+      onReady: function(video) {
+        video.bind('end', function() {
+          video.popover.hide();
+        });
+      }
+    });
+  };
+
   render() {
     return (
       <Card extraClassNames="concept-video-widget" padding="none">
