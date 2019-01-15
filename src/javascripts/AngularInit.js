@@ -62,7 +62,6 @@ angular
       ngRequire('account/cfAccountViewDirective.es6');
       ngRequire('account/cfNewOrganizationMembership.es6');
       ngRequire('analytics/analyticsConsole.es6');
-      ngRequire('analytics/events/customWidgets.es6');
       ngRequire('analytics/events/persistentNotification.es6');
       ngRequire('navigation/confirmLeaveEditor.es6');
       ngRequire('analytics/events/versioning.es6');

@@ -23,8 +23,7 @@ import * as K from 'utils/kefir.es6';
 registerController('FormWidgetsController', [
   '$scope',
   'controls',
-  'analyticsEvents/customWidgets',
-  ($scope, controls, trackCustomWidgets) => {
+  ($scope, controls) => {
     // Widgets, which we need to instantiate, even despite
     // they are not visible. For example, we need a
     // slugEditor in the background, because it depends
@@ -40,13 +39,6 @@ registerController('FormWidgetsController', [
     const validator = $scope.editorContext.validator;
     $scope.$watch('preferences.showDisabledFields', updateWidgets);
     K.onValueScope($scope, validator.errors$, updateWidgets);
-
-    // Executed only once when `$scope.widgets` is not undefined.
-    $scope.$watch('::widgets', widgets => {
-      _.forEach(widgets, widget => {
-        trackCustomWidgets.rendered(widget, $scope.contentType, $scope.entry);
-      });
-    });
 
     function updateWidgets() {
       $scope.widgets = controls.map(markWidgetVisibility).filter(widgetShouldBeListed);
