@@ -3,65 +3,11 @@
   cf-entity-info-panel(entity-sys-property="entitySys$" content-type="entityInfo.contentType" user="user")
 
 .entity-sidebar
-  h2.entity-sidebar__heading
-    | Status
 
-  .entity-sidebar__state(
-    ng-switch="state.current")
-    span.entity-sidebar__state-indicator(
-      data-test-id="entity-state"
-      data-state="{{state.current}}")
-    strong
-      | Status: &nbsp;
-    span(ng-switch-when="archived")
-      | Archived
-    span(ng-switch-when="draft")
-      | Draft
-    span(ng-switch-when="published")
-      | Published
-    span(ng-switch-when="changes")
-      | Published (pending changes)
-
-  .entity-sidebar__state-select
-    .btn-action-select(
-      ng-class="state.hidePrimary && 'x--no-action'")
-
-      button.btn-action-select__action(
-        ui-command="state.primary"
-        data-target-state="{{state.primary.targetStateId}}")
-        | {{ command.label }}
-
-      button.btn-action-select__selector(
-        cf-context-menu-trigger
-        ng-disabled="state.secondaryActionsDisabled"
-        data-test-id="change-state-menu-trigger")
-        span.btn-action-select__selector-label
-          | Change status
-        cf-icon.btn-action-select__icon(name="dd-arrow-down")
-      .context-menu.x--arrow-right(
-        data-test-id="change-state-menu"
-        cf-context-menu="bottom-right")
-        div.context-menu__header
-          | Change status to
-        div(ng-repeat="command in state.secondary")
-          div(role="menuitem" ui-command="command" data-target-state="{{command.targetStateId}}")
-            | {{ command.status }}
-
-  .entity-sidebar__status-more
-    .entity-sidebar__save-status
-      i.entity-sidebar__saving-spinner(ng-class="data.documentIsSaving && 'x--active'")
-      span.entity-sidebar__last-saved
-        | Last saved&nbsp;
-        react-component(
-          name="components/shared/RelativeDateTime/index.es6"
-          props="{value: data.documentUpdatedAt}"
-        )
-    button.entity-sidebar__revert.btn-link(
-      ng-if="data.isEntry && state.current === 'changes'"
-      data-test-id="discard-changed-button"
-      ui-command="state.revertToPrevious")
-      | Discard changes
-
+  react-component(
+    name="app/EntitySidebar/PublicationWidget/PublicationWidgetContainer.es6"
+    props="{emitter: emitter}"
+  )
 
   react-component(
     ng-if="data.isEntry"

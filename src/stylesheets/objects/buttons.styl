@@ -284,63 +284,17 @@ $button--large-popout-icon()
   svg
     display: inline-block
 
-.btn-action-select
+.publish-buttons-row
   display: flex
-  border-radius: 2px
 
-  &:not(&--react)
-    overflow: hidden
+  .secondary-publish-button-wrapper
+    flex-grow: 1
 
-  &__selector,
-  &__action
-    $btn-primary()
-    flex: 1 1 auto
-    transition-property: all, width, padding
-    transition-duration: 0.1s, 0.6s, 0.6s
-    border-radius: 0
+  .secondary-publish-button
+    border-top-left-radius: 0
+    border-bottom-left-radius: 0
 
-  &__action
-    $x--block()
-    border-right: none
-    overflow: hidden
-    width: 100%
-    white-space: nowrap
-
-  &__selector
-    flex-shrink: 0
-    width: 3.2rem
-    white-space: nowrap
-    overflow: hidden
-    padding-left: 0
-    padding-right: 0
-
-  &__icon
-    display: inline-block
-    margin: 0 0.4em
-
-  &__selector-label
-    display: none
-
-  &--react
-    &__action, &__selector
-      margin: 0
-    &__action
-      height: 100%
-
-
-
-
-.btn-action-select.x--no-action
-
-  .btn-action-select__action
-    width: 0
-    padding-left: 0
-    padding-right: 0
-    // This hides the border
-    margin-left: -1px
-
-  .btn-action-select__selector
-    width: 100%
-
-  .btn-action-select__selector-label
-    display: inline
+  .primary-publish-button
+    border-top-right-radius: 0
+    border-bottom-right-radius: 0
+    border-right-width: 0

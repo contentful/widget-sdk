@@ -87,6 +87,47 @@ registerDirective('cfEntitySidebar', [
           });
         });
 
+        const initializePublication = once(() => {
+          const notifyUpdate = update => {
+            $scope.emitter.emit(SidebarEventTypes.UPDATED_PUBLICATION_WIDGET, {
+              ...update,
+              commands: {
+                primary: $scope.state.primary,
+                secondary: $scope.state.secondary,
+                revertToPrevious: $scope.state.revertToPrevious
+              }
+            });
+          };
+
+          notifyUpdate({
+            status: $scope.state.current,
+            updatedAt: K.getValue($scope.otDoc.sysProperty).updatedAt
+          });
+
+          K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
+            notifyUpdate({
+              status: $scope.state.current,
+              updatedAt: sys.updatedAt
+            });
+          });
+
+          let setNotSavingTimeout;
+          K.onValueScope($scope, $scope.otDoc.state.isSaving$.skipDuplicates(), isSaving => {
+            clearTimeout(setNotSavingTimeout);
+            if (isSaving) {
+              notifyUpdate({
+                isSaving: true
+              });
+            } else {
+              setNotSavingTimeout = setTimeout(() => {
+                notifyUpdate({
+                  isSaving: false
+                });
+              }, 1000);
+            }
+          });
+        });
+
         $scope.emitter.on(SidebarEventTypes.WIDGET_REGISTERED, name => {
           switch (name) {
             case SidebarWidgetTypes.INCOMING_LINKS:
@@ -100,6 +141,9 @@ registerDirective('cfEntitySidebar', [
               break;
             case SidebarWidgetTypes.VERSIONS:
               initializeVersions();
+              break;
+            case SidebarWidgetTypes.PUBLICATION:
+              initializePublication();
               break;
           }
         });
@@ -116,26 +160,6 @@ registerDirective('cfEntitySidebar', [
         $scope.asset = null;
 
         $scope.entitySys$ = $scope.otDoc.sysProperty;
-
-        // This code is responsible for showing the saving indicator. We
-        // debounce switching the indicator off so that it is shown for
-        // at least one second.
-        let setNotSavingTimeout;
-        K.onValueScope($scope, $scope.otDoc.state.isSaving$.skipDuplicates(), isSaving => {
-          clearTimeout(setNotSavingTimeout);
-          if (isSaving) {
-            $scope.data.documentIsSaving = true;
-          } else {
-            setNotSavingTimeout = setTimeout(() => {
-              $scope.data.documentIsSaving = false;
-              $scope.$apply();
-            }, 1000);
-          }
-        });
-
-        K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
-          $scope.data.documentUpdatedAt = sys.updatedAt;
-        });
       }
     ]
   })

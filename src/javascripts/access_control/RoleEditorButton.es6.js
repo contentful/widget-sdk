@@ -2,7 +2,6 @@ import React from 'react';
 import { update, negate, identity } from 'lodash/fp';
 import PropTypes from 'prop-types';
 import {
-  IconButton,
   Dropdown,
   DropdownList,
   DropdownListItem,
@@ -33,10 +32,12 @@ export default class RoleEditorButton extends React.Component {
     const { onSave, onDuplicate, onDelete, disabled, loading, showDropdown } = this.props;
 
     return (
-      <div className="btn-action-select btn-action-select--react">
+      <div className="publish-buttons-row">
         <Button
-          extraClassNames="btn-action-select__action btn-action-select--react__action"
+          extraClassNames="primary-publish-button"
           testId="save-button"
+          buttonType="positive"
+          isFullWidth
           disabled={disabled}
           loading={loading}
           onClick={onSave}>
@@ -44,13 +45,13 @@ export default class RoleEditorButton extends React.Component {
         </Button>
         {showDropdown && (
           <Dropdown
+            extraClassNames="secondary-publish-button-wrapper"
             toggleElement={
-              <IconButton
-                label="additional-actions"
+              <Button
+                extraClassNames="secondary-publish-button"
+                indicateDropdown
                 data-test-id="additional-role-editor"
-                extraClassNames="btn-action-select__selector btn-action-select--react__selector"
-                buttonType="white"
-                iconProps={{ icon: 'ChevronDown', color: 'white' }}
+                buttonType="positive"
                 onClick={() => this.setState(update('isOpen', negate(identity)))}
               />
             }

@@ -3,5 +3,6 @@ export default {
   CONTENT_PREVIEW: 'content-preview-widget',
   TRANSLATION: 'translation-widget',
   INCOMING_LINKS: 'incoming-links-widget',
+  PUBLICATION: 'publication-widget',
   VERSIONS: 'versions-widget'
 };

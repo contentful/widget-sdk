@@ -513,7 +513,6 @@ class RoleEditor extends React.Component {
                 <div className="entity-sidebar__state-select">
                   {showTranslator && (
                     <Button
-                      extraClassNames="btn-action-select__action"
                       testId="save-button"
                       disabled={!dirty}
                       loading={saving}
