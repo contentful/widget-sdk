@@ -129,10 +129,9 @@ export default function createBridge({
   }
 
   function install(api) {
-    $scope.$watch(
-      () => $scope.fieldLocale.access.disabled,
-      isDisabled => api.send('isDisabledChanged', [isDisabled])
-    );
+    K.onValueScope($scope, $scope.fieldLocale.access$, access => {
+      api.send('isDisabledChanged', [!!access.disabled]);
+    });
 
     K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
       api.send('sysChanged', [sys]);

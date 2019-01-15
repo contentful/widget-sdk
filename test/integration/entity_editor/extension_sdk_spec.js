@@ -65,9 +65,7 @@ describe('Extension SDK', () => {
       },
       otDoc: this.doc,
       fieldLocale: {
-        access: {
-          disabled: false
-        },
+        access$: K.createMockProperty({ disabled: false }),
         errors$: K.createMockProperty(null)
       },
       fieldController: {
@@ -179,7 +177,7 @@ describe('Extension SDK', () => {
 
     describe('#onIsDisabledChanged', () => {
       when('initially disabled', function() {
-        this.scope.fieldLocale.access.disabled = true;
+        this.scope.fieldLocale.access$.set({ disabled: true });
       }).it('receives default value', function*(api) {
         const isDisabledChanged = sinon.spy();
         api.field.onIsDisabledChanged(isDisabledChanged);
@@ -187,7 +185,7 @@ describe('Extension SDK', () => {
       });
 
       when('initially enabled', function() {
-        this.scope.fieldLocale.access.disabled = true;
+        this.scope.fieldLocale.access$.set({ disabled: true });
       }).it('receives default value', function*(api) {
         const isDisabledChanged = sinon.spy();
         api.field.onIsDisabledChanged(isDisabledChanged);
@@ -199,7 +197,7 @@ describe('Extension SDK', () => {
         api.field.onIsDisabledChanged(isDisabledChanged);
         yield api.nextTick();
         isDisabledChanged.reset();
-        this.scope.fieldLocale.access.disabled = true;
+        this.scope.fieldLocale.access$.set({ disabled: true });
         yield api.nextTick();
         sinon.assert.calledOnce(isDisabledChanged);
         sinon.assert.calledWithExactly(isDisabledChanged, true);

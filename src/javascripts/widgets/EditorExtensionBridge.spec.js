@@ -13,9 +13,9 @@ describe('EditorExtensionBridge', () => {
   const makeBridge = () => {
     const stubs = {
       apply: jest.fn(),
-      watch: jest.fn(),
       sysProperty: createMockProperty({ id: 'test', initial: true }),
       changes: createMockProperty([]),
+      access: createMockProperty({ disabled: false }),
       errors: createMockProperty([]),
       setValueAt: jest.fn(val => Promise.resolve(val)),
       removeValueAt: jest.fn(() => Promise.resolve(undefined)),
@@ -29,7 +29,6 @@ describe('EditorExtensionBridge', () => {
       $rootScope: { $apply: stubs.apply },
       $scope: {
         $on: () => {},
-        $watch: stubs.watch,
         $applyAsync: () => {},
         otDoc: {
           sysProperty: stubs.sysProperty,
@@ -40,6 +39,7 @@ describe('EditorExtensionBridge', () => {
         },
         fieldController: { setInvalid: stubs.setInvalid },
         fieldLocale: {
+          access$: stubs.access,
           errors$: stubs.errors,
           setActive: stubs.setActive
         },
@@ -103,34 +103,24 @@ describe('EditorExtensionBridge', () => {
   });
 
   describe('#install()', () => {
-    it('notifies when the disabled status is changed', () => {
-      const [bridge, stubs] = makeBridge();
-      const api = makeStubbedApi();
-      bridge.install(api);
-
-      const watchCall = stubs.watch.mock.calls[0];
-      expect(typeof watchCall[0]).toBe('function');
-      expect(typeof watchCall[1]).toBe('function');
-      expect(api.send).not.toBeCalledWith('isDisabledChanged');
-
-      watchCall[1](true);
-      expect(api.send).toBeCalledWith('isDisabledChanged', [true]);
-      watchCall[1](false);
-      expect(api.send).toBeCalledWith('isDisabledChanged', [false]);
-    });
-
-    it('notifies when sys or errors are changed', () => {
+    it('notifies when access, sys or errors are changed', () => {
       const [bridge, stubs] = makeBridge();
       const api = makeStubbedApi();
       bridge.install(api);
 
       // initial values
+      expect(api.send).toBeCalledWith('isDisabledChanged', [false]);
       expect(api.send).toBeCalledWith('sysChanged', [{ id: 'test', initial: true }]);
       expect(api.send).toBeCalledWith('schemaErrorsChanged', [[]]);
 
       // changes
+      stubs.access.set({ disabled: true });
+
+      expect(api.send).toBeCalledWith('isDisabledChanged', [true]);
+
       stubs.sysProperty.set({ id: 'test', initial: false });
       expect(api.send).toBeCalledWith('sysChanged', [{ id: 'test', initial: false }]);
+
       stubs.errors.set([{ message: 'some error' }]);
       expect(api.send).toBeCalledWith('schemaErrorsChanged', [[{ message: 'some error' }]]);
     });

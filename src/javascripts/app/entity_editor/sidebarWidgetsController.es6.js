@@ -10,13 +10,7 @@ registerController('SidebarWidgetRenderController', [
   '$controller',
   'TheLocaleStore',
   ($scope, $controller, TheLocaleStore) => {
-    $scope.field = $scope.widget.field;
     $scope.locale = TheLocaleStore.getDefaultLocale();
-    $scope.fieldLocale = $controller('FieldLocaleController', {
-      $scope: $scope,
-      // TODO We should remove this dependency from the
-      // FieldLocaleController.
-      $attrs: {}
-    });
+    $scope.fieldLocale = $controller('FieldLocaleController', { $scope });
   }
 ]);
