@@ -10,6 +10,7 @@ describe('FormWidgetsController#widgets', () => {
 
     this.scope.editorContext = this.$inject('mocks/entityEditor/Context').create();
     this.scope.contentType = { getId: _.constant('ctid') };
+    this.scope.preferences = {};
 
     this.field = {
       id: 'foo',
@@ -26,10 +27,7 @@ describe('FormWidgetsController#widgets', () => {
 
     this.createController = function() {
       const $controller = this.$inject('$controller');
-      $controller('FormWidgetsController', {
-        $scope: this.scope,
-        controls: controls
-      });
+      $controller('FormWidgetsController', { $scope: this.scope, controls });
       this.$apply();
     };
   });
@@ -41,7 +39,6 @@ describe('FormWidgetsController#widgets', () => {
 
   describe('with disabled field', () => {
     beforeEach(function() {
-      this.scope.preferences = {};
       this.field.disabled = true;
       this.createController();
     });
