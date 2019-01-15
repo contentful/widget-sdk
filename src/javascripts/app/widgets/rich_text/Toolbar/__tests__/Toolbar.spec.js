@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import { List } from 'immutable';
 
 import Toolbar from '../index.es6';
 import ValidationType, {
@@ -15,9 +16,9 @@ const fakeProps = () => ({
   isDisabled: false,
   change: {
     value: {
-      blocks: [],
-      inlines: [],
-      activeMarks: [],
+      blocks: List(),
+      inlines: List(),
+      activeMarks: List(),
       selection: {}
     }
   },

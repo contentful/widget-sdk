@@ -42,7 +42,8 @@ export default class Toolbar extends React.Component {
   };
 
   state = {
-    headingMenuOpen: false
+    headingMenuOpen: false,
+    ...getValidationInfo(this.props.richTextAPI.widgetAPI.field)
   };
 
   onChange = (...args) => {
@@ -61,8 +62,7 @@ export default class Toolbar extends React.Component {
     });
 
   renderEmbeds = props => {
-    const { widgetAPI } = this.props.richTextAPI;
-    const { field } = widgetAPI;
+    const field = this.props.richTextAPI.widgetAPI.field;
 
     const amountOfEnabledEmbeds = [
       isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ENTRY),
@@ -105,31 +105,6 @@ export default class Toolbar extends React.Component {
     );
   };
 
-  getValidationInfo() {
-    const { field } = this.props.richTextAPI.widgetAPI;
-    const isAnyMarkEnabled =
-      isMarkEnabled(field, MARKS.BOLD) ||
-      isMarkEnabled(field, MARKS.ITALIC) ||
-      isMarkEnabled(field, MARKS.UNDERLINE) ||
-      isMarkEnabled(field, MARKS.CODE);
-
-    const isAnyHyperlinkEnabled =
-      isNodeTypeEnabled(field, INLINES.HYPERLINK) ||
-      isNodeTypeEnabled(field, INLINES.ASSET_HYPERLINK) ||
-      isNodeTypeEnabled(field, INLINES.ENTRY_HYPERLINK);
-
-    const isAnyListEnabled =
-      isNodeTypeEnabled(field, BLOCKS.UL_LIST) ||
-      isNodeTypeEnabled(field, BLOCKS.OL_LIST) ||
-      isNodeTypeEnabled(field, BLOCKS.QUOTE) ||
-      isNodeTypeEnabled(field, BLOCKS.HR);
-    return {
-      isAnyMarkEnabled,
-      isAnyHyperlinkEnabled,
-      isAnyListEnabled
-    };
-  }
-
   toggleHeadingMenu = event => {
     event.preventDefault();
     this.setState({
@@ -151,7 +126,8 @@ export default class Toolbar extends React.Component {
       richTextAPI
     };
     const { field } = richTextAPI.widgetAPI;
-    const { isAnyHyperlinkEnabled, isAnyListEnabled, isAnyMarkEnabled } = this.getValidationInfo();
+    const { isAnyHyperlinkEnabled, isAnyListEnabled, isAnyMarkEnabled } = this.state;
+    const currentBlockType = props.change.value.blocks.get([0, 'type']);
     return (
       <EditorToolbar extraClassNames="rich-text__toolbar" data-test-id="toolbar">
         <div className="rich-text__toolbar__formatting-options-wrapper">
@@ -160,7 +136,7 @@ export default class Toolbar extends React.Component {
             isToggleActive={true}
             isOpen={this.state.headingMenuOpen}
             onClose={this.closeHeadingMenu}
-            change={props.change}
+            currentBlockType={currentBlockType}
             disabled={props.disabled}>
             <Paragraph {...props} />
             <Visible if={isNodeTypeEnabled(field, BLOCKS.HEADING_1)}>
@@ -221,4 +197,28 @@ export default class Toolbar extends React.Component {
       </EditorToolbar>
     );
   }
+}
+
+function getValidationInfo(field) {
+  const isAnyMarkEnabled =
+    isMarkEnabled(field, MARKS.BOLD) ||
+    isMarkEnabled(field, MARKS.ITALIC) ||
+    isMarkEnabled(field, MARKS.UNDERLINE) ||
+    isMarkEnabled(field, MARKS.CODE);
+
+  const isAnyHyperlinkEnabled =
+    isNodeTypeEnabled(field, INLINES.HYPERLINK) ||
+    isNodeTypeEnabled(field, INLINES.ASSET_HYPERLINK) ||
+    isNodeTypeEnabled(field, INLINES.ENTRY_HYPERLINK);
+
+  const isAnyListEnabled =
+    isNodeTypeEnabled(field, BLOCKS.UL_LIST) ||
+    isNodeTypeEnabled(field, BLOCKS.OL_LIST) ||
+    isNodeTypeEnabled(field, BLOCKS.QUOTE) ||
+    isNodeTypeEnabled(field, BLOCKS.HR);
+  return {
+    isAnyMarkEnabled,
+    isAnyHyperlinkEnabled,
+    isAnyListEnabled
+  };
 }

@@ -5,9 +5,9 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
   change={
     Object {
       "value": Object {
-        "activeMarks": Array [],
-        "blocks": Array [],
-        "inlines": Array [],
+        "activeMarks": Immutable.List [],
+        "blocks": Immutable.List [],
+        "inlines": Immutable.List [],
         "selection": Object {},
       },
     }
@@ -45,16 +45,6 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
         className="rich-text__toolbar__formatting-options-wrapper"
       >
         <HeadingDropdown
-          change={
-            Object {
-              "value": Object {
-                "activeMarks": Array [],
-                "blocks": Array [],
-                "inlines": Array [],
-                "selection": Object {},
-              },
-            }
-          }
           disabled={false}
           isOpen={false}
           isToggleActive={true}
@@ -250,9 +240,9 @@ exports[`Toolbar renders toolbar icons 1`] = `
   change={
     Object {
       "value": Object {
-        "activeMarks": Array [],
-        "blocks": Array [],
-        "inlines": Array [],
+        "activeMarks": Immutable.List [],
+        "blocks": Immutable.List [],
+        "inlines": Immutable.List [],
         "selection": Object {},
       },
     }
@@ -281,16 +271,6 @@ exports[`Toolbar renders toolbar icons 1`] = `
         className="rich-text__toolbar__formatting-options-wrapper"
       >
         <HeadingDropdown
-          change={
-            Object {
-              "value": Object {
-                "activeMarks": Array [],
-                "blocks": Array [],
-                "inlines": Array [],
-                "selection": Object {},
-              },
-            }
-          }
           disabled={false}
           isOpen={false}
           isToggleActive={true}
@@ -448,9 +428,9 @@ exports[`Toolbar renders toolbar icons 1`] = `
             change={
               Object {
                 "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
+                  "activeMarks": Immutable.List [],
+                  "blocks": Immutable.List [],
+                  "inlines": Immutable.List [],
                   "selection": Object {},
                 },
               }
@@ -661,9 +641,9 @@ exports[`Toolbar renders toolbar icons 1`] = `
             change={
               Object {
                 "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
+                  "activeMarks": Immutable.List [],
+                  "blocks": Immutable.List [],
+                  "inlines": Immutable.List [],
                   "selection": Object {},
                 },
               }
@@ -874,9 +854,9 @@ exports[`Toolbar renders toolbar icons 1`] = `
             change={
               Object {
                 "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
+                  "activeMarks": Immutable.List [],
+                  "blocks": Immutable.List [],
+                  "inlines": Immutable.List [],
                   "selection": Object {},
                 },
               }
@@ -1087,9 +1067,9 @@ exports[`Toolbar renders toolbar icons 1`] = `
             change={
               Object {
                 "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
+                  "activeMarks": Immutable.List [],
+                  "blocks": Immutable.List [],
+                  "inlines": Immutable.List [],
                   "selection": Object {},
                 },
               }
@@ -1308,9 +1288,9 @@ exports[`Toolbar renders toolbar icons 1`] = `
             change={
               Object {
                 "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
+                  "activeMarks": Immutable.List [],
+                  "blocks": Immutable.List [],
+                  "inlines": Immutable.List [],
                   "selection": Object {},
                 },
               }
@@ -1524,9 +1504,9 @@ exports[`Toolbar renders toolbar icons 1`] = `
             change={
               Object {
                 "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
+                  "activeMarks": Immutable.List [],
+                  "blocks": Immutable.List [],
+                  "inlines": Immutable.List [],
                   "selection": Object {},
                 },
               }
@@ -1737,9 +1717,9 @@ exports[`Toolbar renders toolbar icons 1`] = `
             change={
               Object {
                 "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
+                  "activeMarks": Immutable.List [],
+                  "blocks": Immutable.List [],
+                  "inlines": Immutable.List [],
                   "selection": Object {},
                 },
               }
@@ -1950,9 +1930,9 @@ exports[`Toolbar renders toolbar icons 1`] = `
             change={
               Object {
                 "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
+                  "activeMarks": Immutable.List [],
+                  "blocks": Immutable.List [],
+                  "inlines": Immutable.List [],
                   "selection": Object {},
                 },
               }
@@ -2179,9 +2159,9 @@ exports[`Toolbar renders toolbar icons 1`] = `
             change={
               Object {
                 "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
+                  "activeMarks": Immutable.List [],
+                  "blocks": Immutable.List [],
+                  "inlines": Immutable.List [],
                   "selection": Object {},
                 },
               }
