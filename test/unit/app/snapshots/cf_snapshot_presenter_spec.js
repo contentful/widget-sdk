@@ -8,10 +8,13 @@ describe('cfSnapshotPresenter', () => {
       $provide.constant('cfWidgetApiDirective', () => {});
     });
 
-    this.prepare = (value, field = {}, template = '<some-widget />', custom = false) => {
+    this.prepare = (value, field = {}, version = 'current') => {
       const data = {
-        fieldLocale: { doc: { get: _.constant(value) } },
-        widget: { field, template, custom }
+        widget: { field: { ...field, id: 'FID-internal' } },
+        locale: { internal_code: 'DE-internal' },
+        entry: { data: { fields: { 'FID-internal': { 'DE-internal': value } } } },
+        snapshot: { snapshot: { fields: { 'FID-internal': { 'DE-internal': 'SNAPSHOT VALUE' } } } },
+        version
       };
 
       const el = this.$compile('<cf-snapshot-presenter />', data);
@@ -21,9 +24,14 @@ describe('cfSnapshotPresenter', () => {
   });
 
   describe('$scope.value', () => {
-    it('gets value from the doc', function() {
+    it('gets value from the entry', function() {
       const scope = this.prepare('test');
       expect(scope.value).toBe('test');
+    });
+
+    it('gets value from the snapshot', function() {
+      const scope = this.prepare('test', {}, 'snapshot');
+      expect(scope.value).toBe('SNAPSHOT VALUE');
     });
   });
 
@@ -53,18 +61,6 @@ describe('cfSnapshotPresenter', () => {
         });
       };
     }
-  });
-
-  describe('$scope.isCustom', () => {
-    it('is false for standard widget', function() {
-      const scope = this.prepare();
-      expect(scope.isCustom).toBe(false);
-    });
-
-    it('is true for custom widget', function() {
-      const scope = this.prepare('test', {}, '<cf-iframe-widget />', true);
-      expect(scope.isCustom).toBe(true);
-    });
   });
 
   describe('$scope.type', () => {

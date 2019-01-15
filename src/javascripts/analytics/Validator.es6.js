@@ -41,14 +41,13 @@ export const validEvents = {
     'view_loaded',
     'search_terms_migrated'
   ],
-  modelling: ['field_added', 'custom_extension_selected'],
+  modelling: ['field_added'],
   experiment: ['start', 'interaction'],
   entry_editor: [
     'state_changed',
     'disabled_fields_visibility_toggled',
     'created_with_same_ct',
     'preview_opened',
-    'custom_extension_rendered',
     'view'
   ],
   versioning: [

@@ -4,29 +4,32 @@ import { once } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import SidebarEventTypes from 'app/EntitySidebar/SidebarEventTypes.es6';
 import SidebarWidgetTypes from 'app/EntitySidebar/SidebarWidgetTypes.es6';
+import createBridge from 'widgets/EditorExtensionBridge.es6';
 
 /**
- * @description
  * Directive that renders the sidebar for entries and assets
  *
- * TODO we should use an isolated scope
- *
- * @scope.requires {object} preferences.showAuxPanel
- *   Determines whether we show the entity information
- * @scope.requires {object} state
- *   An instance of 'entityEditor/StateController'
- * @scope.requires {object} otDoc
- *   An instance of 'app/entity_editor/Document'
- * @scope.requires {object} entityInfo
- *   As provided by the entry/asset editor controller
- * @scope.requires {object} sidebarControls
- *   These probably need a lot of stuff in return
+ * TODO: ideally we should strictly isolate sidebar and editor data.
  */
 registerDirective('cfEntitySidebar', [
+  '$rootScope',
+  '$controller',
   '$state',
+  'Config.es6',
   'TheLocaleStore',
   'spaceContext',
-  ($state, TheLocaleStore, spaceContext) => ({
+  'entitySelector',
+  'analytics/Analytics.es6',
+  (
+    $rootScope,
+    $controller,
+    $state,
+    Config,
+    TheLocaleStore,
+    spaceContext,
+    entitySelector,
+    Analytics
+  ) => ({
     restrict: 'E',
     scope: true,
     template: JST.cf_entity_sidebar(),
@@ -160,6 +163,37 @@ registerDirective('cfEntitySidebar', [
         $scope.asset = null;
 
         $scope.entitySys$ = $scope.otDoc.sysProperty;
+
+        // Construct a list of legacy sidebar extensions
+        const legacyExtensions = $scope.editorData.fieldControls.sidebar.map(widget => {
+          // A fake field-locale scope to be used in the bridge:
+          const fieldLocaleScope = $scope.$new(false);
+          fieldLocaleScope.widget = widget;
+          // Legacy sidebar extensions work only with the default locale:
+          fieldLocaleScope.locale = TheLocaleStore.getDefaultLocale();
+          // There's no validity indicator for sidebar extensions.
+          // We just provide a noop for this SDK method here:
+          fieldLocaleScope.fieldController = { setInvalid: () => {} };
+          fieldLocaleScope.fieldLocale = $controller('FieldLocaleController', {
+            $scope: fieldLocaleScope
+          });
+
+          const bridge = createBridge({
+            $rootScope,
+            $scope: fieldLocaleScope,
+            spaceContext,
+            TheLocaleStore,
+            entitySelector,
+            Analytics
+          });
+
+          return { bridge, widget };
+        });
+
+        $scope.legacyExtensionsProps = {
+          extensions: legacyExtensions,
+          appDomain: `app.${Config.domain}`
+        };
       }
     ]
   })

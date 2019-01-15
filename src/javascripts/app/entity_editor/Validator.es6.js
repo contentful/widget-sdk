@@ -13,32 +13,13 @@
  *   for information on current errors
  */
 
-import { constant, noop, isEmpty, assign, get as getAtPath, isEqual } from 'lodash';
+import { isEmpty, assign, get as getAtPath, isEqual } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as Path from 'utils/Path.es6';
 import * as Schema from '@contentful/validation';
 import { getModule } from 'NgRegistry.es6';
 
 const errorMessageBuilder = getModule('errorMessageBuilder');
-
-/**
- * @ngdoc method
- * @name entityEditor/Validator#createNoop
- * @description
- * This is used by the 'SnapshotComparatorController' to mock the
- * editorContext interface to the field editors.
- *
- * @returns {entityEditor/Validator}
- */
-export function createNoop() {
-  return {
-    errors$: K.constant([]),
-    run: constant(true),
-    hasFieldError: constant(false),
-    hasFieldLocaleError: constant(false),
-    setApiResponseErrors: noop
-  };
-}
 
 /**
  * @ngdoc method

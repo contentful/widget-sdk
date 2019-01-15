@@ -52,12 +52,12 @@ cf-ui-hint.snapshot-comparator__hint(
 
 .workbench-main.x--content-full-size
   .snapshot-comparator__field(
-    ng-repeat="widget in widgets track by widget.fieldId"
-    ng-controller="SnapshotFieldController as fieldController"
+    ng-repeat="widget in widgets track by widget.field.id"
+    ng-init="locales = localesForField[widget.field.id]"
     data-field-api-name="{{widget.field.apiName}}")
     .snapshot-comparator__field-locale(
       ng-repeat="locale in locales track by locale.internal_code"
       ng-controller="SnapshotComparisonController")
 
-      +snapshot-value('snapshotDoc', 'snapshot')
-      +snapshot-value('otDoc', 'current')
+      +snapshot-value('snapshot')
+      +snapshot-value('current')

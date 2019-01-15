@@ -218,8 +218,6 @@ export default async function create($scope, entryId) {
     controls: editorData.fieldControls.form
   });
 
-  $scope.sidebarControls = editorData.fieldControls.sidebar;
-
   /**
    * Build the `entry.fields` api of the widget-sdk at one
    * place and put it on $scope so that we don't rebuild it

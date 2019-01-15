@@ -36,10 +36,7 @@
     props="{emitter: emitter}"
   )
 
-  .entity-sidebar__widget(
-    ng-repeat="widget in sidebarControls track by widget.field.id"
-    ng-controller="SidebarWidgetRenderController")
-    //- FIX(mudit): This shows the field name currently but should show widget name
-    h2.entity-sidebar__heading
-      | {{widget.field.name}}
-    cf-widget-renderer
+  react-component(
+    name="widgets/LegacySidebarExtensions.es6"
+    props="legacyExtensionsProps"
+  )

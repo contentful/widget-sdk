@@ -34,7 +34,6 @@ describe('WidgetStore', () => {
       expect(extension.name).toEqual('NAME');
       expect(extension.src).toEqual('SRC');
       expect(extension.sidebar).toEqual(true);
-      expect(extension.template).toEqual('<cf-iframe-widget />');
       expect(extension.fieldTypes).toEqual(['Assets']);
       expect(extension.parameters).toEqual([{ id: 'x' }]);
       expect(extension.installationParameters).toEqual({

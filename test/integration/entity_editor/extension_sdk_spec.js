@@ -49,6 +49,7 @@ describe('Extension SDK', () => {
     this.scope = {
       widget: {
         field,
+        custom: true,
         srcdoc:
           '<!doctype html>' +
           '<script src="/base/node_modules/contentful-ui-extensions-sdk/dist/cf-extension-api.js"></script>'
@@ -64,9 +65,7 @@ describe('Extension SDK', () => {
       },
       otDoc: this.doc,
       fieldLocale: {
-        access: {
-          disabled: false
-        },
+        access$: K.createMockProperty({ disabled: false }),
         errors$: K.createMockProperty(null)
       },
       fieldController: {
@@ -76,7 +75,7 @@ describe('Extension SDK', () => {
 
     this.setup = () => {
       return new Promise((resolve, reject) => {
-        const el = this.$compile('<cf-iframe-widget>', this.scope);
+        const el = this.$compile('<cf-widget-renderer />', this.scope);
         this.scope = el.scope();
         const iframe = el.find('iframe')[0];
         iframe.removeAttribute('sandbox');
@@ -178,7 +177,7 @@ describe('Extension SDK', () => {
 
     describe('#onIsDisabledChanged', () => {
       when('initially disabled', function() {
-        this.scope.fieldLocale.access.disabled = true;
+        this.scope.fieldLocale.access$.set({ disabled: true });
       }).it('receives default value', function*(api) {
         const isDisabledChanged = sinon.spy();
         api.field.onIsDisabledChanged(isDisabledChanged);
@@ -186,7 +185,7 @@ describe('Extension SDK', () => {
       });
 
       when('initially enabled', function() {
-        this.scope.fieldLocale.access.disabled = true;
+        this.scope.fieldLocale.access$.set({ disabled: true });
       }).it('receives default value', function*(api) {
         const isDisabledChanged = sinon.spy();
         api.field.onIsDisabledChanged(isDisabledChanged);
@@ -198,7 +197,7 @@ describe('Extension SDK', () => {
         api.field.onIsDisabledChanged(isDisabledChanged);
         yield api.nextTick();
         isDisabledChanged.reset();
-        this.scope.fieldLocale.access.disabled = true;
+        this.scope.fieldLocale.access$.set({ disabled: true });
         yield api.nextTick();
         sinon.assert.calledOnce(isDisabledChanged);
         sinon.assert.calledWithExactly(isDisabledChanged, true);

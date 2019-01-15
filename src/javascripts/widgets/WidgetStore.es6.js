@@ -46,7 +46,6 @@ function buildExtensionWidget(data) {
     name: data.extension.name,
     fieldTypes: data.extension.fieldTypes.map(toInternalFieldType),
     sidebar: data.extension.sidebar,
-    template: '<cf-iframe-widget />',
     parameters: get(data.extension, 'parameters.instance', []),
     installationParameters: {
       definitions: get(data.extension, 'parameters.installation', []),

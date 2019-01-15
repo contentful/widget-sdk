@@ -43,7 +43,6 @@ registerController('SnapshotSelectorController', [
   ($scope, spaceContext) => {
     const PER_PAGE = 20;
 
-    const otDoc = $scope.otDoc;
     const entryId = $scope.entityInfo.id;
     const snapshotsById = {};
 
@@ -64,8 +63,6 @@ registerController('SnapshotSelectorController', [
     const snapshotsFirstShown$ = $scope.showSnapshotSelector$.filter(val => val).take(1);
 
     K.onValueScope($scope, snapshotsFirstShown$, load);
-
-    const entrySys = K.getValue(otDoc.sysProperty);
 
     function isActive(snapshot) {
       return $scope.snapshot.sys.id === snapshot.sys.id;
@@ -90,7 +87,10 @@ registerController('SnapshotSelectorController', [
         .getEntrySnapshots(entryId, query)
         .then(res => res.items)
         .then(addUnique)
-        .then(snapshots => snapshotDecorator.withCurrent(entrySys, snapshots))
+        .then(snapshots => {
+          const entrySys = _.get($scope, ['entry', 'data', 'sys'], {});
+          return snapshotDecorator.withCurrent(entrySys, snapshots);
+        })
         .then(snapshots => snapshotDecorator.withAuthorName(spaceContext, snapshots))
         .then(snapshots => {
           $scope.snapshots = $scope.snapshots.concat(snapshots);

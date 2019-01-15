@@ -2,7 +2,6 @@ import { registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { Notification } from '@contentful/forma-36-react-components';
-import * as Focus from 'app/entity_editor/Focus.es6';
 import * as versionPicker from 'app/snapshots/VersionPicker.es6';
 
 /**
@@ -28,24 +27,20 @@ registerController('SnapshotComparatorController', [
   '$state',
   '$stateParams',
   'spaceContext',
-  'SnapshotComparatorController/snapshotDoc',
-  'EntityEditor/DataFields',
   'data/Entries',
   'command',
   'analyticsEvents/versioning',
-  'app/entity_editor/Validator.es6',
+  'TheLocaleStore',
   (
     $scope,
     $q,
     $state,
     $stateParams,
     spaceContext,
-    SnapshotDoc,
-    DataFields,
     Entries,
     Command,
     trackVersioning,
-    Validator
+    TheLocaleStore
   ) => {
     $scope.versionPicker = versionPicker.create();
     $scope.snapshotCount = $stateParams.snapshotCount;
@@ -54,11 +49,13 @@ registerController('SnapshotComparatorController', [
     $scope.context.title = spaceContext.entryTitle($scope.entry);
     $scope.context.requestLeaveConfirmation = trackVersioning.trackableConfirmator(save);
 
-    $scope.editorContext = {
-      validator: Validator.createNoop(),
-      entityInfo: $scope.entityInfo,
-      focus: Focus.create()
-    };
+    $scope.localesForField = $scope.widgets.reduce((acc, { field }) => {
+      const fieldLocales = field.localized
+        ? TheLocaleStore.getPrivateLocales()
+        : [TheLocaleStore.getDefaultLocale()];
+
+      return { ...acc, [field.id]: fieldLocales.filter(TheLocaleStore.isLocaleActive) };
+    }, {});
 
     $scope.$watch(
       () => $scope.versionPicker.getPathsToRestore().length > 0,
@@ -66,9 +63,6 @@ registerController('SnapshotComparatorController', [
         $scope.context.dirty = isDirty;
       }
     );
-
-    const ctData = $scope.contentType.data;
-    const snapshotData = $scope.snapshot.snapshot || {};
 
     let isShowingSnapshotSelector = false;
     const showSnapshotSelectorBus = K.createPropertyBus(isShowingSnapshotSelector, $scope);
@@ -81,9 +75,6 @@ registerController('SnapshotComparatorController', [
     $scope.showSnapshotSelector$ = showSnapshotSelectorBus.property;
 
     $scope.showOnlyDifferences = false;
-    $scope.otDoc = SnapshotDoc.create(_.get($scope, 'entry.data', {}));
-    $scope.snapshotDoc = SnapshotDoc.create(snapshotData);
-    $scope.fields = DataFields.create(ctData.fields, $scope.otDoc);
 
     $scope.goToSnapshot = goToSnapshot;
     $scope.close = close;
@@ -129,7 +120,8 @@ registerController('SnapshotComparatorController', [
     }
 
     function prepareRestoredEntry() {
-      const snapshot = Entries.internalToExternal(snapshotData, ctData);
+      const ctData = $scope.contentType.data || {};
+      const snapshot = Entries.internalToExternal($scope.snapshot.snapshot || {}, ctData);
       const result = Entries.internalToExternal($scope.entry.data, ctData);
 
       $scope.versionPicker.getPathsToRestore().forEach(path => {
@@ -152,38 +144,23 @@ registerController('SnapshotComparatorController', [
   }
 ]);
 
-registerController('SnapshotFieldController', [
-  '$scope',
-  'TheLocaleStore',
-  function($scope, localeStore) {
-    const field = $scope.widget.field;
-    const locales = field.localized
-      ? localeStore.getPrivateLocales()
-      : [localeStore.getDefaultLocale()];
-
-    $scope.field = field;
-    $scope.locales = _.filter(locales, localeStore.isLocaleActive);
-
-    $scope.state = { registerUnpublishedReferencesWarning: _.constant(_.noop) };
-
-    this.setInvalid = _.noop;
-  }
-]);
-
 registerController('SnapshotComparisonController', [
   '$scope',
-  $scope => {
-    const field = $scope.field;
+  'access_control/EntityPermissions.es6',
+  ($scope, Permissions) => {
+    const field = $scope.widget.field;
     const locale = $scope.locale;
     const fieldPath = ['fields', field.id, locale.internal_code];
 
-    const canEdit = $scope.otDoc.permissions.canEditFieldLocale(field.apiName, locale.code);
+    const canEdit = Permissions.create(
+      _.get($scope, ['entry', 'data', 'sys'], {})
+    ).canEditFieldLocale(field.apiName, locale.code);
 
-    const currentVersion = $scope.otDoc.getValueAt(fieldPath);
-    const snapshotVersion = $scope.snapshotDoc.getValueAt(fieldPath);
+    const currentVersion = _.get($scope.entry, ['data'].concat(fieldPath));
+    const snapshotVersion = _.get($scope.snapshot, ['snapshot'].concat(fieldPath));
 
     $scope.isDifferent = !_.isEqual(currentVersion, snapshotVersion);
-    $scope.isDisabled = $scope.field.disabled || !canEdit;
+    $scope.isDisabled = field.disabled || !canEdit;
     $scope.canRestore = $scope.isDifferent && !$scope.isDisabled;
 
     $scope.select = $scope.isDifferent ? select : _.noop;

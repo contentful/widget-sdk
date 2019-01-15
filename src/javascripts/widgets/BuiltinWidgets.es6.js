@@ -255,7 +255,13 @@ export function create() {
     fieldTypes: ['Symbol'],
     name: 'Slug',
     icon: 'slug',
-    template: '<cf-slug-editor />'
+    template: '<cf-slug-editor />',
+    // Slug editor needs to be rendered even if it's disabled.
+    // It generates slugs automatically out of the title.
+    // Right now this is the only "background" widget: when
+    // disabled, it'll be rendered (but hidden) so it still
+    // operates in the background.
+    isBackground: true
   });
 
   return widgets;

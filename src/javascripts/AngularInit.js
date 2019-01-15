@@ -62,7 +62,6 @@ angular
       ngRequire('account/cfAccountViewDirective.es6');
       ngRequire('account/cfNewOrganizationMembership.es6');
       ngRequire('analytics/analyticsConsole.es6');
-      ngRequire('analytics/events/customWidgets.es6');
       ngRequire('analytics/events/persistentNotification.es6');
       ngRequire('navigation/confirmLeaveEditor.es6');
       ngRequire('analytics/events/versioning.es6');
@@ -106,7 +105,6 @@ angular
       ngRequire('app/entity_editor/entityHelpers.es6');
       ngRequire('app/entity_editor/fieldLocaleController.es6');
       ngRequire('app/entity_editor/presenceHub.es6');
-      ngRequire('app/entity_editor/sidebarWidgetsController.es6');
       ngRequire('navigation/stateChangeHandlers.es6');
       ngRequire('navigation/closeState.es6');
       ngRequire('app/entity_editor/stateController.es6');
@@ -128,7 +126,6 @@ angular
       ngRequire('app/widgets/datetime/data.es6');
       ngRequire('app/snapshots/cfSnapshotPresenter.es6');
       ngRequire('app/snapshots/cfSnapshotSelector.es6');
-      ngRequire('app/snapshots/snapshotDoc.es6');
       ngRequire('app/snapshots/snapshotComparator.es6');
       ngRequire('app/widgets/selectionController.es6');
       ngRequire('app/widgets/cfBooleanEditorDirective.es6');
@@ -281,6 +278,5 @@ angular
       ngRequire('ui/onScrollDirective.es6');
       ngRequire('ui/setScrollDirective.es6');
       ngRequire('ui/sortable.es6');
-      ngRequire('widgets/cfIframeWidgetDirective.es6');
     }
   ]);

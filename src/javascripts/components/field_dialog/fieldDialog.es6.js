@@ -57,15 +57,7 @@ registerController('FieldDialogController', [
   'spaceContext',
   'fieldDecorator',
   'validationDecorator',
-  'analyticsEvents/customWidgets',
-  function FieldDialogController(
-    $scope,
-    $timeout,
-    spaceContext,
-    fieldDecorator,
-    validations,
-    trackCustomWidgets
-  ) {
+  function FieldDialogController($scope, $timeout, spaceContext, fieldDecorator, validations) {
     // TODO: Remove this when there are no more API references to the legacy
     // `StructuredText` field type.
     const RICH_TEXT_FIELD_TYPES = ['RichText', 'StructuredText'];
@@ -84,8 +76,6 @@ registerController('FieldDialogController', [
     }
 
     $scope.currentTitleField = getTitleField();
-
-    const initialWidgetId = $scope.widget.widgetId;
 
     $scope.richTextOptions = getInitialRichTextOptions();
     $scope.onRichTextOptionsChange = options => {
@@ -191,10 +181,6 @@ registerController('FieldDialogController', [
         fieldId: $scope.field.apiName,
         settings: values
       });
-
-      if (selectedWidgetId !== initialWidgetId) {
-        trackCustomWidgets.selected($scope.widget, $scope.field, $scope.contentType);
-      }
 
       dialog.confirm();
     };
