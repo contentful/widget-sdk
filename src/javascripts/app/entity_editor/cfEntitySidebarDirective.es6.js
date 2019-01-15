@@ -166,10 +166,14 @@ registerDirective('cfEntitySidebar', [
 
         // Construct a list of legacy sidebar extensions
         const legacyExtensions = $scope.editorData.fieldControls.sidebar.map(widget => {
-          // A fake field-locale scope to be used in the bridge
+          // A fake field-locale scope to be used in the bridge:
           const fieldLocaleScope = $scope.$new(false);
           fieldLocaleScope.widget = widget;
+          // Legacy sidebar extensions work only with the default locale:
           fieldLocaleScope.locale = TheLocaleStore.getDefaultLocale();
+          // There's no validity indicator for sidebar extensions.
+          // We just provide a noop for this SDK method here:
+          fieldLocaleScope.fieldController = { setInvalid: () => {} };
           fieldLocaleScope.fieldLocale = $controller('FieldLocaleController', {
             $scope: fieldLocaleScope
           });
