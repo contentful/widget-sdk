@@ -9,6 +9,12 @@ function createMockProperty(initial) {
   return property;
 }
 
+jest.mock('./ExtensionDialogs.es6', () => ({
+  openAlert: jest.fn(() => Promise.resolve('ALERT RESULT')),
+  openConfirm: jest.fn(() => Promise.resolve('CONFIRM RESULT')),
+  openPrompt: jest.fn(() => Promise.resolve('PROMPT RESULT'))
+}));
+
 describe('EditorExtensionBridge', () => {
   const makeBridge = () => {
     const stubs = {
@@ -182,7 +188,7 @@ describe('EditorExtensionBridge', () => {
       }
     });
 
-    it('registers dialog handlers', async () => {
+    it('registers entity selector dialog handler', async () => {
       const [bridge, stubs] = makeBridge();
       const api = makeStubbedApi();
       bridge.install(api);
@@ -195,6 +201,31 @@ describe('EditorExtensionBridge', () => {
       const result = await openDialog('entitySelector', { opts: true });
       expect(stubs.openFromExtension).toBeCalledWith({ opts: true });
       expect(result).toBe('DIALOG RESULT');
+    });
+
+    it('registers simple dialog handlers', async () => {
+      const [bridge] = makeBridge();
+      const api = makeStubbedApi();
+      bridge.install(api);
+
+      const registerCall = api.registerHandler.mock.calls[0];
+      expect(registerCall[0]).toBe('openDialog');
+      const openDialog = registerCall[1];
+      expect(typeof openDialog).toBe('function');
+
+      const scenarios = [
+        ['alert', 'openAlert'],
+        ['confirm', 'openConfirm'],
+        ['prompt', 'openPrompt']
+      ].map(async ([type, openMethod]) => {
+        const result = await openDialog(type, { opts: true });
+        const dialogs = jest.requireMock('./ExtensionDialogs.es6');
+        expect(dialogs[openMethod]).toBeCalledTimes(1);
+        expect(dialogs[openMethod]).toBeCalledWith({ opts: true });
+        expect(result).toBe(`${type.toUpperCase()} RESULT`);
+      });
+
+      await Promise.all(scenarios);
     });
 
     it('registers space method handlers', async () => {
