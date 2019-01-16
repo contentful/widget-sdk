@@ -3,6 +3,7 @@ import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import navBar from 'navigation/templates/NavBar.es6';
 import { isOwner } from 'services/OrganizationRoles.es6';
+import { SSO_SELF_CONFIG_FLAG } from 'featureFlags.es6';
 
 /**
  * @ngdoc directive
@@ -37,6 +38,10 @@ registerDirective('cfOrganizationNav', () => {
         // Set feature flag for Teams
         LD.getCurrentVariation('feature-bv-11-2018-teams').then(function(variation) {
           nav.teamsEnabled = variation;
+        });
+
+        LD.getCurrentVariation(SSO_SELF_CONFIG_FLAG).then(ssoEnabled => {
+          nav.ssoEnabled = ssoEnabled;
         });
 
         function updateNav() {
@@ -121,6 +126,15 @@ registerDirective('cfOrganizationNav', () => {
         inheritUrlParams: false,
         icon: 'nav-organization-users',
         dataViewType: 'organization-teams'
+      },
+      {
+        if: 'nav.pricingVersion === "pricing_version_2" && nav.ssoEnabled',
+        title: 'SSO',
+        sref: 'account.organizations.sso({orgId: nav.orgId})',
+        rootSref: 'account.organizations.sso',
+        inheritUrlParams: false,
+        // icon: 'nav-organization-sso',
+        dataViewType: 'organization-sso'
       },
       {
         if: 'nav.pricingVersion == "pricing_version_1"',

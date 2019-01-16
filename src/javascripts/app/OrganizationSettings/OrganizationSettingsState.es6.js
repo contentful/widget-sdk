@@ -6,6 +6,7 @@ import teamsState from './Teams/TeamsState.es6';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState.es6';
 import userInvitationsState from './UserInvitations/UserInvitationsList/UserInvitationsListRoutingState.es6';
 import userInvitationDetailState from './UserInvitations/UserInvitationDetail/UserInvitationDetailRoutingState.es6';
+import ssoRoutingState from './SSO/SSOSetupRoutingState.es6';
 import gatekeeperStates from './OrganizationSettingsGatekeeperStates.es6';
 
 const usersAndInvitationsState = Base({
@@ -37,6 +38,7 @@ export default Base({
     usersAndInvitationsState,
     subscriptionState,
     teamsState,
+    ssoRoutingState,
     ...gatekeeperStates
   ]
 });
