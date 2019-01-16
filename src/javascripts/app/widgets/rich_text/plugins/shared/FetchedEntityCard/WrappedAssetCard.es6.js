@@ -131,7 +131,7 @@ class WrappedAssetCard extends React.Component {
         extraClassNames={extraClassNames}
         selected={selected}
         status={entityStatus}
-        src={entityFile && entityFile.url}
+        src={entityFile && `${entityFile.url}?h=${300}`}
         isLoading={isLoading}
         dropdownListElements={this.renderAssetActions(entityFile)}
       />
