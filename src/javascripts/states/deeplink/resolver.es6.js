@@ -130,7 +130,6 @@ function makeSpaceScopedPathResolver({ spaceScopedPath }) {
     runTask(function*() {
       const { space, spaceId } = yield* getSpaceInfo();
       yield spaceContext.resetWithSpace(space);
-
       return {
         path: spaceScopedPath,
         params: { spaceId }
