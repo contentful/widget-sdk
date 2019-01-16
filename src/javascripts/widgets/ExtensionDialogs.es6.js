@@ -74,7 +74,10 @@ export async function openPrompt(options) {
   });
 }
 
-//
+// Options come directly from UI Extensions (3rd-party code).
+// They are later used for rendering in the main Web App window.
+// For this reason we need to validate them strictly as we do
+// here. PropTypes wouldn't cut a deal.
 function validateOptions(options, config = {}) {
   if (!isPlainObject(options)) {
     throw new Error('No options priovided.');
