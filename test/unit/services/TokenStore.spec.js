@@ -88,7 +88,7 @@ describe('Token store service', () => {
     });
   });
 
-  describe('#getSpaces()', () => {
+  describe('#getSpacesByOrgId()', () => {
     it('returns promise resolving to spaces list', function*() {
       yield this.refresh(this.spaces[0], this.spaces[1]);
       const spaces = yield this.tokenStore.getSpaces();

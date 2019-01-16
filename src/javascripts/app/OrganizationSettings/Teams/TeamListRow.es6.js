@@ -22,7 +22,8 @@ export default connect(
     static propTypes = {
       team: TeamPropType.isRequired,
       orgId: PropTypes.string.isRequired,
-      removeTeam: PropTypes.func.isRequired
+      removeTeam: PropTypes.func.isRequired,
+      readOnlyPermission: PropTypes.bool.isRequired
     };
 
     state = {
@@ -30,7 +31,7 @@ export default connect(
     };
 
     render() {
-      const { team, orgId, removeTeam } = this.props;
+      const { team, orgId, removeTeam, readOnlyPermission } = this.props;
       const { showTeamDialog } = this.state;
 
       return (
@@ -50,25 +51,29 @@ export default connect(
               </span>
             )}
           </TableCell>
-          <TableCell>{team.description}</TableCell>
-          <TableCell align="right">
-            <div className="membership-list__item__menu">
-              <Button
-                buttonType="muted"
-                size="small"
-                onClick={() => removeTeam(get(team, 'sys.id'))}
-                extraClassNames="membership-list__item__menu__button">
-                Remove
-              </Button>
-              <Button
-                buttonType="muted"
-                size="small"
-                onClick={() => this.setState({ showTeamDialog: true })}
-                extraClassNames="membership-list__item__menu__button">
-                Edit
-              </Button>
-            </div>
+          <TableCell>
+            <span className="team-details-row_description">{team.description}</span>
           </TableCell>
+          {!readOnlyPermission && (
+            <TableCell align="right">
+              <div className="membership-list__item__menu">
+                <Button
+                  buttonType="muted"
+                  size="small"
+                  onClick={() => removeTeam(get(team, 'sys.id'))}
+                  extraClassNames="membership-list__item__menu__button">
+                  Remove
+                </Button>
+                <Button
+                  buttonType="muted"
+                  size="small"
+                  onClick={() => this.setState({ showTeamDialog: true })}
+                  extraClassNames="membership-list__item__menu__button">
+                  Edit
+                </Button>
+              </div>
+            </TableCell>
+          )}
           <TeamDialog
             isShown={showTeamDialog}
             onClose={() => this.setState({ showTeamDialog: false })}

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
-import { Button } from '@contentful/forma-36-react-components';
+import { Button, Tooltip } from '@contentful/forma-36-react-components';
 
 import { Team as TeamPropType, User as UserPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { getTeams, getCurrentTeam } from 'redux/selectors/teams.es6';
@@ -14,6 +14,20 @@ import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
 
 import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
 import TeamDialog from './TeamDialog.es6';
+
+const EditButton = ({ onClick }) => (
+  <Button size="small" buttonType="muted" disabled={!onClick} onClick={onClick}>
+    Edit team details
+  </Button>
+);
+EditButton.propTypes = { onClick: PropTypes.func };
+
+const DeleteButton = ({ onClick }) => (
+  <Button size="small" buttonType="negative" disabled={!onClick} onClick={onClick}>
+    Delete team
+  </Button>
+);
+DeleteButton.propTypes = { onClick: PropTypes.func };
 
 export default connect(
   state => ({
@@ -29,7 +43,8 @@ export default connect(
       team: TeamPropType,
       users: PropTypes.objectOf(UserPropType),
       goBack: PropTypes.func.isRequired,
-      removeTeam: PropTypes.func.isRequired
+      removeTeam: PropTypes.func.isRequired,
+      readOnlyPermission: PropTypes.bool.isRequired
     };
 
     state = {
@@ -37,7 +52,7 @@ export default connect(
     };
 
     render() {
-      const { team, goBack, removeTeam } = this.props;
+      const { team, goBack, removeTeam, readOnlyPermission } = this.props;
       const { showTeamDialog } = this.state;
       const creator = team && team.sys.createdBy;
 
@@ -74,12 +89,15 @@ export default connect(
                           }, [])}
                         </div>
                       )}
-                      <Button
-                        size="small"
-                        buttonType="muted"
-                        onClick={() => this.setState({ showTeamDialog: true })}>
-                        Edit team details
-                      </Button>
+                      {readOnlyPermission ? (
+                        <Tooltip
+                          place="right"
+                          content="You don't have permission to create or change teams">
+                          <EditButton />
+                        </Tooltip>
+                      ) : (
+                        <EditButton onClick={() => this.setState({ showTeamDialog: true })} />
+                      )}
                     </div>
                   </section>
                   <section className="user-details__profile-section">
@@ -90,15 +108,18 @@ export default connect(
                       <dd>{getUserName(creator)}</dd>
                     </dl>
                   </section>
-                  <Button
-                    size="small"
-                    buttonType="negative"
-                    onClick={() => removeTeam(team.sys.id)}>
-                    Delete team
-                  </Button>
+                  {readOnlyPermission ? (
+                    <Tooltip
+                      place="right"
+                      content="You don't have permission to create or change teams">
+                      <DeleteButton />
+                    </Tooltip>
+                  ) : (
+                    <DeleteButton onClick={() => removeTeam(team.sys.id)} />
+                  )}
                 </div>
                 <div className="user-details__content">
-                  <TeamMemberships />
+                  <TeamMemberships readOnlyPermission={readOnlyPermission} />
                 </div>
               </div>
             ) : (

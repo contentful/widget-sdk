@@ -6,6 +6,7 @@ import { getPath } from 'redux/selectors/location.es6';
 import TeamList from './TeamList.es6';
 import TeamDetails from './TeamDetails.es6';
 import { isLoadingMissingDatasets } from 'redux/selectors/datasets.es6';
+import { hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 
 export default connect(state => {
   const path = getPath(state);
@@ -13,7 +14,7 @@ export default connect(state => {
     showList: ROUTES.organization.children.teams.test(path) !== null,
     showDetails: ROUTES.organization.children.teams.children.team.test(path) !== null,
     isLoading: isLoadingMissingDatasets(state),
-    modalShown: null
+    readOnlyPermission: hasReadOnlyPermission(state)
   };
 })(
   class TeamPage extends React.Component {
@@ -21,8 +22,8 @@ export default connect(state => {
       showList: PropTypes.bool.isRequired,
       showDetails: PropTypes.bool.isRequired,
       isLoading: PropTypes.bool.isRequired,
-      modalShown: PropTypes.string,
-      onReady: PropTypes.func.isRequired
+      onReady: PropTypes.func.isRequired,
+      readOnlyPermission: PropTypes.bool.isRequired
     };
 
     componentDidMount() {
@@ -38,15 +39,15 @@ export default connect(state => {
     }
 
     render() {
-      const { showList, showDetails, isLoading } = this.props;
+      const { showList, showDetails, isLoading, readOnlyPermission } = this.props;
       if (isLoading) {
         return null;
       }
       if (showList) {
-        return <TeamList />;
+        return <TeamList readOnlyPermission={readOnlyPermission} />;
       }
       if (showDetails) {
-        return <TeamDetails />;
+        return <TeamDetails readOnlyPermission={readOnlyPermission} />;
       }
       return '404 not found';
     }

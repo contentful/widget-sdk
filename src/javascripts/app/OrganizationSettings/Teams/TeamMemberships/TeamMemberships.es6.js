@@ -8,7 +8,8 @@ import {
   TableCell,
   TableBody,
   TableRow,
-  Button
+  Button,
+  Tooltip
 } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder.es6';
 import getCurrentTeamMembershipList from 'redux/selectors/getCurrentTeamMembershipList.es6';
@@ -20,12 +21,13 @@ import TeamMembershipRowPlaceholder from './TeamMembershipRowPlaceholder.es6';
 
 class AddTeamMemberButton extends React.Component {
   static propTypes = {
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func
   };
 
   render() {
+    const { onClick } = this.props;
     return (
-      <Button size="small" buttonType="primary" onClick={this.props.onClick}>
+      <Button size="small" buttonType="primary" disabled={!onClick} onClick={onClick}>
         Add a team member
       </Button>
     );
@@ -39,7 +41,8 @@ export default connect(state => ({
   class TeamMemberships extends React.Component {
     static propTypes = {
       memberships: PropTypes.arrayOf(TeamMembershiPropType),
-      teamName: PropTypes.string
+      teamName: PropTypes.string,
+      readOnlyPermission: PropTypes.bool
     };
 
     state = {
@@ -51,7 +54,7 @@ export default connect(state => ({
     };
 
     render() {
-      const { memberships, teamName } = this.props;
+      const { memberships, teamName, readOnlyPermission } = this.props;
       const { showingForm } = this.state;
       const empty = memberships.length === 0 && !showingForm;
       return (
@@ -60,9 +63,17 @@ export default connect(state => ({
           <header
             style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <h3 style={{ marginBottom: 30 }}>Team Members</h3>
-            {!showingForm && !empty && <AddTeamMemberButton onClick={this.toggleForm} />}
+            {!showingForm &&
+              !empty &&
+              (readOnlyPermission ? (
+                <Tooltip place="left" content="You don't have permission to create or change teams">
+                  <AddTeamMemberButton disabled />
+                </Tooltip>
+              ) : (
+                <AddTeamMemberButton onClick={this.toggleForm} />
+              ))}
           </header>
-          {!empty ? (
+          {!empty && (
             <Table>
               <TableHead>
                 <TableRow>
@@ -78,16 +89,27 @@ export default connect(state => ({
                   membership.sys.id === 'placeholder' ? (
                     <TeamMembershipRowPlaceholder key={membership.sys.id} />
                   ) : (
-                    <TeamMembershipRow membership={membership} key={membership.sys.id} />
+                    <TeamMembershipRow
+                      membership={membership}
+                      key={membership.sys.id}
+                      readOnlyPermission={readOnlyPermission}
+                    />
                   )
                 )}
               </TableBody>
             </Table>
-          ) : (
+          )}
+          {empty && !readOnlyPermission && (
             <Placeholder
               title={`Team ${teamName} has no members 🐚`}
               text="They’re not gonna magically appear."
               button={<AddTeamMemberButton onClick={this.toggleForm} />}
+            />
+          )}
+          {empty && readOnlyPermission && (
+            <Placeholder
+              title={`Team ${teamName} has no members 🐚`}
+              text="You don't have permission to add members"
             />
           )}
         </React.Fragment>

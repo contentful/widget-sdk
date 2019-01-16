@@ -1,6 +1,7 @@
 import { get, pickBy, find, defaultTo, flow } from 'lodash/fp';
 import { getPath } from './location.es6';
 import ROUTES from '../routes.es6';
+import getSpacesByOrgId from './getSpacesByOrgId.es6';
 
 export default state => {
   const path = getPath(state);
@@ -13,14 +14,9 @@ export default state => {
     if (!spaceId) {
       return null;
     }
-    const spacesByOrgId = get('token.spaces', state);
-    if (!spacesByOrgId) {
-      return null;
-    }
     return flow(
-      get('token.spaces'),
+      getSpacesByOrgId,
       defaultTo({}),
-      // token.spaces is an object with orgIds as keys and an array of spaces as value
       pickBy(find({ sys: { id: spaceId } })),
       Object.keys,
       get(0),

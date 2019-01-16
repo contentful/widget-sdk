@@ -9,7 +9,8 @@ import {
   TableRow,
   TableHead,
   TableBody,
-  TableCell
+  TableCell,
+  Tooltip
 } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder.es6';
 import { getTeamListWithOptimistic } from 'redux/selectors/teams.es6';
@@ -30,7 +31,8 @@ export default connect(
   class TeamList extends React.Component {
     static propTypes = {
       teams: PropTypes.arrayOf(TeamPropType).isRequired,
-      submitNewTeam: PropTypes.func.isRequired
+      submitNewTeam: PropTypes.func.isRequired,
+      readOnlyPermission: PropTypes.bool.isRequired
     };
 
     state = {
@@ -38,7 +40,7 @@ export default connect(
     };
 
     render() {
-      const { teams } = this.props;
+      const { teams, readOnlyPermission } = this.props;
       const { showTeamDialog } = this.state;
 
       return (
@@ -49,13 +51,19 @@ export default connect(
             </Workbench.Header.Left>
             <Workbench.Header.Actions>
               {`${pluralize('teams', teams.length, true)} in your organization`}
-              <Button onClick={() => this.setState({ showTeamDialog: true })}>New team</Button>
+              {readOnlyPermission ? (
+                <Tooltip place="left" content="You don't have permission to create or change teams">
+                  <Button disabled>New team</Button>
+                </Tooltip>
+              ) : (
+                <Button onClick={() => this.setState({ showTeamDialog: true })}>New team</Button>
+              )}
             </Workbench.Header.Actions>
           </Workbench.Header>
           <Workbench.Content>
             <section style={{ padding: '1em 2em 2em' }}>
               <ExperimentalFeatureNote />
-              {teams.length > 0 ? (
+              {teams.length > 0 && (
                 <Table data-test-id="organization-teams-page">
                   <TableHead>
                     <TableRow data-test-id="team-details-row">
@@ -68,11 +76,16 @@ export default connect(
                   </TableHead>
                   <TableBody>
                     {teams.map(team => (
-                      <TeamListRow team={team} key={team.sys.id} />
+                      <TeamListRow
+                        team={team}
+                        key={team.sys.id}
+                        readOnlyPermission={readOnlyPermission}
+                      />
                     ))}
                   </TableBody>
                 </Table>
-              ) : (
+              )}
+              {teams.length === 0 && !readOnlyPermission && (
                 <Placeholder
                   title="Increased user visibility with teams"
                   text="Everyone in a team can see other members of that team."
@@ -84,6 +97,12 @@ export default connect(
                       New team
                     </Button>
                   }
+                />
+              )}
+              {teams.length === 0 && readOnlyPermission && (
+                <Placeholder
+                  title="Increased user visibility with teams"
+                  text="There are no teams and you don't have permission to create new teams"
                 />
               )}
             </section>

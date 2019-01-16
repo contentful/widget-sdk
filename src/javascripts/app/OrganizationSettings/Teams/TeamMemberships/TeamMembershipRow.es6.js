@@ -17,11 +17,12 @@ export default connect(
   class TeamMembershipRow extends React.Component {
     static propTypes = {
       membership: TeamMembershipPropType.isRequired,
-      removeMembership: PropTypes.func.isRequired
+      removeMembership: PropTypes.func.isRequired,
+      readOnlyPermission: PropTypes.bool.isRequired
     };
 
     render() {
-      const { removeMembership } = this.props;
+      const { removeMembership, readOnlyPermission } = this.props;
       const {
         sys: { user, createdAt, createdBy }
       } = this.props.membership;
@@ -33,17 +34,19 @@ export default connect(
           </TableCell>
           <TableCell>{moment(createdAt).format('MMMM DD, YYYY')}</TableCell>
           <TableCell>{getUserName(createdBy)}</TableCell>
-          <TableCell align="right">
-            <div className="membership-list__item__menu">
-              <Button
-                buttonType="muted"
-                size="small"
-                onClick={removeMembership}
-                extraClassNames="membership-list__item__menu__button">
-                Remove
-              </Button>
-            </div>
-          </TableCell>
+          {!readOnlyPermission && (
+            <TableCell align="right">
+              <div className="membership-list__item__menu">
+                <Button
+                  buttonType="muted"
+                  size="small"
+                  onClick={removeMembership}
+                  extraClassNames="membership-list__item__menu__button">
+                  Remove
+                </Button>
+              </div>
+            </TableCell>
+          )}
         </TableRow>
       );
     }

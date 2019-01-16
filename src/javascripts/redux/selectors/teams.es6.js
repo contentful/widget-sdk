@@ -4,6 +4,7 @@ import { getDatasets } from './datasets.es6';
 import ROUTES from '../routes.es6';
 import { TEAMS } from '../dataSets.es6';
 import getOptimistic from './getOptimistic.es6';
+import getOrgRole from './getOrgRole.es6';
 
 export const getTeams = flow(
   getDatasets,
@@ -26,3 +27,5 @@ export const getCurrentTeam = flow(
   ROUTES.organization.children.teams.children.team.test,
   get('teamId')
 );
+
+export const hasReadOnlyPermission = state => !['owner', 'admin'].includes(getOrgRole(state));
