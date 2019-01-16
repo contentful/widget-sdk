@@ -243,7 +243,6 @@ angular
       ngRequire('navigation/spaceNavBarDirective.es6');
       ngRequire('search/EntitySelector/entitySelectorController.es6');
       ngRequire('search/EntitySelector/entitySelectorDirective.es6');
-      ngRequire('search/cachedParser.es6');
       ngRequire('services/contentfulClient.es6');
       ngRequire('services/exceptionHandler.es6');
       ngRequire('services/hints.es6');
