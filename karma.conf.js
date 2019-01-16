@@ -51,7 +51,9 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/**/*.js': ['babelTest', 'sourcemap'],
+      'test/helpers/**/*.js': ['babelTest', 'sourcemap'],
+      'test/integration/**/*.js': ['babelTest', 'sourcemap'],
+      'test/unit/**/*.js': ['babelTest', 'sourcemap'],
       'public/app/*.js': ['sourcemap']
     },
 
@@ -63,17 +65,16 @@ module.exports = function(config) {
           getModuleId: stripRoot,
           babelrc: false,
           sourceMap: 'inline',
-          ignore: ['test/prelude.js', 'test/system-config.js'],
-          presets: ['react'],
+          presets: ['@babel/env', '@babel/react'],
           plugins: [
             [
-              'transform-es2015-modules-systemjs',
+              '@babel/transform-modules-systemjs',
               {
                 systemGlobal: 'SystemTest'
               }
             ],
-            'transform-object-rest-spread',
-            'transform-class-properties'
+            '@babel/proposal-object-rest-spread',
+            '@babel/proposal-class-properties'
           ]
         },
         sourceFileName: makeSourceFileName
@@ -119,9 +120,8 @@ module.exports = function(config) {
 };
 
 // Test file patterns common to the karma config and the development config
-var testFiles = (module.exports.testFiles = [
+const testFiles = (module.exports.testFiles = [
   'node_modules/systemjs/dist/system.src.js',
-  'test/system-config.js',
   'test/prelude.js',
 
   'test/helpers/**/*.js',

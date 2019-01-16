@@ -1,3 +1,0 @@
-/* global SystemJS */
-
-SystemJS.config({});

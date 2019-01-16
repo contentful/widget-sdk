@@ -7,7 +7,7 @@
   See `libs/test.js` for those libraries.
  */
 
-require('babel-polyfill');
+require('@babel/polyfill');
 require('angular-ui-sortable');
 // Polyfill for Element.closest used to support Slatejs in IE.
 require('element-closest');

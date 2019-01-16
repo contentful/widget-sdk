@@ -1,6 +1,6 @@
 'use strict';
 
-require('babel-polyfill');
+require('@babel/polyfill');
 
 require('./tools/tasks/build/build');
 require('./tools/tasks/build/js');

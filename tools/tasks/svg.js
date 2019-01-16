@@ -4,15 +4,15 @@ const FS = require('../lib/utils').FS;
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 
-// TODO babel-register pollutes regular node `require`
+// TODO @babel/register pollutes regular node `require`
 // calls, sometime it breaks things.
 // It's used only to read JSX files defined below.
 // `only` regexp should limit the impact, consider
 // finding an alternative.
-require('babel-register')({
+require('@babel/register')({
   plugins: ['transform-es2015-modules-commonjs'],
-  presets: ['babel-preset-react'],
-  only: /src\/javascripts\/svg/
+  presets: ['@babel/preset-react'],
+  only: [/src\/javascripts\/svg/]
 });
 
 /**

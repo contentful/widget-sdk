@@ -12,6 +12,7 @@ const gulp = require('gulp');
 const sourceMaps = require('gulp-sourcemaps');
 const prefixer = require('autoprefixer-stylus');
 const _ = require('lodash');
+const { browserslist } = require('../../package.json');
 
 module.exports.assertFilesExist = assertFilesExist;
 module.exports.passError = passError;
@@ -69,7 +70,7 @@ function buildStylus(sources, dest) {
         use: [
           nib(),
           prefixer({
-            browsers: ['last 2 versions']
+            browsers: browserslist
           })
         ],
         sourcemap: { inline: true }
