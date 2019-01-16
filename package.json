@@ -13,7 +13,7 @@
     "@contentful/contentful-slatejs-adapter": "^5.0.0",
     "@contentful/field-editors": "^1.0.0",
     "@contentful/forma-36-fcss": "0.0.6",
-    "@contentful/forma-36-react-components": "^1.0.9",
+    "@contentful/forma-36-react-components": "^1.0.11",
     "@contentful/hostname-transformer": "^1.2.7",
     "@contentful/mimetype": "^1.1.0",
     "@contentful/rich-text-links": "^12.0.3",

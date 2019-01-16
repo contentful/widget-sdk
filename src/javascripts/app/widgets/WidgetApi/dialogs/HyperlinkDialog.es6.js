@@ -238,13 +238,16 @@ export default class HyperlinkDialog extends React.Component {
           </TextLink>
         )}
         {entityLink && (
-          <FetchedEntityCard
-            entityId={entityLink.sys.id}
-            entityType={entityLink.sys.linkType}
-            disabled={false}
-            selected={false}
-            onRemove={resetEntity}
-          />
+          <div>
+            <FetchedEntityCard
+              extraClassNames="entity-selector-dialog__asset-card"
+              entityId={entityLink.sys.id}
+              entityType={entityLink.sys.linkType}
+              disabled={false}
+              selected={false}
+              onRemove={resetEntity}
+            />
+          </div>
         )}
         {/* Keep all entity selectors in the DOM for super fast types switching ux.*/}
         {this.renderEntitySelector(LINK_TYPES.ENTRY, isEntitySelectorVisible)}
