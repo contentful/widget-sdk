@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { orderBy } from 'lodash';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import { Pill, TextLink } from '@contentful/forma-36-react-components';
 
@@ -20,7 +21,7 @@ export default class TranslationSidebarWidget extends Component {
     return (
       <EntrySidebarWidget testId="sidebar-translation-widget" title="Translation">
         <div className="pill-list entity-sidebar__translation-pills">
-          {locales.map(locale => (
+          {orderBy(locales, ['default', 'code'], ['desc', 'asc']).map(locale => (
             <div
               key={locale.code}
               className={classNames('entity-sidebar__translation-pill', {
