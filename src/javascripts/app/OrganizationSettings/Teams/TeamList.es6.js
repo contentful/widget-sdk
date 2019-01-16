@@ -9,15 +9,13 @@ import {
   TableRow,
   TableHead,
   TableBody,
-  TableCell,
-  Modal
+  TableCell
 } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder.es6';
 import { getTeamListWithOptimistic } from 'redux/selectors/teams.es6';
 import Workbench from 'app/common/Workbench.es6';
-import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
-import TeamForm from './TeamForm.es6';
+import TeamDialog from './TeamDialog.es6';
 import TeamListRow from './TeamListRow.es6';
 import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
 
@@ -35,17 +33,14 @@ export default connect(
       submitNewTeam: PropTypes.func.isRequired
     };
 
-    addTeam = () =>
-      ModalLauncher.open(({ onClose, isShown }) => (
-        <Modal isShown={isShown} onClose={onClose}>
-          {() => <TeamForm onClose={onClose} onCreateConfirm={this.props.submitNewTeam} />}
-        </Modal>
-      ));
+    state = {
+      showTeamDialog: false
+    };
 
     render() {
       const { teams } = this.props;
+      const { showTeamDialog } = this.state;
 
-      // TODO: make this route org admin only
       return (
         <Workbench>
           <Workbench.Header>
@@ -54,7 +49,7 @@ export default connect(
             </Workbench.Header.Left>
             <Workbench.Header.Actions>
               {`${pluralize('teams', teams.length, true)} in your organization`}
-              <Button onClick={this.addTeam}>New team</Button>
+              <Button onClick={() => this.setState({ showTeamDialog: true })}>New team</Button>
             </Workbench.Header.Actions>
           </Workbench.Header>
           <Workbench.Content>
@@ -82,13 +77,20 @@ export default connect(
                   title="Increased user visibility with teams"
                   text="Everyone in a team can see other members of that team."
                   button={
-                    <Button size="small" buttonType="primary" onClick={this.addTeam}>
+                    <Button
+                      size="small"
+                      buttonType="primary"
+                      onClick={() => this.setState({ showTeamDialog: true })}>
                       New team
                     </Button>
                   }
                 />
               )}
             </section>
+            <TeamDialog
+              onClose={() => this.setState({ showTeamDialog: false })}
+              isShown={showTeamDialog}
+            />
           </Workbench.Content>
         </Workbench>
       );

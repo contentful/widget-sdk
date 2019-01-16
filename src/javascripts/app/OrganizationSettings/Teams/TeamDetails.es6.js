@@ -13,6 +13,7 @@ import Icon from 'ui/Components/Icon.es6';
 import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
 
 import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
+import TeamDialog from './TeamDialog.es6';
 
 export default connect(
   state => ({
@@ -20,8 +21,7 @@ export default connect(
   }),
   dispatch => ({
     goBack: () => dispatch({ type: 'NAVIGATION_BACK' }),
-    removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } }),
-    editTeam: teamId => dispatch({ type: 'EDIT_TEAM', payload: { teamId } })
+    removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })
   })
 )(
   class TeamDetail extends React.Component {
@@ -29,12 +29,16 @@ export default connect(
       team: TeamPropType,
       users: PropTypes.objectOf(UserPropType),
       goBack: PropTypes.func.isRequired,
-      removeTeam: PropTypes.func.isRequired,
-      editTeam: PropTypes.func.isRequired
+      removeTeam: PropTypes.func.isRequired
+    };
+
+    state = {
+      showTeamDialog: false
     };
 
     render() {
-      const { team, goBack, editTeam, removeTeam } = this.props;
+      const { team, goBack, removeTeam } = this.props;
+      const { showTeamDialog } = this.state;
       const creator = team && team.sys.createdBy;
 
       return (
@@ -70,7 +74,10 @@ export default connect(
                           }, [])}
                         </div>
                       )}
-                      <Button size="small" buttonType="muted" onClick={() => editTeam(team.sys.id)}>
+                      <Button
+                        size="small"
+                        buttonType="muted"
+                        onClick={() => this.setState({ showTeamDialog: true })}>
                         Edit team details
                       </Button>
                     </div>
@@ -101,6 +108,11 @@ export default connect(
                 button={<Button onClick={goBack}>Go to team list</Button>}
               />
             )}
+            <TeamDialog
+              onClose={() => this.setState({ showTeamDialog: false })}
+              isShown={showTeamDialog}
+              initialTeam={team}
+            />
           </Workbench.Content>
         </Workbench>
       );

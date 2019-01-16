@@ -1,15 +1,14 @@
-import React from 'react';
 import getOrgId from 'redux/selectors/getOrgId.es6';
-import { Notification, Modal } from '@contentful/forma-36-react-components';
+import { Notification } from '@contentful/forma-36-react-components';
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
 import { getCurrentTeam, getTeams } from '../selectors/teams.es6';
 import { TEAM_MEMBERSHIPS, TEAMS } from '../dataSets.es6';
 import removeFromDataset from './utils/removeFromDataset.es6';
-import { getDatasets } from 'redux/selectors/datasets.es6';
-import TeamForm from 'app/OrganizationSettings/Teams/TeamForm.es6';
-import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { isTaken } from 'utils/ServerErrorUtils.es6';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
+
+const userToString = ({ firstName, lastName, email }) =>
+  firstName ? `${firstName} ${lastName}` : email;
 
 export default ({ dispatch, getState }) => next => async action => {
   switch (action.type) {
@@ -47,32 +46,9 @@ export default ({ dispatch, getState }) => next => async action => {
         TEAMS,
         ({ name }) => `Remove team ${name}`,
         ({ name }) => `Are you sure you want to remove the team ${name}?`,
-        ({ name }) => `Team ${name} removed successfully`,
-        ({ name }) => `Could not remove ${name}. Please try again`
+        ({ name }) => `Successfully removed team ${name}`,
+        ({ name }) => `Could not remove team ${name}`
       );
-      break;
-    }
-    case 'EDIT_TEAM': {
-      const { teamId } = action.payload;
-      const state = getState();
-      const datasets = getDatasets(state);
-      const team = datasets[TEAMS][teamId];
-      next(action);
-
-      ModalLauncher.open(({ onClose, isShown }) => (
-        <Modal isShown={isShown} onClose={onClose}>
-          {() => (
-            <TeamForm
-              onClose={onClose}
-              initialTeam={team}
-              onEditConfirm={(id, changeSet) =>
-                dispatch({ type: 'EDIT_TEAM_CONFIRMED', payload: { id, changeSet } })
-              }
-            />
-          )}
-        </Modal>
-      ));
-
       break;
     }
     case 'EDIT_TEAM_CONFIRMED': {
@@ -88,10 +64,10 @@ export default ({ dispatch, getState }) => next => async action => {
       try {
         const persistedTeam = await service.update(updatedTeam);
         dispatch({ type: 'ADD_TO_DATASET', payload: { dataset: TEAMS, item: persistedTeam } });
-        Notification.success(`Team ${persistedTeam.name} successfully changed`);
+        Notification.success(`Successfully changed team ${persistedTeam.name}`);
       } catch (e) {
         dispatch({ type: 'ADD_TO_DATASET', payload: { dataset: TEAMS, item: oldTeam } });
-        Notification.error('Something went wrong. Please try again');
+        Notification.error(`Could not change team  ${oldTeam.name}`);
       }
 
       break;
@@ -101,6 +77,7 @@ export default ({ dispatch, getState }) => next => async action => {
       next(action);
       const service = createTeamService(getOrgId(state));
       const teamId = getCurrentTeam(state);
+      const team = getTeams(state)[teamId];
       const { orgMembership } = action.payload;
       const user = getOrgMemberships(state)[orgMembership].sys.user;
       try {
@@ -109,7 +86,7 @@ export default ({ dispatch, getState }) => next => async action => {
           type: 'ADD_TO_DATASET',
           payload: { item: newTeamMembership, dataset: TEAM_MEMBERSHIPS }
         });
-        Notification.success(`User ${user.firstName} ${user.lastName} successfully added to team`);
+        Notification.success(`Successfully added ${userToString(user)} to team ${team.name}`);
       } catch (e) {
         dispatch({
           type: 'SUBMIT_NEW_TEAM_MEMBERSHIP_FAILED',
@@ -117,7 +94,7 @@ export default ({ dispatch, getState }) => next => async action => {
           payload: e,
           meta: { orgMembership }
         });
-        Notification.error(`Could not add ${user.firstName} ${user.lastName} to team`);
+        Notification.error(`Could not add ${userToString(user)} to team ${team.name}`);
       }
       break;
     }
@@ -146,17 +123,10 @@ export default ({ dispatch, getState }) => next => async action => {
           }
         }) => `Remove user from team ${name}`,
         ({ sys: { team, user } }) =>
-          `Are you sure you want to remove ${
-            user.firstName ? `${user.firstName} ${user.lastName}` : user.email
-          } from team ${team.name}?`,
+          `Are you sure you want to remove ${userToString(user)} from team ${team.name}?`,
         ({ sys: { team, user } }) =>
-          `Successfully removed ${
-            user.firstName ? `${user.firstName} ${user.lastName}` : user.email
-          } from team ${team.name}`,
-        ({ sys: { team, user } }) =>
-          `Could not remove ${
-            user.firstName ? `${user.firstName} ${user.lastName}` : user.email
-          } from team ${team.name}`
+          `Successfully removed ${userToString(user)} from team ${team.name}`,
+        ({ sys: { team, user } }) => `Could not remove ${userToString(user)} from team ${team.name}`
       );
       break;
     }

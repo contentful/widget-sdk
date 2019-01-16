@@ -3,31 +3,35 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 
+import { Button, TableRow, TableCell, Spinner } from '@contentful/forma-36-react-components';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import ROUTES from 'redux/routes.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 
-import { Button, TableRow, TableCell, Spinner } from '@contentful/forma-36-react-components';
+import TeamDialog from './TeamDialog.es6';
 
 export default connect(
   state => ({
     orgId: getOrgId(state)
   }),
   dispatch => ({
-    removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } }),
-    editTeam: teamId => dispatch({ type: 'EDIT_TEAM', payload: { teamId } })
+    removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })
   })
 )(
   class TeamListRow extends React.Component {
     static propTypes = {
       team: TeamPropType.isRequired,
       orgId: PropTypes.string.isRequired,
-      removeTeam: PropTypes.func.isRequired,
-      editTeam: PropTypes.func.isRequired
+      removeTeam: PropTypes.func.isRequired
+    };
+
+    state = {
+      showTeamDialog: false
     };
 
     render() {
-      const { team, orgId, removeTeam, editTeam } = this.props;
+      const { team, orgId, removeTeam } = this.props;
+      const { showTeamDialog } = this.state;
 
       return (
         <TableRow className="membership-list__item">
@@ -59,12 +63,17 @@ export default connect(
               <Button
                 buttonType="muted"
                 size="small"
-                onClick={() => editTeam(get(team, 'sys.id'))}
+                onClick={() => this.setState({ showTeamDialog: true })}
                 extraClassNames="membership-list__item__menu__button">
                 Edit
               </Button>
             </div>
           </TableCell>
+          <TeamDialog
+            isShown={showTeamDialog}
+            onClose={() => this.setState({ showTeamDialog: false })}
+            initialTeam={team}
+          />
         </TableRow>
       );
     }
