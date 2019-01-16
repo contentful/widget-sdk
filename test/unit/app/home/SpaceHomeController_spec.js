@@ -50,4 +50,10 @@ describe('SpaceHomeController', function() {
     expect(scope.isSpaceAdmin).toBe(false);
     expect(scope.isAuthorOrEditor).toBe(true);
   });
+  it('should return "isSpaceAdmin = false" "isAuthorOrEditor = false" if user is not author or editor or admin', function() {
+    const space = this.getSpace({ isAdmin: false, isAuthor: false, isEditor: false });
+    spaceHomeController(scope, space, this.accessChecker, this.Config);
+    expect(scope.isSpaceAdmin).toBe(false);
+    expect(scope.isAuthorOrEditor).toBe(false);
+  });
 });
