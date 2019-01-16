@@ -84,9 +84,10 @@ registerDirective('cfEntitySidebar', [
         });
 
         const initializeVersions = once(() => {
-          const notifyUpdate = entrySys => {
+          const notifyUpdate = ({ entrySys, publishedVersion }) => {
             $scope.emitter.emit(SidebarEventTypes.UPDATED_VERSIONS_WIDGET, {
-              entrySys
+              entrySys,
+              publishedVersion
             });
           };
 
@@ -96,12 +97,10 @@ registerDirective('cfEntitySidebar', [
 
           const updateStream$ = K.combineProperties(
             [$scope.otDoc.sysProperty, publishedVersion$],
-            sys => ({ sys })
+            (entrySys, publishedVersion) => ({ entrySys, publishedVersion })
           );
 
-          K.onValue(updateStream$, ({ sys }) => {
-            notifyUpdate(sys);
-          });
+          K.onValue(updateStream$, notifyUpdate);
         });
 
         const initializePublication = once(() => {

@@ -7,7 +7,7 @@ import VersionsWidget from './VersionsWidget.es6';
 import * as SnapshotDecorator from 'app/snapshots/helpers/SnapshotDecorator.es6';
 
 const spaceContext = getModule('spaceContext');
-const PREVIEW_COUNT = 7;
+export const PREVIEW_COUNT = 7;
 
 export default class VersionsWidgetContainer extends Component {
   static propTypes = {
@@ -19,6 +19,7 @@ export default class VersionsWidgetContainer extends Component {
     this.state = {
       isLoaded: false,
       versions: [],
+      publishedVersion: null,
       entryId: null,
       error: null
     };
@@ -33,24 +34,26 @@ export default class VersionsWidgetContainer extends Component {
     this.props.emitter.off(SidebarEventTypes.UPDATED_VERSIONS_WIDGET, this.onUpdateVersionsWidget);
   }
 
-  onUpdateVersionsWidget = ({ entrySys }) => {
-    spaceContext.cma
-      .getEntrySnapshots(entrySys.id, { limit: PREVIEW_COUNT })
-      .then(res => res.items)
-      .then(versions => {
-        this.onLoad(versions, entrySys);
-      })
-      .catch(error => {
-        this.onError(error);
-      });
+  onUpdateVersionsWidget = ({ entrySys, publishedVersion }) => {
+    if (this.state.publishedVersion !== publishedVersion) {
+      this.setState({ publishedVersion });
+      spaceContext.cma
+        .getEntrySnapshots(entrySys.id, { limit: PREVIEW_COUNT })
+        .then(res => res.items)
+        .then(versions => {
+          this.onLoad(versions, entrySys);
+        })
+        .catch(error => {
+          this.onError(error);
+        });
+    } else {
+      this.onLoad(this.state.versions, entrySys);
+    }
   };
 
   onLoad = (versions, entrySys) => {
     const versionsWithCurrent = SnapshotDecorator.withCurrent(entrySys, versions);
-    if (
-      versionsWithCurrent.length > 1 ||
-      (versionsWithCurrent[0] && !versionsWithCurrent[0].sys.isCurrent)
-    ) {
+    if (versionsWithCurrent.length > 0) {
       this.setState({
         isLoaded: true,
         versions: versionsWithCurrent,
@@ -61,6 +64,7 @@ export default class VersionsWidgetContainer extends Component {
       this.setState({
         isLoaded: true,
         versions: [],
+        entryId: entrySys.id,
         error: null
       });
     }

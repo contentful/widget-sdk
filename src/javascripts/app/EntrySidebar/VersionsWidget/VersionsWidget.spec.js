@@ -3,7 +3,7 @@ import Enzyme from 'enzyme';
 import VersionsWidget, { noSnapshotsText, compareHelpText } from './VersionsWidget.es6';
 import $state from 'ng/$state';
 
-describe('EnititySidebar/VersionsWidget', () => {
+describe('EntrySidebar/VersionsWidget', () => {
   const render = (props = {}, renderFn = Enzyme.shallow) => {
     const wrapper = renderFn(<VersionsWidget versions={[]} isLoaded entryId={null} {...props} />);
     return { wrapper };
