@@ -1,16 +1,25 @@
 import DataLoader from 'dataloader';
 import { detect as detectBrowser } from 'detect-browser';
 import { apiUrl } from 'Config.es6';
-import newEntityBatchLoaderFn from './newEntityBatchLoaderFn.es6';
+import {
+  default as newEntityBatchLoaderFn,
+  MAX_FETCH_LIMIT,
+  WORST_CASE_QUERY_PARAMS
+} from './newEntityBatchLoaderFn.es6';
 
 const MAX_URL_LENGTH = detectBrowser().name === 'ie' ? 2000 : 8000;
 const MAX_ID_LENGTH = 64;
 const MAX_LENGTH_ID = 'X'.repeat(MAX_ID_LENGTH);
 const WORST_CASE_URL = encodeURI(
-  apiUrl(`/spaces/${MAX_LENGTH_ID}/environments/${MAX_LENGTH_ID}/content_types?sys.id[in]=`)
+  apiUrl(
+    `/spaces/${MAX_LENGTH_ID}/environments/${MAX_LENGTH_ID}/content_types?${WORST_CASE_QUERY_PARAMS}`
+  )
 );
 const URL_IDS_PORTION_LENGTH = MAX_URL_LENGTH - WORST_CASE_URL.length;
-const MAX_BATCH_SIZE = Math.floor((URL_IDS_PORTION_LENGTH + 1) / (MAX_ID_LENGTH + 1)); // +1 for ','
+const MAX_BATCH_SIZE = Math.min(
+  MAX_FETCH_LIMIT,
+  Math.floor((URL_IDS_PORTION_LENGTH + 1) / (MAX_ID_LENGTH + 1)) // +1 for ','
+);
 
 /**
  * @param {function} options.getResources

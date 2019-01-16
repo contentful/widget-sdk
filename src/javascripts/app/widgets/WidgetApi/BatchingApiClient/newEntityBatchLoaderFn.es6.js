@@ -18,7 +18,7 @@ export default function newEntityBatchLoaderFn({ getResources, newEntityNotFound
     // character url limit that causes a proper 414 response.
     const validIds = entityIds.filter(isValidResourceId);
     const loading = validIds.length
-      ? getResources({ 'sys.id[in]': validIds.join(',') })
+      ? getResources(buildQueryParamsToFetchIds(validIds))
       : Promise.resolve({ items: [] });
     // Can't implement as `async` to ensure a faulty `getResources` implementation
     // immediately throws instead of rejecting.
@@ -48,4 +48,21 @@ export default function newEntityBatchLoaderFn({ getResources, newEntityNotFound
       logger.logServerError(message, { error, data });
     }
   };
+}
+
+export const MAX_FETCH_LIMIT = 999;
+const FETCH_PARAM = 'sys.id[in]';
+export const WORST_CASE_QUERY_PARAMS = `limit=${MAX_FETCH_LIMIT}&${FETCH_PARAM}=`;
+
+function buildQueryParamsToFetchIds(ids) {
+  const params = {
+    [FETCH_PARAM]: ids.join(',')
+  };
+  // If not set and `ids.length > 100`, e.g. 119, then CMA would start pagination
+  // and the request would return the first 100 (CMA default) while we would
+  // resolve the remaining 19 as "not found", which would be a severe bug.
+  if (ids.length > 100) {
+    params.limit = MAX_FETCH_LIMIT;
+  }
+  return params;
 }
