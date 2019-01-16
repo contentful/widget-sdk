@@ -6,32 +6,32 @@ import { getOrganization } from 'services/TokenStore.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 
-import SSOSetupForm from './SSOSetup.es6';
+import SSOSetup from './SSOSetup.es6';
 
 const SSOSetupFetcher = createFetcherComponent(async ({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
-  const org = await getOrganization(orgId);
-  let idpDetails;
+  const organization = await getOrganization(orgId);
+  let identityProvider;
 
   try {
-    idpDetails = await endpoint({
+    identityProvider = await endpoint({
       method: 'GET',
       path: ['identity_provider']
     });
   } catch (e) {
     return {
-      org,
-      idpDetails: null
+      organization,
+      identityProvider: null
     };
   }
 
   return {
-    org,
-    idpDetails
+    organization,
+    identityProvider
   };
 });
 
-export default class SSOSetupFormRouter extends React.Component {
+export default class SSOSetupRouter extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
     onReady: PropTypes.func.isRequired,
@@ -44,6 +44,7 @@ export default class SSOSetupFormRouter extends React.Component {
 
   render() {
     const { orgId } = this.props;
+
     return (
       <OrgAdminOnly orgId={orgId}>
         <SSOSetupFetcher orgId={orgId}>
@@ -56,9 +57,9 @@ export default class SSOSetupFormRouter extends React.Component {
               return <StateRedirect to="spaces.detail.entries.list" />;
             }
 
-            const { idpDetails, org } = data;
+            const { identityProvider, organization } = data;
 
-            return <SSOSetupForm org={org} idpExists={idpDetails} />;
+            return <SSOSetup organization={organization} identityProvider={identityProvider} />;
           }}
         </SSOSetupFetcher>
       </OrgAdminOnly>

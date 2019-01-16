@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import _ from 'lodash';
 import {
   Note,
   TextField,
@@ -7,90 +7,112 @@ import {
   FormLabel,
   HelpText,
   Icon,
-  Tooltip
+  Tooltip,
+  Notification
 } from '@contentful/forma-36-react-components';
+import { authUrl, appUrl } from 'Config.es6';
+import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import {
+  Organization as OrganizationPropType,
+  IdentityProvider as IdentityProviderPropType
+} from 'app/OrganizationSettings/PropTypes.es6';
 
 export default class IDPSetupForm extends React.Component {
   static propTypes = {
-    org: {
-      name: PropTypes.string.isRequired
-    },
-    idpDetails: {
-      ssoName: PropTypes.string,
-      ssoProvider: PropTypes.string,
-      ssoIdpTargetUrl: PropTypes.string,
-      idpCert: PropTypes.string
-    }
+    organization: OrganizationPropType,
+    identityProvider: IdentityProviderPropType
   };
+
   state = {
-    dropdownOpen: false,
     showOtherProvider: false,
-    idpDetails: {
-      ssoName: ''
-    }
+    identityProvider: {}
   };
 
   componentDidMount() {
     const {
-      idpDetails,
-      org: { name: orgName }
+      identityProvider,
+      organization: { name: orgName }
     } = this.props;
+
     const state = this.state;
 
-    if (!idpDetails.ssoName) {
-      state.idpDetails.ssoName = orgName;
+    state.identityProvider = identityProvider;
+
+    if (!identityProvider.ssoName) {
+      state.identityProvider.ssoName = orgName.toLowerCase();
     }
 
     this.setState(state);
+  }
+
+  debouncedUpdateValue = _.debounce(async function(name, value) {
+    const {
+      organization: {
+        sys: { id: orgId }
+      }
+    } = this.props;
+    const endpoint = createOrganizationEndpoint(orgId);
+
+    const state = this.state;
+    const currentValue = state.identityProvider[name];
+
+    if (currentValue === value) {
+      return;
+    }
+
+    state.identityProvider[name] = value;
+
+    // If we are updating the ssoProvider, we should
+    // also update showOtherProvider
+    if (name === 'ssoProvider') {
+      if (value === 'Other') {
+        state.showOtherProvider = true;
+      } else {
+        state.showOtherProvider = false;
+      }
+    }
+
+    try {
+      await endpoint({
+        method: 'PUT',
+        path: ['identity_provider'],
+        data: {
+          [name]: value
+        }
+      });
+    } catch (e) {
+      Notification.error(`Could not update ${name}`);
+
+      return;
+    }
+
+    this.setState(state);
+  }, 500);
+
+  updateValueImmediately(name) {
+    return e => {
+      const value = e.target.value;
+
+      this.debouncedUpdateValue(name, value);
+      this.debouncedUpdateValue.flush();
+    };
   }
 
   updateValue(name) {
     return e => {
       const value = e.target.value;
 
-      const updatedState = this.state;
-      updatedState.idpDetails[name] = value;
-
-      this.setState(updatedState);
+      this.debouncedUpdateValue(name, value);
     };
-  }
-
-  updateSsoProvider() {
-    return e => {
-      const value = e.target.value;
-
-      const state = this.state;
-
-      if (value === 'Other') {
-        state.showOtherProvider = true;
-      } else {
-        state.showOtherProvider = false;
-      }
-
-      state.idpDetails.ssoProvider = value;
-
-      this.setState(state);
-    };
-  }
-
-  toggleSsoProviderDropdown(state) {
-    const { dropdownOpen } = this.state;
-    let newDropdownState;
-
-    if (state) {
-      newDropdownState = state;
-    } else {
-      newDropdownState = !dropdownOpen;
-    }
-
-    this.setState({
-      dropdownOpen: newDropdownState
-    });
   }
 
   render() {
-    const { org } = this.props;
-    const { idpDetails, showOtherProvider } = this.state;
+    const {
+      organization: {
+        sys: { id: orgId }
+      }
+    } = this.props;
+    const { identityProvider, showOtherProvider } = this.state;
 
     const ssoProviders = [
       'Auth0',
@@ -116,7 +138,10 @@ export default class IDPSetupForm extends React.Component {
             style={{ display: 'block' }}>
             SSO provider
           </FormLabel>
-          <select name="ssoProvider" id="ssoProvider" onChange={this.updateSsoProvider()}>
+          <select
+            name="ssoProvider"
+            id="ssoProvider"
+            onChange={this.updateValueImmediately('ssoProvider')}>
             <option value={''}>Select provider</option>
             {ssoProviders.map(name => {
               return (
@@ -135,8 +160,9 @@ export default class IDPSetupForm extends React.Component {
             labelText="SSO name"
             id="sso-name"
             name="sso-name"
-            value={idpDetails.ssoName}
+            value={identityProvider.ssoName}
             onChange={this.updateValue('ssoName')}
+            onBlur={this.updateValueImmediately('ssoName')}
           />
           <HelpText>
             It’s what users have to type to log in via SSO on Contentful. Lowercase letters,
@@ -153,7 +179,7 @@ export default class IDPSetupForm extends React.Component {
               withCopyButton: true,
               disabled: true
             }}
-            value={`https://app.contentful.com`}
+            value={appUrl}
           />
           <TextField
             labelText="Login URL"
@@ -163,7 +189,7 @@ export default class IDPSetupForm extends React.Component {
               withCopyButton: true,
               disabled: true
             }}
-            value={`https://be.contentful.com/sso/${org.sys.id}/login`}
+            value={authUrl(`/sso/${orgId}/login`)}
           />
           <TextField
             labelText="ACS (Assertion Consumer Service) URL"
@@ -173,7 +199,7 @@ export default class IDPSetupForm extends React.Component {
               withCopyButton: true,
               disabled: true
             }}
-            value={`https://be.contentful.com/sso/${org.sys.id}/consume`}
+            value={authUrl(`/sso/${orgId}/consume`)}
           />
         </section>
 
@@ -233,8 +259,9 @@ export default class IDPSetupForm extends React.Component {
           <TextInput
             id="redirect-url"
             name="redirect-url"
-            onBlur={this.updateValue('ssoIdpTargetUrl')}
-            value={idpDetails.ssoIdpTargetUrl}
+            onChange={this.updateValue('idpSsoTargetUrl')}
+            onBlur={this.updateValueImmediately('idpSsoTargetUrl')}
+            value={identityProvider.idpSsoTargetUrl}
           />
           <HelpText>Be careful not to paste the SLO, or Single Logout URL</HelpText>
           <TextField
@@ -245,7 +272,9 @@ export default class IDPSetupForm extends React.Component {
             textInputProps={{
               rows: 8
             }}
+            value={identityProvider.idpCert}
             onChange={this.updateValue('idpCert')}
+            onBlur={this.updateValueImmediately('idpCert')}
           />
           <HelpText>Certificate should be formatted with header or in string format.</HelpText>
         </section>

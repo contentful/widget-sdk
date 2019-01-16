@@ -1,43 +1,71 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Workbench from 'app/common/Workbench.es6';
+import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import {
+  Organization as OrganizationPropType,
+  IdentityProvider as IdentityProviderPropType
+} from 'app/OrganizationSettings/PropTypes.es6';
+import { Button, Notification } from '@contentful/forma-36-react-components';
 import IDPSetupForm from './IDPSetupForm.es6';
-import { Button } from '@contentful/forma-36-react-components';
 
-export default class SSOSetupForm extends React.Component {
+export default class SSOSetup extends React.Component {
   static propTypes = {
-    org: {
-      name: PropTypes.string.isRequired
-    },
-    idpDetails: {
-      ssoName: PropTypes.string,
-      ssoProvider: PropTypes.string,
-      ssoIdpTargetUrl: PropTypes.string,
-      idpCert: PropTypes.string
-    }
+    organization: OrganizationPropType,
+    identityProvider: IdentityProviderPropType
   };
+
   state = {
-    idpDetails: null
+    identityProvider: null,
+    createIdp: false
   };
 
   componentDidMount() {
-    const { idpDetails } = this.props;
+    const { identityProvider } = this.props;
 
     this.setState({
-      idpDetails
+      identityProvider
     });
   }
 
-  createIdp() {
-    // This will call the API
+  async createIdp() {
+    const {
+      organization: {
+        sys: { id: orgId }
+      }
+    } = this.props;
+
+    const endpoint = createOrganizationEndpoint(orgId);
+
     this.setState({
-      idpDetails: {}
+      creatingIdp: true
+    });
+
+    let identityProvider;
+
+    try {
+      identityProvider = await endpoint({
+        method: 'POST',
+        path: ['identity_provider'],
+        data: {}
+      });
+    } catch (e) {
+      this.setState({
+        creatingIdp: false
+      });
+
+      Notification.error(`Could not start setting up SSO`);
+
+      return;
+    }
+
+    this.setState({
+      identityProvider
     });
   }
 
   render() {
-    const { org } = this.props;
-    const { idpDetails } = this.state;
+    const { organization } = this.props;
+    const { identityProvider, creatingIdp } = this.state;
 
     return (
       <Workbench className="sso-setup">
@@ -53,12 +81,14 @@ export default class SSOSetupForm extends React.Component {
                 help with the setup, view our documentation on the process, and if you have any
                 questions, talk to support.
               </p>
-              {!idpDetails && (
-                <Button buttonType="primary" onClick={() => this.createIdp()}>
+              {!identityProvider && (
+                <Button buttonType="primary" onClick={this.createIdp} loading={creatingIdp}>
                   Set up SSO
                 </Button>
               )}
-              {idpDetails && <IDPSetupForm org={org} idpDetails={idpDetails} />}
+              {identityProvider && (
+                <IDPSetupForm organization={organization} identityProvider={identityProvider} />
+              )}
             </div>
           </div>
         </Workbench.Content>
