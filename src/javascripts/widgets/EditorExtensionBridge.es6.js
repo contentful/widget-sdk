@@ -1,12 +1,19 @@
 import { get } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as PathUtils from 'utils/Path.es6';
+import * as Dialogs from './ExtensionDialogs.es6';
 
 const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
 
 const ERROR_MESSAGES = {
   MFAILUPDATE: 'Could not update entry field',
   MFAILREMOVAL: 'Could not remove value for field'
+};
+
+const SIMPLE_DIALOG_TYPE_TO_OPENER = {
+  alert: Dialogs.openAlert,
+  confirm: Dialogs.openConfirm,
+  prompt: Dialogs.openPrompt
 };
 
 // This module, given editor-specific Angular dependencies
@@ -80,11 +87,16 @@ export default function createBridge({
   }
 
   async function openDialog(type, options) {
+    if (Object.keys(SIMPLE_DIALOG_TYPE_TO_OPENER).includes(type)) {
+      const open = SIMPLE_DIALOG_TYPE_TO_OPENER[type];
+      return open(options);
+    }
+
     if (type === 'entitySelector') {
       return entitySelector.openFromExtension(options);
-    } else {
-      throw new Error('Unknown dialog type.');
     }
+
+    throw new Error('Unknown dialog type.');
   }
 
   async function callSpaceMethod(methodName, args) {
