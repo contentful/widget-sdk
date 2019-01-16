@@ -10,7 +10,7 @@ describe('EnititySidebar/VersionsWidget', () => {
   };
 
   it('should render correct message if there are no versions', () => {
-    const { wrapper } = render({ versions: [] });
+    const { wrapper } = render({ versions: [] }, Enzyme.mount);
     expect(wrapper).toIncludeText(noSnapshotsText);
     expect(wrapper).not.toIncludeText(compareHelpText);
   });
@@ -36,9 +36,12 @@ describe('EnititySidebar/VersionsWidget', () => {
     ];
 
     it('should render correct message if there are some versions', () => {
-      const { wrapper } = render({
-        versions
-      });
+      const { wrapper } = render(
+        {
+          versions
+        },
+        Enzyme.mount
+      );
       expect(wrapper).toIncludeText(compareHelpText);
       expect(wrapper).not.toIncludeText(noSnapshotsText);
     });

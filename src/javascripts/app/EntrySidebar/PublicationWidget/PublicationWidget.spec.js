@@ -10,7 +10,7 @@ const createCommand = props => ({
   ...props
 });
 
-describe('app/EntitySidebar/PublicationWidget', () => {
+describe('app/EntrySidebar/PublicationWidget', () => {
   const render = (props, renderFn = Enzyme.mount) => {
     const wrapper = renderFn(<PublicationWidget isSaving={false} {...props} />);
     return { wrapper };

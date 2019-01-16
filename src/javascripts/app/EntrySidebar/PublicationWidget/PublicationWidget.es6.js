@@ -8,6 +8,7 @@ import {
   DropdownList,
   DropdownListItem
 } from '@contentful/forma-36-react-components';
+import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
 
 const PublicationStatus = ({ status }) => (
@@ -56,8 +57,7 @@ export default class PublicationWidget extends React.Component {
     const { primary, status, secondary, isSaving, updatedAt, revert } = this.props;
     const secondaryActionsDisabled = every(secondary || [], action => action.isDisabled());
     return (
-      <div>
-        <h2 className="entity-sidebar__heading">Status</h2>
+      <EntrySidebarWidget title="Status">
         <PublicationStatus status={status} />
         <div className="entity-sidebar__state-select">
           <div className="publish-buttons-row">
@@ -135,7 +135,7 @@ export default class PublicationWidget extends React.Component {
             </button>
           )}
         </div>
-      </div>
+      </EntrySidebarWidget>
     );
   }
 }

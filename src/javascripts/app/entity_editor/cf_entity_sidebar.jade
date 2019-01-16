@@ -1,40 +1,12 @@
-.entity-sidebar__info-panel.entity-info-panel(
-  ng-class="preferences.showAuxPanel && 'x--show'")
-  cf-entity-info-panel(entity-sys-property="entitySys$" content-type="entityInfo.contentType" user="user")
-
 .entity-sidebar
 
-  react-component(
-    name="app/EntitySidebar/PublicationWidget/PublicationWidgetContainer.es6"
-    props="{emitter: emitter}"
+  div(
+    ng-repeat="widgetName in widgets"
   )
-
-  react-component(
-    ng-if="data.isEntry"
-    name="app/EntitySidebar/ContentPreviewWidget/ContentPreviewWidget.es6"
-    props="{emitter: emitter}"
-  )
-
-  react-component(
-    name="app/EntitySidebar/IncomingLinksWidget/IncomingLinksWidgetContainer.es6"
-    props="{emitter: emitter}"
-  )
-
-  react-component(
-    name="app/EntitySidebar/TranslationWidget/TranslationWidgetContainer.es6"
-    props="{emitter: emitter}"
-  )
-
-  react-component(
-    ng-if="data.isEntry && data.isMasterEnvironment"
-    name="app/EntitySidebar/VersionsWidget/VersionsWidgetContainer.es6"
-    props="{emitter: emitter}"
-  )
-
-  react-component(
-    name="app/EntitySidebar/UsersWidget/UsersWidgetContainer.es6"
-    props="{emitter: emitter}"
-  )
+    react-component(
+      name="{{widgetName}}"
+      props="{emitter: emitter}"
+    )
 
   react-component(
     name="widgets/LegacySidebarExtensions.es6"

@@ -2,7 +2,7 @@ import React from 'react';
 import TranslationWidget from './TranslationWidget.es6';
 import Enzyme from 'enzyme';
 
-describe('EntitySidebar/TranslationWidget', () => {
+describe('EntrySidebar/TranslationWidget', () => {
   const selectors = {
     changeLink: '[data-test-id="change-translation"]',
     deactivateBtn: '[data-test-id="deactivate-translation"]'

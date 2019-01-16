@@ -2,8 +2,8 @@ import { registerDirective } from 'NgRegistry.es6';
 import mitt from 'mitt';
 import { once } from 'lodash';
 import * as K from 'utils/kefir.es6';
-import SidebarEventTypes from 'app/EntitySidebar/SidebarEventTypes.es6';
-import SidebarWidgetTypes from 'app/EntitySidebar/SidebarWidgetTypes.es6';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
+import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes.es6';
 import createBridge from 'widgets/EditorExtensionBridge.es6';
 
 /**
@@ -36,6 +36,20 @@ registerDirective('cfEntitySidebar', [
     controller: [
       '$scope',
       $scope => {
+        const isEntry = $scope.entityInfo.type === 'Entry';
+        const isMasterEnvironment = spaceContext.getEnvironmentId() === 'master';
+
+        $scope.widgets = [
+          'app/EntrySidebar/PublicationWidget/PublicationWidgetContainer.es6',
+          isEntry && 'app/EntrySidebar/ContentPreviewWidget/ContentPreviewWidget.es6',
+          'app/EntrySidebar/IncomingLinksWidget/IncomingLinksWidgetContainer.es6',
+          'app/EntrySidebar/TranslationWidget/TranslationWidgetContainer.es6',
+          isEntry &&
+            isMasterEnvironment &&
+            'app/EntrySidebar/VersionsWidget/VersionsWidgetContainer.es6',
+          'app/EntrySidebar/UsersWidget/UsersWidgetContainer.es6'
+        ].filter(item => typeof item === 'string');
+
         $scope.emitter = mitt();
 
         const initializeIncomingLinks = once(() => {
@@ -151,18 +165,11 @@ registerDirective('cfEntitySidebar', [
           }
         });
 
-        $scope.data = {
-          isEntry: $scope.entityInfo.type === 'Entry',
-          isMasterEnvironment: spaceContext.getEnvironmentId() === 'master'
-        };
-
         // We make sure that we do not leak entity instances from the
         // editor controller into the current scope
         $scope.entity = null;
         $scope.entry = null;
         $scope.asset = null;
-
-        $scope.entitySys$ = $scope.otDoc.sysProperty;
 
         // Construct a list of legacy sidebar extensions
         const legacyExtensions = $scope.editorData.fieldControls.sidebar.map(widget => {

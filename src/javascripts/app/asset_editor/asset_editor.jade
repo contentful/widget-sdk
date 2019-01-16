@@ -24,6 +24,10 @@ div.asset-editor.workbench(ng-if="context.ready")
         cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
 
     .workbench-main__sidebar
+      .entity-sidebar__info-panel.entity-info-panel(
+        ng-class="preferences.showAuxPanel && 'x--show'")
+        cf-entity-info-panel(entity-sys-property="otDoc.sysProperty" content-type="entityInfo.contentType" user="user")
+
       cf-entity-sidebar
 
 +entity-load-status("Asset")

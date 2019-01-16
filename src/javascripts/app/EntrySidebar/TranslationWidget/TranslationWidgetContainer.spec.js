@@ -12,7 +12,7 @@ jest.mock(
   { virtual: true }
 );
 
-describe('EntitySidebar/TranslationWidgetContainer', () => {
+describe('EntrySidebar/TranslationWidgetContainer', () => {
   const selectors = {
     changeLink: '[data-test-id="change-translation"]',
     deactivateBtn: '[data-test-id="deactivate-translation"]'

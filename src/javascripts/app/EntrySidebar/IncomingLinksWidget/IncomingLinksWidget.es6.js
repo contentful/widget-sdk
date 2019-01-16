@@ -8,6 +8,7 @@ import FetchLinksToEntity, {
 } from 'app/entity_editor/Components/FetchLinksToEntity/index.es6';
 import { EntityType, getNumberOfLinks } from 'app/entity_editor/Components/constants.es6';
 import messages from './messages.es6';
+import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 
 import {
   onIncomingLinkClick as trackIncomingLinkClick,
@@ -41,8 +42,7 @@ export default class SidebarIncomingLinks extends React.Component {
     const { entityInfo } = this.props;
 
     return (
-      <div data-test-id="sidebar-incoming-links-section">
-        <h2 className="entity-sidebar__heading">Links</h2>
+      <EntrySidebarWidget testId="sidebar-incoming-links-section" title="Links">
         {entityInfo && (
           <FetchLinksToEntity
             {...entityInfo}
@@ -64,7 +64,7 @@ export default class SidebarIncomingLinks extends React.Component {
             )}
           />
         )}
-      </div>
+      </EntrySidebarWidget>
     );
   }
 }

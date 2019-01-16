@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import { Pill, TextLink } from '@contentful/forma-36-react-components';
 
 export default class TranslationSidebarWidget extends Component {
@@ -17,8 +18,7 @@ export default class TranslationSidebarWidget extends Component {
   render() {
     const { locales } = this.props;
     return (
-      <div data-test-id="sidebar-translation-widget">
-        <h2 className="entity-sidebar__heading">Translation</h2>
+      <EntrySidebarWidget testId="sidebar-translation-widget" title="Translation">
         <div className="pill-list entity-sidebar__translation-pills">
           {locales.map(locale => (
             <div
@@ -48,7 +48,7 @@ export default class TranslationSidebarWidget extends Component {
             Change
           </TextLink>
         </div>
-      </div>
+      </EntrySidebarWidget>
     );
   }
 }

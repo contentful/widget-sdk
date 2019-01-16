@@ -1,14 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EntitySidebar/TranslationWidget should match snaphot 1`] = `
-<div
-  data-test-id="sidebar-translation-widget"
+exports[`EntrySidebar/TranslationWidget should match snaphot 1`] = `
+<EntrySidebarWidget
+  testId="sidebar-translation-widget"
+  title="Translation"
 >
-  <h2
-    className="entity-sidebar__heading"
-  >
-    Translation
-  </h2>
   <div
     className="pill-list entity-sidebar__translation-pills"
   >
@@ -42,5 +38,5 @@ exports[`EntitySidebar/TranslationWidget should match snaphot 1`] = `
       Change
     </TextLink>
   </div>
-</div>
+</EntrySidebarWidget>
 `;

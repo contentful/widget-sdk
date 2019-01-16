@@ -4,6 +4,7 @@ import StateLink from 'app/common/StateLink.es6';
 import { Button, Tag } from '@contentful/forma-36-react-components';
 import RelativeDateTime from 'components/shared/RelativeDateTime/index.es6';
 import * as SnapshotStatus from 'app/snapshots/helpers/SnapshotStatus.es6';
+import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 
 const styles = {
   table: {
@@ -94,8 +95,7 @@ export default class VersionsWidget extends Component {
   render() {
     const { versions, error, isLoaded } = this.props;
     return (
-      <div>
-        <h2 className="entity-sidebar__heading">Versions</h2>
+      <EntrySidebarWidget title="Versions">
         <div className="snapshot-sidebar">
           {error && <div className="snapshot-sidebar__warning">{error}</div>}
           {isLoaded && versions.length === 0 && (
@@ -115,7 +115,7 @@ export default class VersionsWidget extends Component {
             </React.Fragment>
           )}
         </div>
-      </div>
+      </EntrySidebarWidget>
     );
   }
 }

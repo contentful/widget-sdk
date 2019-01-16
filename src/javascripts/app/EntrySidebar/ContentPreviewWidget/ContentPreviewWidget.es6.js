@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes.es6';
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
 import NetlifyBuildButton from 'app/settings/apps/netlify/BuildButton/index.es6';
-import SidebarContentPreviewContainer from 'app/entity_editor/Components/SidebarContentPreview/SidebarContentPreviewContainer.es6';
+import SidebarContentPreviewContainer from './SidebarContentPreviewContainer.es6';
+import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 
 export default class ContentPreviewWidget extends Component {
   static propTypes = {
@@ -33,15 +34,14 @@ export default class ContentPreviewWidget extends Component {
 
   render() {
     return (
-      <div>
-        <h2 className="entity-sidebar__heading">Preview</h2>
+      <EntrySidebarWidget title="Preview">
         {this.state.isInitialized && (
           <React.Fragment>
             <NetlifyBuildButton {...this.state.data} />
             <SidebarContentPreviewContainer {...this.state.data} />
           </React.Fragment>
         )}
-      </div>
+      </EntrySidebarWidget>
     );
   }
 }
