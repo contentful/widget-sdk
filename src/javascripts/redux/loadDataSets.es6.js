@@ -6,7 +6,7 @@ import {
 import { createOrganizationEndpoint } from '../data/EndpointFactory.es6';
 import createTeamService from '../app/OrganizationSettings/Teams/TeamService.es6';
 
-import { USERS, TEAMS, ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS } from './dataSets.es6';
+import { USERS, TEAMS, ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS } from './datasets.es6';
 import getOrgId from './selectors/getOrgId.es6';
 
 const loaders = state => {
@@ -15,12 +15,12 @@ const loaders = state => {
     [USERS]: () => getAllUsers(createOrganizationEndpoint(orgId)),
     [TEAMS]: async () => {
       const service = createTeamService(orgId);
-      return (await service.getAll()).items;
+      return await service.getAll();
     },
     [ORG_MEMBERSHIPS]: () => getAllMemberships(createOrganizationEndpoint(orgId)),
     [TEAM_MEMBERSHIPS]: async () => {
       const service = createTeamService(orgId);
-      return (await service.getAllTeamMemberships()).items;
+      return await service.getAllTeamMemberships();
     }
   };
 };

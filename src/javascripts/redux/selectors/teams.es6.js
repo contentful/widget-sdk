@@ -2,7 +2,7 @@ import { get, flow, sortBy, toLower } from 'lodash/fp';
 import { getPath } from './location.es6';
 import { getDatasets } from './datasets.es6';
 import ROUTES from '../routes.es6';
-import { TEAMS } from '../dataSets.es6';
+import { TEAMS } from '../datasets.es6';
 import getOptimistic from './getOptimistic.es6';
 import getOrgRole from './getOrgRole.es6';
 

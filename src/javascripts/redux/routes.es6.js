@@ -1,7 +1,7 @@
 import { uniq, flow, flatMap } from 'lodash/fp';
 import Parser from 'path-parser';
 
-import { TEAMS, USERS, ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS } from './dataSets.es6';
+import { TEAMS, USERS, ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS } from './datasets.es6';
 
 const ROUTES = {
   organization: {

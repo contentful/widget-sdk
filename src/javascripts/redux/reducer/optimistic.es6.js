@@ -1,5 +1,5 @@
 import { concat, update, drop } from 'lodash/fp';
-import { TEAMS, TEAM_MEMBERSHIPS } from '../dataSets.es6';
+import { TEAMS, TEAM_MEMBERSHIPS } from '../datasets.es6';
 
 export default (state = {}, { type, payload }) => {
   switch (type) {

@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { isEmpty, map, get } from 'lodash';
+import { isEmpty, get, some } from 'lodash';
 import { Modal, TextField, Button } from '@contentful/forma-36-react-components';
 import { getTeams } from 'redux/selectors/teams.es6';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 
 export default connect(
   state => ({
-    allTeamNames: map(getTeams(state), 'name')
+    allTeams: getTeams(state)
   }),
   dispatch => ({
     onCreateConfirm: team => dispatch({ type: 'CREATE_NEW_TEAM', payload: { team } }),
@@ -19,7 +19,7 @@ export default connect(
   class TeamDialog extends React.Component {
     static propTypes = {
       initialTeam: TeamPropType,
-      allTeamNames: PropTypes.arrayOf(PropTypes.string),
+      allTeams: PropTypes.objectOf(TeamPropType),
       isShown: PropTypes.bool.isRequired,
       onClose: PropTypes.func.isRequired,
       onCreateConfirm: PropTypes.func,
@@ -66,12 +66,17 @@ export default connect(
 
     getValidationMessage() {
       const { name } = this.state;
-      const { allTeamNames } = this.props;
+      const { allTeams, initialTeam } = this.props;
 
       if (isEmpty(name)) {
         return 'Please insert a name';
       }
-      if (allTeamNames.includes(name.trim())) {
+      if (
+        some(
+          allTeams,
+          otherTeam => otherTeam.name === name.trim() && initialTeam.sys.id !== otherTeam.sys.id
+        )
+      ) {
         return 'This name is already in use';
       }
       return null;

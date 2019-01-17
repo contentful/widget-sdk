@@ -4,6 +4,7 @@ import * as K from 'utils/kefir.es6';
 import navBar from 'navigation/templates/NavBar.es6';
 import { isOwner } from 'services/OrganizationRoles.es6';
 import { SSO_SELF_CONFIG_FLAG } from 'featureFlags.es6';
+import { getOrgFeature } from '../data/CMA/FeatureCatalog.es6';
 
 /**
  * @ngdoc directive
@@ -35,17 +36,19 @@ registerDirective('cfOrganizationNav', () => {
         // Update when token response is refreshed (e.g. billing tab should appear)
         K.onValueScope($scope, TokenStore.organizations$, onNavChange);
 
-        // Set feature flag for Teams
-        LD.getCurrentVariation('feature-bv-11-2018-teams').then(function(variation) {
-          nav.teamsEnabled = variation;
-        });
-
         LD.getCurrentVariation(SSO_SELF_CONFIG_FLAG).then(ssoEnabled => {
           nav.ssoEnabled = ssoEnabled;
         });
 
         function updateNav() {
           const orgId = (nav.orgId = $stateParams.orgId);
+          Promise.all([
+            // Set feature flag for Teams
+            LD.getCurrentVariation('feature-bv-11-2018-teams'),
+            getOrgFeature(orgId, 'teams')
+          ]).then(([variation, catalogFeature]) => {
+            nav.teamsEnabled = variation && _.get(catalogFeature, 'enabled');
+          });
           TokenStore.getOrganization(orgId).then(org => {
             const FeatureService = createFeatureService(orgId, 'organization');
 
@@ -121,6 +124,7 @@ registerDirective('cfOrganizationNav', () => {
       {
         if: 'nav.pricingVersion === "pricing_version_2" && nav.teamsEnabled',
         title: 'Teams',
+        label: 'alpha',
         sref: 'account.organizations.teams({orgId: nav.orgId})',
         rootSref: 'account.organizations.teams',
         inheritUrlParams: false,

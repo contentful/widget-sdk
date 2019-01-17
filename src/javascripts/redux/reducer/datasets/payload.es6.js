@@ -1,7 +1,7 @@
 import { get, mergeWith, keyBy } from 'lodash';
 import { update, set, omit } from 'lodash/fp';
 import getOrgId from 'redux/selectors/getOrgId.es6';
-import { TEAMS } from 'redux/dataSets.es6';
+import { TEAMS } from 'redux/datasets.es6';
 
 export default (state = {}, { type, meta, payload, error }, globalState) => {
   const orgId = getOrgId(globalState);

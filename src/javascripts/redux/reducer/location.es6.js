@@ -15,7 +15,7 @@ import qs from 'qs';
 import getOrgId from '../selectors/getOrgId.es6';
 import { getPath } from '../selectors/location.es6';
 import ROUTES from '../routes.es6';
-import { TEAMS } from '../dataSets.es6';
+import { TEAMS } from '../datasets.es6';
 
 const viewToObject = flow(
   map('filter'),

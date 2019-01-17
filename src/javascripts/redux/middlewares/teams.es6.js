@@ -2,7 +2,7 @@ import getOrgId from 'redux/selectors/getOrgId.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
 import { getCurrentTeam, getTeams } from '../selectors/teams.es6';
-import { TEAM_MEMBERSHIPS, TEAMS } from '../dataSets.es6';
+import { TEAM_MEMBERSHIPS, TEAMS } from '../datasets.es6';
 import removeFromDataset from './utils/removeFromDataset.es6';
 import { isTaken } from 'utils/ServerErrorUtils.es6';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';

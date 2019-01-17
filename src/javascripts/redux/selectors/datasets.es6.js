@@ -8,6 +8,8 @@ import { getPath } from './location.es6';
 
 const getRawDatasets = state => get(state, ['datasets', 'payload', getOrgId(state)], {});
 
+const MAX_AGE = 10 * 1000;
+
 function resolveLinks(datasets) {
   return entity =>
     update(
@@ -37,7 +39,13 @@ export const getMeta = state => get(state, ['datasets', 'meta', getOrgId(state)]
 export const getDataSetsToLoad = state => {
   const requiredDatasets = getRequiredDataSets(getPath(state));
   const datasetsMeta = getMeta(state);
-  return requiredDatasets.filter(datatset => !get(datasetsMeta, [datatset, 'pending']));
+  return requiredDatasets.filter(datatset => {
+    const lastFetchedAt = get(datasetsMeta, [datatset, 'fetched']);
+    return (
+      (!lastFetchedAt || Date.now() - lastFetchedAt > MAX_AGE) &&
+      !get(datasetsMeta, [datatset, 'pending'])
+    );
+  });
 };
 
 export const isLoadingMissingDatasets = state => {

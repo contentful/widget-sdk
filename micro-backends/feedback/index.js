@@ -13,19 +13,24 @@ const TARGET_MAILS = {
 };
 
 const getMailText = ({ feedback, userId, organizationId, teamId, canBeContacted = false }) => `
-${feedback || 'No feedback provided'}${canBeContacted &&
-  `
+  ${feedback || 'No feedback provided'}
 
 
-User agreed to be contacted.
-user: https://admin.contentful.com/admin/users/${userId}
-${
-    organizationId
-      ? `organization: https://admin.contentful.com/admin/organizations/${organizationId}`
-      : ''
+
+  ${
+    canBeContacted
+      ? `
+      User agreed to be contacted.
+      user: https://admin.contentful.com/admin/users/${userId}
+      ${
+        organizationId
+          ? `organization: https://admin.contentful.com/admin/organizations/${organizationId}`
+          : ''
+      }
+      ${teamId ? `team: https://admin.contentful.com/admin/teams/${teamId}` : ''}
+    `
+      : 'User wants to stay anonymous'
   }
-${teamId ? `team: https://admin.contentful.com/admin/teams/${teamId}` : ''}
-`}
 `;
 
 module.exports = {

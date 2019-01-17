@@ -1,6 +1,6 @@
 import { eq, flow, get, filter, concat, orderBy } from 'lodash/fp';
 import { getDatasets } from './datasets.es6';
-import { TEAM_MEMBERSHIPS } from '../dataSets.es6';
+import { TEAM_MEMBERSHIPS } from '../datasets.es6';
 import { getCurrentTeam } from './teams.es6';
 import getOptimistic from 'redux/selectors/getOptimistic.es6';
 

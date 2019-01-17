@@ -1,6 +1,8 @@
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import { fetchAll } from 'data/CMA/FetchAll.es6';
 
 const ALPHA_HEADER = { 'x-contentful-enable-alpha-feature': 'teams-api' };
+const BATCH_LIMIT = 100;
 
 export default function createTeamService(orgId) {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -28,13 +30,7 @@ export default function createTeamService(orgId) {
   }
 
   function getAll() {
-    return endpoint(
-      {
-        method: 'GET',
-        path: ['teams']
-      },
-      ALPHA_HEADER
-    );
+    return fetchAll(endpoint, ['teams'], BATCH_LIMIT, {}, ALPHA_HEADER);
   }
 
   function create({ name, description }) {
@@ -70,26 +66,12 @@ export default function createTeamService(orgId) {
     );
   }
 
-  function getAllTeamMemberships(query) {
-    return endpoint(
-      {
-        method: 'GET',
-        path: ['team_memberships'],
-        query
-      },
-      ALPHA_HEADER
-    );
+  function getAllTeamMemberships() {
+    return fetchAll(endpoint, ['team_memberships'], BATCH_LIMIT, {}, ALPHA_HEADER);
   }
 
-  function getTeamMemberships(teamId, query) {
-    return endpoint(
-      {
-        method: 'GET',
-        path: ['teams', teamId, 'team_memberships'],
-        query
-      },
-      ALPHA_HEADER
-    );
+  function getTeamMemberships(teamId) {
+    return fetchAll(endpoint, ['teams', teamId, 'team_memberships'], BATCH_LIMIT, {}, ALPHA_HEADER);
   }
 
   function createTeamMembership(teamId, organizationMembershipId, admin = false) {
