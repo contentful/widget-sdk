@@ -38,8 +38,8 @@ describe('ExtensionAPI', () => {
         },
         locales: {
           available: [
-            { code: 'LOCALE', internal_code: 'LOCALE-internal', default: true },
-            { code: 'L2', internal_code: 'L2-internal' }
+            { code: 'LOCALE', internal_code: 'LOCALE-internal', name: 'lang1', default: true },
+            { code: 'L2', internal_code: 'L2-internal', name: 'lang2' }
           ],
           default: { code: 'LOCALE', internal_code: 'LOCALE-internal', default: true }
         },
@@ -78,7 +78,11 @@ describe('ExtensionAPI', () => {
           ],
           locales: {
             available: ['LOCALE', 'L2'],
-            default: 'LOCALE'
+            default: 'LOCALE',
+            names: {
+              LOCALE: 'lang1',
+              L2: 'lang2'
+            }
           },
           parameters: expect.any(Object),
           entry: { sys: { id: 'test' }, fields: expect.any(Object) },

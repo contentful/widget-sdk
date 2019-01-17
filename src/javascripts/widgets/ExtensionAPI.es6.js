@@ -79,7 +79,10 @@ export default class ExtensionAPI {
       }),
       locales: {
         available: locales.available.map(locale => locale.code),
-        default: locales.default.code
+        default: locales.default.code,
+        names: locales.available.reduce((acc, locale) => {
+          return { ...acc, [locale.code]: locale.name };
+        }, {})
       },
       entry: entryData,
       contentType: this.contentTypeData,
