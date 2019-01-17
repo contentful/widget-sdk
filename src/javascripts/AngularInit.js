@@ -172,8 +172,6 @@ angular
       ngRequire('components/field_dialog/imageDimensionsValidationController.es6');
       ngRequire('components/field_dialog/validationAssetTypesController.es6');
       ngRequire('components/field_dialog/validationLinkTypeController.es6');
-      ngRequire('components/forms/autocomplete_results/cfAutocompleteResultsController.es6');
-      ngRequire('components/forms/autocomplete_results/cfAutocompleteResultsDirective.es6');
       ngRequire('components/forms/datetime_editor/cfDatetimeEditorDirective.es6');
       ngRequire('components/forms/embedly_preview/cfEmbedlyPreviewDirective.es6');
       ngRequire('components/forms/field_alert/cfFieldAlertDirective.es6');
