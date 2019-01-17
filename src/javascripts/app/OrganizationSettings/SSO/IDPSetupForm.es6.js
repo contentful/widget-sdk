@@ -4,7 +4,6 @@ import {
   Heading,
   Note,
   TextField,
-  TextInput,
   FormLabel,
   HelpText,
   Select,
@@ -18,6 +17,7 @@ import {
   IdentityProvider as IdentityProviderPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
 import { SSO_PROVIDERS } from './constants.es6';
+import * as validators from './validators.es6';
 
 export default class IDPSetupForm extends React.Component {
   static propTypes = {
@@ -27,23 +27,9 @@ export default class IDPSetupForm extends React.Component {
 
   state = {
     showOtherProvider: false,
-    identityProvider: {}
+    identityProvider: {},
+    invalidFields: {}
   };
-
-  componentDidMount() {
-    const {
-      identityProvider,
-      organization: { name: orgName }
-    } = this.props;
-
-    if (!identityProvider.ssoName) {
-      identityProvider.ssoName = orgName.toLowerCase();
-    }
-
-    this.setState({
-      identityProvider
-    });
-  }
 
   debouncedUpdateValue = _.debounce(async function(name, value) {
     const {
@@ -104,9 +90,30 @@ export default class IDPSetupForm extends React.Component {
     });
   }, 500);
 
+  componentDidMount() {
+    const {
+      identityProvider,
+      organization: { name: orgName }
+    } = this.props;
+
+    if (!identityProvider.ssoName) {
+      identityProvider.ssoName = orgName.toLowerCase();
+    }
+
+    this.setState({
+      identityProvider
+    });
+  }
+
   updateValueImmediately(name) {
     return e => {
       const value = e.target.value;
+
+      const isValid = this.validate(name, value);
+
+      if (!isValid) {
+        return;
+      }
 
       this.debouncedUpdateValue(name, value);
       this.debouncedUpdateValue.flush();
@@ -117,8 +124,37 @@ export default class IDPSetupForm extends React.Component {
     return e => {
       const value = e.target.value;
 
+      const isValid = this.validate(name, value);
+
+      if (!isValid) {
+        return;
+      }
+
       this.debouncedUpdateValue(name, value);
     };
+  }
+
+  updateValidity(fieldName, isValid) {
+    this.setState(({ invalidFields }) => {
+      if (isValid && invalidFields[fieldName]) {
+        delete invalidFields[fieldName];
+      } else if (!isValid) {
+        invalidFields[fieldName] = true;
+      }
+
+      return { invalidFields };
+    });
+  }
+
+  validate(fieldName, value) {
+    if (!validators[fieldName]) {
+      return true;
+    }
+
+    const isValid = validators[fieldName](value);
+    this.updateValidity(fieldName, isValid);
+
+    return isValid;
   }
 
   render() {
@@ -163,9 +199,12 @@ export default class IDPSetupForm extends React.Component {
               value={this.state.identityProvider.ssoProvider}
               onChange={this.updateValue('otherIdpName')}
               onBlur={this.updateValueImmediately('otherIdpName')}
+              helpText="This will help us provide better support to you."
+              validationMessage={
+                this.state.invalidFields.otherIdpName && 'Enter a valid SSO provider'
+              }
             />
           )}
-          <HelpText>This will help us provide better support to you.</HelpText>
 
           <TextField
             labelText="SSO name"
@@ -174,11 +213,9 @@ export default class IDPSetupForm extends React.Component {
             value={this.state.identityProvider.ssoName}
             onChange={this.updateValue('ssoName')}
             onBlur={this.updateValueImmediately('ssoName')}
+            helpText="It’s what users have to type to log in via SSO on Contentful. Lowercase letters, numbers, periods, spaces, hyphens, or underscores are allowed."
+            validationMessage={this.state.invalidFields.ssoName && 'Enter a valid SSO name'}
           />
-          <HelpText>
-            It’s what users have to type to log in via SSO on Contentful. Lowercase letters,
-            numbers, periods, spaces, hyphens, or underscores are allowed.
-          </HelpText>
         </section>
         <section className="f36-margin-top--3xl">
           <Heading element="h2">Copy Contentful’s details</Heading>
@@ -260,14 +297,17 @@ export default class IDPSetupForm extends React.Component {
         <section className="f36-margin-top--3xl">
           <Heading element="h2">Enter your SSO provider’s details</Heading>
           <FormLabel htmlFor="redirect-url">Single Sign-On Redirect URL</FormLabel>
-          <TextInput
+          <TextField
             id="redirect-url"
             name="redirect-url"
             onChange={this.updateValue('idpSsoTargetUrl')}
             onBlur={this.updateValueImmediately('idpSsoTargetUrl')}
             value={this.state.identityProvider.idpSsoTargetUrl}
+            helpText="Be careful not to paste the SLO, or Single Logout URL"
+            validationMessage={
+              this.state.invalidFields.idpSsoTargetUrl && 'Enter a valid SSO redirect URL'
+            }
           />
-          <HelpText>Be careful not to paste the SLO, or Single Logout URL</HelpText>
           <TextField
             labelText="X.509 Certificate"
             id="x509-cert"
@@ -279,8 +319,11 @@ export default class IDPSetupForm extends React.Component {
             value={this.state.identityProvider.idpCert}
             onChange={this.updateValue('idpCert')}
             onBlur={this.updateValueImmediately('idpCert')}
+            helpText="Certificate should be formatted with header or in string format."
+            validationMessage={
+              this.state.invalidFields.idpCert && 'Enter a valid X.509 certificate'
+            }
           />
-          <HelpText>Certificate should be formatted with header or in string format.</HelpText>
         </section>
       </React.Fragment>
     );
