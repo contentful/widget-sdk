@@ -59,7 +59,8 @@ export default class SSOSetup extends React.Component {
     }
 
     this.setState({
-      identityProvider
+      identityProvider,
+      creatingIdp: false
     });
   }
 

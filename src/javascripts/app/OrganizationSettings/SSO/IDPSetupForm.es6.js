@@ -1,11 +1,14 @@
 import React from 'react';
 import _ from 'lodash';
 import {
+  Heading,
   Note,
   TextField,
   TextInput,
   FormLabel,
   HelpText,
+  Select,
+  Option,
   Icon,
   Tooltip,
   Notification
@@ -16,6 +19,7 @@ import {
   Organization as OrganizationPropType,
   IdentityProvider as IdentityProviderPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
+import { SSO_PROVIDERS } from './constants.es6';
 
 export default class IDPSetupForm extends React.Component {
   static propTypes = {
@@ -34,15 +38,13 @@ export default class IDPSetupForm extends React.Component {
       organization: { name: orgName }
     } = this.props;
 
-    const state = this.state;
-
-    state.identityProvider = identityProvider;
-
     if (!identityProvider.ssoName) {
-      state.identityProvider.ssoName = orgName.toLowerCase();
+      identityProvider.ssoName = orgName.toLowerCase();
     }
 
-    this.setState(state);
+    this.setState({
+      identityProvider
+    });
   }
 
   debouncedUpdateValue = _.debounce(async function(name, value) {
@@ -51,33 +53,45 @@ export default class IDPSetupForm extends React.Component {
         sys: { id: orgId }
       }
     } = this.props;
-    const endpoint = createOrganizationEndpoint(orgId);
 
-    const state = this.state;
-    const currentValue = state.identityProvider[name];
+    const endpoint = createOrganizationEndpoint(orgId);
+    const currentValue = this.state.identityProvider[name];
 
     if (currentValue === value) {
       return;
     }
 
-    state.identityProvider[name] = value;
+    let field = name;
+    let newValue = value;
+    let showOtherProvider;
 
-    // If we are updating the ssoProvider, we should
-    // also update showOtherProvider
+    // If the user selects "other" as an SSO provider from the list,
+    // we should show the input field for the user to type their own
     if (name === 'ssoProvider') {
-      if (value === 'Other') {
-        state.showOtherProvider = true;
+      if (value === 'other') {
+        showOtherProvider = true;
+        newValue = '';
       } else {
-        state.showOtherProvider = false;
+        showOtherProvider = false;
       }
     }
 
+    if (name === 'otherSsoProvider') {
+      field = 'ssoProvider';
+    }
+
+    const {
+      sys: { version: currentVersion }
+    } = this.state.identityProvider;
+    let updatedIdentityProvider;
+
     try {
-      await endpoint({
+      updatedIdentityProvider = await endpoint({
         method: 'PUT',
         path: ['identity_provider'],
+        version: currentVersion,
         data: {
-          [name]: value
+          [field]: newValue
         }
       });
     } catch (e) {
@@ -86,7 +100,10 @@ export default class IDPSetupForm extends React.Component {
       return;
     }
 
-    this.setState(state);
+    this.setState({
+      showOtherProvider,
+      identityProvider: updatedIdentityProvider
+    });
   }, 500);
 
   updateValueImmediately(name) {
@@ -112,25 +129,13 @@ export default class IDPSetupForm extends React.Component {
         sys: { id: orgId }
       }
     } = this.props;
-    const { identityProvider, showOtherProvider } = this.state;
-
-    const ssoProviders = [
-      'Auth0',
-      'Google Suite',
-      'Microsoft ADFS',
-      'Microsoft Azure',
-      'Okta',
-      'OneLogin',
-      'PingIdentity',
-      'Other'
-    ];
 
     return (
       <React.Fragment>
         <Note>All fields are required unless marked as optional.</Note>
 
         <section className="f36-margin-top--3xl">
-          <h2>SSO provider and SSO name</h2>
+          <Heading element="h2">SSO provider and SSO name</Heading>
           <FormLabel
             htmlFor="ssoProvider"
             required
@@ -138,21 +143,29 @@ export default class IDPSetupForm extends React.Component {
             style={{ display: 'block' }}>
             SSO provider
           </FormLabel>
-          <select
+          <Select
             name="ssoProvider"
             id="ssoProvider"
             onChange={this.updateValueImmediately('ssoProvider')}>
-            <option value={''}>Select provider</option>
-            {ssoProviders.map(name => {
+            <Option value={''}>Select provider</Option>
+            {SSO_PROVIDERS.map(name => {
               return (
-                <option key={name} value={name}>
+                <Option key={name} value={name}>
                   {name}
-                </option>
+                </Option>
               );
             })}
-          </select>
-          {showOtherProvider && (
-            <TextField name="otherProvider" id="otherProvider" labelText="Other provider" />
+            <Option value="other">Other</Option>
+          </Select>
+          {this.state.showOtherProvider && (
+            <TextField
+              name="otherSsoProvider"
+              id="otherSsoProvider"
+              labelText="Other provider"
+              value={this.state.identityProvider.ssoProvider}
+              onChange={this.updateValue('otherSsoProvider')}
+              onBlur={this.updateValueImmediately('otherSsoProvider')}
+            />
           )}
           <HelpText>This will help us provide better support to you.</HelpText>
 
@@ -160,7 +173,7 @@ export default class IDPSetupForm extends React.Component {
             labelText="SSO name"
             id="sso-name"
             name="sso-name"
-            value={identityProvider.ssoName}
+            value={this.state.identityProvider.ssoName}
             onChange={this.updateValue('ssoName')}
             onBlur={this.updateValueImmediately('ssoName')}
           />
@@ -170,7 +183,7 @@ export default class IDPSetupForm extends React.Component {
           </HelpText>
         </section>
         <section className="f36-margin-top--3xl">
-          <h2>Copy Contentful’s details</h2>
+          <Heading element="h2">Copy Contentful’s details</Heading>
           <TextField
             labelText="Audience"
             name="audience"
@@ -204,7 +217,7 @@ export default class IDPSetupForm extends React.Component {
         </section>
 
         <section className="f36-margin-top--3xl">
-          <h2>Map user attributes</h2>
+          <Heading element="h2">Map user attributes</Heading>
           <HelpText>
             Copy and paste these attributes into your SSO provider. They’re not case sensitive.
           </HelpText>
@@ -247,7 +260,7 @@ export default class IDPSetupForm extends React.Component {
         </section>
 
         <section className="f36-margin-top--3xl">
-          <h2>Enter your SSO provider’s details</h2>
+          <Heading element="h2">Enter your SSO provider’s details</Heading>
           <FormLabel htmlFor="redirect-url">
             <strong>
               Single Sign-On Redirect URL
@@ -261,7 +274,7 @@ export default class IDPSetupForm extends React.Component {
             name="redirect-url"
             onChange={this.updateValue('idpSsoTargetUrl')}
             onBlur={this.updateValueImmediately('idpSsoTargetUrl')}
-            value={identityProvider.idpSsoTargetUrl}
+            value={this.state.identityProvider.idpSsoTargetUrl}
           />
           <HelpText>Be careful not to paste the SLO, or Single Logout URL</HelpText>
           <TextField
@@ -272,7 +285,7 @@ export default class IDPSetupForm extends React.Component {
             textInputProps={{
               rows: 8
             }}
-            value={identityProvider.idpCert}
+            value={this.state.identityProvider.idpCert}
             onChange={this.updateValue('idpCert')}
             onBlur={this.updateValueImmediately('idpCert')}
           />
