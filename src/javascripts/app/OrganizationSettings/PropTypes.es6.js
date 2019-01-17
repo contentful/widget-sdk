@@ -3,9 +3,9 @@ import { orgRoles } from 'utils/MembershipUtils.es6';
 
 export const Organization = PropTypes.shape({
   name: PropTypes.string.isRequired,
-  sys: {
+  sys: PropTypes.shape({
     id: PropTypes.string.isRequired
-  }
+  })
 });
 
 export const User = PropTypes.shape({

@@ -9,8 +9,6 @@ import {
   HelpText,
   Select,
   Option,
-  Icon,
-  Tooltip,
   Notification
 } from '@contentful/forma-36-react-components';
 import { authUrl, appUrl } from 'Config.es6';
@@ -67,7 +65,7 @@ export default class IDPSetupForm extends React.Component {
 
     // If the user selects "other" as an SSO provider from the list,
     // we should show the input field for the user to type their own
-    if (name === 'ssoProvider') {
+    if (name === 'idpName') {
       if (value === 'other') {
         showOtherProvider = true;
         newValue = '';
@@ -76,8 +74,8 @@ export default class IDPSetupForm extends React.Component {
       }
     }
 
-    if (name === 'otherSsoProvider') {
-      field = 'ssoProvider';
+    if (name === 'otherIdpName') {
+      field = 'idpName';
     }
 
     const {
@@ -146,7 +144,7 @@ export default class IDPSetupForm extends React.Component {
           <Select
             name="ssoProvider"
             id="ssoProvider"
-            onChange={this.updateValueImmediately('ssoProvider')}>
+            onChange={this.updateValueImmediately('idpName')}>
             <Option value={''}>Select provider</Option>
             {SSO_PROVIDERS.map(name => {
               return (
@@ -163,23 +161,23 @@ export default class IDPSetupForm extends React.Component {
               id="otherSsoProvider"
               labelText="Other provider"
               value={this.state.identityProvider.ssoProvider}
-              onChange={this.updateValue('otherSsoProvider')}
-              onBlur={this.updateValueImmediately('otherSsoProvider')}
+              onChange={this.updateValue('otherIdpName')}
+              onBlur={this.updateValueImmediately('otherIdpName')}
             />
           )}
           <HelpText>This will help us provide better support to you.</HelpText>
 
           <TextField
             labelText="SSO name"
-            id="sso-name"
-            name="sso-name"
+            id="ssoName"
+            name="ssoName"
             value={this.state.identityProvider.ssoName}
             onChange={this.updateValue('ssoName')}
             onBlur={this.updateValueImmediately('ssoName')}
           />
           <HelpText>
             It’s what users have to type to log in via SSO on Contentful. Lowercase letters,
-            numbers, periods, spaces, hypdens, or underscores are allowed.
+            numbers, periods, spaces, hyphens, or underscores are allowed.
           </HelpText>
         </section>
         <section className="f36-margin-top--3xl">
@@ -196,8 +194,8 @@ export default class IDPSetupForm extends React.Component {
           />
           <TextField
             labelText="Login URL"
-            name="login-url"
-            id="login-url"
+            name="loginUrl"
+            id="loginUrl"
             textInputProps={{
               withCopyButton: true,
               disabled: true
@@ -206,8 +204,8 @@ export default class IDPSetupForm extends React.Component {
           />
           <TextField
             labelText="ACS (Assertion Consumer Service) URL"
-            name="acs-url"
-            id="acs-url"
+            name="acsUrl"
+            id="acsUrl"
             textInputProps={{
               withCopyButton: true,
               disabled: true
@@ -261,14 +259,7 @@ export default class IDPSetupForm extends React.Component {
 
         <section className="f36-margin-top--3xl">
           <Heading element="h2">Enter your SSO provider’s details</Heading>
-          <FormLabel htmlFor="redirect-url">
-            <strong>
-              Single Sign-On Redirect URL
-              <Tooltip content="SSO Redirect URL">
-                <Icon icon="HelpCircle" />
-              </Tooltip>
-            </strong>
-          </FormLabel>
+          <FormLabel htmlFor="redirect-url">Single Sign-On Redirect URL</FormLabel>
           <TextInput
             id="redirect-url"
             name="redirect-url"

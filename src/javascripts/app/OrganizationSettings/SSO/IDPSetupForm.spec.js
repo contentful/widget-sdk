@@ -1,13 +1,97 @@
-// import IDPSetupForm from './IDPSetupForm.es6';
+import React from 'react';
+import Enzyme from 'enzyme';
+import IDPSetupForm from './IDPSetupForm.es6';
+import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 
 describe('IDPSetupForm', () => {
-  it('should provide a default SSO name if no SSO name is present in identityProvider', () => {});
+  let rendered;
+  let endpoint;
+  let identityProvider;
 
-  it('should allow users to input their own identity provider name if not in the list', () => {});
+  const render = ({ identityProvider, organization }) => {
+    return Enzyme.shallow(
+      <IDPSetupForm organization={organization} identityProvider={identityProvider} />
+    );
+  };
 
-  it('should update a field every 500ms on change', () => {});
+  const organization = {
+    name: 'My Awesome Org',
+    sys: {
+      id: 'org_1234'
+    }
+  };
 
-  it('should update a field immediately if input is blurred', () => {});
+  beforeEach(() => {
+    identityProvider = {
+      sys: {
+        version: 1
+      }
+    };
 
-  it('should gracefully handle failed update attempts on the network', () => {});
+    endpoint = jest.fn().mockResolvedValue(identityProvider);
+    createOrganizationEndpoint.mockReturnValue(endpoint);
+
+    rendered = render({ identityProvider, organization });
+  });
+
+  it('should provide a default SSO name if no SSO name is present in identityProvider', () => {
+    expect(
+      rendered
+        .find('TextField[name="ssoName"]')
+        .first()
+        .prop('value')
+    ).toBe('my awesome org');
+
+    identityProvider.ssoName = 'lilly';
+    rendered = render({ identityProvider: identityProvider, organization });
+    expect(
+      rendered
+        .find('TextField[name="ssoName"]')
+        .first()
+        .prop('value')
+    ).toBe('lilly');
+  });
+
+  it('should show a secondary TextField if "other" is selected as SSO provider', async () => {
+    expect(rendered.find('TextField[name="otherSsoProvider"]')).toHaveLength(0);
+
+    rendered
+      .find('Select[name="ssoProvider"]')
+      .first()
+      .simulate('change', { target: { value: 'other' } });
+
+    await endpoint();
+
+    expect(rendered.find('TextField[name="otherSsoProvider"]')).toHaveLength(1);
+  });
+
+  it('should update a field every 500ms on change', async () => {
+    rendered
+      .find('TextField[name="ssoName"]')
+      .first()
+      .simulate('change', { target: { value: 'li' } });
+    rendered
+      .find('TextField[name="ssoName"]')
+      .first()
+      .simulate('change', { target: { value: 'lill' } });
+    rendered
+      .find('TextField[name="ssoName"]')
+      .first()
+      .simulate('change', { target: { value: 'lilly' } });
+
+    expect(endpoint.mock.calls).toHaveLength(0);
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    expect(endpoint.mock.calls).toHaveLength(1);
+  });
+
+  it('should update a field immediately if input is blurred', () => {
+    rendered
+      .find('TextField[name="ssoName"]')
+      .first()
+      .simulate('blur', { target: { value: 'lilly' } });
+
+    expect(endpoint.mock.calls).toHaveLength(1);
+  });
 });

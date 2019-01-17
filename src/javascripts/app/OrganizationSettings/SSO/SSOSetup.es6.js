@@ -27,7 +27,7 @@ export default class SSOSetup extends React.Component {
     });
   }
 
-  async createIdp() {
+  createIdp = async () => {
     const {
       organization: {
         sys: { id: orgId }
@@ -46,7 +46,9 @@ export default class SSOSetup extends React.Component {
       identityProvider = await endpoint({
         method: 'POST',
         path: ['identity_provider'],
-        data: {}
+        data: {
+          ssoName: ''
+        }
       });
     } catch (e) {
       this.setState({
@@ -62,7 +64,7 @@ export default class SSOSetup extends React.Component {
       identityProvider,
       creatingIdp: false
     });
-  }
+  };
 
   render() {
     const { organization } = this.props;
