@@ -8,30 +8,30 @@ describe('connectToWidgetAPI', () => {
   beforeEach(async function() {
     module('contentful/test');
     this.system = createIsolatedSystem();
-    this.system.set('entitySelector', {});
     this.system.set('search/EntitySelector/Config.es6', {});
-    this.system.set('AngularComponent', {});
-    this.system.set('modalDialog', { open: sinon.stub() });
-    this.system.set('navigation/SlideInNavigator', {
-      goToSlideInEntity: sinon.stub()
+    this.system.set('app/widgets/WidgetApi/BatchingApiClient/index.es6', {
+      getBatchingApiClient: v => v
     });
-    this.system.set('spaceContext', {
-      default: {
-        cma: {
-          getEntry: sinon.stub().resolves()
-        }
-      }
-    });
-    this.system.set('$rootScope', {
-      default: {
+
+    const getModuleStub = sinon.stub();
+    getModuleStub
+      .withArgs('spaceContext')
+      .returns({
+        cma: {}
+      })
+      .withArgs('$rootScope')
+      .returns({
         $on: sinon.stub()
-      }
-    });
-    this.system.set('$location', {
-      default: {
+      })
+      .withArgs('$location')
+      .returns({
         absUrl: () => 'abs-url'
-      }
+      });
+
+    this.system.set('NgRegistry.es6', {
+      getModule: getModuleStub
     });
+
     this.widgetApi = this.$inject('mocks/widgetApi').create();
 
     this.props = {

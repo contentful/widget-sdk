@@ -19,22 +19,6 @@ export const CONTENT_TYPE_DATA_OBJECT = {
   }
 };
 
-export const getMockedSpaceContext = ({
-  selectedEntity = ENTRY,
-  contentType = CONTENT_TYPE_DATA_OBJECT,
-  thumbnail = null
-}) => {
-  return {
-    space: {
-      getEntry: sinon.spy(() => Promise.resolve({ data: selectedEntity })),
-      getContentType: sinon.spy(() => Promise.resolve(contentType))
-    },
-    entryImage: sinon.spy(() => Promise.resolve(thumbnail)),
-    entryTitle: sinon.spy(() => 'entry-title'),
-    entityDescription: sinon.spy(() => 'entry-description')
-  };
-};
-
 export const stubAll = async ({ isolatedSystem, angularStubs = {} }) => {
   // TODO: Instead of stubbing all kind of services, stub `buildWidgetApi.es6`!
   isolatedSystem.set('ui/cf/thumbnailHelpers.es6', {});
@@ -53,8 +37,17 @@ export const stubAll = async ({ isolatedSystem, angularStubs = {} }) => {
 
   const getModuleStub = sinon.stub();
   getModuleStub
+    .withArgs('environment')
+    .returns({
+      settings: {}
+    })
     .withArgs('spaceContext')
-    .returns({})
+    .returns({
+      cma: {
+        getEntries: sinon.stub().returns(Promise.resolve({})),
+        getAssets: sinon.stub().returns(Promise.resolve({}))
+      }
+    })
     .withArgs('modalDialog')
     .returns({ open: sinon.stub() })
     .withArgs('$rootScope')

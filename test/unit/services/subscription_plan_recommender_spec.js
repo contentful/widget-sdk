@@ -1,5 +1,3 @@
-'use strict';
-
 import $ from 'jquery';
 
 describe('subscriptionPlanRecommender', () => {
@@ -15,10 +13,10 @@ describe('subscriptionPlanRecommender', () => {
   const REASON_CLASS = { class: 'z-subscription-plan-recommendation-reason' };
 
   beforeEach(function() {
-    module('contentful/test');
-
-    this.mockService('environment', {
-      settings: { authUrl: HOST }
+    module('contentful/test', $provide => {
+      $provide.constant('environment', {
+        settings: { authUrl: HOST }
+      });
     });
 
     recommend = this.$inject('subscriptionPlanRecommender').recommend;

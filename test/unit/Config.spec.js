@@ -1,10 +1,19 @@
+import { createIsolatedSystem } from 'test/helpers/system-js';
+
 describe('Config.es6', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.settings = this.$inject('environment').settings;
-    this.settings.authUrl = '//basehost';
-    this.settings.marketingUrl = 'https://website';
-    this.Config = this.$inject('Config.es6');
+  beforeEach(async function() {
+    const system = createIsolatedSystem();
+
+    const getModule = sinon.stub();
+    getModule.withArgs('environment').returns({
+      settings: {
+        authUrl: '//basehost',
+        marketingUrl: 'https://website'
+      }
+    });
+    system.set('NgRegistry.es6', { getModule });
+
+    this.Config = await system.import('Config.es6');
   });
 
   it('provides authUrl with parameters', function() {

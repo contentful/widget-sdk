@@ -5,7 +5,11 @@ describe('cfWidgetApi directive', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.constant('spaceContext', {
-        cma: {}
+        cma: {
+          getEntry: _.noop,
+          getContentType: _.noop,
+          getAsset: _.noop
+        }
       });
     });
 
@@ -99,9 +103,10 @@ describe('cfWidgetApi directive', () => {
   });
 
   describe('#space', () => {
-    it('exposes spaceContext.cma', function() {
+    it('exposes same methods as spaceContext.cma', function() {
       const spaceContext = this.$inject('spaceContext');
-      expect(this.widgetApi.space).toEqual(spaceContext.cma);
+      const getAllKeys = obj => Object.keys(_.toPlainObject(obj));
+      expect(getAllKeys(this.widgetApi.space)).toEqual(getAllKeys(spaceContext.cma));
     });
   });
 
