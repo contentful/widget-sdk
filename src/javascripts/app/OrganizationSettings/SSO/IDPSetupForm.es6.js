@@ -237,7 +237,7 @@ export default class IDPSetupForm extends React.Component {
               withCopyButton: true,
               disabled: true
             }}
-            value={authUrl(`/sso/${orgId}/login`)}
+            value={`https:${authUrl(`/sso/${orgId}/login`)}`}
           />
           <TextField
             labelText="ACS (Assertion Consumer Service) URL"
@@ -247,7 +247,7 @@ export default class IDPSetupForm extends React.Component {
               withCopyButton: true,
               disabled: true
             }}
-            value={authUrl(`/sso/${orgId}/consume`)}
+            value={`https:${authUrl(`/sso/${orgId}/consume`)}`}
           />
         </section>
 

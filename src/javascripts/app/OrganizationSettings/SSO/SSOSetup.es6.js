@@ -5,7 +5,7 @@ import {
   Organization as OrganizationPropType,
   IdentityProvider as IdentityProviderPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
-import { Button, Notification } from '@contentful/forma-36-react-components';
+import { Button, Notification, Note } from '@contentful/forma-36-react-components';
 import IDPSetupForm from './IDPSetupForm.es6';
 
 export default class SSOSetup extends React.Component {
@@ -89,8 +89,13 @@ export default class SSOSetup extends React.Component {
                   Set up SSO
                 </Button>
               )}
-              {identityProvider && (
+              {identityProvider && !identityProvider.enabled && (
                 <IDPSetupForm organization={organization} identityProvider={identityProvider} />
+              )}
+              {identityProvider && identityProvider.enabled && (
+                <Note noteType="positive" title="SSO is enabled">
+                  SSO is enabled for your organization. Contact support to make any changes.
+                </Note>
               )}
             </div>
           </div>

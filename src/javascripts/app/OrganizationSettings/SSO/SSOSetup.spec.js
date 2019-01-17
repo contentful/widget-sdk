@@ -30,6 +30,15 @@ describe('SSOSetup', () => {
     expect(rendered.find('IDPSetupForm')).toHaveLength(0);
   });
 
+  it('should not render the IDPSetupForm component is given identityProvider is enabled', () => {
+    const identityProvider = {
+      enabled: true
+    };
+    const rendered = render({ identityProvider, organization });
+
+    expect(rendered.find('IDPSetupForm')).toHaveLength(0);
+  });
+
   it('should attempt to create an identity provider if CTA button is clicked', () => {
     const endpoint = jest.fn();
     createOrganizationEndpoint.mockReturnValue(endpoint);
