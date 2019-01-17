@@ -38,8 +38,8 @@ describe('ExtensionAPI', () => {
         },
         locales: {
           available: [
-            { code: 'LOCALE', internal_code: 'LOCALE-internal', default: true },
-            { code: 'L2', internal_code: 'L2-internal' }
+            { code: 'LOCALE', internal_code: 'LOCALE-internal', name: 'lang1', default: true },
+            { code: 'L2', internal_code: 'L2-internal', name: 'lang2' }
           ],
           default: { code: 'LOCALE', internal_code: 'LOCALE-internal', default: true }
         },
@@ -52,7 +52,16 @@ describe('ExtensionAPI', () => {
           }
         },
         contentTypeData: {
-          fields: [{ id: 'FID-internal', apiName: 'FID-public', localized: false }]
+          fields: [
+            {
+              id: 'FID-internal',
+              apiName: 'FID-public',
+              localized: false,
+              type: 'Symbol',
+              validations: 'VALIDATIONS1'
+            },
+            { id: 'FID-internal2', apiName: 'FID-public2', localized: true, type: 'Boolean' }
+          ]
         }
       });
 
@@ -73,17 +82,33 @@ describe('ExtensionAPI', () => {
               id: 'FID-public',
               locales: ['LOCALE'],
               localized: false,
-              values: { LOCALE: 'VALUE' }
+              values: { LOCALE: 'VALUE' },
+              type: 'Symbol',
+              validations: 'VALIDATIONS1'
+            },
+            {
+              id: 'FID-public2',
+              locales: ['LOCALE', 'L2'],
+              localized: true,
+              values: {},
+              type: 'Boolean'
             }
           ],
           locales: {
             available: ['LOCALE', 'L2'],
-            default: 'LOCALE'
+            default: 'LOCALE',
+            names: {
+              LOCALE: 'lang1',
+              L2: 'lang2'
+            }
           },
           parameters: expect.any(Object),
           entry: { sys: { id: 'test' }, fields: expect.any(Object) },
           contentType: {
-            fields: [{ id: 'FID-public', localized: false }]
+            fields: [
+              { id: 'FID-public', localized: false, type: 'Symbol', validations: 'VALIDATIONS1' },
+              { id: 'FID-public2', localized: true, type: 'Boolean' }
+            ]
           }
         })
       );

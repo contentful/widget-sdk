@@ -64,8 +64,8 @@ describe('EditorExtensionBridge', () => {
         space: { data: { spaceMembership: 'MEMBERSHIP ' } }
       },
       TheLocaleStore: {
-        getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
-        getDefaultLocale: () => ({ code: 'pl' })
+        getPrivateLocales: () => [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
+        getDefaultLocale: () => ({ code: 'pl', name: 'Polski', default: true })
       },
       entitySelector: { openFromExtension: stubs.openFromExtension }
     });
@@ -89,7 +89,10 @@ describe('EditorExtensionBridge', () => {
         contentTypeData: 'CONTENT TYPE',
         current: { field: 'FIELD', locale: { code: 'pl' } },
         entryData: { fields: {}, sys: {} },
-        locales: { available: [{ code: 'pl' }, { code: 'en' }], default: { code: 'pl' } },
+        locales: {
+          available: [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
+          default: { code: 'pl', name: 'Polski', default: true }
+        },
         parameters: { installation: 'INSTALLATION PARAMS', instance: 'SETTINGS' },
         spaceMembership: 'MEMBERSHIP '
       });

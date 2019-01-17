@@ -4,12 +4,16 @@ import * as PublicContentType from './PublicContentType.es6';
 
 const REQUIRED_CONFIG_KEYS = [
   'channel', // Instance of `ExtensionIFrameChannel`
-  'current', // `{ field, locale }` for a field-locale pair rendering an extension.
   'locales', // `{ available, default }` with all private locales and the default.
   'entryData', // API Entry entity. Using internal IDs (ShareJS format).
   'contentTypeData', // API ContentType entity. Using internal IDs (ShareJS format).
   'spaceMembership', // API SpaceMembership entity.
-  'parameters' // UI Extension parameters.
+  'parameters', // UI Extension parameters.
+
+  // `{ field, locale }` for a field-locale pair of the extension being rendered.
+  // `field` uses internal IDs (ShareJS format).
+  // `locale` has the `internal_code` property.
+  'current'
 ];
 
 /**
@@ -31,14 +35,18 @@ export default class ExtensionAPI {
       throw new Error(`Extra configuration options ${extraKeys.join(', ')} provided`);
     }
 
-    this.fields = this.contentTypeData.fields || [];
+    // Keep content type fields with internal IDs.
+    this.contentTypeFields = get(this.contentTypeData, ['fields'], []);
+    // Create an ID map using internal IDs and internal locale codes.
+    this.idMap = createIDMap(this.contentTypeFields, this.locales.available);
+
+    // Convert content type to its public form for external consumption.
     this.contentTypeData = PublicContentType.fromInternal(this.contentTypeData);
-    this.idMap = createIDMap(this.fields, this.locales.available);
   }
 
   // Sends initial data to the IFrame of an extension.
   connect() {
-    const { spaceMembership, current, entryData, fields, locales } = this;
+    const { spaceMembership, current, entryData, locales } = this;
 
     this.channel.connect({
       user: {
@@ -66,7 +74,7 @@ export default class ExtensionAPI {
         type: current.field.type,
         validations: current.field.validations
       },
-      fieldInfo: (fields || []).map(field => {
+      fieldInfo: this.contentTypeFields.map(field => {
         const fieldLocales = field.localized ? locales.available : [locales.default];
         const values = entryData.fields[field.id];
 
@@ -74,12 +82,17 @@ export default class ExtensionAPI {
           id: field.apiName || field.id,
           localized: field.localized,
           locales: fieldLocales.map(locale => locale.code),
-          values: this.idMap.locale.valuesToPublic(values)
+          values: this.idMap.locale.valuesToPublic(values),
+          type: field.type,
+          validations: field.validations
         };
       }),
       locales: {
         available: locales.available.map(locale => locale.code),
-        default: locales.default.code
+        default: locales.default.code,
+        names: locales.available.reduce((acc, locale) => {
+          return { ...acc, [locale.code]: locale.name };
+        }, {})
       },
       entry: entryData,
       contentType: this.contentTypeData,
@@ -132,7 +145,7 @@ export default class ExtensionAPI {
     }
 
     if (!fieldId) {
-      this.fields.forEach(field => this._updateFieldLocales(field.id, docSnapshot));
+      this.contentTypeFields.forEach(field => this._updateFieldLocales(field.id, docSnapshot));
     } else if (!internalLocaleCode) {
       this._updateFieldLocales(fieldId, docSnapshot);
     } else {
@@ -141,7 +154,7 @@ export default class ExtensionAPI {
   }
 
   _updateFieldLocales(fieldId, docSnapshot) {
-    const field = this.fields.find(field => field.id === fieldId);
+    const field = this.contentTypeFields.find(field => field.id === fieldId);
 
     // We might receive changes from other uses on fields that we
     // do not yet know about. We silently ignore them.
