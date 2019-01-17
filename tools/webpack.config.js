@@ -2,8 +2,7 @@
  * @description This is a webpack configuration to process _most_ of the JS files.
  * For example, `templates.js` is created by gulp, as well as all styles.
  *
- * Currently, only one loader is used – pegjs (https://github.com/eploko/pegjs-loader),
- * because of the way our tests are set up – we can import es6 files directly, using
+ * Because of the way our tests are set up – we can import es6 files directly, using
  * `import` syntax, and if imported file uses non-js loader, karma will fail.
  *
  * Hence, styles and templates (written using Jade/Pug) use gulp for processing.
@@ -153,10 +152,6 @@ module.exports = () => {
               moduleIds: false
             })
           }
-        },
-        {
-          test: /\.pegjs$/,
-          loader: 'pegjs-loader'
         }
       ]
     },

@@ -1,18 +1,8 @@
-'use strict';
+import parse from './legacySearchParser.es6';
 
-describe('Search parser', () => {
-  let parser;
-  afterEach(() => {
-    parser = null;
-  });
-
-  beforeEach(function() {
-    module('contentful/test');
-    parser = this.$inject('searchParser');
-  });
-
+describe('legacySearchParser', () => {
   it('should detect a simple search', () => {
-    expect(parser.parse('Foobar')).toEqual([
+    expect(parse('Foobar')).toEqual([
       {
         type: 'Query',
         text: 'Foobar',
@@ -25,7 +15,7 @@ describe('Search parser', () => {
   });
 
   it('should detect two queries', () => {
-    expect(parser.parse('George Clooney ')).toEqual([
+    expect(parse('George Clooney ')).toEqual([
       {
         type: 'Query',
         text: 'George ',
@@ -46,7 +36,7 @@ describe('Search parser', () => {
   });
 
   it('should detect a key-value search', () => {
-    expect(parser.parse('foo:bar')).toEqual([
+    expect(parse('foo:bar')).toEqual([
       {
         type: 'Pair',
         text: 'foo:bar',
@@ -84,7 +74,7 @@ describe('Search parser', () => {
   });
 
   it('should detect a double key-value search', () => {
-    expect(parser.parse('foo:bar bingo:bongo')).toEqual([
+    expect(parse('foo:bar bingo:bongo')).toEqual([
       {
         type: 'Pair',
         text: 'foo:bar ',
@@ -155,7 +145,7 @@ describe('Search parser', () => {
   });
 
   it('should detect a key-value search with quotes', () => {
-    expect(parser.parse('foo:"Bar Baz"')).toEqual([
+    expect(parse('foo:"Bar Baz"')).toEqual([
       {
         type: 'Pair',
         text: 'foo:"Bar Baz"',
@@ -193,7 +183,7 @@ describe('Search parser', () => {
   });
 
   it('should detect a key-value search with a search', () => {
-    expect(parser.parse('foo:bar Baz')).toEqual([
+    expect(parse('foo:bar Baz')).toEqual([
       {
         type: 'Pair',
         text: 'foo:bar ',
@@ -239,7 +229,7 @@ describe('Search parser', () => {
   });
 
   it('should detect a double key-value search with a quoted search', () => {
-    expect(parser.parse('Merp foo:"Bar Baz" bingo:bongo "Herp Derp"')).toEqual([
+    expect(parse('Merp foo:"Bar Baz" bingo:bongo "Herp Derp"')).toEqual([
       {
         type: 'Query',
         text: 'Merp ',

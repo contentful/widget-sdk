@@ -96,7 +96,6 @@ window.libs = [
   ['rtl-detect', require('rtl-detect')],
   ['sanitize-html', require('sanitize-html')],
   ['scroll-into-view', require('scroll-into-view')],
-  ['searchParser', require('./search.pegjs')],
   ['slate', require('slate')],
   ['slate-edit-list', require('slate-edit-list')],
   ['slate-react', require('slate-react')],
