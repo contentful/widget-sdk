@@ -1,5 +1,4 @@
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
-import { vheight } from 'ui/Layout.es6';
 import { track } from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
 
@@ -139,12 +138,12 @@ function successTemplate() {
         new Personal Access Token. You won’t be able to see it again!`
       ])
     ]),
-    h('div', { style: { marginTop: `${vheight(3)}px` } }),
+    h('div.f36-margin-top--m'),
     h('react-component', {
       name: '@contentful/forma-36-react-components/TextInput',
       props: 'buildTokenInputProps()'
     }),
-    h('div', { style: { marginTop: `${vheight(3)}px` } }),
+    h('div.f36-margin-top--m'),
     h('button.btn-action', { ngClick: 'dialog.confirm()' }, ['Done'])
   ];
 }
@@ -165,7 +164,7 @@ function failureTemplate() {
         ])
       ]
     ),
-    h('div', { style: { marginTop: `${vheight(3)}px` } }),
+    h('div.f36-margin-top--m'),
     h('div', { style: { display: 'flex' } }, [
       h('button.btn-action', { uiCommand: 'createToken' }, ['Retry']),
       h('div', { style: { marginLeft: 'auto' } }),

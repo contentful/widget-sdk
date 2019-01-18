@@ -15,7 +15,6 @@ import {
 import { h } from 'ui/Framework/index.es6';
 import { createStore, bindActions, makeReducer } from 'ui/Framework/Store.es6';
 import escape from 'utils/escape.es6';
-import { container, vspace } from 'ui/Layout.es6';
 import { DocsLink, LinkOpen } from 'ui/Content.es6';
 
 import * as Config from 'Config.es6';
@@ -137,20 +136,24 @@ export function initController($scope, auth) {
 }
 
 function render(state, actions) {
-  return container(
+  return h(
+    'div',
     {
-      padding: '2em 3em'
+      style: {
+        padding: '2em 3em'
+      }
     },
-    [oauthSection(), vspace(7), patSection(state, actions)]
+    [oauthSection(), h('div.f36-margin-top--2xl'), patSection(state, actions)]
   );
 }
 
 function patSection(state, actions) {
   return h('div', [
     h('h1.section-title', ['Personal Access Tokens']),
-    container(
+    h(
+      'div',
       {
-        display: 'flex'
+        style: { display: 'flex' }
       },
       [
         <p
@@ -163,10 +166,13 @@ function patSection(state, actions) {
           use the Content Management API. These tokens are always bound to your individual account,
           with the same permissions you have on all of your spaces and organizations.
         </p>,
-        container(
+        h(
+          'div',
           {
-            marginLeft: '1em',
-            flex: '0 0 auto'
+            style: {
+              marginLeft: '1em',
+              flex: '0 0 auto'
+            }
           },
           [
             h(
@@ -181,7 +187,7 @@ function patSection(state, actions) {
         )
       ]
     ),
-    vspace(5),
+    h('div.f36-margin-top--xl'),
     tokenList(state, actions)
   ]);
 }
@@ -228,10 +234,13 @@ function tokenList(
           dataTestId: 'pat.list'
         },
         [
-          container(
+          h(
+            'div',
             {
-              position: 'relative',
-              minHeight: '6em'
+              style: {
+                position: 'relative',
+                minHeight: '6em'
+              }
             },
             [
               loadingTokens &&
@@ -242,7 +251,7 @@ function tokenList(
               h(TokenTable, { tokens, revoke: Revoke })
             ]
           ),
-          vspace(5),
+          h('div.f36-margin-top--xl'),
           h(Paginator, {
             select: SelectPage,
             page: currentPage,

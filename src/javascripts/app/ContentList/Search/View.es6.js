@@ -2,11 +2,11 @@
 // TODO: add prop-types
 import { noop } from 'lodash';
 import { match } from 'utils/TaggedValues.es6';
+import PropTypes from 'prop-types';
 import { truncate } from 'utils/StringUtils.es6';
 import React from 'react';
 import { h } from 'ui/Framework/index.es6';
 import * as H from 'ui/Framework/Hooks/index.es6';
-import { container, hspace } from 'ui/Layout.es6';
 import { Spinner } from '@contentful/forma-36-react-components';
 import { byName as colors } from 'Styles/Colors.es6';
 import keycodes from 'utils/keycodes.es6';
@@ -160,7 +160,7 @@ export default function render({
               })
             ]
           ),
-          hspace('8px'),
+          h('div.f36-margin-left--s'),
           h(
             '.search-next__filter-toggle',
             {
@@ -170,18 +170,21 @@ export default function render({
               )
             },
             [
-              container(
+              h(
+                'div',
                 {
-                  alignSelf: 'flex-start',
-                  height: '38px',
-                  display: 'flex',
-                  alignItems: 'center'
+                  style: {
+                    alignSelf: 'flex-start',
+                    height: '38px',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }
                 },
                 [
                   // TODO we should be able to pass a `style` argument to
                   // `filterIcon`.
-                  container({ marginTop: '-3px' }, [h(FilterIcon)]),
-                  hspace('7px'),
+                  h('div', { style: { marginTop: '-3px' } }, [h(FilterIcon)]),
+                  h('div.f36-margin-left--s'),
                   'Filter'
                 ]
               )
@@ -413,6 +416,7 @@ function suggestionsBox({ items, searchTerm, defaultFocus, onSelect, onKeyDown }
     return h(
       'div.search-next__completion-item',
       {
+        key: field.queryKey,
         'data-test-id': field.queryKey,
         ref: el => {
           if (defaultFocus.suggestionsFocusIndex === index && el) {
@@ -468,91 +472,123 @@ function suggestionsBox({ items, searchTerm, defaultFocus, onSelect, onKeyDown }
     );
   });
 
-  return suggestionList({
-    items: suggestions,
-    searchTerm
+  return h(SuggestionsList, {
+    key: searchTerm,
+    hasSuggestions: suggestions.length > 0,
+    searchTerm,
+    children: suggestions
   });
 }
 
-function searchHelpBanner() {
-  return container(
-    {
+const SearchHelpBanner = () => (
+  <div
+    style={{
       display: 'flex',
       alignItems: 'center',
       background: colors.iceMid,
       borderTop: '1px solid ' + colors.elementLight,
       height: '56px',
       padding: '15px 20px'
-    },
-    [
-      h(InfoIcon),
-      h(
-        'p',
-        {
-          style: {
-            color: colors.textLight,
-            margin: '0',
-            marginLeft: '10px'
-          }
-        },
-        [
-          'Get more out of search. Here’s ',
-          // TODO use ui/Content module
-          h(
-            'a',
-            {
-              style: { textDecoration: 'underline' },
-              href: 'https://www.contentful.com/r/knowledgebase/content-search/',
-              target: '_blank'
-            },
-            ['how search works']
-          ),
-          '.'
-        ]
-      )
-    ]
-  );
+    }}>
+    <InfoIcon />
+    <p
+      style={{
+        color: colors.textLight,
+        margin: '0',
+        marginLeft: '10px'
+      }}>
+      Get more out of search. Here’s{' '}
+      <a
+        style={{ textDecoration: 'underline' }}
+        href="https://www.contentful.com/r/knowledgebase/content-search/"
+        target="_blank"
+        rel="noopener noreferrer">
+        how search works
+      </a>
+    </p>
+  </div>
+);
+
+class AutoHide extends React.Component {
+  _isMounted = false;
+
+  state = {
+    isHidden: false
+  };
+
+  componentDidMount() {
+    this._isMounted = true;
+    setTimeout(() => {
+      this.hideComponent();
+    }, this.props.ms);
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  hideComponent = () => {
+    if (this._isMounted) {
+      this.setState(previousState => ({
+        ...previousState,
+        isHidden: true
+      }));
+    }
+  };
+
+  render() {
+    return this.state.isHidden ? null : this.props.children;
+  }
 }
 
-function noSuggestionsMessage({ searchTerm }) {
-  return h('div.search-next__suggestions__no-results', [
-    `There are no filters matching “${truncate(searchTerm.trim(), 25)}”`
-  ]);
-}
+class SuggestionsList extends React.Component {
+  static propTypes = {
+    searchTerm: PropTypes.string,
+    hasSuggestions: PropTypes.bool.isRequired,
+    children: PropTypes.node
+  };
 
-function suggestionsHeader() {
-  return h('div.search-next__suggestions-header', [
-    h('div.search-next__suggestions__column', ['Field']),
-    h('div.search-next__suggestions__column', ['Content type']),
-    h('div.search-next__suggestions__column', ['Description'])
-  ]);
-}
-
-function suggestionList({ items, searchTerm }) {
-  const hasSuggestions = items.length > 0;
-  return h(
-    'div',
-    {
-      'data-test-id': 'suggestions',
-      style: {
-        zIndex: 1,
-        border: `solid ${colors.blueMid}`,
-        borderWidth: '0 1px 1px 1px',
-        background: 'white'
-      }
-    },
-    [
-      hasSuggestions
-        ? container(
-            {
+  renderContent() {
+    const { children, searchTerm, hasSuggestions } = this.props;
+    return (
+      <div
+        data-test-id="suggestions"
+        style={{
+          zIndex: 1,
+          border: `solid ${colors.blueMid}`,
+          borderWidth: '0 1px 1px 1px',
+          background: 'white'
+        }}>
+        {hasSuggestions && (
+          <div
+            style={{
               maxHeight: '50vh',
               overflowX: 'hidden',
               overflowY: 'auto'
-            },
-            [suggestionsHeader(), ...items]
-          )
-        : noSuggestionsMessage({ searchTerm }),
-      searchHelpBanner()
-    ]
-  );
+            }}>
+            <div className="search-next__suggestions-header">
+              <div className="search-next__suggestions__column">Field</div>
+              <div className="search-next__suggestions__column">Content type</div>
+              <div className="search-next__suggestions__column">Description</div>
+            </div>
+            {children}
+          </div>
+        )}
+        {!hasSuggestions && (
+          <div className="search-next__suggestions__no-results">
+            {`There are no filters matching “${truncate(searchTerm.trim(), 25)}”`}
+          </div>
+        )}
+        <SearchHelpBanner />
+      </div>
+    );
+  }
+
+  render() {
+    return this.props.hasSuggestions ? (
+      this.renderContent()
+    ) : (
+      <AutoHide ms={1000}>{this.renderContent()}</AutoHide>
+    );
+  }
 }

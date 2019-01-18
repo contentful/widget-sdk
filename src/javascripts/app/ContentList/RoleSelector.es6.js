@@ -6,7 +6,6 @@ import { makeCtor } from 'utils/TaggedValues.es6';
 
 import React from 'react';
 import { createStore, makeReducer } from 'ui/Framework/Store.es6';
-import { container, hfill, vspace_, vspace, hspace } from 'ui/Layout.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
 
 import { Notification } from '@contentful/forma-36-react-components';
@@ -176,7 +175,7 @@ function selectAllButton(state, actions) {
         data-test-id={testId('unselect-all')}
         onClick={actions.UnselectAll}
         disabled={disabled}
-        className="text-link">
+        className="text-link f36-margin-left--m">
         Unselect all
       </button>
     );
@@ -186,7 +185,7 @@ function selectAllButton(state, actions) {
         data-test-id={testId('select-all')}
         onClick={actions.SelectAll}
         disabled={disabled}
-        className="text-link">
+        className="text-link f36-margin-left--m">
         Select all
       </button>
     );
@@ -204,65 +203,58 @@ function render(state, actions) {
         <p style={{ lineHeight: '1.7' }}>{`A view displays a list of entries you searched for.
         By sharing this view with people with other roles,
         you are granting them access to view it.`}</p>
-        {vspace(4)}
-        {container(
-          {
-            display: 'flex'
-          },
-          [
-            <strong key="select-roles">Select role(s)</strong>,
-            hfill(),
-            selectAllButton(state, actions)
-          ]
-        )}
-        {vspace(4)}
+        <div className="f36-margin-top--l" />
+        <div style={{ display: 'flex' }}>
+          <strong key="select-roles">Select role(s)</strong>
+          {selectAllButton(state, actions)}
+        </div>
+        <div className="f36-margin-top--l" />
         {renderRolesContainer(state, actions)}
-        {vspace(4)}
+        <div className="f36-margin-top--l" />
         <div className="note-box--info">
           <p>{`This view might display different content depending on the role,
           because different roles might have access to different content types.
           Administrators have access to all shared views.`}</p>
         </div>
-        {vspace(4)}
-        {container(
-          {
-            display: 'flex'
-          },
-          [
-            <button
-              key="share-this-view"
-              data-test-id={testId('apply-selection')}
-              onClick={actions.ConfirmSelection}
-              className="btn-primary-action">
-              Share this view
-            </button>,
-            hspace('10px'),
-            <button key="cancel" onClick={actions.CancelSelection} className="btn-secondary-action">
-              Cancel
-            </button>
-          ]
-        )}
+        <div className="f36-margin-top--l" />
+        <div style={{ display: 'flex' }}>
+          <button
+            key="share-this-view"
+            data-test-id={testId('apply-selection')}
+            onClick={actions.ConfirmSelection}
+            className="btn-primary-action">
+            Share this view
+          </button>
+          <button
+            key="cancel"
+            onClick={actions.CancelSelection}
+            className="btn-secondary-action f36-margin-left--m">
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
 function renderRolesContainer(state, actions) {
-  return container(
-    {
-      border: `1px solid ${Colors.iceDark}`,
-      backgroundColor: Colors.elementLightest,
-      // We want to show half of a role if the container scrolls
-      maxHeight: '157px',
-      position: 'relative',
-      overflowX: 'hidden',
-      overflowY: 'auto'
-    },
-    caseof(state.rolesFetchStatus, [
-      [K.PromiseStatus.Pending, () => [loader()]],
-      [K.PromiseStatus.Resolved, () => renderRoles(state.roles, actions.ToggleRoleSelection)],
-      [K.PromiseStatus.Rejected, () => [fetchError()]]
-    ])
+  return (
+    <div
+      style={{
+        border: `1px solid ${Colors.iceDark}`,
+        backgroundColor: Colors.elementLightest,
+        // We want to show half of a role if the container scrolls
+        maxHeight: '157px',
+        position: 'relative',
+        overflowX: 'hidden',
+        overflowY: 'auto'
+      }}>
+      {caseof(state.rolesFetchStatus, [
+        [K.PromiseStatus.Pending, () => [loader()]],
+        [K.PromiseStatus.Resolved, () => renderRoles(state.roles, actions.ToggleRoleSelection)],
+        [K.PromiseStatus.Rejected, () => [fetchError()]]
+      ])}
+    </div>
   );
 }
 
@@ -287,40 +279,46 @@ function loader() {
 }
 
 function renderRoles(roles, toggleSelection) {
-  return [
-    vspace_('12.5px'),
-    container(
-      {},
-      roles.map(({ id, name, selected, disabled }, i) => {
-        return (
-          <div
-            key={`role-${id}`}
-            className={[
-              'view-role-selector__role',
-              selected ? 'x--selected' : '',
-              disabled ? 'x--disabled' : ''
-            ].join(' ')}
-            data-test-id={testId(`roles.${id}`)}
-            role="button"
-            aria-disabled={String(!!disabled)}
-            aria-checked={String(!!selected)}
-            onClick={() => !disabled && toggleSelection(i)}>
-            {name}
-            {hfill('20px')}
-            {container(
-              {
-                fontFamily: 'FontAwesome',
-                fontSize: '18px',
-                color: selected ? Colors.greenDark : Colors.textLightest
-              },
-              [selected ? '\uf058' : '\uf055']
-            )}
-          </div>
-        );
-      })
-    ),
-    vspace_('12.5px')
-  ];
+  return (
+    <React.Fragment>
+      <div className="f36-margin-top--m" />
+      <div>
+        {roles.map(({ id, name, selected, disabled }, i) => {
+          return (
+            <div
+              key={`role-${id}`}
+              className={[
+                'view-role-selector__role',
+                selected ? 'x--selected' : '',
+                disabled ? 'x--disabled' : ''
+              ].join(' ')}
+              data-test-id={testId(`roles.${id}`)}
+              role="button"
+              aria-disabled={String(!!disabled)}
+              aria-checked={String(!!selected)}
+              onClick={() => !disabled && toggleSelection(i)}>
+              {name}
+              <div
+                style={{
+                  marginLeft: 'auto',
+                  marginRight: '20px'
+                }}
+              />
+              <div
+                style={{
+                  fontFamily: 'FontAwesome',
+                  fontSize: '18px',
+                  color: selected ? Colors.greenDark : Colors.textLightest
+                }}>
+                {selected ? '\uf058' : '\uf055'}
+              </div>
+            </div>
+          );
+        })}
+        <div className="f36-margin-top--m" />
+      </div>
+    </React.Fragment>
+  );
 }
 
 function testId(id) {

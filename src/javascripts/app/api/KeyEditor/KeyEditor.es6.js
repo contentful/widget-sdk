@@ -3,7 +3,6 @@ import React from 'react';
 import { h } from 'ui/Framework/index.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
 import { assign } from 'utils/Collections.es6';
-import { container, vspace } from 'ui/Layout.es6';
 import { DocsLink } from 'ui/Content.es6';
 import renderEnvironmentSelector from './EnvironmentSelector.es6';
 import CopyIcon from 'svg/CopyIcon.es6';
@@ -26,12 +25,12 @@ function renderForm({ data, model, update, trackCopy }) {
   return h('div', [
     h('h3.section-title', ['Access tokens']),
 
-    container({}, [
+    h('div', [
       'To query and get content using the APIs, client applications ',
       'need to authenticate with both the Space ID and an access token.'
     ]),
 
-    vspace(5),
+    h('div.f36-margin-top--xl'),
 
     section(
       {
@@ -147,9 +146,9 @@ function inputWithCopy({ value, name, track }) {
 function section({ title, description }, content) {
   return h(
     'div',
-    [h('h4.h-reset', [title]), description && h('div', description), vspace(4)]
+    [h('h4.h-reset', [title]), description && h('div', description), h('div.f36-margin-top--l')]
       .concat(content)
-      .concat([vspace(5)])
+      .concat([h('div.f36-margin-top--xl')])
   );
 }
 

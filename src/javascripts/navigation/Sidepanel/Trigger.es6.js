@@ -2,7 +2,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { container, hspace, hbox, vbox } from 'ui/Layout.es6';
 import { caseof } from 'sum-types';
 
 import { byName as colors } from 'Styles/Colors.es6';
@@ -41,18 +40,20 @@ export default class Trigger extends React.Component {
         onClick={onClick}
         data-test-id="sidepanel-trigger">
         <Logo />
-        {hspace('15px')}
-        {vbox(
-          {
+        <div className="f36-margin-left--m" />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'center',
             alignSelf: 'stretch',
             flexGrow: '1',
             flexShrink: '1',
             overflow: 'hidden'
-          },
-          renderContent(this.state)
-        )}
-        {hspace('15px')}
+          }}>
+          {renderContent(this.state)}
+        </div>
+        <div className="f36-margin-left--m" />
         <Hamburger fill={'white'} />
       </div>
     );
@@ -122,29 +123,29 @@ function environmentLabel(env) {
   // TODO The 'Space' nav state should always have an environment
   const envId = env ? env.sys.id : 'master';
   const isMaster = envId === 'master';
-  return hbox(
-    {
-      alignItems: 'center',
-      fontSize: '12px',
-      lineHeight: '1.5',
-      color: isMaster ? colors.greenLight : colors.orangeLight
-    },
-    [
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        fontSize: '12px',
+        lineHeight: '1.5',
+        color: isMaster ? colors.greenLight : colors.orangeLight
+      }}>
       <EnvironmentIcon
-        key="environment-icon"
         style={{
           display: 'block',
           flexShrink: 0,
           fill: 'currentColor'
         }}
-      />,
-      hspace('7px'),
-      container(
-        {
+      />
+      <div className="f36-margin-left--s" />
+      <div
+        style={{
           ...oneLineTruncate
-        },
-        [envId]
-      )
-    ]
+        }}>
+        {envId}
+      </div>
+    </div>
   );
 }

@@ -1,6 +1,5 @@
 import { range } from 'lodash';
 import { h, icons } from 'utils/legacy-html-hyperscript/index.es6';
-import { vheight } from 'ui/Layout.es6';
 
 /**
  * This module exports the template for the content type editor.
@@ -185,9 +184,7 @@ function tabPanel() {
       }
     },
     [
-      h('div', {
-        style: { marginTop: `${vheight(5)}px` }
-      }),
+      h('div.f36-margin-top--xl'),
       h(
         'div',
         {
@@ -434,9 +431,7 @@ function sidebar() {
         ngIf: 'data.canEdit'
       },
       [
-        h('div', {
-          style: { marginTop: `${vheight(4)}px` }
-        }),
+        h('div.f36-margin-top--l'),
         h(
           'button.btn-action.x--block',
           {
