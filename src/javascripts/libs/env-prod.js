@@ -85,7 +85,6 @@ window.libs = [
   ['react-animate-height', require('react-animate-height')],
   ['react-click-outside', require('react-click-outside')],
   ['react-codemirror', require('react-codemirror')],
-  ['react-content-loader', require('react-content-loader')],
   ['react-dom', require('react-dom')],
   ['react-dom/server', require('react-dom/server')],
   ['react-highlight-words', require('react-highlight-words')],

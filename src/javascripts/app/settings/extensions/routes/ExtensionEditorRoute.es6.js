@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import AdminOnly from 'app/common/AdminOnly.es6';
-import ExtensionEditor from '../ExtensionEditor.es6';
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
+import ExtensionEditor, { ExtensionEditorShell } from '../ExtensionEditor.es6';
+import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import { getModule } from 'NgRegistry.es6';
 
@@ -25,7 +25,7 @@ export class ExtensionEditorRoute extends React.Component {
         <ExtensionFetcher extensionId={this.props.extensionId}>
           {({ isLoading, isError, data }) => {
             if (isLoading) {
-              return <FetcherLoading message="Loading extension..." />;
+              return <ExtensionEditorShell />;
             }
             if (isError) {
               return <StateRedirect to="^.list" />;

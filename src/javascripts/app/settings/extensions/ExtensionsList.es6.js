@@ -5,7 +5,9 @@ import {
   Button,
   Dropdown,
   DropdownList,
-  Notification
+  Notification,
+  SkeletonContainer,
+  SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 import Workbench from 'app/common/Workbench.es6';
@@ -115,6 +117,50 @@ const EmptyState = () => (
   </div>
 );
 
+export const ExtensionListShell = props => (
+  <Workbench>
+    <Workbench.Header>
+      <Workbench.Icon icon="page-settings" />
+      <Workbench.Title>{props.title || 'Extensions'}</Workbench.Title>
+      <Workbench.Header.Actions>{props.actions}</Workbench.Header.Actions>
+    </Workbench.Header>
+    <Workbench.Content>
+      {props.children || (
+        <React.Fragment>
+          <ExtensionsTable />
+          <SkeletonContainer svgWidth={600} ariaLabel="Loading extensions list..." clipId="content">
+            <SkeletonBodyText numberOfLines={5} offsetLeft={20} marginBottom={15} offsetTop={20} />
+          </SkeletonContainer>
+        </React.Fragment>
+      )}
+    </Workbench.Content>
+    <Workbench.Sidebar>
+      <ExtensionsSidebar />
+    </Workbench.Sidebar>
+  </Workbench>
+);
+
+ExtensionListShell.propTypes = {
+  title: PropTypes.string,
+  actions: PropTypes.node
+};
+
+const ExtensionsTable = props => (
+  <table className="simple-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Hosting</th>
+        <th>Field type(s)</th>
+        <th>Instance parameters</th>
+        <th>Installation parameters</th>
+        <th className="x--small-cell">Actions</th>
+      </tr>
+    </thead>
+    <tbody>{props.children}</tbody>
+  </table>
+);
+
 export class ExtensionsList extends React.Component {
   static propTypes = {
     extensions: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
@@ -174,38 +220,18 @@ export class ExtensionsList extends React.Component {
 
     return (
       <div data-test-id="extensions.list">
-        <table className="simple-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Hosting</th>
-              <th>Field type(s)</th>
-              <th>Instance parameters</th>
-              <th>Installation parameters</th>
-              <th className="x--small-cell">Actions</th>
-            </tr>
-          </thead>
-          <tbody>{body}</tbody>
-        </table>
+        <ExtensionsTable>{body}</ExtensionsTable>
       </div>
     );
   }
 
   render() {
     return (
-      <Workbench>
-        <Workbench.Header>
-          <Workbench.Icon icon="page-settings" />
-          <Workbench.Title>Extensions ({this.props.extensions.length})</Workbench.Title>
-          <Workbench.Header.Actions>
-            <ExtensionsActions />
-          </Workbench.Header.Actions>
-        </Workbench.Header>
-        <Workbench.Content>{this.renderList()}</Workbench.Content>
-        <Workbench.Sidebar>
-          <ExtensionsSidebar />
-        </Workbench.Sidebar>
-      </Workbench>
+      <ExtensionListShell
+        title={`Extensions (${this.props.extensions.length})`}
+        actions={<ExtensionsActions />}>
+        {this.renderList()}
+      </ExtensionListShell>
     );
   }
 }

@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ContentLoader from 'react-content-loader';
 import Workbench from 'app/common/Workbench.es6';
 import AppsList from './AppsList.es6';
 import AppListItem from './AppListItem.es6';
 import AppsFeedback from '../AppsFeedback.es6';
-import { Note, Button } from '@contentful/forma-36-react-components';
+import {
+  Note,
+  Button,
+  SkeletonContainer,
+  SkeletonDisplayText,
+  SkeletonText,
+  SkeletonImage
+} from '@contentful/forma-36-react-components';
 
 import * as Analytics from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -29,24 +35,29 @@ const AppsListShell = props => (
   </Workbench>
 );
 
-export const AppsListPageLoading = () => (
-  <AppsListShell>
-    <ContentLoader height={200} width={500} ariaLabel="Loading apps list...">
-      <rect x="0" y="0" rx="2" ry="2" width="100" height="10" />
-      <circle cx="15" cy="55" r="15" />
-      <rect x="45" y="52" rx="2" ry="2" width="200" height="6" />
-      <rect x="430" y="52" rx="2" ry="2" width="70" height="6" />
-
-      <circle cx="15" cy="95" r="15" />
-      <rect x="45" y="92" rx="2" ry="2" width="200" height="6" />
-      <rect x="430" y="92" rx="2" ry="2" width="70" height="6" />
-
-      <circle cx="15" cy="135" r="15" />
-      <rect x="45" y="132" rx="2" ry="2" width="200" height="6" />
-      <rect x="430" y="132" rx="2" ry="2" width="70" height="6" />
-    </ContentLoader>
-  </AppsListShell>
+const ItemSkeleton = props => (
+  <React.Fragment>
+    <SkeletonImage offsetTop={props.baseTop} width={36} height={36} radiusX={36} radiusY={36} />
+    <SkeletonText offsetTop={props.baseTop + 15} offsetLeft={50} lineHeight={8} width={240} />
+    <SkeletonText offsetTop={props.baseTop + 15} offsetLeft={510} lineHeight={8} width={90} />
+  </React.Fragment>
 );
+ItemSkeleton.propTypes = {
+  baseTop: PropTypes.number
+};
+
+export const AppsListPageLoading = () => {
+  return (
+    <AppsListShell>
+      <SkeletonContainer svgWidth={600} svgHeight={200} ariaLabel="Loading apps list...">
+        <SkeletonDisplayText />
+        <ItemSkeleton baseTop={60} />
+        <ItemSkeleton baseTop={110} />
+        <ItemSkeleton baseTop={160} />
+      </SkeletonContainer>
+    </AppsListShell>
+  );
+};
 
 const appGroupPropType = PropTypes.arrayOf(
   PropTypes.shape({

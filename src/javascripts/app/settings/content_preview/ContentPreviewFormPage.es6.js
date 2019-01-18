@@ -8,7 +8,10 @@ import {
   FieldGroup,
   CheckboxField,
   Notification,
-  ModalConfirm
+  ModalConfirm,
+  SkeletonContainer,
+  SkeletonBodyText,
+  SkeletonDisplayText
 } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry.es6';
 import validate from './ContentPreviewFormValidation.es6';
@@ -31,9 +34,31 @@ export const ContentPreviewFormPageSkeleton = props => (
     <Workbench.Header>
       <Workbench.Header.Back to="^.list" />
       <Workbench.Icon icon="page-settings" />
-      {props.header}
+      <Workbench.Title>
+        {props.title || (
+          <SkeletonContainer svgHeight={21} clipId="title">
+            <SkeletonDisplayText lineHeight={21} />
+          </SkeletonContainer>
+        )}
+      </Workbench.Title>
+      <Workbench.Header.Actions>
+        {props.actions || (
+          <SkeletonContainer svgHeight={21} svgWidth={100} clipId="actions">
+            <SkeletonDisplayText lineHeight={21} />
+          </SkeletonContainer>
+        )}
+      </Workbench.Header.Actions>
     </Workbench.Header>
-    <Workbench.Content>{props.children}</Workbench.Content>
+    <Workbench.Content>
+      {props.children || (
+        <Form className="content-preview-editor">
+          <h3 className="section-title">General information</h3>
+          <SkeletonContainer svgWidth={600} ariaLabel="Loading content type..." clipId="content">
+            <SkeletonBodyText numberOfLines={5} marginBottom={15} />
+          </SkeletonContainer>
+        </Form>
+      )}
+    </Workbench.Content>
     <Workbench.Sidebar className="content-preview-sidebar">
       <WhatIsContentPreview />
       <TokensForContentPreview />
@@ -43,7 +68,8 @@ export const ContentPreviewFormPageSkeleton = props => (
   </Workbench>
 );
 ContentPreviewFormPageSkeleton.propTypes = {
-  header: PropTypes.node,
+  title: PropTypes.node,
+  actions: PropTypes.node,
   children: PropTypes.node
 };
 
@@ -260,28 +286,26 @@ export default class ContentPreviewFormPage extends Component {
   render() {
     return (
       <ContentPreviewFormPageSkeleton
-        header={
+        title={this.state.preview.name || 'Untitled'}
+        actions={
           <React.Fragment>
-            <Workbench.Title>{this.state.preview.name || 'Untitled'}</Workbench.Title>
-            <Workbench.Header.Actions>
-              {!this.props.isNew && (
-                <Button
-                  testId="delete-content-preview"
-                  buttonType="muted"
-                  onClick={this.remove}
-                  loading={this.state.busy}>
-                  Delete
-                </Button>
-              )}
+            {!this.props.isNew && (
               <Button
-                disabled={!this.state.dirty}
-                onClick={this.save}
-                loading={this.state.busy}
-                testId="save-content-preview"
-                buttonType="positive">
-                Save
+                testId="delete-content-preview"
+                buttonType="muted"
+                onClick={this.remove}
+                loading={this.state.busy}>
+                Delete
               </Button>
-            </Workbench.Header.Actions>
+            )}
+            <Button
+              disabled={!this.state.dirty}
+              onClick={this.save}
+              loading={this.state.busy}
+              testId="save-content-preview"
+              buttonType="positive">
+              Save
+            </Button>
           </React.Fragment>
         }>
         <Form className="content-preview-editor">

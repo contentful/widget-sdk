@@ -3,9 +3,9 @@ import { sortBy, filter, flow } from 'lodash/fp';
 import PropTypes from 'prop-types';
 import AdminOnly from 'app/common/AdminOnly.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
+import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import ExtensionsForbiddenPage from '../ExtensionsForbiddenPage.es6';
-import ExtensionsList from '../ExtensionsList.es6';
+import ExtensionsList, { ExtensionListShell } from '../ExtensionsList.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
@@ -37,7 +37,7 @@ class ExtensionsListRoute extends React.Component {
         <ExtensionsFetcher>
           {({ isLoading, isError, data, fetch }) => {
             if (isLoading) {
-              return <FetcherLoading message="Loading extensions..." />;
+              return <ExtensionListShell />;
             }
             if (isError) {
               return <StateRedirect to="spaces.detail.entries.list" />;

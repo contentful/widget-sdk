@@ -50,7 +50,6 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
       'react-animate-height',
       'react-click-outside',
       'react-codemirror',
-      'react-content-loader',
       'react-dom',
       'react-dom/server',
       'react-highlight-words',

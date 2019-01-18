@@ -26,7 +26,9 @@ export const ContentPreviewListPageSkeleton = () => (
       <Workbench.Title>Content preview</Workbench.Title>
     </Workbench.Header>
     <Workbench.Content />
-    <Workbench.Sidebar />
+    <Workbench.Sidebar>
+      <WhatIsContentPreview />
+    </Workbench.Sidebar>
   </Workbench>
 );
 

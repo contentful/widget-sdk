@@ -1,7 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get, cloneDeep, isEqual, omit } from 'lodash';
-import { Notification } from '@contentful/forma-36-react-components';
+import {
+  Notification,
+  SkeletonContainer,
+  SkeletonBodyText,
+  SkeletonDisplayText
+} from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
@@ -12,6 +17,35 @@ import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
 const Analytics = getModule('analytics/Analytics.es6');
+
+export const ExtensionEditorShell = props => (
+  <Workbench>
+    <Workbench.Header>
+      <Workbench.Header.Back to="^.list" />
+      <Workbench.Icon icon="page-settings" />
+      <Workbench.Title>
+        {props.title || (
+          <SkeletonContainer svgHeight={21} clipId="header">
+            <SkeletonDisplayText lineHeight={21} />
+          </SkeletonContainer>
+        )}
+      </Workbench.Title>
+      <Workbench.Header.Actions>{props.actions}</Workbench.Header.Actions>
+    </Workbench.Header>
+    <Workbench.Content>
+      {props.children || (
+        <SkeletonContainer svgWidth={600} ariaLabel="Loading extension..." clipId="content">
+          <SkeletonBodyText numberOfLines={5} offsetLeft={28} marginBottom={15} offsetTop={18} />
+        </SkeletonContainer>
+      )}
+    </Workbench.Content>
+  </Workbench>
+);
+
+ExtensionEditorShell.propTypes = {
+  title: PropTypes.string,
+  actions: PropTypes.node
+};
 
 class ExtensionEditor extends React.Component {
   static propTypes = {
@@ -137,17 +171,11 @@ class ExtensionEditor extends React.Component {
     const dirty = this.isDirty();
 
     return (
-      <Workbench>
-        <Workbench.Header>
-          <Workbench.Icon icon="page-settings" />
-          <Workbench.Title>
-            Extension: {this.state.initial.extension.name}
-            {dirty ? '*' : ''}
-          </Workbench.Title>
-          <Workbench.Header.Actions>{this.renderActions(dirty)}</Workbench.Header.Actions>
-        </Workbench.Header>
-        <Workbench.Content>{this.renderContent()}</Workbench.Content>
-      </Workbench>
+      <ExtensionEditorShell
+        title={`Extension: ${this.state.initial.extension.name}${dirty ? '*' : ''}`}
+        actions={this.renderActions(dirty)}>
+        {this.renderContent()}
+      </ExtensionEditorShell>
     );
   }
 }

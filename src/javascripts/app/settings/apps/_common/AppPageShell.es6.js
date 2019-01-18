@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { List as SkeletonList } from 'react-content-loader';
+import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import AppIcon from './AppIcon.es6';
 
@@ -17,9 +17,9 @@ const AppPageShell = ({ appId }) => (
       )}
     </Workbench.Header>
     <Workbench.Content centered>
-      <div className="app-page-skeleton">
-        <SkeletonList style={{ marginTop: 20 }} />
-      </div>
+      <SkeletonContainer ariaLabel="Loading app..." svgWidth={600}>
+        <SkeletonBodyText numberOfLines={5} marginBottom={15} offsetTop={60} />
+      </SkeletonContainer>
     </Workbench.Content>
   </Workbench>
 );
