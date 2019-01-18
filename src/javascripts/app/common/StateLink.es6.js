@@ -16,7 +16,7 @@ const StateLink = ({ to, params, options, children, ...rest }) => {
       {...rest}
       href={$state.href(to, params)}
       onClick={e => {
-        if (e.shiftKey || e.ctrlKey || e.metaKey) {
+        if (e.shiftKey || e.ctrlKey || e.metaKey || rest.target === '_blank') {
           // allow to open in a new tab/window normally
         } else {
           // perform Angular UI router transition only

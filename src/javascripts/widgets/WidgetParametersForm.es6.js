@@ -171,4 +171,8 @@ WidgetParametersForm.propTypes = {
   updateValue: PropTypes.func.isRequired
 };
 
+WidgetParametersForm.defaultProps = {
+  definitions: []
+};
+
 export default WidgetParametersForm;

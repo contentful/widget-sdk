@@ -21,6 +21,7 @@ import PageUsage from 'svg/page-usage.es6';
 import PageUsers from 'svg/page-users.es6';
 import Bubble from 'svg/bubble.es6';
 import ArrowDown from 'svg/dd-arrow-down.es6';
+import ArrowUp from 'svg/arrow-up.es6';
 import InvoiceIcon from 'svg/invoice.es6';
 import BackIcon from 'svg/breadcrumbs-icon-back.es6';
 import SpaceIcon from 'svg/space.es6';
@@ -46,6 +47,28 @@ import RelaunchOnboardingIcon from 'svg/icon-onboarding-relaunch.es6';
 import SpaceDiagram from 'svg/space-diagram.es6';
 import ErrorIcon from 'svg/error.es6';
 import PlugIcon from 'svg/plug.es6';
+import Checkmark from 'svg/checkmark.es6';
+import Edit from 'svg/edit.es6';
+import CheckboxWidget from 'svg/checkbox-widget.es6';
+import DropdownWidget from 'svg/dropdown-widget.es6';
+import RadioWidget from 'svg/radio-widget.es6';
+import SlugWidget from 'svg/slug-widget.es6';
+import TagsWidget from 'svg/tags-widget.es6';
+import NumberWidget from 'svg/number-widget.es6';
+import RatingWidget from 'svg/rating-widget.es6';
+import PreviewWidget from 'svg/preview-widget.es6';
+import WysiwigWidget from 'svg/wysiwig-widget.es6';
+import MarkdownWidget from 'svg/markdown-widget.es6';
+import ReferenceWidget from 'svg/reference-widget.es6';
+import ReferencesWidget from 'svg/references-widget.es6';
+import SingleLineWidget from 'svg/singleline-widget.es6';
+import MultiLineWidget from 'svg/multipleline-widget.es6';
+import ReferenceCardWidget from 'svg/reference-card-widget.es6';
+import ReferencesCardWidget from 'svg/references-card-widget.es6';
+import MediaPreviewWidget from 'svg/media-preview-widget.es6';
+import MediaPreviewsWidget from 'svg/media-previews-widget.es6';
+import MediaReferenceWidget from 'svg/media-reference-widget.es6';
+import MediaReferencesWidget from 'svg/media-references-widget.es6';
 
 const SVGs = {
   'home-welcome': HomeWelcomeIcon,
@@ -91,7 +114,30 @@ const SVGs = {
   'relaunch-onboarding': RelaunchOnboardingIcon,
   'space-diagram': SpaceDiagram,
   error: ErrorIcon,
-  plug: PlugIcon
+  plug: PlugIcon,
+  checkmark: Checkmark,
+  edit: Edit,
+  'checkbox-widget': CheckboxWidget,
+  'dropdown-widget': DropdownWidget,
+  'radio-widget': RadioWidget,
+  'tags-widget': TagsWidget,
+  'number-widget': NumberWidget,
+  'rating-widget': RatingWidget,
+  'preview-widget': PreviewWidget,
+  'wysiwig-widget': WysiwigWidget,
+  'markdown-widget': MarkdownWidget,
+  'reference-widget': ReferenceWidget,
+  'references-widget': ReferencesWidget,
+  'singleline-widget': SingleLineWidget,
+  'multipleline-widget': MultiLineWidget,
+  'reference-card-widget': ReferenceCardWidget,
+  'references-card-widget': ReferencesCardWidget,
+  'media-preview-widget': MediaPreviewWidget,
+  'media-previews-widget': MediaPreviewsWidget,
+  'media-reference-widget': MediaReferenceWidget,
+  'media-references-widget': MediaReferencesWidget,
+  'slug-widget': SlugWidget,
+  'arrow-up': ArrowUp
 };
 
 class Icon extends React.Component {
@@ -134,6 +180,11 @@ class Icon extends React.Component {
     const { className, style, name } = this.props;
     const Icon = SVGs[name];
 
+    if (!Icon) {
+      // eslint-disable-next-line
+      console.warn(`"${name}" is not imported in Icon.es6`);
+    }
+
     return (
       <span
         className={className}
@@ -141,7 +192,7 @@ class Icon extends React.Component {
         ref={node => {
           this.container = node;
         }}>
-        <Icon />
+        {Icon && <Icon />}
       </span>
     );
   }

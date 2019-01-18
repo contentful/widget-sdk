@@ -59,8 +59,13 @@
                data-validation-type="{{validation.type}}{{field.type === 'Array' && !validation.onItems ?  '.listElement' : ''}}")
               cf-validation-setting.u-bce
 
-      div(ui-tabpanel="appearance")
-        include ./field_dialog_appearance.jade
+      div(ui-tabpanel="appearance"
+        ng-controller="FieldDialogAppearanceController"
+      )
+        react-component(
+          name="components/field_dialog/appearance/FieldDialogAppearanceTab.es6"
+          props="appearanceTabProps"
+        )
 
     .modal-dialog__controls
       button.btn-primary-action(

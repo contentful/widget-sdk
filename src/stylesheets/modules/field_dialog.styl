@@ -79,20 +79,22 @@ $field-dialog-width = 60em
   &.is-selected
     border: 2px solid $colors.blue-dark
     box-shadow: 0 8px 6px -6px hsla(black, 0.1)
-    cf-icon[name="checkmark"]
-      display: block
   p
     margin-bottom: 0.3em
     padding: 0 0.5em
-  cf-icon[name="checkmark"]
+  .field-dialog__checkmark
     position: absolute
     right: -7px
     bottom: -7px
-    display: none
-    padding: 4px 3px
-    border-radius: 10px
     background: $colors.blue-dark
-    > svg path
+    display: flex
+    width: 22px
+    height: 22px
+    border-radius: 22px
+    align-items: center
+    justify-content: center
+    padding-top: 4px
+    svg path
       fill: white
 
 .field-dialog__widget-item-header
@@ -143,15 +145,3 @@ $field-dialog-width = 60em
   background-color: $colors.white
   border-top: 1px solid $colors.light-gray
   border-bottom: 1px solid $colors.light-gray
-
-  cf-icon[name="arrow-up"]
-    position: absolute
-    left: 2em // positioned at the center of the first widget above it
-    top: -13px
-    transform: scale(1.2)
-    transition-property: margin-left
-    transition-duration: 0.2s
-    transition-timing-function: ease-in-out
-    path
-      fill: $colors.white
-      stroke: $colors.light-gray

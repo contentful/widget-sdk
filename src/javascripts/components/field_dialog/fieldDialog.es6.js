@@ -1,11 +1,8 @@
-import { registerFactory, registerController, registerDirective } from 'NgRegistry.es6';
+import { registerFactory, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
-import React from 'react';
-import ReactDOM from 'react-dom';
 import { joinAndTruncate } from 'utils/StringUtils.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 import { toInternalFieldType } from 'widgets/FieldTypes.es6';
-import WidgetParametersForm from 'widgets/WidgetParametersForm.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import getDefaultWidgetId from 'widgets/DefaultWidget.es6';
 import * as fieldFactory from 'services/fieldFactory.es6';
@@ -66,6 +63,7 @@ registerController('FieldDialogController', [
     const contentTypeData = $scope.contentType.data;
 
     $scope.decoratedField = fieldDecorator.decorate($scope.field, contentTypeData);
+    $scope.widgetsAreLoaded = false;
 
     $scope.validations = validations.decorateFieldValidations($scope.field);
 
@@ -139,7 +137,7 @@ registerController('FieldDialogController', [
      */
     spaceContext.widgets.refresh().then(widgets => {
       const fieldType = toInternalFieldType($scope.field);
-
+      $scope.widgetsAreLoaded = true;
       $scope.availableWidgets = widgets.filter(widget => widget.fieldTypes.includes(fieldType));
     });
 
@@ -333,65 +331,35 @@ registerController('FieldDialogValidationsController', [
  */
 registerController('FieldDialogAppearanceController', [
   '$scope',
-  $scope => {
-    $scope.defaultWidgetId = getDefaultWidgetId($scope.field, $scope.contentType.data.displayField);
-    $scope.selectWidget = selectWidget;
+  'spaceContext',
+  ($scope, spaceContext) => {
+    const isAdmin = !!spaceContext.getData('spaceMembership.admin', false);
 
-    $scope.$watch('availableWidgets', available => {
-      if (Array.isArray(available)) {
-        const selected = _.findIndex(available, { id: $scope.widgetSettings.id });
-        selectWidget(selected > -1 ? selected : 0);
-      }
-    });
-
-    function selectWidget(i) {
-      const widget = $scope.availableWidgets[i];
-      if (widget) {
-        $scope.selectedWidgetIndex = i;
-        $scope.widgetSettings.id = widget.id;
-      }
-    }
-  }
-]);
-
-registerDirective('cfFieldAppearanceParameters', () => ({
-  restrict: 'E',
-  template: '<div class="mount-point"></div>',
-  link: function(scope, el) {
-    render();
-    scope.$watch('widgetSettings.id', render);
-    scope.$watch('availableWidgets', render);
-
-    function render() {
-      const widget = _.find(scope.availableWidgets, { id: scope.widgetSettings.id });
-      if (widget) {
-        ReactDOM.render(
-          <WidgetParametersForm {...prepareProps(widget)} />,
-          el[0].querySelector('.mount-point')
-        );
-      }
-    }
-
-    function prepareProps(widget) {
-      let definitions = widget.parameters;
-      const settings = scope.widgetSettings;
-
-      settings.params = WidgetParametersUtils.applyDefaultValues(definitions, settings.params);
-      definitions = WidgetParametersUtils.filterDefinitions(definitions, settings.params, widget);
-      definitions = WidgetParametersUtils.unifyEnumOptions(definitions);
-
-      return {
-        definitions: definitions,
-        values: settings.params,
-        missing: WidgetParametersUtils.markMissingValues(definitions, settings.params),
-        updateValue: updateValue
+    function updateProps() {
+      const availableWidgets = $scope.availableWidgets || [];
+      $scope.appearanceTabProps = {
+        availableWidgets,
+        widgetsAreLoaded: $scope.widgetsAreLoaded,
+        selectedWidgetId: $scope.widgetSettings.id,
+        widgetParams: $scope.widgetSettings.params,
+        defaultWidgetId: getDefaultWidgetId($scope.field, $scope.contentType.data.displayField),
+        isAdmin,
+        onSelect: id => {
+          $scope.widgetSettings.id = id;
+          updateProps();
+          $scope.$applyAsync();
+        },
+        onParametersUpdate: params => {
+          $scope.widgetSettings.params = params;
+          updateProps();
+          $scope.$applyAsync();
+        }
       };
     }
 
-    function updateValue(id, value) {
-      scope.widgetSettings.params[id] = value;
-      scope.$applyAsync();
-      render();
-    }
+    $scope.$watch('availableWidgets', () => {
+      updateProps();
+      $scope.$applyAsync();
+    });
   }
-}));
+]);
