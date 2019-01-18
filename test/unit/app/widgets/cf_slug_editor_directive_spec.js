@@ -12,6 +12,7 @@ describe('SlugEditor directive', () => {
         getPrivateLocales: () => this.locales
       });
     });
+
     const MockApi = this.$inject('mocks/widgetApi');
 
     this.cfWidgetApi = MockApi.create({
@@ -58,7 +59,7 @@ describe('SlugEditor directive', () => {
     };
   });
 
-  describe('slug generated from entry title', () => {
+  describe('slug generated from entry title', function() {
     describe('field locale is the default locale', function() {
       it('uses an "untitled" slug with the entry creation time, when the title is empty', function() {
         this.entrySys.createdAt = '2015-01-28T10:38:28.989Z';
@@ -325,6 +326,17 @@ describe('SlugEditor directive', () => {
       expect(scope.hasUniqueValidationError).toEqual(false);
       expect(scope.state).toEqual('duplicate');
       expect($duplicateEl.hasClass('ng-hide')).toBe(false);
+    });
+  });
+
+  describe('when the slug is the entry title', function() {
+    it('does not track the title field (itself)', function() {
+      this.cfWidgetApi.field.locale = 'default-LOCALE';
+      this.cfWidgetApi.contentType.displayField = 'slug';
+      const $inputEl = this.compileElement().find('input');
+      this.cfWidgetApi.field.onValueChanged.yield('new-slug');
+      this.$apply();
+      expect($inputEl.val()).toEqual('new-slug');
     });
   });
 });
