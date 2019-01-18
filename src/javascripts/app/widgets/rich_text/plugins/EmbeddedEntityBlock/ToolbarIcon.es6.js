@@ -6,7 +6,7 @@ import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import { selectEntityAndInsert } from './Util.es6';
 import { actionOrigin, TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6';
 
-export default class EntryLinkToolbarIcon extends Component {
+export default class EntityLinkToolbarIcon extends Component {
   static propTypes = {
     ...TOOLBAR_PLUGIN_PROP_TYPES,
     isButton: PropTypes.bool
@@ -52,7 +52,7 @@ export default class EntryLinkToolbarIcon extends Component {
               isDisabled={this.props.disabled}
               extraClassNames={`${baseClass}-list-item`}
               size="small"
-              onMouseDown={event => this.handleClick(event, widgetAPI)}
+              onClick={event => this.handleClick(event, widgetAPI)}
               testId={`toolbar-toggle-${nodeType}`}>
               <div className="cf-flex-grid">
                 <Icon
@@ -77,10 +77,10 @@ export default class EntryLinkToolbarIcon extends Component {
  */
 function getEntityTypeFromNodeType(nodeType) {
   const words = nodeType.toLowerCase().split('-');
-  if (words.indexOf('entry') !== -1) {
+  if (words.includes('entry')) {
     return 'Entry';
   }
-  if (words.indexOf('asset') !== -1) {
+  if (words.includes('asset')) {
     return 'Asset';
   }
   throw new Error(`Node type \`${nodeType}\` has no associated \`entityType\``);

@@ -12,7 +12,7 @@ export default class EntryLinkToolbarIcon extends Component {
   static defaultProps = {
     isButton: false
   };
-  handleMouseDown = async (event, widgetAPI) => {
+  handleClick = async (event, widgetAPI) => {
     event.preventDefault();
     const {
       change,
@@ -46,7 +46,7 @@ export default class EntryLinkToolbarIcon extends Component {
               icon="Entry"
               buttonType="muted"
               testId={`toolbar-toggle-${INLINES.EMBEDDED_ENTRY}`}
-              onMouseDown={event => this.handleMouseDown(event, widgetAPI)}>
+              onClick={event => this.handleClick(event, widgetAPI)}>
               <div className="cf-flex-grid">
                 <Icon
                   icon="EmbeddedEntryInline"
