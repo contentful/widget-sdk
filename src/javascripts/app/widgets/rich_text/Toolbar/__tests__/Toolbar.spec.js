@@ -5,7 +5,7 @@ import { Editor } from 'slate';
 import Toolbar from '../index.es6';
 import ValidationType, {
   VALIDATABLE_NODE_TYPES
-} from '../../../../../components/field_dialog/RichTextValidationType.es6';
+} from 'components/field_dialog/RichTextValidationType.es6';
 import { BLOCKS, INLINES } from '@contentful/rich-text-types';
 
 jest.mock('ng/EntityHelpers', () => ({}), { virtual: true });
@@ -34,22 +34,55 @@ const dropDownEmbedNodeTypes = [
 ];
 
 describe('Toolbar', () => {
-  // it('renders toolbar icons', () => {
-  //   const toolbar = Enzyme.mount(<Toolbar {...fakeProps()} />);
-  //   expect(toolbar).toMatchSnapshot({
-  //     change: expect.any(Date)
-  //   });
-  // });
+  it('renders toolbar icons', () => {
+    const toolbar = Enzyme.mount(<Toolbar {...fakeProps()} />);
 
-  // it('renders no icons if no formatting options enabled', () => {
-  //   const props = fakeProps();
-  //   props.richTextAPI.widgetAPI.field.validations = [
-  //     { [ValidationType.ENABLED_NODE_TYPES]: [] },
-  //     { [ValidationType.ENABLED_MARKS]: [] }
-  //   ];
-  //   const toolbar = Enzyme.mount(<Toolbar {...props} />);
-  //   expect(toolbar).toMatchSnapshot();
-  // });
+    expect(toolbar.exists(`[data-test-id="toolbar-heading-toggle"]`)).toBe(true);
+
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-bold"]`)).toBe(true);
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-italic"]`)).toBe(true);
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-code"]`)).toBe(true);
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-underline"]`)).toBe(true);
+
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-hyperlink"]`)).toBe(true);
+
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-unordered-list"]`)).toBe(true);
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-ordered-list"]`)).toBe(true);
+
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-blockquote"]`)).toBe(true);
+
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-hr"]`)).toBe(true);
+
+    expect(toolbar.exists(`[data-test-id="toolbar-entry-dropdown-toggle"]`)).toBe(true);
+  });
+
+  it('renders no icons if no formatting options enabled', () => {
+    const props = fakeProps();
+    props.richTextAPI.widgetAPI.field.validations = [
+      { [ValidationType.ENABLED_NODE_TYPES]: [] },
+      { [ValidationType.ENABLED_MARKS]: [] }
+    ];
+
+    const toolbar = Enzyme.mount(<Toolbar {...props} />);
+
+    expect(toolbar.exists(`[data-test-id="toolbar-heading-toggle"]`)).toBe(true);
+
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-bold"]`)).toBe(false);
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-italic"]`)).toBe(false);
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-code"]`)).toBe(false);
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-underline"]`)).toBe(false);
+
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-hyperlink"]`)).toBe(false);
+
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-unordered-list"]`)).toBe(false);
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-ordered-list"]`)).toBe(false);
+
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-blockquote"]`)).toBe(false);
+
+    expect(toolbar.exists(`[data-test-id="toolbar-toggle-hr"]`)).toBe(false);
+
+    expect(toolbar.exists(`[data-test-id="toolbar-entry-dropdown-toggle"]`)).toBe(false);
+  });
 
   it('hides group separator if no marks enabled', () => {
     const props = fakeProps();
