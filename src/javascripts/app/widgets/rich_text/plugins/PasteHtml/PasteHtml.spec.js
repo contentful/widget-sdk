@@ -25,34 +25,29 @@ const emptyInitialValue = Value.create({
 });
 
 describe('PasteHtml Plugin', () => {
-  let plugin;
+  it('ignores raw text', () => {
+    const event = createPasteEvent('text/plain', 'text');
+    const editor = new Editor({ value: emptyInitialValue });
+    const next = jest.fn();
 
-  beforeEach(() => {
-    plugin = PasteHtmlPlugin();
+    const result = PasteHtmlPlugin().onPaste(event, editor, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(result).toBeUndefined();
+    expect(editor.value.document.toJSON()).toEqual(emptyInitialValue.document.toJSON());
   });
 
   it('parses html', () => {
     const event = createPasteHtmlEvent('<b>Text</b>');
-    const editor = new Editor({value: emptyInitialValue});
+    const editor = new Editor({ value: emptyInitialValue });
     const next = jest.fn();
-    const result = plugin.onPaste(event, editor, next);
+
+    const result = PasteHtmlPlugin().onPaste(event, editor, next);
 
     expect(result).toBeUndefined();
     expect(next).not.toHaveBeenCalled();
     expect(editor.value.document.toJSON()).toEqual(
       document({}, block(BLOCKS.PARAGRAPH, {}, text({}, leaf(`Text`, mark(MARKS.BOLD)))))
     );
-  });
-
-  it('ignores raw text', () => {
-    const event = createPasteEvent('text/plain', 'text');
-    const editor = new Editor({value: emptyInitialValue});
-    const next = jest.fn();
-
-    const result = plugin.onPaste(event, editor, next);
-
-    expect(next).toHaveBeenCalled();
-    expect(result).toBeUndefined();
-    expect(editor.value.document.toJSON()).toEqual(emptyInitialValue.document.toJSON());
   });
 });

@@ -1,5 +1,5 @@
 import { getEventTransfer } from 'slate-react';
-import serializer from './Serializer.es6';
+import { create as createSerializer } from './Serializer.es6';
 
 /**
  * The plugin allows to paste html to the Structured Text Editor
@@ -7,13 +7,16 @@ import serializer from './Serializer.es6';
  * Slate document.
  */
 export const PasteHtmlPlugin = () => {
+  const serializer = createSerializer();
   return {
     onPaste(event, editor, next) {
       const transfer = getEventTransfer(event);
-      if (transfer.type !== 'html') {
-        return next();
+      if (transfer.type != 'html') {
+        next();
+        return;
       }
       const { document } = serializer.deserialize(transfer.html);
+
       editor.insertFragment(document);
       return;
     }

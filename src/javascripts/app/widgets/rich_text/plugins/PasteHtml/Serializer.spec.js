@@ -1,11 +1,13 @@
-import serializer from './Serializer.es6';
+import { create as createSerializer } from './Serializer.es6';
 import { document, block, inline, text, leaf, mark, emptyText } from './../shared/PasteTestHelpers';
 import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
 import _ from 'lodash';
 
 const testFactory = (message, input, expected) => {
   test(message || `${input} = ${expect}`, () => {
-    const actual = serializer.deserialize(input).document.toJSON();
+    const actual = createSerializer()
+      .deserialize(input)
+      .document.toJSON();
     expect(actual).toEqual(expected);
   });
 };
@@ -14,7 +16,7 @@ describe('HTML', () => {
   testFactory(
     `bold`,
     `<b>Text</b>`.trim(),
-    document({}, block(BLOCKS.PARAGRAPH, {}, text({}, leaf(`Text111`, mark(MARKS.BOLD)))))
+    document({}, block(BLOCKS.PARAGRAPH, {}, text({}, leaf(`Text`, mark(MARKS.BOLD)))))
   );
 
   testFactory(
@@ -57,7 +59,6 @@ describe('HTML', () => {
       block(
         BLOCKS.PARAGRAPH,
         {},
-        emptyText(),
         inline(
           INLINES.HYPERLINK,
           {
@@ -66,8 +67,7 @@ describe('HTML', () => {
             }
           },
           text({}, leaf('Herren'))
-        ),
-        emptyText()
+        )
       )
     )
   );
@@ -198,11 +198,8 @@ describe('HTML', () => {
       block(
         BLOCKS.PARAGRAPH,
         {},
-        text(
-          {},
-          leaf('HyperText Markup Language', mark(MARKS.ITALIC)),
-          leaf(' describes the structure of the page and its contents.')
-        )
+        text({}, leaf('HyperText Markup Language', mark(MARKS.ITALIC))),
+        text({}, leaf(' describes the structure of the page and its contents.'))
       )
     )
   );
@@ -216,7 +213,16 @@ describe('HTML', () => {
   testFactory(
     'retains soft-break',
     `<p>HyperText Markup<br/>Language</p>`,
-    document({}, block(BLOCKS.PARAGRAPH, {}, text({}, leaf('HyperText Markup\nLanguage'))))
+    document(
+      {},
+      block(
+        BLOCKS.PARAGRAPH,
+        {},
+        text({}, leaf('HyperText Markup')),
+        text({}, leaf('\n')),
+        text({}, leaf('Language'))
+      )
+    )
   );
 });
 describe('Google Docs', () => {
@@ -234,7 +240,9 @@ describe('Google Docs', () => {
       block(
         BLOCKS.PARAGRAPH,
         {},
-        text({}, leaf('Sehr geehrte '), leaf('Damen', mark(MARKS.BOLD)), leaf(' und Herren'))
+        text({}, leaf('Sehr geehrte ')),
+        text({}, leaf('Damen', mark(MARKS.BOLD))),
+        text({}, leaf(' und Herren'))
       )
     )
   );
@@ -247,7 +255,9 @@ describe('Google Docs', () => {
       block(
         BLOCKS.PARAGRAPH,
         {},
-        text({}, leaf('Sehr geehrte '), leaf('Damen', mark(MARKS.ITALIC)), leaf(' und Herren'))
+        text({}, leaf('Sehr geehrte ')),
+        text({}, leaf('Damen', mark(MARKS.ITALIC))),
+        text({}, leaf(' und Herren'))
       )
     )
   );
@@ -260,7 +270,9 @@ describe('Google Docs', () => {
       block(
         BLOCKS.PARAGRAPH,
         {},
-        text({}, leaf('Sehr geehrte '), leaf('Damen', mark(MARKS.UNDERLINE)), leaf(' und Herren'))
+        text({}, leaf('Sehr geehrte ')),
+        text({}, leaf('Damen', mark(MARKS.UNDERLINE))),
+        text({}, leaf(' und Herren'))
       )
     )
   );
@@ -273,12 +285,9 @@ describe('Google Docs', () => {
       block(
         BLOCKS.PARAGRAPH,
         {},
-        text(
-          {},
-          leaf('Sehr geehrte222 '),
-          leaf('Damen', mark(MARKS.BOLD), mark(MARKS.ITALIC)),
-          leaf(' und Herren')
-        )
+        text({}, leaf('Sehr geehrte ')),
+        text({}, leaf('Damen', mark(MARKS.BOLD), mark(MARKS.ITALIC))),
+        text({}, leaf(' und Herren'))
       )
     )
   );

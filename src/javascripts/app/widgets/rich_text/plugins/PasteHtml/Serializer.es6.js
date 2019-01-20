@@ -1,5 +1,5 @@
 import HtmlSerializer from 'slate-html-serializer';
-import { BLOCKS, MARKS, INLINES, VOID_BLOCKS } from '@contentful/rich-text-types';
+import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
 
 /**
  * Tags to block types mapping
@@ -78,7 +78,7 @@ const gDocsRules = {
           {
             object: 'leaf',
             text: el.textContent,
-            marks: marks.map(type => ({ type, object: 'mark' }))
+            marks: marks.map(type => ({ object: 'mark', type }))
           }
         ]
       };
@@ -93,6 +93,7 @@ const listItems = {
     /** list-items in Contentful's schema must have blocks as direct children */
     if (el.tagName.toLowerCase() === 'li') {
       let childNodes = next(el.childNodes);
+
       childNodes = childNodes.map(node => {
         if (node.object === 'text') {
           return {
@@ -154,11 +155,12 @@ const blocks = {
   deserialize(el, next) {
     const block = BLOCK_TAGS[el.tagName.toLowerCase()];
     if (block) {
+      const childNodes = next(el.childNodes);
+
       return {
         object: 'block',
         type: block,
-        isVoid: VOID_BLOCKS.includes(block),
-        nodes: next(el.childNodes)
+        nodes: childNodes.length > 0 ? childNodes : [{ object: 'text' }]
       };
     }
   }
@@ -166,6 +168,8 @@ const blocks = {
 
 const RULES = [gDocsRules, listItems, links, macOSTrailingBreak, marks, blocks];
 
-const serializer = new HtmlSerializer({ rules: RULES });
-
-export default serializer;
+export const create = () => {
+  return new HtmlSerializer({
+    rules: RULES
+  });
+};
