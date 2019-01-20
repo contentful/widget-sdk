@@ -9,7 +9,6 @@ import { stubAll, setupWidgetApi, createSandbox, ENTRY } from './setup';
 import { document, block, text } from './helpers';
 
 import { BLOCKS } from '@contentful/rich-text-types';
-import flushPromises from 'test/helpers/flushPromises';
 
 const supportedToolbarIcons = [BLOCKS.UL_LIST, BLOCKS.OL_LIST, BLOCKS.QUOTE];
 
@@ -77,7 +76,7 @@ describe('RichTextEditor', () => {
     this.widgetApi.fieldProperties.isDisabled$.set(false);
     this.widgetApi.fieldProperties.isDisabled$.set(true);
     this.wrapper.update();
-    
+
     const el = this.wrapper.find('[data-test-id="toolbar"]').first();
     expect(el.length).toEqual(1);
   });
