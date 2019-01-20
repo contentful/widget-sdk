@@ -22,11 +22,9 @@ describe('PastePlugin utils', () => {
 
     it("returns the character count of the editor's plain text state", () => {
       const editor = {
-        state: {
-          value: {
-            document: {
-              toJSON: () => 'document-json'
-            }
+        value: {
+          document: {
+            toJSON: () => 'document-json'
           }
         }
       };
