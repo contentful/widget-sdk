@@ -72,6 +72,7 @@ export default connect(
                       </TableCell>
                       <TableCell data-test-id="team-description">Description</TableCell>
                       <TableCell />
+                      <TableCell />
                     </TableRow>
                   </TableHead>
                   <TableBody>

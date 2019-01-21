@@ -8,6 +8,7 @@ import token from './token.es6';
 import location from './location.es6';
 import datasets from './datasets/index.es6';
 import optimistic from './optimistic.es6';
+import deleted from './deleted.es6';
 
 export default combineReducers({
   location,
@@ -17,5 +18,6 @@ export default combineReducers({
   statePersistence,
   token,
   datasets,
-  optimistic
+  optimistic,
+  deleted
 });

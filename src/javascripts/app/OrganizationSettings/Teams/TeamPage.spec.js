@@ -46,21 +46,14 @@ describe('TeamPage', () => {
           type: 'DATASET_LOADING',
           payload: {
             datasets: {
-              Team: []
+              Team: [],
+              TeamMemberships: []
             }
           }
         });
       });
 
       it('should render TeamList', () => {
-        actions.push({
-          type: 'DATASET_LOADING',
-          payload: {
-            datasets: {
-              Team: []
-            }
-          }
-        });
         const { wrapper } = renderComponent(actions);
         expect(wrapper.find(TeamList)).toHaveLength(1);
       });

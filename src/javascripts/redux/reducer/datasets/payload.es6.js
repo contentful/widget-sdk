@@ -2,6 +2,7 @@ import { get, mergeWith, keyBy } from 'lodash';
 import { update, set, omit } from 'lodash/fp';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import { TEAMS } from 'redux/datasets.es6';
+import getDeletedItems from 'redux/selectors/getDeletedItems.es6';
 
 export default (state = {}, { type, meta, payload, error }, globalState) => {
   const orgId = getOrgId(globalState);
@@ -27,8 +28,9 @@ export default (state = {}, { type, meta, payload, error }, globalState) => {
         return update([orgId, dataset], omit(id), state);
       }
       if (error) {
-        const { dataset, item } = meta;
-        return set([orgId, dataset, item.sys.id], item, state);
+        const { dataset, id } = meta;
+        const item = getDeletedItems(globalState)[dataset][id];
+        return set([orgId, dataset, id], item, state);
       }
       return state;
     }

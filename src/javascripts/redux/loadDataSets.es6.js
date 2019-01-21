@@ -8,19 +8,20 @@ import createTeamService from '../app/OrganizationSettings/Teams/TeamService.es6
 
 import { USERS, TEAMS, ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS } from './datasets.es6';
 import getOrgId from './selectors/getOrgId.es6';
+import createTeamMembershipService from '../app/OrganizationSettings/Teams/TeamMemberships/TeamMembershipService.es6';
 
 const loaders = state => {
   const orgId = getOrgId(state);
   return {
     [USERS]: () => getAllUsers(createOrganizationEndpoint(orgId)),
     [TEAMS]: async () => {
-      const service = createTeamService(orgId);
+      const service = createTeamService(state);
       return await service.getAll();
     },
     [ORG_MEMBERSHIPS]: () => getAllMemberships(createOrganizationEndpoint(orgId)),
     [TEAM_MEMBERSHIPS]: async () => {
-      const service = createTeamService(orgId);
-      return await service.getAllTeamMemberships();
+      const service = createTeamMembershipService(state);
+      return await service.getAll();
     }
   };
 };

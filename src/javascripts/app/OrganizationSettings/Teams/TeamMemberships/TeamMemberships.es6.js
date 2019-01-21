@@ -12,7 +12,7 @@ import {
   Tooltip
 } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder.es6';
-import getCurrentTeamMembershipList from 'redux/selectors/getCurrentTeamMembershipList.es6';
+import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
 import { getCurrentTeam, getTeams } from 'redux/selectors/teams.es6';
 import { TeamMembership as TeamMembershiPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import TeamMembershipForm from './TeamMembershipForm.es6';

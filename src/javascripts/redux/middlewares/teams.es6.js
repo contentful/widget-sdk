@@ -1,6 +1,6 @@
-import getOrgId from 'redux/selectors/getOrgId.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
+import createTeamMembershipService from 'app/OrganizationSettings/Teams/TeamMemberships/TeamMembershipService.es6';
 import { getCurrentTeam, getTeams } from '../selectors/teams.es6';
 import { TEAM_MEMBERSHIPS, TEAMS } from '../datasets.es6';
 import removeFromDataset from './utils/removeFromDataset.es6';
@@ -15,7 +15,7 @@ export default ({ dispatch, getState }) => next => async action => {
     case 'CREATE_NEW_TEAM': {
       next(action);
       const team = action.payload.team;
-      const service = createTeamService(getOrgId(getState()));
+      const service = createTeamService(getState());
       try {
         const newTeam = await service.create(action.payload.team);
         dispatch({ type: 'ADD_TO_DATASET', payload: { item: newTeam, dataset: TEAMS } });
@@ -41,7 +41,6 @@ export default ({ dispatch, getState }) => next => async action => {
         next,
         action,
         createTeamService,
-        (service, { sys: { id } }) => service.remove(id),
         action.payload.teamId,
         TEAMS,
         ({ name }) => `Remove team ${name}`,
@@ -57,9 +56,9 @@ export default ({ dispatch, getState }) => next => async action => {
 
       next(action);
       // the reducer updated the team for us
-
-      const service = createTeamService(await getOrgId(getState()));
-      const updatedTeam = getTeams(getState())[id];
+      const state = getState();
+      const service = createTeamService(state);
+      const updatedTeam = getTeams(state)[id];
 
       try {
         const persistedTeam = await service.update(updatedTeam);
@@ -75,13 +74,13 @@ export default ({ dispatch, getState }) => next => async action => {
     case 'SUBMIT_NEW_TEAM_MEMBERSHIP': {
       const state = getState();
       next(action);
-      const service = createTeamService(getOrgId(state));
+      const service = createTeamMembershipService(state);
       const teamId = getCurrentTeam(state);
       const team = getTeams(state)[teamId];
       const { orgMembership } = action.payload;
       const user = getOrgMemberships(state)[orgMembership].sys.user;
       try {
-        const newTeamMembership = await service.createTeamMembership(teamId, orgMembership);
+        const newTeamMembership = await service.create(orgMembership);
         dispatch({
           type: 'ADD_TO_DATASET',
           payload: { item: newTeamMembership, dataset: TEAM_MEMBERSHIPS }
@@ -103,18 +102,7 @@ export default ({ dispatch, getState }) => next => async action => {
         { dispatch, getState },
         next,
         action,
-        createTeamService,
-        (
-          service,
-          {
-            sys: {
-              id,
-              team: {
-                sys: { id: teamId }
-              }
-            }
-          }
-        ) => service.removeTeamMembership(teamId, id),
+        createTeamMembershipService,
         action.payload.teamMembershipId,
         TEAM_MEMBERSHIPS,
         ({

@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { get } from 'lodash/fp';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
-import getCurrentTeamMemberships from 'redux/selectors/getCurrentTeamMembershipList.es6';
+import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
 import { TableCell, TableRow, Button, Select, Option } from '@contentful/forma-36-react-components';
 import {
   TeamMembership as TeamMembershipPropyType,
@@ -10,10 +11,8 @@ import {
 } from 'app/OrganizationSettings/PropTypes.es6';
 
 function getAvailableOrgMemberships(state) {
-  const teamMemberships = getCurrentTeamMemberships(state);
-  const unavailableOrgMemberships = teamMemberships.map(
-    membership => membership.sys.organizationMembership.sys.id
-  );
+  const teamMemberships = getCurrentTeamMembershipList(state);
+  const unavailableOrgMemberships = teamMemberships.map(get('sys.organizationMembership.sys.id'));
   const orgMemberships = Object.values(getOrgMemberships(state));
   return orgMemberships.filter(
     membership => !unavailableOrgMemberships.includes(membership.sys.id)

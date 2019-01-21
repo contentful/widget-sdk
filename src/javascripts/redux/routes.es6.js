@@ -9,7 +9,7 @@ const ROUTES = {
     children: {
       teams: {
         path: '/teams',
-        requiredDataSets: [TEAMS],
+        requiredDataSets: [TEAMS, TEAM_MEMBERSHIPS],
         children: {
           team: {
             path: '/:teamId',
