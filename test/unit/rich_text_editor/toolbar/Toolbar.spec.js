@@ -88,7 +88,10 @@ describe('Toolbar', () => {
         })
       },
       onChange: sinon.spy(),
-      onAction: sinon.spy()
+      onAction: sinon.spy(),
+      permissions: {
+        canAccessAssets: true
+      }
     };
     this.sandbox = createSandbox(window);
 

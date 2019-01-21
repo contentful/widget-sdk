@@ -8,7 +8,8 @@ registerDirective('cfRichTextEditor', () => ({
   link: (scope, _$el, _attr, widgetApi) => {
     scope.slateEditorProps = {
       entry: widgetApi.entry,
-      field: widgetApi.field
+      field: widgetApi.field,
+      permissions: widgetApi.permissions
     };
   }
 }));

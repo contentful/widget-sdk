@@ -21,8 +21,12 @@ angular
       { create: createPublicationWarningsManager }
     ) => {
       return {
-        create: create,
-        createField: createField
+        create,
+        createField,
+        permissions: {
+          canAccessAssets: true,
+          canAccessEntries: true
+        }
       };
 
       function create(overrides) {

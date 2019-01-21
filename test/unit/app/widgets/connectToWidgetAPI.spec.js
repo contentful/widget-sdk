@@ -26,6 +26,13 @@ describe('connectToWidgetAPI', () => {
       .withArgs('$location')
       .returns({
         absUrl: () => 'abs-url'
+      })
+      .withArgs('access_control/AccessChecker')
+      .returns({
+        getSectionVisibility: () => ({
+          entry: true,
+          asset: true
+        })
       });
 
     this.system.set('NgRegistry.es6', {
