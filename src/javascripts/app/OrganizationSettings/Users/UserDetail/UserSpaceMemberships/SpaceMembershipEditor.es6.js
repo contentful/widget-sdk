@@ -5,6 +5,7 @@ import {
   User as UserPropType,
   SpaceMembership as SpaceMembershipPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
+import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
 
 import {
   TableRow,
@@ -65,7 +66,7 @@ class SpaceMembershipEditor extends React.Component {
         role => role.sys.id
       );
     }
-    return [SpaceMembershipRepository.ADMIN_ROLE_ID];
+    return [ADMIN_ROLE_ID];
   }
 
   setSpace(spaceId) {

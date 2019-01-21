@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { assign } from 'utils/Collections.es6';
 import { getOrganization } from 'services/TokenStore.es6';
 import { runTask } from 'utils/Concurrent.es6';
-import { ADMIN_ROLE_ID } from 'access_control/SpaceMembershipRepository.es6';
+import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
 import { createOrganizationEndpoint as createEndpoint } from 'data/EndpointFactory.es6';
 import {
   getUsers,

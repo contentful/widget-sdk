@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { without } from 'lodash';
 import { SpaceRole as SpaceRoleProp } from 'app/OrganizationSettings/PropTypes.es6';
 import {
   Button,
@@ -8,10 +9,7 @@ import {
   DropdownList,
   DropdownListItem
 } from '@contentful/forma-36-react-components';
-import { without } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
-
-const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository.es6');
+import { ADMIN_ROLE, ADMIN_ROLE_ID } from 'access_control/constants.es6';
 
 class SpaceRoleEditor extends React.Component {
   static propTypes = {
@@ -31,11 +29,11 @@ class SpaceRoleEditor extends React.Component {
   };
 
   setAdmin = () => {
-    this.props.onChange([SpaceMembershipRepository.ADMIN_ROLE_ID]);
+    this.props.onChange([ADMIN_ROLE_ID]);
   };
 
   setRole = roleId => ({ target: { checked } }) => {
-    const isAdmin = roleId === SpaceMembershipRepository.ADMIN_ROLE_ID;
+    const isAdmin = roleId === ADMIN_ROLE_ID;
 
     if (checked) {
       isAdmin ? this.setAdmin() : this.addRole(roleId);
@@ -46,7 +44,7 @@ class SpaceRoleEditor extends React.Component {
 
   addRole(roleId) {
     const { value, onChange } = this.props;
-    onChange(without(value, SpaceMembershipRepository.ADMIN_ROLE_ID).concat(roleId));
+    onChange(without(value, ADMIN_ROLE_ID).concat(roleId));
   }
 
   removeRole(roleId) {
@@ -64,7 +62,6 @@ class SpaceRoleEditor extends React.Component {
 
   render() {
     const { options, value, isDisabled } = this.props;
-    const { ADMIN_ROLE_ID, ADMIN_ROLE } = SpaceMembershipRepository;
     const isAdmin = value.includes(ADMIN_ROLE_ID);
 
     const selectedNames = [ADMIN_ROLE, ...options]

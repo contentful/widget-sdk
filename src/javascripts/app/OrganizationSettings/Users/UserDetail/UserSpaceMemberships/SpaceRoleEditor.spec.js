@@ -2,18 +2,6 @@ import React from 'react';
 import { mount } from 'enzyme';
 import SpaceRoleEditor from './SpaceRoleEditor.es6';
 
-jest.mock(
-  'ng/access_control/SpaceMembershipRepository.es6',
-  () => ({
-    ADMIN_ROLE: {
-      name: 'Admin',
-      sys: { id: 'admin' }
-    },
-    ADMIN_ROLE_ID: 'admin'
-  }),
-  { virtual: true }
-);
-
 describe('SpaceRoleEditor', () => {
   let changeCb;
 
