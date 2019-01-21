@@ -8,7 +8,7 @@ const logger = getModule('logger');
 const $state = getModule('$state');
 
 export default class SpaceHome extends React.Component {
-  onPlay = () =>
+  onStart = () =>
     track('element:click', {
       elementId: 'concept_video_pay',
       groupId: 'author_editor_continuous_onboarding',
@@ -26,6 +26,10 @@ export default class SpaceHome extends React.Component {
     window._wq.push({
       id: '_all',
       onReady: function(video) {
+        document.querySelector('.concept-video-widget__play-button').onclick = () => {
+          video.popover.show();
+          video.play();
+        };
         video.bind('end', function() {
           video.popover.hide();
         });
@@ -42,10 +46,9 @@ export default class SpaceHome extends React.Component {
         <div className="concept-video-widget__content">
           <div className="concept-video-widget__copy">
             <p>
-              With Contentful, all text, images, media and other content can be used over and over
+              With Contentful all text, images, media and other content can be used over and over
               again in different parts of your website or device. This content can also be used
-              across many other channels, such as email. At Contentful, we call this Reusable
-              Content.
+              across many other channels such as email. At Contentful we call this Reusable Content.
             </p>
             <p>
               This makes it possible to only create content once, rather than reformatting or
@@ -53,21 +56,27 @@ export default class SpaceHome extends React.Component {
               content.
             </p>
           </div>
-          <ReactPlayer
-            className="concept-video-widget__player"
-            url="https://contentful.wistia.com/medias/a0ug09pj1j"
-            width="397px"
-            height="223px"
-            onPlay={this.onPlay}
-            onError={this.onError}
-            config={{
-              wistia: {
-                options: {
-                  popover: true
+          <div className="concept-video-widget__player-wrapper">
+            <ReactPlayer
+              className="concept-video-widget__player"
+              url="https://contentful.wistia.com/medias/eqe3z9sk1p"
+              width="397px"
+              height="223px"
+              onStart={this.onStart}
+              onError={this.onError}
+              config={{
+                wistia: {
+                  options: {
+                    popover: true,
+                    playButton: false
+                  }
                 }
-              }
-            }}
-          />
+              }}
+            />
+            <button className="concept-video-widget__play-button" aria-label="Play">
+              <div className="concept-video-widget__play-button-icon" />
+            </button>
+          </div>
         </div>
       </Card>
     );
