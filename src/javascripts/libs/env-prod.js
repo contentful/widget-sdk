@@ -51,6 +51,8 @@ window.libs = [
   ['@contentful/widget-map', require('@contentful/widget-map')],
   ['@contentful/worf', require('@contentful/worf')],
 
+  ['@jo-sm/asn1js', require('@jo-sm/asn1js')],
+
   ['classnames', require('classnames')],
   ['codemirror', require('codemirror')],
   ['color', require('color')],

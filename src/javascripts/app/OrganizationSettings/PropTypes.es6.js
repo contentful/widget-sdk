@@ -1,6 +1,13 @@
 import PropTypes from 'prop-types';
 import { orgRoles } from 'utils/MembershipUtils.es6';
 
+export const Organization = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  sys: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  })
+});
+
 export const User = PropTypes.shape({
   firstName: PropTypes.string,
   lastName: PropTypes.string,
@@ -74,4 +81,10 @@ export const TeamMembership = PropTypes.shape({
     id: PropTypes.string.isRequired,
     user: PropTypes.shape({ id: PropTypes.string })
   }).isRequired
+});
+
+export const IdentityProvider = PropTypes.shape({
+  ssoName: PropTypes.string,
+  idpSsoTargetUrl: PropTypes.string,
+  idpCert: PropTypes.string
 });

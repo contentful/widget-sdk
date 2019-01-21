@@ -142,6 +142,8 @@ export const snowplow = settings.snowplow;
  */
 export const launchDarkly = settings.launchDarkly;
 
+export const appUrl = `https://app.${domain}`;
+
 export function toolsUrl(path, params) {
   let base = settings.toolsServiceUrl + ensureLeadingSlash(path.join('/'));
   if (params) {

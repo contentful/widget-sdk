@@ -23,6 +23,7 @@
     "@contentful/validation": "^9.1.1",
     "@contentful/widget-map": "^1.2.3",
     "@contentful/worf": "^3.13.0",
+    "@jo-sm/asn1js": "^1.0.0",
     "ajv": "^5.2.2",
     "angular": "~1.5.7",
     "angular-animate": "~1.5.7",
