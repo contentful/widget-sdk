@@ -30,7 +30,7 @@ class EmbeddedEntryInline extends React.Component {
   handleRemoveClick = event => {
     event.stopPropagation();
     const { editor, node } = this.props;
-    editor.change(change => change.removeNodeByKey(node.key));
+    editor.removeNodeByKey(node.key);
   };
 
   renderMissingNode() {
