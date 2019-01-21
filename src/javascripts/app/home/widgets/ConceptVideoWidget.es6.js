@@ -3,6 +3,7 @@ import ReactPlayer from 'react-player';
 import { Card, Subheading } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry.es6';
 import { track } from 'analytics/Analytics.es6';
+import $ from 'jquery';
 
 const logger = getModule('logger');
 const $state = getModule('$state');
@@ -26,15 +27,18 @@ export default class SpaceHome extends React.Component {
     window._wq.push({
       id: '_all',
       onReady: function(video) {
-        document.querySelector('.concept-video-widget__play-button').onclick = () => {
+        $('.concept-video-widget__play-button').bind('click', () => {
           video.popover.show();
           video.play();
-        };
+        });
         video.bind('end', function() {
           video.popover.hide();
         });
       }
     });
+  };
+  componentWillUnmount = () => {
+    $('.concept-video-widget__play-button').unbind();
   };
 
   render() {
