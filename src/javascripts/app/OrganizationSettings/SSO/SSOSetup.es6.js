@@ -85,7 +85,11 @@ export default class SSOSetup extends React.Component {
                 questions, talk to support.
               </p>
               {!identityProvider && (
-                <Button buttonType="primary" onClick={this.createIdp} loading={creatingIdp}>
+                <Button
+                  buttonType="primary"
+                  testId="create-idp"
+                  loading={creatingIdp}
+                  onClick={this.createIdp}>
                   Set up SSO
                 </Button>
               )}

@@ -37,7 +37,7 @@ describe('IDPSetupForm', () => {
   it('should provide a default SSO name if no SSO name is present in identityProvider', () => {
     expect(
       rendered
-        .find('TextField[name="ssoName"]')
+        .find('[testId="sso-name"]')
         .first()
         .prop('value')
     ).toBe('my awesome org');
@@ -46,7 +46,7 @@ describe('IDPSetupForm', () => {
     rendered = render({ identityProvider: identityProvider, organization });
     expect(
       rendered
-        .find('TextField[name="ssoName"]')
+        .find('[testId="sso-name"]')
         .first()
         .prop('value')
     ).toBe('lilly');
@@ -56,7 +56,7 @@ describe('IDPSetupForm', () => {
     expect(rendered.find('TextField[name="otherSsoProvider"]')).toHaveLength(0);
 
     rendered
-      .find('Select[name="ssoProvider"]')
+      .find('[testId="sso-provider"]')
       .first()
       .simulate('change', { target: { value: 'other' } });
 
@@ -67,15 +67,15 @@ describe('IDPSetupForm', () => {
 
   it('should update a field every 500ms on change', async () => {
     rendered
-      .find('TextField[name="ssoName"]')
+      .find('[testId="sso-name"]')
       .first()
       .simulate('change', { target: { value: 'li' } });
     rendered
-      .find('TextField[name="ssoName"]')
+      .find('[testId="sso-name"]')
       .first()
       .simulate('change', { target: { value: 'lill' } });
     rendered
-      .find('TextField[name="ssoName"]')
+      .find('[testId="sso-name"]')
       .first()
       .simulate('change', { target: { value: 'lilly' } });
 
@@ -88,7 +88,7 @@ describe('IDPSetupForm', () => {
 
   it('should update a field immediately if input is blurred', () => {
     rendered
-      .find('TextField[name="ssoName"]')
+      .find('[testId="sso-name"]')
       .first()
       .simulate('blur', { target: { value: 'lilly' } });
 

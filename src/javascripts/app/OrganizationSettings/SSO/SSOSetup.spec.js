@@ -1,6 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import SSOSetup from './SSOSetup.es6';
+import IDPSetupForm from './IDPSetupForm.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 
 describe('SSOSetup', () => {
@@ -21,13 +22,13 @@ describe('SSOSetup', () => {
     const identityProvider = {};
     const rendered = render({ identityProvider, organization });
 
-    expect(rendered.find('IDPSetupForm')).toHaveLength(1);
+    expect(rendered.find(IDPSetupForm)).toHaveLength(1);
   });
 
   it('should not render the IDPSetupForm component if an identityProvider is not given in props', () => {
     const rendered = render({ organization });
 
-    expect(rendered.find('IDPSetupForm')).toHaveLength(0);
+    expect(rendered.find(IDPSetupForm)).toHaveLength(0);
   });
 
   it('should not render the IDPSetupForm component is given identityProvider is enabled', () => {
@@ -36,16 +37,16 @@ describe('SSOSetup', () => {
     };
     const rendered = render({ identityProvider, organization });
 
-    expect(rendered.find('IDPSetupForm')).toHaveLength(0);
+    expect(rendered.find(IDPSetupForm)).toHaveLength(0);
   });
 
   it('should attempt to create an identity provider if CTA button is clicked', () => {
     const endpoint = jest.fn();
-    createOrganizationEndpoint.mockReturnValue(endpoint);
+    createOrganizationEndpoint.mockReturnValueOnce(endpoint);
 
     const rendered = render({ organization });
     rendered
-      .find('Button')
+      .find('[testId="create-idp"]')
       .first()
       .simulate('click');
 

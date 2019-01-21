@@ -180,6 +180,7 @@ export default class IDPSetupForm extends React.Component {
           <Select
             name="ssoProvider"
             id="ssoProvider"
+            testId="sso-provider"
             onChange={this.updateValueImmediately('idpName')}>
             <Option value={''}>Select provider</Option>
             {SSO_PROVIDERS.map(name => {
@@ -210,6 +211,7 @@ export default class IDPSetupForm extends React.Component {
             labelText="SSO name"
             id="ssoName"
             name="ssoName"
+            testId="sso-name"
             value={this.state.identityProvider.ssoName}
             onChange={this.updateValue('ssoName')}
             onBlur={this.updateValueImmediately('ssoName')}
