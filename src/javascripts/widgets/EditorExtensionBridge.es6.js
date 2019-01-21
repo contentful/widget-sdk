@@ -31,7 +31,10 @@ export default function createBridge({
   spaceContext,
   TheLocaleStore,
   entitySelector,
-  Analytics
+  Analytics,
+  entityCreator,
+  Navigator,
+  SlideInNavigator
 }) {
   return {
     getData,
@@ -99,6 +102,68 @@ export default function createBridge({
     throw new Error('Unknown dialog type.');
   }
 
+  async function navigate(options) {
+    if (!['Entry', 'Asset'].includes(options.entityType)) {
+      throw new Error('Unknown entity type.');
+    }
+
+    const entity = await makeEntity(options);
+
+    try {
+      await navigateToEntity(entity, options.slideIn);
+    } catch (err) {
+      throw new Error('Failed to navigate to the entity.');
+    }
+  }
+
+  async function makeEntity(options) {
+    if (typeof options.id === 'string') {
+      // A valid ID is given, create a stub entity that can be used for navigation.
+      return makeStubEntity(options);
+    } else {
+      try {
+        return await createEntity(options);
+      } catch (err) {
+        throw new Error('Failed to create an entity.');
+      }
+    }
+  }
+
+  function makeStubEntity(options) {
+    return {
+      sys: {
+        type: options.entityType,
+        id: options.id,
+        space: { sys: { id: spaceContext.getId() } },
+        environment: { sys: { id: spaceContext.getEnvironmentId() } }
+      }
+    };
+  }
+
+  async function createEntity(options) {
+    // Important note:
+    // `entityCreator` returns legacy client entities, we need to extract `entity.data`.
+
+    if (options.entityType === 'Entry' && typeof options.contentTypeId === 'string') {
+      const created = await entityCreator.newEntry(options.contentTypeId);
+      return created.data;
+    } else if (options.entityType === 'Asset') {
+      const created = await entityCreator.newAsset();
+      return created.data;
+    }
+
+    throw new Error('Could not determine how to create the requested entity.');
+  }
+
+  async function navigateToEntity(entity, slideIn = false) {
+    if (slideIn) {
+      // This method is sync but the URL change is an async side-effect.
+      SlideInNavigator.goToSlideInEntity(entity.sys);
+    } else {
+      await Navigator.go(Navigator.makeEntityRef(entity));
+    }
+  }
+
   async function callSpaceMethod(methodName, args) {
     try {
       // TODO: Use `getBatchingApiClient(spaceContext.cma)`
@@ -164,6 +229,7 @@ export default function createBridge({
     api.registerPathHandler('removeValue', removeValue);
     api.registerHandler('openDialog', openDialog);
     api.registerHandler('callSpaceMethod', callSpaceMethod);
+    api.registerHandler('navigate', navigate);
 
     api.registerHandler('setInvalid', (isInvalid, localeCode) => {
       $scope.fieldController.setInvalid(localeCode, isInvalid);

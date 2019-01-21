@@ -21,7 +21,21 @@ registerDirective('cfWidgetRenderer', [
   'TheLocaleStore',
   'entitySelector',
   'analytics/Analytics.es6',
-  ($compile, $rootScope, spaceContext, Config, TheLocaleStore, entitySelector, Analytics) => {
+  'entityCreator',
+  'states/Navigator.es6',
+  'navigation/SlideInNavigator',
+  (
+    $compile,
+    $rootScope,
+    spaceContext,
+    Config,
+    TheLocaleStore,
+    entitySelector,
+    Analytics,
+    entityCreator,
+    Navigator,
+    SlideInNavigator
+  ) => {
     return {
       scope: true,
       restrict: 'E',
@@ -44,7 +58,10 @@ registerDirective('cfWidgetRenderer', [
               spaceContext,
               TheLocaleStore,
               entitySelector,
-              Analytics
+              Analytics,
+              entityCreator,
+              Navigator,
+              SlideInNavigator
             }),
             src,
             srcdoc,
