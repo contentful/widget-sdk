@@ -1,5 +1,3 @@
-import React from 'react';
-import { renderToString } from 'react-dom/server';
 import { mapValues } from 'lodash';
 import { assign, get, set, update } from 'utils/Collections.es6';
 import * as C from 'utils/Concurrent.es6';
@@ -42,13 +40,13 @@ export function openCreateDialog(createEnvironment) {
   };
 
   return openDialog({
-    template: renderToString(
+    template: `
       <div className="modal-background">
-        <div className="modal-dialog" style={{ width: '32em' }}>
+        <div className="modal-dialog" style="width: 32px;">
           <cf-component-store-bridge component="component" />
         </div>
       </div>
-    ),
+    `.trim(),
     controller: $scope => {
       $scope.component = createComponent(initialState, { createEnvironment }, value => {
         $scope.dialog.confirm(value);

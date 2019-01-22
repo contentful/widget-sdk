@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { renderToString } from 'react-dom/server';
 import escape from 'utils/escape.es6';
 import { assign } from 'utils/Collections.es6';
 import { makeCtor } from 'utils/TaggedValues.es6';
@@ -54,13 +53,13 @@ const reduce = makeReducer({
  */
 export function openDeleteDialog(runDelete, environment) {
   return ModalDialog.open({
-    template: renderToString(
+    template: `
       <div className="modal-background">
-        <div className="modal-dialog" style={{ width: '32em' }}>
+        <div className="modal-dialog" style="width: 32px;">
           <cf-component-store-bridge component="component" />
         </div>
       </div>
-    ),
+    `.trim(),
     controller: $scope => {
       const closeDialog = value => $scope.dialog.confirm(value);
       $scope.component = createComponent(runDelete, environment, closeDialog);
