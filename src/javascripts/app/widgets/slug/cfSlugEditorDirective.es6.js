@@ -1,5 +1,5 @@
 import { registerDirective } from 'NgRegistry.es6';
-import { isEmpty } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import moment from 'moment';
 import * as K from 'utils/kefir.es6';
 
@@ -78,9 +78,9 @@ registerDirective('cfSlugEditor', [
 
       // we need to update slug values from title only after
       // field becomes not disabled (sharejs connected)
-      const titleUpdate$ = K.combine([disabledBus.stream, titleBus.stream]).filter(
-        ([disabled]) => disabled === false
-      );
+      const titleUpdate$ = K.combine([disabledBus.stream, titleBus.stream])
+        .filter(([disabled]) => disabled === false)
+        .skipDuplicates(isEqual);
 
       K.onValueScope(scope, titleUpdate$, ([, title]) => {
         const slug = field.getValue();
