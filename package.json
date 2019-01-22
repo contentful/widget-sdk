@@ -76,6 +76,7 @@
     "react-codemirror": "^1.0.0",
     "react-dom": "16.6.3",
     "react-highlight-words": "^0.10.0",
+    "react-player": "^1.8.0",
     "react-redux": "^5.0.7",
     "react-sticky-el": "^1.0.20",
     "react-tippy": "^1.2.2",

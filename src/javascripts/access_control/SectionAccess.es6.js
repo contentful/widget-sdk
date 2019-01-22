@@ -26,8 +26,10 @@ export function getFirstAccessibleSref() {
 
   const firstAccessible = Array.isArray(section) ? section[1] : null;
   const userIsAdmin = spaceContext.getData('spaceMembership.admin', false);
+  const userIsAuthorOrEditor = accessChecker.isAuthorOrEditor(
+    spaceContext.getData('spaceMembership.roles', false)
+  );
   const notActivated = !spaceContext.getData('activatedAt');
-  const shouldGoToHome = notActivated && userIsAdmin;
 
-  return shouldGoToHome ? '.home' : firstAccessible;
+  return (notActivated && userIsAdmin) || userIsAuthorOrEditor ? '.home' : firstAccessible;
 }

@@ -2,9 +2,15 @@ $home-width = 820px
 
 .home
   $stretch(0, 0, 0, 0)
-  background-color: $colors.bg-light
   overflow-y: auto
   overflow-x: hidden
+
+  &__container-practitioner
+    background: url('/app/images/practitioner-home-bg.png') no-repeat
+    background-size: cover
+    $stretch(0, 0, 0, 0)
+    overflow-y: auto
+    overflow-x: hidden
 
   &__container
     background-image: url('/app/images/home-bg.png')
@@ -145,7 +151,15 @@ $home-width = 820px
     a
       color: $colors.text-light
       text-decoration: underline
-
+.widget-container
+  width: 100%
+  height 100%
+  display: flex
+  align-content: flex-start
+  flex-wrap: wrap
+  padding: 20px
+  &__row
+    width: 100%
 .tab-list.x--home
   border: 1px solid transparent
   border-bottom: 1px solid $colors.element-mid
@@ -155,3 +169,67 @@ $home-width = 820px
   z-index: 1
   &.fixed
     background-color: white
+
+.greeting-widget
+  justify-content: center
+  display: flex
+  flex-wrap: wrap
+  margin-top: 55px
+  &__header
+    color: $colors.text-dark
+    font-family: "Avenir Next W01"
+    font-size: 35px
+    line-height: 44px
+    text-align: center
+    width: 100%
+    margin: 5px
+  &__copy
+    color: $colors.text-dark
+    font-family: "Avenir Next W01"
+    font-size: 16px
+    line-height: 24px
+    text-align: center
+    width: 100%
+    margin: 5px
+  &__space-name
+    font-weight: 600
+  &__italic
+    font-style: italic
+.concept-video-widget
+  padding: 0
+  width: 939px
+  margin: auto
+  margin-top: 70px
+  &__header
+    font-size: 16px
+    border-bottom: 1px solid $colors.element-mid
+    padding: 26px 27px
+    margin: 0
+  &__content
+    margin: 35px 27px
+    display: flex
+    flex-wrap: nowrap
+    justify-content: space-between
+  &__player
+    background-image: url('/app/images/concept_video_placeholder.png')
+  &__copy
+    width: 364px
+  &__copy p
+    color: $colors.text-mid
+    font-family: "Avenir Next W01"
+    font-size: 14px
+    line-height: 21px
+  &__player-wrapper
+    position: relative
+  &__play-button
+    position: absolute
+    top: 80px
+    left: 180px
+    width: 52px
+    height: 52px
+    cursor: pointer
+  &__play-button-icon
+    background-image: url('/app/images/play-button.png')
+    background-size: 52px 52px 
+    width: 52px
+    height 52px

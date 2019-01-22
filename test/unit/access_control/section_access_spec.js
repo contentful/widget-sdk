@@ -21,7 +21,7 @@ describe('Section Access', () => {
     module('contentful/test');
 
     sectionAccess = this.$inject('access_control/SectionAccess.es6');
-    accessChecker = this.$inject('access_control/AccessChecker');
+    accessChecker = this.$inject('access_control/AccessChecker/index.es6');
     spaceContext = this.$inject('spaceContext');
 
     accessChecker.getSectionVisibility = visibilityStub = sinon.stub().returns(allTrue);
@@ -56,8 +56,28 @@ describe('Section Access', () => {
       };
 
       expect(sectionAccess.getFirstAccessibleSref()).toBe('.home');
-      spaceContext.space.data.spaceMembership.admin = false;
+    });
+
+    it('returns first available screen sref when activated and admin', () => {
+      spaceContext.space = {
+        data: {
+          spaceMembership: { admin: true },
+          activatedAt: 'activatedAt'
+        }
+      };
+
       expect(sectionAccess.getFirstAccessibleSref()).toBe('.entries.list');
+    });
+
+    it('returns home screen sref when user is author or editor', () => {
+      spaceContext.space = {
+        data: {
+          spaceMembership: { roles: [{ name: 'Author' }] },
+          activatedAt: 'activatedAt'
+        }
+      };
+
+      expect(sectionAccess.getFirstAccessibleSref()).toBe('.home');
     });
   });
 });

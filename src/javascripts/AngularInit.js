@@ -155,7 +155,6 @@ angular
       ngRequire('classes/entityListCache.es6');
       ngRequire('components/CreateEntryButton/buttonDirective.es6');
       ngRequire('components/app_container/cfAppContainerDirective.es6');
-      ngRequire('components/authors_help/authorsHelpDirective.es6');
       ngRequire('services/features.es6');
       ngRequire('services/authorization.es6');
       ngRequire('components/client/ClientController.es6');
