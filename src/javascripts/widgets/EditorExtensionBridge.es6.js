@@ -16,6 +16,18 @@ const SIMPLE_DIALOG_TYPE_TO_OPENER = {
   prompt: Dialogs.openPrompt
 };
 
+const REQUIRED_DEPENDENCIES = [
+  '$rootScope',
+  '$scope',
+  'spaceContext',
+  'TheLocaleStore',
+  'entitySelector',
+  'Analytics',
+  'entityCreator',
+  'Navigator',
+  'SlideInNavigator'
+];
+
 // This module, given editor-specific Angular dependencies
 // as listed below, returns a framework-agnostic interface:
 //
@@ -25,17 +37,25 @@ const SIMPLE_DIALOG_TYPE_TO_OPENER = {
 //   handlers and notifies it about changes.
 // - `apply` takes a function to be executed in the Angular
 //   context (using `$rootScope.$apply`).
-export default function createBridge({
-  $rootScope,
-  $scope,
-  spaceContext,
-  TheLocaleStore,
-  entitySelector,
-  Analytics,
-  entityCreator,
-  Navigator,
-  SlideInNavigator
-}) {
+export default function createBridge(dependencies) {
+  REQUIRED_DEPENDENCIES.forEach(key => {
+    if (!(key in dependencies)) {
+      throw new Error(`"${key}" not provided to the extension bridge.`);
+    }
+  });
+
+  const {
+    $rootScope,
+    $scope,
+    spaceContext,
+    TheLocaleStore,
+    entitySelector,
+    Analytics,
+    entityCreator,
+    Navigator,
+    SlideInNavigator
+  } = dependencies;
+
   return {
     getData,
     install,
@@ -115,7 +135,9 @@ export default function createBridge({
       throw new Error('Failed to navigate to the entity.');
     }
 
-    //
+    // Right now we're returning this object with a single `navigated`
+    // property. In the future we could grow the API, for example by
+    // adding a method to listen to close events of the slide-in editor.
     return { navigated: true };
   }
 
