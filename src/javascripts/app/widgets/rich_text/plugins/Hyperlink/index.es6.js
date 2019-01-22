@@ -18,8 +18,10 @@ export const HyperlinkPlugin = ({ richTextAPI: { widgetAPI, logAction } }) => ({
         <Hyperlink
           {...props}
           onClick={event => {
+            event.preventDefault(); // Don't follow `href`
             const { editor } = props;
-            event.preventDefault(); // Don't follow `href`.
+
+            editor.moveToRangeOfNode(props.node).focus();
             if (mayEditLink(editor.value)) {
               const logViewportAction = (name, data) =>
                 logAction(name, { origin: actionOrigin.VIEWPORT, ...data });
