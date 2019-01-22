@@ -1,12 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { renderToStaticMarkup as jsxToHtmlString } from 'react-dom/server';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import { LineChart } from '@contentful/forma-36-react-components';
-
-import Circle from 'svg/chart-symbol-circle.es6';
-import Diamond from 'svg/chart-symbol-diamond.es6';
-import Triangle from 'svg/chart-symbol-triangle.es6';
 import { shorten } from 'utils/NumberUtils.es6';
 
 import { organizationResourceUsagePropType, periodPropType } from './propTypes.es6';
@@ -14,7 +10,7 @@ import periodToDates from './periodToDates.es6';
 import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
 
 const seriesLineSymbol = ['circle', 'diamond', 'triangle'];
-const tooltipSymbol = [Circle, Diamond, Triangle];
+const tooltipIcon = ['chart-symbol-circle', 'chart-symbol-diamond', 'chart-symbol-triangle'];
 
 export default class ApiUsageChart extends React.Component {
   static propTypes = {
@@ -34,19 +30,8 @@ export default class ApiUsageChart extends React.Component {
       },
       tooltip: {
         padding: 0,
-        formatter: series =>
-          // This should not normally be used on the client, but LineCharts needs an html string here
-          jsxToHtmlString(
-            <div className="usage-page__api-chart-tooltip">
-              <div className="date">{series[0].name}</div>
-              {series.map(({ value }, index) => (
-                <div className="value" key={index}>
-                  <span className="icon">{React.createElement(tooltipSymbol[index])}</span>
-                  <span>{value.toLocaleString('en-US')}</span>
-                </div>
-              ))}
-            </div>
-          )
+        // This should not normally be used on the client, but LineCharts needs an html string here
+        formatter: series => renderTooltip(series)
       },
       yAxis: {
         axisLabel: {
@@ -74,4 +59,19 @@ export default class ApiUsageChart extends React.Component {
       />
     );
   }
+}
+
+function renderTooltip(series) {
+  const tooltipChildren = [h('.date', [series[0].name])];
+
+  series.forEach(({ value }, index) => {
+    tooltipChildren.push(
+      h('.value', [
+        h(`span.icon.${tooltipIcon[index]}`),
+        h('span', [value.toLocaleString('en-US')])
+      ])
+    );
+  });
+
+  return h('.usage-page__api-chart-tooltip', tooltipChildren);
 }
