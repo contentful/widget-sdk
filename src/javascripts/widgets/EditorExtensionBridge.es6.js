@@ -263,7 +263,7 @@ export default function createBridge(dependencies) {
     api.registerPathHandler('removeValue', removeValue);
     api.registerHandler('openDialog', openDialog);
     api.registerHandler('callSpaceMethod', callSpaceMethod);
-    api.registerHandler('navigate', navigate);
+    api.registerHandler('navigateToContentEntity', navigate);
     api.registerHandler('notify', notify);
 
     api.registerHandler('setInvalid', (isInvalid, localeCode) => {

@@ -284,7 +284,7 @@ describe('EditorExtensionBridge', () => {
     bridge.install(api);
 
     const registerCall = api.registerHandler.mock.calls[2];
-    expect(registerCall[0]).toBe('navigate');
+    expect(registerCall[0]).toBe('navigateToContentEntity');
     const navigate = registerCall[1];
     expect(typeof navigate).toBe('function');
 
