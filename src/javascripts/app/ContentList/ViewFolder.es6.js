@@ -1,5 +1,6 @@
 import { get as getAtPath } from 'lodash';
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { assign, filter } from 'utils/Collections.es6';
 import openRoleSelector from './RoleSelector.es6';
@@ -10,7 +11,7 @@ import { getModule } from 'NgRegistry.es6';
 const { htmlEncode } = getModule('encoder');
 const modalDialog = getModule('modalDialog');
 
-export default function render(folder, state, actions) {
+export default function ViewFolder({ folder, state, actions }) {
   const { canEdit, roleAssignment, tracking } = state;
   const { UpdateFolder, DeleteFolder, UpdateView, DeleteView } = actions;
   const views = filter(folder.views, view => isViewVisible(view, roleAssignment));
@@ -94,6 +95,12 @@ export default function render(folder, state, actions) {
     </div>
   );
 }
+
+ViewFolder.propTypes = {
+  folder: PropTypes.object.isRequired,
+  state: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired
+};
 
 function renameFolder(folder, UpdateFolder) {
   openInputDialog({

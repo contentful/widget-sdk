@@ -1,3 +1,4 @@
+import React from 'react';
 import { find, isPlainObject } from 'lodash';
 import { update, assign, map, concat, filter } from 'utils/Collections.es6';
 import { makeCtor } from 'utils/TaggedValues.es6';
@@ -165,7 +166,9 @@ export default function({ scopedFolders, loadView, getCurrentView, roleAssignmen
 
   return {
     api: { saveCurrentView },
-    render: ViewMenu,
+    render: (state, actions) => {
+      return <ViewMenu state={state} actions={actions} />;
+    },
     store,
     actions
   };

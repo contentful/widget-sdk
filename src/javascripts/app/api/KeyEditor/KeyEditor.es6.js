@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { h } from 'ui/Framework/index.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
 import { assign } from 'utils/Collections.es6';
 import { DocsLink } from 'ui/Content.es6';
-import renderEnvironmentSelector from './EnvironmentSelector.es6';
+import EnvironmentSelector from './EnvironmentSelector.es6';
 import CopyIcon from 'svg/CopyIcon.es6';
 import copyToClipboard from 'utils/DomClipboardCopy.es6';
 import TextInput from './TextInput.es6';
@@ -22,143 +21,139 @@ export default function({ data, initialValue, connect, trackCopy }) {
 }
 
 function renderForm({ data, model, update, trackCopy }) {
-  return h('div', [
-    h('h3.section-title', ['Access tokens']),
-
-    h('div', [
-      'To query and get content using the APIs, client applications ',
-      'need to authenticate with both the Space ID and an access token.'
-    ]),
-
-    h('div.f36-margin-top--xl'),
-
-    section(
-      {
-        title: 'Name',
-        description: [
-          'Can be platform or device specific names (i.e. marketing website, tablet, VR app)'
-        ]
-      },
-      [input({ canEdit: data.canEdit, model, key: 'name', update })]
-    ),
-
-    section(
-      {
-        title: 'Description',
-        description: ['You can provide an optional description for reference in the future']
-      },
-      [input({ canEdit: data.canEdit, model, key: 'description', update })]
-    ),
-
-    section({ title: 'Space ID' }, [
-      inputWithCopy({ value: data.spaceId, name: 'space-id', track: () => trackCopy('space') })
-    ]),
-
-    section({ title: 'Content Delivery API - access token' }, [
-      inputWithCopy({
-        value: data.deliveryToken,
-        name: 'delivery-token',
-        track: () => trackCopy('cda')
-      })
-    ]),
-
-    separator(),
-
-    section(
-      {
-        title: 'Content Preview API - access token',
-        description: [
-          'Preview unpublished content using this API (i.e. content with “Draft” status). ',
-          <DocsLink key="content-preview-link" text="Read more" target="content_preview" />
-        ]
-      },
-      [
-        inputWithCopy({
-          value: data.previewToken,
-          name: 'preview-token',
-          track: () => trackCopy('cpa')
-        })
-      ]
-    ),
-
-    data.environmentsEnabled && separator(),
-    data.environmentsEnabled &&
-      section(
-        {
-          title: 'Environments',
-          description: [
-            'Select the environments this API key should have access to. At least one environment has to be selected.'
-          ]
-        },
-        [
-          renderEnvironmentSelector({
-            canEdit: data.canEdit,
-            isAdmin: data.isAdmin,
-            spaceEnvironments: data.spaceEnvironments,
-            envs: model.environments,
-            updateEnvs: environments => update(assign(model, { environments }))
-          })
-        ]
-      )
-  ]);
+  return (
+    <div>
+      <h3 className="section-title">Access tokens</h3>
+      <div>
+        To query and get content using the APIs, client applications need to authenticate with both
+        the Space ID and an access token.
+      </div>
+      <div className="f36-margin-top--xl" />
+      <Section
+        title="Name"
+        description="Can be platform or device specific names (i.e. marketing website, tablet, VR app)">
+        <Input canEdit={data.canEdit} model={model} name="name" update={update} />
+      </Section>
+      <div className="f36-margin-top--xl" />
+      <Section
+        title="Description"
+        description="You can provide an optional description for reference in the future">
+        <Input canEdit={data.canEdit} model={model} name="description" update={update} />
+      </Section>
+      <div className="f36-margin-top--xl" />
+      <Section title="Space ID">
+        <InputWithCopy value={data.spaceId} name="space-id" track={() => trackCopy('space')} />
+      </Section>
+      <div className="f36-margin-top--xl" />
+      <Section key="content-delivery-api" title="Content Delivery API - access token">
+        <InputWithCopy
+          value={data.deliveryToken}
+          name="delivery-token"
+          track={() => {
+            trackCopy('cda');
+          }}
+        />
+      </Section>
+      <Separator key="content-preview-api-separator" />
+      <Section
+        key="content-preview-api"
+        title="Content Preview API - access token"
+        description={
+          <React.Fragment>
+            Preview unpublished content using this API (i.e. content with “Draft” status).
+            <DocsLink key="content-preview-link" text="Read more" target="content_preview" />
+          </React.Fragment>
+        }>
+        <InputWithCopy
+          value={data.previewToken}
+          name="preview-token"
+          track={() => {
+            trackCopy('cpa');
+          }}
+        />
+      </Section>
+      {data.environmentsEnabled && <Separator />}
+      {data.environmentsEnabled && (
+        <Section
+          title="Environments"
+          description="Select the environments this API key should have access to. At least one environment has to be selected.">
+          <EnvironmentSelector
+            {...{
+              canEdit: data.canEdit,
+              isAdmin: data.isAdmin,
+              spaceEnvironments: data.spaceEnvironments,
+              envs: model.environments,
+              updateEnvs: environments => update(assign(model, { environments }))
+            }}
+          />
+        </Section>
+      )}
+      <div className="f36-margin-top--xl" />
+    </div>
+  );
 }
 
-function input({ canEdit, model, update, key }) {
+function Input({ canEdit, model, update, name }) {
   return (
     <TextInput
       className="cfnext-form__input--full-size"
       type="text"
-      name={key}
-      value={model[key]}
-      onChange={e => update(assign(model, { [key]: e.target.value }))}
+      name={name}
+      value={model[name]}
+      onChange={e => update(assign(model, { [name]: e.target.value }))}
       disabled={!canEdit}
     />
   );
 }
 
-function inputWithCopy({ value, name, track }) {
-  return h('.cfnext-form__input-group--full-size', [
-    h('input.cfnext-form__input--full-size', {
-      style: { cursor: 'pointer' },
-      type: 'text',
-      name,
-      readOnly: true,
-      value,
-      onClick: e => {
-        e.target.focus();
-        e.target.select();
-      }
-    }),
-    h(
-      '.cfnext-form__icon-suffix.copy-to-clipboard.x--input-suffix',
-      {
-        onClick: () => {
+function InputWithCopy({ value, name, track }) {
+  return (
+    <div className="cfnext-form__input-group--full-size">
+      <input
+        className="cfnext-form__input--full-size"
+        type="text"
+        name={name}
+        readOnly
+        value={value}
+        style={{ cursor: 'pointer' }}
+        onClick={e => {
+          e.target.focus();
+          e.target.select();
+        }}
+      />
+      <div
+        style={{ cursor: 'pointer', paddingTop: '3px' }}
+        onClick={() => {
           copyToClipboard(value);
           track();
-        },
-        style: { cursor: 'pointer', paddingTop: '3px' }
-      },
-      [h(CopyIcon)]
-    )
-  ]);
-}
-
-function section({ title, description }, content) {
-  return h(
-    'div',
-    [h('h4.h-reset', [title]), description && h('div', description), h('div.f36-margin-top--l')]
-      .concat(content)
-      .concat([h('div.f36-margin-top--xl')])
+        }}
+        className="cfnext-form__icon-suffix copy-to-clipboard x--input-suffix">
+        <CopyIcon />
+      </div>
+    </div>
   );
 }
 
-function separator() {
-  return h('div', {
-    style: {
-      height: '1px',
-      width: '100%',
-      backgroundColor: Colors.elementMid,
-      margin: '2.5em 0'
-    }
-  });
+function Section({ title, description, children }) {
+  return (
+    <div>
+      <h4 className="h-reset">{title}</h4>
+      {description && <div>{description}</div>}
+      <div className="f36-margin-top--l" />
+      {children}
+    </div>
+  );
+}
+
+function Separator() {
+  return (
+    <div
+      style={{
+        height: '1px',
+        width: '100%',
+        backgroundColor: Colors.elementMid,
+        margin: '2.5em 0'
+      }}
+    />
+  );
 }

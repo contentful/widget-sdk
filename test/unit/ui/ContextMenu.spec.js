@@ -1,5 +1,4 @@
 import setupContextMenuHandler from 'ui/ContextMenuHandler.es6';
-import { h } from 'utils/legacy-html-hyperscript';
 import $ from 'jquery';
 
 describe('context menu', () => {
@@ -8,7 +7,7 @@ describe('context menu', () => {
     const $document = this.$inject('$document');
     this.detach = setupContextMenuHandler($document);
     this.$body = $document.find('body');
-    this.$body.append(h('style', ['[cf-context-menu] { display: none }']));
+    this.$body.append('<style>[cf-context-menu] { display: none }</style>');
   });
 
   afterEach(function() {
@@ -19,25 +18,10 @@ describe('context menu', () => {
   describe('one context menu', () => {
     beforeEach(function() {
       this.$body.append(
-        this.$compile(
-          [
-            h(
-              'button',
-              {
-                cfContextMenuTrigger: true
-              },
-              ['Open']
-            ),
-            h(
-              'div',
-              {
-                cfContextMenu: true
-              },
-              [h('button', ['Action'])]
-            ),
-            h('div#outside')
-          ].join('')
-        )
+        this.$compile(`
+          <button cf-context-menu-trigger>Open</button>
+          <div cf-context-menu><button>Action</button></div><div id="outside"></div>
+        `)
       );
     });
 

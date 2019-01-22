@@ -1,5 +1,4 @@
 import { assign } from 'lodash';
-import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import baseState from 'states/Base.es6';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
@@ -70,7 +69,7 @@ const keyDetail = assign(
 const cdaKeyList = baseState({
   name: 'list',
   url: '',
-  template: h('cf-api-key-list.workbench')
+  template: '<cf-api-key-list class="workbench"></cf-api-key-list>'
 });
 
 export default {

@@ -3,7 +3,6 @@ import _ from 'lodash';
 describe('cfEntityLink directive', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.h = this.$inject('utils/legacy-html-hyperscript').h;
 
     const $q = this.$inject('$q');
     this.compile = function(entity, actions, config) {
@@ -29,12 +28,7 @@ describe('cfEntityLink directive', () => {
       }
 
       const element = this.$compile(
-        this.h('cf-entity-link', {
-          entity: 'entity',
-          entityHelpers: 'entityHelpers',
-          actions: 'actions',
-          config: 'config'
-        }),
+        `<cf-entity-link entity="entity" entity-helpers="entityHelpers" actions="actions" config="config"></cf-entity-link>`,
         {
           entity: entity,
           entityHelpers: entityHelpers,

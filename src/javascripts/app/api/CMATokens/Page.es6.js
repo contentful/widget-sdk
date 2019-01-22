@@ -12,7 +12,6 @@ import {
   TableCell,
   TableBody
 } from '@contentful/forma-36-react-components';
-import { h } from 'ui/Framework/index.es6';
 import { createStore, bindActions, makeReducer } from 'ui/Framework/Store.es6';
 import escape from 'utils/escape.es6';
 import { DocsLink, LinkOpen } from 'ui/Content.es6';
@@ -124,7 +123,7 @@ export function initController($scope, auth) {
 
   $scope.component = {
     store,
-    render,
+    render: (state, actions) => <PageComponent state={state} actions={actions} />,
     actions: {
       SelectPage,
       Revoke,
@@ -135,29 +134,27 @@ export function initController($scope, auth) {
   /* eslint-enable no-use-before-define */
 }
 
-function render(state, actions) {
-  return h(
-    'div',
-    {
-      style: {
-        padding: '2em 3em'
-      }
-    },
-    [oauthSection(), h('div.f36-margin-top--2xl'), patSection(state, actions)]
+function PageComponent({ state, actions }) {
+  return (
+    <div style={{ padding: '2em 3em' }}>
+      <OauthSection />
+      <div className="f36-margin-top--2xl" />
+      <PATSection state={state} actions={actions} />
+    </div>
   );
 }
 
-function patSection(state, actions) {
-  return h('div', [
-    h('h1.section-title', ['Personal Access Tokens']),
-    h(
-      'div',
-      {
-        style: { display: 'flex' }
-      },
-      [
+PageComponent.propTypes = {
+  state: PropTypes.object,
+  actions: PropTypes.object
+};
+
+function PATSection({ state, actions }) {
+  return (
+    <div>
+      <h1 className="section-title">Personal Access Tokens</h1>
+      <div style={{ display: 'flex' }}>
         <p
-          key="pat-section-explanation"
           style={{
             lineHeight: '1.5',
             color: Colors.textMid
@@ -165,49 +162,46 @@ function patSection(state, actions) {
           As an alternative to OAuth applications, you can also leverage Personal Access Tokens to
           use the Content Management API. These tokens are always bound to your individual account,
           with the same permissions you have on all of your spaces and organizations.
-        </p>,
-        h(
-          'div',
-          {
-            style: {
-              marginLeft: '1em',
-              flex: '0 0 auto'
-            }
-          },
-          [
-            h(
-              'button.btn-action',
-              {
-                dataTestId: 'pat.create.open',
-                onClick: actions.OpenCreateDialog
-              },
-              ['Generate personal token']
-            )
-          ]
-        )
-      ]
-    ),
-    h('div.f36-margin-top--xl'),
-    tokenList(state, actions)
-  ]);
+        </p>
+        <div
+          style={{
+            marginLeft: '1em',
+            flex: '0 0 auto'
+          }}>
+          <button
+            className="btn-action"
+            data-test-id="pat.create.open"
+            onClick={() => actions.OpenCreateDialog()}>
+            Generate personal token
+          </button>
+        </div>
+      </div>
+      <div className="f36-margin-top--xl" />
+      <TokenList state={state} actions={actions} />
+    </div>
+  );
 }
 
-function oauthSection() {
-  return h('div', [
-    h('h1.section-title', ['OAuth tokens']),
-    h('p', [
-      'OAuth tokens are issued by OAuth applications',
-      ` and represent the user who granted access through this
-      application. These tokens have the same rights as the owner of
-      the account. You can `,
-      <DocsLink
-        key="create-oauth-link"
-        text="learn more about OAuth applications in our documentation"
-        target="createOAuthApp"
-      />,
-      '.'
-    ])
-  ]);
+PATSection.propTypes = {
+  state: PropTypes.object,
+  actions: PropTypes.object
+};
+
+function OauthSection() {
+  return (
+    <div>
+      <h1 className="section-title">OAuth tokens</h1>
+      <p>
+        OAuth tokens are issued by OAuth applications and represent the user who granted access
+        through this application. These tokens have the same rights as the owner of the account. You
+        can{' '}
+        <DocsLink
+          text="learn more about OAuth applications in our documentation"
+          target="createOAuthApp"
+        />
+      </p>
+    </div>
+  );
 }
 
 /**
@@ -216,50 +210,41 @@ function oauthSection() {
  * Also includes the error note box when fetching the tokens failed and
  * the loader.
  */
-function tokenList(
-  { loadingTokens, loadingTokensError, tokens, currentPage, totalPages },
-  { Revoke, SelectPage }
-) {
-  return loadingTokensError
-    ? h('.note-box--warning', [
-        `The list of tokens failed to load, try refreshing the page. If
-      the problem persists `,
+function TokenList({ state, actions }) {
+  const { loadingTokens, loadingTokensError, tokens, currentPage, totalPages } = state;
+
+  if (loadingTokensError) {
+    return (
+      <div className="note-box--warning">
+        The list of tokens failed to load, try refreshing the page. If the problem persists{' '}
         <LinkOpen key="contact-support-link" url={Config.supportUrl}>
           contact support
         </LinkOpen>
-      ])
-    : h(
-        'div',
-        {
-          dataTestId: 'pat.list'
-        },
-        [
-          h(
-            'div',
-            {
-              style: {
-                position: 'relative',
-                minHeight: '6em'
-              }
-            },
-            [
-              loadingTokens &&
-                h('.loading-box--stretched.animate', [
-                  h('.loading-box__spinner'),
-                  h('.loading-box__message', ['Loading'])
-                ]),
-              h(TokenTable, { tokens, revoke: Revoke })
-            ]
-          ),
-          h('div.f36-margin-top--xl'),
-          h(Paginator, {
-            select: SelectPage,
-            page: currentPage,
-            pageCount: totalPages
-          })
-        ]
-      );
+      </div>
+    );
+  }
+
+  return (
+    <div data-test-id="pat.list">
+      <div style={{ position: 'relative', minHeight: '6em' }}>
+        {loadingTokens && (
+          <div className="loading-box--stretched animate">
+            <div className="loading-box__spinner" />
+            <div className="loading-box__message">Loading</div>
+          </div>
+        )}
+        <TokenTable tokens={tokens} revoke={actions.Revoke} />
+      </div>
+      <div className="f36-margin-top--xl" />
+      <Paginator select={actions.SelectPage} page={currentPage} pageCount={totalPages} />
+    </div>
+  );
 }
+
+TokenList.propTypes = {
+  state: PropTypes.object,
+  actions: PropTypes.object
+};
 
 function TokenTable({ tokens, revoke }) {
   if (tokens.length === 0) {

@@ -1,6 +1,5 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
-import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import base from 'states/Base.es6';
 
 /**
@@ -50,12 +49,14 @@ registerFactory('states/account/profile', () => {
       params: {
         pathSuffix: ''
       },
-      template: [
-        h('.workbench-header__wrapper', [
-          h('header.workbench-header', [h('h1.workbench-header__title', [definition.title])])
-        ]),
-        h('cf-account-view', { context: 'context' })
-      ].join('')
+      template: `
+        <div class="workbench-header__wrapper">
+          <header class="workbench-header">
+            <h1 class="workbench-header__title">${definition.title}</h1>
+          </header>
+        </div>
+        <cf-account-view context="context"></cf-account-view>
+      `.trim()
     };
 
     return base(_.extend(definition, defaults));
@@ -67,7 +68,7 @@ registerFactory('states/account/profile', () => {
     abstract: true,
     views: {
       'nav-bar@': {
-        template: h('cf-profile-nav', { class: 'app-top-bar__child' })
+        template: '<cf-profile-nav class="app-top-bar__child"></cf-profile-nav>'
       }
     },
     children: [

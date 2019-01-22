@@ -2,7 +2,6 @@ import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import $ from 'jquery';
 import mimetype from '@contentful/mimetype';
-import { h } from 'utils/legacy-html-hyperscript/index.es6';
 
 /**
  * @ngdoc directive
@@ -12,16 +11,6 @@ import { h } from 'utils/legacy-html-hyperscript/index.es6';
  *
  * The thumbnail either shows a thumbnailed image or an icon for the
  * file MIME type.
- *
- * @usage[js]
- * h('cf-thumbnail', {
- *   file: 'fileObject'
- *   size: 'pixels' // if size is used, width and height are ignored
- *   width: 'pixels' // can be used with height or by itself
- *   height: 'pixels' // can be used with width or by itself
- *   fit: 'scale|crop|pad|thumb'
- *   focus: 'bottom|right|bottom_right|face|faces|...'
- * })
  *
  */
 
@@ -42,22 +31,12 @@ registerDirective('cfThumbnail', [
       markup: 'code'
     };
 
-    const template = [
-      h('img.thumbnail', {
-        ngIf: 'thumbnailUrl',
-        ngSrc: '{{thumbnailUrl}}',
-        ngStyle: '{{imageStyle}}',
-        cfImgLoadEvent: true
-      }),
-      h('i.icon', {
-        ngIf: '!thumbnailUrl',
-        ngClass: 'iconName'
-      })
-    ].join('');
-
     return {
       restrict: 'E',
-      template: template,
+      template: `
+        <img ng-if="thumbnailUrl" ng-src="{{thumbnailUrl}}" ng-style="{{imageStyle}}" cf-img-load-event class="thumbnail">
+        <i ng-if="!thumbnailUrl" ng-class="iconName" class="icon"></i>
+      `.trim(),
       scope: {
         file: '='
       },
