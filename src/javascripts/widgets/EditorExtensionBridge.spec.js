@@ -15,6 +15,10 @@ jest.mock('./ExtensionDialogs.es6', () => ({
   openPrompt: jest.fn(() => Promise.resolve('PROMPT RESULT'))
 }));
 
+jest.mock('@contentful/forma-36-react-components', () => ({
+  Notification: { success: jest.fn() }
+}));
+
 describe('EditorExtensionBridge', () => {
   const makeBridge = () => {
     const stubs = {
@@ -315,16 +319,33 @@ describe('EditorExtensionBridge', () => {
     }
   });
 
+  it('registers notifier handlers', async () => {
+    const [bridge] = makeBridge();
+    const api = makeStubbedApi();
+    bridge.install(api);
+
+    const registerCall = api.registerHandler.mock.calls[3];
+    expect(registerCall[0]).toBe('notify');
+    const notify = registerCall[1];
+    expect(typeof notify).toBe('function');
+
+    const result = await notify({ type: 'success', message: 'test' });
+    expect(result).toBeUndefined();
+    const { Notification } = jest.requireMock('@contentful/forma-36-react-components');
+    expect(Notification.success).toBeCalledTimes(1);
+    expect(Notification.success).toBeCalledWith('test');
+  });
+
   it('registers invalid and active handlers', () => {
     const [bridge, stubs] = makeBridge();
     const api = makeStubbedApi();
     bridge.install(api);
 
     const registerCalls = api.registerHandler.mock.calls;
-    expect(registerCalls[3][0]).toBe('setInvalid');
-    const setInvalid = registerCalls[3][1];
-    expect(registerCalls[4][0]).toBe('setActive');
-    const setActive = registerCalls[4][1];
+    expect(registerCalls[4][0]).toBe('setInvalid');
+    const setInvalid = registerCalls[4][1];
+    expect(registerCalls[5][0]).toBe('setActive');
+    const setActive = registerCalls[5][1];
 
     setInvalid(true, 'de-DE');
     expect(stubs.setInvalid).toBeCalledWith('de-DE', true);

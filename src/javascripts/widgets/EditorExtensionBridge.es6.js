@@ -1,4 +1,5 @@
 import { get } from 'lodash';
+import { Notification } from '@contentful/forma-36-react-components';
 import * as K from 'utils/kefir.es6';
 import * as PathUtils from 'utils/Path.es6';
 import * as Dialogs from './ExtensionDialogs.es6';
@@ -219,6 +220,14 @@ export default function createBridge(dependencies) {
     }
   }
 
+  async function notify({ type, message }) {
+    if (['success', 'error'].includes(type) && typeof message === 'string') {
+      Notification[type](message);
+    } else {
+      throw new Error('Invalid notification type.');
+    }
+  }
+
   function trackEntryAction(action, contentTypeId, data) {
     Analytics.track(`entry:${action}`, {
       eventOrigin: 'ui-extension',
@@ -255,6 +264,7 @@ export default function createBridge(dependencies) {
     api.registerHandler('openDialog', openDialog);
     api.registerHandler('callSpaceMethod', callSpaceMethod);
     api.registerHandler('navigate', navigate);
+    api.registerHandler('notify', notify);
 
     api.registerHandler('setInvalid', (isInvalid, localeCode) => {
       $scope.fieldController.setInvalid(localeCode, isInvalid);
