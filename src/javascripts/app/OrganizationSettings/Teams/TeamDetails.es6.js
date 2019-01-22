@@ -7,6 +7,7 @@ import { Button, Tooltip } from '@contentful/forma-36-react-components';
 
 import { Team as TeamPropType, User as UserPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { getTeams, getCurrentTeam } from 'redux/selectors/teams.es6';
+import getOrgId from 'redux/selectors/getOrgId.es6';
 import Workbench from 'app/common/Workbench.es6';
 import Placeholder from 'app/common/Placeholder.es6';
 import Icon from 'ui/Components/Icon.es6';
@@ -14,6 +15,7 @@ import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
 
 import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
 import TeamDialog from './TeamDialog.es6';
+import ROUTES from 'redux/routes.es6';
 
 const EditButton = ({ onClick }) => (
   <Button size="small" buttonType="muted" disabled={!onClick} onClick={onClick}>
@@ -31,18 +33,18 @@ DeleteButton.propTypes = { onClick: PropTypes.func };
 
 export default connect(
   state => ({
-    team: getTeams(state)[getCurrentTeam(state)]
+    team: getTeams(state)[getCurrentTeam(state)],
+    orgId: getOrgId(state)
   }),
   dispatch => ({
-    goBack: () => dispatch({ type: 'NAVIGATION_BACK' }),
     removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })
   })
 )(
   class TeamDetail extends React.Component {
     static propTypes = {
       team: TeamPropType,
+      orgId: PropTypes.string.isRequired,
       users: PropTypes.objectOf(UserPropType),
-      goBack: PropTypes.func.isRequired,
       removeTeam: PropTypes.func.isRequired,
       readOnlyPermission: PropTypes.bool.isRequired
     };
@@ -52,18 +54,21 @@ export default connect(
     };
 
     render() {
-      const { team, goBack, removeTeam, readOnlyPermission } = this.props;
+      const { team, removeTeam, readOnlyPermission, orgId } = this.props;
       const { showTeamDialog } = this.state;
       const creator = team && team.sys.createdBy;
+      const pathBack = ROUTES.organization.children.teams.build({ orgId });
 
       return (
         <Workbench className="organization-users-page" testId="organization-team-page">
           <Workbench.Header>
             <div className="breadcrumbs-widget">
               <div className="breadcrumbs-container">
-                <div data-test-id="teams-back" className="btn btn__back" onClick={goBack}>
-                  <Icon name="back" />
-                </div>
+                <a href={pathBack}>
+                  <div data-test-id="teams-back" className="btn btn__back">
+                    <Icon name="back" />
+                  </div>
+                </a>
               </div>
             </div>
             <Workbench.Title>Teams</Workbench.Title>
@@ -126,7 +131,7 @@ export default connect(
               <Placeholder
                 title="The team you were looking for was not found 🔎"
                 text="It might have been deleted or you lost permission to see it"
-                button={<Button onClick={goBack}>Go to team list</Button>}
+                button={<Button href={pathBack}>Go to team list</Button>}
               />
             )}
             <TeamDialog

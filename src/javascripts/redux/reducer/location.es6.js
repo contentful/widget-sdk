@@ -13,7 +13,6 @@ import {
 } from 'lodash/fp';
 import qs from 'qs';
 import getOrgId from '../selectors/getOrgId.es6';
-import { getPath } from '../selectors/location.es6';
 import ROUTES from '../routes.es6';
 import { TEAMS } from '../datasets.es6';
 
@@ -54,17 +53,6 @@ export default (state = null, { type, payload, meta }, globalState) => {
         return set(
           'pathname',
           ROUTES.organization.children.teams.build({ orgId: getOrgId(globalState) }),
-          state
-        );
-      }
-      return state;
-    }
-    case 'NAVIGATION_BACK': {
-      const match = ROUTES.organization.children.teams.children.team.test(getPath(globalState));
-      if (match !== null) {
-        return set(
-          'pathname',
-          ROUTES.organization.children.teams.build({ orgId: match.orgId }),
           state
         );
       }
