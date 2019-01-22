@@ -9,14 +9,15 @@ import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import ROUTES from 'redux/routes.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import { getMemberCountsByTeam } from 'redux/selectors/teamMemberships.es6';
+import { hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 
 import TeamDialog from './TeamDialog.es6';
 
 class TeamListRow extends React.Component {
   static propTypes = {
     team: TeamPropType.isRequired,
-    readOnlyPermission: PropTypes.bool.isRequired,
 
+    readOnlyPermission: PropTypes.bool.isRequired,
     memberCount: PropTypes.number.isRequired,
     orgId: PropTypes.string.isRequired,
     removeTeam: PropTypes.func.isRequired
@@ -35,6 +36,7 @@ class TeamListRow extends React.Component {
         <TableCell>
           {get(team, 'sys.id') !== 'placeholder' ? (
             <a
+              data-test-id="team-name"
               href={ROUTES.organization.children.teams.children.team.build({
                 orgId,
                 teamId: team.sys.id
@@ -42,19 +44,24 @@ class TeamListRow extends React.Component {
               {team.name}
             </a>
           ) : (
-            <span>
+            <span data-test-id="team-name">
               {team.name} <Spinner size="small" />
             </span>
           )}
         </TableCell>
         <TableCell>
-          <span className="team-details-row_description">{team.description}</span>
+          <span data-test-id="team-description" className="team-details-row_description">
+            {team.description}
+          </span>
         </TableCell>
-        <TableCell>{pluralize('member', memberCount, true)}</TableCell>
+        <TableCell data-test-id="team-member-count">
+          {pluralize('member', memberCount, true)}
+        </TableCell>
         {!readOnlyPermission && (
           <TableCell align="right">
             <div className="membership-list__item__menu">
               <Button
+                testId="remove-team-button"
                 buttonType="muted"
                 size="small"
                 onClick={() => removeTeam(get(team, 'sys.id'))}
@@ -62,6 +69,7 @@ class TeamListRow extends React.Component {
                 Remove
               </Button>
               <Button
+                testId="edit-team-button"
                 buttonType="muted"
                 size="small"
                 onClick={() => this.setState({ showTeamDialog: true })}
@@ -72,6 +80,7 @@ class TeamListRow extends React.Component {
           </TableCell>
         )}
         <TeamDialog
+          testId="team-edit-dialog"
           isShown={showTeamDialog}
           onClose={() => this.setState({ showTeamDialog: false })}
           initialTeam={team}
@@ -84,7 +93,8 @@ class TeamListRow extends React.Component {
 export default connect(
   (state, { team }) => ({
     orgId: getOrgId(state),
-    memberCount: getMemberCountsByTeam(state)[team.sys.id] || 0
+    memberCount: getMemberCountsByTeam(state)[team.sys.id] || 0,
+    readOnlyPermission: hasReadOnlyPermission(state)
   }),
   dispatch => ({
     removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })

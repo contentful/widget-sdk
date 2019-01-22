@@ -19,15 +19,24 @@ class TeamDialog extends React.Component {
 
   state = {};
 
+  initialState = ({ initialTeam }) => ({
+    validationMessage: null,
+    name: get(initialTeam, 'name', ''),
+    description: get(initialTeam, 'description', ''),
+    isEditing: Boolean(initialTeam)
+  });
+
+  constructor(props) {
+    super(props);
+
+    if (props.isShown) {
+      this.state = this.initialState(props);
+    }
+  }
+
   componentDidUpdate(prevProps) {
     if (!prevProps.isShown && this.props.isShown) {
-      const { initialTeam } = this.props;
-      this.setState({
-        validationMessage: null,
-        name: get(initialTeam, 'name', ''),
-        description: get(initialTeam, 'description', ''),
-        isEditing: Boolean(initialTeam)
-      });
+      this.setState(this.initialState(this.props));
     }
   }
 
@@ -65,7 +74,8 @@ class TeamDialog extends React.Component {
     if (
       some(
         allTeams,
-        otherTeam => otherTeam.name === name.trim() && initialTeam.sys.id !== otherTeam.sys.id
+        otherTeam =>
+          otherTeam.name === name.trim() && get(initialTeam, 'sys.id') !== otherTeam.sys.id
       )
     ) {
       return 'This name is already in use';
@@ -80,14 +90,14 @@ class TeamDialog extends React.Component {
   render() {
     const { onClose, isShown } = this.props;
     const { name, description, validationMessage, isEditing } = this.state;
-
     return (
       <Modal isShown={isShown} onClose={onClose}>
         {() => (
           <form
             noValidate
             onSubmit={this.onConfirm}
-            style={{ display: 'flex', flexDirection: 'column' }}>
+            style={{ display: 'flex', flexDirection: 'column' }}
+            data-test-id="team-form">
             <Modal.Header title={isEditing ? 'Edit team' : 'New team'} onClose={onClose} />
             <Modal.Content>
               <p>Teams make it easy to group people together.</p>

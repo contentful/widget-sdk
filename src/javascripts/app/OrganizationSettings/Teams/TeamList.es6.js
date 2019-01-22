@@ -13,7 +13,7 @@ import {
   Tooltip
 } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder.es6';
-import { getTeamListWithOptimistic } from 'redux/selectors/teams.es6';
+import { getTeamListWithOptimistic, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import Workbench from 'app/common/Workbench.es6';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import TeamDialog from './TeamDialog.es6';
@@ -22,10 +22,9 @@ import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
 
 class TeamList extends React.Component {
   static propTypes = {
-    readOnlyPermission: PropTypes.bool.isRequired,
-
     teams: PropTypes.arrayOf(TeamPropType).isRequired,
-    submitNewTeam: PropTypes.func.isRequired
+    submitNewTeam: PropTypes.func.isRequired,
+    readOnlyPermission: PropTypes.bool.isRequired
   };
 
   state = {
@@ -43,13 +42,26 @@ class TeamList extends React.Component {
             <Workbench.Title>Teams</Workbench.Title>
           </Workbench.Header.Left>
           <Workbench.Header.Actions>
-            {`${pluralize('teams', teams.length, true)} in your organization`}
+            <span data-test-id="team-count">{`${pluralize(
+              'teams',
+              teams.length,
+              true
+            )} in your organization`}</span>
             {readOnlyPermission ? (
-              <Tooltip place="left" content="You don't have permission to create or change teams">
-                <Button disabled>New team</Button>
+              <Tooltip
+                testId="read-only-tooltip"
+                place="left"
+                content="You don't have permission to create or change teams">
+                <Button disabled testId="new-team-button">
+                  New team
+                </Button>
               </Tooltip>
             ) : (
-              <Button onClick={() => this.setState({ showTeamDialog: true })}>New team</Button>
+              <Button
+                testId="new-team-button"
+                onClick={() => this.setState({ showTeamDialog: true })}>
+                New team
+              </Button>
             )}
           </Workbench.Header.Actions>
         </Workbench.Header>
@@ -57,7 +69,7 @@ class TeamList extends React.Component {
           <section style={{ padding: '1em 2em 2em' }}>
             <ExperimentalFeatureNote />
             {teams.length > 0 && (
-              <Table data-test-id="organization-teams-page">
+              <Table data-test-id="teams-table">
                 <TableHead>
                   <TableRow data-test-id="team-details-row">
                     <TableCell width="300" data-test-id="team-name">
@@ -69,22 +81,23 @@ class TeamList extends React.Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {teams.map(team => (
-                    <TeamListRow
-                      team={team}
-                      key={team.sys.id}
-                      readOnlyPermission={readOnlyPermission}
-                    />
-                  ))}
+                  {teams.map((team, index) => {
+                    const teamId = team.sys.id;
+                    return (
+                      <TeamListRow team={team} key={teamId === 'placeholder' ? index : teamId} />
+                    );
+                  })}
                 </TableBody>
               </Table>
             )}
             {teams.length === 0 && !readOnlyPermission && (
               <Placeholder
+                testId="no-teams-placeholder"
                 title="Increased user visibility with teams"
                 text="Everyone in a team can see other members of that team."
                 button={
                   <Button
+                    testId="new-team-button"
                     size="small"
                     buttonType="primary"
                     onClick={() => this.setState({ showTeamDialog: true })}>
@@ -95,12 +108,14 @@ class TeamList extends React.Component {
             )}
             {teams.length === 0 && readOnlyPermission && (
               <Placeholder
+                testId="no-teams-placeholder"
                 title="Increased user visibility with teams"
                 text="There are no teams and you don't have permission to create new teams"
               />
             )}
           </section>
           <TeamDialog
+            testId="create-team-dialog"
             onClose={() => this.setState({ showTeamDialog: false })}
             isShown={showTeamDialog}
           />
@@ -112,7 +127,8 @@ class TeamList extends React.Component {
 
 export default connect(
   state => ({
-    teams: getTeamListWithOptimistic(state)
+    teams: getTeamListWithOptimistic(state),
+    readOnlyPermission: hasReadOnlyPermission(state)
   }),
   dispatch => ({
     submitNewTeam: team => dispatch({ type: 'CREATE_NEW_TEAM', payload: { team } })

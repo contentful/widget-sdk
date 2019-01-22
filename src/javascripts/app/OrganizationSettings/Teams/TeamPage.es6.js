@@ -36,7 +36,7 @@ class TeamPage extends React.Component {
       return null;
     }
     if (showList) {
-      return <TeamList readOnlyPermission={readOnlyPermission} />;
+      return <TeamList />;
     }
     if (showDetails) {
       return <TeamDetails readOnlyPermission={readOnlyPermission} />;

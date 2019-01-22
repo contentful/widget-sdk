@@ -8,6 +8,7 @@ import reducer from 'redux/reducer';
 import TeamPage from './TeamPage.es6';
 import TeamList from './TeamList.es6';
 import TeamDetails from './TeamDetails.es6';
+import ROUTES from '../../../redux/routes.es6';
 
 const renderComponent = (actions, onReady = noop) => {
   const store = createStore(reducer);
@@ -27,11 +28,21 @@ describe('TeamPage', () => {
   });
 
   describe('is at teams route', () => {
+    let onReadyMock;
+
     beforeEach(() => {
+      onReadyMock = jest.fn(noop);
       actions.push({
         type: 'LOCATION_CHANGED',
-        payload: { location: { pathname: '/account/organizations/3G4pdEF8qK2waWQfNHYKPo/teams' } }
+        payload: {
+          location: { pathname: ROUTES.organization.children.teams.build({ orgId: 'testOrg' }) }
+        }
       });
+    });
+
+    it('should not have called onReady', () => {
+      renderComponent(actions, onReadyMock);
+      expect(onReadyMock).not.toHaveBeenCalled();
     });
 
     it('should render nothing', () => {
@@ -51,6 +62,11 @@ describe('TeamPage', () => {
             }
           }
         });
+      });
+
+      it('should have called onReady', () => {
+        renderComponent(actions, onReadyMock);
+        expect(onReadyMock).toHaveBeenCalled();
       });
 
       it('should render TeamList', () => {
