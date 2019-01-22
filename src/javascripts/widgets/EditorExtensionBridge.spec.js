@@ -28,7 +28,11 @@ describe('EditorExtensionBridge', () => {
       openFromExtension: jest.fn(() => Promise.resolve('DIALOG RESULT')),
       updateEntry: jest.fn(() => Promise.resolve('Entry updated')),
       setInvalid: jest.fn(),
-      setActive: jest.fn()
+      setActive: jest.fn(),
+      newEntry: jest.fn(() => ({ sys: { type: 'Entry', id: 'some-entry-id' } })),
+      goToSlideInEntity: jest.fn(),
+      navigatorGo: jest.fn(() => Promise.resolve()),
+      makeEntityRef: jest.fn(() => 'ENTITY REF')
     };
 
     const bridge = createBridge({
@@ -60,6 +64,8 @@ describe('EditorExtensionBridge', () => {
         }
       },
       spaceContext: {
+        getId: () => 'sid',
+        getEnvironmentId: () => 'eid',
         cma: { updateEntry: stubs.updateEntry },
         space: { data: { spaceMembership: 'MEMBERSHIP ' } }
       },
@@ -67,7 +73,13 @@ describe('EditorExtensionBridge', () => {
         getPrivateLocales: () => [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
         getDefaultLocale: () => ({ code: 'pl', name: 'Polski', default: true })
       },
-      entitySelector: { openFromExtension: stubs.openFromExtension }
+      entitySelector: { openFromExtension: stubs.openFromExtension },
+      entityCreator: { newEntry: stubs.newEntry },
+      SlideInNavigator: { goToSlideInEntity: stubs.goToSlideInEntity },
+      Navigator: {
+        go: stubs.navigatorGo,
+        makeEntityRef: stubs.makeEntityRef
+      }
     });
 
     return [bridge, stubs];
@@ -261,16 +273,57 @@ describe('EditorExtensionBridge', () => {
     });
   });
 
+  it('registers navigator method handlers', async () => {
+    const [bridge, stubs] = makeBridge();
+    const api = makeStubbedApi();
+    bridge.install(api);
+
+    const registerCall = api.registerHandler.mock.calls[2];
+    expect(registerCall[0]).toBe('navigate');
+    const navigate = registerCall[1];
+    expect(typeof navigate).toBe('function');
+
+    const openResult = await navigate({ id: 'xyz', entityType: 'Entry', slideIn: true });
+    expect(openResult).toEqual({ navigated: true });
+    expect(stubs.goToSlideInEntity).toBeCalledTimes(1);
+    expect(stubs.goToSlideInEntity).toBeCalledWith({
+      type: 'Entry',
+      id: 'xyz',
+      space: { sys: { id: 'sid' } },
+      environment: { sys: { id: 'eid' } }
+    });
+
+    const createResult = await navigate({ entityType: 'Entry', contentTypeId: 'ctid' });
+    expect(createResult).toEqual({ navigated: true });
+    expect(stubs.newEntry).toBeCalledTimes(1);
+    expect(stubs.newEntry).toBeCalledWith('ctid');
+    expect(stubs.navigatorGo).toBeCalledWith('ENTITY REF');
+  });
+
+  it('handles invalid navigator calls', async () => {
+    const [bridge] = makeBridge();
+    const api = makeStubbedApi();
+    bridge.install(api);
+
+    expect.assertions(1);
+    try {
+      const navigate = api.registerHandler.mock.calls[2][1];
+      await navigate({ type: 'UIConfig' });
+    } catch (err) {
+      expect(err).toMatchObject({ message: 'Unknown entity type.' });
+    }
+  });
+
   it('registers invalid and active handlers', () => {
     const [bridge, stubs] = makeBridge();
     const api = makeStubbedApi();
     bridge.install(api);
 
     const registerCalls = api.registerHandler.mock.calls;
-    expect(registerCalls[2][0]).toBe('setInvalid');
-    const setInvalid = registerCalls[2][1];
-    expect(registerCalls[3][0]).toBe('setActive');
-    const setActive = registerCalls[3][1];
+    expect(registerCalls[3][0]).toBe('setInvalid');
+    const setInvalid = registerCalls[3][1];
+    expect(registerCalls[4][0]).toBe('setActive');
+    const setActive = registerCalls[4][1];
 
     setInvalid(true, 'de-DE');
     expect(stubs.setInvalid).toBeCalledWith('de-DE', true);

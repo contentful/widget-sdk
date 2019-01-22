@@ -114,6 +114,9 @@ export default function createBridge({
     } catch (err) {
       throw new Error('Failed to navigate to the entity.');
     }
+
+    //
+    return { navigated: true };
   }
 
   async function makeEntity(options) {
