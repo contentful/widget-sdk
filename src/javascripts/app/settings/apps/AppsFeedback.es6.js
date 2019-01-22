@@ -10,6 +10,51 @@ import { getCurrentTeam } from 'redux/selectors/teams.es6';
 import { TextLink, Button } from '@contentful/forma-36-react-components';
 import FeedbackDialog from './dialogs/FeedbackDialog.es6';
 
+class AppsFeedback extends Component {
+  static propTypes = {
+    about: PropTypes.string.isRequired,
+    type: PropTypes.string,
+    label: PropTypes.string,
+    target: PropTypes.string.isRequired,
+
+    onFeedbackConfirmed: PropTypes.func.isRequired,
+    organizationId: PropTypes.string,
+    userId: PropTypes.string,
+    teamId: PropTypes.string
+  };
+
+  onClick = async () => {
+    const { about, onFeedbackConfirmed } = this.props;
+    const { feedback, canBeContacted } = await ModalLauncher.open(({ isShown, onClose }) => (
+      <FeedbackDialog
+        key={Date.now()}
+        about={about}
+        isShown={isShown}
+        onCancel={() => onClose(false)}
+        onConfirm={onClose}
+      />
+    ));
+
+    if (feedback) {
+      onFeedbackConfirmed(feedback, canBeContacted);
+    }
+  };
+
+  render() {
+    const label = this.props.label || 'Give feedback';
+
+    if (this.props.type === 'Button') {
+      return (
+        <Button buttonType="muted" onClick={this.onClick}>
+          {label}
+        </Button>
+      );
+    } else {
+      return <TextLink onClick={this.onClick}>{label}</TextLink>;
+    }
+  }
+}
+
 export default connect(
   state => ({
     organizationId: getOrgId(state),
@@ -24,48 +69,4 @@ export default connect(
         meta: { about, target }
       })
   })
-)(
-  class AppsFeedback extends Component {
-    static propTypes = {
-      about: PropTypes.string.isRequired,
-      type: PropTypes.string,
-      label: PropTypes.string,
-      target: PropTypes.string.isRequired,
-      onFeedbackConfirmed: PropTypes.func.isRequired,
-      organizationId: PropTypes.string,
-      userId: PropTypes.string,
-      teamId: PropTypes.string
-    };
-
-    onClick = async () => {
-      const { about, onFeedbackConfirmed } = this.props;
-      const { feedback, canBeContacted } = await ModalLauncher.open(({ isShown, onClose }) => (
-        <FeedbackDialog
-          key={Date.now()}
-          about={about}
-          isShown={isShown}
-          onCancel={() => onClose(false)}
-          onConfirm={onClose}
-        />
-      ));
-
-      if (feedback) {
-        onFeedbackConfirmed(feedback, canBeContacted);
-      }
-    };
-
-    render() {
-      const label = this.props.label || 'Give feedback';
-
-      if (this.props.type === 'Button') {
-        return (
-          <Button buttonType="muted" onClick={this.onClick}>
-            {label}
-          </Button>
-        );
-      } else {
-        return <TextLink onClick={this.onClick}>{label}</TextLink>;
-      }
-    }
-  }
-);
+)(AppsFeedback);

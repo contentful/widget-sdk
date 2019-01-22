@@ -7,48 +7,49 @@ import { TeamMembership as TeamMembershipPropType } from 'app/OrganizationSettin
 import { TableCell, TableRow, Button } from '@contentful/forma-36-react-components';
 import { connect } from 'react-redux';
 
+class TeamMembershipRow extends React.Component {
+  static propTypes = {
+    membership: TeamMembershipPropType.isRequired,
+    readOnlyPermission: PropTypes.bool.isRequired,
+
+    removeMembership: PropTypes.func.isRequired
+  };
+
+  render() {
+    const { removeMembership, readOnlyPermission } = this.props;
+    const {
+      sys: { user, createdAt, createdBy }
+    } = this.props.membership;
+
+    return (
+      <TableRow className="membership-list__item">
+        <TableCell>
+          <UserCard user={user} />
+        </TableCell>
+        <TableCell>{moment(createdAt).format('MMMM DD, YYYY')}</TableCell>
+        <TableCell>{getUserName(createdBy)}</TableCell>
+        {!readOnlyPermission && (
+          <TableCell align="right">
+            <div className="membership-list__item__menu">
+              <Button
+                buttonType="muted"
+                size="small"
+                onClick={removeMembership}
+                extraClassNames="membership-list__item__menu__button">
+                Remove
+              </Button>
+            </div>
+          </TableCell>
+        )}
+      </TableRow>
+    );
+  }
+}
+
 export default connect(
   null,
   (dispatch, { membership }) => ({
     removeMembership: () =>
       dispatch({ type: 'REMOVE_TEAM_MEMBERSHIP', payload: { teamMembershipId: membership.sys.id } })
   })
-)(
-  class TeamMembershipRow extends React.Component {
-    static propTypes = {
-      membership: TeamMembershipPropType.isRequired,
-      removeMembership: PropTypes.func.isRequired,
-      readOnlyPermission: PropTypes.bool.isRequired
-    };
-
-    render() {
-      const { removeMembership, readOnlyPermission } = this.props;
-      const {
-        sys: { user, createdAt, createdBy }
-      } = this.props.membership;
-
-      return (
-        <TableRow className="membership-list__item">
-          <TableCell>
-            <UserCard user={user} />
-          </TableCell>
-          <TableCell>{moment(createdAt).format('MMMM DD, YYYY')}</TableCell>
-          <TableCell>{getUserName(createdBy)}</TableCell>
-          {!readOnlyPermission && (
-            <TableCell align="right">
-              <div className="membership-list__item__menu">
-                <Button
-                  buttonType="muted"
-                  size="small"
-                  onClick={removeMembership}
-                  extraClassNames="membership-list__item__menu__button">
-                  Remove
-                </Button>
-              </div>
-            </TableCell>
-          )}
-        </TableRow>
-      );
-    }
-  }
-);
+)(TeamMembershipRow);

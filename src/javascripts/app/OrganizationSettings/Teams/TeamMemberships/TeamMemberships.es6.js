@@ -34,86 +34,87 @@ class AddTeamMemberButton extends React.Component {
   }
 }
 
+class TeamMemberships extends React.Component {
+  static propTypes = {
+    readOnlyPermission: PropTypes.bool,
+
+    memberships: PropTypes.arrayOf(TeamMembershiPropType),
+    teamName: PropTypes.string
+  };
+
+  state = {
+    showingForm: false
+  };
+
+  toggleForm = () => {
+    this.setState({ showingForm: !this.state.showingForm });
+  };
+
+  render() {
+    const { memberships, teamName, readOnlyPermission } = this.props;
+    const { showingForm } = this.state;
+    const empty = memberships.length === 0 && !showingForm;
+    return (
+      <React.Fragment>
+        {/* TODO: move these styles to a CSS class  */}
+        <header
+          style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+          <h3 style={{ marginBottom: 30 }}>Team Members</h3>
+          {!showingForm &&
+            !empty &&
+            (readOnlyPermission ? (
+              <Tooltip place="left" content="You don't have permission to create or change teams">
+                <AddTeamMemberButton disabled />
+              </Tooltip>
+            ) : (
+              <AddTeamMemberButton onClick={this.toggleForm} />
+            ))}
+        </header>
+        {!empty && (
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Member since</TableCell>
+                <TableCell>Added by</TableCell>
+                <TableCell />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {showingForm && <TeamMembershipForm close={this.toggleForm} />}
+              {memberships.map(membership =>
+                membership.sys.id === 'placeholder' ? (
+                  <TeamMembershipRowPlaceholder key={membership.sys.id} />
+                ) : (
+                  <TeamMembershipRow
+                    membership={membership}
+                    key={membership.sys.id}
+                    readOnlyPermission={readOnlyPermission}
+                  />
+                )
+              )}
+            </TableBody>
+          </Table>
+        )}
+        {empty && !readOnlyPermission && (
+          <Placeholder
+            title={`Team ${teamName} has no members 🐚`}
+            text="They’re not gonna magically appear."
+            button={<AddTeamMemberButton onClick={this.toggleForm} />}
+          />
+        )}
+        {empty && readOnlyPermission && (
+          <Placeholder
+            title={`Team ${teamName} has no members 🐚`}
+            text="You don't have permission to add members"
+          />
+        )}
+      </React.Fragment>
+    );
+  }
+}
+
 export default connect(state => ({
   memberships: getCurrentTeamMembershipList(state),
   teamName: get(getTeams(state), [getCurrentTeam(state), 'name'], undefined)
-}))(
-  class TeamMemberships extends React.Component {
-    static propTypes = {
-      memberships: PropTypes.arrayOf(TeamMembershiPropType),
-      teamName: PropTypes.string,
-      readOnlyPermission: PropTypes.bool
-    };
-
-    state = {
-      showingForm: false
-    };
-
-    toggleForm = () => {
-      this.setState({ showingForm: !this.state.showingForm });
-    };
-
-    render() {
-      const { memberships, teamName, readOnlyPermission } = this.props;
-      const { showingForm } = this.state;
-      const empty = memberships.length === 0 && !showingForm;
-      return (
-        <React.Fragment>
-          {/* TODO: move these styles to a CSS class  */}
-          <header
-            style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <h3 style={{ marginBottom: 30 }}>Team Members</h3>
-            {!showingForm &&
-              !empty &&
-              (readOnlyPermission ? (
-                <Tooltip place="left" content="You don't have permission to create or change teams">
-                  <AddTeamMemberButton disabled />
-                </Tooltip>
-              ) : (
-                <AddTeamMemberButton onClick={this.toggleForm} />
-              ))}
-          </header>
-          {!empty && (
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Member since</TableCell>
-                  <TableCell>Added by</TableCell>
-                  <TableCell />
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {showingForm && <TeamMembershipForm close={this.toggleForm} />}
-                {memberships.map(membership =>
-                  membership.sys.id === 'placeholder' ? (
-                    <TeamMembershipRowPlaceholder key={membership.sys.id} />
-                  ) : (
-                    <TeamMembershipRow
-                      membership={membership}
-                      key={membership.sys.id}
-                      readOnlyPermission={readOnlyPermission}
-                    />
-                  )
-                )}
-              </TableBody>
-            </Table>
-          )}
-          {empty && !readOnlyPermission && (
-            <Placeholder
-              title={`Team ${teamName} has no members 🐚`}
-              text="They’re not gonna magically appear."
-              button={<AddTeamMemberButton onClick={this.toggleForm} />}
-            />
-          )}
-          {empty && readOnlyPermission && (
-            <Placeholder
-              title={`Team ${teamName} has no members 🐚`}
-              text="You don't have permission to add members"
-            />
-          )}
-        </React.Fragment>
-      );
-    }
-  }
-);
+}))(TeamMemberships);

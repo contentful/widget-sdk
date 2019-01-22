@@ -8,6 +8,43 @@ import TeamDetails from './TeamDetails.es6';
 import { isLoadingMissingDatasets } from 'redux/selectors/datasets.es6';
 import { hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 
+class TeamPage extends React.Component {
+  static propTypes = {
+    onReady: PropTypes.func.isRequired,
+
+    showList: PropTypes.bool.isRequired,
+    showDetails: PropTypes.bool.isRequired,
+    isLoading: PropTypes.bool.isRequired,
+    readOnlyPermission: PropTypes.bool.isRequired
+  };
+
+  componentDidMount() {
+    if (!this.props.isLoading) {
+      this.props.onReady();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.isLoading && !this.props.isLoading) {
+      this.props.onReady();
+    }
+  }
+
+  render() {
+    const { showList, showDetails, isLoading, readOnlyPermission } = this.props;
+    if (isLoading) {
+      return null;
+    }
+    if (showList) {
+      return <TeamList readOnlyPermission={readOnlyPermission} />;
+    }
+    if (showDetails) {
+      return <TeamDetails readOnlyPermission={readOnlyPermission} />;
+    }
+    return '404 not found';
+  }
+}
+
 export default connect(state => {
   const path = getPath(state);
   return {
@@ -16,40 +53,4 @@ export default connect(state => {
     isLoading: isLoadingMissingDatasets(state),
     readOnlyPermission: hasReadOnlyPermission(state)
   };
-})(
-  class TeamPage extends React.Component {
-    static propTypes = {
-      showList: PropTypes.bool.isRequired,
-      showDetails: PropTypes.bool.isRequired,
-      isLoading: PropTypes.bool.isRequired,
-      onReady: PropTypes.func.isRequired,
-      readOnlyPermission: PropTypes.bool.isRequired
-    };
-
-    componentDidMount() {
-      if (!this.props.isLoading) {
-        this.props.onReady();
-      }
-    }
-
-    componentDidUpdate(prevProps) {
-      if (prevProps.isLoading && !this.props.isLoading) {
-        this.props.onReady();
-      }
-    }
-
-    render() {
-      const { showList, showDetails, isLoading, readOnlyPermission } = this.props;
-      if (isLoading) {
-        return null;
-      }
-      if (showList) {
-        return <TeamList readOnlyPermission={readOnlyPermission} />;
-      }
-      if (showDetails) {
-        return <TeamDetails readOnlyPermission={readOnlyPermission} />;
-      }
-      return '404 not found';
-    }
-  }
-);
+})(TeamPage);
