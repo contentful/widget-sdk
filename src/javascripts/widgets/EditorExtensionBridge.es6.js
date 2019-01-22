@@ -1,4 +1,5 @@
 import { get } from 'lodash';
+import { Notification } from '@contentful/forma-36-react-components';
 import * as K from 'utils/kefir.es6';
 import * as PathUtils from 'utils/Path.es6';
 import * as Dialogs from './ExtensionDialogs.es6';
@@ -16,6 +17,18 @@ const SIMPLE_DIALOG_TYPE_TO_OPENER = {
   prompt: Dialogs.openPrompt
 };
 
+const REQUIRED_DEPENDENCIES = [
+  '$rootScope',
+  '$scope',
+  'spaceContext',
+  'TheLocaleStore',
+  'entitySelector',
+  'Analytics',
+  'entityCreator',
+  'Navigator',
+  'SlideInNavigator'
+];
+
 // This module, given editor-specific Angular dependencies
 // as listed below, returns a framework-agnostic interface:
 //
@@ -25,14 +38,25 @@ const SIMPLE_DIALOG_TYPE_TO_OPENER = {
 //   handlers and notifies it about changes.
 // - `apply` takes a function to be executed in the Angular
 //   context (using `$rootScope.$apply`).
-export default function createBridge({
-  $rootScope,
-  $scope,
-  spaceContext,
-  TheLocaleStore,
-  entitySelector,
-  Analytics
-}) {
+export default function createBridge(dependencies) {
+  REQUIRED_DEPENDENCIES.forEach(key => {
+    if (!(key in dependencies)) {
+      throw new Error(`"${key}" not provided to the extension bridge.`);
+    }
+  });
+
+  const {
+    $rootScope,
+    $scope,
+    spaceContext,
+    TheLocaleStore,
+    entitySelector,
+    Analytics,
+    entityCreator,
+    Navigator,
+    SlideInNavigator
+  } = dependencies;
+
   return {
     getData,
     install,
@@ -99,6 +123,73 @@ export default function createBridge({
     throw new Error('Unknown dialog type.');
   }
 
+  async function navigate(options) {
+    if (!['Entry', 'Asset'].includes(options.entityType)) {
+      throw new Error('Unknown entity type.');
+    }
+
+    const entity = await makeEntity(options);
+
+    try {
+      await navigateToEntity(entity, options.slideIn);
+    } catch (err) {
+      throw new Error('Failed to navigate to the entity.');
+    }
+
+    // Right now we're returning this object with a single `navigated`
+    // property. In the future we could grow the API, for example by
+    // adding a method to listen to close events of the slide-in editor.
+    return { navigated: true };
+  }
+
+  async function makeEntity(options) {
+    if (typeof options.id === 'string') {
+      // A valid ID is given, create a stub entity that can be used for navigation.
+      return makeStubEntity(options);
+    } else {
+      try {
+        return await createEntity(options);
+      } catch (err) {
+        throw new Error('Failed to create an entity.');
+      }
+    }
+  }
+
+  function makeStubEntity(options) {
+    return {
+      sys: {
+        type: options.entityType,
+        id: options.id,
+        space: { sys: { id: spaceContext.getId() } },
+        environment: { sys: { id: spaceContext.getEnvironmentId() } }
+      }
+    };
+  }
+
+  async function createEntity(options) {
+    // Important note:
+    // `entityCreator` returns legacy client entities, we need to extract `entity.data`.
+
+    if (options.entityType === 'Entry' && typeof options.contentTypeId === 'string') {
+      const created = await entityCreator.newEntry(options.contentTypeId);
+      return created.data;
+    } else if (options.entityType === 'Asset') {
+      const created = await entityCreator.newAsset();
+      return created.data;
+    }
+
+    throw new Error('Could not determine how to create the requested entity.');
+  }
+
+  async function navigateToEntity(entity, slideIn = false) {
+    if (slideIn) {
+      // This method is sync but the URL change is an async side-effect.
+      SlideInNavigator.goToSlideInEntity(entity.sys);
+    } else {
+      await Navigator.go(Navigator.makeEntityRef(entity));
+    }
+  }
+
   async function callSpaceMethod(methodName, args) {
     try {
       // TODO: Use `getBatchingApiClient(spaceContext.cma)`
@@ -126,6 +217,14 @@ export default function createBridge({
     } catch (err) {
       // Just catch and ignore, failing to track should not
       // demonstrate itself outside.
+    }
+  }
+
+  async function notify({ type, message }) {
+    if (['success', 'error'].includes(type) && typeof message === 'string') {
+      Notification[type](message);
+    } else {
+      throw new Error('Invalid notification type.');
     }
   }
 
@@ -164,6 +263,8 @@ export default function createBridge({
     api.registerPathHandler('removeValue', removeValue);
     api.registerHandler('openDialog', openDialog);
     api.registerHandler('callSpaceMethod', callSpaceMethod);
+    api.registerHandler('navigateToContentEntity', navigate);
+    api.registerHandler('notify', notify);
 
     api.registerHandler('setInvalid', (isInvalid, localeCode) => {
       $scope.fieldController.setInvalid(localeCode, isInvalid);

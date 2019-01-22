@@ -20,6 +20,9 @@ registerDirective('cfEntitySidebar', [
   'spaceContext',
   'entitySelector',
   'analytics/Analytics.es6',
+  'entityCreator',
+  'states/Navigator.es6',
+  'navigation/SlideInNavigator',
   (
     $rootScope,
     $controller,
@@ -28,7 +31,10 @@ registerDirective('cfEntitySidebar', [
     TheLocaleStore,
     spaceContext,
     entitySelector,
-    Analytics
+    Analytics,
+    entityCreator,
+    Navigator,
+    SlideInNavigator
   ) => ({
     restrict: 'E',
     scope: true,
@@ -190,7 +196,10 @@ registerDirective('cfEntitySidebar', [
             spaceContext,
             TheLocaleStore,
             entitySelector,
-            Analytics
+            Analytics,
+            entityCreator,
+            Navigator,
+            SlideInNavigator
           });
 
           return { bridge, widget };
