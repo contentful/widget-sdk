@@ -36,7 +36,10 @@ gulp.task('svg', async function() {
       'logo-label',
       'note-info',
       'note-success',
-      'note-warning'
+      'note-warning',
+      'chart-symbol-circle',
+      'chart-symbol-diamond',
+      'chart-symbol-triangle'
     ].map(icon => {
       const Component = require(path.resolve('src', 'javascripts', 'svg', icon + '.es6.js'))
         .default;

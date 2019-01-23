@@ -88,7 +88,6 @@ window.libs = [
   ['react-click-outside', require('react-click-outside')],
   ['react-codemirror', require('react-codemirror')],
   ['react-dom', require('react-dom')],
-  ['react-dom/server', require('react-dom/server')],
   ['react-highlight-words', require('react-highlight-words')],
   ['react-redux', require('react-redux')],
   ['react-tippy', require('react-tippy')],

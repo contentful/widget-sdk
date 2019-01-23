@@ -1,9 +1,12 @@
 import React from 'react';
 
 export default () => (
-  <svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1">
-    <title>chart-symbol-triangle</title>
-    <desc>Created with Sketch.</desc>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="12px"
+    height="12px"
+    viewBox="0 0 12 12"
+    version="1.1">
     <g id="chart-symbol-triangle" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <polygon
         id="Polygon-Copy"
