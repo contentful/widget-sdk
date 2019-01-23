@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getModule } from 'NgRegistry.es6';
 const debounce = getModule('debounce');
-import { Editor } from 'slate-react';
+import { Editor } from '@contentful/slate-react';
 import { Value } from 'slate';
 import { noop } from 'lodash';
 import { List, is } from 'immutable';

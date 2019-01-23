@@ -1,4 +1,4 @@
-import { getEventTransfer } from 'slate-react';
+import { getEventTransfer } from '@contentful/slate-react';
 import { create as createSerializer } from './Serializer.es6';
 
 /**

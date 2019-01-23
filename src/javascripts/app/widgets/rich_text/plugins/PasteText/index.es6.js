@@ -1,4 +1,4 @@
-import { getEventTransfer } from 'slate-react';
+import { getEventTransfer } from '@contentful/slate-react';
 import PlainSerializer from 'slate-plain-serializer';
 import { BLOCKS } from '@contentful/rich-text-types';
 

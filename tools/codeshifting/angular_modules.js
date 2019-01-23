@@ -63,7 +63,7 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
       'searchParser',
       'slate',
       '@guestbell/slate-edit-list',
-      'slate-react',
+      '@contentful/slate-react',
       '@wikifactory/slate-trailing-block',
       'slate-html-serializer',
       'slate-plain-serializer',
