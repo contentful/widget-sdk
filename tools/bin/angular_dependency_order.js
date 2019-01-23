@@ -87,8 +87,7 @@ function recursiveRead(p) {
 function determineDependencies(p) {
   const raw = fs.readFileSync(p).toString();
   const babelOptions = createBabelOptions({
-    angularModules: false,
-    debug: false
+    angularModules: false
   });
 
   let ast;

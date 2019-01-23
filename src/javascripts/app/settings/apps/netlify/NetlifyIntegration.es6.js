@@ -31,20 +31,20 @@ export async function install({ config, contentTypeIds, appsClient, accessToken 
   });
 
   // Create Netlify notification hooks for all sites.
-  const netlifyHookPromises = uniqBy(config.sites, s => s.netlifySiteId).reduce(
-    (acc, siteConfig) => {
-      const url = getPostPublishUrl(siteConfig.channel);
-      const promisesForSite = NETLIFY_HOOK_EVENTS.map(event => {
-        return NetlifyClient.createNotificationHook(siteConfig.netlifySiteId, accessToken, {
-          event,
-          url
-        });
+  const netlifyHookPromises = uniqBy(config.sites, s => s.netlifySiteId).reduce((
+    acc,
+    siteConfig
+  ) => {
+    const url = getPostPublishUrl(siteConfig.channel);
+    const promisesForSite = NETLIFY_HOOK_EVENTS.map(event => {
+      return NetlifyClient.createNotificationHook(siteConfig.netlifySiteId, accessToken, {
+        event,
+        url
       });
+    });
 
-      return acc.concat([Promise.all(promisesForSite)]);
-    },
-    []
-  );
+    return acc.concat([Promise.all(promisesForSite)]);
+  }, []);
 
   const netlifyHooks = await Promise.all(netlifyHookPromises);
 

@@ -86,6 +86,15 @@ function FormField({ label, labelHint, field, input, hint, SetFieldValue }) {
   );
 }
 
+FormField.propTypes = {
+  label: PropTypes.string,
+  labelHint: PropTypes.string,
+  field: PropTypes.object,
+  input: PropTypes.object,
+  hint: PropTypes.string,
+  SetFieldValue: PropTypes.func
+};
+
 function DisplayServerError({ inProgress, CancelDialog, Submit }) {
   return (
     <div>

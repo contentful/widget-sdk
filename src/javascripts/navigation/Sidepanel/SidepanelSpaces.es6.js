@@ -125,7 +125,7 @@ NoSpacesMsg.propTypes = {
   showCreateSpaceModal: PropTypes.func.isRequired
 };
 
-export default function(props) {
+export default function SidepanelSpaces(props) {
   const { currOrg, spacesByOrg, canCreateSpaceInCurrOrg, showCreateSpaceModal } = props;
   const spaces = currOrg && spacesByOrg[currOrg.sys.id];
 
@@ -147,3 +147,10 @@ export default function(props) {
     </div>
   );
 }
+
+SidepanelSpaces.propTypes = {
+  canCreateSpaceInCurrOrg: PropTypes.bool,
+  showCreateSpaceModal: PropTypes.func.isRequired,
+  spacesByOrg: PropTypes.object.isRequired,
+  currOrg: PropTypes.object
+};

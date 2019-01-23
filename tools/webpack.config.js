@@ -94,6 +94,7 @@ module.exports = () => {
       publicPath: '/app/',
       chunkFilename: 'chunk_[name]_[hash].js'
     },
+    mode: isProd ? 'production' : 'development',
     module: {
       rules: [
         // this rule is only for ES6 files, we need to use SystemJS plugin to register them
@@ -158,28 +159,12 @@ module.exports = () => {
     plugins: [
       new WebpackRequireFrom({
         methodName: 'WebpackRequireFrom_getChunkURL'
-      }),
-      new webpack.DefinePlugin({
-        // variable to detect which environment we are in
-        IS_PRODUCTION: isProd,
-        // a lot of libraries rely on this env variable in order to cut warnings, checks,
-        // development features, etc. e.g. for react: https://reactjs.org/docs/optimizing-performance.html#webpack
-        'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
       })
     ].concat(
-      // The locales are loaded in development, but ignored in testing and prod
-      isDev
-        ? []
-        : [
-            // moment.js by default bundles all locales, we want to remove them
-            // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
-            // or just google `moment webpack locales`
-            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
-
-            // we minify all JS files after concatenation in `build/js` gulp task
-            // so we don't need to uglify it here
-            // new UglifyJsPlugin({ sourceMap: true })
-          ]
+      // moment.js by default bundles all locales, we want to remove them
+      // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
+      // or just google `moment webpack locales`
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ),
     // Production:
     // We are using `inline-source-map` instead of `source-map` because
@@ -197,6 +182,11 @@ module.exports = () => {
     // We are using `cheap-module-source-map` as this allows us to see
     // errors and stack traces with Karma rather than just "Script error".
     devtool: isDev ? 'cheap-module-source-map' : 'inline-source-map',
+    optimization: {
+      // we minify all JS files after concatenation in `build/js` gulp task
+      // so we don't need to uglify it here
+      minimize: false
+    },
     stats: {
       // Set the maximum number of modules to be shown
       maxModules: 1

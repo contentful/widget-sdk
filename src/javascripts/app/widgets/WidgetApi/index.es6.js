@@ -12,7 +12,9 @@ export default function connectToWidgetAPI(Component) {
   return class extends React.Component {
     displayName = `WithWidgetAPI(${getDisplayName(Component)})`;
     static propTypes = {
-      field: PropTypes.object.isRequired
+      field: PropTypes.object.isRequired,
+      entry: PropTypes.object.isRequired,
+      features: PropTypes.array
     };
 
     state = {

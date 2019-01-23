@@ -113,3 +113,7 @@ export default function SidepanelOrgs(props) {
     </div>
   );
 }
+
+SidepanelOrgs.propTypes = {
+  currOrg: PropTypes.object.isRequired
+};

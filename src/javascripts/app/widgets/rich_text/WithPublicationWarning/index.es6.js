@@ -9,6 +9,7 @@ function withPublicationWarning(WrappedComponent) {
     static propTypes = {
       widgetAPI: PropTypes.object.isRequired,
       field: PropTypes.shape({
+        getValue: PropTypes.func.isRequired,
         registerUnpublishedReferencesWarning: PropTypes.func.isRequired
       }).isRequired
     };

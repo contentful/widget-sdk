@@ -7,8 +7,8 @@ import { richTextDocument } from './helpers';
 
 describe('withPublicationWarning', () => {
   it('renders wrapped component', () => {
-    const [registerUnpublishedReferencesWarning] = registerMocks();
-    const field = { registerUnpublishedReferencesWarning };
+    const [registerUnpublishedReferencesWarning, getValue] = registerMocks();
+    const field = { registerUnpublishedReferencesWarning, getValue };
 
     const wrapper = mount({ field });
 
@@ -16,8 +16,8 @@ describe('withPublicationWarning', () => {
   });
 
   it('registers publication warning', () => {
-    const [registerUnpublishedReferencesWarning] = registerMocks();
-    const field = { registerUnpublishedReferencesWarning };
+    const [registerUnpublishedReferencesWarning, getValue] = registerMocks();
+    const field = { registerUnpublishedReferencesWarning, getValue };
 
     mount({ field });
 
@@ -28,9 +28,10 @@ describe('withPublicationWarning', () => {
   it('unregisters publication warning on unmount', () => {
     const [
       registerUnpublishedReferencesWarning,
-      unRegisterUnpublishedReferencesWarning
+      unRegisterUnpublishedReferencesWarning,
+      getValue
     ] = registerMocks();
-    const field = { registerUnpublishedReferencesWarning };
+    const field = { registerUnpublishedReferencesWarning, getValue };
 
     const wrapper = mount({ field });
     wrapper.unmount();
@@ -89,11 +90,12 @@ function createWidgetAPI() {
 
 function registerMocks() {
   const unRegisterUnpublishedReferencesWarning = jest.fn();
+  const getValue = jest.fn();
   const registerUnpublishedReferencesWarning = jest
     .fn()
     .mockReturnValue(unRegisterUnpublishedReferencesWarning);
 
-  return [registerUnpublishedReferencesWarning, unRegisterUnpublishedReferencesWarning];
+  return [registerUnpublishedReferencesWarning, unRegisterUnpublishedReferencesWarning, getValue];
 }
 
 function createMockEntity(id, isPublished) {

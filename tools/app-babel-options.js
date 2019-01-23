@@ -20,7 +20,7 @@ const basePath = P.resolve('src', 'javascripts');
  * @returns {object}
  */
 module.exports.createBabelOptions = function createBabelOptions(options = {}) {
-  const { angularModules = true, debug = true, modules = false, ...opts } = options;
+  const { angularModules = true, modules = false, ...opts } = options;
   return Object.assign(
     {
       moduleIds: true,
@@ -30,7 +30,6 @@ module.exports.createBabelOptions = function createBabelOptions(options = {}) {
           require.resolve('@babel/preset-env'),
           {
             loose: true,
-            debug: debug,
             modules: modules,
             useBuiltIns: false
           }

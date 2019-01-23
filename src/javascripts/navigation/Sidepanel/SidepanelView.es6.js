@@ -39,6 +39,16 @@ function Sidepanel(props) {
   );
 }
 
+Sidepanel.propTypes = {
+  sidePanelIsShown: PropTypes.bool,
+  closeOrgsDropdown: PropTypes.func,
+  closeSidePanel: PropTypes.func,
+  canGotoOrgSettings: PropTypes.bool,
+  gotoOrgSettings: PropTypes.func,
+  viewingOrgSettings: PropTypes.any,
+  currOrg: PropTypes.object
+};
+
 function OrgActions({ gotoOrgSettings, viewingOrgSettings }) {
   return (
     <div className="nav-sidepanel__org-actions" data-test-id="sidepanel-org-actions">
@@ -67,7 +77,7 @@ OrgActions.propTypes = {
   viewingOrgSettings: PropTypes.bool
 };
 
-export default function(props) {
+export default function SidepanelView(props) {
   const { sidePanelIsShown, orgDropdownIsShown, closeOrgsDropdown, closeSidePanel } = props;
 
   return (
@@ -80,3 +90,14 @@ export default function(props) {
     </div>
   );
 }
+
+SidepanelView.propTypes = {
+  sidePanelIsShown: PropTypes.bool,
+  closeOrgsDropdown: PropTypes.func,
+  closeSidePanel: PropTypes.func,
+  canGotoOrgSettings: PropTypes.bool,
+  gotoOrgSettings: PropTypes.func,
+  viewingOrgSettings: PropTypes.any,
+  currOrg: PropTypes.object,
+  orgDropdownIsShown: PropTypes.bool
+};

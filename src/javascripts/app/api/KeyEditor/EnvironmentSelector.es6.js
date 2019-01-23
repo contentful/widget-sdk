@@ -19,7 +19,7 @@ function makeLink(env) {
   };
 }
 
-export default function(props) {
+export default function EnvironmentSelector(props) {
   return (
     <div>
       <List {...props} />
@@ -27,6 +27,10 @@ export default function(props) {
     </div>
   );
 }
+EnvironmentSelector.propTypes = {
+  isAdmin: PropTypes.bool,
+  spaceEnvironments: PropTypes.array.isRequired
+};
 
 function Hint() {
   return (

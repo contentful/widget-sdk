@@ -7,7 +7,6 @@ module.exports = babelJest.createTransformer(
   createBabelOptions({
     babelrc: false,
     angularModules: false,
-    debug: false,
     modules: 'commonjs'
   })
 );
