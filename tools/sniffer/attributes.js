@@ -72,8 +72,9 @@ const hyperscript = node => {
   }
   const attributes = [
     'utils/hyperscript',
+    'ui/Framework/index',
     'ui/Framework',
-    'ui/Framework/DOMRenderer',
+    'ui/Framework/Hooks/index',
     'utils/legacy-html-hyperscript',
     'utils/legacy-html-hyperscript/index'
   ];
@@ -130,7 +131,12 @@ const needsRefactoring = node => {
   const isAngular = angular(node);
   const isHyperscript = hyperscript(node);
 
-  const attributes = ['create-react-class', 'jquery'];
+  const attributes = [
+    'create-react-class',
+    'jquery',
+    'ui/Framework/CfComponentBridgeDirective',
+    'ui/Framework/Store'
+  ];
   let intersection = _.intersectionWith(modules, attributes, _.isEqual);
 
   if (isAngular) {

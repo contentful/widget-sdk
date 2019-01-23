@@ -1,5 +1,6 @@
 import { omit, pick, negate, trim, sortedUniq, isObject, get } from 'lodash';
-import { h } from 'ui/Framework/index.es6';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { assign } from 'utils/Collections.es6';
 import { getOrganization } from 'services/TokenStore.es6';
 import { runTask } from 'utils/Concurrent.es6';
@@ -17,17 +18,16 @@ import {
   progress$
 } from 'account/SendOrganizationInvitation.es6';
 import { isValidEmail } from 'utils/StringUtils.es6';
-import { go } from 'states/Navigator.es6';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import {
-  header,
-  sidebar,
-  emailsInput,
-  organizationRole,
-  accessToSpaces,
-  progressMessage,
-  errorMessage,
-  successMessage
+  Header,
+  Sidebar,
+  EmailsInput,
+  OrganizationRole,
+  AccessToSpaces,
+  ProgressMessage,
+  ErrorMessage,
+  SuccessMessage
 } from 'account/NewOrganizationMembershipTemplate.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
@@ -80,7 +80,6 @@ export default function($scope) {
     validateEmails,
     toggleInvitationEmailOption,
     restart,
-    goToList,
     submitInvitations
   };
 
@@ -90,7 +89,7 @@ export default function($scope) {
   progress$.onValue(onProgressValue);
   progress$.onError(onProgressError);
 
-  $scope.component = h('noscript');
+  $scope.component = '<noscript></noscript>';
   $scope.$on('$destroy', () => {
     progress$.offValue(onProgressValue);
     progress$.offError(onProgressError);
@@ -314,14 +313,6 @@ export default function($scope) {
   }
 
   /**
-   * Navigate to organization users list
-   */
-  function goToList() {
-    go({
-      path: ['account', 'organizations', 'users', 'list']
-    });
-  }
-  /**
    * Receives a string with email addresses
    * separated by comma and transforms it into
    * an array of emails.
@@ -353,7 +344,7 @@ export default function($scope) {
 
   function rerender(renderAsync = true) {
     $scope.properties.context.ready = true;
-    $scope.component = render(state, actions);
+    $scope.component = render({ state, actions });
     renderAsync ? $scope.$applyAsync() : $scope.$apply();
   }
 
@@ -426,66 +417,78 @@ export default function($scope) {
   }
 }
 
-function render(state, actions) {
-  return h('.workbench', [
-    header(),
-    h(
-      'form.workbench-main',
-      {
-        dataTestId: 'organization-membership.form',
-        onSubmit: actions.submitInvitations
-      },
-      [
-        h(
-          '.workbench-main__content',
-          {
-            style: { padding: '2rem 3.15rem' }
-          },
-          [
-            match(state.status, {
-              [Success]: () => successMessage(state.successfulOrgInvitations, actions.goToList),
-              [Failure]: () =>
-                h('', [
-                  errorMessage(state.useLegacy, state.failedOrgInvitations, actions.restart),
-                  state.successfulOrgInvitations.length > 0 &&
-                    successMessage(
-                      state.successfulOrgInvitations,
-                      actions.restart,
-                      actions.goToList
-                    )
-                ]),
-              [InProgress]: () => progressMessage(state.emails, state.successfulOrgInvitations),
-              _: () =>
-                h('', [
-                  emailsInput(
-                    maxNumberOfEmails,
-                    Invalid,
-                    pick(state, [
-                      'emails',
-                      'emailsInputValue',
-                      'invalidAddresses',
-                      'metadata',
-                      'status'
-                    ]),
-                    pick(actions, ['updateEmails', 'validateEmails'])
-                  ),
-                  organizationRole(state.orgRole, state.isOwner, actions.updateOrgRole),
-                  accessToSpaces(
-                    Loading,
-                    adminRole,
-                    pick(state, ['status', 'spaces', 'spaceMemberships']),
-                    pick(actions, ['updateSpaceRole'])
-                  )
-                ])
-            })
-          ]
-        ),
-        sidebar(
-          { Idle, Invalid },
-          pick(state, ['status', 'organization', 'metadata', 'suppressInvitation']),
-          pick(actions, ['toggleInvitationEmailOption'])
-        )
-      ]
-    )
-  ]);
+function render({ state, actions }) {
+  return (
+    <div className="workbench">
+      <Header />
+      <form
+        className="workbench-main"
+        data-test-id="organization-membership.form"
+        onSubmit={actions.submitInvitations}>
+        <div className="workbench-main__content" style={{ padding: '2rem 3.15rem' }}>
+          {match(state.status, {
+            [Success]: () => (
+              <SuccessMessage successfulOrgInvitations={state.successfulOrgInvitations} />
+            ),
+            [Failure]: () => (
+              <React.Fragment>
+                <ErrorMessage
+                  useLegacy={state.useLegacy}
+                  failedEmails={state.failedOrgInvitations}
+                  restart={actions.restart}
+                />
+                {state.successfulOrgInvitations.length > 0 && (
+                  <SuccessMessage successfulOrgInvitations={state.successfulOrgInvitations} />
+                )}
+              </React.Fragment>
+            ),
+            [InProgress]: () => (
+              <ProgressMessage
+                emails={state.emails}
+                successfulOrgInvitations={state.successfulOrgInvitations}
+              />
+            ),
+            _: () => (
+              <React.Fragment>
+                <EmailsInput
+                  maxNumberOfEmails={maxNumberOfEmails}
+                  Invalid={Invalid}
+                  {...pick(state, [
+                    'emails',
+                    'emailsInputValue',
+                    'invalidAddresses',
+                    'metadata',
+                    'status'
+                  ])}
+                  {...pick(actions, ['updateEmails', 'validateEmails'])}
+                />
+                <OrganizationRole
+                  orgRole={state.orgRole}
+                  isOwner={state.isOwner}
+                  updateOrgRole={actions.updateOrgRole}
+                />
+                <AccessToSpaces
+                  Loading={Loading}
+                  adminRole={adminRole}
+                  {...pick(state, ['status', 'spaces', 'spaceMemberships'])}
+                  {...pick(actions, ['updateSpaceRole'])}
+                />
+              </React.Fragment>
+            )
+          })}
+        </div>
+        <Sidebar
+          Idle={Idle}
+          Invalid={Invalid}
+          {...pick(state, ['status', 'organization', 'metadata', 'suppressInvitation'])}
+          {...pick(actions, ['toggleInvitationEmailOption'])}
+        />
+      </form>
+    </div>
+  );
 }
+
+render.propTypes = {
+  state: PropTypes.object,
+  actions: PropTypes.object
+};
