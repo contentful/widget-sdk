@@ -5,7 +5,14 @@ import {
   Organization as OrganizationPropType,
   IdentityProvider as IdentityProviderPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
-import { Button, Notification, Note } from '@contentful/forma-36-react-components';
+import {
+  Button,
+  Notification,
+  Note,
+  TextLink,
+  Heading,
+  Paragraph
+} from '@contentful/forma-36-react-components';
 import IDPSetupForm from './IDPSetupForm.es6';
 
 export default class SSOSetup extends React.Component {
@@ -78,12 +85,16 @@ export default class SSOSetup extends React.Component {
         <Workbench.Content>
           <div className="sso-setup__main">
             <div>
-              <h1>Set up Single Sign-On (SSO)</h1>
-              <p className="f36-font-size--l f36-line-height--default">
-                Set up SSO for your organization in Contentful in a couple of steps. If you need
-                help with the setup, view our documentation on the process, and if you have any
-                questions, talk to support.
-              </p>
+              <Heading
+                element="h1"
+                extraClassNames="f36-margin-bottom--l f36-margin-top--2xl f36-font-size--2xl">
+                Set up Single Sign-On (SSO) SAML 2.0
+              </Heading>
+              <Paragraph extraClassNames="f36-font-size--l f36-line-height--default f36-margin-bottom--2xl">
+                Set up SSO for your organization in Contentful in a few steps.{' '}
+                <TextLink href="https://www.contentful.com/faq/sso/">View FAQs</TextLink>{' '}
+                <TextLink href="https://www.contentful.com/support/">Talk to support</TextLink>
+              </Paragraph>
               {!identityProvider && (
                 <Button
                   buttonType="primary"
