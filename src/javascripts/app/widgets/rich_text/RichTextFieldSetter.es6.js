@@ -54,10 +54,13 @@ export const setAt = (doc, fieldPath, nextFieldValue) => {
      *    would otherwise bypass the validation, but this is unintuitive from
      *    a practitioner standpoint.
      *
+     * We pass both the `fieldValue` and `nextFieldValue` as undefined to keep
+     * ShareJS from raising a type error. This litters the console output.
+     *
      * [1] https://github.com/contentful/user_interface/blob/master/src/javascripts/app/entity_editor/stringField.es6.js#L28-L33
      */
     return ShareJS.setDeep(doc, fieldPath, undefined).then(() =>
-      setValue(doc, fieldPath, fieldValue, undefined)
+      setValue(doc, fieldPath, undefined, undefined)
     );
   }
 
