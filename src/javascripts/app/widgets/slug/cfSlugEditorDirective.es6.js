@@ -92,7 +92,7 @@ registerDirective('cfSlugEditor', [
         if ((isEmpty(title) && isEmpty(slug) && isOptionalLocaleWithFallback) || isCustomSlug) {
           return; // Do not overwrite user-defined custom slug.
         } else {
-          const newSlug = makeSlug(title);
+          const newSlug = makeSlug(titleField.id === field.id ? slug : title);
           updateInput(newSlug);
           field.setValue(newSlug);
         }
@@ -117,10 +117,16 @@ registerDirective('cfSlugEditor', [
 
       // The content type’s display field might not exist.
       if (titleField) {
-        // Track same locale title:
-        const detachLocaleTitleChangeHandler = titleField.onValueChanged(field.locale, setTitle);
-        scope.$on('$destroy', detachLocaleTitleChangeHandler);
-
+        if (titleField.id !== field.id) {
+          // When the slug field is set to the display field, we still want to
+          // auto-generate the slug title. But we don't want to execute the
+          // logic to align the slug field with the display field, since this
+          // causes buggy behavior (and would be unnecessary, anyway).
+          const detachLocaleTitleChangeHandler = titleField.onValueChanged(field.locale, setTitle);
+          scope.$on('$destroy', detachLocaleTitleChangeHandler);
+        } else if (!titleField.getValue(field.locale)) {
+          setTitle(untitledSlug());
+        }
         if (field.locale !== locales.default && !isOptionalLocaleWithFallback) {
           // Track default locale title:
           const detachDefaultLocaleTitleChangeHandler = titleField.onValueChanged(
