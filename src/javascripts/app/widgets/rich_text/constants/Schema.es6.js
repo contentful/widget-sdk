@@ -91,16 +91,18 @@ export default {
       ]
     },
     ...mapVoidTypes(VOID_BLOCKS),
-    // the schema for the lists and list-items is defined in the slate-edit-list plugin
+    // the schema for the lists and list-items
+    // is defined in the slate-edit-list plugin
     [BLOCKS.QUOTE]: {
       nodes: [
         {
-          types: CONTAINERS[BLOCKS.QUOTE]
+          match: [CONTAINERS[BLOCKS.QUOTE].map(type => ({ type }))],
+          min: 1
         }
       ],
-      normalize: (change, error) => {
+      normalize: (editor, error) => {
         if (error.code === 'child_type_invalid') {
-          return change.unwrapBlockByKey(error.child.key, BLOCKS.QUOTE);
+          return editor.unwrapBlockByKey(error.node.key, BLOCKS.QUOTE);
         }
       }
     }
