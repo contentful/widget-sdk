@@ -54,8 +54,8 @@ const reduce = makeReducer({
 export function openDeleteDialog(runDelete, environment) {
   return ModalDialog.open({
     template: `
-      <div className="modal-background">
-        <div className="modal-dialog" style="width: 32px;">
+      <div class="modal-background">
+        <div class="modal-dialog" style="width: 32px;">
           <cf-component-store-bridge component="component" />
         </div>
       </div>
