@@ -6,14 +6,8 @@ export const getOrgFeature = (orgId, featureKey) =>
     path: `/product_catalog_features/${featureKey}`
   });
 
-export const getInternalSpaceFeature = (spaceId, featureKey) =>
-  createSpaceEndpoint(spaceId)({
-    method: 'GET',
-    path: `/internal/spaces/${spaceId}/product_catalog_features/${featureKey}`
-  });
-
 export const getExternalSpaceFeature = (spaceId, featureKey) =>
   createSpaceEndpoint(spaceId)({
     method: 'GET',
-    path: `/spaces/${spaceId}/product_catalog_features/${featureKey}`
+    path: `/product_catalog_features/${featureKey}`
   });

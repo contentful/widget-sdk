@@ -9,6 +9,7 @@ export default (state = {}, { type, meta, payload, error }, globalState) => {
   switch (type) {
     case 'DATASET_LOADING': {
       if (!get(meta, 'pending')) {
+        // create maps from datasets by id and merge that map into the state
         return update(
           orgId,
           (datasets = {}) =>
@@ -29,6 +30,8 @@ export default (state = {}, { type, meta, payload, error }, globalState) => {
       }
       if (error) {
         const { dataset, id } = meta;
+        // restore deleted item should the deletion server request fail
+        // every deleted item is remembered via the 'deleted' reducer until an operation finishes
         const item = getDeletedItems(globalState)[dataset][id];
         return set([orgId, dataset, id], item, state);
       }

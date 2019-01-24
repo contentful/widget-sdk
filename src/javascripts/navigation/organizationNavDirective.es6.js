@@ -5,6 +5,7 @@ import navBar from 'navigation/templates/NavBar.es6';
 import { isOwner } from 'services/OrganizationRoles.es6';
 import { SSO_SELF_CONFIG_FLAG } from 'featureFlags.es6';
 import { getOrgFeature } from '../data/CMA/FeatureCatalog.es6';
+import { TEAMS as FF_TEAMS } from '../featureFlags.es6';
 
 /**
  * @ngdoc directive
@@ -44,7 +45,7 @@ registerDirective('cfOrganizationNav', () => {
           const orgId = (nav.orgId = $stateParams.orgId);
           Promise.all([
             // Set feature flag for Teams
-            LD.getCurrentVariation('feature-bv-11-2018-teams'),
+            LD.getCurrentVariation(FF_TEAMS),
             getOrgFeature(orgId, 'teams')
           ]).then(([variation, catalogFeature]) => {
             nav.teamsEnabled = variation && _.get(catalogFeature, 'enabled');

@@ -11,7 +11,9 @@ export const getTeamMemberships = flow(
 
 export const getMembershipsByTeam = flow(
   getTeamMemberships,
+  // get values from object...
   Object.values,
+  // ... and group them by the team id instead
   groupBy('sys.team.sys.id')
 );
 
@@ -20,6 +22,7 @@ export const getMemberCountsByTeam = flow(
   mapValues(get('length'))
 );
 
+// Guide about flows: https://contentful.atlassian.net/wiki/spaces/BH/pages/1279721792
 export const getCurrentTeamMembershipList = state => {
   const currentTeamId = getCurrentTeam(state);
   return flow(

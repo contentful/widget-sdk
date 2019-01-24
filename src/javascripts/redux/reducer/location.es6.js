@@ -29,12 +29,14 @@ const updateLocationQuery = updater =>
     flow(
       query => query.slice(1),
       qs.parse,
+      // will give the query as object to the updater function and expected and updated object
       updater,
       qs.stringify,
       query => (query === '' ? '' : `?${query}`)
     )
   );
 
+// Action structure follows these guidelines: https://github.com/redux-utilities/flux-standard-actions
 export default (state = null, { type, payload, meta }, globalState) => {
   switch (type) {
     case 'LOCATION_CHANGED':
@@ -48,6 +50,7 @@ export default (state = null, { type, payload, meta }, globalState) => {
     case 'UPDATE_SEARCH_TERM': {
       return updateLocationQuery(set('searchTerm', payload.newSearchTerm))(state);
     }
+    // remove item from the application state while the server request is still pending
     case 'REMOVE_FROM_DATASET': {
       if (get('pending', meta) && get('dataset', payload) === TEAMS) {
         return set(

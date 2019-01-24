@@ -19,20 +19,17 @@ import TeamMembershipForm from './TeamMembershipForm.es6';
 import TeamMembershipRow from './TeamMembershipRow.es6';
 import TeamMembershipRowPlaceholder from './TeamMembershipRowPlaceholder.es6';
 
-class AddTeamMemberButton extends React.Component {
-  static propTypes = {
-    onClick: PropTypes.func
-  };
+const AddTeamMemberButton = ({ onClick }) => (
+  <Button size="small" buttonType="primary" disabled={!onClick} onClick={onClick}>
+    Add a team member
+  </Button>
+);
 
-  render() {
-    const { onClick } = this.props;
-    return (
-      <Button size="small" buttonType="primary" disabled={!onClick} onClick={onClick}>
-        Add a team member
-      </Button>
-    );
-  }
-}
+AddTeamMemberButton.propTypes = {
+  onClick: PropTypes.func
+};
+
+const isPlaceholder = ({ sys: { id } }) => id === 'placeholder';
 
 class TeamMemberships extends React.Component {
   static propTypes = {
@@ -83,7 +80,7 @@ class TeamMemberships extends React.Component {
             <TableBody>
               {showingForm && <TeamMembershipForm close={this.toggleForm} />}
               {memberships.map(membership =>
-                membership.sys.id === 'placeholder' ? (
+                isPlaceholder(membership) ? (
                   <TeamMembershipRowPlaceholder key={membership.sys.id} />
                 ) : (
                   <TeamMembershipRow

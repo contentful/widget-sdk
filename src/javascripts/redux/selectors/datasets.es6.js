@@ -10,6 +10,8 @@ const getRawDatasets = state => get(state, ['datasets', 'payload', getOrgId(stat
 
 const MAX_AGE = 10 * 1000;
 
+// this replaces all links with actual data if that data is loaded
+// will work recursively
 function resolveLinks(datasets) {
   return entity =>
     update(
@@ -17,6 +19,7 @@ function resolveLinks(datasets) {
       mapValues(potentialLink => {
         if (get(potentialLink, 'sys.type') === 'Link') {
           const { linkType, id } = potentialLink.sys;
+          // checks if link target is loaded
           if (linkType in datasets && id in datasets[linkType]) {
             const entity = datasets[linkType][id];
             return resolveLinks(datasets)(entity);
@@ -36,6 +39,8 @@ export const getDatasets = createSelector(
 
 export const getMeta = state => get(state, ['datasets', 'meta', getOrgId(state)]);
 
+// gets all datasets that have to be loaded for the current location
+// given the new route, the loaded datasets and the age of the loaded datasets
 export const getDataSetsToLoad = state => {
   const requiredDatasets = getRequiredDataSets(getPath(state));
   const datasetsMeta = getMeta(state);

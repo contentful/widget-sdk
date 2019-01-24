@@ -85,7 +85,7 @@ describe('TeamList', () => {
         expect(wrapper.find(ExperimentalFeatureNote)).toHaveLength(1);
       });
 
-      it('should render teams as sorted rows', () => {
+      it('should render teams as rows, sorted by name', () => {
         const { wrapper } = renderComponent(actions);
         const rows = wrapper.find(TeamListRow);
         expect(rows).toHaveLength(3);
@@ -135,7 +135,7 @@ describe('TeamList', () => {
           expect(placeholderProps.team).toHaveProperty('sys.id', 'placeholder');
         });
 
-        describe('team creation returned from server', () => {
+        describe('team creation is successful on API', () => {
           beforeEach(() => {
             actions.push({
               type: 'ADD_TO_DATASET',

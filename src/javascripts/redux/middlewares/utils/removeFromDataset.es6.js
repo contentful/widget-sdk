@@ -17,10 +17,13 @@ export default async function(
 ) {
   const state = getState();
   const service = createService(state);
+
+  // get item to be deleted for notifications messages
   const datasets = getDatasets(state);
   const item = datasets[dataset][id];
-  // call reducer in case it optimistically removes
+  // call reducer afterwards, in case it optimistically removes the item
   next(action);
+
   const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
     <ModalConfirm
       title={confirmationTitle(item)}

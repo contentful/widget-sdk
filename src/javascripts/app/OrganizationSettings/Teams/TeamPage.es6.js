@@ -41,6 +41,9 @@ class TeamPage extends React.Component {
     if (showDetails) {
       return <TeamDetails readOnlyPermission={readOnlyPermission} />;
     }
+    // this will never be reached, because angular handles 404 for this case
+    // if we remove that from angular at some point, this would be a possible place
+    // to return a 404 page
     return '404 not found';
   }
 }

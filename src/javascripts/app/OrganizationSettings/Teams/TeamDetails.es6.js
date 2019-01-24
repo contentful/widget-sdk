@@ -66,7 +66,7 @@ class TeamDetails extends React.Component {
         </Workbench.Header>
         <Workbench.Content>
           <ExperimentalFeatureNote />
-          {team ? (
+          {team && (
             <div className="user-details">
               <div className="user-details__sidebar">
                 <section className="user-details__profile-section">
@@ -118,7 +118,8 @@ class TeamDetails extends React.Component {
                 <TeamMemberships readOnlyPermission={readOnlyPermission} />
               </div>
             </div>
-          ) : (
+          )}
+          {!team && (
             <Placeholder
               title="The team you were looking for was not found 🔎"
               text="It might have been deleted or you lost permission to see it"

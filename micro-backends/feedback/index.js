@@ -12,22 +12,26 @@ const TARGET_MAILS = {
   bizVel: 'squad-hejo+feedback@contentful.com'
 };
 
-const getMailText = ({ feedback, userId, organizationId, teamId, canBeContacted = false }) => `
-  ${feedback || 'No feedback provided'}
+const getOrgLink = ({ organizationId }) =>
+  organizationId
+    ? `organization: https://admin.contentful.com/admin/organizations/${organizationId}`
+    : '';
+
+const getTeamLink = ({ teamId }) =>
+  teamId ? `team: https://admin.contentful.com/admin/teams/${teamId}` : '';
+
+const getMailText = params => `
+  ${params.feedback || 'No feedback provided'}
 
 
 
   ${
-    canBeContacted
+    params.canBeContacted
       ? `
       User agreed to be contacted.
-      user: https://admin.contentful.com/admin/users/${userId}
-      ${
-        organizationId
-          ? `organization: https://admin.contentful.com/admin/organizations/${organizationId}`
-          : ''
-      }
-      ${teamId ? `team: https://admin.contentful.com/admin/teams/${teamId}` : ''}
+      user: https://admin.contentful.com/admin/users/${params.userId}
+      ${getOrgLink(params)}
+      ${getTeamLink(params)}
     `
       : 'User wants to stay anonymous'
   }

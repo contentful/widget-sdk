@@ -30,11 +30,12 @@ class TeamListRow extends React.Component {
   render() {
     const { team, orgId, removeTeam, readOnlyPermission, memberCount } = this.props;
     const { showTeamDialog } = this.state;
+    const teamId = get(team, 'sys.id');
 
     return (
       <TableRow className="membership-list__item">
         <TableCell>
-          {get(team, 'sys.id') !== 'placeholder' ? (
+          {teamId !== 'placeholder' ? (
             <a
               data-test-id="team-name"
               href={ROUTES.organization.children.teams.children.team.build({

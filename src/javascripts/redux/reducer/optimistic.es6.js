@@ -1,6 +1,8 @@
 import { concat, update, drop } from 'lodash/fp';
 import { TEAMS, TEAM_MEMBERSHIPS } from '../datasets.es6';
 
+// This reducers handles showing a placeholder when new
+// items are created but the API request is still pending
 export default (state = {}, { type, payload }) => {
   switch (type) {
     case 'CREATE_NEW_TEAM': {
@@ -21,6 +23,7 @@ export default (state = {}, { type, payload }) => {
         state
       );
     }
+    // placeholders are 'blindly' removed in the order they were created
     case 'SUBMIT_NEW_TEAM_FAILED': {
       return update(TEAMS, drop(1), state);
     }

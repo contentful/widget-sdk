@@ -11,14 +11,18 @@ export const getTeams = flow(
   get(TEAMS)
 );
 
+// Guide about flows: https://contentful.atlassian.net/wiki/spaces/BH/pages/1279721792
 export const getTeamListWithOptimistic = state => {
   const persistedTeams = get(TEAMS, getDatasets(state)) || [];
+  const teamListWithOptimistic = Object.values(persistedTeams).concat(
+    get(TEAMS, getOptimistic(state)) || []
+  );
   return sortBy(
     flow(
       get('name'),
       toLower
     ),
-    Object.values(persistedTeams).concat(get(TEAMS, getOptimistic(state)) || [])
+    teamListWithOptimistic
   );
 };
 
