@@ -40,6 +40,11 @@ npm run jest:coverage
 npm run jest:debug
 ```
 
+```bash
+# Run tests in debug mode in command-line, instead of inspector protocol
+npm run jest:cli-debug
+```
+
 ## Filename Conventions
 
 Jest will look for test files with `.spec.js` suffix in `src/javascripts` folder.

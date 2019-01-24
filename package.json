@@ -206,6 +206,7 @@
     "jest": "TZ=UTC node run-tests-jest.js",
     "jest:coverage": "TZ=UTC node run-tests-jest.js --coverage",
     "jest:debug": "TZ=UTC node --inspect-brk run-tests-jest.js --runInBand",
+    "jest:cli-debug": "TZ=UTC node debug run-tests-jest.js",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf node_modules",
     "codecov": "codecov",
