@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { getModule } from 'NgRegistry.es6';
 const debounce = getModule('debounce');
 import { Editor } from '@contentful/slate-react';
-import { Value } from 'slate';
+import { Value, Editor as EmptyEditor } from 'slate';
 import { noop } from 'lodash';
 import { List, is } from 'immutable';
 import cn from 'classnames';
@@ -124,18 +124,16 @@ export default class RichTextEditor extends React.Component {
       <div className={classNames}>
         {this.props.showToolbar && (
           <StickyToolbarWrapper isDisabled={this.props.isDisabled}>
-            {this.editor.current && (
-              <Toolbar
-                change={this.editor.current}
-                onChange={this.onChange}
-                isDisabled={this.props.isDisabled}
-                permissions={this.props.widgetAPI.permissions}
-                richTextAPI={newPluginAPI({
-                  widgetAPI: this.props.widgetAPI,
-                  onAction: this.props.onAction
-                })}
-              />
-            )}
+            <Toolbar
+              change={this.editor.current || new EmptyEditor({ readOnly: true })}
+              onChange={this.onChange}
+              isDisabled={this.props.isDisabled}
+              permissions={this.props.widgetAPI.permissions}
+              richTextAPI={newPluginAPI({
+                widgetAPI: this.props.widgetAPI,
+                onAction: this.props.onAction
+              })}
+            />
           </StickyToolbarWrapper>
         )}
 
