@@ -5,7 +5,7 @@ import ToolbarIcon from './ToolbarIcon.es6';
 import EntityLinkBlock from './EmbeddedEntityBlock.es6';
 import { BLOCKS } from '@contentful/rich-text-types';
 import { hasBlockOfType, selectEntityAndInsert } from './Util.es6';
-import asyncChange from '../shared/AsyncChange.es6';
+
 import { actionOrigin } from '../shared/PluginApi.es6';
 
 export default ToolbarIcon;
@@ -26,9 +26,7 @@ export const EmbeddedEntityBlockPlugin = ({
       if (hotkey && isHotkey(hotkey, e)) {
         const logShortcutAction = (name, data) =>
           logAction(name, { origin: actionOrigin.SHORTCUT, ...data });
-        asyncChange(editor, newChange =>
-          selectEntityAndInsert(nodeType, widgetAPI, newChange, logShortcutAction)
-        );
+        selectEntityAndInsert(nodeType, widgetAPI, editor, logShortcutAction);
         return;
       }
       if (isHotkey('enter', e)) {
@@ -42,18 +40,18 @@ export const EmbeddedEntityBlockPlugin = ({
   };
 };
 
-export const EmbeddedEntryBlockPlugin = ({ type = BLOCKS.EMBEDDED_ENTRY, richTextAPI }) => {
+export const EmbeddedEntryBlockPlugin = ({ richTextAPI }) => {
   return EmbeddedEntityBlockPlugin({
     richTextAPI,
-    nodeType: type,
+    nodeType: BLOCKS.EMBEDDED_ENTRY,
     hotkey: ['mod+shift+e']
   });
 };
 
-export const EmbeddedAssetBlockPlugin = ({ type = BLOCKS.EMBEDDED_ASSET, richTextAPI }) => {
+export const EmbeddedAssetBlockPlugin = ({ richTextAPI }) => {
   return EmbeddedEntityBlockPlugin({
     richTextAPI,
-    nodeType: type,
+    nodeType: BLOCKS.EMBEDDED_ASSET,
     hotkey: ['mod+shift+a']
   });
 };
