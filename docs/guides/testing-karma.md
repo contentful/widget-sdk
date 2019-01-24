@@ -1,4 +1,4 @@
-Testing with Karma
+(Legacy) Testing with Karma
 =======
 
 This guide describes the testing setup and helpers for the UI.
@@ -15,6 +15,15 @@ $ npm test # run with watching
 $ or:
 $ npm run test:once # run only once
 ~~~
+
+Jest and Karma
+----
+
+Simply put: you should be writing any new tests in Jest unless you have a strong reason
+not to, such as if you need to include some Angular wiring that *cannot* be stubbed. The main reason
+we have this setup is for legacy purposes.
+
+Outside of the single case above, there should be no blockers to writing tests in or migrating tests to Jest.
 
 Deprecated Patterns
 -------------------
@@ -295,6 +304,20 @@ module('contentful/test', $provide => {
   });
 })
 ~~~
+
+Additionally, you can also import a mock and stub it using the methods above, such as for `kefir`.
+
+~~~js
+import * as kMock from 'test/helpers/mocks/kefir';
+
+beforeEach(function() {
+  module('contentful/test');
+
+  const { registerConstant } = this.$inject('NgRegistry.es6');
+  registerConstant('utils/kefir.es6', kMock);
+});
+~~~
+
 
 If you need to stub just a specific property while keeping the rest of the dependency intact,
 you will need to first determine the kind of module you're mocking, e.g. a factory, directive,
