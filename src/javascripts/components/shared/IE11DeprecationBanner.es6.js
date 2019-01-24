@@ -20,7 +20,11 @@ export default class IE11DeprecationBanner extends React.Component {
     return (
       <Note noteType={noteType} extraClassNames={extraClassNames}>
         The {featureName} is not supported in Internet Explorer 11. For more information{' '}
-        <TextLink href="#">see the FAQ</TextLink>
+        <TextLink
+          href="//www.contentful.com/faq/about-contentful/#which-browsers-does-contentful-support"
+          target="_blank">
+          see the FAQ
+        </TextLink>
       </Note>
     );
   }
