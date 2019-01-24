@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getModule } from 'NgRegistry.es6';
 const debounce = getModule('debounce');
-import { Editor } from 'slate-react';
-import { Value } from 'slate';
+import { Editor } from '@contentful/slate-react';
+import { Value, Editor as EmptyEditor } from 'slate';
 import { noop } from 'lodash';
 import { List, is } from 'immutable';
 import cn from 'classnames';
@@ -68,6 +68,8 @@ export default class RichTextEditor extends React.Component {
     hasFocus: false
   };
 
+  editor = React.createRef();
+
   slatePlugins = buildPlugins(
     newPluginAPI({
       widgetAPI: this.props.widgetAPI,
@@ -113,7 +115,6 @@ export default class RichTextEditor extends React.Component {
       });
     }
   }
-
   render() {
     const classNames = cn('rich-text', {
       'rich-text--enabled': !this.props.isDisabled
@@ -124,7 +125,7 @@ export default class RichTextEditor extends React.Component {
         {this.props.showToolbar && (
           <StickyToolbarWrapper isDisabled={this.props.isDisabled}>
             <Toolbar
-              change={this.state.value.change()}
+              change={this.editor.current || new EmptyEditor({ readOnly: true })}
               onChange={this.onChange}
               isDisabled={this.props.isDisabled}
               permissions={this.props.widgetAPI.permissions}
@@ -135,11 +136,12 @@ export default class RichTextEditor extends React.Component {
             />
           </StickyToolbarWrapper>
         )}
+
         <Editor
           data-test-id="editor"
           value={this.state.value}
+          ref={this.editor}
           onChange={this.onChange}
-          onPaste={this.onPaste}
           plugins={this.slatePlugins}
           readOnly={this.props.isDisabled}
           schema={schema}
@@ -168,7 +170,7 @@ function isRelevantOperation(op) {
       throw newUnhandledOpError(op);
     }
   } else if (op.type === 'set_value') {
-    if (op.properties.schema) {
+    if (op.properties.schema || op.properties.data) {
       return false;
     } else {
       throw newUnhandledOpError(op);

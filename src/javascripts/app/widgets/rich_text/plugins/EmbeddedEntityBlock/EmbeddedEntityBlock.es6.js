@@ -28,13 +28,9 @@ class LinkedEntityBlock extends React.Component {
 
   handleRemoveClick() {
     const { editor, node } = this.props;
-    editor.change(change => {
-      // Focus card first so that slate does not cause scrolling to the previous
-      // selection at e.g. top of the document when calling focus() below.
-      change.moveToRangeOf(node);
-      change.removeNodeByKey(node.key);
-      change.focus(); // Click on "x" removes focus.
-    });
+    editor.moveToRangeOfNode(node);
+    editor.removeNodeByKey(node.key);
+    editor.focus(); // Click on "x" removes focus.
   }
 
   render() {

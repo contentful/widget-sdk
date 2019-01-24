@@ -40,7 +40,7 @@ describe('RichTextEditor', () => {
     });
 
     this.system.set('app/widgets/rich_text/withTracking.es6', {
-      default: component => component
+      default: identity
     });
 
     const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index.es6');
@@ -72,6 +72,8 @@ describe('RichTextEditor', () => {
   });
 
   it('renders toolbar', function() {
+    this.wrapper.update();
+
     const el = this.wrapper.find('[data-test-id="toolbar"]').first();
     expect(el.length).toEqual(1);
   });

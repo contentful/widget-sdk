@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Sticky from 'react-sticky-el';
-import { detect as detectBrowser } from 'detect-browser';
+import { isIE } from 'app/widgets/rich_text/helpers/browser.es6';
 
 const StickyToolbarWrapper = ({ children, isDisabled }) =>
-  detectBrowser().name === 'ie' ? (
+  isIE() ? (
     <Sticky
       className="sticky-wrapper"
       boundaryElement=".rich-text"

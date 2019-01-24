@@ -3,19 +3,11 @@ export const haveMarks = ({ value }, type) => {
 };
 
 export const haveBlocks = ({ value }, type) => {
-  if (value.blocks.size > 0) {
-    return value.blocks.some(node => node.type === type || node.type.indexOf(`${type}`) === 0);
-  }
-
-  return false;
+  return value.blocks.some(node => node.type === type);
 };
 
 export const haveInlines = ({ value }, type) => {
-  if (value.inlines.size > 0) {
-    return value.inlines.some(inline => inline.type === type);
-  }
-
-  return false;
+  return value.inlines.some(inline => inline.type === type);
 };
 
 export function haveAnyInlines({ value }) {

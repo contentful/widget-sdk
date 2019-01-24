@@ -8,7 +8,7 @@ import EditListWrapper from './EditListWrapper.es6';
 export const ListPlugin = () => {
   return {
     ...EditListWrapper(),
-    renderNode: props => {
+    renderNode: (props, _editor, next) => {
       if (props.node.type === BLOCKS.UL_LIST) {
         return commonNode('ul')(props);
       } else if (props.node.type === BLOCKS.OL_LIST) {
@@ -16,6 +16,7 @@ export const ListPlugin = () => {
       } else if (props.node.type === BLOCKS.LIST_ITEM) {
         return commonNode('li')(props);
       }
+      return next();
     }
   };
 };

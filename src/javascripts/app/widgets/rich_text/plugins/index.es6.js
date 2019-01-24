@@ -1,4 +1,4 @@
-import TrailingBlock from 'slate-trailing-block';
+import {BLOCKS} from '@contentful/rich-text-types';
 import { BoldPlugin } from './Bold/index.es6';
 import { ItalicPlugin } from './Italic/index.es6';
 import { UnderlinedPlugin } from './Underlined/index.es6';
@@ -25,7 +25,7 @@ import { EmbeddedEntryInlinePlugin } from './EmbeddedEntryInline/index.es6';
 import { ListPlugin } from './List/index.es6';
 import { HrPlugin } from './Hr/index.es6';
 
-import { BLOCKS } from '@contentful/rich-text-types';
+import TrailingBlock from '@wikifactory/slate-trailing-block';
 import { PastePlugin } from './Paste/index.es6';
 import { PasteHtmlPlugin } from './PasteHtml/index.es6';
 import { PasteTextPlugin } from './PasteText/index.es6';

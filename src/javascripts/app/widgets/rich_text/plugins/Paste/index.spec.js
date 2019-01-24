@@ -46,12 +46,18 @@ describe('Paste Plugin', () => {
 
       it('tracks pasted text', () => {
         const logAction = jest.fn();
+        const next = jest.fn();
         const plugin = PastePlugin({ richTextAPI: { logAction } });
-        plugin.onPaste({}, {}, editor);
+        const result = plugin.onPaste({}, editor, next);
+
+        expect(result).toBeUndefined();
+        expect(next).toHaveBeenCalled();
         expect(pasteUtils.getCharacterCount).toHaveBeenCalledTimes(1);
         expect(pasteUtils.getCharacterCount).lastCalledWith(editor);
         expect(logAction).toHaveBeenCalledTimes(0);
+
         jest.runOnlyPendingTimers();
+
         expect(pasteUtils.getCharacterCount).toHaveBeenCalledTimes(2);
         expect(pasteUtils.getCharacterCount).lastCalledWith(editor);
         expect(logAction).toHaveBeenCalledWith('paste', {

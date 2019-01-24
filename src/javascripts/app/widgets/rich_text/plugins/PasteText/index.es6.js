@@ -1,4 +1,4 @@
-import { getEventTransfer } from 'slate-react';
+import { getEventTransfer } from '@contentful/slate-react';
 import PlainSerializer from 'slate-plain-serializer';
 import { BLOCKS } from '@contentful/rich-text-types';
 
@@ -11,9 +11,10 @@ import { BLOCKS } from '@contentful/rich-text-types';
  */
 export const PasteTextPlugin = () => {
   return {
-    onPaste(event, change) {
+    onPaste(event, editor, next) {
       const transfer = getEventTransfer(event);
       if (transfer.type !== 'text') {
+        next();
         return;
       }
 
@@ -24,8 +25,8 @@ export const PasteTextPlugin = () => {
         delimiter: '\n\n' // We look for double new lines as a delimiter for paragraphs
       });
 
-      change.insertFragment(document);
-      return true;
+      editor.insertFragment(document);
+      return;
     }
   };
 };

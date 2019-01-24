@@ -6,7 +6,7 @@ import { INLINES } from '@contentful/rich-text-types';
 import RequestStatus from '../shared/RequestStatus.es6';
 import FetchEntity from '../shared/FetchEntity/index.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
-import { detect as detectBrowser } from 'detect-browser';
+import { isIE, isEdge } from 'app/widgets/rich_text/helpers/browser.es6';
 
 const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
 
@@ -118,5 +118,5 @@ function isUrl(string) {
 
 function hasRealHyperlinkInSlateSupport() {
   // The <a/> element as an inline node causes buggy behavior in IE11/Edge.
-  return !['ie', 'edge'].includes(detectBrowser().name);
+  return !isIE() && !isEdge();
 }

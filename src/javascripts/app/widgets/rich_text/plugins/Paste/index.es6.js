@@ -7,9 +7,10 @@ import { getCharacterCount } from './Paste.es6';
  * tracking for the markdown editor.
  */
 export const PastePlugin = ({ richTextAPI: { logAction } }) => ({
-  onPaste(_event, _change, editor) {
-    const characterCountSelection = getSelection().toString().length;
+  onPaste(_event, editor, next) {
+    const characterCountSelection = global.getSelection().toString().length;
     const characterCountBefore = getCharacterCount(editor);
+
     setTimeout(() => {
       const characterCountAfter = getCharacterCount(editor);
       logAction('paste', {
@@ -19,5 +20,7 @@ export const PastePlugin = ({ richTextAPI: { logAction } }) => ({
         origin: actionOrigin.SHORTCUT
       });
     });
+    next();
+    return;
   }
 });

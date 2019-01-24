@@ -4,7 +4,6 @@ import { INLINES } from '@contentful/rich-text-types';
 import ToolbarIcon from './ToolbarIcon.es6';
 import Hyperlink from './Hyperlink.es6';
 import { editLink, mayEditLink, toggleLink, hasOnlyHyperlinkInlines } from './Util.es6';
-import asyncChange from '../shared/AsyncChange.es6';
 import { actionOrigin } from '../shared/PluginApi.es6';
 
 const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
@@ -12,46 +11,54 @@ const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
 export default ToolbarIcon;
 
 export const HyperlinkPlugin = ({ richTextAPI: { widgetAPI, logAction } }) => ({
-  renderNode: props => {
+  renderNode: (props, _editor, next) => {
     if (isHyperlink(props.node.type)) {
       return (
         <Hyperlink
           {...props}
           onClick={event => {
+            event.preventDefault(); // Don't follow `href`
             const { editor } = props;
-            event.preventDefault(); // Don't follow `href`.
+
+            editor.moveToRangeOfNode(props.node).focus();
             if (mayEditLink(editor.value)) {
               const logViewportAction = (name, data) =>
                 logAction(name, { origin: actionOrigin.VIEWPORT, ...data });
-              asyncChange(editor, newChange =>
-                editLink(newChange, widgetAPI.dialogs.createHyperlink, logViewportAction)
-              );
+
+              editLink(editor, widgetAPI.dialogs.createHyperlink, logViewportAction);
             }
           }}
         />
       );
     }
+    return next();
   },
-  onKeyDown: (event, change, editor) => {
+  onKeyDown: (event, editor, next) => {
     const hotkey = ['mod+k'];
 
-    if (isHotkey(hotkey, event) && hasOnlyHyperlinkInlines(change.value)) {
+    if (isHotkey(hotkey, event) && hasOnlyHyperlinkInlines(editor.value)) {
       const logShortcutAction = (name, data) =>
         logAction(name, { origin: actionOrigin.SHORTCUT, ...data });
-      const changeFn = mayEditLink(change.value) ? editLink : toggleLink;
-      asyncChange(editor, newChange =>
-        changeFn(newChange, widgetAPI.dialogs.createHyperlink, logShortcutAction)
-      );
+
+      if (mayEditLink(editor.value)) {
+        editLink(editor, widgetAPI.dialogs.createHyperlink, logShortcutAction);
+      } else {
+        toggleLink(editor, widgetAPI.dialogs.createHyperlink, logShortcutAction);
+      }
+      return;
     }
+
+    return next();
   },
-  validateNode: node => {
+  normalizeNode: (node, editor, next) => {
     if (isHyperlink(node.type) && node.getInlines().size > 0) {
-      return change => {
+      return () => {
         node
           .getInlines()
-          .forEach(inlineNode => change.unwrapInlineByKey(inlineNode.key, node.type));
+          .forEach(inlineNode => editor.unwrapInlineByKey(inlineNode.key, node.type));
       };
     }
+    next();
   }
 });
 

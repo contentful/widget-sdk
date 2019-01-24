@@ -1,5 +1,4 @@
 import { fromPairs } from 'lodash';
-import { Schema } from 'slate';
 import {
   BLOCKS,
   INLINES,
@@ -12,7 +11,7 @@ const mapVoidTypes = nodeTypes => {
   return fromPairs(nodeTypes.map(nodeType => [nodeType, { isVoid: true }]));
 };
 
-export default Schema.fromJSON({
+export default {
   document: {
     nodes: [
       {
@@ -92,19 +91,18 @@ export default Schema.fromJSON({
       ]
     },
     ...mapVoidTypes(VOID_BLOCKS),
-    // the schema for the lists and list-items is defined in the slate-edit-list plugin
+    // the schema for the lists and list-items
+    // is defined in the slate-edit-list plugin
     [BLOCKS.QUOTE]: {
       nodes: [
         {
-          types: CONTAINERS[BLOCKS.QUOTE]
+          match: [CONTAINERS[BLOCKS.QUOTE].map(type => ({ type }))],
+          min: 1
         }
       ],
-      normalize: (change, reason, context) => {
-        switch (reason) {
-          case 'child_type_invalid': {
-            change.unwrapBlockByKey(context.node.key, BLOCKS.QUOTE);
-            return;
-          }
+      normalize: (editor, error) => {
+        if (error.code === 'child_type_invalid') {
+          return editor.unwrapBlockByKey(error.node.key, BLOCKS.QUOTE);
         }
       }
     }
@@ -135,4 +133,4 @@ export default Schema.fromJSON({
       isVoid: true
     }
   }
-});
+};

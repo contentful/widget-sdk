@@ -6,7 +6,7 @@ import { haveTextInSomeBlocks } from '../shared/UtilHave.es6';
 
 export const HrPlugin = () => {
   return {
-    renderNode: props => {
+    renderNode: (props, _editor, next) => {
       if (props.node.type === BLOCKS.HR) {
         return (
           <hr
@@ -15,6 +15,7 @@ export const HrPlugin = () => {
           />
         );
       }
+      return next();
     }
   };
 };
@@ -33,7 +34,6 @@ export default blockSelectDecorator({
     const hr = {
       type,
       object: 'block',
-      isVoid: true
     };
 
     if (change.value.blocks.size === 0 || haveTextInSomeBlocks(change)) {

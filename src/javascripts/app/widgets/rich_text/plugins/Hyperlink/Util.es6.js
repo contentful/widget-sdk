@@ -62,7 +62,7 @@ async function insertLink(change, createHyperlinkDialog, logAction) {
       if (change.value.blocks.last().isVoid) {
         change.insertBlock(BLOCKS.PARAGRAPH);
       }
-      change.insertText(text).extend(0 - text.length);
+      change.insertText(text).moveFocusForward(0 - text.length);
     }
     const data = target ? { target } : { uri };
     change.call(wrapLink, linkType, data);

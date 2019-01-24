@@ -5,17 +5,21 @@ import { actionOrigin } from '../shared/PluginApi.es6';
 
 export default function({ type, tagName, hotkey, logAction }) {
   return {
-    renderMark: props => {
+    renderMark: (props, _editor, next) => {
       if (props.mark.type === type) {
         return markDecorator(tagName, { className: `cf-slate-mark-${type}` })(props);
       }
+      return next();
     },
-    onKeyDown(event, change) {
+    onKeyDown(event, editor, next) {
       if (isHotkey(hotkey, event)) {
-        change.toggleMark(type);
-        const action = haveMarks(change, type) ? 'mark' : 'unmark';
+        editor.toggleMark(type);
+
+        const action = haveMarks(editor, type) ? 'mark' : 'unmark';
         logAction(action, { origin: actionOrigin.SHORTCUT, markType: type });
+        return;
       }
+      return next();
     }
   };
 }
