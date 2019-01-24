@@ -391,7 +391,7 @@ export function SuccessMessage({ successfulOrgInvitations }) {
 
   return (
     <React.Fragment>
-      <div className=".note-box--success">
+      <div className="note-box--success">
         <h3>
           Yay! {successfulOrgInvitations.length} {userString} been invited to your organization
         </h3>
