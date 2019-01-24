@@ -39,6 +39,11 @@ export const ASSET = {
   }
 };
 
+/**
+ * These tests rely on Content Editable to interact with the RichTextEditor
+ * which is not supported in jsdom yet (see: https://github.com/jsdom/jsdom/issues/1670).
+ * Therefore these tests cannot be written in Jest.
+ */
 describe('Toolbar', () => {
   beforeEach(async function() {
     module('contentful/test');
