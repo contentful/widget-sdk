@@ -73,8 +73,6 @@ describe('RichTextEditor', () => {
 
   it('renders toolbar', function() {
     // TODO: Refactor this mess
-    this.widgetApi.fieldProperties.isDisabled$.set(false);
-    this.widgetApi.fieldProperties.isDisabled$.set(true);
     this.wrapper.update();
 
     const el = this.wrapper.find('[data-test-id="toolbar"]').first();

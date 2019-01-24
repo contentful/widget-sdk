@@ -99,6 +99,10 @@ describe('Toolbar', () => {
 
     this.mount = (props = this.props) => {
       this.wrapper = Enzyme.mount(<RichTextEditor {...props} />, { attachTo: this.sandbox });
+
+      // HACK: since Enzyme doesn't rerender component after ref resolution
+      // (see 'this.editor' in RichTextField). We manually reset isDisabled property
+      // to force update the component
       fieldApi.fieldProperties.isDisabled$.set(true);
       fieldApi.fieldProperties.isDisabled$.set(false);
       this.wrapper.update();
@@ -575,7 +579,9 @@ describe('Toolbar', () => {
         await flushPromises();
         await editor.typeText('a');
 
-        expect(this.field.getValue()).toEqual(document(block(heading, {}, text('a')), EMPTY_PARAGRAPH));
+        expect(this.field.getValue()).toEqual(
+          document(block(heading, {}, text('a')), EMPTY_PARAGRAPH)
+        );
       });
     });
 
@@ -592,7 +598,9 @@ describe('Toolbar', () => {
       it(`inserts ${heading} with ${shortcut}`, async function({ editor }) {
         await editor.pressKeys(shortcut).typeText('a');
 
-        expect(this.field.getValue()).toEqual(document(block(heading, {}, text('a')), EMPTY_PARAGRAPH));
+        expect(this.field.getValue()).toEqual(
+          document(block(heading, {}, text('a')), EMPTY_PARAGRAPH)
+        );
       });
     });
   });
