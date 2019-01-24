@@ -47,13 +47,15 @@ export default class RichTextEditor extends React.Component {
     value: PropTypes.object.isRequired,
     isDisabled: PropTypes.bool,
     onChange: PropTypes.func,
-    onAction: PropTypes.func
+    onAction: PropTypes.func,
+    showToolbar: PropTypes.bool
   };
 
   static defaultProps = {
     value: emptyDoc,
     onChange: noop,
-    onAction: noop
+    onAction: noop,
+    showToolbar: true
   };
 
   state = {
@@ -119,18 +121,20 @@ export default class RichTextEditor extends React.Component {
 
     return (
       <div className={classNames}>
-        <StickyToolbarWrapper isDisabled={this.props.isDisabled}>
-          <Toolbar
-            change={this.state.value.change()}
-            onChange={this.onChange}
-            isDisabled={this.props.isDisabled}
-            permissions={this.props.widgetAPI.permissions}
-            richTextAPI={newPluginAPI({
-              widgetAPI: this.props.widgetAPI,
-              onAction: this.props.onAction
-            })}
-          />
-        </StickyToolbarWrapper>
+        {this.props.showToolbar && (
+          <StickyToolbarWrapper isDisabled={this.props.isDisabled}>
+            <Toolbar
+              change={this.state.value.change()}
+              onChange={this.onChange}
+              isDisabled={this.props.isDisabled}
+              permissions={this.props.widgetAPI.permissions}
+              richTextAPI={newPluginAPI({
+                widgetAPI: this.props.widgetAPI,
+                onAction: this.props.onAction
+              })}
+            />
+          </StickyToolbarWrapper>
+        )}
         <Editor
           data-test-id="editor"
           value={this.state.value}
