@@ -72,7 +72,6 @@ describe('RichTextEditor', () => {
   });
 
   it('renders toolbar', function() {
-    // TODO: Refactor this mess
     this.wrapper.update();
 
     const el = this.wrapper.find('[data-test-id="toolbar"]').first();
