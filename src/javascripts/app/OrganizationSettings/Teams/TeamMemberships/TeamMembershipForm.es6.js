@@ -54,7 +54,6 @@ class TeamMembershipForm extends React.Component {
             </Option>
             {this.props.orgMemberships.map(orgMembership => {
               const user = orgMembership.sys.user;
-              // TODO: handle pending invitations
               return (
                 <Option key={orgMembership.sys.id} value={orgMembership.sys.id}>
                   {`
