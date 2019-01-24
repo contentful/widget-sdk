@@ -114,7 +114,8 @@ function sidebar() {
       {
         ngClass: '{"is-loading": isInvitingUsersToSpace}',
         ngClick: 'openSpaceInvitationDialog()',
-        ngDisabled: '!canModifyUsers()'
+        ngDisabled: '!canModifyUsers()',
+        dataTestId: 'add-users-to-space'
       },
       [h('cf-icon.btn-icon.inverted', { name: 'plus' }), 'Add users to space']
     )
