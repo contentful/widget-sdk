@@ -1,51 +1,73 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import {
   Table,
   TableHead,
   TableCell,
   TableBody,
   TableRow,
-  Button
+  Button,
+  Tooltip
 } from '@contentful/forma-36-react-components';
-import getCurrentTeamMemberships from 'redux/selectors/getCurrentTeamMemberships.es6';
+import Placeholder from 'app/common/Placeholder.es6';
+import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
+import { getCurrentTeam, getTeams } from 'redux/selectors/teams.es6';
 import { TeamMembership as TeamMembershiPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import TeamMembershipForm from './TeamMembershipForm.es6';
 import TeamMembershipRow from './TeamMembershipRow.es6';
+import TeamMembershipRowPlaceholder from './TeamMembershipRowPlaceholder.es6';
 
-export default connect(state => ({
-  memberships: getCurrentTeamMemberships(state)
-}))(
-  class TeamMemberships extends React.Component {
-    static propTypes = {
-      memberships: PropTypes.arrayOf(TeamMembershiPropType)
-    };
+const AddTeamMemberButton = ({ onClick }) => (
+  <Button size="small" buttonType="primary" disabled={!onClick} onClick={onClick}>
+    Add a team member
+  </Button>
+);
 
-    state = {
-      showingForm: false
-    };
+AddTeamMemberButton.propTypes = {
+  onClick: PropTypes.func
+};
 
-    toggleForm = () => {
-      this.setState({ showingForm: !this.state.showingForm });
-    };
+const isPlaceholder = ({ sys: { id } }) => id === 'placeholder';
 
-    render() {
-      const { memberships } = this.props;
-      const { showingForm } = this.state;
-      return memberships !== undefined ? (
-        <React.Fragment>
-          {/* TODO: move these styles to a CSS class  */}
-          <header
-            style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <h3 style={{ marginBottom: 30 }}>Members</h3>
-            {!showingForm && (
-              <Button size="small" buttonType="primary" onClick={this.toggleForm}>
-                Add a team member
-              </Button>
-            )}
-          </header>
+class TeamMemberships extends React.Component {
+  static propTypes = {
+    readOnlyPermission: PropTypes.bool,
 
+    memberships: PropTypes.arrayOf(TeamMembershiPropType),
+    teamName: PropTypes.string
+  };
+
+  state = {
+    showingForm: false
+  };
+
+  toggleForm = () => {
+    this.setState({ showingForm: !this.state.showingForm });
+  };
+
+  render() {
+    const { memberships, teamName, readOnlyPermission } = this.props;
+    const { showingForm } = this.state;
+    const empty = memberships.length === 0 && !showingForm;
+    return (
+      <React.Fragment>
+        {/* TODO: move these styles to a CSS class  */}
+        <header
+          style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+          <h3 style={{ marginBottom: 30 }}>Team Members</h3>
+          {!showingForm &&
+            !empty &&
+            (readOnlyPermission ? (
+              <Tooltip place="left" content="You don't have permission to create or change teams">
+                <AddTeamMemberButton disabled />
+              </Tooltip>
+            ) : (
+              <AddTeamMemberButton onClick={this.toggleForm} />
+            ))}
+        </header>
+        {!empty && (
           <Table>
             <TableHead>
               <TableRow>
@@ -57,13 +79,39 @@ export default connect(state => ({
             </TableHead>
             <TableBody>
               {showingForm && <TeamMembershipForm close={this.toggleForm} />}
-              {memberships.map(membership => (
-                <TeamMembershipRow membership={membership} key={membership.sys.id} />
-              ))}
+              {memberships.map(membership =>
+                isPlaceholder(membership) ? (
+                  <TeamMembershipRowPlaceholder key={membership.sys.id} />
+                ) : (
+                  <TeamMembershipRow
+                    membership={membership}
+                    key={membership.sys.id}
+                    readOnlyPermission={readOnlyPermission}
+                  />
+                )
+              )}
             </TableBody>
           </Table>
-        </React.Fragment>
-      ) : null;
-    }
+        )}
+        {empty && !readOnlyPermission && (
+          <Placeholder
+            title={`Team ${teamName} has no members 🐚`}
+            text="They’re not gonna magically appear."
+            button={<AddTeamMemberButton onClick={this.toggleForm} />}
+          />
+        )}
+        {empty && readOnlyPermission && (
+          <Placeholder
+            title={`Team ${teamName} has no members 🐚`}
+            text="You don't have permission to add members"
+          />
+        )}
+      </React.Fragment>
+    );
   }
-);
+}
+
+export default connect(state => ({
+  memberships: getCurrentTeamMembershipList(state),
+  teamName: get(getTeams(state), [getCurrentTeam(state), 'name'], undefined)
+}))(TeamMemberships);

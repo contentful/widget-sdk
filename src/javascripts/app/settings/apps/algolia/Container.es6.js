@@ -320,7 +320,8 @@ export default class AlgoliaAppPage extends Component {
           <div className="algolia-app__config">
             <div>
               <Note>
-                Let us know how we can improve the Algolia app. <AppsFeedback about="Algolia app" />
+                Let us know how we can improve the Algolia app.{' '}
+                <AppsFeedback target="extensibility" about="Algolia app" />
               </Note>
             </div>
 

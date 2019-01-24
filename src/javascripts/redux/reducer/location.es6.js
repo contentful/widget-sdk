@@ -1,5 +1,6 @@
 import {
   set,
+  get,
   update,
   map,
   keyBy,
@@ -11,8 +12,9 @@ import {
   omitAll
 } from 'lodash/fp';
 import qs from 'qs';
-import { getPath } from '../selectors/location.es6';
+import getOrgId from '../selectors/getOrgId.es6';
 import ROUTES from '../routes.es6';
+import { TEAMS } from '../datasets.es6';
 
 const viewToObject = flow(
   map('filter'),
@@ -27,13 +29,15 @@ const updateLocationQuery = updater =>
     flow(
       query => query.slice(1),
       qs.parse,
+      // will give the query as object to the updater function and expected and updated object
       updater,
       qs.stringify,
       query => (query === '' ? '' : `?${query}`)
     )
   );
 
-export default (state = null, { type, payload }, globalState) => {
+// Action structure follows these guidelines: https://github.com/redux-utilities/flux-standard-actions
+export default (state = null, { type, payload, meta }, globalState) => {
   switch (type) {
     case 'LOCATION_CHANGED':
       return payload.location;
@@ -46,12 +50,12 @@ export default (state = null, { type, payload }, globalState) => {
     case 'UPDATE_SEARCH_TERM': {
       return updateLocationQuery(set('searchTerm', payload.newSearchTerm))(state);
     }
-    case 'NAVIGATION_BACK': {
-      const match = ROUTES.organization.children.teams.children.team.test(getPath(globalState));
-      if (match !== null) {
+    // remove item from the application state while the server request is still pending
+    case 'REMOVE_FROM_DATASET': {
+      if (get('pending', meta) && get('dataset', payload) === TEAMS) {
         return set(
           'pathname',
-          ROUTES.organization.children.teams.build({ orgId: match.orgId }),
+          ROUTES.organization.children.teams.build({ orgId: getOrgId(globalState) }),
           state
         );
       }

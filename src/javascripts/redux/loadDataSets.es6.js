@@ -4,27 +4,24 @@ import {
   getAllMemberships
 } from '../access_control/OrganizationMembershipRepository.es6';
 import { createOrganizationEndpoint } from '../data/EndpointFactory.es6';
-import createTeamService from '../app/OrganizationSettings/Teams/TeamService.es6';
-import addCurrentTeamToMembership from 'redux/utils/addCurrentTeamToMembership.es6';
+import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
+import createTeamMembershipService from 'app/OrganizationSettings/Teams/TeamMemberships/TeamMembershipService.es6';
 
-import { USERS, TEAMS, ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS } from './dataSets.es6';
+import { USERS, TEAMS, ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS } from './datasets.es6';
 import getOrgId from './selectors/getOrgId.es6';
-import { getCurrentTeam } from './selectors/teams.es6';
 
 const loaders = state => {
   const orgId = getOrgId(state);
   return {
     [USERS]: () => getAllUsers(createOrganizationEndpoint(orgId)),
-    [TEAMS]: async () => {
-      const service = createTeamService(orgId);
-      return (await service.getAll()).items;
+    [TEAMS]: () => {
+      const service = createTeamService(state);
+      return service.getAll();
     },
     [ORG_MEMBERSHIPS]: () => getAllMemberships(createOrganizationEndpoint(orgId)),
-    [TEAM_MEMBERSHIPS]: async () => {
-      const service = createTeamService(orgId);
-      const teamId = getCurrentTeam(state);
-      const memberships = (await service.getTeamMemberships(teamId)).items;
-      return memberships.map(membership => addCurrentTeamToMembership(state, membership));
+    [TEAM_MEMBERSHIPS]: () => {
+      const service = createTeamMembershipService(state);
+      return service.getAll();
     }
   };
 };

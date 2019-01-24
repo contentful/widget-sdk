@@ -1,6 +1,6 @@
-import { get } from 'lodash';
-import getDatasets from './getDatasets.es6';
-import { ORG_MEMBERSHIPS } from 'redux/dataSets.es6';
+import { get, keyBy } from 'lodash';
+import { getDatasets } from './datasets.es6';
+import { ORG_MEMBERSHIPS } from 'redux/datasets.es6';
 
 export default state => {
   const datasets = getDatasets(state);
@@ -14,5 +14,5 @@ export default state => {
     membership => !!get(membership, 'sys.user.firstName')
   );
 
-  return withoutInvitations;
+  return keyBy(withoutInvitations, 'sys.id');
 };

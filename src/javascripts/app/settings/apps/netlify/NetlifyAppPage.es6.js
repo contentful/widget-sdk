@@ -245,7 +245,8 @@ export default class NetlifyAppPage extends Component {
     return (
       <Workbench.Content centered>
         <Note>
-          Let us know how we can improve the Netlify app. <AppsFeedback about="Netlify app" />
+          Let us know how we can improve the Netlify app.{' '}
+          <AppsFeedback target="extensibility" about="Netlify app" />
         </Note>
 
         <div className="netlify-app__section">

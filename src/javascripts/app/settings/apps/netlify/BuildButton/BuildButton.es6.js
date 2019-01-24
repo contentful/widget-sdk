@@ -107,7 +107,7 @@ export default class BuildButton extends Component {
       <div className="netlify-app__build-button">
         <div className="netlify-app__build-button__alpha">
           <span className="netlify-app__build-button__alpha-label">Alpha</span>
-          <AppsFeedback about="Netlify Build Button" />
+          <AppsFeedback target="extensibility" about="Netlify Build Button" />
         </div>
         <Button disabled={!ready || busy} loading={busy} isFullWidth onClick={this.build}>
           {busy && status ? status : 'Build'}

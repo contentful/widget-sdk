@@ -10,60 +10,66 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  Modal
+  Tooltip
 } from '@contentful/forma-36-react-components';
-import { getTeamListWithOptimistic } from 'redux/selectors/teams.es6';
+import Placeholder from 'app/common/Placeholder.es6';
+import { getTeamListWithOptimistic, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import Workbench from 'app/common/Workbench.es6';
-import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
-import TeamForm from './TeamForm.es6';
+import TeamDialog from './TeamDialog.es6';
 import TeamListRow from './TeamListRow.es6';
+import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
 
-export default connect(
-  state => ({
-    teams: getTeamListWithOptimistic(state)
-  }),
-  dispatch => ({
-    removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } }),
-    submitNewTeam: team => dispatch({ type: 'CREATE_NEW_TEAM', payload: { team } })
-  })
-)(
-  class TeamList extends React.Component {
-    static propTypes = {
-      teams: PropTypes.arrayOf(TeamPropType).isRequired,
-      submitNewTeam: PropTypes.func.isRequired,
-      onReady: PropTypes.func.isRequired
-    };
+class TeamList extends React.Component {
+  static propTypes = {
+    teams: PropTypes.arrayOf(TeamPropType).isRequired,
+    submitNewTeam: PropTypes.func.isRequired,
+    readOnlyPermission: PropTypes.bool.isRequired
+  };
 
-    componentDidMount() {
-      this.props.onReady();
-    }
+  state = {
+    showTeamDialog: false
+  };
 
-    addTeam = () =>
-      ModalLauncher.open(({ onClose, isShown }) => (
-        <Modal isShown={isShown} onClose={onClose}>
-          {() => <TeamForm onClose={onClose} onCreateConfirm={this.props.submitNewTeam} />}
-        </Modal>
-      ));
+  render() {
+    const { teams, readOnlyPermission } = this.props;
+    const { showTeamDialog } = this.state;
 
-    render() {
-      const { teams } = this.props;
-
-      // TODO: make this route org admin only
-      return (
-        <Workbench>
-          <Workbench.Header>
-            <Workbench.Header.Left>
-              <Workbench.Title>Teams</Workbench.Title>
-            </Workbench.Header.Left>
-            <Workbench.Header.Actions>
-              {`${pluralize('teams', teams.length, true)} in your organization`}
-              <Button onClick={this.addTeam}>New team</Button>
-            </Workbench.Header.Actions>
-          </Workbench.Header>
-          <Workbench.Content>
-            <section style={{ padding: '1em 2em 2em' }}>
-              <Table data-test-id="organization-teams-page">
+    return (
+      <Workbench>
+        <Workbench.Header>
+          <Workbench.Header.Left>
+            <Workbench.Title>Teams</Workbench.Title>
+          </Workbench.Header.Left>
+          <Workbench.Header.Actions>
+            <span data-test-id="team-count">{`${pluralize(
+              'teams',
+              teams.length,
+              true
+            )} in your organization`}</span>
+            {readOnlyPermission ? (
+              <Tooltip
+                testId="read-only-tooltip"
+                place="left"
+                content="You don't have permission to create or change teams">
+                <Button disabled testId="new-team-button">
+                  New team
+                </Button>
+              </Tooltip>
+            ) : (
+              <Button
+                testId="new-team-button"
+                onClick={() => this.setState({ showTeamDialog: true })}>
+                New team
+              </Button>
+            )}
+          </Workbench.Header.Actions>
+        </Workbench.Header>
+        <Workbench.Content>
+          <section style={{ padding: '1em 2em 2em' }}>
+            <ExperimentalFeatureNote />
+            {teams.length > 0 && (
+              <Table data-test-id="teams-table">
                 <TableHead>
                   <TableRow data-test-id="team-details-row">
                     <TableCell width="300" data-test-id="team-name">
@@ -71,18 +77,60 @@ export default connect(
                     </TableCell>
                     <TableCell data-test-id="team-description">Description</TableCell>
                     <TableCell />
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {teams.map(team => (
-                    <TeamListRow team={team} key={team.sys.id} />
-                  ))}
+                  {teams.map((team, index) => {
+                    const teamId = team.sys.id;
+                    return (
+                      <TeamListRow team={team} key={teamId === 'placeholder' ? index : teamId} />
+                    );
+                  })}
                 </TableBody>
               </Table>
-            </section>
-          </Workbench.Content>
-        </Workbench>
-      );
-    }
+            )}
+            {teams.length === 0 && !readOnlyPermission && (
+              <Placeholder
+                testId="no-teams-placeholder"
+                title="Increased user visibility with teams"
+                text="Everyone in a team can see other members of that team."
+                button={
+                  <Button
+                    testId="new-team-button"
+                    size="small"
+                    buttonType="primary"
+                    onClick={() => this.setState({ showTeamDialog: true })}>
+                    New team
+                  </Button>
+                }
+              />
+            )}
+            {teams.length === 0 && readOnlyPermission && (
+              <Placeholder
+                testId="no-teams-placeholder"
+                title="Increased user visibility with teams"
+                text="There are no teams and you don't have permission to create new teams"
+              />
+            )}
+          </section>
+          <TeamDialog
+            testId="create-team-dialog"
+            onClose={() => this.setState({ showTeamDialog: false })}
+            isShown={showTeamDialog}
+          />
+        </Workbench.Content>
+      </Workbench>
+    );
   }
-);
+}
+
+export default connect(
+  state => ({
+    teams: getTeamListWithOptimistic(state),
+    readOnlyPermission: hasReadOnlyPermission(state)
+  }),
+  dispatch => ({
+    submitNewTeam: team => dispatch({ type: 'CREATE_NEW_TEAM', payload: { team } })
+  })
+)(TeamList);

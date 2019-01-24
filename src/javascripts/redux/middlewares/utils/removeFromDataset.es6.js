@@ -1,7 +1,6 @@
 import { ModalConfirm, Notification } from '@contentful/forma-36-react-components';
 import React from 'react';
-import getOrgId from 'redux/selectors/getOrgId.es6';
-import getDatasets from 'redux/selectors/getDatasets.es6';
+import { getDatasets } from 'redux/selectors/datasets.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 export default async function(
@@ -9,7 +8,6 @@ export default async function(
   next,
   action,
   createService,
-  sendRemoveRequest,
   id,
   dataset,
   confirmationTitle,
@@ -17,12 +15,15 @@ export default async function(
   successMessage,
   errorMessage
 ) {
-  // call reducer in case it optimistically removes
-  next(action);
   const state = getState();
-  const service = createService(getOrgId(state));
+  const service = createService(state);
+
+  // get item to be deleted for notifications messages
   const datasets = getDatasets(state);
   const item = datasets[dataset][id];
+  // call reducer afterwards, in case it optimistically removes the item
+  next(action);
+
   const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
     <ModalConfirm
       title={confirmationTitle(item)}
@@ -39,16 +40,14 @@ export default async function(
     return;
   }
 
-  dispatch({ type: 'REMOVE_FROM_DATASET_CONFIRMED', payload: { id, dataset } });
-
+  const type = 'REMOVE_FROM_DATASET';
   try {
-    await sendRemoveRequest(service, item);
+    dispatch({ type, payload: { id, dataset }, meta: { pending: true } });
+    await service.remove(id);
+    dispatch({ type, payload: { id, dataset } });
     Notification.success(successMessage(item));
   } catch (e) {
+    dispatch({ type, payload: e, error: true, meta: { id, dataset } });
     Notification.error(errorMessage(item));
-    dispatch({
-      type: 'ADD_TO_DATASET',
-      payload: { item, dataset }
-    });
   }
 }

@@ -1,7 +1,7 @@
 import { uniq, flow, flatMap } from 'lodash/fp';
 import Parser from 'path-parser';
 
-import { TEAMS, USERS, ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS } from './dataSets.es6';
+import { TEAMS, USERS, ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS } from './datasets.es6';
 
 const ROUTES = {
   organization: {
@@ -9,7 +9,7 @@ const ROUTES = {
     children: {
       teams: {
         path: '/teams',
-        requiredDataSets: [TEAMS],
+        requiredDataSets: [TEAMS, TEAM_MEMBERSHIPS],
         children: {
           team: {
             path: '/:teamId',
@@ -18,6 +18,9 @@ const ROUTES = {
         }
       }
     }
+  },
+  space: {
+    path: '/spaces/:spaceId'
   }
 };
 
@@ -32,7 +35,7 @@ function addParser(route, parentPath) {
   }
 }
 
-Object.values(ROUTES).forEach(addParser);
+Object.values(ROUTES).forEach(route => addParser(route));
 
 export function getRequiredDataSets(path, routes = ROUTES) {
   if (!path) {
