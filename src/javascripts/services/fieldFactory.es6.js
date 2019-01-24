@@ -80,7 +80,8 @@ export const groups = [
     label: 'Rich Text',
     isBeta: true,
     description: 'Text formatting with references and media',
-    types: ['RichText']
+    types: ['RichText'],
+    modernOnly: true
   },
   {
     name: 'text',
