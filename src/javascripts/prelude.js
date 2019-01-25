@@ -214,12 +214,33 @@ angular
 
   .config([
     '$httpProvider',
-    $httpProvider => {
+    'environment',
+    ($httpProvider, environment) => {
       // IE11 caches AJAX requests by default :facepalm: if we don’t set
       // these headers.
       // See: http://viralpatel.net/blogs/ajax-cache-problem-in-ie/
       $httpProvider.defaults.headers.common['Cache-Control'] = 'no-cache';
       $httpProvider.defaults.headers.common['If-Modified-Since'] = '0';
+
+      // Add header to denote UI traffic, so that information can be determined
+      // in services like Librato
+      //
+      // See [CEP-0056] SDK User Agent Headers
+      // https://contentful.atlassian.net/wiki/spaces/ENG/pages/122514052/CEP-0056+SDK+User+Agent+Headers
+      const { gitRevision, settings } = environment;
+      const headerParts = ['app contentful.web-app', 'platform browser'];
+
+      // Add active git revision to headers
+      if (gitRevision) {
+        headerParts.push(`sha ${gitRevision}`);
+      }
+
+      // Add environment, so that local dev versus direct traffic can be differentiated
+      if (settings.environment !== 'production') {
+        headerParts.push(`env ${settings.environment}`);
+      }
+
+      $httpProvider.defaults.headers.common['X-Contentful-User-Agent'] = headerParts.join('; ');
     }
   ]);
 
