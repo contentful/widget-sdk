@@ -85,14 +85,13 @@ export default class SSOSetup extends React.Component {
         <Workbench.Content>
           <div className="sso-setup__main">
             <div>
-              <Heading
-                element="h1"
-                extraClassNames="f36-margin-bottom--l f36-margin-top--2xl f36-font-size--2xl">
+              <Heading element="h1" extraClassNames="f36-margin-bottom--m f36-margin-top--2xl">
                 Set up Single Sign-On (SSO) SAML 2.0
               </Heading>
-              <Paragraph extraClassNames="f36-font-size--l f36-line-height--default f36-margin-bottom--2xl">
-                Set up SSO for your organization in Contentful in a few steps.{' '}
-                <TextLink href="https://www.contentful.com/faq/sso/">View FAQs</TextLink>{' '}
+              <Paragraph extraClassNames="f36-line-height--default f36-margin-bottom--2xl">
+                Set up SSO for your organization in Contentful in a few steps.{'&nbsp;&nbsp;'}
+                <TextLink href="https://www.contentful.com/faq/sso/">Check out the FAQs</TextLink>
+                {'&nbsp;&nbsp;'}
                 <TextLink href="https://www.contentful.com/support/">Talk to support</TextLink>
               </Paragraph>
               {!identityProvider && (

@@ -176,7 +176,7 @@ export default class IDPSetupForm extends React.Component {
             labelText="Audience"
             name="audience"
             id="audience"
-            extraClassNames="f36-margin-bottom--m"
+            extraClassNames="f36-margin-bottom--l"
             textInputProps={{
               withCopyButton: true,
               disabled: true
@@ -187,7 +187,7 @@ export default class IDPSetupForm extends React.Component {
             labelText="ACS (Assertion Consumer Service) URL"
             name="acsUrl"
             id="acsUrl"
-            extraClassNames="f36-margin-bottom--m"
+            extraClassNames="f36-margin-bottom--xl"
             textInputProps={{
               withCopyButton: true,
               disabled: true
@@ -195,7 +195,7 @@ export default class IDPSetupForm extends React.Component {
             value={`https:${authUrl(`/sso/${orgId}/consume`)}`}
           />
 
-          <Subheading extraClassNames="f36-margin-bottom--m">Map user attributes</Subheading>
+          <Subheading extraClassNames="f36-margin-bottom--xs">Map user attributes</Subheading>
           <HelpText extraClassNames="f36-margin-bottom--l">
             Copy and paste these attributes into your SSO provider. They’re not case sensitive.
           </HelpText>
@@ -231,7 +231,7 @@ export default class IDPSetupForm extends React.Component {
               value="email"
             />
           </div>
-          <Note extraClassNames="f36-margin-top--m">
+          <Note extraClassNames="f36-margin-top--l">
             For Microsoft Azure and Microsoft ADFS,{' '}
             <TextLink href="https://www.contentful.com/faq/sso/#what-identity-providers-idp-does-contentful-support">
               read the documentation
@@ -252,7 +252,7 @@ export default class IDPSetupForm extends React.Component {
             id="ssoProvider"
             testId="sso-provider"
             width="medium"
-            extraClassNames="f36-margin-bottom--m"
+            extraClassNames="f36-margin-bottom--l"
             onChange={this.updateValueImmediately('idpName')}>
             <Option value={''}>Select provider</Option>
             {SSO_PROVIDERS.map(name => {
@@ -269,7 +269,7 @@ export default class IDPSetupForm extends React.Component {
               name="otherSsoProvider"
               id="otherSsoProvider"
               labelText="Other provider"
-              extraClassNames="f36-margin-bottom--m"
+              extraClassNames="f36-margin-bottom--l"
               value={this.state.identityProvider.ssoProvider}
               onChange={this.updateValue('otherIdpName')}
               onBlur={this.updateValueImmediately('otherIdpName')}
@@ -283,7 +283,7 @@ export default class IDPSetupForm extends React.Component {
           <TextField
             id="redirect-url"
             name="redirect-url"
-            extraClassNames="f36-margin-bottom--m"
+            extraClassNames="f36-margin-bottom--l"
             onChange={this.updateValue('idpSsoTargetUrl')}
             onBlur={this.updateValueImmediately('idpSsoTargetUrl')}
             value={this.state.identityProvider.idpSsoTargetUrl}
@@ -310,7 +310,7 @@ export default class IDPSetupForm extends React.Component {
         </section>
 
         <section className="f36-margin-top--3xl">
-          <Heading element="h2" extraClassNames="f36-margin-bottom--m">
+          <Heading element="h2" extraClassNames="f36-margin-bottom--xs">
             Sign-in name
           </Heading>
           <HelpText extraClassNames="f36-margin-bottom--l">
@@ -331,7 +331,7 @@ export default class IDPSetupForm extends React.Component {
             validationMessage={this.state.invalidFields.ssoName && 'Enter a valid SSO name'}
           />
 
-          <Note extraClassNames="f36-margin-top--l">
+          <Note extraClassNames="f36-margin-top--3xl">
             To enable SSO in{' '}
             <TextLink href="https://www.contentful.com/faq/sso/#how-does-sso-restricted-mode-work">
               Restricted mode
