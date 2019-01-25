@@ -77,8 +77,8 @@ export default class RichTextEditor extends React.Component {
     })
   );
 
-  onChange = change => {
-    const { value, operations } = change;
+  onChange = editor => {
+    const { value, operations } = editor;
 
     this.setState({
       value,
@@ -125,7 +125,7 @@ export default class RichTextEditor extends React.Component {
         {this.props.showToolbar && (
           <StickyToolbarWrapper isDisabled={this.props.isDisabled}>
             <Toolbar
-              change={this.editor.current || new EmptyEditor({ readOnly: true })}
+              editor={this.editor.current || new EmptyEditor({ readOnly: true })}
               onChange={this.onChange}
               isDisabled={this.props.isDisabled}
               permissions={this.props.widgetAPI.permissions}

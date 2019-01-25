@@ -19,12 +19,12 @@ export default class EntityLinkToolbarIcon extends Component {
   handleClick = async (event, widgetAPI) => {
     event.preventDefault();
     const {
-      change,
+      editor,
       nodeType,
       richTextAPI: { logToolbarAction }
     } = this.props;
-    await selectEntityAndInsert(nodeType, widgetAPI, change, logToolbarAction);
-    this.props.onToggle(change);
+    await selectEntityAndInsert(nodeType, widgetAPI, editor, logToolbarAction);
+    this.props.onToggle(editor);
   };
 
   render() {

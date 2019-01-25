@@ -8,25 +8,25 @@ export default ({ type, title, icon }) => Mark => {
 
     handleToggle = e => {
       const {
-        change,
+        editor,
         onToggle,
         richTextAPI: { logToolbarAction }
       } = this.props;
       e.preventDefault();
-      onToggle(change.toggleMark(type));
-      const action = haveMarks(change, type) ? 'mark' : 'unmark';
+      onToggle(editor.toggleMark(type));
+      const action = haveMarks(editor, type) ? 'mark' : 'unmark';
       logToolbarAction(action, { markType: type });
     };
 
     render() {
-      const { change, disabled } = this.props;
+      const { editor, disabled } = this.props;
       return (
         <Mark
           type={type}
           icon={icon}
           title={title}
           onToggle={this.handleToggle}
-          isActive={haveMarks(change, type)}
+          isActive={haveMarks(editor, type)}
           disabled={disabled}
         />
       );

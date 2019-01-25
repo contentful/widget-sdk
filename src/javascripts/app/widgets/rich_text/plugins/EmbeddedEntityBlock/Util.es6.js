@@ -4,12 +4,12 @@ import { newConfigFromRichTextField } from 'search/EntitySelector/Config.es6';
 
 /**
  * Returns whether given value has a block of the given type.
- * @param {slate.Change} change
+ * @param {slate.Editor} editor
  * @param {string} type
  * @returns {boolean}
  */
-export const hasBlockOfType = (change, type) => {
-  const blocks = change.value.blocks;
+export const hasBlockOfType = (editor, type) => {
+  const blocks = editor.value.blocks;
   return blocks.get(0).type === type;
 };
 
@@ -17,10 +17,10 @@ export const hasBlockOfType = (change, type) => {
  * Invokes entity selector modal and inserts block embed.
  * @param {string} nodeType
  * @param {WidgetAPI} widgetAPI
- * @param {slate.Change} change
+ * @param {slate.Editor} editor
  * @param {function} logAction
  */
-export async function selectEntityAndInsert(nodeType, widgetAPI, change, logAction) {
+export async function selectEntityAndInsert(nodeType, widgetAPI, editor, logAction) {
   logAction('openCreateEmbedDialog', { nodeType });
 
   const baseConfig = await newConfigFromRichTextField(widgetAPI.field, nodeType);
@@ -31,7 +31,7 @@ export async function selectEntityAndInsert(nodeType, widgetAPI, change, logActi
     if (!entity) {
       return;
     }
-    insertBlock(change, nodeType, entity);
+    insertBlock(editor, nodeType, entity);
     logAction('insert', { nodeType });
   } catch (error) {
     if (error) {
@@ -56,12 +56,12 @@ const createNode = (nodeType, entity) => ({
   }
 });
 
-function insertBlock(change, nodeType, entity) {
+function insertBlock(editor, nodeType, entity) {
   const linkedEntityBlock = createNode(nodeType, entity);
-  if (change.value.blocks.size === 0 || haveTextInSomeBlocks(change)) {
-    change.insertBlock(linkedEntityBlock);
+  if (editor.value.blocks.size === 0 || haveTextInSomeBlocks(editor)) {
+    editor.insertBlock(linkedEntityBlock);
   } else {
-    change.setBlocks(linkedEntityBlock);
+    editor.setBlocks(linkedEntityBlock);
   }
-  change.insertBlock(BLOCKS.PARAGRAPH).focus();
+  editor.insertBlock(BLOCKS.PARAGRAPH).focus();
 }

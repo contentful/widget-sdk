@@ -14,7 +14,7 @@ jest.mock('ng/ui/cf/thumbnailHelpers.es6', () => ({}), { virtual: true });
 
 const fakeProps = () => ({
   isDisabled: false,
-  change: new Editor(),
+  editor: new Editor(),
   onChange: jest.fn(),
   richTextAPI: {
     logToolbarAction: jest.fn(),

@@ -1,19 +1,19 @@
 import { BLOCKS } from '@contentful/rich-text-types';
 
-const getParent = change => {
-  const range = change.value.selection;
+const getParent = editor => {
+  const range = editor.value.selection;
 
   if (!range.start.key) {
     return null;
   }
 
-  const startBlock = change.value.document.getClosestBlock(range.start.key);
+  const startBlock = editor.value.document.getClosestBlock(range.start.key);
 
-  return change.value.document.getParent(startBlock.key);
+  return editor.value.document.getParent(startBlock.key);
 };
 
-export const isSelectionInQuote = change => {
-  const ancestor = getParent(change);
+export const isSelectionInQuote = editor => {
+  const ancestor = getParent(editor);
 
   if (!ancestor) {
     return false;
@@ -25,15 +25,15 @@ export const isSelectionInQuote = change => {
 /**
  * Toggles formatting between block quote and a plain paragraph.
  *
- * @param {slate.Change} change
+ * @param {slate.Editor} editor
  * @returns {boolean} New toggle state after the change.
  */
-export const applyChange = change => {
-  const isActive = isSelectionInQuote(change);
+export const applyChange = editor => {
+  const isActive = isSelectionInQuote(editor);
   if (isActive) {
-    change.unwrapBlock(BLOCKS.QUOTE);
+    editor.unwrapBlock(BLOCKS.QUOTE);
   } else {
-    change.setBlocks(BLOCKS.PARAGRAPH).wrapBlock(BLOCKS.QUOTE);
+    editor.setBlocks(BLOCKS.PARAGRAPH).wrapBlock(BLOCKS.QUOTE);
   }
   return !isActive;
 };

@@ -6,17 +6,17 @@ import { TOOLBAR_PLUGIN_PROP_TYPES } from './PluginApi.es6';
 /**
  * Toggles formatting between a given node type and a plain paragraph.
  *
- * @param {slate.Change} change
+ * @param {slate.Editor} editor
  * @param {stirng} type
  * @returns {boolean} New toggle state after the change.
  */
-export const toggleChange = (change, type) => {
-  const isActive = haveBlocks(change, type);
-  change.setBlocks(isActive ? BLOCKS.PARAGRAPH : type);
+export const toggleChange = (editor, type) => {
+  const isActive = haveBlocks(editor, type);
+  editor.setBlocks(isActive ? BLOCKS.PARAGRAPH : type);
   return !isActive;
 };
 
-const isBlockActive = (change, type) => haveBlocks(change, type);
+const isBlockActive = (editor, type) => haveBlocks(editor, type);
 
 export default ({
   type,
@@ -30,20 +30,20 @@ export default ({
 
     handleToggle = e => {
       const {
-        change,
+        editor,
         onToggle,
         richTextAPI: { logToolbarAction }
       } = this.props;
       e.preventDefault();
 
-      const isActive = applyChange(change, type);
-      onToggle(change);
+      const isActive = applyChange(editor, type);
+      onToggle(editor);
       const actionName = isActive ? 'insert' : 'remove';
       logToolbarAction(actionName, { nodeType: type });
     };
 
     render() {
-      const { change, disabled, richTextAPI } = this.props;
+      const { editor, disabled, richTextAPI } = this.props;
 
       return (
         <Block
@@ -51,7 +51,7 @@ export default ({
           icon={icon}
           title={title}
           onToggle={this.handleToggle}
-          isActive={isActive(change, type)}
+          isActive={isActive(editor, type)}
           disabled={disabled}
           richTextAPI={richTextAPI}
         />

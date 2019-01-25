@@ -2,31 +2,31 @@ import * as React from 'react';
 import { TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6';
 import EditList from './EditListWrapper.es6';
 
-const applyChange = (change, type, logAction) => {
+const applyChange = (editor, type, logAction) => {
   const {
     utils,
     changes: { unwrapList, wrapInList }
   } = EditList();
 
-  if (utils.isSelectionInList(change.value)) {
-    if (utils.getCurrentList(change.value).type !== type) {
-      const currentList = utils.getCurrentList(change.value);
-      change.setNodeByKey(currentList.key, type);
+  if (utils.isSelectionInList(editor.value)) {
+    if (utils.getCurrentList(editor.value).type !== type) {
+      const currentList = utils.getCurrentList(editor.value);
+      editor.setNodeByKey(currentList.key, type);
       logAction('insert', { nodeType: type });
     } else {
-      unwrapList(change);
+      unwrapList(editor);
       logAction('remove', { nodeType: type });
     }
   } else {
-    wrapInList(change, type);
+    wrapInList(editor, type);
     logAction('insert', { nodeType: type });
   }
 
-  return change.focus();
+  return editor.focus();
 };
 
-const isActive = (change, type) => {
-  const list = EditList().utils.getCurrentList(change.value);
+const isActive = (editor, type) => {
+  const list = EditList().utils.getCurrentList(editor.value);
 
   if (list) {
     return list.type === type;
@@ -40,24 +40,24 @@ export default ({ type, title, icon }) => Block => {
 
     handleToggle = e => {
       const {
-        change,
+        editor,
         onToggle,
         richTextAPI: { logToolbarAction }
       } = this.props;
       e.preventDefault();
-      applyChange(change, type, logToolbarAction);
-      onToggle(change);
+      applyChange(editor, type, logToolbarAction);
+      onToggle(editor);
     };
 
     render() {
-      const { change } = this.props;
+      const { editor } = this.props;
       return (
         <Block
           type={type}
           icon={icon}
           title={title}
           onToggle={this.handleToggle}
-          isActive={isActive(change, type)}
+          isActive={isActive(editor, type)}
           disabled={this.props.disabled}
         />
       );
