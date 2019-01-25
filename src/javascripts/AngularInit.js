@@ -98,7 +98,6 @@ angular
       ngRequire('app/entity_editor/dataFields.es6');
       ngRequire('app/entity_editor/bulk_editor/cfBulkEntityEditorDirective.es6');
       ngRequire('app/entity_editor/cfEntityFieldDirective.es6');
-      ngRequire('app/entity_editor/cfEntitySidebarDirective.es6');
       ngRequire('app/entity_editor/cfTestEntryEditorDirective.es6');
       ngRequire('app/entity_editor/cfWidgetRendererDirective.es6');
       ngRequire('filters.es6');
@@ -181,7 +180,6 @@ angular
       ngRequire('components/shared/create_new_space/createNewSpaceDirective.es6');
       ngRequire('components/shared/dataSizeScaleController.es6');
       ngRequire('components/shared/endlessContainerDirective.es6');
-      ngRequire('components/shared/entity_info_panel/entityInfoPanelDirective.es6');
       ngRequire('components/shared/knowledge_base_icon/cfKnowledgeBaseDirective.es6');
       ngRequire('components/shared/listViewsController.es6');
       ngRequire('components/shared/persistent_notification/cfPersistentNotificationDirective.es6');

@@ -54,6 +54,7 @@ registerController('ClientController', [
       showAuxPanel: false,
       toggleAuxPanel: function() {
         $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
+        $rootScope.$broadcast('show-aux-panel', $scope.preferences.showAuxPanel);
       },
       showDisabledFields: false
     };

@@ -5,5 +5,7 @@ export default {
   UPDATED_VERSIONS_WIDGET: 'sidebar:updated-versions-widget',
   UPDATED_PUBLICATION_WIDGET: 'sidebar:updated-publication-widget',
 
+  UPDATED_INFO_PANEL: 'sidebar:updated-info-panel',
+
   WIDGET_REGISTERED: 'sidebar:widget-is-registered'
 };

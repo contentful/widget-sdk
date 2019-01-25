@@ -4,5 +4,7 @@ export default {
   TRANSLATION: 'translation-widget',
   INCOMING_LINKS: 'incoming-links-widget',
   PUBLICATION: 'publication-widget',
-  VERSIONS: 'versions-widget'
+  VERSIONS: 'versions-widget',
+
+  INFO_PANEL: 'info-panel'
 };

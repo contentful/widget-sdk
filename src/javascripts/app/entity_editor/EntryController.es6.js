@@ -16,6 +16,7 @@ import installTracking, { trackEntryView } from './Tracking.es6';
 
 import { loadEntry } from 'app/entity_editor/DataLoader.es6';
 import { getModule } from 'NgRegistry.es6';
+import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 
 const $controller = getModule('$controller');
 const $rootScope = getModule('$rootScope');
@@ -227,4 +228,8 @@ export default async function create($scope, entryId) {
   const contentTypeData = entityInfo.contentType;
   const fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
+
+  $scope.entrySidebarProps = createEntrySidebarProps({
+    $scope
+  });
 }

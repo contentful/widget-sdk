@@ -7,6 +7,9 @@ describe('Entry Editor Controller', function() {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
+      $provide.value('app/EntrySidebar/EntitySidebarBridge.es6', () => {
+        return {};
+      });
       $provide.value('app/entity_editor/Tracking.es6', sinon.stub());
       $provide.value('app/entity_editor/Validator.es6', {
         createForEntry: sinon.stub()

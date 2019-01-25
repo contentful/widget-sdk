@@ -9,6 +9,7 @@ import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking from './Tracking.es6';
 import { loadAsset } from 'app/entity_editor/DataLoader.es6';
+import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 
 import { getModule } from 'NgRegistry.es6';
 
@@ -85,5 +86,9 @@ export default async function create($scope, assetId) {
   $controller('FormWidgetsController', {
     $scope,
     controls: editorData.fieldControls.form
+  });
+
+  $scope.entrySidebarProps = createEntrySidebarProps({
+    $scope
   });
 }
