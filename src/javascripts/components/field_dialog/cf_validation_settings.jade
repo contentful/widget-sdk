@@ -80,6 +80,23 @@ include ./validation_settings_mixins
     +validation-errors
     +error-message-input
 
+  //- ng-switch-when-separator is only available in later ng version
+  div(ng-switch-when="prohibitRegexp")
+    input.form-control.validation-controls__re-pattern(
+      type="text" placeholder="foo|bar[baz]" aria-label="Regular Expression pattern"
+      ng-model="validation.settings.pattern" ng-change="setMatchingView()"
+      cf-null-empty-input
+    )
+
+    label
+      span.validation-controls__re-flags-label Flags
+      input.form-control.validation-controls__re-flags(
+        type="text" aria-label="Regular Expression flags"
+        ng-model="validation.settings.flags" ng-change="setMatchingView()")
+
+    +validation-errors
+    +error-message-input
+
 
   cf-validation-values(ng-switch-when="in")
 

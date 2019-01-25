@@ -19,6 +19,7 @@ const validationSettings = {
   range: { min: null, max: null },
   dateRange: { after: null, before: null },
   regexp: { pattern: null, flags: null },
+  prohibitRegexp: { pattern: null, flags: null },
   in: null,
   unique: true,
   linkContentType: null,
@@ -43,6 +44,7 @@ const validationLabels = {
   range: 'Accept only specified number range',
   dateRange: 'Accept only specified date range',
   regexp: 'Match a specific pattern',
+  prohibitRegexp: 'Prohibit a specific pattern',
   unique: 'Unique field',
   in: 'Accept only specified values',
   linkContentType: 'Accept only specified entry type',
@@ -64,6 +66,8 @@ const validationHelpText = {
   range: 'Specify a minimum and/or maximum allowed number for this field',
   dateRange: 'Specify an early and/or latest allowed date for this field',
   regexp: 'Make this field match a pattern: e-mail address, URI, or a custom regular expression',
+  prohibitRegexp:
+    'Make this field invalid when a pattern is matched: custom regular expression (e.g. bad word list)',
   unique:
     "You won't be able to publish an entry if there is an existing entry with identical content",
   in:
@@ -107,6 +111,7 @@ const validationsOrder = [
   'range',
   'dateRange',
   'regexp',
+  'prohibitRegexp',
   'linkContentType',
   'linkMimeType',
   'assetFileSize',
