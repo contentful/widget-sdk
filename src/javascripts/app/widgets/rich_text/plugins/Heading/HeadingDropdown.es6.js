@@ -22,7 +22,7 @@ class HeadingDropdown extends Component {
     disabled: PropTypes.bool,
     onClose: PropTypes.func,
     onToggle: PropTypes.func,
-    currentBlockType: PropTypes.object
+    currentBlockType: PropTypes.string
   };
   getStyleNameForChange = () => {
     return blockTitles[this.props.currentBlockType] || blockTitles[BLOCKS.PARAGRAPH];
