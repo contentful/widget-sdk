@@ -37,3 +37,4 @@ div(
 
     div.cf-flex-grid-column(ng-show="field.isRichTextField")
       <react-component name="components/field_dialog/RichTextOptions.es6" props="{onChange: onRichTextOptionsChange, enabledMarks: richTextOptions.enabledMarks, enabledNodeTypes: richTextOptions.enabledNodeTypes}" />
+  <react-component ng-if="field.isRichTextField" name="components/shared/IE11DeprecationBanner.es6" props="{featureName: '{{fieldTypeLabel}}'}"></react-component>

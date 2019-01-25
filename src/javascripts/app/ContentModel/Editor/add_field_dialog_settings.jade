@@ -55,6 +55,7 @@ header.modal-dialog__header
         | It is generated automatically based on the name
         | and will appear in the API responses
 
+  <react-component ng-if="fieldGroup.modernBrowsersOnly" name="components/shared/IE11DeprecationBanner.es6" props="{featureName: '{{fieldGroup.label}}'}"></react-component>
   .add-field-dialog__settings(ng-switch="fieldGroup.name")
     div(ng-switch-when="text")
       .add-field-dialog__setting-sections

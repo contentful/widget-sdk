@@ -65,13 +65,15 @@ div.entity-editor__field-group(
           | &#32;&ndash; {{locale.name}}
       +field-permission-info
 
+    <react-component ng-if="data.field.type === 'RichText'" name="components/shared/IE11DeprecationBanner.es6" props="{featureName: 'Rich text', ie11Only: true, noteType: 'warning', extraClassNames: 'entity-editor__ie11-support-message f36-margin-bottom--m f36-margin-top--xs'}"></react-component>
+
     div.entity-editor__control-group
       cf-widget-renderer.entity-editor__control(
         ng-class="{ 'x--dir-rtl': methods.shouldDisplayRtl(locale.code) }"
         cf-focus-ot-input="data.hasInitialFocus"
         cf-widget-api)
       react-component(
-        name="app/entity_editor/Collaborators/index.es6" 
+        name="app/entity_editor/Collaborators/index.es6"
         props="{users: fieldLocale.collaborators, extraClassNames: 'entity-editor__field-collaborators'}"
       )
     +field-locale-errors
