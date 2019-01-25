@@ -1,13 +1,7 @@
 import { contentTypes } from './helpers';
+import * as Filters from '../Filters.es6';
 
 describe('app/ContentList/Search/Filters.es6', () => {
-  let Filters;
-  beforeEach(function() {
-    module('contentful/test');
-
-    Filters = this.$inject('app/ContentList/Search/Filters.es6');
-  });
-
   const isApplicableMacro = (message, contentType, queryKey, expected) => {
     it(message, () => {
       expect(Filters.isFieldFilterApplicableToContentType(contentType, queryKey)).toEqual(expected);
@@ -49,15 +43,9 @@ describe('app/ContentList/Search/Filters.es6', () => {
 
           expect(queryKeys).toEqual(expected);
 
-          expect(filters.find(({ type }) => type === 'Location')).toEqual(
-            undefined,
-            'Type Location is not supported'
-          );
+          expect(filters.find(({ type }) => type === 'Location')).toBeUndefined();
 
-          expect(filters.find(({ type }) => type === 'Object')).toEqual(
-            undefined,
-            'Type Object field is not supported'
-          );
+          expect(filters.find(({ type }) => type === 'Object')).toBeUndefined();
         });
       };
 
@@ -128,7 +116,20 @@ describe('app/ContentList/Search/Filters.es6', () => {
           'fields.email',
           'fields.phone',
           'fields.symbol1',
-          'fields.symbol2'
+          'fields.symbol2',
+          'fields.productName',
+          'fields.slug',
+          'fields.productDescription',
+          'fields.sizetypecolor',
+          'fields.image.sys.id',
+          'fields.tags',
+          'fields.categories.sys.id',
+          'fields.price',
+          'fields.brand.sys.id',
+          'fields.quantity',
+          'fields.sku',
+          'fields.website',
+          'fields.createdAt'
         ]
       );
 

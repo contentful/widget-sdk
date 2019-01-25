@@ -1,14 +1,8 @@
 import moment from 'moment';
 import { contentTypes } from './helpers';
+import { buildQuery } from '../QueryBuilder.es6';
 
 describe('app/ContentList/Search/QueryBuilder.es6', () => {
-  let buildQuery;
-  beforeEach(function() {
-    module('contentful/test');
-
-    buildQuery = this.$inject('app/ContentList/Search/QueryBuilder.es6').buildQuery;
-  });
-
   const buildQueryMacro = (message, input, expected) => {
     it(message, () => {
       expect(buildQuery(input)).toEqual(expected);

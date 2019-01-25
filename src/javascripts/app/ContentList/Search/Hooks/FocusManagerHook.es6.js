@@ -1,8 +1,6 @@
 /* global document */
 import { makeCtor } from 'utils/TaggedValues.es6';
 
-// TODO document
-
 export function makeHook(run) {
   return makeCtor(content => {
     return { content, run };
@@ -22,18 +20,6 @@ export const Ref = makeHook((el, prevEl, prevCb, cb) => {
  *
  * A hook that calls the given callback with `true` or `false` when
  * itself or any of its children is focused or unfocused.
- *
- *   h('div', {
- *     hooks: [ TrackFocus((isFocused) => {
- *       if (isFocused) {
- *         console.log('element was focused')
- *       } else {
- *         console.log('element was unfocused')
- *       }
- *     }]
- *   }, [
- *     // focusable children
- *   ])
  *
  * You can make any element focusable by setting the "tabindex"
  * attribute.
@@ -59,6 +45,17 @@ export const TrackFocus = makeHook((el, focusManager, _prev, setHasFocus) => {
     }
   } else if (setHasFocus) {
     return createFocusManager(el, setHasFocus);
+  }
+});
+
+const overflowClassName = 'is-overflown-y';
+export const IsOverflownY = makeHook(el => {
+  if (el) {
+    if (el.scrollHeight > el.clientHeight) {
+      el.classList.add(overflowClassName);
+    } else {
+      el.classList.remove(overflowClassName);
+    }
   }
 });
 

@@ -1,26 +1,18 @@
 /* eslint-disable no-restricted-syntax, react/prop-types, camelcase */
-import * as React from 'react';
-import { omit, clone, get } from 'lodash';
+import React from 'react';
+import { clone, get } from 'lodash';
 import { set } from 'utils/Collections.es6';
 
 /**
+ * @deprecated
  * A React component that runs hooks.
- *
- * Our implementation of `h` translates the following
- *
- *   h(tag, {
- *     hooks: hooks
- *     ...props
- *   }, children)
- *
- * to this React code:
- *
- *   h(Hook, { args: { tag, props, hooks, children })
- *
  * The Hook component is a stateful component that runs hooks that are
  * added or removed from the properties.
+ * This class is a leftover of refactoring from Hyperscript to JSX.
+ * It should be deleted on the next iteration of ContentList/Search refactoring.
+ * Please, don't use it in any new code.
  */
-export class Hook extends React.Component {
+export default class LegacyHook extends React.Component {
   constructor() {
     super();
     this.hooks = {
@@ -54,15 +46,22 @@ export class Hook extends React.Component {
 
   render() {
     const {
-      args: { tag, props, children }
+      args: { tag, ref },
+      children,
+      ...restProps
     } = this.props;
-    const propsWithoutHooks = omit(props, ['hooks']);
-    const oldRef = props.ref;
-    propsWithoutHooks.ref = el => {
-      this.hooks.el = el;
-      oldRef && oldRef(el);
-    };
-    return React.createElement(tag, propsWithoutHooks, ...children);
+
+    return React.createElement(
+      tag,
+      {
+        ...restProps,
+        ref: el => {
+          this.hooks.el = el;
+          ref && ref(el);
+        }
+      },
+      children
+    );
   }
 
   applyHooks() {
