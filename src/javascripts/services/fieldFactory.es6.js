@@ -77,11 +77,11 @@ export const groups = [
   {
     name: 'rich-text',
     icon: 'richtext',
-    label: 'Rich Text',
+    label: 'Rich text',
     isBeta: true,
     description: 'Text formatting with references and media',
     types: ['RichText'],
-    modernOnly: true
+    modernBrowsersOnly: true
   },
   {
     name: 'text',

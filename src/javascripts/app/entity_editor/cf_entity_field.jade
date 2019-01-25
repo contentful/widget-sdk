@@ -65,7 +65,7 @@ div.entity-editor__field-group(
           | &#32;&ndash; {{locale.name}}
       +field-permission-info
 
-    <react-component ng-if="data.field.type === 'RichText'" name="components/shared/IE11DeprecationBanner.es6" props="{featureName: 'Rich Text', ie11Only: true, extraClassNames: 'entity-editor__ie11-support-message f36-margin-bottom--m f36-margin-top--xs'}"></react-component>
+    <react-component ng-if="data.field.type === 'RichText'" name="components/shared/IE11DeprecationBanner.es6" props="{featureName: 'Rich text', ie11Only: true, noteType: 'warning', extraClassNames: 'entity-editor__ie11-support-message f36-margin-bottom--m f36-margin-top--xs'}"></react-component>
 
     div.entity-editor__control-group
       cf-widget-renderer.entity-editor__control(
