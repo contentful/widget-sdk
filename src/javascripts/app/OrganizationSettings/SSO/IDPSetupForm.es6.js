@@ -281,8 +281,8 @@ export default class IDPSetupForm extends React.Component {
 
           <FormLabel htmlFor="redirect-url">Single Sign-On Redirect URL</FormLabel>
           <TextField
-            id="redirect-url"
-            name="redirect-url"
+            id="idpSsoTargetUrl"
+            name="idpSsoTargetUrl"
             extraClassNames="f36-margin-bottom--l"
             onChange={this.updateValue('idpSsoTargetUrl')}
             onBlur={this.updateValueImmediately('idpSsoTargetUrl')}
@@ -293,8 +293,8 @@ export default class IDPSetupForm extends React.Component {
           />
           <TextField
             labelText="X.509 Certificate"
-            id="x509-cert"
-            name="x509-cert"
+            id="idpCert"
+            name="idpCert"
             textarea
             textInputProps={{
               rows: 8
