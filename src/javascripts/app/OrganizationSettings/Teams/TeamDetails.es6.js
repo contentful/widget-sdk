@@ -6,7 +6,7 @@ import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
 import { Button, Tooltip } from '@contentful/forma-36-react-components';
 
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
-import { getTeams, getCurrentTeam } from 'redux/selectors/teams.es6';
+import { getTeams, getCurrentTeam, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import Workbench from 'app/common/Workbench.es6';
 import Placeholder from 'app/common/Placeholder.es6';
@@ -18,14 +18,24 @@ import TeamDialog from './TeamDialog.es6';
 import ROUTES from 'redux/routes.es6';
 
 const EditButton = ({ onClick }) => (
-  <Button size="small" buttonType="muted" disabled={!onClick} onClick={onClick}>
+  <Button
+    testId="edit-team-button"
+    size="small"
+    buttonType="muted"
+    disabled={!onClick}
+    onClick={onClick}>
     Edit team details
   </Button>
 );
 EditButton.propTypes = { onClick: PropTypes.func };
 
 const DeleteButton = ({ onClick }) => (
-  <Button size="small" buttonType="negative" disabled={!onClick} onClick={onClick}>
+  <Button
+    testId="delete-team-button"
+    size="small"
+    buttonType="negative"
+    disabled={!onClick}
+    onClick={onClick}>
     Delete team
   </Button>
 );
@@ -34,7 +44,6 @@ DeleteButton.propTypes = { onClick: PropTypes.func };
 class TeamDetails extends React.Component {
   static propTypes = {
     readOnlyPermission: PropTypes.bool.isRequired,
-
     team: TeamPropType,
     orgId: PropTypes.string.isRequired,
     removeTeam: PropTypes.func.isRequired
@@ -55,7 +64,7 @@ class TeamDetails extends React.Component {
         <Workbench.Header>
           <div className="breadcrumbs-widget">
             <div className="breadcrumbs-container">
-              <a href={pathBack}>
+              <a data-test-id="link-to-list" href={pathBack}>
                 <div data-test-id="teams-back" className="btn btn__back">
                   <Icon name="back" />
                 </div>
@@ -67,17 +76,16 @@ class TeamDetails extends React.Component {
         <Workbench.Content>
           <ExperimentalFeatureNote />
           {team && (
-            <div className="user-details">
+            <div className="user-details" data-test-id="team-details">
               <div className="user-details__sidebar">
                 <section className="user-details__profile-section">
                   <div className="team-card">
-                    <h2 className="team-card__name">{team.name}</h2>
+                    <h2 className="team-card__name" data-test-id="team-card-name">
+                      {team.name}
+                    </h2>
                     {team.description && (
-                      <div className="team-card_description">
+                      <div className="team-card_description" data-test-id="team-card-description">
                         {team.description.split('\n').reduce((acc, cur, idx) => {
-                          if (cur === '') {
-                            return [...acc, <br key={`${idx}-1`} />, <br key={`${idx}-2`} />];
-                          }
                           if (idx === 0) {
                             return [...acc, cur];
                           }
@@ -87,6 +95,7 @@ class TeamDetails extends React.Component {
                     )}
                     {readOnlyPermission ? (
                       <Tooltip
+                        testId="read-only-tooltip"
                         place="right"
                         content="You don't have permission to edit team details">
                         <EditButton />
@@ -99,17 +108,22 @@ class TeamDetails extends React.Component {
                 <section className="user-details__profile-section">
                   <dl className="definition-list">
                     <dt>Created at</dt>
-                    <dd>{moment(team.sys.createdAt).format('MMMM DD, YYYY')}</dd>
+                    <dd data-test-id="creation-date">
+                      {moment(team.sys.createdAt).format('MMMM DD, YYYY')}
+                    </dd>
                     {!readOnlyPermission && (
                       <React.Fragment>
                         <dt>Created by</dt>
-                        <dd>{getUserName(creator)}</dd>
+                        <dd data-test-id="creator-name">{getUserName(creator)}</dd>
                       </React.Fragment>
                     )}
                   </dl>
                 </section>
                 {readOnlyPermission ? (
-                  <Tooltip place="right" content="You don't have permission to delete a team">
+                  <Tooltip
+                    testId="read-only-tooltip"
+                    place="right"
+                    content="You don't have permission to delete a team">
                     <DeleteButton />
                   </Tooltip>
                 ) : (
@@ -123,12 +137,14 @@ class TeamDetails extends React.Component {
           )}
           {!team && (
             <Placeholder
+              testId="not-found-placeholder"
               title="The team you were looking for was not found 🔎"
               text="It might have been deleted or you lost permission to see it"
               button={<Button href={pathBack}>Go to team list</Button>}
             />
           )}
           <TeamDialog
+            testId="edit-team-dialog"
             onClose={() => this.setState({ showTeamDialog: false })}
             isShown={showTeamDialog}
             initialTeam={team}
@@ -142,7 +158,8 @@ class TeamDetails extends React.Component {
 export default connect(
   state => ({
     team: getTeams(state)[getCurrentTeam(state)],
-    orgId: getOrgId(state)
+    orgId: getOrgId(state),
+    readOnlyPermission: hasReadOnlyPermission(state)
   }),
   dispatch => ({
     removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })

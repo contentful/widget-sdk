@@ -1,4 +1,4 @@
-import { get, flow, sortBy, toLower } from 'lodash/fp';
+import { get, flow, sortBy, toLower, defaultTo } from 'lodash/fp';
 import { getPath } from './location.es6';
 import { getDatasets } from './datasets.es6';
 import ROUTES from '../routes.es6';
@@ -8,12 +8,13 @@ import getOrgRole from './getOrgRole.es6';
 
 export const getTeams = flow(
   getDatasets,
-  get(TEAMS)
+  get(TEAMS),
+  defaultTo({})
 );
 
 // Guide about flows: https://contentful.atlassian.net/wiki/spaces/BH/pages/1279721792
 export const getTeamListWithOptimistic = state => {
-  const persistedTeams = get(TEAMS, getDatasets(state)) || [];
+  const persistedTeams = getTeams(state);
   const teamListWithOptimistic = Object.values(persistedTeams).concat(
     get(TEAMS, getOptimistic(state)) || []
   );

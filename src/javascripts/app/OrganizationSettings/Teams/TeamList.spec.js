@@ -5,12 +5,12 @@ import { Provider } from 'react-redux';
 import { Button, IconButton } from '@contentful/forma-36-react-components';
 
 import reducer from 'redux/reducer/index.es6';
+import ROUTES from 'redux/routes.es6';
+import Placeholder from 'app/common/Placeholder.es6';
 import TeamList from './TeamList.es6';
-import ROUTES from '../../../redux/routes.es6';
 import TeamListRow from './TeamListRow.es6';
 import TeamDialog from './TeamDialog.es6';
 import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
-import Placeholder from '../../common/Placeholder.es6';
 
 const renderComponent = actions => {
   const store = createStore(reducer);
