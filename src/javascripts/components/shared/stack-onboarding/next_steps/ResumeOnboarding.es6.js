@@ -33,10 +33,18 @@ const ResumeOnboarding = ({ track }) => {
       </h2>
       <p>You’ll copy the repository for a blog, explore the blog content structure and deploy.</p>
       <div className="home-section__body u-separator--small">
-        <button className="btn-action" onClick={handleResume} type="button">
+        <button
+          className="btn-action"
+          onClick={handleResume}
+          type="button"
+          data-test-id="ms-resume-onboarding">
           Yes, deploy a blog in 3 steps
         </button>
-        <button className="btn-action" onClick={handleCreateNewSpace} type="button">
+        <button
+          className="btn-action"
+          onClick={handleCreateNewSpace}
+          type="button"
+          data-test-id="ms-create-new-space">
           No, create a new space
         </button>
       </div>
