@@ -16,12 +16,21 @@ $ or:
 $ npm run test:once # run only once
 ~~~
 
+Jest and Karma
+----
+
+Simply put: you should be writing any new tests in Jest unless you have a strong reason
+not to, such as if you need to include some Angular wiring that *cannot* be stubbed. The main reason
+we have this setup is for legacy purposes.
+
+Outside of the single case above, there should be no blockers to writing tests in or migrating tests to Jest.
+
 Deprecated Patterns
 -------------------
 
 This is a list of patterns used in old code but deprecated.
 
-* `this.$inject()` for ES6 modules. Use native `import X from 'Y'` instead.
+* `this.$inject()` for ES6 modules. Use an isolated SystemJS instance.
 * Using the `$compile` service to compile directives. Use `this.$compile()`
   instead.
 * Global `sinon`. Use `import sinon from 'helpers/sinon'` instead.
@@ -41,8 +50,7 @@ The test module system is configured in
 
 ### Using modules from `src/javascripts`
 ES6 modules from the application code in `src/javascripts` can also be loaded
-from test files as long all their dependencies are either ES6 modules or
-constant Angular modules. For example
+from test files as long all their dependencies are either ES6 modules. For example
 
 ~~~js
 // test/unit/utils/Kefir.spec.js
@@ -52,40 +60,13 @@ import * as KM from 'test/helpers/mocks/kefir';
 import * as K from 'utils/kefir';
 ~~~
 
-The ES6 module `utils/kefir` imports the `libs/kefir` module, which is registered
-in `libs/index.js`. Any NPM module that needs to be available within the testing
-context will need to be added to this file in the `window.libs` array.
+The ES6 module `utils/kefir` imports the `kefir` module, which is registered
+in `libs/env-prod.js`. Any NPM module that needs to be available within the testing
+context only will need to be added to `libs/env-test.js`.
 
 If you don't use an Angular context in your tests, it's not possible to import
 Angular services that are not ES6 modules into your test. To use Angular services
 that are not defined as ES6 modules see [“Using Angular”](#using-angular) below.
-
-### Using NPM packages
-NPM packages can be imported in the tests using the `npm` prefix.
-
-~~~js
-import sinon from 'sinon'
-~~~
-
-For performance reasons it is heavily advised to load a UMD distribution of the
-file. This is defined in the SystemJS config in `test/system-config.js`.
-
-~~~js
-SystemJS.config({
-  packages: {
-    'npm:package-name': {
-      main: 'dist/file.js'
-      format: 'amd',
-    }
-  }
-})
-~~~
-
-For more information see the [SystemJS config documentation][systemjs-config].
-
-[systemjs-config]: https://github.com/systemjs/systemjs/blob/master/docs/config-api.md
-[src:test/system-config]: ../../test/system-config.js
-
 
 Testing DSL
 -----------
@@ -101,7 +82,7 @@ in the [Test module][module:test].
 
 ### Async/await
 
-You can use async/await code in your tests, both in setup and in tests itself. They behave the same as generators, feel free to choose what you prefer more.
+You can use async/await code in your tests, both in setup and in tests itself. It is recommended that you use this approach rather than generators.
 
 ~~~js
 beforeEach(async function () {
@@ -116,9 +97,10 @@ it('a test with async/await', async function () {
 
 It supports both native and $q-based promises – for Angular ones it does `$rootScope.$apply()` every 10ms, until it is resolved.
 
-### Generators
+### Generators (deprecated)
 
-You can write asynchronous tests using generator functions.
+You can write asynchronous tests using generator functions. This pattern is deprecated as using `async/await` should cover the use case for waiting for asynchronous code. If you come across a test using generators you should update it to support async/await.
+
 ~~~js
 beforeEach(function* () {
   yield asyncSetup();
@@ -129,6 +111,7 @@ it('a generator test', function* () {
   expect(value).toBe('X');
 })
 ~~~
+
 You must always yield a promise. Inside `it` the function `$rootScope.$apply()`
 will be called after each yield and before control is handed back to the
 generator. This is not the case for generators passed to `beforeEach` and
@@ -172,6 +155,7 @@ describe('with params', function () {
 
 When using local variables to provide setup data to test cases memory leaks are
 introduced. Consider the following test code.
+
 ~~~js
 describe(function () {
   let foo
@@ -202,19 +186,20 @@ null`.
 Using Angular
 -------------
 
-Each test case must load an Angular module using the `module` function.
-Then we can use the `$inject` helper to obtain services from that
-module.
+### Testing an Angular module
+
+To test an Angular module, you must load the module via `module('contentful/test')`.
 
 ~~~js
 beforeEach(function () {
   module('contentful/test');
-  const $rootScope = this.$inject('$rootScope');
+  const myDirective = this.$inject('directives/myDirective');
 })
 ~~~
 
-Directives can be compiled and tested with the
-[`$compile` helper][service:helpers].
+### Testing directives
+
+Directives can be compiled and tested with the `$compile` helper.
 
 ~~~js
 it('renders', function () {
@@ -240,6 +225,21 @@ var $el = this.$compile('<my-awesome-directive>', {somePropOnScope: 10}, {
 })
 ~~~
 
+### Testing a non-Angular module
+
+If you are testing a non-Angular module, you should create an isolated SystemJS context
+and import it using `system.import`.
+
+~~~js
+import createIsolatedSystem from 'test/helpers/system-js';
+
+beforeEach(async function() {
+  const system = createIsolatedSystem();
+  const myModule = await system.import('app/myModule.es6');
+})
+
+~~~
+
 
 Mocks and Stubs
 ---------------
@@ -249,7 +249,8 @@ assertions. We provide a couple of extensions to Sinon stubs.
 
 ### Promises
 
-The `stub.resolves(value)` method makes a stub return a resolved promise
+The `stub.resolves(value)` method makes a stub return a resolved promise,
+using Angular's `$q`.
 
 ~~~js
 // Equivalent
@@ -257,7 +258,8 @@ sinon.stub().resolves('yeah')
 sinon.stub().returns($q.resolve('yeah'))
 ~~~
 
-The `stub.rejects(error)` method makes a stub return a rejected promise
+The `stub.rejects(error)` method makes a stub return a rejected promise.
+
 ~~~ js
 // Equivalent
 sinon.stub().rejects(new Error())
@@ -278,141 +280,173 @@ this.$apply()
 
 ### Individual methods
 
+It is recommended to stub exactly what you need for your test.
+
+However, if you need to stub a dependency's property while keeping the
+other properties intact, you need to import the module first, overwrite
+the specific property, and then rewrite the import.
+
 #### Angular
 
-*For mocking an entire service, see [the next section](#services).*
+<!-- ##### Angular dependency -->
 
-If you want to mock only some methods in a dependency of the tested unit, but
-leave other properties intact, you can simply inject it in the test and replace
-these method with stubs:
+You can provide it via `$provide.constant` when initially defining `module('contentful/test')`.
 
 ~~~js
-// foo.js
-angular.module('contentful')
-
-.service('foo', function (require) {
-  var bar = require('bar');
-
-  return function () {
-    return bar.buzz();
-  }
-});
-
-// unit test for 'foo'
-before(function () {
-  this.foo = this.$inject('foo');
-  this.bar = this.$inject('bar');
-  this.bar.buzz = sinon.stub().returns('herp');
-});
-
-it('should herp', function () {
-  expect(this.foo()).toBe('herp');
-});
-~~~
-
-#### ES6 Modules
-
-##### Within an Angular Context
-
-The above won't work if you're using an ES6 module:
-
-~~~js
-// Foo.es6.js
-import * as bar from 'bar';
-
-export function () {
-  return bar.buzz();
-}
-~~~
-
-This is because all ES6 dependencies are shallow-copied, so changes made after
-won't be applied later on.
-
-If you're importing within an Angular context, you can generally stub out the
-module using `$provide.value` or `$provide.constant`:
-
-```js
-let myModule;
-
-beforeEach(function () {
-  module('contentful/test', function($provide) {
-    $provide.value('utils/to-stub', myStub);
-    $provide.constant('utils/different-to-stub', myDifferentStub);
+module('contentful/test', $provide => {
+  $provide.constant('myFactory', {
+    // ...
   });
 
-  myModule = this.$inject('utils/myModule').default;
-});
-```
-
-##### Outside of an Angular Context
-
-However, if you're testing a utility that doesn't need an Angular instance, it is
-useful to be able to test without relying on Angular to $provide and $inject. If
-you need to stub out an ES6 module within a test, that does not use an Angular
-context, you can stub it out by creating an isolated system and stubbing the
-necessary modules before importing your module.
-
-```js
-import { createIsolatedSystem } from 'test/helpers/system-js';
-
-beforeEach(function* () {
-  this.stubs = {
-    stub1: sinon.stub(),
-    stub2: sinon.stub()
-  };
-
-  this.system = createIsolatedSystem();
-
-  this.system.set('utils/to-stub', {
-    moduleMethod: stubs.stub1
+  // Same is true for ES6 files
+  $provide.constant('utils/random.es6', {
+    // ...
   });
-
-  this.system.set('utils/different-to-stub', {
-    // ... Another stubbed module
-  });
-
-  this.myModule = yield system.import('utils/myModule');
-
-  // This works like an ES6 import statement,
-  // so be aware of defaults.
-});
-```
-
-*Note*: If you need to stub something in an integration test, such as a React
-component, see [UI Acceptance Test](#ui-acceptance-test) below.
-
-### Services
-
-Use `this.mockService()` helper to mock *all* methods in an Angular service.
-
-Assume the `myService` service is an object that exports the `foo` and `bar`
-methods.
-
-~~~js
-it('mocks a service', function () {
-  const mock = this.mockService('myService', {
-    bar: true
-  })
-
-  mock.foo.returns('foo')
-
-  const service = this.$inject('myService')
-  expect(service.foo()).toBe('foo')
-  expect(service.bar).toBe(true)
 })
 ~~~
 
-The object passed to `this.mockService()` contains custom extensions to the
-service. It only allows you to change properties that already exist on the
-service.
+Additionally, you can also import a mock and stub it using the methods above, such as for `kefir`.
 
-Note that for testing ES6 modules with mock services, imports order matters in
-the same way as for [mock individual methods](#individual-methods).
+~~~js
+import * as kMock from 'test/helpers/mocks/kefir';
 
-There is a `mocks` module and a `cfStub` service that provide elaborate mocks
-for certain parts of the app. Use of `cfStub` service is *deprecated* and needs
-some major cleanup.
+beforeEach(function() {
+  module('contentful/test');
 
+  const { registerConstant } = this.$inject('NgRegistry.es6');
+  registerConstant('utils/kefir.es6', kMock);
+});
+~~~
+
+
+If you need to stub just a specific property while keeping the rest of the dependency intact,
+you will need to first determine the kind of module you're mocking, e.g. a factory, directive,
+or controller, import the original module, mock the specific property, and rewrite the module
+using the registration function from `NgRegistry.es6`.
+
+~~~js
+module('contentful/test');
+
+const { registerFactory } = this.$inject('NgRegistry.es6');
+const originalMyFactory = this.$inject('myFactory');
+originalMyFactory.property = {};
+registerFactory('myFactory', () => originalMyFactory);
+~~~
+
+You can register a constant using the `registerConstant` helper to do the above for an ES6 module.
+
+~~~js
+module('contentful/test');
+
+const { registerConstant } = this.$inject('NgRegistry.es6');
+const randomUtils = this.$inject('utils/random.es6');
+randomUtils.property = {};
+registerConstant('utils/randomUtils.es6', randomUtils);
+~~~
+
+*NOTE*: You must provide a function when registering anything other than a constant or value. If you provide an
+object directly, Angular will error.
+
+<!--
+This will be true once the tests are migrated to use SystemJS, but this isn't true right now.
+
+##### ES6 dependency
+
+You should provide it via an isolated SystemJS instance before instantiating Angular.
+
+~~~js
+const system = createIsolatedSystem();
+
+/*
+ As above, import if necessary to overwrite just a property
+
+ const myModule = await system.import('app/myModule.es6');
+ myModule.property = {};
+*/
+
+system.set('app/myModule.es6', myModule);
+
+module('contentful/test');
+
+const myFactory = this.$inject('myFactory');
+~~~
+ -->
+
+#### ES6 Modules
+
+##### ES6 dependency
+
+You can directly stub out the module in the isolated SystemJS instance.
+
+~~~js
+const system = createIsolatedSystem();
+
+system.set('utils/AwesomeUtils.es6', {
+  coolFunc: sinon.stub();
+})
+
+const myModule = await system.import('app/myModule.es6');
+~~~
+
+To mock a single module property, import it and overwrite it before you import the tested module.
+
+~~~js
+const system = createIsolatedSystem();
+
+const AwesomeUtils = await system.import('utils/AwesomeUtils.es6');
+AwesomeUtils.coolFunc = sinon.stub();
+
+system.set('utils/AwesomeUtils.es6', AwesomeUtils);
+
+const myModule = await system.import('app/myModule.es6');
+~~~
+
+##### Angular dependency
+
+All ES6 modules import their Angular dependencies via `getModule`.
+
+To stub an Angular dependency, you can mock it by mocking `getModule` with a Sinon
+stub and mocking the given argument.
+
+~~~js
+const system = createIsolatedSystem();
+
+const getModuleStub = sinon.stub();
+getModuleStub
+  .withArgs('myFactory')
+  .returns({
+    // ...
+  })
+
+system.set('NgRegistry.es6', {
+  getModule: getModuleStub
+});
+
+await system.import(...);
+~~~
+
+If you need to mock a single module property, you will need to instantiate Angular first,
+inject it, then mock it via `getModule`.
+
+~~~js
+module('contentful/test');
+
+const myFactory = this.$inject('myFactory');
+myFactory.property = {};
+
+const system = createIsolatedSystem();
+
+const getModuleStub = sinon.stub();
+getModuleStub
+  .withArgs('myFactory')
+  .returns(myFactory)
+
+system.set('NgRegistry.es6', {
+  getModule: getModuleStub
+});
+
+await system.import(...);
+~~~
 
 UI Acceptance Test
 ------------------
@@ -443,16 +477,16 @@ it('tests my component', function () {
 })
 ~~~
 
-This technique is fairly new and requires extending.
-
 ### Within an isolated SystemJS context
 
-If you are testing a stateless component within an isolated context, using the `createIsolatedSystem`
-helper method, you will need to instantiate `this.createUI` with the `createMountPoint` imported from
-your isolated system. If you don't do this, your React components won't test properly and will fail
-during instantiation.
+*NOTE*: If you are looking to test a React component, you should generally test it via Jest.
+See [testing-jest-doc] for more information.
 
-```js
+However, if you are testing a component that is rendered using `DOMRenderer#createMountPoint`, you
+will need to instantiate `this.createUI` with the `createMountPoint` imported from your isolated
+system. If you don't do this, your React components won't test properly and will fail during instantiation.
+
+~~~js
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
 describe('MyComponent', function () {
@@ -470,8 +504,7 @@ describe('MyComponent', function () {
     });
   });
 });
-```
-
+~~~
 
 Reporters
 ---------
@@ -493,3 +526,4 @@ the test run. You can choose a reporter by passing the
 [karma]: http://karma-runner.github.io/0.12/index.html
 [tape]: https://github.com/substack/tape
 [require]: https://docs.angularjs.org/api/ng/service/$compile#-require-
+[testing-jest-doc]: ./testing-jest.md
