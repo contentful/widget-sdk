@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { haveBlocks } from './UtilHave.es6';
-import { actionOrigin, TOOLBAR_PLUGIN_PROP_TYPES } from './PluginApi.es6';
+import { TOOLBAR_PLUGIN_PROP_TYPES } from './PluginApi.es6';
 
 export default ({
   type,
@@ -15,13 +15,13 @@ export default ({
       const {
         change,
         onToggle,
-        richTextAPI: { logAction }
+        richTextAPI: { logToolbarAction }
       } = this.props;
       e.preventDefault();
 
       applyChange(change, type);
       onToggle(change);
-      logAction('insert', { origin: actionOrigin.TOOLBAR, nodeType: type });
+      logToolbarAction('insert', { nodeType: type });
     };
 
     render() {

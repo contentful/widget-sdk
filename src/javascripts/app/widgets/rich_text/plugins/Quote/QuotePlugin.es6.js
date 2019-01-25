@@ -3,11 +3,10 @@ import { BLOCKS } from '@contentful/rich-text-types';
 import { applyChange, isSelectionInQuote } from './Util.es6';
 import commonNode from '../shared/NodeDecorator.es6';
 import { haveTextInSomeBlocks } from '../shared/UtilHave.es6';
-import { actionOrigin } from '../shared/PluginApi.es6';
 
 const newPlugin = (defaultType, tagName, hotkey) => ({
   type = defaultType,
-  richTextAPI: { logAction }
+  richTextAPI: { logShortcutAction }
 }) => {
   return {
     renderNode: (props, _editor, next) => {
@@ -20,7 +19,7 @@ const newPlugin = (defaultType, tagName, hotkey) => ({
       if (isHotkey(hotkey, e)) {
         const isActive = applyChange(editor);
         const actionName = isActive ? 'insert' : 'remove';
-        logAction(actionName, { origin: actionOrigin.SHORTCUT, nodeType: type });
+        logShortcutAction(actionName, { nodeType: type });
         return;
       }
       if (isHotkey('Backspace', e) && isSelectionInQuote(editor) && !haveTextInSomeBlocks(editor)) {

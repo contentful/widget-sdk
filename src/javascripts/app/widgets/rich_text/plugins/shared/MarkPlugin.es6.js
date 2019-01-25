@@ -1,9 +1,8 @@
 import isHotkey from 'is-hotkey';
 import markDecorator from './MarkDecorator.es6';
 import { haveMarks } from './UtilHave.es6';
-import { actionOrigin } from '../shared/PluginApi.es6';
 
-export default function({ type, tagName, hotkey, logAction }) {
+export default function({ type, tagName, hotkey, richTextAPI }) {
   return {
     renderMark: (props, _editor, next) => {
       if (props.mark.type === type) {
@@ -16,7 +15,7 @@ export default function({ type, tagName, hotkey, logAction }) {
         editor.toggleMark(type);
 
         const action = haveMarks(editor, type) ? 'mark' : 'unmark';
-        logAction(action, { origin: actionOrigin.SHORTCUT, markType: type });
+        richTextAPI.logShortcutAction(action, { markType: type });
         return;
       }
       return next();

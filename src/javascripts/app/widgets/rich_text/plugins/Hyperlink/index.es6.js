@@ -4,13 +4,14 @@ import { INLINES } from '@contentful/rich-text-types';
 import ToolbarIcon from './ToolbarIcon.es6';
 import Hyperlink from './Hyperlink.es6';
 import { editLink, mayEditLink, toggleLink, hasOnlyHyperlinkInlines } from './Util.es6';
-import { actionOrigin } from '../shared/PluginApi.es6';
 
 const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
 
 export default ToolbarIcon;
 
-export const HyperlinkPlugin = ({ richTextAPI: { widgetAPI, logAction } }) => ({
+export const HyperlinkPlugin = ({
+  richTextAPI: { widgetAPI, logViewportAction, logShortcutAction }
+}) => ({
   renderNode: (props, _editor, next) => {
     if (isHyperlink(props.node.type)) {
       return (
@@ -22,9 +23,6 @@ export const HyperlinkPlugin = ({ richTextAPI: { widgetAPI, logAction } }) => ({
 
             editor.moveToRangeOfNode(props.node).focus();
             if (mayEditLink(editor.value)) {
-              const logViewportAction = (name, data) =>
-                logAction(name, { origin: actionOrigin.VIEWPORT, ...data });
-
               editLink(editor, widgetAPI.dialogs.createHyperlink, logViewportAction);
             }
           }}
@@ -37,9 +35,6 @@ export const HyperlinkPlugin = ({ richTextAPI: { widgetAPI, logAction } }) => ({
     const hotkey = ['mod+k'];
 
     if (isHotkey(hotkey, event) && hasOnlyHyperlinkInlines(editor.value)) {
-      const logShortcutAction = (name, data) =>
-        logAction(name, { origin: actionOrigin.SHORTCUT, ...data });
-
       if (mayEditLink(editor.value)) {
         editLink(editor, widgetAPI.dialogs.createHyperlink, logShortcutAction);
       } else {

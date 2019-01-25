@@ -4,12 +4,12 @@ import markPlugin from '../shared/MarkPlugin.es6';
 import markToggleDecorator from '../shared/MarkToggleDecorator.es6';
 import { MARKS } from '@contentful/rich-text-types';
 
-export const ItalicPlugin = ({ richTextAPI: { logAction } }) => {
+export const ItalicPlugin = ({ richTextAPI }) => {
   return markPlugin({
     type: MARKS.ITALIC,
     tagName: 'em',
     hotkey: ['mod+i'],
-    logAction
+    richTextAPI
   });
 };
 

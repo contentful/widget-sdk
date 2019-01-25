@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { haveMarks } from './UtilHave.es6';
-import { actionOrigin, TOOLBAR_PLUGIN_PROP_TYPES } from './PluginApi.es6';
+import { TOOLBAR_PLUGIN_PROP_TYPES } from './PluginApi.es6';
 
 export default ({ type, title, icon }) => Mark => {
   return class CommonToggleMark extends React.Component {
@@ -10,12 +10,12 @@ export default ({ type, title, icon }) => Mark => {
       const {
         change,
         onToggle,
-        richTextAPI: { logAction }
+        richTextAPI: { logToolbarAction }
       } = this.props;
       e.preventDefault();
       onToggle(change.toggleMark(type));
       const action = haveMarks(change, type) ? 'mark' : 'unmark';
-      logAction(action, { origin: actionOrigin.TOOLBAR, markType: type });
+      logToolbarAction(action, { markType: type });
     };
 
     render() {

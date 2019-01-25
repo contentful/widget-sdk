@@ -1,6 +1,5 @@
 import isHotkey from 'is-hotkey';
 import { BLOCKS } from '@contentful/rich-text-types';
-import { actionOrigin } from '../shared/PluginApi.es6';
 import { toggleChange } from '../shared/BlockToggleDecorator.es6';
 import CommonNode from '../shared/NodeDecorator.es6';
 
@@ -29,7 +28,7 @@ const newPlugin = (defaultType, tagName, hotkey) => ({ type = defaultType, richT
     } else if (isHotkey(hotkey, e)) {
       const isActive = toggleChange(editor, type);
       const actionName = isActive ? 'insert' : 'remove';
-      richTextAPI.logAction(actionName, { origin: actionOrigin.SHORTCUT, nodeType: type });
+      richTextAPI.logShortcutAction(actionName, { nodeType: type });
       return;
     }
     return next();

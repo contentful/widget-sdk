@@ -4,7 +4,7 @@ import { DropdownListItem, Button, Icon } from '@contentful/forma-36-react-compo
 
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import { selectEntityAndInsert } from './Util.es6';
-import { actionOrigin, TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6';
+import { TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6';
 
 export default class EntityLinkToolbarIcon extends Component {
   static propTypes = {
@@ -21,10 +21,8 @@ export default class EntityLinkToolbarIcon extends Component {
     const {
       change,
       nodeType,
-      richTextAPI: { logAction }
+      richTextAPI: { logToolbarAction }
     } = this.props;
-    const logToolbarAction = (name, data) =>
-      logAction(name, { origin: actionOrigin.TOOLBAR, ...data });
     await selectEntityAndInsert(nodeType, widgetAPI, change, logToolbarAction);
     this.props.onToggle(change);
   };

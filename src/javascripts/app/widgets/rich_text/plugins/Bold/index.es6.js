@@ -4,12 +4,12 @@ import markPlugin from '../shared/MarkPlugin.es6';
 import markToggleDecorator from '../shared/MarkToggleDecorator.es6';
 import { MARKS } from '@contentful/rich-text-types';
 
-export const BoldPlugin = ({ richTextAPI: { logAction } }) => {
+export const BoldPlugin = ({ richTextAPI }) => {
   return markPlugin({
     type: MARKS.BOLD,
     tagName: 'b',
     hotkey: ['mod+b'],
-    logAction
+    richTextAPI
   });
 };
 
