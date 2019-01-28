@@ -16,7 +16,8 @@ class WrappedAssetCard extends React.Component {
     disabled: PropTypes.bool,
     selected: PropTypes.bool,
     onEdit: PropTypes.func,
-    onRemove: PropTypes.func
+    onRemove: PropTypes.func,
+    readOnly: PropTypes.bool
   };
 
   static defaultProps = {
@@ -59,7 +60,7 @@ class WrappedAssetCard extends React.Component {
   }
 
   renderAssetActions(entityFile) {
-    return (
+    return !this.props.readOnly ? (
       <React.Fragment>
         <DropdownList style={{ maxWidth: '300px' }}>
           <DropdownListItem isTitle>Actions</DropdownListItem>
@@ -110,7 +111,7 @@ class WrappedAssetCard extends React.Component {
           )}
         </DropdownList>
       </React.Fragment>
-    );
+    ) : null;
   }
 
   render() {

@@ -20,6 +20,7 @@ export default class ReadOnlyRichTextEditor extends React.Component {
         <RichTextEditor
           {...this.props}
           isToolbarHidden
+          actionsDisabled
           readOnly
           widgetAPI={widgetAPI}
           value={this.props.value}

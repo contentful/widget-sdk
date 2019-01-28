@@ -15,7 +15,8 @@ class WrappedReferenceCard extends React.Component {
     disabled: PropTypes.bool,
     selected: PropTypes.bool,
     onEdit: PropTypes.func,
-    onRemove: PropTypes.func
+    onRemove: PropTypes.func,
+    readOnly: PropTypes.bool
   };
 
   static defaultProps = {
@@ -53,6 +54,15 @@ class WrappedReferenceCard extends React.Component {
     );
   }
 
+  renderActions = () => {
+    return !this.props.readOnly ? (
+      <React.Fragment>
+        {this.props.onEdit && this.renderEditButton()}
+        {this.props.onRemove && this.renderDeleteButton()}
+      </React.Fragment>
+    ) : null;
+  };
+
   render() {
     const {
       contentTypeName,
@@ -75,12 +85,7 @@ class WrappedReferenceCard extends React.Component {
         status={entityStatus}
         thumbnailElement={entityFile && <Thumbnail thumbnail={entityFile} />}
         loading={isLoading}
-        actionElements={
-          <React.Fragment>
-            {this.props.onEdit && this.renderEditButton()}
-            {this.props.onRemove && this.renderDeleteButton()}
-          </React.Fragment>
-        }
+        actionElements={this.renderActions()}
       />
     );
   }

@@ -48,14 +48,16 @@ export default class RichTextEditor extends React.Component {
     isDisabled: PropTypes.bool,
     onChange: PropTypes.func,
     onAction: PropTypes.func,
-    isToolbarHidden: PropTypes.bool
+    isToolbarHidden: PropTypes.bool,
+    actionsDisabled: PropTypes.bool
   };
 
   static defaultProps = {
     value: emptyDoc,
     onChange: noop,
     onAction: noop,
-    isToolbarHidden: false
+    isToolbarHidden: false,
+    actionsDisabled: false
   };
 
   state = {
@@ -147,6 +149,7 @@ export default class RichTextEditor extends React.Component {
           readOnly={this.props.isDisabled}
           schema={schema}
           className="rich-text__editor"
+          actionsDisabled={this.props.actionsDisabled}
         />
       </div>
     );

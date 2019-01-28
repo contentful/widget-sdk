@@ -17,7 +17,8 @@ class FetchedEntityCard extends React.Component {
     disabled: PropTypes.bool,
     selected: PropTypes.bool,
     onEdit: PropTypes.func,
-    onRemove: PropTypes.func
+    onRemove: PropTypes.func,
+    readOnly: PropTypes.bool
   };
   static defaultProps = {
     extraClassNames: ''
@@ -60,7 +61,15 @@ class FetchedEntityCard extends React.Component {
   }
 
   render() {
-    const { entityType, extraClassNames, selected, disabled, onEdit, onRemove } = this.props;
+    const {
+      entityType,
+      extraClassNames,
+      selected,
+      disabled,
+      onEdit,
+      onRemove,
+      readOnly
+    } = this.props;
 
     return (
       <WidgetAPIContext.Consumer>
@@ -84,6 +93,7 @@ class FetchedEntityCard extends React.Component {
                 return (
                   <CardWrapper
                     {...fetchEntityResult}
+                    readOnly={readOnly}
                     isLoading={isLoading}
                     extraClassNames={extraClassNames}
                     selected={selected}

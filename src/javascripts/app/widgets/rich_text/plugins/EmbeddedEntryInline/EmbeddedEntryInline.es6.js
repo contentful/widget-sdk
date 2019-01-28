@@ -54,14 +54,16 @@ class EmbeddedEntryInline extends React.Component {
         extraClassNames="rich-text__inline-reference-card"
         isLoading={isLoading}
         dropdownListItemNodes={
-          <React.Fragment>
-            <DropdownListItem onClick={() => this.handleEditClick(entity)}>Edit</DropdownListItem>
-            <DropdownListItem
-              onClick={this.handleRemoveClick}
-              isDisabled={this.props.editor.props.readOnly}>
-              Remove
-            </DropdownListItem>
-          </React.Fragment>
+          !this.props.editor.props.actionsDisabled ? (
+            <React.Fragment>
+              <DropdownListItem onClick={() => this.handleEditClick(entity)}>Edit</DropdownListItem>
+              <DropdownListItem
+                onClick={this.handleRemoveClick}
+                isDisabled={this.props.editor.props.readOnly}>
+                Remove
+              </DropdownListItem>
+            </React.Fragment>
+          ) : null
         }>
         {entityTitle || 'Untitled'}
       </InlineReferenceCard>

@@ -36,11 +36,13 @@ class LinkedEntityBlock extends React.Component {
   render() {
     const { editor, isSelected } = this.props;
     const isDisabled = editor.props.readOnly;
+    const readOnly = editor.props.actionsDisabled;
     const { id: entityId, type: entityType } = this.getEntitySys();
     return (
       <div {...this.props.attributes}>
         <FetchedEntityCard
           entityId={entityId}
+          readOnly={readOnly}
           entityType={entityType}
           disabled={isDisabled}
           editable={true}
