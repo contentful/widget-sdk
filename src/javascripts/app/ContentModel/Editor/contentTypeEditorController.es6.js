@@ -247,7 +247,10 @@ registerController('ContentTypeEditorController', [
      * Make sure that each field has a widget and vice versa.
      */
     function syncEditingInterface() {
-      editingInterfaces.syncControls($scope.contentType.data, $scope.editingInterface);
+      $scope.editingInterface.controls = editingInterfaces.syncControls(
+        $scope.contentType.data,
+        $scope.editingInterface.controls
+      );
     }
   }
 ]);

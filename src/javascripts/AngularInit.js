@@ -43,8 +43,6 @@ angular
       ngRequire('services/logger.es6');
       ngRequire('services/localeStore.es6');
       ngRequire('data/userCache.es6');
-      ngRequire('data/editing_interfaces/transformer.es6');
-      ngRequire('data/editingInterfaces.es6');
       ngRequire('data/apiClient.es6');
       ngRequire('data/previewEnvironmentsCache.es6');
       ngRequire('classes/spaceContext.es6');
