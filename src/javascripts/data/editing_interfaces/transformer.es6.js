@@ -12,8 +12,7 @@ import getDefaultWidgetId from 'widgets/DefaultWidget.es6';
  * the internal UI format.
  */
 registerFactory('data/editingInterfaces/transformer', [
-  'editingInterfaces/helpers',
-  eiHelpers => {
+  () => {
     return {
       fromAPI: fromAPI,
       toAPI: toAPI,
@@ -79,7 +78,8 @@ registerFactory('data/editingInterfaces/transformer', [
      */
     function alignControls(contentType, controls) {
       return _.map(contentType.fields, field => {
-        let control = eiHelpers.findWidget(controls, field) || defaultControl(contentType, field);
+        const fieldId = field.apiName || field.id;
+        let control = _.find(controls, { fieldId: fieldId }) || defaultControl(contentType, field);
         control = _.cloneDeep(control);
         control.field = field;
         return control;

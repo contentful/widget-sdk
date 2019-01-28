@@ -23,7 +23,6 @@ registerController('ContentTypeEditorController', [
   'navigation/confirmLeaveEditor',
   'contentTypeEditor/metadataDialog',
   'access_control/AccessChecker',
-  'editingInterfaces/helpers',
   'analytics/Analytics.es6',
   'app/ContentModel/Editor/Actions.es6',
   function ContentTypeEditorController(
@@ -36,7 +35,6 @@ registerController('ContentTypeEditorController', [
     leaveConfirmator,
     metadataDialog,
     accessChecker,
-    eiHelpers,
     Analytics,
     { default: createActions }
   ) {
@@ -151,7 +149,9 @@ registerController('ContentTypeEditorController', [
      * @param {Client.ContentType.Field} field
      */
     controller.openFieldDialog = field => {
-      const control = eiHelpers.findWidget($scope.editingInterface.controls, field);
+      const fieldId = field.apiName || field.id;
+      const control = _.find($scope.editingInterface.controls, { fieldId: fieldId });
+
       return openFieldDialog($scope, field, control).then(() => {
         $scope.contentTypeForm.$setDirty();
       });
