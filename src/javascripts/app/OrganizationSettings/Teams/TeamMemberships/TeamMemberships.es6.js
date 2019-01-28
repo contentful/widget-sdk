@@ -73,8 +73,12 @@ class TeamMemberships extends React.Component {
               <TableRow>
                 <TableCell>Name</TableCell>
                 <TableCell>Member since</TableCell>
-                <TableCell>Added by</TableCell>
-                <TableCell />
+                {!readOnlyPermission && (
+                  <React.Fragment>
+                    <TableCell>Added by</TableCell>
+                    <TableCell />
+                  </React.Fragment>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>

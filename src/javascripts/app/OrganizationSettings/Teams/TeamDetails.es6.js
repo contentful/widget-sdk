@@ -100,8 +100,12 @@ class TeamDetails extends React.Component {
                   <dl className="definition-list">
                     <dt>Created at</dt>
                     <dd>{moment(team.sys.createdAt).format('MMMM DD, YYYY')}</dd>
-                    <dt>Created by</dt>
-                    <dd>{getUserName(creator)}</dd>
+                    {!readOnlyPermission && (
+                      <React.Fragment>
+                        <dt>Created by</dt>
+                        <dd>{getUserName(creator)}</dd>
+                      </React.Fragment>
+                    )}
                   </dl>
                 </section>
                 {readOnlyPermission ? (
