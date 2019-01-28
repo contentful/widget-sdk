@@ -1,6 +1,6 @@
 import { syncControls, fromAPI, toAPI } from './EditorInterfaceTransformer.es6';
 
-const makeDefault = ct => ({ controls: syncControls(ct, []) });
+const makeDefault = ct => ({ sys: {}, controls: syncControls(ct, []) });
 const makePath = ct => ['content_types', ct.sys.id, 'editor_interface'];
 
 export default function createEIRepo(spaceEndpoint) {
