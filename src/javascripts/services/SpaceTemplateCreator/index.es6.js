@@ -111,7 +111,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
 
             // if we don't return a promise, `Promise.all` resolves it automatically
             if (contentType) {
-              return createEditingInterface(contentType.data, editorInterface);
+              return createEditorInterface(contentType.data, editorInterface);
             }
           })
         );
@@ -256,15 +256,15 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     };
   }
 
-  function createEditingInterface(contentType, editingInterface) {
-    const handlers = makeHandlers(editingInterface, 'create', 'EditingInterface');
+  function createEditorInterface(contentType, editorInterface) {
+    const handlers = makeHandlers(editorInterface, 'create', 'EditorInterface');
     if (handlers.itemWasHandled) {
       return Promise.resolve(handlers.response);
     }
     // The content type has a default editor interface with version 1.
-    editingInterface.sys.version = 1;
+    editorInterface.sys.version = 1;
     return spaceContext.eiRepo
-      .save(contentType, editingInterface)
+      .save(contentType, editorInterface)
       .then(handlers.success)
       .catch(handlers.error);
   }

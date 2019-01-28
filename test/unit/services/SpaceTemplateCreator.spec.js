@@ -131,11 +131,7 @@ describe('Space Template creation service', () => {
           createContentType: sinon.stub(),
           createEntry: sinon.stub(),
           createAsset: sinon.stub(),
-          getContentType: function() {
-            return Promise.resolve({
-              createEditingInterface: spaceContext.createEditingInterface
-            });
-          }
+          getContentType: sinon.stub().resolves()
         },
         docConnection: {
           open: sinon.stub().returns(
