@@ -4,11 +4,12 @@ import { getFirstAccessibleSref } from 'access_control/SectionAccess.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
+import contentTypes from './contentTypes.es6';
 import apps from 'app/settings/apps/routes/index.es6';
 import api from 'app/api/State.es6';
+
 import { getModule } from 'NgRegistry.es6';
 
-const contentTypes = getModule('states/contentTypes');
 const entries = getModule('states/entries');
 const assets = getModule('states/assets');
 const settings = getModule('states/settings');

@@ -246,7 +246,6 @@ angular
       ngRequire('states/cfSrefDirective.es6');
       ngRequire('states/config.es6');
       ngRequire('states/states.es6');
-      ngRequire('states/contentTypes.es6');
       ngRequire('states/entries.es6');
       ngRequire('states/settings.es6');
       ngRequire('states/settingsRoles.es6');
