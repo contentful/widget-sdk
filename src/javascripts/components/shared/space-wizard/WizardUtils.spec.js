@@ -1,62 +1,54 @@
 import { render } from 'enzyme';
-import { createIsolatedSystem } from 'test/helpers/system-js';
+import * as WizardUtils from './WizardUtils.es6';
+
+jest.mock('utils/ResourceUtils.es6', () => ({
+  resourceHumanNameMap: {
+    asset: 'Assets',
+    content_type: 'Content Types',
+    entry: 'Entries',
+    locale: 'Locales',
+    environment: 'Environments',
+    record: 'Records'
+  }
+}));
 
 describe('WizardUtils', function() {
-  beforeEach(async function() {
-    const system = createIsolatedSystem();
-
-    system.set('utils/ResourceUtils.es6', {
-      resourceHumanNameMap: {
-        asset: 'Assets',
-        content_type: 'Content Types',
-        entry: 'Entries',
-        locale: 'Locales',
-        environment: 'Environments',
-        record: 'Records'
-      }
-    });
-
-    this.WizardUtils = await system.import('components/shared/space-wizard/WizardUtils.es6');
-  });
-
   describe('formatPrice', function() {
     it('should return null if the given value is not finite', function() {
-      expect(this.WizardUtils.formatPrice('hello')).toBe(null);
-      expect(this.WizardUtils.formatPrice({})).toBe(null);
-      expect(this.WizardUtils.formatPrice([])).toBe(null);
+      expect(WizardUtils.formatPrice('hello')).toBeNull();
+      expect(WizardUtils.formatPrice({})).toBeNull();
+      expect(WizardUtils.formatPrice([])).toBeNull();
     });
 
     it('should have no decimal places if given an integer', function() {
-      expect(this.WizardUtils.formatPrice(1)).toBe('$1');
-      expect(this.WizardUtils.formatPrice(27)).toBe('$27');
+      expect(WizardUtils.formatPrice(1)).toBe('$1');
+      expect(WizardUtils.formatPrice(27)).toBe('$27');
     });
 
     it('should have a decimal place if given a float', function() {
-      expect(this.WizardUtils.formatPrice(1.23)).toBe('$1.23');
-      expect(this.WizardUtils.formatPrice(27.41)).toBe('$27.41');
-      expect(this.WizardUtils.formatPrice(36.516)).toBe('$36.52');
+      expect(WizardUtils.formatPrice(1.23)).toBe('$1.23');
+      expect(WizardUtils.formatPrice(27.41)).toBe('$27.41');
+      expect(WizardUtils.formatPrice(36.516)).toBe('$36.52');
     });
   });
 
   describe('getRolesTooltip', function() {
-    beforeEach(function() {
-      const intro = 'This space type includes the';
-      this.testRolesTooltip = function(number, roles, text) {
-        const tooltip = this.WizardUtils.getRolesTooltip(number, { roles });
-        return expect(tooltip).toBe(`${intro} ${text}`);
-      };
-    });
+    const intro = 'This space type includes the';
+    const testRolesTooltip = function(number, roles, text) {
+      const tooltip = WizardUtils.getRolesTooltip(number, { roles });
+      return expect(tooltip).toBe(`${intro} ${text}`);
+    };
 
     it('returns tooltip for a plan with the admin role only', function() {
-      this.testRolesTooltip(1, [], 'Admin role only');
+      testRolesTooltip(1, [], 'Admin role only');
     });
 
     it('returns the tooltip text for a plan with various roles', function() {
-      this.testRolesTooltip(3, ['Editor', 'Translator'], 'Admin, Editor and Translator roles');
+      testRolesTooltip(3, ['Editor', 'Translator'], 'Admin, Editor and Translator roles');
     });
 
     it('returns the tooltip text for a plan with multiple translator roles', function() {
-      this.testRolesTooltip(
+      testRolesTooltip(
         5,
         ['Editor', 'Translator', 'Translator 2', 'Translator3'],
         'Admin, Editor and 3 Translator roles'
@@ -64,7 +56,7 @@ describe('WizardUtils', function() {
     });
 
     it('returns the tooltip text for a plan with custom roles', function() {
-      this.testRolesTooltip(
+      testRolesTooltip(
         10,
         ['Editor', 'Translator'],
         'Admin, Editor and Translator roles and an additional 7 custom roles'
@@ -73,13 +65,15 @@ describe('WizardUtils', function() {
   });
 
   describe('unavailabilityTooltipNode', function() {
+    const data = {};
+
     beforeEach(function() {
-      this.planAvailable = {
+      data.planAvailable = {
         name: 'Small',
         unavailabilityReasons: null
       };
 
-      this.planUnavailableRoles = {
+      data.planUnavailableRoles = {
         name: 'Small 2',
         unavailabilityReasons: [
           {
@@ -89,7 +83,7 @@ describe('WizardUtils', function() {
         ]
       };
 
-      this.planUnavailableLimit = {
+      data.planUnavailableLimit = {
         name: 'Small 3',
         unavailabilityReasons: [
           {
@@ -101,7 +95,7 @@ describe('WizardUtils', function() {
         ]
       };
 
-      this.planUnavailableMultiple1 = {
+      data.planUnavailableMultiple1 = {
         name: 'Small 4',
         unavailabilityReasons: [
           {
@@ -117,7 +111,7 @@ describe('WizardUtils', function() {
         ]
       };
 
-      this.planUnavailableMultiple2 = {
+      data.planUnavailableMultiple2 = {
         name: 'Small 5',
         unavailabilityReasons: [
           {
@@ -135,15 +129,13 @@ describe('WizardUtils', function() {
     });
 
     it('should return null if there are no unavailabilityReasons', function() {
-      expect(this.WizardUtils.unavailabilityTooltipNode(this.planAvailable)).toBe(null);
+      expect(WizardUtils.unavailabilityTooltipNode(data.planAvailable)).toBeNull();
     });
 
     it('should have correct copy if unavailabilityReasons exists', function() {
-      const rolesTooltip = render(
-        this.WizardUtils.unavailabilityTooltipNode(this.planUnavailableRoles)
-      );
+      const rolesTooltip = render(WizardUtils.unavailabilityTooltipNode(data.planUnavailableRoles));
       const limitsTooltip = render(
-        this.WizardUtils.unavailabilityTooltipNode(this.planUnavailableLimit)
+        WizardUtils.unavailabilityTooltipNode(data.planUnavailableLimit)
       );
 
       expect(rolesTooltip.text()).toBe(
@@ -157,12 +149,8 @@ describe('WizardUtils', function() {
     });
 
     it('should handle multiple unavailabilityReasons, in order', function() {
-      const tooltip1 = render(
-        this.WizardUtils.unavailabilityTooltipNode(this.planUnavailableMultiple1)
-      );
-      const tooltip2 = render(
-        this.WizardUtils.unavailabilityTooltipNode(this.planUnavailableMultiple2)
-      );
+      const tooltip1 = render(WizardUtils.unavailabilityTooltipNode(data.planUnavailableMultiple1));
+      const tooltip2 = render(WizardUtils.unavailabilityTooltipNode(data.planUnavailableMultiple2));
 
       expect(tooltip1.text()).toBe(
         'You are currently using more than the Small 4 space allows by 5 locales.Delete resources, and migrate users from the Super Awesome Translator role before changing to this space type.'
@@ -174,8 +162,9 @@ describe('WizardUtils', function() {
   });
 
   describe('with plans and resources', function() {
+    const data = {};
     beforeEach(function() {
-      this.spaceRatePlans = [
+      data.spaceRatePlans = [
         {
           name: 'Free',
           includedResources: [
@@ -214,7 +203,7 @@ describe('WizardUtils', function() {
         }
       ];
 
-      this.ratePlansTooSmall = [
+      data.ratePlansTooSmall = [
         {
           name: 'Free',
           includedResources: [
@@ -238,7 +227,7 @@ describe('WizardUtils', function() {
         }
       ];
 
-      this.allInvalidPlans = [
+      data.allInvalidPlans = [
         {
           name: 'Free',
           unavailabilityReasons: [{ type: 'someIssue' }]
@@ -249,7 +238,7 @@ describe('WizardUtils', function() {
         }
       ];
 
-      this.resources = [
+      data.resources = [
         {
           usage: 12,
           sys: {
@@ -267,25 +256,21 @@ describe('WizardUtils', function() {
 
     describe('getRecommendedPlan', function() {
       it('should return null if no resources or empty resources array is given are given', function() {
-        expect(this.WizardUtils.getRecommendedPlan(this.spaceRatePlans)).toBe(null);
-        expect(this.WizardUtils.getRecommendedPlan(this.spaceRatePlans, [])).toBe(null);
+        expect(WizardUtils.getRecommendedPlan(data.spaceRatePlans)).toBeNull();
+        expect(WizardUtils.getRecommendedPlan(data.spaceRatePlans, [])).toBeNull();
       });
 
       it('should return null if no plan is valid (all are unavailable)', function() {
-        expect(this.WizardUtils.getRecommendedPlan(this.allInvalidPlans, this.resources)).toBe(
-          null
-        );
+        expect(WizardUtils.getRecommendedPlan(data.allInvalidPlans, data.resources)).toBeNull();
       });
 
       it('should return null if no plan can fulfill resource requirements', function() {
-        expect(this.WizardUtils.getRecommendedPlan(this.ratePlansTooSmall, this.resources)).toBe(
-          null
-        );
+        expect(WizardUtils.getRecommendedPlan(data.ratePlansTooSmall, data.resources)).toBeNull();
       });
 
       it('should return the first available plan in the list that fulfills the resource requirements', function() {
-        expect(this.WizardUtils.getRecommendedPlan(this.spaceRatePlans, this.resources)).toEqual(
-          this.spaceRatePlans[3]
+        expect(WizardUtils.getRecommendedPlan(data.spaceRatePlans, data.resources)).toEqual(
+          data.spaceRatePlans[3]
         );
       });
     });
@@ -297,17 +282,17 @@ describe('WizardUtils', function() {
           includedResources: []
         };
 
-        expect(this.WizardUtils.getPlanResourceFulfillment(plan, this.resources)).toEqual({});
+        expect(WizardUtils.getPlanResourceFulfillment(plan, data.resources)).toEqual({});
       });
 
       it('should return an empty object if no resources are given', function() {
-        expect(this.WizardUtils.getPlanResourceFulfillment(this.spaceRatePlans[3])).toEqual({});
+        expect(WizardUtils.getPlanResourceFulfillment(data.spaceRatePlans[3])).toEqual({});
       });
 
       it('should return an object with fulfillment information based on the included resources', function() {
         // Plan that is too small
         expect(
-          this.WizardUtils.getPlanResourceFulfillment(this.spaceRatePlans[0], this.resources)
+          WizardUtils.getPlanResourceFulfillment(data.spaceRatePlans[0], data.resources)
         ).toEqual({
           Environments: {
             reached: true,
@@ -321,7 +306,7 @@ describe('WizardUtils', function() {
 
         // Plan that fulfills but is near one resource limit (80%)
         expect(
-          this.WizardUtils.getPlanResourceFulfillment(this.spaceRatePlans[2], this.resources)
+          WizardUtils.getPlanResourceFulfillment(data.spaceRatePlans[2], data.resources)
         ).toEqual({
           Environments: {
             reached: true,
@@ -335,7 +320,7 @@ describe('WizardUtils', function() {
 
         // Plan that fulfills both resources
         expect(
-          this.WizardUtils.getPlanResourceFulfillment(this.spaceRatePlans[3], this.resources)
+          WizardUtils.getPlanResourceFulfillment(data.spaceRatePlans[3], data.resources)
         ).toEqual({
           Environments: {
             reached: false,

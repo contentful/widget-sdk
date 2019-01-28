@@ -11,8 +11,6 @@ import { byName as Colors } from 'Styles/Colors.es6';
  * The `copyIconButton` component shows a copy icon and copies the
  * provided value to the clipboard when the user clicks the icon.
  *
- *   h(CopyIconButton, { value: 'value to copy' })
- *
  * We also show a tooltip for to notify the user the value was copied.
  *
  * The styles for the tooltip are defined in

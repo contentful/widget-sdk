@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { noop, range } from 'lodash';
-import Menu from 'components/CreateEntryButton/Menu';
+import Menu from './index.es6';
 
 const sel = id => `[data-test-id="${id}"]`;
 
@@ -30,13 +30,13 @@ describe('CreateEntryMenu', () => {
   });
 
   it('renders two groups when there is a suggested content type and no search query', () => {
-    expect(wrapper.find(sel('group-suggested')).length).toEqual(1);
-    expect(wrapper.find(sel('group-all')).length).toEqual(1);
+    expect(wrapper.find(sel('group-suggested'))).toHaveLength(1);
+    expect(wrapper.find(sel('group-all'))).toHaveLength(1);
 
     contentTypes.forEach(item => {
       const listItem = wrapper.find(sel('contentType')).filterWhere(n => n.text() === item.name);
       expect(listItem.exists()).toBeTruthy();
-      expect(listItem.find('.context-menu__highlighted-text').length).toEqual(0);
+      expect(listItem.find('.context-menu__highlighted-text')).toHaveLength(0);
     });
   });
 
@@ -53,13 +53,13 @@ describe('CreateEntryMenu', () => {
       .simulate('change', { target: { value: matchingQuery } });
 
     expect(
-      wrapper.find(sel('contentType')).filterWhere(n => n.text() === unmatchingQuery).length
-    ).toEqual(0);
+      wrapper.find(sel('contentType')).filterWhere(n => n.text() === unmatchingQuery)
+    ).toHaveLength(0);
     const matchingNode = wrapper
       .find(sel('contentType'))
       .filterWhere(n => n.text() === matchingQuery);
 
-    expect(matchingNode.length).toEqual(1);
+    expect(matchingNode).toHaveLength(1);
     expect(matchingNode.find('.context-menu__highlighted-text').text()).toEqual(matchingQuery);
   });
 
@@ -68,7 +68,7 @@ describe('CreateEntryMenu', () => {
       .find(sel('addEntrySearchInput'))
       .simulate('change', { target: { value: 'Some random value' } });
     expect(wrapper.find(sel('group-suggested')).exists()).toBeFalsy();
-    expect(wrapper.find(sel('group')).length).toEqual(0);
+    expect(wrapper.find(sel('group'))).toHaveLength(0);
     expect(wrapper.find(sel('no-results')).exists()).toBeTruthy();
   });
 
