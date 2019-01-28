@@ -140,7 +140,7 @@ registerController('ContentTypeEditorController', [
     controller.removeField = id => {
       const fields = $scope.contentType.data.fields;
       _.remove(fields, { id: id });
-      syncEditingInterface();
+      syncEditorInterface();
     };
 
     /**
@@ -150,7 +150,7 @@ registerController('ContentTypeEditorController', [
      */
     controller.openFieldDialog = field => {
       const fieldId = field.apiName || field.id;
-      const control = _.find($scope.editingInterface.controls, { fieldId: fieldId });
+      const control = _.find($scope.editorInterface.controls, { fieldId: fieldId });
 
       return openFieldDialog($scope, field, control).then(() => {
         $scope.contentTypeForm.$setDirty();
@@ -226,7 +226,7 @@ registerController('ContentTypeEditorController', [
       data.fields = data.fields || [];
       data.fields.push(newField);
       $scope.$broadcast('fieldAdded');
-      syncEditingInterface();
+      syncEditorInterface();
       trackAddedField($scope.contentType, newField);
     }
 
@@ -246,10 +246,10 @@ registerController('ContentTypeEditorController', [
     /**
      * Make sure that each field has a widget and vice versa.
      */
-    function syncEditingInterface() {
-      $scope.editingInterface.controls = syncControls(
+    function syncEditorInterface() {
+      $scope.editorInterface.controls = syncControls(
         $scope.contentType.data,
-        $scope.editingInterface.controls
+        $scope.editorInterface.controls
       );
     }
   }

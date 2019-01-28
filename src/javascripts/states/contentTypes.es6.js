@@ -35,7 +35,7 @@ const newState = editorBase(
         spaceContext =>
           spaceContext.space.newContentType({ sys: { type: 'ContentType' }, fields: [] })
       ],
-      editingInterface: [
+      editorInterface: [
         'spaceContext',
         'contentType',
         (spaceContext, contentType) => spaceContext.eiRepo.get(contentType.data)
@@ -68,7 +68,7 @@ const detail = editorBase(
             }
           })
       ],
-      editingInterface: [
+      editorInterface: [
         'spaceContext',
         'contentType',
         (spaceContext, contentType) => spaceContext.eiRepo.get(contentType.data)
@@ -93,12 +93,12 @@ function editorBase(options, isNew) {
       '$scope',
       '$stateParams',
       'contentType',
-      'editingInterface',
+      'editorInterface',
       'publishedContentType',
-      ($scope, $stateParams, contentType, editingInterface, publishedContentType) => {
+      ($scope, $stateParams, contentType, editorInterface, publishedContentType) => {
         $scope.context.isNew = isNew;
         $scope.contentType = contentType;
-        $scope.editingInterface = editingInterface;
+        $scope.editorInterface = editorInterface;
         $scope.publishedContentType = publishedContentType;
 
         contextHistory.set([

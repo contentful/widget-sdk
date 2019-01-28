@@ -224,7 +224,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
       scope.validate = sinon.stub().returns(true);
 
-      scope.editingInterface = { sys: {} };
+      scope.editorInterface = { sys: {} };
 
       scope.contentType.save = sinon.stub().returns(this.when(scope.contentType));
       scope.contentType.publish = sinon.stub().returns(this.when(scope.contentType));
@@ -278,7 +278,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
       spaceContext.eiRepo.save.resolves('NEW EI');
       controller.save.execute();
       this.$apply();
-      expect(scope.editingInterface).toBe('NEW EI');
+      expect(scope.editorInterface).toBe('NEW EI');
     });
 
     describe('with invalid data', () => {
@@ -407,7 +407,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
         return ct;
       });
 
-      scope.editingInterface = { sys: {}, controls: [] };
+      scope.editorInterface = { sys: {}, controls: [] };
       spaceContext.eiRepo.save = sinon.stub().resolves();
 
       sinon.stub(spaceContext.eiRepo, 'get').callsFake(ctData => {
@@ -449,7 +449,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
     it('synchronizes controls in the new EI', () => {
       contentType.data.fields = [{ id: 'xyz' }, { id: 'boom' }];
-      scope.editingInterface.controls = [
+      scope.editorInterface.controls = [
         { widgetId: 'margarita-making-widget' },
         { widgetId: 'some-other-widget' }
       ];

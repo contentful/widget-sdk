@@ -43,7 +43,6 @@ registerFactory('openFieldDialog', [
  *
  * @scope.requires {Client.ContentType.Field}  field
  * @scope.requires {Client.ContentType}        contentType
- * @scope.requires {API.EditingInterface}      editingInterface
  *
  * @property {string} $scope.widgetSettings.id
  * @property {object} $scope.widgetSettings.params

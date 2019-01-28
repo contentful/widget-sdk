@@ -23,7 +23,7 @@ const previewEnvironmentsCache = getModule('data/previewEnvironmentsCache');
  * - `contentType` for persistence methods and data access
  * - `publishedContentType` is updated whenever the content type is published or
  *   unpublished. Corresponds to the server data.
- * - `editingInterface` is read and updated on `save`.
+ * - `editorInterface` is read and updated on `save`.
  * - `contentTypeForm` is read to check whether the local modal is “dirty”, i.e.
  *   whether the user has made some changes.
  *
@@ -230,7 +230,7 @@ export default function create($scope, contentTypeIds) {
           $scope.publishedContentType = cloneDeep(published);
           return published;
         })
-        .then(saveEditingInterface)
+        .then(saveEditorInterface)
         .catch(trackEnforcedButtonClick)
         .catch(triggerApiErrorNotification)
         .then(setPristine)
@@ -252,18 +252,18 @@ export default function create($scope, contentTypeIds) {
     return spaceContext.publishedCTs
       .publish(contentType)
       .then(() => spaceContext.eiRepo.get(contentType.data))
-      .then(editingInterface => {
+      .then(editorInterface => {
         // On publish the API also updates the editor interface
-        $scope.editingInterface.sys.version = editingInterface.sys.version;
+        $scope.editorInterface.sys.version = editorInterface.sys.version;
         return contentType;
       });
   }
 
-  function saveEditingInterface(contentType) {
+  function saveEditorInterface(contentType) {
     return spaceContext.eiRepo
-      .save(contentType.data, $scope.editingInterface)
-      .then(editingInterface => {
-        $scope.editingInterface = editingInterface;
+      .save(contentType.data, $scope.editorInterface)
+      .then(editorInterface => {
+        $scope.editorInterface = editorInterface;
       });
   }
 
@@ -333,7 +333,7 @@ export default function create($scope, contentTypeIds) {
     return duplicate
       .save()
       .then(publishContentType)
-      .then(ct => spaceContext.eiRepo.save(ct.data, $scope.editingInterface))
+      .then(ct => spaceContext.eiRepo.save(ct.data, $scope.editorInterface))
       .then(
         () => duplicate,
         err => {

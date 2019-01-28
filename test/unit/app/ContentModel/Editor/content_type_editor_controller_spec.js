@@ -39,7 +39,7 @@ describe('ContentTypeEditor Controller', () => {
         $setDirty: sinon.stub()
       },
       context: {},
-      editingInterface: {}
+      editorInterface: {}
     });
 
     const $controller = this.$inject('$controller');
@@ -199,7 +199,7 @@ describe('ContentTypeEditor Controller', () => {
       sinon.assert.calledWithExactly(
         syncControls,
         scope.contentType.data,
-        scope.editingInterface.controls
+        scope.editorInterface.controls
       );
     });
 
@@ -219,10 +219,10 @@ describe('ContentTypeEditor Controller', () => {
     });
 
     it('syncs the editing interface', function() {
-      scope.editingInterface = {};
+      scope.editorInterface = {};
       this.controller.removeField('FID');
       this.$apply();
-      sinon.assert.calledWith(syncControls, contentType.data, scope.editingInterface.controls);
+      sinon.assert.calledWith(syncControls, contentType.data, scope.editorInterface.controls);
     });
 
     it('removes the field', function() {
@@ -313,7 +313,7 @@ describe('ContentTypeEditor Controller', () => {
     it('opens the field dialog with correct arguments', function() {
       const field = { apiName: 'FIELD' };
       const control = { fieldId: 'FIELD' };
-      scope.editingInterface = {
+      scope.editorInterface = {
         controls: [control]
       };
 

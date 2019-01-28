@@ -41,10 +41,10 @@ const newContentTypes = teaJSON.contentTypes.reduce((contentTypes, contentType) 
 
 const res = {
   contentTypes: newContentTypes,
-  editorInterfaces: teaJSON.editorInterfaces.map(editingInterface => {
+  editorInterfaces: teaJSON.editorInterfaces.map(editorInterface => {
     return {
-      sys: omit(editingInterface.sys, ['space', 'version', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy']),
-      controls: editingInterface.controls
+      sys: omit(editorInterface.sys, ['space', 'version', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy']),
+      controls: editorInterface.controls
     };
   })
 };
