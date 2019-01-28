@@ -213,8 +213,8 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
   describe('#save command', () => {
     beforeEach(function() {
-      spaceContext.editingInterfaces.save = sinon.stub().resolves();
-      spaceContext.editingInterfaces.get = sinon.stub().resolves({
+      spaceContext.eiRepo.save = sinon.stub().resolves();
+      spaceContext.eiRepo.get = sinon.stub().resolves({
         sys: { version: 1 },
         controls: []
       });
@@ -246,15 +246,15 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
       }));
 
     it('saves editing interface', () => {
-      spaceContext.editingInterfaces.get = sinon.stub().resolves({
+      spaceContext.eiRepo.get = sinon.stub().resolves({
         sys: { version: 10 },
         controls: []
       });
 
       return controller.save.execute().then(() => {
-        sinon.assert.calledOnce(spaceContext.editingInterfaces.save);
+        sinon.assert.calledOnce(spaceContext.eiRepo.save);
 
-        const callArgs = spaceContext.editingInterfaces.save.getCall(0).args;
+        const callArgs = spaceContext.eiRepo.save.getCall(0).args;
 
         // First argument is the content type
         expect(callArgs[0]).toEqual({
@@ -275,7 +275,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
     });
 
     it('updates editing interface on scope', function() {
-      spaceContext.editingInterfaces.save.resolves('NEW EI');
+      spaceContext.eiRepo.save.resolves('NEW EI');
       controller.save.execute();
       this.$apply();
       expect(scope.editingInterface).toBe('NEW EI');
@@ -289,7 +289,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
       it('does not save entities', () =>
         controller.save.execute().catch(() => {
-          sinon.assert.notCalled(spaceContext.editingInterfaces.save);
+          sinon.assert.notCalled(spaceContext.eiRepo.save);
           sinon.assert.notCalled(scope.contentType.save);
         }));
 
@@ -408,9 +408,9 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
       });
 
       scope.editingInterface = { sys: {}, controls: [] };
-      spaceContext.editingInterfaces.save = sinon.stub().resolves();
+      spaceContext.eiRepo.save = sinon.stub().resolves();
 
-      sinon.stub(spaceContext.editingInterfaces, 'get').callsFake(ctData => {
+      sinon.stub(spaceContext.eiRepo, 'get').callsFake(ctData => {
         return $q.resolve({
           sys: { version: 1 },
           controls: _.map(ctData.fields, field => ({
@@ -455,8 +455,8 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
       ];
 
       return controller.duplicate.execute().then(() => {
-        sinon.assert.calledOnce(spaceContext.editingInterfaces.save);
-        const ei = spaceContext.editingInterfaces.save.firstCall.args[1];
+        sinon.assert.calledOnce(spaceContext.eiRepo.save);
+        const ei = spaceContext.eiRepo.save.firstCall.args[1];
         expect(ei.controls[0].widgetId).toBe('margarita-making-widget');
         expect(ei.controls[1].widgetId).toBe('some-other-widget');
       });

@@ -135,7 +135,7 @@ registerFactory('spaceContext', [
         self.widgets = createWidgetStore(self.cma);
         self.apiKeyRepo = createApiKeyRepo(self.endpoint);
         self.webhookRepo = createWebhookRepo(space);
-        self.editingInterfaces = createEIRepo(self.endpoint);
+        self.eiRepo = createEIRepo(self.endpoint);
         self.localeRepo = createLocaleRepo(self.endpoint);
         self.organization = deepFreezeClone(self.getData('organization'));
 

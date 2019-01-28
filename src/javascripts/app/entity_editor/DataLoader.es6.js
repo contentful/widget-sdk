@@ -150,7 +150,7 @@ function makeEntryLoader(spaceContext) {
     // times for the bulk editor
     getFieldControls: memoize(
       wrapTask(function*(contentType) {
-        const ei = yield spaceContext.editingInterfaces.get(contentType.data);
+        const ei = yield spaceContext.eiRepo.get(contentType.data);
         return buildRenderables(ei.controls, spaceContext.widgets.getAll());
       })
     ),

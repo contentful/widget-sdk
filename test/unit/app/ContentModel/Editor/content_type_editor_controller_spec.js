@@ -22,6 +22,9 @@ describe('ContentTypeEditor Controller', () => {
       });
 
       $provide.constant('openFieldDialog', this.stubs.openFieldDialog);
+      $provide.constant('widgets/EditorInterfaceTransformer.es6', {
+        syncControls: sinon.stub()
+      });
     });
 
     const cfStub = this.$inject('cfStub');
@@ -170,9 +173,7 @@ describe('ContentTypeEditor Controller', () => {
     let syncControls;
 
     beforeEach(function() {
-      const spaceContext = this.$inject('spaceContext');
-      syncControls = sinon.stub();
-      spaceContext.editingInterfaces = { syncControls: syncControls };
+      syncControls = this.$inject('widgets/EditorInterfaceTransformer.es6').syncControls;
 
       scope.$broadcast = sinon.stub();
 
@@ -212,9 +213,7 @@ describe('ContentTypeEditor Controller', () => {
     let syncControls;
 
     beforeEach(function() {
-      const spaceContext = this.$inject('spaceContext');
-      syncControls = sinon.stub();
-      spaceContext.editingInterfaces = { syncControls: syncControls };
+      syncControls = this.$inject('widgets/EditorInterfaceTransformer.es6').syncControls;
 
       this.controller = createContentType([{ id: 'FID' }]);
     });

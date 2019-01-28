@@ -261,10 +261,9 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     if (handlers.itemWasHandled) {
       return Promise.resolve(handlers.response);
     }
-    const repo = spaceContext.editingInterfaces;
     // The content type has a default editor interface with version 1.
     editingInterface.sys.version = 1;
-    return repo
+    return spaceContext.eiRepo
       .save(contentType, editingInterface)
       .then(handlers.success)
       .catch(handlers.error);

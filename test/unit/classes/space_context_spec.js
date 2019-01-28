@@ -70,8 +70,7 @@ describe('spaceContext', () => {
 
   describe('#resetWithSpace()', () => {
     beforeEach(function() {
-      const createEditingInterfaces = this.$inject('widgets/EditorInterfaceRepo.es6').default;
-      createEditingInterfaces.returns('EI');
+      this.$inject('widgets/EditorInterfaceRepo.es6').default.returns('EI');
 
       const spaceData = { sys: { id: 'hello' } };
       this.result = this.spaceContext.resetWithSpace(spaceData);
@@ -111,10 +110,10 @@ describe('spaceContext', () => {
       sinon.assert.calledOnce(this.spaceContext.widgets.refresh);
     });
 
-    it('sets #editingInterfaces', function() {
-      const createEditingInterfaces = this.$inject('widgets/EditorInterfaceRepo.es6').default;
-      sinon.assert.calledOnce(createEditingInterfaces);
-      expect(this.spaceContext.editingInterfaces).toEqual('EI');
+    it('sets #eiRepo', function() {
+      const createEIRepo = this.$inject('widgets/EditorInterfaceRepo.es6').default;
+      sinon.assert.calledOnce(createEIRepo);
+      expect(this.spaceContext.eiRepo).toEqual('EI');
     });
 
     it('updates publishedCTs repo from refreshed CT list', function*() {

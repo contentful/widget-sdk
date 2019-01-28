@@ -38,7 +38,7 @@ const newState = editorBase(
       editingInterface: [
         'spaceContext',
         'contentType',
-        (spaceContext, contentType) => spaceContext.editingInterfaces.get(contentType.data)
+        (spaceContext, contentType) => spaceContext.eiRepo.get(contentType.data)
       ],
       publishedContentType: [() => null]
     }
@@ -71,7 +71,7 @@ const detail = editorBase(
       editingInterface: [
         'spaceContext',
         'contentType',
-        (spaceContext, contentType) => spaceContext.editingInterfaces.get(contentType.data)
+        (spaceContext, contentType) => spaceContext.eiRepo.get(contentType.data)
       ]
     }
   },

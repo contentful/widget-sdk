@@ -2,6 +2,7 @@ import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import validation from '@contentful/validation';
 import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField.es6';
+import { syncControls } from 'widgets/EditorInterfaceTransformer.es6';
 
 /**
  * @ngdoc type
@@ -38,7 +39,6 @@ registerController('ContentTypeEditorController', [
     Analytics,
     { default: createActions }
   ) {
-    const editingInterfaces = spaceContext.editingInterfaces;
     const controller = this;
     const contentTypeIds = spaceContext.cma
       .getContentTypes()
@@ -247,7 +247,7 @@ registerController('ContentTypeEditorController', [
      * Make sure that each field has a widget and vice versa.
      */
     function syncEditingInterface() {
-      $scope.editingInterface.controls = editingInterfaces.syncControls(
+      $scope.editingInterface.controls = syncControls(
         $scope.contentType.data,
         $scope.editingInterface.controls
       );
