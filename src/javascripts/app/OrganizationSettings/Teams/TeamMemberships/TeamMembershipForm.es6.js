@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get } from 'lodash/fp';
+import { get, orderBy, filter, flow } from 'lodash/fp';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
 import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
 import { TableCell, TableRow, Button, Select, Option } from '@contentful/forma-36-react-components';
@@ -13,10 +13,12 @@ import {
 function getAvailableOrgMemberships(state) {
   const teamMemberships = getCurrentTeamMembershipList(state);
   const unavailableOrgMemberships = teamMemberships.map(get('sys.organizationMembership.sys.id'));
-  const orgMemberships = Object.values(getOrgMemberships(state));
-  return orgMemberships.filter(
-    membership => !unavailableOrgMemberships.includes(membership.sys.id)
-  );
+  return flow(
+    getOrgMemberships,
+    Object.values,
+    filter(({ sys: { id } }) => !unavailableOrgMemberships.includes(id)),
+    orderBy(['sys.user.firstName', 'sys.user.lastName'], ['asc', 'asc'])
+  )(state);
 }
 
 class TeamMembershipForm extends React.Component {
@@ -44,6 +46,7 @@ class TeamMembershipForm extends React.Component {
   };
 
   render() {
+    const { orgMemberships } = this.props;
     const { loading, selectedOrgMembershipId } = this.state;
     return (
       <TableRow extraClassNames="space-membership-editor">
@@ -52,7 +55,7 @@ class TeamMembershipForm extends React.Component {
             <Option value="" disabled>
               Please select a user
             </Option>
-            {this.props.orgMemberships.map(orgMembership => {
+            {orgMemberships.map(orgMembership => {
               const user = orgMembership.sys.user;
               return (
                 <Option key={orgMembership.sys.id} value={orgMembership.sys.id}>
