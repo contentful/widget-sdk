@@ -13,14 +13,19 @@ import {
 } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder.es6';
 import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
-import { getCurrentTeam, getTeams } from 'redux/selectors/teams.es6';
-import { TeamMembership as TeamMembershiPropType } from 'app/OrganizationSettings/PropTypes.es6';
+import { getCurrentTeam, getTeams, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
+import { TeamMembership as TeamMembershipPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import TeamMembershipForm from './TeamMembershipForm.es6';
 import TeamMembershipRow from './TeamMembershipRow.es6';
 import TeamMembershipRowPlaceholder from './TeamMembershipRowPlaceholder.es6';
 
 const AddTeamMemberButton = ({ onClick }) => (
-  <Button size="small" buttonType="primary" disabled={!onClick} onClick={onClick}>
+  <Button
+    testId="add-member-button"
+    size="small"
+    buttonType="primary"
+    disabled={!onClick}
+    onClick={onClick}>
     Add a team member
   </Button>
 );
@@ -34,8 +39,7 @@ const isPlaceholder = ({ sys: { id } }) => id === 'placeholder';
 class TeamMemberships extends React.Component {
   static propTypes = {
     readOnlyPermission: PropTypes.bool,
-
-    memberships: PropTypes.arrayOf(TeamMembershiPropType),
+    memberships: PropTypes.arrayOf(TeamMembershipPropType),
     teamName: PropTypes.string
   };
 
@@ -68,7 +72,7 @@ class TeamMemberships extends React.Component {
             ))}
         </header>
         {!empty && (
-          <Table>
+          <Table data-test-id="member-table">
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
@@ -99,6 +103,7 @@ class TeamMemberships extends React.Component {
         )}
         {empty && !readOnlyPermission && (
           <Placeholder
+            testId="no-members-placeholder"
             title={`Team ${teamName} has no members 🐚`}
             text="They’re not gonna magically appear."
             button={<AddTeamMemberButton onClick={this.toggleForm} />}
@@ -106,6 +111,7 @@ class TeamMemberships extends React.Component {
         )}
         {empty && readOnlyPermission && (
           <Placeholder
+            testId="no-members-placeholder"
             title={`Team ${teamName} has no members 🐚`}
             text="You don't have permission to add members"
           />
@@ -117,5 +123,6 @@ class TeamMemberships extends React.Component {
 
 export default connect(state => ({
   memberships: getCurrentTeamMembershipList(state),
-  teamName: get(getTeams(state), [getCurrentTeam(state), 'name'], undefined)
+  teamName: get(getTeams(state), [getCurrentTeam(state), 'name'], undefined),
+  readOnlyPermission: hasReadOnlyPermission(state)
 }))(TeamMemberships);

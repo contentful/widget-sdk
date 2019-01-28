@@ -131,7 +131,7 @@ class TeamDetails extends React.Component {
                 )}
               </div>
               <div className="user-details__content">
-                <TeamMemberships readOnlyPermission={readOnlyPermission} />
+                <TeamMemberships />
               </div>
             </div>
           )}
