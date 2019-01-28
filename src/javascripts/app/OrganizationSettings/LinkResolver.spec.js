@@ -107,4 +107,59 @@ describe('LinkResolver', () => {
 
     expect(result[0].roles).toEqual(roles);
   });
+
+  it('does not resolve a link if no object is found', () => {
+    const link = {
+      sys: {
+        linkType: 'Role',
+        id: 'x'
+      }
+    };
+    const role = {
+      name: 'Translator',
+      sys: { id: 'y' }
+    };
+    const result = ResolveLinks({
+      paths: ['roles'],
+      includes: {
+        Role: [role]
+      },
+      items: [
+        {
+          foo: 'bar',
+          roles: [
+            link,
+            {
+              sys: {
+                linkType: 'Role',
+                id: 'y'
+              }
+            }
+          ]
+        }
+      ]
+    });
+
+    expect(result[0].roles).toEqual([link, role]);
+  });
+
+  it('does not resolve a link if no collection is found in `includes`', () => {
+    const link = {
+      sys: {
+        linkType: 'Role',
+        id: 'x'
+      }
+    };
+    const result = ResolveLinks({
+      paths: ['roles'],
+      includes: {},
+      items: [
+        {
+          roles: [link]
+        }
+      ]
+    });
+
+    expect(result[0].roles).toEqual([link]);
+  });
 });

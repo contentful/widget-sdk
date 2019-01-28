@@ -1,4 +1,4 @@
-import { get, set, cloneDeep } from 'lodash';
+import { get, set, cloneDeep, defaultTo, find } from 'lodash';
 
 /**
  * Replace resource links with actual included resources from the api response payload
@@ -19,7 +19,12 @@ export default function ResolveLinks({
 }) {
   const getFromIncludes = item => {
     const { linkType, id } = item.sys;
-    return includes[linkType].find(resource => resource.sys.id === id);
+
+    const includedList = get(includes, linkType, []);
+
+    // return included item with the same id
+    // or the original item if nothing was found
+    return defaultTo(find(includedList, resource => resource.sys.id === id), item);
   };
 
   return items.map(item => {
@@ -30,7 +35,7 @@ export default function ResolveLinks({
       const obj = get(clone, path);
 
       if (Array.isArray(obj)) {
-        newValue = obj.map(prop => getFromIncludes(prop));
+        newValue = obj.map(item => getFromIncludes(item));
       } else {
         newValue = getFromIncludes(obj);
       }
