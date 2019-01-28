@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import EntrySidebarWidget from './EntrySidebarWidget.es6';
+import createFetcherComponent from 'app/common/createFetcherComponent.es6';
+
+import {
+  getEntryConfiguration,
+  getAssetConfiguration
+} from './Configuration/service/SidebarSync.es6';
 
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer.es6';
 import ContentPreviewWidget from './ContentPreviewWidget/ContentPreviewWidget.es6';
@@ -13,38 +19,25 @@ import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer.es
 
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 
-const CORE_WIDGETS = {
-  PUBLICATION: {
-    type: SidebarWidgetTypes.PUBLICATION,
-    Component: PublicationWidgetContainer
-  },
-  CONTENT_PREVIEW: {
-    type: SidebarWidgetTypes.CONTENT_PREVIEW,
-    Component: ContentPreviewWidget
-  },
-  INCOMING_LINKS: {
-    type: SidebarWidgetTypes.INCOMING_LINKS,
-    Component: IncomingLinksWidgetContainer
-  },
-  TRANSLATION: {
-    type: SidebarWidgetTypes.TRANSLATION,
-    Component: TranslationWidgetContainer
-  },
-  VERSIONS: {
-    type: SidebarWidgetTypes.VERSIONS,
-    Component: VersionsWidgetContainer
-  },
-  USERS: {
-    type: SidebarWidgetTypes.USERS,
-    Component: UsersWidgetContainer
-  }
+const ComponentsMap = {
+  [SidebarWidgetTypes.PUBLICATION]: PublicationWidgetContainer,
+  [SidebarWidgetTypes.CONTENT_PREVIEW]: ContentPreviewWidget,
+  [SidebarWidgetTypes.INCOMING_LINKS]: IncomingLinksWidgetContainer,
+  [SidebarWidgetTypes.TRANSLATION]: TranslationWidgetContainer,
+  [SidebarWidgetTypes.USERS]: UsersWidgetContainer,
+  [SidebarWidgetTypes.VERSIONS]: VersionsWidgetContainer
 };
+
+const WidgetsFetcher = createFetcherComponent(({ isEntry, contentTypeId }) => {
+  return isEntry ? getEntryConfiguration(contentTypeId) : getAssetConfiguration();
+});
 
 export default class EntrySidebar extends Component {
   static propTypes = {
     isMasterEnvironment: PropTypes.bool.isRequired,
     isEntry: PropTypes.bool.isRequired,
     emitter: PropTypes.object.isRequired,
+    contentTypeId: PropTypes.string,
     legacySidebar: PropTypes.shape({
       extensions: PropTypes.arrayOf(
         PropTypes.shape({
@@ -56,38 +49,50 @@ export default class EntrySidebar extends Component {
     })
   };
 
-  getWidgetsList = () => {
-    const { isEntry, isMasterEnvironment } = this.props;
-    return [
-      CORE_WIDGETS.PUBLICATION,
-      isEntry ? CORE_WIDGETS.CONTENT_PREVIEW : null,
-      CORE_WIDGETS.INCOMING_LINKS,
-      CORE_WIDGETS.TRANSLATION,
-      isEntry && isMasterEnvironment ? CORE_WIDGETS.VERSIONS : null,
-      CORE_WIDGETS.USERS
-    ].filter(item => item !== null);
+  renderWidgets = (widgets = []) => {
+    return widgets.map(({ id }) => {
+      if (id === SidebarWidgetTypes.VERSIONS && !this.props.isMasterEnvironment) {
+        return null;
+      }
+      if (!ComponentsMap[id]) {
+        return null;
+      }
+      const Component = ComponentsMap[id];
+      return <Component key={id} emitter={this.props.emitter} />;
+    });
+  };
+
+  renderLegacyExtensions = () => {
+    return this.props.legacySidebar.extensions.map(({ bridge, widget }) => (
+      <EntrySidebarWidget title={widget.field.name} key={widget.field.id}>
+        <ExtensionIFrameRenderer
+          bridge={bridge}
+          src={widget.src}
+          srcdoc={widget.srcdoc}
+          appDomain={this.props.legacySidebar.appDomain}
+        />
+      </EntrySidebarWidget>
+    ));
   };
 
   render() {
-    const widgets = this.getWidgetsList();
     return (
       <React.Fragment>
         <EntryInfoPanelContainer emitter={this.props.emitter} />
         <div className="entity-sidebar">
-          {widgets.map(({ type, Component }) => (
-            <Component key={type} emitter={this.props.emitter} />
-          ))}
-
-          {this.props.legacySidebar.extensions.map(({ bridge, widget }) => (
-            <EntrySidebarWidget title={widget.field.name} key={widget.field.id}>
-              <ExtensionIFrameRenderer
-                bridge={bridge}
-                src={widget.src}
-                srcdoc={widget.srcdoc}
-                appDomain={this.props.legacySidebar.appDomain}
-              />
-            </EntrySidebarWidget>
-          ))}
+          <WidgetsFetcher isEntry={this.props.isEntry} contentTypeId={this.props.contentTypeId}>
+            {({ isLoading, data }) => {
+              if (isLoading) {
+                return null;
+              }
+              return (
+                <React.Fragment>
+                  {this.renderWidgets(data)}
+                  {this.renderLegacyExtensions()}
+                </React.Fragment>
+              );
+            }}
+          </WidgetsFetcher>
         </div>
       </React.Fragment>
     );

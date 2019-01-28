@@ -35,7 +35,9 @@ export default h('div.workbench', [
       },
       [tabSelect(), tabPanel()]
     ),
-    h('div.workbench-main__sidebar', [sidebar()])
+    h('div.workbench-main__sidebar', { ngIf: 'stateIs("^.preview") || stateIs("^.fields")' }, [
+      sidebar()
+    ])
   ])
 ]);
 
@@ -167,6 +169,15 @@ function tabSelect() {
             role: 'tab'
           },
           ['JSON preview']
+        ),
+        h(
+          'li',
+          {
+            ngClick: 'goTo("sidebar_configuration")',
+            ariaSelected: '{{stateIs("^.sidebar_configuration")}}',
+            role: 'tab'
+          },
+          ['Sidebar']
         )
       ])
     ]
@@ -206,6 +217,19 @@ function tabPanel() {
           ]),
           h('div', { ngIf: '!hasFields' }, [
             h('react-component', { name: 'app/ContentModel/Editor/FieldsTab/NoFieldsAdvice.es6' })
+          ])
+        ]
+      ),
+      h(
+        'div',
+        {
+          ngIf: 'stateIs("^.sidebar_configuration")'
+        },
+        [
+          h('.workbench-main__middle-content', [
+            h('react-component', {
+              name: 'app/EntrySidebar/Configuration/SidebarConfiguration.es6'
+            })
           ])
         ]
       )

@@ -114,5 +114,6 @@ window.libs = [
   ['mitt', require('mitt')],
   ['react-player', require('react-player')],
   ['react-beautiful-dnd', require('react-beautiful-dnd')],
-  ['@typeform/embed', require('@typeform/embed')]
+  ['@typeform/embed', require('@typeform/embed')],
+  ['immer', require('immer')]
 ];

@@ -26,6 +26,14 @@ const preview = {
   }
 };
 
+const sidebarConfiguration = {
+  name: 'sidebar_configuration',
+  url: '/sidebar_configuration',
+  params: {
+    addToContext: true
+  }
+};
+
 const widgetResolvers = {
   widgets: ['spaceContext', spaceContext => spaceContext.widgets.refresh()],
   editorInterface: [
@@ -96,7 +104,7 @@ export default {
 function editorBase(options, isNew) {
   return {
     redirectTo: '.fields',
-    children: [fields, preview],
+    children: [fields, preview, sidebarConfiguration],
     controller: [
       '$scope',
       '$stateParams',
