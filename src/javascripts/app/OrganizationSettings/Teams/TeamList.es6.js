@@ -34,6 +34,11 @@ class TeamList extends React.Component {
   render() {
     const { teams, readOnlyPermission } = this.props;
     const { showTeamDialog } = this.state;
+    const countMessage = `
+      ${readOnlyPermission ? 'You are in ' : ''}
+      ${pluralize('teams', teams.length, true)}
+      ${readOnlyPermission ? '' : ' in your organization'}
+    `;
 
     return (
       <Workbench>
@@ -43,16 +48,12 @@ class TeamList extends React.Component {
             <Workbench.Title>Teams</Workbench.Title>
           </Workbench.Header.Left>
           <Workbench.Header.Actions>
-            <span data-test-id="team-count">{`${pluralize(
-              'teams',
-              teams.length,
-              true
-            )} in your organization`}</span>
+            <span data-test-id="team-count">{countMessage}</span>
             {readOnlyPermission ? (
               <Tooltip
                 testId="read-only-tooltip"
                 place="left"
-                content="You don't have permission to create or change teams">
+                content="You don't have permission to create new teams">
                 <Button disabled testId="new-team-button">
                   New team
                 </Button>

@@ -60,7 +60,7 @@ class TeamMemberships extends React.Component {
           {!showingForm &&
             !empty &&
             (readOnlyPermission ? (
-              <Tooltip place="left" content="You don't have permission to create or change teams">
+              <Tooltip place="left" content="You don't have permission to add new team members">
                 <AddTeamMemberButton disabled />
               </Tooltip>
             ) : (

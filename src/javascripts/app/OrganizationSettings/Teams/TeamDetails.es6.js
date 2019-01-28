@@ -88,7 +88,7 @@ class TeamDetails extends React.Component {
                     {readOnlyPermission ? (
                       <Tooltip
                         place="right"
-                        content="You don't have permission to create or change teams">
+                        content="You don't have permission to edit team details">
                         <EditButton />
                       </Tooltip>
                     ) : (
@@ -105,9 +105,7 @@ class TeamDetails extends React.Component {
                   </dl>
                 </section>
                 {readOnlyPermission ? (
-                  <Tooltip
-                    place="right"
-                    content="You don't have permission to create or change teams">
+                  <Tooltip place="right" content="You don't have permission to delete a team">
                     <DeleteButton />
                   </Tooltip>
                 ) : (
