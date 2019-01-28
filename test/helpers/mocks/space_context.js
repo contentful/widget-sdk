@@ -29,7 +29,7 @@ import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
 angular.module('contentful/mocks').factory('mocks/spaceContext', [
   'spaceContext',
   'cfStub',
-  'data/editingInterfaces',
+  'widgets/EditorInterfaceRepo.es6',
   'data/ApiClient',
   'data/ContentTypeRepo/Published.es6',
   'mocks/entityEditor/Document',
@@ -37,7 +37,7 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
   (
     spaceContext,
     cfStub,
-    createEIRepo,
+    { default: createEIRepo },
     CMAClient,
     CTRepo,
     { create: createDocument },

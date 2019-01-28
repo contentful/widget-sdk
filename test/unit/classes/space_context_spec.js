@@ -14,7 +14,7 @@ describe('spaceContext', () => {
 
     module('contentful/test', $provide => {
       $provide.value('data/userCache', sinon.stub());
-      $provide.constant('data/editingInterfaces', sinon.stub());
+      $provide.value('widgets/EditorInterfaceRepo.es6', { default: sinon.stub() });
       $provide.value('access_control/AccessChecker/index.es6', this.AccessChecker);
       $provide.value('data/Endpoint.es6', {
         createSpaceEndpoint: () => this.mockSpaceEndpoint.request
@@ -70,7 +70,7 @@ describe('spaceContext', () => {
 
   describe('#resetWithSpace()', () => {
     beforeEach(function() {
-      const createEditingInterfaces = this.$inject('data/editingInterfaces');
+      const createEditingInterfaces = this.$inject('widgets/EditorInterfaceRepo.es6').default;
       createEditingInterfaces.returns('EI');
 
       const spaceData = { sys: { id: 'hello' } };
@@ -112,7 +112,7 @@ describe('spaceContext', () => {
     });
 
     it('sets #editingInterfaces', function() {
-      const createEditingInterfaces = this.$inject('data/editingInterfaces');
+      const createEditingInterfaces = this.$inject('widgets/EditorInterfaceRepo.es6').default;
       sinon.assert.calledOnce(createEditingInterfaces);
       expect(this.spaceContext.editingInterfaces).toEqual('EI');
     });

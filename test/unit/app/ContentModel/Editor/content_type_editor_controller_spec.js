@@ -195,7 +195,11 @@ describe('ContentTypeEditor Controller', () => {
     it('syncs editing interface widgets with fields', function() {
       sinon.assert.notCalled(syncControls);
       this.$apply();
-      sinon.assert.calledWithExactly(syncControls, scope.contentType.data, scope.editingInterface);
+      sinon.assert.calledWithExactly(
+        syncControls,
+        scope.contentType.data,
+        scope.editingInterface.controls
+      );
     });
 
     it('broadcasts event', function() {
@@ -219,7 +223,7 @@ describe('ContentTypeEditor Controller', () => {
       scope.editingInterface = {};
       this.controller.removeField('FID');
       this.$apply();
-      sinon.assert.calledWith(syncControls, contentType.data, scope.editingInterface);
+      sinon.assert.calledWith(syncControls, contentType.data, scope.editingInterface.controls);
     });
 
     it('removes the field', function() {
