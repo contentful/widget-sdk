@@ -5,13 +5,13 @@
  * We get information about cloned spaces using CDA, and it means we are missing:
  * 1. description of content types
  * 2. fields' validations of content types
- * 3. editing interfaces (appearance - e.g. slug editor or url editor)
+ * 3. editor interfaces (appearance - e.g. slug editor or url editor)
  *
  * This file is generated from exported JSON from TEA space:
  * https://github.com/contentful/content-models/blob/master/the-example-app/contentful-export.json
  * or specific commit - https://github.com/contentful/content-models/blob/25a53799b0b680326a868faf72cb1b59589b2855/the-example-app/contentful-export.json
  *
- * We pick description and validations of content types, and editing interfaces for all fields.
+ * We pick description and validations of content types, and editor interfaces for all fields.
  * Ideally, this file should not change (maybe just slightly), and even in case of changes,
  * breaking changes are almost 100% excluded (because we use this template a lot to power example apps).
  *

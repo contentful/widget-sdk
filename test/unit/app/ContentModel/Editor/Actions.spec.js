@@ -245,7 +245,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
         sinon.assert.calledOnce(ct.publish);
       }));
 
-    it('saves editing interface', () => {
+    it('saves editor interface', () => {
       spaceContext.eiRepo.get = sinon.stub().resolves({
         sys: { version: 10 },
         controls: []
@@ -274,7 +274,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
       });
     });
 
-    it('updates editing interface on scope', function() {
+    it('updates editor interface on scope', function() {
       spaceContext.eiRepo.save.resolves('NEW EI');
       controller.save.execute();
       this.$apply();

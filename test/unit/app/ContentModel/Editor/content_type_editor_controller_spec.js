@@ -193,7 +193,7 @@ describe('ContentTypeEditor Controller', () => {
       expect(scope.contentType.data.fields[0]).toBeDefined();
     });
 
-    it('syncs editing interface widgets with fields', function() {
+    it('syncs editor interface widgets with fields', function() {
       sinon.assert.notCalled(syncControls);
       this.$apply();
       sinon.assert.calledWithExactly(
@@ -218,7 +218,7 @@ describe('ContentTypeEditor Controller', () => {
       this.controller = createContentType([{ id: 'FID' }]);
     });
 
-    it('syncs the editing interface', function() {
+    it('syncs the editor interface', function() {
       scope.editorInterface = {};
       this.controller.removeField('FID');
       this.$apply();

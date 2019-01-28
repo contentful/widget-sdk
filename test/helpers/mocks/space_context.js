@@ -56,7 +56,7 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
       spaceContextMock.space = sinon.stubAll(space);
 
       // We create a mock space endpoint that always returns a 404. This
-      // makes the EI repo create an editing interface from scratch.
+      // makes the EI repo create an editor interface from scratch.
       const eiSpaceEndpoint = sinon.stub().rejects({ status: 404 });
       spaceContextMock.eiRepo = createEIRepo(eiSpaceEndpoint);
 
