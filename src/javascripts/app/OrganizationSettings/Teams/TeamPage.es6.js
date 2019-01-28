@@ -48,7 +48,8 @@ class TeamPage extends React.Component {
     if (!hasAccess) {
       let text;
       if (deniedReason === 'feature_inactive') {
-        text = 'Unfortunately, your current plan does not include the Teams feature 🐚';
+        text =
+          'Unfortunately, your current plan doesn’t include Teams. Teams make it easy to group people together. Get in touch with us if you’re interested.';
       } else {
         text = 'It seems you are not allowed to see this page. Let us know if we are wrong.';
       }
@@ -56,7 +57,11 @@ class TeamPage extends React.Component {
         <Placeholder
           text={text}
           title="No access to Teams page"
-          button={<ContactUsButton buttonType="button" />}
+          button={
+            <ContactUsButton buttonType="button" noIcon>
+              I want to use Teams!
+            </ContactUsButton>
+          }
         />
       );
     }
