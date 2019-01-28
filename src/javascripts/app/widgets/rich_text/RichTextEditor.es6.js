@@ -48,14 +48,14 @@ export default class RichTextEditor extends React.Component {
     isDisabled: PropTypes.bool,
     onChange: PropTypes.func,
     onAction: PropTypes.func,
-    showToolbar: PropTypes.bool
+    isToolbarHidden: PropTypes.bool
   };
 
   static defaultProps = {
     value: emptyDoc,
     onChange: noop,
     onAction: noop,
-    showToolbar: true
+    isToolbarHidden: false
   };
 
   state = {
@@ -117,12 +117,13 @@ export default class RichTextEditor extends React.Component {
   }
   render() {
     const classNames = cn('rich-text', {
-      'rich-text--enabled': !this.props.isDisabled
+      'rich-text--enabled': !this.props.isDisabled,
+      'rich-text--hidden-toolbar': this.props.isToolbarHidden
     });
 
     return (
       <div className={classNames}>
-        {this.props.showToolbar && (
+        {!this.props.isToolbarHidden && (
           <StickyToolbarWrapper isDisabled={this.props.isDisabled}>
             <Toolbar
               change={this.editor.current || new EmptyEditor({ readOnly: true })}

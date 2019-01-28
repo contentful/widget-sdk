@@ -13,7 +13,7 @@ export default class FetchEntity extends React.PureComponent {
     widgetAPI: PropTypes.object.isRequired,
     entityId: PropTypes.string.isRequired,
     entityType: PropTypes.oneOf(['Entry', 'Asset']).isRequired,
-    localeCode: PropTypes.string.isRequired,
+    localeCode: PropTypes.string,
     render: PropTypes.func.isRequired
   };
   state = {

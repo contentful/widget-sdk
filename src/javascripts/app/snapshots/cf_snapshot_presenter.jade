@@ -20,7 +20,7 @@
       cf-snapshot-presenter-markdown
 
     div.x--directed(ng-switch-when="RichText" ng-if="features.displayRichText")
-      <react-component name="app/widgets/rich_text/RichTextEditor.es6" props="{showToolbar: false, value}"" />
+      <react-component name="app/widgets/rich_text/ReadOnlyRichTextEditor.es6" props="{value, entry: entity}"" />
 
     div(ng-switch-when="Boolean")
       span(ng-if="value === true") {{ widget.settings.trueLabel || 'Yes' }}
