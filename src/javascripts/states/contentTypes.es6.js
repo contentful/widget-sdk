@@ -9,8 +9,7 @@ import base from 'states/Base.es6';
  * @name states/contentTypes
  */
 registerFactory('states/contentTypes', [
-  'states/resolvers',
-  resolvers => {
+  () => {
     const list = base({
       name: 'list',
       url: '',
@@ -44,7 +43,11 @@ registerFactory('states/contentTypes', [
             spaceContext =>
               spaceContext.space.newContentType({ sys: { type: 'ContentType' }, fields: [] })
           ],
-          editingInterface: resolvers.editingInterface,
+          editingInterface: [
+            'spaceContext',
+            'contentType',
+            (spaceContext, contentType) => spaceContext.editingInterfaces.get(contentType.data)
+          ],
           publishedContentType: [() => null]
         }
       },
@@ -73,7 +76,11 @@ registerFactory('states/contentTypes', [
                 }
               })
           ],
-          editingInterface: resolvers.editingInterface
+          editingInterface: [
+            'spaceContext',
+            'contentType',
+            (spaceContext, contentType) => spaceContext.editingInterfaces.get(contentType.data)
+          ]
         }
       },
       false
