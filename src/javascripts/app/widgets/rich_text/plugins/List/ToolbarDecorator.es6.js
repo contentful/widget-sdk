@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { actionOrigin, TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6';
+import { TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6';
 import EditList from './EditListWrapper.es6';
 
 const applyChange = (change, type, logAction) => {
@@ -7,20 +7,19 @@ const applyChange = (change, type, logAction) => {
     utils,
     changes: { unwrapList, wrapInList }
   } = EditList();
-  const log = name => logAction(name, { origin: actionOrigin.TOOLBAR, nodeType: type });
 
   if (utils.isSelectionInList(change.value)) {
     if (utils.getCurrentList(change.value).type !== type) {
       const currentList = utils.getCurrentList(change.value);
       change.setNodeByKey(currentList.key, type);
-      log('insert');
+      logAction('insert', { nodeType: type });
     } else {
       unwrapList(change);
-      log('remove');
+      logAction('remove', { nodeType: type });
     }
   } else {
     wrapInList(change, type);
-    log('insert');
+    logAction('insert', { nodeType: type });
   }
 
   return change.focus();
@@ -43,10 +42,10 @@ export default ({ type, title, icon }) => Block => {
       const {
         change,
         onToggle,
-        richTextAPI: { logAction }
+        richTextAPI: { logToolbarAction }
       } = this.props;
       e.preventDefault();
-      applyChange(change, type, logAction);
+      applyChange(change, type, logToolbarAction);
       onToggle(change);
     };
 

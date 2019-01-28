@@ -1,6 +1,5 @@
 import { PastePlugin } from './index.es6';
 import * as pasteUtils from './Paste.es6';
-import { actionOrigin } from '../shared/PluginApi.es6';
 
 describe('Paste Plugin', () => {
   let editor;
@@ -45,26 +44,25 @@ describe('Paste Plugin', () => {
       });
 
       it('tracks pasted text', () => {
-        const logAction = jest.fn();
+        const logShortcutAction = jest.fn();
         const next = jest.fn();
-        const plugin = PastePlugin({ richTextAPI: { logAction } });
+        const plugin = PastePlugin({ richTextAPI: { logShortcutAction } });
         const result = plugin.onPaste({}, editor, next);
 
         expect(result).toBeUndefined();
         expect(next).toHaveBeenCalled();
         expect(pasteUtils.getCharacterCount).toHaveBeenCalledTimes(1);
         expect(pasteUtils.getCharacterCount).lastCalledWith(editor);
-        expect(logAction).toHaveBeenCalledTimes(0);
+        expect(logShortcutAction).toHaveBeenCalledTimes(0);
 
         jest.runOnlyPendingTimers();
 
         expect(pasteUtils.getCharacterCount).toHaveBeenCalledTimes(2);
         expect(pasteUtils.getCharacterCount).lastCalledWith(editor);
-        expect(logAction).toHaveBeenCalledWith('paste', {
+        expect(logShortcutAction).toHaveBeenCalledWith('paste', {
           characterCountAfter,
           characterCountBefore,
-          characterCountSelection,
-          origin: actionOrigin.SHORTCUT
+          characterCountSelection
         });
       });
     });

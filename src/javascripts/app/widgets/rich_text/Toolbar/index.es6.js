@@ -135,7 +135,7 @@ export default class Toolbar extends React.Component {
     };
     const { field } = richTextAPI.widgetAPI;
     const { isAnyHyperlinkEnabled, isAnyListEnabled, isAnyMarkEnabled } = this.state;
-    const currentBlockType = props.change.value.blocks.get([0, 'type']);
+    const currentBlockType = props.change.value.blocks.getIn([0, 'type']);
     return (
       <EditorToolbar extraClassNames="rich-text__toolbar" data-test-id="toolbar">
         <div className="rich-text__toolbar__formatting-options-wrapper">

@@ -4,7 +4,7 @@ import { INLINES } from '@contentful/rich-text-types';
 
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import { selectEntryAndInsert, canInsertInline } from './Utils.es6';
-import { actionOrigin, TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6';
+import { TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6';
 
 export default class EntryLinkToolbarIcon extends Component {
   static propTypes = TOOLBAR_PLUGIN_PROP_TYPES;
@@ -16,10 +16,8 @@ export default class EntryLinkToolbarIcon extends Component {
     event.preventDefault();
     const {
       change,
-      richTextAPI: { logAction }
+      richTextAPI: { logToolbarAction }
     } = this.props;
-    const logToolbarAction = (name, data) =>
-      logAction(name, { origin: actionOrigin.TOOLBAR, ...data });
     await selectEntryAndInsert(widgetAPI, change, logToolbarAction);
     this.props.onToggle(change);
   };

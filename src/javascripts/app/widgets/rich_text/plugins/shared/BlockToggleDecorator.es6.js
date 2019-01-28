@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BLOCKS } from '@contentful/rich-text-types';
 import { haveBlocks } from './UtilHave.es6';
-import { actionOrigin, TOOLBAR_PLUGIN_PROP_TYPES } from './PluginApi.es6';
+import { TOOLBAR_PLUGIN_PROP_TYPES } from './PluginApi.es6';
 
 /**
  * Toggles formatting between a given node type and a plain paragraph.
@@ -32,14 +32,14 @@ export default ({
       const {
         change,
         onToggle,
-        richTextAPI: { logAction }
+        richTextAPI: { logToolbarAction }
       } = this.props;
       e.preventDefault();
 
       const isActive = applyChange(change, type);
       onToggle(change);
       const actionName = isActive ? 'insert' : 'remove';
-      logAction(actionName, { origin: actionOrigin.TOOLBAR, nodeType: type });
+      logToolbarAction(actionName, { nodeType: type });
     };
 
     render() {

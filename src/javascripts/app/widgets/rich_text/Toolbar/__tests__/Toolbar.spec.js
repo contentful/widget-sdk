@@ -17,7 +17,9 @@ const fakeProps = () => ({
   change: new Editor(),
   onChange: jest.fn(),
   richTextAPI: {
-    logAction: jest.fn(),
+    logToolbarAction: jest.fn(),
+    logShortcutAction: jest.fn(),
+    logViewportAction: jest.fn(),
     widgetAPI: {
       field: {}
     }

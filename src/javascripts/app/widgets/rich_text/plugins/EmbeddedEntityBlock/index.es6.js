@@ -6,12 +6,10 @@ import EntityLinkBlock from './EmbeddedEntityBlock.es6';
 import { BLOCKS } from '@contentful/rich-text-types';
 import { hasBlockOfType, selectEntityAndInsert } from './Util.es6';
 
-import { actionOrigin } from '../shared/PluginApi.es6';
-
 export default ToolbarIcon;
 
 export const EmbeddedEntityBlockPlugin = ({
-  richTextAPI: { widgetAPI, logAction },
+  richTextAPI: { widgetAPI, logShortcutAction },
   nodeType,
   hotkey
 }) => {
@@ -24,8 +22,6 @@ export const EmbeddedEntityBlockPlugin = ({
     },
     onKeyDown(e, editor, next) {
       if (hotkey && isHotkey(hotkey, e)) {
-        const logShortcutAction = (name, data) =>
-          logAction(name, { origin: actionOrigin.SHORTCUT, ...data });
         selectEntityAndInsert(nodeType, widgetAPI, editor, logShortcutAction);
         return;
       }

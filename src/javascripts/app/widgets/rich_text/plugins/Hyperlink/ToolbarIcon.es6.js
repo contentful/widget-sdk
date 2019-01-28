@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { INLINES } from '@contentful/rich-text-types';
 import ToolbarIcon from '../shared/ToolbarIcon.es6';
 import { TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6';
-import { actionOrigin } from '../shared/PluginApi.es6';
 import { hasHyperlink, toggleLink, hasOnlyHyperlinkInlines } from './Util.es6';
 
 export default class HyperlinkToolbarIcon extends Component {
@@ -13,10 +12,8 @@ export default class HyperlinkToolbarIcon extends Component {
     const {
       onToggle,
       change,
-      richTextAPI: { widgetAPI, logAction }
+      richTextAPI: { widgetAPI, logToolbarAction }
     } = this.props;
-    const logToolbarAction = (name, data) =>
-      logAction(name, { origin: actionOrigin.TOOLBAR, ...data });
     await toggleLink(change, widgetAPI.dialogs.createHyperlink, logToolbarAction);
     onToggle(change);
   };

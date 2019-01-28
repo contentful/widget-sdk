@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
-import { includes } from 'lodash';
 
 /**
- * All known origins for richTextAPI.logAction(action, {origin: ...})
+ * All known origins for Rich Text actions
  * @type {object}
  */
 export const actionOrigin = {
@@ -11,45 +10,41 @@ export const actionOrigin = {
   VIEWPORT: 'viewport-interaction'
 };
 
+const createActionLogger = (onAction, origin) => (name, data) => {
+  onAction(name, { origin: origin, ...data });
+};
+
 /**
- * Creates a richTextAPI that can be passed to editor or toolbar widgets.
+ * Creates an api that is passed to editor and toolbar widgets.
  *
  * @param {object} widgetAPI
  * @param {function } onAction
- * @returns {{widgetAPI: {object}, logAction: {function}}}
+ * @returns {{ widgetAPI: {object}, logViewportAction: {function}, createActionLogger: {function}, createActionLogger: {function} }}
  */
-export const newPluginAPI = ({ widgetAPI, onAction }) => ({
-  widgetAPI,
-  /**
-   * Allows a plugin to dispatch an action that can be consumed via the
-   * RichTextEditor's `onAction` callback.
-   *
-   * @param {string} name
-   * @param {object} data
-   * @param {string} data.origin One of `actionOrigin`.
-   */
-  logAction: (name, data) => {
-    const { origin } = data;
-    if (origin && !includes(actionOrigin, origin)) {
-      throw new Error(`Unknown action ${origin} in action ${name}`);
-    }
-    onAction(name, data);
-  }
-});
+export const createRichTextAPI = ({ widgetAPI, onAction }) => {
+  return {
+    widgetAPI,
+    logViewportAction: createActionLogger(onAction, actionOrigin.VIEWPORT),
+    logShortcutAction: createActionLogger(onAction, actionOrigin.SHORTCUT),
+    logToolbarAction: createActionLogger(onAction, actionOrigin.TOOLBAR)
+  };
+};
 
 /**
- * Describes the prop types a rich text editor plugin can expect.
+ * Describes the prop types a Rich Text editor plugin can expect.
  * @type {object}
  */
 export const EDITOR_PLUGIN_PROP_TYPES = {
   richTextAPI: PropTypes.shape({
     widgetAPI: PropTypes.object.isRequired,
-    logAction: PropTypes.func.isRequired
+    logViewportAction: PropTypes.func.isRequired,
+    logShortcutAction: PropTypes.func.isRequired,
+    logToolbarAction: PropTypes.func.isRequired
   })
 };
 
 /**
- * Describes the prop types a rich text toolbar plugin can expect.
+ * Describes the prop types a Rich Text toolbar plugin can expect.
  * @type {object}
  */
 export const TOOLBAR_PLUGIN_PROP_TYPES = {

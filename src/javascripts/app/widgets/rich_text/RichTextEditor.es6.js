@@ -13,7 +13,7 @@ import StickyToolbarWrapper from './Toolbar/StickyToolbarWrapper.es6';
 
 import { toContentfulDocument, toSlatejsDocument } from '@contentful/contentful-slatejs-adapter';
 
-import { newPluginAPI } from './plugins/shared/PluginApi.es6';
+import { createRichTextAPI } from './plugins/shared/PluginApi.es6';
 import { buildPlugins } from './plugins/index.es6';
 
 import schema from './constants/Schema.es6';
@@ -71,7 +71,7 @@ export default class RichTextEditor extends React.Component {
   editor = React.createRef();
 
   slatePlugins = buildPlugins(
-    newPluginAPI({
+    createRichTextAPI({
       widgetAPI: this.props.widgetAPI,
       onAction: this.props.onAction
     })
@@ -129,7 +129,7 @@ export default class RichTextEditor extends React.Component {
               onChange={this.onChange}
               isDisabled={this.props.isDisabled}
               permissions={this.props.widgetAPI.permissions}
-              richTextAPI={newPluginAPI({
+              richTextAPI={createRichTextAPI({
                 widgetAPI: this.props.widgetAPI,
                 onAction: this.props.onAction
               })}
