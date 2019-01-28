@@ -91,11 +91,7 @@ class TeamMemberships extends React.Component {
                 isPlaceholder(membership) ? (
                   <TeamMembershipRowPlaceholder key={membership.sys.id} />
                 ) : (
-                  <TeamMembershipRow
-                    membership={membership}
-                    key={membership.sys.id}
-                    readOnlyPermission={readOnlyPermission}
-                  />
+                  <TeamMembershipRow membership={membership} key={membership.sys.id} />
                 )
               )}
             </TableBody>
