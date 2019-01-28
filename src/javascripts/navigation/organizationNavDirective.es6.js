@@ -125,11 +125,11 @@ registerDirective('cfOrganizationNav', () => {
       {
         if: 'nav.pricingVersion === "pricing_version_2" && nav.teamsEnabled',
         title: 'Teams',
-        label: 'alpha',
+        label: 'new',
         sref: 'account.organizations.teams({orgId: nav.orgId})',
         rootSref: 'account.organizations.teams',
         inheritUrlParams: false,
-        icon: 'nav-organization-users',
+        icon: 'nav-organization-teams',
         dataViewType: 'organization-teams'
       },
       {

@@ -39,6 +39,7 @@ class TeamList extends React.Component {
       <Workbench>
         <Workbench.Header>
           <Workbench.Header.Left>
+            <Workbench.Icon icon="page-teams" />
             <Workbench.Title>Teams</Workbench.Title>
           </Workbench.Header.Left>
           <Workbench.Header.Actions>
@@ -66,8 +67,8 @@ class TeamList extends React.Component {
           </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content>
+          <ExperimentalFeatureNote />
           <section style={{ padding: '1em 2em 2em' }}>
-            <ExperimentalFeatureNote />
             {teams.length > 0 && (
               <Table data-test-id="teams-table">
                 <TableHead>
