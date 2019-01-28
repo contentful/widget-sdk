@@ -7,10 +7,18 @@ describe('data/Endpoint.es6', () => {
   const defaultHeaders = {
     Accept: 'application/json, text/plain, */*',
     'If-Modified-Since': '0',
-    'Cache-Control': 'no-cache'
+    'Cache-Control': 'no-cache',
+    'X-Contentful-User-Agent': 'app contentful.web-app; platform browser; env development'
   };
 
   beforeEach(function() {
+    /*
+      Because the default headers are set in prelude.js,
+      it's not possible to mock them using a normal approach.
+
+      This means that the environment in the default headers say `env development`
+      even though it should be `env unittest`.
+     */
     module('contentful/test');
 
     const auth = {
