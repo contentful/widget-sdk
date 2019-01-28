@@ -105,13 +105,17 @@ registerDirective('cfEntityField', [
           }
 
           function updateLocales() {
-            $scope.locales = _.filter(getFieldLocales(field), locale => {
+            const fieldLocalesInternalCodes = getFieldLocales(field).map(
+              locale => locale.internal_code
+            );
+            $scope.locales = _.filter(TheLocaleStore.getPrivateLocales(), locale => {
+              const isFieldLocale = fieldLocalesInternalCodes.includes(locale.internal_code);
               const isActive = TheLocaleStore.isLocaleActive(locale);
               const hasError = $scope.editorContext.validator.hasFieldLocaleError(
                 field.id,
                 locale.internal_code
               );
-              return isActive || hasError;
+              return hasError || (isFieldLocale && isActive);
             });
           }
 
