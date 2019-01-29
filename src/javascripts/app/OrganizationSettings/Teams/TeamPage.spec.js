@@ -9,7 +9,6 @@ import { TEAMS, TEAM_MEMBERSHIPS } from 'redux/datasets.es6';
 
 import Placeholder from 'app/common/Placeholder.es6';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
-import ROUTES from 'redux/routes.es6';
 import { FEATURE_INACTIVE } from 'redux/accessConstants.es6';
 
 import TeamPage from './TeamPage.es6';
