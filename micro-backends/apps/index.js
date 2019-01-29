@@ -20,6 +20,8 @@ module.exports = {
       return respond404();
     }
 
+    const tokenStart = Date.now();
+
     // Fetch a space membership.
     // If there's no membership for token/space ID pair - respond with 401.
     let membership = null;
@@ -28,20 +30,23 @@ module.exports = {
       const api = headers['x-contentful-api'];
       membership = await getSpaceMembership(dependencies, spaceId, token, api);
     } catch (err) {
-      return respond({ message: err.message }, err.status || 500);
+      const tokenTime = { name: 'token-time', value: Date.now() - tokenStart };
+      return respond({ message: err.message }, err.status || 500, [tokenTime]);
     }
+
+    const tokenTime = { name: 'token-time', value: Date.now() - tokenStart };
 
     // Get apps for a space from KV.
     const apps = (await kv.get(spaceId)) || {};
 
     // GET /apps/spaces/:spaceId
     if (method === 'GET' && !appId) {
-      return respond(apps);
+      return respond(apps, 200, [tokenTime]);
     }
 
     // Only admins can see "write" endpoints.
     if (!membership.admin) {
-      return respond404();
+      return respond404([tokenTime]);
     }
 
     // PUT /apps/spaces/:spaceId/:appId
@@ -50,12 +55,12 @@ module.exports = {
       const valid = typeof body === 'object' && body !== null && !Array.isArray(body);
 
       if (!valid) {
-        return respond422();
+        return respond422([tokenTime]);
       }
 
       const updated = { ...apps, [appId]: body };
       await kv.set(spaceId, updated);
-      return respond(updated);
+      return respond(updated, 200, [tokenTime]);
     }
 
     // DELETE /apps/space/:spaceId/:appId
@@ -63,9 +68,9 @@ module.exports = {
       const updated = { ...apps };
       delete updated[appId];
       await kv.set(spaceId, updated);
-      return respond(updated);
+      return respond(updated, 200, [tokenTime]);
     }
 
-    return respond404();
+    return respond404([tokenTime]);
   }
 };
