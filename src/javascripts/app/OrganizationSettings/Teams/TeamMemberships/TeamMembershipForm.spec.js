@@ -3,7 +3,7 @@ import { createStore } from 'redux';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { noop } from 'lodash';
-import { Option } from '@contentful/forma-36-react-components';
+import { Button, Option, Select } from '@contentful/forma-36-react-components';
 import reducer from 'redux/reducer/index.es6';
 import ROUTES from 'redux/routes.es6';
 import { ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS, TEAMS, USERS } from 'redux/datasets.es6';
@@ -189,6 +189,48 @@ describe('TeamMembershipForm', () => {
         expect(options.get(0).props).toHaveProperty('value', 'orgMembershipA');
         expect(options.get(1).props).toHaveProperty('value', 'orgMembershipB1');
         expect(options.get(2).props).toHaveProperty('value', 'orgMembershipB2');
+      });
+
+      it('the close button should close the form', () => {
+        const onClose = jest.fn(noop);
+        const { wrapper } = renderComponent(actions, onClose);
+
+        wrapper
+          .find(Button)
+          .filter({ testId: 'cancel-button' })
+          .simulate('click');
+        expect(onClose).toHaveBeenCalled();
+      });
+
+      it('add member button should be disabled', () => {
+        const { wrapper } = renderComponent(actions);
+
+        expect(
+          wrapper
+            .find(Button)
+            .filter({ testId: 'add-member-button' })
+            .props()
+        ).toHaveProperty('disabled', true);
+      });
+
+      it('after membership was selected, button should be active and working', () => {
+        const onClose = jest.fn(noop);
+        const { wrapper, store } = renderComponent(actions, onClose);
+
+        wrapper
+          .find(Select)
+          .filter('[data-test-id="user-select"]')
+          .find('select')
+          .simulate('change', { target: { value: 'orgMembershipB1' } });
+        const button = wrapper.find(Button).filter({ testId: 'add-member-button' });
+
+        expect(button.props()).toHaveProperty('disabled', false);
+        button.simulate('click');
+        expect(store.dispatch).toHaveBeenCalledWith({
+          type: 'SUBMIT_NEW_TEAM_MEMBERSHIP',
+          payload: { orgMembership: 'orgMembershipB1' }
+        });
+        expect(onClose).toHaveBeenCalled();
       });
     });
   });

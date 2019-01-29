@@ -9,34 +9,26 @@ import { OrganizationMembership as OrganizationMembershipPropType } from 'app/Or
 
 class TeamMembershipForm extends React.Component {
   static propTypes = {
-    onClose: PropTypes.func.isRequired,
-
     orgMemberships: PropTypes.arrayOf(OrganizationMembershipPropType),
-    onMembershipCreate: PropTypes.func
+    onSubmit: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired
   };
 
   state = {
-    selectedOrgMembershipId: null,
-    isAdmin: false,
-    loading: false
+    selectedOrgMembershipId: null
   };
 
   setOrgMembership = evt => {
     this.setState({ selectedOrgMembershipId: evt.target.value });
   };
 
-  submit = async () => {
-    this.props.onMembershipCreate(this.state.selectedOrgMembershipId);
-    this.props.onClose();
-  };
-
   render() {
-    const { orgMemberships } = this.props;
-    const { loading, selectedOrgMembershipId } = this.state;
+    const { orgMemberships, onSubmit, onClose } = this.props;
+    const { selectedOrgMembershipId } = this.state;
     return (
       <TableRow extraClassNames="space-membership-editor">
         <TableCell colSpan="2">
-          <Select onChange={this.setOrgMembership} defaultValue="">
+          <Select data-test-id="user-select" onChange={this.setOrgMembership} defaultValue="">
             <Option value="" disabled>
               Please select a user
             </Option>
@@ -49,15 +41,15 @@ class TeamMembershipForm extends React.Component {
         </TableCell>
         <TableCell align="right" valign="middle">
           <Button
+            testId="add-member-button"
             size="small"
             buttonType="primary"
-            onClick={this.submit}
+            onClick={() => onSubmit(selectedOrgMembershipId)}
             disabled={!selectedOrgMembershipId}
-            loading={loading}
             style={{ marginRight: '10px' }}>
             Add to team
           </Button>
-          <Button size="small" buttonType="naked" onClick={this.props.onClose}>
+          <Button testId="cancel-button" size="small" buttonType="naked" onClick={onClose}>
             Cancel
           </Button>
         </TableCell>
@@ -81,8 +73,10 @@ export default connect(
   state => ({
     orgMemberships: getAvailableOrgMemberships(state)
   }),
-  dispatch => ({
-    onMembershipCreate: orgMembership =>
-      dispatch({ type: 'SUBMIT_NEW_TEAM_MEMBERSHIP', payload: { orgMembership } })
+  (dispatch, { onClose }) => ({
+    onSubmit: orgMembership => {
+      dispatch({ type: 'SUBMIT_NEW_TEAM_MEMBERSHIP', payload: { orgMembership } });
+      onClose();
+    }
   })
 )(TeamMembershipForm);
