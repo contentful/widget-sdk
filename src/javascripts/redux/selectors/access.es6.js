@@ -8,7 +8,7 @@ export const hasAccess = flow(
   defaultTo(false)
 );
 
-export const getDeniedReason = flow(
+export const getReasonDenied = flow(
   getAccessState,
   get('reason')
 );
