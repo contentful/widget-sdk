@@ -8,4 +8,3 @@ export const UPGRADE_PRICING_FLAG = 'feature-dl-09-2018-upgrade-pricing-space-ho
 export const FEATURE_SERVICE_FLAG = 'feature-bv-2018-01-features-api';
 export const SSO_SELF_CONFIG_FLAG = 'feature-bv-2019-01-sso-self-config';
 export const TEAMS = 'feature-bv-11-2018-teams';
-export const RICH_TEXT_VERSIONING_FEATURE_FLAG = 'feature-at-01-2019-rich-text-versioning';

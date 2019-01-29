@@ -2,7 +2,7 @@ import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import moment from 'moment';
 import * as K from 'utils/kefir.es6';
-import { RTL_SUPPORT_FEATURE_FLAG, RICH_TEXT_VERSIONING_FEATURE_FLAG } from 'featureFlags.es6';
+import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
 import createBridge from 'widgets/SnapshotExtensionBridge.es6';
 
 /**
@@ -61,10 +61,6 @@ registerDirective('cfSnapshotPresenter', [
             if (isEnabled) {
               $scope.methods.shouldDisplayRtl = isRtlLocale;
             }
-          });
-
-          LD.onFeatureFlag($scope, RICH_TEXT_VERSIONING_FEATURE_FLAG, isEnabled => {
-            $scope.features.displayRichText = isEnabled;
           });
         }
       ]
