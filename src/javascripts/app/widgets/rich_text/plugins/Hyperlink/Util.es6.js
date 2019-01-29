@@ -40,16 +40,16 @@ export function hasOnlyHyperlinkInlines(value) {
  * selection has a link or not. If there is no link, a dialog is shown for
  * the user.
  *
- * @param {slate.Change} change Will be mutated with the required operations.
+ * @param {slate.Editor} editor Will be mutated with the required operations.
  * @param {function} createHyperlinkDialog
  * @param {function} logAction
  * @returns {Promise<void>}
  */
-export async function toggleLink(change, createHyperlinkDialog, logAction) {
-  if (hasHyperlink(change.value)) {
-    removeLinks(change, logAction);
+export async function toggleLink(editor, createHyperlinkDialog, logAction) {
+  if (hasHyperlink(editor.value)) {
+    removeLinks(editor, logAction);
   } else {
-    await insertLink(change, createHyperlinkDialog, logAction);
+    await insertLink(editor, createHyperlinkDialog, logAction);
   }
 }
 
@@ -85,7 +85,7 @@ function removeLinks(change, logAction) {
  * Allows the user to edit the first selected link of a given Change by showing
  * a dialog and applying the change.
  *
- * @param {slate.Change} change Will be mutated with the required operations.
+ * @param {slate.Editor} change Will be mutated with the required operations.
  * @param {function} createHyperlinkDialog
  * @param {function} logAction
  * @returns {Promise<void>}

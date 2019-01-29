@@ -18,7 +18,7 @@ export function haveAnyInlines({ value }) {
  * Checks if all inline nodes in the selectin have a certain type.
  * Returns false if there are no inline nodes in the selection.
  *
- * @param {slate.Change} Change
+ * @param {slate.Editor} editor
  * @param {string} type
  * @returns {boolean}
  */

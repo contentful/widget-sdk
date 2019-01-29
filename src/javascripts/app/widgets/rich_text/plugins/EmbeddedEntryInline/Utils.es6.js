@@ -16,19 +16,19 @@ const createInlineNode = id => ({
   }
 });
 
-const insertInline = (change, entryId) => {
-  if (haveInlines(change, INLINES.EMBEDDED_ENTRY)) {
-    change.setInlines(createInlineNode(entryId));
+const insertInline = (editor, entryId) => {
+  if (haveInlines(editor, INLINES.EMBEDDED_ENTRY)) {
+    editor.setInlines(createInlineNode(entryId));
   } else {
-    change.insertInline(createInlineNode(entryId));
+    editor.insertInline(createInlineNode(entryId));
   }
 
-  return change.moveToStartOfNextText().focus();
+  return editor.moveToStartOfNextText().focus();
 };
 
-export const hasOnlyInlineEntryInSelection = change => {
-  const inlines = change.value.inlines;
-  const selection = change.value.selection;
+export const hasOnlyInlineEntryInSelection = editor => {
+  const inlines = editor.value.inlines;
+  const selection = editor.value.selection;
   if (inlines.size === 1 && selection.start.key === selection.end.key) {
     return inlines.get(0).type === INLINES.EMBEDDED_ENTRY;
   }
@@ -37,10 +37,10 @@ export const hasOnlyInlineEntryInSelection = change => {
 /**
  * Invokes entity selector modal and inserts inline embed.
  * @param {WidgetAPI} widgetAPI
- * @param {slate.Change} change
+ * @param {slate.Editor} editor
  * @param {function} logAction
  */
-export const selectEntryAndInsert = async (widgetAPI, change, logAction) => {
+export const selectEntryAndInsert = async (widgetAPI, editor, logAction) => {
   const nodeType = INLINES.EMBEDDED_ENTRY;
   logAction('openCreateEmbedDialog', { nodeType });
 
@@ -51,7 +51,7 @@ export const selectEntryAndInsert = async (widgetAPI, change, logAction) => {
     if (!entry) {
       return;
     }
-    insertInline(change, entry.sys.id);
+    insertInline(editor, entry.sys.id);
     logAction('insert', { nodeType });
   } catch (error) {
     if (error) {
@@ -62,6 +62,6 @@ export const selectEntryAndInsert = async (widgetAPI, change, logAction) => {
   }
 };
 
-export const canInsertInline = change => {
-  return !haveAnyInlines(change) || haveEveryInlineOfType(change, INLINES.EMBEDDED_ENTRY);
+export const canInsertInline = editor => {
+  return !haveAnyInlines(editor) || haveEveryInlineOfType(editor, INLINES.EMBEDDED_ENTRY);
 };

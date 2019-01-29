@@ -37,7 +37,7 @@ export default class Toolbar extends React.Component {
   static propTypes = {
     richTextAPI: PropTypes.object.isRequired,
     isDisabled: PropTypes.bool.isRequired,
-    change: PropTypes.object.isRequired,
+    editor: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
     permissions: PropTypes.shape({
       canAccessAssets: PropTypes.bool.isRequired
@@ -126,16 +126,16 @@ export default class Toolbar extends React.Component {
     });
 
   render() {
-    const { change, isDisabled, richTextAPI } = this.props;
+    const { editor, isDisabled, richTextAPI } = this.props;
     const props = {
-      change,
+      editor,
       onToggle: this.onChange,
       disabled: isDisabled,
       richTextAPI
     };
     const { field } = richTextAPI.widgetAPI;
     const { isAnyHyperlinkEnabled, isAnyListEnabled, isAnyMarkEnabled } = this.state;
-    const currentBlockType = props.change.value.blocks.getIn([0, 'type']);
+    const currentBlockType = props.editor.value.blocks.getIn([0, 'type']);
     return (
       <EditorToolbar extraClassNames="rich-text__toolbar" data-test-id="toolbar">
         <div className="rich-text__toolbar__formatting-options-wrapper">

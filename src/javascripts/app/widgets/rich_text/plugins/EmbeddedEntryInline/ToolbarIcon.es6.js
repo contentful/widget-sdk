@@ -15,11 +15,11 @@ export default class EntryLinkToolbarIcon extends Component {
   handleClick = async (event, widgetAPI) => {
     event.preventDefault();
     const {
-      change,
+      editor,
       richTextAPI: { logToolbarAction }
     } = this.props;
-    await selectEntryAndInsert(widgetAPI, change, logToolbarAction);
-    this.props.onToggle(change);
+    await selectEntryAndInsert(widgetAPI, editor, logToolbarAction);
+    this.props.onToggle(editor);
   };
   render() {
     return (
@@ -38,7 +38,7 @@ export default class EntryLinkToolbarIcon extends Component {
             </Button>
           ) : (
             <DropdownListItem
-              isDisabled={this.props.disabled || !canInsertInline(this.props.change)}
+              isDisabled={this.props.disabled || !canInsertInline(this.props.editor)}
               extraClassNames="rich-text__entry-link-block-button"
               size="small"
               icon="Entry"

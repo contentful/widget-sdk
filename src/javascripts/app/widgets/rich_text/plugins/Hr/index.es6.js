@@ -30,18 +30,18 @@ export default blockSelectDecorator({
   type: BLOCKS.HR,
   title: 'HR',
   icon: 'HorizontalRule',
-  applyChange: (change, type) => {
+  applyChange: (editor, type) => {
     const hr = {
       type,
-      object: 'block',
+      object: 'block'
     };
 
-    if (change.value.blocks.size === 0 || haveTextInSomeBlocks(change)) {
-      change.insertBlock(hr);
+    if (editor.value.blocks.size === 0 || haveTextInSomeBlocks(editor)) {
+      editor.insertBlock(hr);
     } else {
-      change.setBlocks(hr);
+      editor.setBlocks(hr);
     }
 
-    change.insertBlock(BLOCKS.PARAGRAPH).focus();
+    editor.insertBlock(BLOCKS.PARAGRAPH).focus();
   }
 })(Hr);

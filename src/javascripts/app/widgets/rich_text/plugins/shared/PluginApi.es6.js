@@ -49,7 +49,7 @@ export const EDITOR_PLUGIN_PROP_TYPES = {
  */
 export const TOOLBAR_PLUGIN_PROP_TYPES = {
   ...EDITOR_PLUGIN_PROP_TYPES,
-  change: PropTypes.object.isRequired,
+  editor: PropTypes.object.isRequired,
   onToggle: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
   isButton: PropTypes.bool

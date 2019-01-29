@@ -11,16 +11,16 @@ export default class HyperlinkToolbarIcon extends Component {
     event.preventDefault();
     const {
       onToggle,
-      change,
+      editor,
       richTextAPI: { widgetAPI, logToolbarAction }
     } = this.props;
-    await toggleLink(change, widgetAPI.dialogs.createHyperlink, logToolbarAction);
-    onToggle(change);
+    await toggleLink(editor, widgetAPI.dialogs.createHyperlink, logToolbarAction);
+    onToggle(editor);
   };
 
   render() {
-    const { disabled, change } = this.props;
-    const isDisabled = disabled || !hasOnlyHyperlinkInlines(change.value);
+    const { disabled, editor } = this.props;
+    const isDisabled = disabled || !hasOnlyHyperlinkInlines(editor.value);
     return (
       <ToolbarIcon
         disabled={isDisabled}
@@ -28,7 +28,7 @@ export default class HyperlinkToolbarIcon extends Component {
         icon="Link"
         title="Hyperlink"
         onToggle={event => this.handleClick(event)}
-        isActive={hasHyperlink(change.value)}
+        isActive={hasHyperlink(editor.value)}
       />
     );
   }
