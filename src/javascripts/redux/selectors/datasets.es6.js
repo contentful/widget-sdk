@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 import getOrgId from './getOrgId.es6';
 import { getRequiredDataSets } from '../routes.es6';
 import { getPath } from './location.es6';
-import { getHasAccess } from './access.es6';
+import { hasAccess } from './access.es6';
 
 const getRawDatasets = state => get(state, ['datasets', 'payload', getOrgId(state)], {});
 
@@ -55,7 +55,7 @@ export const getDataSetsToLoad = state => {
 };
 
 export const isLoadingMissingDatasets = state => {
-  if (!getHasAccess(state)) {
+  if (!hasAccess(state)) {
     return false;
   }
   const datasetsToLoad = getDataSetsToLoad(state);

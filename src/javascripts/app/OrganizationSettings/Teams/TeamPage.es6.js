@@ -6,7 +6,7 @@ import Placeholder from 'app/common/Placeholder.es6';
 import { getPath } from 'redux/selectors/location.es6';
 import { isLoadingMissingDatasets } from 'redux/selectors/datasets.es6';
 import { hasReadOnlyPermission } from 'redux/selectors/teams.es6';
-import { getDeniedReason, getHasAccess } from 'redux/selectors/access.es6';
+import { getDeniedReason, hasAccess } from 'redux/selectors/access.es6';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 
 import TeamList from './TeamList.es6';
@@ -88,7 +88,7 @@ export default connect(state => {
     showDetails: ROUTES.organization.children.teams.children.team.test(path) !== null,
     isLoading: isLoadingMissingDatasets(state),
     readOnlyPermission: hasReadOnlyPermission(state),
-    hasAccess: getHasAccess(state),
+    hasAccess: hasAccess(state),
     deniedReason: getDeniedReason(state)
   };
 })(TeamPage);

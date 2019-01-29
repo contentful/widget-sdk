@@ -2,7 +2,7 @@ import { get, flow, defaultTo } from 'lodash/fp';
 
 export const getAccessState = get('access');
 
-export const getHasAccess = flow(
+export const hasAccess = flow(
   getAccessState,
   get('allowed'),
   defaultTo(false)
