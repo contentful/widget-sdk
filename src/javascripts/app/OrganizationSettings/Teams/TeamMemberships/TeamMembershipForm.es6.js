@@ -5,26 +5,11 @@ import { get, orderBy, filter, flow } from 'lodash/fp';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
 import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
 import { TableCell, TableRow, Button, Select, Option } from '@contentful/forma-36-react-components';
-import {
-  TeamMembership as TeamMembershipPropyType,
-  OrganizationMembership as OrganizationMembershipPropType
-} from 'app/OrganizationSettings/PropTypes.es6';
-
-function getAvailableOrgMemberships(state) {
-  const teamMemberships = getCurrentTeamMembershipList(state);
-  const unavailableOrgMemberships = teamMemberships.map(get('sys.organizationMembership.sys.id'));
-  return flow(
-    getOrgMemberships,
-    Object.values,
-    filter(({ sys: { id } }) => !unavailableOrgMemberships.includes(id)),
-    orderBy(['sys.user.firstName', 'sys.user.lastName'], ['asc', 'asc'])
-  )(state);
-}
+import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes.es6';
 
 class TeamMembershipForm extends React.Component {
   static propTypes = {
-    close: PropTypes.func.isRequired,
-    initialMembership: TeamMembershipPropyType,
+    onClose: PropTypes.func.isRequired,
 
     orgMemberships: PropTypes.arrayOf(OrganizationMembershipPropType),
     onMembershipCreate: PropTypes.func
@@ -42,7 +27,7 @@ class TeamMembershipForm extends React.Component {
 
   submit = async () => {
     this.props.onMembershipCreate(this.state.selectedOrgMembershipId);
-    this.props.close();
+    this.props.onClose();
   };
 
   render() {
@@ -55,17 +40,11 @@ class TeamMembershipForm extends React.Component {
             <Option value="" disabled>
               Please select a user
             </Option>
-            {orgMemberships.map(orgMembership => {
-              const user = orgMembership.sys.user;
-              return (
-                <Option key={orgMembership.sys.id} value={orgMembership.sys.id}>
-                  {`
-                    ${user.firstName} ${user.lastName}
-                    <${user.email}>
-                  `}
-                </Option>
-              );
-            })}
+            {orgMemberships.map(({ sys: { user, id } }) => (
+              <Option data-test-id="user-select-option" key={id} value={id}>
+                {`${user.firstName} ${user.lastName} <${user.email}>`}
+              </Option>
+            ))}
           </Select>
         </TableCell>
         <TableCell align="right" valign="middle">
@@ -78,13 +57,24 @@ class TeamMembershipForm extends React.Component {
             style={{ marginRight: '10px' }}>
             Add to team
           </Button>
-          <Button size="small" buttonType="naked" onClick={this.props.close}>
+          <Button size="small" buttonType="naked" onClick={this.props.onClose}>
             Cancel
           </Button>
         </TableCell>
       </TableRow>
     );
   }
+}
+
+function getAvailableOrgMemberships(state) {
+  const teamMemberships = getCurrentTeamMembershipList(state);
+  const unavailableOrgMemberships = teamMemberships.map(get('sys.organizationMembership.sys.id'));
+  return flow(
+    getOrgMemberships,
+    Object.values,
+    filter(({ sys: { id } }) => !unavailableOrgMemberships.includes(id)),
+    orderBy(['sys.user.firstName', 'sys.user.lastName'], ['asc', 'asc'])
+  )(state);
 }
 
 export default connect(

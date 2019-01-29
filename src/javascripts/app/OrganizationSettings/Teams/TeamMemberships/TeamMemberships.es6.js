@@ -86,7 +86,7 @@ class TeamMemberships extends React.Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {showingForm && <TeamMembershipForm close={this.toggleForm} />}
+              {showingForm && <TeamMembershipForm onClose={this.toggleForm} />}
               {memberships.map(membership =>
                 isPlaceholder(membership) ? (
                   <TeamMembershipRowPlaceholder key={membership.sys.id} />
