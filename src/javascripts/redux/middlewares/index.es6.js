@@ -1,6 +1,7 @@
-import locationMiddleware from './location.es6';
-import dataLoadingMiddleware from './dataLoading.es6';
-import teamsMiddleware from './teams.es6';
-import feedbackMiddleware from './feedback.es6';
+import location from './location.es6';
+import dataLoading from './dataLoading.es6';
+import teams from './teams.es6';
+import feedback from './feedback.es6';
+import intercom from './intercom.es6';
 
-export default [locationMiddleware, dataLoadingMiddleware, teamsMiddleware, feedbackMiddleware];
+export default [location, dataLoading, teams, feedback, intercom];
