@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
 import SpaceRoleEditor from './SpaceRoleEditor.es6';
 
 describe('SpaceRoleEditor', () => {
@@ -27,8 +28,6 @@ describe('SpaceRoleEditor', () => {
     return mount(<SpaceRoleEditor {...Object.assign(defaultProps, props)} />);
   };
 
-  beforeEach(() => {});
-
   it('renders the component', () => {
     expect(render()).toMatchSnapshot();
   });
@@ -41,7 +40,7 @@ describe('SpaceRoleEditor', () => {
 
   it('removes the admin role if any other role is selected', () => {
     const component = render();
-    component.props({ value: ['admin'] });
+    component.props({ value: [ADMIN_ROLE_ID] });
     component.find('button').simulate('click');
     component
       .find('input')
@@ -58,7 +57,7 @@ describe('SpaceRoleEditor', () => {
       .find('input')
       .at(0)
       .simulate('change', { target: { checked: true } });
-    expect(changeCb).toHaveBeenCalledWith(['admin']);
+    expect(changeCb).toHaveBeenCalledWith([ADMIN_ROLE_ID]);
   });
 
   it('allows multiple roles', () => {

@@ -362,7 +362,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                   >
                     <CheckboxField
                       checked={false}
-                      id="admin"
+                      id="__cf_builtin_admin"
                       inputType="checkbox"
                       labelIsLight={true}
                       labelText="Admin"
@@ -371,7 +371,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                     >
                       <ControlledInputField
                         checked={false}
-                        id="admin"
+                        id="__cf_builtin_admin"
                         inputType="checkbox"
                         labelIsLight={true}
                         labelText="Admin"
@@ -386,7 +386,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                             checked={false}
                             disabled={false}
                             extraClassNames="ControlledInputField__ControlledInputField__input___3OMYB"
-                            id="admin"
+                            id="__cf_builtin_admin"
                             labelText="Admin"
                             onChange={[Function]}
                             required={false}
@@ -399,7 +399,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                               className="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
                               data-test-id="cf-ui-controlled-input"
                               disabled={false}
-                              id="admin"
+                              id="__cf_builtin_admin"
                               onChange={[Function]}
                               required={false}
                               type="checkbox"
@@ -408,7 +408,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                           <div>
                             <FormLabel
                               extraClassNames="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                              htmlFor="admin"
+                              htmlFor="__cf_builtin_admin"
                               required={false}
                               requiredText="required"
                               testId="cf-ui-form-label"
@@ -416,7 +416,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                               <label
                                 className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
                                 data-test-id="cf-ui-form-label"
-                                htmlFor="admin"
+                                htmlFor="__cf_builtin_admin"
                               >
                                 Admin
                               </label>
