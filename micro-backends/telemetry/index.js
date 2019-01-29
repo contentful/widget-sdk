@@ -20,7 +20,7 @@ module.exports = {
       return {
         statusCode: 422,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ meassage: 'No measurements provided.' })
+        body: JSON.stringify({ message: 'No measurements provided.' })
       };
     }
 
