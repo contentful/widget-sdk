@@ -23,7 +23,7 @@ import * as validators from './validators.es6';
 
 export default class IDPSetupForm extends React.Component {
   static propTypes = {
-    organization: OrganizationPropType,
+    organization: OrganizationPropType.isRequired,
     identityProvider: IdentityProviderPropType
   };
 
@@ -34,13 +34,9 @@ export default class IDPSetupForm extends React.Component {
   };
 
   debouncedUpdateValue = _.debounce(async function(name, value) {
-    const {
-      organization: {
-        sys: { id: orgId }
-      }
-    } = this.props;
+    const { identityProvider, organization } = this.props;
 
-    const endpoint = createOrganizationEndpoint(orgId);
+    const endpoint = createOrganizationEndpoint(organization.sys.id);
     const currentValue = this.state.identityProvider[name];
 
     if (currentValue === value) {
@@ -66,9 +62,7 @@ export default class IDPSetupForm extends React.Component {
       field = 'idpName';
     }
 
-    const {
-      sys: { version: currentVersion }
-    } = this.state.identityProvider;
+    const { sys: { version: currentVersion } } = identityProvider;
     let updatedIdentityProvider;
 
     try {
@@ -91,21 +85,6 @@ export default class IDPSetupForm extends React.Component {
       identityProvider: updatedIdentityProvider
     });
   }, 500);
-
-  componentDidMount() {
-    const {
-      identityProvider,
-      organization: { name: orgName }
-    } = this.props;
-
-    if (!identityProvider.ssoName) {
-      identityProvider.ssoName = orgName.toLowerCase();
-    }
-
-    this.setState({
-      identityProvider
-    });
-  }
 
   updateValueImmediately(name) {
     return e => {
@@ -161,6 +140,7 @@ export default class IDPSetupForm extends React.Component {
 
   render() {
     const {
+      identityProvider,
       organization: {
         sys: { id: orgId }
       }
@@ -250,7 +230,7 @@ export default class IDPSetupForm extends React.Component {
           <Select
             name="ssoProvider"
             id="ssoProvider"
-            testId="sso-provider"
+            testId="ssoProvider"
             width="medium"
             extraClassNames="f36-margin-bottom--l"
             onChange={this.updateValueImmediately('idpName')}>
@@ -268,9 +248,10 @@ export default class IDPSetupForm extends React.Component {
             <TextField
               name="otherSsoProvider"
               id="otherSsoProvider"
+              testId='otherSsoProvider'
               labelText="Other provider"
               extraClassNames="f36-margin-bottom--l"
-              value={this.state.identityProvider.ssoProvider}
+              value={identityProvider.ssoProvider}
               onChange={this.updateValue('otherIdpName')}
               onBlur={this.updateValueImmediately('otherIdpName')}
               validationMessage={
@@ -286,7 +267,7 @@ export default class IDPSetupForm extends React.Component {
             extraClassNames="f36-margin-bottom--l"
             onChange={this.updateValue('idpSsoTargetUrl')}
             onBlur={this.updateValueImmediately('idpSsoTargetUrl')}
-            value={this.state.identityProvider.idpSsoTargetUrl}
+            value={identityProvider.idpSsoTargetUrl}
             validationMessage={
               this.state.invalidFields.idpSsoTargetUrl && 'Enter a valid SSO redirect URL'
             }
@@ -299,7 +280,7 @@ export default class IDPSetupForm extends React.Component {
             textInputProps={{
               rows: 8
             }}
-            value={this.state.identityProvider.idpCert}
+            value={identityProvider.idpCert}
             onChange={this.updateValue('idpCert')}
             onBlur={this.updateValueImmediately('idpCert')}
             helpText="Certificate should be formatted with header or in string format."
@@ -323,8 +304,8 @@ export default class IDPSetupForm extends React.Component {
             labelText="Sign-in name"
             id="ssoName"
             name="ssoName"
-            testId="sso-name"
-            value={this.state.identityProvider.ssoName}
+            testId="ssoName"
+            value={identityProvider.ssoName}
             onChange={this.updateValue('ssoName')}
             onBlur={this.updateValueImmediately('ssoName')}
             helpText="Lowercase letters, numbers, periods, spaces, hyphens, or underscores are allowed."

@@ -34,35 +34,17 @@ describe('IDPSetupForm', () => {
     rendered = render({ identityProvider, organization });
   });
 
-  it('should provide a default SSO name if no SSO name is present in identityProvider', () => {
-    expect(
-      rendered
-        .find('[testId="ssoName"]')
-        .first()
-        .prop('value')
-    ).toBe('my awesome org');
-
-    identityProvider.ssoName = 'lilly';
-    rendered = render({ identityProvider: identityProvider, organization });
-    expect(
-      rendered
-        .find('[testId="ssoName"]')
-        .first()
-        .prop('value')
-    ).toBe('lilly');
-  });
-
   it('should show a secondary TextField if "other" is selected as SSO provider', async () => {
     expect(rendered.find('TextField[name="otherSsoProvider"]')).toHaveLength(0);
 
     rendered
-      .find('[testId="idpName"]')
+      .find('[testId="ssoProvider"]')
       .first()
       .simulate('change', { target: { value: 'other' } });
 
     await endpoint();
 
-    expect(rendered.find('TextField[name="otherIdpName"]')).toHaveLength(1);
+    expect(rendered.find('[testId="otherSsoProvider"]')).toHaveLength(1);
   });
 
   it('should update a field every 500ms on change', async () => {
