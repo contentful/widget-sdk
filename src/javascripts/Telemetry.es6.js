@@ -6,6 +6,13 @@ import createMicroBackendsClient from './MicroBackendsClient.es6';
 // synchronization between opened browser tabs.
 const INTERVAL = 60 * 1000;
 
+// We want to send the first batch of measurements
+// sooner than `INTERVAL`. We do it after `INITIAL_DELAY`
+// and only then setup the long-running interval.
+const INITIAL_DELAY = 10 * 1000;
+
+const makeMeasurement = (name, value, tags) => ({ name, value, ...(tags ? { tags } : {}) });
+
 const state = {};
 
 // Records a measurement of value `1`.
@@ -22,14 +29,40 @@ export function count(name, tags) {
 // object of tags `{ 'tag-name': 'tag-value' }`.
 export function record(name, value, tags) {
   withState(state => {
-    state.measurements = [...state.measurements, { name, value, ...(tags ? { tags } : {}) }];
+    state.measurements = [...state.measurements, makeMeasurement(name, value, tags)];
+  });
+}
+
+// `countImmediate` and `recordImmediate` are immediate
+// counterparts of `count` and `record`. They don't wait
+// for the `INTERVAL` to pass and instead call Librato
+// right away.
+// These functions can be used for debugging, from E2E
+// or Puppeteer scripts.
+// Please note they'll write to console in case of failure.
+// In the Web App code use only `count` and `record`.
+export function countImmediate(name, tags) {
+  recordImmediate(name, 1, tags);
+}
+
+export function recordImmediate(name, value, tags) {
+  withState(() => {
+    const body = JSON.stringify([makeMeasurement(name, value, tags)]);
+    callBackend(state.client, body).catch(err => {
+      // eslint-disable-next-line no-console
+      console.error('Could not send measurement.', body, err);
+    });
   });
 }
 
 export function init() {
   withState(state => {
-    if (!state.interval) {
-      state.interval = setInterval(() => send(state), INTERVAL);
+    if (!state.initialized) {
+      state.initialized = true;
+      setTimeout(() => {
+        send(state);
+        setInterval(() => send(state), INTERVAL);
+      }, INITIAL_DELAY);
     }
   });
 }
@@ -53,12 +86,7 @@ async function send(state) {
   try {
     const body = JSON.stringify(state.measurements);
     state.measurements = [];
-
-    await state.client.call('/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body
-    });
+    await callBackend(state.client, body);
   } catch (err) {
     // Don't fail if sending failed, no matter what.
     state.measurements = [
@@ -66,4 +94,12 @@ async function send(state) {
       ...backupRef // Try next time...
     ];
   }
+}
+
+function callBackend(client, body) {
+  return client.call('/send', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body
+  });
 }
