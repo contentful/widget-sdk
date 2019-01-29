@@ -1,9 +1,10 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import reducer from 'redux/reducer/index.es6';
 import ROUTES from 'redux/routes.es6';
-import { Provider } from 'react-redux';
+import { ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS, TEAMS } from 'redux/datasets.es6';
 import { Button, Table } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder.es6';
 import TeamMembershipForm from './TeamMembershipForm.es6';
@@ -52,7 +53,7 @@ describe('TeamDetails', () => {
           type: 'DATASET_LOADING',
           payload: {
             datasets: {
-              Team: [
+              [TEAMS]: [
                 {
                   name: 'Team 1',
                   sys: {
@@ -61,8 +62,8 @@ describe('TeamDetails', () => {
                   }
                 }
               ],
-              TeamMemberships: [],
-              OrganizationMemberships: []
+              [TEAM_MEMBERSHIPS]: [],
+              [ORG_MEMBERSHIPS]: []
             }
           }
         });
@@ -167,7 +168,7 @@ describe('TeamDetails', () => {
             type: 'DATASET_LOADING',
             payload: {
               datasets: {
-                TeamMemberships: [
+                [TEAM_MEMBERSHIPS]: [
                   {
                     sys: {
                       type: 'TeamMembership',

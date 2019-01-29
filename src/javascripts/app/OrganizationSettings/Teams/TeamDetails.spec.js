@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { Button, Tooltip } from '@contentful/forma-36-react-components';
 
 import reducer from 'redux/reducer/index.es6';
+import { TEAMS, TEAM_MEMBERSHIPS, USERS } from 'redux/datasets.es6';
 import ROUTES from 'redux/routes.es6';
 import Placeholder from 'app/common/Placeholder.es6';
 import TeamDetails from './TeamDetails.es6';
@@ -35,7 +36,7 @@ describe('TeamDetails', () => {
         type: 'DATASET_LOADING',
         payload: {
           datasets: {
-            Team: [
+            [TEAMS]: [
               {
                 name: 'A Team',
                 description:
@@ -69,7 +70,7 @@ describe('TeamDetails', () => {
                 }
               }
             ],
-            User: [
+            [USERS]: [
               {
                 firstName: 'User 1',
                 lastName: 'LastName1',
@@ -81,7 +82,7 @@ describe('TeamDetails', () => {
                 sys: { id: 'testUser2' }
               }
             ],
-            TeamMemberships: []
+            [TEAM_MEMBERSHIPS]: []
           }
         }
       });

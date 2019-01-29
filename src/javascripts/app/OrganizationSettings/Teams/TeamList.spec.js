@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { Button, IconButton } from '@contentful/forma-36-react-components';
 
 import reducer from 'redux/reducer/index.es6';
+import { TEAMS, TEAM_MEMBERSHIPS } from 'redux/datasets.es6';
 import ROUTES from 'redux/routes.es6';
 import Placeholder from 'app/common/Placeholder.es6';
 import TeamList from './TeamList.es6';
@@ -49,7 +50,7 @@ describe('TeamList', () => {
           type: 'DATASET_LOADING',
           payload: {
             datasets: {
-              Team: [
+              [TEAMS]: [
                 {
                   name: 'B Team',
                   description: 'Editors and writers in our west coast office.',
@@ -74,7 +75,7 @@ describe('TeamList', () => {
                   }
                 }
               ],
-              TeamMemberships: []
+              [TEAM_MEMBERSHIPS]: []
             }
           }
         });
@@ -406,8 +407,8 @@ describe('TeamList', () => {
           type: 'DATASET_LOADING',
           payload: {
             datasets: {
-              Team: [],
-              TeamMemberships: []
+              [TEAMS]: [],
+              [TEAM_MEMBERSHIPS]: []
             }
           }
         });
