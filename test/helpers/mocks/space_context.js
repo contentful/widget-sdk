@@ -2,6 +2,7 @@ import * as sinon from 'test/helpers/sinon';
 import createMockEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 
 import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
+import createEIRepo from 'widgets/EditorInterfaceRepo.es6';
 
 /**
  * @ngdoc service
@@ -29,7 +30,6 @@ import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
 angular.module('contentful/mocks').factory('mocks/spaceContext', [
   'spaceContext',
   'cfStub',
-  'widgets/EditorInterfaceRepo.es6',
   'data/ApiClient',
   'data/ContentTypeRepo/Published.es6',
   'mocks/entityEditor/Document',
@@ -37,7 +37,6 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
   (
     spaceContext,
     cfStub,
-    { default: createEIRepo },
     CMAClient,
     CTRepo,
     { create: createDocument },

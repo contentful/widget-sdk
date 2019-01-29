@@ -3,27 +3,20 @@ import createEIRepo from './EditorInterfaceRepo.es6';
 jest.mock('./DefaultWidget.es6', () => jest.fn(() => 'DEFAULT'));
 
 describe('EditorInterfaceRepo', () => {
-  let contentType;
-
-  beforeEach(() => {
-    contentType = {
-      sys: {},
+  const makeCt = ({ id, version } = {}) => {
+    return {
+      sys: { id, version },
       fields: [{ apiName: 'FIELD' }]
     };
-  });
+  };
 
   describe('#get()', () => {
     describe('with saved content type', () => {
-      beforeEach(() => {
-        contentType.sys.version = 1;
-      });
-
       it('sends GET request to the editor interface endpoint for the content type', () => {
         const endpoint = jest.fn(() => Promise.resolve({}));
         const repo = createEIRepo(endpoint);
 
-        contentType.sys.id = 'CTID';
-        repo.get(contentType);
+        repo.get(makeCt({ id: 'CTID', version: 1 }));
 
         expect(endpoint).toBeCalledWith({
           method: 'GET',
@@ -36,7 +29,7 @@ describe('EditorInterfaceRepo', () => {
         const endpoint = jest.fn(() => Promise.resolve(res));
         const repo = createEIRepo(endpoint);
 
-        const { controls } = await repo.get(contentType);
+        const { controls } = await repo.get(makeCt({ version: 1 }));
 
         expect(controls).toHaveLength(1);
         expect(controls[0]).toEqual({
@@ -50,7 +43,7 @@ describe('EditorInterfaceRepo', () => {
         const endpoint = jest.fn(() => Promise.reject({ status: 404 }));
         const repo = createEIRepo(endpoint);
 
-        const { controls } = await repo.get(contentType);
+        const { controls } = await repo.get(makeCt({ version: 1 }));
 
         expect(controls).toHaveLength(1);
         expect(controls[0]).toEqual({
@@ -66,7 +59,7 @@ describe('EditorInterfaceRepo', () => {
 
         expect.assertions(1);
         try {
-          await repo.get(contentType);
+          await repo.get(makeCt({ version: 1 }));
         } catch (err) {
           expect(err.status).toBe(500);
         }
@@ -74,15 +67,11 @@ describe('EditorInterfaceRepo', () => {
     });
 
     describe('when the content type is new', () => {
-      beforeEach(() => {
-        contentType.sys.version = 0;
-      });
-
       it('does not send GET request', () => {
         const endpoint = jest.fn();
-        const repo = createEIRepo(endpoint);
+        const repo = createEIRepo(makeCt());
 
-        repo.get(contentType);
+        repo.get(makeCt());
 
         expect(endpoint).not.toBeCalled();
       });
@@ -91,7 +80,7 @@ describe('EditorInterfaceRepo', () => {
         const endpoint = jest.fn();
         const repo = createEIRepo(endpoint);
 
-        const { controls } = await repo.get(contentType);
+        const { controls } = await repo.get(makeCt());
 
         expect(controls).toHaveLength(1);
         expect(controls[0]).toEqual({
@@ -104,15 +93,11 @@ describe('EditorInterfaceRepo', () => {
   });
 
   describe('#save()', () => {
-    beforeEach(() => {
-      contentType.sys.id = 'CTID';
-    });
-
     it('sends PUT request with version and payload properly structured', () => {
       const endpoint = jest.fn(() => Promise.resolve({}));
       const repo = createEIRepo(endpoint);
 
-      repo.save(contentType, {
+      repo.save(makeCt({ id: 'CTID' }), {
         sys: { version: 'V' },
         controls: [{ fieldId: 'FIELD', field: { id: 'FIELD' }, widgetId: 'WIDGET', settings: {} }]
       });
@@ -133,7 +118,7 @@ describe('EditorInterfaceRepo', () => {
       const endpoint = jest.fn(() => Promise.resolve(res));
       const repo = createEIRepo(endpoint);
 
-      const { controls } = await repo.save(contentType, { sys: { version: 'V' } });
+      const { controls } = await repo.save(makeCt({ id: 'CTID' }), { sys: { version: 'V' } });
 
       expect(controls).toHaveLength(1);
       expect(controls[0]).toEqual({

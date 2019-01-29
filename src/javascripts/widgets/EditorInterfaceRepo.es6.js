@@ -4,7 +4,7 @@ const makeDefault = ct => ({ sys: {}, controls: syncControls(ct, []) });
 const makePath = ct => ['content_types', ct.sys.id, 'editor_interface'];
 
 export default function createEIRepo(spaceEndpoint) {
-  return { get, save, syncControls };
+  return { get, save };
 
   // Given a content type, fetch and return internal
   // representation of its editor interface.

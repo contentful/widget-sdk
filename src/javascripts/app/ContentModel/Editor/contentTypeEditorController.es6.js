@@ -150,7 +150,9 @@ registerController('ContentTypeEditorController', [
      */
     controller.openFieldDialog = field => {
       const fieldId = field.apiName || field.id;
-      const control = _.find($scope.editorInterface.controls, { fieldId: fieldId });
+      const control = ($scope.editorInterface.controls || []).find(control => {
+        return control.fieldId === fieldId;
+      });
 
       return openFieldDialog($scope, field, control).then(() => {
         $scope.contentTypeForm.$setDirty();
