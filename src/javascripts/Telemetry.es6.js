@@ -1,12 +1,10 @@
 import createMicroBackendsClient from './MicroBackendsClient.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const { env } = getModule('environment');
 
 // How often measurements should be sent.
+// Please note it means some measurements may be dropped.
+// We could use `localStorage` but it would require
+// synchronization between opened browser tabs.
 const INTERVAL = 60 * 1000;
-
-const STORAGE_KEY = 'telemetryMeasurementQueue';
 
 const state = {};
 
@@ -28,43 +26,19 @@ export function record(name, value, tags) {
   });
 }
 
-function withState(cb) {
-  if (env === 'unittest') {
-    cb({ measurements: [] });
-    return;
-  }
-
-  if (state.client) {
-    cb(state);
-    return;
-  }
-
-  // Try to read previously stored queue of outstanding measurements.
-  try {
-    // Always use `localStorage`.
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    localStorage.removeItem(STORAGE_KEY);
-    if (Array.isArray(stored)) {
-      state.measurements = stored;
-    }
-  } catch (err) {
-    // Start with nothing if failed to read.
-    state.measurements = [];
-  }
-
-  state.client = createMicroBackendsClient({ backendName: 'telemetry' });
-
-  send(state);
-  setInterval(() => send(state), INTERVAL);
-
-  // Store outstanding measurements so they are sent in the next session.
-  window.addEventListener('beforeunload', () => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.measurements));
-    } catch (err) {
-      // Failed to stringify or store, ignore.
+export function init() {
+  withState(state => {
+    if (!state.interval) {
+      state.interval = setInterval(() => send(state), INTERVAL);
     }
   });
+}
+
+function withState(cb) {
+  if (!state.client) {
+    state.measurements = [];
+    state.client = createMicroBackendsClient({ backendName: 'telemetry' });
+  }
 
   cb(state);
 }
