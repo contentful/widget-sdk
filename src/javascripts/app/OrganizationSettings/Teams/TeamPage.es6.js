@@ -55,6 +55,7 @@ class TeamPage extends React.Component {
       }
       return (
         <Placeholder
+          testId="access-denied-placeholder"
           text={text}
           title="No access to Teams page"
           button={
