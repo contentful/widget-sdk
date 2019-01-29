@@ -3,6 +3,7 @@ import Parser from 'path-parser';
 
 import { TEAMS, USERS, ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS } from './datasets.es6';
 
+// required datasets and features are inherited by children
 const ROUTES = {
   organization: {
     path: '/account/organizations/:orgId',
@@ -10,10 +11,11 @@ const ROUTES = {
       teams: {
         path: '/teams',
         requiredDataSets: [TEAMS, TEAM_MEMBERSHIPS],
+        feature: 'teams',
         children: {
           team: {
             path: '/:teamId',
-            requiredDataSets: [USERS, ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS]
+            requiredDataSets: [USERS, ORG_MEMBERSHIPS]
           }
         }
       }
@@ -42,12 +44,35 @@ export function getRequiredDataSets(path, routes = ROUTES) {
     return [];
   }
   return flow(
+    // get all routes
+    Object.values,
+    // this gets the datasets of the matching route and all parents
+    // effectively parents gives their dataset requirements to all their children
     flatMap(({ partialTest, children, requiredDataSets = [] }) => {
       const dataSets = partialTest(path) ? requiredDataSets : [];
       return children ? dataSets.concat(getRequiredDataSets(path, children)) : dataSets;
     }),
     uniq
-  )(Object.values(routes));
+  )(routes);
+}
+
+// assumes if a route belongs to a feature, all children belong to that feature as well
+export function getFeature(path, routes = ROUTES) {
+  if (!path) {
+    return null;
+  }
+  return Object.values(routes).reduce((pathFeature, { partialTest, children, feature }) => {
+    // if one of the parents belongs to a feature, return that
+    if (pathFeature) {
+      return pathFeature;
+    }
+    // if this route matches and belongs to a feature, return that
+    if (partialTest(path) && feature) {
+      return feature;
+    }
+    // otherwise check if child route matches and has a feature
+    return children ? getFeature(path, children) : null;
+  }, null);
 }
 
 export default ROUTES;
