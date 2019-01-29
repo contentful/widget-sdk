@@ -8,6 +8,7 @@ import { isLoadingMissingDatasets } from 'redux/selectors/datasets.es6';
 import { hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import { getReasonDenied, hasAccess } from 'redux/selectors/access.es6';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
+import { FEATURE_INACTIVE } from 'redux/accessConstants.es6';
 
 import TeamList from './TeamList.es6';
 import TeamDetails from './TeamDetails.es6';
@@ -47,7 +48,7 @@ class TeamPage extends React.Component {
     } = this.props;
     if (!hasAccess) {
       let text;
-      if (deniedReason === 'feature_inactive') {
+      if (deniedReason === FEATURE_INACTIVE) {
         text =
           'Unfortunately, your current plan doesn’t include Teams. Teams make it easy to group people together. Get in touch with us if you’re interested.';
       } else {

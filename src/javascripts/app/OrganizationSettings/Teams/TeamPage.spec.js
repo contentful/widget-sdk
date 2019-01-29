@@ -8,6 +8,7 @@ import reducer from 'redux/reducer';
 import Placeholder from 'app/common/Placeholder.es6';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 import ROUTES from 'redux/routes.es6';
+import { FEATURE_INACTIVE } from 'redux/accessConstants.es6';
 
 import TeamPage from './TeamPage.es6';
 import TeamList from './TeamList.es6';
@@ -58,7 +59,7 @@ describe('TeamPage', () => {
       beforeEach(() => {
         actions.push({
           type: 'ACCESS_DENIED',
-          payload: { reason: 'feature_inactive' }
+          payload: { reason: FEATURE_INACTIVE }
         });
       });
 
