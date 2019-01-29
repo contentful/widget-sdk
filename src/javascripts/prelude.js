@@ -63,6 +63,7 @@ angular
       $injector.get('dialogsInitController').init();
       $injector.get('navigation/DocumentTitle.es6').init();
       $injector.get('components/shared/auto_create_new_space').init();
+      $injector.get('Telemetry.es6').init();
 
       moment.locale('en', {
         calendar: {

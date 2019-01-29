@@ -9,6 +9,7 @@ import {
 } from 'data/ViewMigrator.es6';
 import { searchTermsMigrated as trackSearchTermsMigrated } from 'analytics/events/SearchAndViews.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as Telemetry from 'Telemetry.es6';
 
 const logger = getModule('logger');
 
@@ -112,9 +113,11 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
 
   function setUiConfigOrMigrate(type, data) {
     if (isUIConfigDataMigrated(data)) {
+      Telemetry.count('uiconfig.migrated-fetched');
       const uiConfig = normalizeMigratedUIConfigData(data);
       return setUiConfig(type, uiConfig);
     } else {
+      Telemetry.count('uiconfig.not-migrated-fetched');
       return viewMigrator.migrateUIConfigViews(data).then(migratedUIConfig => {
         trackSearchTermsMigrated(migratedUIConfig, getEndpointPath(type).join('/'));
         return setUiConfig(type, migratedUIConfig);
