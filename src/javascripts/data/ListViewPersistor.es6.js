@@ -3,6 +3,7 @@ import { getStore } from 'TheStore/index.es6';
 import { omit, isEmpty, isObject } from 'lodash';
 import { serialize, unserialize } from 'data/ViewSerializer.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as Telemetry from 'Telemetry.es6';
 
 const $q = getModule('$q');
 const $location = getModule('$location');
@@ -76,6 +77,11 @@ export default function create(spaceId, viewMigrator, entityType) {
     // Migration of pure text queries to new search ui's format.
     if (viewMigrator) {
       const isAssetsView = entityType === 'assets';
+
+      const migrationNeeded =
+        view && typeof view.searchTerm === 'string' && view.searchTerm.length > 0;
+      Telemetry.count(`uiconfig.qs-migration-${migrationNeeded ? 'needed' : 'not-needed'}`);
+
       return viewMigrator.migrateView(view, isAssetsView);
     }
 
