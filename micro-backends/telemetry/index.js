@@ -8,7 +8,7 @@ module.exports = {
     if (!validEndpoint) {
       return {
         statusCode: 404,
-        headers: { 'Content-Type': 'applcation/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ meassage: 'Not found.' })
       };
     }
@@ -19,7 +19,7 @@ module.exports = {
     if (!hasMeasurements) {
       return {
         statusCode: 422,
-        headers: { 'Content-Type': 'applcation/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ meassage: 'No measurements provided.' })
       };
     }
