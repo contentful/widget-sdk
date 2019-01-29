@@ -47,14 +47,11 @@ class TeamMemberships extends React.Component {
     showingForm: false
   };
 
-  toggleForm = () => {
-    this.setState({ showingForm: !this.state.showingForm });
-  };
-
   render() {
     const { memberships, teamName, readOnlyPermission } = this.props;
     const { showingForm } = this.state;
     const empty = memberships.length === 0 && !showingForm;
+
     return (
       <React.Fragment>
         {/* TODO: move these styles to a CSS class  */}
@@ -68,7 +65,7 @@ class TeamMemberships extends React.Component {
                 <AddTeamMemberButton disabled />
               </Tooltip>
             ) : (
-              <AddTeamMemberButton onClick={this.toggleForm} />
+              <AddTeamMemberButton onClick={() => this.setState({ showingForm: true })} />
             ))}
         </header>
         {!empty && (
@@ -86,10 +83,12 @@ class TeamMemberships extends React.Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {showingForm && <TeamMembershipForm onClose={this.toggleForm} />}
-              {memberships.map(membership =>
+              {showingForm && (
+                <TeamMembershipForm onClose={() => this.setState({ showingForm: false })} />
+              )}
+              {memberships.map((membership, index) =>
                 isPlaceholder(membership) ? (
-                  <TeamMembershipRowPlaceholder key={membership.sys.id} />
+                  <TeamMembershipRowPlaceholder key={index} />
                 ) : (
                   <TeamMembershipRow membership={membership} key={membership.sys.id} />
                 )
@@ -102,7 +101,7 @@ class TeamMemberships extends React.Component {
             testId="no-members-placeholder"
             title={`Team ${teamName} has no members 🐚`}
             text="They’re not gonna magically appear."
-            button={<AddTeamMemberButton onClick={this.toggleForm} />}
+            button={<AddTeamMemberButton onClick={() => this.setState({ showingForm: true })} />}
           />
         )}
         {empty && readOnlyPermission && (
