@@ -63,7 +63,12 @@ angular
       $injector.get('dialogsInitController').init();
       $injector.get('navigation/DocumentTitle.es6').init();
       $injector.get('components/shared/auto_create_new_space').init();
-      $injector.get('Telemetry.es6').init();
+
+      // Start telemetry and expose it as a global.
+      // It can be used by E2E or Puppeteer scripts.
+      const Telemetry = $injector.get('Telemetry.es6');
+      window.cfTelemetry = Telemetry;
+      Telemetry.init();
 
       moment.locale('en', {
         calendar: {
