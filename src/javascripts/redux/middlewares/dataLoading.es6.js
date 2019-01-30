@@ -17,7 +17,7 @@ export default ({ getState, dispatch }) => next => async action => {
     const featureRequired = getFeature(newPath);
     if (featureRequired) {
       const orgId = getOrgId(newState);
-      const isActive = get('enabled', getOrgFeature(orgId, 'teams'));
+      const isActive = get('enabled', await getOrgFeature(orgId, 'teams'));
       if (!isActive) {
         dispatch({ type: 'ACCESS_DENIED', payload: { reason: 'feature_inactive' } });
         return result;
