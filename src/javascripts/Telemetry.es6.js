@@ -4,7 +4,7 @@ import createMicroBackendsClient from './MicroBackendsClient.es6';
 // Please note it means some measurements may be dropped.
 // We could use `localStorage` but it would require
 // synchronization between opened browser tabs.
-const INTERVAL = 60 * 1000;
+const INTERVAL = 120 * 1000;
 
 // We want to send the first batch of measurements
 // sooner than `INTERVAL`. We do it after `INITIAL_DELAY`

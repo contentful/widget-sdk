@@ -32,18 +32,10 @@ export default class NetlifyBuildButton extends Component {
   async componentDidMount() {
     const contentPreviewIds = await getContentPreviewIdsFor(this.props.contentType);
 
-    // Normally if there are no content previews in a space we
-    // could just return here: at least one content preview is
-    // required for Netlify app to operate.
-
-    // We don't return so we put more stress on the "apps"
-    // micro-backend (with calls to `netlifyAppConfig.get`).
-    // TODO: This is an experiment, restore logic commented out
-    // below once done.
-
-    // if (contentPreviewIds.length < 1) {
-    //   return;
-    // }
+    // At least one content preview is required for Netlify app to operate.
+    if (contentPreviewIds.length < 1) {
+      return;
+    }
 
     const config = await spaceContext.netlifyAppConfig.get();
     const sites = get(config, ['sites'], []).filter(s => validId(s.contentPreviewId));
