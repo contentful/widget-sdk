@@ -1,44 +1,32 @@
-import sinon from 'sinon';
+import { getSlideInEntities, goToSlideInEntity } from './index.es6';
+
+import $location from 'ng/$location';
+import $state from 'ng/$state';
+
+jest.mock('analytics/Analytics.es6', () => ({}));
+jest.mock('ng/$location', () => ({ search: jest.fn() }));
+jest.mock('ng/$state', () => ({ params: {}, go: jest.fn() }));
 
 describe('SlideInNavigator', () => {
-  beforeEach(function() {
-    const params = sinon.stub();
-    this.stateParams = params;
-    this.search = sinon.stub();
-    this.stateGo = sinon.stub();
+  beforeEach(jest.clearAllMocks);
 
-    module('contentful/test', $provide => {
-      $provide.value('$state', {
-        get params() {
-          return params();
-        },
-        go: this.stateGo
-      });
-      $provide.value('$location', {
-        search: this.search
-      });
-    });
+  describe('getSlideInEntities()', () => {
+    function testFn(message, { params = {}, search = {} }, expectedOutput) {
+      it(message, () => {
+        $state.params = params;
+        $location.search.mockReturnValue(search);
 
-    this.slideInNavigator = this.$inject('navigation/SlideInNavigator');
-  });
-
-  describe('getSlideInEntities', () => {
-    function getSlideInEntitiesTestFactory(message, { params = {}, search = {} }, expectedOutput) {
-      it(message, function() {
-        this.stateParams.returns(params);
-        this.search.returns(search);
-
-        const entities = this.slideInNavigator.getSlideInEntities();
+        const entities = getSlideInEntities();
 
         expect(entities).toEqual(expectedOutput);
       });
     }
 
-    getSlideInEntitiesTestFactory('returns state params', { params: { entryId: 'entry-id' } }, [
+    testFn('returns state params', { params: { entryId: 'entry-id' } }, [
       { id: 'entry-id', type: 'Entry' }
     ]);
 
-    getSlideInEntitiesTestFactory(
+    testFn(
       'returns ids from query string',
       {
         params: {
@@ -51,7 +39,7 @@ describe('SlideInNavigator', () => {
       [{ id: 'entry-id', type: 'Entry' }, { id: 'entry-id-2', type: 'Entry' }]
     );
 
-    getSlideInEntitiesTestFactory(
+    testFn(
       'ignores empty values',
       {
         params: {
@@ -68,7 +56,7 @@ describe('SlideInNavigator', () => {
       ]
     );
 
-    getSlideInEntitiesTestFactory(
+    testFn(
       'contains no duplicate ids',
       {
         params: {
@@ -81,7 +69,7 @@ describe('SlideInNavigator', () => {
       [{ id: 'entry-id-1', type: 'Entry' }, { id: 'entry-id-2', type: 'Entry' }]
     );
 
-    getSlideInEntitiesTestFactory(
+    testFn(
       'returns asset id from query string',
       {
         params: {
@@ -99,36 +87,25 @@ describe('SlideInNavigator', () => {
     );
   });
 
-  describe('goToSlideInEntity', () => {
-    function willRedirect(
-      message,
-      {
-        params = {
-          entryId: 'entry-id-2'
-        },
-        search = {
-          previousEntries: 'entry-id-0,entry-id-1'
-        },
-        goToEntity = { id: 'entry-id', type: 'Entry' }
-      },
-      stateGoArgs
-    ) {
-      it(message, function() {
-        this.stateParams.returns(params);
-        this.search.returns(search);
+  describe('goToSlideInEntity()', () => {
+    function testRedirect(message, { params, search, goToEntity }, expectedStateGoArgs) {
+      it(message, () => {
+        $state.params = params;
+        $location.search.mockReturnValue(search);
 
-        const result = this.slideInNavigator.goToSlideInEntity(goToEntity);
+        const result = goToSlideInEntity(goToEntity);
 
-        sinon.assert.calledWith(this.stateGo, ...stateGoArgs);
+        expect($state.go).toHaveBeenCalledTimes(1);
+        expect($state.go).toHaveBeenCalledWith(...expectedStateGoArgs);
 
-        const count = ids => [...ids].filter(char => char === ',').length;
-        const currentSlideLevel = search.previousEntries ? count(search.previousEntries) + 1 : 0;
-        const targetSlideLevel = count(stateGoArgs[1].previousEntries) + 1;
+        const count = ids => (ids ? ids.split(',').length : 0);
+        const currentSlideLevel = count(search.previousEntries);
+        const targetSlideLevel = count(expectedStateGoArgs[1].previousEntries);
         expect(result).toEqual({ currentSlideLevel, targetSlideLevel });
       });
     }
 
-    willRedirect(
+    testRedirect(
       'adds up to 5+ entries in stack',
       {
         params: {
@@ -148,7 +125,7 @@ describe('SlideInNavigator', () => {
       ]
     );
 
-    willRedirect(
+    testRedirect(
       'removes all entries above given one if it is already in the stack',
       {
         params: {
