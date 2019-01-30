@@ -31,9 +31,6 @@ export default class SpaceHome extends React.Component {
           video.popover.show();
           video.play();
         });
-        video.bind('end', function() {
-          video.popover.hide();
-        });
       }
     });
   };
