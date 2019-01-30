@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { isEmpty, get, some } from 'lodash';
-import { Modal, TextField, Button } from '@contentful/forma-36-react-components';
+import { Modal, TextField, Button, Paragraph } from '@contentful/forma-36-react-components';
 import { getTeams } from 'redux/selectors/teams.es6';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 
@@ -69,7 +69,7 @@ class TeamDialog extends React.Component {
     const { allTeams, initialTeam } = this.props;
 
     if (isEmpty(name)) {
-      return 'Please insert a name';
+      return 'Choose a name for your new team';
     }
     if (
       some(
@@ -100,7 +100,9 @@ class TeamDialog extends React.Component {
             data-test-id="team-form">
             <Modal.Header title={isEditing ? 'Edit team' : 'New team'} onClose={onClose} />
             <Modal.Content>
-              <p>Teams make it easy to group people together.</p>
+              <Paragraph extraClassNames="f36-margin-bottom--l">
+                Teams make it easy to group people together.
+              </Paragraph>
               <TextField
                 required
                 name="teamName"
@@ -113,7 +115,6 @@ class TeamDialog extends React.Component {
                   maxLength: 120,
                   autoFocus: true
                 }}
-                extraClassNames={'vertical-form-field-rythm-dense'}
                 validationMessage={validationMessage}
                 onChange={this.handleChange('name')}
               />
@@ -125,11 +126,10 @@ class TeamDialog extends React.Component {
                 value={description}
                 countCharacters
                 textInputProps={{
-                  placeholder: `The Mighty Ducks is a series of three live-action films that revolve around a Twin Cities ice hockey team, composed of young players that stick together throughout various challenges.`,
+                  placeholder: `A crew of misfit kids from Minnesota that stick together against all odds to turn their ragtag youth hockey team into regional champions.`,
                   maxLength: 800,
-                  rows: 3
+                  rows: 4
                 }}
-                extraClassNames={'vertical-form-field-rythm-dense'}
                 onChange={this.handleChange('description')}
               />
             </Modal.Content>

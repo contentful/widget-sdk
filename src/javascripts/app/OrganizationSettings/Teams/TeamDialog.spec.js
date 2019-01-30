@@ -129,7 +129,7 @@ describe('TeamDialog', () => {
           expect(props.onClose).not.toHaveBeenCalled();
           expect(getNameField(wrapper).props()).toHaveProperty(
             'validationMessage',
-            'Please insert a name'
+            'Choose a name for your new team'
           );
         });
 
@@ -193,7 +193,7 @@ describe('TeamDialog', () => {
           expect(props.onClose).not.toHaveBeenCalled();
           expect(getNameField(wrapper).props()).toHaveProperty(
             'validationMessage',
-            'Please insert a name'
+            'Choose a name for your new team'
           );
         });
 
