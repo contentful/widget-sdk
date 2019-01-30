@@ -1,4 +1,4 @@
-import {BLOCKS} from '@contentful/rich-text-types';
+import { BLOCKS } from '@contentful/rich-text-types';
 import { BoldPlugin } from './Bold/index.es6';
 import { ItalicPlugin } from './Italic/index.es6';
 import { UnderlinedPlugin } from './Underlined/index.es6';
