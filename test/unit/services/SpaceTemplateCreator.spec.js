@@ -152,12 +152,12 @@ describe('Space Template creation service', () => {
         localeRepo: {
           save: sinon.stub()
         },
-        eiRepo: {
+        editorInterfaceRepo: {
           save: sinon.stub()
         }
       };
 
-      spaceContext.eiRepo.save.returns(Promise.resolve());
+      spaceContext.editorInterfaceRepo.save.returns(Promise.resolve());
 
       _.times(2, n => {
         spaceContext.space.createContentType
@@ -213,7 +213,7 @@ describe('Space Template creation service', () => {
     });
 
     it('creates 1 editor interface', () => {
-      expect(spaceContext.eiRepo.save.callCount).toBe(1);
+      expect(spaceContext.editorInterfaceRepo.save.callCount).toBe(1);
     });
 
     it('attempts to create 3 assets', () => {

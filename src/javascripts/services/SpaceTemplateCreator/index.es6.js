@@ -263,7 +263,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     }
     // The content type has a default editor interface with version 1.
     editorInterface.sys.version = 1;
-    return spaceContext.eiRepo
+    return spaceContext.editorInterfaceRepo
       .save(contentType, editorInterface)
       .then(handlers.success)
       .catch(handlers.error);

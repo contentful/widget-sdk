@@ -251,7 +251,7 @@ export default function create($scope, contentTypeIds) {
   function publishContentType(contentType) {
     return spaceContext.publishedCTs
       .publish(contentType)
-      .then(() => spaceContext.eiRepo.get(contentType.data))
+      .then(() => spaceContext.editorInterfaceRepo.get(contentType.data))
       .then(editorInterface => {
         // On publish the API also updates the editor interface
         $scope.editorInterface.sys.version = editorInterface.sys.version;
@@ -260,7 +260,7 @@ export default function create($scope, contentTypeIds) {
   }
 
   function saveEditorInterface(contentType) {
-    return spaceContext.eiRepo
+    return spaceContext.editorInterfaceRepo
       .save(contentType.data, $scope.editorInterface)
       .then(editorInterface => {
         $scope.editorInterface = editorInterface;
@@ -333,7 +333,7 @@ export default function create($scope, contentTypeIds) {
     return duplicate
       .save()
       .then(publishContentType)
-      .then(ct => spaceContext.eiRepo.save(ct.data, $scope.editorInterface))
+      .then(ct => spaceContext.editorInterfaceRepo.save(ct.data, $scope.editorInterface))
       .then(
         () => duplicate,
         err => {

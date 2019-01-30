@@ -110,10 +110,10 @@ describe('spaceContext', () => {
       sinon.assert.calledOnce(this.spaceContext.widgets.refresh);
     });
 
-    it('sets #eiRepo', function() {
+    it('sets #editorInterfaceRepo', function() {
       const createEditorInterfaceRepo = this.$inject('widgets/EditorInterfaceRepo.es6').default;
       sinon.assert.calledOnce(createEditorInterfaceRepo);
-      expect(this.spaceContext.eiRepo).toEqual('EI');
+      expect(this.spaceContext.editorInterfaceRepo).toEqual('EI');
     });
 
     it('updates publishedCTs repo from refreshed CT list', function*() {
