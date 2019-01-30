@@ -111,8 +111,8 @@ describe('spaceContext', () => {
     });
 
     it('sets #eiRepo', function() {
-      const createEIRepo = this.$inject('widgets/EditorInterfaceRepo.es6').default;
-      sinon.assert.calledOnce(createEIRepo);
+      const createEditorInterfaceRepo = this.$inject('widgets/EditorInterfaceRepo.es6').default;
+      sinon.assert.calledOnce(createEditorInterfaceRepo);
       expect(this.spaceContext.eiRepo).toEqual('EI');
     });
 

@@ -2,7 +2,7 @@ import * as sinon from 'test/helpers/sinon';
 import createMockEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 
 import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
-import createEIRepo from 'widgets/EditorInterfaceRepo.es6';
+import createEditorInterfaceRepo from 'widgets/EditorInterfaceRepo.es6';
 
 /**
  * @ngdoc service
@@ -57,7 +57,7 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
       // We create a mock space endpoint that always returns a 404. This
       // makes the EI repo create an editor interface from scratch.
       const eiSpaceEndpoint = sinon.stub().rejects({ status: 404 });
-      spaceContextMock.eiRepo = createEIRepo(eiSpaceEndpoint);
+      spaceContextMock.eiRepo = createEditorInterfaceRepo(eiSpaceEndpoint);
 
       spaceContextMock.docPool = {
         get: function(entity, _contentType) {
