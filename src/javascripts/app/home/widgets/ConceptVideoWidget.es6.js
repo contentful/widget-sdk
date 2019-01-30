@@ -50,14 +50,14 @@ export default class SpaceHome extends React.Component {
         <div className="concept-video-widget__content">
           <div className="concept-video-widget__copy">
             <p>
-              With Contentful all text, images, media and other content can be used over and over
-              again in different parts of your website or device. This content can also be used
-              across many other channels such as email. At Contentful we call this Reusable Content.
+              In Contentful, your content is structured and developed in the most modern way. All
+              content is organized into Content Types, enabling it to be reused rather than
+              recreated for each use case. This creates consistency across all published content and
+              makes it faster to edit, translate and extend across many platforms.
             </p>
             <p>
-              This makes it possible to only create content once, rather than reformatting or
-              developing it for each use case. It also creates consistency across all published
-              content.
+              Using Contentful means you’ll spend less time editing content in multiple places, and
+              focus on creating engaging experiences.
             </p>
           </div>
           <div className="concept-video-widget__player-wrapper">
