@@ -213,8 +213,8 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
   describe('#save command', () => {
     beforeEach(function() {
-      spaceContext.editingInterfaces.save = sinon.stub().resolves();
-      spaceContext.editingInterfaces.get = sinon.stub().resolves({
+      spaceContext.editorInterfaceRepo.save = sinon.stub().resolves();
+      spaceContext.editorInterfaceRepo.get = sinon.stub().resolves({
         sys: { version: 1 },
         controls: []
       });
@@ -224,7 +224,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
       scope.validate = sinon.stub().returns(true);
 
-      scope.editingInterface = { sys: {} };
+      scope.editorInterface = { sys: {} };
 
       scope.contentType.save = sinon.stub().returns(this.when(scope.contentType));
       scope.contentType.publish = sinon.stub().returns(this.when(scope.contentType));
@@ -245,16 +245,16 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
         sinon.assert.calledOnce(ct.publish);
       }));
 
-    it('saves editing interface', () => {
-      spaceContext.editingInterfaces.get = sinon.stub().resolves({
+    it('saves editor interface', () => {
+      spaceContext.editorInterfaceRepo.get = sinon.stub().resolves({
         sys: { version: 10 },
         controls: []
       });
 
       return controller.save.execute().then(() => {
-        sinon.assert.calledOnce(spaceContext.editingInterfaces.save);
+        sinon.assert.calledOnce(spaceContext.editorInterfaceRepo.save);
 
-        const callArgs = spaceContext.editingInterfaces.save.getCall(0).args;
+        const callArgs = spaceContext.editorInterfaceRepo.save.getCall(0).args;
 
         // First argument is the content type
         expect(callArgs[0]).toEqual({
@@ -274,11 +274,11 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
       });
     });
 
-    it('updates editing interface on scope', function() {
-      spaceContext.editingInterfaces.save.resolves('NEW EI');
+    it('updates editor interface on scope', function() {
+      spaceContext.editorInterfaceRepo.save.resolves('NEW EI');
       controller.save.execute();
       this.$apply();
-      expect(scope.editingInterface).toBe('NEW EI');
+      expect(scope.editorInterface).toBe('NEW EI');
     });
 
     describe('with invalid data', () => {
@@ -289,7 +289,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
       it('does not save entities', () =>
         controller.save.execute().catch(() => {
-          sinon.assert.notCalled(spaceContext.editingInterfaces.save);
+          sinon.assert.notCalled(spaceContext.editorInterfaceRepo.save);
           sinon.assert.notCalled(scope.contentType.save);
         }));
 
@@ -407,10 +407,10 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
         return ct;
       });
 
-      scope.editingInterface = { sys: {}, controls: [] };
-      spaceContext.editingInterfaces.save = sinon.stub().resolves();
+      scope.editorInterface = { sys: {}, controls: [] };
+      spaceContext.editorInterfaceRepo.save = sinon.stub().resolves();
 
-      sinon.stub(spaceContext.editingInterfaces, 'get').callsFake(ctData => {
+      sinon.stub(spaceContext.editorInterfaceRepo, 'get').callsFake(ctData => {
         return $q.resolve({
           sys: { version: 1 },
           controls: _.map(ctData.fields, field => ({
@@ -449,14 +449,14 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
     it('synchronizes controls in the new EI', () => {
       contentType.data.fields = [{ id: 'xyz' }, { id: 'boom' }];
-      scope.editingInterface.controls = [
+      scope.editorInterface.controls = [
         { widgetId: 'margarita-making-widget' },
         { widgetId: 'some-other-widget' }
       ];
 
       return controller.duplicate.execute().then(() => {
-        sinon.assert.calledOnce(spaceContext.editingInterfaces.save);
-        const ei = spaceContext.editingInterfaces.save.firstCall.args[1];
+        sinon.assert.calledOnce(spaceContext.editorInterfaceRepo.save);
+        const ei = spaceContext.editorInterfaceRepo.save.firstCall.args[1];
         expect(ei.controls[0].widgetId).toBe('margarita-making-widget');
         expect(ei.controls[1].widgetId).toBe('some-other-widget');
       });

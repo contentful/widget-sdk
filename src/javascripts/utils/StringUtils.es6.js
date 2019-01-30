@@ -84,18 +84,6 @@ export function titleToFileName(str, spacer) {
   return str.replace(/\s/g, spacer || '').replace(/[^\w]*/g, '');
 }
 
-export const entitiesToLabels = {
-  ContentType: 'Content Type',
-  Entry: 'Entry',
-  Asset: 'Asset',
-  ApiKey: 'API Key',
-  EditingInterface: 'Editing Interface'
-};
-
-export function getEntityLabel(id) {
-  return entitiesToLabels[id];
-}
-
 /**
  * Join the strings with commas and a final 'and'.
  *

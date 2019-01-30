@@ -53,7 +53,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
    * are created, entries are created (and one entry is published).
    *
    * spaceSetup - resolves when _everything_ (API keys, assets are processed and
-   * published, editing interfaces are created, content preview with discovery app/TEA)
+   * published, editor interfaces are created, content preview with discovery app/TEA)
    * is processed
    *
    * Each created item will call the custom success/error handlers and
@@ -70,7 +70,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     // we use CDA for getting template values, and therefore some values can't be obtained:
     // 1. description of content types
     // 2. fields' validations of content types
-    // 3. editing interfaces (appearance - e.g. slug editor or url editor)
+    // 3. editor interfaces (appearance - e.g. slug editor or url editor)
     const template = enrichTemplate(templateInfo, rawTemplate);
 
     const contentCreated = runTask(function*() {
@@ -111,7 +111,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
 
             // if we don't return a promise, `Promise.all` resolves it automatically
             if (contentType) {
-              return createEditingInterface(contentType.data, editorInterface);
+              return createEditorInterface(contentType.data, editorInterface);
             }
           })
         );
@@ -256,16 +256,15 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     };
   }
 
-  function createEditingInterface(contentType, editingInterface) {
-    const handlers = makeHandlers(editingInterface, 'create', 'EditingInterface');
+  function createEditorInterface(contentType, editorInterface) {
+    const handlers = makeHandlers(editorInterface, 'create', 'EditorInterface');
     if (handlers.itemWasHandled) {
       return Promise.resolve(handlers.response);
     }
-    const repo = spaceContext.editingInterfaces;
     // The content type has a default editor interface with version 1.
-    editingInterface.sys.version = 1;
-    return repo
-      .save(contentType, editingInterface)
+    editorInterface.sys.version = 1;
+    return spaceContext.editorInterfaceRepo
+      .save(contentType, editorInterface)
       .then(handlers.success)
       .catch(handlers.error);
   }

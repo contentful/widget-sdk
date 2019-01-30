@@ -1,6 +1,6 @@
 /**
  * This service exposes a list of widget migration specifications that
- * migrate the editing interface data of a content type.
+ * migrate the editor interface of a content type.
  *
  * Each element is an object with a `from` and a `to` property. The
  * corresponding values are strings that represent widget IDs. A

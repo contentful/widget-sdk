@@ -11,7 +11,7 @@ const TEA_SPACE_ID = environment.settings.contentful.TEASpaceId;
  * So we lose some information:
  * 1. description of content types
  * 2. fields' validations of content types
- * 3. editing interfaces (appearance - e.g. slug editor or url editor)
+ * 3. editor interfaces (appearance - e.g. slug editor or url editor)
  *
  * This method enriches specific templates with needed info.
  *

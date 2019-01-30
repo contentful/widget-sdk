@@ -2,6 +2,7 @@ import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import validation from '@contentful/validation';
 import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField.es6';
+import { syncControls } from 'widgets/EditorInterfaceTransformer.es6';
 
 /**
  * @ngdoc type
@@ -23,7 +24,6 @@ registerController('ContentTypeEditorController', [
   'navigation/confirmLeaveEditor',
   'contentTypeEditor/metadataDialog',
   'access_control/AccessChecker',
-  'editingInterfaces/helpers',
   'analytics/Analytics.es6',
   'app/ContentModel/Editor/Actions.es6',
   function ContentTypeEditorController(
@@ -36,11 +36,9 @@ registerController('ContentTypeEditorController', [
     leaveConfirmator,
     metadataDialog,
     accessChecker,
-    eiHelpers,
     Analytics,
     { default: createActions }
   ) {
-    const editingInterfaces = spaceContext.editingInterfaces;
     const controller = this;
     const contentTypeIds = spaceContext.cma
       .getContentTypes()
@@ -142,7 +140,7 @@ registerController('ContentTypeEditorController', [
     controller.removeField = id => {
       const fields = $scope.contentType.data.fields;
       _.remove(fields, { id: id });
-      syncEditingInterface();
+      syncEditorInterface();
     };
 
     /**
@@ -151,7 +149,11 @@ registerController('ContentTypeEditorController', [
      * @param {Client.ContentType.Field} field
      */
     controller.openFieldDialog = field => {
-      const control = eiHelpers.findWidget($scope.editingInterface.controls, field);
+      const fieldId = field.apiName || field.id;
+      const control = ($scope.editorInterface.controls || []).find(control => {
+        return control.fieldId === fieldId;
+      });
+
       return openFieldDialog($scope, field, control).then(() => {
         $scope.contentTypeForm.$setDirty();
       });
@@ -226,7 +228,7 @@ registerController('ContentTypeEditorController', [
       data.fields = data.fields || [];
       data.fields.push(newField);
       $scope.$broadcast('fieldAdded');
-      syncEditingInterface();
+      syncEditorInterface();
       trackAddedField($scope.contentType, newField);
     }
 
@@ -246,8 +248,11 @@ registerController('ContentTypeEditorController', [
     /**
      * Make sure that each field has a widget and vice versa.
      */
-    function syncEditingInterface() {
-      editingInterfaces.syncControls($scope.contentType.data, $scope.editingInterface);
+    function syncEditorInterface() {
+      $scope.editorInterface.controls = syncControls(
+        $scope.contentType.data,
+        $scope.editorInterface.controls
+      );
     }
   }
 ]);

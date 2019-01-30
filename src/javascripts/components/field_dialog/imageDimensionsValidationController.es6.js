@@ -2,7 +2,7 @@ import { registerController } from 'NgRegistry.es6';
 
 /**
  * Translate between the settings of the `assetImageDimension`
- * validation and the editing interface presented to the user.
+ * validation and the UI presented to the user.
  *
  * One controller instance only takes care of one dimension, either
  * 'width' or 'height'. The name of the dimension must be given by the

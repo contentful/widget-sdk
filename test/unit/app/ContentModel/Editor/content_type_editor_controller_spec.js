@@ -22,6 +22,9 @@ describe('ContentTypeEditor Controller', () => {
       });
 
       $provide.constant('openFieldDialog', this.stubs.openFieldDialog);
+      $provide.constant('widgets/EditorInterfaceTransformer.es6', {
+        syncControls: sinon.stub()
+      });
     });
 
     const cfStub = this.$inject('cfStub');
@@ -36,7 +39,7 @@ describe('ContentTypeEditor Controller', () => {
         $setDirty: sinon.stub()
       },
       context: {},
-      editingInterface: {}
+      editorInterface: {}
     });
 
     const $controller = this.$inject('$controller');
@@ -170,9 +173,7 @@ describe('ContentTypeEditor Controller', () => {
     let syncControls;
 
     beforeEach(function() {
-      const spaceContext = this.$inject('spaceContext');
-      syncControls = sinon.stub();
-      spaceContext.editingInterfaces = { syncControls: syncControls };
+      syncControls = this.$inject('widgets/EditorInterfaceTransformer.es6').syncControls;
 
       scope.$broadcast = sinon.stub();
 
@@ -192,10 +193,14 @@ describe('ContentTypeEditor Controller', () => {
       expect(scope.contentType.data.fields[0]).toBeDefined();
     });
 
-    it('syncs editing interface widgets with fields', function() {
+    it('syncs editor interface widgets with fields', function() {
       sinon.assert.notCalled(syncControls);
       this.$apply();
-      sinon.assert.calledWithExactly(syncControls, scope.contentType.data, scope.editingInterface);
+      sinon.assert.calledWithExactly(
+        syncControls,
+        scope.contentType.data,
+        scope.editorInterface.controls
+      );
     });
 
     it('broadcasts event', function() {
@@ -208,18 +213,16 @@ describe('ContentTypeEditor Controller', () => {
     let syncControls;
 
     beforeEach(function() {
-      const spaceContext = this.$inject('spaceContext');
-      syncControls = sinon.stub();
-      spaceContext.editingInterfaces = { syncControls: syncControls };
+      syncControls = this.$inject('widgets/EditorInterfaceTransformer.es6').syncControls;
 
       this.controller = createContentType([{ id: 'FID' }]);
     });
 
-    it('syncs the editing interface', function() {
-      scope.editingInterface = {};
+    it('syncs the editor interface', function() {
+      scope.editorInterface = {};
       this.controller.removeField('FID');
       this.$apply();
-      sinon.assert.calledWith(syncControls, contentType.data, scope.editingInterface);
+      sinon.assert.calledWith(syncControls, contentType.data, scope.editorInterface.controls);
     });
 
     it('removes the field', function() {
@@ -310,7 +313,7 @@ describe('ContentTypeEditor Controller', () => {
     it('opens the field dialog with correct arguments', function() {
       const field = { apiName: 'FIELD' };
       const control = { fieldId: 'FIELD' };
-      scope.editingInterface = {
+      scope.editorInterface = {
         controls: [control]
       };
 

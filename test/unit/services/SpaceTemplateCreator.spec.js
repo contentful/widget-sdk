@@ -131,11 +131,7 @@ describe('Space Template creation service', () => {
           createContentType: sinon.stub(),
           createEntry: sinon.stub(),
           createAsset: sinon.stub(),
-          getContentType: function() {
-            return Promise.resolve({
-              createEditingInterface: spaceContext.createEditingInterface
-            });
-          }
+          getContentType: sinon.stub().resolves()
         },
         docConnection: {
           open: sinon.stub().returns(
@@ -156,12 +152,12 @@ describe('Space Template creation service', () => {
         localeRepo: {
           save: sinon.stub()
         },
-        editingInterfaces: {
+        editorInterfaceRepo: {
           save: sinon.stub()
         }
       };
 
-      spaceContext.editingInterfaces.save.returns(Promise.resolve());
+      spaceContext.editorInterfaceRepo.save.returns(Promise.resolve());
 
       _.times(2, n => {
         spaceContext.space.createContentType
@@ -217,7 +213,7 @@ describe('Space Template creation service', () => {
     });
 
     it('creates 1 editor interface', () => {
-      expect(spaceContext.editingInterfaces.save.callCount).toBe(1);
+      expect(spaceContext.editorInterfaceRepo.save.callCount).toBe(1);
     });
 
     it('attempts to create 3 assets', () => {

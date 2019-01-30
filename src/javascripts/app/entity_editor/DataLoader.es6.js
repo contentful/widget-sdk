@@ -150,7 +150,7 @@ function makeEntryLoader(spaceContext) {
     // times for the bulk editor
     getFieldControls: memoize(
       wrapTask(function*(contentType) {
-        const ei = yield spaceContext.editingInterfaces.get(contentType.data);
+        const ei = yield spaceContext.editorInterfaceRepo.get(contentType.data);
         return buildRenderables(ei.controls, spaceContext.widgets.getAll());
       })
     ),
@@ -196,7 +196,7 @@ function makeEntityInfo(entity, contentType) {
     // TODO Normalize CT data if this property is used by more advanced
     // services like the 'Document' controller and the 'cfEntityField'
     // directive. Normalizing means that we set external field IDs from
-    // internal ones, etc. See for example 'data/editingInterfaces/transformer'
+    // internal ones, etc.
     contentType: contentType ? cloneDeep(contentType.data) : null
   });
 }

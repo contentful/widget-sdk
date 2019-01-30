@@ -73,14 +73,3 @@ registerFactory('states', [
     }
   }
 ]);
-
-registerFactory('states/resolvers', () => {
-  editingInterfaceResolver.$inject = ['spaceContext', 'contentType'];
-  function editingInterfaceResolver(spaceContext, contentType) {
-    return spaceContext.editingInterfaces.get(contentType.data);
-  }
-
-  return {
-    editingInterface: editingInterfaceResolver
-  };
-});

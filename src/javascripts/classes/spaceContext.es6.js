@@ -6,6 +6,7 @@ import * as ShareJSConnection from 'data/sharejs/Connection.es6';
 import createApiKeyRepo from 'data/CMA/ApiKeyRepo.es6';
 import shouldUseEnvEndpoint from 'data/shouldUseEnvEndpoint.es6';
 import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
+import createEditorInterfaceRepo from 'widgets/EditorInterfaceRepo.es6';
 
 /**
  * @ngdoc service
@@ -27,7 +28,6 @@ registerFactory('spaceContext', [
   'logger',
   'TheLocaleStore',
   'data/userCache',
-  'data/editingInterfaces',
   'data/ApiClient',
   'data/previewEnvironmentsCache',
   'Config.es6',
@@ -53,7 +53,6 @@ registerFactory('spaceContext', [
     logger,
     TheLocaleStore,
     createUserCache,
-    createEIRepo,
     ApiClient,
     previewEnvironmentsCache,
     Config,
@@ -135,7 +134,7 @@ registerFactory('spaceContext', [
         self.widgets = createWidgetStore(self.cma);
         self.apiKeyRepo = createApiKeyRepo(self.endpoint);
         self.webhookRepo = createWebhookRepo(space);
-        self.editingInterfaces = createEIRepo(self.endpoint);
+        self.editorInterfaceRepo = createEditorInterfaceRepo(self.endpoint);
         self.localeRepo = createLocaleRepo(self.endpoint);
         self.organization = deepFreezeClone(self.getData('organization'));
 

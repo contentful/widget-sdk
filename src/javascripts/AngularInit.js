@@ -43,9 +43,6 @@ angular
       ngRequire('services/logger.es6');
       ngRequire('services/localeStore.es6');
       ngRequire('data/userCache.es6');
-      ngRequire('services/editingInterfacesHelpers.es6');
-      ngRequire('data/editing_interfaces/transformer.es6');
-      ngRequire('data/editingInterfaces.es6');
       ngRequire('data/apiClient.es6');
       ngRequire('data/previewEnvironmentsCache.es6');
       ngRequire('classes/spaceContext.es6');
@@ -249,7 +246,6 @@ angular
       ngRequire('states/cfSrefDirective.es6');
       ngRequire('states/config.es6');
       ngRequire('states/states.es6');
-      ngRequire('states/contentTypes.es6');
       ngRequire('states/entries.es6');
       ngRequire('states/settings.es6');
       ngRequire('states/settingsRoles.es6');

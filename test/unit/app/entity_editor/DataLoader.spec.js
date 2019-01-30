@@ -27,7 +27,7 @@ describe('app/entity_editor/DataLoader.es6', () => {
           return $q.resolve({ data: makeCt(id) });
         }
       },
-      editingInterfaces: {
+      editorInterfaceRepo: {
         get: sinon.stub().resolves({})
       },
       widgets: {
@@ -61,14 +61,14 @@ describe('app/entity_editor/DataLoader.es6', () => {
     it('requests the editor interface', function*() {
       yield this.loadEntry('EID');
       sinon.assert.calledWith(
-        this.spaceContext.editingInterfaces.get,
+        this.spaceContext.editorInterfaceRepo.get,
         sinon.match.has('sys', sinon.match.has('id', 'CTID'))
       );
     });
 
     it('builds field controls from editor interface', function*() {
       const ei = { controls: 'CONTROLS' };
-      this.spaceContext.editingInterfaces.get.resolves(ei);
+      this.spaceContext.editorInterfaceRepo.get.resolves(ei);
       this.spaceContext.widgets.getAll.returns('WIDGETS');
       yield this.loadEntry('EID');
       sinon.assert.calledWith(

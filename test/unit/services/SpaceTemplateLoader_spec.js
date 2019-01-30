@@ -77,17 +77,6 @@ describe('Space Template loading service', () => {
     }
   ];
 
-  const sourceEditingInterfaces = [
-    {
-      controls: [
-        {
-          fieldId: 'ljZpnZHxIk2voQXa',
-          widgetId: 'multipleLine'
-        }
-      ]
-    }
-  ];
-
   const sourceEntries = [
     {
       sys: {
@@ -528,7 +517,6 @@ describe('Space Template loading service', () => {
       contentTypes: sinon.stub(),
       entries: sinon.stub(),
       assets: sinon.stub(),
-      editingInterface: sinon.stub(),
       space: sinon.stub()
     };
 
@@ -577,7 +565,6 @@ describe('Space Template loading service', () => {
       this.client.entries.returns(Promise.resolve(sourceEntries));
       this.client.assets.returns(Promise.resolve(sourceAssets));
       this.client.space.returns(Promise.resolve(spaceData));
-      this.client.editingInterface.returns(Promise.resolve(sourceEditingInterfaces[0]));
 
       yield this.spaceTemplateLoader.getTemplate(templateInfo).then(_template_ => {
         template = _template_;

@@ -2,6 +2,7 @@ import * as sinon from 'test/helpers/sinon';
 import createMockEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 
 import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
+import createEditorInterfaceRepo from 'widgets/EditorInterfaceRepo.es6';
 
 /**
  * @ngdoc service
@@ -16,7 +17,7 @@ import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
  * - `space`
  * - `publishedCTs` Stubs all methods.
  *   TODO provide a mock implementation with space endpoint
- * - `editingInterfaces` Always returns default interface.
+ * - `editorInterfaceRepo` Always returns the default editor interface.
  * - `widgets` without custom extensions.
  * - `docPool.get` Creates mock document
  * - `memberships` Instance of 'access_control/SpaceMembershipRepository
@@ -29,7 +30,6 @@ import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
 angular.module('contentful/mocks').factory('mocks/spaceContext', [
   'spaceContext',
   'cfStub',
-  'data/editingInterfaces',
   'data/ApiClient',
   'data/ContentTypeRepo/Published.es6',
   'mocks/entityEditor/Document',
@@ -37,7 +37,6 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
   (
     spaceContext,
     cfStub,
-    createEIRepo,
     CMAClient,
     CTRepo,
     { create: createDocument },
@@ -56,9 +55,9 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
       spaceContextMock.space = sinon.stubAll(space);
 
       // We create a mock space endpoint that always returns a 404. This
-      // makes the EI repo create an editing interface from scratch.
+      // makes the EI repo create an editor interface from scratch.
       const eiSpaceEndpoint = sinon.stub().rejects({ status: 404 });
-      spaceContextMock.editingInterfaces = createEIRepo(eiSpaceEndpoint);
+      spaceContextMock.editorInterfaceRepo = createEditorInterfaceRepo(eiSpaceEndpoint);
 
       spaceContextMock.docPool = {
         get: function(entity, _contentType) {
