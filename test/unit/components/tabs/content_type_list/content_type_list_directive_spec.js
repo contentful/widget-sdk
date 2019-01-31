@@ -7,9 +7,9 @@ describe('The ContentType list directive', () => {
     });
 
     const contentTypes = [
-      { sys: { id: 1 }, name: 'A' },
-      { sys: { id: 2 }, name: 'B' },
-      { sys: { id: 3 }, name: 'Bx' }
+      { sys: { id: 1, publishedBy: { sys: { id: 1 } } }, name: 'A' },
+      { sys: { id: 2, publishedBy: { sys: { id: 1 } } }, name: 'B' },
+      { sys: { id: 3, publishedBy: { sys: { id: 1 } } }, name: 'Bx' }
     ];
 
     const spaceContext = this.$inject('mocks/spaceContext').init();
@@ -20,6 +20,6 @@ describe('The ContentType list directive', () => {
 
     scope.context.searchTerm = 'B';
     scope.$apply();
-    expect(element.find('.table tbody tr').length).toBe(2);
+    expect(element.find('table tbody tr').length).toBe(2);
   });
 });

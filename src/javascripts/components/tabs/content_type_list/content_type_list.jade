@@ -70,51 +70,8 @@ header.workbench-header
           .view-folder__item-title Active
 
   .workbench-main__right-content
-    +no-search-results("visibleContentTypes.length < 1")
-    .table(ng-show="visibleContentTypes.length > 0")
-      .table__head
-        table
-          thead
-            tr
-              th(aria-label="cell-display-name").x--medium-cell Name
-              th(aria-label="cell-description").x--large-cell Description
-              th(aria-label="cell-integer").x--small-cell Fields
-              th(aria-label="cell-date").x--small-cell Updated
-              th(aria-label="cell-symbol").x--small-cell By
-              th(aria-label="cell-status").x--small-cell Status
-      .table__body
-        table
-          tbody
-            tr.entity-list__item(
-              ng-repeat="contentType in visibleContentTypes track by contentType.sys.id"
-              ng-init="linkToCt='^.detail.fields({ contentTypeId: contentType.sys.id })'"
-              ui-sref="{{linkToCt}}"
-              data-test-id="content-type-item")
-              +td.x--medium-cell(aria-label="cell-display-name"
-                ui-sref="{{linkToCt}}"
-                data-test-id="cell-name")
-                | {{contentType.name || '&nbsp;'}}
-              +td.x--large-cell(aria-label="cell-description"
-                ui-sref="{{linkToCt}}"
-                data-test-id="cell-description")
-                | {{contentType.description || '&nbsp;'}}
-              +td.x--small-cell(aria-label="cell-integer"
-                ui-sref="{{linkToCt}}"
-                data-test-id="cell-fields")
-                | {{numFields(contentType)}}
-              +td.x--small-cell(aria-label="cell-date"
-                ui-sref="{{linkToCt}}"
-                data-test-id="cell-date")
-                react-component(
-                  ng-if="contentType.sys.updatedAt" 
-                  name="components/shared/RelativeDateTime/index.es6" 
-                  props="{value: contentType.sys.updatedAt}"
-                )
-              +td.x--small-cell(aria-label="cell-symbol"
-                ui-sref="{{linkToCt}}"
-                data-test-id="cell-created-by")
-                react-component(name="components/shared/UserNameFormatter/FetchAndFormatUserName.es6" props="{userId: contentType.sys.updatedBy.sys.id}")
-              +td.x--small-cell(aria-label="cell-status"
-                ui-sref="{{linkToCt}}"
-                data-test-id="cell-status")
-                <react-component name="@contentful/forma-36-react-components/Tag" props="{children: statusLabel(contentType), tagType: statusType(contentType)}"></react-component>
+    +no-search-results("visibleContentTypes.length == 0")
+    react-component(
+      name="components/tabs/content_type_list/ContentTypeList/index.es6"
+      props="{contentTypes: visibleContentTypes}"
+    )
