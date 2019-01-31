@@ -106,7 +106,7 @@ const react = node => {
     'react-tippy',
     'redux/store',
     'downshift',
-    '@contentful/slate-react',
+    'slate-react',
     '<react-component>'
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);

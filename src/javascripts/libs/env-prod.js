@@ -100,7 +100,7 @@ window.libs = [
   ['scroll-into-view', require('scroll-into-view')],
   ['slate', require('slate')],
   ['@guestbell/slate-edit-list', require('@guestbell/slate-edit-list')],
-  ['@contentful/slate-react', require('@contentful/slate-react')],
+  ['slate-react', require('slate-react')],
   ['@wikifactory/slate-trailing-block', require('@wikifactory/slate-trailing-block')],
   ['slate-html-serializer', require('slate-html-serializer')],
   ['slate-plain-serializer', require('slate-plain-serializer')],
