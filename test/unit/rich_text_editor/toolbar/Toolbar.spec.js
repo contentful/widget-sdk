@@ -42,9 +42,9 @@ export const ASSET = {
 /**
  * These tests rely on Content Editable to interact with the RichTextEditor
  * which is not supported in jsdom yet (see: https://github.com/jsdom/jsdom/issues/1670).
- * Therefore these tests cannot be written in Jest.
+ * Therefore these tests cannot be written in Jest or test actions involving DOM interactions.
  */
-describe('Toolbar', () => {
+describe('Rich Text toolbar', () => {
   beforeEach(async function() {
     module('contentful/test');
 
@@ -165,7 +165,7 @@ describe('Toolbar', () => {
     this.sandbox.remove();
   });
 
-  describe('Hyperlink', () => {
+  describe('Hyperlinks', () => {
     forEach(
       {
         [INLINES.HYPERLINK]: {
@@ -253,12 +253,12 @@ describe('Toolbar', () => {
   }
 
   describe('Embed Dropdown', () => {
-    it('renders the embed dropdown', async function() {
+    it('renders the embed dropdown menu when "Embed" toolbar button is selected', async function() {
       await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
       expect(getWithId(this.wrapper, 'cf-ui-dropdown-list').getDOMNode()).toBeDefined();
     });
 
-    it('inserts the embed block button', async function() {
+    it('renders embed dropdown menu items for enabled node types', async function() {
       this.props.field.validations = [{ enabledNodeTypes: ['embedded-entry-block'] }];
       this.mount({ ...this.props });
       expect(
@@ -266,30 +266,30 @@ describe('Toolbar', () => {
       ).toBeDefined();
       this.props.field.validations = undefined;
     });
-  });
 
-  describe('EmbeddedEntryBlock', () => {
-    it('inserts block', async function({ editor }) {
+    it('inserts an embedded entry when "Embed" > "Entry" option is selected', async function({
+      editor
+    }) {
       await editor.embedEntryBlock(ENTRY);
 
       expect(this.field.getValue()).toEqual(
         document(newEmbeddedEntityBlock(ENTRY), EMPTY_PARAGRAPH)
       );
     });
-  });
 
-  describe('EmbeddedAssetBlock', () => {
-    it('inserts block', async function({ editor }) {
+    it('inserts an embedded asset when "Embed" > "Asset" option is selected', async function({
+      editor
+    }) {
       await editor.embedAssetBlock(ASSET);
 
       expect(this.field.getValue()).toEqual(
         document(newEmbeddedEntityBlock(ASSET), EMPTY_PARAGRAPH)
       );
     });
-  });
 
-  describe('EmbeddedEntryInline', () => {
-    it('inserts inline entry', async function({ editor }) {
+    it('inserts an inline entry when "Embed" > "Inline entry" option is selected', async function({
+      editor
+    }) {
       await editor.embedInlineEntry(ENTRY);
 
       expect(this.field.getValue()).toEqual(
@@ -298,9 +298,9 @@ describe('Toolbar', () => {
     });
   });
 
-  describe('List', () => {
+  describe('Lists', () => {
     [BLOCKS.OL_LIST, BLOCKS.UL_LIST].forEach(function(listType) {
-      it(`inserts ${listType}`, async function({ editor }) {
+      it(`inserts ${listType} when ${listType} option is selected`, async function({ editor }) {
         await editor.clickIcon(listType);
 
         expect(this.field.getValue()).toEqual(
@@ -423,7 +423,7 @@ describe('Toolbar', () => {
         );
       });
 
-      it('inserts quote inside a list-item', async function({ editor }) {
+      it('inserts quote block inside a list-item', async function({ editor }) {
         await editor.clickIcon(listType).clickIcon(BLOCKS.QUOTE);
 
         expect(this.field.getValue()).toEqual(
@@ -655,7 +655,7 @@ function itUpdatesFieldValue(expectedValue) {
 }
 
 function itLogsAction(action, data) {
-  it('invokes `props.onAction`', function() {
+  it('tracks the action event', function() {
     sinon.assert.calledOnceWith(this.props.onAction, action, data);
   });
 }
