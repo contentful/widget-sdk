@@ -46,6 +46,14 @@ export function ssoGetIdentityProviderFailure(error) {
   };
 }
 
+export const SSO_UPDATE_IDENTITY_PROVIDER = 'SSO_UPDATE_IDENTITY_PROVIDER';
+export function ssoUpdateIdentityProvider(identityProvider) {
+  return {
+    type: SSO_UPDATE_IDENTITY_PROVIDER,
+    identityProvider
+  };
+}
+
 export const SSO_FIELD_UPDATE_VALUE = 'SSO_FIELD_UPDATE/VALUE';
 export function ssoFieldUpdateValue(fieldName, value) {
   return {
@@ -76,6 +84,22 @@ export const SSO_FIELD_UPDATE_FAILURE = 'SSO_FIELD_UPDATE/FAILURE';
 export function ssoFieldUpdateFailure(fieldName, error) {
   return {
     type: SSO_FIELD_UPDATE_FAILURE,
+    fieldName,
+    error
+  };
+}
+export const SSO_FIELD_VALIDATION_SUCCESS = 'SSO_FIELD_VALIDATION/SUCCESS';
+export function ssoFieldValidationSuccess(fieldName) {
+  return {
+    type: SSO_FIELD_VALIDATION_SUCCESS,
+    fieldName
+  };
+}
+
+export const SSO_FIELD_VALIDATION_FAILURE = 'SSO_FIELD_VALIDATION/FAILURE';
+export function ssoFieldValidationFailure(fieldName, error) {
+  return {
+    type: SSO_FIELD_VALIDATION_FAILURE,
     fieldName,
     error
   };

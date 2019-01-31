@@ -9,6 +9,7 @@ describe('SSO Redux actionCreators', () => {
 
   beforeEach(() => {
     mockStore = createMockStore();
+    mockEndpoint.mockReset();
   });
 
   describe('retrieveIdp', () => {
@@ -122,6 +123,273 @@ describe('SSO Redux actionCreators', () => {
           }
         ]);
       });
+    });
+  });
+
+  describe('updateFieldValue', () => {
+    it('should always dispatch the validateField action when dispatched', async () => {
+      // Using a non-https idpSsoTargetUrl to force validation failure
+      const idpSsoTargetUrlValue = 'http://example.com';
+
+      await mockStore.dispatch(actionCreators.updateFieldValue({
+        orgId: '1234',
+        fieldName: 'idpSsoTargetUrl',
+        value: idpSsoTargetUrlValue
+      }));
+
+      expect(mockStore.getDispatched()[0]).toBe('thunk');
+
+      await mockStore.dispatch(actionCreators.updateFieldValue({
+        orgId: '1234',
+        fieldName: 'idpSsoTargetUrl',
+        value: idpSsoTargetUrlValue
+      }));
+
+      expect(mockStore.getDispatched()[1]).toBe('thunk');
+    });
+
+    it('should not attempt to update the field on the API if the field is invalid', async () => {
+      const idpSsoTargetUrlValue = 'http://example.com';
+
+      await mockStore.dispatch(actionCreators.updateFieldValue({
+        orgId: '1234',
+        fieldName: 'idpSsoTargetUrl',
+        value: idpSsoTargetUrlValue
+      }));
+
+      expect(mockEndpoint).not.toHaveBeenCalled();
+    });
+
+    it('should go through the success flow if the field update was successful on the API', async () => {
+      const identityProvider = {
+        ssoName: 'something-1234',
+      };
+
+      mockEndpoint.mockResolvedValueOnce(identityProvider);
+
+      const fieldName = 'idpSsoTargetUrl';
+      const value = 'https://example.com';
+
+      await mockStore.dispatch(actionCreators.updateFieldValue({
+        orgId: '1234',
+        fieldName,
+        value
+      }));
+
+      expect(mockStore.getActions()).toEqual(
+        expect.arrayContaining([
+          {
+            type: actions.SSO_FIELD_UPDATE_VALUE,
+            fieldName,
+            value
+          },
+          {
+            type: actions.SSO_FIELD_UPDATE_PENDING,
+            fieldName,
+            isPending: true
+          },
+          {
+            type: actions.SSO_FIELD_UPDATE_SUCCESS,
+            fieldName
+          },
+          {
+            type: actions.SSO_FIELD_UPDATE_PENDING,
+            fieldName,
+            isPending: false
+          }
+        ]
+      ));
+    });
+
+    it('should update the identity provider if the field update was successful on the API', async () => {
+      const identityProvider = {
+        ssoName: 'something-1234',
+      };
+
+      mockEndpoint.mockResolvedValueOnce(identityProvider);
+
+      const fieldName = 'idpSsoTargetUrl';
+      const value = 'https://example.com';
+
+      await mockStore.dispatch(actionCreators.updateFieldValue({
+        orgId: '1234',
+        fieldName,
+        value
+      }));
+
+      expect(mockStore.getActions()).toEqual(
+        expect.arrayContaining([
+          {
+            type: actions.SSO_UPDATE_IDENTITY_PROVIDER,
+            identityProvider
+          }
+        ]
+      ));
+    });
+
+    it('should go through the failure flow if the field update was unsuccessful on the API', async () => {
+      const error = new Error('Field is not valid');
+
+      mockEndpoint.mockRejectedValueOnce(error);
+
+      const fieldName = 'idpSsoTargetUrl';
+      const value = 'https://example.com';
+
+      await mockStore.dispatch(actionCreators.updateFieldValue({
+        orgId: '1234',
+        fieldName,
+        value
+      }));
+
+      expect(mockStore.getActions()).toEqual(
+        expect.arrayContaining([
+          {
+            type: actions.SSO_FIELD_UPDATE_VALUE,
+            fieldName,
+            value
+          },
+          {
+            type: actions.SSO_FIELD_UPDATE_PENDING,
+            fieldName,
+            isPending: true
+          },
+          {
+            type: actions.SSO_FIELD_UPDATE_FAILURE,
+            fieldName,
+            error
+          },
+          {
+            type: actions.SSO_FIELD_UPDATE_PENDING,
+            fieldName,
+            isPending: false
+          }
+        ]
+      ));
+    });
+  });
+
+  describe('validateField', () => {
+    it('should not attempt to validate or update if the current and updated field value is the same', () => {
+      // Set the initial field state
+      const state = {
+        sso: {
+          fields: {
+            ssoName: {
+              value: 'something-1234'
+            }
+          }
+        }
+      };
+
+      mockStore.setState(state);
+
+      const fieldName = 'ssoName';
+      const value = 'something-1234';
+
+      mockStore.dispatch(actionCreators.validateField({
+        orgId: '1234',
+        fieldName,
+        value
+      }));
+
+      expect(mockStore.getActions()).toHaveLength(0);
+    });
+
+    it('should go through the success flow if the validation is successful', () => {
+      const fieldName = 'idpSsoTargetUrl';
+      const value = 'https://example.com';
+
+      mockStore.dispatch(actionCreators.validateField({
+        orgId: '1234',
+        fieldName,
+        value
+      }));
+
+      expect(mockStore.getActions()).toEqual([
+        {
+          type: actions.SSO_FIELD_UPDATE_VALUE,
+          fieldName,
+          value
+        },
+        {
+          type: actions.SSO_FIELD_VALIDATION_SUCCESS,
+          fieldName
+        }
+      ]);
+    });
+
+    it('should go through the failure flow if the validation is unsuccessful', () => {
+      const fieldName = 'idpSsoTargetUrl';
+      const value = 'http://example.com';
+
+      mockStore.dispatch(actionCreators.validateField({
+        orgId: '1234',
+        fieldName,
+        value
+      }));
+
+      expect(mockStore.getActions()).toEqual([
+        {
+          type: actions.SSO_FIELD_UPDATE_VALUE,
+          fieldName,
+          value
+        },
+        {
+          type: actions.SSO_FIELD_VALIDATION_FAILURE,
+          fieldName,
+          error: new Error('Field is not valid')
+        }
+      ]);
+    });
+
+    it('should update the field value regardless of value validity if new value is different', () => {
+      const fieldName = 'idpSsoTargetUrl';
+      let value;
+
+      mockStore = createMockStore();
+
+      value = 'http://example.com';
+
+      mockStore.dispatch(actionCreators.validateField({
+        orgId: '1234',
+        fieldName,
+        value
+      }));
+
+      expect(mockStore.getActions()).toEqual([
+        {
+          type: actions.SSO_FIELD_UPDATE_VALUE,
+          fieldName,
+          value
+        },
+        {
+          type: actions.SSO_FIELD_VALIDATION_FAILURE,
+          fieldName,
+          error: new Error('Field is not valid')
+        }
+      ]);
+
+      mockStore = createMockStore();
+
+      value = 'https://example.com';
+
+      mockStore.dispatch(actionCreators.validateField({
+        orgId: '1234',
+        fieldName,
+        value
+      }));
+
+      expect(mockStore.getActions()).toEqual([
+        {
+          type: actions.SSO_FIELD_UPDATE_VALUE,
+          fieldName,
+          value
+        },
+        {
+          type: actions.SSO_FIELD_VALIDATION_SUCCESS,
+          fieldName,
+        }
+      ]);
     });
   });
 });

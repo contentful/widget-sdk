@@ -1,6 +1,6 @@
 import asn1 from '@jo-sm/asn1js';
 
-export function otherIdpName(value) {
+export function idpName(value) {
   return /^[A-Za-z0-9 \-_]+$/.test(value);
 }
 

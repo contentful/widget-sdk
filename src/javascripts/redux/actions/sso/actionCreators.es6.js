@@ -34,7 +34,6 @@ export function createIdp({ orgId, orgName }) {
   return async dispatch => {
     const endpoint = createOrganizationEndpoint(orgId);
 
-    // TODO tomorrow
     dispatch(actions.ssoCreateIdentityProviderPending(true));
 
     let identityProvider;
@@ -59,17 +58,52 @@ export function createIdp({ orgId, orgName }) {
   };
 }
 
-export function updateFieldValue({ fieldName, value }) {
-  return dispatch => {
+export function updateFieldValue({ fieldName, value, orgId }) {
+  return async (dispatch, getState) => {
+    // Validate field both in state and for this actionCreator
+    dispatch(validateField({ fieldName, value }));
+
+    const isValid = validate(fieldName, value);
+
+    if (!isValid) {
+      return;
+    }
+
+    const version = selectors.getIdentityProviderVersion(getState());
+
     dispatch(actions.ssoFieldUpdateValue(fieldName, value));
+    dispatch(actions.ssoFieldUpdatePending(fieldName, true));
+
+    const endpoint = createOrganizationEndpoint(orgId);
+    let identityProvider;
+
+    try {
+      identityProvider = await endpoint({
+        method: 'PUT',
+        path: ['identity_provider'],
+        version,
+        data: {
+          [fieldName]: value
+        }
+      });
+    } catch (e) {
+      dispatch(actions.ssoFieldUpdateFailure(fieldName, new Error('Field is not valid')));
+      dispatch(actions.ssoFieldUpdatePending(fieldName, false));
+
+      return;
+    }
+
+    dispatch(actions.ssoFieldUpdateSuccess(fieldName));
+    dispatch(actions.ssoUpdateIdentityProvider(identityProvider));
+    dispatch(actions.ssoFieldUpdatePending(fieldName, false));
   };
 }
 
-export function validateField({ fieldName, value, orgId }) {
-  return async (dispatch, getState) => {
+export function validateField({ fieldName, value }) {
+  return (dispatch, getState) => {
     // We get the current state of this field
     //
-    // If the current value is the same as the  value in the state,
+    // If the current value is the same as the value in the state,
     // do nothing
     const field = selectors.getField(getState(), fieldName);
 
@@ -77,36 +111,15 @@ export function validateField({ fieldName, value, orgId }) {
       return;
     }
 
-    dispatch(actions.ssoFieldUpdatePending(fieldName, true));
+    // Always update the local field value
+    dispatch(actions.ssoFieldUpdateValue(fieldName, value));
 
-    // Validate the field first
     const isValid = validate(fieldName, value);
 
-    if (!isValid) {
-      dispatch(actions.ssoFieldUpdateFailure(fieldName, 'Field is not valid'));
-      dispatch(actions.ssoFieldUpdatePending(fieldName, false));
-
-      return;
+    if (isValid) {
+      dispatch(actions.ssoFieldValidationSuccess(fieldName));
+    } else {
+      dispatch(actions.ssoFieldValidationFailure(fieldName, new Error('Field is not valid')));
     }
-
-    const endpoint = createOrganizationEndpoint(orgId);
-
-    try {
-      await endpoint({
-        method: 'PUT',
-        path: ['identity_provider'],
-        data: {
-          [fieldName]: value
-        }
-      });
-    } catch (e) {
-      dispatch(actions.ssoFieldUpdateFailure(fieldName, 'Field is not valid'));
-      dispatch(actions.ssoFieldUpdatePending(fieldName, false));
-
-      return;
-    }
-
-    dispatch(actions.ssoFieldUpdateSuccess(fieldName));
-    dispatch(actions.ssoFieldUpdatePending(fieldName, false));
   };
 }

@@ -5,5 +5,6 @@ export const SSO_PROVIDERS = [
   'Microsoft Azure',
   'Okta',
   'OneLogin',
-  'PingIdentity'
+  'PingIdentity',
+  'Other'
 ];

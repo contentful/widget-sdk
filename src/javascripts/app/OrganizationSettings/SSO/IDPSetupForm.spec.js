@@ -1,16 +1,30 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import IDPSetupForm from './IDPSetupForm.es6';
-import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import { IDPSetupForm } from './IDPSetupForm.es6';
 
 describe('IDPSetupForm', () => {
-  let rendered;
-  let endpoint;
   let identityProvider;
 
-  const render = ({ identityProvider, organization }) => {
+  const render = ({
+    identityProvider,
+    organization,
+    updateFieldValue = () => {},
+    validateField = () => {},
+    fields = {
+      idpName: {},
+      ssoName: {},
+      idpSsoTargetUrl: {},
+      idpCert: {}
+    }
+  }) => {
     return Enzyme.shallow(
-      <IDPSetupForm organization={organization} identityProvider={identityProvider} />
+      <IDPSetupForm
+        organization={organization}
+        identityProvider={identityProvider}
+        updateFieldValue={updateFieldValue}
+        validateField={validateField}
+        fields={fields}
+      />
     );
   };
 
@@ -27,27 +41,13 @@ describe('IDPSetupForm', () => {
         version: 1
       }
     };
-
-    endpoint = jest.fn().mockResolvedValue(identityProvider);
-    createOrganizationEndpoint.mockReturnValue(endpoint);
-
-    rendered = render({ identityProvider, organization });
   });
 
-  it('should show a secondary TextField if "other" is selected as SSO provider', async () => {
-    expect(rendered.find('TextField[name="otherSsoProvider"]')).toHaveLength(0);
+  it('should validate a field on every change', () => {
+    const validateField = jest.fn();
 
-    rendered
-      .find('[testId="ssoProvider"]')
-      .first()
-      .simulate('change', { target: { value: 'other' } });
+    const rendered = render({ identityProvider, organization, validateField });
 
-    await endpoint();
-
-    expect(rendered.find('[testId="otherSsoProvider"]')).toHaveLength(1);
-  });
-
-  it('should update a field every 500ms on change', async () => {
     rendered
       .find('[testId="ssoName"]')
       .first()
@@ -61,19 +61,44 @@ describe('IDPSetupForm', () => {
       .first()
       .simulate('change', { target: { value: 'lilly' } });
 
-    expect(endpoint.mock.calls).toHaveLength(0);
+    expect(validateField).toHaveBeenCalledTimes(3);
+  });
 
-    await new Promise(resolve => setTimeout(resolve, 500));
+  it('should update a field every 500ms on change', async () => {
+    const updateFieldValue = jest.fn();
 
-    expect(endpoint.mock.calls).toHaveLength(1);
+    const rendered = render({ identityProvider, organization, updateFieldValue });
+
+    rendered
+      .find('[testId="ssoName"]')
+      .first()
+      .simulate('change', { target: { value: 'li' } });
+    rendered
+      .find('[testId="ssoName"]')
+      .first()
+      .simulate('change', { target: { value: 'lill' } });
+    rendered
+      .find('[testId="ssoName"]')
+      .first()
+      .simulate('change', { target: { value: 'lilly' } });
+
+    expect(updateFieldValue).not.toHaveBeenCalled();
+
+    await new Promise(resolve => setTimeout(resolve, 550));
+
+    expect(updateFieldValue).toHaveBeenCalledTimes(1);
   });
 
   it('should update a field immediately if input is blurred', () => {
+    const updateFieldValue = jest.fn();
+
+    const rendered = render({ identityProvider, organization, updateFieldValue });
+
     rendered
       .find('[testId="ssoName"]')
       .first()
       .simulate('blur', { target: { value: 'lilly' } });
 
-    expect(endpoint.mock.calls).toHaveLength(1);
+    expect(updateFieldValue).toHaveBeenCalledTimes(1);
   });
 });

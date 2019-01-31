@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 
 export function getField(state, fieldName) {
-  const fields = getSsoFields(state);
+  const fields = getFields(state);
 
   if (!fields) {
     return null;
@@ -14,9 +14,13 @@ export function getField(state, fieldName) {
 }
 
 export function getIdentityProvider(state) {
-  return get(state, 'identityProvider', null);
+  return get(state, ['sso', 'identityProvider'], null);
 }
 
-export function getSsoFields(state) {
-  return get(state, 'fields', {});
+export function getFields(state) {
+  return get(state, ['sso', 'fields'], {});
+}
+
+export function getIdentityProviderVersion(state) {
+  return get(getIdentityProvider(state), ['data', 'sys', 'version'], null);
 }
