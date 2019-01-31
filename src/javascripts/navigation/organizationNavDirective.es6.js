@@ -3,9 +3,8 @@ import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import navBar from 'navigation/templates/NavBar.es6';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
-import { SSO_SELF_CONFIG_FLAG } from 'featureFlags.es6';
+import { SSO_SELF_CONFIG_FLAG, TEAMS as FF_TEAMS } from 'featureFlags.es6';
 import { getOrgFeature } from '../data/CMA/FeatureCatalog.es6';
-import { TEAMS as FF_TEAMS } from '../featureFlags.es6';
 
 /**
  * @ngdoc directive

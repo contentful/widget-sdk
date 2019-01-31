@@ -10,6 +10,7 @@ import datasets from './datasets/index.es6';
 import optimistic from './optimistic.es6';
 import deleted from './deleted.es6';
 import access from './access.es6';
+import orgsConstants from './orgsConstants.es6';
 
 // the redux dev tools are highly recommended to inspect the state created by these reducers
 // and how they react to actions
@@ -23,5 +24,6 @@ export default combineReducers({
   datasets,
   optimistic,
   deleted,
-  access
+  access,
+  orgsConstants
 });
