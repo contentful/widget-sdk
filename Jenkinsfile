@@ -106,6 +106,10 @@ pipeline {
         reportFiles: 'reports_v1/index.html, reports_v2/index.html',
         reportTitles: 'Report for v1, Report for v2'])
       labStoreLogs()
+      build job: 'user-interface-sniffer', wait: false, parameters: [
+        string(name: 'sha', value: params.ui_version),
+        string(name: 'job', value: env.JOB_NAME)
+      ]
     }
     changed {
       slackNotification('#dev-qa-bots, #dev-frontend-bots')

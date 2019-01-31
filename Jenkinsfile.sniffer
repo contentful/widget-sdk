@@ -17,6 +17,8 @@ pipeline {
   parameters {
     string(name: 'last', defaultValue: '50', description: 'Analyze number of commits')
     string(name: 'jump', defaultValue: '1', description: '')
+    string(name: 'sha', defaultValue: 'master', description: 'user_interface commit sha')
+    string(name: 'job', defaultValue: 'user-interface-master', description: 'trigger by upstream job')
   }
   options {
     timestamps()
@@ -34,7 +36,14 @@ pipeline {
     stage('Install dependencies') {
       steps {
         container('node') {
-          sh 'apk add --no-cache git zip curl'
+          sh '''
+            apk add --no-cache git zip curl python \
+              g++ make build-base cairo-dev \
+              jpeg-dev pango-dev giflib-dev \
+              pixman-dev pangomm-dev libjpeg-turbo-dev \
+              pango pixman cairo giflib freetype-dev \
+              ttf-opensans ttf-dejavu ttf-droid ttf-freefont ttf-liberation ttf-ubuntu-font-family fontconfig
+          '''
         }
         withCredentials([string(credentialsId: 'NPM_TOKEN', variable: 'NPM_TOKEN')]) {
           sh 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc'
@@ -52,9 +61,12 @@ pipeline {
             withCredentials([
               string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN'),
               string(credentialsId: 'GITHUB_WEBHOOK_TOKEN', variable: 'GITHUB_WEBHOOK_TOKEN'),
-              usernamePassword(credentialsId: 'jenkins-ba', passwordVariable: 'JENKINS_PWD', usernameVariable: 'JENKINS_USERNAME')
+              usernamePassword(credentialsId: 'jenkins-ba', passwordVariable: 'JENKINS_PWD', usernameVariable: 'JENKINS_USERNAME'),
+              file(credentialsId: 'github-dev-emails', variable: 'EMAILS_LIST')
             ]){
-              sh 'node built/src/cli/index.js'
+              sh "node built/src/cli/index.js user_interface ${params.job} ${params.sha}"
+              sh "cp ${EMAILS_LIST} emails-for-dev.json"
+              sh "node built/src/cli/participants.js ${params.sha}"
             }
             sh 'cp -R output ../project-sniffer-dashboard/src/CIStats/data/'
           }
@@ -92,6 +104,17 @@ pipeline {
     }
   }
   post {
+    always {
+      container('node') {
+        dir('project-sniffer-dashboard') {
+          withCredentials([
+            usernamePassword(credentialsId: 'autotest-credentials', passwordVariable: 'EMAIL_PASSWORD', usernameVariable: 'EMAIL_USERNAME'),
+          ]){
+            sh "bin/send-email.sh ${params.sha} src/CIStats/data/${params.sha}-emails.json"
+          }
+        }
+      }
+    }
     success {
       slackSend(channel: '#dev-frontend-bots', color: 'good', message: 'DEPLOYED: *user_interface* project sniffer (https://user-interface-sniffer.netlify.com/)', tokenCredentialId: 'slack-notify')
     }
