@@ -5,11 +5,12 @@ import { mapValues, forEach, upperFirst, identity } from 'lodash';
 
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import { actionOrigin } from 'app/widgets/rich_text/plugins/shared/PluginApi.es6';
+import { document, block, inline, text } from 'app/widgets/rich_text/helpers/nodeFactory.es6';
 
 import * as sinon from 'test/helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-import { document, block, inline, text, getWithId } from '../helpers';
+import { getWithId } from '../helpers';
 import { stubAll, setupWidgetApi, createSandbox, ENTRY } from '../setup';
 import flushPromises from '../../../helpers/flushPromises';
 

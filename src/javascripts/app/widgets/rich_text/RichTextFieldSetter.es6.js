@@ -1,11 +1,11 @@
 import jsondiff from 'json0-ot-diff';
 import emptyDoc from './constants/EmptyDoc.es6';
 import deepEqual from 'fast-deep-equal';
+
 import { getModule } from 'NgRegistry.es6';
 
-const $q = getModule('$q');
-const ShareJS = getModule('data/ShareJS/Utils');
 const logger = getModule('logger');
+const ShareJS = getModule('data/ShareJS/Utils');
 
 /**
  * @description
@@ -40,7 +40,6 @@ export const is = (fieldId, contentType) => {
  */
 export const setAt = (doc, fieldPath, nextFieldValue) => {
   const fieldValue = ShareJS.peek(doc, fieldPath);
-
   if (deepEqual(nextFieldValue, emptyDoc)) {
     /**
      * When the editor state displays an empty document, we need to reset the
@@ -96,16 +95,20 @@ function setValue(doc, fieldPath, fieldValue, nextFieldValue) {
   // reject any operations based on the buggy empty document.
   const isAmendingRootNode = ({ p }) => p.length === 4 && p[3] === 'data';
   const hasMissingDataFields = ops.some(isAmendingRootNode);
+
   if (hasMissingDataFields) {
     logger.logWarn('Amending RichText document');
     return ShareJS.setDeep(doc, fieldPath, nextFieldValue);
   }
 
-  return $q.denodeify(cb => {
-    try {
-      doc.submitOp(ops, cb);
-    } catch (e) {
-      logger.logException(e);
-    }
+  return new Promise((resolve, reject) => {
+    doc.submitOp(ops, (e, ...args) => {
+      if (e) {
+        logger.logException(e);
+        reject(e);
+      } else {
+        resolve(...args);
+      }
+    });
   });
 }
