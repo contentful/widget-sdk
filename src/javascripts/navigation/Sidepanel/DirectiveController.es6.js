@@ -100,7 +100,7 @@ export default function createController($scope, $window) {
     closeSidePanel();
     const orgSettingsPath = ['account', 'organizations'];
     const orgId = state.currOrg.sys.id;
-    if (OrgRoles.isOwnerOrAdmin(orgId)) {
+    if (OrgRoles.isOwnerOrAdmin(state.currOrg)) {
       const hasNewPricing = state.currOrg.pricingVersion === 'pricing_version_2';
       orgSettingsPath.push(hasNewPricing ? 'subscription_new' : 'subscription');
     } else {
