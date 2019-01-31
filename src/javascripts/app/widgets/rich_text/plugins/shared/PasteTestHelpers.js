@@ -22,7 +22,7 @@ export const block = (type, props, ...nodes) => {
 };
 
 export const inline = (type, props, ...nodes) => {
-  const defaultProps = {  };
+  const defaultProps = {};
   return {
     type,
     object: 'inline',
