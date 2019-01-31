@@ -34,11 +34,11 @@ class TeamList extends React.Component {
   render() {
     const { teams, readOnlyPermission } = this.props;
     const { showTeamDialog } = this.state;
-    const countMessage = `
-      ${readOnlyPermission ? 'You are in ' : ''}
-      ${pluralize('teams', teams.length, true)}
-      ${readOnlyPermission ? '' : ' in your organization'}
-    `;
+
+    const teamsPlural = pluralize('teams', teams.length, true);
+    const countMessage = readOnlyPermission
+      ? `You are in ${teamsPlural}`
+      : `${teamsPlural} in your organization`;
 
     return (
       <Workbench>

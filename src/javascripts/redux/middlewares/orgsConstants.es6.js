@@ -16,6 +16,9 @@ export default ({ getState, dispatch }) => next => async action => {
     const type = 'LOADING_CONSTANTS_FOR_ORGS';
     dispatch({ type, meta: { pending: true } });
 
+    // General guide about using flow
+    // and detailed explanation here: https://contentful.atlassian.net/wiki/spaces/BH/pages/1279721792/Guide+for+handling+immutable+data+with+lodash+fp+and+flow#Guideforhandlingimmutabledatawith%60lodash/fp%60and%60flow%60-Example
+
     // get all features for all orgs with max 3 requests in parallel
     // this is just an optimization to not do too many requests in parallel
     const allFeatures = await flow(
