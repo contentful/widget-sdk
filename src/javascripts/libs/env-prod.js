@@ -111,5 +111,6 @@ window.libs = [
   ['react-sticky-el', require('react-sticky-el')],
   ['detect-browser', require('detect-browser')],
   ['mitt', require('mitt')],
-  ['react-player', require('react-player')]
+  ['react-player', require('react-player')],
+  ['react-beautiful-dnd', require('react-beautiful-dnd')]
 ];

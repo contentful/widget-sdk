@@ -77,8 +77,6 @@ angular
       ngRequire('app/ContentModel/Editor/metadataDialog.es6');
       ngRequire('app/ContentModel/Editor/contentTypeEditorController.es6');
       ngRequire('app/ContentModel/Editor/contentTypeEditorDirective.es6');
-      ngRequire('utils/encoder.es6');
-      ngRequire('app/ContentModel/Editor/contentTypeFieldController.es6');
       ngRequire('app/api/api_key_list/apiKeyListDirective.es6');
       ngRequire('app/api/cfApiKeyNavDirective.es6');
       ngRequire('app/asset_editor/cfAssetEditorDirective.es6');

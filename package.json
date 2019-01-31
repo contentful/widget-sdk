@@ -76,6 +76,7 @@
     "react": "16.6.3",
     "react-animate-height": "^0.10.9",
     "react-click-outside": "^3.0.0",
+    "react-beautiful-dnd": "10.0.4",
     "react-codemirror": "^1.0.0",
     "react-dom": "16.6.3",
     "react-highlight-words": "^0.10.0",

@@ -44,7 +44,6 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
       'pluralize',
       'prop-types',
       'qs',
-      'raw/htmlEncoder',
       'moment',
       'react',
       'react-animate-height',

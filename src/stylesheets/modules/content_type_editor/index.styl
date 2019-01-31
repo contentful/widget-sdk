@@ -35,18 +35,18 @@ $ct-editor-code-block()
       background: linear-gradient(to bottom, hsla(0, 0%, 100%, 0.6), hsla(0, 0%, 100%, 1) 80%)
       $stretch()
 
-cf-icon[name="field-shorttext"],
-cf-icon[name="field-shorttext-small"],
-cf-icon[name="field-longtext"],
-cf-icon[name="field-longtext-small"],
-cf-icon[name="field-number"],
-cf-icon[name="field-number-small"],
-cf-icon[name="field-decimal"],
-cf-icon[name="field-decimal-small"],
-cf-icon[name="field-boolean"],
-cf-icon[name="field-boolean-small"],
-cf-icon[name="field-json"],
-cf-icon[name="field-json-small"]
+.icon-component[data-icon-name="field-shorttext"],
+.icon-component[data-icon-name="field-shorttext-small"],
+.icon-component[data-icon-name="field-longtext"],
+.icon-component[data-icon-name="field-longtext-small"],
+.icon-component[data-icon-name="field-number"],
+.icon-component[data-icon-name="field-number-small"],
+.icon-component[data-icon-name="field-decimal"],
+.icon-component[data-icon-name="field-decimal-small"],
+.icon-component[data-icon-name="field-boolean"],
+.icon-component[data-icon-name="field-boolean-small"],
+.icon-component[data-icon-name="field-json"],
+.icon-component[data-icon-name="field-json-small"]
   path, circle
     fill: $colors.green-mid
   rect
@@ -57,27 +57,27 @@ cf-icon[name="field-json-small"]
     rect
       stroke: $colors.gray
 
-cf-icon[name="field-calendar"],
-cf-icon[name="field-calendar-small"],
-cf-icon[name="field-media"],
-cf-icon[name="field-media-small"],
-cf-icon[name="field-location"],
-cf-icon[name="field-location-small"],
-cf-icon[name="field-reference"],
-cf-icon[name="field-reference-small"]
+.icon-component[data-icon-name="field-calendar"],
+.icon-component[data-icon-name="field-calendar-small"],
+.icon-component[data-icon-name="field-media"],
+.icon-component[data-icon-name="field-media-small"],
+.icon-component[data-icon-name="field-location"],
+.icon-component[data-icon-name="field-location-small"],
+.icon-component[data-icon-name="field-reference"],
+.icon-component[data-icon-name="field-reference-small"]
   path, circle, rect
     stroke: $colors.green-mid
   .x--disabled &, .x--omitted &
     path, circle, rect
       stroke: $colors.gray
 
-cf-icon[name="field-calendar"]
+.icon-component[data-icon-name="field-calendar"]
   rect
     fill: $colors.green
   rect:first-of-type
     fill: none
 
-cf-icon[name="field-media"]
+.icon-component[data-icon-name="field-media"]
   rect
     fill: $colors.green-mid
   rect:last-of-type

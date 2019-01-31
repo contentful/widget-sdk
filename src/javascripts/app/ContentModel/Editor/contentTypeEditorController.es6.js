@@ -3,6 +3,11 @@ import _ from 'lodash';
 import validation from '@contentful/validation';
 import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField.es6';
 import { syncControls } from 'widgets/EditorInterfaceTransformer.es6';
+import {
+  openDisallowDialog,
+  openOmitDialog,
+  openSaveDialog
+} from './FieldsTab/FieldTabDialogs.es6';
 
 /**
  * @ngdoc type
@@ -143,6 +148,20 @@ registerController('ContentTypeEditorController', [
       syncEditorInterface();
     };
 
+    controller.updateField = (id, update) => {
+      const fields = $scope.contentType.data.fields;
+      const updatedFields = fields.map(field => {
+        if (field.id === id) {
+          return {
+            ...field,
+            ...update
+          };
+        }
+        return field;
+      });
+      $scope.contentType.data.fields = updatedFields;
+    };
+
     /**
      * @ngdoc method
      * @name ContentTypeEditorController#openFieldDialog
@@ -159,14 +178,80 @@ registerController('ContentTypeEditorController', [
       });
     };
 
+    controller.setFieldAsTitle = field => {
+      $scope.contentType.data.displayField = field.id;
+      forceSetDirtyState(true);
+      $scope.$applyAsync();
+    };
+
+    controller.updateOrder = fields => {
+      $scope.contentType.data.fields = fields;
+      forceSetDirtyState(true);
+      $scope.$applyAsync();
+    };
+
+    controller.toggleFieldProperty = (field, property, isTitle) => {
+      const toggled = !field[property];
+
+      if (isTitle && toggled) {
+        openDisallowDialog({ field, action: 'disable' });
+      } else {
+        controller.updateField(field.id, {
+          [property]: toggled
+        });
+        forceSetDirtyState(true);
+        $scope.$applyAsync();
+      }
+    };
+
+    controller.deleteField = (field, isTitle) => {
+      const publishedField = controller.getPublishedField(field.id);
+      const publishedOmitted = publishedField && publishedField.omitted;
+
+      const isOmittedInApiAndUi = publishedOmitted && field.omitted;
+      const isOmittedInUiOnly = !publishedOmitted && field.omitted;
+
+      if (isTitle) {
+        openDisallowDialog({ field, action: 'delete' });
+      } else if (!publishedField) {
+        controller.removeField(field.id);
+      } else if (isOmittedInApiAndUi) {
+        controller.updateField(field.id, {
+          deleted: true
+        });
+        forceSetDirtyState(true);
+        $scope.$applyAsync();
+      } else if (isOmittedInUiOnly) {
+        openSaveDialog().then(() => {
+          $scope.actions.save.execute();
+        });
+      } else {
+        openOmitDialog().then(() => {
+          controller.toggleFieldProperty(field, 'omitted', isTitle);
+        });
+      }
+    };
+
+    controller.undeleteField = field => {
+      controller.updateField(field.id, {
+        deleted: false
+      });
+      forceSetDirtyState(true);
+      $scope.$applyAsync();
+    };
+
     function checkForDirtyForm(newVal, oldVal) {
       if (newVal !== oldVal) {
         $scope.contentTypeForm.$setDirty();
       }
     }
 
-    function setDirtyState() {
-      let modified = $scope.contentTypeForm.$dirty;
+    function forceSetDirtyState(dirty) {
+      $scope.context.dirty = dirty;
+    }
+
+    function setDirtyState(forceDirty = false) {
+      let modified = $scope.contentTypeForm.$dirty || forceDirty;
       if (modified === true && $scope.context.isNew && $scope.contentType.data.fields.length < 1) {
         modified = false;
       }

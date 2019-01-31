@@ -7,8 +7,8 @@ import openRoleSelector from './RoleSelector.es6';
 import openInputDialog from 'app/InputDialog.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import { getModule } from 'NgRegistry.es6';
+import { htmlEncode } from 'utils/encoder.es6';
 
-const { htmlEncode } = getModule('encoder');
 const modalDialog = getModule('modalDialog');
 
 export default function ViewFolder({ folder, state, actions }) {

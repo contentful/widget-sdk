@@ -16,9 +16,13 @@
           .add-field-dialog__list-item(ng-repeat="group in fieldGroups")
             button.add-field-dialog__icon(
               type="button"
+              data-test-id="select-field-{{group.icon}}"
               aria-label="{{group.label}}"
               ng-click="selectFieldGroup(group)")
-              cf-icon(name="field-{{group.icon}}")
+              react-component(
+                name="ui/Components/Icon.es6"
+                props="{ name: 'field-{{group.icon}}' }"
+              )
             h2 {{group.label}}
               <react-component ng-if="group.isBeta" name="@contentful/forma-36-react-components/Tag" props="{children: 'BETA'}"></react-component>
             p.add-field-dialog__description {{group.description}}

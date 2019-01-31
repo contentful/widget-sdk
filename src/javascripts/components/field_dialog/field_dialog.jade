@@ -4,7 +4,10 @@
     cf-ui-tab
     ng-controller="FieldDialogController as fieldController")
     header.modal-dialog__header.field-dialog__header
-      cf-icon(name="{{iconId}}")
+      react-component(
+        name="ui/Components/Icon.es6"
+        props="{name: iconId}"
+      )
       h1
         span.field-dialog__field-name
           | {{decoratedField.displayName}}

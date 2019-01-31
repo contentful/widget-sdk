@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import $ from 'jquery';
+import cn from 'classnames';
 
 import HomeWelcomeIcon from 'svg/home-welcome.es6';
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
@@ -70,6 +71,28 @@ import MediaPreviewWidget from 'svg/media-preview-widget.es6';
 import MediaPreviewsWidget from 'svg/media-previews-widget.es6';
 import MediaReferenceWidget from 'svg/media-reference-widget.es6';
 import MediaReferencesWidget from 'svg/media-references-widget.es6';
+import FieldJSONSmall from 'svg/field-json-small.es6';
+import FieldShortTextSmall from 'svg/field-shorttext-small.es6';
+import FieldJSON from 'svg/field-json.es6';
+import FieldShortText from 'svg/field-shorttext.es6';
+import FieldLongTextSmall from 'svg/field-longtext-small.es6';
+import FieldNumberSmall from 'svg/field-number-small.es6';
+import FieldDecimalSmall from 'svg/field-decimal-small.es6';
+import FieldBooleanSmall from 'svg/field-boolean-small.es6';
+import FieldCalendarSmall from 'svg/field-calendar-small.es6';
+import FieldMediaSmall from 'svg/field-media-small.es6';
+import FieldLocationSmall from 'svg/field-location-small.es6';
+import FieldReferenceSmall from 'svg/field-reference-small.es6';
+import FieldLongText from 'svg/field-longtext.es6';
+import FieldNumber from 'svg/field-number.es6';
+import FieldDecimal from 'svg/field-decimal.es6';
+import FieldBoolean from 'svg/field-boolean.es6';
+import FieldCalendar from 'svg/field-calendar.es6';
+import FieldMedia from 'svg/field-media.es6';
+import FieldLocation from 'svg/field-location.es6';
+import FieldReference from 'svg/field-reference.es6';
+import FieldRichTextSmall from 'svg/field-richtext-small.es6';
+import FieldRichText from 'svg/field-richtext.es6';
 
 const SVGs = {
   'home-welcome': HomeWelcomeIcon,
@@ -139,7 +162,31 @@ const SVGs = {
   'media-reference-widget': MediaReferenceWidget,
   'media-references-widget': MediaReferencesWidget,
   'slug-widget': SlugWidget,
-  'arrow-up': ArrowUp
+  'arrow-up': ArrowUp,
+
+  // fields
+  'field-json-small': FieldJSONSmall,
+  'field-shorttext-small': FieldShortTextSmall,
+  'field-longtext-small': FieldLongTextSmall,
+  'field-number-small': FieldNumberSmall,
+  'field-decimal-small': FieldDecimalSmall,
+  'field-boolean-small': FieldBooleanSmall,
+  'field-calendar-small': FieldCalendarSmall,
+  'field-media-small': FieldMediaSmall,
+  'field-location-small': FieldLocationSmall,
+  'field-reference-small': FieldReferenceSmall,
+  'field-json': FieldJSON,
+  'field-shorttext': FieldShortText,
+  'field-longtext': FieldLongText,
+  'field-number': FieldNumber,
+  'field-decimal': FieldDecimal,
+  'field-boolean': FieldBoolean,
+  'field-calendar': FieldCalendar,
+  'field-media': FieldMedia,
+  'field-location': FieldLocation,
+  'field-reference': FieldReference,
+  'field-richtext': FieldRichText,
+  'field-richtext-small': FieldRichTextSmall
 };
 
 class Icon extends React.Component {
@@ -151,6 +198,10 @@ class Icon extends React.Component {
     name: PropTypes.string.isRequired,
     scale: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     height: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  };
+
+  static defaultProps = {
+    scale: '1.0'
   };
 
   componentDidMount() {
@@ -189,7 +240,8 @@ class Icon extends React.Component {
 
     return (
       <span
-        className={className}
+        data-icon-name={name}
+        className={cn('icon-component', className)}
         style={style}
         ref={node => {
           this.container = node;

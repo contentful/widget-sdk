@@ -3,9 +3,7 @@ import { getDomains } from 'services/TokenStore.es6';
 import sanitize from 'sanitize-html';
 import * as React from 'react';
 import MarkedAst from 'marked-ast';
-import { getModule } from 'NgRegistry.es6';
-
-const { htmlDecode } = getModule('encoder');
+import { htmlDecode } from 'utils/encoder.es6';
 
 let currentId = 1;
 

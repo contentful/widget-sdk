@@ -2,19 +2,17 @@ $content-type-field-empty-style()
   border: 1px dashed $colors.light-gray
   background-color: lighten($colors.light-gray, 80%)
 
-$ct-field-dimensions()
-  padding-right: 1em
-  height: $rhythm(2.5)
-  margin-bottom: $rhythm(1)
+.ct-fields-drop-container
+  max-width: 50em
+  margin: 1em 0 1em 0
 
-
-.ct-field--placeholder
-  $ct-field-dimensions()
-  $content-type-field-empty-style()
-
+.ct-field-draggable
+  user-select: none
+  margin: 0 0 1em 0
 
 .ct-field
-  $ct-field-dimensions()
+  padding-right: 1em
+  height: $rhythm(2.5)
   display: flex
   align-items: center
   white-space: nowrap
@@ -34,7 +32,8 @@ $ct-field-dimensions()
     margin-right: 1em
 
   &__icon
-    margin-right: 0.66em
+    margin-right: 0.6rem
+    margin-left: 0.6rem
 
   &__type
     flex-grow: 1
@@ -54,24 +53,14 @@ $ct-field-dimensions()
     color: initial
 
   &__drag-handle
-    width: 16px
-    align-self: stretch
-    margin: -1px
-    margin-right: 1em
-    background-color: $colors.aero-blue
-    border: 1px solid $colors.shadow-green
-    cursor: move
-    cursor: -webkit-grabbing
-    cursor: -moz-grab
-    cursor: -moz-grabbing
-    &.x--no-drag
-      cursor: default
-    .x--disabled &
-      background-color: transparentify($colors.gray, 0.2)
-      border: 1px solid transparentify($colors.green, 0.2)
-    .x--omitted &
-      background-color: transparentify($colors.red, 0.2)
-      border: 1px solid transparentify($colors.red, 0.2)
+    display: flex
+    align-items: center
+    justify-content: center
+    color: $colors.gray
+    margin-left: 0.5rem
+    svg
+      fill: $colors.gray
+
 
   &__settings
     position: relative
