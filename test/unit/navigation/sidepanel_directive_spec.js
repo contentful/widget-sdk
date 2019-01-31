@@ -42,6 +42,7 @@ describe('cfNavSidepanel directive', () => {
       $provide.value('utils/LaunchDarkly/index.es6', { onFeatureFlag: sinon.stub() });
       $provide.value('data/EndpointFactory.es6', { createSpaceEndpoint: sinon.stub() });
       $provide.value('data/CMA/SpaceEnvironmentsRepo.es6', { create: () => environmentsRepo });
+      $provide.value('data/CMA/FeatureCatalog.es6', { getOrgFeature: () => sinon.stub() });
     });
 
     const NavState = this.$inject('navigation/NavState.es6');
