@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes.es6';
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
 import EntryInfoPanel from './EntryInfoPanel.es6';
-import { omit } from 'lodash';
 
 export default class EntryInfoPanelContainer extends Component {
   static propTypes = {
@@ -27,12 +26,11 @@ export default class EntryInfoPanelContainer extends Component {
   onUpdate = update => {
     const { sys } = update;
 
-    // we only get updated properties in sys, not the complete object
-    if (sys) {
-      this.setState({ sys: { ...this.state.sys, ...sys } });
-    }
-
-    this.setState(state => ({ ...state, ...omit(update, ['sys']) }));
+    this.setState(state => ({
+      ...state,
+      ...update,
+      sys: sys ? { ...state.sys, ...sys } : state.sys
+    }));
   };
 
   render() {
