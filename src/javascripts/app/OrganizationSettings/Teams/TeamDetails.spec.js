@@ -168,7 +168,6 @@ describe('TeamDetails', () => {
         expect(descriptionElement.text()).toContain('a-team-description');
         expect(descriptionElement.find('br')).toHaveLength(3);
         expect(wrapper.find('[data-test-id="creation-date"]').text()).toEqual('December 20, 2018');
-        expect(wrapper.find('[data-test-id="creator-name"]').text()).toEqual('User 1 LastName1');
       });
       describe('is member of org', () => {
         beforeEach(() => {
@@ -219,6 +218,12 @@ describe('TeamDetails', () => {
               .props()
           ).toHaveProperty('disabled', true);
         });
+
+        it('should not render the creator name', () => {
+          const { wrapper } = renderComponent(actions);
+
+          expect(wrapper.find('[data-test-id="creator-name"]')).toHaveLength(0);
+        });
       });
 
       describe('is admin of org', () => {
@@ -248,6 +253,12 @@ describe('TeamDetails', () => {
               }
             }
           });
+        });
+
+        it('should render the creator name', () => {
+          const { wrapper } = renderComponent(actions);
+
+          expect(wrapper.find('[data-test-id="creator-name"]').text()).toEqual('User 1 LastName1');
         });
 
         it('should render active delete button', () => {
