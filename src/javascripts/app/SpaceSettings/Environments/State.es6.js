@@ -70,7 +70,7 @@ const reduce = makeReducer({
   },
   [OpenCreateDialog]: (state, _, { resourceEndpoint, dispatch }) => {
     C.runTask(function*() {
-      const created = yield openCreateDialog(resourceEndpoint.create);
+      const created = yield openCreateDialog(resourceEndpoint.create, state.items);
       if (created) {
         dispatch(Reload);
       }

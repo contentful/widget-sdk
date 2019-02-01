@@ -17,6 +17,7 @@ const { open: openDialog } = getModule('modalDialog');
 const SetFieldValue = makeCtor('SetFieldValue');
 const Submit = makeCtor('Submit');
 const ReceiveResult = makeCtor('ReceiveResult');
+const SetSourceEnvironment = makeCtor('SetSourceEnvironment');
 
 const ID_EXISTS_ERROR_MESSAGE =
   'This ID already exists in your space. Please make sure it’s unique.';
@@ -33,11 +34,13 @@ const EMPTY_FIELD_ERROR_MESSAGE = 'Please fill out this field.';
  * It returns a promise that resolves with a boolean that is true if
  * the environment was created.
  */
-export function openCreateDialog(createEnvironment) {
+export function openCreateDialog(createEnvironment, environments) {
   const initialState = {
     fields: {
       id: { name: 'id', errors: [] }
-    }
+    },
+    environments,
+    selectedEnvironment: 'master'
   };
 
   return openDialog({
@@ -67,7 +70,8 @@ function createComponent(initialState, context, closeDialog) {
   const actions = bindActions(store, {
     SetFieldValue,
     Submit,
-    ReceiveResult
+    ReceiveResult,
+    SetSourceEnvironment
   });
 
   Object.assign(actions, {
@@ -82,6 +86,9 @@ const reduce = makeReducer({
   [SetFieldValue](state, { name, value }) {
     return set(state, ['fields', name, 'value'], value);
   },
+  [SetSourceEnvironment](state, { value }) {
+    return set(state, 'selectedEnvironment', value);
+  },
   [Submit](state, _, context, actions) {
     state = update(state, 'fields', clearErrors);
     const fieldsWithErrors = validate(state.fields);
@@ -90,7 +97,7 @@ const reduce = makeReducer({
     } else {
       C.runTask(function*() {
         const id = get(state, ['fields', 'id', 'value']);
-        const result = yield context.createEnvironment({ id, name: id });
+        const result = yield context.createEnvironment({ id, name: id, source: state.selectedEnvironment });
         actions.ReceiveResult(result);
       });
       state = set(state, 'inProgress', true);
