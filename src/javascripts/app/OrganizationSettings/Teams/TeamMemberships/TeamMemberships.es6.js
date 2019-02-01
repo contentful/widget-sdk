@@ -60,7 +60,7 @@ class TeamMemberships extends React.Component {
           {!showingForm &&
             !empty &&
             (readOnlyPermission ? (
-              <Tooltip place="left" content="You don't have permission to create or change teams">
+              <Tooltip place="left" content="You don't have permission to add new team members">
                 <AddTeamMemberButton disabled />
               </Tooltip>
             ) : (
@@ -73,8 +73,12 @@ class TeamMemberships extends React.Component {
               <TableRow>
                 <TableCell>Name</TableCell>
                 <TableCell>Member since</TableCell>
-                <TableCell>Added by</TableCell>
-                <TableCell />
+                {!readOnlyPermission && (
+                  <React.Fragment>
+                    <TableCell>Added by</TableCell>
+                    <TableCell />
+                  </React.Fragment>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>

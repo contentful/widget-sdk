@@ -2,10 +2,9 @@ import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import navBar from 'navigation/templates/NavBar.es6';
-import { isOwner } from 'services/OrganizationRoles.es6';
-import { SSO_SELF_CONFIG_FLAG } from 'featureFlags.es6';
+import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import { SSO_SELF_CONFIG_FLAG, TEAMS as FF_TEAMS } from 'featureFlags.es6';
 import { getOrgFeature } from '../data/CMA/FeatureCatalog.es6';
-import { TEAMS as FF_TEAMS } from '../featureFlags.es6';
 
 /**
  * @ngdoc directive
@@ -54,6 +53,7 @@ registerDirective('cfOrganizationNav', () => {
             const FeatureService = createFeatureService(orgId, 'organization');
 
             nav.pricingVersion = org.pricingVersion;
+            nav.isOwnerOrAdmin = isOwnerOrAdmin(org);
 
             FeatureService.get('offsiteBackup').then(featureEnabled => {
               nav.hasOffsiteBackup = featureEnabled;
@@ -69,17 +69,17 @@ registerDirective('cfOrganizationNav', () => {
   function template() {
     return navBar([
       {
+        if: 'nav.hasSettingsTab',
         title: 'Organization information',
         // TODO use cf-sref for navbar links
         sref: 'account.organizations.edit({orgId: nav.orgId})',
         rootSref: 'account.organizations.edit',
         inheritUrlParams: false,
         icon: 'nav-organization-information',
-        dataViewType: 'organization-information',
-        if: 'nav.hasSettingsTab'
+        dataViewType: 'organization-information'
       },
       {
-        if: 'nav.pricingVersion == "pricing_version_1"',
+        if: 'nav.pricingVersion == "pricing_version_1" && nav.isOwnerOrAdmin',
         title: 'Subscription',
         sref: 'account.organizations.subscription({orgId: nav.orgId})',
         rootSref: 'account.organizations.subscription',
@@ -88,7 +88,7 @@ registerDirective('cfOrganizationNav', () => {
         dataViewType: 'subscription'
       },
       {
-        if: 'nav.pricingVersion == "pricing_version_2"',
+        if: 'nav.pricingVersion == "pricing_version_2" && nav.isOwnerOrAdmin',
         title: 'Subscription',
         sref: 'account.organizations.subscription_new({orgId: nav.orgId})',
         rootSref: 'account.organizations.subscription_new',
@@ -97,16 +97,16 @@ registerDirective('cfOrganizationNav', () => {
         dataViewType: 'subscription-new'
       },
       {
+        if: 'nav.hasBillingTab',
         title: 'Billing',
         sref: 'account.organizations.billing({orgId: nav.orgId})',
         rootSref: 'account.organizations.billing',
         inheritUrlParams: false,
         icon: 'nav-organization-billing',
-        dataViewType: 'billing',
-        if: 'nav.hasBillingTab'
+        dataViewType: 'billing'
       },
       {
-        if: 'nav.pricingVersion == "pricing_version_2"',
+        if: 'nav.pricingVersion == "pricing_version_2" && nav.isOwnerOrAdmin',
         title: 'Usage',
         sref: 'account.organizations.usage({orgId: nav.orgId})',
         rootSref: 'account.organizations.usage',
@@ -115,6 +115,7 @@ registerDirective('cfOrganizationNav', () => {
         dataViewType: 'platform-usage'
       },
       {
+        if: 'nav.isOwnerOrAdmin',
         title: 'Users',
         sref: 'account.organizations.users.list({orgId: nav.orgId})',
         rootSref: 'account.organizations.users',
@@ -123,7 +124,7 @@ registerDirective('cfOrganizationNav', () => {
         dataViewType: 'organization-users'
       },
       {
-        if: 'nav.pricingVersion === "pricing_version_2" && nav.teamsEnabled',
+        if: 'nav.teamsEnabled',
         title: 'Teams',
         label: 'new',
         sref: 'account.organizations.teams({orgId: nav.orgId})',
@@ -133,7 +134,7 @@ registerDirective('cfOrganizationNav', () => {
         dataViewType: 'organization-teams'
       },
       {
-        if: 'nav.pricingVersion === "pricing_version_2" && nav.ssoEnabled',
+        if: 'nav.pricingVersion === "pricing_version_2" && nav.ssoEnabled && nav.isOwnerOrAdmin',
         title: 'SSO',
         sref: 'account.organizations.sso({orgId: nav.orgId})',
         rootSref: 'account.organizations.sso',
@@ -151,12 +152,12 @@ registerDirective('cfOrganizationNav', () => {
         dataViewType: 'organization-spaces'
       },
       {
+        if: 'nav.hasOffsiteBackup && nav.isOwnerOrAdmin',
         title: 'Offsite backup',
         sref: 'account.organizations.offsitebackup({orgId: nav.orgId})',
         rootSref: 'account.organizations.offsitebackup',
         inheritUrlParams: false,
-        dataViewType: 'offsite-backup',
-        if: 'nav.hasOffsiteBackup'
+        dataViewType: 'offsite-backup'
       }
     ]);
   }

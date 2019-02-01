@@ -4,6 +4,7 @@ import keycodes from 'utils/keycodes.es6';
 
 import * as Navigator from 'states/Navigator.es6';
 
+import { TEAMS_FOR_MEMBERS as TEAMS_FOR_MEMBERS_FF } from 'featureFlags.es6';
 import { navState$, NavStates } from 'navigation/NavState.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as OrgRoles from 'services/OrganizationRoles.es6';
@@ -90,15 +91,25 @@ export default function createController($scope, $window) {
     render();
   });
 
+  LD.onFeatureFlag($scope, TEAMS_FOR_MEMBERS_FF, isEnabled => {
+    state = assign(state, { teamsForMembersFF: isEnabled });
+    render();
+  });
+
   function gotoOrgSettings() {
     closeSidePanel();
     const orgSettingsPath = ['account', 'organizations'];
-    const hasNewPricing = state.currOrg.pricingVersion === 'pricing_version_2';
-    orgSettingsPath.push(hasNewPricing ? 'subscription_new' : 'subscription');
+    const orgId = state.currOrg.sys.id;
+    if (OrgRoles.isOwnerOrAdmin(state.currOrg)) {
+      const hasNewPricing = state.currOrg.pricingVersion === 'pricing_version_2';
+      orgSettingsPath.push(hasNewPricing ? 'subscription_new' : 'subscription');
+    } else {
+      orgSettingsPath.push('teams');
+    }
 
     Navigator.go({
       path: orgSettingsPath,
-      params: { orgId: state.currOrg.sys.id }
+      params: { orgId }
     });
   }
 
@@ -180,7 +191,6 @@ export default function createController($scope, $window) {
       const orgId = org.sys.id;
 
       state = assign(state, {
-        canGotoOrgSettings: OrgRoles.isOwnerOrAdmin(org),
         canCreateSpaceInCurrOrg: AccessChecker.canCreateSpaceInOrganization(orgId),
         viewingOrgSettings:
           navState instanceof NavStates.OrgSettings && navState.org.sys.id === orgId,
