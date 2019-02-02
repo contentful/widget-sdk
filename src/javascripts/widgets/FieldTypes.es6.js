@@ -20,13 +20,10 @@ const INTERNAL_TO_API = {
 
 export const FIELD_TYPES = Object.keys(INTERNAL_TO_API);
 
-// RichText, Location and File field types are not supported for extensions.
-// TODO: Fix the backend to accept these values.
-const EXTENSION_NOT_SUPPORTED_FIELD_TYPES = ['RichText', 'Location', 'File'];
-
-export const EXTENSION_FIELD_TYPES = FIELD_TYPES.filter(type => {
-  return !EXTENSION_NOT_SUPPORTED_FIELD_TYPES.includes(type);
-});
+// All field types that can be used as Entry Editor controls can be used
+// for UI Extensions too. We don't support the `File` field type yet
+// because it's impossible to customize controls in the Asset Editor.
+export const EXTENSION_FIELD_TYPES = FIELD_TYPES.filter(type => type !== 'File');
 
 /**
  * Returns an internal string identifier for an API field object.
