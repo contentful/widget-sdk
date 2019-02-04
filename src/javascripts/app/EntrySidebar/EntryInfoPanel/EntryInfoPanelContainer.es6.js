@@ -24,9 +24,12 @@ export default class EntryInfoPanelContainer extends Component {
   }
 
   onUpdate = update => {
+    const { sys } = update;
+
     this.setState(state => ({
       ...state,
-      ...update
+      ...update,
+      sys: sys ? { ...state.sys, ...sys } : state.sys
     }));
   };
 
