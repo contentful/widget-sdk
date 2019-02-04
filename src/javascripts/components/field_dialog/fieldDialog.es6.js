@@ -80,11 +80,15 @@ export default function register() {
 
       $scope.widgetSettings = {
         id: $scope.widget.widgetId,
+        namespace: $scope.widget.widgetNamespace,
         // Need to clone so we do not mutate data if we cancel the dialog
         params: _.cloneDeep($scope.widget.settings || {})
       };
 
-      $scope.$watch('widgetSettings.id', reposition);
+      $scope.$watch(
+        () => [$scope.widgetSettings.namespace, $scope.widgetSettings.id].join(','),
+        reposition
+      );
       $scope.$watch(() => $scope.tabController.getActiveTabName(), reposition);
 
       $scope.buildRequiredCheckboxProps = () => ({
@@ -128,16 +132,12 @@ export default function register() {
         });
       }
 
-      // Extension and builtin widget IDs may clash.
-      // Extensions used to "override" built-in widgets and we keep doing it here.
-      // TODO: use `control.widgetNamespace` in the dialog so we don't have to filter.
-      const extensionIds = $scope.widgets.extension.map(e => e.id);
-      const filteredBuiltin = $scope.widgets.builtin.filter(b => {
-        return !extensionIds.includes(b.id);
-      });
-
       const fieldType = toInternalFieldType($scope.field);
-      $scope.availableWidgets = [...filteredBuiltin, ...$scope.widgets.extension].filter(widget => {
+
+      $scope.availableWidgets = [
+        ...$scope.widgets.builtin.map(w => ({ ...w, id: `builtin,${w.id}` })),
+        ...$scope.widgets.extension.map(w => ({ ...w, id: `extension,${w.id}` }))
+      ].filter(widget => {
         return widget.fieldTypes.includes(fieldType);
       });
 
@@ -158,8 +158,9 @@ export default function register() {
           validations.addEnabledRichTextOptions($scope.field, $scope.richTextOptions);
         }
 
-        const selectedWidgetId = $scope.widgetSettings.id;
-        const selectedWidget = _.find($scope.availableWidgets, { id: selectedWidgetId }) || {};
+        const namespaceWidgets = _.get($scope.widgets, [$scope.widgetSettings.namespace], []);
+        const selectedWidget = namespaceWidgets.find(w => w.id === $scope.widgetSettings.id);
+
         let values = $scope.widgetSettings.params;
         let definitions = _.get(selectedWidget, ['parameters']) || [];
 
@@ -175,7 +176,8 @@ export default function register() {
         }
 
         _.extend($scope.widget, {
-          widgetId: selectedWidgetId,
+          widgetId: $scope.widgetSettings.id,
+          widgetNamespace: $scope.widgetSettings.namespace,
           fieldId: $scope.field.apiName,
           settings: values
         });
@@ -305,9 +307,13 @@ export default function register() {
         const available = values[1];
         const properWidgets = ['radio', 'dropdown', 'checkbox'];
 
-        const isProper = _.includes(properWidgets, name);
-        const availableIds = _.map(available, 'id');
-        const properAvailable = _.intersection(availableIds, properWidgets).length;
+        const isBuiltin = $scope.widgetSettings.namespace === 'builtin';
+        const isProper = isBuiltin && _.includes(properWidgets, name);
+        const availableIds = _.map(available, 'id')
+          .map(id => id.split(','))
+          .filter(([namespace]) => namespace === 'builtin')
+          .map(([_, id]) => id);
+        const properAvailable = _.intersection(availableIds, properWidgets).length > 0;
         $scope.showPredefinedValueWidgetHint = !isProper && properAvailable;
       });
 
@@ -334,16 +340,28 @@ export default function register() {
     'spaceContext',
     ($scope, spaceContext) => {
       const isAdmin = !!spaceContext.getData('spaceMembership.admin', false);
+      const defaultWidgetId = getDefaultWidgetId(
+        $scope.field,
+        $scope.contentType.data.displayField
+      );
 
+      // TODO: this component operates on a flat list of widgets. It should take
+      // two separate lists (for builtin and extension widgets) and selection should
+      // be done with a pair of (namespace, id).
+      // For the time being we take a flat list used in the parent controller and
+      // create combined IDs by joining namespace and widget ID with comma which is
+      // an invalid char in both namespace and widget ID.
       function updateProps() {
         const availableWidgets = $scope.availableWidgets || [];
         $scope.appearanceTabProps = {
           availableWidgets,
-          selectedWidgetId: $scope.widgetSettings.id,
+          selectedWidgetId: [$scope.widgetSettings.namespace, $scope.widgetSettings.id].join(','),
           widgetParams: $scope.widgetSettings.params,
-          defaultWidgetId: getDefaultWidgetId($scope.field, $scope.contentType.data.displayField),
+          defaultWidgetId: ['builtin', defaultWidgetId].join(','),
           isAdmin,
-          onSelect: id => {
+          onSelect: combinedId => {
+            const [namespace, id] = combinedId.split(',');
+            $scope.widgetSettings.namespace = namespace;
             $scope.widgetSettings.id = id;
             updateProps();
             $scope.$applyAsync();
