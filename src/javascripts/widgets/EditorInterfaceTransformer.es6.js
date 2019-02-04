@@ -31,7 +31,8 @@ export function syncControls(ct, controls) {
 export function fromAPI(ct, ei) {
   return {
     sys: ei.sys,
-    controls: syncControls(ct, ei.controls).map(c => migrateControl(c))
+    controls: syncControls(ct, ei.controls).map(c => migrateControl(c)),
+    sidebar: ei.sidebar
   };
 }
 
@@ -40,7 +41,8 @@ export function fromAPI(ct, ei) {
 export function toAPI(ct, ei) {
   return {
     sys: ei.sys,
-    controls: syncControls(ct, ei.controls).map(c => prepareAPIControl(c))
+    controls: syncControls(ct, ei.controls).map(c => prepareAPIControl(c)),
+    sidebar: ei.sidebar
   };
 }
 
