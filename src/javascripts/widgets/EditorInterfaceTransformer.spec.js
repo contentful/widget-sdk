@@ -9,11 +9,16 @@ describe('EditorInterfaceTransformer', () => {
       const ct = { fields: [{ apiName: 'AAA' }, { apiName: 'MISSING' }] };
       const ei = { controls: [{ fieldId: 'AAA' }] };
 
-      jest.requireMock('./DefaultWidget.es6').mockImplementationOnce(() => 'DEFAULT_FOR_MISSING');
+      jest
+        .requireMock('./DefaultWidget.es6')
+        .mockImplementationOnce(() => 'DEFAULT')
+        .mockImplementationOnce(() => 'DEFAULT_FOR_MISSING');
 
       const { controls } = fromAPI(ct, ei);
 
       expect(controls).toHaveLength(2);
+      expect(controls[0].widgetId).toEqual('DEFAULT');
+      expect(controls[0].fieldId).toEqual('AAA');
       expect(controls[1].widgetId).toEqual('DEFAULT_FOR_MISSING');
       expect(controls[1].fieldId).toEqual('MISSING');
     });

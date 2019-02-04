@@ -14,6 +14,11 @@ export function syncControls(ct, controls) {
     // If found, use it. If not, create a default for the field type.
     const control = existingControl ? cloneDeep(existingControl) : makeDefaultControl(ct, field);
 
+    // If the widget ID is not provided, use the default.
+    if (typeof control.widgetId !== 'string') {
+      control.widgetId = getDefaultWidgetId(field, ct.displayField);
+    }
+
     // Attach the content type field to the control.
     control.field = cloneDeep(field);
 
