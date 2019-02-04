@@ -2,10 +2,11 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import reducer from 'redux/reducer/index.es6';
 import { Button, TableCell } from '@contentful/forma-36-react-components';
 
-import ROUTES from '../../../redux/routes.es6';
+import reducer from 'redux/reducer/index.es6';
+import ROUTES from 'redux/routes.es6';
+import { TEAM_MEMBERSHIPS, TEAMS } from 'redux/datasets.es6';
 import TeamListRow from './TeamListRow.es6';
 import TeamDialog from './TeamDialog.es6';
 
@@ -70,8 +71,8 @@ describe('TeamListRow', () => {
           type: 'DATASET_LOADING',
           payload: {
             datasets: {
-              Team: teams,
-              TeamMemberships: [
+              [TEAMS]: teams,
+              [TEAM_MEMBERSHIPS]: [
                 {
                   sys: {
                     type: 'TeamMembership',

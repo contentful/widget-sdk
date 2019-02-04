@@ -1,12 +1,6 @@
 import { fetchAll } from 'data/CMA/FetchAll.es6';
 import { omit, extend, includes } from 'lodash';
-
-export const ADMIN_ROLE_ID = '__cf_builtin_admin';
-
-export const ADMIN_ROLE = {
-  name: 'Admin',
-  sys: { id: ADMIN_ROLE_ID }
-};
+import { ADMIN_ROLE, ADMIN_ROLE_ID } from './constants.es6';
 
 export function getMembershipRoles(membership) {
   if (membership.admin) {

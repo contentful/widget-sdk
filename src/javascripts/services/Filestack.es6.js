@@ -29,11 +29,15 @@ const SOURCES = [
 
 function init() {
   return new Promise(resolve =>
-    require.ensure(['filestack-js'], require => {
-      const filestack = require('filestack-js');
-      const { apiKey, policy, signature } = environment.settings.filestack;
-      resolve(filestack.init(apiKey, { security: { policy, signature } }));
-    })
+    require.ensure(
+      ['filestack-js'],
+      require => {
+        const filestack = require('filestack-js');
+        const { apiKey, policy, signature } = environment.settings.filestack;
+        resolve(filestack.init(apiKey, { security: { policy, signature } }));
+      },
+      'filestack'
+    )
   );
 }
 

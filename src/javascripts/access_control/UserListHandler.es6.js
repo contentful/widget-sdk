@@ -1,17 +1,16 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
-import RoleRepository from 'access_control/RoleRepository.es6';
+import RoleRepository from './RoleRepository.es6';
+import { ADMIN_ROLE_ID } from './constants.es6';
 
 registerFactory('UserListHandler', [
   '$q',
   'spaceContext',
-  'access_control/SpaceMembershipRepository.es6',
   'data/CMA/FetchAll.es6',
   'services/ResourceService.es6',
-  ($q, spaceContext, SpaceMembershipRepository, FetchAll, { default: createResourceService }) => {
+  ($q, spaceContext, FetchAll, { default: createResourceService }) => {
     const { fetchAll } = FetchAll;
 
-    const ADMIN_ROLE_ID = SpaceMembershipRepository.ADMIN_ROLE_ID;
     const ADMIN_ROLE_NAME = 'Administrator';
     const ADMIN_OPT = { id: ADMIN_ROLE_ID, name: ADMIN_ROLE_NAME };
     const UNKNOWN_ROLE_NAME = 'Unknown';

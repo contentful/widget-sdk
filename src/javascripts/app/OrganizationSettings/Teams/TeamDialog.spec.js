@@ -2,12 +2,13 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { noop } from 'lodash';
 import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import reducer from 'redux/reducer/index.es6';
+import ROUTES from 'redux/routes.es6';
+import { TEAMS, TEAM_MEMBERSHIPS } from 'redux/datasets.es6';
 import { Button, Modal, TextField } from '@contentful/forma-36-react-components';
 
 import TeamDialog from './TeamDialog.es6';
-import { Provider } from 'react-redux';
-import ROUTES from '../../../redux/routes.es6';
 
 const renderComponent = (actions, props) => {
   const store = createStore(reducer);
@@ -62,7 +63,7 @@ describe('TeamDialog', () => {
           type: 'DATASET_LOADING',
           payload: {
             datasets: {
-              Team: [
+              [TEAMS]: [
                 {
                   name: 'A Team',
                   sys: {
@@ -78,7 +79,7 @@ describe('TeamDialog', () => {
                   }
                 }
               ],
-              TeamMemberships: []
+              [TEAM_MEMBERSHIPS]: []
             }
           }
         });

@@ -2,6 +2,7 @@ import { registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
+import { ADMIN_ROLE_ID } from './constants.es6';
 
 registerDirective('cfRoleList', () => ({
   restrict: 'E',
@@ -19,7 +20,6 @@ registerController('RoleListController', [
   'UserListController/jumpToRole',
   'spaceContext',
   'TheAccountView',
-  'access_control/SpaceMembershipRepository.es6',
   'utils/ResourceUtils.es6',
   (
     $scope,
@@ -31,11 +31,9 @@ registerController('RoleListController', [
     jumpToRoleMembers,
     spaceContext,
     TheAccountView,
-    SpaceMembershipRepository,
     ResourceUtils
   ) => {
     const listHandler = UserListHandler.create();
-    const { ADMIN_ROLE_ID } = SpaceMembershipRepository;
     const organization = spaceContext.organization;
 
     $scope.loading = true;

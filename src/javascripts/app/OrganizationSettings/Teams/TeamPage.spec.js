@@ -3,11 +3,12 @@ import { Provider } from 'react-redux';
 import { noop } from 'lodash';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
-import reducer from 'redux/reducer';
+import reducer from 'redux/reducer/index.es6';
+import ROUTES from 'redux/routes.es6';
+import { TEAMS, TEAM_MEMBERSHIPS } from 'redux/datasets.es6';
 
 import Placeholder from 'app/common/Placeholder.es6';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
-import ROUTES from 'redux/routes.es6';
 import { FEATURE_INACTIVE } from 'redux/accessConstants.es6';
 
 import TeamPage from './TeamPage.es6';
@@ -80,8 +81,8 @@ describe('TeamPage', () => {
           type: 'DATASET_LOADING',
           payload: {
             datasets: {
-              Team: [],
-              TeamMemberships: []
+              [TEAMS]: [],
+              [TEAM_MEMBERSHIPS]: []
             }
           }
         });
