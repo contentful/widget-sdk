@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { get } from 'lodash';
 import { isEdge } from 'app/widgets/rich_text/helpers/browser.es6';
 import StateLink from 'app/common/StateLink.es6';
 
@@ -52,12 +53,16 @@ function getStatusType(ct) {
   return statusType;
 }
 
+function getPublishedVersion(entity) {
+  return get(entity, ['sys', 'publishedVersion'], 0);
+}
+
 function isPublished(entity) {
-  return !!entity.sys.publishedVersion;
+  return getPublishedVersion(entity) > 0;
 }
 
 function isPublishedAndUpdated(entity) {
-  return isPublished(entity) && entity.sys.version > entity.sys.publishedVersion + 1;
+  return isPublished(entity) && entity.sys.version > getPublishedVersion(entity) + 1;
 }
 
 class ContentTypeList extends Component {
@@ -116,7 +121,9 @@ class ContentTypeList extends Component {
                         <RelativeDateTime value={contentType.sys.updatedAt} />
                       </TableCell>
                       <TableCell extraClassNames="x--small-cell" data-test-id="cell-created-by">
-                        <FetchAndFormatUserName userId={contentType.sys.publishedBy.sys.id} />
+                        <FetchAndFormatUserName
+                          userId={get(contentType, ['sys', 'publishedBy', 'sys', 'id'], '')}
+                        />
                       </TableCell>
                       <TableCell extraClassNames="x--small-cell" data-test-id="cell-status">
                         <Tag tagType={statusType(contentType)}>{statusLabel(contentType)}</Tag>
