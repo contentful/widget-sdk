@@ -1,27 +1,29 @@
 import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 
-registerDirective('cfSelection', () => ({
-  restrict: 'A',
+export default function register() {
+  registerDirective('cfSelection', () => ({
+    restrict: 'A',
 
-  link: function(scope, el, attrs) {
-    scope.$watch(
-      () => _.every(getEntities(), scope.selection.isSelected),
-      isSelected => {
-        el.prop('checked', isSelected);
-      }
-    );
+    link: function(scope, el, attrs) {
+      scope.$watch(
+        () => _.every(getEntities(), scope.selection.isSelected),
+        isSelected => {
+          el.prop('checked', isSelected);
+        }
+      );
 
-    function getEntities() {
-      const entities = scope.$eval(attrs.cfSelection);
+      function getEntities() {
+        const entities = scope.$eval(attrs.cfSelection);
 
-      if (_.isArray(entities)) {
-        return entities;
-      } else if (_.isObject(entities)) {
-        return [entities];
-      } else {
-        return [];
+        if (_.isArray(entities)) {
+          return entities;
+        } else if (_.isObject(entities)) {
+          return [entities];
+        } else {
+          return [];
+        }
       }
     }
-  }
-}));
+  }));
+}

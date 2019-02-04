@@ -1,17 +1,19 @@
 import { registerFactory } from 'NgRegistry.es6';
 
-registerFactory('analyticsEvents/persistentNotification', [
-  'analytics/Analytics.es6',
-  Analytics => {
-    return { action };
+export default function register() {
+  registerFactory('analyticsEvents/persistentNotification', [
+    'analytics/Analytics.es6',
+    Analytics => {
+      return { action };
 
-    function action(name) {
-      const currentPlan = Analytics.getSessionData('organization.subscriptionPlan.name');
+      function action(name) {
+        const currentPlan = Analytics.getSessionData('organization.subscriptionPlan.name');
 
-      Analytics.track('notification:action_performed', {
-        action: name,
-        currentPlan: currentPlan !== undefined ? currentPlan : null
-      });
+        Analytics.track('notification:action_performed', {
+          action: name,
+          currentPlan: currentPlan !== undefined ? currentPlan : null
+        });
+      }
     }
-  }
-]);
+  ]);
+}

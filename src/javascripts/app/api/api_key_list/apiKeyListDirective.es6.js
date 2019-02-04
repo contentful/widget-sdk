@@ -3,93 +3,95 @@ import _ from 'lodash';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 
-registerDirective('cfApiKeyList', () => ({
-  template: JST['api_key_list'](),
-  restrict: 'E',
-  controller: 'ApiKeyListController',
-  scope: true
-}));
+export default function register() {
+  registerDirective('cfApiKeyList', () => ({
+    template: JST['api_key_list'](),
+    restrict: 'E',
+    controller: 'ApiKeyListController',
+    scope: true
+  }));
 
-registerController('ApiKeyListController', [
-  '$scope',
-  '$state',
-  '$q',
-  'spaceContext',
-  'TheAccountView',
-  'command',
-  'access_control/AccessChecker/index.es6',
-  'utils/ResourceUtils.es6',
-  'services/ResourceService.es6',
-  (
-    $scope,
-    $state,
-    $q,
-    spaceContext,
-    TheAccountView,
-    Command,
-    accessChecker,
-    ResourceUtils,
-    { default: createResourceService }
-  ) => {
-    const resources = createResourceService(spaceContext.getId());
+  registerController('ApiKeyListController', [
+    '$scope',
+    '$state',
+    '$q',
+    'spaceContext',
+    'TheAccountView',
+    'command',
+    'access_control/AccessChecker/index.es6',
+    'utils/ResourceUtils.es6',
+    'services/ResourceService.es6',
+    (
+      $scope,
+      $state,
+      $q,
+      spaceContext,
+      TheAccountView,
+      Command,
+      accessChecker,
+      ResourceUtils,
+      { default: createResourceService }
+    ) => {
+      const resources = createResourceService(spaceContext.getId());
 
-    const disableCreateApiKey = accessChecker.shouldDisable('create', 'apiKey');
-    $scope.showCreateApiKey = !accessChecker.shouldHide('create', 'apiKey');
+      const disableCreateApiKey = accessChecker.shouldDisable('create', 'apiKey');
+      $scope.showCreateApiKey = !accessChecker.shouldHide('create', 'apiKey');
 
-    $scope.context.ready = false;
+      $scope.context.ready = false;
 
-    $scope.placeholderApiKeys = [
-      {
-        name: 'Website key',
-        description: 'Use this key in your website'
-      },
-      {
-        name: 'iOS key',
-        description: 'Use this key in your iOS app'
-      },
-      {
-        name: 'Android key',
-        description: 'Use this key in your Android app'
-      }
-    ];
-
-    $scope.subscriptionState = TheAccountView.getSubscriptionState();
-
-    $scope.createApiKey = Command.create(create, {
-      disabled: function() {
-        return disableCreateApiKey || $scope.reachedLimit;
-      }
-    });
-
-    function create() {
-      const spaceName = spaceContext.getData(['name']);
-      return spaceContext.apiKeyRepo.create(spaceName).then(
-        apiKey => $state.go('^.detail', { apiKeyId: apiKey.sys.id }),
-        err => {
-          Notification.error(err.data.message);
+      $scope.placeholderApiKeys = [
+        {
+          name: 'Website key',
+          description: 'Use this key in your website'
+        },
+        {
+          name: 'iOS key',
+          description: 'Use this key in your iOS app'
+        },
+        {
+          name: 'Android key',
+          description: 'Use this key in your Android app'
         }
-      );
-    }
+      ];
 
-    $q.all({
-      apiKeys: spaceContext.apiKeyRepo.getAll(),
-      resource: resources.get('apiKey'),
-      legacy: ResourceUtils.useLegacy(spaceContext.organization)
-    })
-      .then(result => {
-        $scope.apiKeys = result.apiKeys;
-        $scope.empty = _.isEmpty($scope.apiKeys);
+      $scope.subscriptionState = TheAccountView.getSubscriptionState();
 
-        const canCreate = ResourceUtils.canCreate(result.resource);
-        const limits = ResourceUtils.getResourceLimits(result.resource);
+      $scope.createApiKey = Command.create(create, {
+        disabled: function() {
+          return disableCreateApiKey || $scope.reachedLimit;
+        }
+      });
 
-        $scope.legacy = result.legacy;
-        $scope.limit = limits.maximum;
-        $scope.usage = result.resource.usage;
-        $scope.reachedLimit = !canCreate;
+      function create() {
+        const spaceName = spaceContext.getData(['name']);
+        return spaceContext.apiKeyRepo.create(spaceName).then(
+          apiKey => $state.go('^.detail', { apiKeyId: apiKey.sys.id }),
+          err => {
+            Notification.error(err.data.message);
+          }
+        );
+      }
 
-        $scope.context.ready = true;
+      $q.all({
+        apiKeys: spaceContext.apiKeyRepo.getAll(),
+        resource: resources.get('apiKey'),
+        legacy: ResourceUtils.useLegacy(spaceContext.organization)
       })
-      .catch(ReloadNotification.apiErrorHandler);
-  }
-]);
+        .then(result => {
+          $scope.apiKeys = result.apiKeys;
+          $scope.empty = _.isEmpty($scope.apiKeys);
+
+          const canCreate = ResourceUtils.canCreate(result.resource);
+          const limits = ResourceUtils.getResourceLimits(result.resource);
+
+          $scope.legacy = result.legacy;
+          $scope.limit = limits.maximum;
+          $scope.usage = result.resource.usage;
+          $scope.reachedLimit = !canCreate;
+
+          $scope.context.ready = true;
+        })
+        .catch(ReloadNotification.apiErrorHandler);
+    }
+  ]);
+}

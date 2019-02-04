@@ -1,69 +1,71 @@
 import { registerFactory } from 'NgRegistry.es6';
 
-/**
- * @ngdoc service
- * @name data/previewEnvironmentsCache
- */
-registerFactory('data/previewEnvironmentsCache', () => {
-  let previewEnvironmentsCache;
-
-  return {
-    getAll: getAll,
-    setAll: setAll,
-    set: set,
-    clearAll: clearAll
-  };
-
+export default function register() {
   /**
-   * @ngdoc method
-   * @name data/previewEnvironmentsCache#getAll
-   * @returns {object} environments
-   *
-   * @description
-   * Returns the cached environments
+   * @ngdoc service
+   * @name data/previewEnvironmentsCache
    */
-  function getAll() {
-    return previewEnvironmentsCache;
-  }
+  registerFactory('data/previewEnvironmentsCache', () => {
+    let previewEnvironmentsCache;
 
-  /**
-   * @ngdoc method
-   * @name data/previewEnvironmentsCache#setAll
-   * @param {object} environments
-   * @returns {object} environments
-   *
-   * @description
-   * Updates the cache with the environments provided
-   */
-  function setAll(environments) {
-    previewEnvironmentsCache = environments;
-    return previewEnvironmentsCache;
-  }
+    return {
+      getAll: getAll,
+      setAll: setAll,
+      set: set,
+      clearAll: clearAll
+    };
 
-  /**
-   * @ngdoc method
-   * @name data/previewEnvironmentsCache#set
-   * @param {object} environment
-   * @returns {object} environment
-   *
-   * @description
-   * Updates a single environment in environments cache
-   */
-  function set(environment) {
-    previewEnvironmentsCache = previewEnvironmentsCache || {};
-    previewEnvironmentsCache[environment.sys.id] = environment;
-    return environment;
-  }
+    /**
+     * @ngdoc method
+     * @name data/previewEnvironmentsCache#getAll
+     * @returns {object} environments
+     *
+     * @description
+     * Returns the cached environments
+     */
+    function getAll() {
+      return previewEnvironmentsCache;
+    }
 
-  /**
-   * @ngdoc method
-   * @name data/previewEnvironmentsCache#clearAll
-   * @returns undefined
-   *
-   * @description
-   * Clear the cache
-   */
-  function clearAll() {
-    previewEnvironmentsCache = undefined;
-  }
-});
+    /**
+     * @ngdoc method
+     * @name data/previewEnvironmentsCache#setAll
+     * @param {object} environments
+     * @returns {object} environments
+     *
+     * @description
+     * Updates the cache with the environments provided
+     */
+    function setAll(environments) {
+      previewEnvironmentsCache = environments;
+      return previewEnvironmentsCache;
+    }
+
+    /**
+     * @ngdoc method
+     * @name data/previewEnvironmentsCache#set
+     * @param {object} environment
+     * @returns {object} environment
+     *
+     * @description
+     * Updates a single environment in environments cache
+     */
+    function set(environment) {
+      previewEnvironmentsCache = previewEnvironmentsCache || {};
+      previewEnvironmentsCache[environment.sys.id] = environment;
+      return environment;
+    }
+
+    /**
+     * @ngdoc method
+     * @name data/previewEnvironmentsCache#clearAll
+     * @returns undefined
+     *
+     * @description
+     * Clear the cache
+     */
+    function clearAll() {
+      previewEnvironmentsCache = undefined;
+    }
+  });
+}
