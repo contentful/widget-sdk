@@ -1,4 +1,4 @@
-import { get, difference, isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { mapValues, update } from 'lodash/fp';
 import { createSelector } from 'reselect';
 
@@ -58,7 +58,5 @@ export const isLoadingMissingDatasets = state => {
   if (!hasAccess(state)) {
     return false;
   }
-  const datasetsToLoad = getDataSetsToLoad(state);
-  const datasetsInState = Object.keys(getRawDatasets(state));
-  return !isEmpty(difference(datasetsToLoad, datasetsInState));
+  return !isEmpty(getDataSetsToLoad(state));
 };
