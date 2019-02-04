@@ -1,14 +1,19 @@
 import React from 'react';
 import ReactPlayer from 'react-player';
-import { Card, Subheading } from '@contentful/forma-36-react-components';
+import { Card, Subheading, Button } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry.es6';
 import { track } from 'analytics/Analytics.es6';
 import $ from 'jquery';
+import { TypeformModal } from 'app/common/Typeform/TypeformModal.es6';
 
 const logger = getModule('logger');
 const $state = getModule('$state');
 
 export default class SpaceHome extends React.Component {
+  state = {
+    showFeedbackModal: false
+  };
+
   onStart = () =>
     track('element:click', {
       elementId: 'concept_video_pay',
@@ -31,11 +36,34 @@ export default class SpaceHome extends React.Component {
           video.popover.show();
           video.play();
         });
+        video.bind('end', function() {
+          video.popover.hide();
+        });
       }
     });
   };
+
   componentWillUnmount = () => {
     $('.concept-video-widget__play-button').unbind();
+  };
+
+  openTypeform = () => {
+    this.setState({
+      showFeedbackModal: true
+    });
+  };
+
+  handleTypeformSubmit = () => {
+    // write to state persistence api
+    this.typeformCloseTimeout = setTimeout(() => {
+      this.closeTypeform();
+    }, 1200);
+  };
+
+  closeTypeform = () => {
+    this.setState({
+      showFeedbackModal: false
+    });
   };
 
   render() {
@@ -74,11 +102,23 @@ export default class SpaceHome extends React.Component {
                 }
               }}
             />
-            <button className="concept-video-widget__play-button" aria-label="Play">
+            <button
+              className="concept-video-widget__play-button"
+              aria-label="Play"
+              data-test-id="play-concepts-video-btn">
               <div className="concept-video-widget__play-button-icon" />
             </button>
           </div>
         </div>
+        <Button onClick={this.openTypeform}>Open feedback form</Button>
+        <TypeformModal
+          title="Share your feedback about the concepts video"
+          isShown={this.state.showFeedbackModal}
+          onClose={this.closeTypeform}
+          testId="concepts-video-feedback-modal"
+          typeformUrl="https://contentful.typeform.com/to/uLHfR1"
+          onTypeformSubmit={this.handleTypeformSubmit}
+        />
       </Card>
     );
   }
