@@ -2,14 +2,14 @@
 
 const path = require('path');
 const fs = require('fs');
-const babel = require('babel-core');
+const babel = require('@babel/core');
+const { default: traverse } = require('@babel/traverse');
 const trailduck = require('trailduck').default;
 const { createBabelOptions } = require('../app-babel-options');
 const _ = require('lodash');
 
 /*
   This script determines the dependency graph for the application.
-
   These cases are handled:
   1. Plain imports, e.g. ImportDeclaration
   2. getModule statements
@@ -42,7 +42,6 @@ console.log(list.map(item => requireString(item, 'ngRequire')).join('\n'));
 /*
   Recursively read through directory `p`, and determine
   dependencies for each .js file.
-
   Returns object with filename as key and dependency info as value.
  */
 function recursiveRead(p) {
@@ -77,7 +76,6 @@ function recursiveRead(p) {
 /*
   Parses given filename `p` through Babel and determines the following
   information:
-
   1. The directly imported files
   2. The registrations e.g. registerFactory
   3. The dependencies registered via Angular DI and $injector.get
@@ -93,7 +91,7 @@ function determineDependencies(p) {
   let ast;
 
   try {
-    ast = babel.transform(raw, babelOptions).ast;
+    ast = babel.parseSync(raw, babelOptions);
   } catch (e) {
     console.log(`Could not parse ${p}`);
     console.log(e);
@@ -116,7 +114,7 @@ function determineDependencies(p) {
   const imports = [];
   const ng = [];
 
-  babel.traverse(ast, {
+  traverse(ast, {
     enter: ({ node }) => {
       if (node.type === 'ImportDeclaration') {
         const value = node.source.value;
@@ -200,11 +198,9 @@ function determineDependencies(p) {
 /*
   Given `depName`, return the type of the dependency with the "real" dependency
   name.
-
   There may be cases when something is imported without index.es6 appended, so
   there are two cases for `import` types. You cannot trust these implicitly, they
   may be fake news.
-
   The reality determining logic will not be necessary once all imports are explicit,
   e.g. all imported files use `index.es6` if needed.
  */
@@ -309,12 +305,10 @@ function normalizeImport(p, importName) {
 
 /*
   Generate string used in AngularInit.js.
-
   By default returns a string like:
-
   `require('myDepName.es6')`
  */
 function requireString(filename, requireFunc = 'require') {
   const dependencyName = filename.split('.js')[0];
-  return `${requireFunc}('${dependencyName}');`;
+  return `${requireFunc}('${dependencyName}').default();`;
 }

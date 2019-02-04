@@ -5,83 +5,6 @@ import { isFunction } from 'lodash';
 import { registerDirective } from 'NgRegistry.es6';
 import angular from 'angular';
 
-// NOTE: require below will need to be updated when moved to Webpack bundle
-
-/**
- * @description
- *
- * Mostly copied from ngReact – https://github.com/ngReact/ngReact/blob/master/ngReact.js#L179-L228
- * The reason for it's existence – we add all providers here, so all react components have same providers
- * Another use-case – special resolution, like for ui-components
- *
- * @usage[js]
- * {
- *   template: `
- *     <react-component name="app/home/welcome/Welcome.es6" props="myController.props"></react-component>
- *     <react-component name="@ui-components-library/TextLink"></react-component>
- *   `
- * }
- *
- * Note: there are two types of watching available: by value (default) and by reference.
- * Reference is more performant, since check is essentially `===`, value traverses the
- * whole props object. Don't optimize rematurely!
- *
- * If you use reference, be aware that in order to update values, you need to replace
- * props object completely.
- */
-registerDirective('reactComponent', [
-  '$injector',
-  'logger',
-  'redux/store.es6',
-  function($injector, logger, { default: store }) {
-    return {
-      restrict: 'E',
-      replace: true,
-      link: ($scope, $element, attrs) => {
-        const element = $element[0];
-        let reactComponent;
-        if (attrs.name) {
-          reactComponent = getReactComponent(attrs.name, $injector.get, logger);
-        } else if (attrs.component) {
-          reactComponent = $scope.$eval(attrs.component);
-        } else if (attrs.jsx) {
-          reactComponent = class Component extends React.Component {
-            render() {
-              return $scope.$eval(attrs.jsx);
-            }
-          };
-        } else {
-          throw new Error('Expect `component` or `name`');
-        }
-
-        const renderMyComponent = () => {
-          const scopeProps = $scope.$eval(attrs.props);
-
-          renderComponent(reactComponent, scopeProps, $scope, element, store);
-        };
-
-        // If there are props, re-render when they change
-        if (attrs.props) {
-          watchProps(attrs.watchDepth, $scope, [attrs.props], renderMyComponent);
-        } else {
-          renderMyComponent();
-        }
-
-        // cleanup when scope is destroyed
-        $scope.$on('$destroy', () => {
-          if (!attrs.onScopeDestroy) {
-            ReactDOM.unmountComponentAtNode(element);
-          } else {
-            $scope.$eval(attrs.onScopeDestroy)({
-              unmountComponent: ReactDOM.unmountComponentAtNode.bind(this, element)
-            });
-          }
-        });
-      }
-    };
-  }
-]);
-
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, elem, store) {
   scope.$evalAsync(() => {
@@ -189,4 +112,83 @@ function getPropExpression(prop) {
 function getPropWatchDepth(defaultWatch, prop) {
   const customWatchDepth = Array.isArray(prop) && angular.isObject(prop[1]) && prop[1].watchDepth;
   return customWatchDepth || defaultWatch;
+}
+
+export default function register() {
+  // NOTE: require below will need to be updated when moved to Webpack bundle
+
+  /**
+   * @description
+   *
+   * Mostly copied from ngReact – https://github.com/ngReact/ngReact/blob/master/ngReact.js#L179-L228
+   * The reason for it's existence – we add all providers here, so all react components have same providers
+   * Another use-case – special resolution, like for ui-components
+   *
+   * @usage[js]
+   * {
+   *   template: `
+   *     <react-component name="app/home/welcome/Welcome.es6" props="myController.props"></react-component>
+   *     <react-component name="@ui-components-library/TextLink"></react-component>
+   *   `
+   * }
+   *
+   * Note: there are two types of watching available: by value (default) and by reference.
+   * Reference is more performant, since check is essentially `===`, value traverses the
+   * whole props object. Don't optimize rematurely!
+   *
+   * If you use reference, be aware that in order to update values, you need to replace
+   * props object completely.
+   */
+  registerDirective('reactComponent', [
+    '$injector',
+    'logger',
+    'redux/store.es6',
+    function($injector, logger, { default: store }) {
+      return {
+        restrict: 'E',
+        replace: true,
+        link: ($scope, $element, attrs) => {
+          const element = $element[0];
+          let reactComponent;
+          if (attrs.name) {
+            reactComponent = getReactComponent(attrs.name, $injector.get, logger);
+          } else if (attrs.component) {
+            reactComponent = $scope.$eval(attrs.component);
+          } else if (attrs.jsx) {
+            reactComponent = class Component extends React.Component {
+              render() {
+                return $scope.$eval(attrs.jsx);
+              }
+            };
+          } else {
+            throw new Error('Expect `component` or `name`');
+          }
+
+          const renderMyComponent = () => {
+            const scopeProps = $scope.$eval(attrs.props);
+
+            renderComponent(reactComponent, scopeProps, $scope, element, store);
+          };
+
+          // If there are props, re-render when they change
+          if (attrs.props) {
+            watchProps(attrs.watchDepth, $scope, [attrs.props], renderMyComponent);
+          } else {
+            renderMyComponent();
+          }
+
+          // cleanup when scope is destroyed
+          $scope.$on('$destroy', () => {
+            if (!attrs.onScopeDestroy) {
+              ReactDOM.unmountComponentAtNode(element);
+            } else {
+              $scope.$eval(attrs.onScopeDestroy)({
+                unmountComponent: ReactDOM.unmountComponentAtNode.bind(this, element)
+              });
+            }
+          });
+        }
+      };
+    }
+  ]);
 }

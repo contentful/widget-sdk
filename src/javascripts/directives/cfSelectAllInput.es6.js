@@ -1,15 +1,17 @@
 import { registerDirective } from 'NgRegistry.es6';
 
-registerDirective('cfSelectAllInput', () => ({
-  restrict: 'A',
+export default function register() {
+  registerDirective('cfSelectAllInput', () => ({
+    restrict: 'A',
 
-  link: function(_scope, el) {
-    el.css('cursor', 'pointer');
-    el.on('click', selectAll);
+    link: function(_scope, el) {
+      el.css('cursor', 'pointer');
+      el.on('click', selectAll);
 
-    function selectAll() {
-      const end = el.val().length;
-      el.textrange('set', 0, end);
+      function selectAll() {
+        const end = el.val().length;
+        el.textrange('set', 0, end);
+      }
     }
-  }
-}));
+  }));
+}
