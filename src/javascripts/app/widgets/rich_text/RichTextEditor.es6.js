@@ -147,7 +147,6 @@ export default class RichTextEditor extends React.Component {
           onChange={this.onChange}
           plugins={this.slatePlugins}
           readOnly={this.props.isDisabled}
-          schema={schema}
           className="rich-text__editor"
           actionsDisabled={this.props.actionsDisabled}
         />

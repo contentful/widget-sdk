@@ -30,8 +30,11 @@ import { PastePlugin } from './Paste/index.es6';
 import { PasteHtmlPlugin } from './PasteHtml/index.es6';
 import { PasteTextPlugin } from './PasteText/index.es6';
 
+import schema from '../constants/Schema.es6';
+
 export function buildPlugins(richTextAPI) {
   return [
+    { schema },
     BoldPlugin({ richTextAPI }),
     ItalicPlugin({ richTextAPI }),
     UnderlinedPlugin({ richTextAPI }),

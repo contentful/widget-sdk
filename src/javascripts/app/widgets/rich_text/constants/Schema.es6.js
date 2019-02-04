@@ -7,9 +7,13 @@ import {
   CONTAINERS
 } from '@contentful/rich-text-types';
 
+import ListPlugin from '../plugins/List/EditListWrapper.es6';
+
 const mapVoidTypes = nodeTypes => {
   return fromPairs(nodeTypes.map(nodeType => [nodeType, { isVoid: true }]));
 };
+
+const listPlugin = ListPlugin();
 
 export default {
   document: {
@@ -93,6 +97,9 @@ export default {
     ...mapVoidTypes(VOID_BLOCKS),
     // the schema for the lists and list-items
     // is defined in the slate-edit-list plugin
+    // Due to the bug in slate@0.44.9 we have to stich schema manually.
+    // related bug ticket AUTH-888
+    ...listPlugin.schema.blocks,
     [BLOCKS.QUOTE]: {
       nodes: [
         {
