@@ -25,6 +25,7 @@
     "@contentful/worf": "^3.13.0",
     "@guestbell/slate-edit-list": "^0.3.0",
     "@jo-sm/asn1js": "^1.0.0",
+    "@typeform/embed": "^0.6.1",
     "@wikifactory/slate-trailing-block": "^0.6.0",
     "ajv": "^5.2.2",
     "angular": "~1.5.7",
