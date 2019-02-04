@@ -198,20 +198,6 @@ describe('data/UiConfig/Store.es6', () => {
           }
         });
       });
-
-      it('is being tracked', async function() {
-        const api = await this.create();
-        await api.entries.shared.set(MIGRATED_DATA.entryListViews);
-        sinon.assert.calledOnceWith(this.trackMigrationSpy, MIGRATED_DATA, 'ui_config');
-      });
-
-      it('is not tracked after migration', async function() {
-        const api = await this.create();
-        await api.entries.shared.set('DATA 1');
-        this.trackMigrationSpy.reset();
-        await api.entries.shared.set('DATA 2');
-        sinon.assert.notCalled(this.trackMigrationSpy);
-      });
     });
   });
 

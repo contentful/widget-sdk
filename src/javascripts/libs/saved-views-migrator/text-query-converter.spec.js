@@ -1,22 +1,25 @@
-import * as sinon from 'test/helpers/sinon';
 import _ from 'lodash';
+import { textQueryToUISearch } from './text-query-converter';
+import assetContentType from './asset-content-type';
 
 describe('TextQueryConverter#textQueryToUISearch()', () => {
+  let convert, testConvert, contentType;
+
   beforeEach(function() {
-    module('contentful/test');
+    contentType = null;
 
-    this.spaceContext = this.$inject('mocks/spaceContext').init();
-    this.space = {};
-    this.contentType = null;
-
-    const convert = this.$inject('search/TextQueryConverter.es6').textQueryToUISearch;
-
-    this.convert = function(textQuery) {
-      return convert(this.space, this.contentType, textQuery);
+    convert = function(textQuery) {
+      return textQueryToUISearch(contentType, textQuery, () =>
+        Promise.resolve([
+          { sys: { id: 'UID1' }, firstName: 'Jane', lastName: 'Doe' },
+          { sys: { id: 'UID2' }, firstName: 'Jon', lastName: 'Doe' },
+          { sys: { id: 'UID3' }, firstName: 'Jon', lastName: 'Doe' }
+        ])
+      );
     };
 
-    this.testConvert = function*(textQuery, expected) {
-      const result = yield this.convert(textQuery);
+    testConvert = async function(textQuery, expected) {
+      const result = await convert(textQuery);
       // For nicer test reporter output compare separately:
       expect(result.contentTypeId).toEqual(expected.contentTypeId);
       expect(result.searchText).toEqual(expected.searchText);
@@ -25,24 +28,24 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
   });
 
   function itConverts(description, setup, textQuery, expectedUISearchObject) {
-    it(`converts ${description}`, function*() {
+    it(`converts ${description}`, async function() {
       if (!_.isFunction(setup)) {
         expectedUISearchObject = textQuery;
         textQuery = setup;
       } else {
         setup.call(this);
       }
-      yield* this.testConvert(textQuery, expectedUISearchObject);
+      await testConvert(textQuery, expectedUISearchObject);
     });
   }
 
   function itConvertsFilters(description, textQuery, searchFilters) {
     const expectedUISearchObject = { searchText: '', searchFilters };
-    it(`converts ${description}`, function*() {
-      if (this.contentType) {
-        expectedUISearchObject.contentTypeId = this.contentType.getId();
+    it(`converts ${description}`, async function() {
+      if (contentType) {
+        expectedUISearchObject.contentTypeId = contentType.sys.id;
       }
-      yield* this.testConvert(textQuery, expectedUISearchObject);
+      await testConvert(textQuery, expectedUISearchObject);
     });
   }
 
@@ -63,14 +66,14 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
 
   describe('for content type fields', () => {
     beforeEach(function() {
-      this.contentType = {
-        getId: () => 'CTID',
-        data: {
-          fields: [
-            { id: 'ID_1', apiName: 'API_NAME_1', name: 'NAME_1' },
-            { id: 'ID_2', apiName: 'API_NAME_2', name: 'NAME_2' }
-          ]
-        }
+      contentType = {
+        sys: {
+          id: 'CTID'
+        },
+        fields: [
+          { id: 'ID_1', apiName: 'API_NAME_1', name: 'NAME_1' },
+          { id: 'ID_2', apiName: 'API_NAME_2', name: 'NAME_2' }
+        ]
       };
     });
 
@@ -81,7 +84,7 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
 
     describe('of type "Text"', () => {
       beforeEach(function() {
-        this.contentType.data.fields[0].type = 'Text';
+        contentType.fields[0].type = 'Text';
       });
 
       itConvertsFilters('to `[match]` operator', 'API_NAME_1: "SOME VALUE" NAME_1 : TEXT', [
@@ -92,7 +95,7 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
 
     describe('of type "Boolean"', () => {
       beforeEach(function() {
-        this.contentType.data.fields[0].type = 'Boolean';
+        contentType.fields[0].type = 'Boolean';
       });
 
       itConvertsFilters('"true" and "yes" to "true"', 'API_NAME_1: "true" NAME_1 = yes ', [
@@ -113,7 +116,7 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
 
     describe('type "Integer"', () => {
       beforeEach(function() {
-        this.contentType.data.fields[0].type = 'Integer';
+        contentType.fields[0].type = 'Integer';
       });
 
       itConvertsFilters('with ":" and "=" operators', 'API_NAME_1: "42" NAME_1 = 1337', [
@@ -139,7 +142,7 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
 
     describe('type "Date"', () => {
       beforeEach(function() {
-        this.contentType.data.fields[0].type = 'Date';
+        contentType.fields[0].type = 'Date';
       });
 
       testDateField('API_NAME_1', 'fields.API_NAME_1');
@@ -148,7 +151,7 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
 
     describe('type "Link"', () => {
       beforeEach(function() {
-        this.contentType.data.fields[0].type = 'Link';
+        contentType.fields[0].type = 'Link';
       });
 
       itConvertsFilters('to `sys.id` path', 'NAME_1: VALUE1 API_NAME_1 = "VALUE 2"', [
@@ -159,8 +162,8 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
 
     describe('type "Array" of "Link"', () => {
       beforeEach(function() {
-        this.contentType.data.fields[0].type = 'Array';
-        this.contentType.data.fields[0].items = { type: 'Link' };
+        contentType.fields[0].type = 'Array';
+        contentType.fields[0].items = { type: 'Link' };
       });
 
       itConvertsFilters('to `sys.id` path', 'API_NAME_1=VALUE1 NAME_1: VALUE2', [
@@ -173,8 +176,8 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
       itConverts(
         'sys field "id"',
         function() {
-          this.contentType.data.fields[0].type = 'Link';
-          this.contentType.data.fields[1].type = 'Text';
+          contentType.fields[0].type = 'Link';
+          contentType.fields[1].type = 'Text';
         },
         'status:archived API_NAME_1: "LINK 1" NAME_2:TEXT some search text',
         {
@@ -191,7 +194,7 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
       itConverts(
         '"text" filter followed by status and search text',
         function() {
-          this.contentType.data.fields[0].type = 'Text';
+          contentType.fields[0].type = 'Text';
         },
         'NAME_1:text status:published More',
         {
@@ -214,17 +217,6 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
   itConvertsFilters('"unknown" status to filter', 'status:unknown', [['__status', '', 'unknown']]);
 
   describe('for user system fields', () => {
-    beforeEach(function() {
-      this.spaceContext.users = {};
-      this.spaceContext.users.getAll = sinon
-        .stub()
-        .resolves([
-          { sys: { id: 'UID1' }, firstName: 'Jane', lastName: 'Doe' },
-          { sys: { id: 'UID2' }, firstName: 'Jon', lastName: 'Doe' },
-          { sys: { id: 'UID3' }, firstName: 'Jon', lastName: 'Doe' }
-        ]);
-    });
-
     const USER_SYSTEM_FIELDS = [['author', 'createdBy'], ['updater', 'updatedBy']];
 
     for (const [searchKey, queryKey] of USER_SYSTEM_FIELDS) {
@@ -233,7 +225,6 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
         `${searchKey}: "Jane Doe"`,
         [[`sys.${queryKey}.sys.id`, '', 'UID1']]
       );
-
       itConvertsFilters(
         `"${searchKey}" filter based on user name and id to user id`,
         `${searchKey}: "Jon Doe (UID3)"`,
@@ -279,7 +270,7 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
 
   describe('for assets', () => {
     beforeEach(function() {
-      this.contentType = this.$inject('legacy-client').assetContentType;
+      contentType = assetContentType;
     });
 
     itConvertsFilters('"filename" filter', 'filename:"FN 1"', [

@@ -236,7 +236,6 @@ angular
       ngRequire('services/contentfulClient.es6');
       ngRequire('services/exceptionHandler.es6');
       ngRequire('services/hints.es6');
-      ngRequire('services/searchQueryAutocompletions.es6');
       ngRequire('services/userAgent.es6');
       ngRequire('states/accountProfile.es6');
       ngRequire('states/account.es6');

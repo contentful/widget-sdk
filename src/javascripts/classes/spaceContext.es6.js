@@ -40,11 +40,11 @@ registerFactory('spaceContext', [
   'data/ContentTypeRepo/Published.es6',
   'data/Endpoint.es6',
   'data/UiConfig/Store.es6',
-  'data/ViewMigrator.es6',
   'data/CMA/LocaleRepo.es6',
   'data/CMA/SpaceEnvironmentsRepo.es6',
   'data/CMA/WebhookRepo.es6',
   'app/settings/apps/CachedAppConfig.es6',
+  'saved-views-migrator',
   (
     $q,
     $rootScope,
@@ -65,11 +65,11 @@ registerFactory('spaceContext', [
     PublishedCTRepo,
     { createSpaceEndpoint },
     { default: createUiConfigStore },
-    { default: createViewMigrator },
     { default: createLocaleRepo },
     { create: createEnvironmentsRepo },
     { default: createWebhookRepo },
-    { default: createCachedAppConfig }
+    { default: createCachedAppConfig },
+    { create: createViewMigrator }
   ) => {
     const publishedCTsBus$ = K.createPropertyBus([]);
 
@@ -186,7 +186,10 @@ registerFactory('spaceContext', [
           .all([
             self.widgets.refresh(),
             self.publishedCTs.refresh().then(() => {
-              const viewMigrator = createViewMigrator(space, self.publishedCTs);
+              const viewMigrator = createViewMigrator(
+                self.publishedCTs.getAllBare(),
+                self.users.getAll
+              );
               return createUiConfigStore(
                 space,
                 self.endpoint,

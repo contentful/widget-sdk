@@ -221,7 +221,7 @@ describe('Asset List Controller', () => {
         scope.searchController.paginator.getSkipParam = sinon.stub().returns(SKIP);
         scope.searchController.resetAssets();
         scope.$apply();
-        expect(stubs.getAssets.args[0][0].skip).toBe(SKIP);
+        expect(stubs.getAssets.lastCall.args[0].skip).toBe(SKIP);
       });
     });
   });

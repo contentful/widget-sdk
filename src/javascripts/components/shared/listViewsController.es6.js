@@ -10,18 +10,21 @@ registerController('ListViewsController', [
   'resetList',
   'preserveStateAs',
   'spaceContext',
-  'data/ViewMigrator.es6',
   'data/ListViewPersistor.es6',
+  'saved-views-migrator',
   (
     $scope,
     getBlankView,
     resetList,
     preserveStateAs,
     spaceContext,
-    { default: createViewMigrator },
-    { default: createViewPersistor }
+    { default: createViewPersistor },
+    { create: createViewMigrator }
   ) => {
-    const viewMigrator = createViewMigrator(spaceContext.space, spaceContext.publishedCTs);
+    const viewMigrator = createViewMigrator(
+      spaceContext.publishedCTs.getAllBare(),
+      spaceContext.users.getAll
+    );
     const viewPersistor = createViewPersistor(spaceContext.getId(), viewMigrator, preserveStateAs);
 
     $scope.$watch('context.view', viewPersistor.save, true);

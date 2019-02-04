@@ -71,6 +71,7 @@ window.libs = [
   ['ldclient-js', require('ldclient-js')],
   ['legacy-client', require('./legacy_client/client.js')],
   ['localesList', require('./locales_list.json')],
+  ['saved-views-migrator', require('./saved-views-migrator')],
   ['lodash', require('lodash')],
   ['lodash/fp', require('lodash/fp')],
   ['marked', require('marked-ast')._marked],

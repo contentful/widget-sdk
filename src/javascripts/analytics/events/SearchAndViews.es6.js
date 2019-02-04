@@ -1,6 +1,5 @@
 import { extend } from 'lodash';
 import { track as analyticsTrack } from 'analytics/Analytics.es6';
-import { getMigrationSuccessCount } from 'data/ViewMigrator.es6';
 
 const PREFIX = 'search:';
 const track = (e, data) => analyticsTrack(PREFIX + e, data);
@@ -63,15 +62,6 @@ function viewEdited(viewType, view, changedProperty = null) {
       })
     );
   }
-}
-
-export function searchTermsMigrated(newUIConfig, endpoint) {
-  const { migratedCount, failedCount } = getMigrationSuccessCount(newUIConfig);
-  track(`search_terms_migrated`, {
-    view_count_migrated: migratedCount,
-    view_count_migration_failed: failedCount,
-    endpoint
-  });
 }
 
 function details({ title, roles }) {

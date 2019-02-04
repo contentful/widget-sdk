@@ -1,33 +1,35 @@
-import sinon from 'sinon';
-import { cloneDeep } from 'lodash';
+const { cloneDeep } = require('lodash');
+const savedViewsMigrator = require('./index');
+const _ = require('lodash');
+const { textQueryToUISearch } = require('./text-query-converter');
 
 let step = 0;
+jest.mock('./text-query-converter', () => ({
+  textQueryToUISearch: jest.fn()
+}));
 
-describe('ViewMigrator', () => {
-  let ViewMigrator, migrateView, migrateViewsFolder, migrateUIConfigViews;
+describe('savedViewMigrator', () => {
+  let migrateView,
+    migrateViewsFolder,
+    migrateUIConfigViews,
+    viewMigrator,
+    contentTypes = {};
 
-  const SPACE = uniqueObject();
+  beforeEach(async function() {
+    textQueryToUISearch.mockClear();
 
-  beforeEach(function() {
-    this.getCTStub = sinon.stub();
-    this.convertStub = sinon.stub();
+    contentTypes = {};
 
-    module('contentful/test', $provide => {
-      $provide.value('search/TextQueryConverter.es6', {
-        textQueryToUISearch: this.convertStub
-      });
-    });
-
-    ViewMigrator = this.$inject('data/ViewMigrator.es6');
-    const createViewMigrator = ViewMigrator.default;
-
-    const contentTypesRepo = {
-      get: this.getCTStub
-    };
-    this.viewMigrator = createViewMigrator(SPACE, contentTypesRepo);
-    migrateView = this.viewMigrator.migrateView.bind(this.viewMigrator);
-    migrateViewsFolder = this.viewMigrator.migrateViewsFolder.bind(this.viewMigrator);
-    migrateUIConfigViews = this.viewMigrator.migrateUIConfigViews.bind(this.viewMigrator);
+    viewMigrator = savedViewsMigrator.create(contentTypes, () =>
+      Promise.resolve([
+        { sys: { id: 'UID1' }, firstName: 'John', lastName: 'Doe' },
+        { sys: { id: 'UID2' }, firstName: 'Jon', lastName: 'Doe' },
+        { sys: { id: 'UID3' }, firstName: 'Jon', lastName: 'Doe' }
+      ])
+    );
+    migrateView = viewMigrator.migrateView.bind(viewMigrator);
+    migrateViewsFolder = viewMigrator.migrateViewsFolder.bind(viewMigrator);
+    migrateUIConfigViews = viewMigrator.migrateUIConfigViews.bind(viewMigrator);
   });
 
   describe('#migrateView()', () => {
@@ -43,7 +45,7 @@ describe('ViewMigrator', () => {
 
       it('does not call `TextQueryConverter.textQueryToUISearch()`', function*() {
         yield migrateView(VIEW);
-        sinon.assert.notCalled(this.convertStub);
+        expect(textQueryToUISearch).not.toHaveBeenCalled();
       });
     });
 
@@ -62,7 +64,11 @@ describe('ViewMigrator', () => {
       describe('on view with a `searchTerm`', () => {
         beforeEach(function() {
           // `null` instead of {ContentType} as no `contentTypeId` is set in VIEW.
-          this.convertStub.withArgs(SPACE, null, SEARCH_TERM).resolves(CONVERTED_SEARCH_TERM);
+          textQueryToUISearch.mockImplementationOnce((...args) => {
+            if (args[0] === null && args[1] === SEARCH_TERM) {
+              return Promise.resolve(CONVERTED_SEARCH_TERM);
+            }
+          });
         });
 
         testMigrateViewSuccess(BASE_VIEW, CONVERTED_SEARCH_TERM);
@@ -75,23 +81,23 @@ describe('ViewMigrator', () => {
         const CONTENT_TYPE = uniqueObject();
 
         beforeEach(function() {
-          this.getCTStub.withArgs('TEST_CT_ID').returns(CONTENT_TYPE);
-          this.convertStub
-            .withArgs(SPACE, CONTENT_TYPE, SEARCH_TERM)
-            .resolves(CONVERTED_SEARCH_TERM);
+          contentTypes['TEST_CT_ID'] = CONTENT_TYPE;
+
+          textQueryToUISearch.mockImplementationOnce((...args) => {
+            if (args[0] === CONTENT_TYPE && args[1] === SEARCH_TERM) {
+              return Promise.resolve(CONVERTED_SEARCH_TERM);
+            }
+          });
         });
 
         testMigrateViewSuccess(VIEW_WITH_CT, CONVERTED_SEARCH_TERM);
-
-        it('calls `ContentTypeRepo#get()`', function*() {
-          yield migrateView(VIEW_WITH_CT);
-          sinon.assert.calledOnce(this.getCTStub);
-        });
       });
 
       describe('TextQueryConverter.textQueryToUISearch() error', () => {
         beforeEach(function() {
-          this.convertStub.throws('SOME UNKNOWN MIGRATION ERROR');
+          textQueryToUISearch.mockImplementationOnce(() => {
+            throw 'SOME UNKNOWN MIGRATION ERROR';
+          });
         });
 
         testMigrateViewOnError(BASE_VIEW);
@@ -99,7 +105,8 @@ describe('ViewMigrator', () => {
 
       describe('TextQueryConverter.textQueryToUISearch() rejects', () => {
         beforeEach(function() {
-          this.convertStub.rejects('SOME UNKNOWN MIGRATION ERROR');
+          // convertStub.rejects('SOME UNKNOWN MIGRATION ERROR')
+          textQueryToUISearch.mockRejectedValueOnce('SOME UNKNOWN MIGRATION ERROR');
         });
 
         testMigrateViewOnError(BASE_VIEW);
@@ -110,7 +117,9 @@ describe('ViewMigrator', () => {
       testMigrateViewBasics(view);
 
       it('has a `searchText` as provided by `TextQueryConverter`', function*() {
-        const { searchText } = yield migrateView(view);
+        const result = yield migrateView(view);
+        const { searchText } = result;
+
         expect(searchText).toEqual(convertedSearchTerm.searchText);
       });
 
@@ -147,7 +156,7 @@ describe('ViewMigrator', () => {
 
       it('calls `TextQueryConverter.textQueryToUISearch()`', function*() {
         yield migrateView(view);
-        sinon.assert.calledOnce(this.convertStub);
+        expect(textQueryToUISearch).toHaveBeenCalledTimes(1);
       });
 
       it('deletes the `searchTerm', function*() {
@@ -164,9 +173,11 @@ describe('ViewMigrator', () => {
   });
 
   describe('#migrateViewsFolder()', () => {
+    let migrateViewStub;
+
     beforeEach(function() {
-      this.migrateViewStub = sinon.stub();
-      this.viewMigrator.migrateView = this.migrateViewStub;
+      migrateViewStub = jest.fn();
+      viewMigrator.migrateView = migrateViewStub;
     });
 
     describe('with multiple views', () => {
@@ -182,11 +193,15 @@ describe('ViewMigrator', () => {
       };
 
       beforeEach(function() {
-        this.migrateViewStub
-          .withArgs(VIEWS[0])
-          .resolves(MIGRATED_VIEWS[0])
-          .withArgs(VIEWS[1])
-          .resolves(MIGRATED_VIEWS[1]);
+        migrateViewStub.mockImplementation((...args) => {
+          if (_.isEqual(args[0], VIEWS[0])) {
+            return Promise.resolve(MIGRATED_VIEWS[0]);
+          }
+
+          if (_.isEqual(args[0], VIEWS[1])) {
+            return Promise.resolve(MIGRATED_VIEWS[1]);
+          }
+        });
       });
 
       testMigrateViewsFolder(FOLDER, MIGRATED_FOLDER);
@@ -210,7 +225,7 @@ describe('ViewMigrator', () => {
 
       it('calls `migrateView()` once for each view', function*() {
         yield migrateViewsFolder(folder);
-        sinon.assert.callCount(this.migrateViewStub, folder.views.length);
+        expect(migrateViewStub).toHaveBeenCalledTimes(folder.views.length);
       });
 
       it('migrates views', function*() {
@@ -221,9 +236,11 @@ describe('ViewMigrator', () => {
   });
 
   describe('#migrateUIConfigViews()', () => {
+    let migrateViewsFolderStub;
+
     beforeEach(function() {
-      this.migrateViewsFolderStub = sinon.stub();
-      this.viewMigrator.migrateViewsFolder = this.migrateViewsFolderStub;
+      migrateViewsFolderStub = jest.fn();
+      viewMigrator.migrateViewsFolder = migrateViewsFolderStub;
     });
 
     describe('without `entryListViews` or `assetListViews`', () => {
@@ -250,11 +267,9 @@ describe('ViewMigrator', () => {
 
       it('does not call `migrateViewsFolder()`', function*() {
         yield migrateUIConfigViews(uiConfig);
-        sinon.assert.notCalled(this.migrateViewsFolderStub);
+        expect(migrateViewsFolderStub).not.toHaveBeenCalled();
       });
     }
-
-    describeWithMultipleFoldersIn('entryListViews');
 
     describeWithMultipleFoldersIn('assetListViews');
 
@@ -274,13 +289,19 @@ describe('ViewMigrator', () => {
       MIGRATED_UI_CONFIG[field] = MIGRATED_FOLDERS;
 
       beforeEach(function() {
-        this.migrateViewsFolderStub
-          .withArgs(FOLDERS[0])
-          .resolves(MIGRATED_FOLDERS[0])
-          .withArgs(FOLDERS[1])
-          .resolves(MIGRATED_FOLDERS[1])
-          .withArgs(FOLDERS[2])
-          .resolves(MIGRATED_FOLDERS[2]);
+        migrateViewsFolderStub.mockImplementation((...args) => {
+          if (_.isEqual(args[0], FOLDERS[0])) {
+            return Promise.resolve(MIGRATED_FOLDERS[0]);
+          }
+
+          if (_.isEqual(args[0], FOLDERS[1])) {
+            return Promise.resolve(MIGRATED_FOLDERS[1]);
+          }
+
+          if (_.isEqual(args[0], FOLDERS[2])) {
+            return Promise.resolve(MIGRATED_FOLDERS[2]);
+          }
+        });
       });
 
       it('does not mutate given uiConfig', function*() {
@@ -291,7 +312,7 @@ describe('ViewMigrator', () => {
 
       it('calls `migrateViewsFolder()` once for each folder', function*() {
         yield migrateUIConfigViews(UI_CONFIG);
-        sinon.assert.callCount(this.migrateViewsFolderStub, FOLDERS.length);
+        expect(migrateViewsFolderStub).toHaveBeenCalledTimes(FOLDERS.length);
       });
 
       it('migrates views', function*() {
@@ -299,84 +320,6 @@ describe('ViewMigrator', () => {
         expect(migratedUIConfig).toEqual(MIGRATED_UI_CONFIG);
       });
     }
-  });
-
-  describe('.normalizeMigratedUIConfigData(), .prepareUIConfigForStorage() ', () => {
-    testHelpers(
-      'without `entryListViews` or `assetListViews`',
-      { sys: { id: 'SOME_ID' } },
-      { sys: { id: 'SOME_ID' }, _migrated: {} }
-    );
-
-    testHelpers(
-      'without `assetListViews` and empty `entryListViews`',
-      { entryListViews: [] },
-      { _migrated: { entryListViews: [] } }
-    );
-
-    testHelpers(
-      'without `entryListViews` and empty `assetListViews`',
-      { someThingElse: 'foo', assetListViews: [] },
-      { someThingElse: 'foo', _migrated: { assetListViews: [] } }
-    );
-
-    testHelpers(
-      'with empty `entryListViews` and empty `assetListViews`',
-      { foo: 'bar', entryListViews: [], assetListViews: [] },
-      { foo: 'bar', _migrated: { entryListViews: [], assetListViews: [] } }
-    );
-
-    function testHelpers(description, normal, stored) {
-      describe(description, () => {
-        it('.normalizeMigratedUIConfigData() normalizes UIConfig data', () => {
-          const normalized = ViewMigrator.normalizeMigratedUIConfigData(stored);
-          expect(normalized).toEqual(normal);
-        });
-
-        it('.prepareUIConfigForStorage() converts UIConfig to store format', () => {
-          const storeReady = ViewMigrator.prepareUIConfigForStorage(normal);
-          expect(storeReady).toEqual(stored);
-        });
-
-        it('.isUIConfigDataMigrated()', () => {
-          const normalIsEmpty = Object.keys(normal).length === 1 && !!normal.sys;
-          expect(ViewMigrator.isUIConfigDataMigrated(normal)).toBe(normalIsEmpty);
-          expect(ViewMigrator.isUIConfigDataMigrated(stored)).toBe(true);
-        });
-      });
-    }
-  });
-
-  describe('.getMigrationSuccessCount()', () => {
-    it('returns 0/0 for empty object', () => {
-      const count = ViewMigrator.getMigrationSuccessCount({});
-      expect(count).toEqual({ migratedCount: 0, failedCount: 0 });
-    });
-
-    describe('on uiConfig with failed/successful migration', () => {
-      const UI_CONFIG = {
-        entryListViews: [
-          {
-            views: [{}, {}, { _legacySearchTerm: '' }]
-          }
-        ],
-        assetListViews: [
-          {
-            views: [{}, {}, { _legacySearchTerm: 'a:b' }, {}, { _legacySearchTerm: '' }]
-          }
-        ]
-      };
-
-      it('returns correct `migratedCount`', () => {
-        const count = ViewMigrator.getMigrationSuccessCount(UI_CONFIG);
-        expect(count.migratedCount).toBe(5);
-      });
-
-      it('returns correct `failedCount`', () => {
-        const count = ViewMigrator.getMigrationSuccessCount(UI_CONFIG);
-        expect(count.failedCount).toBe(3);
-      });
-    });
   });
 
   // TODO: Move to test helpers and also replace in `logger_spec.js`.

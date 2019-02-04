@@ -1,13 +1,7 @@
 import * as Defaults from './Defaults.es6';
-import { findIndex, get as getPath } from 'lodash';
+import { findIndex, get as getPath, extend, omit, pick } from 'lodash';
 import { update, concat } from 'utils/Collections.es6';
 import { deepFreeze } from 'utils/Freeze.es6';
-import {
-  isUIConfigDataMigrated,
-  normalizeMigratedUIConfigData,
-  prepareUIConfigForStorage
-} from 'data/ViewMigrator.es6';
-import { searchTermsMigrated as trackSearchTermsMigrated } from 'analytics/events/SearchAndViews.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as Telemetry from 'Telemetry.es6';
 
@@ -119,7 +113,6 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
     } else {
       Telemetry.count('uiconfig.not-migrated-fetched');
       return viewMigrator.migrateUIConfigViews(data).then(migratedUIConfig => {
-        trackSearchTermsMigrated(migratedUIConfig, getEndpointPath(type).join('/'));
         return setUiConfig(type, migratedUIConfig);
       });
     }
@@ -233,4 +226,47 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
 
     return save(SHARED_VIEWS, updated);
   }
+}
+
+/**
+ * Returns whether given UIConfig data from storage is migrated.
+ *
+ * Note: Does NOT take an UIConfig and check whether the actual views are migrated.
+ *
+ * @param {Object} uiConfig
+ * @returns {boolean}
+ */
+function isUIConfigDataMigrated(data) {
+  if (data._migrated) {
+    return true;
+  }
+  // Empty UIConfig counts as migrated. This is important as all ui_config/me/ return
+  // an empty config instead of a 404 like ui_config/
+  return Object.keys(data).length === 1 && !!data.sys;
+}
+
+/**
+ * Turns migrated UIConfig data from storage into a UIConfig without the `_migrated`
+ * field.
+ *
+ * @param {Object} migratedUIConfig
+ * @returns {UIConfig}
+ */
+function normalizeMigratedUIConfigData(data) {
+  const uiConfig = extend({}, data, data._migrated);
+  delete uiConfig._migrated;
+  return uiConfig;
+}
+
+/**
+ * Moves migrated UIConfig parts into `_migrated` field.
+ *
+ * @param {UIConfig} uiConfig
+ * @returns {Object}
+ */
+function prepareUIConfigForStorage(uiConfig) {
+  const migrationFields = ['entryListViews', 'assetListViews'];
+  const data = omit(uiConfig, migrationFields);
+  data._migrated = pick(uiConfig, migrationFields);
+  return data;
 }

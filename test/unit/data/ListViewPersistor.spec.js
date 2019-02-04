@@ -9,7 +9,7 @@ describe('ListViewPersistor', () => {
 
     store = getStore();
     createPersistor = this.$inject('data/ListViewPersistor.es6').default;
-    createViewMigrator = this.$inject('data/ViewMigrator.es6').default;
+    createViewMigrator = this.$inject('saved-views-migrator').create;
     $location = this.$inject('$location');
 
     qs = createPersistor('SPACE_ID', null, 'testEntity');
@@ -39,9 +39,8 @@ describe('ListViewPersistor', () => {
 
     describe('does `searchTerm` migration', () => {
       beforeEach(() => {
-        const space = { getId: sinon.stub().returns('SPACE_ID') };
         const contentTypes = { get: sinon.stub() };
-        const viewMigrator = createViewMigrator(space, contentTypes);
+        const viewMigrator = createViewMigrator(contentTypes);
         qs = createPersistor('SPACE_ID', viewMigrator, 'testEntity');
         $location.search.returns({ searchTerm: 'some text' });
       });
