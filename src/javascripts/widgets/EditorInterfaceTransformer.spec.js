@@ -48,9 +48,41 @@ describe('EditorInterfaceTransformer', () => {
         {
           field: { apiName: 'AAA' },
           fieldId: 'AAA',
-          widgetId: 'MIGRATED'
+          widgetId: 'MIGRATED',
+          widgetNamespace: 'builtin'
         }
       ]);
+    });
+
+    it('keeps provided namespace', () => {
+      const ct = { fields: [{ apiName: 'test' }] };
+      const ei = { controls: [{ fieldId: 'test', widgetId: 'foo', widgetNamespace: 'bar' }] };
+
+      const { controls } = fromAPI(ct, ei);
+      expect(controls[0].widgetNamespace).toEqual('bar');
+    });
+
+    it('provides a valid namespace for extensions', () => {
+      const ct = { fields: [{ apiName: 'test' }] };
+      const ei = { controls: [{ fieldId: 'test', widgetId: 'foo' }] };
+      const widgets = {
+        extension: [{ id: 'foo' }],
+        builtin: [{ id: 'foo' }]
+      };
+
+      const { controls } = fromAPI(ct, ei, widgets);
+
+      expect(controls[0].widgetNamespace).toEqual('extension');
+    });
+
+    it('provides a valid namespace for builtin widgets', () => {
+      const ct = { fields: [{ apiName: 'test' }] };
+      const ei = { controls: [{ fieldId: 'test', widgetId: 'foo' }] };
+      const widgets = { extension: [], builtin: [{ id: 'foo' }] };
+
+      const { controls } = fromAPI(ct, ei, widgets);
+
+      expect(controls[0].widgetNamespace).toEqual('builtin');
     });
 
     it('restores field order', function() {
@@ -107,6 +139,7 @@ describe('EditorInterfaceTransformer', () => {
       const control = {
         fieldId: 'test',
         widgetId: 'helloWorld',
+        widgetNamespace: 'test',
         settings: { test: true },
         field: { id: 'test' },
         unknown: 'test',
@@ -119,18 +152,30 @@ describe('EditorInterfaceTransformer', () => {
       const { controls } = toAPI(ct, ei);
 
       expect(controls).toEqual([
-        { fieldId: 'test', widgetId: 'helloWorld', settings: { test: true } }
+        {
+          fieldId: 'test',
+          widgetId: 'helloWorld',
+          widgetNamespace: 'test',
+          settings: { test: true }
+        }
       ]);
     });
 
     it('removes empty settings', () => {
-      const control = { fieldId: 'test', widgetId: 'helloWorld', settings: {} };
+      const control = {
+        fieldId: 'test',
+        widgetId: 'helloWorld',
+        widgetNamespace: 'test',
+        settings: {}
+      };
       const ct = { fields: [{ apiName: 'test' }] };
       const ei = { controls: [control] };
 
       const { controls } = toAPI(ct, ei);
 
-      expect(controls).toEqual([{ fieldId: 'test', widgetId: 'helloWorld' }]);
+      expect(controls).toEqual([
+        { fieldId: 'test', widgetId: 'helloWorld', widgetNamespace: 'test' }
+      ]);
     });
 
     it('restores field order', function() {

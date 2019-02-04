@@ -341,7 +341,8 @@ export default function register() {
       function syncEditorInterface() {
         $scope.editorInterface.controls = syncControls(
           $scope.contentType.data,
-          $scope.editorInterface.controls
+          $scope.editorInterface.controls,
+          spaceContext.widgets.getAll()
         );
       }
     }

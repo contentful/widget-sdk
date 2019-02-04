@@ -47,7 +47,8 @@ function buildOneRenderable(control, widgets) {
     settings: {}
   };
 
-  const descriptor = getWidgetDescriptor(widgets, control);
+  const namespaceWidgets = widgets[control.widgetNamespace] || [];
+  const descriptor = namespaceWidgets.find(w => w.id === control.widgetId);
 
   if (!descriptor) {
     renderable.template = `<react-component name="widgets/WidgetRenderWarning.es6" props="{ message: 'missing' }" />`;
@@ -95,24 +96,4 @@ function buildOneRenderable(control, widgets) {
   }
 
   return deepFreeze(renderable);
-}
-
-function getWidgetDescriptor(widgets, { widgetId, widgetNamespace }) {
-  const findInNamespace = namespaceWidgets => {
-    namespaceWidgets = Array.isArray(namespaceWidgets) ? namespaceWidgets : [];
-    return namespaceWidgets.find(w => w.id === widgetId);
-  };
-
-  // If a valid widget namespace is given we resolve the widget from
-  // the specified namespace and don't fall back. This is a preferred
-  // way of widget resolution since it's not possible for builtin and
-  // extension names to clash.
-  if (typeof widgetNamespace === 'string') {
-    return findInNamespace(widgets[widgetNamespace]);
-  }
-
-  // Historically if there is an extension with ID the same as a builtin
-  // editor ID the extension takes precedence. The code below checks
-  // the extension namespace first and then falls back to builtin widgets.
-  return findInNamespace(widgets.extension) || findInNamespace(widgets.builtin);
 }

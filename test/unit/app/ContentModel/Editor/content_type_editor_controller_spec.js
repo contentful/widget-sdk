@@ -199,7 +199,8 @@ describe('ContentTypeEditor Controller', () => {
       sinon.assert.calledWithExactly(
         syncControls,
         scope.contentType.data,
-        scope.editorInterface.controls
+        scope.editorInterface.controls,
+        sinon.match({ builtin: sinon.match.array })
       );
     });
 

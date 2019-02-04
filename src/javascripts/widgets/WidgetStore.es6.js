@@ -3,7 +3,7 @@ import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
 import { toInternalFieldType } from './FieldTypes.es6';
 
 export function create(cma) {
-  let cache = {};
+  const cache = { builtin: createBuiltinWidgetList() };
 
   return {
     refresh,
@@ -11,8 +11,6 @@ export function create(cma) {
   };
 
   async function refresh() {
-    cache = { builtin: createBuiltinWidgetList() };
-
     try {
       const res = await cma.getExtensions();
       cache.extension = res.items.map(buildExtensionWidget);

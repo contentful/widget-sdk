@@ -4,7 +4,7 @@ import getDefaultWidgetId from './DefaultWidget.es6';
 
 // Given a content type and its existing controls return
 // synced controls as described in code comments.
-export function syncControls(ct, controls) {
+export function syncControls(ct, controls, widgets) {
   // Controls are ordered as the content type fields are.
   return (ct.fields || []).map(field => {
     // Find an existing control for a field.
@@ -19,6 +19,11 @@ export function syncControls(ct, controls) {
       control.widgetId = getDefaultWidgetId(field, ct.displayField);
     }
 
+    // If the widget namespace is not given, determine it.
+    if (typeof control.widgetNamespace !== 'string') {
+      control.widgetNamespace = determineWidgetNamespace(control, widgets);
+    }
+
     // Attach the content type field to the control.
     control.field = cloneDeep(field);
 
@@ -26,35 +31,45 @@ export function syncControls(ct, controls) {
   });
 }
 
+// Historically if there is an extension with ID the same as a builtin
+// editor ID the extension takes precedence. The code below checks
+// the extension namespace first and then falls back to builtin widgets.
+function determineWidgetNamespace({ widgetId }, widgets = {}) {
+  const extensionWidget = (widgets.extension || []).find(w => w.id === widgetId);
+
+  return extensionWidget ? 'extension' : 'builtin';
+}
+
 // Given an API editor interface entity convert it to our
 // internal representation as described in `syncControls`.
-export function fromAPI(ct, ei) {
+export function fromAPI(ct, ei, widgets) {
   return {
     sys: ei.sys,
-    controls: syncControls(ct, ei.controls).map(c => migrateControl(c)),
+    controls: syncControls(ct, ei.controls, widgets).map(c => migrateControl(c)),
     sidebar: ei.sidebar
   };
 }
 
 // Given an internal representation of an editor interface
 // prepares it to be stored in the API.
-export function toAPI(ct, ei) {
+export function toAPI(ct, ei, widgets) {
   return {
     sys: ei.sys,
-    controls: syncControls(ct, ei.controls).map(c => prepareAPIControl(c)),
+    controls: syncControls(ct, ei.controls, widgets).map(c => prepareAPIControl(c)),
     sidebar: ei.sidebar
   };
 }
 
 // Given an internal representation of a control prepares
 // a control to be stored in the API.
-function prepareAPIControl({ fieldId, widgetId, settings }) {
+function prepareAPIControl({ fieldId, widgetId, widgetNamespace, settings }) {
   const settingsValid = typeof settings === 'object' && settings !== null;
   const hasSettings = settingsValid && Object.keys(settings).length > 0;
 
   return {
     fieldId,
     widgetId,
+    widgetNamespace,
     ...(hasSettings ? { settings: cloneDeep(settings) } : {})
   };
 }
@@ -63,6 +78,7 @@ function makeDefaultControl(ct, field) {
   return {
     fieldId: field.apiName || field.id,
     field,
-    widgetId: getDefaultWidgetId(field, ct.displayField)
+    widgetId: getDefaultWidgetId(field, ct.displayField),
+    widgetNamespace: 'builtin'
   };
 }

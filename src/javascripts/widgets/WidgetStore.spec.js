@@ -53,20 +53,23 @@ describe('WidgetStore', () => {
   });
 
   describe('#getAll()', () => {
-    it('returns an empty object if not refreshed yet', () => {
+    it('returns only builtins if not refreshed yet', () => {
       const store = createStore();
-      expect(store.getAll()).toEqual({});
+      expect(store.getAll()).toEqual({
+        builtin: expect.any(Array)
+      });
     });
 
     it('returns cached version after refresh', async () => {
       const cma = { getExtensions: jest.fn(() => Promise.resolve({ items: [] })) };
       const store = createStore(cma);
       const widgets = await store.refresh();
-      expect(store.getAll()).toBe(widgets);
+      const initialExtensions = widgets.extension;
+      expect(store.getAll().extension).toBe(initialExtensions);
 
       const refreshed = await store.refresh();
-      expect(refreshed).not.toBe(widgets);
-      expect(store.getAll()).toBe(refreshed);
+      expect(refreshed.extension).not.toBe(initialExtensions);
+      expect(store.getAll().extension).toBe(refreshed.extension);
     });
   });
 });
