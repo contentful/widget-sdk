@@ -9,8 +9,8 @@ import {
 } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import FeedbackButton from 'app/common/FeedbackButton.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
-import AppsFeedback from '../AppsFeedback.es6';
 import AppIcon from '../_common/AppIcon.es6';
 
 import { cloneDeep } from 'lodash';
@@ -321,7 +321,7 @@ export default class AlgoliaAppPage extends Component {
             <div>
               <Note>
                 Let us know how we can improve the Algolia app.{' '}
-                <AppsFeedback target="extensibility" about="Algolia app" />
+                <FeedbackButton target="extensibility" about="Algolia app" />
               </Note>
             </div>
 

@@ -2,20 +2,21 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import { TextLink, Button } from '@contentful/forma-36-react-components';
 
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import { getCurrentUser } from 'redux/selectors/users.es6';
 import { getCurrentTeam } from 'redux/selectors/teams.es6';
-import { TextLink, Button } from '@contentful/forma-36-react-components';
-import FeedbackDialog from './dialogs/FeedbackDialog.es6';
+
+import FeedbackDialog from './FeedbackDialog.es6';
 
 class AppsFeedback extends Component {
   static propTypes = {
     about: PropTypes.string.isRequired,
+    target: PropTypes.string.isRequired,
     type: PropTypes.string,
     label: PropTypes.string,
-    target: PropTypes.string.isRequired,
 
     onFeedbackConfirmed: PropTypes.func.isRequired,
     organizationId: PropTypes.string,

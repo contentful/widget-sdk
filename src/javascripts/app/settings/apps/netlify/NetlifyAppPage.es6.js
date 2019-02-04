@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { cloneDeep, uniqBy } from 'lodash';
 import { Button, Notification, Note } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import FeedbackButton from 'app/common/FeedbackButton.es6.js';
 
 import * as Analytics from 'analytics/Analytics.es6';
 
-import { cloneDeep, uniqBy } from 'lodash';
 import * as Random from 'utils/Random.es6';
 
 import AppIcon from '../_common/AppIcon.es6';
@@ -16,7 +17,6 @@ import NetlifyConfigEditor from './NetlifyConfigEditor.es6';
 import NetlifyConnection from './NetlifyConnection.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
 import NoConnectionUninstallDialog from './NoConnectionUninstallDialog.es6';
-import AppsFeedback from '../AppsFeedback.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const $state = getModule('$state');
@@ -246,7 +246,7 @@ export default class NetlifyAppPage extends Component {
       <Workbench.Content centered>
         <Note>
           Let us know how we can improve the Netlify app.{' '}
-          <AppsFeedback target="extensibility" about="Netlify app" />
+          <FeedbackButton target="extensibility" about="Netlify app" />
         </Note>
 
         <div className="netlify-app__section">
