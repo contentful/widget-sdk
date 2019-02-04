@@ -13,9 +13,9 @@ import FeedbackDialog from './dialogs/FeedbackDialog.es6';
 class AppsFeedback extends Component {
   static propTypes = {
     about: PropTypes.string.isRequired,
+    target: PropTypes.string.isRequired,
     type: PropTypes.string,
     label: PropTypes.string,
-    target: PropTypes.string.isRequired,
 
     onFeedbackConfirmed: PropTypes.func.isRequired,
     organizationId: PropTypes.string,
