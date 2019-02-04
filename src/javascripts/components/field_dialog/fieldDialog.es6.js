@@ -138,7 +138,18 @@ export default function register() {
       spaceContext.widgets.refresh().then(widgets => {
         const fieldType = toInternalFieldType($scope.field);
         $scope.widgetsAreLoaded = true;
-        $scope.availableWidgets = widgets.filter(widget => widget.fieldTypes.includes(fieldType));
+
+        // Extension and builtin widget IDs may clash.
+        // Extensions used to "override" built-in widgets and we keep doing it here.
+        // TODO: use `control.widgetNamespace` in the dialog so we don't have to filter.
+        const extensionIds = widgets.extension.map(e => e.id);
+        const filteredBuiltin = widgets.builtin.filter(b => {
+          return !extensionIds.includes(b.id);
+        });
+
+        $scope.availableWidgets = [...filteredBuiltin, ...widgets.extension].filter(widget => {
+          return widget.fieldTypes.includes(fieldType);
+        });
       });
 
       $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);

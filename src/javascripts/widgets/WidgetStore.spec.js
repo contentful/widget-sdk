@@ -3,11 +3,12 @@ import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
 
 describe('WidgetStore', () => {
   describe('#refresh()', () => {
-    it('returns an object including the builtin widgets', async () => {
+    it('returns an object of all widget namespaces', async () => {
       const cma = { getExtensions: jest.fn(() => Promise.resolve({ items: [] })) };
       const store = createStore(cma);
       const widgets = await store.refresh();
-      expect(widgets.map(w => w.id)).toEqual(createBuiltinWidgetList().map(b => b.id));
+      expect(widgets.extension).toEqual([]);
+      expect(widgets.builtin.map(w => w.id)).toEqual(createBuiltinWidgetList().map(b => b.id));
     });
 
     it('includes processed extensions from API', async () => {
@@ -29,7 +30,7 @@ describe('WidgetStore', () => {
       const store = createStore(cma);
 
       const widgets = await store.refresh();
-      const extension = widgets.find(w => w.id === 'CUSTOM');
+      const [extension] = widgets.extension;
 
       expect(extension.name).toEqual('NAME');
       expect(extension.src).toEqual('SRC');
@@ -46,34 +47,15 @@ describe('WidgetStore', () => {
       const cma = { getExtensions: jest.fn(() => Promise.reject()) };
       const store = createStore(cma);
       const widgets = await store.refresh();
-      expect(widgets.map(w => w.id)).toEqual(createBuiltinWidgetList().map(b => b.id));
-    });
-
-    // This test describes behaviour that may not be desirable.
-    // It was implemented like this back in 2016 and some people may rely on it.
-    it('overrides builtins with extensions if IDs clash', async () => {
-      const customDatePicker = {
-        sys: { id: 'datePicker' },
-        extension: {
-          name: 'my date picker',
-          srcdoc: 'doc',
-          fieldTypes: [{ type: 'Date' }]
-        }
-      };
-      const cma = { getExtensions: jest.fn(() => Promise.resolve({ items: [customDatePicker] })) };
-      const store = createStore(cma);
-
-      const widgets = await store.refresh();
-      const datePickerWidgets = widgets.filter(w => w.id === 'datePicker');
-      expect(datePickerWidgets).toHaveLength(1);
-      expect(datePickerWidgets[0].name).toEqual('my date picker');
+      expect(widgets.extension).toEqual([]);
+      expect(widgets.builtin.map(w => w.id)).toEqual(createBuiltinWidgetList().map(b => b.id));
     });
   });
 
   describe('#getAll()', () => {
-    it('returns an empty array if not refreshed yet', () => {
+    it('returns an empty object if not refreshed yet', () => {
       const store = createStore();
-      expect(store.getAll()).toEqual([]);
+      expect(store.getAll()).toEqual({});
     });
 
     it('returns cached version after refresh', async () => {

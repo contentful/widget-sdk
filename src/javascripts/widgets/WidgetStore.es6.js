@@ -3,7 +3,7 @@ import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
 import { toInternalFieldType } from './FieldTypes.es6';
 
 export function create(cma) {
-  let cache = [];
+  let cache = {};
 
   return {
     refresh,
@@ -11,30 +11,17 @@ export function create(cma) {
   };
 
   async function refresh() {
-    let extensions;
+    cache = { builtin: createBuiltinWidgetList() };
+
     try {
       const res = await cma.getExtensions();
-      extensions = res.items.map(buildExtensionWidget);
+      cache.extension = res.items.map(buildExtensionWidget);
     } catch (e) {
-      extensions = [];
+      cache.extension = [];
     }
-    cache = prepareList(extensions);
+
     return cache;
   }
-}
-
-function prepareList(extensions) {
-  // Extension and built-in widget IDs may clash :(
-  // Extensions used to "override" built-in widgets.
-  // It's far from ideal but we retain this behavior for now.
-  // TODO figure out what to do?
-  const extensionIds = extensions.map(e => e.id);
-  const builtin = createBuiltinWidgetList();
-  const filteredBuiltins = builtin.filter(b => {
-    return !extensionIds.includes(b.id);
-  });
-
-  return [...filteredBuiltins, ...extensions];
 }
 
 function buildExtensionWidget(data) {
