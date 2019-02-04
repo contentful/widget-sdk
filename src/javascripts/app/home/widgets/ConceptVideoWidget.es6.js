@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactPlayer from 'react-player';
-import { Card, Subheading, Button } from '@contentful/forma-36-react-components';
+import { Card, Subheading } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry.es6';
 import { track } from 'analytics/Analytics.es6';
 import $ from 'jquery';
@@ -31,13 +31,24 @@ export default class SpaceHome extends React.Component {
     window._wq = window._wq || [];
     window._wq.push({
       id: '_all',
-      onReady: function(video) {
+      onReady: video => {
         $('.concept-video-widget__play-button').bind('click', () => {
           video.popover.show();
           video.play();
         });
-        video.bind('end', function() {
+        video.bind('end', () => {
           video.popover.hide();
+        });
+        // figure out how to bind this only if the user hasn't already submitted feedback
+        video.bind('crosstime', 77, () => {
+          video.pause();
+          video.popover.hide();
+          this.openTypeform();
+          // the feedback form will only be shown the first time the video is watched on a reload.
+          // Subsequent plays will not trigger the feedback form.
+          // Upon reload, if the user has not submitted feedback (known via state-persistence-api),
+          // the feedback form will get triggered at 76s.
+          return video.unbind;
         });
       }
     });
@@ -110,7 +121,6 @@ export default class SpaceHome extends React.Component {
             </button>
           </div>
         </div>
-        <Button onClick={this.openTypeform}>Open feedback form</Button>
         <TypeformModal
           title="Share your feedback about the concepts video"
           isShown={this.state.showFeedbackModal}
