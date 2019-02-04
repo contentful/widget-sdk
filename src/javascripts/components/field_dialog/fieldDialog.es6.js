@@ -51,10 +51,9 @@ export default function register() {
   registerController('FieldDialogController', [
     '$scope',
     '$timeout',
-    'spaceContext',
     'fieldDecorator',
     'validationDecorator',
-    function FieldDialogController($scope, $timeout, spaceContext, fieldDecorator, validations) {
+    function FieldDialogController($scope, $timeout, fieldDecorator, validations) {
       // TODO: Remove this when there are no more API references to the legacy
       // `StructuredText` field type.
       const RICH_TEXT_FIELD_TYPES = ['RichText', 'StructuredText'];
@@ -63,7 +62,6 @@ export default function register() {
       const contentTypeData = $scope.contentType.data;
 
       $scope.decoratedField = fieldDecorator.decorate($scope.field, contentTypeData);
-      $scope.widgetsAreLoaded = false;
 
       $scope.validations = validations.decorateFieldValidations($scope.field);
 
@@ -130,26 +128,17 @@ export default function register() {
         });
       }
 
-      /**
-       * @ngdoc property
-       * @name FieldDialogController#availableWidgets
-       * @type {Widgets.Descriptor[]}
-       */
-      spaceContext.widgets.refresh().then(widgets => {
-        const fieldType = toInternalFieldType($scope.field);
-        $scope.widgetsAreLoaded = true;
+      // Extension and builtin widget IDs may clash.
+      // Extensions used to "override" built-in widgets and we keep doing it here.
+      // TODO: use `control.widgetNamespace` in the dialog so we don't have to filter.
+      const extensionIds = $scope.widgets.extension.map(e => e.id);
+      const filteredBuiltin = $scope.widgets.builtin.filter(b => {
+        return !extensionIds.includes(b.id);
+      });
 
-        // Extension and builtin widget IDs may clash.
-        // Extensions used to "override" built-in widgets and we keep doing it here.
-        // TODO: use `control.widgetNamespace` in the dialog so we don't have to filter.
-        const extensionIds = widgets.extension.map(e => e.id);
-        const filteredBuiltin = widgets.builtin.filter(b => {
-          return !extensionIds.includes(b.id);
-        });
-
-        $scope.availableWidgets = [...filteredBuiltin, ...widgets.extension].filter(widget => {
-          return widget.fieldTypes.includes(fieldType);
-        });
+      const fieldType = toInternalFieldType($scope.field);
+      $scope.availableWidgets = [...filteredBuiltin, ...$scope.widgets.extension].filter(widget => {
+        return widget.fieldTypes.includes(fieldType);
       });
 
       $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
@@ -350,7 +339,6 @@ export default function register() {
         const availableWidgets = $scope.availableWidgets || [];
         $scope.appearanceTabProps = {
           availableWidgets,
-          widgetsAreLoaded: $scope.widgetsAreLoaded,
           selectedWidgetId: $scope.widgetSettings.id,
           widgetParams: $scope.widgetSettings.params,
           defaultWidgetId: getDefaultWidgetId($scope.field, $scope.contentType.data.displayField),

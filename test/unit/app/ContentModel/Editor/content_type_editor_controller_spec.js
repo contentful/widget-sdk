@@ -39,7 +39,8 @@ describe('ContentTypeEditor Controller', () => {
         $setDirty: sinon.stub()
       },
       context: {},
-      editorInterface: {}
+      editorInterface: {},
+      widgets: { builtin: [] }
     });
 
     const $controller = this.$inject('$controller');
