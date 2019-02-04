@@ -9,7 +9,7 @@ Otherwise add it and note the key you used.
 
 ## Using the Component
 
-You can find the component here: `app/settings/apps/AppsFeedback.es6.js`,
+You can find the component here: `app/common/FeedbackButton.es6.js`,
 Required props are `target`, which is used as key for `TARGET_MAILS`, and `about`, which is a string that will be used in the text of the dialog.
 Optional props:
  - type="button" // show button instead of link

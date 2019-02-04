@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Workbench from 'app/common/Workbench.es6';
+import FeedbackButton from 'app/common/FeedbackButton.es6';
 import AppsList from './AppsList.es6';
 import AppListItem from './AppListItem.es6';
-import AppsFeedback from '../AppsFeedback.es6';
 import {
   Note,
   Button,
@@ -116,7 +116,7 @@ export default class AppsListPage extends Component {
         <Button disabled={optedIn} onClick={this.optIn} icon={optedIn ? 'CheckCircle' : undefined}>
           {optedIn ? 'Apps enabled' : 'Enable alpha feature'}
         </Button>
-        <AppsFeedback target="extensibility" about="Apps" type="Button" />
+        <FeedbackButton target="extensibility" about="Apps" type="Button" />
       </Note>
     );
   }

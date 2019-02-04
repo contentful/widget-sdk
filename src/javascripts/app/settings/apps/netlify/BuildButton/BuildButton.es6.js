@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, ValidationMessage } from '@contentful/forma-36-react-components';
 
 import * as Analytics from 'analytics/Analytics.es6';
-
-import AppsFeedback from 'app/settings/apps/AppsFeedback.es6';
+import FeedbackButton from 'app/common/FeedbackButton.es6';
 
 import { createPubSub } from './PubNubClient.es6';
 import {
@@ -107,7 +106,7 @@ export default class BuildButton extends Component {
       <div className="netlify-app__build-button">
         <div className="netlify-app__build-button__alpha">
           <span className="netlify-app__build-button__alpha-label">Alpha</span>
-          <AppsFeedback target="extensibility" about="Netlify Build Button" />
+          <FeedbackButton target="extensibility" about="Netlify Build Button" />
         </div>
         <Button disabled={!ready || busy} loading={busy} isFullWidth onClick={this.build}>
           {busy && status ? status : 'Build'}
