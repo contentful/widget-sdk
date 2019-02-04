@@ -42,7 +42,7 @@ export default (state = null, { type, payload, meta }, globalState) => {
     case 'LOCATION_CHANGED':
       return payload.location;
     case 'RESET_FILTERS': {
-      return updateLocationQuery(omitAll(['filters', 'spaceTerm']))(state);
+      return updateLocationQuery(omitAll(['filters', 'searchTerm']))(state);
     }
     case 'CHANGE_FILTERS': {
       return updateLocationQuery(set('filters', viewToObject(payload.newFilters)))(state);
