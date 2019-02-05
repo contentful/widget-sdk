@@ -5,18 +5,22 @@ import { getModule } from 'NgRegistry.es6';
 import { track } from 'analytics/Analytics.es6';
 import $ from 'jquery';
 import { TypeformModal } from 'app/common/Typeform/TypeformModal.es6';
+import { fetchUserState, updateUserState } from 'utils/StatePersistenceApi.es6';
 
 const logger = getModule('logger');
 const $state = getModule('$state');
 
-export default class SpaceHome extends React.Component {
+const feedbackKey = 'feedback';
+
+export default class ConceptVideoWidget extends React.Component {
   state = {
-    showFeedbackModal: false
+    feedbackModalIsOpen: false,
+    userHasProvidedFeedback: false
   };
 
   onStart = () =>
     track('element:click', {
-      elementId: 'concept_video_pay',
+      elementId: 'concept_video_play',
       groupId: 'author_editor_continuous_onboarding',
       fromState: $state.current.name
     });
@@ -27,7 +31,73 @@ export default class SpaceHome extends React.Component {
       error
     });
 
+  fetchUserFeedbackState = async () => {
+    try {
+      const { conceptsVideo: userHasProvidedFeedback } = await fetchUserState(feedbackKey);
+
+      this.setState({
+        userHasProvidedFeedback
+      });
+    } catch (error) {
+      logger.logError('ConceptVideoWidget: state-persistence-api fetch error', {
+        message: `An error occured while fetching data for key "${feedbackKey}" from state-persistence-api`,
+        error
+      });
+    }
+  };
+
+  markUserAsHasCompletedFeedback = async () => {
+    // if the user has already provided feedback, this implies that feedback.conceptsVideo
+    // is `true` in state-persistence-api (SPA). This is a terminal condition as we never want
+    // to go from feedback.conceptsVideo being `true` to `false`. No bit of code here does that.
+    // Therefore, it is safe to not make any requests to SPA if userHasProvidedFeedback is `true`.
+    try {
+      if (this.state.userHasProvidedFeedback) {
+        return;
+      } else {
+        const {
+          conceptsVideo: userHasProvidedFeedback,
+          sys: { version }
+        } = await fetchUserState(feedbackKey);
+
+        // same reason as above. If the SPA returns true for feedback.conceptsWidget, then it's
+        // already in its terminal state and we don't have to update the value for "feedback" key
+        // in SPA.
+        if (userHasProvidedFeedback) {
+          this.setState({
+            userHasProvidedFeedback
+          });
+        } else {
+          const payload = {
+            conceptsVideo: true,
+            version
+          };
+
+          const { conceptsVideo: userHasProvidedFeedback } = await updateUserState(
+            feedbackKey,
+            payload
+          );
+
+          this.setState({
+            userHasProvidedFeedback
+          });
+        }
+      }
+    } catch (error) {
+      // if any step errors, we log and don't retry as for this feature i.e., "feedback",
+      // it's ok if we ask a user that has already submitted feedback to submit it again.
+      // This can only occur when the first write fails. If any writes go through, this
+      // will cause no issues.
+      logger.logError('ConceptVideoWidget: state-persistence-api update error', {
+        message: `An error occured while updating data for key "${feedbackKey}" in state-persistence-api`,
+        error
+      });
+    }
+  };
+
   componentDidMount = () => {
+    this.fetchUserFeedbackState();
+
     window._wq = window._wq || [];
     window._wq.push({
       id: '_all',
@@ -39,11 +109,20 @@ export default class SpaceHome extends React.Component {
         video.bind('end', () => {
           video.popover.hide();
         });
+
+        video.bind('crosstime', 60, () => {
+          if (!this.state.userHasProvidedFeedback) {
+            this.fetchUserFeedbackState();
+          }
+          return video.unbind;
+        });
         // figure out how to bind this only if the user hasn't already submitted feedback
-        video.bind('crosstime', 77, () => {
-          video.pause();
-          video.popover.hide();
-          this.openTypeform();
+        video.bind('crosstime', 76, () => {
+          if (!this.state.userHasProvidedFeedback) {
+            video.pause();
+            video.popover.hide();
+            this.openTypeform();
+          }
           // the feedback form will only be shown the first time the video is watched on a reload.
           // Subsequent plays will not trigger the feedback form.
           // Upon reload, if the user has not submitted feedback (known via state-persistence-api),
@@ -60,12 +139,14 @@ export default class SpaceHome extends React.Component {
 
   openTypeform = () => {
     this.setState({
-      showFeedbackModal: true
+      feedbackModalIsOpen: true
     });
   };
 
   handleTypeformSubmit = () => {
-    // write to state persistence api
+    // mark the user as having provided feedback for concept video
+    // in state-persistence-api
+    this.markUserAsHasCompletedFeedback();
     this.typeformCloseTimeout = setTimeout(() => {
       this.closeTypeform();
     }, 1200);
@@ -73,7 +154,7 @@ export default class SpaceHome extends React.Component {
 
   closeTypeform = () => {
     this.setState({
-      showFeedbackModal: false
+      feedbackModalIsOpen: false
     });
   };
 
@@ -123,7 +204,7 @@ export default class SpaceHome extends React.Component {
         </div>
         <TypeformModal
           title="Share your feedback about the concepts video"
-          isShown={this.state.showFeedbackModal}
+          isShown={this.state.feedbackModalIsOpen}
           onClose={this.closeTypeform}
           testId="concepts-video-feedback-modal"
           typeformUrl="https://contentful.typeform.com/to/uLHfR1"
