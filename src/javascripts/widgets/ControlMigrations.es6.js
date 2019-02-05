@@ -1,3 +1,5 @@
+import { NAMESPACE_BUILTIN } from './WidgetNamespaces.es6';
+
 /**
  * This service exposes a list of widget migration specifications that
  * migrate the editor interface of a content type.
@@ -49,9 +51,14 @@ const DEFAULT_MIGRATIONS = [
 export default function migrateControl(control, migrations = DEFAULT_MIGRATIONS) {
   const { field, widgetNamespace, widgetId } = control;
 
+  // All migrations are applicable to builtins only.
+  if (widgetNamespace !== NAMESPACE_BUILTIN) {
+    return widgetId;
+  }
+
   const migration = migrations.find(({ fieldTypes, from }) => {
     const applicable = !Array.isArray(fieldTypes) || fieldTypes.includes(field.type);
-    return applicable && widgetNamespace === 'builtin' && from === widgetId;
+    return applicable && from === widgetId;
   });
 
   return migration ? migration.to : widgetId;

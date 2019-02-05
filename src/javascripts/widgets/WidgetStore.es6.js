@@ -1,9 +1,10 @@
 import { get } from 'lodash';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
 import { toInternalFieldType } from './FieldTypes.es6';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
 
 export function create(cma) {
-  const cache = { builtin: createBuiltinWidgetList() };
+  const cache = { [NAMESPACE_BUILTIN]: createBuiltinWidgetList() };
 
   return {
     refresh,
@@ -13,9 +14,9 @@ export function create(cma) {
   async function refresh() {
     try {
       const res = await cma.getExtensions();
-      cache.extension = res.items.map(buildExtensionWidget);
+      cache[NAMESPACE_EXTENSION] = res.items.map(buildExtensionWidget);
     } catch (e) {
-      cache.extension = [];
+      cache[NAMESPACE_EXTENSION] = [];
     }
 
     return cache;

@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash';
 import migrateControl from './ControlMigrations.es6';
 import getDefaultWidgetId from './DefaultWidget.es6';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
 
 // Given a content type, its existing controls and space widgets
 // return  synced controls as described in code comments.
@@ -16,7 +17,7 @@ export function syncControls(ct, controls, widgets) {
 
     // If the widget ID is not provided, use the default.
     if (typeof control.widgetId !== 'string') {
-      control.widgetNamespace = 'builtin';
+      control.widgetNamespace = NAMESPACE_BUILTIN;
       control.widgetId = getDefaultWidgetId(field, ct.displayField);
     }
 
@@ -39,9 +40,9 @@ export function syncControls(ct, controls, widgets) {
 // editor ID the extension takes precedence. The code below checks
 // the extension namespace first and then falls back to builtin widgets.
 function determineWidgetNamespace({ widgetId }, widgets = {}) {
-  const extensionWidget = (widgets.extension || []).find(w => w.id === widgetId);
+  const extensionWidget = (widgets[NAMESPACE_EXTENSION] || []).find(w => w.id === widgetId);
 
-  return extensionWidget ? 'extension' : 'builtin';
+  return extensionWidget ? NAMESPACE_EXTENSION : NAMESPACE_BUILTIN;
 }
 
 // Given an API editor interface entity convert it to our
@@ -84,6 +85,6 @@ function makeDefaultControl(ct, field) {
     fieldId: field.apiName || field.id,
     field,
     widgetId: getDefaultWidgetId(field, ct.displayField),
-    widgetNamespace: 'builtin'
+    widgetNamespace: NAMESPACE_BUILTIN
   };
 }

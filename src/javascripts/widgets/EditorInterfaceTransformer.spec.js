@@ -1,4 +1,5 @@
 import { fromAPI, toAPI } from './EditorInterfaceTransformer.es6';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
 
 describe('EditorInterfaceTransformer', () => {
   describe('#fromAPI()', () => {
@@ -11,8 +12,18 @@ describe('EditorInterfaceTransformer', () => {
       const { controls } = fromAPI(ct, ei);
 
       expect(controls).toEqual([
-        { fieldId: 'AAA', field: ct.fields[0], widgetNamespace: 'builtin', widgetId: 'singleLine' },
-        { fieldId: 'MISSING', field: ct.fields[1], widgetNamespace: 'builtin', widgetId: 'boolean' }
+        {
+          fieldId: 'AAA',
+          field: ct.fields[0],
+          widgetNamespace: NAMESPACE_BUILTIN,
+          widgetId: 'singleLine'
+        },
+        {
+          fieldId: 'MISSING',
+          field: ct.fields[1],
+          widgetNamespace: NAMESPACE_BUILTIN,
+          widgetId: 'boolean'
+        }
       ]);
     });
 
@@ -37,7 +48,7 @@ describe('EditorInterfaceTransformer', () => {
           field: { apiName: 'AAA' },
           fieldId: 'AAA',
           widgetId: 'singleLine',
-          widgetNamespace: 'builtin'
+          widgetNamespace: NAMESPACE_BUILTIN
         }
       ]);
     });
@@ -60,7 +71,7 @@ describe('EditorInterfaceTransformer', () => {
 
       const { controls } = fromAPI(ct, ei, widgets);
 
-      expect(controls[0].widgetNamespace).toEqual('extension');
+      expect(controls[0].widgetNamespace).toEqual(NAMESPACE_EXTENSION);
     });
 
     it('provides a valid namespace for builtin widgets', () => {
@@ -70,7 +81,7 @@ describe('EditorInterfaceTransformer', () => {
 
       const { controls } = fromAPI(ct, ei, widgets);
 
-      expect(controls[0].widgetNamespace).toEqual('builtin');
+      expect(controls[0].widgetNamespace).toEqual(NAMESPACE_BUILTIN);
     });
 
     it('restores field order', function() {

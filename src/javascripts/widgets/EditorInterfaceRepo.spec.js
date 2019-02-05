@@ -1,4 +1,5 @@
 import createEditorInterfaceRepo from './EditorInterfaceRepo.es6';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
 
 jest.mock('./DefaultWidget.es6', () => jest.fn(() => 'DEFAULT'));
 
@@ -38,7 +39,7 @@ describe('EditorInterfaceRepo', () => {
         expect(controls[0]).toEqual({
           fieldId: 'FIELD',
           widgetId: 'WIDGET',
-          widgetNamespace: 'builtin',
+          widgetNamespace: NAMESPACE_BUILTIN,
           field: { apiName: 'FIELD' }
         });
       });
@@ -54,7 +55,7 @@ describe('EditorInterfaceRepo', () => {
         const { controls } = await repo.get(makeCt({ version: 1 }));
 
         expect(controls).toHaveLength(1);
-        expect(controls[0].widgetNamespace).toEqual('extension');
+        expect(controls[0].widgetNamespace).toEqual(NAMESPACE_EXTENSION);
       });
 
       it('uses API defined widget namespace', async () => {
@@ -80,7 +81,7 @@ describe('EditorInterfaceRepo', () => {
         expect(controls[0]).toEqual({
           fieldId: 'FIELD',
           widgetId: 'DEFAULT',
-          widgetNamespace: 'builtin',
+          widgetNamespace: NAMESPACE_BUILTIN,
           field: { apiName: 'FIELD' }
         });
       });
@@ -118,7 +119,7 @@ describe('EditorInterfaceRepo', () => {
         expect(controls[0]).toEqual({
           fieldId: 'FIELD',
           widgetId: 'DEFAULT',
-          widgetNamespace: 'builtin',
+          widgetNamespace: NAMESPACE_BUILTIN,
           field: { apiName: 'FIELD' }
         });
       });
@@ -141,7 +142,7 @@ describe('EditorInterfaceRepo', () => {
         version: 'V',
         data: {
           sys: { version: 'V' },
-          controls: [{ fieldId: 'FIELD', widgetId: 'WIDGET', widgetNamespace: 'builtin' }]
+          controls: [{ fieldId: 'FIELD', widgetId: 'WIDGET', widgetNamespace: NAMESPACE_BUILTIN }]
         }
       });
     });
@@ -157,7 +158,7 @@ describe('EditorInterfaceRepo', () => {
       expect(controls[0]).toEqual({
         fieldId: 'FIELD',
         widgetId: 'WIDGET',
-        widgetNamespace: 'builtin',
+        widgetNamespace: NAMESPACE_BUILTIN,
         field: { apiName: 'FIELD' }
       });
     });
