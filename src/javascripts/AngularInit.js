@@ -136,7 +136,6 @@ angular
       ngRequire('app/widgets/link/entityLinkDirectives.es6').default();
       ngRequire('app/widgets/location/cfLocationEditorDirective.es6').default();
       ngRequire('app/widgets/location/searchController.es6').default();
-      ngRequire('ui/inputUpdater.es6').default();
       ngRequire('app/widgets/number/cfNumberEditorDirective.es6').default();
       ngRequire('app/widgets/radio/cfRadioEditorDirective.es6').default();
       ngRequire('app/widgets/rich_text/cfRichTextEditorDirective.es6').default();

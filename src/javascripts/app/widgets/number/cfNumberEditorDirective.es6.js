@@ -1,12 +1,12 @@
 import { registerDirective, registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
+import createInputUpdater from 'ui/inputUpdater.es6';
 
 export default function register() {
   registerDirective('cfNumberEditor', [
     'debounce',
     'cfNumberEditor/parseNumber',
-    'ui/inputUpdater',
-    (debounce, parseNumber, InputUpdater) => {
+    (debounce, parseNumber) => {
       return {
         scope: {},
         restrict: 'E',
@@ -15,7 +15,7 @@ export default function register() {
         link: function(scope, $el, _attrs, widgetApi) {
           const field = widgetApi.field;
           const $inputEl = $el.find('input');
-          const updateInput = InputUpdater.create($inputEl.get(0));
+          const updateInput = createInputUpdater($inputEl.get(0));
 
           // update input field value when new synced value received via ot magic
           const detachOnValueChangedHandler = field.onValueChanged(val => {
