@@ -5,6 +5,7 @@ import createPrefetchCache from 'data/CMA/EntityPrefetchCache.es6';
 import buildRenderables from 'widgets/WidgetRenderable.es6';
 import { getModule } from 'NgRegistry.es6';
 import { assetContentType } from 'legacy-client';
+import { NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
@@ -168,13 +169,15 @@ function makeAssetLoader(spaceContext) {
       return {
         sys: { type: 'EditorInterface' },
         controls: [
-          { fieldId: 'title', widgetNamespace: 'builtin', widgetId: 'singleLine' },
-          { fieldId: 'description', widgetNamespace: 'builtin', widgetId: 'singleLine' },
-          { fieldId: 'file', widgetNamespace: 'builtin', widgetId: 'fileEditor' }
-        ].map(control => {
-          const field = assetContentType.data.fields.find(f => f.id === control.fieldId);
-          return { ...control, field };
-        })
+          ['title', 'singleLine'],
+          ['description', 'singleLine'],
+          ['file', 'fileEditor']
+        ].map(([fieldId, widgetId]) => ({
+          fieldId,
+          widgetId,
+          widgetNamespace: NAMESPACE_BUILTIN,
+          field: assetContentType.data.fields.find(f => f.id === fieldId)
+        }))
       };
     },
     getOpenDoc: makeDocOpener(spaceContext)

@@ -6,6 +6,16 @@ import { toInternalFieldType } from 'widgets/FieldTypes.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import getDefaultWidgetId from 'widgets/DefaultWidget.es6';
 import * as fieldFactory from 'services/fieldFactory.es6';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
+
+// TODO: This dialog should be completely rewritten!
+
+// This dialog operates on a flat list of widgets. It should operate on
+// two separate lists (for builtin and extension widgets) and selection should
+// be done with a pair of (namespace, id).
+// For the time being we create combined IDs by joining namespace and widget
+// ID with comma which is an invalid char in both namespace and widget ID.
+const makeId = (namespace, id) => [namespace, id].join(',');
 
 export default function register() {
   /**
@@ -86,7 +96,7 @@ export default function register() {
       };
 
       $scope.$watch(
-        () => [$scope.widgetSettings.namespace, $scope.widgetSettings.id].join(','),
+        () => makeId($scope.widgetSettings.namespace, $scope.widgetSettings.id),
         reposition
       );
       $scope.$watch(() => $scope.tabController.getActiveTabName(), reposition);
@@ -134,12 +144,14 @@ export default function register() {
 
       const fieldType = toInternalFieldType($scope.field);
 
-      $scope.availableWidgets = [
-        ...$scope.widgets.builtin.map(w => ({ ...w, id: `builtin,${w.id}` })),
-        ...$scope.widgets.extension.map(w => ({ ...w, id: `extension,${w.id}` }))
-      ].filter(widget => {
-        return widget.fieldTypes.includes(fieldType);
-      });
+      $scope.availableWidgets = [NAMESPACE_BUILTIN, NAMESPACE_EXTENSION]
+        .reduce((acc, namespace) => {
+          const namespaceWidgets = $scope.widgets[namespace].map(widget => {
+            return { ...widget, id: makeId(namespace, widget.id) };
+          });
+          return acc.concat(namespaceWidgets);
+        }, [])
+        .filter(widget => widget.fieldTypes.includes(fieldType));
 
       $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
       $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';
@@ -307,11 +319,11 @@ export default function register() {
         const available = values[1];
         const properWidgets = ['radio', 'dropdown', 'checkbox'];
 
-        const isBuiltin = $scope.widgetSettings.namespace === 'builtin';
+        const isBuiltin = $scope.widgetSettings.namespace === NAMESPACE_BUILTIN;
         const isProper = isBuiltin && _.includes(properWidgets, name);
         const availableIds = _.map(available, 'id')
           .map(id => id.split(','))
-          .filter(([namespace]) => namespace === 'builtin')
+          .filter(([namespace]) => namespace === NAMESPACE_BUILTIN)
           .map(([_, id]) => id);
         const properAvailable = _.intersection(availableIds, properWidgets).length > 0;
         $scope.showPredefinedValueWidgetHint = !isProper && properAvailable;
@@ -345,19 +357,12 @@ export default function register() {
         $scope.contentType.data.displayField
       );
 
-      // TODO: this component operates on a flat list of widgets. It should take
-      // two separate lists (for builtin and extension widgets) and selection should
-      // be done with a pair of (namespace, id).
-      // For the time being we take a flat list used in the parent controller and
-      // create combined IDs by joining namespace and widget ID with comma which is
-      // an invalid char in both namespace and widget ID.
       function updateProps() {
-        const availableWidgets = $scope.availableWidgets || [];
         $scope.appearanceTabProps = {
-          availableWidgets,
-          selectedWidgetId: [$scope.widgetSettings.namespace, $scope.widgetSettings.id].join(','),
+          availableWidgets: $scope.availableWidgets || [],
+          selectedWidgetId: makeId($scope.widgetSettings.namespace, $scope.widgetSettings.id),
           widgetParams: $scope.widgetSettings.params,
-          defaultWidgetId: ['builtin', defaultWidgetId].join(','),
+          defaultWidgetId: makeId(NAMESPACE_BUILTIN, defaultWidgetId),
           isAdmin,
           onSelect: combinedId => {
             const [namespace, id] = combinedId.split(',');
