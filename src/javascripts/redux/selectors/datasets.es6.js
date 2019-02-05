@@ -45,14 +45,13 @@ export const getMeta = state => get(state, ['datasets', 'meta', getOrgId(state)]
 
 // gets all datasets that have to be loaded for the current location
 // given the new route, the loaded datasets and the age of the loaded datasets
-export const getDataSetsToLoad = state => {
+export const getDataSetsToLoad = (state, { now } = { now: Date.now() }) => {
   const requiredDatasets = getRequiredDataSets(getPath(state));
   const datasetsMeta = getMeta(state);
   return requiredDatasets.filter(datatset => {
     const lastFetchedAt = get(datasetsMeta, [datatset, 'fetched']);
     return (
-      (!lastFetchedAt || Date.now() - lastFetchedAt > MAX_AGE) &&
-      !get(datasetsMeta, [datatset, 'pending'])
+      (!lastFetchedAt || now - lastFetchedAt > MAX_AGE) && !get(datasetsMeta, [datatset, 'pending'])
     );
   });
 };

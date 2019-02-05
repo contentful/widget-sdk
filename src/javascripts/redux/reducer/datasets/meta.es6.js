@@ -15,15 +15,13 @@ export default (state = {}, { type, payload, meta, error }, globalState) => {
       return set([orgId, error ? meta.dataset : payload.dataset, 'pending'], false, state);
     }
     case 'DATASET_LOADING': {
-      if (!get('pending', meta)) {
+      if (!get('pending', meta) && !error) {
         const { datasets } = payload;
+        const { fetched } = meta;
         const datasetKeys = Object.keys(datasets);
         // create an object with the current timestamp for the given datasets
         // this is used to limit how often data is requested from the server
-        const timestampsForDatasets = zipObject(
-          datasetKeys,
-          datasetKeys.map(() => ({ fetched: Date.now() }))
-        );
+        const timestampsForDatasets = zipObject(datasetKeys, datasetKeys.map(() => ({ fetched })));
         return update(
           orgId,
           currentDatasets => merge(currentDatasets, timestampsForDatasets),

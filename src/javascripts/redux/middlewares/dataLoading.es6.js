@@ -36,7 +36,7 @@ export default ({ getState, dispatch }) => next => async action => {
       dispatch({ type, meta: { pending: true, datasets: datasetsToLoad } });
       try {
         const datasets = await loadDataSets(datasetsToLoad, newState);
-        dispatch({ type, payload: { datasets } });
+        dispatch({ type, payload: { datasets }, meta: { fetched: Date.now() } });
       } catch (e) {
         dispatch({ type, error: true, payload: e });
       }
