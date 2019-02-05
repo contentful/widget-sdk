@@ -47,7 +47,7 @@ const isGoogleUnderline = el => {
 
 const gDocsRules = {
   deserialize(el, next) {
-    const isFromGoogleDocs = !!el.getRootNode().querySelector('[id*=docs-internal-guid-]');
+    const isFromGoogleDocs = !!el.ownerDocument.querySelector('[id*=docs-internal-guid-]');
 
     if (!isFromGoogleDocs) {
       return;
