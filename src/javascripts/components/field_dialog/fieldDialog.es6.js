@@ -6,6 +6,16 @@ import { toInternalFieldType } from 'widgets/FieldTypes.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import getDefaultWidgetId from 'widgets/DefaultWidget.es6';
 import * as fieldFactory from 'services/fieldFactory.es6';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
+
+// TODO: This dialog should be completely rewritten!
+
+// This dialog operates on a flat list of widgets. It should operate on
+// two separate lists (for builtin and extension widgets) and selection should
+// be done with a pair of (namespace, id).
+// For the time being we create combined IDs by joining namespace and widget
+// ID with comma which is an invalid char in both namespace and widget ID.
+const makeId = (namespace, id) => [namespace, id].join(',');
 
 export default function register() {
   /**
@@ -51,10 +61,9 @@ export default function register() {
   registerController('FieldDialogController', [
     '$scope',
     '$timeout',
-    'spaceContext',
     'fieldDecorator',
     'validationDecorator',
-    function FieldDialogController($scope, $timeout, spaceContext, fieldDecorator, validations) {
+    function FieldDialogController($scope, $timeout, fieldDecorator, validations) {
       // TODO: Remove this when there are no more API references to the legacy
       // `StructuredText` field type.
       const RICH_TEXT_FIELD_TYPES = ['RichText', 'StructuredText'];
@@ -63,7 +72,6 @@ export default function register() {
       const contentTypeData = $scope.contentType.data;
 
       $scope.decoratedField = fieldDecorator.decorate($scope.field, contentTypeData);
-      $scope.widgetsAreLoaded = false;
 
       $scope.validations = validations.decorateFieldValidations($scope.field);
 
@@ -82,11 +90,15 @@ export default function register() {
 
       $scope.widgetSettings = {
         id: $scope.widget.widgetId,
+        namespace: $scope.widget.widgetNamespace,
         // Need to clone so we do not mutate data if we cancel the dialog
         params: _.cloneDeep($scope.widget.settings || {})
       };
 
-      $scope.$watch('widgetSettings.id', reposition);
+      $scope.$watch(
+        () => makeId($scope.widgetSettings.namespace, $scope.widgetSettings.id),
+        reposition
+      );
       $scope.$watch(() => $scope.tabController.getActiveTabName(), reposition);
 
       $scope.buildRequiredCheckboxProps = () => ({
@@ -130,16 +142,16 @@ export default function register() {
         });
       }
 
-      /**
-       * @ngdoc property
-       * @name FieldDialogController#availableWidgets
-       * @type {Widgets.Descriptor[]}
-       */
-      spaceContext.widgets.refresh().then(widgets => {
-        const fieldType = toInternalFieldType($scope.field);
-        $scope.widgetsAreLoaded = true;
-        $scope.availableWidgets = widgets.filter(widget => widget.fieldTypes.includes(fieldType));
-      });
+      const fieldType = toInternalFieldType($scope.field);
+
+      $scope.availableWidgets = [NAMESPACE_BUILTIN, NAMESPACE_EXTENSION]
+        .reduce((acc, namespace) => {
+          const namespaceWidgets = $scope.widgets[namespace].map(widget => {
+            return { ...widget, id: makeId(namespace, widget.id) };
+          });
+          return acc.concat(namespaceWidgets);
+        }, [])
+        .filter(widget => widget.fieldTypes.includes(fieldType));
 
       $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
       $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';
@@ -158,8 +170,9 @@ export default function register() {
           validations.addEnabledRichTextOptions($scope.field, $scope.richTextOptions);
         }
 
-        const selectedWidgetId = $scope.widgetSettings.id;
-        const selectedWidget = _.find($scope.availableWidgets, { id: selectedWidgetId }) || {};
+        const namespaceWidgets = _.get($scope.widgets, [$scope.widgetSettings.namespace], []);
+        const selectedWidget = namespaceWidgets.find(w => w.id === $scope.widgetSettings.id);
+
         let values = $scope.widgetSettings.params;
         let definitions = _.get(selectedWidget, ['parameters']) || [];
 
@@ -176,7 +189,8 @@ export default function register() {
         }
 
         _.extend($scope.widget, {
-          widgetId: selectedWidgetId,
+          widgetId: $scope.widgetSettings.id,
+          widgetNamespace: $scope.widgetSettings.namespace,
           fieldId: $scope.field.apiName,
           settings: values
         });
@@ -306,9 +320,13 @@ export default function register() {
         const available = values[1];
         const properWidgets = ['radio', 'dropdown', 'checkbox'];
 
-        const isProper = _.includes(properWidgets, name);
-        const availableIds = _.map(available, 'id');
-        const properAvailable = _.intersection(availableIds, properWidgets).length;
+        const isBuiltin = $scope.widgetSettings.namespace === NAMESPACE_BUILTIN;
+        const isProper = isBuiltin && _.includes(properWidgets, name);
+        const availableIds = _.map(available, 'id')
+          .map(id => id.split(','))
+          .filter(([namespace]) => namespace === NAMESPACE_BUILTIN)
+          .map(([_, id]) => id);
+        const properAvailable = _.intersection(availableIds, properWidgets).length > 0;
         $scope.showPredefinedValueWidgetHint = !isProper && properAvailable;
       });
 
@@ -335,17 +353,21 @@ export default function register() {
     'spaceContext',
     ($scope, spaceContext) => {
       const isAdmin = !!spaceContext.getData('spaceMembership.admin', false);
+      const defaultWidgetId = getDefaultWidgetId(
+        $scope.field,
+        $scope.contentType.data.displayField
+      );
 
       function updateProps() {
-        const availableWidgets = $scope.availableWidgets || [];
         $scope.appearanceTabProps = {
-          availableWidgets,
-          widgetsAreLoaded: $scope.widgetsAreLoaded,
-          selectedWidgetId: $scope.widgetSettings.id,
+          availableWidgets: $scope.availableWidgets || [],
+          selectedWidgetId: makeId($scope.widgetSettings.namespace, $scope.widgetSettings.id),
           widgetParams: $scope.widgetSettings.params,
-          defaultWidgetId: getDefaultWidgetId($scope.field, $scope.contentType.data.displayField),
+          defaultWidgetId: makeId(NAMESPACE_BUILTIN, defaultWidgetId),
           isAdmin,
-          onSelect: id => {
+          onSelect: combinedId => {
+            const [namespace, id] = combinedId.split(',');
+            $scope.widgetSettings.namespace = namespace;
             $scope.widgetSettings.id = id;
             updateProps();
             $scope.$applyAsync();

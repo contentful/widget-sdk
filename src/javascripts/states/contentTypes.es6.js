@@ -25,6 +25,17 @@ const preview = {
   }
 };
 
+const widgetResolvers = {
+  widgets: ['spaceContext', spaceContext => spaceContext.widgets.refresh()],
+  editorInterface: [
+    'spaceContext',
+    'contentType',
+    // We declare dependency on `widgets` so Editor Interface is fetched only after the refresh.
+    'widgets',
+    (spaceContext, contentType, _widgets) => spaceContext.editorInterfaceRepo.get(contentType.data)
+  ]
+};
+
 const newState = editorBase(
   {
     name: 'new',
@@ -35,12 +46,8 @@ const newState = editorBase(
         spaceContext =>
           spaceContext.space.newContentType({ sys: { type: 'ContentType' }, fields: [] })
       ],
-      editorInterface: [
-        'spaceContext',
-        'contentType',
-        (spaceContext, contentType) => spaceContext.editorInterfaceRepo.get(contentType.data)
-      ],
-      publishedContentType: [() => null]
+      publishedContentType: [() => null],
+      ...widgetResolvers
     }
   },
   true
@@ -68,11 +75,7 @@ const detail = editorBase(
             }
           })
       ],
-      editorInterface: [
-        'spaceContext',
-        'contentType',
-        (spaceContext, contentType) => spaceContext.editorInterfaceRepo.get(contentType.data)
-      ]
+      ...widgetResolvers
     }
   },
   false
@@ -93,11 +96,13 @@ function editorBase(options, isNew) {
       '$scope',
       '$stateParams',
       'contentType',
+      'widgets',
       'editorInterface',
       'publishedContentType',
-      ($scope, $stateParams, contentType, editorInterface, publishedContentType) => {
+      ($scope, $stateParams, contentType, widgets, editorInterface, publishedContentType) => {
         $scope.context.isNew = isNew;
         $scope.contentType = contentType;
+        $scope.widgets = widgets;
         $scope.editorInterface = editorInterface;
         $scope.publishedContentType = publishedContentType;
 

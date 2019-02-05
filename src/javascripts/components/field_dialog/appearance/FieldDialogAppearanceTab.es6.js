@@ -9,7 +9,6 @@ import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 export default class FieldDialogAppearanceTab extends React.Component {
   static propTypes = {
     isAdmin: PropTypes.bool.isRequired,
-    widgetsAreLoaded: PropTypes.bool.isRequired,
     availableWidgets: PropTypes.array.isRequired,
     defaultWidgetId: PropTypes.string.isRequired,
     selectedWidgetId: PropTypes.string.isRequired,
@@ -40,10 +39,7 @@ export default class FieldDialogAppearanceTab extends React.Component {
   };
 
   render() {
-    const { availableWidgets, defaultWidgetId, isAdmin, widgetsAreLoaded } = this.props;
-    if (!widgetsAreLoaded) {
-      return null;
-    }
+    const { availableWidgets, defaultWidgetId, isAdmin } = this.props;
     const widgetsCount = availableWidgets.length;
     const widget = availableWidgets.find(widget => widget.id === this.props.selectedWidgetId);
     return (

@@ -1,21 +1,30 @@
 import { fromAPI, toAPI } from './EditorInterfaceTransformer.es6';
-
-jest.mock('./DefaultWidget.es6', () => jest.fn(() => 'DEFAULT'));
-jest.mock('./ControlMigrations.es6', () => jest.fn(arg => arg));
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
 
 describe('EditorInterfaceTransformer', () => {
   describe('#fromAPI()', () => {
     it('adds a default control if missing', () => {
-      const ct = { fields: [{ apiName: 'AAA' }, { apiName: 'MISSING' }] };
+      const ct = {
+        fields: [{ apiName: 'AAA', type: 'Symbol' }, { apiName: 'MISSING', type: 'Boolean' }]
+      };
       const ei = { controls: [{ fieldId: 'AAA' }] };
-
-      jest.requireMock('./DefaultWidget.es6').mockImplementationOnce(() => 'DEFAULT_FOR_MISSING');
 
       const { controls } = fromAPI(ct, ei);
 
-      expect(controls).toHaveLength(2);
-      expect(controls[1].widgetId).toEqual('DEFAULT_FOR_MISSING');
-      expect(controls[1].fieldId).toEqual('MISSING');
+      expect(controls).toEqual([
+        {
+          fieldId: 'AAA',
+          field: ct.fields[0],
+          widgetNamespace: NAMESPACE_BUILTIN,
+          widgetId: 'singleLine'
+        },
+        {
+          fieldId: 'MISSING',
+          field: ct.fields[1],
+          widgetNamespace: NAMESPACE_BUILTIN,
+          widgetId: 'boolean'
+        }
+      ]);
     });
 
     it('removes controls for missing fields', () => {
@@ -30,22 +39,49 @@ describe('EditorInterfaceTransformer', () => {
 
     it('migrates deprecated widgets', () => {
       const ct = { fields: [{ apiName: 'AAA' }] };
-      const ei = { controls: [{ fieldId: 'AAA', widgetId: 'OLD' }] };
-
-      const migrate = jest.requireMock('./ControlMigrations.es6');
-      migrate.mockClear();
-      migrate.mockImplementationOnce(control => ({ ...control, widgetId: 'MIGRATED' }));
+      const ei = { controls: [{ fieldId: 'AAA', widgetId: 'kalturaEditor' }] };
 
       const { controls } = fromAPI(ct, ei);
 
-      expect(migrate).toBeCalledTimes(1);
       expect(controls).toEqual([
         {
           field: { apiName: 'AAA' },
           fieldId: 'AAA',
-          widgetId: 'MIGRATED'
+          widgetId: 'singleLine',
+          widgetNamespace: NAMESPACE_BUILTIN
         }
       ]);
+    });
+
+    it('keeps provided namespace', () => {
+      const ct = { fields: [{ apiName: 'test' }] };
+      const ei = { controls: [{ fieldId: 'test', widgetId: 'foo', widgetNamespace: 'bar' }] };
+
+      const { controls } = fromAPI(ct, ei);
+      expect(controls[0].widgetNamespace).toEqual('bar');
+    });
+
+    it('provides a valid namespace for extensions', () => {
+      const ct = { fields: [{ apiName: 'test' }] };
+      const ei = { controls: [{ fieldId: 'test', widgetId: 'foo' }] };
+      const widgets = {
+        extension: [{ id: 'foo' }],
+        builtin: [{ id: 'foo' }]
+      };
+
+      const { controls } = fromAPI(ct, ei, widgets);
+
+      expect(controls[0].widgetNamespace).toEqual(NAMESPACE_EXTENSION);
+    });
+
+    it('provides a valid namespace for builtin widgets', () => {
+      const ct = { fields: [{ apiName: 'test' }] };
+      const ei = { controls: [{ fieldId: 'test', widgetId: 'foo' }] };
+      const widgets = { extension: [], builtin: [{ id: 'foo' }] };
+
+      const { controls } = fromAPI(ct, ei, widgets);
+
+      expect(controls[0].widgetNamespace).toEqual(NAMESPACE_BUILTIN);
     });
 
     it('restores field order', function() {
@@ -102,6 +138,7 @@ describe('EditorInterfaceTransformer', () => {
       const control = {
         fieldId: 'test',
         widgetId: 'helloWorld',
+        widgetNamespace: 'test',
         settings: { test: true },
         field: { id: 'test' },
         unknown: 'test',
@@ -114,18 +151,30 @@ describe('EditorInterfaceTransformer', () => {
       const { controls } = toAPI(ct, ei);
 
       expect(controls).toEqual([
-        { fieldId: 'test', widgetId: 'helloWorld', settings: { test: true } }
+        {
+          fieldId: 'test',
+          widgetId: 'helloWorld',
+          widgetNamespace: 'test',
+          settings: { test: true }
+        }
       ]);
     });
 
     it('removes empty settings', () => {
-      const control = { fieldId: 'test', widgetId: 'helloWorld', settings: {} };
+      const control = {
+        fieldId: 'test',
+        widgetId: 'helloWorld',
+        widgetNamespace: 'test',
+        settings: {}
+      };
       const ct = { fields: [{ apiName: 'test' }] };
       const ei = { controls: [control] };
 
       const { controls } = toAPI(ct, ei);
 
-      expect(controls).toEqual([{ fieldId: 'test', widgetId: 'helloWorld' }]);
+      expect(controls).toEqual([
+        { fieldId: 'test', widgetId: 'helloWorld', widgetNamespace: 'test' }
+      ]);
     });
 
     it('restores field order', function() {

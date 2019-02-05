@@ -1,9 +1,10 @@
 import { get } from 'lodash';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
 import { toInternalFieldType } from './FieldTypes.es6';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
 
 export function create(cma) {
-  let cache = [];
+  const cache = { [NAMESPACE_BUILTIN]: createBuiltinWidgetList() };
 
   return {
     refresh,
@@ -11,30 +12,15 @@ export function create(cma) {
   };
 
   async function refresh() {
-    let extensions;
     try {
       const res = await cma.getExtensions();
-      extensions = res.items.map(buildExtensionWidget);
+      cache[NAMESPACE_EXTENSION] = res.items.map(buildExtensionWidget);
     } catch (e) {
-      extensions = [];
+      cache[NAMESPACE_EXTENSION] = [];
     }
-    cache = prepareList(extensions);
+
     return cache;
   }
-}
-
-function prepareList(extensions) {
-  // Extension and built-in widget IDs may clash :(
-  // Extensions used to "override" built-in widgets.
-  // It's far from ideal but we retain this behavior for now.
-  // TODO figure out what to do?
-  const extensionIds = extensions.map(e => e.id);
-  const builtin = createBuiltinWidgetList();
-  const filteredBuiltins = builtin.filter(b => {
-    return !extensionIds.includes(b.id);
-  });
-
-  return [...filteredBuiltins, ...extensions];
 }
 
 function buildExtensionWidget(data) {

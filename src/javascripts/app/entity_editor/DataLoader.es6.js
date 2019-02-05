@@ -1,22 +1,13 @@
 import { find, isPlainObject, cloneDeep, memoize } from 'lodash';
-import { runTask, wrapTask } from 'utils/Concurrent.es6';
 import { caseof as caseofEq } from 'sum-types/caseof-eq';
 import { deepFreeze } from 'utils/Freeze.es6';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache.es6';
 import buildRenderables from 'widgets/WidgetRenderable.es6';
 import { getModule } from 'NgRegistry.es6';
 import { assetContentType } from 'legacy-client';
+import { NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
-
-const assetControls = [
-  { fieldId: 'title', widgetId: 'singleLine' },
-  { fieldId: 'description', widgetId: 'singleLine' },
-  { fieldId: 'file', widgetId: 'fileEditor' }
-].map(control => {
-  const field = assetContentType.data.fields.find(f => f.id === control.fieldId);
-  return { ...control, field };
-});
 
 /**
  * @ngdoc service
@@ -90,8 +81,8 @@ export function makePrefetchEntryLoader(spaceContext, ids$) {
   });
 
   const loader = makeEntryLoader(spaceContext);
-  loader.getEntity = function* getEntity(id) {
-    const entity = yield cache.get(id);
+  loader.getEntity = async function getEntity(id) {
+    const entity = await cache.get(id);
     if (entity) {
       return entity;
     } else {
@@ -100,7 +91,7 @@ export function makePrefetchEntryLoader(spaceContext, ids$) {
       // Because the CMA is inconsistent newly created entries may
       // not be available from the query endpoint yet. We try to
       // get them from the single resource endpoint instead.
-      return yield spaceContext.space.getEntry(id);
+      return spaceContext.space.getEntry(id);
     }
   };
 
@@ -116,20 +107,21 @@ export function makePrefetchEntryLoader(spaceContext, ids$) {
  *
  * Loaders are created by `makeEntryLoader()` and `makeAssetLoader()`.
  */
-function loadEditorData(loader, id) {
-  return runTask(function*() {
-    const entity = yield* loader.getEntity(id);
-    const contentType = yield* loader.getContentType(entity);
-    const fieldControls = yield loader.getFieldControls(contentType);
-    const entityInfo = makeEntityInfo(entity, contentType);
-    const openDoc = loader.getOpenDoc(entity, contentType);
-    return Object.freeze({
-      entity,
-      contentType,
-      fieldControls,
-      entityInfo,
-      openDoc
-    });
+async function loadEditorData(loader, id) {
+  const entity = await loader.getEntity(id);
+  const contentType = await loader.getContentType(entity);
+  const { controls, sidebar } = await loader.getEditorInterface(contentType);
+  const fieldControls = buildRenderables(controls, loader.getWidgets());
+  const entityInfo = makeEntityInfo(entity, contentType);
+  const openDoc = loader.getOpenDoc(entity, contentType);
+
+  return Object.freeze({
+    entity,
+    contentType,
+    fieldControls,
+    sidebar,
+    entityInfo,
+    openDoc
   });
 }
 
@@ -142,34 +134,51 @@ function makeEntryLoader(spaceContext) {
     getEntity(id) {
       return fetchEntity(spaceContext, 'Entry', id);
     },
-    getContentType: function*(entity) {
-      const ctId = entity.data.sys.contentType.sys.id;
-      return yield spaceContext.publishedCTs.fetch(ctId);
+    getContentType(entry) {
+      const ctId = entry.data.sys.contentType.sys.id;
+      return spaceContext.publishedCTs.fetch(ctId);
     },
-    // We memoize the controls so that we do not fetch them multiple
-    // times for the bulk editor
-    getFieldControls: memoize(
-      wrapTask(function*(contentType) {
-        const ei = yield spaceContext.editorInterfaceRepo.get(contentType.data);
-        return buildRenderables(ei.controls, spaceContext.widgets.getAll());
-      })
-    ),
+    getWidgets() {
+      return spaceContext.widgets.getAll();
+    },
+    // We memoize the editor interface so that we do not fetch
+    // them multiple times in the bulk editor.
+    getEditorInterface: memoize(contentType => {
+      return spaceContext.editorInterfaceRepo.get(contentType.data);
+    }),
     getOpenDoc: makeDocOpener(spaceContext)
   };
 }
 
 function makeAssetLoader(spaceContext) {
   return {
-    getEntity: function(id) {
-      const entity = fetchEntity(spaceContext, 'Asset', id);
-      return entity;
+    getEntity(id) {
+      return fetchEntity(spaceContext, 'Asset', id);
     },
-    getContentType: function*() {
+    getContentType() {
       return null;
     },
-    getFieldControls: function() {
-      const renderable = buildRenderables(assetControls, spaceContext.widgets.getAll());
-      return Promise.resolve(renderable);
+    getWidgets() {
+      return spaceContext.widgets.getAll();
+    },
+    getEditorInterface() {
+      // TODO: this is a hardcoded editor interface for Asset Editor.
+      // If we would have an endpoint with this data
+      // (/spaces/:sid/environments/:eid/asset_content_type/editor_interface)
+      // we could potentially enable UI Extensions for assets.
+      return {
+        sys: { type: 'EditorInterface' },
+        controls: [
+          ['title', 'singleLine'],
+          ['description', 'singleLine'],
+          ['file', 'fileEditor']
+        ].map(([fieldId, widgetId]) => ({
+          fieldId,
+          widgetId,
+          widgetNamespace: NAMESPACE_BUILTIN,
+          field: assetContentType.data.fields.find(f => f.id === fieldId)
+        }))
+      };
     },
     getOpenDoc: makeDocOpener(spaceContext)
   };
@@ -203,9 +212,9 @@ function makeEntityInfo(entity, contentType) {
 
 // TODO instead of fetching a client entity object we should only fetch
 // the payload
-function* fetchEntity(spaceContext, type, id) {
+async function fetchEntity(spaceContext, type, id) {
   const space = spaceContext.space;
-  const entity = yield caseofEq(type, [
+  const entity = await caseofEq(type, [
     ['Entry', () => space.getEntry(id)],
     ['Asset', () => space.getAsset(id)]
   ]);

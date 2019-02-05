@@ -132,12 +132,13 @@ export default function register() {
           self.space = space;
           self.cma = new ApiClient(self.endpoint);
           self.users = createUserCache(self.endpoint);
-          self.widgets = createWidgetStore(self.cma);
           self.apiKeyRepo = createApiKeyRepo(self.endpoint);
           self.webhookRepo = createWebhookRepo(space);
-          self.editorInterfaceRepo = createEditorInterfaceRepo(self.endpoint);
           self.localeRepo = createLocaleRepo(self.endpoint);
           self.organization = deepFreezeClone(self.getData('organization'));
+
+          self.widgets = createWidgetStore(self.cma);
+          self.editorInterfaceRepo = createEditorInterfaceRepo(self.endpoint, self.widgets.getAll);
 
           // TODO: publicly accessible docConnection is
           // used only in a process of creating space out

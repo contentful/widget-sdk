@@ -39,7 +39,8 @@ describe('ContentTypeEditor Controller', () => {
         $setDirty: sinon.stub()
       },
       context: {},
-      editorInterface: {}
+      editorInterface: {},
+      widgets: { builtin: [] }
     });
 
     const $controller = this.$inject('$controller');
@@ -199,7 +200,8 @@ describe('ContentTypeEditor Controller', () => {
       sinon.assert.calledWithExactly(
         syncControls,
         scope.contentType.data,
-        scope.editorInterface.controls
+        scope.editorInterface.controls,
+        sinon.match({ builtin: sinon.match.array })
       );
     });
 

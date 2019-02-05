@@ -1,9 +1,8 @@
 import { syncControls, fromAPI, toAPI } from './EditorInterfaceTransformer.es6';
 
-const makeDefault = ct => ({ sys: {}, controls: syncControls(ct, []) });
 const makePath = ct => ['content_types', ct.sys.id, 'editor_interface'];
 
-export default function createEditorInterfaceRepo(spaceEndpoint) {
+export default function createEditorInterfaceRepo(spaceEndpoint, getWidgets) {
   return { get, save };
 
   // Given a content type, fetch and return internal
@@ -17,7 +16,7 @@ export default function createEditorInterfaceRepo(spaceEndpoint) {
 
     try {
       const ei = await spaceEndpoint({ method: 'GET', path: makePath(ct) });
-      return fromAPI(ct, ei);
+      return fromAPI(ct, ei, getWidgets());
     } catch (err) {
       if (err && err.status === 404) {
         return makeDefault(ct);
@@ -27,14 +26,23 @@ export default function createEditorInterfaceRepo(spaceEndpoint) {
     }
   }
 
+  function makeDefault(ct) {
+    return {
+      sys: {},
+      controls: syncControls(ct, [], getWidgets())
+    };
+  }
+
   async function save(ct, data) {
+    const widgets = getWidgets();
+
     const ei = await spaceEndpoint({
       method: 'PUT',
       path: makePath(ct),
       version: data.sys.version,
-      data: toAPI(ct, data)
+      data: toAPI(ct, data, widgets)
     });
 
-    return fromAPI(ct, ei);
+    return fromAPI(ct, ei, widgets);
   }
 }

@@ -47,7 +47,9 @@ function buildOneRenderable(control, widgets) {
     settings: {}
   };
 
-  const descriptor = (widgets || []).find(w => w.id === control.widgetId);
+  const namespaceWidgets = widgets[control.widgetNamespace] || [];
+  const descriptor = namespaceWidgets.find(w => w.id === control.widgetId);
+
   if (!descriptor) {
     renderable.template = `<react-component name="widgets/WidgetRenderWarning.es6" props="{ message: 'missing' }" />`;
     return renderable;
@@ -59,7 +61,10 @@ function buildOneRenderable(control, widgets) {
 
   Object.assign(renderable, {
     custom: !!descriptor.custom,
-    settings: applyDefaultValues(descriptor.parameters, control.settings),
+    settings: applyDefaultValues(
+      get(descriptor, ['parameters'], []),
+      get(control, ['settings'], {})
+    ),
     installationParameterValues: applyDefaultValues(
       get(descriptor, ['installationParameters', 'definitions'], []),
       get(descriptor, ['installationParameters', 'values'], {})

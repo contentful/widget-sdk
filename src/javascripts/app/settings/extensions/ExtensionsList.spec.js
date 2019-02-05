@@ -8,26 +8,20 @@ describe('app/settings/extensions/Extensions', () => {
     $stateMocked.go.mockClear();
   });
 
-  const mount = props => {
-    const extensions = props.extensions || [];
-    const refresh = props.refresh || jest.fn().mockResolvedValue({});
-    const extensionUrl = props.extensionUrl || null;
-    const wrapper = Enzyme.mount(
-      <ExtensionsList extensions={extensions} refresh={refresh} extensionUrl={extensionUrl} />
-    );
-    return wrapper;
+  const refresh = () => Promise.resolve({});
+  const mount = (extensions = []) => {
+    return Enzyme.mount(<ExtensionsList extensions={extensions} refresh={refresh} />);
   };
 
   const extensions = [
     {
-      id: 'builtin',
-      name: 'Builtin',
+      id: 'hello',
+      name: 'hello',
       fieldTypes: ['Boolean'],
       parameters: ['one'],
       installationParameters: { definitions: ['some'], values: {} }
     },
     {
-      custom: true,
       src: 'http://localhost',
       id: 'test',
       name: 'Widget 1',
@@ -36,7 +30,6 @@ describe('app/settings/extensions/Extensions', () => {
       installationParameters: { definitions: [], values: {} }
     },
     {
-      custom: true,
       srcdoc: '<!doctype html',
       id: 'test2',
       name: 'Widget 2',
@@ -48,20 +41,14 @@ describe('app/settings/extensions/Extensions', () => {
 
   it('shows empty message', function() {
     expect.assertions(1);
-    const wrapper = mount({
-      extensions: [],
-      refresh: jest.fn().mockResolvedValue({})
-    });
+    const wrapper = mount();
     expect(wrapper.exists("[data-test-id='extensions.empty']")).toEqual(true);
   });
 
   it('navigates to single extension', function() {
     expect.assertions(2);
 
-    const wrapper = mount({
-      extensions,
-      refresh: jest.fn().mockResolvedValue({})
-    });
+    const wrapper = mount(extensions);
 
     expect($stateMocked.go).not.toHaveBeenCalled();
     wrapper
@@ -72,10 +59,8 @@ describe('app/settings/extensions/Extensions', () => {
   });
 
   it('lists extensions', function() {
-    const wrapper = mount({
-      extensions: extensions,
-      refresh: jest.fn().mockResolvedValue({})
-    });
+    const wrapper = mount(extensions);
+
     expect(wrapper.find("[data-test-id='extensions.list']")).toHaveLength(1);
 
     const rows = wrapper.find('table tbody tr');
@@ -92,7 +77,7 @@ describe('app/settings/extensions/Extensions', () => {
         .text();
 
     // name
-    expect(getColText(firstRow, 0)).toEqual('Builtin');
+    expect(getColText(firstRow, 0)).toEqual('hello');
     expect(getColText(secondRow, 0)).toEqual('Widget 1');
     expect(getColText(thirdRow, 0)).toEqual('Widget 2');
 

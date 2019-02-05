@@ -1,21 +1,20 @@
 import React from 'react';
-import { sortBy, filter, flow } from 'lodash/fp';
 import PropTypes from 'prop-types';
 import AdminOnly from 'app/common/AdminOnly.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import ExtensionsForbiddenPage from '../ExtensionsForbiddenPage.es6';
 import ExtensionsList, { ExtensionListShell } from '../ExtensionsList.es6';
+import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
 
 const ExtensionsFetcher = createFetcherComponent(() => {
   return spaceContext.widgets.refresh().then(widgets => {
-    return flow(
-      filter('custom'),
-      sortBy('name')
-    )(widgets);
+    return widgets[NAMESPACE_EXTENSION].sort((a, b) => {
+      return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+    });
   });
 });
 
