@@ -7,6 +7,7 @@ import Paginator from 'classes/Paginator.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import { assetContentType } from 'legacy-client';
+import * as SystemFields from 'data/SystemFields.es6';
 
 export default function register() {
   registerController('AssetSearchController', [
@@ -15,7 +16,6 @@ export default function register() {
     'logger',
     'spaceContext',
     'ListQuery',
-    'systemFields',
     'PromisedLoader',
     'analytics/events/SearchAndViews.es6',
     'app/ContentList/Search/index.es6',
@@ -25,7 +25,6 @@ export default function register() {
       logger,
       spaceContext,
       ListQuery,
-      systemFields,
       PromisedLoader,
       Tracking,
       { default: createSearchInput }
@@ -208,7 +207,7 @@ export default function register() {
 
       function getQueryOptions() {
         return _.extend(getViewSearchState(), {
-          order: systemFields.getDefaultOrder(),
+          order: SystemFields.getDefaultOrder(),
           paginator: controller.paginator
         });
       }

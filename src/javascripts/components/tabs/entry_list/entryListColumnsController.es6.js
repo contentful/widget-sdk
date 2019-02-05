@@ -1,11 +1,11 @@
 import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
+import * as SystemFields from 'data/SystemFields.es6';
 
 export default function register() {
   registerController('EntryListColumnsController', [
     '$scope',
-    'systemFields',
-    ($scope, systemFields) => {
+    $scope => {
       const SORTABLE_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Location'];
 
       $scope.fieldIsSortable = field =>
@@ -30,7 +30,7 @@ export default function register() {
             displayedFieldIds &&
             !_.includes(displayedFieldIds, $scope.context.view.order.fieldId)
           ) {
-            setOrderField(systemFields.getFallbackOrderField(displayedFieldIds));
+            setOrderField(SystemFields.getFallbackOrderField(displayedFieldIds));
             $scope.updateEntries();
           }
         },

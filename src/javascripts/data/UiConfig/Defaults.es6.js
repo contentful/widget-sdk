@@ -1,9 +1,7 @@
 import { extend, map } from 'lodash';
 import * as random from 'utils/Random.es6';
 import mimetype from '@contentful/mimetype';
-import { getModule } from 'NgRegistry.es6';
-
-const systemFields = getModule('systemFields');
+import * as SystemFields from 'data/SystemFields.es6';
 
 const STATUSES = ['Published', 'Changed', 'Draft', 'Archived'];
 
@@ -21,8 +19,8 @@ export function getEntryViews(contentTypes) {
         {
           id: random.id(),
           title: 'All',
-          order: systemFields.getDefaultOrder(),
-          displayedFieldIds: systemFields.getDefaultFieldIds(),
+          order: SystemFields.getDefaultOrder(),
+          displayedFieldIds: SystemFields.getDefaultFieldIds(),
           searchText: '',
           searchFilters: []
         }
@@ -78,8 +76,8 @@ function createStatusView(status) {
 function createEntryStatusView(status) {
   return extend(createStatusView(status), {
     contentTypeId: null,
-    order: systemFields.getDefaultOrder(),
-    displayedFieldIds: systemFields.getDefaultFieldIds()
+    order: SystemFields.getDefaultOrder(),
+    displayedFieldIds: SystemFields.getDefaultFieldIds()
   });
 }
 
@@ -92,8 +90,8 @@ export function createContentTypeView(ct) {
     title: ct.name,
     contentTypeId: ct.sys.id,
     id: random.id(),
-    order: systemFields.getDefaultOrder(),
-    displayedFieldIds: systemFields.getDefaultFieldIds(),
+    order: SystemFields.getDefaultOrder(),
+    displayedFieldIds: SystemFields.getDefaultFieldIds(),
     searchText: '',
     searchFilters: []
   };

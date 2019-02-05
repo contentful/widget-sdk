@@ -192,7 +192,6 @@ angular
       ngRequire('components/shared/validation_error_display/errorPathController.es6').default();
       ngRequire('components/shared/viewStateController.es6').default();
       ngRequire('components/tabs/asset_list/assetListActionsController.es6').default();
-      ngRequire('search/systemFields.es6').default();
       ngRequire('components/tabs/asset_list/assetListController.es6').default();
       ngRequire('components/tabs/asset_list/assetListDirective.es6').default();
       ngRequire('search/listQuery.es6').default();

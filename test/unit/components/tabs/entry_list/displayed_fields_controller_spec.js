@@ -4,7 +4,7 @@ describe('Displayed Fields Controller', () => {
   beforeEach(function() {
     module('contentful/test');
 
-    this.mockService('systemFields', {
+    this.mockService('data/SystemFields.es6', {
       getList: sinon.stub().returns([]),
       getDefaultFieldIds: () => [1, 2, 3]
     });

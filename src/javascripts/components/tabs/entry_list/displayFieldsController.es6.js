@@ -1,18 +1,18 @@
 import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
+import * as SystemFields from 'data/SystemFields.es6';
 
 export default function register() {
   registerController('DisplayedFieldsController', [
     '$scope',
     'spaceContext',
-    'systemFields',
-    ($scope, spaceContext, systemFields) => {
+    ($scope, spaceContext) => {
       function getAvailableFields(contentTypeId) {
         const filteredContentType = spaceContext.publishedCTs.get(contentTypeId);
         const contentTypeFields = filteredContentType
           ? _.reject(filteredContentType.data.fields, { disabled: true })
           : [];
-        const fields = systemFields.getList().concat(contentTypeFields);
+        const fields = SystemFields.getList().concat(contentTypeFields);
 
         if (filteredContentType) {
           _.remove(fields, field => field.id === filteredContentType.data.displayField);
@@ -63,7 +63,7 @@ export default function register() {
       );
 
       $scope.resetDisplayFields = () => {
-        $scope.context.view.displayedFieldIds = systemFields.getDefaultFieldIds();
+        $scope.context.view.displayedFieldIds = SystemFields.getDefaultFieldIds();
       };
 
       $scope.addDisplayField = field => {
