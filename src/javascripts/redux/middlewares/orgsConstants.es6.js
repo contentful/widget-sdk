@@ -1,5 +1,5 @@
 import { map, flatMap, flow, chunk, groupBy, keyBy, mapValues, reduce } from 'lodash/fp';
-import { getOrgFeature } from 'data/CMA/FeatureCatalog.es6';
+import { getOrgFeatures } from 'data/CMA/FeatureCatalog.es6';
 import getOrganizationsList from 'redux/selectors/getOrganizationsList.es6';
 
 const catalogFeatures = {
@@ -35,7 +35,7 @@ export default ({ getState, dispatch }) => next => async action => {
     const allFeatures = await flow(
       map('sys.id'),
       // get request promises for all features for each org as flat list
-      flatMap(orgId => flatMap(feature => getOrgFeature(orgId, feature), catalogFeatures)),
+      flatMap(orgId => getOrgFeatures(orgId, Object.values(catalogFeatures))),
       requestAllThrottled
     )(newOrgs);
 
