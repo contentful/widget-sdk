@@ -2,6 +2,7 @@ import { registerDirective } from 'NgRegistry.es6';
 import { isEmpty, isEqual } from 'lodash';
 import moment from 'moment';
 import * as K from 'utils/kefir.es6';
+import createInputUpdater from 'ui/inputUpdater.es6';
 
 export default function register() {
   /**
@@ -31,8 +32,7 @@ export default function register() {
     'debounce',
     'TheLocaleStore',
     'slug',
-    'ui/inputUpdater',
-    (debounce, TheLocaleStore, slugUtils, InputUpdater) => ({
+    (debounce, TheLocaleStore, slugUtils) => ({
       restrict: 'E',
       scope: {},
       require: '^cfWidgetApi',
@@ -55,7 +55,7 @@ export default function register() {
           locales.available.includes(localeObject.fallbackCode);
 
         const $inputEl = $el.find('input');
-        const updateInput = InputUpdater.create($inputEl.get(0));
+        const updateInput = createInputUpdater($inputEl.get(0));
         const titleField = entry.fields[contentType.displayField];
 
         // The most recent value of the title field.

@@ -14,6 +14,7 @@ describe('Client Controller', () => {
       enable: sinon.stub(),
       disable: sinon.stub()
     };
+    this.isAnalyticsAllowed = sinon.stub().returns(true);
 
     module('contentful/test', $provide => {
       $provide.value('analytics/Analytics.es6', {
@@ -31,6 +32,9 @@ describe('Client Controller', () => {
       $provide.constant('authorization', this.authorizationStubs);
       $provide.value('services/EnforcementsService.es6', {
         getEnforcements: this.getEnforcements
+      });
+      $provide.constant('analytics/isAnalyticsAllowed.es6', {
+        default: this.isAnalyticsAllowed
       });
       $provide.constant('logger', this.logger);
     });
@@ -169,8 +173,7 @@ describe('Client Controller', () => {
       });
 
       it('should not set or enable anything when analytics are disallowed', function() {
-        const features = this.$inject('features');
-        features.allowAnalytics = sinon.stub().returns(false);
+        this.isAnalyticsAllowed.returns(false);
         this.prepare();
         sinon.assert.notCalled(this.analytics.enable);
         sinon.assert.called(this.analytics.disable);

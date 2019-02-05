@@ -6,11 +6,11 @@ import * as TokenStore from 'services/TokenStore.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal.es6';
 import { getModule } from 'NgRegistry.es6';
+import APIClient from 'data/APIClient.es6';
 
 const $rootScope = getModule('$rootScope');
 const modalDialog = getModule('modalDialog');
 const Command = getModule('command');
-const ApiClient = getModule('data/ApiClient');
 
 export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
   if (plan && plan.committed) {
@@ -41,7 +41,7 @@ export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
 
 function remove(space) {
   const endpoint = createSpaceEndpoint(space.sys.id);
-  const client = new ApiClient(endpoint);
+  const client = new APIClient(endpoint);
 
   return client
     .deleteSpace()

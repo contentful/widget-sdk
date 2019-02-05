@@ -1,11 +1,11 @@
 import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
+import createInputUpdater from 'ui/inputUpdater.es6';
 
 export default function register() {
   registerDirective('cfUrlEditor', [
     'debounce',
-    'ui/inputUpdater',
-    (debounce, InputUpdater) => ({
+    debounce => ({
       restrict: 'E',
       require: '^cfWidgetApi',
       scope: {},
@@ -13,7 +13,7 @@ export default function register() {
       link: function(scope, $el, _attrs, widgetApi) {
         const field = widgetApi.field;
         const $inputEl = $el.find('input');
-        const updateInput = InputUpdater.create($inputEl.get(0));
+        const updateInput = createInputUpdater($inputEl.get(0));
 
         _.extend(scope, {
           urlStatus: 'ok',

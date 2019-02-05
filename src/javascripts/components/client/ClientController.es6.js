@@ -1,19 +1,17 @@
 import { registerController } from 'NgRegistry.es6';
 import { onValueScope } from 'utils/kefir.es6';
 import { pick, isObject } from 'lodash';
+import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed.es6';
 
 export default function register() {
   registerController('ClientController', [
     '$scope',
     '$state',
-    'features',
     'logger',
     'spaceContext',
     'authorization',
-    'fontsDotCom',
     'intercom',
     '$rootScope',
-
     'services/TokenStore.es6',
     'analytics/Analytics.es6',
     'services/CreateSpace.es6',
@@ -23,11 +21,9 @@ export default function register() {
     function ClientController(
       $scope,
       $state,
-      features,
       logger,
       spaceContext,
       authorization,
-      fontsDotCom,
       Intercom,
       $rootScope,
       TokenStore,
@@ -104,10 +100,9 @@ export default function register() {
 
         $scope.user = user;
 
-        if (features.allowAnalytics(user)) {
+        if (isAnalyticsAllowed(user)) {
           logger.enable(user);
           Analytics.enable(user);
-          fontsDotCom.enable();
         } else {
           logger.disable();
           Analytics.disable();

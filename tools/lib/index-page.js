@@ -92,7 +92,10 @@ function indexPage(uiVersion, config, resolve, entryScripts) {
           h('div', { ngIf: '!user' }, [appLoader()])
         ])
       ].concat(entryScripts.map(src => scriptTag(resolve(src))))
-    )
+    ),
+    // We host all font files on our own, but the fonts.com EULA
+    // states that we should also load this CSS wherever we use them.
+    stylesheet('//fast.fonts.net/t/1.css?apiType=css&projectid=' + config.fonts_dot_com.project_id)
   ]);
 }
 

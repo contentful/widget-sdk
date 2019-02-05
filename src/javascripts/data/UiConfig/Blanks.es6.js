@@ -1,9 +1,6 @@
 import { assign } from 'utils/Collections.es6';
-
 import * as random from 'utils/Random.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const systemFields = getModule('systemFields');
+import * as SystemFields from 'data/SystemFields.es6';
 
 export function getBlankEntryView() {
   return {
@@ -13,8 +10,8 @@ export function getBlankEntryView() {
     searchFilters: [],
     contentTypeId: null,
     contentTypeHidden: false,
-    order: systemFields.getDefaultOrder(),
-    displayedFieldIds: systemFields.getDefaultFieldIds()
+    order: SystemFields.getDefaultOrder(),
+    displayedFieldIds: SystemFields.getDefaultFieldIds()
   };
 }
 

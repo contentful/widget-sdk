@@ -3,6 +3,7 @@ import createMockEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 
 import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
 import createEditorInterfaceRepo from 'widgets/EditorInterfaceRepo.es6';
+import APIClient from 'data/APIClient.es6';
 
 /**
  * @ngdoc service
@@ -30,18 +31,10 @@ import createEditorInterfaceRepo from 'widgets/EditorInterfaceRepo.es6';
 angular.module('contentful/mocks').factory('mocks/spaceContext', [
   'spaceContext',
   'cfStub',
-  'data/ApiClient',
   'data/ContentTypeRepo/Published.es6',
   'mocks/entityEditor/Document',
   'data/CMA/ApiKeyRepo.es6',
-  (
-    spaceContext,
-    cfStub,
-    CMAClient,
-    CTRepo,
-    { create: createDocument },
-    { default: createApiKeyRepo }
-  ) => {
+  (spaceContext, cfStub, CTRepo, { create: createDocument }, { default: createApiKeyRepo }) => {
     return {
       init: init
     };
@@ -70,7 +63,7 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
 
       spaceContextMock._mockEndpoint = createMockEndpoint();
       spaceContextMock.endpoint = spaceContextMock._mockEndpoint.request;
-      spaceContextMock.cma = new CMAClient(spaceContextMock.endpoint);
+      spaceContextMock.cma = new APIClient(spaceContextMock.endpoint);
       spaceContextMock.apiKeyRepo = createApiKeyRepo(spaceContextMock.endpoint);
       spaceContextMock.organization = {
         subscriptionPlan: {

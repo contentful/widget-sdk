@@ -1,7 +1,7 @@
 'use strict';
 import _ from 'lodash';
 
-describe('data/ApiClient', () => {
+describe('data/APIClient', () => {
   let $http;
 
   beforeEach(function() {
@@ -11,7 +11,7 @@ describe('data/ApiClient', () => {
     });
 
     const createSpaceEndpoint = this.$inject('data/Endpoint.es6').createSpaceEndpoint;
-    const Client = this.$inject('data/ApiClient');
+    const Client = this.$inject('data/APIClient.es6').default;
     const $timeout = this.$inject('$timeout');
 
     const auth = { getToken: sinon.stub().resolves('TOKEN') };

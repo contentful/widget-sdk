@@ -43,7 +43,6 @@ angular
       ngRequire('services/logger.es6').default();
       ngRequire('services/localeStore.es6').default();
       ngRequire('data/userCache.es6').default();
-      ngRequire('data/apiClient.es6').default();
       ngRequire('data/previewEnvironmentsCache.es6').default();
       ngRequire('classes/spaceContext.es6').default();
       ngRequire('access_control/UserListHandler.es6').default();
@@ -62,7 +61,6 @@ angular
       ngRequire('analytics/events/persistentNotification.es6').default();
       ngRequire('navigation/confirmLeaveEditor.es6').default();
       ngRequire('analytics/events/versioning.es6').default();
-      ngRequire('analytics/fontsDotCom.es6').default();
       ngRequire('analytics/segment.es6').default();
       ngRequire('components/field_dialog/fieldDecorator.es6').default();
       ngRequire('services/errorMessageBuilder.es6').default();
@@ -138,7 +136,6 @@ angular
       ngRequire('app/widgets/link/entityLinkDirectives.es6').default();
       ngRequire('app/widgets/location/cfLocationEditorDirective.es6').default();
       ngRequire('app/widgets/location/searchController.es6').default();
-      ngRequire('ui/inputUpdater.es6').default();
       ngRequire('app/widgets/number/cfNumberEditorDirective.es6').default();
       ngRequire('app/widgets/radio/cfRadioEditorDirective.es6').default();
       ngRequire('app/widgets/rich_text/cfRichTextEditorDirective.es6').default();
@@ -149,7 +146,6 @@ angular
       ngRequire('classes/entityListCache.es6').default();
       ngRequire('components/CreateEntryButton/buttonDirective.es6').default();
       ngRequire('components/app_container/cfAppContainerDirective.es6').default();
-      ngRequire('services/features.es6').default();
       ngRequire('services/authorization.es6').default();
       ngRequire('components/client/ClientController.es6').default();
       ngRequire('services/activationEmailResender.es6').default();
@@ -192,7 +188,6 @@ angular
       ngRequire('components/shared/validation_error_display/errorPathController.es6').default();
       ngRequire('components/shared/viewStateController.es6').default();
       ngRequire('components/tabs/asset_list/assetListActionsController.es6').default();
-      ngRequire('search/systemFields.es6').default();
       ngRequire('components/tabs/asset_list/assetListController.es6').default();
       ngRequire('components/tabs/asset_list/assetListDirective.es6').default();
       ngRequire('search/listQuery.es6').default();

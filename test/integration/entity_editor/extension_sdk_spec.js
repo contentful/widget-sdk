@@ -1,6 +1,7 @@
 import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
 import $ from 'jquery';
+import APIClient from 'data/APIClient.es6';
 
 describe('Extension SDK', () => {
   beforeEach(function() {
@@ -486,8 +487,7 @@ describe('Extension SDK', () => {
 
     it('has a ApiClient method for each space method', function*(api) {
       const widgetApiMethods = Object.keys(api.space);
-      const ApiClient = this.$inject('data/ApiClient');
-      const cma = new ApiClient({});
+      const cma = new APIClient({});
       for (const method of widgetApiMethods) {
         expect(typeof cma[method]).toBe('function');
       }

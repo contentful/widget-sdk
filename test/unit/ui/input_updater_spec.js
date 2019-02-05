@@ -8,14 +8,14 @@ describe('ui/inputControl', () => {
   beforeEach(function() {
     module('contentful/test');
 
-    const InputUpdater = this.$inject('ui/inputUpdater');
+    const createInputUpdater = this.$inject('ui/inputUpdater.es6').default;
 
     this.$inputEl = $('<input type="text" />')
       .appendTo('body')
       .focus();
     inputEl = this.$inputEl.get(0);
 
-    this.updateInput = InputUpdater.create(inputEl);
+    this.updateInput = createInputUpdater(inputEl);
   });
 
   function resetInputAndCaret(value, caretPosition) {

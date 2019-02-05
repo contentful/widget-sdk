@@ -113,11 +113,6 @@ export default function register() {
         gkPlanCardStyles: {
           url: Config.authUrl('/gatekeeper/plan_cards.css')
         },
-        fontsDotCom: {
-          url:
-            '//fast.fonts.net/t/1.css?apiType=css&projectid=' +
-            _.get(environment, 'settings.fonts_dot_com.project_id')
-        },
         // JavaScript:
         embedly: {
           url: 'https://cdn.embedly.com/widgets/platform.js',

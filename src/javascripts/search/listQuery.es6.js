@@ -1,6 +1,7 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { assetContentType } from 'legacy-client';
+import * as SystemFields from 'data/SystemFields.es6';
 
 export default function register() {
   /**
@@ -13,10 +14,9 @@ export default function register() {
   registerFactory('ListQuery', [
     '$q',
     'spaceContext',
-    'systemFields',
     'app/ContentList/Search/QueryBuilder.es6',
-    ($q, spaceContext, systemFields, { buildQuery: buildQueryFromUISearch }) => {
-      const DEFAULT_ORDER = systemFields.getDefaultOrder();
+    ($q, spaceContext, { buildQuery: buildQueryFromUISearch }) => {
+      const DEFAULT_ORDER = SystemFields.getDefaultOrder();
 
       return {
         /**
@@ -120,7 +120,7 @@ export default function register() {
       }
 
       function isSystemField(id) {
-        return !!_.find(systemFields.getList(), { id: id });
+        return !!_.find(SystemFields.getList(), { id: id });
       }
 
       function getCtField(id, ct) {
