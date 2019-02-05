@@ -4,7 +4,7 @@ import { cloneDeep, uniqBy } from 'lodash';
 import { Button, Notification, Note } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
-import FeedbackButton from 'app/common/FeedbackButton.es6.js';
+import FeedbackButton from 'app/common/FeedbackButton.es6';
 
 import * as Analytics from 'analytics/Analytics.es6';
 
