@@ -11,7 +11,7 @@ import { getCurrentTeam } from 'redux/selectors/teams.es6';
 
 import FeedbackDialog from './FeedbackDialog.es6';
 
-class AppsFeedback extends Component {
+class FeedbackButton extends Component {
   static propTypes = {
     about: PropTypes.string.isRequired,
     target: PropTypes.string.isRequired,
@@ -70,4 +70,4 @@ export default connect(
         meta: { about, target }
       })
   })
-)(AppsFeedback);
+)(FeedbackButton);
