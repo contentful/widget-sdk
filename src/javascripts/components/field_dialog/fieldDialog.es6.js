@@ -163,6 +163,7 @@ export default function register() {
         let values = $scope.widgetSettings.params;
         let definitions = _.get(selectedWidget, ['parameters']) || [];
 
+        values = WidgetParametersUtils.applyDefaultValues(definitions, values);
         definitions = WidgetParametersUtils.filterDefinitions(definitions, values, selectedWidget);
         values = WidgetParametersUtils.filterValues(definitions, values);
 
