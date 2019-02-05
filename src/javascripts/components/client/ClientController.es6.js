@@ -10,7 +10,6 @@ export default function register() {
     'logger',
     'spaceContext',
     'authorization',
-    'fontsDotCom',
     'intercom',
     '$rootScope',
     'services/TokenStore.es6',
@@ -25,7 +24,6 @@ export default function register() {
       logger,
       spaceContext,
       authorization,
-      fontsDotCom,
       Intercom,
       $rootScope,
       TokenStore,
@@ -105,7 +103,6 @@ export default function register() {
         if (isAnalyticsAllowed(user)) {
           logger.enable(user);
           Analytics.enable(user);
-          fontsDotCom.enable();
         } else {
           logger.disable();
           Analytics.disable();

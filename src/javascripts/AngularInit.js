@@ -62,7 +62,6 @@ angular
       ngRequire('analytics/events/persistentNotification.es6').default();
       ngRequire('navigation/confirmLeaveEditor.es6').default();
       ngRequire('analytics/events/versioning.es6').default();
-      ngRequire('analytics/fontsDotCom.es6').default();
       ngRequire('analytics/segment.es6').default();
       ngRequire('components/field_dialog/fieldDecorator.es6').default();
       ngRequire('services/errorMessageBuilder.es6').default();
