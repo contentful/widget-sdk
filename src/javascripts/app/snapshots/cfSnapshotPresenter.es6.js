@@ -4,6 +4,7 @@ import moment from 'moment';
 import * as K from 'utils/kefir.es6';
 import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
 import createBridge from 'widgets/SnapshotExtensionBridge.es6';
+import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 
 export default function register() {
   /**
@@ -29,7 +30,7 @@ export default function register() {
         controller: [
           '$scope',
           $scope => {
-            const { field, custom, src, srcdoc } = $scope.widget;
+            const { field, widgetNamespace, src, srcdoc } = $scope.widget;
             $scope.type = getFieldType(field);
             $scope.linkType = _.get(field, 'linkType', _.get(field, 'items.linkType'));
 
@@ -47,7 +48,7 @@ export default function register() {
               displayRichText: false
             };
 
-            if (custom) {
+            if (widgetNamespace === NAMESPACE_EXTENSION) {
               $scope.extensionProps = {
                 bridge: createBridge({ $scope, spaceContext, TheLocaleStore }),
                 src,

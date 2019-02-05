@@ -177,7 +177,11 @@ export default function register() {
         let definitions = _.get(selectedWidget, ['parameters']) || [];
 
         values = WidgetParametersUtils.applyDefaultValues(definitions, values);
-        definitions = WidgetParametersUtils.filterDefinitions(definitions, values, selectedWidget);
+        definitions = WidgetParametersUtils.filterDefinitions(
+          definitions,
+          values,
+          makeId($scope.widgetSettings.namespace, $scope.widgetSettings.id)
+        );
         values = WidgetParametersUtils.filterValues(definitions, values);
 
         const missing = WidgetParametersUtils.markMissingValues(definitions, values);

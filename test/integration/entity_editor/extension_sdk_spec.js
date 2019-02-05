@@ -50,7 +50,7 @@ describe('Extension SDK', () => {
     this.scope = {
       widget: {
         field,
-        custom: true,
+        widgetNamespace: 'extension',
         srcdoc:
           '<!doctype html>' +
           '<script src="/base/node_modules/contentful-ui-extensions-sdk/dist/cf-extension-api.js"></script>'

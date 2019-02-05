@@ -2,27 +2,11 @@ import { get, cloneDeep } from 'lodash';
 import { deepFreeze } from 'utils/Freeze.es6';
 import { applyDefaultValues } from './WidgetParametersUtils.es6';
 import { toInternalFieldType } from './FieldTypes.es6';
+import { NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
 
-/**
- * Given EditorInterface controls and a list of all widgets in a space
- * builds an array of "renderables". A "renderable" is a data structure
- * holding all the information needed to render an editor for a field.
- *
- * @property {string} fieldId
- * @property {string} widgetId
- * @property {object} settings
- * @property {object} installationParameterValues
- * @property {object} field
- * @property {string} template
- * @property {string} defaultHelpText
- * @property {boolean} rendersHelpText
- * @property {boolean} isFocusable
- * @property {boolean} sidebar
- * @property {boolean} custom
- * @property {string} src
- * @property {string} srcdoc
- * @property {object} trackingData
- */
+// Given EditorInterface controls and a list of all widgets in a space
+// builds an array of "renderables". A "renderable" is a data structure
+// holding all the information needed to render an editor for a field.
 export default function buildRenderables(controls, widgets) {
   return controls.reduce(
     (acc, control) => {
@@ -41,6 +25,7 @@ function buildOneRenderable(control, widgets) {
   const renderable = {
     fieldId: control.fieldId,
     widgetId: control.widgetId,
+    widgetNamespace: control.widgetNamespace,
     field: cloneDeep(control.field),
     settings: {}
   };
@@ -58,7 +43,6 @@ function buildOneRenderable(control, widgets) {
   }
 
   Object.assign(renderable, {
-    custom: !!descriptor.custom,
     settings: applyDefaultValues(
       get(descriptor, ['parameters'], []),
       get(control, ['settings'], {})
@@ -74,8 +58,8 @@ function buildOneRenderable(control, widgets) {
     sidebar: !!descriptor.sidebar
   });
 
-  if (renderable.custom) {
-    renderable.trackingData = {
+  if (renderable.widgetNamespace === NAMESPACE_EXTENSION) {
+    renderable.extensionTrackingData = {
       extension_id: descriptor.id,
       extension_name: descriptor.name,
       field_id: control.fieldId,
@@ -87,7 +71,7 @@ function buildOneRenderable(control, widgets) {
 
     if (descriptor.src) {
       renderable.src = descriptor.src;
-      renderable.trackingData.src = descriptor.src;
+      renderable.extensionTrackingData.src = descriptor.src;
     } else {
       renderable.srcdoc = descriptor.srcdoc;
     }

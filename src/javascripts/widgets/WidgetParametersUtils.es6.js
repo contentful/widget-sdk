@@ -3,8 +3,8 @@ import { clone } from 'lodash';
 // Built-in date picker conditionally renderes one of its parameters.
 // We could buit a generic dependency mechanism but for now we just
 // filter manually the only known scenario.
-export function filterDefinitions(definitions, values, widget) {
-  if (widget.id === 'datePicker' && !widget.custom) {
+export function filterDefinitions(definitions, values, combinedWidgetId) {
+  if (combinedWidgetId === 'builtin,datePicker') {
     return definitions.filter(definition => {
       // Always display all parameters but `ampm`. Show `ampm` only
       // if `format` includes time.

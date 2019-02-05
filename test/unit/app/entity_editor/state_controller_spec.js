@@ -24,6 +24,7 @@ describe('entityEditor/StateController', () => {
     this.scope = this.rootScope.$new();
     this.scope.editorContext = this.$inject('mocks/entityEditor/Context').create();
     this.scope.entityInfo = {};
+    this.scope.editorData = { fieldControls: {} };
 
     this.spaceContext = this.$inject('spaceContext');
 

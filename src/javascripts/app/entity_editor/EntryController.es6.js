@@ -97,8 +97,8 @@ export default async function create($scope, entryId) {
       editorType: $scope.$parent.entities.length > 1 ? 'slide_in_editor' : 'entry_editor',
       customWidgets: (editorData.fieldControls.form || [])
         .concat(editorData.fieldControls.sidebar || [])
-        .filter(w => w.custom)
-        .map(w => w.trackingData)
+        .filter(w => w.extensionTrackingData)
+        .map(w => w.extensionTrackingData)
     });
   } catch (error) {
     logger.logError(error);

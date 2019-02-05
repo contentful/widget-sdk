@@ -22,7 +22,7 @@ export default class FieldDialogAppearanceTab extends React.Component {
     const params = this.props.widgetParams;
 
     const values = WidgetParametersUtils.applyDefaultValues(definitions, params);
-    definitions = WidgetParametersUtils.filterDefinitions(definitions, values, widget);
+    definitions = WidgetParametersUtils.filterDefinitions(definitions, values, widget.id);
     definitions = WidgetParametersUtils.unifyEnumOptions(definitions);
 
     return {
