@@ -21,3 +21,11 @@ export function createAction(type, ...argNames) {
   fn.type = type;
   return fn;
 }
+
+export function createAsyncActions(baseType, { request, success, failure }) {
+  return {
+    request: createAction(`${baseType}$Request`, ...request),
+    success: createAction(`${baseType}$Success`, ...success),
+    failture: createAction(`${baseType}$Reject`, ...failure)
+  };
+}
