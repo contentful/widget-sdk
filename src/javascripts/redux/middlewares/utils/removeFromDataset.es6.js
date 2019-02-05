@@ -3,6 +3,8 @@ import React from 'react';
 import { getDatasets } from 'redux/selectors/datasets.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 
+// this is a rather aggressive way of making code DRY
+// and should only be used internally
 export default async function(
   { dispatch, getState },
   next,
@@ -42,11 +44,15 @@ export default async function(
 
   const type = 'REMOVE_FROM_DATASET';
   try {
+    // pending
     dispatch({ type, payload: { id, dataset }, meta: { pending: true } });
+    // request
     await service.remove(id);
+    // success
     dispatch({ type, payload: { id, dataset } });
     Notification.success(successMessage(item));
   } catch (e) {
+    // failed
     dispatch({ type, payload: e, error: true, meta: { id, dataset } });
     Notification.error(errorMessage(item));
   }

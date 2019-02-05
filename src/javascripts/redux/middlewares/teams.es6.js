@@ -10,6 +10,11 @@ import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
 const userToString = ({ firstName, lastName, email }) =>
   firstName ? `${firstName} ${lastName}` : email;
 
+// all middlewares have this signature (except the optional async)
+// `next(action)` must always be called, as it activates other middlewares and the reducer
+
+// that means the return value of `getState` might change after `next(action)` was called...
+// ...because the state might have been updated by the reducer
 export default ({ dispatch, getState }) => next => async action => {
   switch (action.type) {
     case 'CREATE_NEW_TEAM': {
@@ -21,6 +26,7 @@ export default ({ dispatch, getState }) => next => async action => {
         dispatch({ type: 'ADD_TO_DATASET', payload: { item: newTeam, dataset: TEAMS } });
         Notification.success(`Team ${newTeam.name} created successfully`);
       } catch (e) {
+        // Action structure follows this guideline: https://github.com/redux-utilities/flux-standard-actions
         dispatch({
           type: 'SUBMIT_NEW_TEAM_FAILED',
           error: true,
@@ -36,6 +42,8 @@ export default ({ dispatch, getState }) => next => async action => {
       break;
     }
     case 'REMOVE_TEAM': {
+      // this is a rather aggressive way of making code DRY
+      // therefore this function should not be reused outside this middleware
       await removeFromDataset(
         { dispatch, getState },
         next,
@@ -56,11 +64,15 @@ export default ({ dispatch, getState }) => next => async action => {
 
       next(action);
       // the reducer updated the team for us
+
+      // it's useful for testing and tooling to move as much logic as possible to reducers
+      // (or even better: selectors)
       const state = getState();
       const service = createTeamService(state);
       const updatedTeam = getTeams(state)[id];
 
       try {
+        // no pending action needed, as the `EDIT_TEAM_CONFIRMED` can be used for pending
         const persistedTeam = await service.update(updatedTeam);
         dispatch({ type: 'ADD_TO_DATASET', payload: { dataset: TEAMS, item: persistedTeam } });
         Notification.success(`Successfully changed team ${persistedTeam.name}`);

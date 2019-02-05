@@ -9,9 +9,11 @@ export default ({ getState }) => next => async action => {
   switch (action.type) {
     case 'SEND_FEEDBACK': {
       const state = getState();
+      // get contact details
       const organizationId = getOrgId(state);
       const userId = get(getCurrentUser(state), 'sys.id');
       const teamId = getCurrentTeam(state);
+
       const {
         payload: { feedback, canBeContacted },
         meta: { about, target }
@@ -26,6 +28,7 @@ export default ({ getState }) => next => async action => {
           about,
           target,
           canBeContacted,
+          // add contact details only if user agreed to be contacted
           ...(canBeContacted ? { organizationId, userId, teamId } : {})
         })
       });

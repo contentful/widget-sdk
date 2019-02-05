@@ -9,10 +9,12 @@ import { hasAccess } from './access.es6';
 
 const getRawDatasets = state => get(state, ['datasets', 'payload', getOrgId(state)], {});
 
+// datasets will not be requested more often than this value
 const MAX_AGE = 10 * 1000;
 
 // this replaces all links with actual data if that data is loaded
 // will work recursively
+// if used with a state listener (e.g. `connect` from `react-redux`), will update when more data was loaded later
 function resolveLinks(datasets) {
   return entity =>
     update(
@@ -34,10 +36,11 @@ function resolveLinks(datasets) {
 
 export const getDatasets = createSelector(
   [getRawDatasets],
-  // needs deep value mapping, because datasets are nested by orgId and their name
+  // needs nested value mapping because datasets are nested by orgId and their name
   datasets => mapValues(mapValues(resolveLinks(datasets)), datasets)
 );
 
+// get's meta information about datasets, e.g. if they've been optimistically updated (pending server request)
 export const getMeta = state => get(state, ['datasets', 'meta', getOrgId(state)]);
 
 // gets all datasets that have to be loaded for the current location
@@ -54,6 +57,8 @@ export const getDataSetsToLoad = state => {
   });
 };
 
+// components should use this to show spinner and decide if they should render children
+// especially if children depend on the availability of datasets
 export const isLoadingMissingDatasets = state => {
   if (!hasAccess(state)) {
     return false;

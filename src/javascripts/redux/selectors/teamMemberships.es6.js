@@ -1,4 +1,4 @@
-import { eq, flow, get, filter, concat, orderBy, groupBy, mapValues } from 'lodash/fp';
+import { flow, get, concat, orderBy, groupBy, mapValues } from 'lodash/fp';
 import { getDatasets } from './datasets.es6';
 import { TEAM_MEMBERSHIPS } from '../datasets.es6';
 import { getCurrentTeam } from './teams.es6';
@@ -19,6 +19,7 @@ export const getMembershipsByTeam = flow(
 
 export const getMemberCountsByTeam = flow(
   getMembershipsByTeam,
+  // replace all membership of a team (which are values in this map) with cound of members
   mapValues(get('length'))
 );
 
@@ -26,15 +27,13 @@ export const getMemberCountsByTeam = flow(
 export const getCurrentTeamMembershipList = state => {
   const currentTeamId = getCurrentTeam(state);
   return flow(
-    getTeamMemberships,
-    Object.values,
-    filter(
-      flow(
-        get('sys.team.sys.id'),
-        eq(currentTeamId)
-      )
-    ),
+    getMembershipsByTeam,
+    // get memberships of currently active team (e.g. containg in url)
+    get(currentTeamId),
+    // order by first and last name, in that priority
     orderBy(['sys.user.firstName', 'sys.user.lastName'], ['asc', 'asc']),
+    // optimistic membership placeholders don't have a name...
+    // ...so add them after sorting at the top
     concat(getOptimistic(state)[TEAM_MEMBERSHIPS] || [])
   )(state);
 };

@@ -7,4 +7,4 @@ export const getUsers = flow(
   get(USERS)
 );
 
-export const getCurrentUser = flow(get('token.user'));
+export const getCurrentUser = get('token.user');

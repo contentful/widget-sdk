@@ -9,6 +9,7 @@ const getQueryParameters = flow(
   qs.parse
 );
 
+// get filters for the current view from the url query parameters
 export const getFilters = flow(
   getQueryParameters,
   get('filters'),
