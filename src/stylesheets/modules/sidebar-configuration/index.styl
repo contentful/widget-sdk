@@ -1,0 +1,48 @@
+.sidebar-configuration
+
+  .sidebar-configuration__container
+    display: flex
+
+  .sidebar-configuration__main-column
+    width: 400px
+    border: 1px solid $colors.element-mid
+    background-color: $colors.element-lightest
+    min-height: 500px
+    padding: 1rem 2rem
+
+  .sidebar-configuration__additional-column
+    width: 350px
+    border: 1px solid $colors.element-mid
+    border-left: none
+    min-height: 500px
+    padding: 1rem 2rem
+
+  .sidebar-configuration__item
+    border: 1px solid $colors.element-mid
+    background-color: $colors.white
+    margin-bottom: 1rem
+    padding: $rhythm(0.5) $rhythm(1) $rhythm(0.5) $rhythm(1.5)
+    position: relative
+
+  .sidebar-configuration__item-drag
+    fill: $colors.text-light
+    position: absolute
+    left: $rhythm(0.3)
+    top: 12px
+
+  .sidebar-configuration__item-close
+    fill: $colors.text-light
+    position: absolute
+    right: $rhythm(1)
+    top: 10px
+
+  .sidebar-configuration__item-title
+    flex-grow: 1
+    font-size: .75rem
+    font-weight: 500
+    text-transform: uppercase
+    color: $colors.text-light
+    line-height: 2
+    border-bottom: 1px solid $colors.element-dark
+    letter-spacing: 1px
+    margin-bottom: $rhythm(1)

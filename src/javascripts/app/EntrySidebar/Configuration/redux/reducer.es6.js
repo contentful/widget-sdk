@@ -1,24 +1,24 @@
-import { createImmerReducer, createAction, createAsyncActions } from './utils.es6';
-import { SidebarType } from './constants.es6';
+import { createImmerReducer } from './utils.es6';
+import { SidebarType } from '../constants.es6';
 
 /* Actions */
+const SELECT_SIDEBAR_TYPE = 'sidebar/SELECT_TYPE';
 
-export const selectSidebarType = createAction('sidebar/SELECT_TYPE', 'sidebarType');
-
-export const saveConfigurationAsync = createAsyncActions('sidebar/SAVE_CONFIGURATION', {
-  request: ['configuration'],
-  success: ['configuration'],
-  failure: ['error']
+export const selectSidebarType = sidebarType => ({
+  type: SELECT_SIDEBAR_TYPE,
+  payload: {
+    sidebarType
+  }
 });
 
 /* Reducer */
 
-const initialState = {
+export const initialState = {
   sidebarType: SidebarType.default
 };
 
 export default createImmerReducer(initialState, {
-  [selectSidebarType.type]: (state, action) => {
+  [SELECT_SIDEBAR_TYPE]: (state, action) => {
     state.sidebarType = action.payload.sidebarType;
   }
 });

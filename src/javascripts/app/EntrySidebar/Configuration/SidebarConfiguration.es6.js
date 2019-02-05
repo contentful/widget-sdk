@@ -6,7 +6,10 @@ import {
   FieldGroup,
   RadioButtonField
 } from '@contentful/forma-36-react-components';
-import { SidebarType } from './redux/constants.es6';
+import DefaultSidebar from './components/DefaultSidebar.es6';
+import CustomSidebar from './components/CustomSidebar.es6';
+import AvailableItems from './components/AvailableItems.es6';
+import { SidebarType } from './constants.es6';
 import { connect } from 'react-redux';
 import { selectSidebarType } from './redux/reducer.es6';
 
@@ -25,8 +28,9 @@ class SidebarConfiguration extends Component {
   };
 
   render() {
+    const { sidebarType } = this.props;
     return (
-      <div>
+      <div className="sidebar-configuration">
         <Heading extraClassNames="f36-margin-bottom--s">Sidebar configuration</Heading>
         <Paragraph extraClassNames="f36-margin-bottom--l">
           Configure the sidebar for this content type.
@@ -54,6 +58,23 @@ class SidebarConfiguration extends Component {
             value={SidebarType.custom}
           />
         </FieldGroup>
+        <div className="sidebar-configuration__container f36-margin-top--l">
+          {sidebarType === SidebarType.default && (
+            <div className="sidebar-configuration__main-column">
+              <DefaultSidebar />
+            </div>
+          )}
+          {sidebarType === SidebarType.custom && (
+            <React.Fragment>
+              <div className="sidebar-configuration__main-column">
+                <CustomSidebar />
+              </div>
+              <div className="sidebar-configuration__additional-column">
+                <AvailableItems />
+              </div>
+            </React.Fragment>
+          )}
+        </div>
       </div>
     );
   }

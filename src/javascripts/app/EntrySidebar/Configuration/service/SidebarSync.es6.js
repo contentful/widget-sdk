@@ -1,4 +1,4 @@
-import { AssetConfiguration, EntryConfiguration } from '../SidebarDefaults.es6';
+import { AssetConfiguration, EntryConfiguration } from '../defaults.es6';
 
 export const getAssetConfiguration = () => {
   return Promise.resolve(AssetConfiguration);
