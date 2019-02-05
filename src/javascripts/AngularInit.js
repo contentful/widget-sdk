@@ -149,7 +149,6 @@ angular
       ngRequire('classes/entityListCache.es6').default();
       ngRequire('components/CreateEntryButton/buttonDirective.es6').default();
       ngRequire('components/app_container/cfAppContainerDirective.es6').default();
-      ngRequire('services/features.es6').default();
       ngRequire('services/authorization.es6').default();
       ngRequire('components/client/ClientController.es6').default();
       ngRequire('services/activationEmailResender.es6').default();
