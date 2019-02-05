@@ -2,8 +2,8 @@ import { cloneDeep } from 'lodash';
 import migrateControl from './ControlMigrations.es6';
 import getDefaultWidgetId from './DefaultWidget.es6';
 
-// Given a content type and its existing controls return
-// synced controls as described in code comments.
+// Given a content type, its existing controls and space widgets
+// return  synced controls as described in code comments.
 export function syncControls(ct, controls, widgets) {
   // Controls are ordered as the content type fields are.
   return (ct.fields || []).map(field => {
@@ -16,6 +16,7 @@ export function syncControls(ct, controls, widgets) {
 
     // If the widget ID is not provided, use the default.
     if (typeof control.widgetId !== 'string') {
+      control.widgetNamespace = 'builtin';
       control.widgetId = getDefaultWidgetId(field, ct.displayField);
     }
 
@@ -26,6 +27,9 @@ export function syncControls(ct, controls, widgets) {
 
     // Attach the content type field to the control.
     control.field = cloneDeep(field);
+
+    // Migrate control if needed.
+    control.widgetId = migrateControl(control);
 
     return control;
   });
@@ -45,7 +49,7 @@ function determineWidgetNamespace({ widgetId }, widgets = {}) {
 export function fromAPI(ct, ei, widgets) {
   return {
     sys: ei.sys,
-    controls: syncControls(ct, ei.controls, widgets).map(c => migrateControl(c)),
+    controls: syncControls(ct, ei.controls, widgets),
     sidebar: ei.sidebar
   };
 }
@@ -61,7 +65,8 @@ export function toAPI(ct, ei, widgets) {
 }
 
 // Given an internal representation of a control prepares
-// a control to be stored in the API.
+// a control to be stored in the API by selecting only properties
+// accepted by the API.
 function prepareAPIControl({ fieldId, widgetId, widgetNamespace, settings }) {
   const settingsValid = typeof settings === 'object' && settings !== null;
   const hasSettings = settingsValid && Object.keys(settings).length > 0;

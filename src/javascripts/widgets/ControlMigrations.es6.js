@@ -47,16 +47,12 @@ const DEFAULT_MIGRATIONS = [
 ];
 
 export default function migrateControl(control, migrations = DEFAULT_MIGRATIONS) {
-  const { field, widgetId } = control;
+  const { field, widgetNamespace, widgetId } = control;
 
   const migration = migrations.find(({ fieldTypes, from }) => {
     const applicable = !Array.isArray(fieldTypes) || fieldTypes.includes(field.type);
-    return applicable && from === widgetId;
+    return applicable && widgetNamespace === 'builtin' && from === widgetId;
   });
 
-  if (migration) {
-    return { ...control, widgetId: migration.to };
-  } else {
-    return control;
-  }
+  return migration ? migration.to : widgetId;
 }

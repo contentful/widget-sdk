@@ -1,26 +1,19 @@
 import { fromAPI, toAPI } from './EditorInterfaceTransformer.es6';
 
-jest.mock('./DefaultWidget.es6', () => jest.fn(() => 'DEFAULT'));
-jest.mock('./ControlMigrations.es6', () => jest.fn(arg => arg));
-
 describe('EditorInterfaceTransformer', () => {
   describe('#fromAPI()', () => {
     it('adds a default control if missing', () => {
-      const ct = { fields: [{ apiName: 'AAA' }, { apiName: 'MISSING' }] };
+      const ct = {
+        fields: [{ apiName: 'AAA', type: 'Symbol' }, { apiName: 'MISSING', type: 'Boolean' }]
+      };
       const ei = { controls: [{ fieldId: 'AAA' }] };
-
-      jest
-        .requireMock('./DefaultWidget.es6')
-        .mockImplementationOnce(() => 'DEFAULT')
-        .mockImplementationOnce(() => 'DEFAULT_FOR_MISSING');
 
       const { controls } = fromAPI(ct, ei);
 
-      expect(controls).toHaveLength(2);
-      expect(controls[0].widgetId).toEqual('DEFAULT');
-      expect(controls[0].fieldId).toEqual('AAA');
-      expect(controls[1].widgetId).toEqual('DEFAULT_FOR_MISSING');
-      expect(controls[1].fieldId).toEqual('MISSING');
+      expect(controls).toEqual([
+        { fieldId: 'AAA', field: ct.fields[0], widgetNamespace: 'builtin', widgetId: 'singleLine' },
+        { fieldId: 'MISSING', field: ct.fields[1], widgetNamespace: 'builtin', widgetId: 'boolean' }
+      ]);
     });
 
     it('removes controls for missing fields', () => {
@@ -35,20 +28,15 @@ describe('EditorInterfaceTransformer', () => {
 
     it('migrates deprecated widgets', () => {
       const ct = { fields: [{ apiName: 'AAA' }] };
-      const ei = { controls: [{ fieldId: 'AAA', widgetId: 'OLD' }] };
-
-      const migrate = jest.requireMock('./ControlMigrations.es6');
-      migrate.mockClear();
-      migrate.mockImplementationOnce(control => ({ ...control, widgetId: 'MIGRATED' }));
+      const ei = { controls: [{ fieldId: 'AAA', widgetId: 'kalturaEditor' }] };
 
       const { controls } = fromAPI(ct, ei);
 
-      expect(migrate).toBeCalledTimes(1);
       expect(controls).toEqual([
         {
           field: { apiName: 'AAA' },
           fieldId: 'AAA',
-          widgetId: 'MIGRATED',
+          widgetId: 'singleLine',
           widgetNamespace: 'builtin'
         }
       ]);
