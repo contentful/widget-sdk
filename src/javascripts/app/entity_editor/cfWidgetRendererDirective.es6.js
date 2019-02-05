@@ -41,9 +41,14 @@ export default function register() {
         scope: true,
         restrict: 'E',
         link: function(scope, element) {
-          const { custom, template, src, srcdoc } = scope.widget;
+          const { problem, custom, template, src, srcdoc } = scope.widget;
 
-          if (custom) {
+          if (problem) {
+            scope.props = { message: problem };
+            renderTemplate(
+              `<react-component name="widgets/WidgetRenderWarning.es6" props="props" />`
+            );
+          } else if (custom) {
             renderExtension();
           } else if (template) {
             renderTemplate(template);

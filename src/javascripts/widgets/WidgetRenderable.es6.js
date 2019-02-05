@@ -38,8 +38,6 @@ export default function buildRenderables(controls, widgets) {
 }
 
 function buildOneRenderable(control, widgets) {
-  const fieldType = toInternalFieldType(control.field);
-
   const renderable = {
     fieldId: control.fieldId,
     widgetId: control.widgetId,
@@ -51,12 +49,12 @@ function buildOneRenderable(control, widgets) {
   const descriptor = namespaceWidgets.find(w => w.id === control.widgetId);
 
   if (!descriptor) {
-    renderable.template = `<react-component name="widgets/WidgetRenderWarning.es6" props="{ message: 'missing' }" />`;
-    return renderable;
+    return Object.assign(renderable, { problem: 'missing' });
   }
+
+  const fieldType = toInternalFieldType(control.field);
   if (!descriptor.fieldTypes.includes(fieldType)) {
-    renderable.template = `<react-component name="widgets/WidgetRenderWarning.es6" props="{ message: 'incompatible' }" />`;
-    return renderable;
+    return Object.assign(renderable, { problem: 'incompatible' });
   }
 
   Object.assign(renderable, {
