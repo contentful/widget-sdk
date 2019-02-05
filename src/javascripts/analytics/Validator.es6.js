@@ -64,7 +64,11 @@ export const validEvents = {
     'bulk_editor_close',
     'open',
     'open_create',
-    'delete'
+    'delete',
+    'load_init',
+    'load_sharejs_connected',
+    'load_links_resolved',
+    'load_fully_interactive'
   ],
   // https://contentful.atlassian.net/wiki/display/PRODBulk+references+editor+-+Tracking+specs
   bulk_editor: [

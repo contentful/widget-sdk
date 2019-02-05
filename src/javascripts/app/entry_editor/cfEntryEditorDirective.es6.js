@@ -7,7 +7,9 @@ export default function register() {
       restrict: 'E',
       scope: {
         editorData: '<',
-        preferences: '<'
+        entryId: '<',
+        preferences: '<',
+        slideStates: '<'
       },
       template: JST.entry_editor(),
       controller: [

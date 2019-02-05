@@ -40,8 +40,10 @@ mixin load-status(entityType, entityId)
           reference-context="slideState.viewProps.referenceContext")
         cf-entry-editor(
           ng-if="slideState.slide.type === 'Entry'"
+          slide-index="$index"
           editor-data="slideState.viewProps.editorData"
-          preferences="slideState.viewProps.preferences")
+          preferences="slideState.viewProps.preferences"
+          slideStates="slideStates")
         cf-asset-editor(
           ng-if="slideState.slide.type === 'Asset'"
           editor-data="slideState.viewProps.editorData"

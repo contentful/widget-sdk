@@ -21,9 +21,19 @@ const getCountOrNull = count => (typeof count === 'number' ? count : null);
 export default function withTracking(Component) {
   return class extends React.Component {
     static propTypes = {
-      widgetAPI: PropTypes.object.isRequired,
+      widgetAPI: PropTypes.shape({
+        trackEntryEditorAction: PropTypes.func.isRequired,
+        entry: PropTypes.shape({
+          getSys: PropTypes.func.isRequired
+        }).isRequired,
+        field: PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          locale: PropTypes.string.isRequired
+        }).isRequired
+      }).isRequired,
       onAction: PropTypes.func
     };
+
     static defaultProps = {
       onAction: () => {}
     };
@@ -31,7 +41,11 @@ export default function withTracking(Component) {
     actionsTrackingHandler(name, { origin, ...data }) {
       const actionName = getActionName(name, data);
 
-      if (!isKnownAction(actionName)) {
+      if (isKnownRichTextEditorTrackingAction(actionName)) {
+        this.trackRichTextEditorAction(actionName, origin, data);
+      } else if (isKnownEntryEditorTrackingAction(actionName)) {
+        this.trackEntryEditorAction(actionName, data);
+      } else {
         logger.logWarn(`Unexpected rich text tracking action \`${actionName}\``, {
           groupingHash: 'UnexpectedRichTextTrackingAction',
           data: {
@@ -42,7 +56,16 @@ export default function withTracking(Component) {
         });
         return;
       }
+    }
 
+    trackEntryEditorAction(actionName, data) {
+      const {
+        widgetAPI: { field, trackEntryEditorAction }
+      } = this.props;
+      trackEntryEditorAction({ actionName, field, ...data });
+    }
+
+    trackRichTextEditorAction(actionName, origin, data) {
       const { widgetAPI } = this.props;
       const entrySys = widgetAPI.entry.getSys();
       const entryId = entrySys.id;
@@ -124,12 +147,16 @@ const ALLOWED_EVENTS = reduce(
   OTHER_ACTIONS
 );
 
-function isKnownAction(name) {
+function isKnownEntryEditorTrackingAction(name) {
+  return name === 'linkRendered';
+}
+
+function isKnownRichTextEditorTrackingAction(name) {
   return ALLOWED_EVENTS.includes(name);
 }
 
 function getActionName(name, { nodeType, markType }) {
-  if (isKnownAction(name)) {
+  if (isKnownRichTextEditorTrackingAction(name)) {
     return name;
   }
   let action = name;

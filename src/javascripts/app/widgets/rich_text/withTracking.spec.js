@@ -12,7 +12,8 @@ describe('withTracking() returned hoc', () => {
 
   beforeEach(() => {
     props = {
-      widgetAPI: {}
+      widgetAPI: {},
+      trackEntryEditorAction: () => {}
     };
     setup = () => {
       jest.clearAllMocks();

@@ -27,6 +27,7 @@ const fakeProps = props => ({
   onAction: jest.fn(),
   isDisabled: false,
   showToolbar: false,
+  trackEntryEditorAction: () => {},
   ...props
 });
 

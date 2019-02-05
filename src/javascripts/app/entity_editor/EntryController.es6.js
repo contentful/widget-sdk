@@ -1,6 +1,6 @@
 import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
-import { constant } from 'lodash';
+import { constant, once } from 'lodash';
 
 import { user$ } from 'services/TokenStore.es6';
 
@@ -9,10 +9,16 @@ import * as Focus from './Focus.es6';
 import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking, { trackEntryView } from './Tracking.es6';
+import {
+  isLinkField,
+  createLoadEventTracker,
+  getNumRenderableFieldEditors
+} from './LoadEventTracker.es6';
 
 import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 import * as logger from 'services/logger.es6';
+import * as Telemetry from 'Telemetry.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
@@ -50,6 +56,23 @@ const DataFields = getModule('EntityEditor/DataFields');
 export default async function create($scope, editorData, preferences) {
   $scope.context = {};
 
+  const start = Date.now();
+
+  let loadLinksRendered = false;
+  let loadShareJSConnected = false;
+
+  $scope.loadEvents = K.createStreamBus($scope);
+
+  Telemetry.record('entry_editor_http_time', Date.now() - start);
+
+  const linkFieldTypes = editorData.contentType.data.fields.filter(isLinkField);
+  const numberOfRenderableLinkFieldEditors = getNumRenderableFieldEditors(linkFieldTypes);
+  const trackLoadEvent = createLoadEventTracker($scope.slideStates, editorData);
+  trackLoadEvent('init');
+
+  $scope.context.ready = true;
+  $scope.editorData = editorData;
+
   const editorContext = ($scope.editorContext = {});
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
 
@@ -60,7 +83,20 @@ export default async function create($scope, editorData, preferences) {
   const doc = editorData.openDoc(K.scopeLifeline($scope));
   // TODO rename the scope property
   $scope.otDoc = doc;
+
   initDocErrorHandler($scope, doc.state.error$);
+
+  K.onValueScope($scope, doc.state.isConnected$, status => {
+    if (loadShareJSConnected || status === false) {
+      return;
+    }
+    trackLoadEvent('sharejs_connected');
+
+    loadShareJSConnected = true;
+    if (loadLinksRendered) {
+      trackLoadEvent('fully_interactive');
+    }
+  });
 
   K.onValueScope($scope, doc.status$, status => {
     $scope.statusNotificationProps = { status, entityLabel: 'entry' };
@@ -79,6 +115,29 @@ export default async function create($scope, editorData, preferences) {
   } catch (error) {
     logger.logError(error);
   }
+
+  let numFieldsInteractive = 0;
+  const emit = once(() => {
+    trackLoadEvent('links_rendered');
+    loadLinksRendered = true;
+    if (loadShareJSConnected) {
+      trackLoadEvent('fully_interactive');
+    }
+  });
+
+  if (numberOfRenderableLinkFieldEditors === 0) {
+    emit();
+  }
+
+  $scope.loadEvents.stream.onValue(({ actionName }) => {
+    if (actionName !== 'linksRendered') {
+      return;
+    }
+    numFieldsInteractive++;
+    if (numFieldsInteractive === numberOfRenderableLinkFieldEditors) {
+      emit();
+    }
+  });
 
   editorContext.validator = Validator.createForEntry(
     entityInfo.contentType,
@@ -135,9 +194,7 @@ export default async function create($scope, editorData, preferences) {
    * for every widget. Instead, we share this version in every
    * cfWidgetApi instance.
    */
-  const contentTypeData = entityInfo.contentType;
-  const fields = contentTypeData.fields;
-  $scope.fields = DataFields.create(fields, $scope.otDoc);
+  $scope.fields = DataFields.create(editorData.contentType.fields, $scope.otDoc);
 
   $scope.entrySidebarProps = createEntrySidebarProps({
     $scope

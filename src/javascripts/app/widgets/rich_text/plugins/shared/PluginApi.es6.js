@@ -11,7 +11,7 @@ export const actionOrigin = {
 };
 
 const createActionLogger = (onAction, origin) => (name, data) => {
-  onAction(name, { origin: origin, ...data });
+  onAction(name, { origin, ...data });
 };
 
 /**

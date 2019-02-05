@@ -1,21 +1,22 @@
+import { cloneDeep, find, mapValues } from 'lodash';
 import { track } from 'analytics/Analytics.es6';
 import * as Telemetry from 'Telemetry.es6';
-import { cloneDeep, find, mapValues } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { deepFreeze } from 'utils/Freeze.es6';
 import { getModule } from 'NgRegistry.es6';
 
-import { loadEntry, loadAsset } from 'app/entity_editor/DataLoader.es6';
-const entityLoaders = {
-  Entry: loadEntry,
-  Asset: loadAsset
-};
 const {
   getSlideInEntities,
   goToSlideInEntity,
   getSlideAsString,
   goToPreviousSlideOrExit
 } = getModule('navigation/SlideInNavigator');
+
+import { loadEntry, loadAsset } from 'app/entity_editor/DataLoader.es6';
+const entityLoaders = {
+  Entry: loadEntry,
+  Asset: loadAsset
+};
 
 const spaceContext = getModule('spaceContext');
 
@@ -112,7 +113,7 @@ export default ($scope, $state) => {
     clearTimeout(clearPreviousPeekTimeoutID);
   };
 
-  const unlistenStateChangeSuccess = $scope.$on('$locationChangeSuccess', () => setEntities());
+  const unlistenStateChangeSuccess = $scope.$on('$locationChangeSuccess', setEntities);
 
   const unlistenStateChangeStart = $scope.$on(
     '$stateChangeStart',

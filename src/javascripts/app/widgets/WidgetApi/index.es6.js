@@ -11,8 +11,15 @@ const $rootScope = getModule('$rootScope');
 export default function connectToWidgetAPI(Component) {
   return class extends React.Component {
     displayName = `WithWidgetAPI(${getDisplayName(Component)})`;
+
     static propTypes = {
       field: PropTypes.object.isRequired,
+      loadEvents: PropTypes.shape({
+        emit: PropTypes.func.isRequired,
+        stream: PropTypes.shape({
+          onValue: PropTypes.func.isRequired
+        }).isRequired
+      }),
       entry: PropTypes.object.isRequired,
       features: PropTypes.array
     };
@@ -22,6 +29,7 @@ export default function connectToWidgetAPI(Component) {
       isDisabled: true,
       currentUrl: window.location
     };
+
     UNSAFE_componentWillMount() {
       this.offDisabledState = this.props.field.onIsDisabledChanged(this.handleDisabledChanges);
       this.offValueChanged = this.props.field.onValueChanged(this.handleIncomingChanges);
@@ -30,6 +38,7 @@ export default function connectToWidgetAPI(Component) {
         this.setState({ currentUrl: { ...window.location } });
       });
     }
+
     componentWillUnmount() {
       this.offValueChanged();
       this.offDisabledState();
@@ -55,9 +64,15 @@ export default function connectToWidgetAPI(Component) {
     };
 
     render() {
-      const { entry, field, features } = this.props;
+      const { entry, loadEvents, field, features } = this.props;
       const { currentUrl } = this.state;
-      const widgetAPI = buildWidgetApi({ entry, field, features, currentUrl });
+      const widgetAPI = buildWidgetApi({
+        entry,
+        field,
+        features,
+        currentUrl,
+        loadEvents
+      });
       return (
         <WidgetAPIContext.Provider value={{ widgetAPI }}>
           <Component

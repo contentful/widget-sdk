@@ -8,6 +8,7 @@ const slideInNavigator = getModule('navigation/SlideInNavigator');
 
 class LinkedEntityBlock extends React.Component {
   static propTypes = {
+    onEntityFetchComplete: PropTypes.func,
     isSelected: PropTypes.bool.isRequired,
     attributes: PropTypes.object.isRequired,
     editor: PropTypes.object.isRequired,
@@ -34,7 +35,7 @@ class LinkedEntityBlock extends React.Component {
   }
 
   render() {
-    const { editor, isSelected } = this.props;
+    const { editor, isSelected, onEntityFetchComplete } = this.props;
     const isDisabled = editor.props.readOnly;
     const readOnly = editor.props.actionsDisabled;
     const { id: entityId, type: entityType } = this.getEntitySys();
@@ -47,6 +48,7 @@ class LinkedEntityBlock extends React.Component {
           disabled={isDisabled}
           editable={true}
           selected={isSelected}
+          onEntityFetchComplete={onEntityFetchComplete}
           onEdit={() => this.handleEditClick()}
           onRemove={() => this.handleRemoveClick()}
           extraClassNames="rich-text__reference-card"

@@ -18,7 +18,8 @@ class FetchedEntityCard extends React.Component {
     selected: PropTypes.bool,
     onEdit: PropTypes.func,
     onRemove: PropTypes.func,
-    readOnly: PropTypes.bool
+    readOnly: PropTypes.bool,
+    onEntityFetchComplete: PropTypes.func
   };
   static defaultProps = {
     extraClassNames: ''
@@ -68,7 +69,8 @@ class FetchedEntityCard extends React.Component {
       disabled,
       onEdit,
       onRemove,
-      readOnly
+      readOnly,
+      onEntityFetchComplete
     } = this.props;
 
     return (
@@ -80,9 +82,11 @@ class FetchedEntityCard extends React.Component {
             entityType={this.props.entityType}
             localeCode={widgetAPI.field.locale}
             render={fetchEntityResult => {
-              const isLoading =
-                fetchEntityResult.requestStatus === RequestStatus.Pending &&
-                !fetchEntityResult.entity;
+              const isPending = fetchEntityResult.requestStatus === RequestStatus.Pending;
+              const isLoading = isPending && !fetchEntityResult.entity;
+              if (!isPending) {
+                onEntityFetchComplete && onEntityFetchComplete();
+              }
 
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingEntryReferenceCard();

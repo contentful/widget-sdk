@@ -2,6 +2,10 @@ import { registerDirective } from 'NgRegistry.es6';
 import $ from 'jquery';
 import createBridge from 'widgets/bridges/EditorExtensionBridge.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
+import {
+  createLinksRenderedEvent,
+  createWidgetLinkRenderEventsHandler
+} from './LoadEventTracker.es6';
 
 export default function register() {
   /**
@@ -38,16 +42,34 @@ export default function register() {
         scope: true,
         restrict: 'E',
         link: function(scope, element) {
-          const { problem, widgetNamespace, template, descriptor, parameters } = scope.widget;
+          const {
+            widget,
+            locale,
+            editorData,
+            loadEvents,
+            widget: { problem, widgetNamespace, template, descriptor, parameters }
+          } = scope;
+
+          const trackLinksRendered = createLinksRenderedEvent(loadEvents);
+          const handleWidgetLinkRenderEvents = createWidgetLinkRenderEventsHandler({
+            widget,
+            locale,
+            loadEvents,
+            editorData,
+            trackLinksRendered
+          });
 
           if (problem) {
             scope.props = { message: problem };
+            trackLinksRendered();
             renderTemplate(
               `<react-component name="widgets/WidgetRenderWarning.es6" props="props" />`
             );
           } else if (widgetNamespace === NAMESPACE_EXTENSION) {
+            trackLinksRendered();
             renderExtension();
           } else if (widgetNamespace === NAMESPACE_BUILTIN && template) {
+            handleWidgetLinkRenderEvents();
             renderTemplate(template);
           } else {
             throw new Error('Builtin widget template or a valid UI Extension is required.');

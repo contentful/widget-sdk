@@ -17,7 +17,8 @@ class EmbeddedEntryInline extends React.Component {
     isSelected: PropTypes.bool.isRequired,
     attributes: PropTypes.object.isRequired,
     editor: PropTypes.object.isRequired,
-    node: PropTypes.object.isRequired
+    node: PropTypes.object.isRequired,
+    onEntityFetchComplete: PropTypes.func
   };
 
   handleEditClick = entry => {
@@ -71,6 +72,7 @@ class EmbeddedEntryInline extends React.Component {
   }
 
   render() {
+    const { onEntityFetchComplete } = this.props;
     const entryId = this.props.node.data.get('target').sys.id;
 
     return (
@@ -82,11 +84,13 @@ class EmbeddedEntryInline extends React.Component {
             entityType="Entry"
             localeCode={widgetAPI.field.locale}
             render={fetchEntityResult => {
+              if (fetchEntityResult.requestStatus !== RequestStatus.Pending) {
+                onEntityFetchComplete && onEntityFetchComplete();
+              }
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingNode();
-              } else {
-                return this.renderNode(fetchEntityResult);
               }
+              return this.renderNode(fetchEntityResult);
             }}
           />
         )}

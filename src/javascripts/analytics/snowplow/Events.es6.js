@@ -90,6 +90,10 @@ registerSlideInEditorEvent('slide_in_editor:bulk_editor_close');
 registerSlideInEditorEvent('slide_in_editor:open');
 registerSlideInEditorEvent('slide_in_editor:open_create');
 registerSlideInEditorEvent('slide_in_editor:delete');
+registerSlideInEditorEvent('slide_in_editor:load_init');
+registerSlideInEditorEvent('slide_in_editor:load_sharejs_connected');
+registerSlideInEditorEvent('slide_in_editor:load_links_resolved');
+registerSlideInEditorEvent('slide_in_editor:load_fully_interactive');
 
 registerSnapshotEvent('versioning:no_snapshots');
 registerSnapshotEvent('versioning:snapshot_opened');

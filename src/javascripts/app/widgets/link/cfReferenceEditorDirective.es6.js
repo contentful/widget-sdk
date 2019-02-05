@@ -1,5 +1,5 @@
 import { registerDirective, registerFactory } from 'NgRegistry.es6';
-import { noop } from 'lodash';
+import { noop, once } from 'lodash';
 import { getAvailableContentTypes } from 'app/widgets/link/utils.es6';
 
 export default function register() {
@@ -10,12 +10,19 @@ export default function register() {
       scope: {
         type: '@',
         style: '@variant',
-        single: '='
+        single: '=',
+        loadEvents: '<'
       },
       template: JST.cf_reference_editor(),
       controller: [
         '$scope',
         $scope => {
+          $scope.emitRenderedEvent = once(() =>
+            $scope.loadEvents.emit({
+              actionName: 'referenceLinksRendered'
+            })
+          );
+
           // We need to define the uiSortable property in the pre-link
           // stage. The ui-sortable directive will obtain a reference to
           // the object that we can later modify.
