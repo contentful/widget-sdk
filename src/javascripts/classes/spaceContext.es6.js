@@ -7,6 +7,7 @@ import createApiKeyRepo from 'data/CMA/ApiKeyRepo.es6';
 import shouldUseEnvEndpoint from 'data/shouldUseEnvEndpoint.es6';
 import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
 import createEditorInterfaceRepo from 'widgets/EditorInterfaceRepo.es6';
+import APIClient from 'data/APIClient.es6';
 
 export default function register() {
   /**
@@ -16,10 +17,6 @@ export default function register() {
    * @description
    * This service holds all context related to a space, including
    * contentTypes, users, widgets, and helper methods.
-   *
-   * @property {Client.Space} space
-   * @property {Data.APIClient} cma
-   * @property {ACL.SpaceMembershipRepository} memberships
    */
   registerFactory('spaceContext', [
     '$q',
@@ -29,7 +26,6 @@ export default function register() {
     'logger',
     'TheLocaleStore',
     'data/userCache',
-    'data/ApiClient',
     'data/previewEnvironmentsCache',
     'Config.es6',
     'Authentication.es6',
@@ -54,7 +50,6 @@ export default function register() {
       logger,
       TheLocaleStore,
       createUserCache,
-      ApiClient,
       previewEnvironmentsCache,
       Config,
       Auth,
@@ -130,7 +125,7 @@ export default function register() {
 
           resetMembers(self);
           self.space = space;
-          self.cma = new ApiClient(self.endpoint);
+          self.cma = new APIClient(self.endpoint);
           self.users = createUserCache(self.endpoint);
           self.apiKeyRepo = createApiKeyRepo(self.endpoint);
           self.webhookRepo = createWebhookRepo(space);

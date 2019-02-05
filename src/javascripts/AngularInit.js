@@ -43,7 +43,6 @@ angular
       ngRequire('services/logger.es6').default();
       ngRequire('services/localeStore.es6').default();
       ngRequire('data/userCache.es6').default();
-      ngRequire('data/apiClient.es6').default();
       ngRequire('data/previewEnvironmentsCache.es6').default();
       ngRequire('classes/spaceContext.es6').default();
       ngRequire('access_control/UserListHandler.es6').default();
