@@ -149,7 +149,7 @@ export default class ConceptVideoWidget extends React.Component {
     this.markUserAsHasCompletedFeedback();
     this.typeformCloseTimeout = setTimeout(() => {
       this.closeTypeform();
-    }, 1200);
+    }, 2200);
   };
 
   closeTypeform = () => {
