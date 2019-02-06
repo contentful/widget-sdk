@@ -1,21 +1,10 @@
 import { map, flatMap, flow, chunk, groupBy, keyBy, mapValues, reduce } from 'lodash/fp';
-import { getOrgFeatures } from 'data/CMA/FeatureCatalog.es6';
+import { getOrgFeature } from 'data/CMA/FeatureCatalog.es6';
 import getOrganizationsList from 'redux/selectors/getOrganizationsList.es6';
 
 const catalogFeatures = {
   TEAMS: 'teams'
 };
-
-const requestAllThrottled = flow(
-  // makes chunks of 3 requests
-  chunk(3),
-  // request chunks in sequence but each chunks requests in parallel
-  reduce(
-    (previousP, chunkP) =>
-      previousP.then(previous => Promise.all(chunkP).then(chunk => previous.concat(chunk))),
-    Promise.resolve([])
-  )
-);
 
 export default ({ getState, dispatch }) => next => async action => {
   // check for orgs change, meaning the available orgs of the user changed (not the selected one)
@@ -35,8 +24,15 @@ export default ({ getState, dispatch }) => next => async action => {
     const allFeatures = await flow(
       map('sys.id'),
       // get request promises for all features for each org as flat list
-      flatMap(orgId => getOrgFeatures(orgId, Object.values(catalogFeatures))),
-      requestAllThrottled
+      flatMap(orgId => flatMap(feature => getOrgFeature(orgId, feature), catalogFeatures)),
+      // makes chunks of 3 requests
+      chunk(3),
+      // request chunks in sequence but each chunks requests in parallel
+      reduce(
+        (previousP, chunkP) =>
+          previousP.then(previous => Promise.all(chunkP).then(chunk => previous.concat(chunk))),
+        Promise.resolve([])
+      )
     )(newOrgs);
 
     // make a nested map by org and feature id
