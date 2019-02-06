@@ -1,0 +1,61 @@
+.teams-illustration {
+  width: 370px;
+
+  svg { overflow: visible }
+}
+
+.animate {
+  animation: fadeInAndOut 2s linear infinite;
+  animation-direction: normal;
+  animation-duration: 5s;
+}
+
+@keyframes fadeInAndOut {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  25% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-20px);
+    opacity: 1
+  }
+  100% {
+    transform: translateY(-40px);
+    opacity: 0
+  }
+}
+
+.teams-illustration-element > g {
+  opacity: 0;
+  @extend .animate;
+  mix-blend-mode: luminosity;
+}
+
+.teams-illustration-element--one > g {
+  animation-delay: 1s;
+}
+
+.teams-illustration-element--two > g {
+  animation-delay: 4s;
+}
+
+.teams-illustration-element--three > g {
+  animation-delay: 2s;
+}
+
+.teams-illustration-element--four > g {
+  animation-delay: 2s;
+}
+
+.teams-illustration-element--five > g {
+  animation-delay: 0;
+}
+
