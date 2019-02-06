@@ -5,11 +5,8 @@ const path = require('path');
 module.exports = (resolve, rootDir, srcRoots, coverageDirectory) => {
   const toRelRootDir = f => '<rootDir>/' + path.relative(rootDir || '', f);
   const config = {
-    setupTestFrameworkScriptFile: resolve('tools/testing/setup-tests.js'),
+    setupFilesAfterEnv: [resolve('tools/testing/setup-tests.js')],
     testMatch: ['**/?(*.)(spec|test).{js,jsx}'],
-    // verbose output swallows some console.log() output in some async tests.
-    // See: https://github.com/facebook/jest/issues/2441
-    verbose: false,
     // where to search for files/tests
     roots: srcRoots.map(toRelRootDir),
     collectCoverageFrom: ['**/*.js'],

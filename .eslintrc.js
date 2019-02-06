@@ -6,7 +6,7 @@ module.exports = {
   extends: ['eslint:recommended', 'plugin:react/recommended', 'prettier', 'prettier/react'],
   settings: {
     react: {
-      version: '16.6.3'
+      version: '16.8.0'
     },
     'import/resolver': {
       node: {
