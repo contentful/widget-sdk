@@ -4,12 +4,6 @@
   svg { overflow: visible }
 }
 
-.animate {
-  animation: fadeInAndOut 2s linear infinite;
-  animation-direction: normal;
-  animation-duration: 5s;
-}
-
 @keyframes fadeInAndOut {
   0% {
     transform: translateY(40px);
@@ -35,8 +29,10 @@
 
 .teams-illustration-element > g {
   opacity: 0;
-  @extend .animate;
   mix-blend-mode: luminosity;
+  animation: fadeInAndOut 2s linear infinite;
+  animation-direction: normal;
+  animation-duration: 5s;
 }
 
 .teams-illustration-element--one > g {

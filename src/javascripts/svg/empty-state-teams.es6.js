@@ -1,5 +1,7 @@
 import React from 'react';
 
+// This SVG is animated with CSS. Class names are used
+
 export default function EmptyStateTeams(props) {
   return (
     <div className="teams-illustration">
