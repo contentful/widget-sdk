@@ -119,8 +119,13 @@ import { TypeformEmbed } from 'app/common/Typeform/TypeformEmbed.es6';
 
 export class TriggerTypeformPopup extends React.Component {
   typeform
+  formCloseTimeout
+
   openForm = () => this.typeform.open()
-  onFormSubmit = () => setTimeout(() => this.typeform.close(), 2000)
+  onFormSubmit = () => {
+    this.formCloseTimeout = setTimeout(() => this.typeform.close(), 2000)
+  }
+  componentWillUnmount = () => clearTimeout(this.formCloseTimeout)
 
   render() {
     return (
