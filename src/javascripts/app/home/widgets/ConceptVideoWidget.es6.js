@@ -3,7 +3,6 @@ import ReactPlayer from 'react-player';
 import { Card, Subheading } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry.es6';
 import { track } from 'analytics/Analytics.es6';
-import $ from 'jquery';
 import { TypeformModal } from 'app/common/Typeform/TypeformModal.es6';
 import { fetchUserState, updateUserState } from 'utils/StatePersistenceApi.es6';
 
@@ -13,6 +12,8 @@ const $state = getModule('$state');
 const feedbackKey = 'feedback';
 
 export default class ConceptVideoWidget extends React.Component {
+  playVideo;
+
   state = {
     feedbackModalIsOpen: false,
     userHasProvidedFeedback: false
@@ -102,10 +103,11 @@ export default class ConceptVideoWidget extends React.Component {
     window._wq.push({
       id: '_all',
       onReady: video => {
-        $('.concept-video-widget__play-button').bind('click', () => {
+        this.playVideo = () => {
           video.popover.show();
           video.play();
-        });
+        };
+
         video.bind('end', () => {
           video.popover.hide();
         });
@@ -116,6 +118,7 @@ export default class ConceptVideoWidget extends React.Component {
           }
           return video.unbind;
         });
+
         // figure out how to bind this only if the user hasn't already submitted feedback
         video.bind('crosstime', 76, () => {
           if (!this.state.userHasProvidedFeedback) {
@@ -131,10 +134,6 @@ export default class ConceptVideoWidget extends React.Component {
         });
       }
     });
-  };
-
-  componentWillUnmount = () => {
-    $('.concept-video-widget__play-button').unbind();
   };
 
   openTypeform = () => {
@@ -197,7 +196,8 @@ export default class ConceptVideoWidget extends React.Component {
             <button
               className="concept-video-widget__play-button"
               aria-label="Play"
-              data-test-id="play-concepts-video-btn">
+              data-test-id="play-concepts-video-btn"
+              onClick={this.playVideo}>
               <div className="concept-video-widget__play-button-icon" />
             </button>
           </div>
