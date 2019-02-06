@@ -1,6 +1,15 @@
-import { createImmerReducer } from './utils.es6';
-import { SidebarType, WidgetTypes } from '../constants.es6';
-import { EntryConfiguration } from '../defaults.es6';
+import produce from 'immer';
+import { SidebarType, WidgetTypes } from './constants.es6';
+import { EntryConfiguration } from './defaults.es6';
+
+function createImmerReducer(handlers) {
+  return (state, action) =>
+    produce(state, draft => {
+      if (handlers.hasOwnProperty(action.type)) {
+        return handlers[action.type](draft, action);
+      }
+    });
+}
 
 /* Actions */
 const SELECT_SIDEBAR_TYPE = 'sidebar/SELECT_SIDEBAR_TYPE';
@@ -50,7 +59,7 @@ export const initialState = {
   ]
 };
 
-export default createImmerReducer(initialState, {
+export const reducer = createImmerReducer({
   [SELECT_SIDEBAR_TYPE]: (state, action) => {
     state.sidebarType = action.payload.sidebarType;
   },
