@@ -6,35 +6,49 @@
   .sidebar-configuration__main-column
     width: 400px
     border: 1px solid $colors.element-mid
-    background-color: $colors.element-lightest
+    background-color: $colors.white
     min-height: 500px
-    padding: 1rem 2rem
+    padding: $rhythm(1) $rhythm(1.5) 0 $rhythm(1.5)
+    box-shadow: 2px 0 3px 0 rgba(0,0,0,0.05);
 
   .sidebar-configuration__additional-column
-    width: 350px
+    width: 400px
     border: 1px solid $colors.element-mid
     border-left: none
     min-height: 500px
-    padding: 1rem 2rem
+    padding: $rhythm(1) $rhythm(1.5) 0 $rhythm(1.5)
+    box-shadow: 2px 0 3px 0 rgba(0,0,0,0.05);
 
   .sidebar-configuration__item
     border: 1px solid $colors.element-mid
-    background-color: $colors.white
-    margin-bottom: 1rem
+    background-color: $colors.element-lightest
+    margin-bottom: $rhythm(1)
     padding: $rhythm(0.5) $rhythm(1) $rhythm(0.5) $rhythm(1.5)
     position: relative
 
+
+  .draggable-item
+    margin-bottom: $rhythm(1)
+
+    svg
+      fill: $colors.text-light
+
+
+  .draggable-item .sidebar-configuration__item
+    margin: 0
+    user-select: none
+
   .sidebar-configuration__item-drag
-    fill: $colors.text-light
     position: absolute
     left: $rhythm(0.3)
     top: 12px
 
   .sidebar-configuration__item-close
-    fill: $colors.text-light
     position: absolute
     right: $rhythm(1)
     top: 10px
+    cursor: pointer
+
 
   .sidebar-configuration__item-title
     flex-grow: 1
@@ -46,3 +60,33 @@
     border-bottom: 1px solid $colors.element-dark
     letter-spacing: 1px
     margin-bottom: $rhythm(1)
+
+
+  /* Available Items */
+
+  .sidebar-configuraiton__available-items-section
+    .sidebar-configuration__available-item:first-child
+      border-top: 1px solid $colors.element-mid
+
+  .sidebar-configuration__available-item
+    background-color: $colors.white
+    border: 1px solid $colors.element-mid
+    height: 60px
+    border-top: none
+    display: flex
+    padding: $rhythm(0.5) $rhythm(1)
+    svg
+      fill: $colors.text-light
+
+  .sidebar-configuration__available-item-info
+    flex-grow: 1
+    display: flex
+    flex-direction: column
+    justify-content: center
+
+  .sidebar-configuration__available-item-title
+    font-weight: bold
+
+  .sidebar-configuration__available-item-actions
+    display: flex
+    align-items: center

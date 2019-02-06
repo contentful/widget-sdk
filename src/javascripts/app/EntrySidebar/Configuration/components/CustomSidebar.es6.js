@@ -16,6 +16,14 @@ export default class CustomSidebar extends Component {
     items: EntryConfiguration
   };
 
+  onRemoveClick = id => {
+    this.setState(state => {
+      return {
+        items: state.items.filter(item => item.id !== id)
+      };
+    });
+  };
+
   onDragEnd = result => {
     // dropped outside the list
     if (!result.destination) {
@@ -38,6 +46,7 @@ export default class CustomSidebar extends Component {
                 <Draggable key={id} draggableId={id} index={index}>
                   {provided => (
                     <div
+                      className="draggable-item"
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}>
@@ -46,6 +55,7 @@ export default class CustomSidebar extends Component {
                         description={description}
                         isDraggable
                         isRemovable
+                        onRemoveClick={() => this.onRemoveClick(id)}
                       />
                     </div>
                   )}
