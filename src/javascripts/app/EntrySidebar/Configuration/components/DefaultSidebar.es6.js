@@ -1,17 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Subheading } from '@contentful/forma-36-react-components';
 import { EntryConfiguration } from '../defaults.es6';
 import SidebarWidgetItem from './SidebarWidgetItem.es6';
 
-export default class DefaultSidebar extends Component {
-  render() {
-    return (
-      <div>
-        <Subheading extraClassNames="f36-margin-bottom--m">Default sidebar</Subheading>
-        {EntryConfiguration.map(({ title, id, description }) => (
-          <SidebarWidgetItem key={id} title={title} description={description} />
-        ))}
-      </div>
-    );
-  }
+export default function DefaultSidebar() {
+  return (
+    <div>
+      <Subheading extraClassNames="f36-margin-bottom--m">Default sidebar</Subheading>
+      {EntryConfiguration.map(({ title, id, description }) => (
+        <SidebarWidgetItem key={id} title={title} description={description} />
+      ))}
+    </div>
+  );
 }
