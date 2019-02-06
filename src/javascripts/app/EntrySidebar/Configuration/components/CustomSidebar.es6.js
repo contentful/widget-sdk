@@ -1,27 +1,14 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Subheading } from '@contentful/forma-36-react-components';
-import { EntryConfiguration } from '../defaults.es6';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import SidebarWidgetItem from './SidebarWidgetItem.es6';
 
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-  return result;
-};
-
 export default class CustomSidebar extends Component {
-  state = {
-    items: EntryConfiguration
-  };
-
-  onRemoveClick = id => {
-    this.setState(state => {
-      return {
-        items: state.items.filter(item => item.id !== id)
-      };
-    });
+  static propTypes = {
+    items: PropTypes.array.isRequired,
+    onRemoveItem: PropTypes.func.isRequired,
+    onChangePosition: PropTypes.func.isRequired
   };
 
   onDragEnd = result => {
@@ -29,10 +16,7 @@ export default class CustomSidebar extends Component {
     if (!result.destination) {
       return;
     }
-
-    const orderedItems = reorder(this.state.items, result.source.index, result.destination.index);
-
-    this.setState({ items: orderedItems });
+    this.props.onChangePosition(result.source.index, result.destination.index);
   };
 
   render() {
@@ -42,8 +26,8 @@ export default class CustomSidebar extends Component {
         <Droppable droppableId="droppable">
           {provided => (
             <div ref={provided.innerRef}>
-              {this.state.items.map(({ title, id, description }, index) => (
-                <Draggable key={id} draggableId={id} index={index}>
+              {this.props.items.map((item, index) => (
+                <Draggable key={item.id} draggableId={item.id} index={index}>
                   {provided => (
                     <div
                       className="draggable-item"
@@ -51,11 +35,11 @@ export default class CustomSidebar extends Component {
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}>
                       <SidebarWidgetItem
-                        title={title}
-                        description={description}
+                        title={item.title}
+                        description={item.description}
                         isDraggable
                         isRemovable
-                        onRemoveClick={() => this.onRemoveClick(id)}
+                        onRemoveClick={() => this.props.onRemoveItem(item)}
                       />
                     </div>
                   )}

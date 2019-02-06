@@ -11,20 +11,35 @@ import CustomSidebar from './components/CustomSidebar.es6';
 import AvailableItems from './components/AvailableItems.es6';
 import { SidebarType } from './constants.es6';
 import { connect } from 'react-redux';
-import { selectSidebarType } from './redux/reducer.es6';
+import {
+  selectSidebarType,
+  removeItemFromSidebar,
+  changeItemPosition,
+  addItemToSidebar
+} from './redux/reducer.es6';
 
 const mapStateToProps = state => ({
-  sidebarType: state.sidebar.sidebarType
+  sidebarType: state.sidebar.sidebarType,
+  items: state.sidebar.items,
+  availableItems: state.sidebar.availableItems
 });
 
 const mapDispatchToProps = {
-  selectSidebarType
+  selectSidebarType,
+  removeItemFromSidebar,
+  changeItemPosition,
+  addItemToSidebar
 };
 
 class SidebarConfiguration extends Component {
   static propTypes = {
+    items: PropTypes.array.isRequired,
+    availableItems: PropTypes.array.isRequired,
     sidebarType: PropTypes.string.isRequired,
-    selectSidebarType: PropTypes.func.isRequired
+    selectSidebarType: PropTypes.func.isRequired,
+    removeItemFromSidebar: PropTypes.func.isRequired,
+    changeItemPosition: PropTypes.func.isRequired,
+    addItemToSidebar: PropTypes.func.isRequired
   };
 
   render() {
@@ -67,10 +82,19 @@ class SidebarConfiguration extends Component {
           {sidebarType === SidebarType.custom && (
             <React.Fragment>
               <div className="sidebar-configuration__main-column">
-                <CustomSidebar />
+                <CustomSidebar
+                  items={this.props.items}
+                  onRemoveItem={item => this.props.removeItemFromSidebar(item.id)}
+                  onChangePosition={(sourceIndex, destinationIndex) =>
+                    this.props.changeItemPosition(sourceIndex, destinationIndex)
+                  }
+                />
               </div>
               <div className="sidebar-configuration__additional-column">
-                <AvailableItems />
+                <AvailableItems
+                  items={this.props.availableItems}
+                  onAddItem={item => this.props.addItemToSidebar(item)}
+                />
               </div>
             </React.Fragment>
           )}

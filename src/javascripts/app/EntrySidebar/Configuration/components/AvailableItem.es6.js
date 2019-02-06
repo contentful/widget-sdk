@@ -13,7 +13,7 @@ export default class AvailableItem extends Component {
   render() {
     const { title, onClick, type } = this.props;
     return (
-      <div className="sidebar-configuration__available-item" onClick={onClick}>
+      <div className="sidebar-configuration__available-item">
         <div className="sidebar-configuration__available-item-info">
           <Paragraph extraClassNames="sidebar-configuration__available-item-title">
             {title}
@@ -24,7 +24,11 @@ export default class AvailableItem extends Component {
           </Paragraph>
         </div>
         <div className="sidebar-configuration__available-item-actions">
-          <IconButton iconProps={{ icon: 'PlusCircle' }} label={`Add ${title} to your sidebar`} />
+          <IconButton
+            onClick={onClick}
+            iconProps={{ icon: 'PlusCircle' }}
+            label={`Add ${title} to your sidebar`}
+          />
         </div>
       </div>
     );
