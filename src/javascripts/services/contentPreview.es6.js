@@ -1,6 +1,7 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
+import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 
 export default function register() {
   /**
@@ -14,7 +15,6 @@ export default function register() {
     '$rootScope',
     'spaceContext',
     'TheLocaleStore',
-    'data/previewEnvironmentsCache',
     'data/Entries',
     'TheStore/index.es6',
     'services/ContentPreviewHelper.es6',
@@ -23,7 +23,6 @@ export default function register() {
       $rootScope,
       spaceContext,
       TheLocaleStore,
-      previewEnvironmentsCache,
       { internalToExternal: internalToExternalFieldIds },
       { getStore },
       { resolveReferences }

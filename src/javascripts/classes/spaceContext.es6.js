@@ -8,6 +8,7 @@ import shouldUseEnvEndpoint from 'data/shouldUseEnvEndpoint.es6';
 import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
 import createEditorInterfaceRepo from 'widgets/EditorInterfaceRepo.es6';
 import APIClient from 'data/APIClient.es6';
+import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 
 export default function register() {
   /**
@@ -26,7 +27,6 @@ export default function register() {
     'logger',
     'TheLocaleStore',
     'data/userCache',
-    'data/previewEnvironmentsCache',
     'Config.es6',
     'Authentication.es6',
     'services/TokenStore.es6',
@@ -50,7 +50,6 @@ export default function register() {
       logger,
       TheLocaleStore,
       createUserCache,
-      previewEnvironmentsCache,
       Config,
       Auth,
       TokenStore,

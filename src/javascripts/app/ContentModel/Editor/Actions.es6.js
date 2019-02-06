@@ -5,6 +5,7 @@ import * as Analytics from 'analytics/Analytics.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import { getModule } from 'NgRegistry.es6';
 import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField.es6';
+import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 
 const $q = getModule('$q');
 const $state = getModule('$state');
@@ -14,7 +15,6 @@ const Command = getModule('command');
 const spaceContext = getModule('spaceContext');
 const closeState = getModule('navigation/closeState');
 const metadataDialog = getModule('contentTypeEditor/metadataDialog');
-const previewEnvironmentsCache = getModule('data/previewEnvironmentsCache');
 
 /**
  * @description
