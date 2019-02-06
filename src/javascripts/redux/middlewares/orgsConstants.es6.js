@@ -48,6 +48,7 @@ export default ({ getState, dispatch }) => next => async action => {
 
     // make a nested map by org and feature id
     const featuresByOrgAndFeatureName = flow(
+      map('items[0]'),
       groupBy('sys.organization.sys.id'),
       // make arrays of features for each org and then key that arrays by their feature id
       mapValues(keyBy('sys.feature_id'))
