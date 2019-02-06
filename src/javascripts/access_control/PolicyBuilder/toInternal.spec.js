@@ -1,14 +1,7 @@
-'use strict';
+import { toInternal } from './toInternal.es6';
+import { PolicyBuilderConfig } from './PolicyBuilderConfig.es6';
 
 describe('Policy Builder, to internal representation', () => {
-  let toInternal, CONFIG;
-
-  beforeEach(function() {
-    module('contentful/test');
-    toInternal = this.$inject('PolicyBuilder/toInternal');
-    CONFIG = this.$inject('PolicyBuilder/CONFIG');
-  });
-
   describe('takes external and returns internal representation', () => {
     it('extracts id and version', () => {
       const internal = toInternal({ sys: { id: 'testid', version: 123 } });
@@ -36,7 +29,7 @@ describe('Policy Builder, to internal representation', () => {
       [i.entries.allowed, i.entries.denied, i.assets.allowed, i.assets.denied].forEach(
         collection => {
           expect(Array.isArray(collection)).toBe(true);
-          expect(collection.length).toBe(0);
+          expect(collection).toHaveLength(0);
         }
       );
     });
@@ -102,7 +95,7 @@ describe('Policy Builder, to internal representation', () => {
       });
 
       const as = internal[collection].allowed;
-      expect(as.length).toBe(1);
+      expect(as).toHaveLength(1);
       expect(as[0].entity).toBe(type.toLowerCase());
       expect(as[0].action).toBe(Array.isArray(action) ? action[0] : action);
     }
@@ -142,7 +135,7 @@ describe('Policy Builder, to internal representation', () => {
         ]
       });
 
-      expect(internal.entries.allowed[0].contentType).toBe(CONFIG.ALL_CTS);
+      expect(internal.entries.allowed[0].contentType).toBe(PolicyBuilderConfig.ALL_CTS);
       expect(internal.entries.allowed[1].contentType).toBe('ctid');
     });
 
@@ -173,8 +166,8 @@ describe('Policy Builder, to internal representation', () => {
         ]
       });
 
-      expect(internal.entries.allowed.length).toBe(1);
-      expect(internal.entries.denied.length).toBe(2);
+      expect(internal.entries.allowed).toHaveLength(1);
+      expect(internal.entries.denied).toHaveLength(2);
       expect(internal.entries.denied[0].action).toBe('create');
     });
 
@@ -201,7 +194,7 @@ describe('Policy Builder, to internal representation', () => {
         ]
       });
 
-      expect(internal.entries.allowed.length).toBe(2);
+      expect(internal.entries.allowed).toHaveLength(2);
       expect(internal.entries.allowed[0].scope).toBe('any');
       expect(internal.entries.allowed[1].scope).toBe('user');
     });
@@ -246,13 +239,13 @@ describe('Policy Builder, to internal representation', () => {
         ]
       });
 
-      expect(internal.entries.allowed.length).toBe(4);
+      expect(internal.entries.allowed).toHaveLength(4);
       expect(internal.entries.allowed[0].isPath).toBe(true);
-      expect(internal.entries.allowed[0].field).toBe(CONFIG.ALL_FIELDS);
+      expect(internal.entries.allowed[0].field).toBe(PolicyBuilderConfig.ALL_FIELDS);
       expect(internal.entries.allowed[0].locale).toBe('en-US');
       expect(internal.entries.allowed[0].isPath).toBe(true);
       expect(internal.entries.allowed[1].field).toBe('test');
-      expect(internal.entries.allowed[1].locale).toBe(CONFIG.ALL_LOCALES);
+      expect(internal.entries.allowed[1].locale).toBe(PolicyBuilderConfig.ALL_LOCALES);
       expect(internal.entries.allowed[2].isPath).toBe(true);
       expect(internal.entries.allowed[3].isPath).toBeUndefined();
     });

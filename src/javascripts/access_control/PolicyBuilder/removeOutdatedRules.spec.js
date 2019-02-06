@@ -1,14 +1,7 @@
-'use strict';
+import { toInternal } from './toInternal.es6';
+import { removeOutdatedRules } from './removeOutdatedRules.es6';
 
 describe('Remove outdated rules', () => {
-  let toInternal, remove;
-
-  beforeEach(function() {
-    module('contentful/test');
-    toInternal = this.$inject('PolicyBuilder/toInternal');
-    remove = this.$inject('PolicyBuilder/removeOutdatedRules');
-  });
-
   function createPolicy(ctId, path, type, effect) {
     type = type || 'Entry';
     effect = effect || 'allow';
@@ -39,8 +32,8 @@ describe('Remove outdated rules', () => {
         policies: [createPolicy('ctid', 'fields.%.%'), createPolicy('ctid2', 'fields.%.%')]
       });
 
-      const result = remove(internal, [createCt('ctid')], []);
-      expect(internal.entries.allowed.length).toBe(1);
+      const result = removeOutdatedRules(internal, [createCt('ctid')], []);
+      expect(internal.entries.allowed).toHaveLength(1);
       expect(result).toBe(true);
     });
 
@@ -57,8 +50,8 @@ describe('Remove outdated rules', () => {
         createCt('ctid2')
       ];
 
-      const result = remove(internal, contentTypes, []);
-      expect(internal.entries.allowed.length).toBe(2);
+      const result = removeOutdatedRules(internal, contentTypes, []);
+      expect(internal.entries.allowed).toHaveLength(2);
       expect(result).toBe(true);
     });
 
@@ -67,8 +60,8 @@ describe('Remove outdated rules', () => {
         policies: [createPolicy('ctid', 'fields.%.en-US'), createPolicy('ctid', 'fields.%.de-DE')]
       });
 
-      const result = remove(internal, [createCt('ctid')], [{ code: 'de-DE' }]);
-      expect(internal.entries.allowed.length).toBe(1);
+      const result = removeOutdatedRules(internal, [createCt('ctid')], [{ code: 'de-DE' }]);
+      expect(internal.entries.allowed).toHaveLength(1);
       expect(result).toBe(true);
     });
 
@@ -76,8 +69,8 @@ describe('Remove outdated rules', () => {
       const internal = toInternal({ policies: [createPolicy('ctid', 'fields.internal.%')] });
       const ct = createCt('ctid', { fields: [{ id: 'internal' }, { apiName: 'xyz' }] });
 
-      const result = remove(internal, [ct], []);
-      expect(internal.entries.allowed.length).toBe(0);
+      const result = removeOutdatedRules(internal, [ct], []);
+      expect(internal.entries.allowed).toHaveLength(0);
       expect(result).toBe(true);
     });
 
@@ -92,11 +85,11 @@ describe('Remove outdated rules', () => {
           ]
         });
 
-        const result = remove(internal, cts, locales);
-        expect(internal.entries.allowed.length).toBe(0);
-        expect(internal.entries.denied.length).toBe(0);
-        expect(internal.assets.allowed.length).toBe(0);
-        expect(internal.assets.denied.length).toBe(0);
+        const result = removeOutdatedRules(internal, cts, locales);
+        expect(internal.entries.allowed).toHaveLength(0);
+        expect(internal.entries.denied).toHaveLength(0);
+        expect(internal.assets.allowed).toHaveLength(0);
+        expect(internal.assets.denied).toHaveLength(0);
         expect(result).toBe(true);
       }
 
@@ -109,7 +102,7 @@ describe('Remove outdated rules', () => {
       const internal = toInternal({ policies: [createPolicy('ctid', 'fields.%.%')] });
       const original = internal.entries.allowed;
 
-      const result = remove(internal, [createCt('ctid')], []);
+      const result = removeOutdatedRules(internal, [createCt('ctid')], []);
       expect(internal.entries.allowed).toBe(original);
       expect(result).toBe(false);
     });

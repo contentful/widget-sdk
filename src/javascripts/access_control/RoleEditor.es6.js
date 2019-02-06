@@ -25,11 +25,11 @@ import TranslatorRoleSelector from './TranslatorRoleSelector.es6';
 import RoleEditorButton from './RoleEditorButton.es6';
 import Icon from '../ui/Components/Icon.es6';
 import getLocales from './getLocales.es6';
+import * as PolicyBuilder from 'access_control/PolicyBuilder/index.es6';
 
 const $state = getModule('$state');
 const spaceContext = getModule('spaceContext');
 const createRoleRemover = getModule('createRoleRemover');
-const PolicyBuilder = getModule('PolicyBuilder');
 const logger = getModule('logger');
 const TheAccountView = getModule('TheAccountView');
 const UserListHandler = getModule('UserListHandler');
@@ -37,8 +37,6 @@ const RoleRepository = getModule('access_control/RoleRepository.es6');
 const createFeatureService = getModule('services/FeatureService.es6');
 const createResourceService = getModule('services/ResourceService.es6');
 const ResourceUtils = getModule('utils/ResourceUtils.es6');
-const CONFIG = getModule('PolicyBuilder/CONFIG');
-const defaultRule = getModule('PolicyBuilder/defaultRule');
 
 const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,
@@ -217,8 +215,8 @@ class RoleEditor extends React.Component {
   };
 
   updateRuleAttribute = entities => (rulesKey, id) => attribute => ({ target: { value } }) => {
-    const DEFAULT_FIELD = CONFIG.ALL_FIELDS;
-    const DEFAULT_LOCALE = CONFIG.ALL_LOCALES;
+    const DEFAULT_FIELD = PolicyBuilder.PolicyBuilderConfig.ALL_FIELDS;
+    const DEFAULT_LOCALE = PolicyBuilder.PolicyBuilderConfig.ALL_LOCALES;
 
     const rules = this.state.internal[entities][rulesKey];
     const index = findIndex({ id }, rules);
@@ -249,7 +247,7 @@ class RoleEditor extends React.Component {
   };
 
   addRule = (entity, entities) => rulesKey => () => {
-    const getDefaultRule = defaultRule.getDefaultRuleGetterFor(entity);
+    const getDefaultRule = PolicyBuilder.DefaultRule.getDefaultRuleGetterFor(entity);
     this.updateInternal(update([entities, rulesKey], (rules = []) => [...rules, getDefaultRule()]));
   };
 

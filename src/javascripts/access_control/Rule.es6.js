@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { getModule } from 'NgRegistry.es6';
 import { get } from 'lodash';
 import getLocales from './getLocales.es6';
+import { PolicyBuilderConfig } from 'access_control/PolicyBuilder/index.es6';
 
 const spaceContext = getModule('spaceContext');
-const CONFIG = getModule('PolicyBuilder/CONFIG');
 
 const contentTypesToOptions = contentTypes =>
   [
     {
-      id: CONFIG.ALL_CTS,
+      id: PolicyBuilderConfig.ALL_CTS,
       name: 'All content types'
     }
   ].concat(contentTypes.map(({ sys: { id }, name }) => ({ id, name })));
@@ -54,7 +54,7 @@ class Rule extends React.Component {
     return {
       contentTypeFields: [
         {
-          id: CONFIG.ALL_FIELDS,
+          id: PolicyBuilderConfig.ALL_FIELDS,
           name: 'All fields'
         }
       ].concat(

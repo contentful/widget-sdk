@@ -1,8 +1,5 @@
 import { get, isString, identity } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
-
-const PolicyBuilder = getModule('PolicyBuilder');
-const CONFIG = getModule('PolicyBuilder/CONFIG');
+import * as PolicyBuilder from 'access_control/PolicyBuilder/index.es6';
 
 const policies = {
   entry: {
@@ -152,7 +149,7 @@ function getDenied(contentTypeId) {
 function getCollection(name, contentTypeId) {
   const ctGroups = policies.entry[name].byContentType;
   const ctSpecificItems = ctGroups[contentTypeId] || [];
-  const generalItems = ctGroups[CONFIG.ALL_CTS] || [];
+  const generalItems = ctGroups[PolicyBuilder.PolicyBuilderConfig.ALL_CTS] || [];
 
   return [...ctSpecificItems, ...generalItems];
 }
@@ -188,10 +185,10 @@ function checkPolicyCollectionForPath(collection, fieldId, localeCode) {
   });
 
   function matchField(field) {
-    return [CONFIG.ALL_FIELDS, fieldId].includes(field);
+    return [PolicyBuilder.PolicyBuilderConfig.ALL_FIELDS, fieldId].includes(field);
   }
 
   function matchLocale(locale) {
-    return [CONFIG.ALL_LOCALES, localeCode].includes(locale);
+    return [PolicyBuilder.PolicyBuilderConfig.ALL_LOCALES, localeCode].includes(locale);
   }
 }

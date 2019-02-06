@@ -1,16 +1,8 @@
-'use strict';
-
 import _ from 'lodash';
+import { toExternal } from './toExternal.es6';
+import { PolicyBuilderConfig } from './PolicyBuilderConfig.es6';
 
 describe('Policy Builder, to external representation', () => {
-  let toExternal, CONFIG;
-
-  beforeEach(function() {
-    module('contentful/test');
-    toExternal = this.$inject('PolicyBuilder/toExternal');
-    CONFIG = this.$inject('PolicyBuilder/CONFIG');
-  });
-
   describe('takes internal and returns external representation', () => {
     it('creates sys object with id and version', () => {
       const external = toExternal({ id: 'testid', version: 123 });
@@ -55,7 +47,7 @@ describe('Policy Builder, to external representation', () => {
         policyString: '{test": false}}'
       });
 
-      expect(external.policies).toBe(null);
+      expect(external.policies).toBeNull();
     });
 
     it('does not parse policyString with uiCompatible flag', () => {
@@ -65,7 +57,7 @@ describe('Policy Builder, to external representation', () => {
       });
 
       expect(Array.isArray(external.policies)).toBe(true);
-      expect(external.policies.length).toBe(0);
+      expect(external.policies).toHaveLength(0);
     });
   });
 
@@ -124,7 +116,7 @@ describe('Policy Builder, to external representation', () => {
 
       const ps = external.policies;
 
-      expect(ps.length).toBe(2);
+      expect(ps).toHaveLength(2);
       expect(ps[0].effect).toBe('allow');
       expect(ps[0].actions).toBe('all');
       expect(ps[0].constraint.and[0].equals[1]).toBe('Entry');
@@ -140,7 +132,7 @@ describe('Policy Builder, to external representation', () => {
         entries: {
           allowed: [
             { action: 'read' },
-            { action: 'read', contentType: CONFIG.ALL_CTS },
+            { action: 'read', contentType: PolicyBuilderConfig.ALL_CTS },
             { action: 'read', contentType: 'ctid' }
           ]
         }
@@ -149,13 +141,13 @@ describe('Policy Builder, to external representation', () => {
       const ps = external.policies;
 
       expect(ps[0].constraint.and[0].equals[1]).toBe('Entry');
-      expect(ps[0].constraint.and.length).toBe(1);
+      expect(ps[0].constraint.and).toHaveLength(1);
 
       expect(ps[1].constraint.and[0].equals[1]).toBe('Entry');
-      expect(ps[1].constraint.and.length).toBe(1);
+      expect(ps[1].constraint.and).toHaveLength(1);
 
       expect(ps[2].constraint.and[0].equals[1]).toBe('Entry');
-      expect(ps[2].constraint.and.length).toBe(2);
+      expect(ps[2].constraint.and).toHaveLength(2);
       expect(ps[2].constraint.and[1].equals[0].doc).toBe('sys.contentType.sys.id');
       expect(ps[2].constraint.and[1].equals[1]).toBe('ctid');
     });
@@ -181,8 +173,8 @@ describe('Policy Builder, to external representation', () => {
         uiCompatible: true,
         entries: {
           allowed: [
-            { action: 'update', field: CONFIG.ALL_FIELDS, locale: 'en-US' },
-            { action: 'update', field: 'test', locale: CONFIG.ALL_LOCALES }
+            { action: 'update', field: PolicyBuilderConfig.ALL_FIELDS, locale: 'en-US' },
+            { action: 'update', field: 'test', locale: PolicyBuilderConfig.ALL_LOCALES }
           ]
         }
       });
