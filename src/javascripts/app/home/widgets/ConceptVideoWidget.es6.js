@@ -13,11 +13,11 @@ const feedbackKey = 'feedback';
 
 export default class ConceptVideoWidget extends React.Component {
   typeformCloseTimeout;
-  playVideo;
 
   state = {
     feedbackModalIsOpen: false,
-    userHasProvidedFeedback: false
+    userHasProvidedFeedback: false,
+    playVideo: () => {}
   };
 
   onStart = () =>
@@ -104,10 +104,12 @@ export default class ConceptVideoWidget extends React.Component {
     window._wq.push({
       id: '_all',
       onReady: video => {
-        this.playVideo = () => {
-          video.popover.show();
-          video.play();
-        };
+        this.setState({
+          playVideo: () => {
+            video.popover.show();
+            video.play();
+          }
+        });
 
         video.bind('end', () => {
           video.popover.hide();
@@ -202,7 +204,7 @@ export default class ConceptVideoWidget extends React.Component {
               className="concept-video-widget__play-button"
               aria-label="Play"
               data-test-id="play-concepts-video-btn"
-              onClick={this.playVideo}>
+              onClick={this.state.playVideo}>
               <div className="concept-video-widget__play-button-icon" />
             </button>
           </div>
