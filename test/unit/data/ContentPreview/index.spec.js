@@ -1,16 +1,7 @@
 describe('data/ContentPreview', () => {
-  beforeEach(function() {
-    this.environment = {
-      env: 'production',
-      apiUrl: () => ''
-    };
-  });
-
   describe('#hasTEAContentPreviews', () => {
     beforeEach(function() {
-      module('contentful/test', $provide => {
-        $provide.value('Config.es6', this.environment);
-      });
+      module('contentful/test');
       this.hasTEAContentPreviews = function(...args) {
         const { hasTEAContentPreviews } = this.$inject('data/ContentPreview');
         return hasTEAContentPreviews(...args);
@@ -33,7 +24,7 @@ describe('data/ContentPreview', () => {
       ).toEqual(false);
     });
     it('should return true on prod if there is atleast one content preview that uses an example app from the TEA suite', function() {
-      // default env is production as set in top level beforeEach
+      this.$inject('Config.es6').env = 'production';
       expect(
         this.hasTEAContentPreviews({
           test: {
@@ -44,9 +35,10 @@ describe('data/ContentPreview', () => {
           }
         })
       ).toEqual(true);
+      this.$inject('Config.es6').env = 'unittest';
     });
     it('should return true on staging if there is atleast one content preview that uses an example app from the TEA suite', function() {
-      this.environment.env = 'staging';
+      this.$inject('Config.es6').env = 'staging';
       expect(
         this.hasTEAContentPreviews({
           test: {
@@ -57,6 +49,7 @@ describe('data/ContentPreview', () => {
           }
         })
       ).toEqual(true);
+      this.$inject('Config.es6').env = 'unittest';
     });
   });
 

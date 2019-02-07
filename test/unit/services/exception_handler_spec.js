@@ -10,7 +10,7 @@ xdescribe('Exception handler service', () => {
 
   beforeEach(() => {
     module('contentful/test', $provide => {
-      $provide.constant('environment', {
+      $provide.constant('Config.es6', {
         env: 'production'
       });
 

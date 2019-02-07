@@ -9,9 +9,7 @@ describe('activationEmailResender', () => {
       logError: sinon.stub()
     };
 
-    module('contentful/test', ($provide, environment) => {
-      environment.settings.authUrl = '//be.contentful.com:443';
-
+    module('contentful/test', $provide => {
       $provide.constant('logger', {
         logError: this.stubs.logError
       });
@@ -38,19 +36,19 @@ describe('activationEmailResender', () => {
   describe('resend(email)', () => {
     beforeEach(function() {
       this.promise = resend('user@example.com');
-      this.respond = $httpBackend.whenPOST('//be.contentful.com:443/confirmation').respond;
+      this.respond = $httpBackend.whenPOST('//be.test.com/confirmation').respond;
     });
 
     it('sends data as expected by Gatekeeper', () => {
       $httpBackend
-        .expectPOST('//be.contentful.com:443/confirmation', 'user%5Bemail%5D=user%40example.com')
+        .expectPOST('//be.test.com/confirmation', 'user%5Bemail%5D=user%40example.com')
         .respond();
       $httpBackend.flush();
     });
 
     it('sends headers as expected by Gatekeeper', () => {
       $httpBackend
-        .expectPOST('//be.contentful.com:443/confirmation', undefined, headers => {
+        .expectPOST('//be.test.com/confirmation', undefined, headers => {
           expect(headers['Content-Type']).toBe('application/x-www-form-urlencoded');
           return true;
         })

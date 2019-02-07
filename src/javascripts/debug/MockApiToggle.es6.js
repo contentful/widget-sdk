@@ -2,9 +2,9 @@ import React from 'react';
 import { getStore } from 'TheStore/index.es6';
 import { omit } from 'lodash';
 import { addNotification } from 'debug/DevNotifications.es6';
+import { mockApiUrl } from 'Config.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const { settings } = getModule('environment');
 const $window = getModule('$window');
 const location = getModule('$location');
 
@@ -22,7 +22,7 @@ export function init() {
   if (urlParams['use_mock_api']) {
     // Only set flag if current config has mock api url
     // (i.e. preview & dev-on-preview)
-    if (settings.mockApiUrl) {
+    if (mockApiUrl) {
       store.set(urlParams['use_mock_api'] === 'true');
     }
     // Update url without reloading
@@ -37,7 +37,7 @@ export function init() {
           clear
         </button>
       </h5>,
-      <a href={settings.mockApiUrl}>{settings.mockApiUrl}</a>
+      <a href={mockApiUrl}>{mockApiUrl}</a>
     );
   }
 }

@@ -1,7 +1,5 @@
 import _ from 'lodash';
-import { getModule } from 'NgRegistry.es6';
-
-const environment = getModule('environment');
+import * as Config from 'Config.es6';
 
 const MAX_FILES = 20;
 
@@ -33,7 +31,7 @@ function init() {
       ['filestack-js'],
       require => {
         const filestack = require('filestack-js');
-        const { apiKey, policy, signature } = environment.settings.filestack;
+        const { apiKey, policy, signature } = Config.services.filestack;
         resolve(filestack.init(apiKey, { security: { policy, signature } }));
       },
       'filestack'

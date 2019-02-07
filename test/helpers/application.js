@@ -22,25 +22,31 @@ angular
 
   .config([
     '$provide',
-    'environment',
     $provide => {
       // We cannot provide the environment as a constant directly because
       // changes to it would leak between tests.
-      $provide.constant('environment', {
-        settings: {
-          launchDarkly: { envId: 'launch-darkly-test-id' },
+      $provide.constant('Config.es6', {
+        authUrl: x => `//be.test.com${ensureLeadingSlash(x)}`,
+        apiUrl: x => `//api.test.com${ensureLeadingSlash(x)}`,
+        websiteUrl: x => `//www.test.com${ensureLeadingSlash(x)}`,
+        accountUrl: x => `//be.test.com/account${ensureLeadingSlash(x)}`,
+        domain: 'test.com',
+        env: 'unittest',
+        launchDarkly: { envId: 'launch-darkly-test-id' },
+        snowplow: {},
+        services: {
           filestack: {},
           google: {},
-          contentful: {},
-          snowplow: {},
-          authUrl: '//be.test.com',
-          apiUrl: '//api.test.com',
-          otUrl: '//ot.test.com',
-          assetUrl: '//static.test.com',
-          marketingUrl: '//www.test.com',
-          main_domain: 'test.com'
-        },
-        env: 'unittest'
+          contentful: {}
+        }
       });
+
+      function ensureLeadingSlash(x = '') {
+        if (x.charAt(0) === '/') {
+          return x;
+        } else {
+          return '/' + x;
+        }
+      }
     }
   ]);

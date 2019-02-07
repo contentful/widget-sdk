@@ -9,9 +9,6 @@ describe('Client', () => {
       default: sinon.stub().returns(this.baseRequest)
     });
 
-    const env = this.$inject('environment');
-    env.settings.apiUrl = '//api.contentful.com';
-
     this.client = this.$inject('client');
     this.call = function(i) {
       return this.baseRequest.args[i][0];
@@ -23,8 +20,8 @@ describe('Client', () => {
       this.client.request({ path: '/some/path' });
       this.client.request({ path: 'path/2' });
       sinon.assert.calledTwice(this.baseRequest);
-      expect(this.call(0).url).toBe('//api.contentful.com/some/path');
-      expect(this.call(1).url).toBe('//api.contentful.com/path/2');
+      expect(this.call(0).url).toBe('//api.test.com/some/path');
+      expect(this.call(1).url).toBe('//api.test.com/path/2');
     });
 
     it('passes through the method', function() {
@@ -59,7 +56,7 @@ describe('Client', () => {
       return this.client.request({ path: 'error' }).then(_.noop, err => {
         expect(err.statusCode).toBe(777);
         expect(err.body).toBe('OMG ERROR');
-        expect(err.request.url).toBe('//api.contentful.com/error');
+        expect(err.request.url).toBe('//api.test.com/error');
       });
     });
   });

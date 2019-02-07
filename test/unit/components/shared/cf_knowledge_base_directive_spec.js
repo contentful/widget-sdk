@@ -8,9 +8,7 @@ describe('cfKnowledgeBase directive', () => {
   }
 
   beforeEach(function() {
-    module('contentful/test', environment => {
-      environment.settings.marketingUrl = 'http://test.com';
-    });
+    module('contentful/test');
     scope = this.$inject('$rootScope');
   });
 
@@ -26,7 +24,7 @@ describe('cfKnowledgeBase directive', () => {
 
     it('has href', () => {
       const href = getLink().attr('href');
-      expect(href).toBe('http://test.com/developers/docs/concepts/data-model/');
+      expect(href).toBe('//www.test.com/developers/docs/concepts/data-model/');
       expect(getLink().attr('target')).toBe('_blank');
     });
   });

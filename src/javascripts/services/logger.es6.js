@@ -1,6 +1,7 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import stringifySafe from 'json-stringify-safe';
+import { env } from 'Config.es6';
 
 export default function register() {
   /**
@@ -57,8 +58,7 @@ export default function register() {
     '$window',
     '$injector',
     'bugsnag',
-    'environment',
-    ($window, $injector, bugsnag, environment) => {
+    ($window, $injector, bugsnag) => {
       function getParams() {
         const stateName = $injector.get('$state').current.name;
         const stateParams = $injector.get('$stateParams');
@@ -169,7 +169,7 @@ export default function register() {
          * any 3rd party services running
          */
         disable: function() {
-          if (environment.env === 'production' || environment.env === 'unittest') {
+          if (env === 'production' || env === 'unittest') {
             bugsnag.disable();
             _.forEach(
               this,
@@ -193,7 +193,7 @@ export default function register() {
          */
         logException: function(exception, metaData) {
           const augmentedMetadata = augmentMetadata(metaData);
-          if (environment.env !== 'production' && environment.env !== 'unittest') {
+          if (env !== 'production' && env !== 'unittest') {
             /* eslint no-console: off */
             console.error(exception, augmentedMetadata);
           }
@@ -340,7 +340,7 @@ export default function register() {
           metadata = metadata || {};
           metadata.groupingHash = metadata.groupingHash || message;
           const augmentedMetadata = augmentMetadata(metadata);
-          if (environment.env !== 'production' && environment.env !== 'unittest') {
+          if (env !== 'production' && env !== 'unittest') {
             logToConsole(type, severity, message, augmentedMetadata);
           }
           bugsnag.notify(type, message, augmentedMetadata, severity);
