@@ -225,14 +225,16 @@ function tabPanel() {
       h(
         'div',
         {
-          ngIf: 'stateIs("^.sidebar_configuration")'
+          // we're hiding this div, so react component can keep local state
+          // while we're navigation beetween tabs
+          ngHide: '!stateIs("^.sidebar_configuration")'
         },
         [
           h('.workbench-main__middle-content', [
             h('react-component', {
               name: 'app/EntrySidebar/Configuration/SidebarConfiguration.es6',
               props:
-                '{ sidebar: draftSidebarConfiguration || editorInterface.sidebar, onUpdateConfiguration: updateSidebarConfiguration }'
+                '{ sidebar: editorInterface.sidebar, onUpdateConfiguration: updateSidebarConfiguration }'
             })
           ])
         ]

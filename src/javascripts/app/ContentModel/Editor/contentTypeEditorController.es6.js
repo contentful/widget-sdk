@@ -302,10 +302,7 @@ export default function register() {
         }
       );
 
-      $scope.draftSidebarConfiguration = null;
       $scope.updateSidebarConfiguration = draft => {
-        $scope.draftSidebarConfiguration = draft;
-        forceSetDirtyState(true);
         // eslint-disable-next-line no-console
         console.log(draft);
       };
