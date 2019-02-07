@@ -1,5 +1,6 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
+import * as Telemetry from 'Telemetry.es6';
 
 export default function register() {
   /**
@@ -55,6 +56,8 @@ export default function register() {
         loadScopeData().then(openPaywallDialog);
 
         function openPaywallDialog(scopeData) {
+          Telemetry.count('paywall');
+
           modalDialog
             .open({
               title: 'Paywall',
