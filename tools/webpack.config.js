@@ -80,7 +80,6 @@ module.exports = () => {
         './node_modules/jquery-textrange/jquery-textrange.js',
         './node_modules/angular/angular.js',
         './node_modules/angular-animate/angular-animate.js',
-        './node_modules/angular-load/angular-load.js',
         './node_modules/angular-sanitize/angular-sanitize.js',
         './node_modules/angular-ui-sortable/dist/sortable.js',
         './node_modules/angular-ui-router/release/angular-ui-router.js',
