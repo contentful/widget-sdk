@@ -1,6 +1,4 @@
 import produce from 'immer';
-import { SidebarType, WidgetNamespace } from './constants.es6';
-import { EntryConfiguration } from './defaults.es6';
 
 function createImmerReducer(handlers) {
   return (state, action) =>
@@ -47,25 +45,6 @@ export const changeItemPosition = (sourceIndex, destIndex) => ({
     destIndex
   }
 });
-
-/* Reducer */
-
-export const initialState = {
-  sidebarType: SidebarType.default,
-  items: EntryConfiguration,
-  availableItems: [
-    {
-      widgetId: 'custom-extension',
-      title: 'Your custom extension',
-      widgetNamespace: WidgetNamespace.extension
-    },
-    {
-      widgetId: 'netlify-extension',
-      title: 'Netlify Extension',
-      widgetNamespace: WidgetNamespace.extension
-    }
-  ]
-};
 
 export const reducer = createImmerReducer({
   [SELECT_SIDEBAR_TYPE]: (state, action) => {

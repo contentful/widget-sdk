@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Subheading, SectionHeading } from '@contentful/forma-36-react-components';
 import AvailableItem from './AvailableItem.es6';
-import { WidgetNamespace } from '../constants.es6';
+import { NAMESPACE_EXTENSION, NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNamespaces.es6';
 
 export default function AvailableItems(props) {
-  const builtin = props.items.filter(item => item.widgetNamespace === WidgetNamespace.builtin);
-  const extensions = props.items.filter(item => item.widgetNamespace === WidgetNamespace.extension);
+  const builtin = props.items.filter(item => item.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN);
+  const extensions = props.items.filter(item => item.widgetNamespace === NAMESPACE_EXTENSION);
   return (
     <div>
       <Subheading extraClassNames="f36-margin-bottom--m">Available items</Subheading>

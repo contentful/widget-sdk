@@ -50,15 +50,15 @@ export default class EntrySidebar extends Component {
   };
 
   renderWidgets = (widgets = []) => {
-    return widgets.map(({ id }) => {
-      if (id === SidebarWidgetTypes.VERSIONS && !this.props.isMasterEnvironment) {
+    return widgets.map(({ widgetId }) => {
+      if (widgetId === SidebarWidgetTypes.VERSIONS && !this.props.isMasterEnvironment) {
         return null;
       }
-      if (!ComponentsMap[id]) {
+      if (!ComponentsMap[widgetId]) {
         return null;
       }
-      const Component = ComponentsMap[id];
-      return <Component key={id} emitter={this.props.emitter} />;
+      const Component = ComponentsMap[widgetId];
+      return <Component key={widgetId} emitter={this.props.emitter} />;
     });
   };
 
