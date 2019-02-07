@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TypeformModal should render a Modal with TypeformEmbed inside 1`] = `
+<Modal
+  allowHeightOverflow={true}
+  isShown={true}
+  onAfterOpen={[Function]}
+  onClose={[Function]}
+  position="center"
+  shouldCloseOnEscapePress={true}
+  shouldCloseOnOverlayClick={true}
+  size="700px"
+  testId="my-typeform-modal"
+  title="My typeform modal"
+  topOffset="50px"
+>
+  <TypeformEmbed
+    className="cf-typeform-modal"
+    hideFooter={true}
+    hideHeaders={true}
+    onSubmit={[Function]}
+    popupAutoCloseDuration={5000}
+    popupAutoOpen={false}
+    popupMode="popup"
+    renderAs="widget"
+    url="https://contentful.typeform.com/potato"
+    widgetOpacity={0}
+    widgetStartButtonText="Start"
+  />
+</Modal>
+`;

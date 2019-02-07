@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TypeformEmbed render as popup should render the typeform in popup mode 1`] = `
+<TypeformEmbed
+  className=""
+  hideFooter={false}
+  hideHeaders={false}
+  onSubmit={[Function]}
+  popupAutoCloseDuration={123123}
+  popupAutoOpen={true}
+  popupMode="drawer_left"
+  renderAs="popup"
+  url="https://contentful.typeform.com/potato"
+  widgetOpacity={100}
+  widgetStartButtonText="Start"
+>
+  <div
+    className=""
+  />
+</TypeformEmbed>
+`;
+
+exports[`TypeformEmbed render as widget should render the typeform as a widget inside the TypeformEmbed container 1`] = `
+<TypeformEmbed
+  className=""
+  hideFooter={false}
+  hideHeaders={false}
+  onSubmit={[Function]}
+  popupAutoCloseDuration={5000}
+  popupAutoOpen={false}
+  popupMode="popup"
+  renderAs="widget"
+  url="https://contentful.typeform.com/potato"
+  widgetOpacity={60}
+  widgetStartButtonText="Carpe Diem and such"
+>
+  <div
+    className=""
+  />
+</TypeformEmbed>
+`;
