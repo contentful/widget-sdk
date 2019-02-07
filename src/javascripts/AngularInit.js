@@ -62,7 +62,6 @@ angular
       ngRequire('app/ContentModel/Editor/addFieldDialogController.es6').default();
       ngRequire('app/ContentModel/Editor/apiNameController.es6').default();
       ngRequire('app/ContentModel/Editor/cfApiNameShadowDirective.es6').default();
-      ngRequire('app/ContentModel/Editor/cfContentTypePreview.es6').default();
       ngRequire('services/validationViews.es6').default();
       ngRequire('components/field_dialog/validationDecorator.es6').default();
       ngRequire('components/field_dialog/fieldDialog.es6').default();

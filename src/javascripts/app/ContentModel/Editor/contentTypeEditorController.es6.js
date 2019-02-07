@@ -8,6 +8,7 @@ import {
   openOmitDialog,
   openSaveDialog
 } from './FieldsTab/FieldTabDialogs.es6';
+import getContentTypePreview from './PreviewTab/getContentTypePreview.es6';
 
 export default function register() {
   /**
@@ -349,6 +350,76 @@ export default function register() {
           $scope.editorInterface.controls,
           $scope.widgets
         );
+      }
+
+      /**
+       * ContentType Preview
+       */
+
+      $scope.contentPreviewProps = {
+        isLoading: false,
+        isNew: false,
+        isDirty: $scope.context.dirty,
+        preview: null
+      };
+
+      function updateContentPreviewProps(update) {
+        $scope.contentPreviewProps = {
+          ...$scope.contentPreviewProps,
+          ...update
+        };
+        $scope.$applyAsync();
+      }
+
+      $scope.$watch('context.dirty', isDirty => {
+        updateContentPreviewProps({
+          isDirty
+        });
+      });
+
+      $scope.$watch(
+        'contentType.data',
+        data => {
+          const publishedVersion = _.get(data, 'sys.publishedVersion');
+
+          const isNew = !publishedVersion;
+
+          updateContentPreviewProps({
+            isNew
+          });
+
+          loadPreview(isNew).then(preview => {
+            updateContentPreviewProps({
+              preview
+            });
+          });
+        },
+        true
+      );
+
+      function loadPreview(isNew) {
+        if (isNew) {
+          return loadLocalPreview();
+        } else {
+          return loadServerPreview();
+        }
+      }
+
+      function loadServerPreview() {
+        updateContentPreviewProps({
+          isLoading: true
+        });
+
+        return getContentTypePreview($scope.contentType).then(preview => {
+          updateContentPreviewProps({
+            isLoading: false
+          });
+          return preview;
+        });
+      }
+
+      function loadLocalPreview() {
+        return getContentTypePreview.fromData($scope.contentType);
       }
     }
   ]);

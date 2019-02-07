@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Spinner, Note } from '@contentful/forma-36-react-components';
 
-function ContentTypePreview({ preview, isNew, isLoading, isDirty }) {
+function ContentTypePreview(props) {
+  const { preview, isNew, isLoading, isDirty } = props;
   return (
     <div className="ct-editor-json">
       {isNew && (

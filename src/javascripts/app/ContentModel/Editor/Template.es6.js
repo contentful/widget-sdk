@@ -13,11 +13,6 @@ import { h, icons } from 'utils/legacy-html-hyperscript/index.es6';
  *     'Duplicate'
  *   - tabSelect() Select between 'Fields' and 'JSON Preview' tab
  *   - tabPanel() Slot for fields and JSON preview
- *     - cfContentTypePreview directive
- *     - fields()
- *       - uses fieldActionsContextMenu()
- *     - noFieldsAdvice()
- *   - sidebar()
  */
 
 // TODO It should be possible to inline a lot of the styles since they
@@ -198,13 +193,6 @@ function tabPanel() {
       h(
         'div',
         {
-          ngIf: 'stateIs("^.preview")'
-        },
-        [h('cf-content-type-preview.u-bce')]
-      ),
-      h(
-        'div',
-        {
           ngIf: 'stateIs("^.fields")'
         },
         [
@@ -217,6 +205,20 @@ function tabPanel() {
           ]),
           h('div', { ngIf: '!hasFields' }, [
             h('react-component', { name: 'app/ContentModel/Editor/FieldsTab/NoFieldsAdvice.es6' })
+          ])
+        ]
+      ),
+      h(
+        'div',
+        {
+          ngIf: 'stateIs("^.preview")'
+        },
+        [
+          h('div.u-bce', [
+            h('react-component', {
+              name: 'app/ContentModel/Editor/PreviewTab/ContentTypePreview.es6',
+              props: 'contentPreviewProps'
+            })
           ])
         ]
       ),
