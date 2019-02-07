@@ -1,5 +1,3 @@
-/* global setImmediate */
-
 import _ from 'lodash';
 
 const sel = id => `[data-test-id="${id}"]`;

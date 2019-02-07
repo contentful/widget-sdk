@@ -1,3 +1,5 @@
+/* eslint-disable  react-hooks/rules-of-hooks */
+
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';

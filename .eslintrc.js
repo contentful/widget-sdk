@@ -21,6 +21,7 @@ module.exports = {
       'global/window'
     ]
   },
+  plugins: ['react-hooks'],
   env: {
     browser: true,
     node: true
@@ -31,6 +32,7 @@ module.exports = {
   },
   parser: 'babel-eslint',
   rules: {
+    'react-hooks/rules-of-hooks': 'error',
     'react/display-name': 'off',
     'react/prop-types': ['error', { ignore: ['children'] }],
     'no-template-curly-in-string': 'off',
