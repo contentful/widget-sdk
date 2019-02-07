@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Subheading, SectionHeading } from '@contentful/forma-36-react-components';
 import AvailableItem from './AvailableItem.es6';
-import { WidgetTypes } from '../constants.es6';
+import { WidgetNamespace } from '../constants.es6';
 
 export default function AvailableItems(props) {
-  const builtin = props.items.filter(item => item.type === WidgetTypes.builtin);
-  const extensions = props.items.filter(item => item.type === WidgetTypes.extension);
+  const builtin = props.items.filter(item => item.widgetNamespace === WidgetNamespace.builtin);
+  const extensions = props.items.filter(item => item.widgetNamespace === WidgetNamespace.extension);
   return (
     <div>
       <Subheading extraClassNames="f36-margin-bottom--m">Available items</Subheading>
@@ -16,9 +16,9 @@ export default function AvailableItems(props) {
           <div className="sidebar-configuraiton__available-items-section f36-margin-bottom--l">
             {builtin.map(item => (
               <AvailableItem
-                key={item.id}
+                key={`${item.widgetId}-${item.widgetNamespace}`}
                 title={item.title}
-                type={WidgetTypes.builtin}
+                widgetNamespace={item.widgetNamespace}
                 onClick={() => {
                   props.onAddItem(item);
                 }}
@@ -33,9 +33,9 @@ export default function AvailableItems(props) {
           <div className="sidebar-configuraiton__available-items-section f36-margin-bottom--l">
             {extensions.map(item => (
               <AvailableItem
-                key={item.id}
+                key={`${item.widgetId}-${item.widgetNamespace}`}
                 title={item.title}
-                type={WidgetTypes.extension}
+                widgetNamespace={item.widgetNamespace}
                 onClick={() => {
                   props.onAddItem(item);
                 }}

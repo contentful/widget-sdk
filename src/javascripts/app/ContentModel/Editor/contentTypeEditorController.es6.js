@@ -304,6 +304,11 @@ export default function register() {
         }
       );
 
+      $scope.updateSidebarConfiguration = data => {
+        // eslint-disable-next-line
+        console.log('updated sidebar configuration', data);
+      };
+
       $scope.buildContentTypeIdInputProps = () => ({
         value: $scope.contentType.data.sys.id,
         name: 'contentTypeIdInput',

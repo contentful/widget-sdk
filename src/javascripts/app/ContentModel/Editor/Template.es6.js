@@ -228,7 +228,9 @@ function tabPanel() {
         [
           h('.workbench-main__middle-content', [
             h('react-component', {
-              name: 'app/EntrySidebar/Configuration/SidebarConfiguration.es6'
+              name: 'app/EntrySidebar/Configuration/SidebarConfiguration.es6',
+              props:
+                '{ sidebar: editorInterface.sidebar, onUpdateConfiguration: updateSidebarConfiguration }'
             })
           ])
         ]

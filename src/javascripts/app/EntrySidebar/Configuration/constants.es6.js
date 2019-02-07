@@ -1,5 +1,5 @@
-export const WidgetTypes = {
-  builtin: 'sidebar-builtin',
+export const WidgetNamespace = {
+  builtin: 'builtin',
   extension: 'extension'
 };
 

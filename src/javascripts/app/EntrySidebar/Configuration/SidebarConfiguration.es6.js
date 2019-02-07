@@ -1,4 +1,5 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import {
   Heading,
   Paragraph,
@@ -18,8 +19,12 @@ import {
   addItemToSidebar
 } from './SidebarConfigurationState.es6';
 
-function SidebarConfiguration() {
+function SidebarConfiguration(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    props.onUpdateConfiguration(state);
+  }, [state]);
 
   return (
     <div className="sidebar-configuration">
@@ -62,7 +67,7 @@ function SidebarConfiguration() {
               <CustomSidebar
                 items={state.items}
                 onRemoveItem={item => {
-                  dispatch(removeItemFromSidebar(item.id));
+                  dispatch(removeItemFromSidebar(item));
                 }}
                 onChangePosition={(sourceIndex, destinationIndex) => {
                   dispatch(changeItemPosition(sourceIndex, destinationIndex));
@@ -83,5 +88,10 @@ function SidebarConfiguration() {
     </div>
   );
 }
+
+SidebarConfiguration.propTypes = {
+  sidebar: PropTypes.array,
+  onUpdateConfiguration: PropTypes.func.isRequired
+};
 
 export default SidebarConfiguration;

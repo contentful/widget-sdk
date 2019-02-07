@@ -5,11 +5,17 @@ import SidebarWidgetItem from './SidebarWidgetItem.es6';
 
 export default function DefaultSidebar() {
   return (
-    <div>
+    <React.Fragment>
       <Subheading extraClassNames="f36-margin-bottom--m">Default sidebar</Subheading>
-      {EntryConfiguration.map(({ title, id, description }) => (
-        <SidebarWidgetItem key={id} title={title} description={description} />
-      ))}
-    </div>
+      {EntryConfiguration.map(({ title, widgetId, widgetNamespace, description }) => {
+        return (
+          <SidebarWidgetItem
+            key={`${widgetId}-${widgetNamespace}`}
+            title={title}
+            description={description}
+          />
+        );
+      })}
+    </React.Fragment>
   );
 }

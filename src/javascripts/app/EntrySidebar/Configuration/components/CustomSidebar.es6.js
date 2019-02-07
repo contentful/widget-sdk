@@ -18,25 +18,28 @@ export default function CustomSidebar({ items, onChangePosition, onRemoveItem })
       <Droppable droppableId="droppable">
         {provided => (
           <div ref={provided.innerRef}>
-            {items.map((item, index) => (
-              <Draggable key={item.id} draggableId={item.id} index={index}>
-                {provided => (
-                  <div
-                    className="draggable-item"
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}>
-                    <SidebarWidgetItem
-                      title={item.title}
-                      description={item.description}
-                      isDraggable
-                      isRemovable
-                      onRemoveClick={() => onRemoveItem(item)}
-                    />
-                  </div>
-                )}
-              </Draggable>
-            ))}
+            {items.map((item, index) => {
+              const key = `${item.widgetId}-${item.widgetNamespace}`;
+              return (
+                <Draggable key={key} draggableId={key} index={index}>
+                  {provided => (
+                    <div
+                      className="draggable-item"
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}>
+                      <SidebarWidgetItem
+                        title={item.title}
+                        description={item.description}
+                        isDraggable
+                        isRemovable
+                        onRemoveClick={() => onRemoveItem(item)}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              );
+            })}
           </div>
         )}
       </Droppable>

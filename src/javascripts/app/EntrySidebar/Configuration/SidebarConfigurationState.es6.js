@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { SidebarType, WidgetTypes } from './constants.es6';
+import { SidebarType, WidgetNamespace } from './constants.es6';
 import { EntryConfiguration } from './defaults.es6';
 
 function createImmerReducer(handlers) {
@@ -23,10 +23,10 @@ export const selectSidebarType = sidebarType => ({
 
 const REMOVE_ITEM_FROM_SIDEBAR = 'sidebar/REMOVE_ITEM_FROM_SIDEBAR';
 
-export const removeItemFromSidebar = id => ({
+export const removeItemFromSidebar = item => ({
   type: REMOVE_ITEM_FROM_SIDEBAR,
   payload: {
-    id
+    item
   }
 });
 
@@ -54,8 +54,16 @@ export const initialState = {
   sidebarType: SidebarType.default,
   items: EntryConfiguration,
   availableItems: [
-    { id: 'custom-extension', title: 'Your custom extension', type: WidgetTypes.extension },
-    { id: 'netlify-extension', title: 'Netlify Extension', type: WidgetTypes.extension }
+    {
+      widgetId: 'custom-extension',
+      title: 'Your custom extension',
+      widgetNamespace: WidgetNamespace.extension
+    },
+    {
+      widgetId: 'netlify-extension',
+      title: 'Netlify Extension',
+      widgetNamespace: WidgetNamespace.extension
+    }
   ]
 };
 
@@ -64,17 +72,17 @@ export const reducer = createImmerReducer({
     state.sidebarType = action.payload.sidebarType;
   },
   [REMOVE_ITEM_FROM_SIDEBAR]: (state, action) => {
-    const item = state.items.find(item => item.id === action.payload.id);
-    state.items = state.items.filter(item => item.id !== action.payload.id);
-    state.availableItems.push(item);
+    const removed = action.payload.item;
+    state.items = state.items.filter(item => item.widgetId !== removed.widgetId);
+    state.availableItems.push(removed);
   },
   [CHANGE_ITEM_POSITION]: (state, action) => {
     const [removed] = state.items.splice(action.payload.sourceIndex, 1);
     state.items.splice(action.payload.destIndex, 0, removed);
   },
   [ADD_ITEM_TO_SIDEBAR]: (state, action) => {
-    const itemToAdd = action.payload.item;
-    state.availableItems = state.availableItems.filter(item => item.id !== itemToAdd.id);
-    state.items = [itemToAdd, ...state.items];
+    const added = action.payload.item;
+    state.availableItems = state.availableItems.filter(item => item.widgetId !== added.widgetId);
+    state.items = [...state.items, added];
   }
 });

@@ -1,44 +1,44 @@
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
-import { WidgetTypes } from './constants.es6';
+import { WidgetNamespace } from './constants.es6';
 
 const Publication = {
-  id: SidebarWidgetTypes.PUBLICATION,
-  type: WidgetTypes.builtin,
+  widgetId: SidebarWidgetTypes.PUBLICATION,
+  widgetNamespace: WidgetNamespace.builtin,
   title: 'Publish & Status',
   description: 'Built-in - View entry status, publish, etc.'
 };
 
 const ContentPreview = {
-  id: SidebarWidgetTypes.CONTENT_PREVIEW,
-  type: WidgetTypes.builtin,
+  widgetId: SidebarWidgetTypes.CONTENT_PREVIEW,
+  widgetNamespace: WidgetNamespace.builtin,
   title: 'Preview',
   description: 'Built-in - Displays preview functionality.'
 };
 
 const Links = {
-  id: SidebarWidgetTypes.INCOMING_LINKS,
-  type: WidgetTypes.builtin,
+  widgetId: SidebarWidgetTypes.INCOMING_LINKS,
+  widgetNamespace: WidgetNamespace.builtin,
   title: 'Links',
   description: 'Built-in - Shows where an entry is linked.'
 };
 
 const Translation = {
-  id: SidebarWidgetTypes.TRANSLATION,
-  type: WidgetTypes.builtin,
+  widgetId: SidebarWidgetTypes.TRANSLATION,
+  widgetNamespace: WidgetNamespace.builtin,
   title: 'Translation',
   description: 'Built-in - Manage which translations are visible.'
 };
 
 const Versions = {
-  id: SidebarWidgetTypes.VERSIONS,
-  type: WidgetTypes.builtin,
+  widgetId: SidebarWidgetTypes.VERSIONS,
+  widgetNamespace: WidgetNamespace.builtin,
   title: 'Versions',
   description: 'Built-in - View previously published versions.'
 };
 
 const Users = {
-  id: SidebarWidgetTypes.USERS,
-  type: WidgetTypes.builtin,
+  widgetId: SidebarWidgetTypes.USERS,
+  widgetNamespace: WidgetNamespace.builtin,
   title: 'Users',
   description: 'Built-in - Displays users on the same entry.'
 };
