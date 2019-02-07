@@ -12,6 +12,7 @@ const $state = getModule('$state');
 const feedbackKey = 'feedback';
 
 export default class ConceptVideoWidget extends React.Component {
+  typeformCloseTimeout;
   playVideo;
 
   state = {
@@ -134,6 +135,10 @@ export default class ConceptVideoWidget extends React.Component {
         });
       }
     });
+  };
+
+  componentWillUnmount = () => {
+    clearTimeout(this.typeformCloseTimeout);
   };
 
   openTypeform = () => {
