@@ -2,6 +2,7 @@ import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import stringifySafe from 'json-stringify-safe';
 import { env } from 'Config.es6';
+import * as Bugsnag from 'analytics/Bugsnag.es6';
 
 export default function register() {
   /**
@@ -57,8 +58,7 @@ export default function register() {
   registerFactory('logger', [
     '$window',
     '$injector',
-    'bugsnag',
-    ($window, $injector, bugsnag) => {
+    ($window, $injector) => {
       function getParams() {
         const stateName = $injector.get('$state').current.name;
         const stateParams = $injector.get('$stateParams');
@@ -158,7 +158,7 @@ export default function register() {
          * @param {API.User} user
          */
         enable: function(user) {
-          bugsnag.enable(user);
+          Bugsnag.enable(user);
         },
 
         /**
@@ -170,7 +170,7 @@ export default function register() {
          */
         disable: function() {
           if (env === 'production' || env === 'unittest') {
-            bugsnag.disable();
+            Bugsnag.disable();
             _.forEach(
               this,
               _.bind(function(_value, key) {
@@ -197,7 +197,7 @@ export default function register() {
             /* eslint no-console: off */
             console.error(exception, augmentedMetadata);
           }
-          bugsnag.notifyException(exception, null, augmentedMetadata, 'error');
+          Bugsnag.notifyException(exception, null, augmentedMetadata, 'error');
         },
 
         /**
@@ -343,7 +343,7 @@ export default function register() {
           if (env !== 'production' && env !== 'unittest') {
             logToConsole(type, severity, message, augmentedMetadata);
           }
-          bugsnag.notify(type, message, augmentedMetadata, severity);
+          Bugsnag.notify(type, message, augmentedMetadata, severity);
         },
 
         leaveBreadcrumb: leaveBreadcrumb
@@ -366,7 +366,7 @@ export default function register() {
        * @param {object} data
        */
       function leaveBreadcrumb(name, data) {
-        bugsnag.leaveBreadcrumb(name, data);
+        Bugsnag.leaveBreadcrumb(name, data);
       }
 
       function logToConsole(type, severity, message, metadata) {

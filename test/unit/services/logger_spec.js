@@ -7,13 +7,12 @@ describe('logger service', () => {
 
   beforeEach(function() {
     module('contentful/test');
-    this.bugsnag = this.$inject('bugsnag');
+    this.bugsnag = this.$inject('analytics/Bugsnag.es6');
 
     sinon.stub(this.bugsnag, 'enable');
     sinon.stub(this.bugsnag, 'disable');
     sinon.stub(this.bugsnag, 'notify');
     sinon.stub(this.bugsnag, 'notifyException');
-    sinon.stub(this.bugsnag, 'refresh');
 
     this.$state = this.$inject('$state');
     this.$stateParams = this.$inject('$stateParams');
