@@ -7,6 +7,8 @@ const ListQuery = getModule('ListQuery');
 const TheLocaleStore = getModule('TheLocaleStore');
 const spaceContext = getModule('spaceContext');
 
+const getDefaultLocaleCode = () => TheLocaleStore.getDefaultLocale().code;
+
 const LABELS = {
   entry_single: {
     title: 'Insert existing entry',
@@ -85,7 +87,7 @@ export function newConfigFromField(field = {}, currentSize = 0) {
 
   const config = {
     entityType,
-    locale: field.locale,
+    locale: field.locale || getDefaultLocaleCode(),
     multiple: max !== min && field.type === 'Array',
     min,
     max,
@@ -104,7 +106,7 @@ export function newConfigFromRichTextField(field, nodeType) {
   const entityType = getEntityTypeFromRichTextNode(nodeType);
   const config = {
     entityType,
-    local: field.locale,
+    local: field.locale || getDefaultLocaleCode(),
     multiple: false,
     min: 1,
     max: Infinity,
@@ -135,7 +137,7 @@ function getEntityTypeFromRichTextNode(nodeType) {
 export function newConfigFromExtension(options = {}) {
   const config = {
     ...pick(options, ['multiple', 'min', 'max', 'entityType']),
-    locale: options.locale || TheLocaleStore.getDefaultLocale().code,
+    locale: options.locale || getDefaultLocaleCode(),
     linkedContentTypeIds: options.contentTypes || [],
     linkedMimetypeGroups: []
   };

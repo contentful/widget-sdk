@@ -8,6 +8,7 @@ describe('entitySelector', () => {
     this.entitySelector = this.$inject('entitySelector');
     this.openDialogStub = sinon.stub().returns({ promise: this.$q.resolve() });
     this.$inject('modalDialog').open = this.openDialogStub;
+    this.$inject('TheLocaleStore').getDefaultLocale = () => ({ code: 'de-DE' });
 
     this.open = (field, links) => {
       const promise = this.entitySelector.openFromField(field, links);
@@ -126,12 +127,6 @@ describe('entitySelector', () => {
 
   describe('opening from an extension', () => {
     beforeEach(function() {
-      const mockedLocaleStore = (this.$inject('TheLocaleStore').getDefaultLocale = _.constant({
-        code: 'de-DE'
-      }));
-      const { registerFactory } = this.$inject('NgRegistry.es6');
-      registerFactory('TheLocaleStore', () => mockedLocaleStore);
-
       this.openFromExt = opts => {
         const promise = this.entitySelector.openFromExtension(opts);
         this.$apply();
