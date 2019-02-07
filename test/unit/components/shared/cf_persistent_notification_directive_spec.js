@@ -5,11 +5,7 @@ describe('cfPersistentNotification Directive', () => {
   let $rootScope, $timeout;
 
   beforeEach(function() {
-    this.logger = {};
-
-    module('contentful/test', $provide => {
-      $provide.constant('logger', this.logger);
-    });
+    module('contentful/test');
 
     $rootScope = this.$inject('$rootScope');
     $timeout = this.$inject('$timeout');
@@ -87,7 +83,8 @@ describe('cfPersistentNotification Directive', () => {
     const PARAMS_2 = { message: 'some message 2' };
 
     beforeEach(function() {
-      this.logger.logWarn = sinon.stub();
+      this.logWarnStub = sinon.stub();
+      this.$inject('services/logger.es6').logWarn = this.logWarnStub;
       $rootScope.$broadcast('persistentNotification', null);
       $rootScope.$broadcast('persistentNotification', PARAMS_1);
       $rootScope.$broadcast('persistentNotification', PARAMS_2);
@@ -109,8 +106,8 @@ describe('cfPersistentNotification Directive', () => {
 
     it('logs concurrent broadcasted notification params', function() {
       const RESET_NOTE = '*RESET NOTIFICATION*';
-      sinon.assert.calledOnce(this.logger.logWarn);
-      sinon.assert.calledWithExactly(this.logger.logWarn, sinon.match.string, {
+      sinon.assert.calledOnce(this.logWarnStub);
+      sinon.assert.calledWithExactly(this.logWarnStub, sinon.match.string, {
         notifications: [RESET_NOTE, PARAMS_1, PARAMS_2, RESET_NOTE]
       });
     });

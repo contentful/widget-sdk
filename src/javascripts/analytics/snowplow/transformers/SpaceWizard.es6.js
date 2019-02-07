@@ -1,8 +1,6 @@
 import { addUserOrgSpace } from './Decorators.es6';
 import { env } from 'Config.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const logger = getModule('logger');
+import * as logger from 'services/logger.es6';
 
 const SpaceWizardTransformer = addUserOrgSpace((eventName, data) => {
   const action = eventName.split(':')[1];

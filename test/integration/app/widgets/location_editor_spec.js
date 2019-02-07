@@ -6,7 +6,7 @@ describe('LocationEditor integration', () => {
   beforeEach(function() {
     this.googleMaps = createGoogleMapsStub();
     module('contentful/test', $provide => {
-      $provide.constant('LazyLoader', {
+      $provide.constant('utils/LazyLoader.es6', {
         get: sinon.stub().resolves(this.googleMaps)
       });
       $provide.value('throttle', _.identity);
@@ -236,7 +236,7 @@ describe('LocationEditor integration', () => {
     });
 
     it('shows loading box while loading', function() {
-      const LazyLoader = this.$inject('LazyLoader');
+      const LazyLoader = this.$inject('utils/LazyLoader.es6');
       LazyLoader.get.defers();
       const el = this.compile();
 
@@ -248,7 +248,7 @@ describe('LocationEditor integration', () => {
     });
 
     it('shows initialization error when loading fails', function() {
-      const LazyLoader = this.$inject('LazyLoader');
+      const LazyLoader = this.$inject('utils/LazyLoader.es6');
       LazyLoader.get.defers();
       const el = this.compile();
       const alertSelector = '[role=alert]' + '[data-error-code=field-editor-initialization]';

@@ -3,6 +3,7 @@ import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import moment from 'moment';
 import { validateEvent } from 'analytics/Validator.es6';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   /**
@@ -22,10 +23,9 @@ export default function register() {
   registerFactory('analytics/console', [
     '$rootScope',
     '$compile',
-    'logger',
     'analytics/snowplow/Snowplow.es6',
     'analytics/snowplow/Events.es6',
-    ($rootScope, $compile, logger, Snowplow, SnowplowEvents) => {
+    ($rootScope, $compile, Snowplow, SnowplowEvents) => {
       const { buildUnstructEventData: buildSnowplowEvent } = Snowplow;
       const { getSchema: getSnowplowSchema } = SnowplowEvents;
 

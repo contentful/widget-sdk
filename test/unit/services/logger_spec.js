@@ -7,20 +7,14 @@ describe('logger service', () => {
 
   beforeEach(function() {
     module('contentful/test');
-    this.bugsnag = this.$inject('bugsnag');
+    this.bugsnag = this.$inject('analytics/Bugsnag.es6');
 
     sinon.stub(this.bugsnag, 'enable');
     sinon.stub(this.bugsnag, 'disable');
     sinon.stub(this.bugsnag, 'notify');
     sinon.stub(this.bugsnag, 'notifyException');
-    sinon.stub(this.bugsnag, 'refresh');
 
-    this.$state = this.$inject('$state');
-    this.$stateParams = this.$inject('$stateParams');
-    this.$state.current = { name: 'some.state.name' };
-    this.$stateParams.spaceId = '123456';
-
-    this.logger = this.$inject('logger');
+    this.logger = this.$inject('services/logger.es6');
   });
 
   it('enables', function() {
@@ -31,8 +25,6 @@ describe('logger service', () => {
   it('disables', function() {
     this.logger.disable();
     sinon.assert.called(this.bugsnag.disable);
-    this.logger.logError('foo');
-    sinon.assert.notCalled(this.bugsnag.notify);
   });
 
   it('logs exceptions', function() {
@@ -145,16 +137,6 @@ describe('logger service', () => {
     });
 
     describe('augmenting metadata', () => {
-      it('adds params', function() {
-        this.logger.logError('error', { groupingHash: 'grp' });
-        const actual = this.bugsnag.notify.args[0][2];
-        expect(actual.params.spaceId).toBe('123456');
-        expect(actual.params.state).toBe('some.state.name');
-        expect(actual.groupingHash).toBe('grp');
-        expect(actual.params.screensize).toMatch(/\d+x\d+/);
-        expect(actual.params.viewport).toMatch(/\d+x\d+/);
-      });
-
       it('preparses the data property', function() {
         const data = { foo: { bar: {} } };
         data.foo.bar.baz = data;

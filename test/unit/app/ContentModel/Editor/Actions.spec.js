@@ -37,7 +37,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
         getCurrentVariation: sinon.stub().callsFake(() => Promise.resolve(false))
       });
       $provide.value('app/common/ReloadNotification.es6', stubs.ReloadNotification);
-      $provide.constant('logger', {
+      $provide.constant('services/logger.es6', {
         logServerWarn: sinon.stub(),
         findActualServerError: sinon.stub()
       });
@@ -47,7 +47,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
     this.$state.go = sinon.stub().resolves();
 
     $q = this.$inject('$q');
-    logger = this.$inject('logger');
+    logger = this.$inject('services/logger.es6');
     const ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
     notification = ComponentLibrary.Notification;
     notification.success = sinon.stub();

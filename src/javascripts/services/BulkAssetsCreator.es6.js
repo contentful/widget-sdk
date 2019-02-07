@@ -3,10 +3,10 @@ import * as Filestack from 'services/Filestack.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as stringUtils from 'utils/StringUtils.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as logger from 'services/logger.es6';
 
 const $q = getModule('$q');
 const $timeout = getModule('$timeout');
-const logger = getModule('logger');
 const spaceContext = getModule('spaceContext');
 
 /**

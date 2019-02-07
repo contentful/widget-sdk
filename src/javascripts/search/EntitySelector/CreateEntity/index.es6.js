@@ -5,8 +5,8 @@ import { TextLink } from '@contentful/forma-36-react-components';
 
 import CreateEntryButton, { Style } from 'components/CreateEntryButton/index.es6';
 import Visible from 'components/shared/Visible/index.es6';
+import * as logger from 'services/logger.es6';
 
-const logger = getModule('logger');
 const entityCreator = getModule('entityCreator');
 const accessChecker = getModule('access_control/AccessChecker');
 const slideInNavigator = getModule('navigation/SlideInNavigator');

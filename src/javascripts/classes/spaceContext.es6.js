@@ -9,6 +9,7 @@ import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
 import createEditorInterfaceRepo from 'widgets/EditorInterfaceRepo.es6';
 import APIClient from 'data/APIClient.es6';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   /**
@@ -24,7 +25,6 @@ export default function register() {
     '$rootScope',
     '$injector',
     'client',
-    'logger',
     'TheLocaleStore',
     'data/userCache',
     'Config.es6',
@@ -47,7 +47,6 @@ export default function register() {
       $rootScope,
       $injector,
       client,
-      logger,
       TheLocaleStore,
       createUserCache,
       Config,

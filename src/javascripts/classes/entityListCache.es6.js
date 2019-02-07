@@ -1,12 +1,12 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   registerFactory('EntityListCache', [
     '$q',
-    'logger',
     'TheLocaleStore',
-    ($q, logger, TheLocaleStore) => {
+    ($q, TheLocaleStore) => {
       // params:
       // - space
       // - entityType

@@ -65,13 +65,20 @@ describe('Rich Text toolbar', () => {
         entitySelector: {
           open: () => Promise.resolve([this.selectedEntity])
         },
-        logger: {
+        'services/logger.es6': {
           logWarn: message => {
             // Guards us from accidentally changing analytic actions without whitelisting them:
             throw new Error(`Unexpected logger.logWarn() call with message: ${message}`);
           }
         },
         debounce: identity
+      }
+    });
+
+    this.system.set('Config.es6', {
+      apiUrl: () => '',
+      services: {
+        google: {}
       }
     });
 

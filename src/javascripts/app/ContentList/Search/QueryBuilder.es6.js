@@ -2,9 +2,7 @@ import moment from 'moment';
 import { assign } from 'utils/Collections.es6';
 import { buildFilterFieldByQueryKey } from './Filters.es6';
 import { Operator, isValid as isValidOperator } from './Operators.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const logger = getModule('logger');
+import * as logger from 'services/logger.es6';
 
 /**
  * Takes an object representing the `Search` component's public state object and

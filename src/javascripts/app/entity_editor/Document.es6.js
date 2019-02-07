@@ -21,8 +21,8 @@ import DocumentStatusCode from 'data/document/statusCode.es6';
 import { DocLoad } from 'data/sharejs/Connection.es6';
 import * as Reverter from './document/Reverter.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as logger from 'services/logger.es6';
 
-const logger = getModule('logger');
 const TheLocaleStore = getModule('TheLocaleStore');
 const Status = getModule('data/Document/Status');
 const ShareJS = getModule('data/ShareJS/Utils');

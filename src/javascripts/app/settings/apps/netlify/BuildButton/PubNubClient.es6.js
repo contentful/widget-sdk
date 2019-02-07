@@ -1,7 +1,5 @@
-import { getModule } from 'NgRegistry.es6';
 import { isObject, identity } from 'lodash';
-
-const LazyLoader = getModule('LazyLoader');
+import * as LazyLoader from 'utils/LazyLoader.es6';
 
 // These are front-end safe credentials that can be used in all environments.
 // PubNub account is "team-extensibility@contentful.com", see LastPass.

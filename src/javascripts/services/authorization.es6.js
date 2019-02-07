@@ -1,11 +1,11 @@
 import { registerFactory } from 'NgRegistry.es6';
 import worf from '@contentful/worf';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   registerFactory('authorization', [
-    'logger',
     'access_control/AccessChecker/index.es6',
-    (logger, accessChecker) => {
+    accessChecker => {
       function Authorization() {}
 
       Authorization.prototype = {

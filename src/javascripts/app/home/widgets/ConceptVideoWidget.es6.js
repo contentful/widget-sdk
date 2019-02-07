@@ -5,8 +5,8 @@ import { getModule } from 'NgRegistry.es6';
 import { track } from 'analytics/Analytics.es6';
 import { TypeformModal } from 'app/common/Typeform/TypeformModal.es6';
 import { fetchUserState, updateUserState } from 'utils/StatePersistenceApi.es6';
+import * as logger from 'services/logger.es6';
 
-const logger = getModule('logger');
 const $state = getModule('$state');
 
 const feedbackKey = 'feedback';

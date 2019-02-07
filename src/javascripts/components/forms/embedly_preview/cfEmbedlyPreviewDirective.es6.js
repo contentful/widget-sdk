@@ -1,13 +1,13 @@
 import { registerDirective } from 'NgRegistry.es6';
 import $ from 'jquery';
 import { isValidUrl } from 'utils/StringUtils.es6';
+import * as LazyLoader from 'utils/LazyLoader.es6';
 
 export default function register() {
   registerDirective('cfEmbedlyPreview', [
     '$timeout',
     'debounce',
-    'LazyLoader',
-    ($timeout, debounce, LazyLoader) => ({
+    ($timeout, debounce) => ({
       restrict: 'E',
       scope: {
         previewUrl: '=',
@@ -16,7 +16,10 @@ export default function register() {
       link: function(scope, element) {
         const TIMEOUT = 7500;
 
-        LazyLoader.get('embedly').then(setup);
+        LazyLoader.get('embedly').then(embedly => {
+          setup(embedly);
+          scope.$applyAsync();
+        });
 
         function setup(embedly) {
           const debouncedRequestPreview = debounce(requestPreview, 500);

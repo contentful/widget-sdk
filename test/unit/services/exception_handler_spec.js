@@ -15,7 +15,7 @@ xdescribe('Exception handler service', () => {
       });
 
       exceptionStub = sinon.stub();
-      $provide.factory('logger', () => ({
+      $provide.factory('services/logger.es6', () => ({
         logException: exceptionStub
       }));
 

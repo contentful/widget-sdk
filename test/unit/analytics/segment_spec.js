@@ -6,7 +6,7 @@ describe('Segment service', () => {
 
     this.segment = this.$inject('analytics/segment');
     this.window = this.$inject('$window');
-    this.loader = this.$inject('LazyLoader');
+    this.loader = this.$inject('utils/LazyLoader.es6');
 
     this.analytics = {
       track: sinon.stub(),
@@ -89,7 +89,7 @@ describe('Segment service', () => {
       });
 
       it('logs an error if segment function throws an exception', function() {
-        const spy = (this.$inject('logger').logError = sinon.spy());
+        const spy = (this.$inject('services/logger.es6').logError = sinon.spy());
         const err = new Error('Some exception');
 
         this.enable();

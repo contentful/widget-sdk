@@ -11,11 +11,9 @@ import * as OrgRoles from 'services/OrganizationRoles.es6';
 import * as CreateSpace from 'services/CreateSpace.es6';
 import * as AccessChecker from 'access_control/AccessChecker/index.es6';
 import * as LD from 'utils/LaunchDarkly/index.es6';
-import { getModule } from 'NgRegistry.es6';
+import * as logger from 'services/logger.es6';
 
 import renderSidepanel from './SidepanelView.es6';
-
-const logger = getModule('logger');
 
 const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
 

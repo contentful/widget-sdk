@@ -3,9 +3,9 @@ import { runTask } from 'utils/Concurrent.es6';
 import _ from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 import * as Config from 'Config.es6';
+import * as logger from 'services/logger.es6';
 
 const contentfulClient = getModule('contentfulClient');
-const logger = getModule('logger');
 
 const contentfulConfig = Config.services.contentful;
 

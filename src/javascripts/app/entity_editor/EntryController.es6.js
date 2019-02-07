@@ -17,13 +17,13 @@ import installTracking, { trackEntryView } from './Tracking.es6';
 import { loadEntry } from 'app/entity_editor/DataLoader.es6';
 import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
+import * as logger from 'services/logger.es6';
 
 const $controller = getModule('$controller');
 const $rootScope = getModule('$rootScope');
 const spaceContext = getModule('spaceContext');
 const localeStore = getModule('TheLocaleStore');
 const $state = getModule('$state');
-const logger = getModule('logger');
 const DataFields = getModule('EntityEditor/DataFields');
 
 /**

@@ -53,7 +53,7 @@ describe('Access Checker', () => {
           };
         }
       });
-      $provide.constant('logger', {
+      $provide.constant('services/logger.es6', {
         logError: this.stubs.logError
       });
     });

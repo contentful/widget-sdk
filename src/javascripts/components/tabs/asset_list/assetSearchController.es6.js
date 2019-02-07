@@ -8,12 +8,12 @@ import ReloadNotification from 'app/common/ReloadNotification.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import { assetContentType } from 'legacy-client';
 import * as SystemFields from 'data/SystemFields.es6';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   registerController('AssetSearchController', [
     '$scope',
     '$q',
-    'logger',
     'spaceContext',
     'ListQuery',
     'PromisedLoader',
@@ -22,7 +22,6 @@ export default function register() {
     function(
       $scope,
       $q,
-      logger,
       spaceContext,
       ListQuery,
       PromisedLoader,

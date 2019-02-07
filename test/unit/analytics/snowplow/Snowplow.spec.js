@@ -4,7 +4,7 @@ describe('Snowplow service', () => {
   beforeEach(function() {
     module('contentful/test');
     this.$window = this.$inject('$window');
-    this.LazyLoader = this.$inject('LazyLoader');
+    this.LazyLoader = this.$inject('utils/LazyLoader.es6');
     this.LazyLoader.get = sinon.stub();
     this.Events = this.$inject('analytics/snowplow/Events.es6');
     this.Events.getSchema = sinon.stub();

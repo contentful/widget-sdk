@@ -1,12 +1,12 @@
 import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   registerDirective('cfPersistentNotification', [
     '$sce',
     '$timeout',
-    'logger',
-    ($sce, $timeout, logger) => {
+    ($sce, $timeout) => {
       return {
         restrict: 'E',
         template: JST.cf_persistent_notification(),

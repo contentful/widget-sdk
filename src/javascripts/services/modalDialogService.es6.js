@@ -3,6 +3,7 @@ import _ from 'lodash';
 import $ from 'jquery';
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import keycodes from 'utils/keycodes.es6';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   /**
@@ -36,8 +37,7 @@ export default function register() {
     '$timeout',
     'defer',
     'debounce',
-    'logger',
-    ($compile, $q, $window, $rootScope, $timeout, defer, debounce, logger) => {
+    ($compile, $q, $window, $rootScope, $timeout, defer, debounce) => {
       const opened = [];
 
       function Dialog(params) {

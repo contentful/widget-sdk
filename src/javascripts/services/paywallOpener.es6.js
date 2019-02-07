@@ -18,7 +18,6 @@ export default function register() {
     'TheAccountView',
     'Config.es6',
     'analytics/Analytics.es6',
-    'LazyLoader',
     'subscriptionPlanRecommender',
     (
       $q,
@@ -29,7 +28,6 @@ export default function register() {
       TheAccountView,
       Config,
       Analytics,
-      { get: lazyLoad },
       { recommend: recommendPlan }
     ) => {
       let paywallIsOpen = false;
@@ -90,13 +88,7 @@ export default function register() {
           };
 
           if (options.offerPlanUpgrade) {
-            const loadPlanCardCss = lazyLoad('gkPlanCardStyles');
-            const loadPlanCard = recommendPlan(organizationId);
-
-            return $q
-              .all([loadPlanCardCss, loadPlanCard])
-              .then(data => data[1])
-              .then(returnScopeWithPlan, resolveWithScope);
+            return recommendPlan(organizationId).then(returnScopeWithPlan, resolveWithScope);
           } else {
             return resolveWithScope();
           }

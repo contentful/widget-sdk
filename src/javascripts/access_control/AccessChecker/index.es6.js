@@ -13,11 +13,9 @@ import {
 import { capitalize, capitalizeFirst } from 'utils/StringUtils.es6';
 import { chain, get, set, some, forEach, values } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements.es6';
-import { getModule } from 'NgRegistry.es6';
+import * as logger from 'services/logger.es6';
 
 export { wasForbidden } from './Utils.es6';
-
-const logger = getModule('logger');
 
 /**
  * @name accessChecker

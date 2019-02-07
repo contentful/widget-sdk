@@ -1,6 +1,4 @@
-import { getModule } from 'NgRegistry.es6';
-
-const logger = getModule('logger');
+import * as logger from 'services/logger.es6';
 
 // We keep all references to the requests in progress
 // if they are in progress, we save new data

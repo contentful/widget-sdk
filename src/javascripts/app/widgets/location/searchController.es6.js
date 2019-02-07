@@ -2,14 +2,14 @@ import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import memoize from 'utils/memoize.es6';
 import * as Signal from 'utils/signal.es6';
+import * as LazyLoader from 'utils/LazyLoader.es6';
 
 export default function register() {
   registerController('LocationEditorSearchController', [
     '$scope',
     '$q',
-    'LazyLoader',
     'throttle',
-    function($scope, $q, LazyLoader, throttle) {
+    function($scope, $q, throttle) {
       const controller = this;
       const resultsAvailable = Signal.create();
 

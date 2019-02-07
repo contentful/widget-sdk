@@ -37,7 +37,8 @@ angular
         services: {
           filestack: {},
           google: {},
-          contentful: {}
+          contentful: {},
+          embedly: {}
         }
       });
 

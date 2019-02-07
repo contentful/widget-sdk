@@ -3,8 +3,8 @@ import * as sinon from 'test/helpers/sinon';
 describe('bugsnag', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.bugsnag = this.$inject('bugsnag');
-    this.LazyLoader = this.$inject('LazyLoader');
+    this.bugsnag = this.$inject('analytics/Bugsnag.es6');
+    this.LazyLoader = this.$inject('utils/LazyLoader.es6');
 
     this.BugsnagStub = {
       disableAutoBreadcrumbsConsole: sinon.stub(),

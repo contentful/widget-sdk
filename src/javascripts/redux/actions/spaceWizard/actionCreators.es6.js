@@ -17,10 +17,10 @@ import { canCreate } from 'utils/ResourceUtils.es6';
 import { createTrackingData } from 'components/shared/space-wizard/WizardUtils.es6';
 import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as logger from 'services/logger.es6';
 
 import * as actions from './actions.es6';
 
-const logger = getModule('logger');
 const client = getModule('client');
 const spaceContext = getModule('spaceContext');
 
