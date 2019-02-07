@@ -1,8 +1,6 @@
 import React, { useReducer, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { isArray } from 'lodash';
 import { SidebarType } from './constants.es6';
-import { EntryConfiguration } from './defaults.es6';
 import {
   Heading,
   Paragraph,
@@ -19,27 +17,15 @@ import {
   changeItemPosition,
   addItemToSidebar
 } from './SidebarConfigurationReducer.es6';
-import { convertInternalStateToConfiguration } from './service/SidebarSync.es6';
+import {
+  convertInternalStateToConfiguration,
+  convertConfigirationToInternalState
+} from './service/SidebarSync.es6';
 
 /* Reducer */
 
-function getInitialState(sidebarConfig) {
-  if (isArray(sidebarConfig)) {
-    return {
-      sidebarType: SidebarType.custom,
-      items: sidebarConfig,
-      availableItems: []
-    };
-  }
-  return {
-    sidebarType: SidebarType.default,
-    items: EntryConfiguration,
-    availableItems: []
-  };
-}
-
 function SidebarConfiguration(props) {
-  const [state, dispatch] = useReducer(reducer, getInitialState(props.sidebar));
+  const [state, dispatch] = useReducer(reducer, convertConfigirationToInternalState(props.sidebar));
 
   useEffect(() => {
     props.onUpdateConfiguration(convertInternalStateToConfiguration(state));

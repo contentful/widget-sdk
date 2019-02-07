@@ -27,7 +27,6 @@ export default function register() {
     'command',
     'spaceContext',
     'openFieldDialog',
-    'navigation/confirmLeaveEditor',
     'contentTypeEditor/metadataDialog',
     'access_control/AccessChecker',
     'analytics/Analytics.es6',
@@ -39,7 +38,6 @@ export default function register() {
       Command,
       spaceContext,
       openFieldDialog,
-      leaveConfirmator,
       metadataDialog,
       accessChecker,
       Analytics,
@@ -75,7 +73,6 @@ export default function register() {
         $state.go('^.' + stateName);
       };
 
-      $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);
       $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
       $scope.$watch('contentType.data.displayField', checkForDirtyForm);
@@ -306,6 +303,8 @@ export default function register() {
 
       $scope.draftSidebarConfiguration = null;
       $scope.updateSidebarConfiguration = draft => {
+        $scope.draftSidebarConfiguration = draft;
+        forceSetDirtyState(true);
         // eslint-disable-next-line no-console
         console.log(draft);
       };
