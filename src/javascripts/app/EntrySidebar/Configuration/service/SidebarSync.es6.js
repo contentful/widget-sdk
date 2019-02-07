@@ -1,5 +1,5 @@
-import { AssetConfiguration, EntryConfiguration } from '../defaults.es6';
-import { difference } from 'lodash';
+import { AssetConfiguration, EntryConfiguration, defaultWidgetsMap } from '../defaults.es6';
+import { difference, isArray } from 'lodash';
 import { SidebarType } from '../constants.es6';
 import { NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNamespaces.es6';
 
@@ -38,4 +38,66 @@ export function convertInternalStateToConfiguration(state) {
   return [...selectedItems, ...missingItems];
 }
 
-export function convertConfigirationToInternalState() {}
+export function convertConfigirationToInternalState(configuration) {
+  if (!isArray(configuration)) {
+    return {
+      sidebarType: SidebarType.default,
+      items: EntryConfiguration,
+      availableItems: []
+    };
+  }
+
+  const defaultIds = EntryConfiguration.map(widget => widget.widgetId);
+
+  // filter out all invalid builtin items
+  const validItems = configuration.filter(widget => {
+    if (widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
+      return defaultIds.includes(widget.widgetId);
+    }
+    return true;
+  });
+
+  const availableItems = [];
+
+  // add all disabled buildin items to available items
+  validItems
+    .filter(
+      widget => widget.disabled === true && widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN
+    )
+    .map(widget => widget.widgetId)
+    .forEach(disabledId => {
+      const widget = defaultWidgetsMap[disabledId];
+      if (widget) {
+        availableItems.push(widget);
+      }
+    });
+
+  // add to available all buildin items that are not present in configuration
+  difference(
+    defaultIds,
+    validItems
+      .filter(widget => widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN)
+      .map(widget => widget.widgetId)
+  ).forEach(missingWidgetId => {
+    const widget = defaultWidgetsMap[missingWidgetId];
+    if (widget) {
+      availableItems.push(widget);
+    }
+  });
+
+  const availableItemsIds = availableItems.map(widget => widget.widgetId);
+  const items = validItems
+    .filter(widget => !availableItemsIds.includes(widget.widgetId))
+    .map(widget => {
+      if (widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
+        return defaultWidgetsMap[widget.widgetId];
+      }
+      return widget;
+    });
+
+  return {
+    sidebarType: SidebarType.custom,
+    items,
+    availableItems
+  };
+}
