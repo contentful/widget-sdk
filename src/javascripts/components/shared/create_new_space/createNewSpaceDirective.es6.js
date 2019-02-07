@@ -2,6 +2,7 @@ import { registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import React from 'react';
 import createNewSpaceTemplateDef from 'components/shared/create_new_space/Template.es6';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   registerDirective('cfCreateNewSpace', () => ({
@@ -18,7 +19,6 @@ export default function register() {
     '$element',
     'spaceContext',
     'client',
-    'logger',
     'localesList',
     'services/TokenStore.es6',
     'access_control/Enforcements.es6',
@@ -34,7 +34,6 @@ export default function register() {
       $element,
       spaceContext,
       client,
-      logger,
       localesList,
       TokenStore,
       enforcements,

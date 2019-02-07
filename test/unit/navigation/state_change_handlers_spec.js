@@ -25,7 +25,6 @@ describe('navigation/stateChangeHandlers', () => {
       $provide.value('$state', this.state);
       $provide.constant('spaceContext', this.spaceContext);
       $provide.value('services/TokenStore.es6', this.tokenStore);
-      $provide.constant('logger', {});
       $provide.constant('modalDialog', { closeAll: modalCloseStub });
       $provide.value('navigation/Breadcrumbs/History.es6', {
         default: {
@@ -35,7 +34,7 @@ describe('navigation/stateChangeHandlers', () => {
     });
 
     $rootScope = this.$inject('$rootScope');
-    logger = this.$inject('logger');
+    logger = this.$inject('services/logger.es6');
     const NavState = this.$inject('navigation/NavState.es6');
     this.NavStates = NavState.NavStates;
     this.navState$ = NavState.navState$;
@@ -84,7 +83,7 @@ describe('navigation/stateChangeHandlers', () => {
 
   describe('leave confirmation', () => {
     it('logs error when changing state during confirmation', function() {
-      const logger = this.$inject('logger');
+      const logger = this.$inject('services/logger.es6');
       logger.logError = sinon.stub();
 
       const $q = this.$inject('$q');

@@ -4,7 +4,7 @@ describe('states/deeplink/resolver.es6', () => {
   beforeEach(function() {
     this.logException = sinon.stub();
     module('contentful/test', $provide => {
-      $provide.constant('logger', {
+      $provide.constant('services/logger.es6', {
         logException: this.logException
       });
     });

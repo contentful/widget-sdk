@@ -1,5 +1,6 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   /**
@@ -10,10 +11,9 @@ export default function register() {
    */
   registerFactory('activationEmailResender', [
     '$q',
-    'logger',
     'Config.es6',
     'data/Request/PostForm.es6',
-    ($q, logger, Config, { default: postForm }) => {
+    ($q, Config, { default: postForm }) => {
       const ENDPOINT = Config.authUrl('confirmation');
 
       return {

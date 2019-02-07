@@ -10,7 +10,7 @@ describe('activationEmailResender', () => {
     };
 
     module('contentful/test', $provide => {
-      $provide.constant('logger', {
+      $provide.constant('services/logger.es6', {
         logError: this.stubs.logError
       });
     });

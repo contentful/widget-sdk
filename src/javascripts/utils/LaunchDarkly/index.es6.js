@@ -6,7 +6,7 @@ import { onValueScope, createPropertyBus } from 'utils/kefir.es6';
 import getChangesObject from 'utils/ShallowObjectDiff.es6';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags.es6';
 import { createMVar } from 'utils/Concurrent.es6';
-import { getModule } from 'NgRegistry.es6';
+import * as logger from 'services/logger.es6';
 
 import { isExampleSpace } from 'data/ContentPreview/index.es6';
 import {
@@ -20,8 +20,6 @@ import {
   getUserSpaceRoles,
   getUserCreationDateUnixTimestamp
 } from 'data/User/index.es6';
-
-const logger = getModule('logger');
 
 // mvar to wait until LD context is successfully switched
 const LDContextChangeMVar = createMVar();

@@ -36,7 +36,7 @@ describe('Client Controller', () => {
       $provide.constant('analytics/isAnalyticsAllowed.es6', {
         default: this.isAnalyticsAllowed
       });
-      $provide.constant('logger', this.logger);
+      $provide.constant('services/logger.es6', this.logger);
     });
     this.tokenStore = this.$inject('services/TokenStore.es6');
     this.tokenStore.refresh = sinon.stub().resolves();

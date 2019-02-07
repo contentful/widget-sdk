@@ -1,14 +1,14 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   registerFactory('entityCreator', [
     '$q',
-    'logger',
     'spaceContext',
     'access_control/Enforcements.es6',
-    ($q, logger, spaceContext, enforcements) => {
+    ($q, spaceContext, enforcements) => {
       return {
         newEntry: newEntry,
         newAsset: newAsset

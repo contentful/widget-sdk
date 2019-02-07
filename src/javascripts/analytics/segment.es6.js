@@ -2,6 +2,7 @@ import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as CallBuffer from 'utils/CallBuffer.es6';
 import * as LazyLoader from 'utils/LazyLoader.es6';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   /**
@@ -18,8 +19,7 @@ export default function register() {
   registerFactory('analytics/segment', [
     '$q',
     '$window',
-    'logger',
-    ($q, $window, logger) => {
+    ($q, $window) => {
       /**
        * Our intercom setup doesn't care about
        * `track()` events sent from UI and it has

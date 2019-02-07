@@ -10,9 +10,9 @@ import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import { getStore } from 'TheStore/index.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as logger from 'services/logger.es6';
 
 const spaceContext = getModule('spaceContext');
-const logger = getModule('logger');
 
 const store = getStore();
 

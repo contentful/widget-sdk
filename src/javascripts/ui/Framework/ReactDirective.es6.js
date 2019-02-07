@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { isFunction } from 'lodash';
 import { registerDirective } from 'NgRegistry.es6';
 import angular from 'angular';
+import * as logger from 'services/logger.es6';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, elem, store) {
@@ -141,9 +142,8 @@ export default function register() {
    */
   registerDirective('reactComponent', [
     '$injector',
-    'logger',
     'redux/store.es6',
-    function($injector, logger, { default: store }) {
+    function($injector, { default: store }) {
       return {
         restrict: 'E',
         replace: true,

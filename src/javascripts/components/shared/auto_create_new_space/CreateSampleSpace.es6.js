@@ -9,13 +9,13 @@ import { getTemplate, getTemplatesList } from 'services/SpaceTemplateLoader.es6'
 import autoCreateSpaceTemplate from './Template.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as logger from 'services/logger.es6';
 
 const client = getModule('client');
 const $rootScope = getModule('$rootScope');
 const spaceContext = getModule('spaceContext');
 const modalDialog = getModule('modalDialog');
 const $state = getModule('$state');
-const logger = getModule('logger');
 
 const DEFAULT_LOCALE = 'en-US';
 

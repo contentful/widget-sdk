@@ -3,8 +3,8 @@ import emptyDoc from './constants/EmptyDoc.es6';
 import deepEqual from 'fast-deep-equal';
 
 import { getModule } from 'NgRegistry.es6';
+import * as logger from 'services/logger.es6';
 
-const logger = getModule('logger');
 const ShareJS = getModule('data/ShareJS/Utils');
 
 /**

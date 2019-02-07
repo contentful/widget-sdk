@@ -89,7 +89,7 @@ describe('Segment service', () => {
       });
 
       it('logs an error if segment function throws an exception', function() {
-        const spy = (this.$inject('logger').logError = sinon.spy());
+        const spy = (this.$inject('services/logger.es6').logError = sinon.spy());
         const err = new Error('Some exception');
 
         this.enable();

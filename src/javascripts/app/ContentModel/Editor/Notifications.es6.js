@@ -1,9 +1,7 @@
 import { first, get } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import { truncate } from 'utils/StringUtils.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const logger = getModule('logger');
+import * as logger from 'services/logger.es6';
 
 /**
  * This module exports functions that trigger notifications regarding the

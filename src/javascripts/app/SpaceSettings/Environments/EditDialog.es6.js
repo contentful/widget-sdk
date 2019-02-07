@@ -9,7 +9,8 @@ import render from './EditDialogView.es6';
 import { getModule } from 'NgRegistry.es6';
 
 import { isValidResourceId } from 'data/utils.es6';
-const logger = getModule('logger');
+import * as logger from 'services/logger.es6';
+
 const { open: openDialog } = getModule('modalDialog');
 
 // Actions

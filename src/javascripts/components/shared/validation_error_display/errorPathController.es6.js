@@ -1,12 +1,12 @@
 import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   registerController('ErrorPathController', [
     '$scope',
     '$attrs',
-    'logger',
-    function ErrorPathController($scope, $attrs, logger) {
+    function ErrorPathController($scope, $attrs) {
       const controller = this;
 
       controller.messages = [];

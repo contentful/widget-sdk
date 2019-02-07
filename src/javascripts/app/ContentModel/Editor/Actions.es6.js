@@ -6,10 +6,10 @@ import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import { getModule } from 'NgRegistry.es6';
 import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField.es6';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
+import * as logger from 'services/logger.es6';
 
 const $q = getModule('$q');
 const $state = getModule('$state');
-const logger = getModule('logger');
 const modalDialog = getModule('modalDialog');
 const Command = getModule('command');
 const spaceContext = getModule('spaceContext');

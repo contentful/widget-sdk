@@ -35,7 +35,7 @@ describe('Asset List Controller', () => {
         'apiErrorHandler'
       ]);
 
-      $provide.constant('logger', {
+      $provide.constant('services/logger.es6', {
         logError: stubs.logError
       });
 

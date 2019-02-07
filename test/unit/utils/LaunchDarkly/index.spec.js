@@ -93,7 +93,7 @@ describe('LaunchDarkly', () => {
       $provide.value('data/User/index.es6', userModule);
       $provide.value('utils/ShallowObjectDiff.es6', this.shallowObjectDiff);
       $provide.value('debug/EnforceFlags.es6', this.EnforceFlags);
-      $provide.constant('logger', this.logger);
+      $provide.constant('services/logger.es6', this.logger);
     });
 
     const ld = this.$inject('utils/LaunchDarkly/index.es6')._noMock;

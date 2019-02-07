@@ -2,12 +2,12 @@ import { registerController } from 'NgRegistry.es6';
 import { onValueScope } from 'utils/kefir.es6';
 import { pick, isObject } from 'lodash';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed.es6';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   registerController('ClientController', [
     '$scope',
     '$state',
-    'logger',
     'spaceContext',
     'authorization',
     'intercom',
@@ -21,7 +21,6 @@ export default function register() {
     function ClientController(
       $scope,
       $state,
-      logger,
       spaceContext,
       authorization,
       Intercom,

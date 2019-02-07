@@ -1,8 +1,6 @@
 import { mapKeys } from 'lodash';
 import { isValidResourceId } from 'data/utils.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const logger = getModule('logger');
+import * as logger from 'services/logger.es6';
 
 /**
  * Returns a function that can be used with `dataloader` to fetch entities.

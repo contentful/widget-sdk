@@ -1,9 +1,5 @@
 import newEntityBatchLoaderFn from './newEntityBatchLoaderFn.es6';
-import * as logger from 'ng/logger';
-
-jest.mock('ng/logger', () => ({
-  logServerError: jest.fn()
-}));
+import * as logger from 'services/logger.es6';
 
 const PENDING = new Promise(() => {});
 

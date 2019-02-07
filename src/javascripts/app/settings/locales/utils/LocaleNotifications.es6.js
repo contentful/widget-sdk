@@ -1,8 +1,6 @@
 import { Notification } from '@contentful/forma-36-react-components';
 import { get } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
-
-const logger = getModule('logger');
+import * as logger from 'services/logger.es6';
 
 const NOT_RENAMEABLE_MESSAGE =
   'Cannot change the code of a locale which is fallback of another one';

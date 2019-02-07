@@ -1,6 +1,7 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   /**
@@ -19,11 +20,10 @@ export default function register() {
     '$state',
     '$location',
     'spaceContext',
-    'logger',
     'modalDialog',
     'analytics/Analytics.es6',
     'navigation/NavState.es6',
-    ($rootScope, $state, $location, spaceContext, logger, modalDialog, Analytics, NavState) => {
+    ($rootScope, $state, $location, spaceContext, modalDialog, Analytics, NavState) => {
       const { updateNavState } = NavState;
 
       // Result of confirmation dialog

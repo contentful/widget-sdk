@@ -56,7 +56,7 @@ describe('cfCreateNewSpace directive', () => {
       $provide.value('services/SpaceTemplateLoader.es6', stubs.spaceTemplateLoader);
       $provide.value('services/SpaceTemplateCreator/index.es6', stubs.spaceTemplateCreator);
       $provide.value('analytics/Analytics.es6', stubs.analytics);
-      $provide.constant('logger', stubs.logger);
+      $provide.constant('services/logger.es6', stubs.logger);
       $provide.constant('client', stubs.client);
       $provide.value('services/TokenStore.es6', stubs.tokenStore);
       $provide.value('services/ResourceService.es6', stubs.resourceService);

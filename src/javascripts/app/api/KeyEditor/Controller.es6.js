@@ -8,12 +8,12 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics.es6';
 import { CONTACT_US_BOILERPLATE_FLAG, ENVIRONMENTS_FLAG } from 'featureFlags.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as logger from 'services/logger.es6';
 
 const $state = getModule('$state');
 const Command = getModule('command');
 const leaveConfirmator = getModule('navigation/confirmLeaveEditor');
 const spaceContext = getModule('spaceContext');
-const logger = getModule('logger');
 const Intercom = getModule('intercom');
 
 import initKeyEditor from './KeyEditor.es6';

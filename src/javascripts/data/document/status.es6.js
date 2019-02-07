@@ -1,6 +1,7 @@
 import { registerFactory } from 'NgRegistry.es6';
 import * as K from 'utils/kefir.es6';
 import DocumentStatusCode from 'data/document/statusCode.es6';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   /**
@@ -13,8 +14,7 @@ export default function register() {
    * Tested in the 'app/entity_editor/Document' tests.
    */
   registerFactory('data/Document/Status', [
-    'logger',
-    logger => {
+    () => {
       return {
         create: create
       };

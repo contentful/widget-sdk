@@ -1,6 +1,7 @@
 import { registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   registerDirective('cfContentPreviewEditor', () => ({
@@ -16,7 +17,6 @@ export default function register() {
     '$q',
     '$stateParams',
     'spaceContext',
-    'logger',
     'contentPreview',
     'slug',
     'command',
@@ -28,7 +28,6 @@ export default function register() {
       $q,
       $stateParams,
       spaceContext,
-      logger,
       contentPreview,
       slugUtils,
       Command,

@@ -3,9 +3,9 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { deepFreeze } from 'utils/Freeze.es6';
 import * as K from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as logger from 'services/logger.es6';
 
 const $q = getModule('$q');
-const logger = getModule('logger');
 const Store = getModule('data/StreamHashSet');
 
 /**

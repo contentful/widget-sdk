@@ -1,7 +1,5 @@
 import { fromPairs } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
-
-const logger = getModule('logger');
+import * as logger from 'services/logger.es6';
 
 export function init() {
   try {

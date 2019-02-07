@@ -1,6 +1,7 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
+import * as logger from 'services/logger.es6';
 
 export default function register() {
   /**
@@ -11,8 +12,7 @@ export default function register() {
    * and to bugsnag if it is enabled.
    */
   registerFactory('$exceptionHandler', [
-    'logger',
-    logger => {
+    () => {
       return exception => {
         const metaData = _.extend({ promptedReload: true }, exception.metaData);
 
