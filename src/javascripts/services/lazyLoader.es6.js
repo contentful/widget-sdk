@@ -1,5 +1,64 @@
 import { registerFactory } from 'NgRegistry.es6';
-import _ from 'lodash';
+import { get as getAtPath } from 'lodash';
+import * as Config from 'Config.es6';
+
+/**
+ * Options:
+ * - url - absolute (in rare cases can be relative) URL
+ * - globalObject - if resource registers itself by global value,
+ *                  it should be a key name within window object
+ * - setup - optional function run immediately after the resource is loaded
+ */
+const RESOURCES = {
+  // CSS:
+  gkPlanCardStyles: {
+    url: Config.authUrl('/gatekeeper/plan_cards.css')
+  },
+  // JavaScript:
+  embedly: {
+    url: 'https://cdn.embedly.com/widgets/platform.js',
+    globalObject: 'embedly',
+    setup: embedly => {
+      embedly('defaults', {
+        cards: {
+          key: Config.services.embedly.api_key
+        }
+      });
+      return embedly;
+    }
+  },
+  googleMaps: {
+    url: 'https://maps.googleapis.com/maps/api/js?v=3&key=' + Config.services.google.maps_api_key,
+    globalObject: 'google.maps'
+  },
+  bugsnag: {
+    url: 'https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js',
+    globalObject: 'Bugsnag'
+  },
+  segment: {
+    url:
+      'https://cdn.segment.com/analytics.js/v1/' + Config.services.segment_io + '/analytics.min.js',
+    globalObject: 'analytics'
+  },
+  snowplow: {
+    // This is a special CDN version prepared for us by Snowplow.
+    // It's less likely to be marked as tracking script by ad blockers.
+    url: 'https://d3unofs9w5amk7.cloudfront.net/Sp4yK8ZCFcVrSMi44LjI.js',
+    globalObject: 'Snowplow'
+  },
+  walkMeStaging: {
+    url:
+      'https://cdn.walkme.com/users/cf344057732941ed81018bf903986da9/test/walkme_cf344057732941ed81018bf903986da9_https.js'
+  },
+  walkMeProd: {
+    url:
+      'https://cdn.walkme.com/users/cf344057732941ed81018bf903986da9/walkme_cf344057732941ed81018bf903986da9_https.js'
+  },
+  PubNub: {
+    url: 'https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.6.js',
+    globalObject: 'PubNub'
+  }
+};
 
 export default function register() {
   /**
@@ -8,13 +67,12 @@ export default function register() {
    *
    * @description
    * This service can be used to lazily load script dependencies.
-   * All the dependencies are defined in "LazyLoader/resources".
+   * All the dependencies are defined above.
    */
   registerFactory('LazyLoader', [
     '$q',
     'angularLoad',
-    'LazyLoader/resources',
-    ($q, loader, resources) => {
+    ($q, loader) => {
       const store = {};
       const cache = {};
 
@@ -51,7 +109,7 @@ export default function register() {
        */
       function get(name) {
         // no resource definition at all
-        const resource = resources[name];
+        const resource = RESOURCES[name];
         if (!resource) {
           return $q.reject(new Error('No resource with requested name "' + name + '"'));
         }
@@ -70,13 +128,15 @@ export default function register() {
         const load = getLoaderFor(resource);
         const loadPromise = load(resource.url).then(() => {
           if (resource.globalObject) {
-            store[name] = _.get(window, resource.globalObject);
+            // Warning: sometimes global object is a path (see Google Maps).
+            // We cannot just do `window[resource.globalObject]`.
+            store[name] = getAtPath(window, resource.globalObject);
           }
 
           let value = store[name];
 
           // Immediately run any setup scripts if available
-          if (_.isFunction(resource.setup)) {
+          if (typeof resource.setup === 'function') {
             value = resource.setup(value);
           }
 
@@ -93,76 +153,6 @@ export default function register() {
 
       function isStylesheet(resource) {
         return resource.url.match(/\.css(?:\?.*)?$/);
-      }
-    }
-  ]);
-
-  registerFactory('LazyLoader/resources', [
-    'environment',
-    'Config.es6',
-    (environment, Config) => {
-      /**
-       * Options:
-       * - url - absolute (in rare cases can be relative) URL
-       * - globalObject - if resource registers itself by global value,
-       *                  it should be a key name within window object
-       * - setup - optional function run immediately after the resource is loaded
-       */
-      return {
-        // CSS:
-        gkPlanCardStyles: {
-          url: Config.authUrl('/gatekeeper/plan_cards.css')
-        },
-        // JavaScript:
-        embedly: {
-          url: 'https://cdn.embedly.com/widgets/platform.js',
-          globalObject: 'embedly',
-          setup: setupEmbedly
-        },
-        googleMaps: {
-          url:
-            'https://maps.googleapis.com/maps/api/js?v=3&key=' +
-            environment.settings.google.maps_api_key,
-          globalObject: 'google.maps'
-        },
-        bugsnag: {
-          url: 'https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js',
-          globalObject: 'Bugsnag'
-        },
-        segment: {
-          url:
-            'https://cdn.segment.com/analytics.js/v1/' +
-            environment.settings.segment_io +
-            '/analytics.min.js',
-          globalObject: 'analytics'
-        },
-        snowplow: {
-          // This is a special CDN version prepared for us by Snowplow.
-          // It's less likely to be marked as tracking script by ad blockers.
-          url: 'https://d3unofs9w5amk7.cloudfront.net/Sp4yK8ZCFcVrSMi44LjI.js',
-          globalObject: 'Snowplow'
-        },
-        walkMeStaging: {
-          url:
-            'https://cdn.walkme.com/users/cf344057732941ed81018bf903986da9/test/walkme_cf344057732941ed81018bf903986da9_https.js'
-        },
-        walkMeProd: {
-          url:
-            'https://cdn.walkme.com/users/cf344057732941ed81018bf903986da9/walkme_cf344057732941ed81018bf903986da9_https.js'
-        },
-        PubNub: {
-          url: 'https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.6.js',
-          globalObject: 'PubNub'
-        }
-      };
-
-      function setupEmbedly(embedly) {
-        embedly('defaults', {
-          cards: {
-            key: environment.settings.embedly.api_key
-          }
-        });
-        return embedly;
       }
     }
   ]);

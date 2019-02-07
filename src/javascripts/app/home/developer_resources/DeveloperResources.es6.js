@@ -1,9 +1,3 @@
-import { getModule } from 'NgRegistry.es6';
-
-const environment = getModule('environment');
-
-const MARKETING_BASE_URL = environment.settings.marketingUrl;
-
 export const developerResources = {
   JavaScript: {
     examples: [
@@ -208,5 +202,5 @@ export const apiDocsUrls = [
 ];
 
 function makeDocsUrl(path) {
-  return MARKETING_BASE_URL + '/developers/docs/references/' + path;
+  return 'https://www.contentful.com/developers/docs/references/' + path;
 }

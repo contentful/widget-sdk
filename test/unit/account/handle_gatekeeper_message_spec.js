@@ -7,17 +7,12 @@ describe('Gatekeeper Message Handler', () => {
       $provide.value('$window', this.window);
     });
     this.handle = this.$inject('handleGatekeeperMessage');
-    this.mockService('Config.es6', {
-      websiteUrl: function(path) {
-        return 'website/' + path;
-      }
-    });
   });
 
   describe('actions on message', () => {
     it('logs out cancelled user and redirects them', function() {
       this.handle({ action: 'create', type: 'UserCancellation' });
-      expect(this.window.location).toBe('website/goodbye');
+      expect(this.window.location).toBe('//www.test.com/goodbye');
     });
 
     it('opens the space creation dialog', function() {

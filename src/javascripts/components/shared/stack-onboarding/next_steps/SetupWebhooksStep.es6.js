@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import { SETUP_WEBHOOK } from 'components/shared/stack-onboarding/next_steps/constants.es6';
 import { Step } from 'app/home/welcome/OnboardingWithTeaSteps.es6';
 import A from 'components/react/atoms/Anchor.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const { env } = getModule('environment');
+import { env } from 'Config.es6';
 
 const SetupWebhooksStep = props => {
   const { isExpanded, isDone, onToggle, deploymentProvider, markAsDone } = props;

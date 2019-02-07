@@ -7,15 +7,6 @@ describe('Analytics', () => {
       $provide.value('analytics/validateEvent', this.validateEvent);
     });
 
-    // we want to simulate production environment
-    // this way data hits the Segment and Snowplow services
-    const Config = this.$inject('Config.es6');
-    const originalEnv = Config.env;
-    Config.env = 'production';
-    this.restoreEnv = () => {
-      Config.env = originalEnv;
-    };
-
     this.segment = this.$inject('analytics/segment');
     ['enable', 'disable', 'identify', 'track', 'page'].forEach(m => {
       sinon.stub(this.segment, m);
@@ -25,6 +16,10 @@ describe('Analytics', () => {
     ['enable', 'disable', 'identify', 'track'].forEach(m => {
       sinon.stub(this.Snowplow, m);
     });
+
+    // we want to simulate production environment
+    // this way data hits the Segment and Snowplow services
+    this.$inject('Config.es6').env = 'production';
 
     this.analytics = this.$inject('analytics/Analytics.es6');
 
@@ -36,7 +31,7 @@ describe('Analytics', () => {
   });
 
   afterEach(function() {
-    this.restoreEnv();
+    this.$inject('Config.es6').env = 'unittest';
   });
 
   describe('#enable()', () => {

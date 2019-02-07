@@ -7,9 +7,8 @@ import { getUser } from 'components/shared/auto_create_new_space/CreateModernOnb
 import { Step } from 'app/home/welcome/OnboardingWithTeaSteps.es6';
 import Code from 'components/react/atoms/Code.es6';
 import A from 'components/react/atoms/Anchor.es6';
-import { getModule } from 'NgRegistry.es6';
 
-const { env } = getModule('environment');
+import { env } from 'Config.es6';
 
 const ModifyContentStep = props => {
   const { isDone, isExpanded, onToggle, managementToken, entry, spaceId, onCopy } = props;

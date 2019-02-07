@@ -8,12 +8,12 @@ import {
   DISCOVERY_APP_BASE_URL
 } from './contentPreviewConfig.es6';
 import { enrichTemplate } from './enrichTemplate.es6';
+import * as Config from 'Config.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const $rootScope = getModule('$rootScope');
 const contentPreview = getModule('contentPreview');
 const TheLocaleStore = getModule('TheLocaleStore');
-const environment = getModule('environment');
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
@@ -24,7 +24,7 @@ const ASSET_PROCESSING_TIMEOUT = 60000;
 // content. This is not very reliable, but since we own this repo, we can be
 // sure that this space will remain the same, and also, in case it is invalid,
 // we will create discovery app for TEA
-const TEA_SPACE_ID = environment.settings.contentful.TEASpaceId;
+const TEA_SPACE_ID = Config.services.contentful.TEASpaceId;
 
 /**
  * @description
@@ -491,7 +491,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
         configs: contentTypes
           .map(ct => {
             const fn = createConfigFns[ct.sys.id];
-            const url = environment.env === 'production' ? baseUrl.prod : baseUrl.staging;
+            const url = Config.env === 'production' ? baseUrl.prod : baseUrl.staging;
             // We need 'isMobile' flag because mobile TEA link has the different format
             // And that's because the mobile teas want all params as query params instead of a part the URL
             return fn && fn({ ct, baseUrl: url, spaceId, cdaToken, cpaToken, isMobile });

@@ -1,6 +1,7 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as CallBuffer from 'utils/CallBuffer.es6';
+import * as Config from 'Config.es6';
 
 export default function register() {
   /**
@@ -12,8 +13,7 @@ export default function register() {
    */
   registerFactory('bugsnag', [
     '$injector',
-    'environment',
-    ($injector, environment) => {
+    $injector => {
       // TODO this should be stored in the environment configuration. Need
       // to work with devops get this done.
       const API_KEY = 'b253f10d5d0184a99e1773cec7b726e8';
@@ -97,8 +97,8 @@ export default function register() {
             bugsnag.enableNotifyUnhandledRejections();
             bugsnag.apiKey = API_KEY;
             bugsnag.notifyReleaseStages = ['staging', 'production'];
-            bugsnag.releaseStage = environment.env;
-            bugsnag.appVersion = environment.gitRevision;
+            bugsnag.releaseStage = Config.env;
+            bugsnag.appVersion = Config.gitRevision;
             setUserInfo(user, bugsnag);
             callBuffer.resolve();
           },
@@ -126,7 +126,7 @@ export default function register() {
 
       function getAdminLink(user) {
         const id = _.get(user, ['sys', 'id']);
-        return 'https://admin.' + environment.settings.main_domain + '/admin/users/' + id;
+        return 'https://admin.' + Config.domain + '/admin/users/' + id;
       }
     }
   ]);

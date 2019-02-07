@@ -13,6 +13,25 @@
 import moment from 'moment';
 import _ from 'lodash';
 
+const injectedConfig = readInjectedConfig();
+const env = injectedConfig.config.environment;
+const gitRevision = injectedConfig.uiVersion;
+
+// define global method for code splitting with static subdomain
+window.WebpackRequireFrom_getChunkURL = () => injectedConfig.config.assetUrl + '/app/';
+
+function readInjectedConfig() {
+  // TODO Should throw when config is not injected, but currently required for tests
+  const defaultValue = { config: { environment: 'development' } };
+  const el = document.querySelector('meta[name="external-config"]');
+
+  try {
+    return JSON.parse(el.getAttribute('content')) || defaultValue;
+  } catch (e) {
+    return defaultValue;
+  }
+}
+
 angular.module('contentful/init', []);
 
 /**
@@ -35,10 +54,9 @@ angular.module('contentful', [
 angular
   .module('contentful/app', ['contentful'])
   .config([
-    'environment',
     '$compileProvider',
-    (environment, $compileProvider) => {
-      if (environment.env !== 'development') {
+    $compileProvider => {
+      if (env !== 'development') {
         $compileProvider.debugInfoEnabled(false);
       }
     }
@@ -221,8 +239,7 @@ angular
 
   .config([
     '$httpProvider',
-    'environment',
-    ($httpProvider, environment) => {
+    $httpProvider => {
       // IE11 caches AJAX requests by default :facepalm: if we don’t set
       // these headers.
       // See: http://viralpatel.net/blogs/ajax-cache-problem-in-ie/
@@ -234,7 +251,6 @@ angular
       //
       // See [CEP-0056] SDK User Agent Headers
       // https://contentful.atlassian.net/wiki/spaces/ENG/pages/122514052/CEP-0056+SDK+User+Agent+Headers
-      const { gitRevision, settings } = environment;
       const headerParts = ['app contentful.web-app', 'platform browser'];
 
       // Add active git revision to headers
@@ -243,8 +259,8 @@ angular
       }
 
       // Add environment, so that local dev versus direct traffic can be differentiated
-      if (settings.environment !== 'production') {
-        headerParts.push(`env ${settings.environment}`);
+      if (env !== 'production') {
+        headerParts.push(`env ${env}`);
       }
 
       $httpProvider.defaults.headers.common['X-Contentful-User-Agent'] = headerParts.join('; ');
@@ -319,10 +335,19 @@ angular
 
         // do not freeze exports while running unit
         // test so methods can be freely stubbed
-        if ($injector.get('environment').env === 'unittest') {
+        if (isUnitTest()) {
           return mod.exports;
         } else {
           return Object.freeze(mod.exports);
+        }
+
+        function isUnitTest() {
+          try {
+            // TODO: check actual process env
+            return $injector.get('Config.es6').env === 'unittest';
+          } catch (err) {
+            return false;
+          }
         }
       }
     ]);

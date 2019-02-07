@@ -2,12 +2,12 @@ import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { runTask } from 'utils/Concurrent.es6';
 import _ from 'lodash';
 import { getModule } from 'NgRegistry.es6';
+import * as Config from 'Config.es6';
 
 const contentfulClient = getModule('contentfulClient');
 const logger = getModule('logger');
-const environment = getModule('environment');
 
-const contentfulConfig = environment.settings.contentful;
+const contentfulConfig = Config.services.contentful;
 
 let client;
 const spaceClients = {};
@@ -75,7 +75,7 @@ function getSpaceClient(templateInfo) {
 }
 
 function getClientParams(space, accessToken, previewAccessToken) {
-  const isProduction = environment.env === 'production';
+  const isProduction = Config.env === 'production';
   const params = {
     space,
     accessToken: isProduction ? accessToken : previewAccessToken,

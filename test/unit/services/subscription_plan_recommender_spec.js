@@ -4,7 +4,7 @@ describe('subscriptionPlanRecommender', () => {
   let $httpBackend;
   let recommend;
 
-  const HOST = 'be.contentful.com:443';
+  const HOST = '//be.test.com';
   const TEST_ORG_ID = 'TEST_ORG_ID';
   const ENDPOINT =
     HOST + '/account/organizations/' + TEST_ORG_ID + '/z_subscription_plans/recommended';
@@ -13,12 +13,7 @@ describe('subscriptionPlanRecommender', () => {
   const REASON_CLASS = { class: 'z-subscription-plan-recommendation-reason' };
 
   beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.constant('environment', {
-        settings: { authUrl: HOST }
-      });
-    });
-
+    module('contentful/test');
     recommend = this.$inject('subscriptionPlanRecommender').recommend;
     $httpBackend = this.$inject('$httpBackend');
   });

@@ -1,10 +1,8 @@
 import teaConfig from './teaEditorInterfaces.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const environment = getModule('environment');
+import * as Config from 'Config.es6';
 
 // we need this id to enrich TEA specifically
-const TEA_SPACE_ID = environment.settings.contentful.TEASpaceId;
+const TEA_SPACE_ID = Config.services.contentful.TEASpaceId;
 
 /**
  * @description We use CDA to get information about template while cloning example spaces
