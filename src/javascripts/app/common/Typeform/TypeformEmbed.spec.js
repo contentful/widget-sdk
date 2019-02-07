@@ -1,13 +1,19 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 
-import * as typeformEmbed from '@typeform/embed';
 import { TypeformEmbed } from './TypeformEmbed.es6';
+import { getTypeformEmbedLib } from 'app/common/Typeform/utils.es6';
 
-jest.mock('@typeform/embed');
+jest.mock('app/common/Typeform/utils.es6');
 
 describe('TypeformEmbed', () => {
   const render = props => Enzyme.mount(<TypeformEmbed {...props} />);
+  const typeformEmbedLib = {
+    makeWidget: jest.fn(),
+    makePopup: jest.fn()
+  };
+
+  getTypeformEmbedLib.mockResolvedValue(typeformEmbedLib);
 
   describe('render as widget', () => {
     const props = {
@@ -27,13 +33,17 @@ describe('TypeformEmbed', () => {
     });
 
     it('should pass only typeform widget props to the makeWidget typeform fn', () => {
-      expect(typeformEmbed.makeWidget).toBeCalledWith(wrapper.find('div').getDOMNode(), props.url, {
-        hideHeaders: props.hideHeaders,
-        hideFooter: props.hideFooter,
-        onSubmit: props.onSubmit,
-        opacity: props.widgetOpacity,
-        buttonText: props.widgetStartButtonText
-      });
+      expect(typeformEmbedLib.makeWidget).toBeCalledWith(
+        wrapper.find('div').getDOMNode(),
+        props.url,
+        {
+          hideHeaders: props.hideHeaders,
+          hideFooter: props.hideFooter,
+          onSubmit: props.onSubmit,
+          opacity: props.widgetOpacity,
+          buttonText: props.widgetStartButtonText
+        }
+      );
     });
   });
 
@@ -56,7 +66,7 @@ describe('TypeformEmbed', () => {
     });
 
     it('should pass only typeform widget props to the makeWidget typeform fn', () => {
-      expect(typeformEmbed.makePopup).toBeCalledWith(props.url, {
+      expect(typeformEmbedLib.makePopup).toBeCalledWith(props.url, {
         hideHeaders: props.hideHeaders,
         hideFooter: props.hideFooter,
         onSubmit: props.onSubmit,

@@ -53,8 +53,6 @@ window.libs = [
 
   ['@jo-sm/asn1js', require('@jo-sm/asn1js')],
 
-  ['@typeform/embed', require('@typeform/embed')],
-
   ['classnames', require('classnames')],
   ['codemirror', require('codemirror')],
   ['color', require('color')],
