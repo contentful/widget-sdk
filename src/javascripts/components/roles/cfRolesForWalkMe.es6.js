@@ -1,15 +1,15 @@
 import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { WALK_FOR_ME } from 'featureFlags.es6';
+import * as LazyLoader from 'utils/LazyLoader.es6';
 
 export default function register() {
   registerDirective('cfRolesForWalkMe', [
     '$rootScope',
     '$window',
     'spaceContext',
-    'LazyLoader',
     'utils/LaunchDarkly/index.es6',
-    ($rootScope, $window, spaceContext, LazyLoader, LD) => {
+    ($rootScope, $window, spaceContext, LD) => {
       const isAdminAttr = 'data-space-role-is-admin';
       const roleNamesAttr = 'data-space-role-names';
       let lastVariation = null;

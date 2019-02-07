@@ -1,9 +1,7 @@
 import { isNumber } from 'lodash';
 import { observeResize } from 'ui/ResizeDetector.es6';
 import * as K from 'utils/kefir.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const LazyLoader = getModule('LazyLoader');
+import * as LazyLoader from 'utils/LazyLoader.es6';
 
 /**
  * Create a Google Map inside an element and react to scope data
@@ -23,11 +21,13 @@ export function init(scope, mapSlotElement) {
       if (!destroyed) {
         scope.isLoading = false;
         initMap(scope, GMaps, mapSlotElement);
+        scope.$applyAsync();
       }
     },
     () => {
       scope.isLoading = false;
       scope.loadError = true;
+      scope.$applyAsync();
     }
   );
 }

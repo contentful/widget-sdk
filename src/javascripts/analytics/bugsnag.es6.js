@@ -2,6 +2,7 @@ import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as CallBuffer from 'utils/CallBuffer.es6';
 import * as Config from 'Config.es6';
+import * as LazyLoader from 'utils/LazyLoader.es6';
 
 export default function register() {
   /**
@@ -12,8 +13,7 @@ export default function register() {
    * See https://bugsnag.com/docs/notifiers/js for more details
    */
   registerFactory('bugsnag', [
-    '$injector',
-    $injector => {
+    () => {
       // TODO this should be stored in the environment configuration. Need
       // to work with devops get this done.
       const API_KEY = 'b253f10d5d0184a99e1773cec7b726e8';
@@ -86,9 +86,6 @@ export default function register() {
       };
 
       function load(user) {
-        // Prevent circular dependency
-        const LazyLoader = $injector.get('LazyLoader');
-
         return LazyLoader.get('bugsnag').then(
           _bugsnag => {
             bugsnag = _bugsnag;

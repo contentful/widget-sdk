@@ -40,7 +40,6 @@ angular.module('contentful/init', []);
  */
 angular.module('contentful', [
   'contentful/init',
-  'angularLoad',
   'ngAnimate',
   'ngSanitize',
   'ui.sortable',

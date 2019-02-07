@@ -6,7 +6,7 @@ describe('Segment service', () => {
 
     this.segment = this.$inject('analytics/segment');
     this.window = this.$inject('$window');
-    this.loader = this.$inject('LazyLoader');
+    this.loader = this.$inject('utils/LazyLoader.es6');
 
     this.analytics = {
       track: sinon.stub(),

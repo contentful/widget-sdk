@@ -14,7 +14,7 @@ describe('cfEmbedlyPreview Directive', () => {
     const $q = this.$inject('$q');
     deferredEmbedlyResponse = $q.defer();
 
-    this.$inject('LazyLoader').get = () => {
+    this.$inject('utils/LazyLoader.es6').get = () => {
       const stubbedEmbedly = (type, element, callback) => {
         if (type === 'card' && element.localName === 'a' && element.hasAttribute('href')) {
           element.innerHTML = 'I am a card from ' + element.getAttribute('href');

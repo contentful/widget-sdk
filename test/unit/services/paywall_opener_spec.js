@@ -14,9 +14,6 @@ describe('paywallOpener', () => {
     this.analytics = {
       track: sinon.spy()
     };
-    this.LazyLoader = {
-      get: sinon.stub().withArgs('gkPlanCardStyles')
-    };
     this.TheAccountView = {
       goToSubscription: sinon.spy()
     };
@@ -26,7 +23,6 @@ describe('paywallOpener', () => {
       $provide.constant('modalDialog', self.modalDialog);
       $provide.constant('subscriptionPlanRecommender', subscriptionPlanRecommender);
       $provide.value('analytics/Analytics.es6', self.analytics);
-      $provide.constant('LazyLoader', self.LazyLoader);
       $provide.constant('TheAccountView', self.TheAccountView);
     });
 
@@ -52,14 +48,6 @@ describe('paywallOpener', () => {
 
       it('opens a modal dialog nonetheless', testOpensPaywallModalDialog);
     });
-
-    describe('with plan cards CSS not being able to load', () => {
-      beforeEach(function() {
-        this.LazyLoader.get.withArgs('gkPlanCardStyles').rejects();
-      });
-
-      it('opens a modal dialog nonetheless', testOpensPaywallModalDialog);
-    });
   });
 
   function describeOpenPaywall(caseMsg, options, moreTests) {
@@ -74,7 +62,6 @@ describe('paywallOpener', () => {
     beforeEach(function() {
       if (userCanUpgrade) {
         this.recommendPlan.resolves({ plan: {}, reason: '...' });
-        this.LazyLoader.get.withArgs('gkPlanCardStyles').resolves();
       }
 
       const openPaywall = this.$inject('paywallOpener').openPaywall;
