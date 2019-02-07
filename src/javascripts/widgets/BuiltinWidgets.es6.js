@@ -33,7 +33,6 @@ export function create() {
     fieldTypes: ['Symbol'],
     name: 'URL',
     icon: 'preview',
-    rendersHelpText: true,
     template: '<cf-url-editor />'
   });
 

@@ -52,7 +52,6 @@ function buildOneRenderable(control, widgets) {
       get(descriptor, ['installationParameters', 'values'], {})
     ),
     template: descriptor.template,
-    rendersHelpText: descriptor.rendersHelpText,
     defaultHelpText: descriptor.defaultHelpText,
     isFocusable: !descriptor.notFocusable,
     sidebar: !!descriptor.sidebar

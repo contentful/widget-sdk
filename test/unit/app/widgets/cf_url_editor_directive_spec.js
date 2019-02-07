@@ -43,24 +43,6 @@ describe('cfUrlEditor directive', () => {
     this.scope = this.$el.isolateScope();
   });
 
-  it('shows configured help text', function() {
-    this.setHelpText('some help text');
-
-    const helpText = this.compileElement()
-      .find('[role=note]')
-      .text();
-    expect(helpText).toEqual('some help text');
-  });
-
-  it('shows nothing when no help text configured', function() {
-    this.setHelpText(undefined);
-
-    const helpText = this.compileElement()
-      .find('[role=note]')
-      .text();
-    expect(helpText).toEqual('');
-  });
-
   it('updates when new value is received over the wire', function() {
     this.widgetApi.field.onValueChanged.yield('omgwhat');
     expect(this.$el.find('input').val()).toEqual('omgwhat');

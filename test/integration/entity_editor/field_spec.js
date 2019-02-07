@@ -157,13 +157,6 @@ describe('entity editor field integration', () => {
       expect(hint.length).toBe(1);
       expect(hint.text()).toEqual('HELP TEXT');
     });
-
-    it('does not show hint if widget renders it', function() {
-      this.widget.settings.helpText = 'HELP TEXT';
-      this.widget.rendersHelpText = true;
-      const hint = this.compile().find('[data-test-id=field-hint]');
-      expect(hint.length).toBe(0);
-    });
   });
 
   describe('visible locales', () => {
