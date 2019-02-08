@@ -53,6 +53,7 @@ function buildOneRenderable(control, widgets) {
     ),
     template: descriptor.template,
     isFocusable: !descriptor.notFocusable,
+    isBackground: descriptor.isBackground,
     sidebar: !!descriptor.sidebar
   });
 
