@@ -1,8 +1,7 @@
 export const SSO_CREATE_IDENTITY_PROVIDER_PENDING = 'SSO_CREATE_IDENTITY_PROVIDER/PENDING';
-export function ssoCreateIdentityProviderPending(isPending) {
+export function ssoCreateIdentityProviderPending() {
   return {
-    type: SSO_CREATE_IDENTITY_PROVIDER_PENDING,
-    isPending
+    type: SSO_CREATE_IDENTITY_PROVIDER_PENDING
   };
 }
 
@@ -23,10 +22,9 @@ export function ssoCreateIdentityProviderFailure(error) {
 }
 
 export const SSO_GET_IDENTITY_PROVIDER_PENDING = 'SSO_GET_IDENTITY_PROVIDER/PENDING';
-export function ssoGetIdentityProviderPending(isPending) {
+export function ssoGetIdentityProviderPending() {
   return {
-    type: SSO_GET_IDENTITY_PROVIDER_PENDING,
-    isPending
+    type: SSO_GET_IDENTITY_PROVIDER_PENDING
   };
 }
 
@@ -64,11 +62,10 @@ export function ssoFieldUpdateValue(fieldName, value) {
 }
 
 export const SSO_FIELD_UPDATE_PENDING = 'SSO_FIELD_UPDATE/PENDING';
-export function ssoFieldUpdatePending(fieldName, isPending) {
+export function ssoFieldUpdatePending(fieldName) {
   return {
     type: SSO_FIELD_UPDATE_PENDING,
-    fieldName,
-    isPending
+    fieldName
   };
 }
 

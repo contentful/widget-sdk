@@ -3,23 +3,17 @@ import * as actions from 'redux/actions/sso/actions.es6';
 
 const callReducer = (reducer, action) => {
   return reducer(undefined, action);
-}
+};
 
 describe('SSO Redux reducers', () => {
   describe('identityProvider', () => {
     it('should handle SSO identityProvider creation pending state', () => {
-      expect(callReducer(reducers.identityProvider, {
-        type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
+      expect(
+        callReducer(reducers.identityProvider, {
+          type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING
+        })
+      ).toEqual({
         isPending: true
-      })).toEqual({
-        isPending: true
-      });
-
-      expect(callReducer(reducers.identityProvider, {
-        type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
-        isPending: false
-      })).toEqual({
-        isPending: false
       });
     });
 
@@ -28,30 +22,37 @@ describe('SSO Redux reducers', () => {
         ssoName: 'something-1234'
       };
 
-      expect(callReducer(reducers.identityProvider, {
-        type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
-        identityProvider
-      })).toEqual({
-        data: identityProvider
+      expect(
+        callReducer(reducers.identityProvider, {
+          type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
+          identityProvider
+        })
+      ).toEqual({
+        data: identityProvider,
+        isPending: false
       });
     });
 
     it('should handle SSO identity provider creation failure state', () => {
       const error = new Error('Something bad happened');
 
-      expect(callReducer(reducers.identityProvider, {
-        type: actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE,
-        error
-      })).toEqual({
-        error
+      expect(
+        callReducer(reducers.identityProvider, {
+          type: actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE,
+          error
+        })
+      ).toEqual({
+        error,
+        isPending: false
       });
     });
 
     it('should handle SSO identity provider retrieval pending state', () => {
-      expect(callReducer(reducers.identityProvider, {
-        type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING,
-        isPending: true
-      })).toEqual({
+      expect(
+        callReducer(reducers.identityProvider, {
+          type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING
+        })
+      ).toEqual({
         isPending: true
       });
     });
@@ -61,22 +62,28 @@ describe('SSO Redux reducers', () => {
         ssoName: 'something-1234'
       };
 
-      expect(callReducer(reducers.identityProvider, {
-        type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
-        identityProvider
-      })).toEqual({
-        data: identityProvider
+      expect(
+        callReducer(reducers.identityProvider, {
+          type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
+          identityProvider
+        })
+      ).toEqual({
+        data: identityProvider,
+        isPending: false
       });
     });
 
     it('should handle SSO identity provider retrieval failure state', () => {
       const error = new Error('Something bad happened');
 
-      expect(callReducer(reducers.identityProvider, {
-        type: actions.SSO_GET_IDENTITY_PROVIDER_FAILURE,
-        error
-      })).toEqual({
-        error
+      expect(
+        callReducer(reducers.identityProvider, {
+          type: actions.SSO_GET_IDENTITY_PROVIDER_FAILURE,
+          error
+        })
+      ).toEqual({
+        error,
+        isPending: false
       });
     });
   });
@@ -89,10 +96,12 @@ describe('SSO Redux reducers', () => {
         idpSsoTargetUrl: 'https://example.com/auth'
       };
 
-      expect(callReducer(reducers.fields, {
-        type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
-        identityProvider
-      })).toEqual({
+      expect(
+        callReducer(reducers.fields, {
+          type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
+          identityProvider
+        })
+      ).toEqual({
         ssoName: {
           value: 'something-1234'
         },
@@ -107,10 +116,12 @@ describe('SSO Redux reducers', () => {
         }
       });
 
-      expect(callReducer(reducers.fields, {
-        type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
-        identityProvider
-      })).toEqual({
+      expect(
+        callReducer(reducers.fields, {
+          type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
+          identityProvider
+        })
+      ).toEqual({
         ssoName: {
           value: 'something-1234'
         },
@@ -127,11 +138,13 @@ describe('SSO Redux reducers', () => {
     });
 
     it('should handle field update value state', () => {
-      expect(callReducer(reducers.fields, {
-        type: actions.SSO_FIELD_UPDATE_VALUE,
-        fieldName: 'ssoName',
-        value: 'something-else'
-      })).toEqual({
+      expect(
+        callReducer(reducers.fields, {
+          type: actions.SSO_FIELD_UPDATE_VALUE,
+          fieldName: 'ssoName',
+          value: 'something-else'
+        })
+      ).toEqual({
         ssoName: {
           value: 'something-else'
         }
@@ -139,34 +152,28 @@ describe('SSO Redux reducers', () => {
     });
 
     it('should handle field update pending state', () => {
-      expect(callReducer(reducers.fields, {
-        type: actions.SSO_FIELD_UPDATE_PENDING,
-        fieldName: 'ssoName',
-        isPending: true
-      })).toEqual({
+      expect(
+        callReducer(reducers.fields, {
+          type: actions.SSO_FIELD_UPDATE_PENDING,
+          fieldName: 'ssoName'
+        })
+      ).toEqual({
         ssoName: {
           isPending: true
-        }
-      });
-
-      expect(callReducer(reducers.fields, {
-        type: actions.SSO_FIELD_UPDATE_PENDING,
-        fieldName: 'ssoName',
-        isPending: false
-      })).toEqual({
-        ssoName: {
-          isPending: false
         }
       });
     });
 
     it('should handle field validation success state', () => {
-      expect(callReducer(reducers.fields, {
-        type: actions.SSO_FIELD_VALIDATION_SUCCESS,
-        fieldName: 'ssoName'
-      })).toEqual({
+      expect(
+        callReducer(reducers.fields, {
+          type: actions.SSO_FIELD_VALIDATION_SUCCESS,
+          fieldName: 'ssoName'
+        })
+      ).toEqual({
         ssoName: {
-          error: null
+          error: null,
+          isPending: false
         }
       });
     });
@@ -174,23 +181,29 @@ describe('SSO Redux reducers', () => {
     it('should handle field update and validation failure states', () => {
       const error = new Error('Bad field');
 
-      expect(callReducer(reducers.fields, {
-        type: actions.SSO_FIELD_VALIDATION_FAILURE,
-        fieldName: 'ssoName',
-        error
-      })).toEqual({
+      expect(
+        callReducer(reducers.fields, {
+          type: actions.SSO_FIELD_VALIDATION_FAILURE,
+          fieldName: 'ssoName',
+          error
+        })
+      ).toEqual({
         ssoName: {
-          error: error.message
+          error: error.message,
+          isPending: false
         }
       });
 
-      expect(callReducer(reducers.fields, {
-        type: actions.SSO_FIELD_UPDATE_FAILURE,
-        fieldName: 'ssoName',
-        error
-      })).toEqual({
+      expect(
+        callReducer(reducers.fields, {
+          type: actions.SSO_FIELD_UPDATE_FAILURE,
+          fieldName: 'ssoName',
+          error
+        })
+      ).toEqual({
         ssoName: {
-          error: error.message
+          error: error.message,
+          isPending: false
         }
       });
     });

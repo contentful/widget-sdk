@@ -21,16 +21,11 @@ describe('SSO Redux actionCreators', () => {
       mockStore.dispatch(actionCreators.retrieveIdp({ orgId: '1234' })).then(() => {
         expect(mockStore.getActions()).toEqual([
           {
-            type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING,
-            isPending: true
+            type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING
           },
           {
             type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
             identityProvider
-          },
-          {
-            type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING,
-            isPending: false
           }
         ]);
       });
@@ -44,16 +39,11 @@ describe('SSO Redux actionCreators', () => {
       mockStore.dispatch(actionCreators.retrieveIdp({ orgId: '1234' })).then(() => {
         expect(mockStore.getActions()).toEqual([
           {
-            type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING,
-            isPending: true
+            type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING
           },
           {
             type: actions.SSO_GET_IDENTITY_PROVIDER_FAILURE,
             error
-          },
-          {
-            type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING,
-            isPending: false
           }
         ]);
       });
@@ -71,16 +61,11 @@ describe('SSO Redux actionCreators', () => {
         .then(() => {
           expect(mockStore.getActions()).toEqual([
             {
-              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
-              isPending: true
+              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING
             },
             {
               type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
               identityProvider
-            },
-            {
-              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
-              isPending: false
             }
           ]);
         });
@@ -116,16 +101,11 @@ describe('SSO Redux actionCreators', () => {
         .then(() => {
           expect(mockStore.getActions()).toEqual([
             {
-              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
-              isPending: true
+              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING
             },
             {
               type: actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE,
               error
-            },
-            {
-              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
-              isPending: false
             }
           ]);
         });
@@ -227,17 +207,11 @@ describe('SSO Redux actionCreators', () => {
           },
           {
             type: actions.SSO_FIELD_UPDATE_PENDING,
-            fieldName,
-            isPending: true
+            fieldName
           },
           {
             type: actions.SSO_FIELD_UPDATE_SUCCESS,
             fieldName
-          },
-          {
-            type: actions.SSO_FIELD_UPDATE_PENDING,
-            fieldName,
-            isPending: false
           }
         ])
       );
@@ -296,18 +270,12 @@ describe('SSO Redux actionCreators', () => {
           },
           {
             type: actions.SSO_FIELD_UPDATE_PENDING,
-            fieldName,
-            isPending: true
+            fieldName
           },
           {
             type: actions.SSO_FIELD_UPDATE_FAILURE,
             fieldName,
             error
-          },
-          {
-            type: actions.SSO_FIELD_UPDATE_PENDING,
-            fieldName,
-            isPending: false
           }
         ])
       );

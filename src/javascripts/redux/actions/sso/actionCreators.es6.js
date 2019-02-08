@@ -7,7 +7,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 
 export function retrieveIdp({ orgId }) {
   return async dispatch => {
-    dispatch(actions.ssoGetIdentityProviderPending(true));
+    dispatch(actions.ssoGetIdentityProviderPending());
 
     const endpoint = createOrganizationEndpoint(orgId);
 
@@ -20,13 +20,11 @@ export function retrieveIdp({ orgId }) {
       });
     } catch (e) {
       dispatch(actions.ssoGetIdentityProviderFailure(e));
-      dispatch(actions.ssoGetIdentityProviderPending(false));
 
       return;
     }
 
     dispatch(actions.ssoGetIdentityProviderSuccess(idp));
-    dispatch(actions.ssoGetIdentityProviderPending(false));
   };
 }
 
@@ -34,7 +32,7 @@ export function createIdp({ orgId, orgName }) {
   return async dispatch => {
     const endpoint = createOrganizationEndpoint(orgId);
 
-    dispatch(actions.ssoCreateIdentityProviderPending(true));
+    dispatch(actions.ssoCreateIdentityProviderPending());
 
     let identityProvider;
 
@@ -48,13 +46,11 @@ export function createIdp({ orgId, orgName }) {
       });
     } catch (e) {
       dispatch(actions.ssoCreateIdentityProviderFailure(e));
-      dispatch(actions.ssoCreateIdentityProviderPending(false));
 
       return;
     }
 
     dispatch(actions.ssoCreateIdentityProviderSuccess(identityProvider));
-    dispatch(actions.ssoCreateIdentityProviderPending(false));
   };
 }
 
@@ -80,7 +76,7 @@ export function updateFieldValue({ fieldName, value, orgId }) {
     const version = selectors.getIdentityProviderVersion(getState());
 
     dispatch(actions.ssoFieldUpdateValue(fieldName, value));
-    dispatch(actions.ssoFieldUpdatePending(fieldName, true));
+    dispatch(actions.ssoFieldUpdatePending(fieldName));
 
     const endpoint = createOrganizationEndpoint(orgId);
     let identityProvider;
@@ -96,14 +92,12 @@ export function updateFieldValue({ fieldName, value, orgId }) {
       });
     } catch (e) {
       dispatch(actions.ssoFieldUpdateFailure(fieldName, new Error('Field is not valid')));
-      dispatch(actions.ssoFieldUpdatePending(fieldName, false));
 
       return;
     }
 
     dispatch(actions.ssoFieldUpdateSuccess(fieldName));
     dispatch(actions.ssoUpdateIdentityProvider(identityProvider));
-    dispatch(actions.ssoFieldUpdatePending(fieldName, false));
   };
 }
 

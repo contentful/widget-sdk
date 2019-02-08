@@ -40,32 +40,36 @@ export function identityProvider(state = {}, action) {
     case actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING:
       return {
         ...state,
-        isPending: action.isPending
+        isPending: true
       };
     case actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS:
       return {
         ...state,
-        data: action.identityProvider
+        data: action.identityProvider,
+        isPending: false
       };
     case actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE:
       return {
         ...state,
-        error: action.error
+        error: action.error,
+        isPending: false
       };
     case actions.SSO_GET_IDENTITY_PROVIDER_PENDING:
       return {
         ...state,
-        isPending: action.isPending
+        isPending: true
       };
     case actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS:
       return {
         ...state,
-        data: action.identityProvider
+        data: action.identityProvider,
+        isPending: false
       };
     case actions.SSO_GET_IDENTITY_PROVIDER_FAILURE:
       return {
         ...state,
-        error: action.error
+        error: action.error,
+        isPending: false
       };
     case actions.SSO_UPDATE_IDENTITY_PROVIDER:
       return {
@@ -112,13 +116,14 @@ export function fields(state = {}, action) {
     }
     case actions.SSO_FIELD_UPDATE_PENDING: {
       const updatedState = clone(state);
-      set(updatedState, [action.fieldName, 'isPending'], action.isPending);
+      set(updatedState, [action.fieldName, 'isPending'], true);
 
       return updatedState;
     }
     case actions.SSO_FIELD_VALIDATION_SUCCESS: {
       const updatedState = clone(state);
       set(updatedState, [action.fieldName, 'error'], null);
+      set(updatedState, [action.fieldName, 'isPending'], false);
 
       return updatedState;
     }
@@ -126,6 +131,7 @@ export function fields(state = {}, action) {
     case actions.SSO_FIELD_VALIDATION_FAILURE: {
       const updatedState = clone(state);
       set(updatedState, [action.fieldName, 'error'], action.error.message);
+      set(updatedState, [action.fieldName, 'isPending'], false);
 
       return updatedState;
     }
