@@ -286,6 +286,7 @@ export default function register() {
         data.fields = data.fields || [];
         data.fields.push(newField);
         $scope.$broadcast('fieldAdded');
+        setDirty();
         syncEditorInterface();
         trackAddedField($scope.contentType, newField);
       }
