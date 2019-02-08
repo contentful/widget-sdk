@@ -17,7 +17,7 @@ function getExtensionTrackingContexts(editorData) {
       'fieldControls',
       'sidebar'
     ]),
-    [WidgetLocations.LOCATION_ENTRY_SIDEBAR]: getExtensions(editorData, ['sidebar'])
+    [WidgetLocations.LOCATION_ENTRY_SIDEBAR]: getExtensions(editorData, ['sidebarExtensions'])
   };
 
   return Object.keys(extensionsByLocation).reduce(

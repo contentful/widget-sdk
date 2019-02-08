@@ -22,15 +22,14 @@ export default function register() {
     'utils/locales.es6',
     'spaceContext',
     'TheLocaleStore',
-    'Config.es6',
-    (LD, { isRtlLocale }, spaceContext, TheLocaleStore, Config) => {
+    (LD, { isRtlLocale }, spaceContext, TheLocaleStore) => {
       return {
         restrict: 'E',
         template: JST.cf_snapshot_presenter(),
         controller: [
           '$scope',
           $scope => {
-            const { field, widgetNamespace, src, srcdoc } = $scope.widget;
+            const { field, widgetNamespace, descriptor } = $scope.widget;
             $scope.type = getFieldType(field);
             $scope.linkType = _.get(field, 'linkType', _.get(field, 'items.linkType'));
 
@@ -51,9 +50,7 @@ export default function register() {
             if (widgetNamespace === NAMESPACE_EXTENSION) {
               $scope.extensionProps = {
                 bridge: createBridge({ $scope, spaceContext, TheLocaleStore }),
-                src,
-                srcdoc,
-                appDomain: `app.${Config.domain}`
+                descriptor
               };
             }
 

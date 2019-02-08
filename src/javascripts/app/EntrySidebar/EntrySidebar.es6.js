@@ -42,13 +42,15 @@ export default class EntrySidebar extends Component {
         disabled: PropTypes.bool
       })
     ),
-    appDomain: PropTypes.string.isRequired,
     sidebarExtensions: PropTypes.arrayOf(
       PropTypes.shape({
-        bridge: PropTypes.object.isRequired,
-        widget: PropTypes.object.isRequired
+        widgetId: PropTypes.string.isRequired,
+        widgetNamespace: PropTypes.string.isRequired,
+        descriptor: PropTypes.object,
+        problem: PropTypes.string
       })
     ),
+    sidebarExtensionsBridge: PropTypes.object.isRequired,
     legacySidebarExtensions: PropTypes.arrayOf(
       PropTypes.shape({
         bridge: PropTypes.object.isRequired,
@@ -57,46 +59,48 @@ export default class EntrySidebar extends Component {
     )
   };
 
-  renderBuiltinWidget = widget => {
-    const { widgetId, widgetNamespace } = widget;
+  renderBuiltinWidget = sidebarItem => {
+    const { widgetId, widgetNamespace } = sidebarItem;
+
     if (widgetId === SidebarWidgetTypes.VERSIONS && !this.props.isMasterEnvironment) {
       return null;
     }
-    if (!ComponentsMap[widgetId]) {
+
+    const Component = ComponentsMap[widgetId];
+
+    if (!Component) {
       return null;
     }
-    const Component = ComponentsMap[widgetId];
-    return <Component key={`${widgetId}-${widgetNamespace}`} emitter={this.props.emitter} />;
+
+    return <Component key={`${widgetNamespace},${widgetId}`} emitter={this.props.emitter} />;
   };
 
-  renderExtensionWidget = widget => {
-    const item = this.props.sidebarExtensions.find(item => {
-      return item.widget.id == widget.widgetId;
-    });
+  renderExtensionWidget = item => {
+    item = this.props.sidebarExtensions.find(w => w.widgetId === item.widgetId);
 
-    if (!item) {
-      return null;
+    if (item.problem) {
+      return <p>TODO: Render error - missing UIE</p>;
     }
+
     return (
-      <EntrySidebarWidget title={item.widget.name}>
+      <EntrySidebarWidget
+        title={item.descriptor.name}
+        key={`${item.widgetNamespace},${item.widgetId}`}>
         <ExtensionIFrameRenderer
-          bridge={item.bridge}
-          src={item.widget.src}
-          srcdoc={item.widget.srcdoc}
-          appDomain={this.props.appDomain}
-          location="entry-sidebar"
+          bridge={this.props.sidebarExtensionsBridge}
+          descriptor={item.descriptor}
         />
       </EntrySidebarWidget>
     );
   };
 
-  renderWidgets = (widgets = []) => {
-    return widgets.map(widget => {
-      if (widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
-        return this.renderBuiltinWidget(widget);
+  renderWidgets = (sidebarItems = []) => {
+    return sidebarItems.map(item => {
+      if (item.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
+        return this.renderBuiltinWidget(item);
       }
-      if (widget.widgetNamespace === NAMESPACE_EXTENSION) {
-        return this.renderExtensionWidget(widget);
+      if (item.widgetNamespace === NAMESPACE_EXTENSION) {
+        return this.renderExtensionWidget(item);
       }
       return null;
     });
@@ -105,12 +109,7 @@ export default class EntrySidebar extends Component {
   renderLegacyExtensions = () => {
     return this.props.legacySidebarExtensions.map(({ bridge, widget }) => (
       <EntrySidebarWidget title={widget.field.name} key={widget.field.id}>
-        <ExtensionIFrameRenderer
-          bridge={bridge}
-          src={widget.src}
-          srcdoc={widget.srcdoc}
-          appDomain={this.props.appDomain}
-        />
+        <ExtensionIFrameRenderer bridge={bridge} descriptor={widget.descriptor} />
       </EntrySidebarWidget>
     ));
   };
@@ -126,12 +125,12 @@ export default class EntrySidebar extends Component {
   };
 
   render() {
-    const widgets = this.getSidebarConfiguration();
+    const sidebarItems = this.getSidebarConfiguration();
     return (
       <React.Fragment>
         <EntryInfoPanelContainer emitter={this.props.emitter} />
         <div className="entity-sidebar">
-          {this.renderWidgets(widgets)}
+          {this.renderWidgets(sidebarItems)}
           {this.renderLegacyExtensions()}
         </div>
       </React.Fragment>

@@ -5,9 +5,7 @@ import { getModule } from 'NgRegistry.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes.es6';
 import createBridge from 'widgets/EditorExtensionBridge.es6';
-import createSidebarBridge from 'widgets/SidebarExtensionBridge.es6';
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
-import * as Config from 'Config.es6';
+import * as WidgetLocations from 'widgets/WidgetLocations.es6';
 
 const $controller = getModule('$controller');
 const $rootScope = getModule('$rootScope');
@@ -174,23 +172,26 @@ export default ({ $scope }) => {
       $scope: fieldLocaleScope
     });
 
-    const bridge = createBridge({
-      $rootScope,
-      $scope: fieldLocaleScope,
-      spaceContext,
-      TheLocaleStore,
-      entitySelector,
-      Analytics,
-      entityCreator,
-      Navigator,
-      SlideInNavigator
-    });
+    const bridge = createBridge(
+      {
+        $rootScope,
+        $scope: fieldLocaleScope,
+        spaceContext,
+        TheLocaleStore,
+        entitySelector,
+        Analytics,
+        entityCreator,
+        Navigator,
+        SlideInNavigator
+      },
+      WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR
+    );
 
     return { bridge, widget };
   });
 
-  const sidebarExtensions = $scope.editorData.widgets[NAMESPACE_EXTENSION].map(widget => {
-    const bridge = createSidebarBridge({
+  const sidebarExtensionsBridge = createBridge(
+    {
       $rootScope,
       $scope,
       spaceContext,
@@ -200,16 +201,15 @@ export default ({ $scope }) => {
       entityCreator,
       Navigator,
       SlideInNavigator
-    });
-
-    return { bridge, widget };
-  });
+    },
+    WidgetLocations.LOCATION_ENTRY_SIDEBAR
+  );
 
   return {
-    appDomain: `app.${Config.domain}`,
     legacySidebarExtensions: legacyExtensions,
     sidebar: $scope.editorData.sidebar,
-    sidebarExtensions,
+    sidebarExtensions: $scope.editorData.sidebarExtensions,
+    sidebarExtensionsBridge,
     isEntry,
     isMasterEnvironment,
     emitter

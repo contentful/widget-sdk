@@ -3,16 +3,19 @@ import createIDMap from './IDMap.es6';
 import * as PublicContentType from './PublicContentType.es6';
 
 const REQUIRED_CONFIG_KEYS = [
+  'location', // Where the extension is rendered. See `WidgetLocations`.
   'channel', // Instance of `ExtensionIFrameChannel`
   'locales', // `{ available, default }` with all private locales and the default.
   'entryData', // API Entry entity. Using internal IDs (ShareJS format).
   'contentTypeData', // API ContentType entity. Using internal IDs (ShareJS format).
   'spaceMembership', // API SpaceMembership entity.
-  'parameters' // UI Extension parameters.
+  'parameters', // UI Extension parameters.
 
   // `{ field, locale }` for a field-locale pair of the extension being rendered.
   // `field` uses internal IDs (ShareJS format).
   // `locale` has the `internal_code` property.
+  // Can be `null` if the extension is not tied to a field.
+  'current'
 ];
 
 /**
@@ -20,9 +23,9 @@ const REQUIRED_CONFIG_KEYS = [
  * with UI Extensions rendered in IFrames.
  */
 export default class ExtensionAPI {
-  constructor(config, location) {
+  constructor(config) {
     REQUIRED_CONFIG_KEYS.forEach(key => {
-      if (config[key]) {
+      if (key in config) {
         this[key] = config[key];
       } else {
         throw new Error(`Required configuration option "${key}" missing`);
@@ -33,9 +36,6 @@ export default class ExtensionAPI {
     if (extraKeys.length > 0) {
       throw new Error(`Extra configuration options ${extraKeys.join(', ')} provided`);
     }
-
-    // todo: use constant
-    this.location = location || 'entry-field';
 
     // Keep content type fields with internal IDs.
     this.contentTypeFields = get(this.contentTypeData, ['fields'], []);

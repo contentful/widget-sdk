@@ -1,8 +1,10 @@
 import ExtensionAPI from './ExtensionAPI.es6';
+import { LOCATION_ENTRY_FIELD } from './WidgetLocations.es6';
 
 describe('ExtensionAPI', () => {
   const createAPI = extraConfig => {
     return new ExtensionAPI({
+      location: LOCATION_ENTRY_FIELD,
       channel: { connect: jest.fn(), destroy: jest.fn(), send: jest.fn(), handlers: {} },
       current: { field: {}, locale: {} },
       locales: { available: [], default: {} },
@@ -69,6 +71,7 @@ describe('ExtensionAPI', () => {
       expect(api.channel.connect).toBeCalledTimes(1);
       expect(api.channel.connect).toBeCalledWith(
         expect.objectContaining({
+          location: LOCATION_ENTRY_FIELD,
           user: expect.any(Object),
           field: {
             id: 'FID-public',

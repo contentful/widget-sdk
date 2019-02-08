@@ -51,9 +51,11 @@ describe('Extension SDK', () => {
       widget: {
         field,
         widgetNamespace: 'extension',
-        srcdoc:
-          '<!doctype html>' +
-          '<script src="/base/node_modules/contentful-ui-extensions-sdk/dist/cf-extension-api.js"></script>'
+        descriptor: {
+          srcdoc:
+            '<!doctype html>' +
+            '<script src="/base/node_modules/contentful-ui-extensions-sdk/dist/cf-extension-api.js"></script>'
+        }
       },
       entityInfo: {
         contentType: {
@@ -601,8 +603,8 @@ describe('Extension SDK', () => {
     });
 
     when('parameter values are provided', function() {
-      this.scope.widget.settings = { test: true, x: 'y' };
-      this.scope.widget.installationParameterValues = { flag: true, num: 123 };
+      this.scope.widget.descriptor.settings = { test: true, x: 'y' };
+      this.scope.widget.descriptor.installationParameterValues = { flag: true, num: 123 };
     }).it('exposes them in the API', function*(api) {
       expect(api.parameters).toEqual({
         installation: { flag: true, num: 123 },
