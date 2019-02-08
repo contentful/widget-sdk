@@ -17,7 +17,6 @@ export default function register() {
    * @name ContentTypeEditorController
    *
    * @scope.requires  context
-   * @scope.requires  contentTypeForm
    *
    * @scope.provides  contentType
    * @scope.provides  hasFields
@@ -50,18 +49,11 @@ export default function register() {
         .getContentTypes()
         .then(response => response.items.map(ct => ct.sys.id));
 
+      $scope.context.dirty = false;
+
       const canEdit = accessChecker.can('update', 'ContentType');
       // Read-only data for template
-      $scope.data = {
-        canEdit: canEdit
-      };
-
-      // TODO This does not belong here. Instead it should be set in the template.
-      // Unfortunately the cfUiSortable directive does not support this.
-      $scope.uiSortable = {
-        disabled: !canEdit,
-        placeholder: 'ct-field--placeholder'
-      };
+      $scope.data = { canEdit: canEdit };
 
       $scope.actions = createActions($scope, contentTypeIds);
 
@@ -77,10 +69,6 @@ export default function register() {
 
       $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
-      $scope.$watch('contentType.data.displayField', checkForDirtyForm);
-      $scope.$watch('contentTypeForm.$dirty', setDirtyState);
-      $scope.$watch('context.isNew', setDirtyState);
-
       $scope.$watch(
         () => $scope.contentType.getName(),
         title => {
@@ -88,18 +76,9 @@ export default function register() {
         }
       );
 
-      $scope.$watch(
-        'contentType.data.fields',
-        (newVal, oldVal) => {
-          checkForDirtyForm(newVal, oldVal);
-        },
-        true
-      );
-
       $scope.$watch('contentType.data.fields.length', length => {
         $scope.hasFields = length > 0;
         assureDisplayField($scope.contentType.data);
-        setDirtyState();
         $scope.data.fieldsUsed = length;
       });
 
@@ -118,7 +97,7 @@ export default function register() {
           if (withId) {
             data.sys.id = metadata.id;
           }
-          $scope.contentTypeForm.$setDirty();
+          setDirty();
         };
       }
 
@@ -173,21 +152,17 @@ export default function register() {
           return control.fieldId === fieldId;
         });
 
-        return openFieldDialog($scope, field, control).then(() => {
-          $scope.contentTypeForm.$setDirty();
-        });
+        return openFieldDialog($scope, field, control).then(setDirty);
       };
 
       controller.setFieldAsTitle = field => {
         $scope.contentType.data.displayField = field.id;
-        forceSetDirtyState(true);
-        $scope.$applyAsync();
+        setDirty();
       };
 
       controller.updateOrder = fields => {
         $scope.contentType.data.fields = fields;
-        forceSetDirtyState(true);
-        $scope.$applyAsync();
+        setDirty();
       };
 
       controller.toggleFieldProperty = (field, property, isTitle) => {
@@ -199,8 +174,7 @@ export default function register() {
           controller.updateField(field.id, {
             [property]: toggled
           });
-          forceSetDirtyState(true);
-          $scope.$applyAsync();
+          setDirty();
         }
       };
 
@@ -219,8 +193,7 @@ export default function register() {
           controller.updateField(field.id, {
             deleted: true
           });
-          forceSetDirtyState(true);
-          $scope.$applyAsync();
+          setDirty();
         } else if (isOmittedInUiOnly) {
           openSaveDialog().then(() => {
             $scope.actions.save.execute();
@@ -236,30 +209,12 @@ export default function register() {
         controller.updateField(field.id, {
           deleted: false
         });
-        forceSetDirtyState(true);
-        $scope.$applyAsync();
+        setDirty();
       };
 
-      function checkForDirtyForm(newVal, oldVal) {
-        if (newVal !== oldVal) {
-          $scope.contentTypeForm.$setDirty();
-        }
-      }
-
-      function forceSetDirtyState(dirty) {
-        $scope.context.dirty = dirty;
-      }
-
-      function setDirtyState(forceDirty = false) {
-        let modified = $scope.contentTypeForm.$dirty || forceDirty;
-        if (
-          modified === true &&
-          $scope.context.isNew &&
-          $scope.contentType.data.fields.length < 1
-        ) {
-          modified = false;
-        }
-        $scope.context.dirty = !!modified;
+      function setDirty() {
+        $scope.context.dirty = true;
+        $scope.$applyAsync();
       }
 
       /**
@@ -303,10 +258,14 @@ export default function register() {
         }
       );
 
-      $scope.sidebarConfiguration = $scope.editorInterface.sidebar;
       $scope.sidebarExtensions = $scope.widgets[NAMESPACE_EXTENSION] || [];
-      $scope.updateSidebarConfiguration = draft => {
-        $scope.editorInterface.sidebar = draft;
+
+      $scope.updateSidebarConfiguration = updatedSidebar => {
+        if (!_.isEqual($scope.editorInterface.sidebar, updatedSidebar)) {
+          $scope.editorInterface.sidebar = updatedSidebar;
+          $scope.$applyAsync();
+          setDirty();
+        }
       };
 
       $scope.buildContentTypeIdInputProps = () => ({

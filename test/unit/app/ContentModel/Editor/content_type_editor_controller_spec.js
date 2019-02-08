@@ -35,9 +35,6 @@ describe('ContentTypeEditor Controller', () => {
     scope = $rootScope.$new();
 
     _.extend(scope, {
-      contentTypeForm: {
-        $setDirty: sinon.stub()
-      },
       context: {},
       editorInterface: {},
       widgets: { builtin: [] }
@@ -55,9 +52,9 @@ describe('ContentTypeEditor Controller', () => {
   });
 
   describe('on load, with no fields', () => {
-    beforeEach(() => {
+    beforeEach(function() {
       scope.validate = sinon.stub();
-      createContentType();
+      this.controller = createContentType();
     });
 
     it('sets contentType on the scope', () => {
@@ -124,30 +121,27 @@ describe('ContentTypeEditor Controller', () => {
     });
 
     it("doesn't try to set the form to dirty", () => {
-      sinon.assert.notCalled(scope.contentTypeForm.$setDirty);
+      expect(scope.context.dirty).toBe(false);
     });
 
     describe('sets the form to dirty if fields change', () => {
-      beforeEach(() => {
-        scope.contentType.data.fields.push({});
-        scope.$digest();
+      it('when a new field is added', function() {
+        scope.context.dirty = false;
+        this.controller.updateOrder([{}]);
+        expect(scope.context.dirty).toBe(true);
       });
 
-      it('when a new field is added', () => {
-        sinon.assert.called(scope.contentTypeForm.$setDirty);
-      });
-
-      it('when an existing field is changed', () => {
-        scope.contentType.data.fields[0].required = true;
-        scope.$digest();
-        sinon.assert.calledTwice(scope.contentTypeForm.$setDirty);
+      it('when an existing field is changed', function() {
+        scope.context.dirty = false;
+        this.controller.toggleFieldProperty({ id: 'test' }, 'required', false);
+        expect(scope.context.dirty).toBe(true);
       });
     });
 
-    it('sets the form to dirty if displayField changes', () => {
-      scope.contentType.data.displayField = 'something';
-      scope.$digest();
-      sinon.assert.called(scope.contentTypeForm.$setDirty);
+    it('sets the form to dirty if displayField changes', function() {
+      scope.context.dirty = false;
+      this.controller.setFieldAsTitle({ id: 'xxx' });
+      expect(scope.context.dirty).toBe(true);
     });
   });
 
@@ -327,14 +321,15 @@ describe('ContentTypeEditor Controller', () => {
       this.stubs.openFieldDialog.resolves();
       controller.openFieldDialog({});
       this.$apply();
-      sinon.assert.calledOnce(scope.contentTypeForm.$setDirty);
+      expect(scope.context.dirty).toBe(true);
     });
 
     it('does not set form to dirty when dialog is canceled', function() {
+      scope.context.dirty = false;
       controller.openFieldDialog({});
       this.stubs.openFieldDialog.rejects();
       this.$apply();
-      sinon.assert.notCalled(scope.contentTypeForm.$setDirty);
+      expect(scope.context.dirty).toBe(false);
     });
   });
 });

@@ -234,7 +234,7 @@ function tabPanel() {
             h('react-component', {
               name: 'app/EntrySidebar/Configuration/SidebarConfiguration.es6',
               props:
-                '{ configuration: sidebarConfiguration, extensions: sidebarExtensions, onUpdateConfiguration: updateSidebarConfiguration }'
+                '{ configuration: editorInterface.sidebar, extensions: sidebarExtensions, onUpdateConfiguration: updateSidebarConfiguration }'
             })
           ])
         ]
