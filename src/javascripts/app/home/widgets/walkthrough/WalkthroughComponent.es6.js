@@ -2,6 +2,7 @@ import React from 'react';
 import ReactJoyride from 'react-joyride';
 import PropTypes from 'prop-types';
 import Tooltip from './Tooltip.es6';
+import TooltipContent from './TooltipContent.es6';
 
 export default class WalkthroughComponent extends React.Component {
   static propTypes = {
@@ -33,17 +34,12 @@ export default class WalkthroughComponent extends React.Component {
     {
       title: 'Switch between Spaces',
       content: (
-        <>
-          <img
-            className="walkthrough-tooltip__scheme-image"
-            src="/app/images/author-editor-walkthrough/step1-SpaceMenu.png"
-            alt="Organisation and Space menu scheme"
-          />
-          <p className="walkthrough-tooltip__copy">
-            This is your organization’s account. It can contain one or more Spaces, which are an
-            area to store your content. Use this menu to navigate to other Spaces you’re working in.
-          </p>
-        </>
+        <TooltipContent
+          imgSrs="/app/images/author-editor-walkthrough/step1-SpaceMenu.png"
+          imgAlt="Organisation and Space menu scheme"
+          copy="This is your organization’s account. It can contain one or more Spaces, which are an
+      area to store your content. Use this menu to navigate to other Spaces you’re working in."
+        />
       ),
       disableBeacon: true,
       target: '[data-ui-tour-step="sidepanel-trigger"]',
@@ -52,17 +48,12 @@ export default class WalkthroughComponent extends React.Component {
     {
       title: 'Create and edit content',
       content: (
-        <>
-          <img
-            className="walkthrough-tooltip__scheme-image"
-            src="/app/images/author-editor-walkthrough/step2-ContentTab.png"
-            alt="Content creation page scheme"
-          />
-          <p className="walkthrough-tooltip__copy">
-            Content creation happens in this tab. Here you can search, filter, and view existing
-            Entries, as well as create new content for your Space.
-          </p>
-        </>
+        <TooltipContent
+          imgSrs="/app/images/author-editor-walkthrough/step2-ContentTab.png"
+          imgAlt="Content creation page scheme"
+          copy="Content creation happens in this tab. Here you can search, filter, and view existing
+          Entries, as well as create new content for your Space."
+        />
       ),
       disableBeacon: true,
       target: '[data-ui-tour-step="nav-item-entry-list"]',
@@ -71,17 +62,12 @@ export default class WalkthroughComponent extends React.Component {
     {
       title: 'Manage your media',
       content: (
-        <>
-          <img
-            className="walkthrough-tooltip__scheme-image"
-            src="/app/images/author-editor-walkthrough/step3-MediaTab.png"
-            alt="OMedia managing tab scheme"
-          />
-          <p className="walkthrough-tooltip__copy">
-            In this tab you can manage all of the media in your Space. Here you can upload, search,
-            filter, and publish media to reuse across all of your content.
-          </p>
-        </>
+        <TooltipContent
+          imgSrs="/app/images/author-editor-walkthrough/step3-MediaTab.png"
+          imgAlt="Media managing tab scheme"
+          copy="In this tab you can manage all of the media in your Space. Here you can upload, search,
+          filter, and publish media to reuse across all of your content."
+        />
       ),
       disableBeacon: true,
       target: '[data-ui-tour-step="nav-item-asset-list"]',
@@ -90,17 +76,12 @@ export default class WalkthroughComponent extends React.Component {
     {
       title: 'Settings and support',
       content: (
-        <>
-          <img
-            className="walkthrough-tooltip__scheme-image"
-            src="/app/images/author-editor-walkthrough/step4-profile.png"
-            alt="Image of support chat"
-          />
-          <p className="walkthrough-tooltip__copy">
-            Get answers to any product-related questions by chatting with Contentful experts. From
-            this menu you can also manage your profile.
-          </p>
-        </>
+        <TooltipContent
+          imgSrs="/app/images/author-editor-walkthrough/step4-profile.png"
+          imgAlt="Image of support chat"
+          copy="Get answers to any product-related questions by chatting with Contentful experts. From
+          this menu you can also manage your profile."
+        />
       ),
       disableBeacon: true,
       target: '[data-ui-tour-step="account-menu"]',
@@ -109,10 +90,10 @@ export default class WalkthroughComponent extends React.Component {
     {
       title: 'Get started in Contentful',
       content: (
-        <p className="walkthrough-tooltip__copy">
-          Learn how content is structured in Contentful in the video below. Or, head over to the
-          Content tab to create content in your Space!
-        </p>
+        <TooltipContent
+          copy="Learn how content is structured in Contentful in the video below. Or, head over to the
+          Content tab to create content in your Space!"
+        />
       ),
       disableBeacon: true,
       target: '[data-ui-tour-step="concept-video-widget"]',
@@ -140,7 +121,7 @@ export default class WalkthroughComponent extends React.Component {
         getHelpers={this.setHelpers}
         styles={{
           options: {
-            arrowColor: '#3D81D0',
+            arrowColor: '#3072be',
             backgroundColor: '#fff',
             zIndex: 10000,
             overlayColor: 'rgba(0, 0, 0, 0.7)',

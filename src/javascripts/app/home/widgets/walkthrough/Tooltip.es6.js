@@ -8,7 +8,11 @@ import { Button, IconButton, Heading } from '@contentful/forma-36-react-componen
 
 const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closeProps }) => {
   return (
-    <div className="walkthrough-tooltip" key={index} {...tooltipProps}>
+    <div
+      className="walkthrough-tooltip"
+      key={index}
+      {...tooltipProps}
+      data-test-id="walkthrough-step-tooltip">
       <div className="walkthrough-tooltip__header">
         <Heading className="walkthrough-tooltip__heading" element="h3">
           {step.title}
@@ -21,6 +25,7 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
           onClick={e => {
             closeProps.onClick(e);
           }}
+          testId="close-walkthrough-tooltip-button"
         />
       </div>
       {step.content && { ...step.content }}
@@ -31,7 +36,8 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
           buttonType="positive"
           onClick={e => {
             primaryProps.onClick(e);
-          }}>
+          }}
+          testId="next-step-walkthrough-tooltip-button">
           {isLastStep ? 'Get started' : 'Got it'}
         </Button>
       </div>
