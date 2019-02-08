@@ -51,7 +51,7 @@ export function identityProvider(state = {}, action) {
     case actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE:
       return {
         ...state,
-        error: action.payload,
+        error: action.payload.message,
         isPending: false
       };
     case actions.SSO_GET_IDENTITY_PROVIDER_PENDING:
@@ -68,7 +68,7 @@ export function identityProvider(state = {}, action) {
     case actions.SSO_GET_IDENTITY_PROVIDER_FAILURE:
       return {
         ...state,
-        error: action.payload,
+        error: action.payload.message,
         isPending: false
       };
     case actions.SSO_UPDATE_IDENTITY_PROVIDER:

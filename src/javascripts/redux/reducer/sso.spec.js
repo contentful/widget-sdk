@@ -43,7 +43,7 @@ describe('SSO Redux reducers', () => {
           payload: error
         })
       ).toEqual({
-        error,
+        error: error.message,
         isPending: false
       });
     });
@@ -84,7 +84,7 @@ describe('SSO Redux reducers', () => {
           payload: error
         })
       ).toEqual({
-        error,
+        error: error.message,
         isPending: false
       });
     });
