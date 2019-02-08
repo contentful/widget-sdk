@@ -27,7 +27,8 @@ export default class WidgetRenderWarning extends React.Component {
     }).isRequired,
     src: PropTypes.string,
     srcdoc: PropTypes.string,
-    appDomain: PropTypes.string.isRequired
+    appDomain: PropTypes.string.isRequired,
+    location: PropTypes.string
   };
 
   // There's no need to update. Once the iframe is loaded
@@ -55,9 +56,9 @@ export default class WidgetRenderWarning extends React.Component {
       return;
     }
 
-    const { bridge, src, srcdoc, appDomain } = this.props;
+    const { bridge, src, srcdoc, appDomain, location } = this.props;
     const channel = new Channel(iframe, window, bridge.apply);
-    this.extensionApi = new ExtensionAPI({ channel, ...bridge.getData() });
+    this.extensionApi = new ExtensionAPI({ channel, ...bridge.getData() }, location);
     bridge.install(this.extensionApi);
 
     iframe.allowfullscreen = true;

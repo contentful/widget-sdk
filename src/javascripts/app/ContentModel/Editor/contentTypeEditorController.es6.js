@@ -258,6 +258,7 @@ export default function register() {
         }
       );
 
+      $scope.initialSidebarConfiguration = $scope.editorInterface.sidebar;
       $scope.sidebarExtensions = $scope.widgets[NAMESPACE_EXTENSION] || [];
 
       $scope.updateSidebarConfiguration = updatedSidebar => {

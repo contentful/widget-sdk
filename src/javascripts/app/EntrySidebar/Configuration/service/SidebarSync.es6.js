@@ -32,7 +32,7 @@ export function convertInternalStateToConfiguration(state) {
   return [...selectedItems, ...missingItems];
 }
 
-export function convertExtensionToWidgetConfiguration(extension) {
+function convertExtensionToWidgetConfiguration(extension) {
   return {
     widgetId: extension.id,
     widgetNamespace: NAMESPACE_EXTENSION,

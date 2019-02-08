@@ -7,6 +7,7 @@ import {
   AssetConfiguration,
   EntryConfiguration
 } from 'app/EntrySidebar/Configuration/defaults.es6';
+import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer.es6';
 import ContentPreviewWidget from './ContentPreviewWidget/ContentPreviewWidget.es6';
@@ -33,6 +34,13 @@ export default class EntrySidebar extends Component {
     isMasterEnvironment: PropTypes.bool.isRequired,
     isEntry: PropTypes.bool.isRequired,
     emitter: PropTypes.object.isRequired,
+    sidebarExtensions: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        src: PropTypes.string,
+        srcdoc: PropTypes.string
+      })
+    ).isRequired,
     sidebar: PropTypes.arrayOf(
       PropTypes.shape({
         widgetId: PropTypes.string.isRequired,
@@ -51,16 +59,31 @@ export default class EntrySidebar extends Component {
     })
   };
 
+  renderBuiltinWidget = widget => {
+    const { widgetId, widgetNamespace } = widget;
+    if (widgetId === SidebarWidgetTypes.VERSIONS && !this.props.isMasterEnvironment) {
+      return null;
+    }
+    if (!ComponentsMap[widgetId]) {
+      return null;
+    }
+    const Component = ComponentsMap[widgetId];
+    return <Component key={`${widgetId}-${widgetNamespace}`} emitter={this.props.emitter} />;
+  };
+
+  renderExtensionWidget = widget => {
+    return <h1>{widget.widgetId}</h1>;
+  };
+
   renderWidgets = (widgets = []) => {
-    return widgets.map(({ widgetId }) => {
-      if (widgetId === SidebarWidgetTypes.VERSIONS && !this.props.isMasterEnvironment) {
-        return null;
+    return widgets.map(widget => {
+      if (widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
+        return this.renderBuiltinWidget(widget);
       }
-      if (!ComponentsMap[widgetId]) {
-        return null;
+      if (widget.widgetNamespace === NAMESPACE_EXTENSION) {
+        return this.renderExtensionWidget(widget);
       }
-      const Component = ComponentsMap[widgetId];
-      return <Component key={widgetId} emitter={this.props.emitter} />;
+      return null;
     });
   };
 

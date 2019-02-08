@@ -21,7 +21,7 @@ const REQUIRED_CONFIG_KEYS = [
  * with UI Extensions rendered in IFrames.
  */
 export default class ExtensionAPI {
-  constructor(config) {
+  constructor(config, location) {
     REQUIRED_CONFIG_KEYS.forEach(key => {
       if (config[key]) {
         this[key] = config[key];
@@ -35,6 +35,9 @@ export default class ExtensionAPI {
       throw new Error(`Extra configuration options ${extraKeys.join(', ')} provided`);
     }
 
+    // todo: use constant
+    this.location = location || 'entry-field';
+
     // Keep content type fields with internal IDs.
     this.contentTypeFields = get(this.contentTypeData, ['fields'], []);
     // Create an ID map using internal IDs and internal locale codes.
@@ -46,9 +49,10 @@ export default class ExtensionAPI {
 
   // Sends initial data to the IFrame of an extension.
   connect() {
-    const { spaceMembership, current, entryData, locales } = this;
+    const { spaceMembership, current, entryData, locales, location } = this;
 
     this.channel.connect({
+      location,
       user: {
         sys: {
           id: spaceMembership.user.sys.id
@@ -67,13 +71,15 @@ export default class ExtensionAPI {
           }))
         }
       },
-      field: {
-        id: current.field.apiName,
-        locale: current.locale.code,
-        value: get(entryData, ['fields', current.field.id, current.locale.internal_code]),
-        type: current.field.type,
-        validations: current.field.validations
-      },
+      field: current
+        ? {
+            id: current.field.apiName,
+            locale: current.locale.code,
+            value: get(entryData, ['fields', current.field.id, current.locale.internal_code]),
+            type: current.field.type,
+            validations: current.field.validations
+          }
+        : undefined,
       fieldInfo: this.contentTypeFields.map(field => {
         const fieldLocales = field.localized ? locales.available : [locales.default];
         const values = entryData.fields[field.id];

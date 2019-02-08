@@ -132,7 +132,8 @@ async function loadEditorData(loader, id) {
     fieldControls,
     sidebar,
     entityInfo,
-    openDoc
+    openDoc,
+    widgets
   });
 }
 
