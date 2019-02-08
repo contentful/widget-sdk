@@ -94,11 +94,7 @@ export default async function create($scope, entryId) {
       entityInfo,
       currentSlideLevel: $scope.$parent.entities.length,
       locale: localeStore.getDefaultLocale().internal_code,
-      editorType: $scope.$parent.entities.length > 1 ? 'slide_in_editor' : 'entry_editor',
-      customWidgets: (editorData.fieldControls.form || [])
-        .concat(editorData.fieldControls.sidebar || [])
-        .filter(w => w.custom)
-        .map(w => w.trackingData)
+      editorType: $scope.$parent.entities.length > 1 ? 'slide_in_editor' : 'entry_editor'
     });
   } catch (error) {
     logger.logError(error);

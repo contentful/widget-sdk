@@ -1,5 +1,6 @@
 import { getSchema } from 'analytics/snowplow/Schemas.es6';
 import { addUserOrgSpace } from './Decorators.es6';
+import { getWidgetTrackingContexts } from 'widgets/WidgetTracking.es6';
 
 export default addUserOrgSpace((_, data) => ({
   data: {
@@ -11,7 +12,7 @@ export default addUserOrgSpace((_, data) => ({
   },
   contexts: [
     ...data.referencesCTMetadata.map(refMetadata => getReferenceContext(refMetadata, data.entryId)),
-    ...customWidgetsContexts(data)
+    ...getWidgetTrackingContexts(data.editorData)
   ]
 }));
 
@@ -24,13 +25,4 @@ function getReferenceContext(refMetadata, parentEntryId) {
       parent_entry_id: parentEntryId
     }
   };
-}
-
-function customWidgetsContexts(eventData) {
-  if (Array.isArray(eventData.customWidgets)) {
-    const schema = getSchema('extension_render').path;
-    return eventData.customWidgets.map(data => ({ schema, data }));
-  } else {
-    return [];
-  }
 }

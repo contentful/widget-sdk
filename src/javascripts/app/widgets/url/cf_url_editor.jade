@@ -12,10 +12,6 @@ input.entry-editor__input(
   data-status-code="entry.url.broken"
   ng-show="urlStatus === 'broken'")
   | Unable to access URL
-.cfnext-form__hint(
-  role="note"
-  data-test-id="field-hint")
-  | {{ helpText }}
 
 div(ng-show="urlStatus === 'loading'")
   .loading-box(style="height: 470px")

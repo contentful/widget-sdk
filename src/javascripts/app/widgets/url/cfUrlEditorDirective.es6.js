@@ -1,5 +1,4 @@
 import { registerDirective } from 'NgRegistry.es6';
-import _ from 'lodash';
 import createInputUpdater from 'ui/inputUpdater.es6';
 
 export default function register() {
@@ -15,10 +14,7 @@ export default function register() {
         const $inputEl = $el.find('input');
         const updateInput = createInputUpdater($inputEl.get(0));
 
-        _.extend(scope, {
-          urlStatus: 'ok',
-          helpText: widgetApi.settings.helpText
-        });
+        scope.urlStatus = 'ok';
 
         scope.$watch('urlStatus', urlStatus => {
           const isInvalid = urlStatus === 'broken' || urlStatus === 'invalid';

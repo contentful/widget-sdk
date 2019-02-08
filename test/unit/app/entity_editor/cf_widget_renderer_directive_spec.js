@@ -12,7 +12,9 @@ describe('cfWidgetRenderer Directive', () => {
       $provide.value('debounce', identity);
     });
 
-    this.widget = {};
+    this.widget = {
+      widgetNamespace: 'builtin'
+    };
 
     this.entityInfo = {
       contentTypeId: 'CTID'

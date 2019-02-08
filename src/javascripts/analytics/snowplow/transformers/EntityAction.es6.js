@@ -1,5 +1,6 @@
 import { get, extend, snakeCase } from 'lodash';
 import { getSchema } from 'analytics/snowplow/Schemas.es6';
+import { getWidgetTrackingContexts } from 'widgets/WidgetTracking.es6';
 
 /**
  * @ngdoc service
@@ -13,6 +14,7 @@ import { getSchema } from 'analytics/snowplow/Schemas.es6';
  */
 export default function(_eventName, eventData) {
   const contexts = [getEntityContext(eventData)];
+
   if (eventData.template) {
     contexts.push(getSpaceTemplateContext(eventData));
   }
@@ -27,15 +29,11 @@ export default function(_eventName, eventData) {
     });
   }
 
-  if (Array.isArray(eventData.customWidgets)) {
-    const schema = getSchema('extension_render').path;
-    eventData.customWidgets.forEach(data => contexts.push({ schema, data }));
+  if (get(eventData, ['actionData', 'entity']) === 'Entry') {
+    getWidgetTrackingContexts(eventData.editorData).forEach(ctx => contexts.push(ctx));
   }
 
-  return {
-    data: {},
-    contexts
-  };
+  return { data: {}, contexts };
 }
 
 function getSpaceTemplateContext(eventData) {

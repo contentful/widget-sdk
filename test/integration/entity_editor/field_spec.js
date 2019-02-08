@@ -143,26 +143,11 @@ describe('entity editor field integration', () => {
   });
 
   describe('hint', () => {
-    it('shows widget default helpt text', function() {
-      this.widget.defaultHelpText = 'HELP TEXT';
-      const hint = this.compile().find('[data-test-id=field-hint]');
-      expect(hint.length).toBe(1);
-      expect(hint.text()).toEqual('HELP TEXT');
-    });
-
     it('shows custom widget settings help text', function() {
-      this.widget.defaultHelpText = 'DEFAULT';
       this.widget.settings.helpText = 'HELP TEXT';
       const hint = this.compile().find('[data-test-id=field-hint]');
       expect(hint.length).toBe(1);
       expect(hint.text()).toEqual('HELP TEXT');
-    });
-
-    it('does not show hint if widget renders it', function() {
-      this.widget.settings.helpText = 'HELP TEXT';
-      this.widget.rendersHelpText = true;
-      const hint = this.compile().find('[data-test-id=field-hint]');
-      expect(hint.length).toBe(0);
     });
   });
 

@@ -46,7 +46,6 @@ export default function register() {
       const isEditingDisabled = fieldLocale.access$.map(access => !!access.disabled);
 
       this.settings = _.clone($scope.widget.settings);
-      this.settings.helpText = this.settings.helpText || $scope.widget.defaultHelpText;
 
       this.locales = {
         default: getDefaultLocaleCode(),

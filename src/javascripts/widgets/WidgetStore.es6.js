@@ -36,7 +36,6 @@ function buildExtensionWidget(data) {
     installationParameters: {
       definitions: get(data.extension, 'parameters.installation', []),
       values: data.parameters || {}
-    },
-    custom: true
+    }
   };
 }

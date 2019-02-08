@@ -14,7 +14,6 @@ export default function register() {
    *   Data that is read by the template
    * @property {API.Field}    $scope.data.field
    * @property {string}       $scope.data.helpText
-   * @property {boolean}      $scope.data.showHelpText
    * @property {boolean}      $scope.data.hasInitialFocus
    * @property {boolean}      $scope.data.fieldHasFocus
    * @property {boolean}      $scope.data.fieldHasErrors
@@ -51,10 +50,9 @@ export default function register() {
             const templateData = {
               field: field,
               tooltipPlacement: $scope.$first ? 'bottom' : 'top',
-              helpText: _.get(widget, ['settings', 'helpText']) || widget.defaultHelpText,
+              helpText: _.get(widget, ['settings', 'helpText']),
               hasInitialFocus:
-                $scope.editorContext.hasInitialFocus && $scope.$first && widget.isFocusable,
-              showHelpText: !widget.rendersHelpText
+                $scope.editorContext.hasInitialFocus && $scope.$first && widget.isFocusable
             };
             $scope.data = templateData;
 

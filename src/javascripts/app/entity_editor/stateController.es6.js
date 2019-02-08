@@ -203,9 +203,7 @@ export default function register() {
                       eventOrigin: eventOrigin,
                       contentType: contentType,
                       response: { data: entity },
-                      customWidgets: ($scope.widgets || [])
-                        .filter(w => w.custom)
-                        .map(w => w.trackingData)
+                      editorData: $scope.editorData
                     });
                   }
                   trackVersioning.publishedRestored(entity);

@@ -64,14 +64,7 @@ describe('cfWidgetApi directive', () => {
       it('should equal what has been set for the widget', function() {
         expect(this.widgetApi.settings.helpText).toEqual(this.widget.settings.helpText);
       });
-      it('should equal default help text if no help text is configured or the widget', function() {
-        this.widget.defaultHelpText = 'wat';
-        this.widget.settings.helpText = undefined;
 
-        const widgetApi = this.getWidgetApi();
-
-        expect(widgetApi.settings.helpText).toEqual(this.widget.defaultHelpText);
-      });
       it('should default to undefined when no help text nor default help text is configured', function() {
         this.widget.settings.helpText = undefined;
 

@@ -30,24 +30,22 @@ describe('WidgetRenderables', () => {
       expect(renderables.sidebar[0].widgetId).toBe('SIDEBAR');
     });
 
-    it('sets warning template if widget does not exist', () => {
+    it('sets problem warning flag if widget does not exist', () => {
       const renderables = buildRenderables(
         [{ widgetId: 'foo', widgetNamespace: 'bar', field: { type: 'Symbol' } }],
         {}
       );
-      expect(renderables.form[0].template).toMatch('<react-component');
-      expect(renderables.form[0].template).toMatch('missing');
+      expect(renderables.form[0].problem).toBe('missing');
     });
 
-    it('sets warning template if widget is incompatible', () => {
+    it('sets problem warning flag if widget is incompatible', () => {
       const renderables = buildRenderables(
         [{ widgetId: 'foo', widgetNamespace: NAMESPACE_BUILTIN, field: { type: 'Symbol' } }],
         {
           builtin: [{ id: 'foo', fieldTypes: ['Boolean'] }]
         }
       );
-      expect(renderables.form[0].template).toMatch('<react-component');
-      expect(renderables.form[0].template).toMatch('incompatible');
+      expect(renderables.form[0].problem).toBe('incompatible');
     });
 
     it('adds widget’s template property', () => {

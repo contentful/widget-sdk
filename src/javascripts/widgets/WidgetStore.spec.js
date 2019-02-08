@@ -16,7 +16,7 @@ describe('WidgetStore', () => {
 
     it('includes processed extensions from API', async () => {
       const entity = {
-        sys: { id: 'CUSTOM' },
+        sys: { id: 'my-extension' },
         extension: {
           name: 'NAME',
           src: 'SRC',
