@@ -14,10 +14,8 @@ import {
   Spinner
 } from '@contentful/forma-36-react-components';
 import { authUrl, appUrl } from 'Config.es6';
-import {
-  Organization as OrganizationPropType,
-  IdentityProvider as IdentityProviderPropType
-} from 'app/OrganizationSettings/PropTypes.es6';
+import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes.es6';
+import { IdentityProviderPropType, FieldsStatePropType } from './PropTypes.es6';
 import { SSO_PROVIDERS } from './constants.es6';
 import * as actionCreators from 'redux/actions/sso/actionCreators.es6';
 import * as selectors from 'redux/selectors/sso.es6';
@@ -30,9 +28,7 @@ export class IDPSetupForm extends React.Component {
     identityProvider: IdentityProviderPropType,
     updateFieldValue: PropTypes.func.isRequired,
     validateField: PropTypes.func.isRequired,
-
-    // TODO: add shape
-    fields: PropTypes.object.isRequired
+    fields: FieldsStatePropType.isRequired
   };
 
   debouncedUpdateValue = _.debounce(async function(fieldName, value) {
@@ -154,7 +150,7 @@ export class IDPSetupForm extends React.Component {
               extraClassNames="f36-margin-bottom--l f36-margin-right--m sso-setup__select"
               value={fields.idpName.value}
               onChange={this.updateField('idpName', true)}>
-              <Option value=''>Select provider</Option>
+              <Option value="">Select provider</Option>
               {SSO_PROVIDERS.map(name => {
                 return (
                   <Option key={name} value={name}>

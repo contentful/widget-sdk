@@ -8,6 +8,18 @@ export default combineReducers({
 });
 
 /*
+  For SSO, there are two concepts to understand: the identity provider (idP) and the fields.
+
+  The idP is the current information that is stored in Gatekeeper and is considered "golden",
+  e.g. to be valid implicitly. The value in the state is the latest that the application knows
+  from GK and is updated whenever the idP is updated.
+
+  The fields are the current presentational values that are shown in the UI. The field values
+  do include network information (to update the pending logic in the component) but should not
+  be treated as valid implicitly.
+ */
+
+/*
   `identityProvider` is the state object that encapsulates
   all the current known data about the idP on GK.
 

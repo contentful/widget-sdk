@@ -60,9 +60,17 @@ export function createIdp({ orgId, orgName }) {
 
 export function updateFieldValue({ fieldName, value, orgId }) {
   return async (dispatch, getState) => {
+    // Exit early if the idP value is the same as the updated value
+    const idpValue = selectors.getIdentityProviderValue(getState(), fieldName);
+
+    if (idpValue === value) {
+      return;
+    }
+
     // Validate field both in state and for this actionCreator
     dispatch(validateField({ fieldName, value }));
 
+    // Exit early if field is not valid
     const isValid = validate(fieldName, value);
 
     if (!isValid) {
@@ -101,8 +109,6 @@ export function updateFieldValue({ fieldName, value, orgId }) {
 
 export function validateField({ fieldName, value }) {
   return (dispatch, getState) => {
-    // We get the current state of this field
-    //
     // If the current value is the same as the value in the state,
     // do nothing
     const field = selectors.getField(getState(), fieldName);

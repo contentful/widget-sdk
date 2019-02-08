@@ -1,10 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Workbench from 'app/common/Workbench.es6';
-import {
-  Organization as OrganizationPropType,
-  IdentityProvider as IdentityProviderPropType
-} from 'app/OrganizationSettings/PropTypes.es6';
+import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes.es6';
+import { IdentityProviderStatePropType } from './PropTypes.es6';
 import { Button, Note, TextLink, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import IDPSetupForm from './IDPSetupForm.es6';
@@ -18,9 +16,7 @@ import { connect } from 'react-redux';
 export class SSOSetup extends React.Component {
   static propTypes = {
     organization: OrganizationPropType,
-    identityProvider: PropTypes.shape({
-      data: IdentityProviderPropType
-    }),
+    identityProvider: IdentityProviderStatePropType,
     retrieveIdp: PropTypes.func.isRequired,
     createIdp: PropTypes.func.isRequired,
     onReady: PropTypes.func.isRequired
@@ -55,7 +51,7 @@ export class SSOSetup extends React.Component {
     // state populated in Redux, there will never be a case when that
     // we could run into an ambiguous pending state.
     retrieveIdp({ orgId: organization.sys.id }).then(onReady);
-  }
+  };
 
   createIdp = () => {
     const { createIdp, organization } = this.props;
@@ -67,7 +63,7 @@ export class SSOSetup extends React.Component {
     const { identityProvider, organization } = this.props;
 
     if (!organization) {
-      return <FetcherLoading message='Loading SSO...' />;
+      return <FetcherLoading message="Loading SSO..." />;
     }
 
     if (!identityProvider) {

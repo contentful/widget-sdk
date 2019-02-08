@@ -82,9 +82,3 @@ export const TeamMembership = PropTypes.shape({
     user: PropTypes.shape({ id: PropTypes.string })
   }).isRequired
 });
-
-export const IdentityProvider = PropTypes.shape({
-  ssoName: PropTypes.string,
-  idpSsoTargetUrl: PropTypes.string,
-  idpCert: PropTypes.string
-});

@@ -66,22 +66,24 @@ describe('SSO Redux actionCreators', () => {
 
       mockEndpoint.mockResolvedValueOnce(identityProvider);
 
-      mockStore.dispatch(actionCreators.createIdp({ orgId: '1234', orgName: 'Testing 1234' })).then(() => {
-        expect(mockStore.getActions()).toEqual([
-          {
-            type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
-            isPending: true
-          },
-          {
-            type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
-            identityProvider
-          },
-          {
-            type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
-            isPending: false
-          }
-        ]);
-      });
+      mockStore
+        .dispatch(actionCreators.createIdp({ orgId: '1234', orgName: 'Testing 1234' }))
+        .then(() => {
+          expect(mockStore.getActions()).toEqual([
+            {
+              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
+              isPending: true
+            },
+            {
+              type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
+              identityProvider
+            },
+            {
+              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
+              isPending: false
+            }
+          ]);
+        });
     });
 
     it('should set the ssoName as a kebab-case version of the org name when creating', () => {
@@ -89,17 +91,19 @@ describe('SSO Redux actionCreators', () => {
 
       mockEndpoint.mockResolvedValueOnce(identityProvider);
 
-      mockStore.dispatch(actionCreators.createIdp({ orgId: '1234', orgName: 'Testing 1234' })).then(() => {
-        expect(mockEndpoint).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            method: expect.any(String),
-            path: expect.any(Array),
-            data: {
-              ssoName: _.kebabCase('Testing 1234')
-            }
-          })
-        );
-      });
+      mockStore
+        .dispatch(actionCreators.createIdp({ orgId: '1234', orgName: 'Testing 1234' }))
+        .then(() => {
+          expect(mockEndpoint).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              method: expect.any(String),
+              path: expect.any(Array),
+              data: {
+                ssoName: _.kebabCase('Testing 1234')
+              }
+            })
+          );
+        });
     });
 
     it('should go through the error flow if the endpoint errors', () => {
@@ -107,22 +111,24 @@ describe('SSO Redux actionCreators', () => {
 
       mockEndpoint.mockRejectedValueOnce(error);
 
-      mockStore.dispatch(actionCreators.createIdp({ orgId: '1234', orgName: 'Testing 1234' })).then(() => {
-        expect(mockStore.getActions()).toEqual([
-          {
-            type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
-            isPending: true
-          },
-          {
-            type: actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE,
-            error
-          },
-          {
-            type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
-            isPending: false
-          }
-        ]);
-      });
+      mockStore
+        .dispatch(actionCreators.createIdp({ orgId: '1234', orgName: 'Testing 1234' }))
+        .then(() => {
+          expect(mockStore.getActions()).toEqual([
+            {
+              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
+              isPending: true
+            },
+            {
+              type: actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE,
+              error
+            },
+            {
+              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
+              isPending: false
+            }
+          ]);
+        });
     });
   });
 
@@ -131,19 +137,23 @@ describe('SSO Redux actionCreators', () => {
       // Using a non-https idpSsoTargetUrl to force validation failure
       const idpSsoTargetUrlValue = 'http://example.com';
 
-      await mockStore.dispatch(actionCreators.updateFieldValue({
-        orgId: '1234',
-        fieldName: 'idpSsoTargetUrl',
-        value: idpSsoTargetUrlValue
-      }));
+      await mockStore.dispatch(
+        actionCreators.updateFieldValue({
+          orgId: '1234',
+          fieldName: 'idpSsoTargetUrl',
+          value: idpSsoTargetUrlValue
+        })
+      );
 
       expect(mockStore.getDispatched()[0]).toBe('thunk');
 
-      await mockStore.dispatch(actionCreators.updateFieldValue({
-        orgId: '1234',
-        fieldName: 'idpSsoTargetUrl',
-        value: idpSsoTargetUrlValue
-      }));
+      await mockStore.dispatch(
+        actionCreators.updateFieldValue({
+          orgId: '1234',
+          fieldName: 'idpSsoTargetUrl',
+          value: idpSsoTargetUrlValue
+        })
+      );
 
       expect(mockStore.getDispatched()[1]).toBe('thunk');
     });
@@ -151,18 +161,48 @@ describe('SSO Redux actionCreators', () => {
     it('should not attempt to update the field on the API if the field is invalid', async () => {
       const idpSsoTargetUrlValue = 'http://example.com';
 
-      await mockStore.dispatch(actionCreators.updateFieldValue({
-        orgId: '1234',
-        fieldName: 'idpSsoTargetUrl',
-        value: idpSsoTargetUrlValue
-      }));
+      await mockStore.dispatch(
+        actionCreators.updateFieldValue({
+          orgId: '1234',
+          fieldName: 'idpSsoTargetUrl',
+          value: idpSsoTargetUrlValue
+        })
+      );
+
+      expect(mockEndpoint).not.toHaveBeenCalled();
+    });
+
+    it('should not attempt to update the field if the field value is the same as the value in the idP', async () => {
+      // Set the initial idP state
+      const state = {
+        sso: {
+          identityProvider: {
+            data: {
+              idpSsoTargetUrl: 'https://example.com'
+            }
+          }
+        }
+      };
+
+      mockStore.setState(state);
+
+      const fieldName = 'idpSsoTargetUrl';
+      const value = 'https://example.com';
+
+      await mockStore.dispatch(
+        actionCreators.updateFieldValue({
+          orgId: '1234',
+          fieldName,
+          value
+        })
+      );
 
       expect(mockEndpoint).not.toHaveBeenCalled();
     });
 
     it('should go through the success flow if the field update was successful on the API', async () => {
       const identityProvider = {
-        ssoName: 'something-1234',
+        ssoName: 'something-1234'
       };
 
       mockEndpoint.mockResolvedValueOnce(identityProvider);
@@ -170,11 +210,13 @@ describe('SSO Redux actionCreators', () => {
       const fieldName = 'idpSsoTargetUrl';
       const value = 'https://example.com';
 
-      await mockStore.dispatch(actionCreators.updateFieldValue({
-        orgId: '1234',
-        fieldName,
-        value
-      }));
+      await mockStore.dispatch(
+        actionCreators.updateFieldValue({
+          orgId: '1234',
+          fieldName,
+          value
+        })
+      );
 
       expect(mockStore.getActions()).toEqual(
         expect.arrayContaining([
@@ -197,13 +239,13 @@ describe('SSO Redux actionCreators', () => {
             fieldName,
             isPending: false
           }
-        ]
-      ));
+        ])
+      );
     });
 
     it('should update the identity provider if the field update was successful on the API', async () => {
       const identityProvider = {
-        ssoName: 'something-1234',
+        ssoName: 'something-1234'
       };
 
       mockEndpoint.mockResolvedValueOnce(identityProvider);
@@ -211,11 +253,13 @@ describe('SSO Redux actionCreators', () => {
       const fieldName = 'idpSsoTargetUrl';
       const value = 'https://example.com';
 
-      await mockStore.dispatch(actionCreators.updateFieldValue({
-        orgId: '1234',
-        fieldName,
-        value
-      }));
+      await mockStore.dispatch(
+        actionCreators.updateFieldValue({
+          orgId: '1234',
+          fieldName,
+          value
+        })
+      );
 
       expect(mockStore.getActions()).toEqual(
         expect.arrayContaining([
@@ -223,8 +267,8 @@ describe('SSO Redux actionCreators', () => {
             type: actions.SSO_UPDATE_IDENTITY_PROVIDER,
             identityProvider
           }
-        ]
-      ));
+        ])
+      );
     });
 
     it('should go through the failure flow if the field update was unsuccessful on the API', async () => {
@@ -235,11 +279,13 @@ describe('SSO Redux actionCreators', () => {
       const fieldName = 'idpSsoTargetUrl';
       const value = 'https://example.com';
 
-      await mockStore.dispatch(actionCreators.updateFieldValue({
-        orgId: '1234',
-        fieldName,
-        value
-      }));
+      await mockStore.dispatch(
+        actionCreators.updateFieldValue({
+          orgId: '1234',
+          fieldName,
+          value
+        })
+      );
 
       expect(mockStore.getActions()).toEqual(
         expect.arrayContaining([
@@ -263,8 +309,8 @@ describe('SSO Redux actionCreators', () => {
             fieldName,
             isPending: false
           }
-        ]
-      ));
+        ])
+      );
     });
   });
 
@@ -286,11 +332,13 @@ describe('SSO Redux actionCreators', () => {
       const fieldName = 'ssoName';
       const value = 'something-1234';
 
-      mockStore.dispatch(actionCreators.validateField({
-        orgId: '1234',
-        fieldName,
-        value
-      }));
+      mockStore.dispatch(
+        actionCreators.validateField({
+          orgId: '1234',
+          fieldName,
+          value
+        })
+      );
 
       expect(mockStore.getActions()).toHaveLength(0);
     });
@@ -299,11 +347,13 @@ describe('SSO Redux actionCreators', () => {
       const fieldName = 'idpSsoTargetUrl';
       const value = 'https://example.com';
 
-      mockStore.dispatch(actionCreators.validateField({
-        orgId: '1234',
-        fieldName,
-        value
-      }));
+      mockStore.dispatch(
+        actionCreators.validateField({
+          orgId: '1234',
+          fieldName,
+          value
+        })
+      );
 
       expect(mockStore.getActions()).toEqual([
         {
@@ -322,11 +372,13 @@ describe('SSO Redux actionCreators', () => {
       const fieldName = 'idpSsoTargetUrl';
       const value = 'http://example.com';
 
-      mockStore.dispatch(actionCreators.validateField({
-        orgId: '1234',
-        fieldName,
-        value
-      }));
+      mockStore.dispatch(
+        actionCreators.validateField({
+          orgId: '1234',
+          fieldName,
+          value
+        })
+      );
 
       expect(mockStore.getActions()).toEqual([
         {
@@ -350,11 +402,13 @@ describe('SSO Redux actionCreators', () => {
 
       value = 'http://example.com';
 
-      mockStore.dispatch(actionCreators.validateField({
-        orgId: '1234',
-        fieldName,
-        value
-      }));
+      mockStore.dispatch(
+        actionCreators.validateField({
+          orgId: '1234',
+          fieldName,
+          value
+        })
+      );
 
       expect(mockStore.getActions()).toEqual([
         {
@@ -373,11 +427,13 @@ describe('SSO Redux actionCreators', () => {
 
       value = 'https://example.com';
 
-      mockStore.dispatch(actionCreators.validateField({
-        orgId: '1234',
-        fieldName,
-        value
-      }));
+      mockStore.dispatch(
+        actionCreators.validateField({
+          orgId: '1234',
+          fieldName,
+          value
+        })
+      );
 
       expect(mockStore.getActions()).toEqual([
         {
@@ -387,7 +443,7 @@ describe('SSO Redux actionCreators', () => {
         },
         {
           type: actions.SSO_FIELD_VALIDATION_SUCCESS,
-          fieldName,
+          fieldName
         }
       ]);
     });

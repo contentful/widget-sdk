@@ -17,6 +17,10 @@ export function getIdentityProvider(state) {
   return get(state, ['sso', 'identityProvider'], null);
 }
 
+export function getIdentityProviderValue(state, fieldName) {
+  return get(getIdentityProvider(state), ['data', fieldName], null);
+}
+
 export function getFields(state) {
   return get(state, ['sso', 'fields'], {});
 }
