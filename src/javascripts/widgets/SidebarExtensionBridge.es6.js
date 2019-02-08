@@ -66,10 +66,6 @@ export default function createBridge(dependencies) {
   function getData() {
     return {
       spaceMembership: spaceContext.space.data.spaceMembership,
-      current: {
-        field: $scope.widget.field,
-        locale: $scope.locale
-      },
       locales: {
         available: TheLocaleStore.getPrivateLocales(),
         default: TheLocaleStore.getDefaultLocale()
@@ -77,8 +73,8 @@ export default function createBridge(dependencies) {
       entryData: $scope.otDoc.getValueAt([]),
       contentTypeData: $scope.entityInfo.contentType,
       parameters: {
-        instance: $scope.widget.settings || {},
-        installation: $scope.widget.installationParameterValues || {}
+        instance: {},
+        installation: {}
       }
     };
   }
@@ -241,16 +237,8 @@ export default function createBridge(dependencies) {
   }
 
   function install(api) {
-    K.onValueScope($scope, $scope.fieldLocale.access$, access => {
-      api.send('isDisabledChanged', [!!access.disabled]);
-    });
-
     K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
       api.send('sysChanged', [sys]);
-    });
-
-    K.onValueScope($scope, $scope.fieldLocale.errors$, errors => {
-      api.send('schemaErrorsChanged', [errors || []]);
     });
 
     K.onValueScope(
@@ -265,13 +253,5 @@ export default function createBridge(dependencies) {
     api.registerHandler('callSpaceMethod', callSpaceMethod);
     api.registerHandler('navigateToContentEntity', navigate);
     api.registerHandler('notify', notify);
-
-    api.registerHandler('setInvalid', (isInvalid, localeCode) => {
-      $scope.fieldController.setInvalid(localeCode, isInvalid);
-    });
-
-    api.registerHandler('setActive', isActive => {
-      $scope.fieldLocale.setActive(isActive);
-    });
   }
 }

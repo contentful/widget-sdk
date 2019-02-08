@@ -5,6 +5,7 @@ import { getModule } from 'NgRegistry.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes.es6';
 import createBridge from 'widgets/EditorExtensionBridge.es6';
+import createSidebarBridge from 'widgets/SidebarExtensionBridge.es6';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import * as Config from 'Config.es6';
 
@@ -188,13 +189,27 @@ export default ({ $scope }) => {
     return { bridge, widget };
   });
 
+  const sidebarExtensions = $scope.editorData.widgets[NAMESPACE_EXTENSION].map(widget => {
+    const bridge = createSidebarBridge({
+      $rootScope,
+      $scope,
+      spaceContext,
+      TheLocaleStore,
+      entitySelector,
+      Analytics,
+      entityCreator,
+      Navigator,
+      SlideInNavigator
+    });
+
+    return { bridge, widget };
+  });
+
   return {
-    legacySidebar: {
-      extensions: legacyExtensions,
-      appDomain: `app.${Config.domain}`
-    },
+    appDomain: `app.${Config.domain}`,
+    legacySidebarExtensions: legacyExtensions,
     sidebar: $scope.editorData.sidebar,
-    sidebarExtensions: $scope.editorData.widgets[NAMESPACE_EXTENSION],
+    sidebarExtensions,
     isEntry,
     isMasterEnvironment,
     emitter

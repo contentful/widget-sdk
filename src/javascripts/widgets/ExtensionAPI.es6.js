@@ -8,12 +8,11 @@ const REQUIRED_CONFIG_KEYS = [
   'entryData', // API Entry entity. Using internal IDs (ShareJS format).
   'contentTypeData', // API ContentType entity. Using internal IDs (ShareJS format).
   'spaceMembership', // API SpaceMembership entity.
-  'parameters', // UI Extension parameters.
+  'parameters' // UI Extension parameters.
 
   // `{ field, locale }` for a field-locale pair of the extension being rendered.
   // `field` uses internal IDs (ShareJS format).
   // `locale` has the `internal_code` property.
-  'current'
 ];
 
 /**

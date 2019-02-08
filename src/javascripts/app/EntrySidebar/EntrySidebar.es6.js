@@ -34,13 +34,7 @@ export default class EntrySidebar extends Component {
     isMasterEnvironment: PropTypes.bool.isRequired,
     isEntry: PropTypes.bool.isRequired,
     emitter: PropTypes.object.isRequired,
-    sidebarExtensions: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        src: PropTypes.string,
-        srcdoc: PropTypes.string
-      })
-    ).isRequired,
+
     sidebar: PropTypes.arrayOf(
       PropTypes.shape({
         widgetId: PropTypes.string.isRequired,
@@ -48,15 +42,19 @@ export default class EntrySidebar extends Component {
         disabled: PropTypes.bool
       })
     ),
-    legacySidebar: PropTypes.shape({
-      extensions: PropTypes.arrayOf(
-        PropTypes.shape({
-          bridge: PropTypes.object.isRequired,
-          widget: PropTypes.object.isRequired
-        })
-      ).isRequired,
-      appDomain: PropTypes.string.isRequired
-    })
+    appDomain: PropTypes.string.isRequired,
+    sidebarExtensions: PropTypes.arrayOf(
+      PropTypes.shape({
+        bridge: PropTypes.object.isRequired,
+        widget: PropTypes.object.isRequired
+      })
+    ),
+    legacySidebarExtensions: PropTypes.arrayOf(
+      PropTypes.shape({
+        bridge: PropTypes.object.isRequired,
+        widget: PropTypes.object.isRequired
+      })
+    )
   };
 
   renderBuiltinWidget = widget => {
@@ -72,7 +70,24 @@ export default class EntrySidebar extends Component {
   };
 
   renderExtensionWidget = widget => {
-    return <h1>{widget.widgetId}</h1>;
+    const item = this.props.sidebarExtensions.find(item => {
+      return item.widget.id == widget.widgetId;
+    });
+
+    if (!item) {
+      return null;
+    }
+    return (
+      <EntrySidebarWidget title={item.widget.name}>
+        <ExtensionIFrameRenderer
+          bridge={item.bridge}
+          src={item.widget.src}
+          srcdoc={item.widget.srcdoc}
+          appDomain={this.props.appDomain}
+          location="entry-sidebar"
+        />
+      </EntrySidebarWidget>
+    );
   };
 
   renderWidgets = (widgets = []) => {
@@ -88,13 +103,13 @@ export default class EntrySidebar extends Component {
   };
 
   renderLegacyExtensions = () => {
-    return this.props.legacySidebar.extensions.map(({ bridge, widget }) => (
+    return this.props.legacySidebarExtensions.map(({ bridge, widget }) => (
       <EntrySidebarWidget title={widget.field.name} key={widget.field.id}>
         <ExtensionIFrameRenderer
           bridge={bridge}
           src={widget.src}
           srcdoc={widget.srcdoc}
-          appDomain={this.props.legacySidebar.appDomain}
+          appDomain={this.props.appDomain}
         />
       </EntrySidebarWidget>
     ));
