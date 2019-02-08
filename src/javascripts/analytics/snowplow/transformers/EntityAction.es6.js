@@ -14,6 +14,7 @@ import { getWidgetTrackingContexts } from 'widgets/WidgetTracking.es6';
  */
 export default function(_eventName, eventData) {
   const contexts = [getEntityContext(eventData)];
+
   if (eventData.template) {
     contexts.push(getSpaceTemplateContext(eventData));
   }
@@ -28,15 +29,11 @@ export default function(_eventName, eventData) {
     });
   }
 
-  const { editorData } = eventData;
-  if (editorData) {
-    getWidgetTrackingContexts(editorData).forEach(ctx => contexts.push(ctx));
+  if (get(eventData, ['actionData', 'entity']) === 'Entry') {
+    getWidgetTrackingContexts(eventData.editorData).forEach(ctx => contexts.push(ctx));
   }
 
-  return {
-    data: {},
-    contexts
-  };
+  return { data: {}, contexts };
 }
 
 function getSpaceTemplateContext(eventData) {
