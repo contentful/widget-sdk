@@ -1,6 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Subheading, SectionHeading } from '@contentful/forma-36-react-components';
+import {
+  Subheading,
+  SectionHeading,
+  Paragraph,
+  TextLink
+} from '@contentful/forma-36-react-components';
 import AvailableItem from './AvailableItem.es6';
 import { NAMESPACE_EXTENSION, NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNamespaces.es6';
 
@@ -27,23 +32,42 @@ export default function AvailableItems(props) {
           </div>
         </React.Fragment>
       )}
+      <SectionHeading extraClassNames="f36-margin-bottom--xs">UI Extensions</SectionHeading>
       {extensions.length > 0 && (
-        <React.Fragment>
-          <SectionHeading extraClassNames="f36-margin-bottom--xs">UI Extensions</SectionHeading>
-          <div className="sidebar-configuraiton__available-items-section f36-margin-bottom--l">
-            {extensions.map(item => (
-              <AvailableItem
-                key={`${item.widgetId}-${item.widgetNamespace}`}
-                title={item.title}
-                widgetNamespace={item.widgetNamespace}
-                onClick={() => {
-                  props.onAddItem(item);
-                }}
-              />
-            ))}
-          </div>
-        </React.Fragment>
+        <div className="sidebar-configuraiton__available-items-section f36-margin-bottom--l">
+          {extensions.map(item => (
+            <AvailableItem
+              key={`${item.widgetId}-${item.widgetNamespace}`}
+              title={item.title}
+              widgetNamespace={item.widgetNamespace}
+              onClick={() => {
+                props.onAddItem(item);
+              }}
+            />
+          ))}
+        </div>
       )}
+      {extensions.length === 0 && (
+        <div className="f36-margin-bottom--m">
+          <Paragraph extraClassNames="f36-margin-bottom--s">
+            UI Extensions can enrich how content is created, editor or shared with other services.
+          </Paragraph>
+          <TextLink
+            icon="ExternalLink"
+            href="https://www.contentful.com/developers/marketplace"
+            target="_blank">
+            Add a new UI Extension
+          </TextLink>
+        </div>
+      )}
+      <Paragraph>
+        Learn more about{' '}
+        <TextLink
+          href="https://www.contentful.com/developers/docs/extensibility/ui-extensions/"
+          target="_blank">
+          UI Extensions
+        </TextLink>
+      </Paragraph>
     </div>
   );
 }

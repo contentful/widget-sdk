@@ -42,7 +42,8 @@ function SidebarConfiguration(props) {
       </Paragraph>
       <FieldGroup>
         <RadioButtonField
-          labelText="Use the default sidebar"
+          labelText="Use default sidebar"
+          helpText="Used for all content types without a custom sidebar"
           name="sidebarType"
           id={SidebarType.default}
           checked={state.sidebarType === SidebarType.default}
@@ -53,7 +54,8 @@ function SidebarConfiguration(props) {
         />
         <div className="f36-margin-top--m" />
         <RadioButtonField
-          labelText="Use a custom sidebar"
+          labelText="Create custom sidebar"
+          helpText="Only used for this content type"
           name="sidebarType"
           id={SidebarType.custom}
           checked={state.sidebarType === SidebarType.custom}

@@ -1,8 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Subheading } from '@contentful/forma-36-react-components';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-components';
+import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import SidebarWidgetItem from './SidebarWidgetItem.es6';
+
+function WidgetItem({ widget, onRemoveClick }) {
+  return (
+    <SidebarWidgetItem isDraggable isRemovable title={widget.title} onRemoveClick={onRemoveClick}>
+      {widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN && (
+        <Paragraph>{widget.description}</Paragraph>
+      )}
+      {widget.widgetNamespace === NAMESPACE_EXTENSION && (
+        <React.Fragment>
+          <Paragraph extraClassNames="f36-margin-bottom--s">UI Extension</Paragraph>
+          <TextLink extraClassNames="f36-margin-bottom--s">Configure</TextLink>
+        </React.Fragment>
+      )}
+    </SidebarWidgetItem>
+  );
+}
+
+WidgetItem.propTypes = {
+  widget: PropTypes.object.isRequired,
+  onRemoveClick: PropTypes.func.isRequired
+};
 
 export default function CustomSidebar({ items, onChangePosition, onRemoveItem }) {
   return (
@@ -28,13 +50,7 @@ export default function CustomSidebar({ items, onChangePosition, onRemoveItem })
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}>
-                      <SidebarWidgetItem
-                        title={item.title}
-                        description={item.description}
-                        isDraggable
-                        isRemovable
-                        onRemoveClick={() => onRemoveItem(item)}
-                      />
+                      <WidgetItem widget={item} onRemoveClick={() => onRemoveItem(item)} />
                     </div>
                   )}
                 </Draggable>

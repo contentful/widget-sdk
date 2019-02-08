@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Paragraph, IconButton, Icon } from '@contentful/forma-36-react-components';
+import { IconButton, Icon } from '@contentful/forma-36-react-components';
 
 export default function SidebarWidgetItem({
   title,
-  description,
   isDraggable,
   isRemovable,
-  onRemoveClick
+  onRemoveClick,
+  children
 }) {
   return (
     <div className="sidebar-configuration__item">
@@ -21,7 +21,7 @@ export default function SidebarWidgetItem({
         />
       )}
       <div className="sidebar-configuration__item-title">{title}</div>
-      {description && <Paragraph>{description}</Paragraph>}
+      <div>{children}</div>
     </div>
   );
 }
@@ -30,8 +30,7 @@ SidebarWidgetItem.propTypes = {
   title: PropTypes.string.isRequired,
   isDraggable: PropTypes.bool.isRequired,
   isRemovable: PropTypes.bool.isRequired,
-  onRemoveClick: PropTypes.func,
-  description: PropTypes.string
+  onRemoveClick: PropTypes.func
 };
 
 SidebarWidgetItem.defaultProps = {

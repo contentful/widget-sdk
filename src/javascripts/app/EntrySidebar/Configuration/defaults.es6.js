@@ -33,7 +33,8 @@ export const Versions = {
   widgetId: SidebarWidgetTypes.VERSIONS,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
   title: 'Versions',
-  description: 'Built-in - View previously published versions.'
+  description:
+    'Built-in - View previously published versions. Available only for master environment.'
 };
 
 export const Users = {
