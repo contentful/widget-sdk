@@ -14,7 +14,7 @@ const fields = {
   name: 'fields',
   url: '/fields',
   params: {
-    addToContext: true
+    ignoreLeaveConfirmation: true
   }
 };
 
@@ -22,7 +22,7 @@ const preview = {
   name: 'preview',
   url: '/preview',
   params: {
-    addToContext: true
+    ignoreLeaveConfirmation: true
   }
 };
 
@@ -30,7 +30,7 @@ const sidebarConfiguration = {
   name: 'sidebar_configuration',
   url: '/sidebar_configuration',
   params: {
-    addToContext: true
+    ignoreLeaveConfirmation: true
   }
 };
 

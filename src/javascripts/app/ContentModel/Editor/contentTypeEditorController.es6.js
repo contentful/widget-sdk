@@ -32,6 +32,7 @@ export default function register() {
     'access_control/AccessChecker',
     'analytics/Analytics.es6',
     'app/ContentModel/Editor/Actions.es6',
+    'navigation/confirmLeaveEditor',
     function ContentTypeEditorController(
       $scope,
       $state,
@@ -42,7 +43,8 @@ export default function register() {
       metadataDialog,
       accessChecker,
       Analytics,
-      { default: createActions }
+      { default: createActions },
+      leaveConfirmator
     ) {
       const controller = this;
       const contentTypeIds = spaceContext.cma
@@ -56,6 +58,7 @@ export default function register() {
       $scope.data = { canEdit: canEdit };
 
       $scope.actions = createActions($scope, contentTypeIds);
+      $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);
 
       // We want to track if the user is creating a new CT, but the save
       // action is enforced. Somehow they got to this page, but weren't
