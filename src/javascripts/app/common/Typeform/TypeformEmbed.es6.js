@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as typeformEmbed from '@typeform/embed';
+import { getTypeformEmbedLib } from './utils.es6';
 
 /**
  * @description
@@ -66,7 +66,7 @@ export class TypeformEmbed extends React.Component {
     popupAutoCloseDuration: 5000 // this is the default for non-PRO+ accounts
   };
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     const {
       url,
       renderAs,
@@ -80,8 +80,10 @@ export class TypeformEmbed extends React.Component {
       popupAutoCloseDuration: autoClose
     } = this.props;
 
+    const typeformEmbedLib = await getTypeformEmbedLib();
+
     if (renderAs === 'widget') {
-      typeformEmbed.makeWidget(this.typeformContainerElement, url, {
+      typeformEmbedLib.makeWidget(this.typeformContainerElement, url, {
         hideHeaders,
         hideFooter,
         opacity,
@@ -89,7 +91,7 @@ export class TypeformEmbed extends React.Component {
         onSubmit
       });
     } else if (renderAs === 'popup') {
-      this.typeformPopup = typeformEmbed.makePopup(url, {
+      this.typeformPopup = typeformEmbedLib.makePopup(url, {
         mode,
         autoOpen,
         autoClose,

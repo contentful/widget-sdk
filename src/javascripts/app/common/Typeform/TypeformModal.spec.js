@@ -4,8 +4,6 @@ import { Modal } from '@contentful/forma-36-react-components';
 import { TypeformEmbed } from './TypeformEmbed.es6';
 import { TypeformModal } from './TypeformModal.es6';
 
-jest.mock('@typeform/embed');
-
 describe('TypeformModal', () => {
   const props = {
     title: 'My typeform modal',
