@@ -302,6 +302,7 @@ export default function register() {
         }
       );
 
+      $scope.sidebarInitial = $scope.editorInterface.sidebar;
       $scope.updateSidebarConfiguration = draft => {
         $scope.editorInterface.sidebar = draft;
         // eslint-disable-next-line no-console

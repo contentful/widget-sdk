@@ -1,19 +1,11 @@
-import { AssetConfiguration, EntryConfiguration, defaultWidgetsMap } from '../defaults.es6';
+import { EntryConfiguration, defaultWidgetsMap } from '../defaults.es6';
 import { difference, isArray } from 'lodash';
 import { SidebarType } from '../constants.es6';
 import { NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNamespaces.es6';
 
-export const getAssetConfiguration = () => {
-  return Promise.resolve(AssetConfiguration);
-};
-
-export const getEntryConfiguration = async () => {
-  return Promise.resolve(EntryConfiguration);
-};
-
 export function convertInternalStateToConfiguration(state) {
   if (state.sidebarType === SidebarType.default) {
-    return null;
+    return undefined;
   }
 
   const selectedDefaultIds = state.items

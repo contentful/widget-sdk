@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import EntrySidebarWidget from './EntrySidebarWidget.es6';
-import createFetcherComponent from 'app/common/createFetcherComponent.es6';
+import { isArray } from 'lodash';
 
 import {
-  getEntryConfiguration,
-  getAssetConfiguration
-} from './Configuration/service/SidebarSync.es6';
+  AssetConfiguration,
+  EntryConfiguration
+} from 'app/EntrySidebar/Configuration/defaults.es6';
 
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer.es6';
 import ContentPreviewWidget from './ContentPreviewWidget/ContentPreviewWidget.es6';
@@ -28,16 +28,18 @@ const ComponentsMap = {
   [SidebarWidgetTypes.VERSIONS]: VersionsWidgetContainer
 };
 
-const WidgetsFetcher = createFetcherComponent(({ isEntry, contentTypeId }) => {
-  return isEntry ? getEntryConfiguration(contentTypeId) : getAssetConfiguration();
-});
-
 export default class EntrySidebar extends Component {
   static propTypes = {
     isMasterEnvironment: PropTypes.bool.isRequired,
     isEntry: PropTypes.bool.isRequired,
     emitter: PropTypes.object.isRequired,
-    contentTypeId: PropTypes.string,
+    sidebar: PropTypes.arrayOf(
+      PropTypes.shape({
+        widgetId: PropTypes.string.isRequired,
+        widgetNamespace: PropTypes.string.isRequired,
+        disabled: PropTypes.bool
+      })
+    ),
     legacySidebar: PropTypes.shape({
       extensions: PropTypes.arrayOf(
         PropTypes.shape({
@@ -75,24 +77,24 @@ export default class EntrySidebar extends Component {
     ));
   };
 
+  getSidebarConfiguration = () => {
+    if (!this.props.isEntry) {
+      return AssetConfiguration;
+    }
+    if (!isArray(this.props.sidebar)) {
+      return EntryConfiguration;
+    }
+    return this.props.sidebar.filter(widget => widget.disabled !== true);
+  };
+
   render() {
+    const widgets = this.getSidebarConfiguration();
     return (
       <React.Fragment>
         <EntryInfoPanelContainer emitter={this.props.emitter} />
         <div className="entity-sidebar">
-          <WidgetsFetcher isEntry={this.props.isEntry} contentTypeId={this.props.contentTypeId}>
-            {({ isLoading, data }) => {
-              if (isLoading) {
-                return null;
-              }
-              return (
-                <React.Fragment>
-                  {this.renderWidgets(data)}
-                  {this.renderLegacyExtensions()}
-                </React.Fragment>
-              );
-            }}
-          </WidgetsFetcher>
+          {this.renderWidgets(widgets)}
+          {this.renderLegacyExtensions()}
         </div>
       </React.Fragment>
     );

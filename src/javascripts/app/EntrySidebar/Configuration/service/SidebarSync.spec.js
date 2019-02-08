@@ -27,7 +27,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           sidebarType: SidebarType.default,
           items: EntryConfiguration
         })
-      ).toBeNull();
+      ).toBeUndefined();
     });
 
     it('should return valid configuration with disabled defaults', () => {

@@ -20,7 +20,6 @@ const Analytics = getModule('analytics/Analytics.es6');
 
 export default ({ $scope }) => {
   const isEntry = $scope.entityInfo.type === 'Entry';
-  const contentTypeId = $scope.entityInfo.contentTypeId;
   const isMasterEnvironment = spaceContext.getEnvironmentId() === 'master';
 
   const emitter = mitt();
@@ -193,7 +192,7 @@ export default ({ $scope }) => {
       extensions: legacyExtensions,
       appDomain: `app.${Config.domain}`
     },
-    contentTypeId,
+    sidebar: $scope.editorData.sidebar,
     isEntry,
     isMasterEnvironment,
     emitter
