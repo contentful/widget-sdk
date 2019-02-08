@@ -64,7 +64,6 @@ angular
       ngRequire('app/ContentModel/Editor/cfApiNameShadowDirective.es6').default();
       ngRequire('app/ContentModel/Editor/cfContentTypePreview.es6').default();
       ngRequire('services/validationViews.es6').default();
-      ngRequire('services/validationDialogErrorMessages.es6').default();
       ngRequire('components/field_dialog/validationDecorator.es6').default();
       ngRequire('components/field_dialog/fieldDialog.es6').default();
       ngRequire('app/ContentModel/Editor/metadataDialog.es6').default();
@@ -75,7 +74,6 @@ angular
       ngRequire('app/asset_editor/cfAssetEditorDirective.es6').default();
       ngRequire('data/entries.es6').default();
       ngRequire('services/contentPreview.es6').default();
-      ngRequire('services/slug.es6').default();
       ngRequire('app/content_preview/contentPreviewEditorDirective.es6').default();
       ngRequire('app/entity_editor/Components/BackNav/cfBackNav.es6').default();
       ngRequire(
@@ -245,7 +243,6 @@ angular
       ngRequire('states/spaceHome.es6').default();
       ngRequire('states/stackOnboarding.es6').default();
       ngRequire('states/states.es6').default();
-      ngRequire('ui/AutoFocusDirective.es6').default();
       ngRequire('ui/Framework/AngularComponent.es6').default();
       ngRequire('ui/Framework/CfComponentBridgeDirective.es6').default();
       ngRequire('ui/Framework/ReactDirective.es6').default();

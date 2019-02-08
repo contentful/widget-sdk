@@ -3,6 +3,7 @@ import { isEmpty, isEqual } from 'lodash';
 import moment from 'moment';
 import * as K from 'utils/kefir.es6';
 import createInputUpdater from 'ui/inputUpdater.es6';
+import { slugify } from 'services/slug.es6';
 
 export default function register() {
   /**
@@ -31,8 +32,7 @@ export default function register() {
   registerDirective('cfSlugEditor', [
     'debounce',
     'TheLocaleStore',
-    'slug',
-    (debounce, TheLocaleStore, slugUtils) => ({
+    (debounce, TheLocaleStore) => ({
       restrict: 'E',
       scope: {},
       require: '^cfWidgetApi',
@@ -88,7 +88,7 @@ export default function register() {
           const isCustomSlug =
             !isEmpty(trackingTitle) &&
             !isEmpty(slug) &&
-            slug !== slugUtils.slugify(trackingTitle, field.locale);
+            slug !== slugify(trackingTitle, field.locale);
 
           if ((isEmpty(title) && isEmpty(slug) && isOptionalLocaleWithFallback) || isCustomSlug) {
             return; // Do not overwrite user-defined custom slug.
@@ -230,7 +230,7 @@ export default function register() {
         }
 
         function makeSlug(title) {
-          return title ? slugUtils.slugify(title, field.locale) : untitledSlug();
+          return title ? slugify(title, field.locale) : untitledSlug();
         }
 
         function untitledSlug() {
@@ -239,7 +239,7 @@ export default function register() {
           }
           const createdAt = entry.getSys().createdAt;
           const createdAtFormatted = moment.utc(createdAt).format('YYYY MM DD [at] hh mm ss');
-          return slugUtils.slugify('Untitled entry ' + createdAtFormatted, 'en-US');
+          return slugify('Untitled entry ' + createdAtFormatted, 'en-US');
         }
       }
     })

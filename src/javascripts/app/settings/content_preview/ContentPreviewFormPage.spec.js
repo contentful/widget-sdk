@@ -16,14 +16,6 @@ jest.mock(
   { virtual: true }
 );
 
-jest.mock(
-  'ng/slug',
-  () => ({
-    slugify: _ => _
-  }),
-  { virtual: true }
-);
-
 describe('app/settings/content_preview/ContentPreviewFormPage', () => {
   beforeEach(() => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});

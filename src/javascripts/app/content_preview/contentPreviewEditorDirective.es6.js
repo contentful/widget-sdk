@@ -2,6 +2,7 @@ import { registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as logger from 'services/logger.es6';
+import { slugify } from 'services/slug.es6';
 
 export default function register() {
   registerDirective('cfContentPreviewEditor', () => ({
@@ -18,7 +19,6 @@ export default function register() {
     '$stateParams',
     'spaceContext',
     'contentPreview',
-    'slug',
     'command',
     'navigation/confirmLeaveEditor',
     'analytics/Analytics.es6',
@@ -29,7 +29,6 @@ export default function register() {
       $stateParams,
       spaceContext,
       contentPreview,
-      slugUtils,
       Command,
       leaveConfirmator,
       Analytics
@@ -65,7 +64,7 @@ export default function register() {
         }
       });
 
-      $scope.slugify = text => slugUtils.slugify(text, 'en-US');
+      $scope.slugify = text => slugify(text, 'en-US');
 
       function validate() {
         $scope.invalidFields = null;

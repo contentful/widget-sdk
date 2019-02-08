@@ -17,6 +17,7 @@ import { getModule } from 'NgRegistry.es6';
 import validate from './ContentPreviewFormValidation.es6';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import { slugify } from 'services/slug.es6';
 import {
   WhatIsContentPreview,
   TokensForContentPreview,
@@ -27,7 +28,6 @@ import {
 const $state = getModule('$state');
 const contentPreview = getModule('contentPreview');
 const Analytics = getModule('analytics/Analytics.es6');
-const slugUtils = getModule('slug');
 
 export const ContentPreviewFormPageSkeleton = props => (
   <Workbench>
@@ -347,7 +347,7 @@ export default class ContentPreviewFormPage extends Component {
             {this.state.preview.configs.map(config => {
               const placeholder = `Preview URL for content type '${
                 config.name
-              }'. E.g. http://www.yourwebsite.com/${slugUtils.slugify(
+              }'. E.g. http://www.yourwebsite.com/${slugify(
                 config.name,
                 'en-US'
               )}/{entry_field.slug}/`;
