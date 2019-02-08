@@ -203,10 +203,7 @@ export default function register() {
                       eventOrigin: eventOrigin,
                       contentType: contentType,
                       response: { data: entity },
-                      customWidgets: ($scope.editorData.fieldControls.form || [])
-                        .concat($scope.editorData.fieldControls.sidebar || [])
-                        .filter(w => w.extensionTrackingData)
-                        .map(w => w.extensionTrackingData)
+                      editorData: $scope.editorData
                     });
                   }
                   trackVersioning.publishedRestored(entity);

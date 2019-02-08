@@ -33,7 +33,9 @@ function buildOneRenderable(control, widgets) {
   const namespaceWidgets = widgets[control.widgetNamespace] || [];
   const descriptor = namespaceWidgets.find(w => w.id === control.widgetId);
 
-  if (!descriptor) {
+  if (descriptor) {
+    Object.assign(renderable, { descriptor });
+  } else {
     return Object.assign(renderable, { problem: 'missing' });
   }
 
@@ -58,20 +60,9 @@ function buildOneRenderable(control, widgets) {
   });
 
   if (renderable.widgetNamespace === NAMESPACE_EXTENSION) {
-    renderable.extensionTrackingData = {
-      extension_id: descriptor.id,
-      extension_name: descriptor.name,
-      field_id: control.fieldId,
-      field_type: fieldType,
-      installation_params: Object.keys(renderable.installationParameterValues),
-      instance_params: Object.keys(renderable.settings),
-      sidebar: renderable.sidebar
-    };
-
     if (descriptor.src) {
       renderable.src = descriptor.src;
-      renderable.extensionTrackingData.src = descriptor.src;
-    } else {
+    } else if (descriptor.srcdoc) {
       renderable.srcdoc = descriptor.srcdoc;
     }
   }
