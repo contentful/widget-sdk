@@ -45,13 +45,13 @@ export function identityProvider(state = {}, action) {
     case actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS:
       return {
         ...state,
-        data: action.identityProvider,
+        data: action.payload,
         isPending: false
       };
     case actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE:
       return {
         ...state,
-        error: action.error,
+        error: action.payload,
         isPending: false
       };
     case actions.SSO_GET_IDENTITY_PROVIDER_PENDING:
@@ -62,19 +62,19 @@ export function identityProvider(state = {}, action) {
     case actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS:
       return {
         ...state,
-        data: action.identityProvider,
+        data: action.payload,
         isPending: false
       };
     case actions.SSO_GET_IDENTITY_PROVIDER_FAILURE:
       return {
         ...state,
-        error: action.error,
+        error: action.payload,
         isPending: false
       };
     case actions.SSO_UPDATE_IDENTITY_PROVIDER:
       return {
         ...state,
-        data: action.identityProvider
+        data: action.payload
       };
     default:
       return state;
@@ -102,7 +102,7 @@ export function fields(state = {}, action) {
       const updatedState = clone(state);
 
       fieldNames.forEach(field => {
-        const currentFieldValue = get(action.identityProvider, field);
+        const currentFieldValue = get(action.payload, field);
         set(updatedState, [field, 'value'], currentFieldValue);
       });
 
@@ -110,28 +110,28 @@ export function fields(state = {}, action) {
     }
     case actions.SSO_FIELD_UPDATE_VALUE: {
       const updatedState = clone(state);
-      set(updatedState, [action.fieldName, 'value'], action.value);
+      set(updatedState, [action.meta.fieldName, 'value'], action.payload);
 
       return updatedState;
     }
     case actions.SSO_FIELD_UPDATE_PENDING: {
       const updatedState = clone(state);
-      set(updatedState, [action.fieldName, 'isPending'], true);
+      set(updatedState, [action.meta.fieldName, 'isPending'], true);
 
       return updatedState;
     }
     case actions.SSO_FIELD_VALIDATION_SUCCESS: {
       const updatedState = clone(state);
-      set(updatedState, [action.fieldName, 'error'], null);
-      set(updatedState, [action.fieldName, 'isPending'], false);
+      set(updatedState, [action.meta.fieldName, 'error'], null);
+      set(updatedState, [action.meta.fieldName, 'isPending'], false);
 
       return updatedState;
     }
     case actions.SSO_FIELD_UPDATE_FAILURE:
     case actions.SSO_FIELD_VALIDATION_FAILURE: {
       const updatedState = clone(state);
-      set(updatedState, [action.fieldName, 'error'], action.error.message);
-      set(updatedState, [action.fieldName, 'isPending'], false);
+      set(updatedState, [action.meta.fieldName, 'error'], action.payload.message);
+      set(updatedState, [action.meta.fieldName, 'isPending'], false);
 
       return updatedState;
     }

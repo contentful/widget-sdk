@@ -25,7 +25,7 @@ describe('SSO Redux actionCreators', () => {
           },
           {
             type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
-            identityProvider
+            payload: identityProvider
           }
         ]);
       });
@@ -43,7 +43,8 @@ describe('SSO Redux actionCreators', () => {
           },
           {
             type: actions.SSO_GET_IDENTITY_PROVIDER_FAILURE,
-            error
+            error: true,
+            payload: error
           }
         ]);
       });
@@ -65,7 +66,7 @@ describe('SSO Redux actionCreators', () => {
             },
             {
               type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
-              identityProvider
+              payload: identityProvider
             }
           ]);
         });
@@ -105,7 +106,8 @@ describe('SSO Redux actionCreators', () => {
             },
             {
               type: actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE,
-              error
+              error: true,
+              payload: error
             }
           ]);
         });
@@ -202,16 +204,16 @@ describe('SSO Redux actionCreators', () => {
         expect.arrayContaining([
           {
             type: actions.SSO_FIELD_UPDATE_VALUE,
-            fieldName,
-            value
+            payload: value,
+            meta: { fieldName }
           },
           {
             type: actions.SSO_FIELD_UPDATE_PENDING,
-            fieldName
+            meta: { fieldName }
           },
           {
             type: actions.SSO_FIELD_UPDATE_SUCCESS,
-            fieldName
+            meta: { fieldName }
           }
         ])
       );
@@ -239,7 +241,7 @@ describe('SSO Redux actionCreators', () => {
         expect.arrayContaining([
           {
             type: actions.SSO_UPDATE_IDENTITY_PROVIDER,
-            identityProvider
+            payload: identityProvider
           }
         ])
       );
@@ -265,17 +267,18 @@ describe('SSO Redux actionCreators', () => {
         expect.arrayContaining([
           {
             type: actions.SSO_FIELD_UPDATE_VALUE,
-            fieldName,
-            value
+            payload: value,
+            meta: { fieldName }
           },
           {
             type: actions.SSO_FIELD_UPDATE_PENDING,
-            fieldName
+            meta: { fieldName }
           },
           {
             type: actions.SSO_FIELD_UPDATE_FAILURE,
-            fieldName,
-            error
+            error: true,
+            payload: error,
+            meta: { fieldName }
           }
         ])
       );
@@ -326,12 +329,12 @@ describe('SSO Redux actionCreators', () => {
       expect(mockStore.getActions()).toEqual([
         {
           type: actions.SSO_FIELD_UPDATE_VALUE,
-          fieldName,
-          value
+          payload: value,
+          meta: { fieldName }
         },
         {
           type: actions.SSO_FIELD_VALIDATION_SUCCESS,
-          fieldName
+          meta: { fieldName }
         }
       ]);
     });
@@ -351,13 +354,14 @@ describe('SSO Redux actionCreators', () => {
       expect(mockStore.getActions()).toEqual([
         {
           type: actions.SSO_FIELD_UPDATE_VALUE,
-          fieldName,
-          value
+          payload: value,
+          meta: { fieldName }
         },
         {
           type: actions.SSO_FIELD_VALIDATION_FAILURE,
-          fieldName,
-          error: new Error('Field is not valid')
+          error: true,
+          payload: new Error('Field is not valid'),
+          meta: { fieldName }
         }
       ]);
     });
@@ -381,13 +385,14 @@ describe('SSO Redux actionCreators', () => {
       expect(mockStore.getActions()).toEqual([
         {
           type: actions.SSO_FIELD_UPDATE_VALUE,
-          fieldName,
-          value
+          payload: value,
+          meta: { fieldName }
         },
         {
           type: actions.SSO_FIELD_VALIDATION_FAILURE,
-          fieldName,
-          error: new Error('Field is not valid')
+          error: true,
+          payload: new Error('Field is not valid'),
+          meta: { fieldName }
         }
       ]);
 
@@ -406,12 +411,12 @@ describe('SSO Redux actionCreators', () => {
       expect(mockStore.getActions()).toEqual([
         {
           type: actions.SSO_FIELD_UPDATE_VALUE,
-          fieldName,
-          value
+          payload: value,
+          meta: { fieldName }
         },
         {
           type: actions.SSO_FIELD_VALIDATION_SUCCESS,
-          fieldName
+          meta: { fieldName }
         }
       ]);
     });

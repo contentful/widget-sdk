@@ -25,7 +25,7 @@ describe('SSO Redux reducers', () => {
       expect(
         callReducer(reducers.identityProvider, {
           type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
-          identityProvider
+          payload: identityProvider
         })
       ).toEqual({
         data: identityProvider,
@@ -39,7 +39,8 @@ describe('SSO Redux reducers', () => {
       expect(
         callReducer(reducers.identityProvider, {
           type: actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE,
-          error
+          error: true,
+          payload: error
         })
       ).toEqual({
         error,
@@ -65,7 +66,7 @@ describe('SSO Redux reducers', () => {
       expect(
         callReducer(reducers.identityProvider, {
           type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
-          identityProvider
+          payload: identityProvider
         })
       ).toEqual({
         data: identityProvider,
@@ -79,7 +80,8 @@ describe('SSO Redux reducers', () => {
       expect(
         callReducer(reducers.identityProvider, {
           type: actions.SSO_GET_IDENTITY_PROVIDER_FAILURE,
-          error
+          error: true,
+          payload: error
         })
       ).toEqual({
         error,
@@ -99,7 +101,7 @@ describe('SSO Redux reducers', () => {
       expect(
         callReducer(reducers.fields, {
           type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
-          identityProvider
+          payload: identityProvider
         })
       ).toEqual({
         ssoName: {
@@ -119,7 +121,7 @@ describe('SSO Redux reducers', () => {
       expect(
         callReducer(reducers.fields, {
           type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
-          identityProvider
+          payload: identityProvider
         })
       ).toEqual({
         ssoName: {
@@ -141,8 +143,10 @@ describe('SSO Redux reducers', () => {
       expect(
         callReducer(reducers.fields, {
           type: actions.SSO_FIELD_UPDATE_VALUE,
-          fieldName: 'ssoName',
-          value: 'something-else'
+          payload: 'something-else',
+          meta: {
+            fieldName: 'ssoName'
+          }
         })
       ).toEqual({
         ssoName: {
@@ -155,7 +159,9 @@ describe('SSO Redux reducers', () => {
       expect(
         callReducer(reducers.fields, {
           type: actions.SSO_FIELD_UPDATE_PENDING,
-          fieldName: 'ssoName'
+          meta: {
+            fieldName: 'ssoName'
+          }
         })
       ).toEqual({
         ssoName: {
@@ -168,7 +174,9 @@ describe('SSO Redux reducers', () => {
       expect(
         callReducer(reducers.fields, {
           type: actions.SSO_FIELD_VALIDATION_SUCCESS,
-          fieldName: 'ssoName'
+          meta: {
+            fieldName: 'ssoName'
+          }
         })
       ).toEqual({
         ssoName: {
@@ -184,8 +192,11 @@ describe('SSO Redux reducers', () => {
       expect(
         callReducer(reducers.fields, {
           type: actions.SSO_FIELD_VALIDATION_FAILURE,
-          fieldName: 'ssoName',
-          error
+          error: true,
+          payload: error,
+          meta: {
+            fieldName: 'ssoName'
+          }
         })
       ).toEqual({
         ssoName: {
@@ -197,8 +208,11 @@ describe('SSO Redux reducers', () => {
       expect(
         callReducer(reducers.fields, {
           type: actions.SSO_FIELD_UPDATE_FAILURE,
-          fieldName: 'ssoName',
-          error
+          error: true,
+          payload: error,
+          meta: {
+            fieldName: 'ssoName'
+          }
         })
       ).toEqual({
         ssoName: {
