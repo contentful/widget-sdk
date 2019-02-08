@@ -30,13 +30,18 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
       ).toBeUndefined();
     });
 
-    it('should return valid configuration with disabled defaults', () => {
+    it('should return valid configuration with disabled defaults and ignore invalid items', () => {
       const items = [
         PublicationWidget,
         VersionsWidget,
         {
           widgetId: 'some-custom-extension',
           widgetNamespace: NAMESPACE_EXTENSION
+        },
+        {
+          widgetId: 'some-invalid-extension-that-was-deleted',
+          widgetNamespace: NAMESPACE_EXTENSION,
+          invalid: true
         }
       ];
       const state = {
@@ -60,9 +65,9 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         items: EntryConfiguration,
         availableItems: []
       };
-      expect(convertConfigirationToInternalState(null)).toEqual(defaultState);
-      expect(convertConfigirationToInternalState(undefined)).toEqual(defaultState);
-      expect(convertConfigirationToInternalState({ foo: 'bar' })).toEqual(defaultState);
+      expect(convertConfigirationToInternalState(null, [])).toEqual(defaultState);
+      expect(convertConfigirationToInternalState(undefined, [])).toEqual(defaultState);
+      expect(convertConfigirationToInternalState({ foo: 'bar' }, [])).toEqual(defaultState);
     });
 
     it('should split configuration to items and availableItems', () => {
@@ -71,7 +76,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         widgetNamespace: widget.widgetNamespace,
         disabled: true
       }));
-      const state = convertConfigirationToInternalState(allDisabled);
+      const state = convertConfigirationToInternalState(allDisabled, []);
       expect(state).toEqual({
         sidebarType: SidebarType.custom,
         items: [],
@@ -85,7 +90,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
       ]);
     });
 
-    it('should ignore non-existent builtin items', () => {
+    it('should mark as invalid non-existent builtin items and all extensions that are not installed in space', () => {
       const configuration = [
         {
           widgetId: PublicationWidget.widgetId,
@@ -94,6 +99,10 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         {
           widgetId: VersionsWidget.widgetId,
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
+        },
+        {
+          widgetId: 'some-extension-that-is-not-installed',
+          widgetNamespace: NAMESPACE_EXTENSION
         },
         {
           widgetId: UsersWidget.widgetId,
@@ -106,16 +115,29 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         }
       ];
 
-      const state = convertConfigirationToInternalState(configuration);
+      const state = convertConfigirationToInternalState(configuration, []);
 
       expect(state).toEqual({
         sidebarType: SidebarType.custom,
-        items: [PublicationWidget, VersionsWidget],
-        availableItems: [UsersWidget, ContentPreviewWidget, LinksWidget, TranslationWidget]
+        items: [
+          PublicationWidget,
+          VersionsWidget,
+          {
+            widgetId: 'some-extension-that-is-not-installed',
+            widgetNamespace: NAMESPACE_EXTENSION,
+            invalid: true
+          },
+          {
+            widgetId: 'looks-like-in-invalid-built-in',
+            widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+            invalid: true
+          }
+        ],
+        availableItems: [ContentPreviewWidget, LinksWidget, TranslationWidget, UsersWidget]
       });
     });
 
-    it('should has no available if all are present', () => {
+    it('should push to available only those extension that are not installed', () => {
       const configuration = [
         {
           widgetId: PublicationWidget.widgetId,
@@ -147,7 +169,10 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         }
       ];
 
-      const state = convertConfigirationToInternalState(configuration);
+      const state = convertConfigirationToInternalState(configuration, [
+        { id: 'netlify-extension', name: 'Netlify Extension' },
+        { id: 'custom-publish-button', name: 'Custom Publish button' }
+      ]);
 
       expect(state).toEqual({
         sidebarType: SidebarType.custom,
@@ -156,6 +181,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           VersionsWidget,
           UsersWidget,
           {
+            title: 'Netlify Extension',
             widgetId: 'netlify-extension',
             widgetNamespace: NAMESPACE_EXTENSION
           },
@@ -163,7 +189,13 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           ContentPreviewWidget,
           TranslationWidget
         ],
-        availableItems: []
+        availableItems: [
+          {
+            widgetId: 'custom-publish-button',
+            widgetNamespace: NAMESPACE_EXTENSION,
+            title: 'Custom Publish button'
+          }
+        ]
       });
     });
   });

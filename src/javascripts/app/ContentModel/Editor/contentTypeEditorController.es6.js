@@ -9,6 +9,7 @@ import {
   openSaveDialog
 } from './FieldsTab/FieldTabDialogs.es6';
 import getContentTypePreview from './PreviewTab/getContentTypePreview.es6';
+import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 
 export default function register() {
   /**
@@ -302,11 +303,10 @@ export default function register() {
         }
       );
 
-      $scope.sidebarInitial = $scope.editorInterface.sidebar;
+      $scope.sidebarConfiguration = $scope.editorInterface.sidebar;
+      $scope.sidebarExtensions = $scope.widgets[NAMESPACE_EXTENSION] || [];
       $scope.updateSidebarConfiguration = draft => {
         $scope.editorInterface.sidebar = draft;
-        // eslint-disable-next-line no-console
-        console.log(draft);
       };
 
       $scope.buildContentTypeIdInputProps = () => ({

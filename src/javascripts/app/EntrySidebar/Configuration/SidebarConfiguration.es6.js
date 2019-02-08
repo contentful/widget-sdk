@@ -25,7 +25,10 @@ import {
 /* Reducer */
 
 function SidebarConfiguration(props) {
-  const [state, dispatch] = useReducer(reducer, convertConfigirationToInternalState(props.sidebar));
+  const [state, dispatch] = useReducer(
+    reducer,
+    convertConfigirationToInternalState(props.configuration, props.extensions)
+  );
 
   useEffect(() => {
     props.onUpdateConfiguration(convertInternalStateToConfiguration(state));
@@ -95,7 +98,8 @@ function SidebarConfiguration(props) {
 }
 
 SidebarConfiguration.propTypes = {
-  sidebar: PropTypes.array,
+  configuration: PropTypes.array,
+  extensions: PropTypes.array,
   onUpdateConfiguration: PropTypes.func.isRequired
 };
 
