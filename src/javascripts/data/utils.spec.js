@@ -8,7 +8,7 @@ describe('isValidResourceId(id)', function() {
     }
   );
 
-  test.each(['', 'x'.repeat(65), '$foo', '&bar', '@id'])('`%s` is a valid resource ID', id => {
+  test.each(['', 'x'.repeat(65), '$foo', '&bar', '@id'])('`%s` is an invalid resource ID', id => {
     expect(isValidResourceId(id)).toBe(false);
   });
 });
