@@ -50,7 +50,7 @@ export default function register() {
             const templateData = {
               field: field,
               tooltipPlacement: $scope.$first ? 'bottom' : 'top',
-              helpText: _.get(widget, ['settings', 'helpText']) || widget.defaultHelpText,
+              helpText: _.get(widget, ['settings', 'helpText']),
               hasInitialFocus:
                 $scope.editorContext.hasInitialFocus && $scope.$first && widget.isFocusable
             };

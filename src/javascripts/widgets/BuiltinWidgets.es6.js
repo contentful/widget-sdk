@@ -1,24 +1,22 @@
 import { range } from 'lodash';
 
+const HELP_TEXT_PARAMETER = {
+  id: 'helpText',
+  name: 'Help text',
+  type: 'Symbol',
+  description: 'This help text will show up below the field'
+};
+
 // Returns a list of all builtin widgets.
 export function create() {
   const widgets = [];
 
-  const COMMON_PARAMETERS = [
-    {
-      id: 'helpText',
-      name: 'Help text',
-      type: 'Symbol',
-      description: 'This help text will show up below the field'
-    }
-  ];
-
   const registerWidget = (id, widgetDescriptor) => {
-    Object.assign(widgetDescriptor, {
-      id,
-      parameters: [...COMMON_PARAMETERS, ...(widgetDescriptor.parameters || [])]
-    });
+    const widgetParameters = widgetDescriptor.parameters || [];
+    const hasHelpText = !!widgetParameters.find(({ id }) => id === HELP_TEXT_PARAMETER.id);
+    const parameters = (hasHelpText ? [] : [HELP_TEXT_PARAMETER]).concat(widgetParameters);
 
+    Object.assign(widgetDescriptor, { id, parameters });
     widgets.push(widgetDescriptor);
   };
 
@@ -165,10 +163,15 @@ export function create() {
 
   registerWidget('listInput', {
     fieldTypes: ['Symbols'],
-    defaultHelpText: 'Insert comma separated values',
     name: 'List',
     icon: 'singleline',
-    template: '<cf-list-input-editor>'
+    template: '<cf-list-input-editor>',
+    parameters: [
+      {
+        ...HELP_TEXT_PARAMETER,
+        default: 'Insert comma separated values'
+      }
+    ]
   });
 
   registerWidget('checkbox', {
