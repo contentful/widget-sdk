@@ -160,6 +160,14 @@ $home-width = 820px
   padding: 20px
   &__row
     width: 100%
+  &__row-order-1
+    order: 1
+  &__row-order-2
+    order: 2
+  &__row-order-3
+    order: 3
+  &__row-order-4
+    order: 4
 .tab-list.x--home
   border: 1px solid transparent
   border-bottom: 1px solid $colors.element-mid
@@ -199,7 +207,7 @@ $home-width = 820px
   padding: 0
   width: 939px
   margin: auto
-  margin-top: 70px
+  margin-top: 64px
   &__header
     font-size: 16px
     border-bottom: 1px solid $colors.element-mid
@@ -230,6 +238,50 @@ $home-width = 820px
     cursor: pointer
   &__play-button-icon
     background-image: url('/app/images/play-button.png')
-    background-size: 52px 52px
+    background-size: 52px 52px 
     width: 52px
     height 52px
+.walkthrough-tooltip
+  background-color: $colors.white
+  border-radius: 2px
+  overflow: hidden
+  width: 300px
+  &__space-name
+    font-weight: 600
+  &__header
+    display: flex
+    flex-wrap: nowrap
+    justify-content: space-between
+    align-items: center
+    background-color: #3D81D0
+    padding: 18px
+  &__heading
+    color: $colors.white
+    margin: 0
+  &__scheme-image
+    width: 242px
+    margin: 22px 32px 0px 32px
+  &__copy
+    margin: 22px 32px
+  &__button-container
+    padding: 0 32px 32px
+.start-walkthrough-widget
+  justify-content: center
+  display: flex
+  margin-top: 17px
+.relaunch-walkthrough-widget
+  display: flex
+  flex-wrap: nowrap
+  justify-content: space-between
+  align-items: flex-start
+  background-color: rgba(229, 235, 237, 0.3);
+  padding: 28px
+  width: 939px
+  margin: auto
+  margin-top: 40px
+.relaunch-walkthrough-widget .start-walkthrough-widget
+  justify-content: flex-start
+.space-home-spinner
+  display: flex
+  margin: auto
+  margin-top: 10px

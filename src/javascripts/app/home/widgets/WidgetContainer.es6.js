@@ -6,7 +6,10 @@ export default class WidgetContainer extends React.Component {
     return (
       <div className="widget-container">
         {React.Children.map(children, (child, i) => (
-          <div key={i} className="widget-container__row">
+          <div
+            key={i}
+            className={`widget-container__row ${child.props.order &&
+              'widget-container__row-order-' + child.props.order}`}>
             {child}
           </div>
         ))}
