@@ -100,7 +100,7 @@ describe('app/ContentList/Search/State.es6', () => {
       const expected = {
         ...getInitialState(),
         contentTypeId: contentTypeId,
-        filters: [buildFilter(filter, 'blah')],
+        filters: [buildFilter(filter)],
         focus: getFocusForValue(0)
       };
 

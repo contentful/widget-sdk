@@ -431,7 +431,9 @@ function getControlByType(ctField) {
   if (type === 'Boolean') {
     return ValueInput.Select([['true', 'Yes'], ['false', 'No']]);
   } else if (['SymbolPredefined', 'SymbolListPredefined'].indexOf(type) > -1) {
-    return ValueInput.Select(getPredefinedValues(ctField).map(o => [o, o]));
+    const emptyOption = ['', 'Select...'];
+    const valueOptions = getPredefinedValues(ctField).map(o => [o, o]);
+    return ValueInput.Select([emptyOption].concat(valueOptions));
   } else if (isReferenceField(ctField)) {
     return ValueInput.Reference(
       assign(ctField, {
