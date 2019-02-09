@@ -230,13 +230,11 @@ function tabPanel() {
           ngHide: '!stateIs("^.sidebar_configuration")'
         },
         [
-          h('.workbench-main__middle-content', [
-            h('react-component', {
-              name: 'app/EntrySidebar/Configuration/SidebarConfiguration.es6',
-              props:
-                '{ configuration: initialSidebarConfiguration, extensions: sidebarExtensions, onUpdateConfiguration: updateSidebarConfiguration }'
-            })
-          ])
+          h('react-component', {
+            name: 'app/EntrySidebar/Configuration/SidebarConfiguration.es6',
+            props:
+              '{ configuration: initialSidebarConfiguration, extensions: sidebarExtensions, onUpdateConfiguration: updateSidebarConfiguration }'
+          })
         ]
       )
     ]

@@ -5,7 +5,9 @@ import {
   Heading,
   Paragraph,
   FieldGroup,
-  RadioButtonField
+  RadioButtonField,
+  Note,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import DefaultSidebar from './components/DefaultSidebar.es6';
 import CustomSidebar from './components/CustomSidebar.es6';
@@ -65,7 +67,7 @@ function SidebarConfiguration(props) {
           value={SidebarType.custom}
         />
       </FieldGroup>
-      <div className="sidebar-configuration__container f36-margin-top--l f36-margin-bottom--3xl">
+      <div className="sidebar-configuration__container f36-margin-top--l f36-margin-bottom--m">
         {state.sidebarType === SidebarType.default && (
           <div className="sidebar-configuration__main-column">
             <DefaultSidebar />
@@ -95,6 +97,11 @@ function SidebarConfiguration(props) {
           </React.Fragment>
         )}
       </div>
+      <Note extraClassNames="f36-margin-bottom--m">
+        <TextLink>Send feedback</TextLink> and let us know how we can improve the sidebar
+        configuration.
+      </Note>
+      <div className="f36-margin-bottom--3xl" />
     </div>
   );
 }
