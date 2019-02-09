@@ -4,19 +4,21 @@
     display: flex
 
   .sidebar-configuration__main-column
+    min-width: 400px
     width: 400px
     border: 1px solid $colors.element-mid
     background-color: $colors.white
     min-height: 500px
-    padding: $rhythm(1) $rhythm(1.5) 0 $rhythm(1.5)
+    padding: $rhythm(1) $rhythm(1.5)
     box-shadow: 2px 0 3px 0 rgba(0,0,0,0.05);
 
   .sidebar-configuration__additional-column
+    min-width: 400px
     width: 400px
     border: 1px solid $colors.element-mid
     border-left: none
     min-height: 500px
-    padding: $rhythm(1) $rhythm(1.5) 0 $rhythm(1.5)
+    padding: $rhythm(1) $rhythm(1.5)
     box-shadow: 2px 0 3px 0 rgba(0,0,0,0.05);
 
   .sidebar-configuration__item
@@ -32,6 +34,9 @@
 
     svg
       fill: $colors.text-light
+
+  .draggable-item:last-child
+    margin-bottom: 0
 
 
   .draggable-item .sidebar-configuration__item

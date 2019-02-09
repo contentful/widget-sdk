@@ -37,28 +37,35 @@ export default function CustomSidebar({ items, onChangePosition, onRemoveItem })
         onChangePosition(result.source.index, result.destination.index);
       }}>
       <Subheading extraClassNames="f36-margin-bottom--m">Custom sidebar</Subheading>
-      <Droppable droppableId="droppable">
-        {provided => (
-          <div ref={provided.innerRef}>
-            {items.map((item, index) => {
-              const key = `${item.widgetId}-${item.widgetNamespace}`;
-              return (
-                <Draggable key={key} draggableId={key} index={index}>
-                  {provided => (
-                    <div
-                      className="draggable-item"
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}>
-                      <WidgetItem widget={item} onRemoveClick={() => onRemoveItem(item)} />
-                    </div>
-                  )}
-                </Draggable>
-              );
-            })}
-          </div>
-        )}
-      </Droppable>
+      {items.length > 0 && (
+        <Droppable droppableId="droppable">
+          {provided => (
+            <div ref={provided.innerRef}>
+              {items.map((item, index) => {
+                const key = `${item.widgetId}-${item.widgetNamespace}`;
+                return (
+                  <Draggable key={key} draggableId={key} index={index}>
+                    {provided => (
+                      <div
+                        className="draggable-item"
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}>
+                        <WidgetItem widget={item} onRemoveClick={() => onRemoveItem(item)} />
+                      </div>
+                    )}
+                  </Draggable>
+                );
+              })}
+            </div>
+          )}
+        </Droppable>
+      )}
+      {items.length === 0 && (
+        <Paragraph>
+          Add an item to customize what’s displayed on the sidebar for this content type.
+        </Paragraph>
+      )}
     </DragDropContext>
   );
 }

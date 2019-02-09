@@ -65,7 +65,7 @@ function SidebarConfiguration(props) {
           value={SidebarType.custom}
         />
       </FieldGroup>
-      <div className="sidebar-configuration__container f36-margin-top--l">
+      <div className="sidebar-configuration__container f36-margin-top--l f36-margin-bottom--3xl">
         {state.sidebarType === SidebarType.default && (
           <div className="sidebar-configuration__main-column">
             <DefaultSidebar />
