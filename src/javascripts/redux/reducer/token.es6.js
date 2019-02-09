@@ -1,14 +1,17 @@
-import { set } from 'lodash/fp';
+import produce from 'immer';
 
-export default (state = {}, { type, payload }) => {
-  // Ensure we don't change state if there was no change
+const initialState = {};
+
+export default produce((state, { type, payload }) => {
   switch (type) {
     case 'USER_UPDATE_FROM_TOKEN':
-      return set('user', payload.user, state);
+      state.user = payload.user;
+      return;
     case 'ORGANIZATIONS_UPDATE_FROM_TOKEN':
-      return set('organization', payload.organization, state);
+      state.organization = payload.organization;
+      return;
     case 'SPACES_BY_ORG_UPDATE_FROM_TOKEN':
-      return set('spaces', payload.spaces, state);
+      state.spaces = payload.spaces;
+      return;
   }
-  return state;
-};
+}, initialState);
