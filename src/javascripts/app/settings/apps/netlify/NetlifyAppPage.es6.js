@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'react-emotion';
+import tokens from '@contentful/forma-36-tokens';
 import { cloneDeep, uniqBy } from 'lodash';
 import { Button, Notification, Note } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
@@ -23,6 +25,12 @@ const $state = getModule('$state');
 
 const notifyError = (err, fallbackMessage) => {
   Notification.error(err.useMessage ? err.message || fallbackMessage : fallbackMessage);
+};
+
+const styles = {
+  section: css`
+    margin-bottom: ${tokens.spacingXl};
+  `
 };
 
 export default class NetlifyAppPage extends Component {
@@ -243,12 +251,12 @@ export default class NetlifyAppPage extends Component {
   renderContent() {
     return (
       <Workbench.Content centered>
-        <Note>
+        <Note extraClassNames={styles.section}>
           Let us know how we can improve the Netlify app.{' '}
           <FeedbackButton target="extensibility" about="Netlify app" />
         </Note>
 
-        <div className="netlify-app__section">
+        <div className={styles.section}>
           <h3>About</h3>
           <p>
             With this app developers can do a very quick set up, authors can control when the static
@@ -270,7 +278,7 @@ export default class NetlifyAppPage extends Component {
           onConnectClick={this.onConnectClick}
         />
 
-        <div className="netlify-app__section">
+        <div className={styles.section}>
           <h3>Build Netlify sites</h3>
           <p>
             Pick the Netlify sites you want to enable build for.

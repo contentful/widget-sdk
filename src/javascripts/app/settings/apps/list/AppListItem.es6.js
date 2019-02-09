@@ -1,8 +1,37 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'react-emotion';
+import tokens from '@contentful/forma-36-tokens';
 import { TextLink, Button, Heading } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 import AppIcon from '../_common/AppIcon.es6';
+
+const styles = {
+  item: css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: ${tokens.spacingM} 0;
+    border-bottom: 1px solid ${tokens.colorElementLight};
+  `,
+  icon: css`
+    display: flex;
+  `,
+  title: css`
+    flex-grow: 1;
+    padding: 0 ${tokens.spacingM};
+    display: block;
+  `,
+  titleText: css`
+    font-size: ${tokens.fontSizeL};
+  `,
+  actions: css`
+    display: block;
+    button {
+      margin-left: ${tokens.spacingM};
+    }
+  `
+};
 
 export default class AppListItem extends Component {
   static propTypes = {
@@ -17,14 +46,14 @@ export default class AppListItem extends Component {
     const { id, title, installed } = this.props.app;
     return (
       <React.Fragment>
-        <div className="apps-list-item__title">
+        <div className={styles.title}>
           <StateLink to="^.detail" params={{ appId: id }}>
-            <Heading element="h3" extraClassNames="apps-list-item__title-text">
+            <Heading element="h3" extraClassNames={styles.titleText}>
               {title}
             </Heading>
           </StateLink>
         </div>
-        <div className="apps-list-item__actions">
+        <div className={styles.actions}>
           {installed && (
             <StateLink to="^.detail" params={{ appId: id }}>
               {({ onClick }) => (
@@ -51,12 +80,12 @@ export default class AppListItem extends Component {
   renderSoon() {
     return (
       <React.Fragment>
-        <div className="apps-list-item__title">
-          <Heading element="h3" extraClassNames="apps-list-item__title-text">
+        <div className={styles.title}>
+          <Heading element="h3" extraClassNames={styles.titleText}>
             {this.props.app.title}
           </Heading>
         </div>
-        <div className="apps-list-item__actions">
+        <div className={styles.actions}>
           <Button buttonType="muted" disabled>
             Coming soon
           </Button>
@@ -68,8 +97,8 @@ export default class AppListItem extends Component {
   render() {
     const { app } = this.props;
     return (
-      <div className="apps-list-item">
-        <div className="apps-list-item__icon">
+      <div className={styles.item}>
+        <div className={styles.icon}>
           <AppIcon appId={app.id} />
         </div>
         {!app.soon && this.renderLink()}

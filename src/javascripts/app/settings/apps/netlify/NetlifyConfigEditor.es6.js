@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { css } from 'react-emotion';
 import PropTypes from 'prop-types';
+import tokens from '@contentful/forma-36-tokens';
 import {
   Button,
   SelectField,
@@ -10,6 +12,19 @@ import {
 
 const PICK_OPTION_VALUE = '__pick__';
 const MAX_CONFIGS = 3;
+
+const styles = {
+  row: css`
+    display: flex;
+    margin: ${tokens.spacingXl} 0;
+  `,
+  item: css`
+    margin-right: ${tokens.spacingXl};
+  `,
+  removeBtn: css`
+    margin-top: ${tokens.spacingL};
+  `
+};
 
 export default class NetlifyConfigEditor extends Component {
   static propTypes = {
@@ -68,9 +83,9 @@ export default class NetlifyConfigEditor extends Component {
           const selectId = `site-select-${configIndex}`;
           const inputId = `site-input-${configIndex}`;
           return (
-            <div key={configIndex} className="netlify-app__site-config-row">
+            <div key={configIndex} className={styles.row}>
               <SelectField
-                extraClassNames="netlify-app__site-config-item"
+                extraClassNames={styles.item}
                 id={selectId}
                 name={selectId}
                 labelText="Netlify site:"
@@ -87,7 +102,7 @@ export default class NetlifyConfigEditor extends Component {
                 })}
               </SelectField>
               <TextField
-                extraClassNames="netlify-app__site-config-item"
+                extraClassNames={styles.item}
                 id={inputId}
                 name={inputId}
                 labelText="Display name:"
@@ -96,7 +111,7 @@ export default class NetlifyConfigEditor extends Component {
                 onChange={e => this.onNameChange(configIndex, e.target.value)}
               />
               <TextLink
-                extraClassNames="netlify-app__site-config-remove"
+                extraClassNames={styles.removeBtn}
                 disabled={disabled}
                 onClick={() => this.onRemove(configIndex)}>
                 Remove

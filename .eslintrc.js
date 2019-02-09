@@ -65,7 +65,6 @@ module.exports = {
       'LabeledStatement',
       'MetaProperty',
       'SequenceExpression',
-      'TaggedTemplateExpression',
       'WithStatement'
     ],
     'no-var': 'error',

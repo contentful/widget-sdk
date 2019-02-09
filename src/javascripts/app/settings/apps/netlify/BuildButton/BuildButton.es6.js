@@ -15,6 +15,7 @@ import {
   EVENT_TRIGGER_FAILED
 } from './MessageProcessor.es6';
 import { getModule } from 'NgRegistry.es6';
+import styles from './styles.es6';
 
 const spaceContext = getModule('spaceContext');
 
@@ -103,21 +104,26 @@ export default class BuildButton extends Component {
     const { ready, busy, status, misconfigured, info, ok } = this.state;
 
     return (
-      <div className="netlify-app__build-button">
-        <div className="netlify-app__build-button__alpha">
-          <span className="netlify-app__build-button__alpha-label">Alpha</span>
+      <div>
+        <div className={styles.header}>
+          <span className={styles.alphaLabel}>Alpha</span>
           <FeedbackButton target="extensibility" about="Netlify Build Button" />
         </div>
-        <Button disabled={!ready || busy} loading={busy} isFullWidth onClick={this.build}>
+        <Button
+          disabled={!ready || busy}
+          loading={busy}
+          isFullWidth
+          onClick={this.build}
+          extraClassNames={styles.button}>
           {busy && status ? status : 'Build'}
         </Button>
         {misconfigured && (
-          <div className="netlify-app__build-button__info">
+          <div className={styles.info}>
             <ValidationMessage>Check Netlify App configuration!</ValidationMessage>
           </div>
         )}
         {info && (
-          <div className="netlify-app__build-button__info">
+          <div className={styles.info}>
             {ok && info}
             {!ok && <ValidationMessage>{info}</ValidationMessage>}
           </div>

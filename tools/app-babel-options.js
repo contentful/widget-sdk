@@ -44,7 +44,17 @@ module.exports.createBabelOptions = function createBabelOptions(options = {}) {
           }
         ],
         require.resolve('@babel/plugin-proposal-object-rest-spread'),
-        require.resolve('@babel/plugin-proposal-class-properties')
+        require.resolve('@babel/plugin-proposal-class-properties'),
+        [
+          'emotion',
+          {
+            // sourceMap is on by default but source maps are dead code eliminated in production
+            sourceMap: true,
+            autoLabel: process.env.NODE_ENV !== 'production',
+            labelFormat: '[local]',
+            cssPropOptimization: true
+          }
+        ]
       ].filter(p => !!p),
       getModuleId: angularModules ? getModuleIdInSrc : undefined
     },
