@@ -2,13 +2,12 @@ import * as actions from './actions.es6';
 import getToken from 'redux/selectors/getToken.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import { getOrgConstants } from 'redux/selectors/getOrgConstants.es6';
-import { flow, keyBy, defaultTo, get } from 'lodash/fp';
-
-import { getOrgFeatures } from 'data/CMA/FeatureCatalog.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import { getOrganizationStatusV1, getOrganizationStatusV2 } from 'data/OrganizationStatus.es6';
 
 const catalogFeatures = {
-  TEAMS: 'teams'
+  TEAMS: 'teams',
+  CUSTOM_SIDEBAR: 'custom_sidebar'
 };
 
 export function fetchOrgConstants(orgId) {
@@ -22,18 +21,26 @@ export function fetchOrgConstants(orgId) {
     const token = getToken(getState());
     const org = token.organization.find(org => org.sys.id === orgId);
     const isLegacy = org.pricingVersion === 'pricing_version_1';
-    const getFeatures = () => getOrgFeatures(orgId, Object.values(catalogFeatures));
+
+    // TODO: use multi key request for features
+    const getFeatures = async () => {
+      const featureIds = Object.values(catalogFeatures);
+      const values = await Promise.all(
+        featureIds.map(featureId => getOrgFeature(orgId, featureId, false))
+      );
+      return featureIds.reduce((memo, featureId, index) => {
+        memo[featureId] = values[index];
+        return memo;
+      }, {});
+    };
+
     const getStatus = async () =>
       isLegacy ? getOrganizationStatusV1(org) : getOrganizationStatusV2(org);
 
     try {
       const [features, { isPaid, isEnterprise }] = await Promise.all([getFeatures(), getStatus()]);
       const payload = {
-        catalogFeatures: flow(
-          get('items'),
-          keyBy('sys.feature_id'),
-          defaultTo({})
-        )(features),
+        catalogFeatures: features,
         isLegacy,
         isPaid,
         isEnterprise,
