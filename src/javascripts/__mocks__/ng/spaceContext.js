@@ -6,6 +6,12 @@ export const users = {
   get: jest.fn().mockResolvedValue({})
 };
 
+export const organization = {
+  sys: {
+    id: 'org'
+  }
+};
+
 export const cma = {
   createExtension: jest.fn().mockResolvedValue({}),
   deleteExtension: jest.fn().mockResolvedValue({}),

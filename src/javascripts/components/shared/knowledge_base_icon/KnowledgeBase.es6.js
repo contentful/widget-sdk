@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry.es6';
-
-const { websiteUrl } = getModule('Config.es6');
+import { websiteUrl } from 'Config.es6';
 
 const items = {
   space: 'faq/terminology/#what-is-a-space',

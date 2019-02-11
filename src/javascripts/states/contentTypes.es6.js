@@ -35,7 +35,7 @@ const widgetResolvers = {
     'widgets',
     (spaceContext, contentType, _widgets) => spaceContext.editorInterfaceRepo.get(contentType.data)
   ],
-  hasCustomSidebar: [
+  hasCustomSidebarFeature: [
     'spaceContext',
     spaceContext => getOrgFeature(spaceContext.organization.sys.id, 'custom_sidebar', true)
   ]
@@ -104,7 +104,7 @@ function editorBase(options, isNew) {
       'widgets',
       'editorInterface',
       'publishedContentType',
-      'hasCustomSidebar',
+      'hasCustomSidebarFeature',
       (
         $scope,
         $stateParams,
@@ -112,14 +112,14 @@ function editorBase(options, isNew) {
         widgets,
         editorInterface,
         publishedContentType,
-        hasCustomSidebar
+        hasCustomSidebarFeature
       ) => {
         $scope.context.isNew = isNew;
         $scope.contentType = contentType;
         $scope.widgets = widgets;
         $scope.editorInterface = editorInterface;
         $scope.publishedContentType = publishedContentType;
-        $scope.hasCustomSidebar = hasCustomSidebar;
+        $scope.hasCustomSidebarFeature = hasCustomSidebarFeature;
 
         contextHistory.set([
           crumbFactory.ContentTypeList(),

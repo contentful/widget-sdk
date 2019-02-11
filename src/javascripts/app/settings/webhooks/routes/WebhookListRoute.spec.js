@@ -12,14 +12,7 @@ jest.mock(
   { virtual: true }
 );
 
-jest.mock(
-  'data/OrganizationStatus.es6',
-  () => ({
-    __esModule: true, // needed for `default` export.
-    default: () => Promise.resolve({ isEnterprise: false })
-  }),
-  { virtual: true }
-);
+jest.mock('data/CMA/ProductCatalog.es6', () => ({ getOrgFeature: () => Promise.resolve(false) }));
 
 describe('WebhookListRoute', () => {
   beforeEach(() => {

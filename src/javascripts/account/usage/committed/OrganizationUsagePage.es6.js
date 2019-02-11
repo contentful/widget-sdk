@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { map, sum } from 'lodash';
+import * as Config from 'Config.es6';
 import { getModule } from 'NgRegistry.es6';
 
 import {
@@ -19,7 +20,6 @@ const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
 const apiSeriesColors = ['#3072BE', '#14D997', '#CD3F39'];
 
 const $state = getModule('$state');
-const Config = getModule('Config.es6');
 const Analytics = getModule('analytics/Analytics.es6');
 const Intercom = getModule('intercom');
 

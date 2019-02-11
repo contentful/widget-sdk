@@ -8,7 +8,11 @@ describe('app/entity_editor/DataLoader.es6', () => {
       $provide.constant('TheLocaleStore', {
         getPrivateLocales: sinon.stub().returns([])
       });
+      $provide.constant('data/CMA/ProductCatalog.es6', {
+        getOrgFeature: () => Promise.resolve(true)
+      });
     });
+
     const $q = this.$inject('$q');
 
     // TODO use space context mock
@@ -35,6 +39,9 @@ describe('app/entity_editor/DataLoader.es6', () => {
       },
       docPool: {
         get: sinon.stub()
+      },
+      organization: {
+        sys: { id: 'orgid' }
       }
     };
 
