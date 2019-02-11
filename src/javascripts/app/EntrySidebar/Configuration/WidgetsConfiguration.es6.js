@@ -13,9 +13,9 @@ import {
   Paragraph,
   FieldGroup,
   RadioButtonField,
-  Note,
-  TextLink
+  Note
 } from '@contentful/forma-36-react-components';
+import FeedbackButton from 'app/common/FeedbackButton.es6';
 import DefaultSidebar from './components/DefaultSidebar.es6';
 import CustomSidebar from './components/CustomSidebar.es6';
 import AvailableWidgets from './components/AvailableWidgets.es6';
@@ -89,8 +89,12 @@ export default function WidgetsConfiguration({ state, dispatch }) {
         )}
       </div>
       <Note extraClassNames="f36-margin-bottom--xl">
-        <TextLink>Send feedback</TextLink> and let us know how we can improve the sidebar
-        configuration.
+        <FeedbackButton
+          target="extensibility"
+          about="Sidebar configuration"
+          label="Send feedback"
+        />{' '}
+        and let us know how we can improve the sidebar configuration.
       </Note>
       <div className="f36-margin-bottom--3xl" />
     </React.Fragment>
