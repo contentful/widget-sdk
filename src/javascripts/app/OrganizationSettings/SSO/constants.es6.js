@@ -8,3 +8,9 @@ export const SSO_PROVIDERS = [
   'PingIdentity',
   'Other'
 ];
+
+export const TEST_RESULTS = {
+  unknown: 'unknown',
+  failure: 'failure',
+  success: 'success'
+};

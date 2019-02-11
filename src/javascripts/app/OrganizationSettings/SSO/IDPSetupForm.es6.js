@@ -11,12 +11,14 @@ import {
   Select,
   Option,
   TextLink,
-  Spinner
+  Spinner,
+  Button,
+  Textarea
 } from '@contentful/forma-36-react-components';
 import { authUrl, appUrl } from 'Config.es6';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { IdentityProviderPropType, FieldsStatePropType } from './PropTypes.es6';
-import { SSO_PROVIDERS } from './constants.es6';
+import { SSO_PROVIDERS, TEST_RESULTS } from './constants.es6';
 import * as ssoActionCreators from 'redux/actions/sso/actionCreators.es6';
 import * as ssoSelectors from 'redux/selectors/sso.es6';
 
@@ -28,7 +30,12 @@ export class IDPSetupForm extends React.Component {
     identityProvider: IdentityProviderPropType,
     updateFieldValue: PropTypes.func.isRequired,
     validateField: PropTypes.func.isRequired,
-    fields: FieldsStatePropType.isRequired
+    fields: FieldsStatePropType.isRequired,
+    connectionTest: PropTypes.object,
+    connectionTestStart: PropTypes.func.isRequired,
+    connectionTestCancel: PropTypes.func.isRequired,
+    connectionTestResult: PropTypes.func.isRequired,
+    connectionTestEnd: PropTypes.func.isRequired
   };
 
   debouncedUpdateValue = _.debounce(async function(fieldName, value) {
@@ -37,7 +44,7 @@ export class IDPSetupForm extends React.Component {
     updateFieldValue({ fieldName, value, orgId: organization.sys.id });
   }, 500);
 
-  updateField(fieldName, immediately) {
+  updateField = (fieldName, immediately) => {
     return e => {
       const { validateField } = this.props;
 
@@ -50,15 +57,123 @@ export class IDPSetupForm extends React.Component {
         this.debouncedUpdateValue.flush();
       }
     };
-  }
+  };
+
+  testConnection = () => {
+    const {
+      organization: {
+        sys: { id: orgId }
+      },
+      connectionTestStart
+    } = this.props;
+
+    const testConnectionUrl = authUrl(`/sso/${orgId}/test_connection`);
+
+    // Open the new window and check if it's closed every 250ms
+    const newWindow = window.open(testConnectionUrl, '', 'toolbar=0,status=0,width=650,height=800');
+    const testConnectionTimer = window.setInterval(
+      this.checkTestConnectionWindow(newWindow).bind(this),
+      250
+    );
+
+    // Listen for an event from the window
+    window.addEventListener('message', this.messageHandler);
+
+    this.setState({
+      testConnectionTimer,
+      newWindow,
+      messageHandled: false
+    });
+
+    connectionTestStart();
+  };
+
+  messageHandler = ({ data }) => {
+    this.setState({
+      messageHandled: true
+    });
+
+    this.handleTestResultFromPopup(data);
+  };
+
+  handleTestResultFromPopup = data => {
+    const {
+      organization: {
+        sys: { id: orgId }
+      },
+      connectionTestResult,
+      connectionTestEnd
+    } = this.props;
+
+    if (data.testConnectionAt) {
+      // The status of the connection test is updated in GK
+      // Update the result directly in the store
+      connectionTestResult({ data });
+    } else {
+      // The user clicked on the button, but somehow it never updated in GK
+      // Treat it as if the user closed the popup and attempt to reload
+      // the data
+      connectionTestEnd({ orgId });
+    }
+  };
+
+  cancelConnectionTest = () => {
+    const { connectionTestCancel } = this.props;
+
+    this.state.newWindow.close();
+
+    this.setState({
+      testConnectionTimer: undefined,
+      newWindow: undefined
+    });
+
+    window.clearInterval(this.state.testConnectionTimer);
+    window.removeEventListener('message', this.messageHandler);
+
+    connectionTestCancel();
+  };
+
+  checkTestConnectionWindow = win => {
+    return async () => {
+      const {
+        organization: {
+          sys: { id: orgId }
+        },
+        connectionTestEnd
+      } = this.props;
+
+      // Do not run the `end` action creator if:
+      //
+      // 1. The window isn't closed yet
+      // 2. The window isn't available in the component state (it was canceled)
+      // 3. The message was handled via `#messageHandler`
+      if (!win.closed || !this.state.newWindow || this.state.messageHandled) {
+        return;
+      }
+
+      window.clearInterval(this.state.testConnectionTimer);
+
+      connectionTestEnd({ orgId });
+    };
+  };
 
   render() {
     const {
       fields,
+      connectionTest,
       organization: {
         sys: { id: orgId }
       }
     } = this.props;
+
+    const allowConnectionTest = !(
+      !fields.idpCert.value ||
+      fields.idpCert.error ||
+      !fields.idpSsoTargetUrl.value ||
+      fields.idpSsoTargetUrl.error ||
+      connectionTest.isPending ||
+      connectionTest.result === TEST_RESULTS.success
+    );
 
     return (
       <React.Fragment>
@@ -188,6 +303,54 @@ export class IDPSetupForm extends React.Component {
 
         <section className="f36-margin-top--3xl">
           <Heading element="h2" extraClassNames="f36-margin-bottom--xs">
+            Test connection
+          </Heading>
+          <HelpText extraClassNames="f36-margin-bottom--l">
+            You need a user account in your SSO provider and permission to use the Contentful app in
+            your SSO provider to test the connection.
+          </HelpText>
+          <div>
+            <Button disabled={!allowConnectionTest} onClick={this.testConnection}>
+              Test connection
+            </Button>
+            {connectionTest.isPending && (
+              <Button buttonType="muted" onClick={this.cancelConnectionTest}>
+                Cancel
+              </Button>
+            )}
+            {!connectionTest.isPending && (
+              <div className="f36-margin-top--l">
+                {connectionTest.result === TEST_RESULTS.unknown && (
+                  <Note noteType="warning">
+                    An unknown error occured while testing the connection. Try again.
+                  </Note>
+                )}
+                {connectionTest.result === TEST_RESULTS.failure && (
+                  <Note noteType="negative">
+                    Connection wasn’t established. View the Error log below for more information.
+                  </Note>
+                )}
+                {connectionTest.result === TEST_RESULTS.success && (
+                  <Note noteType="positive">Connection test successful!</Note>
+                )}
+              </div>
+            )}
+          </div>
+
+          {!connectionTest.isPending && connectionTest.result === TEST_RESULTS.failure && (
+            <div>
+              <Textarea
+                extraClassNames="f36-margin-top--xl"
+                rows={5}
+                disabled
+                value={connectionTest.errors.join('\n')}
+              />
+            </div>
+          )}
+        </section>
+
+        <section className="f36-margin-top--3xl">
+          <Heading element="h2" extraClassNames="f36-margin-bottom--xs">
             Sign-in name
           </Heading>
           <HelpText extraClassNames="f36-margin-bottom--l">
@@ -225,10 +388,15 @@ export class IDPSetupForm extends React.Component {
 export default connect(
   state => ({
     fields: ssoSelectors.getFields(state),
-    identityProvider: ssoSelectors.getIdentityProvider(state)
+    identityProvider: ssoSelectors.getIdentityProvider(state),
+    connectionTest: ssoSelectors.getConnectionTest(state)
   }),
   {
     validateField: ssoActionCreators.validateField,
-    updateFieldValue: ssoActionCreators.updateFieldValue
+    updateFieldValue: ssoActionCreators.updateFieldValue,
+    connectionTestStart: ssoActionCreators.connectionTestStart,
+    connectionTestCancel: ssoActionCreators.connectionTestCancel,
+    connectionTestResult: ssoActionCreators.connectionTestResult,
+    connectionTestEnd: ssoActionCreators.connectionTestEnd
   }
 )(IDPSetupForm);

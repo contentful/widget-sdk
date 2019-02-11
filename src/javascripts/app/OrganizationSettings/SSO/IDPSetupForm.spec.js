@@ -10,6 +10,11 @@ describe('IDPSetupForm', () => {
     organization,
     updateFieldValue = () => {},
     validateField = () => {},
+    connectionTestStart = () => {},
+    connectionTestCancel = () => {},
+    connectionTestResult = () => {},
+    connectionTestEnd = () => {},
+    connectionTest = {},
     fields = {
       idpName: {},
       ssoName: {},
@@ -24,6 +29,11 @@ describe('IDPSetupForm', () => {
         updateFieldValue={updateFieldValue}
         validateField={validateField}
         fields={fields}
+        connectionTest={connectionTest}
+        connectionTestStart={connectionTestStart}
+        connectionTestCancel={connectionTestCancel}
+        connectionTestResult={connectionTestResult}
+        connectionTestEnd={connectionTestEnd}
       />
     );
   };

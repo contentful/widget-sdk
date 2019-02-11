@@ -1,6 +1,6 @@
 import * as actions from './actions.es6';
 import * as selectors from 'redux/selectors/sso.es6';
-import { validate } from 'app/OrganizationSettings/SSO/utils.es6';
+import { validate, connectionTestResultFromIdp } from 'app/OrganizationSettings/SSO/utils.es6';
 import _ from 'lodash';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
@@ -25,6 +25,12 @@ export function retrieveIdp({ orgId }) {
     }
 
     dispatch(actions.ssoGetIdentityProviderSuccess(idp));
+
+    if (idp.testConnectionAt) {
+      const testResult = connectionTestResultFromIdp(idp);
+
+      dispatch(connectionTestResult({ data: testResult }));
+    }
   };
 }
 
@@ -121,5 +127,38 @@ export function validateField({ fieldName, value }) {
     } else {
       dispatch(actions.ssoFieldValidationFailure(fieldName, new Error('Field is not valid')));
     }
+  };
+}
+
+export function connectionTestStart() {
+  return dispatch => {
+    dispatch(actions.ssoConnectionTestStart());
+  };
+}
+
+export function connectionTestCancel() {
+  return dispatch => {
+    dispatch(actions.ssoConnectionTestEnd());
+  };
+}
+
+export function connectionTestResult({ data }) {
+  return dispatch => {
+    if (data.testConnectionAt) {
+      if (data.testConnectionResult === 'success') {
+        dispatch(actions.ssoConnectionTestSuccess());
+      } else if (data.testConnectionResult === 'failure') {
+        dispatch(actions.ssoConnectionTestFailure(data.testConnectionError));
+      } else {
+        dispatch(actions.ssoConnectionTestUnknown());
+      }
+    }
+  };
+}
+
+export function connectionTestEnd({ orgId }) {
+  return async dispatch => {
+    await dispatch(retrieveIdp({ orgId }));
+    dispatch(actions.ssoConnectionTestEnd());
   };
 }
