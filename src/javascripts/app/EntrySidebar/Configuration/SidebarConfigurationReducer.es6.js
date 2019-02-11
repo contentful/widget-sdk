@@ -59,6 +59,18 @@ export const closeWidgetConfiguration = () => ({
   type: CLOSE_WIDGET_CONFIGURATION
 });
 
+const UPDATE_WIDGET_SETTINGS = 'sidebar/UPDATE_WIDGET_SETTINGS';
+export const updateWidgetSettings = (widget, settings) => ({
+  type: UPDATE_WIDGET_SETTINGS,
+  payload: {
+    widget,
+    settings
+  }
+});
+
+const areWidgetsSame = (widget1, widget2) =>
+  widget1.widgetId === widget2.widgetId && widget1.widgetNamespace === widget2.widgetNamespace;
+
 export const reducer = createImmerReducer({
   [OPEN_WIDGET_CONFIGURATION]: (state, action) => {
     state.configurableWidget = action.payload.widget;
@@ -71,9 +83,7 @@ export const reducer = createImmerReducer({
   },
   [REMOVE_ITEM_FROM_SIDEBAR]: (state, action) => {
     const removed = action.payload.item;
-    const removeIndex = state.items.findIndex(
-      item => item.widgetId === removed.widgetId && item.widgetNamespace === removed.widgetNamespace
-    );
+    const removeIndex = state.items.findIndex(item => areWidgetsSame(item, removed));
     state.items.splice(removeIndex, 1);
     if (!removed.invalid) {
       state.availableItems.push(removed);
@@ -85,10 +95,15 @@ export const reducer = createImmerReducer({
   },
   [ADD_ITEM_TO_SIDEBAR]: (state, action) => {
     const added = action.payload.item;
-    const removeIndex = state.availableItems.findIndex(
-      item => item.widgetId === added.widgetId && item.widgetNamespace === added.widgetNamespace
-    );
+    const removeIndex = state.availableItems.findIndex(item => areWidgetsSame(item, added));
     state.availableItems.splice(removeIndex, 1);
     state.items = [...state.items, added];
+  },
+  [UPDATE_WIDGET_SETTINGS]: (state, action) => {
+    const widget = action.payload.widget;
+    const index = state.items.findIndex(item => areWidgetsSame(item, widget));
+    if (index > -1) {
+      state.items[index].settings = action.payload.settings;
+    }
   }
 });

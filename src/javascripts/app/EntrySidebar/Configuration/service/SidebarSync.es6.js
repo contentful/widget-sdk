@@ -18,7 +18,8 @@ export function convertInternalStateToConfiguration(state) {
     .filter(widget => widget.invalid !== true)
     .map(widget => ({
       widgetId: widget.widgetId,
-      widgetNamespace: widget.widgetNamespace
+      widgetNamespace: widget.widgetNamespace,
+      settings: widget.settings || {}
     }));
 
   const missingItems = EntryConfiguration.filter(widget =>

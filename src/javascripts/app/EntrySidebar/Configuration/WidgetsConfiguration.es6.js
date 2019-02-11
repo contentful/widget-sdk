@@ -85,7 +85,7 @@ export default function WidgetsConfiguration({ state, dispatch }) {
           </React.Fragment>
         )}
       </div>
-      <Note extraClassNames="f36-margin-bottom--m">
+      <Note extraClassNames="f36-margin-bottom--xl">
         <TextLink>Send feedback</TextLink> and let us know how we can improve the sidebar
         configuration.
       </Note>

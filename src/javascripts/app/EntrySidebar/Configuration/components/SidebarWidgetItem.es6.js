@@ -23,7 +23,7 @@ export default function SidebarWidgetItem({
   if (isInvalid) {
     return (
       <Note noteType="warning" extraClassNames="sidebar-configuration__invalid-item">
-        <code>{title || id}</code> is saved in configuration, but not installed in the space.
+        <code>{title || id}</code> is saved in configuration, but not installed in this environment.
         {removeBtn}
       </Note>
     );

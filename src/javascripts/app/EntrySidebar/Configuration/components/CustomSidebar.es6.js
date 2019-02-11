@@ -23,7 +23,7 @@ function WidgetItem({ widget, onRemoveClick, onConfigureClick }) {
           <Paragraph extraClassNames="f36-margin-bottom--s">UI Extension</Paragraph>
           {hasParams && (
             <TextLink onClick={onConfigureClick} extraClassNames="f36-margin-bottom--s">
-              Configure
+              Change instance parameters
             </TextLink>
           )}
         </React.Fragment>
