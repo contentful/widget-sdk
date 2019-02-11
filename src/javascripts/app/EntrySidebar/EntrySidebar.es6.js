@@ -106,8 +106,8 @@ export default class EntrySidebar extends Component {
     });
   };
 
-  renderLegacyExtensions = () => {
-    return this.props.legacySidebarExtensions.map(({ bridge, widget }) => (
+  renderLegacyExtensions = legacyExtensions => {
+    return legacyExtensions.map(({ bridge, widget }) => (
       <EntrySidebarWidget title={widget.field.name} key={widget.field.id}>
         <ExtensionIFrameRenderer bridge={bridge} descriptor={widget.descriptor} />
       </EntrySidebarWidget>
@@ -126,13 +126,19 @@ export default class EntrySidebar extends Component {
 
   render() {
     const sidebarItems = this.getSidebarConfiguration();
+    const legacyExtensions = this.props.legacySidebarExtensions || [];
+    const hasAnyExtensions = sidebarItems.length > 0 || legacyExtensions.length > 0;
     return (
       <React.Fragment>
         <EntryInfoPanelContainer emitter={this.props.emitter} />
-        <div className="entity-sidebar">
-          {this.renderWidgets(sidebarItems)}
-          {this.renderLegacyExtensions()}
-        </div>
+        {hasAnyExtensions && (
+          <div className="workbench-main__sidebar">
+            <div className="entity-sidebar">
+              {this.renderWidgets(sidebarItems)}
+              {this.renderLegacyExtensions(legacyExtensions)}
+            </div>
+          </div>
+        )}
       </React.Fragment>
     );
   }

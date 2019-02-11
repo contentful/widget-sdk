@@ -48,7 +48,6 @@ include ../entity_editor/entity_editor.mixins.jade
           cf-error-list.form-box-error(cf-error-path="['fields']")
           cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
 
-      .workbench-main__sidebar
-        react-component(name="app/EntrySidebar/EntrySidebar.es6" props="entrySidebarProps")
+      react-component(name="app/EntrySidebar/EntrySidebar.es6" props="entrySidebarProps")
 
 +entity-load-status("Entry")

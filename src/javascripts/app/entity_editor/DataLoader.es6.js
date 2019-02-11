@@ -2,7 +2,7 @@ import { find, isPlainObject, cloneDeep, memoize } from 'lodash';
 import { caseof as caseofEq } from 'sum-types/caseof-eq';
 import { deepFreeze } from 'utils/Freeze.es6';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache.es6';
-import { buildRenderables, buildSidebarRenderables } from 'widgets/WidgetRenderable.es6';
+import buildRenderables from 'widgets/WidgetRenderable.es6';
 import { getModule } from 'NgRegistry.es6';
 import { assetContentType } from 'legacy-client';
 import { NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces.es6';
@@ -129,9 +129,8 @@ async function loadEditorData(loader, id) {
   return Object.freeze({
     entity,
     contentType,
-    sidebar,
     fieldControls,
-    sidebarExtensions,
+    sidebar,
     entityInfo,
     openDoc
   });
