@@ -11,7 +11,7 @@
     border: 1px solid $colors.element-mid
     background-color: $colors.white
     min-height: 500px
-    padding: $rhythm(1) $rhythm(1.5)
+    padding: $rhythm(1) $rhythm(1.5) 0 $rhythm(1.5)
     box-shadow: 2px 0 3px 0 rgba(0,0,0,0.05);
 
   .sidebar-configuration__additional-column
@@ -30,18 +30,15 @@
     padding: $rhythm(0.5) $rhythm(1) $rhythm(0.5) $rhythm(1.5)
     position: relative
 
+  .sidebar-configuration__invalid-item
+    position: relative
+    margin-bottom: $rhythm(1)
 
   .draggable-item
     margin-bottom: $rhythm(1)
 
-    svg
-      fill: $colors.text-light
-
-  .draggable-item:last-child
-    margin-bottom: 0
-
-
-  .draggable-item .sidebar-configuration__item
+  .draggable-item .sidebar-configuration__item,
+  .draggable-item .sidebar-configuration__invalid-item
     margin: 0
     user-select: none
 
@@ -49,13 +46,15 @@
     position: absolute
     left: $rhythm(0.3)
     top: 12px
+    fill: $colors.text-light
 
   .sidebar-configuration__item-close
     position: absolute
     right: $rhythm(1)
     top: 10px
     cursor: pointer
-
+    svg
+      fill: $colors.text-light
 
   .sidebar-configuration__item-title
     flex-grow: 1

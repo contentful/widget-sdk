@@ -56,7 +56,9 @@ export const reducer = createImmerReducer({
       item => item.widgetId === removed.widgetId && item.widgetNamespace === removed.widgetNamespace
     );
     state.items.splice(removeIndex, 1);
-    state.availableItems.push(removed);
+    if (!removed.invalid) {
+      state.availableItems.push(removed);
+    }
   },
   [CHANGE_ITEM_POSITION]: (state, action) => {
     const [removed] = state.items.splice(action.payload.sourceIndex, 1);

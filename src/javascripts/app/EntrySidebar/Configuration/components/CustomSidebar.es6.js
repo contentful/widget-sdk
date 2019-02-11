@@ -7,7 +7,13 @@ import SidebarWidgetItem from './SidebarWidgetItem.es6';
 
 function WidgetItem({ widget, onRemoveClick }) {
   return (
-    <SidebarWidgetItem isDraggable isRemovable title={widget.title} onRemoveClick={onRemoveClick}>
+    <SidebarWidgetItem
+      isDraggable
+      isRemovable
+      id={widget.widgetId}
+      title={widget.title}
+      isInvalid={widget.invalid}
+      onRemoveClick={onRemoveClick}>
       {widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN && (
         <Paragraph>{widget.description}</Paragraph>
       )}
