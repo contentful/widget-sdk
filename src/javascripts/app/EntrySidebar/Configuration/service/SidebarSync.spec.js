@@ -153,7 +153,15 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         },
         {
           widgetId: 'netlify-extension',
-          widgetNamespace: NAMESPACE_EXTENSION
+          widgetNamespace: NAMESPACE_EXTENSION,
+          parameters: [
+            {
+              id: 'netlifyBuildHook',
+              name: 'Netlify build hook',
+              required: true,
+              type: 'Symbol'
+            }
+          ]
         },
         {
           widgetId: LinksWidget.widgetId,
@@ -183,7 +191,15 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           {
             title: 'Netlify Extension',
             widgetId: 'netlify-extension',
-            widgetNamespace: NAMESPACE_EXTENSION
+            widgetNamespace: NAMESPACE_EXTENSION,
+            parameters: [
+              {
+                id: 'netlifyBuildHook',
+                name: 'Netlify build hook',
+                required: true,
+                type: 'Symbol'
+              }
+            ]
           },
           LinksWidget,
           ContentPreviewWidget,
@@ -193,7 +209,8 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           {
             widgetId: 'custom-publish-button',
             widgetNamespace: NAMESPACE_EXTENSION,
-            title: 'Custom Publish button'
+            title: 'Custom Publish button',
+            parameters: []
           }
         ]
       });

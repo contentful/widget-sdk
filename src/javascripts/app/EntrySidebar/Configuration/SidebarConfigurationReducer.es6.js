@@ -46,7 +46,26 @@ export const changeItemPosition = (sourceIndex, destIndex) => ({
   }
 });
 
+const OPEN_WIDGET_CONFIGURATION = 'sidebar/OPEN_WIDGET_CONFIGURATION';
+export const openWidgetConfiguration = widget => ({
+  type: OPEN_WIDGET_CONFIGURATION,
+  payload: {
+    widget
+  }
+});
+
+const CLOSE_WIDGET_CONFIGURATION = 'sidebar/CLOSE_WIDGET_CONFIGURATION';
+export const closeWidgetConfiguration = () => ({
+  type: CLOSE_WIDGET_CONFIGURATION
+});
+
 export const reducer = createImmerReducer({
+  [OPEN_WIDGET_CONFIGURATION]: (state, action) => {
+    state.configurableWidget = action.payload.widget;
+  },
+  [CLOSE_WIDGET_CONFIGURATION]: state => {
+    state.configurableWidget = null;
+  },
   [SELECT_SIDEBAR_TYPE]: (state, action) => {
     state.sidebarType = action.payload.sidebarType;
   },

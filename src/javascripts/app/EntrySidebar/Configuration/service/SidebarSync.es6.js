@@ -36,7 +36,8 @@ function convertExtensionToWidgetConfiguration(extension) {
   return {
     widgetId: extension.id,
     widgetNamespace: NAMESPACE_EXTENSION,
-    title: extension.name
+    title: extension.name,
+    parameters: extension.parameters || []
   };
 }
 
@@ -45,7 +46,8 @@ export function convertConfigirationToInternalState(configuration, extensions) {
     return {
       sidebarType: SidebarType.default,
       items: EntryConfiguration,
-      availableItems: extensions.map(convertExtensionToWidgetConfiguration)
+      availableItems: extensions.map(convertExtensionToWidgetConfiguration),
+      configurableWidget: null
     };
   }
 
@@ -76,7 +78,8 @@ export function convertConfigirationToInternalState(configuration, extensions) {
         return installedExtensionsMap[widget.widgetId]
           ? {
               ...widget,
-              title: installedExtensionsMap[widget.widgetId].title
+              title: installedExtensionsMap[widget.widgetId].title,
+              parameters: installedExtensionsMap[widget.widgetId].parameters || []
             }
           : {
               ...widget,
@@ -127,6 +130,7 @@ export function convertConfigirationToInternalState(configuration, extensions) {
   return {
     sidebarType: SidebarType.custom,
     items,
-    availableItems
+    availableItems,
+    configurableWidget: null
   };
 }

@@ -5,7 +5,8 @@ import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-comp
 import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import SidebarWidgetItem from './SidebarWidgetItem.es6';
 
-function WidgetItem({ widget, onRemoveClick }) {
+function WidgetItem({ widget, onRemoveClick, onConfigureClick }) {
+  const hasParams = widget.parameters && widget.parameters.length > 0;
   return (
     <SidebarWidgetItem
       isDraggable
@@ -20,7 +21,11 @@ function WidgetItem({ widget, onRemoveClick }) {
       {widget.widgetNamespace === NAMESPACE_EXTENSION && (
         <React.Fragment>
           <Paragraph extraClassNames="f36-margin-bottom--s">UI Extension</Paragraph>
-          <TextLink extraClassNames="f36-margin-bottom--s">Configure</TextLink>
+          {hasParams && (
+            <TextLink onClick={onConfigureClick} extraClassNames="f36-margin-bottom--s">
+              Configure
+            </TextLink>
+          )}
         </React.Fragment>
       )}
     </SidebarWidgetItem>
@@ -29,10 +34,11 @@ function WidgetItem({ widget, onRemoveClick }) {
 
 WidgetItem.propTypes = {
   widget: PropTypes.object.isRequired,
-  onRemoveClick: PropTypes.func.isRequired
+  onRemoveClick: PropTypes.func.isRequired,
+  onConfigureClick: PropTypes.func.isRequired
 };
 
-export default function CustomSidebar({ items, onChangePosition, onRemoveItem }) {
+export default function CustomSidebar({ items, onChangePosition, onRemoveItem, onConfigureItem }) {
   return (
     <DragDropContext
       onDragEnd={result => {
@@ -57,7 +63,11 @@ export default function CustomSidebar({ items, onChangePosition, onRemoveItem })
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}>
-                        <WidgetItem widget={item} onRemoveClick={() => onRemoveItem(item)} />
+                        <WidgetItem
+                          widget={item}
+                          onRemoveClick={() => onRemoveItem(item)}
+                          onConfigureClick={() => onConfigureItem(item)}
+                        />
                       </div>
                     )}
                   </Draggable>
@@ -79,5 +89,6 @@ export default function CustomSidebar({ items, onChangePosition, onRemoveItem })
 CustomSidebar.propTypes = {
   items: PropTypes.array.isRequired,
   onRemoveItem: PropTypes.func.isRequired,
+  onConfigureItem: PropTypes.func.isRequired,
   onChangePosition: PropTypes.func.isRequired
 };

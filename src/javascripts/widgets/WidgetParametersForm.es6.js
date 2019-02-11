@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
+import { TextField, SelectField, Option } from '@contentful/forma-36-react-components';
 import { byName as Colors } from 'Styles/Colors.es6';
 
 const handleStringChange = (onChange, e) => {
@@ -10,41 +11,6 @@ const handleStringChange = (onChange, e) => {
 };
 
 const stringValue = value => (typeof value === 'number' ? `${value}` : value || '');
-
-const SymbolControl = ({ definition, value, onChange }) => {
-  return (
-    <input
-      name={definition.id}
-      className="cfnext-form__input--full-size"
-      type="text"
-      maxLength="255"
-      value={stringValue(value)}
-      onChange={handleStringChange.bind(null, onChange)}
-    />
-  );
-};
-
-const EnumControl = ({ definition, value, onChange }) => {
-  return (
-    <select
-      name={definition.id}
-      className="cfnext-select-box"
-      value={stringValue(value)}
-      onChange={handleStringChange.bind(null, onChange)}>
-      <option key="" value="">
-        {get(definition, ['labels', 'empty']) || 'Select an option'}
-      </option>
-      {definition.options.map(o => {
-        const value = Object.keys(o)[0];
-        return (
-          <option key={value} value={value}>
-            {o[value]}
-          </option>
-        );
-      })}
-    </select>
-  );
-};
 
 const NumberControl = ({ definition, value, onChange }) => {
   return (
@@ -101,9 +67,57 @@ const BooleanControl = ({ definition, value, onChange }) => {
 
 const WidgetParameterControl = ({ definition, value, isMissing, onChange }) => {
   const { type, name, description, required } = definition;
+
+  if (type === 'Symbol') {
+    return (
+      <TextField
+        name={definition.id}
+        id={definition.id}
+        labelText={name}
+        countCharacters
+        textInputProps={{
+          type: 'text',
+          maxLength: 255
+        }}
+        required={required}
+        helpText={description}
+        value={stringValue(value)}
+        onChange={handleStringChange.bind(null, onChange)}
+        validationMessage={isMissing ? 'This value is required.' : ''}
+        extraClassNames="f36-margin-bottom--l"
+      />
+    );
+  }
+
+  if (type == 'Enum') {
+    return (
+      <SelectField
+        name={definition.id}
+        id={definition.id}
+        labelText={name}
+        required={required}
+        helpText={description}
+        value={stringValue(value)}
+        selectProps={{ isDisabled: false, width: '300px' }}
+        onChange={handleStringChange.bind(null, onChange)}
+        validationMessage={isMissing ? 'This value is required.' : ''}
+        extraClassNames="f36-margin-bottom--l">
+        <Option key="" value="">
+          {get(definition, ['labels', 'empty']) || 'Select an option'}
+        </Option>
+        {definition.options.map(o => {
+          const value = Object.keys(o)[0];
+          return (
+            <Option key={value} value={value}>
+              {o[value]}
+            </Option>
+          );
+        })}
+      </SelectField>
+    );
+  }
+
   const Control = {
-    Symbol: SymbolControl,
-    Enum: EnumControl,
     Number: NumberControl,
     Boolean: BooleanControl
   }[type];
@@ -145,8 +159,6 @@ const controlPropTypes = {
   onChange: PropTypes.func.isRequired
 };
 
-SymbolControl.propTypes = controlPropTypes;
-EnumControl.propTypes = controlPropTypes;
 NumberControl.propTypes = controlPropTypes;
 BooleanControl.propTypes = controlPropTypes;
 
