@@ -1,6 +1,6 @@
 import { map, flatMap, flow, chunk, groupBy, keyBy, mapValues, reduce } from 'lodash/fp';
-import { getOrgFeature } from 'data/CMA/FeatureCatalog.es6';
 import getOrganizationsList from 'redux/selectors/getOrganizationsList.es6';
+import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 
 const catalogFeatures = {
   TEAMS: 'teams'
@@ -24,7 +24,18 @@ export default ({ getState, dispatch }) => next => async action => {
     const allFeatures = await flow(
       map('sys.id'),
       // get request promises for all features for each org as flat list
-      flatMap(orgId => flatMap(feature => getOrgFeature(orgId, feature), catalogFeatures)),
+      flatMap(orgId =>
+        flatMap(feature => {
+          // TODO: THIS IS VERY BAD, REWRITE!
+          // It causes (numberOfOrgs * keys(catalogFeatures).length * 2)
+          // HTTP requests in the critical path for rendering the initial
+          // view of the Web App. Until there's no "prefetch all features API"
+          // any feature should be checked lazily only when needed using
+          // the batching and cached client (`data/CMA/ProductCatalog.es6`).
+          const endpoint = createOrganizationEndpoint(orgId);
+          return endpoint({ method: 'GET', path: `/product_catalog_features/${feature}` });
+        }, catalogFeatures)
+      ),
       // makes chunks of 3 requests
       chunk(3),
       // request chunks in sequence but each chunks requests in parallel
