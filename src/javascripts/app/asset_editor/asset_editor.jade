@@ -23,6 +23,7 @@ div.asset-editor.workbench(ng-if="context.ready")
         cf-error-list.form-box-error(cf-error-path="['fields']")
         cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
 
-    react-component(name="app/EntrySidebar/EntrySidebar.es6" props="entrySidebarProps")
+    .workbench-main__sidebar
+      react-component(name="app/EntrySidebar/EntrySidebar.es6" props="entrySidebarProps")
 
 +entity-load-status("Asset")

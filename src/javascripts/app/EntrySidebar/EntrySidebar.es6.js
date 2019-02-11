@@ -127,18 +127,13 @@ export default class EntrySidebar extends Component {
   render() {
     const sidebarItems = this.getSidebarConfiguration();
     const legacyExtensions = this.props.legacySidebarExtensions || [];
-    const hasAnyExtensions = sidebarItems.length > 0 || legacyExtensions.length > 0;
     return (
       <React.Fragment>
         <EntryInfoPanelContainer emitter={this.props.emitter} />
-        {hasAnyExtensions && (
-          <div className="workbench-main__sidebar">
-            <div className="entity-sidebar">
-              {this.renderWidgets(sidebarItems)}
-              {this.renderLegacyExtensions(legacyExtensions)}
-            </div>
-          </div>
-        )}
+        <div className="entity-sidebar">
+          {this.renderWidgets(sidebarItems)}
+          {this.renderLegacyExtensions(legacyExtensions)}
+        </div>
       </React.Fragment>
     );
   }
