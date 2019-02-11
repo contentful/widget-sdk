@@ -1,5 +1,6 @@
 import combineReducers from './combineReducers.es6';
 
+import sso from './sso.es6';
 import spaceWizard from './spaceWizard.es6';
 import recordsResourceUsage from './recordsResourceUsage.es6';
 import resources from './resources.es6';
@@ -20,6 +21,7 @@ export default combineReducers({
   resources,
   spaceWizard,
   statePersistence,
+  sso,
   token,
   datasets,
   optimistic,

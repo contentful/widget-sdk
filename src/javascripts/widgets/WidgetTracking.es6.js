@@ -35,8 +35,8 @@ function getExtensionTrackingContexts(editorData) {
 function makeExtensionEventData(location, widget) {
   return {
     location,
-    extension_id: widget.descriptor.id,
-    extension_name: widget.descriptor.name,
+    extension_id: get(widget, ['descriptor', 'id']),
+    extension_name: get(widget, ['descriptor', 'name']),
     // Until schema reaches 2.0 both `field_id` and `field_type` need
     // to be empty strings if the extension is not rendered for a field.
     field_id: typeof widget.fieldId === 'string' ? widget.fieldId : '',
@@ -76,5 +76,10 @@ function getSidebarTrackingContext(editorData) {
 }
 
 function getExtensions(editorData, path) {
-  return get(editorData, path, []).filter(w => w.widgetNamespace === NAMESPACE_EXTENSION);
+  const locationWidgets = get(editorData, path);
+  if (Array.isArray(locationWidgets)) {
+    return locationWidgets.filter(w => w.widgetNamespace === NAMESPACE_EXTENSION);
+  } else {
+    return [];
+  }
 }

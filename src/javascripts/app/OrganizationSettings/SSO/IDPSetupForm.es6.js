@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 import {
   Heading,
   Subheading,
@@ -9,158 +10,51 @@ import {
   HelpText,
   Select,
   Option,
-  Notification,
-  TextLink
+  TextLink,
+  Spinner
 } from '@contentful/forma-36-react-components';
 import { authUrl, appUrl } from 'Config.es6';
-import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import {
-  Organization as OrganizationPropType,
-  IdentityProvider as IdentityProviderPropType
-} from 'app/OrganizationSettings/PropTypes.es6';
+import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes.es6';
+import { IdentityProviderPropType, FieldsStatePropType } from './PropTypes.es6';
 import { SSO_PROVIDERS } from './constants.es6';
-import * as validators from './validators.es6';
+import * as ssoActionCreators from 'redux/actions/sso/actionCreators.es6';
+import * as ssoSelectors from 'redux/selectors/sso.es6';
 
-export default class IDPSetupForm extends React.Component {
+import { connect } from 'react-redux';
+
+export class IDPSetupForm extends React.Component {
   static propTypes = {
     organization: OrganizationPropType,
-    identityProvider: IdentityProviderPropType
+    identityProvider: IdentityProviderPropType,
+    updateFieldValue: PropTypes.func.isRequired,
+    validateField: PropTypes.func.isRequired,
+    fields: FieldsStatePropType.isRequired
   };
 
-  state = {
-    showOtherProvider: false,
-    identityProvider: {},
-    invalidFields: {}
-  };
+  debouncedUpdateValue = _.debounce(async function(fieldName, value) {
+    const { organization, updateFieldValue } = this.props;
 
-  debouncedUpdateValue = _.debounce(async function(name, value) {
-    const {
-      organization: {
-        sys: { id: orgId }
-      }
-    } = this.props;
-
-    const endpoint = createOrganizationEndpoint(orgId);
-    const currentValue = this.state.identityProvider[name];
-
-    if (currentValue === value) {
-      return;
-    }
-
-    let field = name;
-    let newValue = value;
-    let showOtherProvider;
-
-    // If the user selects "other" as an SSO provider from the list,
-    // we should show the input field for the user to type their own
-    if (name === 'idpName') {
-      if (value === 'other') {
-        showOtherProvider = true;
-        newValue = '';
-      } else {
-        showOtherProvider = false;
-      }
-    }
-
-    if (name === 'otherIdpName') {
-      field = 'idpName';
-    }
-
-    const {
-      sys: { version: currentVersion }
-    } = this.state.identityProvider;
-    let updatedIdentityProvider;
-
-    try {
-      updatedIdentityProvider = await endpoint({
-        method: 'PUT',
-        path: ['identity_provider'],
-        version: currentVersion,
-        data: {
-          [field]: newValue
-        }
-      });
-    } catch (e) {
-      Notification.error(`Could not update ${name}`);
-
-      return;
-    }
-
-    this.setState({
-      showOtherProvider,
-      identityProvider: updatedIdentityProvider
-    });
+    updateFieldValue({ fieldName, value, orgId: organization.sys.id });
   }, 500);
 
-  componentDidMount() {
-    const {
-      identityProvider,
-      organization: { name: orgName }
-    } = this.props;
-
-    if (!identityProvider.ssoName) {
-      identityProvider.ssoName = orgName.toLowerCase();
-    }
-
-    this.setState({
-      identityProvider
-    });
-  }
-
-  updateValueImmediately(name) {
+  updateField(fieldName, immediately) {
     return e => {
+      const { validateField } = this.props;
+
       const value = e.target.value;
 
-      const isValid = this.validate(name, value);
+      validateField({ fieldName, value });
+      this.debouncedUpdateValue(fieldName, value);
 
-      if (!isValid) {
-        return;
+      if (immediately) {
+        this.debouncedUpdateValue.flush();
       }
-
-      this.debouncedUpdateValue(name, value);
-      this.debouncedUpdateValue.flush();
     };
-  }
-
-  updateValue(name) {
-    return e => {
-      const value = e.target.value;
-
-      const isValid = this.validate(name, value);
-
-      if (!isValid) {
-        return;
-      }
-
-      this.debouncedUpdateValue(name, value);
-    };
-  }
-
-  updateValidity(fieldName, isValid) {
-    this.setState(({ invalidFields }) => {
-      if (isValid && invalidFields[fieldName]) {
-        delete invalidFields[fieldName];
-      } else if (!isValid) {
-        invalidFields[fieldName] = true;
-      }
-
-      return { invalidFields };
-    });
-  }
-
-  validate(fieldName, value) {
-    if (!validators[fieldName]) {
-      return true;
-    }
-
-    const isValid = validators[fieldName](value);
-    this.updateValidity(fieldName, isValid);
-
-    return isValid;
   }
 
   render() {
     const {
+      fields,
       organization: {
         sys: { id: orgId }
       }
@@ -247,65 +141,48 @@ export default class IDPSetupForm extends React.Component {
           <FormLabel htmlFor="ssoProvider" style={{ display: 'block' }}>
             SSO provider
           </FormLabel>
-          <Select
-            name="ssoProvider"
-            id="ssoProvider"
-            testId="sso-provider"
-            width="medium"
-            extraClassNames="f36-margin-bottom--l"
-            onChange={this.updateValueImmediately('idpName')}>
-            <Option value={''}>Select provider</Option>
-            {SSO_PROVIDERS.map(name => {
-              return (
-                <Option key={name} value={name}>
-                  {name}
-                </Option>
-              );
-            })}
-            <Option value="other">Other</Option>
-          </Select>
-          {this.state.showOtherProvider && (
-            <TextField
-              name="otherSsoProvider"
-              id="otherSsoProvider"
-              labelText="Other provider"
-              extraClassNames="f36-margin-bottom--l"
-              value={this.state.identityProvider.ssoProvider}
-              onChange={this.updateValue('otherIdpName')}
-              onBlur={this.updateValueImmediately('otherIdpName')}
-              validationMessage={
-                this.state.invalidFields.otherIdpName && 'Enter a valid SSO provider'
-              }
-            />
-          )}
-
-          <FormLabel htmlFor="redirect-url">Single Sign-On Redirect URL</FormLabel>
+          <div>
+            <Select
+              name="ssoProvider"
+              id="ssoProvider"
+              testId="ssoProvider"
+              width="medium"
+              extraClassNames="f36-margin-bottom--l f36-margin-right--m sso-setup__select"
+              value={fields.idpName.value}
+              onChange={this.updateField('idpName', true)}>
+              <Option value="">Select provider</Option>
+              {SSO_PROVIDERS.map(name => {
+                return (
+                  <Option key={name} value={name}>
+                    {name}
+                  </Option>
+                );
+              })}
+            </Select>
+            {fields.idpName.isPending && <Spinner />}
+          </div>
           <TextField
-            id="redirect-url"
-            name="redirect-url"
+            labelText="Single Sign-On Redirect URL"
+            id="idpSsoTargetUrl"
+            name="idpSsoTargetUrl"
             extraClassNames="f36-margin-bottom--l"
-            onChange={this.updateValue('idpSsoTargetUrl')}
-            onBlur={this.updateValueImmediately('idpSsoTargetUrl')}
-            value={this.state.identityProvider.idpSsoTargetUrl}
-            validationMessage={
-              this.state.invalidFields.idpSsoTargetUrl && 'Enter a valid SSO redirect URL'
-            }
+            onChange={this.updateField('idpSsoTargetUrl')}
+            onBlur={this.updateField('idpSsoTargetUrl', true)}
+            value={fields.idpSsoTargetUrl.value}
+            validationMessage={fields.idpSsoTargetUrl.error}
           />
           <TextField
             labelText="X.509 Certificate"
-            id="x509-cert"
-            name="x509-cert"
+            id="idpCert"
+            name="idpCert"
             textarea
             textInputProps={{
               rows: 8
             }}
-            value={this.state.identityProvider.idpCert}
-            onChange={this.updateValue('idpCert')}
-            onBlur={this.updateValueImmediately('idpCert')}
-            helpText="Certificate should be formatted with header or in string format."
-            validationMessage={
-              this.state.invalidFields.idpCert && 'Enter a valid X.509 certificate'
-            }
+            value={fields.idpCert.value}
+            onChange={this.updateField('idpCert')}
+            onBlur={this.updateField('idpCert', true)}
+            validationMessage={fields.idpCert.error}
           />
         </section>
 
@@ -323,12 +200,12 @@ export default class IDPSetupForm extends React.Component {
             labelText="Sign-in name"
             id="ssoName"
             name="ssoName"
-            testId="sso-name"
-            value={this.state.identityProvider.ssoName}
-            onChange={this.updateValue('ssoName')}
-            onBlur={this.updateValueImmediately('ssoName')}
+            testId="ssoName"
+            value={fields.ssoName.value}
+            onChange={this.updateField('ssoName')}
+            onBlur={this.updateField('ssoName', true)}
             helpText="Lowercase letters, numbers, periods, spaces, hyphens, or underscores are allowed."
-            validationMessage={this.state.invalidFields.ssoName && 'Enter a valid SSO name'}
+            validationMessage={fields.ssoName.error}
           />
 
           <Note extraClassNames="f36-margin-top--3xl">
@@ -344,3 +221,14 @@ export default class IDPSetupForm extends React.Component {
     );
   }
 }
+
+export default connect(
+  state => ({
+    fields: ssoSelectors.getFields(state),
+    identityProvider: ssoSelectors.getIdentityProvider(state)
+  }),
+  {
+    validateField: ssoActionCreators.validateField,
+    updateFieldValue: ssoActionCreators.updateFieldValue
+  }
+)(IDPSetupForm);

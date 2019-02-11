@@ -4,5 +4,5 @@ export default reactStateWrapper({
   name: 'sso',
   url: '/:orgId/sso',
   label: 'SSO',
-  componentPath: 'app/OrganizationSettings/SSO/SSOSetupRouter.es6'
+  componentPath: 'app/OrganizationSettings/SSO/SSOSetup.es6'
 });
