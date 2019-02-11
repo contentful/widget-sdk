@@ -57,19 +57,27 @@ export default class TeamsEmptyState extends React.Component {
     const { isLegacy } = this.props;
 
     return (
-      <div className="workbench" style={{ alignItems: 'center' }}>
-        <WavyBackground preserveAspectRatio={'none'} style={{ height: 250, width: '100%' }} />
-        <TeamsEmptyStateImage style={{ marginTop: -200 }} />
-        <Heading element="h2" className="f36-margin-top--4xl f36-margin-bottom--m">
-          Improved visibility with Teams
-        </Heading>
-        <Paragraph>Everyone in a Team can see other members of that Team.</Paragraph>
+      <div className="illustrated-empty-state">
+        <WavyBackground
+          className="illustrated-empty-state__background"
+          preserveAspectRatio={'none'}
+        />
+        <TeamsEmptyStateImage
+          className="illustrated-empty-state__illustration"
+          style={{ marginTop: -200 }}
+        />
+        <div className="illustrated-empty-state__content">
+          <Heading element="h2" className="f36-margin-top--4xl f36-margin-bottom--m">
+            Improved visibility with Teams
+          </Heading>
+          <Paragraph>Everyone in a Team can see other members of that Team.</Paragraph>
 
-        {isLegacy ? this.renderLegacyWarning() : this.renderEmptyWarning()}
+          {isLegacy ? this.renderLegacyWarning() : this.renderEmptyWarning()}
 
-        <Paragraph className="f36-margin-top--4xl" style={{ opacity: 0.4 }}>
-          Illustrations by <a href="#">Pablo Stanley</a>
-        </Paragraph>
+          <Paragraph className="f36-margin-top--4xl" style={{ opacity: 0.4 }}>
+            Illustrations by <a href="#">Pablo Stanley</a>
+          </Paragraph>
+        </div>
       </div>
     );
   }

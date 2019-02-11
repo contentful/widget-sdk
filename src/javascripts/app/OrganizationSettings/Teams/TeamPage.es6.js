@@ -11,6 +11,7 @@ import { FEATURE_INACTIVE } from 'redux/accessConstants.es6';
 
 import TeamList from './TeamList.es6';
 import TeamDetails from './TeamDetails.es6';
+import TeamsEmptyState from './TeamsEmptyState.es6';
 
 class TeamPage extends React.Component {
   static propTypes = {
@@ -36,18 +37,11 @@ class TeamPage extends React.Component {
   }
 
   render() {
-    const {
-      hasAccess,
-      deniedReason,
-      showList,
-      showDetails,
-      isLoading
-    } = this.props;
+    const { hasAccess, deniedReason, showList, showDetails, isLoading } = this.props;
     if (!hasAccess) {
       let text;
       if (deniedReason === FEATURE_INACTIVE) {
-        text =
-          'Unfortunately, your current plan doesn’t include Teams. Teams make it easy to group people together. Get in touch with us if you’re interested.';
+        return <TeamsEmptyState isLegacy={true} />;
       } else {
         text = 'It seems you are not allowed to see this page. Let us know if we are wrong.';
       }

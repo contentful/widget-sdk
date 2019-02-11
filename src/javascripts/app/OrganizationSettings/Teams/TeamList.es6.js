@@ -12,12 +12,12 @@ import {
   TableCell,
   Tooltip
 } from '@contentful/forma-36-react-components';
-import Placeholder from 'app/common/Placeholder.es6';
 import { getTeamListWithOptimistic, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import Workbench from 'app/common/Workbench.es6';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import TeamDialog from './TeamDialog.es6';
 import TeamListRow from './TeamListRow.es6';
+import TeamsEmptyState from './TeamsEmptyState.es6';
 import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
 
 class TeamList extends React.Component {
@@ -39,6 +39,9 @@ class TeamList extends React.Component {
     const countMessage = readOnlyPermission
       ? `You are in ${teamsPlural}`
       : `${teamsPlural} in your organization`;
+
+    if (teams.length === 0 && !readOnlyPermission) return <TeamsEmptyState isAdmin={true} />;
+    if (teams.length === 0 && readOnlyPermission) return <TeamsEmptyState isAdmin={false} />;
 
     return (
       <Workbench>
@@ -91,29 +94,6 @@ class TeamList extends React.Component {
                   })}
                 </TableBody>
               </Table>
-            )}
-            {teams.length === 0 && !readOnlyPermission && (
-              <Placeholder
-                testId="no-teams-placeholder"
-                title="Increased user visibility with teams"
-                text="Everyone in a team can see other members of that team."
-                button={
-                  <Button
-                    testId="new-team-button"
-                    size="small"
-                    buttonType="primary"
-                    onClick={() => this.setState({ showTeamDialog: true })}>
-                    New team
-                  </Button>
-                }
-              />
-            )}
-            {teams.length === 0 && readOnlyPermission && (
-              <Placeholder
-                testId="no-teams-placeholder"
-                title="Increased user visibility with teams"
-                text="There are no teams and you don't have permission to create new teams"
-              />
             )}
           </section>
           <TeamDialog
