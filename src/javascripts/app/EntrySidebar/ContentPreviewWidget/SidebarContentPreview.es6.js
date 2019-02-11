@@ -44,8 +44,7 @@ export default class SidebarContentPreview extends Component {
         )}
         {!isAdmin && (
           <React.Fragment>
-            No content preview is set up yet. To set up your preview, contact the administrator of
-            this space.
+            Content preview is not set up yet. To preview, contact the administrator of this space.
           </React.Fragment>
         )}
       </div>

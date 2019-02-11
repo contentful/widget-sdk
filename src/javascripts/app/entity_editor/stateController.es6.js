@@ -54,7 +54,8 @@ export default function register() {
       const archive = Command.create(
         () => applyActionWithConfirmation(Action.Archive()),
         {
-          disabled: checkDisallowed(Action.Archive())
+          disabled: checkDisallowed(Action.Archive()),
+          restricted: checkRestricted(Action.Archive())
         },
         {
           label: 'Archive',
@@ -66,7 +67,8 @@ export default function register() {
       const unarchive = Command.create(
         () => applyAction(Action.Unarchive()),
         {
-          disabled: checkDisallowed(Action.Unarchive())
+          disabled: checkDisallowed(Action.Unarchive()),
+          restricted: checkRestricted(Action.Unarchive())
         },
         {
           label: 'Unarchive',
@@ -78,7 +80,8 @@ export default function register() {
       const unpublish = Command.create(
         () => applyActionWithConfirmation(Action.Unpublish()),
         {
-          disabled: checkDisallowed(Action.Unpublish())
+          disabled: checkDisallowed(Action.Unpublish()),
+          restricted: checkRestricted(Action.Unpublish())
         },
         {
           label: 'Unpublish',
@@ -90,7 +93,8 @@ export default function register() {
       const publishChanges = Command.create(
         publishEntity,
         {
-          disabled: checkDisallowed(Action.Publish())
+          disabled: checkDisallowed(Action.Publish()),
+          restricted: checkRestricted(Action.Publish())
         },
         {
           label: 'Publish changes',
@@ -101,7 +105,8 @@ export default function register() {
       const publish = Command.create(
         publishEntity,
         {
-          disabled: checkDisallowed(Action.Publish())
+          disabled: checkDisallowed(Action.Publish()),
+          restricted: checkRestricted(Action.Publish())
         },
         {
           label: 'Publish',
@@ -288,6 +293,10 @@ export default function register() {
       // TODO Move these checks into the document resource manager
       function checkDisallowed(action) {
         return () => isDeleted || !permissions.can(action);
+      }
+
+      function checkRestricted(action) {
+        return () => !permissions.can(action);
       }
 
       function showConfirmationMessage(props) {

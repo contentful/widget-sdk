@@ -24,6 +24,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
       status: 'draft',
       updatedAt: '2018-01-14T15:15:49.230Z',
       primary: createCommand({
+        isRestricted: () => false,
         label: 'Publish',
         targetStateId: 'published',
         execute: stubs.onPublishClick
@@ -76,6 +77,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
       status: 'changes',
       updatedAt: '2018-01-14T15:15:49.230Z',
       primary: createCommand({
+        isRestricted: () => false,
         label: 'Publish changes',
         targetStateId: 'published',
         execute: stubs.onPublishClick
@@ -136,7 +138,8 @@ describe('app/EntrySidebar/PublicationWidget', () => {
       status: 'published',
       updatedAt: '2018-01-14T15:15:49.230Z',
       primary: createCommand({
-        isAvailable: () => false
+        isAvailable: () => false,
+        isRestricted: () => false
       }),
       revert: createCommand({
         isAvailable: () => true,
@@ -164,7 +167,8 @@ describe('app/EntrySidebar/PublicationWidget', () => {
       secondaryUnpublishBtn:
         '[data-test-id="change-state-menu"] [data-test-id="change-state-draft"]',
       secondaryDropdownTrigger: '[data-test-id="change-state-menu-trigger"]',
-      revertButton: '[data-test-id="discard-changed-button"]'
+      revertButton: '[data-test-id="discard-changed-button"]',
+      actionRestrictionNote: '[data-test-id="action-restriction-note"]'
     };
 
     expect(wrapper.find(selectors.statusState).prop('data-state')).toEqual('published');
@@ -189,6 +193,43 @@ describe('app/EntrySidebar/PublicationWidget', () => {
 
     expect(wrapper.find(selectors.secondaryUnpublishBtn)).toExist();
     expect(wrapper.find(selectors.secondaryUnpublishBtn)).not.toBeDisabled();
+    expect(wrapper.find(selectors.actionRestrictionNote)).not.toExist();
     expect(wrapper.find(selectors.secondaryUnpublishBtn)).toHaveText('Unpublish');
+  });
+
+  it('shows the action restrtiction note for publish action', () => {
+    const stubs = {
+      onPublishClick: jest.fn()
+    };
+    const { wrapper } = render({
+      status: 'draft',
+      updatedAt: '2018-01-14T15:15:49.230Z',
+      primary: createCommand({
+        isRestricted: () => true,
+        isDisabled: () => true,
+        label: 'Publish',
+        targetStateId: 'published',
+        execute: stubs.onPublishClick
+      }),
+      secondary: [
+        createCommand({
+          label: 'Archive',
+          targetStateId: 'archived'
+        })
+      ]
+    });
+
+    const selectors = {
+      statusState: '[data-test-id="entity-state"]',
+      actionRestrictionNote: '[data-test-id="action-restriction-note"]',
+      publishBtn: '[data-test-id="change-state-published"]'
+    };
+
+    expect(wrapper.find(selectors.publishBtn)).toExist();
+    expect(wrapper.find(selectors.publishBtn)).toBeDisabled();
+    expect(wrapper.find(selectors.actionRestrictionNote)).toExist();
+    expect(wrapper.find(selectors.actionRestrictionNote)).toHaveText(
+      'The permissions attached to your role do not allow you to publish.'
+    );
   });
 });

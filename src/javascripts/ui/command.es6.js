@@ -67,11 +67,13 @@ export default function register() {
 
         opts = _.defaults(opts || {}, {
           available: _.constant(true),
-          disabled: _.constant(false)
+          disabled: _.constant(false),
+          restricted: _.constant(false)
         });
 
         this.isAvailable = opts.available;
         this._isDisabled = opts.disabled;
+        this._isRestricted = opts.restricted;
       }
 
       /**
@@ -116,6 +118,10 @@ export default function register() {
 
       Command.prototype.isDisabled = function() {
         return !!(this._isDisabled() || this._inProgress || !this.isAvailable());
+      };
+
+      Command.prototype.isRestricted = function() {
+        return this._isRestricted();
       };
 
       return {

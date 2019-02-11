@@ -6,7 +6,8 @@ import {
   Button,
   Dropdown,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
+  Icon
 } from '@contentful/forma-36-react-components';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
@@ -28,6 +29,17 @@ const PublicationStatus = ({ status }) => (
 
 PublicationStatus.propTypes = {
   status: PropTypes.string.isRequired
+};
+
+const RestrictedNote = ({ actionName }) => (
+  <p className="f36-color--text-light f36-margin-top--xs" data-test-id="action-restriction-note">
+    <Icon icon="Lock" color="muted" extraClassNames="action-restricted__icon" />
+    The permissions attached to your role do not allow you to {actionName.toLowerCase()}.
+  </p>
+);
+
+RestrictedNote.propTypes = {
+  actionName: PropTypes.string.isRequired
 };
 
 const CommandPropType = PropTypes.shape({
@@ -62,18 +74,20 @@ export default class PublicationWidget extends React.Component {
         <div className="entity-sidebar__state-select">
           <div className="publish-buttons-row">
             {status !== 'published' && primary && (
-              <Button
-                isFullWidth
-                buttonType="positive"
-                disabled={primary.isDisabled()}
-                loading={primary.inProgress()}
-                testId={`change-state-${primary.targetStateId}`}
-                onClick={() => {
-                  primary.execute();
-                }}
-                extraClassNames="primary-publish-button">
-                {primary.label}
-              </Button>
+              <React.Fragment>
+                <Button
+                  isFullWidth
+                  buttonType="positive"
+                  disabled={primary.isDisabled()}
+                  loading={primary.inProgress()}
+                  testId={`change-state-${primary.targetStateId}`}
+                  onClick={() => {
+                    primary.execute();
+                  }}
+                  extraClassNames="primary-publish-button">
+                  {primary.label}
+                </Button>
+              </React.Fragment>
             )}
             <Dropdown
               extraClassNames="secondary-publish-button-wrapper"
@@ -112,6 +126,7 @@ export default class PublicationWidget extends React.Component {
               </DropdownList>
             </Dropdown>
           </div>
+          {primary && primary.isRestricted() && <RestrictedNote actionName={primary.label} />}
         </div>
         <div className="entity-sidebar__status-more">
           {updatedAt && (
