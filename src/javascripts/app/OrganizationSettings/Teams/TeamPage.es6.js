@@ -6,6 +6,8 @@ import Placeholder from 'app/common/Placeholder.es6';
 import { getPath } from 'redux/selectors/location.es6';
 import { isLoadingMissingDatasets } from 'redux/selectors/datasets.es6';
 import { getReasonDenied, hasAccess } from 'redux/selectors/access.es6';
+import getOrganization from 'redux/selectors/getOrganization.es6';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 import { FEATURE_INACTIVE } from 'redux/accessConstants.es6';
 
@@ -16,11 +18,11 @@ import TeamsEmptyState from './TeamsEmptyState.es6';
 class TeamPage extends React.Component {
   static propTypes = {
     onReady: PropTypes.func.isRequired,
-
     showList: PropTypes.bool.isRequired,
     showDetails: PropTypes.bool.isRequired,
     isLoading: PropTypes.bool.isRequired,
     hasAccess: PropTypes.bool.isRequired,
+    organization: PropTypes.object,
     deniedReason: PropTypes.string
   };
 
@@ -37,11 +39,11 @@ class TeamPage extends React.Component {
   }
 
   render() {
-    const { hasAccess, deniedReason, showList, showDetails, isLoading } = this.props;
+    const { hasAccess, deniedReason, showList, showDetails, isLoading, organization } = this.props;
     if (!hasAccess) {
       let text;
       if (deniedReason === FEATURE_INACTIVE) {
-        return <TeamsEmptyState isLegacy={true} />;
+        return <TeamsEmptyState isLegacy={true} isAdmin={isOwnerOrAdmin(organization)} />;
       } else {
         text = 'It seems you are not allowed to see this page. Let us know if we are wrong.';
       }
@@ -81,6 +83,7 @@ export default connect(state => {
     showDetails: ROUTES.organization.children.teams.children.team.test(path) !== null,
     isLoading: isLoadingMissingDatasets(state),
     hasAccess: hasAccess(state),
-    deniedReason: getReasonDenied(state)
+    deniedReason: getReasonDenied(state),
+    organization: getOrganization(state)
   };
 })(TeamPage);
