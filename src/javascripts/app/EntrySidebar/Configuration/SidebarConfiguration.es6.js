@@ -11,7 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import DefaultSidebar from './components/DefaultSidebar.es6';
 import CustomSidebar from './components/CustomSidebar.es6';
-import AvailableItems from './components/AvailableItems.es6';
+import AvailableWidgets from './components/AvailableWidgets.es6';
 import {
   reducer,
   selectSidebarType,
@@ -87,7 +87,7 @@ function SidebarConfiguration(props) {
               />
             </div>
             <div className="sidebar-configuration__additional-column">
-              <AvailableItems
+              <AvailableWidgets
                 items={state.availableItems}
                 onAddItem={item => {
                   dispatch(addItemToSidebar(item));

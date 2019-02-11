@@ -6,7 +6,7 @@ import {
   Paragraph,
   TextLink
 } from '@contentful/forma-36-react-components';
-import AvailableItem from './AvailableItem.es6';
+import AvailableWidget from './AvailableWidget.es6';
 import { NAMESPACE_EXTENSION, NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNamespaces.es6';
 
 export default function AvailableItems(props) {
@@ -18,10 +18,10 @@ export default function AvailableItems(props) {
       {builtin.length > 0 && (
         <React.Fragment>
           <SectionHeading extraClassNames="f36-margin-bottom--xs">Built-in</SectionHeading>
-          <div className="sidebar-configuraiton__available-items-section f36-margin-bottom--l">
+          <div className="sidebar-configuraiton__available-widgets-section f36-margin-bottom--l">
             {builtin.map(item => (
-              <AvailableItem
-                key={`${item.widgetId}-${item.widgetNamespace}`}
+              <AvailableWidget
+                key={`${item.widgetNamespace},${item.widgetId}`}
                 title={item.title}
                 widgetNamespace={item.widgetNamespace}
                 onClick={() => {
@@ -34,10 +34,10 @@ export default function AvailableItems(props) {
       )}
       <SectionHeading extraClassNames="f36-margin-bottom--xs">UI Extensions</SectionHeading>
       {extensions.length > 0 && (
-        <div className="sidebar-configuraiton__available-items-section f36-margin-bottom--l">
+        <div className="sidebar-configuraiton__available-widgets-section f36-margin-bottom--l">
           {extensions.map(item => (
-            <AvailableItem
-              key={`${item.widgetId}-${item.widgetNamespace}`}
+            <AvailableWidget
+              key={`${item.widgetNamespace},${item.widgetId}`}
               title={item.title}
               widgetNamespace={item.widgetNamespace}
               onClick={() => {

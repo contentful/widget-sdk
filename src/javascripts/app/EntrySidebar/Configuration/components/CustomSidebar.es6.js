@@ -42,7 +42,7 @@ export default function CustomSidebar({ items, onChangePosition, onRemoveItem })
           {provided => (
             <div ref={provided.innerRef}>
               {items.map((item, index) => {
-                const key = `${item.widgetId}-${item.widgetNamespace}`;
+                const key = `${item.widgetNamespace},${item.widgetId}`;
                 return (
                   <Draggable key={key} draggableId={key} index={index}>
                     {provided => (

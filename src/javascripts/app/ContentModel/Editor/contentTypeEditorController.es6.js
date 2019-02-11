@@ -262,7 +262,9 @@ export default function register() {
       );
 
       $scope.initialSidebarConfiguration = $scope.editorInterface.sidebar;
-      $scope.sidebarExtensions = $scope.widgets[NAMESPACE_EXTENSION] || [];
+      $scope.sidebarExtensions = ($scope.widgets[NAMESPACE_EXTENSION] || []).filter(
+        widget => widget.sidebar === true
+      );
 
       $scope.updateSidebarConfiguration = updatedSidebar => {
         if (!_.isEqual($scope.editorInterface.sidebar, updatedSidebar)) {

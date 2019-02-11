@@ -52,7 +52,10 @@ export const reducer = createImmerReducer({
   },
   [REMOVE_ITEM_FROM_SIDEBAR]: (state, action) => {
     const removed = action.payload.item;
-    state.items = state.items.filter(item => item.widgetId !== removed.widgetId);
+    const removeIndex = state.items.findIndex(
+      item => item.widgetId === removed.widgetId && item.widgetNamespace === removed.widgetNamespace
+    );
+    state.items.splice(removeIndex, 1);
     state.availableItems.push(removed);
   },
   [CHANGE_ITEM_POSITION]: (state, action) => {
@@ -61,7 +64,10 @@ export const reducer = createImmerReducer({
   },
   [ADD_ITEM_TO_SIDEBAR]: (state, action) => {
     const added = action.payload.item;
-    state.availableItems = state.availableItems.filter(item => item.widgetId !== added.widgetId);
+    const removeIndex = state.availableItems.findIndex(
+      item => item.widgetId === added.widgetId && item.widgetNamespace === added.widgetNamespace
+    );
+    state.availableItems.splice(removeIndex, 1);
     state.items = [...state.items, added];
   }
 });
