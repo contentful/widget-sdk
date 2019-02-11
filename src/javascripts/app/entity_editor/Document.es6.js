@@ -22,9 +22,9 @@ import { DocLoad } from 'data/sharejs/Connection.es6';
 import * as Reverter from './document/Reverter.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
+import * as Status from 'data/document/status.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
-const Status = getModule('data/Document/Status');
 const ShareJS = getModule('data/ShareJS/Utils');
 const PresenceHub = getModule('entityEditor/Document/PresenceHub');
 

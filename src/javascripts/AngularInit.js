@@ -197,7 +197,6 @@ angular
       ngRequire('components/tabs/entry_list/viewCustomizerDirective.es6').default();
       ngRequire('services/batchPerformer.es6').default();
       ngRequire('components/tabs/listActionsController.es6').default();
-      ngRequire('data/document/status.es6').default();
       ngRequire('data/streamHashSet.es6').default();
       ngRequire('debug/XHR/cfMockXhrConsoleDirective.es6').default();
       ngRequire('directives/bindHtmlCompileDirective.es6').default();
