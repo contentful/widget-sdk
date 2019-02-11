@@ -98,7 +98,7 @@ const WidgetParameterControl = ({ definition, value, isMissing, onChange }) => {
         required={required}
         helpText={description}
         value={value}
-        selectProps={{ isDisabled: false, width: '300px' }}
+        selectProps={{ isDisabled: false, width: 'medium' }}
         onChange={handleStringChange.bind(null, onChange)}
         validationMessage={isMissing ? 'This value is required.' : ''}
         extraClassNames="f36-margin-bottom--l">

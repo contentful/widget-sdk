@@ -28,29 +28,32 @@ export default function WidgetsConfiguration({ state, dispatch }) {
         Configure the sidebar for this content type.
       </Paragraph>
       <FieldGroup>
-        <RadioButtonField
-          labelText="Use default sidebar"
-          helpText="Used for all content types without a custom sidebar"
-          name="sidebarType"
-          id={SidebarType.default}
-          checked={state.sidebarType === SidebarType.default}
-          onChange={() => {
-            dispatch(selectSidebarType(SidebarType.default));
-          }}
-          value={SidebarType.default}
-        />
-        <div className="f36-margin-top--m" />
-        <RadioButtonField
-          labelText="Create custom sidebar"
-          helpText="Only used for this content type"
-          name="sidebarType"
-          id={SidebarType.custom}
-          checked={state.sidebarType === SidebarType.custom}
-          onChange={() => {
-            dispatch(selectSidebarType(SidebarType.custom));
-          }}
-          value={SidebarType.custom}
-        />
+        <div className="sidebar-configuration__options">
+          <RadioButtonField
+            labelText="Use default sidebar"
+            helpText="Used for all content types without a custom sidebar"
+            name="sidebarType"
+            id={SidebarType.default}
+            checked={state.sidebarType === SidebarType.default}
+            onChange={() => {
+              dispatch(selectSidebarType(SidebarType.default));
+            }}
+            value={SidebarType.default}
+          />
+          <div className="f36-margin-top--m" />
+          <RadioButtonField
+            extraClassNames="f36-margin-left--xl"
+            labelText="Create custom sidebar"
+            helpText="Only used for this content type"
+            name="sidebarType"
+            id={SidebarType.custom}
+            checked={state.sidebarType === SidebarType.custom}
+            onChange={() => {
+              dispatch(selectSidebarType(SidebarType.custom));
+            }}
+            value={SidebarType.custom}
+          />
+        </div>
       </FieldGroup>
       <div className="sidebar-configuration__container f36-margin-top--l f36-margin-bottom--m">
         {state.sidebarType === SidebarType.default && (

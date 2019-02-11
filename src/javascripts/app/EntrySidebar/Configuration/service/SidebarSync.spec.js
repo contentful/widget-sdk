@@ -49,7 +49,12 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         items
       };
       const configuration = convertInternalStateToConfiguration(state);
-      expect(getAllKeys(configuration)).toEqual(['widgetId', 'widgetNamespace', 'disabled']);
+      expect(getAllKeys(configuration)).toEqual([
+        'widgetId',
+        'widgetNamespace',
+        'settings',
+        'disabled'
+      ]);
 
       expect(configuration).toHaveLength(EntryConfiguration.length + 1);
       expect(configuration.filter(item => item.disabled)).toHaveLength(
@@ -62,6 +67,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
     it('should return default state is configuration is not array', () => {
       const defaultState = {
         sidebarType: SidebarType.default,
+        configurableWidget: null,
         items: EntryConfiguration,
         availableItems: []
       };
@@ -79,6 +85,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
       const state = convertConfigirationToInternalState(allDisabled, []);
       expect(state).toEqual({
         sidebarType: SidebarType.custom,
+        configurableWidget: null,
         items: [],
         availableItems: EntryConfiguration
       });
@@ -119,6 +126,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
 
       expect(state).toEqual({
         sidebarType: SidebarType.custom,
+        configurableWidget: null,
         items: [
           PublicationWidget,
           VersionsWidget,
@@ -184,6 +192,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
 
       expect(state).toEqual({
         sidebarType: SidebarType.custom,
+        configurableWidget: null,
         items: [
           PublicationWidget,
           VersionsWidget,
@@ -192,14 +201,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
             title: 'Netlify Extension',
             widgetId: 'netlify-extension',
             widgetNamespace: NAMESPACE_EXTENSION,
-            parameters: [
-              {
-                id: 'netlifyBuildHook',
-                name: 'Netlify build hook',
-                required: true,
-                type: 'Symbol'
-              }
-            ]
+            parameters: []
           },
           LinksWidget,
           ContentPreviewWidget,
