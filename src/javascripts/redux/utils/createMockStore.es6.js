@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 
-import reducers from './reducer/index.es6';
+import reducers from '../reducer/index.es6';
 
 /*
   A basic mocked store that has all the reducers from the application
@@ -39,16 +39,13 @@ export default function createMockStore() {
     }
 
     return reducers(state, action);
-  }
+  };
 
-  const store = createStore(
-    rootReducer,
-    applyMiddleware(thunk, saveActionsMiddleware)
-  );
+  const store = createStore(rootReducer, applyMiddleware(thunk, saveActionsMiddleware));
 
   const setState = state => {
     store.dispatch({ type: '__SET_STATE__', state });
-  }
+  };
 
   // Get the original dispatch function from the store
   // and add a wrapper to save the type of arg dispatched,
@@ -63,7 +60,7 @@ export default function createMockStore() {
     }
 
     return originalDispatch(toDispatch);
-  }
+  };
 
   store.dispatch = dispatch;
 
@@ -82,6 +79,6 @@ export default function createMockStore() {
     getActions: () => [].concat(actions),
 
     // Gets all dispatched types (thunk or action)
-    getDispatched: () => [].concat(dispatched),
+    getDispatched: () => [].concat(dispatched)
   };
 }

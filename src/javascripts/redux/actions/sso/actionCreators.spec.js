@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import * as actionCreators from './actionCreators.es6';
 import * as actions from './actions.es6';
-import createMockStore from 'redux/test.es6';
+import createMockStore from 'redux/utils/createMockStore.es6';
 import { mockEndpoint } from 'data/EndpointFactory.es6';
 
 describe('SSO Redux actionCreators', () => {

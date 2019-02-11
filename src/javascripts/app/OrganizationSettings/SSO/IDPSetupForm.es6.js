@@ -17,8 +17,8 @@ import { authUrl, appUrl } from 'Config.es6';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { IdentityProviderPropType, FieldsStatePropType } from './PropTypes.es6';
 import { SSO_PROVIDERS } from './constants.es6';
-import * as actionCreators from 'redux/actions/sso/actionCreators.es6';
-import * as selectors from 'redux/selectors/sso.es6';
+import * as ssoActionCreators from 'redux/actions/sso/actionCreators.es6';
+import * as ssoSelectors from 'redux/selectors/sso.es6';
 
 import { connect } from 'react-redux';
 
@@ -224,11 +224,11 @@ export class IDPSetupForm extends React.Component {
 
 export default connect(
   state => ({
-    fields: selectors.getFields(state),
-    identityProvider: selectors.getIdentityProvider(state)
+    fields: ssoSelectors.getFields(state),
+    identityProvider: ssoSelectors.getIdentityProvider(state)
   }),
   {
-    validateField: actionCreators.validateField,
-    updateFieldValue: actionCreators.updateFieldValue
+    validateField: ssoActionCreators.validateField,
+    updateFieldValue: ssoActionCreators.updateFieldValue
   }
 )(IDPSetupForm);

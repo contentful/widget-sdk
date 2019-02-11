@@ -6,7 +6,7 @@ import { IdentityProviderStatePropType } from './PropTypes.es6';
 import { Button, Note, TextLink, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import IDPSetupForm from './IDPSetupForm.es6';
-import * as actionCreators from 'redux/actions/sso/actionCreators.es6';
+import * as ssoActionCreators from 'redux/actions/sso/actionCreators.es6';
 import * as ssoSelectors from 'redux/selectors/sso.es6';
 import getOrganizationSelector from 'redux/selectors/getOrganization.es6';
 import _ from 'lodash';
@@ -123,7 +123,7 @@ export default connect(
     };
   },
   {
-    retrieveIdp: actionCreators.retrieveIdp,
-    createIdp: actionCreators.createIdp
+    retrieveIdp: ssoActionCreators.retrieveIdp,
+    createIdp: ssoActionCreators.createIdp
   }
 )(SSOSetup);
