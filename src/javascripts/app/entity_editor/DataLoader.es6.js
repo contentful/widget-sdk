@@ -122,7 +122,7 @@ async function loadEditorData(loader, id) {
   const editorInterface = await loader.getEditorInterface(contentType);
 
   const fieldControls = buildRenderables(editorInterface.controls, loader.getWidgets());
-  const sidebar = hasCustomSidebarFeature ? editorInterface.sidebar : null;
+  const sidebar = hasCustomSidebarFeature ? editorInterface.sidebar : undefined;
   const entityInfo = makeEntityInfo(entity, contentType);
   const openDoc = loader.getOpenDoc(entity, contentType);
 
