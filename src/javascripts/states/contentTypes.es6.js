@@ -1,6 +1,7 @@
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 import base from 'states/Base.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
 const list = base({
   name: 'list',
@@ -33,6 +34,10 @@ const widgetResolvers = {
     // We declare dependency on `widgets` so Editor Interface is fetched only after the refresh.
     'widgets',
     (spaceContext, contentType, _widgets) => spaceContext.editorInterfaceRepo.get(contentType.data)
+  ],
+  hasCustomSidebar: [
+    'spaceContext',
+    spaceContext => getOrgFeature(spaceContext.organization.sys.id, 'custom_sidebar', true)
   ]
 };
 
@@ -99,12 +104,22 @@ function editorBase(options, isNew) {
       'widgets',
       'editorInterface',
       'publishedContentType',
-      ($scope, $stateParams, contentType, widgets, editorInterface, publishedContentType) => {
+      'hasCustomSidebar',
+      (
+        $scope,
+        $stateParams,
+        contentType,
+        widgets,
+        editorInterface,
+        publishedContentType,
+        hasCustomSidebar
+      ) => {
         $scope.context.isNew = isNew;
         $scope.contentType = contentType;
         $scope.widgets = widgets;
         $scope.editorInterface = editorInterface;
         $scope.publishedContentType = publishedContentType;
+        $scope.hasCustomSidebar = hasCustomSidebar;
 
         contextHistory.set([
           crumbFactory.ContentTypeList(),

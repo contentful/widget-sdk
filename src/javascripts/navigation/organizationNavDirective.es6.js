@@ -4,7 +4,7 @@ import * as K from 'utils/kefir.es6';
 import navBar from 'navigation/templates/NavBar.es6';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import { SSO_SELF_CONFIG_FLAG, TEAMS as FF_TEAMS } from 'featureFlags.es6';
-import { getOrgFeature } from '../data/CMA/FeatureCatalog.es6';
+import { getOrgFeature } from '../data/CMA/ProductCatalog.es6';
 
 export default function register() {
   /**
@@ -47,8 +47,8 @@ export default function register() {
               // Set feature flag for Teams
               LD.getCurrentVariation(FF_TEAMS),
               getOrgFeature(orgId, 'teams')
-            ]).then(([variation, catalogFeature]) => {
-              nav.teamsEnabled = variation && _.get(catalogFeature, 'enabled');
+            ]).then(([variation, hasTeamsFeature]) => {
+              nav.teamsEnabled = variation && hasTeamsFeature;
             });
             TokenStore.getOrganization(orgId).then(org => {
               const FeatureService = createFeatureService(orgId, 'organization');
