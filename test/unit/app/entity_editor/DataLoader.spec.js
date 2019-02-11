@@ -108,7 +108,6 @@ describe('app/entity_editor/DataLoader.es6', () => {
       expect(Object.keys(data)).toEqual([
         'entity',
         'contentType',
-        'sidebar',
         'fieldControls',
         'sidebarExtensions',
         'entityInfo',
@@ -193,7 +192,6 @@ describe('app/entity_editor/DataLoader.es6', () => {
       expect(Object.keys(data)).toEqual([
         'entity',
         'contentType',
-        'sidebar',
         'fieldControls',
         'sidebarExtensions',
         'entityInfo',
