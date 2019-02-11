@@ -8,6 +8,7 @@ import reducer from 'redux/reducer/index.es6';
 import { TEAMS, TEAM_MEMBERSHIPS } from 'redux/datasets.es6';
 import ROUTES from 'redux/routes.es6';
 import Placeholder from 'app/common/Placeholder.es6';
+import TeamsEmptyState from './TeamsEmptyState.es6';
 import TeamList from './TeamList.es6';
 import TeamListRow from './TeamListRow.es6';
 import TeamDialog from './TeamDialog.es6';
@@ -420,14 +421,6 @@ describe('TeamList', () => {
         expect(wrapper.find('[data-test-id="teams-table"]')).toHaveLength(0);
       });
 
-      it('it should render placeholder', () => {
-        const { wrapper } = renderComponent(actions);
-
-        expect(wrapper.find(Placeholder).filter({ testId: 'no-teams-placeholder' })).toHaveLength(
-          1
-        );
-      });
-
       describe('is member of org', () => {
         beforeEach(() => {
           actions.push({
@@ -449,16 +442,12 @@ describe('TeamList', () => {
           });
         });
 
-        it('it should not show add team button in placeholder', () => {
+        it('should remder the empty state', () => {
           const { wrapper } = renderComponent(actions);
 
-          expect(
-            wrapper
-              .find(Placeholder)
-              .filter({ testId: 'no-teams-placeholder' })
-              .find(Button)
-              .filter({ testId: 'new-team-button' })
-          ).toHaveLength(0);
+          const emptyState = wrapper.find(TeamsEmptyState);
+          expect(emptyState).toHaveLength(1);
+          expect(emptyState.props().isAdmin).toBe(false);
         });
       });
 
@@ -483,32 +472,12 @@ describe('TeamList', () => {
           });
         });
 
-        it('should show add team button in placeholder', () => {
+        it('should remder the empty state', () => {
           const { wrapper } = renderComponent(actions);
 
-          expect(
-            wrapper
-              .find(Placeholder)
-              .filter({ testId: 'no-teams-placeholder' })
-              .find(Button)
-              .filter({ testId: 'new-team-button' })
-          ).toHaveLength(1);
-        });
-
-        it('clicking button should show add team dialog', () => {
-          const { wrapper } = renderComponent(actions);
-
-          // the result of this won't update with state updates and has to be requested again
-          const getDialog = () => wrapper.find(TeamDialog).filter({ testId: 'create-team-dialog' });
-
-          expect(getDialog().props()).toHaveProperty('isShown', false);
-          wrapper
-            .find(Placeholder)
-            .filter({ testId: 'no-teams-placeholder' })
-            .find(Button)
-            .filter({ testId: 'new-team-button' })
-            .simulate('click');
-          expect(getDialog().props()).toHaveProperty('isShown', true);
+          const emptyState = wrapper.find(TeamsEmptyState);
+          expect(emptyState).toHaveLength(1);
+          expect(emptyState.props().isAdmin).toBe(true);
         });
       });
     });

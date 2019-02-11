@@ -41,24 +41,23 @@ class TeamPage extends React.Component {
   render() {
     const { hasAccess, deniedReason, showList, showDetails, isLoading, organization } = this.props;
     if (!hasAccess) {
-      let text;
       if (deniedReason === FEATURE_INACTIVE) {
         return <TeamsEmptyState isLegacy={true} isAdmin={isOwnerOrAdmin(organization)} />;
       } else {
-        text = 'It seems you are not allowed to see this page. Let us know if we are wrong.';
+        const text = 'It seems you are not allowed to see this page. Let us know if we are wrong.';
+        return (
+          <Placeholder
+            testId="access-denied-placeholder"
+            text={text}
+            title="No access to Teams page"
+            button={
+              <ContactUsButton buttonType="button" noIcon>
+                I want to use Teams!
+              </ContactUsButton>
+            }
+          />
+        );
       }
-      return (
-        <Placeholder
-          testId="access-denied-placeholder"
-          text={text}
-          title="No access to Teams page"
-          button={
-            <ContactUsButton buttonType="button" noIcon>
-              I want to use Teams!
-            </ContactUsButton>
-          }
-        />
-      );
     }
     if (isLoading) {
       return null;
