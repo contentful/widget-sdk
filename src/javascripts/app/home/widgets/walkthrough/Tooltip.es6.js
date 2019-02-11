@@ -1,6 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { kebabCase } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+import { track } from 'analytics/Analytics.es6';
 import { Button, IconButton, Heading } from '@contentful/forma-36-react-components';
+
+const $state = getModule('$state');
 
 // Props for this component come from ReactJoyride
 // Docs on ReactJoyride's castom tooltip components:
@@ -24,6 +29,12 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
           buttonType="white"
           onClick={e => {
             closeProps.onClick(e);
+            track('element:click', {
+              elementId: `close-walkthrough-step-button`,
+              groupId: 'author_editor_continuous_onboarding',
+              fromState: $state.current.name,
+              step: kebabCase(step.title)
+            });
           }}
           testId="close-walkthrough-tooltip-button"
         />
@@ -36,6 +47,12 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
           buttonType="positive"
           onClick={e => {
             primaryProps.onClick(e);
+            track('element:click', {
+              elementId: `next-walkthrough-step-button`,
+              groupId: 'author_editor_continuous_onboarding',
+              fromState: $state.current.name,
+              step: kebabCase(step.title)
+            });
           }}
           testId="next-step-walkthrough-tooltip-button">
           {isLastStep ? 'Get started' : 'Got it'}
