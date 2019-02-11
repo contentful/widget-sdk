@@ -1,3 +1,9 @@
+// TODO: DO NOT USE THIS MODULE
+// It works most of the time but the ways to obtain organization
+// information are not always 100% reliable. If you need to know
+// if an organization can use a feature use the Product Catalog API.
+// If you need to check pricing version just use `org.prcingVersion`.
+
 import { get } from 'lodash';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';

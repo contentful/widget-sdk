@@ -6,6 +6,7 @@ import buildRenderables from 'widgets/WidgetRenderable.es6';
 import { getModule } from 'NgRegistry.es6';
 import { assetContentType } from 'legacy-client';
 import { NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
@@ -108,10 +109,20 @@ export function makePrefetchEntryLoader(spaceContext, ids$) {
  * Loaders are created by `makeEntryLoader()` and `makeAssetLoader()`.
  */
 async function loadEditorData(loader, id) {
-  const entity = await loader.getEntity(id);
+  const [entity, hasCustomSidebarFeature] = await Promise.all([
+    loader.getEntity(id),
+    loader.hasCustomSidebarFeature()
+  ]);
+
+  // TODO: right now we need to load CT and its EI sequentially
+  // but it should be possible to load them in parallel because
+  // we know all the IDs UPFRONT. It's only our internal
+  // abstraction preventing us from doing so.
   const contentType = await loader.getContentType(entity);
-  const { controls, sidebar } = await loader.getEditorInterface(contentType);
-  const fieldControls = buildRenderables(controls, loader.getWidgets());
+  const editorInterface = await loader.getEditorInterface(contentType);
+
+  const fieldControls = buildRenderables(editorInterface.controls, loader.getWidgets());
+  const sidebar = hasCustomSidebarFeature ? editorInterface.sidebar : null;
   const entityInfo = makeEntityInfo(entity, contentType);
   const openDoc = loader.getOpenDoc(entity, contentType);
 
@@ -146,6 +157,9 @@ function makeEntryLoader(spaceContext) {
     getEditorInterface: memoize(contentType => {
       return spaceContext.editorInterfaceRepo.get(contentType.data);
     }),
+    hasCustomSidebarFeature: () => {
+      return getOrgFeature(spaceContext.organization.sys.id, 'custom_sidebar', true);
+    },
     getOpenDoc: makeDocOpener(spaceContext)
   };
 }
@@ -180,6 +194,7 @@ function makeAssetLoader(spaceContext) {
         }))
       };
     },
+    hasCustomSidebarFeature: () => Promise.resolve(false),
     getOpenDoc: makeDocOpener(spaceContext)
   };
 }

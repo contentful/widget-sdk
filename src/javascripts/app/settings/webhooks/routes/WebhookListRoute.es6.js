@@ -7,21 +7,20 @@ import createWebhookTemplateDialogOpener from '../createWebhookTemplateDialogOpe
 import AdminOnly from 'app/common/AdminOnly.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
-import getOrganizationStatus from 'data/OrganizationStatus.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as Config from 'Config.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 const spaceContext = getModule('spaceContext');
-const Config = getModule('Config.es6');
 
 const WebhooksFetcher = createFetcherComponent(() => {
   return Promise.all([
     spaceContext.webhookRepo.getAll(),
-    getOrganizationStatus(spaceContext.organization)
-  ]).then(([webhooks, status]) => {
+    getOrgFeature(spaceContext.organization.sys.id, 'webhook_aws_proxy')
+  ]).then(([webhooks, hasAwsProxyFeature]) => {
     const isContentfulUser = (spaceContext.user.email || '').endsWith('@contentful.com');
-    const isV2Committed = status.isEnterprise && status.pricingVersion === 2;
-    const hasAwsProxy = isV2Committed || isContentfulUser;
+    const hasAwsProxy = hasAwsProxyFeature || isContentfulUser;
     return [webhooks, hasAwsProxy];
   });
 });
