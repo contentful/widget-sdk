@@ -109,6 +109,7 @@ describe('app/entity_editor/DataLoader.es6', () => {
         'entity',
         'contentType',
         'fieldControls',
+        'sidebar',
         'sidebarExtensions',
         'entityInfo',
         'openDoc'
@@ -193,6 +194,7 @@ describe('app/entity_editor/DataLoader.es6', () => {
         'entity',
         'contentType',
         'fieldControls',
+        'sidebar',
         'sidebarExtensions',
         'entityInfo',
         'openDoc'
