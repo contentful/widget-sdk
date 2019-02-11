@@ -113,5 +113,6 @@ window.libs = [
   ['detect-browser', require('detect-browser')],
   ['mitt', require('mitt')],
   ['react-player', require('react-player')],
-  ['react-beautiful-dnd', require('react-beautiful-dnd')]
+  ['react-beautiful-dnd', require('react-beautiful-dnd')],
+  ['@typeform/embed', require('@typeform/embed')]
 ];
