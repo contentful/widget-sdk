@@ -3,23 +3,23 @@ import * as validators from './validators.es6';
 describe('validators', () => {
   describe('otherIdpName', () => {
     it('should accept a case insensitive alphanumeric string', () => {
-      expect(validators.otherIdpName('Testing1234')).toBe(true);
+      expect(validators.idpName('Testing1234')).toBe(true);
     });
 
     it('should accept underscores', () => {
-      expect(validators.otherIdpName('Testing_1234')).toBe(true);
+      expect(validators.idpName('Testing_1234')).toBe(true);
     });
 
     it('should accept hyphens', () => {
-      expect(validators.otherIdpName('Testing-1234')).toBe(true);
+      expect(validators.idpName('Testing-1234')).toBe(true);
     });
 
     it('should accept spaces', () => {
-      expect(validators.otherIdpName('Testing 1234')).toBe(true);
+      expect(validators.idpName('Testing 1234')).toBe(true);
     });
 
     it('should reject for another case', () => {
-      expect(validators.otherIdpName('Testing@1234')).toBe(false);
+      expect(validators.idpName('Testing@1234')).toBe(false);
     });
   });
 
