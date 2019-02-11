@@ -42,9 +42,9 @@ export default function WidgetsConfiguration({ state, dispatch }) {
           />
           <div className="f36-margin-top--m" />
           <RadioButtonField
-            extraClassNames="f36-margin-left--xl"
-            labelText="Create custom sidebar"
-            helpText="Only used for this content type"
+            extraClassNames="f36-margin-left--3xl"
+            labelText="Use custom sidebar"
+            helpText="Used only for this content type"
             name="sidebarType"
             id={SidebarType.custom}
             checked={state.sidebarType === SidebarType.custom}
