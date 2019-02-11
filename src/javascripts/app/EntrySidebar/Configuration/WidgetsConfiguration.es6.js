@@ -96,7 +96,6 @@ export default function WidgetsConfiguration({ state, dispatch }) {
         />{' '}
         and let us know how we can improve the sidebar configuration.
       </Note>
-      <div className="f36-margin-bottom--3xl" />
     </React.Fragment>
   );
 }
