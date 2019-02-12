@@ -63,8 +63,15 @@ export default class ExtensionIFrameRenderer extends React.Component {
       return;
     }
 
-    const { bridge, descriptor, parameters } = this.props;
+    const { bridge, descriptor } = this.props;
     const { src, srcdoc } = descriptor;
+
+    // Cherry-pick only valid parameter types and make sure
+    // they are always defined.
+    const parameters = {
+      instance: this.props.parameters.instance || {},
+      installation: this.props.parameters.installation || {}
+    };
 
     const channel = new Channel(iframe, window, bridge.apply);
     this.extensionApi = new ExtensionAPI({ channel, parameters, ...bridge.getData() });
