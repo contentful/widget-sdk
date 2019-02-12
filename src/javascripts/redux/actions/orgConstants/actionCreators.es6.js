@@ -5,10 +5,10 @@ import { getOrgConstants } from 'redux/selectors/getOrgConstants.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import { getOrganizationStatusV1, getOrganizationStatusV2 } from 'data/OrganizationStatus.es6';
 
-const catalogFeatures = {
-  TEAMS: 'teams',
-  CUSTOM_SIDEBAR: 'custom_sidebar'
-};
+export const catalogFeatures = [
+  { key: 'teams', defaultValue: false },
+  { key: 'custom_sidebar', defaultValue: true }
+];
 
 export function fetchOrgConstants(orgId) {
   return async (dispatch, getState) => {
@@ -24,12 +24,11 @@ export function fetchOrgConstants(orgId) {
 
     // TODO: use multi key request for features
     const getFeatures = async () => {
-      const featureIds = Object.values(catalogFeatures);
       const values = await Promise.all(
-        featureIds.map(featureId => getOrgFeature(orgId, featureId, false))
+        catalogFeatures.map(({ key, defaultValue }) => getOrgFeature(orgId, key, defaultValue))
       );
-      return featureIds.reduce((memo, featureId, index) => {
-        memo[featureId] = values[index];
+      return catalogFeatures.reduce((memo, feature, index) => {
+        memo[feature.key] = values[index];
         return memo;
       }, {});
     };
@@ -38,13 +37,16 @@ export function fetchOrgConstants(orgId) {
       isLegacy ? getOrganizationStatusV1(org) : getOrganizationStatusV2(org);
 
     try {
-      const [features, { isPaid, isEnterprise }] = await Promise.all([getFeatures(), getStatus()]);
+      const [features, { isPaid, isEnterprise, pricingVersion }] = await Promise.all([
+        getFeatures(),
+        getStatus()
+      ]);
       const payload = {
         catalogFeatures: features,
         isLegacy,
         isPaid,
         isEnterprise,
-        pricingVersion: org.pricingVersion
+        pricingVersion
       };
 
       dispatch(actions.orgConstantsSuccess(orgId, payload));
