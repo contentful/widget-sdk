@@ -1,7 +1,55 @@
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
+import _ from 'lodash';
 
 import reducers from '../reducer/index.es6';
+
+/*
+  Creates a wrapper for a dispatched thunk or action. Returns an object
+  with four properties:
+
+  isThunk:
+    function that denotes if the dispatched value is a thunk.
+  isAction:
+    function that denotes if the dispatched value is an action, e.g.
+    a plain object.
+  thunkName:
+    the name of the thunk dispatched.
+
+    If the thunk dispatched is an anonymous function, it will return
+    the value "anonymous". If you see this in your tests make sure you
+    name the inner function that is dispatched.
+
+  actionValue:
+    the value of the action dispatched.
+ */
+function dispatchWrapper(dispatched) {
+  return {
+    isThunk: function() {
+      return typeof dispatched === 'function';
+    },
+    isAction: function() {
+      return _.isPlainObject(dispatched);
+    },
+    thunkName: function() {
+      if (this.isThunk()) {
+        const name = dispatched.name;
+        const thunkName = name === '' ? 'anonymous' : name;
+
+        return thunkName;
+      } else {
+        return null;
+      }
+    },
+    actionValue: function() {
+      if (this.isAction()) {
+        return dispatched;
+      } else {
+        return null;
+      }
+    }
+  };
+}
 
 /*
   A basic mocked store that has all the reducers from the application
@@ -10,22 +58,7 @@ import reducers from '../reducer/index.es6';
   since store instantiation).
  */
 export default function createMockStore() {
-  const actions = [];
   const dispatched = [];
-
-  /*
-    A middleware that takes every action and saves it into the `actions`
-    array above.
-
-    Actions saved can be retrieved using `getActions`.
-   */
-  const saveActionsMiddleware = () => next => action => {
-    if (action.type !== '__SET_STATE__') {
-      actions.push(action);
-    }
-
-    next(action);
-  };
 
   /*
     Reducer that encapsulates state setting logic.
@@ -41,28 +74,25 @@ export default function createMockStore() {
     return reducers(state, action);
   };
 
-  const store = createStore(rootReducer, applyMiddleware(thunk, saveActionsMiddleware));
+  /*
+    A middleware to log everything dispatched. See `#dispatchWrapper` for more
+    information on the value pushed to the `dispatched` array.
+   */
+  const logDispatches = () => next => thunkOrAction => {
+    if (_.isPlainObject(thunkOrAction) && thunkOrAction.type === '__SET_STATE__') {
+      return next(thunkOrAction);
+    }
+
+    dispatched.push(dispatchWrapper(thunkOrAction));
+
+    return next(thunkOrAction);
+  };
+
+  const store = createStore(rootReducer, applyMiddleware(logDispatches, thunk));
 
   const setState = state => {
     store.dispatch({ type: '__SET_STATE__', state });
   };
-
-  // Get the original dispatch function from the store
-  // and add a wrapper to save the type of arg dispatched,
-  // either a thunk (another function) or an action
-  const originalDispatch = store.dispatch;
-
-  const dispatch = toDispatch => {
-    if (typeof toDispatch === 'function') {
-      dispatched.push('thunk');
-    } else {
-      dispatched.push('action');
-    }
-
-    return originalDispatch(toDispatch);
-  };
-
-  store.dispatch = dispatch;
 
   return {
     // Mocked store that acts like the application's Redux store, but also handles
@@ -76,7 +106,7 @@ export default function createMockStore() {
     setState,
 
     // Gets all actions since the last reset or initialization
-    getActions: () => [].concat(actions),
+    getActions: () => dispatched.filter(d => d.isAction()).map(d => d.actionValue()),
 
     // Gets all dispatched types (thunk or action)
     getDispatched: () => [].concat(dispatched)

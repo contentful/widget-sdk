@@ -173,17 +173,17 @@ export function connectionTest(state = {}, action) {
         result: TEST_RESULTS.success,
         isPending: false
       };
-    case actions.SSO_CONNECTION_TEST_UNKNOWN:
-      return {
-        ...state,
-        result: TEST_RESULTS.unknown,
-        isPending: false
-      };
     case actions.SSO_CONNECTION_TEST_FAILURE:
       return {
         ...state,
         result: TEST_RESULTS.failure,
         errors: action.payload,
+        isPending: false
+      };
+    case actions.SSO_CONNECTION_TEST_UNKNOWN:
+      return {
+        ...state,
+        result: TEST_RESULTS.unknown,
         isPending: false
       };
     default:

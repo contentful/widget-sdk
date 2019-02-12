@@ -1,12 +1,13 @@
 import * as actions from './actions.es6';
 import * as selectors from 'redux/selectors/sso.es6';
 import { validate, connectionTestResultFromIdp } from 'app/OrganizationSettings/SSO/utils.es6';
+import { TEST_RESULTS } from 'app/OrganizationSettings/SSO/constants.es6';
 import _ from 'lodash';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 
 export function retrieveIdp({ orgId }) {
-  return async dispatch => {
+  return async function retrieveIdp(dispatch) {
     dispatch(actions.ssoGetIdentityProviderPending());
 
     const endpoint = createOrganizationEndpoint(orgId);
@@ -108,7 +109,7 @@ export function updateFieldValue({ fieldName, value, orgId }) {
 }
 
 export function validateField({ fieldName, value }) {
-  return (dispatch, getState) => {
+  return function validateField(dispatch, getState) {
     // If the current value is the same as the value in the state,
     // do nothing
     const field = selectors.getField(getState(), fieldName);
@@ -143,11 +144,11 @@ export function connectionTestCancel() {
 }
 
 export function connectionTestResult({ data }) {
-  return dispatch => {
+  return function connectionTestResult(dispatch) {
     if (data.testConnectionAt) {
-      if (data.testConnectionResult === 'success') {
+      if (data.testConnectionResult === TEST_RESULTS.success) {
         dispatch(actions.ssoConnectionTestSuccess());
-      } else if (data.testConnectionResult === 'failure') {
+      } else if (data.testConnectionResult === TEST_RESULTS.failure) {
         dispatch(actions.ssoConnectionTestFailure(data.testConnectionError));
       } else {
         dispatch(actions.ssoConnectionTestUnknown());
