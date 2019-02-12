@@ -8,7 +8,6 @@ const EXTENSION_URL_RE = /(^https:\/\/)|(^http:\/\/localhost(:[0-9]+)?(\/|$))/;
 
 const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
   const noName = (entity.extension.name || '').length < 1;
-  const noFieldTypes = entity.extension.fieldTypes.length < 1;
   const invalidUrl = !EXTENSION_URL_RE.test(entity.extension.src || '');
 
   const updateExtensionProp = (prop, value) => {
@@ -33,7 +32,7 @@ const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
       </div>
 
       <div className="cfnext-form__field">
-        <Label text="Field types" info="required" />
+        <Label text="Field types" />
         <div className="extension-form__field-types">
           {EXTENSION_FIELD_TYPES.map(type => {
             return (
@@ -54,9 +53,6 @@ const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
             );
           })}
         </div>
-        {noFieldTypes && (
-          <p className="cfnext-form__field-error">At least one field type has to be selected.</p>
-        )}
       </div>
 
       <div className="cfnext-form__field">
