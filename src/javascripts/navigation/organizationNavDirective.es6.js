@@ -150,7 +150,7 @@ export default function register() {
           dataViewType: 'organization-sso'
         },
         {
-          if: 'nav.pricingVersion == "pricing_version_1"',
+          if: 'nav.pricingVersion == "pricing_version_1" && nav.isOwnerOrAdmin',
           title: 'Spaces',
           sref: 'account.organizations.spaces({orgId: nav.orgId})',
           rootSref: 'account.organizations.spaces',
