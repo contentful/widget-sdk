@@ -14,8 +14,8 @@ import PeriodSelector from './committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
 import isPOCEnabled from 'account/POCFeatureFlag.es6';
 import * as Analytics from 'analytics/Analytics.es6';
+import * as LaunchDarkly from 'utils/LaunchDarkly/index.es6';
 
-const LaunchDarkly = getModule('utils/LaunchDarkly/index.es6');
 const OrganizationRoles = getModule('services/OrganizationRoles.es6');
 const ResourceService = getModule('services/ResourceService.es6');
 const PricingDataProvider = getModule('account/pricing/PricingDataProvider.es6');
