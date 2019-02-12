@@ -36,7 +36,8 @@ function install({ extension, type, url }) {
           ...getExtensionParameterIds(extension)
         });
       }
-    });
+    })
+    .catch(err => handleInstallError(err));
 }
 
 function handleInstallError(err) {
@@ -44,53 +45,50 @@ function handleInstallError(err) {
 
   if (err && !wasCancelled) {
     Notification.error('There was an error while creating your extension.');
-    return Promise.reject(err);
+    return false;
+  } else {
+    return true;
   }
 }
 
 export const openExamplePicker = async () => {
-  const { installed, data, err } = await ModalLauncher.open(({ isShown, onClose }) => (
+  const { data, err } = await ModalLauncher.open(({ isShown, onClose }) => (
     <ExamplePickerModal
       isShown={isShown}
       onConfirm={data => {
-        onClose({ installed: true, data });
+        onClose({ data });
       }}
       onCancel={err => {
-        onClose({ installed: false, err: err instanceof Error ? err : { cancelled: true } });
+        onClose({ err: err instanceof Error ? err : { cancelled: true } });
       }}
     />
   ));
-  if (installed) {
-    install({
-      ...data,
-      type: 'github-example'
-    });
+
+  if (data) {
+    return install({ ...data, type: 'github-example' });
   } else {
-    handleInstallError(err);
+    return handleInstallError(err);
   }
 };
 
 export const openGitHubInstaller = async (extensionUrl = null, extensionUrlReferrer = null) => {
-  const { installed, data, err } = await ModalLauncher.open(({ onClose, isShown }) => (
+  const { data, err } = await ModalLauncher.open(({ onClose, isShown }) => (
     <GitHubInstallerModal
       isShown={isShown}
       extensionUrl={extensionUrl || ''}
       onConfirm={data => {
-        onClose({ installed: true, data });
+        onClose({ data });
       }}
       onCancel={err => {
-        onClose({ installed: false, err: err instanceof Error ? err : { cancelled: true } });
+        onClose({ err: err instanceof Error ? err : { cancelled: true } });
       }}
     />
   ));
 
-  if (installed) {
-    install({
-      ...data,
-      type: extensionUrlReferrer || 'github'
-    });
+  if (data) {
+    return install({ ...data, type: extensionUrlReferrer || 'github' });
   } else {
-    handleInstallError(err);
+    return handleInstallError(err);
   }
 };
 
@@ -110,8 +108,6 @@ export function createExtension() {
           '</script>'
         ].join('\n') + '\n'
     }
-  }).catch(err => {
-    handleInstallError(err);
   });
 }
 
