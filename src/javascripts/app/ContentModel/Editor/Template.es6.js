@@ -168,6 +168,7 @@ function tabSelect() {
         h(
           'li',
           {
+            ngIf: 'hasCustomSidebarFeature === true',
             ngClick: 'goTo("sidebar_configuration")',
             ariaSelected: '{{stateIs("^.sidebar_configuration")}}',
             role: 'tab'
@@ -225,6 +226,7 @@ function tabPanel() {
       h(
         'div',
         {
+          ngIf: 'hasCustomSidebarFeature === true',
           // we're hiding this div, so react component can keep local state
           // while we're navigation beetween tabs
           ngHide: '!stateIs("^.sidebar_configuration")'
@@ -233,7 +235,7 @@ function tabPanel() {
           h('react-component', {
             name: 'app/EntrySidebar/Configuration/SidebarConfiguration.es6',
             props:
-              '{ configuration: initialSidebarConfiguration, extensions: sidebarExtensions, onUpdateConfiguration: updateSidebarConfiguration }'
+              '{ configuration: editorInterface.sidebar, extensions: sidebarExtensions, onUpdateConfiguration: updateSidebarConfiguration }'
           })
         ]
       )
