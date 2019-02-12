@@ -13,7 +13,7 @@ function WidgetItem({ widget, onRemoveClick, onConfigureClick }) {
       isRemovable
       id={widget.widgetId}
       name={widget.name}
-      isInvalid={widget.invalid}
+      isProblem={widget.problem}
       onRemoveClick={onRemoveClick}>
       {widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN && (
         <Paragraph>{widget.description}</Paragraph>

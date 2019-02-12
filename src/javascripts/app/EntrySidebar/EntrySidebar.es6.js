@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import EntrySidebarWidget from './EntrySidebarWidget.es6';
 import { isArray } from 'lodash';
-
+import { Note } from '@contentful/forma-36-react-components';
 import {
   AssetConfiguration,
   EntryConfiguration
@@ -79,7 +79,14 @@ export default class EntrySidebar extends Component {
     item = this.props.sidebarExtensions.find(w => w.widgetId === item.widgetId);
 
     if (item.problem) {
-      return <p>TODO: Render error - missing UIE</p>;
+      return (
+        <EntrySidebarWidget title="Missing extension">
+          <Note noteType="warning" extraClassNames="f36-margin-top--l f36-margin-bottom--l">
+            <code>{item.name || item.widgetId}</code> is saved in configuration, but not installed
+            in this environment.
+          </Note>
+        </EntrySidebarWidget>
+      );
     }
 
     return (

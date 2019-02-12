@@ -3,6 +3,10 @@ import { difference, isArray } from 'lodash';
 import { SidebarType } from '../constants.es6';
 import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 
+/**
+ * Converts internal state for configuration reducer
+ * to data that can be used in API call for saving configuration
+ */
 export function convertInternalStateToConfiguration(state) {
   if (state.sidebarType === SidebarType.default) {
     return undefined;
@@ -15,7 +19,7 @@ export function convertInternalStateToConfiguration(state) {
   const missingBuiltinIds = difference(defaultIds, selectedDefaultIds);
 
   const selectedItems = state.items
-    .filter(widget => widget.invalid !== true)
+    .filter(widget => widget.problem !== true)
     .map(widget => ({
       widgetId: widget.widgetId,
       widgetNamespace: widget.widgetNamespace,
@@ -42,6 +46,11 @@ function convertExtensionToWidgetConfiguration(extension) {
   };
 }
 
+/**
+ * Converts saved configuration state and list of available extensions
+ * to initial state of configuration reducer, enriches save configuration
+ * with additional data needed to render UI
+ */
 export function convertConfigirationToInternalState(configuration, extensions) {
   if (!isArray(configuration)) {
     return {
@@ -60,7 +69,7 @@ export function convertConfigirationToInternalState(configuration, extensions) {
     };
   }, {});
 
-  // mark invalid all items that are not available
+  // mark all items as problem that are not available
   let items = configuration
     .map(widget => {
       if (widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
@@ -72,7 +81,7 @@ export function convertConfigirationToInternalState(configuration, extensions) {
             }
           : {
               ...widget,
-              invalid: true
+              problem: true
             };
       }
       if (widget.widgetNamespace === NAMESPACE_EXTENSION) {
@@ -84,7 +93,7 @@ export function convertConfigirationToInternalState(configuration, extensions) {
             }
           : {
               ...widget,
-              invalid: true
+              problem: true
             };
       }
       return null;
@@ -99,7 +108,7 @@ export function convertConfigirationToInternalState(configuration, extensions) {
       return (
         widget.widgetId === buildInWidget.widgetId &&
         widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN &&
-        widget.invalid !== true
+        widget.problem !== true
       );
     });
     if (!foundWidget || foundWidget.disabled === true) {
@@ -113,7 +122,7 @@ export function convertConfigirationToInternalState(configuration, extensions) {
       return (
         widget.widgetId === extensionWidget.widgetId &&
         widget.widgetNamespace === NAMESPACE_EXTENSION &&
-        widget.invalid !== true
+        widget.problem !== true
       );
     });
 

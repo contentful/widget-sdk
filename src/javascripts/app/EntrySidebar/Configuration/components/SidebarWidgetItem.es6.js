@@ -7,7 +7,7 @@ export default function SidebarWidgetItem({
   name,
   isDraggable,
   isRemovable,
-  isInvalid,
+  isProblem,
   onRemoveClick,
   children
 }) {
@@ -20,9 +20,9 @@ export default function SidebarWidgetItem({
     />
   );
 
-  if (isInvalid) {
+  if (isProblem) {
     return (
-      <Note noteType="warning" extraClassNames="sidebar-configuration__invalid-item">
+      <Note noteType="warning" extraClassNames="sidebar-configuration__problem-item">
         <code>{name || id}</code> is saved in configuration, but not installed in this environment.
         {removeBtn}
       </Note>
@@ -44,12 +44,12 @@ SidebarWidgetItem.propTypes = {
   name: PropTypes.string.isRequired,
   isDraggable: PropTypes.bool.isRequired,
   isRemovable: PropTypes.bool.isRequired,
-  isInvalid: PropTypes.bool.isRequired,
+  isProblem: PropTypes.bool.isRequired,
   onRemoveClick: PropTypes.func
 };
 
 SidebarWidgetItem.defaultProps = {
   isDraggable: false,
   isRemovable: false,
-  isInvalid: false
+  isProblem: false
 };

@@ -30,7 +30,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
       ).toBeUndefined();
     });
 
-    it('should return valid configuration with disabled defaults and ignore invalid items', () => {
+    it('should return valid configuration with disabled defaults and ignore problem items', () => {
       const items = [
         PublicationWidget,
         VersionsWidget,
@@ -39,9 +39,9 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           widgetNamespace: NAMESPACE_EXTENSION
         },
         {
-          widgetId: 'some-invalid-extension-that-was-deleted',
+          widgetId: 'some-problem-extension-that-was-deleted',
           widgetNamespace: NAMESPACE_EXTENSION,
-          invalid: true
+          problem: true
         }
       ];
       const state = {
@@ -97,7 +97,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
       ]);
     });
 
-    it('should mark as invalid non-existent builtin items and all extensions that are not installed in space', () => {
+    it('should mark as problem non-existent builtin items and all extensions that are not installed in space', () => {
       const configuration = [
         {
           widgetId: PublicationWidget.widgetId,
@@ -133,12 +133,12 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           {
             widgetId: 'some-extension-that-is-not-installed',
             widgetNamespace: NAMESPACE_EXTENSION,
-            invalid: true
+            problem: true
           },
           {
             widgetId: 'looks-like-in-invalid-built-in',
             widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
-            invalid: true
+            problem: true
           }
         ],
         availableItems: [ContentPreviewWidget, LinksWidget, TranslationWidget, UsersWidget]

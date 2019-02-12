@@ -85,7 +85,7 @@ export const reducer = createImmerReducer({
     const removed = action.payload.item;
     const removeIndex = state.items.findIndex(item => areWidgetsSame(item, removed));
     state.items.splice(removeIndex, 1);
-    if (!removed.invalid) {
+    if (!removed.problem) {
       state.availableItems.push(removed);
     }
   },
