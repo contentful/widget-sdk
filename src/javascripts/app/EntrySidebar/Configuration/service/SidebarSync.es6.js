@@ -37,7 +37,7 @@ function convertExtensionToWidgetConfiguration(extension) {
   return {
     widgetId: extension.id,
     widgetNamespace: NAMESPACE_EXTENSION,
-    title: extension.name,
+    name: extension.name,
     parameters: extension.parameters || []
   };
 }
@@ -67,7 +67,7 @@ export function convertConfigirationToInternalState(configuration, extensions) {
         return defaultWidgetsMap[widget.widgetId]
           ? {
               ...widget,
-              title: defaultWidgetsMap[widget.widgetId].title,
+              name: defaultWidgetsMap[widget.widgetId].name,
               description: defaultWidgetsMap[widget.widgetId].description
             }
           : {
@@ -79,7 +79,7 @@ export function convertConfigirationToInternalState(configuration, extensions) {
         return installedExtensionsMap[widget.widgetId]
           ? {
               ...widget,
-              title: installedExtensionsMap[widget.widgetId].title,
+              name: installedExtensionsMap[widget.widgetId].name,
               parameters: installedExtensionsMap[widget.widgetId].parameters || []
             }
           : {

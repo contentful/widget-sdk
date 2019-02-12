@@ -7,9 +7,9 @@ export default function DefaultSidebar() {
   return (
     <React.Fragment>
       <Subheading extraClassNames="f36-margin-bottom--m">Default sidebar</Subheading>
-      {EntryConfiguration.map(({ title, widgetId, widgetNamespace, description }) => {
+      {EntryConfiguration.map(({ name, widgetId, widgetNamespace, description }) => {
         return (
-          <SidebarWidgetItem key={`${widgetId}-${widgetNamespace}`} title={title}>
+          <SidebarWidgetItem key={`${widgetNamespace},${widgetId}`} name={name}>
             <Paragraph>{description}</Paragraph>
           </SidebarWidgetItem>
         );

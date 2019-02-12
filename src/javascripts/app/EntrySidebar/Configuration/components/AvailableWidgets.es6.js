@@ -22,7 +22,7 @@ export default function AvailableItems(props) {
             {builtin.map(item => (
               <AvailableWidget
                 key={`${item.widgetNamespace},${item.widgetId}`}
-                title={item.title}
+                name={item.name}
                 widgetNamespace={item.widgetNamespace}
                 onClick={() => {
                   props.onAddItem(item);
@@ -38,7 +38,7 @@ export default function AvailableItems(props) {
           {extensions.map(item => (
             <AvailableWidget
               key={`${item.widgetNamespace},${item.widgetId}`}
-              title={item.title}
+              name={item.name}
               widgetNamespace={item.widgetNamespace}
               onClick={() => {
                 props.onAddItem(item);

@@ -12,7 +12,7 @@ function WidgetItem({ widget, onRemoveClick, onConfigureClick }) {
       isDraggable
       isRemovable
       id={widget.widgetId}
-      title={widget.title}
+      name={widget.name}
       isInvalid={widget.invalid}
       onRemoveClick={onRemoveClick}>
       {widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN && (

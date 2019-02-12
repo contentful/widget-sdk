@@ -4,35 +4,35 @@ import { NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNamespaces.es6';
 export const Publication = {
   widgetId: SidebarWidgetTypes.PUBLICATION,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
-  title: 'Publish & Status',
+  name: 'Publish & Status',
   description: 'Built-in - View entry status, publish, etc.'
 };
 
 export const ContentPreview = {
   widgetId: SidebarWidgetTypes.CONTENT_PREVIEW,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
-  title: 'Preview',
+  name: 'Preview',
   description: 'Built-in - Displays preview functionality.'
 };
 
 export const Links = {
   widgetId: SidebarWidgetTypes.INCOMING_LINKS,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
-  title: 'Links',
+  name: 'Links',
   description: 'Built-in - Shows where an entry is linked.'
 };
 
 export const Translation = {
   widgetId: SidebarWidgetTypes.TRANSLATION,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
-  title: 'Translation',
+  name: 'Translation',
   description: 'Built-in - Manage which translations are visible.'
 };
 
 export const Versions = {
   widgetId: SidebarWidgetTypes.VERSIONS,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
-  title: 'Versions',
+  name: 'Versions',
   description:
     'Built-in - View previously published versions. Available only for master environment.'
 };
@@ -40,7 +40,7 @@ export const Versions = {
 export const Users = {
   widgetId: SidebarWidgetTypes.USERS,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
-  title: 'Users',
+  name: 'Users',
   description: 'Built-in - Displays users on the same entry.'
 };
 

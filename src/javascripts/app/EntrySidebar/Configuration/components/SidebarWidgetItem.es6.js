@@ -4,7 +4,7 @@ import { IconButton, Icon, Note } from '@contentful/forma-36-react-components';
 
 export default function SidebarWidgetItem({
   id,
-  title,
+  name,
   isDraggable,
   isRemovable,
   isInvalid,
@@ -16,14 +16,14 @@ export default function SidebarWidgetItem({
       iconProps={{ icon: 'Close' }}
       extraClassNames="sidebar-configuration__item-close"
       onClick={onRemoveClick}
-      label={`Remove ${title} from your sidebar`}
+      label={`Remove ${name} from your sidebar`}
     />
   );
 
   if (isInvalid) {
     return (
       <Note noteType="warning" extraClassNames="sidebar-configuration__invalid-item">
-        <code>{title || id}</code> is saved in configuration, but not installed in this environment.
+        <code>{name || id}</code> is saved in configuration, but not installed in this environment.
         {removeBtn}
       </Note>
     );
@@ -33,7 +33,7 @@ export default function SidebarWidgetItem({
     <div className="sidebar-configuration__item">
       {isDraggable && <Icon extraClassNames="sidebar-configuration__item-drag" icon="Drag" />}
       {isRemovable && removeBtn}
-      <div className="sidebar-configuration__item-title">{title}</div>
+      <div className="sidebar-configuration__item-name">{name}</div>
       <div>{children}</div>
     </div>
   );
@@ -41,7 +41,7 @@ export default function SidebarWidgetItem({
 
 SidebarWidgetItem.propTypes = {
   id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
   isDraggable: PropTypes.bool.isRequired,
   isRemovable: PropTypes.bool.isRequired,
   isInvalid: PropTypes.bool.isRequired,

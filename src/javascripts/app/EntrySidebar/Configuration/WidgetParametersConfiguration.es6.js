@@ -31,7 +31,7 @@ function WidgetParametersConfiguration({ widget, dispatch }) {
 
   return (
     <React.Fragment>
-      <Heading extraClassNames="f36-margin-bottom--s">Configure {widget.title}</Heading>
+      <Heading extraClassNames="f36-margin-bottom--s">Configure {widget.name}</Heading>
       <div className="sidebar-configuration-fields__container">
         <WidgetParametersForm
           definitions={widget.parameters}

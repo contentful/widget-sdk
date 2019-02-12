@@ -92,7 +92,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
       expect(getAllKeys(state.availableItems)).toEqual([
         'widgetId',
         'widgetNamespace',
-        'title',
+        'name',
         'description'
       ]);
     });
@@ -198,7 +198,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           VersionsWidget,
           UsersWidget,
           {
-            title: 'Netlify Extension',
+            name: 'Netlify Extension',
             widgetId: 'netlify-extension',
             widgetNamespace: NAMESPACE_EXTENSION,
             parameters: []
@@ -211,7 +211,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           {
             widgetId: 'custom-publish-button',
             widgetNamespace: NAMESPACE_EXTENSION,
-            title: 'Custom Publish button',
+            name: 'Custom Publish button',
             parameters: []
           }
         ]
