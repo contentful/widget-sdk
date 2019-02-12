@@ -40,7 +40,7 @@ export default function register() {
         scope: true,
         restrict: 'E',
         link: function(scope, element) {
-          const { problem, widgetNamespace, template, descriptor } = scope.widget;
+          const { problem, widgetNamespace, template, descriptor, parameters } = scope.widget;
 
           if (problem) {
             scope.props = { message: problem };
@@ -58,6 +58,7 @@ export default function register() {
           function renderExtension() {
             scope.props = {
               descriptor,
+              parameters,
               bridge: createBridge({
                 $rootScope,
                 $scope: scope,

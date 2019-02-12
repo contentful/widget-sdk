@@ -29,7 +29,7 @@ export default function register() {
         controller: [
           '$scope',
           $scope => {
-            const { field, widgetNamespace, descriptor } = $scope.widget;
+            const { field, widgetNamespace, descriptor, parameters } = $scope.widget;
             $scope.type = getFieldType(field);
             $scope.linkType = _.get(field, 'linkType', _.get(field, 'items.linkType'));
 
@@ -50,7 +50,8 @@ export default function register() {
             if (widgetNamespace === NAMESPACE_EXTENSION) {
               $scope.extensionProps = {
                 bridge: createBridge({ $scope, spaceContext, TheLocaleStore }),
-                descriptor
+                descriptor,
+                parameters
               };
             }
 

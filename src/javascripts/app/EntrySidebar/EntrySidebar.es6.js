@@ -96,6 +96,7 @@ export default class EntrySidebar extends Component {
         <ExtensionIFrameRenderer
           bridge={this.props.sidebarExtensionsBridge}
           descriptor={item.descriptor}
+          parameters={item.parameters}
         />
       </EntrySidebarWidget>
     );
@@ -116,7 +117,11 @@ export default class EntrySidebar extends Component {
   renderLegacyExtensions = legacyExtensions => {
     return legacyExtensions.map(({ bridge, widget }) => (
       <EntrySidebarWidget title={widget.field.name} key={widget.field.id}>
-        <ExtensionIFrameRenderer bridge={bridge} descriptor={widget.descriptor} />
+        <ExtensionIFrameRenderer
+          bridge={bridge}
+          descriptor={widget.descriptor}
+          parameters={widget.parameters}
+        />
       </EntrySidebarWidget>
     ));
   };
