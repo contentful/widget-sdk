@@ -9,7 +9,7 @@ export default function DefaultSidebar() {
       <Subheading extraClassNames="f36-margin-bottom--m">Default sidebar</Subheading>
       {EntryConfiguration.map(({ name, widgetId, widgetNamespace, description }) => {
         return (
-          <SidebarWidgetItem key={`${widgetNamespace},${widgetId}`} name={name}>
+          <SidebarWidgetItem key={`${widgetNamespace},${widgetId}`} name={name} id={widgetId}>
             <Paragraph>{description}</Paragraph>
           </SidebarWidgetItem>
         );
