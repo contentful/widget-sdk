@@ -6,6 +6,7 @@ import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes.es6';
 import createBridge from 'widgets/EditorExtensionBridge.es6';
 import * as WidgetLocations from 'widgets/WidgetLocations.es6';
+import * as Analytics from 'analytics/Analytics.es6';
 
 const $controller = getModule('$controller');
 const $rootScope = getModule('$rootScope');
@@ -16,7 +17,6 @@ const entitySelector = getModule('entitySelector');
 const SlideInNavigator = getModule('navigation/SlideInNavigator');
 const Navigator = getModule('states/Navigator.es6');
 const entityCreator = getModule('entityCreator');
-const Analytics = getModule('analytics/Analytics.es6');
 
 export default ({ $scope }) => {
   const isEntry = $scope.entityInfo.type === 'Entry';

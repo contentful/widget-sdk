@@ -4,17 +4,9 @@ import ContentPreviewFormPage from './ContentPreviewFormPage.es6';
 import Enzyme from 'enzyme';
 import { Notification } from '@contentful/forma-36-react-components';
 import contentPreview from 'ng/contentPreview';
-import * as Analytics from 'ng/analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics.es6';
 import $state from 'ng/$state';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
-
-jest.mock(
-  'ng/analytics/Analytics.es6',
-  () => ({
-    track: jest.fn()
-  }),
-  { virtual: true }
-);
 
 describe('app/settings/content_preview/ContentPreviewFormPage', () => {
   beforeEach(() => {
