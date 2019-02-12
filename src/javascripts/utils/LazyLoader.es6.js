@@ -133,3 +133,32 @@ function load(url) {
     document.getElementsByTagName('head')[0].appendChild(script);
   });
 }
+
+const globalStore = {};
+
+export function getFromGlobal(globalObject) {
+  const stored = globalStore[globalObject];
+  if (stored) {
+    return Promise.resolve(stored);
+  }
+
+  const deferred = {};
+  deferred.promise = new Promise(resolve => {
+    deferred.resolve = resolve;
+  });
+
+  pollForService(globalObject, deferred);
+
+  return deferred.promise;
+}
+
+function pollForService(globalObject, deferred) {
+  const service = window[globalObject];
+
+  if (service) {
+    globalStore[globalObject] = service;
+    deferred.resolve(service);
+  } else {
+    setTimeout(() => pollForService(globalObject, deferred), 1000);
+  }
+}

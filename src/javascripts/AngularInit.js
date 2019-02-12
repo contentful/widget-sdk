@@ -102,7 +102,6 @@ angular
       ngRequire('app/home/cfPositionRelativeToLanguageDirective.es6').default();
       ngRequire('app/home/cfTrackCopyEvent.es6').default();
       ngRequire('app/home/cfWelcomeDirective.es6').default();
-      ngRequire('services/intercom.es6').default();
       ngRequire('app/home/contactUs/contactUsSpaceHomeDirective.es6').default();
       ngRequire('app/home/developer_resources/cfDeveloperResourcesDirective.es6').default();
       ngRequire('app/home/onboarding_steps/cfOnboardingStepsDirective.es6').default();

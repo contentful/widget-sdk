@@ -15,13 +15,13 @@ import AssetBandwidthSection from './AssetBandwidthSection.es6';
 import OrganisationUsageChart from './OrganisationUsageChart.es6';
 import ApiUsageInfo from './ApiUsageInfo.es6';
 import ApiUsageChart from './ApiUsageChart.es6';
+import * as Intercom from 'services/intercom.es6';
+import * as Analytics from 'analytics/Analytics.es6';
 
 const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
 const apiSeriesColors = ['#3072BE', '#14D997', '#CD3F39'];
 
 const $state = getModule('$state');
-const Analytics = getModule('analytics/Analytics.es6');
-const Intercom = getModule('intercom');
 
 export default class OrganizationUsagePage extends React.Component {
   static propTypes = {
@@ -49,7 +49,7 @@ export default class OrganizationUsagePage extends React.Component {
       groupId: 'contact_sales',
       fromState: $state.current.name
     });
-    Intercom.isEnabled() && Intercom.isLoaded() ? Intercom.open() : window.open(Config.supportUrl);
+    Intercom.isEnabled() ? Intercom.open() : window.open(Config.supportUrl);
   };
 
   render() {

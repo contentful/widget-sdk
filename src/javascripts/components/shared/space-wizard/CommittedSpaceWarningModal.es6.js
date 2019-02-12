@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import Dialog from 'app/entity_editor/Components/Dialog/index.es6';
 
 import { supportUrl } from 'Config.es6';
+import * as Intercom from 'services/intercom.es6';
+
 import { getModule } from 'NgRegistry.es6';
 
 const modalDialog = getModule('modalDialog');
-const Intercom = getModule('intercom');
 
 export default class CommittedSpaceWarningModal extends React.Component {
   static propTypes = {
@@ -15,7 +16,7 @@ export default class CommittedSpaceWarningModal extends React.Component {
 
   closeModal = this.props.scope.dialog.destroy.bind(this.props.scope.dialog);
   handleContact = () => {
-    if (Intercom.isEnabled() && Intercom.isLoaded()) {
+    if (Intercom.isEnabled()) {
       Intercom.open();
     } else {
       window.open(supportUrl);

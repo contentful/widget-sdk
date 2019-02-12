@@ -3,6 +3,7 @@ import { onValueScope } from 'utils/kefir.es6';
 import { pick, isObject } from 'lodash';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed.es6';
 import * as logger from 'services/logger.es6';
+import * as Intercom from 'services/intercom.es6';
 
 export default function register() {
   registerController('ClientController', [
@@ -10,7 +11,6 @@ export default function register() {
     '$state',
     'spaceContext',
     'authorization',
-    'intercom',
     '$rootScope',
     'services/TokenStore.es6',
     'analytics/Analytics.es6',
@@ -23,7 +23,6 @@ export default function register() {
       $state,
       spaceContext,
       authorization,
-      Intercom,
       $rootScope,
       TokenStore,
       Analytics,

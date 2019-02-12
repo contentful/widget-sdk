@@ -9,12 +9,12 @@ import { track } from 'analytics/Analytics.es6';
 import { CONTACT_US_BOILERPLATE_FLAG, ENVIRONMENTS_FLAG } from 'featureFlags.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
+import * as Intercom from 'services/intercom.es6';
 
 const $state = getModule('$state');
 const Command = getModule('command');
 const leaveConfirmator = getModule('navigation/confirmLeaveEditor');
 const spaceContext = getModule('spaceContext');
-const Intercom = getModule('intercom');
 
 import initKeyEditor from './KeyEditor.es6';
 import { get as getBoilerplates } from './BoilerplateCode.es6';

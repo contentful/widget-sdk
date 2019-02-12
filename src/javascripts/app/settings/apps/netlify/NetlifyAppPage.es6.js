@@ -7,8 +7,8 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 
 import * as Analytics from 'analytics/Analytics.es6';
-
 import * as Random from 'utils/Random.es6';
+import * as Intercom from 'services/intercom.es6';
 
 import AppIcon from '../_common/AppIcon.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
@@ -20,7 +20,6 @@ import NoConnectionUninstallDialog from './NoConnectionUninstallDialog.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const $state = getModule('$state');
-const intercom = getModule('intercom');
 
 const notifyError = (err, fallbackMessage) => {
   Notification.error(err.useMessage ? err.message || fallbackMessage : fallbackMessage);
@@ -119,7 +118,7 @@ export default class NetlifyAppPage extends Component {
       Notification.success('Netlify app installed successfully.');
       this.setState({ busyWith: false, installed: true, config: updatedConfig });
       Analytics.track('netlify:installed');
-      intercom.trackEvent('apps-alpha-netlify-installed');
+      Intercom.trackEvent('apps-alpha-netlify-installed');
     } catch (err) {
       notifyError(err, 'Failed to install Netlify app.');
       this.setState({ busyWith: false });
