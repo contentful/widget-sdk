@@ -206,6 +206,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
       scope.editorInterface = { sys: {} };
 
+      scope.contentType.data.fields = [{ type: 'Symbol', id: 'test' }];
       scope.contentType.save = sinon.stub().returns(this.when(scope.contentType));
       scope.contentType.publish = sinon.stub().returns(this.when(scope.contentType));
     });
@@ -238,7 +239,8 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
         // First argument is the content type
         expect(callArgs[0]).toEqual({
           name: 'typename',
-          fields: [],
+          displayField: 'test',
+          fields: [{ type: 'Symbol', id: 'test' }],
           sys: {
             id: 'typeid',
             type: 'ContentType',
