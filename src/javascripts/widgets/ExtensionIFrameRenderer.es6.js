@@ -30,9 +30,11 @@ export default class ExtensionIFrameRenderer extends React.Component {
     }).isRequired,
     descriptor: PropTypes.shape({
       src: PropTypes.string,
-      srcdoc: PropTypes.string,
-      settings: PropTypes.object,
-      installationParameterValues: PropTypes.object
+      srcdoc: PropTypes.string
+    }).isRequired,
+    parameters: PropTypes.shape({
+      instance: PropTypes.object.isRequired,
+      installation: PropTypes.object.isRequired
     }).isRequired
   };
 
@@ -62,11 +64,13 @@ export default class ExtensionIFrameRenderer extends React.Component {
     }
 
     const { bridge, descriptor } = this.props;
-    const { src, srcdoc, settings, installationParameterValues } = descriptor;
+    const { src, srcdoc } = descriptor;
 
+    // Cherry-pick only valid parameter types and make sure
+    // they are always defined.
     const parameters = {
-      instance: settings || {},
-      installation: installationParameterValues || {}
+      instance: this.props.parameters.instance || {},
+      installation: this.props.parameters.installation || {}
     };
 
     const channel = new Channel(iframe, window, bridge.apply);

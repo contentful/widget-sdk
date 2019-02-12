@@ -21,11 +21,7 @@ export default function createBridge({ $scope, spaceContext, TheLocaleStore }) {
         default: TheLocaleStore.getDefaultLocale()
       },
       entryData: $scope.entity,
-      contentTypeData: $scope.entityInfo.contentType,
-      parameters: {
-        instance: $scope.widget.settings || {},
-        installation: $scope.widget.installationParameterValues || {}
-      }
+      contentTypeData: $scope.entityInfo.contentType
     };
   }
 
