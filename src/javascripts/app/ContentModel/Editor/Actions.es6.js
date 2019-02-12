@@ -221,6 +221,11 @@ export default function create($scope, contentTypeIds) {
       return $q.reject();
     }
 
+    if (($scope.contentType.data.fields || []).length < 1) {
+      notify.saveNoFields();
+      return $q.reject();
+    }
+
     return (
       $scope.contentType
         .save()

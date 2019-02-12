@@ -86,22 +86,18 @@ export default function register() {
       });
 
       if ($scope.context.isNew) {
-        metadataDialog.openCreateDialog(contentTypeIds).then(applyContentTypeMetadata(true), () => {
-          // X.detail.fields -> X.list
-          $state.go('^.^.list');
-        });
-      }
-
-      function applyContentTypeMetadata(withId) {
-        return metadata => {
-          const data = $scope.contentType.data;
-          data.name = metadata.name;
-          data.description = metadata.description;
-          if (withId) {
+        metadataDialog.openCreateDialog(contentTypeIds).then(
+          metadata => {
+            const data = $scope.contentType.data;
+            data.name = metadata.name;
+            data.description = metadata.description;
             data.sys.id = metadata.id;
+          },
+          () => {
+            // X.detail.fields -> X.list
+            $state.go('^.^.list');
           }
-          setDirty();
-        };
+        );
       }
 
       /**
@@ -226,7 +222,12 @@ export default function register() {
        */
       $scope.showMetadataDialog = Command.create(
         () => {
-          metadataDialog.openEditDialog($scope.contentType).then(applyContentTypeMetadata());
+          metadataDialog.openEditDialog($scope.contentType).then(metadata => {
+            const data = $scope.contentType.data;
+            data.name = metadata.name;
+            data.description = metadata.description;
+            setDirty();
+          });
         },
         {
           disabled: function() {
