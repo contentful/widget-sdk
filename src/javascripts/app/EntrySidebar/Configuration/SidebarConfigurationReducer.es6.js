@@ -82,22 +82,28 @@ export const reducer = createImmerReducer({
     state.sidebarType = action.payload.sidebarType;
   },
   [REMOVE_ITEM_FROM_SIDEBAR]: (state, action) => {
-    const removed = action.payload.item;
-    const removeIndex = state.items.findIndex(item => areWidgetsSame(item, removed));
+    const removeIndex = state.items.findIndex(item => areWidgetsSame(item, action.payload.item));
+    if (removeIndex === -1) {
+      return;
+    }
+    const removed = state.items[removeIndex];
     state.items.splice(removeIndex, 1);
     if (!removed.problem) {
       state.availableItems.push(removed);
     }
   },
+  [ADD_ITEM_TO_SIDEBAR]: (state, action) => {
+    const index = state.availableItems.findIndex(item => areWidgetsSame(item, action.payload.item));
+    if (index === -1) {
+      return;
+    }
+    const added = state.availableItems[index];
+    state.availableItems.splice(index, 1);
+    state.items = [...state.items, added];
+  },
   [CHANGE_ITEM_POSITION]: (state, action) => {
     const [removed] = state.items.splice(action.payload.sourceIndex, 1);
     state.items.splice(action.payload.destIndex, 0, removed);
-  },
-  [ADD_ITEM_TO_SIDEBAR]: (state, action) => {
-    const added = action.payload.item;
-    const removeIndex = state.availableItems.findIndex(item => areWidgetsSame(item, added));
-    state.availableItems.splice(removeIndex, 1);
-    state.items = [...state.items, added];
   },
   [UPDATE_WIDGET_SETTINGS]: (state, action) => {
     const widget = action.payload.widget;
