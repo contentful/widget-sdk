@@ -6,7 +6,7 @@ const GITHUB_URL_PROPS = ['host', 'repo', 'branch', 'filepath'];
 const ERRORS = {
   DESCRIPTOR: 'Could not fetch the descriptor file. Please check the URL and try again.',
   SRCDOC: 'Could not fetch the extension source. Please check if the descriptor is valid.',
-  INVALID: 'The format of descriptor file is invalid.'
+  INVALID: 'The format of the descriptor file is invalid.'
 };
 
 const nonEmptyString = s => typeof s === 'string' && s.length > 0;
@@ -71,13 +71,10 @@ export function fetchExtension(url) {
       const hosting = srcdoc ? { srcdoc } : { src };
       const extension = { name, fieldTypes, parameters, sidebar: !!sidebar, ...hosting };
 
+      const hasName = nonEmptyString(extension.name);
       const hasCode = nonEmptyString(extension.src) || nonEmptyString(extension.srcdoc);
-      const hasAtLeastOneFieldType = Array.isArray(fieldTypes) && fieldTypes.length > 0;
+      const valid = hasName && hasCode;
 
-      if (nonEmptyString(extension.name) && hasCode && hasAtLeastOneFieldType) {
-        return extension;
-      } else {
-        return Promise.reject(new Error(ERRORS.INVALID));
-      }
+      return valid ? extension : Promise.reject(new Error(ERRORS.INVALID));
     });
 }
