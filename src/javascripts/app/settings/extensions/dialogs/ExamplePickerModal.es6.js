@@ -16,6 +16,11 @@ const EXAMPLES = [
     url: 'https://github.com/contentful/extensions/blob/master/samples/external-api'
   },
   {
+    name: 'Publish button with confirmation',
+    description: 'Requires a user to confirm they really want to (un)publish an entry.',
+    url: 'https://github.com/contentful/extensions/blob/master/samples/publish-confirm'
+  },
+  {
     name: 'Optimizely Audiences',
     description:
       'Tag structured content in Contentful with audience IDs loaded from a project in Optimizely.',

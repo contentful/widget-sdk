@@ -16,9 +16,10 @@ describe('ExamplePickerModal', () => {
     return [wrapper, confirmStub, cancelStub];
   };
 
-  it('renders list of predefined extensions', () => {
+  it('renders list of some predefined extensions', () => {
     const [wrapper] = mount();
-    expect(wrapper.find(BTN_SELECTOR)).toHaveLength(8);
+    const hasPredefined = wrapper.find(BTN_SELECTOR).length > 5;
+    expect(hasPredefined).toBe(true);
   });
 
   it('confirms dialog with fetched extension', () => {
