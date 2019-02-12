@@ -56,6 +56,23 @@ const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
       </div>
 
       <div className="cfnext-form__field">
+        <Label text="Sidebar extension" />
+        <p>
+          Sidebar extension, if used with a field control, will remove itself from the entry editor
+          and instead render itself the sidebar.
+        </p>
+        <p>When not assigned to a field type it can still be used in a custom sidebar.</p>
+        <label>
+          <input
+            type="checkbox"
+            checked={entity.extension.sidebar}
+            onChange={() => updateExtensionProp('sidebar', !entity.extension.sidebar)}
+          />{' '}
+          Yes, this is a sidebar extension
+        </label>
+      </div>
+
+      <div className="cfnext-form__field">
         <Label text="Hosting" info="required" />
         <label>
           <input type="radio" checked={selfHosted} onChange={() => setSelfHosted(true)} />{' '}
@@ -117,19 +134,6 @@ const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
           />
         </div>
       )}
-
-      <div className="cfnext-form__field">
-        <Label text="Render in sidebar" />
-        <p>Hides the extension from the entry editor and instead renders it the sidebar.</p>
-        <label>
-          <input
-            type="checkbox"
-            checked={entity.extension.sidebar}
-            onChange={() => updateExtensionProp('sidebar', !entity.extension.sidebar)}
-          />{' '}
-          Yes, render in the sidebar.
-        </label>
-      </div>
 
       <ExtensionParameters
         entity={entity}
