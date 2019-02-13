@@ -18,6 +18,7 @@ import {
 import { authUrl, appUrl } from 'Config.es6';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { IdentityProviderPropType, FieldsStatePropType } from './PropTypes.es6';
+import { connectionTestingAllowed } from './utils.es6';
 import { SSO_PROVIDERS, TEST_RESULTS } from './constants.es6';
 import * as ssoActionCreators from 'redux/actions/sso/actionCreators.es6';
 import * as ssoSelectors from 'redux/selectors/sso.es6';
@@ -71,10 +72,7 @@ export class IDPSetupForm extends React.Component {
 
     // Open the new window and check if it's closed every 250ms
     const newWindow = window.open(testConnectionUrl, '', 'toolbar=0,status=0,width=650,height=800');
-    const testConnectionTimer = window.setInterval(
-      this.checkTestConnectionWindow(newWindow).bind(this),
-      250
-    );
+    const testConnectionTimer = window.setInterval(this.checkTestConnectionWindow(newWindow), 250);
 
     // Listen for an event from the window
     window.addEventListener('message', this.messageHandler);
@@ -122,19 +120,19 @@ export class IDPSetupForm extends React.Component {
 
     this.state.newWindow.close();
 
+    window.clearInterval(this.state.testConnectionTimer);
+    window.removeEventListener('message', this.messageHandler);
+
     this.setState({
       testConnectionTimer: undefined,
       newWindow: undefined
     });
 
-    window.clearInterval(this.state.testConnectionTimer);
-    window.removeEventListener('message', this.messageHandler);
-
     connectionTestCancel();
   };
 
   checkTestConnectionWindow = win => {
-    return async () => {
+    return () => {
       const {
         organization: {
           sys: { id: orgId }
@@ -166,14 +164,7 @@ export class IDPSetupForm extends React.Component {
       }
     } = this.props;
 
-    const allowConnectionTest = !(
-      !fields.idpCert.value ||
-      fields.idpCert.error ||
-      !fields.idpSsoTargetUrl.value ||
-      fields.idpSsoTargetUrl.error ||
-      connectionTest.isPending ||
-      connectionTest.result === TEST_RESULTS.success
-    );
+    const allowConnectionTest = connectionTestingAllowed(fields, connectionTest);
 
     return (
       <React.Fragment>
@@ -310,28 +301,33 @@ export class IDPSetupForm extends React.Component {
             your SSO provider to test the connection.
           </HelpText>
           <div>
-            <Button disabled={!allowConnectionTest} onClick={this.testConnection}>
+            <Button
+              testId="test-connection-button"
+              disabled={!allowConnectionTest}
+              onClick={this.testConnection}>
               Test connection
             </Button>
             {connectionTest.isPending && (
-              <Button buttonType="muted" onClick={this.cancelConnectionTest}>
+              <Button buttonType="muted" onClick={this.cancelConnectionTest} testId="cancel-button">
                 Cancel
               </Button>
             )}
             {!connectionTest.isPending && (
               <div className="f36-margin-top--l">
                 {connectionTest.result === TEST_RESULTS.unknown && (
-                  <Note noteType="warning">
+                  <Note testId="result-unknown-note" noteType="warning">
                     An unknown error occured while testing the connection. Try again.
                   </Note>
                 )}
                 {connectionTest.result === TEST_RESULTS.failure && (
-                  <Note noteType="negative">
+                  <Note testId="result-failure-note" noteType="negative">
                     Connection wasn’t established. View the Error log below for more information.
                   </Note>
                 )}
                 {connectionTest.result === TEST_RESULTS.success && (
-                  <Note noteType="positive">Connection test successful!</Note>
+                  <Note testId="result-success-note" noteType="positive">
+                    Connection test successful!
+                  </Note>
                 )}
               </div>
             )}
@@ -343,6 +339,7 @@ export class IDPSetupForm extends React.Component {
                 extraClassNames="f36-margin-top--xl"
                 rows={5}
                 disabled
+                testId="errors"
                 value={connectionTest.errors.join('\n')}
               />
             </div>
