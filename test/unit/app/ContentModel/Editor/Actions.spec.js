@@ -5,23 +5,6 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
   let controller, scope, $q, logger, notification, accessChecker, spaceContext, stubs;
   let space, contentType;
 
-  function FormStub() {
-    this.$setDirty = function() {
-      this._setDirty(true);
-    };
-
-    this.$setPristine = function() {
-      this._setDirty(false);
-    };
-
-    this._setDirty = function(dirty) {
-      this.$dirty = dirty;
-      this.$pristine = !dirty;
-    };
-
-    this.$setPristine();
-  }
-
   beforeEach(function() {
     const self = this;
 
@@ -219,13 +202,11 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
         controls: []
       });
 
-      scope.contentTypeForm = new FormStub();
-      scope.contentTypeForm.$setDirty();
-
       scope.validate = sinon.stub().returns(true);
 
       scope.editorInterface = { sys: {} };
 
+      scope.contentType.data.fields = [{ type: 'Symbol', id: 'test' }];
       scope.contentType.save = sinon.stub().returns(this.when(scope.contentType));
       scope.contentType.publish = sinon.stub().returns(this.when(scope.contentType));
     });
@@ -234,7 +215,6 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
       scope.context.dirty = true;
       return controller.save.execute().then(() => {
         expect(scope.context.dirty).toBe(false);
-        expect(scope.contentTypeForm.$pristine).toBe(true);
       });
     });
 
@@ -259,7 +239,8 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
         // First argument is the content type
         expect(callArgs[0]).toEqual({
           name: 'typename',
-          fields: [],
+          displayField: 'test',
+          fields: [{ type: 'Symbol', id: 'test' }],
           sys: {
             id: 'typeid',
             type: 'ContentType',
@@ -301,6 +282,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
     describe('content type server error', () => {
       beforeEach(function() {
+        scope.context.dirty = true;
         scope.contentType.save.returns(this.reject('err'));
       });
 
@@ -321,7 +303,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
       it('does not reset form', () =>
         controller.save.execute().catch(() => {
-          expect(scope.contentTypeForm.$pristine).toBe(false);
+          expect(scope.context.dirty).toBe(true);
         }));
     });
 
@@ -338,22 +320,20 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
   describe('#save command disabled', () => {
     beforeEach(() => {
-      scope.contentTypeForm = {
-        $dirty: true
-      };
+      scope.context.dirty = true;
       scope.contentType.data.fields = [{ disabled: false }, { disabled: true }];
       scope.contentType.data.sys.publishedVersion = 1;
     });
 
     it('is true when form is pristine', () => {
       expect(controller.save.isDisabled()).toBe(false);
-      scope.contentTypeForm.$dirty = false;
+      scope.context.dirty = false;
       expect(controller.save.isDisabled()).toBe(true);
     });
 
     it('is false when form is pristine and Content Type unpublished', () => {
       expect(controller.save.isDisabled()).toBe(false);
-      scope.contentTypeForm.$dirty = false;
+      scope.context.dirty = false;
       delete scope.contentType.data.sys.publishedVersion;
       expect(controller.save.isDisabled()).toBe(false);
     });
@@ -466,7 +446,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
   describe('#duplicate command disabled', () => {
     beforeEach(() => {
       scope.context.isNew = false;
-      scope.contentTypeForm = { $dirty: false };
+      scope.context.dirty = false;
       scope.contentType.data.sys.publishedVersion = 100;
       scope.contentType.isPublished = _.constant(true);
       accessChecker.shouldDisable = _.constant(false);
@@ -479,9 +459,9 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
     });
 
     it('is true when from is dirty', () => {
-      scope.contentTypeForm.$dirty = true;
+      scope.context.dirty = true;
       expect(controller.duplicate.isDisabled()).toBe(true);
-      scope.contentTypeForm.$dirty = false;
+      scope.context.dirty = false;
       delete scope.contentType.data.sys.publishedVersion;
       expect(controller.duplicate.isDisabled()).toBe(true);
     });

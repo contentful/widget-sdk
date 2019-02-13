@@ -9,11 +9,7 @@ describe('SnapshotExtensionBridge', () => {
   const makeBridge = () => {
     const bridge = createBridge({
       $scope: {
-        widget: {
-          field: 'FIELD',
-          settings: 'SETTINGS',
-          installationParameterValues: 'INSTALLATION PARAMS'
-        },
+        widget: { field: 'FIELD' },
         locale: { code: 'pl' },
         entity: { sys: {}, fields: {} },
         entityInfo: {
@@ -42,7 +38,6 @@ describe('SnapshotExtensionBridge', () => {
         current: { field: 'FIELD', locale: { code: 'pl' } },
         entryData: { fields: {}, sys: {} },
         locales: { available: [{ code: 'pl' }, { code: 'en' }], default: { code: 'pl' } },
-        parameters: { installation: 'INSTALLATION PARAMS', instance: 'SETTINGS' },
         spaceMembership: 'MEMBERSHIP '
       });
     });

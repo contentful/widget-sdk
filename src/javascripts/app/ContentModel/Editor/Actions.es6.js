@@ -24,8 +24,7 @@ const metadataDialog = getModule('contentTypeEditor/metadataDialog');
  * - `publishedContentType` is updated whenever the content type is published or
  *   unpublished. Corresponds to the server data.
  * - `editorInterface` is read and updated on `save`.
- * - `contentTypeForm` is read to check whether the local modal is “dirty”, i.e.
- *   whether the user has made some changes.
+ * - `context` is read to check whether the user has made some changes.
  *
  * @param {object} $scope
  * @param {Promise<string[]>} contentTypeIds
@@ -196,7 +195,7 @@ export default function create($scope, contentTypeIds) {
   controller.save = Command.create(() => save(true), {
     disabled: function() {
       const dirty =
-        $scope.contentTypeForm.$dirty ||
+        $scope.context.dirty ||
         $scope.contentType.hasUnpublishedChanges() ||
         !$scope.contentType.getPublishedVersion();
       const valid = !allFieldsInactive($scope.contentType);
@@ -219,6 +218,11 @@ export default function create($scope, contentTypeIds) {
     if (!$scope.validate()) {
       const fieldNames = map($scope.contentType.data.fields, 'name');
       notify.invalidAccordingToScope($scope.validationResult.errors, fieldNames);
+      return $q.reject();
+    }
+
+    if (($scope.contentType.data.fields || []).length < 1) {
+      notify.saveNoFields();
       return $q.reject();
     }
 
@@ -268,11 +272,6 @@ export default function create($scope, contentTypeIds) {
   }
 
   function setPristine() {
-    // Since this is called by asynchronously the scope data may have
-    // already been removed.
-    if ($scope.contentTypeForm) {
-      $scope.contentTypeForm.$setPristine();
-    }
     if ($scope.context) {
       $scope.context.dirty = false;
     }
@@ -312,7 +311,7 @@ export default function create($scope, contentTypeIds) {
         const isDenied =
           accessChecker.shouldDisable('update', 'contentType') ||
           accessChecker.shouldDisable('publish', 'contentType');
-        const isDirty = $scope.contentTypeForm.$dirty || !$scope.contentType.getPublishedVersion();
+        const isDirty = $scope.context.dirty || !$scope.contentType.getPublishedVersion();
         const isPublished = $scope.contentType.isPublished();
 
         return isNew || isDenied || isDirty || !isPublished;

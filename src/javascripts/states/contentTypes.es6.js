@@ -14,7 +14,7 @@ const fields = {
   name: 'fields',
   url: '/fields',
   params: {
-    addToContext: true
+    ignoreLeaveConfirmation: true
   }
 };
 
@@ -22,7 +22,15 @@ const preview = {
   name: 'preview',
   url: '/preview',
   params: {
-    addToContext: true
+    ignoreLeaveConfirmation: true
+  }
+};
+
+const sidebarConfiguration = {
+  name: 'sidebar_configuration',
+  url: '/sidebar_configuration',
+  params: {
+    ignoreLeaveConfirmation: true
   }
 };
 
@@ -37,19 +45,7 @@ const widgetResolvers = {
   ],
   hasCustomSidebarFeature: [
     'spaceContext',
-    spaceContext => {
-      // TODO:
-      // Right now we only present the feature to Contentful employees.
-      // We still do the Product Catalog check so it only works in V2.
-      const isContentfulUser = (spaceContext.user.email || '').endsWith('@contentful.com');
-      if (isContentfulUser) {
-        // TODO: this will be the only line in this resolver when we ship
-        // to the public.
-        return getOrgFeature(spaceContext.organization.sys.id, 'custom_sidebar', true);
-      } else {
-        return Promise.resolve(false);
-      }
-    }
+    spaceContext => getOrgFeature(spaceContext.organization.sys.id, 'custom_sidebar', true)
   ]
 };
 
@@ -108,7 +104,7 @@ export default {
 function editorBase(options, isNew) {
   return {
     redirectTo: '.fields',
-    children: [fields, preview],
+    children: [fields, preview, sidebarConfiguration],
     controller: [
       '$scope',
       '$stateParams',

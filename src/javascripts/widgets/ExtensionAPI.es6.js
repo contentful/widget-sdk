@@ -3,6 +3,7 @@ import createIDMap from './IDMap.es6';
 import * as PublicContentType from './PublicContentType.es6';
 
 const REQUIRED_CONFIG_KEYS = [
+  'location', // Where the extension is rendered. See `WidgetLocations`.
   'channel', // Instance of `ExtensionIFrameChannel`
   'locales', // `{ available, default }` with all private locales and the default.
   'entryData', // API Entry entity. Using internal IDs (ShareJS format).
@@ -13,6 +14,7 @@ const REQUIRED_CONFIG_KEYS = [
   // `{ field, locale }` for a field-locale pair of the extension being rendered.
   // `field` uses internal IDs (ShareJS format).
   // `locale` has the `internal_code` property.
+  // Can be `null` if the extension is not tied to a field.
   'current'
 ];
 
@@ -23,7 +25,7 @@ const REQUIRED_CONFIG_KEYS = [
 export default class ExtensionAPI {
   constructor(config) {
     REQUIRED_CONFIG_KEYS.forEach(key => {
-      if (config[key]) {
+      if (key in config) {
         this[key] = config[key];
       } else {
         throw new Error(`Required configuration option "${key}" missing`);
@@ -46,9 +48,10 @@ export default class ExtensionAPI {
 
   // Sends initial data to the IFrame of an extension.
   connect() {
-    const { spaceMembership, current, entryData, locales } = this;
+    const { spaceMembership, current, entryData, locales, location } = this;
 
     this.channel.connect({
+      location,
       user: {
         sys: {
           id: spaceMembership.user.sys.id
@@ -67,13 +70,15 @@ export default class ExtensionAPI {
           }))
         }
       },
-      field: {
-        id: current.field.apiName,
-        locale: current.locale.code,
-        value: get(entryData, ['fields', current.field.id, current.locale.internal_code]),
-        type: current.field.type,
-        validations: current.field.validations
-      },
+      field: current
+        ? {
+            id: current.field.apiName,
+            locale: current.locale.code,
+            value: get(entryData, ['fields', current.field.id, current.locale.internal_code]),
+            type: current.field.type,
+            validations: current.field.validations
+          }
+        : undefined,
       fieldInfo: this.contentTypeFields.map(field => {
         const fieldLocales = field.localized ? locales.available : [locales.default];
         const values = entryData.fields[field.id];

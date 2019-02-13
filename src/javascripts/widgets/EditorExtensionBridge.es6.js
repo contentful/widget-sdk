@@ -3,6 +3,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import * as K from 'utils/kefir.es6';
 import * as PathUtils from 'utils/Path.es6';
 import * as Dialogs from './ExtensionDialogs.es6';
+import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_SIDEBAR } from './WidgetLocations.es6';
 
 const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
 
@@ -38,7 +39,7 @@ const REQUIRED_DEPENDENCIES = [
 //   handlers and notifies it about changes.
 // - `apply` takes a function to be executed in the Angular
 //   context (using `$rootScope.$apply`).
-export default function createBridge(dependencies) {
+export default function createBridge(dependencies, location = LOCATION_ENTRY_FIELD) {
   REQUIRED_DEPENDENCIES.forEach(key => {
     if (!(key in dependencies)) {
       throw new Error(`"${key}" not provided to the extension bridge.`);
@@ -65,21 +66,21 @@ export default function createBridge(dependencies) {
 
   function getData() {
     return {
+      location,
       spaceMembership: spaceContext.space.data.spaceMembership,
-      current: {
-        field: $scope.widget.field,
-        locale: $scope.locale
-      },
+      current:
+        location === LOCATION_ENTRY_SIDEBAR
+          ? null
+          : {
+              field: $scope.widget.field,
+              locale: $scope.locale
+            },
       locales: {
         available: TheLocaleStore.getPrivateLocales(),
         default: TheLocaleStore.getDefaultLocale()
       },
       entryData: $scope.otDoc.getValueAt([]),
-      contentTypeData: $scope.entityInfo.contentType,
-      parameters: {
-        instance: $scope.widget.settings || {},
-        installation: $scope.widget.installationParameterValues || {}
-      }
+      contentTypeData: $scope.entityInfo.contentType
     };
   }
 
@@ -241,16 +242,8 @@ export default function createBridge(dependencies) {
   }
 
   function install(api) {
-    K.onValueScope($scope, $scope.fieldLocale.access$, access => {
-      api.send('isDisabledChanged', [!!access.disabled]);
-    });
-
     K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
       api.send('sysChanged', [sys]);
-    });
-
-    K.onValueScope($scope, $scope.fieldLocale.errors$, errors => {
-      api.send('schemaErrorsChanged', [errors || []]);
     });
 
     K.onValueScope(
@@ -266,12 +259,23 @@ export default function createBridge(dependencies) {
     api.registerHandler('navigateToContentEntity', navigate);
     api.registerHandler('notify', notify);
 
-    api.registerHandler('setInvalid', (isInvalid, localeCode) => {
-      $scope.fieldController.setInvalid(localeCode, isInvalid);
-    });
+    // Available for field-level extensions only:
+    if (location !== LOCATION_ENTRY_SIDEBAR) {
+      K.onValueScope($scope, $scope.fieldLocale.access$, access => {
+        api.send('isDisabledChanged', [!!access.disabled]);
+      });
 
-    api.registerHandler('setActive', isActive => {
-      $scope.fieldLocale.setActive(isActive);
-    });
+      K.onValueScope($scope, $scope.fieldLocale.errors$, errors => {
+        api.send('schemaErrorsChanged', [errors || []]);
+      });
+
+      api.registerHandler('setInvalid', (isInvalid, localeCode) => {
+        $scope.fieldController.setInvalid(localeCode, isInvalid);
+      });
+
+      api.registerHandler('setActive', isActive => {
+        $scope.fieldLocale.setActive(isActive);
+      });
+    }
   }
 }

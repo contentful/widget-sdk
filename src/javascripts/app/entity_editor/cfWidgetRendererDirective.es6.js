@@ -19,7 +19,6 @@ export default function register() {
     '$compile',
     '$rootScope',
     'spaceContext',
-    'Config.es6',
     'TheLocaleStore',
     'entitySelector',
     'analytics/Analytics.es6',
@@ -30,7 +29,6 @@ export default function register() {
       $compile,
       $rootScope,
       spaceContext,
-      Config,
       TheLocaleStore,
       entitySelector,
       Analytics,
@@ -42,7 +40,7 @@ export default function register() {
         scope: true,
         restrict: 'E',
         link: function(scope, element) {
-          const { problem, widgetNamespace, template, src, srcdoc } = scope.widget;
+          const { problem, widgetNamespace, template, descriptor, parameters } = scope.widget;
 
           if (problem) {
             scope.props = { message: problem };
@@ -59,6 +57,8 @@ export default function register() {
 
           function renderExtension() {
             scope.props = {
+              descriptor,
+              parameters,
               bridge: createBridge({
                 $rootScope,
                 $scope: scope,
@@ -69,10 +69,7 @@ export default function register() {
                 entityCreator,
                 Navigator,
                 SlideInNavigator
-              }),
-              src,
-              srcdoc,
-              appDomain: `app.${Config.domain}`
+              })
             };
 
             renderTemplate(

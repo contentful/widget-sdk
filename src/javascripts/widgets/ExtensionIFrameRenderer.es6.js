@@ -1,33 +1,41 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import * as Config from 'Config.es6';
+
 import Channel from './ExtensionIFrameChannel.es6';
 import ExtensionAPI from './ExtensionAPI.es6';
 
 const WIDTH = { width: '100%' };
 const SANDBOX = 'allow-scripts allow-popups allow-popups-to-escape-sandbox';
 
-function isAppDomain(src, appDomain) {
+function isAppDomain(src) {
   const protocol = ['//', 'http://', 'https://'].find(p => src.startsWith(p));
 
   if (protocol) {
     const [domain] = src.slice(protocol.length).split('/');
+    const appDomain = `app.${Config.domain}`;
     return domain === appDomain || domain.endsWith(`.${appDomain}`);
   } else {
     return false;
   }
 }
 
-export default class WidgetRenderWarning extends React.Component {
+export default class ExtensionIFrameRenderer extends React.Component {
   static propTypes = {
     bridge: PropTypes.shape({
       getData: PropTypes.func.isRequired,
       apply: PropTypes.func.isRequired,
       install: PropTypes.func.isRequired
     }).isRequired,
-    src: PropTypes.string,
-    srcdoc: PropTypes.string,
-    appDomain: PropTypes.string.isRequired
+    descriptor: PropTypes.shape({
+      src: PropTypes.string,
+      srcdoc: PropTypes.string
+    }).isRequired,
+    parameters: PropTypes.shape({
+      instance: PropTypes.object.isRequired,
+      installation: PropTypes.object.isRequired
+    }).isRequired
   };
 
   // There's no need to update. Once the iframe is loaded
@@ -55,16 +63,25 @@ export default class WidgetRenderWarning extends React.Component {
       return;
     }
 
-    const { bridge, src, srcdoc, appDomain } = this.props;
+    const { bridge, descriptor } = this.props;
+    const { src, srcdoc } = descriptor;
+
+    // Cherry-pick only valid parameter types and make sure
+    // they are always defined.
+    const parameters = {
+      instance: this.props.parameters.instance || {},
+      installation: this.props.parameters.installation || {}
+    };
+
     const channel = new Channel(iframe, window, bridge.apply);
-    this.extensionApi = new ExtensionAPI({ channel, ...bridge.getData() });
+    this.extensionApi = new ExtensionAPI({ channel, parameters, ...bridge.getData() });
     bridge.install(this.extensionApi);
 
     iframe.allowfullscreen = true;
     iframe.msallowfullscreen = true;
     iframe.allow = 'fullscreen';
 
-    if (src && !isAppDomain(src, appDomain)) {
+    if (src && !isAppDomain(src)) {
       iframe.sandbox = `${SANDBOX} allow-same-origin`;
       iframe.src = src;
     } else if (srcdoc) {

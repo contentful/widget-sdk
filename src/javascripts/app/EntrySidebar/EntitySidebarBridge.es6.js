@@ -5,7 +5,7 @@ import { getModule } from 'NgRegistry.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes.es6';
 import createBridge from 'widgets/EditorExtensionBridge.es6';
-import * as Config from 'Config.es6';
+import * as WidgetLocations from 'widgets/WidgetLocations.es6';
 
 const $controller = getModule('$controller');
 const $rootScope = getModule('$rootScope');
@@ -172,9 +172,28 @@ export default ({ $scope }) => {
       $scope: fieldLocaleScope
     });
 
-    const bridge = createBridge({
+    const bridge = createBridge(
+      {
+        $rootScope,
+        $scope: fieldLocaleScope,
+        spaceContext,
+        TheLocaleStore,
+        entitySelector,
+        Analytics,
+        entityCreator,
+        Navigator,
+        SlideInNavigator
+      },
+      WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR
+    );
+
+    return { bridge, widget };
+  });
+
+  const sidebarExtensionsBridge = createBridge(
+    {
       $rootScope,
-      $scope: fieldLocaleScope,
+      $scope,
       spaceContext,
       TheLocaleStore,
       entitySelector,
@@ -182,16 +201,15 @@ export default ({ $scope }) => {
       entityCreator,
       Navigator,
       SlideInNavigator
-    });
-
-    return { bridge, widget };
-  });
+    },
+    WidgetLocations.LOCATION_ENTRY_SIDEBAR
+  );
 
   return {
-    legacySidebar: {
-      extensions: legacyExtensions,
-      appDomain: `app.${Config.domain}`
-    },
+    legacySidebarExtensions: legacyExtensions,
+    sidebar: $scope.editorData.sidebar,
+    sidebarExtensions: $scope.editorData.sidebarExtensions,
+    sidebarExtensionsBridge,
     isEntry,
     isMasterEnvironment,
     emitter

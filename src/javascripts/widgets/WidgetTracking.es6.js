@@ -17,7 +17,7 @@ function getExtensionTrackingContexts(editorData) {
       'fieldControls',
       'sidebar'
     ]),
-    [WidgetLocations.LOCATION_ENTRY_SIDEBAR]: getExtensions(editorData, ['sidebar'])
+    [WidgetLocations.LOCATION_ENTRY_SIDEBAR]: getExtensions(editorData, ['sidebarExtensions'])
   };
 
   return Object.keys(extensionsByLocation).reduce(
@@ -41,8 +41,8 @@ function makeExtensionEventData(location, widget) {
     // to be empty strings if the extension is not rendered for a field.
     field_id: typeof widget.fieldId === 'string' ? widget.fieldId : '',
     field_type: widget.field ? toInternalFieldType(widget.field) : '',
-    installation_params: Object.keys(widget.installationParameterValues),
-    instance_params: Object.keys(widget.settings),
+    installation_params: Object.keys(get(widget, ['parameters', 'installation'], {})),
+    instance_params: Object.keys(get(widget, ['parameters', 'instance'], {})),
     sidebar: !!widget.sidebar,
     src: typeof widget.src === 'string' ? widget.src : null
   };

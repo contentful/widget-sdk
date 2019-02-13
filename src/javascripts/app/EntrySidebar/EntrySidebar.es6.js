@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import EntrySidebarWidget from './EntrySidebarWidget.es6';
+import { isArray } from 'lodash';
+import { Note } from '@contentful/forma-36-react-components';
+import {
+  AssetConfiguration,
+  EntryConfiguration
+} from 'app/EntrySidebar/Configuration/defaults.es6';
+import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer.es6';
 import ContentPreviewWidget from './ContentPreviewWidget/ContentPreviewWidget.es6';
@@ -13,31 +20,13 @@ import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer.es
 
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 
-const CORE_WIDGETS = {
-  PUBLICATION: {
-    type: SidebarWidgetTypes.PUBLICATION,
-    Component: PublicationWidgetContainer
-  },
-  CONTENT_PREVIEW: {
-    type: SidebarWidgetTypes.CONTENT_PREVIEW,
-    Component: ContentPreviewWidget
-  },
-  INCOMING_LINKS: {
-    type: SidebarWidgetTypes.INCOMING_LINKS,
-    Component: IncomingLinksWidgetContainer
-  },
-  TRANSLATION: {
-    type: SidebarWidgetTypes.TRANSLATION,
-    Component: TranslationWidgetContainer
-  },
-  VERSIONS: {
-    type: SidebarWidgetTypes.VERSIONS,
-    Component: VersionsWidgetContainer
-  },
-  USERS: {
-    type: SidebarWidgetTypes.USERS,
-    Component: UsersWidgetContainer
-  }
+const ComponentsMap = {
+  [SidebarWidgetTypes.PUBLICATION]: PublicationWidgetContainer,
+  [SidebarWidgetTypes.CONTENT_PREVIEW]: ContentPreviewWidget,
+  [SidebarWidgetTypes.INCOMING_LINKS]: IncomingLinksWidgetContainer,
+  [SidebarWidgetTypes.TRANSLATION]: TranslationWidgetContainer,
+  [SidebarWidgetTypes.USERS]: UsersWidgetContainer,
+  [SidebarWidgetTypes.VERSIONS]: VersionsWidgetContainer
 };
 
 export default class EntrySidebar extends Component {
@@ -45,49 +34,117 @@ export default class EntrySidebar extends Component {
     isMasterEnvironment: PropTypes.bool.isRequired,
     isEntry: PropTypes.bool.isRequired,
     emitter: PropTypes.object.isRequired,
-    legacySidebar: PropTypes.shape({
-      extensions: PropTypes.arrayOf(
-        PropTypes.shape({
-          bridge: PropTypes.object.isRequired,
-          widget: PropTypes.object.isRequired
-        })
-      ).isRequired,
-      appDomain: PropTypes.string.isRequired
-    })
+
+    sidebar: PropTypes.arrayOf(
+      PropTypes.shape({
+        widgetId: PropTypes.string.isRequired,
+        widgetNamespace: PropTypes.string.isRequired,
+        disabled: PropTypes.bool
+      })
+    ),
+    sidebarExtensions: PropTypes.arrayOf(
+      PropTypes.shape({
+        widgetId: PropTypes.string.isRequired,
+        widgetNamespace: PropTypes.string.isRequired,
+        descriptor: PropTypes.object,
+        problem: PropTypes.string
+      })
+    ),
+    sidebarExtensionsBridge: PropTypes.object.isRequired,
+    legacySidebarExtensions: PropTypes.arrayOf(
+      PropTypes.shape({
+        bridge: PropTypes.object.isRequired,
+        widget: PropTypes.object.isRequired
+      })
+    )
   };
 
-  getWidgetsList = () => {
-    const { isEntry, isMasterEnvironment } = this.props;
-    return [
-      CORE_WIDGETS.PUBLICATION,
-      isEntry ? CORE_WIDGETS.CONTENT_PREVIEW : null,
-      CORE_WIDGETS.INCOMING_LINKS,
-      CORE_WIDGETS.TRANSLATION,
-      isEntry && isMasterEnvironment ? CORE_WIDGETS.VERSIONS : null,
-      CORE_WIDGETS.USERS
-    ].filter(item => item !== null);
+  renderBuiltinWidget = sidebarItem => {
+    const { widgetId, widgetNamespace } = sidebarItem;
+
+    if (widgetId === SidebarWidgetTypes.VERSIONS && !this.props.isMasterEnvironment) {
+      return null;
+    }
+
+    const Component = ComponentsMap[widgetId];
+
+    if (!Component) {
+      return null;
+    }
+
+    return <Component key={`${widgetNamespace},${widgetId}`} emitter={this.props.emitter} />;
+  };
+
+  renderExtensionWidget = item => {
+    item = this.props.sidebarExtensions.find(w => w.widgetId === item.widgetId);
+
+    if (item.problem) {
+      return (
+        <EntrySidebarWidget title="Missing extension">
+          <Note noteType="warning" extraClassNames="f36-margin-top--l f36-margin-bottom--l">
+            <code>{item.name || item.widgetId}</code> is saved in configuration, but not installed
+            in this environment.
+          </Note>
+        </EntrySidebarWidget>
+      );
+    }
+
+    return (
+      <EntrySidebarWidget
+        title={item.descriptor.name}
+        key={`${item.widgetNamespace},${item.widgetId}`}>
+        <ExtensionIFrameRenderer
+          bridge={this.props.sidebarExtensionsBridge}
+          descriptor={item.descriptor}
+          parameters={item.parameters}
+        />
+      </EntrySidebarWidget>
+    );
+  };
+
+  renderWidgets = (sidebarItems = []) => {
+    return sidebarItems.map(item => {
+      if (item.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
+        return this.renderBuiltinWidget(item);
+      }
+      if (item.widgetNamespace === NAMESPACE_EXTENSION) {
+        return this.renderExtensionWidget(item);
+      }
+      return null;
+    });
+  };
+
+  renderLegacyExtensions = legacyExtensions => {
+    return legacyExtensions.map(({ bridge, widget }) => (
+      <EntrySidebarWidget title={widget.field.name} key={widget.field.id}>
+        <ExtensionIFrameRenderer
+          bridge={bridge}
+          descriptor={widget.descriptor}
+          parameters={widget.parameters}
+        />
+      </EntrySidebarWidget>
+    ));
+  };
+
+  getSidebarConfiguration = () => {
+    if (!this.props.isEntry) {
+      return AssetConfiguration;
+    }
+    if (!isArray(this.props.sidebar)) {
+      return EntryConfiguration;
+    }
+    return this.props.sidebar.filter(widget => widget.disabled !== true);
   };
 
   render() {
-    const widgets = this.getWidgetsList();
+    const sidebarItems = this.getSidebarConfiguration();
+    const legacyExtensions = this.props.legacySidebarExtensions || [];
     return (
       <React.Fragment>
         <EntryInfoPanelContainer emitter={this.props.emitter} />
         <div className="entity-sidebar">
-          {widgets.map(({ type, Component }) => (
-            <Component key={type} emitter={this.props.emitter} />
-          ))}
-
-          {this.props.legacySidebar.extensions.map(({ bridge, widget }) => (
-            <EntrySidebarWidget title={widget.field.name} key={widget.field.id}>
-              <ExtensionIFrameRenderer
-                bridge={bridge}
-                src={widget.src}
-                srcdoc={widget.srcdoc}
-                appDomain={this.props.legacySidebar.appDomain}
-              />
-            </EntrySidebarWidget>
-          ))}
+          {this.renderWidgets(sidebarItems)}
+          {this.renderLegacyExtensions(legacyExtensions)}
         </div>
       </React.Fragment>
     );

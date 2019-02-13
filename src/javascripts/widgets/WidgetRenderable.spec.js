@@ -1,4 +1,4 @@
-import buildRenderables from './WidgetRenderable.es6';
+import { buildRenderables } from './WidgetRenderable.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
 
 describe('WidgetRenderables', () => {
@@ -155,7 +155,8 @@ describe('WidgetRenderables', () => {
         }
       );
       expect(renderables.form[0].settings).toEqual({ x: true });
-      expect(renderables.form[0].installationParameterValues).toEqual({ z: true, y: 'test' });
+      expect(renderables.form[0].parameters.instance).toEqual({ x: true });
+      expect(renderables.form[0].parameters.installation).toEqual({ z: true, y: 'test' });
     });
   });
 

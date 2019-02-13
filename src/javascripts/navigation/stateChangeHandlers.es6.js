@@ -87,6 +87,19 @@ export default function register() {
           return;
         }
 
+        // When transitioning between two states declaring they don't care
+        // about leaving confirmation...
+        if (fromStateParams.ignoreLeaveConfirmation && toStateParams.ignoreLeaveConfirmation) {
+          // Keep their data in sync so for example dirty state of one
+          // is propagated to the other one so it can be used when finally
+          // navigating to a state not requiring confirmation.
+          toState.data = fromState.data || {};
+
+          // Don't run confirmation logic below but still allow to transition
+          // by not calling `preventDefault()`.
+          return;
+        }
+
         if (confirmationInProgress) {
           logger.logError('Change state during state change confirmation', {
             state: {

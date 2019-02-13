@@ -20,7 +20,7 @@ describe('SSOSetup', () => {
     createIdp = () => {},
     retrieveIdp = jest.fn().mockResolvedValue(true),
     onReady = () => {}
-   } = {}) => {
+  } = {}) => {
     return Enzyme.shallow(
       <SSOSetup
         identityProvider={identityProvider}
@@ -83,7 +83,6 @@ describe('SSOSetup', () => {
 
     expect(rendered.find(IDPSetupForm)).toHaveLength(1);
   });
-
 
   it('should not render the IDPSetupForm component is given identityProvider is enabled', () => {
     const identityProvider = {

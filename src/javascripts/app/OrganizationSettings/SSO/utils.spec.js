@@ -1,7 +1,7 @@
 import * as utils from './utils.es6';
 
 jest.mock('./validators.es6', () => ({
-  myAwesomeField: (str) => {
+  myAwesomeField: str => {
     if (str === 'secret') {
       return `${str} is valid!`;
     } else {

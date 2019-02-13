@@ -7,7 +7,7 @@ import { NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
 // Given EditorInterface controls and a list of all widgets in a space
 // builds an array of "renderables". A "renderable" is a data structure
 // holding all the information needed to render an editor for a field.
-export default function buildRenderables(controls, widgets) {
+export function buildRenderables(controls, widgets) {
   return controls.reduce(
     (acc, control) => {
       if (control.field) {
@@ -26,8 +26,7 @@ function buildOneRenderable(control, widgets) {
     fieldId: control.fieldId,
     widgetId: control.widgetId,
     widgetNamespace: control.widgetNamespace,
-    field: cloneDeep(control.field),
-    settings: {}
+    field: cloneDeep(control.field)
   };
 
   const namespaceWidgets = widgets[control.widgetNamespace] || [];
@@ -44,28 +43,59 @@ function buildOneRenderable(control, widgets) {
     return Object.assign(renderable, { problem: 'incompatible' });
   }
 
-  Object.assign(renderable, {
-    settings: applyDefaultValues(
-      get(descriptor, ['parameters'], []),
-      get(control, ['settings'], {})
-    ),
-    installationParameterValues: applyDefaultValues(
-      get(descriptor, ['installationParameters', 'definitions'], []),
-      get(descriptor, ['installationParameters', 'values'], {})
-    ),
-    template: descriptor.template,
-    isFocusable: !descriptor.notFocusable,
-    isBackground: descriptor.isBackground,
-    sidebar: !!descriptor.sidebar
-  });
+  const parameters = {
+    instance:
+      applyDefaultValues(get(descriptor, ['parameters'], []), get(control, ['settings'], {})) || {},
+    installation:
+      applyDefaultValues(
+        get(descriptor, ['installationParameters', 'definitions'], []),
+        get(descriptor, ['installationParameters', 'values'], {})
+      ) || {}
+  };
 
-  if (renderable.widgetNamespace === NAMESPACE_EXTENSION) {
-    if (descriptor.src) {
-      renderable.src = descriptor.src;
-    } else if (descriptor.srcdoc) {
-      renderable.srcdoc = descriptor.srcdoc;
+  return deepFreeze(
+    Object.assign(renderable, {
+      settings: parameters.instance, // Consumed by builtin widgets.
+      parameters, // Consumed by extensions.
+      template: descriptor.template,
+      isFocusable: !descriptor.notFocusable,
+      isBackground: descriptor.isBackground,
+      sidebar: !!descriptor.sidebar
+    })
+  );
+}
+
+export function buildSidebarRenderables(sidebar, widgets) {
+  const items = sidebar.filter(item => item.widgetNamespace === NAMESPACE_EXTENSION);
+
+  return items.map(item => {
+    const renderable = {
+      widgetId: item.widgetId,
+      widgetNamespace: item.widgetNamespace
+    };
+
+    const namespaceWidgets = widgets[NAMESPACE_EXTENSION] || [];
+    const descriptor = namespaceWidgets.find(w => w.id === item.widgetId);
+
+    if (descriptor) {
+      Object.assign(renderable, { descriptor });
+    } else {
+      return Object.assign(renderable, { problem: 'missing' });
     }
-  }
 
-  return deepFreeze(renderable);
+    return deepFreeze(
+      Object.assign(renderable, {
+        parameters: {
+          instance:
+            applyDefaultValues(get(descriptor, ['parameters'], []), get(item, ['settings'], {})) ||
+            {},
+          installation:
+            applyDefaultValues(
+              get(descriptor, ['installationParameters', 'definitions'], []),
+              get(descriptor, ['installationParameters', 'values'], {})
+            ) || {}
+        }
+      })
+    );
+  });
 }

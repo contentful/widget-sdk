@@ -13,7 +13,8 @@ const messages = {
   save: {
     success: 'Content type saved successfully',
     invalid: saveError + 'Data is invalid',
-    outdated: saveError + 'Your version is outdated. Please reload and try again'
+    outdated: saveError + 'Your version is outdated. Please reload and try again',
+    nofields: 'At least one field is required to save a content type.'
   },
   create: {
     exists: 'A content type with this ID already exists'
@@ -92,6 +93,10 @@ export function saveOutdatedError(error, contentType) {
     error,
     contentType: contentType.data
   });
+}
+
+export function saveNoFields() {
+  Notification.error(messages.save.nofields);
 }
 
 export function saveIdExists() {

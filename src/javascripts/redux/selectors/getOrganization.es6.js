@@ -16,4 +16,4 @@ export default state => {
   }
 
   return find(organizations, org => get(org, ['sys', 'id']) === orgId);
-}
+};

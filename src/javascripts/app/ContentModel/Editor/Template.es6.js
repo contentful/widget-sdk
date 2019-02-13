@@ -13,11 +13,6 @@ import { h, icons } from 'utils/legacy-html-hyperscript/index.es6';
  *     'Duplicate'
  *   - tabSelect() Select between 'Fields' and 'JSON Preview' tab
  *   - tabPanel() Slot for fields and JSON preview
- *     - cfContentTypePreview directive
- *     - fields()
- *       - uses fieldActionsContextMenu()
- *     - noFieldsAdvice()
- *   - sidebar()
  */
 
 // TODO It should be possible to inline a lot of the styles since they
@@ -35,7 +30,9 @@ export default h('div.workbench', [
       },
       [tabSelect(), tabPanel()]
     ),
-    h('div.workbench-main__sidebar', [sidebar()])
+    h('div.workbench-main__sidebar', { ngIf: 'stateIs("^.preview") || stateIs("^.fields")' }, [
+      sidebar()
+    ])
   ])
 ]);
 
@@ -167,6 +164,16 @@ function tabSelect() {
             role: 'tab'
           },
           ['JSON preview']
+        ),
+        h(
+          'li',
+          {
+            ngIf: 'hasCustomSidebarFeature === true',
+            ngClick: 'goTo("sidebar_configuration")',
+            ariaSelected: '{{stateIs("^.sidebar_configuration")}}',
+            role: 'tab'
+          },
+          ['Sidebar']
         )
       ])
     ]
@@ -187,13 +194,6 @@ function tabPanel() {
       h(
         'div',
         {
-          ngIf: 'stateIs("^.preview")'
-        },
-        [h('cf-content-type-preview.u-bce')]
-      ),
-      h(
-        'div',
-        {
           ngIf: 'stateIs("^.fields")'
         },
         [
@@ -207,6 +207,36 @@ function tabPanel() {
           h('div', { ngIf: '!hasFields' }, [
             h('react-component', { name: 'app/ContentModel/Editor/FieldsTab/NoFieldsAdvice.es6' })
           ])
+        ]
+      ),
+      h(
+        'div',
+        {
+          ngIf: 'stateIs("^.preview")'
+        },
+        [
+          h('div.u-bce', [
+            h('react-component', {
+              name: 'app/ContentModel/Editor/PreviewTab/ContentTypePreview.es6',
+              props: 'contentPreviewProps'
+            })
+          ])
+        ]
+      ),
+      h(
+        'div',
+        {
+          ngIf: 'hasCustomSidebarFeature === true',
+          // we're hiding this div, so react component can keep local state
+          // while we're navigation beetween tabs
+          ngHide: '!stateIs("^.sidebar_configuration")'
+        },
+        [
+          h('react-component', {
+            name: 'app/EntrySidebar/Configuration/SidebarConfiguration.es6',
+            props:
+              '{ configuration: editorInterface.sidebar, extensions: sidebarExtensions, onUpdateConfiguration: updateSidebarConfiguration }'
+          })
         ]
       )
     ]

@@ -1,0 +1,108 @@
+.sidebar-configuration
+  margin: 0 auto
+  width: 800px
+  margin-bottom: 60px
+
+  .sidebar-configuration__container
+    display: flex
+
+  .sidebar-configuration__main-column
+    min-width: 400px
+    width: 400px
+    border: 1px solid $colors.element-mid
+    background-color: $colors.white
+    min-height: 500px
+    padding: $rhythm(1) $rhythm(1.5) 0 $rhythm(1.5)
+    box-shadow: 2px 0 3px 0 rgba(0,0,0,0.05);
+
+  .sidebar-configuration__additional-column
+    min-width: 400px
+    width: 400px
+    border: 1px solid $colors.element-mid
+    border-left: none
+    min-height: 500px
+    padding: $rhythm(1) $rhythm(1.5)
+    box-shadow: 2px 0 3px 0 rgba(0,0,0,0.05);
+
+  .sidebar-configuration__options
+    display: flex
+
+  .sidebar-configuration__item
+    border: 1px solid $colors.element-mid
+    background-color: $colors.element-lightest
+    margin-bottom: $rhythm(1)
+    padding: $rhythm(0.5) $rhythm(1) $rhythm(0.5) $rhythm(1.5)
+    position: relative
+
+  .sidebar-configuration__problem-item
+    position: relative
+    margin-bottom: $rhythm(1)
+
+  .draggable-item
+    margin-bottom: $rhythm(1)
+
+  .draggable-item .sidebar-configuration__item,
+  .draggable-item .sidebar-configuration__problem-item
+    margin: 0
+    user-select: none
+
+  .sidebar-configuration__item-drag
+    position: absolute
+    left: $rhythm(0.3)
+    top: 12px
+    fill: $colors.text-light
+
+  .sidebar-configuration__item-close
+    position: absolute
+    right: $rhythm(1)
+    top: 10px
+    cursor: pointer
+    svg
+      fill: $colors.text-light
+
+  .sidebar-configuration__item-name
+    flex-grow: 1
+    font-size: .75rem
+    font-weight: 500
+    text-transform: uppercase
+    color: $colors.text-light
+    line-height: 2
+    border-bottom: 1px solid $colors.element-dark
+    letter-spacing: 1px
+    margin-bottom: $rhythm(1)
+
+
+  /* Available Items */
+
+  .sidebar-configuraiton__available-widgets-section
+    .sidebar-configuration__available-widget:first-child
+      border-top: 1px solid $colors.element-mid
+
+  .sidebar-configuration__available-widget
+    background-color: $colors.white
+    border: 1px solid $colors.element-mid
+    height: 60px
+    border-top: none
+    display: flex
+    padding: $rhythm(0.5) $rhythm(1)
+    svg
+      fill: $colors.text-light
+
+  .sidebar-configuration__available-widget-info
+    flex-grow: 1
+    display: flex
+    flex-direction: column
+    justify-content: center
+
+  .sidebar-configuration__available-widget-name
+    font-weight: bold
+
+  .sidebar-configuration__available-widget-actions
+    display: flex
+    align-items: center
+
+  .sidebar-configuration-fields__container
+    display: block
+    background-color: $colors.element-lightest
+    border: 1px solid $colors.element-mid
+    padding: $rhythm(2)

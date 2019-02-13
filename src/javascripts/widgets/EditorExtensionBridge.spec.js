@@ -1,5 +1,6 @@
 import createBridge from './EditorExtensionBridge.es6';
 import { createBus } from 'utils/kefir.es6';
+import { LOCATION_ENTRY_FIELD } from './WidgetLocations.es6';
 
 function createMockProperty(initial) {
   const bus = createBus();
@@ -57,15 +58,9 @@ describe('EditorExtensionBridge', () => {
           errors$: stubs.errors,
           setActive: stubs.setActive
         },
-        widget: {
-          field: 'FIELD',
-          settings: 'SETTINGS',
-          installationParameterValues: 'INSTALLATION PARAMS'
-        },
+        widget: { field: 'FIELD' },
         locale: { code: 'pl' },
-        entityInfo: {
-          contentType: 'CONTENT TYPE'
-        }
+        entityInfo: { contentType: 'CONTENT TYPE' }
       },
       spaceContext: {
         getId: () => 'sid',
@@ -103,6 +98,7 @@ describe('EditorExtensionBridge', () => {
       const [bridge] = makeBridge();
 
       expect(bridge.getData()).toEqual({
+        location: LOCATION_ENTRY_FIELD,
         contentTypeData: 'CONTENT TYPE',
         current: { field: 'FIELD', locale: { code: 'pl' } },
         entryData: { fields: {}, sys: {} },
@@ -110,7 +106,6 @@ describe('EditorExtensionBridge', () => {
           available: [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
           default: { code: 'pl', name: 'Polski', default: true }
         },
-        parameters: { installation: 'INSTALLATION PARAMS', instance: 'SETTINGS' },
         spaceMembership: 'MEMBERSHIP '
       });
     });

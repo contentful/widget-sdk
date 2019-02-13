@@ -99,13 +99,7 @@ describe('WidgetParametersForm', () => {
     ];
     const [wrapper] = mount(definitions, { str: 'test' }, { bool: true });
     expect(wrapper.find('.cfnext-form__field-error')).toHaveLength(1);
-    const fields = wrapper.find('.cfnext-form__field');
-    expect(
-      fields
-        .at(1)
-        .text()
-        .includes('This value is required')
-    ).toBe(true);
+    expect(wrapper.find('.cfnext-form__field-error')).toIncludeText('This value is required');
   });
 
   it('uses values for rendering', () => {
@@ -117,21 +111,15 @@ describe('WidgetParametersForm', () => {
     ];
     const values = { str: 'test', enum: 'two', num: 123, bool: true };
     const [wrapper] = mount(definitions, values);
-    expect(wrapper.find('.cfnext-form__field')).toHaveLength(4);
-    expect(wrapper.find('[name="str"]').props().value).toBe('test');
-    expect(wrapper.find('[name="enum"]').props().value).toBe('two');
-    expect(wrapper.find('[name="num"]').props().value).toBe('123');
+    expect(wrapper.find('input[name="str"]').props().value).toBe('test');
+    expect(wrapper.find('select[name="enum"]').props().value).toBe('two');
+    expect(wrapper.find('input[name="num"]').props().value).toBe('123');
     expect(wrapper.find('input[name="bool"]').props().checked).toBe(true);
   });
 
   it('renders description', () => {
     const definitions = [{ id: 'x', type: 'Symbol', name: 'X', description: 'Please gimme value' }];
     const [wrapper] = mount(definitions);
-    expect(
-      wrapper
-        .find('p')
-        .text()
-        .includes('Please gimme value')
-    ).toBe(true);
+    expect(wrapper).toIncludeText('Please gimme value');
   });
 });
