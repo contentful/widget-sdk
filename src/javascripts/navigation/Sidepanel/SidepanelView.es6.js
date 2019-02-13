@@ -134,19 +134,22 @@ const Sidepanel = connect(
           aria-hidden={sidePanelIsShown ? '' : 'true'}
           onClick={closeOrgsDropdown}
           data-test-id="sidepanel">
-          {currOrg && <SidepanelOrgs {...this.props} />}
-          {currOrg && <SidepanelSpaces {...this.props} />}
-          {!currOrg && <SidepanelNoOrgs {...this.props} />}
-
-          {isOwnerOrAdmin(currOrg) ? (
-            <OrgActions
-              gotoOrgSettings={gotoOrgSettings}
-              viewingOrgSettings={viewingOrgSettings}
-              showOrgSettingsAsTeams={false}
-            />
-          ) : (
-            this.renderOrgSettingsForMembers()
+          {currOrg && (
+            <React.Fragment>
+              <SidepanelOrgs {...this.props} />
+              <SidepanelSpaces {...this.props} />
+              {isOwnerOrAdmin(currOrg) ? (
+                <OrgActions
+                  gotoOrgSettings={gotoOrgSettings}
+                  viewingOrgSettings={viewingOrgSettings}
+                  showOrgSettingsAsTeams={false}
+                />
+              ) : (
+                this.renderOrgSettingsForMembers()
+              )}
+            </React.Fragment>
           )}
+          {!currOrg && <SidepanelNoOrgs {...this.props} />}
 
           <div
             className="nav-sidepanel__close-btn"
