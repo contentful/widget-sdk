@@ -40,8 +40,7 @@ class TeamList extends React.Component {
       ? `You are in ${teamsPlural}`
       : `${teamsPlural} in your organization`;
 
-    if (teams.length === 0 && !readOnlyPermission) return <TeamsEmptyState isAdmin={true} />;
-    if (teams.length === 0 && readOnlyPermission) return <TeamsEmptyState isAdmin={false} />;
+    if (teams.length === 0) return <TeamsEmptyState isAdmin={!readOnlyPermission} />;
 
     return (
       <Workbench>

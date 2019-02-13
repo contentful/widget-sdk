@@ -85,27 +85,45 @@ const Sidepanel = connect(
       }
     }
 
-    render() {
+    renderOrgSettingsForMembers() {
       const {
-        sidePanelIsShown,
-        closeOrgsDropdown,
-        closeSidePanel,
+        orgConstants,
         teamsFeatureEnabled,
         teamsForMembersFF,
         gotoOrgSettings,
-        viewingOrgSettings,
-        currOrg,
-        orgConstants
+        viewingOrgSettings
       } = this.props;
-
       const isEnterprise = get(orgConstants, ['isEnterprise'], false);
       const isLegacy = get(orgConstants, ['isLegacy'], false);
-      const isLoading = get(orgConstants, ['meta', 'isPending'], true);
       const isLegacyEnterprise = isLegacy && isEnterprise;
       // who can see the Teams button:
       // - members of V1 Enterprise orgs
       // - members of V2 orgs with the Teams feature enabled
       const shouldSeeTeams = teamsForMembersFF && (teamsFeatureEnabled || isLegacyEnterprise);
+      const isLoading = get(orgConstants, ['meta', 'isPending'], true);
+
+      return isLoading ? (
+        <Spinner size="small" style={{ margin: '10px 20px' }} />
+      ) : (
+        shouldSeeTeams && (
+          <OrgActions
+            gotoOrgSettings={gotoOrgSettings}
+            viewingOrgSettings={viewingOrgSettings}
+            showOrgSettingsAsTeams={true}
+          />
+        )
+      );
+    }
+
+    render() {
+      const {
+        sidePanelIsShown,
+        closeOrgsDropdown,
+        closeSidePanel,
+        gotoOrgSettings,
+        viewingOrgSettings,
+        currOrg
+      } = this.props;
 
       return (
         <div
@@ -123,16 +141,8 @@ const Sidepanel = connect(
               viewingOrgSettings={viewingOrgSettings}
               showOrgSettingsAsTeams={false}
             />
-          ) : isLoading ? (
-            <Spinner size="small" style={{ margin: '10px 20px' }} />
           ) : (
-            shouldSeeTeams && (
-              <OrgActions
-                gotoOrgSettings={gotoOrgSettings}
-                viewingOrgSettings={viewingOrgSettings}
-                showOrgSettingsAsTeams={true}
-              />
-            )
+            this.renderOrgSettingsForMembers()
           )}
 
           <div

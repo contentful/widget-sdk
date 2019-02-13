@@ -22,7 +22,6 @@ export function fetchOrgConstants(orgId) {
     const org = token.organization.find(org => org.sys.id === orgId);
     const isLegacy = org.pricingVersion === 'pricing_version_1';
 
-    // TODO: use multi key request for features
     const getFeatures = async () => {
       const values = await Promise.all(
         catalogFeatures.map(({ key, defaultValue }) => getOrgFeature(orgId, key, defaultValue))
