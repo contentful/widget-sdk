@@ -3,10 +3,10 @@ import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import { go } from 'states/Navigator.es6';
 import { get, merge, findKey, forEach } from 'lodash';
 import { supportUrl } from 'Config.es6';
+import * as Analytics from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const $window = getModule('$window');
-const trackPersistentNotification = getModule('analyticsEvents/persistentNotification');
 const $injector = getModule('$injector');
 
 const USAGE_METRICS = {
@@ -24,6 +24,12 @@ const USAGE_METRICS = {
   contentDeliveryApiRequest: 'Content Delivery API Requests'
 };
 
+const trackAction = action =>
+  Analytics.track('notification:action_performed', {
+    action,
+    currentPlan: Analytics.getSessionData('organization.subscriptionPlan.name') || null
+  });
+
 export function determineEnforcement(space, reasons, entityType) {
   if (!reasons || (reasons.length && reasons.length === 0)) return null;
 
@@ -35,7 +41,7 @@ export function determineEnforcement(space, reasons, entityType) {
         '<strong>System under maintenance.</strong> The service is down for maintenance and accessible in read-only mode.',
       actionMessage: 'Status',
       action: () => {
-        trackPersistentNotification.action('Visit Status Page');
+        trackAction('Visit Status Page');
         $window.location = 'https://www.contentfulstatus.com';
       }
     },
@@ -116,7 +122,7 @@ export function determineEnforcement(space, reasons, entityType) {
   return error;
 
   function upgradeAction() {
-    trackPersistentNotification.action('Quota Increase');
+    trackAction('Quota Increase');
     // using require to avoid circular dependency :(
     const isLegacyOrganization = $injector.get('utils/ResourceUtils.es6').isLegacyOrganization;
     const subscriptionState = isLegacyOrganization(organization)
