@@ -84,7 +84,7 @@ export default class WalkthroughComponent extends React.Component {
         />
       ),
       disableBeacon: true,
-      target: '[data-ui-tour-step="account-menu"]',
+      target: '[data-ui-tour-step="account-menu-trigger"]',
       placement: 'bottom-start'
     },
     {
