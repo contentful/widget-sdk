@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { getModule } from 'NgRegistry.es6';
-
-const DatePicker = getModule('datepicker');
+import * as DatePicker from 'ui/datepicker.es6';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
