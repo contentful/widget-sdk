@@ -59,7 +59,7 @@ export function fetchCurrentOrgConstants() {
   return async (dispatch, getState) => {
     const orgId = getOrgId(getState());
 
-    if (orgId) {
+    if (orgId && orgId !== 'new') {
       dispatch(fetchOrgConstants(orgId));
     }
   };

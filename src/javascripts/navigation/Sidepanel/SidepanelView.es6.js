@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, Provider } from 'react-redux';
-import { get } from 'lodash';
+import { get, debounce } from 'lodash';
 import CloseIcon from 'svg/close.es6';
 import SettingsIcon from 'svg/settings.es6';
 import TeamsIcon from 'svg/nav-organization-teams.es6';
@@ -80,10 +80,13 @@ const Sidepanel = connect(
     };
 
     componentDidUpdate(prevProps) {
-      if (prevProps.currOrg !== this.props.currOrg) {
-        this.props.fetchOrgConstants(this.props.currOrg.sys.id);
+      const { currOrg } = this.props;
+      if (currOrg && prevProps.currOrg !== currOrg) {
+        this.debouncedFetchOrgConstants(this.props.currOrg.sys.id);
       }
     }
+
+    debouncedFetchOrgConstants = debounce(this.props.fetchOrgConstants, 200);
 
     renderOrgSettingsForMembers() {
       const {
