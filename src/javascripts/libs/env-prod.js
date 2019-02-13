@@ -117,5 +117,6 @@ window.libs = [
   ['react-beautiful-dnd', require('react-beautiful-dnd')],
   ['@typeform/embed', require('@typeform/embed/dist/embed')],
   ['emotion', require('emotion')],
-  ['immer', require('immer')]
+  ['immer', require('immer')],
+  ['fclone', require('fclone')]
 ];
