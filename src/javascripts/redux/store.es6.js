@@ -2,7 +2,7 @@ import { user$, organizations$, spacesByOrganization$ } from '../services/TokenS
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { onValue } from 'utils/kefir.es6';
-import stripCircularDependencies from 'utils/stripCircularDependencies.es6';
+import removeCircularRefs from 'utils/removeCircularRefs.es6';
 
 import middlewares from './middlewares/index.es6';
 import reducer from './reducer/index.es6';
@@ -15,19 +15,19 @@ if (user$ && organizations$ && spacesByOrganization$) {
   onValue(user$, user => {
     store.dispatch({
       type: 'USER_UPDATE_FROM_TOKEN',
-      payload: { user: stripCircularDependencies(user) }
+      payload: { user: removeCircularRefs(user) }
     });
   });
   onValue(organizations$, organization => {
     store.dispatch({
       type: 'ORGANIZATIONS_UPDATE_FROM_TOKEN',
-      payload: { organization: stripCircularDependencies(organization) }
+      payload: { organization: removeCircularRefs(organization) }
     });
   });
   onValue(spacesByOrganization$, spaces => {
     store.dispatch({
       type: 'SPACES_BY_ORG_UPDATE_FROM_TOKEN',
-      payload: { spaces: stripCircularDependencies(spaces) }
+      payload: { spaces: removeCircularRefs(spaces) }
     });
   });
 }

@@ -1,7 +1,7 @@
 import { env } from 'Config.es6';
 import * as Snowplow from 'analytics/snowplow/Snowplow.es6';
 import { prepareUserData } from 'analytics/UserData.es6';
-import stringifySafe from 'json-stringify-safe';
+import removeCircularRefs from 'utils/removeCircularRefs.es6';
 import _ from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
@@ -221,8 +221,4 @@ function getBasicPayload() {
 
 function sendSessionDataToConsole() {
   analyticsConsole.setSessionData(session);
-}
-
-function removeCircularRefs(obj) {
-  return JSON.parse(stringifySafe(obj));
 }
