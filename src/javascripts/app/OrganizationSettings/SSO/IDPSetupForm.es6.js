@@ -305,10 +305,15 @@ export class IDPSetupForm extends React.Component {
               testId="test-connection-button"
               disabled={!allowConnectionTest}
               onClick={this.testConnection}>
-              Test connection
+              {!connectionTest.isPending && `Test connection`}
+              {connectionTest.isPending && `Testing connection...`}
             </Button>
             {connectionTest.isPending && (
-              <Button buttonType="muted" onClick={this.cancelConnectionTest} testId="cancel-button">
+              <Button
+                extraClassNames="f36-margin-left--m"
+                buttonType="muted"
+                onClick={this.cancelConnectionTest}
+                testId="cancel-button">
                 Cancel
               </Button>
             )}
