@@ -53,7 +53,7 @@ export default function() {
           text: 'Talk to us',
           ngClick: 'talkToUsClicked()',
           dataTestId: 'nav.account.intercom',
-          ngIf: 'isIntercomLoaded()'
+          ngIf: 'isIntercomEnabled()'
         },
         {
           text: 'Get support',

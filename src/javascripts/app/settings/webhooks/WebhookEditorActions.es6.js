@@ -1,9 +1,7 @@
 import { get } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
-
-const Analytics = getModule('analytics/Analytics.es6');
+import * as Analytics from 'analytics/Analytics.es6';
 
 const INVALID_BODY_TRANSFORMATION_ERROR_MSG =
   'Please make sure your custom payload is a valid JSON.';

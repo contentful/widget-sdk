@@ -1,12 +1,10 @@
 import { supportUrl } from 'Config.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const Intercom = getModule('intercom');
+import * as Intercom from 'services/intercom.es6';
 
 export default () => next => action => {
   if (action.type === 'CONTACT_US') {
     // Open intercom if it's possible, otherwise go to support page.
-    if (Intercom.isEnabled() && Intercom.isLoaded()) {
+    if (Intercom.isEnabled()) {
       Intercom.open();
     } else {
       window.open(supportUrl);

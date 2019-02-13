@@ -13,8 +13,9 @@ import { getPeriods, getOrgUsage, getApiUsage } from './UsageService.es6';
 import PeriodSelector from './committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
 import isPOCEnabled from 'account/POCFeatureFlag.es6';
+import * as Analytics from 'analytics/Analytics.es6';
+import * as LaunchDarkly from 'utils/LaunchDarkly/index.es6';
 
-const LaunchDarkly = getModule('utils/LaunchDarkly/index.es6');
 const OrganizationRoles = getModule('services/OrganizationRoles.es6');
 const ResourceService = getModule('services/ResourceService.es6');
 const PricingDataProvider = getModule('account/pricing/PricingDataProvider.es6');
@@ -23,7 +24,6 @@ const OrganizationMembershipRepository = getModule(
 );
 const EndpointFactory = getModule('data/EndpointFactory.es6');
 const TokenStore = getModule('services/TokenStore.es6');
-const Analytics = getModule('analytics/Analytics.es6');
 
 export class WorkbenchContent extends React.Component {
   static propTypes = {

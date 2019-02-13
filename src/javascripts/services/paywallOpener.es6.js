@@ -1,6 +1,7 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as Telemetry from 'Telemetry.es6';
+import * as Intercom from 'services/intercom.es6';
 
 export default function register() {
   /**
@@ -14,7 +15,6 @@ export default function register() {
     '$sce',
     '$window',
     'modalDialog',
-    'intercom',
     'TheAccountView',
     'Config.es6',
     'analytics/Analytics.es6',
@@ -24,7 +24,6 @@ export default function register() {
       $sce,
       $window,
       modalDialog,
-      intercom,
       TheAccountView,
       Config,
       Analytics,
@@ -72,8 +71,8 @@ export default function register() {
         }
 
         function openSupport() {
-          if (intercom.isEnabled()) {
-            intercom.open();
+          if (Intercom.isEnabled()) {
+            Intercom.open();
           } else {
             $window.open(Config.supportUrl);
           }

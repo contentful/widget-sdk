@@ -24,10 +24,10 @@ import {
   LinkedEntries,
   LegacyTokens
 } from './ContentPreviewSidebar.es6';
+import * as Analytics from 'analytics/Analytics.es6';
 
 const $state = getModule('$state');
 const contentPreview = getModule('contentPreview');
-const Analytics = getModule('analytics/Analytics.es6');
 
 export const ContentPreviewFormPageSkeleton = props => (
   <Workbench>

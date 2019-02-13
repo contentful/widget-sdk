@@ -162,7 +162,7 @@ describe('Client Controller', () => {
         };
 
         this.analytics = this.$inject('analytics/Analytics.es6');
-        this.intercom = this.$inject('intercom');
+        this.intercom = this.$inject('services/intercom.es6');
         this.intercom.disable = sinon.stub();
       });
 

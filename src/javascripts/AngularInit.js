@@ -53,7 +53,6 @@ angular
       ngRequire('account/cfAccountViewDirective.es6').default();
       ngRequire('account/cfNewOrganizationMembership.es6').default();
       ngRequire('analytics/analyticsConsole.es6').default();
-      ngRequire('analytics/events/persistentNotification.es6').default();
       ngRequire('navigation/confirmLeaveEditor.es6').default();
       ngRequire('analytics/events/versioning.es6').default();
       ngRequire('analytics/segment.es6').default();
@@ -102,7 +101,6 @@ angular
       ngRequire('app/home/cfPositionRelativeToLanguageDirective.es6').default();
       ngRequire('app/home/cfTrackCopyEvent.es6').default();
       ngRequire('app/home/cfWelcomeDirective.es6').default();
-      ngRequire('services/intercom.es6').default();
       ngRequire('app/home/contactUs/contactUsSpaceHomeDirective.es6').default();
       ngRequire('app/home/developer_resources/cfDeveloperResourcesDirective.es6').default();
       ngRequire('app/home/onboarding_steps/cfOnboardingStepsDirective.es6').default();
@@ -197,7 +195,6 @@ angular
       ngRequire('components/tabs/entry_list/viewCustomizerDirective.es6').default();
       ngRequire('services/batchPerformer.es6').default();
       ngRequire('components/tabs/listActionsController.es6').default();
-      ngRequire('data/document/status.es6').default();
       ngRequire('data/streamHashSet.es6').default();
       ngRequire('debug/XHR/cfMockXhrConsoleDirective.es6').default();
       ngRequire('directives/bindHtmlCompileDirective.es6').default();

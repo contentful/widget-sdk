@@ -14,9 +14,7 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import * as Analytics from 'analytics/Analytics.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const intercom = getModule('intercom');
+import * as Intercom from 'services/intercom.es6';
 
 const AppsListShell = props => (
   <Workbench>
@@ -93,7 +91,7 @@ export default class AppsListPage extends Component {
     Analytics.track('apps:opted_in');
 
     // Track event so the user is identified in Intercom.
-    intercom.trackEvent('apps-alpha-opted-in');
+    Intercom.trackEvent('apps-alpha-opted-in');
   };
 
   renderDisclaimer() {

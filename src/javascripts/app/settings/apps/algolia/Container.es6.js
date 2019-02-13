@@ -23,9 +23,9 @@ import DraftRecordModal, { SELECT_LOCALE } from './DraftRecordModal.es6';
 import APIKeyModal from './APIKeyModal.es6';
 import * as Webhooks from './Webhooks.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as Intercom from 'services/intercom.es6';
 
 const $state = getModule('$state');
-const intercom = getModule('intercom');
 const spaceContext = getModule('spaceContext');
 
 const DEFAULT_NEW_RECORD = {
@@ -221,7 +221,7 @@ export default class AlgoliaAppPage extends Component {
       this.setState({ busyWith: false, installed: true, config: updatedConfig });
       Notification.success('Algolia app installed successfully.');
       Analytics.track('algolia:installed');
-      intercom.trackEvent('apps-alpha-algolia-installed');
+      Intercom.trackEvent('apps-alpha-algolia-installed');
     } catch (err) {
       this.setState({ busyWith: false });
       notifyError(err, 'Failed to install Algolia app. Try again!');
