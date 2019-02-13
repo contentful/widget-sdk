@@ -6,6 +6,7 @@ import {
   Subheading,
   Note,
   TextField,
+  TextInput,
   FormLabel,
   HelpText,
   Select,
@@ -13,9 +14,11 @@ import {
   TextLink,
   Spinner,
   Button,
-  Textarea
+  Textarea,
+  ModalConfirm
 } from '@contentful/forma-36-react-components';
 import { authUrl, appUrl } from 'Config.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { IdentityProviderPropType, FieldsStatePropType } from './PropTypes.es6';
 import { connectionTestingAllowed } from './utils.es6';
@@ -36,7 +39,8 @@ export class IDPSetupForm extends React.Component {
     connectionTestStart: PropTypes.func.isRequired,
     connectionTestCancel: PropTypes.func.isRequired,
     connectionTestResult: PropTypes.func.isRequired,
-    connectionTestEnd: PropTypes.func.isRequired
+    connectionTestEnd: PropTypes.func.isRequired,
+    enable: PropTypes.func.isRequired
   };
 
   debouncedUpdateValue = _.debounce(async function(fieldName, value) {
@@ -155,10 +159,36 @@ export class IDPSetupForm extends React.Component {
     };
   };
 
+  confirmEnable = async () => {
+    const {
+      enable,
+      organization: {
+        sys: { id: orgId }
+      }
+    } = this.props;
+    const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
+      <ModalConfirm
+        title="Enable SSO"
+        intent="positive"
+        isShown={isShown}
+        onConfirm={() => onClose(true)}
+        onCancel={() => onClose(false)}>
+        <p>Are you sure you want to enable your SSO?</p>
+      </ModalConfirm>
+    ));
+
+    if (!confirmation) {
+      return;
+    }
+
+    enable({ orgId });
+  };
+
   render() {
     const {
       fields,
       connectionTest,
+      identityProvider,
       organization: {
         sys: { id: orgId }
       }
@@ -168,18 +198,20 @@ export class IDPSetupForm extends React.Component {
 
     return (
       <React.Fragment>
-        <section className="f36-margin-top--3xl">
+        <section className="f36-margin-top--xl">
           <Heading element="h2" extraClassNames="f36-margin-bottom--l">
-            Copy Contentful’s details
+            Contentful’s service provider details
           </Heading>
           <TextField
             labelText="Audience"
             name="audience"
             id="audience"
             extraClassNames="f36-margin-bottom--l"
+            helpText="Sometimes called the Entity ID"
             textInputProps={{
               withCopyButton: true,
-              disabled: true
+              disabled: true,
+              width: 'large'
             }}
             value={appUrl}
           />
@@ -188,6 +220,7 @@ export class IDPSetupForm extends React.Component {
             name="acsUrl"
             id="acsUrl"
             extraClassNames="f36-margin-bottom--xl"
+            helpText="Sometimes called the Single Sign-On URL"
             textInputProps={{
               withCopyButton: true,
               disabled: true
@@ -201,6 +234,7 @@ export class IDPSetupForm extends React.Component {
           </HelpText>
           <div className="sso-setup__user-attributes">
             <TextField
+              extraClassNames="f36-margin-right--m"
               name="attribute-givenname"
               id="attribute-givenname"
               labelText="First name"
@@ -211,6 +245,7 @@ export class IDPSetupForm extends React.Component {
               value="givenname"
             />
             <TextField
+              extraClassNames="f36-margin-right--m"
               name="attribute-surname"
               id="attribute-surname"
               labelText="Last name"
@@ -221,6 +256,7 @@ export class IDPSetupForm extends React.Component {
               value="surname"
             />
             <TextField
+              extraClassNames="sso-setup__user-attribute"
               name="attribute-email"
               id="attribute-email"
               labelText="Email"
@@ -242,11 +278,9 @@ export class IDPSetupForm extends React.Component {
 
         <section className="f36-margin-top--3xl">
           <Heading element="h2" extraClassNames="f36-margin-bottom--l">
-            Enter your SSO provider details
+            Your SSO provider details
           </Heading>
-          <FormLabel htmlFor="ssoProvider" style={{ display: 'block' }}>
-            SSO provider
-          </FormLabel>
+          <FormLabel htmlFor="ssoProvider">SSO provider</FormLabel>
           <div>
             <Select
               name="ssoProvider"
@@ -267,29 +301,32 @@ export class IDPSetupForm extends React.Component {
             </Select>
             {fields.idpName.isPending && <Spinner />}
           </div>
-          <TextField
-            labelText="Single Sign-On Redirect URL"
-            id="idpSsoTargetUrl"
-            name="idpSsoTargetUrl"
-            extraClassNames="f36-margin-bottom--l"
-            onChange={this.updateField('idpSsoTargetUrl')}
-            onBlur={this.updateField('idpSsoTargetUrl', true)}
-            value={fields.idpSsoTargetUrl.value}
-            validationMessage={fields.idpSsoTargetUrl.error}
-          />
-          <TextField
-            labelText="X.509 Certificate"
-            id="idpCert"
-            name="idpCert"
-            textarea
-            textInputProps={{
-              rows: 8
-            }}
-            value={fields.idpCert.value}
-            onChange={this.updateField('idpCert')}
-            onBlur={this.updateField('idpCert', true)}
-            validationMessage={fields.idpCert.error}
-          />
+          <FormLabel htmlFor="idpSsoTargetUrl">Single Sign-On Redirect URL</FormLabel>
+          <div className="sso-setup__field f36-margin-right--m">
+            <TextInput
+              id="idpSsoTargetUrl"
+              name="idpSsoTargetUrl"
+              extraClassNames="f36-margin-bottom--l"
+              onChange={this.updateField('idpSsoTargetUrl')}
+              onBlur={this.updateField('idpSsoTargetUrl', true)}
+              value={fields.idpSsoTargetUrl.value}
+              validationMessage={fields.idpSsoTargetUrl.error}
+            />
+          </div>
+          {fields.idpSsoTargetUrl.isPending && <Spinner />}
+          <FormLabel htmlFor="idpCert">X.509 Certificate</FormLabel>
+          <div className="sso-setup__field f36-margin-right--m">
+            <Textarea
+              id="idpCert"
+              name="idpCert"
+              rows={8}
+              value={fields.idpCert.value}
+              onChange={this.updateField('idpCert')}
+              onBlur={this.updateField('idpCert', true)}
+              validationMessage={fields.idpCert.error}
+            />
+          </div>
+          {fields.idpCert.isPending && <Spinner />}
         </section>
 
         <section className="f36-margin-top--3xl">
@@ -305,13 +342,18 @@ export class IDPSetupForm extends React.Component {
               testId="test-connection-button"
               disabled={!allowConnectionTest}
               onClick={this.testConnection}>
-              {!connectionTest.isPending && `Test connection`}
+              {!connectionTest.isPending &&
+                connectionTest.result !== TEST_RESULTS.success &&
+                `Test connection`}
+              {!connectionTest.isPending &&
+                connectionTest.result === TEST_RESULTS.success &&
+                `Retest connection`}
               {connectionTest.isPending && `Testing connection...`}
             </Button>
             {connectionTest.isPending && (
               <Button
                 extraClassNames="f36-margin-left--m"
-                buttonType="muted"
+                buttonType="negative"
                 onClick={this.cancelConnectionTest}
                 testId="cancel-button">
                 Cancel
@@ -366,6 +408,9 @@ export class IDPSetupForm extends React.Component {
             id="ssoName"
             name="ssoName"
             testId="ssoName"
+            textInputProps={{
+              width: 'large'
+            }}
             value={fields.ssoName.value}
             onChange={this.updateField('ssoName')}
             onBlur={this.updateField('ssoName', true)}
@@ -381,6 +426,19 @@ export class IDPSetupForm extends React.Component {
             , requiring users to sign in using SSO,{' '}
             <TextLink href="https://www.contentful.com/support/">reach out to support</TextLink>.
           </Note>
+
+          <div className="f36-margin-top--l">
+            <Button
+              buttonType="positive"
+              testId="enable-button"
+              onClick={this.confirmEnable}
+              disabled={
+                connectionTest.result !== TEST_RESULTS.success || identityProvider.isPending
+              }>
+              {!identityProvider.isPending && `Enable SSO`}
+              {identityProvider.isPending && `Enabling SSO...`}
+            </Button>
+          </div>
         </section>
       </React.Fragment>
     );
@@ -399,6 +457,7 @@ export default connect(
     connectionTestStart: ssoActionCreators.connectionTestStart,
     connectionTestCancel: ssoActionCreators.connectionTestCancel,
     connectionTestResult: ssoActionCreators.connectionTestResult,
-    connectionTestEnd: ssoActionCreators.connectionTestEnd
+    connectionTestEnd: ssoActionCreators.connectionTestEnd,
+    enable: ssoActionCreators.enable
   }
 )(IDPSetupForm);

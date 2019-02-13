@@ -3,8 +3,11 @@ import Enzyme from 'enzyme';
 import { IDPSetupForm } from './IDPSetupForm.es6';
 import { TEST_RESULTS } from './constants.es6';
 import { authUrl } from 'Config.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 import { connectionTestingAllowed } from './utils.es6';
+
+const awaitSetImmediate = () => new Promise(resolve => setImmediate(resolve));
 
 jest.mock('./utils.es6', () => ({
   connectionTestingAllowed: jest.fn()
@@ -27,6 +30,7 @@ describe('IDPSetupForm', () => {
     connectionTestCancel = () => {},
     connectionTestResult = () => {},
     connectionTestEnd = () => {},
+    enable = () => {},
     connectionTest = {},
     fields = {
       idpName: {},
@@ -47,6 +51,7 @@ describe('IDPSetupForm', () => {
         connectionTestCancel={connectionTestCancel}
         connectionTestResult={connectionTestResult}
         connectionTestEnd={connectionTestEnd}
+        enable={enable}
       />
     );
   };
@@ -228,6 +233,41 @@ describe('IDPSetupForm', () => {
 
     expect(rendered.find('[testId="result-failure-note"]')).toHaveLength(0);
     expect(rendered.find('[testId="errors"]')).toHaveLength(0);
+  });
+
+  it('should not attempt to enable if the modal is not confirmed', async () => {
+    ModalLauncher.open.mockResolvedValueOnce(false);
+
+    const enable = jest.fn();
+    const connectionTest = {
+      result: TEST_RESULTS.success
+    }
+
+    const rendered = render({ identityProvider, organization, connectionTest, enable });
+
+    rendered.find('[testId="enable-button"]').first().simulate('click');
+
+    await awaitSetImmediate();
+
+    expect(enable).not.toHaveBeenCalled();
+  });
+
+  it('should attempt to enable if the modal is confirmed', async () => {
+    ModalLauncher.open.mockResolvedValueOnce(true);
+
+    const enable = jest.fn();
+    const connectionTest = {
+      result: TEST_RESULTS.success
+    }
+
+    const rendered = render({ identityProvider, organization, connectionTest, enable });
+
+    rendered.find('[testId="enable-button"]').first().simulate('click');
+
+    await awaitSetImmediate();
+
+    expect(enable).toHaveBeenCalledTimes(1);
+    expect(enable).toHaveBeenNthCalledWith(1, { orgId: organization.sys.id });
   });
 
   describe('connection testing flow', () => {

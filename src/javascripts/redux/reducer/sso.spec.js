@@ -8,85 +8,140 @@ const callReducer = (reducer, action) => {
 
 describe('SSO Redux reducers', () => {
   describe('identityProvider', () => {
-    it('should handle SSO identityProvider creation pending state', () => {
-      expect(
-        callReducer(reducers.identityProvider, {
-          type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING
-        })
-      ).toEqual({
-        isPending: true
+    describe('pending', () => {
+      it('should handle SSO identityProvider creation pending state', () => {
+        expect(
+          callReducer(reducers.identityProvider, {
+            type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING
+          })
+        ).toEqual({
+          isPending: true
+        });
+      });
+
+      it('should handle SSO identity provider retrieval pending state', () => {
+        expect(
+          callReducer(reducers.identityProvider, {
+            type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING
+          })
+        ).toEqual({
+          isPending: true
+        });
+      });
+
+      it('should handle SSO enabling pending state', () => {
+        expect(
+          callReducer(reducers.identityProvider, {
+            type: actions.SSO_ENABLE_PENDING
+          })
+        ).toEqual({
+          isPending: true
+        });
       });
     });
 
-    it('should handle SSO identity provider creation success state', () => {
-      const identityProvider = {
-        ssoName: 'something-1234'
-      };
+    describe('success', () => {
+      let identityProvider;
 
-      expect(
-        callReducer(reducers.identityProvider, {
-          type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
-          payload: identityProvider
-        })
-      ).toEqual({
-        data: identityProvider,
-        isPending: false
+      beforeEach(() => {
+        identityProvider = {
+          ssoName: 'something-1234'
+        };
+      });
+
+      it('should handle SSO identity provider creation success state', () => {
+        expect(
+          callReducer(reducers.identityProvider, {
+            type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
+            payload: identityProvider
+          })
+        ).toEqual({
+          data: identityProvider,
+          isPending: false
+        });
+      });
+
+      it('should handle SSO identity provider retrieval success state', () => {
+        expect(
+          callReducer(reducers.identityProvider, {
+            type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
+            payload: identityProvider
+          })
+        ).toEqual({
+          data: identityProvider,
+          isPending: false
+        });
+      });
+
+      it('should handle SSO identity provider update success state', () => {
+        expect(
+          callReducer(reducers.identityProvider, {
+            type: actions.SSO_UPDATE_IDENTITY_PROVIDER,
+            payload: identityProvider
+          })
+        ).toEqual({
+          data: identityProvider,
+          isPending: false
+        });
+      });
+
+      it('should handle SSO enabling success state', () => {
+        expect(
+          callReducer(reducers.identityProvider, {
+            type: actions.SSO_ENABLE_SUCCESS,
+            payload: identityProvider
+          })
+        ).toEqual({
+          data: identityProvider,
+          isPending: false
+        });
       });
     });
 
-    it('should handle SSO identity provider creation failure state', () => {
-      const error = new Error('Something bad happened');
+    describe('failure', () => {
+      let error;
 
-      expect(
-        callReducer(reducers.identityProvider, {
-          type: actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE,
-          error: true,
-          payload: error
-        })
-      ).toEqual({
-        error: error.message,
-        isPending: false
+      beforeEach(() => {
+        error = new Error('Something bad happened');
       });
-    });
 
-    it('should handle SSO identity provider retrieval pending state', () => {
-      expect(
-        callReducer(reducers.identityProvider, {
-          type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING
-        })
-      ).toEqual({
-        isPending: true
+      it('should handle SSO identity provider creation failure state', () => {
+        expect(
+          callReducer(reducers.identityProvider, {
+            type: actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE,
+            error: true,
+            payload: error
+          })
+        ).toEqual({
+          error: error.message,
+          isPending: false
+        });
       });
-    });
 
-    it('should handle SSO identity provider retrieval success state', () => {
-      const identityProvider = {
-        ssoName: 'something-1234'
-      };
-
-      expect(
-        callReducer(reducers.identityProvider, {
-          type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
-          payload: identityProvider
-        })
-      ).toEqual({
-        data: identityProvider,
-        isPending: false
+      it('should handle SSO identity provider retrieval failure state', () => {
+        expect(
+          callReducer(reducers.identityProvider, {
+            type: actions.SSO_GET_IDENTITY_PROVIDER_FAILURE,
+            error: true,
+            payload: error
+          })
+        ).toEqual({
+          error: error.message,
+          isPending: false
+        });
       });
-    });
 
-    it('should handle SSO identity provider retrieval failure state', () => {
-      const error = new Error('Something bad happened');
-
-      expect(
-        callReducer(reducers.identityProvider, {
-          type: actions.SSO_GET_IDENTITY_PROVIDER_FAILURE,
-          error: true,
-          payload: error
-        })
-      ).toEqual({
-        error: error.message,
-        isPending: false
+      it('should handle SSO enabling failure state', () => {
+        expect(
+          callReducer(reducers.identityProvider, {
+            type: actions.SSO_ENABLE_FAILURE,
+            error: true,
+            payload: error
+          })
+        ).toEqual({
+          error: error.message,
+          isPending: false
+        });
       });
     });
   });

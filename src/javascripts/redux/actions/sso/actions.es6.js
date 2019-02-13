@@ -143,3 +143,27 @@ export function ssoConnectionTestUnknown() {
     type: SSO_CONNECTION_TEST_UNKNOWN
   };
 }
+
+export const SSO_ENABLE_PENDING = 'SSO_ENABLE/PENDING';
+export function ssoEnablePending() {
+  return {
+    type: SSO_ENABLE_PENDING
+  };
+}
+
+export const SSO_ENABLE_SUCCESS = 'SSO_ENABLE/SUCCESS';
+export function ssoEnableSuccess(identityProvider) {
+  return {
+    type: SSO_ENABLE_SUCCESS,
+    payload: identityProvider
+  };
+}
+
+export const SSO_ENABLE_FAILURE = 'SSO_ENABLE/FAILURE';
+export function ssoEnableFailure(error) {
+  return {
+    type: SSO_ENABLE_FAILURE,
+    error: true,
+    payload: error
+  };
+}

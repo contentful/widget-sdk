@@ -1,3 +1,4 @@
+import { Notification } from '@contentful/forma-36-react-components';
 import * as actions from './actions.es6';
 import * as selectors from 'redux/selectors/sso.es6';
 import { validate, connectionTestResultFromIdp } from 'app/OrganizationSettings/SSO/utils.es6';
@@ -161,5 +162,29 @@ export function connectionTestEnd({ orgId }) {
   return async dispatch => {
     await dispatch(retrieveIdp({ orgId }));
     dispatch(actions.ssoConnectionTestEnd());
+  };
+}
+
+export function enable({ orgId }) {
+  return async dispatch => {
+    dispatch(actions.ssoEnablePending());
+
+    const endpoint = createOrganizationEndpoint(orgId);
+    let identityProvider;
+
+    try {
+      identityProvider = await endpoint({
+        method: 'POST',
+        path: ['identity_provider', 'enable']
+      });
+    } catch (e) {
+      dispatch(actions.ssoEnableFailure(e));
+
+      return;
+    }
+
+    dispatch(actions.ssoEnableSuccess(identityProvider));
+
+    Notification.success('SSO successfully enabled!');
   };
 }

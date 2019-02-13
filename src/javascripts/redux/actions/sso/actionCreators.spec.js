@@ -4,13 +4,21 @@ import * as actions from './actions.es6';
 import createMockStore from 'redux/utils/createMockStore.es6';
 import { mockEndpoint } from 'data/EndpointFactory.es6';
 import { TEST_RESULTS } from 'app/OrganizationSettings/SSO/constants.es6';
+import { Notification } from '@contentful/forma-36-react-components';
 
 describe('SSO Redux actionCreators', () => {
   let mockStore;
+  let notificationSuccessSpy;
 
   beforeEach(() => {
     mockStore = createMockStore();
     mockEndpoint.mockReset();
+
+    notificationSuccessSpy = jest.spyOn(Notification, 'success');
+  });
+
+  afterEach(() => {
+    notificationSuccessSpy.mockRestore();
   });
 
   describe('retrieveIdp', () => {
@@ -546,6 +554,56 @@ describe('SSO Redux actionCreators', () => {
       expect(_.last(mockStore.getActions())).toEqual({
         type: actions.SSO_CONNECTION_TEST_END
       });
+    });
+  });
+
+  describe('enable', () => {
+    it('should go through the success flow if the IDP was enabled successfully via the API', async () => {
+      const identityProvider = {};
+
+      mockEndpoint.mockResolvedValueOnce(identityProvider);
+
+      await mockStore.dispatch(actionCreators.enable({ orgId: '1234' }));
+
+      expect(mockStore.getActions()).toEqual([
+        {
+          type: actions.SSO_ENABLE_PENDING
+        },
+        {
+          type: actions.SSO_ENABLE_SUCCESS,
+          payload: identityProvider
+        }
+      ]);
+    });
+
+    it('should fire a successful notification upon enabling', async () => {
+      const identityProvider = {};
+
+      mockEndpoint.mockResolvedValueOnce(identityProvider);
+
+      await mockStore.dispatch(actionCreators.enable({ orgId: '1234' }));
+
+      expect(notificationSuccessSpy).toHaveBeenCalledTimes(1);
+      expect(notificationSuccessSpy).toHaveBeenNthCalledWith(1, expect.any(String));
+    });
+
+    it('should go through the failure flow if the IDP was not successfully enabled via the API', async () => {
+      const error = new Error('Could not enable SSO');
+
+      mockEndpoint.mockRejectedValueOnce(error);
+
+      await mockStore.dispatch(actionCreators.enable({ orgId: '1234' }));
+
+      expect(mockStore.getActions()).toEqual([
+        {
+          type: actions.SSO_ENABLE_PENDING
+        },
+        {
+          type: actions.SSO_ENABLE_FAILURE,
+          error: true,
+          payload: error
+        }
+      ]);
     });
   });
 });
