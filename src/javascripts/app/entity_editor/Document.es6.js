@@ -6,7 +6,7 @@
  * Used to edit an entry or asset through ShareJS
  */
 
-import { get, memoize, cloneDeep } from 'lodash';
+import { get, memoize, cloneDeep, isEqual } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { deepFreeze } from 'utils/Freeze.es6';
 import * as PathUtils from 'utils/Path.es6';
@@ -140,6 +140,10 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
    * @description
    * A property that keeps the value of the entity’s `sys` property.
    *
+   * NOTE: Since the `sys` we get form ShareJS does not feature an `updatedBy`,
+   * we use the initial CMA entity's sys.updatedBy until the entity is (re-)published
+   * and from that point on we set sys.updatedBy to sys.publishedBy
+   *
    * TODO rename this to sys$
    *
    * @type {Property<Data.Sys>}
@@ -177,7 +181,32 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
       nextSys.updatedAt = currentSys.updatedAt;
     }
     nextSys.version = version;
-    sysBus.set(deepFreeze(nextSys));
+    // ShareJS doc's sys is missing the `updatedBy` which we got in the initial CMA
+    // entity though. The following logic is a compromise where we pretend that
+    // unless the entity was published by another user, the entity was last updated
+    // by the previous updater.
+    // TODO: Build more meaningful `updatedBy` from the ShareJS operations.
+    if (!nextSys.updatedBy) {
+      if (nextSys.publishedCounter > currentSys.publishedCounter) {
+        nextSys.updatedBy = nextSys.publishedBy;
+      } else {
+        // Pass this along from the initial CMA entity.sys to the ShareJS sys
+        nextSys.updatedBy = currentSys.updatedBy;
+      }
+    }
+    // ShareJS environment.sys.id is internal ID
+    // (e.g. "40ee1ff0-d1a8-4d8c-a976-425c2aab5220" instead of "master")
+    if (get(nextSys, 'environment.sys')) {
+      nextSys.environment.sys.id = currentSys.environment.sys.id;
+    } else {
+      nextSys.environment = currentSys.environment;
+    }
+
+    // Effectively a .skipDuplicates(isEqual)
+    // Comparing `version` first is just a performance optimization.
+    if (currentSys.version !== nextSys.version && !isEqual(currentSys, nextSys)) {
+      sysBus.set(deepFreeze(nextSys));
+    }
   });
 
   // Holds true if the user is allowed to edit the entity
@@ -367,7 +396,7 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
   // Sync the data to the entity instance.
   // The entity instance is unique for the ID. Other views will share
   // the same instance and not necessarily load the data. This is why
-  // we need to make sure that we keep it up date.
+  // we need to make sure that we keep it updated.
   data$.onValue(data => {
     entity.data = data;
     if (data.sys.deletedVersion) {

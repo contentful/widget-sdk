@@ -1,5 +1,6 @@
 import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
+import { deepFreeze } from 'utils/Freeze.es6';
 
 describe('entityEditor/Document', () => {
   beforeEach(function() {
@@ -47,6 +48,11 @@ describe('entityEditor/Document', () => {
       }
     };
 
+    /**
+     * The entity we will pass to Doc.create(). Note that this object might be
+     * mutated which each operation. For reference the initial entity will be
+     * available as `this.initialEntity`
+     */
     this.entity = {
       data: {
         sys: {
@@ -54,6 +60,11 @@ describe('entityEditor/Document', () => {
           version: 8,
           contentType: {
             sys: this.contentType.data.sys
+          },
+          environment: {
+            sys: {
+              id: 'master'
+            }
           }
         },
         fields: {
@@ -68,6 +79,7 @@ describe('entityEditor/Document', () => {
       const Doc = this.$inject('app/entity_editor/Document.es6');
 
       this.entity.data.sys.type = type;
+      this.initialEntity = deepFreeze(_.cloneDeep(this.entity));
 
       return Doc.create(this.docConnection, this.entity, this.contentType, { sys: { id: 'USER' } });
     };
@@ -529,6 +541,28 @@ describe('entityEditor/Document', () => {
 
       const version = K.getValue(this.doc.sysProperty).version;
       expect(version).toBe(30);
+    });
+
+    it('keeps initial environment id to compensate for internal one exposed by ShareJS', async function() {
+      const entityData = _.cloneDeep(this.initialEntity.data);
+      entityData.sys.environment.sys.id = 'SOME_INTERNAL_ENV_ID';
+      this.connectAndOpen(entityData);
+
+      const envId = K.getValue(this.doc.sysProperty).environment.sys.id;
+      expect(envId).not.toBe('SOME_INTERNAL_ENV_ID');
+      expect(envId).toBe(this.initialEntity.data.sys.environment.sys.id);
+    });
+
+    it('keeps initial `updatedBy` if not provided by ShareJS', function() {
+      this.entity.data.sys.updatedBy = 'me';
+      this.doc = this.createDoc();
+      const entityData = _.cloneDeep(this.initialEntity.data);
+      entityData.sys.updatedBy = undefined;
+      this.connectAndOpen(entityData);
+
+      const updatedBy = K.getValue(this.doc.sysProperty).updatedBy;
+      expect(updatedBy).not.toBe(undefined);
+      expect(updatedBy).toBe(this.initialEntity.data.sys.updatedBy);
     });
   });
 
