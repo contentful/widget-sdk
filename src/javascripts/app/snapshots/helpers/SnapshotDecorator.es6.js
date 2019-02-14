@@ -1,4 +1,4 @@
-import { get as getAtPath } from 'lodash';
+import { cloneDeep, get } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
 const $q = getModule('$q');
@@ -16,17 +16,14 @@ const $q = getModule('$q');
  * that is passed as first parameter.
  */
 export function withCurrent(entrySys, snapshots) {
-  if (!snapshots.length) {
-    return snapshots;
+  const currentVersion = entrySys.version;
+  if (currentVersion) {
+    return cloneDeep(snapshots).map(snapshot => {
+      const isCurrent = get(snapshot, 'snapshot.sys.version') === currentVersion;
+      snapshot.sys.isCurrent = isCurrent;
+      return snapshot;
+    });
   } else {
-    const version = entrySys.version;
-    if (version) {
-      snapshots.forEach(snapshot => {
-        const isCurrent = getAtPath(snapshot, 'snapshot.sys.version') === version;
-        snapshot.sys.isCurrent = isCurrent;
-      });
-    }
-
     return snapshots;
   }
 }
@@ -41,13 +38,13 @@ export function withCurrent(entrySys, snapshots) {
  */
 export function withAuthorName(spaceContext, snapshots) {
   const promises = snapshots.map(snapshot => {
-    const userId = getAtPath(snapshot, 'sys.createdBy.sys.id');
+    const userId = get(snapshot, 'sys.createdBy.sys.id');
 
     return spaceContext.users.get(userId).then(user => {
       const authorName = user ? user.firstName + ' ' + user.lastName : '';
-
-      snapshot.sys.createdBy.authorName = authorName;
-      return snapshot;
+      const snapshotClone = cloneDeep(snapshot);
+      snapshotClone.sys.createdBy.authorName = authorName;
+      return snapshotClone;
     });
   });
 

@@ -117,6 +117,24 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
     });
   });
 
+  it('decorates snapshots with `isCurrent`', async () => {
+    const { wrapper } = render();
+    const sys1 = { ...PUBLISHED_ENTRY_SYS, version: 101 };
+    const nextVersion = sys1.version + 1;
+    const sys2 = { ...sys1, version: nextVersion, publishedVersion: nextVersion };
+    const snapshots = deepFreeze([newSnapshotFromEntrySys(sys1), newSnapshotFromEntrySys(sys2)]);
+
+    spaceContextMocked.cma.getEntrySnapshots.mockResolvedValueOnce({
+      items: snapshots
+    });
+    await emitUpdatedVersionsWidgetEvent(sys2);
+
+    const expectedSnapshots = cloneDeep(snapshots);
+    expectedSnapshots[0].sys.isCurrent = false;
+    expectedSnapshots[1].sys.isCurrent = true;
+    expect(wrapper.find(VersionsWidget).props().versions).toEqual(expectedSnapshots);
+  });
+
   it('keeps initial fetching error after a sys update without published version bump', async () => {
     spaceContextMocked.cma.getEntrySnapshots.mockRejectedValueOnce({});
 
@@ -133,5 +151,5 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
 });
 
 function newSnapshotFromEntrySys(entrySys) {
-  return { sys: { type: 'Snapshot' }, snapshot: { sys: entrySys } };
+  return deepFreeze({ sys: { type: 'Snapshot' }, snapshot: { sys: entrySys } });
 }

@@ -56,6 +56,9 @@ export default class VersionsWidgetContainer extends Component {
   };
 
   onLoad = (versions, entrySys, error = null) => {
+    // TODO: Instead of relying on duck punched snapshot entities in VersionsWidget,
+    //  we should just pass standard snapshot entities plus the current version and
+    //  let the widget figure out what to render as current.
     const versionsWithCurrent = SnapshotDecorator.withCurrent(entrySys, versions);
     this.setState({
       isLoaded: true,
