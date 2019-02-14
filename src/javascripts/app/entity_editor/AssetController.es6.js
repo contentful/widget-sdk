@@ -7,6 +7,9 @@ import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking from './Tracking.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
+import DocumentStatusCode from 'data/document/statusCode.es6';
+import { groupBy } from 'lodash';
 
 import { getModule } from 'NgRegistry.es6';
 
@@ -77,5 +80,29 @@ export default async function create($scope, editorData, preferences) {
 
   $scope.entrySidebarProps = createEntrySidebarProps({
     $scope
+  });
+
+  const currentLocale = localeStore.getCurrentLocale();
+  $scope.locale = currentLocale;
+  $scope.locales = [currentLocale];
+
+  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.UPDATED_CURRENT_LOCALE, localeCode => {
+    const locale = localeStore.getLocales().find(l => l.code === localeCode);
+    $scope.locale = locale;
+    $scope.locales = [locale];
+    $scope.$apply();
+  });
+
+  K.onValueScope($scope, editorContext.validator.errors$, errors => {
+    $scope.entrySidebarProps.localeErrors = groupBy(errors, error => error.path[2]);
+
+    if (!errors.length) {
+      return;
+    }
+
+    $scope.statusNotificationProps = {
+      status: DocumentStatusCode.LOCALE_VALIDATION_ERRORS,
+      entityLabel: 'entry'
+    };
   });
 }
