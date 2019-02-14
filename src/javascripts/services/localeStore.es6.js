@@ -55,6 +55,8 @@ export default function register() {
        */
       let codeToActiveLocaleMap = {};
 
+      let currentLocale;
+
       return {
         init: init,
         refresh: refresh,
@@ -62,12 +64,27 @@ export default function register() {
         getDefaultLocale: getDefaultLocale,
         getActiveLocales: getActiveLocales,
         getPrivateLocales: getPrivateLocales,
+        getCurrentLocale: getCurrentLocale,
+        setCurrentLocale: setCurrentLocale,
+        resetCurrentLocale: resetCurrentLocale,
         toInternalCode: toInternalCode,
         toPublicCode: toPublicCode,
         setActiveLocales: setActiveLocales,
         isLocaleActive: isLocaleActive,
         deactivateLocale: deactivateLocale
       };
+
+      function getCurrentLocale() {
+        return currentLocale || getDefaultLocale();
+      }
+
+      function setCurrentLocale(locale) {
+        currentLocale = locale;
+      }
+
+      function resetCurrentLocale() {
+        currentLocale = undefined;
+      }
 
       /**
        * @name TheLocaleStore#init

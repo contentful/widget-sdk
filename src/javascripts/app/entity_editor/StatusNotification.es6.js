@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import DocumentStatusCode from 'data/document/statusCode.es6';
+import classNames from 'classnames';
 
 /**
  * This component renders an alert depending on the document status.
@@ -25,7 +26,9 @@ const messages = ({ entityLabel }) => ({
   deleted: `This ${entityLabel} has been deleted and cannot be ` + 'modified anymore.',
   [DocumentStatusCode.NOT_ALLOWED]:
     `You have read-only access to this ${entityLabel}. If you need to edit ` +
-    'it please contact your administrator.'
+    'it please contact your administrator.',
+  [DocumentStatusCode.LOCALE_VALIDATION_ERRORS]:
+    'Some locales have validation errors. Check the sidebar to see which locales need to be updated.'
 });
 
 export default class StatusCodeNotification extends React.Component {
@@ -38,7 +41,11 @@ export default class StatusCodeNotification extends React.Component {
     const { status, entityLabel } = this.props;
     if (status && status !== 'ok' && entityLabel) {
       return (
-        <div className="entity-editor__notification">
+        <div
+          className={classNames({
+            'entity-editor__notification': true,
+            'x--warning': status === DocumentStatusCode.LOCALE_VALIDATION_ERRORS
+          })}>
           <p>{messages({ entityLabel })[status]}</p>
         </div>
       );

@@ -1,54 +1,61 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { orderBy } from 'lodash';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
-import { Pill, TextLink } from '@contentful/forma-36-react-components';
+import { Select, Option } from '@contentful/forma-36-react-components';
+import { getModule } from 'NgRegistry.es6';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
+
+const TheLocaleStore = getModule('TheLocaleStore');
 
 export default class TranslationSidebarWidget extends Component {
   static propTypes = {
-    locales: PropTypes.arrayOf(
-      PropTypes.shape({
-        code: PropTypes.string.isRequired,
-        default: PropTypes.bool.isRequired
-      })
-    ).isRequired,
-    onChange: PropTypes.func.isRequired,
-    onLocaleDeactivation: PropTypes.func.isRequired
+    emitter: PropTypes.shape({
+      emit: PropTypes.func.isRequired
+    }).isRequired,
+    localeErrors: PropTypes.object
   };
+
+  constructor(props) {
+    super(props);
+    this.locales = TheLocaleStore.getLocales();
+  }
+
+  numErrors = code => {
+    if (!this.props.localeErrors || !this.props.localeErrors[code]) {
+      return 0;
+    }
+    return this.props.localeErrors[code].length;
+  };
+
+  localeName = ({ internal_code: internalCode, code, name }) => {
+    const baseName = `${name} (${code})`;
+    const numErrors = this.numErrors(internalCode);
+    return numErrors > 0
+      ? `${baseName} (${numErrors} ${numErrors > 1 ? 'errors' : 'error'})`
+      : baseName;
+  };
+
+  handleChange = event => {
+    const newLocale = event.target.value;
+    TheLocaleStore.setCurrentLocale(newLocale);
+    this.props.emitter.emit(SidebarEventTypes.UPDATED_CURRENT_LOCALE, newLocale);
+  };
+
+  componentWillUnmount = () => {
+    TheLocaleStore.resetCurrentLocale();
+  };
+
   render() {
-    const { locales } = this.props;
     return (
       <EntrySidebarWidget testId="sidebar-translation-widget" title="Translation">
-        <div className="pill-list entity-sidebar__translation-pills">
-          {orderBy(locales, ['default', 'code'], ['desc', 'asc']).map(locale => (
-            <div
-              key={locale.code}
-              className={classNames('entity-sidebar__translation-pill', {
-                'x--default': locale.default
-              })}>
-              <Pill
-                testId="deactivate-translation"
-                status="default"
-                label={locale.code}
-                onClose={
-                  locale.default
-                    ? undefined
-                    : () => {
-                        this.props.onLocaleDeactivation(locale);
-                      }
-                }
-              />
-            </div>
+        <Select id="optionSelect" onChange={this.handleChange}>
+          {orderBy(this.locales, ['default', 'code'], ['desc', 'asc']).map(locale => (
+            <Option key={locale.code} value={locale.code}>
+              {this.localeName(locale)}
+            </Option>
           ))}
-          <TextLink
-            testId="change-translation"
-            onClick={() => {
-              this.props.onChange();
-            }}>
-            Change
-          </TextLink>
-        </div>
+        </Select>
       </EntrySidebarWidget>
     );
   }

@@ -6,7 +6,7 @@ include ../entity_editor/entity_editor.mixins.jade
       react-component(name="app/entity_editor/Components/BackNav")
       cf-icon.workbench-header__icon(name="page-content", scale="0.75")
       h1.workbench-header__title
-        | {{ title }}
+        | {{ title }} ({{(locale.code)}})
         cf-knowledge-base.workbench-header__kb-link(target="entry")
 
       .workbench-header__actions

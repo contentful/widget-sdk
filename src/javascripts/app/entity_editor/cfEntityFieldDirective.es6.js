@@ -26,10 +26,9 @@ export default function register() {
    * @scope.requires {entityEditor/Context} editorContext
    */
   registerDirective('cfEntityField', [
-    'TheLocaleStore',
     'utils/LaunchDarkly/index.es6',
     'utils/locales.es6',
-    (TheLocaleStore, LD, localesUtils) => {
+    (LD, localesUtils) => {
       const { isRtlLocale } = localesUtils;
 
       return {
@@ -69,12 +68,9 @@ export default function register() {
               updateErrorStatus();
             };
 
-            $scope.$watchCollection(getActiveLocaleCodes, updateLocales);
-
             // TODO Changes to 'validator.errors' change the behavior of
             // 'validator.hasError()'. We should make this dependency explicity
             // by listening to signal on the validator.
-            K.onValueScope($scope, $scope.editorContext.validator.errors$, updateLocales);
             K.onValueScope($scope, $scope.editorContext.validator.errors$, updateErrorStatus);
 
             K.onValueScope($scope, $scope.editorContext.focus.field$, focusedField => {
@@ -97,33 +93,6 @@ export default function register() {
               const hasSchemaErrors = $scope.editorContext.validator.hasFieldError(field.id);
               const hasControlErrors = _.some(invalidControls);
               $scope.data.fieldHasErrors = hasSchemaErrors || hasControlErrors;
-            }
-
-            function getActiveLocaleCodes() {
-              return _.map(TheLocaleStore.getActiveLocales(), 'internal_code');
-            }
-
-            function updateLocales() {
-              const fieldLocalesInternalCodes = getFieldLocales(field).map(
-                locale => locale.internal_code
-              );
-              $scope.locales = _.filter(TheLocaleStore.getPrivateLocales(), locale => {
-                const isFieldLocale = fieldLocalesInternalCodes.includes(locale.internal_code);
-                const isActive = TheLocaleStore.isLocaleActive(locale);
-                const hasError = $scope.editorContext.validator.hasFieldLocaleError(
-                  field.id,
-                  locale.internal_code
-                );
-                return hasError || (isFieldLocale && isActive);
-              });
-            }
-
-            function getFieldLocales(field) {
-              if (field.localized) {
-                return TheLocaleStore.getPrivateLocales();
-              } else {
-                return [TheLocaleStore.getDefaultLocale()];
-              }
             }
           }
         ]

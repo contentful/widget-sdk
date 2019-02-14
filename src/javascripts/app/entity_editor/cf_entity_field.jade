@@ -44,18 +44,19 @@ mixin field-locale-errors
 
 div.entity-editor__field-group(
   ng-show="widget.isVisible"
+  ng-repeat="locale in locales | orderBy: ['-default', 'name'] track by locale.internal_code"
+  ng-controller="FieldLocaleController as fieldLocale"
+  data-locale="{{locale.code}}"
   data-test-id="entity-field-controls"
   data-field-id="{{data.field.id}}"
   data-field-api-name="{{data.field.apiName}}"
   data-field-type="{{data.field.type}}"
   data-field-items-type="{{data.field.items.type}}"
   aria-current="{{data.fieldHasFocus}}"
-  aria-invalid="{{data.fieldHasErrors}}")
+  aria-invalid="{{!!fieldLocale.errors}}")
 
   div.entity-editor__field-locale(
-    ng-repeat="locale in locales | orderBy: ['-default', 'name'] track by locale.internal_code"
-    ng-controller="FieldLocaleController as fieldLocale"
-    data-locale="{{locale.code}}")
+    data-locale="{{fieldLocale.code}}")
 
     div.entity-editor__field-heading
       label(data-test-id="field-locale-label")

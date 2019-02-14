@@ -219,6 +219,7 @@ export default ({ $scope }) => {
 
   return {
     legacySidebarExtensions: legacyExtensions,
+    localeErrors: $scope.localeErrors,
     sidebar: $scope.editorData.sidebar,
     sidebarExtensions: $scope.editorData.sidebarExtensions,
     sidebarExtensionsBridge,
