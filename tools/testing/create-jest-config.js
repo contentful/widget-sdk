@@ -26,7 +26,8 @@ module.exports = (resolve, rootDir, srcRoots, coverageDirectory) => {
       '^.+\\.module\\.(css|sass|scss|styl)$': 'identity-obj-proxy'
     },
     moduleFileExtensions: ['web.js', 'js', 'json', 'web.jsx', 'jsx', 'node', 'mjs', 'es6.js'],
-    coverageReporters: ['lcov', 'clover']
+    coverageReporters: ['lcov', 'clover'],
+    snapshotSerializers: ['jest-emotion']
   };
   if (rootDir) {
     config.rootDir = rootDir;
