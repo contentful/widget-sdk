@@ -189,7 +189,8 @@ export default async function create($scope, editorData, preferences, trackLoadE
   function onlyCurrentLocaleHasErrors() {
     const localeCodes = keys($scope.entrySidebarProps.localeErrors);
     return (
-      localeCodes.length === 1 && localeCodes[0] === localeStore.getCurrentLocale().internal_code
+      localeCodes.length === 1 &&
+      ['undefined', localeStore.getCurrentLocale().internal_code].includes(localeCodes[0])
     );
   }
 }
