@@ -66,6 +66,7 @@ export default class SpaceSettings extends React.Component {
             name="space-id"
             id="space-id"
             labelText="Space ID:"
+            testId="space-id-text-input"
             value={this.props.spaceId}
             textInputProps={{
               disabled: true
@@ -76,6 +77,7 @@ export default class SpaceSettings extends React.Component {
             name="space-name"
             id="space-name"
             labelText="Space name:"
+            testId='space-name-text-input'
             value={this.state.spaceName}
             onChange={this.onChangeSpaceName}
           />
