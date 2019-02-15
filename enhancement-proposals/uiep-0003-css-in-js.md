@@ -1,11 +1,11 @@
 ---
-id: UIEP-0002
+id: UIEP-0003
 title: CSS-in-JS using emotion
 champions: ['Mudit Ameta (@zeusdeux)', 'Alex Suevalov (@suevalov)']
 endDate: March 1st, 2019
 ---
 
-# [UIEP-0002] CSS-in-JS using [emotion](https://emotion.sh)
+# [UIEP-0003] CSS-in-JS using [emotion](https://emotion.sh)
 
 ## Motivation
 
