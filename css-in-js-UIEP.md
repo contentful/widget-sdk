@@ -32,15 +32,52 @@ Following are the characteristics we have used as our guiding principles in pick
 
 ## Solutions looked at [Alex]
 
-styled-components
+### [styled-components](https://www.styled-components.com/)
 
-emotion
+The most popular CSS-in-JS library on a market.
 
-CSS Modules
+* ✅ Compatible with React and React Native
+* ✅ Good Typescript support
+* ✅ Co-location and easy of removal
+* ✅ Themes, animations, ability to compose styles
+* ✅ Good tooling: ESLint pluings, Jest, syntax highlight highlight in most popular editors
+* ✅ Easy to use Forma36 tokens, cause it's just JavaScript
+* 💔 You cannot create style without creating a component which is not always needed, tightly coupled to React.
+* 💔 [15.8Kb (min + gzip)](https://bundlephobia.com/result?p=styled-components@4.1.3)
+* 💔 Not the most performant solution, twice slower than `emotion` [results](https://github.com/A-gambit/CSS-IN-JS-Benchmarks/blob/master/RESULT.md)
 
-astoturf
+### [CSS Modules](https://github.com/css-modules/css-modules)
 
-JSS
+It's actually not even CSS-in-JS solution, but a way how bundler (webpack in our case) processes CSS files. All class and animation names are scoped locally by default.
+
+```css
+/* style.css */
+.greenItem {
+  color: green;
+}
+```
+
+When importing the CSS Module from a JS Module, it exports an object with all mappings from local names to global names.
+
+```js
+import styles from "./style.css";
+
+<div className={styles.greenItem} />
+```
+
+* ✅ CSS is just CSS, but with automated BEM notation and protection about clash of classes
+* ✅ Zero run-time
+* ✅ Co-location and easy of removal
+* 💔 Composability of styles in a bit of a pain
+* 💔 There are some problems with an order of import CSS Modules which we already faced with in Forma36 repo
+* 💔 It's hard to setup in our current Webpack + SystemJS + Karma configuration and we couldn't setup it up without hacks and workarounds
+
+
+### astoturf
+
+### JSS
+
+### emotion
 
 ## Chosen solution : Emotion
 
@@ -84,7 +121,7 @@ which gives us a lot of features for free as you can see below.
       <td><code>css(...)</code></td>
       <td align="center">✅</td>
       <td align="center"></td>
-      <td>Generally used for object styles.</td>
+      <td>Generally used for object styles. Great TS support and autocomplete.</td>
     </tr>
     <tr>
       <td>components as selectors</td>
