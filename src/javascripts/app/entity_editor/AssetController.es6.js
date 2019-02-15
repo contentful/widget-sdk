@@ -9,7 +9,7 @@ import installTracking from './Tracking.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import DocumentStatusCode from 'data/document/statusCode.es6';
-import { groupBy } from 'lodash';
+import { groupBy, get, isEmpty, keys } from 'lodash';
 
 import { getModule } from 'NgRegistry.es6';
 
@@ -90,19 +90,44 @@ export default async function create($scope, editorData, preferences) {
     const locale = localeStore.getLocales().find(l => l.code === localeCode);
     $scope.locale = locale;
     $scope.locales = [locale];
+    if (onDefaultLocale()) {
+      $scope.statusNotificationProps = {
+        status: 'ok',
+        entityLabel: 'entry'
+      };
+    }
     $scope.$apply();
   });
 
   K.onValueScope($scope, editorContext.validator.errors$, errors => {
     $scope.entrySidebarProps.localeErrors = groupBy(errors, error => error.path[2]);
 
-    if (!errors.length) {
+    if (!errors.length || onDefaultLocale()) {
       return;
     }
 
     $scope.statusNotificationProps = {
-      status: DocumentStatusCode.LOCALE_VALIDATION_ERRORS,
+      status: DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR,
       entityLabel: 'entry'
     };
   });
+
+  K.onValueScope($scope, $scope.otDoc.status$, status => {
+    if (
+      status === 'ok' &&
+      !isEmpty(get($scope, 'entrySidebarProps.localeErrors')) &&
+      !onDefaultLocale()
+    ) {
+      return;
+    }
+    $scope.statusNotificationProps = { status, entityLabel: 'entry' };
+  });
+
+  function onDefaultLocale() {
+    const localeCodes = keys($scope.entrySidebarProps.localeErrors);
+    return (
+      localeCodes.length === 1 &&
+      localeStore.getDefaultLocale().internal_code === localeStore.getCurrentLocale().internal_code
+    );
+  }
 }

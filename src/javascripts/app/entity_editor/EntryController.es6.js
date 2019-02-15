@@ -1,6 +1,6 @@
 import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
-import { constant, keys, groupBy } from 'lodash';
+import { constant, groupBy, get, isEmpty, keys } from 'lodash';
 
 import { user$ } from 'services/TokenStore.es6';
 
@@ -69,10 +69,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
   bootstrapEntryEditorLoadEvents($scope, $scope.loadEvents, editorData, trackLoadEvent);
 
   initDocErrorHandler($scope, doc.state.error$);
-
-  K.onValueScope($scope, doc.status$, status => {
-    $scope.statusNotificationProps = { status, entityLabel: 'entry' };
-  });
 
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
   try {
@@ -157,13 +153,19 @@ export default async function create($scope, editorData, preferences, trackLoadE
     const locale = localeStore.getLocales().find(l => l.code === localeCode);
     $scope.locale = locale;
     $scope.locales = [locale];
+    if (onlyCurrentLocaleHasErrors()) {
+      $scope.statusNotificationProps = {
+        status: 'ok',
+        entityLabel: 'entry'
+      };
+    }
     $scope.$apply();
   });
 
   K.onValueScope($scope, editorContext.validator.errors$, errors => {
     $scope.entrySidebarProps.localeErrors = groupBy(errors, error => error.path[2]);
 
-    if (!errors.length) {
+    if (!errors.length || onlyCurrentLocaleHasErrors()) {
       return;
     }
 
@@ -172,4 +174,22 @@ export default async function create($scope, editorData, preferences, trackLoadE
       entityLabel: 'entry'
     };
   });
+
+  K.onValueScope($scope, doc.status$, status => {
+    if (
+      status === 'ok' &&
+      !isEmpty(get($scope, 'entrySidebarProps.localeErrors')) &&
+      !onlyCurrentLocaleHasErrors()
+    ) {
+      return;
+    }
+    $scope.statusNotificationProps = { status, entityLabel: 'entry' };
+  });
+
+  function onlyCurrentLocaleHasErrors() {
+    const localeCodes = keys($scope.entrySidebarProps.localeErrors);
+    return (
+      localeCodes.length === 1 && localeCodes[0] === localeStore.getCurrentLocale().internal_code
+    );
+  }
 }

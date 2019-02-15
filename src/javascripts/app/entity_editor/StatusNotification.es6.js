@@ -28,7 +28,9 @@ const messages = ({ entityLabel }) => ({
     `You have read-only access to this ${entityLabel}. If you need to edit ` +
     'it please contact your administrator.',
   [DocumentStatusCode.LOCALE_VALIDATION_ERRORS]:
-    'Some locales have validation errors. Check the sidebar to see which locales need to be updated.'
+    'Some locales have validation errors. Check the sidebar to see which locales need to be updated.',
+  [DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR]:
+    'This asset is missing a file for the default locale.'
 });
 
 export default class StatusCodeNotification extends React.Component {
