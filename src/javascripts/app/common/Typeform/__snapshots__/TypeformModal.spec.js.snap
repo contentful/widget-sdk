@@ -1,6 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TypeformModal should render a Modal with TypeformEmbed inside 1`] = `
+.emotion-0 {
+  height: 450px;
+  padding: 0;
+  margin: -1.875rem;
+}
+
+.emotion-0 > div {
+  height: 100%;
+  overflow-y: hidden;
+}
+
 <Modal
   allowHeightOverflow={true}
   isShown={true}
@@ -15,7 +26,7 @@ exports[`TypeformModal should render a Modal with TypeformEmbed inside 1`] = `
   topOffset="50px"
 >
   <TypeformEmbed
-    className="cf-typeform-modal"
+    className="emotion-0"
     hideFooter={true}
     hideHeaders={true}
     onSubmit={[Function]}
