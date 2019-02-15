@@ -181,8 +181,6 @@ which gives us a lot of features for free as you can see below.
 
 You can play with the code in this PR locally to see sourcemaps, etc in action.
 
-### Trade-offs [Alex drafts & Mudit reviews]
-
 ### Migration path (can already use in new things) [Mudit drafts & Alex reviews]
 
 All existing components can use emotion from the day this proposal is accepted and merged.
@@ -198,6 +196,61 @@ To add support for snapshot testing, we propose using the serializer provided by
 and its snapshot is made available in this PR as well.
 
 ### Impact on Forma 36 [Alex]
+
+If we go with framework agnostic version of `emotion` then there's no direct impact on Forma.
+
+
+```js
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
+import { Button } from '@contentful/forma-36-react-components';
+
+const hugeButtonStyle = css`
+  width: 1000px;
+  height: 1000px;
+  margin: ${tokens.spacing2Xl};
+`;
+
+<Button extraClassNames={hugeButtonStyle}>Click me</Button>
+```
+
+If we go with React-specific version of `emotion` than it would be really nice to do a breaking change and rename `extraClassNames` to `className`:
+
+
+```js
+// without breaking change in Forma36
+import { css, jsx, ClassNames } from "@emotion/core";
+
+const hugeButtonStyle = css`
+  width: 1000px;
+  height: 1000px;
+  margin: ${tokens.spacing2Xl};
+`;
+
+<ClassNames>
+  {({ cx }) => {
+    return (
+      <Button extraClassNames={cx(hugeButtonStyle)}>
+        Click me!
+      </Button>
+    );
+  }}
+</ClassNames>
+
+
+// after breaking change in Forma36
+const hugeButtonStyle = css`
+  width: 1000px;
+  height: 1000px;
+  margin: ${tokens.spacing2Xl};
+`;
+
+<Button css={hugeButtonStyle}>
+  Click me!
+</Button>
+```
+
+**Note**: this breaking change in Forma36 is likely to happen no matter what desicion we make here.
 
 ### Impact on bundle size [Mudit]
 
