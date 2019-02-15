@@ -66,18 +66,39 @@ import styles from "./style.css";
 ```
 
 * ✅ CSS is just CSS, but with automated BEM notation and protection about clash of classes
-* ✅ Zero run-time
+* ✅ Zero runtime
 * ✅ Co-location and easy of removal
 * 💔 Composability of styles in a bit of a pain
 * 💔 There are some problems with an order of import CSS Modules which we already faced with in Forma36 repo
 * 💔 It's hard to setup in our current Webpack + SystemJS + Karma configuration and we couldn't setup it up without hacks and workarounds
 
 
-### astoturf
+### [astoturf](https://github.com/4Catalyzer/astroturf)
 
-### JSS
+`astroturf` lets you write CSS in your JavaScript files without adding any runtime layer, and with your existing CSS processing pipeline. API is really similar to `styled-components` and `emotion`, but without dinamic properties.
 
-### emotion
+* ✅ Zero runtime CSS-in-JS
+* ✅ Co-location and easy of removal
+* 💔 API for composability looks [weird](https://github.com/4Catalyzer/astroturf#composition-variables-etc)
+* 💔 Complicated to integrate to our Webpack + Gulp pipeline, cause it has to export static CSS files as a result of a build.
+
+### [emotion](https://github.com/emotion-js/emotion)
+
+Second most popular CSS-in-JS library on a market.
+
+* ✅ Compatible with React and can be framework agnostic
+* ✅ Good Typescript support
+* ✅ Co-location and easy of removal
+* ✅ Themes, animations, ability to compose styles
+* ✅ Good tooling: ESLint pluings, Jest, syntax highlight highlight in most popular editors
+* ✅ Use can use both string templates and object notation for writing styles
+* ✅ Easy to use Forma36 tokens, cause it's just JavaScript
+* ✅ You can create style without creating a component, basically it's just a function with produces unique CSS class.
+* ✅ [5.7Kb (min + gzip)](https://bundlephobia.com/result?p=emotion@10.0.7) for framework agostic version
+* ✅ One of the most performant runtime CSS-in-JS solutions [results](https://github.com/A-gambit/CSS-IN-JS-Benchmarks/blob/master/RESULT.md)
+* 💔 About 16Kb (min + gzip) for a React-specific version of library
+* 💔 Run-time
+* 💔 Quite controvercial API for React-spefic v10 version of the library (see below)
 
 ## Chosen solution : Emotion
 
