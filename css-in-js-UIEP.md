@@ -1,6 +1,13 @@
+---
+id: UIEP-0002
+title: CSS-in-JS using emotion
+champions: ['Mudit Ameta (@zeusdeux)', 'Alex Suevalov (@suevalov)']
+endDate: March 1st, 2019
+---
+
 # [UIEP-0002] CSS-in-JS using [emotion](https://emotion.sh)
 
-## Motivation [Mudit]
+## Motivation
 
 Current state of styling in the web app is very fragmented.
 We have a mix of inline styles and classes defined in our stylus files.
@@ -33,7 +40,7 @@ Following are the characteristics we have used as our guiding principles in pick
 - Support for dead code elimination
 - High perf + small size
 
-## Solutions looked at [Alex]
+## Solutions looked at
 
 ### [styled-components](https://www.styled-components.com/)
 
@@ -43,15 +50,16 @@ The most popular CSS-in-JS library on a market.
 - ✅ Good Typescript support
 - ✅ Co-location and easy of removal
 - ✅ Themes, animations, ability to compose styles
-- ✅ Good tooling: ESLint pluings, Jest, syntax highlight highlight in most popular editors
-- ✅ Easy to use Forma36 tokens, cause it's just JavaScript
-- 💔 You cannot create style without creating a component which is not always needed, tightly coupled to React.
+- ✅ Good tooling: ESLint plugins, Jest integration, syntax highlighting support available for popular editors
+- ✅ Easy to use Forma36 tokens, since it's just JavaScript
+- 💔 You cannot create styles without creating a component which is not always needed, tightly coupled to React
 - 💔 [15.8Kb (min + gzip)](https://bundlephobia.com/result?p=styled-components@4.1.3)
-- 💔 Not the most performant solution, twice slower than `emotion` [results](https://github.com/A-gambit/CSS-IN-JS-Benchmarks/blob/master/RESULT.md)
+- 💔 Not the most performant solution, two times slower than `emotion` [results](https://github.com/A-gambit/CSS-IN-JS-Benchmarks/blob/master/RESULT.md)
 
 ### [CSS Modules](https://github.com/css-modules/css-modules)
 
-It's actually not even CSS-in-JS solution, but a way how bundler (webpack in our case) processes CSS files. All class and animation names are scoped locally by default.
+This is not a CSS-in-JS solution, but a way how the bundler (webpack in our case) processes CSS files.
+All class and animation names are scoped locally by default.
 
 ```css
 /* style.css */
@@ -60,7 +68,7 @@ It's actually not even CSS-in-JS solution, but a way how bundler (webpack in our
 }
 ```
 
-When importing the CSS Module from a JS Module, it exports an object with all mappings from local names to global names.
+When importing the CSS module from a JS module, it exports an object with all mappings from local names to global names.
 
 ```js
 import styles from './style.css';
@@ -71,40 +79,42 @@ import styles from './style.css';
 - ✅ CSS is just CSS, but with automated BEM notation and protection about clash of classes
 - ✅ Zero run-time
 - ✅ Co-location and easy of removal
-- 💔 Composability of styles in a bit of a pain
-- 💔 There are some problems with an order of import CSS Modules which we already faced with in Forma36 repo
-- 💔 It's hard to setup in our current Webpack + SystemJS + Karma configuration and we couldn't setup it up without hacks and workarounds
+- 💔 Style composition is a bit of a pain
+- 💔 There are some problems relating to the CSS module `import` order which we've already seen in Forma36
+- 💔 It's hard to use with our current Webpack + SystemJS + Karma configuration and involves hacks and workarounds
 
 ### [astoturf](https://github.com/4Catalyzer/astroturf)
 
-`astroturf` lets you write CSS in your JavaScript files without adding any runtime layer, and with your existing CSS processing pipeline. API is really similar to `styled-components` and `emotion`, but without dinamic properties.
+`astroturf` lets you write CSS in your JavaScript files without adding any runtime layer, and works with your
+existing CSS processing pipeline. The API is really similar to `styled-components` and `emotion`, but without
+dynamic properties.
 
 - ✅ Zero runtime CSS-in-JS
-- ✅ Co-location and easy of removal
+- ✅ Co-location and ease of removal
 - 💔 API for composability looks [weird](https://github.com/4Catalyzer/astroturf#composition-variables-etc)
-- 💔 Complicated to integrate to our Webpack + Gulp pipeline, cause it has to export static CSS files as a result of a build.
+- 💔 Complicated to integrate to our Webpack + Gulp pipeline, as it has to export static CSS files as a result of a build.
 
 ### [emotion](https://github.com/emotion-js/emotion)
 
-Second most popular CSS-in-JS library on a market.
+Second most popular CSS-in-JS library on the market.
 
 - ✅ Compatible with React and can be framework agnostic
 - ✅ Good Typescript support
 - ✅ Co-location and easy of removal
 - ✅ Themes, animations, ability to compose styles
-- ✅ Good tooling: ESLint pluings, Jest, syntax highlight highlight in most popular editors
+- ✅ Good tooling: ESLint plugins, Jest, syntax highlighting support available for most editors
 - ✅ Use can use both string templates and object notation for writing styles
-- ✅ Easy to use Forma36 tokens, cause it's just JavaScript
-- ✅ You can create style without creating a component, basically it's just a function with produces unique CSS class.
+- ✅ Easy to use Forma36 tokens, as it's just JavaScript
+- ✅ You can create style without creating a component as it's API is just a function which produces unique CSS class names
 - ✅ [5.7Kb (min + gzip)](https://bundlephobia.com/result?p=emotion@10.0.7) for framework agostic version
 - ✅ One of the most performant runtime CSS-in-JS solutions [results](https://github.com/A-gambit/CSS-IN-JS-Benchmarks/blob/master/RESULT.md)
 - 💔 About 16Kb (min + gzip) for a React-specific version of library
 - 💔 Run-time
-- 💔 Quite controvercial API for React-spefic v10 version of the library (see below)
+- 💔 Quite controversial API for React-specific v10 version of the library (see below)
 
 ## Chosen solution : Emotion
 
-### Examples [Mudit]
+### Examples
 
 Since emotion@v10 is a big departure from v9 and framework agnostic, it has a direct impact on
 developer ergonomics and how you structure your code. Therefore, instead of static code snippets
@@ -119,7 +129,7 @@ it’ll help you provide better feedback on this proposal.
 
 [![Edit emotion-framework-agnostic](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/jlr25o5q3y)
 
-### Dev experience wins [Mudit]
+### Developer experience
 
 Both `emotion` and `@emotion/core` support [babel-plugin-emotion](https://emotion.sh/docs/babel-plugin-emotion)
 which gives us a lot of features for free as you can see below.
@@ -181,7 +191,7 @@ which gives us a lot of features for free as you can see below.
 
 You can play with the code in this PR locally to see sourcemaps, etc in action.
 
-### Migration path (can already use in new things) [Mudit drafts & Alex reviews]
+### Migration path
 
 All existing components can use emotion from the day this proposal is accepted and merged.
 Once this is merged, no new `.styl` should be added to the codebase. Furthermore, we can
@@ -190,15 +200,14 @@ be expected as a part of the migration to react initiative.
 `vendor` styles will most likely remain as-is. The goal for reducing vendor styles remains
 unaffected by this proposal.
 
-### Impact on Jest snapshots [Mudit]
+### Impact on Jest snapshots
 
 To add support for snapshot testing, we propose using the serializer provided by [jest-emotion](https://github.com/emotion-js/emotion/tree/master/packages/jest-emotion). It's setup as a part of this PR and an example of `TypeformModal.spec.js`
 and its snapshot is made available in this PR as well.
 
-### Impact on Forma 36 [Alex]
+### Impact on Forma 36
 
 If we go with framework agnostic version of `emotion` then there's no direct impact on Forma.
-
 
 ```js
 import { css } from 'emotion';
@@ -211,15 +220,14 @@ const hugeButtonStyle = css`
   margin: ${tokens.spacing2Xl};
 `;
 
-<Button extraClassNames={hugeButtonStyle}>Click me</Button>
+<Button extraClassNames={hugeButtonStyle}>Click me</Button>;
 ```
 
 If we go with React-specific version of `emotion` than it would be really nice to do a breaking change and rename `extraClassNames` to `className`:
 
-
 ```js
 // without breaking change in Forma36
-import { jsx, ClassNames } from "@emotion/core";
+import { jsx, ClassNames } from '@emotion/core';
 import tokens from '@contentful/forma-36-tokens';
 import { Button } from '@contentful/forma-36-react-components';
 
@@ -230,14 +238,9 @@ import { Button } from '@contentful/forma-36-react-components';
       height: 1000px;
       margin: ${tokens.spacing2Xl};
     `;
-    return (
-      <Button extraClassNames={cx(hugeButtonStyle)}>
-        Click me!
-      </Button>
-    );
+    return <Button extraClassNames={cx(hugeButtonStyle)}>Click me!</Button>;
   }}
-</ClassNames>
-
+</ClassNames>;
 
 // after breaking change in Forma36
 const hugeButtonStyle = css`
@@ -246,20 +249,23 @@ const hugeButtonStyle = css`
   margin: ${tokens.spacing2Xl};
 `;
 
-<Button css={hugeButtonStyle}>
-  Click me!
-</Button>
+<Button css={hugeButtonStyle}>Click me!</Button>;
 ```
 
 **Note**: this breaking change in Forma36 is likely to happen no matter what desicion we make here.
 
-### Impact on bundle size [Mudit]
+### Impact on bundle size
 
 The framework agnostic [`emotion@10.0.7` is `5.7kB` gzipped](https://bundlephobia.com/result?p=emotion@10.0.7).
 This should add ~0.03% to our `libs` bundle. Given that this is the successor for stylus, we can save space
 by getting rid of styles there and by discovering and removing unused styles when migrating them to emotion.
 
-### Impact on caching (no more css vs js caching) [Mudit]
+### Impact on caching
 
 Given that styles written using emotion will be bundled with the application javascript, they won't be
 separately cachable. `vendor` and stylus based `application` styles will continue to be cached as they are now.
+
+### Open questions
+
+- v10 or framework agnostic?
+- template strings or object notation for styles or both?
