@@ -219,16 +219,17 @@ If we go with React-specific version of `emotion` than it would be really nice t
 
 ```js
 // without breaking change in Forma36
-import { css, jsx, ClassNames } from "@emotion/core";
-
-const hugeButtonStyle = css`
-  width: 1000px;
-  height: 1000px;
-  margin: ${tokens.spacing2Xl};
-`;
+import { jsx, ClassNames } from "@emotion/core";
+import tokens from '@contentful/forma-36-tokens';
+import { Button } from '@contentful/forma-36-react-components';
 
 <ClassNames>
-  {({ cx }) => {
+  {({ cx, css }) => {
+    const hugeButtonStyle = css`
+      width: 1000px;
+      height: 1000px;
+      margin: ${tokens.spacing2Xl};
+    `;
     return (
       <Button extraClassNames={cx(hugeButtonStyle)}>
         Click me!
