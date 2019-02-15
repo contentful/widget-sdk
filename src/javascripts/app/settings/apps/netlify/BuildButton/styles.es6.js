@@ -1,4 +1,4 @@
-import { css } from 'react-emotion';
+import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
 export default {

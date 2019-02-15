@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'react-emotion';
+import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { cloneDeep, uniqBy } from 'lodash';
 import { Button, Notification, Note } from '@contentful/forma-36-react-components';

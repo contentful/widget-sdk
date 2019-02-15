@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'react-emotion';
+import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { TextLink, Button, Heading } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';

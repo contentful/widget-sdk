@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { css } from 'react-emotion';
+import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Heading } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';

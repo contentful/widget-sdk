@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'react-emotion';
+import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import Workbench from 'app/common/Workbench.es6';
 import FeedbackButton from 'app/common/FeedbackButton.es6';

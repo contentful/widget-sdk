@@ -116,6 +116,5 @@ window.libs = [
   ['react-player', require('react-player')],
   ['react-beautiful-dnd', require('react-beautiful-dnd')],
   ['@typeform/embed', require('@typeform/embed/dist/embed')],
-  ['emotion', require('emotion')],
-  ['react-emotion', require('react-emotion')]
+  ['emotion', require('emotion')]
 ];
