@@ -57,7 +57,10 @@ async function insertLink(change, createHyperlinkDialog, logAction) {
   logAction('openCreateHyperlinkDialog');
   const showTextInput = !change.value.isExpanded || change.value.fragment.text.trim() === '';
   try {
-    const { text, type: linkType, uri, target } = await createHyperlinkDialog({ showTextInput });
+    const { text, type: linkType, uri, target } = await createHyperlinkDialog({
+      showTextInput,
+      value: { text: change.value.fragment.text || '' }
+    });
     if (showTextInput) {
       if (change.value.blocks.last().isVoid) {
         change.insertBlock(BLOCKS.PARAGRAPH);
