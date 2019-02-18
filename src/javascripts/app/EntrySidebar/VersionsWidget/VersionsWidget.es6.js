@@ -98,7 +98,7 @@ export default class VersionsWidget extends Component {
       <EntrySidebarWidget title="Versions">
         <div className="snapshot-sidebar">
           {error && <div className="snapshot-sidebar__warning">{error}</div>}
-          {isLoaded && versions.length === 0 && (
+          {isLoaded && !error && versions.length === 0 && (
             <p className="entity-sidebar__help-text" role="note">
               {noSnapshotsText}
             </p>

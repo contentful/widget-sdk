@@ -84,6 +84,9 @@ export default function register() {
 
         $scope.isLoading = true;
 
+        // TODO: Instead of duck punching snapshot entities and keeping the whole
+        //  thing in memory, we should reduce it to a view friendly data structure
+        //  with only relevant data to build the list.
         return spaceContext.cma
           .getEntrySnapshots(entryId, query)
           .then(res => res.items)

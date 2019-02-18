@@ -44,35 +44,34 @@ export default class VersionsWidgetContainer extends Component {
           this.onLoad(versions, entrySys);
         })
         .catch(error => {
-          this.onError(error);
+          this.onError(error, entrySys);
         });
     } else {
-      this.onLoad(this.state.versions, entrySys);
+      this.onUpdate(entrySys);
     }
   };
 
-  onLoad = (versions, entrySys) => {
+  onUpdate = entrySys => {
+    this.onLoad(this.state.versions, entrySys, this.state.error);
+  };
+
+  onLoad = (versions, entrySys, error = null) => {
+    // TODO: Instead of relying on duck punched snapshot entities in VersionsWidget,
+    //  we should just pass standard snapshot entities plus the current version and
+    //  let the widget figure out what to render as current.
     const versionsWithCurrent = SnapshotDecorator.withCurrent(entrySys, versions);
-    if (versionsWithCurrent.length > 0) {
-      this.setState({
-        isLoaded: true,
-        versions: versionsWithCurrent,
-        entryId: entrySys.id,
-        error: null
-      });
-    } else {
-      this.setState({
-        isLoaded: true,
-        versions: [],
-        entryId: entrySys.id,
-        error: null
-      });
-    }
+    this.setState({
+      isLoaded: true,
+      versions: versionsWithCurrent,
+      entryId: entrySys.id,
+      error
+    });
   };
 
-  onError = () => {
+  onError = (_error, entrySys) => {
     this.setState({
-      error: 'Failed to load entity snapshots',
+      error: 'There was a problem loading the versions of this entry.',
+      entryId: entrySys.id,
       isLoaded: true
     });
   };

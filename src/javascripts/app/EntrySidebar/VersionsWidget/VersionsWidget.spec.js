@@ -9,10 +9,16 @@ describe('EntrySidebar/VersionsWidget', () => {
     return { wrapper };
   };
 
-  it('should render correct message if there are no versions', () => {
+  it('renders correct message if there are no versions', () => {
     const { wrapper } = render({ versions: [] }, Enzyme.mount);
     expect(wrapper).toIncludeText(noSnapshotsText);
     expect(wrapper).not.toIncludeText(compareHelpText);
+  });
+
+  it('renders an error message on an error', () => {
+    const { wrapper } = render({ versions: [], error: 'SOME ERROR' }, Enzyme.mount);
+    expect(wrapper).toIncludeText('SOME ERROR');
+    expect(wrapper).not.toIncludeText(noSnapshotsText);
   });
 
   describe('versions are present', () => {
@@ -35,7 +41,7 @@ describe('EntrySidebar/VersionsWidget', () => {
       }
     ];
 
-    it('should render correct message if there are some versions', () => {
+    it('renders correct message if there are some versions', () => {
       const { wrapper } = render(
         {
           versions
@@ -56,7 +62,7 @@ describe('EntrySidebar/VersionsWidget', () => {
       expect(wrapper.find('table input#selected-2')).not.toBeDisabled();
     });
 
-    it('should have disabled compare button by default which has to be enabled once version is selected', () => {
+    it('disableds compare button by default which has to be enabled once version is selected', () => {
       const { wrapper } = render(
         {
           versions,
