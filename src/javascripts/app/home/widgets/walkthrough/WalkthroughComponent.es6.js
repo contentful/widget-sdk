@@ -6,10 +6,12 @@ import TooltipContent from './TooltipContent.es6';
 
 export default class WalkthroughComponent extends React.Component {
   static propTypes = {
-    spaceName: PropTypes.string,
-    isTourRunning: PropTypes.bool,
-    runTour: PropTypes.func
+    spaceName: PropTypes.string.isRequired,
+    isTourRunning: PropTypes.bool.isRequired,
+    runTour: PropTypes.func.isRequired
   };
+
+  static defaultProps = { isTourRunning: false };
 
   tourCallback = data => {
     const { action } = data;
@@ -35,7 +37,7 @@ export default class WalkthroughComponent extends React.Component {
       title: 'Switch between Spaces',
       content: (
         <TooltipContent
-          imgSrs="/app/images/author-editor-walkthrough/step1-SpaceMenu.png"
+          imgSrc="/app/images/author-editor-walkthrough/step1-SpaceMenu.png"
           imgAlt="Organisation and Space menu scheme"
           copy="This is your organization’s account. It can contain one or more Spaces, which are an
       area to store your content. Use this menu to navigate to other Spaces you’re working in."
@@ -49,7 +51,7 @@ export default class WalkthroughComponent extends React.Component {
       title: 'Create and edit content',
       content: (
         <TooltipContent
-          imgSrs="/app/images/author-editor-walkthrough/step2-ContentTab.png"
+          imgSrc="/app/images/author-editor-walkthrough/step2-ContentTab.png"
           imgAlt="Content creation page scheme"
           copy="Content creation happens in this tab. Here you can search, filter, and view existing
           Entries, as well as create new content for your Space."
@@ -63,7 +65,7 @@ export default class WalkthroughComponent extends React.Component {
       title: 'Manage your media',
       content: (
         <TooltipContent
-          imgSrs="/app/images/author-editor-walkthrough/step3-MediaTab.png"
+          imgSrc="/app/images/author-editor-walkthrough/step3-MediaTab.png"
           imgAlt="Media managing tab scheme"
           copy="In this tab you can manage all of the media in your Space. Here you can upload, search,
           filter, and publish media to reuse across all of your content."
@@ -77,7 +79,7 @@ export default class WalkthroughComponent extends React.Component {
       title: 'Settings and support',
       content: (
         <TooltipContent
-          imgSrs="/app/images/author-editor-walkthrough/step4-profile.png"
+          imgSrc="/app/images/author-editor-walkthrough/step4-profile.png"
           imgAlt="Image of support chat"
           copy="Get answers to any product-related questions by chatting with Contentful experts. From
           this menu you can also manage your profile."
@@ -132,5 +134,3 @@ export default class WalkthroughComponent extends React.Component {
     );
   }
 }
-
-WalkthroughComponent.defaultProps = { isTourRunning: false };

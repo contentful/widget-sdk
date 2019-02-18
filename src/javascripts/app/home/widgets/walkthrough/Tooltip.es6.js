@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { kebabCase } from 'lodash';
+import { snakeCase } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 import { track } from 'analytics/Analytics.es6';
 import { Button, IconButton, Heading } from '@contentful/forma-36-react-components';
@@ -30,16 +30,16 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
           onClick={e => {
             closeProps.onClick(e);
             track('element:click', {
-              elementId: `close-walkthrough-step-button`,
+              elementId: `close_walkthrough_step_button`,
               groupId: 'author_editor_continuous_onboarding',
               fromState: $state.current.name,
-              step: kebabCase(step.title)
+              step: snakeCase(step.title)
             });
           }}
           testId="close-walkthrough-tooltip-button"
         />
       </div>
-      {step.content && { ...step.content }}
+      {step.content}
       <div className="walkthrough-tooltip__button-container">
         <Button
           {...primaryProps}
@@ -48,10 +48,10 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
           onClick={e => {
             primaryProps.onClick(e);
             track('element:click', {
-              elementId: `next-walkthrough-step-button`,
+              elementId: `next_walkthrough_step_button`,
               groupId: 'author_editor_continuous_onboarding',
               fromState: $state.current.name,
-              step: kebabCase(step.title)
+              step: snakeCase(step.title)
             });
           }}
           testId="next-step-walkthrough-tooltip-button">
