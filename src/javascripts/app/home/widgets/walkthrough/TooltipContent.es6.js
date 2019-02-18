@@ -1,20 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const TooltipContent = ({ imgSrc, imgAlt, copy }) => {
+const TooltipContent = ({ illustration, copy }) => {
   return (
     <>
-      {imgSrc && imgAlt && (
-        <img className="walkthrough-tooltip__scheme-image" src={imgSrc} alt={imgAlt} />
-      )}
+      <div className="walkthrough-tooltip__scheme-image">{illustration}</div>
       <p className="walkthrough-tooltip__copy">{copy}</p>
     </>
   );
 };
 
 TooltipContent.propTypes = {
-  imgSrc: PropTypes.string,
-  imgAlt: PropTypes.string,
+  illustration: PropTypes.any,
   copy: PropTypes.string.isRequired
 };
 
