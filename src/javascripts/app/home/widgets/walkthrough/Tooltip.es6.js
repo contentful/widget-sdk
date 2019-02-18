@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { snakeCase } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 import { track } from 'analytics/Analytics.es6';
-import { Button, IconButton, Heading } from '@contentful/forma-36-react-components';
+import { Button, IconButton, Subheading } from '@contentful/forma-36-react-components';
 
 const $state = getModule('$state');
 
@@ -17,11 +17,11 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
       className="walkthrough-tooltip"
       key={index}
       {...tooltipProps}
-      data-test-id="walkthrough-step-tooltip">
+      data-test-id={`walkthrough-step-tooltip-${index + 1}`}>
       <div className="walkthrough-tooltip__header">
-        <Heading className="walkthrough-tooltip__heading" element="h3">
+        <Subheading className="walkthrough-tooltip__heading" element="h3">
           {step.title}
-        </Heading>
+        </Subheading>
         <IconButton
           {...closeProps}
           label="Close tour step tooltip"
