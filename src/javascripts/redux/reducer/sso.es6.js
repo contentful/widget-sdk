@@ -1,10 +1,12 @@
 import { get, set, clone } from 'lodash';
 import { combineReducers } from 'redux';
 import * as actions from 'redux/actions/sso/actions.es6';
+import { TEST_RESULTS } from 'app/OrganizationSettings/SSO/constants.es6';
 
 export default combineReducers({
   identityProvider,
-  fields
+  fields,
+  connectionTest
 });
 
 /*
@@ -89,7 +91,7 @@ export function identityProvider(state = {}, action) {
   {
     isPending: Boolean,
     error: String,
-    value: NullableString
+    value: String
   }
 
  */
@@ -120,7 +122,8 @@ export function fields(state = {}, action) {
 
       return updatedState;
     }
-    case actions.SSO_FIELD_VALIDATION_SUCCESS: {
+    case actions.SSO_FIELD_VALIDATION_SUCCESS:
+    case actions.SSO_FIELD_UPDATE_SUCCESS: {
       const updatedState = clone(state);
       set(updatedState, [action.meta.fieldName, 'error'], null);
       set(updatedState, [action.meta.fieldName, 'isPending'], false);
@@ -135,6 +138,54 @@ export function fields(state = {}, action) {
 
       return updatedState;
     }
+    default:
+      return state;
+  }
+}
+
+/*
+  The current information related to the connection test.
+
+  {
+    isPending: Boolean,
+
+    // Can be success, failure, or unknown
+    result: String,
+    errors: Array<String>
+  }
+
+ */
+export function connectionTest(state = {}, action) {
+  switch (action.type) {
+    case actions.SSO_CONNECTION_TEST_START:
+      return {
+        ...state,
+        isPending: true
+      };
+    case actions.SSO_CONNECTION_TEST_END:
+      return {
+        ...state,
+        isPending: false
+      };
+    case actions.SSO_CONNECTION_TEST_SUCCESS:
+      return {
+        ...state,
+        result: TEST_RESULTS.success,
+        isPending: false
+      };
+    case actions.SSO_CONNECTION_TEST_FAILURE:
+      return {
+        ...state,
+        result: TEST_RESULTS.failure,
+        errors: action.payload,
+        isPending: false
+      };
+    case actions.SSO_CONNECTION_TEST_UNKNOWN:
+      return {
+        ...state,
+        result: TEST_RESULTS.unknown,
+        isPending: false
+      };
     default:
       return state;
   }

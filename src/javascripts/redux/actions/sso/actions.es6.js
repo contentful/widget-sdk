@@ -105,3 +105,41 @@ export function ssoFieldValidationFailure(fieldName, error) {
     meta: { fieldName }
   };
 }
+
+export const SSO_CONNECTION_TEST_START = 'SSO_CONNECTION_TEST/START';
+export function ssoConnectionTestStart() {
+  return {
+    type: SSO_CONNECTION_TEST_START
+  };
+}
+
+export const SSO_CONNECTION_TEST_END = 'SSO_CONNECTION_TEST/END';
+export function ssoConnectionTestEnd() {
+  return {
+    type: SSO_CONNECTION_TEST_END
+  };
+}
+
+export const SSO_CONNECTION_TEST_SUCCESS = 'SSO_CONNECTION_TEST/SUCCESS';
+export function ssoConnectionTestSuccess(data) {
+  return {
+    type: SSO_CONNECTION_TEST_SUCCESS,
+    payload: data
+  };
+}
+
+export const SSO_CONNECTION_TEST_FAILURE = 'SSO_CONNECTION_TEST/FAILURE';
+export function ssoConnectionTestFailure(errors) {
+  return {
+    type: SSO_CONNECTION_TEST_FAILURE,
+    error: true,
+    payload: errors
+  };
+}
+
+export const SSO_CONNECTION_TEST_UNKNOWN = 'SSO_CONNECTION_TEST/UNKNOWN';
+export function ssoConnectionTestUnknown() {
+  return {
+    type: SSO_CONNECTION_TEST_UNKNOWN
+  };
+}

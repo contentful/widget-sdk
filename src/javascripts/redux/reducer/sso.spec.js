@@ -1,5 +1,6 @@
 import * as reducers from './sso.es6';
 import * as actions from 'redux/actions/sso/actions.es6';
+import { TEST_RESULTS } from 'app/OrganizationSettings/SSO/constants.es6';
 
 const callReducer = (reducer, action) => {
   return reducer(undefined, action);
@@ -219,6 +220,64 @@ describe('SSO Redux reducers', () => {
           error: error.message,
           isPending: false
         }
+      });
+    });
+  });
+
+  describe('connectionTest', () => {
+    it('should handle SSO connection test start state', () => {
+      expect(
+        callReducer(reducers.connectionTest, {
+          type: actions.SSO_CONNECTION_TEST_START
+        })
+      ).toEqual({
+        isPending: true
+      });
+    });
+
+    it('should handle SSO connection test end state', () => {
+      expect(
+        callReducer(reducers.connectionTest, {
+          type: actions.SSO_CONNECTION_TEST_END
+        })
+      ).toEqual({
+        isPending: false
+      });
+    });
+
+    it('should handle SSO connection test success state', () => {
+      expect(
+        callReducer(reducers.connectionTest, {
+          type: actions.SSO_CONNECTION_TEST_SUCCESS
+        })
+      ).toEqual({
+        result: TEST_RESULTS.success,
+        isPending: false
+      });
+    });
+
+    it('should handle SSO connection test failure state', () => {
+      expect(
+        callReducer(reducers.connectionTest, {
+          type: actions.SSO_CONNECTION_TEST_FAILURE,
+          error: true,
+          payload: ['something bad happened']
+        })
+      ).toEqual({
+        result: TEST_RESULTS.failure,
+        errors: ['something bad happened'],
+        isPending: false
+      });
+    });
+
+    it('should handle SSO connection test unknown state', () => {
+      expect(
+        callReducer(reducers.connectionTest, {
+          type: actions.SSO_CONNECTION_TEST_UNKNOWN
+        })
+      ).toEqual({
+        result: TEST_RESULTS.unknown,
+        isPending: false
       });
     });
   });

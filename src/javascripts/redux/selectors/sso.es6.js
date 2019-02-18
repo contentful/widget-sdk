@@ -28,3 +28,7 @@ export function getFields(state) {
 export function getIdentityProviderVersion(state) {
   return get(getIdentityProvider(state), ['data', 'sys', 'version'], null);
 }
+
+export function getConnectionTest(state) {
+  return get(state, ['sso', 'connectionTest'], {});
+}
