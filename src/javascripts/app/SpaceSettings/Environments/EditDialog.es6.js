@@ -34,13 +34,17 @@ const EMPTY_FIELD_ERROR_MESSAGE = 'Please fill out this field.';
  * It returns a promise that resolves with a boolean that is true if
  * the environment was created.
  */
-export function openCreateDialog(createEnvironment, environments) {
+export function openCreateDialog(createEnvironment, environments, currentEnvironment) {
   const initialState = {
     fields: {
-      id: { name: 'id', errors: [] }
+      id: {
+        name: 'id',
+        errors: []
+      }
     },
     environments,
-    selectedEnvironment: 'master'
+    currentEnvironment,
+    selectedEnvironment: currentEnvironment
   };
 
   return openDialog({
@@ -52,9 +56,15 @@ export function openCreateDialog(createEnvironment, environments) {
       </div>
     `.trim(),
     controller: $scope => {
-      $scope.component = createComponent(initialState, { createEnvironment }, value => {
-        $scope.dialog.confirm(value);
-      });
+      $scope.component = createComponent(
+        initialState,
+        {
+          createEnvironment
+        },
+        value => {
+          $scope.dialog.confirm(value);
+        }
+      );
     },
     backgroundClose: false
   }).promise;
@@ -79,7 +89,10 @@ function createComponent(initialState, context, closeDialog) {
     ConfirmDialog: () => closeDialog(true)
   });
 
-  return { store, render: state => render(assign(state, actions)) };
+  return {
+    store,
+    render: state => render(assign(state, actions))
+  };
 }
 
 const reduce = makeReducer({
@@ -97,7 +110,11 @@ const reduce = makeReducer({
     } else {
       C.runTask(function*() {
         const id = get(state, ['fields', 'id', 'value']);
-        const result = yield context.createEnvironment({ id, name: id, source: state.selectedEnvironment });
+        const result = yield context.createEnvironment({
+          id,
+          name: id,
+          source: state.selectedEnvironment
+        });
         actions.ReceiveResult(result);
       });
       state = set(state, 'inProgress', true);
@@ -112,7 +129,15 @@ const reduce = makeReducer({
         return state;
       },
       [Environment.IdExistsError]: () => {
-        return set(state, ['fields', 'id', 'errors'], [{ message: ID_EXISTS_ERROR_MESSAGE }]);
+        return set(
+          state,
+          ['fields', 'id', 'errors'],
+          [
+            {
+              message: ID_EXISTS_ERROR_MESSAGE
+            }
+          ]
+        );
       },
       [Environment.ServerError]: error => {
         logger.logServerError(error);
@@ -153,7 +178,11 @@ function validate(fields) {
     const errorMessage = validateField(field.value);
     if (errorMessage) {
       hasErrors = true;
-      return set(field, 'errors', [{ message: errorMessage }]);
+      return set(field, 'errors', [
+        {
+          message: errorMessage
+        }
+      ]);
     } else {
       return field;
     }

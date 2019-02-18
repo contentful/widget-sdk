@@ -70,7 +70,11 @@ const reduce = makeReducer({
   },
   [OpenCreateDialog]: (state, _, { resourceEndpoint, dispatch }) => {
     C.runTask(function*() {
-      const created = yield openCreateDialog(resourceEndpoint.create, state.items);
+      const created = yield openCreateDialog(
+        resourceEndpoint.create,
+        state.items,
+        state.currentEnvironment
+      );
       if (created) {
         dispatch(Reload);
       }
@@ -143,10 +147,10 @@ export function createComponent(spaceContext) {
     resourceEndpoint,
     resourceService
   };
-
   const organization = spaceContext.organization;
   const initialState = {
     items: [],
+    currentEnvironment: spaceContext.getEnvironmentId(),
     canCreateEnv: true,
     resource: { usage: 0 },
     canUpgradeSpace: isOwnerOrAdmin(organization),

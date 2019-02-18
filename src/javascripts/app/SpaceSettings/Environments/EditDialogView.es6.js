@@ -9,10 +9,11 @@ const SpaceEnvironmentsEditDialogPropTypes = {
   inProgress: PropTypes.boolean,
   environments: PropTypes.any,
   selectedEnvironment: PropTypes.any,
+  currentEnvironment: PropTypes.any,
   SetFieldValue: PropTypes.func.isRequired,
   SetSourceEnvironment: PropTypes.func.isRequired,
   CancelDialog: PropTypes.func.isRequired,
-  Submit: PropTypes.func.isRequired,
+  Submit: PropTypes.func.isRequired
 };
 
 export default function SpaceEnvironmentsEditDialog(props) {
@@ -31,23 +32,38 @@ export default function SpaceEnvironmentsEditDialog(props) {
 }
 SpaceEnvironmentsEditDialog.propTypes = SpaceEnvironmentsEditDialogPropTypes;
 
-function Form({ inProgress, fields, environments, selectedEnvironment, Submit, SetFieldValue, SetSourceEnvironment, CancelDialog }) {
+function Form({
+  inProgress,
+  fields,
+  environments,
+  selectedEnvironment,
+  Submit,
+  SetFieldValue,
+  SetSourceEnvironment,
+  CancelDialog,
+  currentEnvironment
+}) {
   return (
     <form
       onSubmit={ev => {
         ev.preventDefault();
         Submit();
       }}>
-
-
       <div className="cfnext-form__field">
         <label>
           <span style={{ fontWeight: 'bold' }}>Environment to copy from</span>
         </label>
-      
-        <select className="cfnext-select-box" style={{ display: 'block', width: '100%' }} onChange={ev => SetSourceEnvironment({ value: ev.target.value })}>
-          {environments.map((env) => {
-            return <option key={env.id} value={env.id} selected={env.id === selectedEnvironment}>{env.id}</option>
+
+        <select
+          className="cfnext-select-box"
+          style={{ display: 'block', width: '100%' }}
+          onChange={ev => SetSourceEnvironment({ value: ev.target.value })}>
+          {environments.map(env => {
+            return (
+              <option key={env.id} value={env.id} selected={env.id === selectedEnvironment}>
+                {env.id === currentEnvironment ? `${env.id} (current)` : `${env.id}`}
+              </option>
+            );
           })}
         </select>
       </div>
