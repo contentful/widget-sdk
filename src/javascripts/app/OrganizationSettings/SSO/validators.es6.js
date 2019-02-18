@@ -9,6 +9,10 @@ export function ssoName(value) {
 }
 
 export function idpCert(value) {
+  if (value === '') {
+    return true;
+  }
+
   try {
     asn1.decode(value);
 
@@ -19,6 +23,10 @@ export function idpCert(value) {
 }
 
 export function idpSsoTargetUrl(value) {
+  if (value === '') {
+    return true;
+  }
+
   // Taken from https://stackoverflow.com/a/3809435
   const httpsUrlRegex = /https:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
 

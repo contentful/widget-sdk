@@ -118,6 +118,7 @@ export function fields(state = {}, action) {
     case actions.SSO_FIELD_UPDATE_FAILURE:
     case actions.SSO_FIELD_VALIDATION_FAILURE: {
       const updatedState = clone(state);
+
       set(updatedState, [action.meta.fieldName, 'error'], action.payload.message);
       set(updatedState, [action.meta.fieldName, 'isPending'], false);
 

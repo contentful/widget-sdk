@@ -6,7 +6,6 @@ import {
   Subheading,
   Note,
   TextField,
-  TextInput,
   FormLabel,
   HelpText,
   Select,
@@ -15,7 +14,9 @@ import {
   Spinner,
   Button,
   Textarea,
-  ModalConfirm
+  ModalConfirm,
+  Tooltip,
+  Icon
 } from '@contentful/forma-36-react-components';
 import { authUrl, appUrl } from 'Config.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
@@ -170,10 +171,15 @@ export class IDPSetupForm extends React.Component {
       <ModalConfirm
         title="Enable SSO"
         intent="positive"
+        confirmLabel="Enable"
         isShown={isShown}
         onConfirm={() => onClose(true)}
         onCancel={() => onClose(false)}>
-        <p>Are you sure you want to enable your SSO?</p>
+        <p>
+          Enabling SSO will allow your users to log in via the SSO portal. Once SSO is enabled, you
+          won’t be able to make any changes via the webapp.
+        </p>
+        <p>Are you sure you want to enable SSO?</p>
       </ModalConfirm>
     ));
 
@@ -195,12 +201,18 @@ export class IDPSetupForm extends React.Component {
     } = this.props;
 
     const allowConnectionTest = connectionTestingAllowed(fields, connectionTest);
+    const metadataUrl = authUrl(`/sso/${orgId}/metadata`);
 
     return (
       <React.Fragment>
         <section className="f36-margin-top--xl">
           <Heading element="h2" extraClassNames="f36-margin-bottom--l">
             Contentful’s service provider details
+            <TextLink extraClassNames="f36-margin-left--s" href={metadataUrl}>
+              <Tooltip place="top" content="Download metadata file">
+                <Icon icon="Download" />
+              </Tooltip>
+            </TextLink>
           </Heading>
           <TextField
             labelText="Audience"
@@ -227,6 +239,15 @@ export class IDPSetupForm extends React.Component {
             }}
             value={`https:${authUrl(`/sso/${orgId}/consume`)}`}
           />
+
+          <Subheading extraClassNames="f36-margin-bottom--xs">Contentful logo</Subheading>
+          <HelpText extraClassNames="f36-margin-bottom--xl">
+            Most SSO providers allow you to upload and set a thumbnail for your custom SAML app.{' '}
+            <TextLink href="http://press.contentful.com/media_kits/219490">
+              Download Contentful logos
+            </TextLink>
+            .
+          </HelpText>
 
           <Subheading extraClassNames="f36-margin-bottom--xs">Map user attributes</Subheading>
           <HelpText extraClassNames="f36-margin-bottom--l">
@@ -301,31 +322,31 @@ export class IDPSetupForm extends React.Component {
             </Select>
             {fields.idpName.isPending && <Spinner />}
           </div>
-          <FormLabel htmlFor="idpSsoTargetUrl">Single Sign-On Redirect URL</FormLabel>
-          <div className="sso-setup__field f36-margin-right--m">
-            <TextInput
-              id="idpSsoTargetUrl"
-              name="idpSsoTargetUrl"
-              extraClassNames="f36-margin-bottom--l"
-              onChange={this.updateField('idpSsoTargetUrl')}
-              onBlur={this.updateField('idpSsoTargetUrl', true)}
-              value={fields.idpSsoTargetUrl.value}
-              validationMessage={fields.idpSsoTargetUrl.error}
-            />
-          </div>
+          <TextField
+            labelText="Single Sign-On Redirect URL"
+            extraClassNames="sso-setup__field f36-margin-right--m f36-margin-bottom--l"
+            id="idpSsoTargetUrl"
+            name="idpSsoTargetUrl"
+            onChange={this.updateField('idpSsoTargetUrl')}
+            onBlur={this.updateField('idpSsoTargetUrl', true)}
+            value={fields.idpSsoTargetUrl.value}
+            validationMessage={fields.idpSsoTargetUrl.error}
+          />
           {fields.idpSsoTargetUrl.isPending && <Spinner />}
-          <FormLabel htmlFor="idpCert">X.509 Certificate</FormLabel>
-          <div className="sso-setup__field f36-margin-right--m">
-            <Textarea
-              id="idpCert"
-              name="idpCert"
-              rows={8}
-              value={fields.idpCert.value}
-              onChange={this.updateField('idpCert')}
-              onBlur={this.updateField('idpCert', true)}
-              validationMessage={fields.idpCert.error}
-            />
-          </div>
+          <TextField
+            labelText="X.509 Certificate"
+            textarea
+            id="idpCert"
+            name="idpCert"
+            extraClassNames="sso-setup__field f36-margin-right--m"
+            textInputProps={{
+              rows: 8
+            }}
+            value={fields.idpCert.value}
+            onChange={this.updateField('idpCert')}
+            onBlur={this.updateField('idpCert', true)}
+            validationMessage={fields.idpCert.error}
+          />
           {fields.idpCert.isPending && <Spinner />}
         </section>
 

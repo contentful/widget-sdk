@@ -180,6 +180,8 @@ export function enable({ orgId }) {
     } catch (e) {
       dispatch(actions.ssoEnableFailure(e));
 
+      Notification.error('Could not enable SSO. Try again.');
+
       return;
     }
 

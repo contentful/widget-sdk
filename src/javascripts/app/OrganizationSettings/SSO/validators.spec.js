@@ -47,6 +47,10 @@ describe('validators', () => {
   });
 
   describe('idpCert', () => {
+    it('should accept an empty string', () => {
+      expect(validators.idpCert('')).toBe(true);
+    });
+
     it('should accept a valid certificate', () => {
       const validCert = `
         -----BEGIN CERTIFICATE-----
@@ -113,6 +117,10 @@ describe('validators', () => {
   });
 
   describe('idpSsoTargetUrl', () => {
+    it('should accept an empty string', () => {
+      expect(validators.idpSsoTargetUrl('')).toBe(true);
+    });
+
     it('should accept an https url', () => {
       expect(validators.idpSsoTargetUrl('https://test.example.com/')).toBe(true);
       expect(validators.idpSsoTargetUrl('https://test.example.com/?provider=contentful')).toBe(
