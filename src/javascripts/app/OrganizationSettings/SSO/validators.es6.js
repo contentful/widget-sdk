@@ -1,11 +1,7 @@
 import asn1 from '@jo-sm/asn1js';
 
-export function idpName(value) {
-  return /^[A-Za-z0-9 \-_]+$/.test(value);
-}
-
 export function ssoName(value) {
-  return /^[a-z0-9 \-_]+$/.test(value);
+  return /^[A-Za-z0-9.\-_]+$/.test(value);
 }
 
 export function idpCert(value) {

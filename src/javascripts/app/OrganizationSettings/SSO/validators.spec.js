@@ -1,32 +1,10 @@
 import * as validators from './validators.es6';
 
 describe('validators', () => {
-  describe('otherIdpName', () => {
-    it('should accept a case insensitive alphanumeric string', () => {
-      expect(validators.idpName('Testing1234')).toBe(true);
-    });
-
-    it('should accept underscores', () => {
-      expect(validators.idpName('Testing_1234')).toBe(true);
-    });
-
-    it('should accept hyphens', () => {
-      expect(validators.idpName('Testing-1234')).toBe(true);
-    });
-
-    it('should accept spaces', () => {
-      expect(validators.idpName('Testing 1234')).toBe(true);
-    });
-
-    it('should reject for another case', () => {
-      expect(validators.idpName('Testing@1234')).toBe(false);
-    });
-  });
-
   describe('ssoName', () => {
-    it('should accept a lowercase alphanumeric string', () => {
+    it('should accept an alphanumeric string', () => {
       expect(validators.ssoName('testing1234')).toBe(true);
-      expect(validators.ssoName('Testing1234')).toBe(false);
+      expect(validators.ssoName('Testing1234')).toBe(true);
     });
 
     it('should accept underscores', () => {
@@ -37,12 +15,13 @@ describe('validators', () => {
       expect(validators.ssoName('testing-1234')).toBe(true);
     });
 
-    it('should accept spaces', () => {
-      expect(validators.ssoName('testing 1234')).toBe(true);
+    it('should accept periods', () => {
+      expect(validators.ssoName('testing.1234')).toBe(true);
     });
 
     it('should reject for another case', () => {
       expect(validators.ssoName('testing@1234')).toBe(false);
+      expect(validators.ssoName('testing 1234')).toBe(false);
     });
   });
 
