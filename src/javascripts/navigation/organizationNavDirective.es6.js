@@ -140,7 +140,7 @@ export default function register() {
           sref: 'account.organizations.sso({orgId: nav.orgId})',
           rootSref: 'account.organizations.sso',
           inheritUrlParams: false,
-          // icon: 'nav-organization-sso',
+          icon: 'nav-organization-sso',
           dataViewType: 'organization-sso'
         },
         {

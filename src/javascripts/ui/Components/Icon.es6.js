@@ -21,6 +21,7 @@ import PageApps from 'svg/page-apps.es6';
 import PageUsage from 'svg/page-usage.es6';
 import PageUsers from 'svg/page-users.es6';
 import PageTeams from 'svg/page-teams.es6';
+import PageSSO from 'svg/page-sso.es6';
 import Bubble from 'svg/bubble.es6';
 import ArrowDown from 'svg/dd-arrow-down.es6';
 import ArrowUp from 'svg/arrow-up.es6';
@@ -113,6 +114,7 @@ const SVGs = {
   'page-usage': PageUsage,
   'page-users': PageUsers,
   'page-teams': PageTeams,
+  'page-sso': PageSSO,
   bubble: Bubble,
   'dd-arrow-down': ArrowDown,
   back: BackIcon,

@@ -73,6 +73,7 @@ export class SSOSetup extends React.Component {
     return (
       <Workbench className="sso-setup">
         <Workbench.Header>
+          <Workbench.Icon icon="page-SSO" />
           <Workbench.Title>Single Sign-On (SSO)</Workbench.Title>
         </Workbench.Header>
         <Workbench.Content>
