@@ -42,8 +42,7 @@ export default class WalkthroughComponent extends React.Component {
       content: (
         <TooltipContent
           illustration={<OrgSliderIllustration />}
-          copy="This is your organization’s account. It can contain one or more Spaces, which are an
-      area to store your content. Use this menu to navigate to other Spaces you’re working in."
+          copy="This is your organization’s account. It can contain one or more Spaces, which are an area to store your content. Use this menu to navigate to other Spaces you’re working in."
         />
       ),
       disableBeacon: true,
@@ -55,8 +54,7 @@ export default class WalkthroughComponent extends React.Component {
       content: (
         <TooltipContent
           illustration={<ContentTabIllustration />}
-          copy="Content creation happens in this tab. Here you can search, filter, and view existing
-          Entries, as well as create new content for your Space."
+          copy="Content creation happens in this tab. Here you can search, filter, and view existing Entries, as well as create new content for your Space. "
         />
       ),
       disableBeacon: true,
@@ -68,8 +66,7 @@ export default class WalkthroughComponent extends React.Component {
       content: (
         <TooltipContent
           illustration={<MediaTabIllustration />}
-          copy="In this tab you can manage all of the media in your Space. Here you can upload, search,
-          filter, and publish media to reuse across all of your content."
+          copy="In this tab you can manage all of the media in your Space. Here you can upload, search, filter, and publish media to reuse across all of your content."
         />
       ),
       disableBeacon: true,
@@ -81,8 +78,7 @@ export default class WalkthroughComponent extends React.Component {
       content: (
         <TooltipContent
           illustration={<SupportChatIllustration />}
-          copy="Get answers to any product-related questions by chatting with Contentful experts. From
-          this menu you can also manage your profile."
+          copy="Get answers to any product-related questions by chatting with Contentful experts. From this menu you can also manage your profile."
         />
       ),
       disableBeacon: true,
@@ -92,10 +88,7 @@ export default class WalkthroughComponent extends React.Component {
     {
       title: 'Get started in Contentful',
       content: (
-        <TooltipContent
-          copy="Learn how content is structured in Contentful in the video below. Or, head over to the
-          Content tab to create content in your Space!"
-        />
+        <TooltipContent copy="Learn how content is structured in Contentful in the video below. Or head over to the Content tab to create content in your Space!" />
       ),
       disableBeacon: true,
       target: '[data-ui-tour-step="concept-video-widget"]',
