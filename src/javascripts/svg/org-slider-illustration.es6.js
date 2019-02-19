@@ -40,7 +40,7 @@ export default () => (
         />
         <text
           id="Organization"
-          fontFamily="AvenirNext-Medium, Avenir Next"
+          fontFamily="Avenir Next W01"
           fontSize="13"
           fontWeight="400"
           fill="#536171">
@@ -51,7 +51,7 @@ export default () => (
         <circle id="Oval" fill="#FFFFFF" fillRule="nonzero" cx="31.5" cy="22.5" r="14.5" />
         <text
           id="Spaces"
-          fontFamily="AvenirNext-Medium, Avenir Next"
+          fontFamily="Avenir Next W01"
           fontSize="13"
           fontWeight="400"
           fill="#536171">

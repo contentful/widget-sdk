@@ -71,7 +71,7 @@ export default () => (
         />
         <text
           id="Preview"
-          fontFamily="AvenirNext-Medium, Avenir Next"
+          fontFamily="Avenir Next W01"
           fontSize="11"
           fontWeight="400"
           fill="#536171">
@@ -79,22 +79,12 @@ export default () => (
             Preview
           </tspan>
         </text>
-        <text
-          id="Name"
-          fontFamily="AvenirNext-Medium, Avenir Next"
-          fontSize="11"
-          fontWeight="400"
-          fill="#536171">
+        <text id="Name" fontFamily="Avenir Next W01" fontSize="11" fontWeight="400" fill="#536171">
           <tspan x="94" y="20">
             Name
           </tspan>
         </text>
-        <text
-          id="Type"
-          fontFamily="AvenirNext-Medium, Avenir Next"
-          fontSize="11"
-          fontWeight="400"
-          fill="#536171">
+        <text id="Type" fontFamily="Avenir Next W01" fontSize="11" fontWeight="400" fill="#536171">
           <tspan x="183" y="20">
             Type
           </tspan>

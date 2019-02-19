@@ -12,13 +12,16 @@ export default class WalkthroughComponent extends React.Component {
   static propTypes = {
     spaceName: PropTypes.string.isRequired,
     isTourRunning: PropTypes.bool.isRequired,
-    runTour: PropTypes.func.isRequired
+    runTour: PropTypes.func.isRequired,
+    walkthroughStarted: PropTypes.bool.isRequired, // from user state
+    updateWalkthroughState: PropTypes.func.isRequired
   };
 
   static defaultProps = { isTourRunning: false };
 
   tourCallback = data => {
     const { action } = data;
+    const { runTour, walkthroughStarted, updateWalkthroughState } = this.props;
 
     if (action === 'close') {
       // to adjust ReactJoyride component's behaviour to our desireable behavior:
@@ -27,8 +30,9 @@ export default class WalkthroughComponent extends React.Component {
     }
 
     if (action === 'reset' || action === 'close') {
-      // this.setState({ run: false });
-      this.props.runTour(false);
+      runTour(false);
+      // to update user state after finishing UI tour, only if it wasn't updated already
+      if (!walkthroughStarted) updateWalkthroughState({ started: true, dismissed: false });
     }
   };
 

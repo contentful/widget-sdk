@@ -83,7 +83,6 @@ export default class WalkthroughWidget extends React.Component {
 
   startTour = () => {
     this.runTour(true);
-    this.updateWalkthroughState({ started: true, dismissed: false });
     track('element:click', {
       elementId: `start_walkthrough_button`,
       groupId: trackingGroupId,
@@ -120,6 +119,8 @@ export default class WalkthroughWidget extends React.Component {
           spaceName={spaceName}
           isTourRunning={isTourRunning}
           runTour={this.runTour}
+          walkthroughStarted={started}
+          updateWalkthroughState={this.updateWalkthroughState}
         />
         {!started && !dismissed && (
           <div className="start-walkthrough">
@@ -132,7 +133,10 @@ export default class WalkthroughWidget extends React.Component {
           <div className="relaunch-walkthrough">
             <div className="relaunch-walkthrough__content">
               <Subheading>Relaunch the walkthrough tour of your Space</Subheading>
-              <Button onClick={this.relaunchTour} testId="relaunch-walkthrough-button">
+              <Button
+                extraClassNames="relaunch-walkthrough__button"
+                onClick={this.relaunchTour}
+                testId="relaunch-walkthrough-button">
                 Relaunch tour
               </Button>
             </div>

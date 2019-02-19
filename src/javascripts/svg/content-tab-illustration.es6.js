@@ -60,7 +60,7 @@ export default () => (
         />
         <text
           id="Content-Type"
-          fontFamily="AvenirNext-Medium, Avenir Next"
+          fontFamily="Avenir Next W01"
           fontSize="11"
           fontWeight="400"
           fill="#536171">
@@ -70,7 +70,7 @@ export default () => (
         </text>
         <text
           id="Search"
-          fontFamily="AvenirNext-Medium, Avenir Next"
+          fontFamily="Avenir Next W01"
           fontSize="11"
           fontWeight="400"
           fill="#C3CFD5">
@@ -80,7 +80,7 @@ export default () => (
         </text>
         <text
           id="All-EntriesFound"
-          fontFamily="AvenirNext-Medium, Avenir Next"
+          fontFamily="Avenir Next W01"
           fontSize="11"
           fontWeight="400"
           fill="#536171">
