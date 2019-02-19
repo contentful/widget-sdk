@@ -25,30 +25,37 @@ export default class ApiUsageInfo extends React.Component {
         <h3>Top 3 spaces</h3>
         <table className="usage-page__api-table">
           <tbody>
-            {usage.map(({ sys: { space: { sys: { id: spaceId } } }, usage: spaceUsage }, i) => (
-              <tr key={spaceId}>
-                <td className="usage-page__space-name">
-                  {spaceNames[spaceId] ? (
-                    <span>{spaceNames[spaceId]}</span>
-                  ) : (
-                    <em>deleted space</em>
-                  )}
-                  {isPoC[spaceId] && (
-                    <Tooltip content="Proof of concept">
-                      <Tag tagType="muted" style={{ marginLeft: '10px' }}>
-                        POC
-                      </Tag>
+            {usage.map(({ sys: { space: { sys: { id: spaceId } } }, usage: spaceUsage }, i) => {
+              const spaceUsageSum = sum(spaceUsage);
+              const percentage =
+                spaceUsageSum === 0 ? 0 : Math.round((spaceUsageSum / totalUsage) * 100);
+              return (
+                <tr key={spaceId}>
+                  <td className="usage-page__space-name">
+                    {spaceNames[spaceId] ? (
+                      <span>{spaceNames[spaceId]}</span>
+                    ) : (
+                      <em>deleted space</em>
+                    )}
+                    {isPoC[spaceId] && (
+                      <Tooltip content="Proof of concept">
+                        <Tag tagType="muted" style={{ marginLeft: '10px' }}>
+                          POC
+                        </Tag>
+                      </Tooltip>
+                    )}
+                  </td>
+                  <td className="usage-page__space-usage">{shorten(sum(spaceUsage))}</td>
+                  <td
+                    className="usage-page__percentage-of-total-usage"
+                    style={{ color: colors[i] }}>
+                    <Tooltip content="Percentage of total number of API requests">
+                      <span>{`${percentage}%`}</span>
                     </Tooltip>
-                  )}
-                </td>
-                <td className="usage-page__space-usage">{shorten(sum(spaceUsage))}</td>
-                <td className="usage-page__percentage-of-total-usage" style={{ color: colors[i] }}>
-                  <Tooltip content="Percentage of total number of API requests">
-                    <span>{`${Math.round((sum(spaceUsage) / totalUsage) * 100)}%`}</span>
-                  </Tooltip>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
