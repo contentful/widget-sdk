@@ -23,11 +23,6 @@ describe('spaceContext', () => {
         default: sinon.stub().resolves({ store: true })
       });
       $provide.constant('client', { newSpace: makeClientSpaceMock });
-      $provide.value('widgets/WidgetStore.es6', {
-        create: sinon.stub().returns({
-          refresh: sinon.stub().resolves([])
-        })
-      });
       $provide.value('services/EnforcementsService.es6', {
         init: this.initEnforcements
       });
@@ -42,7 +37,6 @@ describe('spaceContext', () => {
     // Reregister TheLocaleStore with mocked version
     registerFactory('TheLocaleStore', () => localeStoreOrig);
 
-    this.widgetStoreCreate = this.$inject('widgets/WidgetStore.es6').create;
     this.spaceContext = this.$inject('spaceContext');
     this.localeStore = this.$inject('TheLocaleStore');
 
@@ -62,7 +56,7 @@ describe('spaceContext', () => {
       const sc = this.spaceContext;
       sc.purge();
 
-      ['space', 'users', 'widgets'].forEach(field => {
+      ['space', 'users'].forEach(field => {
         expect(sc[field]).toEqual(null);
       });
     });
@@ -103,11 +97,6 @@ describe('spaceContext', () => {
       this.resetWithSpace();
       sinon.assert.calledWithExactly(this.createUserCache, this.spaceContext.endpoint);
       expect(this.spaceContext.users).toBe(this.userCache);
-    });
-
-    it('creates and refreshes widget store', function() {
-      sinon.assert.calledWith(this.widgetStoreCreate, this.spaceContext.cma);
-      sinon.assert.calledOnce(this.spaceContext.widgets.refresh);
     });
 
     it('sets #editorInterfaceRepo', function() {

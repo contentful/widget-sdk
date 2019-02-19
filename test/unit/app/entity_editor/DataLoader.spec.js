@@ -37,9 +37,6 @@ describe('app/entity_editor/DataLoader.es6', () => {
       editorInterfaceRepo: {
         get: sinon.stub().resolves({})
       },
-      widgets: {
-        getAll: sinon.stub().returns([])
-      },
       docPool: {
         get: sinon.stub()
       },
@@ -79,12 +76,11 @@ describe('app/entity_editor/DataLoader.es6', () => {
     it('builds field controls from editor interface', function*() {
       const ei = { controls: 'CONTROLS' };
       this.spaceContext.editorInterfaceRepo.get.resolves(ei);
-      this.spaceContext.widgets.getAll.returns('WIDGETS');
       yield this.loadEntry('EID');
       sinon.assert.calledWith(
         this.$inject('widgets/WidgetRenderable.es6').buildRenderables,
         'CONTROLS',
-        'WIDGETS'
+        sinon.match({ builtin: sinon.match(Array), extension: [] })
       );
     });
 

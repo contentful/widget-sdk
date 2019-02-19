@@ -1,7 +1,6 @@
 import * as sinon from 'test/helpers/sinon';
 import createMockEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 
-import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
 import createEditorInterfaceRepo from 'widgets/EditorInterfaceRepo.es6';
 import APIClient from 'data/APIClient.es6';
 
@@ -19,7 +18,6 @@ import APIClient from 'data/APIClient.es6';
  * - `publishedCTs` Stubs all methods.
  *   TODO provide a mock implementation with space endpoint
  * - `editorInterfaceRepo` Always returns the default editor interface.
- * - `widgets` without custom extensions.
  * - `docPool.get` Creates mock document
  * - `memberships` Instance of 'access_control/SpaceMembershipRepository
  *
@@ -72,7 +70,6 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
         usage: {},
         sys: {}
       };
-      spaceContextMock.widgets = createWidgetStore(spaceContextMock.cma);
       spaceContextMock.uiConfig = createUiConfigMock();
 
       return spaceContextMock;
