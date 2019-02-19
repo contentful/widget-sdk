@@ -13,7 +13,7 @@ export default class WalkthroughComponent extends React.Component {
     spaceName: PropTypes.string.isRequired,
     isTourRunning: PropTypes.bool.isRequired,
     runTour: PropTypes.func.isRequired,
-    walkthroughStarted: PropTypes.bool.isRequired, // from user state
+    walkthroughStarted: PropTypes.bool, // from user state
     updateWalkthroughState: PropTypes.func.isRequired
   };
 

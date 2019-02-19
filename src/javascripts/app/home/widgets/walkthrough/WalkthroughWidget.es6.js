@@ -19,7 +19,7 @@ export default class WalkthroughWidget extends React.Component {
   };
 
   state = {
-    sTourRunning: false,
+    isTourRunning: false,
     isLoading: true,
     started: undefined,
     dismissed: undefined,
