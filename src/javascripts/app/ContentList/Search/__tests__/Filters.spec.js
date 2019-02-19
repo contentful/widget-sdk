@@ -92,7 +92,7 @@ describe('app/ContentList/Search/Filters.es6', () => {
       );
 
       getMatchingFiltersMacro(
-        'returns all sys and ct fields',
+        'returns brand sys and ct fields',
         {
           searchQuery: '',
           contentType: contentTypes[0].sys.id
@@ -116,20 +116,7 @@ describe('app/ContentList/Search/Filters.es6', () => {
           'fields.email',
           'fields.phone',
           'fields.symbol1',
-          'fields.symbol2',
-          'fields.productName',
-          'fields.slug',
-          'fields.productDescription',
-          'fields.sizetypecolor',
-          'fields.image.sys.id',
-          'fields.tags',
-          'fields.categories.sys.id',
-          'fields.price',
-          'fields.brand.sys.id',
-          'fields.quantity',
-          'fields.sku',
-          'fields.website',
-          'fields.createdAt'
+          'fields.symbol2'
         ]
       );
 

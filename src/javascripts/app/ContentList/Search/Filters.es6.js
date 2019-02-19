@@ -281,15 +281,18 @@ const allFilters = memoize((contentTypes, withAssets = false) => {
  * @returns {Filter[]}
  */
 // Memoized to improve performance on huge lists (>1500 elements).
-export const getMatchingFilters = memoize(
-  (searchString, contentTypeId, availableContentTypes, withAssets) => {
-    let filters = allFilters(availableContentTypes, withAssets);
-    filters = filterByName(filters, searchString);
-    filters = filterByContentType(filters, contentTypeId);
+export const getMatchingFilters = (
+  searchString,
+  contentTypeId,
+  availableContentTypes,
+  withAssets
+) => {
+  let filters = allFilters(availableContentTypes, withAssets);
+  filters = filterByName(filters, searchString);
+  filters = filterByContentType(filters, contentTypeId);
 
-    return withAssets ? filters : filterBySupportedTypes(filters);
-  }
-);
+  return withAssets ? filters : filterBySupportedTypes(filters);
+};
 
 function filterBySupportedTypes(filters) {
   return filters.filter(({ queryKey, type }) => {
