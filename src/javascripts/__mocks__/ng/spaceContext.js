@@ -15,6 +15,7 @@ export const organization = {
 export const cma = {
   createExtension: jest.fn().mockResolvedValue({}),
   deleteExtension: jest.fn().mockResolvedValue({}),
+  getExtensions: jest.fn().mockResolvedValue({ items: [] }),
   getExtension: jest.fn().mockResolvedValue({})
 };
 

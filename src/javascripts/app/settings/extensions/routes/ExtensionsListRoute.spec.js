@@ -7,7 +7,7 @@ import * as $stateMocked from 'ng/$state';
 describe('ExtensionsListRoute', () => {
   beforeEach(() => {
     $stateMocked.go.mockClear();
-    spaceContextMocked.widgets.refresh.mockClear();
+    spaceContextMocked.cma.getExtensions.mockClear();
     spaceContextMocked.getData.mockReset();
   });
 
@@ -33,7 +33,7 @@ describe('ExtensionsListRoute', () => {
       undefined,
       undefined
     );
-    expect(spaceContextMocked.widgets.refresh).not.toHaveBeenCalled();
+    expect(spaceContextMocked.cma.getExtensions).not.toHaveBeenCalled();
   });
 
   it('should show ExtensionsForbiddenPage if non-admin reaches page via deeplink extensionUrl', () => {
@@ -43,7 +43,7 @@ describe('ExtensionsListRoute', () => {
       <ExtensionsListRoute extensionUrl="https://github.com/contentful/extensions/blob/master/samples/build-netlify/extension.json" />
     );
     expect($stateMocked.go).not.toHaveBeenCalled();
-    expect(spaceContextMocked.widgets.refresh).not.toHaveBeenCalled();
+    expect(spaceContextMocked.cma.getExtensions).not.toHaveBeenCalled();
     expect(wrapper.find(selectors.forbiddenPage)).toExist();
 
     expect(
@@ -61,7 +61,7 @@ describe('ExtensionsListRoute', () => {
     setAdmin(true);
     const wrapper = Enzyme.mount(<ExtensionsListRoute />);
     expect($stateMocked.go).not.toHaveBeenCalled();
-    expect(spaceContextMocked.widgets.refresh).toHaveBeenCalledTimes(1);
+    expect(spaceContextMocked.cma.getExtensions).toHaveBeenCalledTimes(1);
     expect(wrapper.find(selectors.forbiddenPage)).not.toExist();
   });
 });

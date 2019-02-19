@@ -1,13 +1,12 @@
-import { create as createStore } from './WidgetStore.es6';
+import * as WidgetStore from './WidgetStore.es6';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
 
 describe('WidgetStore', () => {
-  describe('#refresh()', () => {
+  describe('#getForContentTypeManagement()', () => {
     it('returns an object of all widget namespaces', async () => {
       const cma = { getExtensions: jest.fn(() => Promise.resolve({ items: [] })) };
-      const store = createStore(cma);
-      const widgets = await store.refresh();
+      const widgets = await WidgetStore.getForContentTypeManagement(cma);
       expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
       expect(widgets[NAMESPACE_BUILTIN].map(w => w.id)).toEqual(
         createBuiltinWidgetList().map(b => b.id)
@@ -30,9 +29,7 @@ describe('WidgetStore', () => {
         parameters: { test: true }
       };
       const cma = { getExtensions: jest.fn(() => Promise.resolve({ items: [entity] })) };
-      const store = createStore(cma);
-
-      const widgets = await store.refresh();
+      const widgets = await WidgetStore.getForContentTypeManagement(cma);
       const [extension] = widgets[NAMESPACE_EXTENSION];
 
       expect(extension.name).toEqual('NAME');
@@ -48,8 +45,7 @@ describe('WidgetStore', () => {
 
     it('returns only builtins if API call fails', async () => {
       const cma = { getExtensions: jest.fn(() => Promise.reject()) };
-      const store = createStore(cma);
-      const widgets = await store.refresh();
+      const widgets = await WidgetStore.getForContentTypeManagement(cma);
       expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
       expect(widgets[NAMESPACE_BUILTIN].map(w => w.id)).toEqual(
         createBuiltinWidgetList().map(b => b.id)
@@ -57,24 +53,13 @@ describe('WidgetStore', () => {
     });
   });
 
-  describe('#getAll()', () => {
-    it('returns only builtins if not refreshed yet', () => {
-      const store = createStore();
-      expect(store.getAll()).toEqual({
-        builtin: expect.any(Array)
-      });
-    });
-
-    it('returns cached version after refresh', async () => {
-      const cma = { getExtensions: jest.fn(() => Promise.resolve({ items: [] })) };
-      const store = createStore(cma);
-      const widgets = await store.refresh();
-      const initialExtensions = widgets[NAMESPACE_EXTENSION];
-      expect(store.getAll()[NAMESPACE_EXTENSION]).toBe(initialExtensions);
-
-      const refreshed = await store.refresh();
-      expect(refreshed[NAMESPACE_EXTENSION]).not.toBe(initialExtensions);
-      expect(store.getAll()[NAMESPACE_EXTENSION]).toBe(refreshed[NAMESPACE_EXTENSION]);
+  describe('#getBuiltinsOnly()', () => {
+    it('returns only builtins', () => {
+      const widgets = WidgetStore.getBuiltinsOnly();
+      expect(widgets[NAMESPACE_EXTENSION]).toBeUndefined();
+      expect(widgets[NAMESPACE_BUILTIN].map(w => w.id)).toEqual(
+        createBuiltinWidgetList().map(b => b.id)
+      );
     });
   });
 });
