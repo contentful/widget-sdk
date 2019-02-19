@@ -10,6 +10,7 @@ import getOrganization from 'redux/selectors/getOrganization.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 import { FEATURE_INACTIVE } from 'redux/accessConstants.es6';
+import { Organization as OrganizationPropType } from '../PropTypes.es6';
 
 import TeamList from './TeamList.es6';
 import TeamDetails from './TeamDetails.es6';
@@ -22,7 +23,7 @@ class TeamPage extends React.Component {
     showDetails: PropTypes.bool.isRequired,
     isLoading: PropTypes.bool.isRequired,
     hasAccess: PropTypes.bool.isRequired,
-    organization: PropTypes.object,
+    organization: OrganizationPropType,
     deniedReason: PropTypes.string
   };
 

@@ -442,7 +442,7 @@ describe('TeamList', () => {
           });
         });
 
-        it('should remder the empty state', () => {
+        it('should render the empty state', () => {
           const { wrapper } = renderComponent(actions);
 
           const emptyState = wrapper.find(TeamsEmptyState);
@@ -472,7 +472,7 @@ describe('TeamList', () => {
           });
         });
 
-        it('should remder the empty state', () => {
+        it('should render the empty state', () => {
           const { wrapper } = renderComponent(actions);
 
           const emptyState = wrapper.find(TeamsEmptyState);
