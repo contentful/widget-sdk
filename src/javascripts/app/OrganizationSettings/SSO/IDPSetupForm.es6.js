@@ -216,7 +216,7 @@ export class IDPSetupForm extends React.Component {
           <Heading element="h2" extraClassNames="f36-margin-bottom--l">
             Contentful’s service provider details
             <TextLink extraClassNames="f36-margin-left--s" href={metadataUrl}>
-              <Tooltip place="top" content="Download metadata file">
+              <Tooltip place="top" content="Download SAML metadata file">
                 <Icon icon="Download" />
               </Tooltip>
             </TextLink>

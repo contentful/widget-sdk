@@ -27,7 +27,10 @@ export default class SSOEnabled extends React.Component {
           {restrictedModeEnabled && (
             <React.Fragment>
               If you experience any issues with SSO,{' '}
-              <TextLink testId='restricted-support-link' href="https://www.contentful.com/support/">talk to support</TextLink>.
+              <TextLink testId="restricted-support-link" href="https://www.contentful.com/support/">
+                talk to support
+              </TextLink>
+              .
             </React.Fragment>
           )}
           {!restrictedModeEnabled && (
@@ -37,14 +40,21 @@ export default class SSOEnabled extends React.Component {
                 Restricted mode
               </TextLink>
               , requiring users to sign in using SSO,{' '}
-              <TextLink testId='unrestricted-support-link' href="https://www.contentful.com/support/">talk to support</TextLink>.
+              <TextLink
+                testId="unrestricted-support-link"
+                href="https://www.contentful.com/support/">
+                talk to support
+              </TextLink>
+              .
             </Fragment>
           )}
           <div className="sso-enabled__links f36-margin-top--xl">
             <div className="sso-enabled__link">
               <TextField
                 labelText="Sign-in name"
-                testId='sign-in-name'
+                id="sign-in-name"
+                name="sign-in-name"
+                testId="sign-in-name"
                 value={ssoName}
                 textInputProps={{
                   withCopyButton: true,
@@ -55,8 +65,10 @@ export default class SSOEnabled extends React.Component {
             <div className="sso-enabled__link f36-margin-left--l">
               <TextField
                 labelText="Bookmarkable Login URL"
-                testId='login-url'
-                value={authUrl(`/sso/${orgId}/login`)}
+                id="login-url"
+                name="login-url"
+                testId="login-url"
+                value={`https:${authUrl(`/sso/${orgId}/login`)}`}
                 textInputProps={{
                   withCopyButton: true,
                   disabled: true

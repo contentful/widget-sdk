@@ -99,6 +99,7 @@ export class SSOSetup extends React.Component {
             {!identityProvider.data && (
               <Button
                 buttonType="primary"
+                isFullWidth={false}
                 testId="create-idp"
                 loading={identityProvider.isPending}
                 onClick={this.createIdp}>
