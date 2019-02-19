@@ -63,14 +63,10 @@ export default ({ $scope }) => {
       });
     };
 
-    const updateStream$ = $scope.otDoc.sysProperty
-      // We can't just skip based on `isEqual` as CMA and ShareJS entry's sys looks slightly
-      // different (ShareJS sys misses `updatedBy` and uses an internal environment.sys.id)
-      .skipDuplicates(isSameVersionSys)
-      .map(sys => ({
-        entrySys: sys,
-        publishedVersion: sys.publishedVersion
-      }));
+    const updateStream$ = $scope.otDoc.sysProperty.map(sys => ({
+      entrySys: sys,
+      publishedVersion: sys.publishedVersion
+    }));
 
     K.onValue(updateStream$, notifyUpdate);
   });
@@ -215,7 +211,3 @@ export default ({ $scope }) => {
     emitter
   };
 };
-
-function isSameVersionSys(sys1, sys2) {
-  return sys1.id === sys2.id && sys1.type === sys2.type && sys1.version === sys2.version;
-}

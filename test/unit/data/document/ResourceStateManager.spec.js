@@ -26,6 +26,9 @@ describe('data/document/ResourceStateManager.es6', () => {
         version: 8,
         contentType: {
           sys: { id: 'CTID' }
+        },
+        environment: {
+          sys: { id: 'ENV_ID' }
         }
       },
       fields: {}
