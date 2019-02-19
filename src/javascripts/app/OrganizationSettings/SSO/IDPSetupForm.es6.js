@@ -322,32 +322,48 @@ export class IDPSetupForm extends React.Component {
             </Select>
             {fields.idpName.isPending && <Spinner />}
           </div>
-          <TextField
-            labelText="Single Sign-On Redirect URL"
-            extraClassNames="sso-setup__field f36-margin-right--m f36-margin-bottom--l"
-            id="idpSsoTargetUrl"
-            name="idpSsoTargetUrl"
-            onChange={this.updateField('idpSsoTargetUrl')}
-            onBlur={this.updateField('idpSsoTargetUrl', true)}
-            value={fields.idpSsoTargetUrl.value}
-            validationMessage={fields.idpSsoTargetUrl.error}
-          />
-          {fields.idpSsoTargetUrl.isPending && <Spinner />}
-          <TextField
-            labelText="X.509 Certificate"
-            textarea
-            id="idpCert"
-            name="idpCert"
-            extraClassNames="sso-setup__field f36-margin-right--m"
-            textInputProps={{
-              rows: 8
-            }}
-            value={fields.idpCert.value}
-            onChange={this.updateField('idpCert')}
-            onBlur={this.updateField('idpCert', true)}
-            validationMessage={fields.idpCert.error}
-          />
-          {fields.idpCert.isPending && <Spinner />}
+          <div className="sso-setup__field-container">
+            <div className="sso-setup__field-input sso-setup__field-input--full">
+              <TextField
+                labelText="Single Sign-On Redirect URL"
+                extraClassNames="sso-setup__field f36-margin-right--m f36-margin-bottom--l"
+                id="idpSsoTargetUrl"
+                name="idpSsoTargetUrl"
+                onChange={this.updateField('idpSsoTargetUrl')}
+                onBlur={this.updateField('idpSsoTargetUrl', true)}
+                value={fields.idpSsoTargetUrl.value}
+                validationMessage={fields.idpSsoTargetUrl.error}
+              />
+            </div>
+            {fields.idpSsoTargetUrl.isPending && (
+              <div className="sso-setup__field-spinner">
+                <Spinner />
+              </div>
+            )}
+          </div>
+          <div className="sso-setup__field-container">
+            <div className="sso-setup__field-input sso-setup__field-input--full">
+              <TextField
+                labelText="X.509 Certificate"
+                textarea
+                id="idpCert"
+                name="idpCert"
+                extraClassNames="f36-margin-right--m"
+                textInputProps={{
+                  rows: 8
+                }}
+                value={fields.idpCert.value}
+                onChange={this.updateField('idpCert')}
+                onBlur={this.updateField('idpCert', true)}
+                validationMessage={fields.idpCert.error}
+              />
+            </div>
+            {fields.idpCert.isPending && (
+              <div className="sso-setup__field-spinner">
+                <Spinner />
+              </div>
+            )}
+          </div>
         </section>
 
         <section className="f36-margin-top--3xl">
@@ -424,20 +440,29 @@ export class IDPSetupForm extends React.Component {
             keep it short and memorable.
           </HelpText>
 
-          <TextField
-            labelText="Sign-in name"
-            id="ssoName"
-            name="ssoName"
-            testId="ssoName"
-            textInputProps={{
-              width: 'large'
-            }}
-            value={fields.ssoName.value}
-            onChange={this.updateField('ssoName')}
-            onBlur={this.updateField('ssoName', true)}
-            helpText="Lowercase letters, numbers, periods, spaces, hyphens, or underscores are allowed."
-            validationMessage={fields.ssoName.error}
-          />
+          <div className="sso-setup__field-container">
+            <div className="sso-setup__field-input">
+              <TextField
+                labelText="Sign-in name"
+                id="ssoName"
+                name="ssoName"
+                testId="ssoName"
+                textInputProps={{
+                  width: 'large'
+                }}
+                extraClassNames="f36-margin-right--m"
+                value={fields.ssoName.value}
+                onChange={this.updateField('ssoName')}
+                onBlur={this.updateField('ssoName', true)}
+                validationMessage={fields.ssoName.error}
+              />
+            </div>
+            {fields.ssoName.isPending && (
+              <div className="sso-setup__field-spinner">
+                <Spinner />
+              </div>
+            )}
+          </div>
 
           <Note extraClassNames="f36-margin-top--3xl">
             To enable SSO in{' '}
