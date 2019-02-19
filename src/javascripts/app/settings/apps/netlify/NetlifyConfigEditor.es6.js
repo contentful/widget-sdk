@@ -14,16 +14,16 @@ const PICK_OPTION_VALUE = '__pick__';
 const MAX_CONFIGS = 3;
 
 const styles = {
-  row: css`
-    display: flex;
-    margin: ${tokens.spacingXl} 0;
-  `,
-  item: css`
-    margin-right: ${tokens.spacingXl};
-  `,
-  removeBtn: css`
-    margin-top: ${tokens.spacingL};
-  `
+  row: css({
+    display: 'flex',
+    margin: `${tokens.spacingXl} 0`
+  }),
+  item: css({
+    marginRight: tokens.spacingXl
+  }),
+  removeBtn: css({
+    marginTop: tokens.spacingL
+  })
 };
 
 export default class NetlifyConfigEditor extends Component {

@@ -7,30 +7,30 @@ import StateLink from 'app/common/StateLink.es6';
 import AppIcon from '../_common/AppIcon.es6';
 
 const styles = {
-  item: css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: ${tokens.spacingM} 0;
-    border-bottom: 1px solid ${tokens.colorElementLight};
-  `,
-  icon: css`
-    display: flex;
-  `,
-  title: css`
-    flex-grow: 1;
-    padding: 0 ${tokens.spacingM};
-    display: block;
-  `,
-  titleText: css`
-    font-size: ${tokens.fontSizeL};
-  `,
-  actions: css`
-    display: block;
-    button {
-      margin-left: ${tokens.spacingM};
+  item: css({
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: `${tokens.spacingM} 0`,
+    borderBottom: `1px solid ${tokens.colorElementLight}`
+  }),
+  icon: css({
+    display: 'flex'
+  }),
+  title: css({
+    flexGrow: 1,
+    padding: `0 ${tokens.spacingM}`,
+    display: 'block'
+  }),
+  titleText: css({
+    fontSize: tokens.fontSizeL
+  }),
+  actions: css({
+    display: 'block',
+    button: {
+      marginLeft: tokens.spacingM
     }
-  `
+  })
 };
 
 export default class AppListItem extends Component {

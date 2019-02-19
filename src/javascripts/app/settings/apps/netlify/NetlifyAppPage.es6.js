@@ -28,9 +28,9 @@ const notifyError = (err, fallbackMessage) => {
 };
 
 const styles = {
-  section: css`
-    margin-bottom: ${tokens.spacingXl};
-  `
+  section: css({
+    marginBottom: tokens.spacingXl
+  })
 };
 
 export default class NetlifyAppPage extends Component {

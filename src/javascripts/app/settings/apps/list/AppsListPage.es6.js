@@ -19,19 +19,19 @@ import * as Analytics from 'analytics/Analytics.es6';
 import * as Intercom from 'services/intercom.es6';
 
 const styles = {
-  container: css`
-    max-width: 600px;
-    margin: ${tokens.spacingXl} auto;
-  `,
-  intro: css`
-    margin-bottom: ${tokens.spacingL};
-  `,
-  note: css`
-    margin-bottom: ${tokens.spacingL};
-  `,
-  enableBtn: css`
-    margin-right: ${tokens.spacingL};
-  `
+  container: css({
+    maxWidth: '600px',
+    margin: `${tokens.spacingXl} auto`
+  }),
+  intro: css({
+    marginBottom: tokens.spacingL
+  }),
+  note: css({
+    marginBottom: tokens.spacingL
+  }),
+  enableBtn: css({
+    marginRight: tokens.spacingL
+  })
 };
 
 const AppsListShell = props => (

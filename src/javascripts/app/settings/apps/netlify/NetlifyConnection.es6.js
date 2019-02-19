@@ -5,9 +5,9 @@ import tokens from '@contentful/forma-36-tokens';
 import { Button } from '@contentful/forma-36-react-components';
 
 const styles = {
-  section: css`
-    margin-bottom: ${tokens.spacingXl};
-  `
+  section: css({
+    marginBottom: tokens.spacingXl
+  })
 };
 
 export default class NetlifyConnection extends Component {
