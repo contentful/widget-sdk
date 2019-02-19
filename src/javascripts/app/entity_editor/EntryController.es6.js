@@ -18,6 +18,7 @@ import { loadEntry } from 'app/entity_editor/DataLoader.es6';
 import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 import * as logger from 'services/logger.es6';
+import * as Telemetry from 'Telemetry.es6';
 
 const $controller = getModule('$controller');
 const $rootScope = getModule('$rootScope');
@@ -54,12 +55,17 @@ const DataFields = getModule('EntityEditor/DataFields');
 export default async function create($scope, entryId) {
   $scope.context = {};
   let editorData;
+  const start = Date.now();
+
   try {
     editorData = await loadEntry(spaceContext, entryId);
   } catch (error) {
     $scope.context.loadingError = error;
     return;
   }
+
+  Telemetry.record('entry_editor_http_time', Date.now() - start);
+
   $scope.context.ready = true;
   $scope.editorData = editorData;
 
