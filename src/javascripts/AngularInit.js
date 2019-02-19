@@ -117,7 +117,6 @@ angular
       ngRequire('app/widgets/cfMultiLineEditorDirective.es6').default();
       ngRequire('app/widgets/cfRatingEditorDirective.es6').default();
       ngRequire('app/widgets/cfTagEditorDirective.es6').default();
-      ngRequire('ui/datepicker.es6').default();
       ngRequire('app/widgets/datetime/cfEntryDatetimeEditorDirective.es6').default();
       ngRequire('app/widgets/dropdown/cfDropdownEditorDirective.es6').default();
       ngRequire('app/widgets/json/cfJsonEditorCodeEditorDirective.es6').default();

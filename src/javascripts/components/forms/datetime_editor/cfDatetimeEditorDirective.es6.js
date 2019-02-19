@@ -3,12 +3,12 @@ import _ from 'lodash';
 import moment from 'moment';
 import templateDef from 'components/forms/datetime_editor/cf_datetime_editor.es6';
 import zoneOffsets from 'zoneOffsets.es6';
+import * as Datepicker from 'ui/datepicker.es6';
 
 export default function register() {
   registerDirective('cfDatetimeEditor', [
     '$timeout',
-    'datepicker',
-    ($timeout, Datepicker) => {
+    $timeout => {
       const DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
       const LOCAL_TIMEZONE = moment().format('Z');
 

@@ -2,6 +2,7 @@ import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import moment from 'moment';
 import zoneOffsets from 'zoneOffsets.es6';
+import * as Datepicker from 'ui/datepicker.es6';
 
 export default function register() {
   /**
@@ -11,9 +12,8 @@ export default function register() {
    */
   registerDirective('cfEntryDatetimeEditor', [
     '$timeout',
-    'datepicker',
     'widgets/datetime/data',
-    ($timeout, Datepicker, Data) => {
+    ($timeout, Data) => {
       const ERRORS = {
         timeFormat: {
           message: 'Time is not in a valid format',
