@@ -10,7 +10,7 @@ export default (state = {}, { type, payload }) => {
       return { ...state, [payload.orgId]: { ...payload.data, meta: { isPending: false } } };
     }
 
-    case actions.ORG_CONSTANTS_ERROR: {
+    case actions.ORG_CONSTANTS_FAILURE: {
       return { ...state, [payload.orgId]: { error: payload.error, meta: { isPending: false } } };
     }
 
