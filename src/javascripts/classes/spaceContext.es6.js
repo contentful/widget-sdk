@@ -10,6 +10,7 @@ import createEditorInterfaceRepo from 'widgets/EditorInterfaceRepo.es6';
 import APIClient from 'data/APIClient.es6';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 import * as logger from 'services/logger.es6';
+import * as Telemetry from 'Telemetry.es6';
 
 export default function register() {
   /**
@@ -177,6 +178,8 @@ export default function register() {
           // string is hardcoded because this code _is_ temporary
           $rootScope.$broadcast('spaceContextUpdated');
 
+          const start = Date.now();
+
           return $q
             .all([
               self.widgets.refresh(),
@@ -199,7 +202,11 @@ export default function register() {
               }),
               TheLocaleStore.init(self.localeRepo)
             ])
-            .then(() => self);
+            .then(() => {
+              Telemetry.record('space_context_http_time', Date.now() - start);
+
+              return self;
+            });
         },
 
         /**
