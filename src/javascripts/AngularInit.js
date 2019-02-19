@@ -139,9 +139,6 @@ angular
       ngRequire('components/client/ClientController.es6').default();
       ngRequire('services/activationEmailResender.es6').default();
       ngRequire('components/client/activationEmailResendController.es6').default();
-      ngRequire('services/subscriptionPlanRecommender.es6').default();
-      ngRequire('services/paywallOpener.es6').default();
-      ngRequire('components/client/subscriptionNotifier.es6').default();
       ngRequire('components/client/dialogsInitController.es6').default();
       ngRequire('components/field_dialog/cfPositionRelativeToWidgetListDirective.es6').default();
       ngRequire('components/field_dialog/cfValidationDateSelectDirective.es6').default();

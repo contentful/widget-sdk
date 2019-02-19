@@ -174,9 +174,6 @@ yet).
 | content_preview     | created                               | <code>envName: string<br>envId: id-string<br>isDiscoveryApp: bool</code>
 | content_preview     | updated                               | <code>envName: string<br>envId: id-string</code>
 | content_preview     | deleted                               | <code>envName: string<br>envId: id-string</code>
-| paywall             | viewed                                | <code>userCanUpgradePlan: bool</code>
-| paywall             | closed                                | <code>userCanUpgradePlan: bool</code>
-| paywall             | upgrade_clicked                       | <code>userCanUpgradePlan: bool</code>
 | content_type        | create                                | <code>actionData: obj<br>response: obj</code>
 | entry               | create                                | <code>actionData: obj<br>response: obj, eventOrigin: string</code>
 | asset               | create                                | <code>actionData: obj<br>response: obj</code>

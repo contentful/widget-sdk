@@ -14,29 +14,21 @@ export default function register() {
     '$rootScope',
     'spaceContext',
     'activationEmailResendController',
-    'subscriptionNotifier',
-    ($rootScope, spaceContext, activationEmailResendController, subscriptionNotifier) => {
-      return {
-        init: init
-      };
+    ($rootScope, spaceContext, activationEmailResendController) => {
+      return { init };
 
       function init() {
         activationEmailResendController.init();
-        initSpaceWatcher();
-      }
 
-      function onSpaceChanged(spaceId) {
-        if (!spaceId) {
-          return;
-        }
-        // Reset notification related to the previous space.
-        $rootScope.$broadcast('persistentNotification', null);
-
-        subscriptionNotifier.notifyAbout(spaceContext.organization);
-      }
-
-      function initSpaceWatcher() {
-        $rootScope.$watch(() => spaceContext.getId(), onSpaceChanged);
+        $rootScope.$watch(
+          () => spaceContext.getId(),
+          spaceId => {
+            if (spaceId) {
+              // Reset notification related to the previous space.
+              $rootScope.$broadcast('persistentNotification', null);
+            }
+          }
+        );
       }
     }
   ]);
