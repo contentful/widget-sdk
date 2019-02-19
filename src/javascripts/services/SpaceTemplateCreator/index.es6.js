@@ -9,6 +9,7 @@ import {
 } from './contentPreviewConfig.es6';
 import { enrichTemplate } from './enrichTemplate.es6';
 import * as Config from 'Config.es6';
+import * as WidgetStore from 'widgets/WidgetStore.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const $rootScope = getModule('$rootScope');
@@ -264,7 +265,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     // The content type has a default editor interface with version 1.
     editorInterface.sys.version = 1;
     return spaceContext.editorInterfaceRepo
-      .save(contentType, editorInterface)
+      .save(contentType, editorInterface, WidgetStore.getBuiltinsOnly())
       .then(handlers.success)
       .catch(handlers.error);
   }

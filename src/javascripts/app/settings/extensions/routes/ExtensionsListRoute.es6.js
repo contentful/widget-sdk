@@ -5,16 +5,19 @@ import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import ExtensionsForbiddenPage from '../ExtensionsForbiddenPage.es6';
 import ExtensionsList, { ExtensionListShell } from '../ExtensionsList.es6';
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
+import * as WidgetStore from 'widgets/WidgetStore.es6';
+
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
 
-const ExtensionsFetcher = createFetcherComponent(() => {
-  return spaceContext.widgets.refresh().then(widgets => {
-    return widgets[NAMESPACE_EXTENSION].sort((a, b) => {
-      return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-    });
+const ExtensionsFetcher = createFetcherComponent(async () => {
+  const { items } = await spaceContext.cma.getExtensions();
+  // TODO: use CMA entities directly.
+  const widgets = (items || []).map(WidgetStore.buildExtensionWidget);
+
+  return widgets.sort((a, b) => {
+    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
   });
 });
 

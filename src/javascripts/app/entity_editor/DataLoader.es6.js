@@ -7,6 +7,7 @@ import { getModule } from 'NgRegistry.es6';
 import { assetContentType } from 'legacy-client';
 import { NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
+import * as WidgetStore from 'widgets/WidgetStore.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
@@ -109,9 +110,10 @@ export function makePrefetchEntryLoader(spaceContext, ids$) {
  * Loaders are created by `makeEntryLoader()` and `makeAssetLoader()`.
  */
 async function loadEditorData(loader, id) {
-  const [entity, hasCustomSidebarFeature] = await Promise.all([
+  const [entity, hasCustomSidebarFeature, widgets] = await Promise.all([
     loader.getEntity(id),
-    loader.hasCustomSidebarFeature()
+    loader.hasCustomSidebarFeature(),
+    loader.getWidgets()
   ]);
 
   // TODO: right now we need to load CT and its EI sequentially
@@ -119,14 +121,12 @@ async function loadEditorData(loader, id) {
   // we know all the IDs UPFRONT. It's only our internal
   // abstraction preventing us from doing so.
   const contentType = await loader.getContentType(entity);
-  const editorInterface = await loader.getEditorInterface(contentType);
+  const editorInterface = await loader.getEditorInterface(contentType, widgets);
 
-  const fieldControls = buildRenderables(editorInterface.controls, loader.getWidgets());
+  const fieldControls = buildRenderables(editorInterface.controls, widgets);
   const sidebar = hasCustomSidebarFeature ? editorInterface.sidebar : null;
-  const sidebarExtensions = buildSidebarRenderables(
-    editorInterface.sidebar || [],
-    loader.getWidgets()
-  );
+  const sidebarExtensions = buildSidebarRenderables(sidebar || [], widgets);
+
   const entityInfo = makeEntityInfo(entity, contentType);
   const openDoc = loader.getOpenDoc(entity, contentType);
 
@@ -155,12 +155,12 @@ function makeEntryLoader(spaceContext) {
       return spaceContext.publishedCTs.fetch(ctId);
     },
     getWidgets() {
-      return spaceContext.widgets.getAll();
+      return WidgetStore.getForContentTypeManagement(spaceContext.cma);
     },
     // We memoize the editor interface so that we do not fetch
     // them multiple times in the bulk editor.
-    getEditorInterface: memoize(contentType => {
-      return spaceContext.editorInterfaceRepo.get(contentType.data);
+    getEditorInterface: memoize((contentType, widgets) => {
+      return spaceContext.editorInterfaceRepo.get(contentType.data, widgets);
     }),
     hasCustomSidebarFeature: () => {
       return getOrgFeature(spaceContext.organization.sys.id, 'custom_sidebar', true);
@@ -178,7 +178,7 @@ function makeAssetLoader(spaceContext) {
       return null;
     },
     getWidgets() {
-      return spaceContext.widgets.getAll();
+      return WidgetStore.getBuiltinsOnly();
     },
     getEditorInterface() {
       // TODO: this is a hardcoded editor interface for Asset Editor.

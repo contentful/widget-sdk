@@ -123,11 +123,7 @@ class ExtensionEditor extends React.Component {
         );
         Notification.success('Your extension was updated successfully.');
 
-        // Refresh widgets in a space but don't wait for the result
-        // since it takes some time to navigate to an entry using
-        // the updated extension.
-        // `refresh()` fails gracefully, no need to handle errors.
-        spaceContext.widgets.refresh();
+        // TODO: we should refresh extension cache here!
       })
       .catch(() => {
         Notification.error(

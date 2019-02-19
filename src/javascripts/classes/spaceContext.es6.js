@@ -5,7 +5,6 @@ import { deepFreeze, deepFreezeClone } from 'utils/Freeze.es6';
 import * as ShareJSConnection from 'data/sharejs/Connection.es6';
 import createApiKeyRepo from 'data/CMA/ApiKeyRepo.es6';
 import shouldUseEnvEndpoint from 'data/shouldUseEnvEndpoint.es6';
-import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
 import createEditorInterfaceRepo from 'widgets/EditorInterfaceRepo.es6';
 import APIClient from 'data/APIClient.es6';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
@@ -19,7 +18,7 @@ export default function register() {
    *
    * @description
    * This service holds all context related to a space, including
-   * contentTypes, users, widgets, and helper methods.
+   * contentTypes, users, and helper methods.
    */
   registerFactory('spaceContext', [
     '$q',
@@ -129,10 +128,8 @@ export default function register() {
           self.apiKeyRepo = createApiKeyRepo(self.endpoint);
           self.webhookRepo = createWebhookRepo(space);
           self.localeRepo = createLocaleRepo(self.endpoint);
+          self.editorInterfaceRepo = createEditorInterfaceRepo(self.endpoint);
           self.organization = deepFreezeClone(self.getData('organization'));
-
-          self.widgets = createWidgetStore(self.cma);
-          self.editorInterfaceRepo = createEditorInterfaceRepo(self.endpoint, self.widgets.getAll);
 
           // TODO: publicly accessible docConnection is
           // used only in a process of creating space out
@@ -182,7 +179,6 @@ export default function register() {
 
           return $q
             .all([
-              self.widgets.refresh(),
               self.publishedCTs.refresh().then(() => {
                 const viewMigrator = createViewMigrator(
                   self.publishedCTs.getAllBare(),
@@ -473,7 +469,6 @@ export default function register() {
         spaceContext.uiConfig = null;
         spaceContext.space = null;
         spaceContext.users = null;
-        spaceContext.widgets = null;
         if (spaceContext.docPool) {
           spaceContext.docPool.destroy();
           spaceContext.docPool = null;
