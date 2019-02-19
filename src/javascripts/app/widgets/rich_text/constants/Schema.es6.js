@@ -95,10 +95,9 @@ export default {
       ]
     },
     ...mapVoidTypes(VOID_BLOCKS),
-    // the schema for the lists and list-items
-    // is defined in the slate-edit-list plugin
-    // Due to the bug in slate@0.44.9 we have to stich schema manually.
-    // related bug ticket AUTH-888
+    // The schema for the lists and list-items is defined in the slate-edit-list plugin.
+    // Due to the bug in slate@0.44.9 we have to stitch the schema manually.
+    // Related bug ticket AUTH-888
     ...listPlugin.schema.blocks,
     [BLOCKS.QUOTE]: {
       nodes: [
