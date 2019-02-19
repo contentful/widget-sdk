@@ -39,14 +39,12 @@ export default combineReducers({
  */
 export function identityProvider(state = {}, action) {
   switch (action.type) {
-    case actions.SSO_ENABLE_PENDING:
     case actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING:
     case actions.SSO_GET_IDENTITY_PROVIDER_PENDING:
       return {
         ...state,
         isPending: true
       };
-    case actions.SSO_ENABLE_SUCCESS:
     case actions.SSO_UPDATE_IDENTITY_PROVIDER:
     case actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS:
     case actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS:
@@ -55,13 +53,30 @@ export function identityProvider(state = {}, action) {
         data: action.payload,
         isPending: false
       };
-    case actions.SSO_ENABLE_FAILURE:
     case actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE:
     case actions.SSO_GET_IDENTITY_PROVIDER_FAILURE:
       return {
         ...state,
         error: action.payload.message,
         isPending: false
+      };
+
+    case actions.SSO_ENABLE_PENDING:
+      return {
+        ...state,
+        isEnabling: true
+      };
+    case actions.SSO_ENABLE_SUCCESS:
+      return {
+        ...state,
+        data: action.payload,
+        isEnabling: false
+      };
+    case actions.SSO_ENABLE_FAILURE:
+      return {
+        ...state,
+        error: action.payload.message,
+        isEnabling: false
       };
     default:
       return state;

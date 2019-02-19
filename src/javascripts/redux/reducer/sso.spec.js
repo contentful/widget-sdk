@@ -28,16 +28,6 @@ describe('SSO Redux reducers', () => {
           isPending: true
         });
       });
-
-      it('should handle SSO enabling pending state', () => {
-        expect(
-          callReducer(reducers.identityProvider, {
-            type: actions.SSO_ENABLE_PENDING
-          })
-        ).toEqual({
-          isPending: true
-        });
-      });
     });
 
     describe('success', () => {
@@ -84,18 +74,6 @@ describe('SSO Redux reducers', () => {
           isPending: false
         });
       });
-
-      it('should handle SSO enabling success state', () => {
-        expect(
-          callReducer(reducers.identityProvider, {
-            type: actions.SSO_ENABLE_SUCCESS,
-            payload: identityProvider
-          })
-        ).toEqual({
-          data: identityProvider,
-          isPending: false
-        });
-      });
     });
 
     describe('failure', () => {
@@ -130,8 +108,36 @@ describe('SSO Redux reducers', () => {
           isPending: false
         });
       });
+    });
+
+    describe('enabling', () => {
+      it('should handle SSO enabling pending state', () => {
+        expect(
+          callReducer(reducers.identityProvider, {
+            type: actions.SSO_ENABLE_PENDING
+          })
+        ).toEqual({
+          isEnabling: true
+        });
+      });
+
+      it('should handle SSO enabling success state', () => {
+        const identityProvider = {};
+
+        expect(
+          callReducer(reducers.identityProvider, {
+            type: actions.SSO_ENABLE_SUCCESS,
+            payload: identityProvider
+          })
+        ).toEqual({
+          data: identityProvider,
+          isEnabling: false
+        });
+      });
 
       it('should handle SSO enabling failure state', () => {
+        const error = new Error('Could not enable');
+
         expect(
           callReducer(reducers.identityProvider, {
             type: actions.SSO_ENABLE_FAILURE,
@@ -140,7 +146,7 @@ describe('SSO Redux reducers', () => {
           })
         ).toEqual({
           error: error.message,
-          isPending: false
+          isEnabling: false
         });
       });
     });

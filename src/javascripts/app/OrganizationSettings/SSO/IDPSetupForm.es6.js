@@ -479,10 +479,12 @@ export class IDPSetupForm extends React.Component {
               testId="enable-button"
               onClick={this.confirmEnable}
               disabled={
-                connectionTest.result !== TEST_RESULTS.success || identityProvider.isPending
+                connectionTest.result !== TEST_RESULTS.success ||
+                identityProvider.isPending ||
+                identityProvider.isEnabling
               }>
-              {!identityProvider.isPending && `Enable SSO`}
-              {identityProvider.isPending && `Enabling SSO...`}
+              {!identityProvider.isEnabling && `Enable SSO`}
+              {identityProvider.isEnabling && `Enabling SSO...`}
             </Button>
           </div>
         </section>
