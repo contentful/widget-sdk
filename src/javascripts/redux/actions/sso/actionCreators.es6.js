@@ -64,6 +64,14 @@ export function createIdp({ orgId, orgName }) {
 
 export function updateFieldValue({ fieldName, value, orgId }) {
   return async (dispatch, getState) => {
+    // Exit early if the field value is pending (meaning the network request
+    // from another call has not finished)
+    const fieldIsPending = selectors.getField(getState(), fieldName).isPending;
+
+    if (fieldIsPending) {
+      return;
+    }
+
     // Exit early if the idP value is the same as the updated value
     const idpValue = selectors.getIdentityProviderValue(getState(), fieldName);
 

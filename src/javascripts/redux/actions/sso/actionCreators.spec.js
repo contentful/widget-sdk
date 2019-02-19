@@ -151,7 +151,30 @@ describe('SSO Redux actionCreators', () => {
   });
 
   describe('updateFieldValue', () => {
-    it('should always dispatch the validateField thunk when dispatched', async () => {
+    it('should not dispatch anything if the field is pending', async () => {
+      mockStore.setState({
+        sso: {
+          fields: {
+            idpSsoTargetUrl: {
+              isPending: true
+            }
+          }
+        }
+      });
+
+      await mockStore.dispatch(
+        actionCreators.updateFieldValue({
+          orgId: '1234',
+          fieldName: 'idpSsoTargetUrl',
+          value: 'some-value'
+        })
+      );
+
+      // Only the initial dispatch but no others
+      expect(mockStore.getDispatched()).toHaveLength(1);
+    });
+
+    it('should dispatch the validateField thunk when dispatched if the field is not pending', async () => {
       const idpSsoTargetUrlValue = 'http://example.com';
 
       await mockStore.dispatch(

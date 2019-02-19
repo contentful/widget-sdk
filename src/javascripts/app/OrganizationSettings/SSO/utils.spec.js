@@ -1,5 +1,4 @@
 import * as utils from './utils.es6';
-import { TEST_RESULTS } from 'app/OrganizationSettings/SSO/constants.es6';
 
 jest.mock('./validators.es6', () => ({
   myAwesomeField: str => {
