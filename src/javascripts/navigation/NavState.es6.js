@@ -1,10 +1,7 @@
 import { makeSum } from 'sum-types';
-import { startsWith, get } from 'lodash';
+import { startsWith } from 'lodash';
 import * as K from 'utils/kefir.es6';
-import { getOrganization, getOrganizations } from 'services/TokenStore.es6';
-import { getStore } from 'TheStore/index.es6';
-
-const store = getStore();
+import { getOrganization } from 'services/TokenStore.es6';
 
 /**
  * Possible app states for navigation (as shown in sidepanel)
@@ -12,23 +9,12 @@ const store = getStore();
 export const NavStates = makeSum({
   Space: ['space', 'env', 'org', 'availableEnvironments'],
   OrgSettings: ['org'],
-  UserProfile: ['org'],
-  NewOrg: ['org'],
+  UserProfile: [],
+  NewOrg: [],
   Default: []
 });
 
 const navStateBus = K.createPropertyBus(NavStates.Default());
-
-async function getLastUsedOrg() {
-  const lastUsedOrgId = store.get('lastUsedOrg');
-
-  if (lastUsedOrgId) {
-    return getOrganization(lastUsedOrgId);
-  } else {
-    const allOrgs = await getOrganizations();
-    return get(allOrgs, 0, null);
-  }
-}
 
 // Current navigation state property
 export const navState$ = navStateBus.property;
@@ -41,11 +27,9 @@ export const navState$ = navStateBus.property;
  */
 export async function updateNavState(state, params, spaceContext) {
   if (state.name === 'account.organizations.new') {
-    const org = await getLastUsedOrg();
-    navStateBus.set(NavStates.NewOrg(org));
+    navStateBus.set(NavStates.NewOrg());
   } else if (startsWith(state.name, 'account.profile')) {
-    const org = await getLastUsedOrg();
-    navStateBus.set(NavStates.UserProfile(org));
+    navStateBus.set(NavStates.UserProfile());
   } else if (startsWith(state.name, 'account.organizations') && params.orgId) {
     getOrganization(params.orgId).then(org => {
       navStateBus.set(NavStates.OrgSettings(org));
