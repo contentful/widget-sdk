@@ -92,11 +92,9 @@ export default class RichTextEditor extends React.Component {
     if (this.props.isDisabled !== nextProps.isDisabled) {
       return true;
     }
-    if (is(this.state.value, nextState.value) && this.props.value === nextProps.value) {
-      return false;
-    } else {
-      return true;
-    }
+    const isStateValueUpdate = !is(this.state.value, nextState.value);
+    const isPropsValueUpdate = this.props.value !== nextProps.value;
+    return isStateValueUpdate || isPropsValueUpdate;
   }
   callOnChange = debounce(() => {
     const doc = toContentfulDocument({
@@ -162,16 +160,11 @@ export default class RichTextEditor extends React.Component {
  * @returns {boolean}
  */
 function isRelevantOperation(op) {
-  if (op.type === 'set_node' && !op.properties.type) {
-    if (op.properties.type || op.properties.data) {
-      // Change of node type or data (e.g. quote or hyperlink)
-      return true;
-    } else if (op.properties.isVoid) {
-      // Triggered for embeds and hr, not an actual data change.
-      return false;
-    } else {
-      throw newUnhandledOpError(op);
-    }
+  if (op.type === 'insert_node') {
+    // Slate creates an empty text node for embeds/hr as `content` which is not
+    // considered a data change.
+    // TODO: Consider adding empty text nodes for above types in the adapter instead.
+    return isEmptyTextNode(op.node);
   } else if (op.type === 'set_value') {
     if (op.properties.schema || op.properties.data) {
       return false;
@@ -189,4 +182,9 @@ function newUnhandledOpError(op) {
     .map(v => `\`${v}\``)
     .join(',');
   return new Error(`Unhandled operation \`${op.type}\` with properties ${properties}`);
+}
+
+function isEmptyTextNode(node) {
+  const { leaves } = node;
+  return !(node.object === 'text' && leaves.size === 1 && leaves.get(0).text === '');
 }
