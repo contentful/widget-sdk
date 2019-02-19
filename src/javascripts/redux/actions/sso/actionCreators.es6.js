@@ -156,9 +156,9 @@ export function connectionTestResult({ data }) {
   return function connectionTestResult(dispatch) {
     if (data.testConnectionAt) {
       if (data.testConnectionResult === TEST_RESULTS.success) {
-        dispatch(actions.ssoConnectionTestSuccess());
+        dispatch(actions.ssoConnectionTestSuccess(data.version));
       } else if (data.testConnectionResult === TEST_RESULTS.failure) {
-        dispatch(actions.ssoConnectionTestFailure(data.testConnectionError));
+        dispatch(actions.ssoConnectionTestFailure(data.version, data.testConnectionError));
       } else {
         dispatch(actions.ssoConnectionTestUnknown());
       }

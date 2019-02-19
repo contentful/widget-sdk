@@ -121,19 +121,22 @@ export function ssoConnectionTestEnd() {
 }
 
 export const SSO_CONNECTION_TEST_SUCCESS = 'SSO_CONNECTION_TEST/SUCCESS';
-export function ssoConnectionTestSuccess(data) {
+export function ssoConnectionTestSuccess(version) {
   return {
     type: SSO_CONNECTION_TEST_SUCCESS,
-    payload: data
+    payload: version
   };
 }
 
 export const SSO_CONNECTION_TEST_FAILURE = 'SSO_CONNECTION_TEST/FAILURE';
-export function ssoConnectionTestFailure(errors) {
+export function ssoConnectionTestFailure(version, errors) {
   return {
     type: SSO_CONNECTION_TEST_FAILURE,
     error: true,
-    payload: errors
+    payload: errors,
+    meta: {
+      version
+    }
   };
 }
 

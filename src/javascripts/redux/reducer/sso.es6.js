@@ -53,6 +53,20 @@ export function identityProvider(state = {}, action) {
         data: action.payload,
         isPending: false
       };
+    case actions.SSO_CONNECTION_TEST_SUCCESS: {
+      const updatedState = clone(state);
+
+      set(updatedState, ['data', 'sys', 'version'], action.payload.version);
+
+      return updatedState;
+    }
+    case actions.SSO_CONNECTION_TEST_FAILURE: {
+      const updatedState = clone(state);
+
+      set(updatedState, ['data', 'sys', 'version'], action.meta.version);
+
+      return updatedState;
+    }
     case actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE:
     case actions.SSO_GET_IDENTITY_PROVIDER_FAILURE:
       return {

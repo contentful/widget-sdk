@@ -516,14 +516,16 @@ describe('SSO Redux actionCreators', () => {
     it('should dispatch the ssoConnectionTestSuccess action if testConnectionResult is success', () => {
       const data = {
         testConnectionAt: 'timestamp',
-        testConnectionResult: TEST_RESULTS.success
+        testConnectionResult: TEST_RESULTS.success,
+        version: 8
       };
 
       mockStore.dispatch(actionCreators.connectionTestResult({ data }));
 
       expect(mockStore.getActions()).toEqual([
         {
-          type: actions.SSO_CONNECTION_TEST_SUCCESS
+          type: actions.SSO_CONNECTION_TEST_SUCCESS,
+          payload: 8
         }
       ]);
     });
@@ -534,7 +536,8 @@ describe('SSO Redux actionCreators', () => {
       const data = {
         testConnectionAt: 'timestamp',
         testConnectionResult: TEST_RESULTS.failure,
-        testConnectionError
+        testConnectionError,
+        version: 7
       };
 
       mockStore.dispatch(actionCreators.connectionTestResult({ data }));
@@ -543,7 +546,10 @@ describe('SSO Redux actionCreators', () => {
         {
           type: actions.SSO_CONNECTION_TEST_FAILURE,
           error: true,
-          payload: testConnectionError
+          payload: testConnectionError,
+          meta: {
+            version: 7
+          }
         }
       ]);
     });
