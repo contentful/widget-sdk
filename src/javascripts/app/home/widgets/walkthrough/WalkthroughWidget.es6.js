@@ -14,9 +14,8 @@ const trackingGroupId = 'author_editor_continuous_onboarding';
 
 export default class WalkthroughWidget extends React.Component {
   static propTypes = {
-    spaceName: PropTypes.string,
-    launchButtonLabel: PropTypes.string,
-    setWalkthroughState: PropTypes.func
+    spaceName: PropTypes.string.isRequired,
+    setWalkthroughState: PropTypes.func.isRequired
   };
 
   state = {

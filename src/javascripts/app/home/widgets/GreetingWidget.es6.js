@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 export default class GreetingWidget extends React.Component {
   static propTypes = {
-    spaceName: PropTypes.string,
-    orgName: PropTypes.string,
+    spaceName: PropTypes.string.isRequired,
+    orgName: PropTypes.string.isRequired,
     walkthroughStarted: PropTypes.bool
   };
   render() {

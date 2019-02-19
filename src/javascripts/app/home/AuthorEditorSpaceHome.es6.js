@@ -7,7 +7,7 @@ import WalkthroughWidget from './widgets/walkthrough/WalkthroughWidget.es6';
 
 export default class SpaceHome extends React.Component {
   state = {
-    walkthroughUserState: { started: undefined }
+    walkthroughUserState: { started: false }
   };
 
   static propTypes = {
