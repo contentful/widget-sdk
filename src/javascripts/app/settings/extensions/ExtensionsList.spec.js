@@ -17,25 +17,27 @@ describe('app/settings/extensions/Extensions', () => {
     {
       id: 'hello',
       name: 'hello',
-      fieldTypes: ['Boolean'],
-      parameters: ['one'],
-      installationParameters: { definitions: ['some'], values: {} }
+      fieldTypes: 'Boolean',
+      hosting: 'Contentful',
+      parameterCounts: {
+        instanceDefinitions: 1,
+        installationDefinitions: 1,
+        installationValues: 0
+      }
     },
     {
-      src: 'http://localhost',
       id: 'test',
       name: 'Widget 1',
-      fieldTypes: ['Number'],
-      parameters: [],
-      installationParameters: { definitions: [], values: {} }
+      fieldTypes: 'Number',
+      hosting: 'self-hosted',
+      parameterCounts: {}
     },
     {
-      srcdoc: '<!doctype html',
       id: 'test2',
       name: 'Widget 2',
-      fieldTypes: ['Symbol', 'Text'],
-      parameters: [],
-      installationParameters: { definitions: [], values: {} }
+      fieldTypes: 'Symbol, Text',
+      hosting: 'self-hosted',
+      parameterCounts: {}
     }
   ];
 

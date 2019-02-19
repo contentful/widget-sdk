@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
 import {
   Button,
   Dropdown,
@@ -163,7 +162,15 @@ const ExtensionsTable = props => (
 
 export class ExtensionsList extends React.Component {
   static propTypes = {
-    extensions: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
+    extensions: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        fieldTypes: PropTypes.string.isRequired,
+        hosting: PropTypes.string.isRequired,
+        parameterCounts: PropTypes.object.isRequired
+      })
+    ).isRequired,
     refresh: PropTypes.func.isRequired,
     extensionUrl: PropTypes.string,
     extensionUrlReferrer: PropTypes.string
@@ -189,22 +196,13 @@ export class ExtensionsList extends React.Component {
             {extension.name}
           </StateLink>
         </td>
+        <td>{extension.hosting}</td>
+        <td>{extension.fieldTypes}</td>
+        <td>{`${extension.parameterCounts.instanceDefinitions || 0} definition(s)`}</td>
         <td>
-          {typeof extension.src === 'string' && 'self-hosted'}
-          {typeof extension.srcdoc === 'string' && 'Contentful'}
-        </td>
-        <td>{extension.fieldTypes.join(', ')}</td>
-        <td>{`${get(extension, ['parameters', 'length'], 0)} definition(s)`}</td>
-        <td>
-          {`${get(
-            extension,
-            ['installationParameters', 'definitions', 'length'],
-            0
-          )} definition(s)`}
+          {`${extension.parameterCounts.installationDefinitions || 0} definition(s)`}
           <br />
-          {`${
-            Object.keys(get(extension, ['installationParameters', 'values'], {})).length
-          } value(s)`}
+          {`${extension.parameterCounts.installationValues || 0} value(s)`}
         </td>
         <td className="x--small-cell">
           <StateLink to="^.detail" params={{ extensionId: extension.id }}>
