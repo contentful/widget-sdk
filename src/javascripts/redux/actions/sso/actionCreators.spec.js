@@ -341,6 +341,31 @@ describe('SSO Redux actionCreators', () => {
         ])
       );
     });
+
+    it('should dispatch the connectionTestResult thunk if the field update was successful', async () => {
+      const identityProvider = {
+        ssoName: 'something-1234'
+      };
+
+      mockEndpoint.mockResolvedValueOnce(identityProvider);
+
+      const fieldName = 'idpSsoTargetUrl';
+      const value = 'https://example.com';
+
+      await mockStore.dispatch(
+        actionCreators.updateFieldValue({
+          orgId: '1234',
+          fieldName,
+          value
+        })
+      );
+
+      const connectionTestResultDispatch = mockStore
+        .getDispatched()
+        .filter(d => d.thunkName() === 'connectionTestResult')[0];
+
+      expect(connectionTestResultDispatch).toBeDefined();
+    });
   });
 
   describe('validateField', () => {
@@ -505,18 +530,11 @@ describe('SSO Redux actionCreators', () => {
   });
 
   describe('connectionTestResult', () => {
-    it('should not dispatch anything if the data has no testConnectionAt', () => {
-      const data = {};
-
-      mockStore.dispatch(actionCreators.connectionTestResult({ data }));
-
-      expect(mockStore.getActions()).toHaveLength(0);
-    });
-
-    it('should dispatch the ssoConnectionTestSuccess action if testConnectionResult is success', () => {
+    it('should dispatch the ssoConnectionTestResult action', () => {
       const data = {
         testConnectionAt: 'timestamp',
         testConnectionResult: TEST_RESULTS.success,
+        testConnectionError: null,
         version: 8
       };
 
@@ -524,47 +542,8 @@ describe('SSO Redux actionCreators', () => {
 
       expect(mockStore.getActions()).toEqual([
         {
-          type: actions.SSO_CONNECTION_TEST_SUCCESS,
-          payload: 8
-        }
-      ]);
-    });
-
-    it('should dispatch the ssoConnectionTestFailure action if testConnectionResult is failure', () => {
-      const testConnectionError = ['Something bad happened!'];
-
-      const data = {
-        testConnectionAt: 'timestamp',
-        testConnectionResult: TEST_RESULTS.failure,
-        testConnectionError,
-        version: 7
-      };
-
-      mockStore.dispatch(actionCreators.connectionTestResult({ data }));
-
-      expect(mockStore.getActions()).toEqual([
-        {
-          type: actions.SSO_CONNECTION_TEST_FAILURE,
-          error: true,
-          payload: testConnectionError,
-          meta: {
-            version: 7
-          }
-        }
-      ]);
-    });
-
-    it('should dispatch the ssoConnectionTestUnknown action if the testConnectionResult is not success/failure', () => {
-      const data = {
-        testConnectionAt: 'timestamp',
-        testConnectionResult: null
-      };
-
-      mockStore.dispatch(actionCreators.connectionTestResult({ data }));
-
-      expect(mockStore.getActions()).toEqual([
-        {
-          type: actions.SSO_CONNECTION_TEST_UNKNOWN
+          type: actions.SSO_CONNECTION_TEST_RESULT,
+          payload: data
         }
       ]);
     });

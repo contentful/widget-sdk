@@ -1,7 +1,6 @@
 import { get, set, clone } from 'lodash';
 import { combineReducers } from 'redux';
 import * as actions from 'redux/actions/sso/actions.es6';
-import { TEST_RESULTS } from 'app/OrganizationSettings/SSO/constants.es6';
 
 export default combineReducers({
   identityProvider,
@@ -53,17 +52,10 @@ export function identityProvider(state = {}, action) {
         data: action.payload,
         isPending: false
       };
-    case actions.SSO_CONNECTION_TEST_SUCCESS: {
+    case actions.SSO_CONNECTION_TEST_RESULT: {
       const updatedState = clone(state);
 
       set(updatedState, ['data', 'sys', 'version'], action.payload.version);
-
-      return updatedState;
-    }
-    case actions.SSO_CONNECTION_TEST_FAILURE: {
-      const updatedState = clone(state);
-
-      set(updatedState, ['data', 'sys', 'version'], action.meta.version);
 
       return updatedState;
     }
@@ -182,24 +174,13 @@ export function connectionTest(state = {}, action) {
         ...state,
         isPending: false
       };
-    case actions.SSO_CONNECTION_TEST_SUCCESS:
+    case actions.SSO_CONNECTION_TEST_RESULT:
       return {
         ...state,
-        result: TEST_RESULTS.success,
-        isPending: false
-      };
-    case actions.SSO_CONNECTION_TEST_FAILURE:
-      return {
-        ...state,
-        result: TEST_RESULTS.failure,
-        errors: action.payload,
-        isPending: false
-      };
-    case actions.SSO_CONNECTION_TEST_UNKNOWN:
-      return {
-        ...state,
-        result: TEST_RESULTS.unknown,
-        isPending: false
+        isPending: false,
+        result: action.payload.testConnectionResult,
+        errors: action.payload.testConnectionError,
+        timestamp: action.payload.testConnectionAt
       };
     default:
       return state;

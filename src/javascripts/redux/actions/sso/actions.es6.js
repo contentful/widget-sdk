@@ -120,30 +120,11 @@ export function ssoConnectionTestEnd() {
   };
 }
 
-export const SSO_CONNECTION_TEST_SUCCESS = 'SSO_CONNECTION_TEST/SUCCESS';
-export function ssoConnectionTestSuccess(version) {
+export const SSO_CONNECTION_TEST_RESULT = 'SSO_CONNECTION_TEST/RESULT';
+export function ssoConnectionTestResult(data) {
   return {
-    type: SSO_CONNECTION_TEST_SUCCESS,
-    payload: version
-  };
-}
-
-export const SSO_CONNECTION_TEST_FAILURE = 'SSO_CONNECTION_TEST/FAILURE';
-export function ssoConnectionTestFailure(version, errors) {
-  return {
-    type: SSO_CONNECTION_TEST_FAILURE,
-    error: true,
-    payload: errors,
-    meta: {
-      version
-    }
-  };
-}
-
-export const SSO_CONNECTION_TEST_UNKNOWN = 'SSO_CONNECTION_TEST/UNKNOWN';
-export function ssoConnectionTestUnknown() {
-  return {
-    type: SSO_CONNECTION_TEST_UNKNOWN
+    type: SSO_CONNECTION_TEST_RESULT,
+    payload: data
   };
 }
 

@@ -179,7 +179,8 @@ describe('IDPSetupForm', () => {
 
   it('should show the unknown note if the result is unknown', () => {
     const connectionTest = {
-      result: TEST_RESULTS.unknown
+      timestamp: 'timestamp',
+      result: null
     };
 
     const rendered = render({ identityProvider, organization, connectionTest });

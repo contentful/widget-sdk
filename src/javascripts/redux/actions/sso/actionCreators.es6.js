@@ -2,7 +2,6 @@ import { Notification } from '@contentful/forma-36-react-components';
 import * as actions from './actions.es6';
 import * as selectors from 'redux/selectors/sso.es6';
 import { validate, connectionTestResultFromIdp } from 'app/OrganizationSettings/SSO/utils.es6';
-import { TEST_RESULTS } from 'app/OrganizationSettings/SSO/constants.es6';
 import _ from 'lodash';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
@@ -114,6 +113,10 @@ export function updateFieldValue({ fieldName, value, orgId }) {
 
     dispatch(actions.ssoFieldUpdateSuccess(fieldName));
     dispatch(actions.ssoUpdateIdentityProvider(identityProvider));
+
+    const testResult = connectionTestResultFromIdp(identityProvider);
+
+    dispatch(connectionTestResult({ data: testResult }));
   };
 }
 
@@ -154,15 +157,7 @@ export function connectionTestCancel() {
 
 export function connectionTestResult({ data }) {
   return function connectionTestResult(dispatch) {
-    if (data.testConnectionAt) {
-      if (data.testConnectionResult === TEST_RESULTS.success) {
-        dispatch(actions.ssoConnectionTestSuccess(data.version));
-      } else if (data.testConnectionResult === TEST_RESULTS.failure) {
-        dispatch(actions.ssoConnectionTestFailure(data.version, data.testConnectionError));
-      } else {
-        dispatch(actions.ssoConnectionTestUnknown());
-      }
-    }
+    dispatch(actions.ssoConnectionTestResult(data));
   };
 }
 

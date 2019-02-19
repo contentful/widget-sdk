@@ -203,6 +203,13 @@ export class IDPSetupForm extends React.Component {
     const allowConnectionTest = connectionTestingAllowed(fields, connectionTest);
     const metadataUrl = authUrl(`/sso/${orgId}/metadata`);
 
+    const testResultIsSuccess = connectionTest.result === TEST_RESULTS.success;
+    const testResultIsFailure = connectionTest.result === TEST_RESULTS.failure;
+    const testResultIsUnknown =
+      connectionTest.timestamp &&
+      connectionTest.result !== TEST_RESULTS.success &&
+      connectionTest.result !== TEST_RESULTS.failure;
+
     return (
       <React.Fragment>
         <section className="f36-margin-top--xl">
@@ -379,12 +386,8 @@ export class IDPSetupForm extends React.Component {
               testId="test-connection-button"
               disabled={!allowConnectionTest}
               onClick={this.testConnection}>
-              {!connectionTest.isPending &&
-                connectionTest.result !== TEST_RESULTS.success &&
-                `Test connection`}
-              {!connectionTest.isPending &&
-                connectionTest.result === TEST_RESULTS.success &&
-                `Retest connection`}
+              {!connectionTest.isPending && !testResultIsSuccess && `Test connection`}
+              {!connectionTest.isPending && testResultIsSuccess && `Retest connection`}
               {connectionTest.isPending && `Testing connection...`}
             </Button>
             {connectionTest.isPending && (
@@ -398,17 +401,17 @@ export class IDPSetupForm extends React.Component {
             )}
             {!connectionTest.isPending && (
               <div className="f36-margin-top--l">
-                {connectionTest.result === TEST_RESULTS.unknown && (
+                {testResultIsUnknown && (
                   <Note testId="result-unknown-note" noteType="warning">
                     An unknown error occured while testing the connection. Try again.
                   </Note>
                 )}
-                {connectionTest.result === TEST_RESULTS.failure && (
+                {testResultIsFailure && (
                   <Note testId="result-failure-note" noteType="negative">
                     Connection wasn’t established. View the Error log below for more information.
                   </Note>
                 )}
-                {connectionTest.result === TEST_RESULTS.success && (
+                {testResultIsSuccess && (
                   <Note testId="result-success-note" noteType="positive">
                     Connection test successful!
                   </Note>
