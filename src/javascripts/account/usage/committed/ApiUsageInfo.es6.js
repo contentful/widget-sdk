@@ -7,6 +7,11 @@ import { shorten } from 'utils/NumberUtils.es6';
 
 import { organizationResourceUsagePropType } from './propTypes.es6';
 
+export const calcRelativeSpaceUsage = (spaceUsage, totalUsage) => {
+  const spaceUsageSum = sum(spaceUsage);
+  return spaceUsageSum === 0 ? 0 : Math.round((spaceUsageSum / totalUsage) * 100);
+};
+
 export default class ApiUsageInfo extends React.Component {
   static propTypes = {
     api: PropTypes.string.isRequired,
@@ -25,37 +30,30 @@ export default class ApiUsageInfo extends React.Component {
         <h3>Top 3 spaces</h3>
         <table className="usage-page__api-table">
           <tbody>
-            {usage.map(({ sys: { space: { sys: { id: spaceId } } }, usage: spaceUsage }, i) => {
-              const spaceUsageSum = sum(spaceUsage);
-              const percentage =
-                spaceUsageSum === 0 ? 0 : Math.round((spaceUsageSum / totalUsage) * 100);
-              return (
-                <tr key={spaceId}>
-                  <td className="usage-page__space-name">
-                    {spaceNames[spaceId] ? (
-                      <span>{spaceNames[spaceId]}</span>
-                    ) : (
-                      <em>deleted space</em>
-                    )}
-                    {isPoC[spaceId] && (
-                      <Tooltip content="Proof of concept">
-                        <Tag tagType="muted" style={{ marginLeft: '10px' }}>
-                          POC
-                        </Tag>
-                      </Tooltip>
-                    )}
-                  </td>
-                  <td className="usage-page__space-usage">{shorten(sum(spaceUsage))}</td>
-                  <td
-                    className="usage-page__percentage-of-total-usage"
-                    style={{ color: colors[i] }}>
-                    <Tooltip content="Percentage of total number of API requests">
-                      <span>{`${percentage}%`}</span>
+            {usage.map(({ sys: { space: { sys: { id: spaceId } } }, usage: spaceUsage }, i) => (
+              <tr key={spaceId}>
+                <td className="usage-page__space-name">
+                  {spaceNames[spaceId] ? (
+                    <span>{spaceNames[spaceId]}</span>
+                  ) : (
+                    <em>deleted space</em>
+                  )}
+                  {isPoC[spaceId] && (
+                    <Tooltip content="Proof of concept">
+                      <Tag tagType="muted" style={{ marginLeft: '10px' }}>
+                        POC
+                      </Tag>
                     </Tooltip>
-                  </td>
-                </tr>
-              );
-            })}
+                  )}
+                </td>
+                <td className="usage-page__space-usage">{shorten(sum(spaceUsage))}</td>
+                <td className="usage-page__percentage-of-total-usage" style={{ color: colors[i] }}>
+                  <Tooltip content="Percentage of total number of API requests">
+                    <span>{`${calcRelativeSpaceUsage(spaceUsage, totalUsage)}%`}</span>
+                  </Tooltip>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
