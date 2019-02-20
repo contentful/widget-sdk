@@ -176,10 +176,14 @@ export class IDPSetupForm extends React.Component {
         onConfirm={() => onClose(true)}
         onCancel={() => onClose(false)}>
         <p>
-          Enabling SSO will allow your users to log in via the SSO portal. Once SSO is enabled, you
-          won’t be able to make any changes via the webapp.
+          Enabling SSO will allow your users to log in via SSO.
         </p>
-        <p>Are you sure you want to enable SSO?</p>
+
+        <p>
+          Once SSO is enabled, you won’t be able to make changes to the SSO settings yourself, and you’ll need to contact support instead.
+        </p>
+
+        <p>Ready to enable SSO?</p>
       </ModalConfirm>
     ));
 
@@ -222,7 +226,7 @@ export class IDPSetupForm extends React.Component {
             </TextLink>
           </Heading>
           <TextField
-            labelText="Audience"
+            labelText="Audience URI"
             name="audience"
             id="audience"
             extraClassNames="f36-margin-bottom--l"
@@ -249,7 +253,7 @@ export class IDPSetupForm extends React.Component {
 
           <Subheading extraClassNames="f36-margin-bottom--xs">Contentful logo</Subheading>
           <HelpText extraClassNames="f36-margin-bottom--xl">
-            Most SSO providers allow you to upload and set a thumbnail for your custom SAML app.{' '}
+            Most SSO providers allow you to upload a thumbnail for your custom SAML app.{' '}
             <TextLink href="http://press.contentful.com/media_kits/219490">
               Download Contentful logos
             </TextLink>
@@ -258,7 +262,7 @@ export class IDPSetupForm extends React.Component {
 
           <Subheading extraClassNames="f36-margin-bottom--xs">Map user attributes</Subheading>
           <HelpText extraClassNames="f36-margin-bottom--l">
-            Copy and paste these attributes into your SSO provider. They’re not case sensitive.
+            Map these attributes into your SSO provider.
           </HelpText>
           <div className="sso-setup__user-attributes">
             <TextField
@@ -296,11 +300,11 @@ export class IDPSetupForm extends React.Component {
             />
           </div>
           <Note extraClassNames="f36-margin-top--l">
-            For Microsoft Azure and Microsoft ADFS,{' '}
+            For Microsoft products,{' '}
             <TextLink href="https://www.contentful.com/faq/sso/#what-identity-providers-idp-does-contentful-support">
               read the documentation
             </TextLink>{' '}
-            for mapping the user attributes.
+            about mapping the user attributes.
           </Note>
         </section>
 
@@ -314,6 +318,7 @@ export class IDPSetupForm extends React.Component {
               name="ssoProvider"
               id="ssoProvider"
               testId="ssoProvider"
+              helpText="Sometimes called the SAML 2.0 endpoint"
               width="medium"
               extraClassNames="f36-margin-bottom--l f36-margin-right--m sso-setup__select"
               value={fields.idpName.value}
@@ -450,6 +455,7 @@ export class IDPSetupForm extends React.Component {
                 id="ssoName"
                 name="ssoName"
                 testId="ssoName"
+                helpText="Letters, numbers, periods, hyphens, and underscores are allowed."
                 textInputProps={{
                   width: 'large'
                 }}
