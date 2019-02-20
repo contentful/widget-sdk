@@ -65,7 +65,8 @@ export default function register() {
             ignoreEnter: true,
             ignoreEsc: false,
             disableTopCloseButton: false,
-            persistOnNavigation: false
+            persistOnNavigation: false,
+            disableAutoFocus: false
           },
           _.pick(params, [
             'title',
@@ -79,6 +80,7 @@ export default function register() {
             'backgroundClose',
             'ignoreEnter',
             'ignoreEsc',
+            'disableAutoFocus',
             'disableTopCloseButton',
             'persistOnNavigation'
           ])
@@ -118,14 +120,15 @@ export default function register() {
               // properly calculated
               scope.$apply();
               this._centerOnBackground();
-
-              if (this.domElement.find('input').length > 0) {
-                this.domElement
-                  .find('input')
-                  .eq(0)
-                  .focus();
-              } else {
-                $(':focus').blur();
+              if (!this.params.disableAutoFocus) {
+                if (this.domElement.find('input').length > 0) {
+                  this.domElement
+                    .find('input')
+                    .eq(0)
+                    .focus();
+                } else {
+                  $(':focus').blur();
+                }
               }
 
               $($window).on('keyup', this._handleKeys);

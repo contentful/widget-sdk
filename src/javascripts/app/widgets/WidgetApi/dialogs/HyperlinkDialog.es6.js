@@ -206,7 +206,11 @@ export default class HyperlinkDialog extends React.Component {
             required
             labelText="Link target"
             value={uri || ''}
-            textInputProps={{ placeholder: 'https://', testId: 'link-uri-input' }}
+            textInputProps={{
+              placeholder: 'https://',
+              testId: 'link-uri-input',
+              autoFocus: true
+            }}
             helpText="A protocol may be required, e.g. https://"
             onChange={e => this.setState({ uri: e.target.value })}
             id="link-uri"

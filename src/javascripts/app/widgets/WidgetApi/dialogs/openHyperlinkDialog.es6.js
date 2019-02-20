@@ -67,6 +67,7 @@ export default async function({ value = {}, showTextInput, widgetAPI }) {
   dialog = modalDialog.open({
     template: `<react-component class="modal-background" jsx="jsx" props="props" />`,
     backgroundClose: true,
+    disableAutoFocus: true,
     ignoreEsc: true, // Ignore to allow ESC in search entity selector search.
     scopeData: {
       jsx,
