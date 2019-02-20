@@ -7,6 +7,11 @@ import { shorten } from 'utils/NumberUtils.es6';
 
 import { organizationResourceUsagePropType } from './propTypes.es6';
 
+export const calcRelativeSpaceUsage = (spaceUsage, totalUsage) => {
+  const spaceUsageSum = sum(spaceUsage);
+  return spaceUsageSum === 0 ? 0 : Math.round((spaceUsageSum / totalUsage) * 100);
+};
+
 export default class ApiUsageInfo extends React.Component {
   static propTypes = {
     api: PropTypes.string.isRequired,
@@ -44,7 +49,7 @@ export default class ApiUsageInfo extends React.Component {
                 <td className="usage-page__space-usage">{shorten(sum(spaceUsage))}</td>
                 <td className="usage-page__percentage-of-total-usage" style={{ color: colors[i] }}>
                   <Tooltip content="Percentage of total number of API requests">
-                    <span>{`${Math.round((sum(spaceUsage) / totalUsage) * 100)}%`}</span>
+                    <span>{`${calcRelativeSpaceUsage(spaceUsage, totalUsage)}%`}</span>
                   </Tooltip>
                 </td>
               </tr>
