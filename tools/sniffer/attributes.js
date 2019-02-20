@@ -6,6 +6,8 @@ const js = node => node.extension === '.js';
 
 const jade = node => node.extension === '.jade';
 
+const stylus = node => node.extension === '.styl';
+
 const test = node => js(node) && node.path.indexOf('spec.js') !== -1;
 
 const jest = node => test(node) && node.path.indexOf('src/javascripts') !== -1;
@@ -160,6 +162,7 @@ module.exports = {
   js: js,
   jade: jade,
   test: test,
+  stylus: stylus,
   jest: jest,
   karma: karma,
   angular: angular,
