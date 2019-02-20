@@ -37,6 +37,8 @@ describe('WalkthroughWidget', () => {
   it('should start tour on "Start" button click', async () => {
     await waitToUpdate(wrapper);
     wrapper.find('[testId="start-walkthrough-button"]').simulate('click');
+    // because ReactJoyride uses Portal, we simulate event that would be triggered by ReactJoyride
+    // src/javascripts/app/home/widgets/walkthrough/WalkthroughComponent.es6.js:35
     expect(wrapper.state('isTourRunning')).toEqual(true);
     await wrapper.instance().updateWalkthroughState({ started: true, dismissed: false });
     await waitToUpdate(wrapper);
