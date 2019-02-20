@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { get } from 'lodash';
+import { get, isUndefined } from 'lodash';
 
 import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
@@ -82,6 +82,13 @@ class SubscriptionOverview extends React.Component {
           plan.space.isAccessible = !!accessibleSpaces.find(
             space => space.sys.id === plan.space.sys.id
           );
+        }
+        // plan price is undefined for a free space
+        // later on in the code, we use mathematical ops (like comparison)
+        // using this value which fails. Therefore, setting this to 0
+        // makes all the later usages sane.
+        if (isUndefined(plan.price)) {
+          plan.price = 0;
         }
         return plan;
       });
