@@ -5,6 +5,7 @@ import * as K from 'utils/kefir.es6';
 import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
 import createBridge from 'widgets/SnapshotExtensionBridge.es6';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
+import { userInputFromDatetime } from 'app/widgets/datetime/data.es6';
 
 export default function register() {
   /**
@@ -139,42 +140,39 @@ export default function register() {
     })
   ]);
 
-  registerDirective('cfSnapshotPresenterDate', [
-    'widgets/datetime/data',
-    Data => ({
-      restrict: 'E',
-      template: '<span>{{ dtString }}</span>',
-      controller: [
-        '$scope',
-        $scope => {
-          const dt = Data.userInputFromDatetime($scope.value);
-          const mode = _.get($scope, 'widget.settings.format', 'date');
-          let s = moment(dt.date).format('dddd, MMMM Do YYYY');
+  registerDirective('cfSnapshotPresenterDate', () => ({
+    restrict: 'E',
+    template: '<span>{{ dtString }}</span>',
+    controller: [
+      '$scope',
+      $scope => {
+        const dt = userInputFromDatetime($scope.value);
+        const mode = _.get($scope, 'widget.settings.format', 'date');
+        let s = moment(dt.date).format('dddd, MMMM Do YYYY');
 
-          if (mode === 'date') {
-            $scope.dtString = s;
-            return;
-          }
-
-          if (parseInt(_.get($scope, 'widget.settings.ampm'), 10) !== 24) {
-            const x = dt.time.split(':');
-            s +=
-              ', ' +
-              moment()
-                .hour(x[0])
-                .minute(x[1])
-                .format('LT');
-          } else {
-            s += ', ' + dt.time;
-          }
-
-          if (mode === 'timeZ') {
-            s += ', UTC' + dt.utcOffset;
-          }
-
+        if (mode === 'date') {
           $scope.dtString = s;
+          return;
         }
-      ]
-    })
-  ]);
+
+        if (parseInt(_.get($scope, 'widget.settings.ampm'), 10) !== 24) {
+          const x = dt.time.split(':');
+          s +=
+            ', ' +
+            moment()
+              .hour(x[0])
+              .minute(x[1])
+              .format('LT');
+        } else {
+          s += ', ' + dt.time;
+        }
+
+        if (mode === 'timeZ') {
+          s += ', UTC' + dt.utcOffset;
+        }
+
+        $scope.dtString = s;
+      }
+    ]
+  }));
 }

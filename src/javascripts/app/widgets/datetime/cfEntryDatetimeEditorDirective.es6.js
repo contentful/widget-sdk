@@ -3,6 +3,14 @@ import _ from 'lodash';
 import moment from 'moment';
 import zoneOffsets from 'zoneOffsets.es6';
 import * as Datepicker from 'ui/datepicker.es6';
+import {
+  validate24hTime,
+  formatDateDisplay,
+  parseFreeFormDate,
+  userInputFromDatetime,
+  buildFieldValue,
+  validate12hTime
+} from 'app/widgets/datetime/data.es6';
 
 export default function register() {
   /**
@@ -12,8 +20,7 @@ export default function register() {
    */
   registerDirective('cfEntryDatetimeEditor', [
     '$timeout',
-    'widgets/datetime/data',
-    ($timeout, Data) => {
+    $timeout => {
       const ERRORS = {
         timeFormat: {
           message: 'Time is not in a valid format',
@@ -42,26 +49,26 @@ export default function register() {
           $scope.zoneOffsets = zoneOffsets;
           $scope.data = {};
 
-          const validateTime = $scope.uses12hClock ? Data.validate12hTime : Data.validate24hTime;
+          const validateTime = $scope.uses12hClock ? validate12hTime : validate24hTime;
           const timeController = timeInputEl.controller('ngModel');
           timeController.$validators.timeFormat = validateTime;
 
           const dateController = dateInputEl.controller('ngModel');
-          dateController.$formatters.push(Data.formatDateDisplay);
-          dateController.$parsers.push(Data.parseFreeFormDate);
+          dateController.$formatters.push(formatDateDisplay);
+          dateController.$parsers.push(parseFreeFormDate);
           dateController.$validators.dateFormat = date => (date ? date.isValid() : true);
 
           // We replace the parsed user date with the normalized date when
           // the date input is blurred.
           dateController.$viewChangeListeners.push(() => {
             if (dateController.$valid) {
-              dateController.$viewValue = Data.formatDateDisplay(dateController.$modelValue);
+              dateController.$viewValue = formatDateDisplay(dateController.$modelValue);
               dateController.$render();
             }
           });
 
           const offValueChanged = field.onValueChanged(datetime => {
-            $scope.data = Data.userInputFromDatetime(datetime, $scope.uses12hClock);
+            $scope.data = userInputFromDatetime(datetime, $scope.uses12hClock);
           });
 
           const offDisabledStatusChanged = field.onIsDisabledChanged(isDisabled => {
@@ -121,7 +128,7 @@ export default function register() {
             // would lead to an infinite loop.
             datepicker.setMoment($scope.data.date, true);
 
-            const value = Data.buildFieldValue(
+            const value = buildFieldValue(
               $scope.data,
               $scope.uses12hClock,
               $scope.usesTime,

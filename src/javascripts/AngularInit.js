@@ -105,7 +105,6 @@ angular
       ngRequire('app/home/developer_resources/cfDeveloperResourcesDirective.es6').default();
       ngRequire('app/home/onboarding_steps/cfOnboardingStepsDirective.es6').default();
       ngRequire('app/home/welcome/cfOnboardingWithTeaDirective.es6').default();
-      ngRequire('app/widgets/datetime/data.es6').default();
       ngRequire('app/snapshots/cfSnapshotPresenter.es6').default();
       ngRequire('app/snapshots/cfSnapshotSelector.es6').default();
       ngRequire('app/snapshots/snapshotComparator.es6').default();
