@@ -34,7 +34,7 @@ PublicationStatus.propTypes = {
 const RestrictedNote = ({ actionName }) => (
   <p className="f36-color--text-light f36-margin-top--xs" data-test-id="action-restriction-note">
     <Icon icon="Lock" color="muted" extraClassNames="action-restricted__icon" />
-    The permissions attached to your role do not allow you to {actionName.toLowerCase()}.
+    You do not have permission to {actionName.toLowerCase()}.
   </p>
 );
 

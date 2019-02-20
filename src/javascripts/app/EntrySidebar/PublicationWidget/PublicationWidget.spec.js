@@ -229,7 +229,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     expect(wrapper.find(selectors.publishBtn)).toBeDisabled();
     expect(wrapper.find(selectors.actionRestrictionNote)).toExist();
     expect(wrapper.find(selectors.actionRestrictionNote)).toHaveText(
-      'The permissions attached to your role do not allow you to publish.'
+      'You do not have permission to publish.'
     );
   });
 });
