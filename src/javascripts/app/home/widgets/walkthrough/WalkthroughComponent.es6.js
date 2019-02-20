@@ -31,9 +31,10 @@ export default class WalkthroughComponent extends React.Component {
 
     if (action === 'reset' || action === 'close') {
       runTour(false);
-      // to update user state after finishing UI tour, only if it wasn't updated already
-      if (!walkthroughStarted) updateWalkthroughState({ started: true, dismissed: false });
     }
+    // to update user state after finishing UI tour, only if it wasn't updated already
+    if (!walkthroughStarted && action === 'stop')
+      updateWalkthroughState({ started: true, dismissed: false });
   };
 
   setHelpers = helpers => {
