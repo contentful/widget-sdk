@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 // TODO: add prop-types
 
-import React from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Spinner } from '@contentful/forma-36-react-components';
 
@@ -11,8 +11,6 @@ import FilterIcon from 'svg/filter.es6';
 import FilterPill from './FilterPill.es6';
 import SuggestionsBox from './SuggestionsBox.es6';
 import QueryInput from './Components/QueryInput.es6';
-import LegacyHook from './Hooks/LegacyHook.es6';
-import { TrackFocus, IsOverflownY } from './Hooks/FocusManagerHook.es6';
 
 function PillsList({
   filters,
@@ -43,6 +41,69 @@ function PillsList({
   });
 }
 
+function PillsWrapper({ searchBoxHasFocus, actions, children }) {
+  const [isOverflownY, setOverflownY] = useState(false);
+  const el = useRef(null);
+
+  useLayoutEffect(() => {
+    if (el.current) {
+      // HACK: fixes the scroll position after selecting entity
+      // in reference filter pill
+      if (!searchBoxHasFocus) {
+        el.current.scrollTop = 0;
+      }
+      if (el.current.scrollHeight > el.current.clientHeight) {
+        setOverflownY(true);
+      } else {
+        setOverflownY(false);
+      }
+    }
+  });
+
+  return (
+    <div
+      className={classNames('search-next__pills-wrapper', {
+        'search-next__pills-wrapper--state-active': searchBoxHasFocus,
+        'is-overflown-y': isOverflownY
+      })}
+      onClick={() => actions.SetFocusOnQueryInput()}
+      onBlur={() => actions.ResetFocus()}
+      ref={el}>
+      {children}
+    </div>
+  );
+}
+
+function Wrapper({ actions, searchBoxHasFocus, children }) {
+  const el = useRef(null);
+
+  useLayoutEffect(() => {
+    if (el.current) {
+      const parent = el.current;
+      const child = global.document.activeElement;
+      const hasFocus = parent !== child && parent.contains(child);
+
+      if (searchBoxHasFocus !== hasFocus) {
+        actions.SetBoxFocus(hasFocus);
+      }
+    }
+  });
+
+  return (
+    <div
+      style={{
+        height: '40px',
+        width: '100%',
+        position: 'relative'
+      }}
+      onClick={() => actions.SetBoxFocus(true)}
+      focusin={() => actions.SetBoxFocus(true)}
+      ref={el}>
+      {children}
+    </div>
+  );
+}
+
 export default function View(props) {
   const {
     isSearching,
@@ -69,35 +130,8 @@ export default function View(props) {
   const defaultFocus = props.focus;
 
   return (
-    <LegacyHook
-      style={{
-        height: '40px',
-        width: '100%',
-        position: 'relative'
-      }}
-      args={{
-        tag: 'div',
-        hooks: [TrackFocus(value => actions.SetBoxFocus(value))]
-      }}>
-      <LegacyHook
-        className={
-          searchBoxHasFocus
-            ? 'search-next__pills-wrapper search-next__pills-wrapper--state-active'
-            : 'search-next__pills-wrapper'
-        }
-        onClick={() => actions.SetFocusOnQueryInput()}
-        onBlur={() => actions.ResetFocus()}
-        args={{
-          tag: 'div',
-          hooks: [IsOverflownY()],
-          ref: el => {
-            // HACK: fixes the scroll position after selecting entity
-            // in reference filter pill
-            if (el && !searchBoxHasFocus) {
-              el.scrollTop = 0;
-            }
-          }
-        }}>
+    <Wrapper actions={actions} searchBoxHasFocus={searchBoxHasFocus}>
+      <PillsWrapper actions={actions} searchBoxHasFocus={searchBoxHasFocus}>
         <div className="search-next__pills-list">
           {!withAssets && (
             <FilterPill
@@ -174,7 +208,7 @@ export default function View(props) {
             Filter
           </div>
         </div>
-      </LegacyHook>
+      </PillsWrapper>
       {isSuggestionOpen &&
         (defaultFocus.suggestionsFocusIndex >= 0 || defaultFocus.isQueryInputFocused) && (
           <SuggestionsBox
@@ -196,6 +230,6 @@ export default function View(props) {
             }}
           />
         )}
-    </LegacyHook>
+    </Wrapper>
   );
 }
