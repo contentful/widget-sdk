@@ -41,7 +41,7 @@ class Menu extends React.Component {
 
     this.setState({
       positionY: top < maxHeight ? Position.BOTTOM : Position.TOP,
-      positionX: left < maxWidth ? Position.LEFT : Position.RIGHT
+      positionX: left < maxWidth ? Position.RIGHT : Position.LEFT
     });
   }
 
