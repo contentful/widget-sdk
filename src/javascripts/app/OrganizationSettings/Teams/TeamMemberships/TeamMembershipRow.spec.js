@@ -2,7 +2,7 @@ import React from 'react';
 import { createStore } from 'redux';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
-import { Button, TableCell } from '@contentful/forma-36-react-components';
+import { Button, TableCell, Table, TableHead } from '@contentful/forma-36-react-components';
 import reducer from 'redux/reducer/index.es6';
 import UserCard from '../../Users/UserCard.es6';
 import UnknownUser from '../../Users/UserDetail/UnknownUser.es6';
@@ -16,7 +16,11 @@ const renderComponent = (actions, membership) => {
   actions.forEach(action => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
-      <TeamMembershipRow membership={membership} />
+      <Table>
+        <TableHead>
+          <TeamMembershipRow membership={membership} />
+        </TableHead>
+      </Table>
     </Provider>
   );
   return { store, wrapper };
