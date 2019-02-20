@@ -26,11 +26,12 @@ export function create(cma) {
 function buildExtensionWidget(data) {
   const { src, srcdoc } = data.extension;
   const base = src ? { src } : { srcdoc };
+  const fieldTypes = data.extension.fieldTypes || [];
   return {
     ...base,
     id: data.sys.id,
     name: data.extension.name,
-    fieldTypes: data.extension.fieldTypes.map(toInternalFieldType),
+    fieldTypes: fieldTypes.map(toInternalFieldType),
     sidebar: data.extension.sidebar,
     parameters: get(data.extension, 'parameters.instance', []),
     installationParameters: {
