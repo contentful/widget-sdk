@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import { Button } from '@contentful/forma-36-react-components';
+
+const styles = {
+  section: css({
+    marginBottom: tokens.spacingXl
+  })
+};
 
 export default class NetlifyConnection extends Component {
   static propTypes = {
@@ -19,7 +27,7 @@ export default class NetlifyConnection extends Component {
 
   renderConnectButton() {
     return (
-      <div className="netlify-app__section">
+      <div className={styles.section}>
         <h3>Netlify account</h3>
         <p>
           Connect your Netlify account so you can trigger builds and view status in the Contentful
@@ -36,7 +44,7 @@ export default class NetlifyConnection extends Component {
     const { unavailable, buildable } = this.props.netlifyCounts;
 
     return (
-      <div className="netlify-app__section">
+      <div className={styles.section}>
         <h3>Netlify account</h3>
         <p>
           Netlify account: <code>{this.props.email}</code>.

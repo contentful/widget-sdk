@@ -2,6 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal } from '@contentful/forma-36-react-components';
 import { TypeformEmbed } from './TypeformEmbed.es6';
+import { css } from 'emotion';
+
+const typeformEmbedStyles = css({
+  height: '450px',
+  padding: 0,
+  margin: '-1.875rem',
+  '> div': {
+    height: '100%',
+    overflowY: 'hidden'
+  }
+});
 
 export class TypeformModal extends React.Component {
   static propTypes = {
@@ -34,7 +45,7 @@ export class TypeformModal extends React.Component {
           renderAs="widget"
           widgetOpacity={0}
           onSubmit={onTypeformSubmit}
-          className="cf-typeform-modal"
+          className={typeformEmbedStyles}
         />
       </Modal>
     );

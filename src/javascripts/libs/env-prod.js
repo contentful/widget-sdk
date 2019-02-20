@@ -36,6 +36,7 @@ window.libs = [
   ['angular', window.angular],
 
   ['@contentful/forma-36-react-components', require('@contentful/forma-36-react-components')],
+  ['@contentful/forma-36-tokens', require('@contentful/forma-36-tokens')],
   ['@contentful/contentful-slatejs-adapter', require('@contentful/contentful-slatejs-adapter')],
   [
     '@contentful/rich-text-plain-text-renderer',
@@ -113,5 +114,7 @@ window.libs = [
   ['detect-browser', require('detect-browser')],
   ['mitt', require('mitt')],
   ['react-player', require('react-player')],
-  ['react-beautiful-dnd', require('react-beautiful-dnd')]
+  ['react-beautiful-dnd', require('react-beautiful-dnd')],
+  ['@typeform/embed', require('@typeform/embed/dist/embed')],
+  ['emotion', require('emotion')]
 ];

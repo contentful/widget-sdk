@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import Workbench from 'app/common/Workbench.es6';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 import AppsList from './AppsList.es6';
@@ -16,6 +18,22 @@ import {
 import * as Analytics from 'analytics/Analytics.es6';
 import * as Intercom from 'services/intercom.es6';
 
+const styles = {
+  container: css({
+    maxWidth: '600px',
+    margin: `${tokens.spacingXl} auto`
+  }),
+  intro: css({
+    marginBottom: tokens.spacingL
+  }),
+  note: css({
+    marginBottom: tokens.spacingL
+  }),
+  enableBtn: css({
+    marginRight: tokens.spacingL
+  })
+};
+
 const AppsListShell = props => (
   <Workbench>
     <Workbench.Header>
@@ -23,8 +41,8 @@ const AppsListShell = props => (
       <Workbench.Title>Apps</Workbench.Title>
     </Workbench.Header>
     <Workbench.Content centered>
-      <div className="apps-list-container">
-        <p className="apps-list__intro">
+      <div className={styles.container}>
+        <p className={styles.intro}>
           Extend the platform and integrate with services you’re using by adding apps.
         </p>
         <div>{props.children}</div>
@@ -98,7 +116,7 @@ export default class AppsListPage extends Component {
     const { optedIn } = this.state;
 
     return (
-      <Note extraClassNames="netlify-app__early-access" noteType="primary" title="Alpha feature">
+      <Note extraClassNames={styles.note} noteType="primary" title="Alpha feature">
         <p>
           This is an experimental alpha feature. We are heavily iterating on it based on your
           feedback. Apps might stop working or get removed without notice so it’s recommended to not
@@ -111,7 +129,11 @@ export default class AppsListPage extends Component {
           </a>
           .
         </p>
-        <Button disabled={optedIn} onClick={this.optIn} icon={optedIn ? 'CheckCircle' : undefined}>
+        <Button
+          extraClassNames={styles.enableBtn}
+          disabled={optedIn}
+          onClick={this.optIn}
+          icon={optedIn ? 'CheckCircle' : undefined}>
           {optedIn ? 'Apps enabled' : 'Enable alpha feature'}
         </Button>
         <FeedbackButton target="extensibility" about="Apps" type="Button" />
