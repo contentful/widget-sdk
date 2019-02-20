@@ -100,7 +100,7 @@ window.libs = [
   ['sanitize-html', require('sanitize-html')],
   ['scroll-into-view', require('scroll-into-view')],
   ['slate', require('slate')],
-  ['@guestbell/slate-edit-list', require('@guestbell/slate-edit-list')],
+  ['@productboard/slate-edit-list', require('@productboard/slate-edit-list')],
   ['slate-react', require('slate-react')],
   ['@wikifactory/slate-trailing-block', require('@wikifactory/slate-trailing-block')],
   ['slate-html-serializer', require('slate-html-serializer')],

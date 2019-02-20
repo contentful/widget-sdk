@@ -1,5 +1,5 @@
 import { BLOCKS } from '@contentful/rich-text-types';
-import EditList from '@guestbell/slate-edit-list';
+import EditList from '@productboard/slate-edit-list';
 
 export default opt => {
   const config = {

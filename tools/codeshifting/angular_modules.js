@@ -61,7 +61,7 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
       'scroll-into-view',
       'searchParser',
       'slate',
-      '@guestbell/slate-edit-list',
+      '@productboard/slate-edit-list',
       'slate-react',
       '@wikifactory/slate-trailing-block',
       'slate-html-serializer',
