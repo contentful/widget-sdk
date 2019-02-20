@@ -116,5 +116,7 @@ window.libs = [
   ['react-player', require('react-player')],
   ['react-beautiful-dnd', require('react-beautiful-dnd')],
   ['@typeform/embed', require('@typeform/embed/dist/embed')],
-  ['emotion', require('emotion')]
+  ['emotion', require('emotion')],
+  ['immer', require('immer')],
+  ['fclone', require('fclone')]
 ];

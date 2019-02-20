@@ -1,12 +1,16 @@
 import { env } from 'Config.es6';
 import * as Snowplow from 'analytics/snowplow/Snowplow.es6';
-import { prepareUserData } from 'analytics/UserData.es6';
 import stringifySafe from 'json-stringify-safe';
+import { prepareUserData } from 'analytics/UserData.es6';
 import _ from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
 const segment = getModule('analytics/segment');
 const analyticsConsole = getModule('analytics/console');
+
+function removeCircularRefs(obj) {
+  return JSON.parse(stringifySafe(obj));
+}
 
 /**
  * @ngdoc service
@@ -221,8 +225,4 @@ function getBasicPayload() {
 
 function sendSessionDataToConsole() {
   analyticsConsole.setSessionData(session);
-}
-
-function removeCircularRefs(obj) {
-  return JSON.parse(stringifySafe(obj));
 }

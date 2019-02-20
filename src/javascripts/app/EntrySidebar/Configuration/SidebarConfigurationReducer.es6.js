@@ -1,10 +1,12 @@
-function createReducer(handlers) {
-  return (state, action) => {
-    if (handlers.hasOwnProperty(action.type)) {
-      return handlers[action.type](state, action);
-    }
-    return state;
-  };
+import produce from 'immer';
+
+function createImmerReducer(handlers) {
+  return (state, action) =>
+    produce(state, draft => {
+      if (handlers.hasOwnProperty(action.type)) {
+        return handlers[action.type](draft, action);
+      }
+    });
 }
 
 /* Actions */
@@ -69,78 +71,45 @@ export const updateWidgetSettings = (widget, settings) => ({
 const areWidgetsSame = (widget1, widget2) =>
   widget1.widgetId === widget2.widgetId && widget1.widgetNamespace === widget2.widgetNamespace;
 
-export const reducer = createReducer({
+export const reducer = createImmerReducer({
   [OPEN_WIDGET_CONFIGURATION]: (state, action) => {
-    return {
-      ...state,
-      configurableWidget: action.payload.widget
-    };
+    state.configurableWidget = action.payload.widget;
   },
   [CLOSE_WIDGET_CONFIGURATION]: state => {
-    return {
-      ...state,
-      configurableWidget: null
-    };
+    state.configurableWidget = null;
   },
   [SELECT_SIDEBAR_TYPE]: (state, action) => {
-    return {
-      ...state,
-      sidebarType: action.payload.sidebarType
-    };
+    state.sidebarType = action.payload.sidebarType;
   },
   [REMOVE_ITEM_FROM_SIDEBAR]: (state, action) => {
     const removeIndex = state.items.findIndex(item => areWidgetsSame(item, action.payload.item));
     if (removeIndex === -1) {
-      return state;
+      return;
     }
     const removed = state.items[removeIndex];
-    const newItems = [...state.items];
-    newItems.splice(removeIndex, 1);
-    const newAvailableItems = [...state.availableItems];
+    state.items.splice(removeIndex, 1);
     if (!removed.problem) {
-      newAvailableItems.push(removed);
+      state.availableItems.push(removed);
     }
-    return {
-      ...state,
-      items: newItems,
-      availableItems: newAvailableItems
-    };
   },
   [ADD_ITEM_TO_SIDEBAR]: (state, action) => {
     const index = state.availableItems.findIndex(item => areWidgetsSame(item, action.payload.item));
     if (index === -1) {
-      return state;
+      return;
     }
     const added = state.availableItems[index];
-    const newAvailableItems = [...state.availableItems];
-    newAvailableItems.splice(index, 1);
-    const newItems = [...state.items, added];
-    return {
-      ...state,
-      items: newItems,
-      availableItems: newAvailableItems
-    };
+    state.availableItems.splice(index, 1);
+    state.items = [...state.items, added];
   },
   [CHANGE_ITEM_POSITION]: (state, action) => {
-    const newItems = [...state.items];
-    const [removed] = newItems.splice(action.payload.sourceIndex, 1);
-    newItems.splice(action.payload.destIndex, 0, removed);
-    return {
-      ...state,
-      items: newItems
-    };
+    const [removed] = state.items.splice(action.payload.sourceIndex, 1);
+    state.items.splice(action.payload.destIndex, 0, removed);
   },
   [UPDATE_WIDGET_SETTINGS]: (state, action) => {
     const widget = action.payload.widget;
     const index = state.items.findIndex(item => areWidgetsSame(item, widget));
-    if (index === -1) {
-      return state;
+    if (index > -1) {
+      state.items[index].settings = action.payload.settings;
     }
-    const newItems = [...state.items];
-    newItems[index].settings = action.payload.settings;
-    return {
-      ...state,
-      items: newItems
-    };
   }
 });
