@@ -3,6 +3,8 @@ import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import navBar from 'navigation/templates/NavBar.es6';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import { getOrganization } from 'services/TokenStore.es6';
+import getOrgStatus from '../data/OrganizationStatus.es6';
 import { SSO_SELF_CONFIG_FLAG, TEAMS as FF_TEAMS } from 'featureFlags.es6';
 import { getOrgFeature } from '../data/CMA/ProductCatalog.es6';
 
@@ -41,14 +43,18 @@ export default function register() {
             nav.ssoEnabled = ssoEnabled;
           });
 
-          function updateNav() {
+          async function updateNav() {
             const orgId = (nav.orgId = $stateParams.orgId);
+            const org = await getOrganization(orgId);
+
             Promise.all([
               // Set feature flag for Teams
               LD.getCurrentVariation(FF_TEAMS),
-              getOrgFeature(orgId, 'teams')
-            ]).then(([variation, hasTeamsFeature]) => {
-              nav.teamsEnabled = variation && hasTeamsFeature;
+              getOrgFeature(orgId, 'teams'),
+              getOrgStatus(org)
+            ]).then(([variation, hasTeamsFeature, { isEnterprise, pricingVersion }]) => {
+              const isLegacyEnterprise = isEnterprise && pricingVersion === 1;
+              nav.teamsEnabled = variation && (hasTeamsFeature || isLegacyEnterprise);
             });
             TokenStore.getOrganization(orgId).then(org => {
               const FeatureService = createFeatureService(orgId, 'organization');
@@ -144,7 +150,7 @@ export default function register() {
           dataViewType: 'organization-sso'
         },
         {
-          if: 'nav.pricingVersion == "pricing_version_1"',
+          if: 'nav.pricingVersion == "pricing_version_1" && nav.isOwnerOrAdmin',
           title: 'Spaces',
           sref: 'account.organizations.spaces({orgId: nav.orgId})',
           rootSref: 'account.organizations.spaces',

@@ -25,7 +25,7 @@ export const navState$ = navStateBus.property;
  * @param {object} params - ui state params
  * @param {spaceContext} spaceContext
  */
-export function updateNavState(state, params, spaceContext) {
+export async function updateNavState(state, params, spaceContext) {
   if (state.name === 'account.organizations.new') {
     navStateBus.set(NavStates.NewOrg());
   } else if (startsWith(state.name, 'account.profile')) {
