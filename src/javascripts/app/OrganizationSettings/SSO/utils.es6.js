@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import * as validators from './validators.es6';
+import * as fieldErrorMessageGenerators from './fieldErrorMessages.es6';
 
 export function validate(fieldName, value) {
   if (!validators[fieldName]) {
@@ -33,4 +34,12 @@ export function connectionTestingAllowed(fields, connectionTest) {
     fields.idpSsoTargetUrl.error ||
     connectionTest.isPending
   );
+}
+
+export function fieldErrorMessage(fieldName, { api } = {}) {
+  if (!fieldErrorMessageGenerators[fieldName]) {
+    return new Error('Field is not valid');
+  }
+
+  return fieldErrorMessageGenerators[fieldName]({ api });
 }

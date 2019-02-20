@@ -135,4 +135,24 @@ describe('SSO utils', () => {
       expect(utils.connectionTestingAllowed(fields, connectionTest)).toBe(true);
     });
   });
+
+  describe('#fieldErrorMessage', () => {
+    const defaultErrorMessage = 'Field is not valid';
+
+    it('should have custom errors for ssoName, idpCert, and idpSsoTargetUrl', () => {
+      expect(utils.fieldErrorMessage('ssoName')).toBeInstanceOf(Error);
+      expect(utils.fieldErrorMessage('ssoName').message).not.toBe(defaultErrorMessage);
+
+      expect(utils.fieldErrorMessage('idpCert')).toBeInstanceOf(Error);
+      expect(utils.fieldErrorMessage('idpCert').message).not.toBe(defaultErrorMessage);
+
+      expect(utils.fieldErrorMessage('idpSsoTargetUrl')).toBeInstanceOf(Error);
+      expect(utils.fieldErrorMessage('idpSsoTargetUrl').message).not.toBe(defaultErrorMessage);
+    });
+
+    it('should have return the default error otherwise', () => {
+      expect(utils.fieldErrorMessage('otherField')).toBeInstanceOf(Error);
+      expect(utils.fieldErrorMessage('otherField').message).toBe(defaultErrorMessage);
+    });
+  });
 });

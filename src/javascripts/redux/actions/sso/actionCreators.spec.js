@@ -309,9 +309,7 @@ describe('SSO Redux actionCreators', () => {
     });
 
     it('should go through the failure flow if the field update was unsuccessful on the API', async () => {
-      const error = new Error('Field is not valid');
-
-      mockEndpoint.mockRejectedValueOnce(error);
+      mockEndpoint.mockRejectedValueOnce(new Error());
 
       const fieldName = 'idpSsoTargetUrl';
       const value = 'https://example.com';
@@ -338,7 +336,7 @@ describe('SSO Redux actionCreators', () => {
           {
             type: actions.SSO_FIELD_UPDATE_FAILURE,
             error: true,
-            payload: error,
+            payload: expect.any(Error),
             meta: { fieldName }
           }
         ])
@@ -446,7 +444,7 @@ describe('SSO Redux actionCreators', () => {
         {
           type: actions.SSO_FIELD_VALIDATION_FAILURE,
           error: true,
-          payload: new Error('Field is not valid'),
+          payload: expect.any(Error),
           meta: { fieldName }
         }
       ]);
@@ -477,7 +475,7 @@ describe('SSO Redux actionCreators', () => {
         {
           type: actions.SSO_FIELD_VALIDATION_FAILURE,
           error: true,
-          payload: new Error('Field is not valid'),
+          payload: expect.any(Error),
           meta: { fieldName }
         }
       ]);

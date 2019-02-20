@@ -3,6 +3,7 @@ import * as actions from './actions.es6';
 import * as selectors from 'redux/selectors/sso.es6';
 import { validate, connectionTestResultFromIdp } from 'app/OrganizationSettings/SSO/utils.es6';
 import _ from 'lodash';
+import { fieldErrorMessage } from 'app/OrganizationSettings/SSO/utils.es6';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 
@@ -106,7 +107,9 @@ export function updateFieldValue({ fieldName, value, orgId }) {
         }
       });
     } catch (e) {
-      dispatch(actions.ssoFieldUpdateFailure(fieldName, new Error('Field is not valid')));
+      dispatch(
+        actions.ssoFieldUpdateFailure(fieldName, fieldErrorMessage(fieldName, { api: true }))
+      );
 
       return;
     }
@@ -138,7 +141,7 @@ export function validateField({ fieldName, value }) {
     if (isValid) {
       dispatch(actions.ssoFieldValidationSuccess(fieldName));
     } else {
-      dispatch(actions.ssoFieldValidationFailure(fieldName, new Error('Field is not valid')));
+      dispatch(actions.ssoFieldValidationFailure(fieldName, fieldErrorMessage(fieldName)));
     }
   };
 }
