@@ -69,7 +69,7 @@ APIClient.prototype.getEditorInterface = async function(contentTypeId) {
   // Return an empty editor interface if no ID is
   // given (for example a content type is new).
   if (!contentTypeId) {
-    return { sys: {}, controls: [] };
+    return { sys: { id: 'default', type: 'EditorInterface' }, controls: [] };
   }
 
   const path = ['content_types', contentTypeId, 'editor_interface'];
@@ -87,7 +87,7 @@ APIClient.prototype.getEditorInterface = async function(contentTypeId) {
   // type is not published); return an empty one but
   // linked to a content type in this case.
   return {
-    sys: { contentType: { sys: { id: contentTypeId } } },
+    sys: { id: 'default', type: 'EditorInterface', contentType: { sys: { id: contentTypeId } } },
     controls: []
   };
 };

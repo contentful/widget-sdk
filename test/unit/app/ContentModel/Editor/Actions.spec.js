@@ -229,16 +229,11 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
       }));
 
     it('saves editor interface', () => {
-      spaceContext.cma.getEditorInterface = sinon.stub().resolves({
-        sys: { version: 10 },
-        controls: []
-      });
-
       return controller.save.execute().then(() => {
         sinon.assert.calledOnce(spaceContext.cma.updateEditorInterface);
 
         expect(spaceContext.cma.updateEditorInterface.args[0][0]).toEqual({
-          sys: { version: 10 },
+          sys: { version: 1 },
           controls: [{ fieldId: 'test', widgetId: 'singleLine', widgetNamespace: 'builtin' }],
           sidebar: undefined
         });
@@ -246,9 +241,20 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
     });
 
     it('updates editor interface on scope', function() {
-      controller.save.execute();
-      this.$apply();
-      expect(scope.editorInterface).toEqual({ sys: { version: 1 } });
+      return controller.save.execute().then(() => {
+        expect(scope.editorInterface).toEqual({
+          sys: { version: 2 },
+          controls: [
+            {
+              fieldId: 'test',
+              widgetNamespace: 'builtin',
+              widgetId: 'singleLine',
+              field: { type: 'Symbol', id: 'test' }
+            }
+          ],
+          sidebar: undefined
+        });
+      });
     });
 
     describe('with invalid data', () => {
@@ -357,9 +363,9 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
             cancel: sinon.spy(),
             formController: { $valid: true }
           };
-          params.scope.duplicate.execute();
-          scope.$apply();
-          return { promise: $q.resolve(confirm.firstCall.args[0]) };
+          return {
+            promise: params.scope.duplicate.execute().then(() => confirm.firstCall.args[0])
+          };
         }
 
         if (params.title === 'Duplicated content type') {
@@ -378,16 +384,6 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
       scope.editorInterface = { sys: {}, controls: [] };
       spaceContext.cma.updateEditorInterface = sinon.stub().resolves();
-
-      sinon.stub(spaceContext.cma, 'getEditorInterface').callsFake(ctData => {
-        return $q.resolve({
-          sys: { version: 1 },
-          controls: _.map(ctData.fields, field => ({
-            field: field,
-            widgetId: 'some-widget'
-          }))
-        });
-      });
     });
 
     it('creates new content types type with a provided name', () =>
@@ -419,8 +415,8 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
     it('synchronizes controls in the new EI', () => {
       contentType.data.fields = [{ id: 'xyz' }, { id: 'boom' }];
       scope.editorInterface.controls = [
-        { widgetId: 'margarita-making-widget' },
-        { widgetId: 'some-other-widget' }
+        { fieldId: 'xyz', widgetId: 'margarita-making-widget' },
+        { fieldId: 'boom', widgetId: 'some-other-widget' }
       ];
 
       return controller.duplicate.execute().then(() => {
