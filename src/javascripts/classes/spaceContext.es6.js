@@ -5,7 +5,6 @@ import { deepFreeze, deepFreezeClone } from 'utils/Freeze.es6';
 import * as ShareJSConnection from 'data/sharejs/Connection.es6';
 import createApiKeyRepo from 'data/CMA/ApiKeyRepo.es6';
 import shouldUseEnvEndpoint from 'data/shouldUseEnvEndpoint.es6';
-import createEditorInterfaceRepo from 'widgets/EditorInterfaceRepo.es6';
 import APIClient from 'data/APIClient.es6';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 import * as logger from 'services/logger.es6';
@@ -128,7 +127,6 @@ export default function register() {
           self.apiKeyRepo = createApiKeyRepo(self.endpoint);
           self.webhookRepo = createWebhookRepo(space);
           self.localeRepo = createLocaleRepo(self.endpoint);
-          self.editorInterfaceRepo = createEditorInterfaceRepo(self.cma);
           self.organization = deepFreezeClone(self.getData('organization'));
 
           // TODO: publicly accessible docConnection is

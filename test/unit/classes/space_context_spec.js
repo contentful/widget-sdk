@@ -14,7 +14,6 @@ describe('spaceContext', () => {
 
     module('contentful/test', $provide => {
       $provide.value('data/userCache', sinon.stub());
-      $provide.value('widgets/EditorInterfaceRepo.es6', { default: sinon.stub() });
       $provide.value('access_control/AccessChecker/index.es6', this.AccessChecker);
       $provide.value('data/Endpoint.es6', {
         createSpaceEndpoint: () => this.mockSpaceEndpoint.request
@@ -64,8 +63,6 @@ describe('spaceContext', () => {
 
   describe('#resetWithSpace()', () => {
     beforeEach(function() {
-      this.$inject('widgets/EditorInterfaceRepo.es6').default.returns('EI');
-
       const spaceData = { sys: { id: 'hello' } };
       this.result = this.spaceContext.resetWithSpace(spaceData);
       this.space = this.spaceContext.space;
@@ -97,12 +94,6 @@ describe('spaceContext', () => {
       this.resetWithSpace();
       sinon.assert.calledWithExactly(this.createUserCache, this.spaceContext.endpoint);
       expect(this.spaceContext.users).toBe(this.userCache);
-    });
-
-    it('sets #editorInterfaceRepo', function() {
-      const createEditorInterfaceRepo = this.$inject('widgets/EditorInterfaceRepo.es6').default;
-      sinon.assert.calledOnce(createEditorInterfaceRepo);
-      expect(this.spaceContext.editorInterfaceRepo).toEqual('EI');
     });
 
     it('updates publishedCTs repo from refreshed CT list', function*() {
