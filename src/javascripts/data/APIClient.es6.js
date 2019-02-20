@@ -1,17 +1,13 @@
-import _ from 'lodash';
+import { get } from 'lodash';
 
 /**
  * @description
- * A basic client for the CMA that manages the Content Types, Entries,
- * Entry Snapshots and Assets of a given space.
- *
- * It has almost the same interface as the [Javascript CMA
- * library][cma-js].
+ * A basic client for the CMA that manages the Content Types,
+ * Editor Interfaces, Entries, Entry Snapshots, Assets, Extensions
+ * of a given space.
  *
  * It requires a space endpoint request function as the constructor
  * argument.
- *
- * [cma-js]: https://github.com/contentful/contentful-management.js
  *
  * @usage[js]
  * import APIClient from 'data/APIClient.es6';
@@ -28,8 +24,8 @@ export default function APIClient(spaceEndpoint) {
 APIClient.prototype._get = function(path, query) {
   return this._request({
     method: 'GET',
-    path: path,
-    query: query
+    path,
+    query
   });
 };
 
@@ -57,10 +53,6 @@ APIClient.prototype.getAssets = function(query) {
   return this._getResources('assets', query);
 };
 
-/*
- * TODO (mudit): Switch from this deprecated end point
- * once contentful-management.js is updated
- */
 APIClient.prototype.getPublishedEntries = function(query) {
   return this._getResources('public/entries', query);
 };
@@ -71,6 +63,33 @@ APIClient.prototype.getPublishedAssets = function(query) {
 
 APIClient.prototype.getContentType = function(id) {
   return this._getResource('content_types', id);
+};
+
+APIClient.prototype.getEditorInterface = async function(contentTypeId) {
+  // Return an empty editor interface if no ID is
+  // given (for example a content type is new).
+  if (!contentTypeId) {
+    return { sys: {}, controls: [] };
+  }
+
+  const path = ['content_types', contentTypeId, 'editor_interface'];
+
+  try {
+    return await this._get(path);
+  } catch (err) {
+    if (!err || err.status !== 404) {
+      throw err;
+    }
+  }
+
+  // It's completely fine to get 404 when fetching
+  // an editor interface (for example when a content
+  // type is not published); return an empty one but
+  // linked to a content type in this case.
+  return {
+    sys: { contentType: { sys: { id: contentTypeId } } },
+    controls: []
+  };
 };
 
 APIClient.prototype.getEntry = function(id) {
@@ -88,11 +107,12 @@ APIClient.prototype.getAsset = function(id) {
 APIClient.prototype._createResource = function(name, data, headers) {
   const id = getId(data);
   const method = id ? 'PUT' : 'POST';
+
   return this._request(
     {
-      method: method,
+      method,
       path: [name, id],
-      data: data
+      data
     },
     headers
   );
@@ -111,19 +131,29 @@ APIClient.prototype.createAsset = function(data) {
 };
 
 APIClient.prototype._updateResource = function(path, data) {
-  const id = getId(data);
-  const version = getVersion(data);
   return this._request({
     method: 'PUT',
-    path: [path, id],
-    data: data,
-    version: version
+    path: [path, getId(data)],
+    data,
+    version: getVersion(data)
   });
 };
 
-APIClient.prototype.updateContentType = function(data) {
-  const self = this;
-  return this._updateResource('content_types', data).then(data => self.publishContentType(data));
+APIClient.prototype.updateContentType = async function(data) {
+  const updated = await this._updateResource('content_types', data);
+
+  return this.publishContentType(updated);
+};
+
+APIClient.prototype.updateEditorInterface = function(data) {
+  const contentTypeId = get(data, ['sys', 'contentType', 'sys', 'id']);
+
+  return this._request({
+    method: 'PUT',
+    path: ['content_types', contentTypeId, 'editor_interface'],
+    data,
+    version: getVersion(data)
+  });
 };
 
 APIClient.prototype.updateEntry = function(data) {
@@ -140,7 +170,7 @@ APIClient.prototype._setResourceFlag = function(name, data, flag, version) {
   return this._request({
     method: 'PUT',
     path: [name, id, flag],
-    version: version
+    version
   });
 };
 
@@ -200,23 +230,22 @@ APIClient.prototype.unarchiveAsset = function(data) {
   return this._unsetResourceFlag('content_types', data, 'archived');
 };
 
-APIClient.prototype._deleteResource = function(name, data) {
-  const id = getId(data);
-  return (
-    this._request({
-      method: 'DELETE',
-      path: [name, id]
-    })
-      // do not return anything
-      .then(() => {})
-  );
+APIClient.prototype._deleteResource = async function(name, data) {
+  await this._request({
+    method: 'DELETE',
+    path: [name, getId(data)]
+  });
+  // Resolve with nothing.
 };
 
-APIClient.prototype.deleteContentType = function(data) {
-  const self = this;
-  return this.unpublishContentType(data)
-    .catch(() => {})
-    .then(() => self._deleteResource('content_types', data));
+APIClient.prototype.deleteContentType = async function(data) {
+  try {
+    await this.unpublishContentType(data);
+  } catch (err) {
+    // Failed to unpublish, still try to delete.
+  }
+
+  return this._deleteResource('content_types', data);
 };
 
 APIClient.prototype.deleteEntry = function(data) {
@@ -237,18 +266,15 @@ APIClient.prototype.processAsset = function(asset, fileId, version) {
   });
 };
 
-APIClient.prototype.deleteSpace = function() {
-  return (
-    this._request({ method: 'DELETE' })
-      // discard the response data
-      .then(_.noop)
-  );
+APIClient.prototype.deleteSpace = async function() {
+  await this._request({ method: 'DELETE' });
+  // Resolve with nothing.
 };
 
 APIClient.prototype.renameSpace = function(newName, version) {
   return this._request({
     method: 'PUT',
-    version: version,
+    version,
     data: { name: newName }
   });
 };
@@ -278,13 +304,13 @@ APIClient.prototype._request = function(req, headers) {
 };
 
 function getId(identifiable) {
-  if (_.isString(identifiable)) {
+  if (typeof identifiable === 'string') {
     return identifiable;
   } else {
-    return _.get(identifiable, ['sys', 'id']);
+    return get(identifiable, ['sys', 'id']);
   }
 }
 
 function getVersion(resource) {
-  return _.get(resource, ['sys', 'version']);
+  return get(resource, ['sys', 'version']);
 }

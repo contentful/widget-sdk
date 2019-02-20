@@ -14,21 +14,18 @@ describe('EditorInterfaceRepo', () => {
   describe('#get()', () => {
     describe('with saved content type', () => {
       it('sends GET request to the editor interface endpoint for the content type', () => {
-        const endpoint = jest.fn(() => Promise.resolve({}));
-        const repo = createEditorInterfaceRepo(endpoint);
+        const cma = { getEditorInterface: jest.fn(() => Promise.resolve({})) };
+        const repo = createEditorInterfaceRepo(cma);
 
         repo.get(makeCt({ id: 'CTID', version: 1 }));
 
-        expect(endpoint).toBeCalledWith({
-          method: 'GET',
-          path: ['content_types', 'CTID', 'editor_interface']
-        });
+        expect(cma.getEditorInterface).toBeCalledWith('CTID');
       });
 
       it('returns internal representation of the editor interface with widgets', async () => {
         const res = { controls: [{ fieldId: 'FIELD', widgetId: 'WIDGET' }] };
-        const endpoint = jest.fn(() => Promise.resolve(res));
-        const repo = createEditorInterfaceRepo(endpoint);
+        const cma = { getEditorInterface: jest.fn(() => Promise.resolve(res)) };
+        const repo = createEditorInterfaceRepo(cma);
 
         const { controls } = await repo.get(makeCt({ version: 1 }));
 
@@ -43,8 +40,8 @@ describe('EditorInterfaceRepo', () => {
 
       it('sets "extension" widget namespace for UI Extensions when namespace is missing', async () => {
         const res = { controls: [{ fieldId: 'FIELD', widgetId: 'WIDGET' }] };
-        const endpoint = jest.fn(() => Promise.resolve(res));
-        const repo = createEditorInterfaceRepo(endpoint);
+        const cma = { getEditorInterface: jest.fn(() => Promise.resolve(res)) };
+        const repo = createEditorInterfaceRepo(cma);
         const widgets = {
           extension: [{ id: 'WIDGET' }],
           builtin: [{ id: 'WIDGET' }]
@@ -60,8 +57,8 @@ describe('EditorInterfaceRepo', () => {
         const res = {
           controls: [{ fieldId: 'FIELD', widgetId: 'WIDGET', widgetNamespace: 'test' }]
         };
-        const endpoint = jest.fn(() => Promise.resolve(res));
-        const repo = createEditorInterfaceRepo(endpoint);
+        const cma = { getEditorInterface: jest.fn(() => Promise.resolve(res)) };
+        const repo = createEditorInterfaceRepo(cma);
 
         const { controls } = await repo.get(makeCt({ version: 1 }));
 
@@ -69,24 +66,9 @@ describe('EditorInterfaceRepo', () => {
         expect(controls[0].widgetNamespace).toEqual('test');
       });
 
-      it('resolves with the default editor interface if a 404 is returned', async () => {
-        const endpoint = jest.fn(() => Promise.reject({ status: 404 }));
-        const repo = createEditorInterfaceRepo(endpoint);
-
-        const { controls } = await repo.get(makeCt({ version: 1 }));
-
-        expect(controls).toHaveLength(1);
-        expect(controls[0]).toEqual({
-          fieldId: 'FIELD',
-          widgetId: 'DEFAULT',
-          widgetNamespace: NAMESPACE_BUILTIN,
-          field: { apiName: 'FIELD' }
-        });
-      });
-
       it('throws if the API responds with an error', async () => {
-        const endpoint = jest.fn(() => Promise.reject({ status: 500 }));
-        const repo = createEditorInterfaceRepo(endpoint);
+        const cma = { getEditorInterface: jest.fn(() => Promise.reject({ status: 500 })) };
+        const repo = createEditorInterfaceRepo(cma);
 
         expect.assertions(1);
         try {
@@ -96,59 +78,28 @@ describe('EditorInterfaceRepo', () => {
         }
       });
     });
-
-    describe('when the content type is new', () => {
-      it('does not send GET request', () => {
-        const endpoint = jest.fn();
-        const repo = createEditorInterfaceRepo(makeCt());
-
-        repo.get(makeCt());
-
-        expect(endpoint).not.toBeCalled();
-      });
-
-      it('resolves with the default editor interface', async () => {
-        const endpoint = jest.fn();
-        const repo = createEditorInterfaceRepo(endpoint);
-
-        const { controls } = await repo.get(makeCt());
-
-        expect(controls).toHaveLength(1);
-        expect(controls[0]).toEqual({
-          fieldId: 'FIELD',
-          widgetId: 'DEFAULT',
-          widgetNamespace: NAMESPACE_BUILTIN,
-          field: { apiName: 'FIELD' }
-        });
-      });
-    });
   });
 
   describe('#save()', () => {
     it('sends PUT request with version and payload properly structured', () => {
-      const endpoint = jest.fn(() => Promise.resolve({}));
-      const repo = createEditorInterfaceRepo(endpoint);
+      const cma = { updateEditorInterface: jest.fn(() => Promise.resolve({})) };
+      const repo = createEditorInterfaceRepo(cma);
 
       repo.save(makeCt({ id: 'CTID' }), {
         sys: { version: 'V' },
         controls: [{ fieldId: 'FIELD', field: { id: 'FIELD' }, widgetId: 'WIDGET', settings: {} }]
       });
 
-      expect(endpoint).toBeCalledWith({
-        method: 'PUT',
-        path: ['content_types', 'CTID', 'editor_interface'],
-        version: 'V',
-        data: {
-          sys: { version: 'V' },
-          controls: [{ fieldId: 'FIELD', widgetId: 'WIDGET', widgetNamespace: NAMESPACE_BUILTIN }]
-        }
+      expect(cma.updateEditorInterface).toBeCalledWith({
+        sys: { version: 'V' },
+        controls: [{ fieldId: 'FIELD', widgetId: 'WIDGET', widgetNamespace: NAMESPACE_BUILTIN }]
       });
     });
 
     it('returns internal representation of the saved editor interface', async () => {
       const res = { controls: [{ fieldId: 'FIELD', widgetId: 'WIDGET' }] };
-      const endpoint = jest.fn(() => Promise.resolve(res));
-      const repo = createEditorInterfaceRepo(endpoint);
+      const cma = { updateEditorInterface: jest.fn(() => Promise.resolve(res)) };
+      const repo = createEditorInterfaceRepo(cma);
 
       const { controls } = await repo.save(makeCt({ id: 'CTID' }), { sys: { version: 'V' } });
 

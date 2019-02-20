@@ -128,7 +128,7 @@ export default function register() {
           self.apiKeyRepo = createApiKeyRepo(self.endpoint);
           self.webhookRepo = createWebhookRepo(space);
           self.localeRepo = createLocaleRepo(self.endpoint);
-          self.editorInterfaceRepo = createEditorInterfaceRepo(self.endpoint);
+          self.editorInterfaceRepo = createEditorInterfaceRepo(self.cma);
           self.organization = deepFreezeClone(self.getData('organization'));
 
           // TODO: publicly accessible docConnection is
