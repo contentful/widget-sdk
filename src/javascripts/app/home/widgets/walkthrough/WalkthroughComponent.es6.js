@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactJoyride from 'react-joyride';
+// import ReactJoyride from 'react-joyride';
 import PropTypes from 'prop-types';
 import Tooltip from './Tooltip.es6';
 import TooltipContent from './TooltipContent.es6';
@@ -18,6 +18,18 @@ export default class WalkthroughComponent extends React.Component {
   };
 
   static defaultProps = { isTourRunning: false };
+
+  ReactJoyrideComponent;
+
+  componentDidMount = () => {
+    require.ensure(
+      ['react-joyride'],
+      require => {
+        this.ReactJoyrideComponent = require('react-joyride').default;
+      },
+      'react-joyride'
+    );
+  };
 
   tourCallback = data => {
     const { action } = data;
@@ -108,8 +120,9 @@ export default class WalkthroughComponent extends React.Component {
 
   render() {
     const { isTourRunning } = this.props;
-    return (
-      <ReactJoyride
+    const { ReactJoyrideComponent } = this;
+    return ReactJoyrideComponent ? (
+      <ReactJoyrideComponent
         continuous={true}
         disableOverlayClose={true}
         callback={this.tourCallback}
@@ -129,6 +142,6 @@ export default class WalkthroughComponent extends React.Component {
           }
         }}
       />
-    );
+    ) : null;
   }
 }
