@@ -1,4 +1,4 @@
-import asn1 from '@jo-sm/asn1js';
+import Certificate from '@contentful/asn1js';
 
 export function ssoName(value) {
   return /^[A-Za-z0-9.\-_]+$/.test(value);
@@ -10,7 +10,7 @@ export function idpCert(value) {
   }
 
   try {
-    asn1.decode(value);
+    Certificate.fromString(value);
 
     return true;
   } catch (e) {
