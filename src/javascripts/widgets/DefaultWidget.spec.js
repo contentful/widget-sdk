@@ -74,10 +74,16 @@ describe('DefaultWidget', () => {
     expect(getDefaultWidgetId(field, 'displayfieldid')).toBe('entryLinksEditor');
   });
 
+  it('if field is a File', () => {
+    const field = { type: 'File' };
+    expect(getDefaultWidgetId(field, 'displayfieldid')).toBe('fileEditor');
+  });
+
   it('returns default widget ID for each known field type', () => {
-    FIELD_TYPES.forEach(type => {
-      const id = getDefaultWidgetId(toApiFieldType(type), 'displayfieldid');
-      expect(id).toBe(widgetMap.DEFAULTS[type]);
-    });
+    FIELD_TYPES.filter(t => t !== 'File') // `File` is not handled by the widget-map
+      .forEach(type => {
+        const id = getDefaultWidgetId(toApiFieldType(type), 'displayfieldid');
+        expect(id).toBe(widgetMap.DEFAULTS[type]);
+      });
   });
 });

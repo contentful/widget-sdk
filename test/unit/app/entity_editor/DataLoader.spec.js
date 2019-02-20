@@ -34,8 +34,8 @@ describe('app/entity_editor/DataLoader.es6', () => {
           return $q.resolve({ data: makeCt(id) });
         }
       },
-      editorInterfaceRepo: {
-        get: sinon.stub().resolves({})
+      cma: {
+        getEditorInterface: sinon.stub().resolves({})
       },
       docPool: {
         get: sinon.stub()
@@ -67,21 +67,17 @@ describe('app/entity_editor/DataLoader.es6', () => {
 
     it('requests the editor interface', function*() {
       yield this.loadEntry('EID');
-      sinon.assert.calledWith(
-        this.spaceContext.editorInterfaceRepo.get,
-        sinon.match.has('sys', sinon.match.has('id', 'CTID'))
-      );
+      sinon.assert.calledWith(this.spaceContext.cma.getEditorInterface, 'CTID');
     });
 
     it('builds field controls from editor interface', function*() {
-      const ei = { controls: 'CONTROLS' };
-      this.spaceContext.editorInterfaceRepo.get.resolves(ei);
+      const ei = { controls: [] };
+      this.spaceContext.cma.getEditorInterface.resolves(ei);
       yield this.loadEntry('EID');
-      sinon.assert.calledWith(
-        this.$inject('widgets/WidgetRenderable.es6').buildRenderables,
-        'CONTROLS',
-        sinon.match({ builtin: sinon.match(Array), extension: [] })
-      );
+      sinon.assert.calledWith(this.$inject('widgets/WidgetRenderable.es6').buildRenderables, [], {
+        builtin: sinon.match.array,
+        extension: []
+      });
     });
 
     it('adds the entry’s field controls to the context', function*() {
@@ -172,15 +168,27 @@ describe('app/entity_editor/DataLoader.es6', () => {
       yield this.loadAsset('EID');
       sinon.assert.calledWith(
         this.$inject('widgets/WidgetRenderable.es6').buildRenderables,
-        sinon.match([
-          sinon.match({ fieldId: 'title', widgetId: 'singleLine', field: sinon.match.has('id') }),
+        [
           sinon.match({
-            fieldId: 'description',
+            fieldId: 'title',
+            widgetNamespace: 'builtin',
             widgetId: 'singleLine',
             field: sinon.match.has('id')
           }),
-          sinon.match({ fieldId: 'file', widgetId: 'fileEditor', field: sinon.match.has('id') })
-        ])
+          sinon.match({
+            fieldId: 'description',
+            widgetNamespace: 'builtin',
+            widgetId: 'singleLine',
+            field: sinon.match.has('id')
+          }),
+          sinon.match({
+            fieldId: 'file',
+            widgetNamespace: 'builtin',
+            widgetId: 'fileEditor',
+            field: sinon.match.has('id')
+          })
+        ],
+        { builtin: sinon.match.array }
       );
     });
 

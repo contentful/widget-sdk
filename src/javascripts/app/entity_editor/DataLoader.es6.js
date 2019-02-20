@@ -1,13 +1,13 @@
-import { find, isPlainObject, cloneDeep, memoize } from 'lodash';
+import { get, find, isPlainObject, cloneDeep, memoize } from 'lodash';
 import { caseof as caseofEq } from 'sum-types/caseof-eq';
 import { deepFreeze } from 'utils/Freeze.es6';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache.es6';
 import { buildRenderables, buildSidebarRenderables } from 'widgets/WidgetRenderable.es6';
 import { getModule } from 'NgRegistry.es6';
 import { assetContentType } from 'legacy-client';
-import { NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import * as WidgetStore from 'widgets/WidgetStore.es6';
+import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
@@ -116,16 +116,24 @@ async function loadEditorData(loader, id) {
     loader.getWidgets()
   ]);
 
-  // TODO: right now we need to load CT and its EI sequentially
-  // but it should be possible to load them in parallel because
-  // we know all the IDs UPFRONT. It's only our internal
-  // abstraction preventing us from doing so.
-  const contentType = await loader.getContentType(entity);
-  const editorInterface = await loader.getEditorInterface(contentType, widgets);
+  const contentTypeId = get(entity, ['data', 'sys', 'contentType', 'sys', 'id']);
 
-  const fieldControls = buildRenderables(editorInterface.controls, widgets);
-  const sidebar = hasCustomSidebarFeature ? editorInterface.sidebar : null;
-  const sidebarExtensions = buildSidebarRenderables(sidebar || [], widgets);
+  const [contentType, editorInterface] = await Promise.all([
+    loader.getContentType(contentTypeId),
+    loader.getEditorInterface(contentTypeId)
+  ]);
+
+  const { controls, sidebar } = EditorInterfaceTransformer.fromAPI(
+    contentType.data,
+    editorInterface,
+    widgets
+  );
+
+  const fieldControls = buildRenderables(controls, widgets);
+  const sidebarExtensions = buildSidebarRenderables(
+    (hasCustomSidebarFeature ? sidebar : null) || [],
+    widgets
+  );
 
   const entityInfo = makeEntityInfo(entity, contentType);
   const openDoc = loader.getOpenDoc(entity, contentType);
@@ -150,19 +158,19 @@ function makeEntryLoader(spaceContext) {
     getEntity(id) {
       return fetchEntity(spaceContext, 'Entry', id);
     },
-    getContentType(entry) {
-      const ctId = entry.data.sys.contentType.sys.id;
-      return spaceContext.publishedCTs.fetch(ctId);
+    getContentType(contentTypeId) {
+      return spaceContext.publishedCTs.fetch(contentTypeId);
     },
-    getWidgets() {
+    getWidgets(_extensionIds) {
+      // TODO: this should accept a list of Extension IDs to fetch
       return WidgetStore.getForContentTypeManagement(spaceContext.cma);
     },
     // We memoize the editor interface so that we do not fetch
     // them multiple times in the bulk editor.
-    getEditorInterface: memoize((contentType, widgets) => {
-      return spaceContext.editorInterfaceRepo.get(contentType.data, widgets);
+    getEditorInterface: memoize(contentTypeId => {
+      return spaceContext.cma.getEditorInterface(contentTypeId);
     }),
-    hasCustomSidebarFeature: () => {
+    hasCustomSidebarFeature() {
       return getOrgFeature(spaceContext.organization.sys.id, 'custom_sidebar', true);
     },
     getOpenDoc: makeDocOpener(spaceContext)
@@ -175,29 +183,28 @@ function makeAssetLoader(spaceContext) {
       return fetchEntity(spaceContext, 'Asset', id);
     },
     getContentType() {
-      return null;
+      return assetContentType;
     },
     getWidgets() {
       return WidgetStore.getBuiltinsOnly();
     },
     getEditorInterface() {
-      // TODO: this is a hardcoded editor interface for Asset Editor.
+      // TODO: we compute the editor interface for the Asset Editor.
       // If we would have an endpoint with this data
       // (/spaces/:sid/environments/:eid/asset_content_type/editor_interface)
       // we could potentially enable UI Extensions for assets.
-      return {
-        sys: { type: 'EditorInterface' },
-        controls: [
-          ['title', 'singleLine'],
-          ['description', 'singleLine'],
-          ['file', 'fileEditor']
-        ].map(([fieldId, widgetId]) => ({
-          fieldId,
-          widgetId,
-          widgetNamespace: NAMESPACE_BUILTIN,
-          field: assetContentType.data.fields.find(f => f.id === fieldId)
-        }))
-      };
+      return EditorInterfaceTransformer.fromAPI(
+        assetContentType.data,
+        {
+          sys: { type: 'EditorInterface' },
+          controls: [
+            // Asset Content Type defines `description` as `Text` but
+            // historically we render it as a single line input.
+            { fieldId: 'description', widgetId: 'singleLine' }
+          ]
+        },
+        WidgetStore.getBuiltinsOnly()
+      );
     },
     hasCustomSidebarFeature: () => Promise.resolve(false),
     getOpenDoc: makeDocOpener(spaceContext)
