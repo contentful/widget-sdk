@@ -9,16 +9,19 @@ import { Notification } from '@contentful/forma-36-react-components';
 describe('SSO Redux actionCreators', () => {
   let mockStore;
   let notificationSuccessSpy;
+  let notificationErrorSpy;
 
   beforeEach(() => {
     mockStore = createMockStore();
     mockEndpoint.mockReset();
 
     notificationSuccessSpy = jest.spyOn(Notification, 'success');
+    notificationErrorSpy = jest.spyOn(Notification, 'error');
   });
 
   afterEach(() => {
     notificationSuccessSpy.mockRestore();
+    notificationErrorSpy.mockRestore();
   });
 
   describe('retrieveIdp', () => {
@@ -612,6 +615,15 @@ describe('SSO Redux actionCreators', () => {
           payload: error
         }
       ]);
+    });
+
+    it('should fire an error notification when enabling errors', async () => {
+      mockEndpoint.mockRejectedValueOnce(new Error());
+
+      await mockStore.dispatch(actionCreators.enable({ orgId: '1234' }));
+
+      expect(notificationErrorSpy).toHaveBeenCalledTimes(1);
+      expect(notificationErrorSpy).toHaveBeenNthCalledWith(1, expect.any(String));
     });
   });
 });
