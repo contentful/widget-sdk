@@ -17,6 +17,10 @@ jest.mock('NgRegistry.es6', () => ({
   getModule: () => ({ current: { name: 'name' } })
 }));
 
+jest.mock('app/home/widgets/walkthrough/utils.es6', () => ({
+  getReactJoyride: () => Promise.resolve('')
+}));
+
 describe('WalkthroughWidget', () => {
   const props = {
     spaceName: 'spaceName',
