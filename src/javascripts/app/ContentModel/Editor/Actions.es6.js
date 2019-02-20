@@ -7,6 +7,7 @@ import { getModule } from 'NgRegistry.es6';
 import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField.es6';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 import * as logger from 'services/logger.es6';
+import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
 
 const $q = getModule('$q');
 const $state = getModule('$state');
@@ -234,7 +235,10 @@ export default function create($scope, contentTypeIds) {
           $scope.publishedContentType = cloneDeep(published);
           return published;
         })
-        .then(saveEditorInterface)
+        .then(contentType => saveEditorInterface(contentType.data))
+        .then(editorInterface => {
+          $scope.editorInterface = editorInterface;
+        })
         .catch(trackEnforcedButtonClick)
         .catch(triggerApiErrorNotification)
         .then(setPristine)
@@ -255,7 +259,7 @@ export default function create($scope, contentTypeIds) {
   function publishContentType(contentType) {
     return spaceContext.publishedCTs
       .publish(contentType)
-      .then(() => spaceContext.editorInterfaceRepo.get(contentType.data, $scope.widgets))
+      .then(() => spaceContext.cma.getEditorInterface(contentType.data.sys.id))
       .then(editorInterface => {
         // On publish the API also updates the editor interface
         $scope.editorInterface.sys.version = editorInterface.sys.version;
@@ -263,12 +267,12 @@ export default function create($scope, contentTypeIds) {
       });
   }
 
-  function saveEditorInterface(contentType) {
-    return spaceContext.editorInterfaceRepo
-      .save(contentType.data, $scope.editorInterface, $scope.widgets)
-      .then(editorInterface => {
-        $scope.editorInterface = editorInterface;
-      });
+  async function saveEditorInterface(contentType) {
+    const { editorInterface, widgets } = $scope;
+    const apiData = EditorInterfaceTransformer.toAPI(contentType, editorInterface, widgets);
+    const updated = await spaceContext.cma.updateEditorInterface(apiData);
+
+    return EditorInterfaceTransformer.fromAPI(contentType, updated, widgets);
   }
 
   function setPristine() {
@@ -328,17 +332,15 @@ export default function create($scope, contentTypeIds) {
       fields: cloneDeep(data.fields),
       displayField: data.displayField
     });
+    const editorInterfaceDuplicate = {
+      ...cloneDeep($scope.editorInterface),
+      sys: { contentType: { sys: { id: metadata.id } } }
+    };
 
     return duplicate
       .save()
       .then(publishContentType)
-      .then(ct => {
-        return spaceContext.editorInterfaceRepo.save(
-          ct.data,
-          $scope.editorInterface,
-          $scope.widgets
-        );
-      })
+      .then(() => spaceContext.cma.updateEditorInterface(editorInterfaceDuplicate))
       .then(
         () => duplicate,
         err => {

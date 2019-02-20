@@ -3,6 +3,7 @@ import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 import base from 'states/Base.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import * as WidgetStore from 'widgets/WidgetStore.es6';
+import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
 
 const list = base({
   name: 'list',
@@ -44,8 +45,10 @@ const widgetResolvers = {
     'spaceContext',
     'contentType',
     'widgets',
-    (spaceContext, contentType, widgets) => {
-      return spaceContext.editorInterfaceRepo.get(contentType.data, widgets);
+    async (spaceContext, contentType, widgets) => {
+      const ct = contentType.data;
+      const ei = await spaceContext.cma.getEditorInterface(ct.sys.id);
+      return EditorInterfaceTransformer.fromAPI(ct, ei, widgets);
     }
   ],
   hasCustomSidebarFeature: [
