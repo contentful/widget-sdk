@@ -92,6 +92,7 @@ function renderContent({ navState, showOrganization }) {
 function stateTitle(title) {
   return (
     <div
+      key={title}
       data-test-id="sidepanel-trigger-text-title"
       style={{
         ...oneLineTruncate,
@@ -107,6 +108,7 @@ function stateTitle(title) {
 function organizationName(orgName) {
   return (
     <div
+      key={orgName}
       data-test-id="sidepanel-trigger-text-subtitle"
       style={{
         ...oneLineTruncate,
@@ -125,6 +127,7 @@ function environmentLabel(env) {
   const isMaster = envId === 'master';
   return (
     <div
+      key={env}
       style={{
         display: 'flex',
         alignItems: 'center',
