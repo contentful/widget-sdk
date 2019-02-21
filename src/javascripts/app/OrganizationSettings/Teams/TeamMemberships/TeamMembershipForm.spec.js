@@ -3,7 +3,7 @@ import { createStore } from 'redux';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { noop } from 'lodash';
-import { Button, Option, Select } from '@contentful/forma-36-react-components';
+import { Button, Option, Select, Table, TableBody } from '@contentful/forma-36-react-components';
 import reducer from 'redux/reducer/index.es6';
 import ROUTES from 'redux/routes.es6';
 import { ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS, TEAMS, USERS } from 'redux/datasets.es6';
@@ -15,7 +15,11 @@ const renderComponent = (actions, onClose = noop) => {
   actions.forEach(action => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
-      <TeamMembershipForm onClose={onClose} />
+      <Table>
+        <TableBody>
+          <TeamMembershipForm onClose={onClose} />
+        </TableBody>
+      </Table>
     </Provider>
   );
   return { store, wrapper };
