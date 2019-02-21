@@ -222,18 +222,8 @@ angular
       ngRequire('services/exceptionHandler.es6').default();
       ngRequire('services/hints.es6').default();
       ngRequire('services/userAgent.es6').default();
-      ngRequire('states/accountProfile.es6').default();
-      ngRequire('states/account.es6').default();
-      ngRequire('states/assets.es6').default();
       ngRequire('states/cfSrefDirective.es6').default();
       ngRequire('states/config.es6').default();
-      ngRequire('states/entries.es6').default();
-      ngRequire('states/settingsUsers.es6').default();
-      ngRequire('states/settingsRoles.es6').default();
-      ngRequire('states/settings.es6').default();
-      ngRequire('states/spaceHome.es6').default();
-      ngRequire('states/stackOnboarding.es6').default();
-      ngRequire('states/states.es6').default();
       ngRequire('ui/Framework/AngularComponent.es6').default();
       ngRequire('ui/Framework/CfComponentBridgeDirective.es6').default();
       ngRequire('ui/Framework/ReactDirective.es6').default();

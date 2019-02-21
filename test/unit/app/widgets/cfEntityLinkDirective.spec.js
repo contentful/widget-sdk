@@ -118,7 +118,7 @@ describe('cfEntityLink directive', () => {
 
   it('links to entity', function() {
     // We need to load the states to calculate the hrefs
-    this.$inject('states').loadAll();
+    this.$inject('states/states.es6').loadAll();
     const el = this.compile(
       {
         sys: {

@@ -8,9 +8,6 @@ import { go } from 'states/Navigator.es6';
 const store = getStore();
 
 /**
- * @ngdoc service
- * @name states/home
- * @description
  * If any space exists, the user is redirected to the last accessed space (as
  * defined in local storage) or the first space returned in the spaces listing.
  * The `home` view is loaded only if there are no spaces.
