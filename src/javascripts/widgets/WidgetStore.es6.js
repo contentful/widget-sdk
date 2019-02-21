@@ -49,7 +49,7 @@ export async function getForEditor(spaceId, envId, editorInterface = {}) {
   };
 }
 
-export function buildExtensionWidget(data) {
+function buildExtensionWidget(data) {
   const { src, srcdoc } = data.extension;
   const base = src ? { src } : { srcdoc };
   const fieldTypes = data.extension.fieldTypes || [];

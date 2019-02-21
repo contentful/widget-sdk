@@ -153,11 +153,9 @@ describe('Space Template creation service', () => {
           save: sinon.stub()
         },
         cma: {
-          updateEditorInterface: sinon.stub()
+          updateEditorInterface: sinon.stub().resolves()
         }
       };
-
-      spaceContext.cma.updateEditorInterface.returns(Promise.resolve());
 
       _.times(2, n => {
         spaceContext.space.createContentType
