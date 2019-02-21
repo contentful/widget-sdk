@@ -35,7 +35,7 @@ export default class Date extends React.Component {
   componentDidMount() {
     const onChange = this.props.onChange;
     if (this.inputRef) {
-      this.datePicker = DatePicker.create({
+      const datePicker = DatePicker.create({
         field: this.inputRef,
         container: this.inputRef.parentElement,
         yearRange: [
@@ -49,9 +49,18 @@ export default class Date extends React.Component {
         onSelect: function() {
           onChange(this.getMoment().format(DATE_FORMAT));
         },
+        onOpen: function() {
+          // HACK: we prevent all the butons from getting kb focused (with tab)
+          // otherwise the widget will collapses.
+          for (const el of datePicker.el.querySelectorAll('button')) {
+            el.setAttribute('tabindex', '-1');
+          }
+        },
         firstDay: 1,
         theme: 'search__datepicker'
       });
+
+      this.datePicker = datePicker;
     }
   }
 
