@@ -511,7 +511,7 @@ describe('SSO Redux actionCreators', () => {
         }
       });
 
-      mockStore.stubDispatch('cleanupConnectionTest');
+      mockEndpoint.mockResolvedValueOnce({});
     });
 
     it('should close the new window', () => {
@@ -529,7 +529,7 @@ describe('SSO Redux actionCreators', () => {
 
   describe('checkTestWindow', () => {
     beforeEach(() => {
-      mockStore.stubDispatch('cleanupConnectionTest');
+      mockEndpoint.mockResolvedValueOnce({});
     });
 
     it('should dispatch nothing if the new window is not closed', () => {
@@ -567,7 +567,7 @@ describe('SSO Redux actionCreators', () => {
 
   describe('cleanupConnectionTest', () => {
     beforeEach(() => {
-      mockStore.stubDispatch('retrieveIdp');
+      mockEndpoint.mockResolvedValueOnce({});
     });
 
     it('should clear the timer', () => {
@@ -584,7 +584,7 @@ describe('SSO Redux actionCreators', () => {
       await mockStore.dispatch(actionCreators.cleanupConnectionTest({ orgId: 'org_1234' }));
 
       expect(mockStore.getDispatched()[1].thunkName()).toBe('retrieveIdp');
-      expect(mockStore.getDispatched()[2].actionValue()).toEqual({
+      expect(_.last(mockStore.getDispatched()).actionValue()).toEqual({
         type: actions.SSO_CONNECTION_TEST_END
       });
     });
