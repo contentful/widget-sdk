@@ -10,6 +10,7 @@ import {
 import ExamplePickerModal from './dialogs/ExamplePickerModal.es6';
 import GitHubInstallerModal from './dialogs/GitHubInstallerModal.es6';
 import { toInternalFieldType } from 'widgets/FieldTypes.es6';
+import * as ExtensionLoader from 'widgets/ExtensionLoader.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -22,7 +23,11 @@ const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
 function install({ extension, type, url }) {
   return spaceContext.cma
     .createExtension({ extension })
-    .then(res => $state.go('^.detail', { extensionId: res.sys.id }))
+    .then(res => {
+      ExtensionLoader.cacheExtension(spaceContext.getId(), spaceContext.getEnvironmentId(), res);
+
+      return $state.go('^.detail', { extensionId: res.sys.id });
+    })
     .then(() => {
       Notification.success('Your new extension was successfully created.');
 

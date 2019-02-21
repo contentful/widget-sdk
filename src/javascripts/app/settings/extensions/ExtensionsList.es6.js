@@ -14,6 +14,7 @@ import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar.es6';
 
 import EmptyExtensionIcon from './icons/EmptyExtensionIcon.es6';
 import ExtensionsActions from './ExtensionsActions.es6';
+import * as ExtensionLoader from 'widgets/ExtensionLoader.es6';
 
 import { openGitHubInstaller } from './ExtensionsActions.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -25,7 +26,10 @@ function deleteExtension(id, refresh) {
     .deleteExtension(id)
     .then(refresh)
     .then(
-      () => Notification.success('Your extension was successfully deleted.'),
+      () => {
+        Notification.success('Your extension was successfully deleted.');
+        ExtensionLoader.evictExtension(spaceContext.getId(), spaceContext.getEnvironmentId(), id);
+      },
       err => {
         Notification.error('There was an error while deleting your extension.');
         return Promise.reject(err);

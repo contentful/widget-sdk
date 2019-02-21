@@ -15,6 +15,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 // `cacheExtension` allows to replace a single item
 // (for example when an extension was modified in
 // management views).
+// `evictExtension` removes a single item for the cache.
 //
 // Please note this module is intended to be used
 // to load extensions for entity editors where we
@@ -72,6 +73,12 @@ export async function getAllExtensions(spaceId, envId) {
   });
 
   return items;
+}
+
+export function evictExtension(spaceId, envId, extensionId) {
+  const loader = getLoaderForSpaceEnv(spaceId, envId);
+
+  loader.clear(extensionId);
 }
 
 export function cacheExtension(spaceId, envId, extension) {

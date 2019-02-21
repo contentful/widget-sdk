@@ -14,6 +14,7 @@ import StateLink from 'app/common/StateLink.es6';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes.es6';
 import ExtensionForm from './ExtensionForm.es6';
 import * as Analytics from 'analytics/Analytics.es6';
+import * as ExtensionLoader from 'widgets/ExtensionLoader.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
@@ -121,9 +122,14 @@ class ExtensionEditor extends React.Component {
             });
           }
         );
+
         Notification.success('Your extension was updated successfully.');
 
-        // TODO: we should refresh extension cache here!
+        ExtensionLoader.cacheExtension(
+          spaceContext.getId(),
+          spaceContext.getEnvironmentId(),
+          newEntity
+        );
       })
       .catch(() => {
         Notification.error(
