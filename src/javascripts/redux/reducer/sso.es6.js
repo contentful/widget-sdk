@@ -1,7 +1,6 @@
 import { get, set, clone } from 'lodash';
 import { combineReducers } from 'redux';
 import * as actions from 'redux/actions/sso/actions.es6';
-import { TEST_RESULTS } from 'app/OrganizationSettings/SSO/constants.es6';
 
 export default combineReducers({
   identityProvider,
@@ -40,43 +39,50 @@ export default combineReducers({
 export function identityProvider(state = {}, action) {
   switch (action.type) {
     case actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING:
-      return {
-        ...state,
-        isPending: true
-      };
-    case actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS:
-      return {
-        ...state,
-        data: action.payload,
-        isPending: false
-      };
-    case actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE:
-      return {
-        ...state,
-        error: action.payload.message,
-        isPending: false
-      };
     case actions.SSO_GET_IDENTITY_PROVIDER_PENDING:
       return {
         ...state,
         isPending: true
       };
+    case actions.SSO_UPDATE_IDENTITY_PROVIDER:
+    case actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS:
     case actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS:
       return {
         ...state,
         data: action.payload,
         isPending: false
       };
+    case actions.SSO_CONNECTION_TEST_RESULT: {
+      const updatedState = clone(state);
+
+      set(updatedState, ['data', 'sys', 'version'], action.payload.version);
+
+      return updatedState;
+    }
+    case actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE:
     case actions.SSO_GET_IDENTITY_PROVIDER_FAILURE:
       return {
         ...state,
         error: action.payload.message,
         isPending: false
       };
-    case actions.SSO_UPDATE_IDENTITY_PROVIDER:
+
+    case actions.SSO_ENABLE_PENDING:
       return {
         ...state,
-        data: action.payload
+        isEnabling: true
+      };
+    case actions.SSO_ENABLE_SUCCESS:
+      return {
+        ...state,
+        data: action.payload,
+        isEnabling: false
+      };
+    case actions.SSO_ENABLE_FAILURE:
+      return {
+        ...state,
+        error: action.payload.message,
+        isEnabling: false
       };
     default:
       return state;
@@ -133,6 +139,7 @@ export function fields(state = {}, action) {
     case actions.SSO_FIELD_UPDATE_FAILURE:
     case actions.SSO_FIELD_VALIDATION_FAILURE: {
       const updatedState = clone(state);
+
       set(updatedState, [action.meta.fieldName, 'error'], action.payload.message);
       set(updatedState, [action.meta.fieldName, 'isPending'], false);
 
@@ -167,24 +174,13 @@ export function connectionTest(state = {}, action) {
         ...state,
         isPending: false
       };
-    case actions.SSO_CONNECTION_TEST_SUCCESS:
+    case actions.SSO_CONNECTION_TEST_RESULT:
       return {
         ...state,
-        result: TEST_RESULTS.success,
-        isPending: false
-      };
-    case actions.SSO_CONNECTION_TEST_FAILURE:
-      return {
-        ...state,
-        result: TEST_RESULTS.failure,
-        errors: action.payload,
-        isPending: false
-      };
-    case actions.SSO_CONNECTION_TEST_UNKNOWN:
-      return {
-        ...state,
-        result: TEST_RESULTS.unknown,
-        isPending: false
+        isPending: false,
+        result: action.payload.testConnectionResult,
+        errors: action.payload.testConnectionError,
+        timestamp: action.payload.testConnectionAt
       };
     default:
       return state;

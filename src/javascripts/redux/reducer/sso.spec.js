@@ -1,6 +1,5 @@
 import * as reducers from './sso.es6';
 import * as actions from 'redux/actions/sso/actions.es6';
-import { TEST_RESULTS } from 'app/OrganizationSettings/SSO/constants.es6';
 
 const callReducer = (reducer, action) => {
   return reducer(undefined, action);
@@ -18,6 +17,16 @@ describe('SSO Redux reducers', () => {
       });
     });
 
+    it('should handle SSO identity provider retrieval pending state', () => {
+      expect(
+        callReducer(reducers.identityProvider, {
+          type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING
+        })
+      ).toEqual({
+        isPending: true
+      });
+    });
+
     it('should handle SSO identity provider creation success state', () => {
       const identityProvider = {
         ssoName: 'something-1234'
@@ -26,6 +35,38 @@ describe('SSO Redux reducers', () => {
       expect(
         callReducer(reducers.identityProvider, {
           type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
+          payload: identityProvider
+        })
+      ).toEqual({
+        data: identityProvider,
+        isPending: false
+      });
+    });
+
+    it('should handle SSO identity provider retrieval success state', () => {
+      const identityProvider = {
+        ssoName: 'something-1234'
+      };
+
+      expect(
+        callReducer(reducers.identityProvider, {
+          type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
+          payload: identityProvider
+        })
+      ).toEqual({
+        data: identityProvider,
+        isPending: false
+      });
+    });
+
+    it('should handle SSO identity provider update success state', () => {
+      const identityProvider = {
+        ssoName: 'something-1234'
+      };
+
+      expect(
+        callReducer(reducers.identityProvider, {
+          type: actions.SSO_UPDATE_IDENTITY_PROVIDER,
           payload: identityProvider
         })
       ).toEqual({
@@ -49,32 +90,6 @@ describe('SSO Redux reducers', () => {
       });
     });
 
-    it('should handle SSO identity provider retrieval pending state', () => {
-      expect(
-        callReducer(reducers.identityProvider, {
-          type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING
-        })
-      ).toEqual({
-        isPending: true
-      });
-    });
-
-    it('should handle SSO identity provider retrieval success state', () => {
-      const identityProvider = {
-        ssoName: 'something-1234'
-      };
-
-      expect(
-        callReducer(reducers.identityProvider, {
-          type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
-          payload: identityProvider
-        })
-      ).toEqual({
-        data: identityProvider,
-        isPending: false
-      });
-    });
-
     it('should handle SSO identity provider retrieval failure state', () => {
       const error = new Error('Something bad happened');
 
@@ -87,6 +102,64 @@ describe('SSO Redux reducers', () => {
       ).toEqual({
         error: error.message,
         isPending: false
+      });
+    });
+
+    it('should handle SSO enabling pending state', () => {
+      expect(
+        callReducer(reducers.identityProvider, {
+          type: actions.SSO_ENABLE_PENDING
+        })
+      ).toEqual({
+        isEnabling: true
+      });
+    });
+
+    it('should handle SSO enabling success state', () => {
+      const identityProvider = {};
+
+      expect(
+        callReducer(reducers.identityProvider, {
+          type: actions.SSO_ENABLE_SUCCESS,
+          payload: identityProvider
+        })
+      ).toEqual({
+        data: identityProvider,
+        isEnabling: false
+      });
+    });
+
+    it('should handle SSO enabling failure state', () => {
+      const error = new Error('Could not enable');
+
+      expect(
+        callReducer(reducers.identityProvider, {
+          type: actions.SSO_ENABLE_FAILURE,
+          error: true,
+          payload: error
+        })
+      ).toEqual({
+        error: error.message,
+        isEnabling: false
+      });
+    });
+
+    it('should update the version when the SSO connection test result action is fired', () => {
+      const version = 7;
+
+      expect(
+        callReducer(reducers.identityProvider, {
+          type: actions.SSO_CONNECTION_TEST_RESULT,
+          payload: {
+            version
+          }
+        })
+      ).toEqual({
+        data: {
+          sys: {
+            version
+          }
+        }
       });
     });
   });
@@ -245,38 +318,22 @@ describe('SSO Redux reducers', () => {
       });
     });
 
-    it('should handle SSO connection test success state', () => {
-      expect(
-        callReducer(reducers.connectionTest, {
-          type: actions.SSO_CONNECTION_TEST_SUCCESS
-        })
-      ).toEqual({
-        result: TEST_RESULTS.success,
-        isPending: false
-      });
-    });
+    it('should handle SSO connection test result state', () => {
+      const testResult = {
+        testConnectionResult: 'failure',
+        testConnectionError: ['Invalid SAML certificate signature'],
+        testConnectionAt: 'timestamp'
+      };
 
-    it('should handle SSO connection test failure state', () => {
       expect(
         callReducer(reducers.connectionTest, {
-          type: actions.SSO_CONNECTION_TEST_FAILURE,
-          error: true,
-          payload: ['something bad happened']
+          type: actions.SSO_CONNECTION_TEST_RESULT,
+          payload: testResult
         })
       ).toEqual({
-        result: TEST_RESULTS.failure,
-        errors: ['something bad happened'],
-        isPending: false
-      });
-    });
-
-    it('should handle SSO connection test unknown state', () => {
-      expect(
-        callReducer(reducers.connectionTest, {
-          type: actions.SSO_CONNECTION_TEST_UNKNOWN
-        })
-      ).toEqual({
-        result: TEST_RESULTS.unknown,
+        result: 'failure',
+        errors: testResult.testConnectionError,
+        timestamp: 'timestamp',
         isPending: false
       });
     });

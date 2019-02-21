@@ -1,5 +1,4 @@
 import * as utils from './utils.es6';
-import { TEST_RESULTS } from 'app/OrganizationSettings/SSO/constants.es6';
 
 jest.mock('./validators.es6', () => ({
   myAwesomeField: str => {
@@ -99,8 +98,7 @@ describe('SSO utils', () => {
       };
 
       connectionTest = {
-        isPending: false,
-        result: TEST_RESULTS.failure
+        isPending: false
       };
     });
 
@@ -129,12 +127,6 @@ describe('SSO utils', () => {
 
     it('should not allow testing if the connection is currently being tested', () => {
       connectionTest.isPending = true;
-
-      expect(utils.connectionTestingAllowed(fields, connectionTest)).toBe(false);
-    });
-
-    it('should not allow testing if the connection test result is successful', () => {
-      connectionTest.result = TEST_RESULTS.success;
 
       expect(utils.connectionTestingAllowed(fields, connectionTest)).toBe(false);
     });

@@ -4,13 +4,24 @@ import * as actions from './actions.es6';
 import createMockStore from 'redux/utils/createMockStore.es6';
 import { mockEndpoint } from 'data/EndpointFactory.es6';
 import { TEST_RESULTS } from 'app/OrganizationSettings/SSO/constants.es6';
+import { Notification } from '@contentful/forma-36-react-components';
 
 describe('SSO Redux actionCreators', () => {
   let mockStore;
+  let notificationSuccessSpy;
+  let notificationErrorSpy;
 
   beforeEach(() => {
     mockStore = createMockStore();
     mockEndpoint.mockReset();
+
+    notificationSuccessSpy = jest.spyOn(Notification, 'success');
+    notificationErrorSpy = jest.spyOn(Notification, 'error');
+  });
+
+  afterEach(() => {
+    notificationSuccessSpy.mockRestore();
+    notificationErrorSpy.mockRestore();
   });
 
   describe('retrieveIdp', () => {
@@ -143,7 +154,30 @@ describe('SSO Redux actionCreators', () => {
   });
 
   describe('updateFieldValue', () => {
-    it('should always dispatch the validateField thunk when dispatched', async () => {
+    it('should not dispatch anything if the field is pending', async () => {
+      mockStore.setState({
+        sso: {
+          fields: {
+            idpSsoTargetUrl: {
+              isPending: true
+            }
+          }
+        }
+      });
+
+      await mockStore.dispatch(
+        actionCreators.updateFieldValue({
+          orgId: '1234',
+          fieldName: 'idpSsoTargetUrl',
+          value: 'some-value'
+        })
+      );
+
+      // Only the initial dispatch but no others
+      expect(mockStore.getDispatched()).toHaveLength(1);
+    });
+
+    it('should dispatch the validateField thunk when dispatched if the field is not pending', async () => {
       const idpSsoTargetUrlValue = 'http://example.com';
 
       await mockStore.dispatch(
@@ -310,6 +344,31 @@ describe('SSO Redux actionCreators', () => {
         ])
       );
     });
+
+    it('should dispatch the connectionTestResult thunk if the field update was successful', async () => {
+      const identityProvider = {
+        ssoName: 'something-1234'
+      };
+
+      mockEndpoint.mockResolvedValueOnce(identityProvider);
+
+      const fieldName = 'idpSsoTargetUrl';
+      const value = 'https://example.com';
+
+      await mockStore.dispatch(
+        actionCreators.updateFieldValue({
+          orgId: '1234',
+          fieldName,
+          value
+        })
+      );
+
+      const connectionTestResultDispatch = mockStore
+        .getDispatched()
+        .filter(d => d.thunkName() === 'connectionTestResult')[0];
+
+      expect(connectionTestResultDispatch).toBeDefined();
+    });
   });
 
   describe('validateField', () => {
@@ -474,60 +533,20 @@ describe('SSO Redux actionCreators', () => {
   });
 
   describe('connectionTestResult', () => {
-    it('should not dispatch anything if the data has no testConnectionAt', () => {
-      const data = {};
-
-      mockStore.dispatch(actionCreators.connectionTestResult({ data }));
-
-      expect(mockStore.getActions()).toHaveLength(0);
-    });
-
-    it('should dispatch the ssoConnectionTestSuccess action if testConnectionResult is success', () => {
+    it('should dispatch the ssoConnectionTestResult action', () => {
       const data = {
         testConnectionAt: 'timestamp',
-        testConnectionResult: TEST_RESULTS.success
+        testConnectionResult: TEST_RESULTS.success,
+        testConnectionError: null,
+        version: 8
       };
 
       mockStore.dispatch(actionCreators.connectionTestResult({ data }));
 
       expect(mockStore.getActions()).toEqual([
         {
-          type: actions.SSO_CONNECTION_TEST_SUCCESS
-        }
-      ]);
-    });
-
-    it('should dispatch the ssoConnectionTestFailure action if testConnectionResult is failure', () => {
-      const testConnectionError = ['Something bad happened!'];
-
-      const data = {
-        testConnectionAt: 'timestamp',
-        testConnectionResult: TEST_RESULTS.failure,
-        testConnectionError
-      };
-
-      mockStore.dispatch(actionCreators.connectionTestResult({ data }));
-
-      expect(mockStore.getActions()).toEqual([
-        {
-          type: actions.SSO_CONNECTION_TEST_FAILURE,
-          error: true,
-          payload: testConnectionError
-        }
-      ]);
-    });
-
-    it('should dispatch the ssoConnectionTestUnknown action if the testConnectionResult is not success/failure', () => {
-      const data = {
-        testConnectionAt: 'timestamp',
-        testConnectionResult: null
-      };
-
-      mockStore.dispatch(actionCreators.connectionTestResult({ data }));
-
-      expect(mockStore.getActions()).toEqual([
-        {
-          type: actions.SSO_CONNECTION_TEST_UNKNOWN
+          type: actions.SSO_CONNECTION_TEST_RESULT,
+          payload: data
         }
       ]);
     });
@@ -546,6 +565,65 @@ describe('SSO Redux actionCreators', () => {
       expect(_.last(mockStore.getActions())).toEqual({
         type: actions.SSO_CONNECTION_TEST_END
       });
+    });
+  });
+
+  describe('enable', () => {
+    it('should go through the success flow if the IDP was enabled successfully via the API', async () => {
+      const identityProvider = {};
+
+      mockEndpoint.mockResolvedValueOnce(identityProvider);
+
+      await mockStore.dispatch(actionCreators.enable({ orgId: '1234' }));
+
+      expect(mockStore.getActions()).toEqual([
+        {
+          type: actions.SSO_ENABLE_PENDING
+        },
+        {
+          type: actions.SSO_ENABLE_SUCCESS,
+          payload: identityProvider
+        }
+      ]);
+    });
+
+    it('should fire a successful notification upon enabling', async () => {
+      const identityProvider = {};
+
+      mockEndpoint.mockResolvedValueOnce(identityProvider);
+
+      await mockStore.dispatch(actionCreators.enable({ orgId: '1234' }));
+
+      expect(notificationSuccessSpy).toHaveBeenCalledTimes(1);
+      expect(notificationSuccessSpy).toHaveBeenNthCalledWith(1, expect.any(String));
+    });
+
+    it('should go through the failure flow if the IDP was not successfully enabled via the API', async () => {
+      const error = new Error('Could not enable SSO');
+
+      mockEndpoint.mockRejectedValueOnce(error);
+
+      await mockStore.dispatch(actionCreators.enable({ orgId: '1234' }));
+
+      expect(mockStore.getActions()).toEqual([
+        {
+          type: actions.SSO_ENABLE_PENDING
+        },
+        {
+          type: actions.SSO_ENABLE_FAILURE,
+          error: true,
+          payload: error
+        }
+      ]);
+    });
+
+    it('should fire an error notification when enabling errors', async () => {
+      mockEndpoint.mockRejectedValueOnce(new Error());
+
+      await mockStore.dispatch(actionCreators.enable({ orgId: '1234' }));
+
+      expect(notificationErrorSpy).toHaveBeenCalledTimes(1);
+      expect(notificationErrorSpy).toHaveBeenNthCalledWith(1, expect.any(String));
     });
   });
 });

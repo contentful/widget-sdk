@@ -120,26 +120,34 @@ export function ssoConnectionTestEnd() {
   };
 }
 
-export const SSO_CONNECTION_TEST_SUCCESS = 'SSO_CONNECTION_TEST/SUCCESS';
-export function ssoConnectionTestSuccess(data) {
+export const SSO_CONNECTION_TEST_RESULT = 'SSO_CONNECTION_TEST/RESULT';
+export function ssoConnectionTestResult(data) {
   return {
-    type: SSO_CONNECTION_TEST_SUCCESS,
+    type: SSO_CONNECTION_TEST_RESULT,
     payload: data
   };
 }
 
-export const SSO_CONNECTION_TEST_FAILURE = 'SSO_CONNECTION_TEST/FAILURE';
-export function ssoConnectionTestFailure(errors) {
+export const SSO_ENABLE_PENDING = 'SSO_ENABLE/PENDING';
+export function ssoEnablePending() {
   return {
-    type: SSO_CONNECTION_TEST_FAILURE,
-    error: true,
-    payload: errors
+    type: SSO_ENABLE_PENDING
   };
 }
 
-export const SSO_CONNECTION_TEST_UNKNOWN = 'SSO_CONNECTION_TEST/UNKNOWN';
-export function ssoConnectionTestUnknown() {
+export const SSO_ENABLE_SUCCESS = 'SSO_ENABLE/SUCCESS';
+export function ssoEnableSuccess(identityProvider) {
   return {
-    type: SSO_CONNECTION_TEST_UNKNOWN
+    type: SSO_ENABLE_SUCCESS,
+    payload: identityProvider
+  };
+}
+
+export const SSO_ENABLE_FAILURE = 'SSO_ENABLE/FAILURE';
+export function ssoEnableFailure(error) {
+  return {
+    type: SSO_ENABLE_FAILURE,
+    error: true,
+    payload: error
   };
 }

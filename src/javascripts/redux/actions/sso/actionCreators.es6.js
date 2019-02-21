@@ -1,7 +1,7 @@
+import { Notification } from '@contentful/forma-36-react-components';
 import * as actions from './actions.es6';
 import * as selectors from 'redux/selectors/sso.es6';
 import { validate, connectionTestResultFromIdp } from 'app/OrganizationSettings/SSO/utils.es6';
-import { TEST_RESULTS } from 'app/OrganizationSettings/SSO/constants.es6';
 import _ from 'lodash';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
@@ -63,6 +63,14 @@ export function createIdp({ orgId, orgName }) {
 
 export function updateFieldValue({ fieldName, value, orgId }) {
   return async (dispatch, getState) => {
+    // Exit early if the field value is pending (meaning the network request
+    // from another call has not finished)
+    const fieldIsPending = selectors.getField(getState(), fieldName).isPending;
+
+    if (fieldIsPending) {
+      return;
+    }
+
     // Exit early if the idP value is the same as the updated value
     const idpValue = selectors.getIdentityProviderValue(getState(), fieldName);
 
@@ -105,6 +113,10 @@ export function updateFieldValue({ fieldName, value, orgId }) {
 
     dispatch(actions.ssoFieldUpdateSuccess(fieldName));
     dispatch(actions.ssoUpdateIdentityProvider(identityProvider));
+
+    const testResult = connectionTestResultFromIdp(identityProvider);
+
+    dispatch(connectionTestResult({ data: testResult }));
   };
 }
 
@@ -145,15 +157,7 @@ export function connectionTestCancel() {
 
 export function connectionTestResult({ data }) {
   return function connectionTestResult(dispatch) {
-    if (data.testConnectionAt) {
-      if (data.testConnectionResult === TEST_RESULTS.success) {
-        dispatch(actions.ssoConnectionTestSuccess());
-      } else if (data.testConnectionResult === TEST_RESULTS.failure) {
-        dispatch(actions.ssoConnectionTestFailure(data.testConnectionError));
-      } else {
-        dispatch(actions.ssoConnectionTestUnknown());
-      }
-    }
+    dispatch(actions.ssoConnectionTestResult(data));
   };
 }
 
@@ -161,5 +165,31 @@ export function connectionTestEnd({ orgId }) {
   return async dispatch => {
     await dispatch(retrieveIdp({ orgId }));
     dispatch(actions.ssoConnectionTestEnd());
+  };
+}
+
+export function enable({ orgId }) {
+  return async dispatch => {
+    dispatch(actions.ssoEnablePending());
+
+    const endpoint = createOrganizationEndpoint(orgId);
+    let identityProvider;
+
+    try {
+      identityProvider = await endpoint({
+        method: 'POST',
+        path: ['identity_provider', 'enable']
+      });
+    } catch (e) {
+      dispatch(actions.ssoEnableFailure(e));
+
+      Notification.error('Could not enable SSO. Try again.');
+
+      return;
+    }
+
+    dispatch(actions.ssoEnableSuccess(identityProvider));
+
+    Notification.success('SSO successfully enabled!');
   };
 }

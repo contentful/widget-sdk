@@ -87,7 +87,8 @@ describe('SSOSetup', () => {
   it('should not render the IDPSetupForm component is given identityProvider is enabled', () => {
     const identityProvider = {
       data: {
-        enabled: true
+        enabled: true,
+        ssoName: 'my-sso-setup'
       }
     };
     const rendered = render({ identityProvider, organization });

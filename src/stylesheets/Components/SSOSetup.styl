@@ -2,16 +2,22 @@
   display: flex
 
   &__main
-    display: flex
-    flex-direction: column
-    align-content: flex-start
     margin: 0 auto 80px
-    width: 800px
+    width: 700px
 
   &__user-attributes
     display: flex
-    flex-flow: row
-    justify-content: space-between
 
   &__select
     display: inline-block
+
+  &__field
+    &-container
+      display: flex
+
+    &-input--full
+      width: 95%
+
+    &-spinner
+      width: 5%
+      margin-top: 40px
