@@ -1,4 +1,4 @@
-import { isEmpty, get } from 'lodash/fp';
+import { isEmpty } from 'lodash/fp';
 import { getPath } from '../selectors/location.es6';
 import loadDataSets from '../loadDataSets.es6';
 import { getDataSetsToLoad } from 'redux/selectors/datasets.es6';
@@ -20,7 +20,7 @@ export default ({ getState, dispatch }) => next => async action => {
     if (featureRequired) {
       const orgId = getOrgId(newState);
       // if it does, load the feature and check if it's enabled
-      const isActive = get('enabled', await getOrgFeature(orgId, 'teams'));
+      const isActive = await getOrgFeature(orgId, 'teams');
       if (!isActive) {
         dispatch({ type: 'ACCESS_DENIED', payload: { reason: 'feature_inactive' } });
         // skip dataset loading
