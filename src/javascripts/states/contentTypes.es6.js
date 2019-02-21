@@ -39,7 +39,12 @@ const sidebarConfiguration = {
 const widgetResolvers = {
   widgets: [
     'spaceContext',
-    spaceContext => WidgetStore.getForContentTypeManagement(spaceContext.cma)
+    spaceContext => {
+      return WidgetStore.getForContentTypeManagement(
+        spaceContext.getId(),
+        spaceContext.getEnvironmentId()
+      );
+    }
   ],
   editorInterface: [
     'spaceContext',
@@ -53,7 +58,9 @@ const widgetResolvers = {
   ],
   hasCustomSidebarFeature: [
     'spaceContext',
-    spaceContext => getOrgFeature(spaceContext.organization.sys.id, 'custom_sidebar', true)
+    spaceContext => {
+      return getOrgFeature(spaceContext.organization.sys.id, 'custom_sidebar', true);
+    }
   ]
 };
 

@@ -20,6 +20,8 @@ describe('app/entity_editor/DataLoader.es6', () => {
 
     // TODO use space context mock
     this.spaceContext = {
+      getId: () => 'spaceid',
+      getEnvironmentId: () => 'envid',
       space: {
         getEntry: sinon.spy(id => $q.resolve({ data: makeEntity(id, 'CTID') })),
         getEntries: function(query) {

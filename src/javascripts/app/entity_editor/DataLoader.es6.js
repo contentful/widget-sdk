@@ -110,18 +110,16 @@ export function makePrefetchEntryLoader(spaceContext, ids$) {
  * Loaders are created by `makeEntryLoader()` and `makeAssetLoader()`.
  */
 async function loadEditorData(loader, id) {
-  const [entity, hasCustomSidebarFeature, widgets] = await Promise.all([
-    loader.getEntity(id),
-    loader.hasCustomSidebarFeature(),
-    loader.getWidgets()
-  ]);
-
+  const entity = await loader.getEntity(id);
   const contentTypeId = get(entity, ['data', 'sys', 'contentType', 'sys', 'id']);
 
-  const [contentType, editorInterface] = await Promise.all([
+  const [contentType, editorInterface, hasCustomSidebarFeature] = await Promise.all([
     loader.getContentType(contentTypeId),
-    loader.getEditorInterface(contentTypeId)
+    loader.getEditorInterface(contentTypeId),
+    loader.hasCustomSidebarFeature()
   ]);
+
+  const widgets = await loader.getWidgets(editorInterface);
 
   const { controls, sidebar } = EditorInterfaceTransformer.fromAPI(
     contentType.data,
@@ -155,21 +153,22 @@ async function loadEditorData(loader, id) {
 // `loadEditorData()` function.
 function makeEntryLoader(spaceContext) {
   return {
-    getEntity(id) {
-      return fetchEntity(spaceContext, 'Entry', id);
-    },
+    getEntity: id => fetchEntity(spaceContext, 'Entry', id),
     getContentType(contentTypeId) {
       return spaceContext.publishedCTs.fetch(contentTypeId);
-    },
-    getWidgets(_extensionIds) {
-      // TODO: this should accept a list of Extension IDs to fetch
-      return WidgetStore.getForContentTypeManagement(spaceContext.cma);
     },
     // We memoize the editor interface so that we do not fetch
     // them multiple times in the bulk editor.
     getEditorInterface: memoize(contentTypeId => {
       return spaceContext.cma.getEditorInterface(contentTypeId);
     }),
+    getWidgets(editorInterface) {
+      return WidgetStore.getForEditor(
+        spaceContext.getId(),
+        spaceContext.getEnvironmentId(),
+        editorInterface
+      );
+    },
     hasCustomSidebarFeature() {
       return getOrgFeature(spaceContext.organization.sys.id, 'custom_sidebar', true);
     },
@@ -178,17 +177,12 @@ function makeEntryLoader(spaceContext) {
 }
 
 function makeAssetLoader(spaceContext) {
+  const widgets = WidgetStore.getBuiltinsOnly();
+
   return {
-    getEntity(id) {
-      return fetchEntity(spaceContext, 'Asset', id);
-    },
-    getContentType() {
-      return assetContentType;
-    },
-    getWidgets() {
-      return WidgetStore.getBuiltinsOnly();
-    },
-    getEditorInterface() {
+    getEntity: id => fetchEntity(spaceContext, 'Asset', id),
+    getContentType: () => assetContentType,
+    getEditorInterface: () => {
       // TODO: we compute the editor interface for the Asset Editor.
       // If we would have an endpoint with this data
       // (/spaces/:sid/environments/:eid/asset_content_type/editor_interface)
@@ -203,10 +197,11 @@ function makeAssetLoader(spaceContext) {
             { fieldId: 'description', widgetId: 'singleLine' }
           ]
         },
-        WidgetStore.getBuiltinsOnly()
+        widgets
       );
     },
-    hasCustomSidebarFeature: () => Promise.resolve(false),
+    getWidgets: () => widgets,
+    hasCustomSidebarFeature: () => false,
     getOpenDoc: makeDocOpener(spaceContext)
   };
 }
