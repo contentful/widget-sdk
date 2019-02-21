@@ -33,12 +33,12 @@ export default class EntryInfoPanel extends Component {
                   <td>{contentTypeName}</td>
                 </tr>
               )}
-              {contentTypeDescription && (
+              {contentTypeDescription ? (
                 <tr>
                   <th>Description</th>
                   <td>{contentTypeDescription}</td>
                 </tr>
-              )}
+              ) : null}
               <tr>
                 {contentTypeId && <th>Entry ID</th>}
                 {!contentTypeId && <th>ID</th>}
