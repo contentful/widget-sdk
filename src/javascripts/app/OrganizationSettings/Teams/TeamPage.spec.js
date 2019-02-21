@@ -75,6 +75,7 @@ describe('TeamPage', () => {
       beforeEach(() => {
         actions.push({
           type: 'DATASET_LOADING',
+          meta: { fetched: Date.now() },
           payload: {
             datasets: {
               [TEAMS]: [],

@@ -49,6 +49,7 @@ describe('TeamList', () => {
       beforeEach(() => {
         actions.push({
           type: 'DATASET_LOADING',
+          meta: { fetched: 100 },
           payload: {
             datasets: {
               [TEAMS]: [
@@ -406,6 +407,7 @@ describe('TeamList', () => {
       beforeEach(() => {
         actions.push({
           type: 'DATASET_LOADING',
+          meta: { fetched: 100 },
           payload: {
             datasets: {
               [TEAMS]: [],

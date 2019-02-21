@@ -10,9 +10,13 @@ export default state => {
     return null;
   }
 
+  // for consistency.
+  // new invitations are not pending org memberships anymore and wouldn't be included either way
   const withoutInvitations = Object.values(orgMemberships).filter(
     membership => !!get(membership, 'sys.user.firstName')
   );
 
+  // maps are in general easier and more performant to access
+  // could be cached, but number of org memberships is low
   return keyBy(withoutInvitations, 'sys.id');
 };

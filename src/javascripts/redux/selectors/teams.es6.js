@@ -1,4 +1,5 @@
-import { get, flow, sortBy, toLower, defaultTo } from 'lodash/fp';
+import { get, flow, toLower, defaultTo } from 'lodash/fp';
+import { sortBy } from 'lodash';
 import { getPath } from './location.es6';
 import { getDatasets } from './datasets.es6';
 import ROUTES from '../routes.es6';
@@ -15,21 +16,23 @@ export const getTeams = flow(
 // Guide about flows: https://contentful.atlassian.net/wiki/spaces/BH/pages/1279721792
 export const getTeamListWithOptimistic = state => {
   const persistedTeams = getTeams(state);
-  const teamListWithOptimistic = Object.values(persistedTeams).concat(
-    get(TEAMS, getOptimistic(state)) || []
-  );
+  const optimisticPlaceholders = get(TEAMS, getOptimistic(state)) || [];
+
+  const teamListWithOptimistic = Object.values(persistedTeams).concat(optimisticPlaceholders);
+  // sorts teams and placeholders by their name, ignoring capitalization
   return sortBy(
+    teamListWithOptimistic,
     flow(
       get('name'),
       toLower
-    ),
-    teamListWithOptimistic
+    )
   );
 };
 
 export const getCurrentTeam = flow(
   getPath,
-  ROUTES.organization.children.teams.children.team.test,
+  // returns object with parameters on direct or child match
+  ROUTES.organization.children.teams.children.team.partialTest,
   get('teamId')
 );
 

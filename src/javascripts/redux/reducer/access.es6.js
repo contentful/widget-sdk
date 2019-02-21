@@ -1,3 +1,5 @@
+// state for access denied / granted and related reason
+// currently only used in teams page
 export default (state = { allowed: true }, { type, payload }) => {
   switch (type) {
     case 'ACCESS_DENIED': {
