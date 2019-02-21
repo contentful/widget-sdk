@@ -15,7 +15,7 @@ export default class UsersWidgetContainer extends Component {
 
   componentDidMount() {
     this.props.emitter.on(SidebarEventTypes.UPDATED_USERS_WIDGET, this.onUpdateCollaborators);
-    this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.USERS_WIDGET);
+    this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.USERS);
   }
 
   componentWillUnmount() {
