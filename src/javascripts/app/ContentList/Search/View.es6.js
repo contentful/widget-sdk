@@ -77,18 +77,6 @@ function PillsWrapper({ searchBoxHasFocus, actions, children }) {
 function Wrapper({ actions, searchBoxHasFocus, children }) {
   const el = useRef(null);
 
-  useLayoutEffect(() => {
-    if (el.current) {
-      const parent = el.current;
-      const child = global.document.activeElement;
-      const hasFocus = parent !== child && parent.contains(child);
-
-      if (searchBoxHasFocus !== hasFocus) {
-        actions.SetBoxFocus(hasFocus);
-      }
-    }
-  });
-
   return (
     <div
       style={{
@@ -96,8 +84,25 @@ function Wrapper({ actions, searchBoxHasFocus, children }) {
         width: '100%',
         position: 'relative'
       }}
-      onClick={() => actions.SetBoxFocus(true)}
-      focusin={() => actions.SetBoxFocus(true)}
+      onFocus={() => {
+        if (!searchBoxHasFocus) {
+          actions.SetBoxFocus(true);
+        }
+      }}
+      onBlur={() => {
+        requestAnimationFrame(() => {
+          if (el.current) {
+            const parent = el.current;
+            const activeElement = global.document.activeElement;
+
+            const isChildFocused = parent !== activeElement && parent.contains(activeElement);
+
+            if (!isChildFocused) {
+              actions.SetBoxFocus(false);
+            }
+          }
+        });
+      }}
       ref={el}>
       {children}
     </div>
