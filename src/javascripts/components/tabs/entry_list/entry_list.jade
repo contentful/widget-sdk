@@ -1,4 +1,3 @@
-include ../advice.mixin.jade
 include ../pluralize_entity.mixin.jade
 include ../../shared/table_pattern.mixin.jade
 
@@ -155,7 +154,10 @@ header.workbench-header
 
     cf-search-results-paginator(paginator="paginator" pages="7" ng-show="hasPage()")
 
-    +no-search-results("hasNoSearchResults()")
+    react-component(
+      name="components/tabs/NoSearchResultsAdvice.es6"
+      ng-show="hasNoSearchResults()"
+    )
 
     .advice.advice--row-aligned(ng-show="isEmptyCollection()")
       .advice__frame.advice__frame--no-margin.advice__frame--align-left
