@@ -76,6 +76,8 @@ const hyperscript = node => {
     'utils/hyperscript',
     'ui/Framework/index',
     'ui/Framework',
+    // Scheduled for removal, see: #3983
+    'ui/Framework/Hooks/index',
     'utils/legacy-html-hyperscript',
     'utils/legacy-html-hyperscript/index'
   ];
