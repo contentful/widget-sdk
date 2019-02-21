@@ -132,7 +132,6 @@
     "babel-plugin-emotion": "10.0.7",
     "bluebird": "^3.0.5",
     "browserchannel": "1.2.0",
-    "browserify": "^13.1.0",
     "canonical-path": "0.0.2",
     "chalk": "2.4.1",
     "chokidar": "^1.4.3",
