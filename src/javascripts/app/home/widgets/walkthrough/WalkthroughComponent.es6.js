@@ -14,7 +14,8 @@ export default class WalkthroughComponent extends React.Component {
     runTour: PropTypes.func.isRequired,
     walkthroughStarted: PropTypes.bool, // from user state
     updateWalkthroughState: PropTypes.func.isRequired,
-    ReactJoyrideComponent: PropTypes.any
+    // ReactJoyrideComponent is third-party-component, loaded dynamically in WalkthroughWidget
+    ReactJoyrideComponent: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired
   };
 
   static defaultProps = { isTourRunning: false };
@@ -108,7 +109,7 @@ export default class WalkthroughComponent extends React.Component {
 
   render() {
     const { isTourRunning, ReactJoyrideComponent } = this.props;
-    return ReactJoyrideComponent ? (
+    return (
       <ReactJoyrideComponent
         continuous={true}
         disableOverlayClose={true}
@@ -127,6 +128,6 @@ export default class WalkthroughComponent extends React.Component {
           }
         }}
       />
-    ) : null;
+    );
   }
 }

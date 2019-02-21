@@ -30,13 +30,17 @@ export default class WalkthroughWidget extends React.Component {
   ReactJoyrideComponent;
 
   async componentDidMount() {
-    this.ReactJoyrideComponent = await getReactJoyride();
     try {
+      const [reactJoyrideComponent, userState] = await Promise.all([
+        getReactJoyride(),
+        fetchUserState(walkthroughKey)
+      ]);
+      this.ReactJoyrideComponent = reactJoyrideComponent;
       const {
         started,
         dismissed,
         sys: { version }
-      } = await fetchUserState(walkthroughKey);
+      } = userState;
       this.setState({
         started,
         dismissed,
@@ -118,14 +122,16 @@ export default class WalkthroughWidget extends React.Component {
       <Spinner size="large" extraClassNames="space-home-spinner" />
     ) : (
       <>
-        <WalkthroughComponent
-          spaceName={spaceName}
-          isTourRunning={isTourRunning}
-          runTour={this.runTour}
-          walkthroughStarted={started}
-          updateWalkthroughState={this.updateWalkthroughState}
-          ReactJoyrideComponent={this.ReactJoyrideComponent}
-        />
+        {this.ReactJoyrideComponent && (
+          <WalkthroughComponent
+            spaceName={spaceName}
+            isTourRunning={isTourRunning}
+            runTour={this.runTour}
+            walkthroughStarted={started}
+            updateWalkthroughState={this.updateWalkthroughState}
+            ReactJoyrideComponent={this.ReactJoyrideComponent}
+          />
+        )}
         {!started && !dismissed && (
           <div className="start-walkthrough">
             <Button onClick={this.startTour} testId="start-walkthrough-button">
