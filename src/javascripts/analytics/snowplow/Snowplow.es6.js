@@ -34,6 +34,7 @@ function initSnowplow() {
     platform: 'web',
     bufferSize: snowplowConfig.buffer_size,
     cookieDomain: domain,
+    stateStorageStrategy: 'cookie',
     contexts: {
       gaCookies: true
     }
