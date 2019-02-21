@@ -57,7 +57,7 @@ class ExtensionEditor extends React.Component {
   // TODO: use `getDerivedStateFromProps`
   entityToFreshState = entity => {
     const initial = cloneDeep(entity);
-    initial.extension.fieldTypes = initial.extension.fieldTypes.map(toInternalFieldType);
+    initial.extension.fieldTypes = (initial.extension.fieldTypes || []).map(toInternalFieldType);
     initial.parameters = WidgetParametersUtils.applyDefaultValues(
       get(initial, ['extension', 'parameters', 'installation']) || [],
       initial.parameters
