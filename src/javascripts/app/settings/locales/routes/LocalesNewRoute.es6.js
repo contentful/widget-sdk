@@ -40,15 +40,13 @@ class NewLocaleForm extends Component {
       })
       .then(locale => {
         this.props.setDirty(false);
-        this.setState({ savedLocale: locale, isSaving: false }, () => {
-          LocaleNotifications.saveSuccess();
-        });
+        LocaleNotifications.saveSuccess();
+        this.setState({ savedLocale: locale, isSaving: false });
       })
       .catch(err => {
         this.props.setDirty(true);
-        this.setState({ isSaving: false }, () => {
-          LocaleNotifications.saveError(err);
-        });
+        LocaleNotifications.saveError(err);
+        this.setState({ isSaving: false });
       });
   };
 

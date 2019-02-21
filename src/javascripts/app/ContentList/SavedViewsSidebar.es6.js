@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeCtor } from 'utils/TaggedValues.es6';
 import { assign } from 'utils/Collections.es6';
+import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import { forScopedViews as trackingForScopedViews } from 'analytics/events/SearchAndViews.es6';
 
 import { createStore, makeReducer, combineStoreComponents } from 'ui/Framework/Store.es6';
@@ -45,26 +46,13 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
     if (selected === value) {
       // Use `key` so tree is not reused between shared and private views:
       // it causes nasty DnD bugs
-      return <div key={value}>{component.view}</div>;
+      return (
+        <TabPanel id={value} key={value}>
+          {component.view}
+        </TabPanel>
+      );
     }
     return null;
-  };
-
-  // eslint-disable-next-line react/prop-types
-  const TabButton = ({ selector, value, label }) => {
-    return (
-      <li
-        aria-selected={`${selector.state === value}`}
-        role="tab"
-        style={{
-          fontSize: '14px',
-          fontWeight: 'normal',
-          color: selector.state === value ? colors.textDark : colors.textLight
-        }}
-        onClick={() => selector.actions.Select(value)}>
-        {label}
-      </li>
-    );
   };
 
   // eslint-disable-next-line react/prop-types
@@ -85,10 +73,24 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
             backgroundColor: colors.elementLightest,
             borderBottom: `1px solid ${colors.elementMid}`
           }}>
-          <ul className="workbench-nav__tabs">
-            <TabButton selector={selector} value={VIEWS_SHARED} label="Shared views" />
-            <TabButton selector={selector} value={VIEWS_PRIVATE} label="My views" />
-          </ul>
+          <Tabs role="tablist">
+            <Tab
+              id={VIEWS_SHARED}
+              selected={selector.state === VIEWS_SHARED}
+              onSelect={() => {
+                selector.actions.Select(VIEWS_SHARED);
+              }}>
+              Shared views
+            </Tab>
+            <Tab
+              id={VIEWS_PRIVATE}
+              selected={selector.state === VIEWS_PRIVATE}
+              onSelect={() => {
+                selector.actions.Select(VIEWS_PRIVATE);
+              }}>
+              My views
+            </Tab>
+          </Tabs>
         </div>
         <Views selected={selector.state} value={VIEWS_SHARED} component={sharedViews} />
         <Views selected={selector.state} value={VIEWS_PRIVATE} component={privateViews} />

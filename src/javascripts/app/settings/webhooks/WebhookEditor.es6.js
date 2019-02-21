@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { Button, Notification } from '@contentful/forma-36-react-components';
+import { Button, Notification, Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import WebhookForm from './WebhookForm.es6';
 import WebhookSidebar from './WebhookSidebar.es6';
@@ -157,34 +157,38 @@ class WebhookEditor extends React.Component {
           </Workbench.Header>
           {!fresh && (
             <Workbench.Nav>
-              <ul className="workbench-nav__tabs">
-                <li
-                  role="tab"
-                  aria-selected={tab === TABS.SETTINGS}
-                  onClick={() => this.setState({ tab: TABS.SETTINGS })}>
+              <Tabs role="tablist" extraClassNames="f36-margin-left--xl">
+                <Tab
+                  id="webhook_settings"
+                  selected={tab === TABS.SETTINGS}
+                  onSelect={() => this.setState({ tab: TABS.SETTINGS })}>
                   Webhook settings
-                </li>
-                <li
-                  role="tab"
-                  aria-selected={tab === TABS.LOG}
-                  onClick={() => this.setState({ tab: TABS.LOG })}>
+                </Tab>
+                <Tab
+                  id="webhook_activity_log"
+                  selected={tab === TABS.LOG}
+                  onSelect={() => this.setState({ tab: TABS.LOG })}>
                   Activity log
-                </li>
-              </ul>
+                </Tab>
+              </Tabs>
             </Workbench.Nav>
           )}
           {tab === TABS.SETTINGS && (
             <Workbench.Content>
-              <WebhookForm webhook={webhook} onChange={this.onChange} />
+              <TabPanel id="webhook_settings">
+                <WebhookForm webhook={webhook} onChange={this.onChange} />
+              </TabPanel>
             </Workbench.Content>
           )}
           {tab === TABS.LOG && (
             <Workbench.Content>
-              <WebhookActivityLog
-                webhookId={webhook.sys.id}
-                webhookRepo={spaceContext.webhookRepo}
-                registerLogRefreshAction={refreshLog => this.setState({ refreshLog })}
-              />
+              <TabPanel id="webhook_activity_log">
+                <WebhookActivityLog
+                  webhookId={webhook.sys.id}
+                  webhookRepo={spaceContext.webhookRepo}
+                  registerLogRefreshAction={refreshLog => this.setState({ refreshLog })}
+                />
+              </TabPanel>
             </Workbench.Content>
           )}
           {tab === TABS.SETTINGS && (
