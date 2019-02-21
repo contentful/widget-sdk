@@ -6,6 +6,7 @@ import { track } from 'analytics/Analytics.es6';
 import { Button, IconButton, Subheading } from '@contentful/forma-36-react-components';
 
 const $state = getModule('$state');
+const trackingGroupId = 'author_editor_continuous_onboarding';
 
 // Props for this component come from ReactJoyride
 // Docs on ReactJoyride's castom tooltip components:
@@ -30,10 +31,9 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
           onClick={e => {
             closeProps.onClick(e);
             track('element:click', {
-              elementId: `close_walkthrough_step_button`,
-              groupId: 'author_editor_continuous_onboarding',
-              fromState: $state.current.name,
-              step: snakeCase(step.title)
+              elementId: `close_walkthrough_step_${snakeCase(step.title)}`,
+              groupId: trackingGroupId,
+              fromState: $state.current.name
             });
           }}
           testId="close-walkthrough-tooltip-button"
@@ -48,10 +48,9 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
           onClick={e => {
             primaryProps.onClick(e);
             track('element:click', {
-              elementId: `next_walkthrough_step_button`,
-              groupId: 'author_editor_continuous_onboarding',
-              fromState: $state.current.name,
-              step: snakeCase(step.title)
+              elementId: `finish_walkthrough_step_${snakeCase(step.title)}`,
+              groupId: trackingGroupId,
+              fromState: $state.current.name
             });
           }}
           testId="next-step-walkthrough-tooltip-button">
