@@ -8,8 +8,7 @@ import {
   TableCell,
   TableBody,
   TableRow,
-  Button,
-  Tooltip
+  Button
 } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder.es6';
 import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
@@ -38,36 +37,19 @@ const isPlaceholder = ({ sys: { id } }) => id === 'placeholder';
 
 class TeamMemberships extends React.Component {
   static propTypes = {
+    showingForm: PropTypes.bool.isRequired,
+    onFormDismissed: PropTypes.func.isRequired,
     readOnlyPermission: PropTypes.bool,
     memberships: PropTypes.arrayOf(TeamMembershipPropType),
     teamName: PropTypes.string
   };
 
-  state = {
-    showingForm: false
-  };
-
   render() {
-    const { memberships, teamName, readOnlyPermission } = this.props;
-    const { showingForm } = this.state;
+    const { showingForm, onFormDismissed, memberships, teamName, readOnlyPermission } = this.props;
     const empty = memberships.length === 0 && !showingForm;
 
     return (
       <React.Fragment>
-        {/* TODO: move these styles to a CSS class  */}
-        <header
-          style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-          <h3 style={{ marginBottom: 30 }}>Team Members</h3>
-          {!showingForm &&
-            !empty &&
-            (readOnlyPermission ? (
-              <Tooltip place="left" content="You don't have permission to add new team members">
-                <AddTeamMemberButton disabled />
-              </Tooltip>
-            ) : (
-              <AddTeamMemberButton onClick={() => this.setState({ showingForm: true })} />
-            ))}
-        </header>
         {!empty && (
           <Table data-test-id="member-table">
             <TableHead>
@@ -83,9 +65,7 @@ class TeamMemberships extends React.Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {showingForm && (
-                <TeamMembershipForm onClose={() => this.setState({ showingForm: false })} />
-              )}
+              {showingForm && <TeamMembershipForm onClose={onFormDismissed} />}
               {memberships.map((membership, index) =>
                 isPlaceholder(membership) ? (
                   <TeamMembershipRowPlaceholder key={index} />

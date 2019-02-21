@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
-import { Button, Tooltip } from '@contentful/forma-36-react-components';
-
+import { Button, Tooltip, Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { getTeams, getCurrentTeam, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
@@ -14,6 +15,7 @@ import Icon from 'ui/Components/Icon.es6';
 import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
 
 import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
+import TeamSpaceMemberships from './TeamSpaceMemberships/TeamSpaceMemberships.es6';
 import TeamDialog from './TeamDialog.es6';
 import ROUTES from 'redux/routes.es6';
 
@@ -41,6 +43,15 @@ const DeleteButton = ({ onClick }) => (
 );
 DeleteButton.propTypes = { onClick: PropTypes.func };
 
+const styles = {
+  tabs: css({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    marginBottom: tokens.spacingL
+  })
+};
+
 class TeamDetails extends React.Component {
   static propTypes = {
     readOnlyPermission: PropTypes.bool.isRequired,
@@ -49,9 +60,34 @@ class TeamDetails extends React.Component {
     removeTeam: PropTypes.func.isRequired
   };
 
-  state = {
-    showTeamDialog: false
+  tabs = {
+    teamMembers: {
+      label: 'Team members',
+      component: TeamMemberships,
+      actionLabel: 'Add a team member'
+    },
+    spaceMemberships: {
+      label: 'Space memberships',
+      component: TeamSpaceMemberships,
+      actionLabel: 'Add to space'
+    }
   };
+
+  state = {
+    showTeamDialog: false,
+    selectedTab: this.tabs.teamMembers,
+    showingForm: false
+  };
+
+  isSelected(id) {
+    return this.state.selectedTab === this.tabs[id];
+  }
+
+  selectTab(id) {
+    this.setState({ selectedTab: this.tabs[id] });
+  }
+
+  triggerTabAction() {}
 
   render() {
     const { team, removeTeam, readOnlyPermission, orgId } = this.props;
@@ -131,7 +167,37 @@ class TeamDetails extends React.Component {
                 )}
               </div>
               <div className="user-details__content">
-                <TeamMemberships />
+                <header className={styles.tabs}>
+                  <Tabs role="tablist">
+                    {Object.entries(this.tabs).map(([id, { label }]) => (
+                      <Tab
+                        key={id}
+                        id={id}
+                        selected={this.isSelected(id)}
+                        onSelect={() => this.selectTab(id)}>
+                        {label}
+                      </Tab>
+                    ))}
+                  </Tabs>
+                  <Button
+                    testId="add-membership-button"
+                    size="small"
+                    buttonType="primary"
+                    onClick={() => this.setState({ showingForm: true })}>
+                    {this.state.selectedTab.actionLabel}
+                  </Button>
+                </header>
+
+                {Object.entries(this.tabs).map(([id, { component: Component }]) =>
+                  this.isSelected(id) ? (
+                    <TabPanel key={id} id={id}>
+                      <Component
+                        showingForm={this.state.showingForm}
+                        onFormDismissed={() => this.setState({ showingForm: false })}
+                      />
+                    </TabPanel>
+                  ) : null
+                )}
               </div>
             </div>
           )}
