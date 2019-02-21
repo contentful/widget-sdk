@@ -39,8 +39,6 @@ export class IDPSetupForm extends React.Component {
     connectionTest: PropTypes.object,
     connectionTestStart: PropTypes.func.isRequired,
     connectionTestCancel: PropTypes.func.isRequired,
-    connectionTestResult: PropTypes.func.isRequired,
-    connectionTestEnd: PropTypes.func.isRequired,
     enable: PropTypes.func.isRequired
   };
 
@@ -73,91 +71,18 @@ export class IDPSetupForm extends React.Component {
       connectionTestStart
     } = this.props;
 
-    const testConnectionUrl = authUrl(`/sso/${orgId}/test_connection`);
-
-    // Open the new window and check if it's closed every 250ms
-    const newWindow = window.open(testConnectionUrl, '', 'toolbar=0,status=0,width=650,height=800');
-    const testConnectionTimer = window.setInterval(this.checkTestConnectionWindow(newWindow), 250);
-
-    // Listen for an event from the window
-    window.addEventListener('message', this.messageHandler);
-
-    this.setState({
-      testConnectionTimer,
-      newWindow,
-      messageHandled: false
-    });
-
-    connectionTestStart();
+    connectionTestStart({ orgId });
   };
 
-  messageHandler = ({ data }) => {
-    this.setState({
-      messageHandled: true
-    });
-
-    this.handleTestResultFromPopup(data);
-  };
-
-  handleTestResultFromPopup = data => {
+  cancelConnectionTest = () => {
     const {
       organization: {
         sys: { id: orgId }
       },
-      connectionTestResult,
-      connectionTestEnd
+      connectionTestCancel
     } = this.props;
 
-    if (data.testConnectionAt) {
-      // The status of the connection test is updated in GK
-      // Update the result directly in the store
-      connectionTestResult({ data });
-    } else {
-      // The user clicked on the button, but somehow it never updated in GK
-      // Treat it as if the user closed the popup and attempt to reload
-      // the data
-      connectionTestEnd({ orgId });
-    }
-  };
-
-  cancelConnectionTest = () => {
-    const { connectionTestCancel } = this.props;
-
-    this.state.newWindow.close();
-
-    window.clearInterval(this.state.testConnectionTimer);
-    window.removeEventListener('message', this.messageHandler);
-
-    this.setState({
-      testConnectionTimer: undefined,
-      newWindow: undefined
-    });
-
-    connectionTestCancel();
-  };
-
-  checkTestConnectionWindow = win => {
-    return () => {
-      const {
-        organization: {
-          sys: { id: orgId }
-        },
-        connectionTestEnd
-      } = this.props;
-
-      // Do not run the `end` action creator if:
-      //
-      // 1. The window isn't closed yet
-      // 2. The window isn't available in the component state (it was canceled)
-      // 3. The message was handled via `#messageHandler`
-      if (!win.closed || !this.state.newWindow || this.state.messageHandled) {
-        return;
-      }
-
-      window.clearInterval(this.state.testConnectionTimer);
-
-      connectionTestEnd({ orgId });
-    };
+    connectionTestCancel({ orgId });
   };
 
   confirmEnable = async () => {
@@ -513,8 +438,6 @@ export default connect(
     updateFieldValue: ssoActionCreators.updateFieldValue,
     connectionTestStart: ssoActionCreators.connectionTestStart,
     connectionTestCancel: ssoActionCreators.connectionTestCancel,
-    connectionTestResult: ssoActionCreators.connectionTestResult,
-    connectionTestEnd: ssoActionCreators.connectionTestEnd,
     enable: ssoActionCreators.enable
   }
 )(IDPSetupForm);

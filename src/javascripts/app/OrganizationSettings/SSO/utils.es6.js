@@ -10,15 +10,6 @@ export function validate(fieldName, value) {
   return Boolean(validators[fieldName](value));
 }
 
-export function connectionTestResultFromIdp(idp) {
-  return {
-    testConnectionResult: _.get(idp, 'testConnectionResult', null),
-    testConnectionError: _.get(idp, 'testConnectionErrors', null),
-    testConnectionAt: _.get(idp, 'testConnectionAt', null),
-    version: _.get(idp, ['sys', 'version'], null)
-  };
-}
-
 export function connectionTestingAllowed(fields, connectionTest) {
   // Do not allow testing the connection if any of the conditions are true:
   //

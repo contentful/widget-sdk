@@ -107,9 +107,13 @@ export function ssoFieldValidationFailure(fieldName, error) {
 }
 
 export const SSO_CONNECTION_TEST_START = 'SSO_CONNECTION_TEST/START';
-export function ssoConnectionTestStart() {
+export function ssoConnectionTestStart(testWindow, timer) {
   return {
-    type: SSO_CONNECTION_TEST_START
+    type: SSO_CONNECTION_TEST_START,
+    payload: {
+      testWindow,
+      timer
+    }
   };
 }
 
@@ -117,14 +121,6 @@ export const SSO_CONNECTION_TEST_END = 'SSO_CONNECTION_TEST/END';
 export function ssoConnectionTestEnd() {
   return {
     type: SSO_CONNECTION_TEST_END
-  };
-}
-
-export const SSO_CONNECTION_TEST_RESULT = 'SSO_CONNECTION_TEST/RESULT';
-export function ssoConnectionTestResult(data) {
-  return {
-    type: SSO_CONNECTION_TEST_RESULT,
-    payload: data
   };
 }
 

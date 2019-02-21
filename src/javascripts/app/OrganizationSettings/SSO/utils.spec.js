@@ -22,65 +22,6 @@ describe('SSO utils', () => {
     });
   });
 
-  describe('#connectionTestResultFromIdp', () => {
-    const baseResult = {
-      testConnectionResult: null,
-      testConnectionError: null,
-      testConnectionAt: null,
-      version: null
-    };
-
-    it('should map the connection test result', () => {
-      const idp = {
-        testConnectionResult: 'yay!'
-      };
-
-      expect(utils.connectionTestResultFromIdp(idp)).toEqual(
-        Object.assign({}, baseResult, {
-          testConnectionResult: 'yay!'
-        })
-      );
-    });
-
-    it('should map the connection test timestamp', () => {
-      const idp = {
-        testConnectionAt: 'some timestamp'
-      };
-
-      expect(utils.connectionTestResultFromIdp(idp)).toEqual(
-        Object.assign({}, baseResult, {
-          testConnectionAt: 'some timestamp'
-        })
-      );
-    });
-
-    it('should map the connection test errors', () => {
-      const idp = {
-        testConnectionErrors: ['some error', 'another error']
-      };
-
-      expect(utils.connectionTestResultFromIdp(idp)).toEqual(
-        Object.assign({}, baseResult, {
-          testConnectionError: ['some error', 'another error']
-        })
-      );
-    });
-
-    it('should map the connection test model version', () => {
-      const idp = {
-        sys: {
-          version: '12'
-        }
-      };
-
-      expect(utils.connectionTestResultFromIdp(idp)).toEqual(
-        Object.assign({}, baseResult, {
-          version: '12'
-        })
-      );
-    });
-  });
-
   describe('#connectionTestingAllowed', () => {
     let fields;
     let connectionTest;

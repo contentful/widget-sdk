@@ -32,3 +32,11 @@ export function getIdentityProviderVersion(state) {
 export function getConnectionTest(state) {
   return get(state, ['sso', 'connectionTest'], {});
 }
+
+export function getConnectionTestWindow(state) {
+  return get(getConnectionTest(state), ['testWindow'], null);
+}
+
+export function getConnectionTestIntervalTimer(state) {
+  return get(getConnectionTest(state), ['timer'], null);
+}

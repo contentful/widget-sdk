@@ -59,6 +59,7 @@ function dispatchWrapper(dispatched) {
  */
 export default function createMockStore() {
   const dispatched = [];
+  const stubbed = [];
 
   /*
     Reducer that encapsulates state setting logic.
@@ -85,6 +86,11 @@ export default function createMockStore() {
 
     dispatched.push(dispatchWrapper(thunkOrAction));
 
+    if (_.isFunction(thunkOrAction) && stubbed.includes(thunkOrAction.name)) {
+      // Don't do anything, this thunk is stubbed
+      return;
+    }
+
     return next(thunkOrAction);
   };
 
@@ -109,6 +115,9 @@ export default function createMockStore() {
     getActions: () => dispatched.filter(d => d.isAction()).map(d => d.actionValue()),
 
     // Gets all dispatched types (thunk or action)
-    getDispatched: () => [].concat(dispatched)
+    getDispatched: () => [].concat(dispatched),
+
+    // Explicitly stubs a dispatch and does not call it when fired
+    stubDispatch: name => stubbed.push(name)
   };
 }

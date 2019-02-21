@@ -2,7 +2,6 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import { IDPSetupForm } from './IDPSetupForm.es6';
 import { TEST_RESULTS } from './constants.es6';
-import { authUrl } from 'Config.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 import { connectionTestingAllowed } from './utils.es6';
@@ -28,8 +27,6 @@ describe('IDPSetupForm', () => {
     validateField = () => {},
     connectionTestStart = () => {},
     connectionTestCancel = () => {},
-    connectionTestResult = () => {},
-    connectionTestEnd = () => {},
     enable = () => {},
     connectionTest = {},
     fields = {
@@ -49,8 +46,6 @@ describe('IDPSetupForm', () => {
         connectionTest={connectionTest}
         connectionTestStart={connectionTestStart}
         connectionTestCancel={connectionTestCancel}
-        connectionTestResult={connectionTestResult}
-        connectionTestEnd={connectionTestEnd}
         enable={enable}
       />
     );
@@ -167,6 +162,21 @@ describe('IDPSetupForm', () => {
     expect(testConnectionButton.prop('disabled')).toBe(false);
   });
 
+  it('should call the connectionTestStart prop if the test connection button is clicked', () => {
+    connectionTestingAllowed.mockReturnValueOnce(true);
+
+    const connectionTestStart = jest.fn();
+
+    const rendered = render({ identityProvider, organization, connectionTestStart });
+
+    rendered
+      .find('[testId="test-connection-button"]')
+      .first()
+      .simulate('click');
+
+    expect(connectionTestStart).toHaveBeenCalledTimes(1);
+  });
+
   it('should show a cancel button if the connection test is pending', () => {
     const connectionTest = {
       isPending: true
@@ -175,6 +185,28 @@ describe('IDPSetupForm', () => {
     const rendered = render({ identityProvider, organization, connectionTest });
 
     expect(rendered.find('[testId="cancel-button"]')).toHaveLength(1);
+  });
+
+  it('should call the connectionTestCancel prop if the test cancel button is clicked', () => {
+    const connectionTest = {
+      isPending: true
+    };
+
+    const connectionTestCancel = jest.fn();
+
+    const rendered = render({
+      identityProvider,
+      organization,
+      connectionTest,
+      connectionTestCancel
+    });
+
+    rendered
+      .find('[testId="cancel-button"]')
+      .first()
+      .simulate('click');
+
+    expect(connectionTestCancel).toHaveBeenCalledTimes(1);
   });
 
   it('should show the unknown note if the result is unknown', () => {
@@ -242,11 +274,14 @@ describe('IDPSetupForm', () => {
     const enable = jest.fn();
     const connectionTest = {
       result: TEST_RESULTS.success
-    }
+    };
 
     const rendered = render({ identityProvider, organization, connectionTest, enable });
 
-    rendered.find('[testId="enable-button"]').first().simulate('click');
+    rendered
+      .find('[testId="enable-button"]')
+      .first()
+      .simulate('click');
 
     await awaitSetImmediate();
 
@@ -259,185 +294,18 @@ describe('IDPSetupForm', () => {
     const enable = jest.fn();
     const connectionTest = {
       result: TEST_RESULTS.success
-    }
+    };
 
     const rendered = render({ identityProvider, organization, connectionTest, enable });
 
-    rendered.find('[testId="enable-button"]').first().simulate('click');
+    rendered
+      .find('[testId="enable-button"]')
+      .first()
+      .simulate('click');
 
     await awaitSetImmediate();
 
     expect(enable).toHaveBeenCalledTimes(1);
     expect(enable).toHaveBeenNthCalledWith(1, { orgId: organization.sys.id });
-  });
-
-  describe('connection testing flow', () => {
-    let rendered;
-    let testButton;
-    let connectionTestStart;
-    let connectionTestResult;
-    let connectionTestEnd;
-    let connectionTestCancel;
-    let connectionTest;
-    let win;
-    let timer;
-
-    beforeEach(() => {
-      win = {
-        close: jest.fn()
-      };
-      timer = '123';
-      globalMocks.open.mockReturnValueOnce(win);
-      globalMocks.setInterval.mockReturnValueOnce(timer);
-
-      connectionTest = {
-        isPending: true
-      };
-
-      connectionTestStart = jest.fn();
-      connectionTestResult = jest.fn();
-      connectionTestEnd = jest.fn();
-      connectionTestCancel = jest.fn();
-
-      connectionTestingAllowed.mockReturnValueOnce(true);
-      rendered = render({
-        identityProvider,
-        organization,
-        connectionTest,
-        connectionTestStart,
-        connectionTestResult,
-        connectionTestEnd,
-        connectionTestCancel
-      });
-
-      testButton = rendered.find('[testId="test-connection-button"]').first();
-    });
-
-    describe('starting the test', () => {
-      beforeEach(() => {
-        globalMocks.setInterval.mockReturnValueOnce(timer);
-
-        testButton.simulate('click');
-      });
-
-      it('should open a new window to the sso url when the button is clicked', () => {
-        expect(globalMocks.open).toBeCalledTimes(1);
-        expect(globalMocks.open).toHaveBeenNthCalledWith(
-          1,
-          authUrl(`/sso/${organization.sys.id}/test_connection`),
-          expect.any(String),
-          expect.any(String)
-        );
-      });
-
-      it('should start an interval to check the window every 250ms', () => {
-        expect(globalMocks.setInterval).toBeCalledTimes(1);
-        expect(globalMocks.setInterval).toHaveBeenNthCalledWith(1, expect.any(Function), 250);
-      });
-
-      it('should set up a message event listener', () => {
-        expect(globalMocks.addEventListener).toHaveBeenCalledTimes(1);
-        expect(globalMocks.addEventListener).toHaveBeenNthCalledWith(
-          1,
-          'message',
-          expect.any(Function)
-        );
-      });
-
-      it('should should set the component state with the new window, timer id, and reset messageHandled', () => {
-        expect(rendered.state('testConnectionTimer')).toBe(timer);
-        expect(rendered.state('newWindow')).toBe(win);
-        expect(rendered.state('messageHandled')).toBe(false);
-      });
-
-      it('should fire the connectionTestStart action', () => {
-        expect(connectionTestStart).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    describe('message fired from new window', () => {
-      let data;
-
-      beforeEach(() => {
-        data = {
-          testConnectionAt: null
-        };
-
-        testButton.simulate('click');
-      });
-
-      it('should mark the message as handled in the state', () => {
-        global.dispatchEvent(new MessageEvent('message', { data }));
-        expect(rendered.state('messageHandled')).toBe(true);
-      });
-
-      it('should fire connectionTestResult if the data contains a timestamp', () => {
-        data.testConnectionAt = 'timestamp';
-        global.dispatchEvent(new MessageEvent('message', { data }));
-
-        expect(connectionTestResult).toHaveBeenCalledTimes(1);
-      });
-
-      it('should fire connectionTestEnd if the data does not contain a timestamp', () => {
-        global.dispatchEvent(new MessageEvent('message', { data }));
-        expect(connectionTestEnd).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    describe('new window closed unexpectedly', () => {
-      beforeEach(async () => {
-        global.setInterval.mockRestore();
-
-        testButton.simulate('click');
-        win.closed = true;
-
-        await new Promise(resolve => setTimeout(resolve, 250));
-      });
-
-      it('should clear the timer that checks the window', () => {
-        expect(globalMocks.clearInterval).toHaveBeenCalledTimes(1);
-      });
-
-      it('should fire the testConnectionEnd action', () => {
-        expect(connectionTestEnd).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    describe('test is canceled', () => {
-      beforeEach(() => {
-        testButton.simulate('click');
-        rendered
-          .find('[testId="cancel-button"]')
-          .first()
-          .simulate('click');
-      });
-
-      it('should close the new window', () => {
-        expect(win.close).toHaveBeenCalledTimes(1);
-      });
-
-      it('should clear the timer that checks the window', () => {
-        expect(globalMocks.clearInterval).toHaveBeenCalledTimes(1);
-        expect(globalMocks.clearInterval).toHaveBeenNthCalledWith(1, timer);
-      });
-
-      it('should remove the event listener for message', () => {
-        expect(globalMocks.removeEventListener).toHaveBeenCalledTimes(1);
-        expect(globalMocks.removeEventListener).toHaveBeenNthCalledWith(
-          1,
-          'message',
-          expect.any(Function)
-        );
-      });
-
-      it('should unset the window and timer in the state', () => {
-        expect(rendered.state('newWindow')).toBeUndefined();
-        expect(rendered.state('testConnectionTimer')).toBeUndefined();
-      });
-
-      it('should fire the connectionTestCancel action', () => {
-        expect(connectionTestCancel).toHaveBeenCalledTimes(1);
-      });
-    });
   });
 });

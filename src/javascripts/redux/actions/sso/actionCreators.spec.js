@@ -3,7 +3,6 @@ import * as actionCreators from './actionCreators.es6';
 import * as actions from './actions.es6';
 import createMockStore from 'redux/utils/createMockStore.es6';
 import { mockEndpoint } from 'data/EndpointFactory.es6';
-import { TEST_RESULTS } from 'app/OrganizationSettings/SSO/constants.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 
 describe('SSO Redux actionCreators', () => {
@@ -60,33 +59,6 @@ describe('SSO Redux actionCreators', () => {
           }
         ]);
       });
-    });
-
-    it('should dispatch the connectionTestResult thunk only if a connection test timestamp is present', async () => {
-      const identityProvider = {
-        testConnectionAt: '2019-02-11T16:35:35Z',
-        sys: {
-          version: 1
-        }
-      };
-
-      // With testConnectionAt
-      mockStore = createMockStore();
-
-      mockEndpoint.mockResolvedValueOnce(identityProvider);
-
-      await mockStore.dispatch(actionCreators.retrieveIdp({ orgId: '1234' }));
-
-      expect(mockStore.getDispatched()[3].thunkName()).toBe('connectionTestResult');
-
-      // Without testConnectionAt
-      mockStore = createMockStore();
-
-      mockEndpoint.mockResolvedValueOnce({});
-
-      await mockStore.dispatch(actionCreators.retrieveIdp({ orgId: '1234' }));
-
-      expect(mockStore.getDispatched()[3]).toBeUndefined();
     });
   });
 
@@ -342,31 +314,6 @@ describe('SSO Redux actionCreators', () => {
         ])
       );
     });
-
-    it('should dispatch the connectionTestResult thunk if the field update was successful', async () => {
-      const identityProvider = {
-        ssoName: 'something-1234'
-      };
-
-      mockEndpoint.mockResolvedValueOnce(identityProvider);
-
-      const fieldName = 'idpSsoTargetUrl';
-      const value = 'https://example.com';
-
-      await mockStore.dispatch(
-        actionCreators.updateFieldValue({
-          orgId: '1234',
-          fieldName,
-          value
-        })
-      );
-
-      const connectionTestResultDispatch = mockStore
-        .getDispatched()
-        .filter(d => d.thunkName() === 'connectionTestResult')[0];
-
-      expect(connectionTestResultDispatch).toBeDefined();
-    });
   });
 
   describe('validateField', () => {
@@ -507,60 +454,137 @@ describe('SSO Redux actionCreators', () => {
   });
 
   describe('connectionTestStart', () => {
-    it('should just dispatch the ssoTestConnectionStart action', () => {
-      mockStore.dispatch(actionCreators.connectionTestStart());
+    const globalMocks = {};
+
+    beforeEach(() => {
+      globalMocks.open = jest.spyOn(global, 'open').mockReturnValue('window');
+      globalMocks.setInterval = jest.spyOn(global, 'setInterval').mockReturnValue(12);
+    });
+
+    afterEach(() => {
+      globalMocks.open.mockRestore();
+      globalMocks.setInterval.mockRestore();
+    });
+
+    it('should open a new window and set a timer', () => {
+      mockStore.dispatch(actionCreators.connectionTestStart({ orgId: 'org_1234' }));
+      expect(globalMocks.open).toHaveBeenCalledTimes(1);
+      expect(globalMocks.open).toHaveBeenNthCalledWith(
+        1,
+        expect.stringContaining('/sso/org_1234/test_connection'),
+        expect.any(String),
+        expect.any(String)
+      );
+
+      expect(globalMocks.setInterval).toHaveBeenCalledTimes(1);
+      expect(globalMocks.setInterval).toHaveBeenNthCalledWith(1, expect.any(Function), 250);
+    });
+
+    it('should dispatch the ssoConnectionTestStart action', () => {
+      mockStore.dispatch(actionCreators.connectionTestStart({ orgId: 'org_1234' }));
 
       expect(mockStore.getActions()).toEqual([
         {
-          type: actions.SSO_CONNECTION_TEST_START
+          type: actions.SSO_CONNECTION_TEST_START,
+          payload: {
+            testWindow: 'window',
+            timer: 12
+          }
         }
       ]);
     });
   });
 
   describe('connectionTestCancel', () => {
-    it('should just dispatch the ssoTestConnectionEnd action', () => {
-      mockStore.dispatch(actionCreators.connectionTestCancel());
+    let mockWindow;
 
-      expect(mockStore.getActions()).toEqual([
-        {
-          type: actions.SSO_CONNECTION_TEST_END
-        }
-      ]);
-    });
-  });
-
-  describe('connectionTestResult', () => {
-    it('should dispatch the ssoConnectionTestResult action', () => {
-      const data = {
-        testConnectionAt: 'timestamp',
-        testConnectionResult: TEST_RESULTS.success,
-        testConnectionError: null,
-        version: 8
+    beforeEach(() => {
+      mockWindow = {
+        close: jest.fn()
       };
 
-      mockStore.dispatch(actionCreators.connectionTestResult({ data }));
-
-      expect(mockStore.getActions()).toEqual([
-        {
-          type: actions.SSO_CONNECTION_TEST_RESULT,
-          payload: data
+      mockStore.setState({
+        sso: {
+          connectionTest: {
+            testWindow: mockWindow
+          }
         }
-      ]);
+      });
+
+      mockStore.stubDispatch('cleanupConnectionTest');
+    });
+
+    it('should close the new window', () => {
+      mockStore.dispatch(actionCreators.connectionTestCancel({ orgId: 'org_1234' }));
+
+      expect(mockWindow.close).toHaveBeenCalledTimes(1);
+    });
+
+    it('should dispatch the cleanupConnectionTest thunk', () => {
+      mockStore.dispatch(actionCreators.connectionTestCancel({ orgId: 'org_1234' }));
+
+      expect(mockStore.getDispatched()[1].thunkName()).toBe('cleanupConnectionTest');
     });
   });
 
-  describe('connectionTestEnd', () => {
-    it('should dispatch the retrieveIdp thunk and then ssoConnectionTestEnd action', async () => {
-      // retrieveIdp makes this async call
-      const identityProvider = {};
+  describe('checkTestWindow', () => {
+    beforeEach(() => {
+      mockStore.stubDispatch('cleanupConnectionTest');
+    });
 
-      mockEndpoint.mockResolvedValueOnce(identityProvider);
+    it('should dispatch nothing if the new window is not closed', () => {
+      mockStore.setState({
+        sso: {
+          connectionTest: {
+            testWindow: {
+              closed: false
+            }
+          }
+        }
+      });
 
-      await mockStore.dispatch(actionCreators.connectionTestEnd({ orgId: 'org_1234' }));
+      mockStore.dispatch(actionCreators.checkTestWindow({ orgId: 'org_1234' }));
+
+      expect(mockStore.getDispatched()).toHaveLength(1);
+    });
+
+    it('should dispatch the cleanupConnectionTest thunk if the new window is closed', () => {
+      mockStore.setState({
+        sso: {
+          connectionTest: {
+            testWindow: {
+              closed: true
+            }
+          }
+        }
+      });
+
+      mockStore.dispatch(actionCreators.checkTestWindow({ orgId: 'org_1234' }));
+
+      expect(mockStore.getDispatched()[1].thunkName()).toBe('cleanupConnectionTest');
+    });
+  });
+
+  describe('cleanupConnectionTest', () => {
+    beforeEach(() => {
+      mockStore.stubDispatch('retrieveIdp');
+    });
+
+    it('should clear the timer', () => {
+      const spy = jest.spyOn(global, 'clearInterval');
+
+      mockStore.dispatch(actionCreators.cleanupConnectionTest({ orgId: 'org_1234' }));
+
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      spy.mockRestore();
+    });
+
+    it('should dispatch the retrieveIdp thunk and then the ssoConnectionTestEnd action', async () => {
+      await mockStore.dispatch(actionCreators.cleanupConnectionTest({ orgId: 'org_1234' }));
 
       expect(mockStore.getDispatched()[1].thunkName()).toBe('retrieveIdp');
-      expect(_.last(mockStore.getActions())).toEqual({
+      expect(mockStore.getDispatched()[2].actionValue()).toEqual({
         type: actions.SSO_CONNECTION_TEST_END
       });
     });
