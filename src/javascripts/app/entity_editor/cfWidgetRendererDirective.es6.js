@@ -2,10 +2,6 @@ import { registerDirective } from 'NgRegistry.es6';
 import $ from 'jquery';
 import createBridge from 'widgets/bridges/EditorExtensionBridge.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
-import {
-  createLinksRenderedEvent,
-  createWidgetLinkRenderEventsHandler
-} from './LoadEventTracker.es6';
 
 export default function register() {
   /**
@@ -28,6 +24,7 @@ export default function register() {
     'entityCreator',
     'states/Navigator.es6',
     'navigation/SlideInNavigator',
+    'app/entity_editor/LoadEventTracker.es6',
     (
       $compile,
       $rootScope,
@@ -36,7 +33,8 @@ export default function register() {
       entitySelector,
       entityCreator,
       Navigator,
-      SlideInNavigator
+      SlideInNavigator,
+      LoadEventTracker
     ) => {
       return {
         scope: true,
@@ -50,6 +48,10 @@ export default function register() {
             widget: { problem, widgetNamespace, template, descriptor, parameters }
           } = scope;
 
+          const {
+            createLinksRenderedEvent,
+            createWidgetLinkRenderEventsHandler
+          } = LoadEventTracker;
           const trackLinksRendered = createLinksRenderedEvent(loadEvents);
           const handleWidgetLinkRenderEvents = createWidgetLinkRenderEventsHandler({
             widget,

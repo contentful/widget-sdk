@@ -12,6 +12,7 @@ import { ClipboardCopyTransform, BoilerplateTransform } from './transformers/Api
 import AppOpen from './transformers/AppOpen.es6';
 import BulkEditor from './transformers/BulkEditor.es6';
 import SlideInEditor from './transformers/SlideInEditor.es6';
+import EditorLoad from './transformers/EditorLoad.es6';
 import Snapshot from './transformers/Snapshot.es6';
 import InviteUserExperiment from './transformers/InviteUserExperiment.es6';
 import SearchAndViews from './transformers/SearchAndViews.es6';
@@ -90,10 +91,11 @@ registerSlideInEditorEvent('slide_in_editor:bulk_editor_close');
 registerSlideInEditorEvent('slide_in_editor:open');
 registerSlideInEditorEvent('slide_in_editor:open_create');
 registerSlideInEditorEvent('slide_in_editor:delete');
-registerSlideInEditorEvent('slide_in_editor:load_init');
-registerSlideInEditorEvent('slide_in_editor:load_sharejs_connected');
-registerSlideInEditorEvent('slide_in_editor:load_links_resolved');
-registerSlideInEditorEvent('slide_in_editor:load_fully_interactive');
+
+registerEditorLoadEvent('editor_load:init');
+registerEditorLoadEvent('editor_load:sharejs_connected');
+registerEditorLoadEvent('editor_load:links_rendered');
+registerEditorLoadEvent('editor_load:fully_interactive');
 
 registerSnapshotEvent('versioning:no_snapshots');
 registerSnapshotEvent('versioning:snapshot_opened');
@@ -208,6 +210,10 @@ function registerBulkEditorEvent(event) {
 
 function registerSlideInEditorEvent(event) {
   registerEvent(event, 'slide_in_editor', SlideInEditor);
+}
+
+function registerEditorLoadEvent(event) {
+  registerEvent(event, 'editor_load', EditorLoad);
 }
 
 function registerSnapshotEvent(event) {

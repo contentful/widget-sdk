@@ -58,18 +58,8 @@ export const validEvents = {
     'published_restored'
   ],
   content_preview: ['created', 'updated', 'deleted'],
-  slide_in_editor: [
-    'peek_click',
-    'arrow_back',
-    'bulk_editor_close',
-    'open',
-    'open_create',
-    'delete',
-    'load_init',
-    'load_sharejs_connected',
-    'load_links_resolved',
-    'load_fully_interactive'
-  ],
+  slide_in_editor: ['peek_click', 'arrow_back', 'open', 'open_create', 'delete'],
+  editor_load: ['init', 'sharejs_connected', 'links_rendered', 'fully_interactive'],
   // https://contentful.atlassian.net/wiki/display/PRODBulk+references+editor+-+Tracking+specs
   bulk_editor: [
     'add',

@@ -8,52 +8,11 @@ Event for tracking user behavior on the slide-in reference navigation feature.
   * peeking?
   * clicking a layer without peeking?
 * Do users go back level by level vs. multiple levels at a time?
-* How do the absolute number of link fetch events, DOM complexity (e.g. rich
-  text editor and reference field elements to manage), and slide level effect
-  the rate as which editors are able to edit and fully interact with a page?
 
 ## Schema
 Snowplow schema: [slide_in_editor/1.0.0.json](https://github.com/contentful/com.contentful-schema-registry/blob/master/schemas/com.contentful/slide_in_editor/jsonschema/1-0-0)
 
 We track all of the following cases using the "`slide_in_editor`" event:
-
-## Slide loading lifecycle events
-
-* Initial load
-  * `action`: `"load_init"`
-  * `slide_uuid`
-  * `slide_level`
-  * `number_of_links`
-  * `number_of_rich_text_editors`
-  * `number_of_reference_field_editors`
-  * `load_ms`: should always be 0
-* ShareJS connects
-  * `action`: `"load_sharejs_connected"`
-  * `slide_uuid`
-  * `slide_level`
-  * `number_of_links`
-  * `number_of_rich_text_editors`
-  * `number_of_reference_field_editors`
-  * `load_ms`: number of ms since initial load
-* All initially fetched external links have rendered
-  * `action`: `"load_links_rendered"`
-  * `slide_uuid`
-  * `slide_level`
-  * `number_of_links`
-  * `number_of_rich_text_editors`
-  * `number_of_reference_field_editors`
-  * `load_ms`: number of ms since initial load
-* Page is fully interactive (shareJS is connected, all links are rendered and
-  all field editors are present on the page)
-  * `action`: `"load_fully_interactive"`
-  * `slide_uuid`
-  * `slide_level`
-  * `number_of_links`
-  * `number_of_rich_text_editors`
-  * `number_of_reference_field_editors`
-  * `load_ms`: number of ms since initial load
-
-## Slide interactivity events
 
 * Click on a slide to navigate back (potential peeking)
   * `action`: `"peek_click"`

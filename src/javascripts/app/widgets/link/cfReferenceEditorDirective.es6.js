@@ -17,10 +17,12 @@ export default function register() {
       controller: [
         '$scope',
         $scope => {
-          $scope.emitRenderedEvent = once(() =>
-            $scope.loadEvents.emit({
-              actionName: 'referenceLinksRendered'
-            })
+          $scope.emitRenderedEvent = once(
+            () =>
+              $scope.loadEvents &&
+              $scope.loadEvents.emit({
+                actionName: 'referenceLinksRendered'
+              })
           );
 
           // We need to define the uiSortable property in the pre-link

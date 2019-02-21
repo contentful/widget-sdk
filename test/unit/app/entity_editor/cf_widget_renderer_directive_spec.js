@@ -9,6 +9,10 @@ describe('cfWidgetRenderer Directive', () => {
           return '/spaceHref/' + params.contentTypeId;
         }
       });
+      $provide.value('app/entity_editor/LoadEventTracker.es6', {
+        createLinksRenderedEvent: () => () => {},
+        createWidgetLinkRenderEventsHandler: () => () => {}
+      });
       $provide.value('debounce', identity);
     });
 

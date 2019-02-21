@@ -12,8 +12,8 @@ import installTracking, { trackEntryView } from './Tracking.es6';
 import {
   isLinkField,
   createLoadEventTracker,
-  getNumRenderableFieldEditors
-} from './LoadEventTracker.es6';
+  getRenderableLinkFieldInstanceCount
+} from 'app/entity_editor/LoadEventTracker.es6';
 
 import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
@@ -56,19 +56,20 @@ const DataFields = getModule('EntityEditor/DataFields');
 export default async function create($scope, editorData, preferences) {
   $scope.context = {};
 
-  const start = Date.now();
+  const loadStartMs = Date.now();
 
   let loadLinksRendered = false;
   let loadShareJSConnected = false;
 
   $scope.loadEvents = K.createStreamBus($scope);
 
-  Telemetry.record('entry_editor_http_time', Date.now() - start);
+  const trackLoadEvent = createLoadEventTracker(loadStartMs, $scope.slideStates, () => editorData);
+
+  Telemetry.record('entry_editor_http_time', Date.now() - loadStartMs);
+  trackLoadEvent('init');
 
   const linkFieldTypes = editorData.contentType.data.fields.filter(isLinkField);
-  const numberOfRenderableLinkFieldEditors = getNumRenderableFieldEditors(linkFieldTypes);
-  const trackLoadEvent = createLoadEventTracker($scope.slideStates, editorData);
-  trackLoadEvent('init');
+  const renderableLinkFieldInstanceCount = getRenderableLinkFieldInstanceCount(linkFieldTypes);
 
   $scope.context.ready = true;
   $scope.editorData = editorData;
@@ -108,15 +109,15 @@ export default async function create($scope, editorData, preferences) {
     trackEntryView({
       editorData,
       entityInfo,
-      currentSlideLevel: $scope.$parent.slideStates.length,
+      currentSlideLevel: $scope.entities.length,
       locale: localeStore.getDefaultLocale().internal_code,
-      editorType: $scope.$parent.slideStates.length > 1 ? 'slide_in_editor' : 'entry_editor'
+      editorType: $scope.slideStates.length > 1 ? 'slide_in_editor' : 'entry_editor'
     });
   } catch (error) {
     logger.logError(error);
   }
 
-  let numFieldsInteractive = 0;
+  let fieldsInteractiveCount = 0;
   const emit = once(() => {
     trackLoadEvent('links_rendered');
     loadLinksRendered = true;
@@ -125,7 +126,7 @@ export default async function create($scope, editorData, preferences) {
     }
   });
 
-  if (numberOfRenderableLinkFieldEditors === 0) {
+  if (renderableLinkFieldInstanceCount === 0) {
     emit();
   }
 
@@ -133,8 +134,8 @@ export default async function create($scope, editorData, preferences) {
     if (actionName !== 'linksRendered') {
       return;
     }
-    numFieldsInteractive++;
-    if (numFieldsInteractive === numberOfRenderableLinkFieldEditors) {
+    fieldsInteractiveCount++;
+    if (fieldsInteractiveCount === renderableLinkFieldInstanceCount) {
       emit();
     }
   });

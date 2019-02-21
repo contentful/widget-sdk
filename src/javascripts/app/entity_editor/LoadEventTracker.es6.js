@@ -1,57 +1,66 @@
 import { track } from 'analytics/Analytics.es6';
-import { once, sum, sumBy, values } from 'lodash';
+import { once, sum, sumBy, values, findIndex } from 'lodash';
 import { getRichTextEntityLinks } from '@contentful/rich-text-links';
 import * as random from 'utils/Random.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
-export function createLoadEventTracker(slideStates, editorData) {
-  const { fields: fieldTypes } = editorData.contentType.data;
-  const { fields } = editorData.entity.data;
-  const richTextFieldTypes = fieldTypes.filter(isRichTextField);
-  const singleReferenceFieldTypes = fieldTypes.filter(isSingleReferenceField);
-  const multiReferenceFieldTypes = fieldTypes.filter(isMultiReferenceField);
-  const numberOfRichTextEditors = getNumRenderableFieldEditors(richTextFieldTypes);
-  const numberOfSingleReferenceFieldEditors = getNumRenderableFieldEditors(
-    singleReferenceFieldTypes
-  );
-  const numberOfMultiReferenceFieldEditors = getNumRenderableFieldEditors(multiReferenceFieldTypes);
-  const numberOfReferenceFieldEditors =
-    numberOfSingleReferenceFieldEditors + numberOfMultiReferenceFieldEditors;
+const LOAD_EVENT_CATEGORY = 'editor_load';
 
-  const sumMatchingFieldsBy = (fieldTypes, predicate) =>
-    sum(fieldTypes.map(fieldType => sumBy(values(fields[fieldType.id]), predicate)));
-  const numberOfSingleReferenceFieldLinks = sumMatchingFieldsBy(singleReferenceFieldTypes, field =>
-    field ? 1 : 0
-  );
-  const numberOfMultiReferenceFieldLinks = sumMatchingFieldsBy(multiReferenceFieldTypes, 'length');
-  const numberOfRichTextFieldLinks = sumMatchingFieldsBy(richTextFieldTypes, field =>
-    sumBy(values(getRichTextEntityLinks(field)), 'length')
-  );
-  const numberOfLinks =
-    numberOfSingleReferenceFieldLinks +
-    numberOfMultiReferenceFieldLinks +
-    numberOfRichTextFieldLinks;
-
+export function createLoadEventTracker(loadStartMs, slideStates, getEditorData) {
   const slideUuid = random.id();
-  const loadStart = new Date().getTime();
-  return eventName =>
-    track(`slide_in_editor:load_${eventName}`, {
+  const totalSlideCount = slideStates.length;
+
+  return function trackEditorLoadEvent(eventName) {
+    if (eventName === 'init') {
+      return track(`${LOAD_EVENT_CATEGORY}:init`, { slideUuid, totalSlideCount });
+    }
+    const editorData = getEditorData();
+    const { fields: fieldTypes } = editorData.contentType.data;
+    const { fields } = editorData.entity.data;
+    const entityId = editorData.entity.getId();
+    const richTextFieldTypes = fieldTypes.filter(isRichTextField);
+    const singleReferenceFieldTypes = fieldTypes.filter(isSingleReferenceField);
+    const multiReferenceFieldTypes = fieldTypes.filter(isMultiReferenceField);
+    const richTextEditorInstanceCount = getRenderableLinkFieldInstanceCount(richTextFieldTypes);
+    const singleLinkFieldEditorInstanceCount = getRenderableLinkFieldInstanceCount(
+      singleReferenceFieldTypes
+    );
+    const multiLinkFieldEditorInstanceCount = getRenderableLinkFieldInstanceCount(
+      multiReferenceFieldTypes
+    );
+    const linkFieldEditorInstanceCount =
+      singleLinkFieldEditorInstanceCount + multiLinkFieldEditorInstanceCount;
+
+    const sumMatchingFieldsBy = (fieldTypes, predicate) =>
+      sum(fieldTypes.map(fieldType => sumBy(values(fields[fieldType.id]), predicate)));
+    const singleReferenceFieldLinkCount = sumMatchingFieldsBy(singleReferenceFieldTypes, field =>
+      field ? 1 : 0
+    );
+    const multiReferenceFieldLinkCount = sumMatchingFieldsBy(multiReferenceFieldTypes, 'length');
+    const richTextFieldLinkCount = sumMatchingFieldsBy(richTextFieldTypes, field =>
+      sumBy(values(getRichTextEntityLinks(field)), 'length')
+    );
+    const linkCount =
+      singleReferenceFieldLinkCount + multiReferenceFieldLinkCount + richTextFieldLinkCount;
+    track(`${LOAD_EVENT_CATEGORY}:${eventName}`, {
       slideUuid,
-      slideLevel: slideStates.length - 1,
-      numberOfLinks,
-      numberOfRichTextEditors,
-      numberOfReferenceFieldEditors,
-      loadMs: eventName === 'init' ? 0 : new Date().getTime() - loadStart
+      slideLevel: findIndex(slideStates, entity => entity.id === entityId),
+      linkCount,
+      richTextEditorInstanceCount,
+      linkFieldEditorInstanceCount,
+      totalSlideCount,
+      loadMs: new Date().getTime() - loadStartMs
     });
+  };
 }
 
-export function getNumRenderableFieldEditors(fieldTypes) {
-  const numLocalizedFields = fieldTypes.filter(f => f.localized).length;
-  const numNonLocalizedFields = fieldTypes.length - numLocalizedFields;
-  const numActiveLocales = TheLocaleStore.getActiveLocales().length;
-  return numLocalizedFields * numActiveLocales + numNonLocalizedFields;
+export function getRenderableLinkFieldInstanceCount(fieldTypes) {
+  const localizedFieldCount = fieldTypes.filter(f => f.localized).length;
+  const nonLocalizedFieldCount = fieldTypes.length - localizedFieldCount;
+  const activeLocaleCount = TheLocaleStore.getActiveLocales().length;
+  return localizedFieldCount * activeLocaleCount + nonLocalizedFieldCount;
 }
 
 export function createLinksRenderedEvent(loadEvents) {
@@ -89,8 +98,8 @@ function handleRichTextField({ widget, locale, loadEvents, editorData, trackLink
 
   const { code: localeCode, internal_code: fieldLocaleCode } = locale;
 
-  const numLinks = getNumRichTextLinks(editorData, fieldIdFromEntry, fieldLocaleCode);
-  if (numLinks === 0) {
+  const linkCount = getRichTextLinkCount(editorData, fieldIdFromEntry, fieldLocaleCode);
+  if (linkCount === 0) {
     trackLinksRendered();
     return;
   }
@@ -101,7 +110,7 @@ function handleRichTextField({ widget, locale, loadEvents, editorData, trackLink
 
   loadEvents.stream.onValue(({ actionName, ...data }) => {
     if (
-      linksRendered.size === numLinks ||
+      linksRendered.size === linkCount ||
       actionName !== 'linkRendered' ||
       data.field.id !== fieldIdFromCT ||
       data.field.locale !== localeCode
@@ -109,13 +118,13 @@ function handleRichTextField({ widget, locale, loadEvents, editorData, trackLink
       return;
     }
     linksRendered.add(data.key);
-    if (linksRendered.size === numLinks) {
+    if (linksRendered.size === linkCount) {
       trackLinksRendered();
     }
   });
 }
 
-function getNumRichTextLinks(editorData, fieldIdFromEntry, fieldLocaleCode) {
+function getRichTextLinkCount(editorData, fieldIdFromEntry, fieldLocaleCode) {
   const { fields } = editorData.entity.data;
   const field = fields[fieldIdFromEntry];
   if (!field) {

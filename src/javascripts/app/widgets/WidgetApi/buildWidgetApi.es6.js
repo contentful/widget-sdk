@@ -77,7 +77,7 @@ export default function buildWidgetApi({ field, entry, loadEvents, features, cur
      */
     features,
 
-    trackEntryEditorAction: (...args) => loadEvents.emit(...args),
+    trackEntryEditorAction: (...args) => loadEvents && loadEvents.emit(...args),
 
     permissions: {
       canAccessEntries,
