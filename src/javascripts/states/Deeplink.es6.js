@@ -2,9 +2,6 @@ import makeState from 'states/Base.es6';
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import * as Navigator from 'states/Navigator.es6';
 import { resolveLink } from './deeplink/resolver.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const $location = getModule('$location');
 
 /**
  * @description deeplink route to point users to certain sections,
@@ -26,15 +23,10 @@ export default makeState({
   url: '/deeplink',
   template: createTemplate(),
   loadingText: 'Redirecting…',
-  controller: [
-    '$scope',
-    $scope => {
-      createController($scope);
-    }
-  ]
+  controller: ['$scope', '$location', createController]
 });
 
-export function createController($scope) {
+export function createController($scope, $location) {
   const { link, ...otherParams } = $location.search();
 
   return resolveLink(link, otherParams).then(({ path, params, onboarding }) => {

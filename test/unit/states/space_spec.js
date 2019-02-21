@@ -14,7 +14,7 @@ describe('states/spaces', () => {
     this.tokenStore = this.mockService('services/TokenStore.es6');
     this.tokenStore.getSpace.resolves(this.spaceData);
 
-    const states = this.$inject('states');
+    const states = this.$inject('states/states.es6');
     const spaceState = this.$inject('states/Spaces.es6').default;
     states.load([spaceState]);
 

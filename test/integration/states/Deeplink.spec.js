@@ -59,10 +59,10 @@ describe('states/Deeplink.es6', () => {
     this.createDeeplinkController = this.$inject('states/Deeplink.es6').createController;
     this.$rootScope = this.$inject('$rootScope');
 
-    this.createController = function() {
+    this.createController = () => {
       const $scope = this.$rootScope.$new();
       $scope.context = {};
-      const promise = this.createDeeplinkController($scope);
+      const promise = this.createDeeplinkController($scope, this.$inject('$location'));
 
       return { $scope, promise };
     };

@@ -76,7 +76,7 @@ angular
       $injector.get('utils/LaunchDarkly').init();
       $injector.get('navigation/stateChangeHandlers').setup();
       $injector.get('ui/ContextMenuHandler.es6').default($document);
-      $injector.get('states').loadAll();
+      $injector.get('states/states.es6').loadAll();
       $injector.get('dialogsInitController').init();
       $injector.get('navigation/DocumentTitle.es6').init();
       $injector.get('components/shared/auto_create_new_space').init();
