@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Tooltip from './Tooltip.es6';
 import TooltipContent from './TooltipContent.es6';
-// import { getReactJoyride } from './utils.es6';
 import OrgSliderIllustration from 'svg/org-slider-illustration.es6';
 import ContentTabIllustration from 'svg/content-tab-illustration.es6';
 import MediaTabIllustration from 'svg/media-tab-illustration.es6';
@@ -19,12 +18,6 @@ export default class WalkthroughComponent extends React.Component {
   };
 
   static defaultProps = { isTourRunning: false };
-
-  // ReactJoyrideComponent;
-
-  // componentDidMount = async () => {
-  //   this.ReactJoyrideComponent = await getReactJoyride();
-  // };
 
   tourCallback = data => {
     const { action } = data;
