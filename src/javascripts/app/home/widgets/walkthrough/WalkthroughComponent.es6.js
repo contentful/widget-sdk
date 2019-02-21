@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Tooltip from './Tooltip.es6';
 import TooltipContent from './TooltipContent.es6';
-import { getReactJoyride } from './utils.es6';
+// import { getReactJoyride } from './utils.es6';
 import OrgSliderIllustration from 'svg/org-slider-illustration.es6';
 import ContentTabIllustration from 'svg/content-tab-illustration.es6';
 import MediaTabIllustration from 'svg/media-tab-illustration.es6';
@@ -14,16 +14,17 @@ export default class WalkthroughComponent extends React.Component {
     isTourRunning: PropTypes.bool.isRequired,
     runTour: PropTypes.func.isRequired,
     walkthroughStarted: PropTypes.bool, // from user state
-    updateWalkthroughState: PropTypes.func.isRequired
+    updateWalkthroughState: PropTypes.func.isRequired,
+    ReactJoyrideComponent: PropTypes.any
   };
 
   static defaultProps = { isTourRunning: false };
 
-  ReactJoyrideComponent;
+  // ReactJoyrideComponent;
 
-  componentDidMount = async () => {
-    this.ReactJoyrideComponent = await getReactJoyride();
-  };
+  // componentDidMount = async () => {
+  //   this.ReactJoyrideComponent = await getReactJoyride();
+  // };
 
   tourCallback = data => {
     const { action } = data;
@@ -113,8 +114,7 @@ export default class WalkthroughComponent extends React.Component {
   ];
 
   render() {
-    const { isTourRunning } = this.props;
-    const { ReactJoyrideComponent } = this;
+    const { isTourRunning, ReactJoyrideComponent } = this.props;
     return ReactJoyrideComponent ? (
       <ReactJoyrideComponent
         continuous={true}
@@ -122,8 +122,6 @@ export default class WalkthroughComponent extends React.Component {
         callback={this.tourCallback}
         tooltipComponent={Tooltip}
         run={isTourRunning}
-        scrollToFirstStep
-        showSkipButton
         steps={this.steps}
         getHelpers={this.setHelpers}
         styles={{

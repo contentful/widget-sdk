@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { getModule } from 'NgRegistry.es6';
 import { track } from 'analytics/Analytics.es6';
 import * as logger from 'services/logger.es6';
+import { getReactJoyride } from './utils.es6';
 import WalkthroughComponent from './WalkthroughComponent.es6';
 import { Button, IconButton, Subheading, Spinner } from '@contentful/forma-36-react-components';
 import { fetchUserState, updateUserState } from 'utils/StatePersistenceApi.es6';
@@ -26,7 +27,10 @@ export default class WalkthroughWidget extends React.Component {
     version: undefined
   };
 
+  ReactJoyrideComponent;
+
   async componentDidMount() {
+    this.ReactJoyrideComponent = await getReactJoyride();
     try {
       const {
         started,
@@ -120,6 +124,7 @@ export default class WalkthroughWidget extends React.Component {
           runTour={this.runTour}
           walkthroughStarted={started}
           updateWalkthroughState={this.updateWalkthroughState}
+          ReactJoyrideComponent={this.ReactJoyrideComponent}
         />
         {!started && !dismissed && (
           <div className="start-walkthrough">
