@@ -1,4 +1,4 @@
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, difference } from 'lodash';
 import { mapValues, update } from 'lodash/fp';
 import { createSelector } from 'reselect';
 
@@ -58,9 +58,11 @@ export const getDataSetsToLoad = (state, { now } = { now: Date.now() }) => {
 
 // components should use this to show spinner and decide if they should render children
 // especially if children depend on the availability of datasets
-export const isLoadingMissingDatasets = state => {
+export const isMissingRequiredDatasets = state => {
   if (!hasAccess(state)) {
     return false;
   }
-  return !isEmpty(getDataSetsToLoad(state));
+  const requiredDatasets = getRequiredDataSets(getPath(state));
+  const datasetsInState = Object.keys(getDatasets(state));
+  return !isEmpty(difference(requiredDatasets, datasetsInState));
 };
