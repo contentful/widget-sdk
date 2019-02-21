@@ -12,9 +12,9 @@ import {
 } from './propTypes.es6';
 import OrganizationUsageInfo from './OrganizationUsageInfo.es6';
 import AssetBandwidthSection from './AssetBandwidthSection.es6';
-import OrganisationUsageChart from './OrganisationUsageChart.es6';
+import OrganisationUsageChart from './charts/OrganisationUsageChart.es6';
 import ApiUsageInfo from './ApiUsageInfo.es6';
-import ApiUsageChart from './ApiUsageChart.es6';
+import ApiUsageChart from './charts/ApiUsageChart.es6';
 import * as Intercom from 'services/intercom.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 

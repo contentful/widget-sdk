@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
-import { LineChart } from '@contentful/forma-36-react-components';
 import { shorten } from 'utils/NumberUtils.es6';
 
-import { organizationResourceUsagePropType, periodPropType } from './propTypes.es6';
+import { organizationResourceUsagePropType, periodPropType } from '../propTypes.es6';
 import periodToDates from './periodToDates.es6';
 import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
+import LineChart from './LineChart.es6';
 
 const seriesLineSymbol = ['circle', 'diamond', 'triangle'];
 const tooltipIcon = ['chart-symbol-circle', 'chart-symbol-diamond', 'chart-symbol-triangle'];
