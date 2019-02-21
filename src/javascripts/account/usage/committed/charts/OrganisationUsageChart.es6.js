@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { last } from 'lodash';
 import moment from 'moment';
 
-import { LineChart } from '@contentful/forma-36-react-components';
 import { shorten } from 'utils/NumberUtils.es6';
 
-import { periodPropType } from './propTypes.es6';
+import { periodPropType } from '../propTypes.es6';
 import periodToDates from './periodToDates.es6';
 import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
+import LineChart from './LineChart.es6';
 
 const accumulateUsage = usage =>
   usage.reduce((acc, value) => acc.concat(value + (last(acc) || 0)), []);

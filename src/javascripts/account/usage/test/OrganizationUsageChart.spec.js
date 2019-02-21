@@ -1,11 +1,11 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import moment from 'moment';
-import { LineChart } from '@contentful/forma-36-react-components';
 import { shorten } from 'utils/NumberUtils.es6';
 
-import OrganisationUsageChart from '../committed/OrganisationUsageChart.es6';
-import EmptyChartPlaceholder from '../committed/EmptyChartPlaceholder.es6';
+import LineChart from '../committed/charts/LineChart.es6';
+import OrganisationUsageChart from '../committed/charts/OrganisationUsageChart.es6';
+import EmptyChartPlaceholder from '../committed/charts/EmptyChartPlaceholder.es6';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
