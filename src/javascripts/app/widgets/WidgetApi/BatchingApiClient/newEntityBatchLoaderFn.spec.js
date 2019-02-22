@@ -12,9 +12,7 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
   beforeEach(() => {
     jest.clearAllMocks();
     getResources = jest.fn();
-    newEntityNotFoundError = () => {
-      throw new Error('Unexpected call during test');
-    };
+    newEntityNotFoundError = jest.fn();
   });
 
   function setup() {
@@ -45,8 +43,8 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
       expectGetResourcesCall({ 'sys.id[in]': LONGEST_VALID_ID });
     });
 
-    it('is not invoked if there are no valid IDs', () => {
-      entityBatchLoaderFn([INVALID_LONG_ID]);
+    it('is not invoked if there are no valid IDs', async () => {
+      await entityBatchLoaderFn([INVALID_LONG_ID]);
       expect(getResources).toHaveBeenCalledTimes(0);
     });
 
