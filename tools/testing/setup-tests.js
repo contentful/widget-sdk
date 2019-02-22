@@ -14,8 +14,14 @@ console.error = (warning, ...args) => {
   if (/(Invalid prop|Failed prop type)/gi.test(warning)) {
     throw new Error(warning);
   }
+
   error.apply(console, [warning, ...args]);
 };
+
+// Do not allow uncaught promises
+process.on('unhandledRejection', err => {
+  throw err;
+});
 
 // Polyfills
 
