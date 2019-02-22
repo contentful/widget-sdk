@@ -55,9 +55,9 @@ export default function register() {
          * Mocks ES6 default export. Used by 'Debug' module to initialize
          * service.
          */
-        default: function() {
+        default: overrideScopeOptions => {
           isEnabled = true;
-          show();
+          show(overrideScopeOptions);
         },
 
         add: add,
@@ -74,11 +74,12 @@ export default function register() {
       /**
        * @ngdoc method
        * @name analytics/console#show
+       * @param {Object?} overrideScopeOptions
        * @returns {string|undefined}
        * @description
        * Activates the console.
        */
-      function show() {
+      function show(overrideScopeOptions) {
         el = el || $compile('<cf-analytics-console />')(scope);
         const first = el[0];
         if (!first.parentElement) {
@@ -87,6 +88,7 @@ export default function register() {
 
         scope.$applyAsync(() => {
           scope.isVisible = true;
+          Object.assign(scope, overrideScopeOptions);
         });
 
         return 'enjoy tracking! :wave:';

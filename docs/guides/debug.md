@@ -14,6 +14,8 @@ Existing Tools
 
 Calling this function will show a window that logs calls to `analytics.track()`.
 
+Can also be called as `cfDebug.analytics({showData: true})` to initially show all event data.
+
 ### `cfDebug.http()`
 
 This tool allows you to mock HTTP requests through XHR.
