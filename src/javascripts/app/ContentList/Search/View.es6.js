@@ -89,19 +89,17 @@ function Wrapper({ actions, searchBoxHasFocus, children }) {
           actions.SetBoxFocus(true);
         }
       }}
-      onBlur={() => {
-        requestAnimationFrame(() => {
-          if (el.current) {
-            const parent = el.current;
-            const activeElement = global.document.activeElement;
+      onBlur={event => {
+        if (el.current) {
+          const parent = el.current;
+          const activeElement = event.relatedTarget;
 
-            const isChildFocused = parent !== activeElement && parent.contains(activeElement);
+          const isChildFocused = parent !== activeElement && parent.contains(activeElement);
 
-            if (!isChildFocused) {
-              actions.SetBoxFocus(false);
-            }
+          if (!isChildFocused) {
+            actions.SetBoxFocus(false);
           }
-        });
+        }
       }}
       ref={el}>
       {children}

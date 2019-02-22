@@ -157,6 +157,7 @@ class SuggestionsList extends React.Component {
     const { children, searchTerm, hasSuggestions } = this.props;
     return (
       <div
+        tabIndex="0"
         data-test-id="suggestions"
         style={{
           zIndex: 1,
