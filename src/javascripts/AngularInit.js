@@ -223,7 +223,6 @@ angular
       ngRequire('ui/Framework/AngularComponent.es6').default();
       ngRequire('ui/Framework/CfComponentBridgeDirective.es6').default();
       ngRequire('ui/Framework/ReactDirective.es6').default();
-      ngRequire('ui/Pages/SubscriptionOverview/directive.es6').default();
       ngRequire('ui/cf/cfThumbnailDirective.es6').default();
       ngRequire('ui/cfIconDirective.es6').default();
       ngRequire('ui/cfUiHint.es6').default();

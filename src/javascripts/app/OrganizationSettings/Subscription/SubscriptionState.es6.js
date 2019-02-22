@@ -4,5 +4,5 @@ export default reactStateWrapper({
   name: 'subscription_new',
   url: '/:orgId/subscription_overview',
   label: 'Subscription',
-  componentPath: 'ui/Pages/SubscriptionOverview'
+  componentPath: 'ui/Pages/SubscriptionOverview/index.es6'
 });
