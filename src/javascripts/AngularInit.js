@@ -97,13 +97,11 @@ angular
       ngRequire('app/entry_editor/cfWidgetApiDirective.es6').default();
       ngRequire('app/entry_editor/entryActionsController.es6').default();
       ngRequire('app/entry_editor/formWidgetsController.es6').default();
-      ngRequire('app/home/cfPositionRelativeToLanguageDirective.es6').default();
       ngRequire('app/home/cfTrackCopyEvent.es6').default();
       ngRequire('app/home/cfWelcomeDirective.es6').default();
       ngRequire('app/home/contactUs/contactUsSpaceHomeDirective.es6').default();
       ngRequire('app/home/developer_resources/cfDeveloperResourcesDirective.es6').default();
       ngRequire('app/home/onboarding_steps/cfOnboardingStepsDirective.es6').default();
-      ngRequire('app/home/welcome/cfOnboardingWithTeaDirective.es6').default();
       ngRequire('app/snapshots/cfSnapshotPresenter.es6').default();
       ngRequire('app/snapshots/cfSnapshotSelector.es6').default();
       ngRequire('app/snapshots/snapshotComparator.es6').default();
@@ -138,7 +136,6 @@ angular
       ngRequire('services/activationEmailResender.es6').default();
       ngRequire('components/client/activationEmailResendController.es6').default();
       ngRequire('components/client/dialogsInitController.es6').default();
-      ngRequire('components/field_dialog/cfPositionRelativeToWidgetListDirective.es6').default();
       ngRequire('components/field_dialog/cfValidationDateSelectDirective.es6').default();
       ngRequire('components/field_dialog/cfValidationSettingsDirective.es6').default();
       ngRequire('components/field_dialog/cfValidationValuesDirective.es6').default();
