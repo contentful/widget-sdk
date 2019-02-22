@@ -1,5 +1,5 @@
 import reducer from '../reducer/index.es6';
-import { getDatasets, isLoadingMissingDatasets, getDataSetsToLoad } from './datasets.es6';
+import { getDatasets, isMissingRequiredDatasets, getDataSetsToLoad } from './datasets.es6';
 import ROUTES from '../routes.es6';
 import { TEAMS, TEAM_MEMBERSHIPS, USERS, ORG_MEMBERSHIPS } from '../datasets.es6';
 
@@ -34,8 +34,8 @@ describe('datasets selectors', () => {
     });
 
     // as long permissions were not denied, assume missing datasets are about to be loaded
-    it('isLoadingMissingDatasets should return true', () => {
-      expect(isLoadingMissingDatasets(stateWithLocation)).toBe(true);
+    it('isMissingRequiredDatasets should return true', () => {
+      expect(isMissingRequiredDatasets(stateWithLocation)).toBe(true);
     });
 
     describe('some datasets were loaded', () => {
@@ -62,8 +62,8 @@ describe('datasets selectors', () => {
         });
       });
 
-      it('isLoadingMissingDatasets should still return true', () => {
-        expect(isLoadingMissingDatasets(stateWithSomeDatasets)).toBe(true);
+      it('isMissingRequiredDatasets should still return true', () => {
+        expect(isMissingRequiredDatasets(stateWithSomeDatasets)).toBe(true);
       });
 
       describe('missing dataset was loaded just now', () => {
@@ -93,8 +93,8 @@ describe('datasets selectors', () => {
           expect(getDataSetsToLoad(stateWithAllDatasets)).toEqual([]);
         });
 
-        it('isLoadingMissingDatasets should still return false', () => {
-          expect(isLoadingMissingDatasets(stateWithAllDatasets)).toBe(false);
+        it('isMissingRequiredDatasets should still return false', () => {
+          expect(isMissingRequiredDatasets(stateWithAllDatasets)).toBe(false);
         });
       });
 
@@ -113,13 +113,9 @@ describe('datasets selectors', () => {
         });
 
         it('getDataSetsToLoad should contain stale dataset', () => {
-          expect(getDataSetsToLoad(stateWithLocation)).toEqual(
+          expect(getDataSetsToLoad(stateWithStaleDataset)).toEqual(
             expect.arrayContaining([ORG_MEMBERSHIPS])
           );
-        });
-
-        it('isLoadingMissingDatasets should still return true', () => {
-          expect(isLoadingMissingDatasets(stateWithStaleDataset)).toBe(true);
         });
       });
     });

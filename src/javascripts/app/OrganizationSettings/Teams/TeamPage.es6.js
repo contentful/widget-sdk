@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import ROUTES from 'redux/routes.es6';
 import Placeholder from 'app/common/Placeholder.es6';
 import { getPath } from 'redux/selectors/location.es6';
-import { isLoadingMissingDatasets } from 'redux/selectors/datasets.es6';
+import { isMissingRequiredDatasets } from 'redux/selectors/datasets.es6';
 import { getReasonDenied, hasAccess } from 'redux/selectors/access.es6';
 import getOrganization from 'redux/selectors/getOrganization.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
@@ -81,7 +81,7 @@ export default connect(state => {
   return {
     showList: ROUTES.organization.children.teams.test(path) !== null,
     showDetails: ROUTES.organization.children.teams.children.team.test(path) !== null,
-    isLoading: isLoadingMissingDatasets(state),
+    isLoading: isMissingRequiredDatasets(state),
     hasAccess: hasAccess(state),
     deniedReason: getReasonDenied(state),
     organization: getOrganization(state)
