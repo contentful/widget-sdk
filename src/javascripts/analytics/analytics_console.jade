@@ -1,18 +1,20 @@
-- var style = {};
+- const style = {};
 - style.wrapper = 'position: fixed; width: 400px; border: 2px solid #000; right: 20px; bottom: 20px; background: #fff';
 - style.content = 'height: 450px; overflow-y: scroll; padding: 15px';
 - style.json = 'font-size: 0.9em; white-space: pre-wrap; word-wrap: break-word';
-- style.box = 'border: 1px dashed gray; padding: 5px; margin-bottom: 2px';
+- style.box = 'border-bottom: 1px dotted gray; padding: 10px 5px;';
 
 .analytics-console(style=style.wrapper ng-show="isVisible")
-  button(ng-click="isVisible = false")
-    | close
-  button(ng-click="isCollapsed = !isCollapsed")
-    | {{ isCollapsed ? 'expand' : 'collapse' }}
-  button(ng-click="toggleSessionData()")
-    | {{ showSessionData ? 'show events' : 'show session data' }}
-  button(ng-click="toggleSnowplowDebugInfo()")
-    | {{ showingSnowplowDebugInfo ? 'show all events' : 'show snowplow events'}}
+  button(ng-click="isVisible = false" title="Close console")
+    | 🗙
+  button(ng-click="isCollapsed = !isCollapsed" title="{{ isCollapsed ? 'Maximize' : 'Minimize' }}")
+    | {{ isCollapsed ? '🗖' : '🗕' }}
+  button(ng-click="toggleSessionData()" ng-if="!isCollapsed")
+    | {{ showSessionData ? 'Mode: Session data' : 'Mode: Events' }}
+  button(ng-click="toggleSnowplowDebugInfo()" ng-if="!isCollapsed && !showSessionData")
+    | {{ showingSnowplowDebugInfo ? '☒ snowplow only' : '☐ snowplow only'}}
+  button(ng-click="showData = !showData" ng-show="!isCollapsed && !showSessionData" )
+    | {{ showData ? '☒ show data' : '☐ show data' }}
 
   .analytics-console__content(style=style.content ng-show="!isCollapsed")
     .analytics-console__events(ng-show="!showSessionData && !showingSnowplowDebugInfo")
@@ -20,10 +22,12 @@
         style=style.box
         ng-repeat="event in events track by $index")
         p
-          | {{ event.time }} <strong>{{ event.name }}</strong>
+          | \#{{ $index }} - {{ event.time }} <strong>{{ event.name }}</strong>
           span(ng-show="!event.isValid" style="color: red")
             |  invalid name
-        pre(style=style.json)
+        pre(
+          ng-if="showData"
+          style=style.json)
           | {{ (event.data || 'no data') | json }}
 
     .analytics-console__events(ng-show="showingSnowplowDebugInfo && !showSessionData")
@@ -32,12 +36,14 @@
         ng-repeat="event in events track by $index"
         ng-if="event.snowplow")
         p
-          | {{ event.time }} <strong>{{ event.snowplow.name }}, version: {{ event.snowplow.version }}</strong>
-        pre(style=style.json)
+          | \#{{ $index }} - {{ event.time }} <strong>{{ event.snowplow.name }}, v{{ event.snowplow.version }}</strong>
+        pre(
+          ng-if="showData"
+          style=style.json)
           | {{ (event.snowplow.data || 'no data') | json }}
         pre(style=style.json
-          ng-if="event.snowplow.context")
+          ng-if="showData && event.snowplow.context")
           | context: {{ event.snowplow.context | json }}
 
-    .analytics-console__session-data(ng-show="showSessionData && !showingSnowplowDebugInfo")
+    .analytics-console__session-data(ng-show="showSessionData")
       pre(style=style.json) {{ (sessionData || 'no data') | json }}

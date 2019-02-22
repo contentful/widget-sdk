@@ -68,8 +68,8 @@ function create() {
  */
 function makeLazyObj(obj) {
   const target = mapValues(obj, (fn, key) => {
-    return () => {
-      obj[key] = fn();
+    return (...args) => {
+      obj[key] = fn(...args);
       return obj[key];
     };
   });
