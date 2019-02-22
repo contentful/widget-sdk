@@ -68,7 +68,7 @@ export default async function({ value = {}, showTextInput, widgetAPI }) {
     template: `<react-component class="modal-background" jsx="jsx" props="props" />`,
     backgroundClose: true,
     disableAutoFocus: true,
-    ignoreEsc: true, // Ignore to allow ESC in search entity selector search.
+    ignoreEsc: false, // Ignore to allow ESC in search entity selector search.
     scopeData: {
       jsx,
       props: {}

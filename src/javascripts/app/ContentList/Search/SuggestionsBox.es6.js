@@ -7,12 +7,19 @@ import InfoIcon from 'svg/info.es6';
 
 // Suggestions
 // -----------
-export default function SuggestionsBox({ items, searchTerm, defaultFocus, onSelect, onKeyDown }) {
+export default function SuggestionsBox({
+  items,
+  searchTerm,
+  defaultFocus,
+  onSelect,
+  onKeyUp,
+  onKeyDown
+}) {
   const suggestions = items.map((field, index) => {
     return (
       <div
         className="search-next__completion-item"
-        key={field.queryKey}
+        key={`${field.contentType && field.contentType.id}-${field.queryKey}`}
         data-test-id={field.queryKey}
         tabIndex="0"
         ref={el => {
@@ -23,6 +30,7 @@ export default function SuggestionsBox({ items, searchTerm, defaultFocus, onSele
         onClick={() => {
           onSelect(field);
         }}
+        onKeyUp={onKeyUp}
         onKeyDown={e => {
           if (Keys.enter(e)) {
             onSelect(field);
@@ -69,7 +77,8 @@ SuggestionsBox.propTypes = {
   searchTerm: PropTypes.string,
   defaultFocus: PropTypes.object,
   onSelect: PropTypes.func,
-  onKeyDown: PropTypes.func
+  onKeyDown: PropTypes.func,
+  onKeyUp: PropTypes.func
 };
 
 const SearchHelpBanner = () => (

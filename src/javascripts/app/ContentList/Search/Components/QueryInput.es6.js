@@ -13,6 +13,7 @@ class QueryInput extends React.Component {
     onBlur: PropTypes.func,
     value: PropTypes.string,
     onKeyDown: PropTypes.func.isRequired,
+    onKeyUp: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired
   };
 
@@ -43,7 +44,7 @@ class QueryInput extends React.Component {
   };
 
   render() {
-    const { placeholder, autoFocus, onKeyDown, onFocus, onBlur } = this.props;
+    const { placeholder, autoFocus, onKeyDown, onKeyUp, onFocus, onBlur } = this.props;
     const { value } = this.state;
 
     // Replacing spaces with `|` to make the width of the shadow element equal
@@ -64,6 +65,7 @@ class QueryInput extends React.Component {
           autoFocus={autoFocus}
           value={value}
           onKeyDown={onKeyDown}
+          onKeyUp={onKeyUp}
           onChange={this.handleChange}
           placeholder={placeholder}
         />

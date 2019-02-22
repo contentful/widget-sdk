@@ -73,7 +73,7 @@ export default function register() {
         const dialog = modalDialog.open({
           template: 'entity_selector_dialog',
           backgroundClose: true,
-          ignoreEsc: true,
+          ignoreEsc: false,
           noNewScope: true,
           scopeData
         });

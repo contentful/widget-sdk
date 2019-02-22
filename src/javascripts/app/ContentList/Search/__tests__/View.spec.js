@@ -81,9 +81,9 @@ describe('app/ContentList/Search/View.es6', () => {
     });
 
     it('emits HideSuggestions on esc', () => {
-      const { wrapper, actions } = render();
+      const { wrapper, actions } = render({ isSuggestionOpen: true });
       const queryInput = wrapper.find('[data-test-id="queryInput"]');
-      queryInput.simulate('keyDown', { keyCode: keycodes.ESC });
+      queryInput.simulate('keyUp', { keyCode: keycodes.ESC });
       expect(actions.HideSuggestions).toHaveBeenCalledTimes(1);
     });
 

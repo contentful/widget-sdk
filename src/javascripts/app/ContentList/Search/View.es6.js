@@ -166,6 +166,14 @@ export default function View(props) {
             onChange={value => actions.SetQueryInput(value)}
             autoFocus={!input && !hasFilters}
             isFocused={defaultFocus.isQueryInputFocused}
+            onKeyUp={e => {
+              if (Keys.escape(e)) {
+                if (isSuggestionOpen) {
+                  e.stopPropagation();
+                  actions.HideSuggestions();
+                }
+              }
+            }}
             onKeyDown={e => {
               const { target } = e;
               const hasSelection = target.selectionStart !== 0 || target.selectionEnd !== 0;
@@ -177,7 +185,7 @@ export default function View(props) {
                 } else {
                   actions.SetFocusOnFirstSuggestion();
                 }
-              } else if (Keys.escape(e) || Keys.enter(e)) {
+              } else if (Keys.enter(e)) {
                 actions.HideSuggestions();
               }
             }}
@@ -223,14 +231,18 @@ export default function View(props) {
             onSelect={key => {
               actions.SelectFilterSuggestions(key);
             }}
+            onKeyUp={e => {
+              if (Keys.escape(e)) {
+                e.stopPropagation();
+                actions.ToggleSuggestions();
+                actions.SetFocusOnQueryInput();
+              }
+            }}
             onKeyDown={e => {
               if (Keys.arrowUp(e) || Keys.shiftTab(e)) {
                 actions.SetFocusOnPrevSuggestion();
               } else if (Keys.arrowDown(e) || Keys.tab(e)) {
                 actions.SetFocusOnNextSuggestion();
-              } else if (Keys.escape(e)) {
-                actions.ToggleSuggestions();
-                actions.SetFocusOnQueryInput();
               }
             }}
           />
