@@ -39,7 +39,7 @@ export default function(listItems = []) {
       'ul.nav-bar__list',
       listItems.map((data, index) => {
         const html = data.children ? navbarDropdown(data, index) : navbarItem(data);
-        const attrs = {};
+        const attrs = { 'data-ui-tour-step': `nav-item-${data.dataViewType}` };
 
         if (data.if) {
           attrs.ngIf = data.if;

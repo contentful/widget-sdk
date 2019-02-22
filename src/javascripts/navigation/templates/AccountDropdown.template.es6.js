@@ -11,6 +11,7 @@ export default function() {
         cfContextMenuTrigger: 'cf-context-menu-trigger',
         tabindex: '0',
         dataTestId: 'account-menu-trigger',
+        dataUiTourStep: 'account-menu-trigger',
         style: {
           padding: '0 20px'
         }

@@ -38,6 +38,7 @@ export default class Trigger extends React.Component {
       <div
         className="app-top-bar__sidepanel-trigger"
         onClick={onClick}
+        data-ui-tour-step="sidepanel-trigger"
         data-test-id="sidepanel-trigger">
         <Logo />
         <div className="f36-margin-left--m" />
