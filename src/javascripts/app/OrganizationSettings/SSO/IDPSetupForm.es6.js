@@ -22,7 +22,7 @@ import { authUrl, appUrl } from 'Config.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { IdentityProviderPropType, FieldsStatePropType } from './PropTypes.es6';
-import { connectionTestingAllowed } from './utils.es6';
+import { connectionTestingAllowed, formatConnectionTestErrors } from './utils.es6';
 import { SSO_PROVIDERS, TEST_RESULTS } from './constants.es6';
 import * as ssoActionCreators from 'redux/actions/sso/actionCreators.es6';
 import * as ssoSelectors from 'redux/selectors/sso.es6';
@@ -100,12 +100,11 @@ export class IDPSetupForm extends React.Component {
         isShown={isShown}
         onConfirm={() => onClose(true)}
         onCancel={() => onClose(false)}>
-        <p>
-          Enabling SSO will allow your users to log in via SSO.
-        </p>
+        <p>Enabling SSO will allow your users to log in via SSO.</p>
 
         <p>
-          Once SSO is enabled, you won’t be able to make changes to the SSO settings yourself, and you’ll need to contact support instead.
+          Once SSO is enabled, you won’t be able to make changes to the SSO settings yourself, and
+          you’ll need to contact support instead.
         </p>
 
         <p>Ready to enable SSO?</p>
@@ -355,9 +354,8 @@ export class IDPSetupForm extends React.Component {
               <Textarea
                 extraClassNames="f36-margin-top--xl"
                 rows={5}
-                disabled
                 testId="errors"
-                value={connectionTest.errors.join('\n')}
+                value={formatConnectionTestErrors(connectionTest.errors).join('\n')}
               />
             </div>
           )}

@@ -96,4 +96,69 @@ describe('SSO utils', () => {
       expect(utils.fieldErrorMessage('otherField').message).toBe(defaultErrorMessage);
     });
   });
+
+  describe('#formatConnectionTestErrors', () => {
+    const certErrMsg = 'Invalid Signature on SAML Response';
+    const relayStateErrMsg = 'Missing RelayState, maybe incorrect SSO target URL';
+    const givenNameErrMsg = `'givenname' needs to be included as a SAML response attribute, or a custom mapping needs to be defined on the identity provider`;
+    const surnameErrMsg = `'surname' needs to be included as a SAML response attribute, or a custom mapping needs to be defined on the identity provider`;
+    const otherErrMsg = 'Something else bad happened dude';
+
+    const certFormattedErrMsg = 'The X.509 certificate is incorrect';
+    const relayStateFormattedErrMsg =
+      'Contentful could not determine that the connection is in test mode, check the Redirect URL';
+
+    it('should return null if not given an array', () => {
+      expect(utils.formatConnectionTestErrors('string')).toBeNull();
+    });
+
+    it('should return an empty array if no errors are given', () => {
+      expect(utils.formatConnectionTestErrors([])).toEqual([]);
+    });
+
+    it('should handle an invalid certificate error', () => {
+      expect(utils.formatConnectionTestErrors([certErrMsg])).toEqual([certFormattedErrMsg]);
+    });
+
+    it('should handle an invalid relay state error', () => {
+      expect(utils.formatConnectionTestErrors([relayStateErrMsg])).toEqual([
+        relayStateFormattedErrMsg
+      ]);
+    });
+
+    it('should handle one or more missing attributes', () => {
+      expect(utils.formatConnectionTestErrors([givenNameErrMsg])).toEqual([
+        'The givenname attribute is missing'
+      ]);
+
+      expect(utils.formatConnectionTestErrors([surnameErrMsg])).toEqual([
+        'The surname attribute is missing'
+      ]);
+
+      expect(utils.formatConnectionTestErrors([givenNameErrMsg, surnameErrMsg])).toEqual([
+        'The givenname, and surname attributes are missing'
+      ]);
+    });
+
+    it('should pass other errors through as-is', () => {
+      expect(utils.formatConnectionTestErrors([otherErrMsg])).toEqual([otherErrMsg]);
+    });
+
+    it('should handle a combination of the error messages', () => {
+      expect(
+        utils.formatConnectionTestErrors([
+          certErrMsg,
+          relayStateErrMsg,
+          givenNameErrMsg,
+          surnameErrMsg,
+          otherErrMsg
+        ])
+      ).toEqual([
+        certFormattedErrMsg,
+        relayStateFormattedErrMsg,
+        'The givenname, and surname attributes are missing',
+        otherErrMsg
+      ]);
+    });
+  });
 });

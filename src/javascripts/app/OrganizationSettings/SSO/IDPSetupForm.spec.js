@@ -4,12 +4,13 @@ import { IDPSetupForm } from './IDPSetupForm.es6';
 import { TEST_RESULTS } from './constants.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 
-import { connectionTestingAllowed } from './utils.es6';
+import { connectionTestingAllowed, formatConnectionTestErrors } from './utils.es6';
 
 const awaitSetImmediate = () => new Promise(resolve => setImmediate(resolve));
 
 jest.mock('./utils.es6', () => ({
-  connectionTestingAllowed: jest.fn()
+  connectionTestingAllowed: jest.fn(),
+  formatConnectionTestErrors: jest.fn().mockReturnValue([])
 }));
 
 jest.mock('Config.es6', () => ({
@@ -81,6 +82,9 @@ describe('IDPSetupForm', () => {
     globalMocks.removeEventListener.mockRestore();
     globalMocks.setInterval.mockRestore();
     globalMocks.clearInterval.mockRestore();
+
+    connectionTestingAllowed.mockClear();
+    formatConnectionTestErrors.mockClear();
   });
 
   it('should validate a field on every change', () => {
@@ -243,16 +247,23 @@ describe('IDPSetupForm', () => {
     expect(rendered.find('[testId="result-success-note"]')).toHaveLength(1);
   });
 
-  it('should show the errors to the user if the result is failure', () => {
+  it('should show formatted errors to the user if the result is failure', () => {
     const connectionTest = {
       result: TEST_RESULTS.failure,
       errors: ['something bad happened', 'another error']
     };
 
+    const formattedErrs = ['Formatted err 1', 'Formatted err 2'];
+
+    formatConnectionTestErrors.mockReturnValueOnce(formattedErrs);
+
     const rendered = render({ identityProvider, organization, connectionTest });
 
+    expect(formatConnectionTestErrors).toHaveBeenCalledTimes(1);
+    expect(formatConnectionTestErrors).toHaveBeenNthCalledWith(1, connectionTest.errors);
+
     expect(rendered.find('[testId="errors"]')).toHaveLength(1);
-    expect(rendered.find('[testId="errors"]').prop('value')).toBe(connectionTest.errors.join('\n'));
+    expect(rendered.find('[testId="errors"]').prop('value')).toBe(formattedErrs.join('\n'));
   });
 
   it('should not show the errors or note if present if the connection test is pending', () => {
