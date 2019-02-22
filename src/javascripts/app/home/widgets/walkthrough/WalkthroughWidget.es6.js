@@ -24,28 +24,28 @@ export default class WalkthroughWidget extends React.Component {
     isLoading: true,
     started: undefined,
     dismissed: undefined,
-    version: undefined
+    version: undefined,
+    ReactJoyrideComponent: undefined
   };
-
-  ReactJoyrideComponent;
 
   async componentDidMount() {
     try {
-      const [reactJoyrideComponent, userState] = await Promise.all([
+      const [ReactJoyrideComponent, userState] = await Promise.all([
         getReactJoyride(),
         fetchUserState(walkthroughKey)
       ]);
-      this.ReactJoyrideComponent = reactJoyrideComponent;
       const {
         started,
         dismissed,
         sys: { version }
       } = userState;
       this.setState({
+        ReactJoyrideComponent,
         started,
         dismissed,
         version
       });
+
       this.props.setWalkthroughState({ started });
     } catch (error) {
       logger.logError('Author and Editor Space Home ui walkthrough', {
@@ -53,10 +53,9 @@ export default class WalkthroughWidget extends React.Component {
         error
       });
     }
-    this.setState(state => ({
-      ...state,
+    this.setState({
       isLoading: false
-    }));
+    });
   }
 
   updateWalkthroughState = async ({ started, dismissed }) => {
@@ -69,12 +68,11 @@ export default class WalkthroughWidget extends React.Component {
       const {
         sys: { version }
       } = await updateUserState(walkthroughKey, payload);
-      this.setState(state => ({
-        ...state,
+      this.setState({
         started,
         dismissed,
         version
-      }));
+      });
       this.props.setWalkthroughState({ started });
     } catch (error) {
       logger.logError('Author and Editor Space Home ui walkthrough', {
@@ -85,7 +83,9 @@ export default class WalkthroughWidget extends React.Component {
   };
 
   runTour = isTourRunning => {
-    this.setState({ isTourRunning });
+    this.setState({
+      isTourRunning
+    });
   };
 
   startTour = () => {
@@ -116,20 +116,20 @@ export default class WalkthroughWidget extends React.Component {
   };
 
   render() {
-    const { started, dismissed, isLoading, isTourRunning } = this.state;
+    const { started, dismissed, isLoading, isTourRunning, ReactJoyrideComponent } = this.state;
     const { spaceName } = this.props;
     return isLoading ? (
       <Spinner size="large" extraClassNames="space-home-spinner" />
     ) : (
       <>
-        {this.ReactJoyrideComponent && (
+        {ReactJoyrideComponent && (
           <WalkthroughComponent
             spaceName={spaceName}
             isTourRunning={isTourRunning}
             runTour={this.runTour}
             walkthroughStarted={started}
             updateWalkthroughState={this.updateWalkthroughState}
-            ReactJoyrideComponent={this.ReactJoyrideComponent}
+            ReactJoyrideComponent={ReactJoyrideComponent}
           />
         )}
         {!started && !dismissed && (

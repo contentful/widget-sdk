@@ -122,9 +122,7 @@ export default class WalkthroughComponent extends React.Component {
           options: {
             arrowColor: '#3072be',
             backgroundColor: '#fff',
-            zIndex: 10000,
-            overlayColor: 'rgba(0, 0, 0, 0.7)',
-            spotlightShadow: 'rgba(0, 0, 0, 0.3)'
+            zIndex: 10000
           }
         }}
       />

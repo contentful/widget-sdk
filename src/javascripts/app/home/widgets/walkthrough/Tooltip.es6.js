@@ -13,6 +13,7 @@ const trackingGroupId = 'author_editor_continuous_onboarding';
 // https://docs.react-joyride.com/custom-components#tooltipcomponent
 
 const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closeProps }) => {
+  const primaryButtonLabel = isLastStep ? 'Get started' : 'Got it';
   return (
     <div
       className="walkthrough-tooltip"
@@ -43,6 +44,7 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
       <div className="walkthrough-tooltip__button-container">
         <Button
           {...primaryProps}
+          aria-label={primaryButtonLabel}
           isFullWidth
           buttonType="positive"
           onClick={e => {
@@ -54,7 +56,7 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
             });
           }}
           testId="next-step-walkthrough-tooltip-button">
-          {isLastStep ? 'Get started' : 'Got it'}
+          {primaryButtonLabel}
         </Button>
       </div>
     </div>
