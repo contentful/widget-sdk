@@ -1,4 +1,3 @@
 globals:
-  # We browserify these files so we want to have CommonJS globals
   require: false
   module: false
