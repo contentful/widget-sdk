@@ -3,6 +3,7 @@
 - style.content = 'height: 450px; overflow-y: scroll; padding: 15px';
 - style.json = 'font-size: 0.9em; white-space: pre-wrap; word-wrap: break-word';
 - style.box = 'border-bottom: 1px dotted gray; padding: 10px 5px;';
+- style.infoBox = style.box + "; font-style: italic; text-align: center;";
 
 .analytics-console(style=style.wrapper ng-show="isVisible")
   button(ng-click="isVisible = false" title="Close console")
@@ -11,18 +12,28 @@
     | {{ isCollapsed ? '🗖' : '🗕' }}
   button(ng-click="toggleSessionData()" ng-if="!isCollapsed")
     | {{ showSessionData ? 'Mode: Session data' : 'Mode: Events' }}
+  button.icon(ng-click="clearEvents()" title="Clear listed events so far" ng-show="!isCollapsed && !showSessionData")
+    | 🗑
   button(ng-click="toggleSnowplowDebugInfo()" ng-if="!isCollapsed && !showSessionData")
     | {{ showingSnowplowDebugInfo ? '☒ snowplow only' : '☐ snowplow only'}}
   button(ng-click="showData = !showData" ng-show="!isCollapsed && !showSessionData" )
     | {{ showData ? '☒ show data' : '☐ show data' }}
 
   .analytics-console__content(style=style.content ng-show="!isCollapsed")
+    .analytics-console__info(
+      style=style.infoBox
+      ng-if="!showSessionData && clearedEventsIndex > -1")
+        | {{ clearedEventsIndex+1 }} previous events&#32;
+        a(ng-click="unclearEvents()" href="" style="font-style: normal")
+          | [restore]
+
     .analytics-console__events(ng-show="!showSessionData && !showingSnowplowDebugInfo")
       .analytics-console__event(
         style=style.box
-        ng-repeat="event in events track by $index")
+        ng-repeat="event in events track by $index"
+        ng-if="$index > clearedEventsIndex")
         p
-          | \#{{ $index }} - {{ event.time }} <strong>{{ event.name }}</strong>
+          | \#{{ $index+1 }} - {{ event.time }} <strong>{{ event.name }}</strong>
           span(ng-show="!event.isValid" style="color: red")
             |  invalid name
         pre(
@@ -34,9 +45,9 @@
       .analytics-console__event(
         style=style.box
         ng-repeat="event in events track by $index"
-        ng-if="event.snowplow")
+        ng-if="event.snowplow && $index > clearedEventsIndex")
         p
-          | \#{{ $index }} - {{ event.time }} <strong>{{ event.snowplow.name }}, v{{ event.snowplow.version }}</strong>
+          | \#{{ $index+1 }} - {{ event.time }} <strong>{{ event.snowplow.name }}, v{{ event.snowplow.version }}</strong>
         pre(
           ng-if="showData"
           style=style.json)

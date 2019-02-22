@@ -169,6 +169,10 @@ export default function register() {
           }
         };
 
+        scope.clearEvents = () => (scope.clearedEventsIndex = scope.events.length - 1);
+        scope.unclearEvents = () => (scope.clearedEventsIndex = -1);
+        scope.unclearEvents();
+
         scope.events$.onValue(events => {
           scope.events = events;
           if (!scope.showSessionData) {
