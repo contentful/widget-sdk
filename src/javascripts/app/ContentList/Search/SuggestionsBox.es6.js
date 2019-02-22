@@ -1,4 +1,5 @@
 import React from 'react';
+import { get } from 'lodash';
 import Keys from './Keys.es6';
 import { byName as colors } from 'Styles/Colors.es6';
 import PropTypes from 'prop-types';
@@ -19,7 +20,7 @@ export default function SuggestionsBox({
     return (
       <div
         className="search-next__completion-item"
-        key={`${field.contentType && field.contentType.id}-${field.queryKey}`}
+        key={`${get(field, 'contentType.id', 'none')}::${field.queryKey}`}
         data-test-id={field.queryKey}
         tabIndex="0"
         ref={el => {
@@ -157,6 +158,7 @@ class SuggestionsList extends React.Component {
     const { children, searchTerm, hasSuggestions } = this.props;
     return (
       <div
+        tabIndex="0"
         data-test-id="suggestions"
         style={{
           zIndex: 1,
