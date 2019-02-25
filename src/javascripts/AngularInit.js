@@ -216,7 +216,6 @@ angular
       ngRequire('services/contentfulClient.es6').default();
       ngRequire('services/exceptionHandler.es6').default();
       ngRequire('services/hints.es6').default();
-      ngRequire('services/userAgent.es6').default();
       ngRequire('states/cfSrefDirective.es6').default();
       ngRequire('states/config.es6').default();
       ngRequire('ui/Framework/AngularComponent.es6').default();

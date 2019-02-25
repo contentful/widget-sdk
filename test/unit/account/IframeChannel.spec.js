@@ -30,7 +30,7 @@ describe('account/IframeChannel.es6', () => {
   });
 
   it('parses data as JSON on IE', function() {
-    const UA = this.mockService('userAgent');
+    const UA = this.mockService('services/userAgent.es6');
     UA.isIE.returns(true);
 
     const data = { a: true };
