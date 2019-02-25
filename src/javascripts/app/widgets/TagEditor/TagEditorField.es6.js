@@ -23,7 +23,7 @@ export default function TagEditorField({ field }) {
     return field.onIsDisabledChanged(isDisabled => {
       setIsDisabled(isDisabled);
     });
-  }, []);
+  }, [field]);
 
   useEffect(() => {
     return field.onValueChanged(items => {
@@ -32,7 +32,7 @@ export default function TagEditorField({ field }) {
       // snapshot.
       setItems([...items]);
     });
-  }, []);
+  }, [field]);
 
   const constraints =
     _(field.validations)

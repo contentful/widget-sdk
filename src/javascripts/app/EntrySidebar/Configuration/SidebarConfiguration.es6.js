@@ -13,10 +13,11 @@ function SidebarConfiguration(props) {
     reducer,
     convertConfigirationToInternalState(props.configuration, props.extensions)
   );
+  const onUpdateConfiguration = props.onUpdateConfiguration;
 
   useEffect(() => {
-    props.onUpdateConfiguration(convertInternalStateToConfiguration(state));
-  }, [state]);
+    onUpdateConfiguration(convertInternalStateToConfiguration(state));
+  }, [state, onUpdateConfiguration]);
 
   return (
     <div className="sidebar-configuration">

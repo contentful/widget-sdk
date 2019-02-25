@@ -33,6 +33,7 @@ module.exports = {
   parser: 'babel-eslint',
   rules: {
     'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'error',
     'react/display-name': 'off',
     'react/prop-types': ['error', { ignore: ['children'] }],
     'no-template-curly-in-string': 'off',
