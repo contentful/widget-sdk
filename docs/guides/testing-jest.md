@@ -325,7 +325,8 @@ We have to get rid of injection and use `jest.mock` to mock all imports of Angul
 Let's say that some React component imports `$state` Angular service.
 
 ```js
-import $state from '$state';
+import { getModule } from 'NgRegistry.es6';
+const $state = getModule('$state');
 
 export default class TestedComponent extends React.Component {}
 ```
@@ -335,13 +336,7 @@ By using `jest.mock` with `virtual: true` we can mock import of the module and d
 ```js
 import TestedComponent from '../TestedComponent';
 
-jest.mock(
-  '$state',
-  () => ({
-    go: jest.fn();
-  }),
-  { virtual: true }
-);
+jest.mock('ng/$state', () => ({ go: jest.fn() }), { virtual: true });
 ```
 
 ## Resources

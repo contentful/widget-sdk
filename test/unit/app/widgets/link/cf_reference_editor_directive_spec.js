@@ -26,12 +26,16 @@ describe('cfReferenceEditorDirective', () => {
     this.stateParams = params;
     this.search = sinon.stub();
     this.stateGo = sinon.stub();
+    this.goToSlideInEntity = sinon.stub();
 
     module('contentful/test', $provide => {
       $provide.constant('cfEntityLinkDirective', () => {});
       $provide.constant('cfAssetCardDirective', () => {});
       $provide.value('analytics/Analytics.es6', this.analytics);
       $provide.constant('spaceContext', this.spaceContext);
+      $provide.constant('navigation/SlideInNavigator/index.es6', {
+        goToSlideInEntity: this.goToSlideInEntity
+      });
 
       $provide.value('$state', {
         get params() {
@@ -244,7 +248,6 @@ describe('cfReferenceEditorDirective', () => {
     const ASSET = { sys: { id: 'assetid', type: 'Asset' } };
 
     beforeEach(async function() {
-      this.stateParams.returns({ entryId: '3KinTi83FecuMeiUo0qGU4' });
       this.field.setValue([]);
       this.widgetApi.space.createAsset.withArgs({}).resolves(ASSET);
       this.scope = this.init({ type: 'Asset' });
@@ -257,14 +260,14 @@ describe('cfReferenceEditorDirective', () => {
     });
 
     it('redirects to entity editor after creation', function() {
-      sinon.assert.calledOnceWith(this.widgetApi.state.goToEditor, ASSET);
+      sinon.assert.calledOnceWith(this.goToSlideInEntity, {
+        id: ASSET.sys.id,
+        type: ASSET.sys.type
+      });
     });
 
     it('should be tracked', function() {
-      sinon.assert.calledWithExactly(this.analytics.track, 'slide_in_editor:open_create', {
-        targetSlideLevel: 1,
-        currentSlideLevel: 0
-      });
+      sinon.assert.calledOnceWith(this.analytics.track, 'slide_in_editor:open_create');
     });
 
     itWontAddMultipleEntitiesAtOnce('assets', scope => scope.addNewAsset());
@@ -276,7 +279,6 @@ describe('cfReferenceEditorDirective', () => {
     const CLIENT_CT = { data: { sys: { id: CT_ID }, fields: [{}, { localized: true }] } };
 
     beforeEach(async function() {
-      this.stateParams.returns({ entryId: '3KinTi83FecuMeiUo0qGU4' });
       this.field.setValue([]);
       this.spaceContext.publishedCTs.get.withArgs(CT_ID).returns(CLIENT_CT);
       this.widgetApi.space.createEntry.withArgs(CT_ID, {}).resolves(ENTRY);
@@ -291,7 +293,10 @@ describe('cfReferenceEditorDirective', () => {
     });
 
     it('redirects to entity editor after creation', function() {
-      sinon.assert.calledOnceWith(this.widgetApi.state.goToEditor, ENTRY);
+      sinon.assert.calledOnceWith(this.goToSlideInEntity, {
+        id: ENTRY.sys.id,
+        type: ENTRY.sys.type
+      });
     });
 
     it('tracks `entry:create` event', function() {

@@ -100,6 +100,10 @@ export default function register() {
           $scope.renderInline
         );
 
+        $scope.newCloseWithReason = reason => () => {
+          referenceContext.close(reason);
+        };
+
         function addLinks(links) {
           nextFocusIndex = -1;
           return Promise.all(links.map(link => referenceContext.add(link)));

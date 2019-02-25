@@ -2,13 +2,11 @@ import _ from 'lodash';
 
 describe('entityEditor/StateController', () => {
   beforeEach(function() {
-    const closeStateSpy = (this.closeStateSpy = sinon.spy());
     this.stubs = {
       goToPreviousSlideOrExit: sinon.stub()
     };
 
     module('contentful/test', $provide => {
-      $provide.constant('navigation/closeState', closeStateSpy);
       $provide.constant('navigation/SlideInNavigator/index.es6', {
         goToPreviousSlideOrExit: this.stubs.goToPreviousSlideOrExit
       });
@@ -129,7 +127,7 @@ describe('entityEditor/StateController', () => {
     it('navigates to the previous slide-in entity or closes the current state as a fallback', function() {
       this.controller.delete.execute();
       this.$apply();
-      sinon.assert.calledOnceWith(this.stubs.goToPreviousSlideOrExit, 'delete', this.closeStateSpy);
+      sinon.assert.calledOnceWith(this.stubs.goToPreviousSlideOrExit, 'delete');
     });
   });
 

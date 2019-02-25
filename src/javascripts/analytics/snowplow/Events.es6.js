@@ -72,11 +72,15 @@ registerGenericEvent('algolia:installed');
 registerGenericEvent('algolia:updated');
 registerGenericEvent('algolia:uninstalled');
 
-registerBulkEditorEvent('bulk_editor:action');
 registerBulkEditorEvent('bulk_editor:add');
-registerBulkEditorEvent('bulk_editor:close');
+registerBulkEditorEvent('bulk_editor:unlink');
+registerBulkEditorEvent('bulk_editor:navigate');
+registerBulkEditorEvent('bulk_editor:collapse');
+registerBulkEditorEvent('bulk_editor:expand');
+registerBulkEditorEvent('bulk_editor:edit_in_entry_editor');
 registerBulkEditorEvent('bulk_editor:open');
 registerBulkEditorEvent('bulk_editor:open_slide_in');
+registerBulkEditorEvent('bulk_editor:close');
 registerBulkEditorEvent('bulk_editor:status');
 
 registerSlideInEditorEvent('slide_in_editor:peek_click');

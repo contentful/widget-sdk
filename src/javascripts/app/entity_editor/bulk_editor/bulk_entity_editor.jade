@@ -22,8 +22,8 @@ div(ng-if="data.hasEditor")
       | Actions
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
     .context-menu.x--arrow-right(cf-context-menu="bottom-right" role="menu")
-      a(role="menuitem" cf-sref="data.stateRef")
-        | Open in content editor
+      a(role="menuitem" cf-sref="data.stateRef" target="_blank" rel="noopener noreferrer" ng-click="actions.openInEntryEditor()")
+        | Open in entry editor (new tab)
       div(role="menuitem" ng-click="actions.unlink()")
         | Unlink entry
 

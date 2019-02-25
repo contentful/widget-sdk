@@ -1,13 +1,17 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const { goToPreviousSlideOrExit } = getModule('navigation/SlideInNavigator');
-const closeState = getModule('navigation/closeState');
 
-class BackNav extends React.Component {
-  handleClick = () => {
-    goToPreviousSlideOrExit('arrow_back', closeState);
+export default class BackNav extends React.Component {
+  static propTypes = {
+    onClose: PropTypes.func
+  };
+
+  static defaultProps = {
+    onClose: () => goToPreviousSlideOrExit('arrow_back')
   };
 
   render() {
@@ -17,7 +21,7 @@ class BackNav extends React.Component {
           <div
             className="btn btn__back"
             data-test-id="breadcrumbs-back-btn"
-            onClick={this.handleClick}>
+            onClick={this.props.onClose}>
             <Icon name="back" />
           </div>
         </div>
@@ -25,5 +29,3 @@ class BackNav extends React.Component {
     );
   }
 }
-
-export default BackNav;

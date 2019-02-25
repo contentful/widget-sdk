@@ -47,8 +47,9 @@ export function create(parentEntryId, links$) {
 
   function actions(entryId) {
     return {
+      openInEntryEditor: partial(trackAction, 'edit_in_entry_editor', entryId),
       unlink: partial(trackAction, 'unlink', entryId),
-      navigate: partial(trackAction, 'navigate', entryId),
+      navigate: partial(trackAction, 'navigate', entryId), // TODO: Still relevant?
       setExpansion(expanded) {
         const action = expanded ? 'expand' : 'collapse';
         trackAction(action, entryId);
@@ -56,11 +57,10 @@ export function create(parentEntryId, links$) {
     };
   }
 
-  function trackAction(name, entryId) {
-    track('action', {
+  function trackAction(action, entryId) {
+    track(action, {
       refCount: K.getValue(links$).length + 1,
-      entryId,
-      action: name
+      entryId
     });
   }
 

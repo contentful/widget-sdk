@@ -30,7 +30,7 @@ export default function() {
       'a.entity-link__content',
       {
         dataTestId: 'entity-link-content',
-        ngIf: '(stateRef || actions.slideinEdit) && !actions.edit',
+        ngIf: 'stateRef && !actions.edit',
         cfSref: 'stateRef',
         ngClick: 'onClick($event)'
       },

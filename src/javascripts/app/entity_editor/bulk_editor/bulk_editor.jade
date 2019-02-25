@@ -3,18 +3,14 @@
   // BETA release. Remove this once we are done with
   // the experiment.
   header.workbench-header(ng-if="!renderInline")
-    .breadcrumbs-widget
-      .breadcrumbs-container
-        cf-icon.btn.btn__back(
-          ng-click="referenceContext.close()"
-          name="breadcrumbs-icon-back"
-          role="button"
-          data-test-id="breadcrumbs-back-btn")
+    react-component(
+      name="app/entity_editor/Components/BackNav"
+      props="{onClose: newCloseWithReason('arrow_back')}")
     h1.workbench-header__title
       | Entries linked in <em>{{ referenceContext.field.name }}</em> ({{ data.linkCount }})
     .workbench-header__actions
        button.btn-secondary-action(
-         ng-click="referenceContext.close()")
+         ng-click="newCloseWithReason('bulk_editor_close')()")
          | Close
 
   .workbench-main

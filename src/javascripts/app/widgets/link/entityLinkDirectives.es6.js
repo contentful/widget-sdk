@@ -74,10 +74,9 @@ export default function register() {
 
   registerController('EntityLinkController', [
     '$scope',
-    '$state',
     'utils/LaunchDarkly/index.es6',
     'analytics/Analytics.es6',
-    ($scope, $state, LD, Analytics) => {
+    ($scope, LD, Analytics) => {
       /**
        * Given an entity state we return
        */
@@ -97,38 +96,17 @@ export default function register() {
       });
 
       const data = $scope.entity;
-      $scope.config = _.assign({}, $scope.config || {});
+      $scope.config = { ...($scope.config || {}) };
       $scope.actions = $scope.actions || {};
       $scope.onClick = $event => {
-        if (!$scope.stateRef && !$scope.actions.edit) return;
-
-        if (($scope.stateRef || $scope.actions.slideinEdit) && !$scope.actions.edit) {
-          if ($scope.actions.slideinEdit) {
-            // This will prevent navigating to the entry page
-            // when clicking the ref link and open it inline instead.
-            // This will still allow users to navigate to entry page
-            // with right click + open in a new tab.
-            $event.preventDefault();
-            const eventData = $scope.actions.slideinEdit();
-            Analytics.track('slide_in_editor:open', eventData);
-            Analytics.track('reference_editor_action:edit', {
-              ctId: _.get($scope.entity, 'sys.contentType.sys.id')
-            });
-          } else {
-            // Control navigation to entry editor even if the link has
-            // an href to prevent app reload and losing navigation history.
-            $event.preventDefault();
-            $state.go($scope.stateRef.path.join('.'), $scope.stateRef.params);
-          }
+        if (!$scope.actions.edit) {
+          return;
         }
-
-        if ($scope.actions.edit) {
-          $scope.actions.edit($event);
-          Analytics.track('reference_editor_action:edit', {
-            ctId: _.get($scope.entity, 'sys.contentType.sys.id')
-          });
-          $scope.actions.trackEdit();
-        }
+        $event.preventDefault();
+        $scope.actions.edit($event);
+        Analytics.track('reference_editor_action:edit', {
+          ctId: _.get($scope.entity, 'sys.contentType.sys.id')
+        });
       };
 
       if ($scope.config.largeImage) {
@@ -216,6 +194,8 @@ export default function register() {
 
       const getEntityState = () => {
         if ($scope.config.link) {
+          // Despite using slide-in, we still need this for `href` having a
+          // target, allowing us to open in a new tab.
           $scope.stateRef = makeEntityRef(data);
         }
 

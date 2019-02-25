@@ -1,8 +1,23 @@
 import { track } from 'analytics/Analytics.es6';
-import { findIndex } from 'lodash';
+import { cloneDeep, find, mapValues } from 'lodash';
+import * as K from 'utils/kefir.es6';
+import { deepFreeze } from 'utils/Freeze.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const { getSlideInEntities, goToSlideInEntity } = getModule('navigation/SlideInNavigator');
+import { loadEntry, loadAsset } from 'app/entity_editor/DataLoader.es6';
+const entityLoaders = {
+  Entry: loadEntry,
+  Asset: loadAsset
+};
+const {
+  getSlideInEntities,
+  goToSlideInEntity,
+  getSlideAsString,
+  goToPreviousSlideOrExit
+} = getModule('navigation/SlideInNavigator');
+
+const spaceContext = getModule('spaceContext');
+
 const { setTimeout, clearTimeout } = window;
 
 const PEEK_IN_DELAY = 500;
@@ -19,16 +34,20 @@ export default ($scope, $state) => {
   let clearPreviousPeekTimeoutID, clearPeekTimeoutID;
   let loaderTimeoutID;
 
-  $scope.entities = [];
+  $scope.slideStates = [];
+  $scope.entityLoads = {};
+  $scope.editorsData = {};
   $scope.context.ready = true;
 
   setEntities();
 
-  const isTopLayer = ($scope.isTopLayer = index => index + 1 === $scope.entities.length);
+  const isTopLayer = ($scope.isTopLayer = index => index + 1 === $scope.slideStates.length);
+
+  $scope.getSlideAsString = getSlideAsString;
 
   $scope.getLayerClasses = index => {
     const currentlyPeekedLayerIndex = peekedLayerIndexes.slice(-1)[0];
-    const optimize = $scope.entities.length > 4;
+    const optimize = $scope.slideStates.length > 4;
     return {
       [`workbench-layer--${index}`]: true,
       'workbench-layer--is-current': isTopLayer(index),
@@ -39,17 +58,18 @@ export default ($scope, $state) => {
     };
   };
 
-  $scope.close = entity => {
+  $scope.close = slide => {
     clearTimeouts();
     hoveredLayerIndex = null;
     topPeekingLayerIndex = -1;
     peekedLayerIndexes = [];
-    goToSlideInEntity(entity);
+    const eventData = goToSlideInEntity(slide);
     const peekHoverTimeMs = getTimestamp() - $scope.peekStart - PEEK_IN_DELAY;
+    getSlideStateByKey();
+
     track('slide_in_editor:peek_click', {
       peekHoverTimeMs: Math.max(0, peekHoverTimeMs),
-      currentSlideLevel: $scope.entities.length - 1,
-      targetSlideLevel: findIndex($scope.entities, ({ id }) => entity.id === id)
+      ...eventData
     });
   };
 
@@ -110,25 +130,134 @@ export default ($scope, $state) => {
     clearTimeouts();
   });
 
+  function getSlideStateByKey(key) {
+    return find($scope.slideStates, { key });
+  }
+
   function setEntities() {
-    const previousEntities = $scope.entities;
-    const moreThanOneNewEntityAdded = previousEntities.length + 1 < $scope.entities.length;
+    const previousSlidesCount = $scope.slideStates.length;
 
-    $scope.entities = getSlideInEntities();
+    const slides = getSlideInEntities();
+    const multipleNewSlidesAdded = previousSlidesCount + 1 < slides.length;
 
-    // If there was more than one new entity added to the stack, we will have to
+    $scope.slideStates = slides.reduce((slideStates, slide) => {
+      const key = getSlideAsString(slide);
+      slideStates.push(
+        getSlideStateByKey(key) || {
+          key,
+          slide,
+          viewProps: null,
+          loadingError: null
+        }
+      );
+      return slideStates;
+    }, []);
+
+    $scope.entityLoads = slides.reduce((entityLoads, slide) => {
+      let entityId, entityType, buildSlideEditorViewProps;
+      if (['Entry', 'Asset'].includes(slide.type)) {
+        entityType = slide.type;
+        entityId = slide.id;
+        buildSlideEditorViewProps = editorData => ({ editorData });
+      } else if (slide.type === 'BulkEditor') {
+        entityType = 'Entry';
+        entityId = slide.path[0];
+        buildSlideEditorViewProps = editorData => {
+          const { entityInfo } = editorData;
+          const lifeline = K.createBus();
+          const onDestroy = () => lifeline.end();
+          const doc = editorData.openDoc(lifeline.stream);
+          return {
+            referenceContext: createReferenceContext(entityInfo, doc, slide, onDestroy)
+          };
+        };
+      } else {
+        throw new Error(`Unknown slide of type "${slide.type}"`);
+      }
+      const maybeUpdateSlideState = updateFn => {
+        const key = getSlideAsString(slide);
+        const slideState = getSlideStateByKey(key);
+        if (slideState) {
+          updateFn(slideState);
+          $scope.$digest();
+        }
+      };
+      const updateSlideState = editorData =>
+        maybeUpdateSlideState(
+          slideState => (slideState.viewProps = buildSlideEditorViewProps(editorData))
+        );
+      const setLoadingError = loadingError =>
+        maybeUpdateSlideState(slideState => (slideState.loadingError = loadingError));
+
+      const loaderKey = `${entityType}:${entityId}`;
+      if (!entityLoads[loaderKey]) {
+        const loadEntity = entityLoaders[entityType];
+        entityLoads[loaderKey] =
+          $scope.entityLoads[loaderKey] ||
+          loadEntity(spaceContext, entityId).then(editorData => {
+            // Only add if data is still required once loaded:
+            if ($scope.entityLoads[loaderKey]) {
+              $scope.editorsData[loaderKey] = editorData;
+            }
+            return editorData;
+          });
+      }
+      entityLoads[loaderKey]
+        .then(editorData => updateSlideState(editorData))
+        .catch(error => setLoadingError(error));
+      return entityLoads;
+    }, {});
+
+    // Get rid of unused editorData (e.g. because slide(s) using it were closed)
+    $scope.editorsData = mapValues($scope.entityLoads, (_v, key) => $scope.editorsData[key]);
+
+    // If there was more than one new slide added to the stack, we will have to
     // trigger loading for all those new entries, not just the one on top.
     // This happens initially and on browser history back.
     // TODO: Optimize this: Only load (and therefore re-enable Angular watchers)
     // on the newly added slides.
-    if (moreThanOneNewEntityAdded) {
+    if (multipleNewSlidesAdded) {
       $scope.loaded = false;
-      // TODO: Find a better way to get notified when all entity editors have been
+      // TODO: Find a better way to get notified when all slides' editors have been
       // fully loaded instead of giving each one 3s.
-      loaderTimeoutID = scopeTimeout($scope.entities.length * 3000, () => {
+      loaderTimeoutID = scopeTimeout($scope.slideStates.length * 3000, () => {
         $scope.loaded = true;
       });
     }
+  }
+
+  function createReferenceContext(entityInfo, doc, slide, cb = () => {}) {
+    const [_entryId, fieldId, localeCode, focusIndex] = slide.path;
+    // The links$ property should end when the editor is closed
+    const field = find(entityInfo.contentType.fields, { apiName: fieldId });
+    const lifeline = K.createBus();
+    const links$ = K.endWith(
+      doc.valuePropertyAt(['fields', field.id, localeCode]),
+      lifeline.stream
+    ).map(links => links || []);
+
+    return {
+      links$,
+      focusIndex,
+      editorSettings: deepFreeze(cloneDeep($scope.preferences)),
+      parentId: entityInfo.id,
+      field,
+      add: link => {
+        return doc.pushValueAt(['fields', field.id, localeCode], link);
+      },
+      remove: index => {
+        return doc.removeValueAt(['fields', field.id, localeCode, index]);
+      },
+      close: closeReason => {
+        lifeline.end();
+        goToPreviousSlideOrExit(closeReason, () => {
+          // Bulk editor can't ever be the one and only slide. So e.g. returning to
+          // the content list on a "<" click is a use-case we do not have to handle.
+          throw new Error('Unexpected "exit" after closing bulk editor');
+        });
+        cb();
+      }
+    };
   }
 
   function scopeTimeout(ms, fn) {

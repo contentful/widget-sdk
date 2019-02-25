@@ -8,7 +8,6 @@ import * as Focus from './Focus.es6';
 import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking from './Tracking.es6';
-import { loadAsset } from 'app/entity_editor/DataLoader.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 
 import { getModule } from 'NgRegistry.es6';
@@ -17,16 +16,8 @@ const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
 const localeStore = getModule('TheLocaleStore');
 
-export default async function create($scope, assetId) {
+export default async function create($scope, editorData) {
   $scope.context = {};
-  let editorData;
-  try {
-    editorData = await loadAsset(spaceContext, assetId);
-  } catch (error) {
-    $scope.context.loadingError = error;
-    return;
-  }
-  $scope.context.ready = true;
   $scope.editorData = editorData;
 
   // add list view as parent if it's a deep link to the media/asset
