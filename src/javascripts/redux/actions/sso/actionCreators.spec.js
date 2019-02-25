@@ -83,24 +83,22 @@ describe('SSO Redux actionCreators', () => {
         });
     });
 
-    it('should set the ssoName as a kebab-case version of the org name when creating', () => {
+    it('should send a null ssoName when creating', () => {
       const identityProvider = {};
 
       mockEndpoint.mockResolvedValueOnce(identityProvider);
 
-      mockStore
-        .dispatch(actionCreators.createIdp({ orgId: '1234', orgName: 'Testing 1234' }))
-        .then(() => {
-          expect(mockEndpoint).toHaveBeenLastCalledWith(
-            expect.objectContaining({
-              method: expect.any(String),
-              path: expect.any(Array),
-              data: {
-                ssoName: _.kebabCase('Testing 1234')
-              }
-            })
-          );
-        });
+      mockStore.dispatch(actionCreators.createIdp({ orgId: '1234' })).then(() => {
+        expect(mockEndpoint).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            method: expect.any(String),
+            path: expect.any(Array),
+            data: {
+              ssoName: null
+            }
+          })
+        );
+      });
     });
 
     it('should go through the error flow if the endpoint errors', () => {

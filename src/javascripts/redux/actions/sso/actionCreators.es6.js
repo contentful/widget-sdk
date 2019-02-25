@@ -31,7 +31,7 @@ export function retrieveIdp({ orgId }) {
   };
 }
 
-export function createIdp({ orgId, orgName }) {
+export function createIdp({ orgId }) {
   return async dispatch => {
     const endpoint = createOrganizationEndpoint(orgId);
 
@@ -44,7 +44,7 @@ export function createIdp({ orgId, orgName }) {
         method: 'POST',
         path: ['identity_provider'],
         data: {
-          ssoName: _.kebabCase(orgName)
+          ssoName: null
         }
       });
     } catch (e) {

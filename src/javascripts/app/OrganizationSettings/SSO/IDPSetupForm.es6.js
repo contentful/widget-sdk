@@ -13,7 +13,6 @@ import {
   TextLink,
   Spinner,
   Button,
-  Textarea,
   ModalConfirm,
   Tooltip,
   Icon
@@ -124,6 +123,7 @@ export class IDPSetupForm extends React.Component {
       connectionTest,
       identityProvider,
       organization: {
+        name: orgName,
         sys: { id: orgId }
       }
     } = this.props;
@@ -351,9 +351,15 @@ export class IDPSetupForm extends React.Component {
 
           {!connectionTest.isPending && connectionTest.result === TEST_RESULTS.failure && (
             <div>
-              <Textarea
+              <TextField
+                textarea
+                id="test-errors"
+                name="test-errors"
+                labelText="Error log"
                 extraClassNames="f36-margin-top--xl"
-                rows={5}
+                textInputProps={{
+                  rows: 5
+                }}
                 testId="errors"
                 value={formatConnectionTestErrors(connectionTest.errors).join('\n')}
               />
@@ -366,8 +372,7 @@ export class IDPSetupForm extends React.Component {
             Sign-in name
           </Heading>
           <HelpText extraClassNames="f36-margin-bottom--l">
-            It’s what users have to type if they choose to login in via SSO on Contentful. We’ve
-            prefilled it with the name of your organization, but you can change it. Make sure to
+            It’s what you have to type if you choose to login in via SSO on Contentful. Make sure to
             keep it short and memorable.
           </HelpText>
 
@@ -380,7 +385,8 @@ export class IDPSetupForm extends React.Component {
                 testId="ssoName"
                 helpText="Letters, numbers, periods, hyphens, and underscores are allowed."
                 textInputProps={{
-                  width: 'large'
+                  width: 'large',
+                  placeholder: `E.g. ${_.kebabCase(orgName)}-sso`
                 }}
                 extraClassNames="f36-margin-right--m"
                 value={fields.ssoName.value}
