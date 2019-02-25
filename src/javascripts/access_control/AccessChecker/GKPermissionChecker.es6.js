@@ -53,10 +53,10 @@ export function create({ space, organization }) {
    * Returns true if Roles can be modified.
    */
   function canModifyRoles() {
-    if (!isSuperUser()) {
+    if (!isSuperUser() || !space) {
       return Promise.resolve(false);
     } else {
-      return space ? createFeatureService(space.sys.id).get('customRoles') : undefined;
+      return createFeatureService(space.sys.id).get('customRoles');
     }
   }
 }
