@@ -1,5 +1,7 @@
 import { get } from 'lodash';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
+import { getValue } from 'utils/kefir.es6';
+import { user$ } from 'services/TokenStore.es6';
 
 export const spaceHomeController = ($scope, space, accessChecker, Config) => {
   $scope.context.ready = true;
@@ -16,4 +18,12 @@ export const spaceHomeController = ($scope, space, accessChecker, Config) => {
   $scope.spaceHomeProps = { spaceName, orgName };
   $scope.isSpaceAdmin = get(space, 'spaceMembership.admin');
   $scope.orgOwnerOrAdmin = OrganizationRoles.isOwnerOrAdmin(space.organization);
+
+  const user = getValue(user$) || {};
+  $scope.welcomeProps = {
+    user: {
+      firstName: user.firstName,
+      signInCount: user.signInCount
+    }
+  };
 };

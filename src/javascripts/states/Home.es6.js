@@ -1,9 +1,10 @@
 import { find } from 'lodash';
 import makeState from 'states/Base.es6';
-import { getSpaces } from 'services/TokenStore.es6';
 import { getStore } from 'TheStore/index.es6';
 import template from 'app/home/HomeTemplate.es6';
 import { go } from 'states/Navigator.es6';
+import { getSpaces, user$ } from 'services/TokenStore.es6';
+import { getValue } from 'utils/kefir.es6';
 
 const store = getStore();
 
@@ -47,6 +48,14 @@ export default makeState({
           params: { spaceId: space.sys.id }
         });
       } else {
+        const user = getValue(user$) || {};
+        $scope.welcomeProps = {
+          user: {
+            firstName: user.firstName,
+            signInCount: user.signInCount
+          }
+        };
+
         // Show the blank homepage otherwise
         $scope.context.ready = true;
       }

@@ -16,7 +16,7 @@ export default function template() {
     ),
     h('.home__container', { ngIf: 'isSpaceAdmin && !readOnlySpace' }, [
       h('.home__content', [
-        h('cf-welcome'),
+        h('react-component', { name: 'app/home/welcome/Welcome.es6', props: 'welcomeProps' }),
         h('react-component', { name: 'app/home/UpgradePricing.es6' }),
         h('cf-onboarding-steps'),
         h('cf-developer-resources'),
