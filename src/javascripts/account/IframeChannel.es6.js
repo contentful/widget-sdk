@@ -1,8 +1,8 @@
 import * as K from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as userAgent from 'services/userAgent.es6';
 
 const $window = getModule('$window');
-const userAgent = getModule('userAgent');
 
 /**
  * Create a stream of messages send with `window.postMessage` from the Iframe.
