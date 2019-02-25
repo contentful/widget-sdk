@@ -197,10 +197,6 @@ export default function register() {
                       eventOrigin = 'bulk-editor';
                     }
 
-                    if ($scope.renderInline) {
-                      eventOrigin = 'inline-reference-editor';
-                    }
-
                     Analytics.track('entry:publish', {
                       eventOrigin: eventOrigin,
                       contentType: contentType,

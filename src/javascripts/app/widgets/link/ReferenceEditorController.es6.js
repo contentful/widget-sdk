@@ -50,9 +50,6 @@ export default function create($scope, widgetApi) {
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
   $scope.referenceType = {};
-  $scope.$on('ct-expand-state:toggle', (_event, [...args]) =>
-    handleInlineReferenceEditorToggle(...args)
-  );
 
   // Passed to cfEntityLink and cfAssetCard directive
   $scope.config = {
@@ -225,14 +222,6 @@ export default function create($scope, widgetApi) {
 
   function is(type, style) {
     return type === $scope.type && style === $scope.style;
-  }
-
-  function handleInlineReferenceEditorToggle(id, locale) {
-    if (id !== field.id || locale !== field.locale) {
-      return;
-    }
-    const type = $scope.isAssetCard ? 'asset' : 'link';
-    $scope.referenceType = { [type]: true };
   }
 
   function getUnpublishedReferences() {

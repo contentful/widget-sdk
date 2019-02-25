@@ -49,7 +49,6 @@ export default function register() {
       return {
         restrict: 'E',
         scope: {
-          renderInline: '=',
           entityContext: '<',
           bulkEditorContext: '<'
         },
