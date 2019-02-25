@@ -16,12 +16,6 @@ export function create({ space, organization }) {
     used: get(organization, 'usage.permanent.organizationMembership', 1)
   };
 
-  if (!space) {
-    return;
-  }
-
-  const FeatureService = createFeatureService(space.sys.id);
-
   return {
     getUserQuota: () => userQuota,
     /**
@@ -47,7 +41,7 @@ export function create({ space, organization }) {
   }
 
   function isSuperUser() {
-    const isSpaceAdmin = get(space, 'spaceMembership.admin');
+    const isSpaceAdmin = space ? get(space, 'spaceMembership.admin') : undefined;
     const isOrganizationAdmin = OrganizationRoles.isAdmin(organization);
     const isOrganizationOwner = OrganizationRoles.isOwner(organization);
     return isSpaceAdmin || isOrganizationAdmin || isOrganizationOwner;
@@ -63,7 +57,7 @@ export function create({ space, organization }) {
     if (!isSuperUser()) {
       return Promise.resolve(false);
     } else {
-      return FeatureService.get('customRoles');
+      return space ? createFeatureService(space.sys.id).get('customRoles') : undefined;
     }
   }
 }
