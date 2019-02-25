@@ -3,10 +3,10 @@
 import _ from 'lodash';
 import $ from 'jquery';
 
-describe('navigation/confirmLeaveEditor', () => {
+describe('navigation/confirmLeaveEditor.es6', () => {
   beforeEach(function() {
     module('contentful/test');
-    const createConfirm = this.$inject('navigation/confirmLeaveEditor');
+    const createConfirm = this.$inject('navigation/confirmLeaveEditor.es6').default;
     this.save = sinon.stub().resolves();
     this.confirm = createConfirm(this.save);
 

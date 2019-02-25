@@ -10,6 +10,7 @@ import {
 } from './FieldsTab/FieldTabDialogs.es6';
 import getContentTypePreview from './PreviewTab/getContentTypePreview.es6';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
+import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
 
 export default function register() {
   /**
@@ -32,7 +33,6 @@ export default function register() {
     'access_control/AccessChecker',
     'analytics/Analytics.es6',
     'app/ContentModel/Editor/Actions.es6',
-    'navigation/confirmLeaveEditor',
     function ContentTypeEditorController(
       $scope,
       $state,
@@ -43,8 +43,7 @@ export default function register() {
       metadataDialog,
       accessChecker,
       Analytics,
-      { default: createActions },
-      leaveConfirmator
+      { default: createActions }
     ) {
       const controller = this;
       const contentTypeIds = spaceContext.cma

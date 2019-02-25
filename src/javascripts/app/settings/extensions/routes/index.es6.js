@@ -1,6 +1,4 @@
-import { getModule } from 'NgRegistry.es6';
-
-const leaveConfirmator = getModule('navigation/confirmLeaveEditor');
+import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
 
 export default {
   name: 'extensions',
