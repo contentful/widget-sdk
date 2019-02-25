@@ -3,6 +3,7 @@ import Enzyme from 'enzyme';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import { SSOSetup } from './SSOSetup.es6';
 import IDPSetupForm from './IDPSetupForm.es6';
+import SSOEnabled from './SSOEnabled.es6';
 
 const awaitSetImmediate = () => new Promise(resolve => setImmediate(resolve));
 
@@ -84,7 +85,7 @@ describe('SSOSetup', () => {
     expect(rendered.find(IDPSetupForm)).toHaveLength(1);
   });
 
-  it('should not render the IDPSetupForm component is given identityProvider is enabled', () => {
+  it('should not render the IDPSetupForm component if given identityProvider is enabled', () => {
     const identityProvider = {
       data: {
         enabled: true,
@@ -94,6 +95,19 @@ describe('SSOSetup', () => {
     const rendered = render({ identityProvider, organization });
 
     expect(rendered.find(IDPSetupForm)).toHaveLength(0);
+  });
+
+  it('should render the SSOEnabled component if the given identityProvider is enabled', () => {
+    const identityProvider = {
+      data: {
+        enabled: true,
+        ssoName: 'my-sso-setup',
+        restrictedMode: false
+      }
+    };
+    const rendered = render({ identityProvider, organization });
+
+    expect(rendered.find(SSOEnabled)).toHaveLength(1);
   });
 
   it('should attempt to create an identity provider if CTA button is clicked', () => {
