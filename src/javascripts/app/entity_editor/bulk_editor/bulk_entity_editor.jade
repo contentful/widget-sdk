@@ -14,7 +14,8 @@ div(ng-if="data.hasEditor")
       role="progressbar"
       aria-busy="{{data.isSaving}}")
     div.bulk-editor-entry__header-main(ng-click="actions.toggleExpansion()")
-      div.bulk-editor-entry__header-title
+      cf-icon.bulk-editor-entry__header-icon(name="page-content", scale="0.75")
+      h2.bulk-editor-entry__header-title
         | {{title}}
       div.bulk-editor-entry__header-expander(ng-class="!data.expanded && 'x--collapsed'")
 
@@ -23,7 +24,7 @@ div(ng-if="data.hasEditor")
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
     .context-menu.x--arrow-right(cf-context-menu="bottom-right" role="menu")
       a(role="menuitem" cf-sref="data.stateRef" target="_blank" rel="noopener noreferrer" ng-click="actions.openInEntryEditor()")
-        | Open in entry editor (new tab)
+        | Edit entry in new tab
       div(role="menuitem" ng-click="actions.unlink()")
         | Unlink entry
 

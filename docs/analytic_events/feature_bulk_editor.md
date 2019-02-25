@@ -14,7 +14,7 @@ The following are possible `action` values of this event:
  - `navigate`: ? _Possibly irrelevant?
  - `expand`: The user clicks on an entry's top bar which collapses it.
  - `collapse`:  Counterpart to _expand_.
- - `edit_in_entry_editor`: Actions > "Open in entry editor".
+ - `edit_in_entry_editor`: Actions > "Edit entry in new tab".
  - `open_slide_in`: Tracked whenever slide-in entry editor was opened instead of a bulk editor for technical or UX reasons.
 
 ## Change-log

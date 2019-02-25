@@ -22,9 +22,10 @@
     align-items: center
     transition: background-color 0.2s linear
     background: $colors.element-lightest
-
-    &.x--collapsed
-      border-bottom: 1px solid $colors.element-dark
+    margin-top: -1px
+    border-top: 1px solid $colors.element-dark
+    border-bottom: 1px solid $colors.element-dark
+    box-shadow: 0 1px 2px 0 rgba(black , 0.09)
 
   &__header-main
     display: flex
@@ -45,12 +46,16 @@
     &:before
       content: "\f0d7"
 
+  &__header-icon
+    margin-left: 1.5em
+    margin-top: 0.6em
+
   &__header-title
     font-size: 18px
+    margin: 0 0 0 0.5em
     padding-top: $new-rhythm(0.7)
     padding-bottom: $new-rhythm(0.7)
     font-weight: bold
-    margin-left: 1.3em
 
   &__actions
     margin-left: auto
