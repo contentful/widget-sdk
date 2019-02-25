@@ -1,8 +1,6 @@
 import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
-import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import { user$ } from 'services/TokenStore.es6';
-import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 import * as Validator from './Validator.es6';
 import * as Focus from './Focus.es6';
 import initDocErrorHandler from './DocumentErrorHandler.es6';
@@ -16,20 +14,16 @@ const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
 const localeStore = getModule('TheLocaleStore');
 
-export default async function create($scope, editorData) {
+/**
+ * @param {Object} $scope
+ * @param {Object} editorData
+ * @returns {Promise<void>}
+ */
+export default async function create($scope, editorData, preferences) {
   $scope.context = {};
   $scope.editorData = editorData;
 
-  // add list view as parent if it's a deep link to the media/asset
-  if (contextHistory.isEmpty()) {
-    contextHistory.add(crumbFactory.AssetList());
-  }
-
-  // add current state
-  contextHistory.add(crumbFactory.Asset(editorData.entity.getSys(), $scope.context));
-
   const editorContext = ($scope.editorContext = {});
-
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
 
   const notify = makeNotify('Asset', () => '“' + $scope.title + '”');
@@ -72,6 +66,8 @@ export default async function create($scope, editorData) {
   });
 
   $scope.user = K.getValue(user$);
+
+  editorContext.hasInitialFocus = preferences.hasInitialFocus;
 
   // Building the form
   $controller('FormWidgetsController', {

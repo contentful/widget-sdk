@@ -22,7 +22,6 @@ export function createBreadcrumbsHistory() {
   return {
     add,
     set,
-    extendCurrent,
     isEmpty,
     pop,
     purge,
@@ -31,15 +30,6 @@ export function createBreadcrumbsHistory() {
     },
     crumbs$: crumbBus.property
   };
-
-  function extendCurrent(props) {
-    const current = last(history);
-    // Object.assign will throw in case `current` is not an object
-    if (current) {
-      Object.assign(current, props);
-    }
-    crumbBus.set(history);
-  }
 
   function add(crumb) {
     let old;

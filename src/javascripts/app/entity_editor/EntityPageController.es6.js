@@ -153,12 +153,15 @@ export default ($scope, $state) => {
       return slideStates;
     }, []);
 
-    $scope.entityLoads = slides.reduce((entityLoads, slide) => {
+    $scope.entityLoads = slides.reduce((entityLoads, slide, i) => {
       let entityId, entityType, buildSlideEditorViewProps;
       if (['Entry', 'Asset'].includes(slide.type)) {
         entityType = slide.type;
         entityId = slide.id;
-        buildSlideEditorViewProps = editorData => ({ editorData });
+        buildSlideEditorViewProps = editorData => ({
+          editorData,
+          preferences: { ...$scope.preferences, hasInitialFocus: i + 1 === slides.length }
+        });
       } else if (slide.type === 'BulkEditor') {
         entityType = 'Entry';
         entityId = slide.path[0];

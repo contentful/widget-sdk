@@ -2,10 +2,7 @@ import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
 import { constant } from 'lodash';
 
-import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import { user$ } from 'services/TokenStore.es6';
-
-import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 
 import * as Validator from './Validator.es6';
 import * as Focus from './Focus.es6';
@@ -44,7 +41,10 @@ const DataFields = getModule('EntityEditor/DataFields');
  *
  * @param {Object} $scope
  * @param {Object} editorData
- * @param {Object} preferences
+ * @param {boolean} preferences.hasInitialFocus
+ * @param {boolean} preferences.showDisabledFields
+ * @param {boolean} preferences.showAuxPanel
+ * @param {function} preferences.toggleAuxPanel
  * @scope.requires {Data.FieldControl[]} formControls
  *   Passed to FormWidgetsController to render field controls
  */
@@ -53,14 +53,6 @@ export default async function create($scope, editorData, preferences) {
   const start = Date.now();
 
   Telemetry.record('entry_editor_http_time', Date.now() - start);
-
-  // add list as parent state only if it's a deep link
-  if (contextHistory.isEmpty()) {
-    contextHistory.add(crumbFactory.EntryList());
-  }
-
-  // add current state
-  contextHistory.add(crumbFactory.Entry(editorData.entity.getSys(), $scope.context));
 
   const editorContext = ($scope.editorContext = {});
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
@@ -127,22 +119,9 @@ export default async function create($scope, editorData, preferences) {
     $scope.title = truncate(title, 50);
   });
 
-  $scope.$on('scroll-editor', (_ev, scrollTop) => {
-    // TODO:danwe: Get rid of contextHistory in here!
-    contextHistory.extendCurrent({ scroll: scrollTop });
-  });
-
   $scope.user = K.getValue(user$);
 
-  const startScroll = contextHistory.getLast().scroll;
-  if (startScroll) {
-    $scope.initialEditorScroll = startScroll;
-  } else {
-    // The first input element of the editor will become focused once
-    // the document is loaded and the editor will scroll to that
-    // position.
-    editorContext.hasInitialFocus = true;
-  }
+  editorContext.hasInitialFocus = preferences.hasInitialFocus;
 
   K.onValueScope($scope, $scope.otDoc.state.isDirty$, isDirty => {
     $scope.context.dirty = isDirty;

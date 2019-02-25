@@ -10,7 +10,10 @@ export default function register() {
         preferences: '<'
       },
       template: JST.asset_editor(),
-      controller: ['$scope', $scope => createEditorController($scope, $scope.editorData)]
+      controller: [
+        '$scope',
+        $scope => createEditorController($scope, $scope.editorData, $scope.preferences)
+      ]
     })
   ]);
 }

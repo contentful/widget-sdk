@@ -59,9 +59,6 @@ describe('Entry Editor Controller', function() {
       return scope;
     };
 
-    const contextHistory = this.$inject('navigation/Breadcrumbs/History.es6').default;
-    contextHistory.set([{}]);
-
     this.spaceContext = _.extend(this.$inject('spaceContext'), {
       entryTitle: function(entry) {
         return _.get(entry, 'data.fields.title');
