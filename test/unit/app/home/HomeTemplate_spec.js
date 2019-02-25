@@ -2,7 +2,9 @@
 
 describe('HomeTemplate', () => {
   beforeEach(function() {
-    module('contentful/test');
+    module('contentful/test', $provide => {
+      $provide.value('app/home/widgets/walkthrough/utils.es6', { getReactJoyride: () => '' });
+    });
     this.$state = this.$inject('$state');
     this.$state.current = { name: 'home' };
 
