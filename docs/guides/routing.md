@@ -22,12 +22,11 @@ names and URLs.
 We don't rely heavily on `<ui-view />` directive. The `cf_app_container.jade`
 file defines two views:
 
-- `nav-bar` that holds the space, organization, or account navigation
+- `nav-bar` that holds the space, organization or account navigation
 - `content` that holds the actual content controlled by the state.
 
-If you define a state the single view properties (`controller`, `controllerAs`,
-`template`, `templateProvider`) are moved automatically to the `content@` view.
-(This is implemented in the `states/config` module.) If you provide a value for
-`views['content@']` this will be ignored.
+If you define a state the single view properties (`controller`, `template`) are
+moved automatically to the `content@` view (see the `states/config` module).
+If you provide a value for `views['content@']` this will be ignored.
 
 The `template` value must be a string.

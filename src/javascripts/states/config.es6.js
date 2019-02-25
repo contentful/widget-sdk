@@ -84,7 +84,7 @@ export default function register() {
       }
 
       function useContentView(state) {
-        const VIEW_PROPERTIES = ['controller', 'controllerAs', 'template'];
+        const VIEW_PROPERTIES = ['controller', 'template'];
         state.views = state.views || {};
         const contentView = _.pick(state, VIEW_PROPERTIES);
         if (contentView.template || contentView.controller) {

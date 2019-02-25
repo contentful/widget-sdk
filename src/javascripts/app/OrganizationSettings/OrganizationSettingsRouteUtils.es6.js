@@ -39,6 +39,9 @@ export function reactStateWrapper(definition = {}) {
   const { componentPath } = definition;
   const defaults = {
     controller: getController(),
+    resolve: {
+      useNewView: () => {}
+    },
     template: getReactTemplate(componentPath)
   };
 
@@ -58,20 +61,13 @@ export function conditionalIframeWrapper(definition = {}) {
 
   const defaults = {
     controller: getController(),
-    controllerAs: '$ctrl',
     resolve: {
-      useNewView: [
-        function() {
-          if (featureFlag) {
-            return getCurrentVariation(featureFlag);
-          }
-        }
-      ]
+      useNewView: () => (featureFlag ? getCurrentVariation(featureFlag) : false)
     },
     template: `
       <div>
-        <div ng-if="$ctrl.$resolve.useNewView === false">${getIframeTemplate(title)}</div>
-        <div ng-if="$ctrl.$resolve.useNewView">${getReactTemplate(componentPath)}</div>
+        <div ng-if="useNewView === false">${getIframeTemplate(title)}</div>
+        <div ng-if="useNewView === true">${getReactTemplate(componentPath)}</div>
       </div>
     `
   };
@@ -83,7 +79,9 @@ function getController() {
   return [
     '$scope',
     '$stateParams',
-    function($scope, $stateParams) {
+    'useNewView',
+    function($scope, $stateParams, useNewView) {
+      $scope.useNewView = useNewView;
       $scope.properties = {
         ...$stateParams,
         context: $scope.context,
