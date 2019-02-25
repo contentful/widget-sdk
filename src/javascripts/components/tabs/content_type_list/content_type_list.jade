@@ -1,4 +1,3 @@
-include ../advice.mixin.jade
 include ../../shared/table_pattern.mixin.jade
 
 header.workbench-header
@@ -70,7 +69,10 @@ header.workbench-header
           .view-folder__item-title Active
 
   .workbench-main__right-content
-    +no-search-results("visibleContentTypes.length == 0")
+    react-component(
+      name="components/tabs/NoSearchResultsAdvice.es6"
+      ng-show="visibleContentTypes.length == 0"
+    )
     react-component(
       name="components/tabs/content_type_list/ContentTypeList/index.es6"
       props="{contentTypes: visibleContentTypes}"

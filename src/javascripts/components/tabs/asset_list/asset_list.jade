@@ -1,4 +1,3 @@
-include ../advice.mixin.jade
 include ../pluralize_entity.mixin.jade
 include ../../shared/table_pattern.mixin.jade
 
@@ -147,8 +146,10 @@ header.workbench-header
                 <react-component name="@contentful/forma-36-react-components/Tag" props="entityStatus.getProps(asset)"></react-component>
 
     cf-search-results-paginator(paginator="paginator" pages="7")
-
-    +no-search-results("hasNoSearchResults()")
+    react-component(
+      name="components/tabs/NoSearchResultsAdvice.es6"
+      ng-show="hasNoSearchResults()"
+    )
 
 .workbench-main.x--content(ng-show="showNoAssetsAdvice()")
   include ./no_assets_advice
