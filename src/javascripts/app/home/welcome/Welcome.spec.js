@@ -2,9 +2,16 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import Welcome from './Welcome.es6';
 import Icon from 'ui/Components/Icon.es6';
+import moment from 'moment';
+
+jest.mock('moment');
 
 describe('Space home Welcome react component', () => {
   const mount = (props = {}) => Enzyme.shallow(<Welcome {...props} />);
+
+  moment.mockReturnValue({
+    hour: jest.fn().mockReturnValue(11)
+  });
 
   describe('when no user', () => {
     it('should match snapshot', () => {
