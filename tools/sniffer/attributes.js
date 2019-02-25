@@ -58,7 +58,9 @@ const angular = node => {
     'cf-context-menu',
     'cf-ui-sticky-container',
     'navigation/confirmLeaveEditor',
-    'analytics/Analytics.es6'
+    'analytics/Analytics.es6',
+    'TheLocaleStore',
+    'TheLocaleStore/implementation'
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   return intersection.length > 0 ? intersection : false;
