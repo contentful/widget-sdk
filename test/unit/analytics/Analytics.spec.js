@@ -1,37 +1,30 @@
 'use strict';
 
 describe('Analytics', () => {
+  const makeMock = keys => keys.reduce((acc, key) => ({ ...acc, [key]: sinon.stub() }), {});
+
   beforeEach(function() {
-    this.validateEvent = sinon.stub();
+    this.segment = makeMock(['enable', 'disable', 'identify', 'track', 'page']);
+    this.Snowplow = makeMock(['enable', 'disable', 'identify', 'track', 'buildUnstructEventData']);
+    const analyticsConsole = makeMock(['setSessionData', 'add']);
+
     module('contentful/test', $provide => {
-      $provide.value('analytics/validateEvent', this.validateEvent);
+      $provide.constant('analytics/segment', this.segment);
+      $provide.constant('analytics/snowplow/Snowplow.es6', this.Snowplow);
+      $provide.constant('analytics/console', analyticsConsole);
     });
 
-    this.segment = this.$inject('analytics/segment');
-    ['enable', 'disable', 'identify', 'track', 'page'].forEach(m => {
-      sinon.stub(this.segment, m);
-    });
-
-    this.Snowplow = this.$inject('analytics/snowplow/Snowplow.es6');
-    ['enable', 'disable', 'identify', 'track'].forEach(m => {
-      sinon.stub(this.Snowplow, m);
-    });
+    this.analytics = this.$inject('analytics/Analytics.es6');
 
     // we want to simulate production environment
     // this way data hits the Segment and Snowplow services
-    this.$inject('Config.es6').env = 'production';
-
-    this.analytics = this.$inject('analytics/Analytics.es6');
+    this.analytics.__testOnlySetEnv('production');
 
     this.userData = {
       firstName: 'Hans',
       lastName: 'Wurst',
       sys: { id: 'userid' }
     };
-  });
-
-  afterEach(function() {
-    this.$inject('Config.es6').env = 'unittest';
   });
 
   describe('#enable()', () => {
@@ -132,16 +125,9 @@ describe('Analytics', () => {
 
   describe('tracking events', () => {
     it('calls analytics services if event is valid', function() {
-      this.validateEvent.returns(true);
       this.analytics.track('Event', { data: 'foobar' });
       sinon.assert.calledWith(this.segment.track, 'Event', { data: 'foobar' });
       sinon.assert.calledWith(this.Snowplow.track, 'Event', { data: 'foobar' });
-    });
-
-    it('does not call analytics services if event is invalid', function() {
-      this.validateEvent.returns(false);
-      sinon.assert.notCalled(this.segment.track);
-      sinon.assert.notCalled(this.Snowplow.track);
     });
   });
 

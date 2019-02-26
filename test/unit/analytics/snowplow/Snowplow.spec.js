@@ -2,13 +2,15 @@ import _ from 'lodash';
 
 describe('Snowplow service', () => {
   beforeEach(function() {
-    module('contentful/test');
+    this.LazyLoader = { get: sinon.stub() };
+    this.Events = { getSchema: sinon.stub(), transform: sinon.stub() };
+
+    module('contentful/test', $provide => {
+      $provide.constant('utils/LazyLoader.es6', this.LazyLoader);
+      $provide.constant('analytics/snowplow/Events.es6', this.Events);
+    });
+
     this.$window = this.$inject('$window');
-    this.LazyLoader = this.$inject('utils/LazyLoader.es6');
-    this.LazyLoader.get = sinon.stub();
-    this.Events = this.$inject('analytics/snowplow/Events.es6');
-    this.Events.getSchema = sinon.stub();
-    this.Events.transform = sinon.stub();
     this.Snowplow = this.$inject('analytics/snowplow/Snowplow.es6');
     this.getLastEvent = function() {
       return _.last(this.$window.snowplow.q);
