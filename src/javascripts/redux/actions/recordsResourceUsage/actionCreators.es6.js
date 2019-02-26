@@ -1,23 +1,6 @@
-import * as LD from 'utils/LaunchDarkly/index.es6';
 import createResourceService from 'services/ResourceService.es6';
 
 import * as actions from './actions.es6';
-
-export function getIncentivizingFlag() {
-  return async dispatch => {
-    const flagName = 'feature-bv-06-2018-incentivize-upgrade';
-    let status;
-
-    try {
-      status = await LD.getCurrentVariation(flagName);
-    } catch (e) {
-      // If there is an error, set the flag to false
-      dispatch(actions.incentivizeUpgradeEnabled(false));
-    }
-
-    dispatch(actions.incentivizeUpgradeEnabled(status));
-  };
-}
 
 export function getResource({ spaceId, resourceName }) {
   return async dispatch => {

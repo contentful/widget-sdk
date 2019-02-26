@@ -4,12 +4,6 @@ import { set } from 'lodash';
 
 import * as actions from '../actions/recordsResourceUsage/actions.es6';
 
-const incentivizeUpgradeEnabled = produce((_, action) => {
-  if (action.type === actions.RECORDS_RESOURCE_INCENTIVIZE_ENABLED) {
-    return action.isEnabled;
-  }
-}, false);
-
 const resources = produce((state, action) => {
   const { spaceId, resourceName } = action;
 
@@ -35,6 +29,5 @@ const resources = produce((state, action) => {
 }, {});
 
 export default combineReducers({
-  incentivizeUpgradeEnabled,
   resources
 });

@@ -1,11 +1,3 @@
-export const RECORDS_RESOURCE_INCENTIVIZE_ENABLED = 'RECORDS_RESOURCE/INCENTIVIZE_ENABLED';
-export function incentivizeUpgradeEnabled(isEnabled) {
-  return {
-    type: RECORDS_RESOURCE_INCENTIVIZE_ENABLED,
-    isEnabled
-  };
-}
-
 export const RESOURCE_PENDING = 'RESOURCE/PENDING';
 export function resourcePending(spaceId, resourceName, isPending) {
   return {

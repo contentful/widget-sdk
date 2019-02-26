@@ -16,7 +16,6 @@ describe('app/SpaceSettings/Environments', () => {
     };
 
     const isOwnerOrAdmin = sinon.stub().returns(false);
-    let incentivizeUpgradeEnabled = false;
 
     module('contentful/test', $provide => {
       $provide.value('services/ResourceService.es6', () => resourceService);
@@ -32,7 +31,7 @@ describe('app/SpaceSettings/Environments', () => {
 
     this.init = () => {
       this.$compileWith('<cf-component-store-bridge component=component>', $scope => {
-        $scope.component = createComponent(spaceContext, incentivizeUpgradeEnabled);
+        $scope.component = createComponent(spaceContext);
       }).appendTo(this.container.element);
     };
 
@@ -59,9 +58,6 @@ describe('app/SpaceSettings/Environments', () => {
       spaceContext.organization.pricingVersion = pricingVersion;
     };
 
-    this.setIncentivizeFlag = value => {
-      incentivizeUpgradeEnabled = value;
-    };
     this.setAdmin = value => {
       isOwnerOrAdmin.returns(value);
     };
@@ -160,48 +156,20 @@ describe('app/SpaceSettings/Environments', () => {
       this.container.find('openCreateDialog').assertNonExistent();
     });
 
-    describe('when user is admin', function() {
-      beforeEach(function() {
-        this.setAdmin(true);
-      });
+    it('should render upgrade space button when user is admin', function() {
+      this.setAdmin(true);
+      this.init();
 
-      it('renders upgrade space button with feature flag on', function() {
-        this.setIncentivizeFlag(true);
-        this.init();
-
-        this.container.find('openUpgradeDialog').assertIsVisible();
-        this.container.find('subscriptionLink').assertNonExistent();
-      });
-
-      it('renders subscription link with feature flag off', function() {
-        this.setIncentivizeFlag(false);
-        this.init();
-
-        this.container.find('openUpgradeDialog').assertNonExistent();
-        this.container.find('subscriptionLink').assertIsVisible();
-      });
+      this.container.find('openUpgradeDialog').assertIsVisible();
+      this.container.find('subscriptionLink').assertNonExistent();
     });
 
-    describe('when user is not admin, do not show upgrade action', function() {
-      beforeEach(function() {
-        this.setAdmin(false);
-      });
+    it('should not show upgrade action when user is not admin', function() {
+      this.setAdmin(false);
+      this.init();
 
-      it('with feature flag on', function() {
-        this.setIncentivizeFlag(true);
-        this.init();
-
-        this.container.find('openUpgradeDialog').assertNonExistent();
-        this.container.find('subscriptionLink').assertNonExistent();
-      });
-
-      it('with feature flag off', function() {
-        this.setIncentivizeFlag(false);
-        this.init();
-
-        this.container.find('openUpgradeDialog').assertNonExistent();
-        this.container.find('subscriptionLink').assertNonExistent();
-      });
+      this.container.find('openUpgradeDialog').assertNonExistent();
+      this.container.find('subscriptionLink').assertNonExistent();
     });
   });
 });

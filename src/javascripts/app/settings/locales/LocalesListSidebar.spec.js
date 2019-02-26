@@ -2,13 +2,8 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import LocalesListSidebar from './LocalesListSidebar.es6';
 import * as $stateMocked from 'ng/$state';
-import * as LaunchDarklyMocked from 'utils/LaunchDarkly/index.es6';
 
 describe('settings/locales/LocalesListSidebar', () => {
-  const setShowChangeSpaceIncentive = value => {
-    LaunchDarklyMocked.getCurrentVariation.mockResolvedValueOnce(value);
-  };
-
   const selectors = {
     addLocaleButton: '[data-test-id="add-locales-button"]',
     documentationSection: '[data-test-id="locales-documentation"]',
@@ -135,69 +130,6 @@ describe('settings/locales/LocalesListSidebar', () => {
         expect(wrapper.find(selectors.usagesSection)).toIncludeText(
           'Change the space to add more.'
         );
-      });
-
-      it('if feature "feature-bv-06-2018-incentivize-upgrade" is on then upgrade button should be shown', done => {
-        expect.assertions(4);
-        setShowChangeSpaceIncentive(true);
-        const { wrapper, stubs } = mount({
-          showChangeSpaceIncentive: true,
-          insideMasterEnv: true,
-          canChangeSpace: true,
-          localeResource: {
-            usage: 1,
-            limits: {
-              maximum: 1
-            }
-          }
-        });
-        expect(LaunchDarklyMocked.getCurrentVariation).toHaveBeenCalledWith(
-          'feature-bv-06-2018-incentivize-upgrade'
-        );
-        // there was an async setState in the component
-        // so we need to use process.nextTick to make sure
-        // that all assertions are applied after async update
-        process.nextTick(() => {
-          wrapper.update();
-          expect(wrapper.find(selectors.upgradeSpaceButton)).toHaveText('Upgrade space');
-          expect(wrapper.find(selectors.changeSpaceSection)).not.toIncludeText(
-            'Go to the subscription page to change'
-          );
-          wrapper.find(selectors.upgradeSpaceButton).simulate('click');
-          expect(stubs.upgradeSpace).toHaveBeenCalled();
-          done();
-        });
-      });
-
-      it('if feature "feature-bv-06-2018-incentivize-upgrade" is off then change subscription link is shown', done => {
-        expect.assertions(4);
-        setShowChangeSpaceIncentive(false);
-        const { wrapper } = mount({
-          showChangeSpaceIncentive: false,
-          insideMasterEnv: true,
-          canChangeSpace: true,
-          localeResource: {
-            usage: 1,
-            limits: {
-              maximum: 1
-            }
-          }
-        });
-        expect(LaunchDarklyMocked.getCurrentVariation).toHaveBeenCalledWith(
-          'feature-bv-06-2018-incentivize-upgrade'
-        );
-        // there was an async setState in the component
-        // so we need to use process.nextTick to make sure
-        // that all assertions are applied after async update
-        process.nextTick(() => {
-          wrapper.update();
-          expect(wrapper.find(selectors.upgradeSpaceButton)).not.toExist();
-          expect(wrapper.find(selectors.changeSpaceSection)).toIncludeText(
-            'Go to the subscription page to change'
-          );
-          expect($stateMocked.href).toHaveBeenCalled();
-          done();
-        });
       });
     });
 

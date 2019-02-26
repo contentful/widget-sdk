@@ -14,9 +14,7 @@ export class RecordsResourceUsage extends React.Component {
   static propTypes = {
     space: PropTypes.object.isRequired,
     currentTotal: PropTypes.number.isRequired,
-    getIncentivizingFlag: PropTypes.func.isRequired,
     getResource: PropTypes.func.isRequired,
-    incentivizeUpgradeEnabled: PropTypes.bool.isRequired,
     resources: PropTypes.object.isRequired
   };
 
@@ -30,9 +28,8 @@ export class RecordsResourceUsage extends React.Component {
   }
 
   componentDidMount() {
-    const { getIncentivizingFlag, getResource, space } = this.props;
+    const { getResource, space } = this.props;
 
-    getIncentivizingFlag();
     getResource({ spaceId: space.sys.id, resourceName: 'record' });
   }
 
@@ -62,13 +59,6 @@ export class RecordsResourceUsage extends React.Component {
   }
 
   render() {
-    const { incentivizeUpgradeEnabled } = this.props;
-
-    // Explicitly don't show this until the feature flag is enabled
-    if (!incentivizeUpgradeEnabled) {
-      return null;
-    }
-
     const resource = this.resource();
 
     if (!resource) {
@@ -106,13 +96,11 @@ export class RecordsResourceUsage extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    resources: state.recordsResourceUsage.resources,
-    incentivizeUpgradeEnabled: state.recordsResourceUsage.incentivizeUpgradeEnabled
+    resources: state.recordsResourceUsage.resources
   };
 };
 
 const mapDispatchToProps = {
-  getIncentivizingFlag: actionCreators.getIncentivizingFlag,
   getResource: actionCreators.getResource
 };
 
