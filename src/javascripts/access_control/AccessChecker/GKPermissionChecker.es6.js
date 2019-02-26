@@ -40,7 +40,7 @@ export function create({ space, organization }) {
   }
 
   function isSuperUser() {
-    const isSpaceAdmin = space ? get(space, 'spaceMembership.admin') : undefined;
+    const isSpaceAdmin = space ? get(space, 'spaceMembership.admin') : false;
     const isOrganizationAdmin = OrganizationRoles.isAdmin(organization);
     const isOrganizationOwner = OrganizationRoles.isOwner(organization);
     return isSpaceAdmin || isOrganizationAdmin || isOrganizationOwner;
@@ -56,7 +56,8 @@ export function create({ space, organization }) {
     if (!isSuperUser() || !space) {
       return Promise.resolve(false);
     } else {
-      return createFeatureService(space.sys.id).get('customRoles');
+      const FeatureService = createFeatureService(space.sys.id);
+      return FeatureService.get('customRoles');
     }
   }
 }
