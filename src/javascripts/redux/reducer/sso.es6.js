@@ -103,8 +103,14 @@ export function fields(state = {}, action) {
       const updatedState = clone(state);
 
       fieldNames.forEach(field => {
-        const currentFieldValue = get(action.payload, field);
-        set(updatedState, [field, 'value'], currentFieldValue);
+        let fieldValue = get(action.payload, field);
+
+        // If the field is null or undefined, we default to empty string
+        if (fieldValue == null) {
+          fieldValue = '';
+        }
+
+        set(updatedState, [field, 'value'], fieldValue);
       });
 
       return updatedState;

@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import * as validators from './validators.es6';
 import * as fieldErrorMessageGenerators from './fieldErrorMessages.es6';
 import { joinWithAnd } from 'utils/StringUtils.es6';

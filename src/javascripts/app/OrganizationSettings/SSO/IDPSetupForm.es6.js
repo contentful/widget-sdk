@@ -242,7 +242,6 @@ export class IDPSetupForm extends React.Component {
               name="ssoProvider"
               id="ssoProvider"
               testId="ssoProvider"
-              helpText="Sometimes called the SAML 2.0 endpoint"
               width="medium"
               extraClassNames="f36-margin-bottom--l f36-margin-right--m sso-setup__select"
               value={fields.idpName.value}

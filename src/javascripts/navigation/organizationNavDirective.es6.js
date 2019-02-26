@@ -135,7 +135,7 @@ export default function register() {
           dataViewType: 'organization-users'
         },
         {
-          if: 'nav.teamsEnabled && nav.isOwnerOrAdmin',
+          if: 'nav.teamsEnabled',
           title: 'Teams',
           label: 'new',
           sref: 'account.organizations.teams({orgId: nav.orgId})',

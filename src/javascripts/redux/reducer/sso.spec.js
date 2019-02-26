@@ -169,7 +169,7 @@ describe('SSO Redux reducers', () => {
           value: 'https://example.com/auth'
         },
         idpCert: {
-          value: undefined
+          value: ''
         }
       });
 
@@ -189,7 +189,7 @@ describe('SSO Redux reducers', () => {
           value: 'https://example.com/auth'
         },
         idpCert: {
-          value: undefined
+          value: ''
         }
       });
     });

@@ -2,7 +2,6 @@ import { Notification } from '@contentful/forma-36-react-components';
 import * as actions from './actions.es6';
 import * as selectors from 'redux/selectors/sso.es6';
 import { validate } from 'app/OrganizationSettings/SSO/utils.es6';
-import _ from 'lodash';
 import { fieldErrorMessage } from 'app/OrganizationSettings/SSO/utils.es6';
 import { authUrl } from 'Config.es6';
 
