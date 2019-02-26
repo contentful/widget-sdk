@@ -36,7 +36,7 @@ export default {
         $state.go('spaces.detail');
       }
 
-      LD.getCurrentVariation(environmentsFlagName).then(([environmentsEnabled]) => {
+      LD.getCurrentVariation(environmentsFlagName).then(environmentsEnabled => {
         if (environmentsEnabled) {
           $scope.environmentComponent = createComponent(spaceContext);
           $scope.$applyAsync();
