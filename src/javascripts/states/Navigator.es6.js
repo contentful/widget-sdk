@@ -76,6 +76,17 @@ export function makeEntityRef(entity) {
   };
 }
 
+/**
+ * @ngdoc method
+ * @name state/Navigator#getCurrentStateName:
+ * @description
+ * Returns current state name
+ * @returns {String}
+ */
+export function getCurrentStateName() {
+  return get($state, ['current', 'name']);
+}
+
 function makeEntityPath(entity) {
   const type = getType(entity);
   const typePlural = ENTITY_PLURALS[type];
