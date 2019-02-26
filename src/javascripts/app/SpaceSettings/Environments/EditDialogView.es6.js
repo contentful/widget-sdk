@@ -7,6 +7,7 @@ const SpaceEnvironmentsEditDialogPropTypes = {
   serverFailure: PropTypes.any,
   fields: PropTypes.any,
   inProgress: PropTypes.boolean,
+  canSelectSource: PropTypes.boolean,
   environments: PropTypes.any,
   selectedEnvironment: PropTypes.any,
   currentEnvironment: PropTypes.any,
@@ -36,6 +37,7 @@ function Form({
   inProgress,
   fields,
   environments,
+  canSelectSource,
   selectedEnvironment,
   Submit,
   SetFieldValue,
@@ -49,24 +51,26 @@ function Form({
         ev.preventDefault();
         Submit();
       }}>
-      <div className="cfnext-form__field">
-        <label>
-          <span style={{ fontWeight: 'bold' }}>Environment to copy from</span>
-        </label>
+      {canSelectSource && (
+        <div className="cfnext-form__field">
+          <label>
+            <span style={{ fontWeight: 'bold' }}>Environment to copy from</span>
+          </label>
 
-        <select
-          className="cfnext-select-box"
-          style={{ display: 'block', width: '100%' }}
-          onChange={ev => SetSourceEnvironment({ value: ev.target.value })}>
-          {environments.map(env => {
-            return (
-              <option key={env.id} value={env.id} selected={env.id === selectedEnvironment}>
-                {env.id === currentEnvironment ? `${env.id} (current)` : `${env.id}`}
-              </option>
-            );
-          })}
-        </select>
-      </div>
+          <select
+            className="cfnext-select-box"
+            style={{ display: 'block', width: '100%' }}
+            onChange={ev => SetSourceEnvironment({ value: ev.target.value })}>
+            {environments.map(env => {
+              return (
+                <option key={env.id} value={env.id} selected={env.id === selectedEnvironment}>
+                  {env.id === currentEnvironment ? `${env.id} (current)` : `${env.id}`}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+      )}
 
       <FormField
         label="ID"

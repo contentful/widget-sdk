@@ -34,7 +34,12 @@ const EMPTY_FIELD_ERROR_MESSAGE = 'Please fill out this field.';
  * It returns a promise that resolves with a boolean that is true if
  * the environment was created.
  */
-export function openCreateDialog(createEnvironment, environments, currentEnvironment) {
+export function openCreateDialog(
+  createEnvironment,
+  environments,
+  currentEnvironment,
+  canSelectSource
+) {
   const initialState = {
     fields: {
       id: {
@@ -44,7 +49,9 @@ export function openCreateDialog(createEnvironment, environments, currentEnviron
     },
     environments,
     currentEnvironment,
-    selectedEnvironment: currentEnvironment
+    // If you cannot select the source environment, pick `master` as selected because that's the only source you can use
+    selectedEnvironment: canSelectSource ? currentEnvironment : 'master',
+    canSelectSource
   };
 
   return openDialog({
