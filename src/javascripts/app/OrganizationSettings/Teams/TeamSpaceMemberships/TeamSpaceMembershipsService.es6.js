@@ -1,11 +1,13 @@
-import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { fetchAll } from 'data/CMA/FetchAll.es6';
+import getOrgId from 'redux/selectors/getOrgId.es6';
 
 const BATCH_LIMIT = 100;
 const HEADERS = { 'x-contentful-enable-alpha-feature': 'teams-api' };
 
-export default function createTeamMembershipsService(spaceId) {
-  const endpoint = createSpaceEndpoint(spaceId);
+export default function createTeamMembershipsService(state) {
+  const orgId = getOrgId(state);
+  const endpoint = createOrganizationEndpoint(orgId);
   const getTeamHeaders = teamId => ({
     ...HEADERS,
     'x-contentful-team': teamId
