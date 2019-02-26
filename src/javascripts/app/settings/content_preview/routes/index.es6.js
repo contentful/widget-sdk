@@ -1,5 +1,7 @@
-import _ from 'lodash';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
+import ContentPreviewListRoute from './ContentPreviewListRoute.es6';
+import ContentPreviewNewRoute from './ContentPreviewNewRoute.es6';
+import ContentPreviewEditRoute from './ContentPreviewEditRoute.es6';
 
 export default {
   name: 'content_preview',
@@ -9,18 +11,16 @@ export default {
     {
       name: 'list',
       url: '',
-      template:
-        '<react-component name="app/settings/content_preview/routes/ContentPreviewListRoute.es6" />'
+      component: ContentPreviewListRoute
     },
     {
       name: 'new',
       url: '/new',
-      template:
-        '<react-component name="app/settings/content_preview/routes/ContentPreviewNewRoute.es6" props="props" />',
-      controller: [
+      component: ContentPreviewNewRoute,
+      mapInjectedToProps: [
         '$scope',
         $scope => {
-          $scope.props = {
+          return {
             registerSaveAction: save => {
               $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
               $scope.$applyAsync();
@@ -36,14 +36,13 @@ export default {
     {
       name: 'detail',
       url: '/:contentPreviewId',
-      template:
-        '<react-component name="app/settings/content_preview/routes/ContentPreviewEditRoute.es6" props="props" />',
-      controller: [
+      component: ContentPreviewEditRoute,
+      mapInjectedToProps: [
         '$scope',
         '$stateParams',
-        ($scope, $stateParams) => {
-          $scope.props = {
-            contentPreviewId: $stateParams.contentPreviewId,
+        ($scope, { contentPreviewId }) => {
+          return {
+            contentPreviewId,
             registerSaveAction: save => {
               $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
               $scope.$applyAsync();
