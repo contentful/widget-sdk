@@ -17,7 +17,9 @@ export default class RuleList extends React.Component {
     onRemoveRule: PropTypes.func.isRequired,
     onUpdateRuleAttribute: PropTypes.func.isRequired,
     isDisabled: PropTypes.bool.isRequired,
-    entity: PropTypes.string.isRequired
+    entity: PropTypes.string.isRequired,
+    privateLocales: PropTypes.array.isRequired,
+    contentTypes: PropTypes.array.isRequired
   };
 
   render() {
@@ -27,7 +29,9 @@ export default class RuleList extends React.Component {
       onUpdateRuleAttribute,
       onAddRule,
       rules,
-      onRemoveRule
+      onRemoveRule,
+      privateLocales,
+      contentTypes
     } = this.props;
 
     return (
@@ -50,6 +54,8 @@ export default class RuleList extends React.Component {
               onRemove={onRemoveRule('allowed', rule.id)}
               entity={entity}
               isDisabled={isDisabled}
+              privateLocales={privateLocales}
+              contentTypes={contentTypes}
             />
           ))}
           {!isDisabled && (
@@ -84,6 +90,8 @@ export default class RuleList extends React.Component {
                   onRemove={onRemoveRule('denied', rule.id)}
                   entity={entity}
                   isDisabled={isDisabled}
+                  privateLocales={privateLocales}
+                  contentTypes={contentTypes}
                 />
               ))}
             </div>

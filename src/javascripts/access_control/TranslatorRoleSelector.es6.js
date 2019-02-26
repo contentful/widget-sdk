@@ -8,13 +8,13 @@ export default class TranslatorRoleSelector extends React.Component {
     policies: PropTypes.shape().isRequired,
     hasFeatureEnabled: PropTypes.bool,
     onChange: PropTypes.func.isRequired,
-    $services: PropTypes.shape().isRequired
+    privateLocales: PropTypes.array.isRequired
   };
 
   render() {
-    const { policies, hasFeatureEnabled, onChange } = this.props;
+    const { policies, hasFeatureEnabled, onChange, privateLocales } = this.props;
 
-    const locales = getLocales();
+    const locales = getLocales(privateLocales);
 
     const updateEntityPolicies = policies.entries.allowed
       .concat(policies.assets.allowed)

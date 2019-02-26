@@ -1,11 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry.es6';
 import { get } from 'lodash';
 import getLocales from './getLocales.es6';
 import { PolicyBuilderConfig } from 'access_control/PolicyBuilder/index.es6';
-
-const spaceContext = getModule('spaceContext');
 
 const contentTypesToOptions = contentTypes =>
   [
@@ -37,20 +34,22 @@ class Rule extends React.Component {
     }),
     entity: PropTypes.string,
     onRemove: PropTypes.func.isRequired,
-    onUpdateAttribute: PropTypes.func.isRequired
+    onUpdateAttribute: PropTypes.func.isRequired,
+    privateLocales: PropTypes.array.isRequired,
+    contentTypes: PropTypes.array.isRequired
   };
 
   state = {};
 
   constructor(props) {
     super(props);
-    this.contentTypes = contentTypesToOptions(spaceContext.publishedCTs.getAllBare());
+    this.contentTypes = contentTypesToOptions(props.contentTypes);
   }
 
   static getDerivedStateFromProps(props) {
-    const { rule } = props;
+    const { rule, contentTypes } = props;
 
-    const ct = spaceContext.publishedCTs.get(rule.contentType);
+    const ct = contentTypes.find(ct => ct.sys.id === rule.contentType);
     return {
       contentTypeFields: [
         {
@@ -58,7 +57,7 @@ class Rule extends React.Component {
           name: 'All fields'
         }
       ].concat(
-        get(ct, ['data', 'fields'], []).map(({ id, name, apiName }) => ({
+        get(ct, ['fields'], []).map(({ id, name, apiName }) => ({
           id: apiName || id,
           name
         }))
@@ -67,7 +66,7 @@ class Rule extends React.Component {
   }
 
   render() {
-    const { isDisabled, entity, onRemove, onUpdateAttribute, rule } = this.props;
+    const { isDisabled, entity, onRemove, onUpdateAttribute, rule, privateLocales } = this.props;
     const entityName = getEntityName(entity);
 
     return (
@@ -132,7 +131,7 @@ class Rule extends React.Component {
             disabled={isDisabled}
             value={rule.locale}
             onChange={onUpdateAttribute('locale')}>
-            {getLocales().map(({ code, name }) => (
+            {getLocales(privateLocales).map(({ code, name }) => (
               <option value={code} key={code}>
                 {name}
               </option>
