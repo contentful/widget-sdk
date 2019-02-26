@@ -1,32 +1,66 @@
 Routing
 =======
 
-To realize front-end routing we use [ui-router][] with small tools built on top
-of it.
+To realize front-end routing we use [Angular UI Router][https://github.com/angular-ui/ui-router].
 
-[ui-router]: https://github.com/angular-ui/ui-router
+`states/config` Angular service is a wrapper for UI Router which can be used to
+register states using our internal, slightly modified format.
+
+**IMPORTANT**
+
+We want to sooner or later move away from the current solution. We should make
+sure we don't tie ourselves too much to UI Router. At the same time any cleanup
+or decoupling will make future migration easier.
 
 
 ## States tree
 
-Files in `src/javascripts/states` directory export plain JS objects describing
-states of the app. The format of state definition is identical with ui-router's
-defaults, but we also allow an extra `children` property that can be an array
-of child state definitions. The `states/config` service can transform a tree
-created this way into `$stateProvider.state` calls, with properly configured
-names and URLs.
+`src/javascripts/states/states.es6.js` serves as a root of our states tree.
 
+It exports a single root state as a plain JS object. Each state can define
+`children` property which is a list of immediate child states what combined
+forms the tree.
 
-## Default view
+The following built-in UI Router configuration options for a state are
+allowed:
 
-We don't rely heavily on `<ui-view />` directive. The `cf_app_container.jade`
-file defines two views:
+- `url`
+- `abstract`
+- `resolve`
+- `onEnter`
 
-- `nav-bar` that holds the space, organization or account navigation
-- `content` that holds the actual content controlled by the state.
+The following properties are processed:
 
-If you define a state the single view properties (`controller`, `template`) are
-moved automatically to the `content@` view (see the `states/config` module).
-If you provide a value for `views['content@']` this will be ignored.
+- `name` - it is only the name of the state; parent state name will be
+  prepended automatically
+- `template` and `controller` will be automatically used in the `content@`
+  view (as in `<ui-view />` directive). It basically means it'll be used
+  for rendering everything but the top nav bar.
+- `navTemplate` will be used as a template for the top nav bar.
+- `redirectTo` - makes the state redirect to some other state.
+- `children` as described above.
 
-The `template` value must be a string.
+## Using React components directly
+
+You can use `component` and `mapInjectedToProps` configuration options
+to use React components directly:
+
+```js
+{
+  name: 'test',
+  url: '/test',
+  component: MyNiceComponent,
+  resolve: {
+    something: Promise.resolve(true),
+    testing: ['something', 'spaceContext', (something, spaceContext) => { /* ... */ }]
+  },
+  mapInjectedToProps: ['testing', 'spaceContext', (testing, spaceContext) => {
+    return {
+      testing,
+      cmaClient: spaceContext.cma
+    };
+  }]
+}
+```
+
+Services used in `resolve` **do not** have to use `$q` for promises.
