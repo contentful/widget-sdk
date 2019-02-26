@@ -1,8 +1,5 @@
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { assign, get } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
-
-const flagName = 'feature-bv-2018-01-resources-api';
 
 export const resourceHumanNameMap = {
   api_key: 'API Keys',
@@ -86,11 +83,7 @@ export function getResourceLimits(resource) {
 export function useLegacy(organization) {
   const $q = getModule('$q');
 
-  if (isLegacyOrganization(organization)) {
-    return getCurrentVariation(flagName).then(flagValue => !flagValue);
-  } else {
-    return $q.resolve(false);
-  }
+  return $q.resolve(isLegacyOrganization(organization));
 }
 
 /*

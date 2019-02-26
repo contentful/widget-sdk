@@ -140,10 +140,6 @@ describe('ResourceService', () => {
     this.spies.createSpaceEndpoint = sinon.spy(createSpaceEndpoint);
     this.stubs.createOrganizationEndpoint = sinon.stub();
 
-    this.flags = {
-      'feature-bv-2018-01-resources-api': true
-    };
-
     module('contentful/test', $provide => {
       $provide.value('data/EndpointFactory.es6', {
         createSpaceEndpoint: this.spies.createSpaceEndpoint,
@@ -167,12 +163,6 @@ describe('ResourceService', () => {
       $provide.value('services/TokenStore.es6', {
         getSpace: sinon.stub().resolves(this.mocks.space),
         getOrganization: sinon.stub().resolves(this.mocks.organization)
-      });
-
-      $provide.value('utils/LaunchDarkly/index.es6', {
-        getCurrentVariation: flagName => {
-          return Promise.resolve(this.flags[flagName]);
-        }
       });
     });
 
@@ -210,55 +200,54 @@ describe('ResourceService', () => {
   });
 
   describe('#get', () => {
-    it('should return a failed Promise if not supplied with any arguments', function*() {
+    it('should return a failed Promise if not supplied with any arguments', async function() {
       try {
-        yield this.ResourceService.get();
+        await this.ResourceService.get();
       } catch (e) {
         expect(e).toBeDefined();
         expect(e instanceof Error).toBe(true);
       }
     });
 
-    it('should return a successful Promise if supplied with valid arguments', function*() {
-      yield this.ResourceService.get('entry');
+    it('should return a successful Promise if supplied with valid arguments', async function() {
+      const getPromise = this.ResourceService.get('entry');
+
+      expect(getPromise).toBeInstanceOf(Promise);
     });
 
-    it('should return data from the endpoint if the pricing version is "pricing_version_2" and the feature flag is true', function*() {
+    it('should return data from the endpoint if the pricing version is "pricing_version_2"', async function() {
       this.mocks.organization.pricingVersion = 'pricing_version_2';
-      this.flags['feature-bv-2018-01-resources-api'] = true;
 
-      yield this.ResourceService.get('entry');
+      await this.ResourceService.get('entry');
       expect(this.spies.spaceEndpoint.calledOnce).toBe(true);
     });
 
-    it('should return data from the token, via TokenStore, if the pricing version is "pricing_version_1" and the feature flag is false', function*() {
+    it('should return data from the token, via TokenStore, if the pricing version is "pricing_version_1"', async function() {
       this.mocks.organization.pricingVersion = 'pricing_version_1';
-      this.flags['feature-bv-2018-01-resources-api'] = false;
 
-      yield this.ResourceService.get('entry');
+      await this.ResourceService.get('entry');
 
       expect(this.usages.called).toBeTruthy();
       expect(this.limits.called).toBeTruthy();
     });
 
-    it('should return an item that looks like a Resource regardless', function*() {
+    it('should return an item that looks like a Resource regardless', async function() {
       let locales;
 
       this.mocks.organization.pricingVersion = 'pricing_version_2';
 
-      locales = yield this.ResourceService.get('locale');
+      locales = await this.ResourceService.get('locale');
       expect(locales.usage).toBeDefined();
       expect(locales.limits.included).toBeDefined();
       expect(locales.limits.maximum).toBeDefined();
 
       this.mocks.organization.pricingVersion = 'pricing_version_1';
-      this.flags['feature-bv-2018-01-resources-api'] = false;
 
       // Setup the "token" limit and usage
       this.usages['locale'] = 2;
       this.limits['locale'] = 10;
 
-      locales = yield this.ResourceService.get('locale');
+      locales = await this.ResourceService.get('locale');
       expect(locales.usage).toBeDefined();
       expect(locales.limits.included).toBeDefined();
       expect(locales.limits.maximum).toBeDefined();
@@ -270,20 +259,20 @@ describe('ResourceService', () => {
       expect(this.isPromiseLike(this.ResourceService.getAll())).toBe(true);
     });
 
-    it('should always return data via the endpoint, regardless of the pricing version & feature flag', function*() {
+    it('should always return data via the endpoint, regardless of the pricing version', async function() {
       this.mocks.organization.pricingVersion = 'pricing_version_2';
 
-      yield this.ResourceService.getAll();
+      await this.ResourceService.getAll();
       expect(this.spies.spaceEndpoint.calledOnce).toBe(true);
 
       this.mocks.organization.pricingVersion = 'pricing_version_1';
 
-      yield this.ResourceService.getAll();
+      await this.ResourceService.getAll();
       expect(this.spies.spaceEndpoint.calledTwice).toBe(true);
     });
 
-    it('should return an array with multiple Resource items', function*() {
-      const resources = yield this.ResourceService.getAll();
+    it('should return an array with multiple Resource items', async function() {
+      const resources = await this.ResourceService.getAll();
 
       expect(Array.isArray(resources)).toBe(true);
       expect(resources.length).toBe(3);
@@ -295,18 +284,18 @@ describe('ResourceService', () => {
       expect(this.isPromiseLike(this.ResourceService.canCreate('locale'))).toBe(true);
     });
 
-    it('should return true if the maximum limit is not reached', function*() {
+    it('should return true if the maximum limit is not reached', async function() {
       let status;
 
-      status = yield this.ResourceService.canCreate('contentType');
+      status = await this.ResourceService.canCreate('contentType');
       expect(status).toBe(true);
 
-      status = yield this.ResourceService.canCreate('locale');
+      status = await this.ResourceService.canCreate('locale');
       expect(status).toBe(true);
     });
 
-    it('should return false if the maximum limit is reached', function*() {
-      const status = yield this.ResourceService.canCreate('entry');
+    it('should return false if the maximum limit is reached', async function() {
+      const status = await this.ResourceService.canCreate('entry');
       expect(status).toBe(false);
     });
   });
@@ -316,20 +305,20 @@ describe('ResourceService', () => {
       expect(this.isPromiseLike(this.ResourceService.messagesFor('locale'))).toBe(true);
     });
 
-    it('should return an object that contains `warning` and `error` keys', function*() {
-      const messages = yield this.ResourceService.messagesFor('locale');
+    it('should return an object that contains `warning` and `error` keys', async function() {
+      const messages = await this.ResourceService.messagesFor('locale');
       expect(Object.keys(messages)).toContain('warning');
       expect(Object.keys(messages)).toContain('error');
     });
 
-    it('should return a warning if the included limit is, but the maximum limit is not, reached', function*() {
-      const messages = yield this.ResourceService.messagesFor('contentType');
+    it('should return a warning if the included limit is, but the maximum limit is not, reached', async function() {
+      const messages = await this.ResourceService.messagesFor('contentType');
       expect(messages.warning).toBeDefined();
       expect(messages.error).toBe('');
     });
 
-    it('should return an error if the maximum limit is reached', function*() {
-      const messages = yield this.ResourceService.messagesFor('entry');
+    it('should return an error if the maximum limit is reached', async function() {
+      const messages = await this.ResourceService.messagesFor('entry');
       expect(messages.warning).toBe('');
       expect(messages.error).toBeDefined();
     });
@@ -340,8 +329,8 @@ describe('ResourceService', () => {
       expect(this.isPromiseLike(this.ResourceService.messages())).toBe(true);
     });
 
-    it('should return an array of objects that match the #messagesFor object definition', function*() {
-      const messages = yield this.ResourceService.messages();
+    it('should return an array of objects that match the #messagesFor object definition', async function() {
+      const messages = await this.ResourceService.messages();
 
       values(messages).forEach(message => {
         expect(Object.keys(message)).toContain('warning');
@@ -349,8 +338,8 @@ describe('ResourceService', () => {
       });
     });
 
-    it('should return a different array depending on different limits of the resources', function*() {
-      const messages = yield this.ResourceService.messages();
+    it('should return a different array depending on different limits of the resources', async function() {
+      const messages = await this.ResourceService.messages();
 
       // Entries
       expect(messages.entry.warning).toBeDefined();
