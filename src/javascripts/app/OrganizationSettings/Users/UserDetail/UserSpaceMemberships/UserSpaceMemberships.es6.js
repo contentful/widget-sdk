@@ -79,13 +79,9 @@ class UserSpaceMemberships extends React.Component {
     });
     this.hideSpaceMembershipEditor();
 
-    // Quickfix: Notification breaks ui
-    try {
-      Notification.success(`
+    Notification.success(`
       ${user.firstName} has been successfully added to the space ${newMembership.sys.space.name}
     `);
-      // eslint-disable-next-line no-empty
-    } catch (e) {}
   };
 
   handleMembershipRemove = async membership => {
