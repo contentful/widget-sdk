@@ -9,10 +9,6 @@ import ExtensionsForbiddenPage from '../ExtensionsForbiddenPage.es6';
 import ExtensionsList, { ExtensionListShell } from '../ExtensionsList.es6';
 import { toInternalFieldType } from 'widgets/FieldTypes.es6';
 
-import { getModule } from 'NgRegistry.es6';
-
-const spaceContext = getModule('spaceContext');
-
 // Takes API Extension entity and prepares it for the view.
 const prepareExtension = ({ sys, extension, parameters }) => {
   const fieldTypes = (extension.fieldTypes || []).map(toInternalFieldType);
@@ -31,8 +27,8 @@ const prepareExtension = ({ sys, extension, parameters }) => {
 
 const extensionNameComparator = (a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase());
 
-const ExtensionsFetcher = createFetcherComponent(async () => {
-  const { items } = await spaceContext.cma.getExtensions();
+const ExtensionsFetcher = createFetcherComponent(async ({ cma }) => {
+  const { items } = await cma.getExtensions();
 
   return (items || []).map(prepareExtension).sort(extensionNameComparator);
 });
@@ -40,7 +36,8 @@ const ExtensionsFetcher = createFetcherComponent(async () => {
 class ExtensionsListRoute extends React.Component {
   static propTypes = {
     extensionUrl: PropTypes.string,
-    extensionUrlReferrer: PropTypes.string
+    extensionUrlReferrer: PropTypes.string,
+    cma: PropTypes.shape({ getExtensions: PropTypes.func.isRequired }).isRequired
   };
 
   render() {
@@ -52,7 +49,7 @@ class ExtensionsListRoute extends React.Component {
           }
           return <StateRedirect to="spaces.detail.entries.list" />;
         }}>
-        <ExtensionsFetcher>
+        <ExtensionsFetcher cma={this.props.cma}>
           {({ isLoading, isError, data, fetch }) => {
             if (isLoading) {
               return <ExtensionListShell />;

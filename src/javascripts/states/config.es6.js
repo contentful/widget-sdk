@@ -19,7 +19,9 @@ const VALID_DEFINITION_PROPS = [
   'onEnter',
   'params',
   'controller',
-  'redirectTo'
+  'redirectTo',
+  'component',
+  'mapInjectedToProps'
 ];
 
 export default function register() {
@@ -84,11 +86,22 @@ export default function register() {
           };
         }
 
+        if (state.component) {
+          views['content@'] = {
+            template: '<react-component component="component" props="props" />',
+            controller: makeReactController(state)
+          };
+        }
+
         if (!['string', 'undefined'].includes(typeof state.template)) {
           throw new Error(`${stateName}: template should be string or undefined`);
         }
 
         if (state.template || state.controller) {
+          if (views['content@']) {
+            throw new Error(`${stateName}: cannot mix React and Angular state definitions`);
+          }
+
           views['content@'] = {
             template: state.template,
             controller: provideScopeContext(state.controller, stateName)
@@ -96,6 +109,23 @@ export default function register() {
         }
 
         return views;
+      }
+
+      function makeReactController(state) {
+        const mapping = state.mapInjectedToProps || [() => ({})];
+        const injectables = mapping.slice(0, mapping.length - 1);
+        const mapperFn = mapping[mapping.length - 1];
+
+        return ['$scope', '$state'].concat(injectables).concat([
+          function($scope, $state) {
+            const args = Array.prototype.slice.call(arguments).slice(2);
+            $scope.context = {};
+            $state.current.data = $scope.context;
+            $scope.component = state.component;
+            $scope.props = mapperFn(...args);
+            $scope.$applyAsync();
+          }
+        ]);
       }
 
       function provideScopeContext(controller, stateName) {

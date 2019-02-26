@@ -1,4 +1,6 @@
 import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
+import ExtensionsListRoute from 'app/settings/extensions/routes/ExtensionsListRoute.es6';
+import ExtensionEditorRoute from 'app/settings/extensions/routes/ExtensionEditorRoute.es6';
 
 export default {
   name: 'extensions',
@@ -8,20 +10,20 @@ export default {
     {
       name: 'list',
       url: '',
-      template:
-        '<react-component name="app/settings/extensions/routes/ExtensionsListRoute.es6" props="props" />',
       params: {
         // optional extensionUrl param to open GitHubInstaller
         extensionUrl: null,
         referrer: null
       },
-      controller: [
-        '$scope',
+      component: ExtensionsListRoute,
+      mapInjectedToProps: [
         '$stateParams',
-        ($scope, $stateParams) => {
-          $scope.props = {
+        'spaceContext',
+        ($stateParams, spaceContext) => {
+          return {
             extensionUrl: decodeURI($stateParams.extensionUrl || ''),
-            extensionUrlReferrer: $stateParams.referrer || null
+            extensionUrlReferrer: $stateParams.referrer || null,
+            cma: spaceContext.cma
           };
         }
       ]
@@ -29,13 +31,13 @@ export default {
     {
       name: 'detail',
       url: '/:extensionId',
-      template:
-        '<react-component name="app/settings/extensions/routes/ExtensionEditorRoute.es6" props="props" />',
-      controller: [
+      component: ExtensionEditorRoute,
+      mapInjectedToProps: [
         '$scope',
         '$stateParams',
-        ($scope, $stateParams) => {
-          $scope.props = {
+        'spaceContext',
+        ($scope, $stateParams, spaceContext) => {
+          return {
             extensionId: $stateParams.extensionId,
             registerSaveAction: save => {
               $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
@@ -44,7 +46,8 @@ export default {
             setDirty: value => {
               $scope.context.dirty = value;
               $scope.$applyAsync();
-            }
+            },
+            cma: spaceContext.cma
           };
         }
       ]
