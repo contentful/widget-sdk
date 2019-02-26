@@ -18,7 +18,6 @@ import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceServic
 import View from './View.es6';
 
 const environmentsFlagName = 'feature-dv-11-2017-environments';
-const incentivizeFlagName = 'feature-bv-06-2018-incentivize-upgrade';
 
 export default {
   name: 'environments',
@@ -30,19 +29,17 @@ export default {
     'spaceContext',
     '$state',
     '$q',
-    ($scope, spaceContext, $state, $q) => {
+    ($scope, spaceContext, $state) => {
       const hasAccess = accessChecker.can('manage', 'Environments');
 
       if (!hasAccess) {
         $state.go('spaces.detail');
       }
 
-      $q.all([
-        LD.getCurrentVariation(environmentsFlagName),
-        LD.getCurrentVariation(incentivizeFlagName)
-      ]).then(([environmentsEnabled, incentivizeUpgradeEnabled]) => {
+      LD.getCurrentVariation(environmentsFlagName).then(([environmentsEnabled]) => {
         if (environmentsEnabled) {
-          $scope.environmentComponent = createComponent(spaceContext, incentivizeUpgradeEnabled);
+          $scope.environmentComponent = createComponent(spaceContext);
+          $scope.$applyAsync();
         } else {
           $state.go('spaces.detail');
         }
@@ -139,7 +136,7 @@ const reduce = makeReducer({
 });
 
 // This is exported for testing purposes.
-export function createComponent(spaceContext, incentivizeUpgradeEnabled) {
+export function createComponent(spaceContext) {
   const resourceEndpoint = SpaceEnvironmentRepo.create(spaceContext.endpoint, spaceContext.getId());
   const resourceService = createResourceService(spaceContext.getId(), 'space');
   const context = {
@@ -155,8 +152,7 @@ export function createComponent(spaceContext, incentivizeUpgradeEnabled) {
     canUpgradeSpace: isOwnerOrAdmin(organization),
     isLegacyOrganization: isLegacyOrganization(organization),
     organizationId: organization.sys.id,
-    spaceData: spaceContext.space.data,
-    incentivizeUpgradeEnabled
+    spaceData: spaceContext.space.data
   };
 
   const store = createStore(initialState, (action, state) => reduce(action, state, context));

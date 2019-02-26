@@ -3,35 +3,6 @@ import PropTypes from 'prop-types';
 import { Button } from '@contentful/forma-36-react-components';
 import Pluralized from 'ui/Components/Pluralized.es6';
 import StateLink from 'app/common/StateLink.es6';
-import * as LaunchDarkly from 'utils/LaunchDarkly/index.es6';
-
-class IncentivizeUpgradeExperiment extends React.Component {
-  static propTypes = {
-    children: PropTypes.func.isRequired
-  };
-
-  state = {
-    isInitialized: false,
-    variation: undefined
-  };
-
-  componentDidMount() {
-    LaunchDarkly.getCurrentVariation('feature-bv-06-2018-incentivize-upgrade')
-      .then(variation => {
-        this.setState({ variation, isInitialized: true });
-      })
-      .catch(() => {
-        this.setState({ variation: undefined, isInitialized: true });
-      });
-  }
-
-  render() {
-    if (!this.state.isInitialized) {
-      return null;
-    }
-    return this.props.children(this.state.variation);
-  }
-}
 
 const DocumentationsSection = () => (
   <div data-test-id="locales-documentation">
@@ -88,32 +59,15 @@ export default class LocalesListSidebar extends React.Component {
       <div data-test-id="change-space-block">
         <p>{instruction}</p>
         {canChangeSpace && (
-          <IncentivizeUpgradeExperiment>
-            {variation => {
-              return variation ? (
-                <div className="entity-sidebar__widget">
-                  <Button
-                    onClick={this.props.upgradeSpace}
-                    isFullWidth
-                    buttonType="primary"
-                    testId="locales-change">
-                    Upgrade space
-                  </Button>
-                </div>
-              ) : (
-                <span>
-                  <StateLink
-                    to={this.props.subscriptionState.path.join('.')}
-                    params={this.props.subscriptionState.params}
-                    options={this.props.subscriptionState.options}
-                    className="text-link upgrade-link">
-                    Go to the subscription page
-                  </StateLink>{' '}
-                  to change.
-                </span>
-              );
-            }}
-          </IncentivizeUpgradeExperiment>
+          <div className="entity-sidebar__widget">
+            <Button
+              onClick={this.props.upgradeSpace}
+              isFullWidth
+              buttonType="primary"
+              testId="locales-change">
+              Upgrade space
+            </Button>
+          </div>
         )}
       </div>
     );

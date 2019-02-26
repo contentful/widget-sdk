@@ -5,8 +5,6 @@ import { get } from 'lodash';
 import * as Config from 'Config.es6';
 import { assign } from 'utils/Collections.es6';
 import { caseofEq } from 'sum-types';
-import { href } from 'states/Navigator.es6';
-import { subscription as subscriptionState } from 'ui/NavStates/Org.es6';
 import Workbench from 'app/common/Workbench.es6';
 import { LinkOpen, CodeFragment } from 'ui/Content.es6';
 import {
@@ -204,10 +202,8 @@ DeleteButton.propTypes = {
 function Sidebar({
   canCreateEnv,
   resource,
-  organizationId,
   isLegacyOrganization,
   canUpgradeSpace,
-  incentivizeUpgradeEnabled,
   OpenCreateDialog,
   OpenUpgradeSpaceDialog
 }) {
@@ -249,11 +245,7 @@ function Sidebar({
           </button>
         )}
         {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && (
-          <UpgradeButton
-            organizationId={organizationId}
-            incentivizeUpgradeEnabled={incentivizeUpgradeEnabled}
-            OpenUpgradeSpaceDialog={OpenUpgradeSpaceDialog}
-          />
+          <UpgradeButton OpenUpgradeSpaceDialog={OpenUpgradeSpaceDialog} />
         )}
       </div>
       <h2 className="entity-sidebar__heading">Documentation</h2>
@@ -284,7 +276,6 @@ Sidebar.propTypes = {
   organizationId: PropTypes.string,
   isLegacyOrganization: PropTypes.bool,
   canUpgradeSpace: PropTypes.bool,
-  incentivizeUpgradeEnabled: PropTypes.bool,
   OpenCreateDialog: PropTypes.func.isRequired,
   OpenUpgradeSpaceDialog: PropTypes.func.isRequired
 };
@@ -325,32 +316,17 @@ UsageTooltip.propTypes = {
   resource: PropTypes.object.isRequired
 };
 
-function UpgradeButton({ organizationId, incentivizeUpgradeEnabled, OpenUpgradeSpaceDialog }) {
-  if (incentivizeUpgradeEnabled) {
-    return (
-      <button
-        data-test-id="openUpgradeDialog"
-        onClick={() => OpenUpgradeSpaceDialog()}
-        className="btn-action x--block">
-        Upgrade space
-      </button>
-    );
-  } else {
-    return (
-      <span>
-        <a
-          href={href(subscriptionState(organizationId, false))}
-          data-test-id="subscriptionLink"
-          className="text-link">
-          Go to the subscription page
-        </a>
-        to upgrade
-      </span>
-    );
-  }
+function UpgradeButton({ OpenUpgradeSpaceDialog }) {
+  return (
+    <button
+      data-test-id="openUpgradeDialog"
+      onClick={() => OpenUpgradeSpaceDialog()}
+      className="btn-action x--block">
+      Upgrade space
+    </button>
+  );
 }
+
 UpgradeButton.propTypes = {
-  organizationId: PropTypes.string,
-  incentivizeUpgradeEnabled: PropTypes.bool,
   OpenUpgradeSpaceDialog: PropTypes.func.isRequired
 };
