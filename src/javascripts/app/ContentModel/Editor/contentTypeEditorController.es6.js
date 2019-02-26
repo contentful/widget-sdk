@@ -1,7 +1,7 @@
-import { registerController } from 'NgRegistry.es6';
+import { registerController, registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import validation from '@contentful/validation';
-import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField.es6';
+
 import { syncControls } from 'widgets/EditorInterfaceTransformer.es6';
 import {
   openDisallowDialog,
@@ -13,15 +13,21 @@ import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
 export default function register() {
+  registerDirective('cfContentTypeEditor', [
+    () => ({
+      template:
+        '<react-component name="app/ContentModel/Editor/ContentTypesPage.es6" props="componentProps" />',
+      restrict: 'A',
+      controller: 'ContentTypeEditorController',
+      controllerAs: 'ctEditorController'
+    })
+  ]);
+
   /**
-   * @ngdoc type
-   * @name ContentTypeEditorController
-   *
    * @scope.requires  context
-   *
    * @scope.provides  contentType
-   * @scope.provides  hasFields
    */
+  // todo: need to write tests for this view once is fully migrated to React
   registerController('ContentTypeEditorController', [
     '$scope',
     '$state',
@@ -52,10 +58,6 @@ export default function register() {
 
       $scope.context.dirty = false;
 
-      const canEdit = accessChecker.can('update', 'ContentType');
-      // Read-only data for template
-      $scope.data = { canEdit: canEdit };
-
       $scope.actions = createActions($scope, contentTypeIds);
       $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(
         $scope.actions.saveAndClose
@@ -65,26 +67,7 @@ export default function register() {
       // action is enforced. Somehow they got to this page, but weren't
       // able to save the CT.
 
-      $scope.stateIs = $state.is;
-
-      $scope.goTo = stateName => {
-        $state.go('^.' + stateName);
-      };
-
       $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
-
-      $scope.$watch(
-        () => $scope.contentType.getName(),
-        title => {
-          $scope.context.title = title;
-        }
-      );
-
-      $scope.$watch('contentType.data.fields.length', length => {
-        $scope.hasFields = length > 0;
-        assureDisplayField($scope.contentType.data);
-        $scope.data.fieldsUsed = length;
-      });
 
       if ($scope.context.isNew) {
         metadataDialog.openCreateDialog(contentTypeIds).then(
@@ -141,11 +124,6 @@ export default function register() {
         $scope.contentType.data.fields = updatedFields;
       };
 
-      /**
-       * @ngdoc method
-       * @name ContentTypeEditorController#openFieldDialog
-       * @param {Client.ContentType.Field} field
-       */
       controller.openFieldDialog = field => {
         const fieldId = field.apiName || field.id;
         const control = ($scope.editorInterface.controls || []).find(control => {
@@ -155,17 +133,17 @@ export default function register() {
         return openFieldDialog($scope, field, control).then(setDirty);
       };
 
-      controller.setFieldAsTitle = field => {
+      const setFieldAsTitle = field => {
         $scope.contentType.data.displayField = field.id;
         setDirty();
       };
 
-      controller.updateOrder = fields => {
+      const updateOrder = fields => {
         $scope.contentType.data.fields = fields;
         setDirty();
       };
 
-      controller.toggleFieldProperty = (field, property, isTitle) => {
+      const toggleFieldProperty = (field, property, isTitle) => {
         const toggled = !field[property];
 
         if (isTitle && toggled) {
@@ -178,7 +156,7 @@ export default function register() {
         }
       };
 
-      controller.deleteField = (field, isTitle) => {
+      const deleteField = (field, isTitle) => {
         const publishedField = controller.getPublishedField(field.id);
         const publishedOmitted = publishedField && publishedField.omitted;
 
@@ -200,12 +178,12 @@ export default function register() {
           });
         } else {
           openOmitDialog().then(() => {
-            controller.toggleFieldProperty(field, 'omitted', isTitle);
+            toggleFieldProperty(field, 'omitted', isTitle);
           });
         }
       };
 
-      controller.undeleteField = field => {
+      const undeleteField = field => {
         controller.updateField(field.id, {
           deleted: false
         });
@@ -217,11 +195,7 @@ export default function register() {
         $scope.$applyAsync();
       }
 
-      /**
-       * @ngdoc method
-       * @name ContentTypeEditorController#$scope.showMetadataDialog
-       */
-      $scope.showMetadataDialog = Command.create(
+      const showMetadataDialog = Command.create(
         () => {
           metadataDialog.openEditDialog($scope.contentType).then(metadata => {
             const data = $scope.contentType.data;
@@ -240,11 +214,7 @@ export default function register() {
         }
       );
 
-      /**
-       * @ngdoc property
-       * @name ContentTypeEditorController#$scope.showNewFieldDialog
-       */
-      $scope.showNewFieldDialog = Command.create(
+      const showNewFieldDialog = Command.create(
         () => {
           modalDialog
             .open({
@@ -267,22 +237,13 @@ export default function register() {
         widget => widget.sidebar === true
       );
 
-      $scope.updateSidebarConfiguration = updatedSidebar => {
+      const updateSidebarConfiguration = updatedSidebar => {
         if (!_.isEqual($scope.editorInterface.sidebar, updatedSidebar)) {
           $scope.editorInterface.sidebar = updatedSidebar;
           $scope.$applyAsync();
           setDirty();
         }
       };
-
-      $scope.buildContentTypeIdInputProps = () => ({
-        value: $scope.contentType.data.sys.id,
-        name: 'contentTypeIdInput',
-        id: 'contentTypeIdInput',
-        testId: 'contentTypeIdInput',
-        withCopyButton: true,
-        disabled: true
-      });
 
       function addField(newField) {
         const data = $scope.contentType.data;
@@ -318,75 +279,92 @@ export default function register() {
         );
       }
 
-      /**
-       * ContentType Preview
-       */
-
-      $scope.contentPreviewProps = {
-        isLoading: false,
-        isNew: false,
-        isDirty: $scope.context.dirty,
-        preview: null
+      const loadPreview = () => {
+        const isNew = !_.get($scope.contentType.data, 'sys.publishedVersion');
+        if (isNew) {
+          return getContentTypePreview.fromData($scope.contentType.data);
+        } else {
+          return getContentTypePreview($scope.contentType);
+        }
       };
 
-      function updateContentPreviewProps(update) {
-        $scope.contentPreviewProps = {
-          ...$scope.contentPreviewProps,
-          ...update
-        };
-        $scope.$applyAsync();
+      function getCurrentTab($state) {
+        if ($state.is('^.preview')) {
+          return 'preview';
+        } else if ($state.is('^.sidebar_configuration')) {
+          return 'sidebar_configuration';
+        }
+        return 'fields';
       }
 
-      $scope.$watch('context.dirty', isDirty => {
-        updateContentPreviewProps({
-          isDirty
-        });
+      $scope.$watch('contentType.data', data => {
+        $scope.componentProps = {
+          ...$scope.componentProps,
+          contentTypeData: data
+        };
+        $scope.$applyAsync();
       });
 
       $scope.$watch(
-        'contentType.data',
-        data => {
-          const publishedVersion = _.get(data, 'sys.publishedVersion');
-
-          const isNew = !publishedVersion;
-
-          updateContentPreviewProps({
-            isNew
-          });
-
-          loadPreview(isNew).then(preview => {
-            updateContentPreviewProps({
-              preview
-            });
-          });
-        },
-        true
+        () => $scope.context.dirty,
+        isDirty => {
+          $scope.componentProps = {
+            ...$scope.componentProps,
+            isDirty
+          };
+          $scope.$applyAsync();
+        }
       );
 
-      function loadPreview(isNew) {
-        if (isNew) {
-          return loadLocalPreview();
-        } else {
-          return loadServerPreview();
+      $scope.$watch(
+        () => $state.current.name,
+        () => {
+          $scope.componentProps = {
+            ...$scope.componentProps,
+            currentTab: getCurrentTab($state)
+          };
+          $scope.$applyAsync();
         }
-      }
+      );
 
-      function loadServerPreview() {
-        updateContentPreviewProps({
-          isLoading: true
-        });
+      $scope.$watch(
+        () => $scope.contentType.getName(),
+        name => {
+          $scope.componentProps = {
+            ...$scope.componentProps,
+            contentTypeName: name
+          };
+          $scope.$applyAsync();
+        }
+      );
 
-        return getContentTypePreview($scope.contentType).then(preview => {
-          updateContentPreviewProps({
-            isLoading: false
-          });
-          return preview;
-        });
-      }
-
-      function loadLocalPreview() {
-        return getContentTypePreview.fromData($scope.contentType);
-      }
+      $scope.componentProps = {
+        isDirty: false,
+        isNew: $scope.context.isNew,
+        currentTab: getCurrentTab($state),
+        canEdit: accessChecker.can('update', 'ContentType'),
+        configuration: $scope.editorInterface.sidebar,
+        extensions: $scope.sidebarExtensions,
+        actions: {
+          showMetadataDialog,
+          showNewFieldDialog,
+          save: $scope.actions.save,
+          delete: $scope.actions.delete,
+          duplicate: $scope.actions.duplicate,
+          cancel: $scope.actions.cancel,
+          undeleteField,
+          updateOrder,
+          setFieldAsTitle,
+          openFieldDialog: controller.openFieldDialog,
+          deleteField,
+          toggleFieldProperty,
+          updateSidebarConfiguration,
+          loadPreview
+        },
+        contentTypeName: $scope.contentType.getName(),
+        contentTypeData: $scope.contentType.data,
+        hasCustomSidebarFeature: $scope.hasCustomSidebarFeature
+      };
     }
   ]);
 }

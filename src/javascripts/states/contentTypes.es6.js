@@ -151,14 +151,7 @@ function editorBase(options, isNew) {
       }
     ],
     template:
-      '<div ' +
-      [
-        'cf-content-type-editor',
-        'class="workbench"',
-        'cf-validate="contentType.data" cf-content-type-schema',
-        'cf-ui-tab'
-      ].join(' ') +
-      '></div>',
+      '<div cf-content-type-editor class="workbench" cf-validate="contentType.data" cf-content-type-schema></div>',
     ...options
   };
 }

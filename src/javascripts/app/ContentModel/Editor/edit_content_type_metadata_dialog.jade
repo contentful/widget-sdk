@@ -8,7 +8,9 @@
       h1 {{dialog.title}}
       button.modal-dialog__close(type="button" ng-click="dialog.cancel()")
     .modal-dialog__content
-      include ./content_type_metadata_form
+      <react-component name="@contentful/forma-36-react-components/TextField" props="buildNameTextFieldProps()"></react-component>
+      <react-component name="@contentful/forma-36-react-components/TextField" ng-if="contentTypeIsNew" props="buildApiIdTextFieldProps()"></react-component>
+      <react-component name="@contentful/forma-36-react-components/TextField" props="buildDescriptionTextFieldProps()"></react-component>
 
     .modal-dialog__controls
       button.btn-primary-action(cf-form-submit ng-disabled="!isNewContentTypeFormClean()")

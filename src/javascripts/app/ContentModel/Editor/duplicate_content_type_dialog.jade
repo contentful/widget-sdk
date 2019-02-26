@@ -7,7 +7,9 @@
       h1 Duplicate content type
       button.modal-dialog__close(type="button" ng-click="dialog.cancel()")
     .modal-dialog__content(ng-init="dialog.formController = newContentTypeForm")
-      include ./content_type_metadata_form
+      <react-component name="@contentful/forma-36-react-components/TextField" props="buildNameTextFieldProps()"></react-component>
+      <react-component name="@contentful/forma-36-react-components/TextField" ng-if="contentTypeIsNew" props="buildApiIdTextFieldProps()"></react-component>
+      <react-component name="@contentful/forma-36-react-components/TextField" props="buildDescriptionTextFieldProps()"></react-component>
       .note-box.note-box--info
         | You're about to duplicate the content type <span class="modal-dialog__highlight">{{ originalName }}</span>,
         |  with all existing fields. No entries will be duplicated.

@@ -1,9 +1,23 @@
-import React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Spinner, Note } from '@contentful/forma-36-react-components';
 
 function ContentTypePreview(props) {
-  const { preview, isNew, isLoading, isDirty } = props;
+  const { loadPreview, publishedVersion } = props;
+  const [isLoading, setLoading] = useState(true);
+  const [preview, setPreview] = useState(null);
+
+  const isNew = !publishedVersion;
+
+  useEffect(() => {
+    loadPreview().then(preview => {
+      setPreview(preview);
+      setLoading(false);
+    });
+  }, [publishedVersion, loadPreview]);
+
   return (
     <div className="ct-editor-json">
       {isNew && (
@@ -28,7 +42,7 @@ function ContentTypePreview(props) {
 
           {!isLoading && (
             <div>
-              {isDirty && (
+              {props.isDirty && (
                 <Note extraClassNames="f36-margin-bottom--l">
                   You have unsaved changes. Save content type to get a preview.
                 </Note>
@@ -45,10 +59,9 @@ function ContentTypePreview(props) {
 }
 
 ContentTypePreview.propTypes = {
-  preview: PropTypes.object,
-  isNew: PropTypes.bool.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  isDirty: PropTypes.bool.isRequired
+  isDirty: PropTypes.bool.isRequired,
+  loadPreview: PropTypes.func.isRequired,
+  publishedVersion: PropTypes.number
 };
 
 export default ContentTypePreview;

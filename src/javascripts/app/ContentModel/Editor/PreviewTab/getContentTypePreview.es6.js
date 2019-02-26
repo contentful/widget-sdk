@@ -10,8 +10,8 @@ export default function getContentTypePreview(contentType) {
     .then(orderPreviewKeys);
 }
 
-getContentTypePreview.fromData = contentType => {
-  return Promise.resolve(contentType.data)
+getContentTypePreview.fromData = data => {
+  return Promise.resolve(data)
     .then(orderPreviewKeys)
     .then(omitApiName);
 };

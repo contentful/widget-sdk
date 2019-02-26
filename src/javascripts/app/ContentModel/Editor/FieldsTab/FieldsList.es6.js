@@ -11,6 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import Icon from 'ui/Components/Icon.es6';
 import * as fieldFactory from 'services/fieldFactory.es6';
+import NoFieldsAdvice from './NoFieldsAdvice.es6';
 
 function isTitleType(fieldType) {
   return fieldType === 'Symbol' || fieldType === 'Text';
@@ -187,15 +188,17 @@ const reorder = (list, startIndex, endIndex) => {
 
 export default class FieldsList extends Component {
   static propTypes = {
-    displayField: PropTypes.string.isRequired,
+    displayField: PropTypes.string,
     canEdit: PropTypes.bool.isRequired,
     fields: PropTypes.arrayOf(FieldType.isRequired).isRequired,
-    openFieldDialog: PropTypes.func.isRequired,
-    setFieldAsTitle: PropTypes.func.isRequired,
-    toggleFieldProperty: PropTypes.func.isRequired,
-    deleteField: PropTypes.func.isRequired,
-    undeleteField: PropTypes.func.isRequired,
-    updateOrder: PropTypes.func.isRequired
+    actions: PropTypes.shape({
+      openFieldDialog: PropTypes.func.isRequired,
+      setFieldAsTitle: PropTypes.func.isRequired,
+      toggleFieldProperty: PropTypes.func.isRequired,
+      deleteField: PropTypes.func.isRequired,
+      undeleteField: PropTypes.func.isRequired,
+      updateOrder: PropTypes.func.isRequired
+    }).isRequired
   };
 
   state = {
@@ -217,11 +220,16 @@ export default class FieldsList extends Component {
     const orderedFields = reorder(this.props.fields, result.source.index, result.destination.index);
 
     this.setState({ optimisticFields: orderedFields });
-    this.props.updateOrder(orderedFields);
+    this.props.actions.updateOrder(orderedFields);
   };
 
   render() {
     const { canEdit, displayField } = this.props;
+
+    if (this.props.fields.length === 0) {
+      return <NoFieldsAdvice />;
+    }
+
     const fields = this.state.optimisticFields || this.props.fields;
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
@@ -244,22 +252,22 @@ export default class FieldsList extends Component {
                           isTitle={isTitle}
                           field={field}
                           onSettingsClick={() => {
-                            this.props.openFieldDialog(field);
+                            this.props.actions.openFieldDialog(field);
                           }}
                           onSetAsTitle={() => {
-                            this.props.setFieldAsTitle(field);
+                            this.props.actions.setFieldAsTitle(field);
                           }}
                           onToggleDisabled={() => {
-                            this.props.toggleFieldProperty(field, 'disabled', isTitle);
+                            this.props.actions.toggleFieldProperty(field, 'disabled', isTitle);
                           }}
                           onToggleOmitted={() => {
-                            this.props.toggleFieldProperty(field, 'omitted', isTitle);
+                            this.props.actions.toggleFieldProperty(field, 'omitted', isTitle);
                           }}
                           onDelete={() => {
-                            this.props.deleteField(field, isTitle);
+                            this.props.actions.deleteField(field, isTitle);
                           }}
                           onUndelete={() => {
-                            this.props.undeleteField(field);
+                            this.props.actions.undeleteField(field);
                           }}
                         />
                       </div>
