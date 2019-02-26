@@ -6,11 +6,11 @@ import LocalesListPricingOne from '../LocalesListPricingOne.es6';
 import LocalesListPricingTwo from '../LocalesListPricingTwo.es6';
 import AdminOnly from 'app/common/AdminOnly.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
+import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import * as EnvironmentUtils from 'utils/EnvironmentUtils.es6';
 
 const spaceContext = getModule('spaceContext');
-const ResourceUtils = getModule('utils/ResourceUtils.es6');
 const ResourceService = getModule('services/ResourceService.es6');
 const FeatureService = getModule('services/FeatureService.es6');
 const OrganizationRoles = getModule('services/OrganizationRoles.es6');
@@ -21,7 +21,7 @@ const LocalesFetcher = createFetcherComponent(() => {
   const createFeatureService = FeatureService.default;
   return Promise.all([
     spaceContext.localeRepo.getAll(),
-    ResourceUtils.useLegacy(spaceContext.organization),
+    isLegacyOrganization(spaceContext.organization),
     createResourceService(spaceContext.getId()).get('locale'),
     createFeatureService(spaceContext.getId()).get('multipleLocales'),
     OrganizationRoles.isOwnerOrAdmin(spaceContext.organization),
@@ -50,7 +50,7 @@ class LocalesListRoute extends React.Component {
             }
             const [
               locales,
-              isLegacyOrganization,
+              isLegacy,
               localeResource,
               isMultipleLocalesFeatureEnabled,
               isOwnerOrAdmin,
@@ -58,7 +58,7 @@ class LocalesListRoute extends React.Component {
               subscriptionState,
               subscriptionPlanName
             ] = data;
-            if (isLegacyOrganization) {
+            if (isLegacy) {
               return (
                 <LocalesListPricingOne
                   locales={locales}

@@ -7,6 +7,7 @@ import { createSelection } from 'classes/Selection.es6';
 import * as entityStatus from 'app/entity_editor/EntityStatus.es6';
 import { getBlankEntryView as getBlankView } from 'data/UiConfig/Blanks.es6';
 import * as EnvironmentUtils from 'utils/EnvironmentUtils.es6';
+import * as ResourceUtils from 'utils/ResourceUtils.es6';
 
 export default function register() {
   /**
@@ -22,7 +23,6 @@ export default function register() {
     'entityCreator',
     'access_control/AccessChecker/index.es6',
     'analytics/Analytics.es6',
-    'utils/ResourceUtils.es6',
     'app/ContentList/SavedViewsSidebar.es6',
     function EntryListController(
       $scope,
@@ -33,7 +33,6 @@ export default function register() {
       entityCreator,
       accessChecker,
       Analytics,
-      ResourceUtils,
       { default: createSavedViewsSidebar }
     ) {
       const searchController = $controller('EntryListSearchController', { $scope: $scope });

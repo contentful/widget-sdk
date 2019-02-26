@@ -17,6 +17,7 @@ import PropTypes from 'prop-types';
 import { TextField, Button, Notification } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import FormSection from 'components/forms/FormSection.es6';
+import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import { getModule } from 'NgRegistry.es6';
 import RuleList from './RuleList.es6';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
@@ -36,7 +37,6 @@ const UserListHandler = getModule('UserListHandler');
 const RoleRepository = getModule('access_control/RoleRepository.es6');
 const createFeatureService = getModule('services/FeatureService.es6');
 const createResourceService = getModule('services/ResourceService.es6');
-const ResourceUtils = getModule('utils/ResourceUtils.es6');
 const TheLocaleStore = getModule('TheLocaleStore');
 
 const PermissionPropType = PropTypes.shape({
@@ -290,14 +290,13 @@ class RoleEditor extends React.Component {
 
     this.setState({ loading: true });
 
-    const [featureEnabled, resource, useLegacy] = await Promise.all([
+    const [featureEnabled, resource] = await Promise.all([
       FeatureService.get('customRoles'),
-      createResourceService.default(spaceContext.getId()).get('role'),
-      ResourceUtils.useLegacy(organization)
+      createResourceService.default(spaceContext.getId()).get('role')
     ]);
 
     const stateUpdates = [];
-    stateUpdates.push(set('isLegacy', useLegacy));
+    stateUpdates.push(set('isLegacy', ResourceUtils.isLegacyOrganization(organization)));
 
     if (!featureEnabled) {
       stateUpdates.push(set('hasCustomRolesFeature', false), set('canModifyRoles', false));

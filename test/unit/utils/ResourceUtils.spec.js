@@ -208,17 +208,6 @@ describe('ResourceUtils', () => {
     });
   });
 
-  describe('#useLegacy', () => {
-    it('should return false if given a pricing V2 organization', async function() {
-      expect(await this.ResourceUtils.useLegacy(this.organization)).toBe(false);
-    });
-
-    it('should return true if given a pricing V1 organization', async function() {
-      this.organization.pricingVersion = this.pricingVersions.pricingVersion1;
-      expect(await this.ResourceUtils.useLegacy(this.organization)).toBe(true);
-    });
-  });
-
   describe('#isLegacyOrganization', () => {
     it('should return true if the organization uses pricing version 1', function() {
       const organization = {

@@ -1,10 +1,8 @@
-/* eslint-disable  react-hooks/rules-of-hooks */
-
 import { getSpace, getOrganization } from 'services/TokenStore.es6';
 import {
   canCreate,
   generateMessage,
-  useLegacy,
+  isLegacyOrganization,
   getLegacyLimit,
   getLegacyUsage
 } from 'utils/ResourceUtils.es6';
@@ -37,7 +35,7 @@ export default function createResourceService(id, type = 'space') {
     }
 
     const organization = await getTokenOrganization(id, type);
-    const legacy = await useLegacy(organization);
+    const legacy = isLegacyOrganization(organization);
 
     if (legacy) {
       const limit = getLegacyLimit(resourceType, organization);
