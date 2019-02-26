@@ -4,16 +4,16 @@ import WebhookEditor from '../WebhookEditor.es6';
 import AdminOnly from 'app/common/AdminOnly.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const spaceContext = getModule('spaceContext');
 
 const WebhookFetcher = createFetcherComponent(props => {
-  return spaceContext.webhookRepo.get(props.webhookId);
+  const { webhookRepo, webhookId } = props;
+
+  return webhookRepo.get(webhookId);
 });
 
 export class WebhookEditRoute extends React.Component {
   static propTypes = {
+    webhookRepo: PropTypes.shape({ get: PropTypes.func.isRequired }).isRequired,
     registerSaveAction: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
     webhookId: PropTypes.string.isRequired

@@ -1,11 +1,17 @@
 import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
+import WebhookListRoute from './WebhookListRoute.es6';
+import WebhookNewRoute from './WebhookNewRoute.es6';
+import WebhookEditRoute from './WebhookEditRoute.es6';
+import WebhookCallRoute from './WebhookCallRoute.es6';
 
-const editorContoller = [
+const mapInjectedToEditorProps = [
   '$scope',
   '$stateParams',
-  ($scope, { webhookId }) => {
-    $scope.props = {
+  'spaceContext',
+  ($scope, { webhookId }, { webhookRepo }) => {
+    return {
       webhookId,
+      webhookRepo,
       registerSaveAction: save => {
         $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
         $scope.$applyAsync();
@@ -30,13 +36,11 @@ export default {
         templateId: null,
         referrer: null
       },
-      template:
-        '<react-component name="app/settings/webhooks/routes/WebhookListRoute.es6" props="props" />',
-      controller: [
-        '$scope',
+      component: WebhookListRoute,
+      mapInjectedToProps: [
         '$stateParams',
-        ($scope, $stateParams) => {
-          $scope.props = {
+        $stateParams => {
+          return {
             templateId: $stateParams.templateId || null,
             templateIdReferrer: $stateParams.referrer || null
           };
@@ -46,30 +50,24 @@ export default {
     {
       name: 'new',
       url: '/new',
-      template:
-        '<react-component name="app/settings/webhooks/routes/WebhookNewRoute.es6" props="props" />',
-      controller: editorContoller
+      component: WebhookNewRoute,
+      mapInjectedToProps: mapInjectedToEditorProps
     },
     {
       name: 'detail',
       url: '/:webhookId',
-      template:
-        '<react-component name="app/settings/webhooks/routes/WebhookEditRoute.es6" props="props" />',
-      controller: editorContoller,
+      component: WebhookEditRoute,
+      mapInjectedToProps: mapInjectedToEditorProps,
       children: [
         {
           name: 'call',
           url: '/call/:callId',
-          template:
-            '<react-component name="app/settings/webhooks/routes/WebhookCallRoute.es6" props="props" />',
-          controller: [
-            '$scope',
+          component: WebhookCallRoute,
+          mapInjectedToProps: [
             '$stateParams',
-            ($scope, { webhookId, callId }) => {
-              $scope.props = {
-                webhookId,
-                callId
-              };
+            'spaceContext',
+            ({ webhookId, callId }, { webhookRepo }) => {
+              return { webhookRepo, webhookId, callId };
             }
           ]
         }
