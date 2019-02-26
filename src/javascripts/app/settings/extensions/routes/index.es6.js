@@ -1,6 +1,6 @@
 import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
-import ExtensionsListRoute from 'app/settings/extensions/routes/ExtensionsListRoute.es6';
-import ExtensionEditorRoute from 'app/settings/extensions/routes/ExtensionEditorRoute.es6';
+import ExtensionsListRoute from './ExtensionsListRoute.es6';
+import ExtensionEditorRoute from './ExtensionEditorRoute.es6';
 
 export default {
   name: 'extensions',
