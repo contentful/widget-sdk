@@ -7,11 +7,11 @@ import ModalLauncher from './ModalLauncher.es6';
 export default function createUnsavedChangesDialogOpener(save) {
   return () =>
     ModalLauncher.open(({ isShown, onClose }) => (
-      <UsavedChangesDialog key={`${Date.now()}`} save={save} isShown={isShown} onClose={onClose} />
+      <UnsavedChangesDialog key={`${Date.now()}`} save={save} isShown={isShown} onClose={onClose} />
     ));
 }
 
-class UsavedChangesDialog extends React.Component {
+class UnsavedChangesDialog extends React.Component {
   static propTypes = {
     isShown: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -33,7 +33,7 @@ class UsavedChangesDialog extends React.Component {
     }
   };
 
-  discard = () => this.props.onClose(true);
+  discard = () => this.props.onClose({ discarded: true });
 
   cancel = () => this.props.onClose(false);
 

@@ -5,6 +5,7 @@ import { caseofEq as caseof, otherwise } from 'sum-types';
 import { State, Action } from 'data/CMA/EntityState.es6';
 import { Notification } from 'app/entity_editor/Notifications.es6';
 import { registerUnpublishedReferencesWarning } from 'app/entity_editor/PublicationWarnings/UnpublishedReferencesWarning/index.es6';
+import * as trackVersioning from 'analytics/events/versioning.es6';
 
 export default function register() {
   registerController('entityEditor/StateController', [
@@ -17,7 +18,6 @@ export default function register() {
     'modalDialog',
     'spaceContext',
     'navigation/closeState',
-    'analyticsEvents/versioning',
     'analytics/Analytics.es6',
     'navigation/SlideInNavigator/index.es6',
     'app/entity_editor/PublicationWarnings/index.es6',
@@ -31,7 +31,6 @@ export default function register() {
       modalDialog,
       spaceContext,
       closeState,
-      trackVersioning,
       Analytics,
       { goToPreviousSlideOrExit },
       { create: createPublicationWarnings }
