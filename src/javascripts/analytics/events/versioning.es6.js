@@ -5,10 +5,7 @@ let data = {};
 const restoredVersions = {};
 
 export function setData(entry, snapshot) {
-  data = {
-    entry: entry,
-    snapshot: snapshot
-  };
+  data = { entry, snapshot };
 }
 
 export function noSnapshots(entryId) {
@@ -16,43 +13,28 @@ export function noSnapshots(entryId) {
 }
 
 export function opened(source) {
-  track(
-    'snapshot_opened',
-    Object.assign(
-      {
-        source: source || 'deepLink'
-      },
-      basicInfo()
-    )
-  );
+  track('snapshot_opened', {
+    source: source || 'deepLink',
+    ...basicInfo()
+  });
 }
 
 export function closed(discarded) {
-  track(
-    'snapshot_closed',
-    Object.assign(
-      {
-        changesDiscarded: !!discarded
-      },
-      basicInfo()
-    )
-  );
+  track('snapshot_closed', {
+    changesDiscarded: !!discarded,
+    ...basicInfo()
+  });
 }
 
 export function restored(picker, showDiffsOnly) {
   const count = picker.getPathsToRestore().length;
 
-  track(
-    'snapshot_restored',
-    Object.assign(
-      {
-        fullRestore: count === picker.getDifferenceCount(),
-        restoredFieldsCount: count,
-        showDiffsOnly: !!showDiffsOnly
-      },
-      basicInfo()
-    )
-  );
+  track('snapshot_restored', {
+    fullRestore: count === picker.getDifferenceCount(),
+    restoredFieldsCount: count,
+    showDiffsOnly: !!showDiffsOnly,
+    ...basicInfo()
+  });
 }
 
 export function registerRestoredVersion(entry) {

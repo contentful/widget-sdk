@@ -18,10 +18,7 @@ class UnsavedChangesDialog extends React.Component {
     save: PropTypes.func.isRequired
   };
 
-  constructor(props) {
-    super(props);
-    this.state = { working: false };
-  }
+  state = { working: false };
 
   save = async () => {
     try {
