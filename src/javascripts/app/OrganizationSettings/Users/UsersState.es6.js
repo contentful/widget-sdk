@@ -4,7 +4,6 @@ import {
 } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
 
 export const inviteUsersState = organizationBase({
-  label: 'Organizations & Billing',
   name: 'new',
   title: 'Invite new users',
   url: '/:orgId/invite',

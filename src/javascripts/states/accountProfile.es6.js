@@ -39,7 +39,7 @@ const userCancellation = userBase({
 
 function userBase(definition) {
   const defaults = {
-    label: 'Account',
+    loadingText: 'Loading your account…',
     params: {
       pathSuffix: ''
     },
@@ -53,18 +53,18 @@ function userBase(definition) {
     `.trim()
   };
 
-  return base(Object.assign({}, definition, defaults));
+  const wrapped = base(Object.assign({}, definition, defaults));
+
+  delete wrapped.title;
+
+  return wrapped;
 }
 
 export default base({
   name: 'profile',
   url: '/profile',
   abstract: true,
-  views: {
-    'nav-bar@': {
-      template: '<cf-profile-nav class="app-top-bar__child"></cf-profile-nav>'
-    }
-  },
+  navTemplate: '<cf-profile-nav class="app-top-bar__child" />',
   children: [
     userCancellation,
     user,

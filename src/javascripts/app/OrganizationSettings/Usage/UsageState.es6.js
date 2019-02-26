@@ -3,6 +3,6 @@ import { reactStateWrapper } from 'app/OrganizationSettings/OrganizationSettings
 export default reactStateWrapper({
   name: 'usage',
   url: '/:orgId/usage',
-  label: 'Usage',
+  loadingText: 'Loading your usage…',
   componentPath: 'account/usage/OrganizationUsage.es6'
 });

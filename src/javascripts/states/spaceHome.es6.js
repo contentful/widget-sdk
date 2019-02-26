@@ -6,7 +6,6 @@ import { spaceResolver } from 'states/Resolvers.es6';
 export default base({
   name: 'home',
   url: '/home',
-  label: 'Space home',
   resolve: {
     space: spaceResolver
   },

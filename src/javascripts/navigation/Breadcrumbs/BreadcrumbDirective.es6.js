@@ -17,8 +17,7 @@ export default function register() {
     '$state',
     '$parse',
     'analytics/Analytics.es6',
-    'navigation/DocumentTitle.es6',
-    ($state, $parse, Analytics, documentTitle) => {
+    ($state, $parse, Analytics) => {
       const backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
       const ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
       const ancestorMenuContainerSelector = '[aria-label="breadcrumbs-ancestor-menu-container"]';
@@ -142,11 +141,6 @@ export default function register() {
         controller: [
           '$scope',
           $scope => {
-            $scope.$watch(() => {
-              const last = _.last($scope.crumbs);
-              return last && last.getTitle();
-            }, documentTitle.maybeOverride);
-
             K.onValueScope($scope, contextHistory.crumbs$, crumbs => {
               $scope.crumbs = crumbs;
               $scope.shouldHide = crumbs.length <= 1;

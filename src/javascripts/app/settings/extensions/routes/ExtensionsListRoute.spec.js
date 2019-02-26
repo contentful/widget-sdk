@@ -7,7 +7,6 @@ import * as $stateMocked from 'ng/$state';
 describe('ExtensionsListRoute', () => {
   beforeEach(() => {
     $stateMocked.go.mockClear();
-    spaceContextMocked.cma.getExtensions.mockClear();
     spaceContextMocked.getData.mockReset();
   });
 
@@ -26,7 +25,7 @@ describe('ExtensionsListRoute', () => {
   it('should be resticted for non-admins and redirect should be called', () => {
     expect.assertions(3);
     setAdmin(false);
-    Enzyme.mount(<ExtensionsListRoute />);
+    Enzyme.mount(<ExtensionsListRoute cma={{ getExtensions: () => {} }} />);
     expect($stateMocked.go).toHaveBeenCalledTimes(1);
     expect($stateMocked.go).toHaveBeenCalledWith(
       'spaces.detail.entries.list',
@@ -39,11 +38,15 @@ describe('ExtensionsListRoute', () => {
   it('should show ExtensionsForbiddenPage if non-admin reaches page via deeplink extensionUrl', () => {
     expect.assertions(4);
     setAdmin(false);
+    const getExtensions = jest.fn();
     const wrapper = Enzyme.mount(
-      <ExtensionsListRoute extensionUrl="https://github.com/contentful/extensions/blob/master/samples/build-netlify/extension.json" />
+      <ExtensionsListRoute
+        cma={{ getExtensions }}
+        extensionUrl="https://github.com/contentful/extensions/blob/master/samples/build-netlify/extension.json"
+      />
     );
     expect($stateMocked.go).not.toHaveBeenCalled();
-    expect(spaceContextMocked.cma.getExtensions).not.toHaveBeenCalled();
+    expect(getExtensions).not.toHaveBeenCalled();
     expect(wrapper.find(selectors.forbiddenPage)).toExist();
 
     expect(
@@ -59,9 +62,10 @@ describe('ExtensionsListRoute', () => {
   it('should fetch extensions if admin reaches that page', () => {
     expect.assertions(3);
     setAdmin(true);
-    const wrapper = Enzyme.mount(<ExtensionsListRoute />);
+    const getExtensions = jest.fn();
+    const wrapper = Enzyme.mount(<ExtensionsListRoute cma={{ getExtensions }} />);
     expect($stateMocked.go).not.toHaveBeenCalled();
-    expect(spaceContextMocked.cma.getExtensions).toHaveBeenCalledTimes(1);
+    expect(getExtensions).toHaveBeenCalledTimes(1);
     expect(wrapper.find(selectors.forbiddenPage)).not.toExist();
   });
 });

@@ -39,6 +39,9 @@ export function reactStateWrapper(definition = {}) {
   const { componentPath } = definition;
   const defaults = {
     controller: getController(),
+    resolve: {
+      useNewView: () => {}
+    },
     template: getReactTemplate(componentPath)
   };
 
@@ -58,20 +61,13 @@ export function conditionalIframeWrapper(definition = {}) {
 
   const defaults = {
     controller: getController(),
-    controllerAs: '$ctrl',
     resolve: {
-      useNewView: [
-        function() {
-          if (featureFlag) {
-            return getCurrentVariation(featureFlag);
-          }
-        }
-      ]
+      useNewView: () => (featureFlag ? getCurrentVariation(featureFlag) : false)
     },
     template: `
       <div>
-        <div ng-if="$ctrl.$resolve.useNewView === false">${getIframeTemplate(title)}</div>
-        <div ng-if="$ctrl.$resolve.useNewView">${getReactTemplate(componentPath)}</div>
+        <div ng-if="useNewView === false">${getIframeTemplate(title)}</div>
+        <div ng-if="useNewView === true">${getReactTemplate(componentPath)}</div>
       </div>
     `
   };
@@ -83,7 +79,9 @@ function getController() {
   return [
     '$scope',
     '$stateParams',
-    function($scope, $stateParams) {
+    'useNewView',
+    function($scope, $stateParams, useNewView) {
+      $scope.useNewView = useNewView;
       $scope.properties = {
         ...$stateParams,
         context: $scope.context,
@@ -119,7 +117,7 @@ function getIframeTemplate(title) {
 
 export function organizationBase(definition) {
   const defaults = {
-    label: 'Organizations & Billing',
+    loadingText: 'Loading…',
     onEnter: [
       '$state',
       '$stateParams',
@@ -152,5 +150,12 @@ export function organizationBase(definition) {
       }
     ]
   };
-  return Base(Object.assign(defaults, definition));
+
+  definition = Object.assign(defaults, definition);
+
+  delete definition.featureFlag;
+  delete definition.componentPath;
+  delete definition.title;
+
+  return Base(definition);
 }

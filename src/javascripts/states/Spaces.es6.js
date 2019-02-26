@@ -34,10 +34,8 @@ const newSpace = {
 const hibernation = {
   name: 'hibernation',
   url: '/hibernation',
-  views: {
-    'nav-bar@': { template: '<div />' },
-    'content@': { template: JST.cf_space_hibernation_advice() }
-  }
+  navTemplate: '<div />',
+  template: JST.cf_space_hibernation_advice()
 };
 
 const resolveSpaceData = [
@@ -59,25 +57,21 @@ const spaceEnvironment = {
         spaceContext.resetWithSpace(spaceData, $stateParams.environmentId)
     ]
   },
-  views: {
-    'content@': {
-      template: '<div />',
-      controller: [
-        'spaceData',
-        '$state',
-        (spaceData, $state) => {
-          if (!accessChecker.can('manage', 'Environments')) {
-            $state.go('spaces.detail', null, { reload: true });
-          } else if (isHibernated(spaceData)) {
-            $state.go('spaces.detail.hibernation', null, { reload: true });
-          } else {
-            storeCurrentIds(spaceData);
-            $state.go('.entries.list');
-          }
-        }
-      ]
+  template: '<div />',
+  controller: [
+    'spaceData',
+    '$state',
+    (spaceData, $state) => {
+      if (!accessChecker.can('manage', 'Environments')) {
+        $state.go('spaces.detail', null, { reload: true });
+      } else if (isHibernated(spaceData)) {
+        $state.go('spaces.detail.hibernation', null, { reload: true });
+      } else {
+        storeCurrentIds(spaceData);
+        $state.go('.entries.list');
+      }
     }
-  },
+  ],
   children: [
     contentTypes,
     entries.withoutSnapshots,
@@ -153,16 +147,12 @@ export default {
   name: 'spaces',
   url: '/spaces',
   abstract: true,
-  views: {
-    'nav-bar@': {
-      template: h('div.app-top-bar__child.app-top-bar__main-nav.app-top-bar__with-right-part', [
-        h('cf-space-nav-bar-wrapped', { class: 'app-top-bar__child' }),
-        h('react-component', {
-          name: 'navigation/modernStackOnboardingRelaunch.es6',
-          class: 'app-top-bar__child'
-        })
-      ])
-    }
-  },
+  navTemplate: h('div.app-top-bar__child.app-top-bar__main-nav.app-top-bar__with-right-part', [
+    h('cf-space-nav-bar-wrapped', { class: 'app-top-bar__child' }),
+    h('react-component', {
+      name: 'navigation/modernStackOnboardingRelaunch.es6',
+      class: 'app-top-bar__child'
+    })
+  ]),
   children: [newSpace, spaceDetail]
 };

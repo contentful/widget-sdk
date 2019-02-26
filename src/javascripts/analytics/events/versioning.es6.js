@@ -1,23 +1,23 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
+import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
 
 export default function register() {
   registerFactory('analyticsEvents/versioning', [
-    'navigation/confirmLeaveEditor',
     'analytics/Analytics.es6',
-    (leaveConfirmator, Analytics) => {
+    Analytics => {
       let data = {};
       const restoredVersions = {};
 
       return {
-        setData: setData,
-        noSnapshots: noSnapshots,
-        opened: opened,
-        closed: closed,
-        restored: restored,
-        registerRestoredVersion: registerRestoredVersion,
-        publishedRestored: publishedRestored,
-        trackableConfirmator: trackableConfirmator
+        setData,
+        noSnapshots,
+        opened,
+        closed,
+        restored,
+        registerRestoredVersion,
+        publishedRestored,
+        trackableConfirmator
       };
 
       function setData(entry, snapshot) {

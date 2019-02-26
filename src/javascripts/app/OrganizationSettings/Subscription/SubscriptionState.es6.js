@@ -3,6 +3,6 @@ import { reactStateWrapper } from 'app/OrganizationSettings/OrganizationSettings
 export default reactStateWrapper({
   name: 'subscription_new',
   url: '/:orgId/subscription_overview',
-  label: 'Subscription',
+  loadingText: 'Loading your subscription…',
   componentPath: 'ui/Pages/SubscriptionOverview/index.es6'
 });

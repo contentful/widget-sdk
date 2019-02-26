@@ -2,6 +2,7 @@ import base from 'states/Base.es6';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 import RoleRepository from 'access_control/RoleRepository.es6';
+import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
 
 const list = base({
   name: 'list',
@@ -29,8 +30,7 @@ const newRole = {
   controller: [
     '$scope',
     'baseRole',
-    'navigation/confirmLeaveEditor',
-    ($scope, baseRole, leaveConfirmator) => {
+    ($scope, baseRole) => {
       $scope.props = {
         isNew: true,
         role: RoleRepository.getEmpty(),
@@ -68,8 +68,7 @@ const detail = {
     '$stateParams',
     'spaceContext',
     'role',
-    'navigation/confirmLeaveEditor',
-    ($scope, $stateParams, spaceContext, role, leaveConfirmator) => {
+    ($scope, $stateParams, spaceContext, role) => {
       $scope.props = {
         isNew: false,
         role,
