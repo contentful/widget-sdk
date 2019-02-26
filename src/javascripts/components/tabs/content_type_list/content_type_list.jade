@@ -1,5 +1,3 @@
-include ../../shared/table_pattern.mixin.jade
-
 header.workbench-header
   cf-breadcrumbs
   .workbench-header__left
@@ -27,23 +25,11 @@ header.workbench-header
       | Add content type
 
 .workbench-main.x--content(ng-show="contentTypes.length < 1")
-  .empty-state
-    cf-icon(name="empty-content-model" class="empty-state__icon")
-    .empty-state__title
-      | Alright, let’s create your content model!
-    .empty-state__description
-      | The content model is comprised of content types. They work like a stencil which defines the structure of your content. Get started by creating your first content type.
-    .empty-state__action
-      button.btn-action--large(
-        type="button"
-        ng-click="newContentType()"
-        ng-hide="shouldHide('create', 'contentType')"
-        ng-disabled="shouldDisable('create', 'contentType')"
-        data-test-id="create-content-type-empty-state")
-        cf-icon.btn-icon.inverted(name="plus")
-        | Add content type
-    .empty-state__additional
-      | No clue what purpose the content model serves? Read our documentation on <cf-knowledge-base target="content_model" text="content modeling" inline-text="true" class="text-link--standard"></cf-knowledge-base>.
+  react-component(
+    name="components/tabs/content_type_list/EmptyState.es6"
+    ng-show="visibleContentTypes.length == 0"
+    props="{shouldDisable: shouldDisable('create', 'contentType'), shouldHide: shouldHide('create', 'contentType'), onCreate: newContentType}"
+  )
 
 .workbench-main(ng-show="contentTypes.length > 0")
   .workbench-main__left-sidebar
