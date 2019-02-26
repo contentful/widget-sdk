@@ -2,8 +2,9 @@ import { Notification } from '@contentful/forma-36-react-components';
 import * as actions from './actions.es6';
 import * as selectors from 'redux/selectors/sso.es6';
 import { validate } from 'app/OrganizationSettings/SSO/utils.es6';
-import { fieldErrorMessage } from 'app/OrganizationSettings/SSO/utils.es6';
+import { fieldErrorMessage, trackTestResult } from 'app/OrganizationSettings/SSO/utils.es6';
 import { authUrl } from 'Config.es6';
+import { track } from 'analytics/Analytics.es6';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 
@@ -51,6 +52,8 @@ export function createIdp({ orgId }) {
 
       return;
     }
+
+    track('sso:start_setup');
 
     dispatch(actions.ssoCreateIdentityProviderSuccess(identityProvider));
   };
@@ -182,6 +185,8 @@ export function enable({ orgId }) {
       return;
     }
 
+    track('sso:enable');
+
     dispatch(actions.ssoEnableSuccess(identityProvider));
 
     Notification.success('SSO successfully enabled!');
@@ -207,6 +212,11 @@ export function cleanupConnectionTest({ orgId }) {
     window.clearInterval(timer);
 
     await dispatch(retrieveIdp({ orgId }));
+
+    const testData = selectors.getConnectionTest(getState());
+
+    trackTestResult(testData);
+
     dispatch(actions.ssoConnectionTestEnd());
   };
 }

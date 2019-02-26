@@ -48,35 +48,35 @@ export default class SSOEnabled extends React.Component {
               .
             </Fragment>
           )}
-          <div className="sso-enabled__links f36-margin-top--xl">
-            <div className="sso-enabled__link">
-              <TextField
-                labelText="Sign-in name"
-                id="sign-in-name"
-                name="sign-in-name"
-                testId="sign-in-name"
-                value={ssoName}
-                textInputProps={{
-                  withCopyButton: true,
-                  disabled: true
-                }}
-              />
-            </div>
-            <div className="sso-enabled__link f36-margin-left--l">
-              <TextField
-                labelText="Bookmarkable Login URL"
-                id="login-url"
-                name="login-url"
-                testId="login-url"
-                value={`https:${authUrl(`/sso/${orgId}/login`)}`}
-                textInputProps={{
-                  withCopyButton: true,
-                  disabled: true
-                }}
-              />
-            </div>
-          </div>
         </Paragraph>
+        <div className="sso-enabled__links f36-margin-top--xl">
+          <div className="sso-enabled__link">
+            <TextField
+              labelText="Sign-in name"
+              id="sign-in-name"
+              name="sign-in-name"
+              testId="sign-in-name"
+              value={ssoName}
+              textInputProps={{
+                withCopyButton: true,
+                disabled: true
+              }}
+            />
+          </div>
+          <div className="sso-enabled__link f36-margin-left--l">
+            <TextField
+              labelText="Bookmarkable Login URL"
+              id="login-url"
+              name="login-url"
+              testId="login-url"
+              value={`https:${authUrl(`/sso/${orgId}/login`)}`}
+              textInputProps={{
+                withCopyButton: true,
+                disabled: true
+              }}
+            />
+          </div>
+        </div>
       </div>
     );
   }

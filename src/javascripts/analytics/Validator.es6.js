@@ -94,7 +94,8 @@ export const validEvents = {
     'build_triggered',
     'preview_opened'
   ],
-  algolia: ['installed', 'updated', 'uninstalled']
+  algolia: ['installed', 'updated', 'uninstalled'],
+  sso: ['start_setup', 'connection_test_result', 'contact_support', 'enable']
 };
 
 export const validateEvent = eventName => {
