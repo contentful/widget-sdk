@@ -30,9 +30,6 @@ import { getModule } from 'NgRegistry.es6';
 
 const EndpointFactory = getModule('data/EndpointFactory.es6');
 const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository.es6');
-const OrganizationMembershipRepository = getModule(
-  'access_control/OrganizationMembershipRepository.es6'
-);
 
 class UserSpaceMemberships extends React.Component {
   static propTypes = {
@@ -60,12 +57,6 @@ class UserSpaceMemberships extends React.Component {
     const spaceEndpoint = EndpointFactory.createSpaceEndpoint(spaceId);
     return SpaceMembershipRepository.create(spaceEndpoint);
   }
-
-  fetchSpaceRoles = async spaceId => {
-    const allRoles = await OrganizationMembershipRepository.getAllRoles(this.orgEndpoint);
-    const roles = allRoles.filter(role => role.sys.space.sys.id === spaceId);
-    this.setState({ roles });
-  };
 
   showSpaceMembershipEditor = () => {
     this.setState({
@@ -214,9 +205,16 @@ class UserSpaceMemberships extends React.Component {
   }
 
   render() {
-    const { user, currentUser, orgId } = this.props;
-    const { memberships, showingForm, editingMembershipId, roles, availableSpaces } = this.state;
+    const { user, currentUser, orgId, roles } = this.props;
+    const {
+      memberships,
+      showingForm,
+      editingMembershipId,
+      availableSpaces,
+      selectedSpaceId
+    } = this.state;
     const unavailabilityReason = this.getUnavailabilityReason();
+    const spaceRoles = roles.filter(role => role.sys.space.sys.id === selectedSpaceId);
 
     return (
       <section>
@@ -252,12 +250,12 @@ class UserSpaceMemberships extends React.Component {
               {showingForm && (
                 <SpaceMembershipEditor
                   spaces={availableSpaces}
-                  roles={roles}
+                  roles={spaceRoles}
                   currentUser={currentUser}
                   user={user}
                   orgId={orgId}
                   onMembershipCreated={this.handleMembershipCreated}
-                  onSpaceSelected={this.fetchSpaceRoles}
+                  onSpaceSelected={selectedSpaceId => this.setState({ selectedSpaceId })}
                   onCancel={this.hideSpaceMembershipEditor}
                 />
               )}
@@ -270,8 +268,8 @@ class UserSpaceMemberships extends React.Component {
                       currentUser={currentUser}
                       orgId={orgId}
                       initialMembership={membership}
-                      roles={roles}
-                      onSpaceSelected={this.fetchSpaceRoles}
+                      roles={spaceRoles}
+                      onSpaceSelected={selectedSpaceId => this.setState({ selectedSpaceId })}
                       onMembershipChanged={this.handleMembershipChanged}
                       onCancel={this.hideSpaceMembershipEditor}
                     />
