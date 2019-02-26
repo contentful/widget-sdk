@@ -3,6 +3,5 @@ import { reactStateWrapper } from 'app/OrganizationSettings/OrganizationSettings
 export default reactStateWrapper({
   name: 'sso',
   url: '/:orgId/sso',
-  label: 'SSO',
   componentPath: 'app/OrganizationSettings/SSO/SSOSetup.es6'
 });

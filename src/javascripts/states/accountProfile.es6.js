@@ -39,7 +39,7 @@ const userCancellation = userBase({
 
 function userBase(definition) {
   const defaults = {
-    label: 'Account',
+    loadingText: 'Loading your account…',
     params: {
       pathSuffix: ''
     },

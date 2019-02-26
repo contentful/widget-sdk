@@ -8,7 +8,7 @@ export default makeState({
   url: '/invitations/:invitationId',
   template:
     '<react-component name="components/shared/UserInvitation.es6" props="props"></react-component>',
-  loadingText: 'Loading your invitation...',
+  loadingText: 'Loading your invitation…',
   resolve: {
     invitationData: [
       '$stateParams',

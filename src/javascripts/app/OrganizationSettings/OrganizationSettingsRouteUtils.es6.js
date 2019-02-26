@@ -117,7 +117,7 @@ function getIframeTemplate(title) {
 
 export function organizationBase(definition) {
   const defaults = {
-    label: 'Organizations & Billing',
+    loadingText: 'Loading…',
     onEnter: [
       '$state',
       '$stateParams',

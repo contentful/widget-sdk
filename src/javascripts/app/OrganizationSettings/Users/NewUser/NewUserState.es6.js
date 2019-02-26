@@ -1,5 +1,4 @@
 export default {
-  label: 'Organizations & Billing',
   name: 'new',
   title: 'Organization users',
   url: '/new',

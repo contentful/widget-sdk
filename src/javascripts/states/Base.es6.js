@@ -14,30 +14,20 @@ import { h } from 'utils/legacy-html-hyperscript/index.es6';
  * - show the original template otherwise.
  */
 export default function makeBase(stateDefinition) {
-  const wrapped = { ...stateDefinition };
-
-  wrapped.template = wrapTemplate({
-    template: stateDefinition.template,
-    loadingText: getLoadingText(stateDefinition)
-  });
+  const wrapped = {
+    ...stateDefinition,
+    template: wrapTemplate(stateDefinition)
+  };
 
   delete wrapped.loadingText;
-  delete wrapped.label;
 
   return wrapped;
 }
 
-function getLoadingText(stateDefinition) {
-  if (stateDefinition.loadingText) {
-    return stateDefinition.loadingText;
-  } else if (stateDefinition.label) {
-    return `Loading ${stateDefinition.label}...`;
-  } else {
-    return 'Please hold on…';
-  }
-}
+function wrapTemplate(stateDefinition) {
+  const loadingText = stateDefinition.loadingText || 'Please hold on…';
+  let template = stateDefinition.template;
 
-function wrapTemplate({ template, loadingText }) {
   if (typeof template === 'undefined') {
     template = [];
   }

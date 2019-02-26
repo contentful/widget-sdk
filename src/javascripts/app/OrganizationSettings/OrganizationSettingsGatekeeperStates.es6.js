@@ -3,7 +3,7 @@ import { iframeStateWrapper } from 'app/OrganizationSettings/OrganizationSetting
 const newOrg = {
   name: 'new',
   url: '/new',
-  label: 'Create new organization',
+  title: 'Create new organization',
   navTemplate: '<div />'
 };
 
