@@ -78,7 +78,6 @@ angular
       $injector.get('ui/ContextMenuHandler.es6').default($document);
       $injector.get('states/states.es6').loadAll();
       $injector.get('dialogsInitController').init();
-      $injector.get('navigation/DocumentTitle.es6').init();
       $injector.get('components/shared/auto_create_new_space').init();
 
       // Start telemetry and expose it as a global.
