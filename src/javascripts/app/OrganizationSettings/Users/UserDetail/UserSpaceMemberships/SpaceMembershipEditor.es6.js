@@ -24,11 +24,11 @@ class SpaceMembershipEditor extends React.Component {
   static propTypes = {
     user: UserPropType.isRequired,
     currentUser: UserPropType.isRequired,
+    roles: PropTypes.array.isRequired,
     onSpaceSelected: PropTypes.func,
     onMembershipCreated: PropTypes.func,
     onMembershipChanged: PropTypes.func,
     spaces: PropTypes.array,
-    roles: PropTypes.array,
     onCancel: PropTypes.func,
     orgId: PropTypes.string,
     initialMembership: SpaceMembershipPropType
