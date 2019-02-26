@@ -37,6 +37,7 @@ const RoleRepository = getModule('access_control/RoleRepository.es6');
 const createFeatureService = getModule('services/FeatureService.es6');
 const createResourceService = getModule('services/ResourceService.es6');
 const ResourceUtils = getModule('utils/ResourceUtils.es6');
+const TheLocaleStore = getModule('TheLocaleStore');
 
 const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,
@@ -204,7 +205,7 @@ class RoleEditor extends React.Component {
 
   autofixPolicies = () => {
     const cts = spaceContext.publishedCTs.getAllBare();
-    const locales = getLocales();
+    const locales = getLocales(TheLocaleStore.getPrivateLocales());
     const internalCopy = cloneDeep(this.state.internal);
     const autofixed = PolicyBuilder.removeOutdatedRules(internalCopy, cts, locales);
     if (autofixed) {
@@ -374,6 +375,7 @@ class RoleEditor extends React.Component {
                   policies={internal}
                   hasFeatureEnabled={hasCustomRolesFeature}
                   onChange={this.updateLocale}
+                  privateLocales={TheLocaleStore.getPrivateLocales()}
                 />
               )}
             </FormSection>
@@ -387,6 +389,8 @@ class RoleEditor extends React.Component {
                     onRemoveRule={this.removeRule('entries')}
                     entity="entry"
                     isDisabled={!canModifyRoles}
+                    privateLocales={TheLocaleStore.getPrivateLocales()}
+                    contentTypes={spaceContext.publishedCTs.getAllBare()}
                   />
                 </FormSection>
                 <FormSection title="Media">
@@ -397,6 +401,8 @@ class RoleEditor extends React.Component {
                     onRemoveRule={this.removeRule('assets')}
                     entity="asset"
                     isDisabled={!canModifyRoles}
+                    privateLocales={TheLocaleStore.getPrivateLocales()}
+                    contentTypes={spaceContext.publishedCTs.getAllBare()}
                   />
                 </FormSection>
               </React.Fragment>
