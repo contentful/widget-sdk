@@ -46,21 +46,35 @@ You can use `component` and `mapInjectedToProps` configuration options
 to use React components directly:
 
 ```js
-{
-  name: 'test',
-  url: '/test',
-  component: MyNiceComponent,
+const spaceContext = getModule('spaceContext');
+
+const states = {
+  name: 'root',
+  url: '',
+  component: HomePage,
   resolve: {
-    something: Promise.resolve(true),
-    testing: ['something', 'spaceContext', (something, spaceContext) => { /* ... */ }]
+    spaceContext: () => spaceContext.reset()
   },
-  mapInjectedToProps: ['testing', 'spaceContext', (testing, spaceContext) => {
-    return {
-      testing,
-      cmaClient: spaceContext.cma
-    };
-  }]
-}
+  children: [
+    {
+      name: 'test',
+      url: '/test',
+      component: MyNiceComponent,
+      resolve: {
+        something: () => Promise.resolve(true),
+        testing: ['something', 'spaceContext', (something, spaceContext) => {
+          return something && spaceContext.getId();
+        }]
+      },
+      mapInjectedToProps: ['testing', 'spaceContext', (testing, spaceContext) => {
+        return {
+          testing,
+          cmaClient: spaceContext.cma
+        };
+      }]
+    }
+  ]
+};
 ```
 
 Services used in `resolve` **do not** have to use `$q` for promises.

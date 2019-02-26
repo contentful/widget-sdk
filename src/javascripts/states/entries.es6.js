@@ -4,6 +4,7 @@ import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 import base from 'states/Base.es6';
 import { loadEntry as loadEditorData } from 'app/entity_editor/DataLoader.es6';
 import createEntityPageController from 'app/entity_editor/EntityPageController.es6';
+import * as trackVersioning from 'analytics/events/versioning.es6';
 
 const list = base({
   name: 'list',
@@ -46,8 +47,7 @@ const compareWithCurrent = base({
     '$scope',
     'editorData',
     'snapshot',
-    'analyticsEvents/versioning',
-    ($stateParams, $scope, editorData, snapshot, trackVersioning) => {
+    ($stateParams, $scope, editorData, snapshot) => {
       const entry = editorData.entity;
       const contentType = editorData.contentType;
 
@@ -87,9 +87,8 @@ const compare = base({
     'editorData',
     'spaceContext',
     'modalDialog',
-    'analyticsEvents/versioning',
     '$state',
-    (editorData, spaceContext, modalDialog, trackVersioning, $state) => {
+    (editorData, spaceContext, modalDialog, $state) => {
       const entityId = editorData.entity.getId();
 
       spaceContext.cma.getEntrySnapshots(entityId, { limit: 2 }).then(res => {

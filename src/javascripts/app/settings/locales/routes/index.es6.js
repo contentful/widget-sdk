@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import * as ChangeSpaceService from 'services/ChangeSpaceService.es6';
 import * as Enforcements from 'access_control/Enforcements.es6';
-import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
+import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
 export default {
   name: 'locales',
@@ -44,7 +44,7 @@ export default {
         $scope => {
           $scope.props = {
             registerSaveAction: save => {
-              $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+              $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
               $scope.$applyAsync();
             },
             setDirty: value => {
@@ -67,7 +67,7 @@ export default {
           $scope.props = {
             localeId: $stateParams.localeId,
             registerSaveAction: save => {
-              $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+              $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
               $scope.$applyAsync();
             },
             setDirty: value => {

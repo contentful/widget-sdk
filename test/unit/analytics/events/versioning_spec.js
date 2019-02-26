@@ -1,6 +1,6 @@
 'use strict';
 
-import _ from 'lodash';
+import { cloneDeep } from 'lodash';
 
 describe('Tracking versioning', () => {
   const data = {
@@ -15,12 +15,22 @@ describe('Tracking versioning', () => {
   };
 
   beforeEach(function() {
-    module('contentful/test');
-    this.analytics = this.$inject('analytics/Analytics.es6');
-    sinon.stub(this.analytics, 'track');
-    this.analytics.enable({ sys: { id: 'uid' } });
+    this.analytics = {
+      track: sinon.stub(),
+      getSessionData: sinon
+        .stub()
+        .withArgs('user.sys.id')
+        .returns('uid')
+    };
 
-    this.track = this.$inject('analyticsEvents/versioning');
+    this.openConfirmator = sinon.stub().resolves(true);
+
+    module('contentful/test', $provide => {
+      $provide.value('analytics/Analytics.es6', this.analytics);
+      $provide.value('app/common/UnsavedChangesDialog.es6', () => this.openConfirmator);
+    });
+
+    this.track = this.$inject('analytics/events/versioning.es6');
     this.track.setData(data.entry, data.snapshot);
 
     this.getTrackingData = () => {
@@ -53,7 +63,7 @@ describe('Tracking versioning', () => {
     });
 
     it('sends false if snapshot was taken by some other user', function() {
-      const snapshot = _.cloneDeep(data.snapshot);
+      const snapshot = cloneDeep(data.snapshot);
       snapshot.sys.createdBy.sys.id = 'other-user';
       this.track.setData(data.entry, snapshot);
 
@@ -99,8 +109,8 @@ describe('Tracking versioning', () => {
 
   describe('#restored', () => {
     const picker = {
-      getPathsToRestore: _.constant([1, 2, 3]),
-      getDifferenceCount: _.constant(4)
+      getPathsToRestore: () => [1, 2, 3],
+      getDifferenceCount: () => 4
     };
 
     it('uses picker to calculate params for partial restore', function() {
@@ -114,7 +124,7 @@ describe('Tracking versioning', () => {
     });
 
     it('uses picker to calculate params for full restore', function() {
-      picker.getPathsToRestore = _.constant([1, 2, 3, 4]);
+      picker.getPathsToRestore = () => [1, 2, 3, 4];
       this.track.restored(picker);
       this.assertBasicAnalyticsCall('snapshot_restored');
       this.assertAnalyticsCall('snapshot_restored', {
@@ -131,40 +141,32 @@ describe('Tracking versioning', () => {
   });
 
   describe('#trackableConfirmator', () => {
-    beforeEach(function() {
-      this.$q = this.$inject('$q');
-      this.dialog = this.$inject('modalDialog');
-    });
+    const noopSave = () => {};
 
     it('displays confirmation dialog', function() {
-      this.dialog.open = params => {
-        expect(params.template).toBe('confirm_leave_comparison');
-        return { promise: this.$q.resolve() };
-      };
+      this.track.trackableConfirmator(noopSave)();
 
-      this.track.trackableConfirmator(_.noop)();
+      sinon.assert.calledOnce(this.openConfirmator);
     });
 
     it('tracks close with discarded changes', function() {
-      this.dialog.open = () => {
-        return { promise: this.$q.resolve({ discarded: true }) };
-      };
+      this.openConfirmator.resolves({ discarded: true });
 
-      this.track.trackableConfirmator(_.noop)();
-      this.$apply();
-      this.assertAnalyticsCall('snapshot_closed', {
-        changesDiscarded: true
-      });
+      return this.track
+        .trackableConfirmator(noopSave)()
+        .then(() => {
+          this.assertAnalyticsCall('snapshot_closed', {
+            changesDiscarded: true
+          });
+        });
     });
 
     it('does not track if was not discarded', function() {
-      this.dialog.open = () => {
-        return { promise: this.$q.resolve({ discarded: false }) };
-      };
-
-      this.track.trackableConfirmator(_.noop)();
-      this.$apply();
-      sinon.assert.notCalled(this.analytics.track);
+      return this.track
+        .trackableConfirmator(noopSave)()
+        .then(() => {
+          sinon.assert.notCalled(this.analytics.track);
+        });
     });
   });
 

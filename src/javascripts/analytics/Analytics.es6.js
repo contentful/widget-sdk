@@ -1,4 +1,4 @@
-import { env } from 'Config.es6';
+import * as Config from 'Config.es6';
 import * as Snowplow from 'analytics/snowplow/Snowplow.es6';
 import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData.es6';
@@ -40,9 +40,15 @@ function removeCircularRefs(obj) {
 const ANALYTICS_ENVS = ['production', 'staging', 'preview'];
 const VALUE_UNKNOWN = {};
 
-const shouldSend = _.includes(ANALYTICS_ENVS, env);
+let env = Config.env;
 let session = {};
 let isDisabled = false;
+
+// Ugly but it's super tricky to simulate environment.
+// Better ideas needed.
+export const __testOnlySetEnv = _env => {
+  env = _env;
+};
 
 /**
  * @ngdoc method
@@ -55,7 +61,7 @@ export const enable = _.once(user => {
     return;
   }
 
-  if (shouldSend) {
+  if (ANALYTICS_ENVS.includes(env)) {
     segment.enable();
     Snowplow.enable();
   }

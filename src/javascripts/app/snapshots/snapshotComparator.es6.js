@@ -3,6 +3,7 @@ import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as versionPicker from 'app/snapshots/VersionPicker.es6';
+import * as trackVersioning from 'analytics/events/versioning.es6';
 
 export default function register() {
   /**
@@ -30,19 +31,8 @@ export default function register() {
     'spaceContext',
     'data/Entries',
     'command',
-    'analyticsEvents/versioning',
     'TheLocaleStore',
-    (
-      $scope,
-      $q,
-      $state,
-      $stateParams,
-      spaceContext,
-      Entries,
-      Command,
-      trackVersioning,
-      TheLocaleStore
-    ) => {
+    ($scope, $q, $state, $stateParams, spaceContext, Entries, Command, TheLocaleStore) => {
       $scope.versionPicker = versionPicker.create();
       $scope.snapshotCount = $stateParams.snapshotCount;
 
