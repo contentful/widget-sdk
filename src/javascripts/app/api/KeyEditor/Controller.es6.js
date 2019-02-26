@@ -10,7 +10,7 @@ import { CONTACT_US_BOILERPLATE_FLAG, ENVIRONMENTS_FLAG } from 'featureFlags.es6
 import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
 import * as Intercom from 'services/intercom.es6';
-import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
+import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
 const $state = getModule('$state');
 const Command = getModule('command');
@@ -116,7 +116,7 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments) {
   reinitKeyEditor();
   LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG, reinitKeyEditor);
 
-  $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+  $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
   $scope.apiKeyEditor = {
     canEdit,
     remove: Command.create(remove),

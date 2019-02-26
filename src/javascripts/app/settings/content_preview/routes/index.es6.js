@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
+import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
 export default {
   name: 'content_preview',
@@ -22,7 +22,7 @@ export default {
         $scope => {
           $scope.props = {
             registerSaveAction: save => {
-              $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+              $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
               $scope.$applyAsync();
             },
             setDirty: value => {
@@ -45,7 +45,7 @@ export default {
           $scope.props = {
             contentPreviewId: $stateParams.contentPreviewId,
             registerSaveAction: save => {
-              $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+              $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
               $scope.$applyAsync();
             },
             setDirty: value => {

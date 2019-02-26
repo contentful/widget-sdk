@@ -10,7 +10,7 @@ import {
 } from './FieldsTab/FieldTabDialogs.es6';
 import getContentTypePreview from './PreviewTab/getContentTypePreview.es6';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
-import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
+import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
 export default function register() {
   /**
@@ -57,7 +57,9 @@ export default function register() {
       $scope.data = { canEdit: canEdit };
 
       $scope.actions = createActions($scope, contentTypeIds);
-      $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);
+      $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(
+        $scope.actions.saveAndClose
+      );
 
       // We want to track if the user is creating a new CT, but the save
       // action is enforced. Somehow they got to this page, but weren't

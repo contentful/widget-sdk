@@ -22,7 +22,7 @@ export class WebhookEditRoute extends React.Component {
   render() {
     return (
       <AdminOnly>
-        <WebhookFetcher webhookId={this.props.webhookId}>
+        <WebhookFetcher webhookRepo={this.props.webhookRepo} webhookId={this.props.webhookId}>
           {({ isLoading, isError, data }) => {
             if (isLoading) {
               return <FetcherLoading message="Loading webhook..." />;

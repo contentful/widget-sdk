@@ -1,4 +1,4 @@
-import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
+import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 import WebhookListRoute from './WebhookListRoute.es6';
 import WebhookNewRoute from './WebhookNewRoute.es6';
 import WebhookEditRoute from './WebhookEditRoute.es6';
@@ -13,7 +13,7 @@ const mapInjectedToEditorProps = [
       webhookId,
       webhookRepo,
       registerSaveAction: save => {
-        $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+        $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
         $scope.$applyAsync();
       },
       setDirty: value => {

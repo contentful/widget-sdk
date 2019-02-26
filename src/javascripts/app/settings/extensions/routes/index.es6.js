@@ -1,4 +1,4 @@
-import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
+import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 import ExtensionsListRoute from './ExtensionsListRoute.es6';
 import ExtensionEditorRoute from './ExtensionEditorRoute.es6';
 
@@ -40,7 +40,7 @@ export default {
           return {
             extensionId: $stateParams.extensionId,
             registerSaveAction: save => {
-              $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+              $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
               $scope.$applyAsync();
             },
             setDirty: value => {

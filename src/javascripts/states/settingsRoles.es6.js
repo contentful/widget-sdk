@@ -2,7 +2,7 @@ import base from 'states/Base.es6';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 import RoleRepository from 'access_control/RoleRepository.es6';
-import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
+import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
 const list = base({
   name: 'list',
@@ -36,7 +36,7 @@ const newRole = {
         role: RoleRepository.getEmpty(),
         baseRole,
         registerSaveAction: save => {
-          $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+          $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
           $scope.$applyAsync();
         },
         setDirty: value => {
@@ -73,7 +73,7 @@ const detail = {
         isNew: false,
         role,
         registerSaveAction: save => {
-          $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+          $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
           $scope.$applyAsync();
         },
         setDirty: value => {

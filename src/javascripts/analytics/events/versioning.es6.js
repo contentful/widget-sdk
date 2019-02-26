@@ -1,6 +1,6 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
-import leaveConfirmator from 'navigation/confirmLeaveEditor.es6';
+import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
 export default function register() {
   registerFactory('analyticsEvents/versioning', [
@@ -84,7 +84,7 @@ export default function register() {
       }
 
       function trackableConfirmator(save) {
-        const confirmator = leaveConfirmator(save, 'confirm_leave_comparison');
+        const confirmator = createUnsavedChangesDialogOpener(save);
 
         return () =>
           confirmator().then(result => {
