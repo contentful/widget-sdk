@@ -4,10 +4,7 @@ const newOrg = {
   name: 'new',
   url: '/new',
   label: 'Create new organization',
-  views: {
-    // Override organization navbar from the parent state
-    'nav-bar@': { template: '' }
-  }
+  navTemplate: '<div />'
 };
 
 const edit = {
@@ -25,8 +22,7 @@ const subscription = {
 const subscriptionBilling = {
   name: 'subscription_billing',
   title: 'Subscription',
-  url: '/:orgId/subscription{pathSuffix:PathSuffix}',
-  hideHeader: true
+  url: '/:orgId/subscription{pathSuffix:PathSuffix}'
 };
 
 const spaces = {

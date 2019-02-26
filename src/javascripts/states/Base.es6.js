@@ -14,11 +14,17 @@ import { h } from 'utils/legacy-html-hyperscript/index.es6';
  * - show the original template otherwise.
  */
 export default function makeBase(stateDefinition) {
-  stateDefinition.template = wrapTemplate({
+  const wrapped = { ...stateDefinition };
+
+  wrapped.template = wrapTemplate({
     template: stateDefinition.template,
     loadingText: getLoadingText(stateDefinition)
   });
-  return stateDefinition;
+
+  delete wrapped.loadingText;
+  delete wrapped.label;
+
+  return wrapped;
 }
 
 function getLoadingText(stateDefinition) {

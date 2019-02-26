@@ -28,11 +28,7 @@ export default Base({
   name: 'organizations',
   url: '/organizations',
   abstract: true,
-  views: {
-    'nav-bar@': {
-      template: '<cf-organization-nav class="app-top-bar__child" />'
-    }
-  },
+  navTemplate: '<cf-organization-nav class="app-top-bar__child" />',
   children: [
     usageState,
     usersAndInvitationsState,

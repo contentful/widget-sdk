@@ -150,5 +150,12 @@ export function organizationBase(definition) {
       }
     ]
   };
-  return Base(Object.assign(defaults, definition));
+
+  definition = Object.assign(defaults, definition);
+
+  delete definition.featureFlag;
+  delete definition.componentPath;
+  delete definition.title;
+
+  return Base(definition);
 }

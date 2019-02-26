@@ -1,117 +1,120 @@
 import { registerProvider } from 'NgRegistry.es6';
-import _ from 'lodash';
+import { difference } from 'lodash';
+
+// This is a wrapper for Angular UI Router.
+// It takes our internal state definitions and processes
+// them so they can be added to the vanilla UI Router.
+
+// These are the props that are valid for our internal
+// state definitions. We process and strip some of them
+// in this module.
+const VALID_DEFINITION_PROPS = [
+  'name',
+  'url',
+  'abstract',
+  'navTemplate',
+  'children',
+  'template',
+  'resolve',
+  'onEnter',
+  'params',
+  'controller',
+  'redirectTo'
+];
 
 export default function register() {
-  /**
-   * @ngdoc service
-   * @name states/config
-   * @description
-   * Add states to the application and initialize them.
-   *
-   * This is a proxy for the 'ui.router' module. The service is only used
-   * by the root [`states` service][service:states]
-   *
-   * [service:states]: api/contentful/app/service/states
-   */
   registerProvider('states/config', [
     '$stateProvider',
     $stateProvider => {
-      // Collection of registered services
       const states = [];
 
-      // The actual service
-      const stateConfig = {
-        add: add,
-        init: init
-      };
-
       return {
-        $get: [() => stateConfig]
+        $get: [
+          () => {
+            return {
+              add: state => addChildren(null, [state]),
+              init: () => states.forEach(s => $stateProvider.state(s))
+            };
+          }
+        ]
       };
-
-      /*
-       * @ngdoc method
-       * @name states/config#init
-       * @description
-       * Load all registered states into `ui.router.$stateProvider`.
-       */
-      function init() {
-        _.forEach(states, s => {
-          $stateProvider.state(s);
-        });
-      }
-
-      /**
-       * @ngdoc method
-       * @name states/config#init
-       * @description
-       * Register a top-level state. Recursively adds states in the
-       * `children` property.
-       *
-       * @param {object} state
-       */
-      function add(state) {
-        addChildren(null, [state]);
-      }
 
       function addChildren(parentName, children) {
         children.forEach(state => {
-          state = useContentView(state);
+          const name = parentName ? `${parentName}.${state.name}` : state.name;
 
-          const children = state.children;
-          let name;
-          if (parentName) {
-            name = parentName + '.' + state.name;
-          } else {
-            name = state.name;
+          const extraProps = difference(Object.keys(state), VALID_DEFINITION_PROPS);
+          if (extraProps.length > 0) {
+            throw new Error(`${name} declares extra properties: ${extraProps.join(', ')}`);
           }
 
-          _.forEach(state.views, view => {
-            if (!['string', 'undefined'].includes(typeof view.template)) {
-              throw new Error(`${name}: template should be string or undefined`);
-            }
-
-            provideScopeContext(view);
+          // State definition properties we pass to the UI Router.
+          // We should NEVER add more to this list because it ties
+          // us more to the UI Router. We should eliminate as many
+          // as possible!
+          states.push({
+            // Vanilla UI Router props:
+            name,
+            views: composeViews(state, name),
+            url: state.url,
+            abstract: state.abstract,
+            resolve: state.resolve,
+            onEnter: state.onEnter,
+            // Our own props (they have no meaning to UI Router):
+            params: state.params,
+            redirectTo: state.redirectTo
           });
 
-          state = _.omit(state, ['children']);
-          state.name = name;
-          states.push(state);
-          if (children) {
-            addChildren(name, children);
+          if (state.children) {
+            addChildren(name, state.children);
           }
         });
       }
 
-      function useContentView(state) {
-        const VIEW_PROPERTIES = ['controller', 'template'];
-        state.views = state.views || {};
-        const contentView = _.pick(state, VIEW_PROPERTIES);
-        if (contentView.template || contentView.controller) {
-          state.views['content@'] = contentView;
-          return _.omit(state, VIEW_PROPERTIES);
-        } else {
-          return state;
+      function composeViews(state, stateName) {
+        const views = {};
+
+        if (!['string', 'undefined'].includes(typeof state.navTemplate)) {
+          throw new Error(`${stateName}: navTemplate should be string or undefined`);
         }
+
+        if (state.navTemplate) {
+          views['nav-bar@'] = {
+            template: state.navTemplate
+          };
+        }
+
+        if (!['string', 'undefined'].includes(typeof state.template)) {
+          throw new Error(`${stateName}: template should be string or undefined`);
+        }
+
+        if (state.template || state.controller) {
+          views['content@'] = {
+            template: state.template,
+            controller: provideScopeContext(state.controller, stateName)
+          };
+        }
+
+        return views;
       }
 
-      function provideScopeContext(view) {
-        if (!view.controller) {
-          view.controller = [() => {}];
+      function provideScopeContext(controller, stateName) {
+        if (!controller) {
+          controller = [() => {}];
         }
 
-        if (typeof view.controller === 'function') {
-          view.controller = [view.controller];
+        if (typeof controller === 'function') {
+          controller = [controller];
         }
 
-        if (!Array.isArray(view.controller)) {
-          throw new Error('controller must to be one of: undefined, function, array.');
+        if (!Array.isArray(controller)) {
+          throw new Error(`${stateName} controller must to be one of: undefined, function, array`);
         }
 
-        const injectables = view.controller.slice(0, view.controller.length - 1);
-        const controllerFn = view.controller[view.controller.length - 1];
+        const injectables = controller.slice(0, controller.length - 1);
+        const controllerFn = controller[controller.length - 1];
 
-        view.controller = ['$scope', '$state'].concat(injectables).concat([
+        return ['$scope', '$state'].concat(injectables).concat([
           function($scope, $state) {
             const args = Array.prototype.slice.call(arguments).slice(2);
             $scope.context = {};

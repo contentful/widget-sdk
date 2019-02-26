@@ -7,6 +7,6 @@ export default base({
   name: 'account',
   url: '/account',
   abstract: true,
-  views: { 'nav-bar@': { template: navBar() } },
+  navTemplate: navBar(),
   children: [orgSettingsState, accountProfileState]
 });
