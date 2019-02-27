@@ -90,7 +90,7 @@ export function formatConnectionTestErrors(errors) {
   return formatted;
 }
 
-export function trackTestResult(testData) {
+export function trackTestResult(testData = {}) {
   const result = testData.result;
   const errors = formatConnectionTestErrors(testData.errors);
 

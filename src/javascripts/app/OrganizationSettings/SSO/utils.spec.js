@@ -1,5 +1,7 @@
 import * as utils from './utils.es6';
 
+import { track } from 'analytics/Analytics.es6';
+
 jest.mock('./validators.es6', () => ({
   myAwesomeField: str => {
     if (str === 'secret') {
@@ -159,6 +161,49 @@ describe('SSO utils', () => {
         'The givenname, and surname attributes are missing',
         otherErrMsg
       ]);
+    });
+  });
+
+  describe('#trackTestResult', () => {
+    beforeEach(() => {
+      track.mockClear();
+    });
+
+    it('should fire the sso:connection_test_result event', () => {
+      utils.trackTestResult();
+
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenNthCalledWith(1, 'sso:connection_test_result', expect.any(Object));
+    });
+
+    it('should track an unknown result with no errors if called without arguments', () => {
+      utils.trackTestResult();
+
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenNthCalledWith(1, 'sso:connection_test_result', {
+        result: 'unknown',
+        errors: null
+      });
+    });
+
+    it('should track result', () => {
+      utils.trackTestResult({ result: 'success' });
+
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenNthCalledWith(1, 'sso:connection_test_result', {
+        result: 'success',
+        errors: null
+      });
+    });
+
+    it('should track errors', () => {
+      utils.trackTestResult({ errors: ['Something bad happened'] });
+
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenNthCalledWith(1, 'sso:connection_test_result', {
+        result: 'unknown',
+        errors: ['Something bad happened']
+      });
     });
   });
 });

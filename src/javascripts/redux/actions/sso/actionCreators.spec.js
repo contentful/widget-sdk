@@ -4,11 +4,14 @@ import * as actions from './actions.es6';
 import createMockStore from 'redux/utils/createMockStore.es6';
 import { mockEndpoint } from 'data/EndpointFactory.es6';
 import { Notification } from '@contentful/forma-36-react-components';
+import { track } from 'analytics/Analytics.es6';
+import * as ssoUtils from 'app/OrganizationSettings/SSO/utils.es6';
 
 describe('SSO Redux actionCreators', () => {
   let mockStore;
   let notificationSuccessSpy;
   let notificationErrorSpy;
+  let trackTestResultSpy;
 
   beforeEach(() => {
     mockStore = createMockStore();
@@ -16,11 +19,15 @@ describe('SSO Redux actionCreators', () => {
 
     notificationSuccessSpy = jest.spyOn(Notification, 'success');
     notificationErrorSpy = jest.spyOn(Notification, 'error');
+    trackTestResultSpy = jest.spyOn(ssoUtils, 'trackTestResult');
   });
 
   afterEach(() => {
     notificationSuccessSpy.mockRestore();
     notificationErrorSpy.mockRestore();
+    trackTestResultSpy.mockRestore();
+
+    track.mockClear();
   });
 
   describe('retrieveIdp', () => {
@@ -99,6 +106,17 @@ describe('SSO Redux actionCreators', () => {
           })
         );
       });
+    });
+
+    it('should fire the start_setup event when creating', async () => {
+      const identityProvider = {};
+
+      mockEndpoint.mockResolvedValueOnce(identityProvider);
+
+      await mockStore.dispatch(actionCreators.createIdp({ orgId: '1234' }));
+
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenNthCalledWith(1, 'sso:start_setup');
     });
 
     it('should go through the error flow if the endpoint errors', () => {
@@ -586,6 +604,12 @@ describe('SSO Redux actionCreators', () => {
         type: actions.SSO_CONNECTION_TEST_END
       });
     });
+
+    it('should fire the trackTestResult util', async () => {
+      await mockStore.dispatch(actionCreators.cleanupConnectionTest({ orgId: 'org_1234' }));
+
+      expect(trackTestResultSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('enable', () => {
@@ -616,6 +640,17 @@ describe('SSO Redux actionCreators', () => {
 
       expect(notificationSuccessSpy).toHaveBeenCalledTimes(1);
       expect(notificationSuccessSpy).toHaveBeenNthCalledWith(1, expect.any(String));
+    });
+
+    it('should fire the enable event upon enabling', async () => {
+      const identityProvider = {};
+
+      mockEndpoint.mockResolvedValueOnce(identityProvider);
+
+      await mockStore.dispatch(actionCreators.enable({ orgId: '1234' }));
+
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenNthCalledWith(1, 'sso:enable');
     });
 
     it('should go through the failure flow if the IDP was not successfully enabled via the API', async () => {
