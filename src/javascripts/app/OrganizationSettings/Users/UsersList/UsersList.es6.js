@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { startCase, without, debounce, flow } from 'lodash';
+import { startCase, debounce, flow } from 'lodash';
 import { isEqual } from 'lodash/fp';
 import pluralize from 'pluralize';
 import classnames from 'classnames';
@@ -33,12 +33,14 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
 import Placeholder from 'app/common/Placeholder.es6';
 import { getFilters, getSearchTerm } from 'redux/selectors/filters.es6';
-import { getLastActivityDate } from '../UserUtils.es6';
+import getOrgId from 'redux/selectors/getOrgId.es6';
 import {
   getInvitedUsersCount,
   membershipExistsParam
 } from 'app/OrganizationSettings/UserInvitations/UserInvitationUtils.es6';
+import createResourceService from 'services/ResourceService.es6';
 
+import { getLastActivityDate } from '../UserUtils.es6';
 import { generateFilterDefinitions } from './FilterDefinitions.es6';
 import {
   Filter as FilterPropType,
@@ -50,7 +52,6 @@ class UsersList extends React.Component {
     orgId: PropTypes.string.isRequired,
     spaceRoles: PropTypes.array,
     spaces: PropTypes.arrayOf(SpacePropType),
-    numberOrgMemberships: PropTypes.number.isRequired,
     filters: PropTypes.arrayOf(FilterPropType),
     searchTerm: PropTypes.string.isRequired,
     updateSearchTerm: PropTypes.func.isRequired,
@@ -66,7 +67,8 @@ class UsersList extends React.Component {
     pagination: {
       skip: 0,
       limit: 10
-    }
+    },
+    numberOrgMemberships: 0
   };
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
@@ -81,7 +83,8 @@ class UsersList extends React.Component {
       !isEqual(prevProps.filters, this.props.filters) ||
       prevProps.searchTerm !== this.props.searchTerm
     ) {
-      this.fetch();
+      // the current page might be empty after filtering, going to the first page is our best bet
+      this.setState({ pagination: { ...this.state.pagination, skip: 0 } }, this.fetch);
     }
   }
 
@@ -89,7 +92,7 @@ class UsersList extends React.Component {
     this.setState({ loading: true });
 
     await this.loadInvitationsCount();
-    await this.fetch();
+    await this.fetch(true);
 
     this.setState({ loading: false });
   };
@@ -103,8 +106,8 @@ class UsersList extends React.Component {
     });
   };
 
-  fetch = async () => {
-    const { filters, searchTerm, newUserInvitationsEnabled } = this.props;
+  fetch = async (updateCount = false) => {
+    const { filters, searchTerm, newUserInvitationsEnabled, orgId } = this.props;
     const { pagination } = this.state;
     const filterQuery = formatQuery(filters.map(item => item.filter));
     const includePaths = ['sys.user'];
@@ -126,11 +129,27 @@ class UsersList extends React.Component {
     const { total, items, includes } = await getMemberships(this.endpoint, query);
     const resolved = ResolveLinks({ paths: includePaths, items, includes });
 
-    this.setState({
+    const newState = {
       usersList: resolved,
       queryTotal: total,
       loading: false
-    });
+    };
+
+    if (updateCount) {
+      const endpoint = createOrganizationEndpoint(orgId);
+      const resources = createResourceService(orgId, 'organization');
+      if (newUserInvitationsEnabled) {
+        newState.numberOrgMemberships = await getMemberships(endpoint, {
+          [membershipExistsParam]: true
+        }).then(({ total }) => total);
+      } else {
+        newState.numberOrgMemberships = await resources
+          .get('organizationMembership')
+          .then(({ usage }) => usage);
+      }
+    }
+
+    this.setState(newState);
   };
 
   getLinkToInvitation() {
@@ -161,7 +180,7 @@ class UsersList extends React.Component {
   }
 
   handleMembershipRemove = membership => async () => {
-    const { usersList } = this.state;
+    const { usersList, pagination } = this.state;
     const user = membership.sys.user;
     const message = user.firstName
       ? `${user.firstName} has been successfully removed from this organization`
@@ -178,14 +197,18 @@ class UsersList extends React.Component {
     try {
       await removeMembership(this.endpoint, membership.sys.id);
       Notification.success(message);
-      this.setState({ usersList: without(usersList, membership) });
+      // last item in page removed
+      if (usersList.length === 1 && pagination.skip > 0) {
+        this.setState({ pagination: { ...pagination, skip: pagination.skip - pagination.limit } });
+      }
+      await this.fetch(true);
     } catch (e) {
       Notification.error(e.data.message);
     }
   };
 
   handlePaginationChange = ({ skip, limit }) => {
-    this.setState({ pagination: { ...this.state.pagination, skip, limit } }, this.fetch);
+    this.setState({ pagination: { ...this.state.pagination, skip, limit } }, () => this.fetch());
   };
 
   search = e => {
@@ -207,16 +230,10 @@ class UsersList extends React.Component {
       pagination,
       loading,
       invitedUsersCount,
+      numberOrgMemberships,
       initialLoad
     } = this.state;
-    const {
-      searchTerm,
-      numberOrgMemberships,
-      spaces,
-      spaceRoles,
-      filters,
-      newUserInvitationsEnabled
-    } = this.props;
+    const { searchTerm, spaces, spaceRoles, filters, newUserInvitationsEnabled } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -341,7 +358,8 @@ export default flow(
 
       return {
         filters: filterDefinitions,
-        searchTerm: getSearchTerm(state)
+        searchTerm: getSearchTerm(state),
+        orgId: getOrgId(state)
       };
     },
     dispatch => ({

@@ -5,20 +5,13 @@ import OrgAdminOnly from 'app/common/OrgAdminOnly.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
-import {
-  getAllSpaces,
-  getAllRoles,
-  getMemberships
-} from 'access_control/OrganizationMembershipRepository.es6';
+import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
 import { getOrganization } from 'services/TokenStore.es6';
-import createResourceService from 'services/ResourceService.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { BV_USER_INVITATIONS } from 'featureFlags.es6';
-import { membershipExistsParam } from 'app/OrganizationSettings/UserInvitations/UserInvitationUtils.es6';
 
 const UserListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
-  const resources = createResourceService(orgId, 'organization');
 
   const newUserInvitationsEnabled = getCurrentVariation(BV_USER_INVITATIONS);
 
@@ -28,14 +21,6 @@ const UserListFetcher = createFetcherComponent(({ orgId }) => {
     getOrganization(orgId),
     newUserInvitationsEnabled
   ];
-
-  if (newUserInvitationsEnabled) {
-    promises.push(
-      getMemberships(endpoint, { [membershipExistsParam]: true }).then(({ total }) => total)
-    );
-  } else {
-    promises.push(resources.get('organizationMembership').then(({ usage }) => usage));
-  }
 
   return Promise.all(promises);
 });
@@ -64,11 +49,10 @@ export default class UserListRoute extends React.Component {
               return <StateRedirect to="spaces.detail.entries.list" />;
             }
 
-            const [spaces, roles, org, newUserInvitationsEnabled, numberOrgMemberships] = data;
+            const [spaces, roles, org, newUserInvitationsEnabled] = data;
 
             return (
               <UsersList
-                numberOrgMemberships={numberOrgMemberships}
                 spaces={spaces}
                 spaceRoles={roles}
                 orgId={orgId}
