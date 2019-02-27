@@ -13,6 +13,8 @@ import * as AccessChecker from 'access_control/AccessChecker/index.es6';
 import * as LD from 'utils/LaunchDarkly/index.es6';
 import * as logger from 'services/logger.es6';
 
+import { open as openProjectsCreationModal } from 'app/Projects/ProjectCreationModal.es6';
+
 import renderSidepanel from './SidepanelView.es6';
 
 const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
@@ -152,7 +154,10 @@ export default function createController($scope, $window) {
   }
 
   function showCreateProjectModal() {
+    const orgId = state.currOrg.sys.id;
+
     closeSidePanel();
+    openProjectsCreationModal(orgId);
   }
 
   function handleEsc(ev) {
