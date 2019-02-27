@@ -13,10 +13,6 @@ jest.mock('utils/StatePersistenceApi.es6', () => ({
   updateUserState: (_, { version }) => Promise.resolve({ sys: version + 1 })
 }));
 
-jest.mock('NgRegistry.es6', () => ({
-  getModule: () => ({ current: { name: 'name' } })
-}));
-
 jest.mock('app/home/widgets/walkthrough/utils.es6', () => ({
   getReactJoyride: () => Promise.resolve('')
 }));
