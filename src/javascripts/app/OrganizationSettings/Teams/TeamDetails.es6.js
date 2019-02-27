@@ -84,14 +84,12 @@ class TeamDetails extends React.Component {
   }
 
   selectTab(id) {
-    this.setState({ selectedTab: this.tabs[id] });
+    this.setState({ selectedTab: this.tabs[id], showingForm: false });
   }
-
-  triggerTabAction() {}
 
   render() {
     const { team, removeTeam, readOnlyPermission, orgId } = this.props;
-    const { showTeamDialog } = this.state;
+    const { showTeamDialog, showingForm } = this.state;
     const creator = team && team.sys.createdBy;
     const pathBack = ROUTES.organization.children.teams.build({ orgId });
 
@@ -179,13 +177,15 @@ class TeamDetails extends React.Component {
                       </Tab>
                     ))}
                   </Tabs>
-                  <Button
-                    testId="add-membership-button"
-                    size="small"
-                    buttonType="primary"
-                    onClick={() => this.setState({ showingForm: true })}>
-                    {this.state.selectedTab.actionLabel}
-                  </Button>
+                  {!showingForm && (
+                    <Button
+                      testId="add-membership-button"
+                      size="small"
+                      buttonType="primary"
+                      onClick={() => this.setState({ showingForm: true })}>
+                      {this.state.selectedTab.actionLabel}
+                    </Button>
+                  )}
                 </header>
 
                 {Object.entries(this.tabs).map(([id, { component: Component }]) =>

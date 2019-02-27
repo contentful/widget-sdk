@@ -1,11 +1,15 @@
+import { get } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
+import createTeamSpaceMembershipService from 'app/OrganizationSettings/Teams/TeamSpaceMemberships/TeamSpaceMembershipsService.es6';
 import createTeamMembershipService from 'app/OrganizationSettings/Teams/TeamMemberships/TeamMembershipService.es6';
 import { getCurrentTeam, getTeams } from '../selectors/teams.es6';
-import { TEAM_MEMBERSHIPS, TEAMS } from '../datasets.es6';
+import getCurrentOrgSpaces from '../selectors/getCurrentOrgSpaces.es6';
+import { TEAM_MEMBERSHIPS, TEAM_SPACE_MEMBERSHIPS, TEAMS } from '../datasets.es6';
 import removeFromDataset from './utils/removeFromDataset.es6';
 import { isTaken } from 'utils/ServerErrorUtils.es6';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
+import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
 
 const userToString = ({ firstName, lastName, email }) =>
   firstName ? `${firstName} ${lastName}` : email;
@@ -128,6 +132,39 @@ export default ({ dispatch, getState }) => next => async action => {
           `Successfully removed ${userToString(user)} from team ${team.name}`,
         ({ sys: { team, user } }) => `Could not remove ${userToString(user)} from team ${team.name}`
       );
+      break;
+    }
+    case 'SUBMIT_NEW_TEAM_SPACE_MEMBERSHIP': {
+      const state = getState();
+      next(action);
+      const service = createTeamSpaceMembershipService(state);
+      const teamId = getCurrentTeam(state);
+      const team = getTeams(state)[teamId];
+      const { spaceId, roles } = action.payload;
+      const space = get(getCurrentOrgSpaces(state), spaceId);
+      const isAdmin = roles.includes(ADMIN_ROLE_ID);
+
+      const membershipData = {
+        admin: isAdmin,
+        roles: isAdmin ? [] : roles.map(id => ({ type: 'Link', linkType: 'Role', id }))
+      };
+
+      try {
+        const newTeamSpaceMembership = await service.create(teamId, spaceId, membershipData);
+        dispatch({
+          type: 'ADD_TO_DATASET',
+          payload: { item: newTeamSpaceMembership, dataset: TEAM_SPACE_MEMBERSHIPS }
+        });
+        Notification.success(`Successfully added ${team.name} to the $pace ${space.name}`);
+      } catch (e) {
+        dispatch({
+          type: 'SUBMIT_NEW_TEAM_SPACE_MEMBERSHIP_FAILED',
+          error: true,
+          payload: e,
+          meta: { teamId }
+        });
+        Notification.error(`Could not add ${team.name} to space ${space.name}`);
+      }
       break;
     }
     default:

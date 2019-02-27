@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { get } from 'lodash';
 import * as types from 'app/OrganizationSettings/PropTypes.es6';
 import { getCurrentTeam, getTeams, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
+import TeamSpaceMembershipForm from './TeamSpaceMembershipForm.es6';
 
 import Placeholder from 'app/common/Placeholder.es6';
 
@@ -18,15 +19,17 @@ import {
 
 export class TeamSpaceMemberships extends React.Component {
   static propTypes = {
+    showingForm: PropTypes.bool.isRequired,
+    onFormDismissed: PropTypes.func.isRequired,
     memberships: PropTypes.arrayOf(types.TeamSpaceMembership),
     team: types.Team
   };
 
   render() {
-    const { team, memberships } = this.props;
+    const { team, memberships, showingForm, onFormDismissed } = this.props;
     const empty = !memberships || memberships.length === 0;
 
-    return !empty ? (
+    return !empty || showingForm ? (
       <Table
         style={{ marginBottom: 20, tableLayout: 'fixed' }}
         data-test-id="user-memberships-table">
@@ -39,7 +42,9 @@ export class TeamSpaceMemberships extends React.Component {
             <TableCell width="200px" />
           </TableRow>
         </TableHead>
-        <TableBody />
+        <TableBody>
+          {showingForm && <TeamSpaceMembershipForm onClose={onFormDismissed} />}
+        </TableBody>
       </Table>
     ) : (
       <Placeholder

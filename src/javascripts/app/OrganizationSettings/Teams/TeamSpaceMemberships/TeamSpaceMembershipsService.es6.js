@@ -1,4 +1,4 @@
-import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { fetchAll } from 'data/CMA/FetchAll.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 
@@ -42,8 +42,9 @@ export default function createTeamMembershipsService(state) {
    * @param {Boolean} data.admin
    * @param {Array<Object>} data.roles An array of role links
    */
-  function create(teamId, { admin = false, roles = [] } = {}) {
-    return endpoint(
+  function create(teamId, spaceId, { admin = false, roles = [] } = {}) {
+    const spaceEndpoint = createSpaceEndpoint(spaceId);
+    return spaceEndpoint(
       {
         method: 'POST',
         path: ['team_space_memberships'],

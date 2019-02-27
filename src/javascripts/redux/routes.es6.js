@@ -6,7 +6,9 @@ import {
   USERS,
   ORG_MEMBERSHIPS,
   TEAM_MEMBERSHIPS,
-  TEAM_SPACE_MEMBERSHIPS
+  TEAM_SPACE_MEMBERSHIPS,
+  ORG_SPACES,
+  ORG_SPACE_ROLES
 } from './datasets.es6';
 
 // required datasets and features are inherited by children
@@ -21,7 +23,13 @@ const ROUTES = {
         children: {
           team: {
             path: '/:teamId',
-            requiredDataSets: [USERS, ORG_MEMBERSHIPS, TEAM_SPACE_MEMBERSHIPS]
+            requiredDataSets: [
+              USERS,
+              ORG_MEMBERSHIPS,
+              TEAM_SPACE_MEMBERSHIPS,
+              ORG_SPACES,
+              ORG_SPACE_ROLES
+            ]
           }
         }
       }
