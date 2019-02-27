@@ -210,8 +210,8 @@ function getDescriptor(element) {
 }
 
 export function setValue(element, value) {
-  // TODO extend to textarea, select
-  if (element.tagName !== 'INPUT') {
+  // TODO extend to textarea
+  if (element.tagName !== 'INPUT' && element.tagName !== 'SELECT') {
     throw new Error(`Cannot set value of element ${element.tagName}`);
   }
   element.value = value;
@@ -221,8 +221,8 @@ export function setValue(element, value) {
 }
 
 function getValue(element) {
-  // TODO extend to textarea, select
-  if (element.tagName !== 'INPUT') {
+  // TODO extend to textarea
+  if (element.tagName !== 'INPUT' && element.tagName !== 'SELECT') {
     throw new Error(`Cannot get value of element ${element.tagName}`);
   }
   return element.value;

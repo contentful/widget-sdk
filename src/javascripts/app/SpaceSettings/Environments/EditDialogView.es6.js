@@ -98,10 +98,12 @@ function SourceEnvironmentSelector({
       <select
         className="cfnext-select-box"
         style={{ display: 'block', width: '100%' }}
-        onChange={ev => SetSourceEnvironment({ value: ev.target.value })}>
+        onChange={ev => SetSourceEnvironment({ value: ev.target.value })}
+        data-test-id="source.id"
+        value={selectedEnvironment}>
         {environments.map(env => {
           return (
-            <option key={env.id} value={env.id} selected={env.id === selectedEnvironment}>
+            <option key={env.id} value={env.id}>
               {env.id === currentEnvironment ? `${env.id} (current)` : `${env.id}`}
             </option>
           );
@@ -116,7 +118,7 @@ function SourceEnvironmentSelector({
 SourceEnvironmentSelector.propTypes = {
   selectedEnvironment: PropTypes.object,
   currentEnvironment: PropTypes.object,
-  environments: PropTypes.object,
+  environments: PropTypes.array,
   SetSourceEnvironment: PropTypes.func
 };
 
