@@ -22,7 +22,7 @@ export default function register() {
             target: $scope.target,
             text: $scope.text,
             inlineText: $scope.inlineText,
-            cssClass: $scope.cssClass
+            className: $scope.cssClass
           });
         }
       ]

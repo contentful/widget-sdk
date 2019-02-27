@@ -59,7 +59,7 @@ function dialogContent() {
       h('cf-knowledge-base', {
         target: 'roles',
         text: "What's the difference between Administrator, Developer and Editor?",
-        cssClass: 'text-link--neutral-emphasis-low',
+        className: 'text-link--neutral-emphasis-low',
         inlineText: 'true'
       })
     ]),

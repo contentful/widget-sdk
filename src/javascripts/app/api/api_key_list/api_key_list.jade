@@ -1,8 +1,15 @@
-cf-api-key-nav
+react-component(name="app/api/ApiKeysHeader.es6")
 
 .workbench-main(ng-if="apiKeys")
   //- Non empty state
-  .workbench-main__content(ng-if="!empty")
+  .workbench-main__content(
+    ng-if="!empty"
+    style="padding-top:0"
+  )
+    react-component(
+      name="app/api/ApiKeysNavigation.es6"
+      props="{ currentTab: 'cda-tokens' }"
+    )
     .api-key-list.entity-list
       a.entity-list__item.x--with-icon(
         ng-repeat="apiKey in apiKeys track by apiKey.sys.id"
@@ -13,7 +20,14 @@ cf-api-key-nav
         cf-icon(name="dd-arrow-down")
 
   //- Empty state
-  .workbench-main__content(ng-if="empty")
+  .workbench-main__content(
+    ng-if="empty"
+    style="padding-top:0"
+  )
+    react-component(
+      name="app/api/ApiKeysNavigation.es6"
+      props="{ currentTab: 'cda-tokens' }"
+    )
     .api-key-list
       a.entity-list__item.x--with-icon.api-key-list__placeholder(
         ng-repeat="apiKey in placeholderApiKeys track by $index")

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ContactUsButton from '../ui/Components/ContactUsButton.es6';
-import KnowledgeBase from '../components/shared/knowledge_base_icon/KnowledgeBase.es6';
+import ContactUsButton from 'ui/Components/ContactUsButton.es6';
+import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 
 export default class CustomRolesPlanInfo extends React.Component {
   static propTypes = {

@@ -37,13 +37,13 @@ function getKnowledgeBaseUrl(name) {
   throw new Error('Incorrect Knowledge Base item "' + name + '".');
 }
 
-function KnowledgeBase({ target, text = '', inlineText, cssClass = '', icon = true }) {
+function KnowledgeBase({ target, text = '', inlineText, className = '', icon = true }) {
   const hasText = !text.length ? 'x--no-text' : '';
   const isInline = inlineText ? 'x--inline' : '';
 
   return (
     <a
-      className={`knowledge-base-link ${hasText} ${isInline} ${cssClass}`}
+      className={`knowledge-base-link ${hasText} ${isInline} ${className}`}
       href={getKnowledgeBaseUrl(target)}
       target="_blank"
       rel="noopener noreferrer">
@@ -54,7 +54,7 @@ function KnowledgeBase({ target, text = '', inlineText, cssClass = '', icon = tr
 }
 
 KnowledgeBase.propTypes = {
-  cssClass: PropTypes.string,
+  className: PropTypes.string,
   target: PropTypes.string,
   text: PropTypes.string,
   inlineText: PropTypes.any,

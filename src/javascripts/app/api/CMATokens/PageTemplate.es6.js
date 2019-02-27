@@ -2,9 +2,25 @@ import { h } from 'utils/legacy-html-hyperscript/index.es6';
 
 export default function template() {
   return h('.workbench', [
-    h('cf-api-key-nav'),
+    h('react-component', {
+      name: 'app/api/ApiKeysHeader.es6'
+    }),
     h('.workbench-main', [
-      h('.workbench-main__content', [h('cf-component-store-bridge', { component: 'component' })]),
+      h(
+        '.workbench-main__content',
+        {
+          style: {
+            paddingTop: 0
+          }
+        },
+        [
+          h('react-component', {
+            name: 'app/api/ApiKeysNavigation.es6',
+            props: '{ currentTab: "cma-tokens" }'
+          }),
+          h('cf-component-store-bridge', { component: 'component' })
+        ]
+      ),
       h('.workbench-main__sidebar', [
         h('.entity-sidebar', [
           h('h2.entity-sidebar__heading', ['Documentation']),

@@ -67,11 +67,6 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     @media (max-width: $nav-bar-break-width)
       flex: 0 0 280px
 
-    // We only want to change the margin in sidebar
-    // navigation
-    .workbench-nav__tabs [role=tab]
-      margin-right: 1rem
-
 
   &__right-content
     $workbench-content()
@@ -158,12 +153,6 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   flex-shrink: 0
   > *
     flex-shrink: 0
-  &.x--with-nav
-    display: block
-    > *
-      display: flex
-    .page-header
-      margin-top: 20px
 
   &__icon
     margin-right: 12px
@@ -232,13 +221,6 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   justify-content: space-between
   min-height: 56px
   border-bottom: 1px solid $colors.light-gray
-
-
-.workbench-nav__tabs
-  align-self: flex-end
-  flex-grow: 0
-  flex-basis: $workbench-content-width
-  $tab-list()
 
 @require "../mixins/spinner"
 
