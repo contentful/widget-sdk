@@ -83,7 +83,8 @@ class UsersList extends React.Component {
       !isEqual(prevProps.filters, this.props.filters) ||
       prevProps.searchTerm !== this.props.searchTerm
     ) {
-      this.fetch();
+      // the current page might be empty after filtering, going to the first page is our best bet
+      this.setState({ pagination: { ...this.state.pagination, skip: 0 } }, this.fetch);
     }
   }
 
