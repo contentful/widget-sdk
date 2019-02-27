@@ -15,7 +15,7 @@ import {
   Button,
   Notification
 } from '@contentful/forma-36-react-components';
-import SpaceRoleEditor from './SpaceRoleEditor.es6';
+import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor.es6';
 
 const EndpointFactory = getModule('data/EndpointFactory.es6');
 const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository.es6');
