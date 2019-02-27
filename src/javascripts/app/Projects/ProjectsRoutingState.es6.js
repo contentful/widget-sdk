@@ -4,6 +4,11 @@
 
 import makeState from 'states/Base.es6';
 import navBarTemplate from 'navigation/templates/NavBar.es6';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
+import { PROJECTS_FLAG } from 'featureFlags.es6';
+import { go } from 'states/Navigator.es6';
+
+const projectsEnabled = () => getCurrentVariation(PROJECTS_FLAG);
 
 const template = navBarTemplate([
   {
@@ -17,11 +22,23 @@ const template = navBarTemplate([
 const homeState = makeState({
   name: 'home',
   url: '/:projectId',
+  loadingText: 'Loading…',
   template: '<h1>My awesome project!</h1>',
   controller: [
     '$scope',
-    $scope => {
+    async $scope => {
+      const isEnabled = await projectsEnabled();
+
+      if (!isEnabled) {
+        go({
+          path: ['home']
+        });
+
+        return;
+      }
+
       $scope.context.ready = true;
+      $scope.$applyAsync();
     }
   ]
 });
