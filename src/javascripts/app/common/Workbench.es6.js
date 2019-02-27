@@ -11,12 +11,11 @@ class Workbench extends React.Component {
     testId: PropTypes.string,
     className: PropTypes.string,
     children: function(props, propName) {
-      let children = props[propName];
-      if (!Array.isArray(children)) {
-        children = [children];
-      }
+      const children = React.Children.toArray(props[propName]);
+
       const allowedTypes = [Workbench.Content, Workbench.Sidebar, Workbench.Header, Workbench.Nav];
       const typeNames = allowedTypes.map(type => type.displayName);
+
       const filterByType = type => children.filter(child => child.type === type);
       const validateSingleChildOfType = type => {
         const childrenOfType = filterByType(type);
@@ -55,14 +54,11 @@ class Workbench extends React.Component {
 
   render() {
     const { title, icon, testId, children, className } = this.props;
-    const header = React.Children.toArray(children).find(child => child.type === Workbench.Header);
-    const content = React.Children.toArray(children).find(
-      child => child.type === Workbench.Content
-    );
-    const sidebar = React.Children.toArray(children).find(
-      child => child.type === Workbench.Sidebar
-    );
-    const nav = React.Children.toArray(children).find(child => child.type === Workbench.Nav);
+    const childrenArray = React.Children.toArray(children);
+    const header = childrenArray.find(child => child.type === Workbench.Header);
+    const content = childrenArray.find(child => child.type === Workbench.Content);
+    const sidebar = childrenArray.find(child => child.type === Workbench.Sidebar);
+    const nav = childrenArray.find(child => child.type === Workbench.Nav);
 
     return (
       <div className={classNames('workbench', className)} data-test-id={testId}>
@@ -192,8 +188,9 @@ Workbench.Nav.propTypes = {
 Workbench.Content = class Content extends React.Component {
   static propTypes = {
     centered: PropTypes.bool,
+    className: PropTypes.string,
     style: PropTypes.object,
-    children: PropTypes.oneOfType([PropTypes.array, PropTypes.node])
+    children: PropTypes.node
   };
 
   static displayName = 'Workbench.Content';
@@ -202,11 +199,12 @@ Workbench.Content = class Content extends React.Component {
     return (
       <div
         style={this.props.style}
-        className={
+        className={classNames(
           this.props.centered === true
             ? 'workbench-main__middle-content'
-            : 'workbench-main__content'
-        }>
+            : 'workbench-main__content',
+          this.props.className
+        )}>
         {this.props.children}
       </div>
     );
@@ -216,7 +214,7 @@ Workbench.Content = class Content extends React.Component {
 Workbench.Sidebar = class Sidebar extends React.Component {
   static propTypes = {
     className: PropTypes.string,
-    children: PropTypes.oneOfType([PropTypes.array, PropTypes.element])
+    children: PropTypes.node
   };
 
   static displayName = 'Workbench.Sidebar';

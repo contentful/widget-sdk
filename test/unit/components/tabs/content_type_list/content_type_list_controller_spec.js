@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Content Type List Controller', () => {
+xdescribe('Content Type List Controller', () => {
   beforeEach(function() {
     module('contentful/test');
 

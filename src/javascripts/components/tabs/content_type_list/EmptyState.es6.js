@@ -1,10 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import EmptyContentIcon from 'svg/empty-content-model.es6';
-import { Button } from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
+import CreateContentTypeCta from './CreateContentTypeCta.es6';
 
-export default function EmptyState({ onCreate, shouldHide, shouldDisable }) {
+export default function EmptyState() {
   return (
     <div className="empty-state">
       <EmptyContentIcon />
@@ -14,16 +13,7 @@ export default function EmptyState({ onCreate, shouldHide, shouldDisable }) {
         structure of your content. Get started by creating your first content type.
       </div>
       <div className="empty-state__action">
-        {!shouldHide && (
-          <Button
-            size="large"
-            icon="PlusCircle"
-            testId="create-content-type-empty-state"
-            disabled={shouldDisable}
-            onClick={onCreate}>
-            Add content type
-          </Button>
-        )}
+        <CreateContentTypeCta size="large" />
       </div>
       <div className="empty-state__additional">
         No clue what purpose the content model serves? Read our documentation on{' '}
@@ -38,9 +28,3 @@ export default function EmptyState({ onCreate, shouldHide, shouldDisable }) {
     </div>
   );
 }
-
-EmptyState.propTypes = {
-  onCreate: PropTypes.func.isRequired,
-  shouldHide: PropTypes.bool.isRequired,
-  shouldDisable: PropTypes.bool.isRequired
-};

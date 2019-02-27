@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { isEdge } from 'app/widgets/rich_text/helpers/browser.es6';
 import StateLink from 'app/common/StateLink.es6';
 
@@ -15,6 +15,7 @@ import {
 
 import FetchAndFormatUserName from 'components/shared/UserNameFormatter/FetchAndFormatUserName.es6';
 import RelativeDateTime from 'components/shared/RelativeDateTime/index.es6';
+import { isPublishedAndUpdated, isPublished } from '../ContentTypeListService.es6';
 
 const numFields = ct => (ct.fields || []).length;
 const isEdgeBrowser = isEdge();
@@ -53,18 +54,6 @@ function getStatusType(ct) {
   return statusType;
 }
 
-function getPublishedVersion(entity) {
-  return get(entity, ['sys', 'publishedVersion'], 0);
-}
-
-function isPublished(entity) {
-  return getPublishedVersion(entity) > 0;
-}
-
-function isPublishedAndUpdated(entity) {
-  return isPublished(entity) && entity.sys.version > getPublishedVersion(entity) + 1;
-}
-
 class ContentTypeList extends Component {
   static propTypes = {
     contentTypes: PropTypes.array.isRequired
@@ -73,7 +62,7 @@ class ContentTypeList extends Component {
   render() {
     return (
       <Table>
-        <TableHead offsetTop={isEdgeBrowser ? '0px' : '-20px'} isSticky>
+        <TableHead offsetTop={isEdgeBrowser ? '0px' : '-22px'} isSticky>
           <TableRow>
             <TableCell extraClassNames="x--medium-cell" aria-label="Name">
               Name
@@ -109,7 +98,7 @@ class ContentTypeList extends Component {
                       data-test-id="content-type-item"
                       onClick={onClick}>
                       <TableCell extraClassNames="x--medium-cell" data-test-id="cell-name">
-                        {contentType.name}
+                        {isEmpty(contentType.name) ? 'Untitled' : contentType.name}
                       </TableCell>
                       <TableCell extraClassNames="x--large-cell" data-test-id="cell-description">
                         {contentType.description}
