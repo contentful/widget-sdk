@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { startCase, without, debounce, flow } from 'lodash';
+import { startCase, debounce, flow } from 'lodash';
 import { isEqual } from 'lodash/fp';
 import pluralize from 'pluralize';
 import classnames from 'classnames';
@@ -161,7 +161,7 @@ class UsersList extends React.Component {
   }
 
   handleMembershipRemove = membership => async () => {
-    const { usersList } = this.state;
+    const { usersList, pagination } = this.state;
     const user = membership.sys.user;
     const message = user.firstName
       ? `${user.firstName} has been successfully removed from this organization`
@@ -178,7 +178,11 @@ class UsersList extends React.Component {
     try {
       await removeMembership(this.endpoint, membership.sys.id);
       Notification.success(message);
-      this.setState({ usersList: without(usersList, membership) });
+      // last item in page removed
+      if (usersList.length === 1 && pagination.skip > 0) {
+        this.setState({ pagination: { ...pagination, skip: pagination.skip - pagination.limit } });
+      }
+      await this.fetch();
     } catch (e) {
       Notification.error(e.data.message);
     }
