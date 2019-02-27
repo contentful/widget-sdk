@@ -29,15 +29,14 @@ export default {
     '$scope',
     'spaceContext',
     '$state',
-    '$q',
-    ($scope, spaceContext, $state, $q) => {
+    ($scope, spaceContext, $state) => {
       const hasAccess = accessChecker.can('manage', 'Environments');
 
       if (!hasAccess) {
         $state.go('spaces.detail');
       }
 
-      $q.all([
+      Promise.all([
         LD.getCurrentVariation(environmentsFlagName),
         getOrgFeature(spaceContext.organization.sys.id, 'environment_branching')
       ]).then(([environmentsEnabled, canSelectSource]) => {
