@@ -51,10 +51,23 @@ function Form({
         ev.preventDefault();
         Submit();
       }}>
+      <FormField
+        label="ID"
+        labelHint="(required)"
+        field={fields.id}
+        input={{
+          'data-test-id': 'field.id',
+          type: 'text',
+          maxLength: '64'
+        }}
+        hint="How the environment is referred to in the API."
+        SetFieldValue={SetFieldValue}
+      />
+
       {canSelectSource && (
         <div className="cfnext-form__field">
           <label>
-            <span style={{ fontWeight: 'bold' }}>Environment to copy from</span>
+            <span style={{ fontWeight: 'bold' }}>Source Environment</span>
           </label>
 
           <select
@@ -69,21 +82,13 @@ function Form({
               );
             })}
           </select>
+
+          <p className="cfnext-form__hint">
+            Your new environment will be a copy of the one selected.
+          </p>
         </div>
       )}
 
-      <FormField
-        label="ID"
-        labelHint="(required)"
-        field={fields.id}
-        input={{
-          'data-test-id': 'field.id',
-          type: 'text',
-          maxLength: '64'
-        }}
-        hint="How the environment is referred to in the API."
-        SetFieldValue={SetFieldValue}
-      />
       <DialogActions
         submitLabel="Add environment"
         inProgress={inProgress}
