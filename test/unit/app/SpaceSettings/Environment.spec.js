@@ -36,10 +36,6 @@ describe('app/SpaceSettings/Environments', () => {
       }).appendTo(this.container.element);
     };
 
-    this.setEnvironmentBranchingFeatureEnabled = enabled => {
-      canSelectSource.returns(enabled);
-    };
-
     // Adds an environment to the store that backs the space endpoint
     // mock.
     this.putEnvironment = ({ id, status }) => {
@@ -66,6 +62,12 @@ describe('app/SpaceSettings/Environments', () => {
     this.setAdmin = value => {
       isOwnerOrAdmin.returns(value);
     };
+
+    this.setEnvironmentBranchingFeatureEnabled = enabled => {
+      canSelectSource.returns(enabled);
+    };
+
+    this.envRequests = spaceContext._mockEndpoint.requests.environments;
   });
 
   afterEach(function() {
@@ -87,7 +89,7 @@ describe('app/SpaceSettings/Environments', () => {
   });
 
   describe('when environment branching is disabled', function() {
-    it('does not show the env selector', function() {
+    it('does not show the env selector and uses master', function() {
       this.setEnvironmentBranchingFeatureEnabled(false);
 
       this.putEnvironment({ id: 'e1', status: 'ready' });
@@ -98,6 +100,15 @@ describe('app/SpaceSettings/Environments', () => {
       this.container.find('openCreateDialog').click();
       this.$flush();
       this.container.find('spaceEnvironmentsEditDialog', 'source.id').assertNonExistent();
+
+      this.container.find('spaceEnvironmentsEditDialog', 'field.id').setValue('env_id');
+      this.container.find('spaceEnvironmentsEditDialog', 'submit').click();
+
+      const updateRequest = this.envRequests.find(r => r.method === 'PUT');
+      expect(updateRequest.headers['X-Contentful-Source-Environment']).toEqual('master');
+
+      this.$flush();
+      this.container.find('environmentList', 'environment.env_id').assertHasText('env_id');
     });
   });
 
@@ -133,8 +144,13 @@ describe('app/SpaceSettings/Environments', () => {
         .element.querySelectorAll('option');
       expect(Array.from(sources).map(s => s.value)).toEqual(['e1', 'e2']);
 
+      this.container.find('spaceEnvironmentsEditDialog', 'source.id').setValue('e2');
       this.container.find('spaceEnvironmentsEditDialog', 'field.id').setValue('env_id');
       this.container.find('spaceEnvironmentsEditDialog', 'submit').click();
+
+      const updateRequest = this.envRequests.find(r => r.method === 'PUT');
+      expect(updateRequest.headers['X-Contentful-Source-Environment']).toEqual('e2');
+
       this.$flush();
       this.container.find('environmentList', 'environment.env_id').assertHasText('env_id');
     });

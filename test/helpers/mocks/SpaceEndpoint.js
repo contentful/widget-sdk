@@ -56,13 +56,24 @@ export default function create() {
   };
 
   const stores = mapValues(endpoints, ep => ep.store);
+  const requests = mapValues(endpoints, ep => ep.requests);
 
-  function request({ method, path, data, version }) {
+  function request({ method, path, data, version }, headers) {
     data = cloneDeep(data);
     const [typePath, ...resourcePath] = path;
 
     if (typePath in endpoints) {
       const endpoint = getEndpoint(endpoints, path);
+
+      const { requests } = endpoint;
+
+      requests.push({
+        method,
+        path,
+        data,
+        version,
+        headers
+      });
       return (
         endpoint
           .request(method, resourcePath, data, version)
@@ -75,7 +86,7 @@ export default function create() {
     }
   }
 
-  return { stores, request };
+  return { stores, request, requests };
 }
 
 function getEndpoint(endpoints, [typePath, id]) {
@@ -115,8 +126,9 @@ const defaultResourceConfig = {
 function makeGenericEndpoint(resourceConfig) {
   resourceConfig = assign(defaultResourceConfig, resourceConfig);
   const store = {};
+  const requests = [];
 
-  return { store, request };
+  return { store, request, requests };
 
   function request(method, path, data, version) {
     const [id] = path;
@@ -152,7 +164,9 @@ function makeGenericEndpoint(resourceConfig) {
 function makeEntityEndpoint(resourceConfig) {
   const { store, request: baseRequest } = makeGenericEndpoint(resourceConfig);
 
-  return { store, request };
+  const requests = [];
+
+  return { store, request, requests };
 
   function request(method, path, data, version) {
     const [id, state] = path;
@@ -207,7 +221,9 @@ function updateResourceState(store, method, state, id, version) {
 function makeSingletonEndpoint() {
   const id = 'default';
   const store = {};
-  return { store, request };
+  const requests = [];
+
+  return { store, request, requests };
 
   function request(method, _path, data, version) {
     if (method === 'GET') {
