@@ -33,12 +33,14 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
 import Placeholder from 'app/common/Placeholder.es6';
 import { getFilters, getSearchTerm } from 'redux/selectors/filters.es6';
-import { getLastActivityDate } from '../UserUtils.es6';
+import getOrgId from 'redux/selectors/getOrgId.es6';
 import {
   getInvitedUsersCount,
   membershipExistsParam
 } from 'app/OrganizationSettings/UserInvitations/UserInvitationUtils.es6';
+import createResourceService from 'services/ResourceService.es6';
 
+import { getLastActivityDate } from '../UserUtils.es6';
 import { generateFilterDefinitions } from './FilterDefinitions.es6';
 import {
   Filter as FilterPropType,
@@ -50,7 +52,6 @@ class UsersList extends React.Component {
     orgId: PropTypes.string.isRequired,
     spaceRoles: PropTypes.array,
     spaces: PropTypes.arrayOf(SpacePropType),
-    numberOrgMemberships: PropTypes.number.isRequired,
     filters: PropTypes.arrayOf(FilterPropType),
     searchTerm: PropTypes.string.isRequired,
     updateSearchTerm: PropTypes.func.isRequired,
@@ -66,7 +67,8 @@ class UsersList extends React.Component {
     pagination: {
       skip: 0,
       limit: 10
-    }
+    },
+    numberOrgMemberships: 0
   };
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
@@ -104,7 +106,7 @@ class UsersList extends React.Component {
   };
 
   fetch = async () => {
-    const { filters, searchTerm, newUserInvitationsEnabled } = this.props;
+    const { filters, searchTerm, newUserInvitationsEnabled, orgId } = this.props;
     const { pagination } = this.state;
     const filterQuery = formatQuery(filters.map(item => item.filter));
     const includePaths = ['sys.user'];
@@ -125,11 +127,24 @@ class UsersList extends React.Component {
 
     const { total, items, includes } = await getMemberships(this.endpoint, query);
     const resolved = ResolveLinks({ paths: includePaths, items, includes });
+    let numberOrgMemberships;
+    const endpoint = createOrganizationEndpoint(orgId);
+    const resources = createResourceService(orgId, 'organization');
+    if (newUserInvitationsEnabled) {
+      numberOrgMemberships = await getMemberships(endpoint, { [membershipExistsParam]: true }).then(
+        ({ total }) => total
+      );
+    } else {
+      numberOrgMemberships = await resources
+        .get('organizationMembership')
+        .then(({ usage }) => usage);
+    }
 
     this.setState({
       usersList: resolved,
       queryTotal: total,
-      loading: false
+      loading: false,
+      numberOrgMemberships
     });
   };
 
@@ -211,16 +226,10 @@ class UsersList extends React.Component {
       pagination,
       loading,
       invitedUsersCount,
+      numberOrgMemberships,
       initialLoad
     } = this.state;
-    const {
-      searchTerm,
-      numberOrgMemberships,
-      spaces,
-      spaceRoles,
-      filters,
-      newUserInvitationsEnabled
-    } = this.props;
+    const { searchTerm, spaces, spaceRoles, filters, newUserInvitationsEnabled } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -345,7 +354,8 @@ export default flow(
 
       return {
         filters: filterDefinitions,
-        searchTerm: getSearchTerm(state)
+        searchTerm: getSearchTerm(state),
+        orgId: getOrgId(state)
       };
     },
     dispatch => ({
