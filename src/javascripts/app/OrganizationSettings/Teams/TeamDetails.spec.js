@@ -10,6 +10,7 @@ import ROUTES from 'redux/routes.es6';
 import Placeholder from 'app/common/Placeholder.es6';
 import TeamDetails from './TeamDetails.es6';
 import TeamDialog from './TeamDialog.es6';
+import TeamMembershipForm from './TeamMemberships/TeamMembershipForm.es6';
 
 const renderComponent = actions => {
   const store = createStore(reducer);
@@ -203,7 +204,7 @@ describe('TeamDetails', () => {
           const { wrapper } = renderComponent(actions);
 
           const tooltips = wrapper.find(Tooltip).filter({ testId: 'read-only-tooltip' });
-          expect(tooltips).toHaveLength(2);
+          expect(tooltips).toHaveLength(3);
           // ensures all buttons are wrapped in a tooltip
           expect(wrapper.find(Button)).toHaveLength(tooltips.find(Button).length);
           expect(
@@ -285,29 +286,65 @@ describe('TeamDetails', () => {
           editButton.simulate('click');
           expect(getDialog(wrapper).props()).toHaveProperty('isShown', true);
         });
+
+        it('should render active add button in header', () => {
+          const { wrapper } = renderComponent(actions);
+
+          const button = wrapper
+            .find('header')
+            .find(Button)
+            .filter({ testId: 'add-button' });
+          expect(button.props()).toHaveProperty('disabled', false);
+        });
+
+        describe('after clicking button', () => {
+          let wrapperAfterClick;
+          const getForm = wrapper => wrapper.find(TeamMembershipForm);
+
+          beforeEach(() => {
+            wrapperAfterClick = renderComponent(actions).wrapper;
+            wrapperAfterClick
+              .find(Button)
+              .filter({ testId: 'add-button' })
+              .simulate('click');
+          });
+
+          it('should show add member form', () => {
+            expect(getForm(wrapperAfterClick)).toHaveLength(1);
+          });
+
+          it('clicking cancel in the form should close it', () => {
+            getForm(wrapperAfterClick)
+              .find(Button)
+              .filter({ testId: 'cancel-button' })
+              .simulate('click');
+
+            expect(getForm(wrapperAfterClick)).toHaveLength(0);
+          });
+        });
+      });
+    });
+  });
+
+  describe('is at route with existing team without description', () => {
+    beforeEach(() => {
+      actions.unshift({
+        type: 'LOCATION_CHANGED',
+        payload: {
+          location: {
+            pathname: ROUTES.organization.children.teams.children.team.build({
+              orgId: activeOrgId,
+              teamId: 'bTeam'
+            })
+          }
+        }
       });
     });
 
-    describe('is at route with existing team without description', () => {
-      beforeEach(() => {
-        actions.unshift({
-          type: 'LOCATION_CHANGED',
-          payload: {
-            location: {
-              pathname: ROUTES.organization.children.teams.children.team.build({
-                orgId: activeOrgId,
-                teamId: 'bTeam'
-              })
-            }
-          }
-        });
-      });
+    it('should not render team details', () => {
+      const { wrapper } = renderComponent(actions);
 
-      it('should not render team details', () => {
-        const { wrapper } = renderComponent(actions);
-
-        expect(wrapper.find('[data-test-id="team-card-description"]')).toHaveLength(0);
-      });
+      expect(wrapper.find('[data-test-id="team-card-description"]')).toHaveLength(0);
     });
   });
 });

@@ -19,6 +19,26 @@ import TeamSpaceMemberships from './TeamSpaceMemberships/TeamSpaceMemberships.es
 import TeamDialog from './TeamDialog.es6';
 import ROUTES from 'redux/routes.es6';
 
+const AddButton = ({ label, onClick, disabled }) => (
+  <Button
+    testId="add-button"
+    size="small"
+    buttonType="primary"
+    onClick={onClick}
+    disabled={disabled}>
+    {label}
+  </Button>
+);
+AddButton.propTypes = {
+  onClick: PropTypes.func,
+  label: PropTypes.string.isRequired,
+  disabled: PropTypes.bool
+};
+AddButton.defaultProps = {
+  onClick: () => {},
+  disabled: false
+};
+
 const EditButton = ({ onClick }) => (
   <Button
     testId="edit-team-button"
@@ -177,15 +197,20 @@ class TeamDetails extends React.Component {
                       </Tab>
                     ))}
                   </Tabs>
-                  {!showingForm && (
-                    <Button
-                      testId="add-membership-button"
-                      size="small"
-                      buttonType="primary"
-                      onClick={() => this.setState({ showingForm: true })}>
-                      {this.state.selectedTab.actionLabel}
-                    </Button>
-                  )}
+                  {!showingForm &&
+                    (readOnlyPermission ? (
+                      <Tooltip
+                        testId="read-only-tooltip"
+                        place="left"
+                        content="You don't have permission to change this team">
+                        <AddButton disabled label={this.state.selectedTab.actionLabel} />
+                      </Tooltip>
+                    ) : (
+                      <AddButton
+                        onClick={() => this.setState({ showingForm: true })}
+                        label={this.state.selectedTab.actionLabel}
+                      />
+                    ))}
                 </header>
 
                 {Object.entries(this.tabs).map(([id, { component: Component }]) =>

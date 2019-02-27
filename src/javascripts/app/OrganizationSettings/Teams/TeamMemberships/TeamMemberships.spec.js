@@ -5,9 +5,8 @@ import { Provider } from 'react-redux';
 import reducer from 'redux/reducer/index.es6';
 import ROUTES from 'redux/routes.es6';
 import { ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS, TEAMS, USERS } from 'redux/datasets.es6';
-import { Button, Table, Tooltip } from '@contentful/forma-36-react-components';
+import { Button, Table } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder.es6';
-import TeamMembershipForm from './TeamMembershipForm.es6';
 import TeamMemberships from './TeamMemberships.es6';
 import TeamMembershipRow from './TeamMembershipRow.es6';
 import TeamMembershipRowPlaceholder from './TeamMembershipRowPlaceholder.es6';
@@ -26,7 +25,7 @@ const renderComponent = actions => {
 const activeOrgId = 'testOrgId';
 const activeTeamId = 'team1';
 
-describe('TeamDetails', () => {
+describe('TeamMemberships', () => {
   let actions;
   beforeEach(() => {
     actions = [];
@@ -345,115 +344,6 @@ describe('TeamDetails', () => {
 
                 expect(wrapper.find(TeamMembershipRowPlaceholder)).toHaveLength(0);
               });
-            });
-          });
-        });
-
-        describe('is member of org', () => {
-          beforeEach(() => {
-            actions.push({
-              type: 'USER_UPDATE_FROM_TOKEN',
-              payload: {
-                user: {
-                  organizationMemberships: [
-                    {
-                      role: 'member',
-                      organization: {
-                        sys: {
-                          id: activeOrgId
-                        }
-                      }
-                    },
-                    {
-                      role: 'owner',
-                      organization: {
-                        sys: {
-                          id: 'otherOrg'
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            });
-          });
-
-          it('should render disabled add member button with tooltip', () => {
-            const { wrapper } = renderComponent(actions);
-
-            // there should not be another button
-            expect(wrapper.find(Button).filter({ testId: 'add-member-button' })).toHaveLength(1);
-            // the only button should have a tooltip
-            const buttonWithTooltip = wrapper
-              .find(Tooltip)
-              .find(Button)
-              .filter({ testId: 'add-member-button' });
-            expect(buttonWithTooltip.props()).toHaveProperty('disabled', true);
-          });
-        });
-
-        describe('is admin of org', () => {
-          beforeEach(() => {
-            actions.push({
-              type: 'USER_UPDATE_FROM_TOKEN',
-              payload: {
-                user: {
-                  organizationMemberships: [
-                    {
-                      role: 'admin',
-                      organization: {
-                        sys: {
-                          id: activeOrgId
-                        }
-                      }
-                    },
-                    {
-                      role: 'member',
-                      organization: {
-                        sys: {
-                          id: 'otherOrg'
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            });
-          });
-
-          it('should render active add member button in header', () => {
-            const { wrapper } = renderComponent(actions);
-
-            const button = wrapper
-              .find('header')
-              .find(Button)
-              .filter({ testId: 'add-member-button' });
-            expect(button.props()).toHaveProperty('disabled', false);
-          });
-
-          describe('after clicking button', () => {
-            let wrapperAfterClick;
-            const getForm = wrapper => wrapper.find(TeamMembershipForm);
-
-            beforeEach(() => {
-              wrapperAfterClick = renderComponent(actions).wrapper;
-              wrapperAfterClick
-                .find(Button)
-                .filter({ testId: 'add-member-button' })
-                .simulate('click');
-            });
-
-            it('should show add member form', () => {
-              expect(getForm(wrapperAfterClick)).toHaveLength(1);
-            });
-
-            it('clicking cancel in the form should close it', () => {
-              getForm(wrapperAfterClick)
-                .find(Button)
-                .filter({ testId: 'cancel-button' })
-                .simulate('click');
-
-              expect(getForm(wrapperAfterClick)).toHaveLength(0);
             });
           });
         });
