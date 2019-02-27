@@ -4,6 +4,7 @@ import { caseofEq, otherwise } from 'sum-types';
 import * as C from 'utils/Concurrent.es6';
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
 import * as LD from 'utils/LaunchDarkly/index.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import createResourceService from 'services/ResourceService.es6';
@@ -28,7 +29,6 @@ export default {
     '$scope',
     'spaceContext',
     '$state',
-    '$q',
     ($scope, spaceContext, $state) => {
       const hasAccess = accessChecker.can('manage', 'Environments');
 
@@ -36,9 +36,12 @@ export default {
         $state.go('spaces.detail');
       }
 
-      LD.getCurrentVariation(environmentsFlagName).then(environmentsEnabled => {
+      Promise.all([
+        LD.getCurrentVariation(environmentsFlagName),
+        getOrgFeature(spaceContext.organization.sys.id, 'environment_branching')
+      ]).then(([environmentsEnabled, canSelectSource]) => {
         if (environmentsEnabled) {
-          $scope.environmentComponent = createComponent(spaceContext);
+          $scope.environmentComponent = createComponent(spaceContext, canSelectSource);
           $scope.$applyAsync();
         } else {
           $state.go('spaces.detail');
@@ -70,7 +73,13 @@ const reduce = makeReducer({
   },
   [OpenCreateDialog]: (state, _, { resourceEndpoint, dispatch }) => {
     C.runTask(function*() {
-      const created = yield openCreateDialog(resourceEndpoint.create);
+      const created = yield openCreateDialog(
+        resourceEndpoint.create,
+        state.items,
+        state.currentEnvironment,
+        // Do not show env picker if there is only a single source environment
+        state.canSelectSource && state.items.length > 1
+      );
       if (created) {
         dispatch(Reload);
       }
@@ -136,23 +145,24 @@ const reduce = makeReducer({
 });
 
 // This is exported for testing purposes.
-export function createComponent(spaceContext) {
+export function createComponent(spaceContext, canSelectSource) {
   const resourceEndpoint = SpaceEnvironmentRepo.create(spaceContext.endpoint, spaceContext.getId());
   const resourceService = createResourceService(spaceContext.getId(), 'space');
   const context = {
     resourceEndpoint,
     resourceService
   };
-
   const organization = spaceContext.organization;
   const initialState = {
     items: [],
+    currentEnvironment: spaceContext.getEnvironmentId(),
     canCreateEnv: true,
     resource: { usage: 0 },
     canUpgradeSpace: isOwnerOrAdmin(organization),
     isLegacyOrganization: isLegacyOrganization(organization),
     organizationId: organization.sys.id,
-    spaceData: spaceContext.space.data
+    spaceData: spaceContext.space.data,
+    canSelectSource
   };
 
   const store = createStore(initialState, (action, state) => reduce(action, state, context));

@@ -49,11 +49,13 @@ export function create(spaceEndpoint) {
    *
    * The `ServerError` result holds the original error as its value.
    */
-  function create({ id, name }) {
+  function create({ id, name, source }) {
     return spaceEndpoint({
       method: 'PUT',
       path: ['environments', id],
-      data: { name }
+      data: { name },
+    }, {
+      'X-Contentful-Source-Environment': source || 'master'
     }).then(EnvironmentUpdated, mapCreateError);
   }
 

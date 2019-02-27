@@ -16,6 +16,7 @@ describe('app/SpaceSettings/Environments', () => {
     };
 
     const isOwnerOrAdmin = sinon.stub().returns(false);
+    const canSelectSource = sinon.stub().returns(true);
 
     module('contentful/test', $provide => {
       $provide.value('services/ResourceService.es6', () => resourceService);
@@ -31,7 +32,7 @@ describe('app/SpaceSettings/Environments', () => {
 
     this.init = () => {
       this.$compileWith('<cf-component-store-bridge component=component>', $scope => {
-        $scope.component = createComponent(spaceContext);
+        $scope.component = createComponent(spaceContext, canSelectSource());
       }).appendTo(this.container.element);
     };
 
@@ -61,6 +62,12 @@ describe('app/SpaceSettings/Environments', () => {
     this.setAdmin = value => {
       isOwnerOrAdmin.returns(value);
     };
+
+    this.setEnvironmentBranchingFeatureEnabled = enabled => {
+      canSelectSource.returns(enabled);
+    };
+
+    this.envRequests = spaceContext._mockEndpoint.requests.environments;
   });
 
   afterEach(function() {
@@ -81,15 +88,72 @@ describe('app/SpaceSettings/Environments', () => {
     this.container.find('environmentList', 'environment.e3').assertHasText('Failed');
   });
 
-  it('creates an environment', function() {
-    this.init();
+  describe('when environment branching is disabled', function() {
+    it('does not show the env selector and uses master', function() {
+      this.setEnvironmentBranchingFeatureEnabled(false);
 
-    this.container.find('openCreateDialog').click();
-    this.$flush();
-    this.container.find('spaceEnvironmentsEditDialog', 'field.id').setValue('env_id');
-    this.container.find('spaceEnvironmentsEditDialog', 'submit').click();
-    this.$flush();
-    this.container.find('environmentList', 'environment.env_id').assertHasText('env_id');
+      this.putEnvironment({ id: 'e1', status: 'ready' });
+      this.putEnvironment({ id: 'e2', status: 'ready' });
+
+      this.init();
+
+      this.container.find('openCreateDialog').click();
+      this.$flush();
+      this.container.find('spaceEnvironmentsEditDialog', 'source.id').assertNonExistent();
+
+      this.container.find('spaceEnvironmentsEditDialog', 'field.id').setValue('env_id');
+      this.container.find('spaceEnvironmentsEditDialog', 'submit').click();
+
+      const updateRequest = this.envRequests.find(r => r.method === 'PUT');
+      expect(updateRequest.headers['X-Contentful-Source-Environment']).toEqual('master');
+
+      this.$flush();
+      this.container.find('environmentList', 'environment.env_id').assertHasText('env_id');
+    });
+  });
+
+  describe('when environment branching is enabled', function() {
+    it('does not show the env selector if there is just one env', function() {
+      this.setEnvironmentBranchingFeatureEnabled(true);
+
+      this.putEnvironment({ id: 'e1', status: 'ready' });
+
+      this.init();
+
+      this.container.find('openCreateDialog').click();
+      this.$flush();
+      this.container.find('spaceEnvironmentsEditDialog', 'source.id').assertNonExistent();
+    });
+
+    it('shows the selector if there are multiple envs', function() {
+      this.setEnvironmentBranchingFeatureEnabled(true);
+
+      this.putEnvironment({ id: 'e1', status: 'ready' });
+      this.putEnvironment({ id: 'e2', status: 'ready' });
+
+      this.init();
+
+      this.container.find('openCreateDialog').click();
+      this.$flush();
+
+      this.container.find('spaceEnvironmentsEditDialog', 'source.id').assertIsVisible();
+      this.container.find('spaceEnvironmentsEditDialog', 'source.id').assertValue('e1');
+
+      const sources = this.container
+        .find('spaceEnvironmentsEditDialog', 'source.id')
+        .element.querySelectorAll('option');
+      expect(Array.from(sources).map(s => s.value)).toEqual(['e1', 'e2']);
+
+      this.container.find('spaceEnvironmentsEditDialog', 'source.id').setValue('e2');
+      this.container.find('spaceEnvironmentsEditDialog', 'field.id').setValue('env_id');
+      this.container.find('spaceEnvironmentsEditDialog', 'submit').click();
+
+      const updateRequest = this.envRequests.find(r => r.method === 'PUT');
+      expect(updateRequest.headers['X-Contentful-Source-Environment']).toEqual('e2');
+
+      this.$flush();
+      this.container.find('environmentList', 'environment.env_id').assertHasText('env_id');
+    });
   });
 
   it('deletes an environment', function() {

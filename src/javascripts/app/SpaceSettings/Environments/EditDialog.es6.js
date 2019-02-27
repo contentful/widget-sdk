@@ -17,6 +17,7 @@ const { open: openDialog } = getModule('modalDialog');
 const SetFieldValue = makeCtor('SetFieldValue');
 const Submit = makeCtor('Submit');
 const ReceiveResult = makeCtor('ReceiveResult');
+const SetSourceEnvironment = makeCtor('SetSourceEnvironment');
 
 const ID_EXISTS_ERROR_MESSAGE =
   'This ID already exists in your space. Please make sure it’s unique.';
@@ -33,11 +34,24 @@ const EMPTY_FIELD_ERROR_MESSAGE = 'Please fill out this field.';
  * It returns a promise that resolves with a boolean that is true if
  * the environment was created.
  */
-export function openCreateDialog(createEnvironment) {
+export function openCreateDialog(
+  createEnvironment,
+  environments,
+  currentEnvironment,
+  canSelectSource
+) {
   const initialState = {
     fields: {
-      id: { name: 'id', errors: [] }
-    }
+      id: {
+        name: 'id',
+        errors: []
+      }
+    },
+    environments,
+    currentEnvironment,
+    // If you cannot select the source environment, pick `master` as selected because that's the only source you can use
+    selectedEnvironment: canSelectSource ? currentEnvironment : 'master',
+    canSelectSource
   };
 
   return openDialog({
@@ -49,9 +63,15 @@ export function openCreateDialog(createEnvironment) {
       </div>
     `.trim(),
     controller: $scope => {
-      $scope.component = createComponent(initialState, { createEnvironment }, value => {
-        $scope.dialog.confirm(value);
-      });
+      $scope.component = createComponent(
+        initialState,
+        {
+          createEnvironment
+        },
+        value => {
+          $scope.dialog.confirm(value);
+        }
+      );
     },
     backgroundClose: false
   }).promise;
@@ -67,7 +87,8 @@ function createComponent(initialState, context, closeDialog) {
   const actions = bindActions(store, {
     SetFieldValue,
     Submit,
-    ReceiveResult
+    ReceiveResult,
+    SetSourceEnvironment
   });
 
   Object.assign(actions, {
@@ -75,12 +96,18 @@ function createComponent(initialState, context, closeDialog) {
     ConfirmDialog: () => closeDialog(true)
   });
 
-  return { store, render: state => render(assign(state, actions)) };
+  return {
+    store,
+    render: state => render(assign(state, actions))
+  };
 }
 
 const reduce = makeReducer({
   [SetFieldValue](state, { name, value }) {
     return set(state, ['fields', name, 'value'], value);
+  },
+  [SetSourceEnvironment](state, { value }) {
+    return set(state, 'selectedEnvironment', value);
   },
   [Submit](state, _, context, actions) {
     state = update(state, 'fields', clearErrors);
@@ -90,7 +117,11 @@ const reduce = makeReducer({
     } else {
       C.runTask(function*() {
         const id = get(state, ['fields', 'id', 'value']);
-        const result = yield context.createEnvironment({ id, name: id });
+        const result = yield context.createEnvironment({
+          id,
+          name: id,
+          source: state.selectedEnvironment
+        });
         actions.ReceiveResult(result);
       });
       state = set(state, 'inProgress', true);
@@ -105,7 +136,15 @@ const reduce = makeReducer({
         return state;
       },
       [Environment.IdExistsError]: () => {
-        return set(state, ['fields', 'id', 'errors'], [{ message: ID_EXISTS_ERROR_MESSAGE }]);
+        return set(
+          state,
+          ['fields', 'id', 'errors'],
+          [
+            {
+              message: ID_EXISTS_ERROR_MESSAGE
+            }
+          ]
+        );
       },
       [Environment.ServerError]: error => {
         logger.logServerError(error);
@@ -146,7 +185,11 @@ function validate(fields) {
     const errorMessage = validateField(field.value);
     if (errorMessage) {
       hasErrors = true;
-      return set(field, 'errors', [{ message: errorMessage }]);
+      return set(field, 'errors', [
+        {
+          message: errorMessage
+        }
+      ]);
     } else {
       return field;
     }
