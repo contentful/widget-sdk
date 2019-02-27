@@ -1,4 +1,6 @@
+import React from 'react';
 import { noop, cloneDeep, assign, map, get } from 'lodash';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as notify from './Notifications.es6';
 import * as Analytics from 'analytics/Analytics.es6';
@@ -8,6 +10,7 @@ import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField.es6';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 import * as logger from 'services/logger.es6';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
+import ContentTypeForbiddenRemoval from './Dialogs/ContenTypeForbiddenRemoval.es6';
 
 const $q = getModule('$q');
 const $state = getModule('$state');
@@ -109,13 +112,14 @@ export default function create($scope, contentTypeIds) {
   }
 
   function forbidRemoval(count) {
-    return modalDialog.open({
-      template: 'content_type_removal_forbidden_dialog',
-      scopeData: {
-        count: count > 0 ? count : '',
-        contentTypeName: $scope.contentType.data.name
-      }
-    });
+    return ModalLauncher.open(({ isShown, onClose }) => (
+      <ContentTypeForbiddenRemoval
+        isShown={isShown}
+        onClose={onClose}
+        entriesCount={count}
+        contentTypeName={$scope.contentType.data.name}
+      />
+    ));
   }
 
   function confirmRemoval(isPublished) {

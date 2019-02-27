@@ -116,40 +116,11 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
     });
 
     describe('delete flow interruptions', () => {
-      function testForbiddenRemoval(dialog, data) {
-        const matchObj = {
-          template: 'content_type_removal_forbidden_dialog',
-          scopeData: data || {}
-        };
-
-        controller.delete.execute();
-        scope.$apply();
-        sinon.assert.calledWith(dialog.open, sinon.match(matchObj));
-        sinon.assert.notCalled(contentType.delete);
-      }
-
       function testEndpointError() {
         controller.delete.execute();
         scope.$apply();
         sinon.assert.calledOnce(stubs.ReloadNotification.basicErrorHandler);
       }
-
-      it('notifies the user when entries endpoint cannot be read', function() {
-        accessChecker.canPerformActionOnEntryOfType.returns(false);
-        space.getEntries.rejects({ statusCode: 404 });
-        testForbiddenRemoval(this.modalDialog, { count: '' });
-      });
-
-      it('notifies the user when entries cannot be read due to policy', function() {
-        accessChecker.canPerformActionOnEntryOfType.returns(false);
-        space.getEntries.resolves([]);
-        testForbiddenRemoval(this.modalDialog, { count: '' });
-      });
-
-      it('notifies the user when there are entries', function() {
-        space.getEntries.resolves([{ data: { sys: { id: 'entry' } } }]);
-        testForbiddenRemoval(this.modalDialog, { count: 1 });
-      });
 
       it('fails for 404 when entries can be read by policy', () => {
         accessChecker.canPerformActionOnEntryOfType.returns(true);
