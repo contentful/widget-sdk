@@ -2,6 +2,7 @@ import { registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
+import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import { ADMIN_ROLE_ID } from './constants.es6';
 
 export default function register() {
@@ -14,37 +15,32 @@ export default function register() {
   registerController('RoleListController', [
     '$scope',
     '$state',
-    '$q',
     'UserListHandler',
     'createRoleRemover',
     'access_control/AccessChecker',
     'UserListController/jumpToRole',
     'spaceContext',
     'TheAccountView',
-    'utils/ResourceUtils.es6',
     (
       $scope,
       $state,
-      $q,
       UserListHandler,
       createRoleRemover,
       accessChecker,
       jumpToRoleMembers,
       spaceContext,
-      TheAccountView,
-      ResourceUtils
+      TheAccountView
     ) => {
       const listHandler = UserListHandler.create();
       const organization = spaceContext.organization;
 
+      $scope.legacy = ResourceUtils.isLegacyOrganization(organization);
+
       $scope.loading = true;
-      $q.all({
-        canModifyRoles: accessChecker.canModifyRoles(),
-        useLegacy: ResourceUtils.useLegacy(organization)
-      })
-        .then(result => {
-          $scope.legacy = result.useLegacy;
-          $scope.hasFeatureEnabled = result.canModifyRoles;
+      accessChecker
+        .canModifyRoles()
+        .then(canModifyRoles => {
+          $scope.hasFeatureEnabled = canModifyRoles;
           $scope.loading = false;
         })
         .then(reload)

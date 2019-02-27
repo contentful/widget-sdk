@@ -2,6 +2,7 @@ import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as Navigator from 'states/Navigator.es6';
+import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 
 export default function register() {
@@ -17,10 +18,7 @@ export default function register() {
     '$q',
     'spaceContext',
     'services/TokenStore.es6',
-    'utils/ResourceUtils.es6',
-    ($q, spaceContext, TokenStore, ResourceUtils) => {
-      const { isLegacyOrganization } = ResourceUtils;
-
+    ($q, spaceContext, TokenStore) => {
       return {
         getSubscriptionState: getSubscriptionState,
         getOrganizationRef: getOrganizationRef,

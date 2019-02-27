@@ -2,6 +2,7 @@ import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import Base from 'states/Base.es6';
 import { getStore } from 'TheStore/index.es6';
 import * as Analytics from 'analytics/Analytics.es6';
+import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { go } from 'states/Navigator.es6';
 
 const store = getStore();
@@ -123,8 +124,7 @@ export function organizationBase(definition) {
       '$stateParams',
       'access_control/AccessChecker/index.es6',
       'services/TokenStore.es6',
-      'utils/ResourceUtils.es6',
-      async ($state, $stateParams, accessChecker, TokenStore, { useLegacy }) => {
+      async ($state, $stateParams, accessChecker, TokenStore) => {
         const org = await TokenStore.getOrganization($stateParams.orgId);
 
         Analytics.trackContextChange(null, org);
@@ -133,7 +133,7 @@ export function organizationBase(definition) {
         accessChecker.setOrganization(org);
         store.set('lastUsedOrg', $stateParams.orgId);
 
-        const isLegacy = await useLegacy(org);
+        const isLegacy = isLegacyOrganization(org);
 
         if (isLegacy) {
           const shouldRedirectToV2 = !isLegacy && Boolean(migration);

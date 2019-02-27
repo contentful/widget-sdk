@@ -1,6 +1,7 @@
 import { registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
+import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 
 export default function register() {
@@ -19,7 +20,6 @@ export default function register() {
     'TheAccountView',
     'command',
     'access_control/AccessChecker/index.es6',
-    'utils/ResourceUtils.es6',
     'services/ResourceService.es6',
     (
       $scope,
@@ -29,7 +29,6 @@ export default function register() {
       TheAccountView,
       Command,
       accessChecker,
-      ResourceUtils,
       { default: createResourceService }
     ) => {
       const resources = createResourceService(spaceContext.getId());
@@ -74,8 +73,7 @@ export default function register() {
 
       $q.all({
         apiKeys: spaceContext.apiKeyRepo.getAll(),
-        resource: resources.get('apiKey'),
-        legacy: ResourceUtils.useLegacy(spaceContext.organization)
+        resource: resources.get('apiKey')
       })
         .then(result => {
           $scope.apiKeys = result.apiKeys;
@@ -84,7 +82,7 @@ export default function register() {
           const canCreate = ResourceUtils.canCreate(result.resource);
           const limits = ResourceUtils.getResourceLimits(result.resource);
 
-          $scope.legacy = result.legacy;
+          $scope.legacy = ResourceUtils.isLegacyOrganization(spaceContext.organization);
           $scope.limit = limits.maximum;
           $scope.usage = result.resource.usage;
           $scope.reachedLimit = !canCreate;

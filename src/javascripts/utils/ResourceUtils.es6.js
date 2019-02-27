@@ -1,8 +1,4 @@
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { assign, get } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
-
-const flagName = 'feature-bv-2018-01-resources-api';
 
 export const resourceHumanNameMap = {
   api_key: 'API Keys',
@@ -76,29 +72,11 @@ export function getResourceLimits(resource) {
 }
 
 /*
-  If the organization pricing version is `pricing_version_2`,
-  we do not use legacy.
-
-  If the pricing version is not, we determine if we should use
-  legacy based on the feature flag. If the feature flag is
-  enabled, we don't use legacy, otherwise we do.
- */
-export function useLegacy(organization) {
-  const $q = getModule('$q');
-
-  if (isLegacyOrganization(organization)) {
-    return getCurrentVariation(flagName).then(flagValue => !flagValue);
-  } else {
-    return $q.resolve(false);
-  }
-}
-
-/*
   Determine if an organization is legacy based on the
   pricing version.
 
   Used in cases where the fact that the organization
-  is legacy matters irrespective of the feature flag.
+  is legacy matters.
  */
 export function isLegacyOrganization(organization) {
   const pricingVersion = organization.pricingVersion;

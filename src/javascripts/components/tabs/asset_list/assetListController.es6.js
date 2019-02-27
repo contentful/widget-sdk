@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import { createSelection } from 'classes/Selection.es6';
 import * as entityStatus from 'app/entity_editor/EntityStatus.es6';
+import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import { getBlankAssetView as getBlankView } from 'data/UiConfig/Blanks.es6';
 import * as EnvironmentUtils from 'utils/EnvironmentUtils.es6';
 
@@ -18,7 +19,6 @@ export default function register() {
     'entityCreator',
     'analytics/Analytics.es6',
     'services/BulkAssetsCreator.es6',
-    'utils/ResourceUtils.es6',
     'access_control/AccessChecker/index.es6',
     'app/ContentList/SavedViewsSidebar.es6',
     function AssetListController(
@@ -32,7 +32,6 @@ export default function register() {
       entityCreator,
       Analytics,
       BulkAssetsCreator,
-      ResourceUtils,
       accessChecker,
       { default: createSavedViewsSidebar }
     ) {

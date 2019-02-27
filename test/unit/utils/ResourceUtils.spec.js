@@ -62,17 +62,7 @@ describe('ResourceUtils', () => {
       pricingVersion: this.pricingVersions.pricingVersion2
     };
 
-    this.flags = {
-      'feature-bv-2018-01-resources-api': null
-    };
-
-    module('contentful/test', $provide => {
-      $provide.value('utils/LaunchDarkly/index.es6', {
-        getCurrentVariation: flagName => {
-          return Promise.resolve(this.flags[flagName]);
-        }
-      });
-    });
+    module('contentful/test');
 
     this.ResourceUtils = this.$inject('utils/ResourceUtils.es6');
   });
@@ -215,28 +205,6 @@ describe('ResourceUtils', () => {
       const limits = this.ResourceUtils.getResourceLimits(resource);
       expect(limits.included).toBe(null);
       expect(limits.maximum).toBe(null);
-    });
-  });
-
-  describe('#useLegacy', () => {
-    it('should return false if given a pricing V2 organization regardless of feature flag', function*() {
-      this.flags['feature-bv-2018-01-resources-api'] = false;
-      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
-
-      this.flags['feature-bv-2018-01-resources-api'] = true;
-      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
-    });
-
-    it('should return false if given a pricing V1 organization but the feature flag is enabled', function*() {
-      this.organization.pricingVersion = this.pricingVersions.pricingVersion1;
-      this.flags['feature-bv-2018-01-resources-api'] = true;
-      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
-    });
-
-    it('should return true if given a pricing V1 organization and the feature flag is not enabled', function*() {
-      this.organization.pricingVersion = this.pricingVersions.pricingVersion1;
-      this.flags['feature-bv-2018-01-resources-api'] = false;
-      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(true);
     });
   });
 

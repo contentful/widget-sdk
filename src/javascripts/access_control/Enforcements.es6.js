@@ -2,12 +2,9 @@ import { uncapitalize } from 'utils/StringUtils.es6';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import { go } from 'states/Navigator.es6';
 import { get, merge, findKey, forEach } from 'lodash';
+import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { supportUrl } from 'Config.es6';
 import * as Analytics from 'analytics/Analytics.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const $window = getModule('$window');
-const $injector = getModule('$injector');
 
 const USAGE_METRICS = {
   apiKey: 'API keys',
@@ -42,7 +39,8 @@ export function determineEnforcement(space, reasons, entityType) {
       actionMessage: 'Status',
       action: () => {
         trackAction('Visit Status Page');
-        $window.location = 'https://www.contentfulstatus.com';
+
+        window.location = 'https://www.contentfulstatus.com';
       }
     },
     {
@@ -123,8 +121,6 @@ export function determineEnforcement(space, reasons, entityType) {
 
   function upgradeAction() {
     trackAction('Quota Increase');
-    // using require to avoid circular dependency :(
-    const isLegacyOrganization = $injector.get('utils/ResourceUtils.es6').isLegacyOrganization;
     const subscriptionState = isLegacyOrganization(organization)
       ? 'subscription'
       : 'subscription_new';

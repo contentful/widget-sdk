@@ -1,10 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ProgressBar } from './ProgressBar.es6';
-import { getModule } from 'NgRegistry.es6';
+import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import { shorten, shortenStorageUnit } from 'utils/NumberUtils.es6';
-
-const ResourceUtils = getModule('utils/ResourceUtils.es6');
 
 export const ResourceUsage = ({ resource, description, abbreviateLimit }) => {
   const { usage, unitOfMeasure } = resource;
