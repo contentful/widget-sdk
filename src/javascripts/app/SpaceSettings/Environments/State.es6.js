@@ -37,16 +37,12 @@ export default {
         $state.go('spaces.detail');
       }
 
-
       $q.all([
         LD.getCurrentVariation(environmentsFlagName),
         getOrgFeature(spaceContext.organization.sys.id, 'environment_branching')
       ]).then(([environmentsEnabled, canSelectSource]) => {
         if (environmentsEnabled) {
-          $scope.environmentComponent = createComponent(
-            spaceContext,
-            canSelectSource
-          );
+          $scope.environmentComponent = createComponent(spaceContext, canSelectSource);
           $scope.$applyAsync();
         } else {
           $state.go('spaces.detail');
@@ -82,7 +78,8 @@ const reduce = makeReducer({
         resourceEndpoint.create,
         state.items,
         state.currentEnvironment,
-        state.canSelectSource
+        // Do not show env picker if there is only a single source environment
+        state.canSelectSource && state.items.length > 1
       );
       if (created) {
         dispatch(Reload);
