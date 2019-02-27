@@ -65,28 +65,12 @@ function Form({
       />
 
       {canSelectSource && (
-        <div className="cfnext-form__field">
-          <label>
-            <span style={{ fontWeight: 'bold' }}>Source Environment</span>
-          </label>
-
-          <select
-            className="cfnext-select-box"
-            style={{ display: 'block', width: '100%' }}
-            onChange={ev => SetSourceEnvironment({ value: ev.target.value })}>
-            {environments.map(env => {
-              return (
-                <option key={env.id} value={env.id} selected={env.id === selectedEnvironment}>
-                  {env.id === currentEnvironment ? `${env.id} (current)` : `${env.id}`}
-                </option>
-              );
-            })}
-          </select>
-
-          <p className="cfnext-form__hint">
-            Your new environment will be a copy of the one selected.
-          </p>
-        </div>
+        <SourceEnvironmentSelector
+          SetSourceEnvironment={SetSourceEnvironment}
+          environments={environments}
+          currentEnvironment={currentEnvironment}
+          selectedEnvironment={selectedEnvironment}
+        />
       )}
 
       <DialogActions
@@ -98,6 +82,43 @@ function Form({
   );
 }
 Form.propTypes = SpaceEnvironmentsEditDialogPropTypes;
+
+function SourceEnvironmentSelector({
+  SetSourceEnvironment,
+  environments,
+  currentEnvironment,
+  selectedEnvironment
+}) {
+  return (
+    <div className="cfnext-form__field">
+      <label>
+        <span style={{ fontWeight: 'bold' }}>Source Environment</span>
+      </label>
+
+      <select
+        className="cfnext-select-box"
+        style={{ display: 'block', width: '100%' }}
+        onChange={ev => SetSourceEnvironment({ value: ev.target.value })}>
+        {environments.map(env => {
+          return (
+            <option key={env.id} value={env.id} selected={env.id === selectedEnvironment}>
+              {env.id === currentEnvironment ? `${env.id} (current)` : `${env.id}`}
+            </option>
+          );
+        })}
+      </select>
+
+      <p className="cfnext-form__hint">Your new environment will be a copy of the one selected.</p>
+    </div>
+  );
+}
+
+SourceEnvironmentSelector.propTypes = {
+  selectedEnvironment: PropTypes.object,
+  currentEnvironment: PropTypes.object,
+  environments: PropTypes.object,
+  SetSourceEnvironment: PropTypes.func
+};
 
 function FormField({ label, labelHint, field, input, hint, SetFieldValue }) {
   return (
