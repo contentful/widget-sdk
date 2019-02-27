@@ -91,7 +91,7 @@ class UsersList extends React.Component {
     this.setState({ loading: true });
 
     await this.loadInvitationsCount();
-    await this.fetch();
+    await this.fetch(true);
 
     this.setState({ loading: false });
   };
@@ -105,7 +105,7 @@ class UsersList extends React.Component {
     });
   };
 
-  fetch = async () => {
+  fetch = async (updateCount = false) => {
     const { filters, searchTerm, newUserInvitationsEnabled, orgId } = this.props;
     const { pagination } = this.state;
     const filterQuery = formatQuery(filters.map(item => item.filter));
@@ -127,25 +127,28 @@ class UsersList extends React.Component {
 
     const { total, items, includes } = await getMemberships(this.endpoint, query);
     const resolved = ResolveLinks({ paths: includePaths, items, includes });
-    let numberOrgMemberships;
-    const endpoint = createOrganizationEndpoint(orgId);
-    const resources = createResourceService(orgId, 'organization');
-    if (newUserInvitationsEnabled) {
-      numberOrgMemberships = await getMemberships(endpoint, { [membershipExistsParam]: true }).then(
-        ({ total }) => total
-      );
-    } else {
-      numberOrgMemberships = await resources
-        .get('organizationMembership')
-        .then(({ usage }) => usage);
-    }
 
-    this.setState({
+    const newState = {
       usersList: resolved,
       queryTotal: total,
-      loading: false,
-      numberOrgMemberships
-    });
+      loading: false
+    };
+
+    if (updateCount) {
+      const endpoint = createOrganizationEndpoint(orgId);
+      const resources = createResourceService(orgId, 'organization');
+      if (newUserInvitationsEnabled) {
+        newState.numberOrgMemberships = await getMemberships(endpoint, {
+          [membershipExistsParam]: true
+        }).then(({ total }) => total);
+      } else {
+        newState.numberOrgMemberships = await resources
+          .get('organizationMembership')
+          .then(({ usage }) => usage);
+      }
+    }
+
+    this.setState(newState);
   };
 
   getLinkToInvitation() {
@@ -197,14 +200,14 @@ class UsersList extends React.Component {
       if (usersList.length === 1 && pagination.skip > 0) {
         this.setState({ pagination: { ...pagination, skip: pagination.skip - pagination.limit } });
       }
-      await this.fetch();
+      await this.fetch(true);
     } catch (e) {
       Notification.error(e.data.message);
     }
   };
 
   handlePaginationChange = ({ skip, limit }) => {
-    this.setState({ pagination: { ...this.state.pagination, skip, limit } }, this.fetch);
+    this.setState({ pagination: { ...this.state.pagination, skip, limit } }, () => this.fetch());
   };
 
   search = e => {
