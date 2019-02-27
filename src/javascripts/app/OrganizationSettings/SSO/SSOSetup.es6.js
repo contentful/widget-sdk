@@ -10,6 +10,7 @@ import SSOEnabled from './SSOEnabled.es6';
 import * as ssoActionCreators from 'redux/actions/sso/actionCreators.es6';
 import * as ssoSelectors from 'redux/selectors/sso.es6';
 import getOrganizationSelector from 'redux/selectors/getOrganization.es6';
+import { track } from 'analytics/Analytics.es6';
 import _ from 'lodash';
 
 import { connect } from 'react-redux';
@@ -60,6 +61,10 @@ export class SSOSetup extends React.Component {
     createIdp({ orgId: organization.sys.id, orgName: organization.name });
   };
 
+  trackSupportClick = () => {
+    track('sso:contact_support');
+  };
+
   render() {
     const { identityProvider, organization } = this.props;
 
@@ -92,7 +97,12 @@ export class SSOSetup extends React.Component {
                   Set up SSO for your organization in Contentful in a few steps.&nbsp;&nbsp;
                   <TextLink href="https://www.contentful.com/faq/sso/">Check out the FAQs</TextLink>
                   &nbsp;&nbsp;
-                  <TextLink href="https://www.contentful.com/support/">Talk to support</TextLink>
+                  <TextLink
+                    onClick={this.trackSupportClick}
+                    testId="support-link"
+                    href="https://www.contentful.com/support/">
+                    Talk to support
+                  </TextLink>
                 </Paragraph>
               </React.Fragment>
             )}

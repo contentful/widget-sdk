@@ -3,12 +3,17 @@ import PropTypes from 'prop-types';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { Heading, Paragraph, TextLink, TextField } from '@contentful/forma-36-react-components';
 import { authUrl } from 'Config.es6';
+import { track } from 'analytics/Analytics.es6';
 
 export default class SSOEnabled extends React.Component {
   static propTypes = {
     restrictedModeEnabled: PropTypes.bool.isRequired,
     ssoName: PropTypes.string.isRequired,
     organization: OrganizationPropType.isRequired
+  };
+
+  trackSupportClick = () => {
+    track('sso:contact_support');
   };
 
   render() {
@@ -27,7 +32,10 @@ export default class SSOEnabled extends React.Component {
           {restrictedModeEnabled && (
             <React.Fragment>
               If you experience any issues with SSO,{' '}
-              <TextLink testId="restricted-support-link" href="https://www.contentful.com/support/">
+              <TextLink
+                onClick={this.trackSupportClick}
+                testId="restricted-support-link"
+                href="https://www.contentful.com/support/">
                 talk to support
               </TextLink>
               .
@@ -41,6 +49,7 @@ export default class SSOEnabled extends React.Component {
               </TextLink>
               , requiring users to sign in using SSO,{' '}
               <TextLink
+                onClick={this.trackSupportClick}
                 testId="unrestricted-support-link"
                 href="https://www.contentful.com/support/">
                 talk to support
