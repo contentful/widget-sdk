@@ -55,14 +55,20 @@ function* resolveReferences_({ url, entry, defaultLocale }) {
   // This object is what is used in the final interpolation
   // It also handles locales by converting entry.fields.slug to entry.fields[defaultLocale].slug
   const dataToInterpolate = createInterpolationDataObject(entry, defaultLocale);
+  // This keeps track of entries whose incoming links were fetched already.
+  const entriesWithFetchedIncomingLinks = [];
   let currentEntry = dataToInterpolate;
 
   // eslint-disable-next-line no-restricted-syntax
   for (let i = 0; i < numberOfIncomingLinksToResolve; i += 1) {
-    const linkedByEntries = yield spaceContext.cma.getEntries({
-      // get the incoming links for the current entry
-      links_to_entry: currentEntry.sys.id
-    });
+    let linkedByEntries = entriesWithFetchedIncomingLinks.find(id => id === currentEntry.sys.id);
+    if (!linkedByEntries) {
+      linkedByEntries = yield spaceContext.cma.getEntries({
+        // get the incoming links for the current entry
+        links_to_entry: currentEntry.sys.id
+      });
+      entriesWithFetchedIncomingLinks.push(currentEntry.sys.id);
+    }
     const firstLinkedByEntry = get(linkedByEntries, 'items[0]', undefined);
 
     // fail early if there are no incoming links to the entry in questions

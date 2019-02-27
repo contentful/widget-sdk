@@ -1,7 +1,9 @@
 import React from 'react';
-import Enzyme from 'enzyme';
+import { mount } from 'enzyme';
 import * as mockedSpaceContext from 'ng/spaceContext';
 import * as mockedContentPreview from 'ng/contentPreview';
+
+import flushPromises from '../../../../../test/helpers/flushPromises';
 import SidebarContentPreviewContainer from './SidebarContentPreviewContainer.es6';
 
 const contentPreviews = [
@@ -66,7 +68,9 @@ describe('entity_editor/Components/SidebarContentPreviewContainer.es6', () => {
     mockedContentPreview.replaceVariablesInUrl.mockReset();
   });
 
-  it('getCompiledUrls should be called every time entry is updated', async () => {
+  it('compiles the preview URL only when the user clicks the open preview button', async () => {
+    jest.useFakeTimers();
+    window.open = jest.fn();
     const initialProps = {
       entry: null,
       contentType,
@@ -74,37 +78,22 @@ describe('entity_editor/Components/SidebarContentPreviewContainer.es6', () => {
         locales: []
       }
     };
-    const wrapper = await Enzyme.shallow(<SidebarContentPreviewContainer {...initialProps} />, {
-      disableLifecycleMethods: true
-    });
+    const wrapper = mount(<SidebarContentPreviewContainer {...initialProps} />);
 
     await wrapper.instance().componentDidMount();
 
-    expect(mockedContentPreview.getForContentType).toHaveBeenCalledWith(contentType.sys.id);
-    expect(mockedContentPreview.getForContentType).toHaveBeenCalledTimes(1);
-    expect(mockedContentPreview.getSelected).toHaveBeenCalledTimes(1);
     expect(mockedContentPreview.replaceVariablesInUrl).not.toHaveBeenCalled();
 
     wrapper.setProps({
       entry
     });
 
-    await wrapper.instance().componentDidUpdate(initialProps);
+    expect(mockedContentPreview.replaceVariablesInUrl).not.toHaveBeenCalled();
 
-    expect(mockedContentPreview.replaceVariablesInUrl).toHaveBeenCalledTimes(
-      contentPreviews.length
-    );
-    expect(mockedContentPreview.replaceVariablesInUrl.mock.calls[0]).toEqual([
-      contentPreviews[0].url,
-      entry,
-      contentType
-    ]);
-    expect(mockedContentPreview.getSelected).toHaveBeenCalledTimes(2);
-    expect(wrapper.instance().state.contentPreviews).toEqual(
-      contentPreviews.map(item => ({
-        ...item,
-        compiledUrl: item.url.replace(`{entry.fields.slug}`, 'VALUE')
-      }))
-    );
+    wrapper.find('[data-test-id="open-preview"]').simulate('click');
+    await flushPromises();
+
+    expect(mockedContentPreview.replaceVariablesInUrl).toHaveBeenCalledTimes(1);
+    expect(window.open).toHaveBeenCalledWith('https://google.com/search?q=VALUE');
   });
 });

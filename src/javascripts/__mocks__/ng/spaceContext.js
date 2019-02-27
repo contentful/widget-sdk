@@ -42,3 +42,7 @@ export const widgets = {
 };
 
 export const getData = jest.fn();
+
+export const netlifyAppConfig = {
+  get: jest.fn().mockResolvedValue({})
+};

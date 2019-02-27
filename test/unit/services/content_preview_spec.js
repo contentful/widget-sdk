@@ -16,7 +16,7 @@ describe('contentPreview', () => {
     module('contentful/test', $provide => {
       $provide.constant('TheLocaleStore', {
         getDefaultLocale: _.constant({ code: 'en' }),
-        toPublicCode: sinon.stub()
+        toPublicCode: sinon.stub().returns('en')
       });
       $provide.constant('TheStore/index.es6', {
         getStore: () => {
@@ -166,8 +166,8 @@ describe('contentPreview', () => {
   });
 
   describe('#getForContentType', () => {
-    it('returns all of the preview environments for the provided content type', function*() {
-      const envs = yield this.contentPreview.getForContentType('ct-1');
+    it('returns all of the preview environments for the provided content type', async function() {
+      const envs = await this.contentPreview.getForContentType('ct-1');
       expect(envs.length).toBe(2);
     });
   });
@@ -315,8 +315,8 @@ describe('contentPreview', () => {
   });
 
   describe('#replaceVariablesInUrl', () => {
-    it('replaces variables in URL', function*() {
-      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+    it('replaces variables in URL with the legacy content preview token', async function() {
+      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[0].url,
         makeEntry('entry-1').data,
         makeCt('ct-1')
@@ -324,8 +324,28 @@ describe('contentPreview', () => {
       expect(this.compiledUrl).toBe('https://www.test.com/entry-1/Title/my-slug');
     });
 
-    it('does not replace invalid field tokens', function*() {
-      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+    it('replaces variables in URL with the new content preview token', async function() {
+      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+        'https://www.test.com/{entry.sys.id}/{entry.fields.title}/{entry.fields.slug}',
+        makeEntry('entry-1').data,
+        makeCt('ct-1')
+      );
+      expect(this.compiledUrl).toBe('https://www.test.com/entry-1/Title/my-slug');
+    });
+
+    it('replaces undefined fileds with "_NOT_FOUND"', async function() {
+      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+        'https://www.test.com/{entry.sys.id}/{entry.fields.random_field}/{entry.fields.slug}',
+        makeEntry('entry-1').data,
+        makeCt('ct-1')
+      );
+      expect(this.compiledUrl).toBe(
+        'https://www.test.com/entry-1/fields.random_field_ NOT_FOUND/my-slug'
+      );
+    });
+
+    it('does not replace invalid field tokens', async function() {
+      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[1].url,
         makeEntry('entry-1').data,
         makeCt('ct-1')
@@ -337,8 +357,8 @@ describe('contentPreview', () => {
      * we do it to avoid pasting {entry_field.something}
      * in case value is just an empty string, but exists.
      */
-    it('does replace with empty value', function*() {
-      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+    it('does replace with empty value', async function() {
+      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         'http://test-domain.com/{entry_id}/{entry_field.empty}',
         makeEntry('entry-1').data,
         makeCt('ct-1')
@@ -346,8 +366,8 @@ describe('contentPreview', () => {
       expect(this.compiledUrl).toBe('http://test-domain.com/entry-1/');
     });
 
-    it('does replace with undefined value', function*() {
-      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+    it('does replace with undefined value', async function() {
+      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         'http://test-domain.com/{entry_id}/{entry_field.undefined}',
         makeEntry('entry-1').data,
         makeCt('ct-1')
@@ -355,8 +375,8 @@ describe('contentPreview', () => {
       expect(this.compiledUrl).toBe('http://test-domain.com/entry-1/');
     });
 
-    it('does not replace invalid field tokens', function*() {
-      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+    it('does not replace invalid field tokens', async function() {
+      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[1].url,
         makeEntry('entry-1').data,
         makeCt('ct-1')
@@ -364,9 +384,9 @@ describe('contentPreview', () => {
       expect(this.compiledUrl).toBe('https://www.test.com/{entry_field.invalid}');
     });
 
-    it('calls for entries with linked current entry', function*() {
+    it('calls for entries with linked current entry', async function() {
       spaceContext.cma.getEntries = sinon.stub().resolves();
-      yield this.contentPreview.replaceVariablesInUrl(
+      await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[2].url,
         makeEntry('entry-3').data,
         makeCt('ct-3')
@@ -379,7 +399,7 @@ describe('contentPreview', () => {
       ).toBe(true);
     });
 
-    it('replaces referenced value in URL', function*() {
+    it('replaces referenced value in URL', async function() {
       spaceContext.cma.getEntries = () =>
         Promise.resolve({
           items: [
@@ -389,7 +409,7 @@ describe('contentPreview', () => {
           ]
         });
 
-      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[2].url,
         makeEntry('entry-3').data,
         makeCt('ct-3')
@@ -398,7 +418,7 @@ describe('contentPreview', () => {
       expect(this.compiledUrl).toBe('https://www.test.com/some');
     });
 
-    it('replaces referenced value in URL with fields path', function*() {
+    it('replaces referenced value in URL with fields path', async function() {
       spaceContext.cma.getEntries = () =>
         Promise.resolve({
           items: [
@@ -409,7 +429,7 @@ describe('contentPreview', () => {
           ]
         });
 
-      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[3].url,
         makeEntry('entry-4').data,
         makeCt('ct-4')
@@ -418,7 +438,7 @@ describe('contentPreview', () => {
       expect(this.compiledUrl).toBe('https://www.test.com/new-value');
     });
 
-    it('replaces several referenced values in URL', function*() {
+    it('replaces several referenced values in URL', async function() {
       spaceContext.cma.getEntries = sinon.stub();
       spaceContext.cma.getEntries
         .withArgs({
@@ -450,7 +470,7 @@ describe('contentPreview', () => {
           })
         );
 
-      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[4].url,
         makeEntry('entry-5').data,
         makeCt('ct-5')
@@ -461,9 +481,9 @@ describe('contentPreview', () => {
       );
     });
 
-    it('returns baseURL in case some reference does not exist', function*() {
+    it('returns baseURL in case some reference does not exist', async function() {
       spaceContext.cma.getEntries = () => Promise.resolve({});
-      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[2].url,
         makeEntry('entry-3').data,
         makeCt('ct-3')

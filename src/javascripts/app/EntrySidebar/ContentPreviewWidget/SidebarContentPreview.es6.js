@@ -14,7 +14,6 @@ export default class SidebarContentPreview extends Component {
     isPreviewSetup: PropTypes.bool.isRequired,
     isAdmin: PropTypes.bool.isRequired,
     selectedContentPreview: PropTypes.shape({
-      compiledUrl: PropTypes.string,
       name: PropTypes.string
     }).isRequired,
     contentPreviews: PropTypes.arrayOf(
@@ -90,25 +89,17 @@ export default class SidebarContentPreview extends Component {
   }
 
   render() {
-    const {
-      isPreviewSetup,
-      selectedContentPreview,
-      contentPreviews,
-      trackPreviewOpened,
-      isInitialized
-    } = this.props;
+    const { isPreviewSetup, contentPreviews, trackPreviewOpened, isInitialized } = this.props;
 
     return (
       <div className="entity-sidebar__preview">
         <Button
-          disabled={!isInitialized || !isPreviewSetup || !selectedContentPreview.compiledUrl}
+          disabled={!isInitialized || !isPreviewSetup}
           testId="open-preview"
           isFullWidth
           onClick={trackPreviewOpened}
           buttonType="muted"
           icon="ExternalLink"
-          href={selectedContentPreview.compiledUrl}
-          target="_blank"
           rel="noopener noreferrer">
           Open preview
         </Button>

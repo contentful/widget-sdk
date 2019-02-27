@@ -32,98 +32,66 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   componentDidMount = async () => {
-    const state = await this.initialize();
-    this.setState(state);
-  };
-
-  componentDidUpdate = async prevProps => {
-    // every time entry is updated
-    // we need to complile template url with actual data from entry
-    if (this.props.entry && prevProps.entry !== this.props.entry) {
-      const { contentPreviews, selectedContentPreview } = await this.getCompiledUrls(
-        this.state.contentPreviews,
-        this.props.entry,
-        this.props.contentType
-      );
-      this.setState({ contentPreviews, selectedContentPreview });
-    }
-  };
-
-  getCompiledUrls = async (contentPreviews, entry, contentType) => {
-    const contentPreviewsWithUrls = await Promise.all(
-      contentPreviews.map(preview => {
-        return contentPreview
-          .replaceVariablesInUrl(preview.url, entry, contentType)
-          .then(compiledUrl => ({
-            ...preview,
-            compiledUrl
-          }));
-      })
-    );
-
-    const selectedContentPreviewId = contentPreview.getSelected();
-    const selectedContentPreview = contentPreviewsWithUrls.find(
-      item => item.envId === selectedContentPreviewId
-    );
-
-    return {
-      contentPreviews: contentPreviewsWithUrls,
-      selectedContentPreview:
-        selectedContentPreview || contentPreviews[0] || getEmptyContentPreview()
-    };
-  };
-
-  initialize = async () => {
     // getForContentType does not return API objects, but some non-standard
     // internal representation with `envId` property
     // TODO: refactor to use just API objects
-    let contentPreviews = await contentPreview
+    const contentPreviews = await contentPreview
       .getForContentType(this.props.contentType.sys.id)
       .then(previews => previews || []);
+    const selectedContentPreview = this.getSelectedContentPreview(contentPreviews);
 
-    const selectedContentPreviewId = contentPreview.getSelected();
-    let selectedContentPreview = contentPreviews.find(
-      item => item.envId === selectedContentPreviewId
-    );
-
-    if (this.props.entry) {
-      const compiledUrlsState = await this.getCompiledUrls(
-        contentPreviews,
-        this.props.entry,
-        this.props.contentType
-      );
-      contentPreviews = compiledUrlsState.contentPreviews;
-      selectedContentPreview = compiledUrlsState.selectedContentPreview;
-    }
-
-    return {
+    this.setState({
       isInitialized: true,
       isPreviewSetup: contentPreviews.length > 0,
       contentPreviews,
-      selectedContentPreview:
-        selectedContentPreview || contentPreviews[0] || getEmptyContentPreview()
+      selectedContentPreview
+    });
+  };
+
+  getSelectedContentPreview = contentPreviews => {
+    const selectedContentPreviewId = contentPreview.getSelected();
+    return (
+      contentPreviews.find(preview => preview.envId === selectedContentPreviewId) ||
+      contentPreviews[0] ||
+      getEmptyContentPreview()
+    );
+  };
+
+  getCompiledUrls = async (contentPreviews, entry, contentType) => {
+    const selectedContentPreview = this.getSelectedContentPreview(contentPreviews);
+    const compiledUrl = await contentPreview.replaceVariablesInUrl(
+      selectedContentPreview.url,
+      entry,
+      contentType
+    );
+
+    return {
+      ...selectedContentPreview,
+      compiledUrl
     };
   };
 
   onTrackPreviewOpened = async () => {
-    if (!this.state.isPreviewSetup || !this.state.selectedContentPreview.compiledUrl) {
+    if (!this.state.isPreviewSetup) {
       return;
     }
 
-    const { selectedContentPreview } = this.state;
-    const { dataForTracking } = this.props;
+    const { selectedContentPreview, contentPreviews } = this.state;
+    const { dataForTracking, contentType, entry } = this.props;
+    const previewUrl = await this.getCompiledUrls(contentPreviews, entry, contentType);
+    window.open(previewUrl.compiledUrl);
 
     const contentTypeId = selectedContentPreview.contentType;
-    const contentTypeName = get(this.props.contentType, 'name', '<UNPUBLISHED CONTENT TYPE>');
-    const toState = selectedContentPreview.compiledUrl.replace(/\?.*$/, '');
-    const stFields = this.props.contentType.fields.filter(field => field.type === 'RichText');
+    const contentTypeName = get(contentType, 'name', '<UNPUBLISHED CONTENT TYPE>');
+    const toState = previewUrl.compiledUrl.replace(/\?.*$/, '');
+    const richTextFields = contentType.fields.filter(field => field.type === 'RichText');
 
     const eventOptions = {};
-    if (stFields.length) {
+    if (richTextFields.length) {
       eventOptions.richTextEditor = {
         action: 'contentPreview',
         action_origin: 'entry-editor-content-preview-button',
-        fields: stFields,
+        fields: richTextFields,
         locales: dataForTracking.locales,
         contentTypeId,
         entryId: dataForTracking.entryId

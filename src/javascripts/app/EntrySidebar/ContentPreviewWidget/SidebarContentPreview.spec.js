@@ -56,7 +56,7 @@ describe('entity_editor/Components/SidebarContentPreview.es6', () => {
     });
   });
 
-  it('button should have href and track click event once it is clicked', () => {
+  it('tracks click event once the button is clicked', () => {
     const stubs = {
       trackStub: jest.fn()
     };
@@ -67,8 +67,6 @@ describe('entity_editor/Components/SidebarContentPreview.es6', () => {
       trackPreviewOpened: stubs.trackStub
     });
 
-    expect(wrapper.find(selectors.previewBtn).prop('href')).toEqual('https://contentful.com');
-    expect(wrapper.find(selectors.previewBtn).prop('target')).toEqual('_blank');
     wrapper.find(selectors.previewBtn).simulate('click');
     expect(stubs.trackStub).toHaveBeenCalled();
   });
