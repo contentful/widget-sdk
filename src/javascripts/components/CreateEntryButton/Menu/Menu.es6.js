@@ -35,16 +35,18 @@ class Menu extends React.Component {
   };
 
   componentDidMount() {
-    const { width, height, x, y } = this.menu.getBoundingClientRect();
+    const { width, height, left, top } = this.menu.getBoundingClientRect();
     const minDistanceToViewportBorder = 10;
 
     this.setState({
       positionY:
-        y + height + minDistanceToViewportBorder < window.innerHeight
+        top + height + minDistanceToViewportBorder < window.innerHeight
           ? Position.BOTTOM
           : Position.TOP,
       positionX:
-        x + width + minDistanceToViewportBorder < window.innerWidth ? Position.LEFT : Position.RIGHT
+        left + width + minDistanceToViewportBorder < window.innerWidth
+          ? Position.LEFT
+          : Position.RIGHT
     });
   }
 
