@@ -27,22 +27,21 @@ describe('Entry Editor Controller', function() {
 
     const createDocument = this.$inject('mocks/entityEditor/Document').create;
 
-    this.mockService('app/entity_editor/DataLoader.es6', {
-      loadEntry: () => ({
-        entity: {
-          data: {},
-          getSys: () => ({})
-        },
-        entityInfo: {
-          id: 'testEntryId',
-          contentType: {
-            fields: {}
-          }
-        },
-        fieldControls: {},
-        openDoc: () => createDocument()
-      })
-    });
+    const mockEditorData = {
+      entity: {
+        data: {},
+        getSys: () => ({})
+      },
+      entityInfo: {
+        id: 'testEntryId',
+        contentType: {
+          fields: {}
+        }
+      },
+      fieldControls: {},
+      openDoc: () => createDocument()
+    };
+    const mockPreferencess = {};
 
     this.mockService('services/TokenStore.es6', {
       user$: userBus.property
@@ -55,13 +54,10 @@ describe('Entry Editor Controller', function() {
       const scope = $rootScope.$new();
       scope.context = {};
 
-      createEntryController(scope, 'testEntryId');
+      createEntryController(scope, mockEditorData, mockPreferencess);
 
       return scope;
     };
-
-    const contextHistory = this.$inject('navigation/Breadcrumbs/History.es6').default;
-    contextHistory.set([{}]);
 
     this.spaceContext = _.extend(this.$inject('spaceContext'), {
       entryTitle: function(entry) {

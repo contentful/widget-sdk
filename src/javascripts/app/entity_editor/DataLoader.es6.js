@@ -72,7 +72,7 @@ export function loadAsset(spaceContext, id) {
  * Content type and editor interface data is cached.
  *
  * NOTE This function currently is specialized to entries. It should be
- * easy to generlize this if needed.
+ * easy to generalize this if needed.
  *
  * @param {SpaceContext} spaceContext
  * @param {K.Property<string[]>} ids$

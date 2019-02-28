@@ -1,5 +1,5 @@
 /**
- * This module exports a factory for creating the refernce editor
+ * This module exports a factory for creating the reference editor
  * state.
  *
  * The state connects to the entity field API for a reference field (as

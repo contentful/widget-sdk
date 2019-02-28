@@ -84,8 +84,7 @@ describe('cfEntityLink directive', () => {
           }
         },
         {
-          edit: this.edit,
-          trackEdit: sinon.stub()
+          edit: this.edit
         }
       );
     });

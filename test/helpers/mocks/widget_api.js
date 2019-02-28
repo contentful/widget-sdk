@@ -51,9 +51,6 @@ angular
           settings: {
             helpText: ''
           },
-          _internal: {
-            createReferenceContext: sinon.stub()
-          },
           locales: {
             default: 'en-US',
             available: ['en-US']
@@ -106,9 +103,6 @@ angular
             createEntry: sinon.stub().resolves({}),
             createAsset: sinon.stub().resolves({}),
             getContentTypes: sinon.stub().resolves([])
-          },
-          state: {
-            goToEditor: sinon.stub().resolves()
           }
         };
 

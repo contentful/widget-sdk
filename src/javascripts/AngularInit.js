@@ -68,7 +68,6 @@ angular
       ngRequire('app/asset_editor/cfAssetEditorDirective.es6').default();
       ngRequire('data/entries.es6').default();
       ngRequire('services/contentPreview.es6').default();
-      ngRequire('app/entity_editor/Components/BackNav/cfBackNav.es6').default();
       ngRequire(
         'app/entity_editor/Components/StateChangeConfirmationDialog/cfStateChangeConfirmationDialog.es6'
       ).default();

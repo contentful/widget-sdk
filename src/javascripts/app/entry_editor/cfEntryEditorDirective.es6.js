@@ -6,11 +6,14 @@ export default function register() {
     ({ default: createEditorController }) => ({
       restrict: 'E',
       scope: {
-        entryId: '<',
+        editorData: '<',
         preferences: '<'
       },
       template: JST.entry_editor(),
-      controller: ['$scope', $scope => createEditorController($scope, $scope.entryId)]
+      controller: [
+        '$scope',
+        $scope => createEditorController($scope, $scope.editorData, $scope.preferences)
+      ]
     })
   ]);
 }

@@ -1,5 +1,5 @@
 import { registerDirective, registerFactory } from 'NgRegistry.es6';
-import _ from 'lodash';
+import { noop } from 'lodash';
 import { getAvailableContentTypes } from 'app/widgets/link/utils.es6';
 
 export default function register() {
@@ -19,7 +19,7 @@ export default function register() {
           // We need to define the uiSortable property in the pre-link
           // stage. The ui-sortable directive will obtain a reference to
           // the object that we can later modify.
-          $scope.uiSortable = { update: _.noop };
+          $scope.uiSortable = { update: noop };
         }
       ],
       require: '^cfWidgetApi',

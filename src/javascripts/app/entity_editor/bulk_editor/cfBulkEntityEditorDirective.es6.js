@@ -49,7 +49,6 @@ export default function register() {
       return {
         restrict: 'E',
         scope: {
-          renderInline: '=',
           entityContext: '<',
           bulkEditorContext: '<'
         },
@@ -171,6 +170,9 @@ export default function register() {
               toggleExpansion: function() {
                 data.expanded = !data.expanded;
                 trackAction.setExpansion(data.expanded);
+              },
+              openInEntryEditor: function() {
+                trackAction.openInEntryEditor();
               }
             };
           }

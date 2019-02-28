@@ -145,7 +145,6 @@ export default function register() {
               $scope.crumbs = crumbs;
               $scope.shouldHide = crumbs.length <= 1;
               $scope.shouldShowBack = crumbs.length >= 2;
-              $scope.shouldShowHierarchy = crumbs.length > 2 && !$state.params.inlineEntryId;
             });
           }
         ]

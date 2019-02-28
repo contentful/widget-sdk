@@ -17,7 +17,6 @@ describe('SlideInNavigator', () => {
         $location.search.mockReturnValue(search);
 
         const entities = getSlideInEntities();
-
         expect(entities).toEqual(expectedOutput);
       });
     }
@@ -85,6 +84,58 @@ describe('SlideInNavigator', () => {
         { id: 'asset-id', type: 'Asset' }
       ]
     );
+
+    testFn(
+      'bulk editor',
+      {
+        params: {
+          entryId: 'entry-id',
+          bulkEditor: 'field-id:locale-LOCALE:0'
+        },
+        search: {
+          previousEntries: 'entry-id'
+        }
+      },
+      [
+        { id: 'entry-id', type: 'Entry' },
+        { path: ['entry-id', 'field-id', 'locale-LOCALE', 0], type: 'BulkEditor' }
+      ]
+    );
+
+    testFn(
+      'bulk editor and slides below',
+      {
+        params: {
+          entryId: 'entry-id-2',
+          bulkEditor: 'field-id:en-US:3'
+        },
+        search: {
+          previousEntries: 'entry-id-1,entry-id-2'
+        }
+      },
+      [
+        { id: 'entry-id-1', type: 'Entry' },
+        { id: 'entry-id-2', type: 'Entry' },
+        { path: ['entry-id-2', 'field-id', 'en-US', 3], type: 'BulkEditor' }
+      ]
+    );
+
+    testFn(
+      'slide below, bulk editor and slide on top',
+      {
+        params: {
+          entryId: 'entry-id-2'
+        },
+        search: {
+          previousEntries: 'entry-id-1,entry-id-1:field-id:en-US:-1'
+        }
+      },
+      [
+        { id: 'entry-id-1', type: 'Entry' },
+        { path: ['entry-id-1', 'field-id', 'en-US', -1], type: 'BulkEditor' },
+        { id: 'entry-id-2', type: 'Entry' }
+      ]
+    );
   });
 
   describe('goToSlideInEntity()', () => {
@@ -140,7 +191,8 @@ describe('SlideInNavigator', () => {
         '^.^.entries.detail',
         {
           entryId: 'entry-id-2',
-          previousEntries: 'entry-id-1'
+          previousEntries: 'entry-id-1',
+          bulkEditor: null
         }
       ]
     );

@@ -1,7 +1,6 @@
 import { registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
-import * as Navigator from 'states/Navigator.es6';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index.es6';
 import * as PublicContentType from 'widgets/PublicContentType.es6';
 
@@ -54,36 +53,6 @@ export default function register() {
 
       this.contentType = PublicContentType.fromInternal($scope.entityInfo.contentType);
 
-      // Collection of APIs that are not exposed by the extensions API.
-      this._internal = {};
-      if ($scope.editorContext.editReferences) {
-        this._internal.editReferences = (index, cb) => {
-          $scope.editorContext.editReferences(
-            this.field.id,
-            $scope.locale.internal_code,
-            index,
-            cb
-          );
-        };
-      }
-
-      // TODO: This is used to create multiple reference contexts
-      // to be able to open multiple instances of the bulk editor
-      // simultaneously.
-      if ($scope.editorContext.createReferenceContext) {
-        this._internal.createReferenceContext = (index, cb) =>
-          $scope.editorContext.createReferenceContext(
-            ctField.id,
-            $scope.locale.internal_code,
-            index,
-            cb
-          );
-      }
-
-      if ($scope.editorContext.toggleSlideinEditor) {
-        this._internal.toggleSlideinEditor = $scope.editorContext.toggleSlideinEditor;
-      }
-
       this.entry = {
         // TODO only used by slug and reference editor; we should
         // remove it and only offer a property interface
@@ -98,12 +67,6 @@ export default function register() {
 
       this.space = getBatchingApiClient(spaceContext.cma);
       this.entityHelpers = EntityHelpers.newForLocale($scope.locale.code);
-      this.state = {
-        goToEditor: function(entity) {
-          const ref = Navigator.makeEntityRef(entity);
-          return Navigator.go(ref);
-        }
-      };
 
       // This interface is not exposed on the Extensions SDK. It serves for
       // internal convenience. Everything that uses these values can be

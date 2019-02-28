@@ -1,4 +1,6 @@
-const TYPES = { ASSET: 'Asset', ENTRY: 'Entry' };
+import { isValidResourceId, RESOURCE_ID_PATTERN } from 'data/utils.es6';
+
+const TYPES = { ASSET: 'Asset', ENTRY: 'Entry', BULK_EDITOR: 'BulkEditor' };
 
 const slideHelper = {
   /**
@@ -26,11 +28,11 @@ const slideHelper = {
    * Serializes a given slide as a set of arguments ready for `$state.go(...args)`
    *
    * @param {Slide} slide
-   * @param params
+   * @param {Object} params? Custom params.
    * @returns {*[]}
    */
   toStateGoArgs: (slide, params = {}) => [
-    getSlideStrageyFor(slide).STATE_PATH,
+    getSlideStrategyFor(slide).STATE_PATH,
     { ...params, ...slideHelper.toStateParams(slide) }
   ],
   /**
@@ -45,11 +47,36 @@ export default slideHelper;
 
 const slideStrategies = [
   {
+    TYPE: TYPES.BULK_EDITOR,
+    STATE_PATH: '^.^.entries.detail',
+    shareStateWithPreviousEntry: true,
+    newFromStateParams: ({ entryId, bulkEditor = '' }) =>
+      getSlideStrategyFor({ type: TYPES.BULK_EDITOR }).newFromQS(`${entryId}:${bulkEditor}`),
+    newFromQS: string => {
+      const ID = RESOURCE_ID_PATTERN;
+      const BULK_EDITOR_ID_REGEXP = new RegExp(`^(${ID}):(${ID}):(${ID}):(-?\\d+)$`);
+      const match = string.match(BULK_EDITOR_ID_REGEXP);
+      if (match) {
+        const [_, entryId, fieldId, localeCode, focusedEntityIndex] = match;
+        return {
+          type: TYPES.BULK_EDITOR,
+          path: [entryId, fieldId, localeCode, Number(focusedEntityIndex)]
+        };
+      }
+      return null;
+    },
+    toStateParams: ({ path: [entryId, ...entryBulkPath] }) => ({
+      entryId,
+      bulkEditor: entryBulkPath.join(':')
+    }),
+    toString: ({ path }) => path.join(':')
+  },
+  {
     TYPE: TYPES.ENTRY,
     STATE_PATH: '^.^.entries.detail',
     newFromStateParams: ({ entryId: id }) => (id ? { id, type: TYPES.ENTRY } : null),
-    newFromQS: string => (isId(string) ? { id: string, type: TYPES.ENTRY } : null),
-    toStateParams: ({ id: entryId }) => ({ entryId }),
+    newFromQS: string => (isValidResourceId(string) ? { id: string, type: TYPES.ENTRY } : null),
+    toStateParams: ({ id: entryId }) => ({ entryId, bulkEditor: null }),
     toString: ({ id }) => id
   },
   {
@@ -58,20 +85,20 @@ const slideStrategies = [
     newFromStateParams: ({ assetId: id }) => (id ? { id, type: TYPES.ASSET } : null),
     newFromQS: _string => null, // Assets can't be in query string.
     toStateParams: ({ id: assetId }) => ({ assetId }),
-    toString: ({ id }) => id
+    toString: ({ id }) => `${TYPES.ASSET}^${id}`
   }
 ];
 
-function getSlideStrageyFor(slide) {
-  const helper = slideStrategies.find(({ TYPE }) => TYPE === slide.type);
-  if (helper) {
-    return helper;
+function getSlideStrategyFor({ type }) {
+  const strategy = slideStrategies.find(({ TYPE }) => TYPE === type);
+  if (strategy) {
+    return strategy;
   }
-  throw new Error(`Unsupported slide type "${slide.type}`);
+  throw new Error(`Unsupported slide type "${type}"`);
 }
 
 function newStrategyForSlideInvoker(fnName) {
-  return slide => getSlideStrageyFor(slide)[fnName](slide);
+  return slide => getSlideStrategyFor(slide)[fnName](slide);
 }
 
 function newFactoryStrategyInvoker(fnName) {
@@ -84,8 +111,4 @@ function newFactoryStrategyInvoker(fnName) {
     }
     return null;
   };
-}
-
-function isId(string) {
-  return /[^:. ]+/.test(string);
 }

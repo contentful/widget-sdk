@@ -1,12 +1,8 @@
-import { deepFreeze } from 'utils/Freeze.es6';
 import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
-import { cloneDeep, find, constant } from 'lodash';
+import { constant } from 'lodash';
 
-import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import { user$ } from 'services/TokenStore.es6';
-
-import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 
 import * as Validator from './Validator.es6';
 import * as Focus from './Focus.es6';
@@ -14,17 +10,14 @@ import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking, { trackEntryView } from './Tracking.es6';
 
-import { loadEntry } from 'app/entity_editor/DataLoader.es6';
 import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 import * as logger from 'services/logger.es6';
 import * as Telemetry from 'Telemetry.es6';
 
 const $controller = getModule('$controller');
-const $rootScope = getModule('$rootScope');
 const spaceContext = getModule('spaceContext');
 const localeStore = getModule('TheLocaleStore');
-const $state = getModule('$state');
 const DataFields = getModule('EntityEditor/DataFields');
 
 /**
@@ -46,36 +39,20 @@ const DataFields = getModule('EntityEditor/DataFields');
  * TODO instead of exposing the sub-controllers on the scope we should
  * expose them on this controller.
  *
- * @scope.requires {Client.Entity} entry
- * @scope.requires {Client.Entity} entity
- * @scope.requires {Client.ContentType} contentType
+ * @param {Object} $scope
+ * @param {Object} editorData
+ * @param {boolean} preferences.hasInitialFocus
+ * @param {boolean} preferences.showDisabledFields
+ * @param {boolean} preferences.showAuxPanel
+ * @param {function} preferences.toggleAuxPanel
  * @scope.requires {Data.FieldControl[]} formControls
  *   Passed to FormWidgetsController to render field controls
  */
-export default async function create($scope, entryId) {
+export default async function create($scope, editorData, preferences) {
   $scope.context = {};
-  let editorData;
   const start = Date.now();
 
-  try {
-    editorData = await loadEntry(spaceContext, entryId);
-  } catch (error) {
-    $scope.context.loadingError = error;
-    return;
-  }
-
   Telemetry.record('entry_editor_http_time', Date.now() - start);
-
-  $scope.context.ready = true;
-  $scope.editorData = editorData;
-
-  // add list as parent state only if it's a deep link
-  if (contextHistory.isEmpty()) {
-    contextHistory.add(crumbFactory.EntryList());
-  }
-
-  // add current state
-  contextHistory.add(crumbFactory.Entry(editorData.entity.getSys(), $scope.context));
 
   const editorContext = ($scope.editorContext = {});
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
@@ -95,12 +72,13 @@ export default async function create($scope, entryId) {
 
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
   try {
+    // TODO: Do not directly access $parent in here!
     trackEntryView({
       editorData,
       entityInfo,
-      currentSlideLevel: $scope.$parent.entities.length,
+      currentSlideLevel: $scope.$parent.slideStates.length,
       locale: localeStore.getDefaultLocale().internal_code,
-      editorType: $scope.$parent.entities.length > 1 ? 'slide_in_editor' : 'entry_editor'
+      editorType: $scope.$parent.slideStates.length > 1 ? 'slide_in_editor' : 'entry_editor'
     });
   } catch (error) {
     logger.logError(error);
@@ -126,7 +104,7 @@ export default async function create($scope, entryId) {
     notify,
     fields$: doc.valuePropertyAt(['fields']),
     entityInfo,
-    preferences: $scope.preferences
+    preferences
   });
 
   editorContext.focus = Focus.create();
@@ -141,75 +119,9 @@ export default async function create($scope, entryId) {
     $scope.title = truncate(title, 50);
   });
 
-  $rootScope.$on('$stateChangeStart', (_event, _toState, toParams, _fromState, fromParams) => {
-    if (fromParams.bulkEditor && !toParams.bulkEditor && $scope.referenceContext) {
-      $scope.referenceContext.close();
-    }
-  });
-
-  editorContext.editReferences = (fieldApiName, locale, index, cb) => {
-    const bulkEditorParam = { bulkEditor: `${fieldApiName}:${locale}:${index}` };
-    const crumb = cloneDeep(crumbFactory.Entry(editorData.entity.data.sys, $scope.context));
-    crumb.link.params = {
-      ...crumb.link.params,
-      ...bulkEditorParam
-    };
-    $state.go('.', bulkEditorParam);
-    contextHistory.add(crumb);
-    $scope.referenceContext = createReferenceContext(fieldApiName, locale, index, () => {
-      $state.go('.', { bulkEditor: '' });
-      cb();
-    });
-  };
-
-  editorContext.createReferenceContext = createReferenceContext;
-
-  function createReferenceContext(fieldApiName, locale, index, cb) {
-    // The links$ property should end when the editor is closed
-    const field = find(entityInfo.contentType.fields, { apiName: fieldApiName });
-    const lifeline = K.createBus();
-    const links$ = K.endWith(
-      doc.valuePropertyAt(['fields', field.id, locale]),
-      lifeline.stream
-    ).map(links => links || []);
-
-    return {
-      links$,
-      focusIndex: index,
-      editorSettings: deepFreeze(cloneDeep($scope.preferences)),
-      parentId: entityInfo.id,
-      field,
-      add: function(link) {
-        return doc.pushValueAt(['fields', field.id, locale], link);
-      },
-      remove: function(index) {
-        return doc.removeValueAt(['fields', field.id, locale, index]);
-      },
-      close: function() {
-        lifeline.end();
-        $scope.referenceContext = null;
-        if (cb) {
-          cb();
-        }
-      }
-    };
-  }
-
-  $scope.$on('scroll-editor', (_ev, scrollTop) => {
-    contextHistory.extendCurrent({ scroll: scrollTop });
-  });
-
   $scope.user = K.getValue(user$);
 
-  const startScroll = contextHistory.getLast().scroll;
-  if (startScroll) {
-    $scope.initialEditorScroll = startScroll;
-  } else {
-    // The first input element of the editor will become focused once
-    // the document is loaded and the editor will scroll to that
-    // position.
-    editorContext.hasInitialFocus = true;
-  }
+  editorContext.hasInitialFocus = preferences.hasInitialFocus;
 
   K.onValueScope($scope, $scope.otDoc.state.isDirty$, isDirty => {
     $scope.context.dirty = isDirty;

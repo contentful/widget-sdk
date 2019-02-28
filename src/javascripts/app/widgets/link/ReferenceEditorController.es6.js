@@ -1,4 +1,4 @@
-import { get, isNaN } from 'lodash';
+import { find, get } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as List from 'utils/List.es6';
 
@@ -8,6 +8,10 @@ import {
   onEntryCreate as trackEntryCreate,
   onEntryEdit as trackEntryEdit
 } from 'analytics/events/ReferenceEditor.es6';
+import {
+  getSlideInEntities,
+  goToSlideInEntity as goToSlideInEntityBase
+} from 'navigation/SlideInNavigator/index.es6';
 
 import * as State from './State.es6';
 
@@ -22,10 +26,6 @@ import { getModule } from 'NgRegistry.es6';
 const entitySelector = getModule('entitySelector');
 const createEntity = getModule('cfReferenceEditor/createEntity');
 const spaceContext = getModule('spaceContext');
-const $state = getModule('$state');
-const { getSlideInEntities, goToSlideInEntity: goToSlideInEntityBase } = getModule(
-  'navigation/SlideInNavigator'
-);
 
 const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
   'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference';
@@ -43,16 +43,13 @@ export default function create($scope, widgetApi) {
     $scope.single
   );
 
-  const canEditReferences = !!widgetApi._internal.editReferences;
-  const bulkEditorEnabled = canEditReferences && widgetApi.settings.bulkEditing;
+  const isBulkEditorEnabled = widgetApi.settings.bulkEditing;
+  const isAnotherBulkEditorOpen = () => find(getSlideInEntities(), { type: 'BulkEditor' });
   $scope.canCreateAsset = canCreateAsset();
   $scope.isAssetCreationInProgress = true;
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
   $scope.referenceType = {};
-  $scope.$on('ct-expand-state:toggle', (_event, [...args]) =>
-    handleInlineReferenceEditorToggle(...args)
-  );
 
   // Passed to cfEntityLink and cfAssetCard directive
   $scope.config = {
@@ -117,11 +114,6 @@ export default function create($scope, widgetApi) {
 
   $scope.addNewEntry = makeAddNewEntityHandler(contentTypeId => {
     const contentType = spaceContext.publishedCTs.get(contentTypeId);
-    if ($scope.referenceType.inline) {
-      // necessary to prompt loading state
-      $scope.isReady = false;
-    }
-
     return widgetApi.space
       .createEntry(contentTypeId, {})
       .then(makeNewEntityHandler(contentType))
@@ -155,18 +147,9 @@ export default function create($scope, widgetApi) {
 
   function makeNewEntityHandler(contentType) {
     return entity => {
-      const numEntities = getSlideInEntities().length;
-      const shouldTrackSlideInOpen = !bulkEditorEnabled || numEntities > 1;
-
       state.addEntities([entity]);
-      editEntityAction(entity, -1);
-
-      if (shouldTrackSlideInOpen) {
-        track('slide_in_editor:open_create', {
-          targetSlideLevel: numEntities,
-          currentSlideLevel: numEntities - 1
-        });
-      }
+      const slideEventData = editEntityAction(entity, -1);
+      track('slide_in_editor:open_create', slideEventData);
 
       if (entity.sys.type === 'Entry') {
         track('entry:create', {
@@ -218,12 +201,8 @@ export default function create($scope, widgetApi) {
       // a keyed list.
       $scope.entityModels = List.makeKeyed(models, model => model.hash);
       $scope.isReady = true;
-
-      maybeOpenBulkEditor();
     }
   });
-
-  maybeOpenBulkEditor();
 
   const unregisterPublicationWarning = field.registerUnpublishedReferencesWarning({
     getData: () => ({
@@ -245,18 +224,6 @@ export default function create($scope, widgetApi) {
     return type === $scope.type && style === $scope.style;
   }
 
-  function handleInlineReferenceEditorToggle(id, locale, enableInlineEditing) {
-    if (id !== field.id || locale !== field.locale) {
-      return;
-    }
-    if (enableInlineEditing) {
-      $scope.referenceType = { inline: true };
-      return;
-    }
-    const type = $scope.isAssetCard ? 'asset' : 'link';
-    $scope.referenceType = { [type]: true };
-  }
-
   function getUnpublishedReferences() {
     const models = $scope.entityModels || [];
     return models
@@ -276,53 +243,30 @@ export default function create($scope, widgetApi) {
     const contentTypeId = get(entity, 'sys.contentType.sys.id');
     const hash = [id, version, isDisabled, contentTypeId].join('!');
     const contentType = contentTypeId && spaceContext.publishedCTs.fetch(contentTypeId);
-
-    // This is passed down to the bulk entity editor actions
-    // to be able to unlink an entry when the bulk editor is
-    // rendered inline.
-    let refCtxt = null;
-    if (widgetApi._internal.createReferenceContext) {
-      refCtxt = {};
-    }
-    const entityModel = {
+    return {
       id,
       entity,
       contentType,
       hash,
       actions: {
-        edit: prepareEditAction(entity, index, isDisabled),
-        remove: prepareRemoveAction(index, isDisabled),
-        trackEdit: () => trackEdit(entity),
-        inlineEdit: () => goToSlideInEntity(entity)
-      },
-      // TODO: This is used to create multiple reference contexts
-      // to be able to open multiple instances of the bulk editor
-      // simultaneously. This will be null if it is a nested reference.
-      refCtxt
+        edit: prepareEditAction(entity, index),
+        remove: prepareRemoveAction(index, isDisabled)
+      }
     };
-
-    const shouldSlideIn = !bulkEditorEnabled && refCtxt !== null && !$state.params.inlineEntryId;
-
-    if (shouldSlideIn && entity) {
-      entityModel.actions.slideinEdit = () => goToSlideInEntity(entity);
-    }
-
-    return entityModel;
   }
 
-  function prepareEditAction(entity, index, isDisabled) {
-    if (entity && !isDisabled && !isCurrentEntry(entity) && bulkEditorEnabled) {
-      return $event => {
-        if ($event && $event.preventDefault) {
-          $event.preventDefault();
-        }
-        bulkEditorAction(entity, index);
-      };
-    } else {
-      return null;
-    }
+  function prepareEditAction(entity, index) {
+    return _event => {
+      if (!entity || isCurrentEntry(entity)) {
+        return;
+      }
+      const slideEventData = editEntityAction(entity, index);
+      track('slide_in_editor:open', slideEventData);
+      trackEdit(entity);
+    };
   }
 
+  // TODO: We should get rid of this affordable tracking introduced for inline editing.
   function trackEdit(entity) {
     // only track for 1:1 entry references that will open in a new entry editor.
     if (entity.sys.type === 'Entry' && !!$scope.single && !isCurrentEntry(entity)) {
@@ -333,27 +277,25 @@ export default function create($scope, widgetApi) {
   }
 
   function editEntityAction(entity, index) {
-    if ($scope.referenceType.inline) {
-      return;
-    } else if (bulkEditorEnabled) {
-      bulkEditorAction(entity, index);
-    } else if (canEditReferences) {
-      goToSlideInEntity(entity);
-    } else {
-      widgetApi.state.goToEditor(entity);
+    if (isBulkEditorEnabled) {
+      if (!isAnotherBulkEditorOpen()) {
+        return bulkEditorAction(index);
+      } else {
+        // Limiting the user to only one bulk editor was decided for the sake of
+        // UX and performance. Since the bulk editor as a slide refactoring we allow
+        // the bulk editor to be opened from any slide level, not just the first one.
+        trackOpenSlideInInsteadOfBulk();
+      }
     }
+    return goToSlideInEntity(entity);
   }
 
-  function bulkEditorAction(entity, index) {
-    if (getSlideInEntities().length > 1) {
-      trackOpenSlideIn();
-      goToSlideInEntity(entity);
-    } else {
-      goToBulkEditor(index);
-    }
+  function bulkEditorAction(index) {
+    const path = [widgetApi.entry.getSys().id, field.id, field.locale, index];
+    return goToSlideInEntityBase({ type: 'BulkEditor', path });
   }
 
-  function trackOpenSlideIn() {
+  function trackOpenSlideInInsteadOfBulk() {
     track('bulk_editor:open_slide_in', {
       parentEntryId: widgetApi.entry.getSys().id,
       refCount: $scope.entityModels.length
@@ -362,22 +304,6 @@ export default function create($scope, widgetApi) {
 
   function goToSlideInEntity({ sys: { id, type } }) {
     return goToSlideInEntityBase({ id, type });
-  }
-
-  function maybeOpenBulkEditor() {
-    const bulkEditorParam = $state.params.bulkEditor;
-    if (bulkEditorParam) {
-      const [fieldId, locale, index] = bulkEditorParam.split(':');
-      if (fieldId === field.id && locale === field.locale) {
-        goToBulkEditor(index);
-      }
-    }
-  }
-
-  function goToBulkEditor(referenceIndex) {
-    const fieldIndex = isNaN(Number(referenceIndex)) ? 0 : Number(referenceIndex);
-    widgetApi._internal.editReferences &&
-      widgetApi._internal.editReferences(fieldIndex, state.refreshEntities);
   }
 
   function prepareRemoveAction(index, isDisabled) {

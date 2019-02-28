@@ -1,45 +1,33 @@
 .workbench.sticky-parent
-  // TODO: This is for inline reference editing
-  // BETA release. Remove this once we are done with
-  // the experiment.
-  header.workbench-header(ng-if="!renderInline")
-    .breadcrumbs-widget
-      .breadcrumbs-container
-        cf-icon.btn.btn__back(
-          ng-click="referenceContext.close()"
-          name="breadcrumbs-icon-back"
-          role="button"
-          data-test-id="breadcrumbs-back-btn")
+  header.workbench-header
+    react-component(
+      name="app/entity_editor/Components/BackNav"
+      props="{onClose: newCloseWithReason('arrow_back')}")
     h1.workbench-header__title
       | Entries linked in <em>{{ referenceContext.field.name }}</em> ({{ data.linkCount }})
     .workbench-header__actions
        button.btn-secondary-action(
-         ng-click="referenceContext.close()")
+         ng-click="newCloseWithReason('bulk_editor_close')()")
          | Close
 
   .workbench-main
-    .workbench-main__content(
-      ng-show="!data.loaded && !renderInline"
-      style="padding-top: 0")
+    .workbench-main__content(ng-show="!data.loaded" style="padding-top: 0")
       .loading-box--stretched
         .loading-box__spinner
         .loading-box__message
           | Loading entries
 
-    .workbench-main__content(
-      ng-show="data.loaded || renderInline"
-      style="padding-top: 0")
+    .workbench-main__content(ng-show="data.loaded" style="padding-top: 0")
       // Safari and Edge need a relative container for dropdowns to work:
       div(style="position: relative"
         ng-repeat="ctx in entityContexts track by ctx.key"
         data-entity-id="{{ctx.id}}")
         cf-bulk-entity-editor(
-          render-inline="renderInline"
           entity-context="ctx"
           bulk-editor-context="editorContext"
         )
 
-    .workbench-main__sidebar(ng-if="!renderInline")
+    .workbench-main__sidebar
       .entity-sidebar
         h2.entity-sidebar__heading
           | Entries

@@ -9,18 +9,13 @@ describe('BackNav', () => {
 
     this.sandbox = sinon.sandbox.create();
     this.goToPreviousSlideOrExitStub = this.sandbox.stub();
-    this.closeState = this.sandbox.stub();
 
     this.system = createIsolatedSystem();
     const getModule = sinon.stub();
 
-    getModule
-      .withArgs('navigation/SlideInNavigator')
-      .returns({
-        goToPreviousSlideOrExit: this.goToPreviousSlideOrExitStub
-      })
-      .withArgs('navigation/closeState')
-      .returns(this.closeState);
+    getModule.withArgs('navigation/SlideInNavigator').returns({
+      goToPreviousSlideOrExit: this.goToPreviousSlideOrExitStub
+    });
 
     this.system.set('NgRegistry.es6', { getModule });
     const { default: BackNav } = await this.system.import('app/entity_editor/Components/BackNav');
@@ -48,14 +43,6 @@ describe('BackNav', () => {
     sinon.assert.notCalled(this.goToPreviousSlideOrExitStub);
     backNavButton.simulate('click');
     sinon.assert.calledOnce(this.goToPreviousSlideOrExitStub);
-    sinon.assert.alwaysCalledWithMatch(
-      this.goToPreviousSlideOrExitStub,
-      'arrow_back',
-      sinon.match.func
-    );
-    sinon.assert.notCalled(this.closeState);
-    const [[, callback]] = this.goToPreviousSlideOrExitStub.args;
-    callback();
-    sinon.assert.calledOnce(this.closeState);
+    sinon.assert.alwaysCalledWithMatch(this.goToPreviousSlideOrExitStub, 'arrow_back');
   });
 });

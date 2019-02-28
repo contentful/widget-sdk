@@ -7,7 +7,7 @@
 export default function(eventName, data) {
   return {
     data: {
-      action: eventName,
+      action: extractAction(eventName),
       executing_user_id: data.userId,
       space_id: data.spaceId,
       organization_id: data.organizationId,
@@ -22,4 +22,7 @@ export default function(eventName, data) {
       content_type_id: data.contentTypeId
     }
   };
+}
+function extractAction(eventName) {
+  return eventName.split(':')[1];
 }

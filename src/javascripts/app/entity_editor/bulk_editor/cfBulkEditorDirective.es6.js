@@ -15,8 +15,7 @@ export default function register() {
     (spaceContext, entitySelector, Tracking, DataLoader, Analytics, accessChecker) => {
       return {
         scope: {
-          referenceContext: '=',
-          renderInline: '='
+          referenceContext: '='
         },
         restrict: 'E',
         template: JST.bulk_editor(),
@@ -35,13 +34,7 @@ export default function register() {
 
         const scrollTargetBus = K.createBus($scope);
 
-        let track = Tracking.create(referenceContext.parentId, referenceContext.links$);
-
-        // This ignores tracking when bulk editor is rendered
-        // inline.
-        if ($scope.renderInline) {
-          track = Tracking.createNoop();
-        }
+        const track = Tracking.create(referenceContext.parentId, referenceContext.links$);
 
         track.open();
         $scope.$on('$destroy', track.close);
@@ -96,9 +89,12 @@ export default function register() {
           referenceContext.field,
           addLinks,
           referenceContext.links$,
-          track,
-          $scope.renderInline
+          track
         );
+
+        $scope.newCloseWithReason = reason => () => {
+          referenceContext.close(reason);
+        };
 
         function addLinks(links) {
           nextFocusIndex = -1;
@@ -119,7 +115,7 @@ export default function register() {
           const focusIndex =
             nextFocusIndex < 0 ? $scope.entityContexts.length + nextFocusIndex : nextFocusIndex;
           const focusContext = $scope.entityContexts[focusIndex];
-          if (focusContext && !$scope.renderInline) {
+          if (focusContext) {
             scrollTargetBus.emit(focusContext.key);
           }
           nextFocusIndex = null;
@@ -129,7 +125,7 @@ export default function register() {
       /**
        * Returns the actions for creating new entries and adding existing entries.
        */
-      function makeActions(field, addLinks, links$, track, isInline) {
+      function makeActions(field, addLinks, links$, track) {
         // TODO necessary for entitySelector change it
         const extendedField = _.extend({}, field, {
           itemLinkType: _.get(field, ['items', 'linkType']),
@@ -154,7 +150,7 @@ export default function register() {
             : spaceContext.publishedCTs.get(ctOrCtId);
           return spaceContext.cma.createEntry(contentType.getId(), {}).then(entry => {
             Analytics.track('entry:create', {
-              eventOrigin: isInline ? 'inline-reference-editor' : 'bulk-editor',
+              eventOrigin: 'bulk-editor',
               contentType: contentType,
               response: { data: entry }
             });

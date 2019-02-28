@@ -33,41 +33,6 @@ describe('cfBreadcrumbsDirective spec', () => {
     };
   });
 
-  describe('ancestor menu', () => {
-    it('is only shown for more then two crumbs', function() {
-      this.setCrumbs(1);
-      this.view.find('breadcrumbs-ancestor-btn').assertNotVisible();
-
-      this.setCrumbs(2);
-      this.view.find('breadcrumbs-ancestor-btn').assertNotVisible();
-
-      this.setCrumbs(3);
-      this.view.find('breadcrumbs-ancestor-btn').assertIsVisible();
-    });
-
-    it('shows crumb title in menu', function() {
-      this.setCrumbs(4);
-      this.view.find('breadcrumbs-ancestor-btn').click();
-      this.$flush();
-      range(0, 3).map(i => {
-        const el = this.view.find(`breadcrumbs.crumb.${i}`);
-        el.assertHasText(`title${i}`);
-      });
-      this.view.find('breadcrumbs.crumb.3').assertNotVisible();
-    });
-
-    it('goes to crumb state on click', function() {
-      this.setCrumbs(4);
-
-      this.view.find('breadcrumbs-ancestor-btn').click();
-      this.$flush();
-
-      this.view.find(`breadcrumbs.crumb.${2}`).click();
-      this.$flush();
-      sinon.assert.calledOnceWith(this.$state.go, 'state2', { id: 'param2' });
-    });
-  });
-
   describe('"back" button', () => {
     it('goes back to second to last crumb', function() {
       this.setCrumbs(4);

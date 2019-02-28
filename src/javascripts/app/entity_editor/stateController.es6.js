@@ -17,7 +17,6 @@ export default function register() {
     'command',
     'modalDialog',
     'spaceContext',
-    'navigation/closeState',
     'analytics/Analytics.es6',
     'navigation/SlideInNavigator/index.es6',
     'app/entity_editor/PublicationWarnings/index.es6',
@@ -30,7 +29,6 @@ export default function register() {
       Command,
       modalDialog,
       spaceContext,
-      closeState,
       Analytics,
       { goToPreviousSlideOrExit },
       { create: createPublicationWarnings }
@@ -199,10 +197,6 @@ export default function register() {
                       eventOrigin = 'bulk-editor';
                     }
 
-                    if ($scope.renderInline) {
-                      eventOrigin = 'inline-reference-editor';
-                    }
-
                     Analytics.track('entry:publish', {
                       eventOrigin: eventOrigin,
                       contentType: contentType,
@@ -227,7 +221,7 @@ export default function register() {
       controller.delete = Command.create(
         () =>
           applyActionWithConfirmation(Action.Delete()).then(() => {
-            goToPreviousSlideOrExit('delete', closeState);
+            goToPreviousSlideOrExit('delete');
           }),
         {
           disabled: function() {

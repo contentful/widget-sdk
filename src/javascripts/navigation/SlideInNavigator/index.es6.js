@@ -9,6 +9,14 @@ const $state = getModule('$state');
 const SLIDES_BELOW_QS = 'previousEntries';
 
 /**
+ * Serializes a given slide as a string.
+ *
+ * @param {Slide} slide
+ * @returns {string}
+ */
+export const getSlideAsString = slideHelper.toString;
+
+/**
  * Returns all currently displayed entities including the top slide. Contains no
  * duplicates as the same entity can not be displayed twice. An asset can only be
  * the top slide (last array value).
@@ -47,7 +55,8 @@ export function goToSlideInEntity(slide) {
  * Removes the current top level slide.
  *
  * @param {string} eventLabel
- * @param {Function} onExit Invoked when the last slide is closed
+ * @param {Function} onExit? Invoked when the last slide is closed. Navigates to
+ * the current state's list if omitted.
  */
 export function goToPreviousSlideOrExit(eventLabel, onExit) {
   const slideInEntities = getSlideInEntities();
@@ -59,7 +68,7 @@ export function goToPreviousSlideOrExit(eventLabel, onExit) {
       track(`slide_in_editor:${eventLabel}`, eventData);
     }
   } else {
-    onExit();
+    onExit ? onExit() : $state.go('^.list');
   }
 }
 
