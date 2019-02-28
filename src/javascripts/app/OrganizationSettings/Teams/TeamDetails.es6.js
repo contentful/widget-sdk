@@ -3,7 +3,14 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
-import { Button, Tooltip, Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
+import {
+  Button,
+  Tooltip,
+  Tabs,
+  Tab,
+  TabPanel,
+  Heading
+} from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
@@ -76,6 +83,8 @@ const styles = {
 
 class TeamDetails extends React.Component {
   static propTypes = {
+    spaceMembershipsEnabled: PropTypes.bool.isRequired,
+
     emptyTeamMemberships: PropTypes.bool.isRequired,
     emptyTeamSpaceMemberships: PropTypes.bool.isRequired,
     readOnlyPermission: PropTypes.bool.isRequired,
@@ -210,17 +219,22 @@ class TeamDetails extends React.Component {
               </div>
               <div className="user-details__content">
                 <header className={styles.tabs}>
-                  <Tabs role="tablist">
-                    {Object.entries(this.tabs).map(([id, { label }]) => (
-                      <Tab
-                        key={id}
-                        id={id}
-                        selected={this.isSelected(id)}
-                        onSelect={() => this.selectTab(id)}>
-                        {label}
-                      </Tab>
-                    ))}
-                  </Tabs>
+                  {this.props.spaceMembershipsEnabled && (
+                    <Tabs role="tablist">
+                      {Object.entries(this.tabs).map(([id, { label }]) => (
+                        <Tab
+                          key={id}
+                          id={id}
+                          selected={this.isSelected(id)}
+                          onSelect={() => this.selectTab(id)}>
+                          {label}
+                        </Tab>
+                      ))}
+                    </Tabs>
+                  )}
+                  {!this.props.spaceMembershipsEnabled && (
+                    <Heading element="h2">Team members</Heading>
+                  )}
                   {!showingForm &&
                     !this.isListEmpty() &&
                     (readOnlyPermission ? (

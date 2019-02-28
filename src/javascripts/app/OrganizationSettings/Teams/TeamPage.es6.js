@@ -11,6 +11,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 import { FEATURE_INACTIVE } from 'redux/accessConstants.es6';
 import { Organization as OrganizationPropType } from '../PropTypes.es6';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 
 import TeamList from './TeamList.es6';
 import TeamDetails from './TeamDetails.es6';
@@ -27,7 +28,18 @@ class TeamPage extends React.Component {
     deniedReason: PropTypes.string
   };
 
-  componentDidMount() {
+  state = {
+    spaceMembershipsEnabled: false
+  };
+
+  async componentDidMount() {
+    if (this.props.showDetails) {
+      const spaceMembershipsEnabled = await getCurrentVariation(
+        'feature-bv-01-2019-team-space-memberships'
+      );
+      this.setState({ spaceMembershipsEnabled });
+    }
+
     if (!this.props.isLoading) {
       this.props.onReady();
     }
@@ -67,7 +79,7 @@ class TeamPage extends React.Component {
       return <TeamList />;
     }
     if (showDetails) {
-      return <TeamDetails />;
+      return <TeamDetails spaceMembershipsEnabled={this.state.spaceMembershipsEnabled} />;
     }
     // this will never be reached, because angular handles 404 for this case
     // if we remove that from angular at some point, this would be a possible place
