@@ -91,3 +91,9 @@ export const TeamSpaceMembership = PropTypes.shape({
     team: Team
   }).isRequired
 });
+
+export const TeamSpaceMembershipPlaceholder = PropTypes.shape({
+  sys: PropTypes.shape({
+    id: PropTypes.oneOf(['placeholder']).isRequired
+  }).isRequired
+});

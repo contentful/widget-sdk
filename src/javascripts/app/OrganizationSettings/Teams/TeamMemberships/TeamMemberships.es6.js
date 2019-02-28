@@ -10,7 +10,6 @@ import {
   TableRow,
   Button
 } from '@contentful/forma-36-react-components';
-import Placeholder from 'app/common/Placeholder.es6';
 import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
 import { getCurrentTeam, getTeams, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import { TeamMembership as TeamMembershipPropType } from 'app/OrganizationSettings/PropTypes.es6';
@@ -45,7 +44,7 @@ class TeamMemberships extends React.Component {
   };
 
   render() {
-    const { showingForm, onFormDismissed, memberships, teamName, readOnlyPermission } = this.props;
+    const { showingForm, onFormDismissed, memberships, readOnlyPermission } = this.props;
     const empty = memberships.length === 0 && !showingForm;
 
     return (
@@ -75,21 +74,6 @@ class TeamMemberships extends React.Component {
               )}
             </TableBody>
           </Table>
-        )}
-        {empty && !readOnlyPermission && (
-          <Placeholder
-            testId="no-members-placeholder"
-            title={`Team ${teamName} has no members 🐚`}
-            text="They’re not gonna magically appear."
-            button={<AddTeamMemberButton onClick={() => this.setState({ showingForm: true })} />}
-          />
-        )}
-        {empty && readOnlyPermission && (
-          <Placeholder
-            testId="no-members-placeholder"
-            title={`Team ${teamName} has no members 🐚`}
-            text="You don't have permission to add members"
-          />
         )}
       </React.Fragment>
     );

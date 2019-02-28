@@ -23,7 +23,9 @@ export class TeamSpaceMemberships extends React.Component {
   static propTypes = {
     showingForm: PropTypes.bool.isRequired,
     onFormDismissed: PropTypes.func.isRequired,
-    memberships: PropTypes.arrayOf(types.TeamSpaceMembership),
+    memberships: PropTypes.arrayOf(
+      PropTypes.oneOfType([types.TeamSpaceMembership, types.TeamSpaceMembershipPlaceholder])
+    ),
     team: types.Team
   };
 
@@ -54,11 +56,13 @@ export class TeamSpaceMemberships extends React.Component {
           {memberships.map(membership =>
             editingMembershipId === membership.sys.id ? (
               <TeamSpaceMembershipForm
+                key={membership.sys.id}
                 initialMembership={membership}
                 onClose={() => this.setState({ editingMembershipId: null })}
               />
             ) : (
               <TeamSpaceMembershipRow
+                key={membership.sys.id}
                 membership={membership}
                 onEdit={() => this.setState({ editingMembershipId: membership.sys.id })}
               />

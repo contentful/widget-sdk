@@ -8,6 +8,8 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { getTeams, getCurrentTeam, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
+import { getCurrentTeamSpaceMembershipList } from 'redux/selectors/teamSpaceMemberships.es6';
+import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import Workbench from 'app/common/Workbench.es6';
 import Placeholder from 'app/common/Placeholder.es6';
@@ -74,6 +76,8 @@ const styles = {
 
 class TeamDetails extends React.Component {
   static propTypes = {
+    emptyTeamMemberships: PropTypes.bool.isRequired,
+    emptyTeamSpaceMemberships: PropTypes.bool.isRequired,
     readOnlyPermission: PropTypes.bool.isRequired,
     team: TeamPropType,
     orgId: PropTypes.string.isRequired,
@@ -84,12 +88,22 @@ class TeamDetails extends React.Component {
     teamMembers: {
       label: 'Team members',
       component: TeamMemberships,
-      actionLabel: 'Add a team member'
+      actionLabel: 'Add a team member',
+      emptyStateMessage: () => ({
+        title: `Team ${this.props.team.name} has no members 🐚`,
+        text: 'They’re not gonna magically appear.',
+        readOnly: `You don't have permission to add new members`
+      })
     },
     spaceMemberships: {
       label: 'Space memberships',
       component: TeamSpaceMemberships,
-      actionLabel: 'Add to space'
+      actionLabel: 'Add to space',
+      emptyStateMessage: () => ({
+        title: `Team ${this.props.team.name} is not in any space yet 🐚`,
+        text: 'Give every team member access to spaces by creating team space memberships',
+        readOnly: `You don't have permission to add the team to a space`
+      })
     }
   };
 
@@ -105,6 +119,16 @@ class TeamDetails extends React.Component {
 
   selectTab(id) {
     this.setState({ selectedTab: this.tabs[id], showingForm: false });
+  }
+
+  isListEmpty() {
+    const { selectedTab, showingForm } = this.state;
+    const { emptyTeamMemberships, emptyTeamSpaceMemberships } = this.props;
+    return (
+      !showingForm &&
+      ((selectedTab === this.tabs.teamMembers && emptyTeamMemberships) ||
+        (selectedTab === this.tabs.spaceMemberships && emptyTeamSpaceMemberships))
+    );
   }
 
   render() {
@@ -198,6 +222,7 @@ class TeamDetails extends React.Component {
                     ))}
                   </Tabs>
                   {!showingForm &&
+                    !this.isListEmpty() &&
                     (readOnlyPermission ? (
                       <Tooltip
                         testId="read-only-tooltip"
@@ -213,15 +238,39 @@ class TeamDetails extends React.Component {
                     ))}
                 </header>
 
-                {Object.entries(this.tabs).map(([id, { component: Component }]) =>
-                  this.isSelected(id) ? (
-                    <TabPanel key={id} id={id}>
-                      <Component
-                        showingForm={this.state.showingForm}
-                        onFormDismissed={() => this.setState({ showingForm: false })}
-                      />
-                    </TabPanel>
-                  ) : null
+                {Object.entries(this.tabs).map(
+                  ([id, { component: Component, emptyStateMessage, actionLabel }]) => (
+                    <React.Fragment key={id}>
+                      {this.isSelected(id) && !this.isListEmpty() ? (
+                        <TabPanel id={id}>
+                          <Component
+                            showingForm={this.state.showingForm}
+                            onFormDismissed={() => this.setState({ showingForm: false })}
+                          />
+                        </TabPanel>
+                      ) : null}
+                      {this.isSelected(id) && this.isListEmpty() && !readOnlyPermission && (
+                        <Placeholder
+                          testId="no-members-placeholder"
+                          title={emptyStateMessage().title}
+                          text={emptyStateMessage().text}
+                          button={
+                            <AddButton
+                              onClick={() => this.setState({ showingForm: true })}
+                              label={actionLabel}
+                            />
+                          }
+                        />
+                      )}
+                      {this.isSelected(id) && this.isListEmpty() && readOnlyPermission && (
+                        <Placeholder
+                          testId="no-members-placeholder"
+                          title={emptyStateMessage().title}
+                          text={emptyStateMessage().readOnly}
+                        />
+                      )}
+                    </React.Fragment>
+                  )
                 )}
               </div>
             </div>
@@ -250,7 +299,9 @@ export default connect(
   state => ({
     team: getTeams(state)[getCurrentTeam(state)],
     orgId: getOrgId(state),
-    readOnlyPermission: hasReadOnlyPermission(state)
+    readOnlyPermission: hasReadOnlyPermission(state),
+    emptyTeamMemberships: getCurrentTeamMembershipList(state).length === 0,
+    emptyTeamSpaceMemberships: getCurrentTeamSpaceMembershipList(state).length === 0
   }),
   dispatch => ({
     removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })
