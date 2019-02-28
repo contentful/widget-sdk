@@ -89,8 +89,9 @@ class EmbeddedEntryInline extends React.Component {
               }
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingNode();
+              } else {
+                return this.renderNode(fetchEntityResult);
               }
-              return this.renderNode(fetchEntityResult);
             }}
           />
         )}

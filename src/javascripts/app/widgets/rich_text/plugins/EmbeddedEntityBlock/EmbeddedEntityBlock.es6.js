@@ -23,16 +23,16 @@ class LinkedEntityBlock extends React.Component {
     };
   }
 
-  handleEditClick() {
+  handleEditClick = () => {
     slideInNavigator.goToSlideInEntity(this.getEntitySys());
-  }
+  };
 
-  handleRemoveClick() {
+  handleRemoveClick = () => {
     const { editor, node } = this.props;
     editor.moveToRangeOfNode(node);
     editor.removeNodeByKey(node.key);
     editor.focus(); // Click on "x" removes focus.
-  }
+  };
 
   render() {
     const { editor, isSelected, onEntityFetchComplete } = this.props;
@@ -49,8 +49,8 @@ class LinkedEntityBlock extends React.Component {
           editable={true}
           selected={isSelected}
           onEntityFetchComplete={onEntityFetchComplete}
-          onEdit={() => this.handleEditClick()}
-          onRemove={() => this.handleRemoveClick()}
+          onEdit={this.handleEditClick}
+          onRemove={this.handleRemoveClick}
           extraClassNames="rich-text__reference-card"
         />
       </div>

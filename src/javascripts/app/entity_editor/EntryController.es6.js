@@ -141,7 +141,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
    * for every widget. Instead, we share this version in every
    * cfWidgetApi instance.
    */
-  $scope.fields = DataFields.create(editorData.contentType.fields, $scope.otDoc);
+  $scope.fields = DataFields.create(entityInfo.contentType.fields, $scope.otDoc);
 
   $scope.entrySidebarProps = createEntrySidebarProps({
     $scope

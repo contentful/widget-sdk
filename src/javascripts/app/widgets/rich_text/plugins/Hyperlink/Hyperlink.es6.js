@@ -110,7 +110,7 @@ export default class Hyperlink extends React.Component {
                 const title = truncate(entityTitle, 60) || 'Untitled';
                 tooltip = this.renderEntityTooltipContent(contentTypeName, title, entityStatus);
               }
-              this.renderLink({ tooltip });
+              return this.renderLink({ tooltip });
             }}
           />
         )}

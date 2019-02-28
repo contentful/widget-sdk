@@ -22,9 +22,10 @@ export function createLoadEventTracker(loadStartMs, getSlideStates, getEditorDat
     const { fields: fieldTypes } = editorData.contentType.data;
     const { fields } = editorData.entity.data;
     const entityId = editorData.entity.getId();
-    const richTextFieldTypes = fieldTypes.filter(isRichTextField);
-    const singleReferenceFieldTypes = fieldTypes.filter(isSingleReferenceField);
-    const multiReferenceFieldTypes = fieldTypes.filter(isMultiReferenceField);
+    const enabledFieldTypes = fieldTypes.filter(field => !field.disabled);
+    const richTextFieldTypes = enabledFieldTypes.filter(isRichTextField);
+    const singleReferenceFieldTypes = enabledFieldTypes.filter(isSingleReferenceField);
+    const multiReferenceFieldTypes = enabledFieldTypes.filter(isMultiReferenceField);
     const richTextEditorInstanceCount = getRenderableLinkFieldInstanceCount(richTextFieldTypes);
     const singleLinkFieldEditorInstanceCount = getRenderableLinkFieldInstanceCount(
       singleReferenceFieldTypes

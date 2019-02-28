@@ -210,7 +210,9 @@ export default ($scope, $state) => {
             () => $scope.slideStates,
             () => editorData
           );
-          trackLoadEvent('init');
+          if (slide.type === 'Entry') {
+            trackLoadEvent('init');
+          }
           entityLoads[loaderKey] = loadEntity(spaceContext, entityId).then(data => {
             editorData = data;
             recordEntityEditorLoadTime(entityType, loadStartMs);

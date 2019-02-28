@@ -11,9 +11,7 @@ describe('Entry Editor Controller', function() {
         return {};
       });
       $provide.value('app/entity_editor/LoadEventTracker.es6', {
-        isLinkField: () => false,
-        createLoadEventTracker: () => () => {},
-        getRenderableLinkFieldInstanceCount: () => 0
+        bootstrapEntryEditorLoadEvents: () => {}
       });
       $provide.value('app/entity_editor/Tracking.es6', sinon.stub());
       $provide.value('app/entity_editor/Validator.es6', {

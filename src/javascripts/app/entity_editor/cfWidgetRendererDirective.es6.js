@@ -53,6 +53,7 @@ export default function register() {
             createLinksRenderedEvent,
             createWidgetLinkRenderEventsHandler
           } = LoadEventTracker;
+
           let trackLinksRendered = noop;
           let handleWidgetLinkRenderEvents = noop;
           if (loadEvents) {
