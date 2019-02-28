@@ -17,6 +17,7 @@ export default class EntityLinkToolbarIcon extends Component {
   };
 
   handleClick = async (event, widgetAPI) => {
+    this.props.onCloseEmbedMenu();
     event.preventDefault();
     const {
       editor,

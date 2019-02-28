@@ -130,6 +130,7 @@ export default class Toolbar extends React.Component {
     const props = {
       editor,
       onToggle: this.onChange,
+      onCloseEmbedMenu: this.toggleEmbedDropdown,
       disabled: isDisabled,
       richTextAPI
     };
