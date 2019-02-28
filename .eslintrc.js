@@ -62,7 +62,6 @@ module.exports = {
     'require-yield': 'off',
     'no-restricted-syntax': [
       'error',
-      'ContinueStatement',
       'DebuggerStatement',
       'EmptyStatement',
       'LabeledStatement',

@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository.es6';
+import createMicroBackendsClient from 'MicroBackendsClient.es6';
+import { user$ } from 'services/TokenStore.es6';
+import * as K from 'utils/kefir.es6';
 
 import {
   Card,
@@ -58,20 +61,33 @@ class ProjectCreationModal extends React.Component {
   }
 
   submit = async () => {
-    const { onClose } = this.props;
-    // const { projectName, description, selectedSpaces } = this.state;
+    const { onClose, orgId } = this.props;
+    const { projectName, description, selectedSpaces } = this.state;
+    const backend = createMicroBackendsClient({
+      backendName: 'projects',
+      baseUrl: `/organizations/${orgId}/projects`
+    });
 
     this.setState({
       isPending: true
     });
 
-    // const formData = {
-    //   name: projectName,
-    //   description,
-    //   spaces: selectedSpaces.map(space => space.sys.id)
-    // }
+    const currentUser = K.getValue(user$);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const body = {
+      name: projectName,
+      description,
+      spaceIds: selectedSpaces.map(space => space.sys.id),
+      memberIds: [currentUser.sys.id]
+    };
+
+    await backend.call(null, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
 
     onClose(true);
   };
