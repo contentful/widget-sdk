@@ -60,6 +60,7 @@ export default class ExtensionAPI {
         firstName: spaceMembership.user.firstName,
         lastName: spaceMembership.user.lastName,
         email: spaceMembership.user.email,
+        avatarUrl: spaceMembership.user.avatarUrl,
         spaceMembership: {
           sys: {
             type: 'SpaceMembership',
