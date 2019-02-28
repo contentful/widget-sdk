@@ -52,7 +52,8 @@ export default function createController($scope, $window) {
     environmentsEnabled: false,
 
     projectsEnabled: false,
-    showCreateProjectModal
+    showCreateProjectModal,
+    goToProject
   };
 
   function render() {
@@ -148,16 +149,32 @@ export default function createController($scope, $window) {
     });
   }
 
+  function goToProject(projectId) {
+    const {
+      currOrg: {
+        sys: { id: orgId }
+      }
+    } = state;
+
+    closeSidePanel();
+
+    Navigator.go({
+      path: ['projects', 'home'],
+      params: {
+        orgId,
+        projectId
+      }
+    });
+  }
+
   function showCreateSpaceModal() {
     closeSidePanel();
     CreateSpace.showDialog(state.currOrg.sys.id);
   }
 
   function showCreateProjectModal() {
-    const orgId = state.currOrg.sys.id;
-
     closeSidePanel();
-    openProjectsCreationModal(orgId);
+    openProjectsCreationModal(state.currOrg.sys.id);
   }
 
   function handleEsc(ev) {

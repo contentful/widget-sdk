@@ -7,6 +7,7 @@ import { getAllSpaces } from 'access_control/OrganizationMembershipRepository.es
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
 import { user$ } from 'services/TokenStore.es6';
 import * as K from 'utils/kefir.es6';
+import { go } from 'states/Navigator.es6';
 
 import {
   Card,
@@ -81,11 +82,21 @@ class ProjectCreationModal extends React.Component {
       memberIds: [currentUser.sys.id]
     };
 
-    await backend.call(null, {
+    const resp = await backend.call(null, {
       method: 'POST',
       body: JSON.stringify(body),
       headers: {
         'Content-Type': 'application/json'
+      }
+    });
+
+    const project = await resp.json();
+
+    await go({
+      path: ['projects', 'home'],
+      params: {
+        orgId,
+        projectId: project.sys.id
       }
     });
 

@@ -26,14 +26,17 @@ const homeState = makeState({
   template: `<react-component name='app/Projects/ProjectHome/ProjectHomeRouter.es6' props='componentProps'></react-component>`,
   controller: [
     '$scope',
-    async $scope => {
+    '$stateParams',
+    async ($scope, $stateParams) => {
       $scope.componentProps = {
         onReady: () => {
           $scope.context.ready = true;
         },
         onForbidden: () => {
           $scope.context.forbidden = true;
-        }
+        },
+        projectId: $stateParams.projectId,
+        orgId: $stateParams.orgId
       };
 
       // Determine if the projects is enabled for this
@@ -60,7 +63,7 @@ const homeState = makeState({
 
 export default makeState({
   name: 'projects',
-  url: '/projects',
+  url: '/account/organizations/:orgId/projects',
   abstract: true,
   navTemplate: template,
   children: [homeState]
