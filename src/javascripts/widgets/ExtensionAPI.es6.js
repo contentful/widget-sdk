@@ -54,6 +54,7 @@ export default class ExtensionAPI {
       location,
       user: {
         sys: {
+          type: 'User',
           id: spaceMembership.user.sys.id
         },
         firstName: spaceMembership.user.firstName,
@@ -61,6 +62,7 @@ export default class ExtensionAPI {
         email: spaceMembership.user.email,
         spaceMembership: {
           sys: {
+            type: 'SpaceMembership',
             id: spaceMembership.sys.id
           },
           admin: !!spaceMembership.admin,

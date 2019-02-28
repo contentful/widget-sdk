@@ -6,7 +6,6 @@ import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes.es6';
 import createBridge from 'widgets/EditorExtensionBridge.es6';
 import * as WidgetLocations from 'widgets/WidgetLocations.es6';
-import * as Analytics from 'analytics/Analytics.es6';
 
 const $controller = getModule('$controller');
 const $rootScope = getModule('$rootScope');
@@ -175,7 +174,6 @@ export default ({ $scope }) => {
         spaceContext,
         TheLocaleStore,
         entitySelector,
-        Analytics,
         entityCreator,
         Navigator,
         SlideInNavigator
@@ -193,7 +191,6 @@ export default ({ $scope }) => {
       spaceContext,
       TheLocaleStore,
       entitySelector,
-      Analytics,
       entityCreator,
       Navigator,
       SlideInNavigator

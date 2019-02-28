@@ -72,7 +72,6 @@ describe('EditorExtensionBridge', () => {
         getPrivateLocales: () => [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
         getDefaultLocale: () => ({ code: 'pl', name: 'Polski', default: true })
       },
-      Analytics: {},
       entitySelector: { openFromExtension: stubs.openFromExtension },
       entityCreator: { newEntry: stubs.newEntry },
       SlideInNavigator: { goToSlideInEntity: stubs.goToSlideInEntity },

@@ -1,8 +1,8 @@
-import { get } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as K from 'utils/kefir.es6';
 import * as PathUtils from 'utils/Path.es6';
 import * as Dialogs from './ExtensionDialogs.es6';
+import callSpaceMethod from './ExtensionSpaceMethods.es6';
 import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_SIDEBAR } from './WidgetLocations.es6';
 
 const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
@@ -24,7 +24,6 @@ const REQUIRED_DEPENDENCIES = [
   'spaceContext',
   'TheLocaleStore',
   'entitySelector',
-  'Analytics',
   'entityCreator',
   'Navigator',
   'SlideInNavigator'
@@ -52,7 +51,6 @@ export default function createBridge(dependencies, location = LOCATION_ENTRY_FIE
     spaceContext,
     TheLocaleStore,
     entitySelector,
-    Analytics,
     entityCreator,
     Navigator,
     SlideInNavigator
@@ -191,54 +189,12 @@ export default function createBridge(dependencies, location = LOCATION_ENTRY_FIE
     }
   }
 
-  async function callSpaceMethod(methodName, args) {
-    try {
-      // TODO: Use `getBatchingApiClient(spaceContext.cma)`
-      const entity = await spaceContext.cma[methodName](...args);
-      maybeTrackEntryAction(methodName, args, entity);
-      return entity;
-    } catch ({ code, body }) {
-      const err = new Error('Request failed.');
-      throw Object.assign(err, { code, data: body });
-    }
-  }
-
-  function maybeTrackEntryAction(methodName, args, entity) {
-    try {
-      if (get(entity, ['sys', 'type']) !== 'Entry') {
-        return;
-      }
-
-      if (methodName === 'createEntry') {
-        trackEntryAction('create', args[0], entity);
-      } else if (methodName === 'publishEntry') {
-        const contentTypeId = get(args[0], ['sys', 'contentType', 'sys', 'id']);
-        trackEntryAction('publish', contentTypeId, entity);
-      }
-    } catch (err) {
-      // Just catch and ignore, failing to track should not
-      // demonstrate itself outside.
-    }
-  }
-
   async function notify({ type, message }) {
     if (['success', 'error'].includes(type) && typeof message === 'string') {
       Notification[type](message);
     } else {
       throw new Error('Invalid notification type.');
     }
-  }
-
-  function trackEntryAction(action, contentTypeId, data) {
-    Analytics.track(`entry:${action}`, {
-      eventOrigin: 'ui-extension',
-      // Stub content type object:
-      contentType: {
-        sys: { id: contentTypeId, type: 'ContentType' },
-        fields: []
-      },
-      response: { data }
-    });
   }
 
   function install(api) {
@@ -255,7 +211,9 @@ export default function createBridge(dependencies, location = LOCATION_ENTRY_FIE
     api.registerPathHandler('setValue', setValue);
     api.registerPathHandler('removeValue', removeValue);
     api.registerHandler('openDialog', openDialog);
-    api.registerHandler('callSpaceMethod', callSpaceMethod);
+    api.registerHandler('callSpaceMethod', (methodName, args) => {
+      return callSpaceMethod(spaceContext, methodName, args);
+    });
     api.registerHandler('navigateToContentEntity', navigate);
     api.registerHandler('notify', notify);
 

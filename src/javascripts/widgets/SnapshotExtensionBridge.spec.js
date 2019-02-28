@@ -78,7 +78,7 @@ describe('SnapshotExtensionBridge', () => {
         await callSpaceMethod('updateEntry', { data: 'data' });
       } catch (err) {
         expect(stubs.updateEntry).not.toBeCalled();
-        expect(err).toMatchObject({ message: 'Cannot modify data when comparing versions.' });
+        expect(err).toMatchObject({ message: 'Cannot modify data in read-only mode.' });
       }
     });
   });

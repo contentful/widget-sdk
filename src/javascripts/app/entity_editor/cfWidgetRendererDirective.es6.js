@@ -21,7 +21,6 @@ export default function register() {
     'spaceContext',
     'TheLocaleStore',
     'entitySelector',
-    'analytics/Analytics.es6',
     'entityCreator',
     'states/Navigator.es6',
     'navigation/SlideInNavigator',
@@ -31,7 +30,6 @@ export default function register() {
       spaceContext,
       TheLocaleStore,
       entitySelector,
-      Analytics,
       entityCreator,
       Navigator,
       SlideInNavigator
@@ -65,7 +63,6 @@ export default function register() {
                 spaceContext,
                 TheLocaleStore,
                 entitySelector,
-                Analytics,
                 entityCreator,
                 Navigator,
                 SlideInNavigator
