@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import { registerDirective } from 'NgRegistry.es6';
 import $ from 'jquery';
 import createBridge from 'widgets/bridges/EditorExtensionBridge.es6';
@@ -52,14 +53,18 @@ export default function register() {
             createLinksRenderedEvent,
             createWidgetLinkRenderEventsHandler
           } = LoadEventTracker;
-          const trackLinksRendered = createLinksRenderedEvent(loadEvents);
-          const handleWidgetLinkRenderEvents = createWidgetLinkRenderEventsHandler({
-            widget,
-            locale,
-            loadEvents,
-            editorData,
-            trackLinksRendered
-          });
+          let trackLinksRendered = noop;
+          let handleWidgetLinkRenderEvents = noop;
+          if (loadEvents) {
+            trackLinksRendered = createLinksRenderedEvent(loadEvents);
+            handleWidgetLinkRenderEvents = createWidgetLinkRenderEventsHandler({
+              widget,
+              locale,
+              loadEvents,
+              editorData,
+              trackLinksRendered
+            });
+          }
 
           if (problem) {
             scope.props = { message: problem };

@@ -19,12 +19,11 @@ export default function register() {
         },
         restrict: 'E',
         template: JST.bulk_editor(),
-        link: link
+        link
       };
 
       function link($scope) {
-        // This is passed from the EntryEditorController
-        const referenceContext = $scope.referenceContext;
+        const { referenceContext, trackLoadEvent } = $scope;
 
         const templateData = {};
         $scope.data = templateData;
@@ -81,8 +80,9 @@ export default function register() {
               $scope.$applyAsync(forceFocus);
             }
           },
-          track: track,
-          loadEditorData: loadEditorData
+          track,
+          trackLoadEvent,
+          loadEditorData
         };
 
         $scope.actions = makeActions(

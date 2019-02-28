@@ -1,3 +1,4 @@
+import * as K from 'utils/kefir.es6';
 import { track } from 'analytics/Analytics.es6';
 import { keys, once, sum, sumBy, values, findIndex } from 'lodash';
 import { getRichTextEntityLinks } from '@contentful/rich-text-links';
@@ -55,6 +56,49 @@ export function createLoadEventTracker(loadStartMs, getSlideStates, getEditorDat
       loadMs: new Date().getTime() - loadStartMs
     });
   };
+}
+
+export function bootstrapEntryEditorLoadEvents($scope, loadEvents, editorData, trackLoadEvent) {
+  let loadLinksRendered = false;
+  let loadShareJSConnected = false;
+
+  const linkFieldTypes = editorData.contentType.data.fields.filter(isLinkField);
+  const renderableLinkFieldInstanceCount = getRenderableLinkFieldInstanceCount(linkFieldTypes);
+
+  K.onValueScope($scope, $scope.otDoc.state.isConnected$, status => {
+    if (loadShareJSConnected || status === false) {
+      return;
+    }
+    trackLoadEvent('sharejs_connected');
+
+    loadShareJSConnected = true;
+    if (loadLinksRendered) {
+      trackLoadEvent('fully_interactive');
+    }
+  });
+
+  let fieldsInteractiveCount = 0;
+  const trackLinksRenderedEvent = once(() => {
+    trackLoadEvent('links_rendered');
+    loadLinksRendered = true;
+    if (loadShareJSConnected) {
+      trackLoadEvent('fully_interactive');
+    }
+  });
+
+  if (renderableLinkFieldInstanceCount === 0) {
+    trackLinksRenderedEvent();
+  }
+
+  loadEvents.stream.onValue(({ actionName }) => {
+    if (actionName !== 'linksRendered') {
+      return;
+    }
+    fieldsInteractiveCount++;
+    if (fieldsInteractiveCount === renderableLinkFieldInstanceCount) {
+      trackLinksRenderedEvent();
+    }
+  });
 }
 
 export function getRenderableLinkFieldInstanceCount(fieldTypes) {
@@ -142,11 +186,13 @@ function getRichTextLinkCount(editorData, fieldIdFromEntry, fieldLocaleCode) {
 }
 
 function handleReferenceField(loadEvents, trackLinksRendered) {
-  loadEvents.stream.onValue(({ actionName }) => {
-    if (actionName === 'referenceLinksRendered') {
-      trackLinksRendered();
-    }
-  });
+  if (loadEvents) {
+    loadEvents.stream.onValue(({ actionName }) => {
+      if (actionName === 'referenceLinksRendered') {
+        trackLinksRendered();
+      }
+    });
+  }
 }
 
 export function isRichTextField(field) {

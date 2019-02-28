@@ -168,13 +168,12 @@ export default ($scope, $state) => {
       } else if (slide.type === 'BulkEditor') {
         entityType = 'Entry';
         entityId = slide.path[0];
-        buildSlideEditorViewProps = (editorData, trackLoadEvent) => {
+        buildSlideEditorViewProps = editorData => {
           const { entityInfo } = editorData;
           const lifeline = K.createBus();
           const onDestroy = () => lifeline.end();
           const doc = editorData.openDoc(lifeline.stream);
           return {
-            trackLoadEvent,
             referenceContext: createReferenceContext(entityInfo, doc, slide, onDestroy)
           };
         };

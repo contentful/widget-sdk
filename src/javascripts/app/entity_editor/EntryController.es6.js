@@ -1,6 +1,6 @@
 import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
-import { constant, keys, once } from 'lodash';
+import { constant, keys } from 'lodash';
 
 import { user$ } from 'services/TokenStore.es6';
 
@@ -9,10 +9,7 @@ import * as Focus from './Focus.es6';
 import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking, { trackEntryView } from './Tracking.es6';
-import {
-  isLinkField,
-  getRenderableLinkFieldInstanceCount
-} from 'app/entity_editor/LoadEventTracker.es6';
+import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker.es6';
 
 import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
@@ -53,17 +50,9 @@ const DataFields = getModule('EntityEditor/DataFields');
  */
 export default async function create($scope, editorData, preferences, trackLoadEvent) {
   $scope.context = {};
-
-  let loadLinksRendered = false;
-  let loadShareJSConnected = false;
-
-  $scope.loadEvents = K.createStreamBus($scope);
-
-  const linkFieldTypes = editorData.contentType.data.fields.filter(isLinkField);
-  const renderableLinkFieldInstanceCount = getRenderableLinkFieldInstanceCount(linkFieldTypes);
-
   $scope.context.ready = true;
   $scope.editorData = editorData;
+  $scope.loadEvents = K.createStreamBus($scope);
 
   const editorContext = ($scope.editorContext = {});
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
@@ -75,20 +64,9 @@ export default async function create($scope, editorData, preferences, trackLoadE
   const doc = editorData.openDoc(K.scopeLifeline($scope));
   // TODO rename the scope property
   $scope.otDoc = doc;
+  bootstrapEntryEditorLoadEvents($scope, $scope.loadEvents, editorData, trackLoadEvent);
 
   initDocErrorHandler($scope, doc.state.error$);
-
-  K.onValueScope($scope, doc.state.isConnected$, status => {
-    if (loadShareJSConnected || status === false) {
-      return;
-    }
-    trackLoadEvent('sharejs_connected');
-
-    loadShareJSConnected = true;
-    if (loadLinksRendered) {
-      trackLoadEvent('fully_interactive');
-    }
-  });
 
   K.onValueScope($scope, doc.status$, status => {
     $scope.statusNotificationProps = { status, entityLabel: 'entry' };
@@ -107,29 +85,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
   } catch (error) {
     logger.logError(error);
   }
-
-  let fieldsInteractiveCount = 0;
-  const emit = once(() => {
-    trackLoadEvent('links_rendered');
-    loadLinksRendered = true;
-    if (loadShareJSConnected) {
-      trackLoadEvent('fully_interactive');
-    }
-  });
-
-  if (renderableLinkFieldInstanceCount === 0) {
-    emit();
-  }
-
-  $scope.loadEvents.stream.onValue(({ actionName }) => {
-    if (actionName !== 'linksRendered') {
-      return;
-    }
-    fieldsInteractiveCount++;
-    if (fieldsInteractiveCount === renderableLinkFieldInstanceCount) {
-      emit();
-    }
-  });
 
   editorContext.validator = Validator.createForEntry(
     entityInfo.contentType,
