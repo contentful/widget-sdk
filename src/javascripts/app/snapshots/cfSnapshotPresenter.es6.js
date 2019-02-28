@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import * as K from 'utils/kefir.es6';
 import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
-import createBridge from 'widgets/SnapshotExtensionBridge.es6';
+import createBridge from 'widgets/bridges/SnapshotExtensionBridge.es6';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import { userInputFromDatetime } from 'app/widgets/datetime/data.es6';
 

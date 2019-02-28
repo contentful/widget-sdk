@@ -1,10 +1,11 @@
-import callSpaceMethod from './ExtensionSpaceMethods.es6';
+import makeExtensionSpaceMethodsHandler from './ExtensionSpaceMethodsHandler.es6';
 
 // This is a UI Extension bridge to be used in the version
 // comparison view. It provides static initial data,
 // doesn't notify UI Extensions about changes and doesn't
 // handle any messages but non-mutating CMA calls.
-export default function createBridge({ $scope, spaceContext, TheLocaleStore }) {
+export default function createBridge(dependencies) {
+  const { $scope, spaceContext, TheLocaleStore } = dependencies;
   return {
     getData,
     install,
@@ -28,8 +29,9 @@ export default function createBridge({ $scope, spaceContext, TheLocaleStore }) {
   }
 
   function install(api) {
-    api.registerHandler('callSpaceMethod', (methodName, args) => {
-      return callSpaceMethod(spaceContext, methodName, args, { readOnly: true });
-    });
+    api.registerHandler(
+      'callSpaceMethod',
+      makeExtensionSpaceMethodsHandler(dependencies, { readOnly: true })
+    );
   }
 }

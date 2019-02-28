@@ -4,7 +4,7 @@ import * as K from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes.es6';
-import createBridge from 'widgets/EditorExtensionBridge.es6';
+import createBridge from 'widgets/bridges/EditorExtensionBridge.es6';
 import * as WidgetLocations from 'widgets/WidgetLocations.es6';
 
 const $controller = getModule('$controller');

@@ -1,6 +1,6 @@
 import { registerDirective } from 'NgRegistry.es6';
 import $ from 'jquery';
-import createBridge from 'widgets/EditorExtensionBridge.es6';
+import createBridge from 'widgets/bridges/EditorExtensionBridge.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 
 export default function register() {
