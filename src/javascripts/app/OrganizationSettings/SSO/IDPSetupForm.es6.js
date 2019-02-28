@@ -13,7 +13,6 @@ import {
   TextLink,
   Spinner,
   Button,
-  Textarea,
   ModalConfirm,
   Tooltip,
   Icon
@@ -22,7 +21,7 @@ import { authUrl, appUrl } from 'Config.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { IdentityProviderPropType, FieldsStatePropType } from './PropTypes.es6';
-import { connectionTestingAllowed } from './utils.es6';
+import { connectionTestingAllowed, formatConnectionTestErrors } from './utils.es6';
 import { SSO_PROVIDERS, TEST_RESULTS } from './constants.es6';
 import * as ssoActionCreators from 'redux/actions/sso/actionCreators.es6';
 import * as ssoSelectors from 'redux/selectors/sso.es6';
@@ -39,8 +38,6 @@ export class IDPSetupForm extends React.Component {
     connectionTest: PropTypes.object,
     connectionTestStart: PropTypes.func.isRequired,
     connectionTestCancel: PropTypes.func.isRequired,
-    connectionTestResult: PropTypes.func.isRequired,
-    connectionTestEnd: PropTypes.func.isRequired,
     enable: PropTypes.func.isRequired
   };
 
@@ -73,91 +70,18 @@ export class IDPSetupForm extends React.Component {
       connectionTestStart
     } = this.props;
 
-    const testConnectionUrl = authUrl(`/sso/${orgId}/test_connection`);
-
-    // Open the new window and check if it's closed every 250ms
-    const newWindow = window.open(testConnectionUrl, '', 'toolbar=0,status=0,width=650,height=800');
-    const testConnectionTimer = window.setInterval(this.checkTestConnectionWindow(newWindow), 250);
-
-    // Listen for an event from the window
-    window.addEventListener('message', this.messageHandler);
-
-    this.setState({
-      testConnectionTimer,
-      newWindow,
-      messageHandled: false
-    });
-
-    connectionTestStart();
+    connectionTestStart({ orgId });
   };
 
-  messageHandler = ({ data }) => {
-    this.setState({
-      messageHandled: true
-    });
-
-    this.handleTestResultFromPopup(data);
-  };
-
-  handleTestResultFromPopup = data => {
+  cancelConnectionTest = () => {
     const {
       organization: {
         sys: { id: orgId }
       },
-      connectionTestResult,
-      connectionTestEnd
+      connectionTestCancel
     } = this.props;
 
-    if (data.testConnectionAt) {
-      // The status of the connection test is updated in GK
-      // Update the result directly in the store
-      connectionTestResult({ data });
-    } else {
-      // The user clicked on the button, but somehow it never updated in GK
-      // Treat it as if the user closed the popup and attempt to reload
-      // the data
-      connectionTestEnd({ orgId });
-    }
-  };
-
-  cancelConnectionTest = () => {
-    const { connectionTestCancel } = this.props;
-
-    this.state.newWindow.close();
-
-    window.clearInterval(this.state.testConnectionTimer);
-    window.removeEventListener('message', this.messageHandler);
-
-    this.setState({
-      testConnectionTimer: undefined,
-      newWindow: undefined
-    });
-
-    connectionTestCancel();
-  };
-
-  checkTestConnectionWindow = win => {
-    return () => {
-      const {
-        organization: {
-          sys: { id: orgId }
-        },
-        connectionTestEnd
-      } = this.props;
-
-      // Do not run the `end` action creator if:
-      //
-      // 1. The window isn't closed yet
-      // 2. The window isn't available in the component state (it was canceled)
-      // 3. The message was handled via `#messageHandler`
-      if (!win.closed || !this.state.newWindow || this.state.messageHandled) {
-        return;
-      }
-
-      window.clearInterval(this.state.testConnectionTimer);
-
-      connectionTestEnd({ orgId });
-    };
+    connectionTestCancel({ orgId });
   };
 
   confirmEnable = async () => {
@@ -175,11 +99,14 @@ export class IDPSetupForm extends React.Component {
         isShown={isShown}
         onConfirm={() => onClose(true)}
         onCancel={() => onClose(false)}>
+        <p>Enabling SSO will allow your users to log in via SSO.</p>
+
         <p>
-          Enabling SSO will allow your users to log in via the SSO portal. Once SSO is enabled, you
-          won’t be able to make any changes via the webapp.
+          Once SSO is enabled, you won’t be able to make changes to the SSO settings yourself, and
+          you’ll need to contact support instead.
         </p>
-        <p>Are you sure you want to enable SSO?</p>
+
+        <p>Ready to enable SSO?</p>
       </ModalConfirm>
     ));
 
@@ -196,6 +123,7 @@ export class IDPSetupForm extends React.Component {
       connectionTest,
       identityProvider,
       organization: {
+        name: orgName,
         sys: { id: orgId }
       }
     } = this.props;
@@ -222,7 +150,7 @@ export class IDPSetupForm extends React.Component {
             </TextLink>
           </Heading>
           <TextField
-            labelText="Audience"
+            labelText="Audience URI"
             name="audience"
             id="audience"
             extraClassNames="f36-margin-bottom--l"
@@ -249,7 +177,7 @@ export class IDPSetupForm extends React.Component {
 
           <Subheading extraClassNames="f36-margin-bottom--xs">Contentful logo</Subheading>
           <HelpText extraClassNames="f36-margin-bottom--xl">
-            Most SSO providers allow you to upload and set a thumbnail for your custom SAML app.{' '}
+            Most SSO providers allow you to upload a thumbnail for your custom SAML app.{' '}
             <TextLink href="http://press.contentful.com/media_kits/219490">
               Download Contentful logos
             </TextLink>
@@ -258,7 +186,7 @@ export class IDPSetupForm extends React.Component {
 
           <Subheading extraClassNames="f36-margin-bottom--xs">Map user attributes</Subheading>
           <HelpText extraClassNames="f36-margin-bottom--l">
-            Copy and paste these attributes into your SSO provider. They’re not case sensitive.
+            Map these attributes into your SSO provider.
           </HelpText>
           <div className="sso-setup__user-attributes">
             <TextField
@@ -296,11 +224,11 @@ export class IDPSetupForm extends React.Component {
             />
           </div>
           <Note extraClassNames="f36-margin-top--l">
-            For Microsoft Azure and Microsoft ADFS,{' '}
+            For Microsoft products,{' '}
             <TextLink href="https://www.contentful.com/faq/sso/#what-identity-providers-idp-does-contentful-support">
               read the documentation
             </TextLink>{' '}
-            for mapping the user attributes.
+            about mapping the user attributes.
           </Note>
         </section>
 
@@ -422,12 +350,17 @@ export class IDPSetupForm extends React.Component {
 
           {!connectionTest.isPending && connectionTest.result === TEST_RESULTS.failure && (
             <div>
-              <Textarea
+              <TextField
+                textarea
+                id="test-errors"
+                name="test-errors"
+                labelText="Error log"
                 extraClassNames="f36-margin-top--xl"
-                rows={5}
-                disabled
+                textInputProps={{
+                  rows: 5
+                }}
                 testId="errors"
-                value={connectionTest.errors.join('\n')}
+                value={formatConnectionTestErrors(connectionTest.errors).join('\n')}
               />
             </div>
           )}
@@ -438,8 +371,7 @@ export class IDPSetupForm extends React.Component {
             Sign-in name
           </Heading>
           <HelpText extraClassNames="f36-margin-bottom--l">
-            It’s what users have to type if they choose to login in via SSO on Contentful. We’ve
-            prefilled it with the name of your organization, but you can change it. Make sure to
+            It’s what you have to type if you choose to login in via SSO on Contentful. Make sure to
             keep it short and memorable.
           </HelpText>
 
@@ -450,8 +382,10 @@ export class IDPSetupForm extends React.Component {
                 id="ssoName"
                 name="ssoName"
                 testId="ssoName"
+                helpText="Letters, numbers, periods, hyphens, and underscores are allowed."
                 textInputProps={{
-                  width: 'large'
+                  width: 'large',
+                  placeholder: `E.g. ${_.kebabCase(orgName)}-sso`
                 }}
                 extraClassNames="f36-margin-right--m"
                 value={fields.ssoName.value}
@@ -507,8 +441,6 @@ export default connect(
     updateFieldValue: ssoActionCreators.updateFieldValue,
     connectionTestStart: ssoActionCreators.connectionTestStart,
     connectionTestCancel: ssoActionCreators.connectionTestCancel,
-    connectionTestResult: ssoActionCreators.connectionTestResult,
-    connectionTestEnd: ssoActionCreators.connectionTestEnd,
     enable: ssoActionCreators.enable
   }
 )(IDPSetupForm);

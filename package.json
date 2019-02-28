@@ -10,6 +10,7 @@
     "npm": "6.4.1"
   },
   "dependencies": {
+    "@contentful/asn1js": "^2.1.0",
     "@contentful/contentful-slatejs-adapter": "^5.0.0",
     "@contentful/field-editors": "^1.0.0",
     "@contentful/forma-36-fcss": "0.0.12",
@@ -24,7 +25,6 @@
     "@contentful/validation": "^9.1.1",
     "@contentful/widget-map": "^1.2.3",
     "@contentful/worf": "^3.13.0",
-    "@jo-sm/asn1js": "^1.0.0",
     "@productboard/slate-edit-list": "^0.19.1",
     "@typeform/embed": "^0.6.1",
     "@wikifactory/slate-trailing-block": "^0.6.0",

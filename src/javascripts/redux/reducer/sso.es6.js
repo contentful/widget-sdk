@@ -52,13 +52,6 @@ export function identityProvider(state = {}, action) {
         data: action.payload,
         isPending: false
       };
-    case actions.SSO_CONNECTION_TEST_RESULT: {
-      const updatedState = clone(state);
-
-      set(updatedState, ['data', 'sys', 'version'], action.payload.version);
-
-      return updatedState;
-    }
     case actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE:
     case actions.SSO_GET_IDENTITY_PROVIDER_FAILURE:
       return {
@@ -110,8 +103,14 @@ export function fields(state = {}, action) {
       const updatedState = clone(state);
 
       fieldNames.forEach(field => {
-        const currentFieldValue = get(action.payload, field);
-        set(updatedState, [field, 'value'], currentFieldValue);
+        let fieldValue = get(action.payload, field);
+
+        // If the field is null or undefined, we default to empty string
+        if (fieldValue == null) {
+          fieldValue = '';
+        }
+
+        set(updatedState, [field, 'value'], fieldValue);
       });
 
       return updatedState;
@@ -151,7 +150,7 @@ export function fields(state = {}, action) {
 }
 
 /*
-  The current information related to the connection test.
+  The metadata related to the connection test.
 
   {
     isPending: Boolean,
@@ -159,6 +158,13 @@ export function fields(state = {}, action) {
     // Can be success, failure, or unknown
     result: String,
     errors: Array<String>
+    timestamp: String,
+
+    // Popup window reference
+    testWindow: Window
+
+    // Timer for checking if window is closed
+    timer: Number
   }
 
  */
@@ -167,19 +173,23 @@ export function connectionTest(state = {}, action) {
     case actions.SSO_CONNECTION_TEST_START:
       return {
         ...state,
-        isPending: true
+        isPending: true,
+        testWindow: action.payload.testWindow,
+        timer: action.payload.timer
       };
     case actions.SSO_CONNECTION_TEST_END:
       return {
         ...state,
-        isPending: false
+        isPending: false,
+        testWindow: null,
+        timer: null
       };
-    case actions.SSO_CONNECTION_TEST_RESULT:
+    case actions.SSO_UPDATE_IDENTITY_PROVIDER:
+    case actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS:
       return {
         ...state,
-        isPending: false,
         result: action.payload.testConnectionResult,
-        errors: action.payload.testConnectionError,
+        errors: action.payload.testConnectionErrors,
         timestamp: action.payload.testConnectionAt
       };
     default:

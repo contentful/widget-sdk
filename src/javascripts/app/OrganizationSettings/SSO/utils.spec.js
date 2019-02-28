@@ -22,65 +22,6 @@ describe('SSO utils', () => {
     });
   });
 
-  describe('#connectionTestResultFromIdp', () => {
-    const baseResult = {
-      testConnectionResult: null,
-      testConnectionError: null,
-      testConnectionAt: null,
-      version: null
-    };
-
-    it('should map the connection test result', () => {
-      const idp = {
-        testConnectionResult: 'yay!'
-      };
-
-      expect(utils.connectionTestResultFromIdp(idp)).toEqual(
-        Object.assign({}, baseResult, {
-          testConnectionResult: 'yay!'
-        })
-      );
-    });
-
-    it('should map the connection test timestamp', () => {
-      const idp = {
-        testConnectionAt: 'some timestamp'
-      };
-
-      expect(utils.connectionTestResultFromIdp(idp)).toEqual(
-        Object.assign({}, baseResult, {
-          testConnectionAt: 'some timestamp'
-        })
-      );
-    });
-
-    it('should map the connection test errors', () => {
-      const idp = {
-        testConnectionErrors: ['some error', 'another error']
-      };
-
-      expect(utils.connectionTestResultFromIdp(idp)).toEqual(
-        Object.assign({}, baseResult, {
-          testConnectionError: ['some error', 'another error']
-        })
-      );
-    });
-
-    it('should map the connection test model version', () => {
-      const idp = {
-        sys: {
-          version: '12'
-        }
-      };
-
-      expect(utils.connectionTestResultFromIdp(idp)).toEqual(
-        Object.assign({}, baseResult, {
-          version: '12'
-        })
-      );
-    });
-  });
-
   describe('#connectionTestingAllowed', () => {
     let fields;
     let connectionTest;
@@ -133,6 +74,91 @@ describe('SSO utils', () => {
 
     it('should be allowed if all cases pass', () => {
       expect(utils.connectionTestingAllowed(fields, connectionTest)).toBe(true);
+    });
+  });
+
+  describe('#fieldErrorMessage', () => {
+    const defaultErrorMessage = 'Field is not valid';
+
+    it('should have custom errors for ssoName, idpCert, and idpSsoTargetUrl', () => {
+      expect(utils.fieldErrorMessage('ssoName')).toBeInstanceOf(Error);
+      expect(utils.fieldErrorMessage('ssoName').message).not.toBe(defaultErrorMessage);
+
+      expect(utils.fieldErrorMessage('idpCert')).toBeInstanceOf(Error);
+      expect(utils.fieldErrorMessage('idpCert').message).not.toBe(defaultErrorMessage);
+
+      expect(utils.fieldErrorMessage('idpSsoTargetUrl')).toBeInstanceOf(Error);
+      expect(utils.fieldErrorMessage('idpSsoTargetUrl').message).not.toBe(defaultErrorMessage);
+    });
+
+    it('should have return the default error otherwise', () => {
+      expect(utils.fieldErrorMessage('otherField')).toBeInstanceOf(Error);
+      expect(utils.fieldErrorMessage('otherField').message).toBe(defaultErrorMessage);
+    });
+  });
+
+  describe('#formatConnectionTestErrors', () => {
+    const certErrMsg = 'Invalid Signature on SAML Response';
+    const relayStateErrMsg = 'Missing RelayState, maybe incorrect SSO target URL';
+    const givenNameErrMsg = `'givenname' needs to be included as a SAML response attribute, or a custom mapping needs to be defined on the identity provider`;
+    const surnameErrMsg = `'surname' needs to be included as a SAML response attribute, or a custom mapping needs to be defined on the identity provider`;
+    const otherErrMsg = 'Something else bad happened dude';
+
+    const certFormattedErrMsg = 'The X.509 certificate is incorrect';
+    const relayStateFormattedErrMsg =
+      'Contentful could not determine that the connection is in test mode, check the Redirect URL';
+
+    it('should return null if not given an array', () => {
+      expect(utils.formatConnectionTestErrors('string')).toBeNull();
+    });
+
+    it('should return an empty array if no errors are given', () => {
+      expect(utils.formatConnectionTestErrors([])).toEqual([]);
+    });
+
+    it('should handle an invalid certificate error', () => {
+      expect(utils.formatConnectionTestErrors([certErrMsg])).toEqual([certFormattedErrMsg]);
+    });
+
+    it('should handle an invalid relay state error', () => {
+      expect(utils.formatConnectionTestErrors([relayStateErrMsg])).toEqual([
+        relayStateFormattedErrMsg
+      ]);
+    });
+
+    it('should handle one or more missing attributes', () => {
+      expect(utils.formatConnectionTestErrors([givenNameErrMsg])).toEqual([
+        'The givenname attribute is missing'
+      ]);
+
+      expect(utils.formatConnectionTestErrors([surnameErrMsg])).toEqual([
+        'The surname attribute is missing'
+      ]);
+
+      expect(utils.formatConnectionTestErrors([givenNameErrMsg, surnameErrMsg])).toEqual([
+        'The givenname, and surname attributes are missing'
+      ]);
+    });
+
+    it('should pass other errors through as-is', () => {
+      expect(utils.formatConnectionTestErrors([otherErrMsg])).toEqual([otherErrMsg]);
+    });
+
+    it('should handle a combination of the error messages', () => {
+      expect(
+        utils.formatConnectionTestErrors([
+          certErrMsg,
+          relayStateErrMsg,
+          givenNameErrMsg,
+          surnameErrMsg,
+          otherErrMsg
+        ])
+      ).toEqual([
+        certFormattedErrMsg,
+        relayStateFormattedErrMsg,
+        'The givenname, and surname attributes are missing',
+        otherErrMsg
+      ]);
     });
   });
 });

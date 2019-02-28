@@ -143,25 +143,6 @@ describe('SSO Redux reducers', () => {
         isEnabling: false
       });
     });
-
-    it('should update the version when the SSO connection test result action is fired', () => {
-      const version = 7;
-
-      expect(
-        callReducer(reducers.identityProvider, {
-          type: actions.SSO_CONNECTION_TEST_RESULT,
-          payload: {
-            version
-          }
-        })
-      ).toEqual({
-        data: {
-          sys: {
-            version
-          }
-        }
-      });
-    });
   });
 
   describe('fields', () => {
@@ -188,7 +169,7 @@ describe('SSO Redux reducers', () => {
           value: 'https://example.com/auth'
         },
         idpCert: {
-          value: undefined
+          value: ''
         }
       });
 
@@ -208,7 +189,7 @@ describe('SSO Redux reducers', () => {
           value: 'https://example.com/auth'
         },
         idpCert: {
-          value: undefined
+          value: ''
         }
       });
     });
@@ -301,10 +282,16 @@ describe('SSO Redux reducers', () => {
     it('should handle SSO connection test start state', () => {
       expect(
         callReducer(reducers.connectionTest, {
-          type: actions.SSO_CONNECTION_TEST_START
+          type: actions.SSO_CONNECTION_TEST_START,
+          payload: {
+            testWindow: 'window',
+            timer: 12
+          }
         })
       ).toEqual({
-        isPending: true
+        isPending: true,
+        testWindow: 'window',
+        timer: 12
       });
     });
 
@@ -314,27 +301,47 @@ describe('SSO Redux reducers', () => {
           type: actions.SSO_CONNECTION_TEST_END
         })
       ).toEqual({
-        isPending: false
+        isPending: false,
+        testWindow: null,
+        timer: null
       });
     });
 
-    it('should handle SSO connection test result state', () => {
-      const testResult = {
+    it('should handle SSO identity provider get success state', () => {
+      const identityProvider = {
         testConnectionResult: 'failure',
-        testConnectionError: ['Invalid SAML certificate signature'],
+        testConnectionErrors: ['Invalid SAML certificate signature'],
         testConnectionAt: 'timestamp'
       };
 
       expect(
         callReducer(reducers.connectionTest, {
-          type: actions.SSO_CONNECTION_TEST_RESULT,
-          payload: testResult
+          type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
+          payload: identityProvider
         })
       ).toEqual({
         result: 'failure',
-        errors: testResult.testConnectionError,
-        timestamp: 'timestamp',
-        isPending: false
+        errors: identityProvider.testConnectionErrors,
+        timestamp: 'timestamp'
+      });
+    });
+
+    it('should handle SSO identity provider update state', () => {
+      const identityProvider = {
+        testConnectionResult: 'failure',
+        testConnectionErrors: ['Invalid SAML certificate signature'],
+        testConnectionAt: 'timestamp2'
+      };
+
+      expect(
+        callReducer(reducers.connectionTest, {
+          type: actions.SSO_UPDATE_IDENTITY_PROVIDER,
+          payload: identityProvider
+        })
+      ).toEqual({
+        result: 'failure',
+        errors: identityProvider.testConnectionErrors,
+        timestamp: 'timestamp2'
       });
     });
   });

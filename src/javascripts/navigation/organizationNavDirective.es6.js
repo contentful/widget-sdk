@@ -39,13 +39,16 @@ export default function register() {
           // Update when token response is refreshed (e.g. billing tab should appear)
           K.onValueScope($scope, TokenStore.organizations$, onNavChange);
 
-          LD.getCurrentVariation(SSO_SELF_CONFIG_FLAG).then(ssoEnabled => {
-            nav.ssoEnabled = ssoEnabled;
-          });
-
           async function updateNav() {
             const orgId = (nav.orgId = $stateParams.orgId);
             const org = await getOrganization(orgId);
+
+            Promise.all([
+              LD.getCurrentVariation(SSO_SELF_CONFIG_FLAG),
+              getOrgFeature(orgId, 'self_configure_sso')
+            ]).then(([variation, ssoFeatureEnabled]) => {
+              nav.ssoEnabled = variation && ssoFeatureEnabled;
+            });
 
             Promise.all([
               // Set feature flag for Teams
@@ -56,6 +59,7 @@ export default function register() {
               const isLegacyEnterprise = isEnterprise && pricingVersion === 1;
               nav.teamsEnabled = variation && (hasTeamsFeature || isLegacyEnterprise);
             });
+
             TokenStore.getOrganization(orgId).then(org => {
               const FeatureService = createFeatureService(orgId, 'organization');
 
@@ -141,7 +145,7 @@ export default function register() {
           dataViewType: 'organization-teams'
         },
         {
-          if: 'nav.pricingVersion === "pricing_version_2" && nav.ssoEnabled && nav.isOwnerOrAdmin',
+          if: 'nav.ssoEnabled',
           title: 'SSO',
           sref: 'account.organizations.sso({orgId: nav.orgId})',
           rootSref: 'account.organizations.sso',

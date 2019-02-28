@@ -35,6 +35,7 @@ window.libs = [
 
   ['angular', window.angular],
 
+  ['@contentful/asn1js', require('@contentful/asn1js')],
   ['@contentful/forma-36-react-components', require('@contentful/forma-36-react-components')],
   ['@contentful/forma-36-tokens', require('@contentful/forma-36-tokens')],
   ['@contentful/contentful-slatejs-adapter', require('@contentful/contentful-slatejs-adapter')],
@@ -51,8 +52,6 @@ window.libs = [
   ['@contentful/validation', require('@contentful/validation')],
   ['@contentful/widget-map', require('@contentful/widget-map')],
   ['@contentful/worf', require('@contentful/worf')],
-
-  ['@jo-sm/asn1js', require('@jo-sm/asn1js')],
 
   ['classnames', require('classnames')],
   ['codemirror', require('codemirror')],

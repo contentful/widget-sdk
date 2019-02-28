@@ -1,8 +1,9 @@
 import { Notification } from '@contentful/forma-36-react-components';
 import * as actions from './actions.es6';
 import * as selectors from 'redux/selectors/sso.es6';
-import { validate, connectionTestResultFromIdp } from 'app/OrganizationSettings/SSO/utils.es6';
-import _ from 'lodash';
+import { validate } from 'app/OrganizationSettings/SSO/utils.es6';
+import { fieldErrorMessage } from 'app/OrganizationSettings/SSO/utils.es6';
+import { authUrl } from 'Config.es6';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 
@@ -26,16 +27,10 @@ export function retrieveIdp({ orgId }) {
     }
 
     dispatch(actions.ssoGetIdentityProviderSuccess(idp));
-
-    if (idp.testConnectionAt) {
-      const testResult = connectionTestResultFromIdp(idp);
-
-      dispatch(connectionTestResult({ data: testResult }));
-    }
   };
 }
 
-export function createIdp({ orgId, orgName }) {
+export function createIdp({ orgId }) {
   return async dispatch => {
     const endpoint = createOrganizationEndpoint(orgId);
 
@@ -48,7 +43,7 @@ export function createIdp({ orgId, orgName }) {
         method: 'POST',
         path: ['identity_provider'],
         data: {
-          ssoName: _.kebabCase(orgName)
+          ssoName: null
         }
       });
     } catch (e) {
@@ -106,17 +101,15 @@ export function updateFieldValue({ fieldName, value, orgId }) {
         }
       });
     } catch (e) {
-      dispatch(actions.ssoFieldUpdateFailure(fieldName, new Error('Field is not valid')));
+      dispatch(
+        actions.ssoFieldUpdateFailure(fieldName, fieldErrorMessage(fieldName, { api: true }))
+      );
 
       return;
     }
 
     dispatch(actions.ssoFieldUpdateSuccess(fieldName));
     dispatch(actions.ssoUpdateIdentityProvider(identityProvider));
-
-    const testResult = connectionTestResultFromIdp(identityProvider);
-
-    dispatch(connectionTestResult({ data: testResult }));
   };
 }
 
@@ -138,33 +131,34 @@ export function validateField({ fieldName, value }) {
     if (isValid) {
       dispatch(actions.ssoFieldValidationSuccess(fieldName));
     } else {
-      dispatch(actions.ssoFieldValidationFailure(fieldName, new Error('Field is not valid')));
+      dispatch(actions.ssoFieldValidationFailure(fieldName, fieldErrorMessage(fieldName)));
     }
   };
 }
 
-export function connectionTestStart() {
+export function connectionTestStart({ orgId }) {
   return dispatch => {
-    dispatch(actions.ssoConnectionTestStart());
+    const testConnectionUrl = authUrl(`/sso/${orgId}/test_connection`);
+
+    // Open the new window and check if it's closed every 250ms
+    const testWindow = window.open(
+      testConnectionUrl,
+      '',
+      'toolbar=0,status=0,width=650,height=800,left=250,top=200'
+    );
+    const timer = window.setInterval(() => dispatch(checkTestWindow({ orgId })), 250);
+
+    dispatch(actions.ssoConnectionTestStart(testWindow, timer));
   };
 }
 
-export function connectionTestCancel() {
-  return dispatch => {
-    dispatch(actions.ssoConnectionTestEnd());
-  };
-}
+export function connectionTestCancel({ orgId }) {
+  return async (dispatch, getState) => {
+    const testWindow = selectors.getConnectionTestWindow(getState());
 
-export function connectionTestResult({ data }) {
-  return function connectionTestResult(dispatch) {
-    dispatch(actions.ssoConnectionTestResult(data));
-  };
-}
+    testWindow.close();
 
-export function connectionTestEnd({ orgId }) {
-  return async dispatch => {
-    await dispatch(retrieveIdp({ orgId }));
-    dispatch(actions.ssoConnectionTestEnd());
+    dispatch(cleanupConnectionTest({ orgId }));
   };
 }
 
@@ -191,5 +185,28 @@ export function enable({ orgId }) {
     dispatch(actions.ssoEnableSuccess(identityProvider));
 
     Notification.success('SSO successfully enabled!');
+  };
+}
+
+export function checkTestWindow({ orgId }) {
+  return (dispatch, getState) => {
+    const windowClosed = selectors.getConnectionTestWindow(getState()).closed;
+
+    if (!windowClosed) {
+      return;
+    }
+
+    dispatch(cleanupConnectionTest({ orgId }));
+  };
+}
+
+export function cleanupConnectionTest({ orgId }) {
+  return async function cleanupConnectionTest(dispatch, getState) {
+    const timer = selectors.getConnectionTestIntervalTimer(getState());
+
+    window.clearInterval(timer);
+
+    await dispatch(retrieveIdp({ orgId }));
+    dispatch(actions.ssoConnectionTestEnd());
   };
 }

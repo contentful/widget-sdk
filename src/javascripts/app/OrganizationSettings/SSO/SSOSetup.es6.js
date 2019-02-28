@@ -73,7 +73,7 @@ export class SSOSetup extends React.Component {
 
     const idpData = _.get(identityProvider, ['data'], null);
     const isEnabled = _.get(idpData, ['enabled'], false);
-    const restrictedModeEnabled = _.get(idpData, ['restricted'], false);
+    const restrictedModeEnabled = _.get(idpData, ['restrictedMode'], false);
 
     return (
       <Workbench className="sso-setup">
