@@ -11,12 +11,18 @@ import TeamMemberships from './TeamMemberships.es6';
 import TeamMembershipRow from './TeamMembershipRow.es6';
 import TeamMembershipRowPlaceholder from './TeamMembershipRowPlaceholder.es6';
 
-const renderComponent = actions => {
+const renderComponent = (
+  actions,
+  props = {
+    showingForm: false,
+    onFormDismissed: () => {}
+  }
+) => {
   const store = createStore(reducer);
   actions.forEach(action => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
-      <TeamMemberships />
+      <TeamMemberships {...props} />
     </Provider>
   );
   return { store, wrapper };

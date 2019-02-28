@@ -1,7 +1,14 @@
 import reducer from '../reducer/index.es6';
 import { getDatasets, isMissingRequiredDatasets, getDataSetsToLoad } from './datasets.es6';
 import ROUTES from '../routes.es6';
-import { TEAMS, TEAM_MEMBERSHIPS, USERS, ORG_MEMBERSHIPS } from '../datasets.es6';
+import {
+  TEAMS,
+  TEAM_MEMBERSHIPS,
+  USERS,
+  ORG_MEMBERSHIPS,
+  TEAM_SPACE_MEMBERSHIPS
+} from '../datasets.es6';
+import { ORG_SPACE_ROLES, ORG_SPACES } from '../datasets';
 
 const activeOrgId = 'testOrg';
 const activeTeamId = 'testTeam';
@@ -66,7 +73,7 @@ describe('datasets selectors', () => {
         expect(isMissingRequiredDatasets(stateWithSomeDatasets)).toBe(true);
       });
 
-      describe('missing dataset was loaded just now', () => {
+      describe('missing datasets were loaded just now', () => {
         let stateWithAllDatasets;
         beforeEach(() => {
           stateWithAllDatasets = reducer(stateWithSomeDatasets, {
@@ -74,7 +81,10 @@ describe('datasets selectors', () => {
             meta: { fetched: Date.now() },
             payload: {
               datasets: {
-                [ORG_MEMBERSHIPS]: []
+                [ORG_MEMBERSHIPS]: {},
+                [TEAM_SPACE_MEMBERSHIPS]: {},
+                [ORG_SPACES]: {},
+                [ORG_SPACE_ROLES]: {}
               }
             }
           });
@@ -85,7 +95,10 @@ describe('datasets selectors', () => {
             [TEAMS]: {},
             [TEAM_MEMBERSHIPS]: {},
             [USERS]: {},
-            [ORG_MEMBERSHIPS]: {}
+            [ORG_MEMBERSHIPS]: {},
+            [TEAM_SPACE_MEMBERSHIPS]: {},
+            [ORG_SPACES]: {},
+            [ORG_SPACE_ROLES]: {}
           });
         });
 

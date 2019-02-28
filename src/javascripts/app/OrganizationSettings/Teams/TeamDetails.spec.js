@@ -11,6 +11,7 @@ import Placeholder from 'app/common/Placeholder.es6';
 import TeamDetails from './TeamDetails.es6';
 import TeamDialog from './TeamDialog.es6';
 import TeamMembershipForm from './TeamMemberships/TeamMembershipForm.es6';
+import { ORG_MEMBERSHIPS } from 'redux/datasets';
 
 const renderComponent = actions => {
   const store = createStore(reducer);
@@ -25,6 +26,7 @@ const renderComponent = actions => {
 };
 
 const activeOrgId = 'testOrgId';
+const activeTeamId = 'aTeam';
 
 describe('TeamDetails', () => {
   let actions;
@@ -136,7 +138,7 @@ describe('TeamDetails', () => {
             location: {
               pathname: ROUTES.organization.children.teams.children.team.build({
                 orgId: activeOrgId,
-                teamId: 'aTeam'
+                teamId: activeTeamId
               })
             }
           }
@@ -228,7 +230,7 @@ describe('TeamDetails', () => {
         });
       });
 
-      describe('is admin of org', () => {
+      describe('is admin of org and has required datasets', () => {
         beforeEach(() => {
           actions.push({
             type: 'USER_UPDATE_FROM_TOKEN',
@@ -252,6 +254,15 @@ describe('TeamDetails', () => {
                     }
                   }
                 ]
+              }
+            }
+          });
+          actions.push({
+            type: 'DATASET_LOADING',
+            meta: { fetched: 100 },
+            payload: {
+              datasets: {
+                [ORG_MEMBERSHIPS]: []
               }
             }
           });
