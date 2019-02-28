@@ -23,10 +23,26 @@ const homeState = makeState({
   name: 'home',
   url: '/:projectId',
   loadingText: 'Loading…',
-  template: '<h1>My awesome project!</h1>',
+  template: `<react-component name='app/Projects/ProjectHome/ProjectHomeRouter.es6' props='componentProps'></react-component>`,
   controller: [
     '$scope',
     async $scope => {
+      $scope.componentProps = {
+        onReady: () => {
+          $scope.context.ready = true;
+        },
+        onForbidden: () => {
+          $scope.context.forbidden = true;
+        }
+      };
+
+      // Determine if the projects is enabled for this
+      // user. If not, redirect them as if they went to
+      // a bad URL
+      //
+      // The reason this happens here and not a resolver is
+      // so that the `Loading...` text can be displayed to
+      // the user rather than a blank screen.
       const isEnabled = await projectsEnabled();
 
       if (!isEnabled) {
@@ -37,7 +53,6 @@ const homeState = makeState({
         return;
       }
 
-      $scope.context.ready = true;
       $scope.$applyAsync();
     }
   ]
