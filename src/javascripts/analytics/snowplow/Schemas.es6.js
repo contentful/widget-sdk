@@ -166,7 +166,7 @@ registerSchema({
 
 registerSchema({
   name: 'slide_in_editor',
-  version: '1-0-0'
+  version: '1-0-1'
 });
 
 registerSchema({
