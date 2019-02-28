@@ -1,10 +1,10 @@
 import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
 
-describe('data/StreamHashSet', () => {
+describe('data/StreamHashSet.es6', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.store = this.$inject('data/StreamHashSet').create();
+    this.store = this.$inject('data/streamHashSet.es6').create();
 
     this.itemValues = K.extractValues(this.store.items$);
   });
