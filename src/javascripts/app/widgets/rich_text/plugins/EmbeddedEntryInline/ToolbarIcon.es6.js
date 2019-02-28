@@ -13,6 +13,7 @@ export default class EntryLinkToolbarIcon extends Component {
     isButton: false
   };
   handleClick = async (event, widgetAPI) => {
+    this.props.onCloseEmbedMenu();
     event.preventDefault();
     const {
       editor,

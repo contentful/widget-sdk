@@ -119,6 +119,7 @@ export default class PublicationWidget extends React.Component {
                       testId={`change-state-${action.targetStateId}`}
                       onClick={() => {
                         action.execute();
+                        this.setState({ isOpenDropdown: false });
                       }}>
                       {action.label}
                     </DropdownListItem>
