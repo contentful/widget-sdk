@@ -5,7 +5,9 @@ import { connect } from 'react-redux';
 import { get } from 'lodash';
 import * as types from 'app/OrganizationSettings/PropTypes.es6';
 import { getCurrentTeam, getTeams, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
+import { getCurrentTeamSpaceMembershipList } from 'redux/selectors/teamSpaceMemberships.es6';
 import TeamSpaceMembershipForm from './TeamSpaceMembershipForm.es6';
+import TeamSpaceMembershipRow from './TeamSpaceMembershipRow.es6';
 
 import Placeholder from 'app/common/Placeholder.es6';
 
@@ -25,8 +27,13 @@ export class TeamSpaceMemberships extends React.Component {
     team: types.Team
   };
 
+  state = {
+    editingMembershipId: null
+  };
+
   render() {
     const { team, memberships, showingForm, onFormDismissed } = this.props;
+    const { editingMembershipId } = this.state;
     const empty = !memberships || memberships.length === 0;
 
     return !empty || showingForm ? (
@@ -44,6 +51,19 @@ export class TeamSpaceMemberships extends React.Component {
         </TableHead>
         <TableBody>
           {showingForm && <TeamSpaceMembershipForm onClose={onFormDismissed} />}
+          {memberships.map(membership =>
+            editingMembershipId === membership.sys.id ? (
+              <TeamSpaceMembershipForm
+                initialMembership={membership}
+                onClose={() => this.setState({ editingMembershipId: null })}
+              />
+            ) : (
+              <TeamSpaceMembershipRow
+                membership={membership}
+                onEdit={() => this.setState({ editingMembershipId: membership.sys.id })}
+              />
+            )
+          )}
         </TableBody>
       </Table>
     ) : (
@@ -58,5 +78,6 @@ export class TeamSpaceMemberships extends React.Component {
 
 export default connect(state => ({
   team: get(getTeams(state), [getCurrentTeam(state)], undefined),
-  readOnlyPermission: hasReadOnlyPermission(state)
+  readOnlyPermission: hasReadOnlyPermission(state),
+  memberships: getCurrentTeamSpaceMembershipList(state)
 }))(TeamSpaceMemberships);

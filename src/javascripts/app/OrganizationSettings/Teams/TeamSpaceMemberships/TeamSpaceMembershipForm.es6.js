@@ -1,28 +1,38 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { flow, map } from 'lodash/fp';
 import { get } from 'lodash';
 import getCurrentOrgSpaces from 'redux/selectors/getCurrentOrgSpaces.es6';
 import { getCurrentTeamSpaceMembershipList } from 'redux/selectors/teamSpaceMemberships.es6';
 import getRolesBySpace from 'redux/selectors/getRolesBySpace.es6';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor.es6';
 import { TableCell, TableRow, Button, Select, Option } from '@contentful/forma-36-react-components';
+import { getMembershipRoles } from 'access_control/SpaceMembershipRepository.es6';
 import {
   Space as SpacePropType,
-  SpaceRole as SpaceRolePropType
+  SpaceRole as SpaceRolePropType,
+  TeamSpaceMembership as TeamSpaceMembershipPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
 
 class TeamMembershipForm extends React.Component {
   static propTypes = {
+    initialMembership: TeamSpaceMembershipPropType,
+    onClose: PropTypes.func.isRequired,
+
     availableSpaces: PropTypes.arrayOf(SpacePropType),
     roles: PropTypes.objectOf(PropTypes.arrayOf(SpaceRolePropType)),
-    onSubmit: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired
+    onSubmit: PropTypes.func.isRequired
   };
 
   state = {
-    selectedSpaceId: null,
-    selectedRoles: []
+    selectedSpaceId: get(this.props.initialMembership, 'sys.space.sys.id', null),
+    selectedRoles: this.props.initialMembership
+      ? flow(
+          getMembershipRoles,
+          map('sys.id')
+        )(this.props.initialMembership)
+      : []
   };
 
   setSpace = evt => {
@@ -97,6 +107,10 @@ export default connect(
   (dispatch, { onClose }) => ({
     onSubmit: (spaceId, roles) => {
       dispatch({ type: 'SUBMIT_NEW_TEAM_SPACE_MEMBERSHIP', payload: { spaceId, roles } });
+      onClose();
+    },
+    onEdit: updatedMembership => {
+      dispatch({ type: 'EDIT_TEAM_SPACE_MEMBERSHIP', payload: { updatedMembership } });
       onClose();
     }
   })

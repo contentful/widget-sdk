@@ -61,7 +61,8 @@ export default function createTeamMembershipsService(state) {
    * @param {Array<Object>} data.roles An array of role links
    */
   function update({ admin, roles, sys }) {
-    return endpoint(
+    const spaceEndpoint = createSpaceEndpoint(sys.space.sys.id);
+    return spaceEndpoint(
       {
         method: 'PUT',
         path: ['team_space_memberships', sys.id],
