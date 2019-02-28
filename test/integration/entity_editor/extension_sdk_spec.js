@@ -568,7 +568,8 @@ describe('Extension SDK', () => {
               sys: { id: 'b33ts' },
               firstName: 'Dwight',
               lastName: 'Schrute',
-              email: 'dwight@dundermifflin.com'
+              email: 'dwight@dundermifflin.com',
+              avatarUrl: 'https://avatar.com/x.jpg'
             }
           }
         }
@@ -577,13 +578,14 @@ describe('Extension SDK', () => {
 
     it('makes user data available', function*(api) {
       expect(api.user).toEqual({
-        sys: { id: 'b33ts' },
+        sys: { id: 'b33ts', type: 'User' },
         firstName: 'Dwight',
         lastName: 'Schrute',
         email: 'dwight@dundermifflin.com',
+        avatarUrl: 'https://avatar.com/x.jpg',
         spaceMembership: {
           admin: false,
-          sys: { id: 'SMID' },
+          sys: { id: 'SMID', type: 'SpaceMembership' },
           roles: [
             {
               name: 'Assistant to the regional manager',

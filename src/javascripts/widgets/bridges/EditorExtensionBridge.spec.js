@@ -1,6 +1,6 @@
 import createBridge from './EditorExtensionBridge.es6';
 import { createBus } from 'utils/kefir.es6';
-import { LOCATION_ENTRY_FIELD } from './WidgetLocations.es6';
+import { LOCATION_ENTRY_FIELD } from '../WidgetLocations.es6';
 
 function createMockProperty(initial) {
   const bus = createBus();
@@ -10,7 +10,7 @@ function createMockProperty(initial) {
   return property;
 }
 
-jest.mock('./ExtensionDialogs.es6', () => ({
+jest.mock('../ExtensionDialogs.es6', () => ({
   openAlert: jest.fn(() => Promise.resolve('ALERT RESULT')),
   openConfirm: jest.fn(() => Promise.resolve('CONFIRM RESULT')),
   openPrompt: jest.fn(() => Promise.resolve('PROMPT RESULT'))
@@ -72,7 +72,6 @@ describe('EditorExtensionBridge', () => {
         getPrivateLocales: () => [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
         getDefaultLocale: () => ({ code: 'pl', name: 'Polski', default: true })
       },
-      Analytics: {},
       entitySelector: { openFromExtension: stubs.openFromExtension },
       entityCreator: { newEntry: stubs.newEntry },
       SlideInNavigator: { goToSlideInEntity: stubs.goToSlideInEntity },
@@ -234,7 +233,7 @@ describe('EditorExtensionBridge', () => {
         ['prompt', 'openPrompt']
       ].map(async ([type, openMethod]) => {
         const result = await openDialog(type, { opts: true });
-        const dialogs = jest.requireMock('./ExtensionDialogs.es6');
+        const dialogs = jest.requireMock('../ExtensionDialogs.es6');
         expect(dialogs[openMethod]).toBeCalledTimes(1);
         expect(dialogs[openMethod]).toBeCalledWith({ opts: true });
         expect(result).toBe(`${type.toUpperCase()} RESULT`);

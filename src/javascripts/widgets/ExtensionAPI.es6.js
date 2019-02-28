@@ -54,13 +54,16 @@ export default class ExtensionAPI {
       location,
       user: {
         sys: {
+          type: 'User',
           id: spaceMembership.user.sys.id
         },
         firstName: spaceMembership.user.firstName,
         lastName: spaceMembership.user.lastName,
         email: spaceMembership.user.email,
+        avatarUrl: spaceMembership.user.avatarUrl,
         spaceMembership: {
           sys: {
+            type: 'SpaceMembership',
             id: spaceMembership.sys.id
           },
           admin: !!spaceMembership.admin,
