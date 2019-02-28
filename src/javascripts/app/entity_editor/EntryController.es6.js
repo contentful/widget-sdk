@@ -1,6 +1,6 @@
 import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
-import { constant, once } from 'lodash';
+import { constant, keys, once } from 'lodash';
 
 import { user$ } from 'services/TokenStore.es6';
 
@@ -11,14 +11,12 @@ import { makeNotify } from './Notifications.es6';
 import installTracking, { trackEntryView } from './Tracking.es6';
 import {
   isLinkField,
-  createLoadEventTracker,
   getRenderableLinkFieldInstanceCount
 } from 'app/entity_editor/LoadEventTracker.es6';
 
 import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 import * as logger from 'services/logger.es6';
-import * as Telemetry from 'Telemetry.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
@@ -53,20 +51,13 @@ const DataFields = getModule('EntityEditor/DataFields');
  * @scope.requires {Data.FieldControl[]} formControls
  *   Passed to FormWidgetsController to render field controls
  */
-export default async function create($scope, editorData, preferences) {
+export default async function create($scope, editorData, preferences, trackLoadEvent) {
   $scope.context = {};
-
-  const loadStartMs = Date.now();
 
   let loadLinksRendered = false;
   let loadShareJSConnected = false;
 
   $scope.loadEvents = K.createStreamBus($scope);
-
-  const trackLoadEvent = createLoadEventTracker(loadStartMs, $scope.slideStates, () => editorData);
-
-  Telemetry.record('entry_editor_http_time', Date.now() - loadStartMs);
-  trackLoadEvent('init');
 
   const linkFieldTypes = editorData.contentType.data.fields.filter(isLinkField);
   const renderableLinkFieldInstanceCount = getRenderableLinkFieldInstanceCount(linkFieldTypes);
@@ -105,13 +96,13 @@ export default async function create($scope, editorData, preferences) {
 
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
   try {
-    // TODO: Do not directly access $parent in here!
+    const slideCount = keys($scope.slideStates).length;
     trackEntryView({
       editorData,
       entityInfo,
-      currentSlideLevel: $scope.entities.length,
+      currentSlideLevel: slideCount,
       locale: localeStore.getDefaultLocale().internal_code,
-      editorType: $scope.slideStates.length > 1 ? 'slide_in_editor' : 'entry_editor'
+      editorType: slideCount > 1 ? 'slide_in_editor' : 'entry_editor'
     });
   } catch (error) {
     logger.logError(error);

@@ -1,5 +1,5 @@
 import { track } from 'analytics/Analytics.es6';
-import { once, sum, sumBy, values, findIndex } from 'lodash';
+import { keys, once, sum, sumBy, values, findIndex } from 'lodash';
 import { getRichTextEntityLinks } from '@contentful/rich-text-links';
 import * as random from 'utils/Random.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -8,11 +8,12 @@ const TheLocaleStore = getModule('TheLocaleStore');
 
 const LOAD_EVENT_CATEGORY = 'editor_load';
 
-export function createLoadEventTracker(loadStartMs, slideStates, getEditorData) {
+export function createLoadEventTracker(loadStartMs, getSlideStates, getEditorData) {
   const slideUuid = random.id();
-  const totalSlideCount = slideStates.length;
 
   return function trackEditorLoadEvent(eventName) {
+    const slideStates = getSlideStates();
+    const totalSlideCount = keys(slideStates).length;
     if (eventName === 'init') {
       return track(`${LOAD_EVENT_CATEGORY}:init`, { slideUuid, totalSlideCount });
     }
@@ -46,7 +47,7 @@ export function createLoadEventTracker(loadStartMs, slideStates, getEditorData) 
       singleReferenceFieldLinkCount + multiReferenceFieldLinkCount + richTextFieldLinkCount;
     track(`${LOAD_EVENT_CATEGORY}:${eventName}`, {
       slideUuid,
-      slideLevel: findIndex(slideStates, entity => entity.id === entityId),
+      slideLevel: findIndex(slideStates, state => state.slide.id === entityId),
       linkCount,
       richTextEditorInstanceCount,
       linkFieldEditorInstanceCount,

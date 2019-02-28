@@ -1,9 +1,15 @@
-import { cloneDeep, find, mapValues } from 'lodash';
 import { track } from 'analytics/Analytics.es6';
 import * as Telemetry from 'Telemetry.es6';
+import { cloneDeep, find, mapValues } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { deepFreeze } from 'utils/Freeze.es6';
 import { getModule } from 'NgRegistry.es6';
+import { createLoadEventTracker } from 'app/entity_editor/LoadEventTracker.es6';
+import { loadEntry, loadAsset } from 'app/entity_editor/DataLoader.es6';
+const entityLoaders = {
+  Entry: loadEntry,
+  Asset: loadAsset
+};
 
 const {
   getSlideInEntities,
@@ -11,12 +17,6 @@ const {
   getSlideAsString,
   goToPreviousSlideOrExit
 } = getModule('navigation/SlideInNavigator');
-
-import { loadEntry, loadAsset } from 'app/entity_editor/DataLoader.es6';
-const entityLoaders = {
-  Entry: loadEntry,
-  Asset: loadAsset
-};
 
 const spaceContext = getModule('spaceContext');
 
@@ -160,19 +160,21 @@ export default ($scope, $state) => {
       if (['Entry', 'Asset'].includes(slide.type)) {
         entityType = slide.type;
         entityId = slide.id;
-        buildSlideEditorViewProps = editorData => ({
+        buildSlideEditorViewProps = (editorData, trackLoadEvent) => ({
           editorData,
+          trackLoadEvent,
           preferences: { ...$scope.preferences, hasInitialFocus: i + 1 === slides.length }
         });
       } else if (slide.type === 'BulkEditor') {
         entityType = 'Entry';
         entityId = slide.path[0];
-        buildSlideEditorViewProps = editorData => {
+        buildSlideEditorViewProps = (editorData, trackLoadEvent) => {
           const { entityInfo } = editorData;
           const lifeline = K.createBus();
           const onDestroy = () => lifeline.end();
           const doc = editorData.openDoc(lifeline.stream);
           return {
+            trackLoadEvent,
             referenceContext: createReferenceContext(entityInfo, doc, slide, onDestroy)
           };
         };
@@ -187,9 +189,10 @@ export default ($scope, $state) => {
           $scope.$digest();
         }
       };
-      const updateSlideState = editorData =>
+      const updateSlideState = (editorData, trackLoadEvent) =>
         maybeUpdateSlideState(
-          slideState => (slideState.viewProps = buildSlideEditorViewProps(editorData))
+          slideState =>
+            (slideState.viewProps = buildSlideEditorViewProps(editorData, trackLoadEvent))
         );
       const setLoadingError = loadingError =>
         maybeUpdateSlideState(slideState => (slideState.loadingError = loadingError));
@@ -201,19 +204,27 @@ export default ($scope, $state) => {
         if (ongoingLoad) {
           entityLoads[loaderKey] = ongoingLoad;
         } else {
+          let editorData;
           const loadStartMs = Date.now();
-          entityLoads[loaderKey] = loadEntity(spaceContext, entityId).then(editorData => {
+          const trackLoadEvent = createLoadEventTracker(
+            loadStartMs,
+            () => $scope.slideStates,
+            () => editorData
+          );
+          trackLoadEvent('init');
+          entityLoads[loaderKey] = loadEntity(spaceContext, entityId).then(data => {
+            editorData = data;
             recordEntityEditorLoadTime(entityType, loadStartMs);
             // Only add if data is still required once loaded:
             if ($scope.entityLoads[loaderKey]) {
               $scope.editorsData[loaderKey] = editorData;
             }
-            return editorData;
+            return { editorData, trackLoadEvent };
           });
         }
       }
       entityLoads[loaderKey]
-        .then(editorData => updateSlideState(editorData))
+        .then(({ editorData, trackLoadEvent }) => updateSlideState(editorData, trackLoadEvent))
         .catch(error => setLoadingError(error));
       return entityLoads;
     }, {});
