@@ -13,7 +13,7 @@ describe('spaceContext', () => {
     this.createUserCache = sinon.stub().returns(this.userCache);
 
     module('contentful/test', $provide => {
-      $provide.value('data/userCache', sinon.stub());
+      $provide.value('data/userCache.es6', sinon.stub());
       $provide.value('access_control/AccessChecker/index.es6', this.AccessChecker);
       $provide.value('data/Endpoint.es6', {
         createSpaceEndpoint: () => this.mockSpaceEndpoint.request
@@ -25,7 +25,7 @@ describe('spaceContext', () => {
       $provide.value('services/EnforcementsService.es6', {
         init: this.initEnforcements
       });
-      $provide.constant('data/userCache', this.createUserCache);
+      $provide.constant('data/userCache.es6', this.createUserCache);
     });
 
     const { registerFactory } = this.$inject('NgRegistry.es6');

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('data/userCache', () => {
+describe('data/userCache.es6', () => {
   let userCache, fetchAll;
 
   beforeEach(function() {
@@ -10,7 +10,7 @@ describe('data/userCache', () => {
       });
     });
 
-    const createCache = this.$inject('data/userCache');
+    const createCache = this.$inject('data/userCache.es6').default;
     const endpoint = {};
     userCache = createCache(endpoint);
   });
