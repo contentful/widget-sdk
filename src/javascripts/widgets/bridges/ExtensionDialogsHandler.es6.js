@@ -1,10 +1,14 @@
 import React from 'react';
+import { get } from 'lodash';
+
 import { Modal } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 import { getExtensionsById } from '../ExtensionLoader.es6';
 import ExtensionIFrameRenderer from '../ExtensionIFrameRenderer.es6';
 import * as Dialogs from '../ExtensionDialogs.es6';
+import { applyDefaultValues } from '../WidgetParametersUtils.es6';
+
 import createDialogExtensionBridge from './DialogExtensionBridge.es6';
 
 const SIMPLE_DIALOG_TYPE_TO_OPENER = {
@@ -57,6 +61,18 @@ export default function makeExtensionDialogsHandler(dependencies) {
       // (INCEPTION HORN).
       const bridge = createDialogExtensionBridge(dependencies, openDialog, onClose);
 
+      const parameters = {
+        // No instance parameters for dialogs.
+        instance: {},
+        // Regular installation parameters.
+        installation: applyDefaultValues(
+          get(extension, ['extension', 'parameters', 'installation'], []),
+          extension.parameters || {}
+        ),
+        // Parameters passed directly to the dialog.
+        invocation: options.parameters || {}
+      };
+
       return (
         <Modal
           key={`${Date.now()}`}
@@ -68,10 +84,7 @@ export default function makeExtensionDialogsHandler(dependencies) {
           <ExtensionIFrameRenderer
             bridge={bridge}
             descriptor={extension.extension}
-            parameters={{
-              installation: {},
-              instance: {}
-            }}
+            parameters={parameters}
           />
         </Modal>
       );
