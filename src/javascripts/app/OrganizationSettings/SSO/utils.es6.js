@@ -1,6 +1,7 @@
 import * as validators from './validators.es6';
 import * as fieldErrorMessageGenerators from './fieldErrorMessages.es6';
 import { joinWithAnd } from 'utils/StringUtils.es6';
+import { track } from 'analytics/Analytics.es6';
 
 export function validate(fieldName, value) {
   if (!validators[fieldName]) {
@@ -87,4 +88,14 @@ export function formatConnectionTestErrors(errors) {
   }
 
   return formatted;
+}
+
+export function trackTestResult(testData = {}) {
+  const result = testData.result;
+  const errors = formatConnectionTestErrors(testData.errors);
+
+  track('sso:connection_test_result', {
+    result: result ? result : 'unknown',
+    errors
+  });
 }

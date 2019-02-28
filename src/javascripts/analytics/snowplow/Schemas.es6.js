@@ -229,6 +229,11 @@ registerSchema({
   version: '2-0-1'
 });
 
+registerSchema({
+  name: 'feature_sso_self_configuration',
+  version: '1-0-0'
+});
+
 function registerSchema(schema) {
   _schemas[schema.name] = schema;
   _schemas[schema.name].path = buildPath(schema);

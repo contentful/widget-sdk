@@ -3,6 +3,7 @@ import Enzyme from 'enzyme';
 import { IDPSetupForm } from './IDPSetupForm.es6';
 import { TEST_RESULTS } from './constants.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import { track } from 'analytics/Analytics.es6';
 
 import { connectionTestingAllowed, formatConnectionTestErrors } from './utils.es6';
 
@@ -85,6 +86,8 @@ describe('IDPSetupForm', () => {
 
     connectionTestingAllowed.mockClear();
     formatConnectionTestErrors.mockClear();
+
+    track.mockClear();
   });
 
   it('should validate a field on every change', () => {
@@ -318,5 +321,17 @@ describe('IDPSetupForm', () => {
 
     expect(enable).toHaveBeenCalledTimes(1);
     expect(enable).toHaveBeenNthCalledWith(1, { orgId: organization.sys.id });
+  });
+
+  it('should track when a user clicks on the support link', () => {
+    const rendered = render({ identityProvider, organization });
+
+    rendered
+      .find('[testId="support-link"]')
+      .first()
+      .simulate('click');
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenNthCalledWith(1, 'sso:contact_support');
   });
 });

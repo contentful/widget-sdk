@@ -22,6 +22,7 @@ import ExtensionSaveTransform from './transformers/ExtensionSave.es6';
 import ExtensionInstallTransform from './transformers/ExtensionInstall.es6';
 import WebhookEditorTransform from './transformers/WebhookEditor.es6';
 import FeatureTextEditorTransform from './transformers/FeatureTextEditor.es6';
+import SSOSelfConfigurationTransformer from './transformers/SSOSelfConfiguration.es6';
 
 /**
  * @ngdoc module
@@ -119,6 +120,11 @@ registerSpaceWizardEvent('space_wizard:space_type_change');
 registerSpaceWizardEvent('space_wizard:select_plan');
 registerSpaceWizardEvent('space_wizard:entered_details');
 
+registerSSOSelfConfigurationEvent('sso:start_setup');
+registerSSOSelfConfigurationEvent('sso:connection_test_result');
+registerSSOSelfConfigurationEvent('sso:contact_support');
+registerSSOSelfConfigurationEvent('sso:enable');
+
 registerEvent('global:app_loaded', 'app_open', AppOpen);
 
 registerEvent('invite_user:learn', 'generic', InviteUserExperiment);
@@ -205,6 +211,10 @@ function registerSnapshotEvent(event) {
 
 function registerSpaceWizardEvent(event) {
   registerEvent(event, 'feature_space_wizard', SpaceWizardTransformer);
+}
+
+function registerSSOSelfConfigurationEvent(event) {
+  registerEvent(event, 'feature_sso_self_configuration', SSOSelfConfigurationTransformer);
 }
 
 /**

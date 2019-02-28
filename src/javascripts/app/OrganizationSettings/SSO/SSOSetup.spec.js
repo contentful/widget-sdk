@@ -4,6 +4,7 @@ import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import { SSOSetup } from './SSOSetup.es6';
 import IDPSetupForm from './IDPSetupForm.es6';
 import SSOEnabled from './SSOEnabled.es6';
+import { track } from 'analytics/Analytics.es6';
 
 const awaitSetImmediate = () => new Promise(resolve => setImmediate(resolve));
 
@@ -32,6 +33,10 @@ describe('SSOSetup', () => {
       />
     );
   };
+
+  afterEach(() => {
+    track.mockClear();
+  });
 
   it('should call retrieveIdp and onReady when the component is mounted if org is present', async () => {
     const retrieveIdp = jest.fn().mockResolvedValue(true);
@@ -121,5 +126,19 @@ describe('SSOSetup', () => {
       .simulate('click');
 
     expect(createIdp.mock.calls).toHaveLength(1);
+  });
+
+  it('should track when the support link is clicked', () => {
+    const identityProvider = {};
+
+    const rendered = render({ identityProvider, organization });
+
+    rendered
+      .find('[testId="support-link"]')
+      .first()
+      .simulate('click');
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenNthCalledWith(1, 'sso:contact_support');
   });
 });
