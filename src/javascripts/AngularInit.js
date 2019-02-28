@@ -99,7 +99,6 @@ angular
       ngRequire('app/snapshots/cfSnapshotPresenter.es6').default();
       ngRequire('app/snapshots/cfSnapshotSelector.es6').default();
       ngRequire('app/snapshots/snapshotComparator.es6').default();
-      ngRequire('app/widgets/selectionController.es6').default();
       ngRequire('app/widgets/cfBooleanEditorDirective.es6').default();
       ngRequire('app/widgets/cfCheckboxEditorDirective.es6').default();
       ngRequire('app/widgets/cfFileEditorDirective.es6').default();
