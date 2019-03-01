@@ -2,24 +2,23 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { Button, Tooltip } from '@contentful/forma-36-react-components';
+import { Button, Tab, Tooltip } from '@contentful/forma-36-react-components';
 
 import reducer from 'redux/reducer/index.es6';
-import { TEAMS, TEAM_MEMBERSHIPS, USERS } from 'redux/datasets.es6';
+import { TEAMS, TEAM_MEMBERSHIPS, USERS, ORG_MEMBERSHIPS } from 'redux/datasets.es6';
 import ROUTES from 'redux/routes.es6';
 import Placeholder from 'app/common/Placeholder.es6';
 import TeamDetails from './TeamDetails.es6';
 import TeamDialog from './TeamDialog.es6';
 import TeamMembershipForm from './TeamMemberships/TeamMembershipForm.es6';
-import { ORG_MEMBERSHIPS } from 'redux/datasets';
 
-const renderComponent = actions => {
+const renderComponent = (actions, props = { spaceMembershipsEnabled: true }) => {
   const store = createStore(reducer);
   store.dispatch = jest.fn(store.dispatch);
   actions.forEach(action => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
-      <TeamDetails />
+      <TeamDetails {...props} />
     </Provider>
   );
   return { store, wrapper };
@@ -206,7 +205,7 @@ describe('TeamDetails', () => {
           const { wrapper } = renderComponent(actions);
 
           const tooltips = wrapper.find(Tooltip).filter({ testId: 'read-only-tooltip' });
-          expect(tooltips).toHaveLength(3);
+          expect(tooltips).toHaveLength(2);
           // ensures all buttons are wrapped in a tooltip
           expect(wrapper.find(Button)).toHaveLength(tooltips.find(Button).length);
           expect(
@@ -288,7 +287,6 @@ describe('TeamDetails', () => {
 
         it('should render active edit button', () => {
           const { wrapper } = renderComponent(actions);
-
           const editButton = wrapper.find(Button).filter({ testId: 'edit-team-button' });
           expect(editButton).toHaveLength(1);
 
@@ -298,39 +296,102 @@ describe('TeamDetails', () => {
           expect(getDialog(wrapper).props()).toHaveProperty('isShown', true);
         });
 
-        it('should render active add button in header', () => {
-          const { wrapper } = renderComponent(actions);
+        describe('team members tab is active', () => {
+          let wrapperWithTeamMemberTabActive;
+          beforeEach(() => {
+            wrapperWithTeamMemberTabActive = renderComponent(actions).wrapper;
+            wrapperWithTeamMemberTabActive
+              .find(Tab)
+              .filter({ testId: 'tab-teamMembers' })
+              .props()
+              .onSelect();
+          });
 
-          const button = wrapper
-            .find('header')
-            .find(Button)
-            .filter({ testId: 'add-button' });
-          expect(button.props()).toHaveProperty('disabled', false);
+          it('should show empty placeholder with add member button', () => {
+            const placeholder = wrapperWithTeamMemberTabActive
+              .find(Placeholder)
+              .filter({ testId: 'empty-placeholder' });
+            expect(placeholder).toHaveLength(1);
+            expect(placeholder.props().title).toContain('Team A Team has no members');
+            const addMemberButton = placeholder.find(Button).filter({ testId: 'add-button' });
+            expect(addMemberButton).toHaveLength(1);
+            expect(addMemberButton).toHaveText('Add a team member');
+          });
+
+          describe('after clicking button', () => {
+            let wrapperAfterClick;
+            const getForm = wrapper => wrapper.find(TeamMembershipForm);
+
+            beforeEach(() => {
+              wrapperAfterClick = wrapperWithTeamMemberTabActive;
+              wrapperAfterClick
+                .find(Button)
+                .filter({ testId: 'add-button' })
+                .simulate('click');
+            });
+
+            it('should show add member form', () => {
+              expect(getForm(wrapperAfterClick)).toHaveLength(1);
+            });
+
+            it('clicking cancel in the form should close it', () => {
+              getForm(wrapperAfterClick)
+                .find(Button)
+                .filter({ testId: 'cancel-button' })
+                .simulate('click');
+
+              expect(getForm(wrapperAfterClick)).toHaveLength(0);
+            });
+          });
         });
 
-        describe('after clicking button', () => {
-          let wrapperAfterClick;
-          const getForm = wrapper => wrapper.find(TeamMembershipForm);
-
+        describe('team space memberships tab is active', () => {
+          let wrapperWithTeamMemberTabActive;
           beforeEach(() => {
-            wrapperAfterClick = renderComponent(actions).wrapper;
-            wrapperAfterClick
-              .find(Button)
-              .filter({ testId: 'add-button' })
-              .simulate('click');
+            wrapperWithTeamMemberTabActive = renderComponent(actions).wrapper;
+            wrapperWithTeamMemberTabActive
+              .find(Tab)
+              .filter({ testId: 'tab-spaceMemberships' })
+              .simulate('select');
           });
 
-          it('should show add member form', () => {
-            expect(getForm(wrapperAfterClick)).toHaveLength(1);
+          it('should show empty placeholder with add space membership button', () => {
+            const placeholder = wrapperWithTeamMemberTabActive
+              .find(Placeholder)
+              .filter({ testId: 'empty-placeholder' });
+            expect(placeholder).toHaveLength(1);
+            expect(placeholder.props().title).toContain('Team A is not in any space yet');
+            const addSpaceMembershipButton = placeholder
+              .find(Button)
+              .filter({ testId: 'add-button' });
+            expect(addSpaceMembershipButton).toHaveLength(1);
+            expect(addSpaceMembershipButton).toHaveText('Add a team member');
           });
 
-          it('clicking cancel in the form should close it', () => {
-            getForm(wrapperAfterClick)
-              .find(Button)
-              .filter({ testId: 'cancel-button' })
-              .simulate('click');
+          describe('after clicking button', () => {
+            let wrapperAfterClick;
+            const getForm = wrapper => wrapper.find(TeamMembershipForm);
 
-            expect(getForm(wrapperAfterClick)).toHaveLength(0);
+            beforeEach(() => {
+              wrapperAfterClick = wrapperWithTeamMemberTabActive;
+              wrapperAfterClick
+                .find(Button)
+                .filter({ testId: 'add-button' })
+                .simulate('click');
+            });
+
+            it('should show add member form', () => {
+              expect(getForm(wrapperAfterClick)).toHaveLength(1);
+            });
+
+            it('clicking cancel in the form should close it', () => {
+              getForm(wrapperAfterClick)
+                .find(Button)
+                .filter({ testId: 'cancel-button' })
+                .simulate('click');
+
+              expect(getForm(wrapperAfterClick)).toHaveLength(0);
+            });
           });
         });
       });

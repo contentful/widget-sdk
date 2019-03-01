@@ -225,6 +225,7 @@ class TeamDetails extends React.Component {
                         <Tab
                           key={id}
                           id={id}
+                          testId={`tab-${id}`}
                           selected={this.isSelected(id)}
                           onSelect={() => this.selectTab(id)}>
                           {label}
@@ -265,7 +266,7 @@ class TeamDetails extends React.Component {
                       ) : null}
                       {this.isSelected(id) && this.isListEmpty() && !readOnlyPermission && (
                         <Placeholder
-                          testId="no-members-placeholder"
+                          testId="empty-placeholder"
                           title={emptyStateMessage().title}
                           text={emptyStateMessage().text}
                           button={
@@ -278,7 +279,7 @@ class TeamDetails extends React.Component {
                       )}
                       {this.isSelected(id) && this.isListEmpty() && readOnlyPermission && (
                         <Placeholder
-                          testId="no-members-placeholder"
+                          testId="empty-placeholder"
                           title={emptyStateMessage().title}
                           text={emptyStateMessage().readOnly}
                         />

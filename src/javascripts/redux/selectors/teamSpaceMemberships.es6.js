@@ -11,6 +11,7 @@ export const getTeamSpaceMemberships = flow(
 
 export const getSpaceMembershipsByTeam = flow(
   getTeamSpaceMemberships,
+  defaultTo({}),
   // get values from object...
   Object.values,
   // ... and group them by the team id instead
