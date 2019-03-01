@@ -35,7 +35,7 @@ const createRoleRemover = getModule('createRoleRemover');
 const TheAccountView = getModule('TheAccountView');
 const UserListHandler = getModule('UserListHandler');
 const RoleRepository = getModule('access_control/RoleRepository.es6');
-const createFeatureService = getModule('services/FeatureService.es6');
+const createLegacyFeatureService = getModule('services/LegacyFeatureService.es6');
 const createResourceService = getModule('services/ResourceService.es6');
 const TheLocaleStore = getModule('TheLocaleStore');
 
@@ -286,7 +286,7 @@ class RoleEditor extends React.Component {
   async componentDidMount() {
     const { isNew } = this.props;
     const organization = spaceContext.organization;
-    const FeatureService = createFeatureService.default(spaceContext.getId());
+    const FeatureService = createLegacyFeatureService.default(spaceContext.getId());
 
     this.setState({ loading: true });
 

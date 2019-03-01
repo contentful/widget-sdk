@@ -26,8 +26,8 @@ export default function register() {
         '$stateParams',
         'services/TokenStore.es6',
         'utils/LaunchDarkly/index.es6',
-        'services/FeatureService.es6',
-        function($scope, $stateParams, TokenStore, LD, { default: createFeatureService }) {
+        'services/LegacyFeatureService.es6',
+        function($scope, $stateParams, TokenStore, LD, { default: createLegacyFeatureService }) {
           const nav = this;
 
           // Prevent unnecesary calls from watchers
@@ -61,7 +61,7 @@ export default function register() {
             });
 
             TokenStore.getOrganization(orgId).then(org => {
-              const FeatureService = createFeatureService(orgId, 'organization');
+              const FeatureService = createLegacyFeatureService(orgId, 'organization');
 
               nav.pricingVersion = org.pricingVersion;
               nav.isOwnerOrAdmin = isOwnerOrAdmin(org);

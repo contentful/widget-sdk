@@ -2,7 +2,7 @@ import { createIsolatedSystem } from 'test/helpers/system-js';
 import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 import { set } from 'lodash';
 
-describe('Feature Service', () => {
+describe('Legacy Feature Service', () => {
   beforeEach(async function() {
     this.flags = {
       'feature-bv-2018-01-features-api': false
@@ -84,25 +84,27 @@ describe('Feature Service', () => {
       getOrganization: sinon.stub().resolves(this.mocks.organization)
     });
 
-    this.createFeatureService = (await system.import('services/FeatureService.es6')).default;
+    this.createLegacyFeatureService = (await system.import(
+      'services/LegacyFeatureService.es6'
+    )).default;
   });
 
   it('should use the space endpoint by default during instantiation', function() {
-    this.createFeatureService('1234');
+    this.createLegacyFeatureService('1234');
 
     expect(this.spies.createSpaceEndpoint.called).toBe(true);
     expect(this.stubs.createOrganizationEndpoint.called).toBe(false);
   });
 
   it('should also allow instantiating with the organization type', function() {
-    this.createFeatureService('1234', 'organization');
+    this.createLegacyFeatureService('1234', 'organization');
 
     expect(this.spies.createSpaceEndpoint.called).toBe(false);
     expect(this.stubs.createOrganizationEndpoint.called).toBe(true);
   });
 
   it('should return the proper definition on instantiation', function() {
-    const FeatureService = this.createFeatureService('1234');
+    const FeatureService = this.createLegacyFeatureService('1234');
 
     expect(Object.keys(FeatureService).length).toBe(2);
     expect(FeatureService.get).toBeDefined();
@@ -111,7 +113,7 @@ describe('Feature Service', () => {
 
   describe('#get', () => {
     beforeEach(function() {
-      this.FeatureService = this.createFeatureService('1234');
+      this.FeatureService = this.createLegacyFeatureService('1234');
     });
 
     it('should return a Feature from the token if legacy and the feature flag is off', async function() {
@@ -169,7 +171,7 @@ describe('Feature Service', () => {
 
   describe('#getAll', () => {
     beforeEach(function() {
-      this.FeatureService = this.createFeatureService('1234');
+      this.FeatureService = this.createLegacyFeatureService('1234');
     });
 
     it('should return all enabled Features from the token if legacy and the feature flag is off', async function() {

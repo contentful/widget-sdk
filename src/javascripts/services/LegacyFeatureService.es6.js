@@ -9,7 +9,7 @@ import { FEATURE_SERVICE_FLAG } from 'featureFlags.es6';
 
 import { get, snakeCase } from 'lodash';
 
-export default function createFeatureService(id, type = 'space') {
+export default function create(id, type = 'space') {
   const endpoint = createEndpoint(id, type);
 
   return { get, getAll };
