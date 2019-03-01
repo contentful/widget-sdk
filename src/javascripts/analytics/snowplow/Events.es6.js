@@ -86,6 +86,7 @@ registerBulkEditorEvent('bulk_editor:status');
 
 registerSlideInEditorEvent('slide_in_editor:peek_click');
 registerSlideInEditorEvent('slide_in_editor:arrow_back');
+registerSlideInEditorEvent('slide_in_editor:bulk_editor_close');
 registerSlideInEditorEvent('slide_in_editor:open');
 registerSlideInEditorEvent('slide_in_editor:open_create');
 registerSlideInEditorEvent('slide_in_editor:delete');

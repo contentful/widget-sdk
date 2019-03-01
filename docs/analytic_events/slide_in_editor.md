@@ -22,7 +22,11 @@ We track all of the following cases using the "`slide_in_editor`" event:
 * Click on "←" back arrow of a slided-in entity
   * `action`: `"arrow_back"`
   * `current_slide_level`
-  * `target_slide_level`: should be `current_slide_level - 1`
+  * `target_slide_level`: always `current_slide_level - 1`
+* Click on the Bulk editor's "Close" button
+  * `action`: `"arrow_back"`
+  * `current_slide_level`
+  * `target_slide_level`: always `current_slide_level - 1`
 * Click on a reference or creating a new entity from a reference field, resulting in slide-in
   * `action`: `"open" | "open_create"`
   * `current_slide_level`
@@ -30,7 +34,7 @@ We track all of the following cases using the "`slide_in_editor`" event:
 * Entity "action > delete" which indirectly results in the top slide being closed
   * `action`: `"delete"`
   * `current_slide_level`
-  * `target_slide_level`: should be `current_slide_level - 1`
+  * `target_slide_level`: always `current_slide_level - 1`
 * (Dropped/TBD) ~~Use of native browser history back or forward button~~
   * ~~`action`: `"browser_back" | "browser_forward"`~~
   * ~~`current_slide_level`~~

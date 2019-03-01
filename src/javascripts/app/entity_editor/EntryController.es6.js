@@ -13,7 +13,6 @@ import installTracking, { trackEntryView } from './Tracking.es6';
 import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 import * as logger from 'services/logger.es6';
-import * as Telemetry from 'Telemetry.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
@@ -50,9 +49,6 @@ const DataFields = getModule('EntityEditor/DataFields');
  */
 export default async function create($scope, editorData, preferences) {
   $scope.context = {};
-  const start = Date.now();
-
-  Telemetry.record('entry_editor_http_time', Date.now() - start);
 
   const editorContext = ($scope.editorContext = {});
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);

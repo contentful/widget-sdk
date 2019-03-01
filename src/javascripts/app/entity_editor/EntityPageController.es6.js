@@ -1,4 +1,5 @@
 import { track } from 'analytics/Analytics.es6';
+import * as Telemetry from 'Telemetry.es6';
 import { cloneDeep, find, mapValues } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { deepFreeze } from 'utils/Freeze.es6';
@@ -195,15 +196,20 @@ export default ($scope, $state) => {
       const loaderKey = `${entityType}:${entityId}`;
       if (!entityLoads[loaderKey]) {
         const loadEntity = entityLoaders[entityType];
-        entityLoads[loaderKey] =
-          $scope.entityLoads[loaderKey] ||
-          loadEntity(spaceContext, entityId).then(editorData => {
+        const ongoingLoad = $scope.entityLoads[loaderKey];
+        if (ongoingLoad) {
+          entityLoads[loaderKey] = ongoingLoad;
+        } else {
+          const loadStartMs = Date.now();
+          entityLoads[loaderKey] = loadEntity(spaceContext, entityId).then(editorData => {
+            recordEntityEditorLoadTime(entityType, loadStartMs);
             // Only add if data is still required once loaded:
             if ($scope.entityLoads[loaderKey]) {
               $scope.editorsData[loaderKey] = editorData;
             }
             return editorData;
           });
+        }
       }
       entityLoads[loaderKey]
         .then(editorData => updateSlideState(editorData))
@@ -283,4 +289,14 @@ export default ($scope, $state) => {
 
 function isRelevantState({ name }) {
   return /^spaces\.detail(\.environment|)\.(entries|assets)\.detail$/.test(name);
+}
+
+const ENTITY_EDITOR_HTTP_TIME_EVENTS = {
+  Entry: 'entry_editor_http_time',
+  Asset: 'asset_editor_http_time'
+};
+
+function recordEntityEditorLoadTime(entityType, loadStartMs) {
+  const loadTimeMs = Date.now() - loadStartMs;
+  Telemetry.record(ENTITY_EDITOR_HTTP_TIME_EVENTS[entityType], loadTimeMs);
 }
