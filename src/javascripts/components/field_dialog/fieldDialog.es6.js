@@ -227,7 +227,11 @@ export default function register() {
         }
 
         const titleField = _.find(contentTypeData.fields, { id: fieldId });
-        return fieldDecorator.getDisplayName(titleField);
+        if (titleField) {
+          return fieldDecorator.getDisplayName(titleField);
+        } else {
+          return null;
+        }
       }
     }
   ]);
