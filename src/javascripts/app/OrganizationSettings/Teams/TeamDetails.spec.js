@@ -11,6 +11,7 @@ import Placeholder from 'app/common/Placeholder.es6';
 import TeamDetails from './TeamDetails.es6';
 import TeamDialog from './TeamDialog.es6';
 import TeamMembershipForm from './TeamMemberships/TeamMembershipForm.es6';
+import TeamSpaceMembershipForm from './TeamSpaceMemberships/TeamSpaceMembershipForm.es6';
 
 const renderComponent = (actions, props = { spaceMembershipsEnabled: true }) => {
   const store = createStore(reducer);
@@ -201,6 +202,16 @@ describe('TeamDetails', () => {
           });
         });
 
+        it('should show empty placeholder without add member button', () => {
+          const { wrapper } = renderComponent(actions);
+
+          const placeholder = wrapper.find(Placeholder).filter({ testId: 'empty-placeholder' });
+          expect(placeholder).toHaveLength(1);
+          expect(placeholder.props().title).toContain('Team A');
+          const addMemberButton = placeholder.find(Button).filter({ testId: 'add-button' });
+          expect(addMemberButton).toHaveLength(0);
+        });
+
         it('should render buttons disabled and with tooltips', () => {
           const { wrapper } = renderComponent(actions);
 
@@ -346,34 +357,38 @@ describe('TeamDetails', () => {
         });
 
         describe('team space memberships tab is active', () => {
-          let wrapperWithTeamMemberTabActive;
+          let wrapperWithSpaceMembershipTabActive;
           beforeEach(() => {
-            wrapperWithTeamMemberTabActive = renderComponent(actions).wrapper;
-            wrapperWithTeamMemberTabActive
+            wrapperWithSpaceMembershipTabActive = renderComponent(actions).wrapper;
+
+            wrapperWithSpaceMembershipTabActive
               .find(Tab)
               .filter({ testId: 'tab-spaceMemberships' })
-              .simulate('select');
+              .props()
+              .onSelect();
+            // unfortunately necessary: https://airbnb.io/enzyme/docs/api/ShallowWrapper/update.html
+            wrapperWithSpaceMembershipTabActive.update();
           });
 
           it('should show empty placeholder with add space membership button', () => {
-            const placeholder = wrapperWithTeamMemberTabActive
+            const placeholder = wrapperWithSpaceMembershipTabActive
               .find(Placeholder)
               .filter({ testId: 'empty-placeholder' });
             expect(placeholder).toHaveLength(1);
-            expect(placeholder.props().title).toContain('Team A is not in any space yet');
+            expect(placeholder.props().title).toContain('Team A Team is not in any space yet');
             const addSpaceMembershipButton = placeholder
               .find(Button)
               .filter({ testId: 'add-button' });
             expect(addSpaceMembershipButton).toHaveLength(1);
-            expect(addSpaceMembershipButton).toHaveText('Add a team member');
+            expect(addSpaceMembershipButton).toHaveText('Add to space');
           });
 
           describe('after clicking button', () => {
             let wrapperAfterClick;
-            const getForm = wrapper => wrapper.find(TeamMembershipForm);
+            const getForm = wrapper => wrapper.find(TeamSpaceMembershipForm);
 
             beforeEach(() => {
-              wrapperAfterClick = wrapperWithTeamMemberTabActive;
+              wrapperAfterClick = wrapperWithSpaceMembershipTabActive;
               wrapperAfterClick
                 .find(Button)
                 .filter({ testId: 'add-button' })

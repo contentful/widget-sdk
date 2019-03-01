@@ -5,8 +5,7 @@ import { Provider } from 'react-redux';
 import reducer from 'redux/reducer/index.es6';
 import ROUTES from 'redux/routes.es6';
 import { ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS, TEAMS, USERS } from 'redux/datasets.es6';
-import { Button, Table } from '@contentful/forma-36-react-components';
-import Placeholder from 'app/common/Placeholder.es6';
+import { Table } from '@contentful/forma-36-react-components';
 import TeamMemberships from './TeamMemberships.es6';
 import TeamMembershipRow from './TeamMembershipRow.es6';
 import TeamMembershipRowPlaceholder from './TeamMembershipRowPlaceholder.es6';
@@ -81,90 +80,6 @@ describe('TeamMemberships', () => {
         const { wrapper } = renderComponent(actions);
 
         expect(wrapper.find(Table).filter({ 'data-test-id': 'member-table' })).toHaveLength(0);
-      });
-
-      describe('is member of org', () => {
-        beforeEach(() => {
-          actions.push({
-            type: 'USER_UPDATE_FROM_TOKEN',
-            payload: {
-              user: {
-                organizationMemberships: [
-                  {
-                    role: 'member',
-                    organization: {
-                      sys: {
-                        id: activeOrgId
-                      }
-                    }
-                  },
-                  {
-                    role: 'owner',
-                    organization: {
-                      sys: {
-                        id: 'otherOrg'
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          });
-        });
-
-        it('should show empty placeholder without add member button', () => {
-          const { wrapper } = renderComponent(actions);
-
-          const placeholder = wrapper
-            .find(Placeholder)
-            .filter({ testId: 'no-members-placeholder' });
-          expect(placeholder).toHaveLength(1);
-          expect(placeholder.props().title).toContain('Team 1');
-          const addMemberButton = placeholder.find(Button).filter({ testId: 'add-member-button' });
-          expect(addMemberButton).toHaveLength(0);
-        });
-      });
-
-      describe('is admin of org', () => {
-        beforeEach(() => {
-          actions.push({
-            type: 'USER_UPDATE_FROM_TOKEN',
-            payload: {
-              user: {
-                organizationMemberships: [
-                  {
-                    role: 'admin',
-                    organization: {
-                      sys: {
-                        id: activeOrgId
-                      }
-                    }
-                  },
-                  {
-                    role: 'member',
-                    organization: {
-                      sys: {
-                        id: 'otherOrg'
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          });
-        });
-
-        it('should show empty placeholder with add member button', () => {
-          const { wrapper } = renderComponent(actions);
-
-          const placeholder = wrapper
-            .find(Placeholder)
-            .filter({ testId: 'no-members-placeholder' });
-          expect(placeholder).toHaveLength(1);
-          expect(placeholder.props().title).toContain('Team 1');
-          const addMemberButton = placeholder.find(Button).filter({ testId: 'add-member-button' });
-          expect(addMemberButton).toHaveLength(1);
-        });
       });
 
       describe('memberships were added', () => {
