@@ -9,16 +9,16 @@ import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcher
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import * as EnvironmentUtils from 'utils/EnvironmentUtils.es6';
+import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 
 const spaceContext = getModule('spaceContext');
 const ResourceService = getModule('services/ResourceService.es6');
-const LegacyFeatureService = getModule('services/LegacyFeatureService.es6');
 const OrganizationRoles = getModule('services/OrganizationRoles.es6');
 const TheAccountView = getModule('TheAccountView');
 
 const LocalesFetcher = createFetcherComponent(() => {
   const createResourceService = ResourceService.default;
-  const createLegacyFeatureService = LegacyFeatureService.default;
+
   return Promise.all([
     spaceContext.localeRepo.getAll(),
     isLegacyOrganization(spaceContext.organization),

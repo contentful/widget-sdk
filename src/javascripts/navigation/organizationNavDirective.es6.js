@@ -7,6 +7,7 @@ import { getOrganization } from 'services/TokenStore.es6';
 import getOrgStatus from '../data/OrganizationStatus.es6';
 import { SSO_SELF_CONFIG_FLAG, TEAMS as FF_TEAMS } from 'featureFlags.es6';
 import { getOrgFeature } from '../data/CMA/ProductCatalog.es6';
+import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 
 export default function register() {
   /**
@@ -26,8 +27,7 @@ export default function register() {
         '$stateParams',
         'services/TokenStore.es6',
         'utils/LaunchDarkly/index.es6',
-        'services/LegacyFeatureService.es6',
-        function($scope, $stateParams, TokenStore, LD, { default: createLegacyFeatureService }) {
+        function($scope, $stateParams, TokenStore, LD) {
           const nav = this;
 
           // Prevent unnecesary calls from watchers
