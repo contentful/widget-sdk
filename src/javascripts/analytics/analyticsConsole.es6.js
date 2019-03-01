@@ -160,6 +160,29 @@ export default function register() {
           }
         };
 
+        scope.$watchGroup(
+          ['events', 'filterText', 'clearedEventsIndex', 'showingSnowplowDebugInfo'],
+          (_new, _old, scope) => {
+            const relevantEvents = scope.events
+              .map((event, index) => ({ ...event, index }))
+              .filter(isRelevantEvent);
+            scope.filteredEvents = relevantEvents.filter(isSearchResultEvent);
+            scope.relevantEventsCount = relevantEvents.length;
+          }
+        );
+
+        function isRelevantEvent(event, index) {
+          if (index <= scope.clearedEventsIndex) return false;
+          if (scope.showingSnowplowDebugInfo && !event.snowplow) return false;
+          return true;
+        }
+
+        function isSearchResultEvent(event) {
+          if (!scope.filterText) return true;
+          const isMatch = text => text.indexOf(scope.filterText) !== -1;
+          return isMatch(event.name) || (event.snowplow && isMatch(event.snowplow.name));
+        }
+
         scope.toggleSnowplowDebugInfo = () => {
           scope.showSessionData = false;
           scope.showingSnowplowDebugInfo = !scope.showingSnowplowDebugInfo;
@@ -171,6 +194,7 @@ export default function register() {
 
         scope.clearEvents = () => (scope.clearedEventsIndex = scope.events.length - 1);
         scope.unclearEvents = () => (scope.clearedEventsIndex = -1);
+        scope.clearSearch = () => (scope.filterText = '');
 
         scope.events$.onValue(events => {
           scope.events = events;
