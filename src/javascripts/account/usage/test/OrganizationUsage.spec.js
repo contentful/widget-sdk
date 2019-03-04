@@ -79,14 +79,6 @@ jest.mock(
 );
 
 jest.mock(
-  'utils/LaunchDarkly/index.es6',
-  () => ({
-    getCurrentVariation: jest.fn(fs => fs === 'feature-bizvel-09-2018-usage')
-  }),
-  { virtual: true }
-);
-
-jest.mock(
   'ng/services/TokenStore.es6',
   () => ({
     getOrganization: jest.fn(() => ({}))
@@ -268,13 +260,12 @@ describe('WorkbenchActions', () => {
     });
   });
 
-  describe('org is committed, flag is set and periods received', () => {
+  describe('org is committed and periods received', () => {
     it('should render the PeriodSelector', () => {
       const wrapper = shallow(
         <WorkbenchActions
           hasSpaces
           committed
-          flagActive
           periods={[]}
           selectedPeriodIndex={0}
           setPeriodIndex={() => {}}
@@ -290,7 +281,6 @@ describe('WorkbenchActions', () => {
       const wrapper = shallow(
         <WorkbenchActions
           hasSpaces
-          flagActive
           periods={[]}
           selectedPeriodIndex={0}
           setPeriodIndex={() => {}}
@@ -306,24 +296,6 @@ describe('WorkbenchActions', () => {
     it('should render nothing', () => {
       const wrapper = shallow(
         <WorkbenchActions
-          committed
-          flagActive
-          periods={[]}
-          selectedPeriodIndex={0}
-          setPeriodIndex={() => {}}
-        />
-      );
-
-      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
-      expect(wrapper.find(Spinner)).toHaveLength(0);
-    });
-  });
-
-  describe('feature flag not set', () => {
-    it('should render nothing', () => {
-      const wrapper = shallow(
-        <WorkbenchActions
-          hasSpaces
           committed
           periods={[]}
           selectedPeriodIndex={0}
@@ -343,7 +315,6 @@ describe('WorkbenchContent', () => {
   beforeEach(() => {
     defaultProps = {
       committed: true,
-      flagActive: true,
       hasSpaces: true,
       selectedPeriodIndex: 0,
       spaceNames: { space1: 'Space1', space2: 'Space2' },
@@ -365,7 +336,7 @@ describe('WorkbenchContent', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  describe('org is committed, flag is active and there are spaces', () => {
+  describe('org is committed and there are spaces', () => {
     it('should render the OrganizationUsagePage', () => {
       const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
 
@@ -415,19 +386,6 @@ describe('WorkbenchContent', () => {
         expect(wrapper.find(OrganizationUsagePage)).toHaveLength(0);
         expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(0);
       });
-    });
-  });
-
-  describe('feature flag is not active', () => {
-    it('should render OrganizationResourceUsageList', () => {
-      const wrapper = shallow(
-        <WorkbenchContent {...{ ...defaultProps, ...{ flagActive: false } }} />
-      );
-
-      expect(wrapper.find(OrganizationResourceUsageList)).toHaveLength(1);
-
-      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(0);
-      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(0);
     });
   });
 });
