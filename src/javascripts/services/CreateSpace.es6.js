@@ -10,7 +10,6 @@ import {
   getBasePlan
 } from 'account/pricing/PricingDataProvider.es6';
 import { openModal as showLoading } from 'components/shared/LoadingModal.es6';
-import isPOCEnabled from 'account/POCFeatureFlag.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const modalDialog = getModule('modalDialog');
@@ -49,18 +48,10 @@ export async function showDialog(organizationId) {
     });
   } else {
     const loadingModal = showLoading();
-
-    // check if Proof of Concept spaces feature is on
-    const canCreatePOC = await isPOCEnabled();
     const orgEndpoint = createOrganizationEndpoint(organizationId);
-
-    let shouldCreatePOC;
-
-    if (canCreatePOC) {
-      const basePlan = await getBasePlan(orgEndpoint);
-      // org should create POC if it is Enterprise
-      shouldCreatePOC = isEnterprisePlan(basePlan);
-    }
+    const basePlan = await getBasePlan(orgEndpoint);
+    // org should create POC if it is Enterprise
+    const shouldCreatePOC = isEnterprisePlan(basePlan);
 
     if (shouldCreatePOC) {
       const resources = createResourceService(organizationId, 'organization');
