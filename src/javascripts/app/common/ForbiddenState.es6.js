@@ -3,7 +3,7 @@ import React from 'react';
 export default class ForbiddenState extends React.Component {
   render() {
     return (
-      <div>
+      <div className="workbench workbench-forbidden x--center">
         <h2 className="workbench-forbidden__over-headline">Access forbidden (403)</h2>
         <p className="workbench-forbidden__headline">You don’t have access to this page.</p>
         <p className="workbench-forbidden__message">
