@@ -78,7 +78,7 @@ export default connect(
     removeMembership: () =>
       dispatch({
         type: 'REMOVE_TEAM_SPACE_MEMBERSHIP',
-        payload: { teamSpaceMembership: membership.sys.id }
+        payload: { teamSpaceMembershipId: membership.sys.id }
       })
   })
 )(TeamMembershipRow);
