@@ -1,5 +1,5 @@
 import { registerFactory, registerController } from 'NgRegistry.es6';
-import _ from 'lodash';
+import { extend, find, cloneDeep, get, isEmpty, map, includes, intersection } from 'lodash';
 import { joinAndTruncate } from 'utils/StringUtils.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 import { toInternalFieldType } from 'widgets/FieldTypes.es6';
@@ -7,6 +7,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import getDefaultWidgetId from 'widgets/DefaultWidget.es6';
 import * as fieldFactory from 'services/fieldFactory.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
+import validationDecorator from 'components/field_dialog/validationDecorator.es6';
 
 // TODO: This dialog should be completely rewritten!
 
@@ -36,7 +37,7 @@ export default function register() {
     'modalDialog',
     modalDialog => {
       return function openFieldDialog($scope, field, widget) {
-        const scope = _.extend($scope.$new(), {
+        const scope = extend($scope.$new(), {
           field: field,
           widget: widget
         });
@@ -62,8 +63,7 @@ export default function register() {
     '$scope',
     '$timeout',
     'fieldDecorator',
-    'validationDecorator',
-    function FieldDialogController($scope, $timeout, fieldDecorator, validations) {
+    function FieldDialogController($scope, $timeout, fieldDecorator) {
       // TODO: Remove this when there are no more API references to the legacy
       // `StructuredText` field type.
       const RICH_TEXT_FIELD_TYPES = ['RichText', 'StructuredText'];
@@ -73,12 +73,12 @@ export default function register() {
 
       $scope.decoratedField = fieldDecorator.decorate($scope.field, contentTypeData);
 
-      $scope.validations = validations.decorateFieldValidations($scope.field);
+      $scope.validations = validationDecorator.decorateFieldValidations($scope.field);
 
       if (RICH_TEXT_FIELD_TYPES.includes($scope.field.type)) {
-        const validation = _.find($scope.field.validations, 'nodes');
+        const validation = find($scope.field.validations, 'nodes');
         const nodeValidations = validation ? validation.nodes : {};
-        $scope.nodeValidations = validations.decorateNodeValidations(nodeValidations);
+        $scope.nodeValidations = validationDecorator.decorateNodeValidations(nodeValidations);
       }
 
       $scope.currentTitleField = getTitleField();
@@ -92,7 +92,7 @@ export default function register() {
         id: $scope.widget.widgetId,
         namespace: $scope.widget.widgetNamespace,
         // Need to clone so we do not mutate data if we cancel the dialog
-        params: _.cloneDeep($scope.widget.settings || {})
+        params: cloneDeep($scope.widget.settings || {})
       };
 
       $scope.$watch(
@@ -164,17 +164,17 @@ export default function register() {
         }
 
         fieldDecorator.update($scope.decoratedField, $scope.field, contentTypeData);
-        validations.updateField($scope.field, $scope.validations, $scope.nodeValidations);
+        validationDecorator.updateField($scope.field, $scope.validations, $scope.nodeValidations);
 
         if ($scope.field.type === 'RichText') {
-          validations.addEnabledRichTextOptions($scope.field, $scope.richTextOptions);
+          validationDecorator.addEnabledRichTextOptions($scope.field, $scope.richTextOptions);
         }
 
-        const namespaceWidgets = _.get($scope.widgets, [$scope.widgetSettings.namespace], []);
+        const namespaceWidgets = get($scope.widgets, [$scope.widgetSettings.namespace], []);
         const selectedWidget = namespaceWidgets.find(w => w.id === $scope.widgetSettings.id);
 
         let values = $scope.widgetSettings.params;
-        let definitions = _.get(selectedWidget, ['parameters']) || [];
+        let definitions = get(selectedWidget, ['parameters']) || [];
 
         values = WidgetParametersUtils.applyDefaultValues(definitions, values);
         definitions = WidgetParametersUtils.filterDefinitions(
@@ -192,7 +192,7 @@ export default function register() {
           return;
         }
 
-        _.extend($scope.widget, {
+        extend($scope.widget, {
           widgetId: $scope.widgetSettings.id,
           widgetNamespace: $scope.widgetSettings.namespace,
           fieldId: $scope.field.apiName,
@@ -216,7 +216,7 @@ export default function register() {
       function isValid() {
         return (
           $scope.fieldForm.$valid &&
-          _.isEmpty(validations.validateAll($scope.validations, $scope.nodeValidations))
+          isEmpty(validationDecorator.validateAll($scope.validations, $scope.nodeValidations))
         );
       }
 
@@ -226,7 +226,7 @@ export default function register() {
           return null;
         }
 
-        const titleField = _.find(contentTypeData.fields, { id: fieldId });
+        const titleField = find(contentTypeData.fields, { id: fieldId });
         if (titleField) {
           return fieldDecorator.getDisplayName(titleField);
         } else {
@@ -289,7 +289,7 @@ export default function register() {
         $scope.tab.invalid = isInvalid;
       });
 
-      $scope.locales = _.map(TheLocaleStore.getPrivateLocales(), 'name');
+      $scope.locales = map(TheLocaleStore.getPrivateLocales(), 'name');
     }
   ]);
 
@@ -302,8 +302,7 @@ export default function register() {
    */
   registerController('FieldDialogValidationsController', [
     '$scope',
-    'validationDecorator',
-    ($scope, validations) => {
+    $scope => {
       // TODO: Remove this when there are no more API references to the legacy
       // `StructuredText` field type.
       const RICH_TEXT_FIELD_TYPES = ['RichText', 'StructuredText'];
@@ -314,7 +313,7 @@ export default function register() {
 
       $scope.schema = {
         errors: function(decoratedValidation) {
-          return validations.validate(decoratedValidation);
+          return validationDecorator.validate(decoratedValidation);
         }
       };
 
@@ -329,12 +328,12 @@ export default function register() {
         const properWidgets = ['radio', 'dropdown', 'checkbox'];
 
         const isBuiltin = $scope.widgetSettings.namespace === NAMESPACE_BUILTIN;
-        const isProper = isBuiltin && _.includes(properWidgets, name);
-        const availableIds = _.map(available, 'id')
+        const isProper = isBuiltin && includes(properWidgets, name);
+        const availableIds = map(available, 'id')
           .map(id => id.split(','))
           .filter(([namespace]) => namespace === NAMESPACE_BUILTIN)
           .map(([_, id]) => id);
-        const properAvailable = _.intersection(availableIds, properWidgets).length > 0;
+        const properAvailable = intersection(availableIds, properWidgets).length > 0;
         $scope.showPredefinedValueWidgetHint = !isProper && properAvailable;
       });
 
