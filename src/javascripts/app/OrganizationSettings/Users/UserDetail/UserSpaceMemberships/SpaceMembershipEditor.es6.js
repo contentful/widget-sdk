@@ -6,6 +6,7 @@ import {
   SpaceMembership as SpaceMembershipPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
 import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
+import { getMembershipRoles } from 'access_control/utils.es6';
 
 import {
   TableRow,
@@ -62,9 +63,7 @@ class SpaceMembershipEditor extends React.Component {
   getInitialRoleIds() {
     const { initialMembership } = this.props;
     if (this.isEditing) {
-      return SpaceMembershipRepository.getMembershipRoles(initialMembership).map(
-        role => role.sys.id
-      );
+      return getMembershipRoles(initialMembership).map(role => role.sys.id);
     }
     return [ADMIN_ROLE_ID];
   }
