@@ -6,6 +6,8 @@ import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
 import { hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import * as types from 'app/OrganizationSettings/PropTypes.es6';
 import { TableCell, TableRow, Button, Spinner } from '@contentful/forma-36-react-components';
+import { getSpaceMembershipRoleNames } from 'access_control/utils.es6';
+import { joinWithAnd } from 'utils/StringUtils.es6';
 
 class TeamMembershipRow extends React.Component {
   static propTypes = {
@@ -18,7 +20,7 @@ class TeamMembershipRow extends React.Component {
   };
 
   render() {
-    const { removeMembership, readOnlyPermission } = this.props;
+    const { membership, removeMembership, readOnlyPermission } = this.props;
     const {
       sys: { space, createdAt, createdBy, id }
     } = this.props.membership;
@@ -37,6 +39,7 @@ class TeamMembershipRow extends React.Component {
     return (
       <TableRow className="membership-list__item">
         <TableCell>{space.name}</TableCell>
+        <TableCell>{joinWithAnd(getSpaceMembershipRoleNames(membership))}</TableCell>
         <TableCell data-test-id="created-at-cell">
           {moment(createdAt).format('MMMM DD, YYYY')}
         </TableCell>

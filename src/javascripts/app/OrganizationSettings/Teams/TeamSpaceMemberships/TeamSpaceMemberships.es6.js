@@ -41,8 +41,8 @@ export class TeamSpaceMemberships extends React.Component {
           <TableRow>
             <TableCell>Space</TableCell>
             <TableCell>Space roles</TableCell>
-            <TableCell>Created by</TableCell>
             <TableCell>Created at</TableCell>
+            <TableCell>Created by</TableCell>
             <TableCell width="200px" />
           </TableRow>
         </TableHead>
