@@ -147,7 +147,7 @@ export default ({ dispatch, getState }) => next => async action => {
 
       const membershipData = {
         admin: isAdmin,
-        roles: isAdmin ? [] : roles.map(id => ({ type: 'Link', linkType: 'Role', id }))
+        roles: isAdmin ? [] : roles.map(id => ({ sys: { type: 'Link', linkType: 'Role', id } }))
       };
 
       try {
