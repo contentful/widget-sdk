@@ -53,7 +53,6 @@ angular
       ngRequire('account/cfNewOrganizationMembership.es6').default();
       ngRequire('analytics/analyticsConsole.es6').default();
       ngRequire('analytics/segment.es6').default();
-      ngRequire('components/field_dialog/fieldDecorator.es6').default();
       ngRequire('services/errorMessageBuilder.es6').default();
       ngRequire('app/ContentModel/Editor/addFieldDialogController.es6').default();
       ngRequire('app/ContentModel/Editor/apiNameController.es6').default();

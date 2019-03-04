@@ -7,6 +7,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import getDefaultWidgetId from 'widgets/DefaultWidget.es6';
 import * as fieldFactory from 'services/fieldFactory.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
+import fieldDecorator from 'components/field_dialog/fieldDecorator.es6';
 import validationDecorator from 'components/field_dialog/validationDecorator.es6';
 
 // TODO: This dialog should be completely rewritten!
@@ -62,8 +63,7 @@ export default function register() {
   registerController('FieldDialogController', [
     '$scope',
     '$timeout',
-    'fieldDecorator',
-    function FieldDialogController($scope, $timeout, fieldDecorator) {
+    function FieldDialogController($scope, $timeout) {
       // TODO: Remove this when there are no more API references to the legacy
       // `StructuredText` field type.
       const RICH_TEXT_FIELD_TYPES = ['RichText', 'StructuredText'];
@@ -238,10 +238,9 @@ export default function register() {
 
   registerController('FieldDialogSettingsController', [
     '$scope',
-    'fieldDecorator',
     'TheLocaleStore',
     'fieldErrorMessageBuilder',
-    ($scope, fieldDecorator, TheLocaleStore, buildMessage) => {
+    ($scope, TheLocaleStore, buildMessage) => {
       $scope.schema = {
         errors: function(decoratedField) {
           return fieldDecorator.validateInContentType(decoratedField, $scope.contentType.data);
