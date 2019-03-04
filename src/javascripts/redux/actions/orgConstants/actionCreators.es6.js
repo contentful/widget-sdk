@@ -20,6 +20,13 @@ export function fetchOrgConstants(orgId) {
 
     const token = getToken(getState());
     const org = token.organization.find(org => org.sys.id === orgId);
+
+    if (!org) {
+      dispatch(actions.orgConstantsFailure(orgId, new Error(`Org ${orgId} does not exist`)));
+
+      return;
+    }
+
     const isLegacy = org.pricingVersion === 'pricing_version_1';
 
     const getFeatures = async () => {

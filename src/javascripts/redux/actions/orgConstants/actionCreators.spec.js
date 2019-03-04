@@ -90,24 +90,49 @@ describe('Org constants redux action creators', () => {
     ]);
   });
 
-  it('should go through the failure flow if the endpoint errors', () => {
+  it('should go through the success flow even if the endpoint errors', async () => {
     const error = new Error('Something bad happened');
-    const orgId = '123';
+    const orgId = 'v2OrgId';
 
     mockEndpoint.mockRejectedValueOnce(error);
 
-    mockStore.dispatch(actionCreators.fetchOrgConstants(orgId)).then(() => {
-      expect(mockStore.getActions()).toEqual([
-        {
-          type: actions.ORG_CONSTANTS_PENDING,
-          payload: { orgId }
-        },
-        {
-          type: actions.ORG_CONSTANTS_FAILURE,
-          payload: { orgId, error }
+    await mockStore.dispatch(actionCreators.fetchOrgConstants(orgId));
+
+    expect(mockStore.getActions()).toEqual([
+      {
+        type: actions.ORG_CONSTANTS_PENDING,
+        payload: { orgId: orgId }
+      },
+      {
+        type: actions.ORG_CONSTANTS_SUCCESS,
+        payload: {
+          orgId: orgId,
+          data: {
+            pricingVersion: 2,
+            isPaid: false,
+            isEnterprise: false,
+            isLegacy: false,
+            catalogFeatures: catalogFeaturesResult
+          }
         }
-      ]);
-    });
+      }
+    ]);
+  });
+
+  it('should go through the failure flow if the org does not exist', async () => {
+    const orgId = '123';
+
+    await mockStore.dispatch(actionCreators.fetchOrgConstants(orgId));
+    expect(mockStore.getActions()).toEqual([
+      {
+        type: actions.ORG_CONSTANTS_PENDING,
+        payload: { orgId }
+      },
+      {
+        type: actions.ORG_CONSTANTS_FAILURE,
+        payload: { orgId, error: new Error('Org 123 does not exist') }
+      }
+    ]);
   });
 
   it('should set the default values if the product catalog is not available', async () => {
