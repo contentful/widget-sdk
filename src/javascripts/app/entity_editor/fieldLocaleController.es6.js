@@ -29,7 +29,7 @@ export default function register() {
       const field = $scope.widget.field;
       const locale = $scope.locale;
       const fieldPath = ['fields', field.id];
-      const localePath = [...fieldPath, locale.internal_code];
+      const localePath = fieldPath.concat([locale.internal_code]);
 
       // Values for controller.access
       const DENIED = { denied: true, disabled: true };

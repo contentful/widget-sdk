@@ -82,15 +82,14 @@ export default async function create($scope, editorData, preferences) {
     $scope
   });
 
-  const currentLocale = localeStore.getCurrentLocale();
-  $scope.locale = currentLocale;
-  $scope.locales = [currentLocale];
+  $scope.locales = localeStore.getLocales();
+  $scope.focusedLocale = localeStore.getFocusedLocale();
+  $scope.activeLocales = localeStore.getActiveLocales();
+  $scope.isLocaleFocused = localeStore.isLocaleFocused();
 
-  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.UPDATED_CURRENT_LOCALE, localeCode => {
-    const locale = localeStore.getLocales().find(l => l.code === localeCode);
-    $scope.locale = locale;
-    $scope.locales = [locale];
-    if (onDefaultLocale()) {
+  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, localeCode => {
+    $scope.focusedLocale = $scope.locales.find(l => l.code === localeCode);
+    if (defaultLocaleIsFocused()) {
       $scope.statusNotificationProps = {
         status: 'ok',
         entityLabel: 'entry'
@@ -102,7 +101,7 @@ export default async function create($scope, editorData, preferences) {
   K.onValueScope($scope, editorContext.validator.errors$, errors => {
     $scope.entrySidebarProps.localeErrors = groupBy(errors, error => error.path[2]);
 
-    if (!errors.length || onDefaultLocale()) {
+    if (!errors.length || defaultLocaleIsFocused()) {
       return;
     }
 
@@ -116,18 +115,21 @@ export default async function create($scope, editorData, preferences) {
     if (
       status === 'ok' &&
       !isEmpty(get($scope, 'entrySidebarProps.localeErrors')) &&
-      !onDefaultLocale()
+      !defaultLocaleIsFocused()
     ) {
       return;
     }
     $scope.statusNotificationProps = { status, entityLabel: 'entry' };
   });
 
-  function onDefaultLocale() {
+  function defaultLocaleIsFocused() {
+    if (!$scope.isLocaleFocused) {
+      return false;
+    }
     const localeCodes = keys($scope.entrySidebarProps.localeErrors);
     return (
       localeCodes.length === 1 &&
-      localeStore.getDefaultLocale().internal_code === localeStore.getCurrentLocale().internal_code
+      localeStore.getDefaultLocale().internal_code === localeStore.getFocusedLocale().internal_code
     );
   }
 }

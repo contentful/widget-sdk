@@ -4,6 +4,7 @@ import { registerDirective } from 'NgRegistry.es6';
 import $ from 'jquery';
 import createBridge from 'widgets/bridges/EditorExtensionBridge.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 
 export default function register() {
   /**
@@ -43,6 +44,7 @@ export default function register() {
         require: '?^cfWidgetApi',
         restrict: 'E',
         link: function(scope, element, _attrs, widgetApi) {
+          scope.locale = scope.locale || scope.focusedLocale;
           const {
             widget,
             locale,
@@ -91,6 +93,13 @@ export default function register() {
           } else {
             throw new Error('Builtin widget template or a valid UI Extension is required.');
           }
+
+          scope.entrySidebarProps.emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, () => {
+            if (scope.isLocaleFocused) {
+              scope.locale = scope.focusedLocale;
+              scope.$apply();
+            }
+          });
 
           function renderExtension() {
             scope.props = {

@@ -44,26 +44,25 @@ mixin field-locale-errors
 
 div.entity-editor__field-group(
   ng-show="widget.isVisible"
-  ng-repeat="locale in locales | orderBy: ['-default', 'name'] track by locale.internal_code"
-  ng-controller="FieldLocaleController as fieldLocale"
-  data-locale="{{locale.code}}"
   data-test-id="entity-field-controls"
   data-field-id="{{data.field.id}}"
   data-field-api-name="{{data.field.apiName}}"
   data-field-type="{{data.field.type}}"
   data-field-items-type="{{data.field.items.type}}"
   aria-current="{{data.fieldHasFocus}}"
-  aria-invalid="{{!!fieldLocale.errors}}")
+  aria-invalid="{{data.fieldHasErrors}}")
 
   div.entity-editor__field-locale(
+    ng-repeat="locale in fieldLocales | orderBy: ['-default', 'name'] track by locale.internal_code"
+    ng-controller="FieldLocaleController as fieldLocale"
     data-locale="{{fieldLocale.code}}")
 
     div.entity-editor__field-heading
       label(data-test-id="field-locale-label")
         | {{ data.field.name }}
         span(ng-if="fieldLocale.isRequired") &#32;(required)
-        span(ng-if="locales.length > 1")
-          | &#32;&ndash; {{locale.name}}
+        span(ng-if="fieldLocales.length > 1")
+        | &#32;&ndash; {{locale.name}}
       +field-permission-info
 
     <react-component ng-if="data.field.type === 'RichText'" name="components/shared/IE11DeprecationBanner.es6" props="{featureName: 'Rich text', ie11Only: true, noteType: 'warning', className: 'entity-editor__ie11-support-message f36-margin-bottom--m f36-margin-top--xs'}"></react-component>

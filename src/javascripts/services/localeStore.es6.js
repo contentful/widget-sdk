@@ -27,12 +27,13 @@ export default function register() {
 
   registerFactory('TheLocaleStore/implementation', () => {
     return {
-      create: create
+      create
     };
 
     function create(getStore) {
       let store = null;
       let defaultLocale = null;
+      let localeFocused = true;
 
       let localeRepo = {
         getAll: function() {
@@ -55,35 +56,45 @@ export default function register() {
        */
       let codeToActiveLocaleMap = {};
 
-      let currentLocale;
+      let focusedLocale;
 
       return {
-        init: init,
-        refresh: refresh,
-        getLocales: getLocales,
-        getDefaultLocale: getDefaultLocale,
-        getActiveLocales: getActiveLocales,
-        getPrivateLocales: getPrivateLocales,
-        getCurrentLocale: getCurrentLocale,
-        setCurrentLocale: setCurrentLocale,
-        resetCurrentLocale: resetCurrentLocale,
-        toInternalCode: toInternalCode,
-        toPublicCode: toPublicCode,
-        setActiveLocales: setActiveLocales,
-        isLocaleActive: isLocaleActive,
-        deactivateLocale: deactivateLocale
+        init,
+        refresh,
+        getLocales,
+        getDefaultLocale,
+        getActiveLocales,
+        getPrivateLocales,
+        toInternalCode,
+        toPublicCode,
+        setActiveLocales,
+        isLocaleActive,
+        deactivateLocale,
+        getFocusedLocale,
+        setFocusedLocale,
+        resetFocusedLocale,
+        isLocaleFocused,
+        toggleLocaleFocus
       };
 
-      function getCurrentLocale() {
-        return currentLocale || getDefaultLocale();
+      function getFocusedLocale() {
+        return focusedLocale || getDefaultLocale();
       }
 
-      function setCurrentLocale(locale) {
-        currentLocale = locale;
+      function setFocusedLocale(locale) {
+        focusedLocale = locale;
       }
 
-      function resetCurrentLocale() {
-        currentLocale = undefined;
+      function resetFocusedLocale() {
+        focusedLocale = undefined;
+      }
+
+      function isLocaleFocused() {
+        return localeFocused;
+      }
+
+      function toggleLocaleFocus() {
+        localeFocused = !localeFocused;
       }
 
       /**

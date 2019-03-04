@@ -4,7 +4,7 @@ export default {
   UPDATED_INCOMING_LINKS_WIDGET: 'sidebar:updated-incoming-links-widget',
   UPDATED_VERSIONS_WIDGET: 'sidebar:updated-versions-widget',
   UPDATED_PUBLICATION_WIDGET: 'sidebar:updated-publication-widget',
-  UPDATED_CURRENT_LOCALE: 'sidebar:updated-current-locale',
+  UPDATED_FOCUSED_LOCALE: 'sidebar:updated-focused-locale',
 
   UPDATED_DOCUMENT_STATE: 'sidebar:updated-document-state',
   UPDATED_INFO_PANEL: 'sidebar:updated-info-panel',
