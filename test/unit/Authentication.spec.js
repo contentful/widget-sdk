@@ -102,12 +102,12 @@ describe('Authentication.es6', () => {
       expect(K.getValue(this.Auth.token$)).toBe('NEW TOKEN');
     });
 
-    it('triggers logout if user logged out from another tab', function() {
+    it('triggers logout if user logged out from another tab', async function() {
       this.store.set('STORED_TOKEN');
       this.Auth.init();
       this.window.addEventListener.withArgs('storage').yield({ key: 'loggedOut', newValue: true });
 
-      this.$apply();
+      await this.$http();
 
       expect(this.window.location).toEqual('//be.test.com/logout');
     });
