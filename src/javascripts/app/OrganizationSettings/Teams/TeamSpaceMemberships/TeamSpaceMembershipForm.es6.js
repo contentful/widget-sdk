@@ -22,7 +22,8 @@ class TeamMembershipForm extends React.Component {
 
     availableSpaces: PropTypes.arrayOf(SpacePropType),
     roles: PropTypes.objectOf(PropTypes.arrayOf(SpaceRolePropType)),
-    onSubmit: PropTypes.func.isRequired
+    onSubmit: PropTypes.func.isRequired,
+    onEdit: PropTypes.func.isRequired
   };
 
   state = {
@@ -44,23 +45,28 @@ class TeamMembershipForm extends React.Component {
   };
 
   render() {
-    const { availableSpaces, roles, onSubmit, onClose } = this.props;
+    const { initialMembership, availableSpaces, roles, onSubmit, onEdit, onClose } = this.props;
     const { selectedSpaceId, selectedRoles } = this.state;
+    const isEditing = !!initialMembership;
+
     return (
       <TableRow extraClassNames="space-membership-editor">
-        <TableCell colSpan="2">
-          <Select data-test-id="space-select" onChange={this.setSpace} defaultValue="">
-            <Option value="" disabled>
-              Please select a space
-            </Option>
-            {availableSpaces.map(({ name, sys: { id } }) => (
-              <Option data-test-id="space-select-option" key={id} value={id}>
-                {name}
+        <TableCell colSpan={isEditing ? 1 : 2}>
+          {isEditing && initialMembership.sys.space.name}
+          {!isEditing && (
+            <Select data-test-id="space-select" onChange={this.setSpace} defaultValue="">
+              <Option value="" disabled>
+                Please select a space
               </Option>
-            ))}
-          </Select>
+              {availableSpaces.map(({ name, sys: { id } }) => (
+                <Option data-test-id="space-select-option" key={id} value={id}>
+                  {name}
+                </Option>
+              ))}
+            </Select>
+          )}
         </TableCell>
-        <TableCell>
+        <TableCell colSpan="2">
           <SpaceRoleEditor
             isDisabled={!selectedSpaceId}
             options={roles[selectedSpaceId]}
@@ -73,10 +79,14 @@ class TeamMembershipForm extends React.Component {
             testId="add-member-button"
             size="small"
             buttonType="primary"
-            onClick={() => onSubmit(selectedSpaceId, selectedRoles)}
+            onClick={() => {
+              isEditing
+                ? onEdit(initialMembership, selectedRoles)
+                : onSubmit(selectedSpaceId, selectedRoles);
+            }}
             disabled={!selectedSpaceId || selectedRoles.length === 0}
             style={{ marginRight: '10px' }}>
-            Add to space
+            {isEditing ? 'Change role' : 'Add to space'}
           </Button>
           <Button testId="cancel-button" size="small" buttonType="naked" onClick={onClose}>
             Cancel
@@ -109,8 +119,8 @@ export default connect(
       dispatch({ type: 'SUBMIT_NEW_TEAM_SPACE_MEMBERSHIP', payload: { spaceId, roles } });
       onClose();
     },
-    onEdit: updatedMembership => {
-      dispatch({ type: 'EDIT_TEAM_SPACE_MEMBERSHIP', payload: { updatedMembership } });
+    onEdit: (oldMembership, roles) => {
+      dispatch({ type: 'EDIT_TEAM_SPACE_MEMBERSHIP', payload: { oldMembership, roles } });
       onClose();
     }
   })

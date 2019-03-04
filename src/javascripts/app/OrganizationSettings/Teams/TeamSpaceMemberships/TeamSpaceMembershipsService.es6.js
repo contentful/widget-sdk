@@ -69,7 +69,7 @@ export default function createTeamMembershipsService(state) {
         data: { admin, roles },
         version: sys.version
       },
-      HEADERS
+      getTeamHeaders(sys.team.sys.id)
     );
   }
 

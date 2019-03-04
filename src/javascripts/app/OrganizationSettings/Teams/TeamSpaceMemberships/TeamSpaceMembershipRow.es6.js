@@ -2,12 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import { get, keyBy } from 'lodash';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
 import { hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import * as types from 'app/OrganizationSettings/PropTypes.es6';
 import { TableCell, TableRow, Button, Spinner } from '@contentful/forma-36-react-components';
-import { getSpaceMembershipRoleNames } from 'access_control/utils.es6';
 import { joinWithAnd } from 'utils/StringUtils.es6';
+import getRolesBySpace from 'redux/selectors/getRolesBySpace.es6';
 
 class TeamMembershipRow extends React.Component {
   static propTypes = {
@@ -15,12 +16,27 @@ class TeamMembershipRow extends React.Component {
       types.TeamSpaceMembership,
       types.TeamSpaceMembershipPlaceholder
     ]).isRequired,
+    onEdit: PropTypes.func.isRequired,
+
+    roles: PropTypes.objectOf(PropTypes.arrayOf(types.SpaceRole)),
     readOnlyPermission: PropTypes.bool.isRequired,
     removeMembership: PropTypes.func.isRequired
   };
 
+  getRoleNames() {
+    const { membership, roles } = this.props;
+    const spaceId = get(membership, 'sys.space.sys.id');
+    const spaceRoles = keyBy(roles[spaceId], 'sys.id');
+
+    if (membership.admin) {
+      return 'Admin';
+    } else {
+      return joinWithAnd(membership.roles.map(role => spaceRoles[role.sys.id].name));
+    }
+  }
+
   render() {
-    const { membership, removeMembership, readOnlyPermission } = this.props;
+    const { membership, onEdit, removeMembership, readOnlyPermission } = this.props;
     const {
       sys: { space, createdAt, createdBy, id }
     } = this.props.membership;
@@ -39,7 +55,7 @@ class TeamMembershipRow extends React.Component {
     return (
       <TableRow className="membership-list__item">
         <TableCell>{space.name}</TableCell>
-        <TableCell>{joinWithAnd(getSpaceMembershipRoleNames(membership))}</TableCell>
+        <TableCell>{this.getRoleNames()}</TableCell>
         <TableCell data-test-id="created-at-cell">
           {moment(createdAt).format('MMMM DD, YYYY')}
         </TableCell>
@@ -60,7 +76,7 @@ class TeamMembershipRow extends React.Component {
                   testId="remove-button"
                   buttonType="muted"
                   size="small"
-                  onClick={this.editMembership}
+                  onClick={() => onEdit(membership)}
                   extraClassNames="membership-list__item__menu__button">
                   Edit
                 </Button>
@@ -75,7 +91,8 @@ class TeamMembershipRow extends React.Component {
 
 export default connect(
   state => ({
-    readOnlyPermission: hasReadOnlyPermission(state)
+    readOnlyPermission: hasReadOnlyPermission(state),
+    roles: getRolesBySpace(state)
   }),
   (dispatch, { membership }) => ({
     removeMembership: () =>

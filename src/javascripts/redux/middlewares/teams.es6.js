@@ -9,8 +9,7 @@ import { TEAM_MEMBERSHIPS, TEAM_SPACE_MEMBERSHIPS, TEAMS } from '../datasets.es6
 import removeFromDataset from './utils/removeFromDataset.es6';
 import { isTaken } from 'utils/ServerErrorUtils.es6';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
-import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
-import { getTeamSpaceMemberships } from 'redux/selectors/teamSpaceMemberships.es6';
+import { createSpaceRoleLinks } from 'access_control/utils.es6';
 
 const userToString = ({ firstName, lastName, email }) =>
   firstName ? `${firstName} ${lastName}` : email;
@@ -143,12 +142,8 @@ export default ({ dispatch, getState }) => next => async action => {
       const team = getTeams(state)[teamId];
       const { spaceId, roles } = action.payload;
       const space = get(getCurrentOrgSpaces(state), spaceId);
-      const isAdmin = roles.includes(ADMIN_ROLE_ID);
 
-      const membershipData = {
-        admin: isAdmin,
-        roles: isAdmin ? [] : roles.map(id => ({ sys: { type: 'Link', linkType: 'Role', id } }))
-      };
+      const membershipData = createSpaceRoleLinks(roles);
 
       try {
         const newTeamSpaceMembership = await service.create(teamId, spaceId, membershipData);
@@ -170,14 +165,17 @@ export default ({ dispatch, getState }) => next => async action => {
     }
     case 'EDIT_TEAM_SPACE_MEMBERSHIP': {
       const state = getState();
-      const { updatedMembership } = action.payload;
-      const {
-        sys: { space, id }
-      } = updatedMembership;
-      const oldMembership = getTeamSpaceMemberships(getState())[id];
+      const { oldMembership, roles } = action.payload;
+      const { sys } = oldMembership;
+
       next(action);
       const service = createTeamSpaceMembershipService(state);
-
+      const updatedData = createSpaceRoleLinks(roles);
+      const updatedMembership = {
+        admin: updatedData.admin,
+        roles: updatedData.roles,
+        sys
+      };
       dispatch({
         type: 'ADD_TO_DATASET',
         payload: {
@@ -194,10 +192,12 @@ export default ({ dispatch, getState }) => next => async action => {
           type: 'ADD_TO_DATASET',
           payload: { dataset: TEAM_SPACE_MEMBERSHIPS, item: persisted }
         });
-        Notification.success(`Successfully changed the team's access to the space ${space.name}`);
+        Notification.success(
+          `Successfully changed the team's access to the space ${sys.space.name}`
+        );
       } catch (e) {
         dispatch({ type: 'ADD_TO_DATASET', payload: { dataset: TEAMS, item: oldMembership } });
-        Notification.error(`Could not change the team access to the space ${space.name}`);
+        Notification.error(`Could not change the team access to the space ${sys.space.name}`);
       }
 
       break;
