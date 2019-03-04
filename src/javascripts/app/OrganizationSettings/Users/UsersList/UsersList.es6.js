@@ -38,7 +38,6 @@ import {
   getInvitedUsersCount,
   membershipExistsParam
 } from 'app/OrganizationSettings/UserInvitations/UserInvitationUtils.es6';
-import createResourceService from 'services/ResourceService.es6';
 
 import { getLastActivityDate } from '../UserUtils.es6';
 import { generateFilterDefinitions } from './FilterDefinitions.es6';
@@ -55,7 +54,6 @@ class UsersList extends React.Component {
     filters: PropTypes.arrayOf(FilterPropType),
     searchTerm: PropTypes.string.isRequired,
     updateSearchTerm: PropTypes.func.isRequired,
-    newUserInvitationsEnabled: PropTypes.bool.isRequired,
     hasSsoEnabled: PropTypes.bool
   };
 
@@ -107,7 +105,7 @@ class UsersList extends React.Component {
   };
 
   fetch = async (updateCount = false) => {
-    const { filters, searchTerm, newUserInvitationsEnabled, orgId } = this.props;
+    const { filters, searchTerm, orgId } = this.props;
     const { pagination } = this.state;
     const filterQuery = formatQuery(filters.map(item => item.filter));
     const includePaths = ['sys.user'];
@@ -116,13 +114,9 @@ class UsersList extends React.Component {
       query: searchTerm,
       include: includePaths,
       skip: pagination.skip,
-      limit: pagination.limit
+      limit: pagination.limit,
+      [membershipExistsParam]: true
     };
-
-    if (newUserInvitationsEnabled) {
-      // Skip all "pending" org memberships
-      query[membershipExistsParam] = true;
-    }
 
     this.setState({ loading: true });
 
@@ -137,16 +131,9 @@ class UsersList extends React.Component {
 
     if (updateCount) {
       const endpoint = createOrganizationEndpoint(orgId);
-      const resources = createResourceService(orgId, 'organization');
-      if (newUserInvitationsEnabled) {
-        newState.numberOrgMemberships = await getMemberships(endpoint, {
-          [membershipExistsParam]: true
-        }).then(({ total }) => total);
-      } else {
-        newState.numberOrgMemberships = await resources
-          .get('organizationMembership')
-          .then(({ usage }) => usage);
-      }
+      newState.numberOrgMemberships = await getMemberships(endpoint, {
+        [membershipExistsParam]: true
+      }).then(({ total }) => total);
     }
 
     this.setState(newState);
@@ -233,7 +220,7 @@ class UsersList extends React.Component {
       numberOrgMemberships,
       initialLoad
     } = this.state;
-    const { searchTerm, spaces, spaceRoles, filters, newUserInvitationsEnabled } = this.props;
+    const { searchTerm, spaces, spaceRoles, filters } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -254,12 +241,11 @@ class UsersList extends React.Component {
           <Workbench.Header.Actions>
             <div>
               <div>{`${pluralize('users', numberOrgMemberships, true)} in your organization`}</div>
-              {newUserInvitationsEnabled &&
-                (invitedUsersCount != null && invitedUsersCount > 0) && (
-                  <TextLink href={this.getLinkToInvitationsList()}>
-                    {invitedUsersCount} invited users
-                  </TextLink>
-                )}
+              {invitedUsersCount != null && invitedUsersCount > 0 && (
+                <TextLink href={this.getLinkToInvitationsList()}>
+                  {invitedUsersCount} invited users
+                </TextLink>
+              )}
             </div>
             <Button href={this.getLinkToInvitation()}>Invite users</Button>
           </Workbench.Header.Actions>

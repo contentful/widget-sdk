@@ -9,7 +9,8 @@ import { createOrganizationEndpoint as createEndpoint } from 'data/EndpointFacto
 import {
   getUsers,
   getAllSpaces,
-  getAllRoles
+  getAllRoles,
+  getInvitations
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { makeCtor, match } from 'utils/TaggedValues.es6';
 import {
@@ -30,8 +31,6 @@ import {
   SuccessMessage
 } from 'account/NewOrganizationMembershipTemplate.es6';
 import createResourceService from 'services/ResourceService.es6';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
-import * as featureFlags from 'featureFlags.es6';
 import { getStore } from 'TheStore/index.es6';
 
 // Start: For Next Steps for a TEA space (a space created using the example space template)
@@ -115,13 +114,6 @@ export default function($scope) {
     state = assign(state, {
       spaces: orgRoles,
       status: Idle()
-    });
-    rerender();
-
-    // 3rd step - get feature flag for invitations
-    const useLegacy = !(yield getCurrentVariation(featureFlags.BV_USER_INVITATIONS));
-    state = assign(state, {
-      useLegacy
     });
     rerender();
   });
@@ -391,23 +383,18 @@ export default function($scope) {
 
     const resourceService = createResourceService(orgId, 'organization');
     const orgMembershipResource = yield resourceService.get('organization_membership');
-    const pendingInvitationResource = yield resourceService.get('pending_invitation');
     const membershipLimit = get(orgMembershipResource, 'limits.maximum');
-
-    const useLegacy = !(yield getCurrentVariation(featureFlags.BV_USER_INVITATIONS));
 
     // We cannot rely on usage data from organization (token) since the cache
     // is not invalidated on user creation.
     // We should use resources API later when it's available for org memberships.
     const users = yield getUsers(orgEndpoint, { limit: 0 });
-    const invitationLimit = membershipLimit;
-    let invitationUsage;
 
-    if (useLegacy) {
-      invitationUsage = users.total;
-    } else {
-      invitationUsage = users.total + pendingInvitationResource.usage;
-    }
+    // This also isn't perfect, because it does not encapsulate pending organization
+    // memberships, but it would only affect older, non-paying customers.
+    const pendingInvitations = yield getInvitations(orgEndpoint, { limit: 0 });
+    const invitationLimit = membershipLimit;
+    const invitationUsage = users.total + pendingInvitations.total;
 
     return {
       invitationUsage,
@@ -432,11 +419,7 @@ function render({ state, actions }) {
             ),
             [Failure]: () => (
               <React.Fragment>
-                <ErrorMessage
-                  useLegacy={state.useLegacy}
-                  failedEmails={state.failedOrgInvitations}
-                  restart={actions.restart}
-                />
+                <ErrorMessage failedEmails={state.failedOrgInvitations} />
                 {state.successfulOrgInvitations.length > 0 && (
                   <SuccessMessage successfulOrgInvitations={state.successfulOrgInvitations} />
                 )}

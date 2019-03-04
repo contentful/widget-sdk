@@ -3,7 +3,6 @@ import { sendInvites, progress$ } from './SendOrganizationInvitation.es6';
 const mockStubs = {
   invite: jest.fn().mockResolvedValue(true),
   createOrgMembership: jest.fn().mockResolvedValue(true),
-  getCurrentVariation: jest.fn().mockResolvedValue(false),
   SpaceMembershipRepository_create_invite: jest.fn().mockResolvedValue(true)
 };
 
@@ -21,14 +20,6 @@ jest.mock(
   () => ({
     createOrganizationEndpoint: jest.fn(),
     createSpaceEndpoint: jest.fn()
-  }),
-  { virtual: true }
-);
-
-jest.mock(
-  'utils/LaunchDarkly/index.es6',
-  () => ({
-    getCurrentVariation: () => mockStubs.getCurrentVariation()
   }),
   { virtual: true }
 );
@@ -55,9 +46,6 @@ describe('account/SendOrganizationInvitation.es6', () => {
     beforeEach(() => {
       mockStubs.invite.mockClear();
       mockStubs.invite.mockResolvedValue(true);
-
-      // By default, test with feature flag on
-      mockStubs.getCurrentVariation.mockResolvedValue(true);
     });
 
     it('should call OrganizationMembershipRepository#invite for each email', async () => {
@@ -123,70 +111,6 @@ describe('account/SendOrganizationInvitation.es6', () => {
           roleIds: ['role_5678', 'role_1234']
         }
       ]);
-    });
-
-    describe('with feature flag off', () => {
-      beforeEach(() => {
-        mockStubs.createOrgMembership.mockClear();
-        mockStubs.SpaceMembershipRepository_create_invite.mockClear();
-        mockStubs.createOrgMembership.mockResolvedValue(true);
-        mockStubs.getCurrentVariation.mockResolvedValue(false);
-      });
-
-      it('should call OrganizationMembershipRepository#createOrgMembership for each email', async () => {
-        await sendInvites({ emails });
-
-        expect(mockStubs.createOrgMembership).toHaveBeenCalledTimes(2);
-      });
-
-      it('should emit a non-error event on progress$ for each invitation', async () => {
-        let busCount = 0;
-
-        progress$.onValue(() => busCount++);
-
-        await sendInvites({ emails });
-
-        expect(busCount).toBe(2);
-      });
-
-      it('should error if the org membership could not be created and does not exist', async () => {
-        mockStubs.createOrgMembership.mockRejectedValue(true);
-
-        let busCount = 0;
-
-        progress$.onError(() => busCount++);
-
-        await sendInvites({ emails });
-
-        expect(busCount).toBe(2);
-      });
-
-      it('should attempt to add to spaces without error if the org membership exists', async () => {
-        const apiError = {
-          statusCode: 422,
-          data: {
-            details: {
-              errors: [
-                {
-                  name: 'taken'
-                }
-              ]
-            }
-          }
-        };
-        mockStubs.createOrgMembership.mockRejectedValue(apiError);
-
-        let busCount = 0;
-
-        progress$.onValue(() => busCount++);
-
-        await sendInvites({ emails, spaceMemberships });
-
-        expect(busCount).toBe(2);
-
-        // Called six times, 3 space memberships ⨉ 2 emails
-        expect(mockStubs.SpaceMembershipRepository_create_invite).toHaveBeenCalledTimes(6);
-      });
     });
   });
 });

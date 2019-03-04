@@ -336,23 +336,12 @@ export function ProgressMessage({ emails, successfulOrgInvitations }) {
   );
 }
 
-export function ErrorMessage({ useLegacy, failedEmails, restart }) {
+export function ErrorMessage({ failedEmails }) {
   const userString = failedEmails.length > 1 ? 'users' : 'user';
-  let copy;
 
-  if (useLegacy) {
-    copy = (
-      <React.Fragment>
-        <h3>Whoops! Something went wrong</h3>
-        <p>
-          The process failed for the following {userString}. Please try to{' '}
-          <a onClick={() => restart(failedEmails)}>invite them again</a>.
-        </p>
-      </React.Fragment>
-    );
-  } else {
-    copy = (
-      <React.Fragment>
+  return (
+    <div>
+      <div className="note-box--warning">
         <h3>
           {failedEmails.length} {userString} couldn’t be invited
         </h3>
@@ -361,13 +350,7 @@ export function ErrorMessage({ useLegacy, failedEmails, restart }) {
           invited.{' '}
           <StateLink to="account.organizations.users.invitations">View invitations</StateLink>.
         </p>
-      </React.Fragment>
-    );
-  }
-
-  return (
-    <div>
-      <div className="note-box--warning">{copy}</div>
+      </div>
       <ul className="pill-list u-separator--small">
         {failedEmails.map(email => (
           <li key={email} className="pill-item pill-item--warning">
