@@ -14,7 +14,6 @@ exports[`OrganizationUsage should render page without errors 1`] = `
     <HeaderActions>
       <WorkbenchActions
         committed={true}
-        flagActive={true}
         hasSpaces={true}
         isLoading={false}
         periods={
@@ -49,7 +48,6 @@ exports[`OrganizationUsage should render page without errors 1`] = `
       assetBandwidthUOM="MB"
       assetBandwidthUsage={200}
       committed={true}
-      flagActive={true}
       hasSpaces={true}
       isLoading={false}
       isPoC={

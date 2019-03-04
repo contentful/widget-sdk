@@ -14,7 +14,6 @@ import PeriodSelector from './committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
 import isPOCEnabled from 'account/POCFeatureFlag.es6';
 import * as Analytics from 'analytics/Analytics.es6';
-import * as LaunchDarkly from 'utils/LaunchDarkly/index.es6';
 
 const OrganizationRoles = getModule('services/OrganizationRoles.es6');
 const ResourceService = getModule('services/ResourceService.es6');
@@ -28,7 +27,6 @@ const TokenStore = getModule('services/TokenStore.es6');
 export class WorkbenchContent extends React.Component {
   static propTypes = {
     committed: PropTypes.bool,
-    flagActive: PropTypes.bool,
     hasSpaces: PropTypes.bool,
     selectedPeriodIndex: PropTypes.number,
     spaceNames: PropTypes.objectOf(PropTypes.string),
@@ -46,7 +44,6 @@ export class WorkbenchContent extends React.Component {
   render() {
     const {
       committed,
-      flagActive,
       hasSpaces,
       selectedPeriodIndex,
       spaceNames,
@@ -61,7 +58,7 @@ export class WorkbenchContent extends React.Component {
       resources
     } = this.props;
 
-    if (committed && flagActive) {
+    if (committed) {
       if (!hasSpaces) {
         return <NoSpacesPlaceholder />;
       }
@@ -96,7 +93,6 @@ export class WorkbenchActions extends React.Component {
     isLoading: PropTypes.bool,
     hasSpaces: PropTypes.bool,
     committed: PropTypes.bool,
-    flagActive: PropTypes.bool,
     periods: PropTypes.array,
     selectedPeriodIndex: PropTypes.number,
     setPeriodIndex: PropTypes.func
@@ -107,7 +103,6 @@ export class WorkbenchActions extends React.Component {
       isLoading,
       hasSpaces,
       committed,
-      flagActive,
       periods,
       selectedPeriodIndex,
       setPeriodIndex
@@ -115,7 +110,7 @@ export class WorkbenchActions extends React.Component {
 
     return isLoading ? (
       <Spinner />
-    ) : hasSpaces && committed && flagActive && periods ? (
+    ) : hasSpaces && committed && periods ? (
       <PeriodSelector
         periods={periods}
         selectedPeriodIndex={selectedPeriodIndex}
@@ -144,10 +139,6 @@ export class OrganizationUsage extends React.Component {
   async componentDidMount() {
     const { onForbidden } = this.props;
 
-    this.setState({
-      flagActive: await LaunchDarkly.getCurrentVariation('feature-bizvel-09-2018-usage')
-    });
-
     try {
       await this.checkPermissions();
       await this.fetchOrgData();
@@ -167,14 +158,13 @@ export class OrganizationUsage extends React.Component {
 
   async fetchOrgData() {
     const { orgId, onReady } = this.props;
-    const { flagActive } = this.state;
 
     try {
       const service = ResourceService.default(orgId, 'organization');
       const basePlan = await PricingDataProvider.getBasePlan(this.endpoint);
       const committed = PricingDataProvider.isEnterprisePlan(basePlan);
 
-      if (committed && flagActive) {
+      if (committed) {
         const [
           spaces,
           plans,
@@ -277,7 +267,6 @@ export class OrganizationUsage extends React.Component {
       assetBandwidthUOM,
       committed,
       resources,
-      flagActive,
       hasSpaces
     } = this.state;
     return (
@@ -291,7 +280,6 @@ export class OrganizationUsage extends React.Component {
                 isLoading,
                 hasSpaces,
                 committed,
-                flagActive,
                 periods,
                 selectedPeriodIndex,
                 setPeriodIndex: this.setPeriodIndex
@@ -303,7 +291,6 @@ export class OrganizationUsage extends React.Component {
           <WorkbenchContent
             {...{
               committed,
-              flagActive,
               hasSpaces,
               selectedPeriodIndex,
               spaceNames,
