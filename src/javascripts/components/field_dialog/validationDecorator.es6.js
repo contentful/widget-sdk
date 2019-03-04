@@ -5,6 +5,7 @@ import { capitalize, joinWithAnd } from 'utils/StringUtils.es6';
 import createSchema from '@contentful/validation';
 import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
 import { getErrorMessage } from 'services/validationDialogErrorMessages.es6';
+import validationViews from 'services/validationViews.es6';
 
 export default function register() {
   /**
@@ -12,8 +13,7 @@ export default function register() {
    * @name validationDecorator
    */
   registerFactory('validationDecorator', [
-    'validationViews',
-    validationViews => {
+    () => {
       const validationName = createSchema.Validation.getName;
       const nodeValidationName = createSchema.Validation.getNodeValidationName;
       const validationTypesForField = createSchema.Validation.forField;
