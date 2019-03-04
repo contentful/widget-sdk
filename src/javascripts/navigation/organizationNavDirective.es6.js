@@ -145,7 +145,7 @@ export default function register() {
           dataViewType: 'organization-teams'
         },
         {
-          if: 'nav.ssoEnabled',
+          if: 'nav.ssoEnabled && nav.isOwnerOrAdmin',
           title: 'SSO',
           sref: 'account.organizations.sso({orgId: nav.orgId})',
           rootSref: 'account.organizations.sso',
