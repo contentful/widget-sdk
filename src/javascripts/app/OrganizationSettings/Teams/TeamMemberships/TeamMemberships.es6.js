@@ -45,36 +45,33 @@ class TeamMemberships extends React.Component {
 
   render() {
     const { showingForm, onFormDismissed, memberships, readOnlyPermission } = this.props;
-    const empty = memberships.length === 0 && !showingForm;
 
     return (
       <React.Fragment>
-        {!empty && (
-          <Table data-test-id="member-table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Member since</TableCell>
-                {!readOnlyPermission && (
-                  <React.Fragment>
-                    <TableCell>Added by</TableCell>
-                    <TableCell />
-                  </React.Fragment>
-                )}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {showingForm && <TeamMembershipForm onClose={onFormDismissed} />}
-              {memberships.map((membership, index) =>
-                isPlaceholder(membership) ? (
-                  <TeamMembershipRowPlaceholder key={index} />
-                ) : (
-                  <TeamMembershipRow membership={membership} key={membership.sys.id} />
-                )
+        <Table data-test-id="member-table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Member since</TableCell>
+              {!readOnlyPermission && (
+                <React.Fragment>
+                  <TableCell>Added by</TableCell>
+                  <TableCell />
+                </React.Fragment>
               )}
-            </TableBody>
-          </Table>
-        )}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {showingForm && <TeamMembershipForm onClose={onFormDismissed} />}
+            {memberships.map((membership, index) =>
+              isPlaceholder(membership) ? (
+                <TeamMembershipRowPlaceholder key={index} />
+              ) : (
+                <TeamMembershipRow membership={membership} key={membership.sys.id} />
+              )
+            )}
+          </TableBody>
+        </Table>
       </React.Fragment>
     );
   }
