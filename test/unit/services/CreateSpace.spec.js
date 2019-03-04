@@ -25,17 +25,12 @@ describe('CreateSpace', () => {
       canCreateSpaceInOrganization: sinon.stub().returns(true)
     };
     this.getSpaceRatePlans = sinon.stub().returns([this.ratePlans.onDemand]);
-    this.isPOCEnabled = sinon.stub().resolves(false);
 
     module('contentful/test', $provide => {
       $provide.value('services/TokenStore.es6', {
         getOrganization: this.getOrganization
       });
-      $provide.value('utils/LaunchDarkly/index.es6', {});
       $provide.value('access_control/AccessChecker/index.es6', this.accessChecker);
-      $provide.value('utils/LaunchDarkly/index.es6', {
-        getCurrentVariation: this.isPOCEnabled
-      });
       $provide.value('services/ResourceService.es6', () => ({
         get: sinon.stub().returns(
           Promise.resolve({
@@ -49,7 +44,7 @@ describe('CreateSpace', () => {
     });
     this.PricingDataProvider = this.$inject('account/pricing/PricingDataProvider.es6');
     this.PricingDataProvider.getSpaceRatePlans = this.getSpaceRatePlans;
-    this.PricingDataProvider.getBasePlan = sinon.stub().returns({ customerType: 'Enterprise' });
+    this.PricingDataProvider.getBasePlan = sinon.stub().returns({ customerType: 'Self-service' });
     this.modalDialog = this.$inject('modalDialog');
     this.CreateSpace = this.$inject('services/CreateSpace.es6');
     this.modalDialog.open = sinon
@@ -92,7 +87,7 @@ describe('CreateSpace', () => {
 
     it('opens the enterprise dialog for enterprise orgs', async function() {
       this.getSpaceRatePlans.returns([this.ratePlans.enterprise]);
-      this.isPOCEnabled.resolves(true);
+      this.PricingDataProvider.getBasePlan.returns({ customerType: 'Enterprise' });
       await this.CreateSpace.showDialog('v2');
       const modalArgs = this.modalDialog.open.secondCall.args[0];
       expect(modalArgs.scopeData.modalProps.organization.sys.id).toBe(this.v2Org.sys.id);
