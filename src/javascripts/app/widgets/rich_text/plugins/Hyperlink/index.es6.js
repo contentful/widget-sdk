@@ -13,19 +13,20 @@ export const HyperlinkPlugin = ({
   richTextAPI: { widgetAPI, logViewportAction, logShortcutAction }
 }) => ({
   renderNode: (props, _editor, next) => {
-    if (isHyperlink(props.node.type)) {
+    const { node, editor, key } = props;
+    if (isHyperlink(node.type)) {
       return (
         <Hyperlink
           {...props}
           onClick={event => {
             event.preventDefault(); // Don't follow `href`
-            const { editor } = props;
 
-            editor.moveToRangeOfNode(props.node).focus();
+            editor.moveToRangeOfNode(node).focus();
             if (mayEditLink(editor.value)) {
               editLink(editor, widgetAPI.dialogs.createHyperlink, logViewportAction);
             }
           }}
+          onEntityFetchComplete={() => logViewportAction('linkRendered', { key })}
         />
       );
     }

@@ -10,6 +10,9 @@ describe('Entry Editor Controller', function() {
       $provide.value('app/EntrySidebar/EntitySidebarBridge.es6', () => {
         return {};
       });
+      $provide.value('app/entity_editor/LoadEventTracker.es6', {
+        bootstrapEntryEditorLoadEvents: () => {}
+      });
       $provide.value('app/entity_editor/Tracking.es6', sinon.stub());
       $provide.value('app/entity_editor/Validator.es6', {
         createForEntry: sinon.stub()
@@ -38,10 +41,15 @@ describe('Entry Editor Controller', function() {
           fields: {}
         }
       },
+      contentType: {
+        data: {
+          fields: []
+        }
+      },
       fieldControls: {},
       openDoc: () => createDocument()
     };
-    const mockPreferencess = {};
+    const mockPreferences = {};
 
     this.mockService('services/TokenStore.es6', {
       user$: userBus.property
@@ -54,7 +62,7 @@ describe('Entry Editor Controller', function() {
       const scope = $rootScope.$new();
       scope.context = {};
 
-      createEntryController(scope, mockEditorData, mockPreferencess);
+      createEntryController(scope, mockEditorData, mockPreferences);
 
       return scope;
     };

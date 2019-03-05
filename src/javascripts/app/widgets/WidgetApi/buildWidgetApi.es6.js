@@ -26,12 +26,12 @@ const { getSectionVisibility } = getModule('access_control/AccessChecker');
  * @param {string} currentUrl
  * @returns {Object}
  */
-export default function buildWidgetApi({ field, entry, features, currentUrl }) {
+export default function buildWidgetApi({ field, entry, loadEvents, features, currentUrl }) {
   const { entry: canAccessEntries, asset: canAccessAssets } = getSectionVisibility();
 
   const widgetAPI = {
     /**
-     * @see https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md#extensionfield
+     * @see https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-reference/#field
      */
     field,
 
@@ -41,11 +41,12 @@ export default function buildWidgetApi({ field, entry, features, currentUrl }) {
     entry,
 
     /**
-     * @see https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md#extensionspace
+     * @see https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-reference/#space
      */
     space: getBatchingApiClient(spaceContext.cma),
+
     /**
-     * @see https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md#extensiondialogs
+     * @see https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-reference/#dialogs
      */
     dialogs: {
       /**
@@ -75,6 +76,8 @@ export default function buildWidgetApi({ field, entry, features, currentUrl }) {
      * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
      */
     features,
+
+    trackEntryEditorAction: (...args) => loadEvents && loadEvents.emit(...args),
 
     permissions: {
       canAccessEntries,

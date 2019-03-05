@@ -198,14 +198,16 @@ export function create() {
     fieldTypes: ['Entry'],
     name: 'Entry link',
     icon: 'reference',
-    template: '<cf-reference-editor type="Entry" variant="link" single="true" />'
+    template:
+      '<cf-reference-editor type="Entry" variant="link" single="true" load-events="loadEvents" />'
   });
 
   registerWidget('assetLinkEditor', {
     fieldTypes: ['Asset'],
     name: 'Asset link',
     icon: 'media-reference',
-    template: '<cf-reference-editor type="Asset" variant="card" single="true" />'
+    template:
+      '<cf-reference-editor type="Asset" variant="card" single="true" load-events="loadEvents" />'
   });
 
   const BULK_EDITOR_PARAMETER = {
@@ -220,7 +222,7 @@ export function create() {
     fieldTypes: ['Entries'],
     name: 'Entry links list',
     icon: 'references',
-    template: '<cf-reference-editor type="Entry" variant="link" />',
+    template: '<cf-reference-editor type="Entry" variant="link" load-events="loadEvents" />',
     parameters: [BULK_EDITOR_PARAMETER]
   });
 
@@ -228,14 +230,15 @@ export function create() {
     fieldTypes: ['Entry'],
     name: 'Entry card',
     icon: 'reference-card',
-    template: '<cf-reference-editor type="Entry" variant="card" single="true" />'
+    template:
+      '<cf-reference-editor type="Entry" variant="card" single="true" load-events="loadEvents" />'
   });
 
   registerWidget('entryCardsEditor', {
     fieldTypes: ['Entries'],
     name: 'Entry cards',
     icon: 'references-card',
-    template: '<cf-reference-editor type="Entry" variant="card" />',
+    template: '<cf-reference-editor type="Entry" variant="card" load-events="loadEvents" />',
     parameters: [BULK_EDITOR_PARAMETER]
   });
 
@@ -243,14 +246,14 @@ export function create() {
     fieldTypes: ['Assets'],
     name: 'Asset links list',
     icon: 'media-references',
-    template: '<cf-reference-editor type="Asset" variant="link" />'
+    template: '<cf-reference-editor type="Asset" variant="link" load-events="loadEvents" />'
   });
 
   registerWidget('assetGalleryEditor', {
     fieldTypes: ['Assets'],
     name: 'Asset gallery',
     icon: 'media-previews',
-    template: '<cf-reference-editor type="Asset" variant="card" />'
+    template: '<cf-reference-editor type="Asset" variant="card" load-events="loadEvents" />'
   });
 
   registerWidget('slugEditor', {

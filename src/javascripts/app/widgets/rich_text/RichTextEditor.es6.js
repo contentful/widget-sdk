@@ -40,6 +40,11 @@ const emptySlateValue = createSlateValue(emptyDoc);
 export default class RichTextEditor extends React.Component {
   static propTypes = {
     widgetAPI: PropTypes.shape({
+      trackEntryEditorAction: PropTypes.func.isRequired,
+      field: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        locale: PropTypes.string.isRequired
+      }).isRequired,
       permissions: PropTypes.shape({
         canAccessAssets: PropTypes.bool.isRequired
       }).isRequired
@@ -96,6 +101,7 @@ export default class RichTextEditor extends React.Component {
     const isPropsValueUpdate = this.props.value !== nextProps.value;
     return isStateValueUpdate || isPropsValueUpdate;
   }
+
   callOnChange = debounce(() => {
     const doc = toContentfulDocument({
       document: this.state.value.document.toJSON(),
@@ -103,6 +109,7 @@ export default class RichTextEditor extends React.Component {
     });
     this.props.onChange(doc);
   }, 500);
+
   componentDidUpdate(prevProps) {
     const isIncomingChange = () => !deepEqual(prevProps.value, this.props.value);
     const isDocumentChanged = !this.state.lastOperations.isEmpty();
@@ -115,6 +122,7 @@ export default class RichTextEditor extends React.Component {
       });
     }
   }
+
   render() {
     const classNames = cn('rich-text', {
       'rich-text--enabled': !this.props.isDisabled,

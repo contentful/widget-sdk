@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import { registerDirective } from 'NgRegistry.es6';
 import $ from 'jquery';
 import createBridge from 'widgets/bridges/EditorExtensionBridge.es6';
@@ -24,6 +25,7 @@ export default function register() {
     'entityCreator',
     'states/Navigator.es6',
     'navigation/SlideInNavigator',
+    'app/entity_editor/LoadEventTracker.es6',
     (
       $compile,
       $rootScope,
@@ -32,22 +34,50 @@ export default function register() {
       entitySelector,
       entityCreator,
       Navigator,
-      SlideInNavigator
+      SlideInNavigator,
+      LoadEventTracker
     ) => {
       return {
         scope: true,
         restrict: 'E',
         link: function(scope, element) {
-          const { problem, widgetNamespace, template, descriptor, parameters } = scope.widget;
+          const {
+            widget,
+            locale,
+            editorData,
+            loadEvents,
+            widget: { problem, widgetNamespace, template, descriptor, parameters }
+          } = scope;
+
+          const {
+            createLinksRenderedEvent,
+            createWidgetLinkRenderEventsHandler
+          } = LoadEventTracker;
+
+          let trackLinksRendered = noop;
+          let handleWidgetLinkRenderEvents = noop;
+          if (loadEvents) {
+            trackLinksRendered = createLinksRenderedEvent(loadEvents);
+            handleWidgetLinkRenderEvents = createWidgetLinkRenderEventsHandler({
+              widget,
+              locale,
+              loadEvents,
+              editorData,
+              trackLinksRendered
+            });
+          }
 
           if (problem) {
             scope.props = { message: problem };
+            trackLinksRendered();
             renderTemplate(
               `<react-component name="widgets/WidgetRenderWarning.es6" props="props" />`
             );
           } else if (widgetNamespace === NAMESPACE_EXTENSION) {
+            trackLinksRendered();
             renderExtension();
           } else if (widgetNamespace === NAMESPACE_BUILTIN && template) {
+            handleWidgetLinkRenderEvents();
             renderTemplate(template);
           } else {
             throw new Error('Builtin widget template or a valid UI Extension is required.');

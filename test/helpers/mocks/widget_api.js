@@ -103,6 +103,10 @@ angular
             createEntry: sinon.stub().resolves({}),
             createAsset: sinon.stub().resolves({}),
             getContentTypes: sinon.stub().resolves([])
+          },
+          trackEntryEditorAction: () => {},
+          state: {
+            goToEditor: sinon.stub().resolves()
           }
         };
 

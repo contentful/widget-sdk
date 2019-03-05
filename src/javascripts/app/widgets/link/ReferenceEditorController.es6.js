@@ -201,6 +201,7 @@ export default function create($scope, widgetApi) {
       // a keyed list.
       $scope.entityModels = List.makeKeyed(models, model => model.hash);
       $scope.isReady = true;
+      $scope.emitRenderedEvent();
     }
   });
 

@@ -12,7 +12,21 @@ describe('withTracking() returned hoc', () => {
 
   beforeEach(() => {
     props = {
-      widgetAPI: {}
+      widgetAPI: {
+        trackEntryEditorAction: () => {},
+        field: {
+          id: 'FIELD_ID,',
+          locale: 'FIELD_LOCALE'
+        },
+        entry: {
+          getSys: () => ({
+            id: 'ENTRY_ID',
+            contentType: {
+              sys: { id: 'CT_ID' }
+            }
+          })
+        }
+      }
     };
     setup = () => {
       jest.clearAllMocks();
@@ -35,20 +49,6 @@ describe('withTracking() returned hoc', () => {
 
   describe("when loc's props.onAction() is called", () => {
     beforeEach(() => {
-      props.widgetAPI = {
-        field: {
-          id: 'FIELD_ID,',
-          locale: 'FIELD_LOCALE'
-        },
-        entry: {
-          getSys: () => ({
-            id: 'ENTRY_ID',
-            contentType: {
-              sys: { id: 'CT_ID' }
-            }
-          })
-        }
-      };
       setup();
     });
 

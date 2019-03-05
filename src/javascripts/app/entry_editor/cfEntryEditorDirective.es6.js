@@ -7,12 +7,19 @@ export default function register() {
       restrict: 'E',
       scope: {
         editorData: '<',
-        preferences: '<'
+        preferences: '<',
+        trackLoadEvent: '<'
       },
       template: JST.entry_editor(),
       controller: [
         '$scope',
-        $scope => createEditorController($scope, $scope.editorData, $scope.preferences)
+        $scope =>
+          createEditorController(
+            $scope,
+            $scope.editorData,
+            $scope.preferences,
+            $scope.trackLoadEvent
+          )
       ]
     })
   ]);

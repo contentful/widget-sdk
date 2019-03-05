@@ -156,7 +156,7 @@ export default function register() {
             function setupEditor(editorData) {
               $scope.editorData = editorData;
               $scope.otDoc = editorData.doc;
-              $controller('InlineEditingController/editor', { $scope: $scope });
+              $controller('InlineEditingController/editor', { $scope });
               data.hasEditor = true;
             }
 
@@ -201,7 +201,6 @@ export default function register() {
     ) {
       const editorData = $scope.editorData;
       const entityInfo = (this.entityInfo = editorData.entityInfo);
-
       const notify = makeNotify('Entry', () => '“' + $scope.title + '”');
 
       $scope.editorContext = this;
@@ -224,7 +223,8 @@ export default function register() {
         otDoc: $scope.otDoc
       });
 
-      const track = $scope.bulkEditorContext.track;
+      const { track } = $scope.bulkEditorContext;
+
       K.onValueScope($scope, $scope.otDoc.resourceState.stateChange$, data => {
         track.changeStatus($scope.entityInfo.id, data.to);
       });

@@ -1,6 +1,6 @@
 import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
-import { constant } from 'lodash';
+import { constant, keys } from 'lodash';
 
 import { user$ } from 'services/TokenStore.es6';
 
@@ -9,6 +9,7 @@ import * as Focus from './Focus.es6';
 import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking, { trackEntryView } from './Tracking.es6';
+import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker.es6';
 
 import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
@@ -47,8 +48,11 @@ const DataFields = getModule('EntityEditor/DataFields');
  * @scope.requires {Data.FieldControl[]} formControls
  *   Passed to FormWidgetsController to render field controls
  */
-export default async function create($scope, editorData, preferences) {
+export default async function create($scope, editorData, preferences, trackLoadEvent) {
   $scope.context = {};
+  $scope.context.ready = true;
+  $scope.editorData = editorData;
+  $scope.loadEvents = K.createStreamBus($scope);
 
   const editorContext = ($scope.editorContext = {});
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
@@ -60,6 +64,8 @@ export default async function create($scope, editorData, preferences) {
   const doc = editorData.openDoc(K.scopeLifeline($scope));
   // TODO rename the scope property
   $scope.otDoc = doc;
+  bootstrapEntryEditorLoadEvents($scope, $scope.loadEvents, editorData, trackLoadEvent);
+
   initDocErrorHandler($scope, doc.state.error$);
 
   K.onValueScope($scope, doc.status$, status => {
@@ -68,13 +74,13 @@ export default async function create($scope, editorData, preferences) {
 
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
   try {
-    // TODO: Do not directly access $parent in here!
+    const slideCount = keys($scope.slideStates).length;
     trackEntryView({
       editorData,
       entityInfo,
-      currentSlideLevel: $scope.$parent.slideStates.length,
+      currentSlideLevel: slideCount,
       locale: localeStore.getDefaultLocale().internal_code,
-      editorType: $scope.$parent.slideStates.length > 1 ? 'slide_in_editor' : 'entry_editor'
+      editorType: slideCount > 1 ? 'slide_in_editor' : 'entry_editor'
     });
   } catch (error) {
     logger.logError(error);
@@ -135,9 +141,7 @@ export default async function create($scope, editorData, preferences) {
    * for every widget. Instead, we share this version in every
    * cfWidgetApi instance.
    */
-  const contentTypeData = entityInfo.contentType;
-  const fields = contentTypeData.fields;
-  $scope.fields = DataFields.create(fields, $scope.otDoc);
+  $scope.fields = DataFields.create(entityInfo.contentType.fields, $scope.otDoc);
 
   $scope.entrySidebarProps = createEntrySidebarProps({
     $scope

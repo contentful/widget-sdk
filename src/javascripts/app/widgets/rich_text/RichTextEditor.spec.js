@@ -18,8 +18,13 @@ jest.mock(
 
 const fakeProps = props => ({
   widgetAPI: {
+    trackEntryEditorAction: () => {},
     permissions: {
       canAccessAssets: true
+    },
+    field: {
+      id: 'FIELD_ID,',
+      locale: 'FIELD_LOCALE'
     }
   },
   value: undefined,

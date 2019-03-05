@@ -170,6 +170,11 @@ registerSchema({
 });
 
 registerSchema({
+  name: 'editor_load',
+  version: '1-0-0'
+});
+
+registerSchema({
   name: 'ui_extension_install',
   version: '2-0-0'
 });

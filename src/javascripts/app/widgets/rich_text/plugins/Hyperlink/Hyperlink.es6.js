@@ -23,7 +23,8 @@ export default class Hyperlink extends React.Component {
     children: PropTypes.node,
     editor: PropTypes.object,
     createHyperlinkDialog: PropTypes.func,
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
+    onEntityFetchComplete: PropTypes.func
   };
 
   render() {
@@ -85,6 +86,7 @@ export default class Hyperlink extends React.Component {
   };
 
   renderEntityLink(target) {
+    const { onEntityFetchComplete } = this.props;
     return (
       <WidgetAPIContext.Consumer>
         {({ widgetAPI }) => (
@@ -94,14 +96,19 @@ export default class Hyperlink extends React.Component {
             entityType={target.sys.linkType}
             localeCode={widgetAPI.field.locale}
             render={({ requestStatus, entityTitle, entityStatus, contentTypeName = 'Asset' }) => {
-              const title = truncate(entityTitle, 60) || 'Untitled';
+              if (requestStatus === RequestStatus.Pending) {
+                return this.renderLink({
+                  tooltip: `Loading ${target.sys.linkType.toLowerCase()}...`
+                });
+              }
+
+              onEntityFetchComplete && onEntityFetchComplete();
               let tooltip = '';
               if (requestStatus === RequestStatus.Error) {
                 tooltip = `${target.sys.linkType} missing or inaccessible`;
               } else if (requestStatus === RequestStatus.Success) {
+                const title = truncate(entityTitle, 60) || 'Untitled';
                 tooltip = this.renderEntityTooltipContent(contentTypeName, title, entityStatus);
-              } else if (requestStatus === RequestStatus.Pending) {
-                tooltip = `Loading ${target.sys.linkType.toLowerCase()}...`;
               }
               return this.renderLink({ tooltip });
             }}
