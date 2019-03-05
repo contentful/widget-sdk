@@ -20,6 +20,10 @@ jest.mock('@contentful/forma-36-react-components', () => ({
   Notification: { success: jest.fn() }
 }));
 
+jest.mock('TheStore/index.es6', () => ({
+  getStore: jest.fn()
+}));
+
 describe('EditorExtensionBridge', () => {
   const makeBridge = () => {
     const stubs = {

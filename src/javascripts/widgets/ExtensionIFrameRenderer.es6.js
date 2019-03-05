@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { get } from 'lodash';
 
 import * as Config from 'Config.es6';
 
+import ExtensionDevelopmentMode from './ExtensionDevelopmentMode.es6';
 import Channel from './ExtensionIFrameChannel.es6';
 import ExtensionAPI from './ExtensionAPI.es6';
 
@@ -54,7 +56,14 @@ export default class ExtensionIFrameRenderer extends React.Component {
   }
 
   render() {
-    return <iframe style={WIDTH} ref={this.initialize} onLoad={this.onLoad} />;
+    const src = get(this.props, ['descriptor', 'src'], '');
+    const isDevMode = src.startsWith('http://localhost');
+
+    const iframe = <iframe style={WIDTH} ref={this.initialize} onLoad={this.onLoad} />;
+    if (isDevMode) {
+      return <ExtensionDevelopmentMode>{iframe}</ExtensionDevelopmentMode>;
+    }
+    return iframe;
   }
 
   onLoad = () => this.extensionApi.connect();
