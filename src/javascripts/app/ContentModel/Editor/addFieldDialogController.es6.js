@@ -3,6 +3,7 @@ import _ from 'lodash';
 import * as random from 'utils/Random.es6';
 import * as stringUtils from 'utils/StringUtils.es6';
 import * as fieldFactory from 'services/fieldFactory.es6';
+import fieldDecorator from 'components/field_dialog/fieldDecorator.es6';
 
 export default function register() {
   /**
@@ -21,9 +22,8 @@ export default function register() {
     '$scope',
     '$controller',
     '$q',
-    'fieldDecorator',
     'fieldErrorMessageBuilder',
-    function AddFieldDialogController($scope, $controller, $q, fieldDecorator, buildMessage) {
+    function AddFieldDialogController($scope, $controller, $q, buildMessage) {
       $scope.viewState = $controller('ViewStateController', {
         $scope: $scope,
         defaultState: 'fieldSelection'
