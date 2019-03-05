@@ -47,7 +47,7 @@ export default async function(
     // pending
     dispatch({ type, payload: { id, dataset }, meta: { pending: true } });
     // request
-    await service.remove(id);
+    await service.remove(id, item);
     // success
     dispatch({ type, payload: { id, dataset } });
     Notification.success(successMessage(item));

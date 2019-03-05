@@ -73,8 +73,9 @@ export default function createTeamMembershipsService(state) {
     );
   }
 
-  function remove(teamSpaceMembershipId) {
-    return endpoint(
+  function remove(teamSpaceMembershipId, teamSpaceMembership) {
+    const spaceEndpoint = createSpaceEndpoint(teamSpaceMembership.sys.space.sys.id);
+    return spaceEndpoint(
       {
         method: 'DELETE',
         path: ['team_space_memberships', teamSpaceMembershipId]
