@@ -9,21 +9,21 @@ import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcher
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import * as EnvironmentUtils from 'utils/EnvironmentUtils.es6';
+import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 
 const spaceContext = getModule('spaceContext');
 const ResourceService = getModule('services/ResourceService.es6');
-const FeatureService = getModule('services/FeatureService.es6');
 const OrganizationRoles = getModule('services/OrganizationRoles.es6');
 const TheAccountView = getModule('TheAccountView');
 
 const LocalesFetcher = createFetcherComponent(() => {
   const createResourceService = ResourceService.default;
-  const createFeatureService = FeatureService.default;
+
   return Promise.all([
     spaceContext.localeRepo.getAll(),
     isLegacyOrganization(spaceContext.organization),
     createResourceService(spaceContext.getId()).get('locale'),
-    createFeatureService(spaceContext.getId()).get('multipleLocales'),
+    createLegacyFeatureService(spaceContext.getId()).get('multipleLocales'),
     OrganizationRoles.isOwnerOrAdmin(spaceContext.organization),
     EnvironmentUtils.isInsideMasterEnv(spaceContext),
     TheAccountView.getSubscriptionState(),

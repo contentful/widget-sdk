@@ -44,7 +44,7 @@ describe('Access Checker', () => {
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: sinon.stub().resolves(false)
       });
-      $provide.value('services/FeatureService.es6', {
+      $provide.value('services/LegacyFeatureService.es6', {
         default: () => {
           return {
             get: () => {

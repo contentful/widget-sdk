@@ -1,15 +1,20 @@
-/* eslint-disable  react-hooks/rules-of-hooks */
-
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { getSpace, getOrganization } from 'services/TokenStore.es6';
-import { getEnabledFeatures } from 'account/pricing/PricingDataProvider.es6';
-import { FEATURE_SERVICE_FLAG } from 'featureFlags.es6';
+import { getEnabledFeatures as getFeaturesFromApi } from 'account/pricing/PricingDataProvider.es6';
 
 import { get, snakeCase } from 'lodash';
 
-export default function createFeatureService(id, type = 'space') {
+/*
+  This is the legacy feature service that allows you to query
+  about features that are not yet in the product catalog, such
+  as `custom_roles`.
+
+  If the customer is on pricing version 2 (current pricing), this
+  service queries the API. If the customer is on pricing version 1
+  (legacy pricing), this service uses data from the token instead.
+ */
+export default function create(id, type = 'space') {
   const endpoint = createEndpoint(id, type);
 
   return { get, getAll };
@@ -23,20 +28,21 @@ export default function createFeatureService(id, type = 'space') {
 
   async function getAll() {
     const organization = await getTokenOrganization(id, type);
-    const legacy = await useLegacy(organization);
+    const legacy = isLegacyOrganization(organization);
 
     if (legacy) {
-      // Look at the Token
-      return legacyGetFeatures(organization);
+      return getFeaturesFromToken(organization);
     } else {
-      return getEnabledFeatures(endpoint);
+      return getFeaturesFromApi(endpoint);
     }
   }
 }
 
-function legacyGetFeatures(organization) {
+function getFeaturesFromToken(organization) {
   const featuresHash = get(organization, 'subscriptionPlan.limits.features', {});
   const enabledFeatureIds = Object.keys(featuresHash).filter(featureId => featuresHash[featureId]);
+
+  // Make feature consistent with API Feature object
   const features = enabledFeatureIds.map(featureId => {
     return {
       sys: {
@@ -62,13 +68,5 @@ async function getTokenOrganization(id, type) {
     return space.organization;
   } else if (type === 'organization') {
     return getOrganization(id);
-  }
-}
-
-async function useLegacy(organization) {
-  if (isLegacyOrganization(organization)) {
-    return getCurrentVariation(FEATURE_SERVICE_FLAG).then(flagValue => !flagValue);
-  } else {
-    return false;
   }
 }

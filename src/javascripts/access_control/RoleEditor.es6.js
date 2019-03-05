@@ -28,6 +28,7 @@ import Icon from '../ui/Components/Icon.es6';
 import getLocales from './getLocales.es6';
 import * as PolicyBuilder from 'access_control/PolicyBuilder/index.es6';
 import * as logger from 'services/logger.es6';
+import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 
 const $state = getModule('$state');
 const spaceContext = getModule('spaceContext');
@@ -35,7 +36,6 @@ const createRoleRemover = getModule('createRoleRemover');
 const TheAccountView = getModule('TheAccountView');
 const UserListHandler = getModule('UserListHandler');
 const RoleRepository = getModule('access_control/RoleRepository.es6');
-const createFeatureService = getModule('services/FeatureService.es6');
 const createResourceService = getModule('services/ResourceService.es6');
 const TheLocaleStore = getModule('TheLocaleStore');
 
@@ -286,7 +286,7 @@ class RoleEditor extends React.Component {
   async componentDidMount() {
     const { isNew } = this.props;
     const organization = spaceContext.organization;
-    const FeatureService = createFeatureService.default(spaceContext.getId());
+    const FeatureService = createLegacyFeatureService(spaceContext.getId());
 
     this.setState({ loading: true });
 

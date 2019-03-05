@@ -2,14 +2,9 @@ import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as K from 'utils/kefir.es6';
 import { get } from 'lodash';
-
-import { getModule } from 'NgRegistry.es6';
-
-const $injector = getModule('$injector');
-// TODO prevent circular ref
+import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 
 export function create({ space, organization }) {
-  const createFeatureService = $injector.get('services/FeatureService.es6').default;
   const userQuota = {
     // TODO get from limits/usage endpoint
     limit: get(organization, 'subscriptionPlan.limits.permanent.organizationMembership', -1),
@@ -56,7 +51,7 @@ export function create({ space, organization }) {
     if (!isSuperUser() || !space) {
       return Promise.resolve(false);
     } else {
-      const FeatureService = createFeatureService(space.sys.id);
+      const FeatureService = createLegacyFeatureService(space.sys.id);
       return FeatureService.get('customRoles');
     }
   }

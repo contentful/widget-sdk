@@ -2,12 +2,8 @@ import { createIsolatedSystem } from 'test/helpers/system-js';
 import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 import { set } from 'lodash';
 
-describe('Feature Service', () => {
+describe('Legacy Feature Service', () => {
   beforeEach(async function() {
-    this.flags = {
-      'feature-bv-2018-01-features-api': false
-    };
-
     this.mocks = {
       legacyOrganization: null,
       organization: {
@@ -31,20 +27,10 @@ describe('Feature Service', () => {
 
     const system = createIsolatedSystem();
 
-    system.set('utils/LaunchDarkly/index.es6', {
-      getCurrentVariation: flagName => {
-        return Promise.resolve(this.flags[flagName]);
-      }
-    });
-
     system.set('utils/ResourceUtils.es6', {
       isLegacyOrganization: () => {
         return this.mocks.legacyOrganization;
       }
-    });
-
-    system.set('NgRegistry.es6', {
-      getModule: sinon.stub()
     });
 
     // Spying on both the endpoint creation and the actual endpoint
@@ -84,25 +70,27 @@ describe('Feature Service', () => {
       getOrganization: sinon.stub().resolves(this.mocks.organization)
     });
 
-    this.createFeatureService = (await system.import('services/FeatureService.es6')).default;
+    this.createLegacyFeatureService = (await system.import(
+      'services/LegacyFeatureService.es6'
+    )).default;
   });
 
   it('should use the space endpoint by default during instantiation', function() {
-    this.createFeatureService('1234');
+    this.createLegacyFeatureService('1234');
 
     expect(this.spies.createSpaceEndpoint.called).toBe(true);
     expect(this.stubs.createOrganizationEndpoint.called).toBe(false);
   });
 
   it('should also allow instantiating with the organization type', function() {
-    this.createFeatureService('1234', 'organization');
+    this.createLegacyFeatureService('1234', 'organization');
 
     expect(this.spies.createSpaceEndpoint.called).toBe(false);
     expect(this.stubs.createOrganizationEndpoint.called).toBe(true);
   });
 
   it('should return the proper definition on instantiation', function() {
-    const FeatureService = this.createFeatureService('1234');
+    const FeatureService = this.createLegacyFeatureService('1234');
 
     expect(Object.keys(FeatureService).length).toBe(2);
     expect(FeatureService.get).toBeDefined();
@@ -111,11 +99,10 @@ describe('Feature Service', () => {
 
   describe('#get', () => {
     beforeEach(function() {
-      this.FeatureService = this.createFeatureService('1234');
+      this.FeatureService = this.createLegacyFeatureService('1234');
     });
 
-    it('should return a Feature from the token if legacy and the feature flag is off', async function() {
-      this.flags['feature-bv-2018-01-features-api'] = false;
+    it('should return true if feature is enabled from the token if org is legacy', async function() {
       this.mocks.legacyOrganization = true;
 
       let feature = await this.FeatureService.get('multipleLocales');
@@ -126,16 +113,7 @@ describe('Feature Service', () => {
       expect(feature).toEqual(true);
     });
 
-    it('should return a Feature from the endpoint if legacy and the feature flag is on', async function() {
-      this.flags['feature-bv-2018-01-features-api'] = true;
-      this.mocks.legacyOrganization = true;
-
-      const feature = await this.FeatureService.get('multipleLocales');
-
-      expect(feature).toEqual(true);
-    });
-
-    it('should return a Feature from the endpoint if not legacy', async function() {
+    it('should return true if feature is enabled from the endpoint if org is not legacy', async function() {
       let feature;
 
       this.mocks.legacyOrganization = false;
@@ -147,7 +125,7 @@ describe('Feature Service', () => {
       expect(feature).toEqual(false);
     });
 
-    it('should return false if the Feature is not found', async function() {
+    it('should return false if the feature is not found', async function() {
       let feature;
 
       this.mocks.legacyOrganization = true;
@@ -155,13 +133,8 @@ describe('Feature Service', () => {
 
       expect(feature).toEqual(false);
 
-      this.flags['feature-bv-2018-01-features-api'] = true;
-      feature = await this.FeatureService.get('missing2');
-
-      expect(feature).toEqual(false);
-
       this.mocks.legacyOrganization = false;
-      feature = await this.FeatureService.get('missing3');
+      feature = await this.FeatureService.get('missing2');
 
       expect(feature).toEqual(false);
     });
@@ -169,10 +142,10 @@ describe('Feature Service', () => {
 
   describe('#getAll', () => {
     beforeEach(function() {
-      this.FeatureService = this.createFeatureService('1234');
+      this.FeatureService = this.createLegacyFeatureService('1234');
     });
 
-    it('should return all enabled Features from the token if legacy and the feature flag is off', async function() {
+    it('should return all enabled features from the token if org is legacy', async function() {
       this.mocks.legacyOrganization = true;
 
       const features = await this.FeatureService.getAll();
@@ -187,31 +160,7 @@ describe('Feature Service', () => {
       ]);
     });
 
-    it('should return all Features from the endpoint if legacy and the feature flag is on', async function() {
-      this.mocks.legacyOrganization = true;
-      this.flags['feature-bv-2018-01-features-api'] = true;
-
-      const features = await this.FeatureService.getAll();
-      expect(features.length).toBe(2);
-      expect(features).toEqual([
-        {
-          name: 'Custom Roles',
-          sys: {
-            id: 'custom_roles',
-            type: 'Feature'
-          }
-        },
-        {
-          name: 'Multiple Locales',
-          sys: {
-            id: 'multiple_locales',
-            type: 'Feature'
-          }
-        }
-      ]);
-    });
-
-    it('should return all Features from the endpoint if not legacy', async function() {
+    it('should return all features from the endpoint if org is not legacy', async function() {
       this.mocks.legacyOrganization = false;
 
       const features = await this.FeatureService.getAll();
