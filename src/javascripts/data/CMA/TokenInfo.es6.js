@@ -1,9 +1,7 @@
 import resolveTokenLinks from './resolveTokenLinks.es6';
 import makeFetch from 'data/Request.es6';
 import { apiUrl } from 'Config.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const $q = getModule('$q');
+import * as logger from 'services/logger.es6';
 
 /**
  * @description
@@ -17,25 +15,42 @@ const $q = getModule('$q');
  */
 export default function makeFetchWithAuth(auth) {
   const fetch = makeFetch(auth);
-
+  const request = {
+    method: 'GET',
+    url: apiUrl('token'),
+    headers: {
+      'Content-Type': 'application/vnd.contentful.management.v1+json'
+    }
+  };
   return () =>
-    fetch({
-      method: 'GET',
-      url: apiUrl('token'),
-      headers: {
-        'Content-Type': 'application/vnd.contentful.management.v1+json'
-      }
-    }).then(response => {
-      const data = response.data;
-      if (data) {
-        // Locales are always fetched from the `/locales` endpoint.
-        // Do not resolve links to locales.
-        delete data.includes.Locale;
+    fetch(request).then(
+      response => {
+        const data = response.data;
+        if (data) {
+          // Locales are always fetched from the `/locales` endpoint.
+          // Do not resolve links to locales.
+          delete data.includes.Locale;
 
-        // TODO freeze returned object
-        return resolveTokenLinks(data);
-      } else {
-        return $q.reject(new Error('Could not obtain token info'));
+          // TODO freeze returned object
+          return resolveTokenLinks(data);
+        } else {
+          logError('Obtained /token info without `data`', response);
+          throw newError();
+        }
+      },
+      response => {
+        logError('Could not obtain /token info', response);
+        throw newError();
       }
-    });
+    );
+
+  function logError(message, { data, status, statusText }) {
+    // We don't want e.g. `config` in here which contains secrets.
+    const error = { request, data, status, statusText };
+    logger.logServerError(message, { error });
+  }
+}
+
+function newError() {
+  return new Error('Could not obtain token info');
 }
