@@ -165,8 +165,8 @@ describe('TeamSpaceMemberships', () => {
 
         const rows = wrapper.find(TeamSpaceMembershipRow);
         expect(rows).toHaveLength(2);
-        expect(rows.get(0).props.membership.sys.id).toEqual('membershipB2');
-        expect(rows.get(1).props.membership.sys.id).toEqual('membershipB1');
+        expect(rows.get(0).props.membership.sys.id).toEqual('membershipB1');
+        expect(rows.get(1).props.membership.sys.id).toEqual('membershipB2');
       });
     });
   });

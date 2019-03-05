@@ -12,7 +12,7 @@ export const getTeamSpaceMemberships = flow(
 const getSpaceName = membership => get('sys.space.name', membership) || '';
 
 const sortBySpaceName = memberships =>
-  memberships.slice().sort((a, b) => getSpaceName(a).localeCompare(getSpaceName(b)));
+  memberships.sort((a, b) => getSpaceName(a).localeCompare(getSpaceName(b)));
 
 export const getSpaceMembershipsByTeam = flow(
   getTeamSpaceMemberships,
@@ -30,6 +30,7 @@ export const getCurrentTeamSpaceMembershipList = state => {
     getSpaceMembershipsByTeam,
     // get team space memberships of currently active team (e.g. containg in url)
     get(currentTeamId),
+    defaultTo([]),
     sortBySpaceName,
     concat(getOptimistic(state)[TEAM_SPACE_MEMBERSHIPS] || [])
   )(state);

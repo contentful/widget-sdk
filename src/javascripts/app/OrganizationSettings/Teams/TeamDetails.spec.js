@@ -470,6 +470,7 @@ describe('TeamDetails', () => {
                     [TEAM_SPACE_MEMBERSHIPS]: [
                       {
                         admin: false,
+                        roles: [],
                         sys: {
                           id: 'membershipB2',
                           space: {
