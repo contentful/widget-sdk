@@ -151,7 +151,7 @@ export default ({ dispatch, getState }) => next => async action => {
           type: 'ADD_TO_DATASET',
           payload: { item: newTeamSpaceMembership, dataset: TEAM_SPACE_MEMBERSHIPS }
         });
-        Notification.success(`Successfully added ${team.name} to the $pace ${space.name}`);
+        Notification.success(`Successfully added ${team.name} to the space ${space.name}`);
       } catch (e) {
         dispatch({
           type: 'SUBMIT_NEW_TEAM_SPACE_MEMBERSHIP_FAILED',
