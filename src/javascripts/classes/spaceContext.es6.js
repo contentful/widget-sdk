@@ -9,6 +9,7 @@ import APIClient from 'data/APIClient.es6';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 import * as logger from 'services/logger.es6';
 import * as Telemetry from 'Telemetry.es6';
+import createUserCache from 'data/userCache.es6';
 
 export default function register() {
   /**
@@ -25,7 +26,6 @@ export default function register() {
     '$injector',
     'client',
     'TheLocaleStore',
-    'data/userCache',
     'Config.es6',
     'Authentication.es6',
     'services/TokenStore.es6',
@@ -47,7 +47,6 @@ export default function register() {
       $injector,
       client,
       TheLocaleStore,
-      createUserCache,
       Config,
       Auth,
       TokenStore,
