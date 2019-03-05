@@ -51,7 +51,7 @@ class TeamMembershipForm extends React.Component {
 
     return (
       <TableRow extraClassNames="space-membership-editor">
-        <TableCell colSpan={isEditing ? 1 : 2}>
+        <TableCell>
           {isEditing && initialMembership.sys.space.name}
           {!isEditing && (
             <Select data-test-id="space-select" onChange={this.setSpace} defaultValue="">

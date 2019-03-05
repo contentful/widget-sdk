@@ -28,6 +28,14 @@ export const SpaceRole = PropTypes.shape({
   }).isRequired
 });
 
+export const Link = PropTypes.shape({
+  sys: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    linkType: PropTypes.string.isRequired,
+    type: PropTypes.oneOf(['Link'])
+  }).isRequired
+});
+
 export const Space = PropTypes.shape({
   name: PropTypes.string.isRequired,
   sys: PropTypes.shape({
@@ -85,10 +93,10 @@ export const TeamMembership = PropTypes.shape({
 
 export const TeamSpaceMembership = PropTypes.shape({
   admin: PropTypes.bool.isRequired,
-  roles: PropTypes.arrayOf(SpaceRole),
+  roles: PropTypes.arrayOf(PropTypes.oneOfType([SpaceRole, Link])),
   sys: PropTypes.shape({
-    space: Space,
-    team: Team
+    space: PropTypes.oneOfType([Space, Link]),
+    team: PropTypes.oneOfType([Team, Link])
   }).isRequired
 });
 
