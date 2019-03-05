@@ -136,7 +136,7 @@ export default function create($scope, contentTypeIds) {
                 scope.dialog.confirm();
               }),
             {
-              disabled: () => scope.input.contentTypeName !== scope.contentTypeName
+              disabled: () => scope.input.contentTypeName !== scope.contentTypeName.trim()
             }
           )
         });

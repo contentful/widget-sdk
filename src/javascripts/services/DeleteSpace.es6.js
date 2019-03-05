@@ -28,7 +28,7 @@ export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
             scope.dialog.confirm();
           })
           .then(onSuccess),
-      { disabled: () => scope.input.spaceName !== spaceName }
+      { disabled: () => scope.input.spaceName !== spaceName.trim() }
     )
   });
 
