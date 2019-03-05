@@ -11,6 +11,8 @@ import * as ssoActionCreators from 'redux/actions/sso/actionCreators.es6';
 import * as ssoSelectors from 'redux/selectors/sso.es6';
 import getOrganizationSelector from 'redux/selectors/getOrganization.es6';
 import { track } from 'analytics/Analytics.es6';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import _ from 'lodash';
 
 import { connect } from 'react-redux';
@@ -70,6 +72,10 @@ export class SSOSetup extends React.Component {
 
     if (!organization) {
       return <FetcherLoading message="Loading SSO..." />;
+    }
+
+    if (!isOwnerOrAdmin(organization)) {
+      return <ForbiddenPage />;
     }
 
     if (!identityProvider) {

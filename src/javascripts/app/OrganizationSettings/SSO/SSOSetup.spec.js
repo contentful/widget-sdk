@@ -5,6 +5,12 @@ import { SSOSetup } from './SSOSetup.es6';
 import IDPSetupForm from './IDPSetupForm.es6';
 import SSOEnabled from './SSOEnabled.es6';
 import { track } from 'analytics/Analytics.es6';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
+
+jest.mock('services/OrganizationRoles.es6', () => ({
+  isOwnerOrAdmin: jest.fn().mockReturnValue(true)
+}));
 
 const awaitSetImmediate = () => new Promise(resolve => setImmediate(resolve));
 
@@ -79,6 +85,14 @@ describe('SSOSetup', () => {
     const rendered = render({ organization });
 
     expect(rendered.find(IDPSetupForm)).toHaveLength(0);
+  });
+
+  it('should render the forbidden page if the user is not admin/owner', () => {
+    isOwnerOrAdmin.mockReturnValueOnce(false);
+
+    const rendered = render({ organization });
+
+    expect(rendered.find(ForbiddenPage)).toHaveLength(1);
   });
 
   it('should render the IDPSetupForm component if an identityProvider store data is given in props', () => {
