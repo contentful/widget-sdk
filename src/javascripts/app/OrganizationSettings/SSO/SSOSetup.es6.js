@@ -11,6 +11,9 @@ import * as ssoActionCreators from 'redux/actions/sso/actionCreators.es6';
 import * as ssoSelectors from 'redux/selectors/sso.es6';
 import getOrganizationSelector from 'redux/selectors/getOrganization.es6';
 import { track } from 'analytics/Analytics.es6';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import _ from 'lodash';
 
 import { connect } from 'react-redux';
@@ -24,11 +27,15 @@ export class SSOSetup extends React.Component {
     onReady: PropTypes.func.isRequired
   };
 
+  state = {
+    isAllowed: false
+  };
+
   componentDidMount() {
     const { organization } = this.props;
 
     if (organization) {
-      this.retrieve();
+      this.initialize();
     }
   }
 
@@ -41,6 +48,29 @@ export class SSOSetup extends React.Component {
       this.retrieve();
     }
   }
+
+  initialize = async () => {
+    const { organization, onReady } = this.props;
+
+    const featureEnabled = await getOrgFeature(organization.sys.id, 'self_configure_sso');
+    const hasPerms = isOwnerOrAdmin(organization);
+
+    if (!featureEnabled || !hasPerms) {
+      this.setState({
+        isAllowed: false
+      });
+
+      onReady();
+
+      return;
+    }
+
+    this.setState({
+      isAllowed: true
+    });
+
+    this.retrieve();
+  };
 
   retrieve = () => {
     const { retrieveIdp, organization, onReady } = this.props;
@@ -67,9 +97,14 @@ export class SSOSetup extends React.Component {
 
   render() {
     const { identityProvider, organization } = this.props;
+    const { isAllowed } = this.state;
 
     if (!organization) {
       return <FetcherLoading message="Loading SSO..." />;
+    }
+
+    if (!isAllowed) {
+      return <ForbiddenPage />;
     }
 
     if (!identityProvider) {
