@@ -24,7 +24,9 @@ WORKDIR /app
 ENV PATH=/app/node_modules/.bin:$PATH \
     NPM_CONFIG_LOGLEVEL=warn \
     # Used by karma launcher
-    CHROME_BIN=/usr/bin/google-chrome
+    CHROME_BIN=/usr/bin/google-chrome \
+    # We don't want to install Cypress with npm install
+    CYPRESS_INSTALL_BINARY=0
 
 ARG NPM_TOKEN
 RUN \

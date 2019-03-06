@@ -1,7 +1,14 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./"
+    "types": ["cypress", "node"],
+    "lib": ["es2015", "dom"],
+    "strict": true,
+    "noEmitOnError": true,
+    "noErrorTruncation": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
-  "include": ["**/*"]
+  "include": ["**/*", "../node_modules/cypress"]
 }

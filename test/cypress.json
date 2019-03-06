@@ -1,0 +1,10 @@
+{
+  "projectId": "a8uyth",
+  "ignoreTestFiles": "**/example*.js",
+  "baseUrl": "https://app.flinkly.com",
+  "defaultCommandTimeout": 6000,
+  "env": {
+    "token": "CFPAT-e86a3df56dfa61838d6621da70fd471db5b6ed5c6874d80ee23568942a5262d7",
+    "space_id": "uomrsivr095w"
+  }
+}
