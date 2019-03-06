@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import * as K from 'utils/kefir.es6';
-import { createMVar$q, runTask, createExclusiveTask } from 'utils/Concurrent.es6';
+import { createMVar, runTask, createExclusiveTask } from 'utils/Concurrent.es6';
 import { getStore } from 'TheStore/index.es6';
 import * as Config from 'Config.es6';
 import postForm from 'data/Request/PostForm.es6';
@@ -39,7 +39,7 @@ const LOGOUT_KEY = 'loggedOut';
  *
  * Emits a new value whenever a token is successfully refreshed.
  */
-const tokenMVar = createMVar$q();
+const tokenMVar = createMVar();
 
 const store = getStore();
 const sessionStore = getStore('session');

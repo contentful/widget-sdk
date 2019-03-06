@@ -1,5 +1,3 @@
-import { getModule } from 'NgRegistry.es6';
-
 /**
  * @ngdoc method
  * @name utils/Concurrent/MVar#create
@@ -19,29 +17,13 @@ import { getModule } from 'NgRegistry.es6';
  * @params {Object} value
  * @returns {utils/Concurrent/MVar}
  */
-export function createMVar(value) {
-  return createBase(Promise, !arguments.length, value);
-}
-
-/**
- * @description
- * Create an MVar that uses Angular’s $q Promise internally.
- *
- * We still need a $q based implementation because some code relies on
- * the fact that handlers on $q trigger Angular digest cycles that
- * updated the application state.
- */
-export function createMVar$q(value) {
-  const $q = getModule('$q');
-
-  return createBase($q, !arguments.length, value);
-}
 
 // `initialEmpty` is used to distinguish between providing `undefined` as an
 // initial value or no initial value at all.
-function createBase(PromiseImplementation, initialEmpty, value) {
-  let readDeferred = makeDeferred(PromiseImplementation);
+export function createMVar(value) {
+  let readDeferred = makeDeferred();
   let isEmpty = true;
+  const initialEmpty = !arguments.length;
 
   if (!initialEmpty) {
     put(value);
@@ -70,7 +52,7 @@ function createBase(PromiseImplementation, initialEmpty, value) {
 
   function empty() {
     if (!isEmpty) {
-      readDeferred = makeDeferred(PromiseImplementation);
+      readDeferred = makeDeferred();
       isEmpty = true;
     }
   }
@@ -79,7 +61,7 @@ function createBase(PromiseImplementation, initialEmpty, value) {
     if (isEmpty) {
       readDeferred.resolve(value);
     } else {
-      readDeferred = makeDeferred(PromiseImplementation);
+      readDeferred = makeDeferred();
       readDeferred.resolve(value);
     }
 
@@ -88,10 +70,10 @@ function createBase(PromiseImplementation, initialEmpty, value) {
 }
 
 // TODO we should probably extract this
-function makeDeferred(PromiseImplementation) {
+function makeDeferred() {
   let resolve, reject;
   // eslint-disable-next-line promise/param-name
-  const promise = new PromiseImplementation((resolve_, reject_) => {
+  const promise = new Promise((resolve_, reject_) => {
     resolve = resolve_;
     reject = reject_;
   });
