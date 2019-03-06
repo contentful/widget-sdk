@@ -43,7 +43,13 @@ export default class ContentTypesPage extends React.Component {
     return (
       <Workbench.Sidebar className="ct-filter-sidebar">
         {!isLoading && (
-          <ContentTypeListFilter status={status} onChange={status => this.setState({ status })} />
+          <ContentTypeListFilter
+            data-test-id="status-filter"
+            status={status}
+            onChange={status => {
+              this.setState({ status });
+            }}
+          />
         )}
       </Workbench.Sidebar>
     );
@@ -55,6 +61,7 @@ export default class ContentTypesPage extends React.Component {
       searchTerm,
       status
     });
+
     return (
       <Workbench>
         <Workbench.Header>

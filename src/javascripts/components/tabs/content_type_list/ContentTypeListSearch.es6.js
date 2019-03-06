@@ -24,6 +24,7 @@ export default class ContentTypeListSearch extends React.Component {
   render() {
     return (
       <TextInput
+        testId="search-box"
         autoFocus
         placeholder="Search for a content type"
         value={this.state.value}

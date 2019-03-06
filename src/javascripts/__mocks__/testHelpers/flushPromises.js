@@ -7,8 +7,9 @@
  */
 export default function flushPromises() {
   return new Promise(resolve => {
-    setTimeout(() => {
+    //eslint-disable-next-line no-undef
+    setImmediate(() => {
       resolve();
-    }, 1);
+    });
   });
 }

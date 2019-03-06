@@ -3,8 +3,9 @@ import { mount } from 'enzyme';
 import * as mockedSpaceContext from 'ng/spaceContext';
 import * as mockedContentPreview from 'ng/contentPreview';
 
-import flushPromises from '../../../../../test/helpers/flushPromises';
 import SidebarContentPreviewContainer from './SidebarContentPreviewContainer.es6';
+
+import flushPromises from 'testHelpers/flushPromises';
 
 const contentPreviews = [
   {
@@ -92,6 +93,7 @@ describe('entity_editor/Components/SidebarContentPreviewContainer.es6', () => {
 
     wrapper.find('[data-test-id="open-preview"]').simulate('click');
     await flushPromises();
+    wrapper.update();
 
     expect(mockedContentPreview.replaceVariablesInUrl).toHaveBeenCalledTimes(1);
     expect(window.open).toHaveBeenCalledWith('https://google.com/search?q=VALUE');

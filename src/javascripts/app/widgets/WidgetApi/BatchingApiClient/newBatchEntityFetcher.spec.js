@@ -1,5 +1,6 @@
-import nextTick from '../../../../../../test/helpers/flushPromises';
 import newBatchEntityFetcher from './newBatchEntityFetcher.es6';
+
+import flushPromises from 'testHelpers/flushPromises';
 
 jest.mock('Config.es6', () => ({ apiUrl: v => `https://api.some-domain.com/${v}` }));
 jest.mock('detect-browser', () => ({
@@ -44,7 +45,7 @@ describe('newBatchEntityFetcher({ getResources, resourceContext }) -> fetchEntit
     it('happens in the next tick', async () => {
       fetch('ID');
       expect(getResources).not.toHaveBeenCalled();
-      await nextTick();
+      await flushPromises();
       expect(getResources).toHaveBeenCalledTimes(1);
     });
 

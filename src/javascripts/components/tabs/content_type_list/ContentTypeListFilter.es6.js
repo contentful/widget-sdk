@@ -5,6 +5,7 @@ import cn from 'classnames';
 function ListItem({ isActive, status, label, onClick }) {
   return (
     <li
+      data-test-id={`status-${status}`}
       className={cn('view-folder__item', { '-active': isActive })}
       onClick={() => onClick(status)}>
       <div className="view-folder__item-title">{label}</div>
