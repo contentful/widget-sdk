@@ -104,6 +104,7 @@ export default function register() {
         id: ctField.apiName, // we only want to expose the public ID
         name: ctField.name,
         locale: $scope.locale.code,
+        internalLocale: $scope.locale.internal_code, // TODO: Not part of public sdk
         type: ctField.type,
         linkType: ctField.linkType,
         itemLinkType: _.get(ctField, ['items', 'linkType']),
