@@ -1,5 +1,5 @@
 import {
-  conditionalIframeWrapper,
+  reactStateWrapper,
   organizationBase
 } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
 
@@ -20,21 +20,19 @@ export const inviteUsersState = organizationBase({
   template: '<cf-new-organization-membership properties="properties" />'
 });
 
-export const userDetailState = conditionalIframeWrapper({
+export const userDetailState = reactStateWrapper({
   name: 'detail',
   params: {
     userId: ''
   },
   title: 'Organization user',
   url: '/:orgId/organization_memberships/:userId',
-  featureFlag: 'feature-bv-09-2018-new-org-membership-pages',
   componentPath: 'app/OrganizationSettings/Users/UserDetail/UserDetailRoute.es6'
 });
 
-export const usersListState = conditionalIframeWrapper({
+export const usersListState = reactStateWrapper({
   name: 'list',
   title: 'Organization users',
   url: '/:orgId/organization_memberships',
-  featureFlag: 'feature-bv-09-2018-new-org-membership-pages',
   componentPath: 'app/OrganizationSettings/Users/UsersList/UserListRoute.es6'
 });
