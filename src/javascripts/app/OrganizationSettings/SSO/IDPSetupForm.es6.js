@@ -229,11 +229,11 @@ export class IDPSetupForm extends React.Component {
             />
           </div>
           <Note extraClassNames="f36-margin-top--l">
-            For Microsoft products,{' '}
+            Read the documentation on{' '}
             <TextLink href="https://www.contentful.com/faq/sso/#what-identity-providers-idp-does-contentful-support">
-              read the documentation
-            </TextLink>{' '}
-            about mapping the user attributes.
+              mapping user attributes
+            </TextLink>
+            .
           </Note>
         </section>
 
