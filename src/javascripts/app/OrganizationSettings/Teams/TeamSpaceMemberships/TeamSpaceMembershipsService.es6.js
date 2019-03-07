@@ -1,5 +1,5 @@
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
-import { fetchAll } from 'data/CMA/FetchAll.es6';
+import { fetchAllWithIncludes } from 'data/CMA/FetchAll.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 
 const BATCH_LIMIT = 100;
@@ -31,8 +31,8 @@ export default function createTeamMembershipsService(state) {
     );
   }
 
-  function getAll() {
-    return fetchAll(endpoint, ['team_space_memberships'], BATCH_LIMIT, {}, HEADERS);
+  function getAll(query = {}) {
+    return fetchAllWithIncludes(endpoint, ['team_space_memberships'], BATCH_LIMIT, query, HEADERS);
   }
 
   /**

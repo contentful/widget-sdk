@@ -8,6 +8,7 @@ import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembership
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
 import createTeamMembershipService from 'app/OrganizationSettings/Teams/TeamMemberships/TeamMembershipService.es6';
 import createTeamSpaceMembershipService from 'app/OrganizationSettings/Teams/TeamSpaceMemberships/TeamSpaceMembershipsService.es6';
+import ResolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
 
 import {
   USERS,
@@ -33,9 +34,11 @@ const loaders = state => {
       const service = createTeamMembershipService(state);
       return service.getAll();
     },
-    [TEAM_SPACE_MEMBERSHIPS]: () => {
+    [TEAM_SPACE_MEMBERSHIPS]: async () => {
       const service = createTeamSpaceMembershipService(state);
-      return service.getAll();
+      const includePaths = ['roles'];
+      const { items, includes } = await service.getAll({ include: includePaths });
+      return ResolveLinks({ paths: includePaths, items, includes });
     },
     [ORG_SPACES]: () => {
       const endpoint = createOrganizationEndpoint(orgId);
