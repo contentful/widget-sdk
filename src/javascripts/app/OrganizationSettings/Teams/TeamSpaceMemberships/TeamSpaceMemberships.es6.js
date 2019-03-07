@@ -19,6 +19,7 @@ import {
 export class TeamSpaceMemberships extends React.Component {
   static propTypes = {
     showingForm: PropTypes.bool.isRequired,
+    readOnlyPermission: PropTypes.bool.isRequired,
     onFormDismissed: PropTypes.func.isRequired,
     memberships: PropTypes.arrayOf(
       PropTypes.oneOfType([types.TeamSpaceMembership, types.TeamSpaceMembershipPlaceholder])
@@ -30,7 +31,7 @@ export class TeamSpaceMemberships extends React.Component {
   };
 
   render() {
-    const { memberships, showingForm, onFormDismissed } = this.props;
+    const { memberships, showingForm, onFormDismissed, readOnlyPermission } = this.props;
     const { editingMembershipId } = this.state;
 
     return (
@@ -42,8 +43,12 @@ export class TeamSpaceMemberships extends React.Component {
             <TableCell>Space</TableCell>
             <TableCell>Space roles</TableCell>
             <TableCell>Created at</TableCell>
-            <TableCell>Created by</TableCell>
-            <TableCell width="200px" />
+            {!readOnlyPermission && (
+              <React.Fragment>
+                <TableCell>Created by</TableCell>
+                <TableCell width="200px" />
+              </React.Fragment>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
