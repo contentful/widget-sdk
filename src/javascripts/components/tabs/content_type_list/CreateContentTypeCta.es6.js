@@ -4,7 +4,7 @@ import { Button } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
-export default function CreateContentTypeCta({ size = null }) {
+export default function CreateContentTypeCta({ size = null, testId }) {
   const canCreateContentTypes = !accessChecker.shouldDisable(
     accessChecker.Action.CREATE,
     'contentType'
@@ -23,7 +23,7 @@ export default function CreateContentTypeCta({ size = null }) {
         <Button
           icon="PlusCircle"
           size={size}
-          testId="create-content-type-empty-state"
+          testId={testId}
           disabled={!canCreateContentTypes}
           onClick={onClick}>
           Add content type
@@ -34,5 +34,6 @@ export default function CreateContentTypeCta({ size = null }) {
 }
 
 CreateContentTypeCta.propTypes = {
-  size: PropTypes.oneOf(['large', null])
+  size: PropTypes.oneOf(['large', null]),
+  testId: PropTypes.string
 };

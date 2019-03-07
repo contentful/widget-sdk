@@ -83,7 +83,7 @@ export default class ContentTypesPage extends React.Component {
             )}
           </Workbench.Header.Search>
           <Workbench.Header.Actions>
-            {contentTypes.length > 0 && <CreateContentTypeCta />}
+            {contentTypes.length > 0 && <CreateContentTypeCta testId="create-content-type" />}
           </Workbench.Header.Actions>
         </Workbench.Header>
         {this.renderSidebar()}

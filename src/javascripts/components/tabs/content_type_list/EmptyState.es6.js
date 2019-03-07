@@ -13,7 +13,7 @@ export default function EmptyState() {
         structure of your content. Get started by creating your first content type.
       </div>
       <div className="empty-state__action">
-        <CreateContentTypeCta size="large" />
+        <CreateContentTypeCta size="large" testId="create-content-type-empty-state" />
       </div>
       <div className="empty-state__additional">
         No clue what purpose the content model serves? Read our documentation on{' '}
