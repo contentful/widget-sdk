@@ -292,7 +292,7 @@ export default function create($scope, widgetApi) {
   }
 
   function bulkEditorAction(index) {
-    const path = [widgetApi.entry.getSys().id, field.id, field.locale, index];
+    const path = [widgetApi.entry.getSys().id, field.id, field.internalLocale, index];
     return goToSlideInEntityBase({ type: 'BulkEditor', path });
   }
 
