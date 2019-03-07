@@ -4,6 +4,7 @@ import { getModule } from 'NgRegistry.es6';
 import TranslationWidget from './TranslationWidget.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import LocaleSelectDialog from './LocaleSelectDialog.es6';
+import { PropTypes } from 'prop-types';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
@@ -23,6 +24,13 @@ function getLocalesWithActiveFlag(locales) {
 }
 
 export default class TranslationWidgetContainer extends React.Component {
+  static propTypes = {
+    emitter: PropTypes.shape({
+      emit: PropTypes.func.isRequired
+    }).isRequired,
+    localeErrors: PropTypes.object
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -70,6 +78,8 @@ export default class TranslationWidgetContainer extends React.Component {
         locales={this.state.locales}
         onChange={this.onChange}
         onLocaleDeactivation={this.onLocaleDeactivation}
+        emitter={this.props.emitter}
+        localeErrors={this.props.localeErrors}
       />
     );
   }

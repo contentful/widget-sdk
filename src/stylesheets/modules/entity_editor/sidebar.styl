@@ -24,21 +24,25 @@ $entity-sidebar-content()
 // TODO rename workbench-sidebar__content
   $entity-sidebar-content()
 
+  &__header
+    font-size: .75rem
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid $colors.element-dark
+    margin-bottom: $rhythm(1.5)
+    margin-top: $rhythm(1.5)
+
   &__heading
-    margin-top: $rhythm(2.5)
     font-size: .75rem
     font-weight: 500
     text-transform: uppercase
     color: $colors.text-light
     line-height: 2
-    border-bottom: 1px solid $colors.element-dark
     letter-spacing: 1px
-    margin-bottom: $rhythm(1.5)
-    margin-top: $rhythm(1.5)
+    margin: 0
 
   &__state-select
     margin-bottom: $rhythm(0.5)
-
 
   &__state
     margin-bottom: $rhythm(0.5)

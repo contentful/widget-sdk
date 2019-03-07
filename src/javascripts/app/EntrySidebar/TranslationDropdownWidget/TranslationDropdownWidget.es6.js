@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { orderBy, keys } from 'lodash';
-import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import { Select, Option } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
-export default class TranslationSidebarWidget extends Component {
+export default class TranslationDropdownWidget extends Component {
   static propTypes = {
     emitter: PropTypes.shape({
       emit: PropTypes.func.isRequired
@@ -77,15 +76,13 @@ export default class TranslationSidebarWidget extends Component {
 
   render() {
     return (
-      <EntrySidebarWidget testId="sidebar-translation-widget" title="Translation">
-        <Select id="optionSelect" onChange={this.handleChange} hasError={this.hasError()}>
-          {orderBy(this.locales, ['default', 'code'], ['desc', 'asc']).map(locale => (
-            <Option key={locale.code} value={locale.code}>
-              {this.localeName(locale)}
-            </Option>
-          ))}
-        </Select>
-      </EntrySidebarWidget>
+      <Select id="optionSelect" onChange={this.handleChange} hasError={this.hasError()}>
+        {orderBy(this.locales, ['default', 'code'], ['desc', 'asc']).map(locale => (
+          <Option key={locale.code} value={locale.code}>
+            {this.localeName(locale)}
+          </Option>
+        ))}
+      </Select>
     );
   }
 }

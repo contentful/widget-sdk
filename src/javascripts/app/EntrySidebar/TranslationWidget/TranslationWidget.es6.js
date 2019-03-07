@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { orderBy } from 'lodash';
+import TranslationWidgetPills from './TranslationWidgetPills.es6';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
-import { Pill, TextLink } from '@contentful/forma-36-react-components';
+import TranslationDropdownWidget from '../TranslationDropdownWidget/TranslationDropdownWidget.es6';
+
+const Tab = {
+  multi: 'MULTI',
+  single: 'SINGLE'
+};
 
 export default class TranslationSidebarWidget extends Component {
   static propTypes = {
@@ -16,39 +20,31 @@ export default class TranslationSidebarWidget extends Component {
     onChange: PropTypes.func.isRequired,
     onLocaleDeactivation: PropTypes.func.isRequired
   };
+
+  state = {
+    activeTab: Tab.multi
+  };
+
   render() {
-    const { locales } = this.props;
+    const tabs = [
+      {
+        title: 'Multi',
+        onClick: () => {
+          this.setState({ activeTab: Tab.multi });
+        }
+      },
+      {
+        title: 'Single',
+        onClick: () => {
+          this.setState({ activeTab: Tab.single });
+        }
+      }
+    ];
+    const CurrentTranslationWidget =
+      this.state.activeTab === Tab.multi ? TranslationWidgetPills : TranslationDropdownWidget;
     return (
-      <EntrySidebarWidget testId="sidebar-translation-widget" title="Translation">
-        <div className="pill-list entity-sidebar__translation-pills">
-          {orderBy(locales, ['default', 'code'], ['desc', 'asc']).map(locale => (
-            <div
-              key={locale.code}
-              className={classNames('entity-sidebar__translation-pill', {
-                'x--default': locale.default
-              })}>
-              <Pill
-                testId="deactivate-translation"
-                status="default"
-                label={locale.code}
-                onClose={
-                  locale.default
-                    ? undefined
-                    : () => {
-                        this.props.onLocaleDeactivation(locale);
-                      }
-                }
-              />
-            </div>
-          ))}
-          <TextLink
-            testId="change-translation"
-            onClick={() => {
-              this.props.onChange();
-            }}>
-            Change
-          </TextLink>
-        </div>
+      <EntrySidebarWidget testId="sidebar-translation-widget" title="Translation" tabs={tabs}>
+        <CurrentTranslationWidget {...this.props} />
       </EntrySidebarWidget>
     );
   }
