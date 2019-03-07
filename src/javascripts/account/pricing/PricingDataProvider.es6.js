@@ -72,7 +72,7 @@ export function getBasePlan(endpoint) {
  * @param {boolean} is POC enabled
  * @returns {Promise<object[]>} array of subscription plans w. spaces & users
  */
-export async function getPlansWithSpaces(endpoint, POCenabled) {
+export async function getPlansWithSpaces(endpoint) {
   const [baseRatePlan, plans, spaces] = await Promise.all([
     getBaseRatePlan(endpoint),
     getSubscriptionPlans(endpoint),
@@ -98,7 +98,7 @@ export async function getPlansWithSpaces(endpoint, POCenabled) {
       ...freeSpaces.map(space => ({
         sys: { id: uniqueId('free-space-plan-') },
         gatekeeperKey: space.sys.id,
-        name: isEnterprise && POCenabled ? 'Proof of concept' : 'Free',
+        name: isEnterprise ? 'Proof of concept' : 'Free',
         planType: 'free_space',
         space
       }))

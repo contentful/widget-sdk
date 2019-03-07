@@ -12,7 +12,6 @@ import OrganizationUsagePage from './committed/OrganizationUsagePage.es6';
 import { getPeriods, getOrgUsage, getApiUsage } from './UsageService.es6';
 import PeriodSelector from './committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
-import isPOCEnabled from 'account/POCFeatureFlag.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 
 const OrganizationRoles = getModule('services/OrganizationRoles.es6');
@@ -179,7 +178,7 @@ export class OrganizationUsage extends React.Component {
           }
         ] = await Promise.all([
           OrganizationMembershipRepository.getAllSpaces(this.endpoint),
-          PricingDataProvider.getPlansWithSpaces(this.endpoint, await isPOCEnabled()),
+          PricingDataProvider.getPlansWithSpaces(this.endpoint),
           getPeriods(this.endpoint),
           service.get('api_request'),
           service.get('asset_bandwidth')
