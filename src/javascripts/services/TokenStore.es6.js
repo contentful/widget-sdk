@@ -191,3 +191,18 @@ export function getOrganization(id) {
 export function getOrganizations() {
   return tokenInfoMVar.read().then(() => deepFreezeClone(K.getValue(organizationsBus.property)));
 }
+
+/*
+  Gets the current user value of the user$ stream
+ */
+export function getUser() {
+  return K.getValue(user$);
+}
+
+/*
+  Gets the current spaces keyed by organization
+  of the spacesByOrganization$ stream
+ */
+export function getSpacesByOrganization() {
+  return K.getValue(spacesByOrganization$);
+}
