@@ -17,7 +17,12 @@ describe('FieldLocaleController', () => {
         },
         locale: { internal_code: 'LID' },
         otDoc: this.otDoc,
-        editorContext: this.$inject('mocks/entityEditor/Context').create()
+        editorContext: this.$inject('mocks/entityEditor/Context').create(),
+        entrySidebarProps: {
+          emitter: {
+            on: this.sandbox.stub()
+          }
+        }
       });
       if (patchScope) {
         patchScope(scope);

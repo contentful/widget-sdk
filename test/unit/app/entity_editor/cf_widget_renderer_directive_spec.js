@@ -33,7 +33,12 @@ describe('cfWidgetRenderer Directive', () => {
       return this.$compile('<cf-widget-renderer>', {
         widget: this.widget,
         entityInfo: this.entityInfo,
-        fieldLocale: this.fieldLocale
+        fieldLocale: this.fieldLocale,
+        entrySidebarProps: {
+          emitter: {
+            on: sinon.stub()
+          }
+        }
       });
     };
   });

@@ -39,9 +39,11 @@ export default function register() {
     'TheLocaleStore',
     'EntityHelpers',
     function($scope, spaceContext, TheLocaleStore, EntityHelpers) {
-      const fieldLocale = $scope.fieldLocale;
-      const ctField = $scope.widget.field;
-      const locale = $scope.locale || TheLocaleStore.getFocusedLocale();
+      const {
+        locale,
+        fieldLocale,
+        widget: { field: ctField }
+      } = $scope;
 
       const isEditingDisabled = fieldLocale.access$.map(access => !!access.disabled);
 
