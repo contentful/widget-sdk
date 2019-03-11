@@ -127,11 +127,14 @@ async function loadEditorData(loader, id) {
     widgets
   );
 
+  // There's nothing that prevents users to configure a custom
+  // sidebar with the API. The feature check only happens here.
+  // If a user has no feature, we undefine any config they may
+  // have so they see the default one.
+  const sidebarConfig = hasCustomSidebarFeature ? sidebar : undefined;
+
   const fieldControls = buildRenderables(controls, widgets);
-  const sidebarExtensions = buildSidebarRenderables(
-    (hasCustomSidebarFeature ? sidebar : null) || [],
-    widgets
-  );
+  const sidebarExtensions = buildSidebarRenderables(sidebarConfig || [], widgets);
 
   const entityInfo = makeEntityInfo(entity, contentType);
   const openDoc = loader.getOpenDoc(entity, contentType);
@@ -140,7 +143,7 @@ async function loadEditorData(loader, id) {
     entity,
     contentType,
     fieldControls,
-    sidebar,
+    sidebar: sidebarConfig,
     sidebarExtensions,
     entityInfo,
     openDoc
