@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { cloneDeep } from 'lodash';
 import PropTypes from 'prop-types';
-import AdminOnly from 'app/common/AdminOnly.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import LocaleEditForm from '../LocaleEditForm.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
@@ -11,6 +10,8 @@ import LocaleRemovalConfirmDialog from '../dialogs/LocaleRemovalConfirmDialog.es
 import ChooseNewFallbackLocaleDialog from '../dialogs/ChooseNewFallbackLocaleDialog.es6';
 import LocaleCodeChangeConfirmation from '../dialogs/LocaleCodeChangeConfirmDialog.es6';
 import { getModule } from 'NgRegistry.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 
 const spaceContext = getModule('spaceContext');
 const TheLocaleStore = getModule('TheLocaleStore');
@@ -190,39 +191,41 @@ export default class LocalesEditRoute extends React.Component {
   };
 
   render() {
-    return (
-      <AdminOnly>
-        <LocalesFetcher>
-          {({ isLoading, isError, data, fetch }) => {
-            if (isLoading) {
-              return <FetcherLoading message="Loading locale..." />;
-            }
-            if (isError) {
-              return <StateRedirect to="^.list" />;
-            }
-            const spaceLocales = data;
-            const locale = spaceLocales.find(locale => locale.sys.id === this.props.localeId);
-            if (!locale) {
-              return <StateRedirect to="^.list" />;
-            }
+    if (!getSectionVisibility()['locales']) {
+      return <ForbiddenPage />;
+    }
 
-            return (
-              <EditLocaleForm
-                initialLocale={locale}
-                spaceLocales={spaceLocales}
-                saveLocale={locale =>
-                  this.save(locale).then(() => {
-                    fetch();
-                  })
-                }
-                removeLocale={this.remove}
-                setDirty={this.props.setDirty}
-                registerSaveAction={this.props.registerSaveAction}
-              />
-            );
-          }}
-        </LocalesFetcher>
-      </AdminOnly>
+    return (
+      <LocalesFetcher>
+        {({ isLoading, isError, data, fetch }) => {
+          if (isLoading) {
+            return <FetcherLoading message="Loading locale..." />;
+          }
+          if (isError) {
+            return <StateRedirect to="^.list" />;
+          }
+          const spaceLocales = data;
+          const locale = spaceLocales.find(locale => locale.sys.id === this.props.localeId);
+          if (!locale) {
+            return <StateRedirect to="^.list" />;
+          }
+
+          return (
+            <EditLocaleForm
+              initialLocale={locale}
+              spaceLocales={spaceLocales}
+              saveLocale={locale =>
+                this.save(locale).then(() => {
+                  fetch();
+                })
+              }
+              removeLocale={this.remove}
+              setDirty={this.props.setDirty}
+              registerSaveAction={this.props.registerSaveAction}
+            />
+          );
+        }}
+      </LocalesFetcher>
     );
   }
 }

@@ -2,12 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
-import AdminOnly from 'app/common/AdminOnly.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import ExtensionsForbiddenPage from '../ExtensionsForbiddenPage.es6';
 import ExtensionsList, { ExtensionListShell } from '../ExtensionsList.es6';
 import { toInternalFieldType } from 'widgets/FieldTypes.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 
 // Takes API Extension entity and prepares it for the view.
 const prepareExtension = ({ sys, extension, parameters }) => {
@@ -41,33 +42,32 @@ class ExtensionsListRoute extends React.Component {
   };
 
   render() {
+    if (!getSectionVisibility()['extensions']) {
+      if (this.props.extensionUrl) {
+        return <ExtensionsForbiddenPage extensionUrl={this.props.extensionUrl} />;
+      }
+      return <ForbiddenPage />;
+    }
+
     return (
-      <AdminOnly
-        render={StateRedirect => {
-          if (this.props.extensionUrl) {
-            return <ExtensionsForbiddenPage extensionUrl={this.props.extensionUrl} />;
+      <ExtensionsFetcher cma={this.props.cma}>
+        {({ isLoading, isError, data, fetch }) => {
+          if (isLoading) {
+            return <ExtensionListShell />;
           }
-          return <StateRedirect to="spaces.detail.entries.list" />;
-        }}>
-        <ExtensionsFetcher cma={this.props.cma}>
-          {({ isLoading, isError, data, fetch }) => {
-            if (isLoading) {
-              return <ExtensionListShell />;
-            }
-            if (isError) {
-              return <StateRedirect to="spaces.detail.entries.list" />;
-            }
-            return (
-              <ExtensionsList
-                extensionUrl={this.props.extensionUrl}
-                extensionUrlReferrer={this.props.extensionUrlReferrer}
-                extensions={data}
-                refresh={fetch}
-              />
-            );
-          }}
-        </ExtensionsFetcher>
-      </AdminOnly>
+          if (isError) {
+            return <StateRedirect to="spaces.detail.entries.list" />;
+          }
+          return (
+            <ExtensionsList
+              extensionUrl={this.props.extensionUrl}
+              extensionUrlReferrer={this.props.extensionUrlReferrer}
+              extensions={data}
+              refresh={fetch}
+            />
+          );
+        }}
+      </ExtensionsFetcher>
     );
   }
 }

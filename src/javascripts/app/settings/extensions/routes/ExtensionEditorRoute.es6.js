@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AdminOnly from 'app/common/AdminOnly.es6';
 import ExtensionEditor, { ExtensionEditorShell } from '../ExtensionEditor.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 
 const ExtensionFetcher = createFetcherComponent(({ cma, extensionId }) => {
   return cma.getExtension(extensionId);
@@ -18,26 +19,28 @@ export class ExtensionEditorRoute extends React.Component {
   };
 
   render() {
+    if (!getSectionVisibility()['extensions']) {
+      return <ForbiddenPage />;
+    }
+
     return (
-      <AdminOnly>
-        <ExtensionFetcher cma={this.props.cma} extensionId={this.props.extensionId}>
-          {({ isLoading, isError, data }) => {
-            if (isLoading) {
-              return <ExtensionEditorShell />;
-            }
-            if (isError) {
-              return <StateRedirect to="^.list" />;
-            }
-            return (
-              <ExtensionEditor
-                entity={data}
-                registerSaveAction={this.props.registerSaveAction}
-                setDirty={this.props.setDirty}
-              />
-            );
-          }}
-        </ExtensionFetcher>
-      </AdminOnly>
+      <ExtensionFetcher cma={this.props.cma} extensionId={this.props.extensionId}>
+        {({ isLoading, isError, data }) => {
+          if (isLoading) {
+            return <ExtensionEditorShell />;
+          }
+          if (isError) {
+            return <StateRedirect to="^.list" />;
+          }
+          return (
+            <ExtensionEditor
+              entity={data}
+              registerSaveAction={this.props.registerSaveAction}
+              setDirty={this.props.setDirty}
+            />
+          );
+        }}
+      </ExtensionFetcher>
     );
   }
 }

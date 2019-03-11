@@ -4,12 +4,13 @@ import _ from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 import LocalesListPricingOne from '../LocalesListPricingOne.es6';
 import LocalesListPricingTwo from '../LocalesListPricingTwo.es6';
-import AdminOnly from 'app/common/AdminOnly.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import * as EnvironmentUtils from 'utils/EnvironmentUtils.es6';
 import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 
 const spaceContext = getModule('spaceContext');
 const ResourceService = getModule('services/ResourceService.es6');
@@ -38,59 +39,61 @@ class LocalesListRoute extends React.Component {
   };
 
   render() {
+    if (!getSectionVisibility()['locales']) {
+      return <ForbiddenPage />;
+    }
+
     return (
-      <AdminOnly>
-        <LocalesFetcher>
-          {({ isLoading, isError, data, fetch }) => {
-            if (isLoading) {
-              return <FetcherLoading message="Loading locales..." />;
-            }
-            if (isError) {
-              return <StateRedirect to="spaces.detail.entries.list" />;
-            }
-            const [
-              locales,
-              isLegacy,
-              localeResource,
-              isMultipleLocalesFeatureEnabled,
-              isOwnerOrAdmin,
-              insideMasterEnv,
-              subscriptionState,
-              subscriptionPlanName
-            ] = data;
-            if (isLegacy) {
-              return (
-                <LocalesListPricingOne
-                  locales={locales}
-                  canCreateMultipleLocales={isMultipleLocalesFeatureEnabled}
-                  canChangeSpace={isOwnerOrAdmin}
-                  localeResource={localeResource}
-                  subscriptionState={subscriptionState}
-                  insideMasterEnv={insideMasterEnv}
-                  subscriptionPlanName={subscriptionPlanName}
-                  getComputeLocalesUsageForOrganization={
-                    this.props.getComputeLocalesUsageForOrganization
-                  }
-                />
-              );
-            }
+      <LocalesFetcher>
+        {({ isLoading, isError, data, fetch }) => {
+          if (isLoading) {
+            return <FetcherLoading message="Loading locales..." />;
+          }
+          if (isError) {
+            return <StateRedirect to="spaces.detail.entries.list" />;
+          }
+          const [
+            locales,
+            isLegacy,
+            localeResource,
+            isMultipleLocalesFeatureEnabled,
+            isOwnerOrAdmin,
+            insideMasterEnv,
+            subscriptionState,
+            subscriptionPlanName
+          ] = data;
+          if (isLegacy) {
             return (
-              <LocalesListPricingTwo
+              <LocalesListPricingOne
                 locales={locales}
+                canCreateMultipleLocales={isMultipleLocalesFeatureEnabled}
                 canChangeSpace={isOwnerOrAdmin}
                 localeResource={localeResource}
                 subscriptionState={subscriptionState}
                 insideMasterEnv={insideMasterEnv}
-                upgradeSpace={() =>
-                  this.props.showUpgradeSpaceDialog({
-                    onSubmit: () => fetch()
-                  })
+                subscriptionPlanName={subscriptionPlanName}
+                getComputeLocalesUsageForOrganization={
+                  this.props.getComputeLocalesUsageForOrganization
                 }
               />
             );
-          }}
-        </LocalesFetcher>
-      </AdminOnly>
+          }
+          return (
+            <LocalesListPricingTwo
+              locales={locales}
+              canChangeSpace={isOwnerOrAdmin}
+              localeResource={localeResource}
+              subscriptionState={subscriptionState}
+              insideMasterEnv={insideMasterEnv}
+              upgradeSpace={() =>
+                this.props.showUpgradeSpaceDialog({
+                  onSubmit: () => fetch()
+                })
+              }
+            />
+          );
+        }}
+      </LocalesFetcher>
     );
   }
 }
