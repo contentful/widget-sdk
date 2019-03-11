@@ -9,6 +9,8 @@ import { SSO_SELF_CONFIG_FLAG, TEAMS as FF_TEAMS } from 'featureFlags.es6';
 import { getOrgFeature } from '../data/CMA/ProductCatalog.es6';
 import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 
+import { getVariation } from 'LaunchDarkly.es6';
+
 export default function register() {
   /**
    * @ngdoc directive
@@ -44,7 +46,7 @@ export default function register() {
             const org = await getOrganization(orgId);
 
             Promise.all([
-              LD.getCurrentVariation(SSO_SELF_CONFIG_FLAG),
+              getVariation(SSO_SELF_CONFIG_FLAG, { orgId }),
               getOrgFeature(orgId, 'self_configure_sso')
             ]).then(([variation, ssoFeatureEnabled]) => {
               nav.ssoEnabled = variation && ssoFeatureEnabled;
