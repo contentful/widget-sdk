@@ -45,7 +45,7 @@ export class SSOSetup extends React.Component {
     // Getting the org is asynchronous, so we wait until there is an org available
     // before making the retrieveIdp call
     if (!prevProps.organization && organization) {
-      this.retrieve();
+      this.initialize();
     }
   }
 
