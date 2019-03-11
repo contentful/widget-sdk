@@ -2,6 +2,7 @@ import makeExtensionSpaceMethodsHandler from './ExtensionSpaceMethodsHandler.es6
 import makeExtensionNavigationHandler from './ExtensionNavigationHandler.es6';
 import makeExtensionNotificationHandler from './ExtensionNotificationHandler.es6';
 import { LOCATION_DIALOG } from '../WidgetLocations.es6';
+import { createEndpoint } from 'data/EndpointFactory.es6';
 
 export default function createBridge(dependencies, openDialog, onClose) {
   const { $rootScope, spaceContext, TheLocaleStore } = dependencies;
@@ -41,5 +42,9 @@ export default function createBridge(dependencies, openDialog, onClose) {
         return navigationHandler(options);
       }
     });
+
+    // Exposing a full, authenticated API client for development
+    // builds of UI Extensions SDK.
+    api.registerHandler('___internal___request', createEndpoint());
   }
 }

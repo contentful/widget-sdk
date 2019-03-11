@@ -5,6 +5,7 @@ import makeExtensionSpaceMethodsHandler from './ExtensionSpaceMethodsHandler.es6
 import makeExtensionNavigationHandler from './ExtensionNavigationHandler.es6';
 import makeExtensionNotificationHandler from './ExtensionNotificationHandler.es6';
 import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_SIDEBAR } from '../WidgetLocations.es6';
+import { createEndpoint } from 'data/EndpointFactory.es6';
 
 const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
 
@@ -132,5 +133,9 @@ export default function createBridge(dependencies, location = LOCATION_ENTRY_FIE
         $scope.fieldLocale.setActive(isActive);
       });
     }
+
+    // Exposing a full, authenticated API client for development
+    // builds of UI Extensions SDK.
+    api.registerHandler('___internal___request', createEndpoint());
   }
 }
