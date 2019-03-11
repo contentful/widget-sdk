@@ -1,8 +1,10 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import UserFetcher from './index.es6';
-import flushPromises from '../../../../../test/helpers/flushPromises';
+
 import * as spaceContextMock from 'ng/spaceContext';
+
+import flushPromises from 'testHelpers/flushPromises';
 
 describe('UserFetcher', () => {
   const user = {};

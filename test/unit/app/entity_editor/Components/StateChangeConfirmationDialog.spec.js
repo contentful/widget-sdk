@@ -8,7 +8,8 @@ import { assertElementExists, assertMessageEquals, getElement } from './helpers'
 import { Action } from 'data/CMA/EntityActions.es6';
 import { EntityType, NumberOfLinks } from 'app/entity_editor/Components/constants.es6';
 import messages from 'app/entity_editor/Components/StateChangeConfirmationDialog/messages.es6';
-import flushPromises from '../../../../helpers/flushPromises';
+
+import flushPromises from 'test/helpers/flushPromises';
 
 describe('StateChangeConfirmationDialog', () => {
   const defaultProps = {

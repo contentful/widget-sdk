@@ -124,6 +124,13 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
       width: 2px
       z-index: 1
 
+  &__sidebar.ct-filter-sidebar
+    max-width: 280px
+    order: 1
+    overflow hidden
+    background-color: rgb(247, 249, 250)
+    border-right: 1px solid rgb(180, 195, 202)
+    box-shadow: rgba(0, 0, 0, 0.09) 1px 0px 2px 0px
   &__middle-content
     $workbench-content()
     max-width: $workbench-middle-width
@@ -132,6 +139,13 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     overflow-y: visible
     margin-left: auto
     margin-right: auto
+  &__middle-content.ct-list-main
+    order: 2
+    height: 100%
+    overflow: scroll
+    max-width: 100%
+    padding: 1.5em
+
 
 .workbench-header__wrapper
   display: block
@@ -148,7 +162,7 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   padding-right: $workbench-header-horizontal-padding
   position relative
   z-index: 6
-  min-height: $workbench-header-height
+  height: $workbench-header-height
   width: 100%
   flex-shrink: 0
   > *
@@ -163,7 +177,7 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     text-overflow: ellipsis
     overflow: hidden
     font-size: $tab-header-font-size
-    margin: 0 0.6em 0 0.1ex
+    margin: 0 1em 0 0.1ex
     white-space: nowrap
     line-height: 30px
 

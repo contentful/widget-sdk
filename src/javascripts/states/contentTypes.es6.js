@@ -8,8 +8,13 @@ import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.
 const list = base({
   name: 'list',
   url: '',
-  loadingText: 'Loading content model…',
-  template: '<div cf-content-type-list class="workbench entity-list"></div>'
+  template: '<react-component name="components/tabs/content_type_list/ContentTypeListPage.es6" />',
+  controller: [
+    '$scope',
+    $scope => {
+      $scope.context.ready = true;
+    }
+  ]
 });
 
 const fields = {

@@ -46,3 +46,5 @@ export const getData = jest.fn();
 export const netlifyAppConfig = {
   get: jest.fn().mockResolvedValue({})
 };
+
+export const endpoint = jest.fn();

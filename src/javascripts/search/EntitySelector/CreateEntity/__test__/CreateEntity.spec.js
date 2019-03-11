@@ -6,7 +6,7 @@ import accessChecker from 'ng/access_control/AccessChecker';
 import slideInNavigator from 'ng/navigation/SlideInNavigator';
 import entityCreator from 'ng/entityCreator';
 
-import flushPromises from '../../../../../../test/helpers/flushPromises';
+import flushPromises from 'testHelpers/flushPromises';
 
 jest.mock(
   'ng/entityCreator',
@@ -97,6 +97,8 @@ describe('CreateEntity', () => {
     wrapper.find('[data-test-id="cta"]').simulate('click');
 
     await flushPromises();
+    wrapper.update();
+
     expect(entityCreator.newEntry).toHaveBeenCalledWith('abs');
     expect(props.onSelect).toHaveBeenCalledTimes(1);
     expect(props.onSelect).toHaveBeenCalledWith(entry.data);
@@ -121,6 +123,8 @@ describe('CreateEntity', () => {
     wrapper.find('[data-test-id="create-asset"]').simulate('click');
 
     await flushPromises();
+    wrapper.update();
+
     expect(entityCreator.newAsset).toHaveBeenCalledTimes(1);
     expect(props.onSelect).toHaveBeenCalledTimes(1);
     expect(props.onSelect).toHaveBeenCalledWith(asset.data);
