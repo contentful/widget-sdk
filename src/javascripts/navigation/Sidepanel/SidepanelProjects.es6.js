@@ -134,12 +134,7 @@ export default class SidepanelProjects extends React.Component {
           <TextLink onClick={showCreateProjectModal}>+ Add new project</TextLink>
         </div>
         <div>
-          {isLoading && (
-            <span>
-              <Spinner />
-              Loading...
-            </span>
-          )}
+          {isLoading && <Spinner />}
           {!isLoading && projects.length === 0 && (
             <span>You don’t have any projects. Add one!</span>
           )}

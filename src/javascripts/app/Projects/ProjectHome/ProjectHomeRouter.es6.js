@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 
+import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import { getAllSpaces, getUsers } from 'access_control/OrganizationMembershipRepository.es6';
+
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 
 const ProjectFetcher = createFetcherComponent(async ({ orgId, projectId }) => {
@@ -19,7 +22,13 @@ const ProjectFetcher = createFetcherComponent(async ({ orgId, projectId }) => {
 
   const project = await resp.json();
 
-  return project;
+  const { spaceIds, memberIds } = project;
+
+  const orgEndpoint = createOrganizationEndpoint(orgId);
+  const spaces = (await getAllSpaces(orgEndpoint)).filter(space => spaceIds.includes(space.sys.id));
+  const members = (await getUsers(orgEndpoint, { 'sys.id[in]': memberIds })).items;
+
+  return { project, spaces, members };
 });
 
 import ProjectHome from './ProjectHome.es6';
@@ -49,9 +58,9 @@ export default class ProjectHomeRouter extends React.Component {
             return <ForbiddenPage />;
           }
 
-          const project = data;
+          const { project, spaces, members } = data;
 
-          return <ProjectHome project={project} />;
+          return <ProjectHome project={project} spaces={spaces} members={members} />;
         }}
       </ProjectFetcher>
     );
