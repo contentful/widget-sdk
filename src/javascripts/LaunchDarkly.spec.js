@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import moment from 'moment';
-// import { update, push } from 'utils/Collections.es6';
 import ldClient from 'ldclient-js';
 import { getVariation, _clearClientCache } from './LaunchDarkly.es6';
 import { getOrganization, getSpace, getUser } from 'services/TokenStore.es6';
 import { launchDarkly } from 'Config.es6';
 import getOrgStatus from 'data/OrganizationStatus.es6';
 import { logError } from 'services/logger.es6';
+import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags.es6';
 
 jest.mock('ldclient-js', () => ({
   initialize: jest.fn()
@@ -38,6 +38,11 @@ jest.mock('services/TokenStore.es6', () => ({
 }));
 
 jest.mock('data/OrganizationStatus.es6', () => jest.fn());
+
+jest.mock('debug/EnforceFlags.es6', () => ({
+  isFlagOverridden: jest.fn(),
+  getFlagOverride: jest.fn()
+}));
 
 const wait = (ms, boundVal) =>
   new Promise(resolve => setTimeout(resolve.bind(undefined, boundVal), ms));
@@ -132,6 +137,8 @@ describe('LaunchDarkly', () => {
     getUser.mockReset();
     ldClient.initialize.mockReset();
     logError.mockReset();
+    isFlagOverridden.mockReset();
+    getFlagOverride.mockReset();
 
     _clearClientCache();
   });
@@ -178,6 +185,17 @@ describe('LaunchDarkly', () => {
       const variation = await variationPromise;
 
       expect(variation).toBe('flag_value');
+    });
+
+    it('should return the overridden flag variation and not initialize if flag has override', async () => {
+      isFlagOverridden.mockReturnValueOnce(true);
+      getFlagOverride.mockReturnValueOnce('override-value');
+
+      const variation = await getVariationWithReady('FLAG');
+
+      expect(ldClient.initialize).not.toHaveBeenCalled();
+      expect(isFlagOverridden).toHaveBeenCalledTimes(1);
+      expect(variation).toBe('override-value');
     });
 
     it('should attempt to get the organization if provided orgId', async () => {

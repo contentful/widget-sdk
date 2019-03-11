@@ -12,7 +12,7 @@ import {
 } from 'data/User/index.es6';
 import * as config from 'Config.es6';
 import * as logger from 'services/logger.es6';
-
+import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags.es6';
 import getOrgStatus from 'data/OrganizationStatus.es6';
 import {
   getOrganization,
@@ -151,6 +151,15 @@ async function ldUser(user, org, space) {
  * @returns {Promise<Variation>}
  */
 export async function getVariation(flagName, { orgId, spaceId } = {}) {
+  /**
+   * if the flag is overridden, don't wait to
+   * connect to LD before returning the overridden
+   * variation.
+   */
+  if (isFlagOverridden(flagName)) {
+    return Promise.resolve(getFlagOverride(flagName));
+  }
+
   const clientKey = `${orgId ? orgId : ''}:${spaceId ? spaceId : ''}`;
 
   let client = _.get(clients, clientKey, null);
