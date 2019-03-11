@@ -64,6 +64,10 @@ angular
         }
       ]);
 
+      $provide.constant('LaunchDarkly.es6', {
+        getVariation: sinon.stub().resolves(false)
+      });
+
       $provide.stubDirective = (name, definition) => {
         $provide.factory(name + 'Directive', () => [
           _.extend(
