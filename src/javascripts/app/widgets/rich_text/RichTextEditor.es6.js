@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { getModule } from 'NgRegistry.es6';
 const debounce = getModule('debounce');
 import { Editor } from 'slate-react';
-import { Value, Editor as EmptyEditor } from 'slate';
+import { Value, Editor as BasicEditor } from 'slate';
 import { noop } from 'lodash';
 import { List, is } from 'immutable';
 import cn from 'classnames';
@@ -31,8 +31,13 @@ const createSlateValue = contentfulDocument => {
     document,
     schema
   });
-
-  return value;
+  // Normalize document instead of doing this in the Editor instance as this would
+  // trigger unwanted operations that would result in an unwated version bump.
+  // TODO: This normalization step wouldn't be necessary if we had a perfect
+  // adapter for the version of Slate we are currently using.
+  const editor = new BasicEditor({ readOnly: true, value }, { normalize: true });
+  const normalizedValue = editor.value;
+  return normalizedValue;
 };
 
 const emptySlateValue = createSlateValue(emptyDoc);
@@ -134,7 +139,7 @@ export default class RichTextEditor extends React.Component {
         {!this.props.isToolbarHidden && (
           <StickyToolbarWrapper isDisabled={this.props.isDisabled}>
             <Toolbar
-              editor={this.editor.current || new EmptyEditor({ readOnly: true })}
+              editor={this.editor.current || new BasicEditor({ readOnly: true })}
               onChange={this.onChange}
               isDisabled={this.props.isDisabled}
               permissions={this.props.widgetAPI.permissions}
@@ -155,6 +160,9 @@ export default class RichTextEditor extends React.Component {
           readOnly={this.props.isDisabled}
           className="rich-text__editor"
           actionsDisabled={this.props.actionsDisabled}
+          options={{
+            normalize: false // No initial normalizaiton as we pass a normalized document.
+          }}
         />
       </div>
     );
@@ -168,31 +176,13 @@ export default class RichTextEditor extends React.Component {
  * @returns {boolean}
  */
 function isRelevantOperation(op) {
-  if (op.type === 'insert_node') {
-    // Slate creates an empty text node for embeds/hr as `content` which is not
-    // considered a data change.
-    // TODO: Consider adding empty text nodes for above types in the adapter instead.
-    return isEmptyTextNode(op.node);
-  } else if (op.type === 'set_value') {
-    if (op.properties.schema || op.properties.data) {
+  if (op.type === 'set_value') {
+    if (op.properties.data) {
+      // Relevant for undo/redo that can be empty ops that we want to ignore.
       return false;
-    } else {
-      throw newUnhandledOpError(op);
     }
   } else if (op.type === 'set_selection') {
     return false;
   }
   return true;
-}
-
-function newUnhandledOpError(op) {
-  const properties = Object.keys(op.properties)
-    .map(v => `\`${v}\``)
-    .join(',');
-  return new Error(`Unhandled operation \`${op.type}\` with properties ${properties}`);
-}
-
-function isEmptyTextNode(node) {
-  const { leaves } = node;
-  return !(node.object === 'text' && leaves.size === 1 && leaves.get(0).text === '');
 }
