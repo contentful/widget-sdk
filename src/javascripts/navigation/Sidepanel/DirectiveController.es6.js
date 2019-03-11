@@ -4,7 +4,7 @@ import keycodes from 'utils/keycodes.es6';
 
 import * as Navigator from 'states/Navigator.es6';
 
-import { TEAMS_FOR_MEMBERS as TEAMS_FOR_MEMBERS_FF, PROJECTS_FLAG } from 'featureFlags.es6';
+import { TEAMS_FOR_MEMBERS as TEAMS_FOR_MEMBERS_FF } from 'featureFlags.es6';
 import { navState$, NavStates } from 'navigation/NavState.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as OrgRoles from 'services/OrganizationRoles.es6';
@@ -51,7 +51,6 @@ export default function createController($scope, $window) {
     setOpenedSpaceId,
     environmentsEnabled: false,
 
-    projectsEnabled: false,
     showCreateProjectModal,
     goToProject
   };
@@ -97,11 +96,6 @@ export default function createController($scope, $window) {
 
   LD.onFeatureFlag($scope, TEAMS_FOR_MEMBERS_FF, isEnabled => {
     state = assign(state, { teamsForMembersFF: isEnabled });
-    render();
-  });
-
-  LD.onFeatureFlag($scope, PROJECTS_FLAG, isEnabled => {
-    state = assign(state, { projectsEnabled: isEnabled });
     render();
   });
 

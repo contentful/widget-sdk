@@ -5,6 +5,9 @@ import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { TextLink, Spinner } from '@contentful/forma-36-react-components';
 
+import { getVariation } from 'LaunchDarkly.es6';
+import { PROJECTS_FLAG } from 'featureFlags.es6';
+
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
 
 // Styles mostly copied from sidepanel.styl
@@ -28,27 +31,54 @@ const styles = {
 export default class SidepanelProjects extends React.Component {
   static propTypes = {
     currOrg: PropTypes.object.isRequired,
-    projectsEnabled: PropTypes.bool.isRequired,
     showCreateProjectModal: PropTypes.func.isRequired,
     goToProject: PropTypes.func.isRequired
   };
 
   state = {
+    isEnabled: false,
     isLoading: false,
     projects: []
   };
 
   componentDidMount() {
-    this.getAllProjects();
+    const { currOrg } = this.props;
+
+    if (currOrg) {
+      this.initialize();
+    }
   }
 
   componentDidUpdate(prevProps) {
     const { currOrg } = this.props;
 
     if (currOrg.sys.id !== prevProps.currOrg.sys.id) {
-      this.getAllProjects();
+      this.setState(
+        {
+          isEnabled: false
+        },
+        this.initialize
+      );
     }
   }
+
+  initialize = async () => {
+    const {
+      currOrg: {
+        sys: { id: orgId }
+      }
+    } = this.props;
+
+    const isEnabled = await getVariation(PROJECTS_FLAG, { orgId });
+
+    if (isEnabled) {
+      this.getAllProjects();
+    }
+
+    this.setState({
+      isEnabled
+    });
+  };
 
   getAllProjects = async () => {
     const {
@@ -90,10 +120,10 @@ export default class SidepanelProjects extends React.Component {
   };
 
   render() {
-    const { projectsEnabled, showCreateProjectModal } = this.props;
-    const { isLoading, projects } = this.state;
+    const { showCreateProjectModal } = this.props;
+    const { isEnabled, isLoading, projects } = this.state;
 
-    if (!projectsEnabled) {
+    if (!isEnabled) {
       return null;
     }
 
