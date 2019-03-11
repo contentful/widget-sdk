@@ -21,17 +21,17 @@ import {
   getSpacesByOrganization
 } from 'services/TokenStore.es6';
 
-let clients = {};
+let flagsCache = {};
 
 /*
-  During testing, allows for clearing the client cache.
+  During testing, allows for clearing the flags cache.
 
-  This is necessary since we cache LD clients, but do not create a single instance
+  This is necessary since we cache the flags from LD, but do not create a single instance
   of this service and then expose it somewhere in the application.
  */
-export function _clearClientCache() {
+export function _clearFlagsCache() {
   if (process.env.NODE_ENV === 'test') {
-    clients = {};
+    flagsCache = {};
   } else {
     throw new Error('Clearing LaunchDarkly client cache is only available in testing.');
   }
@@ -137,7 +137,7 @@ async function ldUser(user, org, space) {
  *
  * 2. If the flag is NOT overridden
  *   1. The promise will settle only when LD is ready for the given context
- *      where context is a combination of current user, and given org and space data.
+ *      where context is a combination of current user, and given org and space IDs.
  *   2. The promise will resolve with the variation for the provided flag name
  *      if it receives a variation from it from LD.
  *   3. The promise will resolve with `undefined` if LD does not find a flag
@@ -160,16 +160,33 @@ export async function getVariation(flagName, { orgId, spaceId } = {}) {
     return Promise.resolve(getFlagOverride(flagName));
   }
 
-  const clientKey = `${orgId ? orgId : ''}:${spaceId ? spaceId : ''}`;
+  // The flagsCache key will look like this:
+  //
+  // Only org ID:
+  // `org_abcd1234:`
+  //
+  // Only space ID:
+  // `:space_abcd1234`
+  //
+  // Org and space ID:
+  // `org_abcd1234:space_abcd1234`
+  //
+  // No ID:
+  // `:`
+  const key = `${orgId ? orgId : ''}:${spaceId ? spaceId : ''}`;
 
-  let client = _.get(clients, clientKey, null);
+  const flags = _.get(flagsCache, key, null);
 
-  if (!client) {
+  if (!flags) {
     const user = getUser();
 
     let org;
     let space;
 
+    // Attempt to get the org and space, if given an ID.
+    //
+    // If the ID results in an unknown org or space, log the
+    // error to Bugsnag and return undefined.
     try {
       org = orgId ? await getOrganization(orgId) : null;
     } catch (e) {
@@ -186,28 +203,33 @@ export async function getVariation(flagName, { orgId, spaceId } = {}) {
       return undefined;
     }
 
+    // Get the user data that will be used for LD client variation data
     const clientUser = await ldUser(user, org, space);
-
-    client = ldClient.initialize(config.launchDarkly.envId, clientUser);
-
+    const client = ldClient.initialize(config.launchDarkly.envId, clientUser);
     const initialized = await isInitialized(client);
 
+    // If the client is not initialized, log error and return undefined
     if (!initialized) {
       logger.logError(`LD not initialized when calling for ${flagName}`);
       return undefined;
     }
 
-    _.set(clients, clientKey, client);
+    // Get and save the flags to the cache
+    const flags = client.allFlags();
+
+    _.set(flagsCache, key, flags);
   }
 
-  const variation = client.variation(flagName, undefined);
+  const variation = _.get(flagsCache, [key, flagName], undefined);
 
+  // LD could not find a flag with given name, log error and return undefined
   if (variation === undefined) {
-    // LD could not find a flag with given name, log error and return undefined
     logger.logError(`Invalid flag ${flagName}`);
     return undefined;
   }
 
+  // Should never happen, but if the variation data could not be parsed
+  // log the error and return undefined
   try {
     return JSON.parse(variation);
   } catch (e) {

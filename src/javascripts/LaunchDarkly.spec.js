@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import ldClient from 'ldclient-js';
-import { getVariation, _clearClientCache } from './LaunchDarkly.es6';
+import { getVariation, _clearFlagsCache } from './LaunchDarkly.es6';
 import { getOrganization, getSpace, getUser } from 'services/TokenStore.es6';
 import { launchDarkly } from 'Config.es6';
 import getOrgStatus from 'data/OrganizationStatus.es6';
@@ -109,8 +109,8 @@ describe('LaunchDarkly', () => {
         clientEventHandlers[event] = clientEventHandlers[event].filter(h => h !== handler);
       },
       identify: jest.fn(),
-      variation: jest.fn().mockImplementation(flagName => {
-        return variations[flagName];
+      allFlags: jest.fn().mockImplementation(() => {
+        return variations;
       })
     };
 
@@ -140,7 +140,7 @@ describe('LaunchDarkly', () => {
     isFlagOverridden.mockReset();
     getFlagOverride.mockReset();
 
-    _clearClientCache();
+    _clearFlagsCache();
   });
 
   describe('#getVariation', () => {
@@ -166,11 +166,11 @@ describe('LaunchDarkly', () => {
       expect(result4).toBeUndefined();
     });
 
-    it('should return undefined and not attempt to get the variation if client does not initialize', async () => {
+    it('should return undefined and not attempt to get the flags if client does not initialize', async () => {
       const variation = await getVariation('FLAG');
 
       expect(variation).toBeUndefined();
-      expect(client.variation).not.toHaveBeenCalled();
+      expect(client.allFlags).not.toHaveBeenCalled();
       expect(logError).toHaveBeenCalledTimes(1);
     });
 
@@ -240,22 +240,18 @@ describe('LaunchDarkly', () => {
       expect(logError).toHaveBeenCalledTimes(2);
     });
 
-    it('should cache the client but always request the variation', async () => {
+    it('should cache the flags after initialization', async () => {
       await getVariationWithReady('FLAG', { orgId: 'org_1234' });
       expect(ldClient.initialize).toHaveBeenCalledTimes(1);
-      expect(client.variation).toHaveBeenCalledTimes(1);
 
       await getVariationWithReady('FLAG', { orgId: 'org_1234' });
       expect(ldClient.initialize).toHaveBeenCalledTimes(1);
-      expect(client.variation).toHaveBeenCalledTimes(2);
 
       await getVariationWithReady('FLAG', { spaceId: 'space_1234' });
       expect(ldClient.initialize).toHaveBeenCalledTimes(2);
-      expect(client.variation).toHaveBeenCalledTimes(3);
 
       await getVariationWithReady('FLAG', { spaceId: 'space_1234' });
       expect(ldClient.initialize).toHaveBeenCalledTimes(2);
-      expect(client.variation).toHaveBeenCalledTimes(4);
     });
 
     it('should return undefined if the flag does not have a variation/does not exist', async () => {
