@@ -4,6 +4,8 @@ import { NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
 import { toInternalFieldType } from './FieldTypes.es6';
 import * as WidgetLocations from './WidgetLocations.es6';
 
+// `editorData` is a data structured returned by `loadEntry`
+// and `loadAsset` methods of `app/entity_editor/DataLoader`.
 export function getWidgetTrackingContexts(editorData) {
   return [...getExtensionTrackingContexts(editorData), getSidebarTrackingContext(editorData)];
 }
@@ -54,7 +56,7 @@ function getSidebarTrackingContext(editorData) {
   const legacySidebarExtensions = getExtensions(editorData, ['fieldControls', 'sidebar']);
   const has_legacy_extensions = legacySidebarExtensions.length > 0;
 
-  const sidebar = get(editorData, ['editorInterface', 'sidebar']);
+  const sidebar = get(editorData, ['sidebar']);
 
   if (!Array.isArray(sidebar)) {
     return {
