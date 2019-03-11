@@ -1,14 +1,6 @@
 import { fetchAll } from 'data/CMA/FetchAll.es6';
-import { omit, extend, includes } from 'lodash';
-import { ADMIN_ROLE, ADMIN_ROLE_ID } from './constants.es6';
-
-export function getMembershipRoles(membership) {
-  if (membership.admin) {
-    return [ADMIN_ROLE];
-  } else {
-    return membership.roles;
-  }
-}
+import { extend, includes, omit } from 'lodash';
+import { ADMIN_ROLE_ID } from './constants.es6';
 
 // `GET /spaces/:id/space_memberships` endpoint returns a max of 100 items
 const PER_PAGE = 100;

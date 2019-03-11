@@ -1,7 +1,15 @@
 import { uniq, flow, flatMap } from 'lodash/fp';
 import Parser from 'path-parser';
 
-import { TEAMS, USERS, ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS } from './datasets.es6';
+import {
+  TEAMS,
+  USERS,
+  ORG_MEMBERSHIPS,
+  TEAM_MEMBERSHIPS,
+  TEAM_SPACE_MEMBERSHIPS,
+  ORG_SPACES,
+  ORG_SPACE_ROLES
+} from './datasets.es6';
 
 // required datasets and features are inherited by children
 const ROUTES = {
@@ -15,7 +23,13 @@ const ROUTES = {
         children: {
           team: {
             path: '/:teamId',
-            requiredDataSets: [USERS, ORG_MEMBERSHIPS]
+            requiredDataSets: [
+              USERS,
+              ORG_MEMBERSHIPS,
+              TEAM_SPACE_MEMBERSHIPS,
+              ORG_SPACES,
+              ORG_SPACE_ROLES
+            ]
           }
         }
       }

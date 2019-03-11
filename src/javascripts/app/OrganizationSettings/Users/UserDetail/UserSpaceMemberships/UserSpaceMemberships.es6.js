@@ -27,6 +27,7 @@ import {
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
 import moment from 'moment';
 import { getModule } from 'NgRegistry.es6';
+import { getMembershipRoles } from 'access_control/utils.es6';
 
 const EndpointFactory = getModule('data/EndpointFactory.es6');
 const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository.es6');
@@ -136,9 +137,7 @@ class UserSpaceMemberships extends React.Component {
     const { user } = this.props;
     const { space } = membership.sys;
     const memberships = [...this.state.memberships];
-    const roleNames = SpaceMembershipRepository.getMembershipRoles(membership).map(
-      role => role.name
-    );
+    const roleNames = getMembershipRoles(membership).map(role => role.name);
     const index = findIndex(memberships, item => item.sys.id === membership.sys.id);
     memberships[index] = membership;
 
@@ -181,7 +180,7 @@ class UserSpaceMemberships extends React.Component {
       <TableRow key={membership.sys.id}>
         <TableCell>{membership.sys.space.name}</TableCell>
         <TableCell>
-          {SpaceMembershipRepository.getMembershipRoles(membership)
+          {getMembershipRoles(membership)
             .map(role => role.name)
             .join(', ')}
         </TableCell>

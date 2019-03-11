@@ -1,4 +1,4 @@
-import { flow, get, concat, orderBy, groupBy, mapValues } from 'lodash/fp';
+import { flow, get, concat, orderBy, groupBy, mapValues, defaultTo } from 'lodash/fp';
 import { getDatasets } from './datasets.es6';
 import { TEAM_MEMBERSHIPS } from '../datasets.es6';
 import { getCurrentTeam } from './teams.es6';
@@ -11,6 +11,7 @@ export const getTeamMemberships = flow(
 
 export const getMembershipsByTeam = flow(
   getTeamMemberships,
+  defaultTo({}),
   // get values from object...
   Object.values,
   // ... and group them by the team id instead

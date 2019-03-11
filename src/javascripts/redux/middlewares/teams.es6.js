@@ -1,11 +1,15 @@
+import { get } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
+import createTeamSpaceMembershipService from 'app/OrganizationSettings/Teams/TeamSpaceMemberships/TeamSpaceMembershipsService.es6';
 import createTeamMembershipService from 'app/OrganizationSettings/Teams/TeamMemberships/TeamMembershipService.es6';
 import { getCurrentTeam, getTeams } from '../selectors/teams.es6';
-import { TEAM_MEMBERSHIPS, TEAMS } from '../datasets.es6';
+import getCurrentOrgSpaces from '../selectors/getCurrentOrgSpaces.es6';
+import { TEAM_MEMBERSHIPS, TEAM_SPACE_MEMBERSHIPS, TEAMS } from '../datasets.es6';
 import removeFromDataset from './utils/removeFromDataset.es6';
 import { isTaken } from 'utils/ServerErrorUtils.es6';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
+import { createSpaceRoleLinks } from 'access_control/utils.es6';
 
 const userToString = ({ firstName, lastName, email }) =>
   firstName ? `${firstName} ${lastName}` : email;
@@ -127,6 +131,109 @@ export default ({ dispatch, getState }) => next => async action => {
         ({ sys: { team, user } }) =>
           `Successfully removed ${userToString(user)} from team ${team.name}`,
         ({ sys: { team, user } }) => `Could not remove ${userToString(user)} from team ${team.name}`
+      );
+      break;
+    }
+    case 'SUBMIT_NEW_TEAM_SPACE_MEMBERSHIP': {
+      const state = getState();
+      next(action);
+      const service = createTeamSpaceMembershipService(state);
+      const teamId = getCurrentTeam(state);
+      const team = getTeams(state)[teamId];
+      const { spaceId, roles } = action.payload;
+      const space = get(getCurrentOrgSpaces(state), spaceId);
+
+      const membershipData = createSpaceRoleLinks(roles);
+
+      try {
+        const newTeamSpaceMembership = await service.create(teamId, spaceId, membershipData);
+        dispatch({
+          type: 'ADD_TO_DATASET',
+          payload: { item: newTeamSpaceMembership, dataset: TEAM_SPACE_MEMBERSHIPS }
+        });
+        Notification.success(`Successfully added ${team.name} to the space ${space.name}`);
+      } catch (e) {
+        dispatch({
+          type: 'SUBMIT_NEW_TEAM_SPACE_MEMBERSHIP_FAILED',
+          error: true,
+          payload: e,
+          meta: { teamId }
+        });
+        Notification.error(`Could not add ${team.name} to space ${space.name}`);
+      }
+      break;
+    }
+    case 'EDIT_TEAM_SPACE_MEMBERSHIP': {
+      const state = getState();
+      const { oldMembership, roles } = action.payload;
+      const { sys } = oldMembership;
+
+      next(action);
+      const service = createTeamSpaceMembershipService(state);
+      const updatedData = createSpaceRoleLinks(roles);
+      const updatedMembership = {
+        admin: updatedData.admin,
+        roles: updatedData.roles,
+        sys
+      };
+      dispatch({
+        type: 'ADD_TO_DATASET',
+        payload: {
+          dataset: TEAM_SPACE_MEMBERSHIPS,
+          item: updatedMembership,
+          meta: { pending: true }
+        }
+      });
+
+      try {
+        // no pending action needed, as the `EDIT_TEAM_CONFIRMED` can be used for pending
+        const persisted = await service.update(updatedMembership);
+        dispatch({
+          type: 'ADD_TO_DATASET',
+          payload: { dataset: TEAM_SPACE_MEMBERSHIPS, item: persisted }
+        });
+        Notification.success(
+          `Successfully changed the team's access to the space ${sys.space.name}`
+        );
+      } catch (e) {
+        dispatch({ type: 'ADD_TO_DATASET', payload: { dataset: TEAMS, item: oldMembership } });
+        Notification.error(`Could not change the team access to the space ${sys.space.name}`);
+      }
+
+      break;
+    }
+    case 'REMOVE_TEAM_SPACE_MEMBERSHIP': {
+      await removeFromDataset(
+        { dispatch, getState },
+        next,
+        action,
+        createTeamSpaceMembershipService,
+        action.payload.teamSpaceMembershipId,
+        TEAM_SPACE_MEMBERSHIPS,
+        ({
+          sys: {
+            team: { name: teamName },
+            space: { name: spaceName }
+          }
+        }) => `Remove team ${teamName} from space ${spaceName}`,
+        ({
+          sys: {
+            team: { name: teamName },
+            space: { name: spaceName }
+          }
+        }) => `Are you sure you want to remove ${teamName} from the space ${spaceName}?`,
+        ({
+          sys: {
+            team: { name: teamName },
+            space: { name: spaceName }
+          }
+        }) => `Successfully removed ${teamName} from the space ${spaceName}`,
+        ({
+          sys: {
+            team: { name: teamName },
+            space: { name: spaceName }
+          }
+        }) => `Could not remove ${teamName} from the space ${spaceName}`
       );
       break;
     }

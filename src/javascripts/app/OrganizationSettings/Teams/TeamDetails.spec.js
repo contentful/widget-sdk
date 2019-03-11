@@ -2,28 +2,40 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { Button, Tooltip } from '@contentful/forma-36-react-components';
+import { Button, Tab, Tooltip } from '@contentful/forma-36-react-components';
 
 import reducer from 'redux/reducer/index.es6';
-import { TEAMS, TEAM_MEMBERSHIPS, USERS } from 'redux/datasets.es6';
+import {
+  TEAMS,
+  TEAM_MEMBERSHIPS,
+  USERS,
+  ORG_MEMBERSHIPS,
+  ORG_SPACES,
+  TEAM_SPACE_MEMBERSHIPS
+} from 'redux/datasets.es6';
 import ROUTES from 'redux/routes.es6';
 import Placeholder from 'app/common/Placeholder.es6';
 import TeamDetails from './TeamDetails.es6';
 import TeamDialog from './TeamDialog.es6';
+import TeamMembershipForm from './TeamMemberships/TeamMembershipForm.es6';
+import TeamSpaceMembershipForm from './TeamSpaceMemberships/TeamSpaceMembershipForm.es6';
+import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
+import TeamSpaceMemberships from './TeamSpaceMemberships/TeamSpaceMemberships.es6';
 
-const renderComponent = actions => {
+const renderComponent = (actions, props = { spaceMembershipsEnabled: true }) => {
   const store = createStore(reducer);
   store.dispatch = jest.fn(store.dispatch);
   actions.forEach(action => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
-      <TeamDetails />
+      <TeamDetails {...props} />
     </Provider>
   );
   return { store, wrapper };
 };
 
 const activeOrgId = 'testOrgId';
+const activeTeamId = 'aTeam';
 
 describe('TeamDetails', () => {
   let actions;
@@ -135,7 +147,7 @@ describe('TeamDetails', () => {
             location: {
               pathname: ROUTES.organization.children.teams.children.team.build({
                 orgId: activeOrgId,
-                teamId: 'aTeam'
+                teamId: activeTeamId
               })
             }
           }
@@ -199,6 +211,16 @@ describe('TeamDetails', () => {
           });
         });
 
+        it('should show empty placeholder without add member button', () => {
+          const { wrapper } = renderComponent(actions);
+
+          const placeholder = wrapper.find(Placeholder).filter({ testId: 'empty-placeholder' });
+          expect(placeholder).toHaveLength(1);
+          expect(placeholder.props().title).toContain('Team A');
+          const addMemberButton = placeholder.find(Button).filter({ testId: 'add-button' });
+          expect(addMemberButton).toHaveLength(0);
+        });
+
         it('should render buttons disabled and with tooltips', () => {
           const { wrapper } = renderComponent(actions);
 
@@ -227,7 +249,7 @@ describe('TeamDetails', () => {
         });
       });
 
-      describe('is admin of org', () => {
+      describe('is admin of org and has required datasets', () => {
         beforeEach(() => {
           actions.push({
             type: 'USER_UPDATE_FROM_TOKEN',
@@ -254,6 +276,15 @@ describe('TeamDetails', () => {
               }
             }
           });
+          actions.push({
+            type: 'DATASET_LOADING',
+            meta: { fetched: 100 },
+            payload: {
+              datasets: {
+                [ORG_MEMBERSHIPS]: []
+              }
+            }
+          });
         });
 
         it('should render the creator name', () => {
@@ -276,7 +307,6 @@ describe('TeamDetails', () => {
 
         it('should render active edit button', () => {
           const { wrapper } = renderComponent(actions);
-
           const editButton = wrapper.find(Button).filter({ testId: 'edit-team-button' });
           expect(editButton).toHaveLength(1);
 
@@ -285,29 +315,258 @@ describe('TeamDetails', () => {
           editButton.simulate('click');
           expect(getDialog(wrapper).props()).toHaveProperty('isShown', true);
         });
+
+        describe('team members tab is active and no team members', () => {
+          const getWrapperWithTeamMemberTabActive = () => {
+            const wrapper = renderComponent(actions).wrapper;
+            wrapper
+              .find(Tab)
+              .filter({ testId: 'tab-teamMembers' })
+              .props()
+              .onSelect();
+            // unfortunately necessary: https://airbnb.io/enzyme/docs/api/ShallowWrapper/update.html
+            wrapper.update();
+            return wrapper;
+          };
+
+          it('should show empty placeholder with add member button', () => {
+            const placeholder = getWrapperWithTeamMemberTabActive()
+              .find(Placeholder)
+              .filter({ testId: 'empty-placeholder' });
+            expect(placeholder).toHaveLength(1);
+            expect(placeholder.props().title).toContain('Team A Team has no members');
+            const addMemberButton = placeholder.find(Button).filter({ testId: 'add-button' });
+            expect(addMemberButton).toHaveLength(1);
+            expect(addMemberButton).toHaveText('Add a team member');
+          });
+
+          it('should not render TeamMemberships', () => {
+            expect(getWrapperWithTeamMemberTabActive().find(TeamMemberships)).toHaveLength(0);
+          });
+
+          describe('after clicking button', () => {
+            let wrapperAfterClick;
+            const getForm = wrapper => wrapper.find(TeamMembershipForm);
+
+            beforeEach(() => {
+              wrapperAfterClick = getWrapperWithTeamMemberTabActive();
+              wrapperAfterClick
+                .find(Button)
+                .filter({ testId: 'add-button' })
+                .simulate('click');
+            });
+
+            it('should show add member form', () => {
+              expect(getForm(wrapperAfterClick)).toHaveLength(1);
+            });
+
+            it('clicking cancel in the form should close it', () => {
+              getForm(wrapperAfterClick)
+                .find(Button)
+                .filter({ testId: 'cancel-button' })
+                .simulate('click');
+
+              expect(getForm(wrapperAfterClick)).toHaveLength(0);
+            });
+          });
+
+          describe('with at least one team member', () => {
+            beforeEach(() =>
+              actions.push({
+                type: 'DATASET_LOADING',
+                meta: { fetched: 100 },
+                payload: {
+                  datasets: {
+                    [TEAM_MEMBERSHIPS]: [
+                      {
+                        admin: false,
+                        sys: {
+                          id: 'membershipB2',
+                          user: {
+                            sys: {
+                              type: 'Link',
+                              linkType: USERS,
+                              id: 'testUserB2'
+                            }
+                          },
+                          team: {
+                            sys: {
+                              type: 'Link',
+                              linkType: TEAMS,
+                              id: activeTeamId
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    [USERS]: [
+                      {
+                        firstName: 'B User',
+                        lastName: 'Lastname 2',
+                        avatarUrl: 'doesntMatter.com/blah',
+                        email: 'userB2@test.com',
+                        sys: { id: 'testUserB2' }
+                      }
+                    ]
+                  }
+                }
+              })
+            );
+
+            it('should not render empty placeholder', () => {
+              expect(
+                getWrapperWithTeamMemberTabActive()
+                  .find(Placeholder)
+                  .filter({ testId: 'empty-placeholder' })
+              ).toHaveLength(0);
+            });
+
+            it('should render TeamMemberships', () => {
+              expect(getWrapperWithTeamMemberTabActive().find(TeamMemberships)).toHaveLength(1);
+            });
+          });
+        });
+
+        describe('team space memberships tab is active and no space team memberships', () => {
+          const getWrapperWithSpaceMembershipTabActive = () => {
+            const wrapper = renderComponent(actions).wrapper;
+
+            wrapper
+              .find(Tab)
+              .filter({ testId: 'tab-spaceMemberships' })
+              .props()
+              .onSelect();
+            // unfortunately necessary: https://airbnb.io/enzyme/docs/api/ShallowWrapper/update.html
+            wrapper.update();
+            return wrapper;
+          };
+
+          it('should show empty placeholder with add space membership button', () => {
+            const placeholder = getWrapperWithSpaceMembershipTabActive()
+              .find(Placeholder)
+              .filter({ testId: 'empty-placeholder' });
+            expect(placeholder).toHaveLength(1);
+            expect(placeholder.props().title).toContain('Team A Team is not in any space yet');
+            const addSpaceMembershipButton = placeholder
+              .find(Button)
+              .filter({ testId: 'add-button' });
+            expect(addSpaceMembershipButton).toHaveLength(1);
+            expect(addSpaceMembershipButton).toHaveText('Add to space');
+          });
+
+          it('should not render TeamSpaceMemberships', () => {
+            expect(
+              getWrapperWithSpaceMembershipTabActive().find(TeamSpaceMemberships)
+            ).toHaveLength(0);
+          });
+
+          describe('with at least one team space membership', () => {
+            beforeEach(() =>
+              actions.push({
+                type: 'DATASET_LOADING',
+                meta: { fetched: 100 },
+                payload: {
+                  datasets: {
+                    [TEAM_SPACE_MEMBERSHIPS]: [
+                      {
+                        admin: false,
+                        roles: [],
+                        sys: {
+                          id: 'membershipB2',
+                          space: {
+                            sys: {
+                              type: 'Link',
+                              linkType: ORG_SPACES,
+                              id: 'testSpaceB2'
+                            }
+                          },
+                          team: {
+                            sys: {
+                              type: 'Link',
+                              linkType: TEAMS,
+                              id: activeTeamId
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    [ORG_SPACES]: [
+                      {
+                        name: 'Test Space B2',
+                        sys: {
+                          id: 'testSpaceB2'
+                        }
+                      }
+                    ]
+                  }
+                }
+              })
+            );
+
+            it('should not render empty placeholder', () => {
+              expect(
+                getWrapperWithSpaceMembershipTabActive()
+                  .find(Placeholder)
+                  .filter({ testId: 'empty-placeholder' })
+              ).toHaveLength(0);
+            });
+
+            it('should render TeamSpaceMemberShips', () => {
+              expect(
+                getWrapperWithSpaceMembershipTabActive().find(TeamSpaceMemberships)
+              ).toHaveLength(1);
+            });
+          });
+
+          describe('after clicking button', () => {
+            let wrapperAfterClick;
+            const getForm = wrapper => wrapper.find(TeamSpaceMembershipForm);
+
+            beforeEach(() => {
+              wrapperAfterClick = getWrapperWithSpaceMembershipTabActive();
+              wrapperAfterClick
+                .find(Button)
+                .filter({ testId: 'add-button' })
+                .simulate('click');
+            });
+
+            it('should show add member form', () => {
+              expect(getForm(wrapperAfterClick)).toHaveLength(1);
+            });
+
+            it('clicking cancel in the form should close it', () => {
+              getForm(wrapperAfterClick)
+                .find(Button)
+                .filter({ testId: 'cancel-button' })
+                .simulate('click');
+
+              expect(getForm(wrapperAfterClick)).toHaveLength(0);
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe('is at route with existing team without description', () => {
+    beforeEach(() => {
+      actions.unshift({
+        type: 'LOCATION_CHANGED',
+        payload: {
+          location: {
+            pathname: ROUTES.organization.children.teams.children.team.build({
+              orgId: activeOrgId,
+              teamId: 'bTeam'
+            })
+          }
+        }
       });
     });
 
-    describe('is at route with existing team without description', () => {
-      beforeEach(() => {
-        actions.unshift({
-          type: 'LOCATION_CHANGED',
-          payload: {
-            location: {
-              pathname: ROUTES.organization.children.teams.children.team.build({
-                orgId: activeOrgId,
-                teamId: 'bTeam'
-              })
-            }
-          }
-        });
-      });
+    it('should not render team details', () => {
+      const { wrapper } = renderComponent(actions);
 
-      it('should not render team details', () => {
-        const { wrapper } = renderComponent(actions);
-
-        expect(wrapper.find('[data-test-id="team-card-description"]')).toHaveLength(0);
-      });
+      expect(wrapper.find('[data-test-id="team-card-description"]')).toHaveLength(0);
     });
   });
 });

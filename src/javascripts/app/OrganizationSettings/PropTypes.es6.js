@@ -18,6 +18,24 @@ export const User = PropTypes.shape({
   })
 });
 
+export const SpaceRole = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  permissions: PropTypes.object,
+  policies: PropTypes.array,
+  sys: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired
+});
+
+export const Link = PropTypes.shape({
+  sys: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    linkType: PropTypes.string.isRequired,
+    type: PropTypes.oneOf(['Link'])
+  }).isRequired
+});
+
 export const Space = PropTypes.shape({
   name: PropTypes.string.isRequired,
   sys: PropTypes.shape({
@@ -27,7 +45,7 @@ export const Space = PropTypes.shape({
 
 export const SpaceMembership = PropTypes.shape({
   admin: PropTypes.bool.isRequired,
-  roles: PropTypes.array.isRequired,
+  roles: PropTypes.arrayOf(SpaceRole).isRequired,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
     space: Space.isRequired
@@ -57,16 +75,6 @@ export const Filter = PropTypes.shape({
   options: PropTypes.arrayOf(FilterOption)
 });
 
-export const SpaceRole = PropTypes.shape({
-  name: PropTypes.string.isRequired,
-  description: PropTypes.string,
-  permissions: PropTypes.object,
-  policies: PropTypes.array,
-  sys: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  }).isRequired
-});
-
 export const Team = PropTypes.shape({
   name: PropTypes.string.isRequired,
   description: PropTypes.string,
@@ -80,5 +88,20 @@ export const TeamMembership = PropTypes.shape({
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
     user: PropTypes.shape({ id: PropTypes.string })
+  }).isRequired
+});
+
+export const TeamSpaceMembership = PropTypes.shape({
+  admin: PropTypes.bool.isRequired,
+  roles: PropTypes.arrayOf(PropTypes.oneOfType([SpaceRole, Link])),
+  sys: PropTypes.shape({
+    space: PropTypes.oneOfType([Space, Link]),
+    team: PropTypes.oneOfType([Team, Link])
+  }).isRequired
+});
+
+export const TeamSpaceMembershipPlaceholder = PropTypes.shape({
+  sys: PropTypes.shape({
+    id: PropTypes.oneOf(['placeholder']).isRequired
   }).isRequired
 });

@@ -3,10 +3,20 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
-import { Button, Tooltip } from '@contentful/forma-36-react-components';
-
+import {
+  Button,
+  Tooltip,
+  Tabs,
+  Tab,
+  TabPanel,
+  Heading
+} from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { getTeams, getCurrentTeam, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
+import { getCurrentTeamSpaceMembershipList } from 'redux/selectors/teamSpaceMemberships.es6';
+import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import Workbench from 'app/common/Workbench.es6';
 import Placeholder from 'app/common/Placeholder.es6';
@@ -14,8 +24,29 @@ import Icon from 'ui/Components/Icon.es6';
 import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
 
 import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
+import TeamSpaceMemberships from './TeamSpaceMemberships/TeamSpaceMemberships.es6';
 import TeamDialog from './TeamDialog.es6';
 import ROUTES from 'redux/routes.es6';
+
+const AddButton = ({ label, onClick, disabled }) => (
+  <Button
+    testId="add-button"
+    size="small"
+    buttonType="primary"
+    onClick={onClick}
+    disabled={disabled}>
+    {label}
+  </Button>
+);
+AddButton.propTypes = {
+  onClick: PropTypes.func,
+  label: PropTypes.string.isRequired,
+  disabled: PropTypes.bool
+};
+AddButton.defaultProps = {
+  onClick: () => {},
+  disabled: false
+};
 
 const EditButton = ({ onClick }) => (
   <Button
@@ -41,21 +72,77 @@ const DeleteButton = ({ onClick }) => (
 );
 DeleteButton.propTypes = { onClick: PropTypes.func };
 
+const styles = {
+  tabs: css({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    marginBottom: tokens.spacingL
+  })
+};
+
 class TeamDetails extends React.Component {
   static propTypes = {
+    spaceMembershipsEnabled: PropTypes.bool.isRequired,
+
+    emptyTeamMemberships: PropTypes.bool.isRequired,
+    emptyTeamSpaceMemberships: PropTypes.bool.isRequired,
     readOnlyPermission: PropTypes.bool.isRequired,
     team: TeamPropType,
     orgId: PropTypes.string.isRequired,
     removeTeam: PropTypes.func.isRequired
   };
 
-  state = {
-    showTeamDialog: false
+  tabs = {
+    teamMembers: {
+      label: 'Team members',
+      component: TeamMemberships,
+      actionLabel: 'Add a team member',
+      emptyStateMessage: () => ({
+        title: `Team ${this.props.team.name} has no members 🐚`,
+        text: 'They’re not gonna magically appear.',
+        readOnly: `You don't have permission to add new members`
+      })
+    },
+    spaceMemberships: {
+      label: 'Space memberships',
+      component: TeamSpaceMemberships,
+      actionLabel: 'Add to space',
+      emptyStateMessage: () => ({
+        title: `Team ${this.props.team.name} is not in any space yet 🐚`,
+        text: 'Give every team member access to spaces by creating team space memberships',
+        readOnly: `You don't have permission to add the team to a space`
+      })
+    }
   };
+
+  state = {
+    showTeamDialog: false,
+    selectedTab: this.tabs.teamMembers,
+    showingForm: false
+  };
+
+  isSelected(id) {
+    return this.state.selectedTab === this.tabs[id];
+  }
+
+  selectTab(id) {
+    this.setState({ selectedTab: this.tabs[id], showingForm: false });
+  }
+
+  isListEmpty() {
+    const { selectedTab, showingForm } = this.state;
+    const { emptyTeamMemberships, emptyTeamSpaceMemberships } = this.props;
+    return (
+      !showingForm &&
+      ((selectedTab === this.tabs.teamMembers && emptyTeamMemberships) ||
+        (selectedTab === this.tabs.spaceMemberships && emptyTeamSpaceMemberships))
+    );
+  }
 
   render() {
     const { team, removeTeam, readOnlyPermission, orgId } = this.props;
-    const { showTeamDialog } = this.state;
+    const { showTeamDialog, showingForm } = this.state;
     const creator = team && team.sys.createdBy;
     const pathBack = ROUTES.organization.children.teams.build({ orgId });
 
@@ -131,7 +218,75 @@ class TeamDetails extends React.Component {
                 )}
               </div>
               <div className="user-details__content">
-                <TeamMemberships />
+                <header className={styles.tabs}>
+                  {this.props.spaceMembershipsEnabled && (
+                    <Tabs role="tablist">
+                      {Object.entries(this.tabs).map(([id, { label }]) => (
+                        <Tab
+                          key={id}
+                          id={id}
+                          testId={`tab-${id}`}
+                          selected={this.isSelected(id)}
+                          onSelect={() => this.selectTab(id)}>
+                          {label}
+                        </Tab>
+                      ))}
+                    </Tabs>
+                  )}
+                  {!this.props.spaceMembershipsEnabled && (
+                    <Heading element="h2">Team members</Heading>
+                  )}
+                  {!showingForm &&
+                    !this.isListEmpty() &&
+                    (readOnlyPermission ? (
+                      <Tooltip
+                        testId="read-only-tooltip"
+                        place="left"
+                        content="You don't have permission to change this team">
+                        <AddButton disabled label={this.state.selectedTab.actionLabel} />
+                      </Tooltip>
+                    ) : (
+                      <AddButton
+                        onClick={() => this.setState({ showingForm: true })}
+                        label={this.state.selectedTab.actionLabel}
+                      />
+                    ))}
+                </header>
+
+                {Object.entries(this.tabs).map(
+                  ([id, { component: Component, emptyStateMessage, actionLabel }]) => (
+                    <React.Fragment key={id}>
+                      {this.isSelected(id) && !this.isListEmpty() ? (
+                        <TabPanel id={id}>
+                          <Component
+                            showingForm={this.state.showingForm}
+                            onFormDismissed={() => this.setState({ showingForm: false })}
+                          />
+                        </TabPanel>
+                      ) : null}
+                      {this.isSelected(id) && this.isListEmpty() && !readOnlyPermission && (
+                        <Placeholder
+                          testId="empty-placeholder"
+                          title={emptyStateMessage().title}
+                          text={emptyStateMessage().text}
+                          button={
+                            <AddButton
+                              onClick={() => this.setState({ showingForm: true })}
+                              label={actionLabel}
+                            />
+                          }
+                        />
+                      )}
+                      {this.isSelected(id) && this.isListEmpty() && readOnlyPermission && (
+                        <Placeholder
+                          testId="empty-placeholder"
+                          title={emptyStateMessage().title}
+                          text={emptyStateMessage().readOnly}
+                        />
+                      )}
+                    </React.Fragment>
+                  )
+                )}
               </div>
             </div>
           )}
@@ -159,7 +314,9 @@ export default connect(
   state => ({
     team: getTeams(state)[getCurrentTeam(state)],
     orgId: getOrgId(state),
-    readOnlyPermission: hasReadOnlyPermission(state)
+    readOnlyPermission: hasReadOnlyPermission(state),
+    emptyTeamMemberships: getCurrentTeamMembershipList(state).length === 0,
+    emptyTeamSpaceMemberships: getCurrentTeamSpaceMembershipList(state).length === 0
   }),
   dispatch => ({
     removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })

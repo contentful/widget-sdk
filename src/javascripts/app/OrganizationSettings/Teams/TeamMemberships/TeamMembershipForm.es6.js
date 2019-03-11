@@ -39,7 +39,7 @@ class TeamMembershipForm extends React.Component {
             ))}
           </Select>
         </TableCell>
-        <TableCell align="right" valign="middle">
+        <TableCell colSpan="2" align="right" valign="middle">
           <Button
             testId="add-member-button"
             size="small"

@@ -8,10 +8,8 @@ import {
   TableCell,
   TableBody,
   TableRow,
-  Button,
-  Tooltip
+  Button
 } from '@contentful/forma-36-react-components';
-import Placeholder from 'app/common/Placeholder.es6';
 import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
 import { getCurrentTeam, getTeams, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import { TeamMembership as TeamMembershipPropType } from 'app/OrganizationSettings/PropTypes.es6';
@@ -38,79 +36,42 @@ const isPlaceholder = ({ sys: { id } }) => id === 'placeholder';
 
 class TeamMemberships extends React.Component {
   static propTypes = {
+    showingForm: PropTypes.bool.isRequired,
+    onFormDismissed: PropTypes.func.isRequired,
     readOnlyPermission: PropTypes.bool,
     memberships: PropTypes.arrayOf(TeamMembershipPropType),
     teamName: PropTypes.string
   };
 
-  state = {
-    showingForm: false
-  };
-
   render() {
-    const { memberships, teamName, readOnlyPermission } = this.props;
-    const { showingForm } = this.state;
-    const empty = memberships.length === 0 && !showingForm;
+    const { showingForm, onFormDismissed, memberships, readOnlyPermission } = this.props;
 
     return (
       <React.Fragment>
-        {/* TODO: move these styles to a CSS class  */}
-        <header
-          style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-          <h3 style={{ marginBottom: 30 }}>Team Members</h3>
-          {!showingForm &&
-            !empty &&
-            (readOnlyPermission ? (
-              <Tooltip place="left" content="You don't have permission to add new team members">
-                <AddTeamMemberButton disabled />
-              </Tooltip>
-            ) : (
-              <AddTeamMemberButton onClick={() => this.setState({ showingForm: true })} />
-            ))}
-        </header>
-        {!empty && (
-          <Table data-test-id="member-table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Member since</TableCell>
-                {!readOnlyPermission && (
-                  <React.Fragment>
-                    <TableCell>Added by</TableCell>
-                    <TableCell />
-                  </React.Fragment>
-                )}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {showingForm && (
-                <TeamMembershipForm onClose={() => this.setState({ showingForm: false })} />
+        <Table data-test-id="member-table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Member since</TableCell>
+              {!readOnlyPermission && (
+                <React.Fragment>
+                  <TableCell>Added by</TableCell>
+                  <TableCell />
+                </React.Fragment>
               )}
-              {memberships.map((membership, index) =>
-                isPlaceholder(membership) ? (
-                  <TeamMembershipRowPlaceholder key={index} />
-                ) : (
-                  <TeamMembershipRow membership={membership} key={membership.sys.id} />
-                )
-              )}
-            </TableBody>
-          </Table>
-        )}
-        {empty && !readOnlyPermission && (
-          <Placeholder
-            testId="no-members-placeholder"
-            title={`Team ${teamName} has no members 🐚`}
-            text="They’re not gonna magically appear."
-            button={<AddTeamMemberButton onClick={() => this.setState({ showingForm: true })} />}
-          />
-        )}
-        {empty && readOnlyPermission && (
-          <Placeholder
-            testId="no-members-placeholder"
-            title={`Team ${teamName} has no members 🐚`}
-            text="You don't have permission to add members"
-          />
-        )}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {showingForm && <TeamMembershipForm onClose={onFormDismissed} />}
+            {memberships.map((membership, index) =>
+              isPlaceholder(membership) ? (
+                <TeamMembershipRowPlaceholder key={index} />
+              ) : (
+                <TeamMembershipRow membership={membership} key={membership.sys.id} />
+              )
+            )}
+          </TableBody>
+        </Table>
       </React.Fragment>
     );
   }
