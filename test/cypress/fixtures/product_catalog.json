@@ -1,0 +1,28 @@
+{
+  "total": 2,
+  "sys": { "type": "Array" },
+  "items": [
+    {
+      "sys": {
+        "type": "Feature",
+        "id": "6lfmLizdm5psdqy4XKkV8J-teams",
+        "feature_id": "teams",
+        "organization": {
+          "sys": { "type": "Link", "linkType": "Organization", "id": "6lfmLizdm5psdqy4XKkV8J" }
+        }
+      },
+      "enabled": false
+    },
+    {
+      "sys": {
+        "type": "Feature",
+        "id": "6lfmLizdm5psdqy4XKkV8J-custom_sidebar",
+        "feature_id": "custom_sidebar",
+        "organization": {
+          "sys": { "type": "Link", "linkType": "Organization", "id": "6lfmLizdm5psdqy4XKkV8J" }
+        }
+      },
+      "enabled": true
+    }
+  ]
+}

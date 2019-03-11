@@ -1,0 +1,95 @@
+{
+  "total": 1,
+  "sys": { "type": "Array" },
+  "items": [
+    {
+      "sys": { "type": "Plan", "id": "free" },
+      "name": "Free Platform",
+      "price": 0.0,
+      "productRatePlanId": "2c92c0f8626c796b0162716722ef2261",
+      "productName": "V2 Pricing Plans MASTER (0.4)",
+      "planType": "base",
+      "gatekeeperKey": null,
+      "committed": false,
+      "customerType": "Self-service",
+      "ratePlanCharges": [
+        {
+          "sys": { "type": "RatePlanCharge", "id": "2c92c0f8626c796b0162716723442263" },
+          "name": "Users",
+          "model": "Tiered",
+          "uom": "Organization Membership Limit",
+          "price": null,
+          "number": null,
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 10,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "ratePlanChargeType": "Usage",
+          "unitType": "limit"
+        },
+        {
+          "sys": { "type": "RatePlanCharge", "id": "2c92c0f8626c796b0162716723f22269" },
+          "name": "API requests",
+          "model": "Tiered",
+          "uom": "API Request Limit Period",
+          "price": null,
+          "number": null,
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 2000000,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "ratePlanChargeType": "Usage",
+          "unitType": "limit"
+        },
+        {
+          "sys": { "type": "RatePlanCharge", "id": "2c92c0f8626c796b0162716724a3226f" },
+          "name": "Asset bandwidth",
+          "model": "Tiered",
+          "uom": "Asset Bandwidth Limit Period",
+          "price": null,
+          "number": null,
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 750000,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "ratePlanChargeType": "Usage",
+          "unitType": "limit"
+        },
+        {
+          "sys": { "type": "RatePlanCharge", "id": "2c92c0f8626c796b01627167254f2275" },
+          "name": "Free spaces",
+          "model": "PerUnit",
+          "uom": "Space Limit",
+          "price": 0.0,
+          "number": null,
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 2,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "ratePlanChargeType": "Recurring",
+          "unitType": "limit"
+        }
+      ]
+    }
+  ]
+}

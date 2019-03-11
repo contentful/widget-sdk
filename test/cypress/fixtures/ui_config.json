@@ -1,0 +1,36 @@
+{
+  "sys": {
+    "type": "UserUIConfig",
+    "space": {
+      "sys": {
+        "id": "fuuami4adicz",
+        "type": "Link",
+        "linkType": "Space"
+      }
+    },
+    "version": 1,
+    "createdAt": "2019-03-06T13:01:33.814Z",
+    "createdBy": {
+      "sys": {
+        "id": "6leNEhjzCLxfGbJjOvxk6R",
+        "type": "Link",
+        "linkType": "User"
+      }
+    },
+    "updatedAt": "2019-03-06T13:01:33.814Z",
+    "updatedBy": {
+      "sys": {
+        "id": "6leNEhjzCLxfGbJjOvxk6R",
+        "type": "Link",
+        "linkType": "User"
+      }
+    },
+    "environment": {
+      "sys": {
+        "id": "master",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    }
+  }
+}
