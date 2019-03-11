@@ -71,7 +71,7 @@ export default class SidebarContentPreview extends Component {
               Change
             </span>
           }>
-          <DropdownList>
+          <DropdownList maxHeight={200}>
             {contentPreviews.map(preview => (
               <DropdownListItem
                 key={preview.name}
