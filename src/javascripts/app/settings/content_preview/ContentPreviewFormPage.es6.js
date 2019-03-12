@@ -11,7 +11,8 @@ import {
   ModalConfirm,
   SkeletonContainer,
   SkeletonBodyText,
-  SkeletonDisplayText
+  SkeletonDisplayText,
+  Heading
 } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry.es6';
 import validate from './ContentPreviewFormValidation.es6';
@@ -52,7 +53,9 @@ export const ContentPreviewFormPageSkeleton = props => (
     <Workbench.Content>
       {props.children || (
         <Form className="content-preview-editor">
-          <h3 className="section-title">General information</h3>
+          <Heading extraClassNames="section-title" element="h3">
+            General information
+          </Heading>
           <SkeletonContainer svgWidth={600} ariaLabel="Loading content type..." clipId="content">
             <SkeletonBodyText numberOfLines={5} marginBottom={15} />
           </SkeletonContainer>
@@ -309,7 +312,9 @@ export default class ContentPreviewFormPage extends Component {
           </React.Fragment>
         }>
         <Form className="content-preview-editor">
-          <h3 className="section-title">General information</h3>
+          <Heading extraClassNames="section-title" element="h3">
+            General information
+          </Heading>
           <TextField
             required
             name="previewName"
@@ -337,7 +342,9 @@ export default class ContentPreviewFormPage extends Component {
             }}
             labelText="Description"
           />
-          <h3 className="section-title">Content preview URLs</h3>
+          <Heading extraClassNames="section-title" element="h3">
+            Content preview URLs
+          </Heading>
           <p>
             Activate the content preview and specify a custom URL for every content type that should
             display it. Use the tokens documented on the right to include specific field values of
