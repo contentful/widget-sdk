@@ -139,6 +139,7 @@
     "chokidar": "^1.4.3",
     "codecov": "^3.1.0",
     "cypress": "^3.1.5",
+    "cypress-testing-library": "^2.3.6",
     "enzyme": "3.8.0",
     "enzyme-adapter-react-16": "1.9.1",
     "eslint": "5.14.1",

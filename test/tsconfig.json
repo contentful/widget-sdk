@@ -10,5 +10,5 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["**/*", "../node_modules/cypress"]
+  "include": ["**/*", "../node_modules/cypress", "../node_modules/cypress-testing-library"]
 }

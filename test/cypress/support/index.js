@@ -18,3 +18,9 @@ import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+import 'cypress-testing-library/add-commands';
+
+// set a custom test id
+import { configure } from 'dom-testing-library';
+configure({ testIdAttribute: 'data-test-id' });

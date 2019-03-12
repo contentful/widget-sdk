@@ -83,14 +83,14 @@ describe('Content Preview Page', () => {
     });
 
     it('renders create new content preview page', () => {
-      cy.get('.content-preview-editor[data-test-id="cf-ui-form"]')
+      cy.getByTestId('cf-ui-form')
         .should('be.visible')
         .get('h3')
         .should('contain', 'Content preview URLs');
     });
 
     it('has a save button disabled', () => {
-      cy.get('[data-test-id="save-content-preview"]').should('be.disabled');
+      cy.getByTestId('save-content-preview').should('be.disabled');
     });
   });
 
@@ -103,16 +103,16 @@ describe('Content Preview Page', () => {
     it('submit the form correctly', () => {
       cy.route(postRequest).as('postRequest');
       cy.route(getRequest).as('getRequest');
-      cy.get('#previewName')
+      cy.getByTestId('cf-ui-text-input')
         .type(previewName)
         .should('have.value', previewName);
-      cy.get('#previewDescription')
+      cy.getByTestId('cf-ui-textarea')
         .type(previewDescription)
         .should('have.value', previewDescription);
-      cy.get('[data-test-id="save-content-preview"]')
+      cy.getByTestId('save-content-preview')
         .should('be.enabled')
         .click();
-      cy.get('[data-test-id="cf-ui-notification"][data-intent="success"]').should('be.visible');
+      cy.getByTestId('cf-ui-notification').should('contain', 'success');
       cy.url().should('include', previewId);
     });
   });
