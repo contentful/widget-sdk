@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Spinner, Note } from '@contentful/forma-36-react-components';
@@ -7,14 +9,14 @@ function ContentTypePreview(props) {
   const [isLoading, setLoading] = useState(true);
   const [preview, setPreview] = useState(null);
 
+  const isNew = !publishedVersion;
+
   useEffect(() => {
-    loadPreview(!publishedVersion).then(preview => {
+    loadPreview().then(preview => {
       setPreview(preview);
       setLoading(false);
     });
   }, [publishedVersion, loadPreview]);
-
-  const isNew = !publishedVersion;
 
   return (
     <div className="ct-editor-json">

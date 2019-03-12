@@ -279,7 +279,8 @@ export default function register() {
         );
       }
 
-      const loadPreview = isNew => {
+      const loadPreview = () => {
+        const isNew = !_.get($scope.contentType.data, 'sys.publishedVersion');
         if (isNew) {
           return getContentTypePreview.fromData($scope.contentType.data);
         } else {
