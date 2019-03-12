@@ -11,7 +11,7 @@ import {
   isAuthor
 } from './Utils.es6';
 import { capitalize, capitalizeFirst } from 'utils/StringUtils.es6';
-import { chain, get, set, some, forEach, values } from 'lodash';
+import { chain, get, set, some, forEach, values, find } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements.es6';
 import * as logger from 'services/logger.es6';
 
@@ -386,6 +386,7 @@ export function canModifyApiKeys() {
 export function canReadApiKeys() {
   return get(responses, 'read.apiKey.can', false);
 }
+
 /**
  * @name accessChecker#canCreateSpace
  * @returns {boolean}
@@ -449,6 +450,13 @@ function collectResponses() {
   responses = replacement;
 }
 
+const canChangeLocales = space =>
+  get(space, 'spaceMembership.admin') ||
+  find(
+    get(space, 'spaceMembership.roles', []),
+    role => get(role, 'permissions.Settings') === 'all'
+  ) !== undefined;
+
 function collectSectionVisibility() {
   sectionVisibility = {
     contentType: can(Action.MANAGE, 'ContentType') || !shouldHide(Action.READ, 'apiKey'),
@@ -456,8 +464,10 @@ function collectSectionVisibility() {
     asset: !shouldHide(Action.READ, 'asset') || policyChecker.canAccessAssets(),
     apiKey: isAllowed(Action.READ, 'settings') && !shouldHide(Action.READ, 'apiKey'),
     settings: !shouldHide(Action.UPDATE, 'settings'),
-    locales: !shouldHide(Action.UPDATE, 'settings'),
-    extensions: !shouldHide(Action.UPDATE, 'settings'),
+    // don't use worf here, as it allows things that result in 403
+    locales: canChangeLocales(space),
+    // don't use worf here, as it allows things that result in 403
+    extensions: get(space, 'spaceMembership.admin'),
     users: !shouldHide(Action.UPDATE, 'settings'),
     roles: !shouldHide(Action.UPDATE, 'settings'),
     environments: isAllowed(Action.READ, 'settings') && can(Action.MANAGE, 'Environments'),
