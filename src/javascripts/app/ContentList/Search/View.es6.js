@@ -92,7 +92,8 @@ function Wrapper({ actions, searchBoxHasFocus, children }) {
       onBlur={event => {
         if (el.current) {
           const parent = el.current;
-          const activeElement = event.relatedTarget;
+          // Related target is not defined in IE11 so we need to fallback to the activeElement
+          const activeElement = event.relatedTarget || document.activeElement;
 
           const isChildFocused = parent !== activeElement && parent.contains(activeElement);
 
