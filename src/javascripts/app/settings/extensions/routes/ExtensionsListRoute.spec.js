@@ -2,44 +2,44 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as $stateMocked from 'ng/$state';
-// import ExtensionsListRoute from './ExtensionsListRoute.es6';
-// FIXME: mock 'global/window' somehow
-const ExtensionsListRoute = undefined;
+import ExtensionsListRoute from './ExtensionsListRoute.es6';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
+import * as AccessCheckerMocked from 'access_control/AccessChecker/index.es6';
 
-describe.skip('ExtensionsListRoute', () => {
+jest.mock(
+  'access_control/AccessChecker/index.es6',
+  () => ({
+    getSectionVisibility: jest.fn(() => {})
+  }),
+  { virtual: true }
+);
+
+describe('ExtensionsListRoute', () => {
   beforeEach(() => {
     $stateMocked.go.mockClear();
     spaceContextMocked.getData.mockReset();
+    AccessCheckerMocked.getSectionVisibility.mockReset();
   });
-
-  const setAdmin = isAdmin => {
-    spaceContextMocked.getData.mockImplementation(name => {
-      if (name === 'spaceMembership.admin') {
-        return isAdmin;
-      }
-    });
-  };
 
   const selectors = {
     forbiddenPage: '[data-test-id="extensions.forbidden"]'
   };
 
-  it('should be resticted for non-admins and redirect should be called', () => {
-    expect.assertions(3);
-    setAdmin(false);
-    Enzyme.mount(<ExtensionsListRoute cma={{ getExtensions: () => {} }} />);
-    expect($stateMocked.go).toHaveBeenCalledTimes(1);
-    expect($stateMocked.go).toHaveBeenCalledWith(
-      'spaces.detail.entries.list',
-      undefined,
-      undefined
+  it('should render Forbidden page when no access', () => {
+    AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: false }));
+    const wrapper = Enzyme.mount(
+      <ExtensionsListRoute
+        cma={{
+          getExtensions: () => {}
+        }}
+      />
     );
-    expect(spaceContextMocked.cma.getExtensions).not.toHaveBeenCalled();
+    expect(wrapper.find(ForbiddenPage)).toExist();
   });
 
-  it('should show ExtensionsForbiddenPage if non-admin reaches page via deeplink extensionUrl', () => {
+  it('should show ExtensionsForbiddenPage if no access and reaches page via deeplink extensionUrl', () => {
+    AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: false }));
     expect.assertions(4);
-    setAdmin(false);
     const getExtensions = jest.fn();
     const wrapper = Enzyme.mount(
       <ExtensionsListRoute
@@ -61,9 +61,9 @@ describe.skip('ExtensionsListRoute', () => {
     );
   });
 
-  it('should fetch extensions if admin reaches that page', () => {
+  it('should fetch extensions if access and  reaches page', () => {
+    AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: true }));
     expect.assertions(3);
-    setAdmin(true);
     const getExtensions = jest.fn();
     const wrapper = Enzyme.mount(<ExtensionsListRoute cma={{ getExtensions }} />);
     expect($stateMocked.go).not.toHaveBeenCalled();
