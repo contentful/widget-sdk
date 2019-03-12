@@ -2,6 +2,7 @@
   "environment": "development",
   "authUrl": "https://be.quirely.com",
   "apiUrl": "https://api.quirely.com",
+  "uploadApiUrl": "https://upload.quirely.com",
   "mockApiUrl": "https://pcfjmbizecazdxcwy.stoplight-proxy.io",
   "otUrl": [
     "https://ot1.quirely.com",

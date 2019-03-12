@@ -28,7 +28,9 @@ module.exports = {
   },
   globals: {
     setTimeout: false,
-    Promise: false
+    Promise: false,
+    ArrayBuffer: false,
+    Uint8Array: false
   },
   parser: 'babel-eslint',
   rules: {

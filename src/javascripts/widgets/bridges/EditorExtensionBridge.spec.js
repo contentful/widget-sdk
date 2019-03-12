@@ -10,6 +10,14 @@ function createMockProperty(initial) {
   return property;
 }
 
+jest.mock(
+  'Authentication.es6',
+  () => ({
+    getToken: () => '<TOKEN>'
+  }),
+  { virtual: true }
+);
+
 jest.mock('../ExtensionDialogs.es6', () => ({
   openAlert: jest.fn(() => Promise.resolve('ALERT RESULT')),
   openConfirm: jest.fn(() => Promise.resolve('CONFIRM RESULT')),

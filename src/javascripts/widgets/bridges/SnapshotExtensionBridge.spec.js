@@ -1,5 +1,13 @@
 import createBridge from './SnapshotExtensionBridge.es6';
 
+jest.mock(
+  'Authentication.es6',
+  () => ({
+    getToken: () => '<TOKEN>'
+  }),
+  { virtual: true }
+);
+
 describe('SnapshotExtensionBridge', () => {
   const stubs = {
     updateEntry: jest.fn(),

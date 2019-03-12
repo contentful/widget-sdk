@@ -34,6 +34,13 @@ export function apiUrl(path) {
 }
 
 /**
+ * Given a path return the URL for the Upload API.
+ */
+export function uploadApiUrl(path) {
+  return settings.uploadApiUrl + ensureLeadingSlash(path);
+}
+
+/**
  * Builds a URL for the Gatekeeper host.
  *
  * In production returns something like `//be.contentful.com/path/?query`.

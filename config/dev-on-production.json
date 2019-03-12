@@ -2,6 +2,7 @@
   "environment": "development",
   "authUrl": "https://be.contentful.com",
   "apiUrl": "https://api.contentful.com",
+  "uploadApiUrl": "https://upload.contentful.com",
   "mockApiUrl": "",
   "assetUrl": "//localhost:3001",
   "otUrl": [

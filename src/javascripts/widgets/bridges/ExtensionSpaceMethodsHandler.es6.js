@@ -1,5 +1,9 @@
 import { get } from 'lodash';
 import * as Analytics from 'analytics/Analytics.es6';
+import { getToken } from 'Authentication.es6';
+import { uploadApiUrl } from 'Config.es6';
+
+const ASSET_PROCESSING_POLL_MS = 500;
 
 export default function makeExtensionSpaceMethodsHandlers({ spaceContext }, options = {}) {
   return async function(methodName, args) {
@@ -16,6 +20,14 @@ export default function makeExtensionSpaceMethodsHandlers({ spaceContext }, opti
       if (methodName === 'getUsers') {
         const users = await spaceContext.users.getAll();
         return prepareUsers(users);
+      }
+
+      if (methodName === 'createUpload') {
+        return createUpload(spaceContext.getId(), args[0]);
+      }
+
+      if (methodName === 'waitUntilAssetProcessed') {
+        return waitUntilAssetProcessed(spaceContext.cma, args[0], args[1]);
       }
 
       // TODO: Use `getBatchingApiClient(spaceContext.cma)`.
@@ -75,4 +87,38 @@ function trackEntryAction(action, contentTypeId, data) {
     },
     response: { data }
   });
+}
+
+async function createUpload(spaceId, base64Data) {
+  // Convert raw Base64 string to Uint8Array so we can post the binary to upload API
+  const raw = atob(base64Data);
+  const rawLength = raw.length;
+  const binary = new Uint8Array(new ArrayBuffer(rawLength));
+
+  for (let i = 0; i < rawLength; i++) {
+    binary[i] = raw.charCodeAt(i);
+  }
+
+  const token = await getToken();
+
+  // We're preferring `fetch` over `createEndpoint` to be able to send binary data
+  return fetch(uploadApiUrl(`/spaces/${spaceId}/uploads`), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/octet-stream',
+      Authorization: `Bearer ${token}`
+    },
+    body: binary
+  }).then(resp => resp.json());
+}
+
+// Assets are processed asynchronously, so we have to poll the asset endpoint to wait until they're processed.
+async function waitUntilAssetProcessed(cmaClient, assetId, locale) {
+  const asset = await cmaClient.getAsset(assetId);
+  if (get(asset, ['fields', 'file', locale, 'url'])) {
+    return asset;
+  }
+
+  await new Promise(resolve => setTimeout(resolve, ASSET_PROCESSING_POLL_MS));
+  return waitUntilAssetProcessed(cmaClient, assetId, locale);
 }

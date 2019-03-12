@@ -31,7 +31,7 @@ const urlsArraySchema = {
 };
 
 // For each item 'x' we require a property 'xUrl' that has a URL format.
-const URL_KEYS = ['auth', 'api', 'asset', 'marketing', 'toolsService', 'mockApi'];
+const URL_KEYS = ['auth', 'api', 'uploadApi', 'asset', 'marketing', 'toolsService', 'mockApi'];
 
 module.exports = strictObject(
   Object.assign(
