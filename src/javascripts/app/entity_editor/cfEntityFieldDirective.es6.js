@@ -56,16 +56,6 @@ export default function register() {
             };
             $scope.data = templateData;
 
-            const setLocales = () => {
-              $scope.fieldLocales = $scope.isLocaleFocused
-                ? [$scope.focusedLocale]
-                : $scope.activeLocales;
-              updateErrorStatus();
-            };
-            $scope.$watch('isLocaleFocused', setLocales);
-            $scope.$watch('focusedLocale', setLocales);
-            setLocales();
-
             /**
              * @ngdoc method
              * @name cfEntityField#fieldController.setInvalid
@@ -79,12 +69,25 @@ export default function register() {
               updateErrorStatus();
             };
 
-            $scope.$watchCollection(getActiveLocaleCodes, updateLocales);
+            const setFieldLocales = () => {
+              $scope.fieldLocales = $scope.isSingleLocaleModeOn
+                ? [TheLocaleStore.getFocusedLocale()]
+                : $scope.activeLocales;
+              updateErrorStatus();
+            };
+
+            setFieldLocales();
+            $scope.$watch('focusedLocale', setFieldLocales);
+            $scope.$watch('isSingleLocaleModeOn', setFieldLocales);
+            $scope.$watchCollection(getActiveLocaleCodes, () => {
+              updateActiveLocales();
+              setFieldLocales();
+            });
 
             // TODO Changes to 'validator.errors' change the behavior of
             // 'validator.hasError()'. We should make this dependency explicity
             // by listening to signal on the validator.
-            K.onValueScope($scope, $scope.editorContext.validator.errors$, updateLocales);
+            K.onValueScope($scope, $scope.editorContext.validator.errors$, updateActiveLocales);
             K.onValueScope($scope, $scope.editorContext.validator.errors$, updateErrorStatus);
 
             K.onValueScope($scope, $scope.editorContext.focus.field$, focusedField => {
@@ -105,7 +108,7 @@ export default function register() {
 
             function updateErrorStatus() {
               const { validator } = $scope.editorContext;
-              const hasSchemaErrors = $scope.isLocaleFocused
+              const hasSchemaErrors = $scope.isSingleLocaleModeOn
                 ? validator.hasFieldLocaleError(field.id, $scope.focusedLocale.internal_code)
                 : validator.hasFieldError(field.id);
               const hasControlErrors = _.some(invalidControls);
@@ -116,7 +119,7 @@ export default function register() {
               return _.map(TheLocaleStore.getActiveLocales(), 'internal_code');
             }
 
-            function updateLocales() {
+            function updateActiveLocales() {
               const fieldLocalesInternalCodes = getFieldLocales(field).map(
                 locale => locale.internal_code
               );

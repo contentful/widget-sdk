@@ -19,7 +19,7 @@ import DocumentStatusCode from 'data/document/statusCode.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
-const localeStore = getModule('TheLocaleStore');
+const TheLocaleStore = getModule('TheLocaleStore');
 const DataFields = getModule('EntityEditor/DataFields');
 
 /**
@@ -77,7 +77,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
       editorData,
       entityInfo,
       currentSlideLevel: slideCount,
-      locale: localeStore.getDefaultLocale().internal_code,
+      locale: TheLocaleStore.getDefaultLocale().internal_code,
       editorType: slideCount > 1 ? 'slide_in_editor' : 'entry_editor'
     });
   } catch (error) {
@@ -88,7 +88,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
     entityInfo.contentType,
     $scope.otDoc,
     spaceContext.publishedCTs,
-    localeStore.getPrivateLocales()
+    TheLocaleStore.getPrivateLocales()
   );
 
   $scope.state = $controller('entityEditor/StateController', {
@@ -145,21 +145,60 @@ export default async function create($scope, editorData, preferences, trackLoadE
     $scope
   });
 
-  $scope.locales = localeStore.getLocales();
-  $scope.focusedLocale = localeStore.getFocusedLocale();
-  $scope.activeLocales = localeStore.getActiveLocales();
-  $scope.isLocaleFocused = localeStore.isLocaleFocused();
+  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, newLocale => {
+    TheLocaleStore.setFocusedLocale(newLocale);
+    $scope.focusedLocale = newLocale;
+  });
 
-  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, localeCode => {
-    $scope.focusedLocale = $scope.locales.find(l => l.code === localeCode);
+  $scope.isSingleLocaleModeOn = TheLocaleStore.isSingleLocaleModeOn();
+  setVisibleWidgets();
+
+  $scope.$watch('focusedLocale', () => {
     if (onlyFocusedLocaleHasErrors()) {
       $scope.statusNotificationProps = {
         status: 'ok',
         entityLabel: 'entry'
       };
     }
-    $scope.$apply();
+    setVisibleWidgets();
+    $scope.$applyAsync();
   });
+
+  $scope.$watch(TheLocaleStore.getLocales, () => {
+    $scope.locales = TheLocaleStore.getLocales();
+  });
+
+  $scope.$watch(TheLocaleStore.isSingleLocaleModeOn, () => {
+    $scope.isSingleLocaleModeOn = TheLocaleStore.isSingleLocaleModeOn();
+    $scope.focusedLocale = TheLocaleStore.getFocusedLocale();
+    setVisibleWidgets();
+  });
+
+  $scope.$watch(TheLocaleStore.getActiveLocales, () => {
+    $scope.activeLocales = TheLocaleStore.getActiveLocales();
+  });
+
+  function setVisibleWidgets() {
+    if (
+      !$scope.isSingleLocaleModeOn ||
+      $scope.focusedLocale === TheLocaleStore.getDefaultLocale()
+    ) {
+      $scope.visibleWidgets = $scope.widgets;
+    } else {
+      $scope.visibleWidgets = $scope.widgets.filter(w => w.field.localized);
+    }
+  }
+
+  function onlyFocusedLocaleHasErrors() {
+    if (!$scope.isSingleLocaleModeOn) {
+      return false;
+    }
+    const localeCodes = keys($scope.entrySidebarProps.localeErrors);
+    return (
+      localeCodes.length === 1 &&
+      ['undefined', TheLocaleStore.getFocusedLocale().internal_code].includes(localeCodes[0])
+    );
+  }
 
   K.onValueScope($scope, editorContext.validator.errors$, errors => {
     $scope.entrySidebarProps.localeErrors = groupBy(errors, error => error.path[2]);
@@ -184,15 +223,4 @@ export default async function create($scope, editorData, preferences, trackLoadE
     }
     $scope.statusNotificationProps = { status, entityLabel: 'entry' };
   });
-
-  function onlyFocusedLocaleHasErrors() {
-    if (!$scope.isLocaleFocused) {
-      return false;
-    }
-    const localeCodes = keys($scope.entrySidebarProps.localeErrors);
-    return (
-      localeCodes.length === 1 &&
-      ['undefined', localeStore.getFocusedLocale().internal_code].includes(localeCodes[0])
-    );
-  }
 }

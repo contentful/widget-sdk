@@ -33,7 +33,7 @@ export default function register() {
     function create(getStore) {
       let store = null;
       let defaultLocale = null;
-      let localeFocused = true;
+      let _isSingleLocaleModeOn = false;
 
       let localeRepo = {
         getAll: function() {
@@ -72,9 +72,9 @@ export default function register() {
         deactivateLocale,
         getFocusedLocale,
         setFocusedLocale,
-        resetFocusedLocale,
-        isLocaleFocused,
-        toggleLocaleFocus
+        setSingleLocaleMode,
+        isSingleLocaleModeOn,
+        toggleSingleLocaleMode
       };
 
       function getFocusedLocale() {
@@ -85,16 +85,16 @@ export default function register() {
         focusedLocale = locale;
       }
 
-      function resetFocusedLocale() {
-        focusedLocale = undefined;
+      function isSingleLocaleModeOn() {
+        return _isSingleLocaleModeOn;
       }
 
-      function isLocaleFocused() {
-        return localeFocused;
+      function setSingleLocaleMode(state) {
+        _isSingleLocaleModeOn = state;
       }
 
-      function toggleLocaleFocus() {
-        localeFocused = !localeFocused;
+      function toggleSingleLocaleMode() {
+        _isSingleLocaleModeOn = !_isSingleLocaleModeOn;
       }
 
       /**

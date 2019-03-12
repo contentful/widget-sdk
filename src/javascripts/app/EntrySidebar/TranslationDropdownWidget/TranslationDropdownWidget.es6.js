@@ -58,25 +58,20 @@ export default class TranslationDropdownWidget extends Component {
     }
   };
 
-  setFocusedLocale = newLocaleCode => {
-    this.setState({ focusedLocaleCode: newLocaleCode });
-    const newLocale = this.locales.find(l => l.internal_code === newLocaleCode);
-    TheLocaleStore.setFocusedLocale(newLocale);
-  };
-
   handleChange = event => {
-    const newLocale = event.target.value;
-    this.setFocusedLocale(newLocale);
+    const localeCode = event.target.value;
+    this.setState({ focusedLocaleCode: localeCode });
+    const newLocale = this.locales.find(l => l.code === localeCode);
     this.props.emitter.emit(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, newLocale);
-  };
-
-  componentWillUnmount = () => {
-    TheLocaleStore.resetFocusedLocale();
   };
 
   render() {
     return (
-      <Select id="optionSelect" onChange={this.handleChange} hasError={this.hasError()}>
+      <Select
+        id="optionSelect"
+        onChange={this.handleChange}
+        hasError={this.hasError()}
+        value={this.state.focusedLocaleCode}>
         {orderBy(this.locales, ['default', 'code'], ['desc', 'asc']).map(locale => (
           <Option key={locale.code} value={locale.code}>
             {this.localeName(locale)}

@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import TranslationWidgetPills from './TranslationWidgetPills.es6';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import TranslationDropdownWidget from '../TranslationDropdownWidget/TranslationDropdownWidget.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const TheLocaleStore = getModule('TheLocaleStore');
 
 const Tab = {
   multi: 'MULTI',
@@ -25,21 +28,27 @@ export default class TranslationSidebarWidget extends Component {
     activeTab: Tab.multi
   };
 
+  onMultiTabClick = () => {
+    TheLocaleStore.setSingleLocaleMode(false);
+    this.setState({ activeTab: Tab.multi });
+  };
+  onSingleTabClick = () => {
+    TheLocaleStore.setSingleLocaleMode(true);
+    this.setState({ activeTab: Tab.single });
+  };
+
   render() {
     const tabs = [
       {
         title: 'Multi',
-        onClick: () => {
-          this.setState({ activeTab: Tab.multi });
-        }
+        onClick: this.onMultiTabClick
       },
       {
         title: 'Single',
-        onClick: () => {
-          this.setState({ activeTab: Tab.single });
-        }
+        onClick: this.onSingleTabClick
       }
     ];
+
     const CurrentTranslationWidget =
       this.state.activeTab === Tab.multi ? TranslationWidgetPills : TranslationDropdownWidget;
     return (

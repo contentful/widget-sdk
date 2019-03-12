@@ -96,7 +96,7 @@ export default function register() {
 
           if (scope.entrySidebarProps) {
             scope.entrySidebarProps.emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, () => {
-              if (scope.isLocaleFocused) {
+              if (scope.isSingleLocaleModeOn) {
                 scope.locale = scope.focusedLocale;
                 scope.$apply();
               }
