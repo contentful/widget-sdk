@@ -171,7 +171,7 @@ class TeamDetails extends React.Component {
                       {team.name}
                     </h2>
                     {team.description && (
-                      <div className="team-card_description" data-test-id="team-card-description">
+                      <div className="team-card__description" data-test-id="team-card-description">
                         {team.description.split('\n').reduce((acc, cur, idx) => {
                           if (idx === 0) {
                             return [...acc, cur];

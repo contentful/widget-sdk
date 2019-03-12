@@ -2,15 +2,29 @@
   > *
     margin-bottom 1rem
 
+  &__name, &__description
+    width: 24rem
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+    display: block
+
 .teams-experimental-note
   // hacky width until we figure out the note component
   width: 710px
+
   &__message
     margin-right 1rem
 
-.team-details-row_description
-  width: 30rem
-  white-space: nowrap
-  overflow: hidden
-  text-overflow: ellipsis
-  display: block
+.team-details-row
+  &_description
+    width: 40rem
+
+  &_name
+    width: 30rem
+
+  &_description, &_name
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+    display: block

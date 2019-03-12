@@ -35,20 +35,22 @@ class TeamListRow extends React.Component {
     return (
       <TableRow className="membership-list__item">
         <TableCell>
-          {teamId !== 'placeholder' ? (
-            <a
-              data-test-id="team-name"
-              href={ROUTES.organization.children.teams.children.team.build({
-                orgId,
-                teamId: team.sys.id
-              })}>
-              {team.name}
-            </a>
-          ) : (
-            <span data-test-id="team-name">
-              {team.name} <Spinner size="small" />
-            </span>
-          )}
+          <span className="team-details-row_name">
+            {teamId !== 'placeholder' ? (
+              <a
+                data-test-id="team-name"
+                href={ROUTES.organization.children.teams.children.team.build({
+                  orgId,
+                  teamId: team.sys.id
+                })}>
+                {team.name}
+              </a>
+            ) : (
+              <span data-test-id="team-name">
+                {team.name} <Spinner size="small" />
+              </span>
+            )}
+          </span>
         </TableCell>
         <TableCell>
           <span data-test-id="team-description" className="team-details-row_description">
