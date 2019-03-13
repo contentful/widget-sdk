@@ -1,10 +1,11 @@
 import React from 'react';
 import _ from 'lodash';
-import { getModule } from 'NgRegistry.es6';
 import TranslationWidget from './TranslationWidget.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import LocaleSelectDialog from './LocaleSelectDialog.es6';
 import { PropTypes } from 'prop-types';
+import { track } from 'analytics/Analytics.es6';
+import { getModule } from 'NgRegistry.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
@@ -55,6 +56,7 @@ export default class TranslationWidgetContainer extends React.Component {
       const activeLocales = locales.filter(locale => locale.active);
       TheLocaleStore.setActiveLocales(activeLocales);
       this.updateLocales();
+      track('translation_sidebar:update_active_locales', { currentMode: 'multiple' });
     };
 
     await ModalLauncher.open(({ onClose, isShown }) => (
@@ -70,6 +72,7 @@ export default class TranslationWidgetContainer extends React.Component {
   onLocaleDeactivation = locale => {
     TheLocaleStore.deactivateLocale(locale);
     this.updateLocales();
+    track('translation_sidebar:deselect_active_locale', { currentMode: 'multiple' });
   };
 
   render() {

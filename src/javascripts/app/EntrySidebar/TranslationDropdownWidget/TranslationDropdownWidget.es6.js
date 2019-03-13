@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { orderBy, keys } from 'lodash';
 import { Select, Option } from '@contentful/forma-36-react-components';
-import { getModule } from 'NgRegistry.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
+import { track } from 'analytics/Analytics.es6';
+import { getModule } from 'NgRegistry.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
@@ -63,6 +64,7 @@ export default class TranslationDropdownWidget extends Component {
     this.setState({ focusedLocaleCode: localeCode });
     const newLocale = this.locales.find(l => l.code === localeCode);
     this.props.emitter.emit(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, newLocale);
+    track('translation_sidebar:change_focused_locale', { currentMode: 'single' });
   };
 
   render() {

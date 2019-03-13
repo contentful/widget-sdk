@@ -5,7 +5,7 @@ export default class EntrySidebarWidget extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
     testId: PropTypes.string,
-    select: PropTypes.node,
+    headerNode: PropTypes.node,
     children: PropTypes.node
   };
 
@@ -14,12 +14,12 @@ export default class EntrySidebarWidget extends Component {
   };
 
   render() {
-    const { select, testId, title, children, ...restProps } = this.props;
+    const { headerNode, testId, title, children, ...restProps } = this.props;
     return (
       <div data-test-id={testId} {...restProps}>
         <header className="entity-sidebar__header">
           <h2 className="entity-sidebar__heading">{title}</h2>
-          {select}
+          {headerNode}
         </header>
         {children}
       </div>

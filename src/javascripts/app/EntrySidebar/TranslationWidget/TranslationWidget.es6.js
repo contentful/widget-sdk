@@ -5,13 +5,14 @@ import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import TranslationDropdownWidget from '../TranslationDropdownWidget/TranslationDropdownWidget.es6';
 import { Select, Option } from '@contentful/forma-36-react-components';
+import { track } from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
 const Tab = {
-  MULTI: 'MULTI',
-  SINGLE: 'SINGLE'
+  MULTI: 'multiple',
+  SINGLE: 'single'
 };
 
 export default class TranslationSidebarWidget extends Component {
@@ -39,6 +40,7 @@ export default class TranslationSidebarWidget extends Component {
     } = event;
     this.props.emitter.emit(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, value === Tab.SINGLE);
     this.setState({ isSingleLocaleModeOn: value === Tab.SINGLE });
+    track('translation_sidebar:toggle_widget_mode', { currentMode: value });
   };
 
   render() {
@@ -46,7 +48,7 @@ export default class TranslationSidebarWidget extends Component {
       ? TranslationDropdownWidget
       : TranslationWidgetPills;
 
-    const select = (
+    const headerNode = (
       <Select
         value={this.state.isSingleLocaleModeOn ? Tab.SINGLE : Tab.MULTI}
         onChange={this.onTabChange}
@@ -58,7 +60,10 @@ export default class TranslationSidebarWidget extends Component {
     );
 
     return (
-      <EntrySidebarWidget testId="sidebar-translation-widget" title="Translation" select={select}>
+      <EntrySidebarWidget
+        testId="sidebar-translation-widget"
+        title="Translation"
+        headerNode={headerNode}>
         <CurrentTranslationWidget {...this.props} />
       </EntrySidebarWidget>
     );
