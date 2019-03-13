@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import WebhookForbiddenPage from '../WebhookForbiddenPage.es6';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import WebhookList from '../WebhookList.es6';
 import createWebhookTemplateDialogOpener from '../createWebhookTemplateDialogOpener.es6';
-import AdminOnly from 'app/common/AdminOnly.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as Config from 'Config.es6';
@@ -42,34 +43,32 @@ export class WebhookListRoute extends React.Component {
   }
 
   render() {
+    if (!getSectionVisibility()['webhooks']) {
+      if (this.props.templateId) {
+        return <WebhookForbiddenPage templateId={this.props.templateId} />;
+      }
+      return <ForbiddenPage />;
+    }
     return (
-      <AdminOnly
-        render={StateRedirect => {
-          if (this.props.templateId) {
-            return <WebhookForbiddenPage templateId={this.props.templateId} />;
+      <WebhooksFetcher>
+        {({ isLoading, isError, data }) => {
+          if (isLoading) {
+            return <FetcherLoading message="Loading webhooks..." />;
           }
-          return <StateRedirect to="spaces.detail.entries.list" />;
-        }}>
-        <WebhooksFetcher>
-          {({ isLoading, isError, data }) => {
-            if (isLoading) {
-              return <FetcherLoading message="Loading webhooks..." />;
-            }
-            if (isError) {
-              return <StateRedirect to="spaces.detail.entries.list" />;
-            }
-            const [webhooks, hasAwsProxy] = data;
-            return (
-              <WebhookList
-                templateId={this.props.templateId}
-                templateIdReferrer={this.props.templateIdReferrer}
-                webhooks={webhooks}
-                openTemplateDialog={this.setupTemplateOpener(hasAwsProxy)}
-              />
-            );
-          }}
-        </WebhooksFetcher>
-      </AdminOnly>
+          if (isError) {
+            return <StateRedirect to="spaces.detail.entries.list" />;
+          }
+          const [webhooks, hasAwsProxy] = data;
+          return (
+            <WebhookList
+              templateId={this.props.templateId}
+              templateIdReferrer={this.props.templateIdReferrer}
+              webhooks={webhooks}
+              openTemplateDialog={this.setupTemplateOpener(hasAwsProxy)}
+            />
+          );
+        }}
+      </WebhooksFetcher>
     );
   }
 }
