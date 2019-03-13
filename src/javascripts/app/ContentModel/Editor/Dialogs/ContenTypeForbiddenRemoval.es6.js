@@ -9,19 +9,24 @@ import {
   Typography
 } from '@contentful/forma-36-react-components';
 
-export default function ContentTypeForbiddenRemoval(props) {
+export default function ContentTypeForbiddenRemoval({
+  isShown,
+  onClose,
+  entriesCount,
+  contentTypeName
+}) {
   const [explanationShown, setExplanationShown] = useState(false);
 
   return (
-    <Modal isShown={props.isShown} onClose={props.onClose} size="large">
+    <Modal isShown={isShown} onClose={onClose} size="large">
       {() => (
         <React.Fragment>
           <Modal.Header title={`This content type can't be deleted right now.`} />
           <Modal.Content>
             <Typography>
               <Paragraph>
-                We&apos;ve found {props.entriesCount} entries which use the content type post123.
-                Content types that are currently used by entries can&apos;t be deleted.{' '}
+                We&apos;ve found {entriesCount} entries which use the content type {contentTypeName}
+                . Content types that are currently used by entries can&apos;t be deleted.{' '}
                 <TextLink
                   onClick={() => {
                     setExplanationShown(!explanationShown);
@@ -39,7 +44,7 @@ export default function ContentTypeForbiddenRemoval(props) {
             </Typography>
           </Modal.Content>
           <Modal.Controls>
-            <Button buttonType="positive" onClick={() => props.onClose()}>
+            <Button buttonType="positive" onClick={() => onClose()}>
               Okay, got it
             </Button>
           </Modal.Controls>
@@ -53,5 +58,5 @@ ContentTypeForbiddenRemoval.propTypes = {
   entriesCount: PropTypes.number.isRequired,
   contentTypeName: PropTypes.string.isRequired,
   isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.bool.isRequired
+  onClose: PropTypes.func.isRequired
 };
