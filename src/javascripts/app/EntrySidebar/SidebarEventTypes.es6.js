@@ -5,6 +5,7 @@ export default {
   UPDATED_VERSIONS_WIDGET: 'sidebar:updated-versions-widget',
   UPDATED_PUBLICATION_WIDGET: 'sidebar:updated-publication-widget',
   UPDATED_FOCUSED_LOCALE: 'sidebar:updated-focused-locale',
+  SET_SINGLE_LOCALE_MODE: 'sidebar:set-single-locale-mode',
 
   UPDATED_DOCUMENT_STATE: 'sidebar:updated-document-state',
   UPDATED_INFO_PANEL: 'sidebar:updated-info-panel',

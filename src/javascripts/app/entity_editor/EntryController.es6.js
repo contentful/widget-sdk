@@ -145,6 +145,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
     $scope
   });
 
+  $scope.focusedLocale = TheLocaleStore.getFocusedLocale();
   $scope.entrySidebarProps.emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, newLocale => {
     TheLocaleStore.setFocusedLocale(newLocale);
     $scope.focusedLocale = newLocale;
@@ -168,10 +169,11 @@ export default async function create($scope, editorData, preferences, trackLoadE
     $scope.locales = TheLocaleStore.getLocales();
   });
 
-  $scope.$watch(TheLocaleStore.isSingleLocaleModeOn, () => {
-    $scope.isSingleLocaleModeOn = TheLocaleStore.isSingleLocaleModeOn();
-    $scope.focusedLocale = TheLocaleStore.getFocusedLocale();
+  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, value => {
+    TheLocaleStore.setSingleLocaleMode(value);
+    $scope.isSingleLocaleModeOn = value;
     setVisibleWidgets();
+    $scope.$applyAsync();
   });
 
   $scope.$watch(TheLocaleStore.getActiveLocales, () => {
@@ -179,13 +181,10 @@ export default async function create($scope, editorData, preferences, trackLoadE
   });
 
   function setVisibleWidgets() {
-    if (
-      !$scope.isSingleLocaleModeOn ||
-      $scope.focusedLocale === TheLocaleStore.getDefaultLocale()
-    ) {
-      $scope.visibleWidgets = $scope.widgets;
-    } else {
+    if ($scope.isSingleLocaleModeOn && $scope.focusedLocale !== TheLocaleStore.getDefaultLocale()) {
       $scope.visibleWidgets = $scope.widgets.filter(w => w.field.localized);
+    } else {
+      $scope.visibleWidgets = $scope.widgets;
     }
   }
 
