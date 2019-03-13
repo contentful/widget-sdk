@@ -15,7 +15,7 @@ import { getModule } from 'NgRegistry.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
-const localeStore = getModule('TheLocaleStore');
+const TheLocaleStore = getModule('TheLocaleStore');
 
 /**
  * @param {Object} $scope
@@ -43,7 +43,10 @@ export default async function create($scope, editorData, preferences) {
 
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
 
-  editorContext.validator = Validator.createForAsset($scope.otDoc, localeStore.getPrivateLocales());
+  editorContext.validator = Validator.createForAsset(
+    $scope.otDoc,
+    TheLocaleStore.getPrivateLocales()
+  );
 
   editorContext.focus = Focus.create();
 
@@ -82,33 +85,53 @@ export default async function create($scope, editorData, preferences) {
     $scope
   });
 
-  $scope.locales = localeStore.getLocales();
-  $scope.focusedLocale = localeStore.getFocusedLocale();
-  $scope.activeLocales = localeStore.getActiveLocales();
-  $scope.isLocaleFocused = localeStore.isLocaleFocused();
+  $scope.locales = TheLocaleStore.getLocales();
+  $scope.focusedLocale = TheLocaleStore.getFocusedLocale();
+  $scope.activeLocales = TheLocaleStore.getActiveLocales();
+  $scope.isSingleLocaleModeOn = TheLocaleStore.isSingleLocaleModeOn();
 
-  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, localeCode => {
-    $scope.focusedLocale = $scope.locales.find(l => l.code === localeCode);
+  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, isOn => {
+    TheLocaleStore.setSingleLocaleMode(isOn);
+    if (!isOn) {
+      $scope.statusNotificationProps = {
+        status: 'ok',
+        entityLabel: 'asset'
+      };
+    }
+    $scope.isSingleLocaleModeOn = isOn;
+    $scope.$applyAsync();
+  });
+
+  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, newLocale => {
+    TheLocaleStore.setFocusedLocale(newLocale);
+    $scope.focusedLocale = newLocale;
+  });
+
+  $scope.$watch('focusedLocale', () => {
+    $scope.focusedLocale = TheLocaleStore.getFocusedLocale();
     if (defaultLocaleIsFocused()) {
       $scope.statusNotificationProps = {
         status: 'ok',
-        entityLabel: 'entry'
+        entityLabel: 'asset'
       };
     }
-    $scope.$apply();
+    $scope.$applyAsync();
   });
 
   K.onValueScope($scope, editorContext.validator.errors$, errors => {
-    $scope.entrySidebarProps.localeErrors = groupBy(errors, error => error.path[2]);
-
-    if (!errors.length || defaultLocaleIsFocused()) {
+    if (!$scope.isSingleLocaleModeOn) {
+      // We only want to display the top-nav notification about locale errors
+      // if we are in the single focused locale mode.
       return;
     }
+    $scope.entrySidebarProps.localeErrors = groupBy(errors, error => error.path[2]);
 
-    $scope.statusNotificationProps = {
-      status: DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR,
-      entityLabel: 'entry'
-    };
+    if (errors.length && !defaultLocaleIsFocused()) {
+      $scope.statusNotificationProps = {
+        status: DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR,
+        entityLabel: 'asset'
+      };
+    }
   });
 
   K.onValueScope($scope, $scope.otDoc.status$, status => {
@@ -123,13 +146,14 @@ export default async function create($scope, editorData, preferences) {
   });
 
   function defaultLocaleIsFocused() {
-    if (!$scope.isLocaleFocused) {
+    if (!$scope.isSingleLocaleModeOn) {
       return false;
     }
     const localeCodes = keys($scope.entrySidebarProps.localeErrors);
     return (
       localeCodes.length === 1 &&
-      localeStore.getDefaultLocale().internal_code === localeStore.getFocusedLocale().internal_code
+      TheLocaleStore.getDefaultLocale().internal_code ===
+        TheLocaleStore.getFocusedLocale().internal_code
     );
   }
 }

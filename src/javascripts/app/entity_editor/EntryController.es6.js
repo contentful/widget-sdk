@@ -169,9 +169,15 @@ export default async function create($scope, editorData, preferences, trackLoadE
     $scope.locales = TheLocaleStore.getLocales();
   });
 
-  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, value => {
-    TheLocaleStore.setSingleLocaleMode(value);
-    $scope.isSingleLocaleModeOn = value;
+  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, isOn => {
+    TheLocaleStore.setSingleLocaleMode(isOn);
+    if (!isOn) {
+      $scope.statusNotificationProps = {
+        status: 'ok',
+        entityLabel: 'asset'
+      };
+    }
+    $scope.isSingleLocaleModeOn = isOn;
     setVisibleWidgets();
     $scope.$applyAsync();
   });
@@ -192,9 +198,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
   }
 
   function onlyFocusedLocaleHasErrors() {
-    if (!$scope.isSingleLocaleModeOn) {
-      return false;
-    }
     const localeCodes = keys($scope.entrySidebarProps.localeErrors);
     return (
       localeCodes.length === 1 &&
@@ -203,16 +206,19 @@ export default async function create($scope, editorData, preferences, trackLoadE
   }
 
   K.onValueScope($scope, editorContext.validator.errors$, errors => {
-    $scope.entrySidebarProps.localeErrors = groupBy(errors, error => error.path[2]);
-
-    if (!errors.length || onlyFocusedLocaleHasErrors()) {
+    if (!$scope.isSingleLocaleModeOn) {
+      // We only want to display the top-nav notification about locale errors
+      // if we are in the single focused locale mode.
       return;
     }
+    $scope.entrySidebarProps.localeErrors = groupBy(errors, error => error.path[2]);
 
-    $scope.statusNotificationProps = {
-      status: DocumentStatusCode.LOCALE_VALIDATION_ERRORS,
-      entityLabel: 'entry'
-    };
+    if (errors.length && !onlyFocusedLocaleHasErrors()) {
+      $scope.statusNotificationProps = {
+        status: DocumentStatusCode.LOCALE_VALIDATION_ERRORS,
+        entityLabel: 'entry'
+      };
+    }
   });
 
   K.onValueScope($scope, doc.status$, status => {
