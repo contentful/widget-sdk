@@ -42,9 +42,9 @@ class LinkedEntityBlock extends React.Component {
     return (
       <div {...this.props.attributes}>
         <FetchedEntityCard
+          entityType={entityType}
           entityId={entityId}
           readOnly={readOnly}
-          entityType={entityType}
           disabled={isDisabled}
           editable={true}
           selected={isSelected}
