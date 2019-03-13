@@ -75,15 +75,24 @@ export default function register() {
         const debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
 
         const disabledBus = K.createStreamBus();
+        disabledBus.emit(true);
+
+        const disconnectedBus = K.createStreamBus();
+        disconnectedBus.emit(true);
+
         const titleBus = K.createStreamBus();
 
         // we need to update slug values from title only after
         // field becomes not disabled (sharejs connected)
-        const titleUpdate$ = K.combine([disabledBus.stream, titleBus.stream])
-          .filter(([disabled]) => disabled === false)
+        const titleUpdate$ = K.combine([
+          disabledBus.stream,
+          disconnectedBus.stream,
+          titleBus.stream
+        ])
+          .filter(([disabled, disconnected]) => disabled === false && disconnected === false)
           .skipDuplicates(isEqual);
 
-        K.onValueScope(scope, titleUpdate$, ([, title]) => {
+        K.onValueScope(scope, titleUpdate$, ([, , title]) => {
           const slug = field.getValue();
           const isCustomSlug =
             !isEmpty(trackingTitle) &&
@@ -102,6 +111,7 @@ export default function register() {
         const detachOnFieldDisabledHandler = field.onPermissionChanged(disabledStatus => {
           scope.isDisabled = !!disabledStatus.disabled;
           disabledBus.emit(!!disabledStatus.denied);
+          disconnectedBus.emit(!!disabledStatus.disconnected);
         });
 
         const offSchemaErrorsChanged = field.onSchemaErrorsChanged(errors => {
