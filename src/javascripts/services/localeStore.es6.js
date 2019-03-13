@@ -31,7 +31,13 @@ export default function register() {
     };
 
     function create(getStore) {
-      let store = null;
+      const stores = {
+        activeLocales: null,
+        focusedLocale: null,
+        isSingleLocaleModeOn: false
+      };
+
+      let focusedLocale = null;
       let defaultLocale = null;
       let _isSingleLocaleModeOn = false;
 
@@ -56,8 +62,6 @@ export default function register() {
        */
       let codeToActiveLocaleMap = {};
 
-      let focusedLocale;
-
       return {
         init,
         refresh,
@@ -78,11 +82,12 @@ export default function register() {
       };
 
       function getFocusedLocale() {
-        return focusedLocale || getDefaultLocale();
+        return focusedLocale;
       }
 
       function setFocusedLocale(locale) {
         focusedLocale = locale;
+        stores.focusedLocale.set(locale);
       }
 
       function isSingleLocaleModeOn() {
@@ -91,6 +96,7 @@ export default function register() {
 
       function setSingleLocaleMode(state) {
         _isSingleLocaleModeOn = state;
+        stores.isSingleLocaleModeOn.set(state);
       }
 
       function toggleSingleLocaleMode() {
@@ -125,17 +131,33 @@ export default function register() {
           defaultLocale = _.find(privateLocales, { default: true }) || privateLocales[0];
 
           const spaceId = defaultLocale.sys.space.sys.id;
-          store = getStore().forKey('activeLocalesForSpace.' + spaceId);
 
-          const storedLocaleCodes = store.get() || [];
-          const storedLocales = _.filter(privateLocales, locale =>
-            _.includes(storedLocaleCodes, locale.code)
-          );
-
-          setActiveLocales(storedLocales);
+          refreshActiveLocales(spaceId);
+          refreshFocusedLocalesForSpace(spaceId);
+          refreshLocaleModeForSpace(spaceId);
 
           return locales;
         });
+      }
+
+      function refreshActiveLocales(spaceId) {
+        stores.activeLocales = getStore().forKey('activeLocalesForSpace.' + spaceId);
+
+        const storedLocaleCodes = stores.activeLocales.get() || activeLocales;
+        const storedLocales = _.filter(privateLocales, locale =>
+          _.includes(storedLocaleCodes, locale.code)
+        );
+        setActiveLocales(storedLocales);
+      }
+
+      function refreshFocusedLocalesForSpace(spaceId) {
+        stores.focusedLocale = getStore().forKey('focusedLocaleForSpace.' + spaceId);
+        setFocusedLocale(stores.focusedLocale.get() || defaultLocale);
+      }
+
+      function refreshLocaleModeForSpace(spaceId) {
+        stores.isSingleLocaleModeOn = getStore().forKey('isSingleLocaleModeOnForSpace.' + spaceId);
+        setSingleLocaleMode(stores.isSingleLocaleModeOn.get() || _isSingleLocaleModeOn);
       }
 
       /**
@@ -279,7 +301,7 @@ export default function register() {
         activeLocales = _.filter(privateLocales, isLocaleActive);
         activeLocales = _.uniqBy(activeLocales, locale => locale.internal_code);
 
-        store.set(_.map(activeLocales, 'code'));
+        stores.activeLocales.set(_.map(activeLocales, 'code'));
       }
     }
   });

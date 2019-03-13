@@ -5,6 +5,9 @@ import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import TranslationDropdownWidget from '../TranslationDropdownWidget/TranslationDropdownWidget.es6';
 import { Select, Option } from '@contentful/forma-36-react-components';
+import { getModule } from 'NgRegistry.es6';
+
+const TheLocaleStore = getModule('TheLocaleStore');
 
 const Tab = {
   MULTI: 'MULTI',
@@ -27,7 +30,7 @@ export default class TranslationSidebarWidget extends Component {
   };
 
   state = {
-    activeTab: Tab.multi
+    isSingleLocaleModeOn: TheLocaleStore.isSingleLocaleModeOn()
   };
 
   onTabChange = event => {
@@ -35,15 +38,20 @@ export default class TranslationSidebarWidget extends Component {
       target: { value }
     } = event;
     this.props.emitter.emit(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, value === Tab.SINGLE);
-    this.setState({ activeTab: value });
+    this.setState({ isSingleLocaleModeOn: value === Tab.SINGLE });
   };
 
   render() {
-    const CurrentTranslationWidget =
-      this.state.activeTab === Tab.MULTI ? TranslationWidgetPills : TranslationDropdownWidget;
+    const CurrentTranslationWidget = this.state.isSingleLocaleModeOn
+      ? TranslationDropdownWidget
+      : TranslationWidgetPills;
 
     const select = (
-      <Select onChange={this.onTabChange} width="auto" className="entity-sidebar__select">
+      <Select
+        value={this.state.isSingleLocaleModeOn ? Tab.SINGLE : Tab.MULTI}
+        onChange={this.onTabChange}
+        width="auto"
+        className="entity-sidebar__select">
         <Option value={Tab.MULTI}>Multiple locales</Option>
         <Option value={Tab.SINGLE}>Single locale</Option>
       </Select>

@@ -181,7 +181,10 @@ export default async function create($scope, editorData, preferences, trackLoadE
   });
 
   function setVisibleWidgets() {
-    if ($scope.isSingleLocaleModeOn && $scope.focusedLocale !== TheLocaleStore.getDefaultLocale()) {
+    if (
+      $scope.isSingleLocaleModeOn &&
+      $scope.focusedLocale.internal_code !== TheLocaleStore.getDefaultLocale().internal_code
+    ) {
       $scope.visibleWidgets = $scope.widgets.filter(w => w.field.localized);
     } else {
       $scope.visibleWidgets = $scope.widgets;
