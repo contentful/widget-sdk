@@ -82,6 +82,7 @@ class WrappedAssetCard extends React.Component {
 
           {this.props.onRemove && (
             <DropdownListItem
+              isDisabled={this.props.disabled}
               onClick={event => {
                 event.stopPropagation();
                 this.props.onRemove();
