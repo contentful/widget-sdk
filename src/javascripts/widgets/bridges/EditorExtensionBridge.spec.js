@@ -70,6 +70,11 @@ describe('EditorExtensionBridge', () => {
           errors$: stubs.errors,
           setActive: stubs.setActive
         },
+        editorContext: {
+          focus: {
+            field$: createMockProperty(false)
+          }
+        },
         widget: { field: 'FIELD' },
         locale: { code: 'pl' },
         entityInfo: { contentType: 'CONTENT TYPE' }
