@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import WebhookForbiddenPage from '../WebhookForbiddenPage.es6';
-import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import WebhookList from '../WebhookList.es6';
 import createWebhookTemplateDialogOpener from '../createWebhookTemplateDialogOpener.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
@@ -47,7 +46,7 @@ export class WebhookListRoute extends React.Component {
       if (this.props.templateId) {
         return <WebhookForbiddenPage templateId={this.props.templateId} />;
       }
-      return <ForbiddenPage />;
+      return <StateRedirect to="spaces.detail.entries.list" />;
     }
     return (
       <WebhooksFetcher>
