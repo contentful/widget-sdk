@@ -60,7 +60,7 @@ function Form({
           type: 'text',
           maxLength: '64'
         }}
-        hint="How the environment is referred to in the API."
+        hint="The environment ID represents how it is referred to in the API"
         SetFieldValue={SetFieldValue}
       />
 
@@ -92,7 +92,7 @@ function SourceEnvironmentSelector({
   return (
     <div className="cfnext-form__field">
       <label>
-        <span style={{ fontWeight: 'bold' }}>Source Environment</span>
+        <span style={{ fontWeight: 'bold' }}>Clone new environment from</span>
       </label>
 
       <select
@@ -109,8 +109,6 @@ function SourceEnvironmentSelector({
           );
         })}
       </select>
-
-      <p className="cfnext-form__hint">Your new environment will be a copy of the one selected.</p>
     </div>
   );
 }
