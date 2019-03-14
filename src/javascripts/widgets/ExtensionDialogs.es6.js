@@ -42,7 +42,7 @@ export async function openConfirm(options) {
       onConfirm={() => onClose(true)}
       onCancel={() => onClose(false)}
       title={options.title}
-      intent="primary"
+      intent={options.intent || 'primary'}
       confirmLabel={options.confirmLabel}
       cancelLabel={options.cancelLabel}>
       {options.message}
@@ -64,7 +64,7 @@ export async function openPrompt(options) {
         onConfirm={() => onClose(value)}
         onCancel={() => onClose(false)}
         title={options.title}
-        intent="primary"
+        intent={options.intent || 'primary'}
         confirmLabel={options.confirmLabel}
         cancelLabel={options.cancelLabel}>
         <p>{options.message}</p>
@@ -95,7 +95,7 @@ function validateOptions(options, config = {}) {
     : [];
 
   // If present, these options must be strings.
-  ['title', 'message', 'confirmLabel'].concat(additionalStringOptions).forEach(key => {
+  ['title', 'message', 'confirmLabel', 'intent'].concat(additionalStringOptions).forEach(key => {
     if (key in options && typeof options[key] !== 'string') {
       throw new Error(`"${key}" must be a string.`);
     }

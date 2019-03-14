@@ -76,16 +76,22 @@ export default function makeExtensionDialogsHandler(dependencies) {
       return (
         <Modal
           key={`${Date.now()}`}
-          shouldCloseOnOverlayClick={false}
-          shouldCloseOnEscapePress={false}
+          shouldCloseOnOverlayClick={options.shouldCloseOnOverlayClick || false}
+          shouldCloseOnEscapePress={options.shouldCloseOnEscapePress || false}
+          position={options.position || 'center'}
           isShown={isShown}
           onClose={onClose}
           size={`${options.width || 700}px`}>
-          <ExtensionIFrameRenderer
-            bridge={bridge}
-            descriptor={extension.extension}
-            parameters={parameters}
-          />
+          {() => (
+            <React.Fragment>
+              {options.title && <Modal.Header title={options.title} onClose={() => onClose()} />}
+              <ExtensionIFrameRenderer
+                bridge={bridge}
+                descriptor={extension.extension}
+                parameters={parameters}
+              />
+            </React.Fragment>
+          )}
         </Modal>
       );
     });
