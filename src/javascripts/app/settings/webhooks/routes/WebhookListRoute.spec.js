@@ -3,6 +3,15 @@ import Enzyme from 'enzyme';
 import WebhookListRoute from './WebhookListRoute.es6';
 import * as $stateMocked from 'ng/$state';
 import * as spaceContextMocked from 'ng/spaceContext';
+import * as AccessCheckerMocked from 'access_control/AccessChecker/index.es6';
+
+jest.mock(
+  'access_control/AccessChecker/index.es6',
+  () => ({
+    getSectionVisibility: jest.fn(() => {})
+  }),
+  { virtual: true }
+);
 
 jest.mock(
   'app/common/ReloadNotification.es6',
@@ -20,10 +29,11 @@ describe('WebhookListRoute', () => {
     spaceContextMocked.getData.mockReset();
     spaceContextMocked.webhookRepo.getAll.mockClear();
     spaceContextMocked.publishedCTs.getAllBare.mockClear();
+    AccessCheckerMocked.getSectionVisibility.mockReset();
   });
 
-  const setAdmin = isAdmin => {
-    spaceContextMocked.getData.mockReturnValue(isAdmin);
+  const setSectionVisibility = isVisible => {
+    AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ webhooks: isVisible }));
   };
 
   const selectors = {
@@ -32,7 +42,7 @@ describe('WebhookListRoute', () => {
 
   it('should be resticted for non-admins and redirect should be called', () => {
     expect.assertions(3);
-    setAdmin(false);
+    setSectionVisibility(false);
     Enzyme.mount(<WebhookListRoute />);
     expect($stateMocked.go).toHaveBeenCalledTimes(1);
     expect($stateMocked.go).toHaveBeenCalledWith(
@@ -45,7 +55,7 @@ describe('WebhookListRoute', () => {
 
   it('should show WebhookForbiddenPage if non-admin reaches page via deeplink templateId', () => {
     expect.assertions(3);
-    setAdmin(false);
+    setSectionVisibility(false);
 
     const wrapper = Enzyme.mount(<WebhookListRoute templateId="algolia-index-entries" />);
 
@@ -56,7 +66,7 @@ describe('WebhookListRoute', () => {
 
   it('should fetch webhooks if admin reaches that page', () => {
     expect.assertions(3);
-    setAdmin(true);
+    setSectionVisibility(true);
     const wrapper = Enzyme.mount(<WebhookListRoute />);
     expect($stateMocked.go).not.toHaveBeenCalled();
     expect(spaceContextMocked.webhookRepo.getAll).toHaveBeenCalledTimes(1);
