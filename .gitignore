@@ -31,5 +31,5 @@ output/
 /micro-backends/.kv
 
 # Cypress artifacts
-test/cypress/screenshots/
-test/cypress/videos/
+screenshots/
+videos/

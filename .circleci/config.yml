@@ -1,0 +1,13 @@
+version: 2.1
+orbs:
+  cypress: cypress-io/cypress@1.5.1
+workflows:
+  build:
+    jobs:
+      - cypress/run:
+          executor: cypress/base-8
+          pre-steps:
+            - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
+            # TODO: remove this line once npm ci will work without it
+            - run: npm install -g typescript
+          store_artifacts: true
