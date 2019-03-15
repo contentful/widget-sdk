@@ -13,7 +13,11 @@ const modalDialog = getModule('modalDialog');
 const Command = getModule('command');
 
 export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
-  if (plan && plan.committed) {
+  if (
+    plan &&
+    (plan.committed || plan.customerType === 'Enterprise') &&
+    plan.planType !== 'free_space'
+  ) {
     return openCommittedSpaceWarningDialog();
   }
 
