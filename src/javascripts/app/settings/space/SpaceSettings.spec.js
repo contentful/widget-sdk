@@ -1,9 +1,15 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import { noop } from 'lodash';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import reducer from 'redux/reducer/index.es6';
+import routes from 'redux/routes.es6';
 
 import SpaceSettings from './SpaceSettings.es6';
 
+const activeOrgId = 'testOrgId';
+let store;
 describe('SpaceSettings', () => {
   const selectors = {
     idInput: 'input[name="space-id"]',
@@ -12,15 +18,46 @@ describe('SpaceSettings', () => {
     deleteBtn: 'button[data-test-id="delete-space"]'
   };
 
+  beforeEach(() => {
+    store = createStore(reducer);
+    store.dispatch({
+      type: 'LOCATION_CHANGED',
+      payload: {
+        location: {
+          pathname: routes.organization.build({ orgId: activeOrgId })
+        }
+      }
+    });
+    store.dispatch({
+      type: 'USER_UPDATE_FROM_TOKEN',
+      payload: {
+        user: {
+          organizationMemberships: [
+            {
+              organization: {
+                sys: {
+                  id: activeOrgId
+                }
+              },
+              role: 'owner'
+            }
+          ]
+        }
+      }
+    });
+  });
+
   const mount = props => {
     return Enzyme.mount(
-      <SpaceSettings
-        spaceName="test-name"
-        spaceId="test-id"
-        onRemoveClick={noop}
-        save={noop}
-        {...props}
-      />
+      <Provider store={store}>
+        <SpaceSettings
+          spaceName="test-name"
+          spaceId="test-id"
+          onRemoveClick={noop}
+          save={noop}
+          {...props}
+        />
+      </Provider>
     );
   };
 
