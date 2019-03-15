@@ -52,7 +52,7 @@ export default class TeamsEmptyState extends React.Component {
             <Paragraph className="f36-margin-bottom--m">
               Let us know if you’re interested in upgrading.
             </Paragraph>
-            <Button href={supportUrl} target="_blank">
+            <Button href={`${supportUrl}?upgrade-teams=true`} target="_blank">
               I want to use Teams!
             </Button>
           </React.Fragment>
