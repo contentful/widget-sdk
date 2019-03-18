@@ -16,22 +16,24 @@ export default connect(state => ({
   return (
     <div className="project-home__spaces">
       <h2>Spaces</h2>
-      {spaceIdsToSpaces(projectSpaceIds, allSpaces).map(({ name, sys: { id } }) => (
-        <div key={id} className="project-home__member">
-          <div key={id}>{name}</div>
-          <IconButton
-            label="remove"
-            iconProps={{ icon: 'Close' }}
-            buttonType="negative"
-            onClick={() => setProjectSpaceIds(without(projectSpaceIds, id))}
-          />
-        </div>
-      ))}
-      <TextInput
-        placeholder="filter spaces to select..."
-        onChange={({ target: { value } }) => setFilter(value)}
-      />
+      <div className="project-home__space-list">
+        {spaceIdsToSpaces(projectSpaceIds, allSpaces).map(({ name, sys: { id } }) => (
+          <div key={id} className="project-home__space">
+            <div key={id}>{name}</div>
+            <IconButton
+              label="remove"
+              iconProps={{ icon: 'Close' }}
+              buttonType="negative"
+              onClick={() => setProjectSpaceIds(without(projectSpaceIds, id))}
+            />
+          </div>
+        ))}
+      </div>
       <div className="project-home__add-space">
+        <TextInput
+          placeholder="filter spaces to select..."
+          onChange={({ target: { value } }) => setFilter(value)}
+        />
         <Select value={selectedSpace} onChange={({ target: { value } }) => setSelectedSpace(value)}>
           <Option value="" disabled>
             Please select a space

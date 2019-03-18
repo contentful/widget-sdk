@@ -16,26 +16,28 @@ export default connect(state => ({
   return (
     <div className="project-home__members">
       <h2>Members</h2>
-      {userIdsToUsers(projectMemberIds, allUsers).map(
-        ({ firstName, lastName, email, sys: { id } }) => (
-          <div key={id} className="project-home__member">
-            <span>
-              {firstName} {lastName} ({email})
-            </span>
-            <IconButton
-              label="remove"
-              iconProps={{ icon: 'Close' }}
-              buttonType="negative"
-              onClick={() => setProjectMemberIds(without(projectMemberIds, id))}
-            />
-          </div>
-        )
-      )}
-      <TextInput
-        placeholder="filter users to select..."
-        onChange={({ target: { value } }) => setFilter(value)}
-      />
+      <div className="project-home__member-list">
+        {userIdsToUsers(projectMemberIds, allUsers).map(
+          ({ firstName, lastName, email, sys: { id } }) => (
+            <div key={id} className="project-home__member">
+              <span>
+                {firstName} {lastName} ({email})
+              </span>
+              <IconButton
+                label="remove"
+                iconProps={{ icon: 'Close' }}
+                buttonType="negative"
+                onClick={() => setProjectMemberIds(without(projectMemberIds, id))}
+              />
+            </div>
+          )
+        )}
+      </div>
       <div className="project-home__add-member">
+        <TextInput
+          placeholder="filter users to select..."
+          onChange={({ target: { value } }) => setFilter(value)}
+        />
         <Select value={selectedUser} onChange={({ target: { value } }) => setSelectedUser(value)}>
           <Option value="" disabled>
             Please select an user
