@@ -115,7 +115,7 @@ export class SidepanelProjects extends React.Component {
       <div className={cx(styles.container)}>
         <div className={cx(styles.header)}>
           <div className={cx(styles.headerTitle)}>My Projects</div>
-          <TextLink onClick={showCreateProjectModal}>+ Add new project</TextLink>
+          <TextLink onClick={showCreateProjectModal}>+ Create project</TextLink>
         </div>
         <div>
           {isPending && <Spinner />}
@@ -123,7 +123,10 @@ export class SidepanelProjects extends React.Component {
           {!isPending && items.length !== 0 && (
             <ul>
               {items.map(project => (
-                <li key={project.sys.id} onClick={this.goToProject(project.sys.id)}>
+                <li
+                  key={project.sys.id}
+                  onClick={this.goToProject(project.sys.id)}
+                  className="nav-sidepanel__space-list-item ">
                   {project.name}
                 </li>
               ))}
