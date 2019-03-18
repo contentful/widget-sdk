@@ -12,6 +12,7 @@ import optimistic from './optimistic.es6';
 import deleted from './deleted.es6';
 import access from './access.es6';
 import orgConstants from './orgConstants.es6';
+import projects from './projects.es6';
 
 // the redux dev tools are highly recommended to inspect the state created by these reducers
 // and how they react to actions
@@ -27,5 +28,6 @@ export default combineReducers({
   optimistic,
   deleted,
   access,
-  orgConstants
+  orgConstants,
+  projects
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
+import _ from 'lodash';
 
 import tokens from '@contentful/forma-36-tokens';
 import { TextLink, Spinner } from '@contentful/forma-36-react-components';
@@ -8,7 +9,8 @@ import { TextLink, Spinner } from '@contentful/forma-36-react-components';
 import { getVariation } from 'LaunchDarkly.es6';
 import { PROJECTS_FLAG } from 'featureFlags.es6';
 
-import createMicroBackendsClient from 'MicroBackendsClient.es6';
+import { connect } from 'react-redux';
+import * as actionCreators from 'redux/actions/projects/actionCreators.es6';
 
 // Styles mostly copied from sidepanel.styl
 const styles = {
@@ -28,11 +30,13 @@ const styles = {
   })
 };
 
-export default class SidepanelProjects extends React.Component {
+export class SidepanelProjects extends React.Component {
   static propTypes = {
     currOrg: PropTypes.object.isRequired,
     showCreateProjectModal: PropTypes.func.isRequired,
-    goToProject: PropTypes.func.isRequired
+    goToProject: PropTypes.func.isRequired,
+    getAllProjects: PropTypes.func.isRequired,
+    projects: PropTypes.object
   };
 
   state = {
@@ -66,50 +70,18 @@ export default class SidepanelProjects extends React.Component {
     const {
       currOrg: {
         sys: { id: orgId }
-      }
+      },
+      getAllProjects
     } = this.props;
 
     const isEnabled = await getVariation(PROJECTS_FLAG, { orgId });
 
     if (isEnabled) {
-      this.getAllProjects();
+      getAllProjects({ orgId });
     }
 
     this.setState({
       isEnabled
-    });
-  };
-
-  getAllProjects = async () => {
-    const {
-      currOrg: {
-        sys: { id: orgId }
-      }
-    } = this.props;
-
-    this.setState({
-      isLoading: true
-    });
-
-    const backend = createMicroBackendsClient({
-      backendName: 'projects',
-      baseUrl: `/organizations/${orgId}/projects`
-    });
-
-    let projects;
-
-    try {
-      const resp = await backend.call();
-
-      projects = await resp.json();
-    } catch (e) {
-      // Assume 404
-      projects = [];
-    }
-
-    this.setState({
-      isLoading: false,
-      projects
     });
   };
 
@@ -120,12 +92,24 @@ export default class SidepanelProjects extends React.Component {
   };
 
   render() {
-    const { showCreateProjectModal } = this.props;
-    const { isEnabled, isLoading, projects } = this.state;
+    const {
+      showCreateProjectModal,
+      projects,
+      currOrg: {
+        sys: { id: orgId }
+      }
+    } = this.props;
+    const { isEnabled } = this.state;
+
+    const orgProjects = _.get(projects, orgId, {
+      items: []
+    });
 
     if (!isEnabled) {
       return null;
     }
+
+    const { items, isPending } = orgProjects;
 
     return (
       <div className={cx(styles.container)}>
@@ -134,13 +118,11 @@ export default class SidepanelProjects extends React.Component {
           <TextLink onClick={showCreateProjectModal}>+ Add new project</TextLink>
         </div>
         <div>
-          {isLoading && <Spinner />}
-          {!isLoading && projects.length === 0 && (
-            <span>You don’t have any projects. Add one!</span>
-          )}
-          {!isLoading && projects.length !== 0 && (
+          {isPending && <Spinner />}
+          {!isPending && items.length === 0 && <span>You don’t have any projects. Add one!</span>}
+          {!isPending && items.length !== 0 && (
             <ul>
-              {projects.map(project => (
+              {items.map(project => (
                 <li key={project.sys.id} onClick={this.goToProject(project.sys.id)}>
                   {project.name}
                 </li>
@@ -152,3 +134,12 @@ export default class SidepanelProjects extends React.Component {
     );
   }
 }
+
+export default connect(
+  state => ({
+    projects: state.projects
+  }),
+  {
+    getAllProjects: actionCreators.getAllProjects
+  }
+)(SidepanelProjects);
