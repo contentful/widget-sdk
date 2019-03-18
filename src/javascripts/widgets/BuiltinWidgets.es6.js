@@ -202,10 +202,12 @@ export function create() {
       '<cf-reference-editor type="Entry" variant="link" single="true" load-events="loadEvents" />'
   });
 
+  // NOTE: We render this as "card" ever since we got rid of the actual "link" appearance
+  // option for single assets some time in 2016.
   registerWidget('assetLinkEditor', {
     fieldTypes: ['Asset'],
-    name: 'Asset link',
-    icon: 'media-reference',
+    name: 'Asset card',
+    icon: 'media-preview',
     template:
       '<cf-reference-editor type="Asset" variant="card" single="true" load-events="loadEvents" />'
   });
