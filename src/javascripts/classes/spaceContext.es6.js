@@ -317,7 +317,17 @@ export default function register() {
             if (!displayField) {
               return defaultTitle;
             } else {
-              title = this.getFieldValue(entry, displayField, localeCode);
+              // when localization for a field is "turned off",
+              // we don't clean up the "old" localized data, so it is still in the response.
+              // Therefore, we're checking if displayField is localizable.
+              const displayFieldInfo = _.find(contentType.data.fields, { id: displayField });
+
+              if (displayFieldInfo.localized) {
+                title = this.getFieldValue(entry, displayField, localeCode);
+              } else {
+                title = this.getFieldValue(entry, displayField);
+              }
+
               // TODO: Display meaningful title in case of non-string displayField.
               if (!title || title.match(/^\s*$/)) {
                 return defaultTitle;
@@ -445,11 +455,14 @@ export default function register() {
          */
         entityTitle: function(entity, localeCode) {
           const type = entity.getType();
-          if (!_.includes(['Entry', 'Asset'], type)) {
+
+          if (type === 'Entry') {
+            return this.entryTitle(entity, localeCode, true);
+          } else if (type === 'Asset') {
+            return this.assetTitle(entity, localeCode, true);
+          } else {
             return null;
           }
-          const getterName = type.toLowerCase() + 'Title'; // entryTitle() or assetTitle()
-          return this[getterName](entity, localeCode, true);
         }
       };
 
