@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { without } from 'lodash';
 import getCurrentOrgSpaces from 'redux/selectors/getCurrentOrgSpaces.es6';
-import { Select, Option, IconButton } from '@contentful/forma-36-react-components';
+import { Select, Option, IconButton, TextInput } from '@contentful/forma-36-react-components';
 
 const spaceIdsToSpaces = (projectSpaceIds, allSpaces) =>
   allSpaces.filter(({ sys: { id } }) => projectSpaceIds.includes(id));
@@ -11,6 +11,7 @@ export default connect(state => ({
   allSpaces: Object.values(getCurrentOrgSpaces(state))
 }))(({ projectSpaceIds, allSpaces, setProjectSpaceIds }) => {
   const [selectedSpace, setSelectedSpace] = useState('');
+  const [filter, setFilter] = useState('');
 
   return (
     <div className="project-home__spaces">
@@ -26,13 +27,20 @@ export default connect(state => ({
           />
         </div>
       ))}
+      <TextInput
+        placeholder="filter spaces to select..."
+        onChange={({ target: { value } }) => setFilter(value)}
+      />
       <div className="project-home__add-space">
         <Select value={selectedSpace} onChange={({ target: { value } }) => setSelectedSpace(value)}>
           <Option value="" disabled>
             Please select a space
           </Option>
           {allSpaces
-            .filter(({ sys: { id } }) => !projectSpaceIds.includes(id))
+            .filter(
+              ({ name, sys: { id } }) =>
+                !projectSpaceIds.includes(id) && (filter === '' || name.includes(filter))
+            )
             .map(({ name, sys: { id } }) => (
               <Option key={id} value={id} className="project-home__space">
                 {name}

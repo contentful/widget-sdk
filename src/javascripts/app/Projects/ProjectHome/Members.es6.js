@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { without } from 'lodash';
 import { getUsers } from 'redux/selectors/users.es6';
-import { Option, Select, IconButton } from '@contentful/forma-36-react-components';
+import { Option, Select, IconButton, TextInput } from '@contentful/forma-36-react-components';
 
 const userIdsToUsers = (userIds, allUsers) =>
   allUsers.filter(({ sys: { id } }) => userIds.includes(id));
@@ -11,6 +11,7 @@ export default connect(state => ({
   allUsers: Object.values(getUsers(state))
 }))(({ allUsers, projectMemberIds, setProjectMemberIds }) => {
   const [selectedUser, setSelectedUser] = useState('');
+  const [filter, setFilter] = useState('');
 
   return (
     <div className="project-home__members">
@@ -30,16 +31,30 @@ export default connect(state => ({
           </div>
         )
       )}
+      <TextInput
+        placeholder="filter users to select..."
+        onChange={({ target: { value } }) => setFilter(value)}
+      />
       <div className="project-home__add-member">
         <Select value={selectedUser} onChange={({ target: { value } }) => setSelectedUser(value)}>
           <Option value="" disabled>
             Please select an user
           </Option>
           {allUsers
-            .filter(({ firstName, sys: { id } }) => firstName && !projectMemberIds.includes(id))
-            .map(({ firstName, lastName, sys: { id } }) => (
+            .filter(
+              ({ firstName, lastName, email, sys: { id } }) =>
+                firstName &&
+                lastName &&
+                email &&
+                !projectMemberIds.includes(id) &&
+                (filter === '' ||
+                  firstName.includes(filter) ||
+                  lastName.includes(filter) ||
+                  email.includes(filter))
+            )
+            .map(({ firstName, lastName, email, sys: { id } }) => (
               <Option key={id} value={id}>
-                {firstName} {lastName}
+                {firstName} {lastName} ({email})
               </Option>
             ))}
         </Select>
@@ -47,7 +62,9 @@ export default connect(state => ({
           label="add"
           iconProps={{ icon: 'PlusCircle' }}
           onClick={() =>
-            setSelectedUser('') || setProjectMemberIds(projectMemberIds.concat(selectedUser))
+            setSelectedUser('') ||
+            setFilter('') ||
+            setProjectMemberIds(projectMemberIds.concat(selectedUser))
           }
         />
       </div>
