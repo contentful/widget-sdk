@@ -95,11 +95,11 @@ const put = requireProjectId(async function put({
 
   // Enforce that at least one spaceId and one memberId is present
   if (_.get(body, ['spaceIds'], []).length === 0) {
-    return responses.unprocessable('At least space is required');
+    return responses.unprocessable('At least one space is required');
   }
 
   if (_.get(body, ['memberIds'], []).length === 0) {
-    return responses.unprocessable('At least space is required');
+    return responses.unprocessable('At least one member is required');
   }
 
   // Validate each key
