@@ -1,4 +1,6 @@
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
+import { PROJECTS } from 'redux/datasets.es6';
+
 import * as actions from './actions.es6';
 
 export function getAllProjects({ orgId }) {
@@ -8,7 +10,11 @@ export function getAllProjects({ orgId }) {
       baseUrl: `/organizations/${orgId}/projects`
     });
 
-    dispatch(actions.getAllProjectsPending(orgId));
+    dispatch({
+      type: 'DATASET_LOADING',
+      meta: { pending: true, orgId },
+      datasets: [PROJECTS]
+    });
 
     let projects;
 
@@ -17,44 +23,25 @@ export function getAllProjects({ orgId }) {
 
       projects = await resp.json();
     } catch (e) {
-      dispatch(actions.getAllProjectsFailure(orgId, e));
+      dispatch({
+        type: 'DATASET_LOADING',
+        error: true,
+        payload: e,
+        meta: { orgId }
+      });
 
       return;
     }
 
-    dispatch(actions.getAllProjectsSuccess(orgId, projects));
-  };
-}
-
-export function getProject({ orgId, projectId }) {
-  return async dispatch => {
-    const backend = createMicroBackendsClient({
-      backendName: 'projects',
-      baseUrl: `/organizations/${orgId}/projects`
+    dispatch({
+      type: 'DATASET_LOADING',
+      payload: {
+        datasets: {
+          [PROJECTS]: projects
+        }
+      },
+      meta: { fetched: Date.now(), orgId }
     });
-
-    dispatch(actions.getProjectPending(orgId, projectId));
-
-    const resp = await backend.call(`/${projectId}`);
-
-    if (resp.status > 299) {
-      const e = new Error('not found');
-      dispatch(actions.getProjectFailure(orgId, projectId, e));
-
-      return;
-    }
-
-    let project;
-
-    try {
-      project = await resp.json();
-    } catch (e) {
-      dispatch(actions.getProjectFailure(orgId, projectId, e));
-
-      return;
-    }
-
-    dispatch(actions.getProjectSuccess(orgId, projectId, project));
   };
 }
 

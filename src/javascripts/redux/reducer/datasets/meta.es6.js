@@ -23,7 +23,7 @@ export default (state = {}, { type, payload, meta, error }, globalState) => {
         // this is used to limit how often data is requested from the server
         const timestampsForDatasets = zipObject(datasetKeys, datasetKeys.map(() => ({ fetched })));
         return update(
-          orgId,
+          (meta && meta.orgId) || orgId,
           currentDatasets => merge(currentDatasets, timestampsForDatasets),
           state
         );

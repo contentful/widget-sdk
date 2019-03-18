@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 import _ from 'lodash';
+import { connect } from 'react-redux';
 
 import tokens from '@contentful/forma-36-tokens';
 import { TextLink, Spinner } from '@contentful/forma-36-react-components';
@@ -9,8 +10,9 @@ import { TextLink, Spinner } from '@contentful/forma-36-react-components';
 import { getVariation } from 'LaunchDarkly.es6';
 import { PROJECTS_FLAG } from 'featureFlags.es6';
 
-import { connect } from 'react-redux';
 import * as actionCreators from 'redux/actions/projects/actionCreators.es6';
+import { PROJECTS } from 'redux/datasets.es6';
+import { getRawDatasets } from 'redux/selectors/datasets.es6';
 
 // Styles mostly copied from sidepanel.styl
 const styles = {
@@ -41,8 +43,7 @@ export class SidepanelProjects extends React.Component {
 
   state = {
     isEnabled: false,
-    isLoading: false,
-    projects: []
+    isLoading: false
   };
 
   componentDidMount() {
@@ -92,24 +93,15 @@ export class SidepanelProjects extends React.Component {
   };
 
   render() {
-    const {
-      showCreateProjectModal,
-      projects,
-      currOrg: {
-        sys: { id: orgId }
-      }
-    } = this.props;
+    const { showCreateProjectModal, projects } = this.props;
     const { isEnabled } = this.state;
-
-    const orgProjects = _.get(projects, orgId, {
-      items: []
-    });
 
     if (!isEnabled) {
       return null;
     }
 
-    const { items, isPending } = orgProjects;
+    const isPending = projects === undefined;
+    const projectList = isPending ? [] : Object.values(projects);
 
     return (
       <div className={cx(styles.container)}>
@@ -119,10 +111,12 @@ export class SidepanelProjects extends React.Component {
         </div>
         <div>
           {isPending && <Spinner />}
-          {!isPending && items.length === 0 && <span>You don’t have any projects. Add one!</span>}
-          {!isPending && items.length !== 0 && (
+          {!isPending && projectList.length === 0 && (
+            <span>You don’t have any projects. Add one!</span>
+          )}
+          {!isPending && projectList.length !== 0 && (
             <ul>
-              {items.map(project => (
+              {projectList.map(project => (
                 <li
                   key={project.sys.id}
                   onClick={this.goToProject(project.sys.id)}
@@ -139,8 +133,8 @@ export class SidepanelProjects extends React.Component {
 }
 
 export default connect(
-  state => ({
-    projects: state.projects
+  (state, { currOrg }) => ({
+    projects: (getRawDatasets(state, { orgId: currOrg.sys.id }) || {})[PROJECTS]
   }),
   {
     getAllProjects: actionCreators.getAllProjects

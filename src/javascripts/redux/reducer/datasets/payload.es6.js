@@ -11,7 +11,7 @@ export default (state = {}, { type, meta, payload, error }, globalState) => {
       if (!get(meta, 'pending')) {
         // create maps from datasets by id and merge that map into the state
         return update(
-          orgId,
+          get(meta, 'orgId', orgId),
           (datasets = {}) =>
             mergeWith(datasets, payload.datasets, (_, newDataset) => keyBy(newDataset, 'sys.id')),
           state
