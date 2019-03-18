@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import { without } from 'lodash';
 import getCurrentOrgSpaces from 'redux/selectors/getCurrentOrgSpaces.es6';
 import { Select, Option, IconButton } from '@contentful/forma-36-react-components';
 
@@ -15,7 +16,15 @@ export default connect(state => ({
     <div className="project-home__spaces">
       <h2>Spaces</h2>
       {spaceIdsToSpaces(projectSpaceIds, allSpaces).map(({ name, sys: { id } }) => (
-        <div key={id}>{name}</div>
+        <div key={id} className="project-home__member">
+          <div key={id}>{name}</div>
+          <IconButton
+            label="remove"
+            iconProps={{ icon: 'Close' }}
+            buttonType="negative"
+            onClick={() => setProjectSpaceIds(without(projectSpaceIds, id))}
+          />
+        </div>
       ))}
       <div className="project-home__add-space">
         <Select value={selectedSpace} onChange={({ target: { value } }) => setSelectedSpace(value)}>
@@ -25,13 +34,13 @@ export default connect(state => ({
           {allSpaces
             .filter(({ sys: { id } }) => !projectSpaceIds.includes(id))
             .map(({ name, sys: { id } }) => (
-              <Option key={id} value={id}>
+              <Option key={id} value={id} className="project-home__space">
                 {name}
               </Option>
             ))}
         </Select>
         <IconButton
-          label="add member"
+          label="add"
           iconProps={{ icon: 'PlusCircle' }}
           onClick={() =>
             setSelectedSpace('') || setProjectSpaceIds(projectSpaceIds.concat(selectedSpace))

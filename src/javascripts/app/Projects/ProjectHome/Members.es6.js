@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import { without } from 'lodash';
 import { getUsers } from 'redux/selectors/users.es6';
 import { Option, Select, IconButton } from '@contentful/forma-36-react-components';
 
@@ -17,7 +18,15 @@ export default connect(state => ({
       {userIdsToUsers(projectMemberIds, allUsers).map(
         ({ firstName, lastName, email, sys: { id } }) => (
           <div key={id} className="project-home__member">
-            {firstName} {lastName} ({email})
+            <span>
+              {firstName} {lastName} ({email})
+            </span>
+            <IconButton
+              label="remove"
+              iconProps={{ icon: 'Close' }}
+              buttonType="negative"
+              onClick={() => setProjectMemberIds(without(projectMemberIds, id))}
+            />
           </div>
         )
       )}
@@ -35,7 +44,7 @@ export default connect(state => ({
             ))}
         </Select>
         <IconButton
-          label="add member"
+          label="add"
           iconProps={{ icon: 'PlusCircle' }}
           onClick={() =>
             setSelectedUser('') || setProjectMemberIds(projectMemberIds.concat(selectedUser))
