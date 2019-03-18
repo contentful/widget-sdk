@@ -37,10 +37,14 @@ export default class ProjectHome extends React.Component {
 
     return (
       <div className="project-home">
-        <DisplayText>{project.name}</DisplayText>
-        <Paragraph>{project.description}</Paragraph>
-        <Members memberIds={project.memberIds} />
-        <Spaces spaceIds={project.spaceIds} />
+        <div className="project-home__details">
+          <DisplayText>{project.name}</DisplayText>
+          <Paragraph>{project.description}</Paragraph>
+        </div>
+        <div className="project-home__relations">
+          <Members memberIds={project.memberIds} />
+          <Spaces spaceIds={project.spaceIds} />
+        </div>
       </div>
     );
   }
