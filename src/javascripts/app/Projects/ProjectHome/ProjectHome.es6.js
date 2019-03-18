@@ -10,7 +10,9 @@ import {
   Paragraph,
   List,
   ListItem,
-  Button
+  Button,
+  TextInput,
+  Textarea
 } from '@contentful/forma-36-react-components';
 
 const styles = {
@@ -27,23 +29,22 @@ import Spaces from './Spaces.es6';
 
 export default class ProjectHome extends React.Component {
   static propTypes = {
-    project: PropTypes.object.isRequired,
-    spaces: PropTypes.array.isRequired,
-    members: PropTypes.array.isRequired
+    project: PropTypes.object.isRequired
   };
 
   render() {
-    const { project, spaces, members } = this.props;
+    const { project } = this.props;
 
     return (
       <div className="project-home">
         <div className="project-home__details">
-          <DisplayText>{project.name}</DisplayText>
-          <Paragraph>{project.description}</Paragraph>
+          <h2>{project.name}</h2>
+          <TextInput value={project.name} />
+          <Textarea value={project.description} />
         </div>
         <div className="project-home__relations">
-          <Members memberIds={project.memberIds} />
-          <Spaces spaceIds={project.spaceIds} />
+          <Members projectMemberIds={project.memberIds} />
+          <Spaces projectSpaceIds={project.spaceIds} />
         </div>
       </div>
     );
