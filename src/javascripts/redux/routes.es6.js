@@ -31,6 +31,10 @@ const ROUTES = {
             ]
           }
         }
+      },
+      projects: {
+        path: '/projects',
+        requiredDataSets: [USERS, ORG_SPACES]
       }
     }
   },

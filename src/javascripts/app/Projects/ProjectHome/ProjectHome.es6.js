@@ -22,6 +22,9 @@ const styles = {
   })
 };
 
+import Members from './Members.es6';
+import Spaces from './Spaces.es6';
+
 export default class ProjectHome extends React.Component {
   static propTypes = {
     project: PropTypes.object.isRequired,
@@ -33,34 +36,11 @@ export default class ProjectHome extends React.Component {
     const { project, spaces, members } = this.props;
 
     return (
-      <div className={cx(styles.container)}>
-        <Typography>
-          <Button>Edit your project</Button>
-          <DisplayText>{project.name}</DisplayText>
-          <Paragraph>{project.description}</Paragraph>
-          <Heading>Spaces</Heading>
-          <Button>Edit spaces</Button>
-          {spaces.length === 0 && <span>Add a space! DO IT!</span>}
-          {spaces.length !== 0 && (
-            <List>
-              {spaces.map(space => (
-                <ListItem key={space.sys.id}>{space.name}</ListItem>
-              ))}
-            </List>
-          )}
-          <Heading>Project members</Heading>
-          <Button>Edit members</Button>
-          {members.length === 0 && <span>Go ahead, add a project member!</span>}
-          {members.length !== 0 && (
-            <List>
-              {members.map(member => (
-                <ListItem key={member.sys.id}>
-                  {member.firstName} {member.lastName}
-                </ListItem>
-              ))}
-            </List>
-          )}
-        </Typography>
+      <div className="project-home">
+        <DisplayText>{project.name}</DisplayText>
+        <Paragraph>{project.description}</Paragraph>
+        <Members memberIds={project.memberIds} />
+        <Spaces spaceIds={project.spaceIds} />
       </div>
     );
   }
