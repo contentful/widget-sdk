@@ -20,7 +20,10 @@ import schema from './constants/Schema.es6';
 import emptyDoc from './constants/EmptyDoc.es6';
 import { BLOCKS } from '@contentful/rich-text-types';
 
+import CommandPalette from './CommandPalette/index.es6';
 import Toolbar from './Toolbar/index.es6';
+import { testForCommands, RICH_TEXT_COMMANDS_CONTEXT_MARK_TYPE } from './CommandPalette/Util.es6';
+import { richTextCommandsFeatureFlag } from './CommandPalette/CommandPaletteService.es6';
 
 const createSlateValue = contentfulDocument => {
   const document = toSlatejsDocument({
@@ -59,7 +62,8 @@ export default class RichTextEditor extends React.Component {
     onChange: PropTypes.func,
     onAction: PropTypes.func,
     isToolbarHidden: PropTypes.bool,
-    actionsDisabled: PropTypes.bool
+    actionsDisabled: PropTypes.bool,
+    scope: PropTypes.object
   };
 
   static defaultProps = {
@@ -77,7 +81,10 @@ export default class RichTextEditor extends React.Component {
       this.props.value && this.props.value.nodeType === BLOCKS.DOCUMENT
         ? createSlateValue(this.props.value)
         : emptySlateValue,
-    hasFocus: false
+    hasFocus: false,
+    currentCommand: '',
+    commandPaletteOpen: false,
+    commandsEnabled: false
   };
 
   editor = React.createRef();
@@ -89,13 +96,48 @@ export default class RichTextEditor extends React.Component {
     })
   );
 
-  onChange = editor => {
-    const { value, operations } = editor;
+  async componentDidMount() {
+    const commandsEnabled = await richTextCommandsFeatureFlag.isEnabled();
 
     this.setState({
-      value,
-      lastOperations: operations.filter(isRelevantOperation)
+      commandsEnabled
     });
+  }
+
+  renderCommandMark(props, _, next) {
+    if (props.mark.type === RICH_TEXT_COMMANDS_CONTEXT_MARK_TYPE) {
+      return (
+        <span tabIndex="1" {...props.attributes} className="command-context">
+          {props.children}
+        </span>
+      );
+    }
+
+    return next();
+  }
+
+  openCommandPanel = command => {
+    this.editor.current.setDecorations(command.decorations);
+    this.setState({
+      currentCommand: command.value,
+      currentSelection: command.selection
+    });
+  };
+
+  onChange = editor => {
+    const { value, operations } = editor;
+    this.setState(
+      {
+        value,
+        lastOperations: operations.filter(isRelevantOperation)
+      },
+      () => {
+        if (this.state.commandsEnabled) {
+          const command = testForCommands(value);
+          command && this.openCommandPanel(command);
+        }
+      }
+    );
   };
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -159,11 +201,25 @@ export default class RichTextEditor extends React.Component {
           plugins={this.slatePlugins}
           readOnly={this.props.isDisabled}
           className="rich-text__editor"
+          renderMark={this.renderCommandMark}
           actionsDisabled={this.props.actionsDisabled}
           options={{
             normalize: false // No initial normalizaiton as we pass a normalized document.
           }}
         />
+        {this.state.currentCommand && this.state.commandsEnabled && (
+          <CommandPalette
+            anchor=".command-context"
+            value={this.state.value}
+            editor={this.editor}
+            command={this.state.currentCommand}
+            widgetAPI={this.props.widgetAPI}
+            selection={this.state.currentSelection}
+            onClose={() => {
+              this.setState({ currentCommand: null });
+            }}
+          />
+        )}
       </div>
     );
   }

@@ -56,7 +56,7 @@ const createNode = (nodeType, entity) => ({
   }
 });
 
-function insertBlock(editor, nodeType, entity) {
+export function insertBlock(editor, nodeType, entity) {
   const linkedEntityBlock = createNode(nodeType, entity);
   if (editor.value.blocks.size === 0 || haveTextInSomeBlocks(editor)) {
     editor.insertBlock(linkedEntityBlock);

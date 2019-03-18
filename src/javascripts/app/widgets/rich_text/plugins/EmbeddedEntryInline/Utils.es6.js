@@ -16,7 +16,7 @@ const createInlineNode = id => ({
   }
 });
 
-const insertInline = (editor, entryId) => {
+export const insertInline = (editor, entryId) => {
   if (haveInlines(editor, INLINES.EMBEDDED_ENTRY)) {
     editor.setInlines(createInlineNode(entryId));
   } else {

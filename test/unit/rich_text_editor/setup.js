@@ -28,8 +28,9 @@ export const stubAll = async ({ isolatedSystem, angularStubs = {} }) => {
   isolatedSystem.set('app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6', {
     LINK_TYPES: {}
   });
-  isolatedSystem.set('utils/LaunchDarkly', {
-    onFeatureFlag: sinon.stub()
+  isolatedSystem.set('utils/LaunchDarkly/index.es6', {
+    onFeatureFlag: sinon.stub(),
+    getCurrentVariation: sinon.stub()
   });
   isolatedSystem.set('detect-browser', {
     detect: () => ({ name: 'chrome' })
