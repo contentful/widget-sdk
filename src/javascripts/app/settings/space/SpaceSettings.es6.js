@@ -1,14 +1,18 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Workbench from 'app/common/Workbench.es6';
 import { Button, TextField } from '@contentful/forma-36-react-components';
+import getOrgRole from 'redux/selectors/getOrgRole.es6';
 
-export default class SpaceSettings extends React.Component {
+class SpaceSettings extends React.Component {
   static propTypes = {
     onRemoveClick: PropTypes.func.isRequired,
     save: PropTypes.func.isRequired,
     spaceName: PropTypes.string.isRequired,
-    spaceId: PropTypes.string.isRequired
+    spaceId: PropTypes.string.isRequired,
+
+    showDeleteButton: PropTypes.bool.isRequired
   };
 
   state = {
@@ -39,18 +43,18 @@ export default class SpaceSettings extends React.Component {
   };
 
   render() {
+    const { showDeleteButton, onRemoveClick, spaceId } = this.props;
     return (
       <Workbench className="space-settings">
         <Workbench.Header>
           <Workbench.Icon icon="page-settings" />
           <Workbench.Title>Space settings</Workbench.Title>
           <Workbench.Header.Actions>
-            <Button
-              buttonType="negative"
-              onClick={this.props.onRemoveClick}
-              data-test-id="delete-space">
-              Remove space and all its contents
-            </Button>
+            {showDeleteButton && (
+              <Button buttonType="negative" onClick={onRemoveClick} data-test-id="delete-space">
+                Remove space and all its contents
+              </Button>
+            )}
             <Button
               disabled={this.isSaveDisabled()}
               onClick={this.onSaveNewName}
@@ -67,7 +71,7 @@ export default class SpaceSettings extends React.Component {
             id="space-id"
             labelText="Space ID:"
             testId="space-id-text-input"
-            value={this.props.spaceId}
+            value={spaceId}
             textInputProps={{
               disabled: true
             }}
@@ -77,7 +81,7 @@ export default class SpaceSettings extends React.Component {
             name="space-name"
             id="space-name"
             labelText="Space name:"
-            testId='space-name-text-input'
+            testId="space-name-text-input"
             value={this.state.spaceName}
             onChange={this.onChangeSpaceName}
           />
@@ -86,3 +90,7 @@ export default class SpaceSettings extends React.Component {
     );
   }
 }
+
+export default connect(state => ({
+  showDeleteButton: ['owner', 'admin'].includes(getOrgRole(state))
+}))(SpaceSettings);

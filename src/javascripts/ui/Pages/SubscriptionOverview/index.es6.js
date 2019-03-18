@@ -14,7 +14,6 @@ import { openDeleteSpaceDialog } from 'services/DeleteSpace.es6';
 import { getSpaces, getOrganization } from 'services/TokenStore.es6';
 import { isOwnerOrAdmin, isOwner } from 'services/OrganizationRoles.es6';
 import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils.es6';
-import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal.es6';
 
 import Workbench from 'app/common/Workbench.es6';
 
@@ -162,13 +161,10 @@ class SubscriptionOverview extends React.Component {
   };
 
   deleteSpace = (space, plan) => {
-    if (plan.committed) {
-      return () => openCommittedSpaceWarningDialog();
-    }
-
     return () => {
       openDeleteSpaceDialog({
         space,
+        plan,
         onSuccess: this.fetchData
       });
     };
