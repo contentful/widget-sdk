@@ -7,17 +7,14 @@ import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal.es6';
 import { getModule } from 'NgRegistry.es6';
 import APIClient from 'data/APIClient.es6';
+import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider.es6';
 
 const $rootScope = getModule('$rootScope');
 const modalDialog = getModule('modalDialog');
 const Command = getModule('command');
 
 export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
-  if (
-    plan &&
-    (plan.committed || plan.customerType === 'Enterprise') &&
-    plan.planType !== 'free_space'
-  ) {
+  if (plan && isEnterprisePlan(plan) && !isFreeSpacePlan(plan)) {
     return openCommittedSpaceWarningDialog();
   }
 
