@@ -1,6 +1,7 @@
 import { assign, get } from 'utils/Collections.es6';
 import * as K from 'utils/kefir.es6';
 import keycodes from 'utils/keycodes.es6';
+import { find } from 'lodash';
 
 import * as Navigator from 'states/Navigator.es6';
 
@@ -12,6 +13,8 @@ import * as CreateSpace from 'services/CreateSpace.es6';
 import * as AccessChecker from 'access_control/AccessChecker/index.es6';
 import * as LD from 'utils/LaunchDarkly/index.es6';
 import * as logger from 'services/logger.es6';
+import store from 'redux/store.es6';
+import getOrgId from 'redux/selectors/getOrgId.es6';
 
 import { open as openProjectsCreationModal } from 'app/Projects/ProjectCreationModal.es6';
 
@@ -84,7 +87,11 @@ export default function createController($scope, $window) {
         currentSpaceId: get(navState, ['space', 'sys', 'id']),
         currentEnvId: get(navState, ['env', 'sys', 'id'], 'master')
       });
-      setCurrOrg(navState.org || get(state, ['orgs', 0]));
+      setCurrOrg(
+        navState.org ||
+          find(state.orgs, { sys: { id: getOrgId(store.getState()) } }) ||
+          get(state, ['orgs', 0])
+      );
       render();
     }
   });
