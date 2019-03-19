@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import WavyBackground from 'svg/wavy-background.es6';
 import TeamsEmptyStateImage from 'svg/empty-state-teams.es6';
 import { Heading, Paragraph, Button, Tooltip } from '@contentful/forma-36-react-components';
-import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 import TeamDialog from './TeamDialog.es6';
+import { supportUrl } from 'Config.es6';
 
 export default class TeamsEmptyState extends React.Component {
   static propTypes = {
@@ -52,7 +52,9 @@ export default class TeamsEmptyState extends React.Component {
             <Paragraph className="f36-margin-bottom--m">
               Let us know if you’re interested in upgrading.
             </Paragraph>
-            <ContactUsButton buttonType="button" noIcon />
+            <Button href={`${supportUrl}?upgrade-teams=true`} target="_blank">
+              I want to use Teams!
+            </Button>
           </React.Fragment>
         ) : (
           <Paragraph>Talk to you Organization admin about using Teams.</Paragraph>

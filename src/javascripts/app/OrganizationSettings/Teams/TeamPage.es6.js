@@ -8,7 +8,6 @@ import { isMissingRequiredDatasets } from 'redux/selectors/datasets.es6';
 import { getReasonDenied, hasAccess } from 'redux/selectors/access.es6';
 import getOrganization from 'redux/selectors/getOrganization.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
-import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 import { FEATURE_INACTIVE } from 'redux/accessConstants.es6';
 import { Organization as OrganizationPropType } from '../PropTypes.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
@@ -57,17 +56,13 @@ class TeamPage extends React.Component {
       if (deniedReason === FEATURE_INACTIVE) {
         return <TeamsEmptyState isLegacy={true} isAdmin={isOwnerOrAdmin(organization)} />;
       } else {
-        const text = 'It seems you are not allowed to see this page. Let us know if we are wrong.';
+        const text =
+          'It seems you are not allowed to see this page. Please contact you administrator.';
         return (
           <Placeholder
             testId="access-denied-placeholder"
             text={text}
             title="No access to Teams page"
-            button={
-              <ContactUsButton buttonType="button" noIcon>
-                I want to use Teams!
-              </ContactUsButton>
-            }
           />
         );
       }
