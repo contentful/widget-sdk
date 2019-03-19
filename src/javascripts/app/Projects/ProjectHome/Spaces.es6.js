@@ -15,7 +15,7 @@ export default connect(state => ({
 
   return (
     <div className="project-home__spaces">
-      <h2>Spaces</h2>
+      <h3>Spaces</h3>
       <div className="project-home__space-list">
         {spaceIdsToSpaces(projectSpaceIds, allSpaces).map(({ name, sys: { id } }) => (
           <div key={id} className="project-home__space">
@@ -32,6 +32,7 @@ export default connect(state => ({
       <div className="project-home__add-space">
         <TextInput
           placeholder="filter spaces to select..."
+          value={filter}
           onChange={({ target: { value } }) => setFilter(value)}
         />
         <Select value={selectedSpace} onChange={({ target: { value } }) => setSelectedSpace(value)}>
@@ -41,7 +42,8 @@ export default connect(state => ({
           {allSpaces
             .filter(
               ({ name, sys: { id } }) =>
-                !projectSpaceIds.includes(id) && (filter === '' || name.includes(filter))
+                !projectSpaceIds.includes(id) &&
+                (filter === '' || name.toLowerCase().includes(filter.toLowerCase()))
             )
             .map(({ name, sys: { id } }) => (
               <Option key={id} value={id} className="project-home__space">

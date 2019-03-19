@@ -15,7 +15,7 @@ export default connect(state => ({
 
   return (
     <div className="project-home__members">
-      <h2>Members</h2>
+      <h3>Members</h3>
       <div className="project-home__member-list">
         {userIdsToUsers(projectMemberIds, allUsers).map(
           ({ firstName, lastName, email, sys: { id } }) => (
@@ -36,6 +36,7 @@ export default connect(state => ({
       <div className="project-home__add-member">
         <TextInput
           placeholder="filter users to select..."
+          value={filter}
           onChange={({ target: { value } }) => setFilter(value)}
         />
         <Select value={selectedUser} onChange={({ target: { value } }) => setSelectedUser(value)}>
@@ -50,9 +51,9 @@ export default connect(state => ({
                 email &&
                 !projectMemberIds.includes(id) &&
                 (filter === '' ||
-                  firstName.includes(filter) ||
-                  lastName.includes(filter) ||
-                  email.includes(filter))
+                  firstName.toLowerCase().includes(filter.toLowerCase()) ||
+                  lastName.toLowerCase().includes(filter.toLowerCase()) ||
+                  email.toLowerCase().includes(filter.toLowerCase()))
             )
             .map(({ firstName, lastName, email, sys: { id } }) => (
               <Option key={id} value={id}>

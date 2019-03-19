@@ -42,7 +42,11 @@ export default connect(state => {
         <h2>{name}</h2>
         <TextInput value={name} onChange={({ target: { value } }) => setName(value)} />
         <div>{description}</div>
-        <Textarea value={description} onChange={({ target: { value } }) => setDescription(value)} />
+        <Textarea
+          placeholder="description"
+          value={description}
+          onChange={({ target: { value } }) => setDescription(value)}
+        />
       </div>
       <div className="project-home__relations">
         <Members {...{ projectMemberIds, setProjectMemberIds }} />
