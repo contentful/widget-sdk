@@ -7,8 +7,7 @@ import {
   ORG_MEMBERSHIPS,
   TEAM_MEMBERSHIPS,
   TEAM_SPACE_MEMBERSHIPS,
-  ORG_SPACES,
-  ORG_SPACE_ROLES
+  ORG_SPACES
 } from './datasets.es6';
 
 // required datasets and features are inherited by children
@@ -27,8 +26,8 @@ const ROUTES = {
               USERS,
               ORG_MEMBERSHIPS,
               TEAM_SPACE_MEMBERSHIPS,
-              ORG_SPACES,
-              ORG_SPACE_ROLES
+              ORG_SPACES
+              // ORG_SPACE_ROLES
             ]
           }
         }
