@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import ldClient from 'ldclient-js';
+import * as LDClient from 'ldclient-js';
 import {
   getOrgRole,
   isUserOrgCreator,
@@ -205,7 +205,7 @@ export async function getVariation(flagName, { orgId, spaceId } = {}) {
 
     // Get the user data that will be used for LD client variation data
     const clientUser = await ldUser(user, org, space);
-    const client = ldClient.initialize(config.launchDarkly.envId, clientUser);
+    const client = LDClient.initialize(config.launchDarkly.envId, clientUser);
     const initialized = await isInitialized(client);
 
     // If the client is not initialized, log error and return undefined

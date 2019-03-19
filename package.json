@@ -62,7 +62,7 @@
     "json-stringify-safe": "~5.0.0",
     "json0-ot-diff": "^1.0.3",
     "kefir": "^3.7.1",
-    "ldclient-js": "^1.1.8",
+    "ldclient-js": "^2.9.5",
     "lodash": "^4.17.10",
     "marked-ast": "git@github.com:contentful/marked-ast.git#21fabcbf99aebc1ac4626343dc9cc58b45a34628",
     "mitt": "^1.1.3",
