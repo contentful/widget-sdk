@@ -2,68 +2,35 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ModalLauncher from 'app/common/ModalLauncher.es6';
-import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { getAllSpaces } from 'access_control/OrganizationMembershipRepository.es6';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
 import { user$ } from 'services/TokenStore.es6';
 import * as K from 'utils/kefir.es6';
 import { go } from 'states/Navigator.es6';
 
-import {
-  Card,
-  Spinner,
-  Modal,
-  Button,
-  TextField,
-  Select,
-  Option,
-  FormLabel,
-  List,
-  ListItem
-} from '@contentful/forma-36-react-components';
+import { Modal, Button, TextField } from '@contentful/forma-36-react-components';
 
 class ProjectCreationModal extends React.Component {
   static propTypes = {
     onClose: PropTypes.func.isRequired,
-    isShown: PropTypes.func.isRequired,
+    isShown: PropTypes.bool.isRequired,
     orgId: PropTypes.string.isRequired
   };
   state = {
-    isLoading: true,
     error: null,
     isPending: false,
-    allSpaces: [],
+    validationMessage: '',
 
-    projectName: '',
-    description: '',
-    selectedSpaces: []
+    name: '',
+    description: ''
   };
-
-  async componentDidMount() {
-    const { orgId } = this.props;
-
-    const endpoint = createOrganizationEndpoint(orgId);
-
-    let allSpaces;
-
-    try {
-      allSpaces = await getAllSpaces(endpoint);
-    } catch (error) {
-      this.setState({
-        error,
-        isLoading: false
-      });
-    }
-
-    this.setState({
-      isLoading: false,
-      allSpaces
-    });
-  }
 
   submit = async () => {
     const { onClose, orgId } = this.props;
-    const { projectName, description, selectedSpaces } = this.state;
+    const { name, description } = this.state;
+    if (!name) {
+      this.setState({ validationMessage: 'Please provide a project name' });
+      return;
+    }
     const backend = createMicroBackendsClient({
       backendName: 'projects',
       baseUrl: `/organizations/${orgId}/projects`
@@ -76,9 +43,9 @@ class ProjectCreationModal extends React.Component {
     const currentUser = K.getValue(user$);
 
     const body = {
-      name: projectName,
+      name,
       description,
-      spaceIds: selectedSpaces.map(space => space.sys.id),
+      spaceIds: [],
       memberIds: [currentUser.sys.id]
     };
 
@@ -103,22 +70,9 @@ class ProjectCreationModal extends React.Component {
     onClose(true);
   };
 
-  selectSpace = ({ target: { value } }) => {
-    this.setState(state => {
-      const selectedSpaces = [].concat(state.selectedSpaces);
-      const selectedSpace = state.allSpaces.find(space => space.sys.id === value);
-
-      selectedSpaces.push(selectedSpace);
-
-      return {
-        selectedSpaces
-      };
-    });
-  };
-
   updateName = ({ target: { value } }) => {
     this.setState({
-      projectName: value
+      name: value
     });
   };
 
@@ -131,78 +85,44 @@ class ProjectCreationModal extends React.Component {
   render() {
     const { isShown, onClose } = this.props;
 
-    const {
-      projectName,
-      description,
-      selectedSpaces,
-      allSpaces,
-      isLoading,
-      isPending
-    } = this.state;
-
-    const availableSpaces = allSpaces.filter(
-      space => !selectedSpaces.find(ss => ss.sys.id === space.sys.id)
-    );
+    const { name, description, isPending, validationMessage } = this.state;
 
     return (
       <Modal title="Create project" isShown={isShown} onClose={onClose}>
         {() => (
           <React.Fragment>
-            {isLoading && (
-              <Card padding="large">
-                <Spinner size="large" />
-              </Card>
-            )}
-            {!isLoading && (
-              <React.Fragment>
-                <Modal.Header title="Create a project" />
-                <Modal.Content>
-                  <TextField
-                    name="projectName"
-                    id="projectName"
-                    labelText="Project name"
-                    value={projectName}
-                    onChange={this.updateName}
-                    disabled={isPending}
-                  />
-                  <TextField
-                    name="description"
-                    id="description"
-                    textarea
-                    labelText="Description"
-                    value={description}
-                    onChange={this.updateDescription}
-                    disabled={isPending}
-                  />
-                  <FormLabel>Spaces</FormLabel>
-                  <Select onChange={this.selectSpace}>
-                    <Option value="">Select space</Option>
-                    {availableSpaces.map(space => (
-                      <Option key={space.sys.id} value={space.sys.id}>
-                        {space.name}
-                      </Option>
-                    ))}
-                  </Select>
-                  {Boolean(selectedSpaces.length) && (
-                    <List>
-                      {selectedSpaces.map(space => (
-                        <ListItem key={space.sys.id}>{space.name}</ListItem>
-                      ))}
-                    </List>
-                  )}
-                </Modal.Content>
-                <Modal.Controls>
-                  <Button
-                    buttonType="positive"
-                    disabled={isPending}
-                    loading={isPending}
-                    onClick={this.submit}>
-                    {isPending && 'Creating...'}
-                    {!isPending && 'Create'}
-                  </Button>
-                </Modal.Controls>
-              </React.Fragment>
-            )}
+            <Modal.Header title="Create a project" />
+            <Modal.Content>
+              <TextField
+                name="projectName"
+                id="projectName"
+                labelText="Project name"
+                value={name}
+                onChange={this.updateName}
+                disabled={isPending}
+                required
+                validationMessage={validationMessage}
+              />
+              <TextField
+                name="description"
+                id="description"
+                textarea
+                labelText="Description"
+                value={description}
+                onChange={this.updateDescription}
+                disabled={isPending}
+              />
+            </Modal.Content>
+            <Modal.Controls>
+              <Button
+                buttonType="positive"
+                disabled={isPending}
+                loading={isPending}
+                onClick={this.submit}>
+                {isPending && 'Creating...'}
+                {!isPending && 'Create'}
+              </Button>
+            </Modal.Controls>
           </React.Fragment>
         )}
       </Modal>

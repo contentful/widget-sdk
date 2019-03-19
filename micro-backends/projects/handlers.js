@@ -1,22 +1,22 @@
 const responses = require('./responses');
 const utils = require('./utils');
 
-const { requireOrgId, requireProjectId, generateEmptyProject, validate } = utils;
+const { requireOrgId, requireProjectId, validate, generateId } = utils;
 
 const getAll = requireOrgId(async function getAll({ kv, meta: { orgId } }) {
-  const projects = (await kv.get(orgId)) || [];
+  const projects = (await kv.get(orgId)) || {};
 
-  return responses.ok(projects);
+  return responses.ok(Object.values(projects));
 });
 
 const get = requireProjectId(async function get({ kv, meta: { orgId, projectId } }) {
   const projects = await kv.get(orgId);
 
   if (!projects) {
-    return [];
+    return responses.notFound();
   }
 
-  const project = projects.find(p => p.sys.id === projectId);
+  const project = projects[projectId];
 
   if (!project) {
     return responses.notFound();
@@ -26,33 +26,22 @@ const get = requireProjectId(async function get({ kv, meta: { orgId, projectId }
 });
 
 const post = requireOrgId(async function post({ req, kv, meta: { orgId } }) {
-  const allowedKeys = ['name', 'description', 'spaceIds', 'memberIds'];
-
-  const project = generateEmptyProject();
-
   const { body } = req;
 
   if (!body) {
     return responses.badRequest();
   }
 
-  for (const key of allowedKeys) {
-    if (!body[key]) {
-      return responses.unprocessable(`${key} is required`);
-    }
+  const project = body;
+  project.sys = { id: generateId() };
 
-    const validationMessage = validate(key, body[key]);
-
-    if (validationMessage) {
-      return responses.unprocessable(`${key} is invalid: ${validationMessage}`);
-    }
-
-    project[key] = body[key];
+  if (!project.name) {
+    return responses.unprocessable('name is required');
   }
 
-  const projects = (await kv.get(orgId)) || [];
+  const projects = (await kv.get(orgId)) || {};
 
-  projects.push(project);
+  projects[project.sys.id] = project;
 
   await kv.set(orgId, projects);
 
@@ -91,15 +80,6 @@ const put = requireProjectId(async function put({
 
   if (!project) {
     return responses.badRequest();
-  }
-
-  // Enforce that at least one spaceId and one memberId is present
-  if (_.get(body, ['spaceIds'], []).length === 0) {
-    return responses.unprocessable('At least one space is required');
-  }
-
-  if (_.get(body, ['memberIds'], []).length === 0) {
-    return responses.unprocessable('At least one member is required');
   }
 
   // Validate each key

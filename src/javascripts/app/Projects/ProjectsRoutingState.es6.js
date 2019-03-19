@@ -12,7 +12,7 @@ const projectsEnabled = () => getCurrentVariation(PROJECTS_FLAG);
 
 const template = navBarTemplate([
   {
-    title: 'Project details',
+    title: 'Project Home',
     sref: 'projects.home',
     rootSref: 'projects'
     // icon: 'nav-organization-information',

@@ -21,21 +21,6 @@ function generateId() {
     .substr(0, 12);
 }
 
-function generateEmptyProject() {
-  return {
-    name: '',
-    description: '',
-    spaceIds: [],
-    memberIds: [],
-    links: [],
-    platforms: [],
-    sections: [],
-    sys: {
-      id: generateId()
-    }
-  };
-}
-
 function requireOrgId(cb) {
   return ({ req, kv, dependencies, meta }) => {
     if (!meta) {
@@ -73,7 +58,7 @@ function validate(name, value) {
 }
 
 module.exports = {
-  generateEmptyProject,
+  generateId,
   requireOrgId,
   requireProjectId,
   validate
