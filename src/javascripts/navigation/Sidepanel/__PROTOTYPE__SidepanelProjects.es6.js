@@ -1,17 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
-import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import tokens from '@contentful/forma-36-tokens';
 import { TextLink, Spinner } from '@contentful/forma-36-react-components';
 
 import { getVariation } from 'LaunchDarkly.es6';
-import { PROJECTS_FLAG } from 'featureFlags.es6';
+import { __PROTOTYPE__PROJECTS_FLAG } from 'featureFlags.es6';
 
-import * as actionCreators from 'redux/actions/projects/actionCreators.es6';
-import { PROJECTS } from 'redux/datasets.es6';
+import * as actionCreators from 'redux/actions/__PROTOTYPE__projects/actionCreators.es6';
+import { __PROTOTYPE__PROJECTS } from 'redux/datasets.es6';
 import { getRawDatasets } from 'redux/selectors/datasets.es6';
 
 // Styles mostly copied from sidepanel.styl
@@ -19,7 +18,9 @@ const styles = {
   container: css({
     display: 'flex',
     flexDirection: 'column',
-    padding: '20px 20px 0'
+    padding: '20px 20px 0',
+    border: '2px solid red',
+    position: 'relative'
   }),
   header: css({
     display: 'flex',
@@ -29,6 +30,14 @@ const styles = {
   headerTitle: css({
     fontWeight: 'bold',
     marginBottom: tokens.spacingM
+  }),
+  warning: css({
+    position: 'absolute',
+    top: '3px',
+    left: '3px',
+    color: 'red',
+    fontWeight: 'bold',
+    fontSize: '.7rem'
   })
 };
 
@@ -75,7 +84,7 @@ export class SidepanelProjects extends React.Component {
       getAllProjects
     } = this.props;
 
-    const isEnabled = await getVariation(PROJECTS_FLAG, { orgId });
+    const isEnabled = await getVariation(__PROTOTYPE__PROJECTS_FLAG, { orgId });
 
     if (isEnabled) {
       getAllProjects({ orgId });
@@ -106,6 +115,7 @@ export class SidepanelProjects extends React.Component {
     return (
       <div className={cx(styles.container)}>
         <div className={cx(styles.header)}>
+          <div className={cx(styles.warning)}>PROTOTYPE</div>
           <div className={cx(styles.headerTitle)}>My Projects</div>
           <TextLink onClick={showCreateProjectModal}>+ Create project</TextLink>
         </div>
@@ -134,7 +144,7 @@ export class SidepanelProjects extends React.Component {
 
 export default connect(
   (state, { currOrg }) => ({
-    projects: (getRawDatasets(state, { orgId: currOrg.sys.id }) || {})[PROJECTS]
+    projects: (getRawDatasets(state, { orgId: currOrg.sys.id }) || {})[__PROTOTYPE__PROJECTS]
   }),
   {
     getAllProjects: actionCreators.getAllProjects

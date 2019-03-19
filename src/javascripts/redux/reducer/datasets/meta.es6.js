@@ -4,7 +4,7 @@ import getOrgId from 'redux/selectors/getOrgId.es6';
 // this substate currently has pending operations state and
 // timestamps when datasets have last been updated
 export default (state = {}, { type, payload, meta, error }, globalState) => {
-  const orgId = getOrgId(globalState);
+  const orgId = get(payload, 'orgId', getOrgId(globalState));
   switch (type) {
     case 'REMOVE_FROM_DATASET': {
       if (get('pending', meta)) {
@@ -23,7 +23,7 @@ export default (state = {}, { type, payload, meta, error }, globalState) => {
         // this is used to limit how often data is requested from the server
         const timestampsForDatasets = zipObject(datasetKeys, datasetKeys.map(() => ({ fetched })));
         return update(
-          (meta && meta.orgId) || orgId,
+          orgId,
           currentDatasets => merge(currentDatasets, timestampsForDatasets),
           state
         );

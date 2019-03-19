@@ -8,7 +8,7 @@ import {
   TEAM_MEMBERSHIPS,
   TEAM_SPACE_MEMBERSHIPS,
   ORG_SPACES,
-  PROJECTS
+  __PROTOTYPE__PROJECTS
 } from './datasets.es6';
 
 // required datasets and features are inherited by children
@@ -35,7 +35,7 @@ const ROUTES = {
       },
       projects: {
         path: '/projects',
-        requiredDataSets: [USERS, ORG_SPACES, PROJECTS],
+        requiredDataSets: [USERS, ORG_SPACES, __PROTOTYPE__PROJECTS],
         children: {
           project: {
             path: '/:projectId'

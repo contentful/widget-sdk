@@ -18,7 +18,7 @@ import {
   TEAM_SPACE_MEMBERSHIPS,
   ORG_SPACES,
   ORG_SPACE_ROLES,
-  PROJECTS
+  __PROTOTYPE__PROJECTS
 } from './datasets.es6';
 import getOrgId from './selectors/getOrgId.es6';
 import createMicroBackendsClient from '../MicroBackendsClient.es6';
@@ -50,9 +50,9 @@ const loaders = state => {
       const endpoint = createOrganizationEndpoint(orgId);
       return getAllRoles(endpoint);
     },
-    [PROJECTS]: async () => {
+    [__PROTOTYPE__PROJECTS]: async () => {
       const backend = createMicroBackendsClient({
-        backendName: 'projects',
+        backendName: '__PROTOTYPE__projects',
         baseUrl: `/organizations/${orgId}/projects`
       });
       const resp = await backend.call();

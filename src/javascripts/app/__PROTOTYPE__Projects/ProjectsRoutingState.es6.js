@@ -5,10 +5,10 @@
 import makeState from 'states/Base.es6';
 import navBarTemplate from 'navigation/templates/NavBar.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
-import { PROJECTS_FLAG } from 'featureFlags.es6';
+import { __PROTOTYPE__PROJECTS_FLAG } from 'featureFlags.es6';
 import { go } from 'states/Navigator.es6';
 
-const projectsEnabled = () => getCurrentVariation(PROJECTS_FLAG);
+const projectsEnabled = () => getCurrentVariation(__PROTOTYPE__PROJECTS_FLAG);
 
 const template = navBarTemplate([
   {
@@ -23,7 +23,7 @@ const homeState = makeState({
   name: 'home',
   url: '/:projectId',
   loadingText: 'Loading…',
-  template: `<react-component name='app/Projects/ProjectHome/ProjectHome.es6' props='componentProps'></react-component>`,
+  template: `<react-component name='app/__PROTOTYPE__Projects/ProjectHome/ProjectHome.es6' props='componentProps'></react-component>`,
   controller: [
     '$scope',
     '$stateParams',

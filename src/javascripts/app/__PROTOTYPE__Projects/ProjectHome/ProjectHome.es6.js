@@ -5,7 +5,7 @@ import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 
 import { TextInput, Textarea, Button, Notification } from '@contentful/forma-36-react-components';
 import { getDatasets } from 'redux/selectors/datasets.es6';
-import { PROJECTS } from 'redux/datasets.es6';
+import { __PROTOTYPE__PROJECTS } from 'redux/datasets.es6';
 import ROUTES from 'redux/routes.es6';
 import { getPath } from 'redux/selectors/location.es6';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
@@ -19,7 +19,7 @@ export default connect(
     const isLoading = isMissingRequiredDatasets(state);
     const project =
       !isLoading &&
-      getDatasets(state)[PROJECTS][
+      getDatasets(state)[__PROTOTYPE__PROJECTS][
         ROUTES.organization.children.projects.children.project.test(getPath(state)).projectId
       ];
 
@@ -34,13 +34,13 @@ export default connect(
       dispatch({
         type: 'SAVE_PROJECT',
         payload: {
-          dataset: PROJECTS,
+          dataset: __PROTOTYPE__PROJECTS,
           item: project
         }
       });
 
       const backend = createMicroBackendsClient({
-        backendName: 'projects',
+        backendName: '__PROTOTYPE__projects',
         baseUrl: `/organizations/${orgId}/projects`
       });
 
@@ -59,7 +59,7 @@ export default connect(
     },
     _delete: orgId => async projectId => {
       const backend = createMicroBackendsClient({
-        backendName: 'projects',
+        backendName: '__PROTOTYPE__projects',
         baseUrl: `/organizations/${orgId}/projects/${projectId}`
       });
 
@@ -70,7 +70,7 @@ export default connect(
         dispatch({
           type: 'REMOVE_FROM_DATASET',
           payload: {
-            dataset: PROJECTS,
+            dataset: __PROTOTYPE__PROJECTS,
             id: projectId
           },
           meta: { pending: true }
@@ -102,6 +102,16 @@ export default connect(
 
   return (
     <div className="project-home">
+      <h2
+        style={{
+          color: 'red',
+          fontWeight: 'bold',
+          position: 'absolute',
+          top: '.2rem',
+          left: '.2rem'
+        }}>
+        PROTOTYPE
+      </h2>
       <div className="project-home__details">
         <h2>{name}</h2>
         <TextInput
@@ -131,6 +141,7 @@ export default connect(
       </div>
       <div>
         <Button
+          style={{ margin: '.4rem' }}
           disabled={!dirty}
           onClick={() =>
             setDirty(false) || save({ ...project, name, description, memberIds, spaceIds })
@@ -138,7 +149,7 @@ export default connect(
           Save
         </Button>
         <Button
-          style={{ marginLeft: '.4rem' }}
+          style={{ margin: '.4rem' }}
           buttonType="negative"
           onClick={() => deleteProject(project.sys.id)}>
           Delete

@@ -16,7 +16,7 @@ import * as logger from 'services/logger.es6';
 import store from 'redux/store.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 
-import { open as openProjectsCreationModal } from 'app/Projects/ProjectCreationModal.es6';
+import { open as openProjectsCreationModal } from 'app/__PROTOTYPE__Projects/ProjectCreationModal.es6';
 
 import renderSidepanel from './SidepanelView.es6';
 

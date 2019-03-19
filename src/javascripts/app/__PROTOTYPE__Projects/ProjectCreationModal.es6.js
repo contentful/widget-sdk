@@ -11,7 +11,7 @@ import * as random from 'utils/Random.es6';
 import { Modal, Button, TextField } from '@contentful/forma-36-react-components';
 import store from 'redux/store.es6';
 
-import { PROJECTS } from 'redux/datasets.es6';
+import { __PROTOTYPE__PROJECTS } from 'redux/datasets.es6';
 
 class ProjectCreationModal extends React.Component {
   static propTypes = {
@@ -37,7 +37,7 @@ class ProjectCreationModal extends React.Component {
       return;
     }
     const backend = createMicroBackendsClient({
-      backendName: 'projects',
+      backendName: '__PROTOTYPE__projects',
       baseUrl: `/organizations/${orgId}/projects`
     });
 
@@ -145,7 +145,7 @@ const Connected = connect(
       dispatch({
         type: 'ADD_TO_DATASET',
         payload: {
-          dataset: PROJECTS,
+          dataset: __PROTOTYPE__PROJECTS,
           item: project,
           orgId
         }

@@ -7,4 +7,4 @@ export const UPGRADE_PRICING_FLAG = 'feature-dl-09-2018-upgrade-pricing-space-ho
 export const SSO_SELF_CONFIG_FLAG = 'feature-bv-2019-01-sso-self-config';
 export const TEAMS = 'feature-bv-11-2018-teams';
 export const TEAMS_FOR_MEMBERS = 'feature-bv-01-2019-teams-for-members';
-export const PROJECTS_FLAG = 'feature-bv-02-2019-projects-experiment';
+export const __PROTOTYPE__PROJECTS_FLAG = 'feature-bv-02-2019-projects-experiment';

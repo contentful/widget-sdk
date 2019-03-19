@@ -9,7 +9,7 @@ import { getOrgConstants } from 'redux/selectors/getOrgConstants.es6';
 import { fetchOrgConstants } from 'redux/actions/orgConstants/actionCreators.es6';
 import SidepanelOrgs from './SidepanelOrgs.es6';
 import SidepanelSpaces from './SidepanelSpaces.es6';
-import SidepanelProjects from './SidepanelProjects.es6';
+import SidepanelProjects from './__PROTOTYPE__SidepanelProjects.es6';
 import SidepanelNoOrgs from './SidepanelNoOrgs.es6';
 import { Spinner } from '@contentful/forma-36-react-components';
 import OrgActions from './OrgActions.es6';
