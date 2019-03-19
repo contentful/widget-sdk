@@ -34,9 +34,7 @@ exports[`locales/components/ChooseNewFallbackLocaleDialog should match snapshot 
     id="newFallbackLocale"
     isDisabled={false}
     name="newFallbackLocale"
-    onBlur={[Function]}
     onChange={[Function]}
-    onFocus={[Function]}
     required={false}
     testId="choose-fallback-locale-select"
     value=""

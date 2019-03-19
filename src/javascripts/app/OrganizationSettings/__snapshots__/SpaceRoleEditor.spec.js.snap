@@ -518,8 +518,6 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                       isActive={false}
                       isDisabled={false}
                       isTitle={false}
-                      onEnter={[Function]}
-                      onLeave={[Function]}
                       testId="cf-ui-dropdown-list-item"
                     >
                       <li
@@ -600,8 +598,6 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                       isDisabled={false}
                       isTitle={false}
                       key="police"
-                      onEnter={[Function]}
-                      onLeave={[Function]}
                       testId="cf-ui-dropdown-list-item"
                     >
                       <li
@@ -686,8 +682,6 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                       isDisabled={false}
                       isTitle={false}
                       key="thief"
-                      onEnter={[Function]}
-                      onLeave={[Function]}
                       testId="cf-ui-dropdown-list-item"
                     >
                       <li
