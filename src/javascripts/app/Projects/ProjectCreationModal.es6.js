@@ -139,13 +139,14 @@ class ProjectCreationModal extends React.Component {
 
 const Connected = connect(
   null,
-  dispatch => ({
+  (dispatch, { orgId }) => ({
     addProject: project =>
       dispatch({
         type: 'ADD_TO_DATASET',
         payload: {
           dataset: PROJECTS,
-          item: project
+          item: project,
+          orgId
         }
       })
   })

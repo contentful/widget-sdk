@@ -5,7 +5,7 @@ import { TEAMS } from 'redux/datasets.es6';
 import getDeletedItems from 'redux/selectors/getDeletedItems.es6';
 
 export default (state = {}, { type, meta, payload, error }, globalState) => {
-  const orgId = getOrgId(globalState);
+  const orgId = get(payload, 'orgId', getOrgId(globalState));
   switch (type) {
     case 'DATASET_LOADING': {
       if (!get(meta, 'pending')) {
