@@ -126,8 +126,16 @@ export default connect(
           value={name}
           onChange={({ target: { value } }) => setDirty(true) || setName(value)}
         />
-        <div>{description}</div>
+        <div>
+          {description.split('\n').reduce((acc, cur, idx) => {
+            if (idx === 0) {
+              return [...acc, cur];
+            }
+            return [...acc, <br key={idx} />, cur];
+          }, [])}
+        </div>
         <Textarea
+          rows={5}
           placeholder="description"
           value={description}
           onChange={({ target: { value } }) => setDirty(true) || setDescription(value)}

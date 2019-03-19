@@ -22,29 +22,34 @@ export default connect(state => ({
           value={filter}
           onChange={({ target: { value } }) => setFilter(value)}
         />
-        <Select value={selectedSpace} onChange={({ target: { value } }) => setSelectedSpace(value)}>
-          <Option value="" disabled>
-            Please select a space
-          </Option>
-          {allSpaces
-            .filter(
-              ({ name, sys: { id } }) =>
-                !projectSpaceIds.includes(id) &&
-                (filter === '' || name.toLowerCase().includes(filter.toLowerCase()))
-            )
-            .map(({ name, sys: { id } }) => (
-              <Option key={id} value={id} className="project-home__space">
-                {name}
-              </Option>
-            ))}
-        </Select>
-        <IconButton
-          label="add"
-          iconProps={{ icon: 'PlusCircle' }}
-          onClick={() =>
-            setSelectedSpace('') || setProjectSpaceIds(projectSpaceIds.concat(selectedSpace))
-          }
-        />
+        <div style={{ display: 'flex' }}>
+          <Select
+            value={selectedSpace}
+            onChange={({ target: { value } }) => setSelectedSpace(value)}>
+            <Option value="" disabled>
+              Please select a space
+            </Option>
+            {allSpaces
+              .filter(
+                ({ name, sys: { id } }) =>
+                  !projectSpaceIds.includes(id) &&
+                  (filter === '' || name.toLowerCase().includes(filter.toLowerCase()))
+              )
+              .map(({ name, sys: { id } }) => (
+                <Option key={id} value={id} className="project-home__space">
+                  {name}
+                </Option>
+              ))}
+          </Select>
+          <IconButton
+            style={{ marginLeft: '.5rem' }}
+            label="add"
+            iconProps={{ icon: 'PlusCircle' }}
+            onClick={() =>
+              setSelectedSpace('') || setProjectSpaceIds(projectSpaceIds.concat(selectedSpace))
+            }
+          />
+        </div>
       </div>
       <div className="project-home__space-list">
         {spaceIdsToSpaces(projectSpaceIds, allSpaces).map(({ name, sys: { id } }) => (

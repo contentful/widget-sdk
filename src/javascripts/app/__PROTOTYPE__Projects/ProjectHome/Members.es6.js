@@ -22,37 +22,40 @@ export default connect(state => ({
           value={filter}
           onChange={({ target: { value } }) => setFilter(value)}
         />
-        <Select value={selectedUser} onChange={({ target: { value } }) => setSelectedUser(value)}>
-          <Option value="" disabled>
-            Please select an user
-          </Option>
-          {allUsers
-            .filter(
-              ({ firstName, lastName, email, sys: { id } }) =>
-                firstName &&
-                lastName &&
-                email &&
-                !projectMemberIds.includes(id) &&
-                (filter === '' ||
-                  firstName.toLowerCase().includes(filter.toLowerCase()) ||
-                  lastName.toLowerCase().includes(filter.toLowerCase()) ||
-                  email.toLowerCase().includes(filter.toLowerCase()))
-            )
-            .map(({ firstName, lastName, email, sys: { id } }) => (
-              <Option key={id} value={id}>
-                {firstName} {lastName} ({email})
-              </Option>
-            ))}
-        </Select>
-        <IconButton
-          label="add"
-          iconProps={{ icon: 'PlusCircle' }}
-          onClick={() =>
-            setSelectedUser('') ||
-            setFilter('') ||
-            setProjectMemberIds(projectMemberIds.concat(selectedUser))
-          }
-        />
+        <div style={{ display: 'flex' }}>
+          <Select value={selectedUser} onChange={({ target: { value } }) => setSelectedUser(value)}>
+            <Option value="" disabled>
+              Please select an user
+            </Option>
+            {allUsers
+              .filter(
+                ({ firstName, lastName, email, sys: { id } }) =>
+                  firstName &&
+                  lastName &&
+                  email &&
+                  !projectMemberIds.includes(id) &&
+                  (filter === '' ||
+                    firstName.toLowerCase().includes(filter.toLowerCase()) ||
+                    lastName.toLowerCase().includes(filter.toLowerCase()) ||
+                    email.toLowerCase().includes(filter.toLowerCase()))
+              )
+              .map(({ firstName, lastName, email, sys: { id } }) => (
+                <Option key={id} value={id}>
+                  {firstName} {lastName} ({email})
+                </Option>
+              ))}
+          </Select>
+          <IconButton
+            style={{ marginLeft: '.5rem' }}
+            label="add"
+            iconProps={{ icon: 'PlusCircle' }}
+            onClick={() =>
+              setSelectedUser('') ||
+              setFilter('') ||
+              setProjectMemberIds(projectMemberIds.concat(selectedUser))
+            }
+          />
+        </div>
       </div>
       <div className="project-home__member-list">
         {userIdsToUsers(projectMemberIds, allUsers).map(
