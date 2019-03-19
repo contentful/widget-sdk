@@ -9,7 +9,7 @@ export default function register() {
     'notify',
     'fields$',
     'entityInfo',
-    'preferences',
+
     'spaceContext',
     'command', // Command
     'analytics/Analytics.es6', // Analytics
@@ -20,7 +20,6 @@ export default function register() {
       notify,
       fields$,
       entityInfo,
-      preferences,
       spaceContext,
       Command,
       Analytics,
@@ -34,8 +33,8 @@ export default function register() {
 
       controller.toggleDisabledFields = Command.create(
         () => {
-          const show = !preferences.showDisabledFields;
-          preferences.showDisabledFields = show;
+          const show = !$scope.preferences.showDisabledFields;
+          $scope.preferences.showDisabledFields = show;
           Analytics.track('entry_editor:disabled_fields_visibility_toggled', {
             entryId: entityInfo.id,
             show: show
@@ -44,7 +43,9 @@ export default function register() {
         {},
         {
           label: function() {
-            return preferences.showDisabledFields ? 'Hide disabled fields' : 'Show disabled fields';
+            return $scope.preferences.showDisabledFields
+              ? 'Hide disabled fields'
+              : 'Show disabled fields';
           }
         }
       );
