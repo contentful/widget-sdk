@@ -33,7 +33,9 @@ const post = requireOrgId(async function post({ req, kv, meta: { orgId } }) {
   }
 
   const project = body;
-  project.sys = { id: generateId() };
+  if (!project.sys) {
+    project.sys = { id: generateId() };
+  }
 
   if (!project.name) {
     return responses.unprocessable('name is required');
