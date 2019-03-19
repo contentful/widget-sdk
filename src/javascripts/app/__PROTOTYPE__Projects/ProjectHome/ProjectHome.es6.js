@@ -13,6 +13,7 @@ import getOrgId from 'redux/selectors/getOrgId.es6';
 
 import Members from './Members.es6';
 import Spaces from './Spaces.es6';
+import LinkSections from './LinkSections.es6';
 
 export default connect(
   state => {
@@ -106,6 +107,7 @@ export default connect(
   const [description, setDescription] = useState(project.description);
   const [memberIds, setProjectMemberIds] = useState(project.memberIds);
   const [spaceIds, setProjectSpaceIds] = useState(project.spaceIds);
+  const [linkSections, setLinkSections] = useState(project.linkSections || []);
   const [dirty, setDirty] = useState(false);
 
   return (
@@ -140,6 +142,12 @@ export default connect(
           value={description}
           onChange={({ target: { value } }) => setDirty(true) || setDescription(value)}
         />
+        <LinkSections
+          {...{
+            projectLinkSections: linkSections,
+            setLinkSections: sections => setDirty(true) || setLinkSections(sections)
+          }}
+        />
       </div>
       <div className="project-home__relations">
         <Members
@@ -160,7 +168,8 @@ export default connect(
           style={{ margin: '.4rem' }}
           disabled={!dirty}
           onClick={() =>
-            setDirty(false) || save({ ...project, name, description, memberIds, spaceIds })
+            setDirty(false) ||
+            save({ ...project, name, description, memberIds, spaceIds, linkSections })
           }>
           Save
         </Button>
