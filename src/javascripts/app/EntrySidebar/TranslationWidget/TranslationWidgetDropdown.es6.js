@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { orderBy } from 'lodash';
+import { keys, orderBy } from 'lodash';
 import { Select, Option } from '@contentful/forma-36-react-components';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import { track } from 'analytics/Analytics.es6';
@@ -8,12 +8,19 @@ import { getModule } from 'NgRegistry.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
+const TranslationWidgetDropdownValidationError = () => (
+  <div className="entity-sidebar__error">
+    <i className="cf-field-alert fa fa-exclamation-triangle" tooltip />
+    <p>Use the dropdown to see which locales have validation errors.</p>
+  </div>
+);
+
 export default class TranslationDropdownWidget extends Component {
   static propTypes = {
     emitter: PropTypes.shape({
       emit: PropTypes.func.isRequired
     }).isRequired,
-    localeErrors: PropTypes.object
+    localeErrors: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -25,7 +32,7 @@ export default class TranslationDropdownWidget extends Component {
   }
 
   numErrors = code => {
-    if (!this.props.localeErrors || !this.props.localeErrors[code]) {
+    if (!this.props.localeErrors[code]) {
       return 0;
     }
     return this.props.localeErrors[code].length;
@@ -39,6 +46,26 @@ export default class TranslationDropdownWidget extends Component {
       : baseName;
   };
 
+  hasError = () => {
+    const localeCodes = keys(this.props.localeErrors);
+    if (localeCodes.length === 0) {
+      return false;
+    } else if (localeCodes.length === 1 && localeCodes[0] === this.state.focusedLocaleCode) {
+      // there is at least one locale error, but we don't want to display it
+      // since it's for the locale we're already on
+      return false;
+    } else if (
+      localeCodes.length === 1 &&
+      localeCodes[0] === 'undefined' &&
+      TheLocaleStore.getDefaultLocale().internal_code === this.state.focusedLocaleCode
+    ) {
+      // we're in the asset editor and on the default locale
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   handleChange = event => {
     const focusedLocaleCode = event.target.value;
     this.setState({ focusedLocaleCode });
@@ -48,14 +75,22 @@ export default class TranslationDropdownWidget extends Component {
   };
 
   render() {
+    const hasError = this.hasError();
     return (
-      <Select id="optionSelect" onChange={this.handleChange} value={this.state.focusedLocaleCode}>
-        {orderBy(this.locales, ['default', 'code'], ['desc', 'asc']).map(locale => (
-          <Option key={locale.internal_code} value={locale.internal_code}>
-            {this.localeName(locale)}
-          </Option>
-        ))}
-      </Select>
+      <div>
+        {hasError && <TranslationWidgetDropdownValidationError />}
+        <Select
+          id="optionSelect"
+          onChange={this.handleChange}
+          hasError={hasError}
+          value={this.state.focusedLocaleCode}>
+          {orderBy(this.locales, ['default', 'code'], ['desc', 'asc']).map(locale => (
+            <Option key={locale.internal_code} value={locale.internal_code}>
+              {this.localeName(locale)}
+            </Option>
+          ))}
+        </Select>
+      </div>
     );
   }
 }
