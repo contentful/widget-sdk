@@ -1,4 +1,5 @@
 import makeExtensionSpaceMethodsHandler from './ExtensionSpaceMethodsHandler.es6';
+import { LOCATION_ENTRY_FIELD } from '../WidgetLocations.es6';
 
 // This is a UI Extension bridge to be used in the version
 // comparison view. It provides static initial data,
@@ -14,6 +15,7 @@ export default function createBridge(dependencies) {
 
   function getData() {
     return {
+      location: LOCATION_ENTRY_FIELD,
       spaceMembership: spaceContext.space.data.spaceMembership,
       current: {
         field: $scope.widget.field,
