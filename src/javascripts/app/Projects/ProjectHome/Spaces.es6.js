@@ -16,19 +16,6 @@ export default connect(state => ({
   return (
     <div className="project-home__spaces">
       <h3>Spaces</h3>
-      <div className="project-home__space-list">
-        {spaceIdsToSpaces(projectSpaceIds, allSpaces).map(({ name, sys: { id } }) => (
-          <div key={id} className="project-home__space">
-            <div key={id}>{name}</div>
-            <IconButton
-              label="remove"
-              iconProps={{ icon: 'Close' }}
-              buttonType="negative"
-              onClick={() => setProjectSpaceIds(without(projectSpaceIds, id))}
-            />
-          </div>
-        ))}
-      </div>
       <div className="project-home__add-space">
         <TextInput
           placeholder="filter spaces to select..."
@@ -58,6 +45,19 @@ export default connect(state => ({
             setSelectedSpace('') || setProjectSpaceIds(projectSpaceIds.concat(selectedSpace))
           }
         />
+      </div>
+      <div className="project-home__space-list">
+        {spaceIdsToSpaces(projectSpaceIds, allSpaces).map(({ name, sys: { id } }) => (
+          <div key={id} className="project-home__space">
+            <div key={id}>{name}</div>
+            <IconButton
+              label="remove"
+              iconProps={{ icon: 'Close' }}
+              buttonType="negative"
+              onClick={() => setProjectSpaceIds(without(projectSpaceIds, id))}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -16,23 +16,6 @@ export default connect(state => ({
   return (
     <div className="project-home__members">
       <h3>Members</h3>
-      <div className="project-home__member-list">
-        {userIdsToUsers(projectMemberIds, allUsers).map(
-          ({ firstName, lastName, email, sys: { id } }) => (
-            <div key={id} className="project-home__member">
-              <span>
-                {firstName} {lastName} ({email})
-              </span>
-              <IconButton
-                label="remove"
-                iconProps={{ icon: 'Close' }}
-                buttonType="negative"
-                onClick={() => setProjectMemberIds(without(projectMemberIds, id))}
-              />
-            </div>
-          )
-        )}
-      </div>
       <div className="project-home__add-member">
         <TextInput
           placeholder="filter users to select..."
@@ -70,6 +53,23 @@ export default connect(state => ({
             setProjectMemberIds(projectMemberIds.concat(selectedUser))
           }
         />
+      </div>
+      <div className="project-home__member-list">
+        {userIdsToUsers(projectMemberIds, allUsers).map(
+          ({ firstName, lastName, email, sys: { id } }) => (
+            <div key={id} className="project-home__member">
+              <span>
+                {firstName} {lastName} ({email})
+              </span>
+              <IconButton
+                label="remove"
+                iconProps={{ icon: 'Close' }}
+                buttonType="negative"
+                onClick={() => setProjectMemberIds(without(projectMemberIds, id))}
+              />
+            </div>
+          )
+        )}
       </div>
     </div>
   );

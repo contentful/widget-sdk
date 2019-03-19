@@ -7,7 +7,7 @@ module.exports = {
   apiVersion: 1,
   dependencies: ['fetch', 'lodash'],
   handle: async ({ req, kv, dependencies }) => {
-    const allowedMethods = ['get', 'post', 'put', 'delete'];
+    const allowedMethods = ['get', 'post', 'delete'];
     const method = req.method.toLowerCase();
 
     const [, orgPath, orgId, projectPath, projectId] = req.path.split('/');

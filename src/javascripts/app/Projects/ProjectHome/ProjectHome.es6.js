@@ -56,15 +56,39 @@ export default connect(
       } catch (e) {
         Notification.error(e);
       }
+    },
+    _delete: orgId => async projectId => {
+      const backend = createMicroBackendsClient({
+        backendName: 'projects',
+        baseUrl: `/organizations/${orgId}/projects/${projectId}`
+      });
+
+      try {
+        await backend.call(null, {
+          method: 'DELETE'
+        });
+        dispatch({
+          type: 'REMOVE_FROM_DATASET',
+          payload: {
+            dataset: PROJECTS,
+            id: projectId
+          },
+          meta: { pending: true }
+        });
+        Notification.success('deleted');
+      } catch (e) {
+        Notification.error(e);
+      }
     }
   }),
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
     ...dispatchProps,
     ...ownProps,
-    save: dispatchProps._save(stateProps.orgId)
+    save: dispatchProps._save(stateProps.orgId),
+    deleteProject: dispatchProps._delete(stateProps.orgId)
   })
-)(({ project, isLoading, onReady, save }) => {
+)(({ project, isLoading, onReady, save, deleteProject }) => {
   if (isLoading === false) {
     onReady();
   }
@@ -115,7 +139,10 @@ export default connect(
           }>
           Save
         </Button>
-        <Button style={{ marginLeft: '.4rem' }} buttonType="negative">
+        <Button
+          style={{ marginLeft: '.4rem' }}
+          buttonType="negative"
+          onClick={() => deleteProject(project.sys.id)}>
           Delete
         </Button>
       </div>
