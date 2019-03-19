@@ -1,3 +1,4 @@
+import ReactDOM from 'react-dom';
 import { noop } from 'lodash';
 import { registerDirective } from 'NgRegistry.es6';
 import $ from 'jquery';
@@ -39,14 +40,15 @@ export default function register() {
     ) => {
       return {
         scope: true,
+        require: '?^cfWidgetApi',
         restrict: 'E',
-        link: function(scope, element) {
+        link: function(scope, element, _attrs, widgetApi) {
           const {
             widget,
             locale,
             editorData,
             loadEvents,
-            widget: { problem, widgetNamespace, template, descriptor, parameters }
+            widget: { problem, widgetNamespace, template, buildTemplate, descriptor, parameters }
           } = scope;
 
           const {
@@ -79,6 +81,13 @@ export default function register() {
           } else if (widgetNamespace === NAMESPACE_BUILTIN && template) {
             handleWidgetLinkRenderEvents();
             renderTemplate(template);
+          } else if (widgetNamespace === NAMESPACE_BUILTIN && buildTemplate) {
+            if (!widgetApi) {
+              throw new Error('widgetApi is unavailable in this context.');
+            }
+            handleWidgetLinkRenderEvents();
+            const jsx = buildTemplate({ widgetApi, loadEvents });
+            renderJsxTemplate(jsx);
           } else {
             throw new Error('Builtin widget template or a valid UI Extension is required.');
           }
@@ -108,6 +117,13 @@ export default function register() {
             const $widget = $(template);
             element.append($widget);
             $compile($widget)(scope);
+            setupFocus();
+          }
+
+          function renderJsxTemplate(jsx) {
+            scope.$evalAsync(() => {
+              ReactDOM.render(jsx, element[0]);
+            });
             setupFocus();
           }
 

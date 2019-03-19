@@ -1,4 +1,8 @@
+/* eslint-disable react/prop-types */
+
 import { range } from 'lodash';
+import React from 'react';
+import { default as RichTextEditor } from 'app/widgets/rich_text/index.es6';
 
 const HELP_TEXT_PARAMETER = {
   id: 'helpText',
@@ -158,7 +162,15 @@ export function create() {
     fieldTypes: ['RichText'],
     name: 'RichText',
     icon: 'json',
-    template: '<cf-rich-text-editor />'
+    buildTemplate: ({ widgetApi, loadEvents }) => {
+      // TODO: Just provide `widgetApi` via `WidgetApiContext`
+      //  directly in `cfWidgetRendererDirective` and merge
+      //  app/widgets/WidgetApi/buildWidgetApi.es6.js
+      //  with `cfWidgetApiDirective`.
+      const { entry, field, permissions } = widgetApi;
+      const props = { entry, field, permissions, loadEvents };
+      return <RichTextEditor {...props} />;
+    }
   });
 
   registerWidget('listInput', {
