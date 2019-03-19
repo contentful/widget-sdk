@@ -107,6 +107,7 @@ class ProjectCreationModal extends React.Component {
                 value={name}
                 onChange={this.updateName}
                 disabled={isPending}
+                textInputProps={{ autoFocus: true }}
                 required
                 validationMessage={validationMessage}
               />

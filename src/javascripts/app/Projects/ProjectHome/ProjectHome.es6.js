@@ -89,9 +89,7 @@ export default connect(
     deleteProject: dispatchProps._delete(stateProps.orgId)
   })
 )(({ project, isLoading, onReady, save, deleteProject }) => {
-  if (isLoading === false) {
-    onReady();
-  }
+  onReady();
   if (isLoading) {
     return <FetcherLoading message="Loading project..." />;
   }
