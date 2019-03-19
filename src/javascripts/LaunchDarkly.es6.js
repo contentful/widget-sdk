@@ -21,17 +21,21 @@ import {
   getSpacesByOrganization
 } from 'services/TokenStore.es6';
 
-let flagsCache = {};
+let client;
+let cache = {};
 
 /*
   During testing, allows for clearing the flags cache.
 
   This is necessary since we cache the flags from LD, but do not create a single instance
   of this service and then expose it somewhere in the application.
+
+  TODO: Turn this into a class/singleton
  */
-export function _clearFlagsCache() {
+export function clearCache() {
   if (process.env.NODE_ENV === 'test') {
-    flagsCache = {};
+    client = null;
+    cache = {};
   } else {
     throw new Error('Clearing LaunchDarkly client cache is only available in testing.');
   }
@@ -125,7 +129,7 @@ async function ldUser(user, org, space) {
  *
  * @description
  * This function returns a promise that resolves to the variation for the
- * provided test or feature flag name for the given orgId or spaceId. If the flag name
+ * provided feature flag for the given orgId or spaceId. If the flag name
  * is overridden using `ui_enable_flags`, then a promise that resolves to the
  * overridden value is returned.
  *
@@ -140,8 +144,8 @@ async function ldUser(user, org, space) {
  *      where context is a combination of current user, and given org and space IDs.
  *   2. The promise will resolve with the variation for the provided flag name
  *      if it receives a variation from it from LD.
- *   3. The promise will resolve with `undefined` if LD does not find a flag
- *      with the provided flag name. An error will be logged to bugsnag.
+ *   3. The promise will resolve with `undefined` if an error occurs, such as the flag
+ *      not existing in LaunchDarkly.
  *
  *      NOTE: this can also happen in rare cases even if a flag does exist (e.g. LD
  *      service is down) and you should keep it in mind if your default value is not
@@ -157,10 +161,20 @@ export async function getVariation(flagName, { orgId, spaceId } = {}) {
    * variation.
    */
   if (isFlagOverridden(flagName)) {
-    return Promise.resolve(getFlagOverride(flagName));
+    return getFlagOverride(flagName);
   }
 
-  // The flagsCache key will look like this:
+  const user = getUser();
+
+  // If the client doesn't exist, initialize with a basic LD user
+  // object (no org or space data)
+  if (!client) {
+    const clientUser = await ldUser(user);
+
+    client = LDClient.initialize(config.launchDarkly.envId, clientUser);
+  }
+
+  // The cache key will look like this:
   //
   // Only org ID:
   // `org_abcd1234:`
@@ -175,56 +189,73 @@ export async function getVariation(flagName, { orgId, spaceId } = {}) {
   // `:`
   const key = `${orgId ? orgId : ''}:${spaceId ? spaceId : ''}`;
 
-  const flags = _.get(flagsCache, key, null);
+  let flagsPromise = _.get(cache, key, null);
 
-  if (!flags) {
-    const user = getUser();
+  if (!flagsPromise) {
+    flagsPromise = createFlagsPromise(flagName, user, orgId, spaceId);
 
-    let org;
-    let space;
+    // Set the initial flags promise
+    _.set(cache, key, flagsPromise);
 
-    // Attempt to get the org and space, if given an ID.
-    //
-    // If the ID results in an unknown org or space, log the
-    // error to Bugsnag and return undefined.
-    try {
-      org = orgId ? await getOrganization(orgId) : null;
-    } catch (e) {
-      logger.logError(`Invalid org ID ${orgId} given to LD`);
+    // Await for the promise, in case an error occurs when getting the variation
+    // or the flag name doesn't exist
+    const initialPromiseValue = await flagsPromise;
 
-      return undefined;
-    }
-
-    try {
-      space = spaceId ? await getSpace(spaceId) : null;
-    } catch (e) {
-      logger.logError(`Invalid space ID ${spaceId} given to LD`);
+    // If the initial promise value is undefined, unset the promise in the
+    // cache
+    if (initialPromiseValue === undefined) {
+      _.set(cache, key, undefined);
 
       return undefined;
     }
-
-    // Get the user data that will be used for LD client variation data
-    const clientUser = await ldUser(user, org, space);
-    const client = LDClient.initialize(config.launchDarkly.envId, clientUser);
-    const initialized = await isInitialized(client);
-
-    // If the client is not initialized, log error and return undefined
-    if (!initialized) {
-      logger.logError(`LD not initialized when calling for ${flagName}`);
-      return undefined;
-    }
-
-    // Get and save the flags to the cache
-    const flags = client.allFlags();
-
-    _.set(flagsCache, key, flags);
   }
 
-  const variation = _.get(flagsCache, [key, flagName], undefined);
+  return flagsPromise;
+}
+
+/*
+  Creates a promise that returns either the value of the flag in LaunchDarkly
+  or undefined
+ */
+async function createFlagsPromise(flagName, user, orgId, spaceId) {
+  // Get the user data that will be used for LD client variation data
+
+  await client.waitForInitialization();
+
+  let org;
+  let space;
+
+  // Attempt to get the org and space, if given an ID.
+  //
+  // If the ID results in an unknown org or space, log the
+  // error to Bugsnag and return undefined.
+  try {
+    org = orgId ? await getOrganization(orgId) : null;
+  } catch (e) {
+    logger.logError(`Invalid org ID ${orgId} given to LD`);
+
+    return undefined;
+  }
+
+  try {
+    space = spaceId ? await getSpace(spaceId) : null;
+  } catch (e) {
+    logger.logError(`Invalid space ID ${spaceId} given to LD`);
+
+    return undefined;
+  }
+
+  const clientUser = await ldUser(user, org, space);
+  await client.identify(clientUser);
+
+  // Get and save the flags to the cache
+  const flags = client.allFlags();
+  const variation = _.get(flags, flagName, undefined);
 
   // LD could not find a flag with given name, log error and return undefined
   if (variation === undefined) {
     logger.logError(`Invalid flag ${flagName}`);
+
     return undefined;
   }
 
@@ -237,35 +268,4 @@ export async function getVariation(flagName, { orgId, spaceId } = {}) {
 
     return undefined;
   }
-}
-
-/*
-  Waits for the LD client to initialize.
-
-  Waits 250ms twice. If the client does not
-  initialize within the whole 500ms, returns `false`.
-
-  If the client initializes, returns `true`.
- */
-async function isInitialized(client, n = 0) {
-  let bound;
-
-  const ready = await Promise.race([
-    new Promise(resolve => {
-      bound = resolve.bind(this, true);
-
-      client.on('ready', bound);
-    }),
-    new Promise(resolve => setTimeout(resolve.bind(this, false), 250))
-  ]);
-
-  client.off('ready', bound);
-
-  if (!ready && n < 1) {
-    return isInitialized(client, n + 1);
-  } else if (!ready) {
-    return false;
-  }
-
-  return true;
 }
