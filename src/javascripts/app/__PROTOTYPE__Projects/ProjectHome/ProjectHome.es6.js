@@ -45,13 +45,17 @@ export default connect(
       });
 
       try {
-        await backend.call(null, {
+        const res = await backend.call(null, {
           method: 'POST',
           body: JSON.stringify(project),
           headers: {
             'Content-Type': 'application/json'
           }
         });
+        if (res.status > 299) {
+          Notification.error('Could not save project');
+          return;
+        }
         Notification.success('saved');
       } catch (e) {
         Notification.error(e);
@@ -64,7 +68,7 @@ export default connect(
       });
 
       try {
-        await backend.call(null, {
+        const res = await backend.call(null, {
           method: 'DELETE'
         });
         dispatch({
@@ -75,6 +79,10 @@ export default connect(
           },
           meta: { pending: true }
         });
+        if (res.status > 299) {
+          Notification.error('Could not delete project');
+          return;
+        }
         Notification.success('deleted');
       } catch (e) {
         Notification.error(e);

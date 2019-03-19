@@ -8,7 +8,7 @@ import { user$ } from 'services/TokenStore.es6';
 import * as K from 'utils/kefir.es6';
 import { go } from 'states/Navigator.es6';
 import * as random from 'utils/Random.es6';
-import { Modal, Button, TextField } from '@contentful/forma-36-react-components';
+import { Modal, Button, TextField, Notification } from '@contentful/forma-36-react-components';
 import store from 'redux/store.es6';
 
 import { __PROTOTYPE__PROJECTS } from 'redux/datasets.es6';
@@ -63,6 +63,11 @@ class ProjectCreationModal extends React.Component {
         'Content-Type': 'application/json'
       }
     });
+
+    if (resp.status > 299) {
+      Notification.error('Could not create project');
+      return;
+    }
 
     const project = await resp.json();
 
