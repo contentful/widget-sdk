@@ -11,8 +11,7 @@ export default function register() {
         entry: widgetApi.entry,
         field: widgetApi.field,
         permissions: widgetApi.permissions,
-        loadEvents: scope.loadEvents,
-        trackEntryEditorAction: (...args) => scope.loadEvents && scope.loadEvents.emit(...args)
+        loadEvents: scope.loadEvents
       };
     }
   }));
