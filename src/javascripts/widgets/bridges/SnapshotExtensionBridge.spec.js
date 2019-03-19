@@ -1,4 +1,5 @@
 import createBridge from './SnapshotExtensionBridge.es6';
+import { LOCATION_ENTRY_FIELD } from '../WidgetLocations.es6';
 
 jest.mock(
   'Authentication.es6',
@@ -42,6 +43,7 @@ describe('SnapshotExtensionBridge', () => {
       const [bridge] = makeBridge();
 
       expect(bridge.getData()).toEqual({
+        location: LOCATION_ENTRY_FIELD,
         contentTypeData: 'CONTENT TYPE',
         current: { field: 'FIELD', locale: { code: 'pl' } },
         entryData: { fields: {}, sys: {} },
