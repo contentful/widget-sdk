@@ -5,13 +5,13 @@ import { TEAMS } from 'redux/datasets.es6';
 import getDeletedItems from 'redux/selectors/getDeletedItems.es6';
 
 export default (state = {}, { type, meta, payload, error }, globalState) => {
-  const orgId = get(payload, 'orgId', getOrgId(globalState));
+  const orgId = get(payload, 'orgId') || get(meta, 'orgId') || getOrgId(globalState);
   switch (type) {
     case 'DATASET_LOADING': {
       if (!get(meta, 'pending')) {
         // create maps from datasets by id and merge that map into the state
         return update(
-          get(meta, 'orgId', orgId),
+          orgId,
           (datasets = {}) =>
             mergeWith(datasets, payload.datasets, (_, newDataset) => keyBy(newDataset, 'sys.id')),
           state
