@@ -36,22 +36,54 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is off should ma
         "emit": [MockFunction],
       }
     }
-    locales={
-      Array [
-        Object {
-          "code": "en-US",
+    isSingleLocaleModeOn={false}
+    localeData={
+      Object {
+        "activeLocales": Array [
+          Object {
+            "default": true,
+            "internal_code": "en-US",
+          },
+          Object {
+            "default": false,
+            "internal_code": "de-DE",
+          },
+          Object {
+            "default": false,
+            "internal_code": "es-AR",
+          },
+          Object {
+            "default": false,
+            "internal_code": "ru",
+          },
+        ],
+        "errors": Object {},
+        "focusedLocale": Object {
           "default": true,
-          "name": "English (United States)",
+          "internal_code": "en-US",
         },
-        Object {
-          "code": "ru",
-          "default": false,
-          "name": "Russian",
-        },
-      ]
+        "isLocaleActive": [Function],
+        "isSingleLocaleModeOn": false,
+        "privateLocales": Array [
+          Object {
+            "default": true,
+            "internal_code": "en-US",
+          },
+          Object {
+            "default": false,
+            "internal_code": "de-DE",
+          },
+          Object {
+            "default": false,
+            "internal_code": "es-AR",
+          },
+          Object {
+            "default": false,
+            "internal_code": "ru",
+          },
+        ],
+      }
     }
-    onChange={[MockFunction]}
-    onLocaleDeactivation={[MockFunction]}
   />
 </EntrySidebarWidget>
 `;
@@ -68,7 +100,7 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is on should mat
       onFocus={[Function]}
       required={false}
       testId="cf-ui-select"
-      value="single"
+      value="multiple"
       width="auto"
     >
       <Option
@@ -86,28 +118,60 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is on should mat
   testId="sidebar-translation-widget"
   title="Translation"
 >
-  <TranslationDropdownWidget
+  <TranslationWidgetPills
     emitter={
       Object {
         "emit": [MockFunction],
       }
     }
-    locales={
-      Array [
-        Object {
-          "code": "en-US",
+    isSingleLocaleModeOn={true}
+    localeData={
+      Object {
+        "activeLocales": Array [
+          Object {
+            "default": true,
+            "internal_code": "en-US",
+          },
+          Object {
+            "default": false,
+            "internal_code": "de-DE",
+          },
+          Object {
+            "default": false,
+            "internal_code": "es-AR",
+          },
+          Object {
+            "default": false,
+            "internal_code": "ru",
+          },
+        ],
+        "errors": Object {},
+        "focusedLocale": Object {
           "default": true,
-          "name": "English (United States)",
+          "internal_code": "en-US",
         },
-        Object {
-          "code": "ru",
-          "default": false,
-          "name": "Russian",
-        },
-      ]
+        "isLocaleActive": [Function],
+        "isSingleLocaleModeOn": false,
+        "privateLocales": Array [
+          Object {
+            "default": true,
+            "internal_code": "en-US",
+          },
+          Object {
+            "default": false,
+            "internal_code": "de-DE",
+          },
+          Object {
+            "default": false,
+            "internal_code": "es-AR",
+          },
+          Object {
+            "default": false,
+            "internal_code": "ru",
+          },
+        ],
+      }
     }
-    onChange={[MockFunction]}
-    onLocaleDeactivation={[MockFunction]}
   />
 </EntrySidebarWidget>
 `;

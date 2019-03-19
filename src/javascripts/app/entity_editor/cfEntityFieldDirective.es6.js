@@ -70,15 +70,15 @@ export default function register() {
             };
 
             const setFieldLocales = () => {
-              $scope.fieldLocales = $scope.isSingleLocaleModeOn
+              $scope.fieldLocales = $scope.localeData.isSingleLocaleModeOn
                 ? [TheLocaleStore.getFocusedLocale()]
                 : $scope.activeLocales;
               updateErrorStatus();
             };
 
             setFieldLocales();
-            $scope.$watch('focusedLocale', setFieldLocales);
-            $scope.$watch('isSingleLocaleModeOn', setFieldLocales);
+            $scope.$watch('localeData.focusedLocale', setFieldLocales);
+            $scope.$watch('localeData.isSingleLocaleModeOn', setFieldLocales);
             $scope.$watchCollection(getActiveLocaleCodes, () => {
               updateActiveLocales();
               setFieldLocales();
@@ -108,15 +108,18 @@ export default function register() {
 
             function updateErrorStatus() {
               const { validator } = $scope.editorContext;
-              const hasSchemaErrors = $scope.isSingleLocaleModeOn
-                ? validator.hasFieldLocaleError(field.id, $scope.focusedLocale.internal_code)
+              const hasSchemaErrors = $scope.localeData.isSingleLocaleModeOn
+                ? validator.hasFieldLocaleError(
+                    field.id,
+                    $scope.localeData.focusedLocale.internal_code
+                  )
                 : validator.hasFieldError(field.id);
               const hasControlErrors = _.some(invalidControls);
               $scope.data.fieldHasErrors = hasSchemaErrors || hasControlErrors;
             }
 
             function getActiveLocaleCodes() {
-              return _.map(TheLocaleStore.getActiveLocales(), 'internal_code');
+              return _.map($scope.localeData.activeLocales, 'internal_code');
             }
 
             function updateActiveLocales() {

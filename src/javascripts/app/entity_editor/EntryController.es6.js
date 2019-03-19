@@ -1,6 +1,6 @@
 import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
-import { constant, groupBy, get, isEmpty, keys } from 'lodash';
+import { constant, keys } from 'lodash';
 
 import { user$ } from 'services/TokenStore.es6';
 
@@ -10,12 +10,11 @@ import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking, { trackEntryView } from './Tracking.es6';
 import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker.es6';
+import setLocaleData from 'app/entity_editor/setLocaleData.es6';
 
 import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 import * as logger from 'services/logger.es6';
-import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
-import DocumentStatusCode from 'data/document/statusCode.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
@@ -141,94 +140,15 @@ export default async function create($scope, editorData, preferences, trackLoadE
    */
   $scope.fields = DataFields.create(entityInfo.contentType.fields, $scope.otDoc);
 
+  $scope.localeData = {};
+
   $scope.entrySidebarProps = createEntrySidebarProps({
     $scope
   });
 
-  $scope.focusedLocale = TheLocaleStore.getFocusedLocale();
-  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, newLocale => {
-    TheLocaleStore.setFocusedLocale(newLocale);
-    $scope.focusedLocale = newLocale;
-  });
-
-  $scope.isSingleLocaleModeOn = TheLocaleStore.isSingleLocaleModeOn();
-  setVisibleWidgets();
-
-  $scope.$watch('focusedLocale', () => {
-    if (onlyFocusedLocaleHasErrors()) {
-      $scope.statusNotificationProps = {
-        status: 'ok',
-        entityLabel: 'entry'
-      };
-    }
-    setVisibleWidgets();
-    $scope.$applyAsync();
-  });
-
-  $scope.$watch(TheLocaleStore.getLocales, () => {
-    $scope.locales = TheLocaleStore.getLocales();
-  });
-
-  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, isOn => {
-    TheLocaleStore.setSingleLocaleMode(isOn);
-    if (!isOn) {
-      $scope.statusNotificationProps = {
-        status: 'ok',
-        entityLabel: 'asset'
-      };
-    }
-    $scope.isSingleLocaleModeOn = isOn;
-    setVisibleWidgets();
-    $scope.$applyAsync();
-  });
-
-  $scope.$watch(TheLocaleStore.getActiveLocales, () => {
-    $scope.activeLocales = TheLocaleStore.getActiveLocales();
-  });
-
-  function setVisibleWidgets() {
-    if (
-      $scope.isSingleLocaleModeOn &&
-      $scope.focusedLocale.internal_code !== TheLocaleStore.getDefaultLocale().internal_code
-    ) {
-      $scope.visibleWidgets = $scope.widgets.filter(w => w.field.localized);
-    } else {
-      $scope.visibleWidgets = $scope.widgets;
-    }
-  }
-
-  function onlyFocusedLocaleHasErrors() {
-    const localeCodes = keys($scope.entrySidebarProps.localeErrors);
-    return (
-      localeCodes.length === 1 &&
-      ['undefined', TheLocaleStore.getFocusedLocale().internal_code].includes(localeCodes[0])
-    );
-  }
-
-  K.onValueScope($scope, editorContext.validator.errors$, errors => {
-    if (!$scope.isSingleLocaleModeOn) {
-      // We only want to display the top-nav notification about locale errors
-      // if we are in the single focused locale mode.
-      return;
-    }
-    $scope.entrySidebarProps.localeErrors = groupBy(errors, error => error.path[2]);
-
-    if (errors.length && !onlyFocusedLocaleHasErrors()) {
-      $scope.statusNotificationProps = {
-        status: DocumentStatusCode.LOCALE_VALIDATION_ERRORS,
-        entityLabel: 'entry'
-      };
-    }
-  });
-
-  K.onValueScope($scope, doc.status$, status => {
-    if (
-      status === 'ok' &&
-      !isEmpty(get($scope, 'entrySidebarProps.localeErrors')) &&
-      !onlyFocusedLocaleHasErrors()
-    ) {
-      return;
-    }
-    $scope.statusNotificationProps = { status, entityLabel: 'entry' };
+  setLocaleData($scope, 'entry', function onlyFocusedLocaleHasErrors() {
+    const { errors, focusedLocale } = $scope.localeData;
+    const localeCodes = keys(errors);
+    return localeCodes.length === 1 && localeCodes[0] === focusedLocale.internal_code;
   });
 }

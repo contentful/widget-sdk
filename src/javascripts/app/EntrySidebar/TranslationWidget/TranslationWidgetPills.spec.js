@@ -1,48 +1,96 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import TranslationWidgetPills from './TranslationWidgetPills.es6';
+import ModalLauncherMocked from 'app/common/ModalLauncher.es6';
+import { TextLink, Pill } from '@contentful/forma-36-react-components';
+import { track } from 'analytics/Analytics.es6';
+
+jest.mock('app/common/ModalLauncher.es6', () => ({
+  open: jest.fn()
+}));
 
 describe('EntrySidebar/TranslationWidgetPills', () => {
-  const selectors = {
-    changeLink: '[data-test-id="change-translation"]',
-    deactivateBtn: '[data-test-id="deactivate-translation"]'
-  };
-
   const locales = [
-    { code: 'en-US', default: true, name: 'English (United States)' },
-    { code: 'ru', default: false, name: 'Russian' }
+    { internal_code: 'en-US', default: true },
+    { internal_code: 'de-DE', default: false },
+    { internal_code: 'es-AR', default: false },
+    { internal_code: 'ru', default: false }
   ];
 
-  const stubs = {
-    onChange: jest.fn(),
-    onLocaleDeactivation: jest.fn()
-  };
-
   const props = {
-    locales,
-    ...stubs
+    emitter: {
+      emit: jest.fn()
+    },
+    localeData: {
+      activeLocales: locales,
+      privateLocales: locales,
+      isLocaleActive: ({ internal_code }) => ['es-AR', 'ru'].includes(internal_code)
+    }
   };
 
-  const render = () => ({
-    wrapper: Enzyme.mount(<TranslationWidgetPills {...props} />),
-    stubs,
-    locales
-  });
+  const render = () => Enzyme.shallow(<TranslationWidgetPills {...props} />);
 
   beforeEach(() => {
-    Object.values(stubs).map(mock => mock.mockClear());
+    props.emitter.emit.mockClear();
   });
 
-  it('should call onChange after click on changeLink', () => {
-    const { wrapper, stubs } = render();
-    wrapper.find(selectors.changeLink).simulate('click');
-    expect(stubs.onChange).toHaveBeenCalled();
+  it('should match snapshot', () => {
+    expect(render()).toMatchSnapshot();
   });
 
-  it('should call onLocaleDeactivation after click on close on a language pill', () => {
-    const { wrapper, stubs, locales } = render();
-    expect(wrapper.find(selectors.deactivateBtn)).toHaveLength(1);
-    wrapper.find(selectors.deactivateBtn).simulate('click');
-    expect(stubs.onLocaleDeactivation).toHaveBeenCalledWith(locales[1]);
+  describe('on locale deactivation', () => {
+    beforeEach(() => {
+      render()
+        .find('.entity-sidebar__translation-pill')
+        .at(1)
+        .find(Pill)
+        .prop('onClose')();
+    });
+
+    it('emits the DEACTIVATED_LOCALE event with the locale', () => {
+      expect(props.emitter.emit).toHaveBeenCalledWith(
+        SidebarEventTypes.DEACTIVATED_LOCALE,
+        props.localeData.activeLocales[1]
+      );
+    });
+
+    it('tracks the update event', () => {
+      expect(track).toHaveBeenCalledWith('translation_sidebar:deselect_active_locale', {
+        currentMode: 'multiple'
+      });
+    });
+  });
+
+  describe('on change', () => {
+    beforeEach(async () => {
+      await render()
+        .find(TextLink)
+        .prop('onClick')();
+      const [[callback]] = ModalLauncherMocked.open.mock.calls;
+      const localeSelectDialog = callback({});
+      const {
+        props: { onUpdate }
+      } = localeSelectDialog;
+      onUpdate([
+        { internal_code: 'en-US', active: false },
+        { internal_code: 'es-AR', active: true },
+        { internal_code: 'ru', active: true },
+        { internal_code: 'de-DE', active: false }
+      ]);
+    });
+
+    it('emits the SET_ACTIVE_LOCALES event with the new active locales', () => {
+      expect(props.emitter.emit).toHaveBeenCalledWith(SidebarEventTypes.SET_ACTIVE_LOCALES, [
+        { internal_code: 'es-AR', active: true },
+        { internal_code: 'ru', active: true }
+      ]);
+    });
+
+    it('tracks the update event', () => {
+      expect(track).toHaveBeenCalledWith('translation_sidebar:update_active_locales', {
+        currentMode: 'multiple'
+      });
+    });
   });
 });

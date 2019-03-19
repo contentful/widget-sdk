@@ -1,113 +1,122 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EntrySidebar/TranslationWidgetDropdown when a locale has 1 error should match snapshot 1`] = `
-<Select
-  hasError={false}
-  id="optionSelect"
-  isDisabled={false}
-  onBlur={[Function]}
-  onChange={[Function]}
-  onFocus={[Function]}
-  required={false}
-  testId="cf-ui-select"
-  value="en-US"
-  width="full"
->
-  <Option
-    key="en-US"
+<div>
+  <Select
+    hasError={false}
+    id="optionSelect"
+    isDisabled={false}
+    onBlur={[Function]}
+    onChange={[Function]}
+    onFocus={[Function]}
+    required={false}
+    testId="cf-ui-select"
     value="en-US"
+    width="full"
   >
-    English (United States) (undefined) - 1 error
-  </Option>
-  <Option
-    key="ru"
-    value="ru"
-  >
-    Russian (undefined)
-  </Option>
-</Select>
+    <Option
+      key="en-US"
+      value="en-US"
+    >
+      English (United States) (undefined) - 1 error
+    </Option>
+    <Option
+      key="ru"
+      value="ru"
+    >
+      Russian (undefined)
+    </Option>
+  </Select>
+</div>
 `;
 
 exports[`EntrySidebar/TranslationWidgetDropdown when a locale has more than one 1 error should match snapshot 1`] = `
-<Select
-  hasError={false}
-  id="optionSelect"
-  isDisabled={false}
-  onBlur={[Function]}
-  onChange={[Function]}
-  onFocus={[Function]}
-  required={false}
-  testId="cf-ui-select"
-  value="en-US"
-  width="full"
->
-  <Option
-    key="en-US"
+<div>
+  <Select
+    hasError={false}
+    id="optionSelect"
+    isDisabled={false}
+    onBlur={[Function]}
+    onChange={[Function]}
+    onFocus={[Function]}
+    required={false}
+    testId="cf-ui-select"
     value="en-US"
+    width="full"
   >
-    English (United States) (undefined) - 2 errors
-  </Option>
-  <Option
-    key="ru"
-    value="ru"
-  >
-    Russian (undefined)
-  </Option>
-</Select>
+    <Option
+      key="en-US"
+      value="en-US"
+    >
+      English (United States) (undefined) - 2 errors
+    </Option>
+    <Option
+      key="ru"
+      value="ru"
+    >
+      Russian (undefined)
+    </Option>
+  </Select>
+</div>
 `;
 
 exports[`EntrySidebar/TranslationWidgetDropdown when both locales have errors should match snapshot 1`] = `
-<Select
-  hasError={false}
-  id="optionSelect"
-  isDisabled={false}
-  onBlur={[Function]}
-  onChange={[Function]}
-  onFocus={[Function]}
-  required={false}
-  testId="cf-ui-select"
-  value="en-US"
-  width="full"
->
-  <Option
-    key="en-US"
+<div>
+  <TranslationWidgetDropdownValidationError />
+  <Select
+    hasError={true}
+    id="optionSelect"
+    isDisabled={false}
+    onBlur={[Function]}
+    onChange={[Function]}
+    onFocus={[Function]}
+    required={false}
+    testId="cf-ui-select"
     value="en-US"
+    width="full"
   >
-    English (United States) (undefined) - 2 errors
-  </Option>
-  <Option
-    key="ru"
-    value="ru"
-  >
-    Russian (undefined) - 1 error
-  </Option>
-</Select>
+    <Option
+      key="en-US"
+      value="en-US"
+    >
+      English (United States) (undefined) - 2 errors
+    </Option>
+    <Option
+      key="ru"
+      value="ru"
+    >
+      Russian (undefined) - 1 error
+    </Option>
+  </Select>
+</div>
 `;
 
 exports[`EntrySidebar/TranslationWidgetDropdown when there are no locale errors should match snapshot 1`] = `
-<Select
-  hasError={false}
-  id="optionSelect"
-  isDisabled={false}
-  onBlur={[Function]}
-  onChange={[Function]}
-  onFocus={[Function]}
-  required={false}
-  testId="cf-ui-select"
-  value="en-US"
-  width="full"
->
-  <Option
-    key="en-US"
+<div>
+  <Select
+    hasError={false}
+    id="optionSelect"
+    isDisabled={false}
+    onBlur={[Function]}
+    onChange={[Function]}
+    onFocus={[Function]}
+    required={false}
+    testId="cf-ui-select"
     value="en-US"
+    width="full"
   >
-    English (United States) (undefined)
-  </Option>
-  <Option
-    key="ru"
-    value="ru"
-  >
-    Russian (undefined)
-  </Option>
-</Select>
+    <Option
+      key="en-US"
+      value="en-US"
+    >
+      English (United States) (undefined)
+    </Option>
+    <Option
+      key="ru"
+      value="ru"
+    >
+      Russian (undefined)
+    </Option>
+  </Select>
+</div>
 `;

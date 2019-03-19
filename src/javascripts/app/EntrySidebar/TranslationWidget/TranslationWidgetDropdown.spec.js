@@ -2,47 +2,37 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import TranslationWidgetDropdown from './TranslationWidgetDropdown.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
-import { track } from 'analytics/Analytics.es6';
 import { Select } from '@contentful/forma-36-react-components';
-import TheLocaleStoreMocked from 'ng/TheLocaleStore';
-
-jest.mock(
-  'ng/TheLocaleStore',
-  () => ({
-    getLocales: jest
-      .fn()
-      .mockImplementation(() => [
-        { internal_code: 'en-US', default: true, name: 'English (United States)' },
-        { internal_code: 'ru', default: false, name: 'Russian' }
-      ]),
-    getFocusedLocale: jest.fn().mockImplementation(() => ({
-      internal_code: 'en-US',
-      default: true,
-      name: 'English (United States)'
-    }))
-  }),
-  { virtual: true }
-);
+import { track } from 'analytics/Analytics.es6';
 
 describe('EntrySidebar/TranslationWidgetDropdown', () => {
   const props = {
     emitter: {
       emit: jest.fn()
     },
-    localeErrors: {}
+    localeData: {
+      privateLocales: [
+        { internal_code: 'en-US', default: true, name: 'English (United States)' },
+        { internal_code: 'ru', default: false, name: 'Russian' }
+      ],
+      focusedLocale: {
+        internal_code: 'en-US',
+        default: true,
+        name: 'English (United States)'
+      },
+      errors: {}
+    }
   };
 
   const render = () => Enzyme.shallow(<TranslationWidgetDropdown {...props} />);
 
   beforeEach(() => {
-    TheLocaleStoreMocked.getLocales.mockClear();
-    TheLocaleStoreMocked.getFocusedLocale.mockClear();
     track.mockClear();
   });
 
   describe('when there are no locale errors', () => {
     beforeEach(() => {
-      props.localeErrors = {};
+      props.localeData.errors = {};
     });
 
     it('should match snapshot', () => {
@@ -52,7 +42,7 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
 
   describe('when a locale has 1 error', () => {
     beforeEach(() => {
-      props.localeErrors = {
+      props.localeData.errors = {
         'en-US': [{}]
       };
     });
@@ -64,7 +54,7 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
 
   describe('when a locale has more than one 1 error', () => {
     beforeEach(() => {
-      props.localeErrors = {
+      props.localeData.errors = {
         'en-US': [{}, {}]
       };
     });
@@ -76,7 +66,7 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
 
   describe('when both locales have errors', () => {
     beforeEach(() => {
-      props.localeErrors = {
+      props.localeData.errors = {
         'en-US': [{}, {}],
         ru: [{}]
       };

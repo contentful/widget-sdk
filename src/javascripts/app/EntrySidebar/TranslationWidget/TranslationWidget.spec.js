@@ -1,64 +1,102 @@
 import React from 'react';
-import TranslationWidget from './TranslationWidget.es6';
 import Enzyme from 'enzyme';
-import TheLocaleStoreMocked from 'ng/TheLocaleStore';
-
-jest.mock(
-  'ng/TheLocaleStore',
-  () => ({
-    isSingleLocaleModeOn: jest.fn().mockReturnValue(false)
-  }),
-  { virtual: true }
-);
+import TranslationWidget from './TranslationWidget.es6';
+import EntrySidebarWidget from '../EntrySidebarWidget.es6';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
+import { track } from 'analytics/Analytics.es6';
 
 describe('EntrySidebar/TranslationWidget', () => {
-  const render = (props = {}, renderFn = Enzyme.mount) => {
-    const stubs = {
-      onChange: jest.fn(),
-      onLocaleDeactivation: jest.fn(),
-      emitter: {
-        emit: jest.fn()
-      }
-    };
-    const locales = [
-      { code: 'en-US', default: true, name: 'English (United States)' },
-      { code: 'ru', default: false, name: 'Russian' }
-    ];
-    const wrapper = renderFn(
-      <TranslationWidget
-        locales={locales}
-        onChange={stubs.onChange}
-        emitter={stubs.emitter}
-        onLocaleDeactivation={stubs.onLocaleDeactivation}
-        {...props}
-      />
-    );
-    return { wrapper, stubs, locales };
-  };
+  const locales = [
+    { internal_code: 'en-US', default: true },
+    { internal_code: 'de-DE', default: false },
+    { internal_code: 'es-AR', default: false },
+    { internal_code: 'ru', default: false }
+  ];
 
-  beforeEach(() => {
-    TheLocaleStoreMocked.isSingleLocaleModeOn.mockReset();
-  });
+  const props = {
+    localeData: {
+      activeLocales: locales,
+      privateLocales: locales,
+      errors: {},
+      focusedLocale: locales[0],
+      isLocaleActive: () => {},
+      isSingleLocaleModeOn: false
+    },
+    emitter: {
+      emit: jest.fn()
+    }
+  };
+  const render = () => Enzyme.shallow(<TranslationWidget {...props} />);
 
   describe('when single locale mode is on', () => {
     beforeEach(() => {
-      TheLocaleStoreMocked.isSingleLocaleModeOn.mockReturnValue(true);
+      props.isSingleLocaleModeOn = true;
     });
 
     it('should match snapshot', () => {
-      const { wrapper } = render({}, Enzyme.shallow);
-      expect(wrapper).toMatchSnapshot();
+      expect(render()).toMatchSnapshot();
     });
   });
 
   describe('when single locale mode is off', () => {
     beforeEach(() => {
-      TheLocaleStoreMocked.isSingleLocaleModeOn.mockReturnValue(false);
+      props.isSingleLocaleModeOn = false;
     });
 
     it('should match snapshot', () => {
-      const { wrapper } = render({}, Enzyme.shallow);
-      expect(wrapper).toMatchSnapshot();
+      expect(render()).toMatchSnapshot();
+    });
+  });
+
+  describe('when the locale mode is changed', () => {
+    describe('and the mode is changed to "single"', () => {
+      beforeEach(() => {
+        props.isSingleLocaleModeOn = false;
+        const headerNode = Enzyme.shallow(
+          render()
+            .find(EntrySidebarWidget)
+            .prop('headerNode')
+        );
+        headerNode.find('select').prop('onChange')({ target: { value: 'single' } });
+      });
+
+      it('emits the SET_SINGLE_LOCALE_MODE event with the new value', () => {
+        expect(props.emitter.emit).toHaveBeenCalledWith(
+          SidebarEventTypes.SET_SINGLE_LOCALE_MODE,
+          true
+        );
+      });
+
+      it('tracks the change event', () => {
+        expect(track).toHaveBeenCalledWith('translation_sidebar:toggle_widget_mode', {
+          currentMode: 'single'
+        });
+      });
+    });
+
+    describe('and the mode is changed to "multiple"', () => {
+      beforeEach(() => {
+        props.isSingleLocaleModeOn = true;
+        const headerNode = Enzyme.shallow(
+          render()
+            .find(EntrySidebarWidget)
+            .prop('headerNode')
+        );
+        headerNode.find('select').prop('onChange')({ target: { value: 'multiple' } });
+      });
+
+      it('emits the SET_SINGLE_LOCALE_MODE event with the new value', () => {
+        expect(props.emitter.emit).toHaveBeenCalledWith(
+          SidebarEventTypes.SET_SINGLE_LOCALE_MODE,
+          false
+        );
+      });
+
+      it('tracks the change event', () => {
+        expect(track).toHaveBeenCalledWith('translation_sidebar:toggle_widget_mode', {
+          currentMode: 'multiple'
+        });
+      });
     });
   });
 });

@@ -7,9 +7,8 @@ import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking from './Tracking.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
-import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
-import DocumentStatusCode from 'data/document/statusCode.es6';
-import { groupBy, get, isEmpty, keys } from 'lodash';
+import { keys } from 'lodash';
+import setLocaleData from 'app/entity_editor/setLocaleData.es6';
 
 import { getModule } from 'NgRegistry.es6';
 
@@ -81,79 +80,20 @@ export default async function create($scope, editorData, preferences) {
     controls: editorData.fieldControls.form
   });
 
+  $scope.localeData = {};
+
   $scope.entrySidebarProps = createEntrySidebarProps({
     $scope
   });
 
-  $scope.locales = TheLocaleStore.getLocales();
-  $scope.focusedLocale = TheLocaleStore.getFocusedLocale();
-  $scope.activeLocales = TheLocaleStore.getActiveLocales();
-  $scope.isSingleLocaleModeOn = TheLocaleStore.isSingleLocaleModeOn();
-
-  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, isOn => {
-    TheLocaleStore.setSingleLocaleMode(isOn);
-    if (!isOn) {
-      $scope.statusNotificationProps = {
-        status: 'ok',
-        entityLabel: 'asset'
-      };
-    }
-    $scope.isSingleLocaleModeOn = isOn;
-    $scope.$applyAsync();
-  });
-
-  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, newLocale => {
-    TheLocaleStore.setFocusedLocale(newLocale);
-    $scope.focusedLocale = newLocale;
-  });
-
-  $scope.$watch('focusedLocale', () => {
-    $scope.focusedLocale = TheLocaleStore.getFocusedLocale();
-    if (defaultLocaleIsFocused()) {
-      $scope.statusNotificationProps = {
-        status: 'ok',
-        entityLabel: 'asset'
-      };
-    }
-    $scope.$applyAsync();
-  });
-
-  K.onValueScope($scope, editorContext.validator.errors$, errors => {
-    if (!$scope.isSingleLocaleModeOn) {
-      // We only want to display the top-nav notification about locale errors
-      // if we are in the single focused locale mode.
-      return;
-    }
-    $scope.entrySidebarProps.localeErrors = groupBy(errors, error => error.path[2]);
-
-    if (errors.length && !defaultLocaleIsFocused()) {
-      $scope.statusNotificationProps = {
-        status: DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR,
-        entityLabel: 'asset'
-      };
-    }
-  });
-
-  K.onValueScope($scope, $scope.otDoc.status$, status => {
-    if (
-      status === 'ok' &&
-      !isEmpty(get($scope, 'entrySidebarProps.localeErrors')) &&
-      !defaultLocaleIsFocused()
-    ) {
-      return;
-    }
-    $scope.statusNotificationProps = { status, entityLabel: 'entry' };
-  });
-
-  function defaultLocaleIsFocused() {
-    if (!$scope.isSingleLocaleModeOn) {
+  setLocaleData($scope, 'asset', function defaultLocaleIsFocused() {
+    if (!$scope.localeData.isSingleLocaleModeOn) {
       return false;
     }
-    const localeCodes = keys($scope.entrySidebarProps.localeErrors);
     return (
-      localeCodes.length === 1 &&
-      TheLocaleStore.getDefaultLocale().internal_code ===
-        TheLocaleStore.getFocusedLocale().internal_code
+      keys($scope.localeData.errors).length === 1 &&
+      $scope.localeData.defaultLocale.internal_code ===
+        $scope.localeData.focusedLocale.internal_code
     );
-  }
+  });
 }

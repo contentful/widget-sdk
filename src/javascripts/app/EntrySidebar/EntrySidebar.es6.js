@@ -12,22 +12,19 @@ import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNa
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer.es6';
 import ContentPreviewWidget from './ContentPreviewWidget/ContentPreviewWidget.es6';
 import IncomingLinksWidgetContainer from './IncomingLinksWidget/IncomingLinksWidgetContainer.es6';
-import TranslationWidgetContainer from './TranslationWidget/TranslationWidgetContainer.es6';
+import TranslationWidget from './TranslationWidget/TranslationWidget.es6';
 import UsersWidgetContainer from './UsersWidget/UsersWidgetContainer.es6';
 import VersionsWidgetContainer from './VersionsWidget/VersionsWidgetContainer.es6';
 import EntryActivityWidgetContainer from './EntryActivity/EntryActivityContainer.es6';
 import SidebarWidgetTypes from './SidebarWidgetTypes.es6';
 import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const TheLocaleStore = getModule('TheLocaleStore');
 
 const ComponentsMap = {
   [SidebarWidgetTypes.PUBLICATION]: PublicationWidgetContainer,
   [SidebarWidgetTypes.CONTENT_PREVIEW]: ContentPreviewWidget,
   [SidebarWidgetTypes.INCOMING_LINKS]: IncomingLinksWidgetContainer,
-  [SidebarWidgetTypes.TRANSLATION]: TranslationWidgetContainer,
+  [SidebarWidgetTypes.TRANSLATION]: TranslationWidget,
   [SidebarWidgetTypes.USERS]: UsersWidgetContainer,
   [SidebarWidgetTypes.VERSIONS]: VersionsWidgetContainer,
   [SidebarWidgetTypes.ACTIVITY]: EntryActivityWidgetContainer
@@ -61,7 +58,7 @@ export default class EntrySidebar extends Component {
         widget: PropTypes.object.isRequired
       })
     ),
-    localeErrors: PropTypes.object
+    localeData: PropTypes.object.isRequired
   };
 
   renderBuiltinWidget = sidebarItem => {
@@ -82,8 +79,7 @@ export default class EntrySidebar extends Component {
         key={`${widgetNamespace},${widgetId}`}
         emitter={this.props.emitter}
         bridge={this.props.sidebarExtensionsBridge}
-        localeStore={TheLocaleStore}
-        localeErrors={this.props.localeErrors}
+        localeData={this.props.localeData}
       />
     );
   };
