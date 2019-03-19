@@ -26,13 +26,12 @@ const get = requireProjectId(async function get({ kv, meta: { orgId, projectId }
 });
 
 const post = requireOrgId(async function post({ req, kv, meta: { orgId } }) {
-  const { body } = req;
+  const { body: project } = req;
 
-  if (!body) {
+  if (!project) {
     return responses.badRequest();
   }
 
-  const project = body;
   if (!project.sys) {
     project.sys = { id: generateId() };
   }
