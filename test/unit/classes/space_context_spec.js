@@ -162,39 +162,69 @@ describe('spaceContext', () => {
         data: {
           fields: {
             title: {
-              'en-US': 'the title'
+              'en-US': 'the title',
+              zh: 'chinese title'
             }
           }
         }
       };
       this.space = this.resetWithSpace();
       this.space.getDefaultLocale = sinon.stub().returns('en-US');
-
-      const CTRepo = this.$inject('data/ContentTypeRepo/Published.es6');
-      this.spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
     });
 
     it('fetched successfully', function() {
-      this.spaceContext.publishedCTs.get.returns(
-        makeCtMock('CTID', {
-          displayField: 'title',
-          fields: { id: 'title', type: 'Symbol' }
-        })
-      );
+      this.spaceContext.publishedCTs = {
+        get: sinon.stub().returns(
+          makeCtMock('CTID', {
+            displayField: 'title',
+            fields: [{ id: 'title', type: 'Symbol' }]
+          })
+        )
+      };
       expect(this.spaceContext.entryTitle(entry)).toBe('the title');
       expect(this.spaceContext.entryTitle(entry, 'en-US', true)).toBe('the title');
       expect(this.spaceContext.entityTitle(entry)).toBe('the title');
     });
 
+    it('returns default locale if not localized', function() {
+      this.spaceContext.publishedCTs = {
+        get: sinon.stub().returns(
+          makeCtMock('CTID', {
+            displayField: 'title',
+            fields: [{ id: 'title', type: 'Symbol', localized: false }]
+          })
+        )
+      };
+      expect(this.spaceContext.entityTitle(entry, 'zh')).toBe('the title');
+    });
+
+    it('returns localized title', function() {
+      this.spaceContext.publishedCTs = {
+        get: sinon.stub().returns(
+          makeCtMock('CTID', {
+            displayField: 'title',
+            fields: [{ id: 'title', type: 'Symbol', localized: true }]
+          })
+        )
+      };
+
+      expect(this.spaceContext.entityTitle(entry, 'zh')).toBe('chinese title');
+    });
+
     it('gets no title, falls back to default', function() {
-      this.spaceContext.publishedCTs.get.returns({ data: {} });
+      this.spaceContext.publishedCTs = {
+        get: sinon.stub().returns({ data: {} })
+      };
+
       expect(this.spaceContext.entryTitle(entry)).toBe('Untitled');
       expect(this.spaceContext.entryTitle(entry, 'en-US', true)).toBe(null);
       expect(this.spaceContext.entityTitle(entry)).toBe(null);
     });
 
     it('handles an exception, falls back to default', function() {
-      this.spaceContext.publishedCTs.get.returns({});
+      this.spaceContext.publishedCTs = {
+        get: sinon.stub().returns({})
+      };
       expect(this.spaceContext.entryTitle(entry)).toBe('Untitled');
       expect(this.spaceContext.entityTitle(entry)).toBe(null);
     });
