@@ -35,7 +35,7 @@ const ROUTES = {
       },
       projects: {
         path: '/projects',
-        requiredDataSets: [USERS, ORG_SPACES, __PROTOTYPE__PROJECTS],
+        requiredDataSets: [USERS, ORG_SPACES, __PROTOTYPE__PROJECTS, ORG_MEMBERSHIPS],
         children: {
           project: {
             path: '/:projectId'

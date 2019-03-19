@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { IconButton, TextInput } from '@contentful/forma-36-react-components';
 
-const LinkSection = ({ section, onChange }) => {
+const LinkSection = ({ section, onChange, editing }) => {
   const [adding, setAdding] = useState(false);
   const [text, setText] = useState('');
   const [href, setHref] = useState('');
@@ -11,7 +11,7 @@ const LinkSection = ({ section, onChange }) => {
     <div>
       <div style={{ display: 'flex', margin: '.5rem 0 .3rem 0', alignItems: 'center' }}>
         <h4 style={{ margin: '0' }}>{section.header}</h4>
-        {!adding && (
+        {!adding && editing && (
           <IconButton
             buttonType="primary"
             style={{ marginLeft: '.5rem' }}
@@ -70,6 +70,7 @@ const LinkSection = ({ section, onChange }) => {
 };
 
 LinkSection.propTypes = {
+  editing: PropTypes.bool,
   section: PropTypes.shape(),
   onChange: PropTypes.func
 };

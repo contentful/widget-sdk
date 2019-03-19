@@ -4,8 +4,6 @@ import { connect, Provider } from 'react-redux';
 
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
-import { user$ } from 'services/TokenStore.es6';
-import * as K from 'utils/kefir.es6';
 import { go } from 'states/Navigator.es6';
 import * as random from 'utils/Random.es6';
 import { Modal, Button, TextField, Notification } from '@contentful/forma-36-react-components';
@@ -45,13 +43,11 @@ class ProjectCreationModal extends React.Component {
       isPending: true
     });
 
-    const currentUser = K.getValue(user$);
-
     const body = {
       name,
       description,
       spaceIds: [],
-      memberIds: [currentUser.sys.id],
+      memberIds: [],
       sys: { id: random.id() }
     };
     addProject(body);

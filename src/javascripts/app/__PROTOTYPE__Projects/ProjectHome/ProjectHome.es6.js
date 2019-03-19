@@ -3,13 +3,20 @@ import { connect } from 'react-redux';
 import { isMissingRequiredDatasets } from 'redux/selectors/datasets.es6';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 
-import { TextInput, Textarea, Button, Notification } from '@contentful/forma-36-react-components';
+import {
+  TextInput,
+  Textarea,
+  Button,
+  Notification,
+  ModalConfirm
+} from '@contentful/forma-36-react-components';
 import { getDatasets } from 'redux/selectors/datasets.es6';
 import { __PROTOTYPE__PROJECTS } from 'redux/datasets.es6';
 import ROUTES from 'redux/routes.es6';
 import { getPath } from 'redux/selectors/location.es6';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 import Members from './Members.es6';
 import Spaces from './Spaces.es6';
@@ -63,6 +70,22 @@ export default connect(
       }
     },
     _delete: orgId => async projectId => {
+      const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
+        <ModalConfirm
+          title="Delete Project"
+          intent="negative"
+          isShown={isShown}
+          confirmLabel="Remove"
+          onConfirm={() => onClose(true)}
+          onCancel={() => onClose(false)}>
+          <p>Do you really want to delete this project?</p>
+        </ModalConfirm>
+      ));
+
+      if (!confirmation) {
+        return;
+      }
+
       const backend = createMicroBackendsClient({
         backendName: '__PROTOTYPE__projects',
         baseUrl: `/organizations/${orgId}/projects/${projectId}`
@@ -109,6 +132,7 @@ export default connect(
   const [spaceIds, setProjectSpaceIds] = useState(project.spaceIds);
   const [linkSections, setLinkSections] = useState(project.linkSections || []);
   const [dirty, setDirty] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   return (
     <div className="project-home">
@@ -123,27 +147,34 @@ export default connect(
         PROTOTYPE
       </h2>
       <div className="project-home__details">
-        <h2>{name}</h2>
-        <TextInput
-          value={name}
-          onChange={({ target: { value } }) => setDirty(true) || setName(value)}
-        />
-        <div>
-          {description.split('\n').reduce((acc, cur, idx) => {
-            if (idx === 0) {
-              return [...acc, cur];
-            }
-            return [...acc, <br key={idx} />, cur];
-          }, [])}
-        </div>
-        <Textarea
-          rows={5}
-          placeholder="description"
-          value={description}
-          onChange={({ target: { value } }) => setDirty(true) || setDescription(value)}
-        />
+        {!editing && <h2>{name}</h2>}
+        {editing && (
+          <TextInput
+            value={name}
+            onChange={({ target: { value } }) => setDirty(true) || setName(value)}
+          />
+        )}
+        {!editing && (
+          <div>
+            {description.split('\n').reduce((acc, cur, idx) => {
+              if (idx === 0) {
+                return [...acc, cur];
+              }
+              return [...acc, <br key={idx} />, cur];
+            }, [])}
+          </div>
+        )}
+        {editing && (
+          <Textarea
+            rows={5}
+            placeholder="description"
+            value={description}
+            onChange={({ target: { value } }) => setDirty(true) || setDescription(value)}
+          />
+        )}
         <LinkSections
           {...{
+            editing,
             projectLinkSections: linkSections,
             setLinkSections: sections => setDirty(true) || setLinkSections(sections)
           }}
@@ -152,27 +183,37 @@ export default connect(
       <div className="project-home__relations">
         <Members
           {...{
+            editing,
             projectMemberIds: memberIds,
             setProjectMemberIds: ids => setDirty(true) || setProjectMemberIds(ids)
           }}
         />
         <Spaces
           {...{
+            editing,
             projectSpaceIds: spaceIds,
             setProjectSpaceIds: ids => setDirty(true) || setProjectSpaceIds(ids)
           }}
         />
       </div>
       <div>
-        <Button
-          style={{ margin: '.4rem' }}
-          disabled={!dirty}
-          onClick={() =>
-            setDirty(false) ||
-            save({ ...project, name, description, memberIds, spaceIds, linkSections })
-          }>
-          Save
-        </Button>
+        {!editing && (
+          <Button style={{ margin: '.4rem' }} onClick={() => setEditing(true)}>
+            Edit
+          </Button>
+        )}
+        {editing && (
+          <Button
+            style={{ margin: '.4rem' }}
+            disabled={!dirty}
+            onClick={() =>
+              setDirty(false) ||
+              setEditing(false) ||
+              save({ ...project, name, description, memberIds, spaceIds, linkSections })
+            }>
+            Save
+          </Button>
+        )}
         <Button
           style={{ margin: '.4rem' }}
           buttonType="negative"
