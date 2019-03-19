@@ -86,20 +86,20 @@ async function ldUser(user, org, space) {
 
   if (org) {
     const {
-      sys: { id: orgId }
+      sys: { id: organizationId }
     } = org;
 
     const orgStatus = await getOrgStatus(org);
     const spacesByOrg = getSpacesByOrganization();
 
     customData = _.assign({}, customData, {
-      currentOrgId: orgId,
+      currentOrgId: organizationId,
       currentOrgSubscriptionStatus: _.get(org, 'subscription.status', null),
       currentOrgPricingVersion: org.pricingVersion,
       currentOrgPlanIsEnterprise: _.get(orgStatus, ['isEnterprise'], false),
-      currentOrgHasSpace: Boolean(_.get(spacesByOrg, [orgId, 'length'], 0)),
+      currentOrgHasSpace: Boolean(_.get(spacesByOrg, [organizationId, 'length'], 0)),
 
-      currentUserOrgRole: getOrgRole(user, orgId),
+      currentUserOrgRole: getOrgRole(user, organizationId),
       currentUserHasAtleastOneSpace: hasAnOrgWithSpaces(spacesByOrg),
       currentUserIsCurrentOrgCreator: isUserOrgCreator(user, org),
 
@@ -125,11 +125,11 @@ async function ldUser(user, org, space) {
  * @usage[js]
  * import { getVariation } from 'utils/LaunchDarkly'
  *
- * const variation = await getVariation('my-test-or-feature-flag', { orgId: '1234' })
+ * const variation = await getVariation('my-test-or-feature-flag', { organizationId: '1234' })
  *
  * @description
  * This function returns a promise that resolves to the variation for the
- * provided feature flag for the given orgId or spaceId. If the flag name
+ * provided feature flag for the given organizationId or spaceId. If the flag name
  * is overridden using `ui_enable_flags`, then a promise that resolves to the
  * overridden value is returned.
  *
@@ -154,7 +154,7 @@ async function ldUser(user, org, space) {
  * @param {String} flagName
  * @returns {Promise<Variation>}
  */
-export async function getVariation(flagName, { orgId, spaceId } = {}) {
+export async function getVariation(flagName, { organizationId, spaceId } = {}) {
   /**
    * if the flag is overridden, don't wait to
    * connect to LD before returning the overridden
@@ -187,12 +187,12 @@ export async function getVariation(flagName, { orgId, spaceId } = {}) {
   //
   // No ID:
   // `:`
-  const key = `${orgId ? orgId : ''}:${spaceId ? spaceId : ''}`;
+  const key = `${organizationId ? organizationId : ''}:${spaceId ? spaceId : ''}`;
 
   let flagsPromise = _.get(cache, key, null);
 
   if (!flagsPromise) {
-    flagsPromise = createFlagsPromise(flagName, user, orgId, spaceId);
+    flagsPromise = createFlagsPromise(flagName, user, organizationId, spaceId);
 
     // Set the initial flags promise
     _.set(cache, key, flagsPromise);
@@ -217,7 +217,7 @@ export async function getVariation(flagName, { orgId, spaceId } = {}) {
   Creates a promise that returns either the value of the flag in LaunchDarkly
   or undefined
  */
-async function createFlagsPromise(flagName, user, orgId, spaceId) {
+async function createFlagsPromise(flagName, user, organizationId, spaceId) {
   // Get the user data that will be used for LD client variation data
 
   await client.waitForInitialization();
@@ -230,9 +230,12 @@ async function createFlagsPromise(flagName, user, orgId, spaceId) {
   // If the ID results in an unknown org or space, log the
   // error to Bugsnag and return undefined.
   try {
-    org = orgId ? await getOrganization(orgId) : null;
+    org = organizationId ? await getOrganization(organizationId) : null;
   } catch (e) {
-    logger.logError(`Invalid org ID ${orgId} given to LD`);
+    logger.logError(`Invalid org ID ${organizationId} given to LD`, {
+      groupingHash: 'InvalidLDOrgId',
+      data: { organizationId }
+    });
 
     return undefined;
   }
@@ -240,7 +243,10 @@ async function createFlagsPromise(flagName, user, orgId, spaceId) {
   try {
     space = spaceId ? await getSpace(spaceId) : null;
   } catch (e) {
-    logger.logError(`Invalid space ID ${spaceId} given to LD`);
+    logger.logError(`Invalid space ID ${spaceId} given to LD`, {
+      groupingHash: 'InvalidLDSpaceId',
+      data: { spaceId }
+    });
 
     return undefined;
   }
@@ -254,7 +260,10 @@ async function createFlagsPromise(flagName, user, orgId, spaceId) {
 
   // LD could not find a flag with given name, log error and return undefined
   if (variation === undefined) {
-    logger.logError(`Invalid flag ${flagName}`);
+    logger.logError(`Invalid flag ${flagName}`, {
+      groupingHash: 'InvalidLDFlag',
+      data: { flagName }
+    });
 
     return undefined;
   }
@@ -264,7 +273,10 @@ async function createFlagsPromise(flagName, user, orgId, spaceId) {
   try {
     return JSON.parse(variation);
   } catch (e) {
-    logger.logError(`Invalid JSON for ${flagName}: ${variation}`);
+    logger.logError(`Invalid variation JSON for ${flagName}`, {
+      groupingHash: 'InvalidLDVariationJSON',
+      data: { variation }
+    });
 
     return undefined;
   }

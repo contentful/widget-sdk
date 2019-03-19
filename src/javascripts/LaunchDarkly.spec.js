@@ -123,8 +123,8 @@ describe('LaunchDarkly', () => {
       expect(variation).toBe('override-value');
     });
 
-    it('should attempt to get the organization if provided orgId', async () => {
-      await getVariation('FLAG', { orgId: 'org_1234' });
+    it('should attempt to get the organization if provided org id', async () => {
+      await getVariation('FLAG', { organizationId: 'org_1234' });
 
       expect(getOrganization).toHaveBeenCalledTimes(1);
       expect(getOrganization).toHaveBeenNthCalledWith(1, 'org_1234');
@@ -138,7 +138,7 @@ describe('LaunchDarkly', () => {
     });
 
     it('should attempt to get both org and space if provided both ids', async () => {
-      await getVariation('FLAG', { orgId: 'org_1234', spaceId: 'space_1234' });
+      await getVariation('FLAG', { organizationId: 'org_1234', spaceId: 'space_1234' });
 
       expect(getOrganization).toHaveBeenCalledTimes(1);
       expect(getOrganization).toHaveBeenNthCalledWith(1, 'org_1234');
@@ -152,7 +152,7 @@ describe('LaunchDarkly', () => {
 
       getOrganization.mockRejectedValueOnce(false);
 
-      variation = await getVariation('FLAG', { orgId: 'org_1234' });
+      variation = await getVariation('FLAG', { organizationId: 'org_1234' });
 
       expect(variation).toBeUndefined();
       expect(logError).toHaveBeenCalledTimes(1);
@@ -166,7 +166,7 @@ describe('LaunchDarkly', () => {
     });
 
     it('should only initialize once', async () => {
-      await getVariation('FLAG', { orgId: 'org_1234' });
+      await getVariation('FLAG', { organizationId: 'org_1234' });
       expect(ldClient.initialize).toHaveBeenCalledTimes(1);
 
       await getVariation('FLAG', { spaceId: 'space_1234' });
@@ -174,10 +174,10 @@ describe('LaunchDarkly', () => {
     });
 
     it('should only identify once per orgId/spaceId combo', async () => {
-      await getVariation('FLAG', { orgId: 'org_1234' });
+      await getVariation('FLAG', { organizationId: 'org_1234' });
       expect(client.identify).toHaveBeenCalledTimes(1);
 
-      await getVariation('FLAG', { orgId: 'org_1234' });
+      await getVariation('FLAG', { organizationId: 'org_1234' });
       expect(client.identify).toHaveBeenCalledTimes(1);
 
       await getVariation('FLAG', { spaceId: 'space_1234' });
@@ -186,10 +186,10 @@ describe('LaunchDarkly', () => {
       await getVariation('FLAG', { spaceId: 'space_1234' });
       expect(client.identify).toHaveBeenCalledTimes(2);
 
-      await getVariation('FLAG', { spaceId: 'space_1234', orgId: 'org_1234' });
+      await getVariation('FLAG', { spaceId: 'space_1234', organizationId: 'org_1234' });
       expect(client.identify).toHaveBeenCalledTimes(3);
 
-      await getVariation('FLAG', { spaceId: 'space_1234', orgId: 'org_1234' });
+      await getVariation('FLAG', { spaceId: 'space_1234', organizationId: 'org_1234' });
       expect(client.identify).toHaveBeenCalledTimes(3);
     });
 
@@ -230,7 +230,7 @@ describe('LaunchDarkly', () => {
       getOrganization.mockResolvedValueOnce(organization);
       getOrgStatus.mockResolvedValueOnce({ isPaid: true, isEnterprise: true });
 
-      await getVariation('FLAG', { orgId: 'org_5678' });
+      await getVariation('FLAG', { organizationId: 'org_5678' });
 
       // Note a lot of this data is provided from functions in
       // data/User/index.es6
@@ -288,7 +288,7 @@ describe('LaunchDarkly', () => {
       getOrganization.mockResolvedValueOnce(organization);
       getSpace.mockResolvedValueOnce(space);
 
-      await getVariation('FLAG', { orgId: 'org_5678', spaceId: 'space_5678' });
+      await getVariation('FLAG', { organizationId: 'org_5678', spaceId: 'space_5678' });
 
       expect(client.identify).toHaveBeenCalledTimes(1);
       expect(client.identify).toHaveBeenNthCalledWith(1, {
