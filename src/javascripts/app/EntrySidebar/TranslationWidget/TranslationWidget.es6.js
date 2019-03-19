@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import TranslationWidgetPills from './TranslationWidgetPills.es6';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
-import TranslationDropdownWidget from '../TranslationDropdownWidget/TranslationDropdownWidget.es6';
+import TranslationWidgetDropdown from './TranslationWidgetDropdown.es6';
 import { Select, Option } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -21,7 +21,7 @@ export default class TranslationSidebarWidget extends Component {
       PropTypes.shape({
         code: PropTypes.string.isRequired,
         default: PropTypes.bool.isRequired
-      })
+      }).isRequired
     ).isRequired,
     emitter: PropTypes.shape({
       emit: PropTypes.func.isRequired
@@ -45,7 +45,7 @@ export default class TranslationSidebarWidget extends Component {
 
   render() {
     const CurrentTranslationWidget = this.state.isSingleLocaleModeOn
-      ? TranslationDropdownWidget
+      ? TranslationWidgetDropdown
       : TranslationWidgetPills;
 
     const headerNode = (

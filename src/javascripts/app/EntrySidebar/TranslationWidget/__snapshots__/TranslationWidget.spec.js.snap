@@ -1,42 +1,113 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EntrySidebar/TranslationWidget should match snaphot 1`] = `
+exports[`EntrySidebar/TranslationWidget when single locale mode is off should match snapshot 1`] = `
 <EntrySidebarWidget
+  headerNode={
+    <Select
+      extraClassNames="entity-sidebar__select"
+      hasError={false}
+      isDisabled={false}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      required={false}
+      testId="cf-ui-select"
+      value="multiple"
+      width="auto"
+    >
+      <Option
+        value="multiple"
+      >
+        Multiple locales
+      </Option>
+      <Option
+        value="single"
+      >
+        Single locale
+      </Option>
+    </Select>
+  }
   testId="sidebar-translation-widget"
   title="Translation"
 >
-  <div
-    className="pill-list entity-sidebar__translation-pills"
-  >
-    <div
-      className="entity-sidebar__translation-pill x--default"
-      key="en-US"
+  <TranslationWidgetPills
+    emitter={
+      Object {
+        "emit": [MockFunction],
+      }
+    }
+    locales={
+      Array [
+        Object {
+          "code": "en-US",
+          "default": true,
+          "name": "English (United States)",
+        },
+        Object {
+          "code": "ru",
+          "default": false,
+          "name": "Russian",
+        },
+      ]
+    }
+    onChange={[MockFunction]}
+    onLocaleDeactivation={[MockFunction]}
+  />
+</EntrySidebarWidget>
+`;
+
+exports[`EntrySidebar/TranslationWidget when single locale mode is on should match snapshot 1`] = `
+<EntrySidebarWidget
+  headerNode={
+    <Select
+      extraClassNames="entity-sidebar__select"
+      hasError={false}
+      isDisabled={false}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      required={false}
+      testId="cf-ui-select"
+      value="single"
+      width="auto"
     >
-      <Pill
-        label="en-US"
-        status="default"
-        testId="deactivate-translation"
-      />
-    </div>
-    <div
-      className="entity-sidebar__translation-pill"
-      key="ru"
-    >
-      <Pill
-        label="ru"
-        onClose={[Function]}
-        status="default"
-        testId="deactivate-translation"
-      />
-    </div>
-    <TextLink
-      disabled={false}
-      linkType="primary"
-      onClick={[Function]}
-      testId="change-translation"
-    >
-      Change
-    </TextLink>
-  </div>
+      <Option
+        value="multiple"
+      >
+        Multiple locales
+      </Option>
+      <Option
+        value="single"
+      >
+        Single locale
+      </Option>
+    </Select>
+  }
+  testId="sidebar-translation-widget"
+  title="Translation"
+>
+  <TranslationDropdownWidget
+    emitter={
+      Object {
+        "emit": [MockFunction],
+      }
+    }
+    locales={
+      Array [
+        Object {
+          "code": "en-US",
+          "default": true,
+          "name": "English (United States)",
+        },
+        Object {
+          "code": "ru",
+          "default": false,
+          "name": "Russian",
+        },
+      ]
+    }
+    onChange={[MockFunction]}
+    onLocaleDeactivation={[MockFunction]}
+  />
 </EntrySidebarWidget>
 `;

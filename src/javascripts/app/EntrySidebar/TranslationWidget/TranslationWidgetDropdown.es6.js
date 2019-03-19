@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { orderBy, keys } from 'lodash';
+import { orderBy } from 'lodash';
 import { Select, Option } from '@contentful/forma-36-react-components';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import { track } from 'analytics/Analytics.es6';
@@ -39,43 +39,19 @@ export default class TranslationDropdownWidget extends Component {
       : baseName;
   };
 
-  hasError = () => {
-    const localeCodes = keys(this.props.localeErrors);
-    if (localeCodes.length === 0) {
-      return false;
-    } else if (localeCodes.length === 1 && localeCodes[0] === this.state.focusedLocaleCode) {
-      // there is at least one locale error, but we don't want to display it
-      // since it's for the locale we're already on.
-      return false;
-    } else if (
-      localeCodes.length === 1 &&
-      localeCodes[0] === 'undefined' &&
-      TheLocaleStore.getDefaultLocale().internal_code === this.state.focusedLocaleCode
-    ) {
-      // we're in the asset editor and on the default locale. (HACK!)
-      return false;
-    } else {
-      return true;
-    }
-  };
-
   handleChange = event => {
-    const localeCode = event.target.value;
-    this.setState({ focusedLocaleCode: localeCode });
-    const newLocale = this.locales.find(l => l.code === localeCode);
+    const focusedLocaleCode = event.target.value;
+    this.setState({ focusedLocaleCode });
+    const newLocale = this.locales.find(l => l.internal_code === focusedLocaleCode);
     this.props.emitter.emit(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, newLocale);
     track('translation_sidebar:change_focused_locale', { currentMode: 'single' });
   };
 
   render() {
     return (
-      <Select
-        id="optionSelect"
-        onChange={this.handleChange}
-        hasError={this.hasError()}
-        value={this.state.focusedLocaleCode}>
+      <Select id="optionSelect" onChange={this.handleChange} value={this.state.focusedLocaleCode}>
         {orderBy(this.locales, ['default', 'code'], ['desc', 'asc']).map(locale => (
-          <Option key={locale.code} value={locale.code}>
+          <Option key={locale.internal_code} value={locale.internal_code}>
             {this.localeName(locale)}
           </Option>
         ))}

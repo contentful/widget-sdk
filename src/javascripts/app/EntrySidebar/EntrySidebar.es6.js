@@ -18,8 +18,10 @@ import VersionsWidgetContainer from './VersionsWidget/VersionsWidgetContainer.es
 import EntryActivityWidgetContainer from './EntryActivity/EntryActivityContainer.es6';
 import SidebarWidgetTypes from './SidebarWidgetTypes.es6';
 import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer.es6';
-
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const TheLocaleStore = getModule('TheLocaleStore');
 
 const ComponentsMap = {
   [SidebarWidgetTypes.PUBLICATION]: PublicationWidgetContainer,
@@ -80,6 +82,7 @@ export default class EntrySidebar extends Component {
         key={`${widgetNamespace},${widgetId}`}
         emitter={this.props.emitter}
         bridge={this.props.sidebarExtensionsBridge}
+        localeStore={TheLocaleStore}
         localeErrors={this.props.localeErrors}
       />
     );

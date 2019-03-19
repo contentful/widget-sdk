@@ -35,12 +35,8 @@ export default class TranslationWidgetContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      locales: []
+      locales: TheLocaleStore.getActiveLocales()
     };
-  }
-
-  componentDidMount() {
-    this.updateLocales();
   }
 
   updateLocales = () => {
@@ -50,7 +46,7 @@ export default class TranslationWidgetContainer extends React.Component {
   };
 
   onChange = async () => {
-    const locales = getLocalesWithActiveFlag(TheLocaleStore.getPrivateLocales());
+    const initialLocales = getLocalesWithActiveFlag(TheLocaleStore.getPrivateLocales());
 
     const onUpdate = locales => {
       const activeLocales = locales.filter(locale => locale.active);
@@ -61,7 +57,7 @@ export default class TranslationWidgetContainer extends React.Component {
 
     await ModalLauncher.open(({ onClose, isShown }) => (
       <LocaleSelectDialog
-        initialLocales={locales}
+        initialLocales={initialLocales}
         isShown={isShown}
         onClose={onClose}
         onUpdate={onUpdate}
