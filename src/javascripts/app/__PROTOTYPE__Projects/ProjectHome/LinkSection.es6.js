@@ -41,7 +41,13 @@ const LinkSection = ({ section, onChange }) => {
             onClick={() =>
               setText('') ||
               setHref('') ||
-              onChange({ ...section, links: (section.links || []).concat({ text, href }) })
+              onChange({
+                ...section,
+                links: (section.links || []).concat({
+                  text,
+                  href: href.includes('http') ? href : `http://${href}`
+                })
+              })
             }
           />
         </div>
