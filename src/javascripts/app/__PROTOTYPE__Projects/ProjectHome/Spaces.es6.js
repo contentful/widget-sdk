@@ -3,9 +3,12 @@ import { connect } from 'react-redux';
 import { without } from 'lodash';
 import getCurrentOrgSpaces from 'redux/selectors/getCurrentOrgSpaces.es6';
 import { Select, Option, IconButton, TextInput } from '@contentful/forma-36-react-components';
+import { sortBy, flow, filter as ldFilter, map } from 'lodash/fp';
 
 const spaceIdsToSpaces = (projectSpaceIds, allSpaces) =>
   allSpaces.filter(({ sys: { id } }) => projectSpaceIds.includes(id));
+
+const sort = sortBy(['name']);
 
 export default connect(state => ({
   allSpaces: Object.values(getCurrentOrgSpaces(state))
@@ -30,17 +33,19 @@ export default connect(state => ({
               <Option value="" disabled>
                 Please select a space
               </Option>
-              {allSpaces
-                .filter(
+              {flow(
+                ldFilter(
                   ({ name, sys: { id } }) =>
                     !projectSpaceIds.includes(id) &&
                     (filter === '' || name.toLowerCase().includes(filter.toLowerCase()))
-                )
-                .map(({ name, sys: { id } }) => (
+                ),
+                sort,
+                map(({ name, sys: { id } }) => (
                   <Option key={id} value={id} className="project-home__space">
                     {name}
                   </Option>
-                ))}
+                ))
+              )(allSpaces)}
             </Select>
             <IconButton
               style={{ marginLeft: '.5rem' }}
@@ -54,7 +59,7 @@ export default connect(state => ({
         </div>
       )}
       <div className="project-home__space-list">
-        {spaceIdsToSpaces(projectSpaceIds, allSpaces).map(({ name, sys: { id } }) => (
+        {sort(spaceIdsToSpaces(projectSpaceIds, allSpaces)).map(({ name, sys: { id } }) => (
           <div key={id} className="project-home__space">
             <div key={id}>{name}</div>
             {editing && (

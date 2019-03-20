@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { without } from 'lodash';
+import { flow, filter as ldFilter, sortBy, map } from 'lodash/fp';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import { Option, Select, IconButton, TextInput } from '@contentful/forma-36-react-components';
 
 const membershipIdsToMembers = (membershipIds, allMemberships) =>
   allMemberships.filter(({ sys: { id } }) => membershipIds.includes(id));
+
+const sort = sortBy(['sys.user.firstName', 'sys.user.lastName', 'sys.user.email']);
 
 export default connect(state => ({
   allOrgMemberships: Object.values(getOrgMemberships(state)),
@@ -32,8 +35,8 @@ export default connect(state => ({
               <Option value="" disabled>
                 Please select an user
               </Option>
-              {allOrgMemberships
-                .filter(
+              {flow(
+                ldFilter(
                   ({
                     sys: {
                       id,
@@ -48,12 +51,14 @@ export default connect(state => ({
                       firstName.toLowerCase().includes(filter.toLowerCase()) ||
                       lastName.toLowerCase().includes(filter.toLowerCase()) ||
                       email.toLowerCase().includes(filter.toLowerCase()))
-                )
-                .map(({ sys: { id, user: { firstName, lastName, email } } }) => (
+                ),
+                sort,
+                map(({ sys: { id, user: { firstName, lastName, email } } }) => (
                   <Option key={id} value={id}>
                     {firstName} {lastName} ({email})
                   </Option>
-                ))}
+                ))
+              )(allOrgMemberships)}
             </Select>
             <IconButton
               style={{ marginLeft: '.5rem' }}
@@ -69,7 +74,7 @@ export default connect(state => ({
         </div>
       )}
       <div className="project-home__member-list">
-        {membershipIdsToMembers(projectMemberIds, allOrgMemberships).map(
+        {sort(membershipIdsToMembers(projectMemberIds, allOrgMemberships)).map(
           ({
             sys: {
               id,
