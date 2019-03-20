@@ -1,4 +1,4 @@
-import LD from 'ldclient-js';
+import * as LDClient from 'ldclient-js';
 
 import { launchDarkly as config } from 'Config.es6';
 import { assign, get, isNull, omitBy } from 'lodash';
@@ -317,7 +317,7 @@ function changeUserContext([
 
     client.identify(ldUser, null, LDContextChangeMVar.put);
   } else {
-    client = LD.initialize(config.envId, ldUser);
+    client = LDClient.initialize(config.envId, ldUser);
     client.on('ready', LDContextChangeMVar.put);
   }
 }
