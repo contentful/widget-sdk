@@ -24,11 +24,9 @@ import {
   removeMembership
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { go } from 'states/Navigator.es6';
-import { getModule } from 'NgRegistry.es6';
 import UserInvitationRemovalModal from '../UserInvitationRemovalModal.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
-
-const { getMembershipRoles } = getModule('access_control/SpaceMembershipRepository.es6');
+import { getMembershipRoles } from 'access_control/utils.es6';
 
 export default class UserInvitationDetail extends React.Component {
   static propTypes = {
