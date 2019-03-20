@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { IconButton, TextInput } from '@contentful/forma-36-react-components';
+import { without } from 'lodash';
 
 import LinkSection from './LinkSection.es6';
-import { IconButton, TextInput } from '@contentful/forma-36-react-components';
 
 const LinkSections = ({ projectLinkSections, setLinkSections, editing }) => {
   const [header, setHeader] = useState('');
@@ -33,6 +34,7 @@ const LinkSections = ({ projectLinkSections, setLinkSections, editing }) => {
           editing={editing}
           key={i}
           section={section}
+          onDelete={() => setLinkSections(without(projectLinkSections, section))}
           onChange={updatedSection => {
             const newSections = projectLinkSections.slice();
             newSections.splice(i, 1, updatedSection);

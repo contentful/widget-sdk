@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { without } from 'lodash';
 import PropTypes from 'prop-types';
 import { IconButton, TextInput } from '@contentful/forma-36-react-components';
 
-const LinkSection = ({ section, onChange, editing }) => {
+const LinkSection = ({ section, onChange, onDelete, editing }) => {
   const [adding, setAdding] = useState(false);
   const [text, setText] = useState('');
   const [href, setHref] = useState('');
@@ -12,13 +13,21 @@ const LinkSection = ({ section, onChange, editing }) => {
       <div style={{ display: 'flex', margin: '.5rem 0 .3rem 0', alignItems: 'center' }}>
         <h4 style={{ margin: '0' }}>{section.header}</h4>
         {!adding && editing && (
-          <IconButton
-            buttonType="primary"
-            style={{ marginLeft: '.5rem' }}
-            label="add"
-            iconProps={{ icon: 'PlusCircle' }}
-            onClick={() => setAdding(true)}
-          />
+          <>
+            <IconButton
+              buttonType="primary"
+              style={{ marginLeft: '.5rem' }}
+              label="add"
+              iconProps={{ icon: 'PlusCircle' }}
+              onClick={() => setAdding(true)}
+            />
+            <IconButton
+              label="remove"
+              iconProps={{ icon: 'Close' }}
+              buttonType="negative"
+              onClick={onDelete}
+            />
+          </>
         )}
       </div>
       {adding && (
@@ -54,15 +63,29 @@ const LinkSection = ({ section, onChange, editing }) => {
       )}
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {section.links &&
-          section.links.map(({ text, href }, i) => (
-            <a
-              style={{ marginBottom: '.2rem' }}
-              key={i}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer">
-              {text}
-            </a>
+          section.links.map((link, i) => (
+            <div style={{ display: 'flex' }} key={i}>
+              <a
+                style={{ marginBottom: '.2rem' }}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer">
+                {link.text}
+              </a>
+              {editing && (
+                <IconButton
+                  label="remove"
+                  iconProps={{ icon: 'Close' }}
+                  buttonType="negative"
+                  onClick={() =>
+                    onChange({
+                      ...section,
+                      links: without(section.links, link)
+                    })
+                  }
+                />
+              )}
+            </div>
           ))}
       </div>
     </div>
@@ -72,7 +95,8 @@ const LinkSection = ({ section, onChange, editing }) => {
 LinkSection.propTypes = {
   editing: PropTypes.bool,
   section: PropTypes.shape(),
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+  onDelete: PropTypes.func
 };
 
 export default LinkSection;
