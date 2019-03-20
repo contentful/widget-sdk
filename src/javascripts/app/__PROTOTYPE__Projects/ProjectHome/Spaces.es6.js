@@ -61,7 +61,11 @@ export default connect(state => ({
       <div className="project-home__space-list">
         {sort(spaceIdsToSpaces(projectSpaceIds, allSpaces)).map(({ name, sys: { id } }) => (
           <div key={id} className="project-home__space">
-            <div key={id}>{name}</div>
+            <div key={id}>
+              <a href={`/spaces/${id}/home`} target="_blank" rel="noopener noreferrer">
+                {name}
+              </a>
+            </div>
             {editing && (
               <IconButton
                 label="remove"
