@@ -1,12 +1,10 @@
 import * as K from 'utils/kefir.es6';
 import * as PathUtils from 'utils/Path.es6';
-import { get } from 'lodash';
 import makeExtensionDialogsHandler from './ExtensionDialogsHandler.es6';
 import makeExtensionSpaceMethodsHandler from './ExtensionSpaceMethodsHandler.es6';
 import makeExtensionNavigationHandler from './ExtensionNavigationHandler.es6';
 import makeExtensionNotificationHandler from './ExtensionNotificationHandler.es6';
 import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_SIDEBAR } from '../WidgetLocations.es6';
-import { createEndpoint } from 'data/EndpointFactory.es6';
 
 const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
 
@@ -134,39 +132,5 @@ export default function createBridge(dependencies, location = LOCATION_ENTRY_FIE
         $scope.fieldLocale.setActive(isActive);
       });
     }
-
-    // Exposing a full, authenticated API client for development
-    // builds of UI Extensions SDK.
-    api.registerHandler('___internal___request', createEndpoint());
-
-    setupActivityListeners(api);
-  }
-
-  function setupActivityListeners(api) {
-    const visibilityChanged = event => {
-      // `event.target` is `document`.
-      const docVisible = !get(event, ['target', 'hidden'], false);
-      if (docVisible) {
-        // Browser tab was focused. Read the currently focused field ID:
-        const focusedField = K.getValue($scope.editorContext.focus.field$);
-        // If it's a string, there is a field focused:
-        api.send('editorActivityChanged', [typeof focusedField === 'string']);
-      } else {
-        // Always send `false` if the browser tab is defocused:
-        api.send('editorActivityChanged', [false]);
-      }
-    };
-
-    // Listen to browser tab focus ("visibility") events:
-    const visibilityListener = ['visibilitychange', visibilityChanged, false];
-    document.addEventListener(...visibilityListener);
-    $scope.$on('$destroy', () => document.removeEventListener(...visibilityListener));
-
-    // Listen to field focus activity:
-    K.onValueScope($scope, $scope.editorContext.focus.field$, focusedField => {
-      if (!get(document, ['hidden'], false)) {
-        api.send('editorActivityChanged', [typeof focusedField === 'string']);
-      }
-    });
   }
 }

@@ -74,11 +74,6 @@ describe('Extension SDK', () => {
       },
       fieldController: {
         setInvalid: sinon.spy()
-      },
-      editorContext: {
-        focus: {
-          field$: K.createMockProperty(false)
-        }
       }
     };
 
