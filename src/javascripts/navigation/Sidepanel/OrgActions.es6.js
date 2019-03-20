@@ -22,15 +22,15 @@ export default function OrgActions({
         <div className="nav-sidepanel__org-title">
           <div className="nav-sidepanel__org-icon">
             {showOrgSettingsAsTeams ? (
-              <React.Fragment>
+              <>
                 <TeamsIcon />
                 <span>Teams</span>
-              </React.Fragment>
+              </>
             ) : (
-              <React.Fragment>
+              <>
                 <SettingsIcon />
                 <span>Organization settings</span>
-              </React.Fragment>
+              </>
             )}
           </div>
         </div>

@@ -80,7 +80,7 @@ class Sidepanel extends React.Component {
     return (
       <div
         className={`nav-sidepanel ${sidePanelIsShown ? 'nav-sidepanel--is-active' : ''}`}
-        aria-hidden={sidePanelIsShown ? '' : 'true'}
+        aria-hidden={sidePanelIsShown ? 'false' : 'true'}
         onClick={closeOrgsDropdown}
         data-test-id="sidepanel">
         {currOrg && (
