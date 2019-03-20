@@ -146,9 +146,15 @@ export default async function create($scope, editorData, preferences, trackLoadE
     $scope
   });
 
-  setLocaleData($scope, 'entry', function onlyFocusedLocaleHasErrors() {
+  setLocaleData($scope, {
+    entityLabel: 'entry',
+    shouldHideLocaleErrors: onlyFocusedLocaleHasErrors,
+    emitter: $scope.entrySidebarProps.emitter
+  });
+
+  function onlyFocusedLocaleHasErrors() {
     const { errors, focusedLocale } = $scope.localeData;
     const localeCodes = keys(errors);
     return localeCodes.length === 1 && localeCodes[0] === focusedLocale.internal_code;
-  });
+  }
 }

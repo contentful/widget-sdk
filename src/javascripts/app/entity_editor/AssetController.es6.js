@@ -86,7 +86,13 @@ export default async function create($scope, editorData, preferences) {
     $scope
   });
 
-  setLocaleData($scope, 'asset', function defaultLocaleIsFocused() {
+  setLocaleData($scope, {
+    entityLabel: 'asset',
+    shouldHideLocaleErrors: defaultLocaleIsFocused,
+    emitter: $scope.entrySidebarProps.emitter
+  });
+
+  function defaultLocaleIsFocused() {
     if (!$scope.localeData.isSingleLocaleModeOn) {
       return false;
     }
@@ -95,5 +101,5 @@ export default async function create($scope, editorData, preferences) {
       $scope.localeData.defaultLocale.internal_code ===
         $scope.localeData.focusedLocale.internal_code
     );
-  });
+  }
 }

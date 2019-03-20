@@ -6,57 +6,69 @@ import { getModule } from 'NgRegistry.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
-export default ($scope, entityLabel, shouldHideLocaleErrors) => {
+export default ($scope, { entityLabel, shouldHideLocaleErrors, emitter }) => {
+  setLocaleData($scope);
+  setVisibleWidgets($scope);
+  handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitter);
+  handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors);
+};
+
+export function setLocaleData($scope, { isBulkEditor = false } = {}) {
+  $scope.localeData = $scope.localeData || {};
   Object.assign($scope.localeData, {
     defaultLocale: TheLocaleStore.getDefaultLocale(),
     privateLocales: TheLocaleStore.getPrivateLocales(),
     focusedLocale: TheLocaleStore.getFocusedLocale(),
-    isSingleLocaleModeOn: TheLocaleStore.isSingleLocaleModeOn(),
+    isSingleLocaleModeOn: isBulkEditor ? false : TheLocaleStore.isSingleLocaleModeOn(),
     activeLocales: TheLocaleStore.getActiveLocales(),
     isLocaleActive: TheLocaleStore.isLocaleActive,
     errors: {}
   });
+}
 
-  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, isOn => {
+function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitter) {
+  emitter.on(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, isOn => {
     if (!isOn) {
-      resetStatusNotificationProps();
+      resetStatusNotificationProps($scope, entityLabel);
     }
     TheLocaleStore.setSingleLocaleMode(isOn);
     $scope.localeData.isSingleLocaleModeOn = isOn;
-    setVisibleWidgets();
+    setVisibleWidgets($scope);
     $scope.$applyAsync();
   });
 
-  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, locale => {
+  emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, locale => {
+    if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
+      resetStatusNotificationProps($scope, entityLabel);
+    }
     TheLocaleStore.setFocusedLocale(locale);
     $scope.localeData.focusedLocale = locale;
-    if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
-      resetStatusNotificationProps();
-    }
-    setVisibleWidgets();
+    setVisibleWidgets($scope);
     $scope.$applyAsync();
   });
 
-  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.DEACTIVATED_LOCALE, locale => {
+  emitter.on(SidebarEventTypes.DEACTIVATED_LOCALE, locale => {
+    if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
+      resetStatusNotificationProps($scope, entityLabel);
+    }
     TheLocaleStore.deactivateLocale(locale);
     $scope.localeData.activeLocales = TheLocaleStore.getActiveLocales();
-    if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
-      resetStatusNotificationProps();
-    }
-    setVisibleWidgets();
+    setVisibleWidgets($scope);
     $scope.$applyAsync();
   });
 
-  $scope.entrySidebarProps.emitter.on(SidebarEventTypes.SET_ACTIVE_LOCALES, locales => {
+  emitter.on(SidebarEventTypes.SET_ACTIVE_LOCALES, locales => {
+    if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
+      resetStatusNotificationProps($scope, entityLabel);
+    }
     TheLocaleStore.setActiveLocales(locales);
     $scope.localeData.activeLocales = TheLocaleStore.getActiveLocales();
-    if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
-      resetStatusNotificationProps();
-    }
-    setVisibleWidgets();
+    setVisibleWidgets($scope);
     $scope.$applyAsync();
   });
+}
 
+function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
   K.onValueScope($scope, $scope.editorContext.validator.errors$, errors => {
     if (!$scope.localeData.isSingleLocaleModeOn) {
       // We only want to display the top-nav notification about locale errors
@@ -88,25 +100,20 @@ export default ($scope, entityLabel, shouldHideLocaleErrors) => {
     }
     $scope.statusNotificationProps = { status, entityLabel };
   });
+}
 
-  setVisibleWidgets();
+function resetStatusNotificationProps($scope, entityLabel) {
+  $scope.statusNotificationProps = {
+    status: 'ok',
+    entityLabel
+  };
+}
 
-  function resetStatusNotificationProps() {
-    $scope.statusNotificationProps = {
-      status: 'ok',
-      entityLabel
-    };
+function setVisibleWidgets($scope) {
+  const { isSingleLocaleModeOn, focusedLocale, defaultLocale } = $scope.localeData;
+  if (isSingleLocaleModeOn && focusedLocale.internal_code !== defaultLocale.internal_code) {
+    $scope.visibleWidgets = $scope.widgets.filter(w => w.field.localized);
+  } else {
+    $scope.visibleWidgets = $scope.widgets;
   }
-
-  function setVisibleWidgets() {
-    if (
-      $scope.localeData.isSingleLocaleModeOn &&
-      $scope.localeData.focusedLocale.internal_code !==
-        $scope.localeData.defaultLocale.internal_code
-    ) {
-      $scope.visibleWidgets = $scope.widgets.filter(w => w.field.localized);
-    } else {
-      $scope.visibleWidgets = $scope.widgets;
-    }
-  }
-};
+}
