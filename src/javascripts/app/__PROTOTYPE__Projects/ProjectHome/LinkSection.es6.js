@@ -73,6 +73,12 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
               })
             }
           />
+          <IconButton
+            label="remove"
+            iconProps={{ icon: 'Close' }}
+            buttonType="negative"
+            onClick={() => setText('') || setHref('') || setAdding(false)}
+          />
         </div>
       )}
       <div style={{ display: 'flex', flexDirection: 'column' }}>
