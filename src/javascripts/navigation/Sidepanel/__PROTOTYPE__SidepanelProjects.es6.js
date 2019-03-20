@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 import { connect } from 'react-redux';
 
-import tokens from '@contentful/forma-36-tokens';
 import { TextLink, Spinner } from '@contentful/forma-36-react-components';
 
 import { getVariation } from 'LaunchDarkly.es6';
@@ -28,8 +27,19 @@ const styles = {
     justifyContent: 'space-between'
   }),
   headerTitle: css({
-    fontWeight: 'bold',
-    marginBottom: tokens.spacingM
+    fontWeight: 'bold'
+  }),
+  alphaTag: css({
+    background: '#3072be',
+    color: '#fff',
+    padding: '3px 5px 2px 5px',
+    fontSize: '10px',
+    lineHeight: '.7rem',
+    borderRadius: '3px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05rem',
+    marginLeft: '.7rem',
+    height: '1rem'
   }),
   warning: css({
     position: 'absolute',
@@ -116,7 +126,9 @@ export class SidepanelProjects extends React.Component {
       <div className={cx(styles.container)}>
         <div className={cx(styles.header)}>
           <div className={cx(styles.warning)}>PROTOTYPE</div>
-          <div className={cx(styles.headerTitle)}>My Projects</div>
+          <div className={cx(styles.headerTitle)}>Projects</div>
+          <div className={cx(styles.alphaTag)}>alpha</div>
+          <div style={{ flexGrow: 1 }} />
           <TextLink onClick={showCreateProjectModal}>+ Create project</TextLink>
         </div>
         <div>

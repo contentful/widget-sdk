@@ -6,7 +6,13 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
 import { go } from 'states/Navigator.es6';
 import * as random from 'utils/Random.es6';
-import { Modal, Button, TextField, Notification } from '@contentful/forma-36-react-components';
+import {
+  Modal,
+  Button,
+  TextField,
+  Notification,
+  Note
+} from '@contentful/forma-36-react-components';
 import store from 'redux/store.es6';
 
 import { __PROTOTYPE__PROJECTS } from 'redux/datasets.es6';
@@ -101,7 +107,9 @@ class ProjectCreationModal extends React.Component {
           <React.Fragment>
             <Modal.Header title="Create a project" />
             <Modal.Content>
+              <span>Placeholder: Beware, that be dragons</span>
               <TextField
+                style={{ marginTop: '1rem' }}
                 name="projectName"
                 id="projectName"
                 labelText="Project name"
@@ -113,6 +121,7 @@ class ProjectCreationModal extends React.Component {
                 validationMessage={validationMessage}
               />
               <TextField
+                style={{ marginTop: '1rem' }}
                 name="description"
                 id="description"
                 textarea
@@ -121,6 +130,9 @@ class ProjectCreationModal extends React.Component {
                 onChange={this.updateDescription}
                 disabled={isPending}
               />
+              <Note style={{ marginTop: '1rem' }}>
+                Placeholder: This is an prototype and is not representative of the final feature
+              </Note>
             </Modal.Content>
             <Modal.Controls>
               <Button
