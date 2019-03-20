@@ -60,6 +60,7 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
             style={{ marginLeft: '.5rem' }}
             label="confirm"
             iconProps={{ icon: 'CheckCircle' }}
+            disabled={!(text && href)}
             onClick={() =>
               setText('') ||
               setHref('') ||
