@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { snakeCase } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
 import { track } from 'analytics/Analytics.es6';
 import { Button, IconButton, Subheading } from '@contentful/forma-36-react-components';
+import { getCurrentStateName } from 'states/Navigator.es6';
 
-const $state = getModule('$state');
 const trackingGroupId = 'author_editor_continuous_onboarding';
 
 // Props for this component come from ReactJoyride
@@ -14,6 +13,7 @@ const trackingGroupId = 'author_editor_continuous_onboarding';
 
 const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closeProps }) => {
   const primaryButtonLabel = isLastStep ? 'Get started' : 'Got it';
+  const currentStateName = getCurrentStateName();
   return (
     <div
       className="walkthrough-tooltip"
@@ -34,7 +34,7 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
             track('element:click', {
               elementId: `close_walkthrough_step_${snakeCase(step.title)}`,
               groupId: trackingGroupId,
-              fromState: $state.current.name
+              fromState: currentStateName
             });
           }}
           testId="close-walkthrough-tooltip-button"
@@ -52,7 +52,7 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
             track('element:click', {
               elementId: `finish_walkthrough_step_${snakeCase(step.title)}`,
               groupId: trackingGroupId,
-              fromState: $state.current.name
+              fromState: currentStateName
             });
           }}
           testId="next-step-walkthrough-tooltip-button">
