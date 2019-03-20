@@ -133,6 +133,11 @@ export default class SelectContent extends Component {
   }
 
   renderSearchableContentRow(record, ind) {
+    const contentType = this.props.findContentTypeById(record.contentTypeId);
+    if (!contentType) {
+      return;
+    }
+
     return (
       <TableRow
         extraClassNames={`algolia-app__config-searchable-content-table-row ${
@@ -145,7 +150,7 @@ export default class SelectContent extends Component {
           <Icon color="muted" icon="Entry" />
         </TableCell>
         <TableCell>
-          <Subheading>{this.props.findContentTypeById(record.contentTypeId).name}</Subheading>
+          <Subheading>{contentType.name}</Subheading>
           {this.findLocaleNameByCode(record.localeCode)}
         </TableCell>
         <TableCell>
