@@ -35,7 +35,7 @@ class ProjectCreationModal extends React.Component {
       return;
     }
     const backend = createMicroBackendsClient({
-      backendName: '__PROTOTYPE__projects',
+      backendName: 'projects',
       baseUrl: `/organizations/${orgId}/projects`
     });
 

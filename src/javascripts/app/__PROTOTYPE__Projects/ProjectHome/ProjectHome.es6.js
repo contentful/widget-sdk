@@ -48,7 +48,7 @@ export default connect(
       });
 
       const backend = createMicroBackendsClient({
-        backendName: '__PROTOTYPE__projects',
+        backendName: 'projects',
         baseUrl: `/organizations/${orgId}/projects`
       });
 
@@ -87,7 +87,7 @@ export default connect(
       }
 
       const backend = createMicroBackendsClient({
-        backendName: '__PROTOTYPE__projects',
+        backendName: 'projects',
         baseUrl: `/organizations/${orgId}/projects/${projectId}`
       });
 

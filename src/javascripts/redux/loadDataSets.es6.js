@@ -52,7 +52,7 @@ const loaders = state => {
     },
     [__PROTOTYPE__PROJECTS]: async () => {
       const backend = createMicroBackendsClient({
-        backendName: '__PROTOTYPE__projects',
+        backendName: 'projects',
         baseUrl: `/organizations/${orgId}/projects`
       });
       const resp = await backend.call();

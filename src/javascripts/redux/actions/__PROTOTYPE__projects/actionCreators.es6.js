@@ -4,7 +4,7 @@ import { __PROTOTYPE__PROJECTS } from 'redux/datasets.es6';
 export function getAllProjects({ orgId }) {
   return async dispatch => {
     const backend = createMicroBackendsClient({
-      backendName: '__PROTOTYPE__projects',
+      backendName: 'projects',
       baseUrl: `/organizations/${orgId}/projects`
     });
 
