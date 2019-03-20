@@ -55,7 +55,7 @@ div.entity-editor__field-group(
   div.entity-editor__field-locale(
     ng-repeat="locale in fieldLocales | orderBy: ['-default', 'name'] track by locale.internal_code"
     ng-controller="FieldLocaleController as fieldLocale"
-    data-locale="{{fieldLocale.code}}")
+    data-locale="{{locale.code}}")
 
     div.entity-editor__field-heading
       label(data-test-id="field-locale-label")
