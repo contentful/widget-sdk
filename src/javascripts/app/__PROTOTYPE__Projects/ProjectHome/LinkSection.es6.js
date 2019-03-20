@@ -30,7 +30,7 @@ const LinkSection = ({ section, onChange, onDelete, editing }) => {
           </>
         )}
       </div>
-      {adding && (
+      {editing && adding && (
         <div style={{ display: 'flex', marginBottom: '.3rem' }}>
           <TextInput
             placeholder="link text"
@@ -50,6 +50,7 @@ const LinkSection = ({ section, onChange, onDelete, editing }) => {
             onClick={() =>
               setText('') ||
               setHref('') ||
+              setAdding(false) ||
               onChange({
                 ...section,
                 links: (section.links || []).concat({
