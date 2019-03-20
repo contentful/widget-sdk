@@ -34,6 +34,7 @@ describe('cfWidgetRenderer Directive', () => {
         widget: this.widget,
         entityInfo: this.entityInfo,
         fieldLocale: this.fieldLocale,
+        localeData: {},
         entrySidebarProps: {
           emitter: {
             on: sinon.stub()

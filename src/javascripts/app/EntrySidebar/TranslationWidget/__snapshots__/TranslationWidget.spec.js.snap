@@ -4,12 +4,10 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is off should ma
 <EntrySidebarWidget
   headerNode={
     <Select
-      extraClassNames="entity-sidebar__select"
+      className="entity-sidebar__select"
       hasError={false}
       isDisabled={false}
-      onBlur={[Function]}
       onChange={[Function]}
-      onFocus={[Function]}
       required={false}
       testId="cf-ui-select"
       value="multiple"
@@ -92,12 +90,10 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is on should mat
 <EntrySidebarWidget
   headerNode={
     <Select
-      extraClassNames="entity-sidebar__select"
+      className="entity-sidebar__select"
       hasError={false}
       isDisabled={false}
-      onBlur={[Function]}
       onChange={[Function]}
-      onFocus={[Function]}
       required={false}
       testId="cf-ui-select"
       value="multiple"

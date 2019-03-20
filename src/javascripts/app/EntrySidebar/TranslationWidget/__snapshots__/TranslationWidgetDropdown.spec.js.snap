@@ -6,9 +6,7 @@ exports[`EntrySidebar/TranslationWidgetDropdown when a locale has 1 error should
     hasError={false}
     id="optionSelect"
     isDisabled={false}
-    onBlur={[Function]}
     onChange={[Function]}
-    onFocus={[Function]}
     required={false}
     testId="cf-ui-select"
     value="en-US"
@@ -36,9 +34,7 @@ exports[`EntrySidebar/TranslationWidgetDropdown when a locale has more than one 
     hasError={false}
     id="optionSelect"
     isDisabled={false}
-    onBlur={[Function]}
     onChange={[Function]}
-    onFocus={[Function]}
     required={false}
     testId="cf-ui-select"
     value="en-US"
@@ -67,9 +63,7 @@ exports[`EntrySidebar/TranslationWidgetDropdown when both locales have errors sh
     hasError={true}
     id="optionSelect"
     isDisabled={false}
-    onBlur={[Function]}
     onChange={[Function]}
-    onFocus={[Function]}
     required={false}
     testId="cf-ui-select"
     value="en-US"
@@ -97,9 +91,7 @@ exports[`EntrySidebar/TranslationWidgetDropdown when there are no locale errors 
     hasError={false}
     id="optionSelect"
     isDisabled={false}
-    onBlur={[Function]}
     onChange={[Function]}
-    onFocus={[Function]}
     required={false}
     testId="cf-ui-select"
     value="en-US"
