@@ -4,6 +4,7 @@ import { IconButton, TextInput } from '@contentful/forma-36-react-components';
 import { without } from 'lodash';
 
 import LinkSection from './LinkSection.es6';
+import { flow, pullAt } from 'lodash/fp';
 
 const LinkSections = ({ projectLinkSections, setLinkSections, editing }) => {
   const [header, setHeader] = useState('');
@@ -34,6 +35,32 @@ const LinkSections = ({ projectLinkSections, setLinkSections, editing }) => {
           editing={editing}
           key={i}
           section={section}
+          onUp={() =>
+            i > 0 &&
+            setLinkSections(
+              flow(
+                pullAt(i),
+                withoutSection => [
+                  ...withoutSection.slice(0, i - 1),
+                  section,
+                  ...withoutSection.slice(i - 1)
+                ]
+              )(projectLinkSections)
+            )
+          }
+          onDown={() =>
+            i < projectLinkSections.length - 1 &&
+            setLinkSections(
+              flow(
+                pullAt(i),
+                withoutSection => [
+                  ...withoutSection.slice(0, i + 1),
+                  section,
+                  ...withoutSection.slice(i + 1)
+                ]
+              )(projectLinkSections)
+            )
+          }
           onDelete={() => setLinkSections(without(projectLinkSections, section))}
           onChange={updatedSection => {
             const newSections = projectLinkSections.slice();
