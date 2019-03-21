@@ -24,7 +24,7 @@ export default function ExtensionDevelopmentMode(props) {
   return (
     <>
       {props.children}
-      <Note noteType="primary" extraClassNames={styles.note}>
+      <Note noteType="primary" className={styles.note}>
         To view your extension in development mode, you need to disable mixed content protection.{' '}
         <div>
           <TextLink

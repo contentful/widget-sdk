@@ -27,24 +27,23 @@ class TeamMembershipRow extends React.Component {
         <TableCell>
           <UserCard testId="user-card" user={user} />
         </TableCell>
-        <TableCell data-test-id="created-at-cell">
-          {moment(createdAt).format('MMMM DD, YYYY')}
-        </TableCell>
+        <TableCell testId="created-at-cell">{moment(createdAt).format('MMMM DD, YYYY')}</TableCell>
         {!readOnlyPermission && (
           <React.Fragment>
-            <TableCell data-test-id="created-by-cell">{getUserName(createdBy)}</TableCell>
+            <TableCell testId="created-by-cell">{getUserName(createdBy)}</TableCell>
             <TableCell align="right">
               <div className="membership-list__item__menu">
                 <Button
                   testId="remove-button"
-                buttonType="muted"
-                size="small"
-                onClick={removeMembership}
-                extraClassNames="membership-list__item__menu__button">
-                Remove
-              </Button>
-            </div>
-          </TableCell></React.Fragment>
+                  buttonType="muted"
+                  size="small"
+                  onClick={removeMembership}
+                  className="membership-list__item__menu__button">
+                  Remove
+                </Button>
+              </div>
+            </TableCell>
+          </React.Fragment>
         )}
       </TableRow>
     );

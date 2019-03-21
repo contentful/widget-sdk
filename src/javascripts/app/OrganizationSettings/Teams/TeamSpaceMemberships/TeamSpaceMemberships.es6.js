@@ -37,7 +37,7 @@ export class TeamSpaceMemberships extends React.Component {
     return (
       <Table
         style={{ marginBottom: 20, tableLayout: 'fixed' }}
-        data-test-id="team-space-memberships-table">
+        testId="team-space-memberships-table">
         <TableHead>
           <TableRow>
             <TableCell>Space</TableCell>

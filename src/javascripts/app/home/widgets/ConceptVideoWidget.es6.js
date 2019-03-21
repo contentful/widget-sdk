@@ -168,7 +168,7 @@ export default class ConceptVideoWidget extends React.Component {
     return (
       <Card
         data-ui-tour-step="concept-video-widget"
-        extraClassNames="concept-video-widget"
+        className="concept-video-widget"
         padding="none">
         <Subheading className="concept-video-widget__header">
           Learn how content is structured in Contentful

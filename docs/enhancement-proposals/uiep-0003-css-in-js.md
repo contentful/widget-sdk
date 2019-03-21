@@ -220,13 +220,13 @@ const hugeButtonStyle = css`
   margin: ${tokens.spacing2Xl};
 `;
 
-<Button extraClassNames={hugeButtonStyle}>Click me</Button>;
+<Button className={hugeButtonStyle}>Click me</Button>;
 ```
 
-If we go with React-specific version of `emotion` than it would be really nice to do a breaking change and rename `extraClassNames` to `className`:
+If we go with React-specific version of `emotion`:
 
 ```js
-// without breaking change in Forma36
+// before Forma@3
 import { jsx, ClassNames } from '@emotion/core';
 import tokens from '@contentful/forma-36-tokens';
 import { Button } from '@contentful/forma-36-react-components';
@@ -242,7 +242,7 @@ import { Button } from '@contentful/forma-36-react-components';
   }}
 </ClassNames>;
 
-// after breaking change in Forma36
+// after Forma@3
 const hugeButtonStyle = css`
   width: 1000px;
   height: 1000px;
@@ -251,8 +251,6 @@ const hugeButtonStyle = css`
 
 <Button css={hugeButtonStyle}>Click me!</Button>;
 ```
-
-**Note**: this breaking change in Forma36 is likely to happen no matter what desicion we make here.
 
 ### Impact on bundle size
 

@@ -48,7 +48,7 @@ export default class AppListItem extends Component {
       <React.Fragment>
         <div className={styles.title}>
           <StateLink to="^.detail" params={{ appId: id }}>
-            <Heading element="h3" extraClassNames={styles.titleText}>
+            <Heading element="h3" className={styles.titleText}>
               {title}
             </Heading>
           </StateLink>
@@ -81,7 +81,7 @@ export default class AppListItem extends Component {
     return (
       <React.Fragment>
         <div className={styles.title}>
-          <Heading element="h3" extraClassNames={styles.titleText}>
+          <Heading element="h3" className={styles.titleText}>
             {this.props.app.title}
           </Heading>
         </div>

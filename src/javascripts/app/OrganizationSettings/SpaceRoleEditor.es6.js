@@ -77,7 +77,7 @@ class SpaceRoleEditor extends React.Component {
         toggleElement={
           <Button
             disabled={isDisabled}
-            extraClassNames="select-button"
+            className="select-button"
             buttonType="naked"
             indicateDropdown
             onClick={this.toggleDropdown}>

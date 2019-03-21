@@ -116,7 +116,7 @@ export default class AppsListPage extends Component {
     const { optedIn } = this.state;
 
     return (
-      <Note extraClassNames={styles.note} noteType="primary" title="Alpha feature">
+      <Note className={styles.note} noteType="primary" title="Alpha feature">
         <p>
           This is an experimental alpha feature. We are heavily iterating on it based on your
           feedback. Apps might stop working or get removed without notice so it’s recommended to not
@@ -130,7 +130,7 @@ export default class AppsListPage extends Component {
           .
         </p>
         <Button
-          extraClassNames={styles.enableBtn}
+          className={styles.enableBtn}
           disabled={optedIn}
           onClick={this.optIn}
           icon={optedIn ? 'CheckCircle' : undefined}>

@@ -355,7 +355,7 @@ class RoleEditor extends React.Component {
                 name="nameInput"
                 id="opt_name"
                 labelText="Name"
-                extraClassNames="role-editor__name-input"
+                className="role-editor__name-input"
                 value={internal.name || ''}
                 onChange={this.updateRoleFromTextInput('name')}
                 textInputProps={{ disabled: !canModifyRoles }}

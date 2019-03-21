@@ -20,9 +20,9 @@ function WidgetItem({ widget, onRemoveClick, onConfigureClick }) {
       )}
       {widget.widgetNamespace === NAMESPACE_EXTENSION && (
         <React.Fragment>
-          <Paragraph extraClassNames="f36-margin-bottom--s">UI Extension</Paragraph>
+          <Paragraph className="f36-margin-bottom--s">UI Extension</Paragraph>
           {hasParams && (
-            <TextLink onClick={onConfigureClick} extraClassNames="f36-margin-bottom--s">
+            <TextLink onClick={onConfigureClick} className="f36-margin-bottom--s">
               Change instance parameters
             </TextLink>
           )}
@@ -48,7 +48,7 @@ export default function CustomSidebar({ items, onChangePosition, onRemoveItem, o
         }
         onChangePosition(result.source.index, result.destination.index);
       }}>
-      <Subheading extraClassNames="f36-margin-bottom--m">Custom sidebar</Subheading>
+      <Subheading className="f36-margin-bottom--m">Custom sidebar</Subheading>
       {items.length > 0 && (
         <Droppable droppableId="droppable">
           {provided => (

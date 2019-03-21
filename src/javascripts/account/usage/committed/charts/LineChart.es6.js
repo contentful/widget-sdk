@@ -12,14 +12,14 @@ export default class LineChart extends React.Component {
     empty: PropTypes.bool,
     EmptyPlaceholder: PropTypes.func,
     loading: PropTypes.bool.isRequired,
-    extraClassNames: PropTypes.string,
+    className: PropTypes.string,
     width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     require: PropTypes.shape({ ensure: PropTypes.func })
   };
 
   static defaultProps = {
-    extraClassNames: null,
+    className: null,
     empty: false,
     EmptyPlaceholder: null,
     width: '700px',
@@ -84,15 +84,18 @@ export default class LineChart extends React.Component {
   }
 
   render() {
-    const { EmptyPlaceholder, empty, extraClassNames, width, height } = this.props;
+    const { EmptyPlaceholder, empty, className, width, height } = this.props;
     const loading = this.state.loading || this.props.loading;
     return (
       <div
-        className={cn('line-chart', {
-          'line-chart--loading': loading,
-          'line-chart--empty': empty,
-          [extraClassNames]: !!extraClassNames
-        })}
+        className={cn(
+          'line-chart',
+          {
+            'line-chart--loading': loading,
+            'line-chart--empty': empty
+          },
+          className
+        )}
         style={{
           width,
           height

@@ -61,7 +61,7 @@ export default class SelectContent extends Component {
 
   render() {
     return (
-      <Form extraClassNames="algolia-app__config-section" spacing="condensed">
+      <Form className="algolia-app__config-section" spacing="condensed">
         <div>
           <Heading>Searchable content (max. {MAX_RECORD_LIMIT})</Heading>
           <Paragraph>Choose the content types that you{"'"}d like to enable for search.</Paragraph>
@@ -94,7 +94,7 @@ export default class SelectContent extends Component {
           ))}
         </Select>
         <Button
-          extraClassNames="algolia-app__config-content-type-form-button"
+          className="algolia-app__config-content-type-form-button"
           onClick={this.props.editDraft}>
           Add
         </Button>
@@ -112,14 +112,14 @@ export default class SelectContent extends Component {
     }
 
     return (
-      <Table extraClassNames="algolia-app__config-searchable-content-table">
+      <Table className="algolia-app__config-searchable-content-table">
         <TableHead>
           <TableRow>
-            <TableCell extraClassNames="algolia-app__config-searchable-content-table-icon" />
-            <TableCell extraClassNames="algolia-app__config-searchable-content-table-heading">
+            <TableCell className="algolia-app__config-searchable-content-table-icon" />
+            <TableCell className="algolia-app__config-searchable-content-table-heading">
               <SectionHeading>Content Type</SectionHeading>
             </TableCell>
-            <TableCell extraClassNames="algolia-app__config-searchable-content-table-heading">
+            <TableCell className="algolia-app__config-searchable-content-table-heading">
               <SectionHeading>Algolia Index</SectionHeading>
             </TableCell>
             <TableCell />
@@ -140,13 +140,11 @@ export default class SelectContent extends Component {
 
     return (
       <TableRow
-        extraClassNames={`algolia-app__config-searchable-content-table-row ${
+        className={`algolia-app__config-searchable-content-table-row ${
           record.deleted ? 'deleted' : ''
         } `}
         onClick={() => this.props.editRecord(ind)}>
-        <TableCell
-          extraClassNames="algolia-app__config-searchable-content-table-icon"
-          align="center">
+        <TableCell className="algolia-app__config-searchable-content-table-icon" align="center">
           <Icon color="muted" icon="Entry" />
         </TableCell>
         <TableCell>

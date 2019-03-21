@@ -3,8 +3,8 @@
 exports[`ApiUsageChart should render line chart and not throw errors 1`] = `
 <LineChart
   EmptyPlaceholder={[Function]}
+  className={null}
   empty={false}
-  extraClassNames={null}
   height={300}
   loading={false}
   options={

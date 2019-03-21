@@ -26,14 +26,14 @@ class TeamMembershipForm extends React.Component {
     const { orgMemberships, onSubmit, onClose } = this.props;
     const { selectedOrgMembershipId } = this.state;
     return (
-      <TableRow extraClassNames="space-membership-editor">
+      <TableRow className="space-membership-editor">
         <TableCell colSpan="2">
-          <Select data-test-id="user-select" onChange={this.setOrgMembership} defaultValue="">
+          <Select testId="user-select" onChange={this.setOrgMembership} defaultValue="">
             <Option value="" disabled>
               Please select a user
             </Option>
             {orgMemberships.map(({ sys: { user, id } }) => (
-              <Option data-test-id="user-select-option" key={id} value={id}>
+              <Option testId="user-select-option" key={id} value={id}>
                 {`${user.firstName} ${user.lastName} <${user.email}>`}
               </Option>
             ))}

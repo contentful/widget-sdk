@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 const Placeholder = ({ loading, title, text, button }) => (
   <div className="empty-placeholder">
-    {loading ? <Spinner size="large" extraClassNames="empty-placeholder__spinner" /> : null}
+    {loading ? <Spinner size="large" className="empty-placeholder__spinner" /> : null}
     <h2>{title}</h2>
     <div>{text}</div>
     {button && button}

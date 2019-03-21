@@ -62,7 +62,7 @@ export default function EditorFieldsHeader(props) {
                   Actions
                 </Button>
               }>
-              <DropdownList extraClassNames={styles.dropdownContainer}>
+              <DropdownList className={styles.dropdownContainer}>
                 <DropdownListItem
                   onClick={() => {
                     props.duplicate.execute();

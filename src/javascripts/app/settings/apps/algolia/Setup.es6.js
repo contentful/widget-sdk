@@ -13,7 +13,7 @@ export default class Setup extends Component {
 
   render() {
     return (
-      <Form extraClassNames="algolia-app__config-section" spacing="condensed">
+      <Form className="algolia-app__config-section" spacing="condensed">
         <div>
           <Heading>Algolia credentials</Heading>
           {!this.props.installed && (

@@ -28,7 +28,7 @@ export default class ToolbarDropdownListItem extends Component {
         label={title}
         isActive={isActive}
         data-test-id={`toolbar-toggle-${type}`}
-        extraClassNames={`toolbar-toggle-${type}`}
+        className={`toolbar-toggle-${type}`}
         onMouseDown={this.handleMouseDown}>
         {children}
       </DropdownListItem>

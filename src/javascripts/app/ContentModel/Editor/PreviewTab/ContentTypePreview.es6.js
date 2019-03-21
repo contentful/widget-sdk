@@ -20,7 +20,7 @@ function ContentTypePreview(props) {
     <div className="ct-editor-json">
       {isNew && (
         <div>
-          <Note extraClassNames="f36-margin-bottom--l">
+          <Note className="f36-margin-bottom--l">
             We will show you a preview once the content type has been saved. Save content type to
             get a preview.
           </Note>
@@ -41,7 +41,7 @@ function ContentTypePreview(props) {
           {!isLoading && (
             <div>
               {props.isDirty && (
-                <Note extraClassNames="f36-margin-bottom--l">
+                <Note className="f36-margin-bottom--l">
                   You have unsaved changes. Save content type to get a preview.
                 </Note>
               )}

@@ -83,7 +83,7 @@ export default class VersionsWidget extends Component {
             width: '100%',
             ...styles.cell
           }}>
-          <RelativeDateTime value={version.sys.createdAt} extraClassNames="radio-editor__label" />
+          <RelativeDateTime value={version.sys.createdAt} className="radio-editor__label" />
         </td>
         <td style={styles.cell}>
           <Tag {...SnapshotStatus.getProps(version)} />

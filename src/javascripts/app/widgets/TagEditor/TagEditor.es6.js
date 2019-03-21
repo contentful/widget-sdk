@@ -31,7 +31,7 @@ function TagEditor(props) {
     <div data-test-id="tag-editor-container">
       <TextInput
         testId="tag-editor-input"
-        extraClassNames={styles.input}
+        className={styles.input}
         disabled={isDisabled}
         type="text"
         value={value}

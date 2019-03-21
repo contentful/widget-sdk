@@ -50,7 +50,7 @@ export default class Hyperlink extends React.Component {
     return (
       <Tooltip
         content={tooltip}
-        extraClassNames="rich-text__tooltip-container"
+        className="rich-text__tooltip-container"
         targetWrapperClassName="rich-text__hyperlink-wrapper"
         maxWidth="auto">
         {hasRealHyperlinkInSlateSupport() ? (
@@ -58,9 +58,9 @@ export default class Hyperlink extends React.Component {
             href={href} // Allows user to open uri link in new tab.
             rel="noopener noreferrer"
             title={title}
-            extraClassNames="rich-text__hyperlink">
+            className="rich-text__hyperlink">
             {children}
-            {/*<Icon icon={icon} extraClassNames="rich-text__hyperlink-icon" />*/}
+            {/*<Icon icon={icon} className="rich-text__hyperlink-icon" />*/}
           </TextLink>
         ) : (
           <span className="rich-text__hyperlink rich-text__hyperlink--ie-fallback">{children}</span>

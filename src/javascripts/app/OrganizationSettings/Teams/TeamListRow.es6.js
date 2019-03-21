@@ -55,9 +55,7 @@ class TeamListRow extends React.Component {
             {team.description}
           </span>
         </TableCell>
-        <TableCell data-test-id="team-member-count">
-          {pluralize('member', memberCount, true)}
-        </TableCell>
+        <TableCell testId="team-member-count">{pluralize('member', memberCount, true)}</TableCell>
         {!readOnlyPermission && (
           <TableCell align="right">
             <div className="membership-list__item__menu">
@@ -66,7 +64,7 @@ class TeamListRow extends React.Component {
                 buttonType="muted"
                 size="small"
                 onClick={() => removeTeam(get(team, 'sys.id'))}
-                extraClassNames="membership-list__item__menu__button">
+                className="membership-list__item__menu__button">
                 Remove
               </Button>
               <Button
@@ -74,7 +72,7 @@ class TeamListRow extends React.Component {
                 buttonType="muted"
                 size="small"
                 onClick={() => this.setState({ showTeamDialog: true })}
-                extraClassNames="membership-list__item__menu__button">
+                className="membership-list__item__menu__button">
                 Edit
               </Button>
             </div>

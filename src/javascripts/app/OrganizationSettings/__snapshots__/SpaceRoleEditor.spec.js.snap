@@ -34,8 +34,8 @@ exports[`SpaceRoleEditor renders the component 1`] = `
     toggleElement={
       <Button
         buttonType="naked"
+        className="select-button"
         disabled={false}
-        extraClassNames="select-button"
         indicateDropdown={true}
         isFullWidth={false}
         loading={false}
@@ -60,8 +60,8 @@ exports[`SpaceRoleEditor renders the component 1`] = `
     >
       <Button
         buttonType="naked"
+        className="select-button"
         disabled={false}
-        extraClassNames="select-button"
         indicateDropdown={true}
         isFullWidth={false}
         loading={false}
@@ -78,7 +78,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
           type="button"
         >
           <TabFocusTrap
-            extraClassNames="Button__Button__inner-wrapper___3qrNC"
+            className="Button__Button__inner-wrapper___3qrNC"
           >
             <span
               className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
@@ -194,8 +194,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
     toggleElement={
       <Button
         buttonType="naked"
+        className="select-button"
         disabled={false}
-        extraClassNames="select-button"
         indicateDropdown={true}
         isFullWidth={false}
         loading={false}
@@ -220,8 +220,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
     >
       <Button
         buttonType="naked"
+        className="select-button"
         disabled={false}
-        extraClassNames="select-button"
         indicateDropdown={true}
         isFullWidth={false}
         loading={false}
@@ -238,7 +238,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
           type="button"
         >
           <TabFocusTrap
-            extraClassNames="Button__Button__inner-wrapper___3qrNC"
+            className="Button__Button__inner-wrapper___3qrNC"
           >
             <span
               className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
@@ -548,8 +548,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                             >
                               <ControlledInput
                                 checked={false}
+                                className="ControlledInputField__ControlledInputField__input___3OMYB"
                                 disabled={false}
-                                extraClassNames="ControlledInputField__ControlledInputField__input___3OMYB"
                                 id="__cf_builtin_admin"
                                 labelText="Admin"
                                 onChange={[Function]}
@@ -573,7 +573,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                               </ControlledInput>
                               <div>
                                 <FormLabel
-                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
+                                  className="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
                                   htmlFor="__cf_builtin_admin"
                                   required={false}
                                   requiredText="required"
@@ -630,8 +630,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                             >
                               <ControlledInput
                                 checked={false}
+                                className="ControlledInputField__ControlledInputField__input___3OMYB"
                                 disabled={false}
-                                extraClassNames="ControlledInputField__ControlledInputField__input___3OMYB"
                                 id="police"
                                 labelText="Police officer"
                                 onChange={[Function]}
@@ -657,7 +657,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                               </ControlledInput>
                               <div>
                                 <FormLabel
-                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
+                                  className="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
                                   htmlFor="police"
                                   required={false}
                                   requiredText="required"
@@ -714,8 +714,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                             >
                               <ControlledInput
                                 checked={false}
+                                className="ControlledInputField__ControlledInputField__input___3OMYB"
                                 disabled={false}
-                                extraClassNames="ControlledInputField__ControlledInputField__input___3OMYB"
                                 id="thief"
                                 labelText="Thief"
                                 onChange={[Function]}
@@ -741,7 +741,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                               </ControlledInput>
                               <div>
                                 <FormLabel
-                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
+                                  className="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
                                   htmlFor="thief"
                                   required={false}
                                   requiredText="required"

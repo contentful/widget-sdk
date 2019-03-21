@@ -103,7 +103,7 @@ class CreateEntryButton extends React.Component {
             size="small"
             color="white"
             data-test-id="dropdown-icon"
-            extraClassNames="btn-dropdown-icon"
+            className="btn-dropdown-icon"
           />
         )}
       </button>
@@ -130,7 +130,7 @@ class CreateEntryButton extends React.Component {
               data-test-id="dropdown-icon"
               icon="ChevronDown"
               color="secondary"
-              extraClassNames="btn-dropdown-icon"
+              className="btn-dropdown-icon"
             />
           )}
         </TextLink>

@@ -34,7 +34,7 @@ export default class RoleEditorButton extends React.Component {
     return (
       <div className="publish-buttons-row">
         <Button
-          extraClassNames="primary-publish-button"
+          className="primary-publish-button"
           testId="save-button"
           buttonType="positive"
           isFullWidth
@@ -45,10 +45,10 @@ export default class RoleEditorButton extends React.Component {
         </Button>
         {showDropdown && (
           <Dropdown
-            extraClassNames="secondary-publish-button-wrapper"
+            className="secondary-publish-button-wrapper"
             toggleElement={
               <Button
-                extraClassNames="secondary-publish-button"
+                className="secondary-publish-button"
                 indicateDropdown
                 data-test-id="additional-role-editor"
                 buttonType="positive"

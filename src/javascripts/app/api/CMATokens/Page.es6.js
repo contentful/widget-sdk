@@ -261,7 +261,7 @@ function TokenTable({ tokens, revoke }) {
       </TableHead>
       <TableBody>
         {tokens.map(token => (
-          <TableRow key={token.id} data-test-id={`pat.tokenRow.${token.id}`}>
+          <TableRow key={token.id} testId={`pat.tokenRow.${token.id}`}>
             <TableCell
               style={{
                 overflow: 'hidden',

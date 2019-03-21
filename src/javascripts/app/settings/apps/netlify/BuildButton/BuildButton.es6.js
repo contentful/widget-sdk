@@ -114,7 +114,7 @@ export default class BuildButton extends Component {
           loading={busy}
           isFullWidth
           onClick={this.build}
-          extraClassNames={styles.button}>
+          className={styles.button}>
           {busy && status ? status : 'Build'}
         </Button>
         {misconfigured && (

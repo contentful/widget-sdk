@@ -64,22 +64,22 @@ class ContentTypeList extends Component {
       <Table>
         <TableHead offsetTop={isEdgeBrowser ? '0px' : '-22px'} isSticky>
           <TableRow>
-            <TableCell extraClassNames="x--medium-cell" aria-label="Name">
+            <TableCell className="x--medium-cell" aria-label="Name">
               Name
             </TableCell>
-            <TableCell extraClassNames="x--large-cell" arial-label="Description">
+            <TableCell className="x--large-cell" arial-label="Description">
               Description
             </TableCell>
-            <TableCell extraClassNames="x--small-cell" aria-label="Fields">
+            <TableCell className="x--small-cell" aria-label="Fields">
               Fields
             </TableCell>
-            <TableCell extraClassNames="x--small-cell" aria-label="Updated">
+            <TableCell className="x--small-cell" aria-label="Updated">
               Updated
             </TableCell>
-            <TableCell extraClassNames="x--small-cell" aria-label="By">
+            <TableCell className="x--small-cell" aria-label="By">
               By
             </TableCell>
-            <TableCell extraClassNames="x--small-cell" aria-label="Status">
+            <TableCell className="x--small-cell" aria-label="Status">
               Status
             </TableCell>
           </TableRow>
@@ -94,27 +94,27 @@ class ContentTypeList extends Component {
                 {({ onClick }) => {
                   return (
                     <TableRow
-                      extraClassNames="ctf-ui-cursor--pointer"
+                      className="ctf-ui-cursor--pointer"
                       data-test-id="content-type-item"
                       onClick={onClick}>
-                      <TableCell extraClassNames="x--medium-cell" data-test-id="cell-name">
+                      <TableCell className="x--medium-cell" data-test-id="cell-name">
                         {isEmpty(contentType.name) ? 'Untitled' : contentType.name}
                       </TableCell>
-                      <TableCell extraClassNames="x--large-cell" data-test-id="cell-description">
+                      <TableCell className="x--large-cell" data-test-id="cell-description">
                         {contentType.description}
                       </TableCell>
-                      <TableCell extraClassNames="x--small-cell" data-test-id="cell-fields">
+                      <TableCell className="x--small-cell" data-test-id="cell-fields">
                         {numFields(contentType)}
                       </TableCell>
-                      <TableCell extraClassNames="x--small-cell" data-test-id="cell-date">
+                      <TableCell className="x--small-cell" data-test-id="cell-date">
                         <RelativeDateTime value={contentType.sys.updatedAt} />
                       </TableCell>
-                      <TableCell extraClassNames="x--small-cell" data-test-id="cell-created-by">
+                      <TableCell className="x--small-cell" data-test-id="cell-created-by">
                         <FetchAndFormatUserName
                           userId={get(contentType, ['sys', 'publishedBy', 'sys', 'id'], '')}
                         />
                       </TableCell>
-                      <TableCell extraClassNames="x--small-cell" data-test-id="cell-status">
+                      <TableCell className="x--small-cell" data-test-id="cell-status">
                         <Tag tagType={statusType(contentType)}>{statusLabel(contentType)}</Tag>
                       </TableCell>
                     </TableRow>

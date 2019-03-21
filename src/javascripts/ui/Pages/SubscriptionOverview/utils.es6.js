@@ -23,7 +23,7 @@ export function getSpaceActionLinks(space, isOrgOwner, onDeleteSpace) {
 
   let spaceLink = (
     <TextLink
-      extraClassNames="text-link"
+      className="text-link"
       href={(space.isAccessible && href(home(space.sys.id))) || undefined}
       disabled={!space.isAccessible}
       style={actionLinkStyle}
@@ -33,7 +33,7 @@ export function getSpaceActionLinks(space, isOrgOwner, onDeleteSpace) {
   );
   let usageLink = (
     <TextLink
-      extraClassNames="text-link"
+      className="text-link"
       href={(space.isAccessible && href(spaceUsage(space.sys.id))) || undefined}
       disabled={!space.isAccessible}
       style={actionLinkStyle}

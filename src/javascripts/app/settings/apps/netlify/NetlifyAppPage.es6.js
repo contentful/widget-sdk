@@ -251,7 +251,7 @@ export default class NetlifyAppPage extends Component {
   renderContent() {
     return (
       <Workbench.Content centered>
-        <Note extraClassNames={styles.section}>
+        <Note className={styles.section}>
           Let us know how we can improve the Netlify app.{' '}
           <FeedbackButton target="extensibility" about="Netlify app" />
         </Note>

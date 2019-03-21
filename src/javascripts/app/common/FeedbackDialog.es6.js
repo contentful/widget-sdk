@@ -37,7 +37,7 @@ export default class FeedbackDialog extends Component {
         onConfirm={() => onConfirm({ canBeContacted: accepted, feedback })}
         isConfirmDisabled={feedback.length < 1}
         onCancel={onCancel}>
-        <Paragraph extraClassNames="f36-margin-bottom--l">
+        <Paragraph className="f36-margin-bottom--l">
           We’re still working on {about} so please let us know if you have any questions or
           comments. It’s an opportunity for you to contribute to the development of the feature.
         </Paragraph>
@@ -46,7 +46,7 @@ export default class FeedbackDialog extends Component {
           labelText="Your feedback"
           name="feedback"
           id="feedback-input"
-          extraClassNames="f36-margin-bottom--l"
+          className="f36-margin-bottom--l"
           onChange={e => this.setState({ feedback: e.target.value })}
           value={feedback}
           textInputProps={{

@@ -146,9 +146,9 @@ export class IDPSetupForm extends React.Component {
     return (
       <React.Fragment>
         <section className="f36-margin-top--xl">
-          <Heading element="h2" extraClassNames="f36-margin-bottom--l">
+          <Heading element="h2" className="f36-margin-bottom--l">
             Contentful’s service provider details
-            <TextLink extraClassNames="f36-margin-left--s" href={metadataUrl}>
+            <TextLink className="f36-margin-left--s" href={metadataUrl}>
               <Tooltip place="top" content="Download SAML metadata file">
                 <Icon icon="Download" />
               </Tooltip>
@@ -158,7 +158,7 @@ export class IDPSetupForm extends React.Component {
             labelText="Audience URI"
             name="audience"
             id="audience"
-            extraClassNames="f36-margin-bottom--l"
+            className="f36-margin-bottom--l"
             helpText="Sometimes called the Entity ID"
             textInputProps={{
               withCopyButton: true,
@@ -171,7 +171,7 @@ export class IDPSetupForm extends React.Component {
             labelText="ACS (Assertion Consumer Service) URL"
             name="acsUrl"
             id="acsUrl"
-            extraClassNames="f36-margin-bottom--xl"
+            className="f36-margin-bottom--xl"
             helpText="Sometimes called the Single Sign-On URL"
             textInputProps={{
               withCopyButton: true,
@@ -180,8 +180,8 @@ export class IDPSetupForm extends React.Component {
             value={`https:${authUrl(`/sso/${orgId}/consume`)}`}
           />
 
-          <Subheading extraClassNames="f36-margin-bottom--xs">Contentful logo</Subheading>
-          <HelpText extraClassNames="f36-margin-bottom--xl">
+          <Subheading className="f36-margin-bottom--xs">Contentful logo</Subheading>
+          <HelpText className="f36-margin-bottom--xl">
             Most SSO providers allow you to upload a thumbnail for your custom SAML app.{' '}
             <TextLink href="http://press.contentful.com/media_kits/219490">
               Download Contentful logos
@@ -189,13 +189,13 @@ export class IDPSetupForm extends React.Component {
             .
           </HelpText>
 
-          <Subheading extraClassNames="f36-margin-bottom--xs">Map user attributes</Subheading>
-          <HelpText extraClassNames="f36-margin-bottom--l">
+          <Subheading className="f36-margin-bottom--xs">Map user attributes</Subheading>
+          <HelpText className="f36-margin-bottom--l">
             Map these attributes into your SSO provider.
           </HelpText>
           <div className="sso-setup__user-attributes">
             <TextField
-              extraClassNames="f36-margin-right--m"
+              className="f36-margin-right--m"
               name="attribute-givenname"
               id="attribute-givenname"
               labelText="First name"
@@ -206,7 +206,7 @@ export class IDPSetupForm extends React.Component {
               value="givenname"
             />
             <TextField
-              extraClassNames="f36-margin-right--m"
+              className="f36-margin-right--m"
               name="attribute-surname"
               id="attribute-surname"
               labelText="Last name"
@@ -217,7 +217,7 @@ export class IDPSetupForm extends React.Component {
               value="surname"
             />
             <TextField
-              extraClassNames="sso-setup__user-attribute"
+              className="sso-setup__user-attribute"
               name="attribute-email"
               id="attribute-email"
               labelText="Email"
@@ -228,7 +228,7 @@ export class IDPSetupForm extends React.Component {
               value="email"
             />
           </div>
-          <Note extraClassNames="f36-margin-top--l">
+          <Note className="f36-margin-top--l">
             Read the documentation on{' '}
             <TextLink href="https://www.contentful.com/faq/sso/#what-identity-providers-idp-does-contentful-support">
               mapping user attributes
@@ -238,7 +238,7 @@ export class IDPSetupForm extends React.Component {
         </section>
 
         <section className="f36-margin-top--3xl">
-          <Heading element="h2" extraClassNames="f36-margin-bottom--l">
+          <Heading element="h2" className="f36-margin-bottom--l">
             Your SSO provider details
           </Heading>
           <FormLabel htmlFor="ssoProvider">SSO provider</FormLabel>
@@ -248,7 +248,7 @@ export class IDPSetupForm extends React.Component {
               id="ssoProvider"
               testId="ssoProvider"
               width="medium"
-              extraClassNames="f36-margin-bottom--l f36-margin-right--m sso-setup__select"
+              className="f36-margin-bottom--l f36-margin-right--m sso-setup__select"
               value={fields.idpName.value}
               onChange={this.updateField('idpName', true)}>
               <Option value="">Select provider</Option>
@@ -266,7 +266,7 @@ export class IDPSetupForm extends React.Component {
             <div className="sso-setup__field-input sso-setup__field-input--full">
               <TextField
                 labelText="Single Sign-On Redirect URL"
-                extraClassNames="sso-setup__field f36-margin-right--m f36-margin-bottom--l"
+                className="sso-setup__field f36-margin-right--m f36-margin-bottom--l"
                 id="idpSsoTargetUrl"
                 name="idpSsoTargetUrl"
                 onChange={this.updateField('idpSsoTargetUrl')}
@@ -288,7 +288,7 @@ export class IDPSetupForm extends React.Component {
                 textarea
                 id="idpCert"
                 name="idpCert"
-                extraClassNames="f36-margin-right--m"
+                className="f36-margin-right--m"
                 textInputProps={{
                   rows: 8
                 }}
@@ -307,10 +307,10 @@ export class IDPSetupForm extends React.Component {
         </section>
 
         <section className="f36-margin-top--3xl">
-          <Heading element="h2" extraClassNames="f36-margin-bottom--xs">
+          <Heading element="h2" className="f36-margin-bottom--xs">
             Test connection
           </Heading>
-          <HelpText extraClassNames="f36-margin-bottom--l">
+          <HelpText className="f36-margin-bottom--l">
             You need a user account in your SSO provider and permission to use the Contentful app in
             your SSO provider to test the connection.
           </HelpText>
@@ -325,7 +325,7 @@ export class IDPSetupForm extends React.Component {
             </Button>
             {connectionTest.isPending && (
               <Button
-                extraClassNames="f36-margin-left--m"
+                className="f36-margin-left--m"
                 buttonType="negative"
                 onClick={this.cancelConnectionTest}
                 testId="cancel-button">
@@ -360,7 +360,7 @@ export class IDPSetupForm extends React.Component {
                 id="test-errors"
                 name="test-errors"
                 labelText="Error log"
-                extraClassNames="f36-margin-top--xl"
+                className="f36-margin-top--xl"
                 textInputProps={{
                   rows: 5
                 }}
@@ -372,10 +372,10 @@ export class IDPSetupForm extends React.Component {
         </section>
 
         <section className="f36-margin-top--3xl">
-          <Heading element="h2" extraClassNames="f36-margin-bottom--xs">
+          <Heading element="h2" className="f36-margin-bottom--xs">
             Sign-in name
           </Heading>
-          <HelpText extraClassNames="f36-margin-bottom--l">
+          <HelpText className="f36-margin-bottom--l">
             It’s what you have to type if you choose to login in via SSO on Contentful. Make sure to
             keep it short and memorable.
           </HelpText>
@@ -392,7 +392,7 @@ export class IDPSetupForm extends React.Component {
                   width: 'large',
                   placeholder: `E.g. ${_.kebabCase(orgName)}-sso`
                 }}
-                extraClassNames="f36-margin-right--m"
+                className="f36-margin-right--m"
                 value={fields.ssoName.value}
                 onChange={this.updateField('ssoName')}
                 onBlur={this.updateField('ssoName', true)}
@@ -406,7 +406,7 @@ export class IDPSetupForm extends React.Component {
             )}
           </div>
 
-          <Note extraClassNames="f36-margin-top--3xl">
+          <Note className="f36-margin-top--3xl">
             To enable SSO in{' '}
             <TextLink href="https://www.contentful.com/faq/sso/#how-does-sso-restricted-mode-work">
               Restricted mode

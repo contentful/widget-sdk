@@ -47,16 +47,16 @@ export default class LocalesTable extends React.Component {
                 </span>
               )}
             </TableCell>
-            <TableCell data-test-id="locale-list-fallback-column">
+            <TableCell testId="locale-list-fallback-column">
               {locale.fallbackCode ? this.state.localeNamesByCode[locale.fallbackCode] : 'None'}
             </TableCell>
-            <TableCell data-test-id="locale-list-cda-column">
+            <TableCell testId="locale-list-cda-column">
               {locale.contentDeliveryApi ? 'Enabled' : 'Disabled'}
             </TableCell>
-            <TableCell data-test-id="locale-list-cma-column">
+            <TableCell testId="locale-list-cma-column">
               {locale.contentManagementApi ? 'Enabled' : 'Disabled'}
             </TableCell>
-            <TableCell data-test-id="locale-list-optional-column">
+            <TableCell testId="locale-list-optional-column">
               {locale.optional ? 'Can be published empty' : 'Content is required'}
             </TableCell>
           </TableRow>

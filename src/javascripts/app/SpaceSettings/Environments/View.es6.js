@@ -123,7 +123,7 @@ function EnvironmentTable({ environments }) {
       <TableBody>
         {environments.map(environment => {
           return (
-            <TableRow key={environment.id} data-test-id={`environment.${environment.id}`}>
+            <TableRow key={environment.id} testId={`environment.${environment.id}`}>
               <TableCell>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <CodeFragment key="environment-code-fragment">{environment.id}</CodeFragment>

@@ -18,7 +18,7 @@ export default function SearchInput({ getInputProps }) {
           icon="Search"
           size="small"
           color="muted"
-          extraClassNames="context-menu__search-input-icon"
+          className="context-menu__search-input-icon"
         />
       </label>
     </div>

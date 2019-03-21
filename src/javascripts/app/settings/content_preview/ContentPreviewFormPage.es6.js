@@ -53,7 +53,7 @@ export const ContentPreviewFormPageSkeleton = props => (
     <Workbench.Content>
       {props.children || (
         <Form className="content-preview-editor">
-          <Heading extraClassNames="section-title" element="h3">
+          <Heading className="section-title" element="h3">
             General information
           </Heading>
           <SkeletonContainer svgWidth={600} ariaLabel="Loading content type..." clipId="content">
@@ -312,7 +312,7 @@ export default class ContentPreviewFormPage extends Component {
           </React.Fragment>
         }>
         <Form className="content-preview-editor">
-          <Heading extraClassNames="section-title" element="h3">
+          <Heading className="section-title" element="h3">
             General information
           </Heading>
           <TextField
@@ -342,7 +342,7 @@ export default class ContentPreviewFormPage extends Component {
             }}
             labelText="Description"
           />
-          <Heading extraClassNames="section-title" element="h3">
+          <Heading className="section-title" element="h3">
             Content preview URLs
           </Heading>
           <p>

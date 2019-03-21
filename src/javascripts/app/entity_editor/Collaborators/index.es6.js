@@ -17,7 +17,7 @@ class Collaborators extends Component {
         }).isRequired
       })
     ).isRequired,
-    extraClassNames: PropTypes.string,
+    className: PropTypes.string,
     shape: PropTypes.oneOf(['circle', 'rect'])
   };
 
@@ -27,7 +27,7 @@ class Collaborators extends Component {
   };
   render() {
     return (
-      <ul className={cn('collaborators', this.props.extraClassNames)}>
+      <ul className={cn('collaborators', this.props.className)}>
         {this.props.users.map(({ sys: { id } }) => {
           return (
             <li key={id} className={cn('collaborators__item')}>

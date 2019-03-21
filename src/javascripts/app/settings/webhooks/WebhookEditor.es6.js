@@ -157,7 +157,7 @@ class WebhookEditor extends React.Component {
           </Workbench.Header>
           {!fresh && (
             <Workbench.Nav>
-              <Tabs role="tablist" extraClassNames="f36-margin-left--xl">
+              <Tabs role="tablist" className="f36-margin-left--xl">
                 <Tab
                   id="webhook_settings"
                   selected={tab === TABS.SETTINGS}

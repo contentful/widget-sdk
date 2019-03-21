@@ -29,7 +29,7 @@ export default class EntryLinkToolbarIcon extends Component {
           this.props.isButton ? (
             <Button
               disabled={this.props.disabled}
-              extraClassNames={`${INLINES.EMBEDDED_ENTRY}-button`}
+              className={`${INLINES.EMBEDDED_ENTRY}-button`}
               size="small"
               onClick={event => this.handleClick(event, widgetAPI)}
               icon="EmbeddedEntryInline"
@@ -40,7 +40,7 @@ export default class EntryLinkToolbarIcon extends Component {
           ) : (
             <DropdownListItem
               isDisabled={this.props.disabled || !canInsertInline(this.props.editor)}
-              extraClassNames="rich-text__entry-link-block-button"
+              className="rich-text__entry-link-block-button"
               size="small"
               icon="Entry"
               buttonType="muted"
@@ -50,7 +50,7 @@ export default class EntryLinkToolbarIcon extends Component {
                 <Icon
                   icon="EmbeddedEntryInline"
                   color="secondary"
-                  extraClassNames="rich-text__embedded-entry-list-icon"
+                  className="rich-text__embedded-entry-list-icon"
                 />
                 Inline entry
               </div>

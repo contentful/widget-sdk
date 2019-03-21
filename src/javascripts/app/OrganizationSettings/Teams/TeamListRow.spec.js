@@ -144,7 +144,7 @@ describe('TeamListRow', () => {
         expect(
           wrapper
             .find(TableCell)
-            .filter({ 'data-test-id': 'team-member-count' })
+            .filter({ testId: 'team-member-count' })
             .text()
             .split(' ')
         ).toContain('3');
@@ -160,7 +160,7 @@ describe('TeamListRow', () => {
         expect(
           wrapper
             .find(TableCell)
-            .filter({ 'data-test-id': 'team-member-count' })
+            .filter({ testId: 'team-member-count' })
             .text()
             .split(' ')
         ).toContain('0');

@@ -137,28 +137,28 @@ export default class InvitationsList extends React.Component {
             </TableHead>
             <TableBody>
               {sortedList.map(invitation => (
-                <TableRow key={invitation.id} extraClassNames="user-invitations-list__row">
+                <TableRow key={invitation.id} className="user-invitations-list__row">
                   <TableCell
                     onClick={this.goToUserInvitationDetail(invitation.id)}
-                    extraClassNames="user-invitations-list__email">
+                    className="user-invitations-list__email">
                     {invitation.email}
                   </TableCell>
                   <TableCell>{invitation.role}</TableCell>
                   <TableCell>{moment(invitation.createdAt).format('MMMM D, YYYY')}</TableCell>
-                  <TableCell align="right" extraClassNames="user-invitations-list__buttons">
+                  <TableCell align="right" className="user-invitations-list__buttons">
                     <div>
                       <Button
                         buttonType="muted"
                         size="small"
                         onClick={this.removeInvitation(invitation)}
-                        extraClassNames="user-invitations-list__button">
+                        className="user-invitations-list__button">
                         Revoke
                       </Button>
                       <Button
                         buttonType="muted"
                         size="small"
                         onClick={this.goToUserInvitationDetail(invitation.id)}
-                        extraClassNames="user-invitations-list__button">
+                        className="user-invitations-list__button">
                         View
                       </Button>
                     </div>

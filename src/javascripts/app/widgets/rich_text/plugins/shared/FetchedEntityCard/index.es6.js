@@ -11,7 +11,7 @@ import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 class FetchedEntityCard extends React.Component {
   static propTypes = {
     // TODO: Add support for `locale` prop.
-    extraClassNames: PropTypes.string,
+    className: PropTypes.string,
     entityId: PropTypes.string.isRequired,
     entityType: PropTypes.oneOf(['Entry', 'Asset']).isRequired,
     disabled: PropTypes.bool,
@@ -22,7 +22,7 @@ class FetchedEntityCard extends React.Component {
     onEntityFetchComplete: PropTypes.func
   };
   static defaultProps = {
-    extraClassNames: ''
+    className: ''
   };
 
   renderDeleteButton() {
@@ -42,9 +42,9 @@ class FetchedEntityCard extends React.Component {
   }
 
   renderMissingEntryReferenceCard() {
-    const { extraClassNames, selected } = this.props;
+    const { className, selected } = this.props;
     return (
-      <Card selected={selected} extraClassNames={extraClassNames}>
+      <Card selected={selected} className={className}>
         <div style={{ display: 'flex' }}>
           <h1
             style={{
@@ -64,7 +64,7 @@ class FetchedEntityCard extends React.Component {
   render() {
     const {
       entityType,
-      extraClassNames,
+      className,
       selected,
       disabled,
       onEdit,
@@ -99,7 +99,7 @@ class FetchedEntityCard extends React.Component {
                     {...fetchEntityResult}
                     readOnly={readOnly}
                     isLoading={isLoading}
-                    extraClassNames={extraClassNames}
+                    className={className}
                     selected={selected}
                     disabled={disabled}
                     onEdit={onEdit}

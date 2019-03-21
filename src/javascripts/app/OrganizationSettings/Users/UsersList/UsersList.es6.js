@@ -261,11 +261,11 @@ class UsersList extends React.Component {
             {initialLoad || queryTotal > 0 ? (
               <div style={{ position: 'relative' }}>
                 {loading ? (
-                  <Spinner size="large" extraClassNames="organization-users-page__spinner" />
+                  <Spinner size="large" className="organization-users-page__spinner" />
                 ) : null}
                 <Table
                   data-test-id="organization-membership-list"
-                  extraClassNames={classnames('organization-membership-list', {
+                  className={classnames('organization-membership-list', {
                     'organization-membership-list--loading': loading
                   })}>
                   <TableHead>
@@ -294,14 +294,14 @@ class UsersList extends React.Component {
                               buttonType="muted"
                               size="small"
                               onClick={this.handleMembershipRemove(membership)}
-                              extraClassNames="membership-list__item__menu__button">
+                              className="membership-list__item__menu__button">
                               Remove
                             </Button>
                             <Button
                               buttonType="muted"
                               size="small"
                               href={this.getLinkToUser(membership)}
-                              extraClassNames="membership-list__item__menu__button">
+                              className="membership-list__item__menu__button">
                               Edit
                             </Button>
                           </div>

@@ -15,13 +15,13 @@ class EntryEmbedDropdown extends Component {
     const { onToggle, isOpen, onClose, children } = this.props;
     return (
       <Dropdown
-        extraClassNames="toolbar-entry-dropdown"
+        className="toolbar-entry-dropdown"
         position="bottom-right"
         toggleElement={
           <Button
             onMouseDown={onToggle}
             data-test-id="toolbar-entry-dropdown-toggle"
-            extraClassNames="toolbar-entry-dropdown-toggle"
+            className="toolbar-entry-dropdown-toggle"
             indicateDropdown
             buttonType="muted"
             size="small"
@@ -32,7 +32,7 @@ class EntryEmbedDropdown extends Component {
         }
         isOpen={isOpen}
         onClose={onClose}>
-        <DropdownList extraClassNames="toolbar-entry-dropdown-list">{children}</DropdownList>
+        <DropdownList className="toolbar-entry-dropdown-list">{children}</DropdownList>
       </Dropdown>
     );
   }

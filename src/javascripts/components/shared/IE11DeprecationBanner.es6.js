@@ -7,13 +7,13 @@ export default class IE11DeprecationBanner extends React.Component {
   static propTypes = {
     featureName: PropTypes.string.isRequired,
     noteType: PropTypes.string,
-    extraClassNames: PropTypes.string,
+    className: PropTypes.string,
     ie11Only: PropTypes.bool
   };
 
   static defaultProps = {
     noteType: undefined,
-    extraClassNames: undefined,
+    className: undefined,
     ie11Only: false
   };
 
@@ -22,14 +22,14 @@ export default class IE11DeprecationBanner extends React.Component {
   }
 
   render() {
-    const { featureName, noteType, ie11Only, extraClassNames } = this.props;
+    const { featureName, noteType, ie11Only, className } = this.props;
 
     if (ie11Only && !this.browserIsIE11()) {
       return null;
     }
 
     return (
-      <Note noteType={noteType} extraClassNames={extraClassNames}>
+      <Note noteType={noteType} className={className}>
         {featureName} is not supported in Internet Explorer 11. For more information{' '}
         <TextLink
           href="//www.contentful.com/faq/about-contentful/#which-browsers-does-contentful-support"

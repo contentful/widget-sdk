@@ -26,7 +26,7 @@ export default class OrganizationUsageInfo extends React.Component {
           <TextLink
             href="https://www.contentful.com/r/knowledgebase/fair-use/"
             target="_blank"
-            extraClassNames="usage-page__learn-more-link">
+            className="usage-page__learn-more-link">
             Learn more
           </TextLink>
         </div>

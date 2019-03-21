@@ -11,7 +11,7 @@ class WrappedReferenceCard extends React.Component {
     entityTitle: PropTypes.string,
     entityStatus: PropTypes.string,
     isLoading: PropTypes.bool,
-    extraClassNames: PropTypes.string,
+    className: PropTypes.string,
     disabled: PropTypes.bool,
     selected: PropTypes.bool,
     onEdit: PropTypes.func,
@@ -20,7 +20,7 @@ class WrappedReferenceCard extends React.Component {
   };
 
   static defaultProps = {
-    extraClassNames: ''
+    className: ''
   };
 
   renderEditButton() {
@@ -69,7 +69,7 @@ class WrappedReferenceCard extends React.Component {
       entityDescription,
       entityFile,
       entityTitle,
-      extraClassNames,
+      className,
       selected,
       entityStatus,
       isLoading
@@ -79,7 +79,7 @@ class WrappedReferenceCard extends React.Component {
       <ReferenceCard
         title={entityTitle || 'Untitled'}
         contentType={contentTypeName}
-        extraClassNames={extraClassNames}
+        className={className}
         description={entityDescription}
         selected={selected}
         status={entityStatus}

@@ -50,16 +50,16 @@ class TeamMembershipForm extends React.Component {
     const isEditing = !!initialMembership;
 
     return (
-      <TableRow extraClassNames="space-membership-editor">
+      <TableRow className="space-membership-editor">
         <TableCell>
           {isEditing && initialMembership.sys.space.name}
           {!isEditing && (
-            <Select data-test-id="space-select" onChange={this.setSpace} defaultValue="">
+            <Select testId="space-select" onChange={this.setSpace} defaultValue="">
               <Option value="" disabled>
                 Please select a space
               </Option>
               {availableSpaces.map(({ name, sys: { id } }) => (
-                <Option data-test-id="space-select-option" key={id} value={id}>
+                <Option testId="space-select-option" key={id} value={id}>
                   {name}
                 </Option>
               ))}

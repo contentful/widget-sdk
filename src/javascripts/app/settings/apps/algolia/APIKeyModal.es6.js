@@ -29,7 +29,7 @@ export default class APIKeyModal extends Component {
         {() => (
           <React.Fragment>
             <Modal.Header title="Algolia Admin API Key" />
-            <Form extraClassNames="algolia-app__config-modal-form" spacing="condensed">
+            <Form className="algolia-app__config-modal-form" spacing="condensed">
               <TextField
                 id="algolia-api-key"
                 name="algolia-api-key"

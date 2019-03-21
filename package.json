@@ -14,7 +14,7 @@
     "@contentful/contentful-slatejs-adapter": "^5.0.0",
     "@contentful/field-editors": "^1.0.0",
     "@contentful/forma-36-fcss": "0.0.15",
-    "@contentful/forma-36-react-components": "2.10.1",
+    "@contentful/forma-36-react-components": "3.0.0-alpha.0",
     "@contentful/forma-36-tokens": "0.2.2",
     "@contentful/hostname-transformer": "^1.2.7",
     "@contentful/mimetype": "^1.1.0",

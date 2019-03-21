@@ -14,7 +14,7 @@ export default function ContentModalSidebar(props) {
           icon="PlusCircle"
           isFullWidth
           disabled={props.showNewFieldDialog.isDisabled()}
-          extraClassNames="f36-margin-top--m"
+          className="f36-margin-top--m"
           onClick={() => {
             props.showNewFieldDialog.execute();
           }}>

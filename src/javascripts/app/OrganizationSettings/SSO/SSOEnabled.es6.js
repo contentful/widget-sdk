@@ -27,8 +27,8 @@ export default class SSOEnabled extends React.Component {
 
     return (
       <div className="sso-enabled__main">
-        <Heading extraClassNames="f36-margin-top--3xl">Congrats! SSO is enabled 🎉</Heading>
-        <Paragraph extraClassNames="f36-margin-top--l">
+        <Heading className="f36-margin-top--3xl">Congrats! SSO is enabled 🎉</Heading>
+        <Paragraph className="f36-margin-top--l">
           {restrictedModeEnabled && (
             <React.Fragment>
               If you experience any issues with SSO,{' '}

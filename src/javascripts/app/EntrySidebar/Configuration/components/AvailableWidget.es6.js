@@ -7,7 +7,7 @@ export default function AvailableWidget({ name, onClick, widgetNamespace }) {
   return (
     <div className="sidebar-configuration__available-widget">
       <div className="sidebar-configuration__available-widget-info">
-        <Paragraph extraClassNames="sidebar-configuration__available-widget-name">{name}</Paragraph>
+        <Paragraph className="sidebar-configuration__available-widget-name">{name}</Paragraph>
         <Paragraph>
           {widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN && 'Built-in item'}
           {widgetNamespace === NAMESPACE_EXTENSION && 'UI Extension'}

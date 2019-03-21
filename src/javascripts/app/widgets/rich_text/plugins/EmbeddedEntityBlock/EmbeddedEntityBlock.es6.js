@@ -51,7 +51,7 @@ class LinkedEntityBlock extends React.Component {
           onEntityFetchComplete={onEntityFetchComplete}
           onEdit={this.handleEditClick}
           onRemove={this.handleRemoveClick}
-          extraClassNames="rich-text__reference-card"
+          className="rich-text__reference-card"
         />
       </div>
     );

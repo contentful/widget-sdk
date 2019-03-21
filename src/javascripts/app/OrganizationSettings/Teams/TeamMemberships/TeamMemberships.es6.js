@@ -48,7 +48,7 @@ class TeamMemberships extends React.Component {
 
     return (
       <React.Fragment>
-        <Table data-test-id="member-table">
+        <Table testId="member-table">
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>

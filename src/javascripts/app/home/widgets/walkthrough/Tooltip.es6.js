@@ -21,7 +21,7 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
       {...tooltipProps}
       data-test-id={`walkthrough-step-tooltip-${index + 1}`}>
       <div className="walkthrough-tooltip__header">
-        <Subheading extraClassNames="walkthrough-tooltip__heading" element="h3">
+        <Subheading className="walkthrough-tooltip__heading" element="h3">
           {step.title}
         </Subheading>
         <IconButton

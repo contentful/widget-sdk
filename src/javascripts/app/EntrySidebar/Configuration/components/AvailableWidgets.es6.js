@@ -14,10 +14,10 @@ export default function AvailableItems(props) {
   const extensions = props.items.filter(item => item.widgetNamespace === NAMESPACE_EXTENSION);
   return (
     <div>
-      <Subheading extraClassNames="f36-margin-bottom--m">Available items</Subheading>
+      <Subheading className="f36-margin-bottom--m">Available items</Subheading>
       {builtin.length > 0 && (
         <React.Fragment>
-          <SectionHeading extraClassNames="f36-margin-bottom--xs">Built-in</SectionHeading>
+          <SectionHeading className="f36-margin-bottom--xs">Built-in</SectionHeading>
           <div className="sidebar-configuraiton__available-widgets-section f36-margin-bottom--l">
             {builtin.map(item => (
               <AvailableWidget
@@ -32,7 +32,7 @@ export default function AvailableItems(props) {
           </div>
         </React.Fragment>
       )}
-      <SectionHeading extraClassNames="f36-margin-bottom--xs">UI Extensions</SectionHeading>
+      <SectionHeading className="f36-margin-bottom--xs">UI Extensions</SectionHeading>
       {extensions.length > 0 && (
         <div className="sidebar-configuraiton__available-widgets-section f36-margin-bottom--l">
           {extensions.map(item => (
@@ -49,7 +49,7 @@ export default function AvailableItems(props) {
       )}
       {extensions.length === 0 && (
         <div className="f36-margin-bottom--m">
-          <Paragraph extraClassNames="f36-margin-bottom--s">
+          <Paragraph className="f36-margin-bottom--s">
             UI Extensions can enrich how content is created, editor or shared with other services.
           </Paragraph>
           <TextLink

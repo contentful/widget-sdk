@@ -36,7 +36,7 @@ class HeadingDropdown extends Component {
           <Button
             onMouseDown={onToggle}
             data-test-id="toolbar-heading-toggle"
-            extraClassNames="toolbar-heading-toggle"
+            className="toolbar-heading-toggle"
             indicateDropdown
             buttonType="naked"
             size="small"
@@ -46,7 +46,7 @@ class HeadingDropdown extends Component {
         }
         isOpen={isOpen}
         onClose={onClose}>
-        <DropdownList extraClassNames="toolbar-heading-dropdown-list">{children}</DropdownList>
+        <DropdownList className="toolbar-heading-dropdown-list">{children}</DropdownList>
       </Dropdown>
     );
   }

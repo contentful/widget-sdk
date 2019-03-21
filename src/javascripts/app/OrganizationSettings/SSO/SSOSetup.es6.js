@@ -125,10 +125,10 @@ export class SSOSetup extends React.Component {
           <div className="sso-setup__main">
             {!isEnabled && (
               <React.Fragment>
-                <Heading element="h1" extraClassNames="f36-margin-bottom--m f36-margin-top--2xl">
+                <Heading element="h1" className="f36-margin-bottom--m f36-margin-top--2xl">
                   Set up Single Sign-On (SSO) SAML 2.0
                 </Heading>
-                <Paragraph extraClassNames="f36-line-height--default f36-margin-bottom--2xl">
+                <Paragraph className="f36-line-height--default f36-margin-bottom--2xl">
                   Set up SSO for your organization in Contentful in a few steps.&nbsp;&nbsp;
                   <TextLink href="https://www.contentful.com/faq/sso/">Check out the FAQs</TextLink>
                   &nbsp;&nbsp;

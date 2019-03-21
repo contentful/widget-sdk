@@ -73,13 +73,13 @@ class TeamList extends React.Component {
           <ExperimentalFeatureNote />
           <section style={{ padding: '1em 2em 2em' }}>
             {teams.length > 0 && (
-              <Table data-test-id="teams-table">
+              <Table testId="teams-table">
                 <TableHead>
-                  <TableRow data-test-id="team-details-row">
-                    <TableCell width="300" data-test-id="team-name">
+                  <TableRow testId="team-details-row">
+                    <TableCell width="300" testId="team-name">
                       Name
                     </TableCell>
-                    <TableCell data-test-id="team-description">Description</TableCell>
+                    <TableCell testId="team-description">Description</TableCell>
                     <TableCell />
                     {!readOnlyPermission && <TableCell />}
                   </TableRow>

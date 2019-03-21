@@ -138,7 +138,7 @@ export default class Toolbar extends React.Component {
     const { isAnyHyperlinkEnabled, isAnyListEnabled, isAnyMarkEnabled } = this.state;
     const currentBlockType = props.editor.value.blocks.getIn([0, 'type']);
     return (
-      <EditorToolbar extraClassNames="rich-text__toolbar" data-test-id="toolbar">
+      <EditorToolbar className="rich-text__toolbar" data-test-id="toolbar">
         <div className="rich-text__toolbar__formatting-options-wrapper">
           <HeadingDropdown
             onToggle={this.toggleHeadingMenu}
@@ -149,7 +149,7 @@ export default class Toolbar extends React.Component {
             disabled={props.disabled}>
             <Paragraph {...props} />
             <Visible if={isNodeTypeEnabled(field, BLOCKS.HEADING_1)}>
-              <Heading1 {...props} extraClassNames="toolbar-h1-toggle" />
+              <Heading1 {...props} className="toolbar-h1-toggle" />
             </Visible>
             <Visible if={isNodeTypeEnabled(field, BLOCKS.HEADING_2)}>
               <Heading2 {...props} />

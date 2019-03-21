@@ -81,7 +81,7 @@ export default class EntrySidebar extends Component {
     if (item.problem) {
       return (
         <EntrySidebarWidget title="Missing extension">
-          <Note noteType="warning" extraClassNames="f36-margin-top--l f36-margin-bottom--l">
+          <Note noteType="warning" className="f36-margin-top--l f36-margin-bottom--l">
             <code>{item.name || item.widgetId}</code> is saved in configuration, but not installed
             in this environment.
           </Note>

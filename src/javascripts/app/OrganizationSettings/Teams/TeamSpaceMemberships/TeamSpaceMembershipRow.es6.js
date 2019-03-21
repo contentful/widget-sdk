@@ -56,12 +56,10 @@ class TeamMembershipRow extends React.Component {
       <TableRow className="membership-list__item">
         <TableCell>{space.name}</TableCell>
         <TableCell>{this.getRoleNames()}</TableCell>
-        <TableCell data-test-id="created-at-cell">
-          {moment(createdAt).format('MMMM DD, YYYY')}
-        </TableCell>
+        <TableCell testId="created-at-cell">{moment(createdAt).format('MMMM DD, YYYY')}</TableCell>
         {!readOnlyPermission && (
           <React.Fragment>
-            <TableCell data-test-id="created-by-cell">{getUserName(createdBy)}</TableCell>
+            <TableCell testId="created-by-cell">{getUserName(createdBy)}</TableCell>
             <TableCell align="right">
               <div className="membership-list__item__menu">
                 <Button
@@ -69,7 +67,7 @@ class TeamMembershipRow extends React.Component {
                   buttonType="muted"
                   size="small"
                   onClick={removeMembership}
-                  extraClassNames="membership-list__item__menu__button">
+                  className="membership-list__item__menu__button">
                   Remove
                 </Button>
                 <Button
@@ -77,7 +75,7 @@ class TeamMembershipRow extends React.Component {
                   buttonType="muted"
                   size="small"
                   onClick={() => onEdit(membership)}
-                  extraClassNames="membership-list__item__menu__button">
+                  className="membership-list__item__menu__button">
                   Edit
                 </Button>
               </div>

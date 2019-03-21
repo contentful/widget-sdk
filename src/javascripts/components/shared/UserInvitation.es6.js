@@ -105,7 +105,7 @@ export default class UserInvitation extends React.Component {
                   <p className="user-invitation--inviter">Invited by {inviterName}</p>
                   <Button
                     buttonType="primary"
-                    extraClassNames="user-invitation--join-org-button"
+                    className="user-invitation--join-org-button"
                     disabled={accepting}
                     loading={accepting}
                     onClick={this.acceptInvitation}>

@@ -106,7 +106,7 @@ export default function register() {
         labelText: 'Required field',
         checked: $scope.decoratedField.required,
         helpText: "You won't be able to publish an entry if this field is empty",
-        extraClassNames: 'validation-checkboxfield',
+        className: 'validation-checkboxfield',
         onChange: e => {
           $scope.decoratedField.required = e.target.checked;
           $scope.$digest();
@@ -124,7 +124,7 @@ export default function register() {
           labelText: name,
           checked: enabled,
           helpText,
-          extraClassNames: 'validation-checkboxfield',
+          className: 'validation-checkboxfield',
           checkboxProps: {
             name: 'isthisenabled',
             'aria-label': `${enabled ? 'Disable' : 'Enable'} validation`

@@ -84,7 +84,7 @@ const WidgetParameterControl = ({ definition, value, isMissing, onChange }) => {
         value={stringValue(value)}
         onChange={handleStringChange.bind(null, onChange)}
         validationMessage={isMissing ? 'This value is required.' : ''}
-        extraClassNames="f36-margin-bottom--l"
+        className="f36-margin-bottom--l"
       />
     );
   }
@@ -101,7 +101,7 @@ const WidgetParameterControl = ({ definition, value, isMissing, onChange }) => {
         selectProps={{ isDisabled: false, width: 'medium' }}
         onChange={handleStringChange.bind(null, onChange)}
         validationMessage={isMissing ? 'This value is required.' : ''}
-        extraClassNames="f36-margin-bottom--l">
+        className="f36-margin-bottom--l">
         <Option value="">{get(definition, ['labels', 'empty']) || 'Select an option'}</Option>
         {definition.options.map(o => {
           const value = Object.keys(o)[0];

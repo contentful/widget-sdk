@@ -12,7 +12,7 @@ class WrappedAssetCard extends React.Component {
     entityTitle: PropTypes.string,
     entityStatus: PropTypes.string,
     isLoading: PropTypes.bool,
-    extraClassNames: PropTypes.string,
+    className: PropTypes.string,
     disabled: PropTypes.bool,
     selected: PropTypes.bool,
     onEdit: PropTypes.func,
@@ -21,7 +21,7 @@ class WrappedAssetCard extends React.Component {
   };
 
   static defaultProps = {
-    extraClassNames: ''
+    className: ''
   };
 
   getFileType(file) {
@@ -116,20 +116,13 @@ class WrappedAssetCard extends React.Component {
   }
 
   render() {
-    const {
-      entityFile,
-      entityTitle,
-      extraClassNames,
-      selected,
-      entityStatus,
-      isLoading
-    } = this.props;
+    const { entityFile, entityTitle, className, selected, entityStatus, isLoading } = this.props;
 
     return (
       <AssetCard
         type={entityFile ? this.getFileType(entityFile) : 'archive'} // Default to archive if file doesn't exist
         title={entityTitle || 'Untitled'}
-        extraClassNames={extraClassNames}
+        className={className}
         selected={selected}
         status={entityStatus}
         src={entityFile ? `${entityFile.url}?h=${300}` : ''}

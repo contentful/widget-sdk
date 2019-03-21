@@ -14,7 +14,7 @@ export default function SidebarWidgetItem({
   const removeBtn = (
     <IconButton
       iconProps={{ icon: 'Close' }}
-      extraClassNames="sidebar-configuration__item-close"
+      className="sidebar-configuration__item-close"
       onClick={onRemoveClick}
       label={`Remove ${name} from your sidebar`}
     />
@@ -22,7 +22,7 @@ export default function SidebarWidgetItem({
 
   if (isProblem) {
     return (
-      <Note noteType="warning" extraClassNames="sidebar-configuration__problem-item">
+      <Note noteType="warning" className="sidebar-configuration__problem-item">
         <code>{name || id}</code> is saved in configuration, but not installed in this environment.
         {removeBtn}
       </Note>
@@ -31,7 +31,7 @@ export default function SidebarWidgetItem({
 
   return (
     <div className="sidebar-configuration__item">
-      {isDraggable && <Icon extraClassNames="sidebar-configuration__item-drag" icon="Drag" />}
+      {isDraggable && <Icon className="sidebar-configuration__item-drag" icon="Drag" />}
       {isRemovable && removeBtn}
       <div className="sidebar-configuration__item-name">{name}</div>
       <div>{children}</div>

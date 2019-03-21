@@ -188,7 +188,7 @@ describe('TeamMembershipForm', () => {
       it('should only have non-team members as sorted options', () => {
         const { wrapper } = renderComponent(actions);
 
-        const options = wrapper.find(Option).filter('[data-test-id="user-select-option"]');
+        const options = wrapper.find(Option).filter({ testId: 'user-select-option' });
         expect(options).toHaveLength(3);
         expect(options.get(0).props.children).toEqual('A User LastName <userA@test.com>');
         expect(options.get(0).props).toHaveProperty('value', 'orgMembershipA');
@@ -224,7 +224,7 @@ describe('TeamMembershipForm', () => {
 
         wrapper
           .find(Select)
-          .filter('[data-test-id="user-select"]')
+          .filter({ testId: 'user-select' })
           .find('select')
           .simulate('change', { target: { value: 'orgMembershipB1' } });
         const button = wrapper.find(Button).filter({ testId: 'add-member-button' });

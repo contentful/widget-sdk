@@ -26,7 +26,7 @@ describe('WalkthroughWidget', () => {
   const wrapper = Enzyme.mount(<WalkthroughWidget {...props} />);
 
   it('should render spinner while initial data is fetching', () => {
-    expect(wrapper.find('.space-home-spinner')).toHaveLength(1);
+    expect(wrapper.find('.space-home-spinner')).toExist();
   });
 
   it('should render "Start" button after initial fetch', async () => {

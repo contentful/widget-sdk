@@ -16,7 +16,7 @@ export default function NoSearchResultsAdvice() {
   return (
     <div className={cn('advice', 'advice--row-aligned')}>
       <Icon
-        extraClassNames={cn(styles.icon, 'f36-margin-right--s')}
+        className={cn(styles.icon, 'f36-margin-right--s')}
         icon="Search"
         size="large"
         color="muted"

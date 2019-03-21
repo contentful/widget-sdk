@@ -117,7 +117,7 @@ export default class WalkthroughWidget extends React.Component {
     const { started, dismissed, isLoading, isTourRunning, ReactJoyrideComponent } = this.state;
     const { spaceName } = this.props;
     return isLoading ? (
-      <Spinner size="large" extraClassNames="space-home-spinner" />
+      <Spinner size="large" className="space-home-spinner" />
     ) : (
       <>
         {ReactJoyrideComponent && (
@@ -142,7 +142,7 @@ export default class WalkthroughWidget extends React.Component {
             <div className="relaunch-walkthrough__content">
               <Subheading>Relaunch the walkthrough tour of your Space</Subheading>
               <Button
-                extraClassNames="relaunch-walkthrough__button"
+                className="relaunch-walkthrough__button"
                 onClick={this.relaunchTour}
                 testId="relaunch-walkthrough-button">
                 Relaunch tour

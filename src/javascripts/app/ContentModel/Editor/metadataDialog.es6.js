@@ -185,7 +185,7 @@ export default function register() {
         required: true,
         name: 'contentTypeName',
         id: 'contentTypeName',
-        extraClassNames: 'vertical-form-field-rythm-dense',
+        className: 'vertical-form-field-rythm-dense',
         validationMessage: newContentTypeFormState.nameFieldRequiredMessage,
         onChange: e => {
           newContentTypeFormState.pristine = false;
@@ -216,7 +216,7 @@ export default function register() {
         name: 'contentTypeId',
         id: 'contentTypeId',
         helpText: 'generated from name',
-        extraClassNames: 'vertical-form-field-rythm-dense',
+        className: 'vertical-form-field-rythm-dense',
         validationMessage:
           validateField($scope.contentTypeMetadata.id, 'apiId') ||
           newContentTypeFormState.idFieldRequiredMessage,
@@ -248,7 +248,7 @@ export default function register() {
         helpText: 'in less than 500 characters',
         name: 'contentTypeDescription',
         id: 'contentTypeDescription',
-        extraClassNames: 'vertical-form-field-rythm-dense',
+        className: 'vertical-form-field-rythm-dense',
         onChange: e => {
           newContentTypeFormState.pristine = false;
           $scope.contentTypeMetadata.description = e.target.value;

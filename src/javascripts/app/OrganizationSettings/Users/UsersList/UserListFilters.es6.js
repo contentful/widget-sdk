@@ -56,7 +56,7 @@ export class UserListFilters extends React.Component {
         </div>
         <section className="user-list__filters__column">
           {showResetButton && (
-            <TextLink onClick={onReset} extraClassNames="user-list__reset-button">
+            <TextLink onClick={onReset} className="user-list__reset-button">
               Clear filters
             </TextLink>
           )}

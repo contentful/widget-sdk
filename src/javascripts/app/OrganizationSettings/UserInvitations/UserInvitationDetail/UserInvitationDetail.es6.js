@@ -128,7 +128,7 @@ export default class UserInvitationDetail extends React.Component {
                   </Tooltip>
                 </header>
                 {Boolean(spaceInvitations.length) && (
-                  <Table extraClassNames="user-invitation-detail__table">
+                  <Table className="user-invitation-detail__table">
                     <TableHead>
                       <TableRow>
                         <TableCell>Space</TableCell>

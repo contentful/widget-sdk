@@ -52,7 +52,7 @@ export default class Pagination extends React.Component {
             value={`${limit}`} // TODO: this component should not require string as a value
             onChange={this.handleLimitChange}
             width="small"
-            extraClassNames="pagination__limit-selector">
+            className="pagination__limit-selector">
             <Option value="10">10</Option>
             <Option value="25">25</Option>
             <Option value="50">50</Option>
@@ -68,14 +68,14 @@ export default class Pagination extends React.Component {
             disabled={isFirstPage || loading}
             onClick={this.handlePreviousClick}
             buttonType="muted"
-            extraClassNames="pagination__button">
+            className="pagination__button">
             Previous
           </Button>{' '}
           <Button
             disabled={isLastPage || loading}
             onClick={this.handleNextClick}
             buttonType="muted"
-            extraClassNames="pagination__button">
+            className="pagination__button">
             Next
           </Button>
         </nav>

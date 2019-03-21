@@ -52,7 +52,7 @@ class EmbeddedEntryInline extends React.Component {
         selected={this.props.isSelected}
         title={`${contentTypeName}: ${entityTitle}`}
         status={entityStatus}
-        extraClassNames="rich-text__inline-reference-card"
+        className="rich-text__inline-reference-card"
         isLoading={isLoading}
         dropdownListItemNodes={
           !this.props.editor.props.actionsDisabled ? (

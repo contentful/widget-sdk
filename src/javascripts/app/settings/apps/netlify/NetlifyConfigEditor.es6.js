@@ -85,7 +85,7 @@ export default class NetlifyConfigEditor extends Component {
           return (
             <div key={configIndex} className={styles.row}>
               <SelectField
-                extraClassNames={styles.item}
+                className={styles.item}
                 id={selectId}
                 name={selectId}
                 labelText="Netlify site:"
@@ -102,7 +102,7 @@ export default class NetlifyConfigEditor extends Component {
                 })}
               </SelectField>
               <TextField
-                extraClassNames={styles.item}
+                className={styles.item}
                 id={inputId}
                 name={inputId}
                 labelText="Display name:"
@@ -111,7 +111,7 @@ export default class NetlifyConfigEditor extends Component {
                 onChange={e => this.onNameChange(configIndex, e.target.value)}
               />
               <TextLink
-                extraClassNames={styles.removeBtn}
+                className={styles.removeBtn}
                 disabled={disabled}
                 onClick={() => this.onRemove(configIndex)}>
                 Remove

@@ -94,13 +94,13 @@ export class CommandPanel extends React.Component {
   static propTypes = {
     items: PropTypes.arrayOf(itemPropType),
     searchString: PropTypes.string,
-    extraClassNames: PropTypes.string,
+    className: PropTypes.string,
     children: PropTypes.node,
     testId: PropTypes.string,
     isLoading: PropTypes.bool
   };
   static defaultProps = {
-    extraClassNames: undefined,
+    className: undefined,
     searchString: '',
     items: [],
     testId: 'cf-ui-command-panel',
@@ -209,9 +209,9 @@ export class CommandPanel extends React.Component {
   );
 
   render() {
-    const { extraClassNames, testId, isLoading } = this.props;
+    const { className, testId, isLoading } = this.props;
 
-    const classNames = cn(styles.commandPanel, extraClassNames);
+    const classNames = cn(styles.commandPanel, className);
 
     return (
       <ul className={classNames} data-test-id={testId}>

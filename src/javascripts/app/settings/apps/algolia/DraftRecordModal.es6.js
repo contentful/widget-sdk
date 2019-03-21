@@ -123,7 +123,7 @@ export default class DraftRecordModal extends React.Component {
 
   renderForm() {
     return (
-      <Form extraClassNames="algolia-app__config-modal-form" spacing="condensed">
+      <Form className="algolia-app__config-modal-form" spacing="condensed">
         <SelectField
           id="algolia-language"
           name="algolia-language"

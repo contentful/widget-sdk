@@ -33,7 +33,7 @@ PublicationStatus.propTypes = {
 
 const RestrictedNote = ({ actionName }) => (
   <p className="f36-color--text-light f36-margin-top--xs" data-test-id="action-restriction-note">
-    <Icon icon="Lock" color="muted" extraClassNames="action-restricted__icon" />
+    <Icon icon="Lock" color="muted" className="action-restricted__icon" />
     You do not have permission to {actionName.toLowerCase()}.
   </p>
 );
@@ -84,13 +84,13 @@ export default class PublicationWidget extends React.Component {
                   onClick={() => {
                     primary.execute();
                   }}
-                  extraClassNames="primary-publish-button">
+                  className="primary-publish-button">
                   {primary.label}
                 </Button>
               </React.Fragment>
             )}
             <Dropdown
-              extraClassNames="secondary-publish-button-wrapper"
+              className="secondary-publish-button-wrapper"
               position="bottom-right"
               isOpen={this.state.isOpenDropdown}
               onClose={() => {
@@ -98,7 +98,7 @@ export default class PublicationWidget extends React.Component {
               }}
               toggleElement={
                 <Button
-                  extraClassNames="secondary-publish-button"
+                  className="secondary-publish-button"
                   isFullWidth
                   disabled={secondaryActionsDisabled}
                   testId="change-state-menu-trigger"

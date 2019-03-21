@@ -77,7 +77,7 @@ export class FieldEditorRow extends React.Component {
       <React.Fragment>
         <div className="algolia-app__config-field-editor-row">
           <Select
-            extraClassNames="algolia-app__config-field-editor-row__field-select"
+            className="algolia-app__config-field-editor-row__field-select"
             value={this.state.id}
             onChange={e => {
               this.setState({ id: e.target.value });
@@ -90,7 +90,7 @@ export class FieldEditorRow extends React.Component {
             ))}
           </Select>
           <Select
-            extraClassNames="algolia-app__config-field-editor-row__helper-select"
+            className="algolia-app__config-field-editor-row__helper-select"
             value={this.state.helper}
             onChange={e => {
               this.setState({ helper: e.target.value });
@@ -104,7 +104,7 @@ export class FieldEditorRow extends React.Component {
           </Select>
           {selectedHelper && selectedHelper.param && (
             <TextInput
-              extraClassNames="algolia-app__config-field-editor-row__helper-value-input"
+              className="algolia-app__config-field-editor-row__helper-value-input"
               placeholder={selectedHelper.placeholder}
               value={this.state.helperParameter}
               onChange={e => {
@@ -113,7 +113,7 @@ export class FieldEditorRow extends React.Component {
             />
           )}
           <Button
-            extraClassNames="algolia-app__config-field-editor-row__add-button"
+            className="algolia-app__config-field-editor-row__add-button"
             buttonType="muted"
             onClick={this.onAdd}>
             Add

@@ -100,7 +100,7 @@ class TeamDialog extends React.Component {
             data-test-id="team-form">
             <Modal.Header title={isEditing ? 'Edit team' : 'New team'} onClose={onClose} />
             <Modal.Content>
-              <Paragraph extraClassNames="f36-margin-bottom--l">
+              <Paragraph className="f36-margin-bottom--l">
                 Teams make it easy to group people together.
               </Paragraph>
               <TextField

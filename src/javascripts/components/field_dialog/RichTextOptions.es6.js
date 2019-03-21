@@ -219,7 +219,7 @@ class RichTextOptions extends Component {
   renderToggles = (options, className) =>
     options.map(option => (
       <ToggleButton
-        extraClassNames={`rich-text-option-toggle ${className}`}
+        className={`rich-text-option-toggle ${className}`}
         testId={`toggle-button-${option.id}`}
         key={option.id + this.isOptionActive(option)}
         icon={option.icon}

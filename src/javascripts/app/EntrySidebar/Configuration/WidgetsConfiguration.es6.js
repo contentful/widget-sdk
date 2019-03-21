@@ -23,8 +23,8 @@ import AvailableWidgets from './components/AvailableWidgets.es6';
 export default function WidgetsConfiguration({ state, dispatch }) {
   return (
     <React.Fragment>
-      <Heading extraClassNames="f36-margin-bottom--s">Sidebar configuration</Heading>
-      <Paragraph extraClassNames="f36-margin-bottom--l">
+      <Heading className="f36-margin-bottom--s">Sidebar configuration</Heading>
+      <Paragraph className="f36-margin-bottom--l">
         Configure the sidebar for this content type.
       </Paragraph>
       <FieldGroup>
@@ -42,7 +42,7 @@ export default function WidgetsConfiguration({ state, dispatch }) {
           />
           <div className="f36-margin-top--m" />
           <RadioButtonField
-            extraClassNames="f36-margin-left--3xl"
+            className="f36-margin-left--3xl"
             labelText="Use custom sidebar"
             helpText="Used only for this content type"
             name="sidebarType"
@@ -88,7 +88,7 @@ export default function WidgetsConfiguration({ state, dispatch }) {
           </React.Fragment>
         )}
       </div>
-      <Note extraClassNames="f36-margin-bottom--xl">
+      <Note className="f36-margin-bottom--xl">
         <FeedbackButton
           target="extensibility"
           about="Sidebar configuration"

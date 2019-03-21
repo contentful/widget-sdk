@@ -38,7 +38,7 @@ export default class EntityLinkToolbarIcon extends Component {
           this.props.isButton ? (
             <Button
               disabled={this.props.disabled}
-              extraClassNames={`${baseClass}-button`}
+              className={`${baseClass}-button`}
               size="small"
               onClick={event => this.handleClick(event, widgetAPI)}
               icon={type === 'Asset' ? 'Asset' : 'EmbeddedEntryBlock'}
@@ -49,14 +49,14 @@ export default class EntityLinkToolbarIcon extends Component {
           ) : (
             <DropdownListItem
               isDisabled={this.props.disabled}
-              extraClassNames={`${baseClass}-list-item`}
+              className={`${baseClass}-list-item`}
               size="small"
               onClick={event => this.handleClick(event, widgetAPI)}
               testId={`toolbar-toggle-${nodeType}`}>
               <div className="cf-flex-grid">
                 <Icon
                   icon={type === 'Asset' ? 'Asset' : 'EmbeddedEntryBlock'}
-                  extraClassNames="rich-text__embedded-entry-list-icon"
+                  className="rich-text__embedded-entry-list-icon"
                   color="secondary"
                 />
                 {type}

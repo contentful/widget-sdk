@@ -31,7 +31,7 @@ function WidgetParametersConfiguration({ widget, dispatch }) {
 
   return (
     <React.Fragment>
-      <Heading extraClassNames="f36-margin-bottom--s">Configure {widget.name}</Heading>
+      <Heading className="f36-margin-bottom--s">Configure {widget.name}</Heading>
       <div className="sidebar-configuration-fields__container">
         <WidgetParametersForm
           definitions={widget.parameters}
@@ -42,7 +42,7 @@ function WidgetParametersConfiguration({ widget, dispatch }) {
         <div>
           <Button
             disabled={anyIsMissing}
-            extraClassNames="f36-margin-right--m"
+            className="f36-margin-right--m"
             onClick={() => {
               dispatch(updateWidgetSettings(widget, values));
               dispatch(closeWidgetConfiguration());

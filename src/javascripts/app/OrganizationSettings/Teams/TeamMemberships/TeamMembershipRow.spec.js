@@ -102,7 +102,7 @@ describe('TeamMembershipRow', () => {
         expect(
           wrapper
             .find(TableCell)
-            .filter({ 'data-test-id': 'created-at-cell' })
+            .filter({ testId: 'created-at-cell' })
             .text()
         ).toEqual('January 25, 2019');
         expect(
@@ -169,7 +169,7 @@ describe('TeamMembershipRow', () => {
           expect(
             wrapper
               .find(TableCell)
-              .filter({ 'data-test-id': 'created-at-cell' })
+              .filter({ testId: 'created-at-cell' })
               .text()
           ).toEqual('January 25, 2019');
           expect(
@@ -181,7 +181,7 @@ describe('TeamMembershipRow', () => {
           expect(
             wrapper
               .find(TableCell)
-              .filter({ 'data-test-id': 'created-by-cell' })
+              .filter({ testId: 'created-by-cell' })
               .text()
           ).toEqual('test User2');
         });
