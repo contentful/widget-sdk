@@ -15,6 +15,7 @@ const Tab = {
 export default class TranslationSidebarWidget extends Component {
   static propTypes = {
     localeData: PropTypes.shape({
+      isSingleLocaleModeSupported: PropTypes.bool.isRequired,
       isSingleLocaleModeOn: PropTypes.bool.isRequired
     }).isRequired,
     emitter: PropTypes.shape({
@@ -30,28 +31,29 @@ export default class TranslationSidebarWidget extends Component {
     track('translation_sidebar:toggle_widget_mode', { currentMode: value });
   };
 
-  render() {
-    const { isSingleLocaleModeOn } = this.props.localeData;
-    const CurrentTranslationWidget = isSingleLocaleModeOn
-      ? TranslationWidgetDropdown
-      : TranslationWidgetPills;
+  headerNode = () => (
+    <Select
+      value={this.props.localeData.isSingleLocaleModeOn ? Tab.SINGLE : Tab.MULTI}
+      onChange={this.onSelectChange}
+      width="auto"
+      className="entity-sidebar__select">
+      <Option value={Tab.MULTI}>Multiple locales</Option>
+      <Option value={Tab.SINGLE}>Single locale</Option>
+    </Select>
+  );
 
-    const headerNode = (
-      <Select
-        value={isSingleLocaleModeOn ? Tab.SINGLE : Tab.MULTI}
-        onChange={this.onSelectChange}
-        width="auto"
-        className="entity-sidebar__select">
-        <Option value={Tab.MULTI}>Multiple locales</Option>
-        <Option value={Tab.SINGLE}>Single locale</Option>
-      </Select>
-    );
+  render() {
+    const { isSingleLocaleModeSupported, isSingleLocaleModeOn } = this.props.localeData;
+    const CurrentTranslationWidget =
+      isSingleLocaleModeSupported && isSingleLocaleModeOn
+        ? TranslationWidgetDropdown
+        : TranslationWidgetPills;
 
     return (
       <EntrySidebarWidget
         testId="sidebar-translation-widget"
         title="Translation"
-        headerNode={headerNode}>
+        headerNode={isSingleLocaleModeSupported ? this.headerNode() : undefined}>
         <CurrentTranslationWidget {...this.props} />
       </EntrySidebarWidget>
     );
