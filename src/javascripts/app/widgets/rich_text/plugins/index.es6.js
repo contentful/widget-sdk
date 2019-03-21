@@ -31,12 +31,14 @@ import { PasteHtmlPlugin } from './PasteHtml/index.es6';
 import { PasteTextPlugin } from './PasteText/index.es6';
 
 import { CommandPalettePlugin } from './CommandPalette/index.es6';
+import { InsertBeforeFirstVoidBlockPlugin } from './InsertBeforeFirstVoidBlock/index.es6';
 
 import schema from '../constants/Schema.es6';
 
 export function buildPlugins(richTextAPI) {
   return [
     { schema },
+    InsertBeforeFirstVoidBlockPlugin({ richTextAPI }),
     BoldPlugin({ richTextAPI }),
     ItalicPlugin({ richTextAPI }),
     UnderlinedPlugin({ richTextAPI }),
