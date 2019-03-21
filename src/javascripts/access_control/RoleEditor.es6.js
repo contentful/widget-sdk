@@ -10,8 +10,7 @@ import {
   extend,
   omit,
   find,
-  cloneDeep,
-  identity
+  cloneDeep
 } from 'lodash';
 import PropTypes from 'prop-types';
 import { TextField, Button, Notification } from '@contentful/forma-36-react-components';
@@ -209,10 +208,9 @@ class RoleEditor extends React.Component {
     const internalCopy = cloneDeep(this.state.internal);
     const autofixed = PolicyBuilder.removeOutdatedRules(internalCopy, cts, locales);
     if (autofixed) {
-      this.save(true);
-      return set('internal', internalCopy);
+      return internalCopy;
     }
-    return identity;
+    return null;
   };
 
   updateRuleAttribute = entities => (rulesKey, id) => attribute => ({ target: { value } }) => {
@@ -297,6 +295,7 @@ class RoleEditor extends React.Component {
 
     const stateUpdates = [];
     stateUpdates.push(set('isLegacy', ResourceUtils.isLegacyOrganization(organization)));
+    let autofixedInternals;
 
     if (!featureEnabled) {
       stateUpdates.push(set('hasCustomRolesFeature', false), set('canModifyRoles', false));
@@ -305,11 +304,14 @@ class RoleEditor extends React.Component {
       stateUpdates.push(set('hasCustomRolesFeature', true), set('canModifyRoles', false));
     } else {
       stateUpdates.push(set('hasCustomRolesFeature', true), set('canModifyRoles', true));
-      stateUpdates.push(this.autofixPolicies());
+      autofixedInternals = this.autofixPolicies();
+      if (autofixedInternals) {
+        stateUpdates.push(set('internal', autofixedInternals));
+      }
     }
     stateUpdates.push(set('loading', false));
 
-    this.setState(flow(...stateUpdates));
+    this.setState(flow(...stateUpdates), () => autofixedInternals !== null && this.save(true));
   }
 
   navigateToList() {
