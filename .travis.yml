@@ -22,8 +22,7 @@ before_install:
   # Install latest version of docker. We require at least 1.12
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
   - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y install docker-ce
+  - sudo apt-get -y install -t $(lsb_release -cs) docker-ce
 
 install:
   # Build the application with test dependencies
