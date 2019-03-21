@@ -11,6 +11,7 @@ import { __PROTOTYPE__PROJECTS_FLAG } from 'featureFlags.es6';
 import * as actionCreators from 'redux/actions/__PROTOTYPE__projects/actionCreators.es6';
 import { __PROTOTYPE__PROJECTS } from 'redux/datasets.es6';
 import { getRawDatasets } from 'redux/selectors/datasets.es6';
+import getOrgRole from 'redux/selectors/getOrgRole.es6';
 
 // Styles mostly copied from sidepanel.styl
 const styles = {
@@ -57,7 +58,8 @@ export class SidepanelProjects extends React.Component {
     showCreateProjectModal: PropTypes.func.isRequired,
     goToProject: PropTypes.func.isRequired,
     getAllProjects: PropTypes.func.isRequired,
-    projects: PropTypes.object
+    projects: PropTypes.object,
+    authorized: PropTypes.bool.isRequired
   };
 
   state = {
@@ -91,10 +93,11 @@ export class SidepanelProjects extends React.Component {
       currOrg: {
         sys: { id: orgId }
       },
-      getAllProjects
+      getAllProjects,
+      authorized
     } = this.props;
 
-    const isEnabled = await getVariation(__PROTOTYPE__PROJECTS_FLAG, { orgId });
+    const isEnabled = authorized && (await getVariation(__PROTOTYPE__PROJECTS_FLAG, { orgId }));
 
     if (isEnabled) {
       getAllProjects({ orgId });
@@ -156,6 +159,7 @@ export class SidepanelProjects extends React.Component {
 
 export default connect(
   (state, { currOrg }) => ({
+    authorized: ['owner', 'admin'].includes(getOrgRole(state, { orgId: currOrg.sys.id })),
     projects: (getRawDatasets(state, { orgId: currOrg.sys.id }) || {})[__PROTOTYPE__PROJECTS]
   }),
   {
