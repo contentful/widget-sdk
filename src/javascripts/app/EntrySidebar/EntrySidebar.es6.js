@@ -62,7 +62,9 @@ export default class EntrySidebar extends Component {
   };
 
   renderBuiltinWidget = sidebarItem => {
+    const { emitter, localeData, sidebarExtensionsBridge: bridge } = this.props;
     const { widgetId, widgetNamespace } = sidebarItem;
+    const defaultProps = { emitter, bridge };
 
     if (widgetId === SidebarWidgetTypes.VERSIONS && !this.props.isMasterEnvironment) {
       return null;
@@ -74,14 +76,12 @@ export default class EntrySidebar extends Component {
       return null;
     }
 
-    return (
-      <Component
-        key={`${widgetNamespace},${widgetId}`}
-        emitter={this.props.emitter}
-        bridge={this.props.sidebarExtensionsBridge}
-        localeData={this.props.localeData}
-      />
-    );
+    const props =
+      widgetId === SidebarWidgetTypes.TRANSLATION
+        ? { ...defaultProps, localeData }
+        : defaultProps;
+
+    return <Component {...props} key={`${widgetNamespace},${widgetId}`} />;
   };
 
   renderExtensionWidget = item => {
