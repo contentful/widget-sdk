@@ -7,7 +7,8 @@ import { getRequiredDataSets } from '../routes.es6';
 import { getPath } from './location.es6';
 import { hasAccess } from './access.es6';
 
-const getRawDatasets = state => get(state, ['datasets', 'payload', getOrgId(state)], {});
+export const getRawDatasets = (state, props) =>
+  get(state, ['datasets', 'payload', get(props, 'orgId', getOrgId(state))], {});
 
 // datasets will not be requested more often than this value
 const MAX_AGE = 10 * 1000;

@@ -4,6 +4,7 @@ import spacesState from 'states/Spaces.es6';
 import homeState from 'states/Home.es6';
 import deeplinkState from 'states/Deeplink.es6';
 import userInvitationState from 'states/UserInvitationState.es6';
+import projectsState from 'app/__PROTOTYPE__Projects/ProjectsRoutingState.es6';
 
 import { getModule } from 'NgRegistry.es6';
 
@@ -20,6 +21,7 @@ export function loadAll() {
     homeState,
     deeplinkState,
     userInvitationState,
+    projectsState,
     {
       name: '_other',
       url: '/*path',
