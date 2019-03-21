@@ -9,7 +9,7 @@ import Channel from './ExtensionIFrameChannel.es6';
 import ExtensionAPI from './ExtensionAPI.es6';
 
 const WIDTH = { width: '100%' };
-const SANDBOX = 'allow-scripts allow-popups allow-popups-to-escape-sandbox';
+const SANDBOX = 'allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms';
 
 function isAppDomain(src) {
   const protocol = ['//', 'http://', 'https://'].find(p => src.startsWith(p));
