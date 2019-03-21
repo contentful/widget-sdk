@@ -39,8 +39,9 @@ export default class Channel {
    *
    * The message looks like this: `{ method, params }`.
    *
-   * If the channel has not yet been connected the message will be
-   * pushed onto a queue and will be sent after calling `#connect()`.
+   * If the channel has not been yet connected the message will
+   * be pushed into the queue and will be sent with the first
+   * `connect()` call.
    */
   send(method, params) {
     if (!Array.isArray(params)) {
@@ -55,13 +56,12 @@ export default class Channel {
   }
 
   connect(data) {
-    if (this.connected) {
-      throw new Error('Widget Channel already connected');
-    }
+    this._send('connect', [{ id: this.id, ...data }, this.messageQueue]);
 
+    // Stop using message queue (see `send()`) right after
+    // the first connection is estabilished.
     this.connected = true;
-    const params = [{ id: this.id, ...data }, this.messageQueue];
-    this._send('connect', params);
+    this.messageQueue = [];
   }
 
   destroy() {

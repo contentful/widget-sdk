@@ -39,24 +39,31 @@ describe('ExtensionIFrameChannel', () => {
   };
 
   describe('#connect()', () => {
+    const makeExpectedConnectMessage = channel => [
+      {
+        method: 'connect',
+        params: [{ id: channel.id }, []]
+      },
+      '*'
+    ];
+
     it('sends connect message with ID', () => {
       const [channel, stubs] = makeChannel();
       channel.connect();
 
-      expect(stubs.postMessage).toBeCalledWith(
-        {
-          method: 'connect',
-          params: [{ id: channel.id }, []]
-        },
-        '*'
-      );
+      expect(stubs.postMessage).toBeCalledWith(...makeExpectedConnectMessage(channel));
     });
 
-    it('throws an error when called twice', () => {
-      const [channel] = makeChannel();
-      const connect = channel.connect.bind(channel);
-      connect();
-      expect(connect).toThrow();
+    it('can be called twice and always sends connect message', () => {
+      const [channel, stubs] = makeChannel();
+      channel.connect();
+      channel.connect();
+
+      expect(stubs.postMessage).toBeCalledTimes(2);
+
+      const expected = makeExpectedConnectMessage(channel);
+      expect(stubs.postMessage.mock.calls[0]).toEqual(expected);
+      expect(stubs.postMessage.mock.calls[1]).toEqual(expected);
     });
   });
 

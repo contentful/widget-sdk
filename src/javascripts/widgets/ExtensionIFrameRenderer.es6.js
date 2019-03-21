@@ -66,6 +66,10 @@ export default class ExtensionIFrameRenderer extends React.Component {
     return iframe;
   }
 
+  // This will be called when the iframe navigates or is refreshed.
+  // We want to connect in this case too (otherwise we'd just render
+  // HTML page but the `contentfulExtension.init(cb)` callback wouldn't
+  // be called).
   onLoad = () => this.extensionApi.connect();
 
   initialize = iframe => {
