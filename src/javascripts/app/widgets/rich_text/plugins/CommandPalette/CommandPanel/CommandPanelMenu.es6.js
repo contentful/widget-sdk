@@ -117,7 +117,7 @@ export class CommandPanel extends React.Component {
     const searchStringHasUpdated = props.searchString !== state.originalSearchString;
 
     const items = props.items.filter(item =>
-      item.label.toLowerCase().includes(props.searchString.toLowerCase())
+      item.label.toLowerCase().includes(props.searchString ? props.searchString.toLowerCase() : '')
     );
 
     return {

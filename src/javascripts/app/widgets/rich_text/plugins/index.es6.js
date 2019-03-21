@@ -30,6 +30,8 @@ import { PastePlugin } from './Paste/index.es6';
 import { PasteHtmlPlugin } from './PasteHtml/index.es6';
 import { PasteTextPlugin } from './PasteText/index.es6';
 
+import { CommandPalettePlugin } from './CommandPalette/index.es6';
+
 import schema from '../constants/Schema.es6';
 
 export function buildPlugins(richTextAPI) {
@@ -56,6 +58,7 @@ export function buildPlugins(richTextAPI) {
     PastePlugin({ richTextAPI }),
     PasteHtmlPlugin(),
     PasteTextPlugin(),
+    CommandPalettePlugin({ richTextAPI }),
     TrailingBlock({ type: BLOCKS.PARAGRAPH }),
     NewLinePlugin()
   ];

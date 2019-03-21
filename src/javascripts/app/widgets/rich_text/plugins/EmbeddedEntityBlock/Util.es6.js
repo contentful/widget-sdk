@@ -42,7 +42,7 @@ export async function selectEntityAndInsert(nodeType, widgetAPI, editor, logActi
   }
 }
 
-const createNode = (nodeType, entity) => ({
+export const createNode = (nodeType, entity) => ({
   type: nodeType,
   object: 'block',
   data: {
@@ -56,12 +56,15 @@ const createNode = (nodeType, entity) => ({
   }
 });
 
-export function insertBlock(editor, nodeType, entity) {
+export function insertBlock(editor, nodeType, entity, focusNextLine = true) {
   const linkedEntityBlock = createNode(nodeType, entity);
   if (editor.value.blocks.size === 0 || haveTextInSomeBlocks(editor)) {
     editor.insertBlock(linkedEntityBlock);
   } else {
     editor.setBlocks(linkedEntityBlock);
   }
-  editor.insertBlock(BLOCKS.PARAGRAPH).focus();
+
+  if (focusNextLine) {
+    editor.insertBlock(BLOCKS.PARAGRAPH).focus();
+  }
 }

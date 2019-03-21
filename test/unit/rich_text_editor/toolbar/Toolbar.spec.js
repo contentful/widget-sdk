@@ -133,7 +133,11 @@ describe('Rich Text toolbar', () => {
     this.editorApi.embedEntryBlock = entry => embedEntity(entry, BLOCKS.EMBEDDED_ENTRY);
     this.editorApi.embedInlineEntry = entry => embedEntity(entry, INLINES.EMBEDDED_ENTRY);
     this.editorApi.embedAssetBlock = asset => embedEntity(asset, BLOCKS.EMBEDDED_ASSET);
-    this.editorApi.typeText = text => this.editorNode.simulate('beforeinput', { data: text });
+    this.editorApi.typeText = text =>
+      // The editor node is a fragment/array which renders editor and command
+      // palette. This is why we need to simulate the events on the first child which is
+      // the actual content editable.
+      this.editorNode.childAt(0).simulate('beforeinput', { data: text });
     this.editorApi.pressKeys = async keys => {
       await flushPromises();
       const event = {
@@ -143,7 +147,7 @@ describe('Rich Text toolbar', () => {
 
       event.key = upperFirst(event.key);
 
-      this.editorNode.simulate('keyDown', event);
+      this.editorNode.childAt(0).simulate('keyDown', event);
     };
     this.editorApi.pressEnter = this.editorApi.pressKeys.bind(null, 'enter');
     this.editorApi.pressTab = this.editorApi.pressKeys.bind(null, 'tab');

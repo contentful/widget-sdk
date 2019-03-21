@@ -16,14 +16,14 @@ const createInlineNode = id => ({
   }
 });
 
-export const insertInline = (editor, entryId) => {
+export const insertInline = (editor, entryId, focusNextLine = true) => {
   if (haveInlines(editor, INLINES.EMBEDDED_ENTRY)) {
     editor.setInlines(createInlineNode(entryId));
   } else {
     editor.insertInline(createInlineNode(entryId));
   }
 
-  return editor.moveToStartOfNextText().focus();
+  focusNextLine ? editor.moveToStartOfNextText().focus() : null;
 };
 
 export const hasOnlyInlineEntryInSelection = editor => {
