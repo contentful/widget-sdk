@@ -1,13 +1,13 @@
-import { uniq, flow, flatMap } from 'lodash/fp';
 import Parser from 'path-parser';
 
 import {
-  TEAMS,
-  USERS,
   ORG_MEMBERSHIPS,
+  ORG_SPACE_ROLES,
+  ORG_SPACES,
   TEAM_MEMBERSHIPS,
   TEAM_SPACE_MEMBERSHIPS,
-  ORG_SPACES,
+  TEAMS,
+  USERS,
   __PROTOTYPE__PROJECTS
 } from './datasets.es6';
 
@@ -27,8 +27,8 @@ const ROUTES = {
               USERS,
               ORG_MEMBERSHIPS,
               TEAM_SPACE_MEMBERSHIPS,
-              ORG_SPACES
-              // ORG_SPACE_ROLES
+              ORG_SPACES,
+              { orgRoles: ['admin', 'owner'], datasets: [ORG_SPACE_ROLES] }
             ]
           }
         }
@@ -61,23 +61,6 @@ function addParser(route, parentPath) {
 }
 
 Object.values(ROUTES).forEach(route => addParser(route));
-
-export function getRequiredDataSets(path, routes = ROUTES) {
-  if (!path) {
-    return [];
-  }
-  return flow(
-    // get all routes
-    Object.values,
-    // this gets the datasets of the matching route and all parents
-    // effectively parents gives their dataset requirements to all their children
-    flatMap(({ partialTest, children, requiredDataSets = [] }) => {
-      const dataSets = partialTest(path) ? requiredDataSets : [];
-      return children ? dataSets.concat(getRequiredDataSets(path, children)) : dataSets;
-    }),
-    uniq
-  )(routes);
-}
 
 // assumes if a route belongs to a feature, all children belong to that feature as well
 export function getFeature(path, routes = ROUTES) {

@@ -2,18 +2,22 @@ import { isEmpty } from 'lodash/fp';
 import { getPath } from '../selectors/location.es6';
 import loadDataSets from '../loadDataSets.es6';
 import { getDataSetsToLoad } from 'redux/selectors/datasets.es6';
+import getOrgRole from 'redux/selectors/getOrgRole.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import { getFeature } from '../routes.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
 export default ({ getState, dispatch }) => next => async action => {
-  const oldPath = getPath(getState());
+  const oldState = getState();
+  const oldPath = getPath(oldState);
+  const oldOrgRole = getOrgRole(oldState);
   // calls other middleware and reducer; the reducer updates the state
   const result = next(action);
   const newState = getState();
   const newPath = getPath(newState);
+  const newOrgRole = getOrgRole(newState);
 
-  if (oldPath !== newPath) {
+  if (newPath && newOrgRole && (oldPath !== newPath || oldOrgRole !== newOrgRole)) {
     // feature catalog handling
     const featureRequired = getFeature(newPath);
     // does the new location depend on a feature from the catalog?

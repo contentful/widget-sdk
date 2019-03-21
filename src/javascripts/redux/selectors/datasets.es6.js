@@ -3,8 +3,7 @@ import { mapValues, update } from 'lodash/fp';
 import { createSelector } from 'reselect';
 
 import getOrgId from './getOrgId.es6';
-import { getRequiredDataSets } from '../routes.es6';
-import { getPath } from './location.es6';
+import getRequiredDatasets from './getRequiredDatasets.es6';
 import { hasAccess } from './access.es6';
 
 export const getRawDatasets = (state, props) =>
@@ -47,7 +46,7 @@ export const getMeta = state => get(state, ['datasets', 'meta', getOrgId(state)]
 // gets all datasets that have to be loaded for the current location
 // given the new route, the loaded datasets and the age of the loaded datasets
 export const getDataSetsToLoad = (state, { now } = { now: Date.now() }) => {
-  const requiredDatasets = getRequiredDataSets(getPath(state));
+  const requiredDatasets = getRequiredDatasets(state);
   const datasetsMeta = getMeta(state);
   return requiredDatasets.filter(datatset => {
     const lastFetchedAt = get(datasetsMeta, [datatset, 'fetched']);
@@ -63,7 +62,7 @@ export const isMissingRequiredDatasets = state => {
   if (!hasAccess(state)) {
     return false;
   }
-  const requiredDatasets = getRequiredDataSets(getPath(state));
+  const requiredDatasets = getRequiredDatasets(state);
   const datasetsInState = Object.keys(getDatasets(state));
   return !isEmpty(difference(requiredDatasets, datasetsInState));
 };
