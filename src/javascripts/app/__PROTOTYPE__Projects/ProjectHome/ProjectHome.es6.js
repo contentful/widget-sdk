@@ -49,6 +49,7 @@ export default connect(
 
       const backend = createMicroBackendsClient({
         backendName: 'projects',
+        withAuth: true,
         baseUrl: `/organizations/${orgId}/projects`
       });
 
@@ -88,6 +89,7 @@ export default connect(
 
       const backend = createMicroBackendsClient({
         backendName: 'projects',
+        withAuth: true,
         baseUrl: `/organizations/${orgId}/projects/${projectId}`
       });
 

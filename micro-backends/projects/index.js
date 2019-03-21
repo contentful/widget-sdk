@@ -2,6 +2,7 @@
 
 const handlers = require('./handlers');
 const responses = require('./responses');
+const checkAuthorization = require('./checkAuthorization');
 
 module.exports = {
   apiVersion: 1,
@@ -17,6 +18,16 @@ module.exports = {
       projectId
     };
 
+    // Fetch a org membership.
+    // If there's no membership for token/space ID pair - respond with 401.
+    try {
+      const token = req.headers['x-contentful-token'];
+      const api = req.headers['x-contentful-api'];
+      await checkAuthorization(dependencies, orgId, token, api);
+    } catch (err) {
+      return responses.notFound();
+    }
+
     if (orgPath !== 'organizations' || projectPath !== 'projects') {
       return responses.notFound();
     }
@@ -25,8 +36,6 @@ module.exports = {
     if (!projectId && method === 'get') {
       return handlers.getAll({ req, kv, dependencies, meta });
     }
-
-    // TODO: validate org
 
     if (!allowedMethods.includes(method)) {
       return responses.notFound();

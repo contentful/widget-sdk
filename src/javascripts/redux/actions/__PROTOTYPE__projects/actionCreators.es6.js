@@ -5,6 +5,7 @@ export function getAllProjects({ orgId }) {
   return async dispatch => {
     const backend = createMicroBackendsClient({
       backendName: 'projects',
+      withAuth: true,
       baseUrl: `/organizations/${orgId}/projects`
     });
 
