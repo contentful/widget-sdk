@@ -22,16 +22,16 @@ jobs:
     machine: true
     steps:
       - attach_workspace:
-          at: /workspace
-      - run: docker load -i /workspace/docker/user-interface-ci.tar.gz
+          at: ~/workspace
+      - run: docker load -i ~/workspace/docker/user-interface-ci.tar.gz
       - run: bin/docker-run-ci test
 
   generate-assets:
     machine: true
     steps:
       - attach_workspace:
-          at: /workspace
-      - run: docker load -i /workspace/docker/user-interface-ci.tar.gz
+          at: ~/workspace
+      - run: docker load -i ~/workspace/docker/user-interface-ci.tar.gz
       - run: bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false"
       - persist_to_workspace:
           root: .
@@ -43,12 +43,12 @@ jobs:
       docker_layer_caching: true
     steps:
       - attach_workspace:
-          at: /workspace
+          at: ~/workspace
       - run: docker build -t aws -f Dockerfile-awscli .
       - run:
           name: Deploy to preview
           command: |
-            docker run -t --rm -v /workspace/output:/app/output \
+            docker run -t --rm -v ~/workspace/output:/app/output \
             -e AWS_REGION=eu-west-1 \
             -e AWS_ACCESS_KEY_ID=${AWS_S3_PREVIEW_ACCESS_KEY_ID} \
             -e AWS_SECRET_ACCESS_KEY=${AWS_S3_PREVIEW_SECRET_ACCESS_KEY} \
@@ -60,12 +60,12 @@ jobs:
       docker_layer_caching: true
     steps:
       - attach_workspace:
-          at: /workspace
+          at: ~/workspace
       - run: docker build -t aws -f Dockerfile-awscli .
       - run:
           name: Deploy to staging
           command: |
-            docker run -t --rm -v /workspace/output:/app/output \
+            docker run -t --rm -v ~/workspace/output:/app/output \
             -e AWS_REGION=us-east-1 \
             -e AWS_ACCESS_KEY_ID=${AWS_S3_STAGING_ACCESS_KEY_ID} \
             -e AWS_SECRET_ACCESS_KEY=${AWS_S3_STAGING_SECRET_ACCESS_KEY} \
@@ -77,12 +77,12 @@ jobs:
       docker_layer_caching: true
     steps:
       - attach_workspace:
-          at: /workspace
+          at: ~/workspace
       - run: docker build -t aws -f Dockerfile-awscli .
       - run:
           name: Deploy to production
           command: |
-            docker run -t --rm -v /workspace/output:/app/output \
+            docker run -t --rm -v ~/workspace/output:/app/output \
             -e AWS_REGION=us-east-1 \
             -e AWS_ACCESS_KEY_ID=${AWS_S3_PRODUCTION_ACCESS_KEY_ID} \
             -e AWS_SECRET_ACCESS_KEY=${AWS_S3_PRODUCTION_SECRET_ACCESS_KEY} \
@@ -97,9 +97,9 @@ jobs:
       DOCKER_IMAGE: contentful/user_interface
     steps:
       - attach_workspace:
-          at: /workspace
+          at: ~/workspace
       - checkout
-      - run: cp /workspace/output .
+      - run: cp ~/workspace/output .
       - run: docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${CIRCLE_SHA1}" .
       - run:
           name: Push image to our docker repo
