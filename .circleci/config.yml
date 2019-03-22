@@ -6,44 +6,78 @@ jobs:
   all-the-things:
     machine:
       docker_layer_caching: true
-    environment:
-      DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
-      DOCKER_IMAGE: contentful/user_interface
     steps:
       - checkout
       - run: bin/docker-build-ci
       - run: bin/docker-run-ci test
       - run: bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false"
-      - run: docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${CIRCLE_SHA1}" .
+      - persist_to_workspace:
+          root: .
+          paths:
+            - output
+
+  deploy-to-preview:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - attach_workspace:
+          at: /workspace
       - run: docker build -t aws -f Dockerfile-awscli .
       - run:
           name: Deploy to preview
           command: |
-            docker run -t --rm -v $(pwd)/output:/app/output \
+            docker run -t --rm -v /workspace/output:/app/output \
             -e AWS_REGION=eu-west-1 \
             -e AWS_ACCESS_KEY_ID=${AWS_S3_PREVIEW_ACCESS_KEY_ID} \
-            -e AWS_SECRET_ACCESS_KEY=${AWS_S3_PREVIEW_SECRET_KEY} \
+            -e AWS_SECRET_ACCESS_KEY=${AWS_S3_PREVIEW_SECRET_ACCESS_KEY} \
             aws s3 cp --acl public-read --recursive \
             /app/output/files/preview s3://cf-preview-static-cdnorigin
+
+  deploy-to-staging:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - attach_workspace:
+          at: /workspace
+      - run: docker build -t aws -f Dockerfile-awscli .
       - run:
           name: Deploy to staging
           command: |
-            docker run -t --rm -v $(pwd)/output:/app/output \
+            docker run -t --rm -v /workspace/output:/app/output \
             -e AWS_REGION=us-east-1 \
             -e AWS_ACCESS_KEY_ID=${AWS_S3_STAGING_ACCESS_KEY_ID} \
-            -e AWS_SECRET_ACCESS_KEY=${AWS_S3_STAGING_SECRET_KEY} \
+            -e AWS_SECRET_ACCESS_KEY=${AWS_S3_STAGING_SECRET_ACCESS_KEY} \
             aws s3 cp --acl public-read --recursive \
             /app/output/files/staging s3://cf-staging-static-cdnorigin
+
+  deploy-to-production:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - attach_workspace:
+          at: /workspace
+      - run: docker build -t aws -f Dockerfile-awscli .
       - run:
           name: Deploy to production
           command: |
-            docker run -t --rm -v $(pwd)/output:/app/output \
+            docker run -t --rm -v /workspace/output:/app/output \
             -e AWS_REGION=us-east-1 \
             -e AWS_ACCESS_KEY_ID=${AWS_S3_PRODUCTION_ACCESS_KEY_ID} \
-            -e AWS_SECRET_ACCESS_KEY=${AWS_S3_PRODUCTION_SECRET_KEY} \
+            -e AWS_SECRET_ACCESS_KEY=${AWS_S3_PRODUCTION_SECRET_ACCESS_KEY} \
             aws s3 cp --acl public-read --recursive \
             /app/output/files/production s3://static.cdnorigin.contentful.com
-      - run: bin/travis-run-jenkins
+
+  push-image-to-docker-repo:
+    machine:
+      docker_layer_caching: true
+    environment:
+      DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
+      DOCKER_IMAGE: contentful/user_interface
+    steps:
+      - attach_workspace:
+          at: /workspace
+      - checkout
+      - run: docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${CIRCLE_SHA1}" .
       - run:
           name: Push image to our docker repo
           command: |
@@ -52,6 +86,12 @@ jobs:
             ./estivador docker-ecr-login
             ./estivador put-image
             ./estivador notify-slack
+
+  deploy-microbackend:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - checkout
       - run:
           name: Deploy microbackend
           command: |
@@ -65,6 +105,14 @@ jobs:
             -w /app/.scripts \
             microbackend \
             node deploy.js "rev-$CIRLE_SHA1"
+
+  trigger-jenkins:
+    docker:
+      - image: node:8
+    steps:
+      - checkout
+      - run: bin/travis-run-jenkins
+
 
 workflows:
   build:
