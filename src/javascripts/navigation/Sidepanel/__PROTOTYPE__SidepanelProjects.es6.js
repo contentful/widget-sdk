@@ -97,7 +97,8 @@ export class SidepanelProjects extends React.Component {
       authorized
     } = this.props;
 
-    const isEnabled = authorized && (await getVariation(__PROTOTYPE__PROJECTS_FLAG, { orgId }));
+    const isEnabled =
+      authorized && (await getVariation(__PROTOTYPE__PROJECTS_FLAG, { organizationId: orgId }));
 
     if (isEnabled) {
       getAllProjects({ orgId });
