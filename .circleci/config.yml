@@ -120,7 +120,7 @@ jobs:
           command: |
             cd micro-backends
             docker build -t microbackend --build-arg NPM_TOKEN .
-            docker run -t --rm $(pwd):/app \
+            docker run -t --rm -v $(pwd):/app \
             -e AWS_REGION=${MICRO_BACKENDS_AWS_REGION} \
             -e AWS_ACCESS_KEY_ID=${MICRO_BACKENDS_AWS_ACCESS_KEY_ID} \
             -e AWS_SECRET_ACCESS_KEY=${MICRO_BACKENDS_AWS_SECRET_ACCESS_KEY} \
