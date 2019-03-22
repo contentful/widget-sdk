@@ -15,11 +15,11 @@ jobs:
       docker_layer_caching: true
     steps:
       - checkout
-      - bin/docker-build-ci
-      - bin/docker-run-ci test
-      - bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false" # yolo
-      - docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${CIRCLE_SHA1}" .
-      - docker build -t aws -f Dockerfile-awscli .
+      - run: bin/docker-build-ci
+      - run: bin/docker-run-ci test
+      - run: bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false" # yolo
+      - run: docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${CIRCLE_SHA1}" .
+      - run: docker build -t aws -f Dockerfile-awscli .
 
   # run-tests:
   #   machine:
