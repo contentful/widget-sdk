@@ -44,8 +44,15 @@ jobs:
             -e AWS_SECRET_ACCESS_KEY=${AWS_S3_PRODUCTION_SECRET_KEY} \
             aws s3 cp --acl public-read --recursive \
             /app/output/files/production s3://static.cdnorigin.contentful.com
-      - run: tools/push-and-promote.sh
       - run: bin/travis-run-jenkins
+      - run:
+          name: Push image to our docker repo
+          command: |
+            curl -fsSLO https://contentful-lab-assets.s3.amazonaws.com/estivador && chmod +x estivador
+            echo "$(curl -sSL https://contentful-lab-assets.s3.amazonaws.com/estivador.sum)" | sha512sum -c
+            ./estivador docker-ecr-login
+            ./estivador put-image
+            ./estivador notify-slack
 
 workflows:
   build:

@@ -6,9 +6,6 @@
 
 set -e
 
-# Skip this whole script if this is a PR build
-if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then exit 0; fi
-
 pushd $TRAVIS_BUILD_DIR
 
 # Download estivador and validate checksum

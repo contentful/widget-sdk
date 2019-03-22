@@ -18,7 +18,7 @@ const configureAndWriteIndex = require('../../lib/index-configure');
  * output/files/staging/index.html (served for request to app.flinkly.com)
  */
 module.exports = async function runTravis({ branch, pr, version }) {
-  console.log(`TRAVIS_BRANCH: ${branch}, TRAVIS_COMMIT: ${version}, TRAVIS_PULL_REQUEST: ${pr}`);
+  console.log(`BRANCH: ${branch}, COMMIT: ${version}, PULL_REQUEST: ${pr}`);
 
   // If `pr` is not 'false' this is the `travis-ci/pr` job. Since we don’t
   // deploy anything for this job we skip the build.
