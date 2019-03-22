@@ -3,12 +3,6 @@ orbs:
   cypress: cypress-io/cypress@1.5.1
 
 jobs:
-  # cypress/run:
-  #   executor: cypress/base-8
-  #   pre-steps:
-  #     - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
-  #   store_artifacts: true
-
   all-the-things:
     machine:
       docker_layer_caching: true
@@ -19,10 +13,10 @@ jobs:
       - checkout
       - run: bin/docker-build-ci
       - run: bin/docker-run-ci test
-      - run: bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false" # yolo
+      - run: bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false"
       - run: docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${CIRCLE_SHA1}" .
       - run: docker build -t aws -f Dockerfile-awscli .
-      - run: micro-backends/.scripts/deploy.sh # for jakub with love
+      - run: micro-backends/.scripts/deploy.sh
       - run:
           name: Deploy to preview
           command: |
@@ -53,14 +47,12 @@ jobs:
       - run: tools/push-and-promote.sh
       - run: bin/travis-run-jenkins
 
-  # run-tests:
-  #   machine:
-  #     docker_layer_caching: true
-  #   steps:
-  #     - checkout
-
 workflows:
   build:
     jobs:
       - all-the-things
-      # - cypress/run
+      - cypress/run:
+          executor: cypress/base-8
+          pre-steps:
+            - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
+          store_artifacts: true
