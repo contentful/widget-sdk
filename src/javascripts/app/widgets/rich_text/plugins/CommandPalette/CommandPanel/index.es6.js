@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { BLOCKS } from '@contentful/rich-text-types';
+import { BLOCKS, INLINES } from '@contentful/rich-text-types';
 import { getModule } from 'NgRegistry.es6';
 import isHotKey from 'is-hotkey';
 import _ from 'lodash';
@@ -10,6 +10,7 @@ import { insertInline } from 'app/widgets/rich_text/plugins/EmbeddedEntryInline/
 import { fetchEntries, fetchContentTypes, fetchAssets } from '../CommandPaletteService.es6';
 import { removeCommand } from '../Util.es6';
 import CommandPanelMenu from './CommandPanelMenu.es6';
+import { isNodeTypeEnabled } from 'app/widgets/rich_text/validations/index.es6';
 
 const entityCreator = getModule('entityCreator');
 const slideInNavigator = getModule('navigation/SlideInNavigator');
@@ -30,6 +31,25 @@ class CommandPalette extends React.PureComponent {
     anchorPosition: DEFAULT_POSITION,
     items: [],
     isLoading: true
+  };
+
+  constructor(props) {
+    super(props);
+    this.applyRichTextSettings(props.widgetAPI.richTextAPI);
+  }
+
+  applyRichTextSettings = richTextAPI => {
+    this.inlineEntryEmbedEnabled = isNodeTypeEnabled(
+      richTextAPI.widgetAPI.field,
+      INLINES.EMBEDDED_ENTRY
+    );
+    this.blockEntryEmbedEnabled = isNodeTypeEnabled(
+      richTextAPI.widgetAPI.field,
+      BLOCKS.EMBEDDED_ENTRY
+    );
+    this.blockAssetEmbedEnabled =
+      richTextAPI.widgetAPI.permissions.canAccessAssets &&
+      isNodeTypeEnabled(richTextAPI.widgetAPI.field, BLOCKS.EMBEDDED_ASSET);
   };
 
   componentDidMount = async () => {
@@ -82,36 +102,50 @@ class CommandPalette extends React.PureComponent {
     slideInNavigator.goToSlideInEntity(slide);
   };
 
-  createContentTypeCommand = contentType => [
-    {
-      label: `Create new ${contentType.name}`,
-      group: contentType.name,
-      callback: () => this.onCreateEntry(contentType.sys.id)
-    },
-    {
-      label: `Add existing ${contentType.name}`,
-      group: contentType.name,
-      callback: () => this.createCommands(contentType)
-    },
-    {
-      label: `Add existing ${contentType.name} - Inline`,
-      group: contentType.name,
-      callback: () => this.createCommands(contentType, 'inline')
-    }
-  ];
+  createContentTypeCommand = contentType => {
+    const blockActions = this.blockEntryEmbedEnabled
+      ? [
+          {
+            label: `Create new ${contentType.name}`,
+            group: contentType.name,
+            callback: () => this.onCreateEntry(contentType.sys.id)
+          },
+          {
+            label: `Add existing ${contentType.name}`,
+            group: contentType.name,
+            callback: () => this.createCommands(contentType)
+          }
+        ]
+      : [];
 
-  createAssetCommands = () => [
-    {
-      label: `Create new Asset`,
-      group: 'Assets',
-      callback: () => this.onCreateEntry(null)
-    },
-    {
-      label: `Add existing Asset`,
-      group: 'Assets',
-      callback: () => this.createAssetEntityCommands()
-    }
-  ];
+    const inlineAction = this.inlineEntryEmbedEnabled
+      ? [
+          {
+            label: `Add existing ${contentType.name} - Inline`,
+            group: contentType.name,
+            callback: () => this.createCommands(contentType, 'inline')
+          }
+        ]
+      : [];
+
+    return [...blockActions, ...inlineAction];
+  };
+
+  createAssetCommands = () =>
+    this.blockAssetEmbedEnabled
+      ? [
+          {
+            label: `Create new Asset`,
+            group: 'Assets',
+            callback: () => this.onCreateEntry(null)
+          },
+          {
+            label: `Add existing Asset`,
+            group: 'Assets',
+            callback: () => this.createAssetEntityCommands()
+          }
+        ]
+      : [];
 
   handleScroll = e => {
     if (e.target.nodeName !== 'UL') {
