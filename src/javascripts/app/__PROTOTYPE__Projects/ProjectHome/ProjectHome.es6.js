@@ -216,12 +216,29 @@ export default connect(
             Save
           </Button>
         )}
-        <Button
-          style={{ margin: '.4rem' }}
-          buttonType="negative"
-          onClick={() => deleteProject(project.sys.id)}>
-          Delete
-        </Button>
+        {!editing && (
+          <Button
+            style={{ margin: '.4rem' }}
+            buttonType="negative"
+            onClick={() => deleteProject(project.sys.id)}>
+            Delete
+          </Button>
+        )}
+        {editing && (
+          <Button
+            style={{ margin: '.4rem' }}
+            buttonType="negative"
+            onClick={() => {
+              setName(project.name);
+              setDescription(project.description);
+              setProjectMemberIds(project.memberIds);
+              setProjectSpaceIds(project.spaceIds);
+              setLinkSections(project.linkSections || []);
+              setEditing(false);
+            }}>
+            Cancel
+          </Button>
+        )}
       </div>
     </div>
   );
