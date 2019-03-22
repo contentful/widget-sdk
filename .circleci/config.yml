@@ -19,7 +19,7 @@ jobs:
           paths:
             - docker
   run-tests:
-    executor: machine
+    machine: true
     steps:
       - attach_workspace:
           at: /workspace
@@ -27,7 +27,7 @@ jobs:
       - run: bin/docker-run-ci test
 
   generate-assets:
-    executor: machine
+    machine: true
     steps:
       - attach_workspace:
           at: /workspace
