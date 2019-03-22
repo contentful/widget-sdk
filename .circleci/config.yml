@@ -120,14 +120,14 @@ jobs:
           command: |
             cd micro-backends
             docker build -t microbackend --build-arg NPM_TOKEN .
-            docker run -t --rm -v $(pwd):/app \
+            docker run -t --rm -v /app/node_modules -v $(pwd):/app \
             -e AWS_REGION=${MICRO_BACKENDS_AWS_REGION} \
             -e AWS_ACCESS_KEY_ID=${MICRO_BACKENDS_AWS_ACCESS_KEY_ID} \
             -e AWS_SECRET_ACCESS_KEY=${MICRO_BACKENDS_AWS_SECRET_ACCESS_KEY} \
             -e CIRCLE_SHA1 \
             -w /app/.scripts \
             microbackend \
-            node deploy.js "rev-$CIRLE_SHA1"
+            node deploy.js "rev-$CIRCLE_SHA1"
 
   trigger-jenkins:
     docker:
