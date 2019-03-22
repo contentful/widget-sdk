@@ -3,13 +3,35 @@ orbs:
   cypress: cypress-io/cypress@1.5.1
 
 jobs:
-  build-and-test:
+  build-ci-image:
     machine:
       docker_layer_caching: true
     steps:
       - checkout
+      - run: mkdir ./docker
       - run: bin/docker-build-ci
+      - run:
+          name: Save CI image
+          command: |
+            docker save contentful/user-interface-ci | gzip -c > ./docker/user-interface-ci.tar.gz
+      - persist_to_workspace:
+          root: .
+          paths:
+            - docker
+  run-tests:
+    machine:
+    steps:
+      - attach_workspace:
+          at: /workspace
+      - run: docker load -i /workspace/docker/user-interface-ci.tar.gz
       - run: bin/docker-run-ci test
+
+  generate-assets:
+    machine:
+    steps:
+      - attach_workspace:
+          at: /workspace
+      - run: docker load -i /workspace/docker/user-interface-ci.tar.gz
       - run: bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false"
       - persist_to_workspace:
           root: .
@@ -114,29 +136,31 @@ jobs:
       - checkout
       - run: bin/travis-run-jenkins
 
-
 workflows:
   build:
     jobs:
-      - build-and-test
+      - build-ci-image
+      - run-tests:
+          requires:
+            - build-ci-image
+      - generate-assets:
+          requires:
+            - build-ci-image
       - deploy-to-preview:
           requires:
-            - build-and-test
+            - generate-assets
       - deploy-to-staging:
           requires:
-            - build-and-test
+            - generate-assets
       - deploy-to-production:
           requires:
-            - build-and-test
-      - deploy-microbackend:
-          requires:
-            - build-and-test
+            - generate-assets
+      - deploy-microbackend
       - push-image-to-docker-repo:
           requires:
-            - build-and-test
+            - generate-assets
       - trigger-jenkins:
           requires:
-            - build-and-test
             - push-image-to-docker-repo
       - cypress/run:
           executor: cypress/base-8
