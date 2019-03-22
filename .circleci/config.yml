@@ -16,7 +16,6 @@ jobs:
       - run: bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false"
       - run: docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${CIRCLE_SHA1}" .
       - run: docker build -t aws -f Dockerfile-awscli .
-      - run: micro-backends/.scripts/deploy.sh
       - run:
           name: Deploy to preview
           command: |
@@ -53,6 +52,19 @@ jobs:
             ./estivador docker-ecr-login
             ./estivador put-image
             ./estivador notify-slack
+      - run:
+          name: Deploy microbackend
+          command: |
+            cd micro-backends
+            docker build -t microbackend --build-arg NPM_TOKEN .
+            docker run -t --rm $(pwd):/app \
+            -e AWS_REGION=${MICRO_BACKENDS_AWS_REGION} \
+            -e AWS_ACCESS_KEY_ID=${MICRO_BACKENDS_AWS_ACCESS_KEY_ID} \
+            -e AWS_SECRET_ACCESS_KEY=${MICRO_BACKENDS_AWS_SECRET_ACCESS_KEY} \
+            -e CIRCLE_SHA1 \
+            -w /app/.scripts \
+            microbackend \
+            node deploy.js "rev-$CIRLE_SHA1"
 
 workflows:
   build:
