@@ -15,47 +15,47 @@
 
 set -e
 
-echo "------------------------------------"
-echo "| Jenkins trigger script in Travis |"
-echo "------------------------------------"
+echo "--------------------------------------"
+echo "| Jenkins trigger script in CircleCI |"
+echo "--------------------------------------"
 echo ""
 
 # abort if tests failed
-if [[ "$TRAVIS_TEST_RESULT" != "0" ]]; then
-  echo "Skipping due to tests failure."
-  exit $TRAVIS_TEST_RESULT;
-fi
+# if [[ "$TRAVIS_TEST_RESULT" != "0" ]]; then
+#   echo "Skipping due to tests failure."
+#   exit $TRAVIS_TEST_RESULT;
+# fi
 
 # abort if testing a merge commit
-if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
-  echo "Skipping integration tests for PR build."
+# if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+#   echo "Skipping integration tests for PR build."
+#   exit 0;
+# fi
+
+# abort if deployment was to preview
+if [[ "$CIRCLE_BRANCH" =~ ^(preview)$ ]]; then
+  echo "Skipping integration tests for $CIRCLE_BRANCH branch builds."
   exit 0;
 fi
 
-# abort if not a feature branch
-if [[ "$TRAVIS_BRANCH" =~ ^(preview|production)$ ]]; then
-  echo "Skipping integration tests for $TRAVIS_BRANCH branch builds."
-  exit 0;
-fi
-
-if [[ "$TRAVIS_BRANCH" = "master" ]]; then
+if [[ "$CIRLCE_BRANCH" = "master" ]]; then
 	JOB="user-interface-master"
 else
 	JOB="user-interface-pr"
 fi
 
-echo "Running ${JOB} for ${TRAVIS_BRANCH}."
+echo "Running ${JOB} for ${CIRCLE_BRANCH}."
 
 AUTH="cf-ci:$JENKINS_PASSWORD"
-CAUSE="Triggered+by+Travis+build+%23$TRAVIS_BUILD_ID+within+commit+$TRAVIS_COMMIT"
-QUERY="token=$JENKINS_TOKEN&ui_version=$TRAVIS_COMMIT&cause=$CAUSE"
+CAUSE="Triggered+by+Circle+build+%23$CIRCLE_BUILD_NUM+within+commit+$CIRCLE_SHA1"
+QUERY="token=$JENKINS_TOKEN&ui_version=$CIRCLE_SHA1&cause=$CAUSE"
 URL="https://jenkins.contentful.org/job/$JOB/buildWithParameters?$QUERY"
 
 echo "POST $URL"
 curl -X POST -i -u "$AUTH" --header "$JENKINS_CRUMB" --url "$URL"
 
 # trigger cross-browser job for master only
-if [[ "$TRAVIS_BRANCH" = "master" ]]; then
+if [[ "$CIRCLE_BRANCH" = "master" ]]; then
    curl -i -X POST \
    -u "$AUTH" \
    --header "$JENKINS_CRUMB" \

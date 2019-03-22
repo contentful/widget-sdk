@@ -13,6 +13,9 @@ jobs:
   all-the-things:
     machine:
       docker_layer_caching: true
+    environment:
+      DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
+      DOCKER_IMAGE: contentful/user_interface
     steps:
       - checkout
       - run: bin/docker-build-ci
@@ -20,6 +23,36 @@ jobs:
       - run: bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false" # yolo
       - run: docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${CIRCLE_SHA1}" .
       - run: docker build -t aws -f Dockerfile-awscli .
+      - run: micro-backends/.scripts/deploy.sh # for jakub with love
+      - run:
+          name: Deploy to preview
+          command: |
+            docker run -t --rm -v $(pwd)/output:/app/output \
+            -e AWS_REGION=eu-west-1 \
+            -e AWS_ACCESS_KEY_ID=${AWS_S3_PREVIEW_ACCESS_KEY_ID} \
+            -e AWS_SECRET_ACCESS_KEY=${AWS_S3_PREVIEW_SECRET_KEY} \
+            aws s3 cp --acl public-read --recursive \
+            /app/output/files/preview s3://cf-preview-static-cdnorigin
+      - run:
+          name: Deploy to staging
+          command: |
+            docker run -t --rm -v $(pwd)/output:/app/output \
+            -e AWS_REGION=us-east-1 \
+            -e AWS_ACCESS_KEY_ID=${AWS_S3_STAGING_ACCESS_KEY_ID} \
+            -e AWS_SECRET_ACCESS_KEY=${AWS_S3_STAGING_SECRET_KEY} \
+            aws s3 cp --acl public-read --recursive \
+            /app/output/files/staging s3://cf-staging-static-cdnorigin
+      - run:
+          name: Deploy to production
+          command: |
+            docker run -t --rm -v $(pwd)/output:/app/output \
+            -e AWS_REGION=us-east-1 \
+            -e AWS_ACCESS_KEY_ID=${AWS_S3_PRODUCTION_ACCESS_KEY_ID} \
+            -e AWS_SECRET_ACCESS_KEY=${AWS_S3_PRODUCTION_SECRET_KEY} \
+            aws s3 cp --acl public-read --recursive \
+            /app/output/files/production s3://static.cdnorigin.contentful.com
+      - run: tools/push-and-promote.sh
+      - run: bin/travis-run-jenkins
 
   # run-tests:
   #   machine:
