@@ -23,6 +23,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/workspace
+      - checkout
       - run: docker load -i ~/workspace/docker/user-interface-ci.tar.gz
       - run: bin/docker-run-ci test
 
@@ -31,6 +32,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/workspace
+      - checkout
       - run: docker load -i ~/workspace/docker/user-interface-ci.tar.gz
       - run: bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false"
       - persist_to_workspace:
