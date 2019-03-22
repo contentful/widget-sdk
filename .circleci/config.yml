@@ -4,11 +4,11 @@ orbs:
   aws-s3: circleci/aws-s3@1.0.0
 
 jobs:
-  cypress/run:
-    executor: cypress/base-8
-    pre-steps:
-      - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
-    store_artifacts: true
+  # cypress/run:
+  #   executor: cypress/base-8
+  #   pre-steps:
+  #     - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
+  #   store_artifacts: true
 
   all-the-things:
     machine:
@@ -31,4 +31,4 @@ workflows:
   build:
     jobs:
       - all-the-things
-      - cypress/run
+      # - cypress/run
