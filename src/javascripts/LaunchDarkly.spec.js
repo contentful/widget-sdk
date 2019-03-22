@@ -173,6 +173,11 @@ describe('LaunchDarkly', () => {
       expect(ldClient.initialize).toHaveBeenCalledTimes(1);
     });
 
+    it('should be able to get two different flag values', async () => {
+      expect(await getVariation('FLAG')).toBe('flag_value');
+      expect(await getVariation('OTHER_FLAG')).toBe('other_flag_value');
+    });
+
     it('should only identify once per orgId/spaceId combo', async () => {
       await getVariation('FLAG', { organizationId: 'org_1234' });
       expect(client.identify).toHaveBeenCalledTimes(1);
