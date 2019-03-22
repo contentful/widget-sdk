@@ -75,3 +75,7 @@ workflows:
           pre-steps:
             - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
           store_artifacts: true
+
+notify:
+  webhooks:
+    - url: https://samson.contentful.org/integrations/circleci/24884e787b5439c88cedef3d8bf1ca90
