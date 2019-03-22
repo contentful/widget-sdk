@@ -77,6 +77,7 @@ jobs:
       - attach_workspace:
           at: /workspace
       - checkout
+      - run: cp /workspace/output .
       - run: docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${CIRCLE_SHA1}" .
       - run:
           name: Push image to our docker repo
