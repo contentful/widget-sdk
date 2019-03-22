@@ -192,13 +192,12 @@ export async function getVariation(flagName, { organizationId, spaceId } = {}) {
   let flagsPromise = _.get(cache, key, null);
 
   if (!flagsPromise) {
-    flagsPromise = createFlagsPromise(flagName, user, organizationId, spaceId);
+    flagsPromise = createFlagsPromise(user, organizationId, spaceId);
 
     // Set the initial flags promise
     _.set(cache, key, flagsPromise);
 
-    // Await for the promise, in case an error occurs when getting the variation
-    // or the flag name doesn't exist
+    // Await for the promise, in case the org/space doesn't exist
     const initialPromiseValue = await flagsPromise;
 
     // If the initial promise value is undefined, unset the promise in the
@@ -210,16 +209,17 @@ export async function getVariation(flagName, { organizationId, spaceId } = {}) {
     }
   }
 
-  return flagsPromise;
+  const getFlagValue = await flagsPromise;
+
+  return getFlagValue(flagName);
 }
 
 /*
   Creates a promise that returns either the value of the flag in LaunchDarkly
   or undefined
  */
-async function createFlagsPromise(flagName, user, organizationId, spaceId) {
+async function createFlagsPromise(user, organizationId, spaceId) {
   // Get the user data that will be used for LD client variation data
-
   await client.waitForInitialization();
 
   let org;
@@ -256,28 +256,33 @@ async function createFlagsPromise(flagName, user, organizationId, spaceId) {
 
   // Get and save the flags to the cache
   const flags = client.allFlags();
-  const variation = _.get(flags, flagName, undefined);
 
-  // LD could not find a flag with given name, log error and return undefined
-  if (variation === undefined) {
-    logger.logError(`Invalid flag ${flagName}`, {
-      groupingHash: 'InvalidLDFlag',
-      data: { flagName }
-    });
+  // Now that we have all the flags for this identified user, return
+  // a function that returns the given flagName variation
+  return flagName => {
+    const variation = _.get(flags, flagName, undefined);
 
-    return undefined;
-  }
+    // LD could not find a flag with given name, log error and return undefined
+    if (variation === undefined) {
+      logger.logError(`Invalid flag ${flagName}`, {
+        groupingHash: 'InvalidLDFlag',
+        data: { flagName }
+      });
 
-  // Should never happen, but if the variation data could not be parsed
-  // log the error and return undefined
-  try {
-    return JSON.parse(variation);
-  } catch (e) {
-    logger.logError(`Invalid variation JSON for ${flagName}`, {
-      groupingHash: 'InvalidLDVariationJSON',
-      data: { variation }
-    });
+      return undefined;
+    }
 
-    return undefined;
-  }
+    // Should never happen, but if the variation data could not be parsed
+    // log the error and return undefined
+    try {
+      return JSON.parse(variation);
+    } catch (e) {
+      logger.logError(`Invalid variation JSON for ${flagName}`, {
+        groupingHash: 'InvalidLDVariationJSON',
+        data: { variation }
+      });
+
+      return undefined;
+    }
+  };
 }
