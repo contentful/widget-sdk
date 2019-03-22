@@ -118,7 +118,26 @@ jobs:
 workflows:
   build:
     jobs:
-      - all-the-things
+      - build-and-test
+      - deploy-to-preview:
+          requires:
+            - build-and-test
+      - deploy-to-staging:
+          requires:
+            - build-and-test
+      - deploy-to-production:
+          requires:
+            - build-and-test
+      - deploy-microbackend:
+          requires:
+            - build-and-test
+      - push-image-to-docker-repo:
+          requires:
+            - build-and-test
+      - trigger-jenkins:
+          requires:
+            - build-and-test
+            - push-image-to-docker-repo
       - cypress/run:
           executor: cypress/base-8
           pre-steps:
