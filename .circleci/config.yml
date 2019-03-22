@@ -1,13 +1,34 @@
 version: 2.1
 orbs:
   cypress: cypress-io/cypress@1.5.1
+  aws-s3: circleci/aws-s3@1.0.0
+
+jobs:
+  cypress/run:
+    executor: cypress/base-8
+    pre-steps:
+      - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
+    store_artifacts: true
+
+  all-the-things:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - checkout
+      - bin/docker-build-ci
+      - bin/docker-run-ci test
+      - bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false" # yolo
+      - docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${CIRCLE_SHA1}" .
+      - docker build -t aws -f Dockerfile-awscli .
+
+  # run-tests:
+  #   machine:
+  #     docker_layer_caching: true
+  #   steps:
+  #     - checkout
+
 workflows:
   build:
     jobs:
-      - cypress/run:
-          executor: cypress/base-8
-          pre-steps:
-            - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
-            # TODO: remove this line once npm ci will work without it
-            - run: npm install -g typescript
-          store_artifacts: true
+      - all-the-things
+      - cypress/run
