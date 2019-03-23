@@ -10,6 +10,7 @@ jobs:
       - checkout
       - run: mkdir ./docker
       - run: bin/docker-build-ci
+      - run: bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false"
       - run:
           name: Save CI image
           command: |
@@ -18,6 +19,8 @@ jobs:
           root: .
           paths:
             - docker
+            - output
+
   run-tests:
     machine: true
     steps:
@@ -26,19 +29,6 @@ jobs:
       - checkout
       - run: docker load -i ~/workspace/docker/user-interface-ci.tar.gz
       - run: bin/docker-run-ci test
-
-  generate-assets:
-    machine: true
-    steps:
-      - attach_workspace:
-          at: ~/workspace
-      - checkout
-      - run: docker load -i ~/workspace/docker/user-interface-ci.tar.gz
-      - run: bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false"
-      - persist_to_workspace:
-          root: .
-          paths:
-            - output
 
   deploy-to-preview:
     machine:
@@ -147,22 +137,19 @@ workflows:
       - run-tests:
           requires:
             - build-ci-image
-      - generate-assets:
-          requires:
-            - build-ci-image
       - deploy-to-preview:
           requires:
-            - generate-assets
+            - build-ci-image
       - deploy-to-staging:
           requires:
-            - generate-assets
+            - build-ci-image
       - deploy-to-production:
           requires:
-            - generate-assets
+            - build-ci-image
       - deploy-microbackend
       - push-image-to-docker-repo:
           requires:
-            - generate-assets
+            - build-ci-image
       - trigger-jenkins:
           requires:
             - push-image-to-docker-repo
