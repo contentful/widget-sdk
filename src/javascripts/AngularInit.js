@@ -62,8 +62,6 @@ angular
       ngRequire('app/ContentModel/Editor/contentTypeEditorController.es6').default();
       ngRequire('app/api/api_key_list/apiKeyListDirective.es6').default();
       ngRequire('app/asset_editor/cfAssetEditorDirective.es6').default();
-      ngRequire('data/entries.es6').default();
-      ngRequire('services/contentPreview.es6').default();
       ngRequire(
         'app/entity_editor/Components/StateChangeConfirmationDialog/cfStateChangeConfirmationDialog.es6'
       ).default();
@@ -79,8 +77,6 @@ angular
       ngRequire('app/entity_editor/entityHelpers.es6').default();
       ngRequire('app/entity_editor/fieldLocaleController.es6').default();
       ngRequire('app/entity_editor/presenceHub.es6').default();
-      ngRequire('navigation/stateChangeHandlers.es6').default();
-      ngRequire('navigation/closeState.es6').default();
       ngRequire('app/entity_editor/stateController.es6').default();
       ngRequire('data/sharejs/utils.es6').default();
       ngRequire('app/entity_editor/stringField.es6').default();
@@ -91,17 +87,19 @@ angular
       ngRequire('app/home/cfTrackCopyEvent.es6').default();
       ngRequire('app/home/contactUs/contactUsSpaceHomeDirective.es6').default();
       ngRequire('app/home/developer_resources/cfDeveloperResourcesDirective.es6').default();
+      ngRequire('data/entries.es6').default();
+      ngRequire('services/contentPreview.es6').default();
       ngRequire('app/home/onboarding_steps/cfOnboardingStepsDirective.es6').default();
       ngRequire('app/snapshots/cfSnapshotPresenter.es6').default();
       ngRequire('app/snapshots/cfSnapshotSelector.es6').default();
       ngRequire('app/snapshots/snapshotComparator.es6').default();
+      ngRequire('app/widgets/TagEditor/cfTagEditorDirective.es6').default();
       ngRequire('app/widgets/cfBooleanEditorDirective.es6').default();
       ngRequire('app/widgets/cfCheckboxEditorDirective.es6').default();
       ngRequire('app/widgets/cfFileEditorDirective.es6').default();
       ngRequire('app/widgets/cfListInputEditorDirective.es6').default();
       ngRequire('app/widgets/cfMultiLineEditorDirective.es6').default();
       ngRequire('app/widgets/cfRatingEditorDirective.es6').default();
-      ngRequire('app/widgets/TagEditor/cfTagEditorDirective.es6').default();
       ngRequire('app/widgets/datetime/cfEntryDatetimeEditorDirective.es6').default();
       ngRequire('app/widgets/dropdown/cfDropdownEditorDirective.es6').default();
       ngRequire('app/widgets/json/cfJsonEditorCodeEditorDirective.es6').default();
@@ -112,7 +110,6 @@ angular
       ngRequire('app/widgets/location/searchController.es6').default();
       ngRequire('app/widgets/number/cfNumberEditorDirective.es6').default();
       ngRequire('app/widgets/radio/cfRadioEditorDirective.es6').default();
-      ngRequire('app/widgets/rich_text/cfRichTextEditorDirective.es6').default();
       ngRequire('app/widgets/shared/cfEditorCharacterInfoDirective.es6').default();
       ngRequire('app/widgets/single_line/cfSingleLineEditorDirective.es6').default();
       ngRequire('app/widgets/slug/cfSlugEditorDirective.es6').default();
@@ -196,6 +193,8 @@ angular
       ngRequire('navigation/Sidepanel/TriggerDirective.es6').default();
       ngRequire('navigation/Sidepanel/directive.es6').default();
       ngRequire('navigation/accountDropdownDirective.es6').default();
+      ngRequire('navigation/stateChangeHandlers.es6').default();
+      ngRequire('navigation/closeState.es6').default();
       ngRequire('navigation/organizationNavDirective.es6').default();
       ngRequire('navigation/profileNavDirective.es6').default();
       ngRequire('navigation/spaceNavBarDirective.es6').default();

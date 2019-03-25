@@ -6,12 +6,13 @@ import {
   NAMESPACE_SIDEBAR_BUILTIN
 } from './WidgetNamespaces.es6';
 
-jest.mock('./ExtensionLoader.es6', () => {
-  return {
-    getAllExtensions: jest.fn(),
-    getExtensionsById: jest.fn()
-  };
-});
+jest.mock('./ExtensionLoader.es6', () => ({
+  getAllExtensions: jest.fn(),
+  getExtensionsById: jest.fn()
+}));
+jest.mock('./BuiltinWidgets.es6', () => ({
+  create: () => []
+}));
 
 describe('WidgetStore', () => {
   describe('#getBuiltinsOnly()', () => {

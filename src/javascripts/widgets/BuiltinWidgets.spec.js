@@ -2,21 +2,40 @@ import { uniq } from 'lodash';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
 
 const CMA_ID_REGEXP = /^[a-zA-Z0-9][a-zA-Z0-9-_]{0,63}$/;
+const BUILTIN_WIDGETS_COUNT = 25;
+
+jest.mock('app/widgets/rich_text/index.es6', () => {});
 
 describe('BuiltinWidgets', () => {
   describe('#create()', () => {
+    it(`returns a list of ${BUILTIN_WIDGETS_COUNT} built-in widgets`, () => {
+      const list = createBuiltinWidgetList();
+      expect(Array.isArray(list)).toBe(true);
+      expect(list).toHaveLength(BUILTIN_WIDGETS_COUNT);
+    });
+
     it('returns a list of widget descriptors', () => {
+      expect.assertions(BUILTIN_WIDGETS_COUNT * 2);
       createBuiltinWidgetList().forEach(descriptor => {
-        expect(typeof descriptor.id).toBe('string');
-        expect(typeof descriptor.name).toBe('string');
-        expect(typeof descriptor.template).toBe('string');
-        expect(Array.isArray(descriptor.fieldTypes)).toBe(true);
+        expect(descriptor).toMatchObject({
+          id: expect.any(String),
+          name: expect.any(String),
+          fieldTypes: expect.any(Array)
+        });
+        if (descriptor.template) {
+          expect(descriptor.template).toEqual(expect.any(String));
+        } else if (descriptor.buildTemplate) {
+          expect(descriptor.buildTemplate).toEqual(expect.any(Function));
+        } else {
+          throw new Error('expect `template` or `buildTemplate`');
+        }
       });
     });
 
     // This asserts that developer who edits the list uses an ID
     // which will be accepted by the CMA (editor_interface).
     it('returns a valid CMA ID for each widget descriptor', () => {
+      expect.assertions(BUILTIN_WIDGETS_COUNT);
       createBuiltinWidgetList().forEach(({ id }) => {
         expect(id).toMatch(CMA_ID_REGEXP);
       });

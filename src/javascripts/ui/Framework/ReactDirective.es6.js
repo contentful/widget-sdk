@@ -7,7 +7,7 @@ import angular from 'angular';
 import * as logger from 'services/logger.es6';
 
 // TODO refactor this function (6 arguments is too much)
-function renderComponent(Component, props, scope, elem, store) {
+function renderComponent(Component, props, scope, container, store) {
   scope.$evalAsync(() => {
     // this is the single place we mount all our components, so all
     // providers should be added here
@@ -15,7 +15,7 @@ function renderComponent(Component, props, scope, elem, store) {
       <Provider store={store}>
         <Component {...props} scope={scope} />
       </Provider>,
-      elem
+      container
     );
   });
 }
@@ -148,14 +148,14 @@ export default function register() {
         restrict: 'E',
         replace: true,
         link: ($scope, $element, attrs) => {
-          const element = $element[0];
-          let reactComponent;
+          const container = $element[0];
+          let ReactComponent;
           if (attrs.name) {
-            reactComponent = getReactComponent(attrs.name, $injector.get, logger);
+            ReactComponent = getReactComponent(attrs.name, $injector.get, logger);
           } else if (attrs.component) {
-            reactComponent = $scope.$eval(attrs.component);
+            ReactComponent = $scope.$eval(attrs.component);
           } else if (attrs.jsx) {
-            reactComponent = class Component extends React.Component {
+            ReactComponent = class Component extends React.Component {
               render() {
                 return $scope.$eval(attrs.jsx);
               }
@@ -166,8 +166,7 @@ export default function register() {
 
           const renderMyComponent = () => {
             const scopeProps = $scope.$eval(attrs.props);
-
-            renderComponent(reactComponent, scopeProps, $scope, element, store);
+            renderComponent(ReactComponent, scopeProps, $scope, container, store);
           };
 
           // If there are props, re-render when they change
@@ -180,10 +179,10 @@ export default function register() {
           // cleanup when scope is destroyed
           $scope.$on('$destroy', () => {
             if (!attrs.onScopeDestroy) {
-              ReactDOM.unmountComponentAtNode(element);
+              ReactDOM.unmountComponentAtNode(container);
             } else {
               $scope.$eval(attrs.onScopeDestroy)({
-                unmountComponent: ReactDOM.unmountComponentAtNode.bind(this, element)
+                unmountComponent: ReactDOM.unmountComponentAtNode.bind(this, container)
               });
             }
           });
