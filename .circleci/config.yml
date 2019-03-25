@@ -133,6 +133,7 @@ jobs:
     docker:
       - image: circleci/node:8.12.0
     steps:
+      - run: export SSH_KEY=$(cat ~/.ssh/id_rsa)
       - checkout
       - run: npm ci
       - run: tools/bin/validate-config.js config/*.json
@@ -145,6 +146,7 @@ jobs:
       NODE_ENV: production
       CI: true
     steps:
+      - run: export SSH_KEY=$(cat ~/.ssh/id_rsa)
       - checkout
       - run: npm ci
       - run: npm run jest:coverage
