@@ -73,7 +73,7 @@ describe('datasets selectors', () => {
         expect(isMissingRequiredDatasets(stateWithSomeDatasets)).toBe(true);
       });
 
-      describe('missing datasets were loaded just now', () => {
+      describe('missing datasets for org member were loaded, but org role is missing', () => {
         let stateWithAllDatasets;
         beforeEach(() => {
           stateWithAllDatasets = reducer(stateWithSomeDatasets, {
@@ -83,8 +83,7 @@ describe('datasets selectors', () => {
               datasets: {
                 [ORG_MEMBERSHIPS]: {},
                 [TEAM_SPACE_MEMBERSHIPS]: {},
-                [ORG_SPACES]: {},
-                [ORG_SPACE_ROLES]: {}
+                [ORG_SPACES]: {}
               }
             }
           });
@@ -97,17 +96,92 @@ describe('datasets selectors', () => {
             [USERS]: {},
             [ORG_MEMBERSHIPS]: {},
             [TEAM_SPACE_MEMBERSHIPS]: {},
-            [ORG_SPACES]: {},
-            [ORG_SPACE_ROLES]: {}
+            [ORG_SPACES]: {}
           });
         });
 
-        it('getDataSetsToLoad should return empty array', () => {
-          expect(getDataSetsToLoad(stateWithAllDatasets)).toEqual([]);
+        it('getDataSetsToLoad should contain null for dataset that depends on org role', () => {
+          expect(getDataSetsToLoad(stateWithAllDatasets)).toEqual([null]);
         });
 
-        it('isMissingRequiredDatasets should still return false', () => {
-          expect(isMissingRequiredDatasets(stateWithAllDatasets)).toBe(false);
+        it('isMissingRequiredDatasets should still return true', () => {
+          expect(isMissingRequiredDatasets(stateWithAllDatasets)).toBe(true);
+        });
+
+        describe('org role was loaded and is member', () => {
+          let stateWithMember;
+          beforeEach(() => {
+            stateWithMember = reducer(stateWithAllDatasets, {
+              type: 'USER_UPDATE_FROM_TOKEN',
+              payload: {
+                user: {
+                  organizationMemberships: [
+                    {
+                      role: 'member',
+                      organization: {
+                        sys: {
+                          id: activeOrgId
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            });
+          });
+
+          it('should not be missing datasets', () => {
+            expect(getDataSetsToLoad(stateWithMember)).toEqual([]);
+            expect(isMissingRequiredDatasets(stateWithMember)).toBe(false);
+          });
+        });
+
+        describe('org role was loaded and is admin', () => {
+          let stateWithAdmin;
+          beforeEach(() => {
+            stateWithAdmin = reducer(stateWithAllDatasets, {
+              type: 'USER_UPDATE_FROM_TOKEN',
+              payload: {
+                user: {
+                  organizationMemberships: [
+                    {
+                      role: 'admin',
+                      organization: {
+                        sys: {
+                          id: activeOrgId
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            });
+          });
+
+          it('should be missing ORG_SPACE_ROLES dataset', () => {
+            expect(getDataSetsToLoad(stateWithAdmin)).toEqual([ORG_SPACE_ROLES]);
+            expect(isMissingRequiredDatasets(stateWithAdmin)).toBe(true);
+          });
+
+          describe('last dataset need for admins was loaded', () => {
+            let stateWithLastAdminDataset;
+            beforeEach(() => {
+              stateWithLastAdminDataset = reducer(stateWithAdmin, {
+                type: 'DATASET_LOADING',
+                meta: { fetched: Date.now() },
+                payload: {
+                  datasets: {
+                    [ORG_SPACE_ROLES]: []
+                  }
+                }
+              });
+            });
+
+            it('should not be missing datasets', () => {
+              expect(getDataSetsToLoad(stateWithLastAdminDataset)).toEqual([]);
+              expect(isMissingRequiredDatasets(stateWithLastAdminDataset)).toBe(false);
+            });
+          });
         });
       });
 
