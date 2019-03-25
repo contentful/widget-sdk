@@ -218,7 +218,7 @@
     "test:once": "TZ=UTC node run-tests.js --once",
     "hint": "eslint src test tools tasks micro-backends",
     "jest": "TZ=UTC node run-tests-jest.js",
-    "jest:coverage": "TZ=UTC node run-tests-jest.js --coverage --runInBand",
+    "jest:coverage": "TZ=UTC node run-tests-jest.js --coverage --maxWorkers=2",
     "jest:debug": "TZ=UTC node --inspect-brk run-tests-jest.js --runInBand",
     "jest:cli-debug": "TZ=UTC node debug run-tests-jest.js",
     "cloc": "cloc --read-lang-def .cloc.def src",
