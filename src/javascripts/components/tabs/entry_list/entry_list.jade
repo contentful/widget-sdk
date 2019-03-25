@@ -166,4 +166,14 @@ header.workbench-header
           | You can add entries to collections to better group and organize content.
 
 .workbench-main.x--content(ng-show="showNoEntriesAdvice()")
-  include ./no_entries_advice
+  react-component(
+    name="components/tabs/entry_list/NoEntriesAdvice/index.es6"
+    props="{contentTypes: accessibleCts, suggestedContentTypeId: context.view.contentTypeId, onCreate: newEntry, hasArchivedEntries: hasArchivedEntries, loadArchived: loadArchived}"
+    ng-show="hasContentType"
+  )
+
+  react-component(
+    name="components/tabs/NoContentTypeAdvice/index.es6"
+    props="{title: 'A content model is needed before adding content. Let’s fix that!'}"
+    ng-show="!hasContentType"
+  )

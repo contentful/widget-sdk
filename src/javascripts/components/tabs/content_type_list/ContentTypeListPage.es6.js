@@ -4,8 +4,8 @@ import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-
 import Workbench from 'app/common/Workbench.es6';
 import ContentTypeList from './ContentTypeList/index.es6';
 import NoSearchResultsAdvice from 'components/tabs/NoSearchResultsAdvice.es6';
-import EmptyState from './EmptyState.es6';
-import CreateContentTypeCta from './CreateContentTypeCta.es6';
+import NoContentTypeAdvice from 'components/tabs/NoContentTypeAdvice/index.es6';
+import CreateContentTypeCta from 'components/tabs/CreateContentTypeCta/index.es6';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 import ContentTypeListSearch from './ContentTypeListSearch.es6';
 import ContentTypeListFilter from './ContentTypeListFilter.es6';
@@ -112,7 +112,7 @@ export default class ContentTypesPage extends React.Component {
               {contentTypes.length > 0 && filteredContentTypes.length === 0 && (
                 <NoSearchResultsAdvice data-test-id="no-search-results" />
               )}
-              {contentTypes.length === 0 && <EmptyState data-test-id="empty-state" />}
+              {contentTypes.length === 0 && <NoContentTypeAdvice data-test-id="empty-state" />}
             </React.Fragment>
           )}
         </Workbench.Content>
