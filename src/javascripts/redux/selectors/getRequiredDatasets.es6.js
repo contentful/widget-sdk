@@ -6,8 +6,9 @@ import ROUTES from '../routes.es6';
 function getRequiredDatasets(state, routes = ROUTES) {
   const path = getPath(state);
   const orgRole = getOrgRole(state);
-  if (!path || !orgRole) {
-    return [];
+  // path is not yet available
+  if (!path) {
+    return null;
   }
   return flow(
     // get all routes
@@ -22,6 +23,10 @@ function getRequiredDatasets(state, routes = ROUTES) {
           // constants are always loaded
           if (isString(ds)) {
             return acc.concat([ds]);
+          }
+          // orgRole is required and not yet available
+          if (ds.orgRoles && !orgRole) {
+            return acc.concat(null);
           }
           // objects are used to limit loading of datasets to specific org roles
           if (ds.orgRoles && ds.orgRoles.includes(orgRole)) {

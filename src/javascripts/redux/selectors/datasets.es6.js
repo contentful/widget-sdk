@@ -63,6 +63,10 @@ export const isMissingRequiredDatasets = state => {
     return false;
   }
   const requiredDatasets = getRequiredDatasets(state);
+  // required datasets couldn't be determined yet
+  if (requiredDatasets === null || requiredDatasets.includes(null)) {
+    return true;
+  }
   const datasetsInState = Object.keys(getDatasets(state));
   return !isEmpty(difference(requiredDatasets, datasetsInState));
 };
