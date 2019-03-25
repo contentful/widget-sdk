@@ -17,23 +17,8 @@ const configureAndWriteIndex = require('../../lib/index-configure');
  *
  * output/files/staging/index.html (served for request to app.flinkly.com)
  */
-module.exports = async function runTravis({ branch, pr, version }) {
-  console.log(`TRAVIS_BRANCH: ${branch}, TRAVIS_COMMIT: ${version}, TRAVIS_PULL_REQUEST: ${pr}`);
-
-  // If `pr` is not 'false' this is the `travis-ci/pr` job. Since we don’t
-  // deploy anything for this job we skip the build.
-  //
-  // See the [Travis documentation][1] for more information about pull
-  // request jobs
-  //
-  // [1] https://docs.travis-ci.com/user/deployment/#Pull-Requests
-  if (pr !== 'false') {
-    console.log('This is a pull request build. Skipping building distribution');
-    return;
-  }
-
-  // If `pr` is 'false, it's the `travis-ci/push` job. We deploy for
-  // this job so we build the app.
+module.exports = async function configureFileDistribution({ branch, version }) {
+  console.log(`BRANCH: ${branch}, COMMIT: ${version}`);
 
   // Supported environments
   const ENV = {

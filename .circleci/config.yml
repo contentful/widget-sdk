@@ -1,13 +1,191 @@
 version: 2.1
 orbs:
   cypress: cypress-io/cypress@1.5.1
+  deploy-assets:
+    executors:
+      machine-executor:
+        machine:
+          docker_layer_caching: true
+    commands:
+      deploy-to-s3:
+        description: "Deploy configured assets to S3 using the image containing awscli"
+        parameters:
+          access_key_id:
+            type: string
+          secret_access_key:
+            type: string
+          region:
+            type: string
+          path:
+            type: string
+          bucket:
+            type: string
+        steps:
+          - run:
+              name: Deploy assets to S3
+              command: |
+                docker run -t --rm -v ~/workspace/output:/app/output \
+                -e AWS_REGION=<<parameters.region>> \
+                -e AWS_ACCESS_KEY_ID=<<parameters.access_key_id>> \
+                -e AWS_SECRET_ACCESS_KEY=<<parameters.secret_access_key>> \
+                aws s3 cp --acl public-read --recursive \
+                <<parameters.path>> s3://<<parameters.bucket>>
+    jobs:
+      to-s3:
+        description: "Build the image containing awscli and deploy assets to S3 using it"
+        parameters:
+          access_key_id:
+            type: string
+          secret_access_key:
+            type: string
+          region:
+            type: string
+          path:
+            type: string
+          bucket:
+            type: string
+        executor: machine-executor
+        steps:
+          - attach_workspace:
+              at: ~/workspace
+          - checkout
+          - run: docker build -t aws -f Dockerfile-awscli .
+          - deploy-to-s3:
+              access_key_id: <<parameters.access_key_id>>
+              secret_access_key: <<parameters.secret_access_key>>
+              region: <<parameters.region>>
+              path: <<parameters.path>>
+              bucket: <<parameters.bucket>>
+
+
+jobs:
+  build-ci-image:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - checkout
+      - run: mkdir ./docker
+      - run:
+          name: Build CI image
+          command: |
+            docker build --file Dockerfile-ci \
+            --tag contentful/user-interface-ci \
+            --build-arg "NPM_TOKEN=${NPM_TOKEN}" \
+            --build-arg "SSH_KEY=${SSH_KEY-$(cat ~/.ssh/id_rsa)}" .
+      - run: bin/docker-run-ci configure-file-dist --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}"
+      - run:
+          name: Save CI image
+          command: |
+            docker save contentful/user-interface-ci | gzip -c > ./docker/user-interface-ci.tar.gz
+      - persist_to_workspace:
+          root: .
+          paths:
+            - docker
+            - output
+
+  run-tests:
+    machine: true
+    steps:
+      - attach_workspace:
+          at: ~/workspace
+      - checkout
+      - run: docker load -i ~/workspace/docker/user-interface-ci.tar.gz
+      - run: bin/docker-run-ci test
+
+  push-image-to-docker-repo:
+    machine:
+      docker_layer_caching: true
+    environment:
+      DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
+      DOCKER_IMAGE: contentful/user_interface
+    steps:
+      - attach_workspace:
+          at: ~/workspace
+      - checkout
+      - run: cp -r ~/workspace/output ./output
+      - run: docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${CIRCLE_SHA1}" .
+      - run:
+          name: Push image to our docker repo
+          command: |
+            curl -fsSLO https://contentful-lab-assets.s3.amazonaws.com/estivador && chmod +x estivador
+            echo "$(curl -sSL https://contentful-lab-assets.s3.amazonaws.com/estivador.sum)" | sha512sum -c
+            ./estivador docker-ecr-login
+            ./estivador put-image
+
+  deploy-microbackend:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - checkout
+      - run:
+          name: Deploy microbackend
+          command: |
+            cd micro-backends
+            docker build -t microbackend --build-arg NPM_TOKEN .
+            docker run -t --rm -v /app/.scripts/node_modules -v $(pwd):/app \
+            -e AWS_REGION=${MICRO_BACKENDS_AWS_REGION} \
+            -e AWS_ACCESS_KEY_ID=${MICRO_BACKENDS_AWS_ACCESS_KEY_ID} \
+            -e AWS_SECRET_ACCESS_KEY=${MICRO_BACKENDS_AWS_SECRET_ACCESS_KEY} \
+            -e CIRCLE_SHA1 \
+            -w /app/.scripts \
+            microbackend \
+            node deploy.js "rev-$CIRCLE_SHA1"
+
+  trigger-jenkins:
+    docker:
+      - image: node:8
+    steps:
+      - checkout
+      - run: bin/trigger-jenkins
+
 workflows:
   build:
     jobs:
+      - build-ci-image
+      - run-tests:
+          requires:
+            - build-ci-image
+      - deploy-assets/to-s3:
+          name: deploy-assets-to-preview
+          access_key_id: "${AWS_S3_PREVIEW_ACCESS_KEY_ID}"
+          secret_access_key: "${AWS_S3_PREVIEW_SECRET_ACCESS_KEY}"
+          region: "eu-west-1"
+          path: "/app/output/files/preview"
+          bucket: "cf-preview-static-cdnorigin"
+          requires:
+            - build-ci-image
+      - deploy-assets/to-s3:
+          name: deploy-assets-to-staging
+          access_key_id: "${AWS_S3_STAGING_ACCESS_KEY_ID}"
+          secret_access_key: "${AWS_S3_STAGING_SECRET_ACCESS_KEY}"
+          region: "us-east-1"
+          path: "/app/output/files/staging"
+          bucket: "cf-staging-static-cdnorigin"
+          requires:
+            - build-ci-image
+      - deploy-assets/to-s3:
+          name: deploy-assets-to-prod
+          access_key_id: "${AWS_S3_PRODUCTION_ACCESS_KEY_ID}"
+          secret_access_key: "${AWS_S3_PRODUCTION_SECRET_ACCESS_KEY}"
+          region: "us-east-1"
+          path: "/app/output/files/production"
+          bucket: "static.cdnorigin.contentful.com"
+          requires:
+            - build-ci-image
+      - deploy-microbackend
+      - push-image-to-docker-repo:
+          requires:
+            - build-ci-image
+      - trigger-jenkins:
+          requires:
+            - push-image-to-docker-repo
       - cypress/run:
+          name: cypress-run
           executor: cypress/base-8
           pre-steps:
             - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
-            # TODO: remove this line once npm ci will work without it
-            - run: npm install -g typescript
           store_artifacts: true
+
+notify:
+  webhooks:
+    - url: https://samson.contentful.org/integrations/circleci/24884e787b5439c88cedef3d8bf1ca90

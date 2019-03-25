@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -e
+
+echo "--------------------------------------"
+echo "| Jenkins trigger script in CircleCI |"
+echo "--------------------------------------"
+echo ""
+
+# abort if deployment was to preview
+if [[ "$CIRCLE_BRANCH" =~ ^(preview)$ ]]; then
+  echo "Skipping integration tests for $CIRCLE_BRANCH branch builds."
+  exit 0;
+fi
+
+if [[ "$CIRLCE_BRANCH" = "master" ]]; then
+	JOB="user-interface-master"
+else
+	JOB="user-interface-pr"
+fi
+
+echo "Running ${JOB} for ${CIRCLE_BRANCH}."
+
+AUTH="cf-ci:$JENKINS_PASSWORD"
+CAUSE="Triggered+by+Circle+build+%23$CIRCLE_BUILD_NUM+within+commit+$CIRCLE_SHA1"
+QUERY="token=$JENKINS_TOKEN&ui_version=$CIRCLE_SHA1&cause=$CAUSE"
+URL="https://jenkins.contentful.org/job/$JOB/buildWithParameters?$QUERY"
+
+echo "POST $URL"
+curl -X POST -i -u "$AUTH" --header "$JENKINS_CRUMB" --url "$URL"
+
+# trigger cross-browser job for master only
+if [[ "$CIRCLE_BRANCH" = "master" ]]; then
+   curl -i -X POST \
+   -u "$AUTH" \
+   --header "$JENKINS_CRUMB" \
+   --url "https://jenkins.contentful.org/job/cross-browser-job/buildWithParameters?$QUERY"
+fi

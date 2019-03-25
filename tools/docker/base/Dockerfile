@@ -17,4 +17,4 @@ RUN apt-get update && \
   libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 \
   ca-certificates fonts-liberation libappindicator3-1 libnss3 lsb-release xdg-utils && \
   dpkg -i google-chrome.deb && \
-  gem install --no-document 'json:<2.0' fpm
+  gem install --no-document 'json:<2.0'
