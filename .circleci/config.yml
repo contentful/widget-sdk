@@ -1,6 +1,65 @@
 version: 2.1
 orbs:
   cypress: cypress-io/cypress@1.5.1
+  deploy-assets:
+    executors:
+      machine-executor:
+        machine:
+          docker_layer_caching: true
+    commands:
+      deploy-to-s3:
+        description: "Deploy configured assets to S3 using the image containing awscli"
+        parameters:
+          access_key_id:
+            type: string
+          secret_access_key:
+            type: string
+          region:
+            type: string
+          path:
+            type: string
+          bucket:
+            type: string
+        steps:
+          - run:
+              name: Deploy assets to S3
+              command: |
+                docker run -t --rm -v ~/workspace/output:/app/output \
+                -e AWS_REGION=<<parameters.region>> \
+                -e AWS_ACCESS_KEY_ID=<<parameters.access_key_id>> \
+                -e AWS_SECRET_ACCESS_KEY=<<parameters.secret_access_key>> \
+                aws s3 cp --acl public-read --recursive \
+                <<parameters.path>> s3://<<parameters.bucket>>
+    jobs:
+      to-s3:
+        description: "Build the image containing awscli and deploy assets to S3 using it"
+        parameters:
+          access_key_id:
+            type: string
+          secret_access_key:
+            type: string
+          region:
+            type: string
+          path:
+            type: string
+          bucket:
+            type: string
+          env:
+            type: string
+        executor: machine-executor
+        steps:
+          - attach_workspace:
+              at: ~/workspace
+          - checkout
+          - run: docker build -t aws -f Dockerfile-awscli .
+          - run: echo "Deploying configured assets to <<parameters.env>>"
+          - deploy-to-s3:
+              access_key_id: <<parameters.access_key_id>>
+              secret_access_key: <<parameters.secret_access_key>>
+              region: <<parameters.region>>
+              path: <<parameters.path>>
+              bucket: <<parameters.bucket>>
+
 
 jobs:
   build-ci-image:
@@ -35,60 +94,6 @@ jobs:
       - checkout
       - run: docker load -i ~/workspace/docker/user-interface-ci.tar.gz
       - run: bin/docker-run-ci test
-
-  deploy-to-preview:
-    machine:
-      docker_layer_caching: true
-    steps:
-      - attach_workspace:
-          at: ~/workspace
-      - checkout
-      - run: docker build -t aws -f Dockerfile-awscli .
-      - run:
-          name: Deploy to preview
-          command: |
-            docker run -t --rm -v ~/workspace/output:/app/output \
-            -e AWS_REGION=eu-west-1 \
-            -e AWS_ACCESS_KEY_ID=${AWS_S3_PREVIEW_ACCESS_KEY_ID} \
-            -e AWS_SECRET_ACCESS_KEY=${AWS_S3_PREVIEW_SECRET_ACCESS_KEY} \
-            aws s3 cp --acl public-read --recursive \
-            /app/output/files/preview s3://cf-preview-static-cdnorigin
-
-  deploy-to-staging:
-    machine:
-      docker_layer_caching: true
-    steps:
-      - attach_workspace:
-          at: ~/workspace
-      - checkout
-      - run: docker build -t aws -f Dockerfile-awscli .
-      - run:
-          name: Deploy to staging
-          command: |
-            docker run -t --rm -v ~/workspace/output:/app/output \
-            -e AWS_REGION=us-east-1 \
-            -e AWS_ACCESS_KEY_ID=${AWS_S3_STAGING_ACCESS_KEY_ID} \
-            -e AWS_SECRET_ACCESS_KEY=${AWS_S3_STAGING_SECRET_ACCESS_KEY} \
-            aws s3 cp --acl public-read --recursive \
-            /app/output/files/staging s3://cf-staging-static-cdnorigin
-
-  deploy-to-production:
-    machine:
-      docker_layer_caching: true
-    steps:
-      - attach_workspace:
-          at: ~/workspace
-      - checkout
-      - run: docker build -t aws -f Dockerfile-awscli .
-      - run:
-          name: Deploy to production
-          command: |
-            docker run -t --rm -v ~/workspace/output:/app/output \
-            -e AWS_REGION=us-east-1 \
-            -e AWS_ACCESS_KEY_ID=${AWS_S3_PRODUCTION_ACCESS_KEY_ID} \
-            -e AWS_SECRET_ACCESS_KEY=${AWS_S3_PRODUCTION_SECRET_ACCESS_KEY} \
-            aws s3 cp --acl public-read --recursive \
-            /app/output/files/production s3://static.cdnorigin.contentful.com
 
   push-image-to-docker-repo:
     machine:
@@ -143,13 +148,31 @@ workflows:
       - run-tests:
           requires:
             - build-ci-image
-      - deploy-to-preview:
+      - deploy-assets/to-s3:
+          env: "Preview"
+          access_key_id: "${AWS_S3_PREVIEW_ACCESS_KEY_ID}"
+          secret_access_key: "${AWS_S3_PREVIEW_SECRET_ACCESS_KEY}"
+          region: "eu-west-1"
+          path: "/app/output/files/preview"
+          bucket: "cf-preview-static-cdnorigin"
           requires:
             - build-ci-image
-      - deploy-to-staging:
+      - deploy-assets/to-s3:
+          env: "Staging"
+          access_key_id: "${AWS_S3_STAGING_ACCESS_KEY_ID}"
+          secret_access_key: "${AWS_S3_STAGING_SECRET_ACCESS_KEY}"
+          region: "us-east-1"
+          path: "/app/output/files/staging"
+          bucket: "cf-staging-static-cdnorigin"
           requires:
             - build-ci-image
-      - deploy-to-production:
+      - deploy-assets/to-s3:
+          env: "Production"
+          access_key_id: "${AWS_S3_PRODUCTION_ACCESS_KEY_ID}"
+          secret_access_key: "${AWS_S3_PRODUCTION_SECRET_ACCESS_KEY}"
+          region: "us-east-1"
+          path: "/app/output/files/production"
+          bucket: "static.cdnorigin.contentful.com"
           requires:
             - build-ci-image
       - deploy-microbackend
