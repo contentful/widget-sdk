@@ -11,7 +11,6 @@ const FEATURE_FLAG_TRANSLATION_WIDGET_DROPDOWN = 'feature-at-03-2019-translation
 
 export default ($scope, { entityLabel, shouldHideLocaleErrors, emitter }) => {
   setLocaleData($scope);
-  setVisibleWidgets($scope);
   handleSingleModeSupportFeatureFlag($scope);
   handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitter);
   handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors);
@@ -44,7 +43,6 @@ function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitte
     }
     TheLocaleStore.setSingleLocaleMode(isOn);
     $scope.localeData.isSingleLocaleModeOn = isOn;
-    setVisibleWidgets($scope);
     $scope.$applyAsync();
   });
 
@@ -54,7 +52,6 @@ function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitte
     }
     TheLocaleStore.setFocusedLocale(locale);
     $scope.localeData.focusedLocale = locale;
-    setVisibleWidgets($scope);
     $scope.$applyAsync();
   });
 
@@ -64,7 +61,6 @@ function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitte
     }
     TheLocaleStore.deactivateLocale(locale);
     $scope.localeData.activeLocales = TheLocaleStore.getActiveLocales();
-    setVisibleWidgets($scope);
     $scope.$applyAsync();
   });
 
@@ -74,7 +70,6 @@ function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitte
     }
     TheLocaleStore.setActiveLocales(locales);
     $scope.localeData.activeLocales = TheLocaleStore.getActiveLocales();
-    setVisibleWidgets($scope);
     $scope.$applyAsync();
   });
 }
@@ -118,13 +113,4 @@ function resetStatusNotificationProps($scope, entityLabel) {
     status: 'ok',
     entityLabel
   };
-}
-
-function setVisibleWidgets($scope) {
-  const { isSingleLocaleModeOn, focusedLocale, defaultLocale } = $scope.localeData;
-  if (isSingleLocaleModeOn && focusedLocale.internal_code !== defaultLocale.internal_code) {
-    $scope.visibleWidgets = $scope.widgets.filter(w => w.field.localized);
-  } else {
-    $scope.visibleWidgets = $scope.widgets;
-  }
 }

@@ -74,12 +74,6 @@ export default async function create($scope, editorData, preferences) {
 
   editorContext.hasInitialFocus = preferences.hasInitialFocus;
 
-  // Building the form
-  $controller('FormWidgetsController', {
-    $scope,
-    controls: editorData.fieldControls.form
-  });
-
   $scope.localeData = {};
 
   $scope.entrySidebarProps = createEntrySidebarProps({
@@ -90,6 +84,11 @@ export default async function create($scope, editorData, preferences) {
     entityLabel: 'asset',
     shouldHideLocaleErrors: defaultLocaleIsFocused,
     emitter: $scope.entrySidebarProps.emitter
+  });
+
+  $controller('FormWidgetsController', {
+    $scope,
+    controls: editorData.fieldControls.form
   });
 
   function defaultLocaleIsFocused() {

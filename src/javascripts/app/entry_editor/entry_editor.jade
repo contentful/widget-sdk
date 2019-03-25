@@ -39,7 +39,7 @@ include ../entity_editor/entity_editor.mixins.jade
         react-component(name="app/entity_editor/StatusNotification.es6" props="statusNotificationProps")
         .entity-editor-form
           cf-error-list.form-box-error(cf-error-path="['fields']")
-          cf-entity-field(ng-repeat="widget in visibleWidgets track by widget.fieldId")
+          cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
 
       .workbench-main__sidebar
         react-component(name="app/EntrySidebar/EntrySidebar.es6" props="entrySidebarProps")

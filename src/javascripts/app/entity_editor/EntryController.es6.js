@@ -126,12 +126,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
     $scope.context.dirty = isDirty;
   });
 
-  // Building the form
-  $controller('FormWidgetsController', {
-    $scope,
-    controls: editorData.fieldControls.form
-  });
-
   /**
    * Build the `entry.fields` api of the widget-sdk at one
    * place and put it on $scope so that we don't rebuild it
@@ -150,6 +144,11 @@ export default async function create($scope, editorData, preferences, trackLoadE
     entityLabel: 'entry',
     shouldHideLocaleErrors: onlyFocusedLocaleHasErrors,
     emitter: $scope.entrySidebarProps.emitter
+  });
+
+  $controller('FormWidgetsController', {
+    $scope,
+    controls: editorData.fieldControls.form
   });
 
   function onlyFocusedLocaleHasErrors() {
