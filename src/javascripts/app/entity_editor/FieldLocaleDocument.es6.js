@@ -39,6 +39,7 @@ export default function create(doc, fieldId, localeCode) {
   const valueProperty = doc
     .valuePropertyAt(path)
     .filter(value => !isEqual(value, lastSetValue))
+    .onValue(value => (lastSetValue = value))
     .toProperty(getValue);
 
   /**

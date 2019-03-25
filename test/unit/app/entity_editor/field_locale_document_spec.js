@@ -1,7 +1,8 @@
 import * as sinon from 'test/helpers/sinon';
 
 describe('entityEditor/FieldLocaleDocument', () => {
-  const path = ['fields', 'FID', 'LC'];
+  const fieldsPath = ['FID', 'LC'];
+  const path = ['fields', ...fieldsPath];
 
   beforeEach(function() {
     module('contentful/test');
@@ -10,7 +11,7 @@ describe('entityEditor/FieldLocaleDocument', () => {
     const createFieldLocaleDoc = this.$inject('app/entity_editor/FieldLocaleDocument.es6').default;
 
     this.rootDoc = createDocument();
-    this.doc = createFieldLocaleDoc(this.rootDoc, 'FID', 'LC');
+    this.doc = createFieldLocaleDoc(this.rootDoc, ...fieldsPath);
   });
 
   describe('delegates', () => {
@@ -37,6 +38,22 @@ describe('entityEditor/FieldLocaleDocument', () => {
     }
   });
 
+  describe('#set() / #get()', () => {
+    it('gets `undefined` initially', function() {
+      expect(this.doc.get()).toEqual(undefined);
+    });
+
+    it('gets value set in rootDoc', function() {
+      this.rootDoc.setValueAt(path, 'VAL-123');
+      expect(this.doc.get()).toEqual('VAL-123');
+    });
+
+    it('sets and gets', function() {
+      this.doc.set('VAL-FOO');
+      expect(this.doc.get()).toEqual('VAL-FOO');
+    });
+  });
+
   describe('#valueProperty()', () => {
     it('has initial value', function() {
       this.rootDoc.setValueAt(path, 'VAL');
@@ -46,23 +63,30 @@ describe('entityEditor/FieldLocaleDocument', () => {
       sinon.assert.calledWith(changed, 'VAL');
     });
 
-    it('update value when root doc changes at path', function() {
-      const changed = sinon.stub();
-      this.doc.valueProperty.onValue(changed);
-      changed.reset();
+    describe('change handling', function() {
+      beforeEach(function() {
+        this.changed = sinon.stub();
+        this.doc.valueProperty.onValue(this.changed);
+        this.changed.reset();
+      });
 
-      this.rootDoc.setValueAt(path, 'VAL');
-      sinon.assert.calledWith(changed, 'VAL');
-    });
+      it('updates value when root doc changes at path', function() {
+        this.rootDoc.setValueAt(path, 'VAL');
+        sinon.assert.calledWith(this.changed, 'VAL');
+      });
 
-    it('does not update value when "set()" is called', function() {
-      const changed = sinon.stub();
-      this.doc.valueProperty.onValue(changed);
-      changed.reset();
+      it('updates value when root doc changes and reverts ', function() {
+        const initialValue = this.doc.get();
+        this.rootDoc.setValueAt(path, `${initialValue || ''}VAL`);
+        this.rootDoc.setValueAt(path, initialValue);
+        sinon.assert.calledWith(this.changed, initialValue);
+      });
 
-      this.doc.set('VAL');
-      this.rootDoc.setValueAt(path, 'VAL');
-      sinon.assert.notCalled(changed);
+      it('does not update value when "set()" is called', function() {
+        this.doc.set('VAL');
+        this.rootDoc.setValueAt(path, 'VAL');
+        sinon.assert.notCalled(this.changed);
+      });
     });
   });
 
@@ -73,7 +97,7 @@ describe('entityEditor/FieldLocaleDocument', () => {
       this.rootDoc.localFieldChanges$.emit(['FID', 'LC-other']);
       this.rootDoc.localFieldChanges$.emit(['FID-other', 'LC']);
       sinon.assert.notCalled(emitted);
-      this.rootDoc.localFieldChanges$.emit(['FID', 'LC']);
+      this.rootDoc.localFieldChanges$.emit(fieldsPath);
       sinon.assert.calledOnce(emitted);
     });
   });
