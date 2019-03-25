@@ -46,7 +46,7 @@ export default function register() {
             const org = await getOrganization(orgId);
 
             Promise.all([
-              getVariation(SSO_SELF_CONFIG_FLAG, { orgId }),
+              getVariation(SSO_SELF_CONFIG_FLAG, { organizationId: orgId }),
               getOrgFeature(orgId, 'self_configure_sso')
             ]).then(([variation, ssoFeatureEnabled]) => {
               nav.ssoEnabled = variation && ssoFeatureEnabled;
