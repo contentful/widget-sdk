@@ -9,7 +9,13 @@ jobs:
     steps:
       - checkout
       - run: mkdir ./docker
-      - run: bin/docker-build-ci
+      - run:
+          name: Build CI image
+          command: |
+            docker build --file Dockerfile-ci \
+            --tag contentful/user-interface-ci \
+            --build-arg "NPM_TOKEN=${NPM_TOKEN}" \
+            --build-arg "SSH_KEY=${SSH_KEY}" .
       - run: bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false"
       - run:
           name: Save CI image
