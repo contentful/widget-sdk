@@ -27,6 +27,7 @@ import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
 import TeamSpaceMemberships from './TeamSpaceMemberships/TeamSpaceMemberships.es6';
 import TeamDialog from './TeamDialog.es6';
 import ROUTES from 'redux/routes.es6';
+import ellipsisStyle from './ellipsisStyle.es6';
 
 const AddButton = ({ label, onClick, disabled }) => (
   <Button
@@ -78,7 +79,30 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     marginBottom: tokens.spacingL
-  })
+  }),
+  details: css({
+    padding: '1em 2em 2em',
+    display: 'flex'
+  }),
+  detailsContent: css({
+    flex: 1
+  }),
+  sidebar: css({
+    marginRight: '25px',
+    width: '400px'
+  }),
+  profileSection: css({
+    borderBottom: `1px solid ${tokens.colorElementLight}`,
+    paddingBottom: '20px',
+    marginBottom: '20px'
+  }),
+  card: css({
+    '> *': {
+      marginBottom: '1rem'
+    }
+  }),
+  name: css(ellipsisStyle),
+  description: css(ellipsisStyle)
 };
 
 class TeamDetails extends React.Component {
@@ -147,7 +171,7 @@ class TeamDetails extends React.Component {
     const pathBack = ROUTES.organization.children.teams.build({ orgId });
 
     return (
-      <Workbench className="organization-users-page" testId="organization-team-page">
+      <Workbench testId="organization-team-page">
         <Workbench.Header>
           <div className="breadcrumbs-widget">
             <div className="breadcrumbs-container">
@@ -163,15 +187,15 @@ class TeamDetails extends React.Component {
         <Workbench.Content>
           <ExperimentalFeatureNote />
           {team && (
-            <div className="user-details" data-test-id="team-details">
-              <div className="user-details__sidebar">
-                <section className="user-details__profile-section">
-                  <div className="team-card">
-                    <h2 className="team-card__name" data-test-id="team-card-name">
+            <div className={styles.details} data-test-id="team-details">
+              <div className={styles.sidebar}>
+                <section className={styles.profileSection}>
+                  <div className={styles.card}>
+                    <h2 className={styles.name} data-test-id="team-card-name">
                       {team.name}
                     </h2>
                     {team.description && (
-                      <div className="team-card__description" data-test-id="team-card-description">
+                      <div className={styles.description} data-test-id="team-card-description">
                         {team.description.split('\n').reduce((acc, cur, idx) => {
                           if (idx === 0) {
                             return [...acc, cur];
@@ -192,7 +216,7 @@ class TeamDetails extends React.Component {
                     )}
                   </div>
                 </section>
-                <section className="user-details__profile-section">
+                <section className={styles.profileSection}>
                   <dl className="definition-list">
                     <dt>Created at</dt>
                     <dd data-test-id="creation-date">
@@ -217,7 +241,7 @@ class TeamDetails extends React.Component {
                   <DeleteButton onClick={() => removeTeam(team.sys.id)} />
                 )}
               </div>
-              <div className="user-details__content">
+              <div className={styles.detailsContent}>
                 <header className={styles.tabs}>
                   {this.props.spaceMembershipsEnabled && (
                     <Tabs role="tablist">
