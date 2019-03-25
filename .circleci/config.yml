@@ -166,7 +166,7 @@ jobs:
       - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
       - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
       - run: npm ci
-      - run: NODE_ENV=production node --max_old_space_size=8096 ./node_modules/.bin/gulp build
+      - run: NODE_ENV=production node --max_old_space_size=3072 ./node_modules/.bin/gulp build
       - run: NODE_ENV=production npm run test:once
 
 workflows:
