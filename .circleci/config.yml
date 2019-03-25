@@ -16,7 +16,7 @@ jobs:
             --tag contentful/user-interface-ci \
             --build-arg "NPM_TOKEN=${NPM_TOKEN}" \
             --build-arg "SSH_KEY=${SSH_KEY-$(cat ~/.ssh/id_rsa)}" .
-      - run: bin/docker-run-ci travis --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}" --pr "false"
+      - run: bin/docker-run-ci configure-file-dist --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}"
       - run:
           name: Save CI image
           command: |
