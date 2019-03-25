@@ -157,15 +157,16 @@ jobs:
       - run: npm run codecov
 
   run-karma-tests:
-    machine: true
+    docker:
+      - image: circleci/node:8.12.0
     environment:
-      NODE_ENV: production
+      CYPRESS_INSTALL_BINARY: 0
     steps:
-      - attach_workspace:
-          at: ~/workspace
       - checkout
-      - run: docker load -i ~/workspace/docker/user-interface-ci.tar.gz
-      - run: npm run test:once
+      - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
+      - run: npm ci
+      - run: NODE_ENV=production npm run test:once
 
 workflows:
   build:
