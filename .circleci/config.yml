@@ -158,7 +158,7 @@ jobs:
 
   run-karma-tests:
     docker:
-      - image: circleci/node:8.12.0
+      - image: circleci/node:8.12.0-browsers
     environment:
       CYPRESS_INSTALL_BINARY: 0
     steps:
