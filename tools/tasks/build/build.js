@@ -1,5 +1,4 @@
 const gulp = require('gulp');
-const runSequence = require('run-sequence');
 
 /**
  * Production Builds
@@ -24,6 +23,7 @@ const runSequence = require('run-sequence');
  * - `rev.manifest()` is a transformer that creates a json file that
  *   maps each non-fingerprinted file to its fingerprinted version.
  */
-gulp.task('build', function(done) {
-  runSequence('clean', ['build/js', 'build/styles', 'build/static'], 'build/chunks', done);
-});
+gulp.task(
+  'build',
+  gulp.series('clean', gulp.parallel('build/js', 'build/styles', 'build/static'), 'build/chunks')
+);

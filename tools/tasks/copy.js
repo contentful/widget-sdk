@@ -11,6 +11,8 @@ gulp.task('copy-static', function() {
   return gulp.src(STATIC_SRC).pipe(gulp.dest('./public/app'));
 });
 
-gulp.task('copy-images', ['svg'], function() {
+const copyImages = () => {
   return gulp.src(IMAGES_SRC).pipe(gulp.dest('./public/app/images'));
-});
+};
+
+gulp.task('copy-images', gulp.series('svg', copyImages));

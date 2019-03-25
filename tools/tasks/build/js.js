@@ -13,7 +13,8 @@ const uglify = composer(terser, console);
  * Concatenates and minifies application JS files to
  * `application.min.js` and creates a manifest.
  */
-gulp.task('build/js', ['js', 'templates'], function() {
+
+const js = () => {
   // The main production application
   const prodBundleSteeam = generateBundleFromFiles(
     'app/application.min.js',
@@ -39,7 +40,9 @@ gulp.task('build/js', ['js', 'templates'], function() {
   );
 
   return mergeStream(prodBundleSteeam, testBundleStream);
-});
+};
+
+gulp.task('build/js', gulp.series(gulp.parallel('js', 'templates'), js));
 
 function generateBundleFromFiles(bundlePath, manifestPath, files) {
   return (
