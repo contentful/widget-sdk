@@ -174,9 +174,7 @@ workflows:
       - build-ci-image
       - lint
       - run-jest-tests
-      - run-karma-tests:
-          requires:
-            - build-ci-image
+      - run-karma-tests
       - deploy-assets/to-s3:
           name: deploy-assets-to-preview
           access_key_id: "${AWS_S3_PREVIEW_ACCESS_KEY_ID}"
