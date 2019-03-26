@@ -8,15 +8,19 @@ const contentfulClient = getModule('contentfulClient');
 const contentfulConfig = Config.services.contentful;
 
 let client = null;
-const spaceClients = {};
+let spaceClients = {};
 
-export function resetContentfulClient() {
+/**
+ * Only used in tests as singletons and caches are super weird to test
+ */
+export function _resetGlobals() {
   client = null;
+  spaceClients = {};
 }
 
 export async function getTemplatesList() {
   if (!client) {
-    client = getSpaceTemplatesClient();
+    client = contentfulClient.newClient(getClientParams({ env: Config.env, ...contentfulConfig }));
   }
 
   const templates = await client.entries({
@@ -38,10 +42,6 @@ export function getTemplate(templateInfo) {
   return getSpaceContents(spaceClient)
     .then(parseSpaceContents)
     .then(createApiKeyObjects(templateInfo));
-}
-
-function getSpaceTemplatesClient() {
-  return contentfulClient.newClient(getClientParams({ env: Config.env, ...contentfulConfig }));
 }
 
 function getSpaceClient(templateInfo) {

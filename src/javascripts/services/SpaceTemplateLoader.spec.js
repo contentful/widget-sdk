@@ -1,10 +1,11 @@
 import {
-  _getTemplate,
+  getTemplate,
   getTemplatesList,
   getClientParams,
-  resetContentfulClient
+  _resetGlobals
 } from './SpaceTemplateLoader.es6';
 import { getModule } from 'NgRegistry.es6';
+import { contentTypesCDA, assetsCDA, entriesCDA, spaceCDA } from 'fixtures/SpaceTemplateLoader.es6';
 
 jest.mock(
   'ng/contentfulClient',
@@ -16,18 +17,27 @@ jest.mock(
 
 describe('SpaceTemplateLoader', () => {
   const contentfulClient = getModule('contentfulClient');
-  const clientEntriesFn = jest.fn();
+  const clientGetEntriesMock = jest.fn();
+  const clientGetAssetsMock = jest.fn();
+  const clientGetCTsMock = jest.fn();
+  const clientGetSpaceMock = jest.fn();
 
   beforeEach(() => {
     contentfulClient.newClient.mockReturnValue({
-      entries: clientEntriesFn
+      entries: clientGetEntriesMock,
+      assets: clientGetAssetsMock,
+      contentTypes: clientGetCTsMock,
+      space: clientGetSpaceMock
     });
   });
 
   afterEach(async () => {
-    resetContentfulClient(); // so that a new client is generated for every spec
-    clientEntriesFn.mockReset();
+    _resetGlobals(); // so that a new client is generated for every spec
     contentfulClient.newClient.mockReset();
+    clientGetEntriesMock.mockReset();
+    clientGetAssetsMock.mockReset();
+    clientGetCTsMock.mockReset();
+    clientGetSpaceMock.mockReset();
   });
 
   describe('getClientParams', () => {
@@ -85,14 +95,14 @@ describe('SpaceTemplateLoader', () => {
     ];
 
     it("should instantiate a contentful client when there isn't one", async () => {
-      clientEntriesFn.mockResolvedValue([]);
+      clientGetEntriesMock.mockResolvedValue([]);
       const _templates = await getTemplatesList();
 
       expect(contentfulClient.newClient).toHaveBeenCalledTimes(1);
     });
 
     it('should instantiate the client only once', async () => {
-      clientEntriesFn.mockResolvedValue([]);
+      clientGetEntriesMock.mockResolvedValue([]);
       await getTemplatesList();
       await getTemplatesList();
 
@@ -100,13 +110,13 @@ describe('SpaceTemplateLoader', () => {
     });
 
     it('should fetch entries for space templates content type and return them sorted by fields.order', async () => {
-      clientEntriesFn.mockResolvedValue(entries);
+      clientGetEntriesMock.mockResolvedValue(entries);
       const templates = await getTemplatesList();
 
       // assert new client was instantiated
       expect(contentfulClient.newClient).toHaveBeenCalledTimes(1);
-      expect(clientEntriesFn).toHaveBeenCalledTimes(1);
-      expect(clientEntriesFn).toHaveBeenCalledWith({
+      expect(clientGetEntriesMock).toHaveBeenCalledTimes(1);
+      expect(clientGetEntriesMock).toHaveBeenCalledWith({
         content_type: 'space-template-ct-id' // comes from __mocks__/Config.es6.js
       });
       expect(templates).toEqual(sortedEntries);
@@ -121,14 +131,63 @@ describe('SpaceTemplateLoader', () => {
 
       contentfulClient.newClient.mockReset();
       contentfulClient.newClient.mockReturnValue({
-        entries: clientEntriesFn
+        entries: clientGetEntriesMock
       });
-      clientEntriesFn.mockReset();
-      clientEntriesFn.mockRejectedValue(new Error());
+      clientGetEntriesMock.mockReset();
+      clientGetEntriesMock.mockRejectedValue(new Error());
 
       expect(getTemplatesList()).rejects.toThrow();
     });
   });
 
-  // TODO: Tests for getTemplate
+  describe('getTemplate', () => {
+    const templateInfo = {
+      spaceId: 'my-space',
+      spaceApiKey: 'my-space-api-key',
+      templateDeliveryApiKeys: [
+        {
+          fields: { name: 'apikey-1', description: 'Api Key 1' }
+        },
+        {
+          fields: { name: 'apikey-2', description: 'Api Key 2' }
+        }
+      ]
+    };
+
+    beforeEach(() => {
+      clientGetEntriesMock.mockReturnValue([]);
+      clientGetAssetsMock.mockReturnValue([]);
+      clientGetCTsMock.mockReturnValue([]);
+      clientGetSpaceMock.mockReturnValue({ space: { sys: { id: 'my-space' } } });
+    });
+
+    it('should create a contentful client for the requested template', async () => {
+      const _template = await getTemplate(templateInfo);
+
+      expect(contentfulClient.newClient).toHaveBeenCalledTimes(1);
+      expect(contentfulClient.newClient).toHaveBeenCalledWith({
+        host: 'cda-api-url', // comes from __mocks__/Config.es6.js
+        space: templateInfo.spaceId,
+        accessToken: templateInfo.spaceApiKey
+      });
+    });
+
+    it('should only create a contentful client once for a requested template', async () => {
+      await getTemplate(templateInfo);
+      await getTemplate(templateInfo);
+
+      expect(contentfulClient.newClient).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return template space, entries, assets, CTs and api keys', async () => {
+      clientGetCTsMock.mockReturnValue(contentTypesCDA);
+      clientGetEntriesMock.mockReturnValue(entriesCDA);
+      clientGetAssetsMock.mockReturnValue(assetsCDA);
+      clientGetSpaceMock.mockReturnValue(spaceCDA);
+
+      const template = await getTemplate(templateInfo);
+
+      expect(template).toMatchSnapshot();
+    });
+  });
 });
