@@ -9,7 +9,7 @@ export default function NoContentTypeAdvice({
   title = 'Alright, let’s create your content model!'
 }) {
   return (
-    <Advice>
+    <Advice data-test-id="no-content-type-advice">
       <Advice.Icon>
         <EmptyContentIcon />
       </Advice.Icon>

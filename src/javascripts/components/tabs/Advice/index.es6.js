@@ -41,7 +41,7 @@ const styles = {
   })
 };
 
-export default function Advice({ children }) {
+export default function Advice({ ['data-test-id']: dataTestId, children }) {
   const childrenArray = React.Children.toArray(children);
   const icon = childrenArray.find(child => child.type === Advice.Icon);
   const title = childrenArray.find(child => child.type === Advice.Title);
@@ -50,7 +50,7 @@ export default function Advice({ children }) {
   const additional = childrenArray.find(child => child.type === Advice.AdditionalInfo);
   const notes = childrenArray.find(child => child.type === Advice.Notes);
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test-id={dataTestId}>
       {icon}
       {title}
       {description}
