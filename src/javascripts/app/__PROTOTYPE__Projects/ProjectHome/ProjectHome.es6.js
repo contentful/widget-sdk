@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { isMissingRequiredDatasets } from 'redux/selectors/datasets.es6';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
-
+import { css } from 'emotion';
 import {
   TextInput,
   Textarea,
@@ -10,6 +10,8 @@ import {
   Notification,
   ModalConfirm
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+
 import { getDatasets } from 'redux/selectors/datasets.es6';
 import { __PROTOTYPE__PROJECTS } from 'redux/datasets.es6';
 import ROUTES from 'redux/routes.es6';
@@ -21,6 +23,29 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import Members from './Members.es6';
 import Spaces from './Spaces.es6';
 import LinkSections from './LinkSections.es6';
+
+const styles = {
+  home: css({
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    overflowY: 'auto',
+    overflowX: 'hidden'
+  }),
+  content: css({
+    padding: '2rem',
+    display: 'flex',
+    justifyContent: 'space-around',
+    maxWidth: '1080px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    '> *': {
+      margin: tokens.spacingM
+    }
+  })
+};
 
 export default connect(
   state => {
@@ -137,108 +162,110 @@ export default connect(
   const [editing, setEditing] = useState(false);
 
   return (
-    <div className="project-home">
-      <h2
-        style={{
-          color: 'red',
-          fontWeight: 'bold',
-          position: 'absolute',
-          top: '.2rem',
-          left: '.2rem'
-        }}>
-        PROTOTYPE
-      </h2>
-      <div className="project-home__details">
-        {!editing && <h2>{name}</h2>}
-        {editing && (
-          <TextInput
-            value={name}
-            onChange={({ target: { value } }) => setDirty(true) || setName(value)}
+    <div className={styles.home}>
+      <div className={styles.content}>
+        <h2
+          style={{
+            color: 'red',
+            fontWeight: 'bold',
+            position: 'absolute',
+            top: '.2rem',
+            left: '.2rem'
+          }}>
+          PROTOTYPE
+        </h2>
+        <div className="project-home__details">
+          {!editing && <h2>{name}</h2>}
+          {editing && (
+            <TextInput
+              value={name}
+              onChange={({ target: { value } }) => setDirty(true) || setName(value)}
+            />
+          )}
+          {!editing && (
+            <div>
+              {description.split('\n').reduce((acc, cur, idx) => {
+                if (idx === 0) {
+                  return [...acc, cur];
+                }
+                return [...acc, <br key={idx} />, cur];
+              }, [])}
+            </div>
+          )}
+          {editing && (
+            <Textarea
+              rows={5}
+              placeholder="description"
+              value={description}
+              onChange={({ target: { value } }) => setDirty(true) || setDescription(value)}
+            />
+          )}
+          <LinkSections
+            {...{
+              editing,
+              projectLinkSections: linkSections,
+              setLinkSections: sections => setDirty(true) || setLinkSections(sections)
+            }}
           />
-        )}
-        {!editing && (
-          <div>
-            {description.split('\n').reduce((acc, cur, idx) => {
-              if (idx === 0) {
-                return [...acc, cur];
-              }
-              return [...acc, <br key={idx} />, cur];
-            }, [])}
-          </div>
-        )}
-        {editing && (
-          <Textarea
-            rows={5}
-            placeholder="description"
-            value={description}
-            onChange={({ target: { value } }) => setDirty(true) || setDescription(value)}
+        </div>
+        <div className="project-home__relations">
+          <Members
+            {...{
+              editing,
+              projectMemberIds: memberIds,
+              setProjectMemberIds: ids => setDirty(true) || setProjectMemberIds(ids)
+            }}
           />
-        )}
-        <LinkSections
-          {...{
-            editing,
-            projectLinkSections: linkSections,
-            setLinkSections: sections => setDirty(true) || setLinkSections(sections)
-          }}
-        />
-      </div>
-      <div className="project-home__relations">
-        <Members
-          {...{
-            editing,
-            projectMemberIds: memberIds,
-            setProjectMemberIds: ids => setDirty(true) || setProjectMemberIds(ids)
-          }}
-        />
-        <Spaces
-          {...{
-            editing,
-            projectSpaceIds: spaceIds,
-            setProjectSpaceIds: ids => setDirty(true) || setProjectSpaceIds(ids)
-          }}
-        />
-      </div>
-      <div>
-        {!editing && (
-          <Button style={{ margin: '.4rem' }} onClick={() => setEditing(true)}>
-            Edit
-          </Button>
-        )}
-        {editing && (
-          <Button
-            style={{ margin: '.4rem' }}
-            disabled={!dirty}
-            onClick={() =>
-              setDirty(false) ||
-              setEditing(false) ||
-              save({ ...project, name, description, memberIds, spaceIds, linkSections })
-            }>
-            Save
-          </Button>
-        )}
-        {!editing && (
-          <Button
-            style={{ margin: '.4rem' }}
-            buttonType="negative"
-            onClick={() => deleteProject(project.sys.id)}>
-            Delete
-          </Button>
-        )}
-        {editing && (
-          <Button
-            style={{ margin: '.4rem' }}
-            buttonType="negative"
-            onClick={() => {
-              setName(project.name);
-              setDescription(project.description);
-              setProjectMemberIds(project.memberIds);
-              setProjectSpaceIds(project.spaceIds);
-              setLinkSections(project.linkSections || []);
-              setEditing(false);
-            }}>
-            Cancel
-          </Button>
-        )}
+          <Spaces
+            {...{
+              editing,
+              projectSpaceIds: spaceIds,
+              setProjectSpaceIds: ids => setDirty(true) || setProjectSpaceIds(ids)
+            }}
+          />
+        </div>
+        <div>
+          {!editing && (
+            <Button style={{ margin: '.4rem' }} onClick={() => setEditing(true)}>
+              Edit
+            </Button>
+          )}
+          {editing && (
+            <Button
+              style={{ margin: '.4rem' }}
+              disabled={!dirty}
+              onClick={() =>
+                setDirty(false) ||
+                setEditing(false) ||
+                save({ ...project, name, description, memberIds, spaceIds, linkSections })
+              }>
+              Save
+            </Button>
+          )}
+          {!editing && (
+            <Button
+              style={{ margin: '.4rem' }}
+              buttonType="negative"
+              onClick={() => deleteProject(project.sys.id)}>
+              Delete
+            </Button>
+          )}
+          {editing && (
+            <Button
+              style={{ margin: '.4rem' }}
+              buttonType="negative"
+              onClick={() => {
+                setName(project.name);
+                setDescription(project.description);
+                setProjectMemberIds(project.memberIds);
+                setProjectSpaceIds(project.spaceIds);
+                setLinkSections(project.linkSections || []);
+                setEditing(false);
+              }}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
