@@ -39,6 +39,8 @@ const getMailText = params => `
 
 module.exports = {
   apiVersion: 1,
+  memorySize: 256,
+  timeout: 5,
   dependencies: ['fetch'],
   handle: async ({ req, kv, dependencies }) => {
     if (req.path !== '/' || req.method !== 'POST' || typeof req.body !== 'object') {

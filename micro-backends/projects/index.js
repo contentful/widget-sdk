@@ -6,6 +6,8 @@ const checkAuthorization = require('./checkAuthorization');
 
 module.exports = {
   apiVersion: 1,
+  memorySize: 512,
+  timeout: 5,
   dependencies: ['fetch', 'lodash'],
   handle: async ({ req, kv, dependencies }) => {
     const allowedMethods = ['get', 'post', 'delete'];

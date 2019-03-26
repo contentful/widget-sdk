@@ -2,6 +2,8 @@
 
 module.exports = {
   apiVersion: 1,
+  memorySize: 128,
+  timeout: 1,
   handle: ({ req }) => {
     const validEndpoint = req.path === '/send' && req.method === 'POST';
 

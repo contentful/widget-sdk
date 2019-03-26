@@ -4,7 +4,8 @@ const stream = require('getstream');
 
 module.exports = {
   apiVersion: 1,
-
+  memorySize: 256,
+  timeout: 5,
   handle: ({ req, env }) => {
     const validEndpoint = req.path === '/generate' && req.method === 'POST';
     const id = req.body.id;
