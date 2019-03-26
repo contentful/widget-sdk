@@ -93,7 +93,7 @@ describe('entity editor field integration', () => {
   });
 
   describe('labels', () => {
-    it('shows field name for single locale', function() {
+    it('shows field name for single-locale', function() {
       this.localeData.privateLocales = [{ code: 'en', internal_code: 'en-internal' }];
       const el = this.compile();
       const label = el.find('[data-test-id="field-locale-label"]');
@@ -163,72 +163,118 @@ describe('entity editor field integration', () => {
     });
   });
 
-  describe('visible locales', () => {
-    it('only shows default locale when field is not localized', function() {
-      this.localeData.privateLocales = [
-        { code: 'en', internal_code: 'en-internal' },
-        { code: 'de', internal_code: 'de-internal' },
-        { code: 'fr', internal_code: 'fr-internal' }
-      ];
-      this.localeData.defaultLocale = { code: 'en', internal_code: 'en-internal' };
-      this.widget.field.localized = false;
-      const el = this.compile();
-      expectShownLocales(el, ['en']);
+  describe('visible locales', function() {
+    describe('when the multi-locale mode is on', function() {
+      beforeEach(function() {
+        this.localeData.isSingleLocaleModeOn = false;
+      });
+
+      describe('and the field is not localized', function() {
+        it('only shows the default locale', function() {
+          this.localeData.privateLocales = [
+            { code: 'en', internal_code: 'en-internal' },
+            { code: 'de', internal_code: 'de-internal' },
+            { code: 'fr', internal_code: 'fr-internal' }
+          ];
+          this.localeData.defaultLocale = { code: 'en', internal_code: 'en-internal' };
+          this.widget.field.localized = false;
+          const el = this.compile();
+          expectShownLocales(el, ['en']);
+        });
+      });
+
+      it('responds to changing the active locales', function() {
+        this.localeData.privateLocales = [
+          { code: 'en', internal_code: 'en-internal' },
+          { code: 'de', internal_code: 'de-internal' },
+          { code: 'fr', internal_code: 'fr-internal' }
+        ];
+        this.localeData.activeLocales = [
+          { code: 'en', internal_code: 'en-internal' },
+          { code: 'de', internal_code: 'de-internal' },
+          { code: 'fr', internal_code: 'fr-internal' }
+        ];
+        const el = this.compile();
+        expectShownLocales(el, ['en', 'de', 'fr']);
+        this.localeData.activeLocales = [
+          { code: 'en', internal_code: 'en-internal' },
+          { code: 'de', internal_code: 'de-internal' }
+        ];
+        this.$apply();
+        expectShownLocales(el, ['en', 'de']);
+      });
+
+      it('adds locales with error on field with localization enabled', testShowsErrorLocales);
+
+      it('adds locales with error on field without localization', function() {
+        this.widget.field.localized = false;
+        testShowsErrorLocales.call(this);
+      });
+
+      function testShowsErrorLocales() {
+        this.localeData.activeLocales = [{ code: 'en', internal_code: 'en-internal' }];
+        this.localeData.privateLocales = [
+          { code: 'en', internal_code: 'en-internal' },
+          { code: 'de', internal_code: 'de-internal' },
+          { code: 'fr', internal_code: 'fr-internal' }
+        ];
+        this.localeData.defaultLocale = { code: 'en', internal_code: 'en-internal' };
+
+        const el = this.compile();
+        expectShownLocales(el, ['en']);
+
+        this.validator.hasFieldLocaleError.withArgs('FID', 'de-internal').returns(true);
+        // we need to force an update unfortunately
+        this.validator.errors$.set([]);
+        this.$apply();
+
+        expectShownLocales(el, ['en', 'de']);
+      }
+
+      // TODO: Why is the `default: true` ignored here?
+      xit('shows default locale as the first one', function() {
+        this.localeData.privateLocales = [{ code: 'en-2', default: true }, { code: 'en-1' }];
+        const el = this.compile();
+        expectShownLocalesDisplayOrder(el, ['en-2', 'en-1']);
+      });
     });
 
-    it('responds to changing the active locales', function() {
-      this.localeData.privateLocales = [
-        { code: 'en', internal_code: 'en-internal' },
-        { code: 'de', internal_code: 'de-internal' },
-        { code: 'fr', internal_code: 'fr-internal' }
-      ];
-      this.localeData.activeLocales = [
-        { code: 'en', internal_code: 'en-internal' },
-        { code: 'de', internal_code: 'de-internal' },
-        { code: 'fr', internal_code: 'fr-internal' }
-      ];
-      const el = this.compile();
-      expectShownLocales(el, ['en', 'de', 'fr']);
-      this.localeData.activeLocales = [
-        { code: 'en', internal_code: 'en-internal' },
-        { code: 'de', internal_code: 'de-internal' }
-      ];
-      this.$apply();
-      expectShownLocales(el, ['en', 'de']);
-    });
+    describe('when the single-locale mode is on', function() {
+      beforeEach(function() {
+        this.localeData.isSingleLocaleModeOn = true;
+        this.localeData.privateLocales = [
+          { code: 'en', internal_code: 'en-internal' },
+          { code: 'de', internal_code: 'de-internal' },
+          { code: 'fr', internal_code: 'fr-internal' }
+        ];
+        this.localeData.defaultLocale = { code: 'en', internal_code: 'en-internal' };
+      });
 
-    it('adds locales with error on field with localization enabled', testShowsErrorLocales);
+      describe('and the field is localized', function() {
+        beforeEach(function() {
+          this.widget.field.localized = true;
+        });
 
-    it('adds locales with error on field without localization', function() {
-      this.widget.field.localized = false;
-      testShowsErrorLocales.call(this);
-    });
+        describe('and the default locale is focused', function() {
+          beforeEach(function() {
+            this.localeData.focusedLocale = { code: 'en', internal_code: 'en-internal' };
+          });
 
-    function testShowsErrorLocales() {
-      this.localeData.activeLocales = [{ code: 'en', internal_code: 'en-internal' }];
-      this.localeData.privateLocales = [
-        { code: 'en', internal_code: 'en-internal' },
-        { code: 'de', internal_code: 'de-internal' },
-        { code: 'fr', internal_code: 'fr-internal' }
-      ];
-      this.localeData.defaultLocale = { code: 'en', internal_code: 'en-internal' };
+          it('shows the locale', function() {
+            expectShownLocales(this.compile(), ['en']);
+          });
+        });
 
-      const el = this.compile();
-      expectShownLocales(el, ['en']);
+        describe('and the non-default locale is focused', function() {
+          beforeEach(function() {
+            this.localeData.focusedLocale = { code: 'de', internal_code: 'de-internal' };
+          });
 
-      this.validator.hasFieldLocaleError.withArgs('FID', 'de-internal').returns(true);
-      // we need to force an update unfortunately
-      this.validator.errors$.set([]);
-      this.$apply();
-
-      expectShownLocales(el, ['en', 'de']);
-    }
-
-    // TODO: Why is the `default: true` ignored here?
-    xit('shows default locale as the first one', function() {
-      this.localeData.privateLocales = [{ code: 'en-2', default: true }, { code: 'en-1' }];
-      const el = this.compile();
-      expectShownLocalesDisplayOrder(el, ['en-2', 'en-1']);
+          it('shows the locale', function() {
+            expectShownLocales(this.compile(), ['de']);
+          });
+        });
+      });
     });
 
     function expectShownLocalesDisplayOrder(el, locales) {
@@ -248,73 +294,105 @@ describe('entity editor field integration', () => {
     }
   });
 
-  describe('errors', () => {
-    it('shows field locale errors', function() {
-      const el = this.compile();
-      expect(hasErrorStatus(el)).toBe(false);
+  describe('errors', function() {
+    describe('when the multi-locale mode is on', function() {
+      it('shows field locale errors', function() {
+        const el = this.compile();
+        expect(hasErrorStatus(el)).toBe(false);
 
-      this.validator.errors$.set([
-        { path: ['fields', 'FID', 'def-internal'], name: 'def-error' },
-        { path: ['fields', 'FID', 'en-internal'], name: 'en-error-1' },
-        { path: ['fields', 'FID', 'en-internal'], name: 'en-error-2' }
-      ]);
-      this.$apply();
+        this.validator.errors$.set([
+          { path: ['fields', 'FID', 'def-internal'], name: 'def-error' },
+          { path: ['fields', 'FID', 'en-internal'], name: 'en-error-1' },
+          { path: ['fields', 'FID', 'en-internal'], name: 'en-error-2' }
+        ]);
+        this.$apply();
 
-      const defLocale = el.find('[data-locale=def]');
-      expect(hasErrorStatus(defLocale, 'entry.schema.def-error')).toBe(true);
+        const defLocale = el.find('[data-locale=def]');
+        expect(hasErrorStatus(defLocale, 'entry.schema.def-error')).toBe(true);
 
-      const enLocale = el.find('[data-locale=en]');
-      expect(hasErrorStatus(enLocale, 'entry.schema.en-error-1')).toBe(true);
-      expect(hasErrorStatus(enLocale, 'entry.schema.en-error-2')).toBe(true);
+        const enLocale = el.find('[data-locale=en]');
+        expect(hasErrorStatus(enLocale, 'entry.schema.en-error-1')).toBe(true);
+        expect(hasErrorStatus(enLocale, 'entry.schema.en-error-2')).toBe(true);
+      });
+
+      it('sets field’s invalid state if there are schema errors', function() {
+        const el = this.compile();
+        assertInvalidState(el.field, false);
+
+        this.validator.hasFieldError.withArgs('FID').returns(true);
+        // we need to force an update unfortunately
+        this.validator.errors$.set([]);
+        this.$apply();
+        assertInvalidState(el.field, true);
+
+        this.validator.hasFieldError = sinon.stub().returns(false);
+        this.validator.errors$.set([]);
+        this.$apply();
+        assertInvalidState(el.field, false);
+      });
+
+      it('sets field’s invalid state if a field control is invalid', function() {
+        const el = this.compile();
+        assertInvalidState(el.field, false);
+
+        el.fieldController.setInvalid('def', true);
+        el.fieldController.setInvalid('en', true);
+        this.$apply();
+        assertInvalidState(el.field, true);
+
+        el.fieldController.setInvalid('en', false);
+        this.$apply();
+        assertInvalidState(el.field, true);
+
+        el.fieldController.setInvalid('def', false);
+        this.$apply();
+        assertInvalidState(el.field, false);
+      });
+
+      it('shows link for duplicate errors', function() {
+        const view = DOM.createView(this.compile().get(0));
+
+        this.validator.errors$.set([
+          {
+            path: ['fields', 'FID', 'def-internal'],
+            name: 'unique',
+            conflicting: [{ sys: { id: 'DUPLICATE' } }],
+            message: ''
+          }
+        ]);
+        this.$apply();
+        view.find('uniqueness-conflicts-list').assertHasText('TITLE DUPLICATE');
+      });
     });
 
-    it('sets field’s invalid state if there are schema errors', function() {
-      const el = this.compile();
-      assertInvalidState(el.field, false);
+    describe('when the single-locale mode is on', function() {
+      beforeEach(function() {
+        this.localeData.isSingleLocaleModeOn = true;
+        this.localeData.defaultLocale = { code: 'en', internal_code: 'en-internal' };
+        this.localeData.focusedLocale = { code: 'en', internal_code: 'en-internal' };
+      });
 
-      this.validator.hasFieldError.withArgs('FID').returns(true);
-      // we need to force an update unfortunately
-      this.validator.errors$.set([]);
-      this.$apply();
-      assertInvalidState(el.field, true);
+      describe('and the field locale has errors', function() {
+        beforeEach(function() {
+          this.validator.hasFieldLocaleError.withArgs('FID', 'en-internal').returns(true);
+        });
 
-      this.validator.hasFieldError = sinon.stub().returns(false);
-      this.validator.errors$.set([]);
-      this.$apply();
-      assertInvalidState(el.field, false);
-    });
+        it('checks whether the focused field locale has error', function() {
+          const el = this.compile();
+          assertInvalidState(el.field, true);
+        });
+      });
 
-    it('sets field’s invalid state if a field control is invalid', function() {
-      const el = this.compile();
-      assertInvalidState(el.field, false);
+      describe('and the field locale does not have errors', function() {
+        beforeEach(function() {
+          this.validator.hasFieldLocaleError.withArgs('FID', 'en-internal').returns(false);
+        });
 
-      el.fieldController.setInvalid('def', true);
-      el.fieldController.setInvalid('en', true);
-      this.$apply();
-      assertInvalidState(el.field, true);
-
-      el.fieldController.setInvalid('en', false);
-      this.$apply();
-      assertInvalidState(el.field, true);
-
-      el.fieldController.setInvalid('def', false);
-      this.$apply();
-      assertInvalidState(el.field, false);
-    });
-
-    it('shows link for duplicate errors', function() {
-      const view = DOM.createView(this.compile().get(0));
-
-      this.validator.errors$.set([
-        {
-          path: ['fields', 'FID', 'def-internal'],
-          name: 'unique',
-          conflicting: [{ sys: { id: 'DUPLICATE' } }],
-          message: ''
-        }
-      ]);
-      this.$apply();
-      view.find('uniqueness-conflicts-list').assertHasText('TITLE DUPLICATE');
+        it('checks whether the focused field locale has error', function() {
+          const el = this.compile();
+          assertInvalidState(el.field, false);
+        });
+      });
     });
   });
 

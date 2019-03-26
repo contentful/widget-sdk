@@ -23,7 +23,7 @@ export default function register() {
       // - Validation errors change (we always show fields with errors).
       $scope.$watchGroup(
         [
-          '$scopepreferences.showDisabledFields',
+          'preferences.showDisabledFields',
           'localeData.isSingleLocaleModeOn',
           'localeData.focusedLocale'
         ],
@@ -32,35 +32,34 @@ export default function register() {
       K.onValueScope($scope, $scope.editorContext.validator.errors$, update);
 
       function update() {
-        const nonLocalizedFieldsAreDisplayable = areNonLocalizedFieldsDisplayable();
-        $scope.widgets = controls
-          .map(widget => markVisibility(widget, nonLocalizedFieldsAreDisplayable))
-          .filter(shouldRender);
+        $scope.widgets = controls.map(markVisibility).filter(shouldRender);
       }
 
       // Adds `isVisible` property to a widget telling the editor
       // if the widget should be visible.
-      function markVisibility(widget, nonLocalizedFieldsAreDisplayable) {
-        const isNonDisplayableNonLocalizedField =
-          !nonLocalizedFieldsAreDisplayable && !widget.field.localized;
+      function markVisibility(widget) {
         const isNotDisabled = !widget.field.disabled;
         const showingDisabled = $scope.preferences.showDisabledFields;
-        const hasErrors = $scope.editorContext.validator.hasFieldError(widget.field.id);
+        const { focusedLocale, defaultLocale, isSingleLocaleModeOn } = $scope.localeData;
 
-        return {
-          ...widget,
-          isVisible:
-            !isNonDisplayableNonLocalizedField && (isNotDisabled || showingDisabled || hasErrors)
-        };
-      }
+        let isVisible;
+        if (isSingleLocaleModeOn) {
+          const hasFieldLocaleErrors = $scope.editorContext.validator.hasFieldLocaleError(
+            widget.field.id,
+            focusedLocale.internal_code
+          );
+          const isNonDefaultLocale = focusedLocale.internal_code !== defaultLocale.internal_code;
 
-      function areNonLocalizedFieldsDisplayable() {
-        const { localeData } = $scope;
-        if (!localeData.isSingleLocaleModeOn) {
-          return true;
+          isVisible =
+            isNonDefaultLocale && !widget.field.localized
+              ? hasFieldLocaleErrors
+              : isNotDisabled || showingDisabled || hasFieldLocaleErrors;
         } else {
-          return localeData.focusedLocale.internal_code === localeData.defaultLocale.internal_code;
+          const hasFieldErrors = $scope.editorContext.validator.hasFieldError(widget.field.id);
+          isVisible = isNotDisabled || showingDisabled || hasFieldErrors;
         }
+
+        return { ...widget, isVisible };
       }
 
       // Determines if the widget should be rendered, either visible
