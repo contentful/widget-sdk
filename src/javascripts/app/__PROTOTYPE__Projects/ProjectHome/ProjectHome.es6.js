@@ -10,7 +10,8 @@ import {
   Notification,
   ModalConfirm,
   DisplayText,
-  Paragraph
+  Paragraph,
+  Note
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -192,29 +193,6 @@ export default connect(
               onChange={({ target: { value } }) => setDirty(true) || setDescription(value)}
             />
           )}
-          <LinkSections
-            {...{
-              editing,
-              projectLinkSections: linkSections,
-              setLinkSections: sections => setDirty(true) || setLinkSections(sections)
-            }}
-          />
-        </div>
-        <div className="project-home__relations">
-          <Members
-            {...{
-              editing,
-              projectMemberIds: memberIds,
-              setProjectMemberIds: ids => setDirty(true) || setProjectMemberIds(ids)
-            }}
-          />
-          <Spaces
-            {...{
-              editing,
-              projectSpaceIds: spaceIds,
-              setProjectSpaceIds: ids => setDirty(true) || setProjectSpaceIds(ids)
-            }}
-          />
         </div>
         <div>
           {!editing && (
@@ -234,14 +212,6 @@ export default connect(
               Save
             </Button>
           )}
-          {!editing && (
-            <Button
-              style={{ margin: '.4rem' }}
-              buttonType="negative"
-              onClick={() => deleteProject(project.sys.id)}>
-              Delete
-            </Button>
-          )}
           {editing && (
             <Button
               style={{ margin: '.4rem' }}
@@ -255,6 +225,50 @@ export default connect(
                 setEditing(false);
               }}>
               Cancel
+            </Button>
+          )}
+        </div>
+        <Note style={{ marginTop: '1rem' }}>
+          Please note: Projects is an experimental feature so we haven’t yet built it with our usual
+          polish. Help us decide if we should! Share your feedback with us{' '}
+          <a
+            href="mailto:squad-hejo+feedback@contentful.com"
+            target="_blank"
+            rel="noopener noreferrer">
+            here
+          </a>{' '}
+          or through your Customer Success Manager.
+        </Note>
+        <div className="project-home__relations">
+          <Spaces
+            {...{
+              editing,
+              projectSpaceIds: spaceIds,
+              setProjectSpaceIds: ids => setDirty(true) || setProjectSpaceIds(ids)
+            }}
+          />
+          <Members
+            {...{
+              editing,
+              projectMemberIds: memberIds,
+              setProjectMemberIds: ids => setDirty(true) || setProjectMemberIds(ids)
+            }}
+          />
+          <LinkSections
+            {...{
+              editing,
+              projectLinkSections: linkSections,
+              setLinkSections: sections => setDirty(true) || setLinkSections(sections)
+            }}
+          />
+        </div>
+        <div>
+          {!editing && (
+            <Button
+              style={{ margin: '.4rem' }}
+              buttonType="negative"
+              onClick={() => deleteProject(project.sys.id)}>
+              Delete
             </Button>
           )}
         </div>
