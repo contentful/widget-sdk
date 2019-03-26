@@ -7,10 +7,14 @@ import isHotKey from 'is-hotkey';
 import _ from 'lodash';
 import { insertBlock } from 'app/widgets/rich_text/plugins/EmbeddedEntityBlock/Util.es6';
 import { insertInline } from 'app/widgets/rich_text/plugins/EmbeddedEntryInline/Utils.es6';
-import { fetchEntries, fetchContentTypes, fetchAssets } from '../CommandPaletteService.es6';
+import {
+  fetchEntries,
+  fetchContentTypes,
+  fetchAssets,
+  createActionIfAllowed
+} from '../CommandPaletteService.es6';
 import { removeCommand } from '../Util.es6';
 import CommandPanelMenu from './CommandPanelMenu.es6';
-import { isNodeTypeEnabled } from 'app/widgets/rich_text/validations/index.es6';
 
 const entityCreator = getModule('entityCreator');
 const slideInNavigator = getModule('navigation/SlideInNavigator');
@@ -35,22 +39,7 @@ class CommandPalette extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    this.applyRichTextSettings(props.widgetAPI.richTextAPI);
   }
-
-  applyRichTextSettings = richTextAPI => {
-    this.inlineEntryEmbedEnabled = isNodeTypeEnabled(
-      richTextAPI.widgetAPI.field,
-      INLINES.EMBEDDED_ENTRY
-    );
-    this.blockEntryEmbedEnabled = isNodeTypeEnabled(
-      richTextAPI.widgetAPI.field,
-      BLOCKS.EMBEDDED_ENTRY
-    );
-    this.blockAssetEmbedEnabled =
-      richTextAPI.widgetAPI.permissions.canAccessAssets &&
-      isNodeTypeEnabled(richTextAPI.widgetAPI.field, BLOCKS.EMBEDDED_ASSET);
-  };
 
   componentDidMount = async () => {
     this.createInitialCommands();
@@ -65,7 +54,7 @@ class CommandPalette extends React.PureComponent {
   }
 
   createCommand = (label, contentType, entry, type) => ({
-    label: `${contentType}: ${label}`,
+    label: `${label}`,
     contentType,
     callback: () => {
       removeCommand(this.props.editor, this.props.command);
@@ -83,7 +72,7 @@ class CommandPalette extends React.PureComponent {
     }
   });
 
-  onCreateEntry = async contentTypeId => {
+  onCreateAndEmbedEntry = async (contentTypeId, inline) => {
     removeCommand(this.props.editor, this.props.command);
     const createEntity = () =>
       contentTypeId !== null ? entityCreator.newEntry(contentTypeId) : entityCreator.newAsset();
@@ -93,59 +82,42 @@ class CommandPalette extends React.PureComponent {
       type: entity.data.sys.type
     };
 
-    insertBlock(
-      this.props.editor,
-      contentTypeId ? BLOCKS.EMBEDDED_ENTRY : BLOCKS.EMBEDDED_ASSET,
-      entity.data
-    );
+    inline
+      ? insertInline(this.props.editor, entity.data.sys.id, false)
+      : insertBlock(
+          this.props.editor,
+          contentTypeId ? BLOCKS.EMBEDDED_ENTRY : BLOCKS.EMBEDDED_ASSET,
+          entity.data
+        );
 
     slideInNavigator.goToSlideInEntity(slide);
   };
 
-  createContentTypeCommand = contentType => {
-    const blockActions = this.blockEntryEmbedEnabled
-      ? [
-          {
-            label: `Create new ${contentType.name}`,
-            group: contentType.name,
-            callback: () => this.onCreateEntry(contentType.sys.id)
-          },
-          {
-            label: `Add existing ${contentType.name}`,
-            group: contentType.name,
-            callback: () => this.createCommands(contentType)
-          }
-        ]
-      : [];
+  createContentTypeActions = (field, contentType) =>
+    [
+      createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ENTRY, false, () =>
+        this.createCommands(contentType)
+      ),
+      createActionIfAllowed(field, contentType, INLINES.EMBEDDED_ENTRY, false, () =>
+        this.createCommands(contentType, 'inline')
+      ),
+      createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ENTRY, true, () =>
+        this.onCreateAndEmbedEntry(contentType.sys.id, true)
+      ),
+      createActionIfAllowed(field, contentType, INLINES.EMBEDDED_ENTRY, true, () =>
+        this.onCreateAndEmbedEntry(contentType.sys.id, true)
+      )
+    ].filter(action => action);
 
-    const inlineAction = this.inlineEntryEmbedEnabled
-      ? [
-          {
-            label: `Add existing ${contentType.name} - Inline`,
-            group: contentType.name,
-            callback: () => this.createCommands(contentType, 'inline')
-          }
-        ]
-      : [];
-
-    return [...blockActions, ...inlineAction];
-  };
-
-  createAssetCommands = () =>
-    this.blockAssetEmbedEnabled
-      ? [
-          {
-            label: `Create new Asset`,
-            group: 'Assets',
-            callback: () => this.onCreateEntry(null)
-          },
-          {
-            label: `Add existing Asset`,
-            group: 'Assets',
-            callback: () => this.createAssetEntityCommands()
-          }
-        ]
-      : [];
+  createAssetActions = (field, contentType) =>
+    [
+      createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ASSET, true, () =>
+        this.onCreateAndEmbedEntry(null)
+      ),
+      createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ASSET, false, () =>
+        this.createAssetEntityCommands()
+      )
+    ].filter(action => action);
 
   handleScroll = e => {
     if (e.target.nodeName !== 'UL') {
@@ -176,6 +148,7 @@ class CommandPalette extends React.PureComponent {
   };
 
   createInitialCommands = async () => {
+    const { widgetAPI } = this.props;
     const allContentTypes = await fetchContentTypes(this.props.widgetAPI);
     this.setState({
       isLoading: false
@@ -186,10 +159,13 @@ class CommandPalette extends React.PureComponent {
         ...this.state.items,
         ...allContentTypes
           .map(contentType => {
-            return this.createContentTypeCommand(contentType);
+            return this.createContentTypeActions(
+              widgetAPI.richTextAPI.widgetAPI.field,
+              contentType
+            );
           })
-          .flat(),
-        ...this.createAssetCommands().flat()
+          .reduce((pre, cur) => [...cur, ...pre]),
+        ...this.createAssetActions(widgetAPI.richTextAPI.widgetAPI.field)
       ]
     });
   };
