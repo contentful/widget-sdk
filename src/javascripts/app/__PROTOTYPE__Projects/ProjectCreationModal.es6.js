@@ -108,7 +108,11 @@ class ProjectCreationModal extends React.Component {
           <React.Fragment>
             <Modal.Header title="Create a project" />
             <Modal.Content>
-              <span>Placeholder: Beware, that be dragons</span>
+              <span>
+                Projects helps you keep track of your work. Create a project, link the relevant
+                spaces and users, and share information with your team about the context of the
+                work.
+              </span>
               <TextField
                 style={{ marginTop: '1rem' }}
                 name="projectName"
@@ -132,7 +136,15 @@ class ProjectCreationModal extends React.Component {
                 disabled={isPending}
               />
               <Note style={{ marginTop: '1rem' }}>
-                Placeholder: This is an prototype and is not representative of the final feature
+                Please note: Projects is an experimental feature so we haven’t yet built it with our
+                usual polish. Help us decide if we should! Share your feedback with us{' '}
+                <a
+                  href="mailto:squad-hejo+feedback@contentful.com"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  here
+                </a>{' '}
+                or through your Customer Success Manager.
               </Note>
             </Modal.Content>
             <Modal.Controls>
