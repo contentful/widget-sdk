@@ -8,7 +8,9 @@ import {
   Textarea,
   Button,
   Notification,
-  ModalConfirm
+  ModalConfirm,
+  DisplayText,
+  Paragraph
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -37,6 +39,7 @@ const styles = {
   content: css({
     paddingTop: '2rem',
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'space-around',
     maxWidth: '1080px',
     marginLeft: 'auto',
@@ -160,12 +163,11 @@ export default connect(
   const [linkSections, setLinkSections] = useState(project.linkSections || []);
   const [dirty, setDirty] = useState(false);
   const [editing, setEditing] = useState(false);
-
   return (
     <div className={styles.home}>
       <div className={styles.content}>
         <div className="project-home__details">
-          {!editing && <h2>{name}</h2>}
+          {!editing && <DisplayText>{name}</DisplayText>}
           {editing && (
             <TextInput
               value={name}
@@ -173,14 +175,14 @@ export default connect(
             />
           )}
           {!editing && (
-            <div>
+            <Paragraph>
               {description.split('\n').reduce((acc, cur, idx) => {
                 if (idx === 0) {
                   return [...acc, cur];
                 }
                 return [...acc, <br key={idx} />, cur];
               }, [])}
-            </div>
+            </Paragraph>
           )}
           {editing && (
             <Textarea

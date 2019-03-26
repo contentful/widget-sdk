@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { TextInput, Button } from '@contentful/forma-36-react-components';
+import { TextInput, Button, Card, Heading } from '@contentful/forma-36-react-components';
 import { without } from 'lodash';
 import { flow, pullAt } from 'lodash/fp';
 import { css } from 'emotion';
@@ -18,8 +18,8 @@ const LinkSections = ({ projectLinkSections, setLinkSections, editing }) => {
   const [header, setHeader] = useState('');
 
   return (
-    <div>
-      <h3>Useful links</h3>
+    <Card>
+      <Heading>Useful links</Heading>
       {editing && (
         <div style={{ display: 'flex' }}>
           <TextInput
@@ -78,7 +78,7 @@ const LinkSections = ({ projectLinkSections, setLinkSections, editing }) => {
           }}
         />
       ))}
-    </div>
+    </Card>
   );
 };
 

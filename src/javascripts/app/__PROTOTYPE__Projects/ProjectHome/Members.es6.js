@@ -10,7 +10,9 @@ import {
   Select,
   Button,
   TextInput,
-  IconButton
+  IconButton,
+  Card,
+  Heading
 } from '@contentful/forma-36-react-components';
 
 const membershipIdsToMembers = (membershipIds, allMemberships) =>
@@ -33,8 +35,8 @@ export default connect(state => ({
   const [filter, setFilter] = useState('');
 
   return (
-    <div className="project-home__members">
-      <h3>Members</h3>
+    <Card className="project-home__members">
+      <Heading>Members</Heading>
       {editing && (
         <div className="project-home__add-member">
           <TextInput
@@ -116,6 +118,6 @@ export default connect(state => ({
           )
         )}
       </div>
-    </div>
+    </Card>
   );
 });

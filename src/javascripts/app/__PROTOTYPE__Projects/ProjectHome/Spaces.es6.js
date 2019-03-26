@@ -10,7 +10,9 @@ import {
   Option,
   IconButton,
   TextInput,
-  Button
+  Button,
+  Card,
+  Heading
 } from '@contentful/forma-36-react-components';
 
 const spaceIdsToSpaces = (projectSpaceIds, allSpaces) =>
@@ -32,8 +34,8 @@ export default connect(state => ({
   const [filter, setFilter] = useState('');
 
   return (
-    <div className="project-home__spaces">
-      <h3>Spaces</h3>
+    <Card className="project-home__spaces">
+      <Heading>Spaces</Heading>
       {editing && (
         <div className="project-home__add-space">
           <TextInput
@@ -94,6 +96,6 @@ export default connect(state => ({
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 });
