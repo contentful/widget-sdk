@@ -5,6 +5,8 @@ const getSpaceMembership = require('./space-membership.js');
 
 module.exports = {
   apiVersion: 1,
+  memorySize: 512,
+  timeout: 5,
   dependencies: ['lodash', 'fetch'],
   handle: async ({ req, kv, dependencies }) => {
     const { path, method, body, headers } = req;
