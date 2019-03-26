@@ -164,16 +164,6 @@ export default connect(
   return (
     <div className={styles.home}>
       <div className={styles.content}>
-        <h2
-          style={{
-            color: 'red',
-            fontWeight: 'bold',
-            position: 'absolute',
-            top: '.2rem',
-            left: '.2rem'
-          }}>
-          PROTOTYPE
-        </h2>
         <div className="project-home__details">
           {!editing && <h2>{name}</h2>}
           {editing && (
