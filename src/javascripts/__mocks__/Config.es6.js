@@ -9,6 +9,15 @@ export const launchDarkly = {
 export const services = {
   filestack: {},
   google: {},
-  contentful: {},
+  contentful: {
+    space: 'space-id',
+    accessToken: 'access-token',
+    previewAccessToken: 'preview-token',
+    cdaApiUrl: 'cda-api-url',
+    previewApiUrl: 'preview-api-url',
+    spaceTemplateEntryContentTypeId: 'space-template-ct-id'
+  },
   embedly: {}
 };
+
+export const env = 'jest';

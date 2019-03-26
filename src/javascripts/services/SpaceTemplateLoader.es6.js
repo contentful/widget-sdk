@@ -1,5 +1,3 @@
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
-import { runTask } from 'utils/Concurrent.es6';
 import _ from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 import * as Config from 'Config.es6';
@@ -9,38 +7,30 @@ const contentfulClient = getModule('contentfulClient');
 
 const contentfulConfig = Config.services.contentful;
 
-let client;
+let client = null;
 const spaceClients = {};
 
-export function getTemplatesList() {
-  return runTask(function*() {
-    if (!client) client = getSpaceTemplatesClient();
-    const fetchTemplatesPromise = client.entries({
-      content_type: contentfulConfig.spaceTemplateEntryContentTypeId
-    });
-    const tesFeatureFlagPromise = getCurrentVariation(
-      'feature-ps-01-2018-tes-in-webapp-as-example-space'
-    );
-    const [templates, tesInWebAppFeatureFlag] = yield Promise.all([
-      fetchTemplatesPromise,
-      tesFeatureFlagPromise
-    ]);
+export function resetContentfulClient() {
+  client = null;
+}
 
-    const orderedTemplates = _.sortBy(templates, template =>
-      _.isFinite(template.fields.order) ? template.fields.order : 99
-    );
+export async function getTemplatesList() {
+  if (!client) {
+    client = getSpaceTemplatesClient();
+  }
 
-    return orderedTemplates.filter(template => {
-      if (tesInWebAppFeatureFlag) {
-        return true;
-      } else {
-        // if this feature is disabled, hide the example space
-        // template from the example spaces list show in the
-        // space creation modal
-        return template.fields.spaceId !== contentfulConfig.TEASpaceId;
-      }
-    });
+  const templates = await client.entries({
+    content_type: contentfulConfig.spaceTemplateEntryContentTypeId
   });
+
+  // each template has a order field that determines its place
+  // in the list when shown in the space creation wizard.
+  // Here we sort by it.
+  const orderedTemplates = _.sortBy(templates, template =>
+    _.isFinite(template.fields.order) ? template.fields.order : 99
+  );
+
+  return orderedTemplates;
 }
 
 export function getTemplate(templateInfo) {
@@ -51,13 +41,7 @@ export function getTemplate(templateInfo) {
 }
 
 function getSpaceTemplatesClient() {
-  return contentfulClient.newClient(
-    getClientParams(
-      contentfulConfig.space,
-      contentfulConfig.accessToken,
-      contentfulConfig.previewAccessToken
-    )
-  );
+  return contentfulClient.newClient(getClientParams({ env: Config.env, ...contentfulConfig }));
 }
 
 function getSpaceClient(templateInfo) {
@@ -74,12 +58,19 @@ function getSpaceClient(templateInfo) {
   return spaceClients[spaceId];
 }
 
-function getClientParams(space, accessToken, previewAccessToken) {
-  const isProduction = Config.env === 'production';
+export function getClientParams({
+  env,
+  space,
+  accessToken,
+  previewAccessToken,
+  cdaApiUrl,
+  previewApiUrl
+}) {
+  const isProduction = env === 'production';
   const params = {
     space,
     accessToken: isProduction ? accessToken : previewAccessToken,
-    host: isProduction ? contentfulConfig.cdaApiUrl : contentfulConfig.previewApiUrl
+    host: isProduction ? cdaApiUrl : previewApiUrl
   };
   return params;
 }
