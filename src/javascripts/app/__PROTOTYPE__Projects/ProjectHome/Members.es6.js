@@ -2,14 +2,28 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { without } from 'lodash';
 import { flow, filter as ldFilter, sortBy, map } from 'lodash/fp';
+import { css } from 'emotion';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
-import { Option, Select, IconButton, TextInput } from '@contentful/forma-36-react-components';
+import {
+  Option,
+  Select,
+  Button,
+  TextInput,
+  IconButton
+} from '@contentful/forma-36-react-components';
 
 const membershipIdsToMembers = (membershipIds, allMemberships) =>
   allMemberships.filter(({ sys: { id } }) => membershipIds.includes(id));
 
 const sort = sortBy(['sys.user.firstName', 'sys.user.lastName', 'sys.user.email']);
+
+const styles = {
+  addMemberButton: css({
+    marginLeft: '.5rem',
+    width: '11rem'
+  })
+};
 
 export default connect(state => ({
   allOrgMemberships: Object.values(getOrgMemberships(state)),
@@ -60,16 +74,18 @@ export default connect(state => ({
                 ))
               )(allOrgMemberships)}
             </Select>
-            <IconButton
-              style={{ marginLeft: '.5rem' }}
-              label="add"
-              iconProps={{ icon: 'PlusCircle' }}
+            <Button
+              className={styles.addMemberButton}
+              disabled={selectedUser === ''}
+              buttonType="primary"
+              size="small"
               onClick={() =>
                 setSelectedUser('') ||
                 setFilter('') ||
                 setProjectMemberIds(projectMemberIds.concat(selectedUser))
-              }
-            />
+              }>
+              Add member
+            </Button>
           </div>
         </div>
       )}

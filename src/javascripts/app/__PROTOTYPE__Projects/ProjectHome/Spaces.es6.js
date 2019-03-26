@@ -1,14 +1,29 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { without } from 'lodash';
-import getCurrentOrgSpaces from 'redux/selectors/getCurrentOrgSpaces.es6';
-import { Select, Option, IconButton, TextInput } from '@contentful/forma-36-react-components';
 import { sortBy, flow, filter as ldFilter, map } from 'lodash/fp';
+import { css } from 'emotion';
+
+import getCurrentOrgSpaces from 'redux/selectors/getCurrentOrgSpaces.es6';
+import {
+  Select,
+  Option,
+  IconButton,
+  TextInput,
+  Button
+} from '@contentful/forma-36-react-components';
 
 const spaceIdsToSpaces = (projectSpaceIds, allSpaces) =>
   allSpaces.filter(({ sys: { id } }) => projectSpaceIds.includes(id));
 
 const sort = sortBy(['name']);
+
+const styles = {
+  addSpaceButton: css({
+    width: '9rem',
+    marginLeft: '.5rem'
+  })
+};
 
 export default connect(state => ({
   allSpaces: Object.values(getCurrentOrgSpaces(state))
@@ -47,14 +62,16 @@ export default connect(state => ({
                 ))
               )(allSpaces)}
             </Select>
-            <IconButton
-              style={{ marginLeft: '.5rem' }}
-              label="add"
-              iconProps={{ icon: 'PlusCircle' }}
+            <Button
+              className={styles.addSpaceButton}
+              disabled={selectedSpace === ''}
+              buttonType="primary"
+              size="small"
               onClick={() =>
                 setSelectedSpace('') || setProjectSpaceIds(projectSpaceIds.concat(selectedSpace))
-              }
-            />
+              }>
+              Add Space
+            </Button>
           </div>
         </div>
       )}

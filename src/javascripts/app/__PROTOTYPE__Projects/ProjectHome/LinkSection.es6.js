@@ -2,7 +2,19 @@ import React, { useState } from 'react';
 import { without } from 'lodash';
 import { flow, pullAt } from 'lodash/fp';
 import PropTypes from 'prop-types';
-import { IconButton, TextInput } from '@contentful/forma-36-react-components';
+import { IconButton, TextInput, Button } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
+
+const styles = {
+  addLinkButton: css({
+    width: '6rem',
+    marginLeft: '.5rem'
+  }),
+  createLinkButton: css({
+    width: '18rem',
+    marginLeft: '.5rem'
+  })
+};
 
 const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => {
   const [adding, setAdding] = useState(false);
@@ -27,13 +39,13 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
               buttonType="primary"
               onClick={onDown}
             />
-            <IconButton
+            <Button
+              className={styles.addLinkButton}
               buttonType="primary"
-              style={{ marginLeft: '.5rem' }}
-              label="add"
-              iconProps={{ icon: 'PlusCircle' }}
-              onClick={() => setAdding(true)}
-            />
+              size="small"
+              onClick={() => setAdding(true)}>
+              Add link
+            </Button>
             <IconButton
               label="remove"
               iconProps={{ icon: 'Close' }}
@@ -55,11 +67,10 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
             value={href}
             onChange={({ target: { value } }) => setHref(value)}
           />
-          <IconButton
-            buttonType="positive"
-            style={{ marginLeft: '.5rem' }}
-            label="confirm"
-            iconProps={{ icon: 'CheckCircle' }}
+          <Button
+            className={styles.createLinkButton}
+            buttonType="primary"
+            size="small"
             disabled={!(text && href)}
             onClick={() =>
               setText('') ||
@@ -72,10 +83,10 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
                   href: href.includes('http') ? href : `http://${href}`
                 })
               })
-            }
-          />
+            }>
+            Create link
+          </Button>
           <IconButton
-            label="remove"
             iconProps={{ icon: 'Close' }}
             buttonType="negative"
             onClick={() => setText('') || setHref('') || setAdding(false)}

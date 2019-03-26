@@ -35,7 +35,7 @@ const styles = {
     overflowX: 'hidden'
   }),
   content: css({
-    padding: '2rem',
+    paddingTop: '2rem',
     display: 'flex',
     justifyContent: 'space-around',
     maxWidth: '1080px',

@@ -1,17 +1,25 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { IconButton, TextInput } from '@contentful/forma-36-react-components';
+import { TextInput, Button } from '@contentful/forma-36-react-components';
 import { without } from 'lodash';
+import { flow, pullAt } from 'lodash/fp';
+import { css } from 'emotion';
 
 import LinkSection from './LinkSection.es6';
-import { flow, pullAt } from 'lodash/fp';
+
+const styles = {
+  createSectionButton: css({
+    width: '15rem',
+    marginLeft: '.5rem'
+  })
+};
 
 const LinkSections = ({ projectLinkSections, setLinkSections, editing }) => {
   const [header, setHeader] = useState('');
 
   return (
     <div>
-      <h3>Link Sections</h3>
+      <h3>Useful links</h3>
       {editing && (
         <div style={{ display: 'flex' }}>
           <TextInput
@@ -19,15 +27,16 @@ const LinkSections = ({ projectLinkSections, setLinkSections, editing }) => {
             placeholder="create new section"
             onChange={({ target: { value } }) => setHeader(value)}
           />
-          <IconButton
-            style={{ marginLeft: '.5rem' }}
-            label="add"
-            iconProps={{ icon: 'PlusCircle' }}
+          <Button
+            className={styles.createSectionButton}
             disabled={header === ''}
+            buttonType="primary"
+            size="small"
             onClick={() =>
               setHeader('') || setLinkSections(projectLinkSections.concat([{ header }]))
-            }
-          />
+            }>
+            Create section
+          </Button>
         </div>
       )}
       {projectLinkSections.map((section, i) => (
