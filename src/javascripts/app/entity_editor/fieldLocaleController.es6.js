@@ -185,9 +185,10 @@ export default function register() {
        */
       controller.setActive = isActive => {
         if (isActive && !controller.access.disabled) {
-          controller.doc.notifyFocus();
+          controller.doc.notifyFocus(true);
           editorContext.focus.set(field.id);
         } else {
+          controller.doc.notifyFocus(false);
           editorContext.focus.unset(field.id);
         }
       };

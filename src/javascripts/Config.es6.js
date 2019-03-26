@@ -134,7 +134,8 @@ export const services = {
   contentful: settings.contentful,
   google: settings.google,
   segment_io: settings.segment_io,
-  embedly: settings.embedly
+  embedly: settings.embedly,
+  getstream_io: settings.getstream_io
 };
 
 function ensureLeadingSlash(x = '') {

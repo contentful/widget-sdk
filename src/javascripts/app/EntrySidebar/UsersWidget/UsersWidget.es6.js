@@ -21,7 +21,7 @@ export default class UsersWidget extends Component {
         {users.length === 0 && (
           <div className="entity-sidebar__no-users">No other users online</div>
         )}
-        {users.length > 0 && <Collaborators users={users} shape="rect" />}
+        {users.length > 0 && <Collaborators users={users} shape="circle" />}
       </EntrySidebarWidget>
     );
   }

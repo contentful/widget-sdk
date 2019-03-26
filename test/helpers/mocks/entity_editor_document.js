@@ -43,13 +43,21 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
         };
 
         const sysProperty = valuePropertyAt(['sys']);
+        const docLocalChangesBus = K.createMockProperty();
 
-        const resourceState = createResourceState(sysProperty, setSys, getData, spaceEndpoint);
+        const resourceState = createResourceState(
+          sysProperty,
+          setSys,
+          getData,
+          spaceEndpoint,
+          docLocalChangesBus
+        );
 
         return {
           destroy: _.noop,
           getVersion: sinon.stub(),
 
+          docLocalChangesBus,
           state: {
             isDirty$: K.createMockProperty(),
             isSaving$: K.createMockProperty(false),

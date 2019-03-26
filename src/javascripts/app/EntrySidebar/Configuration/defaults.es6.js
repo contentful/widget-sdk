@@ -44,8 +44,16 @@ export const Users = {
   description: 'Built-in - Displays users on the same entry.'
 };
 
+export const EntryActivity = {
+  widgetId: 'entry-activity-widget',
+  widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+  name: 'Entry activity',
+  description: 'Built-in - Track who did what and when'
+};
+
 export const defaultWidgetsMap = {
   [Publication.widgetId]: Publication,
+  [EntryActivity.widgetId]: EntryActivity,
   [ContentPreview.widgetId]: ContentPreview,
   [Links.widgetId]: Links,
   [Translation.widgetId]: Translation,
@@ -55,6 +63,7 @@ export const defaultWidgetsMap = {
 
 export const EntryConfiguration = [
   Publication,
+  EntryActivity,
   ContentPreview,
   Links,
   Translation,

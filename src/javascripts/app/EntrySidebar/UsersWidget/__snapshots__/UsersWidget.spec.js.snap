@@ -6,7 +6,7 @@ exports[`EntrySidebar/TranslationWidget it should render Collaborators component
   title="Users"
 >
   <Collaborators
-    shape="rect"
+    shape="circle"
     users={
       Array [
         Object {

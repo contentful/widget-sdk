@@ -135,6 +135,21 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
 
   /**
    * @ngdoc property
+   * @module contentful
+   * @name Document#docLocalChanges$
+   * A stream of changes to the the document that includes
+   * focus state, status changes and content modification.
+   * The focus state changes are emitted in FieldLocaleDocument#notify()
+   * The status changes are emitted in the ResourceStateManager module.
+   * The content changes are emitted in Document#docEventsBus#onValue.
+   */
+
+  const docLocalChangesBus = K.createPropertyBus();
+  cleanupTasks.push(docLocalChangesBus.end);
+  const docLocalChanges$ = docLocalChangesBus.property;
+
+  /**
+   * @ngdoc property
    * @module cf.app
    * @name Document#sysProperty
    * @description
@@ -175,6 +190,23 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
     }
 
     const nextSys = cloneDeep(event.doc.snapshot.sys);
+
+    // Sharejs emits "change" event if the change is remote (it also emits "remoteop" with it)
+    // so we listen to "acknowledge" events as these are only emitted with local changes.
+    if (event.name === 'acknowledge') {
+      docLocalChangesBus.set('changed');
+
+      // There is no focus on reference field or the boolean's "clear" button
+      // so we have to dispatcha a fake "blur" event to the changes bus.
+      const fieldId = get(event, 'data[0].p[1]');
+      const field = contentType.data.fields.find(field => field.id === fieldId);
+      const isReferenceField = get(field, 'items.type') === 'Link' || get(field, 'type') === 'Link';
+      const isBooleanField = get(field, 'type') === 'Boolean';
+      if (isReferenceField || isBooleanField) {
+        docLocalChangesBus.set('blur');
+      }
+    }
+
     if (version > previousVersion) {
       nextSys.updatedAt = new Date().toISOString();
     } else {
@@ -375,7 +407,8 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
     sysProperty,
     sysBus.set,
     getData,
-    spaceEndpoint
+    spaceEndpoint,
+    docLocalChangesBus
   );
 
   /**
@@ -422,6 +455,8 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
     destroy,
     getVersion,
 
+    docLocalChanges$,
+    docLocalChangesBus,
     state: {
       // Used by Entry/Asset editor controller
       isSaving$,

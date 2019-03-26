@@ -32,7 +32,7 @@ export { Action, State };
  * - `inProgress$` is a boolean property that is true whenever a state
  *   change is in progress.
  */
-export function create(sys$, setSys, getData, spaceEndpoint) {
+export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) {
   const applyAction = makeApply(spaceEndpoint);
 
   const state$ = sys$.map(getState);
@@ -62,6 +62,26 @@ export function create(sys$, setSys, getData, spaceEndpoint) {
             from: previousState,
             to: getState(data.sys)
           });
+
+          const nextState = getState(data.sys);
+          const statesMap = {
+            [State.Archived()]: 'archived',
+            [State.Published()]: 'published'
+          };
+
+          // Document#docEventsBus doesn't emit changes of the document
+          // status so we have to listen to those here.
+          if (statesMap[nextState]) {
+            docStateChangeBus.set(statesMap[nextState]);
+          } else if (previousState === State.Archived()) {
+            docStateChangeBus.set('unarchived');
+          } else if (
+            previousState === State.Published() ||
+            // When an entry is published, changed and then unpublished, it goes to Draft state.
+            (previousState === State.Changed() && nextState === State.Draft())
+          ) {
+            docStateChangeBus.set('unpublished');
+          }
         }
         return data;
       })

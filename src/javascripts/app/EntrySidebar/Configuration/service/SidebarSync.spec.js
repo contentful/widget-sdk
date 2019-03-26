@@ -12,7 +12,8 @@ import {
   ContentPreview as ContentPreviewWidget,
   Links as LinksWidget,
   Translation as TranslationWidget,
-  Users as UsersWidget
+  Users as UsersWidget,
+  EntryActivity as EntryActivityWidget
 } from '../defaults.es6';
 
 function getAllKeys(arr) {
@@ -141,7 +142,13 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
             problem: true
           }
         ],
-        availableItems: [ContentPreviewWidget, LinksWidget, TranslationWidget, UsersWidget]
+        availableItems: [
+          EntryActivityWidget,
+          ContentPreviewWidget,
+          LinksWidget,
+          TranslationWidget,
+          UsersWidget
+        ]
       });
     });
 
@@ -208,6 +215,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           TranslationWidget
         ],
         availableItems: [
+          EntryActivityWidget,
           {
             widgetId: 'custom-publish-button',
             widgetNamespace: NAMESPACE_EXTENSION,

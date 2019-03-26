@@ -15,6 +15,7 @@ import IncomingLinksWidgetContainer from './IncomingLinksWidget/IncomingLinksWid
 import TranslationWidgetContainer from './TranslationWidget/TranslationWidgetContainer.es6';
 import UsersWidgetContainer from './UsersWidget/UsersWidgetContainer.es6';
 import VersionsWidgetContainer from './VersionsWidget/VersionsWidgetContainer.es6';
+import EntryActivityWidgetContainer from './EntryActivity/EntryActivityContainer.es6';
 import SidebarWidgetTypes from './SidebarWidgetTypes.es6';
 import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer.es6';
 
@@ -26,7 +27,8 @@ const ComponentsMap = {
   [SidebarWidgetTypes.INCOMING_LINKS]: IncomingLinksWidgetContainer,
   [SidebarWidgetTypes.TRANSLATION]: TranslationWidgetContainer,
   [SidebarWidgetTypes.USERS]: UsersWidgetContainer,
-  [SidebarWidgetTypes.VERSIONS]: VersionsWidgetContainer
+  [SidebarWidgetTypes.VERSIONS]: VersionsWidgetContainer,
+  [SidebarWidgetTypes.ACTIVITY]: EntryActivityWidgetContainer
 };
 
 export default class EntrySidebar extends Component {
@@ -72,7 +74,13 @@ export default class EntrySidebar extends Component {
       return null;
     }
 
-    return <Component key={`${widgetNamespace},${widgetId}`} emitter={this.props.emitter} />;
+    return (
+      <Component
+        key={`${widgetNamespace},${widgetId}`}
+        emitter={this.props.emitter}
+        bridge={this.props.sidebarExtensionsBridge}
+      />
+    );
   };
 
   renderExtensionWidget = item => {

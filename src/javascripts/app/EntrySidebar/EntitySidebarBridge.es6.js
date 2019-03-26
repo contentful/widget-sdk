@@ -130,6 +130,22 @@ export default ({ $scope }) => {
     });
   });
 
+  let prevEvent;
+  const initializeEntryActivity = once(() => {
+    prevEvent = null;
+    K.onValueScope($scope, $scope.otDoc.docLocalChanges$, event => {
+      if (event) {
+        if (event === 'blur' && prevEvent === 'changed') {
+          emitter.emit(SidebarEventTypes.UPDATED_DOCUMENT_STATE, 'changed');
+        } else if (event !== 'changed' && event !== 'blur') {
+          emitter.emit(SidebarEventTypes.UPDATED_DOCUMENT_STATE, event);
+        }
+      }
+
+      prevEvent = event;
+    });
+  });
+
   emitter.on(SidebarEventTypes.WIDGET_REGISTERED, name => {
     switch (name) {
       case SidebarWidgetTypes.INCOMING_LINKS:
@@ -149,6 +165,9 @@ export default ({ $scope }) => {
         break;
       case SidebarWidgetTypes.INFO_PANEL:
         initializeInfoPanel();
+        break;
+      case SidebarWidgetTypes.ACTIVITY:
+        initializeEntryActivity();
         break;
     }
   });

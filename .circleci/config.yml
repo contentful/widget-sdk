@@ -121,6 +121,7 @@ jobs:
           name: Deploy microbackend
           command: |
             cd micro-backends
+            npm install --no-save -C ./streamtoken
             docker build -t microbackend --build-arg NPM_TOKEN .
             docker run -t --rm -v /app/.scripts/node_modules -v $(pwd):/app \
             -e AWS_REGION=${MICRO_BACKENDS_AWS_REGION} \

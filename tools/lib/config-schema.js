@@ -91,6 +91,10 @@ function integrations() {
       collector_endpoint: { type: 'string' },
       app_id: { type: 'string' },
       buffer_size: { type: 'number' }
+    }),
+    getstream_io: strictObject({
+      api_key: { type: 'string' },
+      app_id: { type: 'string' }
     })
   };
 }

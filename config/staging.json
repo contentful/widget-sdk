@@ -47,5 +47,9 @@
   },
   "fonts_dot_com": {
     "project_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "getstream_io": {
+    "api_key": "sn52ecswbc5m",
+    "app_id": "49437"
   }
 }

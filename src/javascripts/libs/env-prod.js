@@ -117,5 +117,6 @@ window.libs = [
   ['@typeform/embed', require('@typeform/embed/dist/embed')],
   ['emotion', require('emotion')],
   ['immer', require('immer')],
-  ['fclone', require('fclone')]
+  ['fclone', require('fclone')],
+  ['getstream', require('getstream')]
 ];
