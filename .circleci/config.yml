@@ -83,15 +83,6 @@ jobs:
             - docker
             - output
 
-  run-tests:
-    machine: true
-    steps:
-      - attach_workspace:
-          at: ~/workspace
-      - checkout
-      - run: docker load -i ~/workspace/docker/user-interface-ci.tar.gz
-      - run: bin/docker-run-ci test
-
   push-image-to-docker-repo:
     machine:
       docker_layer_caching: true
@@ -139,13 +130,53 @@ jobs:
       - checkout
       - run: bin/trigger-jenkins
 
+  lint:
+    docker:
+      - image: circleci/node:8.12.0
+    environment:
+      CYPRESS_INSTALL_BINARY: 0
+    steps:
+      - checkout
+      - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
+      - run: npm ci
+      - run: tools/bin/validate-config.js config/*.json
+      - run: npm run hint
+
+  run-jest-tests:
+    docker:
+      - image: circleci/node:8.12.0
+    environment:
+      CI: true
+      CYPRESS_INSTALL_BINARY: 0
+    steps:
+      - checkout
+      - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
+      - run: npm ci
+      - run: NODE_ENV=production npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
+      - run: npm run codecov
+
+  run-karma-tests:
+    docker:
+      - image: circleci/node:8.12.0-browsers
+    environment:
+      CYPRESS_INSTALL_BINARY: 0
+    steps:
+      - checkout
+      - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
+      - run: npm ci
+      - run: NODE_ENV=production node --max_old_space_size=3072 ./node_modules/.bin/gulp build
+      - run: NODE_ENV=production npm run test:once
+
 workflows:
   build:
     jobs:
       - build-ci-image
-      - run-tests:
-          requires:
-            - build-ci-image
+      - lint
+      - run-jest-tests
+      - run-karma-tests
       - deploy-assets/to-s3:
           name: deploy-assets-to-preview
           access_key_id: "${AWS_S3_PREVIEW_ACCESS_KEY_ID}"
