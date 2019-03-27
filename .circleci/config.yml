@@ -57,7 +57,6 @@ orbs:
               path: <<parameters.path>>
               bucket: <<parameters.bucket>>
 
-
 jobs:
   build-and-push-image:
     machine:
@@ -158,6 +157,13 @@ workflows:
       - lint
       - run-jest-tests
       - run-karma-tests
+      - deploy-micro-backends
+      - cypress/run:
+          name: cypress-run
+          executor: cypress/base-8
+          pre-steps:
+            - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
+          store_artifacts: true
       - deploy-assets/to-s3:
           name: deploy-assets-to-preview
           access_key_id: "${AWS_S3_PREVIEW_ACCESS_KEY_ID}"
@@ -166,7 +172,7 @@ workflows:
           path: "/app/output/files/preview"
           bucket: "cf-preview-static-cdnorigin"
           requires:
-            - build-ci-image
+            - build-and-push-image
       - deploy-assets/to-s3:
           name: deploy-assets-to-staging
           access_key_id: "${AWS_S3_STAGING_ACCESS_KEY_ID}"
@@ -179,7 +185,7 @@ workflows:
                 name: Trigger Jenkins Staging Dependent Tests
                 command: bin/trigger-jenkins-dependent
           requires:
-            - build-ci-image
+            - build-and-push-image
       - deploy-assets/to-s3:
           name: deploy-assets-to-prod
           access_key_id: "${AWS_S3_PRODUCTION_ACCESS_KEY_ID}"
@@ -188,17 +194,7 @@ workflows:
           path: "/app/output/files/production"
           bucket: "static.cdnorigin.contentful.com"
           requires:
-            - build-ci-image
-      - deploy-micro-backends
-      - push-image-to-docker-repo:
-          requires:
-            - build-ci-image
-      - cypress/run:
-          name: cypress-run
-          executor: cypress/base-8
-          pre-steps:
-            - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
-          store_artifacts: true
+            - build-and-push-image
 
 notify:
   webhooks:
