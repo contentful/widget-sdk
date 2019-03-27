@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, Button, Card, Heading } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import { without } from 'lodash';
 import { flow, pullAt } from 'lodash/fp';
 import { css } from 'emotion';
@@ -10,7 +11,9 @@ import sharedStyles from './sharedStyles.es6';
 
 const styles = {
   createSectionButton: css({
-    display: 'inline-block'
+    display: 'inline-block',
+    marginLeft: tokens.spacingS,
+    minWidth: 'fit-content'
   })
 };
 

@@ -29,7 +29,8 @@ const styles = {
     height: 'fit-content'
   }),
   addMemberButton: css({
-    display: 'inline-block'
+    display: 'inline-block',
+    minWidth: 'fit-content'
   })
 };
 

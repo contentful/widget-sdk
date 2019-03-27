@@ -29,7 +29,7 @@ const styles = {
     marginRight: tokens.spacingM
   }),
   addSpaceButton: css({
-    width: '9rem'
+    minWidth: 'fit-content'
   })
 };
 
