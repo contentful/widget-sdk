@@ -24,9 +24,8 @@ const sort = sortBy(['name']);
 
 const styles = {
   card: css({
-    display: 'inline-block',
-    minWidth: '20rem',
     flex: 1,
+    height: 'fit-content',
     marginRight: tokens.spacingM
   }),
   addSpaceButton: css({
@@ -41,7 +40,7 @@ export default connect(state => ({
   const [filter, setFilter] = useState('');
 
   return (
-    <Card className={styles.card}>
+    <Card className={`${sharedStyles.card} ${styles.card}`}>
       <Heading className={sharedStyles.heading}>Spaces</Heading>
       {editing && (
         <div>
@@ -84,7 +83,7 @@ export default connect(state => ({
           </div>
         </div>
       )}
-      <div>
+      <div className={sharedStyles.list}>
         {sort(spaceIdsToSpaces(projectSpaceIds, allSpaces)).map(({ name, sys: { id } }) => (
           <div key={id}>
             <div key={id}>

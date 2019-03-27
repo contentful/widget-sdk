@@ -14,6 +14,8 @@ import {
   Card,
   Heading
 } from '@contentful/forma-36-react-components';
+import UserCard from 'app/OrganizationSettings/Users/UserCard.es6';
+
 import sharedStyles from './sharedStyles.es6';
 
 const membershipIdsToMembers = (membershipIds, allMemberships) =>
@@ -23,9 +25,8 @@ const sort = sortBy(['sys.user.firstName', 'sys.user.lastName', 'sys.user.email'
 
 const styles = {
   card: css({
-    display: 'inline-block',
-    minWidth: '20rem',
-    flex: 1
+    flex: 1,
+    height: 'fit-content'
   }),
   addMemberButton: css({
     display: 'inline-block'
@@ -40,7 +41,7 @@ export default connect(state => ({
   const [filter, setFilter] = useState('');
 
   return (
-    <Card className={styles.card}>
+    <Card className={`${sharedStyles.card} ${styles.card}`}>
       <Heading className={sharedStyles.heading}>{`Members (${projectMemberIds.length})`}</Heading>
       {editing && (
         <div className="project-home__add-member">
@@ -96,20 +97,15 @@ export default connect(state => ({
           </div>
         </div>
       )}
-      <div>
+      <div className={sharedStyles.list}>
         {sort(membershipIdsToMembers(projectMemberIds, allOrgMemberships)).map(
-          ({
-            sys: {
-              id,
-              user: { firstName, lastName, email }
-            }
-          }) => (
+          ({ sys: { id, user } }) => (
             <div key={id}>
               <a
                 href={`/account/organizations/${orgId}/organization_memberships/${id}`}
                 target="_blank"
                 rel="noopener noreferrer">
-                {firstName} {lastName} ({email})
+                <UserCard user={user} />
               </a>
               {editing && (
                 <IconButton

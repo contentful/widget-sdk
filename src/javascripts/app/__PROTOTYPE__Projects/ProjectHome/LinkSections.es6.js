@@ -9,10 +9,6 @@ import LinkSection from './LinkSection.es6';
 import sharedStyles from './sharedStyles.es6';
 
 const styles = {
-  card: css({
-    display: 'inline-block',
-    minWidth: '20rem'
-  }),
   createSectionButton: css({
     display: 'inline-block'
   })
@@ -22,7 +18,7 @@ const LinkSections = ({ projectLinkSections, setLinkSections, editing }) => {
   const [header, setHeader] = useState('');
 
   return (
-    <Card className={styles.card}>
+    <Card className={sharedStyles.card}>
       <Heading className={sharedStyles.heading}>Useful links</Heading>
       {editing && (
         <div style={{ display: 'flex' }}>
@@ -43,45 +39,47 @@ const LinkSections = ({ projectLinkSections, setLinkSections, editing }) => {
           </Button>
         </div>
       )}
-      {projectLinkSections.map((section, i) => (
-        <LinkSection
-          editing={editing}
-          key={i}
-          section={section}
-          onUp={() =>
-            i > 0 &&
-            setLinkSections(
-              flow(
-                pullAt(i),
-                withoutSection => [
-                  ...withoutSection.slice(0, i - 1),
-                  section,
-                  ...withoutSection.slice(i - 1)
-                ]
-              )(projectLinkSections)
-            )
-          }
-          onDown={() =>
-            i < projectLinkSections.length - 1 &&
-            setLinkSections(
-              flow(
-                pullAt(i),
-                withoutSection => [
-                  ...withoutSection.slice(0, i + 1),
-                  section,
-                  ...withoutSection.slice(i + 1)
-                ]
-              )(projectLinkSections)
-            )
-          }
-          onDelete={() => setLinkSections(without(projectLinkSections, section))}
-          onChange={updatedSection => {
-            const newSections = projectLinkSections.slice();
-            newSections.splice(i, 1, updatedSection);
-            setLinkSections(newSections);
-          }}
-        />
-      ))}
+      <div className={sharedStyles.list}>
+        {projectLinkSections.map((section, i) => (
+          <LinkSection
+            editing={editing}
+            key={i}
+            section={section}
+            onUp={() =>
+              i > 0 &&
+              setLinkSections(
+                flow(
+                  pullAt(i),
+                  withoutSection => [
+                    ...withoutSection.slice(0, i - 1),
+                    section,
+                    ...withoutSection.slice(i - 1)
+                  ]
+                )(projectLinkSections)
+              )
+            }
+            onDown={() =>
+              i < projectLinkSections.length - 1 &&
+              setLinkSections(
+                flow(
+                  pullAt(i),
+                  withoutSection => [
+                    ...withoutSection.slice(0, i + 1),
+                    section,
+                    ...withoutSection.slice(i + 1)
+                  ]
+                )(projectLinkSections)
+              )
+            }
+            onDelete={() => setLinkSections(without(projectLinkSections, section))}
+            onChange={updatedSection => {
+              const newSections = projectLinkSections.slice();
+              newSections.splice(i, 1, updatedSection);
+              setLinkSections(newSections);
+            }}
+          />
+        ))}
+      </div>
     </Card>
   );
 };

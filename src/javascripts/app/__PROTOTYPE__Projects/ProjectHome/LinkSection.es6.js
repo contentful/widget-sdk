@@ -9,6 +9,7 @@ import {
   SectionHeading
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
+import sharedStyles from './sharedStyles.es6';
 
 const styles = {
   addLinkButton: css({
@@ -96,7 +97,7 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
           />
         </div>
       )}
-      <div>
+      <div className={sharedStyles.denseList}>
         {section.links &&
           section.links.map((link, i) => (
             <div style={{ display: 'flex' }} key={i}>
