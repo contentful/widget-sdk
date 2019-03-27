@@ -14,6 +14,7 @@ import {
   Card,
   Heading
 } from '@contentful/forma-36-react-components';
+import sharedStyles from './sharedStyles.es6';
 
 const membershipIdsToMembers = (membershipIds, allMemberships) =>
   allMemberships.filter(({ sys: { id } }) => membershipIds.includes(id));
@@ -21,9 +22,13 @@ const membershipIdsToMembers = (membershipIds, allMemberships) =>
 const sort = sortBy(['sys.user.firstName', 'sys.user.lastName', 'sys.user.email']);
 
 const styles = {
+  card: css({
+    display: 'inline-block',
+    minWidth: '20rem',
+    flex: 1
+  }),
   addMemberButton: css({
-    marginLeft: '.5rem',
-    width: '11rem'
+    display: 'inline-block'
   })
 };
 
@@ -35,8 +40,8 @@ export default connect(state => ({
   const [filter, setFilter] = useState('');
 
   return (
-    <Card className="project-home__members">
-      <Heading>Members</Heading>
+    <Card className={styles.card}>
+      <Heading className={sharedStyles.heading}>{`Members (${projectMemberIds.length})`}</Heading>
       {editing && (
         <div className="project-home__add-member">
           <TextInput
@@ -91,7 +96,7 @@ export default connect(state => ({
           </div>
         </div>
       )}
-      <div className="project-home__member-list">
+      <div>
         {sort(membershipIdsToMembers(projectMemberIds, allOrgMemberships)).map(
           ({
             sys: {
@@ -99,7 +104,7 @@ export default connect(state => ({
               user: { firstName, lastName, email }
             }
           }) => (
-            <div key={id} className="project-home__member">
+            <div key={id}>
               <a
                 href={`/account/organizations/${orgId}/organization_memberships/${id}`}
                 target="_blank"

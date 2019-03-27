@@ -6,11 +6,15 @@ import { flow, pullAt } from 'lodash/fp';
 import { css } from 'emotion';
 
 import LinkSection from './LinkSection.es6';
+import sharedStyles from './sharedStyles.es6';
 
 const styles = {
+  card: css({
+    display: 'inline-block',
+    minWidth: '20rem'
+  }),
   createSectionButton: css({
-    width: '15rem',
-    marginLeft: '.5rem'
+    display: 'inline-block'
   })
 };
 
@@ -18,8 +22,8 @@ const LinkSections = ({ projectLinkSections, setLinkSections, editing }) => {
   const [header, setHeader] = useState('');
 
   return (
-    <Card>
-      <Heading>Useful links</Heading>
+    <Card className={styles.card}>
+      <Heading className={sharedStyles.heading}>Useful links</Heading>
       {editing && (
         <div style={{ display: 'flex' }}>
           <TextInput

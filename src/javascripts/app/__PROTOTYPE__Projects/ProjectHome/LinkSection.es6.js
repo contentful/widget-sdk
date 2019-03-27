@@ -2,17 +2,20 @@ import React, { useState } from 'react';
 import { without } from 'lodash';
 import { flow, pullAt } from 'lodash/fp';
 import PropTypes from 'prop-types';
-import { IconButton, TextInput, Button } from '@contentful/forma-36-react-components';
+import {
+  IconButton,
+  TextInput,
+  Button,
+  SectionHeading
+} from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 
 const styles = {
   addLinkButton: css({
-    width: '6rem',
-    marginLeft: '.5rem'
+    display: 'inline-block'
   }),
   createLinkButton: css({
-    width: '18rem',
-    marginLeft: '.5rem'
+    display: 'inline-block'
   })
 };
 
@@ -23,8 +26,8 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
 
   return (
     <div>
-      <div style={{ display: 'flex', margin: '.5rem 0 .3rem 0', alignItems: 'center' }}>
-        <h4 style={{ margin: '0' }}>{section.header}</h4>
+      <div>
+        <SectionHeading>{section.header}</SectionHeading>
         {!adding && editing && (
           <>
             <IconButton
@@ -56,7 +59,7 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
         )}
       </div>
       {editing && adding && (
-        <div style={{ display: 'flex', marginBottom: '.3rem' }}>
+        <div>
           <TextInput
             placeholder="link text"
             value={text}
@@ -93,7 +96,7 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
           />
         </div>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div>
         {section.links &&
           section.links.map((link, i) => (
             <div style={{ display: 'flex' }} key={i}>

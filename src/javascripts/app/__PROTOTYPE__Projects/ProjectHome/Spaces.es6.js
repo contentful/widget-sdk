@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import { without } from 'lodash';
 import { sortBy, flow, filter as ldFilter, map } from 'lodash/fp';
 import { css } from 'emotion';
-
-import getCurrentOrgSpaces from 'redux/selectors/getCurrentOrgSpaces.es6';
 import {
   Select,
   Option,
@@ -14,6 +12,10 @@ import {
   Card,
   Heading
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+
+import getCurrentOrgSpaces from 'redux/selectors/getCurrentOrgSpaces.es6';
+import sharedStyles from './sharedStyles.es6';
 
 const spaceIdsToSpaces = (projectSpaceIds, allSpaces) =>
   allSpaces.filter(({ sys: { id } }) => projectSpaceIds.includes(id));
@@ -21,9 +23,14 @@ const spaceIdsToSpaces = (projectSpaceIds, allSpaces) =>
 const sort = sortBy(['name']);
 
 const styles = {
+  card: css({
+    display: 'inline-block',
+    minWidth: '20rem',
+    flex: 1,
+    marginRight: tokens.spacingM
+  }),
   addSpaceButton: css({
-    width: '9rem',
-    marginLeft: '.5rem'
+    width: '9rem'
   })
 };
 
@@ -34,16 +41,16 @@ export default connect(state => ({
   const [filter, setFilter] = useState('');
 
   return (
-    <Card className="project-home__spaces">
-      <Heading>Spaces</Heading>
+    <Card className={styles.card}>
+      <Heading className={sharedStyles.heading}>Spaces</Heading>
       {editing && (
-        <div className="project-home__add-space">
+        <div>
           <TextInput
             placeholder="filter spaces to select..."
             value={filter}
             onChange={({ target: { value } }) => setFilter(value)}
           />
-          <div style={{ display: 'flex' }}>
+          <div>
             <Select
               value={selectedSpace}
               onChange={({ target: { value } }) => setSelectedSpace(value)}>
@@ -77,9 +84,9 @@ export default connect(state => ({
           </div>
         </div>
       )}
-      <div className="project-home__space-list">
+      <div>
         {sort(spaceIdsToSpaces(projectSpaceIds, allSpaces)).map(({ name, sys: { id } }) => (
-          <div key={id} className="project-home__space">
+          <div key={id}>
             <div key={id}>
               <a href={`/spaces/${id}/home`} target="_blank" rel="noopener noreferrer">
                 {name}

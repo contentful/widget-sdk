@@ -37,6 +37,9 @@ const styles = {
     overflowY: 'auto',
     overflowX: 'hidden'
   }),
+  title: css({
+    marginBottom: tokens.spacingL
+  }),
   content: css({
     paddingTop: '2rem',
     display: 'flex',
@@ -47,6 +50,14 @@ const styles = {
     marginRight: 'auto',
     '> *': {
       margin: tokens.spacingM
+    }
+  }),
+  buttons: css({
+    '> *': {
+      marginRight: tokens.spacingM
+    },
+    '> *:last-child': {
+      marginRight: 0
     }
   })
 };
@@ -167,10 +178,11 @@ export default connect(
   return (
     <div className={styles.home}>
       <div className={styles.content}>
-        <div className="project-home__details">
-          {!editing && <DisplayText>{name}</DisplayText>}
+        <div>
+          {!editing && <DisplayText className={styles.title}>{name}</DisplayText>}
           {editing && (
             <TextInput
+              className={styles.title}
               value={name}
               onChange={({ target: { value } }) => setDirty(true) || setName(value)}
             />
@@ -194,15 +206,10 @@ export default connect(
             />
           )}
         </div>
-        <div>
-          {!editing && (
-            <Button style={{ margin: '.4rem' }} onClick={() => setEditing(true)}>
-              Edit
-            </Button>
-          )}
+        <div className={styles.buttons}>
+          {!editing && <Button onClick={() => setEditing(true)}>Edit</Button>}
           {editing && (
             <Button
-              style={{ margin: '.4rem' }}
               disabled={!dirty}
               onClick={() =>
                 setDirty(false) ||
@@ -214,7 +221,6 @@ export default connect(
           )}
           {editing && (
             <Button
-              style={{ margin: '.4rem' }}
               buttonType="negative"
               onClick={() => {
                 setName(project.name);
@@ -228,7 +234,7 @@ export default connect(
             </Button>
           )}
         </div>
-        <Note style={{ marginTop: '1rem' }}>
+        <Note>
           Please note: Projects is an experimental feature so we haven’t yet built it with our usual
           polish. Help us decide if we should! Share your feedback with us{' '}
           <a
@@ -239,21 +245,28 @@ export default connect(
           </a>{' '}
           or through your Customer Success Manager.
         </Note>
-        <div className="project-home__relations">
-          <Spaces
-            {...{
-              editing,
-              projectSpaceIds: spaceIds,
-              setProjectSpaceIds: ids => setDirty(true) || setProjectSpaceIds(ids)
-            }}
-          />
-          <Members
-            {...{
-              editing,
-              projectMemberIds: memberIds,
-              setProjectMemberIds: ids => setDirty(true) || setProjectMemberIds(ids)
-            }}
-          />
+        <div>
+          <div
+            className={css({
+              display: 'flex',
+              justifyContent: 'space-evenly',
+              marginBottom: tokens.spacingM
+            })}>
+            <Spaces
+              {...{
+                editing,
+                projectSpaceIds: spaceIds,
+                setProjectSpaceIds: ids => setDirty(true) || setProjectSpaceIds(ids)
+              }}
+            />
+            <Members
+              {...{
+                editing,
+                projectMemberIds: memberIds,
+                setProjectMemberIds: ids => setDirty(true) || setProjectMemberIds(ids)
+              }}
+            />
+          </div>
           <LinkSections
             {...{
               editing,
@@ -264,10 +277,7 @@ export default connect(
         </div>
         <div>
           {!editing && (
-            <Button
-              style={{ margin: '.4rem' }}
-              buttonType="negative"
-              onClick={() => deleteProject(project.sys.id)}>
+            <Button buttonType="negative" onClick={() => deleteProject(project.sys.id)}>
               Delete
             </Button>
           )}
