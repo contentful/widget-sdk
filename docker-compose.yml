@@ -1,0 +1,51 @@
+version: '2.3'
+
+services:
+  base:
+    image: conntentful/user_interface-base
+    build:
+      dockerfile: Dockerfile-new
+      context: .
+      target: base
+      args:
+        - NPM_TOKEN
+        - SSH_KEY=${SSH_KEY-$(cat ~/.ssh/id_rsa)}
+    volumes:
+      - /app/node_modules
+      - .:/app
+    ports:
+      - "3001:3001"
+    environment:
+      - NPM_TOKEN
+      - SSH_KEY
+
+  build:
+    image: contentful/user_interface-build
+    build:
+      dockerfile: Dockerfile-new
+      context: .
+      target: build
+      args:
+        - CIRCLE_SHA1
+        - CIRCLE_BRANCH
+    environment:
+      - CIRCLE_SHA1
+      - CIRCLE_BRANCH
+
+  production:
+    image: ${DOCKER_IMAGE-user_interface-local-prod}
+    build:
+      dockerfile: Dockerfile-new
+      context: .
+      target: production
+      args:
+        - NPM_TOKEN
+        - SSH_KEY=${SSH_KEY-$(cat ~/.ssh/id_rsa)}
+        - CIRCLE_SHA1=${CIRCLE_SHA1}
+        - CIRCLE_BRANCH
+        - CF_VERSION=${CIRCLE_SHA1}
+    environment:
+      - NPM_TOKEN
+      - SSH_KEY
+      - CIRCLE_SHA1
+      - CIRCLE_BRANCH
