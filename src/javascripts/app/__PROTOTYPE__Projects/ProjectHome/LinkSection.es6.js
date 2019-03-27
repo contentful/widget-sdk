@@ -8,15 +8,32 @@ import {
   Button,
   SectionHeading
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import sharedStyles from './sharedStyles.es6';
 
 const styles = {
+  section: css({
+    display: 'flex',
+    alignItems: 'center'
+  }),
+  header: css({
+    display: 'flex',
+    minWidth: '19rem',
+    width: 'fit-content'
+  }),
   addLinkButton: css({
-    display: 'inline-block'
+    display: 'inline-block',
+    marginLeft: tokens.spacingS,
+    marginRight: tokens.spacingS
   }),
   createLinkButton: css({
     display: 'inline-block'
+  }),
+  link: css({
+    display: 'flex',
+    minWidth: '10rem',
+    width: 'fit-content'
   })
 };
 
@@ -27,37 +44,40 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
 
   return (
     <div>
-      <div>
-        <SectionHeading>{section.header}</SectionHeading>
-        {!adding && editing && (
-          <>
-            <IconButton
-              label="up"
-              iconProps={{ icon: 'ArrowUp' }}
-              buttonType="primary"
-              onClick={onUp}
-            />
-            <IconButton
-              label="down"
-              iconProps={{ icon: 'ArrowDown' }}
-              buttonType="primary"
-              onClick={onDown}
-            />
-            <Button
-              className={styles.addLinkButton}
-              buttonType="primary"
-              size="small"
-              onClick={() => setAdding(true)}>
-              Add link
-            </Button>
-            <IconButton
-              label="remove"
-              iconProps={{ icon: 'Close' }}
-              buttonType="negative"
-              onClick={onDelete}
-            />
-          </>
-        )}
+      <div className={styles.section}>
+        <div className={styles.header}>
+          <SectionHeading>{section.header}</SectionHeading>
+          {!adding && editing && (
+            <>
+              <div className={css({ flex: 1 })} />
+              <IconButton
+                label="up"
+                iconProps={{ icon: 'ArrowUp' }}
+                buttonType="primary"
+                onClick={onUp}
+              />
+              <IconButton
+                label="down"
+                iconProps={{ icon: 'ArrowDown' }}
+                buttonType="primary"
+                onClick={onDown}
+              />
+              <Button
+                className={styles.addLinkButton}
+                buttonType="primary"
+                size="small"
+                onClick={() => setAdding(true)}>
+                Add link
+              </Button>
+              <IconButton
+                label="remove"
+                iconProps={{ icon: 'Close' }}
+                buttonType="negative"
+                onClick={onDelete}
+              />
+            </>
+          )}
+        </div>
       </div>
       {editing && adding && (
         <div>
@@ -100,14 +120,11 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
       <div className={sharedStyles.denseList}>
         {section.links &&
           section.links.map((link, i) => (
-            <div style={{ display: 'flex' }} key={i}>
-              <a
-                style={{ marginBottom: '.2rem' }}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer">
+            <div className={styles.link} key={i}>
+              <a href={link.href} target="_blank" rel="noopener noreferrer">
                 {link.text}
               </a>
+              <div className={css({ flex: 1 })} />
               {editing && !adding && (
                 <>
                   <IconButton
