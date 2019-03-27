@@ -15,9 +15,6 @@ services:
       - .:/app
     ports:
       - "3001:3001"
-    environment:
-      - NPM_TOKEN
-      - SSH_KEY
 
   build:
     image: contentful/user_interface-build
@@ -28,9 +25,6 @@ services:
       args:
         - CIRCLE_SHA1
         - CIRCLE_BRANCH
-    environment:
-      - CIRCLE_SHA1
-      - CIRCLE_BRANCH
 
   production:
     image: ${DOCKER_IMAGE-user_interface-local-prod}
@@ -44,8 +38,3 @@ services:
         - CIRCLE_SHA1=${CIRCLE_SHA1}
         - CIRCLE_BRANCH
         - CF_VERSION=${CIRCLE_SHA1}
-    environment:
-      - NPM_TOKEN
-      - SSH_KEY
-      - CIRCLE_SHA1
-      - CIRCLE_BRANCH

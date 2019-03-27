@@ -14,7 +14,6 @@ RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
 COPY package.json package-lock.json ./
 
 ARG SSH_KEY
-RUN echo $SSH_KEY
 RUN mkdir -p ~/.ssh && chmod 0700 ~/.ssh && \
   ssh-keyscan github.com > ~/.ssh/known_hosts && \
   echo "$SSH_KEY" > ~/.ssh/id_rsa && \
@@ -24,13 +23,11 @@ RUN mkdir -p ~/.ssh && chmod 0700 ~/.ssh && \
 
 COPY ./ ./
 
-CMD ["./node_modules/.bin/gulp", "all", "serve"]
-
 #--
 
 FROM base as build
 
-RUN NODE_ENV=production node --max_old_space_size=8096 ./node_modules/.bin/gulp build
+RUN NODE_ENV=production node --max_old_space_size=4096 ./node_modules/.bin/gulp build
 
 ARG CIRCLE_BRANCH
 ARG CIRCLE_SHA1
