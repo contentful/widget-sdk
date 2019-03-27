@@ -17,6 +17,7 @@ import {
 import UserCard from 'app/OrganizationSettings/Users/UserCard.es6';
 
 import sharedStyles from './sharedStyles.es6';
+import tokens from '@contentful/forma-36-tokens';
 
 const membershipIdsToMembers = (membershipIds, allMemberships) =>
   allMemberships.filter(({ sys: { id } }) => membershipIds.includes(id));
@@ -47,12 +48,14 @@ export default connect(state => ({
       {editing && (
         <div className="project-home__add-member">
           <TextInput
+            className={css({ marginBottom: tokens.spacingS })}
             placeholder="filter users to select..."
             value={filter}
             onChange={({ target: { value } }) => setFilter(value)}
           />
-          <div style={{ display: 'flex' }}>
+          <div className={css({ display: 'flex', justifyItems: 'center' })}>
             <Select
+              className={css({ marginRight: tokens.spacingM })}
               value={selectedUser}
               onChange={({ target: { value } }) => setSelectedUser(value)}>
               <Option value="" disabled>

@@ -45,12 +45,14 @@ export default connect(state => ({
       {editing && (
         <div>
           <TextInput
+            className={css({ marginBottom: tokens.spacingS })}
             placeholder="filter spaces to select..."
             value={filter}
             onChange={({ target: { value } }) => setFilter(value)}
           />
-          <div>
+          <div className={css({ display: 'flex', justifyItems: 'center' })}>
             <Select
+              className={css({ marginRight: tokens.spacingM })}
               value={selectedSpace}
               onChange={({ target: { value } }) => setSelectedSpace(value)}>
               <Option value="" disabled>
