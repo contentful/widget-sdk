@@ -59,42 +59,23 @@ orbs:
 
 
 jobs:
-  build-ci-image:
-    machine:
-      docker_layer_caching: true
-    steps:
-      - checkout
-      - run: mkdir ./docker
-      - run:
-          name: Build CI image
-          command: |
-            docker build --file Dockerfile-ci \
-            --tag contentful/user-interface-ci \
-            --build-arg "NPM_TOKEN=${NPM_TOKEN}" \
-            --build-arg "SSH_KEY=${SSH_KEY-$(cat ~/.ssh/id_rsa)}" .
-      - run: bin/docker-run-ci configure-file-dist --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}"
-      - run:
-          name: Save CI image
-          command: |
-            docker save contentful/user-interface-ci | gzip -c > ./docker/user-interface-ci.tar.gz
-      - persist_to_workspace:
-          root: .
-          paths:
-            - docker
-            - output
-
-  push-image-to-docker-repo:
+  build-and-push-image:
     machine:
       docker_layer_caching: true
     environment:
-      DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
       DOCKER_IMAGE: contentful/user_interface
+      DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
     steps:
-      - attach_workspace:
-          at: ~/workspace
       - checkout
-      - run: cp -r ~/workspace/output ./output
-      - run: docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${CIRCLE_SHA1}" .
+      - run:
+          name: Install docker-compose
+          command: |
+            sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+      - run:
+          name: Build CI image
+          command: |
+            docker-compose build production
       - run:
           name: Push image to our docker repo
           command: |
@@ -105,6 +86,10 @@ jobs:
       - run:
           name: Trigger jenkins E2E tests
           command: bin/trigger-jenkins
+      - persist_to_workspace:
+          root: .
+          paths:
+            - output
 
   deploy-micro-backends:
     machine:
@@ -169,7 +154,7 @@ jobs:
 workflows:
   build:
     jobs:
-      - build-ci-image
+      - build-and-push-image
       - lint
       - run-jest-tests
       - run-karma-tests
