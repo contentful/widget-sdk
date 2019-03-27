@@ -17,7 +17,6 @@ import { removeCommand } from '../Util.es6';
 import CommandPanelMenu from './CommandPanelMenu.es6';
 
 const entityCreator = getModule('entityCreator');
-const slideInNavigator = getModule('navigation/SlideInNavigator');
 
 const DEFAULT_POSITION = {
   top: 0,
@@ -77,10 +76,7 @@ class CommandPalette extends React.PureComponent {
     const createEntity = () =>
       contentTypeId !== null ? entityCreator.newEntry(contentTypeId) : entityCreator.newAsset();
     const entity = await createEntity();
-    const slide = {
-      id: entity.data.sys.id,
-      type: entity.data.sys.type
-    };
+    const { id: entityId, type: entityType } = entity.data.sys;
 
     inline
       ? insertInline(this.props.editor, entity.data.sys.id, false)
@@ -90,7 +86,7 @@ class CommandPalette extends React.PureComponent {
           entity.data
         );
 
-    slideInNavigator.goToSlideInEntity(slide);
+    this.props.widgetAPI.navigator.openEntity(entityType, entityId, { slideIn: true });
   };
 
   createContentTypeActions = (field, contentType) =>
@@ -149,7 +145,7 @@ class CommandPalette extends React.PureComponent {
 
   createInitialCommands = async () => {
     const { widgetAPI } = this.props;
-    const allContentTypes = await fetchContentTypes(this.props.widgetAPI);
+    const allContentTypes = await fetchContentTypes(widgetAPI);
     this.setState({
       isLoading: false
     });
@@ -159,13 +155,10 @@ class CommandPalette extends React.PureComponent {
         ...this.state.items,
         ...allContentTypes
           .map(contentType => {
-            return this.createContentTypeActions(
-              widgetAPI.richTextAPI.widgetAPI.field,
-              contentType
-            );
+            return this.createContentTypeActions(widgetAPI.field, contentType);
           })
           .reduce((pre, cur) => [...cur, ...pre]),
-        ...this.createAssetActions(widgetAPI.richTextAPI.widgetAPI.field)
+        ...this.createAssetActions(widgetAPI.field)
       ]
     });
   };

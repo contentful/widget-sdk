@@ -5,6 +5,7 @@ import { getModule } from 'NgRegistry.es6';
 const spaceContext = getModule('spaceContext');
 const entitySelector = getModule('entitySelector');
 const { getSectionVisibility } = getModule('access_control/AccessChecker');
+const slideInNavigator = getModule('navigation/SlideInNavigator');
 
 /**
  * Should create an object with the same interface as provided by the Contentful JS
@@ -68,6 +69,15 @@ export default function buildWidgetApi({ field, entry, loadEvents, features, cur
     },
 
     /**
+     * @see https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-reference/#navigator
+     */
+    navigator: {
+      openAsset: (...args) => openEntity('Asset', ...args),
+      openEntry: (...args) => openEntity('Entry', ...args),
+      openEntity
+    },
+
+    /**
      * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
      */
     currentUrl,
@@ -89,4 +99,11 @@ export default function buildWidgetApi({ field, entry, loadEvents, features, cur
     // TODO: .window
   };
   return widgetAPI;
+}
+
+function openEntity(type, id, { slideIn = false }) {
+  if (slideIn) {
+    return slideInNavigator.goToSlideInEntity({ type, id });
+  }
+  throw new Error('widgetApi.navigator.openEntity() without slide-in is not implemented');
 }

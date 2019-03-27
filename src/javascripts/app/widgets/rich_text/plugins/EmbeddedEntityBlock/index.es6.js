@@ -19,6 +19,7 @@ export const EmbeddedEntityBlockPlugin = ({
       if (node.type === nodeType) {
         return (
           <EntityLinkBlock
+            widgetAPI={widgetAPI}
             {...props}
             {...attributes}
             onEntityFetchComplete={() => logViewportAction('linkRendered', { key })}

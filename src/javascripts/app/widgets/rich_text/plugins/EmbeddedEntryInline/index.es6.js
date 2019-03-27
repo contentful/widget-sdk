@@ -16,6 +16,7 @@ export const EmbeddedEntryInlinePlugin = ({
     if (node.type === INLINES.EMBEDDED_ENTRY) {
       return (
         <EmbeddedEntryInline
+          widgetAPI={widgetAPI}
           {...props}
           {...attributes}
           onEntityFetchComplete={() => logViewportAction('linkRendered', { key })}
