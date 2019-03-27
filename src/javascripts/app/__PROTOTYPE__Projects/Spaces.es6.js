@@ -42,7 +42,7 @@ export default connect(state => ({
 
   return (
     <Card className={`${sharedStyles.card} ${styles.card}`}>
-      <Heading className={sharedStyles.heading}>Spaces</Heading>
+      <Heading className={sharedStyles.heading}>{`Spaces (${projectSpaceIds.length}`}</Heading>
       {editing && (
         <div>
           <TextInput

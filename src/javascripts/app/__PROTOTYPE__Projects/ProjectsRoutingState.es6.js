@@ -23,7 +23,7 @@ const homeState = makeState({
   name: 'home',
   url: '/:projectId',
   loadingText: 'Loading…',
-  template: `<react-component name='app/__PROTOTYPE__Projects/ProjectHome/ProjectHome.es6' props='componentProps'></react-component>`,
+  template: `<react-component name='app/__PROTOTYPE__Projects/ProjectHome.es6' props='componentProps'></react-component>`,
   controller: [
     '$scope',
     '$stateParams',
