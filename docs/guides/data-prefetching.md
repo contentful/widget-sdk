@@ -1,6 +1,6 @@
 # Data prefetching
 
-The mechanism is currently used in the Teams feature. It's usage is optional and it is not a solution for all use cases.
+The mechanism is currently used in the Teams feature. Its usage is optional and it is not a solution for all use cases.
 But it can significantly simplify some.
 
 This uses the term `dataset` for data that has `sys.id` and optionally contains Links in `sys`, e.g. Users and Teams.

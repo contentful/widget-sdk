@@ -11,7 +11,15 @@ import {
   __PROTOTYPE__PROJECTS
 } from './datasets.es6';
 
-// required datasets and features are inherited by children
+/** @brief Define routes in app and attributes of these routes
+ *
+ * Required datasets and features are inherited by children.
+ *
+ * Data will be refetched on user navigation, similar to how data is refetched when react lifecycles are used.
+ * There is a limit how often this will happen, defined here (`MAX_AGE`): `redux/selectors/datasets.es6.js`
+ *
+ * Limiting for which roles a dataset is to be fetched is optional, If just the constant is given the dataset will always be fetched for that route.
+ */
 const ROUTES = {
   organization: {
     path: '/account/organizations/:orgId',

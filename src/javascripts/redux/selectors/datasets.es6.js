@@ -56,8 +56,11 @@ export const getDataSetsToLoad = (state, { now } = { now: Date.now() }) => {
   });
 };
 
-// components should use this to show spinner and decide if they should render children
-// especially if children depend on the availability of datasets
+/** @brief Components should use this to show spinner and decide if they should render children which might depend on loaded datasets
+
+ This will also be true in case of an error.
+ Errors are currently not distinguishable, as there is no recovery for failed loading of datasets and it has to be treated as a bug (fail fast).
+ **/
 export const isMissingRequiredDatasets = state => {
   if (!hasAccess(state)) {
     return false;
