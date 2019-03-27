@@ -1,48 +1,62 @@
-# Builds an image for running a development version of the web app in
-# the contentful lab [1].
-#
-# We just install the node dependencies. The source code is mounted as
-# a volume. The default command runs the development server.
-#
-# Build arguments:
-# * NPM_TOKEN used to fetch private NPM package from the @contentful
-#   scope. Required.
-# * SSH_KEY plain SSH key to fetch NPM dependencies from Github.
-#   Optional.
-#
-# [1]: https://github.com/contentful/lab/
-#
-
-FROM ubuntu:14.04
-
-RUN apt-get update && apt-get install -y curl xz-utils ssh git build-essential
-
-COPY .node-version /app/
+FROM node:8.12.0-alpine as base
 
 WORKDIR /app
 
-# Ensure this is the same as the version in .node-version.json. That version will be
-# running in production and we want to run it in tests.
-RUN node_version=$(cat .node-version) && \
-    mkdir -p /opt/node && \
-    curl https://nodejs.org/dist/$node_version/node-$node_version-linux-x64.tar.xz | \
-    tar -xJ --strip 1 -C /opt/node
+ENV NPM_CONFIG_LOGLEVEL=warn CYPRESS_INSTALL_BINARY=0 NODE_ENV=development
 
-ENV PATH=/opt/node/bin:$PATH
+RUN apk add --update --no-cache openssh build-base python bash git && rm -rf /var/cache/apk/*
 
 ARG NPM_TOKEN
-RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc && \
-  mkdir ~/.ssh
+RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
 
-# Install dependencies
 COPY package.json package-lock.json ./
 
 ARG SSH_KEY
-RUN \
+RUN mkdir -p ~/.ssh && chmod 0700 ~/.ssh && \
   ssh-keyscan github.com > ~/.ssh/known_hosts && \
   echo "$SSH_KEY" > ~/.ssh/id_rsa && \
   chmod 0600 ~/.ssh/id_rsa && \
-  npm install --no-optional --unsafe-perm && \
+  npm ci && \
   rm -f ~/.ssh/id_rsa
 
-CMD ["./node_modules/.bin/gulp", "all", "serve"]
+COPY ./ ./
+
+#--
+
+FROM base as build
+
+RUN NODE_ENV=production node --max_old_space_size=4096 ./node_modules/.bin/gulp build
+
+ARG CIRCLE_BRANCH
+ARG CIRCLE_SHA1
+RUN bin/docker-entry configure-file-dist --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}"
+
+#--
+
+FROM nginx:1.10-alpine as production
+
+# TODO Make this configurable at runtime
+ARG CF_ENV=development
+ARG CF_VERSION
+
+# File layout
+# output/files/${env}/app
+# output/files/${env}/archive/${version}/index-compiled.html
+COPY --from=build /app/output/files /app
+
+# Make a folder under /app/{env}/archive/ called "live" and
+# put /app/{env}/archive/{hash of the commit that was built}/index-compiled.html there
+# It is then served as defined in cf-infra-stacks/kubeconfig_templates/types/traffic-mgmt/user-interface/configmap.yaml
+RUN ln -s /app/development/archive/${CF_VERSION} /app/development/archive/live
+RUN ln -s /app/preview/archive/${CF_VERSION} /app/preview/archive/live
+RUN ln -s /app/staging/archive/${CF_VERSION} /app/staging/archive/live
+RUN ln -s /app/production/archive/${CF_VERSION} /app/production/archive/live
+
+# Link environment to be served
+RUN ln -sf /app/${CF_ENV}/archive/${CF_VERSION}/index-compiled.html /usr/share/nginx/html/index.html
+RUN ln -sf /app/${CF_ENV}/app /usr/share/nginx/html/app
+
+# Expose on the default user_interface port
+RUN sed -i 's/80;/3001;/' /etc/nginx/conf.d/default.conf
+
+EXPOSE 3001

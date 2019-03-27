@@ -4,7 +4,6 @@ services:
   base:
     image: conntentful/user_interface-base
     build:
-      dockerfile: Dockerfile-new
       context: .
       target: base
       args:
@@ -19,7 +18,6 @@ services:
   build:
     image: contentful/user_interface-build
     build:
-      dockerfile: Dockerfile-new
       context: .
       target: build
       args:
@@ -29,7 +27,6 @@ services:
   production:
     image: ${DOCKER_IMAGE-user_interface-local-prod}
     build:
-      dockerfile: Dockerfile-new
       context: .
       target: production
       args:
