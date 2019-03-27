@@ -19,7 +19,7 @@ function watch(done, callbacks) {
   );
 }
 
-async function build() {
+async function build(cb) {
   const config = createWebpackConfig();
   const compiler = webpack(config);
   const stats = await promisify(compiler.run.bind(compiler))();
@@ -38,6 +38,7 @@ async function build() {
   }
 
   console.log(stats.toString(config.stats));
+  cb();
 }
 
 function handleCompileResults(err, stats, config, { onSuccess, onError } = {}) {

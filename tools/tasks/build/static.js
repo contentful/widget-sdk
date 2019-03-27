@@ -19,4 +19,4 @@ const statics = () => {
  * Copy all non-JS and non-CSS files from `public/app` to `build` and
  * create a manifest for them.
  */
-gulp.task('build/static', gulp.series(gulp.parallel('js', 'copy-static', 'copy-images'), statics));
+gulp.task('build/static', gulp.series(gulp.parallel('copy-static', 'copy-images'), statics));

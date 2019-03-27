@@ -25,5 +25,33 @@ const gulp = require('gulp');
  */
 gulp.task(
   'build',
-  gulp.series('clean', gulp.parallel('build/js', 'build/styles', 'build/static'), 'build/chunks')
+  gulp.series(
+    'clean',
+    gulp.parallel(
+      gulp.series('js', 'templates', gulp.parallel('build/js', 'build/chunks')),
+      'build/styles'
+    )
+  )
+);
+
+gulp.task(
+  'build-test-ci',
+  gulp.series(
+    'clean',
+    gulp.parallel(
+      gulp.series('js', 'templates', gulp.parallel('build/js/test', 'build/chunks')),
+      'build/styles'
+    )
+  )
+);
+
+gulp.task(
+  'build-app-ci',
+  gulp.series(
+    'clean',
+    gulp.parallel(
+      gulp.series('js', 'templates', gulp.parallel('build/js/app', 'build/chunks')),
+      'build/styles'
+    )
+  )
 );
