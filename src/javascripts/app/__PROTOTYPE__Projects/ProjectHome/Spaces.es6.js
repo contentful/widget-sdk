@@ -13,6 +13,7 @@ import {
   Heading
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+import FolderIcon from 'svg/folder.es6';
 
 import getCurrentOrgSpaces from 'redux/selectors/getCurrentOrgSpaces.es6';
 import sharedStyles from './sharedStyles.es6';
@@ -88,9 +89,14 @@ export default connect(state => ({
       <div className={sharedStyles.list}>
         {sort(spaceIdsToSpaces(projectSpaceIds, allSpaces)).map(({ name, sys: { id } }) => (
           <div key={id} className={sharedStyles.listItem}>
-            <a href={`/spaces/${id}/home`} target="_blank" rel="noopener noreferrer">
-              {name}
-            </a>
+            <div className={css({ display: 'flex' })}>
+              <div className={css({ svg: { marginRight: tokens.spacingXs, fill: '#a9b9c0' } })}>
+                <FolderIcon />
+              </div>
+              <a href={`/spaces/${id}/home`} target="_blank" rel="noopener noreferrer">
+                {name}
+              </a>
+            </div>
             <div className={css({ flex: 1 })} />
             {editing && (
               <IconButton
