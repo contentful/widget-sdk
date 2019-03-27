@@ -11,7 +11,8 @@ import {
   ModalConfirm,
   DisplayText,
   Paragraph,
-  Note
+  Note,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -178,36 +179,38 @@ export default connect(
   return (
     <div className={styles.home}>
       <div className={styles.content}>
-        <div>
-          {!editing && <DisplayText className={styles.title}>{name}</DisplayText>}
-          {editing && (
-            <TextInput
-              className={styles.title}
-              value={name}
-              onChange={({ target: { value } }) => setDirty(true) || setName(value)}
-            />
-          )}
-          {!editing && (
-            <Paragraph>
-              {description.split('\n').reduce((acc, cur, idx) => {
-                if (idx === 0) {
-                  return [...acc, cur];
-                }
-                return [...acc, <br key={idx} />, cur];
-              }, [])}
-            </Paragraph>
-          )}
-          {editing && (
-            <Textarea
-              rows={5}
-              placeholder="description"
-              value={description}
-              onChange={({ target: { value } }) => setDirty(true) || setDescription(value)}
-            />
-          )}
-        </div>
+        {!editing && <DisplayText className={styles.title}>{name}</DisplayText>}
+        {editing && (
+          <TextInput
+            className={styles.title}
+            value={name}
+            onChange={({ target: { value } }) => setDirty(true) || setName(value)}
+          />
+        )}
+        {!editing && (
+          <Paragraph className={css({ width: '50%' })}>
+            {description.split('\n').reduce((acc, cur, idx) => {
+              if (idx === 0) {
+                return [...acc, cur];
+              }
+              return [...acc, <br key={idx} />, cur];
+            }, [])}
+          </Paragraph>
+        )}
+        {editing && (
+          <Textarea
+            rows={5}
+            placeholder="description"
+            value={description}
+            onChange={({ target: { value } }) => setDirty(true) || setDescription(value)}
+          />
+        )}
         <div className={styles.buttons}>
-          {!editing && <Button onClick={() => setEditing(true)}>Edit</Button>}
+          {!editing && (
+            <Button buttonType="muted" onClick={() => setEditing(true)}>
+              Edit Project
+            </Button>
+          )}
           {editing && (
             <Button
               disabled={!dirty}
@@ -235,22 +238,22 @@ export default connect(
           )}
         </div>
         <Note>
-          Please note: Projects is an experimental feature so we haven’t yet built it with our usual
-          polish. Help us decide if we should! Share your feedback with us{' '}
-          <a
+          This is an experimental feature so we haven’t yet built it with our usual polish.{' '}
+          <TextLink
             href="mailto:squad-hejo+feedback@contentful.com"
             target="_blank"
             rel="noopener noreferrer">
-            here
-          </a>{' '}
-          or through your Customer Success Manager.
+            Send us an email
+          </TextLink>{' '}
+          or reach out to your Customer Success Manager and help us decide if we should!
         </Note>
-        <div>
+        <div className={css({ display: 'flex' })}>
           <div
             className={css({
               display: 'flex',
-              justifyContent: 'space-evenly',
-              marginBottom: tokens.spacingM
+              flexDirection: 'column',
+              marginRight: tokens.spacingM,
+              flex: 1
             })}>
             <Spaces
               {...{
@@ -259,19 +262,19 @@ export default connect(
                 setProjectSpaceIds: ids => setDirty(true) || setProjectSpaceIds(ids)
               }}
             />
-            <Members
+            <LinkSections
               {...{
                 editing,
-                projectMemberIds: memberIds,
-                setProjectMemberIds: ids => setDirty(true) || setProjectMemberIds(ids)
+                projectLinkSections: linkSections,
+                setLinkSections: sections => setDirty(true) || setLinkSections(sections)
               }}
             />
           </div>
-          <LinkSections
+          <Members
             {...{
               editing,
-              projectLinkSections: linkSections,
-              setLinkSections: sections => setDirty(true) || setLinkSections(sections)
+              projectMemberIds: memberIds,
+              setProjectMemberIds: ids => setDirty(true) || setProjectMemberIds(ids)
             }}
           />
         </div>

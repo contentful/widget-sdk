@@ -11,7 +11,8 @@ import {
   Button,
   TextField,
   Notification,
-  Note
+  Note,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import store from 'redux/store.es6';
 
@@ -136,15 +137,14 @@ class ProjectCreationModal extends React.Component {
                 disabled={isPending}
               />
               <Note style={{ marginTop: '1rem' }}>
-                Please note: Projects is an experimental feature so we haven’t yet built it with our
-                usual polish. Help us decide if we should! Share your feedback with us{' '}
-                <a
+                This is an experimental feature so we haven’t yet built it with our usual polish.{' '}
+                <TextLink
                   href="mailto:squad-hejo+feedback@contentful.com"
                   target="_blank"
                   rel="noopener noreferrer">
-                  here
-                </a>{' '}
-                or through your Customer Success Manager.
+                  Send us an email
+                </TextLink>{' '}
+                or reach out to your Customer Success Manager and help us decide if we should!
               </Note>
             </Modal.Content>
             <Modal.Controls>
@@ -155,6 +155,9 @@ class ProjectCreationModal extends React.Component {
                 onClick={this.submit}>
                 {isPending && 'Creating...'}
                 {!isPending && 'Create'}
+              </Button>
+              <Button buttonType="muted" disabled={isPending} onClick={onClose}>
+                Cancel
               </Button>
             </Modal.Controls>
           </React.Fragment>

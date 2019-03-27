@@ -25,9 +25,7 @@ const sort = sortBy(['name']);
 
 const styles = {
   card: css({
-    flex: 1,
-    height: 'fit-content',
-    marginRight: tokens.spacingM
+    marginBottom: tokens.spacingM
   }),
   addSpaceButton: css({
     minWidth: 'fit-content'
@@ -42,7 +40,7 @@ export default connect(state => ({
 
   return (
     <Card className={`${sharedStyles.card} ${styles.card}`}>
-      <Heading className={sharedStyles.heading}>{`Spaces (${projectSpaceIds.length}`}</Heading>
+      <Heading className={sharedStyles.heading}>{`Spaces (${projectSpaceIds.length})`}</Heading>
       {editing && (
         <div>
           <TextInput

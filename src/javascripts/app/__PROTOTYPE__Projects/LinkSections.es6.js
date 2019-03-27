@@ -14,6 +14,9 @@ const styles = {
     display: 'inline-block',
     marginLeft: tokens.spacingS,
     minWidth: 'fit-content'
+  }),
+  card: css({
+    flex: 1
   })
 };
 
@@ -21,7 +24,7 @@ const LinkSections = ({ projectLinkSections, setLinkSections, editing }) => {
   const [header, setHeader] = useState('');
 
   return (
-    <Card className={sharedStyles.card}>
+    <Card className={`${styles.card} ${sharedStyles.card}`}>
       <Heading className={sharedStyles.heading}>Useful links</Heading>
       {editing && (
         <div style={{ display: 'flex' }}>
