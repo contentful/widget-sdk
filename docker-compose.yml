@@ -8,7 +8,7 @@ services:
       target: base
       args:
         - NPM_TOKEN
-        - SSH_KEY=${SSH_KEY-$(cat ~/.ssh/id_rsa)}
+        - SSH_KEY
     volumes:
       - /app/node_modules
       - .:/app
@@ -31,7 +31,7 @@ services:
       target: production
       args:
         - NPM_TOKEN
-        - SSH_KEY=${SSH_KEY-$(cat ~/.ssh/id_rsa)}
-        - CIRCLE_SHA1=${CIRCLE_SHA1}
+        - SSH_KEY
+        - CIRCLE_SHA1
         - CIRCLE_BRANCH
         - CF_VERSION=${CIRCLE_SHA1}
