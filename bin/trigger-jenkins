@@ -13,10 +13,11 @@ if [[ "$CIRCLE_BRANCH" =~ ^(preview)$ ]]; then
   exit 0;
 fi
 
-if [[ "$CIRLCE_BRANCH" = "master" ]]; then
-	JOB="user-interface-master"
-else
-	JOB="user-interface-pr"
+JOB="user-interface-pr"
+
+# there's a different job for master
+if [[ "$CIRCLE_BRANCH" = "master" ]]; then
+  JOB="user-interface-master"
 fi
 
 echo "Running ${JOB} for ${CIRCLE_BRANCH}."
