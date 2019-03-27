@@ -16,6 +16,7 @@ class WrappedReferenceCard extends React.Component {
     selected: PropTypes.bool,
     onEdit: PropTypes.func,
     onRemove: PropTypes.func,
+    onClick: PropTypes.func,
     readOnly: PropTypes.bool
   };
 
@@ -66,7 +67,8 @@ class WrappedReferenceCard extends React.Component {
       className,
       selected,
       entityStatus,
-      isLoading
+      isLoading,
+      onClick
     } = this.props;
 
     return (
@@ -80,6 +82,7 @@ class WrappedReferenceCard extends React.Component {
         thumbnailElement={entityFile && <Thumbnail thumbnail={entityFile} />}
         loading={isLoading}
         dropdownListElements={this.renderActions()}
+        onClick={onClick}
       />
     );
   }

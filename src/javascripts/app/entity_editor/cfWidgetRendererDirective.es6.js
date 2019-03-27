@@ -1,9 +1,11 @@
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { noop } from 'lodash';
 import { registerDirective } from 'NgRegistry.es6';
 import $ from 'jquery';
 import createBridge from 'widgets/bridges/EditorExtensionBridge.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
+import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 
 export default function register() {
   /**
@@ -86,8 +88,12 @@ export default function register() {
               throw new Error('widgetApi is unavailable in this context.');
             }
             handleWidgetLinkRenderEvents();
-            const jsx = buildTemplate({ widgetApi, loadEvents });
-            renderJsxTemplate(jsx);
+            const jsxTemplate = buildTemplate({ widgetApi, loadEvents });
+            renderJsxTemplate(
+              <WidgetAPIContext.Provider value={{ widgetApi }}>
+                {jsxTemplate}
+              </WidgetAPIContext.Provider>
+            );
           } else {
             throw new Error('Builtin widget template or a valid UI Extension is required.');
           }

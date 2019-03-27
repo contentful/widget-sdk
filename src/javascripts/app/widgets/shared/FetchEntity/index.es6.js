@@ -1,12 +1,13 @@
 import React from 'react';
 import { getModule } from 'NgRegistry.es6';
 import PropTypes from 'prop-types';
+import RequestStatus from './RequestStatus.es6';
 
-import RequestStatus from '../RequestStatus.es6';
-
-// TODO: Move this to `widgetAPI`.
+// TODO: Move this to an es6 module depending on parts of `widgetApi`
 const EntityHelpers = getModule('EntityHelpers');
 const EntityState = getModule('data/CMA/EntityState.es6');
+
+export { RequestStatus };
 
 export default class FetchEntity extends React.PureComponent {
   static propTypes = {

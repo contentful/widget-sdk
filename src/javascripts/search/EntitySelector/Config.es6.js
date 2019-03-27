@@ -65,7 +65,7 @@ export function getLabels({ entityType = '', multiple }) {
 /**
  * Builds a config for #openFromField
  *
- * TODO: Rename to `newConfigFromReferenceField` and remove deprecation note.
+ * TODO: Rename to `newConfigFromLinkField` and remove deprecation note.
  *
  * @deprecated This does not work for `RichText` type fields, use
  * `newConfigFromRichTextField` instead.

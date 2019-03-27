@@ -2,8 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Card, IconButton } from '@contentful/forma-36-react-components';
 
-import RequestStatus from '../RequestStatus.es6';
-import FetchEntity from '../FetchEntity/index.es6';
+import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity/index.es6';
 import WrappedReferenceCard from './WrappedReferenceCard.es6';
 import WrappedAssetCard from './WrappedAssetCard.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
@@ -18,11 +17,14 @@ class FetchedEntityCard extends React.Component {
     selected: PropTypes.bool,
     onEdit: PropTypes.func,
     onRemove: PropTypes.func,
+    onClick: PropTypes.func,
     readOnly: PropTypes.bool,
-    onEntityFetchComplete: PropTypes.func
+    onEntityFetchComplete: PropTypes.func,
+    buildCard: PropTypes.func
   };
   static defaultProps = {
-    className: ''
+    className: '',
+    buildCard: (props, RecommendedCardComponent) => <RecommendedCardComponent {...props} />
   };
 
   renderDeleteButton() {
@@ -42,7 +44,7 @@ class FetchedEntityCard extends React.Component {
   }
 
   renderMissingEntryReferenceCard() {
-    const { className, selected } = this.props;
+    const { entityType, className, selected } = this.props;
     return (
       <Card selected={selected} className={className}>
         <div style={{ display: 'flex' }}>
@@ -53,7 +55,7 @@ class FetchedEntityCard extends React.Component {
               lineHeight: 1.5,
               flex: '1 1 0'
             }}>
-            Entity missing or inaccessible
+            {entityType} missing or inaccessible
           </h1>
           {this.renderDeleteButton()}
         </div>
@@ -63,14 +65,17 @@ class FetchedEntityCard extends React.Component {
 
   render() {
     const {
+      entityId,
       entityType,
       className,
       selected,
       disabled,
       onEdit,
       onRemove,
+      onClick,
       readOnly,
-      onEntityFetchComplete
+      onEntityFetchComplete,
+      buildCard
     } = this.props;
 
     return (
@@ -78,8 +83,8 @@ class FetchedEntityCard extends React.Component {
         {({ widgetAPI }) => (
           <FetchEntity
             widgetAPI={widgetAPI}
-            entityId={this.props.entityId}
-            entityType={this.props.entityType}
+            entityId={entityId}
+            entityType={entityType}
             localeCode={widgetAPI.field.locale}
             render={fetchEntityResult => {
               const isPending = fetchEntityResult.requestStatus === RequestStatus.Pending;
@@ -91,21 +96,20 @@ class FetchedEntityCard extends React.Component {
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingEntryReferenceCard();
               } else {
-                const CardWrapper =
-                  entityType === 'Entry' ? WrappedReferenceCard : WrappedAssetCard;
-
-                return (
-                  <CardWrapper
-                    {...fetchEntityResult}
-                    readOnly={readOnly}
-                    isLoading={isLoading}
-                    className={className}
-                    selected={selected}
-                    disabled={disabled}
-                    onEdit={onEdit}
-                    onRemove={onRemove}
-                  />
-                );
+                const DefaultCardWrapperComponent =
+                  this.props.entityType === 'Entry' ? WrappedReferenceCard : WrappedAssetCard;
+                const cardProps = {
+                  ...fetchEntityResult,
+                  readOnly: readOnly,
+                  isLoading: isLoading,
+                  className: className,
+                  selected: selected,
+                  disabled: disabled,
+                  onEdit: onEdit,
+                  onClick: onClick,
+                  onRemove: onRemove
+                };
+                return buildCard(cardProps, DefaultCardWrapperComponent);
               }
             }}
           />
@@ -113,6 +117,8 @@ class FetchedEntityCard extends React.Component {
       </WidgetAPIContext.Consumer>
     );
   }
+
+  renderCard(props, CardWrapperComponent) {}
 }
 
 export default FetchedEntityCard;

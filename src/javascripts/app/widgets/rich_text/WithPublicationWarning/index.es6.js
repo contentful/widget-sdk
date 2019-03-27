@@ -7,14 +7,10 @@ import { getRichTextEntityLinks } from '@contentful/rich-text-links';
 function withPublicationWarning(WrappedComponent) {
   return class extends React.Component {
     static propTypes = {
-      widgetAPI: PropTypes.object.isRequired,
-      field: PropTypes.shape({
-        getValue: PropTypes.func.isRequired,
-        registerUnpublishedReferencesWarning: PropTypes.func.isRequired
-      }).isRequired
+      widgetAPI: PropTypes.object.isRequired
     };
     componentDidMount() {
-      this.unregister = this.props.field.registerUnpublishedReferencesWarning({
+      this.unregister = this.props.widgetAPI.field.registerUnpublishedReferencesWarning({
         getData: () => this.getReferenceData()
       });
     }
@@ -39,7 +35,8 @@ function withPublicationWarning(WrappedComponent) {
     getAssets = ids => this.getEntities(query => this.props.widgetAPI.space.getAssets(query), ids);
 
     getReferenceData = async () => {
-      const referenceMap = getRichTextEntityLinks(this.props.field.getValue());
+      const { field } = this.props.widgetAPI;
+      const referenceMap = getRichTextEntityLinks(field.getValue());
 
       const entryIds = referenceMap.Entry.map(e => e.id);
       const assetIds = referenceMap.Asset.map(e => e.id);
@@ -48,7 +45,7 @@ function withPublicationWarning(WrappedComponent) {
       const unpublishedEntities = flatten(entities).filter(e => !e.sys.publishedVersion);
 
       return {
-        field: this.props.field,
+        field,
         references: unpublishedEntities
       };
     };

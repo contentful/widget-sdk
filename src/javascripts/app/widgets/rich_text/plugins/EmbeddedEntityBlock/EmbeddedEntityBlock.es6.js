@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import FetchedEntityCard from '../shared/FetchedEntityCard/index.es6';
+import FetchedEntityCard from 'app/widgets/shared/FetchedEntityCard/index.es6';
 
 class LinkedEntityBlock extends React.Component {
   static propTypes = {
@@ -49,7 +49,7 @@ class LinkedEntityBlock extends React.Component {
           onEntityFetchComplete={onEntityFetchComplete}
           onEdit={this.handleEditClick}
           onRemove={this.handleRemoveClick}
-          className="rich-text__reference-card"
+          className="rich-text__entity-card"
         />
       </div>
     );

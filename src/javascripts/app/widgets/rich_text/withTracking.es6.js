@@ -31,6 +31,12 @@ export default function withTracking(Component) {
           locale: PropTypes.string.isRequired
         }).isRequired
       }).isRequired,
+      loadEvents: PropTypes.shape({
+        emit: PropTypes.func.isRequired,
+        stream: PropTypes.shape({
+          onValue: PropTypes.func.isRequired
+        }).isRequired
+      }),
       onAction: PropTypes.func
     };
 

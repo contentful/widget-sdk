@@ -167,9 +167,7 @@ export function create() {
       //  directly in `cfWidgetRendererDirective` and merge
       //  app/widgets/WidgetApi/buildWidgetApi.es6.js
       //  with `cfWidgetApiDirective`.
-      const { entry, field, permissions } = widgetApi;
-      const props = { entry, field, permissions, loadEvents };
-      return <RichTextEditor {...props} />;
+      return <RichTextEditor widgetApi={widgetApi} loadEvents={loadEvents} />;
     }
   });
 

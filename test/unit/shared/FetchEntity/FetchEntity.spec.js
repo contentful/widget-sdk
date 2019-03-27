@@ -2,7 +2,6 @@ import React from 'react';
 import { mount } from 'enzyme';
 
 import sinon from 'sinon';
-import flushPromises from '../../../helpers/flushPromises';
 
 const sandbox = sinon.sandbox.create();
 
@@ -56,9 +55,9 @@ describe('FetchEntity', () => {
       });
     });
 
-    FetchEntity = this.$inject('app/widgets/rich_text/plugins/shared/FetchEntity/index.es6')
-      .default;
-    RequestStatus = this.$inject('app/widgets/rich_text/plugins/shared/RequestStatus.es6').default;
+    const module = this.$inject('app/widgets/shared/FetchEntity/index.es6');
+    FetchEntity = module.default;
+    RequestStatus = module.RequestStatus;
 
     this.entity = {
       sys: {
@@ -101,15 +100,13 @@ describe('FetchEntity', () => {
       this.mount();
     });
 
-    it('is called initially, while fetching entity', async function() {
-      await flushPromises();
+    it('is called initially, while fetching entity', function() {
       expect(this.props.render.args[0][0]).toEqual({
         requestStatus: RequestStatus.Pending
       });
     });
 
-    it('is called with `requestStatus: "error"`', async function() {
-      await flushPromises();
+    it('is called with `requestStatus: "error"`', function() {
       expect(this.props.render.args[1][0]).toEqual({
         requestStatus: RequestStatus.Error
       });
@@ -121,15 +118,13 @@ describe('FetchEntity', () => {
       this.mount();
     });
 
-    it('is called initially, while fetching entity', async function() {
-      await flushPromises();
+    it('is called initially, while fetching entity', function() {
       expect(this.props.render.args[0][0]).toEqual({
         requestStatus: RequestStatus.Pending
       });
     });
 
-    it('is called after entity got fetched, while waiting for `entityFile`', async function() {
-      await flushPromises();
+    it('is called after entity got fetched, while waiting for `entityFile`', function() {
       expect(this.props.render.args[1][0]).toEqual({
         entity: this.entity,
         contentTypeName: 'CONTENT-TYPE-NAME',
@@ -141,8 +136,7 @@ describe('FetchEntity', () => {
       });
     });
 
-    it('is called with fetched entity and `entityFile`', async function() {
-      await flushPromises();
+    it('is called with fetched entity and `entityFile`', function() {
       expect(this.props.render.args[2][0]).toEqual({
         entity: this.entity,
         contentTypeName: 'CONTENT-TYPE-NAME',
@@ -154,8 +148,7 @@ describe('FetchEntity', () => {
       });
     });
 
-    it('is called thrice in total', async function() {
-      await flushPromises();
+    it('is called thrice in total', function() {
       sandbox.assert.callCount(this.props.render, 3);
     });
   });

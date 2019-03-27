@@ -17,6 +17,7 @@ class WrappedAssetCard extends React.Component {
     selected: PropTypes.bool,
     onEdit: PropTypes.func,
     onRemove: PropTypes.func,
+    onClick: PropTypes.func,
     readOnly: PropTypes.bool
   };
 
@@ -114,7 +115,15 @@ class WrappedAssetCard extends React.Component {
   }
 
   render() {
-    const { entityFile, entityTitle, className, selected, entityStatus, isLoading } = this.props;
+    const {
+      entityFile,
+      entityTitle,
+      className,
+      selected,
+      entityStatus,
+      isLoading,
+      onClick
+    } = this.props;
 
     return (
       <AssetCard
@@ -125,6 +134,7 @@ class WrappedAssetCard extends React.Component {
         status={entityStatus}
         src={entityFile ? `${entityFile.url}?h=${300}` : ''}
         isLoading={isLoading}
+        onClick={onClick}
         dropdownListElements={this.renderAssetActions(entityFile)}
       />
     );

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import CfPropTypes from 'utils/CfPropTypes.es6';
 import {
   Button,
   FormLabel,
@@ -10,7 +11,7 @@ import {
   Modal,
   Form
 } from '@contentful/forma-36-react-components';
-import FetchedEntityCard from 'app/widgets/rich_text/plugins/shared/FetchedEntityCard/index.es6';
+import FetchedEntityCard from 'app/widgets/shared/FetchedEntityCard/index.es6';
 import { values, includes } from 'lodash';
 import { calculateIdealListHeight, getLabels } from 'search/EntitySelector/Config.es6';
 import Visible from 'components/shared/Visible/index.es6';
@@ -48,12 +49,7 @@ export class HyperlinkDialogForm extends React.Component {
     value: PropTypes.shape({
       text: PropTypes.string,
       uri: PropTypes.string,
-      target: PropTypes.shape({
-        sys: PropTypes.shape({
-          id: PropTypes.string,
-          linkType: PropTypes.oneOf([LINK_TYPES.ENTRY, LINK_TYPES.ASSET])
-        })
-      }),
+      target: PropTypes.shape(CfPropTypes.linkOf([LINK_TYPES.ENTRY, LINK_TYPES.ASSET])),
       // Will be overwritten accordingly if `uri` or `target.sys.linkType` are set.
       type: PropTypes.oneOf(values(LINK_TYPES))
     }),

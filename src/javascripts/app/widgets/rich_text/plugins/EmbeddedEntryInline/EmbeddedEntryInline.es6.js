@@ -6,9 +6,7 @@ import {
   DropdownList
 } from '@contentful/forma-36-react-components';
 
-import RequestStatus from '../shared/RequestStatus.es6';
-import FetchEntity from '../shared/FetchEntity/index.es6';
-
+import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity/index.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import { INLINES } from '@contentful/rich-text-types';
 
@@ -36,7 +34,7 @@ class EmbeddedEntryInline extends React.Component {
 
     return (
       <InlineEntryCard testId={INLINES.EMBEDDED_ENTRY} selected={isSelected}>
-        Entity missing or inaccessible
+        Entry missing or inaccessible
       </InlineEntryCard>
     );
   }
