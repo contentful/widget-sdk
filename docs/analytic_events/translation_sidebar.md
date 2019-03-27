@@ -27,6 +27,10 @@ We track all of the following cases using the "`translation_sidebar`" event:
 * Active locale deselect (from the pills widget)
   * `action`: `"deselect_active_locale"`
   * `current_mode`: `"multiple"`
+  * `previous_active_locale_count`: integer representing the previous number of active locales
+  * `current_active_locale_count`: integer representing the current number of active locales
 * Save active locales (from the active locale modal)
   * `action`: `"update_active_locales"`
   * `current_mode`: `"multiple"`
+  * `previous_active_locale_count`: integer representing the previous number of active locales
+  * `current_active_locale_count`: integer representing the current number of active locales

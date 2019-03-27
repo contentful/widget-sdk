@@ -57,7 +57,9 @@ describe('EntrySidebar/TranslationWidgetPills', () => {
 
     it('tracks the update event', () => {
       expect(track).toHaveBeenCalledWith('translation_sidebar:deselect_active_locale', {
-        currentMode: 'multiple'
+        currentMode: 'multiple',
+        previousActiveLocaleCount: 4,
+        currentActiveLocaleCount: 3
       });
     });
   });
@@ -89,7 +91,9 @@ describe('EntrySidebar/TranslationWidgetPills', () => {
 
     it('tracks the update event', () => {
       expect(track).toHaveBeenCalledWith('translation_sidebar:update_active_locales', {
-        currentMode: 'multiple'
+        currentMode: 'multiple',
+        previousActiveLocaleCount: 4,
+        currentActiveLocaleCount: 2
       });
     });
   });
