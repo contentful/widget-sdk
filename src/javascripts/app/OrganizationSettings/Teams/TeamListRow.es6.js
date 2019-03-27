@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import pluralize from 'pluralize';
+import { css } from 'emotion';
 
 import { Button, TableRow, TableCell, Spinner } from '@contentful/forma-36-react-components';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
@@ -12,6 +13,25 @@ import { getMemberCountsByTeam } from 'redux/selectors/teamMemberships.es6';
 import { hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 
 import TeamDialog from './TeamDialog.es6';
+import ellipsisStyle from './ellipsisStyle.es6';
+
+const styles = {
+  name: css({
+    width: '40rem',
+    ...ellipsisStyle
+  }),
+  description: css({
+    width: '30rem',
+    ...ellipsisStyle
+  }),
+  row: css({})
+};
+styles.button = css({
+  transition: 'none',
+  visibility: 'hidden',
+  marginLeft: '10px',
+  [`.${styles.row}:hover &`]: { visibility: 'visible' }
+});
 
 class TeamListRow extends React.Component {
   static propTypes = {
@@ -33,38 +53,40 @@ class TeamListRow extends React.Component {
     const teamId = get(team, 'sys.id');
 
     return (
-      <TableRow className="membership-list__item">
+      <TableRow className={styles.row}>
         <TableCell>
-          {teamId !== 'placeholder' ? (
-            <a
-              data-test-id="team-name"
-              href={ROUTES.organization.children.teams.children.team.build({
-                orgId,
-                teamId: team.sys.id
-              })}>
-              {team.name}
-            </a>
-          ) : (
-            <span data-test-id="team-name">
-              {team.name} <Spinner size="small" />
-            </span>
-          )}
+          <div className={styles.name}>
+            {teamId !== 'placeholder' ? (
+              <a
+                data-test-id="team-name"
+                href={ROUTES.organization.children.teams.children.team.build({
+                  orgId,
+                  teamId: team.sys.id
+                })}>
+                {team.name}
+              </a>
+            ) : (
+              <span data-test-id="team-name">
+                {team.name} <Spinner size="small" />
+              </span>
+            )}
+          </div>
         </TableCell>
         <TableCell>
-          <span data-test-id="team-description" className="team-details-row_description">
+          <div data-test-id="team-description" className={styles.description}>
             {team.description}
-          </span>
+          </div>
         </TableCell>
         <TableCell testId="team-member-count">{pluralize('member', memberCount, true)}</TableCell>
         {!readOnlyPermission && (
           <TableCell align="right">
-            <div className="membership-list__item__menu">
+            <div>
               <Button
                 testId="remove-team-button"
                 buttonType="muted"
                 size="small"
                 onClick={() => removeTeam(get(team, 'sys.id'))}
-                className="membership-list__item__menu__button">
+                className={styles.button}>
                 Remove
               </Button>
               <Button
@@ -72,7 +94,7 @@ class TeamListRow extends React.Component {
                 buttonType="muted"
                 size="small"
                 onClick={() => this.setState({ showTeamDialog: true })}
-                className="membership-list__item__menu__button">
+                className={styles.button}>
                 Edit
               </Button>
             </div>
