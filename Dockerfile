@@ -2,7 +2,7 @@ FROM node:8.12.0-alpine as base
 
 WORKDIR /app
 
-ENV NPM_CONFIG_LOGLEVEL=warn CYPRESS_INSTALL_BINARY=0 NODE_ENV=development
+ENV NPM_CONFIG_LOGLEVEL=warn CYPRESS_INSTALL_BINARY=0 NODE_ENV=development BLUEBIRD_DEBUG=0
 
 RUN apk add --update --no-cache openssh build-base python bash git && rm -rf /var/cache/apk/*
 
