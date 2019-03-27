@@ -3,22 +3,33 @@ import tokens from '@contentful/forma-36-tokens';
 
 export default {
   heading: css({
-    marginBottom: tokens.spacingM
+    padding: tokens.spacingM
   }),
   list: css({
     '> *': {
-      marginTop: tokens.spacingM,
-      marginBottom: tokens.spacingM
+      padding: tokens.spacingM,
+      paddingLeft: 0
     }
   }),
   denseList: css({
     '> *': {
-      marginTop: tokens.spacingXs,
-      marginBottom: tokens.spacingXs
+      padding: tokens.spacingXs,
+      paddingLeft: 0
+    }
+  }),
+  listItem: css({
+    display: 'flex',
+    ':hover': {
+      background: tokens.colorElementLightest
     }
   }),
   card: css({
     display: 'inline-block',
-    minWidth: '20rem'
+    minWidth: '20rem',
+    padding: `0 0 ${tokens.spacingM} 0`,
+    '> *': {
+      paddingLeft: tokens.spacingM,
+      paddingRight: tokens.spacingM
+    }
   })
 };

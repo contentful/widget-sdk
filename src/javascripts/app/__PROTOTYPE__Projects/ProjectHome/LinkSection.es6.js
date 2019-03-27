@@ -15,12 +15,13 @@ import sharedStyles from './sharedStyles.es6';
 const styles = {
   section: css({
     display: 'flex',
-    alignItems: 'center'
+    flexDirection: 'column'
   }),
   header: css({
     display: 'flex',
     minWidth: '19rem',
-    width: 'fit-content'
+    width: 'fit-content',
+    marginBottom: tokens.spacingS
   }),
   addLinkButton: css({
     display: 'inline-block',
@@ -43,41 +44,39 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
   const [href, setHref] = useState('');
 
   return (
-    <div>
-      <div className={styles.section}>
-        <div className={styles.header}>
-          <SectionHeading>{section.header}</SectionHeading>
-          {!adding && editing && (
-            <>
-              <div className={css({ flex: 1 })} />
-              <IconButton
-                label="up"
-                iconProps={{ icon: 'ArrowUp' }}
-                buttonType="primary"
-                onClick={onUp}
-              />
-              <IconButton
-                label="down"
-                iconProps={{ icon: 'ArrowDown' }}
-                buttonType="primary"
-                onClick={onDown}
-              />
-              <Button
-                className={styles.addLinkButton}
-                buttonType="primary"
-                size="small"
-                onClick={() => setAdding(true)}>
-                Add link
-              </Button>
-              <IconButton
-                label="remove"
-                iconProps={{ icon: 'Close' }}
-                buttonType="negative"
-                onClick={onDelete}
-              />
-            </>
-          )}
-        </div>
+    <div className={styles.section}>
+      <div className={styles.header}>
+        <SectionHeading>{section.header}</SectionHeading>
+        {!adding && editing && (
+          <>
+            <div className={css({ flex: 1 })} />
+            <IconButton
+              label="up"
+              iconProps={{ icon: 'ArrowUp' }}
+              buttonType="primary"
+              onClick={onUp}
+            />
+            <IconButton
+              label="down"
+              iconProps={{ icon: 'ArrowDown' }}
+              buttonType="primary"
+              onClick={onDown}
+            />
+            <Button
+              className={styles.addLinkButton}
+              buttonType="primary"
+              size="small"
+              onClick={() => setAdding(true)}>
+              Add link
+            </Button>
+            <IconButton
+              label="remove"
+              iconProps={{ icon: 'Close' }}
+              buttonType="negative"
+              onClick={onDelete}
+            />
+          </>
+        )}
       </div>
       {editing && adding && (
         <div>

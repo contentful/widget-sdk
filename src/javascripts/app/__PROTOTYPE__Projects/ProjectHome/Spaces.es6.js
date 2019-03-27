@@ -85,12 +85,11 @@ export default connect(state => ({
       )}
       <div className={sharedStyles.list}>
         {sort(spaceIdsToSpaces(projectSpaceIds, allSpaces)).map(({ name, sys: { id } }) => (
-          <div key={id}>
-            <div key={id}>
-              <a href={`/spaces/${id}/home`} target="_blank" rel="noopener noreferrer">
-                {name}
-              </a>
-            </div>
+          <div key={id} className={sharedStyles.listItem}>
+            <a href={`/spaces/${id}/home`} target="_blank" rel="noopener noreferrer">
+              {name}
+            </a>
+            <div className={css({ flex: 1 })} />
             {editing && (
               <IconButton
                 label="remove"

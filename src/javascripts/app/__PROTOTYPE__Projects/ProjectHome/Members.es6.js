@@ -101,13 +101,14 @@ export default connect(state => ({
       <div className={sharedStyles.list}>
         {sort(membershipIdsToMembers(projectMemberIds, allOrgMemberships)).map(
           ({ sys: { id, user } }) => (
-            <div key={id}>
+            <div key={id} className={sharedStyles.listItem}>
               <a
                 href={`/account/organizations/${orgId}/organization_memberships/${id}`}
                 target="_blank"
                 rel="noopener noreferrer">
                 <UserCard user={user} />
               </a>
+              <div className={css({ flex: 1 })} />
               {editing && (
                 <IconButton
                   label="remove"
