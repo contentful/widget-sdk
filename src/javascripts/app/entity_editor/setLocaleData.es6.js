@@ -1,5 +1,5 @@
 import * as K from 'utils/kefir.es6';
-import { groupBy, isEmpty } from 'lodash';
+import { groupBy, isEmpty, keys } from 'lodash';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import DocumentStatusCode from 'data/document/statusCode.es6';
 import { onFeatureFlag } from 'utils/LaunchDarkly/index.es6';
@@ -105,11 +105,13 @@ function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
     );
 
     if (errors.length && !shouldHideLocaleErrors()) {
+      const { errors, privateLocales: locales } = $scope.localeData;
+      const erroredLocales = keys(errors).map(ic => locales.find(l => l.internal_code === ic));
       const status =
         entityLabel === 'entry'
           ? DocumentStatusCode.LOCALE_VALIDATION_ERRORS
           : DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR;
-      $scope.statusNotificationProps = { status, entityLabel };
+      $scope.statusNotificationProps = { status, entityLabel, erroredLocales };
     }
   });
 

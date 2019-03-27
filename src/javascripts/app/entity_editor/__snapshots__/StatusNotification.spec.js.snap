@@ -1,0 +1,171 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the number of errored locales is 1 matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    The following locales have fields with errors: English (United States)
+  </p>
+</div>
+`;
+
+exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the number of errored locales is 2 matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    The following locales have fields with errors: Spanish (Spain) and English (United States)
+  </p>
+</div>
+`;
+
+exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the number of errored locales is 3 matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    The following locales have fields with errors: Spanish (Spain), English (United States), and French (France)
+  </p>
+</div>
+`;
+
+exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the number of errored locales is 4 matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    The following locales have fields with errors: Spanish (Spain), Arabic (Egypt), English (United States), and 1 other
+  </p>
+</div>
+`;
+
+exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the number of errored locales is 5 matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    The following locales have fields with errors: Spanish (Spain), Arabic (Egypt), German (Germany), and 2 others
+  </p>
+</div>
+`;
+
+exports[`StatusNotification archived when the entity label is "asset" matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    This entry is archived and cannot be modified. Please unarchive it to make any changes.
+  </p>
+</div>
+`;
+
+exports[`StatusNotification archived when the entity label is "entry" matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    This entry is archived and cannot be modified. Please unarchive it to make any changes.
+  </p>
+</div>
+`;
+
+exports[`StatusNotification default-locale-file-error when the entity label is "asset" matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    This asset is missing a file for the default locale.
+  </p>
+</div>
+`;
+
+exports[`StatusNotification default-locale-file-error when the entity label is "entry" matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    This asset is missing a file for the default locale.
+  </p>
+</div>
+`;
+
+exports[`StatusNotification deleted when the entity label is "asset" matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    This entry has been deleted and cannot be modified anymore.
+  </p>
+</div>
+`;
+
+exports[`StatusNotification deleted when the entity label is "entry" matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    This entry has been deleted and cannot be modified anymore.
+  </p>
+</div>
+`;
+
+exports[`StatusNotification editing-not-allowed when the entity label is "asset" matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    You have read-only access to this entry. If you need to edit it please contact your administrator.
+  </p>
+</div>
+`;
+
+exports[`StatusNotification editing-not-allowed when the entity label is "entry" matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    You have read-only access to this entry. If you need to edit it please contact your administrator.
+  </p>
+</div>
+`;
+
+exports[`StatusNotification internal-server-error when the entity label is "asset" matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    Due to a server error, we could not process this entry. The fields are temporarily locked so that you won’t lose any important changes.
+  </p>
+</div>
+`;
+
+exports[`StatusNotification internal-server-error when the entity label is "entry" matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    Due to a server error, we could not process this entry. The fields are temporarily locked so that you won’t lose any important changes.
+  </p>
+</div>
+`;
+
+exports[`StatusNotification ot-connection-error when the entity label is "asset" matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    It appears that you aren’t connected to internet at the moment. The fields are temporarily locked so that you won’t lose any important changes.
+  </p>
+</div>
+`;
+
+exports[`StatusNotification ot-connection-error when the entity label is "entry" matches snapshot 1`] = `
+<div
+  className="entity-editor__notification"
+>
+  <p>
+    It appears that you aren’t connected to internet at the moment. The fields are temporarily locked so that you won’t lose any important changes.
+  </p>
+</div>
+`;

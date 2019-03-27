@@ -76,9 +76,8 @@ exports[`EntrySidebar/TranslationWidgetDropdown when a locale has more than one 
 
 exports[`EntrySidebar/TranslationWidgetDropdown when both locales have errors should match snapshot 1`] = `
 <div>
-  <TranslationWidgetDropdownValidationError />
   <Select
-    hasError={true}
+    hasError={false}
     id="optionSelect"
     isDisabled={false}
     onChange={[Function]}
