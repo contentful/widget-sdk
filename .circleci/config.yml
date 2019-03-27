@@ -102,6 +102,9 @@ jobs:
             echo "$(curl -sSL https://contentful-lab-assets.s3.amazonaws.com/estivador.sum)" | sha512sum -c
             ./estivador docker-ecr-login
             ./estivador put-image
+      - run:
+          name: Trigger jenkins E2E tests
+          command: bin/trigger-jenkins
 
   deploy-micro-backends:
     machine:
@@ -122,13 +125,6 @@ jobs:
             -e AWS_SECRET_ACCESS_KEY="$MICRO_BACKENDS_AWS_SECRET_ACCESS_KEY" \
             micro-backends-deployment \
             ./node_modules/.bin/micro-backends "micro-backends" "rev-$CIRCLE_SHA1"
-
-  trigger-jenkins:
-    docker:
-      - image: node:8
-    steps:
-      - checkout
-      - run: bin/trigger-jenkins
 
   lint:
     docker:
@@ -193,6 +189,10 @@ workflows:
           region: "us-east-1"
           path: "/app/output/files/staging"
           bucket: "cf-staging-static-cdnorigin"
+          post-steps:
+            - run:
+                name: Trigger Jenkins Staging Dependent Tests
+                command: bin/trigger-jenkins-dependent
           requires:
             - build-ci-image
       - deploy-assets/to-s3:
@@ -208,9 +208,6 @@ workflows:
       - push-image-to-docker-repo:
           requires:
             - build-ci-image
-      - trigger-jenkins:
-          requires:
-            - push-image-to-docker-repo
       - cypress/run:
           name: cypress-run
           executor: cypress/base-8

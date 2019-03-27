@@ -1,0 +1,28 @@
+#!/bin/bash
+# This script triggers a build of the Dependent Tests on Staging/Preview environment on Jenkins.
+set -ex
+
+echo "--------------------------------------"
+echo "| Jenkins trigger script in CircleCI |"
+echo "--------------------------------------"
+echo ""
+
+# Trigger Jenkins Job for dependent tests
+echo "Trigger Jenkins Job for dependent tests for ${CIRCLE_BRANCH}."
+
+AUTH="cf-ci:$JENKINS_PASSWORD"
+CAUSE="Triggered+by+Circle+after+Staging+deploy"
+QUERY="token=$JENKINS_TOKEN&ui_version=$CIRCLE_SHA1&upstream=user_interface&cause=$CAUSE"
+URL="https://jenkins.contentful.org/job/user-interface-dependent/buildWithParameters?$QUERY"
+CURL="curl -X POST -i -u '$AUTH' --header '$JENKINS_CRUMB' --url '$URL'"
+
+echo $CURL
+eval $CURL
+
+# trigger cross-browser job for master only
+if [[ "$CIRCLE_BRANCH" = "master" ]]; then
+   curl -i -X POST \
+   -u "$AUTH" \
+   --header "$JENKINS_CRUMB" \
+   --url "https://jenkins.contentful.org/job/cross-browser-job/buildWithParameters?$QUERY"
+fi
