@@ -78,6 +78,7 @@ jobs:
       - run:
           name: Build CI image
           command: |
+            mkdir output
             docker-compose build production
       - run:
           name: Push image to our docker repo
