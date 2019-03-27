@@ -4,9 +4,6 @@
  *
  */
 import { isEqual } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
-
-const $q = getModule('$q');
 
 /**
  * @ngdoc method
@@ -39,6 +36,7 @@ export default function create(doc, fieldId, localeCode) {
   const valueProperty = doc
     .valuePropertyAt(path)
     .filter(value => !isEqual(value, lastSetValue))
+    .onValue(value => (lastSetValue = value))
     .toProperty(getValue);
 
   /**
@@ -96,7 +94,7 @@ export default function create(doc, fieldId, localeCode) {
     lastSetValue = value;
     return doc.setValueAt(path, value).catch(error => {
       lastSetValue = getValue();
-      return $q.reject(error);
+      return Promise.reject(error);
     });
   }
 
