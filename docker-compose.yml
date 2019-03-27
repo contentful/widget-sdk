@@ -11,16 +11,16 @@ services:
         - SSH_KEY
     volumes:
       - /app/node_modules
-      - ./output:/app/output
       - .:/app
     ports:
       - "3001:3001"
 
-  build:
-    image: contentful/user_interface-build
+  generate-assets:
+    image: contentful/user_interface-built
+    container_name: user_interface-built-assets
     build:
       context: .
-      target: build
+      target: built
       args:
         - CIRCLE_SHA1
         - CIRCLE_BRANCH

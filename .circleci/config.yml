@@ -78,8 +78,13 @@ jobs:
       - run:
           name: Build CI image
           command: |
-            mkdir output
+            # build prod image
             docker-compose build production
+            # create a container from the "built" target
+            # this is so that we can copy the output folder from it
+            docker-compose up --no-start generate-assets
+            docker cp user_interface-built-assets:app/output .
+            ls -la ./output
       - run:
           name: Push image to our docker repo
           command: |

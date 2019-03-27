@@ -23,7 +23,7 @@ COPY ./ ./
 
 #--
 
-FROM base as build
+FROM base as built
 
 RUN NODE_ENV=production node --max_old_space_size=4096 ./node_modules/.bin/gulp build
 
@@ -42,7 +42,7 @@ ARG CF_VERSION
 # File layout
 # output/files/${env}/app
 # output/files/${env}/archive/${version}/index-compiled.html
-COPY --from=build /app/output/files /app
+COPY --from=built /app/output/files /app
 
 # Make a folder under /app/{env}/archive/ called "live" and
 # put /app/{env}/archive/{hash of the commit that was built}/index-compiled.html there
