@@ -1,7 +1,10 @@
+import React from 'react';
 import { registerFactory, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as stringUtils from 'utils/StringUtils.es6';
 import { isValidResourceId } from 'data/utils.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
+import DuplicateContentTypeDialog from './Dialogs/DuplicateContentTypeDialog.es6';
 
 export default function register() {
   /**
@@ -11,14 +14,7 @@ export default function register() {
   registerFactory('contentTypeEditor/metadataDialog', [
     '$rootScope',
     'modalDialog',
-    'command',
-    ($rootScope, modalDialog, Command) => {
-      return {
-        openCreateDialog: openCreateDialog,
-        openEditDialog: openEditDialog,
-        openDuplicateDialog: openDuplicateDialog
-      };
-
+    ($rootScope, modalDialog) => {
       /**
        * @ngdoc method
        * @name contentTypeEditor/metadataDialog#openCreateDialog
@@ -53,37 +49,22 @@ export default function register() {
         });
       }
 
-      function openDuplicateDialog(contentType, duplicate, contentTypeIds) {
-        const scope = prepareScope({
-          description: contentType.data.description,
-          isNew: true,
-          contentTypeIds: contentTypeIds,
-          namePlaceholder: 'Duplicate of "' + contentType.data.name + '"'
-        });
-
-        scope.originalName = contentType.data.name;
-        scope.duplicate = Command.create(() => {
-          const d = scope.dialog;
-          const form = d.formController;
-
-          if (scope.contentTypeMetadata.name && scope.contentTypeMetadata.id) {
-            return duplicate(scope.contentTypeMetadata).then(
-              _.bind(d.confirm, d),
-              _.bind(d.cancel, d)
-            );
-          } else {
-            form.showErrors = true;
-          }
-        });
-
-        return modalDialog.open({
-          template: 'duplicate_content_type_dialog',
-          noBackgroundClose: true,
-          scope: scope,
-          ignoreEnter: true,
-          noNewScope: true
-        }).promise;
-      }
+      const openDuplicateDialog = async (contentType, duplicate, contentTypeIdsPromise) => {
+        const contentTypeIds = await contentTypeIdsPromise;
+        // every time open modal with clean state
+        const modalKey = new Date().getTime();
+        return ModalLauncher.open(props => (
+          <DuplicateContentTypeDialog
+            key={modalKey}
+            isShown={props.isShown}
+            originalName={contentType.data.name}
+            originalDescription={contentType.data.description}
+            existingContentTypeIds={contentTypeIds}
+            onClose={props.onClose}
+            onDuplicate={duplicate}
+          />
+        ));
+      };
 
       function openDialog(params) {
         const scope = prepareScope(params);
@@ -113,6 +94,12 @@ export default function register() {
           contentTypeIds: params.contentTypeIds
         });
       }
+
+      return {
+        openCreateDialog,
+        openEditDialog,
+        openDuplicateDialog
+      };
     }
   ]);
 

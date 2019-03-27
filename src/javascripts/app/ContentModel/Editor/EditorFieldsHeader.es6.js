@@ -65,6 +65,7 @@ export default function EditorFieldsHeader(props) {
               <DropdownList className={styles.dropdownContainer}>
                 <DropdownListItem
                   onClick={() => {
+                    setOpenActions(false);
                     props.duplicate.execute();
                   }}
                   testId="duplicate-content-type">
@@ -72,6 +73,7 @@ export default function EditorFieldsHeader(props) {
                 </DropdownListItem>
                 <DropdownListItem
                   onClick={() => {
+                    setOpenActions(false);
                     props.delete.execute();
                   }}
                   testId="delete-content-type">

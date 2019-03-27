@@ -74,31 +74,4 @@ describe('contentTypeEditor/metadataDialog', () => {
       expect(newMetadata.id).toEqual('newName');
     });
   });
-
-  describe('#openDuplicateDialog()', () => {
-    it('duplicates a provided content type', function() {
-      const duplicate = sinon.stub().resolves();
-      this.metadataDialog.openDuplicateDialog(
-        { data: { name: 'test', description: 'xyz' } },
-        duplicate
-      );
-      this.$apply();
-
-      const nameInput = this.dialogContainer.find('input[name=contentTypeName]');
-      expect(nameInput.attr('placeholder')).toBe('Duplicate of "test"');
-
-      dispatchOnChange(nameInput[0], 'NEW NAME');
-      this.$apply();
-
-      const submitButton = this.dialogContainer.find('button:contains(Duplicate)');
-      submitButton.trigger('click');
-      this.$apply();
-
-      sinon.assert.called(duplicate);
-      const newMetadata = duplicate.firstCall.args[0];
-      expect(newMetadata.name).toEqual('NEW NAME');
-      expect(newMetadata.id).toEqual('newName');
-      expect(newMetadata.description).toEqual('xyz');
-    });
-  });
 });

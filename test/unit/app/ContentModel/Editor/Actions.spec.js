@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import _ from 'lodash';
 
 describe('app/ContentModel/Editor/Actions.es6', () => {
-  let controller, scope, $q, logger, notification, accessChecker, spaceContext, stubs;
+  let controller, scope, logger, notification, accessChecker, spaceContext, stubs;
   let space, contentType;
 
   beforeEach(function() {
@@ -29,7 +29,6 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
     this.$state = this.$inject('$state');
     this.$state.go = sinon.stub().resolves();
 
-    $q = this.$inject('$q');
     logger = this.$inject('services/logger.es6');
     const ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
     notification = ComponentLibrary.Notification;
@@ -316,86 +315,6 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
       expect(controller.save.isDisabled()).toBe(false);
       scope.contentType.data.fields[0].disabled = true;
       expect(controller.save.isDisabled()).toBe(true);
-    });
-  });
-
-  describe('#duplicate command', () => {
-    function getCreatedCt() {
-      return spaceContext.space.newContentType.returnValues[0];
-    }
-
-    beforeEach(function() {
-      sinon.stub(this.$inject('modalDialog'), 'open').callsFake(params => {
-        if (params.scope && params.scope.duplicate) {
-          _.extend(params.scope.contentTypeMetadata, { name: 'test', id: 'test' });
-          const confirm = sinon.spy();
-          params.scope.dialog = {
-            confirm: confirm,
-            cancel: sinon.spy(),
-            formController: { $valid: true }
-          };
-          return {
-            promise: params.scope.duplicate.execute().then(() => confirm.firstCall.args[0])
-          };
-        }
-
-        if (params.title === 'Duplicated content type') {
-          return { promise: $q.resolve() };
-        }
-      });
-
-      sinon.stub(spaceContext.space, 'newContentType').callsFake(data => {
-        const ct = { data: { sys: { id: 'ct-id' } }, name: 'ct-name' };
-        _.extend(ct.data, data);
-        ct.getId = () => 'ct-id';
-        ct.save = sinon.stub().resolves(ct);
-        ct.publish = sinon.stub().resolves(ct);
-        return ct;
-      });
-
-      scope.editorInterface = { sys: {}, controls: [] };
-      spaceContext.cma.updateEditorInterface = sinon.stub().resolves();
-    });
-
-    it('creates new content types type with a provided name', () =>
-      controller.duplicate.execute().then(() => {
-        sinon.assert.calledOnce(spaceContext.space.newContentType);
-        expect(spaceContext.space.newContentType.firstCall.args[0].name).toBe('test');
-      }));
-
-    it('saves a duplicate with the same field IDs and display field', () => {
-      contentType.data.displayField = 'field-id-2-disp';
-      contentType.data.fields = [{ id: 'field-id-1' }, { id: 'field-id-2-disp' }];
-
-      return controller.duplicate.execute().then(() => {
-        const ct = getCreatedCt();
-        sinon.assert.calledOnce(ct.save);
-        expect(typeof ct.data.displayField).toBe('string');
-        expect(ct.data.displayField).toBe(contentType.data.displayField);
-        expect(ct.data.displayField).toBe(ct.data.fields[1].id);
-        expect(ct.data.fields[0].id).toBe(contentType.data.fields[0].id);
-        expect(ct.data.fields[1].id).toBe(contentType.data.fields[1].id);
-      });
-    });
-
-    it('publishes content type duplicate', () =>
-      controller.duplicate.execute().then(() => {
-        sinon.assert.calledOnce(getCreatedCt().publish);
-      }));
-
-    it('synchronizes controls in the new EI', () => {
-      contentType.data.fields = [{ id: 'xyz' }, { id: 'boom' }];
-      scope.editorInterface.controls = [
-        { fieldId: 'xyz', widgetId: 'margarita-making-widget' },
-        { fieldId: 'boom', widgetId: 'some-other-widget' }
-      ];
-
-      return controller.duplicate.execute().then(() => {
-        sinon.assert.calledOnce(spaceContext.cma.updateEditorInterface);
-        const ei = spaceContext.cma.updateEditorInterface.firstCall.args[0];
-        expect(ei.controls[0].widgetId).toBe('margarita-making-widget');
-        expect(ei.controls[1].widgetId).toBe('some-other-widget');
-      });
     });
   });
 

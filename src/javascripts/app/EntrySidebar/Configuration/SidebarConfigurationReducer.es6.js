@@ -1,13 +1,4 @@
-import produce from 'immer';
-
-function createImmerReducer(handlers) {
-  return (state, action) =>
-    produce(state, draft => {
-      if (handlers.hasOwnProperty(action.type)) {
-        return handlers[action.type](draft, action);
-      }
-    });
-}
+import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
 
 /* Actions */
 const SELECT_SIDEBAR_TYPE = 'sidebar/SELECT_SIDEBAR_TYPE';

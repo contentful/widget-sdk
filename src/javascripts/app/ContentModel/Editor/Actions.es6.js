@@ -308,11 +308,21 @@ export default function create($scope, contentTypeIds) {
    * @type {Command}
    */
   controller.duplicate = Command.create(
-    () =>
-      metadataDialog
-        .openDuplicateDialog($scope.contentType, createDuplicate, contentTypeIds)
-        .then(askAboutRedirection)
-        .then(notify.duplicateSuccess),
+    async () => {
+      const duplicatedContentType = await metadataDialog.openDuplicateDialog(
+        $scope.contentType,
+        createDuplicate,
+        contentTypeIds
+      );
+
+      if (!duplicatedContentType) {
+        return;
+      }
+
+      await askAboutRedirection(duplicatedContentType);
+
+      notify.duplicateSuccess();
+    },
     {
       disabled: function() {
         const isNew = $scope.context.isNew;
@@ -327,12 +337,12 @@ export default function create($scope, contentTypeIds) {
     }
   );
 
-  function createDuplicate(metadata) {
+  function createDuplicate({ contentTypeId, name, description }) {
     const data = $scope.contentType.data;
     const duplicate = spaceContext.space.newContentType({
-      sys: { type: 'ContentType', id: metadata.id },
-      name: metadata.name,
-      description: metadata.description || '',
+      sys: { type: 'ContentType', id: contentTypeId },
+      name: name,
+      description: description || '',
       fields: cloneDeep(data.fields),
       displayField: data.displayField
     });
@@ -343,7 +353,7 @@ export default function create($scope, contentTypeIds) {
         id: 'default',
         type: 'EditorInterface',
         version: 1,
-        contentType: { sys: { id: metadata.id } }
+        contentType: { sys: { id: contentTypeId } }
       }
     };
 
