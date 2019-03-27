@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry.es6';
 import { InlineReferenceCard, DropdownListItem } from '@contentful/forma-36-react-components';
 
 import RequestStatus from '../shared/RequestStatus.es6';
@@ -9,11 +8,9 @@ import FetchEntity from '../shared/FetchEntity/index.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import { INLINES } from '@contentful/rich-text-types';
 
-// TODO: Add slideIn functionality to WidgetAPI.
-const slideInNavigator = getModule('navigation/SlideInNavigator');
-
 class EmbeddedEntryInline extends React.Component {
   static propTypes = {
+    widgetAPI: PropTypes.object.isRequired,
     isSelected: PropTypes.bool.isRequired,
     attributes: PropTypes.object.isRequired,
     editor: PropTypes.object.isRequired,
@@ -22,10 +19,7 @@ class EmbeddedEntryInline extends React.Component {
   };
 
   handleEditClick = entry => {
-    slideInNavigator.goToSlideInEntity({
-      id: entry.sys.id,
-      type: 'Entry'
-    });
+    this.props.widgetAPI.navigator.openEntry(entry.sys.id, { slideIn: true });
   };
 
   handleRemoveClick = event => {

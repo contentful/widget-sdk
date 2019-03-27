@@ -1,13 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry.es6';
 import FetchedEntityCard from '../shared/FetchedEntityCard/index.es6';
-
-// TODO: Add slideIn functionality to WidgetAPI.
-const slideInNavigator = getModule('navigation/SlideInNavigator');
 
 class LinkedEntityBlock extends React.Component {
   static propTypes = {
+    widgetAPI: PropTypes.object.isRequired,
     onEntityFetchComplete: PropTypes.func,
     isSelected: PropTypes.bool.isRequired,
     attributes: PropTypes.object.isRequired,
@@ -24,7 +21,8 @@ class LinkedEntityBlock extends React.Component {
   }
 
   handleEditClick = () => {
-    slideInNavigator.goToSlideInEntity(this.getEntitySys());
+    const { type, id } = this.getEntitySys();
+    this.props.widgetAPI.navigator.openEntity(type, id, { slideIn: true });
   };
 
   handleRemoveClick = () => {

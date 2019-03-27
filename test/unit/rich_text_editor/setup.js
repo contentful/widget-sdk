@@ -61,10 +61,6 @@ export const stubAll = async ({ isolatedSystem, angularStubs = {} }) => {
     .withArgs('analytics/Analytics.es6')
     .returns({
       track: sinon.stub()
-    })
-    .withArgs('navigation/SlideInNavigator')
-    .returns({
-      goToSlideInEntity: sinon.stub()
     });
 
   Object.entries(angularStubs).forEach(([name, stub]) => {
