@@ -11,6 +11,7 @@ services:
         - SSH_KEY
     volumes:
       - /app/node_modules
+      - ./output:/app/output
       - .:/app
     ports:
       - "3001:3001"
