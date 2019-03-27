@@ -158,13 +158,6 @@ header.workbench-header
       ng-show="hasNoSearchResults()"
     )
 
-    .advice.advice--row-aligned(ng-show="isEmptyCollection()")
-      .advice__frame.advice__frame--no-margin.advice__frame--align-left
-        header.advice__title.advice__title--normal
-          | The collection is empty
-        p.advice__subtext
-          | You can add entries to collections to better group and organize content.
-
 .workbench-main.x--content(ng-show="showNoEntriesAdvice()")
   react-component(
     name="components/tabs/entry_list/NoEntriesAdvice/index.es6"

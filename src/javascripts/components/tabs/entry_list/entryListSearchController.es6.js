@@ -249,13 +249,7 @@ export default function register() {
       }
 
       function prepareQuery() {
-        return ListQuery.getForEntries(getQueryOptions()).then(query => {
-          const collection = getViewItem('collection');
-          if (collection && Array.isArray(collection.items)) {
-            query['sys.id[in]'] = collection.items.join(',');
-          }
-          return query;
-        });
+        return ListQuery.getForEntries(getQueryOptions());
       }
 
       function refreshEntityCaches() {
