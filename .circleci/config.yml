@@ -57,46 +57,39 @@ orbs:
               path: <<parameters.path>>
               bucket: <<parameters.bucket>>
 
-
 jobs:
-  build-ci-image:
-    machine:
-      docker_layer_caching: true
-    steps:
-      - checkout
-      - run: mkdir ./docker
-      - run:
-          name: Build CI image
-          command: |
-            docker build --file Dockerfile-ci \
-            --tag contentful/user-interface-ci \
-            --build-arg "NPM_TOKEN=${NPM_TOKEN}" \
-            --build-arg "SSH_KEY=${SSH_KEY-$(cat ~/.ssh/id_rsa)}" .
-      - run: bin/docker-run-ci configure-file-dist --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}"
-      - run:
-          name: Save CI image
-          command: |
-            docker save contentful/user-interface-ci | gzip -c > ./docker/user-interface-ci.tar.gz
-      - persist_to_workspace:
-          root: .
-          paths:
-            - docker
-            - output
-
-  push-image-to-docker-repo:
+  build-and-push-image:
     machine:
       docker_layer_caching: true
     environment:
-      DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
       DOCKER_IMAGE: contentful/user_interface
+      DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
     steps:
-      - attach_workspace:
-          at: ~/workspace
       - checkout
-      - run: cp -r ~/workspace/output ./output
-      - run: docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${CIRCLE_SHA1}" .
       - run:
-          name: Push image to our docker repo
+          name: Install docker-compose
+          command: |
+            sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+      - run:
+          name: Setup environment variables
+          command: |
+             echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
+      - run:
+          name: Build production image
+          command: |
+            docker-compose build production
+      - run:
+          name: Build assets image
+          command: |
+            # create a container from the "built" target
+            # this is so that we can copy the output folder from it
+            # This is extremely fast as all layers used by it are already
+            # cached by building the production image earlier
+            docker-compose up --no-start generate-assets
+            docker cp user_interface-built-assets:app/output .
+      - run:
+          name: Push production image to our docker repo
           command: |
             curl -fsSLO https://contentful-lab-assets.s3.amazonaws.com/estivador && chmod +x estivador
             echo "$(curl -sSL https://contentful-lab-assets.s3.amazonaws.com/estivador.sum)" | sha512sum -c
@@ -105,6 +98,10 @@ jobs:
       - run:
           name: Trigger jenkins E2E tests
           command: bin/trigger-jenkins
+      - persist_to_workspace:
+          root: .
+          paths:
+            - output
 
   deploy-micro-backends:
     machine:
@@ -169,10 +166,17 @@ jobs:
 workflows:
   build:
     jobs:
-      - build-ci-image
+      - build-and-push-image
       - lint
       - run-jest-tests
       - run-karma-tests
+      - deploy-micro-backends
+      - cypress/run:
+          name: cypress-run
+          executor: cypress/base-8
+          pre-steps:
+            - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
+          store_artifacts: true
       - deploy-assets/to-s3:
           name: deploy-assets-to-preview
           access_key_id: "${AWS_S3_PREVIEW_ACCESS_KEY_ID}"
@@ -181,7 +185,7 @@ workflows:
           path: "/app/output/files/preview"
           bucket: "cf-preview-static-cdnorigin"
           requires:
-            - build-ci-image
+            - build-and-push-image
       - deploy-assets/to-s3:
           name: deploy-assets-to-staging
           access_key_id: "${AWS_S3_STAGING_ACCESS_KEY_ID}"
@@ -194,7 +198,7 @@ workflows:
                 name: Trigger Jenkins Staging Dependent Tests
                 command: bin/trigger-jenkins-dependent
           requires:
-            - build-ci-image
+            - build-and-push-image
       - deploy-assets/to-s3:
           name: deploy-assets-to-prod
           access_key_id: "${AWS_S3_PRODUCTION_ACCESS_KEY_ID}"
@@ -203,17 +207,7 @@ workflows:
           path: "/app/output/files/production"
           bucket: "static.cdnorigin.contentful.com"
           requires:
-            - build-ci-image
-      - deploy-micro-backends
-      - push-image-to-docker-repo:
-          requires:
-            - build-ci-image
-      - cypress/run:
-          name: cypress-run
-          executor: cypress/base-8
-          pre-steps:
-            - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
-          store_artifacts: true
+            - build-and-push-image
 
 notify:
   webhooks:

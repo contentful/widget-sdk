@@ -1,0 +1,40 @@
+version: '2.3'
+
+services:
+  base:
+    image: contentful/user_interface-base
+    build:
+      context: .
+      target: base
+      args:
+        - NPM_TOKEN
+        - SSH_KEY
+    volumes:
+      - /app/node_modules
+      - .:/app
+    ports:
+      - "3001:3001"
+
+  generate-assets:
+    image: contentful/user_interface-built
+    container_name: user_interface-built-assets
+    build:
+      context: .
+      target: built
+      args:
+        - NPM_TOKEN
+        - SSH_KEY
+        - CIRCLE_SHA1
+        - CIRCLE_BRANCH
+
+  production:
+    image: ${DOCKER_IMAGE-user_interface-local-prod}
+    build:
+      context: .
+      target: production
+      args:
+        - NPM_TOKEN
+        - SSH_KEY
+        - CIRCLE_SHA1
+        - CIRCLE_BRANCH
+        - CF_VERSION=${CIRCLE_SHA1}
