@@ -155,8 +155,14 @@ jobs:
       - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
       - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
       - run: npm ci
-      - run: NODE_ENV=production npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
+      - run:
+          name: Run Jest tests
+          command: NODE_ENV=production npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
+          environment:
+            JEST_JUNIT_OUTPUT: "reports/junit/jest-test-results.xml"
       - run: npm run codecov
+      - store_test_results:
+          path: reports/junit
 
   run-karma-tests:
     docker:
