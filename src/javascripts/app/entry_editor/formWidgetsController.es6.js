@@ -16,13 +16,20 @@ export default function register() {
     '$scope',
     'controls',
     ($scope, controls) => {
-      const { validator } = $scope.editorContext;
-
       // Visibility can change when:
       // - "Show disabled fields" option is used.
+      // - The single/multi-locale mode is toggled.
+      // - The focused locale is changed (from the single-locale mode).
       // - Validation errors change (we always show fields with errors).
-      $scope.$watch(() => $scope.preferences.showDisabledFields, update);
-      K.onValueScope($scope, validator.errors$, update);
+      $scope.$watchGroup(
+        [
+          'preferences.showDisabledFields',
+          'localeData.isSingleLocaleModeOn',
+          'localeData.focusedLocale'
+        ],
+        update
+      );
+      K.onValueScope($scope, $scope.editorContext.validator.errors$, update);
 
       function update() {
         $scope.widgets = controls.map(markVisibility).filter(shouldRender);
@@ -33,12 +40,26 @@ export default function register() {
       function markVisibility(widget) {
         const isNotDisabled = !widget.field.disabled;
         const showingDisabled = $scope.preferences.showDisabledFields;
-        const hasErrors = validator.hasFieldError(widget.field.id);
+        const { focusedLocale, defaultLocale, isSingleLocaleModeOn } = $scope.localeData;
 
-        return {
-          ...widget,
-          isVisible: isNotDisabled || showingDisabled || hasErrors
-        };
+        let isVisible;
+        if (isSingleLocaleModeOn) {
+          const hasFieldLocaleErrors = $scope.editorContext.validator.hasFieldLocaleError(
+            widget.field.id,
+            focusedLocale.internal_code
+          );
+          const isNonDefaultLocale = focusedLocale.internal_code !== defaultLocale.internal_code;
+
+          isVisible =
+            isNonDefaultLocale && !widget.field.localized
+              ? hasFieldLocaleErrors
+              : isNotDisabled || showingDisabled || hasFieldLocaleErrors;
+        } else {
+          const hasFieldErrors = $scope.editorContext.validator.hasFieldError(widget.field.id);
+          isVisible = isNotDisabled || showingDisabled || hasFieldErrors;
+        }
+
+        return { ...widget, isVisible };
       }
 
       // Determines if the widget should be rendered, either visible

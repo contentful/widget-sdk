@@ -58,6 +58,7 @@ describe('Extension SDK', () => {
         },
         parameters: {}
       },
+      localeData: {},
       entityInfo: {
         contentType: {
           fields: [field]

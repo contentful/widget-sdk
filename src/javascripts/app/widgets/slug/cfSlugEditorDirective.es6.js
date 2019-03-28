@@ -118,6 +118,9 @@ export default function register() {
           if (errors) {
             scope.hasErrors = errors.length > 0;
             scope.hasUniqueValidationError = errors.some(error => error && error.name === 'unique');
+          } else {
+            scope.hasErrors = false;
+            scope.hasUniqueValidationError = false;
           }
         });
 

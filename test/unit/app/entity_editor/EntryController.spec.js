@@ -10,6 +10,9 @@ describe('Entry Editor Controller', function() {
       $provide.value('app/EntrySidebar/EntitySidebarBridge.es6', () => {
         return {};
       });
+      $provide.value('app/entity_editor/setLocaleData.es6', () => {
+        return {};
+      });
       $provide.value('app/entity_editor/LoadEventTracker.es6', {
         bootstrapEntryEditorLoadEvents: () => {}
       });
