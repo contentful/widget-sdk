@@ -23,7 +23,8 @@ const styles = {
     width: tokens.spacingM
   }),
   listItem: css({
-    display: 'flex'
+    display: 'flex',
+    alignItems: 'center'
   }),
   dragHandle: css({})
 };
@@ -108,12 +109,13 @@ export default class ViewCustomizer extends React.Component {
                       {provided => (
                         <div ref={provided.innerRef} {...provided.draggableProps}>
                           <DropdownListItem
-                            className={styles.listItem}
                             onClick={() => this.props.removeDisplayField(fieldInfo)}>
-                            <span className={styles.dragHandle} {...provided.dragHandleProps}>
-                              <Icon icon="Drag" color="muted" />
+                            <span className={styles.listItem}>
+                              <span className={styles.dragHandle} {...provided.dragHandleProps}>
+                                <Icon icon="Drag" color="muted" />
+                              </span>
+                              <span>{fieldInfo.name}</span>
                             </span>
-                            {fieldInfo.name}
                           </DropdownListItem>
                         </div>
                       )}
