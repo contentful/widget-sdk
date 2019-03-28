@@ -183,7 +183,7 @@ describe('utils/StringUtils.es6', () => {
 
     it('should return items joined with and if more than one item given', function() {
       const { twoItems, threeItems, fourItems } = getItems();
-      expect(utils.joinWithAnd(twoItems)).toBe('two, and items');
+      expect(utils.joinWithAnd(twoItems)).toBe('two and items');
       expect(utils.joinWithAnd(threeItems)).toBe('definitely, three, and items');
       expect(utils.joinWithAnd(fourItems)).toBe('absolutely, 100%, four, and items');
     });

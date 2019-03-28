@@ -153,10 +153,10 @@ describe('WizardUtils', function() {
       const tooltip2 = render(WizardUtils.unavailabilityTooltipNode(data.planUnavailableMultiple2));
 
       expect(tooltip1.text()).toBe(
-        'You are currently using more than the Small 4 space allows by 5 locales.Delete resources, and migrate users from the Super Awesome Translator role before changing to this space type.'
+        'You are currently using more than the Small 4 space allows by 5 locales.Delete resources and migrate users from the Super Awesome Translator role before changing to this space type.'
       );
       expect(tooltip2.text()).toBe(
-        'You are currently using more than the Small 5 space allows by 4 locales.Migrate users from the Super Awesome Translator role, and delete resources before changing to this space type.'
+        'You are currently using more than the Small 5 space allows by 4 locales.Migrate users from the Super Awesome Translator role and delete resources before changing to this space type.'
       );
     });
   });

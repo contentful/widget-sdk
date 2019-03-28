@@ -254,6 +254,10 @@ export function joinWithAnd(items, oxford = true) {
     return null;
   }
 
+  if (items.length === 2) {
+    return `${items[0]} and ${items[1]}`;
+  }
+
   return items.reduce((memo, item, i) => {
     if (i === 0) {
       return item;
