@@ -30,7 +30,19 @@ const prod = process.env.NODE_ENV === 'production';
 
 const config = parseConfig(resolve('./karma.conf.js'));
 
-if (singleRun || prod) {
+if (singleRun && prod) {
+  config.set({
+    reporters: ['dots', 'junit'],
+    singleRun: true,
+    junitReporter: {
+      outputDir: process.env.JUNIT_REPORT_PATH,
+      outputFile: process.env.JUNIT_REPORT_NAME,
+      useBrowserName: false
+    }
+  });
+}
+
+if (singleRun && !prod) {
   // we don't show a detailed report for single runs
   config.set({
     reporters: ['dots'],
@@ -76,7 +88,7 @@ if (prod) {
 }
 
 function runTests() {
-  var server = new Server(config, exitCode => {
+  const server = new Server(config, exitCode => {
     console.log(`Karma has exited with ${exitCode}`);
     process.exit(exitCode);
   });

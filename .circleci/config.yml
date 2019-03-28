@@ -174,8 +174,19 @@ jobs:
       - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
       - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
       - run: npm ci
-      - run: NODE_ENV=production node --max_old_space_size=3072 ./node_modules/.bin/gulp build
-      - run: NODE_ENV=production npm run test:once
+      - run:
+          name: Build test artifacts
+          command: NODE_ENV=production node --max_old_space_size=3072 ./node_modules/.bin/gulp build
+      - run:
+          name: Run Karma tests
+          command: |
+            mkdir -p ./reports/junit
+            NODE_ENV=production npm run test:once
+          environment:
+            JUNIT_REPORT_PATH: ./reports/junit
+            JUNIT_REPORT_NAME: karma-test-results.xml
+      - store_test_results:
+          path: reports/junit
 
 workflows:
   build:

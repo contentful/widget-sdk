@@ -183,6 +183,7 @@
     "karma-chrome-launcher": "2.2.0",
     "karma-cli": "2.0.0",
     "karma-jasmine": "1.1.2",
+    "karma-junit-reporter": "^1.2.0",
     "karma-mocha-reporter": "2.2.5",
     "karma-nested-reporter": "0.1.6",
     "karma-nyan-reporter": "0.2.5",
