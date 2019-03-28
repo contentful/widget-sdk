@@ -58,7 +58,7 @@ export default function WidgetsConfiguration({ state, dispatch }) {
       <div className="sidebar-configuration__container f36-margin-top--l f36-margin-bottom--m">
         {state.sidebarType === SidebarType.default && (
           <div className="sidebar-configuration__main-column">
-            <DefaultSidebar />
+            <DefaultSidebar items={state.items} />
           </div>
         )}
         {state.sidebarType === SidebarType.custom && (
