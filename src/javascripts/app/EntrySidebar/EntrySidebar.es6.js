@@ -77,9 +77,7 @@ export default class EntrySidebar extends Component {
     }
 
     const props =
-      widgetId === SidebarWidgetTypes.TRANSLATION
-        ? { ...defaultProps, localeData }
-        : defaultProps;
+      widgetId === SidebarWidgetTypes.TRANSLATION ? { ...defaultProps, localeData } : defaultProps;
 
     return <Component {...props} key={`${widgetNamespace},${widgetId}`} />;
   };
@@ -151,7 +149,7 @@ export default class EntrySidebar extends Component {
     return (
       <React.Fragment>
         <EntryInfoPanelContainer emitter={this.props.emitter} />
-        <div className="entity-sidebar">
+        <div className="entity-sidebar entity-editor-sidebar">
           {this.renderWidgets(sidebarItems)}
           {this.renderLegacyExtensions(legacyExtensions)}
         </div>
