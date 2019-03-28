@@ -2,7 +2,7 @@ version: '2.3'
 
 services:
   base:
-    image: conntentful/user_interface-base
+    image: contentful/user_interface-base
     build:
       context: .
       target: base
