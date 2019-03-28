@@ -4,7 +4,14 @@ import isHotKey from 'is-hotkey';
 import cn from 'classnames';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
+import {
+  SkeletonContainer,
+  SkeletonBodyText,
+  Spinner,
+  Paragraph,
+  SectionHeading,
+  Icon
+} from '@contentful/forma-36-react-components';
 import _ from 'lodash';
 
 const styles = {
@@ -14,12 +21,16 @@ const styles = {
     boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(0, 0, 0, 0.3)',
     border: `1px solid ${tokens.colorElementDark}`,
     borderRadius: '3px',
+    fontFamily: tokens.fontStackPrimary,
+    width: '500px',
+    overflowY: 'auto'
+  }),
+  commandPanelList: css({
+    display: 'block',
     listStyle: 'none',
     margin: 0,
     padding: 0,
-    fontFamily: tokens.fontStackPrimary,
-    width: '320px',
-    maxHeight: '207px',
+    height: '200px',
     overflowY: 'auto'
   }),
   item: css({
@@ -41,11 +52,35 @@ const styles = {
     lineHeight: tokens.lineHeightDefault,
     color: tokens.colorTextDark
   }),
+  icon: css({
+    marginRight: 10
+  }),
   isSelected: css({
     background: tokens.colorElementLight
   }),
   skeletonContainer: css({
-    padding: tokens.spacingM
+    padding: tokens.spacingM,
+    height: 200,
+    margin: 0
+  }),
+  button: css({
+    textAlign: 'left',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center'
+  }),
+  navBar: css({
+    display: 'flex',
+    bottom: 0,
+    background: tokens.colorElementLightest,
+    padding: `${tokens.spacingS} ${tokens.spacingXs}`,
+    width: '100%'
+  }),
+  loader: css({
+    marginLeft: 'auto'
   })
 };
 
@@ -82,7 +117,8 @@ class CommandPanelItem extends React.Component {
         ref={ref => {
           this.listItemRef = ref;
         }}>
-        <button type="button" onClick={item.callback && item.callback}>
+        <button type="button" className={styles.button} onClick={item.callback && item.callback}>
+          {item.icon && <Icon className={styles.icon} icon={item.icon} color="secondary" />}
           {item.label}
         </button>
       </li>
@@ -97,14 +133,17 @@ export class CommandPanel extends React.Component {
     className: PropTypes.string,
     children: PropTypes.node,
     testId: PropTypes.string,
-    isLoading: PropTypes.bool
+    isLoading: PropTypes.bool,
+    isUpdating: PropTypes.bool,
+    breadcrumb: PropTypes.string
   };
   static defaultProps = {
     className: undefined,
     searchString: '',
     items: [],
     testId: 'cf-ui-command-panel',
-    isLoading: true
+    isLoading: true,
+    isUpdating: false
   };
 
   state = {
@@ -200,12 +239,31 @@ export class CommandPanel extends React.Component {
       });
   }
 
-  renderSkeleton = () => (
-    <div className={styles.skeletonContainer}>
-      <SkeletonContainer>
-        <SkeletonBodyText numberOfLines={6} />
-      </SkeletonContainer>
+  renderNavigationBar = () => (
+    <div className={styles.navBar}>
+      <SectionHeading>
+        {this.props.breadcrumb ? `Add ${this.props.breadcrumb}` : 'Richtext Commands'}
+      </SectionHeading>
     </div>
+  );
+
+  renderStatusBar = () => (
+    <div className={styles.navBar}>
+      <Paragraph>Use arrow keys to navigate : close with esc</Paragraph>
+      {this.props.isUpdating && (
+        <Paragraph className={styles.loader}>
+          loading <Spinner size="small" />
+        </Paragraph>
+      )}
+    </div>
+  );
+
+  renderSkeleton = () => (
+    <li className={styles.skeletonContainer}>
+      <SkeletonContainer>
+        <SkeletonBodyText numberOfLines={7} />
+      </SkeletonContainer>
+    </li>
   );
 
   render() {
@@ -214,9 +272,13 @@ export class CommandPanel extends React.Component {
     const classNames = cn(styles.commandPanel, className);
 
     return (
-      <ul className={classNames} data-test-id={testId}>
-        {isLoading ? this.renderSkeleton() : this.renderGroups()}
-      </ul>
+      <div className={classNames}>
+        {this.renderNavigationBar()}
+        <ul className={styles.commandPanelList} data-test-id={testId}>
+          {isLoading ? this.renderSkeleton() : this.renderGroups()}
+        </ul>
+        {this.renderStatusBar()}
+      </div>
     );
   }
 }

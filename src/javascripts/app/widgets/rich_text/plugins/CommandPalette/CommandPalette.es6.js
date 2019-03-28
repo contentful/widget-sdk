@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import * as logger from 'services/logger.es6';
 import { richTextCommandsFeatureFlag } from './CommandPaletteService.es6';
 import { hasCommandPaletteDecoration, getCommandText } from './Util.es6';
 import CommandPanel from './CommandPanel/index.es6';
@@ -14,6 +15,10 @@ class CommandPalette extends React.PureComponent {
   state = {
     isFeatureEnabled: false
   };
+
+  componentDidCatch(error, info) {
+    logger.logError('Unexpected rich text commands error.', { error, info });
+  }
 
   componentDidMount = async () => {
     const isFeatureEnabled = await richTextCommandsFeatureFlag.isEnabled();

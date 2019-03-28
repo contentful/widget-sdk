@@ -15,6 +15,7 @@ import {
 } from '../CommandPaletteService.es6';
 import { removeCommand } from '../Util.es6';
 import CommandPanelMenu from './CommandPanelMenu.es6';
+import { InViewport } from '@contentful/forma-36-react-components';
 
 const entityCreator = getModule('entityCreator');
 
@@ -33,23 +34,73 @@ class CommandPalette extends React.PureComponent {
   state = {
     anchorPosition: DEFAULT_POSITION,
     items: [],
-    isLoading: true
+    isLoading: true,
+    panelPosition: 'bottom'
   };
 
-  constructor(props) {
-    super(props);
-  }
+  paletteDimensions = {
+    height: 300,
+    width: 300
+  };
 
   componentDidMount = async () => {
     this.createInitialCommands();
     this.updatePanelPosition();
-    document.addEventListener('scroll', this.handleScroll, true);
-    document.addEventListener('keydown', this.handleKeyboard, true);
+    this.paletteDimensions = {
+      height: this.palette.getBoundingClientRect().height,
+      width: this.palette.getBoundingClientRect().width
+    };
+    this.bindEventListeners();
   };
 
   componentWillUnmount() {
+    this.removeEventListeners();
+  }
+
+  bindEventListeners = () => {
+    document.addEventListener('scroll', this.handleScroll, true);
+    document.addEventListener('keydown', this.handleKeyboard, true);
+    document.addEventListener('mousedown', this.handleOutsideClick, true);
+  };
+
+  removeEventListeners = () => {
     document.removeEventListener('scroll', this.handleScroll, true);
     document.removeEventListener('keydown', this.handleKeyboard, true);
+    document.removeEventListener('mousedown', this.handleOutsideClick, true);
+  };
+
+  handleOutsideClick = event => {
+    if (!this.palette.contains(event.target)) {
+      this.setState({
+        isClosed: true
+      });
+    }
+  };
+
+  requestUpdate = _.throttle(
+    () => {
+      this.setState({ isUpdating: true });
+      this.createCommands(
+        this.state.currentCommand.contentType,
+        this.state.currentCommand.type,
+        this.props.command
+      );
+    },
+    1000,
+    { leading: false, trailing: true }
+  );
+
+  componentDidUpdate() {
+    if (this.state.currentCommand && this.state.currentCommand.command !== this.props.command) {
+      this.requestUpdate();
+    } else {
+      this.requestUpdate.cancel();
+    }
+    if (!this.state.isClosed) {
+      this.bindEventListeners();
+    } else {
+      this.removeEventListeners();
+    }
   }
 
   createCommand = (label, contentType, entry, type) => ({
@@ -58,10 +109,10 @@ class CommandPalette extends React.PureComponent {
     callback: () => {
       removeCommand(this.props.editor, this.props.command);
       switch (type) {
-        case 'inline':
+        case INLINES.EMBEDDED_ENTRY:
           insertInline(this.props.editor, entry.sys.id, false);
           break;
-        case 'asset':
+        case BLOCKS.EMBEDDED_ASSET:
           insertBlock(this.props.editor, BLOCKS.EMBEDDED_ASSET, entry, false);
           break;
         default:
@@ -91,14 +142,18 @@ class CommandPalette extends React.PureComponent {
 
   createContentTypeActions = (field, contentType) =>
     [
-      createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ENTRY, false, () =>
-        this.createCommands(contentType)
-      ),
-      createActionIfAllowed(field, contentType, INLINES.EMBEDDED_ENTRY, false, () =>
-        this.createCommands(contentType, 'inline')
-      ),
+      createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ENTRY, false, () => {
+        this.setState({ breadcrumb: contentType.name, isLoading: true });
+        this.clearCommand();
+        this.createCommands(contentType);
+      }),
+      createActionIfAllowed(field, contentType, INLINES.EMBEDDED_ENTRY, false, () => {
+        this.setState({ breadcrumb: contentType.name, isLoading: true });
+        this.clearCommand();
+        this.createCommands(contentType, INLINES.EMBEDDED_ENTRY);
+      }),
       createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ENTRY, true, () =>
-        this.onCreateAndEmbedEntry(contentType.sys.id, true)
+        this.onCreateAndEmbedEntry(contentType.sys.id)
       ),
       createActionIfAllowed(field, contentType, INLINES.EMBEDDED_ENTRY, true, () =>
         this.onCreateAndEmbedEntry(contentType.sys.id, true)
@@ -107,11 +162,13 @@ class CommandPalette extends React.PureComponent {
 
   createAssetActions = (field, contentType) =>
     [
+      createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ASSET, false, () => {
+        this.setState({ breadcrumb: 'Asset', isLoading: true });
+        this.clearCommand();
+        this.createCommands(null, BLOCKS.EMBEDDED_ASSET);
+      }),
       createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ASSET, true, () =>
         this.onCreateAndEmbedEntry(null)
-      ),
-      createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ASSET, false, () =>
-        this.createAssetEntityCommands()
       )
     ].filter(action => action);
 
@@ -121,24 +178,27 @@ class CommandPalette extends React.PureComponent {
     }
   };
 
-  createCommands = async (contentType, type) => {
-    this.setState({ isLoading: true });
-    const allEntries = await fetchEntries(this.props.widgetAPI, contentType);
+  clearCommand = () => {
+    if (this.props.command !== '/') {
+      removeCommand(this.props.editor, this.props.command, 0);
+    }
+  };
+
+  createCommands = async (contentType, type, command) => {
+    this.setState({ isUpdating: true });
+    const allEntries = !contentType
+      ? await fetchAssets(this.props.widgetAPI)
+      : await fetchEntries(this.props.widgetAPI, contentType, command);
     this.setState({
+      currentCommand: {
+        contentType,
+        type,
+        command
+      },
+      isUpdating: false,
       isLoading: false,
       items: allEntries.map(entry =>
         this.createCommand(entry.displayTitle, entry.contentTypeName, entry.entry, type)
-      )
-    });
-  };
-
-  createAssetEntityCommands = async () => {
-    this.setState({ isLoading: true });
-    const allAssets = await fetchAssets(this.props.widgetAPI);
-    this.setState({
-      isLoading: false,
-      items: allAssets.map(entry =>
-        this.createCommand(entry.displayTitle, entry.contentTypeName, entry.entry, 'asset')
       )
     });
   };
@@ -170,12 +230,16 @@ class CommandPalette extends React.PureComponent {
     }
 
     if (isHotKey('esc', e)) {
-      this.removeCommand();
-      this.props.onClose();
+      this.setState({
+        isClosed: true
+      });
     }
   };
 
   render() {
+    if (this.state.isClosed) {
+      return null;
+    }
     const root = window.document.body;
     return ReactDOM.createPortal(
       <div
@@ -184,18 +248,27 @@ class CommandPalette extends React.PureComponent {
           this.palette = ref;
         }}
         style={{
-          backgroundColor: '#fff',
           position: 'absolute',
           outline: 'none',
           minWidth: 200,
           top: this.state.anchorPosition.top,
           left: this.state.anchorPosition.left
         }}>
-        <CommandPanelMenu
-          searchString={this.props.command === '/' ? '' : this.props.command}
-          items={this.state.items}
-          isLoading={this.state.isLoading}
-        />
+        <InViewport
+          onOverflowBottom={() => {
+            this.setState({ panelPosition: 'top' }, this.updatePanelPosition);
+          }}
+          onOverflowTop={() => {
+            this.setState({ panelPosition: 'bottom' }, this.updatePanelPosition);
+          }}>
+          <CommandPanelMenu
+            searchString={this.props.command === '/' ? '' : this.props.command}
+            items={this.state.items}
+            isLoading={this.state.isLoading}
+            isUpdating={this.state.isUpdating}
+            breadcrumb={this.state.breadcrumb}
+          />
+        </InViewport>
       </div>,
       root
     );
@@ -207,11 +280,16 @@ class CommandPalette extends React.PureComponent {
       .getRangeAt(0)
       .getBoundingClientRect();
 
+    const anchorPosition =
+      this.state.panelPosition === 'bottom'
+        ? {
+            top: anchorRect.bottom,
+            left: anchorRect.left
+          }
+        : { top: anchorRect.top - this.paletteDimensions.height, left: anchorRect.left };
+
     this.setState({
-      anchorPosition: {
-        top: anchorRect.bottom,
-        left: anchorRect.left
-      }
+      anchorPosition
     });
   }
 }

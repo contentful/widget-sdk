@@ -9,7 +9,10 @@ const RICH_TEXT_COMMANDS_CONTEXT_MARK_TYPE = 'richTextCommandsContext';
  */
 export const getCommandText = editor => {
   // matches the character / literally (case sensitive)
-  const COMMAND_REGEX = /\/(\S*)$/;
+  if (!editor.value.startText) {
+    return null;
+  }
+  const COMMAND_REGEX = /\/(.*)$/;
   const startOffset = editor.value.selection.start.offset;
   const textBefore = editor.value.startText.text.slice(0, startOffset);
   const result = COMMAND_REGEX.exec(textBefore);
@@ -76,10 +79,10 @@ export const hasCommandPaletteDecoration = editor => {
   return Boolean(commandPaletteDecoration);
 };
 
-export const removeCommand = (editor, command) => {
+export const removeCommand = (editor, command, anchorOffset = 1) => {
   editor.removeTextByKey(
     editor.value.selection.start.key,
-    editor.value.selection.start.offset - (command.length + 1),
-    command.length + 1
+    editor.value.selection.start.offset - (command.length + anchorOffset),
+    command.length + anchorOffset
   );
 };

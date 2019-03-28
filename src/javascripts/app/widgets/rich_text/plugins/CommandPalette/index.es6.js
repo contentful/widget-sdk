@@ -4,7 +4,7 @@ import { getDecorationOrDefault, hasCommandPaletteMarkType } from './Util.es6';
 import CommandPalette from './CommandPalette.es6';
 import CommandMark from './CommandMark.es6';
 
-export const CommandPalettePlugin = widgetAPI => ({
+export const CommandPalettePlugin = ({ richTextAPI }) => ({
   decorateNode: (_node, editor, next) => {
     const others = next();
 
@@ -35,10 +35,7 @@ export const CommandPalettePlugin = widgetAPI => ({
           anchor={editor.state.commandMark}
           value={editor.value}
           editor={editor}
-          widgetAPI={widgetAPI}
-          onClose={() => {
-            this.setState({ currentCommand: null });
-          }}
+          widgetAPI={richTextAPI.widgetAPI}
         />
       </React.Fragment>
     );
