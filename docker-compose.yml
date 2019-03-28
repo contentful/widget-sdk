@@ -22,6 +22,8 @@ services:
       context: .
       target: built
       args:
+        - NPM_TOKEN
+        - SSH_KEY
         - CIRCLE_SHA1
         - CIRCLE_BRANCH
 
