@@ -68,10 +68,24 @@ export default function register() {
 
       $scope.addDisplayField = field => {
         $scope.context.view.displayedFieldIds.push(field.id);
+        $scope.$applyAsync();
       };
 
       $scope.removeDisplayField = field => {
         _.remove($scope.context.view.displayedFieldIds, id => id === field.id);
+        $scope.$applyAsync();
+      };
+
+      $scope.toggleContentType = () => {
+        $scope.context.view.contentTypeHidden = !$scope.context.view.contentTypeHidden;
+        $scope.$applyAsync();
+      };
+
+      $scope.updateFieldOrder = fields => {
+        $scope.displayedFields = fields;
+        const fieldIds = $scope.displayedFields.map(field => field.id);
+        $scope.context.view.displayedFieldIds = fieldIds;
+        $scope.$applyAsync();
       };
     }
   ]);

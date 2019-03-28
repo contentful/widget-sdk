@@ -1,54 +1,10 @@
-.view-customizer
-  position: absolute
-  right: 22px
-  top: 58px
+/* will be removed after migrating content page to react */
+.status-header-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .column-lists
-    overflow-y: auto
-    max-height: 500px
-  h3
-    margin-top: 10px
-    margin-left: 10px
-    color: $gray-medium
-  ul
-    margin-top: 10px
-    margin-bottom: 10px
-  hr
-    margin: 15px 0px
-    background-color: $gray-light
-
-.displayed-fields
-  li
-    overflow: hidden
-    cursor: default
-    user-select: none
-    &:hover
-      .close-button
-        display: block
-    &[data-field-id]
-      cursor: move
-  p, .close-button
-    float: left
-  p, a
-    line-height: 20px
-  p
-    clear: left
-  .dragging
-    text-shadow: lighten($colors.dark-gray, 0.6) 1px 1px 5px
-    &:hover
-      .close-button
-        display: none
-  .close-button
-    display: none
-    margin-left: 5px
-    &:after
-      font-size: 16px
-
-.customizable
-  margin-left: 5px
-.non-customizable
-  color: $gray
-
-.hidden-fields
-  a
-    cursor: pointer
+.view-customizer {
+  height: 18px;
+}

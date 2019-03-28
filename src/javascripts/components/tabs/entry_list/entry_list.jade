@@ -36,10 +36,9 @@ header.workbench-header
       name="components/RecordsResourceUsage"
       props="usageProps"
       watch-depth="reference")
-
-    .view-customizer(
-      ng-show="hasPage()"
-      cf-view-customizer)
+    
+      
+    
     .table(ng-show="hasPage()")
       .table__head
         table
@@ -79,7 +78,16 @@ header.workbench-header
                 span(ng-show="fieldIsSortable(field)")
                   i.fa.fa-caret-up(ng-show="context.view.order.direction === 'ascending' && isOrderField(field)")
                   i.fa.fa-caret-down(ng-show="context.view.order.direction === 'descending' && isOrderField(field)")
-              th.x--small-cell(aria-label="cell-status") Status
+              th.x--small-cell(aria-label="cell-status") 
+                .status-header-cell
+                  span
+                    | Status
+                  .view-customizer
+                    react-component(
+                      ng-show="hasPage()"
+                      name="components/tabs/entry_list/ViewCustomizer/index.es6"
+                      props="{ hasHiddenFields: hasHiddenFields, displayedFields: displayedFields, hiddenFields: hiddenFields, removeDisplayField: removeDisplayField, addDisplayField: addDisplayField, toggleContentType: toggleContentType, isContentTypeHidden: !context.view.contentTypeId && context.view.contentTypeHidden, updateFieldOrder: updateFieldOrder}"
+                    )
 
       .table__bulk-actions(ng-hide="selection.isEmpty()")
         .workbench-actions(ng-controller="EntryListActionsController")
