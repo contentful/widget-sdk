@@ -6,10 +6,10 @@ ENV NPM_CONFIG_LOGLEVEL=warn CYPRESS_INSTALL_BINARY=0 NODE_ENV=development BLUEB
 
 RUN apk add --update --no-cache openssh build-base python bash git && rm -rf /var/cache/apk/*
 
-ARG NPM_TOKEN
-RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-
 COPY package.json package-lock.json ./
+
+ARG NPM_TOKEN
+RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
 
 ARG SSH_KEY
 RUN mkdir -p ~/.ssh && chmod 0700 ~/.ssh && \
