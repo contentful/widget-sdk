@@ -27,6 +27,7 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import Members from './Members.es6';
 import Spaces from './Spaces.es6';
 import LinkSections from './LinkSections.es6';
+import Placeholder from '../common/Placeholder.es6';
 
 const styles = {
   home: css({
@@ -73,7 +74,7 @@ export default connect(
       ];
 
     return {
-      isLoading: isLoading || !project,
+      isLoading: isLoading,
       project,
       orgId: getOrgId(state)
     };
@@ -167,6 +168,14 @@ export default connect(
   onReady();
   if (isLoading) {
     return <FetcherLoading message="Loading project..." />;
+  }
+  if (!project) {
+    return (
+      <Placeholder
+        text="The project you were looking for could not be found. Sorry about that."
+        title="Missing project"
+      />
+    );
   }
 
   const [name, setName] = useState(project.name);
