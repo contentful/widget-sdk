@@ -187,14 +187,6 @@ describe('utils/StringUtils.es6', () => {
       expect(utils.joinWithAnd(threeItems)).toBe('definitely, three, and items');
       expect(utils.joinWithAnd(fourItems)).toBe('absolutely, 100%, four, and items');
     });
-
-    it('should allow disabling oxford commas', function() {
-      const { twoItems, threeItems, fourItems } = getItems();
-
-      expect(utils.joinWithAnd(twoItems, false)).toBe('two and items');
-      expect(utils.joinWithAnd(threeItems, false)).toBe('definitely, three and items');
-      expect(utils.joinWithAnd(fourItems, false)).toBe('absolutely, 100%, four and items');
-    });
   });
 
   describe('#article', () => {

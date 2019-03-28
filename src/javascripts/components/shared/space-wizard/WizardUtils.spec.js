@@ -44,14 +44,14 @@ describe('WizardUtils', function() {
     });
 
     it('returns the tooltip text for a plan with various roles', function() {
-      testRolesTooltip(3, ['Editor', 'Translator'], 'Admin, Editor and Translator roles');
+      testRolesTooltip(3, ['Editor', 'Translator'], 'Admin, Editor, and Translator roles');
     });
 
     it('returns the tooltip text for a plan with multiple translator roles', function() {
       testRolesTooltip(
         5,
         ['Editor', 'Translator', 'Translator 2', 'Translator3'],
-        'Admin, Editor and 3 Translator roles'
+        'Admin, Editor, and 3 Translator roles'
       );
     });
 
@@ -59,7 +59,7 @@ describe('WizardUtils', function() {
       testRolesTooltip(
         10,
         ['Editor', 'Translator'],
-        'Admin, Editor and Translator roles and an additional 7 custom roles'
+        'Admin, Editor, and Translator roles and an additional 7 custom roles'
       );
     });
   });
