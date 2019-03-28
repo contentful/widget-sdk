@@ -86,7 +86,7 @@ jobs:
             # this is so that we can copy the output folder from it
             # This is extremely fast as all layers used by it are already
             # cached by building the production image earlier
-            docker-compose up --no-start generate-assets
+            docker-compose up --no-start --build generate-assets
             docker cp user_interface-built-assets:app/output .
       - run:
           name: Push production image to our docker repo
