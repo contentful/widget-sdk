@@ -72,84 +72,84 @@ export default class ViewCustomizer extends React.Component {
     const fields = this.state.optimisticFields || this.props.displayedFields;
     const hasHiddenFields = this.props.hiddenFields.length > 0;
     return (
-      <Tooltip content="Select visible columns" place="left">
-        <Dropdown
-          className={styles.root}
-          isOpen={this.state.isOpen}
-          onClose={() => this.setState({ isOpen: false })}
-          position="bottom-left"
-          toggleElement={
+      <Dropdown
+        className={styles.root}
+        isOpen={this.state.isOpen}
+        onClose={() => this.setState({ isOpen: false })}
+        position="bottom-left"
+        toggleElement={
+          <Tooltip content="Select visible columns" place="left">
             <IconButton
               buttonType="muted"
               iconProps={{ icon: 'Settings' }}
               label="Select visible columns"
               onClick={() => this.setState({ isOpen: !this.state.isOpen })}
             />
-          }>
-          <DropdownList>
-            <DropdownListItem isTitle>Displayed Columns</DropdownListItem>
-            <DropdownListItem isDisabled>Title</DropdownListItem>
-            {!this.props.isContentTypeHidden && (
-              <DropdownListItem onClick={() => this.props.toggleContentType()}>
-                Content Type
-              </DropdownListItem>
-            )}
-            <DragDropContext onDragEnd={this.onDragEnd}>
-              <Droppable droppableId="droppable">
-                {provided => (
-                  <div ref={provided.innerRef}>
-                    {fields.map((fieldInfo, index) => (
-                      <Draggable
-                        key={fieldInfo.id}
-                        draggableId={fieldInfo.id}
-                        index={index}
-                        disableInteractiveElementBlocking={true}>
-                        {provided => (
-                          <div ref={provided.innerRef} {...provided.draggableProps}>
-                            <DropdownListItem
-                              className={styles.listItem}
-                              onClick={() => this.props.removeDisplayField(fieldInfo)}>
-                              <span className={styles.dragHandle} {...provided.dragHandleProps}>
-                                <Icon icon="Drag" color="muted" />
-                              </span>
-                              {fieldInfo.name}
-                            </DropdownListItem>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
+          </Tooltip>
+        }>
+        <DropdownList>
+          <DropdownListItem isTitle>Displayed Columns</DropdownListItem>
+          <DropdownListItem isDisabled>Title</DropdownListItem>
+          {!this.props.isContentTypeHidden && (
+            <DropdownListItem onClick={() => this.props.toggleContentType()}>
+              Content Type
+            </DropdownListItem>
+          )}
+          <DragDropContext onDragEnd={this.onDragEnd}>
+            <Droppable droppableId="droppable">
+              {provided => (
+                <div ref={provided.innerRef}>
+                  {fields.map((fieldInfo, index) => (
+                    <Draggable
+                      key={fieldInfo.id}
+                      draggableId={fieldInfo.id}
+                      index={index}
+                      disableInteractiveElementBlocking={true}>
+                      {provided => (
+                        <div ref={provided.innerRef} {...provided.draggableProps}>
+                          <DropdownListItem
+                            className={styles.listItem}
+                            onClick={() => this.props.removeDisplayField(fieldInfo)}>
+                            <span className={styles.dragHandle} {...provided.dragHandleProps}>
+                              <Icon icon="Drag" color="muted" />
+                            </span>
+                            {fieldInfo.name}
+                          </DropdownListItem>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
 
-            <DropdownListItem isDisabled>Status</DropdownListItem>
-            {hasHiddenFields && (
-              <React.Fragment>
-                <DropdownListItem isTitle>Available columns</DropdownListItem>
-                {this.props.isContentTypeHidden && (
-                  <DropdownListItem onClick={() => this.props.toggleContentType()}>
-                    Content Type
-                  </DropdownListItem>
-                )}
-                {this.props.hiddenFields.map(
-                  fieldInfo =>
-                    fieldInfo.type !== 'Object' &&
-                    !fieldInfo.disabled && (
-                      <DropdownListItem
-                        key={fieldInfo.id}
-                        onClick={() => {
-                          this.props.addDisplayField(fieldInfo);
-                        }}>
-                        {fieldInfo.name}
-                      </DropdownListItem>
-                    )
-                )}
-              </React.Fragment>
-            )}
-          </DropdownList>
-        </Dropdown>
-      </Tooltip>
+          <DropdownListItem isDisabled>Status</DropdownListItem>
+          {hasHiddenFields && (
+            <React.Fragment>
+              <DropdownListItem isTitle>Available columns</DropdownListItem>
+              {this.props.isContentTypeHidden && (
+                <DropdownListItem onClick={() => this.props.toggleContentType()}>
+                  Content Type
+                </DropdownListItem>
+              )}
+              {this.props.hiddenFields.map(
+                fieldInfo =>
+                  fieldInfo.type !== 'Object' &&
+                  !fieldInfo.disabled && (
+                    <DropdownListItem
+                      key={fieldInfo.id}
+                      onClick={() => {
+                        this.props.addDisplayField(fieldInfo);
+                      }}>
+                      {fieldInfo.name}
+                    </DropdownListItem>
+                  )
+              )}
+            </React.Fragment>
+          )}
+        </DropdownList>
+      </Dropdown>
     );
   }
 }
