@@ -76,17 +76,20 @@ jobs:
           command: |
              echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
       - run:
-          name: Build CI image
+          name: Build production image
           command: |
-            # build prod image
             docker-compose build production
+      - run:
+          name: Build assets image
+          command: |
             # create a container from the "built" target
             # this is so that we can copy the output folder from it
+            # This is extremely fast as all layers used by it are already
+            # cached by building the production image earlier
             docker-compose up --no-start generate-assets
             docker cp user_interface-built-assets:app/output .
-            ls -la ./output
       - run:
-          name: Push image to our docker repo
+          name: Push production image to our docker repo
           command: |
             curl -fsSLO https://contentful-lab-assets.s3.amazonaws.com/estivador && chmod +x estivador
             echo "$(curl -sSL https://contentful-lab-assets.s3.amazonaws.com/estivador.sum)" | sha512sum -c
