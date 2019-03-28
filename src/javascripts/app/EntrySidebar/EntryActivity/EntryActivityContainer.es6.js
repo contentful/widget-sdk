@@ -56,13 +56,23 @@ export default class EntryActivityContainer extends Component {
 
   async componentDidMount() {
     const isFeatureEnabled = await getCurrentVariation(ENTRY_ACTIVITY);
+    let activityFeed;
 
     this.setState({ isFeatureEnabled });
     if (!isFeatureEnabled) {
       return;
     }
 
-    this.entryfeed = await this.setUpFeed();
+    try {
+      this.entryfeed = await this.setUpFeed();
+      activityFeed = await this.entryfeed.getAll();
+    } catch (error) {
+      this.setState({
+        fetchingStatus: FETCHING_STATUS.FAILURE
+      });
+      logger.logException(error);
+      return;
+    }
 
     this.props.emitter.on(SidebarEventTypes.UPDATED_DOCUMENT_STATE, this.onUpdatePublicationWidget);
     this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.ACTIVITY);
@@ -71,23 +81,21 @@ export default class EntryActivityContainer extends Component {
       this.setState({ activityFeed: [...data.new, ...this.state.activityFeed] });
     });
 
-    try {
-      const activityFeed = await this.entryfeed.getAll();
+    this.setState({
+      activityFeed,
+      fetchingStatus: FETCHING_STATUS.SUCCESS
+    });
 
-      this.setState({
-        activityFeed,
-        fetchingStatus: FETCHING_STATUS.SUCCESS
-      });
-
-      if (activityFeed.length === 0) {
-        await this.addCreatedEntryActivity();
-      }
-    } catch (error) {
-      this.setState({
-        fetchingStatus: FETCHING_STATUS.FAILURE
-      });
-      logger.logException(error);
+    if (activityFeed.length === 0) {
+      await this.addCreatedEntryActivity();
     }
+  }
+
+  componentWillUnmount() {
+    this.props.emitter.off(
+      SidebarEventTypes.UPDATED_DOCUMENT_STATE,
+      this.onUpdatePublicationWidget
+    );
   }
 
   addCreatedEntryActivity = async () => {

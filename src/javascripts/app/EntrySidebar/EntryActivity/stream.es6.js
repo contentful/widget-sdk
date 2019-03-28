@@ -19,7 +19,7 @@ export async function feed(feedId) {
   });
 
   if (!res.ok) {
-    return;
+    throw new Error(`Could not get stream token for ${feedId}`);
   }
 
   const userToken = await res.text();

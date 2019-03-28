@@ -116,7 +116,8 @@ export default function register() {
 
         // Convenience properties not provided by the extensions API but
         // easily emulated.
-        value$: fieldLocale.doc.value$
+        value$: fieldLocale.doc.value$,
+        setActive: fieldLocale.setActive
       };
 
       /**

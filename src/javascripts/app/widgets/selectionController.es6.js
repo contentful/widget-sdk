@@ -19,7 +19,7 @@ export function create(widgetApi, scope, options) {
 
   scope.clear = function clear(e) {
     e.preventDefault();
-    field.removeValue();
+    field.removeValue().then(() => field.setActive(false));
   };
 
   const removeChangeListener = field.onValueChanged(value => {
