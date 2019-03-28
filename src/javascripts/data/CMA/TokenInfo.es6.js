@@ -38,8 +38,14 @@ export default function makeFetchWithAuth(auth) {
           throw newError();
         }
       },
-      response => {
-        logError('Could not obtain /token info', response);
+      error => {
+        // true if the request was rejected in prefligh. Auth token is invalid
+        const isPreflightError = error.status === -1;
+
+        if (!isPreflightError) {
+          logError('Could not obtain /token info', error);
+        }
+
         throw newError();
       }
     );
