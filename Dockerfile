@@ -25,7 +25,7 @@ COPY ./ ./
 
 FROM base as built
 
-RUN NODE_ENV=production node --max_old_space_size=4096 ./node_modules/.bin/gulp build-app-ci
+RUN NODE_ENV=production node --max_old_space_size=4096 ./node_modules/.bin/gulp build-app
 
 ARG CIRCLE_BRANCH
 ARG CIRCLE_SHA1

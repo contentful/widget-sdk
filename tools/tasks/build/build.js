@@ -23,34 +23,38 @@ const gulp = require('gulp');
  * - `rev.manifest()` is a transformer that creates a json file that
  *   maps each non-fingerprinted file to its fingerprinted version.
  */
+// COMPAT: not used on ci.
 gulp.task(
   'build',
   gulp.series(
     'clean',
     gulp.parallel(
-      gulp.series('js', 'templates', gulp.parallel('build/js', 'build/chunks')),
+      gulp.series(
+        gulp.parallel('js', 'templates'),
+        gulp.parallel(gulp.parallel('build/js/app', 'build/js/test'), 'build/chunks')
+      ),
       'build/styles'
     )
   )
 );
 
 gulp.task(
-  'build-test-ci',
+  'build-test',
   gulp.series(
     'clean',
     gulp.parallel(
-      gulp.series('js', 'templates', gulp.parallel('build/js/test', 'build/chunks')),
+      gulp.series(gulp.parallel('js', 'templates'), gulp.parallel('build/js/test', 'build/chunks')),
       'build/styles'
     )
   )
 );
 
 gulp.task(
-  'build-app-ci',
+  'build-app',
   gulp.series(
     'clean',
     gulp.parallel(
-      gulp.series('js', 'templates', gulp.parallel('build/js/app', 'build/chunks')),
+      gulp.series(gulp.parallel('js', 'templates'), gulp.parallel('build/js/app', 'build/chunks')),
       'build/styles'
     )
   )

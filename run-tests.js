@@ -53,7 +53,7 @@ if (singleRun && !prod) {
 if (prod) {
   // we need to extend config, because we run it in CI environment
   // in order to make it work, you need to build the application for production
-  // $ NODE_ENV=production gulp build
+  // $ NODE_ENV=production gulp build-app
   // you can run it locally as well, just execute the command above first
   config.set({
     // We only care about the test bundle, not the main application, plus the chunks (like echarts)
