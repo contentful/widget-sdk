@@ -27,7 +27,8 @@ module.exports = (resolve, rootDir, srcRoots, coverageDirectory) => {
     },
     moduleFileExtensions: ['web.js', 'js', 'json', 'web.jsx', 'jsx', 'node', 'mjs', 'es6.js'],
     coverageReporters: ['lcov', 'clover'],
-    snapshotSerializers: ['jest-emotion']
+    snapshotSerializers: ['jest-emotion'],
+    reporters: ['default', 'jest-junit']
   };
   if (rootDir) {
     config.rootDir = rootDir;
