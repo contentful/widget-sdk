@@ -40,7 +40,7 @@ export default function withTracking(Component) {
       onAction: () => {}
     };
 
-    actionsTrackingHandler(name, { origin, ...data }) {
+    handleTracking(name, { origin, ...data }) {
       const actionName = getActionName(name, data);
 
       if (isKnownRichTextEditorTrackingAction(actionName)) {
@@ -56,7 +56,6 @@ export default function withTracking(Component) {
             originalActionData: { origin, ...data }
           }
         });
-        return;
       }
     }
 
@@ -94,7 +93,7 @@ export default function withTracking(Component) {
         <Component
           {...this.props}
           onAction={(...args) => {
-            this.actionsTrackingHandler(...args);
+            this.handleTracking(...args);
             this.props.onAction(...args);
           }}
         />

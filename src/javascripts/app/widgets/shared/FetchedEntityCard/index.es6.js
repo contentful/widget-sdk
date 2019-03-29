@@ -101,14 +101,14 @@ class FetchedEntityCard extends React.Component {
                   this.props.entityType === 'Entry' ? WrappedReferenceCard : WrappedAssetCard;
                 const cardProps = {
                   ...fetchEntityResult,
-                  readOnly: readOnly,
-                  isLoading: isLoading,
-                  className: className,
-                  selected: selected,
-                  disabled: disabled,
-                  onEdit: onEdit,
-                  onClick: onClick,
-                  onRemove: onRemove
+                  readOnly,
+                  isLoading,
+                  className,
+                  selected,
+                  disabled,
+                  onEdit: () => onEdit(fetchEntityResult),
+                  onClick: () => onClick(fetchEntityResult),
+                  onRemove: () => onRemove(fetchEntityResult)
                 };
                 return buildCard(cardProps, DefaultCardWrapperComponent);
               }

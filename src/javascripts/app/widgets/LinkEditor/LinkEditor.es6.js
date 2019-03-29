@@ -9,6 +9,7 @@ import {
   default as CreateEntryButton,
   Style as CreateEntryStyle
 } from 'components/CreateEntryButton/index.es6';
+import { entityToLink } from './Util.es6';
 
 const TYPES = {
   ENTRY: 'Entry',
@@ -24,7 +25,8 @@ export default class LinkEditor extends React.Component {
     value: PropTypes.arrayOf(CfPropTypes.Link).isRequired,
     isDisabled: PropTypes.bool,
     onChange: PropTypes.func,
-    onAction: PropTypes.func,
+    onLinkEntities: PropTypes.func,
+    onUnlinkEntities: PropTypes.func,
     onLinkFetchComplete: PropTypes.func,
     type: PropTypes.oneOf(Object.values(TYPES)).isRequired,
     style: PropTypes.oneOf(['link', 'card']).isRequired,
@@ -32,15 +34,16 @@ export default class LinkEditor extends React.Component {
     contentTypes: PropTypes.arrayOf(PropTypes.object),
     actions: PropTypes.shape({
       selectEntities: PropTypes.func,
-      editLinkTarget: PropTypes.func,
+      editLinkedEntity: PropTypes.func,
       createEntity: PropTypes.func
-    })
+    }).isRequired
   };
 
   static defaultProps = {
     value: [],
     onChange: noop,
-    onAction: noop,
+    onLinkEntities: noop,
+    onUnlinkEntities: noop,
     onLinkFetchComplete: noop,
     isSingle: false
   };
@@ -68,7 +71,7 @@ export default class LinkEditor extends React.Component {
 
   renderCard(link, index) {
     const { isDisabled, onLinkFetchComplete } = this.props;
-    const handleEditLink = () => this.handleEditLink(link);
+    const handleEditLink = fetchEntityResult => this.handleEditLink(fetchEntityResult.entity);
     const entityType = link.sys.linkType;
     return (
       <FetchedEntityCard
@@ -80,8 +83,10 @@ export default class LinkEditor extends React.Component {
         selected={false}
         onEntityFetchComplete={() => onLinkFetchComplete()}
         onEdit={handleEditLink}
-        onRemove={() => this.handleRemoveLinkAt(index)}
         onClick={handleEditLink}
+        onRemove={fetchEntityResult => {
+          this.handleRemoveLinkAt(index, fetchEntityResult.entity);
+        }}
         className="link-editor__entity-card"
         buildCard={(allProps, RecommendedCardComponent) => {
           const props = { ...allProps };
@@ -113,7 +118,7 @@ export default class LinkEditor extends React.Component {
           />
         </Visible>
         <Visible if={type === TYPES.ASSET}>
-          <TextLink onClick={this.handleCreateAndLink} linkType="primary" icon="Link">
+          <TextLink onClick={() => this.handleCreateAndLink(null)} linkType="primary" icon="Link">
             Create {typeName} and link
           </TextLink>
         </Visible>
@@ -124,16 +129,19 @@ export default class LinkEditor extends React.Component {
     );
   }
 
-  handleEditLink = link => {
-    this.props.actions.editLinkTarget(link);
+  handleEditLink = entity => {
+    this.props.actions.editLinkedEntity(entity);
   };
 
-  handleAddLinks = links => {
+  handleAddLinks = (entities, isNewlyCreatedLinks = false) => {
+    this.props.onLinkEntities(entities, isNewlyCreatedLinks);
+    const links = entities.map(entityToLink);
     const newValue = this.getLinks().concat(links);
     this.props.onChange(newValue);
   };
 
-  handleRemoveLinkAt = index => {
+  handleRemoveLinkAt = (index, entity) => {
+    this.props.onUnlinkEntities([entity]);
     const newValue = this.getLinks().slice();
     newValue.splice(index, 1);
     this.props.onChange(newValue);
@@ -141,17 +149,13 @@ export default class LinkEditor extends React.Component {
 
   handleCreateAndLink = async contentTypeId => {
     const entity = await this.props.actions.createEntity(contentTypeId);
-    const newLink = entityToLink(entity);
-    this.handleAddLinks([newLink]);
-    this.handleEditLink(newLink);
+    if (entity) {
+      this.handleAddLinks([entity], true);
+    }
   };
 
   handleSelectAndLink = async () => {
     const entities = await this.props.actions.selectEntities();
-    this.handleAddLinks(entities.map(entityToLink));
+    this.handleAddLinks(entities);
   };
-}
-
-function entityToLink(entity) {
-  return { sys: { type: 'Link', id: entity.sys.id, linkType: entity.sys.type } };
 }

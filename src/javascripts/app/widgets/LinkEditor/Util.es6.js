@@ -1,5 +1,9 @@
 import { isString, find, filter } from 'lodash';
 
+export function entityToLink(entity) {
+  return { sys: { type: 'Link', id: entity.sys.id, linkType: entity.sys.type } };
+}
+
 export function getAvailableContentTypes(space, field) {
   return space
     .getContentTypes({ order: 'name', limit: 1000 })
