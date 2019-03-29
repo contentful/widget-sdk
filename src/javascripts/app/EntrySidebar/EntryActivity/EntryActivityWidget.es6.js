@@ -72,7 +72,7 @@ const renderDailyActivity = (activity, index, activities) => {
 };
 const className = css({
   maxHeight: '350px',
-  overflow: 'scroll'
+  overflowY: 'auto'
 });
 
 export default function EntryActivityWidget({ activities = [] }) {
