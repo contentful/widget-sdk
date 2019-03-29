@@ -8,7 +8,7 @@ import CommandPanel from './CommandPanel/index.es6';
 class CommandPalette extends React.PureComponent {
   static propTypes = {
     editor: PropTypes.object,
-    widgetAPI: PropTypes.object,
+    richTextAPI: PropTypes.object,
     onClose: PropTypes.func
   };
 
@@ -42,7 +42,7 @@ class CommandPalette extends React.PureComponent {
     return (
       <CommandPanel
         editor={this.props.editor}
-        widgetAPI={this.props.widgetAPI}
+        richTextAPI={this.props.richTextAPI}
         command={getCommandText(this.props.editor)}
       />
     );

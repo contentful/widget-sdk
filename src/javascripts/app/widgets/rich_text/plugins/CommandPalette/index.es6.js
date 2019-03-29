@@ -35,7 +35,7 @@ export const CommandPalettePlugin = ({ richTextAPI }) => ({
           anchor={editor.state.commandMark}
           value={editor.value}
           editor={editor}
-          widgetAPI={richTextAPI.widgetAPI}
+          richTextAPI={richTextAPI}
         />
       </React.Fragment>
     );

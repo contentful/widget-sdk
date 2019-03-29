@@ -8,7 +8,6 @@ import {
   SkeletonContainer,
   SkeletonBodyText,
   Spinner,
-  Paragraph,
   SectionHeading,
   Icon
 } from '@contentful/forma-36-react-components';
@@ -81,6 +80,10 @@ const styles = {
   }),
   loader: css({
     marginLeft: 'auto'
+  }),
+  instruction: css({
+    marginRight: 15,
+    color: tokens.colorTextLight
   })
 };
 
@@ -126,6 +129,8 @@ class CommandPanelItem extends React.Component {
   }
 }
 
+const Instruction = ({ children }) => <span className={styles.instruction}>{children}</span>;
+
 export class CommandPanel extends React.Component {
   static propTypes = {
     items: PropTypes.arrayOf(itemPropType),
@@ -135,7 +140,8 @@ export class CommandPanel extends React.Component {
     testId: PropTypes.string,
     isLoading: PropTypes.bool,
     isUpdating: PropTypes.bool,
-    breadcrumb: PropTypes.string
+    breadcrumb: PropTypes.string,
+    richTextAPI: PropTypes.object
   };
   static defaultProps = {
     className: undefined,
@@ -168,10 +174,12 @@ export class CommandPanel extends React.Component {
   }
 
   componentDidMount() {
+    this.props.richTextAPI.logViewportAction('openRichTextCommandsPalette');
     document.addEventListener('keydown', this.handleKeyboard, true);
   }
 
   componentWillUnmount() {
+    this.props.richTextAPI.logViewportAction('cancelRichTextCommandsPalette');
     document.removeEventListener('keydown', this.handleKeyboard, true);
   }
 
@@ -192,7 +200,7 @@ export class CommandPanel extends React.Component {
 
     if (isHotKey('enter', e)) {
       const selectedItem = this.state.items[this.state.selectedKey];
-      if (selectedItem.callback) selectedItem.callback();
+      if (selectedItem && selectedItem.callback) selectedItem.callback();
     }
   };
 
@@ -249,11 +257,15 @@ export class CommandPanel extends React.Component {
 
   renderStatusBar = () => (
     <div className={styles.navBar}>
-      <Paragraph>Use arrow keys to navigate : close with esc</Paragraph>
+      <span className={styles.instructions}>
+        <Instruction>↑ ↓ to navigate</Instruction>
+        <Instruction>↵ to confirm</Instruction>
+        <Instruction>esc to close</Instruction>
+      </span>
       {this.props.isUpdating && (
-        <Paragraph className={styles.loader}>
+        <span className={styles.loader}>
           loading <Spinner size="small" />
-        </Paragraph>
+        </span>
       )}
     </div>
   );

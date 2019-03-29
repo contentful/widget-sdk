@@ -7,7 +7,8 @@ import PropTypes from 'prop-types';
 export const actionOrigin = {
   TOOLBAR: 'toolbar-icon',
   SHORTCUT: 'shortcut',
-  VIEWPORT: 'viewport-interaction'
+  VIEWPORT: 'viewport-interaction',
+  COMMAND_PALETTE: 'command-palette'
 };
 
 const createActionLogger = (onAction, origin) => (name, data) => {
@@ -26,7 +27,8 @@ export const createRichTextAPI = ({ widgetAPI, onAction }) => {
     widgetAPI,
     logViewportAction: createActionLogger(onAction, actionOrigin.VIEWPORT),
     logShortcutAction: createActionLogger(onAction, actionOrigin.SHORTCUT),
-    logToolbarAction: createActionLogger(onAction, actionOrigin.TOOLBAR)
+    logToolbarAction: createActionLogger(onAction, actionOrigin.TOOLBAR),
+    logCommandPaletteAction: createActionLogger(onAction, actionOrigin.COMMAND_PALETTE)
   };
 };
 

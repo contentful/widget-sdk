@@ -26,9 +26,9 @@ const DEFAULT_POSITION = {
 class CommandPalette extends React.PureComponent {
   static propTypes = {
     editor: PropTypes.object,
-    widgetAPI: PropTypes.object,
     onClose: PropTypes.func,
-    command: PropTypes.string
+    command: PropTypes.string,
+    richTextAPI: PropTypes.object
   };
 
   state = {
@@ -50,7 +50,6 @@ class CommandPalette extends React.PureComponent {
       height: this.palette.getBoundingClientRect().height,
       width: this.palette.getBoundingClientRect().width
     };
-    this.bindEventListeners();
   };
 
   componentWillUnmount() {
@@ -79,12 +78,14 @@ class CommandPalette extends React.PureComponent {
 
   requestUpdate = _.throttle(
     () => {
-      this.setState({ isUpdating: true });
-      this.createCommands(
-        this.state.currentCommand.contentType,
-        this.state.currentCommand.type,
-        this.props.command
-      );
+      if (this.state.currentCommand) {
+        this.setState({ isUpdating: true });
+        this.createCommands(
+          this.state.currentCommand.contentType,
+          this.state.currentCommand.type,
+          this.props.command
+        );
+      }
     },
     1000,
     { leading: false, trailing: true }
@@ -103,6 +104,21 @@ class CommandPalette extends React.PureComponent {
     }
   }
 
+  requestUpdate = _.throttle(
+    () => {
+      if (this.state.currentCommand) {
+        this.setState({ isUpdating: true });
+        this.createCommands(
+          this.state.currentCommand.contentType,
+          this.state.currentCommand.type,
+          this.props.command
+        );
+      }
+    },
+    1000,
+    { leading: false, trailing: true }
+  );
+
   createCommand = (label, contentType, entry, type) => ({
     label: `${label}`,
     contentType,
@@ -111,33 +127,42 @@ class CommandPalette extends React.PureComponent {
       switch (type) {
         case INLINES.EMBEDDED_ENTRY:
           insertInline(this.props.editor, entry.sys.id, false);
+          this.props.richTextAPI.logCommandPaletteAction('insert', {
+            nodeType: INLINES.EMBEDDED_ENTRY
+          });
           break;
         case BLOCKS.EMBEDDED_ASSET:
           insertBlock(this.props.editor, BLOCKS.EMBEDDED_ASSET, entry, false);
+          this.props.richTextAPI.logCommandPaletteAction('insert', {
+            nodeType: BLOCKS.EMBEDDED_ASSET
+          });
           break;
         default:
           insertBlock(this.props.editor, BLOCKS.EMBEDDED_ENTRY, entry, false);
+          this.props.richTextAPI.logCommandPaletteAction('insert', {
+            nodeType: BLOCKS.EMBEDDED_ENTRY
+          });
           break;
       }
     }
   });
 
-  onCreateAndEmbedEntry = async (contentTypeId, inline) => {
+  onCreateAndEmbedEntry = async (contentTypeId, nodeType) => {
     removeCommand(this.props.editor, this.props.command);
     const createEntity = () =>
       contentTypeId !== null ? entityCreator.newEntry(contentTypeId) : entityCreator.newAsset();
     const entity = await createEntity();
     const { id: entityId, type: entityType } = entity.data.sys;
 
-    inline
+    nodeType === INLINES.EMBEDDED_ENTRY
       ? insertInline(this.props.editor, entity.data.sys.id, false)
-      : insertBlock(
-          this.props.editor,
-          contentTypeId ? BLOCKS.EMBEDDED_ENTRY : BLOCKS.EMBEDDED_ASSET,
-          entity.data
-        );
+      : insertBlock(this.props.editor, nodeType, entity.data);
 
-    this.props.widgetAPI.navigator.openEntity(entityType, entityId, { slideIn: true });
+    this.props.richTextAPI.logCommandPaletteAction('insert', {
+      nodeType
+    });
+
+    this.props.richTextAPI.widgetAPI.navigator.openEntity(entityType, entityId, { slideIn: true });
   };
 
   createContentTypeActions = (field, contentType) =>
@@ -153,10 +178,10 @@ class CommandPalette extends React.PureComponent {
         this.createCommands(contentType, INLINES.EMBEDDED_ENTRY);
       }),
       createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ENTRY, true, () =>
-        this.onCreateAndEmbedEntry(contentType.sys.id)
+        this.onCreateAndEmbedEntry(contentType.sys.id, BLOCKS.EMBEDDED_ENTRY)
       ),
       createActionIfAllowed(field, contentType, INLINES.EMBEDDED_ENTRY, true, () =>
-        this.onCreateAndEmbedEntry(contentType.sys.id, true)
+        this.onCreateAndEmbedEntry(contentType.sys.id, INLINES.EMBEDDED_ENTRY)
       )
     ].filter(action => action);
 
@@ -168,7 +193,7 @@ class CommandPalette extends React.PureComponent {
         this.createCommands(null, BLOCKS.EMBEDDED_ASSET);
       }),
       createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ASSET, true, () =>
-        this.onCreateAndEmbedEntry(null)
+        this.onCreateAndEmbedEntry(null, BLOCKS.EMBEDDED_ASSET)
       )
     ].filter(action => action);
 
@@ -187,8 +212,8 @@ class CommandPalette extends React.PureComponent {
   createCommands = async (contentType, type, command) => {
     this.setState({ isUpdating: true });
     const allEntries = !contentType
-      ? await fetchAssets(this.props.widgetAPI)
-      : await fetchEntries(this.props.widgetAPI, contentType, command);
+      ? await fetchAssets(this.props.richTextAPI.widgetAPI)
+      : await fetchEntries(this.props.richTextAPI.widgetAPI, contentType, command);
     this.setState({
       currentCommand: {
         contentType,
@@ -204,8 +229,8 @@ class CommandPalette extends React.PureComponent {
   };
 
   createInitialCommands = async () => {
-    const { widgetAPI } = this.props;
-    const allContentTypes = await fetchContentTypes(widgetAPI);
+    const { richTextAPI } = this.props;
+    const allContentTypes = await fetchContentTypes(richTextAPI.widgetAPI);
     this.setState({
       isLoading: false
     });
@@ -215,10 +240,10 @@ class CommandPalette extends React.PureComponent {
         ...this.state.items,
         ...allContentTypes
           .map(contentType => {
-            return this.createContentTypeActions(widgetAPI.field, contentType);
+            return this.createContentTypeActions(richTextAPI.widgetAPI.field, contentType);
           })
           .reduce((pre, cur) => [...cur, ...pre]),
-        ...this.createAssetActions(widgetAPI.field)
+        ...this.createAssetActions(richTextAPI.widgetAPI.field)
       ]
     });
   };
@@ -267,6 +292,7 @@ class CommandPalette extends React.PureComponent {
             isLoading={this.state.isLoading}
             isUpdating={this.state.isUpdating}
             breadcrumb={this.state.breadcrumb}
+            richTextAPI={this.props.richTextAPI}
           />
         </InViewport>
       </div>,

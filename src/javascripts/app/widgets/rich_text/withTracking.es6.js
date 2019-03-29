@@ -126,7 +126,8 @@ const DIALOGS = [
   'EditHyperlinkDialog',
   'CreateEmbedDialogEmbeddedEntryInline',
   'CreateEmbedDialogEmbeddedEntryBlock',
-  'CreateEmbedDialogEmbeddedAssetBlock'
+  'CreateEmbedDialogEmbeddedAssetBlock',
+  'RichTextCommandsPalette'
 ];
 const DICTIONARY = {
   mark: [...MARKS],
