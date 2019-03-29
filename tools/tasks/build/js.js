@@ -65,5 +65,3 @@ function generateBundleFromFiles(bundlePath, manifestPath, files) {
       .pipe(writeFile())
   );
 }
-
-gulp.task('build/js', gulp.parallel('build/js/app', 'build/js/test'));
