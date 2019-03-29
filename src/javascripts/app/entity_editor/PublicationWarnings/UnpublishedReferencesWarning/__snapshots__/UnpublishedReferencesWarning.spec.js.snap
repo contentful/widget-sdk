@@ -2,6 +2,7 @@
 
 exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders confirmation dialog 1`] = `
 <ModalConfirm
+  allowHeightOverflow={false}
   cancelLabel="Cancel"
   cancelTestId="cf-ui-modal-confirm-cancel-button"
   confirmLabel="Got it, publish anyway"

@@ -66,8 +66,7 @@ class WrappedAssetCard extends React.Component {
           <DropdownListItem isTitle>Actions</DropdownListItem>
           {this.props.onEdit && (
             <DropdownListItem
-              onClick={event => {
-                event.stopPropagation();
+              onClick={() => {
                 this.props.onEdit();
               }}>
               Edit
@@ -83,8 +82,7 @@ class WrappedAssetCard extends React.Component {
           {this.props.onRemove && (
             <DropdownListItem
               isDisabled={this.props.disabled}
-              onClick={event => {
-                event.stopPropagation();
+              onClick={() => {
                 this.props.onRemove();
               }}>
               Remove

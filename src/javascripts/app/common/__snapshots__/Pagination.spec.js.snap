@@ -23,21 +23,25 @@ exports[`Pagination disables the Next and Previous buttons there is loading 1`] 
       width="small"
     >
       <Option
+        testId="cf-ui-select-option"
         value="10"
       >
         10
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="25"
       >
         25
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="50"
       >
         50
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="100"
       >
         100
@@ -110,21 +114,25 @@ exports[`Pagination disables the Next and Previous buttons there is only one avi
       width="small"
     >
       <Option
+        testId="cf-ui-select-option"
         value="10"
       >
         10
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="25"
       >
         25
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="50"
       >
         50
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="100"
       >
         100
@@ -197,21 +205,25 @@ exports[`Pagination disables the Next button if it is the last page 1`] = `
       width="small"
     >
       <Option
+        testId="cf-ui-select-option"
         value="10"
       >
         10
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="25"
       >
         25
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="50"
       >
         50
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="100"
       >
         100
@@ -284,21 +296,25 @@ exports[`Pagination disables the Previous button if it is the first page 1`] = `
       width="small"
     >
       <Option
+        testId="cf-ui-select-option"
         value="10"
       >
         10
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="25"
       >
         25
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="50"
       >
         50
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="100"
       >
         100
@@ -371,21 +387,25 @@ exports[`Pagination enables the Previous and Next buttons if it is not the first
       width="small"
     >
       <Option
+        testId="cf-ui-select-option"
         value="10"
       >
         10
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="25"
       >
         25
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="50"
       >
         50
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="100"
       >
         100

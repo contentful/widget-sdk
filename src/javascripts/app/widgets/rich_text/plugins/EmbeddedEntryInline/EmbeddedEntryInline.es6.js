@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { InlineReferenceCard, DropdownListItem } from '@contentful/forma-36-react-components';
+import {
+  InlineEntryCard,
+  DropdownListItem,
+  DropdownList
+} from '@contentful/forma-36-react-components';
 
 import RequestStatus from '../shared/RequestStatus.es6';
 import FetchEntity from '../shared/FetchEntity/index.es6';
@@ -22,8 +26,7 @@ class EmbeddedEntryInline extends React.Component {
     this.props.widgetAPI.navigator.openEntry(entry.sys.id, { slideIn: true });
   };
 
-  handleRemoveClick = event => {
-    event.stopPropagation();
+  handleRemoveClick = () => {
     const { editor, node } = this.props;
     editor.removeNodeByKey(node.key);
   };
@@ -32,36 +35,36 @@ class EmbeddedEntryInline extends React.Component {
     const { isSelected } = this.props;
 
     return (
-      <InlineReferenceCard testId={INLINES.EMBEDDED_ENTRY} selected={isSelected}>
+      <InlineEntryCard testId={INLINES.EMBEDDED_ENTRY} selected={isSelected}>
         Entity missing or inaccessible
-      </InlineReferenceCard>
+      </InlineEntryCard>
     );
   }
 
   renderNode({ requestStatus, contentTypeName, entity, entityTitle, entityStatus }) {
     const isLoading = requestStatus === RequestStatus.Pending && !entity;
     return (
-      <InlineReferenceCard
+      <InlineEntryCard
         testId={INLINES.EMBEDDED_ENTRY}
         selected={this.props.isSelected}
         title={`${contentTypeName}: ${entityTitle}`}
         status={entityStatus}
         className="rich-text__inline-reference-card"
         isLoading={isLoading}
-        dropdownListItemNodes={
+        dropdownListElements={
           !this.props.editor.props.actionsDisabled ? (
-            <React.Fragment>
+            <DropdownList>
               <DropdownListItem onClick={() => this.handleEditClick(entity)}>Edit</DropdownListItem>
               <DropdownListItem
                 onClick={this.handleRemoveClick}
                 isDisabled={this.props.editor.props.readOnly}>
                 Remove
               </DropdownListItem>
-            </React.Fragment>
+            </DropdownList>
           ) : null
         }>
         {entityTitle || 'Untitled'}
-      </InlineReferenceCard>
+      </InlineEntryCard>
     );
   }
 

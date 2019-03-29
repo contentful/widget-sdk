@@ -20,12 +20,14 @@ exports[`PeriodSelector should render 1`] = `
   >
     <Option
       key="0"
+      testId="cf-ui-select-option"
       value="0"
     >
       06 Jan – 05 Feb (current)
     </Option>
     <Option
       key="1"
+      testId="cf-ui-select-option"
       value="1"
     >
       05 Dec – 05 Jan (a month ago)

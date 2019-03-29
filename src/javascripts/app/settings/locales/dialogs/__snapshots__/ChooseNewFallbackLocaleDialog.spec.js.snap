@@ -2,6 +2,7 @@
 
 exports[`locales/components/ChooseNewFallbackLocaleDialog should match snapshot 1`] = `
 <ModalConfirm
+  allowHeightOverflow={false}
   cancelLabel="Don’t delete"
   cancelTestId="choose-locale-cancel"
   confirmLabel="OK, delete German and update affected locales"
@@ -41,18 +42,21 @@ exports[`locales/components/ChooseNewFallbackLocaleDialog should match snapshot 
     width="full"
   >
     <Option
+      testId="cf-ui-select-option"
       value=""
     >
       None (no fallback)
     </Option>
     <Option
       key="ru"
+      testId="cf-ui-select-option"
       value="ru"
     >
       Russian
     </Option>
     <Option
       key="en"
+      testId="cf-ui-select-option"
       value="en"
     >
       English

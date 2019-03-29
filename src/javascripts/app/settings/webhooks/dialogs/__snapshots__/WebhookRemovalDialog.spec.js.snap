@@ -2,6 +2,7 @@
 
 exports[`webhooks/dialogs/WebhookRemovalDialog should match snapshot 1`] = `
 <ModalConfirm
+  allowHeightOverflow={false}
   cancelLabel="Don't remove"
   cancelTestId="remove-webhook-cancel"
   confirmLabel="Remove"

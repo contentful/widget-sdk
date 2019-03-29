@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ReferenceCard, IconButton } from '@contentful/forma-36-react-components';
+import { EntryCard, DropdownList, DropdownListItem } from '@contentful/forma-36-react-components';
 import Thumbnail from './Thumbnail.es6';
 
 class WrappedReferenceCard extends React.Component {
@@ -23,43 +23,37 @@ class WrappedReferenceCard extends React.Component {
     className: ''
   };
 
-  renderEditButton() {
+  renderEditAction() {
     return (
-      <IconButton
-        iconProps={{ icon: 'Edit' }}
-        label="Edit referenced entry"
-        onClick={event => {
-          event.stopPropagation();
+      <DropdownListItem
+        onClick={() => {
           this.props.onEdit();
         }}
-        buttonType="muted"
-        testId="edit"
-      />
+        testId="edit">
+        Edit
+      </DropdownListItem>
     );
   }
 
-  renderDeleteButton() {
+  renderDeleteAction() {
     return (
-      <IconButton
-        iconProps={{ icon: 'Close' }}
-        label="Remove reference to entry"
-        onClick={event => {
-          event.stopPropagation();
+      <DropdownListItem
+        onClick={() => {
           this.props.onRemove();
         }}
-        buttonType="muted"
         disabled={this.props.disabled}
-        testId="delete"
-      />
+        testId="delete">
+        Remove
+      </DropdownListItem>
     );
   }
 
   renderActions = () => {
     return !this.props.readOnly ? (
-      <React.Fragment>
-        {this.props.onEdit && this.renderEditButton()}
-        {this.props.onRemove && this.renderDeleteButton()}
-      </React.Fragment>
+      <DropdownList>
+        {this.props.onEdit && this.renderEditAction()}
+        {this.props.onRemove && this.renderDeleteAction()}
+      </DropdownList>
     ) : null;
   };
 
@@ -76,7 +70,7 @@ class WrappedReferenceCard extends React.Component {
     } = this.props;
 
     return (
-      <ReferenceCard
+      <EntryCard
         title={entityTitle || 'Untitled'}
         contentType={contentTypeName}
         className={className}
@@ -85,7 +79,7 @@ class WrappedReferenceCard extends React.Component {
         status={entityStatus}
         thumbnailElement={entityFile && <Thumbnail thumbnail={entityFile} />}
         loading={isLoading}
-        actionElements={this.renderActions()}
+        dropdownListElements={this.renderActions()}
       />
     );
   }
