@@ -1,5 +1,3 @@
-'use strict';
-
 // Shamelessly copied from gulp-jst-concat
 const gUtil = require('gulp-util');
 const PluginError = gUtil.PluginError;

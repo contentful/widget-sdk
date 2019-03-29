@@ -1,6 +1,6 @@
 const gulp = require('gulp');
 const jade = require('gulp-jade');
-const jstConcat = require('../../tasks/build-template');
+const jstConcat = require('./build-template');
 const { passError } = require('./helpers');
 
 const TEMPLATES_SRC = 'src/javascripts/**/*.jade';
