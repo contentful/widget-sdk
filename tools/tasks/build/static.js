@@ -3,7 +3,7 @@ const glob = require('glob');
 const { changeBase, writeFile } = require('../helpers');
 const rev = require('gulp-rev');
 
-const statics = () => {
+const processStatic = () => {
   const files = glob.sync('public/app/**/*.!(js|css)');
 
   return gulp
@@ -19,4 +19,4 @@ const statics = () => {
  * Copy all non-JS and non-CSS files from `public/app` to `build` and
  * create a manifest for them.
  */
-gulp.task('build/static', gulp.series(gulp.parallel('copy-static', 'copy-images'), statics));
+gulp.task('build/static', gulp.series('copy-static', processStatic));

@@ -23,7 +23,7 @@ require('@babel/register')({
  * The SVG files are put into 'public/app/svg'. Once can reference them
  * from stylesheets using `url("/app/svg/my-file.svg")`.
  */
-gulp.task('svg', async function(done) {
+gulp.task('copy-svg', async function(done) {
   const targetDir = path.resolve('public', 'app', 'svg');
   await FS.mkdirsAsync(targetDir);
 
