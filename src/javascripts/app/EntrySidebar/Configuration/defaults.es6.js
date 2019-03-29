@@ -48,7 +48,7 @@ export const EntryActivity = {
   widgetId: 'entry-activity-widget',
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
   name: 'Entry activity',
-  description: 'Built-in - Track who did what and when'
+  description: 'Built-in - See the list of all changes to an entry'
 };
 
 export const defaultWidgetsMap = {

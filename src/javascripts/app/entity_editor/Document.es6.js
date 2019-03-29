@@ -194,16 +194,17 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
     // Sharejs emits "change" event if the change is remote (it also emits "remoteop" with it)
     // so we listen to "acknowledge" events as these are only emitted with local changes.
     if (event.name === 'acknowledge') {
-      docLocalChangesBus.set('changed');
+      const path = get(event, 'data[0].p', []);
+      docLocalChangesBus.set({ name: 'changed', path });
 
       // There is no focus on reference field or the boolean's "clear" button
       // so we have to dispatcha a fake "blur" event to the changes bus.
-      const fieldId = get(event, 'data[0].p[1]');
+      const fieldId = path[1];
       const field = contentType.data.fields.find(field => field.id === fieldId);
       const isReferenceField = get(field, 'items.type') === 'Link' || get(field, 'type') === 'Link';
       const isBooleanField = get(field, 'type') === 'Boolean';
       if (isReferenceField || isBooleanField) {
-        docLocalChangesBus.set('blur');
+        docLocalChangesBus.set({ name: 'blur', path });
       }
     }
 

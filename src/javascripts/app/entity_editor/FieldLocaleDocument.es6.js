@@ -85,7 +85,7 @@ export default function create(doc, fieldId, localeCode) {
 
   function notifyFocus(isFocused) {
     if (isFocused === false) {
-      doc.docLocalChangesBus.set('blur');
+      doc.docLocalChangesBus.set({ name: 'blur', path });
     }
     return doc.notifyFocus(fieldId, localeCode);
   }

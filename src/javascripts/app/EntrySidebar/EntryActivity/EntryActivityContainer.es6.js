@@ -34,6 +34,7 @@ export default class EntryActivityContainer extends Component {
   };
 
   entryfeed = null;
+  fieldIdNameMap = {};
 
   state = {
     isFeatureEnabled: false,
@@ -57,6 +58,12 @@ export default class EntryActivityContainer extends Component {
   async componentDidMount() {
     const isFeatureEnabled = await getCurrentVariation(ENTRY_ACTIVITY);
     let activityFeed;
+    // Builds a field id/name map like so: { <field_id>: <field_name> }.
+    // This is used to display the field names based on the field ids stored
+    // in the activity stream. We don't store the names because they can change.
+    this.fieldIdNameMap = this.props.bridge
+      .getData()
+      .contentTypeData.fields.reduce((acc, field) => ({ ...acc, [field.id]: field.name }), {});
 
     this.setState({ isFeatureEnabled });
     if (!isFeatureEnabled) {
@@ -74,7 +81,7 @@ export default class EntryActivityContainer extends Component {
       return;
     }
 
-    this.props.emitter.on(SidebarEventTypes.UPDATED_DOCUMENT_STATE, this.onUpdatePublicationWidget);
+    this.props.emitter.on(SidebarEventTypes.UPDATED_DOCUMENT_STATE, this.onUpdateDocumentState);
     this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.ACTIVITY);
 
     this.entryfeed.subscribe(data => {
@@ -109,16 +116,18 @@ export default class EntryActivityContainer extends Component {
     });
   };
 
-  onUpdatePublicationWidget = async verb => {
-    const entry = this.props.bridge.getData();
-    const userId = get(entry, 'spaceMembership.user.sys.id');
-    const entrySys = get(entry, 'entryData.sys');
+  onUpdateDocumentState = async stateChange => {
+    const { name: verb, path = [] } = stateChange;
+    const sidebar = this.props.bridge.getData();
+    const userId = get(sidebar, 'spaceMembership.user.sys.id');
+    const entrySys = get(sidebar, 'entryData.sys');
 
     await this.entryfeed.addActivity({
       foreign_id: `${userId}:${entrySys.id}`,
       user_id: userId,
       object: {},
-      verb
+      verb,
+      path
     });
   };
 
@@ -139,7 +148,10 @@ export default class EntryActivityContainer extends Component {
               </div>
             )}
             {this.state.fetchingStatus === FETCHING_STATUS.SUCCESS && (
-              <EntryActivityWidget activities={this.state.activityFeed} />
+              <EntryActivityWidget
+                activities={this.state.activityFeed}
+                fieldIdNameMap={this.fieldIdNameMap}
+              />
             )}
 
             {this.state.fetchingStatus === FETCHING_STATUS.FAILURE && (

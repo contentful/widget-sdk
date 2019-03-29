@@ -29,54 +29,64 @@ const renderDayHeader = (activity, index) => {
   );
 };
 
-const renderDailyActivity = (activity, index, activities) => {
-  return (
-    <React.Fragment key={`${activity.time}`}>
-      {(moment(activity.time).format('L') !==
-        moment(get(activities[index - 1], 'time')).format('L') ||
-        index === 0) &&
-        renderDayHeader(activity, index)}
-      <li
-        className="collaborators__item entity-sidebar__no-users collaborators__item-flex"
-        key={`${activity.verb}-${activity.time}`}>
-        <div className="collaborators__item-flex">
-          <UserFetcher userId={activity.user_id}>
-            {({ isLoading, isError, data: user }) => {
-              if (isLoading) {
-                return <FetcherLoading />;
-              }
-              if (isError || !user) {
-                return null;
-              }
-              return (
-                <Tooltip content={<UserNameFormatter user={user} />}>
-                  <img
-                    className="collaborators__avatar collaborators__avatar-circle f36-margin-right--s"
-                    src={user.avatarUrl}
-                  />
-                </Tooltip>
-              );
-            }}
-          </UserFetcher>
-          <span>Entry {activity.verb}</span>
-        </div>
-        <div>
-          {moment
-            .utc(activity.time)
-            .local()
-            .format('HH:mm')}
-        </div>
-      </li>
-    </React.Fragment>
-  );
+const renderActivityText = (activity, fieldIdNameMap) => {
+  if (activity.verb === 'changed' && get(activity, 'path')) {
+    const fieldName = fieldIdNameMap[activity.path[1]];
+    const fieldLabel = fieldName.length > 14 ? `${fieldName.slice(0, 13).trim()}...` : fieldName;
+    return <span title={fieldName}>{`Field "${fieldLabel}" changed`}</span>;
+  }
+
+  return <span>Entry {activity.verb}</span>;
+};
+
+const renderDailyActivity = fieldIdNameMap => {
+  return (activity, index, activities) => {
+    const activityIsInNewDay =
+      moment(activity.time).format('L') !==
+        moment(get(activities[index - 1], 'time')).format('L') || index === 0;
+    return (
+      <React.Fragment key={activity.time}>
+        {activityIsInNewDay && renderDayHeader(activity, index)}
+        <li className="collaborators__item entity-sidebar__no-users collaborators__item-flex">
+          <div className="collaborators__item-flex">
+            <UserFetcher userId={activity.user_id}>
+              {({ isLoading, isError, data: user }) => {
+                if (isLoading) {
+                  return <FetcherLoading />;
+                }
+                if (isError || !user) {
+                  return null;
+                }
+                return (
+                  <Tooltip content={<UserNameFormatter user={user} />}>
+                    <img
+                      className="collaborators__avatar collaborators__avatar-circle f36-margin-right--s"
+                      src={user.avatarUrl}
+                    />
+                  </Tooltip>
+                );
+              }}
+            </UserFetcher>
+            {renderActivityText(activity, fieldIdNameMap)}
+          </div>
+          <div>
+            {moment
+              .utc(activity.time)
+              .local()
+              .format('HH:mm')}
+          </div>
+        </li>
+      </React.Fragment>
+    );
+  };
 };
 const className = css({
   maxHeight: '350px',
   overflowY: 'auto'
 });
 
-export default function EntryActivityWidget({ activities = [] }) {
-  return <ul className={className}>{activities.map(renderDailyActivity)}</ul>;
+export default function EntryActivityWidget({ activities = [], fieldIdNameMap = {} }) {
+  return <ul className={className}>{activities.map(renderDailyActivity(fieldIdNameMap))}</ul>;
 }
 
 EntryActivityWidget.propTypes = {
@@ -87,5 +97,6 @@ EntryActivityWidget.propTypes = {
       time: PropTypes.string.isRequired,
       id: PropTypes.string.isRequired
     })
-  )
+  ).isRequired,
+  fieldIdNameMap: PropTypes.object.isRequired
 };
