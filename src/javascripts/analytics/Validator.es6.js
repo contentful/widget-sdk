@@ -67,12 +67,6 @@ export const validEvents = {
     'delete'
   ],
   editor_load: ['init', 'sharejs_connected', 'links_rendered', 'fully_interactive'],
-  translation_sidebar: [
-    'toggle_widget_mode',
-    'deselect_active_locale',
-    'update_active_locales',
-    'change_focused_locale'
-  ],
   // https://contentful.atlassian.net/wiki/display/PRODBulk+references+editor+-+Tracking+specs
   bulk_editor: [
     'add',

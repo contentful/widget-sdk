@@ -12,8 +12,7 @@ export default function register() {
     'app/entity_editor/DataLoader.es6',
     'analytics/Analytics.es6',
     'access_control/AccessChecker/index.es6',
-    'app/entity_editor/setLocaleData.es6',
-    (spaceContext, entitySelector, Tracking, DataLoader, Analytics, accessChecker, localeData) => {
+    (spaceContext, entitySelector, Tracking, DataLoader, Analytics, accessChecker) => {
       return {
         scope: {
           referenceContext: '='
@@ -25,8 +24,6 @@ export default function register() {
 
       function link($scope) {
         const { referenceContext, trackLoadEvent } = $scope;
-
-        localeData.setLocaleData($scope, { isBulkEditor: true });
 
         const templateData = {};
         $scope.data = templateData;

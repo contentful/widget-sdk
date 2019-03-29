@@ -51,7 +51,7 @@ const CommandPropType = PropTypes.shape({
   inProgress: PropTypes.func.isRequired
 });
 
-export default class PublicationWidget extends React.PureComponent {
+export default class PublicationWidget extends React.Component {
   static propTypes = {
     status: PropTypes.string.isRequired,
     isSaving: PropTypes.bool.isRequired,

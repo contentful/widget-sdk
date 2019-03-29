@@ -17,7 +17,7 @@ import _ from 'lodash';
  * });
  * var TheLocaleStore = this.$inject('TheLocaleStore');
  * TheLocaleStore.setLocales([
- *   // This is the default locale
+ *   // Tis is the default locale
  *   {code: 'en'},
  *   // Internal code defaults to 'de-internal'
  *   {code: 'de'},

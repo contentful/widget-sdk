@@ -7,8 +7,6 @@ include ../entity_editor/entity_editor.mixins.jade
       cf-icon.workbench-header__icon(name="page-content", scale="0.75")
       h1.workbench-header__title
         | {{ title }}
-        span.locale(ng-if="localeData.isSingleLocaleModeOn")
-          | &nbsp;- {{localeData.focusedLocale.name}}
         cf-knowledge-base.workbench-header__kb-link(target="entry")
 
       .workbench-header__actions

@@ -39,11 +39,8 @@ export default function register() {
     'TheLocaleStore',
     'EntityHelpers',
     function($scope, spaceContext, TheLocaleStore, EntityHelpers) {
-      const {
-        locale,
-        fieldLocale,
-        widget: { field: ctField }
-      } = $scope;
+      const fieldLocale = $scope.fieldLocale;
+      const ctField = $scope.widget.field;
 
       const isEditingDisabled = fieldLocale.access$.map(access => !!access.disabled);
 
@@ -69,7 +66,7 @@ export default function register() {
       };
 
       this.space = getBatchingApiClient(spaceContext.cma);
-      this.entityHelpers = EntityHelpers.newForLocale(locale.code);
+      this.entityHelpers = EntityHelpers.newForLocale($scope.locale.code);
 
       // This interface is not exposed on the Extensions SDK. It serves for
       // internal convenience. Everything that uses these values can be
@@ -106,8 +103,8 @@ export default function register() {
 
         id: ctField.apiName, // we only want to expose the public ID
         name: ctField.name,
-        locale: locale.code,
-        internalLocale: locale.internal_code, // TODO: Not part of public sdk
+        locale: $scope.locale.code,
+        internalLocale: $scope.locale.internal_code, // TODO: Not part of public sdk
         type: ctField.type,
         linkType: ctField.linkType,
         itemLinkType: _.get(ctField, ['items', 'linkType']),
@@ -134,7 +131,7 @@ export default function register() {
        * @param {boolean} isInvalid
        */
       function setInvalid(isInvalid) {
-        $scope.fieldController.setInvalid(locale.code, isInvalid);
+        $scope.fieldController.setInvalid($scope.locale.code, isInvalid);
       }
 
       function getDefaultLocaleCode() {

@@ -9,7 +9,7 @@ export default function register() {
    * @module cf.app
    * @name cfEntityField
    *
-   * @property {API.Locale[]} $scope.activeLocales
+   * @property {API.Locale[]} $scope.locales
    * @property {object}       $scope.data
    *   Data that is read by the template
    * @property {API.Field}    $scope.data.field
@@ -26,9 +26,10 @@ export default function register() {
    * @scope.requires {entityEditor/Context} editorContext
    */
   registerDirective('cfEntityField', [
+    'TheLocaleStore',
     'utils/LaunchDarkly/index.es6',
     'utils/locales.es6',
-    (LD, localesUtils) => {
+    (TheLocaleStore, LD, localesUtils) => {
       const { isRtlLocale } = localesUtils;
 
       return {
@@ -68,30 +69,13 @@ export default function register() {
               updateErrorStatus();
             };
 
-            const setFieldLocales = () => {
-              $scope.fieldLocales = $scope.localeData.isSingleLocaleModeOn
-                ? [$scope.localeData.focusedLocale]
-                : $scope.activeLocales;
-              updateErrorStatus();
-            };
-
-            updateActiveLocales();
-            setFieldLocales();
-
-            $scope.$watch('localeData.focusedLocale', setFieldLocales);
-            $scope.$watch('localeData.isSingleLocaleModeOn', setFieldLocales);
-            $scope.$watchCollection(getActiveLocaleCodes, () => {
-              updateActiveLocales();
-              setFieldLocales();
-            });
+            $scope.$watchCollection(getActiveLocaleCodes, updateLocales);
 
             // TODO Changes to 'validator.errors' change the behavior of
             // 'validator.hasError()'. We should make this dependency explicity
             // by listening to signal on the validator.
-            K.onValueScope($scope, $scope.editorContext.validator.errors$, () => {
-              updateActiveLocales();
-              setFieldLocales();
-            });
+            K.onValueScope($scope, $scope.editorContext.validator.errors$, updateLocales);
+            K.onValueScope($scope, $scope.editorContext.validator.errors$, updateErrorStatus);
 
             K.onValueScope($scope, $scope.editorContext.focus.field$, focusedField => {
               templateData.fieldHasFocus = focusedField === field.id;
@@ -110,28 +94,22 @@ export default function register() {
             });
 
             function updateErrorStatus() {
-              const { validator } = $scope.editorContext;
-              const hasSchemaErrors = $scope.localeData.isSingleLocaleModeOn
-                ? validator.hasFieldLocaleError(
-                    field.id,
-                    $scope.localeData.focusedLocale.internal_code
-                  )
-                : validator.hasFieldError(field.id);
+              const hasSchemaErrors = $scope.editorContext.validator.hasFieldError(field.id);
               const hasControlErrors = _.some(invalidControls);
               $scope.data.fieldHasErrors = hasSchemaErrors || hasControlErrors;
             }
 
             function getActiveLocaleCodes() {
-              return _.map($scope.localeData.activeLocales, 'internal_code');
+              return _.map(TheLocaleStore.getActiveLocales(), 'internal_code');
             }
 
-            function updateActiveLocales() {
+            function updateLocales() {
               const fieldLocalesInternalCodes = getFieldLocales(field).map(
                 locale => locale.internal_code
               );
-              $scope.activeLocales = _.filter($scope.localeData.privateLocales, locale => {
+              $scope.locales = _.filter(TheLocaleStore.getPrivateLocales(), locale => {
                 const isFieldLocale = fieldLocalesInternalCodes.includes(locale.internal_code);
-                const isActive = $scope.localeData.isLocaleActive(locale);
+                const isActive = TheLocaleStore.isLocaleActive(locale);
                 const hasError = $scope.editorContext.validator.hasFieldLocaleError(
                   field.id,
                   locale.internal_code
@@ -142,9 +120,9 @@ export default function register() {
 
             function getFieldLocales(field) {
               if (field.localized) {
-                return $scope.localeData.privateLocales;
+                return TheLocaleStore.getPrivateLocales();
               } else {
-                return [$scope.localeData.defaultLocale];
+                return [TheLocaleStore.getDefaultLocale()];
               }
             }
           }

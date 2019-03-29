@@ -10,8 +10,8 @@ import * as WidgetLocations from 'widgets/WidgetLocations.es6';
 const $controller = getModule('$controller');
 const $rootScope = getModule('$rootScope');
 const spaceContext = getModule('spaceContext');
-const $state = getModule('$state');
 const TheLocaleStore = getModule('TheLocaleStore');
+const $state = getModule('$state');
 const entitySelector = getModule('entitySelector');
 const SlideInNavigator = getModule('navigation/SlideInNavigator');
 const Navigator = getModule('states/Navigator.es6');
@@ -35,7 +35,7 @@ export default ({ $scope }) => {
         entry,
         contentType: $scope.entityInfo.contentType,
         dataForTracking: {
-          locales: $scope.localeData.activeLocales,
+          locales: TheLocaleStore.getActiveLocales(),
           fromState: $state.current.name,
           entryId: $scope.entityInfo.id
         }
@@ -178,7 +178,7 @@ export default ({ $scope }) => {
     const fieldLocaleScope = $scope.$new(false);
     fieldLocaleScope.widget = widget;
     // Legacy sidebar extensions work only with the default locale:
-    fieldLocaleScope.locale = $scope.localeData.defaultLocale;
+    fieldLocaleScope.locale = TheLocaleStore.getDefaultLocale();
     // There's no validity indicator for sidebar extensions.
     // We just provide a noop for this SDK method here:
     fieldLocaleScope.fieldController = { setInvalid: () => {} };
@@ -219,7 +219,6 @@ export default ({ $scope }) => {
 
   return {
     legacySidebarExtensions: legacyExtensions,
-    localeData: $scope.localeData,
     sidebar: $scope.editorData.sidebar,
     sidebarExtensions: $scope.editorData.sidebarExtensions,
     sidebarExtensionsBridge,

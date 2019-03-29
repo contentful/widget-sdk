@@ -36,15 +36,11 @@ exports[`EntrySidebar/TranslationWidget it should show "No other users online" i
     <div
       data-test-id="cf-entity-sidebar"
     >
-      <header
-        className="entity-sidebar__header"
+      <h2
+        className="entity-sidebar__heading"
       >
-        <h2
-          className="entity-sidebar__heading"
-        >
-          Users
-        </h2>
-      </header>
+        Users
+      </h2>
       <div
         className="entity-sidebar__no-users"
       >

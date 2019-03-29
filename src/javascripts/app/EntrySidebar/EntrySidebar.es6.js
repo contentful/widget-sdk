@@ -12,19 +12,20 @@ import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNa
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer.es6';
 import ContentPreviewWidget from './ContentPreviewWidget/ContentPreviewWidget.es6';
 import IncomingLinksWidgetContainer from './IncomingLinksWidget/IncomingLinksWidgetContainer.es6';
-import TranslationWidget from './TranslationWidget/TranslationWidget.es6';
+import TranslationWidgetContainer from './TranslationWidget/TranslationWidgetContainer.es6';
 import UsersWidgetContainer from './UsersWidget/UsersWidgetContainer.es6';
 import VersionsWidgetContainer from './VersionsWidget/VersionsWidgetContainer.es6';
 import EntryActivityWidgetContainer from './EntryActivity/EntryActivityContainer.es6';
 import SidebarWidgetTypes from './SidebarWidgetTypes.es6';
 import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer.es6';
+
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 
 const ComponentsMap = {
   [SidebarWidgetTypes.PUBLICATION]: PublicationWidgetContainer,
   [SidebarWidgetTypes.CONTENT_PREVIEW]: ContentPreviewWidget,
   [SidebarWidgetTypes.INCOMING_LINKS]: IncomingLinksWidgetContainer,
-  [SidebarWidgetTypes.TRANSLATION]: TranslationWidget,
+  [SidebarWidgetTypes.TRANSLATION]: TranslationWidgetContainer,
   [SidebarWidgetTypes.USERS]: UsersWidgetContainer,
   [SidebarWidgetTypes.VERSIONS]: VersionsWidgetContainer,
   [SidebarWidgetTypes.ACTIVITY]: EntryActivityWidgetContainer
@@ -57,14 +58,11 @@ export default class EntrySidebar extends Component {
         bridge: PropTypes.object.isRequired,
         widget: PropTypes.object.isRequired
       })
-    ),
-    localeData: PropTypes.object.isRequired
+    )
   };
 
   renderBuiltinWidget = sidebarItem => {
-    const { emitter, localeData, sidebarExtensionsBridge: bridge } = this.props;
     const { widgetId, widgetNamespace } = sidebarItem;
-    const defaultProps = { emitter, bridge };
 
     if (widgetId === SidebarWidgetTypes.VERSIONS && !this.props.isMasterEnvironment) {
       return null;
@@ -76,10 +74,13 @@ export default class EntrySidebar extends Component {
       return null;
     }
 
-    const props =
-      widgetId === SidebarWidgetTypes.TRANSLATION ? { ...defaultProps, localeData } : defaultProps;
-
-    return <Component {...props} key={`${widgetNamespace},${widgetId}`} />;
+    return (
+      <Component
+        key={`${widgetNamespace},${widgetId}`}
+        emitter={this.props.emitter}
+        bridge={this.props.sidebarExtensionsBridge}
+      />
+    );
   };
 
   renderExtensionWidget = item => {
@@ -149,7 +150,7 @@ export default class EntrySidebar extends Component {
     return (
       <React.Fragment>
         <EntryInfoPanelContainer emitter={this.props.emitter} />
-        <div className="entity-sidebar entity-editor-sidebar">
+        <div className="entity-sidebar">
           {this.renderWidgets(sidebarItems)}
           {this.renderLegacyExtensions(legacyExtensions)}
         </div>

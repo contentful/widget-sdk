@@ -6,8 +6,6 @@ div.asset-editor.workbench
     cf-icon.workbench-header__icon(name="page-media", scale="0.75")
     h1.workbench-header__title
       | {{ title }}
-      span.locale(ng-if="localeData.isSingleLocaleModeOn")
-        | &nbsp;- {{localeData.focusedLocale.name}}
       cf-knowledge-base.workbench-header__kb-link(target="asset")
 
     .workbench-header__actions

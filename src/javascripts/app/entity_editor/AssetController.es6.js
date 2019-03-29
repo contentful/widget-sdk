@@ -7,14 +7,12 @@ import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking from './Tracking.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
-import { keys } from 'lodash';
-import setLocaleData from 'app/entity_editor/setLocaleData.es6';
 
 import { getModule } from 'NgRegistry.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
-const TheLocaleStore = getModule('TheLocaleStore');
+const localeStore = getModule('TheLocaleStore');
 
 /**
  * @param {Object} $scope
@@ -42,10 +40,7 @@ export default async function create($scope, editorData, preferences) {
 
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
 
-  editorContext.validator = Validator.createForAsset(
-    $scope.otDoc,
-    TheLocaleStore.getPrivateLocales()
-  );
+  editorContext.validator = Validator.createForAsset($scope.otDoc, localeStore.getPrivateLocales());
 
   editorContext.focus = Focus.create();
 
@@ -74,31 +69,13 @@ export default async function create($scope, editorData, preferences) {
 
   editorContext.hasInitialFocus = preferences.hasInitialFocus;
 
-  $scope.localeData = {};
-
-  $scope.entrySidebarProps = createEntrySidebarProps({
-    $scope
-  });
-
-  setLocaleData($scope, {
-    entityLabel: 'asset',
-    shouldHideLocaleErrors: defaultLocaleIsFocused,
-    emitter: $scope.entrySidebarProps.emitter
-  });
-
+  // Building the form
   $controller('FormWidgetsController', {
     $scope,
     controls: editorData.fieldControls.form
   });
 
-  function defaultLocaleIsFocused() {
-    if (!$scope.localeData.isSingleLocaleModeOn) {
-      return false;
-    }
-    return (
-      keys($scope.localeData.errors).length === 1 &&
-      $scope.localeData.defaultLocale.internal_code ===
-        $scope.localeData.focusedLocale.internal_code
-    );
-  }
+  $scope.entrySidebarProps = createEntrySidebarProps({
+    $scope
+  });
 }

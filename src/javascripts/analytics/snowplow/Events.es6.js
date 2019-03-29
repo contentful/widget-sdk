@@ -13,7 +13,6 @@ import AppOpen from './transformers/AppOpen.es6';
 import BulkEditor from './transformers/BulkEditor.es6';
 import SlideInEditor from './transformers/SlideInEditor.es6';
 import EditorLoad from './transformers/EditorLoad.es6';
-import TranslationSidebar from './transformers/TranslationSidebar.es6';
 import Snapshot from './transformers/Snapshot.es6';
 import InviteUserExperiment from './transformers/InviteUserExperiment.es6';
 import SearchAndViews from './transformers/SearchAndViews.es6';
@@ -92,11 +91,6 @@ registerSlideInEditorEvent('slide_in_editor:bulk_editor_close');
 registerSlideInEditorEvent('slide_in_editor:open');
 registerSlideInEditorEvent('slide_in_editor:open_create');
 registerSlideInEditorEvent('slide_in_editor:delete');
-
-registerTranslationSidebarEvent('translation_sidebar:toggle_widget_mode');
-registerTranslationSidebarEvent('translation_sidebar:deselect_active_locale');
-registerTranslationSidebarEvent('translation_sidebar:update_active_locales');
-registerTranslationSidebarEvent('translation_sidebar:change_focused_locale');
 
 registerEditorLoadEvent('editor_load:init');
 registerEditorLoadEvent('editor_load:sharejs_connected');
@@ -220,10 +214,6 @@ function registerSlideInEditorEvent(event) {
 
 function registerEditorLoadEvent(event) {
   registerEvent(event, 'editor_load', EditorLoad);
-}
-
-function registerTranslationSidebarEvent(event) {
-  registerEvent(event, 'translation_sidebar', TranslationSidebar);
 }
 
 function registerSnapshotEvent(event) {
