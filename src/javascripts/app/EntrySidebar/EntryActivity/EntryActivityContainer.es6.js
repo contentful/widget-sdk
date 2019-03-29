@@ -9,6 +9,7 @@ import { ENTRY_ACTIVITY } from 'featureFlags.es6';
 import Visible from 'components/shared/Visible/index.es6';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.es6';
 import * as logger from 'services/logger.es6';
+import FeedbackButton from 'app/common/FeedbackButton.es6';
 
 import SidebarEventTypes from '../SidebarEventTypes.es6';
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
@@ -135,7 +136,9 @@ export default class EntryActivityContainer extends Component {
     return (
       <ErrorHandler>
         <Visible if={this.state.isFeatureEnabled}>
-          <EntrySidebarWidget title="Entry activity">
+          <EntrySidebarWidget
+            title="Entry activity"
+            headerNode={<FeedbackButton target="authoring" about="Entry Activity" />}>
             {this.state.fetchingStatus === FETCHING_STATUS.REQUEST && (
               <div
                 className={css({
