@@ -178,7 +178,7 @@ export default ({ $scope }) => {
     const fieldLocaleScope = $scope.$new(false);
     fieldLocaleScope.widget = widget;
     // Legacy sidebar extensions work only with the default locale:
-    fieldLocaleScope.locale = $scope.localeData.defaultLocale;
+    fieldLocaleScope.locale = TheLocaleStore.getDefaultLocale();
     // There's no validity indicator for sidebar extensions.
     // We just provide a noop for this SDK method here:
     fieldLocaleScope.fieldController = { setInvalid: () => {} };
