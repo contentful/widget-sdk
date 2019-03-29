@@ -14,7 +14,7 @@ declare global {
  */
 export function setAuthToken() {
   const TOKEN = Cypress.env('token');
-  window.sessionStorage.setItem('token', TOKEN);
+  window.localStorage.setItem('token', TOKEN);
 }
 
 Cypress.Commands.add('setAuthToken', setAuthToken);

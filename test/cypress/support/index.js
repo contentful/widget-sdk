@@ -24,3 +24,17 @@ import 'cypress-testing-library/add-commands';
 // set a custom test id
 import { configure } from 'dom-testing-library';
 configure({ testIdAttribute: 'data-test-id' });
+
+// cypress-pact plugin
+import '@contentful/cypress-pact/add-commands';
+
+before(() => {
+  cy.startPact({
+    consumer: 'user_interface',
+    provider: 'content-api',
+    cors: true,
+    port: 5000
+  });
+});
+afterEach(() => cy.verifyPact());
+after(() => cy.finalizePact());

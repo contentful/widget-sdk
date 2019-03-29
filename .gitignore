@@ -33,3 +33,7 @@ output/
 # Cypress artifacts
 screenshots/
 videos/
+
+# PACT
+logs/
+pacts/

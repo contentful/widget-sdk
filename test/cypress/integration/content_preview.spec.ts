@@ -3,8 +3,7 @@ const spaceId = Cypress.env('spaceId');
 const previewName = 'Test Name';
 const previewDescription = 'Test Description';
 const previewId = '0xi0FU6rvrUVlJtPFuaUyl';
-const apiUrl = 'https://api.flinkly.com';
-const responseBody = {
+const previewResponseBody = {
   name: previewName,
   description: previewDescription,
   sys: {
@@ -23,63 +22,183 @@ const responseBody = {
   },
   configurations: []
 };
-const postRequest = {
-  method: 'POST' as Cypress.HttpMethod,
-  url: '**/preview_environments',
-  status: 201,
-  response: responseBody
-};
-const getRequest = {
-  method: 'GET' as Cypress.HttpMethod,
-  url: '**/preview_environments?limit=100',
-  status: 200,
-  response: {
-    total: 1,
-    limit: 100,
-    skip: 0,
-    sys: {
-      type: 'Array'
-    },
-    items: [responseBody]
-  }
-};
+const token = require('../fixtures/token.json');
+const empty = require('../fixtures/empty.json');
+const environments = require('../fixtures/environments.json');
+const plans = require('../fixtures/plans.json');
+const locales = require('../fixtures/locales.json');
+const productCatalog = require('../fixtures/product_catalog.json');
+const uiConfig = require('../fixtures/ui_config.json');
 
 describe('Content Preview Page', () => {
+
   function stubServer() {
-    cy.server();
-    cy.route(`${apiUrl}/token`, 'fixture:token').as('token');
-    cy.route(`${apiUrl}/spaces/${spaceId}/enforcements`, 'fixture:empty').as('enforcements');
-    cy.route(`${apiUrl}/spaces/${spaceId}/public/content_types?limit=1000`, 'fixture:empty').as(
-      'contentTypes'
-    );
-    cy.route(`${apiUrl}/spaces/${spaceId}/environments?limit=101`, 'fixture:environments').as(
-      'environments'
-    );
-    cy.route(`${apiUrl}/organizations/${orgId}/plans?plan_type=base`, 'fixture:plans').as('plans');
-    cy.route(`${apiUrl}/spaces/${spaceId}/locales?limit=100&skip=0`, 'fixture:locales').as(
-      'locales'
-    );
-    cy.route(
-      `${apiUrl}/organizations/${orgId}/product_catalog_features?sys.featureId[]=teams&sys.featureId[]=custom_sidebar`,
-      'fixture:product_catalog'
-    ).as('productCatalog');
-    cy.route(`${apiUrl}/spaces/${spaceId}/ui_config`, 'fixture:empty').as('ui_config');
-    cy.route(`${apiUrl}/spaces/${spaceId}/ui_config/me`, 'fixture:ui_config').as('uiConfigMe');
-    cy.route(`${apiUrl}/spaces/${spaceId}/preview_environments?limit=100`, 'fixture:empty').as(
-      'preview_environments'
-    );
+    cy.addInteraction({
+      state: 'getToken',
+      uponReceiving: 'a request for token',
+      withRequest: {
+        method: 'GET',
+        path: '/token',
+        headers: {
+          Accept: 'application/json, text/plain, */*'
+        }
+      },
+      willRespondWith: {
+        status: 200,
+        body: token
+      }
+    }).as('token');
+    cy.addInteraction({
+      state: 'noEnforcements',
+      uponReceiving: 'a request for all enforcements',
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${spaceId}/enforcements`,
+        headers: {
+          Accept: 'application/json, text/plain, */*'
+        }
+      },
+      willRespondWith: {
+        status: 200,
+        body: empty
+      }
+    }).as('enforcements');
+    cy.addInteraction({
+      state: 'noPublicContentTypes',
+      uponReceiving: 'a request for all public content types',
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${spaceId}/public/content_types`,
+        headers: {
+          Accept: 'application/json, text/plain, */*'
+        },
+        query: 'limit=1000'
+      },
+      willRespondWith: {
+        status: 200,
+        body: empty
+      }
+    }).as('publicContentTypes');
+    cy.addInteraction({
+      state: 'masterEnvironment',
+      uponReceiving: 'a request for all environments',
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${spaceId}/environments`,
+        headers: {
+          Accept: 'application/json, text/plain, */*'
+        }
+      },
+      willRespondWith: {
+        status: 200,
+        body: environments
+      }
+    }).as('environments');
+    cy.addInteraction({
+      state: 'onePlan',
+      uponReceiving: 'a request for all plans',
+      withRequest: {
+        method: 'GET',
+        path: `/organizations/${orgId}/plans`,
+        headers: {
+          Accept: 'application/json, text/plain, */*'
+        }
+      },
+      willRespondWith: {
+        status: 200,
+        body: plans
+      }
+    }).as('plans');
+    cy.addInteraction({
+      state: 'oneLocale',
+      uponReceiving: 'a request for all locales',
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${spaceId}/locales`,
+        headers: {
+          Accept: 'application/json, text/plain, */*'
+        }
+      },
+      willRespondWith: {
+        status: 200,
+        body: locales
+      }
+    }).as('locales');
+    cy.addInteraction({
+      state: 'severalProductCatalogFeatures',
+      uponReceiving: 'a request for all product catalog features',
+      withRequest: {
+        method: 'GET',
+        path: `/organizations/${orgId}/product_catalog_features`,
+        headers: {
+          Accept: 'application/json, text/plain, */*'
+        }
+      },
+      willRespondWith: {
+        status: 200,
+        body: productCatalog
+      }
+    }).as('productCatalogFeatures');
+    cy.addInteraction({
+      state: 'noUIConfig',
+      uponReceiving: 'a request for userUIConfig',
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${spaceId}/ui_config`,
+        headers: {
+          Accept: 'application/json, text/plain, */*'
+        }
+      },
+      willRespondWith: {
+        status: 200,
+        body: empty
+      }
+    }).as('uiConfig');
+    cy.addInteraction({
+      state: 'userUIConfig',
+      uponReceiving: 'a request for profile UserUIConfig',
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${spaceId}/ui_config/me`,
+        headers: {
+          Accept: 'application/json, text/plain, */*'
+        }
+      },
+      willRespondWith: {
+        status: 200,
+        body: uiConfig
+      }
+    }).as('uiConfigMe');
+    cy.addInteraction({
+      state: 'noPreviewEnvironments',
+      uponReceiving: 'a request for all preview environments',
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${spaceId}/preview_environments`,
+        query: {
+          limit: '100'
+        },
+        headers: {
+          Accept: 'application/json, text/plain, */*'
+        }
+      },
+      willRespondWith: {
+        status: 200,
+        body: empty
+      }
+    }).as('noPreviewEnvironments');
   }
 
-  function openPage() {
+  beforeEach(()=>{
     cy.setAuthToken();
+    stubServer();
     cy.visit(`/spaces/${spaceId}/settings/content_preview/new`);
-    cy.wait(['@preview_environments']);
-  }
+  })
+
 
   describe('opening the page', () => {
-    before(() => {
-      stubServer();
-      openPage();
+    beforeEach(() => {
+      cy.wait(['@token', '@noPreviewEnvironments']);
     });
 
     it('renders create new content preview page', () => {
@@ -95,14 +214,25 @@ describe('Content Preview Page', () => {
   });
 
   describe('saving the content preview', () => {
-    before(() => {
-      stubServer();
-      openPage();
+    beforeEach(() => {
+      cy.addInteraction({
+        state: 'canAddPreviewEnvironments',
+        uponReceiving: 'add preview environment request',
+        withRequest: {
+          method: 'POST',
+          path: `/spaces/${spaceId}/preview_environments`,
+          headers: {
+            Accept: 'application/json, text/plain, */*'
+          }
+        },
+        willRespondWith: {
+          status: 201,
+          body: previewResponseBody
+        }
+      }).as('addPreviewEnvironments');
     });
 
     it('submit the form correctly', () => {
-      cy.route(postRequest).as('postRequest');
-      cy.route(getRequest).as('getRequest');
       cy.getByTestId('cf-ui-text-input')
         .type(previewName)
         .should('have.value', previewName);

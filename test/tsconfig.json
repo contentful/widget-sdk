@@ -10,5 +10,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["**/*", "../node_modules/cypress", "../node_modules/cypress-testing-library"]
+  "include": [
+    "**/*",
+    "../node_modules/cypress",
+    "../node_modules/cypress-testing-library",
+    "../node_modules/@contentful/cypress-pact"
+  ]
 }

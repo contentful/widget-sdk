@@ -8,7 +8,7 @@ orbs:
           docker_layer_caching: true
     commands:
       deploy-to-s3:
-        description: "Deploy configured assets to S3 using the image containing awscli"
+        description: 'Deploy configured assets to S3 using the image containing awscli'
         parameters:
           access_key_id:
             type: string
@@ -32,7 +32,7 @@ orbs:
                 <<parameters.path>> s3://<<parameters.bucket>>
     jobs:
       to-s3:
-        description: "Build the image containing awscli and deploy assets to S3 using it"
+        description: 'Build the image containing awscli and deploy assets to S3 using it'
         parameters:
           access_key_id:
             type: string
@@ -57,6 +57,14 @@ orbs:
               path: <<parameters.path>>
               bucket: <<parameters.bucket>>
 
+executors:
+  cypress-base-8:
+    docker:
+      - image: 'cypress/base:8'
+    environment:
+      NODE_ENV: dev
+      UI_CONFIG: localhost
+
 jobs:
   build-and-push-image:
     machine:
@@ -74,7 +82,7 @@ jobs:
       - run:
           name: Setup environment variables
           command: |
-             echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
+            echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
       - run:
           name: Build production image
           command: |
@@ -173,26 +181,28 @@ workflows:
       - deploy-micro-backends
       - cypress/run:
           name: cypress-run
-          executor: cypress/base-8
+          executor: cypress-base-8
           pre-steps:
             - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
+          start: npm start
+          wait-on: 'http://localhost:3001'
           store_artifacts: true
       - deploy-assets/to-s3:
           name: deploy-assets-to-preview
-          access_key_id: "${AWS_S3_PREVIEW_ACCESS_KEY_ID}"
-          secret_access_key: "${AWS_S3_PREVIEW_SECRET_ACCESS_KEY}"
-          region: "eu-west-1"
-          path: "/app/output/files/preview"
-          bucket: "cf-preview-static-cdnorigin"
+          access_key_id: '${AWS_S3_PREVIEW_ACCESS_KEY_ID}'
+          secret_access_key: '${AWS_S3_PREVIEW_SECRET_ACCESS_KEY}'
+          region: 'eu-west-1'
+          path: '/app/output/files/preview'
+          bucket: 'cf-preview-static-cdnorigin'
           requires:
             - build-and-push-image
       - deploy-assets/to-s3:
           name: deploy-assets-to-staging
-          access_key_id: "${AWS_S3_STAGING_ACCESS_KEY_ID}"
-          secret_access_key: "${AWS_S3_STAGING_SECRET_ACCESS_KEY}"
-          region: "us-east-1"
-          path: "/app/output/files/staging"
-          bucket: "cf-staging-static-cdnorigin"
+          access_key_id: '${AWS_S3_STAGING_ACCESS_KEY_ID}'
+          secret_access_key: '${AWS_S3_STAGING_SECRET_ACCESS_KEY}'
+          region: 'us-east-1'
+          path: '/app/output/files/staging'
+          bucket: 'cf-staging-static-cdnorigin'
           post-steps:
             - run:
                 name: Trigger Jenkins Staging Dependent Tests
@@ -201,11 +211,11 @@ workflows:
             - build-and-push-image
       - deploy-assets/to-s3:
           name: deploy-assets-to-prod
-          access_key_id: "${AWS_S3_PRODUCTION_ACCESS_KEY_ID}"
-          secret_access_key: "${AWS_S3_PRODUCTION_SECRET_ACCESS_KEY}"
-          region: "us-east-1"
-          path: "/app/output/files/production"
-          bucket: "static.cdnorigin.contentful.com"
+          access_key_id: '${AWS_S3_PRODUCTION_ACCESS_KEY_ID}'
+          secret_access_key: '${AWS_S3_PRODUCTION_SECRET_ACCESS_KEY}'
+          region: 'us-east-1'
+          path: '/app/output/files/production'
+          bucket: 'static.cdnorigin.contentful.com'
           requires:
             - build-and-push-image
 
