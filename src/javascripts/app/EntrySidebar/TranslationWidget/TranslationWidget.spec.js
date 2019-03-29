@@ -1,48 +1,131 @@
 import React from 'react';
-import TranslationWidget from './TranslationWidget.es6';
 import Enzyme from 'enzyme';
+import TranslationWidget from './TranslationWidget.es6';
+import EntrySidebarWidget from '../EntrySidebarWidget.es6';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
+import { track } from 'analytics/Analytics.es6';
 
 describe('EntrySidebar/TranslationWidget', () => {
-  const selectors = {
-    changeLink: '[data-test-id="change-translation"]',
-    deactivateBtn: '[data-test-id="deactivate-translation"]'
-  };
+  const locales = [
+    { internal_code: 'en-US', default: true },
+    { internal_code: 'de-DE', default: false },
+    { internal_code: 'es-AR', default: false },
+    { internal_code: 'ru', default: false }
+  ];
 
-  const render = (props = {}, renderFn = Enzyme.mount) => {
-    const stubs = {
-      onChange: jest.fn(),
-      onLocaleDeactivation: jest.fn()
-    };
-    const locales = [
-      { code: 'en-US', default: true, name: 'English (United States)' },
-      { code: 'ru', default: false, name: 'Russian' }
-    ];
-    const wrapper = renderFn(
-      <TranslationWidget
-        locales={locales}
-        onChange={stubs.onChange}
-        onLocaleDeactivation={stubs.onLocaleDeactivation}
-        {...props}
-      />
-    );
-    return { wrapper, stubs, locales };
+  const props = {
+    localeData: {
+      activeLocales: locales,
+      privateLocales: locales,
+      errors: {},
+      focusedLocale: locales[0],
+      isLocaleActive: () => {},
+      isSingleLocaleModeOn: false,
+      isSingleLocaleModeSupported: false
+    },
+    emitter: {
+      emit: jest.fn()
+    }
   };
+  const render = () => Enzyme.shallow(<TranslationWidget {...props} />);
 
-  it('should match snaphot', () => {
-    const { wrapper } = render({}, Enzyme.shallow);
-    expect(wrapper).toMatchSnapshot();
+  describe('when single locale mode is not supported', () => {
+    beforeEach(() => {
+      props.localeData.isSingleLocaleModeSupported = false;
+    });
+
+    describe('when single locale mode is on', () => {
+      beforeEach(() => {
+        props.localeData.isSingleLocaleModeOn = true;
+      });
+
+      it('should match snapshot', () => {
+        expect(render()).toMatchSnapshot();
+      });
+    });
+
+    describe('when single locale mode is off', () => {
+      beforeEach(() => {
+        props.localeData.isSingleLocaleModeOn = false;
+      });
+
+      it('should match snapshot', () => {
+        expect(render()).toMatchSnapshot();
+      });
+    });
   });
 
-  it('should call onChange after click on changeLink', () => {
-    const { wrapper, stubs } = render();
-    wrapper.find(selectors.changeLink).simulate('click');
-    expect(stubs.onChange).toHaveBeenCalledWith();
-  });
+  describe('when single locale mode is supported', () => {
+    beforeEach(() => {
+      props.localeData.isSingleLocaleModeSupported = true;
+    });
 
-  it('should call onLocaleDeactivation after click on close on a language pill', () => {
-    const { wrapper, stubs, locales } = render();
-    expect(wrapper.find(selectors.deactivateBtn)).toHaveLength(1);
-    wrapper.find(selectors.deactivateBtn).simulate('click');
-    expect(stubs.onLocaleDeactivation).toHaveBeenCalledWith(locales[1]);
+    describe('when single locale mode is on', () => {
+      beforeEach(() => {
+        props.localeData.isSingleLocaleModeOn = true;
+      });
+
+      it('should match snapshot', () => {
+        expect(render()).toMatchSnapshot();
+      });
+
+      describe('and the locale mode is change', () => {
+        beforeEach(() => {
+          const headerNode = Enzyme.shallow(
+            render()
+              .find(EntrySidebarWidget)
+              .prop('headerNode')
+          );
+          headerNode.find('select').prop('onChange')({ target: { value: 'multiple' } });
+        });
+
+        it('emits the SET_SINGLE_LOCALE_MODE event with the new value', () => {
+          expect(props.emitter.emit).toHaveBeenCalledWith(
+            SidebarEventTypes.SET_SINGLE_LOCALE_MODE,
+            false
+          );
+        });
+
+        it('tracks the change event', () => {
+          expect(track).toHaveBeenCalledWith('translation_sidebar:toggle_widget_mode', {
+            currentMode: 'multiple'
+          });
+        });
+      });
+    });
+
+    describe('when single locale mode is off', () => {
+      beforeEach(() => {
+        props.localeData.isSingleLocaleModeOn = false;
+      });
+
+      it('should match snapshot', () => {
+        expect(render()).toMatchSnapshot();
+      });
+
+      describe('and the locale mode is changed', () => {
+        beforeEach(() => {
+          const headerNode = Enzyme.shallow(
+            render()
+              .find(EntrySidebarWidget)
+              .prop('headerNode')
+          );
+          headerNode.find('select').prop('onChange')({ target: { value: 'single' } });
+        });
+
+        it('emits the SET_SINGLE_LOCALE_MODE event with the new value', () => {
+          expect(props.emitter.emit).toHaveBeenCalledWith(
+            SidebarEventTypes.SET_SINGLE_LOCALE_MODE,
+            true
+          );
+        });
+
+        it('tracks the change event', () => {
+          expect(track).toHaveBeenCalledWith('translation_sidebar:toggle_widget_mode', {
+            currentMode: 'single'
+          });
+        });
+      });
+    });
   });
 });

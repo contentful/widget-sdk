@@ -10,6 +10,7 @@ import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking, { trackEntryView } from './Tracking.es6';
 import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker.es6';
+import setLocaleData from 'app/entity_editor/setLocaleData.es6';
 
 import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
@@ -17,7 +18,7 @@ import * as logger from 'services/logger.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
-const localeStore = getModule('TheLocaleStore');
+const TheLocaleStore = getModule('TheLocaleStore');
 const DataFields = getModule('EntityEditor/DataFields');
 
 /**
@@ -68,10 +69,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
 
   initDocErrorHandler($scope, doc.state.error$);
 
-  K.onValueScope($scope, doc.status$, status => {
-    $scope.statusNotificationProps = { status, entityLabel: 'entry' };
-  });
-
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
   try {
     const slideCount = keys($scope.slideStates).length;
@@ -79,7 +76,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
       editorData,
       entityInfo,
       currentSlideLevel: slideCount,
-      locale: localeStore.getDefaultLocale().internal_code,
+      locale: TheLocaleStore.getDefaultLocale().internal_code,
       editorType: slideCount > 1 ? 'slide_in_editor' : 'entry_editor'
     });
   } catch (error) {
@@ -90,7 +87,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
     entityInfo.contentType,
     $scope.otDoc,
     spaceContext.publishedCTs,
-    localeStore.getPrivateLocales()
+    TheLocaleStore.getPrivateLocales()
   );
 
   $scope.state = $controller('entityEditor/StateController', {
@@ -129,12 +126,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
     $scope.context.dirty = isDirty;
   });
 
-  // Building the form
-  $controller('FormWidgetsController', {
-    $scope,
-    controls: editorData.fieldControls.form
-  });
-
   /**
    * Build the `entry.fields` api of the widget-sdk at one
    * place and put it on $scope so that we don't rebuild it
@@ -143,7 +134,26 @@ export default async function create($scope, editorData, preferences, trackLoadE
    */
   $scope.fields = DataFields.create(entityInfo.contentType.fields, $scope.otDoc);
 
+  $scope.localeData = {};
+
   $scope.entrySidebarProps = createEntrySidebarProps({
     $scope
   });
+
+  setLocaleData($scope, {
+    entityLabel: 'entry',
+    shouldHideLocaleErrors: onlyFocusedLocaleHasErrors,
+    emitter: $scope.entrySidebarProps.emitter
+  });
+
+  $controller('FormWidgetsController', {
+    $scope,
+    controls: editorData.fieldControls.form
+  });
+
+  function onlyFocusedLocaleHasErrors() {
+    const { errors, focusedLocale } = $scope.localeData;
+    const localeCodes = keys(errors);
+    return localeCodes.length === 1 && localeCodes[0] === focusedLocale.internal_code;
+  }
 }

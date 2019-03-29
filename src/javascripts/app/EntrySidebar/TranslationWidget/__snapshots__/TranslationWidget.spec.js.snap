@@ -1,42 +1,320 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EntrySidebar/TranslationWidget should match snaphot 1`] = `
+exports[`EntrySidebar/TranslationWidget when single locale mode is not supported when single locale mode is off should match snapshot 1`] = `
 <EntrySidebarWidget
   testId="sidebar-translation-widget"
   title="Translation"
 >
-  <div
-    className="pill-list entity-sidebar__translation-pills"
-  >
-    <div
-      className="entity-sidebar__translation-pill x--default"
-      key="en-US"
+  <TranslationWidgetPills
+    emitter={
+      Object {
+        "emit": [MockFunction],
+      }
+    }
+    localeData={
+      Object {
+        "activeLocales": Array [
+          Object {
+            "default": true,
+            "internal_code": "en-US",
+          },
+          Object {
+            "default": false,
+            "internal_code": "de-DE",
+          },
+          Object {
+            "default": false,
+            "internal_code": "es-AR",
+          },
+          Object {
+            "default": false,
+            "internal_code": "ru",
+          },
+        ],
+        "errors": Object {},
+        "focusedLocale": Object {
+          "default": true,
+          "internal_code": "en-US",
+        },
+        "isLocaleActive": [Function],
+        "isSingleLocaleModeOn": false,
+        "isSingleLocaleModeSupported": false,
+        "privateLocales": Array [
+          Object {
+            "default": true,
+            "internal_code": "en-US",
+          },
+          Object {
+            "default": false,
+            "internal_code": "de-DE",
+          },
+          Object {
+            "default": false,
+            "internal_code": "es-AR",
+          },
+          Object {
+            "default": false,
+            "internal_code": "ru",
+          },
+        ],
+      }
+    }
+  />
+</EntrySidebarWidget>
+`;
+
+exports[`EntrySidebar/TranslationWidget when single locale mode is not supported when single locale mode is on should match snapshot 1`] = `
+<EntrySidebarWidget
+  testId="sidebar-translation-widget"
+  title="Translation"
+>
+  <TranslationWidgetPills
+    emitter={
+      Object {
+        "emit": [MockFunction],
+      }
+    }
+    localeData={
+      Object {
+        "activeLocales": Array [
+          Object {
+            "default": true,
+            "internal_code": "en-US",
+          },
+          Object {
+            "default": false,
+            "internal_code": "de-DE",
+          },
+          Object {
+            "default": false,
+            "internal_code": "es-AR",
+          },
+          Object {
+            "default": false,
+            "internal_code": "ru",
+          },
+        ],
+        "errors": Object {},
+        "focusedLocale": Object {
+          "default": true,
+          "internal_code": "en-US",
+        },
+        "isLocaleActive": [Function],
+        "isSingleLocaleModeOn": true,
+        "isSingleLocaleModeSupported": false,
+        "privateLocales": Array [
+          Object {
+            "default": true,
+            "internal_code": "en-US",
+          },
+          Object {
+            "default": false,
+            "internal_code": "de-DE",
+          },
+          Object {
+            "default": false,
+            "internal_code": "es-AR",
+          },
+          Object {
+            "default": false,
+            "internal_code": "ru",
+          },
+        ],
+      }
+    }
+  />
+</EntrySidebarWidget>
+`;
+
+exports[`EntrySidebar/TranslationWidget when single locale mode is supported when single locale mode is off should match snapshot 1`] = `
+<EntrySidebarWidget
+  headerNode={
+    <Select
+      className="entity-sidebar__select"
+      hasError={false}
+      isDisabled={false}
+      onChange={[Function]}
+      required={false}
+      testId="cf-ui-select"
+      value="multiple"
+      width="auto"
     >
-      <Pill
-        label="en-US"
-        status="default"
-        testId="deactivate-translation"
-      />
-    </div>
-    <div
-      className="entity-sidebar__translation-pill"
-      key="ru"
+      <Option
+        value="multiple"
+      >
+        Multiple locales
+      </Option>
+      <Option
+        value="single"
+      >
+        Single locale
+      </Option>
+    </Select>
+  }
+  testId="sidebar-translation-widget"
+  title="Translation"
+>
+  <TranslationWidgetPills
+    emitter={
+      Object {
+        "emit": [MockFunction] {
+          "calls": Array [
+            Array [
+              "sidebar:set-single-locale-mode",
+              false,
+            ],
+            Array [
+              "sidebar:set-single-locale-mode",
+              false,
+            ],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+          ],
+        },
+      }
+    }
+    localeData={
+      Object {
+        "activeLocales": Array [
+          Object {
+            "default": true,
+            "internal_code": "en-US",
+          },
+          Object {
+            "default": false,
+            "internal_code": "de-DE",
+          },
+          Object {
+            "default": false,
+            "internal_code": "es-AR",
+          },
+          Object {
+            "default": false,
+            "internal_code": "ru",
+          },
+        ],
+        "errors": Object {},
+        "focusedLocale": Object {
+          "default": true,
+          "internal_code": "en-US",
+        },
+        "isLocaleActive": [Function],
+        "isSingleLocaleModeOn": false,
+        "isSingleLocaleModeSupported": true,
+        "privateLocales": Array [
+          Object {
+            "default": true,
+            "internal_code": "en-US",
+          },
+          Object {
+            "default": false,
+            "internal_code": "de-DE",
+          },
+          Object {
+            "default": false,
+            "internal_code": "es-AR",
+          },
+          Object {
+            "default": false,
+            "internal_code": "ru",
+          },
+        ],
+      }
+    }
+  />
+</EntrySidebarWidget>
+`;
+
+exports[`EntrySidebar/TranslationWidget when single locale mode is supported when single locale mode is on should match snapshot 1`] = `
+<EntrySidebarWidget
+  headerNode={
+    <Select
+      className="entity-sidebar__select"
+      hasError={false}
+      isDisabled={false}
+      onChange={[Function]}
+      required={false}
+      testId="cf-ui-select"
+      value="single"
+      width="auto"
     >
-      <Pill
-        label="ru"
-        onClose={[Function]}
-        status="default"
-        testId="deactivate-translation"
-      />
-    </div>
-    <TextLink
-      disabled={false}
-      linkType="primary"
-      onClick={[Function]}
-      testId="change-translation"
-    >
-      Change
-    </TextLink>
-  </div>
+      <Option
+        value="multiple"
+      >
+        Multiple locales
+      </Option>
+      <Option
+        value="single"
+      >
+        Single locale
+      </Option>
+    </Select>
+  }
+  testId="sidebar-translation-widget"
+  title="Translation"
+>
+  <TranslationDropdownWidget
+    emitter={
+      Object {
+        "emit": [MockFunction],
+      }
+    }
+    localeData={
+      Object {
+        "activeLocales": Array [
+          Object {
+            "default": true,
+            "internal_code": "en-US",
+          },
+          Object {
+            "default": false,
+            "internal_code": "de-DE",
+          },
+          Object {
+            "default": false,
+            "internal_code": "es-AR",
+          },
+          Object {
+            "default": false,
+            "internal_code": "ru",
+          },
+        ],
+        "errors": Object {},
+        "focusedLocale": Object {
+          "default": true,
+          "internal_code": "en-US",
+        },
+        "isLocaleActive": [Function],
+        "isSingleLocaleModeOn": true,
+        "isSingleLocaleModeSupported": true,
+        "privateLocales": Array [
+          Object {
+            "default": true,
+            "internal_code": "en-US",
+          },
+          Object {
+            "default": false,
+            "internal_code": "de-DE",
+          },
+          Object {
+            "default": false,
+            "internal_code": "es-AR",
+          },
+          Object {
+            "default": false,
+            "internal_code": "ru",
+          },
+        ],
+      }
+    }
+  />
 </EntrySidebarWidget>
 `;

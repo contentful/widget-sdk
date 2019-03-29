@@ -175,6 +175,11 @@ registerSchema({
 });
 
 registerSchema({
+  name: 'translation_sidebar',
+  version: '1-0-0'
+});
+
+registerSchema({
   name: 'ui_extension_install',
   version: '2-0-0'
 });
