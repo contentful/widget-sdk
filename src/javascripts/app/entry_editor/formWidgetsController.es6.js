@@ -16,20 +16,13 @@ export default function register() {
     '$scope',
     'controls',
     ($scope, controls) => {
+      const { validator } = $scope.editorContext;
+
       // Visibility can change when:
       // - "Show disabled fields" option is used.
-      // - The single/multi-locale mode is toggled.
-      // - The focused locale is changed (from the single-locale mode).
       // - Validation errors change (we always show fields with errors).
-      $scope.$watchGroup(
-        [
-          'preferences.showDisabledFields',
-          'localeData.isSingleLocaleModeOn',
-          'localeData.focusedLocale'
-        ],
-        update
-      );
-      K.onValueScope($scope, $scope.editorContext.validator.errors$, update);
+      $scope.$watch(() => $scope.preferences.showDisabledFields, update);
+      K.onValueScope($scope, validator.errors$, update);
 
       function update() {
         $scope.widgets = controls.map(markVisibility).filter(shouldRender);
@@ -40,26 +33,12 @@ export default function register() {
       function markVisibility(widget) {
         const isNotDisabled = !widget.field.disabled;
         const showingDisabled = $scope.preferences.showDisabledFields;
-        const { focusedLocale, defaultLocale, isSingleLocaleModeOn } = $scope.localeData;
+        const hasErrors = validator.hasFieldError(widget.field.id);
 
-        let isVisible;
-        if (isSingleLocaleModeOn) {
-          const hasFieldLocaleErrors = $scope.editorContext.validator.hasFieldLocaleError(
-            widget.field.id,
-            focusedLocale.internal_code
-          );
-          const isNonDefaultLocale = focusedLocale.internal_code !== defaultLocale.internal_code;
-
-          isVisible =
-            isNonDefaultLocale && !widget.field.localized
-              ? hasFieldLocaleErrors
-              : isNotDisabled || showingDisabled || hasFieldLocaleErrors;
-        } else {
-          const hasFieldErrors = $scope.editorContext.validator.hasFieldError(widget.field.id);
-          isVisible = isNotDisabled || showingDisabled || hasFieldErrors;
-        }
-
-        return { ...widget, isVisible };
+        return {
+          ...widget,
+          isVisible: isNotDisabled || showingDisabled || hasErrors
+        };
       }
 
       // Determines if the widget should be rendered, either visible
