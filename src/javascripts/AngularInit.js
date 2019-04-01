@@ -168,7 +168,6 @@ angular
       ngRequire('components/tabs/entry_list/entryListDirective.es6').default();
       ngRequire('utils/overridingRequestQueue.es6').default();
       ngRequire('components/tabs/entry_list/entryListSearchController.es6').default();
-      ngRequire('components/tabs/entry_list/viewCustomizerDirective.es6').default();
       ngRequire('services/batchPerformer.es6').default();
       ngRequire('components/tabs/listActionsController.es6').default();
       ngRequire('debug/XHR/cfMockXhrConsoleDirective.es6').default();

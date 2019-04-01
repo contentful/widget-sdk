@@ -190,21 +190,8 @@ export default function register() {
       $scope.hasNoSearchResults = () => {
         const hasQuery = searchController.hasQuery();
         const hasEntries = $scope.paginator.getTotal() > 0;
-        const hasCollection = getViewItem('collection');
-        return !hasEntries && hasQuery && !hasCollection && !$scope.context.loading;
+        return !hasEntries && hasQuery && !$scope.context.loading;
       };
-
-      /**
-       * @ngdoc method
-       * @name EntryListController#$scope.isEmptyCollection
-       * @description
-       * Returns true if a collection view is active but there is nothing
-       * in the collection.
-       *
-       * @return {boolean}
-       */
-      $scope.isEmptyCollection = () =>
-        !$scope.paginator.getTotal() && getViewItem('collection') && !$scope.context.loading;
 
       /**
        * @ngdoc property
