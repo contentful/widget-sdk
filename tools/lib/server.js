@@ -1,10 +1,11 @@
 const P = require('path');
-const { denodeify } = require('promise');
+const gulp = require('gulp');
+
 const { watch } = require('chokidar');
 const { debounce, values } = require('lodash');
 const anymatch = require('anymatch');
 const express = require('express');
-const runSequence = require('run-sequence');
+
 const { readJSON } = require('./utils');
 const middleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
@@ -13,8 +14,6 @@ const createWebpackConfig = require('../webpack.config');
 const IndexPage = require('./index-page');
 
 const MicroBackends = require('@contentful/micro-backends');
-
-const runSequenceP = denodeify(runSequence);
 
 /**
  * Serve the application and rebuild files on file changes
@@ -55,8 +54,17 @@ module.exports.serveWatch = function serveWatch(configName, watchFiles, patternT
         .on('unlink', buildPath);
     }
 
+    const tasksPromise = new Promise((res, rej) => {
+      gulp.series(...tasks)(function callbackForAsyncTasks(err) {
+        if (err) {
+          rej();
+        } else {
+          res();
+        }
+      });
+    });
     function buildImmediately() {
-      addBuild(runSequenceP.apply(null, tasks));
+      addBuild(tasksPromise);
     }
 
     function buildPath(path) {
@@ -87,7 +95,7 @@ function createServer(configName, getBuild) {
   const docIndex = sendIndex(P.join(publicDir, 'docs'));
 
   const app = express();
-  const config = createWebpackConfig({ dev: true });
+  const config = createWebpackConfig();
   const compiler = webpack(config);
   const PORT = Number.parseInt(process.env.PORT, 10) || 3001;
 

@@ -4,7 +4,6 @@ const concat = require('gulp-concat');
 const terser = require('terser');
 const composer = require('gulp-uglify/composer');
 const rev = require('gulp-rev');
-const mergeStream = require('merge-stream');
 const { writeFile, changeBase } = require('../helpers');
 
 const uglify = composer(terser, console);
@@ -13,7 +12,7 @@ const uglify = composer(terser, console);
  * Concatenates and minifies application JS files to
  * `application.min.js` and creates a manifest.
  */
-gulp.task('build/js', ['js', 'templates'], function() {
+gulp.task('build/js/app', () => {
   // The main production application
   const prodBundleSteeam = generateBundleFromFiles(
     'app/application.min.js',
@@ -26,6 +25,14 @@ gulp.task('build/js', ['js', 'templates'], function() {
     ]
   );
 
+  return prodBundleSteeam;
+});
+
+/**
+ * Concatenates and minifies application JS files to
+ * `application.min.js` and creates a manifest.
+ */
+gulp.task('build/js/test', () => {
   // The "test" application, bundled with test dependencies
   const testBundleStream = generateBundleFromFiles(
     'app/test-bundle.min.js',
@@ -38,14 +45,14 @@ gulp.task('build/js', ['js', 'templates'], function() {
     ]
   );
 
-  return mergeStream(prodBundleSteeam, testBundleStream);
+  return testBundleStream;
 });
 
 function generateBundleFromFiles(bundlePath, manifestPath, files) {
   return (
     gulp
       .src(files)
-      .pipe(sourceMaps.init({ loadMaps: true, largeFile: true }))
+      .pipe(sourceMaps.init({ loadMaps: true }))
       .pipe(concat(bundlePath))
       .pipe(uglify())
       .pipe(changeBase('build'))

@@ -71,7 +71,7 @@ async function createIndex(env, version) {
 }
 
 /*
- * Creates a file distribution after gulp build.
+ * Creates a file distribution after gulp build-app.
  *
  * Copies the following files.
  * ~~~
@@ -90,7 +90,7 @@ async function createFileDist(env, version, branch) {
   console.log(`Creating file distribution for "${env}"`);
 
   // This directory contains all the files needed to run the app.
-  // It is populated by `gulp build`.
+  // It is populated by `gulp build-app`.
   const BUILD_SRC = P.resolve('./build');
 
   await copy(P.join(BUILD_SRC, 'app'), targetPath(env, 'app'));

@@ -5,7 +5,7 @@ const { writeFile, changeBase } = require('../helpers');
 
 const uglify = composer(terser, console);
 
-gulp.task('build/chunks', [], function() {
+gulp.task('build/chunks', function() {
   return gulp
     .src('public/app/chunk_*.js')
     .pipe(uglify())

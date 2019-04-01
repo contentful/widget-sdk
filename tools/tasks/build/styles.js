@@ -23,7 +23,7 @@ const rev = require('gulp-rev');
  * - Extracts source maps contained in the files and writes them
  *   to a separate `.maps` file.
  */
-gulp.task('build/styles', ['build/static', 'stylesheets'], function() {
+const styles = () => {
   const staticManifest = require('../../../build/static-manifest.json');
   const manifestResolver = createManifestResolver(staticManifest, '/app');
   return (
@@ -56,4 +56,6 @@ gulp.task('build/styles', ['build/static', 'stylesheets'], function() {
       .pipe(rev.manifest('build/styles-manifest.json'))
       .pipe(writeFile())
   );
-});
+};
+
+gulp.task('build/styles', gulp.series(gulp.parallel('build/static', 'stylesheets'), styles));
