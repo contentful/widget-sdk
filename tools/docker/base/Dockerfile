@@ -4,7 +4,7 @@
 # - Installs unzip and fpm as packages
 # - Installs Chrome to run tests with karma
 #
-FROM node:8.11
+FROM node:10.15.3-alpine
 
 ADD https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb google-chrome.deb
 

@@ -1,4 +1,4 @@
-FROM node:8-alpine
+FROM node:10.15.3-alpine
 
 ARG NPM_TOKEN
 ARG MICRO_BACKENDS_VERSION

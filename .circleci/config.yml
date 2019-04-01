@@ -133,7 +133,7 @@ jobs:
 
   lint:
     docker:
-      - image: circleci/node:8.12.0
+      - image: circleci/node:10.15.3
     environment:
       CYPRESS_INSTALL_BINARY: 0
     steps:
@@ -146,7 +146,7 @@ jobs:
 
   run-jest-tests:
     docker:
-      - image: circleci/node:8.12.0
+      - image: circleci/node:10.15.3
     environment:
       CI: true
       CYPRESS_INSTALL_BINARY: 0
@@ -159,14 +159,14 @@ jobs:
           name: Run Jest tests
           command: NODE_ENV=production npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
           environment:
-            JEST_JUNIT_OUTPUT: "reports/junit/jest-test-results.xml"
+            JEST_JUNIT_OUTPUT: 'reports/junit/jest-test-results.xml'
       - run: npm run codecov
       - store_test_results:
           path: reports/junit
 
   run-karma-tests:
     docker:
-      - image: circleci/node:8.12.0-browsers
+      - image: circleci/node:10.15.3-browsers
     environment:
       CYPRESS_INSTALL_BINARY: 0
     steps:
