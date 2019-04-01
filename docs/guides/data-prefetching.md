@@ -5,6 +5,9 @@ But it can significantly simplify some.
 
 This uses the term `dataset` for data that has `sys.id` and optionally contains Links in `sys`, e.g. Users and Teams.
 
+See selector tests for documentation of behaviour: `redux/selectors/access.spec.js`.
+Also use the redux dev tools to inspect behaviour and state during runtime.
+
 ## Loading defined datasets for routes
 
 Add your route including datasets to load here: `redux/routes.es6.js`

@@ -11,7 +11,9 @@ import {
   __PROTOTYPE__PROJECTS
 } from './datasets.es6';
 
-/** @brief Define routes in app and attributes of these routes
+/**
+ * @description
+ * Define routes in app and attributes of these routes
  *
  * Required datasets and features are inherited by children.
  *
