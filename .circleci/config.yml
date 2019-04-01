@@ -110,7 +110,7 @@ jobs:
             cd micro-backends
             npm init -y
             npm install --production --no-save "@contentful/micro-backends@$MICRO_BACKENDS_VERSION"
-            ./node_modules/.bin/micro-backends "micro-backends" "rev-$CIRCLE_SHA1"
+            ./node_modules/.bin/micro-backends "." "rev-$CIRCLE_SHA1"
 
   lint:
     docker:
