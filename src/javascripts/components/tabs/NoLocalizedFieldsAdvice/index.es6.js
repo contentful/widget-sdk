@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Advice from 'components/tabs/Advice/index.es6';
 import TranslationsIcon from 'svg/translations-icon.es6';
 import { css } from 'emotion';
@@ -10,20 +11,25 @@ const styles = {
   })
 };
 
-const NoLocalizedFieldsAdvice = () => (
+const getDescription = localeName => `
+  There are no localized fields to translate for ${localeName}. You can
+  switch to a different locale using "Translation" in your sidebar.
+`;
+
+const NoLocalizedFieldsAdvice = ({ localeName }) => (
   <div className={styles.container}>
     <Advice data-test-id="no-localized-fields-advice">
       <Advice.Icon>
         <TranslationsIcon />
       </Advice.Icon>
-      <Advice.Title>There are no localized fields for this locale</Advice.Title>
-      <Advice.Description>
-        The locale you have chosen does no have any localized fields to display. You can see which
-        fields are editable by switching to a new locale, or by toggling into the multiple locale
-        display.
-      </Advice.Description>
+      <Advice.Title>There are no fields to translate</Advice.Title>
+      <Advice.Description>{getDescription(localeName)}</Advice.Description>
     </Advice>
   </div>
 );
+
+NoLocalizedFieldsAdvice.propTypes = {
+  localeName: PropTypes.string.isRequired
+};
 
 export default NoLocalizedFieldsAdvice;
