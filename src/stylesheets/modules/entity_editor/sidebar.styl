@@ -24,30 +24,6 @@ $entity-sidebar-content()
 // TODO rename workbench-sidebar__content
   $entity-sidebar-content()
 
-  &__header
-    font-size: .75rem
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid $colors.element-dark
-    margin-bottom: $rhythm(1.5)
-    margin-top: $rhythm(1.5)
-
-  &__heading
-    font-size: .75rem
-    font-weight: 500
-    text-transform: uppercase
-    color: $colors.text-light
-    border-bottom: 1px solid $colors.element-dark
-    margin-bottom: $rhythm(1.5)
-    margin-top: $rhythm(1.5)
-    line-height: 2
-    letter-spacing: 1px
-
-  &.entity-editor-sidebar
-    .entity-sidebar__heading
-      margin: 0
-      border-bottom: 0
-
   &__error
     i
       display: block
@@ -179,21 +155,6 @@ $entity-sidebar-content()
 @require '../objects/pills'
 
 .entity-sidebar
-  &__select
-    select
-      background-color: transparent
-      text-align-last: right
-      border: 0
-      padding: 0 1.25rem 0 0
-      height: 1.5rem
-
-      &:focus
-        border: 0
-        box-shadow: none
-
-    svg
-      right: 0
-
   &__translation-pill
     &.x--default
       background: $colors.element-light
