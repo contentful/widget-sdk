@@ -27,7 +27,7 @@ const style = `
 `;
 
 export default () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="330" height="245" viewBox="0 0 325.64 241.14">
+  <svg xmlns="http://www.w3.org/2000/svg" width="280" height="207" viewBox="0 0 325.64 241.14">
     <defs>
       <style>{style}</style>
       <linearGradient
