@@ -12,8 +12,10 @@ describe('withTracking() returned hoc', () => {
 
   beforeEach(() => {
     props = {
+      loadEvents: {
+        emit: () => {}
+      },
       widgetAPI: {
-        trackEntryEditorAction: () => {},
         field: {
           id: 'FIELD_ID,',
           locale: 'FIELD_LOCALE'

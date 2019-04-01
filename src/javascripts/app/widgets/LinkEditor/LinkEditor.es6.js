@@ -15,8 +15,8 @@ const TYPES = {
   ASSET: 'Asset'
 };
 const TYPE_NAMES = {
-  Entry: 'entry',
-  Asset: 'asset'
+  [TYPES.ENTRY]: 'entry',
+  [TYPES.ASSET]: 'asset'
 };
 
 export default class LinkEditor extends React.Component {
@@ -25,9 +25,10 @@ export default class LinkEditor extends React.Component {
     isDisabled: PropTypes.bool,
     onChange: PropTypes.func,
     onAction: PropTypes.func,
+    onLinkFetchComplete: PropTypes.func,
     type: PropTypes.oneOf(Object.values(TYPES)).isRequired,
     style: PropTypes.oneOf(['link', 'card']).isRequired,
-    isSingle: PropTypes.bool.isRequired,
+    isSingle: PropTypes.bool,
     contentTypes: PropTypes.arrayOf(PropTypes.object),
     actions: PropTypes.shape({
       selectEntities: PropTypes.func,
@@ -40,7 +41,8 @@ export default class LinkEditor extends React.Component {
     value: [],
     onChange: noop,
     onAction: noop,
-    single: false
+    onLinkFetchComplete: noop,
+    isSingle: false
   };
 
   getLinks() {
@@ -65,7 +67,7 @@ export default class LinkEditor extends React.Component {
   }
 
   renderCard(link, index) {
-    const { isDisabled } = this.props;
+    const { isDisabled, onLinkFetchComplete } = this.props;
     const handleEditLink = () => this.handleEditLink(link);
     const entityType = link.sys.linkType;
     return (
@@ -76,7 +78,7 @@ export default class LinkEditor extends React.Component {
         disabled={isDisabled}
         editable={true}
         selected={false}
-        onEntityFetchComplete={noop}
+        onEntityFetchComplete={() => onLinkFetchComplete()}
         onEdit={handleEditLink}
         onRemove={() => this.handleRemoveLinkAt(index)}
         onClick={handleEditLink}

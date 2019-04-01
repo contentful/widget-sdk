@@ -82,16 +82,15 @@ export default function connectToWidgetAPI(
     };
 
     render() {
-      const { loadEvents } = this.props;
       const { entry, field } = this.props.widgetApi;
       const { currentUrl } = this.state;
+      // TODO: Merge this part of widgetApi with the other widgetApi.
       const widgetAPI = buildWidgetApi({
         entry,
         field,
-        currentUrl,
-        loadEvents
+        currentUrl
       });
-      const { widgetApi, ...otherProps } = this.props;
+      const { widgetApi: _widgetApi, ...otherProps } = this.props;
       return (
         <WidgetAPIContext.Provider value={{ widgetAPI }}>
           <Component

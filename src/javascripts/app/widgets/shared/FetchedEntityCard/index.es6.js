@@ -1,3 +1,4 @@
+import { once, noop } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Card, IconButton } from '@contentful/forma-36-react-components';
@@ -24,6 +25,7 @@ class FetchedEntityCard extends React.Component {
   };
   static defaultProps = {
     className: '',
+    onEntityFetchComplete: noop,
     buildCard: (props, RecommendedCardComponent) => <RecommendedCardComponent {...props} />
   };
 
@@ -74,7 +76,6 @@ class FetchedEntityCard extends React.Component {
       onRemove,
       onClick,
       readOnly,
-      onEntityFetchComplete,
       buildCard
     } = this.props;
 
@@ -90,7 +91,7 @@ class FetchedEntityCard extends React.Component {
               const isPending = fetchEntityResult.requestStatus === RequestStatus.Pending;
               const isLoading = isPending && !fetchEntityResult.entity;
               if (!isPending) {
-                onEntityFetchComplete && onEntityFetchComplete();
+                this.handleEntityFetchComplete();
               }
 
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
@@ -118,7 +119,7 @@ class FetchedEntityCard extends React.Component {
     );
   }
 
-  renderCard(props, CardWrapperComponent) {}
+  handleEntityFetchComplete = once(() => this.props.onEntityFetchComplete());
 }
 
 export default FetchedEntityCard;

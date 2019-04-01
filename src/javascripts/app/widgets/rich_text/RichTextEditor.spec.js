@@ -21,7 +21,6 @@ jest.mock(
 
 const fakeProps = props => ({
   widgetAPI: {
-    trackEntryEditorAction: () => {},
     permissions: {
       canAccessAssets: true
     },

@@ -22,7 +22,6 @@ export default function withTracking(Component) {
   return class extends React.Component {
     static propTypes = {
       widgetAPI: PropTypes.shape({
-        trackEntryEditorAction: PropTypes.func.isRequired,
         entry: PropTypes.shape({
           getSys: PropTypes.func.isRequired
         }).isRequired,
@@ -32,10 +31,7 @@ export default function withTracking(Component) {
         }).isRequired
       }).isRequired,
       loadEvents: PropTypes.shape({
-        emit: PropTypes.func.isRequired,
-        stream: PropTypes.shape({
-          onValue: PropTypes.func.isRequired
-        }).isRequired
+        emit: PropTypes.func.isRequired
       }),
       onAction: PropTypes.func
     };
@@ -65,10 +61,9 @@ export default function withTracking(Component) {
     }
 
     trackEntryEditorAction(actionName, data) {
-      const {
-        widgetAPI: { field, trackEntryEditorAction }
-      } = this.props;
-      trackEntryEditorAction({ actionName, field, ...data });
+      const { widgetAPI, loadEvents } = this.props;
+      const { field } = widgetAPI;
+      loadEvents.emit({ actionName, field, ...data });
     }
 
     trackRichTextEditorAction(actionName, origin, data) {

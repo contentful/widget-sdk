@@ -17,17 +17,14 @@ const slideInNavigator = getModule('navigation/SlideInNavigator');
  *
  * Note: This deprecates the old `cfWidgetApi` directive.
  *
- * TODO:
- * - Feature parity with ui-extensions-sdk official API.
- * - Move additional functions from here to ui-extensions-sdk as required (e.g. on
- *   customer request or when we want to open-source a widget relying on it).
+ * TODO: Merge this with widgetApiDirective instead, no need to have this on top of the other.
  *
  * @param {Object} field
- * @param {Object} features
+ * @param {Object} entry
  * @param {string} currentUrl
  * @returns {Object}
  */
-export default function buildWidgetApi({ field, entry, loadEvents, features, currentUrl }) {
+export default function buildWidgetApi({ field, entry, currentUrl }) {
   const { entry: canAccessEntries, asset: canAccessAssets } = getSectionVisibility();
 
   const widgetAPI = {
@@ -81,13 +78,6 @@ export default function buildWidgetApi({ field, entry, loadEvents, features, cur
      * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
      */
     currentUrl,
-
-    /**
-     * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
-     */
-    features,
-
-    trackEntryEditorAction: (...args) => loadEvents && loadEvents.emit(...args),
 
     permissions: {
       canAccessEntries,

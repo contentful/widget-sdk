@@ -1,11 +1,6 @@
-import { noop } from 'lodash';
-import { canLinkToContentType } from './Util.es6';
 import React from 'react';
-import {
-  canPerformActionOnEntryOfType,
-  canCreateAsset,
-  Action
-} from 'access_control/AccessChecker/index.es6';
+import PropTypes from 'prop-types';
+import { canPerformActionOnEntryOfType, Action } from 'access_control/AccessChecker/index.es6';
 import { newConfigFromField } from 'search/EntitySelector/Config.es6';
 
 import { getModule } from 'NgRegistry.es6';
@@ -16,6 +11,8 @@ const entityCreatorsByType = {
   Asset: entityCreator.newAsset
 };
 import withWidgetApi from 'app/widgets/WidgetApi/index.es6';
+import BaseLinkEditor from './LinkEditor.es6';
+import { canLinkToContentType } from './Util.es6';
 
 /**
  * Takes the `LinkEditor` component and returns a HOC providing all props from web
@@ -23,6 +20,14 @@ import withWidgetApi from 'app/widgets/WidgetApi/index.es6';
  */
 export default function withCfWebApp(LinkEditor) {
   class HOC extends React.Component {
+    static propTypes = {
+      type: BaseLinkEditor.propTypes.type,
+      widgetAPI: PropTypes.object.isRequired,
+      loadEvents: PropTypes.shape({
+        emit: PropTypes.func.isRequired
+      }).isRequired
+    };
+
     state = { contentTypes: [] };
 
     componentDidMount() {
@@ -47,10 +52,17 @@ export default function withCfWebApp(LinkEditor) {
       const props = {
         ...this.props,
         contentTypes,
-        actions
+        actions,
+        onLinkFetchComplete: this.handleLinkRendered
       };
       return <LinkEditor {...props} />;
     }
+
+    handleLinkRendered = () => {
+      const { loadEvents, widgetAPI } = this.props;
+      const { field } = widgetAPI;
+      loadEvents.emit({ actionName: 'linkRendered', field });
+    };
   }
   return withWidgetApi(HOC);
 }

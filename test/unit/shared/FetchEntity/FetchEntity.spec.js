@@ -55,9 +55,9 @@ describe('FetchEntity', () => {
       });
     });
 
-    const module = this.$inject('app/widgets/shared/FetchEntity/index.es6');
-    FetchEntity = module.default;
-    RequestStatus = module.RequestStatus;
+    const FetchEntityModule = this.$inject('app/widgets/shared/FetchEntity/index.es6');
+    FetchEntity = FetchEntityModule.default;
+    RequestStatus = FetchEntityModule.RequestStatus;
 
     this.entity = {
       sys: {

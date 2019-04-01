@@ -126,67 +126,74 @@ export function createWidgetLinkRenderEventsHandler({
 }) {
   return function handleWidgetLinkRenderEvents() {
     const { field } = widget;
+    let getLinkCountForField;
     if (isRichTextField(field)) {
-      handleRichTextField({ widget, locale, loadEvents, editorData, trackLinksRendered });
+      getLinkCountForField = getRichTextLinkCount;
     } else if (isSingleReferenceField(field) || isMultiReferenceField(field)) {
-      handleReferenceField(loadEvents, trackLinksRendered);
+      getLinkCountForField = getLinkFieldLinkCount;
+      // TODO: Remove once we get rid of legacy Angular link field editors:
+      handleAngularReferenceFieldEditor(loadEvents, trackLinksRendered);
     } else {
       trackLinksRendered();
+      return;
     }
+    handleField({
+      widget,
+      locale,
+      loadEvents,
+      editorData,
+      trackLinksRendered,
+      getLinkCountForField
+    });
   };
 }
 
-function handleRichTextField({ widget, locale, loadEvents, editorData, trackLinksRendered }) {
-  const {
-    fieldId: fieldIdFromCT,
-    field: { id: fieldIdFromEntry }
-  } = widget;
-
-  const { code: localeCode, internal_code: fieldLocaleCode } = locale;
-
-  const linkCount = getRichTextLinkCount(editorData, fieldIdFromEntry, fieldLocaleCode);
+function handleField({
+  widget,
+  locale,
+  loadEvents,
+  editorData,
+  trackLinksRendered,
+  getLinkCountForField
+}) {
+  // TODO: We shouldn't have to deal with `editorData` but a simple entity in here.
+  const fieldId = widget.fieldId;
+  const internalFieldId = widget.field.id;
+  const localeFieldOrNull = getLocaleFieldOrNull(editorData, internalFieldId, locale);
+  const linkCount = localeFieldOrNull ? getLinkCountForField(localeFieldOrNull) : 0;
   if (linkCount === 0) {
     trackLinksRendered();
     return;
   }
 
-  // TODO: "Set" is undefined, since we have no polyfill for it yet.
-  // eslint-disable-next-line no-undef
-  const linksRendered = new Set();
+  let linksRenderedCount = 0;
+  loadEvents.stream.onValue(handleAction);
 
-  loadEvents.stream.onValue(({ actionName, ...data }) => {
+  function handleAction({ actionName, ...data }) {
     if (
-      linksRendered.size === linkCount ||
-      actionName !== 'linkRendered' ||
-      data.field.id !== fieldIdFromCT ||
-      data.field.locale !== localeCode
+      linksRenderedCount < linkCount &&
+      actionName === 'linkRendered' &&
+      data.field.id === fieldId &&
+      data.field.locale === locale.code
     ) {
-      return;
+      linksRenderedCount++;
+      if (linksRenderedCount === linkCount) {
+        loadEvents.stream.offValue(handleAction);
+        trackLinksRendered();
+      }
     }
-    linksRendered.add(data.key);
-    if (linksRendered.size === linkCount) {
-      trackLinksRendered();
-    }
-  });
+  }
 }
 
-function getRichTextLinkCount(editorData, fieldIdFromEntry, fieldLocaleCode) {
-  const { fields } = editorData.entity.data;
-  const field = fields[fieldIdFromEntry];
-  if (!field) {
-    // no entity data for the field yet
-    return 0;
-  }
-  const localeField = field[fieldLocaleCode];
-  if (!localeField) {
-    // no entity data for this specific field
-    return 0;
-  }
+function getRichTextLinkCount(localeField) {
   const { Entry, Asset } = getRichTextEntityLinks(localeField);
   return Entry.length + Asset.length;
 }
+function getLinkFieldLinkCount(localeField) {
+  return Array.isArray(localeField) ? localeField.length : Number(!!localeField);
+}
 
-function handleReferenceField(loadEvents, trackLinksRendered) {
+function handleAngularReferenceFieldEditor(loadEvents, trackLinksRendered) {
   if (loadEvents) {
     loadEvents.stream.onValue(({ actionName }) => {
       if (actionName === 'referenceLinksRendered') {
@@ -196,18 +203,27 @@ function handleReferenceField(loadEvents, trackLinksRendered) {
   }
 }
 
-export function isRichTextField(field) {
+function isRichTextField(field) {
   return field.type === 'RichText';
 }
 
-export function isSingleReferenceField(field) {
+function isSingleReferenceField(field) {
   return field.type === 'Link';
 }
 
-export function isMultiReferenceField(field) {
+function isMultiReferenceField(field) {
   return field.type === 'Array' && field.items.type === 'Link';
 }
 
-export function isLinkField(field) {
+function isLinkField(field) {
   return isRichTextField(field) || isSingleReferenceField(field) || isMultiReferenceField(field);
+}
+
+function getLocaleFieldOrNull(editorData, fieldId, locale) {
+  const { fields } = editorData.entity.data;
+  const field = fields[fieldId];
+  if (!field) {
+    return null;
+  }
+  return field[locale.internal_code] || null;
 }
