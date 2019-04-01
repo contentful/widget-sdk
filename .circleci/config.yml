@@ -2,34 +2,8 @@ version: 2.1
 orbs:
   cypress: cypress-io/cypress@1.5.1
   deploy-assets:
-    executors:
-      machine-executor:
-        machine:
-          docker_layer_caching: true
-    commands:
-      deploy-to-s3:
-        description: 'Deploy configured assets to S3 using the image containing awscli'
-        parameters:
-          access_key_id:
-            type: string
-          secret_access_key:
-            type: string
-          region:
-            type: string
-          path:
-            type: string
-          bucket:
-            type: string
-        steps:
-          - run:
-              name: Deploy assets to S3
-              command: |
-                docker run -t --rm -v ~/workspace/output:/app/output \
-                -e AWS_REGION=<<parameters.region>> \
-                -e AWS_ACCESS_KEY_ID=<<parameters.access_key_id>> \
-                -e AWS_SECRET_ACCESS_KEY=<<parameters.secret_access_key>> \
-                aws s3 cp --acl public-read --recursive \
-                <<parameters.path>> s3://<<parameters.bucket>>
+    orbs:
+      aws-s3: circleci/aws-s3@1.0.4
     jobs:
       to-s3:
         description: 'Build the image containing awscli and deploy assets to S3 using it'
@@ -44,18 +18,22 @@ orbs:
             type: string
           bucket:
             type: string
-        executor: machine-executor
+        docker:
+          - image: circleci/python:2.7
         steps:
           - attach_workspace:
               at: ~/workspace
           - checkout
-          - run: docker build -t aws -f Dockerfile-awscli .
-          - deploy-to-s3:
-              access_key_id: <<parameters.access_key_id>>
-              secret_access_key: <<parameters.secret_access_key>>
-              region: <<parameters.region>>
-              path: <<parameters.path>>
-              bucket: <<parameters.bucket>>
+          - run:
+              name: Export AWS environment variables
+              command: |
+                echo 'export AWS_ACCESS_KEY_ID=<<parameters.access_key_id>>' >> $BASH_ENV
+                echo 'export AWS_SECRET_ACCESS_KEY=<<parameters.secret_access_key>>' >> $BASH_ENV
+                echo 'export AWS_REGION=<<parameters.region>>' >> $BASH_ENV
+          - aws-s3/copy:
+              from: <<parameters.path>>
+              to: s3://<<parameters.bucket>>
+              arguments: '--acl public-read --recursive'
 
 executors:
   cypress-base-8:
@@ -209,7 +187,7 @@ workflows:
           access_key_id: '${AWS_S3_PREVIEW_ACCESS_KEY_ID}'
           secret_access_key: '${AWS_S3_PREVIEW_SECRET_ACCESS_KEY}'
           region: 'eu-west-1'
-          path: '/app/output/files/preview'
+          path: '~/workspace/output/files/preview'
           bucket: 'cf-preview-static-cdnorigin'
           requires:
             - build-and-push-image
@@ -218,7 +196,7 @@ workflows:
           access_key_id: '${AWS_S3_STAGING_ACCESS_KEY_ID}'
           secret_access_key: '${AWS_S3_STAGING_SECRET_ACCESS_KEY}'
           region: 'us-east-1'
-          path: '/app/output/files/staging'
+          path: '~/workspace/output/files/staging'
           bucket: 'cf-staging-static-cdnorigin'
           post-steps:
             - run:
@@ -231,7 +209,7 @@ workflows:
           access_key_id: '${AWS_S3_PRODUCTION_ACCESS_KEY_ID}'
           secret_access_key: '${AWS_S3_PRODUCTION_SECRET_ACCESS_KEY}'
           region: 'us-east-1'
-          path: '/app/output/files/production'
+          path: '~/workspace/output/files/production'
           bucket: 'static.cdnorigin.contentful.com'
           requires:
             - build-and-push-image
