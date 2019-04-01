@@ -32,6 +32,9 @@ const renderDayHeader = (activity, index) => {
 const renderActivityText = (activity, fieldIdNameMap) => {
   if (activity.verb === 'changed' && get(activity, 'path')) {
     const fieldName = fieldIdNameMap[activity.path[1]];
+    if (!fieldName) {
+      return <span title={fieldName}>{`Inaccessible field changed`}</span>;
+    }
     const fieldLabel = fieldName.length > 14 ? `${fieldName.slice(0, 13).trim()}...` : fieldName;
     return <span title={fieldName}>{`Field "${fieldLabel}" changed`}</span>;
   }
