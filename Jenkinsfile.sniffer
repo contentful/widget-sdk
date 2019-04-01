@@ -8,7 +8,7 @@ pipeline {
       label buildId('sniffer')
       containerTemplate {
         name 'node'
-        image 'node:8-alpine'
+        image 'node:10.15.3-alpine'
         ttyEnabled true
         command 'cat'
       }
