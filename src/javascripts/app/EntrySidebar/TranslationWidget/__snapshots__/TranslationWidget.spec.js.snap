@@ -140,11 +140,13 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is supported whe
       width="auto"
     >
       <Option
+        testId="cf-ui-select-option"
         value="multiple"
       >
         Multiple locales
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="single"
       >
         Single locale
@@ -247,11 +249,13 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is supported whe
       width="auto"
     >
       <Option
+        testId="cf-ui-select-option"
         value="multiple"
       >
         Multiple locales
       </Option>
       <Option
+        testId="cf-ui-select-option"
         value="single"
       >
         Single locale

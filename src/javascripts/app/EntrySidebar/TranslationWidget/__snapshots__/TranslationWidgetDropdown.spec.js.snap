@@ -14,12 +14,14 @@ exports[`EntrySidebar/TranslationWidgetDropdown when a locale has 1 error should
   >
     <Option
       key="en-US"
+      testId="cf-ui-select-option"
       value="en-US"
     >
       English (United States) (undefined) - 1 error
     </Option>
     <Option
       key="ru"
+      testId="cf-ui-select-option"
       value="ru"
     >
       Russian (undefined)
@@ -42,12 +44,14 @@ exports[`EntrySidebar/TranslationWidgetDropdown when a locale has more than one 
   >
     <Option
       key="en-US"
+      testId="cf-ui-select-option"
       value="en-US"
     >
       English (United States) (undefined) - 2 errors
     </Option>
     <Option
       key="ru"
+      testId="cf-ui-select-option"
       value="ru"
     >
       Russian (undefined)
@@ -71,12 +75,14 @@ exports[`EntrySidebar/TranslationWidgetDropdown when both locales have errors sh
   >
     <Option
       key="en-US"
+      testId="cf-ui-select-option"
       value="en-US"
     >
       English (United States) (undefined) - 2 errors
     </Option>
     <Option
       key="ru"
+      testId="cf-ui-select-option"
       value="ru"
     >
       Russian (undefined) - 1 error
@@ -99,12 +105,14 @@ exports[`EntrySidebar/TranslationWidgetDropdown when there are no locale errors 
   >
     <Option
       key="en-US"
+      testId="cf-ui-select-option"
       value="en-US"
     >
       English (United States) (undefined)
     </Option>
     <Option
       key="ru"
+      testId="cf-ui-select-option"
       value="ru"
     >
       Russian (undefined)
