@@ -110,7 +110,7 @@ class ProjectCreationModal extends React.Component {
             <Modal.Header title="Create a project" />
             <Modal.Content>
               <span>
-                Projects helps you keep track of your work. Create a project, link the relevant
+                Projects help you keep track of your work. Create a project, link the relevant
                 spaces and users, and share information with your team about the context of the
                 work.
               </span>
