@@ -74,6 +74,8 @@ registerGenericEvent('netlify:preview_opened');
 registerGenericEvent('algolia:installed');
 registerGenericEvent('algolia:updated');
 registerGenericEvent('algolia:uninstalled');
+registerGenericEvent('aiImageManagement:installed');
+registerGenericEvent('aiImageManagement:uninstalled');
 
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:unlink');

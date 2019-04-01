@@ -22,6 +22,7 @@ node_modules
 /build/
 public/*
 .vscode/
+*.iml
 .idea/
 *.ignore
 output/

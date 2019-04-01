@@ -120,6 +120,7 @@ export const validEvents = {
     'preview_opened'
   ],
   algolia: ['installed', 'updated', 'uninstalled'],
+  aiImageManagement: ['installed', 'uninstalled'],
   sso: ['start_setup', 'connection_test_result', 'contact_support', 'enable']
 };
 

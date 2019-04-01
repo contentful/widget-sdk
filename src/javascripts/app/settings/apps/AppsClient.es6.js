@@ -1,4 +1,8 @@
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
+import {
+  APP_ID as IMAGE_MANAGEMENT_APP_ID,
+  APP_NAME as IMAGE_MANAGEMENT_APP_NAME
+} from './image-management/Constants.es6';
 
 const KNOWN_APPS = {
   netlify: {
@@ -6,6 +10,9 @@ const KNOWN_APPS = {
   },
   algolia: {
     title: 'Algolia'
+  },
+  [IMAGE_MANAGEMENT_APP_ID]: {
+    title: IMAGE_MANAGEMENT_APP_NAME
   },
   optimizely: {
     title: 'Optimizely',
