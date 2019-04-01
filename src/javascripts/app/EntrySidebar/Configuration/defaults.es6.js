@@ -53,22 +53,22 @@ export const EntryActivity = {
 
 export const defaultWidgetsMap = {
   [Publication.widgetId]: Publication,
+  [EntryActivity.widgetId]: EntryActivity,
   [ContentPreview.widgetId]: ContentPreview,
   [Links.widgetId]: Links,
   [Translation.widgetId]: Translation,
   [Versions.widgetId]: Versions,
-  [Users.widgetId]: Users,
-  [EntryActivity.widgetId]: EntryActivity
+  [Users.widgetId]: Users
 };
 
 export const EntryConfiguration = [
   Publication,
+  EntryActivity,
   ContentPreview,
   Links,
   Translation,
   Versions,
-  Users,
-  EntryActivity
+  Users
 ];
 
 export const AssetConfiguration = [Publication, Links, Translation, Users];

@@ -12,10 +12,6 @@ import getContentTypePreview from './PreviewTab/getContentTypePreview.es6';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
-import { ENTRY_ACTIVITY } from 'featureFlags.es6';
-
-import { EntryActivity } from 'app/EntrySidebar/Configuration/defaults.es6';
-
 export default function register() {
   registerDirective('cfContentTypeEditor', [
     () => ({
@@ -43,7 +39,6 @@ export default function register() {
     'access_control/AccessChecker',
     'analytics/Analytics.es6',
     'app/ContentModel/Editor/Actions.es6',
-    'utils/LaunchDarkly/index.es6',
     function ContentTypeEditorController(
       $scope,
       $state,
@@ -54,8 +49,7 @@ export default function register() {
       metadataDialog,
       accessChecker,
       Analytics,
-      { default: createActions },
-      LD
+      { default: createActions }
     ) {
       const controller = this;
       const contentTypeIds = spaceContext.cma
@@ -74,16 +68,6 @@ export default function register() {
       // able to save the CT.
 
       $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
-      $scope.excludedDefaultWidgetsIds = [];
-      LD.onFeatureFlag($scope, ENTRY_ACTIVITY, isEntryActivityEnabled => {
-        if (!isEntryActivityEnabled) {
-          $scope.excludedDefaultWidgetsIds.push(EntryActivity.widgetId);
-        } else {
-          $scope.excludedDefaultWidgetsIds = $scope.excludedDefaultWidgetsIds.filter(
-            id => id !== EntryActivity.widgetId
-          );
-        }
-      });
 
       if ($scope.context.isNew) {
         metadataDialog.openCreateDialog(contentTypeIds).then(
@@ -378,8 +362,7 @@ export default function register() {
         },
         contentTypeName: $scope.contentType.getName(),
         contentTypeData: $scope.contentType.data,
-        hasCustomSidebarFeature: $scope.hasCustomSidebarFeature,
-        excludedDefaultWidgetsIds: $scope.excludedDefaultWidgetsIds
+        hasCustomSidebarFeature: $scope.hasCustomSidebarFeature
       };
     }
   ]);

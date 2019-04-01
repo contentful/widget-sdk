@@ -22,15 +22,7 @@ function SidebarConfiguration(props) {
   return (
     <div className="sidebar-configuration">
       {state.configurableWidget === null && (
-        <WidgetsConfiguration
-          state={{
-            ...state,
-            items: state.items.filter(
-              ({ widgetId }) => !props.excludedDefaultWidgetsIds.includes(widgetId)
-            )
-          }}
-          dispatch={dispatch}
-        />
+        <WidgetsConfiguration state={state} dispatch={dispatch} />
       )}
       {state.configurableWidget !== null && (
         <WidgetParametersConfiguration widget={state.configurableWidget} dispatch={dispatch} />
@@ -42,8 +34,7 @@ function SidebarConfiguration(props) {
 SidebarConfiguration.propTypes = {
   configuration: PropTypes.array,
   extensions: PropTypes.array,
-  onUpdateConfiguration: PropTypes.func.isRequired,
-  excludedDefaultWidgetsIds: PropTypes.array
+  onUpdateConfiguration: PropTypes.func.isRequired
 };
 
 export default SidebarConfiguration;

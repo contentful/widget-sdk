@@ -143,11 +143,11 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           }
         ],
         availableItems: [
+          EntryActivityWidget,
           ContentPreviewWidget,
           LinksWidget,
           TranslationWidget,
-          UsersWidget,
-          EntryActivityWidget
+          UsersWidget
         ]
       });
     });

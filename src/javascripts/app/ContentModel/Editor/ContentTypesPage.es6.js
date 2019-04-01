@@ -67,7 +67,6 @@ export default function ContentTypesPage(props) {
                   configuration={props.configuration}
                   extensions={props.extensions}
                   onUpdateConfiguration={props.actions.updateSidebarConfiguration}
-                  excludedDefaultWidgetsIds={props.excludedDefaultWidgetsIds}
                 />
               </div>
             )}
@@ -113,6 +112,5 @@ ContentTypesPage.propTypes = {
   }).isRequired,
   hasCustomSidebarFeature: PropTypes.bool.isRequired,
   configuration: PropTypes.array,
-  extensions: PropTypes.array,
-  excludedDefaultWidgetsIds: PropTypes.array
+  extensions: PropTypes.array
 };
