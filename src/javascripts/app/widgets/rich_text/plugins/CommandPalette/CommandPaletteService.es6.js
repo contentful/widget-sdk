@@ -3,6 +3,9 @@ import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { isNodeTypeEnabled } from 'app/widgets/rich_text/validations/index.es6';
 import { can, canCreateAsset } from 'access_control/AccessChecker/index.es6';
 import { INLINES, BLOCKS } from '@contentful/rich-text-types';
+import { getModule } from 'NgRegistry.es6';
+
+const EntityHelpers = getModule('EntityHelpers');
 
 export async function fetchContentTypes(widgetAPI) {
   const contentTypes = await widgetAPI.space.getContentTypes();
@@ -15,24 +18,34 @@ export async function fetchAssets(widgetAPI) {
     contentTypeName: 'Asset',
     displayTitle: asset.fields.title ? asset.fields.title[widgetAPI.field.locale] : 'Untitled',
     id: asset.sys.id,
-    entry: asset
+    entry: asset,
+    thumbnail:
+      asset.fields.file &&
+      asset.fields.file[widgetAPI.field.locale] &&
+      `${asset.fields.file[widgetAPI.field.locale].url}?h=30`
   }));
 }
 
 export async function fetchEntries(widgetAPI, contentType, query = '') {
+  const entityHelpers = EntityHelpers.newForLocale(widgetAPI.field.locale);
   const entries = await widgetAPI.space.getEntries({
     content_type: contentType.sys.id,
     query
   });
 
-  return entries.items.map(entry => ({
-    contentTypeName: contentType.name,
-    displayTitle: entry.fields[contentType.displayField]
-      ? entry.fields[contentType.displayField][widgetAPI.field.locale]
-      : 'Untitled',
-    id: entry.sys.contentType.sys.id,
-    entry
-  }));
+  return Promise.all(
+    entries.items.map(async entry => {
+      const description = await entityHelpers.entityDescription(entry);
+      const displayTitle = await entityHelpers.entityTitle(entry);
+      return {
+        contentTypeName: contentType.name,
+        displayTitle: displayTitle || 'Untitled',
+        id: entry.sys.contentType.sys.id,
+        description,
+        entry
+      };
+    })
+  );
 }
 
 export const richTextCommandsFeatureFlag = {
@@ -66,6 +79,11 @@ export const isValidLinkedContentType = (field, contentType, embedType) => {
     .find(ct => ct === contentType.sys.id);
 };
 
+export const isEmbeddingEnabled = field =>
+  isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ASSET) ||
+  isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ENTRY) ||
+  isNodeTypeEnabled(field, INLINES.EMBEDDED_ENTRY);
+
 export const createActionIfAllowed = (
   field,
   contentType,
@@ -93,7 +111,7 @@ export const createActionIfAllowed = (
     }
   }
 
-  const label = `${isCreateAndEmbed ? 'Create and add' : 'Add'} ${
+  const label = `${isCreateAndEmbed ? 'Create and embed' : 'Embed'} ${
     isAsset ? 'Asset' : contentType.name
   } ${isInline ? ' - Inline' : ''}`;
 

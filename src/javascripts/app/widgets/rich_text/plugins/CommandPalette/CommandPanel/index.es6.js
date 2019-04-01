@@ -119,8 +119,9 @@ class CommandPalette extends React.PureComponent {
     { leading: false, trailing: true }
   );
 
-  createCommand = (label, contentType, entry, type) => ({
-    label: `${label}`,
+  createCommand = (label, contentType, entry, type, description, thumbnail) => ({
+    label: `${label}${description ? ` - ${description}` : ''}`,
+    thumbnail,
     contentType,
     callback: () => {
       removeCommand(this.props.editor, this.props.command);
@@ -223,7 +224,14 @@ class CommandPalette extends React.PureComponent {
       isUpdating: false,
       isLoading: false,
       items: allEntries.map(entry =>
-        this.createCommand(entry.displayTitle, entry.contentTypeName, entry.entry, type)
+        this.createCommand(
+          entry.displayTitle,
+          entry.contentTypeName,
+          entry.entry,
+          type,
+          entry.description,
+          entry.thumbnail
+        )
       )
     });
   };

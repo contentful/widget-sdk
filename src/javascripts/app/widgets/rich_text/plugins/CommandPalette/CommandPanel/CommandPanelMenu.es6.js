@@ -81,6 +81,9 @@ const styles = {
   loader: css({
     marginLeft: 'auto'
   }),
+  thumbnail: css({
+    marginRight: 15
+  }),
   instruction: css({
     marginRight: 15,
     color: tokens.colorTextLight
@@ -122,6 +125,7 @@ class CommandPanelItem extends React.Component {
         }}>
         <button type="button" className={styles.button} onClick={item.callback && item.callback}>
           {item.icon && <Icon className={styles.icon} icon={item.icon} color="secondary" />}
+          {item.thumbnail && <img className={styles.thumbnail} src={item.thumbnail} />}
           {item.label}
         </button>
       </li>
@@ -250,7 +254,7 @@ export class CommandPanel extends React.Component {
   renderNavigationBar = () => (
     <div className={styles.navBar}>
       <SectionHeading>
-        {this.props.breadcrumb ? `Add ${this.props.breadcrumb}` : 'Richtext Commands'}
+        {this.props.breadcrumb ? `Embed ${this.props.breadcrumb}` : 'Richtext Commands'}
       </SectionHeading>
     </div>
   );

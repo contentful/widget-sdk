@@ -12,7 +12,7 @@ export const getCommandText = editor => {
   if (!editor.value.startText) {
     return null;
   }
-  const COMMAND_REGEX = /\/(.*)$/;
+  const COMMAND_REGEX = /\/(\S*)$/;
   const startOffset = editor.value.selection.start.offset;
   const textBefore = editor.value.startText.text.slice(0, startOffset);
   const result = COMMAND_REGEX.exec(textBefore);
