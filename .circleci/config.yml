@@ -93,7 +93,6 @@ jobs:
     docker:
       - image: circleci/node:8.10
     environment:
-      CYPRESS_INSTALL_BINARY: 0
       LOG: 'yesplease'
     steps:
       - checkout
