@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EntrySidebar/TranslationWidget it should render Collaborators component if users list is not empty 1`] = `
+exports[`EntrySidebar/UsersWidget it should render Collaborators component if users list is not empty 1`] = `
 <EntrySidebarWidget
   testId="cf-entity-sidebar"
   title="Users"
@@ -25,7 +25,7 @@ exports[`EntrySidebar/TranslationWidget it should render Collaborators component
 </EntrySidebarWidget>
 `;
 
-exports[`EntrySidebar/TranslationWidget it should show "No other users online" if users list is empty 1`] = `
+exports[`EntrySidebar/UsersWidget it should show "No other users online" if users list is empty 1`] = `
 <UsersWidget
   users={Array []}
 >

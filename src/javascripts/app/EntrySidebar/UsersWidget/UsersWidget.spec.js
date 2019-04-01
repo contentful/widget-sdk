@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import UsersWidget from './UsersWidget.es6';
 
-describe('EntrySidebar/TranslationWidget', () => {
+describe('EntrySidebar/UsersWidget', () => {
   const render = (props = {}, renderFn = Enzyme.shallow) => {
     const wrapper = renderFn(<UsersWidget {...props} />);
     return { wrapper };

@@ -10,7 +10,9 @@ const API_KEY = '85be5437fb63d71aec4a8f99eff1022d-6b60e603-8a27e1dd';
 const TARGET_MAILS = {
   extensibility: 'team-extensibility+apps@contentful.com',
   bizVel: 'squad-hejo+feedback@contentful.com',
-  authoring: 'team-authoring@contentful.com'
+  // TODO: Please change this to one of the authoring group's
+  // product team email.
+  authoring: 'mohamed+feedback@contentful.com'
 };
 
 const getOrgLink = ({ organizationId }) =>
