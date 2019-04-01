@@ -50,7 +50,8 @@ export default function register() {
         restrict: 'E',
         scope: {
           entityContext: '<',
-          bulkEditorContext: '<'
+          bulkEditorContext: '<',
+          localeData: '<'
         },
         template: JST.bulk_entity_editor(),
         link: function($scope, $el) {

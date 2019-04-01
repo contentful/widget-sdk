@@ -10,8 +10,8 @@ import * as WidgetLocations from 'widgets/WidgetLocations.es6';
 const $controller = getModule('$controller');
 const $rootScope = getModule('$rootScope');
 const spaceContext = getModule('spaceContext');
-const TheLocaleStore = getModule('TheLocaleStore');
 const $state = getModule('$state');
+const TheLocaleStore = getModule('TheLocaleStore');
 const entitySelector = getModule('entitySelector');
 const SlideInNavigator = getModule('navigation/SlideInNavigator');
 const Navigator = getModule('states/Navigator.es6');
@@ -35,7 +35,7 @@ export default ({ $scope }) => {
         entry,
         contentType: $scope.entityInfo.contentType,
         dataForTracking: {
-          locales: TheLocaleStore.getActiveLocales(),
+          locales: $scope.localeData.activeLocales,
           fromState: $state.current.name,
           entryId: $scope.entityInfo.id
         }
@@ -225,6 +225,7 @@ export default ({ $scope }) => {
 
   return {
     legacySidebarExtensions: legacyExtensions,
+    localeData: $scope.localeData,
     sidebar: $scope.editorData.sidebar,
     sidebarExtensions: $scope.editorData.sidebarExtensions,
     sidebarExtensionsBridge,

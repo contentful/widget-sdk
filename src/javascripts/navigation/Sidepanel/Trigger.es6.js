@@ -129,7 +129,7 @@ function environmentLabel(env) {
   const isMaster = envId === 'master';
   return (
     <div
-      key={env}
+      key={envId}
       style={{
         display: 'flex',
         alignItems: 'center',

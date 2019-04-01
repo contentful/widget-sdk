@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import DocumentStatusCode from 'data/document/statusCode.es6';
 
 /**
@@ -25,25 +24,22 @@ const messages = ({ entityLabel }) => ({
   deleted: `This ${entityLabel} has been deleted and cannot be ` + 'modified anymore.',
   [DocumentStatusCode.NOT_ALLOWED]:
     `You have read-only access to this ${entityLabel}. If you need to edit ` +
-    'it please contact your administrator.'
+    'it please contact your administrator.',
+  [DocumentStatusCode.LOCALE_VALIDATION_ERRORS]: 'Some locales have validation errors.',
+  [DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR]:
+    'This asset is missing a file for the default locale.'
 });
 
-export default class StatusCodeNotification extends React.Component {
-  static propTypes = {
-    status: PropTypes.string.isRequired,
-    entityLabel: PropTypes.string.isRequired
-  };
+const StatusCodeNotification = ({ status, entityLabel }) =>
+  status && status !== 'ok' && entityLabel ? (
+    <div className="entity-editor__notification">
+      <p>{messages({ entityLabel })[status]}</p>
+    </div>
+  ) : null;
 
-  render() {
-    const { status, entityLabel } = this.props;
-    if (status && status !== 'ok' && entityLabel) {
-      return (
-        <div className="entity-editor__notification">
-          <p>{messages({ entityLabel })[status]}</p>
-        </div>
-      );
-    } else {
-      return null;
-    }
-  }
-}
+StatusCodeNotification.propTypes = {
+  status: PropTypes.string.isRequired,
+  entityLabel: PropTypes.string.isRequired
+};
+
+export default StatusCodeNotification;
