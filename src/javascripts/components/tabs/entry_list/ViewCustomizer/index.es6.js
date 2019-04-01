@@ -71,7 +71,7 @@ export default class ViewCustomizer extends React.Component {
 
   render() {
     const fields = this.state.optimisticFields || this.props.displayedFields;
-    const hasHiddenFields = this.props.hiddenFields.length > 0;
+    const hasHiddenFields = this.props.hiddenFields.length > 0 || this.props.isContentTypeHidden;
     return (
       <Dropdown
         className={styles.root}
@@ -90,7 +90,7 @@ export default class ViewCustomizer extends React.Component {
         }>
         <DropdownList>
           <DropdownListItem isTitle>Displayed Columns</DropdownListItem>
-          <DropdownListItem isDisabled>Title</DropdownListItem>
+          <DropdownListItem isDisabled>Name</DropdownListItem>
           {!this.props.isContentTypeHidden && (
             <DropdownListItem onClick={() => this.props.toggleContentType()}>
               Content Type
