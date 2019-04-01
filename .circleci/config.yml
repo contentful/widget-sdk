@@ -91,7 +91,7 @@ jobs:
 
   deploy-micro-backends:
     docker:
-      image: circleci/node:10.15.3
+      - image: circleci/node:10.15.3
     steps:
       - checkout
       - run:
