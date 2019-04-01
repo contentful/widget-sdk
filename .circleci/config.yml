@@ -97,7 +97,7 @@ jobs:
       - run:
           name: Setup environment variables
           command: |
-            echo 'export MICRO_BACKENDS_VERSION="$(cat package-lock.json | jq \'.dependencies["@contentful/micro-backends"].version\' --raw-output)"' >> $BASH_ENV
+            echo $'export MICRO_BACKENDS_VERSION="$(cat package-lock.json | jq \'.dependencies["@contentful/micro-backends"].version\' --raw-output)"' >> $BASH_ENV
             echo 'export LOG="yesplease"' >> $BASH_ENV
             echo 'export AWS_REGION="$MICRO_BACKENDS_AWS_REGION' >> $BASH_ENV
             echo 'export AWS_ACCESS_KEY_ID="$MICRO_BACKENDS_AWS_ACCESS_KEY_ID' >> $BASH_ENV
