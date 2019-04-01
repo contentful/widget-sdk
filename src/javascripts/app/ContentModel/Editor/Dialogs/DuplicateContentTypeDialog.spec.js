@@ -1,56 +1,56 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import { DuplicateContentForm } from './DuplicateContentTypeDialog.es6';
+import { DuplicateContentTypeForm } from './DuplicateContentTypeDialog.es6';
 import { Promise } from 'bluebird';
 
-const render = (props = {}) => {
-  const stubs = {
-    onDuplicateStub: jest.fn().mockImplementation(input => Promise.resolve(input)),
-    onCloseStub: jest.fn()
+describe('ContentModel/Editor/DuplicateContentTypeDialog', () => {
+  const render = (props = {}) => {
+    const stubs = {
+      onConfirmStub: jest.fn().mockImplementation(input => Promise.resolve(input)),
+      onCloseStub: jest.fn()
+    };
+    const initialProps = {
+      isShown: true,
+      onConfirm: stubs.onConfirmStub,
+      onCancel: stubs.onCloseStub,
+      originalName: 'contentTypeYouWantToCopy',
+      originalDescription: 'Description of contentTypeYouWantToCopy',
+      existingContentTypeIds: ['first', 'second', 'third', 'contentTypeYouWantToCopy']
+    };
+    const wrapper = Enzyme.mount(<DuplicateContentTypeForm {...initialProps} {...props} />);
+    return {
+      wrapper,
+      initialProps,
+      stubs
+    };
   };
-  const initialProps = {
-    isShown: true,
-    onDuplicate: stubs.onDuplicateStub,
-    onClose: stubs.onCloseStub,
-    originalName: 'contentTypeYouWantToCopy',
-    originalDescription: 'Description of contentTypeYouWantToCopy',
-    existingContentTypeIds: ['first', 'second', 'third', 'contentTypeYouWantToCopy']
+
+  const selectors = {
+    ctNameInput: 'input#contentTypeName',
+    ctIdInput: 'input#contentTypeId',
+    ctDescriptionInput: 'textarea#contentTypeDescription',
+    note: '[data-test-id="duplicate-content-type-note"]',
+    confirmBtn: '[data-test-id="content-type-form-confirm"]',
+    cancelBtn: '[data-test-id="content-type-form-cancel"]',
+    validationMessage: '[data-test-id="cf-ui-validation-message"]'
   };
-  const wrapper = Enzyme.mount(<DuplicateContentForm {...initialProps} {...props} />);
-  return {
-    wrapper,
-    initialProps,
-    stubs
+
+  const changeFieldValue = (wrapper, field, value) => {
+    wrapper.find(field).simulate('change', { target: { value } });
   };
-};
 
-const selectors = {
-  ctNameInput: 'input#contentTypeName',
-  ctIdInput: 'input#contentTypeId',
-  ctDescriptionInput: 'textarea#contentTypeDescription',
-  note: '[data-test-id="duplicate-content-type-note"]',
-  confirmBtn: '[data-test-id="duplicate-content-type-confirm"]',
-  cancelBtn: '[data-test-id="duplicate-content-type-cancel"]',
-  validationMessage: '[data-test-id="cf-ui-validation-message"]'
-};
+  const changeName = (wrapper, value) => {
+    changeFieldValue(wrapper, selectors.ctNameInput, value);
+  };
 
-const changeFieldValue = (wrapper, field, value) => {
-  wrapper.find(field).simulate('change', { target: { value } });
-};
+  const changeId = (wrapper, value) => {
+    changeFieldValue(wrapper, selectors.ctIdInput, value);
+  };
 
-const changeName = (wrapper, value) => {
-  changeFieldValue(wrapper, selectors.ctNameInput, value);
-};
+  const changeDescription = (wrapper, value) => {
+    changeFieldValue(wrapper, selectors.ctDescriptionInput, value);
+  };
 
-const changeId = (wrapper, value) => {
-  changeFieldValue(wrapper, selectors.ctIdInput, value);
-};
-
-const changeDescription = (wrapper, value) => {
-  changeFieldValue(wrapper, selectors.ctDescriptionInput, value);
-};
-
-describe('ContentModel/Editor/DuplicateContentTypeForm', () => {
   it('should show proper initial state', () => {
     const { wrapper, initialProps } = render();
 
@@ -113,7 +113,7 @@ describe('ContentModel/Editor/DuplicateContentTypeForm', () => {
     expect(wrapper.find(selectors.confirmBtn)).not.toBeDisabled();
   });
 
-  it('should call onDuplicate and onClose once click on Duplicate', async () => {
+  it('should call onConfirm and onClose once click on Duplicate', async () => {
     const { wrapper, stubs } = render();
 
     const values = {
@@ -128,9 +128,7 @@ describe('ContentModel/Editor/DuplicateContentTypeForm', () => {
 
     wrapper.find(selectors.confirmBtn).simulate('click');
 
-    expect(stubs.onDuplicateStub).toHaveBeenCalledWith(values);
-    await Promise.resolve();
-    expect(stubs.onCloseStub).toHaveBeenCalledWith(values);
+    expect(stubs.onConfirmStub).toHaveBeenCalledWith(values);
   });
 
   it('should call onClose once click on Cancel', () => {
@@ -138,7 +136,7 @@ describe('ContentModel/Editor/DuplicateContentTypeForm', () => {
 
     wrapper.find(selectors.cancelBtn).simulate('click');
 
-    expect(stubs.onDuplicateStub).not.toHaveBeenCalled();
-    expect(stubs.onCloseStub).toHaveBeenCalledWith(false);
+    expect(stubs.onConfirmStub).not.toHaveBeenCalled();
+    expect(stubs.onCloseStub).toHaveBeenCalled();
   });
 });

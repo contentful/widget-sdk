@@ -1,6 +1,7 @@
 import { registerController, registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import validation from '@contentful/validation';
+import * as Analytics from 'analytics/Analytics.es6';
 
 import { syncControls } from 'widgets/EditorInterfaceTransformer.es6';
 import {
@@ -8,6 +9,7 @@ import {
   openOmitDialog,
   openSaveDialog
 } from './FieldsTab/FieldTabDialogs.es6';
+import { openCreateContentTypeDialog, openEditContentTypeDialog } from './Dialogs/index.es6';
 import getContentTypePreview from './PreviewTab/getContentTypePreview.es6';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
@@ -33,32 +35,23 @@ export default function register() {
     '$state',
     'modalDialog',
     'command',
-    'spaceContext',
     'openFieldDialog',
-    'contentTypeEditor/metadataDialog',
     'access_control/AccessChecker',
-    'analytics/Analytics.es6',
     'app/ContentModel/Editor/Actions.es6',
     function ContentTypeEditorController(
       $scope,
       $state,
       modalDialog,
       Command,
-      spaceContext,
       openFieldDialog,
-      metadataDialog,
       accessChecker,
-      Analytics,
       { default: createActions }
     ) {
       const controller = this;
-      const contentTypeIds = spaceContext.cma
-        .getContentTypes()
-        .then(response => response.items.map(ct => ct.sys.id));
 
       $scope.context.dirty = false;
 
-      $scope.actions = createActions($scope, contentTypeIds);
+      $scope.actions = createActions($scope, $scope.contentTypeIds);
       $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(
         $scope.actions.saveAndClose
       );
@@ -70,18 +63,22 @@ export default function register() {
       $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
       if ($scope.context.isNew) {
-        metadataDialog.openCreateDialog(contentTypeIds).then(
-          metadata => {
-            const data = $scope.contentType.data;
-            data.name = metadata.name;
-            data.description = metadata.description;
-            data.sys.id = metadata.id;
-          },
-          () => {
-            // X.detail.fields -> X.list
-            $state.go('^.^.list');
-          }
-        );
+        const openCreateDialog = async () => {
+          openCreateContentTypeDialog($scope.contentTypeIds).then(
+            result => {
+              if (result) {
+                $scope.contentType.data.name = result.name;
+                $scope.contentType.data.description = result.description;
+                $scope.contentType.data.sys.id = result.contentTypeId;
+              } else {
+                // X.detail.fields -> X.list
+                $state.go('^.^.list');
+              }
+            },
+            () => {}
+          );
+        };
+        openCreateDialog();
       }
 
       /**
@@ -197,11 +194,13 @@ export default function register() {
 
       const showMetadataDialog = Command.create(
         () => {
-          metadataDialog.openEditDialog($scope.contentType).then(metadata => {
-            const data = $scope.contentType.data;
-            data.name = metadata.name;
-            data.description = metadata.description;
-            setDirty();
+          openEditContentTypeDialog($scope.contentType).then(result => {
+            if (result) {
+              const { name, description } = result;
+              $scope.contentType.data.name = name;
+              $scope.contentType.data.description = description;
+              setDirty();
+            }
           });
         },
         {

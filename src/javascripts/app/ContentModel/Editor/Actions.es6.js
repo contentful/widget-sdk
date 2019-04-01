@@ -1,24 +1,24 @@
 import React from 'react';
+import { getModule } from 'NgRegistry.es6';
 import { noop, cloneDeep, assign, map, get } from 'lodash';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as notify from './Notifications.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
-import { getModule } from 'NgRegistry.es6';
 import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField.es6';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 import * as logger from 'services/logger.es6';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
 import ContentTypeForbiddenRemoval from './Dialogs/ContenTypeForbiddenRemoval.es6';
+import { openDuplicateContentTypeDialog } from './Dialogs/index.es6';
 
+const spaceContext = getModule('spaceContext');
 const $q = getModule('$q');
 const $state = getModule('$state');
 const modalDialog = getModule('modalDialog');
 const Command = getModule('command');
-const spaceContext = getModule('spaceContext');
 const closeState = getModule('navigation/closeState');
-const metadataDialog = getModule('contentTypeEditor/metadataDialog');
 
 /**
  * @description
@@ -31,7 +31,7 @@ const metadataDialog = getModule('contentTypeEditor/metadataDialog');
  * - `context` is read to check whether the user has made some changes.
  *
  * @param {object} $scope
- * @param {Promise<string[]>} contentTypeIds
+ * @param {string[]} contentTypeIds
  *   A promise that resolves to all the used content type IDs. It is passed to
  *   the duplication dialog to verify new IDs.
  */
@@ -309,7 +309,7 @@ export default function create($scope, contentTypeIds) {
    */
   controller.duplicate = Command.create(
     async () => {
-      const duplicatedContentType = await metadataDialog.openDuplicateDialog(
+      const duplicatedContentType = await openDuplicateContentTypeDialog(
         $scope.contentType,
         createDuplicate,
         contentTypeIds

@@ -58,7 +58,6 @@ angular
       ngRequire('app/ContentModel/Editor/apiNameController.es6').default();
       ngRequire('app/ContentModel/Editor/cfApiNameShadowDirective.es6').default();
       ngRequire('components/field_dialog/fieldDialog.es6').default();
-      ngRequire('app/ContentModel/Editor/metadataDialog.es6').default();
       ngRequire('app/ContentModel/Editor/contentTypeEditorController.es6').default();
       ngRequire('app/api/api_key_list/apiKeyListDirective.es6').default();
       ngRequire('app/asset_editor/cfAssetEditorDirective.es6').default();

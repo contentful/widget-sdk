@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Modal, Button } from '@contentful/forma-36-react-components';
+import { Modal, Button, Paragraph } from '@contentful/forma-36-react-components';
 import ModalLauncher from './ModalLauncher.es6';
 
 export default function createUnsavedChangesDialogOpener(save) {
@@ -39,23 +39,35 @@ class UnsavedChangesDialog extends React.Component {
 
     return (
       <Modal
+        size={600}
         title="There are unsaved changes"
         shouldCloseOnOverlayClick={false}
         shouldCloseOnEscapePress={false}
         isShown={this.props.isShown}
         onClose={this.cancel}>
-        <React.Fragment>
-          <p>What would you like to do with them?</p>
-          <Button buttonType="primary" onClick={this.save} disabled={working} loading={working}>
-            Save changes
-          </Button>{' '}
-          <Button buttonType="muted" onClick={this.discard} disabled={working}>
-            Discard changes
-          </Button>{' '}
-          <Button buttonType="muted" onClick={this.cancel} disabled={working}>
-            Back to editing
-          </Button>
-        </React.Fragment>
+        {() => (
+          <React.Fragment>
+            <Modal.Header title="There are unsaved changes" />
+            <Modal.Content>
+              <Paragraph>What would you like to do with them?</Paragraph>
+            </Modal.Content>
+            <Modal.Controls>
+              <Button
+                buttonType="positive"
+                onClick={this.save}
+                disabled={working}
+                loading={working}>
+                Save changes
+              </Button>{' '}
+              <Button buttonType="muted" onClick={this.discard} disabled={working}>
+                Discard changes
+              </Button>{' '}
+              <Button buttonType="muted" onClick={this.cancel} disabled={working}>
+                Back to editing
+              </Button>
+            </Modal.Controls>
+          </React.Fragment>
+        )}
       </Modal>
     );
   }

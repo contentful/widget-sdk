@@ -11,6 +11,7 @@ vagrant_bootstrap.sh
 run_vagrant_build.sh
 karma-specs.json
 .coverage/
+junit.xml
 
 
 # Install artifacts

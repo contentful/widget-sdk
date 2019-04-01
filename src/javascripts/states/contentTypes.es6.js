@@ -69,6 +69,16 @@ const widgetResolvers = {
   ]
 };
 
+const existingContentTypeIdsResolver = {
+  contentTypeIds: [
+    'spaceContext',
+    async spaceContext => {
+      const contentTypes = await spaceContext.cma.getContentTypes();
+      return contentTypes.items.map(ct => ct.sys.id);
+    }
+  ]
+};
+
 const newState = editorBase(
   {
     name: 'new',
@@ -80,7 +90,8 @@ const newState = editorBase(
           spaceContext.space.newContentType({ sys: { type: 'ContentType' }, fields: [] })
       ],
       publishedContentType: [() => null],
-      ...widgetResolvers
+      ...widgetResolvers,
+      ...existingContentTypeIdsResolver
     }
   },
   true
@@ -108,7 +119,8 @@ const detail = editorBase(
             }
           })
       ],
-      ...widgetResolvers
+      ...widgetResolvers,
+      ...existingContentTypeIdsResolver
     }
   },
   false
@@ -132,6 +144,7 @@ function editorBase(options, isNew) {
       'widgets',
       'editorInterface',
       'publishedContentType',
+      'contentTypeIds',
       'hasCustomSidebarFeature',
       (
         $scope,
@@ -140,6 +153,7 @@ function editorBase(options, isNew) {
         widgets,
         editorInterface,
         publishedContentType,
+        contentTypeIds,
         hasCustomSidebarFeature
       ) => {
         $scope.context.isNew = isNew;
@@ -147,6 +161,7 @@ function editorBase(options, isNew) {
         $scope.widgets = widgets;
         $scope.editorInterface = editorInterface;
         $scope.publishedContentType = publishedContentType;
+        $scope.contentTypeIds = contentTypeIds;
         $scope.hasCustomSidebarFeature = hasCustomSidebarFeature;
 
         contextHistory.set([
