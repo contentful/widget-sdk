@@ -90,23 +90,25 @@ jobs:
             - output
 
   deploy-micro-backends:
-    machine:
-      docker_layer_caching: true
+    docker:
+      image: circleci/node:10.15.3
     steps:
       - checkout
       - run:
+          name: Setup environment variables
+          command: |
+            echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
+            echo 'export MICRO_BACKENDS_VERSION="$(cat package-lock.json | jq '.dependencies["@contentful/micro-backends"].version' --raw-output)"' >> $BASH_ENV
+            echo 'export LOG="yesplease"' >> $BASH_ENV
+            echo 'export AWS_REGION="$MICRO_BACKENDS_AWS_REGION' >> $BASH_ENV
+            echo 'export AWS_ACCESS_KEY_ID="$MICRO_BACKENDS_AWS_ACCESS_KEY_ID' >> $BASH_ENV
+            echo 'export AWS_SECRET_ACCESS_KEY="$MICRO_BACKENDS_AWS_SECRET_ACCESS_KEY' >> $BASH_ENV
+      - run:
           name: Deploy micro-backends
           command: |
-            MICRO_BACKENDS_VERSION="$(cat package-lock.json | jq '.dependencies["@contentful/micro-backends"].version' --raw-output)"
             echo "Using @contentful/micro-backends@$MICRO_BACKENDS_VERSION"
             cd micro-backends
-            docker build -t micro-backends-deployment --build-arg NPM_TOKEN --build-arg MICRO_BACKENDS_VERSION .
-            docker run -t --rm -v "$(pwd):/micro-backends" \
-            -e LOG="yesplease" \
-            -e AWS_REGION="$MICRO_BACKENDS_AWS_REGION" \
-            -e AWS_ACCESS_KEY_ID="$MICRO_BACKENDS_AWS_ACCESS_KEY_ID" \
-            -e AWS_SECRET_ACCESS_KEY="$MICRO_BACKENDS_AWS_SECRET_ACCESS_KEY" \
-            micro-backends-deployment \
+            npm install --production --no-save "@contentful/micro-backends@$MICRO_BACKENDS_VERSION"
             ./node_modules/.bin/micro-backends "micro-backends" "rev-$CIRCLE_SHA1"
 
   lint:
