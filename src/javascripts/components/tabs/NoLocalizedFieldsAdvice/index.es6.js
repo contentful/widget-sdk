@@ -1,12 +1,20 @@
 import React from 'react';
 import Advice from 'components/tabs/Advice/index.es6';
-import EmptyContentIcon from 'svg/empty-content-model.es6';
+import TranslationsIcon from 'svg/translations-icon.es6';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
-export default function NoLocalizedFieldsAdvice() {
-  return (
-    <Advice data-test-id="no-content-type-advice">
+const styles = {
+  container: css({
+    marginTop: tokens.spacingXl
+  })
+};
+
+const NoLocalizedFieldsAdvice = () => (
+  <div className={styles.container}>
+    <Advice data-test-id="no-localized-fields-advice">
       <Advice.Icon>
-        <EmptyContentIcon />
+        <TranslationsIcon />
       </Advice.Icon>
       <Advice.Title>There are no localized fields for this locale</Advice.Title>
       <Advice.Description>
@@ -15,5 +23,7 @@ export default function NoLocalizedFieldsAdvice() {
         display.
       </Advice.Description>
     </Advice>
-  );
-}
+  </div>
+);
+
+export default NoLocalizedFieldsAdvice;
