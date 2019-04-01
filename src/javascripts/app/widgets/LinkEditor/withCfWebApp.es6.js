@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { canPerformActionOnEntryOfType, Action } from 'access_control/AccessChecker/index.es6';
+import {
+  canPerformActionOnEntryOfType,
+  canCreateAsset,
+  Action
+} from 'access_control/AccessChecker/index.es6';
 import { newConfigFromField } from 'search/EntitySelector/Config.es6';
 
 import { getModule } from 'NgRegistry.es6';
@@ -63,6 +67,7 @@ export default function withCfWebApp(LinkEditor) {
         ...this.props,
         contentTypes,
         actions,
+        canCreateEntity: type === 'Asset' ? canCreateAsset() : !!contentTypes.length,
         onLinkEntities: (entities, isNewlyCreated) => {
           if (!isNewlyCreated) {
             // Never track ":link" event together with ":create" event.

@@ -22,7 +22,7 @@ class CreateEntryButton extends React.Component {
     onSelect: PropTypes.func.isRequired,
     size: PropTypes.oneOf([Size.Large, Size.Normal]),
     style: PropTypes.oneOf([Style.Button, Style.Link]),
-    disabled: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool,
     hasPlusIcon: PropTypes.bool,
     text: PropTypes.string
   };
@@ -30,7 +30,8 @@ class CreateEntryButton extends React.Component {
   static defaultProps = {
     mode: Size.Normal,
     style: Style.Button,
-    hasPlusIcon: true
+    hasPlusIcon: true,
+    disabled: false
   };
 
   state = {

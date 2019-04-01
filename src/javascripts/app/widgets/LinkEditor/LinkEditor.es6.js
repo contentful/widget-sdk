@@ -1,4 +1,5 @@
 import { noop } from 'lodash';
+import pluralize from 'pluralize';
 import React from 'react';
 import PropTypes from 'prop-types';
 import CfPropTypes from 'utils/CfPropTypes.es6';
@@ -20,6 +21,11 @@ const TYPE_NAMES = {
   [TYPES.ASSET]: 'asset'
 };
 
+const labels = {
+  createAndLink: name => `Create new ${name} and link`,
+  linkExisting: name => `Link existing ${name}`
+};
+
 export default class LinkEditor extends React.Component {
   static propTypes = {
     value: PropTypes.arrayOf(CfPropTypes.Link).isRequired,
@@ -31,6 +37,7 @@ export default class LinkEditor extends React.Component {
     type: PropTypes.oneOf(Object.values(TYPES)).isRequired,
     style: PropTypes.oneOf(['link', 'card']).isRequired,
     isSingle: PropTypes.bool,
+    canCreateEntity: PropTypes.bool,
     contentTypes: PropTypes.arrayOf(PropTypes.object),
     actions: PropTypes.shape({
       selectEntities: PropTypes.func,
@@ -45,7 +52,8 @@ export default class LinkEditor extends React.Component {
     onLinkEntities: noop,
     onUnlinkEntities: noop,
     onLinkFetchComplete: noop,
-    isSingle: false
+    isSingle: false,
+    canCreateEntity: true
   };
 
   getLinks() {
@@ -53,17 +61,19 @@ export default class LinkEditor extends React.Component {
   }
 
   render() {
-    // TODO:danwe the `key` needs to take multiple links with same id into consideration!
     const { isDisabled, isSingle } = this.props;
     const links = this.getLinks();
     const showLinkButtons = !isDisabled && (!isSingle || links.length === 0);
+    const countPerId = {};
+    const listElements = links.map((link, index) => {
+      const { id } = link.sys;
+      countPerId[id] = (countPerId[id] || 0) + 1;
+      const key = `${id}:${countPerId[id] - 1}`;
+      return <li key={key}>{this.renderCard(link, index)}</li>;
+    });
     return (
       <div className="link-editor">
-        <ol>
-          {links.map((link, index) => (
-            <li key={`${link.sys.id}`}>{this.renderCard(link, index)}</li>
-          ))}
-        </ol>
+        <ol>{listElements}</ol>
         {showLinkButtons && this.renderLinkButtons()}
       </div>
     );
@@ -102,28 +112,27 @@ export default class LinkEditor extends React.Component {
   }
 
   renderLinkButtons() {
-    const { type, contentTypes, isDisabled } = this.props;
+    const { type, contentTypes, isSingle, canCreateEntity } = this.props;
     const typeName = TYPE_NAMES[type];
-    // TODO:danwe: Disable Create asset button and loading spinner.
+    const singleCtOrTypeName = contentTypes.length === 1 ? contentTypes[0].name : typeName;
     return (
       <div className="link-editor__feature-at-11-2017-lots-of-cts-add-entry-and-link-reference">
-        <Visible if={type === TYPES.ENTRY}>
+        <Visible if={type === TYPES.ENTRY && canCreateEntity}>
           <CreateEntryButton
-            text={`Create ${typeName} and link`}
+            text={labels.createAndLink(singleCtOrTypeName)}
             contentTypes={contentTypes}
-            disabled={isDisabled && contentTypes && contentTypes.length > 0}
             hasPlusIcon={true}
             style={CreateEntryStyle.Link}
             onSelect={this.handleCreateAndLink}
           />
         </Visible>
-        <Visible if={type === TYPES.ASSET}>
+        <Visible if={type === TYPES.ASSET && canCreateEntity}>
           <TextLink onClick={() => this.handleCreateAndLink(null)} linkType="primary" icon="Link">
-            Create {typeName} and link
+            {labels.createAndLink(typeName)}
           </TextLink>
         </Visible>
         <TextLink onClick={this.handleSelectAndLink} linkType="primary" icon="Link">
-          Link existing {typeName}
+          {labels.linkExisting(isSingle ? typeName : pluralize(typeName))}
         </TextLink>
       </div>
     );
