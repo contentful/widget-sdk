@@ -109,8 +109,8 @@ jobs:
           name: Deploy micro-backends
           command: |
             echo "Using @contentful/micro-backends@$MICRO_BACKENDS_VERSION"
-            npm install --no-save "@contentful/micro-backends@$MICRO_BACKENDS_VERSION"
-            ./node_modules/.bin/micro-backends "micro-backends" "rev-$CIRCLE_SHA1"
+            cd micro-backends
+            npx "@contentful/micro-backends@$MICRO_BACKENDS_VERSION" "." "rev-$CIRCLE_SHA1"
 
   lint:
     docker:
