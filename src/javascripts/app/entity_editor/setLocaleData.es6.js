@@ -17,6 +17,7 @@ export default ($scope, { entityLabel, shouldHideLocaleErrors, emitter }) => {
 };
 
 export function setLocaleData($scope, { isBulkEditor = false } = {}) {
+  maybeResetFocusedLocale();
   $scope.localeData = $scope.localeData || {};
   Object.assign($scope.localeData, {
     defaultLocale: TheLocaleStore.getDefaultLocale(),
@@ -28,6 +29,12 @@ export function setLocaleData($scope, { isBulkEditor = false } = {}) {
     isLocaleActive: TheLocaleStore.isLocaleActive,
     errors: {}
   });
+}
+
+function maybeResetFocusedLocale() {
+  if (!TheLocaleStore.getPrivateLocales().includes(TheLocaleStore.getFocusedLocale())) {
+    TheLocaleStore.setFocusedLocale(TheLocaleStore.getDefaultLocale());
+  }
 }
 
 function handleSingleModeSupportFeatureFlag($scope) {
