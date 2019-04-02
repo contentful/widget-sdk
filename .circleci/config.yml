@@ -81,6 +81,7 @@ jobs:
             echo "$(curl -sSL https://contentful-lab-assets.s3.amazonaws.com/estivador.sum)" | sha512sum -c
             ./estivador docker-ecr-login
             ./estivador put-image
+            ./estivador promote-image
       - run:
           name: Trigger jenkins E2E tests
           command: bin/trigger-jenkins
