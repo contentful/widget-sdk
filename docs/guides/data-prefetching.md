@@ -1,7 +1,8 @@
 # Data prefetching
 
-The mechanism is currently used in the Teams feature. Its usage is optional and it is not a solution for all use cases.
-But it can significantly simplify some.
+This mechanism is used to fetch needed data based route and org role (and potentially more conditions in the future).
+
+**Currently not to be used outside the Teams feature.**
 
 This uses the term `dataset` for collections of entities that contain `sys.id` and optionally contains Links in `sys`, e.g. Users and Teams.
 
