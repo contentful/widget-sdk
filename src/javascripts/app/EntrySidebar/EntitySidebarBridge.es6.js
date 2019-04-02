@@ -111,6 +111,47 @@ export default ({ $scope }) => {
     });
   });
 
+  const initializeScheduledPublication = once(() => {
+    const notifyUpdate = update => {
+      emitter.emit(SidebarEventTypes.UPDATED_PUBLICATION_WIDGET, {
+        ...update,
+        commands: {
+          primary: $scope.state.primary,
+          secondary: $scope.state.secondary,
+          revertToPrevious: $scope.state.revertToPrevious
+        }
+      });
+    };
+
+    notifyUpdate({
+      status: $scope.state.current,
+      updatedAt: K.getValue($scope.otDoc.sysProperty).updatedAt
+    });
+
+    K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
+      notifyUpdate({
+        status: $scope.state.current,
+        updatedAt: sys.updatedAt
+      });
+    });
+
+    let setNotSavingTimeout;
+    K.onValueScope($scope, $scope.otDoc.state.isSaving$.skipDuplicates(), isSaving => {
+      clearTimeout(setNotSavingTimeout);
+      if (isSaving) {
+        notifyUpdate({
+          isSaving: true
+        });
+      } else {
+        setNotSavingTimeout = setTimeout(() => {
+          notifyUpdate({
+            isSaving: false
+          });
+        }, 1000);
+      }
+    });
+  });
+
   const initializeInfoPanel = once(() => {
     const updateProps = update => {
       emitter.emit(SidebarEventTypes.UPDATED_INFO_PANEL, {
@@ -168,6 +209,9 @@ export default ({ $scope }) => {
         break;
       case SidebarWidgetTypes.PUBLICATION:
         initializePublication();
+        break;
+      case SidebarWidgetTypes.SCHEDULED_PUBLICATION:
+        initializeScheduledPublication();
         break;
       case SidebarWidgetTypes.INFO_PANEL:
         initializeInfoPanel();
