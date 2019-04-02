@@ -141,6 +141,12 @@ export default ({ $scope }) => {
       });
     });
 
+    $scope.$on('show-comments-panel', (_, isVisible) => {
+      emitter.emit(SidebarEventTypes.UPDATED_COMMENTS_PANEL, {
+        isVisible
+      });
+    });
+
     K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
       updateProps({ sys });
     });

@@ -60,6 +60,29 @@ describe('Client Controller', () => {
       scope.preferences.toggleAuxPanel();
       expect(scope.preferences.showAuxPanel).toBeTruthy();
     });
+
+    it('closes the comments panel', () => {
+      scope.preferences.toggleCommentsPanel();
+      scope.preferences.toggleAuxPanel();
+      expect(scope.preferences.showCommentsPanel).toBeFalsy();
+    });
+  });
+
+  describe('comments panel', () => {
+    it('comments pannel is off by default', () => {
+      expect(scope.preferences.showCommentsPanel).toBeFalsy();
+    });
+
+    it('toggles comments panel', () => {
+      scope.preferences.toggleCommentsPanel();
+      expect(scope.preferences.showCommentsPanel).toBeTruthy();
+    });
+
+    it('closes the aux panel', () => {
+      scope.preferences.toggleAuxPanel();
+      scope.preferences.toggleCommentsPanel();
+      expect(scope.preferences.showAuxPanel).toBeFalsy();
+    });
   });
 
   describe('updates authorization data', () => {
