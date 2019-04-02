@@ -3,7 +3,7 @@
 The mechanism is currently used in the Teams feature. Its usage is optional and it is not a solution for all use cases.
 But it can significantly simplify some.
 
-This uses the term `dataset` for data that has `sys.id` and optionally contains Links in `sys`, e.g. Users and Teams.
+This uses the term `dataset` for collections of entities that contain `sys.id` and optionally contains Links in `sys`, e.g. Users and Teams.
 
 See selector tests for documentation of behaviour: `redux/selectors/access.spec.js`.
 Also use the redux dev tools to inspect behaviour and state during runtime.
