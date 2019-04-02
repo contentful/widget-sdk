@@ -56,7 +56,9 @@ function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitte
     }
     TheLocaleStore.setSingleLocaleMode(isOn);
     $scope.localeData.isSingleLocaleModeOn = isOn;
-    $scope.$applyAsync();
+    $scope.$applyAsync(() => {
+      $scope.editorContext.validator.run();
+    });
   });
 
   emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, locale => {
@@ -65,7 +67,9 @@ function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitte
     }
     TheLocaleStore.setFocusedLocale(locale);
     $scope.localeData.focusedLocale = locale;
-    $scope.$applyAsync();
+    $scope.$applyAsync(() => {
+      $scope.editorContext.validator.run();
+    });
   });
 
   emitter.on(SidebarEventTypes.DEACTIVATED_LOCALE, locale => {
