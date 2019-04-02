@@ -14,6 +14,9 @@ const KNOWN_APPS = {
   [IMAGE_MANAGEMENT_APP_ID]: {
     title: IMAGE_MANAGEMENT_APP_NAME
   },
+  basicApprovalWorkflow: {
+    title: 'Basic approval workflow'
+  },
   optimizely: {
     title: 'Optimizely',
     soon: true

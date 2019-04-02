@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import DefaultAppIcon from 'svg/default-app-icon.es6';
 import NetlifyIcon from 'svg/logo-netlify.es6';
 import AlgoliaIcon from 'svg/logo-algolia.es6';
 import ImageManagementIcon from 'svg/logo-image-management.es6';
@@ -15,6 +16,7 @@ const Icons = {
   netlify: NetlifyIcon,
   algolia: AlgoliaIcon,
   [IMAGE_MANAGEMENT_APP_ID]: ImageManagementIcon,
+  basicApprovalWorkflow: DefaultAppIcon,
   optimizely: OptimizelyLogo
 };
 

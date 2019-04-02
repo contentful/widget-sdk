@@ -7,13 +7,14 @@ import createAppsClient from '../AppsClient.es6';
 import NetlifyApp from '../netlify/index.es6';
 import AlgoliaApp from '../algolia/index.es6';
 import ImageManagementApp from '../image-management/index.es6';
-
 import { APP_ID as IMAGE_MANAGEMENT_APP_ID } from '../image-management/Constants.es6';
+import ApprovalWorkflowApp from '../basicApprovalWorkflow/index.es6';
 
 const APP_ID_TO_COMPONENT = {
   netlify: NetlifyApp,
   algolia: AlgoliaApp,
-  [IMAGE_MANAGEMENT_APP_ID]: ImageManagementApp
+  [IMAGE_MANAGEMENT_APP_ID]: ImageManagementApp,
+  basicApprovalWorkflow: ApprovalWorkflowApp
 };
 
 export default class AppRoute extends Component {
@@ -36,7 +37,7 @@ export default class AppRoute extends Component {
 
     return (
       <AdminOnly>
-        <Component client={this.client} />;
+        <Component client={this.client} />
       </AdminOnly>
     );
   }

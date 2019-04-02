@@ -76,6 +76,8 @@ registerGenericEvent('algolia:updated');
 registerGenericEvent('algolia:uninstalled');
 registerGenericEvent('aiImageManagement:installed');
 registerGenericEvent('aiImageManagement:uninstalled');
+registerGenericEvent('approval:installed');
+registerGenericEvent('approval:uninstalled');
 
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:unlink');
