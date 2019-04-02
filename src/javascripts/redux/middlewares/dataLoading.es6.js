@@ -17,7 +17,9 @@ export default ({ getState, dispatch }) => next => async action => {
   const newPath = getPath(newState);
   const newOrgRole = getOrgRole(newState);
 
-  if (newPath && newOrgRole && (oldPath !== newPath || oldOrgRole !== newOrgRole)) {
+  const pathChanged = oldPath !== newPath;
+  const orgRoleChanged = oldOrgRole !== newOrgRole;
+  if (newPath && newOrgRole && (pathChanged || orgRoleChanged)) {
     // feature catalog handling
     const featureRequired = getFeature(newPath);
     // does the new location depend on a feature from the catalog?
