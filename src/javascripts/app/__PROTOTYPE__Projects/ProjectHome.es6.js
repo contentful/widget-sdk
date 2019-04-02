@@ -2,14 +2,20 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { isMissingRequiredDatasets } from 'redux/selectors/datasets.es6';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
-
+import { css } from 'emotion';
 import {
   TextInput,
   Textarea,
   Button,
   Notification,
-  ModalConfirm
+  ModalConfirm,
+  DisplayText,
+  Paragraph,
+  Note,
+  TextLink
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+
 import { getDatasets } from 'redux/selectors/datasets.es6';
 import { __PROTOTYPE__PROJECTS } from 'redux/datasets.es6';
 import ROUTES from 'redux/routes.es6';
@@ -21,6 +27,42 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import Members from './Members.es6';
 import Spaces from './Spaces.es6';
 import LinkSections from './LinkSections.es6';
+import Placeholder from '../common/Placeholder.es6';
+
+const styles = {
+  home: css({
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    overflowY: 'auto',
+    overflowX: 'hidden'
+  }),
+  title: css({
+    marginBottom: tokens.spacingL
+  }),
+  content: css({
+    paddingTop: '2rem',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    maxWidth: '1080px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    '> *': {
+      margin: tokens.spacingM
+    }
+  }),
+  buttons: css({
+    '> *': {
+      marginRight: tokens.spacingM
+    },
+    '> *:last-child': {
+      marginRight: 0
+    }
+  })
+};
 
 export default connect(
   state => {
@@ -32,7 +74,7 @@ export default connect(
       ];
 
     return {
-      isLoading: isLoading || !project,
+      isLoading: isLoading,
       project,
       orgId: getOrgId(state)
     };
@@ -127,6 +169,14 @@ export default connect(
   if (isLoading) {
     return <FetcherLoading message="Loading project..." />;
   }
+  if (!project) {
+    return (
+      <Placeholder
+        text="The project you were looking for could not be found. Sorry about that."
+        title="Missing project"
+      />
+    );
+  }
 
   const [name, setName] = useState(project.name);
   const [description, setDescription] = useState(project.description);
@@ -135,36 +185,26 @@ export default connect(
   const [linkSections, setLinkSections] = useState(project.linkSections || []);
   const [dirty, setDirty] = useState(false);
   const [editing, setEditing] = useState(false);
-
   return (
-    <div className="project-home">
-      <h2
-        style={{
-          color: 'red',
-          fontWeight: 'bold',
-          position: 'absolute',
-          top: '.2rem',
-          left: '.2rem'
-        }}>
-        PROTOTYPE
-      </h2>
-      <div className="project-home__details">
-        {!editing && <h2>{name}</h2>}
+    <div className={styles.home}>
+      <div className={styles.content}>
+        {!editing && <DisplayText className={styles.title}>{name}</DisplayText>}
         {editing && (
           <TextInput
+            className={styles.title}
             value={name}
             onChange={({ target: { value } }) => setDirty(true) || setName(value)}
           />
         )}
         {!editing && (
-          <div>
+          <Paragraph className={css({ width: '50%' })}>
             {description.split('\n').reduce((acc, cur, idx) => {
               if (idx === 0) {
                 return [...acc, cur];
               }
               return [...acc, <br key={idx} />, cur];
             }, [])}
-          </div>
+          </Paragraph>
         )}
         {editing && (
           <Textarea
@@ -174,54 +214,86 @@ export default connect(
             onChange={({ target: { value } }) => setDirty(true) || setDescription(value)}
           />
         )}
-        <LinkSections
-          {...{
-            editing,
-            projectLinkSections: linkSections,
-            setLinkSections: sections => setDirty(true) || setLinkSections(sections)
-          }}
-        />
-      </div>
-      <div className="project-home__relations">
-        <Members
-          {...{
-            editing,
-            projectMemberIds: memberIds,
-            setProjectMemberIds: ids => setDirty(true) || setProjectMemberIds(ids)
-          }}
-        />
-        <Spaces
-          {...{
-            editing,
-            projectSpaceIds: spaceIds,
-            setProjectSpaceIds: ids => setDirty(true) || setProjectSpaceIds(ids)
-          }}
-        />
-      </div>
-      <div>
-        {!editing && (
-          <Button style={{ margin: '.4rem' }} onClick={() => setEditing(true)}>
-            Edit
-          </Button>
-        )}
-        {editing && (
-          <Button
-            style={{ margin: '.4rem' }}
-            disabled={!dirty}
-            onClick={() =>
-              setDirty(false) ||
-              setEditing(false) ||
-              save({ ...project, name, description, memberIds, spaceIds, linkSections })
-            }>
-            Save
-          </Button>
-        )}
-        <Button
-          style={{ margin: '.4rem' }}
-          buttonType="negative"
-          onClick={() => deleteProject(project.sys.id)}>
-          Delete
-        </Button>
+        <div className={styles.buttons}>
+          {!editing && (
+            <Button buttonType="muted" onClick={() => setEditing(true)}>
+              Edit Project
+            </Button>
+          )}
+          {editing && (
+            <Button
+              disabled={!dirty}
+              onClick={() =>
+                setDirty(false) ||
+                setEditing(false) ||
+                save({ ...project, name, description, memberIds, spaceIds, linkSections })
+              }>
+              Save
+            </Button>
+          )}
+          {editing && (
+            <Button
+              buttonType="negative"
+              onClick={() => {
+                setName(project.name);
+                setDescription(project.description);
+                setProjectMemberIds(project.memberIds);
+                setProjectSpaceIds(project.spaceIds);
+                setLinkSections(project.linkSections || []);
+                setEditing(false);
+              }}>
+              Cancel
+            </Button>
+          )}
+        </div>
+        <Note>
+          This is an experimental feature so we haven’t yet built it with our usual polish.{' '}
+          <TextLink
+            href="mailto:squad-hejo+feedback@contentful.com"
+            target="_blank"
+            rel="noopener noreferrer">
+            Send us an email
+          </TextLink>{' '}
+          or reach out to your Customer Success Manager and help us decide if we should!
+        </Note>
+        <div className={css({ display: 'flex' })}>
+          <div
+            className={css({
+              display: 'flex',
+              flexDirection: 'column',
+              marginRight: tokens.spacingM,
+              flex: 1
+            })}>
+            <Spaces
+              {...{
+                editing,
+                projectSpaceIds: spaceIds,
+                setProjectSpaceIds: ids => setDirty(true) || setProjectSpaceIds(ids)
+              }}
+            />
+            <LinkSections
+              {...{
+                editing,
+                projectLinkSections: linkSections,
+                setLinkSections: sections => setDirty(true) || setLinkSections(sections)
+              }}
+            />
+          </div>
+          <Members
+            {...{
+              editing,
+              projectMemberIds: memberIds,
+              setProjectMemberIds: ids => setDirty(true) || setProjectMemberIds(ids)
+            }}
+          />
+        </div>
+        <div>
+          {!editing && (
+            <Button buttonType="negative" onClick={() => deleteProject(project.sys.id)}>
+              Delete
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

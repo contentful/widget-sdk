@@ -86,6 +86,10 @@ function renderContent({ navState, showOrganization }) {
     ],
     [NavStates.NewOrg, () => [stateTitle('Create new organization')]],
     [NavStates.UserProfile, () => [stateTitle('User profile')]],
+    [
+      NavStates.Projects,
+      ({ org }) => [showOrganization && organizationName(org.name), stateTitle('Project')]
+    ],
     [NavStates.Projects, () => [stateTitle('Project')]],
     [NavStates.Default, () => [stateTitle('Welcome to Contentful')]]
   ]);

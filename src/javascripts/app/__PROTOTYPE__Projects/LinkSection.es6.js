@@ -2,7 +2,41 @@ import React, { useState } from 'react';
 import { without } from 'lodash';
 import { flow, pullAt } from 'lodash/fp';
 import PropTypes from 'prop-types';
-import { IconButton, TextInput } from '@contentful/forma-36-react-components';
+import {
+  IconButton,
+  TextInput,
+  Button,
+  SectionHeading
+} from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
+import sharedStyles from './sharedStyles.es6';
+
+const styles = {
+  section: css({
+    display: 'flex',
+    flexDirection: 'column'
+  }),
+  header: css({
+    display: 'flex',
+    minWidth: '19rem',
+    width: 'fit-content',
+    marginBottom: tokens.spacingS
+  }),
+  addLinkButton: css({
+    display: 'inline-block',
+    marginLeft: tokens.spacingS,
+    marginRight: tokens.spacingS
+  }),
+  createLinkButton: css({
+    display: 'inline-block'
+  }),
+  link: css({
+    display: 'flex',
+    minWidth: '10rem',
+    width: 'fit-content'
+  })
+};
 
 const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => {
   const [adding, setAdding] = useState(false);
@@ -10,11 +44,12 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
   const [href, setHref] = useState('');
 
   return (
-    <div>
-      <div style={{ display: 'flex', margin: '.5rem 0 .3rem 0', alignItems: 'center' }}>
-        <h4 style={{ margin: '0' }}>{section.header}</h4>
+    <div className={styles.section}>
+      <div className={styles.header}>
+        <SectionHeading>{section.header}</SectionHeading>
         {!adding && editing && (
           <>
+            <div className={css({ flex: 1 })} />
             <IconButton
               label="up"
               iconProps={{ icon: 'ArrowUp' }}
@@ -27,13 +62,13 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
               buttonType="primary"
               onClick={onDown}
             />
-            <IconButton
+            <Button
+              className={styles.addLinkButton}
               buttonType="primary"
-              style={{ marginLeft: '.5rem' }}
-              label="add"
-              iconProps={{ icon: 'PlusCircle' }}
-              onClick={() => setAdding(true)}
-            />
+              size="small"
+              onClick={() => setAdding(true)}>
+              Add link
+            </Button>
             <IconButton
               label="remove"
               iconProps={{ icon: 'Close' }}
@@ -44,7 +79,7 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
         )}
       </div>
       {editing && adding && (
-        <div style={{ display: 'flex', marginBottom: '.3rem' }}>
+        <div>
           <TextInput
             placeholder="link text"
             value={text}
@@ -55,11 +90,10 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
             value={href}
             onChange={({ target: { value } }) => setHref(value)}
           />
-          <IconButton
-            buttonType="positive"
-            style={{ marginLeft: '.5rem' }}
-            label="confirm"
-            iconProps={{ icon: 'CheckCircle' }}
+          <Button
+            className={styles.createLinkButton}
+            buttonType="primary"
+            size="small"
             disabled={!(text && href)}
             onClick={() =>
               setText('') ||
@@ -72,27 +106,24 @@ const LinkSection = ({ section, onChange, onDelete, onUp, onDown, editing }) => 
                   href: href.includes('http') ? href : `http://${href}`
                 })
               })
-            }
-          />
+            }>
+            Create link
+          </Button>
           <IconButton
-            label="remove"
             iconProps={{ icon: 'Close' }}
             buttonType="negative"
             onClick={() => setText('') || setHref('') || setAdding(false)}
           />
         </div>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className={sharedStyles.denseList}>
         {section.links &&
           section.links.map((link, i) => (
-            <div style={{ display: 'flex' }} key={i}>
-              <a
-                style={{ marginBottom: '.2rem' }}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer">
+            <div className={styles.link} key={i}>
+              <a href={link.href} target="_blank" rel="noopener noreferrer">
                 {link.text}
               </a>
+              <div className={css({ flex: 1 })} />
               {editing && !adding && (
                 <>
                   <IconButton

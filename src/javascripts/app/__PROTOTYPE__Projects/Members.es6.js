@@ -2,14 +2,38 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { without } from 'lodash';
 import { flow, filter as ldFilter, sortBy, map } from 'lodash/fp';
+import { css } from 'emotion';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
-import { Option, Select, IconButton, TextInput } from '@contentful/forma-36-react-components';
+import {
+  Option,
+  Select,
+  Button,
+  TextInput,
+  IconButton,
+  Card,
+  Heading
+} from '@contentful/forma-36-react-components';
+import UserCard from 'app/OrganizationSettings/Users/UserCard.es6';
+
+import sharedStyles from './sharedStyles.es6';
+import tokens from '@contentful/forma-36-tokens';
 
 const membershipIdsToMembers = (membershipIds, allMemberships) =>
   allMemberships.filter(({ sys: { id } }) => membershipIds.includes(id));
 
 const sort = sortBy(['sys.user.firstName', 'sys.user.lastName', 'sys.user.email']);
+
+const styles = {
+  card: css({
+    flex: 1,
+    height: 'fit-content'
+  }),
+  addMemberButton: css({
+    display: 'inline-block',
+    minWidth: 'fit-content'
+  })
+};
 
 export default connect(state => ({
   allOrgMemberships: Object.values(getOrgMemberships(state)),
@@ -19,17 +43,19 @@ export default connect(state => ({
   const [filter, setFilter] = useState('');
 
   return (
-    <div className="project-home__members">
-      <h3>Members</h3>
+    <Card className={`${sharedStyles.card} ${styles.card}`}>
+      <Heading className={sharedStyles.heading}>{`Members (${projectMemberIds.length})`}</Heading>
       {editing && (
         <div className="project-home__add-member">
           <TextInput
+            className={css({ marginBottom: tokens.spacingS })}
             placeholder="filter users to select..."
             value={filter}
             onChange={({ target: { value } }) => setFilter(value)}
           />
-          <div style={{ display: 'flex' }}>
+          <div className={css({ display: 'flex', justifyItems: 'center' })}>
             <Select
+              className={css({ marginRight: tokens.spacingM })}
               value={selectedUser}
               onChange={({ target: { value } }) => setSelectedUser(value)}>
               <Option value="" disabled>
@@ -60,34 +86,32 @@ export default connect(state => ({
                 ))
               )(allOrgMemberships)}
             </Select>
-            <IconButton
-              style={{ marginLeft: '.5rem' }}
-              label="add"
-              iconProps={{ icon: 'PlusCircle' }}
+            <Button
+              className={styles.addMemberButton}
+              disabled={selectedUser === ''}
+              buttonType="primary"
+              size="small"
               onClick={() =>
                 setSelectedUser('') ||
                 setFilter('') ||
                 setProjectMemberIds(projectMemberIds.concat(selectedUser))
-              }
-            />
+              }>
+              Add member
+            </Button>
           </div>
         </div>
       )}
-      <div className="project-home__member-list">
+      <div className={sharedStyles.list}>
         {sort(membershipIdsToMembers(projectMemberIds, allOrgMemberships)).map(
-          ({
-            sys: {
-              id,
-              user: { firstName, lastName, email }
-            }
-          }) => (
-            <div key={id} className="project-home__member">
+          ({ sys: { id, user } }) => (
+            <div key={id} className={sharedStyles.listItem}>
               <a
                 href={`/account/organizations/${orgId}/organization_memberships/${id}`}
                 target="_blank"
                 rel="noopener noreferrer">
-                {firstName} {lastName} ({email})
+                <UserCard user={user} />
               </a>
+              <div className={css({ flex: 1 })} />
               {editing && (
                 <IconButton
                   label="remove"
@@ -100,6 +124,6 @@ export default connect(state => ({
           )
         )}
       </div>
-    </div>
+    </Card>
   );
 });

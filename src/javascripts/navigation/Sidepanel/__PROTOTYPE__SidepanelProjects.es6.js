@@ -19,7 +19,6 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     padding: '20px 20px 0',
-    border: '2px solid red',
     position: 'relative'
   }),
   header: css({
@@ -41,14 +40,6 @@ const styles = {
     letterSpacing: '0.05rem',
     marginLeft: '.7rem',
     height: '1rem'
-  }),
-  warning: css({
-    position: 'absolute',
-    top: '3px',
-    left: '3px',
-    color: 'red',
-    fontWeight: 'bold',
-    fontSize: '.7rem'
   })
 };
 
@@ -129,9 +120,8 @@ export class SidepanelProjects extends React.Component {
     return (
       <div className={cx(styles.container)}>
         <div className={cx(styles.header)}>
-          <div className={cx(styles.warning)}>PROTOTYPE</div>
           <div className={cx(styles.headerTitle)}>Projects</div>
-          <div className={cx(styles.alphaTag)}>alpha</div>
+          <div className={cx(styles.alphaTag)}>prototype</div>
           <div style={{ flexGrow: 1 }} />
           <TextLink onClick={showCreateProjectModal}>+ Create project</TextLink>
         </div>
