@@ -6,20 +6,20 @@ exports[`EntrySidebar/TranslationWidgetPills should match snapshot 1`] = `
 >
   <div
     className="entity-sidebar__translation-pill x--default"
-    key="en-US"
+    key="en"
   >
     <Pill
-      label="en-US"
+      label="en"
       status="default"
       testId="deactivate-translation"
     />
   </div>
   <div
     className="entity-sidebar__translation-pill"
-    key="de-DE"
+    key="de"
   >
     <Pill
-      label="de-DE"
+      label="de"
       onClose={[Function]}
       status="default"
       testId="deactivate-translation"
@@ -27,10 +27,10 @@ exports[`EntrySidebar/TranslationWidgetPills should match snapshot 1`] = `
   </div>
   <div
     className="entity-sidebar__translation-pill"
-    key="es-AR"
+    key="es"
   >
     <Pill
-      label="es-AR"
+      label="es"
       onClose={[Function]}
       status="default"
       testId="deactivate-translation"

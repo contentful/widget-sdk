@@ -61,14 +61,14 @@ export default class TranslationWidgetPills extends Component {
       <div className="pill-list entity-sidebar__translation-pills">
         {orderLocales(this.props.localeData.activeLocales).map(locale => (
           <div
-            key={locale.internal_code}
+            key={locale.code}
             className={classNames('entity-sidebar__translation-pill', {
               'x--default': locale.default
             })}>
             <Pill
               testId="deactivate-translation"
               status="default"
-              label={locale.internal_code}
+              label={locale.code}
               onClose={locale.default ? undefined : () => this.onLocaleDeactivation(locale)}
             />
           </div>

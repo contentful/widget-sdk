@@ -12,10 +12,10 @@ jest.mock('app/common/ModalLauncher.es6', () => ({
 
 describe('EntrySidebar/TranslationWidgetPills', () => {
   const locales = [
-    { internal_code: 'en-US', default: true },
-    { internal_code: 'de-DE', default: false },
-    { internal_code: 'es-AR', default: false },
-    { internal_code: 'ru', default: false }
+    { internal_code: 'en-US', code: 'en', default: true },
+    { internal_code: 'de-DE', code: 'de', default: false },
+    { internal_code: 'es-AR', code: 'es', default: false },
+    { internal_code: 'ru', code: 'ru', default: false }
   ];
 
   const props = {
