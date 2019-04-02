@@ -3,10 +3,26 @@ import { mapValues, update } from 'lodash/fp';
 import { createSelector } from 'reselect';
 
 import getOrgId from './getOrgId.es6';
-import { getRequiredDataSets } from '../routes.es6';
-import { getPath } from './location.es6';
+import getRequiredDatasets from './getRequiredDatasets.es6';
 import { hasAccess } from './access.es6';
 
+/**
+ * @description
+ * Returns all datasets of the given org as nested map; keyed by dataset name constant first, then by dataset item ids
+ *
+ * {
+ *   USERS: {
+ *     userId1: user1,
+ *     userId2: user2,
+ *     ...
+ *   }
+ * }
+ *
+ * This will not resolve link.
+ * If no orgId is given, the current org is used.
+ *
+ * @returns {obj}
+ */
 export const getRawDatasets = (state, props) =>
   get(state, ['datasets', 'payload', get(props, 'orgId', getOrgId(state))], {});
 
@@ -35,19 +51,48 @@ function resolveLinks(datasets) {
     );
 }
 
+/**
+ * @description
+ * Returns all datasets of the current org as nested map; keyed by dataset name constant first, then by dataset item ids
+ *
+ * {
+ *   USERS: {
+ *     userId1: user1,
+ *     userId2: user2,
+ *     ...
+ *   }
+ * }
+ *
+ * Returns structure of redux store, which can be expected with redux dev tools.
+ *
+ * This will also resolve links, given
+ * - the link type equals the dataset constant (e.g. USERS => `User`, corresponds with `{ linkType: User }`)
+ * - the dataset the link points to is loaded (this will update if it's loaded later because it's `redux`)
+ * - the link is in `sys` (e.g. org memeberships have a duplicated `user` link outside `sys` for some reason and that will not be resolved)
+
+ * @returns {obj}
+ */
 export const getDatasets = createSelector(
   [getRawDatasets],
   // needs nested value mapping because datasets are nested by orgId and their name
   datasets => mapValues(mapValues(resolveLinks(datasets)), datasets)
 );
 
-// get's meta information about datasets, e.g. if they've been optimistically updated (pending server request)
+/**
+ * @description
+ * Returns meta information about datasets
+ *
+ * Mostly for internal use of the fetching mechanism.
+ * Inspect with redux dev tools for details.
+ *
+ * @returns {obj}
+ */
 export const getMeta = state => get(state, ['datasets', 'meta', getOrgId(state)]);
 
 // gets all datasets that have to be loaded for the current location
 // given the new route, the loaded datasets and the age of the loaded datasets
 export const getDataSetsToLoad = (state, { now } = { now: Date.now() }) => {
-  const requiredDatasets = getRequiredDataSets(getPath(state));
+  const requiredDatasets = getRequiredDatasets(state);
   const datasetsMeta = getMeta(state);
   return requiredDatasets.filter(datatset => {
     const lastFetchedAt = get(datasetsMeta, [datatset, 'fetched']);
@@ -57,13 +102,24 @@ export const getDataSetsToLoad = (state, { now } = { now: Date.now() }) => {
   });
 };
 
-// components should use this to show spinner and decide if they should render children
-// especially if children depend on the availability of datasets
+/**
+ * @description
+ * Components should use this to show spinner and decide if they should render children which might depend on loaded datasets
+ *
+ * This will also be true in case of an error.
+ * Errors are currently not distinguishable, as there is no recovery for failed loading of datasets and it has to be treated as a bug (fail fast).
+ *
+ * @returns {boolean}
+ **/
 export const isMissingRequiredDatasets = state => {
   if (!hasAccess(state)) {
     return false;
   }
-  const requiredDatasets = getRequiredDataSets(getPath(state));
+  const requiredDatasets = getRequiredDatasets(state);
+  // required datasets couldn't be determined yet
+  if (requiredDatasets === null || requiredDatasets.includes(null)) {
+    return true;
+  }
   const datasetsInState = Object.keys(getDatasets(state));
   return !isEmpty(difference(requiredDatasets, datasetsInState));
 };

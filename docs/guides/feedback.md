@@ -20,7 +20,7 @@ The mail will contain contact information for that user if he agreed to be conta
 ## Creating custom component
 
 You can create your own component that dispatches the feedback action.
-It's structure is:
+Its structure is:
 ```js
   dispatch({
     type: 'SEND_FEEDBACK',

@@ -83,6 +83,12 @@ This is a list of all the guides for developing the Contentful web application.
 * How to write tests
 * How to migrate from Karma to Jest
 
+## [Prefetch data with redux util](./data-prefetching.md)
+
+* How to prefetch data based on route and org role
+* How to use the prefetched data
+* How to check if prefetching finished
+
 ## [(Legacy) Testing with Karma](./testing-karma.md)
 
 * How to run tests
