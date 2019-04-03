@@ -12,8 +12,8 @@ export async function fetchContentTypes(widgetAPI) {
   return _.uniqBy(contentTypes.items, contentType => contentType.name);
 }
 
-export async function fetchAssets(widgetAPI) {
-  const assets = await widgetAPI.space.getAssets();
+export async function fetchAssets(widgetAPI, query = '') {
+  const assets = await widgetAPI.space.getAssets({ query });
   return assets.items.map(asset => ({
     contentTypeName: 'Asset',
     displayTitle: asset.fields.title ? asset.fields.title[widgetAPI.field.locale] : 'Untitled',

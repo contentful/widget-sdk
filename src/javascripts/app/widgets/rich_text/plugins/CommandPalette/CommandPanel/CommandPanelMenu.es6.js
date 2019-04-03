@@ -9,9 +9,14 @@ import {
   SkeletonBodyText,
   Spinner,
   SectionHeading,
-  Icon
+  Icon,
+  IconButton
 } from '@contentful/forma-36-react-components';
 import _ from 'lodash';
+import { Provider } from 'react-redux';
+import store from 'redux/store.es6';
+
+import FeedbackButton from 'app/common/FeedbackButton.es6';
 
 const styles = {
   commandPanel: css({
@@ -87,6 +92,9 @@ const styles = {
   instruction: css({
     marginRight: 15,
     color: tokens.colorTextLight
+  }),
+  closeButton: css({
+    marginLeft: 'auto'
   })
 };
 
@@ -145,7 +153,8 @@ export class CommandPanel extends React.Component {
     isLoading: PropTypes.bool,
     isUpdating: PropTypes.bool,
     breadcrumb: PropTypes.string,
-    richTextAPI: PropTypes.object
+    richTextAPI: PropTypes.object,
+    onClose: PropTypes.func
   };
   static defaultProps = {
     className: undefined,
@@ -256,6 +265,13 @@ export class CommandPanel extends React.Component {
       <SectionHeading>
         {this.props.breadcrumb ? `Embed ${this.props.breadcrumb}` : 'Richtext Commands'}
       </SectionHeading>
+      <IconButton
+        label="Close"
+        className={styles.closeButton}
+        iconProps={{ icon: 'Close' }}
+        buttonType="muted"
+        onClick={this.props.onClose}
+      />
     </div>
   );
 
@@ -265,6 +281,15 @@ export class CommandPanel extends React.Component {
         <Instruction>↑ ↓ to navigate</Instruction>
         <Instruction>↵ to confirm</Instruction>
         <Instruction>esc to close</Instruction>
+
+        <Provider store={store}>
+          <FeedbackButton
+            store={store}
+            target="authoring"
+            about="Richtext Commands"
+            label="Send feedback"
+          />
+        </Provider>
       </span>
       {this.props.isUpdating && (
         <span className={styles.loader}>

@@ -213,7 +213,7 @@ class CommandPalette extends React.PureComponent {
   createCommands = async (contentType, type, command) => {
     this.setState({ isUpdating: true });
     const allEntries = !contentType
-      ? await fetchAssets(this.props.richTextAPI.widgetAPI)
+      ? await fetchAssets(this.props.richTextAPI.widgetAPI, command)
       : await fetchEntries(this.props.richTextAPI.widgetAPI, contentType, command);
     this.setState({
       currentCommand: {
@@ -262,7 +262,7 @@ class CommandPalette extends React.PureComponent {
       e.stopPropagation();
     }
 
-    if (isHotKey('esc', e)) {
+    if (isHotKey('esc', e) || isHotKey('tab', e)) {
       this.setState({
         isClosed: true
       });
@@ -299,6 +299,11 @@ class CommandPalette extends React.PureComponent {
             items={this.state.items}
             isLoading={this.state.isLoading}
             isUpdating={this.state.isUpdating}
+            onClose={() => {
+              this.setState({
+                isClosed: true
+              });
+            }}
             breadcrumb={this.state.breadcrumb}
             richTextAPI={this.props.richTextAPI}
           />
