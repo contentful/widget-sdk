@@ -4,14 +4,6 @@ const P = require('path');
 const root = P.resolve() + '/';
 const express = require('express');
 
-// Test file patterns common to the karma config and the development config
-const filesNeededToRunTests = (module.exports.filesNeededToRunTests = [
-  'node_modules/systemjs/dist/system.src.js',
-  'test/prelude.js',
-
-  'test/helpers/**/*.js'
-]);
-
 module.exports = function(config) {
   config.plugins.push(
     // Serve static files from root directory under /base
@@ -52,9 +44,7 @@ module.exports = function(config) {
       // it also means that this file should already exist, so you can either
       // build it in advance, or run with webpack in parallel
       'public/app/components.js'
-    ]
-      .concat(filesNeededToRunTests)
-      .concat(['test/unit/**/*.js', 'test/integration/**/*.js']), // eslint-disable-line
+    ].concat(filesNeededToRunTests, ['test/unit/**/*.js', 'test/integration/**/*.js']), // eslint-disable-line
 
     middleware: ['static'],
 
@@ -128,6 +118,14 @@ module.exports = function(config) {
     singleRun: false
   });
 };
+
+// Test file patterns common to the karma config and the development config
+const filesNeededToRunTests = (module.exports.filesNeededToRunTests = [
+  'node_modules/systemjs/dist/system.src.js',
+  'test/prelude.js',
+
+  'test/helpers/**/*.js'
+]);
 
 function stripRoot(path) {
   if (path.startsWith(root)) {

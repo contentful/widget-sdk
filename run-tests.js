@@ -31,29 +31,25 @@ const ci = process.env.CI === 'true';
 const config = parseConfig(resolve('./karma.conf.js'));
 
 if (singleRun) {
+  config.set({
+    singleRun: true
+  });
+
   if (ci) {
     const specs = process.argv.slice(3); // 0 -> node, 1 -> run-tests.js, 2 -> --once
 
     config.set({
       reporters: ['dots', 'junit'],
-      singleRun: true,
       junitReporter: {
         outputDir: process.env.JUNIT_REPORT_PATH,
         outputFile: process.env.JUNIT_REPORT_NAME,
         useBrowserName: false
-      }
-    });
-    // we need to extend config, because we run it in CI environment
-    // in order to make it work, you need to build the application for production
-    // $ NODE_ENV=production gulp build-app
-    // you can run it locally as well, just execute the command above first
-    config.set({
-      // We only care about the test bundle, not the main application, plus the chunks (like echarts)
-      files: ['build/app/**/test-bundle-*.js', 'build/app/**/chunk_*.js', 'build/app/**/*.css']
-        .concat(filesNeededToRunTests)
-        .concat(specs),
-
-      // Fix for https://crbug.com/638180: Running as root without --no-sandbox is not supported
+      },
+      files: [
+        'build/app/**/test-bundle-*.js',
+        'build/app/**/chunk_*.js',
+        'build/app/**/*.css'
+      ].concat(filesNeededToRunTests, specs),
       browsers: ['ChromeHeadlessNoSandbox'],
       customLaunchers: {
         ChromeHeadlessNoSandbox: {
