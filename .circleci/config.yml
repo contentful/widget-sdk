@@ -157,12 +157,12 @@ jobs:
           command: |
             echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
             echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
-      - run: npm ci
       - run:
-          name: Split tests into specs for this run
+          name: Split tests into specs for the run
           command: |
             echo 'export TESTFILES="$(circleci tests glob "test/{unit,integration}/**/*.spec.js | circleci tests split --split-by=timings --timings-type=filename)"' >> $BASH_ENV
       - run: echo $TESTFILES
+      - run: npm ci
       - run:
           name: Build test artifacts
           command: NODE_ENV=production node --max_old_space_size=3072 ./node_modules/.bin/gulp build-test
