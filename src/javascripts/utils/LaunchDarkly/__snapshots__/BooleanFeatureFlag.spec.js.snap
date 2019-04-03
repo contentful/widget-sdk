@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BooleanFeatureFlag Component renders children if feature is enabled 1`] = `
+<BooleanFeatureFlag
+  featureFlagKey="ff"
+>
+  1
+</BooleanFeatureFlag>
+`;
+
+exports[`BooleanFeatureFlag Component renders null if feature is disabled 1`] = `
+<BooleanFeatureFlag
+  featureFlagKey="ff"
+/>
+`;
