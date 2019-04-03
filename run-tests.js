@@ -21,59 +21,56 @@ const {
   Server,
   config: { parseConfig }
 } = require('karma');
-const { testFiles } = require('./karma.conf');
+const { filesNeededToRunTests } = require('./karma.conf');
 const { resolve } = require('path');
 const { argv } = require('yargs');
 
 const singleRun = argv.once;
-const prod = process.env.NODE_ENV === 'production';
+const ci = process.env.CI === 'true';
 
 const config = parseConfig(resolve('./karma.conf.js'));
 
-if (singleRun && prod) {
-  config.set({
-    reporters: ['dots', 'junit'],
-    singleRun: true,
-    junitReporter: {
-      outputDir: process.env.JUNIT_REPORT_PATH,
-      outputFile: process.env.JUNIT_REPORT_NAME,
-      useBrowserName: false
-    }
-  });
-}
-
-if (singleRun && !prod) {
-  // we don't show a detailed report for single runs
-  config.set({
-    reporters: ['dots'],
-    singleRun: true
-  });
-}
-
-if (prod) {
-  // we need to extend config, because we run it in CI environment
-  // in order to make it work, you need to build the application for production
-  // $ NODE_ENV=production gulp build-app
-  // you can run it locally as well, just execute the command above first
-  config.set({
-    // We only care about the test bundle, not the main application, plus the chunks (like echarts)
-    files: [
-      'build/app/**/test-bundle-*.js',
-      'build/app/**/chunk_*.js',
-      'build/app/**/*.css'
-    ].concat(testFiles),
-
-    // Fix for https://crbug.com/638180: Running as root without --no-sandbox is not supported
-    browsers: ['ChromeHeadlessNoSandbox'],
-    customLaunchers: {
-      ChromeHeadlessNoSandbox: {
-        base: 'ChromeHeadless',
-        flags: ['--no-sandbox']
+if (singleRun) {
+  if (ci) {
+    process.exit(1);
+    const specs = process.argv.slice(3); // 0 -> node, 1 -> run-tests.js, 2 -> --once
+    config.set({
+      reporters: ['dots', 'junit'],
+      singleRun: true,
+      junitReporter: {
+        outputDir: process.env.JUNIT_REPORT_PATH,
+        outputFile: process.env.JUNIT_REPORT_NAME,
+        useBrowserName: false
       }
-    }
-  });
+    });
+    // we need to extend config, because we run it in CI environment
+    // in order to make it work, you need to build the application for production
+    // $ NODE_ENV=production gulp build-app
+    // you can run it locally as well, just execute the command above first
+    config.set({
+      // We only care about the test bundle, not the main application, plus the chunks (like echarts)
+      files: ['build/app/**/test-bundle-*.js', 'build/app/**/chunk_*.js', 'build/app/**/*.css']
+        .concat(filesNeededToRunTests)
+        .concat(specs),
+
+      // Fix for https://crbug.com/638180: Running as root without --no-sandbox is not supported
+      browsers: ['ChromeHeadlessNoSandbox'],
+      customLaunchers: {
+        ChromeHeadlessNoSandbox: {
+          base: 'ChromeHeadless',
+          flags: ['--no-sandbox']
+        }
+      }
+    });
+  } else {
+    // we don't show a detailed report for single runs
+    config.set({
+      reporters: ['dots'],
+      singleRun: true
+    });
+  }
   runTests();
-} else if (!singleRun) {
+} else {
   // we need to do the following:
   // 1. build our initial bundle using webpack
   // 2. watch for future changes in JS files (to build them again)
@@ -83,8 +80,6 @@ if (prod) {
     // but we need to run karma only once
     onSuccess: once(runTests)
   });
-} else {
-  runTests();
 }
 
 function runTests() {
