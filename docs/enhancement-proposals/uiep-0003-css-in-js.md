@@ -83,7 +83,7 @@ import styles from './style.css';
 - 💔 There are some problems relating to the CSS module `import` order which we've already seen in Forma36
 - 💔 It's hard to use with our current Webpack + SystemJS + Karma configuration and involves hacks and workarounds
 
-### [astoturf](https://github.com/4Catalyzer/astroturf)
+### [astroturf](https://github.com/4Catalyzer/astroturf)
 
 `astroturf` lets you write CSS in your JavaScript files without adding any runtime layer, and works with your
 existing CSS processing pipeline. The API is really similar to `styled-components` and `emotion`, but without
