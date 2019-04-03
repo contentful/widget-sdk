@@ -8,6 +8,12 @@ import { orderLocales } from 'app/EntrySidebar/TranslationWidget/helpers.es6';
 import { Pill, TextLink } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics.es6';
 
+const trackTranslationSidebarEvent = (action, data) =>
+  track(`translation_sidebar:${action}`, {
+    currentMode: 'multiple',
+    ...data
+  });
+
 const localesPropType = PropTypes.arrayOf(
   PropTypes.shape({
     internal_code: PropTypes.string.isRequired,
@@ -28,8 +34,12 @@ export default class TranslationWidgetPills extends Component {
   };
 
   onLocaleDeactivation = locale => {
+    const activeLocaleCount = this.props.localeData.activeLocales.length;
+    trackTranslationSidebarEvent('deselect_active_locale', {
+      previousActiveLocaleCount: activeLocaleCount,
+      currentActiveLocaleCount: activeLocaleCount - 1
+    });
     this.props.emitter.emit(SidebarEventTypes.DEACTIVATED_LOCALE, locale);
-    track('translation_sidebar:deselect_active_locale', { currentMode: 'multiple' });
   };
 
   onChange = async () => {
@@ -41,9 +51,12 @@ export default class TranslationWidgetPills extends Component {
     }));
 
     const onUpdate = locales => {
-      const activeLocales = locales.filter(l => l.active);
-      this.props.emitter.emit(SidebarEventTypes.SET_ACTIVE_LOCALES, activeLocales);
-      track('translation_sidebar:update_active_locales', { currentMode: 'multiple' });
+      const currentActiveLocales = locales.filter(l => l.active);
+      trackTranslationSidebarEvent('update_active_locales', {
+        previousActiveLocaleCount: this.props.localeData.activeLocales.length,
+        currentActiveLocaleCount: currentActiveLocales.length
+      });
+      this.props.emitter.emit(SidebarEventTypes.SET_ACTIVE_LOCALES, currentActiveLocales);
     };
 
     await ModalLauncher.open(({ onClose, isShown }) => (
