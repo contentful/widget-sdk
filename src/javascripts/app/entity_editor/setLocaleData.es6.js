@@ -33,6 +33,12 @@ export function setLocaleData($scope, { isBulkEditor = false } = {}) {
 
 function maybeResetFocusedLocale() {
   if (!TheLocaleStore.getPrivateLocales().includes(TheLocaleStore.getFocusedLocale())) {
+    // This would happen if the focused locale was changed or deleted by a
+    // space administrator. In that case, the focused locale would still be
+    // stored in localStorage, but the UI wouldn't be able to handle it
+    // properly (since the CMA doesn't know about it and it's not in the list
+    // of private locales). We default to 'resetting' the focused locale to
+    // the default locale, which is always a safe choice.
     TheLocaleStore.setFocusedLocale(TheLocaleStore.getDefaultLocale());
   }
 }
