@@ -17,14 +17,21 @@ exports[`EntrySidebar/TranslationWidgetDropdown when a locale has 1 error should
       testId="cf-ui-select-option"
       value="en-US"
     >
-      English (United States) (undefined) - 1 error
+      English (United States) (en) - 1 error
     </Option>
     <Option
       key="ru"
       testId="cf-ui-select-option"
       value="ru"
     >
-      Russian (undefined)
+      Russian (ru)
+    </Option>
+    <Option
+      key="ar-AR"
+      testId="cf-ui-select-option"
+      value="ar-AR"
+    >
+      Zhao (Azerbaijan) (zh)
     </Option>
   </Select>
 </div>
@@ -47,14 +54,21 @@ exports[`EntrySidebar/TranslationWidgetDropdown when a locale has more than one 
       testId="cf-ui-select-option"
       value="en-US"
     >
-      English (United States) (undefined) - 2 errors
+      English (United States) (en) - 2 errors
     </Option>
     <Option
       key="ru"
       testId="cf-ui-select-option"
       value="ru"
     >
-      Russian (undefined)
+      Russian (ru)
+    </Option>
+    <Option
+      key="ar-AR"
+      testId="cf-ui-select-option"
+      value="ar-AR"
+    >
+      Zhao (Azerbaijan) (zh)
     </Option>
   </Select>
 </div>
@@ -78,14 +92,21 @@ exports[`EntrySidebar/TranslationWidgetDropdown when both locales have errors sh
       testId="cf-ui-select-option"
       value="en-US"
     >
-      English (United States) (undefined) - 2 errors
+      English (United States) (en) - 2 errors
     </Option>
     <Option
       key="ru"
       testId="cf-ui-select-option"
       value="ru"
     >
-      Russian (undefined) - 1 error
+      Russian (ru) - 1 error
+    </Option>
+    <Option
+      key="ar-AR"
+      testId="cf-ui-select-option"
+      value="ar-AR"
+    >
+      Zhao (Azerbaijan) (zh)
     </Option>
   </Select>
 </div>
@@ -108,14 +129,21 @@ exports[`EntrySidebar/TranslationWidgetDropdown when there are no locale errors 
       testId="cf-ui-select-option"
       value="en-US"
     >
-      English (United States) (undefined)
+      English (United States) (en)
     </Option>
     <Option
       key="ru"
       testId="cf-ui-select-option"
       value="ru"
     >
-      Russian (undefined)
+      Russian (ru)
+    </Option>
+    <Option
+      key="ar-AR"
+      testId="cf-ui-select-option"
+      value="ar-AR"
+    >
+      Zhao (Azerbaijan) (zh)
     </Option>
   </Select>
 </div>

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { keys } from 'lodash';
-import { orderLocales } from 'app/EntrySidebar/TranslationWidget/helpers.es6';
+import { keys, orderBy } from 'lodash';
 import { Select, Option } from '@contentful/forma-36-react-components';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import { track } from 'analytics/Analytics.es6';
+
+const sortLocales = locales => orderBy(locales, ['default', 'name'], ['desc', 'asc']);
 
 const TranslationWidgetDropdownValidationError = () => (
   <div className="entity-sidebar__error">
@@ -21,6 +22,8 @@ export default class TranslationDropdownWidget extends Component {
     localeData: PropTypes.shape({
       privateLocales: PropTypes.arrayOf(
         PropTypes.shape({
+          name: PropTypes.string.isRequired,
+          code: PropTypes.string.isRequired,
           internal_code: PropTypes.string.isRequired,
           default: PropTypes.bool.isRequired
         }).isRequired
@@ -88,7 +91,7 @@ export default class TranslationDropdownWidget extends Component {
           onChange={this.handleChange}
           hasError={hasError}
           value={focusedLocaleCode}>
-          {orderLocales(privateLocales).map(locale => (
+          {sortLocales(privateLocales).map(locale => (
             <Option key={locale.internal_code} value={locale.internal_code}>
               {this.localeName(locale)}
             </Option>
