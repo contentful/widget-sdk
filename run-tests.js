@@ -32,8 +32,8 @@ const config = parseConfig(resolve('./karma.conf.js'));
 
 if (singleRun) {
   if (ci) {
-    process.exit(1);
     const specs = process.argv.slice(3); // 0 -> node, 1 -> run-tests.js, 2 -> --once
+
     config.set({
       reporters: ['dots', 'junit'],
       singleRun: true,
