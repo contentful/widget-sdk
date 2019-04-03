@@ -161,7 +161,7 @@ jobs:
       - run:
           name: Split tests into specs for this run
           command: |
-            echo 'export TESTFILES=$(circleci tests glob "test/{unit,integration}/**/*.spec.js | circleci tests split --split-by=timings --timings-type=filename)' >> $BASH_ENV
+            echo 'export TESTFILES="$(circleci tests glob "test/{unit,integration}/**/*.spec.js | circleci tests split --split-by=timings --timings-type=filename)"' >> $BASH_ENV
       - run: echo $TESTFILES
       - run:
           name: Build test artifacts
