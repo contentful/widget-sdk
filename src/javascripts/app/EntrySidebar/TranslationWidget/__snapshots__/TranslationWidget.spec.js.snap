@@ -15,46 +15,64 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is not supported
       Object {
         "activeLocales": Array [
           Object {
+            "code": "en",
             "default": true,
             "internal_code": "en-US",
+            "name": "English (United States)",
           },
           Object {
+            "code": "de",
             "default": false,
             "internal_code": "de-DE",
+            "name": "German (Germany)",
           },
           Object {
+            "code": "es",
             "default": false,
             "internal_code": "es-AR",
+            "name": "Spanish (Argentina)",
           },
           Object {
+            "code": "ru",
             "default": false,
             "internal_code": "ru",
+            "name": "Russian",
           },
         ],
         "errors": Object {},
         "focusedLocale": Object {
+          "code": "en",
           "default": true,
           "internal_code": "en-US",
+          "name": "English (United States)",
         },
         "isLocaleActive": [Function],
         "isSingleLocaleModeOn": false,
         "isSingleLocaleModeSupported": false,
         "privateLocales": Array [
           Object {
+            "code": "en",
             "default": true,
             "internal_code": "en-US",
+            "name": "English (United States)",
           },
           Object {
+            "code": "de",
             "default": false,
             "internal_code": "de-DE",
+            "name": "German (Germany)",
           },
           Object {
+            "code": "es",
             "default": false,
             "internal_code": "es-AR",
+            "name": "Spanish (Argentina)",
           },
           Object {
+            "code": "ru",
             "default": false,
             "internal_code": "ru",
+            "name": "Russian",
           },
         ],
       }
@@ -78,46 +96,64 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is not supported
       Object {
         "activeLocales": Array [
           Object {
+            "code": "en",
             "default": true,
             "internal_code": "en-US",
+            "name": "English (United States)",
           },
           Object {
+            "code": "de",
             "default": false,
             "internal_code": "de-DE",
+            "name": "German (Germany)",
           },
           Object {
+            "code": "es",
             "default": false,
             "internal_code": "es-AR",
+            "name": "Spanish (Argentina)",
           },
           Object {
+            "code": "ru",
             "default": false,
             "internal_code": "ru",
+            "name": "Russian",
           },
         ],
         "errors": Object {},
         "focusedLocale": Object {
+          "code": "en",
           "default": true,
           "internal_code": "en-US",
+          "name": "English (United States)",
         },
         "isLocaleActive": [Function],
         "isSingleLocaleModeOn": true,
         "isSingleLocaleModeSupported": false,
         "privateLocales": Array [
           Object {
+            "code": "en",
             "default": true,
             "internal_code": "en-US",
+            "name": "English (United States)",
           },
           Object {
+            "code": "de",
             "default": false,
             "internal_code": "de-DE",
+            "name": "German (Germany)",
           },
           Object {
+            "code": "es",
             "default": false,
             "internal_code": "es-AR",
+            "name": "Spanish (Argentina)",
           },
           Object {
+            "code": "ru",
             "default": false,
             "internal_code": "ru",
+            "name": "Russian",
           },
         ],
       }
@@ -187,46 +223,64 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is supported whe
       Object {
         "activeLocales": Array [
           Object {
+            "code": "en",
             "default": true,
             "internal_code": "en-US",
+            "name": "English (United States)",
           },
           Object {
+            "code": "de",
             "default": false,
             "internal_code": "de-DE",
+            "name": "German (Germany)",
           },
           Object {
+            "code": "es",
             "default": false,
             "internal_code": "es-AR",
+            "name": "Spanish (Argentina)",
           },
           Object {
+            "code": "ru",
             "default": false,
             "internal_code": "ru",
+            "name": "Russian",
           },
         ],
         "errors": Object {},
         "focusedLocale": Object {
+          "code": "en",
           "default": true,
           "internal_code": "en-US",
+          "name": "English (United States)",
         },
         "isLocaleActive": [Function],
         "isSingleLocaleModeOn": false,
         "isSingleLocaleModeSupported": true,
         "privateLocales": Array [
           Object {
+            "code": "en",
             "default": true,
             "internal_code": "en-US",
+            "name": "English (United States)",
           },
           Object {
+            "code": "de",
             "default": false,
             "internal_code": "de-DE",
+            "name": "German (Germany)",
           },
           Object {
+            "code": "es",
             "default": false,
             "internal_code": "es-AR",
+            "name": "Spanish (Argentina)",
           },
           Object {
+            "code": "ru",
             "default": false,
             "internal_code": "ru",
+            "name": "Russian",
           },
         ],
       }
@@ -275,46 +329,64 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is supported whe
       Object {
         "activeLocales": Array [
           Object {
+            "code": "en",
             "default": true,
             "internal_code": "en-US",
+            "name": "English (United States)",
           },
           Object {
+            "code": "de",
             "default": false,
             "internal_code": "de-DE",
+            "name": "German (Germany)",
           },
           Object {
+            "code": "es",
             "default": false,
             "internal_code": "es-AR",
+            "name": "Spanish (Argentina)",
           },
           Object {
+            "code": "ru",
             "default": false,
             "internal_code": "ru",
+            "name": "Russian",
           },
         ],
         "errors": Object {},
         "focusedLocale": Object {
+          "code": "en",
           "default": true,
           "internal_code": "en-US",
+          "name": "English (United States)",
         },
         "isLocaleActive": [Function],
         "isSingleLocaleModeOn": true,
         "isSingleLocaleModeSupported": true,
         "privateLocales": Array [
           Object {
+            "code": "en",
             "default": true,
             "internal_code": "en-US",
+            "name": "English (United States)",
           },
           Object {
+            "code": "de",
             "default": false,
             "internal_code": "de-DE",
+            "name": "German (Germany)",
           },
           Object {
+            "code": "es",
             "default": false,
             "internal_code": "es-AR",
+            "name": "Spanish (Argentina)",
           },
           Object {
+            "code": "ru",
             "default": false,
             "internal_code": "ru",
+            "name": "Russian",
           },
         ],
       }

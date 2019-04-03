@@ -7,10 +7,10 @@ import { track } from 'analytics/Analytics.es6';
 
 describe('EntrySidebar/TranslationWidget', () => {
   const locales = [
-    { internal_code: 'en-US', default: true },
-    { internal_code: 'de-DE', default: false },
-    { internal_code: 'es-AR', default: false },
-    { internal_code: 'ru', default: false }
+    { internal_code: 'en-US', code: 'en', name: 'English (United States)', default: true },
+    { internal_code: 'de-DE', code: 'de', name: 'German (Germany)', default: false },
+    { internal_code: 'es-AR', code: 'es', name: 'Spanish (Argentina)', default: false },
+    { internal_code: 'ru', code: 'ru', name: 'Russian', default: false }
   ];
 
   const props = {

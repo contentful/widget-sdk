@@ -12,11 +12,13 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
     },
     localeData: {
       privateLocales: [
-        { internal_code: 'en-US', default: true, name: 'English (United States)' },
-        { internal_code: 'ru', default: false, name: 'Russian' }
+        { internal_code: 'en-US', code: 'en', default: true, name: 'English (United States)' },
+        { internal_code: 'ru', code: 'ru', default: false, name: 'Russian' },
+        { internal_code: 'ar-AR', code: 'zh', default: false, name: 'Zhao (Azerbaijan)' }
       ],
       focusedLocale: {
         internal_code: 'en-US',
+        code: 'en',
         default: true,
         name: 'English (United States)'
       },
@@ -86,6 +88,7 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
     it('emits the UPDATE_FOCUSED_LOCALE event with the new locale', () => {
       expect(props.emitter.emit).toHaveBeenCalledWith(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, {
         internal_code: 'ru',
+        code: 'ru',
         default: false,
         name: 'Russian'
       });

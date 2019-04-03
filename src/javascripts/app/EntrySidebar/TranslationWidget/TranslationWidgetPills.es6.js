@@ -4,9 +4,11 @@ import classNames from 'classnames';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import LocaleSelectDialog from './LocaleSelectDialog.es6';
-import { orderLocales } from 'app/EntrySidebar/TranslationWidget/helpers.es6';
 import { Pill, TextLink } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics.es6';
+import { orderBy } from 'lodash';
+
+const sortLocales = locales => orderBy(locales, ['default', 'code'], ['desc', 'asc']);
 
 const trackTranslationSidebarEvent = (action, data) =>
   track(`translation_sidebar:${action}`, {
@@ -16,7 +18,7 @@ const trackTranslationSidebarEvent = (action, data) =>
 
 const localesPropType = PropTypes.arrayOf(
   PropTypes.shape({
-    internal_code: PropTypes.string.isRequired,
+    code: PropTypes.string.isRequired,
     default: PropTypes.bool.isRequired
   }).isRequired
 ).isRequired;
@@ -72,7 +74,7 @@ export default class TranslationWidgetPills extends Component {
   render() {
     return (
       <div className="pill-list entity-sidebar__translation-pills">
-        {orderLocales(this.props.localeData.activeLocales).map(locale => (
+        {sortLocales(this.props.localeData.activeLocales).map(locale => (
           <div
             key={locale.code}
             className={classNames('entity-sidebar__translation-pill', {

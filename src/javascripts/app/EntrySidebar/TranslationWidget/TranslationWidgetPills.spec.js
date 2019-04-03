@@ -12,10 +12,10 @@ jest.mock('app/common/ModalLauncher.es6', () => ({
 
 describe('EntrySidebar/TranslationWidgetPills', () => {
   const locales = [
-    { internal_code: 'en-US', code: 'en', default: true },
-    { internal_code: 'de-DE', code: 'de', default: false },
-    { internal_code: 'es-AR', code: 'es', default: false },
-    { internal_code: 'ru', code: 'ru', default: false }
+    { code: 'en', default: true },
+    { code: 'de', default: false },
+    { code: 'es', default: false },
+    { code: 'ru', default: false }
   ];
 
   const props = {
@@ -25,7 +25,7 @@ describe('EntrySidebar/TranslationWidgetPills', () => {
     localeData: {
       activeLocales: locales,
       privateLocales: locales,
-      isLocaleActive: ({ internal_code }) => ['es-AR', 'ru'].includes(internal_code)
+      isLocaleActive: ({ code }) => ['es-AR', 'ru'].includes(code)
     }
   };
 
@@ -75,17 +75,17 @@ describe('EntrySidebar/TranslationWidgetPills', () => {
         props: { onUpdate }
       } = localeSelectDialog;
       onUpdate([
-        { internal_code: 'en-US', active: false },
-        { internal_code: 'es-AR', active: true },
-        { internal_code: 'ru', active: true },
-        { internal_code: 'de-DE', active: false }
+        { code: 'en-US', active: false },
+        { code: 'es-AR', active: true },
+        { code: 'ru', active: true },
+        { code: 'de-DE', active: false }
       ]);
     });
 
     it('emits the SET_ACTIVE_LOCALES event with the new active locales', () => {
       expect(props.emitter.emit).toHaveBeenCalledWith(SidebarEventTypes.SET_ACTIVE_LOCALES, [
-        { internal_code: 'es-AR', active: true },
-        { internal_code: 'ru', active: true }
+        { code: 'es-AR', active: true },
+        { code: 'ru', active: true }
       ]);
     });
 
