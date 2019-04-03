@@ -2,7 +2,7 @@
 declare global {
   namespace Cypress {
     interface Chainable {
-      setAuthToken: typeof setAuthToken;
+      setAuthTokenToLocalStorage: typeof setAuthTokenToLocalStorage;
     }
   }
 }
@@ -12,9 +12,9 @@ declare global {
  * @returns {void}
  * @example cy.login()
  */
-export function setAuthToken() {
+export function setAuthTokenToLocalStorage() {
   const TOKEN = Cypress.env('token');
   window.localStorage.setItem('token', TOKEN);
 }
 
-Cypress.Commands.add('setAuthToken', setAuthToken);
+Cypress.Commands.add('setAuthTokenToLocalStorage', setAuthTokenToLocalStorage);
