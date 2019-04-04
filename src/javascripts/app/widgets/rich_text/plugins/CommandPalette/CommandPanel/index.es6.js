@@ -44,6 +44,7 @@ class CommandPalette extends React.PureComponent {
   };
 
   componentDidMount = async () => {
+    this.isComponentMounted = true;
     this.createInitialCommands();
     this.updatePanelPosition();
     this.paletteDimensions = {
@@ -53,7 +54,9 @@ class CommandPalette extends React.PureComponent {
   };
 
   componentWillUnmount() {
+    this.isComponentMounted = false;
     this.removeEventListeners();
+    this.requestUpdate.cancel();
   }
 
   bindEventListeners = () => {
@@ -88,7 +91,7 @@ class CommandPalette extends React.PureComponent {
       }
     },
     1000,
-    { leading: false, trailing: true }
+    { leading: true, trailing: false }
   );
 
   componentDidUpdate() {
@@ -170,13 +173,13 @@ class CommandPalette extends React.PureComponent {
     [
       createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ENTRY, false, () => {
         this.setState({ breadcrumb: contentType.name, isLoading: true });
-        this.clearCommand();
         this.createCommands(contentType);
+        this.clearCommand();
       }),
       createActionIfAllowed(field, contentType, INLINES.EMBEDDED_ENTRY, false, () => {
         this.setState({ breadcrumb: contentType.name, isLoading: true });
-        this.clearCommand();
         this.createCommands(contentType, INLINES.EMBEDDED_ENTRY);
+        this.clearCommand();
       }),
       createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ENTRY, true, () =>
         this.onCreateAndEmbedEntry(contentType.sys.id, BLOCKS.EMBEDDED_ENTRY)
@@ -190,8 +193,8 @@ class CommandPalette extends React.PureComponent {
     [
       createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ASSET, false, () => {
         this.setState({ breadcrumb: 'Asset', isLoading: true });
-        this.clearCommand();
         this.createCommands(null, BLOCKS.EMBEDDED_ASSET);
+        this.clearCommand();
       }),
       createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ASSET, true, () =>
         this.onCreateAndEmbedEntry(null, BLOCKS.EMBEDDED_ASSET)
@@ -215,25 +218,28 @@ class CommandPalette extends React.PureComponent {
     const allEntries = !contentType
       ? await fetchAssets(this.props.richTextAPI.widgetAPI, command)
       : await fetchEntries(this.props.richTextAPI.widgetAPI, contentType, command);
-    this.setState({
-      currentCommand: {
-        contentType,
-        type,
-        command
-      },
-      isUpdating: false,
-      isLoading: false,
-      items: allEntries.map(entry =>
-        this.createCommand(
-          entry.displayTitle,
-          entry.contentTypeName,
-          entry.entry,
+
+    if (this.isComponentMounted) {
+      this.setState({
+        currentCommand: {
+          contentType,
           type,
-          entry.description,
-          entry.thumbnail
+          command
+        },
+        isUpdating: false,
+        isLoading: false,
+        items: allEntries.map(entry =>
+          this.createCommand(
+            entry.displayTitle,
+            entry.contentTypeName,
+            entry.entry,
+            type,
+            entry.description,
+            entry.thumbnail
+          )
         )
-      )
-    });
+      });
+    }
   };
 
   createInitialCommands = async () => {
@@ -289,10 +295,14 @@ class CommandPalette extends React.PureComponent {
         }}>
         <InViewport
           onOverflowBottom={() => {
-            this.setState({ panelPosition: 'top' }, this.updatePanelPosition);
+            if (this.state.panelPosition !== 'top') {
+              this.setState({ panelPosition: 'top' }, this.updatePanelPosition);
+            }
           }}
           onOverflowTop={() => {
-            this.setState({ panelPosition: 'bottom' }, this.updatePanelPosition);
+            if (this.state.panelPosition !== 'bottom') {
+              this.setState({ panelPosition: 'bottom' }, this.updatePanelPosition);
+            }
           }}>
           <CommandPanelMenu
             searchString={this.props.command === '/' ? '' : this.props.command}
