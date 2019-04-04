@@ -22,21 +22,25 @@ import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
 import Icon from 'ui/Components/Icon.es6';
 import CopyIconButton from 'ui/Components/CopyIconButton.es6';
 import { Tooltip } from 'react-tippy';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 export default function View({ state, actions }) {
   return (
-    <Workbench>
-      <Workbench.Header>
-        <Workbench.Icon icon="page-settings" />
-        <Workbench.Title>Environments</Workbench.Title>
-      </Workbench.Header>
-      <Workbench.Content>
-        <EnvironmentList {...state} {...actions} />
-      </Workbench.Content>
-      <Workbench.Sidebar>
-        <Sidebar {...state} {...actions} />
-      </Workbench.Sidebar>
-    </Workbench>
+    <React.Fragment>
+      <DocumentTitle title="Environments" />
+      <Workbench>
+        <Workbench.Header>
+          <Workbench.Icon icon="page-settings" />
+          <Workbench.Title>Environments</Workbench.Title>
+        </Workbench.Header>
+        <Workbench.Content>
+          <EnvironmentList {...state} {...actions} />
+        </Workbench.Content>
+        <Workbench.Sidebar>
+          <Sidebar {...state} {...actions} />
+        </Workbench.Sidebar>
+      </Workbench>
+    </React.Fragment>
   );
 }
 View.propTypes = {
