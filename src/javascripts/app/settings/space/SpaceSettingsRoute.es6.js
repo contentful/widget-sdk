@@ -4,6 +4,7 @@ import { getModule } from 'NgRegistry.es6';
 import SpaceSettings from './SpaceSettings.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const spaceContext = getModule('spaceContext');
 const $state = getModule('$state');
@@ -67,12 +68,15 @@ export class SpaceSettingsRoute extends React.Component {
 
   render() {
     return (
-      <SpaceSettings
-        save={this.save}
-        onRemoveClick={this.openRemovalDialog}
-        spaceName={spaceContext.space.data.name}
-        spaceId={spaceContext.space.getId()}
-      />
+      <React.Fragment>
+        <DocumentTitle title="Settings" />
+        <SpaceSettings
+          save={this.save}
+          onRemoveClick={this.openRemovalDialog}
+          spaceName={spaceContext.space.data.name}
+          spaceId={spaceContext.space.getId()}
+        />
+      </React.Fragment>
     );
   }
 }
