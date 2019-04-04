@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
+import { isArray } from 'lodash';
 
 import { getModule } from 'NgRegistry.es6';
 
@@ -11,15 +12,15 @@ const spaceContext = getModule('spaceContext');
  * usage from jade templates easier.
  *
  */
-export default function DocumentTitle({ title, scope }) {
+export default function DocumentTitle({ title }) {
+  const titleSegments = isArray(title) ? title : [title];
   const spaceName = getSpaceName(spaceContext);
   const environmentId = getEnvironmentId(spaceContext);
 
   const docTitle = buildDocumentTitle({
     spaceName,
     environmentId,
-    scope,
-    title
+    titleSegments: titleSegments
   });
 
   return (
@@ -30,13 +31,15 @@ export default function DocumentTitle({ title, scope }) {
 }
 
 DocumentTitle.propTypes = {
-  // Locales, Entries, Users etc
-  scope: PropTypes.string,
-  title: PropTypes.string.isRequired
+  /**
+   * can be a plain string ('Home', 'Content') or
+   * an array of string for scoped titles (['New Locale', 'Locales'])
+   */
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]).isRequired
 };
 
-function buildDocumentTitle({ title, scope, spaceName, environmentId }) {
-  const titleParts = [title, scope, spaceName, environmentId, 'Contentful'].filter(Boolean);
+function buildDocumentTitle({ titleSegments, spaceName, environmentId }) {
+  const titleParts = [...titleSegments, spaceName, environmentId, 'Contentful'].filter(Boolean);
   return titleParts.join(' — ');
 }
 
