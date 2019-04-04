@@ -1,5 +1,5 @@
 import Client from 'legacy-client';
-import describeSpaceInstance from './space_instance';
+import describeSpaceInstance from 'test/helpers/libs/legacy_client/space_instance';
 import _ from 'lodash';
 
 describe('client', function() {
