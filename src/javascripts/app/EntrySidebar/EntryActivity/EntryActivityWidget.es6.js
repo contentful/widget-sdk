@@ -11,6 +11,8 @@ import UserFetcher from 'components/shared/UserFetcher/index.es6';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import UserNameFormatter from 'components/shared/UserNameFormatter/index.es6';
 
+import { MAX_FEED_SIZE } from './stream.es6';
+
 const renderDayHeader = (activity, index) => {
   const time = new Date(activity.time);
   return (
@@ -89,7 +91,35 @@ const className = css({
 });
 
 export default function EntryActivityWidget({ activities = [], fieldIdNameMap = {} }) {
-  return <ul className={className}>{activities.map(renderDailyActivity(fieldIdNameMap))}</ul>;
+  return (
+    <React.Fragment>
+      <p
+        className="entity-sidebar__help-text f36-margin-bottom--xl"
+        role="note"
+        aria-multiselectable="false">
+        List of{' '}
+        <Tooltip content="This includes all changes except those made through UI Extensions, API, and/or rollback to previous versions">
+          <span className={css({ textDecoration: 'underline dotted' })}> changes</span>
+        </Tooltip>{' '}
+        to this entry made within the Contentful Web app.
+      </p>
+      <ul className={className}>
+        {activities.map(renderDailyActivity(fieldIdNameMap))}
+        {activities.length === MAX_FEED_SIZE && (
+          <li
+            className={`collaborators__item entity-sidebar__no-users collaborators__item-flex f36-margin-top--l ${css(
+              {
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }
+            )}`}>
+            {`Limit of ${MAX_FEED_SIZE} changes reached`}
+          </li>
+        )}
+      </ul>
+    </React.Fragment>
+  );
 }
 
 EntryActivityWidget.propTypes = {

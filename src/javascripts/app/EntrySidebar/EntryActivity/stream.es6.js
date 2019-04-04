@@ -2,13 +2,15 @@ import stream from 'getstream';
 
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
 import * as logger from 'services/logger.es6';
-
+import * as Telemetry from 'Telemetry.es6';
 import { services } from 'Config.es6';
 
 // same key as in microbackend
 const FEED_NAME = 'entry_activity';
 const API_KEY = services.getstream_io.api_key;
 const APP_ID = services.getstream_io.app_id;
+
+export const MAX_FEED_SIZE = 300;
 
 export async function feed(feedId) {
   const mbClient = createMicroBackendsClient({ backendName: 'streamtoken' });
@@ -49,13 +51,23 @@ export async function feed(feedId) {
       const nextPage = await feed.get({ limit: 100, offset: 100 * i }).catch(error => {
         logger.logError('Could not fetch feed', {
           feedId,
-          page: 100 * i,
+          page: i,
           ...error
         });
       });
       activities.push(...nextPage.results);
       i++;
-      shouldFetchMore = nextPage.next.length > 0;
+      shouldFetchMore = nextPage.next.length > 0 && activities.length < MAX_FEED_SIZE;
+
+      // We want to know how many feeds are larger than the max size
+      // to be able to adjust this in the future.
+      if (activities.length >= MAX_FEED_SIZE) {
+        Telemetry.count('entry-activity-feed.exceeded-limit', {
+          feedId,
+          maxFeedSize: MAX_FEED_SIZE,
+          page: i
+        });
+      }
     }
 
     return activities;
