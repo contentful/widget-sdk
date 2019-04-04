@@ -14,8 +14,11 @@ export const scheduleStyles = {
       height: '10px',
       position: 'absolute',
       borderRadius: '10px',
-      backgroundColor: tokens.colorElementMid,
+      backgroundColor: 'transparent',
       border: `2px solid ${tokens.colorElementDarkest}`
+    },
+    '&:first-child::before': {
+      backgroundColor: tokens.colorElementMid
     },
     '&:not(:first-child)::after': {
       top: '-9px',
