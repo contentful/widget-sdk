@@ -11,6 +11,7 @@ import * as EnvironmentUtils from 'utils/EnvironmentUtils.es6';
 import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const spaceContext = getModule('spaceContext');
 const ResourceService = getModule('services/ResourceService.es6');
@@ -44,56 +45,59 @@ class LocalesListRoute extends React.Component {
     }
 
     return (
-      <LocalesFetcher>
-        {({ isLoading, isError, data, fetch }) => {
-          if (isLoading) {
-            return <FetcherLoading message="Loading locales..." />;
-          }
-          if (isError) {
-            return <StateRedirect to="spaces.detail.entries.list" />;
-          }
-          const [
-            locales,
-            isLegacy,
-            localeResource,
-            isMultipleLocalesFeatureEnabled,
-            isOwnerOrAdmin,
-            insideMasterEnv,
-            subscriptionState,
-            subscriptionPlanName
-          ] = data;
-          if (isLegacy) {
+      <React.Fragment>
+        <DocumentTitle title="Locales" />
+        <LocalesFetcher>
+          {({ isLoading, isError, data, fetch }) => {
+            if (isLoading) {
+              return <FetcherLoading message="Loading locales..." />;
+            }
+            if (isError) {
+              return <StateRedirect to="spaces.detail.entries.list" />;
+            }
+            const [
+              locales,
+              isLegacy,
+              localeResource,
+              isMultipleLocalesFeatureEnabled,
+              isOwnerOrAdmin,
+              insideMasterEnv,
+              subscriptionState,
+              subscriptionPlanName
+            ] = data;
+            if (isLegacy) {
+              return (
+                <LocalesListPricingOne
+                  locales={locales}
+                  canCreateMultipleLocales={isMultipleLocalesFeatureEnabled}
+                  canChangeSpace={isOwnerOrAdmin}
+                  localeResource={localeResource}
+                  subscriptionState={subscriptionState}
+                  insideMasterEnv={insideMasterEnv}
+                  subscriptionPlanName={subscriptionPlanName}
+                  getComputeLocalesUsageForOrganization={
+                    this.props.getComputeLocalesUsageForOrganization
+                  }
+                />
+              );
+            }
             return (
-              <LocalesListPricingOne
+              <LocalesListPricingTwo
                 locales={locales}
-                canCreateMultipleLocales={isMultipleLocalesFeatureEnabled}
                 canChangeSpace={isOwnerOrAdmin}
                 localeResource={localeResource}
                 subscriptionState={subscriptionState}
                 insideMasterEnv={insideMasterEnv}
-                subscriptionPlanName={subscriptionPlanName}
-                getComputeLocalesUsageForOrganization={
-                  this.props.getComputeLocalesUsageForOrganization
+                upgradeSpace={() =>
+                  this.props.showUpgradeSpaceDialog({
+                    onSubmit: () => fetch()
+                  })
                 }
               />
             );
-          }
-          return (
-            <LocalesListPricingTwo
-              locales={locales}
-              canChangeSpace={isOwnerOrAdmin}
-              localeResource={localeResource}
-              subscriptionState={subscriptionState}
-              insideMasterEnv={insideMasterEnv}
-              upgradeSpace={() =>
-                this.props.showUpgradeSpaceDialog({
-                  onSubmit: () => fetch()
-                })
-              }
-            />
-          );
-        }}
-      </LocalesFetcher>
+          }}
+        </LocalesFetcher>
+      </React.Fragment>
     );
   }
 }

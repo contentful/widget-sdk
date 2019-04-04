@@ -12,6 +12,7 @@ import LocaleCodeChangeConfirmation from '../dialogs/LocaleCodeChangeConfirmDial
 import { getModule } from 'NgRegistry.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const spaceContext = getModule('spaceContext');
 const TheLocaleStore = getModule('TheLocaleStore');
@@ -211,18 +212,21 @@ export default class LocalesEditRoute extends React.Component {
           }
 
           return (
-            <EditLocaleForm
-              initialLocale={locale}
-              spaceLocales={spaceLocales}
-              saveLocale={locale =>
-                this.save(locale).then(() => {
-                  fetch();
-                })
-              }
-              removeLocale={this.remove}
-              setDirty={this.props.setDirty}
-              registerSaveAction={this.props.registerSaveAction}
-            />
+            <React.Fragment>
+              <DocumentTitle title={[locale.name, 'Locales']} />
+              <EditLocaleForm
+                initialLocale={locale}
+                spaceLocales={spaceLocales}
+                saveLocale={locale =>
+                  this.save(locale).then(() => {
+                    fetch();
+                  })
+                }
+                removeLocale={this.remove}
+                setDirty={this.props.setDirty}
+                registerSaveAction={this.props.registerSaveAction}
+              />
+            </React.Fragment>
           );
         }}
       </LocalesFetcher>
