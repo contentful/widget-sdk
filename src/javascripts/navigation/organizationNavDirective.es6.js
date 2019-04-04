@@ -5,7 +5,7 @@ import navBar from 'navigation/templates/NavBar.es6';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import { getOrganization } from 'services/TokenStore.es6';
 import getOrgStatus from '../data/OrganizationStatus.es6';
-import { SSO_SELF_CONFIG_FLAG, TEAMS as FF_TEAMS } from 'featureFlags.es6';
+import { SSO_SELF_CONFIG_FLAG } from 'featureFlags.es6';
 import { getOrgFeature } from '../data/CMA/ProductCatalog.es6';
 import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 
@@ -28,11 +28,10 @@ export default function register() {
         '$scope',
         '$stateParams',
         'services/TokenStore.es6',
-        'utils/LaunchDarkly/index.es6',
-        function($scope, $stateParams, TokenStore, LD) {
+        function($scope, $stateParams, TokenStore) {
           const nav = this;
 
-          // Prevent unnecesary calls from watchers
+          // Prevent unnecessary calls from watchers
           const onNavChange = _.debounce(updateNav, 50);
 
           // Update on state transition to another org
@@ -52,15 +51,12 @@ export default function register() {
               nav.ssoEnabled = variation && ssoFeatureEnabled;
             });
 
-            Promise.all([
-              // Set feature flag for Teams
-              LD.getCurrentVariation(FF_TEAMS),
-              getOrgFeature(orgId, 'teams'),
-              getOrgStatus(org)
-            ]).then(([variation, hasTeamsFeature, { isEnterprise, pricingVersion }]) => {
-              const isLegacyEnterprise = isEnterprise && pricingVersion === 1;
-              nav.teamsEnabled = variation && (hasTeamsFeature || isLegacyEnterprise);
-            });
+            Promise.all([getOrgFeature(orgId, 'teams'), getOrgStatus(org)]).then(
+              ([hasTeamsFeature, { isEnterprise, pricingVersion }]) => {
+                const isLegacyEnterprise = isEnterprise && pricingVersion === 1;
+                nav.teamsEnabled = hasTeamsFeature || isLegacyEnterprise;
+              }
+            );
 
             TokenStore.getOrganization(orgId).then(org => {
               const FeatureService = createLegacyFeatureService(orgId, 'organization');

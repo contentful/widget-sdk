@@ -23,7 +23,6 @@ class Sidepanel extends React.Component {
     viewingOrgSettings: PropTypes.any,
     currOrg: PropTypes.object,
     teamsFeatureEnabled: PropTypes.bool,
-    teamsForMembersFF: PropTypes.bool,
     orgConstants: PropTypes.object,
     fetchOrgConstants: PropTypes.func
   };
@@ -38,20 +37,14 @@ class Sidepanel extends React.Component {
   debouncedFetchOrgConstants = debounce(this.props.fetchOrgConstants, 200);
 
   renderOrgSettingsForMembers() {
-    const {
-      orgConstants,
-      teamsFeatureEnabled,
-      teamsForMembersFF,
-      gotoOrgSettings,
-      viewingOrgSettings
-    } = this.props;
+    const { orgConstants, teamsFeatureEnabled, gotoOrgSettings, viewingOrgSettings } = this.props;
     const isEnterprise = get(orgConstants, ['isEnterprise'], false);
     const isLegacy = get(orgConstants, ['isLegacy'], false);
     const isLegacyEnterprise = isLegacy && isEnterprise;
     // who can see the Teams button:
     // - members of V1 Enterprise orgs
     // - members of V2 orgs with the Teams feature enabled
-    const shouldSeeTeams = teamsForMembersFF && (teamsFeatureEnabled || isLegacyEnterprise);
+    const shouldSeeTeams = teamsFeatureEnabled || isLegacyEnterprise;
     const isLoading = get(orgConstants, ['meta', 'isPending'], true);
 
     return isLoading ? (
