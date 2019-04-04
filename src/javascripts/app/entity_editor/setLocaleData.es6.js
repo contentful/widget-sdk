@@ -1,5 +1,5 @@
 import * as K from 'utils/kefir.es6';
-import { groupBy, isEmpty } from 'lodash';
+import { groupBy, isEmpty, keys } from 'lodash';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import DocumentStatusCode from 'data/document/statusCode.es6';
 import { onFeatureFlag } from 'utils/LaunchDarkly/index.es6';
@@ -56,16 +56,20 @@ function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitte
     }
     TheLocaleStore.setSingleLocaleMode(isOn);
     $scope.localeData.isSingleLocaleModeOn = isOn;
-    $scope.$applyAsync();
+    $scope.$applyAsync(() => {
+      $scope.editorContext.validator.run();
+    });
   });
 
   emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, locale => {
-    if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
-      resetStatusNotificationProps($scope, entityLabel);
-    }
     TheLocaleStore.setFocusedLocale(locale);
     $scope.localeData.focusedLocale = locale;
-    $scope.$applyAsync();
+    $scope.$applyAsync(() => {
+      $scope.editorContext.validator.run();
+      if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
+        resetStatusNotificationProps($scope, entityLabel);
+      }
+    });
   });
 
   emitter.on(SidebarEventTypes.DEACTIVATED_LOCALE, locale => {
@@ -105,11 +109,13 @@ function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
     );
 
     if (errors.length && !shouldHideLocaleErrors()) {
+      const { errors, privateLocales: locales } = $scope.localeData;
+      const erroredLocales = keys(errors).map(ic => locales.find(l => l.internal_code === ic));
       const status =
         entityLabel === 'entry'
           ? DocumentStatusCode.LOCALE_VALIDATION_ERRORS
           : DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR;
-      $scope.statusNotificationProps = { status, entityLabel };
+      $scope.statusNotificationProps = { status, entityLabel, erroredLocales };
     }
   });
 

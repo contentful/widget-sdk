@@ -44,14 +44,14 @@ describe('WizardUtils', function() {
     });
 
     it('returns the tooltip text for a plan with various roles', function() {
-      testRolesTooltip(3, ['Editor', 'Translator'], 'Admin, Editor and Translator roles');
+      testRolesTooltip(3, ['Editor', 'Translator'], 'Admin, Editor, and Translator roles');
     });
 
     it('returns the tooltip text for a plan with multiple translator roles', function() {
       testRolesTooltip(
         5,
         ['Editor', 'Translator', 'Translator 2', 'Translator3'],
-        'Admin, Editor and 3 Translator roles'
+        'Admin, Editor, and 3 Translator roles'
       );
     });
 
@@ -59,7 +59,7 @@ describe('WizardUtils', function() {
       testRolesTooltip(
         10,
         ['Editor', 'Translator'],
-        'Admin, Editor and Translator roles and an additional 7 custom roles'
+        'Admin, Editor, and Translator roles and an additional 7 custom roles'
       );
     });
   });
@@ -153,10 +153,10 @@ describe('WizardUtils', function() {
       const tooltip2 = render(WizardUtils.unavailabilityTooltipNode(data.planUnavailableMultiple2));
 
       expect(tooltip1.text()).toBe(
-        'You are currently using more than the Small 4 space allows by 5 locales.Delete resources, and migrate users from the Super Awesome Translator role before changing to this space type.'
+        'You are currently using more than the Small 4 space allows by 5 locales.Delete resources and migrate users from the Super Awesome Translator role before changing to this space type.'
       );
       expect(tooltip2.text()).toBe(
-        'You are currently using more than the Small 5 space allows by 4 locales.Migrate users from the Super Awesome Translator role, and delete resources before changing to this space type.'
+        'You are currently using more than the Small 5 space allows by 4 locales.Migrate users from the Super Awesome Translator role and delete resources before changing to this space type.'
       );
     });
   });

@@ -239,8 +239,6 @@ export function isValidUrl(value) {
 /**
  * Takes an array and joins with "," and "and".
  *
- * TODO: Do we really need/want the `oxford` parameter? It's not used anywhere.
- *
  * @usage[js]
  * joinWithAnd(['one', 'two', 'three'])
  * // => 'one, two and, three
@@ -249,16 +247,20 @@ export function isValidUrl(value) {
  * @param oxford
  * @returns {*}
  */
-export function joinWithAnd(items, oxford = true) {
+export function joinWithAnd(items) {
   if (!Array.isArray(items)) {
     return null;
+  }
+
+  if (items.length === 2) {
+    return `${items[0]} and ${items[1]}`;
   }
 
   return items.reduce((memo, item, i) => {
     if (i === 0) {
       return item;
     } else if (i === items.length - 1) {
-      return `${memo}${oxford ? ',' : ''} and ${item}`;
+      return `${memo}, and ${item}`;
     } else {
       return `${memo}, ${item}`;
     }

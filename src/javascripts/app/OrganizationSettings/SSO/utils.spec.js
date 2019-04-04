@@ -138,7 +138,7 @@ describe('SSO utils', () => {
       ]);
 
       expect(utils.formatConnectionTestErrors([givenNameErrMsg, surnameErrMsg])).toEqual([
-        'The givenname, and surname attributes are missing'
+        'The givenname and surname attributes are missing'
       ]);
     });
 
@@ -158,7 +158,7 @@ describe('SSO utils', () => {
       ).toEqual([
         certFormattedErrMsg,
         relayStateFormattedErrMsg,
-        'The givenname, and surname attributes are missing',
+        'The givenname and surname attributes are missing',
         otherErrMsg
       ]);
     });

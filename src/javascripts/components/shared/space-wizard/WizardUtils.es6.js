@@ -42,7 +42,7 @@ EnvironmentsTooltip.propTypes = resourceTooltipPropTypes;
 export function getRolesTooltip(limit, roleSet) {
   const roles = ['Admin', ...roleSet.roles];
   // all roles joined by comma and `and`
-  const rolesString = joinWithAnd(roles, false);
+  const rolesString = joinWithAnd(roles);
   const pluralized = pluralize('role', roles.length);
   const hasAdminOnly = limit === 1;
 
@@ -65,13 +65,13 @@ export function getRolesTooltip(limit, roleSet) {
   if (hasAdminOnly) {
     return `${intro} Admin role only`;
   } else if (hasMultipleTranslators) {
-    // e.g. [...] Admin, Editor and 10 Translator roles
-    return `${intro} ${withoutTranslator} and ${translatorRolesCount} Translator roles`;
+    // e.g. [...] Admin, Editor, and 10 Translator roles
+    return `${intro} ${withoutTranslator}, and ${translatorRolesCount} Translator roles`;
   } else if (hasCustomRoles) {
-    // e.g. [...] Admin, Editor and an additional 10 custom roles
+    // e.g. [...] Admin, Editor, and an additional 10 custom roles
     return `${intro} ${rolesString} ${pluralized} and an additional ${customRolesString}`;
   } else {
-    // e.g. [...] Admin, Editor and Translator roles
+    // e.g. [...] Admin, Editor, and Translator roles
     return `${intro} ${rolesString} ${pluralized}`;
   }
 }

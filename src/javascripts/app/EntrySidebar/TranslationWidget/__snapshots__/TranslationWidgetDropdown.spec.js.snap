@@ -9,15 +9,15 @@ exports[`EntrySidebar/TranslationWidgetDropdown when a locale has 1 error should
     onChange={[Function]}
     required={false}
     testId="cf-ui-select"
-    value="en-US"
+    value="en-HK"
     width="full"
   >
     <Option
-      key="en-US"
+      key="en-HK"
       testId="cf-ui-select-option"
-      value="en-US"
+      value="en-HK"
     >
-      English (United States) (en) - 1 error
+      English (Hong Kong… (en-HK) - 1 error
     </Option>
     <Option
       key="ru"
@@ -46,15 +46,15 @@ exports[`EntrySidebar/TranslationWidgetDropdown when a locale has more than one 
     onChange={[Function]}
     required={false}
     testId="cf-ui-select"
-    value="en-US"
+    value="en-HK"
     width="full"
   >
     <Option
-      key="en-US"
+      key="en-HK"
       testId="cf-ui-select-option"
-      value="en-US"
+      value="en-HK"
     >
-      English (United States) (en) - 2 errors
+      English (Hong Kong… (en-HK) - 2 errors
     </Option>
     <Option
       key="ru"
@@ -76,23 +76,22 @@ exports[`EntrySidebar/TranslationWidgetDropdown when a locale has more than one 
 
 exports[`EntrySidebar/TranslationWidgetDropdown when both locales have errors should match snapshot 1`] = `
 <div>
-  <TranslationWidgetDropdownValidationError />
   <Select
-    hasError={true}
+    hasError={false}
     id="optionSelect"
     isDisabled={false}
     onChange={[Function]}
     required={false}
     testId="cf-ui-select"
-    value="en-US"
+    value="en-HK"
     width="full"
   >
     <Option
-      key="en-US"
+      key="en-HK"
       testId="cf-ui-select-option"
-      value="en-US"
+      value="en-HK"
     >
-      English (United States) (en) - 2 errors
+      English (Hong Kong… (en-HK) - 2 errors
     </Option>
     <Option
       key="ru"
@@ -121,15 +120,15 @@ exports[`EntrySidebar/TranslationWidgetDropdown when there are no locale errors 
     onChange={[Function]}
     required={false}
     testId="cf-ui-select"
-    value="en-US"
+    value="en-HK"
     width="full"
   >
     <Option
-      key="en-US"
+      key="en-HK"
       testId="cf-ui-select-option"
-      value="en-US"
+      value="en-HK"
     >
-      English (United States) (en)
+      English (Hong Kong SAR China) (en-HK)
     </Option>
     <Option
       key="ru"
