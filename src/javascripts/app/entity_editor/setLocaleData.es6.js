@@ -62,13 +62,13 @@ function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitte
   });
 
   emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, locale => {
-    if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
-      resetStatusNotificationProps($scope, entityLabel);
-    }
     TheLocaleStore.setFocusedLocale(locale);
     $scope.localeData.focusedLocale = locale;
     $scope.$applyAsync(() => {
       $scope.editorContext.validator.run();
+      if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
+        resetStatusNotificationProps($scope, entityLabel);
+      }
     });
   });
 
