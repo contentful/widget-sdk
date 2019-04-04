@@ -118,7 +118,7 @@ export default class WalkthroughWidget extends React.Component {
     const { started, dismissed, isLoading, isTourRunning, ReactJoyrideComponent } = this.state;
     const { spaceName } = this.props;
     return isLoading ? (
-      <Spinner size="large" className={styles.spaceHomeSpinner} data-test-id="space-home-spinner" />
+      <Spinner size="large" className={styles.spaceHomeSpinner} testId="space-home-spinner" />
     ) : (
       <>
         {ReactJoyrideComponent && (
