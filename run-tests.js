@@ -61,8 +61,7 @@ if (singleRun) {
   } else {
     // we don't show a detailed report for single runs
     config.set({
-      reporters: ['dots'],
-      singleRun: true
+      reporters: ['dots']
     });
   }
   runTests();
