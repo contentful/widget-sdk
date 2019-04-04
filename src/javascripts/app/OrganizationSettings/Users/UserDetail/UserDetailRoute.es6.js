@@ -12,6 +12,7 @@ import {
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
 import ResolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const UserDetailFetcher = createFetcherComponent(async ({ orgId, userId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -77,8 +78,14 @@ export default class UserDetailRoute extends React.Component {
             if (isError) {
               return <StateRedirect to="spaces.detail.entries.list" />;
             }
+            const user = data.initialMembership.sys.user;
 
-            return <UserDetail {...data} orgId={orgId} />;
+            return (
+              <React.Fragment>
+                <DocumentTitle title={[`${user.firstName} ${user.lastName}`, 'Users']} />
+                <UserDetail {...data} orgId={orgId} />
+              </React.Fragment>
+            );
           }}
         </UserDetailFetcher>
       </OrgAdminOnly>
