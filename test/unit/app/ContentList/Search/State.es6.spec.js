@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { contentTypes, brand } from 'test/fixtures/app/ContentList/Search/index';
+import { contentTypes, brand } from 'test/helpers/app/ContentList/Search/fixtures';
 import { createStore, bindActions } from 'ui/Framework/Store.es6';
 import * as K from 'test/helpers/mocks/kefir';
 import * as State from 'app/ContentList/Search/State.es6';
