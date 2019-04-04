@@ -82,9 +82,6 @@ jobs:
             ./estivador docker-ecr-login
             ./estivador put-image
             ./estivador promote-image
-      - run:
-          name: Trigger jenkins E2E tests
-          command: bin/trigger-jenkins
       - persist_to_workspace:
           root: .
           paths:
@@ -168,6 +165,68 @@ jobs:
       - store_test_results:
           path: reports/junit
 
+  run-e2e-tests:
+    machine:
+      docker_layer_caching: true
+    parallelism: 4
+    environment:
+      CF_EMAIL: nobody@localhost
+      COMPONENTS_ROOT: /home/circleci/components
+      COMPOSE_FILE: docker-compose.yml:compose/e2e-tests.yml:compose/e2e-tests-ci.yml
+      CONDITIONAL_VOLUME: ./artifacts/test-results:/app/test-results
+      DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
+      E2E_CHROME_IMAGE: selenium/standalone-chrome:3.14.0-curium
+      E2E_TESTS_VERSION: master
+      GATEKEEPER_VERSION: production
+      WEB_CONCURRENCY: 0
+      RAILS_MAX_THREADS: 8
+    working_directory: /home/circleci/components/lab
+    steps:
+      - run: echo 'export USER_INTERFACE_VERSION="$CIRCLE_SHA1"' >> $BASH_ENV
+      - run:
+          name: Add lab repository
+          command: git clone git@github.com:contentful/lab.git .
+      - run:
+          name: Install docker-compose
+          command: |
+            sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+      - run:
+          name: Download estivador, validate checksum and log into private registry
+          command: |
+            curl -fsSLO https://contentful-lab-assets.s3.amazonaws.com/estivador && chmod +x estivador
+            echo "$(curl -sSL https://contentful-lab-assets.s3.amazonaws.com/estivador.sum)" | sha512sum -c
+            ./estivador docker-ecr-login
+      - run: mkdir -p $COMPONENTS_ROOT/lab/artifacts
+      - run:
+          name: Add e2e-tests repository
+          command: git clone git@github.com:contentful/e2e-tests.git $COMPONENTS_ROOT/e2e-tests
+      - run:
+          name: Split test files
+          command: |
+            cd ${COMPONENTS_ROOT}/e2e-tests
+            TESTFILES=$(circleci tests glob "tests/**/test_*.py" | circleci tests split --split-by=timings --timings-type=filename)
+            echo "export TESTFILES=\"$TESTFILES\"" >> $BASH_ENV
+      - run:
+          name: Start lab
+          command: make pull setup-db start
+      - run:
+          name: Pipe logs to the background
+          command: docker-compose logs -f > $COMPONENTS_ROOT/lab/artifacts/output.log
+          background: true
+      - run:
+          name: Run e2e tests
+          command: |
+            bin/run-e2e-tests.sh -- -n=2 -d --max-worker-restart=2 --instafail --tb=short --durations=10 \
+            --force-flaky --max-runs=2 --no-flaky-report \
+            --junit-xml=test-results/pytest/junit.xml \
+            --html=test-results/pytest/index.html \
+            -m 'not dependent' --pricing=v2 --pricing=v1 ${TESTFILES}
+      - store_artifacts:
+          path: ~/components/lab/artifacts
+      - store_test_results:
+          path: ~/components/lab/artifacts/test-results
+
 workflows:
   build:
     jobs:
@@ -175,6 +234,9 @@ workflows:
       - lint
       - run-jest-tests
       - run-karma-tests
+      - run-e2e-tests:
+          requires:
+            - build-and-push-image
       - deploy-micro-backends
       - cypress/run:
           name: cypress-run
