@@ -149,7 +149,7 @@ jobs:
       - image: circleci/node:10.15.3-browsers
     environment:
       CYPRESS_INSTALL_BINARY: 0
-    parallelism: 8
+    parallelism: 4
     steps:
       - checkout
       - run:
