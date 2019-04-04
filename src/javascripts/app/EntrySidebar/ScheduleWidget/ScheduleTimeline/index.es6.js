@@ -1,6 +1,7 @@
 import React from 'react';
-import Schedule from './Schedule.es6';
 import PropTypes from 'prop-types';
+
+import Schedule from './Schedule.es6';
 
 const ScheduleTimeline = ({ schedules }) => (
   <ul>

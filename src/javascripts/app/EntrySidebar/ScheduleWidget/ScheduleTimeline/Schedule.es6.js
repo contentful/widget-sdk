@@ -1,9 +1,10 @@
 import React from 'react';
-import { Tag } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
-import { scheduleStyles as styles } from './styles.es6';
 import cn from 'classnames';
 import moment from 'moment';
+
+import { Tag } from '@contentful/forma-36-react-components';
+import { scheduleStyles as styles } from './styles.es6';
 
 const FormattedTime = time => <span>{moment.utc(time).format('MMM Do YYYY - hh:mm')}</span>;
 const tagTypeForStatus = {

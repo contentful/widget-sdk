@@ -8,7 +8,7 @@ import { NAMESPACE_EXTENSION, NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNa
 import {
   EntryConfiguration,
   Publication as PublicationWidget,
-  ScheduledPublication as ScheduledPublicationWidget,
+  Schedule as ScheduleWidget,
   Versions as VersionsWidget,
   ContentPreview as ContentPreviewWidget,
   Links as LinksWidget,
@@ -106,7 +106,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
-          widgetId: ScheduledPublicationWidget.widgetId,
+          widgetId: ScheduleWidget.widgetId,
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
@@ -135,7 +135,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         configurableWidget: null,
         items: [
           PublicationWidget,
-          ScheduledPublicationWidget,
+          ScheduleWidget,
           VersionsWidget,
           {
             widgetId: 'some-extension-that-is-not-installed',
@@ -165,7 +165,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
-          widgetId: ScheduledPublicationWidget.widgetId,
+          widgetId: ScheduleWidget.widgetId,
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
@@ -212,7 +212,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         configurableWidget: null,
         items: [
           PublicationWidget,
-          ScheduledPublicationWidget,
+          ScheduleWidget,
           VersionsWidget,
           UsersWidget,
           {

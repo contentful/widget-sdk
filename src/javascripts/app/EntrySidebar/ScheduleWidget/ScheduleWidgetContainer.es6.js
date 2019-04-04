@@ -3,11 +3,11 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes.es6';
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
-import ScheduledPublicationWidget from './ScheduledPublicationWidget.es6';
+import ScheduleWidget from './ScheduleWidget.es6';
 import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
 import * as FeatureFlagKey from 'featureFlags.es6';
 
-export default class ScheduledPublicationWidgetContainer extends Component {
+export default class ScheduleWidgetContainer extends Component {
   static propTypes = {
     emitter: PropTypes.object.isRequired
   };
@@ -21,18 +21,15 @@ export default class ScheduledPublicationWidgetContainer extends Component {
 
   componentDidMount() {
     this.props.emitter.on(
-      SidebarEventTypes.UPDATED_SCHEDULED_PUBLICATION_WIDGET,
+      SidebarEventTypes.UPDATED_SCHEDULE_WIDGET,
       this.onUpdatePublicationWidget
     );
-    this.props.emitter.emit(
-      SidebarEventTypes.WIDGET_REGISTERED,
-      SidebarWidgetTypes.SCHEDULED_PUBLICATION
-    );
+    this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.SCHEDULE);
   }
 
   componentWillUnmount() {
     this.props.emitter.off(
-      SidebarEventTypes.UPDATED_SCHEDULED_PUBLICATION_WIDGET,
+      SidebarEventTypes.UPDATED_SCHEDULE_WIDGET,
       this.onUpdatePublicationWidget
     );
   }
@@ -49,8 +46,8 @@ export default class ScheduledPublicationWidgetContainer extends Component {
     const secondary = get(commands, 'secondary', []);
 
     return (
-      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.SCHEDULED_PUBLICATION}>
-        <ScheduledPublicationWidget
+      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.SCHEDULE}>
+        <ScheduleWidget
           status={this.state.status}
           primary={primary}
           secondary={secondary}

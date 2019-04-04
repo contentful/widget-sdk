@@ -7,5 +7,5 @@ export default {
   VERSIONS: 'versions-widget',
   ACTIVITY: 'entry-activity-widget',
   INFO_PANEL: 'info-panel',
-  SCHEDULED_PUBLICATION: 'scheduled-publication-widget'
+  SCHEDULE: 'schedule-widget'
 };

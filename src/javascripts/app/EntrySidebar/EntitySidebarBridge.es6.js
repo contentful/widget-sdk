@@ -111,9 +111,9 @@ export default ({ $scope }) => {
     });
   });
 
-  const initializeScheduledPublication = once(() => {
+  const initializeScheduleWidget = once(() => {
     const notifyUpdate = update => {
-      emitter.emit(SidebarEventTypes.UPDATED_SCHEDULED_PUBLICATION_WIDGET, {
+      emitter.emit(SidebarEventTypes.UPDATED_SCHEDULE_WIDGET, {
         ...update,
         commands: {
           primary: $scope.state.primary,
@@ -187,8 +187,8 @@ export default ({ $scope }) => {
       case SidebarWidgetTypes.PUBLICATION:
         initializePublication();
         break;
-      case SidebarWidgetTypes.SCHEDULED_PUBLICATION:
-        initializeScheduledPublication();
+      case SidebarWidgetTypes.SCHEDULE:
+        initializeScheduleWidget();
         break;
       case SidebarWidgetTypes.INFO_PANEL:
         initializeInfoPanel();
