@@ -5,6 +5,7 @@ import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const ExtensionFetcher = createFetcherComponent(({ cma, extensionId }) => {
   return cma.getExtension(extensionId);
@@ -33,11 +34,14 @@ export class ExtensionEditorRoute extends React.Component {
             return <StateRedirect to="^.list" />;
           }
           return (
-            <ExtensionEditor
-              entity={data}
-              registerSaveAction={this.props.registerSaveAction}
-              setDirty={this.props.setDirty}
-            />
+            <React.Fragment>
+              <DocumentTitle title={[data.extension.name, 'Extensions']} />
+              <ExtensionEditor
+                entity={data}
+                registerSaveAction={this.props.registerSaveAction}
+                setDirty={this.props.setDirty}
+              />
+            </React.Fragment>
           );
         }}
       </ExtensionFetcher>
