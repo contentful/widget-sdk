@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { IconButton, Icon, Note } from '@contentful/forma-36-react-components';
-import { ENTRY_ACTIVITY } from 'featureFlags.es6';
+import * as FeatureFlagKey from 'featureFlags.es6';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes.es6';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
+
+import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
 
 export function SidebarWidgetItem({
   id,
@@ -57,38 +58,18 @@ SidebarWidgetItem.defaultProps = {
   isProblem: false
 };
 
-class ConditionallyRenderedWidget extends React.Component {
-  static propTypes = {
-    isAvailable: PropTypes.func.isRequired
-  };
-
-  state = {
-    visible: false
-  };
-
-  componentDidMount() {
-    this.props.isAvailable().then(result => {
-      this.setState({ visible: Boolean(result) });
-    });
-  }
-
-  render() {
-    if (!this.state.visible) {
-      return null;
-    }
-    return this.props.children;
-  }
-}
-
 export default function WrappedSidebarWidgetItem(props) {
   if (props.id === SidebarWidgetTypes.ACTIVITY) {
     return (
-      <ConditionallyRenderedWidget
-        isAvailable={() => {
-          return getCurrentVariation(ENTRY_ACTIVITY);
-        }}>
+      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.ENTRY_ACTIVITY}>
         <SidebarWidgetItem {...props} />
-      </ConditionallyRenderedWidget>
+      </BooleanFeatureFlag>
+    );
+  } else if (props.id === SidebarWidgetTypes.SCHEDULED_PUBLICATION) {
+    return (
+      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.SCHEDULED_PUBLICATION}>
+        <SidebarWidgetItem {...props} />
+      </BooleanFeatureFlag>
     );
   }
   return <SidebarWidgetItem {...props} />;

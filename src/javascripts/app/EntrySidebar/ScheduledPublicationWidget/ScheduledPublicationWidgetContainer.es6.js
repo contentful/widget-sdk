@@ -5,6 +5,7 @@ import SidebarEventTypes from '../SidebarEventTypes.es6';
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
 import ScheduledPublicationWidget from './ScheduledPublicationWidget.es6';
 import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
+import * as FeatureFlagKey from 'featureFlags.es6';
 
 export default class ScheduledPublicationWidgetContainer extends Component {
   static propTypes = {
@@ -48,7 +49,7 @@ export default class ScheduledPublicationWidgetContainer extends Component {
     const secondary = get(commands, 'secondary', []);
 
     return (
-      <BooleanFeatureFlag featureFlagKey="feature-pul-04-2019-scheduled-publication-enabled">
+      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.SCHEDULED_PUBLICATION}>
         <ScheduledPublicationWidget
           status={this.state.status}
           primary={primary}
