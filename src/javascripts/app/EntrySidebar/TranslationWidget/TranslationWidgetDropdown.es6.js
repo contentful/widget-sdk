@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { orderBy } from 'lodash';
 import { Select, Option } from '@contentful/forma-36-react-components';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
+import { truncate } from 'utils/StringUtils.es6';
 import { track } from 'analytics/Analytics.es6';
 
 const sortLocales = locales => orderBy(locales, ['default', 'name'], ['desc', 'asc']);
@@ -36,11 +37,13 @@ export default class TranslationDropdownWidget extends Component {
   };
 
   localeName = ({ internal_code: internalCode, code, name }) => {
-    const baseName = `${name} (${code})`;
     const numErrors = this.numErrors(internalCode);
-    return numErrors > 0
-      ? `${baseName} - ${numErrors} ${numErrors > 1 ? 'errors' : 'error'}`
-      : baseName;
+    if (numErrors > 0) {
+      const errors = numErrors > 1 ? 'errors' : 'error';
+      return `${truncate(name, 20)} (${code}) - ${numErrors} ${errors}`;
+    } else {
+      return `${name} (${code})`;
+    }
   };
 
   handleChange = event => {

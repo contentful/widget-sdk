@@ -12,12 +12,17 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
     },
     localeData: {
       privateLocales: [
-        { internal_code: 'en-US', code: 'en', default: true, name: 'English (United States)' },
+        {
+          internal_code: 'en-HK',
+          code: 'en-HK',
+          default: true,
+          name: 'English (Hong Kong SAR China)'
+        },
         { internal_code: 'ru', code: 'ru', default: false, name: 'Russian' },
         { internal_code: 'ar-AR', code: 'zh', default: false, name: 'Zhao (Azerbaijan)' }
       ],
       focusedLocale: {
-        internal_code: 'en-US',
+        internal_code: 'en-HK',
         code: 'en',
         default: true,
         name: 'English (United States)'
@@ -45,7 +50,7 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
   describe('when a locale has 1 error', () => {
     beforeEach(() => {
       props.localeData.errors = {
-        'en-US': [{}]
+        'en-HK': [{}]
       };
     });
 
@@ -57,7 +62,7 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
   describe('when a locale has more than one 1 error', () => {
     beforeEach(() => {
       props.localeData.errors = {
-        'en-US': [{}, {}]
+        'en-HK': [{}, {}]
       };
     });
 
@@ -69,7 +74,7 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
   describe('when both locales have errors', () => {
     beforeEach(() => {
       props.localeData.errors = {
-        'en-US': [{}, {}],
+        'en-HK': [{}, {}],
         ru: [{}]
       };
     });
