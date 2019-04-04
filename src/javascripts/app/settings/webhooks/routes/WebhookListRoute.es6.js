@@ -10,6 +10,7 @@ import StateRedirect from 'app/common/StateRedirect.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as Config from 'Config.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 const spaceContext = getModule('spaceContext');
@@ -59,12 +60,15 @@ export class WebhookListRoute extends React.Component {
           }
           const [webhooks, hasAwsProxy] = data;
           return (
-            <WebhookList
-              templateId={this.props.templateId}
-              templateIdReferrer={this.props.templateIdReferrer}
-              webhooks={webhooks}
-              openTemplateDialog={this.setupTemplateOpener(hasAwsProxy)}
-            />
+            <React.Fragment>
+              <DocumentTitle title="Webhooks" />
+              <WebhookList
+                templateId={this.props.templateId}
+                templateIdReferrer={this.props.templateIdReferrer}
+                webhooks={webhooks}
+                openTemplateDialog={this.setupTemplateOpener(hasAwsProxy)}
+              />
+            </React.Fragment>
           );
         }}
       </WebhooksFetcher>
