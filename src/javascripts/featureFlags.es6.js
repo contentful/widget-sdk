@@ -9,3 +9,4 @@ export const TEAMS = 'feature-bv-11-2018-teams';
 export const TEAMS_FOR_MEMBERS = 'feature-bv-01-2019-teams-for-members';
 export const __PROTOTYPE__PROJECTS_FLAG = 'feature-bv-02-2019-projects-experiment';
 export const ENTRY_ACTIVITY = 'feature-pul-03-2019-entry-activity';
+export const SCHEDULE = 'feature-pul-04-2019-scheduled-publication-enabled';

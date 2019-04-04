@@ -111,6 +111,24 @@ export default ({ $scope }) => {
     });
   });
 
+  const initializeScheduleWidget = once(() => {
+    const notifyUpdate = update => {
+      emitter.emit(SidebarEventTypes.UPDATED_SCHEDULE_WIDGET, {
+        ...update,
+        commands: {
+          primary: $scope.state.primary,
+          secondary: $scope.state.secondary,
+          revertToPrevious: $scope.state.revertToPrevious
+        }
+      });
+    };
+
+    notifyUpdate({
+      status: $scope.state.current,
+      updatedAt: K.getValue($scope.otDoc.sysProperty).updatedAt
+    });
+  });
+
   const initializeInfoPanel = once(() => {
     const updateProps = update => {
       emitter.emit(SidebarEventTypes.UPDATED_INFO_PANEL, {
@@ -168,6 +186,9 @@ export default ({ $scope }) => {
         break;
       case SidebarWidgetTypes.PUBLICATION:
         initializePublication();
+        break;
+      case SidebarWidgetTypes.SCHEDULE:
+        initializeScheduleWidget();
         break;
       case SidebarWidgetTypes.INFO_PANEL:
         initializeInfoPanel();

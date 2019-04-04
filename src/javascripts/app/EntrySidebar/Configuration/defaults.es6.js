@@ -8,6 +8,13 @@ export const Publication = {
   description: 'Built-in - View entry status, publish, etc.'
 };
 
+export const Schedule = {
+  widgetId: SidebarWidgetTypes.SCHEDULE,
+  widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+  name: 'Scheduled Publishing & Status',
+  description: 'Built-in - View entry status, schedule publish, etc.'
+};
+
 export const ContentPreview = {
   widgetId: SidebarWidgetTypes.CONTENT_PREVIEW,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
@@ -53,6 +60,7 @@ export const EntryActivity = {
 
 export const defaultWidgetsMap = {
   [Publication.widgetId]: Publication,
+  [Schedule.widgetId]: Schedule,
   [ContentPreview.widgetId]: ContentPreview,
   [Links.widgetId]: Links,
   [Translation.widgetId]: Translation,
@@ -63,6 +71,7 @@ export const defaultWidgetsMap = {
 
 export const EntryConfiguration = [
   Publication,
+  Schedule,
   ContentPreview,
   Links,
   Translation,

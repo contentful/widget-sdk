@@ -10,6 +10,7 @@ import {
 import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer.es6';
+import ScheduleWidgetContainer from './ScheduleWidget/ScheduleWidgetContainer.es6';
 import ContentPreviewWidget from './ContentPreviewWidget/ContentPreviewWidget.es6';
 import IncomingLinksWidgetContainer from './IncomingLinksWidget/IncomingLinksWidgetContainer.es6';
 import TranslationWidget from './TranslationWidget/TranslationWidget.es6';
@@ -22,6 +23,7 @@ import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 
 const ComponentsMap = {
   [SidebarWidgetTypes.PUBLICATION]: PublicationWidgetContainer,
+  [SidebarWidgetTypes.SCHEDULE]: ScheduleWidgetContainer,
   [SidebarWidgetTypes.CONTENT_PREVIEW]: ContentPreviewWidget,
   [SidebarWidgetTypes.INCOMING_LINKS]: IncomingLinksWidgetContainer,
   [SidebarWidgetTypes.TRANSLATION]: TranslationWidget,

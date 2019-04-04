@@ -1,5 +1,6 @@
 import React from 'react';
 import { Subheading, Paragraph } from '@contentful/forma-36-react-components';
+
 import { EntryConfiguration } from '../defaults.es6';
 import SidebarWidgetItem from './SidebarWidgetItem.es6';
 
