@@ -1,26 +1,26 @@
 ng-switch(on="displayType(field)")
   react-component(ng-switch-when="updatedAt"
     ng-if="entry.getUpdatedAt()"
-    name="components/shared/RelativeDateTime/index.es6" 
+    name="components/shared/RelativeDateTime/index.es6"
     props="{value: entry.getUpdatedAt()}"
   )
   react-component(ng-switch-when="createdAt"
     ng-if="entry.getCreatedAt()"
-    name="components/shared/RelativeDateTime/index.es6" 
+    name="components/shared/RelativeDateTime/index.es6"
     props="{value: entry.getCreatedAt()}"
   )
   react-component(ng-switch-when="publishedAt"
     ng-if="entry.getPublishedAt()"
-    name="components/shared/RelativeDateTime/index.es6" 
+    name="components/shared/RelativeDateTime/index.es6"
     props="{value: entry.getPublishedAt()}"
   )
   react-component(ng-switch-when="Date"
     ng-if="dataForField(entry, field)"
-    name="components/shared/RelativeDateTime/index.es6" 
+    name="components/shared/RelativeDateTime/index.es6"
     props="{value: dataForField(entry, field)}")
   span(ng-switch-when="author")
     react-component(
-      name="components/shared/UserNameFormatter/FetchAndFormatUserName.es6" 
+      name="components/shared/UserNameFormatter/FetchAndFormatUserName.es6"
       props="{userId: entry.getUpdatedBy().sys.id}"
     )
   span(ng-switch-when="Boolean")
@@ -52,4 +52,4 @@ ng-switch(on="displayType(field)")
       li(ng-if="!isEntryArray(entry, field) && !isAssetArray(entry, field)")
         | {{dataForField(entry, field) || '&nbsp;'}}
 
-  span(ng-switch-default) {{dataForField(entry, field) || '&nbsp;'}}
+  span(ng-switch-default) {{dataForField(entry, field) != undefined ? dataForField(entry, field) : '&nbsp;'}}
