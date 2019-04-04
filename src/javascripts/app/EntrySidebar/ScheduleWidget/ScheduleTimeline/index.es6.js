@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Schedule from './Schedule.es6';
+import Schedule, { schedulePropTypes } from './Schedule.es6';
 
 const ScheduleTimeline = ({ schedules }) => (
   <ul>
@@ -17,13 +17,7 @@ const ScheduleTimeline = ({ schedules }) => (
 );
 
 ScheduleTimeline.propTypes = {
-  schedules: PropTypes.arrayOf(
-    PropTypes.shape({
-      actionType: PropTypes.string,
-      scheduledAt: PropTypes.string,
-      status: PropTypes.oneOf(['pending', 'cancelled', 'success', 'error'])
-    })
-  )
+  schedules: PropTypes.arrayOf(PropTypes.shape(schedulePropTypes))
 };
 
 export default ScheduleTimeline;
