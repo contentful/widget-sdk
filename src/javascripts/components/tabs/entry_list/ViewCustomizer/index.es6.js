@@ -77,7 +77,7 @@ export default class ViewCustomizer extends React.Component {
         className={styles.root}
         isOpen={this.state.isOpen}
         onClose={() => this.setState({ isOpen: false })}
-        position="bottom-left"
+        position="bottom-right"
         toggleElement={
           <Tooltip content="Select visible columns" place="left">
             <IconButton
@@ -88,7 +88,7 @@ export default class ViewCustomizer extends React.Component {
             />
           </Tooltip>
         }>
-        <DropdownList>
+        <DropdownList maxHeight={'50vh'}>
           <DropdownListItem isTitle>Displayed Columns</DropdownListItem>
           <DropdownListItem isDisabled>Name</DropdownListItem>
           {!this.props.isContentTypeHidden && (
