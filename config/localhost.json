@@ -9,6 +9,7 @@
   "marketingUrl": "//localhost:5000",
   "main_domain": "localhost.com:5000",
   "toolsServiceUrl": "http://localhost:5000",
+  "microBackendsUrl": "http://localhost:5000/_microbackends/backends",
   "contentful": {
     "apiUrl": "api.contentful.com",
     "cdaApiUrl": "cdn.contentful.com",

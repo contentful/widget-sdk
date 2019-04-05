@@ -1,19 +1,12 @@
 import { getToken } from './Authentication.es6';
-import { apiUrl, env, gitRevision } from 'Config.es6';
-
-const ENV_TO_URL_PREFIX = {
-  development: '/_microbackends/backends/',
-  staging: 'https://staging.ctffns.net/',
-  // We don't have a separate preview environment.
-  // Use staging instead.
-  preview: 'https://staging.ctffns.net/',
-  production: 'https://backends.ctffns.net/'
-};
+import { apiUrl, microBackendsUrl, gitRevision } from 'Config.es6';
 
 const HAS_PROTO_RE = /^https?:\/\//;
 const trimTrailingSlashes = s => (s || '').replace(/\/+$/, '');
 
 export default function createMicroBackendsClient({ backendName, withAuth, baseUrl }) {
+  const base = trimTrailingSlashes(baseUrl || '');
+
   return { call, url };
 
   async function call(path, opts) {
@@ -25,13 +18,11 @@ export default function createMicroBackendsClient({ backendName, withAuth, baseU
   function url(path) {
     path = path || '/';
     path = path.startsWith('/') ? path : `/${path}`;
-    const prefix = ENV_TO_URL_PREFIX[env];
-    const base = trimTrailingSlashes(baseUrl || '');
 
     if (gitRevision) {
-      return prefix + `_rev-${gitRevision}/${backendName}` + base + path;
+      return microBackendsUrl(`_rev-${gitRevision}/${backendName}` + base + path);
     } else {
-      return prefix + backendName + base + path;
+      return microBackendsUrl(backendName + base + path);
     }
   }
 
@@ -40,24 +31,25 @@ export default function createMicroBackendsClient({ backendName, withAuth, baseU
     opts.headers = opts.headers || {};
 
     if (token) {
-      const api = trimTrailingSlashes(prepareApiUrl(apiUrl('/')));
-      opts.headers['X-Contentful-Api'] = api;
-      opts.headers['X-Contentful-Token'] = token;
+      Object.assign(opts.headers, {
+        'X-Contentful-Api': trimTrailingSlashes(prepareApiUrl()),
+        'X-Contentful-Token': token
+      });
     }
 
     return opts;
   }
 }
 
-function prepareApiUrl(apiUrl) {
-  apiUrl = apiUrl || '';
+function prepareApiUrl() {
+  const url = apiUrl('/');
 
   // If API URL is provided as a protocol relative URL,
   // use `window.location.protocol`.
-  if (apiUrl.startsWith('//')) {
-    return window.location.protocol + apiUrl;
-  } else if (HAS_PROTO_RE.test(apiUrl)) {
-    return apiUrl;
+  if (url.startsWith('//')) {
+    return window.location.protocol + url;
+  } else if (HAS_PROTO_RE.test(url)) {
+    return url;
   } else {
     throw new Error('Could not determine CMA URL.');
   }
