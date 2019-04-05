@@ -1,5 +1,9 @@
 include ../entity_editor/entity_editor.mixins.jade
 
+react-component(
+  name="components/shared/DocumentTitle.es6"
+  props="{title: [title, 'Media']}"
+)
 div.asset-editor.workbench
   header.workbench-header
     react-component(name="app/entity_editor/Components/BackNav")
