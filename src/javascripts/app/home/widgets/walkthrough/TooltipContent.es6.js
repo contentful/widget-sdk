@@ -1,18 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styles from './styles.es6';
 
-const TooltipContent = ({ illustration, copy }) => {
-  return (
-    <>
-      <div className="walkthrough-tooltip__scheme-image">{illustration}</div>
-      <p className="walkthrough-tooltip__copy">{copy}</p>
-    </>
-  );
-};
+const TooltipContent = ({ imgPath, copy, imgDescription }) => (
+  <>
+    {imgPath && (
+      <div
+        style={{ backgroundImage: `url("${imgPath}")` }}
+        className={styles.tooltipIllustration}
+        aria-label={imgDescription}
+        role="img"
+      />
+    )}
+    <p className={styles.tooltipCopy}>{copy}</p>
+  </>
+);
 
 TooltipContent.propTypes = {
-  illustration: PropTypes.any,
-  copy: PropTypes.string.isRequired
+  imgPath: PropTypes.any,
+  copy: PropTypes.string.isRequired,
+  imgDescription: PropTypes.string
 };
 
 export default TooltipContent;

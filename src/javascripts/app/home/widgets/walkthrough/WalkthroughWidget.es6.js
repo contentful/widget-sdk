@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { track } from 'analytics/Analytics.es6';
 import * as logger from 'services/logger.es6';
 import { getReactJoyride } from './utils.es6';
+import styles from './styles.es6';
 import WalkthroughComponent from './WalkthroughComponent.es6';
 import { Button, IconButton, Subheading, Spinner } from '@contentful/forma-36-react-components';
 import { fetchUserState, updateUserState } from 'utils/StatePersistenceApi.es6';
@@ -117,7 +118,7 @@ export default class WalkthroughWidget extends React.Component {
     const { started, dismissed, isLoading, isTourRunning, ReactJoyrideComponent } = this.state;
     const { spaceName } = this.props;
     return isLoading ? (
-      <Spinner size="large" className="space-home-spinner" />
+      <Spinner size="large" className={styles.spaceHomeSpinner} testId="space-home-spinner" />
     ) : (
       <>
         {ReactJoyrideComponent && (
@@ -131,18 +132,18 @@ export default class WalkthroughWidget extends React.Component {
           />
         )}
         {!started && !dismissed && (
-          <div className="start-walkthrough">
+          <div className={styles.startWalkthroughButton}>
             <Button onClick={this.startTour} testId="start-walkthrough-button">
               Start Space tour
             </Button>
           </div>
         )}
         {started && !dismissed && (
-          <div className="relaunch-walkthrough">
-            <div className="relaunch-walkthrough__content">
+          <div className={styles.relaunchWalkthroughSection}>
+            <div>
               <Subheading>Relaunch the walkthrough tour of your Space</Subheading>
               <Button
-                className="relaunch-walkthrough__button"
+                className={styles.relaunchWalkthroughButton}
                 onClick={this.relaunchTour}
                 testId="relaunch-walkthrough-button">
                 Relaunch tour

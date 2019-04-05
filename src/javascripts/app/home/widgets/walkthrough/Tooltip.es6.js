@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { snakeCase } from 'lodash';
+import styles from './styles.es6';
 import { track } from 'analytics/Analytics.es6';
 import { Button, IconButton, Subheading } from '@contentful/forma-36-react-components';
 import { getCurrentStateName } from 'states/Navigator.es6';
@@ -16,12 +17,12 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
   const currentStateName = getCurrentStateName();
   return (
     <div
-      className="walkthrough-tooltip"
+      className={styles.walkthroughTooltip}
       key={index}
       {...tooltipProps}
       data-test-id={`walkthrough-step-tooltip-${index + 1}`}>
-      <div className="walkthrough-tooltip__header">
-        <Subheading className="walkthrough-tooltip__heading" element="h3">
+      <div className={styles.tooltipHeader}>
+        <Subheading className={styles.tooltipHeading} element="h3">
           {step.title}
         </Subheading>
         <IconButton
@@ -41,7 +42,7 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
         />
       </div>
       {step.content}
-      <div className="walkthrough-tooltip__button-container">
+      <div className={styles.tooltipButtonContainer}>
         <Button
           {...primaryProps}
           aria-label={primaryButtonLabel}
