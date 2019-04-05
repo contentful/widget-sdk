@@ -5,7 +5,10 @@ gulp.task(
   gulp.series(
     'clean',
     gulp.parallel(
-      gulp.series(gulp.parallel('js', 'templates'), gulp.parallel('build/js/test', 'build/chunks')),
+      gulp.series(
+        gulp.parallel('js', 'templates'),
+        gulp.parallel('build/js/test', 'build/chunks/test')
+      ),
       'build/styles'
     )
   )

@@ -12,3 +12,10 @@ gulp.task('build/chunks', function() {
     .pipe(changeBase('build/app'))
     .pipe(writeFile());
 });
+
+gulp.task('build/chunks/test', function() {
+  return gulp
+    .src('public/app/chunk_*.js')
+    .pipe(changeBase('build/app'))
+    .pipe(writeFile());
+});
