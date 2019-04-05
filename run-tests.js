@@ -46,10 +46,10 @@ if (singleRun) {
         useBrowserName: false
       },
       files: [
-        'build/app/**/test-bundle-*.js',
+        'build/app/**/test-bundle*.js',
         'build/app/**/chunk_*.js',
         'build/app/**/*.css'
-      ].concat(filesNeededToRunTests, specs),
+      ].concat(filesNeededToRunTests, specs), // we get specs to run from circleci as we parallelize karma runs
       browsers: ['ChromeHeadlessNoSandbox'],
       customLaunchers: {
         ChromeHeadlessNoSandbox: {
@@ -61,7 +61,8 @@ if (singleRun) {
   } else {
     // we don't show a detailed report for single runs
     config.set({
-      reporters: ['dots']
+      reporters: ['dots'],
+      files: config.files.concat(['test/unit/**/*.js', 'test/integration/**/*.js'])
     });
   }
   runTests();
