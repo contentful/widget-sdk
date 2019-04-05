@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-
-import { byName as colors } from 'Styles/Colors.es6';
+import tokens from '@contentful/forma-36-tokens';
+import classNames from 'classnames';
 
 const headerClassName = css({
-  fontSize: '.75rem',
+  fontSize: tokens.spacingS,
   display: 'flex',
   justifyContent: 'space-between',
-  borderBottom: `1px solid ${colors.elementDark}`,
-  marginBottom: '1.5rem',
-  marginTop: '1.5rem'
+  borderBottom: `1px solid ${tokens.colorElementDark}`,
+  marginBottom: tokens.spacingL,
+  marginTop: tokens.spacingL
 });
 
 const titleClassName = css({
-  fontSize: '.75rem',
+  fontSize: tokens.fontSizeS,
   fontWeight: 500,
   textTransform: 'uppercase',
-  color: colors.textLight,
+  color: tokens.colorTextLight,
   borderBottom: 0,
   margin: 0,
   lineHeight: 2,
@@ -40,8 +40,8 @@ export default class EntrySidebarWidget extends Component {
     const { headerNode, testId, title, children, ...restProps } = this.props;
     return (
       <div data-test-id={testId} {...restProps}>
-        <header className={headerClassName}>
-          <h2 className={titleClassName}>{title}</h2>
+        <header className={classNames(headerClassName, 'entity-sidebar__header')}>
+          <h2 className={classNames(titleClassName, 'entity-sidebar__heading')}>{title}</h2>
           {headerNode}
         </header>
         {children}

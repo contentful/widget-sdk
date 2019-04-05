@@ -166,7 +166,7 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is supported whe
 <EntrySidebarWidget
   headerNode={
     <Select
-      className="entity-sidebar__select"
+      className="css-nzn8f8-selectStyles"
       hasError={false}
       isDisabled={false}
       onChange={[Function]}
@@ -293,7 +293,7 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is supported whe
 <EntrySidebarWidget
   headerNode={
     <Select
-      className="entity-sidebar__select"
+      className="css-nzn8f8-selectStyles"
       hasError={false}
       isDisabled={false}
       onChange={[Function]}

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
 import TranslationWidgetPills from './TranslationWidgetPills.es6';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
@@ -17,10 +18,10 @@ const Tab = {
 const selectStyles = css({
   '& select': {
     backgroundColor: 'transparent',
-    textAlign: 'right',
+    textAlignLast: 'right',
     border: '0',
-    padding: '0 1.25rem 0 0',
-    height: '1.5rem'
+    padding: `0 ${tokens.spacingL} 0 0`,
+    height: tokens.spacingL
   },
   '& select:focus': {
     border: 0,
