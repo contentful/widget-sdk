@@ -42,13 +42,24 @@ gulp.task('build/js/test', () => {
       'public/app/vendor.js',
       'public/app/libs-test.js',
       'public/app/components.js'
-    ]
+    ],
+    true
   );
 
   return testBundleStream;
 });
 
-function generateBundleFromFiles(bundlePath, manifestPath, files) {
+function generateBundleFromFiles(bundlePath, manifestPath, files, isTestBuild = false) {
+  if (isTestBuild) {
+    return gulp
+      .src(files)
+      .pipe(sourceMaps.init({ loadMaps: true }))
+      .pipe(concat(bundlePath))
+      .pipe(changeBase('build'))
+      .pipe(sourceMaps.write('.', { sourceRoot: '/' }))
+      .pipe(writeFile());
+  }
+
   return (
     gulp
       .src(files)
@@ -59,7 +70,7 @@ function generateBundleFromFiles(bundlePath, manifestPath, files) {
       .pipe(rev())
       .pipe(writeFile())
       // 'uglify' already prepends a slash to every source path
-      .pipe(sourceMaps.write('.', { sourceRoot: null }))
+      .pipe(sourceMaps.write('.', { sourceRoot: '' }))
       .pipe(writeFile())
       .pipe(rev.manifest(manifestPath))
       .pipe(writeFile())
