@@ -46,7 +46,7 @@ if (singleRun) {
         useBrowserName: false
       },
       files: [
-        'build/app/**/test-bundle-*.js',
+        'build/app/**/test-bundle*.js',
         'build/app/**/chunk_*.js',
         'build/app/**/*.css'
       ].concat(filesNeededToRunTests, specs),
