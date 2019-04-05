@@ -65,7 +65,7 @@ export default class ContentTypesPage extends React.Component {
 
     return (
       <React.Fragment>
-        <DocumentTitle title="Content Type List" />
+        <DocumentTitle title="Content Model" />
         <Workbench>
           <Workbench.Header>
             <Workbench.Icon icon="page-ct" scale="0.75" />

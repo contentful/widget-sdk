@@ -9,6 +9,7 @@ import EditorFieldTabs from './EditorFieldTabs.es6';
 import FieldsList from './FieldsTab/FieldsList.es6';
 import ContentTypePreview from './PreviewTab/ContentTypePreview.es6';
 import SidebarConfiguration from 'app/EntrySidebar/Configuration/SidebarConfiguration.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const styles = {
   form: css({
@@ -44,31 +45,44 @@ export default function ContentTypesPage(props) {
           />
           <form name="contentTypeForm" className={styles.form}>
             {props.currentTab === 'fields' && (
-              <FieldsList
-                displayField={props.contentTypeData.displayField}
-                canEdit={props.canEdit}
-                fields={props.contentTypeData.fields}
-                actions={props.actions}
-              />
+              <React.Fragment>
+                <DocumentTitle title={[props.contentTypeData.name, 'Content Model']} />
+                <FieldsList
+                  displayField={props.contentTypeData.displayField}
+                  canEdit={props.canEdit}
+                  fields={props.contentTypeData.fields}
+                  actions={props.actions}
+                />
+              </React.Fragment>
             )}
             {props.currentTab === 'preview' && (
-              <ContentTypePreview
-                isDirty={props.isDirty}
-                publishedVersion={get(props.contentTypeData, 'sys.publishedVersion')}
-                loadPreview={props.actions.loadPreview}
-              />
+              <React.Fragment>
+                <DocumentTitle title={['Preview', props.contentTypeData.name, 'Content Model']} />
+                <ContentTypePreview
+                  isDirty={props.isDirty}
+                  publishedVersion={get(props.contentTypeData, 'sys.publishedVersion')}
+                  loadPreview={props.actions.loadPreview}
+                />
+              </React.Fragment>
             )}
             {props.hasCustomSidebarFeature && (
-              <div
-                style={{
-                  display: props.currentTab === 'sidebar_configuration' ? 'block' : 'none'
-                }}>
-                <SidebarConfiguration
-                  configuration={props.configuration}
-                  extensions={props.extensions}
-                  onUpdateConfiguration={props.actions.updateSidebarConfiguration}
-                />
-              </div>
+              <React.Fragment>
+                {props.currentTab === 'sidebar_configuration' && (
+                  <DocumentTitle
+                    title={['Sidebar Configuration', props.contentTypeData.name, 'Content Model']}
+                  />
+                )}
+                <div
+                  style={{
+                    display: props.currentTab === 'sidebar_configuration' ? 'block' : 'none'
+                  }}>
+                  <SidebarConfiguration
+                    configuration={props.configuration}
+                    extensions={props.extensions}
+                    onUpdateConfiguration={props.actions.updateSidebarConfiguration}
+                  />
+                </div>
+              </React.Fragment>
             )}
           </form>
         </div>
