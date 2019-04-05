@@ -10,8 +10,8 @@ import { document, block, inline, text } from 'app/widgets/rich_text/helpers/nod
 import * as sinon from 'test/helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-import { getWithId } from '../helpers';
-import { stubAll, setupWidgetApi, createSandbox, ENTRY } from '../setup';
+import { getWithId } from 'test/helpers/rich_text_editor/helpers';
+import { stubAll, setupWidgetApi, createSandbox, ENTRY } from 'test/helpers/rich_text_editor/setup';
 import flushPromises from '../../../helpers/flushPromises';
 
 const triggerToolbarIcon = async (wrapper, iconName) => {
