@@ -183,6 +183,7 @@ jobs:
       CF_EMAIL: nobody@localhost
       COMPONENTS_ROOT: /home/circleci/components
       COMPOSE_FILE: docker-compose.yml:compose/e2e-tests.yml:compose/e2e-tests-ci.yml
+      COMPOSE_HTTP_TIMEOUT: 180
       CONDITIONAL_VOLUME: ./artifacts/test-results:/app/test-results
       DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
       E2E_CHROME_IMAGE: selenium/standalone-chrome:3.14.0-curium
@@ -192,7 +193,14 @@ jobs:
       RAILS_MAX_THREADS: 8
     working_directory: /home/circleci/components/lab
     steps:
-      - run: echo 'export USER_INTERFACE_VERSION="$CIRCLE_SHA1"' >> $BASH_ENV
+      - checkout:
+          path: /home/circleci/components/user_interface
+      - run:
+          name: Setup environment
+          command: |
+            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+            echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
+            echo 'export USER_INTERFACE_VERSION=master' >> $BASH_ENV
       - run:
           name: Add lab repository
           command: git clone git@github.com:contentful/lab.git .
@@ -212,17 +220,25 @@ jobs:
           name: Add e2e-tests repository
           command: git clone git@github.com:contentful/e2e-tests.git $COMPONENTS_ROOT/e2e-tests
       - run:
-          name: Split test files
+          name: Check for identically named branch in e2e-tests repo
+          working_directory: /home/circleci/components/e2e-tests
           command: |
-            cd ${COMPONENTS_ROOT}/e2e-tests
+            echo 'export MATCHED_BRANCH_SHA=$(git rev-parse --verify "origin/$CIRCLE_BRANCH" 2>/dev/null)' >> $BASH_ENV
+            echo 'export E2E_TESTS_VERSION=${MATCHED_BRANCH_SHA:-master}' >> $BASH_ENV
+      - run:
+          name: Split test files
+          working_directory: /home/circleci/components/e2e-tests
+          command: |
             TESTFILES=$(circleci tests glob "tests/**/test_*.py" | circleci tests split --split-by=timings --timings-type=filename)
             echo "export TESTFILES=\"$TESTFILES\"" >> $BASH_ENV
       - run:
           name: Start lab
-          command: make pull setup-db start
+          command: |
+            make pull setup-db start
+            make link-user_interface
       - run:
           name: Pipe logs to the background
-          command: docker-compose logs -f > $COMPONENTS_ROOT/lab/artifacts/output.log
+          command: docker-compose logs -t -f --no-color > $COMPONENTS_ROOT/lab/artifacts/output.log
           background: true
       - run:
           name: Run e2e tests
@@ -237,6 +253,13 @@ jobs:
       - store_test_results:
           path: ~/components/lab/artifacts/test-results
 
+  trigger-sniffer:
+    docker:
+      - image: circleci/node:10.15.3
+    steps:
+      - checkout
+      - run: bin/trigger-jenkins-sniffer
+
 workflows:
   build:
     jobs:
@@ -244,9 +267,10 @@ workflows:
       - lint
       - run-jest-tests
       - run-karma-tests
-      - run-e2e-tests:
+      - run-e2e-tests
+      - trigger-sniffer:
           requires:
-            - build-and-push-image
+            - run-e2e-tests
       - deploy-micro-backends
       - cypress/run:
           name: cypress-run
