@@ -14,16 +14,16 @@ const uglify = composer(terser, console);
  */
 gulp.task('build/js/app', () => {
   // The main production application
-  const prodBundleSteeam = generateBundleFromFiles(
-    'app/application.min.js',
-    'build/app-manifest.json',
-    [
+  const prodBundleSteeam = generateBundleFromFiles({
+    bundlePath: 'app/application.min.js',
+    manifestPath: 'build/app-manifest.json',
+    files: [
       'public/app/templates.js',
       'public/app/vendor.js',
       'public/app/libs.js',
       'public/app/components.js'
     ]
-  );
+  });
 
   return prodBundleSteeam;
 });
@@ -34,22 +34,22 @@ gulp.task('build/js/app', () => {
  */
 gulp.task('build/js/test', () => {
   // The "test" application, bundled with test dependencies
-  const testBundleStream = generateBundleFromFiles(
-    'app/test-bundle.min.js',
-    'build/test-manifest.json',
-    [
+  const testBundleStream = generateBundleFromFiles({
+    bundlePath: 'app/test-bundle.min.js',
+    manifestPath: 'build/test-manifest.json',
+    files: [
       'public/app/templates.js',
       'public/app/vendor.js',
       'public/app/libs-test.js',
       'public/app/components.js'
     ],
-    true
-  );
+    isTestBuild: true
+  });
 
   return testBundleStream;
 });
 
-function generateBundleFromFiles(bundlePath, manifestPath, files, isTestBuild = false) {
+function generateBundleFromFiles({ bundlePath, manifestPath, files, isTestBuild = false }) {
   if (isTestBuild) {
     return gulp
       .src(files)
