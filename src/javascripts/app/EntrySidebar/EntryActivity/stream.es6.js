@@ -10,7 +10,7 @@ const FEED_NAME = 'entry_activity';
 const API_KEY = services.getstream_io.api_key;
 const APP_ID = services.getstream_io.app_id;
 
-export const MAX_FEED_SIZE = 300;
+export const MAX_FEED_SIZE = 150;
 
 export async function feed(feedId) {
   const mbClient = createMicroBackendsClient({ backendName: 'streamtoken' });

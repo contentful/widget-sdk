@@ -105,7 +105,7 @@ export default function EntryActivityWidget({ activities = [], fieldIdNameMap = 
       </p>
       <ul className={className}>
         {activities.map(renderDailyActivity(fieldIdNameMap))}
-        {activities.length === MAX_FEED_SIZE && (
+        {activities.length >= MAX_FEED_SIZE && (
           <li
             className={`collaborators__item entity-sidebar__no-users collaborators__item-flex f36-margin-top--l ${css(
               {
