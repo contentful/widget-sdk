@@ -221,14 +221,13 @@ jobs:
           command: git clone git@github.com:contentful/e2e-tests.git $COMPONENTS_ROOT/e2e-tests
       - run:
           name: Check for identically named branch in e2e-tests repo
-          working_directory: /home/circleci/components/e2e-tests
           command: |
-            echo 'export MATCHED_BRANCH_SHA=$(git rev-parse --verify "origin/$CIRCLE_BRANCH" 2>/dev/null)' >> $BASH_ENV
+            echo 'export MATCHED_BRANCH_SHA=$(git --git-dir=$COMPONENTS_ROOT/e2e-tests/.git rev-parse --verify "origin/$CIRCLE_BRANCH" 2>/dev/null)' >> $BASH_ENV
             echo 'export E2E_TESTS_VERSION=${MATCHED_BRANCH_SHA:-master}' >> $BASH_ENV
       - run:
           name: Split test files
-          working_directory: /home/circleci/components/e2e-tests
           command: |
+            cd $COMPONENTS_ROOT/e2e-tests
             TESTFILES=$(circleci tests glob "tests/**/test_*.py" | circleci tests split --split-by=timings --timings-type=filename)
             echo "export TESTFILES=\"$TESTFILES\"" >> $BASH_ENV
       - run:
