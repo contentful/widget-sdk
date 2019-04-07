@@ -2,6 +2,9 @@
 
 exports[`Space home Welcome react component when new user should match snapshot 1`] = `
 <div>
+  <DocumentTitle
+    title="Home"
+  />
   <section
     className="home-section"
   >
@@ -38,6 +41,9 @@ exports[`Space home Welcome react component when new user should match snapshot 
 
 exports[`Space home Welcome react component when no user should match snapshot 1`] = `
 <div>
+  <DocumentTitle
+    title="Home"
+  />
   <section
     className="home-section"
   >
@@ -69,6 +75,9 @@ exports[`Space home Welcome react component when no user should match snapshot 1
 
 exports[`Space home Welcome react component when old user should match snapshot 1`] = `
 <div>
+  <DocumentTitle
+    title="Home"
+  />
   <section
     className="home-section"
   >

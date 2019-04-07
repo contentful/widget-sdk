@@ -45,7 +45,7 @@ function buildDocumentTitle({ titleSegments, spaceName, environmentId }) {
 
 function getSpaceName(spaceContext) {
   try {
-    return spaceContext.space.data.name;
+    return spaceContext.getData('name');
   } catch (error) {
     return undefined;
   }
