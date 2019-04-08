@@ -48,24 +48,32 @@ export async function feed(feedId) {
     let shouldFetchMore = true;
 
     while (shouldFetchMore) {
-      const nextPage = await feed.get({ limit: 100, offset: 100 * i }).catch(error => {
+      try {
+        const nextPage = await feed.get({ limit: 100, offset: 100 * i });
+
+        if (!nextPage) {
+          shouldFetchMore = false;
+          break;
+        }
+
+        activities.push(...nextPage.results);
+        i++;
+        shouldFetchMore = nextPage.next.length > 0 && activities.length < MAX_FEED_SIZE;
+
+        // We want to know how many feeds are larger than the max size
+        // to be able to adjust this in the future.
+        if (activities.length >= MAX_FEED_SIZE) {
+          Telemetry.count('entry-activity-feed.exceeded-limit', {
+            feedId,
+            maxFeedSize: MAX_FEED_SIZE,
+            page: i
+          });
+        }
+      } catch (error) {
         logger.logError('Could not fetch feed', {
           feedId,
           page: i,
           ...error
-        });
-      });
-      activities.push(...nextPage.results);
-      i++;
-      shouldFetchMore = nextPage.next.length > 0 && activities.length < MAX_FEED_SIZE;
-
-      // We want to know how many feeds are larger than the max size
-      // to be able to adjust this in the future.
-      if (activities.length >= MAX_FEED_SIZE) {
-        Telemetry.count('entry-activity-feed.exceeded-limit', {
-          feedId,
-          maxFeedSize: MAX_FEED_SIZE,
-          page: i
         });
       }
     }
