@@ -18,6 +18,7 @@
   "marketingUrl": "//www.quirely.com",
   "main_domain": "quirely.com",
   "toolsServiceUrl": "https://tools.flinkly.com",
+  "microBackendsUrl": "https://staging.ctffns.net",
   "contentful": {
     "previewApiUrl": "preview.contentful.com",
     "space": "l1ay9bp8gv68",

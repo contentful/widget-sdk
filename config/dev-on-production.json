@@ -18,6 +18,7 @@
   "marketingUrl": "https://www.contentful.com",
   "main_domain": "contentful.com",
   "toolsServiceUrl": "https://tools.contentful.com",
+  "microBackendsUrl": "/_microbackends/backends",
   "contentful": {
     "spaceTemplateEntryContentTypeId": "17WjnjeALEOeSyuiMI4QOW",
     "cdaApiUrl": "cdn.contentful.com",

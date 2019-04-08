@@ -126,6 +126,13 @@ export function toolsUrl(path, params) {
 }
 
 /**
+ * Builds a URL for calling micro-backends.
+ */
+export function microBackendsUrl(path) {
+  return settings.microBackendsUrl + ensureLeadingSlash(path);
+}
+
+/**
  * Configuration for 3rd party services.
  * TODO: move Snowplow and LD here.
  */

@@ -15,6 +15,7 @@
   "marketingUrl": "//www.flinkly.com",
   "main_domain": "flinkly.com",
   "toolsServiceUrl": "https://tools.flinkly.com",
+  "microBackendsUrl": "https://staging.ctffns.net",
   "contentful": {
     "apiUrl": "api.contentful.com",
     "cdaApiUrl": "cdn.contentful.com",
