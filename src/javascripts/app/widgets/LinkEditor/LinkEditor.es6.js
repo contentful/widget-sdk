@@ -1,27 +1,12 @@
 import { noop } from 'lodash';
-import pluralize from 'pluralize';
 import React from 'react';
 import PropTypes from 'prop-types';
 import CfPropTypes from 'utils/CfPropTypes.es6';
-import Visible from 'components/shared/Visible/index.es6';
-import { TextLink } from '@contentful/forma-36-react-components';
 import FetchedEntityCard from '../shared/FetchedEntityCard/index.es6';
-import {
-  default as CreateEntryButton,
-  Style as CreateEntryStyle
-} from 'components/CreateEntryButton/index.es6';
-import { entityToLink } from './Util.es6';
+import LinkingActions from './LinkingActions.es6';
+import { TYPES, entityToLink } from './Util.es6';
 
-const TYPES = {
-  ENTRY: 'Entry',
-  ASSET: 'Asset'
-};
-const TYPE_NAMES = {
-  [TYPES.ENTRY]: 'entry',
-  [TYPES.ASSET]: 'asset'
-};
-
-const labels = {
+export const labels = {
   createAndLink: name => `Create new ${name} and link`,
   linkExisting: name => `Link existing ${name}`
 };
@@ -52,7 +37,7 @@ export default class LinkEditor extends React.Component {
     onLinkEntities: noop,
     onUnlinkEntities: noop,
     onLinkFetchComplete: noop,
-    isSingle: false,
+    style: 'card',
     canCreateEntity: true
   };
 
@@ -61,20 +46,28 @@ export default class LinkEditor extends React.Component {
   }
 
   render() {
-    const { isDisabled, isSingle } = this.props;
+    const { type, isDisabled, isSingle, canCreateEntity, contentTypes } = this.props;
     const links = this.getLinks();
+    const linkKeys = getLinkKeys(links);
     const showLinkButtons = !isDisabled && (!isSingle || links.length === 0);
-    const countPerId = {};
-    const listElements = links.map((link, index) => {
-      const { id } = link.sys;
-      countPerId[id] = (countPerId[id] || 0) + 1;
-      const key = `${id}:${countPerId[id] - 1}`;
-      return <li key={key}>{this.renderCard(link, index)}</li>;
-    });
     return (
       <div className="link-editor">
-        <ol>{listElements}</ol>
-        {showLinkButtons && this.renderLinkButtons()}
+        <ol>
+          {links.map((link, index) => (
+            <li key={linkKeys[index]}>{this.renderCard(link, index)}</li>
+          ))}
+        </ol>
+        {showLinkButtons && (
+          <LinkingActions
+            type={type}
+            isDisabled={isDisabled}
+            isSingle={isSingle}
+            canCreateEntity={canCreateEntity}
+            contentTypes={contentTypes}
+            onCreateAndLink={this.handleCreateAndLink}
+            onLinkExisting={this.handleSelectAndLink}
+          />
+        )}
       </div>
     );
   }
@@ -111,33 +104,6 @@ export default class LinkEditor extends React.Component {
     );
   }
 
-  renderLinkButtons() {
-    const { type, contentTypes, isSingle, canCreateEntity } = this.props;
-    const typeName = TYPE_NAMES[type];
-    const singleCtOrTypeName = contentTypes.length === 1 ? contentTypes[0].name : typeName;
-    return (
-      <div className="link-editor__feature-at-11-2017-lots-of-cts-add-entry-and-link-reference">
-        <Visible if={type === TYPES.ENTRY && canCreateEntity}>
-          <CreateEntryButton
-            text={labels.createAndLink(singleCtOrTypeName)}
-            contentTypes={contentTypes}
-            hasPlusIcon={true}
-            style={CreateEntryStyle.Link}
-            onSelect={this.handleCreateAndLink}
-          />
-        </Visible>
-        <Visible if={type === TYPES.ASSET && canCreateEntity}>
-          <TextLink onClick={() => this.handleCreateAndLink(null)} linkType="primary" icon="Link">
-            {labels.createAndLink(typeName)}
-          </TextLink>
-        </Visible>
-        <TextLink onClick={this.handleSelectAndLink} linkType="primary" icon="Link">
-          {labels.linkExisting(isSingle ? typeName : pluralize(typeName))}
-        </TextLink>
-      </div>
-    );
-  }
-
   handleEditLink = entity => {
     this.props.actions.editLinkedEntity(entity);
   };
@@ -167,4 +133,13 @@ export default class LinkEditor extends React.Component {
     const entities = await this.props.actions.selectEntities();
     this.handleAddLinks(entities);
   };
+}
+
+function getLinkKeys(links) {
+  const countPerId = {};
+  return links.map(link => {
+    const { id } = link.sys;
+    countPerId[id] = (countPerId[id] || 0) + 1;
+    return `${id}:${countPerId[id] - 1}`;
+  });
 }

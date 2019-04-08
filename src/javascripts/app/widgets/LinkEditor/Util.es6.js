@@ -1,5 +1,10 @@
 import { isString, find, filter } from 'lodash';
 
+export const TYPES = {
+  ENTRY: 'Entry',
+  ASSET: 'Asset'
+};
+
 export function entityToLink(entity) {
   return { sys: { type: 'Link', id: entity.sys.id, linkType: entity.sys.type } };
 }

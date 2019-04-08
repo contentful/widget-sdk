@@ -24,14 +24,16 @@ class CreateEntryButton extends React.Component {
     style: PropTypes.oneOf([Style.Button, Style.Link]),
     disabled: PropTypes.bool,
     hasPlusIcon: PropTypes.bool,
-    text: PropTypes.string
+    text: PropTypes.string,
+    testId: PropTypes.string
   };
 
   static defaultProps = {
     mode: Size.Normal,
     style: Style.Button,
     hasPlusIcon: true,
-    disabled: false
+    disabled: false,
+    testId: 'create-entry'
   };
 
   state = {
@@ -158,14 +160,14 @@ class CreateEntryButton extends React.Component {
   };
 
   render() {
-    const { size } = this.props;
+    const { size, testId } = this.props;
     return (
       <span
         style={{ position: 'relative' }}
         className={cn({
           'x--block': size === Size.Large
         })}
-        data-test-id="create-entry">
+        data-test-id={testId}>
         {this.props.style === Style.Button ? this.renderButton() : this.renderLink()}
         {this.renderMenu()}
       </span>

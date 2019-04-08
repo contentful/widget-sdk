@@ -22,7 +22,8 @@ class WrappedAssetCard extends React.Component {
   };
 
   static defaultProps = {
-    className: ''
+    className: '',
+    onClick: () => {}
   };
 
   getFileType(file) {
