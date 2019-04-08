@@ -24,7 +24,7 @@ const Schedule = ({ scheduledAt, actionType, status }) => (
 );
 
 export const schedulePropTypes = {
-  scheduledAt: PropTypes.number,
+  scheduledAt: PropTypes.string,
   actionType: PropTypes.string.isRequired,
   status: PropTypes.oneOf(['pending', 'cancelled', 'success', 'error'])
 };
