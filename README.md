@@ -58,6 +58,7 @@ If you run into them you’ll need to run the application in the Lab.
 ### Running the tests
 
 - [Running tests with Jest](./docs/guides/testing-jest.md)
+- [Running tests with Cypress](./docs/guides/testing-cypress.md)
 - [(Legacy) Running tests with Karma](./docs/guides/testing-karma.md)
 
 ### Running a full Contentful Instance
