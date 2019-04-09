@@ -7,6 +7,7 @@ import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-
 
 import ScheduleTimeline from './ScheduleTimeline/index.es6';
 import ScheduleFetcher from './ScheduleFetcher.es6';
+import NewSchedule from './NewSchedule.es6';
 
 const styles = {
   root: css({
@@ -42,11 +43,16 @@ export default () => {
             // Implement proper error handling
             return null;
           }
+          const hasScheduledActions = data.scheduleCollection.items.length > 0;
 
           return (
             <React.Fragment>
               <div className={styles.heading}>Scheduled Publication</div>
-              <ScheduleTimeline schedules={data.scheduleCollection.items} />
+              {hasScheduledActions ? (
+                <ScheduleTimeline schedules={data.scheduleCollection.items} />
+              ) : (
+                <NewSchedule />
+              )}
             </React.Fragment>
           );
         }}

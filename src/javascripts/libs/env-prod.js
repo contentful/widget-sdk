@@ -85,6 +85,7 @@ window.libs = [
   ['qs', require('qs')],
   ['node-html-encoder', require('node-html-encoder')],
   ['moment', require('moment')],
+  ['moment-timezone', require('moment-timezone')],
   ['react', require('react')],
   ['react-animate-height', require('react-animate-height')],
   ['react-click-outside', require('react-click-outside')],

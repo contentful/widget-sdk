@@ -14,6 +14,14 @@ const createMockCollectionResponse = items => {
 };
 
 export function getSchedulesWithEntryId(_entryId) {
+  // eslint-disable-next-line no-constant-condition
+  if (1 === 1) {
+    return new Promise(res => {
+      setTimeout(() => {
+        res(createMockCollectionResponse([]));
+      }, 1000);
+    });
+  }
   return new Promise(res => {
     setTimeout(() => {
       res(createMockCollectionResponse([createMockSchedule()]));
