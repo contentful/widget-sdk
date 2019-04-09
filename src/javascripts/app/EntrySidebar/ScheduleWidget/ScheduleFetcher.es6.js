@@ -2,7 +2,10 @@ import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import * as ScheduleService from './ScheduleService.es6';
 
 const ScheduleFetcher = createFetcherComponent(async props => {
-  const scheduleCollection = await ScheduleService.getSchedulesWithEntryId(props.entryId);
+  const scheduleCollection = await ScheduleService.getSchedulesWithEntryId(
+    props.endpoint,
+    props.entryId
+  );
 
   return {
     scheduleCollection
