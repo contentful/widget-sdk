@@ -178,7 +178,7 @@ jobs:
   run-e2e-tests:
     machine:
       docker_layer_caching: true
-    parallelism: 4
+    parallelism: 6
     environment:
       CF_EMAIL: nobody@localhost
       COMPONENTS_ROOT: /home/circleci/components
@@ -195,12 +195,7 @@ jobs:
     steps:
       - checkout:
           path: /home/circleci/components/user_interface
-      - run:
-          name: Setup environment
-          command: |
-            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-            echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
-            echo 'export USER_INTERFACE_VERSION=master' >> $BASH_ENV
+      - run: echo 'export USER_INTERFACE_VERSION="$CIRCLE_SHA1"' >> $BASH_ENV
       - run:
           name: Add lab repository
           command: git clone git@github.com:contentful/lab.git .
@@ -232,9 +227,7 @@ jobs:
             echo "export TESTFILES=\"$TESTFILES\"" >> $BASH_ENV
       - run:
           name: Start lab
-          command: |
-            make pull setup-db start
-            make link-user_interface
+          command: make pull setup-db start
       - run:
           name: Pipe logs to the background
           command: docker-compose logs -t -f --no-color > $COMPONENTS_ROOT/lab/artifacts/output.log
@@ -266,7 +259,9 @@ workflows:
       - lint
       - run-jest-tests
       - run-karma-tests
-      - run-e2e-tests
+      - run-e2e-tests:
+          requires:
+            - build-and-push-image
       - trigger-sniffer:
           requires:
             - run-e2e-tests
