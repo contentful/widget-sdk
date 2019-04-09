@@ -1,6 +1,7 @@
 import React from 'react';
 import { getModule } from 'NgRegistry.es6';
-import { noop, cloneDeep, assign, map, get } from 'lodash';
+import { cloneDeep, map, get } from 'lodash';
+import { ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as notify from './Notifications.es6';
@@ -11,12 +12,12 @@ import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 import * as logger from 'services/logger.es6';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
 import ContentTypeForbiddenRemoval from './Dialogs/ContenTypeForbiddenRemoval.es6';
+import DeleteContentTypeDialog from './Dialogs/DeleteContentTypeDialog.es6';
 import { openDuplicateContentTypeDialog } from './Dialogs/index.es6';
 
 const spaceContext = getModule('spaceContext');
 const $q = getModule('$q');
 const $state = getModule('$state');
-const modalDialog = getModule('modalDialog');
 const Command = getModule('command');
 const closeState = getModule('navigation/closeState');
 
@@ -123,25 +124,22 @@ export default function create($scope, contentTypeIds) {
   }
 
   function confirmRemoval(isPublished) {
-    return modalDialog.open({
-      template: 'content_type_removal_confirm_dialog',
-      persistOnNavigation: true,
-      controller(scope) {
-        assign(scope, {
-          input: {},
-          contentTypeName: $scope.contentType.data.name,
-          delete: Command.create(
-            () =>
-              remove(isPublished).finally(() => {
-                scope.dialog.confirm();
-              }),
-            {
-              disabled: () => scope.input.contentTypeName !== scope.contentTypeName.trim()
-            }
-          )
-        });
-      }
-    });
+    const key = Date.now();
+    return ModalLauncher.open(({ isShown, onClose }) => (
+      <DeleteContentTypeDialog
+        key={key}
+        contentTypeName={$scope.contentType.data.name}
+        isShown={isShown}
+        onConfirm={() => {
+          return remove(isPublished).finally(() => {
+            onClose(true);
+          });
+        }}
+        onCancel={() => {
+          onClose(false);
+        }}
+      />
+    ));
   }
 
   function trackEnforcedButtonClick(err) {
@@ -375,17 +373,24 @@ export default function create($scope, contentTypeIds) {
   }
 
   function askAboutRedirection(duplicated) {
-    return modalDialog
-      .open({
-        title: 'Duplicated content type',
-        message: 'Content type was successfully duplicated. What do you want to do now?',
-        confirmLabel: 'Go to the duplicated content type',
-        cancelLabel: null
-      })
-      .promise.then(() => {
-        setPristine();
-        return goToDetails(duplicated);
-      }, noop);
+    return ModalLauncher.open(({ isShown, onClose }) => (
+      <ModalConfirm
+        shouldCloseOnEscapePress={false}
+        shouldCloseOnOverlayClick={false}
+        isShown={isShown}
+        onConfirm={onClose}
+        onCancel={onClose}
+        title="Duplicated content type"
+        confirmLabel="Go to the duplicated content type."
+        confirmTestId="go-to-duplicated-content-type"
+        cancelLabel={null}>
+        <Paragraph>Content type was successfully duplicated.</Paragraph>
+      </ModalConfirm>
+    )).then(() => {
+      // mark the form as pristine so we can navigate without confirmation dialog
+      setPristine();
+      return goToDetails(duplicated);
+    });
   }
 
   return controller;
