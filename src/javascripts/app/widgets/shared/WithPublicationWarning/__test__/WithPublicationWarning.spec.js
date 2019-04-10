@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import _ from 'lodash';
 
-import withPublicationWarning from '../index.es6';
+import { withRichTextPublicationWarning as withPublicationWarning } from '../index.es6';
 import { richTextDocument } from './helpers';
 
 describe('withPublicationWarning', () => {
