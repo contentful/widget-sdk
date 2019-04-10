@@ -13,8 +13,9 @@ export default function register() {
   registerFactory('EntityHelpers', [
     '$q',
     'spaceContext',
+    'TheLocaleStore',
     '$filter',
-    ($q, spaceContext, $filter) => {
+    ($q, spaceContext, TheLocaleStore, $filter) => {
       const assetUrlFilter = $filter('assetUrl');
 
       return {
@@ -93,8 +94,14 @@ export default function register() {
               return _.transform(
                 ct.data.fields,
                 (acc, ctField) => {
-                  const field = _.get(data, ['fields', ctField.apiName]);
+                  let field = _.get(data, ['fields', ctField.apiName]);
                   if (field) {
+                    // map field locales from `code` to `internal_code` if locale is available
+                    field = _.mapKeys(
+                      field,
+                      // the locale might be missing in some cases, e.g. it was deleted
+                      (_, localeCode) => TheLocaleStore.toInternalCode(localeCode) || localeCode
+                    );
                     acc[ctField.id] = field;
                   }
                 },
