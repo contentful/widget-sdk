@@ -1,30 +1,24 @@
-const createMockSchedule = () => ({
-  scheduledAt: '2019-11-14T16:36:36.850Z',
-  actionType: 'publish',
-  status: 'pending'
-});
-const createMockCollectionResponse = items => {
-  return {
-    items,
-    limit: 1000,
-    skip: 0,
-    sys: { type: 'Array' },
-    total: items.length
-  };
+const ALPHA_HEADER = {
+  'x-contentful-enable-alpha-feature': 'scheduled-actions'
 };
 
-export function getSchedulesWithEntryId(_entryId) {
-  // eslint-disable-next-line no-constant-condition
-  if (1 === 1) {
-    return new Promise(res => {
-      setTimeout(() => {
-        res(createMockCollectionResponse([]));
-      }, 1000);
-    });
-  }
-  return new Promise(res => {
-    setTimeout(() => {
-      res(createMockCollectionResponse([createMockSchedule()]));
-    }, 1000);
-  });
+export function createSchedule(endpoint, entryId, scheduleDto) {
+  return endpoint(
+    {
+      method: 'POST',
+      data: scheduleDto,
+      path: ['entries', entryId, 'schedules']
+    },
+    ALPHA_HEADER
+  );
+}
+
+export function getSchedulesWithEntryId(endpoint, entryId) {
+  return endpoint(
+    {
+      method: 'GET',
+      path: ['entries', entryId, 'schedules']
+    },
+    ALPHA_HEADER
+  );
 }

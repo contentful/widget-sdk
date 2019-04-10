@@ -115,11 +115,9 @@ export default ({ $scope }) => {
     const notifyUpdate = update => {
       emitter.emit(SidebarEventTypes.UPDATED_SCHEDULE_WIDGET, {
         ...update,
-        commands: {
-          primary: $scope.state.primary,
-          secondary: $scope.state.secondary,
-          revertToPrevious: $scope.state.revertToPrevious
-        }
+        entityInfo: $scope.entityInfo,
+        spaceId: spaceContext.space.getId(),
+        envId: spaceContext.getEnvironmentId()
       });
     };
 

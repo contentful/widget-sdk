@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes.es6';
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
 import ScheduleWidget from './ScheduleWidget.es6';
+import ErrorHandler from 'components/shared/ErrorHandlerComponent.es6';
 import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
 import * as FeatureFlagKey from 'featureFlags.es6';
 
@@ -13,10 +13,9 @@ export default class ScheduleWidgetContainer extends Component {
   };
 
   state = {
-    status: '',
-    updatedAt: null,
-    isSaving: false,
-    showDiscardButton: false
+    spaceId: undefined,
+    envId: undefined,
+    entityInfo: undefined
   };
 
   componentDidMount() {
@@ -39,23 +38,16 @@ export default class ScheduleWidgetContainer extends Component {
   };
 
   render() {
-    const { commands } = this.state;
-
-    const revert = get(commands, 'revertToPrevious');
-    const primary = get(commands, 'primary');
-    const secondary = get(commands, 'secondary', []);
-
+    const { spaceId, envId, entityInfo } = this.state;
+    if (!spaceId) {
+      return null;
+    }
     return (
-      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.SCHEDULE}>
-        <ScheduleWidget
-          status={this.state.status}
-          primary={primary}
-          secondary={secondary}
-          revert={revert}
-          isSaving={this.state.isSaving}
-          updatedAt={this.state.updatedAt}
-        />
-      </BooleanFeatureFlag>
+      <ErrorHandler>
+        <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.SCHEDULE}>
+          <ScheduleWidget spaceId={spaceId} envId={envId} entityInfo={entityInfo} />
+        </BooleanFeatureFlag>
+      </ErrorHandler>
     );
   }
 }
