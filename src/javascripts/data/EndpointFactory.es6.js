@@ -26,7 +26,7 @@ export function createOrganizationEndpoint(orgId) {
   return Endpoint.createOrganizationEndpoint(apiUrl(), orgId, auth);
 }
 
-/*
+/**
  * @description
  * Return a function that makes requests to a space resource.
  *

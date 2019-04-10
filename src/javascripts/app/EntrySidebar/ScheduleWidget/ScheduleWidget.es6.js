@@ -11,7 +11,7 @@ import ScheduleFetcher from './ScheduleFetcher.es6';
 import { createSchedule } from './ScheduleService.es6';
 import NewSchedule from './NewSchedule.es6';
 
-import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import { createSpaceEndpoint } from './ScheduleEndpointFactory.es6';
 
 const styles = {
   root: css({
@@ -37,14 +37,25 @@ export default class ScheduleWidget extends React.Component {
     envId: PropTypes.string.isRequired,
     entityInfo: PropTypes.object.isRequired
   };
+  state = {
+    // used to re-fetch schedules after creation
+    fetcherKey: 0
+  };
   endpoint = createSpaceEndpoint(this.props.spaceId, this.props.envId);
   handleScheduleCreate = scheduleDto => {
-    createSchedule(this.endpoint, this.props.entityInfo.id, scheduleDto);
+    createSchedule(this.endpoint, this.props.entityInfo.id, scheduleDto).then(() => {
+      this.setState({
+        fetcherKey: this.state.fetcherKey + 1
+      });
+    });
   };
   render() {
     return (
       <div className={styles.root}>
-        <ScheduleFetcher endpoint={this.endpoint} entryId={this.props.entityInfo.id}>
+        <ScheduleFetcher
+          key={this.state.fetcherKey}
+          endpoint={this.endpoint}
+          entryId={this.props.entityInfo.id}>
           {({ isLoading, isError, data }) => {
             if (isLoading) {
               return (
