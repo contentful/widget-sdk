@@ -1,4 +1,4 @@
-import { noop, omit } from 'lodash';
+import { noop } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import CfPropTypes from 'utils/CfPropTypes.es6';
@@ -74,10 +74,12 @@ export default class LinkEditor extends React.Component {
     const { isDisabled, onLinkFetchComplete } = this.props;
     const handleEditLink = fetchEntityResult => this.handleEditLink(fetchEntityResult.entity);
     const entityType = link.sys.linkType;
+    // TODO: Optimize fetching in this case, don't load thumbnail!
     return (
       <FetchedEntityCard
         entityType={entityType}
         entityId={link.sys.id}
+        size={this.props.style === 'link' ? 'small' : 'default'}
         readOnly={false}
         disabled={isDisabled}
         editable={true}
@@ -89,14 +91,6 @@ export default class LinkEditor extends React.Component {
           this.handleRemoveLinkAt(index, fetchEntityResult.entity);
         }}
         className="link-editor__entity-card"
-        buildCard={(allProps, RecommendedCardComponent) => {
-          // TODO:danwe Optimize what we load instead of disposing already fetched info!
-          const props =
-            entityType === TYPES.ENTRY && this.props.style === 'link'
-              ? omit(allProps, ['entityDescription', 'entityFile'])
-              : allProps;
-          return <RecommendedCardComponent {...props} />;
-        }}
       />
     );
   }

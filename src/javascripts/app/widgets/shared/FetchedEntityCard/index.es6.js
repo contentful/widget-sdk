@@ -14,19 +14,18 @@ class FetchedEntityCard extends React.Component {
     className: PropTypes.string,
     entityId: PropTypes.string.isRequired,
     entityType: PropTypes.oneOf(['Entry', 'Asset']).isRequired,
+    size: PropTypes.string,
     disabled: PropTypes.bool,
     selected: PropTypes.bool,
     onEdit: PropTypes.func,
     onRemove: PropTypes.func,
     onClick: PropTypes.func,
     readOnly: PropTypes.bool,
-    onEntityFetchComplete: PropTypes.func,
-    buildCard: PropTypes.func
+    onEntityFetchComplete: PropTypes.func
   };
   static defaultProps = {
     className: '',
-    onEntityFetchComplete: noop,
-    buildCard: (props, RecommendedCardComponent) => <RecommendedCardComponent {...props} />
+    onEntityFetchComplete: noop
   };
 
   renderDeleteButton() {
@@ -76,7 +75,7 @@ class FetchedEntityCard extends React.Component {
       onRemove,
       onClick,
       readOnly,
-      buildCard
+      size
     } = this.props;
 
     return (
@@ -97,11 +96,12 @@ class FetchedEntityCard extends React.Component {
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingEntryReferenceCard();
               } else {
-                const DefaultCardWrapperComponent =
+                const WrapperComponent =
                   this.props.entityType === 'Entry' ? WrappedReferenceCard : WrappedAssetCard;
                 const cardProps = {
                   ...fetchEntityResult,
                   readOnly,
+                  size,
                   isLoading,
                   className,
                   selected,
@@ -110,7 +110,7 @@ class FetchedEntityCard extends React.Component {
                   onClick: () => onClick(fetchEntityResult),
                   onRemove: () => onRemove(fetchEntityResult)
                 };
-                return buildCard(cardProps, DefaultCardWrapperComponent);
+                return <WrapperComponent {...cardProps} />;
               }
             }}
           />

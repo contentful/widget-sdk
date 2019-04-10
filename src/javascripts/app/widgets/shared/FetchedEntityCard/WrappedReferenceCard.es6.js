@@ -12,6 +12,7 @@ class WrappedReferenceCard extends React.Component {
     entityStatus: PropTypes.string,
     isLoading: PropTypes.bool,
     className: PropTypes.string,
+    size: PropTypes.string,
     disabled: PropTypes.bool,
     selected: PropTypes.bool,
     onEdit: PropTypes.func,
@@ -65,6 +66,7 @@ class WrappedReferenceCard extends React.Component {
       entityFile,
       entityTitle,
       className,
+      size,
       selected,
       entityStatus,
       isLoading,
@@ -77,6 +79,7 @@ class WrappedReferenceCard extends React.Component {
         contentType={contentTypeName}
         className={className}
         description={entityDescription}
+        size={size}
         selected={selected}
         status={entityStatus}
         thumbnailElement={entityFile && <Thumbnail thumbnail={entityFile} />}
