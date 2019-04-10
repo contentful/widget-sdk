@@ -13,5 +13,6 @@ export default {
   UPDATED_DOCUMENT_STATE: 'sidebar:updated-document-state',
   UPDATED_INFO_PANEL: 'sidebar:updated-info-panel',
   UPDATED_COMMENTS_PANEL: 'sidebar:updated-comments-panel',
+  INIT_COMMENTS_PANEL: 'sidebar:init-comments-panel',
   WIDGET_REGISTERED: 'sidebar:widget-is-registered'
 };

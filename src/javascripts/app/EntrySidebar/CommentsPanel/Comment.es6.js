@@ -1,15 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import {
   CardActions,
   DropdownList,
   DropdownListItem,
-  Heading,
-  TextLink
+  Heading
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import CreateComment from './CreateEntryComment.es6';
+
+import * as types from './CommentPropTypes.es6';
 
 const styles = {
   comment: {
@@ -44,24 +43,10 @@ const styles = {
   timestamp: {
     color: tokens.colorTextLightest,
     fontSize: tokens.fontSizeS
-  },
-  footer: {
-    marginTop: tokens.spacingM
-  },
-  thread: {
-    paddingLeft: tokens.spacingS,
-    boxShadow: `inset 2px 0 0 ${tokens.colorBlueDark}`,
-    marginLeft: `-${tokens.spacingS}`
-  },
-  showCommentsButton: {
-    margin: `${tokens.spacingM} 0`
-  },
-  replyActions: {
-    marginTop: tokens.spacingS
   }
 };
 
-export default function Comment(props) {
+export default function Comment({ comment }) {
   return (
     <div className={css(styles.comment)}>
       <header className={css(styles.header)}>
@@ -88,33 +73,11 @@ export default function Comment(props) {
           </DropdownList>
         </CardActions>
       </header>
-      <div>
-        <p>I think the title does not reflect the content of the post. We should change that.</p>
-        <p>
-          Also, there are a couple of typos in the text. We should consider having spell check
-          running.
-        </p>
-      </div>
-
-      {!props.child && (
-        <React.Fragment>
-          <TextLink icon="ChevronRightTrimmed" className={css(styles.showCommentsButton)}>
-            Show all 10 replies
-          </TextLink>
-
-          <div className={css(styles.thread)}>
-            <Comment child={true} />
-          </div>
-
-          <footer className={css(styles.footer)}>
-            <CreateComment parentCommentId="abc" />
-          </footer>
-        </React.Fragment>
-      )}
+      <div>{comment.body}</div>
     </div>
   );
 }
 
 Comment.propTypes = {
-  child: PropTypes.bool
+  comment: types.Comment.isRequired
 };

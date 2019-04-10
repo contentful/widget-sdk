@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SidebarEventTypes from '../SidebarEventTypes.es6';
 import { css } from 'emotion';
+
 import tokens from '@contentful/forma-36-tokens';
-import { Card } from '@contentful/forma-36-react-components';
-import Comment from './Comment.es6';
+
+import { useCommentsFetcher } from './hooks.es6';
 import CreateComment from './CreateEntryComment.es6';
+import CommentThread from './CommentThread.es6';
 
 const styles = {
   root: {
@@ -25,56 +26,52 @@ const styles = {
     flexDirection: 'column',
     zIndex: 1
   },
+  commentList: {
+    overflow: 'auto',
+    padding: tokens.spacingS,
+    flexGrow: 1
+  },
   commentForm: {
     borderTop: `1px solid ${tokens.colorElementLight}`,
     padding: tokens.spacingS
   }
 };
 
-export default class CommentsPanel extends React.Component {
-  static propTypes = {
-    emitter: PropTypes.object.isRequired
-  };
+export default function CommentsPanel({ spaceId, entryId, isVisible }) {
+  const [{ isLoading, isError, data }, fetch] = useCommentsFetcher(spaceId, entryId);
 
-  state = {
-    isVisible: true
-  };
-
-  componentDidMount() {
-    this.props.emitter.on(SidebarEventTypes.UPDATED_COMMENTS_PANEL, this.updateVisibility);
+  if (isLoading) {
+    return 'Loading comments';
+  } else if (isError) {
+    return 'An error happened';
+  } else if (!data) {
+    fetch();
+    return null;
   }
 
-  componentWillUnmount() {
-    this.props.emitter.off(SidebarEventTypes.UPDATED_COMMENTS_PANEL, this.updateVisibility);
-  }
+  const { items } = data;
 
-  updateVisibility = ({ isVisible }) => {
-    this.setState({
-      isVisible
-    });
-  };
-
-  render() {
-    const { isVisible } = this.state;
-
-    return (
-      <div
-        className={css({
-          ...styles.root,
-          transform: isVisible ? 'translateX(-1px)' : 'translateX(100%)'
-        })}>
-        <div className={css({ overflow: 'auto', padding: tokens.spacingS })}>
-          <Card className={css({ padding: tokens.spacingS, marginBottom: tokens.spacingS })}>
-            <Comment />
-          </Card>
-          <Card className={css({ padding: tokens.spacingS, marginBottom: tokens.spacingS })}>
-            <Comment />
-          </Card>
-        </div>
-        <div className={css(styles.commentForm)}>
-          <CreateComment />
-        </div>
+  return (
+    <div
+      className={css({
+        ...styles.root,
+        transform: isVisible ? 'translateX(-1px)' : 'translateX(100%)'
+      })}>
+      <div className={css(styles.commentList)}>
+        {items.map(comment => (
+          <CommentThread key={comment.sys.id} comment={comment} />
+        ))}
       </div>
-    );
-  }
+      <div className={css(styles.commentForm)}>
+        <CreateComment />
+      </div>
+    </div>
+  );
 }
+
+CommentsPanel.propTypes = {
+  spaceId: PropTypes.string.isRequired,
+  entryId: PropTypes.string.isRequired,
+  environmentId: PropTypes.string,
+  isVisible: PropTypes.bool
+};
