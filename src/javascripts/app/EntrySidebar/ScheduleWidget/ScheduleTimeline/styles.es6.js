@@ -30,7 +30,18 @@ export const scheduleStyles = {
       background: tokens.colorElementDarkest
     }
   }),
+  info: css({
+    marginLeft: 'auto',
+    display: 'flex',
+    justifyContent: 'right',
+    flexWrap: 'wrap',
+    textAlign: 'right'
+  }),
   actionType: css({
+    display: 'block',
+    width: '100%'
+  }),
+  date: css({
     marginLeft: 'auto'
   })
 };
