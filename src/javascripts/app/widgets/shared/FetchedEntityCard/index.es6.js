@@ -17,14 +17,15 @@ class FetchedEntityCard extends React.Component {
     size: PropTypes.string,
     disabled: PropTypes.bool,
     selected: PropTypes.bool,
+    readOnly: PropTypes.bool,
     onEdit: PropTypes.func,
     onRemove: PropTypes.func,
     onClick: PropTypes.func,
-    readOnly: PropTypes.bool,
     onEntityFetchComplete: PropTypes.func
   };
   static defaultProps = {
     className: '',
+    onClick: noop,
     onEntityFetchComplete: noop
   };
 
