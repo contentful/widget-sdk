@@ -270,5 +270,8 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "config": {
+    "pact_do_not_track": true
   }
 }
