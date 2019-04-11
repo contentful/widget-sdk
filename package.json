@@ -104,8 +104,7 @@
     "sortablejs": "^1.6.1",
     "speakingurl": "^13.0.0",
     "stream-combiner": "^0.2.1",
-    "sum-types": "^0.9.4",
-    "unfetch": "^4.1.0"
+    "sum-types": "^0.9.4"
   },
   "devDependencies": {
     "@babel/cli": "7.2.3",
