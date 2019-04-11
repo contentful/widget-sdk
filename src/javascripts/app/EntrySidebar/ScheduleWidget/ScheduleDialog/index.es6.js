@@ -10,36 +10,16 @@ import {
   SelectField,
   Option
 } from '@contentful/forma-36-react-components';
-import { timezones, getTimezoneI18nName } from './Utils.es6';
+import { createTimezonesByOffset } from './Utils.es6';
 
-const createTimezoneOptions = () =>
-  moment.tz
-    .names()
-    .filter(tz => {
-      return timezones.includes(tz);
-    })
-    .reduce((acc, cur) => {
-      return [
-        ...acc,
-        {
-          name: cur,
-          offset: moment.tz(cur).utcOffset()
-        }
-      ];
-    }, [])
-    .sort((a, b) => {
-      return a.offset - b.offset;
-    })
-    .reduce((acc, cur) => {
-      const timezone = cur.offset ? moment.tz(cur.name).format('Z') : '';
-
-      return [
-        ...acc,
-        <Option key={cur.name} value={cur.offset}>{`(GMT${timezone}) ${getTimezoneI18nName(
-          cur.name
-        )}`}</Option>
-      ];
-    }, '');
+const createTimezoneOptions = () => {
+  const timezonesByOffset = createTimezonesByOffset();
+  return Object.keys(timezonesByOffset).map(offset => {
+    const i18n = timezonesByOffset[offset].i18nTimezones.join(', ');
+    const timezone = moment.tz(timezonesByOffset[offset].name).format('Z');
+    return <Option key={name} value={offset}>{`(GMT${timezone}) ${i18n}`}</Option>;
+  });
+};
 
 class ScheduleDialog extends React.Component {
   static propTypes = {

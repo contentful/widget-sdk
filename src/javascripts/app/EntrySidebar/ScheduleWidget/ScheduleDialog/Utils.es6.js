@@ -1,4 +1,5 @@
-export const timezones = [
+import moment from 'moment-timezone';
+const timezones = [
   'Etc/GMT+12',
   'Pacific/Midway',
   'Pacific/Honolulu',
@@ -77,7 +78,7 @@ export const timezones = [
   'Pacific/Tongatapu'
 ];
 
-export const i18nTimezones = {
+const i18nTimezones = {
   'Etc/GMT+12': 'International Date Line West',
   'Pacific/Midway': 'Midway Island, Samoa',
   'Pacific/Honolulu': 'Hawaii',
@@ -156,10 +157,45 @@ export const i18nTimezones = {
   'Pacific/Tongatapu': "Nuku'alofa"
 };
 
-export const getTimezoneI18nName = s => {
+const getTimezoneI18nName = s => {
   if (i18nTimezones !== void 0 && i18nTimezones[s]) {
     return i18nTimezones[s];
   }
 
   return s;
 };
+
+export const createTimezonesByOffset = () =>
+  moment.tz
+    .names()
+    .filter(tz => {
+      return timezones.includes(tz);
+    })
+    .reduce((acc, cur) => {
+      return [
+        ...acc,
+        {
+          name: cur,
+          offset: moment.tz(cur).utcOffset()
+        }
+      ];
+    }, [])
+    .sort((a, b) => {
+      return a.offset - b.offset;
+    })
+    .reduce(
+      (acc, cur) =>
+        acc[cur.offset]
+          ? {
+              ...acc,
+              [cur.offset]: {
+                i18nTimezones: [...acc[cur.offset].i18nTimezones, getTimezoneI18nName(cur.name)],
+                name: cur.name
+              }
+            }
+          : {
+              ...acc,
+              [cur.offset]: { i18nTimezones: [getTimezoneI18nName(cur.name)], name: cur.name }
+            },
+      {}
+    );
