@@ -10,7 +10,6 @@ import { go } from 'states/Navigator.es6';
 import { getEnabledFeatures } from 'utils/SubscriptionUtils.es6';
 import { getUserName } from 'utils/UserUtils.es6';
 
-import { home, usage as spaceUsage } from 'ui/NavStates/Space.es6';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider.es6';
 import HelpIcon from 'ui/Components/HelpIcon.es6';
 import Tooltip from 'ui/Components/Tooltip.es6';
@@ -43,7 +42,12 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
     {
       label: 'Go to space',
       disabled: Boolean(space && !space.isAccessible),
-      action: () => go(home(space.sys.id)),
+      action: () =>
+        go({
+          path: ['spaces', 'detail', 'home'],
+          params: { spaceId: space.sys.id },
+          options: { reload: true }
+        }),
       otherProps: {
         'data-test-id': 'subscription-page.spaces-list.space-link'
       }
@@ -51,7 +55,12 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
     {
       label: 'Usage',
       disabled: Boolean(space && !space.isAccessible),
-      action: () => go(spaceUsage(space.sys.id)),
+      action: () =>
+        go({
+          path: ['spaces', 'detail', 'settings', 'usage'],
+          params: { spaceId: space.sys.id },
+          options: { reload: true }
+        }),
       otherProps: {
         'data-test-id': 'subscription-page.spaces-list.space-usage-link'
       }

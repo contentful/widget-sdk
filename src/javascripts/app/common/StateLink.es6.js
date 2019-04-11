@@ -7,7 +7,7 @@ const $state = getModule('$state');
 const StateLink = ({ to, params, options, children, ...rest }) => {
   if (typeof children === 'function') {
     return children({
-      getHref: () => $state.href(to, params),
+      getHref: () => $state.href(to, params, options),
       onClick: () => $state.go(to, params, options)
     });
   }

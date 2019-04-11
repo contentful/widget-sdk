@@ -3,14 +3,20 @@ import PropTypes from 'prop-types';
 
 import { href } from 'states/Navigator.es6';
 import { byName as colors } from 'Styles/Colors.es6';
-import { billing, invoices } from 'ui/NavStates/Org.es6';
+import { billing, invoices } from './links.es6';
 
 import Icon from 'ui/Components/Icon.es6';
 import Price from 'ui/Components/Price.es6';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 
-import { hasAnyInaccessibleSpaces } from './utils.es6';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider.es6';
+
+export function hasAnyInaccessibleSpaces(plans) {
+  return plans.some(plan => {
+    const space = plan.space;
+    return space && !space.isAccessible;
+  });
+}
 
 function Sidebar({ grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, basePlan }) {
   // TODO - add these styles to stylesheets

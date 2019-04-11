@@ -40,6 +40,7 @@ const angular = node => {
     '$controller',
     '$state',
     '$stateParams',
+    '$stateProvider',
     '$injector',
     '$timeout',
     '$q',
@@ -53,7 +54,6 @@ const angular = node => {
     'spaceContext',
     'PolicyBuilder',
     'PolicyBuilder/CONFIG',
-    'states/Navigator',
     'cf-context-menu-trigger',
     'cf-context-menu',
     'cf-ui-sticky-container',
@@ -140,7 +140,8 @@ const needsRefactoring = node => {
     'create-react-class',
     'jquery',
     'ui/Framework/CfComponentBridgeDirective',
-    'ui/Framework/Store'
+    'ui/Framework/Store',
+    'states/Navigator'
   ];
   let intersection = _.intersectionWith(modules, attributes, _.isEqual);
 

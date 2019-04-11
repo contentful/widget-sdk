@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { href } from 'states/Navigator.es6';
-import { memberships as orgMemberships } from 'ui/NavStates/Org.es6';
+import { memberships as orgMemberships } from './links.es6';
 
 import Pluralized from 'ui/Components/Pluralized.es6';
 
