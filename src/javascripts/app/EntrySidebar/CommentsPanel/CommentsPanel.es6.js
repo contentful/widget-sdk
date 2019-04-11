@@ -26,15 +26,15 @@ const styles = {
     flexDirection: 'column',
     zIndex: 1
   },
-  commentList: {
+  commentList: css({
     overflow: 'auto',
     padding: tokens.spacingS,
     flexGrow: 1
-  },
-  commentForm: {
+  }),
+  commentForm: css({
     borderTop: `1px solid ${tokens.colorElementLight}`,
     padding: tokens.spacingS
-  }
+  })
 };
 
 export default function CommentsPanel({ spaceId, entryId, isVisible }) {
@@ -57,12 +57,12 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
         ...styles.root,
         transform: isVisible ? 'translateX(-1px)' : 'translateX(100%)'
       })}>
-      <div className={css(styles.commentList)}>
+      <div className={styles.commentList}>
         {items.map(comment => (
           <CommentThread key={comment.sys.id} comment={comment} />
         ))}
       </div>
-      <div className={css(styles.commentForm)}>
+      <div className={styles.commentForm}>
         <CreateComment />
       </div>
     </div>

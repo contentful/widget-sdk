@@ -10,39 +10,39 @@ import Comment from './Comment.es6';
 import CreateComment from './CreateEntryComment.es6';
 
 const styles = {
-  root: {
+  root: css({
     padding: tokens.spacingS,
     marginBottom: tokens.spacingS
-  },
-  footer: {
+  }),
+  footer: css({
     marginTop: tokens.spacingM
-  },
-  thread: {
+  }),
+  thread: css({
     paddingLeft: tokens.spacingS,
     boxShadow: `inset 2px 0 0 ${tokens.colorBlueDark}`,
     marginLeft: `-${tokens.spacingS}`
-  },
-  showCommentsButton: {
+  }),
+  showCommentsButton: css({
     margin: `${tokens.spacingM} 0`
-  },
-  replyActions: {
+  }),
+  replyActions: css({
     marginTop: tokens.spacingS
-  }
+  })
 };
 
 export default function CommentThread(props) {
   return (
-    <Card className={css(styles.root)}>
+    <Card className={styles.root}>
       <Comment comment={props.comment} />
 
       {props.replies && props.replies.length && (
         <React.Fragment>
-          <TextLink icon="ChevronRightTrimmed" className={css(styles.showCommentsButton)}>
+          <TextLink icon="ChevronRightTrimmed" className={styles.showCommentsButton}>
             Show all 10 replies
           </TextLink>
         </React.Fragment>
       )}
-      <footer className={css(styles.footer)}>
+      <footer className={styles.footer}>
         <CreateComment parentCommentId="123" />
       </footer>
     </Card>

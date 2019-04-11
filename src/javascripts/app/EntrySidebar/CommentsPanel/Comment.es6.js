@@ -11,54 +11,54 @@ import tokens from '@contentful/forma-36-tokens';
 import * as types from './CommentPropTypes.es6';
 
 const styles = {
-  comment: {
+  comment: css({
     display: 'flex',
     flexDirection: 'column',
     marginBottom: tokens.spacingM,
     '&:last-child': {
       marginBottom: 0
     }
-  },
-  header: {
+  }),
+  header: css({
     display: 'flex',
     alignItems: 'flex-start',
     marginBottom: tokens.spacingM
-  },
-  avatar: {
+  }),
+  avatar: css({
     width: 36,
     height: 36,
     background: tokens.colorElementLight,
     borderRadius: '100%',
     marginRight: tokens.spacingS
-  },
-  meta: {
+  }),
+  meta: css({
     display: 'flex',
     justifyContent: 'space-between',
     flexGrow: 1,
     flexDirection: 'column'
-  },
-  userName: {
+  }),
+  userName: css({
     fontSize: tokens.fontSizeM
-  },
-  timestamp: {
+  }),
+  timestamp: css({
     color: tokens.colorTextLightest,
     fontSize: tokens.fontSizeS
-  }
+  })
 };
 
 export default function Comment({ comment }) {
   return (
-    <div className={css(styles.comment)}>
-      <header className={css(styles.header)}>
+    <div className={styles.comment}>
+      <header className={styles.header}>
         <img
-          className={css(styles.avatar)}
+          className={styles.avatar}
           src="https://www.gravatar.com/avatar/114482f1a617ddfee34f8d314c33a1e3?s=50&d=https%3A%2F%2Fstatic.quirely.com%2Fgatekeeper%2Fusers%2Fdefault-a4327b54b8c7431ea8ddd9879449e35f051f43bd767d83c5ff351aed9db5986e.png"
         />
-        <div className={css(styles.meta)}>
-          <Heading element="h4" className={css(styles.userName)}>
+        <div className={styles.meta}>
+          <Heading element="h4" className={styles.userName}>
             Guilherme Barbosa
           </Heading>
-          <time dateTime="2019-04-01T12:00" className={css(styles.timestamp)}>
+          <time dateTime="2019-04-01T12:00" className={styles.timestamp}>
             1 day ago
           </time>
         </div>
