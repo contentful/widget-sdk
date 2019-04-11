@@ -26,6 +26,35 @@ exports[`EntrySidebar/UsersWidget it should render Collaborators component if us
 `;
 
 exports[`EntrySidebar/UsersWidget it should show "No other users online" if users list is empty 1`] = `
+.emotion-1 {
+  font-size: 0.75rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  border-bottom: 1px solid #c3cfd5;
+  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.emotion-0 {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: #8091a5;
+  border-bottom: 0;
+  margin: 0;
+  line-height: 2;
+  -webkit-letter-spacing: 1px;
+  -moz-letter-spacing: 1px;
+  -ms-letter-spacing: 1px;
+  letter-spacing: 1px;
+}
+
 <UsersWidget
   users={Array []}
 >
@@ -37,10 +66,10 @@ exports[`EntrySidebar/UsersWidget it should show "No other users online" if user
       data-test-id="cf-entity-sidebar"
     >
       <header
-        className="entity-sidebar__header"
+        className="emotion-1 entity-sidebar__header"
       >
         <h2
-          className="entity-sidebar__heading"
+          className="emotion-0 entity-sidebar__heading"
         >
           Users
         </h2>
