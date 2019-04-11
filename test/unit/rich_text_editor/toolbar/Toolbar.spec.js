@@ -95,7 +95,7 @@ describe('Rich Text toolbar', () => {
     this.field = fieldApi.field;
 
     this.props = {
-      field: this.field,
+      widgetApi: fieldApi,
       entry: {
         getSys: sinon.stub().returns({
           id: 'ENTRY_ID',
@@ -271,12 +271,11 @@ describe('Rich Text toolbar', () => {
     });
 
     it('renders embed dropdown menu items for enabled node types', async function() {
-      this.props.field.validations = [{ enabledNodeTypes: ['embedded-entry-block'] }];
+      this.field.validations = [{ enabledNodeTypes: ['embedded-entry-block'] }];
       this.mount({ ...this.props });
       expect(
         getWithId(this.wrapper, `toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`).getDOMNode()
       ).toBeDefined();
-      this.props.field.validations = undefined;
     });
 
     it('inserts an embedded entry when "Embed" > "Entry" option is selected', async function({

@@ -45,7 +45,6 @@ const emptySlateValue = createSlateValue(emptyDoc);
 export default class RichTextEditor extends React.Component {
   static propTypes = {
     widgetAPI: PropTypes.shape({
-      trackEntryEditorAction: PropTypes.func.isRequired,
       field: PropTypes.shape({
         id: PropTypes.string.isRequired,
         locale: PropTypes.string.isRequired

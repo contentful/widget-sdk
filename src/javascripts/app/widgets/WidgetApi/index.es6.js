@@ -8,31 +8,44 @@ import { getModule } from 'NgRegistry.es6';
 
 const $rootScope = getModule('$rootScope');
 
-export default function connectToWidgetAPI(Component) {
+/**
+ * Takes a component with a `value`, `isDisabled` and `onChange` props
+ * and connects them to a `widgetApi` passed to the returned HOC.
+ *
+ * TODO: This also takes the given `widgetApi` and adds some more
+ *  stuff to it and passes it to the component. We shouldn't create
+ *  another version of widgetApi here but move this to
+ *  `cfWidgetApiDirective` or somewhere else to have a uniform
+ *  interface.
+ *
+ * @param {boolean?} options.updateValueOnComponentChange If set to false,
+ *  then re-rendering won't happen after the inner component
+ *  fires its `props.onChange`
+ * @param {boolean?} options.updateValueWhileEnabled If set to false,
+ *  then re-rendering won't happen while the field is enabled.
+ * @returns {React.Component}
+ */
+export default function connectToWidgetAPI(
+  Component,
+  { updateValueOnComponentChange = true, updateValueWhileEnabled = true } = {}
+) {
   return class extends React.Component {
     displayName = `WithWidgetAPI(${getDisplayName(Component)})`;
 
     static propTypes = {
-      field: PropTypes.object.isRequired,
-      loadEvents: PropTypes.shape({
-        emit: PropTypes.func.isRequired,
-        stream: PropTypes.shape({
-          onValue: PropTypes.func.isRequired
-        }).isRequired
-      }),
-      entry: PropTypes.object.isRequired,
-      features: PropTypes.array
+      widgetApi: PropTypes.object.isRequired
     };
 
     state = {
-      value: this.props.field.getValue(),
+      value: this.props.widgetApi.field.getValue(),
       isDisabled: true,
       currentUrl: window.location
     };
 
     UNSAFE_componentWillMount() {
-      this.offDisabledState = this.props.field.onIsDisabledChanged(this.handleDisabledChanges);
-      this.offValueChanged = this.props.field.onValueChanged(this.handleIncomingChanges);
+      const field = this.props.widgetApi.field;
+      this.offDisabledState = field.onIsDisabledChanged(this.handleDisabledChanges);
+      this.offValueChanged = field.onValueChanged(this.handleIncomingChanges);
 
       this.offLocationChanged = $rootScope.$on('$locationChangeSuccess', () => {
         this.setState({ currentUrl: { ...window.location } });
@@ -52,35 +65,40 @@ export default function connectToWidgetAPI(Component) {
     };
 
     handleIncomingChanges = nextValue => {
-      if (this.state.isDisabled) {
+      if (this.state.isDisabled || updateValueWhileEnabled) {
         this.setState({
           value: nextValue
         });
       }
     };
 
-    handleFieldValueChanges = nextValue => {
-      this.props.field.setValue(nextValue);
+    handleComponentChanges = nextValue => {
+      if (updateValueOnComponentChange) {
+        this.setState({
+          value: nextValue
+        });
+      }
+      this.props.widgetApi.field.setValue(nextValue);
     };
 
     render() {
-      const { entry, loadEvents, field, features } = this.props;
+      const { entry, field } = this.props.widgetApi;
       const { currentUrl } = this.state;
+      // TODO: Merge this part of widgetApi with the other widgetApi.
       const widgetAPI = buildWidgetApi({
         entry,
         field,
-        features,
-        currentUrl,
-        loadEvents
+        currentUrl
       });
+      const { widgetApi: _widgetApi, ...otherProps } = this.props;
       return (
         <WidgetAPIContext.Provider value={{ widgetAPI }}>
           <Component
-            {...this.props}
+            {...otherProps}
             widgetAPI={widgetAPI}
             value={this.state.value}
             isDisabled={this.state.isDisabled}
-            onChange={this.handleFieldValueChanges}
+            onChange={this.handleComponentChanges}
           />
         </WidgetAPIContext.Provider>
       );

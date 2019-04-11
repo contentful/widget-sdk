@@ -12,10 +12,12 @@ class WrappedReferenceCard extends React.Component {
     entityStatus: PropTypes.string,
     isLoading: PropTypes.bool,
     className: PropTypes.string,
+    size: PropTypes.string,
     disabled: PropTypes.bool,
     selected: PropTypes.bool,
     onEdit: PropTypes.func,
     onRemove: PropTypes.func,
+    onClick: PropTypes.func,
     readOnly: PropTypes.bool
   };
 
@@ -64,9 +66,11 @@ class WrappedReferenceCard extends React.Component {
       entityFile,
       entityTitle,
       className,
+      size,
       selected,
       entityStatus,
-      isLoading
+      isLoading,
+      onClick
     } = this.props;
 
     return (
@@ -75,11 +79,13 @@ class WrappedReferenceCard extends React.Component {
         contentType={contentTypeName}
         className={className}
         description={entityDescription}
+        size={size}
         selected={selected}
         status={entityStatus}
         thumbnailElement={entityFile && <Thumbnail thumbnail={entityFile} />}
         loading={isLoading}
         dropdownListElements={this.renderActions()}
+        onClick={onClick}
       />
     );
   }

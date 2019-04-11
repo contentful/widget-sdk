@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import _ from 'lodash';
 
-import withPublicationWarning from '../index.es6';
+import { withRichTextPublicationWarning as withPublicationWarning } from '../index.es6';
 import { richTextDocument } from './helpers';
 
 describe('withPublicationWarning', () => {
@@ -10,7 +10,7 @@ describe('withPublicationWarning', () => {
     const [registerUnpublishedReferencesWarning, getValue] = registerMocks();
     const field = { registerUnpublishedReferencesWarning, getValue };
 
-    const wrapper = mount({ field });
+    const wrapper = mount(createWidgetAPI(field));
 
     expect(wrapper.text()).toBe('Hello');
   });
@@ -19,7 +19,7 @@ describe('withPublicationWarning', () => {
     const [registerUnpublishedReferencesWarning, getValue] = registerMocks();
     const field = { registerUnpublishedReferencesWarning, getValue };
 
-    mount({ field });
+    mount(createWidgetAPI(field));
 
     const callArg = registerUnpublishedReferencesWarning.mock.calls[0][0];
     expect(callArg).toContainEntry(['getData', expect.toBeFunction()]);
@@ -33,7 +33,7 @@ describe('withPublicationWarning', () => {
     ] = registerMocks();
     const field = { registerUnpublishedReferencesWarning, getValue };
 
-    const wrapper = mount({ field });
+    const wrapper = mount(createWidgetAPI(field));
     wrapper.unmount();
 
     expect(unRegisterUnpublishedReferencesWarning).toBeCalled();
@@ -53,12 +53,12 @@ describe('withPublicationWarning', () => {
         },
         registerUnpublishedReferencesWarning
       };
-      const widgetAPI = createWidgetAPI();
+      const widgetAPI = createWidgetAPI(field);
 
       widgetAPI.space.getAssets.mockResolvedValue({ items: resolvedAssets });
       widgetAPI.space.getEntries.mockResolvedValue({ items: resolvedEntries });
 
-      mount({ field, widgetAPI });
+      mount(widgetAPI);
 
       const registerArg = registerUnpublishedReferencesWarning.mock.calls[0][0];
       const data = await registerArg.getData();
@@ -73,18 +73,19 @@ describe('withPublicationWarning', () => {
   });
 });
 
-function mount({ field, widgetAPI = createWidgetAPI() }) {
+function mount(widgetAPI) {
   const wrappedComponent = () => 'Hello';
   const WrappedWithPublicationWarning = withPublicationWarning(wrappedComponent);
-  return Enzyme.mount(<WrappedWithPublicationWarning widgetAPI={widgetAPI} field={field} />);
+  return Enzyme.mount(<WrappedWithPublicationWarning widgetAPI={widgetAPI} />);
 }
 
-function createWidgetAPI() {
+function createWidgetAPI(field) {
   return {
     space: {
       getEntries: jest.fn(),
       getAssets: jest.fn()
-    }
+    },
+    field
   };
 }
 
