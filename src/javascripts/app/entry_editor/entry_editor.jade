@@ -37,7 +37,7 @@ react-component(
             | {{command.label()}}
 
         +editor-info-toggle
-        +entry-comments-toggle
+          +entry-comments-toggle(ng-if="showDisplayCommentsToggle")
 
     .workbench-main
       .workbench-main__content.sticky-parent
