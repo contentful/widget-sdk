@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
@@ -13,12 +14,23 @@ import ContentTypeListFilter from './ContentTypeListFilter.es6';
 import * as service from './ContentTypeListService.es6';
 
 export default class ContentTypesPage extends React.Component {
-  state = {
-    isLoading: true,
-    contentTypes: [],
-    searchTerm: '',
-    status: undefined
+  static propTypes = {
+    searchText: PropTypes.string,
+    onSearchChange: PropTypes.func
   };
+  static defaultProps = {
+    onSearchChange: () => {}
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: true,
+      contentTypes: [],
+      searchTerm: props.searchText || '',
+      status: undefined
+    };
+  }
 
   componentDidMount() {
     service.fetchContentTypes().then(items => {
@@ -81,6 +93,7 @@ export default class ContentTypesPage extends React.Component {
                     this.setState({
                       searchTerm: value
                     });
+                    this.props.onSearchChange(value);
                   }}
                 />
               )}
