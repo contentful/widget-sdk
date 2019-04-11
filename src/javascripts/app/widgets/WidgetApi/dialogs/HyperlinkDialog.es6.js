@@ -6,11 +6,12 @@ import {
   Option,
   SelectField,
   TextField,
-  TextLink
+  TextLink,
+  Modal,
+  Form
 } from '@contentful/forma-36-react-components';
 import FetchedEntityCard from 'app/widgets/rich_text/plugins/shared/FetchedEntityCard/index.es6';
-import Dialog from 'app/entity_editor/Components/Dialog/index.es6';
-import { noop, values, includes } from 'lodash';
+import { values, includes } from 'lodash';
 import { calculateIdealListHeight, getLabels } from 'search/EntitySelector/Config.es6';
 import Visible from 'components/shared/Visible/index.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -22,7 +23,24 @@ export const LINK_TYPES = {
   ENTRY: 'Entry',
   ASSET: 'Asset'
 };
-export default class HyperlinkDialog extends React.Component {
+
+function isFeaturingEntitySelector(entitySelectorConfigs = {}) {
+  return !!entitySelectorConfigs.Entry || !!entitySelectorConfigs.Asset;
+}
+
+function entityToLink(entity) {
+  const { id, type } = entity.sys;
+  return { sys: { id, type: 'Link', linkType: type } };
+}
+
+function getCustomizedLabels(config) {
+  const labels = getLabels(config);
+  labels.info = labels.info.replace(/insert/g, 'choose');
+  delete labels.input;
+  return labels;
+}
+
+export class HyperlinkDialogForm extends React.Component {
   static propTypes = {
     labels: PropTypes.shape({
       title: PropTypes.string
@@ -45,9 +63,7 @@ export default class HyperlinkDialog extends React.Component {
     ),
     hideText: PropTypes.bool,
     onConfirm: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired,
-    // TODO: Remove once we have better solution for re-center modal dialog:
-    onRender: PropTypes.func
+    onCancel: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -57,7 +73,6 @@ export default class HyperlinkDialog extends React.Component {
     },
     value: {},
     hideText: false,
-    onRender: noop,
     entitySelectorConfigs: {},
     allowedHyperlinkTypes: [LINK_TYPES.ENTRY, LINK_TYPES.ASSET, LINK_TYPES.URI]
   };
@@ -107,11 +122,6 @@ export default class HyperlinkDialog extends React.Component {
     return value;
   }
 
-  isFeaturingEntitySelector() {
-    const { entitySelectorConfigs } = this.props;
-    return !!entitySelectorConfigs.Entry || !!entitySelectorConfigs.Asset;
-  }
-
   isLinkComplete() {
     const { text, type, uri, target } = this.getValue();
     const requiresText = !this.props.hideText;
@@ -128,40 +138,34 @@ export default class HyperlinkDialog extends React.Component {
 
   render() {
     const { labels, onCancel } = this.props;
-    this.props.onRender();
     return (
-      <Dialog
-        testId="create-hyperlink-dialog"
-        className={this.isFeaturingEntitySelector ? 'entity-selector-dialog' : ''}>
-        <Dialog.Header onCloseButtonClicked={onCancel}>{labels.title}</Dialog.Header>
-        <form onSubmit={this.handleSubmit}>
-          <Dialog.Body>{this.renderFields()}</Dialog.Body>
-          <Dialog.Controls>
-            <Button
-              type="submit"
-              buttonType="positive"
-              disabled={!this.isLinkComplete()}
-              data-test-id="confirm-cta">
-              {labels.confirm}
-            </Button>
-            <Button type="button" onClick={onCancel} buttonType="muted" data-test-id="cancel-cta">
-              Cancel
-            </Button>
-          </Dialog.Controls>
-        </form>
-      </Dialog>
+      <React.Fragment>
+        <Modal.Header title={labels.title} onClose={onCancel} />
+        <Modal.Content>{this.renderFields()}</Modal.Content>
+        <Modal.Controls>
+          <Button
+            type="submit"
+            buttonType="positive"
+            onClick={this.handleSubmit}
+            disabled={!this.isLinkComplete()}
+            testId="confirm-cta">
+            {labels.confirm}
+          </Button>
+          <Button type="button" onClick={onCancel} buttonType="muted" testId="cancel-cta">
+            Cancel
+          </Button>
+        </Modal.Controls>
+      </React.Fragment>
     );
   }
 
   renderFields() {
-    // TODO: Use `Form` for spacing once available in component library.
-    const style = { marginBottom: '1.75rem' };
-    const { hideText, allowedHyperlinkTypes } = this.props;
+    const { hideText, allowedHyperlinkTypes, entitySelectorConfigs } = this.props;
     const { uri, text, type } = this.state;
 
     return (
-      <React.Fragment>
-        {hideText || (
+      <Form>
+        {hideText ? null : (
           <TextField
             required
             labelText="Link text"
@@ -172,18 +176,16 @@ export default class HyperlinkDialog extends React.Component {
             textInputProps={{
               testId: 'link-text-input'
             }}
-            style={style}
           />
         )}
-        {this.isFeaturingEntitySelector() && (
+        {isFeaturingEntitySelector(entitySelectorConfigs) && (
           <SelectField
             labelText="Link type"
             value={type}
             onChange={e => this.setState({ type: e.target.value })}
             name="link-type"
             id="link-type"
-            selectProps={{ testId: 'link-type-select' }}
-            style={style}>
+            selectProps={{ testId: 'link-type-select' }}>
             {/* Show the option if the link type is allowed or the current link is of type that is no longer valid */}
             <Visible
               if={includes(allowedHyperlinkTypes, LINK_TYPES.URI) || type === LINK_TYPES.URI}>
@@ -215,12 +217,11 @@ export default class HyperlinkDialog extends React.Component {
             onChange={e => this.setState({ uri: e.target.value })}
             id="link-uri"
             name="link-uri"
-            style={style}
           />
         ) : (
           this.renderEntityField()
         )}
-      </React.Fragment>
+      </Form>
     );
   }
 
@@ -282,14 +283,24 @@ export default class HyperlinkDialog extends React.Component {
   }
 }
 
-function entityToLink(entity) {
-  const { id, type } = entity.sys;
-  return { sys: { id, type: 'Link', linkType: type } };
+export default function HyperlinkDialog(props) {
+  const { onCancel, isShown, entitySelectorConfigs } = props;
+
+  return (
+    <Modal
+      size="large"
+      allowHeightOverflow
+      isShown={isShown}
+      onClose={onCancel}
+      testId="create-hyperlink-dialog"
+      className={isFeaturingEntitySelector(entitySelectorConfigs) ? 'entity-selector-dialog' : ''}>
+      {() => <HyperlinkDialogForm {...props} />}
+    </Modal>
+  );
 }
 
-function getCustomizedLabels(config) {
-  const labels = getLabels(config);
-  labels.info = labels.info.replace(/insert/g, 'choose');
-  delete labels.input;
-  return labels;
-}
+HyperlinkDialog.propTypes = {
+  onCancel: PropTypes.func.isRequired,
+  isShown: PropTypes.bool.isRequired,
+  entitySelectorConfigs: PropTypes.object
+};

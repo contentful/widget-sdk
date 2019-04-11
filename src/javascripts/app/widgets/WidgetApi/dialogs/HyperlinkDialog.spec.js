@@ -1,11 +1,30 @@
-import sinon from 'sinon';
 import React from 'react';
 import { mount } from 'enzyme';
-import { createIsolatedSystem } from 'test/helpers/system-js';
+
+import { HyperlinkDialogForm } from 'app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6';
+
+jest.mock('NgRegistry.es6', () => ({
+  getModule: jest.fn().mockImplementation(name => {
+    if (name === 'AngularComponent') {
+      return () => <div />;
+    }
+    return null;
+  })
+}));
+
+jest.mock('search/EntitySelector/Config.es6', () => ({
+  getLabels: () => ({
+    title: '',
+    input: '',
+    info: '',
+    empty: '',
+    searchPlaceholder: ''
+  }),
+  calculateIdealListHeight: () => 200
+}));
 
 describe('HyperlinkDialog', () => {
   const selectors = {
-    hyperlinkDialog: '[data-test-id="create-hyperlink-dialog"]',
     confirmCta: 'button[data-test-id="confirm-cta"]',
     cancelCta: 'button[data-test-id="cancel-cta"]',
     linkTextInput: 'input[data-test-id="link-text-input"]',
@@ -16,60 +35,25 @@ describe('HyperlinkDialog', () => {
     fetchedEntityCard: '[data-test-id="cf-ui-reference-card"]'
   };
 
-  beforeEach(function() {
-    const system = createIsolatedSystem();
-
-    system.set('search/EntitySelector/Config.es6', {
-      getLabels: () => ({
-        title: '',
-        input: '',
-        info: '',
-        empty: '',
-        searchPlaceholder: ''
-      }),
-      calculateIdealListHeight: () => 200
-    });
-
-    const getModuleStub = sinon.stub();
-    getModuleStub.withArgs('AngularComponent').returns(() => <div />);
-
-    system.set('NgRegistry.es6', {
-      getModule: getModuleStub
-    });
-
-    this.importModule = async function importModule() {
-      return (await system.import('app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6')).default;
-    };
-  });
-
-  it('renders the hyperlink dialog component', async function() {
-    const Component = await this.importModule();
-
-    const wrapper = mount(<Component onConfirm={() => {}} onCancel={() => {}} />);
-
-    expect(wrapper.find(selectors.hyperlinkDialog).exists()).toBe(true);
-  });
-
   it('allows the user to add a hyperlink to a URL', async function() {
-    const Component = await this.importModule();
-    const mockOnConfirm = sinon.spy();
+    const mockOnConfirm = jest.fn();
 
-    const wrapper = mount(<Component onConfirm={e => mockOnConfirm(e)} onCancel={() => {}} />);
+    const wrapper = mount(<HyperlinkDialogForm onConfirm={mockOnConfirm} onCancel={() => {}} />);
 
-    expect(wrapper.find(selectors.confirmCta).prop('disabled')).toBe(true);
+    expect(wrapper.find(selectors.confirmCta)).toBeDisabled();
     wrapper.find(selectors.confirmCta).simulate('click');
-    sinon.assert.notCalled(mockOnConfirm);
+
+    expect(mockOnConfirm).not.toHaveBeenCalled();
 
     wrapper.find(selectors.linkTextInput).simulate('change', { target: { value: 'My text link' } });
     wrapper
       .find(selectors.linkUriInput)
       .simulate('change', { target: { value: 'https://www.contentful.com' } });
 
-    expect(wrapper.find(selectors.confirmCta).prop('disabled')).toBe(false);
-    // TODO: Using 'click' does not trigger form onSubmit. See https://github.com/airbnb/enzyme/issues/308
-    wrapper.find(selectors.confirmCta).simulate('submit');
+    expect(wrapper.find(selectors.confirmCta)).not.toBeDisabled();
+    wrapper.find(selectors.confirmCta).simulate('click');
 
-    sinon.assert.calledWith(mockOnConfirm, {
+    expect(mockOnConfirm).toHaveBeenCalledWith({
       type: 'uri',
       text: 'My text link',
       uri: 'https://www.contentful.com'
@@ -77,11 +61,10 @@ describe('HyperlinkDialog', () => {
   });
 
   it('allows the user to edit an existing hyperlink to a URL', async function() {
-    const Component = await this.importModule();
-    const mockOnConfirm = sinon.spy();
+    const mockOnConfirm = jest.fn();
 
     const wrapper = mount(
-      <Component
+      <HyperlinkDialogForm
         onConfirm={e => mockOnConfirm(e)}
         onCancel={() => {}}
         value={{
@@ -103,10 +86,9 @@ describe('HyperlinkDialog', () => {
     wrapper
       .find(selectors.linkUriInput)
       .simulate('change', { target: { value: 'https://app.contentful.com' } });
-    // TODO: Using 'click' does not trigger form onSubmit. See https://github.com/airbnb/enzyme/issues/308
-    wrapper.find(selectors.confirmCta).simulate('submit');
+    wrapper.find(selectors.confirmCta).simulate('click');
 
-    sinon.assert.calledWith(mockOnConfirm, {
+    expect(mockOnConfirm).toHaveBeenCalledWith({
       type: 'uri',
       text: 'My updated text link',
       uri: 'https://app.contentful.com'
@@ -114,11 +96,10 @@ describe('HyperlinkDialog', () => {
   });
 
   it('allows the user to cancel editing an existing hyperlink to a URL', async function() {
-    const Component = await this.importModule();
-    const mockOnCancel = sinon.spy();
+    const mockOnCancel = jest.fn();
 
     const wrapper = mount(
-      <Component
+      <HyperlinkDialogForm
         onConfirm={() => {}}
         onCancel={mockOnCancel}
         value={{
@@ -135,19 +116,18 @@ describe('HyperlinkDialog', () => {
     );
 
     wrapper.find(selectors.cancelCta).simulate('click');
-    sinon.assert.called(mockOnCancel);
+
+    expect(mockOnCancel).toHaveBeenCalled();
   });
 
   it('renders a "link type" field if passed multiple entity configs', async function() {
-    const Component = await this.importModule();
-
     const entitySelectorConfigs = {
       Entry: {},
       Asset: {}
     };
 
     const wrapper = mount(
-      <Component
+      <HyperlinkDialogForm
         onConfirm={() => {}}
         onCancel={() => {}}
         entitySelectorConfigs={entitySelectorConfigs}
@@ -159,21 +139,19 @@ describe('HyperlinkDialog', () => {
       />
     );
 
-    expect(wrapper.find(selectors.linkTypeSelect).exists()).toBe(true);
+    expect(wrapper.find(selectors.linkTypeSelect)).toExist();
     expect(
       wrapper
         .find(selectors.linkTypeSelectOptions)
         .map(element => element.text())
         .sort()
     ).toEqual(['Asset', 'Entry', 'URL'].sort());
-    expect(wrapper.find(selectors.linkTypeSelectOptions).length).toEqual(3);
+    expect(wrapper.find(selectors.linkTypeSelectOptions)).toHaveLength(3);
   });
 
   it('does not render a "link type" field if not passed entity configs', async function() {
-    const Component = await this.importModule();
-
     const wrapper = mount(
-      <Component
+      <HyperlinkDialogForm
         onConfirm={() => {}}
         onCancel={() => {}}
         value={{
@@ -184,12 +162,11 @@ describe('HyperlinkDialog', () => {
       />
     );
 
-    expect(wrapper.find(selectors.linkTypeSelect).exists()).toBe(false);
-    expect(wrapper.find(selectors.linkTypeSelectOptions).length).toEqual(0);
+    expect(wrapper.find(selectors.linkTypeSelect)).not.toExist();
+    expect(wrapper.find(selectors.linkTypeSelectOptions)).toHaveLength(0);
   });
 
   it('does not render "url" option in link type field if not passed url in entity configs', async function() {
-    const Component = await this.importModule();
     const allowedHyperlinkTypes = ['Asset', 'Entry'];
     const entitySelectorConfigs = {
       Entry: {},
@@ -197,7 +174,7 @@ describe('HyperlinkDialog', () => {
     };
 
     const wrapper = mount(
-      <Component
+      <HyperlinkDialogForm
         onConfirm={() => {}}
         onCancel={() => {}}
         allowedHyperlinkTypes={allowedHyperlinkTypes}
@@ -205,8 +182,8 @@ describe('HyperlinkDialog', () => {
       />
     );
 
-    expect(wrapper.find(selectors.linkTypeSelect).exists()).toBe(true);
-    expect(wrapper.find(selectors.linkTypeSelectOptions).length).toEqual(2);
+    expect(wrapper.find(selectors.linkTypeSelect)).toExist();
+    expect(wrapper.find(selectors.linkTypeSelectOptions)).toHaveLength(2);
     expect(
       wrapper
         .find(selectors.linkTypeSelectOptions)
@@ -216,7 +193,6 @@ describe('HyperlinkDialog', () => {
   });
 
   it('renders entity selector by default if link type is not URL', async function() {
-    const Component = await this.importModule();
     const allowedHyperlinkTypes = ['Asset', 'Entry'];
     const entitySelectorConfigs = {
       Entry: {},
@@ -224,7 +200,7 @@ describe('HyperlinkDialog', () => {
     };
 
     const wrapper = mount(
-      <Component
+      <HyperlinkDialogForm
         onConfirm={() => {}}
         onCancel={() => {}}
         value={{}}
@@ -233,26 +209,6 @@ describe('HyperlinkDialog', () => {
       />
     );
 
-    expect(wrapper.find(selectors.entitySelector).exists()).toBe(true);
-  });
-
-  it('calls an onRender function', async function() {
-    const Component = await this.importModule();
-    const mockOnRender = sinon.spy();
-
-    mount(
-      <Component
-        onConfirm={() => {}}
-        onCancel={() => {}}
-        onRender={e => mockOnRender(e)}
-        value={{
-          text: 'My text link',
-          uri: 'https://www.contentful.com',
-          type: 'uri'
-        }}
-      />
-    );
-
-    sinon.assert.called(mockOnRender);
+    expect(wrapper.find(selectors.entitySelector)).toExist();
   });
 });

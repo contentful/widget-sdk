@@ -2,11 +2,9 @@ import React from 'react';
 import { INLINES } from '@contentful/rich-text-types';
 import HyperlinkDialog, { LINK_TYPES } from 'app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6';
 import WidgetAPIContext from '../WidgetApiContext.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { newConfigFromRichTextField } from 'search/EntitySelector/Config.es6';
 import { isNodeTypeEnabled } from 'app/widgets/rich_text/validations/index.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const modalDialog = getModule('modalDialog');
 
 const nodeToHyperlinkType = {
   [INLINES.ENTRY_HYPERLINK]: LINK_TYPES.ENTRY,
@@ -29,7 +27,6 @@ const nodeToHyperlinkType = {
  * @returns {Promise<{uri: string?, target: object?, text: string?}>}
  */
 export default async function({ value = {}, showTextInput, widgetAPI }) {
-  let dialog;
   const entitySelectorConfigs = await newConfigsForField(widgetAPI.field);
   const isNew = !(value.uri || value.target);
   const props = {
@@ -39,42 +36,32 @@ export default async function({ value = {}, showTextInput, widgetAPI }) {
     },
     value,
     hideText: !showTextInput,
-    onConfirm: value => dialog.confirm(value),
-    onCancel: () => {
-      dialog.cancel();
-      dialog = null;
-    },
-    onRender: () => {
-      // TODO: Get rid of this hack to re-center modal dialog.
-      dialog &&
-        setTimeout(() => {
-          dialog._centerOnBackground();
-          // We apparently need this for the angular directive when
-          // switching from link type URI to e.g. Entry or Asset:
-          setTimeout(() => {
-            dialog._centerOnBackground();
-          }, 10);
-        }, 0);
-    },
     entitySelectorConfigs,
     allowedHyperlinkTypes: getAllowedHyperlinkTypes(widgetAPI.field)
   };
-  const jsx = (
-    <WidgetAPIContext.Provider value={{ widgetAPI }}>
-      <HyperlinkDialog {...props} />
-    </WidgetAPIContext.Provider>
-  );
-  dialog = modalDialog.open({
-    template: `<react-component class="modal-background" jsx="jsx" props="props" />`,
-    backgroundClose: true,
-    disableAutoFocus: true,
-    ignoreEsc: false, // Ignore to allow ESC in search entity selector search.
-    scopeData: {
-      jsx,
-      props: {}
-    }
+
+  return new Promise((resolve, reject) => {
+    ModalLauncher.open(({ isShown, onClose }) => (
+      <WidgetAPIContext.Provider value={{ widgetAPI }}>
+        <HyperlinkDialog
+          {...props}
+          isShown={isShown}
+          onConfirm={value => {
+            onClose(value);
+          }}
+          onCancel={() => {
+            onClose(null);
+          }}
+        />
+      </WidgetAPIContext.Provider>
+    )).then(value => {
+      if (value === null) {
+        reject();
+      } else {
+        resolve(value);
+      }
+    });
   });
-  return dialog.promise;
 }
 
 async function newConfigsForField(field) {
