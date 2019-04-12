@@ -379,6 +379,35 @@ describe('spaceContext', () => {
         expect(desc).toBe('SYMBOL VAL DE');
       });
 
+      describe('skips potential slug fields', function() {
+        beforeEach(function() {
+          _.remove(this.fields, field => ['Text', 'Symbol'].includes(field.type));
+          this.ct.data.fields.push({ type: 'Symbol', id: 'SLUG', name: 'slug' });
+          this.entry.data.fields.SLUG = { xx: 'SLUG 1' };
+          this.ct.data.fields.push({ type: 'Text', id: 'SLUG_2', name: 'Another slug-field' });
+          this.entry.data.fields.SLUG_2 = { xx: 'SLUG 2' };
+        });
+
+        it('returns undefined if there is only slug text fields', function() {
+          const desc = this.spaceContext.entityDescription(this.entry);
+          expect(desc).toBe(undefined);
+        });
+
+        it('returns a field containing name containing "slug" without word boundary', function() {
+          this.ct.data.fields.push({
+            type: 'Symbol',
+            id: 'SLUG_3',
+            name: 'sluggish',
+            localized: true
+          });
+          this.entry.data.fields.SLUG_3 = { xx: 'SLUGGISH', de: 'SLUGGISH DE' };
+          const desc = this.spaceContext.entityDescription(this.entry);
+          expect(desc).toBe('SLUGGISH');
+          const descDe = this.spaceContext.entityDescription(this.entry, 'de');
+          expect(descDe).toBe('SLUGGISH DE');
+        });
+      });
+
       describe('skips display field', () => {
         beforeEach(function() {
           _.remove(this.fields, field => field.id === 'TEXT');
@@ -386,7 +415,7 @@ describe('spaceContext', () => {
           this.ct.data.displayField = 'SYMBOL';
         });
 
-        it('returns undefined if there is not other field', function() {
+        it('returns undefined if there is no other field', function() {
           const desc = this.spaceContext.entityDescription(this.entry);
           expect(desc).toBe(undefined);
         });

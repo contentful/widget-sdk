@@ -75,8 +75,10 @@ export default function register() {
        * method to work.
        */
       function spaceContextDelegator(methodName, localeCode) {
-        return data =>
-          dataToEntity(data).then(entity => spaceContext[methodName](entity, localeCode));
+        return async function(data) {
+          const entity = await dataToEntity(data);
+          return spaceContext[methodName](entity, localeCode);
+        };
       }
 
       /**
