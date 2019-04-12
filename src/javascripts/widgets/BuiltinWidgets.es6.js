@@ -257,7 +257,14 @@ export function create() {
     fieldTypes: ['Entries'],
     name: 'Entry links list',
     icon: 'references',
-    template: '<cf-reference-editor type="Entry" variant="link" load-events="loadEvents" />',
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <FeatureFlaggedLinkEditor
+        type="Entry"
+        style="link"
+        widgetApi={widgetApi}
+        loadEvents={loadEvents}
+      />
+    ),
     parameters: [BULK_EDITOR_PARAMETER]
   });
 
@@ -280,7 +287,14 @@ export function create() {
     fieldTypes: ['Entries'],
     name: 'Entry cards',
     icon: 'references-card',
-    template: '<cf-reference-editor type="Entry" variant="card" load-events="loadEvents" />',
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <FeatureFlaggedLinkEditor
+        type="Entry"
+        style="card"
+        widgetApi={widgetApi}
+        loadEvents={loadEvents}
+      />
+    ),
     parameters: [BULK_EDITOR_PARAMETER]
   });
 
@@ -288,14 +302,28 @@ export function create() {
     fieldTypes: ['Assets'],
     name: 'Asset links list',
     icon: 'media-references',
-    template: '<cf-reference-editor type="Asset" variant="link" load-events="loadEvents" />'
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <FeatureFlaggedLinkEditor
+        type="Asset"
+        style="link"
+        widgetApi={widgetApi}
+        loadEvents={loadEvents}
+      />
+    )
   });
 
   registerWidget('assetGalleryEditor', {
     fieldTypes: ['Assets'],
     name: 'Asset gallery',
     icon: 'media-previews',
-    template: '<cf-reference-editor type="Asset" variant="card" load-events="loadEvents" />'
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <FeatureFlaggedLinkEditor
+        type="Asset"
+        style="card"
+        widgetApi={widgetApi}
+        loadEvents={loadEvents}
+      />
+    )
   });
 
   registerWidget('slugEditor', {
@@ -316,7 +344,7 @@ export function create() {
 
 const FEATURE_NEW_LINK_EDITOR = 'refactor-pen-04-2019-forma-36-link-editor-cards';
 
-function FeatureFlaggedLinkEditor({ isSingle, ...props }) {
+function FeatureFlaggedLinkEditor({ isSingle = false, ...props }) {
   const LinkEditorComponent = isSingle ? CfSingleLinkEditor : CfLinkEditor;
   const { type, style, loadEvents } = props;
   const [useNew, setUseNew] = useState(false);
@@ -325,8 +353,8 @@ function FeatureFlaggedLinkEditor({ isSingle, ...props }) {
     <LinkEditorComponent {...props} />
   ) : (
     <AngularComponent
-      template={`<cf-reference-editor type="${type}" variant="${style}" single="true" load-events="loadEvents" />`}
-      scope={{ loadEvents }}
+      template={`<cf-reference-editor type="${type}" variant="${style}" single="${isSingle}" load-events="loadEvents" />`}
+      scope={{ loadEvents, isSingle }}
     />
   );
 }
