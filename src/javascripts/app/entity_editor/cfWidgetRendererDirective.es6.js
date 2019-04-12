@@ -6,6 +6,7 @@ import $ from 'jquery';
 import createBridge from 'widgets/bridges/EditorExtensionBridge.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
+import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
 
 export default function register() {
   /**
@@ -27,7 +28,6 @@ export default function register() {
     'entitySelector',
     'entityCreator',
     'states/Navigator.es6',
-    'navigation/SlideInNavigator',
     'app/entity_editor/LoadEventTracker.es6',
     (
       $compile,
@@ -37,7 +37,6 @@ export default function register() {
       entitySelector,
       entityCreator,
       Navigator,
-      SlideInNavigator,
       LoadEventTracker
     ) => {
       return {

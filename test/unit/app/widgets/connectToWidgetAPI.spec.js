@@ -9,6 +9,9 @@ describe('connectToWidgetAPI', () => {
     module('contentful/test');
     this.system = createIsolatedSystem();
     this.system.set('search/EntitySelector/Config.es6', {});
+    this.system.set('navigation/SlideInNavigator/index.es6', {
+      goToSlideInEntity: () => {}
+    });
     this.system.set('app/widgets/WidgetApi/BatchingApiClient/index.es6', {
       getBatchingApiClient: v => v
     });

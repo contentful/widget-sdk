@@ -6,17 +6,17 @@ import { deepFreeze } from 'utils/Freeze.es6';
 import { getModule } from 'NgRegistry.es6';
 import { createLoadEventTracker } from 'app/entity_editor/LoadEventTracker.es6';
 import { loadEntry, loadAsset } from 'app/entity_editor/DataLoader.es6';
-const entityLoaders = {
-  Entry: loadEntry,
-  Asset: loadAsset
-};
-
-const {
+import {
   getSlideInEntities,
   goToSlideInEntity,
   getSlideAsString,
   goToPreviousSlideOrExit
-} = getModule('navigation/SlideInNavigator');
+} from 'navigation/SlideInNavigator/index.es6';
+
+const entityLoaders = {
+  Entry: loadEntry,
+  Asset: loadAsset
+};
 
 const spaceContext = getModule('spaceContext');
 

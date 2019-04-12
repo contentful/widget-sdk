@@ -1,11 +1,11 @@
 import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDialog.es6';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index.es6';
 import { getModule } from 'NgRegistry.es6';
+import { goToSlideInEntity } from 'navigation/SlideInNavigator/index.es6';
 
 const spaceContext = getModule('spaceContext');
 const entitySelector = getModule('entitySelector');
 const { getSectionVisibility } = getModule('access_control/AccessChecker');
-const slideInNavigator = getModule('navigation/SlideInNavigator');
 
 /**
  * Should create an object with the same interface as provided by the Contentful JS
@@ -93,7 +93,7 @@ export default function buildWidgetApi({ field, entry, currentUrl }) {
 
 function openEntity(type, id, { slideIn = false }) {
   if (slideIn) {
-    return slideInNavigator.goToSlideInEntity({ type, id });
+    return goToSlideInEntity({ type, id });
   }
   throw new Error('widgetApi.navigator.openEntity() without slide-in is not implemented');
 }

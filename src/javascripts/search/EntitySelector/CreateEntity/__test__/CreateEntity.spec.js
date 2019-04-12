@@ -1,12 +1,20 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import * as slideInNavigator from 'navigation/SlideInNavigator/index.es6';
 
 import CreateEntity, { entityTypes } from '../index.es6';
 import accessChecker from 'ng/access_control/AccessChecker';
-import slideInNavigator from 'ng/navigation/SlideInNavigator';
 import entityCreator from 'ng/entityCreator';
 
 import flushPromises from 'testHelpers/flushPromises';
+
+jest.mock(
+  'navigation/SlideInNavigator/index.es6',
+  () => ({
+    goToSlideInEntity: jest.fn()
+  }),
+  { virtual: true }
+);
 
 jest.mock(
   'ng/entityCreator',

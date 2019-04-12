@@ -6,6 +6,8 @@ import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes.es6';
 import createBridge from 'widgets/bridges/EditorExtensionBridge.es6';
 import * as WidgetLocations from 'widgets/WidgetLocations.es6';
+import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
+import * as Navigator from 'states/Navigator.es6';
 
 const $controller = getModule('$controller');
 const $rootScope = getModule('$rootScope');
@@ -13,8 +15,6 @@ const spaceContext = getModule('spaceContext');
 const $state = getModule('$state');
 const TheLocaleStore = getModule('TheLocaleStore');
 const entitySelector = getModule('entitySelector');
-const SlideInNavigator = getModule('navigation/SlideInNavigator');
-const Navigator = getModule('states/Navigator.es6');
 const entityCreator = getModule('entityCreator');
 
 export default ({ $scope }) => {

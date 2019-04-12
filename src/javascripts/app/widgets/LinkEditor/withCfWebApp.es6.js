@@ -6,16 +6,16 @@ import {
   Action
 } from 'access_control/AccessChecker/index.es6';
 import { newConfigFromField } from 'search/EntitySelector/Config.es6';
-
+import * as slideInNavigator from 'navigation/SlideInNavigator/index.es6';
 import { getModule } from 'NgRegistry.es6';
-const spaceContext = getModule('spaceContext');
-const entityCreator = getModule('entityCreator');
-const slideInNavigator = getModule('navigation/SlideInNavigator');
 import withWidgetApi from 'app/widgets/WidgetApi/index.es6';
 import { withLinksPublicationWarning } from 'app/widgets/shared/WithPublicationWarning/index.es6';
 import { track } from 'analytics/Analytics.es6';
 import BaseLinkEditor from './LinkEditor.es6';
 import { canLinkToContentType } from './Util.es6';
+
+const spaceContext = getModule('spaceContext');
+const entityCreator = getModule('entityCreator');
 
 const entityCreatorsByType = {
   Entry: entityCreator.newEntry,

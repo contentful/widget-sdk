@@ -2,14 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getModule } from 'NgRegistry.es6';
 import { TextLink } from '@contentful/forma-36-react-components';
-
+import { goToSlideInEntity } from 'navigation/SlideInNavigator/index.es6';
 import CreateEntryButton, { Style } from 'components/CreateEntryButton/index.es6';
 import Visible from 'components/shared/Visible/index.es6';
 import * as logger from 'services/logger.es6';
 
 const entityCreator = getModule('entityCreator');
 const accessChecker = getModule('access_control/AccessChecker');
-const slideInNavigator = getModule('navigation/SlideInNavigator');
 
 export const entityTypes = {
   Entry: 'Entry',
@@ -97,7 +96,7 @@ async function onSelectHandler(contentTypeId, cb) {
     };
 
     cb(entity.data);
-    slideInNavigator.goToSlideInEntity(slide);
+    goToSlideInEntity(slide);
   } catch (error) {
     logger.logError('Failed to create new entry from entity selector', { error });
   }
