@@ -14,17 +14,15 @@ describe('CommentsPanel', () => {
   afterEach(() => {});
 
   describe('initializing', () => {
-    const mockFetch = jest.fn();
-    useCommentsFetcher.mockReturnValueOnce([{ isLoading: false, isError: false }, mockFetch]);
+    useCommentsFetcher.mockReturnValueOnce({ isLoading: false, isError: false });
     render({ spaceId: 'a', entryId: 'b' });
 
     it('fetches all comments in the entry', () => {
       expect(useCommentsFetcher).toHaveBeenCalledWith('a', 'b');
-      expect(mockFetch).toHaveBeenCalled();
     });
   });
   describe('loading', () => {
-    useCommentsFetcher.mockReturnValueOnce([{ isLoading: true, isError: false }, jest.fn()]);
+    useCommentsFetcher.mockReturnValueOnce({ isLoading: true, isError: false });
     const component = render({ spaceId: 'a', entryId: 'b' });
 
     it('matches the snapshot', () => {
@@ -33,7 +31,7 @@ describe('CommentsPanel', () => {
   });
 
   describe('error', () => {
-    useCommentsFetcher.mockReturnValueOnce([{ isLoading: false, isError: true }, jest.fn()]);
+    useCommentsFetcher.mockReturnValueOnce({ isLoading: false, isError: true });
     const component = render({ spaceId: 'a', entryId: 'b' });
 
     it('matches the snapshot', () => {
@@ -49,10 +47,11 @@ describe('CommentsPanel', () => {
         createdBy: { sys: { id: 'abc' } }
       }
     };
-    useCommentsFetcher.mockReturnValueOnce([
-      { isLoading: false, isError: false, data: { items: [comment] } },
-      jest.fn()
-    ]);
+    useCommentsFetcher.mockReturnValueOnce({
+      isLoading: false,
+      isError: false,
+      data: { items: [comment] }
+    });
     const component = render({ spaceId: 'a', entryId: 'b' });
 
     it('matches the snapshot', () => {

@@ -1,20 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CommentsPanel data loaded matches the snapshot 1`] = `
-.emotion-0 {
-  overflow: auto;
-  padding: 0.75rem;
-  -webkit-box-flex: 1;
-  -webkit-flex-grow: 1;
-  -ms-flex-positive: 1;
-  flex-grow: 1;
-}
-
-.emotion-1 {
-  border-top: 1px solid #e5ebed;
-  padding: 0.75rem;
-}
-
 .emotion-2 {
   position: absolute;
   top: 0;
@@ -38,13 +24,30 @@ exports[`CommentsPanel data loaded matches the snapshot 1`] = `
   -ms-flex-direction: column;
   flex-direction: column;
   z-index: 1;
+}
+
+.emotion-3 {
   -webkit-transform: translateX(100%);
   -ms-transform: translateX(100%);
   transform: translateX(100%);
 }
 
+.emotion-0 {
+  overflow: auto;
+  padding: 0.75rem;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+}
+
+.emotion-1 {
+  border-top: 1px solid #e5ebed;
+  padding: 0.75rem;
+}
+
 <div
-  className="emotion-2"
+  className="emotion-2 emotion-3"
 >
   <div
     className="emotion-0"

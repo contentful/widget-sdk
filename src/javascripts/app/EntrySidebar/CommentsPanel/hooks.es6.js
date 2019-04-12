@@ -1,41 +1,35 @@
-import { useReducer } from 'react';
+import { useCallback } from 'react';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
-import { getAll } from 'data/CMA/CommentsRepo.es6';
+import { getAll, create } from 'data/CMA/CommentsRepo.es6';
+import useAsync from 'app/common/hooks/useAsync.es6';
 
-const FETCH_INIT = 'FETCH_INIT';
-const FETCH_SUCCESS = 'FETCH_SUCCESS';
-const FETCH_FAILURE = 'FETCH_FAILURE';
-
-const dataFetchReducer = (_, action) => {
-  switch (action.type) {
-    case FETCH_INIT:
-      return { isLoading: true, isError: false };
-    case FETCH_SUCCESS:
-      return { isLoading: false, isError: false, data: action.payload };
-    case FETCH_FAILURE:
-      return { isLoading: false, isError: true, error: action.error };
-  }
-};
-
-const initialFetchState = {
-  isLoading: false,
-  isError: false
-};
-
+/**
+ * Fetches all comments for the given entry.
+ * Returns a state object
+ * @param {string} spaceId
+ * @param {string} entryId
+ */
 export const useCommentsFetcher = (spaceId, entryId) => {
-  const endpoint = createSpaceEndpoint(spaceId);
-  const [state, dispatch] = useReducer(dataFetchReducer, initialFetchState);
+  // avoiding infinite loop.
+  const fetch = useCallback(() => {
+    const endpoint = createSpaceEndpoint(spaceId);
+    return getAll(endpoint, entryId);
+  }, [spaceId, entryId]);
 
-  const fetch = async () => {
-    dispatch({ type: FETCH_INIT });
+  return useAsync(fetch);
+};
 
-    try {
-      const data = await getAll(endpoint, entryId);
-      dispatch({ type: FETCH_SUCCESS, payload: data });
-    } catch (error) {
-      dispatch({ type: FETCH_FAILURE, error });
-    }
-  };
+/**
+ * Creates a comment in the given entry.
+ * Returns a state object
+ * @param {string} spaceId
+ * @param {string} entryId
+ */
+export const useCommentCreator = (spaceId, entryId, body) => {
+  const requestFn = useCallback(() => {
+    const endpoint = createSpaceEndpoint(spaceId);
+    return create(endpoint, entryId, body);
+  }, [spaceId, entryId, body]);
 
-  return [state, fetch];
+  return useAsync(requestFn);
 };

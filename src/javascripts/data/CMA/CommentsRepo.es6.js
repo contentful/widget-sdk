@@ -1,4 +1,4 @@
-export async function create(endpoint, body, { entryId }) {
+export async function create(endpoint, entryId, body) {
   return endpoint({
     method: 'POST',
     path: ['entries', entryId, 'comments'],

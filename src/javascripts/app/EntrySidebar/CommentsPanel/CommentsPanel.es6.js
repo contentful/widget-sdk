@@ -9,7 +9,7 @@ import CreateComment from './CreateEntryComment.es6';
 import CommentThread from './CommentThread.es6';
 
 const styles = {
-  root: {
+  root: css({
     position: 'absolute',
     top: 0,
     right: 0,
@@ -25,7 +25,13 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     zIndex: 1
-  },
+  }),
+  hidden: css({
+    transform: 'translateX(100%)'
+  }),
+  visible: css({
+    transform: 'translateX(-1px)'
+  }),
   commentList: css({
     overflow: 'auto',
     padding: tokens.spacingS,
@@ -38,25 +44,20 @@ const styles = {
 };
 
 export default function CommentsPanel({ spaceId, entryId, isVisible }) {
-  const [{ isLoading, isError, data }, fetch] = useCommentsFetcher(spaceId, entryId);
+  const { isLoading, isError, data } = useCommentsFetcher(spaceId, entryId);
 
   if (isLoading) {
     return 'Loading comments';
   } else if (isError) {
     return 'An error happened';
   } else if (!data) {
-    fetch();
     return null;
   }
 
   const { items } = data;
 
   return (
-    <div
-      className={css({
-        ...styles.root,
-        transform: isVisible ? 'translateX(-1px)' : 'translateX(100%)'
-      })}>
+    <div className={`${styles.root} ${isVisible ? styles.visible : styles.hidden}`}>
       <div className={styles.commentList}>
         {items.map(comment => (
           <CommentThread key={comment.sys.id} comment={comment} />
