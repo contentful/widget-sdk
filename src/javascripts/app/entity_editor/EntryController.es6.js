@@ -164,5 +164,5 @@ export default async function create($scope, editorData, preferences, trackLoadE
 
   getVariation('feature-04-2019-entry-comments', {
     organizationId: get(spaceContext, 'organization.sys.id')
-  }).then(variation => ($scope.showDisplayCommentsToggle = variation));
+  }).then(variation => ($scope.shouldDisplayCommentsToggle = variation));
 }

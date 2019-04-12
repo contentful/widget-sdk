@@ -6,6 +6,7 @@ mixin editor-info-toggle
 
 mixin entry-comments-toggle
   button.btn-secondary-action(type="button"
+    ng-if="shouldDisplayCommentsToggle"
     ng-click="preferences.toggleCommentsPanel()"
     ng-class="{active: preferences.showCommentsPanel}")
     | Comments
