@@ -133,6 +133,7 @@ export default class AppsListPage extends Component {
           className={styles.enableBtn}
           disabled={optedIn}
           onClick={this.optIn}
+          testId="enable-apps"
           icon={optedIn ? 'CheckCircle' : undefined}>
           {optedIn ? 'Apps enabled' : 'Enable alpha feature'}
         </Button>

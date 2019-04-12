@@ -32,7 +32,7 @@ export default class AppsList extends Component {
   render() {
     return (
       <div className={styles.list}>
-        {this.props.overlayed && <div className={styles.overlay} />}
+        {this.props.overlayed && <div className={styles.overlay} data-test-id="disabled-apps" />}
         <Heading>{this.props.title}</Heading>
         {this.props.children}
       </div>

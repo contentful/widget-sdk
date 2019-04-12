@@ -46,7 +46,7 @@ export default class AppListItem extends Component {
     const { id, title, installed } = this.props.app;
     return (
       <React.Fragment>
-        <div className={styles.title}>
+        <div className={styles.title} data-test-id="app-title">
           <StateLink to="^.detail" params={{ appId: id }}>
             <Heading element="h3" className={styles.titleText}>
               {title}
@@ -66,7 +66,7 @@ export default class AppListItem extends Component {
           {!installed && (
             <StateLink to="^.detail" params={{ appId: id }}>
               {({ onClick }) => (
-                <Button onClick={onClick} buttonType="muted">
+                <Button onClick={onClick} buttonType="muted" testId="install-app">
                   Install
                 </Button>
               )}

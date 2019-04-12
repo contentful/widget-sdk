@@ -71,7 +71,9 @@ class Workbench extends React.Component {
                   <Icon name={icon} />
                 </div>
               )}
-              <h1 className="workbench-header__title">{title}</h1>
+              <h1 className="workbench-header__title" data-test-id="workbench-title">
+                {title}
+              </h1>
             </header>
           </div>
         )}
@@ -106,7 +108,11 @@ Workbench.Icon.propTypes = {
   icon: PropTypes.string
 };
 
-Workbench.Title = ({ children }) => <h1 className="workbench-header__title">{children}</h1>;
+Workbench.Title = ({ children }) => (
+  <h1 className="workbench-header__title" data-test-id="workbench-title">
+    {children}
+  </h1>
+);
 Workbench.Title.displayName = 'Workbench.Title';
 Workbench.Title.propTypes = {
   children: PropTypes.node

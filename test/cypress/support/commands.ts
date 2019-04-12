@@ -5,6 +5,11 @@ declare global {
       setAuthTokenToLocalStorage: typeof setAuthTokenToLocalStorage;
     }
   }
+  interface Window {
+    fetch: any;
+    eval: any;
+    unfetch: any;
+  }
 }
 /**
  * Custom cypress command for login
@@ -18,3 +23,18 @@ export function setAuthTokenToLocalStorage() {
 }
 
 Cypress.Commands.add('setAuthTokenToLocalStorage', setAuthTokenToLocalStorage);
+
+Cypress.Commands.overwrite('visit', (visit, url) => {
+  cy.request('https://unpkg.com/unfetch/dist/unfetch.umd.js').then(response => {
+    const polyfill = response.body;
+    return visit(url, {
+      onBeforeLoad(win: Window) {
+        delete win.fetch;
+        // since the application code does not ship with a polyfill
+        // load a polyfilled "fetch" from the test
+        win.eval(polyfill);
+        win.fetch = win.unfetch;
+      }
+    });
+  });
+});
