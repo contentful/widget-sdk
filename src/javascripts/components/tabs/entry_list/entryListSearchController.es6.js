@@ -118,14 +118,37 @@ export default function register() {
         return updateEntries();
       }
 
-      function requestEntries() {
+      /**
+       *
+       * @param {int|null} chunkSize Break request down into multiple chunks (used when response is too big for backend)
+       * @return {Promise<[]>}
+       */
+      function requestEntries(chunkSize = null) {
         initialized = true;
         $scope.context.loading = true;
         $scope.context.isSearching = true;
 
+        let query;
         return prepareQuery()
           .then(
-            query => spaceContext.space.getEntries(query),
+            _query => {
+              query = _query;
+              let result;
+              if (chunkSize === null || query.limit === undefined) {
+                return spaceContext.space.getEntries(query);
+              } else {
+                const skipsForChunks = _.range(query.skip, query.skip + query.limit, chunkSize);
+                return Promise.all(
+                  skipsForChunks.map(skip =>
+                    spaceContext.space.getEntries({ ...query, skip, limit: chunkSize })
+                  )
+                ).then(results => {
+                  result = [].concat(...results);
+                  result.total = results[0].total;
+                  return result;
+                });
+              }
+            },
             err => {
               handleEntriesError(err);
               return $q.reject(err);
@@ -138,6 +161,18 @@ export default function register() {
               return result;
             },
             err => {
+              // check if we can and should try request again in multiple chunks
+              if (
+                err.status === 400 &&
+                _.get(err, 'body.message', '').startsWith('Response size too big') &&
+                _.get(query, 'limit') !== undefined &&
+                // reaching chunk size 1 is where recursion ends for sure in very few steps,
+                // as chunk size is halved with every level of recursion
+                (chunkSize === null || chunkSize > 1)
+              ) {
+                const oldChunkSize = chunkSize === null ? query.limit : chunkSize;
+                return requestEntries(Math.floor(oldChunkSize / 2));
+              }
               handleEntriesError(err);
               return $q.reject(err);
             }
