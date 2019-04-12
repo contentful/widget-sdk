@@ -240,17 +240,17 @@ jobs:
             --junit-xml=test-results/pytest/junit.xml \
             --html=test-results/pytest/index.html \
             -m 'not dependent' --pricing=v2 --pricing=v1 ${TESTFILES}
+      - run:
+          name: Trigger sniffer build
+          when: always
+          command: |
+            if [[ "$CIRCLE_NODE_INDEX" == "0" ]]; then
+              $COMPONENTS_ROOT/user_interface/bin/trigger-jenkins-sniffer
+            fi
       - store_artifacts:
           path: ~/components/lab/artifacts
       - store_test_results:
           path: ~/components/lab/artifacts/test-results
-
-  trigger-sniffer:
-    docker:
-      - image: circleci/node:10.15.3
-    steps:
-      - checkout
-      - run: bin/trigger-jenkins-sniffer
 
 workflows:
   build:
@@ -262,9 +262,6 @@ workflows:
       - run-e2e-tests:
           requires:
             - build-and-push-image
-      - trigger-sniffer:
-          requires:
-            - run-e2e-tests
       - deploy-micro-backends
       - cypress/run:
           name: cypress-run
