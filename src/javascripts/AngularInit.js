@@ -203,7 +203,6 @@ angular
       ngRequire('services/hints.es6').default();
       ngRequire('states/cfSrefDirective.es6').default();
       ngRequire('states/config.es6').default();
-      ngRequire('ui/Framework/AngularComponent.es6').default();
       ngRequire('ui/Framework/CfComponentBridgeDirective.es6').default();
       ngRequire('ui/Framework/ReactDirective.es6').default();
       ngRequire('ui/cf/cfThumbnailDirective.es6').default();

@@ -3,14 +3,8 @@ import { mount } from 'enzyme';
 
 import { HyperlinkDialogForm } from 'app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6';
 
-jest.mock('NgRegistry.es6', () => ({
-  getModule: jest.fn().mockImplementation(name => {
-    if (name === 'AngularComponent') {
-      return () => <div />;
-    }
-    return null;
-  })
-}));
+jest.mock('ui/Framework/AngularComponent.es6', () => () => null);
+jest.mock('NgRegistry.es6', () => ({ getModule: jest.fn().mockImplementation(() => null) }));
 
 jest.mock('search/EntitySelector/Config.es6', () => ({
   getLabels: () => ({
