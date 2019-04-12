@@ -37,7 +37,7 @@ function createMockEndpoint() {
  * to allow development of the widget w/o existing endpoint in the api.
  */
 export function createSpaceEndpoint(spaceId, envId) {
-  const useMockEndpoint = false;
+  const useMockEndpoint = true;
 
   if (useMockEndpoint) {
     return createMockEndpoint();

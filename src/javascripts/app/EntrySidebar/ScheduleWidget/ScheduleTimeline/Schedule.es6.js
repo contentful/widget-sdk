@@ -20,10 +20,7 @@ const Schedule = ({ scheduledAt, actionType, status }) => (
   <li className={styles.schedule}>
     <span>Scheduled to</span>
     <span className={styles.info}>
-      <Tag
-        className={cn(styles.actionType)}
-        tagType={tagTypeForStatus[status]}
-        testId="scheduled-item">
+      <Tag className={cn(styles.actionType)} tagType={tagTypeForStatus[status]}>
         {actionType}
       </Tag>
       {FormattedTime(scheduledAt)}

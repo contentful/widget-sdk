@@ -50,7 +50,6 @@ class ScheduleDialog extends React.Component {
         shouldCloseOnEscapePress
         shouldCloseOnOverlayClick
         isShown
-        testId="schedule-publication-modal"
         onClose={() => onCancel(false)}>
         {({ title, onClose }) => (
           <React.Fragment>

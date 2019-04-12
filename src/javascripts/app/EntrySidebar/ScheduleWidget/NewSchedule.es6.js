@@ -18,7 +18,6 @@ export default class NewSchedule extends React.Component {
           icon="Clock"
           buttonType="muted"
           isFullWidth
-          testId="schedule-publication"
           onClick={() => {
             this.setState({
               isDialogShown: true
