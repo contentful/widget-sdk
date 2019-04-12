@@ -20,8 +20,7 @@ describe('EntrySidebar/TranslationWidget', () => {
       errors: {},
       focusedLocale: locales[0],
       isLocaleActive: () => {},
-      isSingleLocaleModeOn: false,
-      isSingleLocaleModeSupported: false
+      isSingleLocaleModeOn: false
     },
     emitter: {
       emit: jest.fn()
@@ -29,101 +28,69 @@ describe('EntrySidebar/TranslationWidget', () => {
   };
   const render = () => Enzyme.shallow(<TranslationWidget {...props} />);
 
-  describe('when single locale mode is not supported', () => {
+  describe('when single locale mode is on', () => {
     beforeEach(() => {
-      props.localeData.isSingleLocaleModeSupported = false;
+      props.localeData.isSingleLocaleModeOn = true;
     });
 
-    describe('when single locale mode is on', () => {
-      beforeEach(() => {
-        props.localeData.isSingleLocaleModeOn = true;
-      });
-
-      it('should match snapshot', () => {
-        expect(render()).toMatchSnapshot();
-      });
+    it('should match snapshot', () => {
+      expect(render()).toMatchSnapshot();
     });
 
-    describe('when single locale mode is off', () => {
+    describe('and the locale mode is change', () => {
       beforeEach(() => {
-        props.localeData.isSingleLocaleModeOn = false;
+        const headerNode = Enzyme.shallow(
+          render()
+            .find(EntrySidebarWidget)
+            .prop('headerNode')
+        );
+        headerNode.find('select').prop('onChange')({ target: { value: 'multiple' } });
       });
 
-      it('should match snapshot', () => {
-        expect(render()).toMatchSnapshot();
+      it('emits the SET_SINGLE_LOCALE_MODE event with the new value', () => {
+        expect(props.emitter.emit).toHaveBeenCalledWith(
+          SidebarEventTypes.SET_SINGLE_LOCALE_MODE,
+          false
+        );
+      });
+
+      it('tracks the change event', () => {
+        expect(track).toHaveBeenCalledWith('translation_sidebar:toggle_widget_mode', {
+          currentMode: 'multiple'
+        });
       });
     });
   });
 
-  describe('when single locale mode is supported', () => {
+  describe('when single locale mode is off', () => {
     beforeEach(() => {
-      props.localeData.isSingleLocaleModeSupported = true;
+      props.localeData.isSingleLocaleModeOn = false;
     });
 
-    describe('when single locale mode is on', () => {
-      beforeEach(() => {
-        props.localeData.isSingleLocaleModeOn = true;
-      });
-
-      it('should match snapshot', () => {
-        expect(render()).toMatchSnapshot();
-      });
-
-      describe('and the locale mode is change', () => {
-        beforeEach(() => {
-          const headerNode = Enzyme.shallow(
-            render()
-              .find(EntrySidebarWidget)
-              .prop('headerNode')
-          );
-          headerNode.find('select').prop('onChange')({ target: { value: 'multiple' } });
-        });
-
-        it('emits the SET_SINGLE_LOCALE_MODE event with the new value', () => {
-          expect(props.emitter.emit).toHaveBeenCalledWith(
-            SidebarEventTypes.SET_SINGLE_LOCALE_MODE,
-            false
-          );
-        });
-
-        it('tracks the change event', () => {
-          expect(track).toHaveBeenCalledWith('translation_sidebar:toggle_widget_mode', {
-            currentMode: 'multiple'
-          });
-        });
-      });
+    it('should match snapshot', () => {
+      expect(render()).toMatchSnapshot();
     });
 
-    describe('when single locale mode is off', () => {
+    describe('and the locale mode is changed', () => {
       beforeEach(() => {
-        props.localeData.isSingleLocaleModeOn = false;
+        const headerNode = Enzyme.shallow(
+          render()
+            .find(EntrySidebarWidget)
+            .prop('headerNode')
+        );
+        headerNode.find('select').prop('onChange')({ target: { value: 'single' } });
       });
 
-      it('should match snapshot', () => {
-        expect(render()).toMatchSnapshot();
+      it('emits the SET_SINGLE_LOCALE_MODE event with the new value', () => {
+        expect(props.emitter.emit).toHaveBeenCalledWith(
+          SidebarEventTypes.SET_SINGLE_LOCALE_MODE,
+          true
+        );
       });
 
-      describe('and the locale mode is changed', () => {
-        beforeEach(() => {
-          const headerNode = Enzyme.shallow(
-            render()
-              .find(EntrySidebarWidget)
-              .prop('headerNode')
-          );
-          headerNode.find('select').prop('onChange')({ target: { value: 'single' } });
-        });
-
-        it('emits the SET_SINGLE_LOCALE_MODE event with the new value', () => {
-          expect(props.emitter.emit).toHaveBeenCalledWith(
-            SidebarEventTypes.SET_SINGLE_LOCALE_MODE,
-            true
-          );
-        });
-
-        it('tracks the change event', () => {
-          expect(track).toHaveBeenCalledWith('translation_sidebar:toggle_widget_mode', {
-            currentMode: 'single'
-          });
+      it('tracks the change event', () => {
+        expect(track).toHaveBeenCalledWith('translation_sidebar:toggle_widget_mode', {
+          currentMode: 'single'
         });
       });
     });

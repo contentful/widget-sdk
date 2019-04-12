@@ -35,7 +35,6 @@ const selectStyles = css({
 export default class TranslationSidebarWidget extends Component {
   static propTypes = {
     localeData: PropTypes.shape({
-      isSingleLocaleModeSupported: PropTypes.bool.isRequired,
       isSingleLocaleModeOn: PropTypes.bool.isRequired
     }).isRequired,
     emitter: PropTypes.shape({
@@ -63,17 +62,16 @@ export default class TranslationSidebarWidget extends Component {
   );
 
   render() {
-    const { isSingleLocaleModeSupported, isSingleLocaleModeOn } = this.props.localeData;
-    const CurrentTranslationWidget =
-      isSingleLocaleModeSupported && isSingleLocaleModeOn
-        ? TranslationWidgetDropdown
-        : TranslationWidgetPills;
+    const { isSingleLocaleModeOn } = this.props.localeData;
+    const CurrentTranslationWidget = isSingleLocaleModeOn
+      ? TranslationWidgetDropdown
+      : TranslationWidgetPills;
 
     return (
       <EntrySidebarWidget
         testId="sidebar-translation-widget"
         title="Translation"
-        headerNode={isSingleLocaleModeSupported ? this.headerNode() : undefined}>
+        headerNode={this.headerNode()}>
         <CurrentTranslationWidget {...this.props} />
       </EntrySidebarWidget>
     );

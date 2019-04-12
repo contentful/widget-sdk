@@ -2,14 +2,10 @@ import * as K from 'utils/kefir.es6';
 import { groupBy, isEmpty, keys } from 'lodash';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import DocumentStatusCode from 'data/document/statusCode.es6';
-import { onFeatureFlag } from 'utils/LaunchDarkly/index.es6';
 import TheLocaleStore from 'services/localeStore.es6';
-
-const FEATURE_FLAG_TRANSLATION_WIDGET_DROPDOWN = 'feature-at-03-2019-translation-widget-dropdown';
 
 export default ($scope, { entityLabel, shouldHideLocaleErrors, emitter }) => {
   setLocaleData($scope);
-  handleSingleModeSupportFeatureFlag($scope);
   handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitter);
   handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors);
 };
@@ -22,7 +18,6 @@ export function setLocaleData($scope, { isBulkEditor = false } = {}) {
     privateLocales: TheLocaleStore.getPrivateLocales(),
     focusedLocale: TheLocaleStore.getFocusedLocale(),
     isSingleLocaleModeOn: isBulkEditor ? false : TheLocaleStore.isSingleLocaleModeOn(),
-    isSingleLocaleModeSupported: false,
     activeLocales: TheLocaleStore.getActiveLocales(),
     isLocaleActive: TheLocaleStore.isLocaleActive,
     errors: {}
@@ -39,12 +34,6 @@ function maybeResetFocusedLocale() {
     // the default locale, which is always a safe choice.
     TheLocaleStore.setFocusedLocale(TheLocaleStore.getDefaultLocale());
   }
-}
-
-function handleSingleModeSupportFeatureFlag($scope) {
-  onFeatureFlag($scope, FEATURE_FLAG_TRANSLATION_WIDGET_DROPDOWN, isEnabled => {
-    $scope.localeData.isSingleLocaleModeSupported = isEnabled;
-  });
 }
 
 function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitter) {
