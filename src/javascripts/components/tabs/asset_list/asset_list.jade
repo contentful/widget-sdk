@@ -131,14 +131,14 @@ header.workbench-header
                 ui-sref="{{linkToAsset}}")
                 react-component(
                   ng-if="asset.getUpdatedAt()"
-                  name="components/shared/RelativeDateTime/index.es6" 
+                  name="components/shared/RelativeDateTime/index.es6"
                   props="{value: asset.getUpdatedAt()}"
                 )
               +td.x--small-cell(aria-label="cell-author"
                 ui-sref="{{linkToAsset}}")
                 span
                   react-component(name="components/shared/UserNameFormatter/FetchAndFormatUserName.es6" props="{userId: asset.getUpdatedBy().sys.id}")
-                  
+
               +td.x--small-cell(
                 aria-label="cell-status"
                 ui-sref="{{linkToAsset}}")

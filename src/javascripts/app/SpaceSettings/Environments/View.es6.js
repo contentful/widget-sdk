@@ -13,7 +13,8 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Tag
+  Tag,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import { byName as Colors } from 'Styles/Colors.es6';
 
@@ -186,13 +187,13 @@ QuestionMarkWithTooltip.propTypes = {
 
 function DeleteButton({ environment }) {
   return (
-    <button
-      className="text-link--destructive"
-      data-test-id="openDeleteDialog"
+    <TextLink
+      linkType="negative"
+      testId="openDeleteDialog"
       disabled={environment.isMaster}
       onClick={environment.Delete}>
       Delete
-    </button>
+    </TextLink>
   );
 }
 DeleteButton.propTypes = {

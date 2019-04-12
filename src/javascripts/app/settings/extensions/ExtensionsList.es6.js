@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import {
   Button,
   Dropdown,
   DropdownList,
   Notification,
   SkeletonContainer,
-  SkeletonBodyText
+  SkeletonBodyText,
+  TextLink,
+  Typography,
+  Paragraph
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink.es6';
 import Workbench from 'app/common/Workbench.es6';
 import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar.es6';
@@ -20,6 +25,18 @@ import { openGitHubInstaller } from './ExtensionsActions.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
+
+const styles = {
+  deleteDropdown: css({
+    padding: tokens.spacingXl,
+    width: 350,
+    textAlign: 'center'
+  }),
+  deleteDropdownButton: css({
+    margin: tokens.spacingM,
+    marginBottom: 0
+  })
+};
 
 function deleteExtension(id, refresh) {
   return spaceContext.cma
@@ -37,65 +54,57 @@ function deleteExtension(id, refresh) {
     );
 }
 
-class DeleteButton extends React.Component {
-  static propTypes = {
-    extension: PropTypes.object.isRequired,
-    onClick: PropTypes.func.isRequired
-  };
-
-  state = {
-    isOpen: false
-  };
-
-  render() {
-    const { extension, onClick } = this.props;
-    return (
-      <div>
-        <Dropdown
-          isOpen={this.state.isOpen}
-          onClose={() => this.setState({ isOpen: false })}
-          position="bottom-right"
-          toggleElement={
-            <button
-              onClick={() =>
-                this.setState(state => ({
-                  isOpen: !state.isOpen
-                }))
-              }
-              className="text-link--destructive"
-              data-test-id={`extensions.delete.${extension.id}`}>
-              Delete
-            </button>
-          }>
-          <DropdownList style={{ padding: 20, width: 350, textAlign: 'center' }}>
-            <p>
-              You are about to remove the extension <strong>{extension.name}</strong>. If the
-              extension is in use in any content type you will have to pick a different appearance
-              for the field using it.
-            </p>
-            <Button
-              testId={`extensions.deleteConfirm.${extension.id}`}
-              buttonType="negative"
-              onClick={() => {
-                onClick();
-                this.setState({ isOpen: false });
-              }}>
-              Delete
-            </Button>
-            <Button
-              style={{ marginLeft: 20 }}
-              buttonType="muted"
-              onClick={() => {
-                this.setState({ isOpen: false });
-              }}>
-              Cancel
-            </Button>
-          </DropdownList>
-        </Dropdown>
-      </div>
-    );
-  }
+function DeleteButton(props) {
+  const [isOpen, setOpen] = useState(false);
+  const { extension, onClick } = props;
+  return (
+    <Dropdown
+      isOpen={isOpen}
+      onClose={() => setOpen(false)}
+      position="bottom-right"
+      toggleElement={
+        <TextLink
+          onClick={() => setOpen(!isOpen)}
+          linkType="negative"
+          testId={`extensions.delete.${extension.id}`}>
+          Delete
+        </TextLink>
+      }>
+      <DropdownList className={styles.deleteDropdown}>
+        <Typography>
+          <Paragraph>
+            You are about to remove the extension <strong>{extension.name}</strong>. If the
+            extension is in use in any content type you will have to pick a different appearance for
+            the field using it.
+          </Paragraph>
+        </Typography>
+        <Button
+          testId={`extensions.deleteConfirm.${extension.id}`}
+          buttonType="negative"
+          className={styles.deleteDropdownButton}
+          onClick={() => {
+            onClick();
+            setOpen(false);
+          }}>
+          Delete
+        </Button>
+        <Button
+          className={styles.deleteDropdownButton}
+          buttonType="muted"
+          onClick={() => {
+            setOpen(false);
+          }}>
+          Cancel
+        </Button>
+      </DropdownList>
+    </Dropdown>
+  );
 }
+
+DeleteButton.propTypes = {
+  extension: PropTypes.object.isRequired,
+  onClick: PropTypes.func.isRequired
+};
 
 const EmptyState = () => (
   <div className="empty-state" data-test-id="extensions.empty">
@@ -209,13 +218,21 @@ export class ExtensionsList extends React.Component {
           {`${extension.parameterCounts.installationValues || 0} value(s)`}
         </td>
         <td className="x--small-cell">
-          <StateLink to="^.detail" params={{ extensionId: extension.id }}>
-            <span style={{ textDecoration: 'underline' }}>Edit</span>
-          </StateLink>
-          <DeleteButton
-            extension={extension}
-            onClick={() => deleteExtension(extension.id, refresh)}
-          />
+          <div>
+            <StateLink to="^.detail" params={{ extensionId: extension.id }}>
+              {({ getHref }) => (
+                <TextLink href={getHref()} linkType="primary">
+                  Edit
+                </TextLink>
+              )}
+            </StateLink>
+          </div>
+          <div>
+            <DeleteButton
+              extension={extension}
+              onClick={() => deleteExtension(extension.id, refresh)}
+            />
+          </div>
         </td>
       </tr>
     ));

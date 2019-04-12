@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { assign } from 'lodash';
-import { byName as Colors } from 'Styles/Colors.es6';
 import { createSlot, Success, Failure } from 'utils/Concurrent.es6';
 import { truncate } from 'utils/StringUtils.es6';
 import { makeCtor, match } from 'utils/TaggedValues.es6';
@@ -10,8 +9,19 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  TableBody
+  TableBody,
+  Notification,
+  Dropdown,
+  DropdownList,
+  Button,
+  Paragraph,
+  Typography,
+  Subheading,
+  Note,
+  TextLink
 } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import { createStore, bindActions, makeReducer } from 'ui/Framework/Store.es6';
 import escape from 'utils/escape.es6';
 import { DocsLink, LinkOpen } from 'ui/Content.es6';
@@ -19,7 +29,6 @@ import { DocsLink, LinkOpen } from 'ui/Content.es6';
 import * as Config from 'Config.es6';
 import * as ResourceManager from './Resource.es6';
 import openCreateDialog from './CreateDialog.es6';
-import { Notification } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics.es6';
 
 import Paginator from 'ui/Components/Paginator.es6';
@@ -33,6 +42,39 @@ const Revoke = makeCtor('Revoke');
 const Reload = makeCtor('Reload');
 const OpenCreateDialog = makeCtor('OpenCreateDialog');
 const ReceiveResponse = makeCtor('ReceiveResponse');
+
+const styles = {
+  page: css({
+    padding: tokens.spacingXl
+  }),
+  pageSection: css({
+    marginBottom: tokens.spacing2Xl
+  }),
+  tableWrapper: css({
+    position: 'relative',
+    minHeight: '6em',
+    marginTop: tokens.spacingL,
+    marginBottom: tokens.spacingL
+  }),
+  nameCell: css({
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis'
+  }),
+  actionCell: css({
+    width: '7em',
+    textAlign: 'right'
+  }),
+  revokeDropdown: css({
+    padding: tokens.spacingXl,
+    width: 350,
+    textAlign: 'center'
+  }),
+  revokeButton: css({
+    margin: tokens.spacingM,
+    marginBottom: 0
+  })
+};
 
 export function initController($scope, auth) {
   // TODO This hack is unfortunate. But until we come up with a better
@@ -136,9 +178,8 @@ export function initController($scope, auth) {
 
 function PageComponent({ state, actions }) {
   return (
-    <div style={{ padding: '2em 3em' }}>
+    <div className={styles.page}>
       <OauthSection />
-      <div className="f36-margin-top--2xl" />
       <PATSection state={state} actions={actions} />
     </div>
   );
@@ -151,32 +192,20 @@ PageComponent.propTypes = {
 
 function PATSection({ state, actions }) {
   return (
-    <div>
-      <h1 className="section-title">Personal Access Tokens</h1>
-      <div style={{ display: 'flex' }}>
-        <p
-          style={{
-            lineHeight: '1.5',
-            color: Colors.textMid
-          }}>
+    <div className={styles.pageSection}>
+      <Typography>
+        <Subheading element="h2">Personal Access Tokens</Subheading>
+        <Paragraph>
           As an alternative to OAuth applications, you can also leverage Personal Access Tokens to
           use the Content Management API. These tokens are always bound to your individual account,
           with the same permissions you have on all of your spaces and organizations.
-        </p>
-        <div
-          style={{
-            marginLeft: '1em',
-            flex: '0 0 auto'
-          }}>
-          <button
-            className="btn-action"
-            data-test-id="pat.create.open"
-            onClick={() => actions.OpenCreateDialog()}>
-            Generate personal token
-          </button>
-        </div>
+        </Paragraph>
+      </Typography>
+      <div>
+        <Button testId="pat.create.open" onClick={() => actions.OpenCreateDialog()}>
+          Generate personal token
+        </Button>
       </div>
-      <div className="f36-margin-top--xl" />
       <TokenList state={state} actions={actions} />
     </div>
   );
@@ -189,17 +218,19 @@ PATSection.propTypes = {
 
 function OauthSection() {
   return (
-    <div>
-      <h1 className="section-title">OAuth tokens</h1>
-      <p>
-        OAuth tokens are issued by OAuth applications and represent the user who granted access
-        through this application. These tokens have the same rights as the owner of the account. You
-        can{' '}
-        <DocsLink
-          text="learn more about OAuth applications in our documentation"
-          target="createOAuthApp"
-        />
-      </p>
+    <div className={styles.pageSection}>
+      <Typography>
+        <Subheading element="h2">OAuth tokens</Subheading>
+        <Paragraph>
+          OAuth tokens are issued by OAuth applications and represent the user who granted access
+          through this application. These tokens have the same rights as the owner of the account.
+          You can{' '}
+          <DocsLink
+            text="learn more about OAuth applications in our documentation"
+            target="createOAuthApp"
+          />
+        </Paragraph>
+      </Typography>
     </div>
   );
 }
@@ -215,18 +246,18 @@ function TokenList({ state, actions }) {
 
   if (loadingTokensError) {
     return (
-      <div className="note-box--warning">
+      <Note noteType="warning">
         The list of tokens failed to load, try refreshing the page. If the problem persists{' '}
         <LinkOpen key="contact-support-link" url={Config.supportUrl}>
           contact support
         </LinkOpen>
-      </div>
+      </Note>
     );
   }
 
   return (
     <div data-test-id="pat.list">
-      <div style={{ position: 'relative', minHeight: '6em' }}>
+      <div className={styles.tableWrapper}>
         {loadingTokens && (
           <div className="loading-box--stretched animate">
             <div className="loading-box__spinner" />
@@ -235,7 +266,6 @@ function TokenList({ state, actions }) {
         )}
         <TokenTable tokens={tokens} revoke={actions.Revoke} />
       </div>
-      <div className="f36-margin-top--xl" />
       <Paginator select={actions.SelectPage} page={currentPage} pageCount={totalPages} />
     </div>
   );
@@ -262,19 +292,8 @@ function TokenTable({ tokens, revoke }) {
       <TableBody>
         {tokens.map(token => (
           <TableRow key={token.id} testId={`pat.tokenRow.${token.id}`}>
-            <TableCell
-              style={{
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis'
-              }}>
-              {token.name}
-            </TableCell>
-            <TableCell
-              style={{
-                width: '7em',
-                textAlign: 'right'
-              }}>
+            <TableCell className={styles.nameCell}>{token.name}</TableCell>
+            <TableCell className={styles.actionCell}>
               <RevokeButton revoke={revoke} token={token} />
             </TableCell>
           </TableRow>
@@ -290,31 +309,43 @@ TokenTable.propTypes = {
 };
 
 function RevokeButton({ revoke, token }) {
+  const [isOpen, setOpen] = useState(false);
+
   return (
-    <div style={{ textAlign: 'right' }}>
-      <button
-        className="text-link--destructive"
-        cf-context-menu-trigger="true"
-        data-test-id={`pat.revoke.${token.id}.request`}>
-        Revoke
-      </button>
-      <div
-        className="delete-confirm context-menu x--arrow-right"
-        style={{ display: 'none' }}
-        cf-context-menu="bottom-right">
-        <p>
+    <Dropdown
+      isOpen={isOpen}
+      onClose={() => setOpen(false)}
+      position="bottom-right"
+      toggleElement={
+        <TextLink linkType="negative" onClick={() => setOpen(!isOpen)} testId="pat.revoke.request">
+          Revoke
+        </TextLink>
+      }>
+      <DropdownList className={styles.revokeDropdown}>
+        <Paragraph>
           This token won’t be available anymore, any application using it might break. Do you
           confirm?
-        </p>
-        <button
-          data-test-id={`pat.revoke.${token.id}.confirm`}
-          onClick={() => revoke(token)}
-          className="btn-caution">
+        </Paragraph>
+        <Button
+          testId="pat.revoke.confirm"
+          onClick={() => {
+            revoke(token);
+            setOpen(false);
+          }}
+          className={styles.revokeButton}
+          buttonType="negative">
           Revoke
-        </button>
-        <button className="btn-secondary-action">Cancel</button>
-      </div>
-    </div>
+        </Button>
+        <Button
+          className={styles.revokeButton}
+          buttonType="muted"
+          onClick={() => {
+            setOpen(false);
+          }}>
+          Cancel
+        </Button>
+      </DropdownList>
+    </Dropdown>
   );
 }
 

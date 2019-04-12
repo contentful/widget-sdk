@@ -168,43 +168,4 @@ describe('app/api/CMATokens', () => {
 
     this.container.find('paginator.select.2').assertNonExistent();
   });
-
-  describe('revoke', () => {
-    beforeEach(function() {
-      const ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
-      ComponentLibrary.Notification.success = sinon.stub();
-      ComponentLibrary.Notification.error = sinon.stub();
-      this.Notification = ComponentLibrary.Notification;
-      this.init();
-    });
-
-    it('successfully revokes a token', function() {
-      this.listTokenHandler.returns([
-        200,
-        {
-          total: 0,
-          items: []
-        }
-      ]);
-      this.container.find('pat.tokenRow.TOKEN-ID').assertHasText('TOKEN-NAME');
-      this.container.find('pat.revoke.TOKEN-ID.request').click();
-      this.$flush();
-      this.container.find('pat.revoke.TOKEN-ID.confirm').click();
-      this.$flush();
-      sinon.assert.calledOnceWith(this.revokeToken, 'TOKEN-ID');
-      sinon.assert.calledOnceWith(this.Notification.success, sinon.match('successfully revoked'));
-      this.container.assertNotHasElement('pat.tokenRow.TOKEN-ID');
-    });
-
-    it('fails to revoke a token', function() {
-      this.revokeToken.returns([500]);
-      this.container.find('pat.tokenRow.TOKEN-ID').assertHasText('TOKEN-NAME');
-      this.container.find('pat.revoke.TOKEN-ID.request').click();
-      this.$flush();
-      this.container.find('pat.revoke.TOKEN-ID.confirm').click();
-      this.$flush();
-      sinon.assert.calledOnceWith(this.revokeToken, 'TOKEN-ID');
-      sinon.assert.calledOnceWith(this.Notification.error, sinon.match(/Revoking failed/));
-    });
-  });
 });
