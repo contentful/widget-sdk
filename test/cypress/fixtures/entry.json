@@ -1,0 +1,46 @@
+{
+  "sys": {
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "gni2ifncgx0l"
+      }
+    },
+    "id": "testEntryId",
+    "type": "Entry",
+    "createdAt": "2019-04-08T09:12:07.892Z",
+    "updatedAt": "2019-04-08T09:12:07.892Z",
+    "environment": {
+      "sys": {
+        "id": "master",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    },
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "userId"
+      }
+    },
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "userId"
+      }
+    },
+    "publishedCounter": 0,
+    "version": 1,
+    "contentType": {
+      "sys": {
+        "type": "Link",
+        "linkType": "ContentType",
+        "id": "testContentType"
+      }
+    }
+  },
+  "fields": {}
+}
