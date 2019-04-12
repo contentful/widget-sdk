@@ -18,7 +18,7 @@ export default function CreateContentTypeCta({ size = null, testId }) {
     return null;
   }
   return (
-    <StateLink to="spaces.detail.content_types.new">
+    <StateLink to="^.new">
       {({ onClick }) => (
         <Button
           icon="PlusCircle"
