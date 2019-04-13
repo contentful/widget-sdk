@@ -41,10 +41,13 @@ export default function withCfWebApp(LinkEditor) {
     state = { contentTypes: [] };
 
     componentDidMount() {
-      this.offContentTypes = spaceContext.publishedCTs.items$.onValue(allContentTypes => {
+      const fetchContentTypes = allContentTypes => {
         const contentTypes = getAccessibleCts(allContentTypes, this.props.widgetAPI.field);
         this.setState({ contentTypes });
-      });
+      };
+      const ct$ = spaceContext.publishedCTs.items$;
+      ct$.onValue(fetchContentTypes);
+      this.offContentTypes = () => ct$.offValue(fetchContentTypes);
     }
 
     componentWillUnmount() {

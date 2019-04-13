@@ -11,13 +11,11 @@ import {
   Modal,
   Form
 } from '@contentful/forma-36-react-components';
+import AngularComponent from 'ui/Framework/AngularComponent.es6';
 import FetchedEntityCard from 'app/widgets/shared/FetchedEntityCard/index.es6';
 import { values, includes } from 'lodash';
 import { calculateIdealListHeight, getLabels } from 'search/EntitySelector/Config.es6';
 import Visible from 'components/shared/Visible/index.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const AngularComponent = getModule('AngularComponent');
 
 export const LINK_TYPES = {
   URI: 'uri',
@@ -271,7 +269,9 @@ export class HyperlinkDialogForm extends React.Component {
         style={{ display: isForCurrentType && isVisible ? 'block' : 'none' }}
         data-test-id="entity-selector-container">
         <AngularComponent
-          template={`<cf-entity-selector config="config" labels="labels" list-height="listHeight" on-change="onChange" />`}
+          template={
+            '<cf-entity-selector config="config" labels="labels" list-height="listHeight" on-change="onChange" />'
+          }
           scope={{ config, labels, listHeight, onChange }}
         />
       </div>

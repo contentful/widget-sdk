@@ -5,6 +5,8 @@ const CMA_ID_REGEXP = /^[a-zA-Z0-9][a-zA-Z0-9-_]{0,63}$/;
 const BUILTIN_WIDGETS_COUNT = 25;
 
 jest.mock('app/widgets/rich_text/index.es6', () => {});
+jest.mock('app/widgets/LinkEditor/index.es6', () => ({ withCfWebApp: () => {} }));
+jest.mock('ui/Framework/AngularComponent.es6', () => () => null);
 
 describe('BuiltinWidgets', () => {
   describe('#create()', () => {

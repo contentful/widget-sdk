@@ -1,8 +1,17 @@
 /* eslint-disable react/prop-types */
 
 import { range } from 'lodash';
-import React from 'react';
+import React, { useState } from 'react';
 import { default as RichTextEditor } from 'app/widgets/rich_text/index.es6';
+import AngularComponent from 'ui/Framework/AngularComponent.es6';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
+import LinkEditor, {
+  SingleLinkEditor,
+  withCfWebApp as linkEditorWithCfWebApp
+} from 'app/widgets/LinkEditor/index.es6';
+
+const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
+const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
 
 const HELP_TEXT_PARAMETER = {
   id: 'helpText',
@@ -208,8 +217,15 @@ export function create() {
     fieldTypes: ['Entry'],
     name: 'Entry link',
     icon: 'reference',
-    template:
-      '<cf-reference-editor type="Entry" variant="link" single="true" load-events="loadEvents" />'
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <FeatureFlaggedLinkEditor
+        isSingle={true}
+        type="Entry"
+        style="link"
+        widgetApi={widgetApi}
+        loadEvents={loadEvents}
+      />
+    )
   });
 
   // NOTE: We render this as "card" ever since we got rid of the actual "link" appearance
@@ -218,8 +234,15 @@ export function create() {
     fieldTypes: ['Asset'],
     name: 'Asset card',
     icon: 'media-preview',
-    template:
-      '<cf-reference-editor type="Asset" variant="card" single="true" load-events="loadEvents" />'
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <FeatureFlaggedLinkEditor
+        isSingle={true}
+        type="Asset"
+        style="card"
+        widgetApi={widgetApi}
+        loadEvents={loadEvents}
+      />
+    )
   });
 
   const BULK_EDITOR_PARAMETER = {
@@ -234,7 +257,14 @@ export function create() {
     fieldTypes: ['Entries'],
     name: 'Entry links list',
     icon: 'references',
-    template: '<cf-reference-editor type="Entry" variant="link" load-events="loadEvents" />',
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <FeatureFlaggedLinkEditor
+        type="Entry"
+        style="link"
+        widgetApi={widgetApi}
+        loadEvents={loadEvents}
+      />
+    ),
     parameters: [BULK_EDITOR_PARAMETER]
   });
 
@@ -242,15 +272,29 @@ export function create() {
     fieldTypes: ['Entry'],
     name: 'Entry card',
     icon: 'reference-card',
-    template:
-      '<cf-reference-editor type="Entry" variant="card" single="true" load-events="loadEvents" />'
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <FeatureFlaggedLinkEditor
+        isSingle={true}
+        type="Entry"
+        style="card"
+        widgetApi={widgetApi}
+        loadEvents={loadEvents}
+      />
+    )
   });
 
   registerWidget('entryCardsEditor', {
     fieldTypes: ['Entries'],
     name: 'Entry cards',
     icon: 'references-card',
-    template: '<cf-reference-editor type="Entry" variant="card" load-events="loadEvents" />',
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <FeatureFlaggedLinkEditor
+        type="Entry"
+        style="card"
+        widgetApi={widgetApi}
+        loadEvents={loadEvents}
+      />
+    ),
     parameters: [BULK_EDITOR_PARAMETER]
   });
 
@@ -258,14 +302,28 @@ export function create() {
     fieldTypes: ['Assets'],
     name: 'Asset links list',
     icon: 'media-references',
-    template: '<cf-reference-editor type="Asset" variant="link" load-events="loadEvents" />'
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <FeatureFlaggedLinkEditor
+        type="Asset"
+        style="link"
+        widgetApi={widgetApi}
+        loadEvents={loadEvents}
+      />
+    )
   });
 
   registerWidget('assetGalleryEditor', {
     fieldTypes: ['Assets'],
     name: 'Asset gallery',
     icon: 'media-previews',
-    template: '<cf-reference-editor type="Asset" variant="card" load-events="loadEvents" />'
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <FeatureFlaggedLinkEditor
+        type="Asset"
+        style="card"
+        widgetApi={widgetApi}
+        loadEvents={loadEvents}
+      />
+    )
   });
 
   registerWidget('slugEditor', {
@@ -282,4 +340,21 @@ export function create() {
   });
 
   return widgets;
+}
+
+const FEATURE_NEW_LINK_EDITOR = 'refactor-pen-04-2019-forma-36-link-editor-cards';
+
+function FeatureFlaggedLinkEditor({ isSingle = false, ...props }) {
+  const LinkEditorComponent = isSingle ? CfSingleLinkEditor : CfLinkEditor;
+  const { type, style, loadEvents } = props;
+  const [useNew, setUseNew] = useState(false);
+  getCurrentVariation(FEATURE_NEW_LINK_EDITOR).then(isEnabled => setUseNew(isEnabled));
+  return useNew ? (
+    <LinkEditorComponent {...props} />
+  ) : (
+    <AngularComponent
+      template={`<cf-reference-editor type="${type}" variant="${style}" single="${isSingle}" load-events="loadEvents" />`}
+      scope={{ loadEvents, isSingle }}
+    />
+  );
 }
