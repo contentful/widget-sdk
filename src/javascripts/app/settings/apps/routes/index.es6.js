@@ -10,13 +10,21 @@ export default {
       name: 'list',
       url: '',
       component: AppsListRoute,
-      mapInjectedToProps: ['$stateParams', ({ spaceId }) => ({ spaceId })]
+      mapInjectedToProps: [
+        'spaceContext',
+        '$stateParams',
+        ({ organization }, { spaceId }) => ({ orgId: organization.sys.id, spaceId })
+      ]
     },
     {
       name: 'detail',
       url: '/:appId',
       component: AppRoute,
-      mapInjectedToProps: ['$stateParams', ({ appId, spaceId }) => ({ appId, spaceId })]
+      mapInjectedToProps: [
+        'spaceContext',
+        '$stateParams',
+        ({ organization }, { appId, spaceId }) => ({ orgId: organization.sys.id, appId, spaceId })
+      ]
     }
   ]
 };

@@ -164,6 +164,13 @@ export default class AppsListPage extends Component {
             ))}
           </AppsList>
         )}
+        {apps.unavailable.length > 0 && (
+          <AppsList title="Unavailable" overlayed={true}>
+            {apps.unavailable.map(app => (
+              <AppListItem key={app.id} app={app} />
+            ))}
+          </AppsList>
+        )}
       </React.Fragment>
     );
   }
