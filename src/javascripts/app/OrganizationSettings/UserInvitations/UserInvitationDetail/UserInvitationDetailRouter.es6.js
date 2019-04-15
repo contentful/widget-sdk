@@ -16,6 +16,7 @@ import { map, flatten } from 'lodash';
 import ResolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
 
 import UserInvitationDetail from './UserInvitationDetail.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const InvitationDetailFetcher = createFetcherComponent(async ({ orgId, invitationId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -132,7 +133,12 @@ export default class UserInvitationsListRouter extends React.Component {
               };
             }
 
-            return <UserInvitationDetail orgId={orgId} {...componentProps} />;
+            return (
+              <React.Fragment>
+                <DocumentTitle title={[componentProps.email, 'Invitations']} />
+                <UserInvitationDetail orgId={orgId} {...componentProps} />
+              </React.Fragment>
+            );
           }}
         </InvitationDetailFetcher>
       </OrgAdminOnly>
