@@ -226,8 +226,15 @@ jobs:
             TESTFILES=$(circleci tests glob "tests/**/test_*.py" | circleci tests split --split-by=timings --timings-type=filename)
             echo "export TESTFILES=\"$TESTFILES\"" >> $BASH_ENV
       - run:
+          name: Pull lab images
+          command: |
+            make pull
+            docker images --format "table {{.Repository}}\t{{.Tag}}"
+      - run:
           name: Start lab
-          command: make pull setup-db start
+          command: |
+            make setup-db start
+            docker ps --format "table {{.Names}}\t{{.Image}}"
       - run:
           name: Pipe logs to the background
           command: docker-compose logs -t -f --no-color > $COMPONENTS_ROOT/lab/artifacts/output.log
