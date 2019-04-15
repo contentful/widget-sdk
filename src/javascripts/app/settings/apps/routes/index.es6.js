@@ -1,5 +1,6 @@
 import AppsListRoute from './AppsListRoute.es6';
 import AppRoute from './AppRoute.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
 export default {
   name: 'apps',
@@ -19,11 +20,20 @@ export default {
     {
       name: 'detail',
       url: '/:appId',
+      resolve: {
+        isEnabled: [
+          'spaceContext',
+          '$stateParams',
+          ({ organization }, { appId }) => {
+            return getOrgFeature(organization.sys.id, appId, true);
+          }
+        ]
+      },
       component: AppRoute,
       mapInjectedToProps: [
-        'spaceContext',
+        'isEnabled',
         '$stateParams',
-        ({ organization }, { appId, spaceId }) => ({ orgId: organization.sys.id, appId, spaceId })
+        (isEnabled, { appId, spaceId }) => ({ isEnabled, appId, spaceId })
       ]
     }
   ]

@@ -4,14 +4,11 @@ import { getModule } from 'NgRegistry.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import AppPageShell from '../_common/AppPageShell.es6';
-import * as AppsFeatureFlag from '../AppsFeatureFlag.es6';
 import ApprovalWorkflowAppPage from './ApprovalWorkflowAppPage.es6';
 
 const spaceContext = getModule('spaceContext');
 
-const ApprovalWorkflowFetcher = createFetcherComponent(async ({ client }) => {
-  await AppsFeatureFlag.assertIsEnabled();
-
+const ApprovalWorkflowFetcher = createFetcherComponent(({ client }) => {
   return Promise.all([client.get('basicApprovalWorkflow'), spaceContext.publishedCTs.getAllBare()]);
 });
 
