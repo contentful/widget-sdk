@@ -120,5 +120,6 @@ window.libs = [
   ['emotion', require('emotion')],
   ['immer', require('immer')],
   ['fclone', require('fclone')],
-  ['getstream', require('getstream')]
+  ['getstream', require('getstream')],
+  ['react-modal', require('react-modal')]
 ];

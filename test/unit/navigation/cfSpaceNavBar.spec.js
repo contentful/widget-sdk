@@ -15,6 +15,9 @@ describe('Space nav bar directive', () => {
         'entryList',
         'cfIcon'
       );
+      $provide.value('components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6', {
+        default: () => null
+      });
     });
 
     const $compile = this.$inject('$compile');

@@ -1,3 +1,8 @@
+/* 
+   This function operates on legacy client entity objects.
+   For raw CMA entity objects we use `EntityState.es6`. 
+*/
+
 export function getProps(entity) {
   let label;
   let type;

@@ -122,7 +122,8 @@ export const validEvents = {
   algolia: ['installed', 'updated', 'uninstalled'],
   aiImageManagement: ['installed', 'uninstalled'],
   approval: ['installed', 'uninstalled'],
-  sso: ['start_setup', 'connection_test_result', 'contact_support', 'enable']
+  sso: ['start_setup', 'connection_test_result', 'contact_support', 'enable'],
+  quick_navigation: ['opened_by_shortcut']
 };
 
 export const validateEvent = eventName => {

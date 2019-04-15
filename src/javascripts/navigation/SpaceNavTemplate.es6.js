@@ -118,6 +118,8 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     dropdownItems.usage
   ];
 
+  const showQuickNavigation = true;
+
   return navBar(
     [
       !useSpaceEnv || isMaster
@@ -177,6 +179,7 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
         title: useSpaceEnv ? 'Settings' : 'Space settings',
         children: useSpaceEnv ? envSettingsDropdown : spaceSettingsDropdown
       }
-    ].filter(item => typeof item === 'object')
+    ].filter(item => typeof item === 'object'),
+    showQuickNavigation
   );
 }

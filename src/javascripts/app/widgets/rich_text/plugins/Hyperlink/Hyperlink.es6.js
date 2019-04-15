@@ -1,11 +1,12 @@
 import React from 'react';
-import { Tooltip, TextLink, Tag } from '@contentful/forma-36-react-components';
+import { Tooltip, TextLink } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import { truncate } from 'utils/StringUtils.es6';
 import { INLINES } from '@contentful/rich-text-types';
 import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity/index.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import { isIE, isEdge } from 'app/widgets/rich_text/helpers/browser.es6';
+import { EntityStatusTag } from 'components/shared/EntityStatusTag.es6';
 
 const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
 
@@ -69,17 +70,11 @@ export default class Hyperlink extends React.Component {
   }
 
   renderEntityTooltipContent = (contentTypeName, title, entityStatus) => {
-    const statusTagTypeMapping = {
-      published: 'positive',
-      draft: 'warning',
-      archived: 'negative',
-      changed: 'primary'
-    };
     return (
       <div className="rich-text__entity-tooltip-content">
         <span className="rich-text__entity-tooltip-content__content-type">{contentTypeName}</span>
         <span className="rich-text__entity-tooltip-content__title">{title}</span>
-        <Tag tagType={statusTagTypeMapping[entityStatus]}>{entityStatus.toUpperCase()}</Tag>
+        <EntityStatusTag statusLabel={entityStatus} />
       </div>
     );
   };

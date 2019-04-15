@@ -79,6 +79,8 @@ registerGenericEvent('aiImageManagement:uninstalled');
 registerGenericEvent('approval:installed');
 registerGenericEvent('approval:uninstalled');
 
+registerGenericEvent('quick_navigation:opened_by_shortcut');
+
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:unlink');
 registerBulkEditorEvent('bulk_editor:navigate');

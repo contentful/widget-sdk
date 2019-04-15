@@ -33,7 +33,7 @@ import { byName as Colors } from 'Styles/Colors.es6';
  *   ]
  * }
  */
-export default function(listItems = []) {
+export default function(listItems = [], showQuickNavigation) {
   return h('nav.nav-bar', [
     h(
       'ul.nav-bar__list',
@@ -51,7 +51,11 @@ export default function(listItems = []) {
 
         return h('li.app-top-bar__action.nav-bar__list-item', attrs, [html]);
       })
-    )
+    ),
+    showQuickNavigation &&
+      h('react-component', {
+        name: 'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6'
+      })
   ]);
 }
 
