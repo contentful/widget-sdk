@@ -1,6 +1,10 @@
 include ../pluralize_entity.mixin.jade
 include ../../shared/table_pattern.mixin.jade
 
+react-component(
+  name="components/shared/DocumentTitle.es6"
+  props="{title: 'Media'}"
+)
 header.workbench-header
   .workbench-header__left
     cf-icon.workbench-header__icon(name="page-media", scale="0.75")

@@ -48,3 +48,5 @@ export const netlifyAppConfig = {
 };
 
 export const endpoint = jest.fn();
+
+export const getEnvironmentId = jest.fn();

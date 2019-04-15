@@ -5,6 +5,7 @@ import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const WebhookFetcher = createFetcherComponent(props => {
   const { webhookRepo, webhookId } = props;
@@ -34,11 +35,14 @@ export class WebhookEditRoute extends React.Component {
             return <StateRedirect to="^.list" />;
           }
           return (
-            <WebhookEditor
-              initialWebhook={data}
-              registerSaveAction={this.props.registerSaveAction}
-              setDirty={this.props.setDirty}
-            />
+            <React.Fragment>
+              <DocumentTitle title={[data.name, 'Webhooks']} />
+              <WebhookEditor
+                initialWebhook={data}
+                registerSaveAction={this.props.registerSaveAction}
+                setDirty={this.props.setDirty}
+              />
+            </React.Fragment>
           );
         }}
       </WebhookFetcher>

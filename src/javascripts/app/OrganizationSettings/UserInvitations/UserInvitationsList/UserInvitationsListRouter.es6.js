@@ -8,6 +8,7 @@ import { getMemberships } from 'access_control/OrganizationMembershipRepository.
 
 import UserInvitationsList from './UserInvitationsList.es6';
 import { membershipExistsParam } from '../UserInvitationUtils.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const InvitationListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -44,7 +45,12 @@ export default class UserInvitationsListRouter extends React.Component {
 
             const [membershipsCount] = data;
 
-            return <UserInvitationsList orgId={orgId} membershipsCount={membershipsCount} />;
+            return (
+              <React.Fragment>
+                <DocumentTitle title="Invitations" />
+                <UserInvitationsList orgId={orgId} membershipsCount={membershipsCount} />
+              </React.Fragment>
+            );
           }}
         </InvitationListFetcher>
       </OrgAdminOnly>

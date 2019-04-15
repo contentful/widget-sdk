@@ -9,6 +9,7 @@ import ExtensionsList, { ExtensionListShell } from '../ExtensionsList.es6';
 import { toInternalFieldType } from 'widgets/FieldTypes.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 // Takes API Extension entity and prepares it for the view.
 const prepareExtension = ({ sys, extension, parameters }) => {
@@ -59,12 +60,15 @@ class ExtensionsListRoute extends React.Component {
             return <StateRedirect to="spaces.detail.entries.list" />;
           }
           return (
-            <ExtensionsList
-              extensionUrl={this.props.extensionUrl}
-              extensionUrlReferrer={this.props.extensionUrlReferrer}
-              extensions={data}
-              refresh={fetch}
-            />
+            <React.Fragment>
+              <DocumentTitle title="Extensions" />
+              <ExtensionsList
+                extensionUrl={this.props.extensionUrl}
+                extensionUrlReferrer={this.props.extensionUrlReferrer}
+                extensions={data}
+                refresh={fetch}
+              />
+            </React.Fragment>
           );
         }}
       </ExtensionsFetcher>

@@ -17,6 +17,7 @@ import {
 
 import * as Analytics from 'analytics/Analytics.es6';
 import * as Intercom from 'services/intercom.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const styles = {
   container: css({
@@ -97,6 +98,7 @@ export default class AppsListPage extends Component {
   render() {
     return (
       <AppsListShell>
+        <DocumentTitle title="Apps" />
         {this.renderDisclaimer()}
         {this.renderApps()}
       </AppsListShell>

@@ -6,6 +6,7 @@ import { update, add, keyBy, flow, filter } from 'lodash/fp';
 import Workbench from 'app/common/Workbench.es6';
 import ResourceUsageList from './ResourceUsageList.es6';
 import SpaceUsageSidebar from './SpaceUsageSidebar.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const addMasterEnvironment = flow(
   update(
@@ -53,18 +54,21 @@ class SpaceUsage extends React.Component {
   render() {
     const { resources } = this.state;
     return (
-      <Workbench>
-        <Workbench.Header>
-          <Workbench.Icon icon="page-usage" />
-          <Workbench.Title>Space usage</Workbench.Title>
-        </Workbench.Header>
-        <Workbench.Content>
-          <ResourceUsageList resources={resources} />
-        </Workbench.Content>
-        <Workbench.Sidebar>
-          <SpaceUsageSidebar resources={resources} />
-        </Workbench.Sidebar>
-      </Workbench>
+      <React.Fragment>
+        <DocumentTitle title="Usage" />
+        <Workbench>
+          <Workbench.Header>
+            <Workbench.Icon icon="page-usage" />
+            <Workbench.Title>Space usage</Workbench.Title>
+          </Workbench.Header>
+          <Workbench.Content>
+            <ResourceUsageList resources={resources} />
+          </Workbench.Content>
+          <Workbench.Sidebar>
+            <SpaceUsageSidebar resources={resources} />
+          </Workbench.Sidebar>
+        </Workbench>
+      </React.Fragment>
     );
   }
 }

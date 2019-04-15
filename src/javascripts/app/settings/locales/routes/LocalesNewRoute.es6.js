@@ -7,6 +7,7 @@ import LocaleNotifications from '../utils/LocaleNotifications.es6';
 import { getModule } from 'NgRegistry.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const spaceContext = getModule('spaceContext');
 const TheLocaleStore = getModule('TheLocaleStore');
@@ -96,25 +97,28 @@ export default class LocalesNewRoute extends React.Component {
     }
 
     return (
-      <LocalesFetcher>
-        {({ isLoading, isError, data }) => {
-          if (isLoading) {
-            return <FetcherLoading message="Loading locale..." />;
-          }
-          if (isError) {
-            return <StateRedirect to="^.list" />;
-          }
-          const spaceLocales = data;
-          return (
-            <NewLocaleForm
-              spaceLocales={spaceLocales}
-              saveLocale={this.save}
-              setDirty={this.props.setDirty}
-              registerSaveAction={this.props.registerSaveAction}
-            />
-          );
-        }}
-      </LocalesFetcher>
+      <React.Fragment>
+        <DocumentTitle title="New Locale" />
+        <LocalesFetcher>
+          {({ isLoading, isError, data }) => {
+            if (isLoading) {
+              return <FetcherLoading message="Loading locale..." />;
+            }
+            if (isError) {
+              return <StateRedirect to="^.list" />;
+            }
+            const spaceLocales = data;
+            return (
+              <NewLocaleForm
+                spaceLocales={spaceLocales}
+                saveLocale={this.save}
+                setDirty={this.props.setDirty}
+                registerSaveAction={this.props.registerSaveAction}
+              />
+            );
+          }}
+        </LocalesFetcher>
+      </React.Fragment>
     );
   }
 }

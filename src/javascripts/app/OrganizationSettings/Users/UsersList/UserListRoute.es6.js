@@ -7,6 +7,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
 import { getOrganization } from 'services/TokenStore.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const UserListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -43,12 +44,15 @@ export default class UserListRoute extends React.Component {
             const [spaces, roles, org] = data;
 
             return (
-              <UsersList
-                spaces={spaces}
-                spaceRoles={roles}
-                orgId={orgId}
-                hasSsoEnabled={org.hasSsoEnabled}
-              />
+              <React.Fragment>
+                <DocumentTitle title="Users" />
+                <UsersList
+                  spaces={spaces}
+                  spaceRoles={roles}
+                  orgId={orgId}
+                  hasSsoEnabled={org.hasSsoEnabled}
+                />
+              </React.Fragment>
             );
           }}
         </UserListFetcher>

@@ -93,6 +93,7 @@ window.libs = [
   ['react-highlight-words', require('react-highlight-words')],
   ['react-redux', require('react-redux')],
   ['react-tippy', require('react-tippy')],
+  ['react-helmet', require('react-helmet')],
   ['redux', require('redux')],
   ['redux-thunk', require('redux-thunk')],
   ['reselect', require('reselect')],

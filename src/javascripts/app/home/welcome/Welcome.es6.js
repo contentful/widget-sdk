@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Icon from 'ui/Components/Icon.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 export default class Welcome extends React.Component {
   static propTypes = {
@@ -52,6 +53,7 @@ export default class Welcome extends React.Component {
 
     return (
       <div>
+        <DocumentTitle title="Home" />
         <section className="home-section">
           <h2 className="home-section__heading" data-test-id="greeting">
             {this.greet(user)}
