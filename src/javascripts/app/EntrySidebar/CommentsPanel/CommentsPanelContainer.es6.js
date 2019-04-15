@@ -1,18 +1,7 @@
-import React, { useEffect, useReducer } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes.es6';
 import CommentsPanel from './CommentsPanel.es6';
-
-const INIT = 'INIT';
-const CHANGE_VISIBILITY = 'CHANGE_VISIBILITY';
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case INIT:
-      return { ...action.data, initialized: true };
-    case CHANGE_VISIBILITY:
-      return { ...state, isVisible: action.data.isVisible };
-  }
-};
 
 /**
  * This component is the bridge between the EntitySidebar and the CommentPanel components.
@@ -21,25 +10,32 @@ const reducer = (state, action) => {
  * This component also takes care of listening to an event to decide when
  * to show or hide the comments panel.
  */
+export default class CommentsPanelContainer extends React.Component {
+  static propTypes = {
+    emitter: PropTypes.object.isRequired
+  };
 
-export default function CommentsPanelContainer({ emitter }) {
-  const [state, dispatch] = useReducer(reducer, { initialized: false });
+  state = {
+    initialized: false
+  };
 
-  useEffect(() => {
+  componentDidMount() {
+    const { emitter } = this.props;
     emitter.on(SidebarEventTypes.INIT_COMMENTS_PANEL, ({ entryId, environmentId, spaceId }) => {
-      dispatch({ type: INIT, data: { entryId, environmentId, spaceId } });
+      this.setState({ initialized: true, entryId, environmentId, spaceId });
     });
     emitter.on(SidebarEventTypes.UPDATED_COMMENTS_PANEL, ({ isVisible }) => {
-      dispatch({ type: CHANGE_VISIBILITY, data: { isVisible } });
+      this.setState({ isVisible });
     });
+  }
 
-    return () => {
-      emitter.off(SidebarEventTypes.INIT_COMMENTS_PANEL);
-      emitter.off(SidebarEventTypes.UPDATED_COMMENTS_PANEL);
-    };
-  }, [emitter]);
+  componentWillUnmount() {
+    this.props.emitter.off(SidebarEventTypes.INIT_COMMENTS_PANEL);
+    this.props.emitter.off(SidebarEventTypes.UPDATED_COMMENTS_PANEL);
+  }
 
-  const { initialized, ...panelProps } = state;
-
-  return initialized && <CommentsPanel {...panelProps} />;
+  render() {
+    const { initialized, ...panelProps } = this.state;
+    return initialized && <CommentsPanel {...panelProps} />;
+  }
 }
