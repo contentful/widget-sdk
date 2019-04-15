@@ -11,8 +11,6 @@ describe('CommentsPanel', () => {
     return shallow(<CommentsPanel {...props} />);
   };
 
-  afterEach(() => {});
-
   describe('initializing', () => {
     useCommentsFetcher.mockReturnValueOnce({ isLoading: false, isError: false });
     render({ spaceId: 'a', entryId: 'b' });

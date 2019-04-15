@@ -30,18 +30,18 @@ const styles = {
   })
 };
 
-export default function CommentThread(props) {
+export default function CommentThread({ comment, replies = [] }) {
   return (
     <Card className={styles.root}>
-      <Comment comment={props.comment} />
+      <Comment comment={comment} />
 
-      {props.replies && props.replies.length && (
+      {replies.length ? (
         <React.Fragment>
           <TextLink icon="ChevronRightTrimmed" className={styles.showCommentsButton}>
             Show all 10 replies
           </TextLink>
         </React.Fragment>
-      )}
+      ) : null}
       <footer className={styles.footer}>
         <CreateComment parentCommentId="123" />
       </footer>
