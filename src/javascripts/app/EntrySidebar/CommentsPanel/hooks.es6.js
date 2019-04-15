@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { getAll, create } from 'data/CMA/CommentsRepo.es6';
-import useAsync from 'app/common/hooks/useAsync.es6';
+import useAsync, { useAsyncFn } from 'app/common/hooks/useAsync.es6';
 
 /**
  * Fetches all comments for the given entry.
@@ -21,15 +21,14 @@ export const useCommentsFetcher = (spaceId, entryId) => {
 
 /**
  * Creates a comment in the given entry.
- * Returns a state object
+ * Returns a state object and a requester function
  * @param {string} spaceId
  * @param {string} entryId
  */
-export const useCommentCreator = (spaceId, entryId, body) => {
-  const requestFn = useCallback(() => {
+export const useCommentCreator = (spaceId, entryId) => {
+  return useAsyncFn(async body => {
     const endpoint = createSpaceEndpoint(spaceId);
-    return create(endpoint, entryId, body);
-  }, [spaceId, entryId, body]);
-
-  return useAsync(requestFn);
+    const delay = () => new Promise(resolve => setTimeout(resolve, 1000));
+    return Promise.all([create(endpoint, entryId, body), delay()]).then(([comment]) => comment);
+  });
 };

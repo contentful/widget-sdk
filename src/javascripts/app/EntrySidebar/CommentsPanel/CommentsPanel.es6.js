@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
@@ -45,6 +45,8 @@ const styles = {
 
 export default function CommentsPanel({ spaceId, entryId, isVisible }) {
   const { isLoading, isError, data } = useCommentsFetcher(spaceId, entryId);
+  const [newComments, setNewComments] = useState([]);
+  const handleNewComment = comment => setNewComments(() => [...newComments, comment]);
 
   if (isLoading) {
     return 'Loading comments';
@@ -55,16 +57,17 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
   }
 
   const { items } = data;
+  const comments = items.concat(newComments);
 
   return (
     <div className={`${styles.root} ${isVisible ? styles.visible : styles.hidden}`}>
       <div className={styles.commentList}>
-        {items.map(comment => (
+        {comments.map(comment => (
           <CommentThread key={comment.sys.id} comment={comment} />
         ))}
       </div>
       <div className={styles.commentForm}>
-        <CreateComment />
+        <CreateComment spaceId={spaceId} entryId={entryId} onNewComment={handleNewComment} />
       </div>
     </div>
   );
