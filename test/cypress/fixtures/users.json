@@ -1,0 +1,26 @@
+{
+  "total": 1,
+  "limit": 100,
+  "skip": 0,
+  "sys": {
+    "type": "Array"
+  },
+  "items": [
+    {
+      "firstName": "Test",
+      "lastName": "User",
+      "avatarUrl": "",
+      "email": "test@user.com",
+      "activated": true,
+      "signInCount": 8,
+      "confirmed": false,
+      "sys": {
+        "type": "User",
+        "id": "userId",
+        "version": 11,
+        "createdAt": "2019-01-08T12:34:16Z",
+        "updatedAt": "2019-03-11T14:01:06Z"
+      }
+    }
+  ]
+}
