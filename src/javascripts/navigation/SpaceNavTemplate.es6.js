@@ -161,8 +161,8 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
         icon: 'nav-media',
         title: 'Media'
       },
-      (!useSpaceEnv || isMaster) && {
-        if: 'nav.appsEnabled && nav.canNavigateTo("apps")',
+      {
+        if: 'nav.canNavigateTo("apps")',
         dataViewType: 'apps',
         icon: 'nav-apps',
         label: 'alpha',
