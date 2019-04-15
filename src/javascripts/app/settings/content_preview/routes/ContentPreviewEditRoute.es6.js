@@ -7,6 +7,7 @@ import StateRedirect from 'app/common/StateRedirect.es6';
 import ContentPreviewFormPage, {
   ContentPreviewFormPageSkeleton
 } from '../ContentPreviewFormPage.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const spaceContext = getModule('spaceContext');
 const contentPreview = getModule('contentPreview');
@@ -41,13 +42,17 @@ export default class ContentPreviewEditRoute extends Component {
             if (!canCreate) {
               return <StateRedirect to="^.list" />;
             }
+            const initialValue = contentPreview.toInternal(preview, contentTypes);
             return (
-              <ContentPreviewFormPage
-                isNew={false}
-                initialValue={contentPreview.toInternal(preview, contentTypes)}
-                registerSaveAction={this.props.registerSaveAction}
-                setDirty={this.props.setDirty}
-              />
+              <React.Fragment>
+                <DocumentTitle title={[initialValue.name, 'Content Preview']} />
+                <ContentPreviewFormPage
+                  isNew={false}
+                  initialValue={initialValue}
+                  registerSaveAction={this.props.registerSaveAction}
+                  setDirty={this.props.setDirty}
+                />
+              </React.Fragment>
             );
           }}
         </ContentTypesFetcher>
