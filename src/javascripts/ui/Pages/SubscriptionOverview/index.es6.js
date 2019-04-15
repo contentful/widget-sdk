@@ -21,6 +21,7 @@ import BasePlan from './BasePlan.es6';
 import UsersForPlan from './UsersForPlan.es6';
 import SpacePlans from './SpacePlans.es6';
 import Sidebar from './Sidebar.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 class SubscriptionOverview extends React.Component {
   static propTypes = {
@@ -175,35 +176,38 @@ class SubscriptionOverview extends React.Component {
     const { orgId } = this.props;
 
     return (
-      <Workbench title="Subscription" icon="subscription" testId="subscription-page">
-        <Workbench.Content>
-          <div style={{ padding: '0px 2rem' }}>
-            <div className="header">
-              <BasePlan basePlan={basePlan} orgId={orgId} />
-              <UsersForPlan usersMeta={usersMeta} orgId={orgId} />
+      <React.Fragment>
+        <DocumentTitle title="Subscription" />
+        <Workbench title="Subscription" icon="subscription" testId="subscription-page">
+          <Workbench.Content>
+            <div style={{ padding: '0px 2rem' }}>
+              <div className="header">
+                <BasePlan basePlan={basePlan} orgId={orgId} />
+                <UsersForPlan usersMeta={usersMeta} orgId={orgId} />
+              </div>
+              <SpacePlans
+                basePlan={basePlan}
+                spacePlans={spacePlans}
+                upgradedSpace={upgradedSpace}
+                onCreateSpace={this.createSpace}
+                onChangeSpace={this.changeSpace}
+                onDeleteSpace={this.deleteSpace}
+                isOrgOwner={isOwner(organization)}
+              />
             </div>
-            <SpacePlans
+          </Workbench.Content>
+          <Workbench.Sidebar>
+            <Sidebar
               basePlan={basePlan}
+              orgId={orgId}
+              grandTotal={grandTotal}
               spacePlans={spacePlans}
-              upgradedSpace={upgradedSpace}
-              onCreateSpace={this.createSpace}
-              onChangeSpace={this.changeSpace}
-              onDeleteSpace={this.deleteSpace}
               isOrgOwner={isOwner(organization)}
+              isOrgBillable={Boolean(organization.isBillable)}
             />
-          </div>
-        </Workbench.Content>
-        <Workbench.Sidebar>
-          <Sidebar
-            basePlan={basePlan}
-            orgId={orgId}
-            grandTotal={grandTotal}
-            spacePlans={spacePlans}
-            isOrgOwner={isOwner(organization)}
-            isOrgBillable={Boolean(organization.isBillable)}
-          />
-        </Workbench.Sidebar>
-      </Workbench>
+          </Workbench.Sidebar>
+        </Workbench>
+      </React.Fragment>
     );
   }
 }
