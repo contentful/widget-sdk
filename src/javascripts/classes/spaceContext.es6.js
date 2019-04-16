@@ -350,11 +350,12 @@ export default function register() {
         /**
          * @ngdoc method
          * @name spaceContext#entityDescription
-         * @param {Client.Entity} entry
+         * @param {Client.Entity} entity
          * @param {string?} localeCode
          * @description
          * Gets the localized value of the first text field that is not the
-         * display field. May return undefined.
+         * display field and assumably not a slug field. Returns undefined if
+         * there is no such field.
          *
          * @return {string?}
          */
@@ -362,18 +363,18 @@ export default function register() {
           const contentTypeId = entity.getContentTypeId();
           const contentType = this.publishedCTs.get(contentTypeId);
           if (!contentType) {
-            return;
+            return undefined;
           }
-          const displayFieldId = contentType.data.displayField;
-          const field = _.find(
-            contentType.data.fields,
-            field => _.includes(['Symbol', 'Text'], field.type) && field.id !== displayFieldId
-          );
-          if (!field) {
-            return;
-          }
+          const isTextField = field => ['Symbol', 'Text'].includes(field.type);
+          const isDisplayField = field => field.id === contentType.data.displayField;
+          const isMaybeSlugField = field => /\bslug\b/.test(field.name);
+          const isDescriptionField = field =>
+            isTextField(field) && !isDisplayField(field) && !isMaybeSlugField(field);
 
-          return this.getFieldValue(entity, field.id, localeCode);
+          const descriptionField = contentType.data.fields.find(isDescriptionField);
+          return descriptionField
+            ? this.getFieldValue(entity, descriptionField.id, localeCode)
+            : undefined;
         },
 
         /**
