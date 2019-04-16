@@ -20,19 +20,30 @@ export default function makeRequest(auth) {
 
 function wrapWithCounter(request) {
   return (...args) => {
-    const [{ url }] = args;
-    const endpoint =
-      url || url === ''
-        ? `/${url
-            .split('?')[0]
-            .split('/')
-            .pop()}`
-        : 'INVALID_URL';
+    const [{ url } = {}] = args;
 
     Telemetry.count('cma-req', {
-      endpoint
+      endpoint: getEndpoint(url)
     });
 
     return request(...args);
   };
+}
+
+function getEndpoint(url) {
+  const segments = url
+    .split('?')[0]
+    .split('/')
+    .slice(3);
+  const makeStableName = idx => `/${segments[idx]}${segments[idx + 1] ? '/:id' : ''}`;
+
+  if (segments.length <= 2) {
+    return `/${segments.join('/')}`;
+  }
+
+  if (segments[2] === 'environments' && segments.length > 3) {
+    return makeStableName(4);
+  } else {
+    return makeStableName(2);
+  }
 }
