@@ -20,7 +20,19 @@ export default function makeRequest(auth) {
 
 function wrapWithCounter(request) {
   return (...args) => {
-    Telemetry.count('cma-req');
+    const [{ url }] = args;
+    const endpoint =
+      url || url === ''
+        ? `/${url
+            .split('?')[0]
+            .split('/')
+            .pop()}`
+        : 'INVALID_URL';
+
+    Telemetry.count('cma-req', {
+      endpoint
+    });
+
     return request(...args);
   };
 }
