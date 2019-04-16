@@ -3,6 +3,11 @@ import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { getAll, create } from 'data/CMA/CommentsRepo.es6';
 import useAsync, { useAsyncFn } from 'app/common/hooks/useAsync.es6';
 
+const delay = () => new Promise(resolve => setTimeout(resolve, 700));
+const withMinDelay = promise => {
+  return Promise.all([promise, delay()]).then(([data]) => data);
+};
+
 /**
  * Fetches all comments for the given entry.
  * Returns a state object
@@ -13,7 +18,7 @@ export const useCommentsFetcher = (spaceId, entryId) => {
   // avoiding infinite loop.
   const fetch = useCallback(() => {
     const endpoint = createSpaceEndpoint(spaceId);
-    return getAll(endpoint, entryId);
+    return withMinDelay(getAll(endpoint, entryId));
   }, [spaceId, entryId]);
 
   return useAsync(fetch);
@@ -28,7 +33,6 @@ export const useCommentsFetcher = (spaceId, entryId) => {
 export const useCommentCreator = (spaceId, entryId) => {
   return useAsyncFn(async body => {
     const endpoint = createSpaceEndpoint(spaceId);
-    const delay = () => new Promise(resolve => setTimeout(resolve, 1000));
-    return Promise.all([create(endpoint, entryId, body), delay()]).then(([comment]) => comment);
+    return create(endpoint, entryId, body);
   });
 };
