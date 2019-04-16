@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CommentsPanelContainer initializes the sidebar 1`] = `
+<CommentsPanelContainer
+  emitter={
+    Object {
+      "emit": [Function],
+      "off": [MockFunction],
+      "on": [Function],
+    }
+  }
+/>
+`;
+
+exports[`CommentsPanelContainer makes panel hidden 1`] = `
+<CommentsPanelContainer
+  emitter={
+    Object {
+      "emit": [Function],
+      "off": [MockFunction],
+      "on": [Function],
+    }
+  }
+>
+  <CommentsPanel
+    entryId="my-entry"
+    environmentId="my-env"
+    isVisible={false}
+    spaceId="my-space"
+  />
+</CommentsPanelContainer>
+`;
+
+exports[`CommentsPanelContainer makes panel visible 1`] = `
+<CommentsPanelContainer
+  emitter={
+    Object {
+      "emit": [Function],
+      "off": [MockFunction],
+      "on": [Function],
+    }
+  }
+>
+  <CommentsPanel
+    entryId="my-entry"
+    environmentId="my-env"
+    isVisible={true}
+    spaceId="my-space"
+  />
+</CommentsPanelContainer>
+`;

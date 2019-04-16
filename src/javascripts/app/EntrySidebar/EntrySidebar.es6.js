@@ -20,6 +20,7 @@ import EntryActivityWidgetContainer from './EntryActivity/EntryActivityContainer
 import SidebarWidgetTypes from './SidebarWidgetTypes.es6';
 import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
+import CommentsPanelContainer from './CommentsPanel/CommentsPanelContainer.es6';
 
 const ComponentsMap = {
   [SidebarWidgetTypes.PUBLICATION]: PublicationWidgetContainer,
@@ -150,6 +151,7 @@ export default class EntrySidebar extends Component {
     const legacyExtensions = this.props.legacySidebarExtensions || [];
     return (
       <React.Fragment>
+        <CommentsPanelContainer emitter={this.props.emitter} />
         <EntryInfoPanelContainer emitter={this.props.emitter} />
         <div className="entity-sidebar entity-editor-sidebar">
           {this.renderWidgets(sidebarItems)}

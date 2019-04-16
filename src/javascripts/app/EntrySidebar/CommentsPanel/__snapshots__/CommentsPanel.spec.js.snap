@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CommentsPanel data loaded matches the snapshot 1`] = `
+.emotion-2 {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  color: #536171;
+  background: #f7f9fa;
+  border-left: 1px solid #b4c3ca;
+  -webkit-transition: -webkit-transform .3s cubic-bezier(.38,.54,.5,.99);
+  -webkit-transition: transform .3s cubic-bezier(.38,.54,.5,.99);
+  transition: transform .3s cubic-bezier(.38,.54,.5,.99);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  z-index: 1;
+}
+
+.emotion-3 {
+  -webkit-transform: translateX(100%);
+  -ms-transform: translateX(100%);
+  transform: translateX(100%);
+}
+
+.emotion-0 {
+  overflow: auto;
+  padding: 0.75rem;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+}
+
+.emotion-1 {
+  border-top: 1px solid #e5ebed;
+  padding: 0.75rem;
+}
+
+<div
+  className="emotion-2 emotion-3"
+>
+  <div
+    className="emotion-0"
+  >
+    <CommentThread
+      comment={
+        Object {
+          "body": "Foo foo foo bar bar bar",
+          "sys": Object {
+            "createdBy": Object {
+              "sys": Object {
+                "id": "abc",
+              },
+            },
+            "id": "123",
+          },
+        }
+      }
+      key="123"
+    />
+  </div>
+  <div
+    className="emotion-1"
+  >
+    <CreateEntryComment />
+  </div>
+</div>
+`;
+
+exports[`CommentsPanel error matches the snapshot 1`] = `"An error happened"`;
+
+exports[`CommentsPanel loading matches the snapshot 1`] = `"Loading comments"`;

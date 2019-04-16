@@ -3,3 +3,10 @@ mixin editor-info-toggle
     ng-click="preferences.toggleAuxPanel()"
     ng-class="{active: preferences.showAuxPanel}")
     | Info
+
+mixin entry-comments-toggle
+  button.btn-secondary-action(type="button"
+    ng-if="shouldDisplayCommentsToggle"
+    ng-click="preferences.toggleCommentsPanel()"
+    ng-class="{active: preferences.showCommentsPanel}")
+    | Comments

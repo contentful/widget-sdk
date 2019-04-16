@@ -1,6 +1,6 @@
 import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
-import { constant, keys } from 'lodash';
+import { constant, keys, get } from 'lodash';
 
 import { user$ } from 'services/TokenStore.es6';
 
@@ -15,6 +15,7 @@ import setLocaleData from 'app/entity_editor/setLocaleData.es6';
 import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 import * as logger from 'services/logger.es6';
+import { getVariation } from 'LaunchDarkly.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
@@ -160,4 +161,8 @@ export default async function create($scope, editorData, preferences, trackLoadE
     const localeCodes = keys(errors);
     return localeCodes.length === 1 && localeCodes[0] === focusedLocale.internal_code;
   }
+
+  getVariation('feature-04-2019-entry-comments', {
+    organizationId: get(spaceContext, 'organization.sys.id')
+  }).then(variation => ($scope.shouldDisplayCommentsToggle = variation));
 }
