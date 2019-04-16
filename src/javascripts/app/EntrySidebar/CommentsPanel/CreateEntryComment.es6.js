@@ -8,9 +8,12 @@ import tokens from '@contentful/forma-36-tokens';
 import { useCommentCreator } from './hooks.es6';
 
 const styles = {
-  replyActions: {
+  validationMessage: css({
     marginTop: tokens.spacingS
-  }
+  }),
+  replyActions: css({
+    marginTop: tokens.spacingS
+  })
 };
 
 export default function CreateEntryComment({ spaceId, entryId, parentCommentId, onNewComment }) {
@@ -44,15 +47,16 @@ export default function CreateEntryComment({ spaceId, entryId, parentCommentId, 
       <Textarea
         value={body}
         onChange={evt => setBody(evt.target.value)}
-        validationMessage={error ? error.message : null}
         onFocus={() => setShowActions(true)}
         onKeyDown={handleKeyPress}
         disabled={isLoading}
         placeholder={placeholder}
       />
-      {error && <ValidationMessage>{error.message}</ValidationMessage>}
+      {error && (
+        <ValidationMessage className={styles.validationMessage}>{error.message}</ValidationMessage>
+      )}
       {showActions && (
-        <div className={css(styles.replyActions)}>
+        <div className={styles.replyActions}>
           <Button
             size="small"
             onClick={() => handleSubmit()}

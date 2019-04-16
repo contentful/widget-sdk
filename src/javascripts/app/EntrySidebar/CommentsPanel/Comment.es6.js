@@ -10,7 +10,7 @@ import tokens from '@contentful/forma-36-tokens';
 
 import * as types from './CommentPropTypes.es6';
 
-const styles = {
+export const styles = {
   comment: css({
     display: 'flex',
     flexDirection: 'column',
