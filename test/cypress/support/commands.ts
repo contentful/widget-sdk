@@ -25,15 +25,16 @@ export function setAuthTokenToLocalStorage() {
 Cypress.Commands.add('setAuthTokenToLocalStorage', setAuthTokenToLocalStorage);
 
 Cypress.Commands.overwrite('visit', (visit, url) => {
-  cy.request('https://unpkg.com/unfetch/dist/unfetch.umd.js').then(response => {
-    const polyfill = response.body;
+  cy.readFile('test/cypress/support/unfetch.js').then(polyfill => {
     return visit(url, {
       onBeforeLoad(win: Window) {
+        // Cypress cannot capture fetch requests.
+        // See https://github.com/cypress-io/cypress/issues/95.
+        // What we do here is we unset the default fetch
+        // and polyfill with unfetch which uses XHR which
+        // can be captured.
         delete win.fetch;
-        // since the application code does not ship with a polyfill
-        // load a polyfilled "fetch" from the test
         win.eval(polyfill);
-        win.fetch = win.unfetch;
       }
     });
   });
