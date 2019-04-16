@@ -2,7 +2,7 @@ import wrapWithRetry from 'data/Request/Retry.es6';
 import wrapWithAuth from 'data/Request/Auth.es6';
 import * as Telemetry from 'Telemetry.es6';
 import { getModule } from 'NgRegistry.es6';
-import { logError, logWarn } from 'services/logger.es6';
+
 const $http = getModule('$http');
 
 /**
@@ -20,60 +20,30 @@ export default function makeRequest(auth) {
 
 function wrapWithCounter(request) {
   return (...args) => {
-    try {
-      const [{ url } = {}] = args;
+    const [{ url } = {}] = args;
 
-      Telemetry.count('cma-req', {
-        endpoint: getEndpoint(url)
-      });
-    } catch (error) {
-      logError('Error during telemetry reporting for cma request', {
-        groupingHash: 'telemetry-cma-req',
-        error
-      });
-    }
+    Telemetry.count('cma-req', {
+      endpoint: getEndpoint(url)
+    });
 
     return request(...args);
   };
 }
 
 function getEndpoint(url) {
-  const entitiesToStabilize = [
-    'entries',
-    'content_types',
-    'assets',
-    'extensions',
-    'locales',
-    'webhook_definitions',
-    'roles',
-    'snapshots',
-    'space_memberships',
-    'api_keys',
-    'preview_api_keys',
-    'access_tokens',
-    'states',
-    'user_states',
-    'comments'
-  ];
+  const segments = url
+    .split('?')[0]
+    .split('/')
+    .slice(3);
+  const makeStableName = idx => `/${segments[idx]}${segments[idx + 1] ? '/:id' : ''}`;
 
-  if (url || url === '') {
-    const urlComponents = url.split('?')[0].split('/');
-    const resource = urlComponents.pop();
-    const entity = urlComponents.pop();
-
-    if (entitiesToStabilize.includes(entity)) {
-      // replace all ids with just :id to provide a stable
-      // tag value for endpoint tag in librato
-      return `/${entity}/:id`;
-    }
-
-    return `/${resource}`;
+  if (segments.length <= 2) {
+    return `/${segments.join('/')}`;
   }
 
-  logWarn('Invalid resource requested', {
-    groupingHash: 'telemetry-cma-req',
-    url
-  });
-
-  return 'INVALID_RESOURCE';
+  if (segments[2] === 'environments' && segments.length > 3) {
+    return makeStableName(4);
+  } else {
+    return makeStableName(2);
+  }
 }
