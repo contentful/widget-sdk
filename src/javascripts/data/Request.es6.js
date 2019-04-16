@@ -50,7 +50,9 @@ function getEndpoint(url) {
     'space_memberships',
     'api_keys',
     'preview_api_keys',
-    'access_tokens'
+    'access_tokens',
+    'states',
+    'user_states'
   ];
 
   if (url || url === '') {
