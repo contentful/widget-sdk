@@ -275,6 +275,9 @@ workflows:
           executor: cypress-base-8
           pre-steps:
             - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
+          post-steps:
+            - store_test_results:
+                path: cypress/results
           start: npm start
           wait-on: 'http://localhost:3001'
           store_artifacts: true
