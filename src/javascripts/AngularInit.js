@@ -131,7 +131,6 @@ angular
       ngRequire('components/forms/embedly_preview/cfEmbedlyPreviewDirective.es6').default();
       ngRequire('components/forms/field_alert/cfFieldAlertDirective.es6').default();
       ngRequire('components/roles/cfRolesForWalkMe.es6').default();
-      ngRequire('components/shared/cfDropdownToggleDirective.es6').default();
       ngRequire('components/shared/cfImgLoadEvent.es6').default();
       ngRequire('components/shared/cfSelectionDirective.es6').default();
       ngRequire('components/shared/create_new_space/createNewSpaceDirective.es6').default();
@@ -200,7 +199,6 @@ angular
       ngRequire('search/EntitySelector/entitySelectorDirective.es6').default();
       ngRequire('services/contentfulClient.es6').default();
       ngRequire('services/exceptionHandler.es6').default();
-      ngRequire('services/hints.es6').default();
       ngRequire('states/cfSrefDirective.es6').default();
       ngRequire('states/config.es6').default();
       ngRequire('ui/Framework/CfComponentBridgeDirective.es6').default();
@@ -213,8 +211,6 @@ angular
       ngRequire('ui/hideOnClickDirective.es6').default();
       ngRequire('ui/highlightMatchDirective.es6').default();
       ngRequire('ui/loader.es6').default();
-      ngRequire('ui/onScrollDirective.es6').default();
-      ngRequire('ui/setScrollDirective.es6').default();
       ngRequire('ui/sortable.es6').default();
     }
   ]);

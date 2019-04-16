@@ -48,8 +48,20 @@ export default function register() {
    *     top: -7px
    */
   registerDirective('cfUiHint', [
-    'hints',
-    Hints => {
+    'TheStore/index.es6',
+    ({ getStore }) => {
+      const store = getStore();
+
+      const Hints = {
+        shouldShow: function(id) {
+          return !store.get('hint-' + id);
+        },
+
+        setAsSeen: function(id) {
+          return !store.set('hint-' + id, true);
+        }
+      };
+
       return {
         restrict: 'E',
         replace: true,
