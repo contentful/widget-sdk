@@ -1,4 +1,4 @@
-import { tokenRequestAlias, validTokenResponse } from '../../mocks/token';
+import { validTokenResponse } from '../../mocks/token';
 import { noEnforcementsResponse } from '../../mocks/enforcements';
 import { masterEnvironmentResponse } from '../../mocks/environments';
 import { freePlanResponse } from '../../mocks/plans';
@@ -15,6 +15,7 @@ import {
   noEntrySnapshotsResponse
 } from '../../mocks/entries';
 import { microbackendStreamToken } from '../../mocks/microbackend';
+import * as state from '../../mocks/interactionState';
 
 const spaceId = Cypress.env('spaceId');
 const empty = require('../../fixtures/empty.json');
@@ -62,7 +63,7 @@ describe('Schedule Publication', () => {
         body: empty
       }
     }).as('entrySchedules');
-    cy.wait([`@${tokenRequestAlias}`, `@entrySchedules`]);
+    cy.wait([`@${state.Token.VALID}`, `@entrySchedules`]);
   });
   it('renders schedule publication button', () => {
     cy.getByTestId('schedule-publication').should('be.visible');

@@ -1,4 +1,4 @@
-import { tokenRequestAlias, validTokenResponse } from '../../mocks/token';
+import { validTokenResponse } from '../../mocks/token';
 import { noEnforcementsResponse } from '../../mocks/enforcements';
 import { noPublicContentTypesResponse } from '../../mocks/content_types';
 import { masterEnvironmentResponse } from '../../mocks/environments';
@@ -6,10 +6,8 @@ import { freePlanResponse } from '../../mocks/plans';
 import { defaultLocaleResponse } from '../../mocks/locales';
 import { productCatalogFeaturesResponse } from '../../mocks/product_catalog_features';
 import { emptyUiConfigResponse, uiConfigMeResponse } from '../../mocks/ui_config';
-import {
-  noPreviewEnvironmentsAlias,
-  noPreviewEnvironmentsResponse
-} from '../../mocks/preview_environments';
+import { noPreviewEnvironmentsResponse } from '../../mocks/preview_environments';
+import * as state from '../../mocks/interactionState';
 
 const spaceId = Cypress.env('spaceId');
 const previewName = 'Test Name';
@@ -54,7 +52,7 @@ describe('Content Preview Page', () => {
 
   describe('opening the page', () => {
     beforeEach(() => {
-      cy.wait([`@${tokenRequestAlias}`, `@${noPreviewEnvironmentsAlias}`]);
+      cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
     });
 
     it('renders create new content preview page', () => {

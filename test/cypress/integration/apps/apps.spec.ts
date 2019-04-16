@@ -1,4 +1,4 @@
-import { tokenRequestAlias, validTokenResponse } from '../../mocks/token';
+import { validTokenResponse } from '../../mocks/token';
 import { noEnforcementsResponse } from '../../mocks/enforcements';
 import { noPublicContentTypesResponse } from '../../mocks/content_types';
 import { masterEnvironmentResponse } from '../../mocks/environments';
@@ -6,10 +6,8 @@ import { freePlanResponse } from '../../mocks/plans';
 import { defaultLocaleResponse } from '../../mocks/locales';
 import { productCatalogFeaturesResponse } from '../../mocks/product_catalog_features';
 import { emptyUiConfigResponse, uiConfigMeResponse } from '../../mocks/ui_config';
-import {
-  noPreviewEnvironmentsAlias,
-  noPreviewEnvironmentsResponse
-} from '../../mocks/preview_environments';
+import { noPreviewEnvironmentsResponse } from '../../mocks/preview_environments';
+import * as state from '../../mocks/interactionState';
 
 const spaceId = Cypress.env('spaceId');
 
@@ -40,7 +38,7 @@ describe('Apps Page', () => {
       }
     }).as('apps');
     cy.visit(`/spaces/${spaceId}/apps`);
-    cy.wait([`@${tokenRequestAlias}`, `@${noPreviewEnvironmentsAlias}`]);
+    cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
   });
 
   describe('Opening the Apps page with disabled Alpha feature', () => {

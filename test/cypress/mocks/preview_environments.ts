@@ -1,12 +1,11 @@
+import * as state from './interactionState';
+
 const empty = require('../fixtures/empty.json');
-
 const spaceId = Cypress.env('spaceId');
-
-export const noPreviewEnvironmentsAlias = 'noPreviewEnvironments';
 
 export function noPreviewEnvironmentsResponse() {
   cy.addInteraction({
-    state: 'noPreviewEnvironments',
+    state: state.PreviewEnvironments.NONE,
     uponReceiving: 'a request for all preview environments',
     withRequest: {
       method: 'GET',
@@ -22,5 +21,5 @@ export function noPreviewEnvironmentsResponse() {
       status: 200,
       body: empty
     }
-  }).as(noPreviewEnvironmentsAlias);
+  }).as(state.PreviewEnvironments.NONE);
 }

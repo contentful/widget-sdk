@@ -1,3 +1,5 @@
+import * as state from './interactionState';
+
 const empty = require('../fixtures/empty.json');
 const entryResponseBody = require('../fixtures/entry.json');
 const spaceId = Cypress.env('spaceId');
@@ -5,7 +7,7 @@ export const entryId = 'testEntryId';
 
 export function singleEntryResponse() {
   cy.addInteraction({
-    state: 'emptyEntry',
+    state: state.Entries.EMPTY,
     uponReceiving: 'a request for entry object',
     withRequest: {
       method: 'GET',
@@ -18,12 +20,12 @@ export function singleEntryResponse() {
       status: 200,
       body: entryResponseBody
     }
-  }).as('entry');
+  }).as(state.Entries.EMPTY);
 }
 
 export function noEntryLinksResponse() {
   cy.addInteraction({
-    state: 'entryLinks',
+    state: state.Entries.LINKS,
     uponReceiving: 'a request for entry links',
     withRequest: {
       method: 'GET',
@@ -37,12 +39,12 @@ export function noEntryLinksResponse() {
       status: 200,
       body: empty
     }
-  }).as('entryLinks');
+  }).as(state.Entries.LINKS);
 }
 
 export function noEntrySnapshotsResponse() {
   cy.addInteraction({
-    state: 'emptySnapshots',
+    state: state.Entries.SNAPSHOTS,
     uponReceiving: 'a request for entry snapshots',
     withRequest: {
       method: 'GET',
@@ -56,5 +58,5 @@ export function noEntrySnapshotsResponse() {
       status: 200,
       body: empty
     }
-  }).as('snapshots');
+  }).as(state.Entries.SNAPSHOTS);
 }

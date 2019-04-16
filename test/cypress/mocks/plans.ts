@@ -1,9 +1,11 @@
+import * as state from './interactionState';
+
 const plans = require('../fixtures/plans.json');
 const orgId = Cypress.env('orgId');
 
 export function freePlanResponse() {
   cy.addInteraction({
-    state: 'onePlan',
+    state: state.Plans.FREE,
     uponReceiving: 'a request for all plans',
     withRequest: {
       method: 'GET',
@@ -16,5 +18,5 @@ export function freePlanResponse() {
       status: 200,
       body: plans
     }
-  }).as('plans');
+  }).as(state.Plans.FREE);
 }

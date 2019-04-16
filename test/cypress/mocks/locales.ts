@@ -1,9 +1,11 @@
+import * as state from './interactionState';
+
 const locales = require('../fixtures/locales.json');
 const spaceId = Cypress.env('spaceId');
 
 export function defaultLocaleResponse() {
   cy.addInteraction({
-    state: 'oneLocale',
+    state: state.Locales.DEFAULT,
     uponReceiving: 'a request for all locales',
     withRequest: {
       method: 'GET',
@@ -16,5 +18,5 @@ export function defaultLocaleResponse() {
       status: 200,
       body: locales
     }
-  }).as('locales');
+  }).as(state.Locales.DEFAULT);
 }

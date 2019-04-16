@@ -1,9 +1,11 @@
+import * as state from './interactionState';
+
 const productCatalog = require('../fixtures/product_catalog.json');
 const orgId = Cypress.env('orgId');
 
 export function productCatalogFeaturesResponse() {
   cy.addInteraction({
-    state: 'severalProductCatalogFeatures',
+    state: state.ProductCatalogFeatures.SEVERAL,
     uponReceiving: 'a request for all product catalog features',
     withRequest: {
       method: 'GET',
@@ -16,5 +18,5 @@ export function productCatalogFeaturesResponse() {
       status: 200,
       body: productCatalog
     }
-  }).as('productCatalogFeatures');
+  }).as(state.ProductCatalogFeatures.SEVERAL);
 }

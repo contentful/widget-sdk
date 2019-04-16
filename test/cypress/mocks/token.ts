@@ -1,12 +1,11 @@
+import * as state from './interactionState';
 import { HTTPMethod } from '@pact-foundation/pact/common/request';
 
 const token = require('../fixtures/token.json');
 
-export const tokenRequestAlias = 'token';
-
 export function validTokenResponse() {
   cy.addInteraction({
-    state: 'validToken',
+    state: state.Token.VALID,
     uponReceiving: 'a request for valid token',
     withRequest: {
       method: 'GET' as HTTPMethod,
@@ -19,5 +18,5 @@ export function validTokenResponse() {
       status: 200,
       body: token
     }
-  }).as(tokenRequestAlias);
+  }).as(state.Token.VALID);
 }
