@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { get, isEmpty } from 'lodash';
-import { isEdge } from 'app/widgets/rich_text/helpers/browser.es6';
+import { isEdge } from 'utils/browser.es6';
+const isEdgeBrowser = isEdge();
 import StateLink from 'app/common/StateLink.es6';
 
 import {
@@ -18,7 +19,6 @@ import RelativeDateTime from 'components/shared/RelativeDateTime/index.es6';
 import { isPublishedAndUpdated, isPublished } from '../ContentTypeListService.es6';
 
 const numFields = ct => (ct.fields || []).length;
-const isEdgeBrowser = isEdge();
 
 const statusType = ct => getStatusType(ct);
 const statusLabel = ct => {
