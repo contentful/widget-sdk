@@ -119,6 +119,10 @@ export default function register() {
       }
 
       /**
+       * This function tries to recover from a response that is to big for the API to handle.
+       * It tries to recover by splitting the request into multiple chunks and merging the response.
+       * A better but harder solution would be to limit the fields that are requested (no RT / MD / JSON)
+       * and don't support these as columns in the entry table.
        *
        * @param {int|null} chunkSize Break request down into multiple chunks (used when response is too big for backend)
        * @return {Promise<[]>}
@@ -162,6 +166,7 @@ export default function register() {
             },
             err => {
               // check if we can and should try request again in multiple chunks
+              // to recover from the response being too big for the API to handle
               if (
                 err.status === 400 &&
                 _.get(err, 'body.message', '').startsWith('Response size too big') &&
