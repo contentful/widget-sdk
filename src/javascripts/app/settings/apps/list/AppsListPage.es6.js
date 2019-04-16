@@ -115,7 +115,13 @@ export default class AppsListPage extends Component {
   };
 
   renderDisclaimer() {
+    const { apps } = this.props;
     const { optedIn } = this.state;
+
+    const canUseAtLeastOneApp = apps.installed.length > 0 || apps.available.length > 0;
+    if (!canUseAtLeastOneApp) {
+      return null;
+    }
 
     return (
       <Note className={styles.note} noteType="primary" title="Alpha feature">

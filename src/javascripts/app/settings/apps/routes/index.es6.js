@@ -2,6 +2,11 @@ import AppsListRoute from './AppsListRoute.es6';
 import AppRoute from './AppRoute.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
+// Product Catalog Feature ID for an app is the ID of the app
+// prefixed with "app". If the Product Catalog is not available,
+// we allow a user to use the app this time.
+const hasAppFeature = (orgId, appId) => getOrgFeature(orgId, `app_${appId}`, true);
+
 export default {
   name: 'apps',
   url: '/apps',
@@ -14,7 +19,10 @@ export default {
       mapInjectedToProps: [
         'spaceContext',
         '$stateParams',
-        ({ organization }, { spaceId }) => ({ orgId: organization.sys.id, spaceId })
+        ({ organization }, { spaceId }) => ({
+          hasAppFeature: appId => hasAppFeature(organization.sys.id, appId),
+          spaceId
+        })
       ]
     },
     {
@@ -24,9 +32,7 @@ export default {
         isEnabled: [
           'spaceContext',
           '$stateParams',
-          ({ organization }, { appId }) => {
-            return getOrgFeature(organization.sys.id, appId, true);
-          }
+          ({ organization }, { appId }) => hasAppFeature(organization.sys.id, appId)
         ]
       },
       component: AppRoute,

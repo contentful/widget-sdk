@@ -5,22 +5,16 @@ import AppsListPage, { AppsListPageLoading } from '../list/AppsListPage.es6';
 import createAppsClient from '../AppsClient.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
-import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
-async function getEnabledApps(orgId, apps) {
-  const features = await Promise.all(
-    apps.map(async app => {
-      const enabled = await getOrgFeature(orgId, `app_${app.id}`, true);
-      return [enabled, app.id];
-    })
-  );
+async function getEnabledApps(hasAppFeature, apps) {
+  const features = await Promise.all(apps.map(async app => [await hasAppFeature(app.id), app.id]));
 
   return features.filter(([enabled]) => enabled).map(([_, id]) => id);
 }
 
-const AppsFetcher = createFetcherComponent(async ({ orgId, spaceId }) => {
+const AppsFetcher = createFetcherComponent(async ({ hasAppFeature, spaceId }) => {
   const apps = await createAppsClient(spaceId).getAll();
-  const enabled = await getEnabledApps(orgId, apps);
+  const enabled = await getEnabledApps(hasAppFeature, apps);
 
   return apps.reduce(
     (acc, app) => {
@@ -40,14 +34,14 @@ const AppsFetcher = createFetcherComponent(async ({ orgId, spaceId }) => {
 
 export default class AppsListRoute extends Component {
   static propTypes = {
-    orgId: PropTypes.string.isRequired,
+    hasAppFeature: PropTypes.func.isRequired,
     spaceId: PropTypes.string.isRequired
   };
 
   render() {
     return (
       <AdminOnly>
-        <AppsFetcher orgId={this.props.orgId} spaceId={this.props.spaceId}>
+        <AppsFetcher hasAppFeature={this.props.hasAppFeature} spaceId={this.props.spaceId}>
           {({ isLoading, isError, data }) => {
             if (isLoading) {
               return <AppsListPageLoading />;
