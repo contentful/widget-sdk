@@ -52,7 +52,8 @@ function getEndpoint(url) {
     'preview_api_keys',
     'access_tokens',
     'states',
-    'user_states'
+    'user_states',
+    'comments'
   ];
 
   if (url || url === '') {
