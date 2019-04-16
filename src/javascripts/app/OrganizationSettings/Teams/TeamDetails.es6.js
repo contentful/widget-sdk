@@ -191,11 +191,14 @@ class TeamDetails extends React.Component {
               <div className={styles.sidebar}>
                 <section className={styles.profileSection}>
                   <div className={styles.card}>
-                    <h2 className={styles.name} data-test-id="team-card-name">
+                    <h2 className={styles.name} data-test-id="team-card-name" title={team.name}>
                       {team.name}
                     </h2>
                     {team.description && (
-                      <div className={styles.description} data-test-id="team-card-description">
+                      <div
+                        className={styles.description}
+                        data-test-id="team-card-description"
+                        title={team.description}>
                         {team.description.split('\n').reduce((acc, cur, idx) => {
                           if (idx === 0) {
                             return [...acc, cur];
