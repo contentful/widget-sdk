@@ -14,8 +14,23 @@ describe('cfJsonEditor directive', () => {
       historySize: sinon.stub().returns({})
     };
 
-    module('contentful/test', ($provide, createQueuedDebounce) => {
-      $provide.value('debounce', createQueuedDebounce());
+    module('contentful/test', $provide => {
+      function debounce(fn) {
+        return function(...args) {
+          debounce.queue.push({ fn: fn, args: args });
+        };
+      }
+
+      debounce.queue = [];
+      debounce.flush = () => {
+        debounce.queue.forEach(call => {
+          call.fn.apply(null, call.args);
+        });
+      };
+
+      $provide.constant('lodash/debounce', {
+        default: debounce
+      });
       $provide.constant('codemirror', {
         default: sinon.stub().returns(cmEditor)
       });
@@ -55,7 +70,7 @@ describe('cfJsonEditor directive', () => {
     beforeEach(function() {
       fieldApi.setValue = sinon.stub();
 
-      const debounce = this.$inject('debounce');
+      const debounce = this.$inject('lodash/debounce').default;
       this.flush = function() {
         debounce.flush();
         this.$apply();

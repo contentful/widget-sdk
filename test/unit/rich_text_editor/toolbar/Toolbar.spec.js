@@ -70,8 +70,7 @@ describe('Rich Text toolbar', () => {
             // Guards us from accidentally changing analytic actions without whitelisting them:
             throw new Error(`Unexpected logger.logWarn() call with message: ${message}`);
           }
-        },
-        debounce: identity
+        }
       }
     });
 
@@ -80,6 +79,10 @@ describe('Rich Text toolbar', () => {
       services: {
         google: {}
       }
+    });
+
+    this.system.set('lodash/debounce', {
+      default: identity
     });
 
     this.system.set('app/widgets/WidgetApi/dialogs/openHyperlinkDialog.es6', {

@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry.es6';
-const debounce = getModule('debounce');
 import { Editor } from 'slate-react';
 import { Value, Editor as BasicEditor } from 'slate';
 import { noop } from 'lodash';
+import debounce from 'lodash/debounce';
 import { List, is } from 'immutable';
 import cn from 'classnames';
 

@@ -36,21 +36,4 @@ angular
       }
     };
     return delayedFunction;
-  })
-
-  .constant('createQueuedDebounce', () => {
-    function debounce(fn) {
-      return function(...args) {
-        debounce.queue.push({ fn: fn, args: args });
-      };
-    }
-
-    debounce.queue = [];
-    debounce.flush = () => {
-      debounce.queue.forEach(call => {
-        call.fn.apply(null, call.args);
-      });
-    };
-
-    return debounce;
   });

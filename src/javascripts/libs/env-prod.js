@@ -74,6 +74,7 @@ window.libs = [
   ['saved-views-migrator', require('./saved-views-migrator')],
   ['lodash', require('lodash')],
   ['lodash/fp', require('lodash/fp')],
+  ['lodash/debounce', require('lodash/debounce')],
   ['marked', require('marked-ast')._marked],
   ['marked-ast', require('marked-ast')],
   ['path-parser', require('path-parser')],
