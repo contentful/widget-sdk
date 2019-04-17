@@ -36,24 +36,4 @@ describe('CommentsPanel', () => {
       expect(component).toMatchSnapshot();
     });
   });
-
-  describe('data loaded', () => {
-    const comment = {
-      body: 'Foo foo foo bar bar bar',
-      sys: {
-        id: '123',
-        createdBy: { sys: { id: 'abc' } }
-      }
-    };
-    useCommentsFetcher.mockReturnValueOnce({
-      isLoading: false,
-      isError: false,
-      data: { items: [comment] }
-    });
-    const component = render({ spaceId: 'a', entryId: 'b' });
-
-    it('matches the snapshot', () => {
-      expect(component).toMatchSnapshot();
-    });
-  });
 });
