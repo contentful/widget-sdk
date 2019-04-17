@@ -40,8 +40,8 @@ export default class LinkEditor extends React.Component {
     return this.props.value;
   }
 
-  handleEditLink = entity => {
-    this.props.actions.editLinkedEntity(entity);
+  handleEditLink = (entity, index) => {
+    this.props.actions.editLinkedEntity(entity, index);
   };
 
   handleAddLinks = (entities, isNewlyCreatedLinks = false) => {
@@ -72,7 +72,8 @@ export default class LinkEditor extends React.Component {
 
   renderCard(link, index) {
     const { isDisabled, onLinkFetchComplete } = this.props;
-    const handleEditLink = fetchEntityResult => this.handleEditLink(fetchEntityResult.entity);
+    const handleEditLink = fetchEntityResult =>
+      this.handleEditLink(fetchEntityResult.entity, index);
     const entityType = link.sys.linkType;
     // TODO: Optimize fetching in this case, don't load thumbnail!
     return (

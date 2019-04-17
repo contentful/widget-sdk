@@ -5,6 +5,7 @@ import {
   canCreateAsset,
   Action
 } from 'access_control/AccessChecker/index.es6';
+import { find } from 'lodash';
 import { newConfigFromField } from 'search/EntitySelector/Config.es6';
 import * as slideInNavigator from 'navigation/SlideInNavigator/index.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -54,17 +55,43 @@ export default function withCfWebApp(LinkEditor) {
       this.offContentTypes();
     }
 
+    handleOpenLink(entity, index, action) {
+      const { widgetAPI } = this.props;
+      const useBulkEditor = widgetAPI.settings.bulkEditing;
+      const { type, id } = entity.sys;
+      let slide = { type, id };
+      if (useBulkEditor) {
+        const entryId = widgetAPI.entry.getSys().id;
+        if (!isAnotherBulkEditorOpen()) {
+          const field = widgetAPI.field;
+          const path = [entryId, field.id, field.internalLocale, index];
+          slide = { type: 'BulkEditor', path };
+        } else {
+          trackOpenSlideInInsteadOfBulk({
+            parentEntryId: entryId,
+            refCount: widgetAPI.field.getValue().length
+          });
+        }
+      }
+      slideInLinkedEntityAndTrack(slide, action, useBulkEditor);
+    }
+
     render() {
       const { type, widgetAPI } = this.props;
       const { contentTypes } = this.state;
       const actions = {
         selectEntities: () => selectEntities(widgetAPI),
-        createEntity: ctId => {
+        createEntity: async ctId => {
           const contentType = contentTypes.find(ct => ct.sys.id === ctId);
-          return createEntityOfType(type, contentType);
+          const entity = await createEntityOfType(type, contentType);
+          if (entity) {
+            this.handleOpenLink(entity, -1, SLIDE_IN_ACTIONS.OPEN_CREATE);
+            return entity;
+          }
         },
-        editLinkedEntity: entity => {
-          slideInLinkedEntityAndTrack(entity, SLIDE_IN_ACTIONS.OPEN);
+        editLinkedEntity: (entity, index) => {
+          this.handleOpenLink(entity, index, SLIDE_IN_ACTIONS.OPEN);
+          track('reference_editor_action:edit', { ctId: getCtId(entity) });
         }
       };
       const props = {
@@ -116,20 +143,13 @@ async function createEntityOfType(type, contentType = null) {
     });
     track('reference_editor_action:create', { ctId });
   }
-  const entity = legacyClientEntity.data;
-  slideInLinkedEntityAndTrack(entity, SLIDE_IN_ACTIONS.OPEN_CREATE);
-  return entity;
+  return legacyClientEntity.data;
 }
 
-function slideInLinkedEntityAndTrack(entity, action) {
-  const { type, id } = entity.sys;
-  const slideEventData = slideInNavigator.goToSlideInEntity({ type, id });
+function slideInLinkedEntityAndTrack(slide, action) {
+  const slideEventData = slideInNavigator.goToSlideInEntity(slide);
   // Tracks: slide_in_editor:open, slide_in_editor:open_create
   track(`slide_in_editor:${action}`, slideEventData);
-
-  if (action === SLIDE_IN_ACTIONS.OPEN && type === 'Entry') {
-    track('reference_editor_action:edit', { ctId: getCtId(entity) });
-  }
 }
 
 function trackLinksChanged(event, entities) {
@@ -149,4 +169,15 @@ function getAccessibleCts(allContentTypes, field) {
 
 function getCtId(entry) {
   return entry.sys.contentType.sys.id;
+}
+
+function isAnotherBulkEditorOpen() {
+  return !!find(slideInNavigator.getSlideInEntities(), { type: 'BulkEditor' });
+}
+
+function trackOpenSlideInInsteadOfBulk(data) {
+  // Limiting the user to only one bulk editor was decided for the sake of
+  // UX and performance. Since the bulk editor as a slide refactoring we allow
+  // the bulk editor to be opened from any slide level, not just the first one.
+  track('bulk_editor:open_slide_in', data);
 }
