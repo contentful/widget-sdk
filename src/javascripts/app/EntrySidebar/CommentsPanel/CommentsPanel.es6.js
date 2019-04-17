@@ -51,7 +51,7 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
   const handleNewComment = comment => setComments(() => [...comments, comment]);
 
   useEffect(() => {
-    data && setComments(data.items);
+    data && setComments(data);
   }, [data]);
 
   return (
