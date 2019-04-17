@@ -36,12 +36,10 @@ export default function register() {
       const searchController = $controller('AssetSearchController', { $scope: $scope });
 
       $controller('ListViewsController', {
-        $scope: $scope,
+        $scope,
+        entityType: 'Asset',
         getBlankView,
-        preserveStateAs: 'assets',
-        resetList: function() {
-          searchController.resetAssets(true);
-        }
+        resetList: () => searchController.resetAssets(true)
       });
 
       $scope.savedViewsSidebar = createSavedViewsSidebar({

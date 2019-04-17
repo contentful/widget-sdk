@@ -40,9 +40,9 @@ export default function register() {
       $controller('EntryListColumnsController', { $scope: $scope });
 
       $controller('ListViewsController', {
-        $scope: $scope,
-        getBlankView: getBlankView,
-        preserveStateAs: 'entries',
+        $scope,
+        entityType: 'Entry',
+        getBlankView,
         resetList: _.noop
       });
 

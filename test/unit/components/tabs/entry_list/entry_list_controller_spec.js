@@ -44,19 +44,6 @@ describe('Entry List Controller', () => {
         getDefaultLocale: sinon.stub().returns({ internal_code: 'en-US' })
       });
 
-      const readStub = (this.readStub = sinon.stub());
-      const promise = (this.readPersistedViewPromise = new Promise(resolve => {
-        this.resolveReadPersistedView = resolve;
-      }));
-      $provide.value('data/ListViewPersistor.es6', {
-        default: function() {
-          return {
-            save: sinon.stub().resolves({}),
-            read: readStub.returns(promise)
-          };
-        }
-      });
-
       $provide.value('app/ContentList/Search', {
         default: _.noop // TODO: Test search ui integration.
       });
@@ -86,30 +73,6 @@ describe('Entry List Controller', () => {
     scope.selection.updateList = sinon.stub();
 
     ListQuery = this.$inject('ListQuery');
-  });
-
-  describe('initially undefined view', () => {
-    beforeEach(function() {
-      ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
-      scope.$apply();
-    });
-
-    it('is undefined', () => {
-      expect(scope.context.view).toBe(undefined);
-    });
-
-    it('does not trigger query', function() {
-      sinon.assert.notCalled(this.getQuery);
-    });
-
-    it('triggers query after loading view', function*() {
-      this.resolveReadPersistedView({});
-      yield this.readPersistedViewPromise;
-      scope.$apply();
-
-      expect(scope.context.view).not.toBe(undefined);
-      sinon.assert.calledOnce(this.getQuery);
-    });
   });
 
   describe('#loadView()', () => {
@@ -164,12 +127,6 @@ describe('Entry List Controller', () => {
   describe('page parameters change', () => {
     beforeEach(function() {
       ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
-    });
-
-    it('triggers no query on page change if no view is loaded', function() {
-      scope.paginator.setPage(1);
-      scope.$apply();
-      sinon.assert.notCalled(this.getQuery);
     });
 
     describe('triggers query on change', () => {

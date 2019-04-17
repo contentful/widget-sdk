@@ -1,61 +1,45 @@
 describe('ListViewPersistor', () => {
-  let store, $location, qs, createPersistor, createViewMigrator;
-  const STORE_KEY = 'lastFilterQueryString.testEntity.SPACE_ID';
+  let store, $location, qs;
+  afterEach(() => {
+    store = $location = qs = null;
+  });
+
+  const STORE_KEY = 'lastFilterQueryString.entries.SPACE_ID';
 
   beforeEach(function() {
     module('contentful/test');
 
-    const getStore = this.$inject('TheStore').getStore;
+    store = this.$inject('TheStore').getStore();
 
-    store = getStore();
-    createPersistor = this.$inject('data/ListViewPersistor.es6').default;
-    createViewMigrator = this.$inject('saved-views-migrator').create;
     $location = this.$inject('$location');
-
-    qs = createPersistor('SPACE_ID', null, 'testEntity');
     sinon.stub($location, 'search');
+
+    qs = this.$inject('data/ListViewPersistor.es6').default({
+      spaceId: 'SPACE_ID',
+      entityType: 'Entry',
+      $location
+    });
   });
 
   describe('#read', () => {
-    it('reads data from query string by default', function*() {
+    it('reads data from query string by default', () => {
       $location.search.returns({ fromSearch: true });
-      expect((yield qs.read()).fromSearch).toBe(true);
+      expect(qs.read().fromSearch).toBe(true);
     });
 
-    it('falls back to data from localStorage', function*() {
+    it('falls back to data from localStorage', () => {
       store.set(STORE_KEY, { test: true });
-      expect((yield qs.read()).test).toBe(true);
+      expect(qs.read().test).toBe(true);
     });
 
-    it('restores nested structure', function*() {
+    it('restores nested structure', () => {
       $location.search.returns({ 'x.y': true });
-      expect((yield qs.read()).x.y).toBe(true);
+      expect(qs.read().x.y).toBe(true);
     });
 
-    it('handles boolean fields', function*() {
+    it('handles boolean fields', () => {
       $location.search.returns({ contentTypeHidden: 'false' });
-      expect((yield qs.read()).contentTypeHidden).toBe(false);
-    });
-
-    describe('does `searchTerm` migration', () => {
-      beforeEach(() => {
-        const contentTypes = { get: sinon.stub() };
-        const viewMigrator = createViewMigrator(contentTypes);
-        qs = createPersistor('SPACE_ID', viewMigrator, 'testEntity');
-        $location.search.returns({ searchTerm: 'some text' });
-      });
-
-      it('removes `searchTerm`', function*() {
-        expect((yield qs.read()).searchTerm).toBe(undefined);
-      });
-
-      it('adds `searchText`', function*() {
-        expect((yield qs.read()).searchText).toBe('some text');
-      });
-
-      it('adds (empty) `searchFilters`', function*() {
-        expect((yield qs.read()).searchFilters).toEqual([]);
-      });
+      expect(qs.read().contentTypeHidden).toBe(false);
     });
   });
 
