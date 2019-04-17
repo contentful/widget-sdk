@@ -5,24 +5,14 @@ import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import * as WidgetStore from 'widgets/WidgetStore.es6';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
 
-const SEARCH_URL_PARAM = 'searchText';
-
 const list = base({
   name: 'list',
   url: '',
-  template:
-    '<react-component name="components/tabs/content_type_list/ContentTypeListPage.es6" props="componentProps" />',
+  template: '<react-component name="components/tabs/content_type_list/ContentTypeListPage.es6" />',
   controller: [
     '$scope',
-    '$location',
-    ($scope, $location) => {
+    $scope => {
       $scope.context.ready = true;
-      $scope.componentProps = {
-        searchText: $location.search()[SEARCH_URL_PARAM],
-        onSearchChange: searchText => {
-          $scope.$apply(() => $location.search(SEARCH_URL_PARAM, searchText || null).replace());
-        }
-      };
     }
   ]
 });

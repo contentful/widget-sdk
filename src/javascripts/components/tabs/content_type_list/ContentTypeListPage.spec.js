@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import { flatten, concat } from 'lodash';
 
-import Page from './ContentTypeListPage.es6';
+import { ContentTypesPage as Page } from './ContentTypeListPage.es6';
 
 import * as spaceContextMocked from 'ng/spaceContext';
 import flushPromises from 'testHelpers/flushPromises';
