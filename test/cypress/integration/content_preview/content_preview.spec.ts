@@ -1,12 +1,4 @@
-import { validTokenResponse } from '../../mocks/token';
-import { noEnforcementsResponse } from '../../mocks/enforcements';
-import { noPublicContentTypesResponse } from '../../mocks/content_types';
-import { masterEnvironmentResponse } from '../../mocks/environments';
-import { freePlanResponse } from '../../mocks/plans';
-import { defaultLocaleResponse } from '../../mocks/locales';
-import { productCatalogFeaturesResponse } from '../../mocks/product_catalog_features';
-import { emptyUiConfigResponse, uiConfigMeResponse } from '../../mocks/ui_config';
-import { noPreviewEnvironmentsResponse } from '../../mocks/preview_environments';
+import { defaultRequestsMock } from '../../mocks/factories';
 import * as state from '../../mocks/interactionState';
 
 const spaceId = Cypress.env('spaceId');
@@ -36,16 +28,7 @@ const previewResponseBody = {
 describe('Content Preview Page', () => {
   beforeEach(() => {
     cy.setAuthTokenToLocalStorage();
-    validTokenResponse();
-    noEnforcementsResponse();
-    noPublicContentTypesResponse();
-    masterEnvironmentResponse();
-    freePlanResponse();
-    defaultLocaleResponse();
-    productCatalogFeaturesResponse();
-    emptyUiConfigResponse();
-    uiConfigMeResponse();
-    noPreviewEnvironmentsResponse();
+    defaultRequestsMock();
 
     cy.visit(`/spaces/${spaceId}/settings/content_preview/new`);
   });

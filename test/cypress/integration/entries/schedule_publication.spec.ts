@@ -1,11 +1,4 @@
-import { validTokenResponse } from '../../mocks/token';
-import { noEnforcementsResponse } from '../../mocks/enforcements';
-import { masterEnvironmentResponse } from '../../mocks/environments';
-import { freePlanResponse } from '../../mocks/plans';
-import { defaultLocaleResponse } from '../../mocks/locales';
-import { productCatalogFeaturesResponse } from '../../mocks/product_catalog_features';
-import { emptyUiConfigResponse, uiConfigMeResponse } from '../../mocks/ui_config';
-import { noPreviewEnvironmentsResponse } from '../../mocks/preview_environments';
+import { defaultRequestsMock } from '../../mocks/factories';
 import { singleUser } from '../../mocks/users';
 import { singleContentTypeResponse, editorInterfaceResponse } from '../../mocks/content_types';
 import {
@@ -24,17 +17,10 @@ const featureFlag = 'feature-pul-04-2019-scheduled-publication-enabled';
 describe('Schedule Publication', () => {
   before(() => {
     cy.setAuthTokenToLocalStorage();
-    validTokenResponse();
-    noEnforcementsResponse();
-    masterEnvironmentResponse();
-    freePlanResponse();
-    defaultLocaleResponse();
-    productCatalogFeaturesResponse();
-    emptyUiConfigResponse();
-    uiConfigMeResponse();
-    noPreviewEnvironmentsResponse();
+    defaultRequestsMock({
+      publicContentTypesResponse: singleContentTypeResponse
+    });
     singleUser();
-    singleContentTypeResponse();
     singleEntryResponse();
     noEntryLinksResponse();
     noEntrySnapshotsResponse();
