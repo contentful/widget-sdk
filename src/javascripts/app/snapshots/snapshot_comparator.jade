@@ -37,19 +37,6 @@ header.workbench-header
 
 cf-snapshot-selector(ng-show="isShowingSnapshotSelector()")
 
-cf-ui-hint.snapshot-comparator__hint(
-  name="snapshots-intro"
-  arrow="true"
-  arrow-direction="up"
-  show-dismiss="true"
-  data-test-id="snapshots-intro")
-  span(ng-show="versionPicker.getDifferenceCount() > 0")
-    | The contents of these two versions seem to be different.
-  span(ng-show="versionPicker.getDifferenceCount() < 1")
-    | These two versions are identical.
-  span(ng-show="snapshotCount > 1")
-    |  Use this navigation to change the versions being compared.
-
 .workbench-main.x--content-full-size
   .snapshot-comparator__field(
     ng-repeat="widget in widgets track by widget.field.id"

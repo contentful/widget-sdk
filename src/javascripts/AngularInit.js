@@ -205,7 +205,6 @@ angular
       ngRequire('ui/Framework/ReactDirective.es6').default();
       ngRequire('ui/cf/cfThumbnailDirective.es6').default();
       ngRequire('ui/cfIconDirective.es6').default();
-      ngRequire('ui/cfUiHint.es6').default();
       ngRequire('ui/cfUiSticky.es6').default();
       ngRequire('ui/cfUiTab.es6').default();
       ngRequire('ui/hideOnClickDirective.es6').default();
