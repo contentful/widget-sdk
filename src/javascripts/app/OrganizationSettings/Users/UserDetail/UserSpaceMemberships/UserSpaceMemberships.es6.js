@@ -179,11 +179,7 @@ class UserSpaceMemberships extends React.Component {
     return (
       <TableRow key={membership.sys.id}>
         <TableCell>{membership.sys.space.name}</TableCell>
-        <TableCell>
-          {getMembershipRoles(membership)
-            .map(role => role.name)
-            .join(', ')}
-        </TableCell>
+        <TableCell>{joinWithAnd(getMembershipRoles(membership).map(role => role.name))}</TableCell>
         <TableCell>{getUserName(membership.sys.createdBy)}</TableCell>
         <TableCell>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</TableCell>
         <TableCell align="right">
