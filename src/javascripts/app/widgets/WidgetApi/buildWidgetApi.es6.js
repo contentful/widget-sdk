@@ -24,7 +24,7 @@ const { getSectionVisibility } = getModule('access_control/AccessChecker');
  * @param {string} currentUrl
  * @returns {Object}
  */
-export default function buildWidgetApi({ field, entry, currentUrl }) {
+export default function buildWidgetApi({ field, entry, currentUrl, settings }) {
   const { entry: canAccessEntries, asset: canAccessAssets } = getSectionVisibility();
 
   const widgetAPI = {
@@ -34,7 +34,7 @@ export default function buildWidgetApi({ field, entry, currentUrl }) {
     field,
 
     /**
-     *
+     * @see https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-reference/#entry
      */
     entry,
 
@@ -82,7 +82,9 @@ export default function buildWidgetApi({ field, entry, currentUrl }) {
     permissions: {
       canAccessEntries,
       canAccessAssets
-    }
+    },
+
+    settings
 
     // TODO: .locales
     // TODO: .user

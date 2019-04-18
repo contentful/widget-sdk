@@ -87,7 +87,10 @@ export default function register() {
               throw new Error('widgetApi is unavailable in this context.');
             }
             handleWidgetLinkRenderEvents();
-            const jsxTemplate = buildTemplate({ widgetApi, loadEvents });
+            const jsxTemplate = buildTemplate({
+              widgetApi,
+              loadEvents: loadEvents || newNoopLoadEvents()
+            });
             renderJsxTemplate(
               <WidgetAPIContext.Provider value={{ widgetApi }}>
                 {jsxTemplate}
@@ -150,4 +153,10 @@ export default function register() {
       };
     }
   ]);
+}
+
+function newNoopLoadEvents() {
+  return {
+    emit: () => {}
+  };
 }
