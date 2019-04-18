@@ -1,13 +1,18 @@
 import React from 'react';
 
+import cn from 'classnames';
+
 import {
   Table,
   TableHead,
   TableRow,
   TableCell,
   TableBody,
-  Checkbox
+  Checkbox,
+  IconButton
 } from '@contentful/forma-36-react-components';
+
+import ViewCustomizer from 'components/tabs/entry_list/ViewCustomizer/index.es6';
 
 import { isEdge } from 'utils/browser.es6';
 const isEdgeBrowser = isEdge();
@@ -137,14 +142,96 @@ const isEdgeBrowser = isEdge();
 
 */
 
-export default function EntryList() {
+function SortableTableCell({ fieldName, isSortable, isActiveSort, onClick, direction }) {
+  return (
+    <TableCell
+      className={cn({
+        'x--sortable': isSortable,
+        'x--active-sort': isActiveSort
+      })}
+      onClick={() => {
+        onClick();
+      }}>
+      {fieldName}
+      {isSortable && isActiveSort && (
+        <IconButton
+          buttonType="naked"
+          iconProps={{
+            icon: direction === 'descending' ? 'ArrowDown' : 'ArrowDown'
+          }}
+        />
+      )}
+    </TableCell>
+  );
+}
+
+export default function EntryList({
+  context,
+  displayedFields = [],
+  displayFieldForFilteredContentType,
+  fieldIsSortable,
+  isOrderField,
+  orderColumnBy,
+  hasHiddenFields,
+  hiddenFields,
+  removeDisplayField,
+  addDisplayField,
+  toggleContentType,
+  updateFieldOrder
+}) {
+  console.log('sss', context.view.contentTypeId && displayFieldForFilteredContentType());
+  const hasContentTypeSelected = !!context.view.contentTypeId;
+  const displayField = displayFieldForFilteredContentType();
+  const t = !hasContentTypeSelected || !displayField;
+  const t1 = !hasContentTypeSelected && !displayField;
   return (
     <Table>
       <TableHead offsetTop={isEdgeBrowser ? '0px' : '-22px'} isSticky>
         <TableRow>
+          {t && (
+            <TableCell>
+              <Checkbox />
+              Name
+            </TableCell>
+          )}
+          {t1 && <TableCell>Content Type</TableCell>}
+          {context.view.contentTypeId && displayFieldForFilteredContentType() && (
+            <SortableTableCell
+              fieldName="Name"
+              isSortable={fieldIsSortable(displayField)}
+              isActiveSort={isOrderField(displayField)}
+              onClick={() => {
+                fieldIsSortable(displayField) && orderColumnBy(displayField);
+              }}
+              direction={context.view.order.direction}
+            />
+          )}
+          {displayedFields.map(field => {
+            return (
+              <SortableTableCell
+                key={field.id}
+                fieldName={field.name}
+                isSortable={fieldIsSortable(field)}
+                isActiveSort={isOrderField(field)}
+                onClick={() => {
+                  fieldIsSortable(field) && orderColumnBy(field);
+                }}
+                direction={context.view.order.direction}
+              />
+            );
+          })}
           <TableCell>
-            <Checkbox />
-            Name
+            Status
+            <ViewCustomizer
+              hasHiddenFields={hasHiddenFields}
+              displayedFields={displayedFields}
+              hiddenFields={hiddenFields}
+              removeDisplayField={removeDisplayField}
+              addDisplayField={addDisplayField}
+              toggleContentType={toggleContentType}
+              isContentTypeHidden={!context.view.contentTypeId && context.view.contentTypeHidden}
+              updateFieldOrder={updateFieldOrder}
+            />
           </TableCell>
         </TableRow>
       </TableHead>
