@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import { flatten, concat } from 'lodash';
 
-import Page from './ContentTypeListPage.es6';
+import { ContentTypesPage as Page } from './ContentTypeListPage.es6';
 
 import * as spaceContextMocked from 'ng/spaceContext';
 import flushPromises from 'testHelpers/flushPromises';
@@ -41,11 +41,11 @@ const mockContentTypeList = [
   contentTypeFactory.createPublished()
 ];
 
-function mount(mock) {
-  const getStub = jest.fn().mockResolvedValue(mock);
+function mount({ props = {}, items = [] }) {
+  const getStub = jest.fn().mockResolvedValue({ items });
   spaceContextMocked.endpoint = getStub;
 
-  const wrapper = Enzyme.mount(<Page />);
+  const wrapper = Enzyme.mount(<Page {...props} />);
 
   return [wrapper, getStub];
 }
@@ -87,6 +87,16 @@ describe('ContentTypeList Page', () => {
     expect(wrapper.find(selectors.emptyState)).toExist();
   });
 
+  it('renders predefined search text', async () => {
+    const searchText = 'initial search text 42';
+    const [wrapper] = mount({
+      props: { searchText },
+      items: mockContentTypeList
+    });
+    await waitForUpdate(wrapper);
+    expect(wrapper.find('ContentTypeListSearch').props().initialValue).toEqual(searchText);
+  });
+
   describe('Search Box', () => {
     let wrapper;
     const contentTypes = [
@@ -124,6 +134,19 @@ describe('ContentTypeList Page', () => {
 
       expect(wrapper.find(selectors.contentTypeList)).not.toExist();
       expect(wrapper.find(selectors.noSearchResults)).toExist();
+    });
+
+    it('invokes onSearchChange()', async () => {
+      const onSearchChange = jest.fn();
+      wrapper = mount({
+        props: { onSearchChange },
+        items: contentTypes
+      })[0];
+      await waitForUpdate(wrapper);
+      const searchText = 'My great search';
+      setSearchValueAndUpdate(searchText);
+      expect(onSearchChange).toHaveBeenCalledTimes(1);
+      expect(onSearchChange).toHaveBeenCalledWith(searchText);
     });
   });
 

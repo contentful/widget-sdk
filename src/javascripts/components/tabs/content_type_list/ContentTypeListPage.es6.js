@@ -1,5 +1,6 @@
 import React from 'react';
-
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
@@ -11,14 +12,26 @@ import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.e
 import ContentTypeListSearch from './ContentTypeListSearch.es6';
 import ContentTypeListFilter from './ContentTypeListFilter.es6';
 import * as service from './ContentTypeListService.es6';
+import { getSearchTerm } from 'redux/selectors/filters.es6';
 
-export default class ContentTypesPage extends React.Component {
-  state = {
-    isLoading: true,
-    contentTypes: [],
-    searchTerm: '',
-    status: undefined
+export class ContentTypesPage extends React.Component {
+  static propTypes = {
+    searchText: PropTypes.string,
+    onSearchChange: PropTypes.func
   };
+  static defaultProps = {
+    onSearchChange: () => {}
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: true,
+      contentTypes: [],
+      searchTerm: props.searchText || '',
+      status: undefined
+    };
+  }
 
   componentDidMount() {
     service.fetchContentTypes().then(items => {
@@ -81,6 +94,7 @@ export default class ContentTypesPage extends React.Component {
                     this.setState({
                       searchTerm: value
                     });
+                    this.props.onSearchChange(value);
                   }}
                 />
               )}
@@ -125,4 +139,12 @@ export default class ContentTypesPage extends React.Component {
   }
 }
 
-ContentTypesPage;
+export default connect(
+  state => ({
+    searchText: getSearchTerm(state)
+  }),
+  dispatch => ({
+    onSearchChange: newSearchTerm =>
+      dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm } })
+  })
+)(ContentTypesPage);
