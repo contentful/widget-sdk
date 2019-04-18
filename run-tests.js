@@ -61,7 +61,6 @@ if (singleRun) {
   } else {
     // we don't show a detailed report for single runs
     config.set({
-      reporters: ['dots'],
       files: config.files.concat(['test/unit/**/*.js', 'test/integration/**/*.js'])
     });
   }
