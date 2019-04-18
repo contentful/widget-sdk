@@ -34,7 +34,7 @@ const Command = getModule('command');
  */
 export function create(widgetApi) {
   const field = widgetApi.field;
-  const editor = Adapter.create();
+  const editor = Adapter.create({ onStateChange: updateState });
 
   // Internal state for commands. Has 'undoable' and 'redoable'
   // properties.
@@ -55,7 +55,6 @@ export function create(widgetApi) {
   });
 
   const offValueChanged = field.onValueChanged(editor.setValue, true);
-  const offStateChanged = editor.onStateChange(updateState);
 
   const controller = {
     undo: undoCmd,
@@ -65,7 +64,6 @@ export function create(widgetApi) {
     destroy: function() {
       editor.destroy();
       offValueChanged();
-      offStateChanged();
     }
   };
 

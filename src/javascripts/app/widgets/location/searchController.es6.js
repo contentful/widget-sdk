@@ -2,7 +2,6 @@ import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import throttle from 'lodash/throttle';
 import memoize from 'utils/memoize.es6';
-import * as Signal from 'utils/signal.es6';
 import * as LazyLoader from 'utils/LazyLoader.es6';
 
 export default function register() {
@@ -11,14 +10,11 @@ export default function register() {
     '$q',
     function($scope, $q) {
       const controller = this;
-      const resultsAvailable = Signal.create();
 
       const ADDRESS_NOT_FOUND_ERROR = {
         code: 'address-not-found',
         message: 'Could not find address'
       };
-
-      controller.onResultsAvailable = resultsAvailable.attach;
 
       controller.pick = result => {
         $scope.location = result.location;
@@ -55,7 +51,7 @@ export default function register() {
           } else {
             controller.results = convertResults(results);
             controller.error = null;
-            resultsAvailable.dispatch();
+            controller.onResultsAvailable && controller.onResultsAvailable();
           }
         },
         error => {

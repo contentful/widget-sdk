@@ -25,9 +25,7 @@ export default function register() {
 
         $scope.search = $controller('LocationEditorSearchController', { $scope: $scope });
 
-        $scope.search.onResultsAvailable(() => {
-          searchResultsMenu.show();
-        });
+        $scope.search.onResultsAvailable = () => searchResultsMenu.show();
 
         const offValueChanged = field.onValueChanged(location => {
           $scope.location = location || {};
