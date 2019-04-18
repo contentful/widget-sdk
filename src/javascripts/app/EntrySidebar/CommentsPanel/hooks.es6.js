@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { map, uniq } from 'lodash';
 import resolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
-import { getSpace } from 'services/TokenStore.es6';
+import { getSpace, getUser } from 'services/TokenStore.es6';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getUsers } from 'access_control/OrganizationMembershipRepository.es6';
 import { getAll, create } from 'data/CMA/CommentsRepo.es6';
@@ -29,9 +29,13 @@ export const useCommentsFetcher = (spaceId, entryId) => {
  * @param {string} entryId
  */
 export const useCommentCreator = (spaceId, entryId) => {
+  const user = getUser();
+  const endpoint = createSpaceEndpoint(spaceId);
+
   return useAsyncFn(async body => {
-    const endpoint = createSpaceEndpoint(spaceId);
-    return create(endpoint, entryId, body);
+    const comment = await create(endpoint, entryId, body);
+    comment.sys.createdBy = user;
+    return comment;
   });
 };
 
