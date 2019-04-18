@@ -43,7 +43,7 @@ const styles = {
     borderBottom: `1px solid ${tokens.colorTextLightest}`
   }),
   entityStatusTag: css({
-    'margin-left': 'auto'
+    marginLeft: 'auto'
   }),
   searchLinkItem: css({
     backgroundColor: tokens.colorElementLightest,
