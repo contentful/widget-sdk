@@ -35,6 +35,7 @@ output/
 # Cypress artifacts
 screenshots/
 videos/
+reports/
 
 # PACT
 logs/
