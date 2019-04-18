@@ -14,6 +14,6 @@
   },
   "reporter": "junit",
   "reporterOptions": {
-    "mochaFile": "cypress/reports/cypress/cypress-test-results.xml"
+    "mochaFile": "cypress/reports/cypress/cypress-test-results.[hash].xml"
   }
 }
