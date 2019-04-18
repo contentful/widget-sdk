@@ -1,4 +1,4 @@
-import { create as createSignal, createMemoized } from './signal.es6';
+import { create as createSignal } from './signal.es6';
 import _ from 'lodash';
 
 describe('utils/signal.es6', () => {
@@ -30,34 +30,6 @@ describe('utils/signal.es6', () => {
       detach();
       signal.dispatch();
       expect(listener).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('#createMemoized()', () => {
-    it('sends initial value on attach with send option', function() {
-      const signal = createMemoized('INITIAL');
-      const listener = jest.fn();
-
-      signal.attach(listener, true);
-      expect(listener).toHaveBeenLastCalledWith('INITIAL');
-    });
-
-    it('sends last value on attach with send option', function() {
-      const signal = createMemoized();
-      const listener = jest.fn();
-
-      signal.dispatch('VALUE');
-      signal.attach(listener, true);
-      expect(listener).toHaveBeenCalledWith('VALUE');
-    });
-
-    it('overides initial value when dispatched', function() {
-      const signal = createMemoized('INITIAL');
-      signal.dispatch('VALUE');
-
-      const listener = jest.fn();
-      signal.attach(listener, true);
-      expect(listener).toHaveBeenCalledWith('VALUE');
     });
   });
 });

@@ -54,24 +54,3 @@ export function create() {
     }
   };
 }
-
-/**
- * @returns {Signal}
- */
-export function createMemoized(...args) {
-  let lastArgs = args;
-
-  const baseSignal = create();
-
-  return {
-    dispatch: function(...args) {
-      lastArgs = args;
-      baseSignal.dispatch.apply(null, args);
-    },
-
-    attach: function(listener) {
-      listener(...lastArgs);
-      return baseSignal.attach(listener);
-    }
-  };
-}
