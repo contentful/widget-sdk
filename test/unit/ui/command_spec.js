@@ -4,7 +4,6 @@ describe('command service', () => {
   beforeEach(function() {
     module('contentful/test');
     this.create = this.$inject('command').create;
-    this.executions = this.$inject('command').executions;
   });
 
   describe('#execute', () => {
@@ -32,17 +31,6 @@ describe('command service', () => {
 
       this.$apply();
       expect(executed).toBe(true);
-    });
-
-    it('triggers #executions signal', function() {
-      const command = this.create(sinon.stub());
-
-      const executed = sinon.stub();
-      this.executions.attach(executed);
-
-      command.execute();
-      sinon.assert.calledOnce(executed);
-      sinon.assert.calledWith(executed, command);
     });
   });
 
