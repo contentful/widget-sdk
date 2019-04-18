@@ -136,10 +136,10 @@ jobs:
           name: Run Jest tests
           command: NODE_ENV=production npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
           environment:
-            JEST_JUNIT_OUTPUT: 'reports/junit/jest-test-results.xml'
+            JEST_JUNIT_OUTPUT: 'reports/jest/jest-test-results.xml'
       - run: npm run codecov
       - store_test_results:
-          path: reports/junit
+          path: reports
 
   run-karma-tests:
     docker:
@@ -167,13 +167,13 @@ jobs:
       - run:
           name: Run Karma tests
           command: |
-            mkdir -p ./reports/junit
+            mkdir -p ./reports/karma
             npm run test:once -- $TESTFILES
           environment:
-            JUNIT_REPORT_PATH: ./reports/junit
+            JUNIT_REPORT_PATH: ./reports/karma
             JUNIT_REPORT_NAME: karma-test-results.xml
       - store_test_results:
-          path: reports/junit
+          path: reports
 
   run-e2e-tests:
     machine:
@@ -244,8 +244,8 @@ jobs:
           command: |
             bin/run-e2e-tests.sh -- -n=2 -d --max-worker-restart=2 --instafail --tb=short --durations=10 \
             --force-flaky --max-runs=2 --no-flaky-report \
-            --junit-xml=test-results/pytest/junit.xml \
-            --html=test-results/pytest/index.html \
+            --junit-xml=test-results/pytest/pytest-test-results.xml \
+            --html=test-results/pytest/e2e-test-report.html \
             -m 'not dependent' --pricing=v2 --pricing=v1 ${TESTFILES}
       - run:
           name: Trigger sniffer build
@@ -271,13 +271,13 @@ workflows:
             - build-and-push-image
       - deploy-micro-backends
       - cypress/run:
-          name: cypress-run
+          name: run-contract-tests
           executor: cypress-base-8
           pre-steps:
             - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
           post-steps:
             - store_test_results:
-                path: cypress/results
+                path: cypress/reports
           start: npm start
           wait-on: 'http://localhost:3001'
           store_artifacts: true
