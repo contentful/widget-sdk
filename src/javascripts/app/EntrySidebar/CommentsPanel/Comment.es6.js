@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { css } from 'emotion';
 import {
   CardActions,
@@ -52,8 +53,9 @@ export const styles = {
 
 export default function Comment({ comment }) {
   const {
-    sys: { createdBy }
+    sys: { createdBy, createdAt }
   } = comment;
+  const creationDate = moment(createdAt, moment.ISO_8601);
   return (
     <div className={styles.comment}>
       <header className={styles.header}>
@@ -62,8 +64,11 @@ export default function Comment({ comment }) {
           <Heading element="h4" className={styles.userName}>
             {`${createdBy.firstName} ${createdBy.lastName}`}
           </Heading>
-          <time dateTime="2019-04-01T12:00" className={styles.timestamp}>
-            1 day ago
+          <time
+            dateTime={creationDate.toISOString()}
+            title={creationDate.format('LLLL')}
+            className={styles.timestamp}>
+            {creationDate.fromNow()}
           </time>
         </div>
         <CardActions>
