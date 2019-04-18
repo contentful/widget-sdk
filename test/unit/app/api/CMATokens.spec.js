@@ -10,10 +10,10 @@ describe('app/api/CMATokens', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       // TODO Fix modal dialog or immediately invoked defer.
-      // The modal dialog service uses 'defer', which immediately invokes its
+      // The modal dialog service uses 'lodash/defer', which immediately invokes its
       // callback in the tests. This leads to a 'digest already in progress
       // error'
-      $provide.factory('defer', $timeout => {
+      $provide.factory('lodash/defer', $timeout => {
         return $timeout;
       });
       $provide.value('$state', {

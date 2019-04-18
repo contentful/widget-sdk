@@ -1,5 +1,7 @@
 import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
+import debounce from 'lodash/debounce';
+import delay from 'lodash/delay';
 import { Notification } from '@contentful/forma-36-react-components';
 import { createSelection } from 'classes/Selection.es6';
 import * as entityStatus from 'app/entity_editor/EntityStatus.es6';
@@ -12,8 +14,6 @@ export default function register() {
     '$scope',
     '$controller',
     '$state',
-    'delay',
-    'debounce',
     'spaceContext',
     'TheLocaleStore',
     'entityCreator',
@@ -25,8 +25,6 @@ export default function register() {
       $scope,
       $controller,
       $state,
-      delay,
-      debounce,
       spaceContext,
       TheLocaleStore,
       entityCreator,

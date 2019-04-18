@@ -1,5 +1,6 @@
 import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
+import defer from 'lodash/defer';
 import * as K from 'utils/kefir.es6';
 
 export default function register() {
@@ -21,8 +22,7 @@ export default function register() {
    * <div cf-focus-ot-input="optionalExpression"></div>
    */
   registerDirective('cfFocusOtInput', [
-    'defer',
-    defer => ({
+    () => ({
       restrict: 'A',
       link: function(scope, elem, attrs) {
         if (scope.$eval(attrs.cfFocusOtInput) || _.isEmpty(attrs.cfFocusOtInput)) {

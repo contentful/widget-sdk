@@ -1,10 +1,8 @@
 import { transform } from 'lodash';
+import throttle from 'lodash/throttle';
 import { observeResize } from 'ui/ResizeDetector.es6';
 import * as K from 'utils/kefir.es6';
-import { getModule } from 'NgRegistry.es6';
 import * as userAgent from 'services/userAgent.es6';
-
-const throttle = getModule('throttle');
 
 export function create(textarea, options, CodeMirror) {
   const { direction, fixedHeight, height } = options || {};

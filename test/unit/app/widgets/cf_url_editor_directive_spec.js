@@ -1,9 +1,12 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('cfUrlEditor directive', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.removeDirectives(['cfEmbedlyPreview']);
+      $provide.constant('lodash/debounce', _.identity);
     });
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();

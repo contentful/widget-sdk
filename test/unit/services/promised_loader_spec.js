@@ -6,6 +6,7 @@ describe('Promised loader service', () => {
 
   beforeEach(() => {
     module('contentful/test', $provide => {
+      $provide.constant('lodash/debounce', _.debounce);
       stubs = $provide.makeStubs(['method', 'success', 'error', 'success2', 'error2']);
     });
     inject($injector => {
@@ -118,7 +119,7 @@ describe('PromisedLoader service', () => {
   let a, b;
   beforeEach(() => {
     module('contentful/test', $provide => {
-      $provide.value('debounce', _.debounce);
+      $provide.constant('lodash/debounce', _.debounce);
     });
     inject(PromisedLoader => {
       a = new PromisedLoader();

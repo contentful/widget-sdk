@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 describe('SlugEditor directive', () => {
   beforeEach(function() {
     this.locales = [
@@ -11,6 +13,7 @@ describe('SlugEditor directive', () => {
       $provide.constant('TheLocaleStore', {
         getPrivateLocales: () => this.locales
       });
+      $provide.constant('lodash/debounce', _.identity);
     });
 
     const MockApi = this.$inject('mocks/widgetApi');

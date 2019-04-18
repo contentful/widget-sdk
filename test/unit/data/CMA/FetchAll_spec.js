@@ -2,7 +2,10 @@ import _ from 'lodash';
 
 describe('FetchAll', () => {
   beforeEach(function() {
-    module('contentful/test');
+    module('contentful/test', $provide => {
+      $provide.constant('lodash/debounce', _.identity);
+      $provide.constant('lodash/throttle', _.identity);
+    });
     this.fetchAll = this.$inject('data/CMA/FetchAll.es6').fetchAll;
     this.fetchAllWithIncludes = this.$inject('data/CMA/FetchAll.es6').fetchAllWithIncludes;
     this.query = { skip: 0, limit: 10 };

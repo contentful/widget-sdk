@@ -3,15 +3,15 @@ import _ from 'lodash';
 angular
   .module('contentful/mocks')
 
-  .value('debounce', _.identity)
-  .value('throttle', _.identity)
+  .constant('lodash/debounce', _.identity)
+  .constant('lodash/throttle', _.identity)
 
-  .value('defer', function(f) {
+  .constant('lodash/defer', function(f) {
     const args = _.tail(arguments);
     f.apply(this, args);
   })
 
-  .value('delay', function(f) {
+  .constant('lodash/delay', function(f) {
     const args = _.drop(arguments, 2);
     f.apply(this, args);
   })

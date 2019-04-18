@@ -1,5 +1,6 @@
 import { registerDirective } from 'NgRegistry.es6';
 import { isEmpty, isEqual } from 'lodash';
+import debounce from 'lodash/debounce';
 import moment from 'moment';
 import * as K from 'utils/kefir.es6';
 import createInputUpdater from 'ui/inputUpdater.es6';
@@ -30,9 +31,8 @@ export default function register() {
    * so we don't duplicate our API error and custom check inside this directive.
    */
   registerDirective('cfSlugEditor', [
-    'debounce',
     'TheLocaleStore',
-    (debounce, TheLocaleStore) => ({
+    TheLocaleStore => ({
       restrict: 'E',
       scope: {},
       require: '^cfWidgetApi',

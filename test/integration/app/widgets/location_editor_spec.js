@@ -9,7 +9,7 @@ describe('LocationEditor integration', () => {
       $provide.constant('utils/LazyLoader.es6', {
         get: sinon.stub().resolves(this.googleMaps)
       });
-      $provide.value('throttle', _.identity);
+      $provide.constant('lodash/throttle', _.identity);
     });
 
     this.fieldApi = {

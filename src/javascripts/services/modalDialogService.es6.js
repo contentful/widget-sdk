@@ -1,5 +1,7 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
+import debounce from 'lodash/debounce';
+import defer from 'lodash/defer';
 import $ from 'jquery';
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import keycodes from 'utils/keycodes.es6';
@@ -35,9 +37,7 @@ export default function register() {
     '$window',
     '$rootScope',
     '$timeout',
-    'defer',
-    'debounce',
-    ($compile, $q, $window, $rootScope, $timeout, defer, debounce) => {
+    ($compile, $q, $window, $rootScope, $timeout) => {
       const opened = [];
 
       function Dialog(params) {

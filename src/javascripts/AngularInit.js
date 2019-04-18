@@ -20,12 +20,6 @@ angular
         provider: $provide.provider,
         value: $provide.value
       };
-
-      // Legacy values originally from lodash_timing.js
-      $provide.value('debounce', _.debounce);
-      $provide.value('throttle', _.throttle);
-      $provide.value('defer', _.defer);
-      $provide.value('delay', _.delay);
     }
   ])
   .run([

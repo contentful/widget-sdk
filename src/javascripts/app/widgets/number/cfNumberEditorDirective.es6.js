@@ -1,12 +1,12 @@
 import { registerDirective, registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
+import debounce from 'lodash/debounce';
 import createInputUpdater from 'ui/inputUpdater.es6';
 
 export default function register() {
   registerDirective('cfNumberEditor', [
-    'debounce',
     'cfNumberEditor/parseNumber',
-    (debounce, parseNumber) => {
+    parseNumber => {
       return {
         scope: {},
         restrict: 'E',

@@ -1,11 +1,11 @@
 import { registerFactory } from 'NgRegistry.es6';
-import _ from 'lodash';
+import { drop } from 'lodash';
+import debounce from 'lodash/debounce';
 
 export default function register() {
   registerFactory('PromisedLoader', [
     '$q',
-    'debounce',
-    ($q, debounce) => {
+    $q => {
       function PromisedLoader() {
         this.inProgress = false;
         this._loadPromise = debounce(this._loadPromiseImmediately, 500, { leading: true });
@@ -41,7 +41,7 @@ export default function register() {
 
         loadPromise: function(promiseLoader /*, args[] */) {
           const deferred = $q.defer();
-          const args = _.drop(arguments, 1);
+          const args = drop(arguments, 1);
           if (this.inProgress) {
             deferred.reject(PromisedLoader.IN_PROGRESS);
             return deferred.promise;

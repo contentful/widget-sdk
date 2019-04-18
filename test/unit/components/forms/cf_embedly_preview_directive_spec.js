@@ -9,7 +9,9 @@ describe('cfEmbedlyPreview Directive', () => {
   });
 
   beforeEach(function() {
-    module('contentful/test');
+    module('contentful/test', $provide => {
+      $provide.constant('lodash/debounce', _.identity);
+    });
 
     const $q = this.$inject('$q');
     deferredEmbedlyResponse = $q.defer();

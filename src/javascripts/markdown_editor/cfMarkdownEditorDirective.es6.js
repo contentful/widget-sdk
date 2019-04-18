@@ -1,13 +1,13 @@
 import { registerDirective } from 'NgRegistry.es6';
 import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
 import _ from 'lodash';
+import throttle from 'lodash/throttle';
 import * as K from 'utils/kefir.es6';
 import * as LazyLoader from 'utils/LazyLoader.es6';
 
 export default function register() {
   registerDirective('cfMarkdownEditor', [
     '$timeout',
-    'throttle',
     'TheLocaleStore',
     'utils/LaunchDarkly/index.es6',
     'markdown_editor/markdown_editor.es6',
@@ -17,7 +17,6 @@ export default function register() {
     'analytics/MarkdownEditorActions.es6',
     (
       $timeout,
-      throttle,
       LocaleStore,
       LD,
       MarkdownEditor,

@@ -13,7 +13,9 @@ describe('cfWidgetRenderer Directive', () => {
         createLinksRenderedEvent: () => () => {},
         createWidgetLinkRenderEventsHandler: () => () => {}
       });
-      $provide.value('debounce', identity);
+      $provide.value('lodash/debounce', {
+        default: identity
+      });
     });
 
     this.widget = {

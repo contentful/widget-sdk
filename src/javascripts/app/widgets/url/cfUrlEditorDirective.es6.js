@@ -1,10 +1,10 @@
 import { registerDirective } from 'NgRegistry.es6';
+import debounce from 'lodash/debounce';
 import createInputUpdater from 'ui/inputUpdater.es6';
 
 export default function register() {
   registerDirective('cfUrlEditor', [
-    'debounce',
-    debounce => ({
+    () => ({
       restrict: 'E',
       require: '^cfWidgetApi',
       scope: {},
