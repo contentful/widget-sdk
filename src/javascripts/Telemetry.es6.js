@@ -1,4 +1,5 @@
 import createMicroBackendsClient from './MicroBackendsClient.es6';
+import { gitRevision as uiVersion } from 'Config.es6';
 
 // How often measurements should be sent.
 // Please note it means some measurements may be dropped.
@@ -11,7 +12,15 @@ const INTERVAL = 120 * 1000;
 // and only then setup the long-running interval.
 const INITIAL_DELAY = 10 * 1000;
 
-const makeMeasurement = (name, value, tags) => ({ name, value, ...(tags ? { tags } : {}) });
+const makeMeasurement = (name, value, tags) => {
+  if (tags) {
+    tags.uiVersion = uiVersion;
+  } else {
+    tags = { uiVersion };
+  }
+
+  return { name, value, tags };
+};
 
 const state = {};
 
