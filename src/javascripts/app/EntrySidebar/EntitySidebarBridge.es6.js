@@ -141,26 +141,27 @@ export default ({ $scope }) => {
       });
     });
 
-    const initializeComments = once(() => {
-      const {
-        entityInfo: { id }
-      } = $scope;
-      emitter.emit(SidebarEventTypes.INIT_COMMENTS_PANEL, {
-        entryId: id,
-        spaceId: spaceContext.getId(),
-        environmentId: spaceContext.getEnvironmentId()
-      });
-    });
-
-    $scope.$on('show-comments-panel', (_, isVisible) => {
-      initializeComments();
-      emitter.emit(SidebarEventTypes.UPDATED_COMMENTS_PANEL, {
-        isVisible
-      });
-    });
-
     K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
       updateProps({ sys });
+    });
+  });
+
+  const initializeComments = once(() => {
+    const {
+      entityInfo: { id }
+    } = $scope;
+
+    emitter.emit(SidebarEventTypes.INIT_COMMENTS_PANEL, {
+      entryId: id,
+      spaceId: spaceContext.getId(),
+      environmentId: spaceContext.getEnvironmentId()
+    });
+  });
+
+  $scope.$on('show-comments-panel', (_, isVisible) => {
+    initializeComments();
+    emitter.emit(SidebarEventTypes.UPDATED_COMMENTS_PANEL, {
+      isVisible
     });
   });
 
