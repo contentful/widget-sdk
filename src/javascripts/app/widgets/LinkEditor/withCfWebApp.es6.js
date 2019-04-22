@@ -91,7 +91,9 @@ export default function withCfWebApp(LinkEditor) {
         },
         editLinkedEntity: (entity, index) => {
           this.handleOpenLink(entity, index, SLIDE_IN_ACTIONS.OPEN);
-          track('reference_editor_action:edit', { ctId: getCtId(entity) });
+          if (entity.sys.type === 'Entry') {
+            track('reference_editor_action:edit', { ctId: getCtId(entity) });
+          }
         }
       };
       const props = {
