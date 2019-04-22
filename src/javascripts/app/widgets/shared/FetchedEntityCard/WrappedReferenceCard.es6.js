@@ -1,10 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EntryCard, DropdownList, DropdownListItem } from '@contentful/forma-36-react-components';
+import { EntryCard } from '@contentful/forma-36-react-components';
 import Thumbnail from './Thumbnail.es6';
+import { EntryActions, AssetActions } from './CardActions.es6';
 
-class WrappedReferenceCard extends React.Component {
+/**
+ * Wrapper around Forma 36 EntryCard. Can be used with entries but works
+ * also with assets (as in the link editor's "Link" appearance style).
+ */
+export default class WrappedReferenceCard extends React.Component {
   static propTypes = {
+    entityType: PropTypes.string,
     contentTypeName: PropTypes.string,
     entityDescription: PropTypes.string,
     entityFile: PropTypes.object,
@@ -25,42 +31,23 @@ class WrappedReferenceCard extends React.Component {
     className: ''
   };
 
-  renderEditAction() {
-    return (
-      <DropdownListItem
-        onClick={() => {
-          this.props.onEdit();
-        }}
-        testId="edit">
-        Edit
-      </DropdownListItem>
-    );
-  }
-
-  renderDeleteAction() {
-    return (
-      <DropdownListItem
-        onClick={() => {
-          this.props.onRemove();
-        }}
-        disabled={this.props.disabled}
-        testId="delete">
-        Remove
-      </DropdownListItem>
-    );
-  }
-
   renderActions = () => {
-    return !this.props.readOnly ? (
-      <DropdownList>
-        {this.props.onEdit && this.renderEditAction()}
-        {this.props.onRemove && this.renderDeleteAction()}
-      </DropdownList>
-    ) : null;
+    if (this.props.readOnly) {
+      return null;
+    }
+    const { entityType, disabled: isDisabled, onEdit, onRemove, entityFile } = this.props;
+    const actions =
+      entityType === 'Asset'
+        ? new AssetActions({ isDisabled, onEdit, onRemove, entityFile })
+        : new EntryActions({ isDisabled, onEdit, onRemove });
+    // Render card actions directly as EntryCard's dropdownListElements prop expects a
+    // React.Fragment or a DropdownListItem.
+    return actions.render();
   };
 
   render() {
     const {
+      entityType,
       contentTypeName,
       entityDescription,
       entityFile,
@@ -76,7 +63,7 @@ class WrappedReferenceCard extends React.Component {
     return (
       <EntryCard
         title={entityTitle || 'Untitled'}
-        contentType={contentTypeName}
+        contentType={contentTypeName || (entityType === 'Asset' ? 'Asset' : null)}
         className={className}
         description={entityDescription}
         size={size}
@@ -90,5 +77,3 @@ class WrappedReferenceCard extends React.Component {
     );
   }
 }
-
-export default WrappedReferenceCard;

@@ -97,9 +97,12 @@ class FetchedEntityCard extends React.Component {
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingEntryReferenceCard();
               } else {
+                const isEntry = this.props.entityType === 'Entry';
+                const isSmallAsset = !isEntry && this.props.size === 'small';
                 const WrapperComponent =
-                  this.props.entityType === 'Entry' ? WrappedReferenceCard : WrappedAssetCard;
+                  isEntry || isSmallAsset ? WrappedReferenceCard : WrappedAssetCard;
                 const cardProps = {
+                  entityType,
                   ...fetchEntityResult,
                   readOnly,
                   size,
