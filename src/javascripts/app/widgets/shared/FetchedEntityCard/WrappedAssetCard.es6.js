@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { AssetCard, DropdownList, DropdownListItem } from '@contentful/forma-36-react-components';
-import { get } from 'lodash';
+import { AssetCard } from '@contentful/forma-36-react-components';
+import { AssetActions } from './CardActions.es6';
 import mimetype from '@contentful/mimetype';
 
-import { shortenStorageUnit } from 'utils/NumberUtils.es6';
-
-class WrappedAssetCard extends React.Component {
+export default class WrappedAssetCard extends React.Component {
   static propTypes = {
     entityFile: PropTypes.object,
     entityTitle: PropTypes.string,
@@ -56,62 +54,19 @@ class WrappedAssetCard extends React.Component {
     }
   }
 
-  downloadAsset(url) {
-    window.open(url, '_blank');
-  }
-
   renderAssetActions(entityFile) {
-    return !this.props.readOnly ? (
-      <React.Fragment>
-        <DropdownList style={{ maxWidth: '300px' }}>
-          <DropdownListItem isTitle>Actions</DropdownListItem>
-          {this.props.onEdit && (
-            <DropdownListItem
-              onClick={() => {
-                this.props.onEdit();
-              }}>
-              Edit
-            </DropdownListItem>
-          )}
-
-          {entityFile && (
-            <DropdownListItem onClick={() => this.downloadAsset(entityFile.url)}>
-              Download
-            </DropdownListItem>
-          )}
-
-          {this.props.onRemove && (
-            <DropdownListItem
-              isDisabled={this.props.disabled}
-              onClick={() => {
-                this.props.onRemove();
-              }}>
-              Remove
-            </DropdownListItem>
-          )}
-        </DropdownList>
-        <DropdownList border="top" style={{ maxWidth: '300px' }}>
-          <DropdownListItem isTitle>File info</DropdownListItem>
-          {get(entityFile, 'fileName') && (
-            <DropdownListItem>
-              <div className="u-truncate">{entityFile.fileName}</div>
-            </DropdownListItem>
-          )}
-          {get(entityFile, 'contentType') && (
-            <DropdownListItem>
-              <div className="u-truncate">{entityFile.contentType}</div>
-            </DropdownListItem>
-          )}
-          {get(entityFile, 'details.size') && (
-            <DropdownListItem>{shortenStorageUnit(entityFile.details.size, 'B')}</DropdownListItem>
-          )}
-          {get(entityFile, 'details.image') && (
-            <DropdownListItem>{`${entityFile && entityFile.details.image.width} × ${entityFile &&
-              entityFile.details.image.height}`}</DropdownListItem>
-          )}
-        </DropdownList>
-      </React.Fragment>
-    ) : null;
+    const { readOnly, disabled, onEdit, onRemove } = this.props;
+    if (readOnly) {
+      return null;
+    }
+    // Can't just use jsx <AssetActions /> here as dropdownListElements expects
+    // a React.Fragment with direct <DropdownList /> children.
+    return new AssetActions({
+      entityFile,
+      isDisabled: disabled,
+      onEdit,
+      onRemove
+    }).render();
   }
 
   render() {
@@ -140,5 +95,3 @@ class WrappedAssetCard extends React.Component {
     );
   }
 }
-
-export default WrappedAssetCard;

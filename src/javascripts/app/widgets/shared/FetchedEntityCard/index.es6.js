@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Card, IconButton } from '@contentful/forma-36-react-components';
 
 import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity/index.es6';
-import WrappedReferenceCard from './WrappedReferenceCard.es6';
+import WrappedEntityCard from './WrappedEntityCard.es6';
 import WrappedAssetCard from './WrappedAssetCard.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 
@@ -97,9 +97,12 @@ class FetchedEntityCard extends React.Component {
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingEntryReferenceCard();
               } else {
+                const isEntry = this.props.entityType === 'Entry';
+                const isSmallAsset = !isEntry && this.props.size === 'small';
                 const WrapperComponent =
-                  this.props.entityType === 'Entry' ? WrappedReferenceCard : WrappedAssetCard;
+                  isEntry || isSmallAsset ? WrappedEntityCard : WrappedAssetCard;
                 const cardProps = {
+                  entityType,
                   ...fetchEntityResult,
                   readOnly,
                   size,

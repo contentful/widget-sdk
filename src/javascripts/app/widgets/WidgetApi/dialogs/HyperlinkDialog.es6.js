@@ -240,9 +240,9 @@ export class HyperlinkDialogForm extends React.Component {
               className="entity-selector-dialog__asset-card"
               entityId={entityLink.sys.id}
               entityType={entityLink.sys.linkType}
+              readOnly={true}
               disabled={false}
               selected={false}
-              onRemove={resetEntity}
             />
           </div>
         )}
