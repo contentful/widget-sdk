@@ -1,5 +1,7 @@
 import moment from 'moment';
 import { getModule } from 'NgRegistry.es6';
+import { getEndpoint } from './Utils.es6';
+import * as Telemetry from 'Telemetry.es6';
 
 const $q = getModule('$q');
 const $timeout = getModule('$timeout');
@@ -42,6 +44,23 @@ export default function wrapWithRetry(requestFn) {
     return deferred.promise;
   };
 
+  // the time sent here includes time needed to run the requestFn
+  // and the time it takes the JS runtime to have the resolve/reject
+  // handlers execute. Therefore, it is off from the times reported
+  // by the Network tab in your dev tools by a few milliseconds to
+  // tens of millisecond at worst (as per my limited testing).
+  function recordResponseTime({ status }, startTime, { url, method } = {}) {
+    try {
+      Telemetry.record('cma-response-time', now() - startTime, {
+        endpoint: getEndpoint(url),
+        status,
+        method
+      });
+    } catch (_) {
+      // no-op
+    }
+  }
+
   function shift() {
     if (inFlight >= CALLS_IN_PERIOD || queue.length < 1) {
       return;
@@ -53,6 +72,16 @@ export default function wrapWithRetry(requestFn) {
 
     $timeout(call.wait)
       .then(() => requestFn(...call.args))
+      .then(
+        res => {
+          recordResponseTime(res, start, ...call.args);
+          return res;
+        },
+        err => {
+          recordResponseTime(err, start, ...call.args);
+          return $q.reject(err);
+        }
+      )
       .then(handleSuccess, handleError)
       .then(completePeriod)
       .then(() => {
