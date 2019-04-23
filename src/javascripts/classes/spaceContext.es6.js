@@ -177,15 +177,15 @@ export default function register() {
           return $q
             .all([
               self.publishedCTs.refresh().then(() => {
-                const viewMigrator = createViewMigrator(
-                  self.publishedCTs.getAllBare(),
-                  self.users.getAll
-                );
+                const ctMap = self.publishedCTs.getAllBare().reduce((acc, ct) => {
+                  return { ...acc, [ct.sys.id]: ct };
+                }, {});
+
                 return createUiConfigStore(
                   space,
                   self.endpoint,
                   self.publishedCTs,
-                  viewMigrator
+                  createViewMigrator(ctMap)
                 ).then(api => {
                   self.uiConfig = api;
                 });

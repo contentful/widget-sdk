@@ -1,13 +1,13 @@
-const _ = require('lodash');
-const helpers = require('./helpers');
-const autocompletion = require('./auto-completion');
-const assetCompletions = require('./asset-completions');
+const { get } = require('lodash');
+const { queryOperator } = require('./helpers');
 const parse = require('./legacy-search-parser');
+const converters = require('./converters');
+
+const apiNameOrId = field => field.apiName || field.id;
 
 module.exports = {
   cmaQueryBuilderForField,
-  parseTextQuery,
-  parseTokens
+  parseTextQuery
 };
 
 function parseTokens(textQuery) {
@@ -27,67 +27,57 @@ function parseTextQuery(textQuery) {
 }
 
 // Returns a list of [key, operator, value] pairs from tokens
-
 function getFilters(tokens) {
-  const pairs = tokens.filter(token => {
-    return token.type === 'Pair' && token.content.value.length > 0;
-  });
-  return pairs.map(pair => {
-    return [pair.content.key.content, pair.content.operator.content, pair.content.value.content];
-  });
+  return tokens
+    .filter(token => {
+      return token.type === 'Pair' && token.content.value.length > 0;
+    })
+    .map(pair => {
+      return [pair.content.key.content, pair.content.operator.content, pair.content.value.content];
+    });
 }
 
 // Takes all tokens that are queries and joins them with spaces
 function getQueryText(tokens) {
-  const queries = tokens.filter(token => {
-    return token.type === 'Query' && token.content.length > 0;
-  });
-  const queryContents = _.map(queries, 'content');
-  return queryContents.join(' ');
+  return tokens
+    .filter(token => token.type === 'Query' && token.content.length > 0)
+    .map(token => token.content)
+    .join(' ');
 }
 
-function cmaQueryBuilderForField(key, contentType, getAllUsers) {
-  const keyData = staticAutocompletions(contentType, getAllUsers)[key];
-  if (keyData) {
+function cmaQueryBuilderForField(key, contentType) {
+  const convertFn = getConverters(contentType)[key];
+  if (convertFn) {
     return {
-      context: keyData,
-      build: _.wrap(keyData.convert, (convert, operator, value) =>
-        Promise.resolve(convert(operator, value))
-      )
+      context: {},
+      build: convertFn
     };
   }
-  const field = helpers.findField(key, contentType);
+
+  const field = findField(key, contentType || {});
   if (field) {
     return {
       context: field,
-      build: function(operator, value) {
-        return Promise.resolve(makeFieldQuery(field, operator, value));
-      }
+      build: (op, val) => makeFieldQuery(field, op, val)
     };
   }
+
   return {
     context: {},
-    build: function() {
-      return Promise.resolve({});
-    }
+    build: () => ({})
   };
 }
 
-// Returns all the static autocompletions that are possible for the content Type.
-function staticAutocompletions(contentType, getAllUsers) {
-  if (!contentType || typeof _.get(contentType, ['sys', 'id']) === 'string') {
-    return autocompletion(getAllUsers);
+function getConverters(contentType) {
+  if (!contentType || typeof get(contentType, ['sys', 'id']) === 'string') {
+    return converters.Entry;
   } else {
-    return assetCompletions(getAllUsers);
+    return converters.Asset;
   }
 }
 
 function makeFieldQuery(field, operator, value) {
-  const q = {};
-
-  // TODO Using apiNameOrId here is a temporary solution while the backend doesn't honor
-  // the Skip-Transformation header for field.ids in searches
-  let queryKey = 'fields.' + helpers.apiNameOrId(field) + helpers.queryOperator(operator);
+  let queryKey = 'fields.' + apiNameOrId(field) + queryOperator(operator);
   if (field.type === 'Text') {
     queryKey = queryKey + '[match]';
   }
@@ -95,11 +85,18 @@ function makeFieldQuery(field, operator, value) {
     value = value.match(/yes|true/i) ? 'true' : false;
   }
   if (field.type === 'Link') {
-    queryKey = 'fields.' + helpers.apiNameOrId(field) + '.sys.id';
+    queryKey = 'fields.' + apiNameOrId(field) + '.sys.id';
   }
   if (field.type === 'Array' && field.items.type === 'Link') {
-    queryKey = 'fields.' + helpers.apiNameOrId(field) + '.sys.id';
+    queryKey = 'fields.' + apiNameOrId(field) + '.sys.id';
   }
-  q[queryKey] = value;
-  return q;
+
+  return { [queryKey]: value };
+}
+
+function findField(key, contentType) {
+  const fields = contentType.fields || [];
+  const matchingId = fields.find(field => apiNameOrId(field) === key);
+  const matchingName = fields.find(field => field.name.toLowerCase() === key.toLowerCase());
+  return matchingId || matchingName;
 }

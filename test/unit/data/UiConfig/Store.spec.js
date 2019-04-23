@@ -172,7 +172,7 @@ describe('data/UiConfig/Store.es6', () => {
 
     beforeEach(function() {
       this.store.default = cloneDeep(INITIAL_DATA);
-      this.migrateStub.resolves(MIGRATED_DATA);
+      this.migrateStub.returns(MIGRATED_DATA);
     });
 
     // NOTE: We originally designed the migration to be stored back immediately

@@ -1,25 +1,14 @@
-import _ from 'lodash';
 import { textQueryToUISearch } from './text-query-converter';
-import assetContentType from './asset-content-type';
 
 describe('TextQueryConverter#textQueryToUISearch()', () => {
   let convert, testConvert, contentType;
 
   beforeEach(function() {
     contentType = null;
+    convert = textQuery => textQueryToUISearch(contentType, textQuery);
 
-    convert = function(textQuery) {
-      return textQueryToUISearch(contentType, textQuery, () =>
-        Promise.resolve([
-          { sys: { id: 'UID1' }, firstName: 'Jane', lastName: 'Doe' },
-          { sys: { id: 'UID2' }, firstName: 'Jon', lastName: 'Doe' },
-          { sys: { id: 'UID3' }, firstName: 'Jon', lastName: 'Doe' }
-        ])
-      );
-    };
-
-    testConvert = async function(textQuery, expected) {
-      const result = await convert(textQuery);
+    testConvert = function(textQuery, expected) {
+      const result = convert(textQuery);
       // For nicer test reporter output compare separately:
       expect(result.contentTypeId).toEqual(expected.contentTypeId);
       expect(result.searchText).toEqual(expected.searchText);
@@ -28,24 +17,25 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
   });
 
   function itConverts(description, setup, textQuery, expectedUISearchObject) {
-    it(`converts ${description}`, async function() {
-      if (!_.isFunction(setup)) {
+    it(`converts ${description}`, function() {
+      if (typeof setup === 'function') {
+        setup();
+      } else {
         expectedUISearchObject = textQuery;
         textQuery = setup;
-      } else {
-        setup.call(this);
       }
-      await testConvert(textQuery, expectedUISearchObject);
+
+      testConvert(textQuery, expectedUISearchObject);
     });
   }
 
   function itConvertsFilters(description, textQuery, searchFilters) {
     const expectedUISearchObject = { searchText: '', searchFilters };
-    it(`converts ${description}`, async function() {
+    it(`converts ${description}`, function() {
       if (contentType) {
         expectedUISearchObject.contentTypeId = contentType.sys.id;
       }
-      await testConvert(textQuery, expectedUISearchObject);
+      testConvert(textQuery, expectedUISearchObject);
     });
   }
 
@@ -216,29 +206,6 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
 
   itConvertsFilters('"unknown" status to filter', 'status:unknown', [['__status', '', 'unknown']]);
 
-  describe('for user system fields', () => {
-    const USER_SYSTEM_FIELDS = [['author', 'createdBy'], ['updater', 'updatedBy']];
-
-    for (const [searchKey, queryKey] of USER_SYSTEM_FIELDS) {
-      itConvertsFilters(
-        `"${searchKey}" filter based on user name to user id`,
-        `${searchKey}: "Jane Doe"`,
-        [[`sys.${queryKey}.sys.id`, '', 'UID1']]
-      );
-      itConvertsFilters(
-        `"${searchKey}" filter based on user name and id to user id`,
-        `${searchKey}: "Jon Doe (UID3)"`,
-        [[`sys.${queryKey}.sys.id`, '', 'UID3']]
-      );
-
-      itConvertsFilters(
-        `unknown "${searchKey}" filter user to no filter`,
-        `${searchKey}: "Unknown"`,
-        []
-      );
-    }
-  });
-
   const DATE_SYS_FIELDS = ['updatedAt', 'createdAt', 'publishedAt', 'firstPublishedAt'];
 
   for (const dateField of DATE_SYS_FIELDS) {
@@ -270,7 +237,14 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
 
   describe('for assets', () => {
     beforeEach(function() {
-      contentType = assetContentType;
+      contentType = {
+        sys: { type: 'AssetContentType' },
+        fields: [
+          { id: 'title', type: 'Symbol' },
+          { id: 'description', type: 'Text' },
+          { id: 'file', type: 'File' }
+        ]
+      };
     });
 
     itConvertsFilters('"filename" filter', 'filename:"FN 1"', [
