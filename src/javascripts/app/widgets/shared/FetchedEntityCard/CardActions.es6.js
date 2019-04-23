@@ -33,7 +33,7 @@ export class EntryActions extends React.PureComponent {
           </DropdownListItem>
         )}
         {onRemove && (
-          <DropdownListItem onClick={onRemove} disabled={isDisabled} testId="delete">
+          <DropdownListItem onClick={onRemove} isDisabled={isDisabled} testId="delete">
             Remove
           </DropdownListItem>
         )}
