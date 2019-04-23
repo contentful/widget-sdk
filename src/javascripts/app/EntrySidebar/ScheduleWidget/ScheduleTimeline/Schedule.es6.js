@@ -7,7 +7,7 @@ import { Tag } from '@contentful/forma-36-react-components';
 import { scheduleStyles as styles } from './styles.es6';
 
 const FormattedTime = time => (
-  <span className={styles.date}>{moment.utc(time).format('MMM Do YYYY - hh:mm')}</span>
+  <span className={styles.date}>{moment.utc(time).format('ddd, MMM Do, YYYY - hh:mm')}</span>
 );
 const tagTypeForStatus = {
   pending: 'warning',
@@ -32,7 +32,7 @@ const Schedule = ({ scheduledAt, actionType, status }) => (
 );
 
 export const schedulePropTypes = {
-  scheduledAt: PropTypes.string.isRequired,
+  scheduledAt: PropTypes.instanceOf(Date),
   actionType: PropTypes.string.isRequired,
   status: PropTypes.oneOf(['pending', 'cancelled', 'success', 'error'])
 };

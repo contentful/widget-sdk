@@ -12,6 +12,11 @@
   margin-top: 13px
   position: relative
 
+.hide-carret
+  margin-top: 5px
+  &:after, &:before
+    display: none
+
 .pika-title
   display: flex
   align-items: baseline
@@ -109,3 +114,6 @@
   &:hover
     color: white
     background: $colors.blue-light
+
+.pika-row .is-disabled
+  opacity: 0.3

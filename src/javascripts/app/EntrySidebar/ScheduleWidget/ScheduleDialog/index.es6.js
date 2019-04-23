@@ -11,13 +11,14 @@ import {
   Option
 } from '@contentful/forma-36-react-components';
 import { createTimezonesByOffset } from './Utils.es6';
+import DatePicker from '../DatePicker/index.es6';
 
 const createTimezoneOptions = () => {
   const timezonesByOffset = createTimezonesByOffset();
   return Object.keys(timezonesByOffset).map(offset => {
     const i18n = timezonesByOffset[offset].i18nTimezones.join(', ');
     const timezone = moment.tz(timezonesByOffset[offset].name).format('Z');
-    return <Option key={name} value={offset}>{`(GMT${timezone}) ${i18n}`}</Option>;
+    return <Option key={timezone} value={offset}>{`(GMT${timezone}) ${i18n}`}</Option>;
   });
 };
 
@@ -29,9 +30,7 @@ class ScheduleDialog extends React.Component {
 
   state = {
     date: moment().format('YYYY-MM-DD'),
-    time: moment()
-      .add(1, 'h')
-      .format('HH:mm'),
+    time: moment().format('HH:mm'),
     utcOffset: moment().utcOffset()
   };
 
@@ -42,7 +41,7 @@ class ScheduleDialog extends React.Component {
   };
 
   render() {
-    const { date, time, utcOffset } = this.state;
+    const { time, utcOffset } = this.state;
     const { onCreate, onCancel } = this.props;
     return (
       <Modal
@@ -58,22 +57,14 @@ class ScheduleDialog extends React.Component {
             <Modal.Content>
               <Form spacing="condensed">
                 <FieldGroup row>
-                  <TextField
-                    name="date"
-                    id="date"
-                    textInputProps={{
-                      type: 'date',
-                      min: moment().format('YYYY-MM-DD')
+                  <DatePicker
+                    onChange={date => {
+                      this.setState({ date: moment(date).format('YYYY-MM-DD') });
                     }}
-                    value={date}
-                    onChange={e => {
-                      this.setState({
-                        date: e.target.value
-                      });
-                    }}
-                    required
                     labelText="Date"
-                    helpText="Please select a date"
+                    required
+                    helpText="Select a date"
+                    minDate={moment().toDate()}
                   />
                   <TextField
                     name="time"
@@ -102,7 +93,7 @@ class ScheduleDialog extends React.Component {
                       });
                     }}
                     labelText="Timezone"
-                    value={utcOffset}
+                    value={utcOffset.toString()}
                     helpText="Please select a Timezone">
                     {createTimezoneOptions()}
                   </SelectField>
