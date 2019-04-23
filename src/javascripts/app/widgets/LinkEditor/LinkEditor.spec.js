@@ -1,18 +1,13 @@
 import { forEach } from 'lodash';
 import React from 'react';
 import Enzyme from 'enzyme';
+import { newLink } from './__test__/helpers.js';
 
 import LinkEditor from './LinkEditor.es6';
 import LinkingActions from './LinkingActions.es6';
-import FetchedEntityCard from '../shared/FetchedEntityCard/index.es6';
+import SortableLinkList from './SortableLinkList.es6';
 
-const link = {
-  sys: {
-    id: 'LINK_ID',
-    type: 'Link',
-    linkType: 'Entry'
-  }
-};
+const link = newLink();
 
 jest.mock('../shared/FetchedEntityCard/index.es6', () => 'FetchedEntityCard', { virtual: true });
 
@@ -27,9 +22,36 @@ describe('LinkEditor', () => {
     return Enzyme.shallow(<LinkEditor {...props} />);
   }
 
-  it('renders links', () => {
-    const wrapper = mount({ value: [link] });
-    expect(wrapper.find(FetchedEntityCard)).toHaveLength(1);
+  const renderLinksCases = {
+    'without link': {
+      props: { value: [] }
+    },
+    'with single link': {
+      props: { value: [link] }
+    },
+    'with links': {
+      props: { value: [link, newLink(), newLink()] }
+    },
+    'with duplicate links': {
+      props: { value: [link, link, link] }
+    },
+    'isSingle with link': {
+      props: { value: [link], isSingle: true }
+    },
+    '(isSingle without link': {
+      props: { value: [], isSingle: true }
+    }
+  };
+  forEach(renderLinksCases, (testCase, description) => {
+    const { props } = testCase;
+    const expectedLinkCount = props.value.length;
+
+    describe(description, () => {
+      it(`renders ${expectedLinkCount} links`, () => {
+        const wrapper = mount(props);
+        expectLinks(wrapper, expectedLinkCount);
+      });
+    });
   });
 
   const linkingActionsVisibilityCases = {
@@ -45,7 +67,7 @@ describe('LinkEditor', () => {
       props: { isSingle: true, value: [link] },
       expectLinkingActions: false
     },
-    'isSingle link without link': {
+    'isSingle without link': {
       props: { isSingle: true, value: [] },
       expectLinkingActions: true
     }
@@ -61,3 +83,9 @@ describe('LinkEditor', () => {
     });
   });
 });
+
+function expectLinks(wrapper, expectedCount) {
+  const linkList = wrapper.find(SortableLinkList);
+  expect(linkList).toHaveLength(1);
+  expect(linkList.props().items).toHaveLength(expectedCount);
+}

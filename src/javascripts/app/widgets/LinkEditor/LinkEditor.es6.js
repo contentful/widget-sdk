@@ -5,6 +5,16 @@ import CfPropTypes from 'utils/CfPropTypes.es6';
 import FetchedEntityCard from '../shared/FetchedEntityCard/index.es6';
 import LinkingActions from './LinkingActions.es6';
 import { TYPES, entityToLink } from './Util.es6';
+import SortableLinkList, { linksToListItems } from './SortableLinkList.es6';
+
+const STYLE = {
+  LINK: 'link',
+  CARD: 'card'
+};
+const VIEW_MODE = {
+  LIST: 'list',
+  GRID: 'grid'
+};
 
 export default class LinkEditor extends React.Component {
   static propTypes = {
@@ -15,7 +25,7 @@ export default class LinkEditor extends React.Component {
     onUnlinkEntities: PropTypes.func,
     onLinkFetchComplete: PropTypes.func,
     type: PropTypes.oneOf(Object.values(TYPES)).isRequired,
-    style: PropTypes.oneOf(['link', 'card']).isRequired,
+    style: PropTypes.oneOf(Object.values(STYLE)).isRequired,
     isSingle: PropTypes.bool,
     canCreateEntity: PropTypes.bool,
     contentTypes: PropTypes.arrayOf(PropTypes.object),
@@ -32,12 +42,17 @@ export default class LinkEditor extends React.Component {
     onLinkEntities: noop,
     onUnlinkEntities: noop,
     onLinkFetchComplete: noop,
-    style: 'card',
+    style: STYLE.CARD,
     canCreateEntity: true
   };
 
   getLinks() {
     return this.props.value;
+  }
+
+  getViewMode() {
+    const { type, style } = this.props;
+    return type === TYPES.ASSET && style === STYLE.CARD ? VIEW_MODE.GRID : VIEW_MODE.LIST;
   }
 
   handleEditLink = (entity, index) => {
@@ -56,6 +71,14 @@ export default class LinkEditor extends React.Component {
     const newValue = this.getLinks().slice();
     newValue.splice(index, 1);
     this.props.onChange(newValue);
+  };
+
+  handleLinkSortEnd = (oldIndex, newIndex) => {
+    if (oldIndex !== newIndex) {
+      const newLinks = this.getLinks().slice();
+      newLinks.splice(newIndex, 0, newLinks.splice(oldIndex, 1)[0]);
+      this.props.onChange(newLinks);
+    }
   };
 
   handleCreateAndLink = async contentTypeId => {
@@ -80,7 +103,7 @@ export default class LinkEditor extends React.Component {
       <FetchedEntityCard
         entityType={entityType}
         entityId={link.sys.id}
-        size={this.props.style === 'link' ? 'small' : 'default'}
+        size={this.props.style === STYLE.LINK ? 'small' : 'default'}
         readOnly={false}
         disabled={isDisabled}
         editable={true}
@@ -98,18 +121,16 @@ export default class LinkEditor extends React.Component {
 
   render() {
     const { type, isDisabled, isSingle, canCreateEntity, contentTypes } = this.props;
-    const links = this.getLinks();
-    const linkKeys = getLinkKeys(links);
-    const showLinkButtons = !isDisabled && (!isSingle || links.length === 0);
+    const items = linksToListItems(this.getLinks(), (link, index) => this.renderCard(link, index));
+    const showLinkButtons = !isDisabled && (!isSingle || items.length === 0);
+    const isGrid = this.getViewMode() === VIEW_MODE.GRID;
     return (
-      <div className="link-editor">
-        <ol className="link-editor__links">
-          {links.map((link, index) => (
-            <li key={linkKeys[index]} className="link-editor__link">
-              {this.renderCard(link, index)}
-            </li>
-          ))}
-        </ol>
+      <div className={`link-editor ${isGrid ? 'x--contains-asset-cards' : ''}`}>
+        <SortableLinkList
+          axis={isGrid ? 'xy' : 'y'}
+          items={items}
+          onSortEnd={({ oldIndex, newIndex }) => this.handleLinkSortEnd(oldIndex, newIndex)}
+        />
         {showLinkButtons && (
           <LinkingActions
             type={type}
@@ -124,13 +145,4 @@ export default class LinkEditor extends React.Component {
       </div>
     );
   }
-}
-
-function getLinkKeys(links) {
-  const countPerId = {};
-  return links.map(link => {
-    const { id } = link.sys;
-    countPerId[id] = (countPerId[id] || 0) + 1;
-    return `${id}:${countPerId[id] - 1}`;
-  });
 }
