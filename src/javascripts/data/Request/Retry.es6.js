@@ -50,11 +50,15 @@ export default function wrapWithRetry(requestFn) {
   // by the Network tab in your dev tools by a few milliseconds to
   // tens of millisecond at worst (as per my limited testing).
   function recordResponseTime({ status }, startTime, { url, method } = {}) {
-    Telemetry.record('cma-response-time', now() - startTime, {
-      endpoint: getEndpoint(url),
-      status,
-      method
-    });
+    try {
+      Telemetry.record('cma-response-time', now() - startTime, {
+        endpoint: getEndpoint(url),
+        status,
+        method
+      });
+    } catch (_) {
+      // no-op
+    }
   }
 
   function shift() {
