@@ -5,7 +5,8 @@ import {
   CardActions,
   DropdownList,
   DropdownListItem,
-  Heading
+  Heading,
+  Tooltip
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -62,7 +63,7 @@ export default function Comment({ comment }) {
         <img className={styles.avatar} src={createdBy.avatarUrl} />
         <div className={styles.meta}>
           <Heading element="h4" className={styles.userName}>
-            {`${createdBy.firstName} ${createdBy.lastName}`}
+            {renderUserName(createdBy)}
           </Heading>
           <time
             dateTime={creationDate.toISOString()}
@@ -90,3 +91,13 @@ export default function Comment({ comment }) {
 Comment.propTypes = {
   comment: types.Comment.isRequired
 };
+
+function renderUserName(user) {
+  return user.firstName ? (
+    <>{`${user.firstName} ${user.lastName}`}</>
+  ) : (
+    <Tooltip content="The author of this comment is no longer a member of this organization">
+      {'(Deactivated user)'}
+    </Tooltip>
+  );
+}
