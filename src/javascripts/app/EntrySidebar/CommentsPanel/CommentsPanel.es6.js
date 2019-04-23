@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
@@ -7,8 +7,9 @@ import tokens from '@contentful/forma-36-tokens';
 import { useCommentsFetcher } from './hooks.es6';
 import CreateComment from './CreateEntryComment.es6';
 import CommentThread from './CommentThread.es6';
+import { CommentSkeletonGroup } from './CommentSkeleton.es6';
 
-const styles = {
+export const styles = {
   root: css({
     position: 'absolute',
     top: 0,
@@ -44,27 +45,24 @@ const styles = {
 };
 
 export default function CommentsPanel({ spaceId, entryId, isVisible }) {
-  const { isLoading, isError, data } = useCommentsFetcher(spaceId, entryId);
+  const { isLoading, data } = useCommentsFetcher(spaceId, entryId);
+  const [comments, setComments] = useState([]);
 
-  if (isLoading) {
-    return 'Loading comments';
-  } else if (isError) {
-    return 'An error happened';
-  } else if (!data) {
-    return null;
-  }
+  const handleNewComment = comment => setComments(() => [...comments, comment]);
 
-  const { items } = data;
+  useEffect(() => {
+    data && setComments(data.items);
+  }, [data]);
 
   return (
     <div className={`${styles.root} ${isVisible ? styles.visible : styles.hidden}`}>
       <div className={styles.commentList}>
-        {items.map(comment => (
-          <CommentThread key={comment.sys.id} comment={comment} />
-        ))}
+        {isLoading && <CommentSkeletonGroup />}
+        {comments.length > 0 &&
+          comments.map(comment => <CommentThread key={comment.sys.id} comment={comment} />)}
       </div>
       <div className={styles.commentForm}>
-        <CreateComment />
+        <CreateComment spaceId={spaceId} entryId={entryId} onNewComment={handleNewComment} />
       </div>
     </div>
   );

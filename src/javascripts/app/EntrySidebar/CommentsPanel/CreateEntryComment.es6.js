@@ -1,34 +1,65 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { TextInput, Button } from '@contentful/forma-36-react-components';
+import keycodes from 'utils/keycodes.es6';
+import { Textarea, Button, ValidationMessage } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
+import { useCommentCreator } from './hooks.es6';
+
 const styles = {
-  replyActions: {
+  validationMessage: css({
     marginTop: tokens.spacingS
-  }
+  }),
+  replyActions: css({
+    marginTop: tokens.spacingS
+  })
 };
 
-export default function CreateEntryComment({ parentCommentId }) {
+export default function CreateEntryComment({ spaceId, entryId, parentCommentId, onNewComment }) {
   const [showActions, setShowActions] = useState(false);
-  const [body, setbody] = useState('');
+  const [isSubmitted, setIsSubmited] = useState(false);
+  const [body, setBody] = useState('');
+  const [{ data, isLoading, error }, createComment] = useCommentCreator(spaceId, entryId);
   const placeholder = parentCommentId ? 'Reply to this comment...' : 'Comment on this entry...';
   const sendButtonLabel = parentCommentId ? 'Reply' : 'Send';
 
+  const handleSubmit = () => {
+    if (!body || isLoading) return;
+    setIsSubmited(true);
+    createComment(body);
+  };
+
+  const handleKeyPress = evt => {
+    if (evt.keyCode === keycodes.ENTER && evt.metaKey) {
+      handleSubmit();
+    }
+  };
+
+  if (isSubmitted && data) {
+    setBody('');
+    setIsSubmited(false);
+    onNewComment(data);
+  }
+
   return (
-    <React.Fragment>
-      <TextInput
+    <>
+      <Textarea
         value={body}
-        onChange={evt => setbody(evt.target.value)}
-        placeholder={placeholder}
+        onChange={evt => setBody(evt.target.value)}
         onFocus={() => setShowActions(true)}
+        onKeyDown={handleKeyPress}
+        disabled={isLoading}
+        placeholder={placeholder}
       />
+      {error && (
+        <ValidationMessage className={styles.validationMessage}>{error.message}</ValidationMessage>
+      )}
       {showActions && (
-        <div className={css(styles.replyActions)}>
+        <div className={styles.replyActions}>
           <Button
-            onClick={() => {}}
             size="small"
+            onClick={() => handleSubmit()}
             buttonType="primary"
             className={css({ marginRight: tokens.spacingS })}>
             {sendButtonLabel}
@@ -38,10 +69,13 @@ export default function CreateEntryComment({ parentCommentId }) {
           </Button>
         </div>
       )}
-    </React.Fragment>
+    </>
   );
 }
 
 CreateEntryComment.propTypes = {
+  spaceId: PropTypes.string.isRequired,
+  entryId: PropTypes.string.isRequired,
+  onNewComment: PropTypes.func.isRequired,
   parentCommentId: PropTypes.string
 };

@@ -10,7 +10,7 @@ import tokens from '@contentful/forma-36-tokens';
 
 import * as types from './CommentPropTypes.es6';
 
-const styles = {
+export const styles = {
   comment: css({
     display: 'flex',
     flexDirection: 'column',
@@ -43,6 +43,10 @@ const styles = {
   timestamp: css({
     color: tokens.colorTextLightest,
     fontSize: tokens.fontSizeS
+  }),
+  commentBody: css({
+    wordBreak: 'break-word',
+    whiteSpace: 'pre-wrap'
   })
 };
 
@@ -73,7 +77,7 @@ export default function Comment({ comment }) {
           </DropdownList>
         </CardActions>
       </header>
-      <div>{comment.body}</div>
+      <div className={styles.commentBody}>{comment.body}</div>
     </div>
   );
 }

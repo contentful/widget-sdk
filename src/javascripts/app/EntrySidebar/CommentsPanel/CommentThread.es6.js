@@ -7,7 +7,6 @@ import tokens from '@contentful/forma-36-tokens';
 
 import * as types from './CommentPropTypes.es6';
 import Comment from './Comment.es6';
-import CreateComment from './CreateEntryComment.es6';
 
 const styles = {
   root: css({
@@ -42,9 +41,6 @@ export default function CommentThread({ comment, replies = [] }) {
           </TextLink>
         </React.Fragment>
       ) : null}
-      <footer className={styles.footer}>
-        <CreateComment parentCommentId="123" />
-      </footer>
     </Card>
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import mitt from 'mitt';
 
 import SidebarEventTypes from '../SidebarEventTypes.es6';
@@ -17,7 +17,7 @@ describe('CommentsPanelContainer', () => {
   const render = () => {
     emitter = mitt();
     off = jest.spyOn(emitter, 'off');
-    return mount(<CommentsPanelContainer emitter={emitter} />);
+    return shallow(<CommentsPanelContainer emitter={emitter} />);
   };
 
   beforeEach(() => {
