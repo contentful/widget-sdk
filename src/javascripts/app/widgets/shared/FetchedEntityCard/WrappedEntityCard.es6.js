@@ -8,7 +8,7 @@ import { EntryActions, AssetActions } from './CardActions.es6';
  * Wrapper around Forma 36 EntryCard. Can be used with entries but works
  * also with assets (as in the link editor's "Link" appearance style).
  */
-export default class WrappedReferenceCard extends React.Component {
+export default class WrappedEntityCard extends React.Component {
   static propTypes = {
     entityType: PropTypes.string,
     contentTypeName: PropTypes.string,
