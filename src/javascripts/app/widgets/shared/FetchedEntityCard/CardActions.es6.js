@@ -1,9 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { DropdownList, DropdownListItem } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
 
 import { get } from 'lodash';
 import { shortenStorageUnit } from 'utils/NumberUtils.es6';
+
+const styles = {
+  cardDropdown: css({
+    width: '300px'
+  })
+};
 
 const commonPropTypes = {
   onEdit: PropTypes.func,
@@ -11,7 +18,7 @@ const commonPropTypes = {
   isDisabled: PropTypes.bool
 };
 
-export class EntryActions extends React.Component {
+export class EntryActions extends React.PureComponent {
   static propTypes = {
     ...commonPropTypes
   };
@@ -21,21 +28,12 @@ export class EntryActions extends React.Component {
     return (
       <DropdownList>
         {onEdit && (
-          <DropdownListItem
-            onClick={() => {
-              onEdit();
-            }}
-            testId="edit">
+          <DropdownListItem onClick={onEdit} testId="edit">
             Edit
           </DropdownListItem>
         )}
         {onRemove && (
-          <DropdownListItem
-            onClick={() => {
-              onRemove();
-            }}
-            disabled={isDisabled}
-            testId="delete">
+          <DropdownListItem onClick={onRemove} disabled={isDisabled} testId="delete">
             Remove
           </DropdownListItem>
         )}
@@ -44,7 +42,7 @@ export class EntryActions extends React.Component {
   }
 }
 
-export class AssetActions extends React.Component {
+export class AssetActions extends React.PureComponent {
   static propTypes = {
     entityFile: PropTypes.object,
     ...commonPropTypes
@@ -53,30 +51,16 @@ export class AssetActions extends React.Component {
   renderActions() {
     const { entityFile, isDisabled, onEdit, onRemove } = this.props;
     return (
-      <DropdownList style={{ maxWidth: '300px' }}>
+      <DropdownList className={styles.cardDropdown}>
         <DropdownListItem isTitle>Actions</DropdownListItem>
-        {onEdit && (
-          <DropdownListItem
-            onClick={() => {
-              onEdit();
-            }}>
-            Edit
-          </DropdownListItem>
-        )}
+        {onEdit && <DropdownListItem onClick={onEdit}>Edit</DropdownListItem>}
         {entityFile && (
-          <DropdownListItem
-            onClick={() => {
-              downloadAsset(entityFile.url);
-            }}>
+          <DropdownListItem onClick={() => downloadAsset(entityFile.url)}>
             Download
           </DropdownListItem>
         )}
         {onRemove && (
-          <DropdownListItem
-            isDisabled={isDisabled}
-            onClick={() => {
-              onRemove();
-            }}>
+          <DropdownListItem isDisabled={isDisabled} onClick={onRemove}>
             Remove
           </DropdownListItem>
         )}
@@ -91,7 +75,7 @@ export class AssetActions extends React.Component {
     const fileSize = get(entityFile, 'details.size');
     const image = get(entityFile, 'details.image');
     return (
-      <DropdownList border="top" style={{ maxWidth: '300px' }}>
+      <DropdownList border="top" className={styles.cardDropdown}>
         <DropdownListItem isTitle>File info</DropdownListItem>
         {fileName && (
           <DropdownListItem>

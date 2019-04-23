@@ -40,8 +40,8 @@ export default class WrappedEntityCard extends React.Component {
       entityType === 'Asset'
         ? new AssetActions({ isDisabled, onEdit, onRemove, entityFile })
         : new EntryActions({ isDisabled, onEdit, onRemove });
-    // Render card actions directly as EntryCard's dropdownListElements prop expects a
-    // React.Fragment or a DropdownListItem.
+    // Can't just use jsx <EntryActions /> here as dropdownListElements expects
+    // a React.Fragment with direct <DropdownList /> children.
     return actions.render();
   };
 

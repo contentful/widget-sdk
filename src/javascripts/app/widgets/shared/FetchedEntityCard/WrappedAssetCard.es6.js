@@ -60,7 +60,7 @@ export default class WrappedAssetCard extends React.Component {
       return null;
     }
     // Can't just use jsx <AssetActions /> here as dropdownListElements expects
-    // a React.Fragement with <DropdownList /> inside.
+    // a React.Fragment with direct <DropdownList /> children.
     return new AssetActions({
       entityFile,
       isDisabled: disabled,
