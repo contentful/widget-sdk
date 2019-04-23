@@ -178,7 +178,7 @@ jobs:
   run-e2e-tests:
     machine:
       docker_layer_caching: true
-    parallelism: 6
+    parallelism: 4
     environment:
       CF_EMAIL: nobody@localhost
       COMPONENTS_ROOT: /home/circleci/components
