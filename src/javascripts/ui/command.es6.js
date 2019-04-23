@@ -1,6 +1,5 @@
 import { registerFactory, registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
-import { create as createSignal } from 'utils/signal.es6';
 
 export default function register() {
   /**
@@ -25,18 +24,6 @@ export default function register() {
     '$q',
     $q => {
       /**
-       * @ngdoc property
-       * @name command#executions
-       * @description
-       * This signal is dispatched when ever a command is executed.
-       *
-       * It receives the command and the action promise as parameters.
-       *
-       * @type Signal<Command, Promise<any>>
-       */
-      const executions = createSignal();
-
-      /**
        * @ngdoc method
        * @module cf.ui
        * @name command#create
@@ -49,7 +36,7 @@ export default function register() {
        * @returns {Command}
        */
       function createCommand(run, options, extension) {
-        const command = new Command(run, options, executions);
+        const command = new Command(run, options);
         return _.extend(command, extension);
       }
 
@@ -58,12 +45,11 @@ export default function register() {
        * @module cf.ui
        * @name Command
        */
-      function Command(run, opts, executions) {
+      function Command(run, opts) {
         if (!_.isFunction(run)) {
           throw new Error('Expected a function');
         }
         this._run = run;
-        this._executions = executions;
 
         opts = _.defaults(opts || {}, {
           available: _.constant(true),
@@ -94,10 +80,6 @@ export default function register() {
           self._inProgress = null;
         });
 
-        if (this._executions) {
-          this._executions.dispatch(this, this._inProgress);
-        }
-
         return this._inProgress;
       };
 
@@ -125,8 +107,7 @@ export default function register() {
       };
 
       return {
-        create: createCommand,
-        executions: executions
+        create: createCommand
       };
     }
   ]);

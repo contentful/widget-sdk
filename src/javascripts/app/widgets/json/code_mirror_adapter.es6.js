@@ -1,4 +1,3 @@
-import { create as createSignal } from 'utils/signal.es6';
 import $ from 'jquery';
 import debounce from 'lodash/debounce';
 import CodeMirror from 'codemirror';
@@ -10,14 +9,14 @@ import CodeMirror from 'codemirror';
  * @description
  * Create a wrapper around a CodeMirror editor for json objects
  *
- * The editor accepts any JSON serializable object as input and makes
- * available the state as a signal.
+ * The editor accepts any JSON serializable object as input and accepts a callback
+ * to react to state changes.
  *
  * The adapter is created asynchronously after loading the required
  * libraries.
  *
  * @usage[js]
- * const editor = adapter.create()
+ * const editor = adapter.create({ onStateChange })
  * // The CodeMirror DOM element
  * editor.attach(jqueryElement)
  * editor.setValue(object)
@@ -37,8 +36,7 @@ const CODE_MIRROR_CONFIG = {
   theme: 'none'
 };
 
-export function create() {
-  const stateSignal = createSignal();
+export function create({ onStateChange }) {
   let hasInitialValue = false;
   let currentValue;
   const element = $('<div />')[0];
@@ -58,7 +56,6 @@ export function create() {
     undo: function() {
       cm.undo();
     },
-    onStateChange: stateSignal.attach,
     attach,
     destroy
   };
@@ -77,7 +74,7 @@ export function create() {
     const str = ev.getValue();
     if (currentValue !== str) {
       currentValue = str;
-      stateSignal.dispatch(parseJSON(currentValue));
+      onStateChange(parseJSON(currentValue));
     }
   }
 
@@ -100,7 +97,7 @@ export function create() {
   }
 
   function updateHistorySize() {
-    stateSignal.dispatch({
+    onStateChange({
       undoable: cm.historySize().undo > 0,
       redoable: cm.historySize().redo > 0
     });
