@@ -9,14 +9,14 @@ import CodeMirror from 'codemirror';
  * @description
  * Create a wrapper around a CodeMirror editor for json objects
  *
- * The editor accepts any JSON serializable object as input and makes
- * available the state as a signal.
+ * The editor accepts any JSON serializable object as input and accepts a callback
+ * to react to state changes.
  *
  * The adapter is created asynchronously after loading the required
  * libraries.
  *
  * @usage[js]
- * const editor = adapter.create()
+ * const editor = adapter.create({ onStateChange })
  * // The CodeMirror DOM element
  * editor.attach(jqueryElement)
  * editor.setValue(object)
