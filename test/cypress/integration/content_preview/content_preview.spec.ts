@@ -1,22 +1,24 @@
-import { defaultRequestsMock } from '../../mocks/factories';
-import * as state from '../../mocks/interactionState';
+import { defaultRequestsMock } from '../../util/factories';
+import * as state from '../../util/interactionState';
+import {
+  defaultSpaceId,
+  defaultPreviewName,
+  defaultPreviewId,
+  defaultPreviewDescription
+} from '../../util/requests';
 
-const spaceId = Cypress.env('spaceId');
-const previewName = 'Test Name';
-const previewDescription = 'Test Description';
-const previewId = '0xi0FU6rvrUVlJtPFuaUyl';
 const previewResponseBody = {
-  name: previewName,
-  description: previewDescription,
+  name: defaultPreviewName,
+  description: defaultPreviewDescription,
   sys: {
     type: 'PreviewEnvironment',
-    id: previewId,
+    id: defaultPreviewId,
     version: 0,
     space: {
       sys: {
         type: 'Link',
         linkType: 'Space',
-        id: spaceId
+        id: defaultSpaceId
       }
     },
     createdAt: '2019-03-06T10:53:58Z',
@@ -30,7 +32,7 @@ describe('Content Preview Page', () => {
     cy.setAuthTokenToLocalStorage();
     defaultRequestsMock();
 
-    cy.visit(`/spaces/${spaceId}/settings/content_preview/new`);
+    cy.visit(`/spaces/${defaultSpaceId}/settings/content_preview/new`);
   });
 
   describe('opening the page', () => {
@@ -57,7 +59,7 @@ describe('Content Preview Page', () => {
         uponReceiving: 'add preview environment request',
         withRequest: {
           method: 'POST',
-          path: `/spaces/${spaceId}/preview_environments`,
+          path: `/spaces/${defaultSpaceId}/preview_environments`,
           headers: {
             Accept: 'application/json, text/plain, */*'
           }
@@ -71,16 +73,16 @@ describe('Content Preview Page', () => {
 
     it('submit the form correctly', () => {
       cy.getByTestId('cf-ui-text-input')
-        .type(previewName)
-        .should('have.value', previewName);
+        .type(defaultPreviewName)
+        .should('have.value', defaultPreviewName);
       cy.getByTestId('cf-ui-textarea')
-        .type(previewDescription)
-        .should('have.value', previewDescription);
+        .type(defaultPreviewDescription)
+        .should('have.value', defaultPreviewDescription);
       cy.getByTestId('save-content-preview')
         .should('be.enabled')
         .click();
       cy.getByTestId('cf-ui-notification').should('contain', 'success');
-      cy.url().should('include', previewId);
+      cy.url().should('include', defaultPreviewId);
     });
   });
 });

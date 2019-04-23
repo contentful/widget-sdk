@@ -1,7 +1,7 @@
-import * as state from './interactionState';
+import * as state from '../util/interactionState';
 
 const empty = require('../fixtures/empty.json');
-const uiConfig = require('../fixtures/ui_config.json');
+const uiConfig = require('../fixtures/ui-config.json');
 const spaceId = Cypress.env('spaceId');
 
 export function emptyUiConfigResponse() {

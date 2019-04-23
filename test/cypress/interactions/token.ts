@@ -1,4 +1,4 @@
-import * as state from './interactionState';
+import * as state from '../util/interactionState';
 import { HTTPMethod } from '@pact-foundation/pact/common/request';
 
 const token = require('../fixtures/token.json');

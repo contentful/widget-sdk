@@ -1,12 +1,12 @@
-import { validTokenResponse } from './token';
-import { noEnforcementsResponse } from './enforcements';
-import { noPublicContentTypesResponse } from './content_types';
-import { masterEnvironmentResponse } from './environments';
-import { freePlanResponse } from './plans';
-import { defaultLocaleResponse } from './locales';
-import { productCatalogFeaturesResponse } from './product_catalog_features';
-import { emptyUiConfigResponse, uiConfigMeResponse } from './ui_config';
-import { noPreviewEnvironmentsResponse } from './preview_environments';
+import { validTokenResponse } from '../interactions/token';
+import { noEnforcementsResponse } from '../interactions/enforcements';
+import { noPublicContentTypesResponse } from '../interactions/content_types';
+import { masterEnvironmentResponse } from '../interactions/environments';
+import { freePlanResponse } from '../interactions/plans';
+import { defaultLocaleResponse } from '../interactions/locales';
+import { productCatalogFeaturesResponse } from '../interactions/product_catalog_features';
+import { emptyUiConfigResponse, uiConfigMeResponse } from '../interactions/ui_config';
+import { noPreviewEnvironmentsResponse } from '../interactions/preview_environments';
 
 type DefaultHandlers = {
   tokenResponse: Function;

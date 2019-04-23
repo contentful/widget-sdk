@@ -1,19 +1,13 @@
-import * as state from './interactionState';
+import * as state from '../util/interactionState';
+import { getEnvironments } from '../util/requests';
 
 const environments = require('../fixtures/environments.json');
-const spaceId = Cypress.env('spaceId');
 
 export function masterEnvironmentResponse() {
   cy.addInteraction({
     state: state.Environments.MASTER,
     uponReceiving: 'a request for all environments',
-    withRequest: {
-      method: 'GET',
-      path: `/spaces/${spaceId}/environments`,
-      headers: {
-        Accept: 'application/json, text/plain, */*'
-      }
-    },
+    withRequest: getEnvironments(),
     willRespondWith: {
       status: 200,
       body: environments

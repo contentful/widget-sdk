@@ -1,19 +1,13 @@
-import * as state from './interactionState';
+import * as state from '../util/interactionState';
+import { getPlans } from '../util/requests';
 
 const plans = require('../fixtures/plans.json');
-const orgId = Cypress.env('orgId');
 
 export function freePlanResponse() {
   cy.addInteraction({
     state: state.Plans.FREE,
     uponReceiving: 'a request for all plans',
-    withRequest: {
-      method: 'GET',
-      path: `/organizations/${orgId}/plans`,
-      headers: {
-        Accept: 'application/json, text/plain, */*'
-      }
-    },
+    withRequest: getPlans(),
     willRespondWith: {
       status: 200,
       body: plans

@@ -1,8 +1,9 @@
-import { defaultRequestsMock } from '../../mocks/factories';
-import * as state from '../../mocks/interactionState';
+import { defaultRequestsMock } from '../../util/factories';
+import * as state from '../../util/interactionState';
+import { defaultSpaceId, getExtensions, getContentTypes } from '../../util/requests';
 
-const spaceId = Cypress.env('spaceId');
 const empty = require('../../fixtures/empty.json');
+const query = 'limit=1000&order=name';
 
 describe('Content types list page', () => {
   before(() => {
@@ -12,20 +13,13 @@ describe('Content types list page', () => {
     cy.addInteraction({
       state: 'noContentTypesWithQuery',
       uponReceiving: 'a request for all content types',
-      withRequest: {
-        method: 'GET',
-        path: `/spaces/${spaceId}/content_types`,
-        headers: {
-          Accept: 'application/json, text/plain, */*'
-        },
-        query: 'limit=1000&order=name'
-      },
+      withRequest: getContentTypes(defaultSpaceId, query),
       willRespondWith: {
         status: 200,
         body: empty
       }
     }).as('noContentTypes');
-    cy.visit(`/spaces/${spaceId}/content_types`);
+    cy.visit(`/spaces/${defaultSpaceId}/content_types`);
     cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
   });
   describe('Opening the page with no content types', () => {
@@ -41,13 +35,7 @@ describe('Content types list page', () => {
       cy.addInteraction({
         state: 'noExtensions',
         uponReceiving: 'a request for all extensions',
-        withRequest: {
-          method: 'GET',
-          path: `/spaces/${spaceId}/environments/master/extensions`,
-          headers: {
-            Accept: 'application/json, text/plain, */*'
-          }
-        },
+        withRequest: getExtensions(),
         willRespondWith: {
           status: 200,
           body: empty
@@ -56,13 +44,7 @@ describe('Content types list page', () => {
       cy.addInteraction({
         state: 'noContentTypes',
         uponReceiving: 'a request for all content types',
-        withRequest: {
-          method: 'GET',
-          path: `/spaces/${spaceId}/content_types`,
-          headers: {
-            Accept: 'application/json, text/plain, */*'
-          }
-        },
+        withRequest: getContentTypes(),
         willRespondWith: {
           status: 200,
           body: empty

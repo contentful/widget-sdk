@@ -30,6 +30,7 @@ export default function WidgetsConfiguration({ state, dispatch }) {
       <FieldGroup>
         <div className="sidebar-configuration__options">
           <RadioButtonField
+            testId="default-sidebar-option"
             labelText="Use default sidebar"
             helpText="Used for all content types without a custom sidebar"
             name="sidebarType"
@@ -42,6 +43,7 @@ export default function WidgetsConfiguration({ state, dispatch }) {
           />
           <div className="f36-margin-top--m" />
           <RadioButtonField
+            testId="custom-sidebar-option"
             className="f36-margin-left--3xl"
             labelText="Use custom sidebar"
             helpText="Used only for this content type"
@@ -57,7 +59,7 @@ export default function WidgetsConfiguration({ state, dispatch }) {
       </FieldGroup>
       <div className="sidebar-configuration__container f36-margin-top--l f36-margin-bottom--m">
         {state.sidebarType === SidebarType.default && (
-          <div className="sidebar-configuration__main-column">
+          <div className="sidebar-configuration__main-column" data-test-id="default-sidebar-column">
             <DefaultSidebar />
           </div>
         )}

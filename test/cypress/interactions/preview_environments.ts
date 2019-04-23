@@ -1,22 +1,14 @@
-import * as state from './interactionState';
+import * as state from '../util/interactionState';
+import { getPreviewEnvironments, defaultSpaceId } from '../util/requests';
 
 const empty = require('../fixtures/empty.json');
-const spaceId = Cypress.env('spaceId');
 
 export function noPreviewEnvironmentsResponse() {
+  const query = 'limit=100';
   cy.addInteraction({
     state: state.PreviewEnvironments.NONE,
     uponReceiving: 'a request for all preview environments',
-    withRequest: {
-      method: 'GET',
-      path: `/spaces/${spaceId}/preview_environments`,
-      query: {
-        limit: '100'
-      },
-      headers: {
-        Accept: 'application/json, text/plain, */*'
-      }
-    },
+    withRequest: getPreviewEnvironments(defaultSpaceId, query),
     willRespondWith: {
       status: 200,
       body: empty

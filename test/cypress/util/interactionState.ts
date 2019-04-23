@@ -39,10 +39,9 @@ export enum Locales {
   DEFAULT = 'locales/default'
 }
 
-export enum ContentTypes {
-  NONE = 'content_types/none',
-  SINGLE = 'content_types/single',
-  EDITORINTERFACE = 'content_types/editor_interface'
+export enum PublicContentTypes {
+  NONE = 'public/content_types/none',
+  SINGLE = 'public/content_types/single'
 }
 
 export enum Entries {
@@ -53,4 +52,22 @@ export enum Entries {
 
 export enum Microbackends {
   STREAMTOKEN = 'microbackends/streamtoken'
+}
+
+export enum ContentType {
+  DEFAULT = 'content_types/id/default',
+  PUBLISHED = 'content_types/id/published'
+}
+
+export enum Extensions {
+  NONE = 'estensions/none'
+}
+
+export enum ContentTypes {
+  EDITORINTERFACE = 'content_types/editor_interface',
+  SINGLE = 'content_types/single'
+}
+
+export enum Apps {
+  NONE_INSTALLED = 'microbackends/apps/spaces/space_id'
 }

@@ -1,16 +1,18 @@
-import { defaultRequestsMock } from '../../mocks/factories';
-import { singleUser } from '../../mocks/users';
-import { singleContentTypeResponse, editorInterfaceResponse } from '../../mocks/content_types';
+import { defaultRequestsMock } from '../../util/factories';
+import { singleUser } from '../../interactions/users';
 import {
-  entryId,
+  singleContentTypeResponse,
+  editorInterfaceResponse
+} from '../../interactions/content_types';
+import {
   singleEntryResponse,
   noEntryLinksResponse,
   noEntrySnapshotsResponse
-} from '../../mocks/entries';
-import { microbackendStreamToken } from '../../mocks/microbackend';
-import * as state from '../../mocks/interactionState';
+} from '../../interactions/entries';
+import { microbackendStreamToken } from '../../interactions/microbackend';
+import * as state from '../../util/interactionState';
+import { defaultEntryId, defaultSpaceId, getEntrySchedules } from '../../util/requests';
 
-const spaceId = Cypress.env('spaceId');
 const empty = require('../../fixtures/empty.json');
 const featureFlag = 'feature-pul-04-2019-scheduled-publication-enabled';
 
@@ -33,17 +35,11 @@ describe('Schedule Publication', () => {
 
     window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
 
-    cy.visit(`/spaces/${spaceId}/entries/${entryId}`);
+    cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
     cy.addInteraction({
       state: 'noSchedules',
       uponReceiving: 'a request for entry schedules',
-      withRequest: {
-        method: 'GET',
-        path: `/spaces/${spaceId}/environments/master/entries/${entryId}/schedules`,
-        headers: {
-          Accept: 'application/json, text/plain, */*'
-        }
-      },
+      withRequest: getEntrySchedules(),
       willRespondWith: {
         status: 200,
         body: empty
@@ -60,7 +56,7 @@ describe('Schedule Publication', () => {
       uponReceiving: 'a post request for scheduling publication',
       withRequest: {
         method: 'POST',
-        path: `/spaces/${spaceId}/environments/master/entries/${entryId}/schedules`,
+        path: `/spaces/${defaultSpaceId}/environments/master/entries/${defaultEntryId}/schedules`,
         headers: {
           Accept: 'application/json, text/plain, */*',
           'x-contentful-enable-alpha-feature': 'scheduled-actions'
@@ -73,13 +69,7 @@ describe('Schedule Publication', () => {
     cy.addInteraction({
       state: 'oneSchedule',
       uponReceiving: 'a request for entry schedules',
-      withRequest: {
-        method: 'GET',
-        path: `/spaces/${spaceId}/environments/master/entries/${entryId}/schedules`,
-        headers: {
-          Accept: 'application/json, text/plain, */*'
-        }
-      },
+      withRequest: getEntrySchedules(),
       willRespondWith: {
         status: 200,
         body: {

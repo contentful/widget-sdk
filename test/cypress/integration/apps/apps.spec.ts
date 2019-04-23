@@ -1,27 +1,17 @@
-import { defaultRequestsMock } from '../../mocks/factories'
-import * as state from '../../mocks/interactionState';
+import { defaultRequestsMock } from '../../util/factories';
+import * as state from '../../util/interactionState';
+import { defaultSpaceId } from '../../util/requests';
+import { noInstalledAppsResponse } from '../../interactions/apps';
 
-const spaceId = Cypress.env('spaceId');
+const baseUrl = Cypress.config().baseUrl;
 
 describe('Apps Page', () => {
   beforeEach(() => {
     cy.setAuthTokenToLocalStorage();
     defaultRequestsMock();
+    noInstalledAppsResponse();
 
-    cy.addInteraction({
-      state: 'noInstalledApps',
-      uponReceiving: 'a request for all installed Apps',
-      withRequest: {
-        method: 'GET',
-        path: `/_microbackends/backends/apps/spaces/${spaceId}/`,
-        headers: {}
-      },
-      willRespondWith: {
-        status: 200,
-        body: {}
-      }
-    }).as('apps');
-    cy.visit(`/spaces/${spaceId}/apps`);
+    cy.visit(`/spaces/${defaultSpaceId}/apps`);
     cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
   });
 
@@ -52,15 +42,15 @@ describe('Apps Page', () => {
 
     describe('Apps links work correctly', () => {
       const apps = [
-        { title: 'Netlify', expectedUrl: `/spaces/${spaceId}/apps/netlify` },
-        { title: 'Algolia', expectedUrl: `/spaces/${spaceId}/apps/algolia` },
+        { title: 'Netlify', expectedUrl: `/spaces/${defaultSpaceId}/apps/netlify` },
+        { title: 'Algolia', expectedUrl: `/spaces/${defaultSpaceId}/apps/algolia` },
         {
           title: 'AI image management',
-          expectedUrl: `/spaces/${spaceId}/apps/aiImageManagement`
+          expectedUrl: `/spaces/${defaultSpaceId}/apps/aiImageManagement`
         },
         {
           title: 'Basic approval workflow',
-          expectedUrl: `/spaces/${spaceId}/apps/basicApprovalWorkflow`
+          expectedUrl: `/spaces/${defaultSpaceId}/apps/basicApprovalWorkflow`
         }
       ];
 
@@ -85,7 +75,7 @@ describe('Apps Page', () => {
         cy.getByTestId('install-app')
           .click()
           .url()
-          .should('eq', `${Cypress.config().baseUrl}${apps[0].expectedUrl}`);
+          .should('eq', `${baseUrl}${apps[0].expectedUrl}`);
       });
     });
   });
