@@ -1,10 +1,12 @@
 import React from 'react';
+import moment from 'moment';
 import { css } from 'emotion';
 import {
   CardActions,
   DropdownList,
   DropdownListItem,
-  Heading
+  Heading,
+  Tooltip
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -51,19 +53,23 @@ export const styles = {
 };
 
 export default function Comment({ comment }) {
+  const {
+    sys: { createdBy, createdAt }
+  } = comment;
+  const creationDate = moment(createdAt, moment.ISO_8601);
   return (
     <div className={styles.comment}>
       <header className={styles.header}>
-        <img
-          className={styles.avatar}
-          src="https://www.gravatar.com/avatar/114482f1a617ddfee34f8d314c33a1e3?s=50&d=https%3A%2F%2Fstatic.quirely.com%2Fgatekeeper%2Fusers%2Fdefault-a4327b54b8c7431ea8ddd9879449e35f051f43bd767d83c5ff351aed9db5986e.png"
-        />
+        <img className={styles.avatar} src={createdBy.avatarUrl} />
         <div className={styles.meta}>
           <Heading element="h4" className={styles.userName}>
-            Guilherme Barbosa
+            {renderUserName(createdBy)}
           </Heading>
-          <time dateTime="2019-04-01T12:00" className={styles.timestamp}>
-            1 day ago
+          <time
+            dateTime={creationDate.toISOString()}
+            title={creationDate.format('LLLL')}
+            className={styles.timestamp}>
+            {creationDate.fromNow()}
           </time>
         </div>
         <CardActions>
@@ -85,3 +91,13 @@ export default function Comment({ comment }) {
 Comment.propTypes = {
   comment: types.Comment.isRequired
 };
+
+function renderUserName(user) {
+  return user.firstName ? (
+    <>{`${user.firstName} ${user.lastName}`}</>
+  ) : (
+    <Tooltip content="The author of this comment is no longer a member of this organization">
+      {'(Deactivated user)'}
+    </Tooltip>
+  );
+}

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
 import tokens from '@contentful/forma-36-tokens';
+import { Typography, Paragraph, Heading } from '@contentful/forma-36-react-components';
 
 import { useCommentsFetcher } from './hooks.es6';
 import CreateComment from './CreateEntryComment.es6';
@@ -38,26 +39,58 @@ export const styles = {
     padding: tokens.spacingS,
     flexGrow: 1
   }),
+  commentListLoading: css({
+    overflow: 'hidden'
+  }),
   commentForm: css({
     borderTop: `1px solid ${tokens.colorElementLight}`,
     padding: tokens.spacingS
+  }),
+  emptyState: css({
+    display: 'flex',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center'
   })
 };
 
 export default function CommentsPanel({ spaceId, entryId, isVisible }) {
   const { isLoading, data } = useCommentsFetcher(spaceId, entryId);
   const [comments, setComments] = useState([]);
+  const [isEmpty, setIsEmpty] = useState(false);
+  const listRef = useRef(null);
 
-  const handleNewComment = comment => setComments(() => [...comments, comment]);
+  const handleNewComment = comment => {
+    setComments([...comments, comment]);
+  };
 
   useEffect(() => {
-    data && setComments(data.items);
+    if (data) {
+      setComments(data);
+      if (!data.length) setIsEmpty(true);
+    }
   }, [data]);
+
+  useEffect(() => {
+    scrollToBottom(listRef.current);
+    comments.length && setIsEmpty(false);
+  }, [comments]);
 
   return (
     <div className={`${styles.root} ${isVisible ? styles.visible : styles.hidden}`}>
-      <div className={styles.commentList}>
+      <div
+        className={`${styles.commentList} ${isLoading ? styles.commentListLoading : ''}`}
+        ref={listRef}>
         {isLoading && <CommentSkeletonGroup />}
+        {!isLoading && isEmpty && (
+          <div className={styles.emptyState}>
+            <Typography>
+              <Heading>Start a conversation</Heading>
+              <Paragraph>No one has commented on this entry yet.</Paragraph>
+            </Typography>
+          </div>
+        )}
         {comments.length > 0 &&
           comments.map(comment => <CommentThread key={comment.sys.id} comment={comment} />)}
       </div>
@@ -74,3 +107,16 @@ CommentsPanel.propTypes = {
   environmentId: PropTypes.string,
   isVisible: PropTypes.bool
 };
+
+function scrollToBottom(element) {
+  try {
+    element.scroll({
+      top: 9999,
+      left: 0,
+      behavior: 'smooth'
+    });
+  } catch {
+    // Safari, IE and Edge
+    element.scrollTop = element.scrollHeight;
+  }
+}

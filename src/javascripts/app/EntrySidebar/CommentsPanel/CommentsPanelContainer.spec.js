@@ -5,6 +5,10 @@ import mitt from 'mitt';
 import SidebarEventTypes from '../SidebarEventTypes.es6';
 import CommentsPanelContainer from './CommentsPanelContainer.es6';
 
+// TODO: find a better way to avoid the ng dependencies
+jest.mock('services/TokenStore.es6', () => {});
+jest.mock('access_control/OrganizationMembershipRepository.es6', () => {});
+
 describe('CommentsPanelContainer', () => {
   let emitter;
   let off;

@@ -5,6 +5,11 @@ import CommentsPanel from './CommentsPanel.es6';
 import { useCommentsFetcher } from './hooks.es6';
 
 jest.mock('./hooks.es6', () => ({ useCommentsFetcher: jest.fn() }));
+// should not be mocking this, but the TokenStore uses some angular module
+jest.mock('services/TokenStore.es6', () => ({
+  getSpace: jest.fn(),
+  getUser: jest.fn()
+}));
 
 describe('CommentsPanel', () => {
   const render = props => {
@@ -21,6 +26,15 @@ describe('CommentsPanel', () => {
   });
   describe('loading', () => {
     useCommentsFetcher.mockReturnValueOnce({ isLoading: true, isError: false });
+    const component = render({ spaceId: 'a', entryId: 'b' });
+
+    it('matches the snapshot', () => {
+      expect(component).toMatchSnapshot();
+    });
+  });
+
+  describe('empty state', () => {
+    useCommentsFetcher.mockReturnValueOnce({ isLoading: false, isError: true });
     const component = render({ spaceId: 'a', entryId: 'b' });
 
     it('matches the snapshot', () => {
