@@ -74,6 +74,9 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
     !newList.length && setIsEmpty(true);
   };
 
+  // check for the first load of comments.
+  // display comments and scroll to the bottom
+  // or display empty state
   useEffect(() => {
     if (data) {
       setComments(data);
@@ -88,8 +91,9 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
 
   useEffect(() => {
     // scroll to the bottom to show latest comments
-    // after the first load or new comments
-    // this effect is need because `setState` hook doesnt allow callbacks
+    // after the first load or new comments.
+    // the effect garantees that the scrolling happens after
+    // the comments are rendered
     shouldScroll && scrollToBottom(listRef.current);
     setShouldScroll(false);
   }, [shouldScroll]);
@@ -129,8 +133,9 @@ CommentsPanel.propTypes = {
 
 function scrollToBottom(element) {
   try {
+    // Chrome and Firefox
     element.scroll({
-      top: 9999,
+      top: element.scrollHeight,
       left: 0,
       behavior: 'smooth'
     });
