@@ -10,8 +10,12 @@ export enum Plans {
   FREE = 'plans/free'
 }
 
-export enum ProductCatalogFeatures {
-  SEVERAL = 'product_catalog_features/several'
+export enum OrgProductCatalogFeatures {
+  SEVERAL = 'org_product_catalog_features/several'
+}
+
+export enum SpaceProductCatalogFeatures {
+  SEVERAL = 'space_product_catalog_features/several'
 }
 
 export enum UIConfig {

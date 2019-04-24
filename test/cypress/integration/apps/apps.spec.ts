@@ -2,6 +2,7 @@ import { defaultRequestsMock } from '../../util/factories';
 import * as state from '../../util/interactionState';
 import { defaultSpaceId } from '../../util/requests';
 import { noInstalledAppsResponse } from '../../interactions/apps';
+import { spaceProductCatalogFeaturesResponse } from '../../interactions/product_catalog_features';
 
 const baseUrl = Cypress.config().baseUrl;
 
@@ -10,6 +11,7 @@ describe('Apps Page', () => {
     cy.setAuthTokenToLocalStorage();
     defaultRequestsMock();
     noInstalledAppsResponse();
+    spaceProductCatalogFeaturesResponse();
 
     cy.visit(`/spaces/${defaultSpaceId}/apps`);
     cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);

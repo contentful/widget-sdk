@@ -170,10 +170,18 @@ export function getPreviewEnvironments(
   };
 }
 
-export function getProductCatalogFeatures(orgId: string = defaultOrgId): RequestOptions {
+export function getOrgProductCatalogFeatures(orgId: string = defaultOrgId): RequestOptions {
   return {
     method: 'GET',
     path: `/organizations/${orgId}/product_catalog_features`,
+    headers: defaultHeader
+  };
+}
+
+export function getSpaceProductCatalogFeatures(spaceId: string = defaultSpaceId): RequestOptions {
+  return {
+    method: 'GET',
+    path: `/spaces/${spaceId}/product_catalog_features`,
     headers: defaultHeader
   };
 }
