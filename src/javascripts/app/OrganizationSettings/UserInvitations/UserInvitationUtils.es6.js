@@ -5,7 +5,7 @@ import {
   getMemberships
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { fetchAll } from 'data/CMA/FetchAll.es6';
-import ResolveLinks from '../LinkResolver.es6';
+import ResolveLinks from 'data/LinkResolver.es6';
 
 const includePaths = ['sys.user'];
 export const membershipExistsParam = 'sys.user.firstName[exists]';

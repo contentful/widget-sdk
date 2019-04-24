@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { map, uniq } from 'lodash';
-import resolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
+import resolveLinks from 'data/LinkResolver.es6';
 import { getSpace, getUser } from 'services/TokenStore.es6';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getUsers } from 'access_control/OrganizationMembershipRepository.es6';
@@ -39,16 +39,15 @@ export const useCommentCreator = (spaceId, entryId) => {
   });
 };
 
-function delay() {
-  return new Promise(resolve => setTimeout(resolve, 700));
-}
 function withMinDelay(promise) {
+  const delay = () => new Promise(resolve => setTimeout(resolve, 700));
   return Promise.all([promise, delay()]).then(([data]) => data);
 }
 
 async function fetchUsers(spaceId, userIds) {
   const { organization } = await getSpace(spaceId);
   const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
+  // TODO: handle case where there are too many ids to fit into the query string
   const { items } = await getUsers(orgEndpoint, {
     'sys.id[in]': userIds.join(',')
   });

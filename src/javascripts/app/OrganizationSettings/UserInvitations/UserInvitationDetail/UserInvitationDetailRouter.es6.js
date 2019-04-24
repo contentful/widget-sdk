@@ -13,7 +13,7 @@ import {
   getAllSpaces
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { map, flatten } from 'lodash';
-import ResolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
+import ResolveLinks from 'data/LinkResolver.es6';
 
 import UserInvitationDetail from './UserInvitationDetail.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';

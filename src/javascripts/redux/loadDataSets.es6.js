@@ -8,7 +8,7 @@ import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembership
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
 import createTeamMembershipService from 'app/OrganizationSettings/Teams/TeamMemberships/TeamMembershipService.es6';
 import createTeamSpaceMembershipService from 'app/OrganizationSettings/Teams/TeamSpaceMemberships/TeamSpaceMembershipsService.es6';
-import ResolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
+import ResolveLinks from 'data/LinkResolver.es6';
 
 import {
   USERS,
