@@ -37,13 +37,8 @@ export default class ExtensionAPI {
       throw new Error(`Extra configuration options ${extraKeys.join(', ')} provided`);
     }
 
-    // Keep content type fields with internal IDs.
     this.contentTypeFields = get(this.contentTypeData, ['fields'], []);
-    // Create an ID map using internal IDs and internal locale codes.
     this.idMap = createIDMap(this.contentTypeFields, this.locales.available);
-
-    // Convert content type to its public form for external consumption.
-    this.contentTypeData = PublicContentType.fromInternal(this.contentTypeData);
   }
 
   // Sends initial data to the IFrame of an extension.
@@ -105,7 +100,8 @@ export default class ExtensionAPI {
       // We only need `sys` in the SDK.
       // Make sure we don't leak internal field IDs:
       entry: { sys: entryData.sys },
-      contentType: this.contentTypeData,
+      // Convert content type to its public form for external consumption:
+      contentType: PublicContentType.fromInternal(this.contentTypeData),
       parameters: this.parameters
     });
   }
