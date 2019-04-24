@@ -21,18 +21,49 @@ const styles = {
   })
 };
 
-export default function CreateEntryComment({ spaceId, entryId, parentCommentId, onNewComment }) {
+export default function CreateEntryComment({
+  spaceId,
+  entryId,
+  parentCommentId,
+  onNewComment,
+  onActive,
+  onInactive
+}) {
   const [active, setActive] = useState(false);
   const [isSubmitted, setIsSubmited] = useState(false);
   const [body, setBody] = useState('');
-  const [{ data, isLoading, error }, createComment] = useCommentCreator(spaceId, entryId);
+  const [{ data, isLoading, error }, createComment, resetCreatorState] = useCommentCreator(
+    spaceId,
+    entryId,
+    parentCommentId
+  );
   const placeholder = parentCommentId ? 'Reply to this comment...' : 'Comment on this entry...';
-  const sendButtonLabel = parentCommentId ? 'Reply' : 'Send';
+  const sendButtonLabel = parentCommentId ? 'Post reply' : 'Post comment';
 
   const handleSubmit = () => {
     if (!body || isLoading) return;
     setIsSubmited(true);
     createComment(body);
+  };
+
+  const handleChange = evt => {
+    const {
+      target: { value }
+    } = evt;
+    setBody(value);
+    if (value) {
+      onActive && onActive();
+    } else {
+      onInactive && onInactive();
+    }
+  };
+
+  const handleCancel = () => {
+    setBody('');
+    setActive(false);
+    // get rid of any error message from the creation call
+    resetCreatorState();
+    onInactive && onInactive();
   };
 
   const handleKeyPress = evt => {
@@ -52,14 +83,14 @@ export default function CreateEntryComment({ spaceId, entryId, parentCommentId, 
       <Textarea
         className={styles.textField}
         value={body}
-        onChange={evt => setBody(evt.target.value)}
+        onChange={handleChange}
         onFocus={() => setActive(true)}
         rows={active ? 4 : 1}
         onKeyDown={handleKeyPress}
         disabled={isLoading}
         placeholder={placeholder}
       />
-      {error && (
+      {active && error && (
         <ValidationMessage className={styles.validationMessage}>{error.message}</ValidationMessage>
       )}
       {active && (
@@ -71,7 +102,7 @@ export default function CreateEntryComment({ spaceId, entryId, parentCommentId, 
             className={css({ marginRight: tokens.spacingS })}>
             {sendButtonLabel}
           </Button>
-          <Button size="small" buttonType="muted" onClick={() => setActive(false)}>
+          <Button size="small" buttonType="muted" onClick={handleCancel}>
             Cancel
           </Button>
         </div>
@@ -84,5 +115,7 @@ CreateEntryComment.propTypes = {
   spaceId: PropTypes.string.isRequired,
   entryId: PropTypes.string.isRequired,
   onNewComment: PropTypes.func.isRequired,
+  onActive: PropTypes.func,
+  onInactive: PropTypes.func,
   parentCommentId: PropTypes.string
 };

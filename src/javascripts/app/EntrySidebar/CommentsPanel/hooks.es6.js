@@ -28,12 +28,12 @@ export const useCommentsFetcher = (spaceId, entryId) => {
  * @param {string} spaceId
  * @param {string} entryId
  */
-export const useCommentCreator = (spaceId, entryId) => {
+export const useCommentCreator = (spaceId, entryId, parentCommentId) => {
   const user = getUser();
   const endpoint = createSpaceEndpoint(spaceId);
 
   return useAsyncFn(async body => {
-    const comment = await create(endpoint, entryId, body);
+    const comment = await create(endpoint, entryId, body, parentCommentId);
     comment.sys.createdBy = user;
     return comment;
   });

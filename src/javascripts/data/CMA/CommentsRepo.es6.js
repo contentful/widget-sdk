@@ -1,11 +1,15 @@
-export async function create(endpoint, entryId, body) {
-  return endpoint({
-    method: 'POST',
-    path: ['entries', entryId, 'comments'],
-    data: {
-      body
-    }
-  });
+export async function create(endpoint, entryId, body, parentCommentId) {
+  const headers = parentCommentId ? { 'x-contentful-parent-id': parentCommentId } : {};
+  return endpoint(
+    {
+      method: 'POST',
+      path: ['entries', entryId, 'comments'],
+      data: {
+        body
+      }
+    },
+    headers
+  );
 }
 
 export async function getAll(endpoint, entryId) {
