@@ -1,10 +1,12 @@
-import { get, difference } from 'lodash';
+import { pick, get, difference } from 'lodash';
 import createIDMap from './IDMap.es6';
 import * as PublicContentType from './PublicContentType.es6';
 
-// Use `apiName` for internal representation first.
-// If not available or public always default to `id`:
-const publicFieldId = field => field.apiName || field.id;
+const sharedFieldProps = field => ({
+  id: field.apiName || field.id,
+  required: !!field.required,
+  ...pick(field, ['type', 'validations', 'items'])
+});
 
 const REQUIRED_CONFIG_KEYS = [
   'location', // Where the extension is rendered. See `WidgetLocations`.
@@ -74,11 +76,9 @@ export default class ExtensionAPI {
       },
       field: current
         ? {
-            id: publicFieldId(current.field),
             locale: current.locale.code,
             value: get(entryData, ['fields', current.field.id, current.locale.internal_code]),
-            type: current.field.type,
-            validations: current.field.validations
+            ...sharedFieldProps(current.field)
           }
         : undefined,
       fieldInfo: this.contentTypeFields.map(field => {
@@ -86,12 +86,10 @@ export default class ExtensionAPI {
         const values = entryData.fields[field.id];
 
         return {
-          id: publicFieldId(field),
           localized: field.localized,
           locales: fieldLocales.map(locale => locale.code),
           values: this.idMap.locale.valuesToPublic(values),
-          type: field.type,
-          validations: field.validations
+          ...sharedFieldProps(field)
         };
       }),
       locales: {
