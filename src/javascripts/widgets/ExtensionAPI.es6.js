@@ -2,6 +2,10 @@ import { get, difference } from 'lodash';
 import createIDMap from './IDMap.es6';
 import * as PublicContentType from './PublicContentType.es6';
 
+// Use `apiName` for internal representation first.
+// If not available or public always default to `id`:
+const publicFieldId = field => field.apiName || field.id;
+
 const REQUIRED_CONFIG_KEYS = [
   'location', // Where the extension is rendered. See `WidgetLocations`.
   'channel', // Instance of `ExtensionIFrameChannel`
@@ -70,7 +74,7 @@ export default class ExtensionAPI {
       },
       field: current
         ? {
-            id: current.field.apiName,
+            id: publicFieldId(current.field),
             locale: current.locale.code,
             value: get(entryData, ['fields', current.field.id, current.locale.internal_code]),
             type: current.field.type,
@@ -82,7 +86,7 @@ export default class ExtensionAPI {
         const values = entryData.fields[field.id];
 
         return {
-          id: field.apiName || field.id,
+          id: publicFieldId(field),
           localized: field.localized,
           locales: fieldLocales.map(locale => locale.code),
           values: this.idMap.locale.valuesToPublic(values),
