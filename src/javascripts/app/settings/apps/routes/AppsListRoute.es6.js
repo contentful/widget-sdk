@@ -6,42 +6,31 @@ import createAppsClient from '../AppsClient.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 
-async function getEnabledApps(hasAppFeature, apps) {
-  const features = await Promise.all(apps.map(async app => [await hasAppFeature(app.id), app.id]));
-
-  return features.filter(([enabled]) => enabled).map(([_, id]) => id);
-}
-
-const AppsFetcher = createFetcherComponent(async ({ hasAppFeature, spaceId }) => {
+const AppsFetcher = createFetcherComponent(async ({ spaceId }) => {
   const apps = await createAppsClient(spaceId).getAll();
-  const enabled = await getEnabledApps(hasAppFeature, apps);
 
   return apps.reduce(
-    (acc, app) => {
-      const addTo = group => ({ ...acc, [group]: acc[group].concat([app]) });
-
-      if (!enabled.includes(app.id)) {
-        return addTo('unavailable');
-      } else if (app.installed) {
-        return addTo('installed');
+    ({ installed, rest }, app) => {
+      if (app.installed) {
+        return { installed: installed.concat([app]), rest };
       } else {
-        return addTo('available');
+        return { installed, rest: rest.concat([app]) };
       }
     },
-    { installed: [], available: [], unavailable: [] }
+    { installed: [], rest: [] }
   );
 });
 
 export default class AppsListRoute extends Component {
   static propTypes = {
-    hasAppFeature: PropTypes.func.isRequired,
+    hasBasicApps: PropTypes.bool.isRequired,
     spaceId: PropTypes.string.isRequired
   };
 
   render() {
     return (
       <AdminOnly>
-        <AppsFetcher hasAppFeature={this.props.hasAppFeature} spaceId={this.props.spaceId}>
+        <AppsFetcher spaceId={this.props.spaceId}>
           {({ isLoading, isError, data }) => {
             if (isLoading) {
               return <AppsListPageLoading />;
@@ -49,7 +38,7 @@ export default class AppsListRoute extends Component {
             if (isError) {
               return <StateRedirect to="spaces.detail.entries.list" />;
             }
-            return <AppsListPage apps={data} />;
+            return <AppsListPage hasBasicApps={this.props.hasBasicApps} apps={data} />;
           }}
         </AppsFetcher>
       </AdminOnly>

@@ -38,12 +38,14 @@ export default class AppListItem extends Component {
     app: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
-      installed: PropTypes.bool.isRequired
+      installed: PropTypes.bool.isRequired,
+      soon: PropTypes.bool,
+      basic: PropTypes.bool
     }).isRequired
   };
 
   renderLink() {
-    const { id, title, installed } = this.props.app;
+    const { id, title, installed, basic } = this.props.app;
     return (
       <React.Fragment>
         <div className={styles.title} data-test-id="app-title">
@@ -52,6 +54,7 @@ export default class AppListItem extends Component {
               {title}
             </Heading>
           </StateLink>
+          {!basic && <TextLink disabled>Enterprise plans only</TextLink>}
         </div>
         <div className={styles.actions}>
           {installed && (
@@ -78,12 +81,14 @@ export default class AppListItem extends Component {
   }
 
   renderSoon() {
+    const { title, basic } = this.props.app;
     return (
       <React.Fragment>
         <div className={styles.title}>
           <Heading element="h3" className={styles.titleText}>
-            {this.props.app.title}
+            {title}
           </Heading>
+          {!basic && <TextLink disabled>Enterprise plans only</TextLink>}
         </div>
         <div className={styles.actions}>
           <Button buttonType="muted" disabled>
