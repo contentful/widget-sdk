@@ -330,8 +330,8 @@ export default function register() {
               const hasContentTypes = spaceContext.publishedCTs.getAllBare().length > 0;
 
               if (hasContentTypes) {
-                spaceContext.space.getEntries().then(function(entries) {
-                  const hasEntries = !!_.size(entries);
+                spaceContext.space.getEntries({ limit: 0 }).then(function(entries) {
+                  const hasEntries = entries.total > 0;
                   const nextStep = hasEntries ? 3 : 2;
                   setStepCompletion(nextStep);
                 });

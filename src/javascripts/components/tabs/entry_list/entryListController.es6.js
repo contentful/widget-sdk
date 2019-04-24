@@ -234,7 +234,7 @@ export default function register() {
       function hasArchivedEntries(space) {
         return space
           .getEntries({
-            limit: 1,
+            limit: 0,
             'sys.archivedAt[exists]': true
           })
           .then(response => response && response.total > 0);

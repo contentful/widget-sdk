@@ -437,7 +437,7 @@ describe('Entry List Controller', () => {
     it('gets archived entries when showNoEntries() changes to true', function() {
       this.$apply();
       const query = {
-        limit: 1,
+        limit: 0,
         'sys.archivedAt[exists]': true
       };
       sinon.assert.calledWith(spaceContext.space.getEntries, query);

@@ -251,6 +251,7 @@ describe('SlugEditor directive', () => {
       sinon.assert.calledWith(getEntries, {
         content_type: 'CTID',
         'fields.slug.some-LOCALE': 'SLUG',
+        limit: 0,
         'sys.id[ne]': 'ENTRY ID',
         'sys.publishedAt[exists]': true
       });
