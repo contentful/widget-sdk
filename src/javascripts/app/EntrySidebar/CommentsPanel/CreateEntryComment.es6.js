@@ -13,11 +13,16 @@ const styles = {
   }),
   replyActions: css({
     marginTop: tokens.spacingS
+  }),
+  textField: css({
+    textarea: {
+      resize: 'none'
+    }
   })
 };
 
 export default function CreateEntryComment({ spaceId, entryId, parentCommentId, onNewComment }) {
-  const [showActions, setShowActions] = useState(false);
+  const [active, setActive] = useState(false);
   const [isSubmitted, setIsSubmited] = useState(false);
   const [body, setBody] = useState('');
   const [{ data, isLoading, error }, createComment] = useCommentCreator(spaceId, entryId);
@@ -45,9 +50,11 @@ export default function CreateEntryComment({ spaceId, entryId, parentCommentId, 
   return (
     <>
       <Textarea
+        className={styles.textField}
         value={body}
         onChange={evt => setBody(evt.target.value)}
-        onFocus={() => setShowActions(true)}
+        onFocus={() => setActive(true)}
+        rows={active ? 4 : 1}
         onKeyDown={handleKeyPress}
         disabled={isLoading}
         placeholder={placeholder}
@@ -55,7 +62,7 @@ export default function CreateEntryComment({ spaceId, entryId, parentCommentId, 
       {error && (
         <ValidationMessage className={styles.validationMessage}>{error.message}</ValidationMessage>
       )}
-      {showActions && (
+      {active && (
         <div className={styles.replyActions}>
           <Button
             size="small"
@@ -64,7 +71,7 @@ export default function CreateEntryComment({ spaceId, entryId, parentCommentId, 
             className={css({ marginRight: tokens.spacingS })}>
             {sendButtonLabel}
           </Button>
-          <Button size="small" buttonType="muted" onClick={() => setShowActions(false)}>
+          <Button size="small" buttonType="muted" onClick={() => setActive(false)}>
             Cancel
           </Button>
         </div>
