@@ -8,7 +8,7 @@ describe('ExtensionAPI', () => {
       channel: { connect: jest.fn(), destroy: jest.fn(), send: jest.fn(), handlers: {} },
       current: { field: {}, locale: {} },
       locales: { available: [], default: {} },
-      entryData: { fields: {} },
+      entryData: { sys: {}, fields: {} },
       contentTypeData: {},
       spaceMembership: {
         sys: {},
@@ -106,7 +106,7 @@ describe('ExtensionAPI', () => {
             }
           },
           parameters: expect.any(Object),
-          entry: { sys: { id: 'test' }, fields: expect.any(Object) },
+          entry: { sys: { id: 'test' } },
           contentType: {
             fields: [
               { id: 'FID-public', localized: false, type: 'Symbol', validations: 'VALIDATIONS1' },

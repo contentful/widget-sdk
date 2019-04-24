@@ -102,7 +102,9 @@ export default class ExtensionAPI {
           return { ...acc, [locale.code]: locale.name };
         }, {})
       },
-      entry: entryData,
+      // We only need `sys` in the SDK.
+      // Make sure we don't leak internal field IDs:
+      entry: { sys: entryData.sys },
       contentType: this.contentTypeData,
       parameters: this.parameters
     });
