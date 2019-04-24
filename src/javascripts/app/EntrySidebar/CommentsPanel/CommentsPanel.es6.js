@@ -58,24 +58,41 @@ export const styles = {
 export default function CommentsPanel({ spaceId, entryId, isVisible }) {
   const { isLoading, data } = useCommentsFetcher(spaceId, entryId);
   const [comments, setComments] = useState([]);
-  const [isEmpty, setIsEmpty] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(null);
+  const [shouldScroll, setShouldScroll] = useState(false);
   const listRef = useRef(null);
 
   const handleNewComment = comment => {
     setComments([...comments, comment]);
+    setShouldScroll(true);
+  };
+
+  // A thread can be a single comment or a comment and its replies
+  const handleRemovedThread = comment => {
+    const newList = comments.filter(item => item !== comment);
+    setComments(newList);
+    !newList.length && setIsEmpty(true);
   };
 
   useEffect(() => {
     if (data) {
       setComments(data);
-      if (!data.length) setIsEmpty(true);
+      setShouldScroll(true);
+      if (!data.length) {
+        setIsEmpty(true);
+      } else {
+        setIsEmpty(false);
+      }
     }
   }, [data]);
 
   useEffect(() => {
-    scrollToBottom(listRef.current);
-    comments.length && setIsEmpty(false);
-  }, [comments]);
+    // scroll to the bottom to show latest comments
+    // after the first load or new comments
+    // this effect is need because `setState` hook doesnt allow callbacks
+    shouldScroll && scrollToBottom(listRef.current);
+    setShouldScroll(false);
+  }, [shouldScroll]);
 
   return (
     <div className={`${styles.root} ${isVisible ? styles.visible : styles.hidden}`}>
@@ -92,7 +109,9 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
           </div>
         )}
         {comments.length > 0 &&
-          comments.map(comment => <CommentThread key={comment.sys.id} comment={comment} />)}
+          comments.map(comment => (
+            <CommentThread key={comment.sys.id} comment={comment} onRemoved={handleRemovedThread} />
+          ))}
       </div>
       <div className={styles.commentForm}>
         <CreateComment spaceId={spaceId} entryId={entryId} onNewComment={handleNewComment} />

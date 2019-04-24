@@ -29,10 +29,10 @@ const styles = {
   })
 };
 
-export default function CommentThread({ comment, replies = [] }) {
+export default function CommentThread({ comment, replies = [], onRemoved }) {
   return (
     <Card className={styles.root}>
-      <Comment comment={comment} />
+      <Comment comment={comment} onRemoved={onRemoved} />
 
       {replies.length ? (
         <React.Fragment>
@@ -47,5 +47,6 @@ export default function CommentThread({ comment, replies = [] }) {
 
 CommentThread.propTypes = {
   comment: types.Comment.isRequired,
+  onRemoved: PropTypes.func.isRequired,
   replies: PropTypes.arrayOf(types.Comment)
 };
