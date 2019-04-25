@@ -95,6 +95,16 @@ export default function wrapWithRetry(requestFn) {
 
     function handleError(err) {
       if (err.status === RATE_LIMIT_EXCEEDED && call.ttl > 0) {
+        try {
+          const [{ url } = {}] = call.args;
+
+          Telemetry.count('cma-rate-limit-exceeded', {
+            endpoint: getEndpoint(url)
+          });
+        } catch (_) {
+          // no op
+        }
+
         queue.unshift(backOff(call));
       } else if (
         [BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT].indexOf(err.status) > -1 &&
