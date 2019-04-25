@@ -42,15 +42,20 @@ export default function register() {
         resetList: () => searchController.resetAssets(true)
       });
 
-      $scope.savedViewsSidebar = createSavedViewsSidebar({
-        entityFolders: spaceContext.uiConfig.assets,
-        loadView: function(view) {
-          $scope.loadView(view);
+      $scope.savedViewsState = 'loading';
+      spaceContext.uiConfig.then(
+        api => {
+          $scope.savedViewsSidebar = createSavedViewsSidebar({
+            entityFolders: api.assets,
+            loadView: view => $scope.loadView(view),
+            getCurrentView: () => _.cloneDeep(_.get($scope, ['context', 'view'], {}))
+          });
+          $scope.savedViewsState = 'ready';
         },
-        getCurrentView: function() {
-          return _.cloneDeep(_.get($scope, ['context', 'view'], {}));
+        () => {
+          $scope.savedViewsState = 'error';
         }
-      });
+      );
 
       $scope.entityStatus = entityStatus;
 

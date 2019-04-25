@@ -176,24 +176,22 @@ export default function register() {
 
           return $q
             .all([
+              maybeFetchEnvironments(self.endpoint).then(environments => {
+                self.environments = deepFreeze(environments);
+              }),
+              TheLocaleStore.init(self.localeRepo),
               self.publishedCTs.refresh().then(() => {
                 const ctMap = self.publishedCTs.getAllBare().reduce((acc, ct) => {
                   return { ...acc, [ct.sys.id]: ct };
                 }, {});
 
-                return createUiConfigStore(
+                self.uiConfig = createUiConfigStore(
                   space,
                   self.endpoint,
                   self.publishedCTs,
                   createViewMigrator(ctMap)
-                ).then(api => {
-                  self.uiConfig = api;
-                });
-              }),
-              maybeFetchEnvironments(self.endpoint).then(environments => {
-                self.environments = deepFreeze(environments);
-              }),
-              TheLocaleStore.init(self.localeRepo)
+                );
+              })
             ])
             .then(() => {
               Telemetry.record('space_context_http_time', Date.now() - start);

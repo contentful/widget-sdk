@@ -46,20 +46,25 @@ export default function register() {
         resetList: _.noop
       });
 
-      $scope.savedViewsSidebar = createSavedViewsSidebar({
-        entityFolders: spaceContext.uiConfig.entries,
-        loadView: function(view) {
-          $scope.loadView(view);
+      $scope.savedViewsState = 'loading';
+      spaceContext.uiConfig.then(
+        api => {
+          $scope.savedViewsSidebar = createSavedViewsSidebar({
+            entityFolders: api.entries,
+            loadView: view => $scope.loadView(view),
+            getCurrentView: () => _.cloneDeep(_.get($scope, ['context', 'view'], {})),
+            // a view can be assigned to roles only in the Entry List
+            roleAssignment: {
+              membership: spaceContext.space.data.spaceMembership,
+              endpoint: spaceContext.endpoint
+            }
+          });
+          $scope.savedViewsState = 'ready';
         },
-        getCurrentView: function() {
-          return _.cloneDeep(_.get($scope, ['context', 'view'], {}));
-        },
-        // a view can be assigned to roles only in the Entry List
-        roleAssignment: {
-          membership: spaceContext.space.data.spaceMembership,
-          endpoint: spaceContext.endpoint
+        () => {
+          $scope.savedViewsState = 'error';
         }
-      });
+      );
 
       $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(spaceContext.organization);
       $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);

@@ -58,13 +58,7 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
   // eslint-disable-next-line react/prop-types
   function render({ selector, sharedViews, privateViews }) {
     return (
-      <div
-        style={{
-          backgroundColor: colors.elementLightest,
-          height: '100vh',
-          borderRight: `1px solid ${colors.elementDarkest}`,
-          boxShadow: '1px 0 2px 0 rgba(0,0,0,0.09)'
-        }}>
+      <div className="saved-views-wrapper">
         <div
           style={{
             paddingTop: '1rem',

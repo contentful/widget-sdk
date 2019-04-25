@@ -58,6 +58,13 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
     }
   });
 
+  // TODO: optimization - lazy loading
+  // We could return `{ withApi }`, where `withApi` takes a callback
+  // and fetches UIConfigs ONLY on the first use:
+  //
+  // uiConfig.withApi(api => doSomething(api.entries.shared)) // fetches...
+  // uiConfig.withApi(api => doSomething(api.entries.private)) // instant!
+
   return Promise.all([load(SHARED_VIEWS), load(PRIVATE_VIEWS)]).then(() => api);
 
   /**

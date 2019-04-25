@@ -84,10 +84,10 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
       const canEdit = { views: true, folders: true };
       const scopedApi = { get: emptyArr, set: noop, getDefaults: emptyArr, canEdit };
 
-      return {
+      return Promise.resolve({
         entries: { shared: scopedApi, private: scopedApi },
         assets: { shared: scopedApi, private: scopedApi }
-      };
+      });
     }
 
     function createUsersMock() {
