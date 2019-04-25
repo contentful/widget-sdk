@@ -142,11 +142,11 @@ function RemovalConfirmationDialog({ isShown, onConfirm, onCancel }) {
   return (
     <ModalConfirm
       isShown={isShown}
-      title="Remove comment?"
+      title="Remove comment"
       intent="negative"
       onCancel={onCancel}
       onConfirm={onConfirm}>
-      <p>Are you sure you want to delete this comment?</p>
+      <p>Are you sure you want to remove this comment?</p>
     </ModalConfirm>
   );
 }
