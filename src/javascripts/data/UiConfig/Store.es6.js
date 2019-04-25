@@ -110,9 +110,8 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
       return setUiConfig(type, uiConfig);
     } else {
       Telemetry.count('uiconfig.not-migrated-fetched');
-      return viewMigrator.migrateUIConfigViews(data).then(migratedUIConfig => {
-        return setUiConfig(type, migratedUIConfig);
-      });
+      const migratedUIConfig = viewMigrator.migrateUIConfigViews(data);
+      return setUiConfig(type, migratedUIConfig);
     }
   }
 

@@ -1,6 +1,5 @@
 import * as state from '../util/interactionState';
 
-const empty = require('../fixtures/empty.json');
 const uiConfig = require('../fixtures/ui-config.json');
 const spaceId = Cypress.env('spaceId');
 
@@ -17,7 +16,7 @@ export function emptyUiConfigResponse() {
     },
     willRespondWith: {
       status: 200,
-      body: empty
+      body: uiConfig
     }
   }).as(state.UIConfig.NONE);
 }

@@ -1,13 +1,10 @@
-const { reduce, flatten } = require('lodash');
 const { parseTextQuery, cmaQueryBuilderForField } = require('./query-builder');
-const helpers = require('./helpers');
+const { RELATIVE_DATE_REGEX } = require('./helpers');
 const DATE_SYS_FIELDS = ['updatedAt', 'createdAt', 'publishedAt', 'firstPublishedAt'];
 
 // Matches an API key and an optional operator, e.g. `fields.title[match]`.
 // In case of a match $1 is the key and $2 will be empty or the operator.
 const API_KEY_AND_OPERATOR_REGEX = /^(.+?)(?:\[(.+)\])?$/;
-
-module.exports.textQueryToUISearch = textQueryToUISearch;
 
 const DATE_OPERATORS = {
   '<': 'lt',
@@ -17,15 +14,12 @@ const DATE_OPERATORS = {
   // '==', '=' and ':' default to ''
 };
 
+module.exports = { textQueryToUISearch };
+
 /**
- * Creates a search ui state object from a legacy text query (`searchTerm`).
- *
- * @param {ContentType?} contentType
- * @param {string} textQuery Legacy text query.
- * @param {function} Function Promise<User[]>
- * @returns {Promise<object>}
+ * Creates a search UI state object from a legacy text query (`searchTerm`).
  */
-function textQueryToUISearch(contentType, textQuery, getAllUsers) {
+function textQueryToUISearch(contentType, textQuery) {
   const { filters, queryText = '' } = parseTextQuery(textQuery);
   const result = { searchText: queryText };
 
@@ -33,56 +27,46 @@ function textQueryToUISearch(contentType, textQuery, getAllUsers) {
     result.contentTypeId = contentType.sys.id;
   }
 
-  const searchFilters = filters.map(filter => {
-    return convertFilter(contentType, getAllUsers, filter);
-  });
+  result.searchFilters = filters.reduce((acc, filter) => {
+    const converted = convertFilter(contentType, filter);
+    return Array.isArray(converted) ? [...acc, converted] : acc;
+  }, []);
 
-  return Promise.all(searchFilters).then(searchFilters => {
-    result.searchFilters = flatten(searchFilters);
-    return result;
-  });
+  return result;
 }
 
-function convertFilter(contentType, getAllUsers, filter) {
+function convertFilter(contentType, filter) {
   const [key, operator, value] = filter;
-  const cmaQueryBuilder = cmaQueryBuilderForField(key, contentType, getAllUsers);
+  const cmaQueryBuilder = cmaQueryBuilderForField(key, contentType);
 
   if (key === 'status') {
-    return [['__status', '', value]];
+    return ['__status', '', value];
   } else if (isDateField(key, cmaQueryBuilder.context)) {
     return convertDateFilter(cmaQueryBuilder.context, filter);
   } else {
-    return cmaQueryBuilder.build(operator, value).then(convertCMAQuery);
+    const cmaQuery = cmaQueryBuilder.build(operator, value);
+    return convertCMAQuery(cmaQuery);
   }
 }
 
 function convertCMAQuery(cmaQuery) {
-  return reduce(
-    cmaQuery,
-    (uiSearchFilters, value, keyAndOperator) => {
-      const match = keyAndOperator.match(API_KEY_AND_OPERATOR_REGEX);
-      if (match) {
-        const field = match[1];
-        const operator = match[2] || '';
-        value = typeof value === 'string' ? value : value.toString();
-        uiSearchFilters.push([field, operator, value]);
-      }
-      return uiSearchFilters;
-    },
-    []
-  );
+  const keyAndOperator = Object.keys(cmaQuery)[0];
+  const value = cmaQuery[keyAndOperator];
+  const match = keyAndOperator.match(API_KEY_AND_OPERATOR_REGEX);
+
+  if (match) {
+    return [match[1], match[2] || '', typeof value === 'string' ? value : value.toString()];
+  }
 }
 
 function convertDateFilter(context, [key, operator, value]) {
-  if (helpers.isRelativeDate(value)) {
-    return [];
+  if (!RELATIVE_DATE_REGEX.test(value)) {
+    const dateMatch = value.match(/^\d{4}-\d\d-\d\d/);
+    const date = dateMatch && dateMatch[0];
+    const prefix = isSysDateField(key) ? 'sys' : 'fields';
+    const apiKey = context.apiName || key;
+    return [`${prefix}.${apiKey}`, uiSearchOperator(operator), date];
   }
-
-  const dateMatch = value.match(/^\d{4}-\d\d-\d\d/);
-  const date = dateMatch && dateMatch[0];
-  const prefix = isSysDateField(key) ? 'sys' : 'fields';
-  const apiKey = context.apiName || key;
-  return [[`${prefix}.${apiKey}`, uiSearchOperator(operator), date]];
 }
 
 function isSysDateField(fieldName) {

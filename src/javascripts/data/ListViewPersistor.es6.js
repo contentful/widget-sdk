@@ -1,62 +1,44 @@
 import qs from 'qs';
 import { getStore } from 'TheStore/index.es6';
-import { omit, isEmpty, isObject } from 'lodash';
+import { omit, isEmpty } from 'lodash';
 import { serialize, unserialize } from 'data/ViewSerializer.es6';
-import { getModule } from 'NgRegistry.es6';
-import * as Telemetry from 'Telemetry.es6';
 
-const $q = getModule('$q');
-const $location = getModule('$location');
+const STORE_PREFIX = 'lastFilterQueryString';
+
+const getEntityKey = entityType => {
+  const entityKey = { Entry: 'entries', Asset: 'assets' }[entityType];
+
+  if (typeof entityKey === 'string') {
+    return entityKey;
+  }
+
+  throw new Error(`Cannot create a view persistor for ${entityType}.`);
+};
 
 /**
- * Create a persitory for entity views.
+ * Create a view persistor. Used on both entry and asset list.
  *
  * Views are persisted to the location query string and local storage.
  * They are also read from both with the query string taking
  * precedence.
- *
- * This module is used in the ListViewsController and The
- * ContentTypeListController.
- *
- * TODO we need to separate the serialization logic for content types
- * and content.
- *
- * @param {string} spaceId
- * @param {ViewMigrator?} viewMigrator
- * @returns {ListViewPersistor}
  */
-export default function create(spaceId, viewMigrator, entityType) {
-  const key = `lastFilterQueryString.${entityType}.${spaceId}`;
-  const localStorage = getStore().forKey(key);
+export default function create({ entityType, spaceId, $location }) {
+  const store = getStore().forKey([STORE_PREFIX, getEntityKey(entityType), spaceId].join('.'));
 
   return { read, save };
 
   function save(view) {
     const viewData = serialize(omitUIConfigOnlyViewProperties(view));
-    localStorage.set(viewData);
+    store.set(viewData);
     $location.search(prepareQueryString(viewData));
     $location.replace();
   }
 
   function read() {
     const currentQS = $location.search();
-    const qs = isEmpty(currentQS) ? getPreviousQS() : currentQS;
-    return fromStorageFormat(qs);
-  }
-
-  function getPreviousQS() {
-    return localStorage.get() || {};
-  }
-
-  function fromStorageFormat(viewData) {
-    const view = omitUIConfigOnlyViewProperties(unserialize(viewData));
-    return viewMigrations(view);
-  }
-
-  function viewMigrations(view) {
-    if (!isObject(view)) {
-      return $q.resolve({});
-    }
+    const previousQS = store.get() || {};
+    const viewData = isEmpty(currentQS) ? previousQS : currentQS;
+    const view = omitUIConfigOnlyViewProperties(unserialize(viewData)) || {};
 
     // For "contentTypeHidden" we cast a string value to a boolean:
     // - An undefined value is retained.
@@ -67,25 +49,7 @@ export default function create(spaceId, viewMigrator, entityType) {
       view.contentTypeHidden = contentTypeHidden.toString() !== 'false';
     }
 
-    // Migration of faulty query strings that were introduced
-    // accidentally some time ago.
-    if (isObject(view.order)) {
-      delete view.order.sys;
-      delete view.order.isSys;
-    }
-
-    // Migration of pure text queries to new search ui's format.
-    if (viewMigrator) {
-      const isAssetsView = entityType === 'assets';
-
-      const migrationNeeded =
-        view && typeof view.searchTerm === 'string' && view.searchTerm.length > 0;
-      Telemetry.count(`uiconfig.qs-migration-${migrationNeeded ? 'needed' : 'not-needed'}`);
-
-      return viewMigrator.migrateView(view, isAssetsView);
-    }
-
-    return $q.resolve(view);
+    return view;
   }
 }
 
@@ -95,11 +59,8 @@ function omitUIConfigOnlyViewProperties(view) {
 
 function prepareQueryString(viewData) {
   const qsObject = Object.keys(viewData)
-    .filter(key => key.charAt(0) !== '_')
-    .reduce((acc, key) => {
-      acc[key] = viewData[key];
-      return acc;
-    }, {});
+    .filter(key => !key.startsWith('_'))
+    .reduce((acc, key) => ({ ...acc, [key]: viewData[key] }), {});
 
   // We use the "repeat" array format option so:
   // stringify({x: [1, 2]}) // results in: 'x=1&x=2'
