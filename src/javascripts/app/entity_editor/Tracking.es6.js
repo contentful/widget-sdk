@@ -65,11 +65,10 @@ async function getReferencesContentTypes(editorData, locale) {
     .filter(id => editorData.entity.data.fields[id] !== undefined)
     .map(id => getReferenceEntitiesIds(id, locale, editorData));
   const refEntities = await Promise.all(
-    flatten(refEntitiesIds).map(id => batchingApiClient.getEntry(id))
+    flatten(refEntitiesIds).map(id => batchingApiClient.getEntry(id).catch(_error => null))
   );
-  const refCts = refEntities.map(entity =>
-    spaceContext.publishedCTs.get(get(entity, 'sys.contentType.sys.id'))
-  );
-
+  const refCts = refEntities
+    .filter(Boolean)
+    .map(entity => spaceContext.publishedCTs.get(get(entity, 'sys.contentType.sys.id')));
   return refCts;
 }
