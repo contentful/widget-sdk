@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import { css } from 'emotion';
 import {
@@ -6,10 +7,14 @@ import {
   DropdownList,
   DropdownListItem,
   Heading,
-  Tooltip
+  Tooltip,
+  Notification,
+  ModalConfirm
 } from '@contentful/forma-36-react-components';
+import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import tokens from '@contentful/forma-36-tokens';
-
+import { remove as removeComment } from 'data/CMA/CommentsRepo.es6';
+import { canRemoveComment } from './utils.es6';
 import * as types from './CommentPropTypes.es6';
 
 export const styles = {
@@ -52,11 +57,25 @@ export const styles = {
   })
 };
 
-export default function Comment({ comment }) {
+export default function Comment({ comment, onRemoved }) {
   const {
     sys: { createdBy, createdAt }
   } = comment;
   const creationDate = moment(createdAt, moment.ISO_8601);
+
+  const handleRemove = async () => {
+    const {
+      sys: { space, reference: entry, id: commentId }
+    } = comment;
+    const endpoint = createSpaceEndpoint(space.sys.id);
+    try {
+      await removeComment(endpoint, entry.sys.id, commentId);
+      onRemoved(comment);
+    } catch (err) {
+      Notification.error(err.message);
+    }
+  };
+
   return (
     <div className={styles.comment}>
       <header className={styles.header}>
@@ -72,16 +91,7 @@ export default function Comment({ comment }) {
             {creationDate.fromNow()}
           </time>
         </div>
-        <CardActions>
-          <DropdownList>
-            <DropdownListItem onClick={() => {}}>Edit</DropdownListItem>
-            <DropdownListItem onClick={() => {}}>Reply</DropdownListItem>
-            <DropdownListItem onClick={() => {}}>Mark as resolved</DropdownListItem>
-          </DropdownList>
-          <DropdownList border="top">
-            <DropdownListItem onClick={() => {}}>Remove</DropdownListItem>
-          </DropdownList>
-        </CardActions>
+        <CommentActions comment={comment} onRemove={handleRemove} />
       </header>
       <div className={styles.commentBody}>{comment.body}</div>
     </div>
@@ -89,7 +99,8 @@ export default function Comment({ comment }) {
 }
 
 Comment.propTypes = {
-  comment: types.Comment.isRequired
+  comment: types.Comment.isRequired,
+  onRemoved: PropTypes.func.isRequired
 };
 
 function renderUserName(user) {
@@ -101,3 +112,46 @@ function renderUserName(user) {
     </Tooltip>
   );
 }
+
+function CommentActions({ comment, onRemove }) {
+  const [showRemovalDialog, setShowRemovalDialog] = useState(false);
+
+  if (!canRemoveComment(comment)) return null;
+
+  return (
+    <>
+      <CardActions>
+        <DropdownList>
+          <DropdownListItem onClick={() => setShowRemovalDialog(true)}>Remove</DropdownListItem>
+        </DropdownList>
+      </CardActions>
+      <RemovalConfirmationDialog
+        isShown={showRemovalDialog}
+        onConfirm={onRemove}
+        onCancel={() => setShowRemovalDialog(false)}
+      />
+    </>
+  );
+}
+CommentActions.propTypes = {
+  comment: types.Comment.isRequired,
+  onRemove: PropTypes.func.isRequired
+};
+
+function RemovalConfirmationDialog({ isShown, onConfirm, onCancel }) {
+  return (
+    <ModalConfirm
+      isShown={isShown}
+      title="Remove comment"
+      intent="negative"
+      onCancel={onCancel}
+      onConfirm={onConfirm}>
+      <p>Are you sure you want to remove this comment?</p>
+    </ModalConfirm>
+  );
+}
+RemovalConfirmationDialog.propTypes = {
+  isShown: PropTypes.bool.isRequired,
+  onConfirm: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired
+};

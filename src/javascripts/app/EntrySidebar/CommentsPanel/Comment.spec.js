@@ -2,6 +2,12 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import Comment from './Comment.es6';
 
+// should not be mocking this, but the TokenStore uses some angular module
+jest.mock('services/TokenStore.es6', () => ({
+  getSpace: jest.fn(),
+  getUser: jest.fn()
+}));
+
 const unknownAuthor = { sys: { id: 'abc' } };
 const author = { firstName: 'John', lastName: 'Doe', avatarUrl: '0.jpeg', sys: { id: 'abc' } };
 const date = '2019-01-01T10:00:00.000Z';
@@ -23,7 +29,7 @@ const withoutAuthor = {
 };
 
 describe('Comment', () => {
-  const render = comment => shallow(<Comment comment={comment} />);
+  const render = comment => shallow(<Comment comment={comment} onRemoved={jest.fn()} />);
   const now = new Date(date).valueOf();
 
   beforeEach(() => {

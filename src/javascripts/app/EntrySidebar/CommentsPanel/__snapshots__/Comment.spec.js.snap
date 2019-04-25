@@ -96,55 +96,26 @@ exports[`Comment renders a comment with the author info 1`] = `
         a few seconds ago
       </time>
     </div>
-    <CardActions
-      testId="cf-ui-card-actions"
-    >
-      <DropdownList
-        testId="cf-ui-dropdown-list"
-      >
-        <DropdownListItem
-          isActive={false}
-          isDisabled={false}
-          isTitle={false}
-          onClick={[Function]}
-          testId="cf-ui-dropdown-list-item"
-        >
-          Edit
-        </DropdownListItem>
-        <DropdownListItem
-          isActive={false}
-          isDisabled={false}
-          isTitle={false}
-          onClick={[Function]}
-          testId="cf-ui-dropdown-list-item"
-        >
-          Reply
-        </DropdownListItem>
-        <DropdownListItem
-          isActive={false}
-          isDisabled={false}
-          isTitle={false}
-          onClick={[Function]}
-          testId="cf-ui-dropdown-list-item"
-        >
-          Mark as resolved
-        </DropdownListItem>
-      </DropdownList>
-      <DropdownList
-        border="top"
-        testId="cf-ui-dropdown-list"
-      >
-        <DropdownListItem
-          isActive={false}
-          isDisabled={false}
-          isTitle={false}
-          onClick={[Function]}
-          testId="cf-ui-dropdown-list-item"
-        >
-          Remove
-        </DropdownListItem>
-      </DropdownList>
-    </CardActions>
+    <CommentActions
+      comment={
+        Object {
+          "body": "Foo",
+          "sys": Object {
+            "createdAt": "2019-01-01T10:00:00.000Z",
+            "createdBy": Object {
+              "avatarUrl": "0.jpeg",
+              "firstName": "John",
+              "lastName": "Doe",
+              "sys": Object {
+                "id": "abc",
+              },
+            },
+            "id": "xyz",
+          },
+        }
+      }
+      onRemove={[Function]}
+    />
   </header>
   <div
     className="emotion-5"
@@ -258,55 +229,23 @@ exports[`Comment renders a comment without the author info 1`] = `
         a few seconds ago
       </time>
     </div>
-    <CardActions
-      testId="cf-ui-card-actions"
-    >
-      <DropdownList
-        testId="cf-ui-dropdown-list"
-      >
-        <DropdownListItem
-          isActive={false}
-          isDisabled={false}
-          isTitle={false}
-          onClick={[Function]}
-          testId="cf-ui-dropdown-list-item"
-        >
-          Edit
-        </DropdownListItem>
-        <DropdownListItem
-          isActive={false}
-          isDisabled={false}
-          isTitle={false}
-          onClick={[Function]}
-          testId="cf-ui-dropdown-list-item"
-        >
-          Reply
-        </DropdownListItem>
-        <DropdownListItem
-          isActive={false}
-          isDisabled={false}
-          isTitle={false}
-          onClick={[Function]}
-          testId="cf-ui-dropdown-list-item"
-        >
-          Mark as resolved
-        </DropdownListItem>
-      </DropdownList>
-      <DropdownList
-        border="top"
-        testId="cf-ui-dropdown-list"
-      >
-        <DropdownListItem
-          isActive={false}
-          isDisabled={false}
-          isTitle={false}
-          onClick={[Function]}
-          testId="cf-ui-dropdown-list-item"
-        >
-          Remove
-        </DropdownListItem>
-      </DropdownList>
-    </CardActions>
+    <CommentActions
+      comment={
+        Object {
+          "body": "Boo",
+          "sys": Object {
+            "createdAt": "2019-01-01T10:00:00.000Z",
+            "createdBy": Object {
+              "sys": Object {
+                "id": "abc",
+              },
+            },
+            "id": "xyz",
+          },
+        }
+      }
+      onRemove={[Function]}
+    />
   </header>
   <div
     className="emotion-5"

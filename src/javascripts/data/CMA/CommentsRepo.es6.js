@@ -14,3 +14,10 @@ export async function getAll(endpoint, entryId) {
     path: ['entries', entryId, 'comments']
   });
 }
+
+export async function remove(endpoint, entryId, commentId) {
+  return endpoint({
+    method: 'DELETE',
+    path: ['entries', entryId, 'comments', commentId]
+  });
+}
