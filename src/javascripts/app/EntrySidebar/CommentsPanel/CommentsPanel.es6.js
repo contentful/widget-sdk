@@ -56,7 +56,7 @@ export const styles = {
 };
 
 export default function CommentsPanel({ spaceId, entryId, isVisible }) {
-  const { isLoading, data } = useCommentsFetcher(spaceId, entryId);
+  const { isLoading, data, error } = useCommentsFetcher(spaceId, entryId);
   const [comments, setComments] = useState([]);
   const [isEmpty, setIsEmpty] = useState(null);
   const [shouldScroll, setShouldScroll] = useState(false);
@@ -65,6 +65,7 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
   const handleNewComment = comment => {
     setComments([...comments, comment]);
     setShouldScroll(true);
+    setIsEmpty(false);
   };
 
   // A thread can be a single comment or a comment and its replies
@@ -116,6 +117,14 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
           comments.map(comment => (
             <CommentThread key={comment.sys.id} comment={comment} onRemoved={handleRemovedThread} />
           ))}
+        {error && (
+          <div className={styles.emptyState}>
+            <Typography>
+              <Heading>Something went wrong</Heading>
+              <Paragraph>{`We couldn't fetch the comments because of a problem.`}</Paragraph>
+            </Typography>
+          </div>
+        )}
       </div>
       <div className={styles.commentForm}>
         <CreateComment spaceId={spaceId} entryId={entryId} onNewComment={handleNewComment} />
