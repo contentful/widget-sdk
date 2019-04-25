@@ -120,7 +120,7 @@
     "@babel/preset-react": "7.0.0",
     "@babel/register": "7.0.0",
     "@babel/traverse": "7.2.3",
-    "@contentful/cypress-pact": "^1.1.0",
+    "@contentful/cypress-pact": "^1.1.1",
     "@contentful/micro-backends": "^0.5.1",
     "@cypress/webpack-preprocessor": "^4.0.3",
     "@pact-foundation/pact": "^8.2.0",

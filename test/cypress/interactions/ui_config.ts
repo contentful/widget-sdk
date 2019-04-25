@@ -5,6 +5,7 @@ const spaceId = Cypress.env('spaceId');
 
 export function emptyUiConfigResponse() {
   cy.addInteraction({
+    provider: 'ui_config',
     state: state.UIConfig.NONE,
     uponReceiving: 'a request for userUIConfig',
     withRequest: {
@@ -23,6 +24,7 @@ export function emptyUiConfigResponse() {
 
 export function uiConfigMeResponse() {
   cy.addInteraction({
+    provider: 'ui_config',
     state: state.UIConfig.USER,
     uponReceiving: 'a request for profile UserUIConfig',
     withRequest: {

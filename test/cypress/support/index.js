@@ -28,14 +28,28 @@ configure({ testIdAttribute: 'data-test-id' });
 // cypress-pact plugin
 import '@contentful/cypress-pact/add-commands';
 
+before(() => cy.startGateway(5000));
 before(() => {
-  cy.startPact({
+  cy.startFakeServers({
     consumer: 'user_interface',
-    provider: 'content-api',
+    providers: [
+      'enforcements',
+      'entries',
+      'environments',
+      'content_types',
+      'locales',
+      'microbackend',
+      'plans',
+      'preview_environments',
+      'product_catalog_features',
+      'token',
+      'ui_config',
+      'users'
+    ],
     cors: true,
-    port: 5000,
     pactfileWriteMode: 'merge'
   });
 });
-afterEach(() => cy.verifyPact());
-after(() => cy.finalizePact());
+afterEach(() => cy.verifyAndResetAllFakeServers());
+after(() => cy.writePactsAndStopAllFakeServers());
+after(() => cy.stopGateway());

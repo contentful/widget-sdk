@@ -6,6 +6,7 @@ const productCatalogSpace = require('../fixtures/product-catalog-space.json');
 
 export function orgProductCatalogFeaturesResponse() {
   cy.addInteraction({
+    provider: 'product_catalog_features',
     state: state.OrgProductCatalogFeatures.SEVERAL,
     uponReceiving: 'a request for all org product catalog features',
     withRequest: getOrgProductCatalogFeatures(),
@@ -18,6 +19,7 @@ export function orgProductCatalogFeaturesResponse() {
 
 export function spaceProductCatalogFeaturesResponse() {
   cy.addInteraction({
+    provider: 'product_catalog_features',
     state: state.SpaceProductCatalogFeatures.SEVERAL,
     uponReceiving: 'a request for all space product catalog features',
     withRequest: getSpaceProductCatalogFeatures(),

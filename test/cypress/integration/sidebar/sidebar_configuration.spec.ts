@@ -10,6 +10,13 @@ import { defaultContentTypeId, defaultSpaceId } from '../../util/requests';
 import * as state from '../../util/interactionState';
 
 describe('Sidebar configuration', () => {
+  before(() => cy.startFakeServer({
+    consumer: 'user_interface',
+    provider: 'extensions',
+    cors: true,
+    pactfileWriteMode: 'merge'
+  }))
+
   before(() => {
     cy.setAuthTokenToLocalStorage();
     defaultRequestsMock();

@@ -28,18 +28,16 @@ const previewResponseBody = {
 };
 
 describe('Content Preview Page', () => {
-  function configurePageAndOpenIt() {
+  beforeEach(() => {
     cy.setAuthTokenToLocalStorage();
     defaultRequestsMock();
 
     cy.visit(`/spaces/${defaultSpaceId}/settings/content_preview/new`);
 
     cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
-  }
+  });
 
   describe('opening the page', () => {
-    before(configurePageAndOpenIt);
-
     it('renders create new content preview page', () => {
       cy.getByTestId('cf-ui-form')
         .should('be.visible')
@@ -54,9 +52,8 @@ describe('Content Preview Page', () => {
 
   describe('saving the content preview', () => {
     beforeEach(() => {
-      configurePageAndOpenIt();
-
       cy.addInteraction({
+        provider: 'preview_environments',
         state: 'canAddPreviewEnvironments',
         uponReceiving: 'add preview environment request',
         withRequest: {

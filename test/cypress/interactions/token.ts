@@ -5,6 +5,7 @@ const token = require('../fixtures/token.json');
 
 export function validTokenResponse() {
   cy.addInteraction({
+    provider: 'token',
     state: state.Token.VALID,
     uponReceiving: 'a request for valid token',
     withRequest: {

@@ -17,8 +17,14 @@ const empty = require('../../fixtures/empty.json');
 const featureFlag = 'feature-pul-04-2019-scheduled-publication-enabled';
 
 describe('Schedule Publication', () => {
-  before(() => {
-    cy.setAuthTokenToLocalStorage();
+  before(() => cy.startFakeServer({
+    consumer: 'user_interface',
+    provider: 'scheduled-actions',
+    cors: true,
+    pactfileWriteMode: 'merge'
+  }))
+
+  function basicServerSetUpWithNoSchedules() {
     defaultRequestsMock({
       publicContentTypesResponse: singleContentTypeResponse
     });
@@ -29,14 +35,8 @@ describe('Schedule Publication', () => {
     editorInterfaceResponse();
     microbackendStreamToken();
 
-    cy.route('**/_microbackends/backends/**').as('microbackend');
-    cy.route('POST', '**/_microbackends/backends/**').as('microbackendPOST');
-    cy.route('**/channel/**', []).as('shareJS');
-
-    window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
-
-    cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
     cy.addInteraction({
+      provider: 'scheduled-actions',
       state: 'noSchedules',
       uponReceiving: 'a request for entry schedules',
       withRequest: getEntrySchedules(),
@@ -45,13 +45,35 @@ describe('Schedule Publication', () => {
         body: empty
       }
     }).as('entrySchedules');
-    cy.wait([`@${state.Token.VALID}`, `@entrySchedules`]);
+
+    cy.route('**/channel/**', []).as('shareJS');
+  }
+
+  beforeEach(() => {
+    cy.setAuthTokenToLocalStorage();
+    window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
+
+    basicServerSetUpWithNoSchedules()
+
+    cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
+
+    cy.wait([`@${state.Token.VALID}`, '@entrySchedules']);
   });
-  it('renders schedule publication button', () => {
-    cy.getByTestId('schedule-publication').should('be.visible');
+
+  describe('opening the page', () => {
+    it('renders schedule publication button', () => {
+      cy.getByTestId('schedule-publication').should('be.visible');
+    });
   });
+
   it('can schedule publication', () => {
+    // Remove actual and expected interaction for 'scheduled-actions'
+    // They were already verified in the other test
+    // And we need to ovewrite 'a request for entry schedules' to return one schedule now
+    cy.resetFakeServer('scheduled-actions');
+
     cy.addInteraction({
+      provider: 'scheduled-actions',
       state: 'schedulePublicationPost',
       uponReceiving: 'a post request for scheduling publication',
       withRequest: {
@@ -66,7 +88,9 @@ describe('Schedule Publication', () => {
         status: 200
       }
     }).as('schedulePOST');
+
     cy.addInteraction({
+      provider: 'scheduled-actions',
       state: 'oneSchedule',
       uponReceiving: 'a request for entry schedules',
       withRequest: getEntrySchedules(),
@@ -99,8 +123,9 @@ describe('Schedule Publication', () => {
       .getByTestId('cf-ui-button')
       .first()
       .click();
-    cy.wait('@schedulePOST');
-    cy.wait('@oneSchedule');
+
+    cy.wait(['@schedulePOST', '@oneSchedule']);
+
     cy.getByTestId('scheduled-item').should('have.length', 1);
   });
 });
