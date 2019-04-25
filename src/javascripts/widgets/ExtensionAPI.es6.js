@@ -1,6 +1,12 @@
-import { get, difference } from 'lodash';
+import { pick, get, difference } from 'lodash';
 import createIDMap from './IDMap.es6';
 import * as PublicContentType from './PublicContentType.es6';
+
+const sharedFieldProps = field => ({
+  id: field.apiName || field.id,
+  required: !!field.required,
+  ...pick(field, ['type', 'validations', 'items'])
+});
 
 const REQUIRED_CONFIG_KEYS = [
   'location', // Where the extension is rendered. See `WidgetLocations`.
@@ -37,13 +43,8 @@ export default class ExtensionAPI {
       throw new Error(`Extra configuration options ${extraKeys.join(', ')} provided`);
     }
 
-    // Keep content type fields with internal IDs.
     this.contentTypeFields = get(this.contentTypeData, ['fields'], []);
-    // Create an ID map using internal IDs and internal locale codes.
     this.idMap = createIDMap(this.contentTypeFields, this.locales.available);
-
-    // Convert content type to its public form for external consumption.
-    this.contentTypeData = PublicContentType.fromInternal(this.contentTypeData);
   }
 
   // Sends initial data to the IFrame of an extension.
@@ -75,11 +76,9 @@ export default class ExtensionAPI {
       },
       field: current
         ? {
-            id: current.field.apiName,
             locale: current.locale.code,
             value: get(entryData, ['fields', current.field.id, current.locale.internal_code]),
-            type: current.field.type,
-            validations: current.field.validations
+            ...sharedFieldProps(current.field)
           }
         : undefined,
       fieldInfo: this.contentTypeFields.map(field => {
@@ -87,12 +86,10 @@ export default class ExtensionAPI {
         const values = entryData.fields[field.id];
 
         return {
-          id: field.apiName || field.id,
           localized: field.localized,
           locales: fieldLocales.map(locale => locale.code),
           values: this.idMap.locale.valuesToPublic(values),
-          type: field.type,
-          validations: field.validations
+          ...sharedFieldProps(field)
         };
       }),
       locales: {
@@ -102,8 +99,11 @@ export default class ExtensionAPI {
           return { ...acc, [locale.code]: locale.name };
         }, {})
       },
-      entry: entryData,
-      contentType: this.contentTypeData,
+      // We only need `sys` in the SDK.
+      // Make sure we don't leak internal field IDs:
+      entry: { sys: entryData.sys },
+      // Convert content type to its public form for external consumption:
+      contentType: PublicContentType.fromInternal(this.contentTypeData),
       parameters: this.parameters
     });
   }

@@ -8,7 +8,7 @@ describe('ExtensionAPI', () => {
       channel: { connect: jest.fn(), destroy: jest.fn(), send: jest.fn(), handlers: {} },
       current: { field: {}, locale: {} },
       locales: { available: [], default: {} },
-      entryData: { fields: {} },
+      entryData: { sys: {}, fields: {} },
       contentTypeData: {},
       spaceMembership: {
         sys: {},
@@ -62,7 +62,24 @@ describe('ExtensionAPI', () => {
               type: 'Symbol',
               validations: 'VALIDATIONS1'
             },
-            { id: 'FID-internal2', apiName: 'FID-public2', localized: true, type: 'Boolean' }
+            {
+              id: 'FID-internal2',
+              apiName: 'FID-public2',
+              localized: true,
+              type: 'Boolean',
+              required: true
+            },
+            {
+              id: 'FID-api-name-missing',
+              localized: false,
+              type: 'Array',
+              items: {
+                type: 'Link',
+                linkType: 'Entry',
+                validations: [{ linkContentType: 'testct' }]
+              },
+              required: false
+            }
           ]
         }
       });
@@ -78,7 +95,8 @@ describe('ExtensionAPI', () => {
             locale: 'LOCALE',
             value: 'VALUE',
             type: 'FIELD-TYPE',
-            validations: 'VALIDATIONS'
+            validations: 'VALIDATIONS',
+            required: false
           },
           fieldInfo: [
             {
@@ -87,14 +105,29 @@ describe('ExtensionAPI', () => {
               localized: false,
               values: { LOCALE: 'VALUE' },
               type: 'Symbol',
-              validations: 'VALIDATIONS1'
+              validations: 'VALIDATIONS1',
+              required: false
             },
             {
               id: 'FID-public2',
               locales: ['LOCALE', 'L2'],
               localized: true,
               values: {},
-              type: 'Boolean'
+              type: 'Boolean',
+              required: true
+            },
+            {
+              id: 'FID-api-name-missing',
+              locales: ['LOCALE'],
+              localized: false,
+              values: {},
+              type: 'Array',
+              items: {
+                type: 'Link',
+                linkType: 'Entry',
+                validations: [{ linkContentType: 'testct' }]
+              },
+              required: false
             }
           ],
           locales: {
@@ -106,11 +139,22 @@ describe('ExtensionAPI', () => {
             }
           },
           parameters: expect.any(Object),
-          entry: { sys: { id: 'test' }, fields: expect.any(Object) },
+          entry: { sys: { id: 'test' } },
           contentType: {
             fields: [
               { id: 'FID-public', localized: false, type: 'Symbol', validations: 'VALIDATIONS1' },
-              { id: 'FID-public2', localized: true, type: 'Boolean' }
+              { id: 'FID-public2', localized: true, type: 'Boolean', required: true },
+              {
+                id: 'FID-api-name-missing',
+                localized: false,
+                type: 'Array',
+                items: {
+                  type: 'Link',
+                  linkType: 'Entry',
+                  validations: [{ linkContentType: 'testct' }]
+                },
+                required: false
+              }
             ]
           }
         })
