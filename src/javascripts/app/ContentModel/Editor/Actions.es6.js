@@ -82,11 +82,12 @@ export default function create($scope, contentTypeIds) {
 
     return spaceContext.space
       .getEntries({
-        content_type: $scope.contentType.getId()
+        content_type: $scope.contentType.getId(),
+        limit: 0
       })
       .then(
         res => {
-          const count = res.length;
+          const count = res.total;
           return createStatusObject(canRead && count < 1, count);
         },
         res => {

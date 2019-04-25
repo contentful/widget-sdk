@@ -129,7 +129,7 @@ describe('cfOnboardingSteps Directive', () => {
           getAllBare: () => [{}],
           items$: K.createMockProperty([])
         };
-        this.spaceContext.space.getEntries = sinon.stub().resolves([]);
+        this.spaceContext.space.getEntries = sinon.stub().resolves({ total: 0 });
         this.compile();
         this.assertCompletedSteps(2);
         this.assertActiveButton('Add an entry');
@@ -140,7 +140,7 @@ describe('cfOnboardingSteps Directive', () => {
           getAllBare: () => [{}],
           items$: K.createMockProperty([])
         };
-        this.spaceContext.space.getEntries = sinon.stub().resolves([{}]);
+        this.spaceContext.space.getEntries = sinon.stub().resolves({ total: 1 });
         this.compile();
         this.assertCompletedSteps(3);
         this.assertActiveButton('Use the API');

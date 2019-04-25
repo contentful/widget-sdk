@@ -236,6 +236,7 @@ export default function register() {
             req[`fields.${field.id}.${field.locale}`] = value;
             req['sys.id[ne]'] = entry.getSys().id;
             req['sys.publishedAt[exists]'] = true;
+            req.limit = 0;
             space.getEntries(req).then(res => {
               scope.state = res.total !== 0 ? 'duplicate' : 'unique';
             });
