@@ -5,7 +5,7 @@ import CfPropTypes from 'utils/CfPropTypes.es6';
 import FetchedEntityCard from '../shared/FetchedEntityCard/index.es6';
 import LinkingActions from './LinkingActions.es6';
 import { TYPES, entityToLink } from './Util.es6';
-import SortableLinkList, { linksToListItems } from './SortableLinkList.es6';
+import SortableLinkList, { DragHandle, linksToListItems } from './SortableLinkList.es6';
 
 const STYLE = {
   LINK: 'link',
@@ -94,7 +94,7 @@ export default class LinkEditor extends React.Component {
   };
 
   renderCard(link, index) {
-    const { isDisabled, onLinkFetchComplete } = this.props;
+    const { isSingle, isDisabled, onLinkFetchComplete } = this.props;
     const handleEditLink = fetchEntityResult =>
       this.handleEditLink(fetchEntityResult.entity, index);
     const entityType = link.sys.linkType;
@@ -115,6 +115,7 @@ export default class LinkEditor extends React.Component {
           this.handleRemoveLinkAt(index, fetchEntityResult.entity);
         }}
         className="link-editor__entity-card"
+        cardDragHandleComponent={isSingle ? null : <DragHandle />}
       />
     );
   }
@@ -127,6 +128,7 @@ export default class LinkEditor extends React.Component {
     return (
       <div className={`link-editor ${isGrid ? 'x--contains-asset-cards' : ''}`}>
         <SortableLinkList
+          useDragHandle={true}
           axis={isGrid ? 'xy' : 'y'}
           items={items}
           onSortEnd={({ oldIndex, newIndex }) => this.handleLinkSortEnd(oldIndex, newIndex)}

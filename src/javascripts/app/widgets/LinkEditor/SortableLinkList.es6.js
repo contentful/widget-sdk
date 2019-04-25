@@ -1,5 +1,8 @@
 import React from 'react';
-import { sortableContainer, sortableElement } from 'react-sortable-hoc';
+import { sortableContainer, sortableElement, sortableHandle } from 'react-sortable-hoc';
+import { CardDragHandle } from '@contentful/forma-36-react-components';
+
+export const DragHandle = sortableHandle(() => <CardDragHandle>Reorder item</CardDragHandle>);
 
 const SortableLink = sortableElement(({ value }) => <li className="link-editor__link">{value}</li>);
 

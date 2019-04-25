@@ -16,7 +16,8 @@ export default class WrappedAssetCard extends React.Component {
     onEdit: PropTypes.func,
     onRemove: PropTypes.func,
     onClick: PropTypes.func,
-    readOnly: PropTypes.bool
+    readOnly: PropTypes.bool,
+    cardDragHandleComponent: PropTypes.element
   };
 
   static defaultProps = {
@@ -77,7 +78,8 @@ export default class WrappedAssetCard extends React.Component {
       selected,
       entityStatus,
       isLoading,
-      onClick
+      onClick,
+      cardDragHandleComponent
     } = this.props;
 
     return (
@@ -91,6 +93,8 @@ export default class WrappedAssetCard extends React.Component {
         isLoading={isLoading}
         onClick={onClick}
         dropdownListElements={this.renderAssetActions(entityFile)}
+        cardDragHandleComponent={cardDragHandleComponent}
+        withDragHandle={!!cardDragHandleComponent}
       />
     );
   }
