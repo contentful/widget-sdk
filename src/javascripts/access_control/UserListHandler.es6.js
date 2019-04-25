@@ -65,7 +65,7 @@ export default function register() {
           userRolesMap = {};
 
           _.forEach(data.memberships, membership => {
-            const userId = membership.user.sys.id;
+            const userId = membership.sys.user.sys.id;
             adminMap[userId] = membership.admin;
             membershipMap[userId] = membership;
 

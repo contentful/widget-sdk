@@ -218,7 +218,7 @@ function setContext(context) {
   organization = context.organization;
 
   cache.reset(spaceAuthContext);
-  policyChecker.setMembership(get(space, 'spaceMembership'), spaceAuthContext);
+  policyChecker.setMembership(get(space, 'spaceMember'), spaceAuthContext);
   gkPermissionChecker = createGKPermissionChecker({ space, organization });
   collectResponses();
   collectSectionVisibility();
@@ -451,11 +451,9 @@ function collectResponses() {
 }
 
 const canChangeLocales = space =>
-  get(space, 'spaceMembership.admin') ||
-  find(
-    get(space, 'spaceMembership.roles', []),
-    role => get(role, 'permissions.Settings') === 'all'
-  ) !== undefined;
+  get(space, 'spaceMember.admin') ||
+  find(get(space, 'spaceMember.roles', []), role => get(role, 'permissions.Settings') === 'all') !==
+    undefined;
 
 function collectSectionVisibility() {
   sectionVisibility = {
@@ -467,16 +465,15 @@ function collectSectionVisibility() {
     // don't use worf here, as it allows things that result in 403
     locales: canChangeLocales(space),
     // don't use worf here, as it allows things that result in 403
-    extensions: get(space, 'spaceMembership.admin'),
+    extensions: get(space, 'spaceMember.admin'),
     users: !shouldHide(Action.UPDATE, 'settings'),
     roles: !shouldHide(Action.UPDATE, 'settings'),
     environments: isAllowed(Action.READ, 'settings') && can(Action.MANAGE, 'Environments'),
     usage: !shouldHide(Action.UPDATE, 'settings'),
     previews: !shouldHide(Action.UPDATE, 'settings'),
     webhooks: !shouldHide(Action.UPDATE, 'settings'),
-    spaceHome:
-      get(space, 'spaceMembership.admin') || isAuthorOrEditor(get(space, 'spaceMembership.roles')),
-    apps: get(space, 'spaceMembership.admin')
+    spaceHome: get(space, 'spaceMember.admin') || isAuthorOrEditor(get(space, 'spaceMember.roles')),
+    apps: get(space, 'spaceMember.admin')
   };
 }
 

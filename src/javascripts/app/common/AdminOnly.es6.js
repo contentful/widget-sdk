@@ -19,7 +19,7 @@ export class AdminOnly extends React.Component {
   };
 
   render() {
-    const isAdmin = !!spaceContext.getData('spaceMembership.admin', false);
+    const isAdmin = !!spaceContext.getData('spaceMember.admin', false);
     if (isAdmin) {
       return this.props.children;
     }

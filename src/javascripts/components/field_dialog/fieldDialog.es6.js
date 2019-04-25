@@ -358,7 +358,7 @@ export default function register() {
     '$scope',
     'spaceContext',
     ($scope, spaceContext) => {
-      const isAdmin = !!spaceContext.getData('spaceMembership.admin', false);
+      const isAdmin = !!spaceContext.getData('spaceMember.admin', false);
 
       const hasCustomEditor =
         $scope.editorInterface.editor &&

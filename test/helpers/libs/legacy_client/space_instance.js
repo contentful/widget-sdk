@@ -36,7 +36,7 @@ export default function spaceInstanceDescription(serverSpaceData) {
       it('is true for admin member', function() {
         const user = { sys: { id: 'uid' } };
         const admin = { sys: { id: 'admin' } };
-        this.space.data.spaceMembership = {
+        this.space.data.spaceMember = {
           admin: true,
           user: admin
         };
@@ -46,7 +46,7 @@ export default function spaceInstanceDescription(serverSpaceData) {
 
       it('is false for non admin member', function() {
         const user = { sys: { id: 'uid' } };
-        this.space.data.spaceMembership = {
+        this.space.data.spaceMember = {
           admin: false,
           user: user
         };
