@@ -106,7 +106,8 @@ describe('app/entity_editor/DataLoader.es6', () => {
         'sidebar',
         'sidebarExtensions',
         'entityInfo',
-        'openDoc'
+        'openDoc',
+        'editorInterface'
       ]);
     });
 
@@ -203,7 +204,8 @@ describe('app/entity_editor/DataLoader.es6', () => {
         'sidebar',
         'sidebarExtensions',
         'entityInfo',
-        'openDoc'
+        'openDoc',
+        'editorInterface'
       ]);
     });
   });

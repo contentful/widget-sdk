@@ -9,6 +9,9 @@ const sharedFieldProps = field => ({
 });
 
 const REQUIRED_CONFIG_KEYS = [
+  'extensionId',
+  'spaceId',
+  'environmentId',
   'location', // Where the extension is rendered. See `WidgetLocations`.
   'channel', // Instance of `ExtensionIFrameChannel`
   'locales', // `{ available, default }` with all private locales and the default.
@@ -16,6 +19,7 @@ const REQUIRED_CONFIG_KEYS = [
   'contentTypeData', // API ContentType entity. Using internal IDs (ShareJS format).
   'spaceMembership', // API SpaceMembership entity.
   'parameters', // UI Extension parameters.
+  'editorInterface',
 
   // `{ field, locale }` for a field-locale pair of the extension being rendered.
   // `field` uses internal IDs (ShareJS format).
@@ -47,9 +51,40 @@ export default class ExtensionAPI {
     this.idMap = createIDMap(this.contentTypeFields, this.locales.available);
   }
 
+  getIds() {
+    const {
+      current,
+      extensionId,
+      spaceId,
+      environmentId,
+      contentTypeData,
+      entryData,
+      spaceMembership
+    } = this;
+
+    return {
+      extension: extensionId,
+      space: spaceId,
+      environment: environmentId,
+      contentType: get(contentTypeData, ['sys', 'id']),
+      entry: get(entryData, ['sys', 'id']),
+      field: get(current, ['field', 'id']),
+      user: get(spaceMembership, ['user', 'sys', 'id'])
+    };
+  }
+
   // Sends initial data to the IFrame of an extension.
   connect() {
-    const { spaceMembership, current, entryData, locales, location } = this;
+    const {
+      spaceMembership,
+      current,
+      entryData,
+      locales,
+      location,
+      editorInterface,
+      parameters,
+      contentTypeData
+    } = this;
 
     this.channel.connect({
       location,
@@ -103,8 +138,10 @@ export default class ExtensionAPI {
       // Make sure we don't leak internal field IDs:
       entry: { sys: entryData.sys },
       // Convert content type to its public form for external consumption:
-      contentType: PublicContentType.fromInternal(this.contentTypeData),
-      parameters: this.parameters
+      contentType: PublicContentType.fromInternal(contentTypeData),
+      editorInterface,
+      parameters,
+      ids: this.getIds()
     });
   }
 

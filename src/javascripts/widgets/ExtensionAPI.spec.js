@@ -4,12 +4,16 @@ import { LOCATION_ENTRY_FIELD } from './WidgetLocations.es6';
 describe('ExtensionAPI', () => {
   const createAPI = extraConfig => {
     return new ExtensionAPI({
+      extensionId: 'my-extension-id',
+      spaceId: 'my-space-id',
+      environmentId: 'master',
       location: LOCATION_ENTRY_FIELD,
       channel: { connect: jest.fn(), destroy: jest.fn(), send: jest.fn(), handlers: {} },
       current: { field: {}, locale: {} },
       locales: { available: [], default: {} },
       entryData: { sys: {}, fields: {} },
       contentTypeData: {},
+      editorInterface: {},
       spaceMembership: {
         sys: {},
         user: { sys: {}, firstName: 'Jakub' },

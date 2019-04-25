@@ -9,7 +9,7 @@ import ExtensionIFrameRenderer from '../ExtensionIFrameRenderer.es6';
 import * as Dialogs from '../ExtensionDialogs.es6';
 import { applyDefaultValues } from '../WidgetParametersUtils.es6';
 
-import createDialogExtensionBridge from './DialogExtensionBridge.es6';
+import createDialogExtensionBridge from './createDialogExtensionBridge.es6';
 
 const SIMPLE_DIALOG_TYPE_TO_OPENER = {
   alert: Dialogs.openAlert,
@@ -17,7 +17,7 @@ const SIMPLE_DIALOG_TYPE_TO_OPENER = {
   prompt: Dialogs.openPrompt
 };
 
-export default function makeExtensionDialogsHandler(dependencies) {
+export default function makeExtensionDialogsHandlers(dependencies) {
   const { entitySelector, spaceContext } = dependencies;
 
   return openDialog;
@@ -54,6 +54,11 @@ export default function makeExtensionDialogsHandler(dependencies) {
       throw new Error('no extension found');
     }
 
+    const descriptor = {
+      id: options.id,
+      ...extension.extension
+    };
+
     return ModalLauncher.open(({ isShown, onClose }) => {
       // We're passing `openDialog` (function above) down
       // to the bridge so it doesn't circularly imports
@@ -87,7 +92,7 @@ export default function makeExtensionDialogsHandler(dependencies) {
               {options.title && <Modal.Header title={options.title} onClose={() => onClose()} />}
               <ExtensionIFrameRenderer
                 bridge={bridge}
-                descriptor={extension.extension}
+                descriptor={descriptor}
                 parameters={parameters}
               />
             </React.Fragment>

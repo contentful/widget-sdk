@@ -146,7 +146,8 @@ async function loadEditorData(loader, id) {
     sidebar: sidebarConfig,
     sidebarExtensions,
     entityInfo,
-    openDoc
+    openDoc,
+    editorInterface
   });
 }
 

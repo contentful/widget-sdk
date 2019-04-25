@@ -1,3 +1,4 @@
+import mitt from 'mitt';
 import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
 import { user$ } from 'services/TokenStore.es6';
@@ -76,14 +77,17 @@ export default async function create($scope, editorData, preferences) {
 
   $scope.localeData = {};
 
+  $scope.emitter = mitt();
+
   $scope.entrySidebarProps = createEntrySidebarProps({
-    $scope
+    $scope,
+    emitter: $scope.emitter
   });
 
   setLocaleData($scope, {
     entityLabel: 'asset',
     shouldHideLocaleErrors: defaultLocaleIsFocused,
-    emitter: $scope.entrySidebarProps.emitter
+    emitter: $scope.emitter
   });
 
   $controller('FormWidgetsController', {

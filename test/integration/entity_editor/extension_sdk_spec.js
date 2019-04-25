@@ -58,6 +58,15 @@ describe('Extension SDK', () => {
         },
         parameters: {}
       },
+      editorData: {
+        editorInterface: {
+          controls: [],
+          sidebar: []
+        }
+      },
+      preferences: {
+        showDisabledFields: false
+      },
       localeData: {},
       entityInfo: {
         contentType: {

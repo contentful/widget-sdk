@@ -31,6 +31,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
       install: PropTypes.func.isRequired
     }).isRequired,
     descriptor: PropTypes.shape({
+      id: PropTypes.string,
       src: PropTypes.string,
       srcdoc: PropTypes.string
     }).isRequired,
@@ -78,7 +79,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
     }
 
     const { bridge, descriptor } = this.props;
-    const { src, srcdoc } = descriptor;
+    const { src, srcdoc, id } = descriptor;
 
     // Cherry-pick only valid parameter types.
     const parameters = {
@@ -95,7 +96,12 @@ export default class ExtensionIFrameRenderer extends React.Component {
     }
 
     const channel = new Channel(iframe, window, bridge.apply);
-    this.extensionApi = new ExtensionAPI({ channel, parameters, ...bridge.getData() });
+    this.extensionApi = new ExtensionAPI({
+      extensionId: id,
+      channel,
+      parameters,
+      ...bridge.getData()
+    });
     bridge.install(this.extensionApi);
 
     iframe.allowfullscreen = true;

@@ -1,4 +1,4 @@
-import createBridge from './EditorExtensionBridge.es6';
+import createExtensionBridge from './createExtensionBridge.es6';
 import { createBus } from 'utils/kefir.es6';
 import { LOCATION_ENTRY_FIELD } from '../WidgetLocations.es6';
 
@@ -32,7 +32,7 @@ jest.mock('TheStore/index.es6', () => ({
   getStore: jest.fn()
 }));
 
-describe('EditorExtensionBridge', () => {
+describe('createExtensionBridge', () => {
   const makeBridge = () => {
     const stubs = {
       apply: jest.fn(),
@@ -49,14 +49,17 @@ describe('EditorExtensionBridge', () => {
       newEntry: jest.fn(() => ({ sys: { type: 'Entry', id: 'some-entry-id' } })),
       goToSlideInEntity: jest.fn(),
       navigatorGo: jest.fn(() => Promise.resolve()),
-      makeEntityRef: jest.fn(() => 'ENTITY REF')
+      makeEntityRef: jest.fn(() => 'ENTITY REF'),
+      getEntry: jest.fn(),
+      $watch: jest.fn()
     };
 
-    const bridge = createBridge({
+    const bridge = createExtensionBridge({
       $rootScope: { $apply: stubs.apply },
       $scope: {
         $on: () => {},
         $applyAsync: () => {},
+        $watch: stubs.$watch,
         otDoc: {
           sysProperty: stubs.sysProperty,
           changes: stubs.changes,
@@ -70,6 +73,12 @@ describe('EditorExtensionBridge', () => {
           errors$: stubs.errors,
           setActive: stubs.setActive
         },
+        editorData: {
+          editorInterface: {
+            controls: [],
+            sidebar: []
+          }
+        },
         widget: { field: 'FIELD' },
         locale: { code: 'pl' },
         entityInfo: { contentType: 'CONTENT TYPE' }
@@ -77,7 +86,7 @@ describe('EditorExtensionBridge', () => {
       spaceContext: {
         getId: () => 'sid',
         getEnvironmentId: () => 'eid',
-        cma: { updateEntry: stubs.updateEntry },
+        cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
         space: { data: { spaceMembership: 'MEMBERSHIP ' } }
       },
       TheLocaleStore: {
@@ -109,6 +118,8 @@ describe('EditorExtensionBridge', () => {
       const [bridge] = makeBridge();
 
       expect(bridge.getData()).toEqual({
+        environmentId: 'eid',
+        spaceId: 'sid',
         location: LOCATION_ENTRY_FIELD,
         contentTypeData: 'CONTENT TYPE',
         current: { field: 'FIELD', locale: { code: 'pl' } },
@@ -117,7 +128,11 @@ describe('EditorExtensionBridge', () => {
           available: [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
           default: { code: 'pl', name: 'Polski', default: true }
         },
-        spaceMembership: 'MEMBERSHIP '
+        spaceMembership: 'MEMBERSHIP ',
+        editorInterface: {
+          controls: [],
+          sidebar: []
+        }
       });
     });
   });
@@ -289,20 +304,29 @@ describe('EditorExtensionBridge', () => {
     const api = makeStubbedApi();
     bridge.install(api);
 
+    const returnedEntry = {
+      sys: {
+        type: 'Entry',
+        id: 'xyz',
+        space: { sys: { id: 'sid' } },
+        environment: { sys: { id: 'eid' } }
+      }
+    };
+
+    stubs.getEntry.mockResolvedValue({
+      data: returnedEntry
+    });
+
     const registerCall = api.registerHandler.mock.calls[2];
     expect(registerCall[0]).toBe('navigateToContentEntity');
     const navigate = registerCall[1];
     expect(typeof navigate).toBe('function');
 
     const openResult = await navigate({ id: 'xyz', entityType: 'Entry', slideIn: true });
-    expect(openResult).toEqual({ navigated: true });
+    expect(openResult).toEqual({ navigated: true, entity: returnedEntry });
+    expect(stubs.getEntry).toHaveBeenCalledWith('xyz');
     expect(stubs.goToSlideInEntity).toBeCalledTimes(1);
-    expect(stubs.goToSlideInEntity).toBeCalledWith({
-      type: 'Entry',
-      id: 'xyz',
-      space: { sys: { id: 'sid' } },
-      environment: { sys: { id: 'eid' } }
-    });
+    expect(stubs.goToSlideInEntity).toBeCalledWith(returnedEntry.sys);
 
     const createResult = await navigate({ entityType: 'Entry', contentTypeId: 'ctid' });
     expect(createResult).toEqual({ navigated: true });
@@ -358,5 +382,33 @@ describe('EditorExtensionBridge', () => {
 
     setActive(true);
     expect(stubs.setActive).toBeCalledWith(true);
+  });
+
+  it('watches changes in $scope.localeData and $scope.preferences.showDisabledFields', () => {
+    const [bridge, stubs] = makeBridge();
+    const api = makeStubbedApi();
+    bridge.install(api);
+
+    expect(stubs.$watch).toHaveBeenCalledTimes(4);
+    expect(stubs.$watch).toHaveBeenNthCalledWith(
+      1,
+      'preferences.showDisabledFields',
+      expect.any(Function)
+    );
+    expect(stubs.$watch).toHaveBeenNthCalledWith(
+      2,
+      'localeData.activeLocales',
+      expect.any(Function)
+    );
+    expect(stubs.$watch).toHaveBeenNthCalledWith(
+      3,
+      'localeData.isSingleLocaleModeOn',
+      expect.any(Function)
+    );
+    expect(stubs.$watch).toHaveBeenNthCalledWith(
+      4,
+      'localeData.focusedLocale',
+      expect.any(Function)
+    );
   });
 });

@@ -1,10 +1,9 @@
-import mitt from 'mitt';
 import { once, get } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes.es6';
-import createBridge from 'widgets/bridges/EditorExtensionBridge.es6';
+import createExtensionBridge from 'widgets/bridges/createExtensionBridge.es6';
 import * as WidgetLocations from 'widgets/WidgetLocations.es6';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
 import * as Navigator from 'states/Navigator.es6';
@@ -17,11 +16,9 @@ const TheLocaleStore = getModule('TheLocaleStore');
 const entitySelector = getModule('entitySelector');
 const entityCreator = getModule('entityCreator');
 
-export default ({ $scope }) => {
+export default ({ $scope, emitter }) => {
   const isEntry = $scope.entityInfo.type === 'Entry';
   const isMasterEnvironment = spaceContext.getEnvironmentId() === 'master';
-
-  const emitter = mitt();
 
   const initializeIncomingLinks = once(() => {
     emitter.emit(SidebarEventTypes.UPDATED_INCOMING_LINKS_WIDGET, {
@@ -230,7 +227,7 @@ export default ({ $scope }) => {
       $scope: fieldLocaleScope
     });
 
-    const bridge = createBridge(
+    const bridge = createExtensionBridge(
       {
         $rootScope,
         $scope: fieldLocaleScope,
@@ -247,7 +244,7 @@ export default ({ $scope }) => {
     return { bridge, widget };
   });
 
-  const sidebarExtensionsBridge = createBridge(
+  const sidebarExtensionsBridge = createExtensionBridge(
     {
       $rootScope,
       $scope,

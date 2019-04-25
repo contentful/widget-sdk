@@ -51,6 +51,8 @@ const compareWithCurrent = base({
       const entry = editorData.entity;
       const contentType = editorData.contentType;
 
+      $scope.editorData = editorData;
+
       $scope.widgets = _.filter(
         editorData.fieldControls.form,
         widget => !_.get(widget, 'field.disabled') || $scope.preferences.showDisabledFields
@@ -84,11 +86,14 @@ const compare = base({
     ]
   },
   controller: [
+    '$scope',
     'editorData',
     'spaceContext',
     'modalDialog',
     '$state',
-    (editorData, spaceContext, modalDialog, $state) => {
+    ($scope, editorData, spaceContext, modalDialog, $state) => {
+      $scope.editorData = editorData;
+
       const entityId = editorData.entity.getId();
 
       spaceContext.cma.getEntrySnapshots(entityId, { limit: 2 }).then(res => {

@@ -1,4 +1,4 @@
-export default function makeExtensionNavigationHandler({
+export default function makeExtensionNavigationHandlers({
   spaceContext,
   entityCreator,
   Navigator,
@@ -17,16 +17,19 @@ export default function makeExtensionNavigationHandler({
       throw new Error('Failed to navigate to the entity.');
     }
 
-    // Right now we're returning this object with a single `navigated`
-    // property. In the future we could grow the API, for example by
+    // In the future we could grow the API, for example by
     // adding a method to listen to close events of the slide-in editor.
-    return { navigated: true };
+    return { navigated: true, entity };
   };
 
   async function makeEntity(options) {
     if (typeof options.id === 'string') {
-      // A valid ID is given, create a stub entity that can be used for navigation.
-      return makeStubEntity(options);
+      try {
+        const entry = await spaceContext.cma.getEntry(options.id);
+        return entry.data;
+      } catch (err) {
+        throw new Error(`Failed to fetch an entity with the following ID: ${options.id}`);
+      }
     } else {
       try {
         return await createEntity(options);
@@ -34,17 +37,6 @@ export default function makeExtensionNavigationHandler({
         throw new Error('Failed to create an entity.');
       }
     }
-  }
-
-  function makeStubEntity(options) {
-    return {
-      sys: {
-        type: options.entityType,
-        id: options.id,
-        space: { sys: { id: spaceContext.getId() } },
-        environment: { sys: { id: spaceContext.getEnvironmentId() } }
-      }
-    };
   }
 
   async function createEntity(options) {

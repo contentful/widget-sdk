@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { noop } from 'lodash';
 import { registerDirective } from 'NgRegistry.es6';
 import $ from 'jquery';
-import createBridge from 'widgets/bridges/EditorExtensionBridge.es6';
+import createExtensionBridge from 'widgets/bridges/createExtensionBridge.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
@@ -104,7 +104,7 @@ export default function register() {
             scope.props = {
               descriptor,
               parameters,
-              bridge: createBridge({
+              bridge: createExtensionBridge({
                 $rootScope,
                 $scope: scope,
                 spaceContext,

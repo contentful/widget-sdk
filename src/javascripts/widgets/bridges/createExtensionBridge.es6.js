@@ -1,10 +1,14 @@
 import * as K from 'utils/kefir.es6';
 import * as PathUtils from 'utils/Path.es6';
-import makeExtensionDialogsHandler from './ExtensionDialogsHandler.es6';
-import makeExtensionSpaceMethodsHandler from './ExtensionSpaceMethodsHandler.es6';
-import makeExtensionNavigationHandler from './ExtensionNavigationHandler.es6';
-import makeExtensionNotificationHandler from './ExtensionNotificationHandler.es6';
-import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_SIDEBAR } from '../WidgetLocations.es6';
+import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers.es6';
+import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers.es6';
+import makeExtensionNavigationHandlers from './makeExtensionNavigationHandlers.es6';
+import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers.es6';
+import {
+  LOCATION_ENTRY_FIELD,
+  LOCATION_ENTRY_SIDEBAR,
+  LOCATION_ENTRY_FIELD_SIDEBAR
+} from '../WidgetLocations.es6';
 
 const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
 
@@ -33,7 +37,7 @@ const REQUIRED_DEPENDENCIES = [
 //   handlers and notifies it about changes.
 // - `apply` takes a function to be executed in the Angular
 //   context (using `$rootScope.$apply`).
-export default function createBridge(dependencies, location = LOCATION_ENTRY_FIELD) {
+export default function createExtensionBridge(dependencies, location = LOCATION_ENTRY_FIELD) {
   REQUIRED_DEPENDENCIES.forEach(key => {
     if (!(key in dependencies)) {
       throw new Error(`"${key}" not provided to the extension bridge.`);
@@ -50,6 +54,8 @@ export default function createBridge(dependencies, location = LOCATION_ENTRY_FIE
 
   function getData() {
     return {
+      spaceId: spaceContext.getId(),
+      environmentId: spaceContext.getEnvironmentId(),
       location,
       spaceMembership: spaceContext.space.data.spaceMembership,
       current:
@@ -64,7 +70,8 @@ export default function createBridge(dependencies, location = LOCATION_ENTRY_FIE
         default: TheLocaleStore.getDefaultLocale()
       },
       entryData: $scope.otDoc.getValueAt([]),
-      contentTypeData: $scope.entityInfo.contentType
+      contentTypeData: $scope.entityInfo.contentType,
+      editorInterface: $scope.editorData.editorInterface
     };
   }
 
@@ -95,6 +102,20 @@ export default function createBridge(dependencies, location = LOCATION_ENTRY_FIE
     return Object.assign(error, { code: ERROR_CODES.EBADUPDATE, data });
   }
 
+  function getLocaleSettings() {
+    const mode = $scope.localeData.isSingleLocaleModeOn ? 'single' : 'multi';
+    if (mode === 'single') {
+      return {
+        mode,
+        focused: $scope.localeData.focusedLocale
+      };
+    }
+    return {
+      mode,
+      active: $scope.localeData.activeLocales
+    };
+  }
+
   function install(api) {
     K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
       api.send('sysChanged', [sys]);
@@ -110,12 +131,28 @@ export default function createBridge(dependencies, location = LOCATION_ENTRY_FIE
     api.registerPathHandler('removeValue', removeValue);
 
     api.registerHandler('openDialog', makeExtensionDialogsHandler(dependencies));
-    api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandler(dependencies));
-    api.registerHandler('navigateToContentEntity', makeExtensionNavigationHandler(dependencies));
-    api.registerHandler('notify', makeExtensionNotificationHandler(dependencies));
+    api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
+    api.registerHandler('navigateToContentEntity', makeExtensionNavigationHandlers(dependencies));
+    api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
+
+    $scope.$watch('preferences.showDisabledFields', () => {
+      api.send('showDisabledFieldsChanged', [$scope.preferences.showDisabledFields]);
+    });
+
+    $scope.$watch('localeData.activeLocales', () => {
+      api.send('localeSettingsChanged', [getLocaleSettings()]);
+    });
+
+    $scope.$watch('localeData.isSingleLocaleModeOn', () => {
+      api.send('localeSettingsChanged', [getLocaleSettings()]);
+    });
+
+    $scope.$watch('localeData.focusedLocale', () => {
+      api.send('localeSettingsChanged', [getLocaleSettings()]);
+    });
 
     // Available for field-level extensions only:
-    if (location !== LOCATION_ENTRY_SIDEBAR) {
+    if (location === LOCATION_ENTRY_FIELD || location === LOCATION_ENTRY_FIELD_SIDEBAR) {
       K.onValueScope($scope, $scope.fieldLocale.access$, access => {
         api.send('isDisabledChanged', [!!access.disabled]);
       });

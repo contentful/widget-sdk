@@ -1,4 +1,4 @@
-import createBridge from './SnapshotExtensionBridge.es6';
+import createSnapshotExtensionBridge from './createSnapshotExtensionBridge.es6';
 import { LOCATION_ENTRY_FIELD } from '../WidgetLocations.es6';
 
 jest.mock(
@@ -9,23 +9,31 @@ jest.mock(
   { virtual: true }
 );
 
-describe('SnapshotExtensionBridge', () => {
+describe('createSnaphotExtensionBridge', () => {
   const stubs = {
     updateEntry: jest.fn(),
     getEntry: jest.fn(() => Promise.resolve('Entry data'))
   };
 
   const makeBridge = () => {
-    const bridge = createBridge({
+    const bridge = createSnapshotExtensionBridge({
       $scope: {
         widget: { field: 'FIELD' },
         locale: { code: 'pl' },
         entity: { sys: {}, fields: {} },
         entityInfo: {
           contentType: 'CONTENT TYPE'
+        },
+        editorData: {
+          editorInterface: {
+            controls: [],
+            sidebar: []
+          }
         }
       },
       spaceContext: {
+        getId: () => 'spaceId',
+        getEnvironmentId: () => 'environmentId',
         cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
         space: { data: { spaceMembership: 'MEMBERSHIP ' } }
       },
@@ -43,12 +51,18 @@ describe('SnapshotExtensionBridge', () => {
       const [bridge] = makeBridge();
 
       expect(bridge.getData()).toEqual({
+        environmentId: 'environmentId',
+        spaceId: 'spaceId',
         location: LOCATION_ENTRY_FIELD,
         contentTypeData: 'CONTENT TYPE',
         current: { field: 'FIELD', locale: { code: 'pl' } },
         entryData: { fields: {}, sys: {} },
         locales: { available: [{ code: 'pl' }, { code: 'en' }], default: { code: 'pl' } },
-        spaceMembership: 'MEMBERSHIP '
+        spaceMembership: 'MEMBERSHIP ',
+        editorInterface: {
+          controls: [],
+          sidebar: []
+        }
       });
     });
   });
