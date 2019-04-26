@@ -76,7 +76,7 @@ export default function register() {
       // TODO: kill selection and move it to the table state.
       const wrapWithScopeApply = fn => (...args) => {
         const result = fn(...args);
-        $scope.$apply();
+        $scope.$applyAsync();
         return result;
       };
 
@@ -147,16 +147,24 @@ export default function register() {
       $scope.$watchGroup(
         [
           'context.view.order',
+          'context.view.order.direction',
           'context.view.displayedFieldIds',
           'orderColumnBy',
+          'paginator.getPage()',
           'paginator.getTotal()'
         ],
         () => {
           resetSearchResults();
+          $scope.$applyAsync();
         }
       );
+      $scope.$watchCollection('entries', () => {
+        resetSearchResults();
+        $scope.$applyAsync();
+      });
       $scope.$watchCollection('selection.getSelected()', () => {
         resetSearchResults();
+        $scope.$applyAsync();
       });
       resetSearchResults();
 

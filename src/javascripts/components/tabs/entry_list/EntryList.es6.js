@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useState } from 'react';
+import pluralize from 'pluralize';
 
 import cn from 'classnames';
 import { truncate } from 'lodash';
@@ -12,7 +13,9 @@ import {
   TableBody,
   Checkbox,
   IconButton,
-  TextLink
+  TextLink,
+  ModalConfirm,
+  Paragraph
 } from '@contentful/forma-36-react-components';
 
 import isHotkey from 'is-hotkey';
@@ -156,26 +159,113 @@ const contentTypeName = entry => {
 
 */
 
-function SortableTableCell({ fieldName, isSortable, isActiveSort, onClick, direction }) {
+function SortableTableCell({ children, isSortable, isActiveSort, onClick, direction }) {
   return (
     <TableCell
       className={cn({
         'x--sortable': isSortable,
         'x--active-sort': isActiveSort
       })}
-      onClick={() => {
+      onClick={e => {
+        if (isTargetInput(e)) {
+          return;
+        }
         onClick();
       }}>
-      {fieldName}
+      {children}
       {isSortable && isActiveSort && (
         <IconButton
           buttonType="naked"
           iconProps={{
-            icon: direction === 'descending' ? 'ArrowDown' : 'ArrowDown'
+            icon: direction === 'ascending' ? 'ArrowDown' : 'ArrowUp'
           }}
         />
       )}
     </TableCell>
+  );
+}
+
+function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm }) {
+  return (
+    <ModalConfirm
+      title={`Delete ${pluralize('entry', itemsCount, true)}`}
+      isShown={true}
+      intent="negative"
+      confirmLabel="Delete"
+      cancelLabel="Cancel"
+      confirmTestId="delete-entry-confirm"
+      cancelTestId="delete-entry-cancel"
+      onCancel={onCancel}
+      onConfirm={onConfirm}>
+      <Paragraph>Do you really want to delete {pluralize('entry', itemsCount, true)}?</Paragraph>
+    </ModalConfirm>
+  );
+}
+
+function BulkActions({ actions, selection }) {
+  const [isConfirmVisibile, setConfirmVisibility] = useState(false);
+  return (
+    <TableRow>
+      <TableCell colSpan="5">
+        <span className="f36-margin-right--s">
+          {pluralize('entry', selection.size(), true)} selected:
+        </span>
+        {actions.showDuplicate && actions.showDuplicate() && (
+          <TextLink
+            className="f36-margin-right--s"
+            linkType="secondary"
+            onClick={() => actions.duplicateSelected()}>
+            Duplicate
+          </TextLink>
+        )}
+
+        {actions.showDelete && actions.showDelete() && (
+          <React.Fragment>
+            <TextLink
+              className="f36-margin-right--s"
+              linkType="negative"
+              onClick={() => setConfirmVisibility(true)}
+              data-test-id="delete-entry">
+              Delete
+            </TextLink>
+            {isConfirmVisibile && (
+              <DeleteEntryConfirm
+                itemsCount={selection.size()}
+                onConfirm={() => {
+                  actions.deleteSelected();
+                  setConfirmVisibility(false);
+                }}
+                onCancel={() => setConfirmVisibility(false)}
+              />
+            )}
+          </React.Fragment>
+        )}
+        {actions.showArchive && actions.showArchive() && (
+          <TextLink
+            className="f36-margin-right--s"
+            linkType="secondary"
+            onClick={() => actions.archiveSelected()}>
+            Archive
+          </TextLink>
+        )}
+        {actions.showUnarchive && actions.showUnarchive() && (
+          <TextLink
+            className="f36-margin-right--s"
+            linkType="secondary"
+            onClick={() => actions.unarchiveSelected()}>
+            Unarchive
+          </TextLink>
+        )}
+        {actions.showPublish && actions.showPublish() && (
+          <TextLink
+            className="f36-margin-right--s"
+            linkType="positive"
+            onClick={() => actions.publishSelected()}>
+            {actions.publishButtonName()}
+          </TextLink>
+        )}
+      </TableCell>
+    </TableRow>
   );
 }
 
@@ -199,41 +289,51 @@ export default function EntryList({
   const hasContentTypeSelected = !!context.view.contentTypeId;
   const displayFieldName = displayFieldForFilteredContentType();
 
-  const isContentTypeVisible = !hasContentTypeSelected && !displayFieldName;
+  const isContentTypeVisible = !hasContentTypeSelected && !context.view.contentTypeHidden;
+  const selectAll = (
+    <Checkbox
+      className="f36-margin-left--s"
+      onChange={e => {
+        selection.toggleList(entries, e);
+      }}
+    />
+  );
+
   return (
     <Table>
       <TableHead offsetTop={isEdgeBrowser ? '0px' : '-22px'} isSticky>
         <TableRow>
           {(!hasContentTypeSelected || !displayFieldName) && (
             <TableCell>
-              <Checkbox onChange={e => selection.toggleList(entries, e)} />
+              {selectAll}
               Name
             </TableCell>
           )}
           {isContentTypeVisible && <TableCell>Content Type</TableCell>}
           {context.view.contentTypeId && displayFieldForFilteredContentType() && (
             <SortableTableCell
-              fieldName="Name"
               isSortable={fieldIsSortable(displayFieldName)}
               isActiveSort={isOrderField(displayFieldName)}
               onClick={() => {
                 fieldIsSortable(displayFieldName) && orderColumnBy(displayFieldName);
               }}
-              direction={context.view.order.direction}
-            />
+              direction={context.view.order.direction}>
+              {selectAll}
+              Name
+            </SortableTableCell>
           )}
           {displayedFields.map(field => {
             return (
               <SortableTableCell
                 key={field.id}
-                fieldName={field.name}
                 isSortable={fieldIsSortable(field)}
                 isActiveSort={isOrderField(field)}
                 onClick={() => {
                   fieldIsSortable(field) && orderColumnBy(field);
                 }}
-                direction={context.view.order.direction}
-              />
+                direction={context.view.order.direction}>
+                {field.name}
+              </SortableTableCell>
             );
           })}
           <TableCell>
@@ -250,55 +350,7 @@ export default function EntryList({
             />
           </TableCell>
         </TableRow>
-        {!selection.isEmpty() && (
-          <TableRow>
-            <TableCell colSpan="5">
-              <span className="f36-margin-right--s">{selection.size()} entries selected:</span>
-              {actions.showDuplicate && actions.showDuplicate() && (
-                <TextLink
-                  className="f36-margin-right--s"
-                  linkType="secondary"
-                  onClick={() => actions.duplicateSelected()}>
-                  Duplicate
-                </TextLink>
-              )}
-              {/* TODO: add confirmation */}
-              {actions.showDelete && actions.showDelete() && (
-                <TextLink
-                  className="f36-margin-right--s"
-                  linkType="negative"
-                  onClick={() => actions.deleteSelected()}
-                  data-test-id="delete-entry">
-                  Delete
-                </TextLink>
-              )}
-              {actions.showArchive && actions.showArchive() && (
-                <TextLink
-                  className="f36-margin-right--s"
-                  linkType="secondary"
-                  onClick={() => actions.archiveSelected()}>
-                  Archive
-                </TextLink>
-              )}
-              {actions.showUnarchive && actions.showUnarchive() && (
-                <TextLink
-                  className="f36-margin-right--s"
-                  linkType="secondary"
-                  onClick={() => actions.unarchiveSelected()}>
-                  Unarchive
-                </TextLink>
-              )}
-              {actions.showPublish && actions.showPublish() && (
-                <TextLink
-                  className="f36-margin-right--s"
-                  linkType="positive"
-                  onClick={() => actions.publishSelected()}>
-                  {actions.publishButtonName()}
-                </TextLink>
-              )}
-            </TableCell>
-          </TableRow>
-        )}
+        {!selection.isEmpty() && <BulkActions actions={actions} selection={selection} />}
       </TableHead>
       <TableBody>
         {entries.map(entry => (
@@ -308,16 +360,18 @@ export default function EntryList({
                 <TableRow
                   tabIndex="0"
                   onClick={e => {
-                    if (e.target.tagName !== 'INPUT') {
-                      onClick(e);
+                    if (isTargetInput(e)) {
+                      return;
                     }
+                    onClick(e);
                   }}
                   onKeyDown={e => {
-                    if (e.target.tagName !== 'INPUT') {
-                      if (isHotkey(['enter', 'space'], e)) {
-                        onClick(e);
-                        e.preventDefault();
-                      }
+                    if (isTargetInput(e)) {
+                      return;
+                    }
+                    if (isHotkey(['enter', 'space'], e)) {
+                      onClick(e);
+                      e.preventDefault();
                     }
                   }}
                   className={cn({
@@ -353,4 +407,7 @@ export default function EntryList({
       </TableBody>
     </Table>
   );
+}
+function isTargetInput(e) {
+  return e.target.tagName === 'INPUT';
 }
