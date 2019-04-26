@@ -16,6 +16,7 @@ header.workbench-header
     cf-component-bridge(style="flex:1; z-index: 1" component="search")
     a.text-link(
       style="margin-left: 15px"
+      ng-if="savedViewsState === 'ready'"
       ng-click="savedViewsSidebar.api.saveCurrentView()"
     ) Save as view
 
@@ -26,10 +27,20 @@ header.workbench-header
       on-select="newEntry")
 
 .workbench-main(ng-hide="showNoEntriesAdvice()")
-  .workbench-main__left-sidebar(
-    style="max-height: 100vh; overflow-y: hidden"
-   )
-    cf-component-store-bridge(component="savedViewsSidebar")
+  .workbench-main__left-sidebar(style="max-height: 100vh; overflow-y: hidden")
+    .saved-views-wrapper(
+      ng-if="savedViewsState === 'loading'"
+      style="padding: 4rem 1rem; text-align: center")
+      | Loading&nbsp;
+      react-component(name="@contentful/forma-36-react-components/Spinner")
+
+    .saved-views-wrapper(ng-if="savedViewsState === 'error'" style="padding: 0.5rem")
+      react-component(
+        name="@contentful/forma-36-react-components/Note"
+        props="{noteType: 'warning', title: 'Failed to load views', children: 'Please refresh the page.'}")
+
+    div(ng-if="savedViewsState === 'ready'")
+      cf-component-store-bridge(component="savedViewsSidebar")
 
   .workbench-main__right-content
     .search-results__count(ng-show="hasPage()")
@@ -40,9 +51,7 @@ header.workbench-header
       name="components/RecordsResourceUsage"
       props="usageProps"
       watch-depth="reference")
-    
-      
-    
+
     .table(ng-show="hasPage()")
       .table__head
         table
@@ -82,7 +91,7 @@ header.workbench-header
                 span(ng-show="fieldIsSortable(field)")
                   i.fa.fa-caret-up(ng-show="context.view.order.direction === 'ascending' && isOrderField(field)")
                   i.fa.fa-caret-down(ng-show="context.view.order.direction === 'descending' && isOrderField(field)")
-              th.x--small-cell(aria-label="cell-status") 
+              th.x--small-cell(aria-label="cell-status")
                 .status-header-cell
                   span
                     | Status
