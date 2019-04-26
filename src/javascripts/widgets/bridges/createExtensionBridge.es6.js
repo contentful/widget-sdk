@@ -105,14 +105,16 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
   function getLocaleSettings() {
     const mode = $scope.localeData.isSingleLocaleModeOn ? 'single' : 'multi';
     if (mode === 'single') {
+      const focusedLocale = $scope.localeData.focusedLocale;
       return {
         mode,
-        focused: $scope.localeData.focusedLocale
+        focused: focusedLocale ? focusedLocale.code : undefined
       };
     }
+    const activeLocales = $scope.localeData.activeLocales || [];
     return {
       mode,
-      active: $scope.localeData.activeLocales
+      active: activeLocales.map(locale => locale.code).filter(code => code)
     };
   }
 
