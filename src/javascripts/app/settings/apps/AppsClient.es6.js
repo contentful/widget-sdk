@@ -6,19 +6,24 @@ import {
 
 const KNOWN_APPS = {
   netlify: {
-    title: 'Netlify'
+    title: 'Netlify',
+    basic: true
   },
   algolia: {
-    title: 'Algolia'
+    title: 'Algolia',
+    basic: true
   },
   [IMAGE_MANAGEMENT_APP_ID]: {
-    title: IMAGE_MANAGEMENT_APP_NAME
+    title: IMAGE_MANAGEMENT_APP_NAME,
+    basic: true
   },
   basicApprovalWorkflow: {
-    title: 'Basic approval workflow'
+    title: 'Basic approval workflow',
+    basic: true
   },
   optimizely: {
     title: 'Optimizely',
+    basic: false,
     soon: true
   }
 };

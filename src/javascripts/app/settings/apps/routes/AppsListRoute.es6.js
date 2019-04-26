@@ -5,27 +5,25 @@ import AppsListPage, { AppsListPageLoading } from '../list/AppsListPage.es6';
 import createAppsClient from '../AppsClient.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
-import * as AppsFeatureFlag from '../AppsFeatureFlag.es6';
 
 const AppsFetcher = createFetcherComponent(async ({ spaceId }) => {
   const apps = await createAppsClient(spaceId).getAll();
 
-  await AppsFeatureFlag.assertIsEnabled();
-
   return apps.reduce(
-    ({ installed, available }, app) => {
+    ({ installed, rest }, app) => {
       if (app.installed) {
-        return { installed: installed.concat([app]), available };
+        return { installed: installed.concat([app]), rest };
       } else {
-        return { installed, available: available.concat([app]) };
+        return { installed, rest: rest.concat([app]) };
       }
     },
-    { installed: [], available: [] }
+    { installed: [], rest: [] }
   );
 });
 
 export default class AppsListRoute extends Component {
   static propTypes = {
+    hasBasicApps: PropTypes.bool.isRequired,
     spaceId: PropTypes.string.isRequired
   };
 
@@ -40,7 +38,7 @@ export default class AppsListRoute extends Component {
             if (isError) {
               return <StateRedirect to="spaces.detail.entries.list" />;
             }
-            return <AppsListPage apps={data} />;
+            return <AppsListPage hasBasicApps={this.props.hasBasicApps} apps={data} />;
           }}
         </AppsFetcher>
       </AdminOnly>

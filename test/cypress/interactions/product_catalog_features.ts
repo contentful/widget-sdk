@@ -1,16 +1,29 @@
 import * as state from '../util/interactionState';
-import { getProductCatalogFeatures } from '../util/requests';
+import { getOrgProductCatalogFeatures, getSpaceProductCatalogFeatures } from '../util/requests';
 
-const productCatalog = require('../fixtures/product-catalog.json');
+const productCatalogOrg = require('../fixtures/product-catalog-org.json');
+const productCatalogSpace = require('../fixtures/product-catalog-space.json');
 
-export function productCatalogFeaturesResponse() {
+export function orgProductCatalogFeaturesResponse() {
   cy.addInteraction({
-    state: state.ProductCatalogFeatures.SEVERAL,
-    uponReceiving: 'a request for all product catalog features',
-    withRequest: getProductCatalogFeatures(),
+    state: state.OrgProductCatalogFeatures.SEVERAL,
+    uponReceiving: 'a request for all org product catalog features',
+    withRequest: getOrgProductCatalogFeatures(),
     willRespondWith: {
       status: 200,
-      body: productCatalog
+      body: productCatalogOrg
     }
-  }).as(state.ProductCatalogFeatures.SEVERAL);
+  }).as(state.OrgProductCatalogFeatures.SEVERAL);
+}
+
+export function spaceProductCatalogFeaturesResponse() {
+  cy.addInteraction({
+    state: state.SpaceProductCatalogFeatures.SEVERAL,
+    uponReceiving: 'a request for all space product catalog features',
+    withRequest: getSpaceProductCatalogFeatures(),
+    willRespondWith: {
+      status: 200,
+      body: productCatalogSpace
+    }
+  }).as(state.SpaceProductCatalogFeatures.SEVERAL);
 }

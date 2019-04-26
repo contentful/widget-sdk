@@ -4,7 +4,7 @@ import { noPublicContentTypesResponse } from '../interactions/content_types';
 import { masterEnvironmentResponse } from '../interactions/environments';
 import { freePlanResponse } from '../interactions/plans';
 import { defaultLocaleResponse } from '../interactions/locales';
-import { productCatalogFeaturesResponse } from '../interactions/product_catalog_features';
+import { orgProductCatalogFeaturesResponse } from '../interactions/product_catalog_features';
 import { emptyUiConfigResponse, uiConfigMeResponse } from '../interactions/ui_config';
 import { noPreviewEnvironmentsResponse } from '../interactions/preview_environments';
 
@@ -15,7 +15,7 @@ type DefaultHandlers = {
   environmentResponse: Function;
   planResponse: Function;
   localeResponse: Function;
-  productCatalogFeaturesResponse: Function;
+  orgProductCatalogFeaturesResponse: Function;
   uiConfigResponse: Function;
   uiConfigMeResponse: Function;
   previewEnvironmentsResponse: Function;
@@ -28,7 +28,7 @@ const defaultHandlers: DefaultHandlers = {
   environmentResponse: masterEnvironmentResponse,
   planResponse: freePlanResponse,
   localeResponse: defaultLocaleResponse,
-  productCatalogFeaturesResponse: productCatalogFeaturesResponse,
+  orgProductCatalogFeaturesResponse: orgProductCatalogFeaturesResponse,
   uiConfigResponse: emptyUiConfigResponse,
   uiConfigMeResponse: uiConfigMeResponse,
   previewEnvironmentsResponse: noPreviewEnvironmentsResponse
@@ -47,7 +47,7 @@ export function defaultRequestsMock(customHandlers: Partial<DefaultHandlers> = {
   handlers.environmentResponse();
   handlers.planResponse();
   handlers.localeResponse();
-  handlers.productCatalogFeaturesResponse();
+  handlers.orgProductCatalogFeaturesResponse();
   handlers.uiConfigResponse();
   handlers.uiConfigMeResponse();
   handlers.previewEnvironmentsResponse();

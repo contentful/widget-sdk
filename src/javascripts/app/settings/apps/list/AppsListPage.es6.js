@@ -18,6 +18,7 @@ import {
 import * as Analytics from 'analytics/Analytics.es6';
 import * as Intercom from 'services/intercom.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import { websiteUrl } from 'Config.es6';
 
 const styles = {
   container: css({
@@ -84,9 +85,10 @@ const appGroupPropType = PropTypes.arrayOf(
 
 export default class AppsListPage extends Component {
   static propTypes = {
+    hasBasicApps: PropTypes.bool.isRequired,
     apps: PropTypes.shape({
       installed: appGroupPropType,
-      available: appGroupPropType
+      rest: appGroupPropType
     }).isRequired
   };
 
@@ -99,7 +101,7 @@ export default class AppsListPage extends Component {
     return (
       <AppsListShell>
         <DocumentTitle title="Apps" />
-        {this.renderDisclaimer()}
+        {this.props.hasBasicApps ? this.renderDisclaimer() : this.renderPricingInfo()}
         {this.renderApps()}
       </AppsListShell>
     );
@@ -144,22 +146,53 @@ export default class AppsListPage extends Component {
     );
   }
 
+  renderPricingInfo() {
+    return (
+      <Note
+        className={styles.note}
+        noteType="warning"
+        title="Upgrade your space to access our latest features">
+        <p>
+          To access this feature, submit a request to begin the process of upgrading your space. To
+          learn more, read about our{' '}
+          <a
+            href={websiteUrl(
+              '/pricing/?faq_category=payments&faq=what-type-of-spaces-can-i-have#payments'
+            )}
+            rel="noopener noreferrer"
+            target="_blank">
+            Space types and pricing
+          </a>
+          .
+        </p>
+        <p>
+          <a
+            href={websiteUrl('/support/?upgrade-pricing=true')}
+            target="_blank"
+            rel="noopener noreferrer">
+            Submit a support request{' '}
+          </a>
+        </p>
+      </Note>
+    );
+  }
+
   renderApps() {
-    const { apps } = this.props;
-    const overlayed = !this.state.optedIn;
+    const { hasBasicApps, apps } = this.props;
+    const canUse = hasBasicApps && this.state.optedIn;
 
     return (
       <React.Fragment>
         {apps.installed.length > 0 && (
-          <AppsList title="Installed" overlayed={overlayed}>
+          <AppsList title="Installed" overlayed={!canUse}>
             {apps.installed.map(app => (
               <AppListItem key={app.id} app={app} />
             ))}
           </AppsList>
         )}
-        {apps.available.length > 0 && (
-          <AppsList title="Available" overlayed={overlayed}>
-            {apps.available.map(app => (
+        {apps.rest.length > 0 && (
+          <AppsList title="Available" overlayed={!canUse}>
+            {apps.rest.map(app => (
               <AppListItem key={app.id} app={app} />
             ))}
           </AppsList>

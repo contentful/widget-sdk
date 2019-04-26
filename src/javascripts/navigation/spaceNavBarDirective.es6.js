@@ -1,6 +1,19 @@
 import { registerFactory, registerDirective } from 'NgRegistry.es6';
 import spaceNavTemplateDef from 'navigation/SpaceNavTemplate.es6';
 
+// We don't want to display the following sections within the context of
+// a sandbox space environment.
+const SPACE_SETTINGS_SECTIONS = [
+  'settings',
+  'users',
+  'roles',
+  'apiKey',
+  'webhooks',
+  'previews',
+  'usage',
+  'apps'
+];
+
 export default function register() {
   /**
    * @ngdoc directive
@@ -12,8 +25,7 @@ export default function register() {
     'spaceContext',
     'services/TokenStore.es6',
     'access_control/AccessChecker/index.es6',
-    'app/settings/apps/AppsFeatureFlag.es6',
-    (spaceContext, TokenStore, accessChecker, AppsFeatureFlag) => {
+    (spaceContext, TokenStore, accessChecker) => {
       return (useSpaceEnv, isMaster) => ({
         template: spaceNavTemplateDef(useSpaceEnv, isMaster),
         restrict: 'E',
@@ -21,9 +33,8 @@ export default function register() {
         controllerAs: 'nav',
 
         controller: [
-          '$scope',
           '$stateParams',
-          function($scope, $stateParams) {
+          function($stateParams) {
             const controller = this;
             const orgId = spaceContext.organization.sys.id;
 
@@ -34,12 +45,9 @@ export default function register() {
               controller.usageEnabled = org.pricingVersion === 'pricing_version_2';
             });
 
-            AppsFeatureFlag.withAngularScope($scope, value => {
-              controller.appsEnabled = value;
-            });
-
             function canNavigateTo(section) {
-              if (spaceContext.getEnvironmentId() !== 'master' && isSpaceSettingsSection(section)) {
+              const isSpaceSettingsSection = SPACE_SETTINGS_SECTIONS.includes(section);
+              if (isSpaceSettingsSection && !isMaster) {
                 return false;
               }
 
@@ -48,23 +56,6 @@ export default function register() {
               const isHibernated = enforcements.some(e => e.reason === 'hibernated');
 
               return spaceContext.space && !isHibernated && sectionAvailable;
-            }
-
-            // We don't want to display the following sections within the context of
-            // a sandbox space environment.
-            function isSpaceSettingsSection(section) {
-              const spaceSettingsSections = [
-                'settings',
-                'users',
-                'roles',
-                'apiKey',
-                'webhooks',
-                'previews',
-                'usage',
-                'apps'
-              ];
-
-              return spaceSettingsSections.includes(section);
             }
           }
         ]
