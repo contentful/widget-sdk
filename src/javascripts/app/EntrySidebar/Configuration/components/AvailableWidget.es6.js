@@ -5,7 +5,7 @@ import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNa
 
 export default function AvailableWidget({ name, onClick, widgetNamespace }) {
   return (
-    <div className="sidebar-configuration__available-widget">
+    <div className="sidebar-configuration__available-widget" data-test-id="available-widget">
       <div className="sidebar-configuration__available-widget-info">
         <Paragraph className="sidebar-configuration__available-widget-name">{name}</Paragraph>
         <Paragraph>
@@ -18,6 +18,7 @@ export default function AvailableWidget({ name, onClick, widgetNamespace }) {
           onClick={onClick}
           iconProps={{ icon: 'PlusCircle' }}
           label={`Add ${name} to your sidebar`}
+          testId="add-widget-to-sidebar"
         />
       </div>
     </div>

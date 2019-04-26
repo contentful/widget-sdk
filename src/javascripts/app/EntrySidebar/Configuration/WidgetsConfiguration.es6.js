@@ -65,7 +65,9 @@ export default function WidgetsConfiguration({ state, dispatch }) {
         )}
         {state.sidebarType === SidebarType.custom && (
           <React.Fragment>
-            <div className="sidebar-configuration__main-column">
+            <div
+              className="sidebar-configuration__main-column"
+              data-test-id="custom-sidebar-column">
               <CustomSidebar
                 items={state.items}
                 onRemoveItem={widget => {
@@ -79,7 +81,9 @@ export default function WidgetsConfiguration({ state, dispatch }) {
                 }}
               />
             </div>
-            <div className="sidebar-configuration__additional-column">
+            <div
+              className="sidebar-configuration__additional-column"
+              data-test-id="available-sidebar-items">
               <AvailableWidgets
                 items={state.availableItems}
                 onAddItem={item => {

@@ -37,7 +37,9 @@ export function SidebarWidgetItem({
     <div className="sidebar-configuration__item" data-test-id="sidebar-widget-item">
       {isDraggable && <Icon className="sidebar-configuration__item-drag" icon="Drag" />}
       {isRemovable && removeBtn}
-      <div className="sidebar-configuration__item-name">{name}</div>
+      <div className="sidebar-configuration__item-name" data-test-id="sidebar-widget-name">
+        {name}
+      </div>
       <div>{children}</div>
     </div>
   );

@@ -40,7 +40,8 @@ export default function EditorFieldTabs(props) {
               <Tab
                 id="sidebar_configuration"
                 selected={props.currentTab === 'sidebar_configuration'}
-                href={getHref()}>
+                href={getHref()}
+                testId="sidebar-config-tab">
                 Sidebar
               </Tab>
             )}

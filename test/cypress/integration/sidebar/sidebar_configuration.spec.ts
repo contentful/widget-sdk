@@ -6,8 +6,8 @@ import {
 } from '../../interactions/content_types';
 import { noExtensionsResponse } from '../../interactions/extensions';
 import { editorInterfaceResponse } from '../../interactions/content_types';
-import * as state from '../../util/interactionState';
 import { defaultContentTypeId, defaultSpaceId } from '../../util/requests';
+import * as state from '../../util/interactionState';
 
 describe('Sidebar configuration', () => {
   before(() => {
@@ -25,13 +25,94 @@ describe('Sidebar configuration', () => {
     cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
   });
 
-  it('opening the page with no configuration saved', () => {
-    cy.getByTestId('default-sidebar-option')
-      .find('input')
-      .should('be.checked');
+  const widgetNames = [
+    'Publish & Status',
+    'Preview',
+    'Links',
+    'Translation',
+    'Versions',
+    'Users',
+    'Entry activity'
+  ];
 
-    cy.getByTestId('custom-sidebar-option')
-      .find('input')
-      .should('not.be.checked');
+  describe('Opening the page with no configuration saved', () => {
+    it('renders the page', () => {
+      const expectedUrl = `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`;
+      cy.getByTestId('sidebar-config-tab')
+        .should('be.visible')
+        .should('have.attr', 'href')
+        .and('eq', expectedUrl);
+      cy.getByTestId('default-sidebar-option')
+        .find('input')
+        .should('be.checked');
+      cy.getByTestId('custom-sidebar-option')
+        .find('input')
+        .should('not.be.checked');
+    });
+
+    it('checks the sidebar by default', () => {
+      cy.getByTestId('default-sidebar-column')
+        .should('be.visible')
+        .getAllByTestId('sidebar-widget-name')
+        .should('have.length', widgetNames.length)
+        .each(($widget, index) => {
+          cy.wrap($widget).should('have.text', widgetNames[index]);
+        });
+    });
+  });
+
+  describe('Configuration of a custom sidebar', () => {
+    beforeEach(() => {
+      cy.getByTestId('custom-sidebar-option')
+        .find('input')
+        .click();
+    });
+
+    it('renders the page with custom sidebar configuration', () => {
+      cy.getByTestId('custom-sidebar-column').should('be.visible');
+      cy.getByTestId('available-sidebar-items').should('be.visible');
+    });
+
+    it('checks changing the order of widgets in custom sidebar', () => {
+      const space: number = 32;
+      const arrowDown: number = 40;
+      const widgetsReordered = [
+        'Publish & Status',
+        'Links',
+        'Preview',
+        'Translation',
+        'Versions',
+        'Users',
+        'Entry activity'
+      ];
+
+      cy.get('[data-react-beautiful-dnd-drag-handle]')
+        .eq(2)
+        .focus()
+        .trigger('keydown', { keyCode: space })
+        .wait(0.2 * 1000)
+        .trigger('keydown', { keyCode: arrowDown, force: true })
+        .wait(0.2 * 1000)
+        .trigger('keydown', { keyCode: space, force: true });
+      cy.getByTestId('custom-sidebar-column').should('be.visible');
+      cy.getAllByTestId('sidebar-widget-name').each(($widget, index) => {
+        cy.wrap($widget).should('have.text', widgetsReordered[index]);
+      });
+    });
+
+    it('moves widget from a custom sidebar to available items and vice versa', () => {
+      cy.getByTestId('sidebar-widget-item')
+        .eq(0)
+        .getByTestId('cf-ui-icon-button')
+        .click();
+      cy.getAllByTestId('sidebar-widget-name')
+        .should('have.length', widgetNames.length - 1)
+        .should('not.contain', 'Publish & Status');
+      cy.getAllByTestId('available-widget')
+        .should('have.length', 1)
+        .getByTestId('add-widget-to-sidebar')
+        .click();
+      cy.getAllByTestId('sidebar-widget-name').should('have.length', widgetNames.length);
+    });
   });
 });
