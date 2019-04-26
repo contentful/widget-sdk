@@ -74,6 +74,12 @@ export default function register() {
 
       $scope.showCreateSpaceDialog = CreateSpace.showDialog;
 
+      $rootScope.$on('resetPreference', (_, name) => {
+        if (name === 'show-comments-panel') {
+          $scope.preferences.showCommentsPanel = false;
+        }
+      });
+
       function broadcastPrefs($scope) {
         $rootScope.$broadcast('show-aux-panel', $scope.preferences.showAuxPanel);
         $rootScope.$broadcast('show-comments-panel', $scope.preferences.showCommentsPanel);

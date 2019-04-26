@@ -14,5 +14,6 @@ export default {
   UPDATED_INFO_PANEL: 'sidebar:updated-info-panel',
   UPDATED_COMMENTS_PANEL: 'sidebar:updated-comments-panel',
   INIT_COMMENTS_PANEL: 'sidebar:init-comments-panel',
-  WIDGET_REGISTERED: 'sidebar:widget-is-registered'
+  WIDGET_REGISTERED: 'sidebar:widget-is-registered',
+  WIDGET_DEREGISTERED: 'sidebar:widget-is-registered'
 };
