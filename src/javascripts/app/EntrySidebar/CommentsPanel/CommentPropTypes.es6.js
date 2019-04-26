@@ -14,3 +14,5 @@ export const Comment = PropTypes.shape({
     updatedAt: PropTypes.string
   })
 });
+
+export const CommentThread = PropTypes.arrayOf(Comment);

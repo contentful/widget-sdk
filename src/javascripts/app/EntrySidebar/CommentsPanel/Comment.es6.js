@@ -48,7 +48,7 @@ export const styles = {
     fontSize: tokens.fontSizeM
   }),
   timestamp: css({
-    color: tokens.colorTextLightest,
+    color: tokens.colorTextLight,
     fontSize: tokens.fontSizeS
   }),
   commentBody: css({
@@ -57,7 +57,7 @@ export const styles = {
   })
 };
 
-export default function Comment({ comment, onRemoved }) {
+export default function Comment({ comment, onRemoved, hasReplies }) {
   const {
     sys: { createdBy, createdAt }
   } = comment;
@@ -91,7 +91,7 @@ export default function Comment({ comment, onRemoved }) {
             {creationDate.fromNow()}
           </time>
         </div>
-        <CommentActions comment={comment} onRemove={handleRemove} />
+        <CommentActions comment={comment} onRemove={handleRemove} hasReplies={hasReplies} />
       </header>
       <div className={styles.commentBody}>{comment.body}</div>
     </div>
@@ -100,7 +100,10 @@ export default function Comment({ comment, onRemoved }) {
 
 Comment.propTypes = {
   comment: types.Comment.isRequired,
-  onRemoved: PropTypes.func.isRequired
+  onRemoved: PropTypes.func.isRequired,
+  // Only used to check if the comment can be removed.
+  // Get rid of this once thread deletion is supported by the API
+  hasReplies: PropTypes.bool
 };
 
 function renderUserName(user) {
@@ -113,14 +116,14 @@ function renderUserName(user) {
   );
 }
 
-function CommentActions({ comment, onRemove }) {
+function CommentActions({ comment, onRemove, hasReplies }) {
   const [showRemovalDialog, setShowRemovalDialog] = useState(false);
 
-  if (!canRemoveComment(comment)) return null;
+  if (hasReplies || !canRemoveComment(comment)) return null;
 
   return (
     <>
-      <CardActions>
+      <CardActions onClick={e => e.stopPropagation()}>
         <DropdownList>
           <DropdownListItem onClick={() => setShowRemovalDialog(true)}>Remove</DropdownListItem>
         </DropdownList>
@@ -135,7 +138,10 @@ function CommentActions({ comment, onRemove }) {
 }
 CommentActions.propTypes = {
   comment: types.Comment.isRequired,
-  onRemove: PropTypes.func.isRequired
+  onRemove: PropTypes.func.isRequired,
+  // Only used to check if the comment can be removed.
+  // Get rid of this once thread deletion is supported by the API
+  hasReplies: PropTypes.bool
 };
 
 function RemovalConfirmationDialog({ isShown, onConfirm, onCancel }) {

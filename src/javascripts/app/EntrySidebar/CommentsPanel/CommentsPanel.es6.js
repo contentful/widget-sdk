@@ -9,6 +9,7 @@ import { useCommentsFetcher } from './hooks.es6';
 import CreateComment from './CreateEntryComment.es6';
 import CommentThread from './CommentThread.es6';
 import { CommentSkeletonGroup } from './CommentSkeleton.es6';
+import { fromFlatToThreads, isReply, isReplyToComment } from './utils.es6';
 
 export const styles = {
   root: css({
@@ -64,13 +65,16 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
 
   const handleNewComment = comment => {
     setComments([...comments, comment]);
-    setShouldScroll(true);
     setIsEmpty(false);
+    !isReply(comment) && setShouldScroll(true);
   };
 
-  // A thread can be a single comment or a comment and its replies
-  const handleRemovedThread = comment => {
-    const newList = comments.filter(item => item !== comment);
+  // Remove a single comment or a comment and its replies
+  const handleCommentRemoved = comment => {
+    const isReply = isReplyToComment(comment);
+    const newList = comments.filter(item => {
+      return !(item == comment || isReply(item));
+    });
     setComments(newList);
     !newList.length && setIsEmpty(true);
   };
@@ -99,6 +103,8 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
     setShouldScroll(false);
   }, [shouldScroll]);
 
+  const threads = fromFlatToThreads(comments);
+
   return (
     <div className={`${styles.root} ${isVisible ? styles.visible : styles.hidden}`}>
       <div
@@ -113,9 +119,14 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
             </Typography>
           </div>
         )}
-        {comments.length > 0 &&
-          comments.map(comment => (
-            <CommentThread key={comment.sys.id} comment={comment} onRemoved={handleRemovedThread} />
+        {threads.length > 0 &&
+          threads.map(thread => (
+            <CommentThread
+              key={thread[0].sys.id}
+              thread={thread}
+              onNewReply={handleNewComment}
+              onRemoved={handleCommentRemoved}
+            />
           ))}
         {error && (
           <div className={styles.emptyState}>
@@ -126,6 +137,7 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
           </div>
         )}
       </div>
+
       <div className={styles.commentForm}>
         <CreateComment spaceId={spaceId} entryId={entryId} onNewComment={handleNewComment} />
       </div>

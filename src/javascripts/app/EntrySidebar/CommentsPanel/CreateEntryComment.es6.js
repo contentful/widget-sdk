@@ -74,8 +74,10 @@ export default function CreateEntryComment({
 
   if (isSubmitted && data) {
     setBody('');
+    setActive(false);
     setIsSubmited(false);
     onNewComment(data);
+    onInactive && onInactive();
   }
 
   return (
