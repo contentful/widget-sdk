@@ -40,7 +40,7 @@ export default function register() {
 
           scope.contentTypeName = entry => {
             const ctId = entry.getContentTypeId();
-            const ct = publishedCTs.get(ctId);
+            const ct = spaceContext.publishedCTs.get(ctId);
             if (ct) {
               return ct.getName();
             } else {

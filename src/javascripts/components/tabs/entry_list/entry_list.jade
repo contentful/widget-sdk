@@ -54,8 +54,10 @@ header.workbench-header
     
       
     react-component(
+      ng-if="hasPage()"
       name="components/tabs/entry_list/EntryList.es6"
-      props="{ context: context, displayedFields: displayedFields, displayFieldForFilteredContentType: displayFieldForFilteredContentType, fieldIsSortable: fieldIsSortable, isOrderField: isOrderField, orderColumnBy: orderColumnBy, hasHiddenFields: hasHiddenFields, displayedFields: displayedFields, hiddenFields: hiddenFields, removeDisplayField: removeDisplayField, addDisplayField: addDisplayField, toggleContentType: toggleContentType, updateFieldOrder: updateFieldOrder }"
+      props="entryProps"
+      watch-depth="reference"
     )
 
     cf-search-results-paginator(paginator="paginator" pages="7" ng-show="hasPage()")

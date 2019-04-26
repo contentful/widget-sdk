@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 export function createSelection() {
   let selectedById = {};
-  let selected = [];
 
   return {
     add,
@@ -13,24 +12,24 @@ export function createSelection() {
     updateList,
     clear,
     size: function() {
-      return _.size(selected);
+      return _.size(selectedById);
     },
     isEmpty: function() {
-      return _.isEmpty(selected);
+      return _.isEmpty(selectedById);
     },
     getSelected: function() {
-      return selected;
+      const values = _.memoize(_.values);
+
+      return values(selectedById);
     }
   };
 
   function add(entity) {
     selectedById[entity.getId()] = entity;
-    sync();
   }
 
   function remove(entity) {
     delete selectedById[entity.getId()];
-    sync();
   }
 
   function isSelected(entity) {
@@ -58,6 +57,7 @@ export function createSelection() {
     const action = $event.currentTarget.checked ? add : remove;
 
     entities.forEach(action);
+
     $event.stopPropagation();
   }
 
@@ -71,16 +71,9 @@ export function createSelection() {
       },
       {}
     );
-
-    sync();
   }
 
   function clear() {
     selectedById = {};
-    sync();
-  }
-
-  function sync() {
-    selected = _.values(selectedById);
   }
 }

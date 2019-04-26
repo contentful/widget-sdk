@@ -72,7 +72,21 @@ export default function register() {
       $scope.entityStatus = entityStatus;
 
       $scope.paginator = Paginator.create();
-      $scope.selection = createSelection();
+
+      // TODO: kill selection and move it to the table state.
+      const wrapWithScopeApply = fn => (...args) => {
+        const result = fn(...args);
+        $scope.$apply();
+        return result;
+      };
+
+      const selection = createSelection();
+      $scope.selection = {
+        ...selection,
+        toggle: wrapWithScopeApply(selection.toggle),
+        toggleList: wrapWithScopeApply(selection.toggleList),
+        clear: wrapWithScopeApply(selection.clear)
+      };
 
       $scope.shouldHide = accessChecker.shouldHide;
       $scope.shouldDisable = accessChecker.shouldDisable;
@@ -82,6 +96,40 @@ export default function register() {
         $scope.usageProps = {
           space: spaceContext.space.data,
           currentTotal: $scope.paginator.getTotal()
+        };
+      });
+
+      const resetSearchResults = _.debounce(() => {
+        $scope.entryProps = {
+          context: $scope.context,
+          displayedFields: $scope.displayedFields,
+          displayFieldForFilteredContentType: $scope.displayFieldForFilteredContentType,
+          fieldIsSortable: $scope.fieldIsSortable,
+          isOrderField: $scope.isOrderField,
+          orderColumnBy: $scope.orderColumnBy,
+          hasHiddenFields: $scope.hasHiddenFields,
+          hiddenFields: $scope.hiddenFields,
+          removeDisplayField: $scope.removeDisplayField,
+          addDisplayField: $scope.addDisplayField,
+          toggleContentType: $scope.toggleContentType,
+          updateFieldOrder: $scope.updateFieldOrder,
+          selection: $scope.selection,
+          entries: $scope.entries,
+          actions: {
+            showDuplicate: $scope.showDuplicate,
+            duplicateSelected: $scope.duplicateSelected,
+            showDelete: $scope.showDelete,
+            deleteSelected: $scope.deleteSelected,
+            archiveSelected: $scope.archiveSelected,
+            showArchive: $scope.showArchive,
+            unarchiveSelected: $scope.unarchiveSelected,
+            showUnarchive: $scope.showUnarchive,
+            unpublishSelected: $scope.unpublishSelected,
+            showUnpublish: $scope.showUnpublish,
+            publishSelected: $scope.publishSelected,
+            showPublish: $scope.showPublish,
+            publishButtonName: $scope.publishButtonName
+          }
         };
       });
 
@@ -95,6 +143,22 @@ export default function register() {
           reason
         });
       };
+
+      $scope.$watchGroup(
+        [
+          'context.view.order',
+          'context.view.displayedFieldIds',
+          'orderColumnBy',
+          'paginator.getTotal()'
+        ],
+        () => {
+          resetSearchResults();
+        }
+      );
+      $scope.$watchCollection('selection.getSelected()', () => {
+        resetSearchResults();
+      });
+      resetSearchResults();
 
       $scope.$watch('paginator.getTotal()', resetUsageProps);
       resetUsageProps();
@@ -249,6 +313,8 @@ export default function register() {
         path = _.isString(path) ? path.split('.') : path;
         return _.get($scope, ['context', 'view'].concat(path));
       }
+
+      $controller('EntryListActionsController', { $scope: $scope });
     }
   ]);
 }

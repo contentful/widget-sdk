@@ -1,6 +1,8 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 
 import cn from 'classnames';
+import { truncate } from 'lodash';
 
 import {
   Table,
@@ -9,13 +11,51 @@ import {
   TableCell,
   TableBody,
   Checkbox,
-  IconButton
+  IconButton,
+  TextLink
 } from '@contentful/forma-36-react-components';
 
-import ViewCustomizer from 'components/tabs/entry_list/ViewCustomizer/index.es6';
+import isHotkey from 'is-hotkey';
+import StateLink from 'app/common/StateLink.es6';
+
+import ViewCustomizer from './ViewCustomizer/index.es6';
+import DisplayField from './DisplayField.es6';
+
+import { EntityStatusTag } from 'components/shared/EntityStatusTag.es6';
 
 import { isEdge } from 'utils/browser.es6';
 const isEdgeBrowser = isEdge();
+
+import { getModule } from 'NgRegistry.es6';
+const spaceContext = getModule('spaceContext');
+const EntityState = getModule('data/CMA/EntityState.es6');
+
+// TODO This function is called repeatedly from the template.
+// Unfortunately, 'publishedCTs.get' has the side effect of
+// fetching the CT if it was not found. This results in problems
+// when we switch the space but this directive is still active. We
+// request a content type from the _new_ space which does not
+// exist.
+// The solution is to separate `entryTitle()` and similar
+// functions from the space context.
+const entryTitle = entry => {
+  let entryTitle = spaceContext.entryTitle(entry);
+  const length = 130;
+  if (entryTitle.length > length) {
+    entryTitle = truncate(entryTitle, length);
+  }
+  return entryTitle;
+};
+
+const contentTypeName = entry => {
+  const ctId = entry.getContentTypeId();
+  const ct = spaceContext.publishedCTs.get(ctId);
+  if (ct) {
+    return ct.getName();
+  } else {
+    return '';
+  }
+};
 
 /*
 
@@ -96,7 +136,7 @@ const isEdgeBrowser = isEdge();
             ng-show="showArchive()"
             aria-label="archive")
             | Archive
-          span.text-link--neutral-emphasis-mid(type="button"
+          span.text-link--neutral-emphasis-mid(type="button" 
             ng-click="unarchiveSelected()"
             ng-show="showUnarchive()"
             aria-label="unarchive")
@@ -112,32 +152,6 @@ const isEdgeBrowser = isEdge();
             aria-label="publish")
             | {{publishButtonName()}}
 
-
-      .table__body
-        table
-          tbody
-            tr.x--multiline(ng-repeat="entry in entries track by entry.getId()"
-              ng-init="linkToEntry = '^.detail({ entryId: entry.getId() })'"
-              ng-class="{'x--highlight': selection.isSelected(entry)}"
-              ui-sref="{{linkToEntry}}")
-              td.x--large-cell.td__checkbox-cell(aria-label="cell-display-name")
-                div
-                  label(ng-click="$event.stopPropagation()")
-                    input(type="checkbox" cf-selection="entry" tabindex="-1" aria-label="cell-select" ng-click="selection.toggle(entry, $event);")
-                  a(ui-sref="{{linkToEntry}}" ng-click="$event.stopPropagation();") {{entryTitle(entry)}}
-              +td.x--medium-cell(
-                aria-label="cell-content-type"
-                ui-sref="{{linkToEntry}}"
-                ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden")
-                | {{contentTypeName(entry) || '&nbsp;'}}
-              +td.x--small-cell(
-                ui-sref="{{linkToEntry}}"
-                ng-repeat="field in displayedFields track by field.id")
-                cf-field-display
-              +td.x--small-cell(
-                ui-sref="{{linkToEntry}}"
-                aria-label="cell-status")
-                  <react-component name="@contentful/forma-36-react-components/Tag" props="entityStatus.getProps(entry)"></react-component>
 
 
 */
@@ -177,31 +191,33 @@ export default function EntryList({
   removeDisplayField,
   addDisplayField,
   toggleContentType,
-  updateFieldOrder
+  updateFieldOrder,
+  selection,
+  entries = [],
+  actions
 }) {
-  console.log('sss', context.view.contentTypeId && displayFieldForFilteredContentType());
   const hasContentTypeSelected = !!context.view.contentTypeId;
-  const displayField = displayFieldForFilteredContentType();
-  const t = !hasContentTypeSelected || !displayField;
-  const t1 = !hasContentTypeSelected && !displayField;
+  const displayFieldName = displayFieldForFilteredContentType();
+
+  const isContentTypeVisible = !hasContentTypeSelected && !displayFieldName;
   return (
     <Table>
       <TableHead offsetTop={isEdgeBrowser ? '0px' : '-22px'} isSticky>
         <TableRow>
-          {t && (
+          {(!hasContentTypeSelected || !displayFieldName) && (
             <TableCell>
-              <Checkbox />
+              <Checkbox onChange={e => selection.toggleList(entries, e)} />
               Name
             </TableCell>
           )}
-          {t1 && <TableCell>Content Type</TableCell>}
+          {isContentTypeVisible && <TableCell>Content Type</TableCell>}
           {context.view.contentTypeId && displayFieldForFilteredContentType() && (
             <SortableTableCell
               fieldName="Name"
-              isSortable={fieldIsSortable(displayField)}
-              isActiveSort={isOrderField(displayField)}
+              isSortable={fieldIsSortable(displayFieldName)}
+              isActiveSort={isOrderField(displayFieldName)}
               onClick={() => {
-                fieldIsSortable(displayField) && orderColumnBy(displayField);
+                fieldIsSortable(displayFieldName) && orderColumnBy(displayFieldName);
               }}
               direction={context.view.order.direction}
             />
@@ -234,8 +250,107 @@ export default function EntryList({
             />
           </TableCell>
         </TableRow>
+        {!selection.isEmpty() && (
+          <TableRow>
+            <TableCell colSpan="5">
+              <span className="f36-margin-right--s">{selection.size()} entries selected:</span>
+              {actions.showDuplicate && actions.showDuplicate() && (
+                <TextLink
+                  className="f36-margin-right--s"
+                  linkType="secondary"
+                  onClick={() => actions.duplicateSelected()}>
+                  Duplicate
+                </TextLink>
+              )}
+              {/* TODO: add confirmation */}
+              {actions.showDelete && actions.showDelete() && (
+                <TextLink
+                  className="f36-margin-right--s"
+                  linkType="negative"
+                  onClick={() => actions.deleteSelected()}
+                  data-test-id="delete-entry">
+                  Delete
+                </TextLink>
+              )}
+              {actions.showArchive && actions.showArchive() && (
+                <TextLink
+                  className="f36-margin-right--s"
+                  linkType="secondary"
+                  onClick={() => actions.archiveSelected()}>
+                  Archive
+                </TextLink>
+              )}
+              {actions.showUnarchive && actions.showUnarchive() && (
+                <TextLink
+                  className="f36-margin-right--s"
+                  linkType="secondary"
+                  onClick={() => actions.unarchiveSelected()}>
+                  Unarchive
+                </TextLink>
+              )}
+              {actions.showPublish && actions.showPublish() && (
+                <TextLink
+                  className="f36-margin-right--s"
+                  linkType="positive"
+                  onClick={() => actions.publishSelected()}>
+                  {actions.publishButtonName()}
+                </TextLink>
+              )}
+            </TableCell>
+          </TableRow>
+        )}
       </TableHead>
-      <TableBody />
+      <TableBody>
+        {entries.map(entry => (
+          <StateLink to="^.detail" params={{ entryId: entry.getId() }} key={entry.getId()}>
+            {({ onClick }) => {
+              return (
+                <TableRow
+                  tabIndex="0"
+                  onClick={e => {
+                    if (e.target.tagName !== 'INPUT') {
+                      onClick(e);
+                    }
+                  }}
+                  onKeyDown={e => {
+                    if (e.target.tagName !== 'INPUT') {
+                      if (isHotkey(['enter', 'space'], e)) {
+                        onClick(e);
+                        e.preventDefault();
+                      }
+                    }
+                  }}
+                  className={cn({
+                    'ctf-ui-cursor--pointer': true,
+                    'x--highlight': selection.isSelected(entry)
+                  })}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selection.isSelected(entry)}
+                      onChange={e => {
+                        selection.toggle(entry, e);
+                        e.preventDefault();
+                      }}
+                    />
+                    {entryTitle(entry)}
+                  </TableCell>
+                  {isContentTypeVisible && <TableCell>{contentTypeName(entry)}</TableCell>}
+                  {displayedFields.map(field => (
+                    <TableCell key={field.id}>
+                      <DisplayField field={field} entry={entry} />
+                    </TableCell>
+                  ))}
+                  <TableCell>
+                    <EntityStatusTag
+                      statusLabel={EntityState.stateName(EntityState.getState(entry.data.sys))}
+                    />
+                  </TableCell>
+                </TableRow>
+              );
+            }}
+          </StateLink>
+        ))}
+      </TableBody>
     </Table>
   );
 }
