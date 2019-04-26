@@ -313,9 +313,7 @@ describe('createExtensionBridge', () => {
       }
     };
 
-    stubs.getEntry.mockResolvedValue({
-      data: returnedEntry
-    });
+    stubs.getEntry.mockResolvedValue(returnedEntry);
 
     const registerCall = api.registerHandler.mock.calls[2];
     expect(registerCall[0]).toBe('navigateToContentEntity');

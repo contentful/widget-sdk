@@ -25,8 +25,7 @@ export default function makeExtensionNavigationHandlers({
   async function makeEntity(options) {
     if (typeof options.id === 'string') {
       try {
-        const entry = await spaceContext.cma.getEntry(options.id);
-        return entry.data;
+        return await spaceContext.cma.getEntry(options.id);
       } catch (err) {
         throw new Error(`Failed to fetch an entity with the following ID: ${options.id}`);
       }
