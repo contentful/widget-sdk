@@ -5,6 +5,7 @@ import * as K from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index.es6';
 
 export default function install(entityInfo, document, lifeline$) {
   K.onValueWhile(lifeline$, document.resourceState.stateChange$, data => {
@@ -56,6 +57,7 @@ const getReferenceEntitiesIds = (id, locale, editorData) => {
 };
 
 async function getReferencesContentTypes(editorData, locale) {
+  const batchingApiClient = getBatchingApiClient(spaceContext.cma);
   const referenceFieldsIds = editorData.fieldControls.form
     .filter(isEntryReferenceField)
     .map(getFieldId);
@@ -63,11 +65,10 @@ async function getReferencesContentTypes(editorData, locale) {
     .filter(id => editorData.entity.data.fields[id] !== undefined)
     .map(id => getReferenceEntitiesIds(id, locale, editorData));
   const refEntities = await Promise.all(
-    flatten(refEntitiesIds).map(id => spaceContext.space.getEntry(id))
+    flatten(refEntitiesIds).map(id => batchingApiClient.getEntry(id).catch(_error => null))
   );
-  const refCts = refEntities.map(entity =>
-    spaceContext.publishedCTs.get(get(entity, 'data.sys.contentType.sys.id'))
-  );
-
+  const refCts = refEntities
+    .filter(Boolean)
+    .map(entity => spaceContext.publishedCTs.get(get(entity, 'sys.contentType.sys.id')));
   return refCts;
 }
