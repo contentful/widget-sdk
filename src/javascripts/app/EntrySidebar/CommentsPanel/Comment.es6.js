@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import {
   CardActions,
   DropdownList,
@@ -57,7 +57,7 @@ export const styles = {
   })
 };
 
-export default function Comment({ comment, onRemoved, hasReplies }) {
+export default function Comment({ comment, onRemoved, className, hasReplies }) {
   const {
     sys: { createdBy, createdAt }
   } = comment;
@@ -77,7 +77,7 @@ export default function Comment({ comment, onRemoved, hasReplies }) {
   };
 
   return (
-    <div className={styles.comment}>
+    <div className={cx([styles.comment, className])}>
       <header className={styles.header}>
         <img className={styles.avatar} src={createdBy.avatarUrl} />
         <div className={styles.meta}>
@@ -101,6 +101,7 @@ export default function Comment({ comment, onRemoved, hasReplies }) {
 Comment.propTypes = {
   comment: types.Comment.isRequired,
   onRemoved: PropTypes.func.isRequired,
+  className: PropTypes.string,
   // Only used to check if the comment can be removed.
   // Get rid of this once thread deletion is supported by the API
   hasReplies: PropTypes.bool

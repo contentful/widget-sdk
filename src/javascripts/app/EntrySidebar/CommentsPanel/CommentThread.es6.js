@@ -22,15 +22,17 @@ const styles = {
   footer: css({
     marginTop: tokens.spacingM
   }),
-  thread: css({
-    paddingLeft: tokens.spacingS,
-    boxShadow: `inset 2px 0 0 ${tokens.colorBlueDark}`,
-    marginLeft: `-${tokens.spacingS}`
-  }),
+  thread: css({}),
   showCommentsButton: css({
     margin: `${tokens.spacingM} 0`
   }),
+  reply: css({
+    borderTop: `1px solid ${tokens.colorElementLight}`,
+    paddingTop: tokens.spacingS
+  }),
   replyActions: css({
+    borderTop: `1px solid ${tokens.colorElementLight}`,
+    paddingTop: tokens.spacingS,
     marginTop: tokens.spacingS
   })
 };
@@ -59,7 +61,12 @@ export default function CommentThread({ thread, onRemoved, onNewReply }) {
         {replies.length ? (
           <div className={styles.thread}>
             {replies.map(reply => (
-              <Comment key={reply.sys.id} comment={reply} onRemoved={onRemoved} />
+              <Comment
+                className={styles.reply}
+                key={reply.sys.id}
+                comment={reply}
+                onRemoved={onRemoved}
+              />
             ))}
           </div>
         ) : null}
