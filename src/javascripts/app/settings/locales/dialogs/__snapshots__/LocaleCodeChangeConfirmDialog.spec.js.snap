@@ -42,6 +42,7 @@ exports[`locales/components/LocaleCodeChangeConfirmDialog should match snapshot 
   <TextInput
     disabled={false}
     id="localeInput"
+    isReadOnly={false}
     name="localeInput"
     onChange={[Function]}
     required={false}
