@@ -160,7 +160,7 @@ export default function register() {
 
       $scope.$watchGroup(
         [
-          'context.view.order',
+          'context.view.order.fieldId',
           'context.view.order.direction',
           'context.view.displayedFieldIds',
           'orderColumnBy',
