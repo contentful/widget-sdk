@@ -107,7 +107,7 @@ const dataForArray = (entry, field, entryCache, assetCache) => {
 
   if (hasItemsOfType(items, 'Asset')) {
     return _.map(filterVisibleItems(items, entryCache, assetCache), entry =>
-      dataForAsset(entry, 'data.fields.file', assetCache)
+      dataForAsset(entry, assetCache)
     );
   }
 };
@@ -147,8 +147,8 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
       result = (
         <div className="file-preview linked-assets">
           <AngularComponent
-            template={'<cf-thumbnail file="" size="30" fit="thumb" focus="faces" />'}
-            scope={{ file: dataForLinkedAsset(entry, field) }}
+            template={'<cf-thumbnail file="file" size="30" fit="thumb" focus="faces" />'}
+            scope={{ file: dataForLinkedAsset(entry, field, assetCache) }}
           />
         </div>
       );
@@ -172,7 +172,7 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
                 <li key={index}>
                   <div className="file-preview">
                     <AngularComponent
-                      template={'<cf-thumbnail file="" size="30" fit="thumb" focus="faces" />'}
+                      template={'<cf-thumbnail file="file" size="30" fit="thumb" focus="faces" />'}
                       scope={{ file: entity }}
                     />
                   </div>
