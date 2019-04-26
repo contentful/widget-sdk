@@ -143,23 +143,43 @@ export default ({ $scope, emitter }) => {
     });
   });
 
-  const initializeComments = once(() => {
+  let commentsPanelDelistener;
+
+  const initializeCommentsPanel = once(() => {
     const {
       entityInfo: { id }
     } = $scope;
 
-    emitter.emit(SidebarEventTypes.INIT_COMMENTS_PANEL, {
-      entryId: id,
-      spaceId: spaceContext.getId(),
-      environmentId: spaceContext.getEnvironmentId()
+    const init = once(() => {
+      // init will fetch all comments. we don't want that until
+      // the comments tab is opened for the first time
+      emitter.emit(SidebarEventTypes.INIT_COMMENTS_PANEL, {
+        entryId: id,
+        spaceId: spaceContext.getId(),
+        environmentId: spaceContext.getEnvironmentId()
+      });
+    });
+
+    commentsPanelDelistener = $scope.$on('show-comments-panel', (_, isVisible) => {
+      init();
+      emitter.emit(SidebarEventTypes.UPDATED_COMMENTS_PANEL, {
+        isVisible
+      });
     });
   });
 
-  $scope.$on('show-comments-panel', (_, isVisible) => {
-    initializeComments();
-    emitter.emit(SidebarEventTypes.UPDATED_COMMENTS_PANEL, {
-      isVisible
-    });
+  const deinitializeCommentsPanel = once(() => {
+    commentsPanelDelistener && commentsPanelDelistener();
+    commentsPanelDelistener = undefined;
+    $rootScope.$broadcast('resetPreference', 'show-comments-panel');
+  });
+
+  emitter.on(SidebarEventTypes.WIDGET_DEREGISTERED, name => {
+    switch (name) {
+      case SidebarWidgetTypes.COMMENTS_PANEL:
+        deinitializeCommentsPanel();
+        break;
+    }
   });
 
   let prevEvent;
@@ -209,6 +229,9 @@ export default ({ $scope, emitter }) => {
         break;
       case SidebarWidgetTypes.ACTIVITY:
         initializeEntryActivity();
+        break;
+      case SidebarWidgetTypes.COMMENTS_PANEL:
+        initializeCommentsPanel();
         break;
     }
   });

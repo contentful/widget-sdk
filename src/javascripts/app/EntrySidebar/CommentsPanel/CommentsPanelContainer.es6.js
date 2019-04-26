@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes.es6';
+import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
 import CommentsPanel from './CommentsPanel.es6';
 
 /**
@@ -21,6 +22,7 @@ export default class CommentsPanelContainer extends React.Component {
 
   componentDidMount() {
     const { emitter } = this.props;
+    emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.COMMENTS_PANEL);
     emitter.on(SidebarEventTypes.INIT_COMMENTS_PANEL, ({ entryId, environmentId, spaceId }) => {
       this.setState({ initialized: true, entryId, environmentId, spaceId });
     });
@@ -30,6 +32,10 @@ export default class CommentsPanelContainer extends React.Component {
   }
 
   componentWillUnmount() {
+    this.props.emitter.emit(
+      SidebarEventTypes.WIDGET_DEREGISTERED,
+      SidebarWidgetTypes.COMMENTS_PANEL
+    );
     this.props.emitter.off(SidebarEventTypes.INIT_COMMENTS_PANEL);
     this.props.emitter.off(SidebarEventTypes.UPDATED_COMMENTS_PANEL);
   }
