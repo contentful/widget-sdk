@@ -15,5 +15,6 @@ module.exports = {
   appTools: resolveApp('tools'),
   appSrcJavascripts: resolveApp('src/javascripts'),
   appNodeModules: resolveApp('node_modules'),
-  appCoverage: resolveApp('.coverage')
+  appCoverage: resolveApp('.coverage'),
+  appMicroBackends: resolveApp('micro-backends')
 };

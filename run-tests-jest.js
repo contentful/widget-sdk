@@ -36,7 +36,7 @@ argv.push(
     createJestConfig(
       relativePath => path.resolve(__dirname, relativePath),
       paths.appPath,
-      [paths.appSrcJavascripts, paths.appTools],
+      [paths.appSrcJavascripts, paths.appTools, paths.appMicroBackends],
       paths.appCoverage
     )
   )

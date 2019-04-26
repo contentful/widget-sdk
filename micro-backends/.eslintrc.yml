@@ -3,3 +3,8 @@ env:
   es6: true
 rules:
   no-console: off
+globals:
+  jest: true
+  describe: false
+  it: false
+  expect: false
