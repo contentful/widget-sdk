@@ -46,6 +46,18 @@ export default function register() {
         resetList: _.noop
       });
 
+      $scope.entryCache = new EntityListCache({
+        space: spaceContext.space,
+        entityType: 'Entry',
+        limit: 5
+      });
+
+      $scope.assetCache = new EntityListCache({
+        space: spaceContext.space,
+        entityType: 'Asset',
+        limit: 3
+      });
+
       $scope.savedViewsState = 'loading';
       spaceContext.uiConfig.then(
         api => {
@@ -129,7 +141,9 @@ export default function register() {
             publishSelected: $scope.publishSelected,
             showPublish: $scope.showPublish,
             publishButtonName: $scope.publishButtonName
-          }
+          },
+          entryCache: $scope.entryCache,
+          assetCache: $scope.assetCache
         };
       });
 
@@ -162,6 +176,15 @@ export default function register() {
         resetSearchResults();
         $scope.$applyAsync();
       });
+      $scope.$watchCollection('entryCache.queue', () => {
+        resetSearchResults();
+        $scope.$applyAsync();
+      });
+      $scope.$watchCollection('assetCache.queue', () => {
+        resetSearchResults();
+        $scope.$applyAsync();
+      });
+
       $scope.$watchCollection('selection.getSelected()', () => {
         resetSearchResults();
         $scope.$applyAsync();
@@ -170,18 +193,6 @@ export default function register() {
 
       $scope.$watch('paginator.getTotal()', resetUsageProps);
       resetUsageProps();
-
-      $scope.entryCache = new EntityListCache({
-        space: spaceContext.space,
-        entityType: 'Entry',
-        limit: 5
-      });
-
-      $scope.assetCache = new EntityListCache({
-        space: spaceContext.space,
-        entityType: 'Asset',
-        limit: 3
-      });
 
       $scope.newContentType = () => {
         // X.entries.list -> X.content_types.new

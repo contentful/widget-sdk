@@ -60,105 +60,6 @@ const contentTypeName = entry => {
   }
 };
 
-/*
-
-.table(ng-show="hasPage()")
-      .table__head
-        table
-          thead
-            tr
-              th.th__checkbox-cell.x--large-cell(
-                aria-label="cell-display-name"
-                ng-if="!context.view.contentTypeId || !displayFieldForFilteredContentType()")
-                div
-                  label(ng-click="$event.stopPropagation()")
-                    input(type="checkbox" cf-selection="entries" ng-click="selection.toggleList(entries, $event)" ng-show="entries.length > 0" tabindex="-1")
-                  div
-                    | Name
-              th.x--medium-cell(
-                aria-label="cell-content-type"
-                ng-if="!context.view.contentTypeId && !context.view.contentTypeHidden")
-                | Content type
-              th.x--large-cell(
-                aria-label="cell-display-name"
-                ng-if="context.view.contentTypeId && displayFieldForFilteredContentType()"
-                ng-init="getField=displayFieldForFilteredContentType"
-                ng-class="{'x--sortable': fieldIsSortable(getField()), 'x--active-sort': isOrderField(getField())}"
-                ng-click="fieldIsSortable(getField()) && orderColumnBy(getField())")
-                  div.table__checkbox-cell
-                    label(ng-click="$event.stopPropagation()")
-                      input(type="checkbox" cf-selection="entries" ng-click="selection.toggleList(entries, $event)" ng-show="entries.length > 0" tabindex="-1")
-                    | Name
-                    span(ng-show="fieldIsSortable(getField())")
-                      i.fa.fa-caret-up(ng-show="context.view.order.direction === 'ascending' && isOrderField(getField())")
-                      i.fa.fa-caret-down(ng-show="context.view.order.direction === 'descending' && isOrderField(getField())")
-              th.x--small-cell(
-                ng-repeat="field in displayedFields track by field.id"
-                ng-class="{'x--sortable': fieldIsSortable(field), 'x--active-sort': isOrderField(field)}"
-                data-field-id="{{field.id}}"
-                ng-click="fieldIsSortable(field) && orderColumnBy(field)")
-                | {{field.name}}
-                span(ng-show="fieldIsSortable(field)")
-                  i.fa.fa-caret-up(ng-show="context.view.order.direction === 'ascending' && isOrderField(field)")
-                  i.fa.fa-caret-down(ng-show="context.view.order.direction === 'descending' && isOrderField(field)")
-              th.x--small-cell(aria-label="cell-status") 
-                .status-header-cell
-                  span
-                    | Status
-                  .view-customizer
-                    react-component(
-                      ng-show="hasPage()"
-                      name="components/tabs/entry_list/ViewCustomizer/index.es6"
-                      props="{ hasHiddenFields: hasHiddenFields, displayedFields: displayedFields, hiddenFields: hiddenFields, removeDisplayField: removeDisplayField, addDisplayField: addDisplayField, toggleContentType: toggleContentType, isContentTypeHidden: !context.view.contentTypeId && context.view.contentTypeHidden, updateFieldOrder: updateFieldOrder}"
-                    )
-
-      .table__bulk-actions(ng-hide="selection.isEmpty()")
-        .workbench-actions(ng-controller="EntryListActionsController")
-          .workbench-actions__label
-            +pluralize-entity("entry", "selection.size()", "selected: ")
-
-          span.text-link--neutral-emphasis-mid(type="button"
-            ng-click="duplicateSelected()"
-            ng-show="showDuplicate()"
-            aria-label="duplicate")
-            | Duplicate
-          span.text-link--destructive(type="button"
-            ng-show="showDelete()"
-            cf-context-menu-trigger
-            data-test-id="delete-entry"
-            aria-label="delete")
-            | Delete
-          .delete-confirm(cf-context-menu="bottom")
-            p You are about to delete #[+pluralize-entity("entry", "selection.size()")]
-            button.btn-caution(type="button" ng-click="deleteSelected()")
-              | Delete
-            button.btn-secondary-action(type="button")
-              | Don't Delete
-          span.text-link--neutral-emphasis-mid(type="button"
-            ng-click="archiveSelected()"
-            ng-show="showArchive()"
-            aria-label="archive")
-            | Archive
-          span.text-link--neutral-emphasis-mid(type="button" 
-            ng-click="unarchiveSelected()"
-            ng-show="showUnarchive()"
-            aria-label="unarchive")
-            | Unarchive
-          span.text-link--neutral-emphasis-mid(type="button"
-            ng-click="unpublishSelected()"
-            ng-show="showUnpublish()"
-            aria-label="unpublish")
-            | Unpublish
-          span.text-link--constructive(type="submit"
-            ng-click="publishSelected()"
-            ng-show="showPublish()"
-            aria-label="publish")
-            | {{publishButtonName()}}
-
-
-
-*/
-
 function SortableTableCell({ children, isSortable, isActiveSort, onClick, direction }) {
   return (
     <TableCell
@@ -202,11 +103,11 @@ function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm }) {
   );
 }
 
-function BulkActions({ actions, selection }) {
+function BulkActionsRow({ colSpan, actions, selection }) {
   const [isConfirmVisibile, setConfirmVisibility] = useState(false);
   return (
     <TableRow>
-      <TableCell colSpan="5">
+      <TableCell colSpan={colSpan}>
         <span className="f36-margin-right--s">
           {pluralize('entry', selection.size(), true)} selected:
         </span>
@@ -284,7 +185,9 @@ export default function EntryList({
   updateFieldOrder,
   selection,
   entries = [],
-  actions
+  actions,
+  entryCache,
+  assetCache
 }) {
   const hasContentTypeSelected = !!context.view.contentTypeId;
   const displayFieldName = displayFieldForFilteredContentType();
@@ -299,18 +202,18 @@ export default function EntryList({
     />
   );
 
+  const columnLength =
+    // if no ct selected 2 cols, otherwise 1
+    (hasContentTypeSelected ? 1 : 2) +
+    // all displayed fields
+    displayedFields.length +
+    // status column
+    1;
   return (
     <Table>
       <TableHead offsetTop={isEdgeBrowser ? '0px' : '-22px'} isSticky>
         <TableRow>
-          {(!hasContentTypeSelected || !displayFieldName) && (
-            <TableCell>
-              {selectAll}
-              Name
-            </TableCell>
-          )}
-          {isContentTypeVisible && <TableCell>Content Type</TableCell>}
-          {context.view.contentTypeId && displayFieldForFilteredContentType() && (
+          {hasContentTypeSelected ? (
             <SortableTableCell
               isSortable={fieldIsSortable(displayFieldName)}
               isActiveSort={isOrderField(displayFieldName)}
@@ -321,7 +224,16 @@ export default function EntryList({
               {selectAll}
               Name
             </SortableTableCell>
+          ) : (
+            <React.Fragment>
+              <TableCell>
+                {selectAll}
+                Name
+              </TableCell>
+              {isContentTypeVisible && <TableCell>Content Type</TableCell>}
+            </React.Fragment>
           )}
+
           {displayedFields.map(field => {
             return (
               <SortableTableCell
@@ -350,7 +262,9 @@ export default function EntryList({
             />
           </TableCell>
         </TableRow>
-        {!selection.isEmpty() && <BulkActions actions={actions} selection={selection} />}
+        {!selection.isEmpty() && (
+          <BulkActionsRow colSpan={columnLength} actions={actions} selection={selection} />
+        )}
       </TableHead>
       <TableBody>
         {entries.map(entry => (
@@ -391,7 +305,12 @@ export default function EntryList({
                   {isContentTypeVisible && <TableCell>{contentTypeName(entry)}</TableCell>}
                   {displayedFields.map(field => (
                     <TableCell key={field.id}>
-                      <DisplayField field={field} entry={entry} />
+                      <DisplayField
+                        field={field}
+                        entry={entry}
+                        entryCache={entryCache}
+                        assetCache={assetCache}
+                      />
                     </TableCell>
                   ))}
                   <TableCell>

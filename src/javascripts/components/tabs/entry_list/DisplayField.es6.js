@@ -31,16 +31,12 @@ const displayType = field => {
 
 const dataForField = (entry, field) => spaceContext.getFieldValue(entry, field.id);
 
-const scope = {};
-const entryCache = {};
-const assetCache = {};
-
-function filterVisibleItems(items) {
+function filterVisibleItems(items, entryCache, assetCache) {
   let counter = 0;
-  const cacheName = hasItemsOfType(items, 'Entry') ? 'entryCache' : 'assetCache';
-  const limit = scope[cacheName].params.limit;
+  const cacheName = hasItemsOfType(items, 'Entry') ? entryCache : assetCache;
+  const limit = cacheName.params.limit;
   return _.filter(items, item => {
-    const hasItem = scope[cacheName].has(item.sys.id);
+    const hasItem = cacheName.has(item.sys.id);
     if (hasItem && counter < limit) {
       counter++;
       return true;
@@ -54,7 +50,7 @@ function filterVisibleItems(items) {
  *
  * If the link points to a missing entry, return "missing".
  */
-const dataForEntry = entryLink => {
+const dataForEntry = (entryLink, entryCache) => {
   const entry = entryCache.get(entryLink.sys.id);
   if (entry) {
     return spaceContext.entryTitle(entry);
@@ -63,19 +59,19 @@ const dataForEntry = entryLink => {
   }
 };
 
-const dataForAsset = assetLink => {
+const dataForAsset = (assetLink, assetCache) => {
   const asset = assetCache.get(assetLink.sys.id);
   return spaceContext.getFieldValue(asset, 'file');
 };
 
-const dataForLinkedEntry = (entry, field) => {
+const dataForLinkedEntry = (entry, field, entryCache) => {
   const entryLinkField = spaceContext.getFieldValue(entry, field.id);
-  return entryLinkField ? dataForEntry(entryLinkField) : '';
+  return entryLinkField ? dataForEntry(entryLinkField, entryCache) : '';
 };
 
-const dataForLinkedAsset = (entry, field) => {
+const dataForLinkedAsset = (entry, field, assetCache) => {
   const assetLinkField = spaceContext.getFieldValue(entry, field.id);
-  return assetLinkField ? dataForAsset(assetLinkField) : '';
+  return assetLinkField ? dataForAsset(assetLinkField, assetCache) : '';
 };
 
 const displayBool = value => (value ? 'Yes' : 'No');
@@ -101,18 +97,22 @@ const isAssetArray = (entity, field) => {
   return hasItemsOfType(items, 'Asset');
 };
 
-const dataForArray = (entry, field) => {
+const dataForArray = (entry, field, entryCache, assetCache) => {
   const items = dataForField(entry, field);
   if (hasItemsOfType(items, 'Entry')) {
-    return _.map(filterVisibleItems(items), entry => dataForEntry(entry));
+    return _.map(filterVisibleItems(items, entryCache, assetCache), entry =>
+      dataForEntry(entry, entryCache)
+    );
   }
 
   if (hasItemsOfType(items, 'Asset')) {
-    return _.map(filterVisibleItems(items), entry => dataForAsset(entry, 'data.fields.file'));
+    return _.map(filterVisibleItems(items, entryCache, assetCache), entry =>
+      dataForAsset(entry, 'data.fields.file', assetCache)
+    );
   }
 };
 
-export default function DisplayField({ entry, field }) {
+export default function DisplayField({ entry, field, entryCache, assetCache }) {
   let result;
   switch (displayType(field)) {
     case 'updatedAt':
@@ -139,7 +139,9 @@ export default function DisplayField({ entry, field }) {
       result = <span>{displayLocation(dataForField(entry, field))}</span>;
       break;
     case 'Entry':
-      result = <span className="linked-entries">{dataForLinkedEntry(entry, field)}</span>;
+      result = (
+        <span className="linked-entries">{dataForLinkedEntry(entry, field, entryCache)}</span>
+      );
       break;
     case 'Asset':
       result = (
@@ -158,7 +160,7 @@ export default function DisplayField({ entry, field }) {
             'linked-entries': isEntryArray(entry, field),
             'linked-assets': isAssetArray(entry, field)
           })}>
-          {dataForArray(entry, field).map((entity, index) => {
+          {dataForArray(entry, field, entryCache, assetCache).map((entity, index) => {
             if (isEntryArray(entry, field)) {
               return (
                 <li key={index}>
