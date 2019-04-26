@@ -11,3 +11,4 @@ export const __PROTOTYPE__PROJECTS_FLAG = 'feature-bv-02-2019-projects-experimen
 export const ENTRY_ACTIVITY = 'feature-pul-03-2019-entry-activity';
 export const SCHEDULE = 'feature-pul-04-2019-scheduled-publication-enabled';
 export const QUICK_NAVIGATION = 'feature-ht-04-2019-quick-navigation';
+export const ENTRY_COMMENTS = 'feature-04-2019-entry-comments';

@@ -17,6 +17,7 @@ import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 import * as logger from 'services/logger.es6';
 import { getVariation } from 'LaunchDarkly.es6';
+import { ENTRY_COMMENTS } from 'featureFlags.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
@@ -166,7 +167,10 @@ export default async function create($scope, editorData, preferences, trackLoadE
     return localeCodes.length === 1 && localeCodes[0] === focusedLocale.internal_code;
   }
 
-  getVariation('feature-04-2019-entry-comments', {
+  getVariation(ENTRY_COMMENTS, {
     organizationId: get(spaceContext, 'organization.sys.id')
-  }).then(variation => ($scope.shouldDisplayCommentsToggle = variation));
+  }).then(variation => {
+    const isMasterEnvironment = spaceContext.getEnvironmentId() === 'master';
+    $scope.shouldDisplayCommentsToggle = isMasterEnvironment && variation;
+  });
 }
