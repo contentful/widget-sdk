@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import _ from 'lodash';
+import { forEach, orderBy, random } from 'lodash';
 
 import { withRichTextPublicationWarning as withPublicationWarning } from '../index.es6';
 import { richTextDocument } from './helpers';
@@ -39,13 +39,30 @@ describe('withPublicationWarning', () => {
     expect(unRegisterUnpublishedReferencesWarning).toBeCalled();
   });
 
-  // eslint-disable-next-line no-restricted-syntax
-  describe.each`
-    title                               | resolvedAssets                 | resolvedEntries              | unpublishedRefs
-    ${'no unpublished'}                 | ${[createMockEntity(1, true)]} | ${createMockEntity(2, true)} | ${[]}
-    ${'unpublished entries and assets'} | ${createMockEntity(1)}         | ${createMockEntity(2)}       | ${[createMockEntity(1), createMockEntity(2)]}
-  `('on document with $title', ({ resolvedAssets, resolvedEntries, unpublishedRefs }) => {
-    it('provides a list of unpublished entities', async () => {
+  const testCases = {
+    'no unpublished': {
+      resolvedAssets: [newEntity('asset-1', true)],
+      resolvedEntries: [newEntity('entry-2', true)],
+      unpublishedRefs: []
+    },
+    'unpublished asset': {
+      resolvedAssets: [newEntity('asset-1')],
+      resolvedEntries: [newEntity('entry-2', true)],
+      unpublishedRefs: [newEntity('asset-1')]
+    },
+    'unpublished entry': {
+      resolvedAssets: [newEntity('asset-1', true)],
+      resolvedEntries: [newEntity('entry-2')],
+      unpublishedRefs: [newEntity('entry-2')]
+    },
+    'unpublished entries and assets': {
+      resolvedAssets: [newEntity('asset-1')],
+      resolvedEntries: [newEntity('entry-2')],
+      unpublishedRefs: [newEntity('asset-1'), newEntity('entry-2')]
+    }
+  };
+  forEach(testCases, ({ resolvedAssets, resolvedEntries, unpublishedRefs }, description) => {
+    it(`returns ${description}`, async () => {
       const [registerUnpublishedReferencesWarning] = registerMocks();
       const field = {
         getValue() {
@@ -55,20 +72,32 @@ describe('withPublicationWarning', () => {
       };
       const widgetAPI = createWidgetAPI(field);
 
-      widgetAPI.space.getAssets.mockResolvedValue({ items: resolvedAssets });
-      widgetAPI.space.getEntries.mockResolvedValue({ items: resolvedEntries });
+      widgetAPI.space.getAsset.mockImplementation(async id =>
+        resolvedAssets.find(asset => asset.sys.id === id)
+      );
+      widgetAPI.space.getEntry.mockImplementation(async id =>
+        resolvedEntries.find(entry => entry.sys.id === id)
+      );
 
       mount(widgetAPI);
 
       const registerArg = registerUnpublishedReferencesWarning.mock.calls[0][0];
       const data = await registerArg.getData();
 
-      expect(widgetAPI.space.getEntries).toBeCalledWith({
-        'sys.id[in]': 'entry-1,entry-3,entry-2'
-      });
-      expect(widgetAPI.space.getAssets).toBeCalledWith({ 'sys.id[in]': 'asset-1,asset-3,asset-2' });
+      expect(widgetAPI.space.getAsset).toBeCalledTimes(3);
+      resolvedAssets
+        .map(asset => asset.sys.id)
+        .forEach(id => {
+          expect(widgetAPI.space.getAsset).toBeCalledWith(id);
+        });
+      expect(widgetAPI.space.getEntry).toBeCalledTimes(3);
+      resolvedEntries
+        .map(entry => entry.sys.id)
+        .forEach(id => {
+          expect(widgetAPI.space.getEntry).toBeCalledWith(id);
+        });
       expect(data.field).toEqual(field);
-      expect(_.orderBy(data.references, 'sys.id')).toEqual(_.orderBy(unpublishedRefs, 'sys.id'));
+      expect(orderBy(data.references, 'sys.id')).toEqual(orderBy(unpublishedRefs, 'sys.id'));
     });
   });
 });
@@ -82,8 +111,8 @@ function mount(widgetAPI) {
 function createWidgetAPI(field) {
   return {
     space: {
-      getEntries: jest.fn(),
-      getAssets: jest.fn()
+      getEntry: jest.fn(),
+      getAsset: jest.fn()
     },
     field
   };
@@ -99,16 +128,11 @@ function registerMocks() {
   return [registerUnpublishedReferencesWarning, unRegisterUnpublishedReferencesWarning, getValue];
 }
 
-function createMockEntity(id, isPublished) {
-  const entity = {
+function newEntity(id, isPublished) {
+  return {
     sys: {
-      id
+      id,
+      publishedVersion: isPublished ? random(1, 10) : undefined
     }
   };
-
-  if (isPublished) {
-    entity.sys.publishedVersion = _.random(1, 10);
-  }
-
-  return entity;
 }

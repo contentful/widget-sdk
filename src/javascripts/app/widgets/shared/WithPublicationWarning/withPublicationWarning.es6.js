@@ -18,20 +18,14 @@ export default function withPublicationWarning(WrappedComponent, { getLinkedEnti
       this.unregister();
     }
 
-    getEntities = async (getResources, ids) => {
-      if (ids.length > 0) {
-        const { items } = await getResources({
-          'sys.id[in]': ids.join(',')
-        });
-
-        return items;
-      }
-      return Promise.resolve([]);
+    getEntities = async (getResource, ids) => {
+      const entities = await Promise.all(ids.map(id => getResource(id).catch(_error => null)));
+      return entities.filter(Boolean);
     };
 
-    getEntries = ids =>
-      this.getEntities(query => this.props.widgetAPI.space.getEntries(query), ids);
-    getAssets = ids => this.getEntities(query => this.props.widgetAPI.space.getAssets(query), ids);
+    getEntries = ids => this.getEntities(this.props.widgetAPI.space.getEntry, ids);
+
+    getAssets = ids => this.getEntities(this.props.widgetAPI.space.getAsset, ids);
 
     getReferenceData = async () => {
       const { field } = this.props.widgetAPI;
