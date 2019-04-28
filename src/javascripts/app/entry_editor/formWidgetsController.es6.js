@@ -33,8 +33,9 @@ export default function register() {
 
       function update() {
         $scope.widgets = controls.map(markVisibility).filter(shouldRender);
-        $scope.shouldDisplayNoLocalizedFieldsAdvice =
-          $scope.widgets.every(w => w.isVisible === false);
+        $scope.shouldDisplayNoLocalizedFieldsAdvice = $scope.widgets.every(
+          w => w.isVisible === false
+        );
       }
 
       // Adds `isVisible` property to a widget telling the editor
