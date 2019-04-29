@@ -292,8 +292,8 @@ workflows:
             - run:
                 name: Post deployment URL to GitHub
                 command: |
-                  export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | grep -o "\d+$")
-                  curl -i -X POST --data-binary "{\"issue\": $PR_NUMBER, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"quirely\"}" \
+                  export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
+                  curl -i -X POST --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"quirely\"}" \
                   -H 'content-type: application/json' \
                   https://tooling-lambdas.ctfl1.now.sh/user_interface/comments?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY
           requires:
@@ -312,8 +312,8 @@ workflows:
             - run:
                 name: Post deployment URL to GitHub
                 command: |
-                  export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | grep -o "\d+$")
-                  curl -i -X POST --data-binary "{\"issue\": $PR_NUMBER, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"flinkly\"}" \
+                  export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
+                  curl -i -X POST --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"flinkly\"}" \
                   -H 'content-type: application/json' \
                   https://tooling-lambdas.ctfl1.now.sh/user_interface/comments?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY
           requires:
