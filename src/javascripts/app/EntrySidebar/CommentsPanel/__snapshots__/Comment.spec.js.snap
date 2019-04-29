@@ -59,7 +59,7 @@ exports[`Comment renders a comment with the author info 1`] = `
 }
 
 .emotion-2 {
-  color: #a9b9c0;
+  color: #8091a5;
   font-size: 0.75rem;
 }
 
@@ -184,7 +184,7 @@ exports[`Comment renders a comment without the author info 1`] = `
 }
 
 .emotion-2 {
-  color: #a9b9c0;
+  color: #8091a5;
   font-size: 0.75rem;
 }
 

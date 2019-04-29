@@ -4,6 +4,7 @@ import useRefMounted from './useRefMounted.es6';
 const ASYNC_INIT = 'ASYNC_INIT';
 const ASYNC_SUCCESS = 'ASYNC_SUCCESS';
 const ASYNC_FAILURE = 'ASYNC_FAILURE';
+const ASYNC_RESET = 'ASYNC_RESET';
 
 export const dataFetchReducer = (_, action) => {
   switch (action.type) {
@@ -13,13 +14,17 @@ export const dataFetchReducer = (_, action) => {
       return { isLoading: false, data: action.payload };
     case ASYNC_FAILURE:
       return { isLoading: false, error: action.error };
+    case ASYNC_RESET:
+      return { isLoading: false, data: null, error: null };
   }
 };
 
 /**
  * Runs any given function that returns a promise.
- * Returns a new state on every of step the async operation
+ * Returns a new state on every step -- loading, success/error --
  * and a memoized function that will be used to start the async op.
+ * A third value, the reset function, is returned. It can be used
+ * to reset the state of the async operation. This will erase data and error.
  * @param {function(): Promise} fn
  */
 export const useAsyncFn = fn => {
@@ -38,7 +43,7 @@ export const useAsyncFn = fn => {
     }
   }, [fn, isMounted]);
 
-  return [state, runAsync];
+  return [state, runAsync, () => dispatch({ type: ASYNC_RESET })];
 };
 
 /**
