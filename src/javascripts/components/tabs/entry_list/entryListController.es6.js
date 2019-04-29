@@ -162,6 +162,7 @@ export default function register() {
         [
           'context.view.order.fieldId',
           'context.view.order.direction',
+          'context.isSearching',
           'context.view.displayedFieldIds',
           'orderColumnBy',
           'paginator.getPage()',

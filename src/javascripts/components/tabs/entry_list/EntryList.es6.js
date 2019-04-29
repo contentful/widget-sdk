@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import pluralize from 'pluralize';
 
 import cn from 'classnames';
-import { truncate } from 'lodash';
+import { truncate, range } from 'lodash';
 
 import {
   Table,
@@ -15,8 +15,12 @@ import {
   IconButton,
   TextLink,
   ModalConfirm,
-  Paragraph
+  Paragraph,
+  SkeletonContainer,
+  SkeletonBodyText
 } from '@contentful/forma-36-react-components';
+
+import tokens from '@contentful/forma-36-tokens';
 
 import isHotkey from 'is-hotkey';
 import StateLink from 'app/common/StateLink.es6';
@@ -30,8 +34,24 @@ import { isEdge } from 'utils/browser.es6';
 const isEdgeBrowser = isEdge();
 
 import { getModule } from 'NgRegistry.es6';
+
+import { css } from 'emotion';
+
 const spaceContext = getModule('spaceContext');
 const EntityState = getModule('data/CMA/EntityState.es6');
+
+const styles = {
+  tableCellFlexCenter: css({
+    display: 'flex',
+    alignItems: 'center'
+  }),
+  marginBottomXXS: css({
+    marginBottom: '0.25rem'
+  }),
+  hidden: css({
+    visibility: 'hidden'
+  })
+};
 
 // TODO This function is called repeatedly from the template.
 // Unfortunately, 'publishedCTs.get' has the side effect of
@@ -73,15 +93,18 @@ function SortableTableCell({ children, isSortable, isActiveSort, onClick, direct
         }
         onClick();
       }}>
-      {children}
-      {isSortable && isActiveSort && (
-        <IconButton
-          buttonType="naked"
-          iconProps={{
-            icon: direction === 'ascending' ? 'ArrowDown' : 'ArrowUp'
-          }}
-        />
-      )}
+      <span className={styles.tableCellFlexCenter}>
+        {children}
+        {isSortable && isActiveSort && (
+          <IconButton
+            className="f36-margin-left--xs"
+            buttonType="muted"
+            iconProps={{
+              icon: direction === 'ascending' ? 'ArrowDown' : 'ArrowUp'
+            }}
+          />
+        )}
+      </span>
     </TableCell>
   );
 }
@@ -195,7 +218,9 @@ export default function EntryList({
   const isContentTypeVisible = !hasContentTypeSelected && !context.view.contentTypeHidden;
   const selectAll = (
     <Checkbox
-      className="f36-margin-left--s"
+      id="select-all"
+      name="select-all"
+      className={cn('f36-margin-right--xs', styles.marginBottomXXS)}
       onChange={e => {
         selection.toggleList(entries, e);
       }}
@@ -222,13 +247,15 @@ export default function EntryList({
               }}
               direction={context.view.order.direction}>
               {selectAll}
-              Name
+              <label htmlFor="select-all">Name</label>
             </SortableTableCell>
           ) : (
             <React.Fragment>
               <TableCell>
-                {selectAll}
-                Name
+                <span className={styles.tableCellFlexCenter}>
+                  {selectAll}
+                  <label htmlFor="select-all">Name</label>
+                </span>
               </TableCell>
               {isContentTypeVisible && <TableCell>Content Type</TableCell>}
             </React.Fragment>
@@ -249,17 +276,19 @@ export default function EntryList({
             );
           })}
           <TableCell>
-            Status
-            <ViewCustomizer
-              hasHiddenFields={hasHiddenFields}
-              displayedFields={displayedFields}
-              hiddenFields={hiddenFields}
-              removeDisplayField={removeDisplayField}
-              addDisplayField={addDisplayField}
-              toggleContentType={toggleContentType}
-              isContentTypeHidden={!context.view.contentTypeId && context.view.contentTypeHidden}
-              updateFieldOrder={updateFieldOrder}
-            />
+            <span className={styles.tableCellFlexCenter}>
+              Status
+              <ViewCustomizer
+                hasHiddenFields={hasHiddenFields}
+                displayedFields={displayedFields}
+                hiddenFields={hiddenFields}
+                removeDisplayField={removeDisplayField}
+                addDisplayField={addDisplayField}
+                toggleContentType={toggleContentType}
+                isContentTypeHidden={!context.view.contentTypeId && context.view.contentTypeHidden}
+                updateFieldOrder={updateFieldOrder}
+              />
+            </span>
           </TableCell>
         </TableRow>
         {!selection.isEmpty() && (
@@ -267,6 +296,18 @@ export default function EntryList({
         )}
       </TableHead>
       <TableBody>
+        {context.isSearching &&
+          range(0, entries.length || 10).map((_, i) => {
+            return (
+              <TableRow key={i}>
+                <TableCell colSpan={columnLength}>
+                  <SkeletonContainer svgHeight={tokens.spacingM}>
+                    <SkeletonBodyText numberOfLines={1} />
+                  </SkeletonContainer>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         {entries.map(entry => (
           <StateLink to="^.detail" params={{ entryId: entry.getId() }} key={entry.getId()}>
             {({ onClick }) => {
@@ -290,17 +331,23 @@ export default function EntryList({
                   }}
                   className={cn({
                     'ctf-ui-cursor--pointer': true,
-                    'x--highlight': selection.isSelected(entry)
+                    'x--highlight': selection.isSelected(entry),
+                    [styles.hidden]: context.isSearching
                   })}>
                   <TableCell>
-                    <Checkbox
-                      checked={selection.isSelected(entry)}
-                      onChange={e => {
-                        selection.toggle(entry, e);
-                        e.preventDefault();
-                      }}
-                    />
-                    {entryTitle(entry)}
+                    <span className={styles.tableCellFlexCenter}>
+                      <Checkbox
+                        id="select-entry"
+                        name="select-entry"
+                        className={cn('f36-margin-right--xs', styles.marginBottomXXS)}
+                        checked={selection.isSelected(entry)}
+                        onChange={e => {
+                          selection.toggle(entry, e);
+                          e.preventDefault();
+                        }}
+                      />
+                      <label htmlFor="select-entry">{entryTitle(entry)}</label>
+                    </span>
                   </TableCell>
                   {isContentTypeVisible && <TableCell>{contentTypeName(entry)}</TableCell>}
                   {displayedFields.map(field => (
