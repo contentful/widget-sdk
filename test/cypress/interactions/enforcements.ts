@@ -6,6 +6,7 @@ const empty = require('../fixtures/empty.json');
 export function noEnforcementsResponse() {
   return cy
     .addInteraction({
+      provider: 'enforcements',
       state: state.Enforcements.NONE,
       uponReceiving: 'a request for all enforcements',
       withRequest: getEnforcements(),

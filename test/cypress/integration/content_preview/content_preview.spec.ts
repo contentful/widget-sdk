@@ -33,13 +33,11 @@ describe('Content Preview Page', () => {
     defaultRequestsMock();
 
     cy.visit(`/spaces/${defaultSpaceId}/settings/content_preview/new`);
+
+    cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
   });
 
   describe('opening the page', () => {
-    beforeEach(() => {
-      cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
-    });
-
     it('renders create new content preview page', () => {
       cy.getByTestId('cf-ui-form')
         .should('be.visible')
@@ -55,6 +53,7 @@ describe('Content Preview Page', () => {
   describe('saving the content preview', () => {
     beforeEach(() => {
       cy.addInteraction({
+        provider: 'preview_environments',
         state: 'canAddPreviewEnvironments',
         uponReceiving: 'add preview environment request',
         withRequest: {
@@ -81,6 +80,9 @@ describe('Content Preview Page', () => {
       cy.getByTestId('save-content-preview')
         .should('be.enabled')
         .click();
+
+      cy.wait('@addPreviewEnvironments')
+
       cy.getByTestId('cf-ui-notification').should('contain', 'success');
       cy.url().should('include', defaultPreviewId);
     });

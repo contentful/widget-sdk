@@ -5,6 +5,7 @@ const plans = require('../fixtures/plans.json');
 
 export function freePlanResponse() {
   cy.addInteraction({
+    provider: 'plans',
     state: state.Plans.FREE,
     uponReceiving: 'a request for all plans',
     withRequest: getPlans(),

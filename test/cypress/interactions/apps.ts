@@ -4,6 +4,7 @@ import { getApps } from '../util/requests';
 export function noInstalledAppsResponse() {
   return cy
     .addInteraction({
+      provider: 'apps',
       state: state.Apps.NONE_INSTALLED,
       uponReceiving: 'a request for all installed Apps',
       withRequest: getApps(),

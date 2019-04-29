@@ -7,6 +7,13 @@ import { spaceProductCatalogFeaturesResponse } from '../../interactions/product_
 const baseUrl = Cypress.config().baseUrl;
 
 describe('Apps Page', () => {
+  before(() => cy.startFakeServer({
+    consumer: 'user_interface',
+    provider: 'apps',
+    cors: true,
+    pactfileWriteMode: 'merge'
+  }))
+
   beforeEach(() => {
     cy.setAuthTokenToLocalStorage();
     defaultRequestsMock();
@@ -14,6 +21,7 @@ describe('Apps Page', () => {
     spaceProductCatalogFeaturesResponse();
 
     cy.visit(`/spaces/${defaultSpaceId}/apps`);
+
     cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
   });
 

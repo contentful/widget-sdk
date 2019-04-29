@@ -17,6 +17,7 @@ const query = 'limit=1000';
 export function noPublicContentTypesResponse() {
   return cy
     .addInteraction({
+      provider: 'content_types',
       state: state.PublicContentTypes.NONE,
       uponReceiving: 'a request for all public content types',
       withRequest: getPublicContentTypes(defaultSpaceId, query),
@@ -30,6 +31,7 @@ export function noPublicContentTypesResponse() {
 
 export function singleContentTypeResponse() {
   cy.addInteraction({
+    provider: 'content_types',
     state: state.ContentTypes.SINGLE,
     uponReceiving: 'a request for all public content types',
     withRequest: getPublicContentTypes(defaultSpaceId, query),
@@ -42,6 +44,7 @@ export function singleContentTypeResponse() {
 
 export function editorInterfaceResponse() {
   cy.addInteraction({
+    provider: 'content_types',
     state: state.ContentTypes.EDITORINTERFACE,
     uponReceiving: 'a request for editor interfaces',
     withRequest: getEditorInterface(),
@@ -54,6 +57,7 @@ export function editorInterfaceResponse() {
 
 export function allContentTypesResponse() {
   cy.addInteraction({
+    provider: 'content_types',
     state: state.ContentTypes.SINGLE,
     uponReceiving: 'a request for a list of all content types',
     withRequest: getContentTypes(),
@@ -66,6 +70,7 @@ export function allContentTypesResponse() {
 
 export function concreteContentTypeResponse() {
   cy.addInteraction({
+    provider: 'content_types',
     state: state.ContentType.DEFAULT,
     uponReceiving: 'a request for a conrete content type',
     withRequest: getContentType(),
@@ -78,6 +83,7 @@ export function concreteContentTypeResponse() {
 
 export function concretePublishedContentTypeResponse() {
   cy.addInteraction({
+    provider: 'content_types',
     state: state.ContentType.PUBLISHED,
     uponReceiving: 'a request for a published version of concrete content type',
     withRequest: getContentTypePublished(),

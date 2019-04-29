@@ -6,6 +6,7 @@ const empty = require('../fixtures/empty.json');
 export function noPreviewEnvironmentsResponse() {
   const query = 'limit=100';
   cy.addInteraction({
+    provider: 'preview_environments',
     state: state.PreviewEnvironments.NONE,
     uponReceiving: 'a request for all preview environments',
     withRequest: getPreviewEnvironments(defaultSpaceId, query),
