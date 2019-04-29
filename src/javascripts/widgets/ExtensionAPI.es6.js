@@ -17,7 +17,7 @@ const REQUIRED_CONFIG_KEYS = [
   'locales', // `{ available, default }` with all private locales and the default.
   'entryData', // API Entry entity. Using internal IDs (ShareJS format).
   'contentTypeData', // API ContentType entity. Using internal IDs (ShareJS format).
-  'spaceMembership', // API SpaceMembership entity.
+  'spaceMember', // API SpaceMembership entity.
   'parameters', // UI Extension parameters.
   'editorInterface',
 
@@ -59,7 +59,7 @@ export default class ExtensionAPI {
       environmentId,
       contentTypeData,
       entryData,
-      spaceMembership
+      spaceMember
     } = this;
 
     return {
@@ -69,14 +69,14 @@ export default class ExtensionAPI {
       contentType: get(contentTypeData, ['sys', 'id']),
       entry: get(entryData, ['sys', 'id']),
       field: get(current, ['field', 'id']),
-      user: get(spaceMembership, ['user', 'sys', 'id'])
+      user: get(spaceMember, ['sys', 'user', 'sys', 'id'])
     };
   }
 
   // Sends initial data to the IFrame of an extension.
   connect() {
     const {
-      spaceMembership,
+      spaceMember,
       current,
       entryData,
       locales,
@@ -91,19 +91,19 @@ export default class ExtensionAPI {
       user: {
         sys: {
           type: 'User',
-          id: spaceMembership.user.sys.id
+          id: spaceMember.user.sys.id
         },
-        firstName: spaceMembership.user.firstName,
-        lastName: spaceMembership.user.lastName,
-        email: spaceMembership.user.email,
-        avatarUrl: spaceMembership.user.avatarUrl,
-        spaceMembership: {
+        firstName: spaceMember.user.firstName,
+        lastName: spaceMember.user.lastName,
+        email: spaceMember.user.email,
+        avatarUrl: spaceMember.user.avatarUrl,
+        spaceMember: {
           sys: {
             type: 'SpaceMembership',
-            id: spaceMembership.sys.id
+            id: spaceMember.sys.id
           },
-          admin: !!spaceMembership.admin,
-          roles: spaceMembership.roles.map(role => ({
+          admin: !!spaceMember.admin,
+          roles: spaceMember.roles.map(role => ({
             name: role.name,
             description: role.description
           }))

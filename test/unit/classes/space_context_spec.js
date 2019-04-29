@@ -40,7 +40,7 @@ describe('spaceContext', () => {
     this.localeStore = this.$inject('TheLocaleStore');
 
     this.resetWithSpace = function(spaceData) {
-      spaceData = spaceData || { sys: { id: 'spaceid' }, spaceMembership: {} };
+      spaceData = spaceData || { sys: { id: 'spaceid' }, spaceMember: {} };
       this.spaceContext.resetWithSpace(spaceData);
       this.$apply();
       return this.spaceContext.space;

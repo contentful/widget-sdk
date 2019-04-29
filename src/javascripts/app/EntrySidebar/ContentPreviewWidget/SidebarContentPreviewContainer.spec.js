@@ -50,7 +50,7 @@ const entry = {
 describe('entity_editor/Components/SidebarContentPreviewContainer.es6', () => {
   beforeEach(() => {
     mockedSpaceContext.getData.mockImplementation(value => {
-      if (value === 'spaceMembership.admin') {
+      if (value === 'spaceMember.admin') {
         return true;
       }
     });

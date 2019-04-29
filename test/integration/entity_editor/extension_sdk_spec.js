@@ -15,10 +15,11 @@ describe('Extension SDK', () => {
     spaceContext.space = {
       data: {
         sys: {},
-        spaceMembership: {
-          sys: {},
-          user: {
-            sys: {}
+        spaceMember: {
+          sys: {
+            user: {
+              sys: {}
+            }
           },
           roles: []
         }
@@ -562,7 +563,7 @@ describe('Extension SDK', () => {
       spaceContext.space = {
         data: {
           sys: {},
-          spaceMembership: {
+          spaceMember: {
             admin: false,
             sys: { id: 'SMID' },
             roles: [
@@ -593,7 +594,7 @@ describe('Extension SDK', () => {
         lastName: 'Schrute',
         email: 'dwight@dundermifflin.com',
         avatarUrl: 'https://avatar.com/x.jpg',
-        spaceMembership: {
+        spaceMember: {
           admin: false,
           sys: { id: 'SMID', type: 'SpaceMembership' },
           roles: [
