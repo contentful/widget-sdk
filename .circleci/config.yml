@@ -307,8 +307,8 @@ workflows:
           post-steps:
             - post-comment/to-pr:
                 env: 'quirely'
-        requires:
-          - build-and-push-image
+          requires:
+            - build-and-push-image
       - deploy-assets/to-s3:
           name: deploy-assets-to-staging
           access_key_id: '${AWS_S3_STAGING_ACCESS_KEY_ID}'
