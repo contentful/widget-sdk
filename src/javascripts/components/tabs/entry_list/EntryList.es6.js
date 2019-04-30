@@ -41,18 +41,27 @@ const spaceContext = getModule('spaceContext');
 const EntityState = getModule('data/CMA/EntityState.es6');
 
 const styles = {
-  tableCellFlexCenter: css({
+  flexCenter: css({
     display: 'flex',
     alignItems: 'center'
   }),
-  tableCell: css({
+  wordBreak: css({
     wordBreak: 'break-all'
   }),
   marginBottomXXS: css({
     marginBottom: '0.25rem'
   }),
-  hidden: css({
+  /*
+    We use visibility:hidden to preserve column width during search, sorting, or pagination.
+  */
+  visibilityHidden: css({
     visibility: 'hidden'
+  }),
+  /*
+    We have to override inline styles set by TableHead.offsetTop
+  */
+  secondRowOffset: css({
+    top: '22px !important'
   })
 };
 
@@ -96,7 +105,7 @@ function SortableTableCell({ children, isSortable, isActiveSort, onClick, direct
         }
         onClick();
       }}>
-      <span className={styles.tableCellFlexCenter}>
+      <span className={styles.flexCenter}>
         {children}
         {isSortable && isActiveSort && (
           <IconButton
@@ -133,7 +142,7 @@ function BulkActionsRow({ colSpan, actions, selection }) {
   const [isConfirmVisibile, setConfirmVisibility] = useState(false);
   return (
     <TableRow>
-      <TableCell colSpan={colSpan}>
+      <TableCell colSpan={colSpan} className={styles.secondRowOffset}>
         <span className="f36-margin-right--s">
           {pluralize('entry', selection.size(), true)} selected:
         </span>
@@ -216,6 +225,8 @@ export default function EntryList({
   assetCache
 }) {
   const hasContentTypeSelected = !!context.view.contentTypeId;
+
+  // can be undefined
   const displayFieldName = displayFieldForFilteredContentType();
 
   const isContentTypeVisible = !hasContentTypeSelected && !context.view.contentTypeHidden;
@@ -239,9 +250,9 @@ export default function EntryList({
     1;
   return (
     <Table>
-      <TableHead offsetTop={isEdgeBrowser ? '0px' : '-22px'} isSticky>
+      <TableHead offsetTop={isEdgeBrowser ? '0px' : '-20px'} isSticky>
         <TableRow>
-          {hasContentTypeSelected ? (
+          {hasContentTypeSelected & displayFieldName ? (
             <SortableTableCell
               isSortable={fieldIsSortable(displayFieldName)}
               isActiveSort={isOrderField(displayFieldName)}
@@ -255,7 +266,7 @@ export default function EntryList({
           ) : (
             <React.Fragment>
               <TableCell>
-                <span className={styles.tableCellFlexCenter}>
+                <span className={styles.flexCenter}>
                   {selectAll}
                   <label htmlFor="select-all">Name</label>
                 </span>
@@ -279,7 +290,7 @@ export default function EntryList({
             );
           })}
           <TableCell>
-            <span className={styles.tableCellFlexCenter}>
+            <span className={styles.flexCenter}>
               Status
               <ViewCustomizer
                 hasHiddenFields={hasHiddenFields}
@@ -335,10 +346,10 @@ export default function EntryList({
                   className={cn({
                     'ctf-ui-cursor--pointer': true,
                     'x--highlight': selection.isSelected(entry),
-                    [styles.hidden]: context.isSearching
+                    [styles.visibilityHidden]: context.isSearching
                   })}>
                   <TableCell>
-                    <span className={styles.tableCellFlexCenter}>
+                    <span className={styles.flexCenter}>
                       <Checkbox
                         id="select-entry"
                         name="select-entry"
@@ -354,7 +365,7 @@ export default function EntryList({
                   </TableCell>
                   {isContentTypeVisible && <TableCell>{contentTypeName(entry)}</TableCell>}
                   {displayedFields.map(field => (
-                    <TableCell key={field.id} className={styles.tableCell}>
+                    <TableCell key={field.id} className={styles.wordBreak}>
                       <DisplayField
                         field={field}
                         entry={entry}

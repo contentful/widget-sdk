@@ -8,8 +8,9 @@ export default function register() {
     $scope => {
       const SORTABLE_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Location'];
 
-      $scope.fieldIsSortable = field =>
-        _.includes(SORTABLE_TYPES, field.type) && field.id !== 'author';
+      $scope.fieldIsSortable = field => {
+        return _.includes(SORTABLE_TYPES, field.type) && field.id !== 'author';
+      };
 
       $scope.isOrderField = field => $scope.context.view.order.fieldId === field.id;
 

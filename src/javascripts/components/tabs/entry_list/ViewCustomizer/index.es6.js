@@ -82,7 +82,10 @@ export default class ViewCustomizer extends React.Component {
         onClose={() => this.setState({ isOpen: false })}
         position="bottom-right"
         toggleElement={
-          <Tooltip content="Select visible columns" place="left" className={styles.tooltip}>
+          <Tooltip
+            content="Select visible columns"
+            place="left"
+            targetWrapperClassName={styles.tooltip}>
             <IconButton
               buttonType="muted"
               iconProps={{ icon: 'Settings' }}
