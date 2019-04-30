@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get, orderBy, filter, flow } from 'lodash/fp';
-import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
-import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
 import { TableCell, TableRow, Button, Select, Option } from '@contentful/forma-36-react-components';
+import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
+import { getMembershipsOfCurrentTeamToDisplay } from 'redux/selectors/teamMemberships.es6';
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes.es6';
 
 class TeamMembershipForm extends React.Component {
@@ -59,7 +59,7 @@ class TeamMembershipForm extends React.Component {
 }
 
 function getAvailableOrgMemberships(state) {
-  const teamMemberships = getCurrentTeamMembershipList(state);
+  const teamMemberships = getMembershipsOfCurrentTeamToDisplay(state);
   const unavailableOrgMemberships = teamMemberships.map(get('sys.organizationMembership.sys.id'));
   return flow(
     getOrgMemberships,

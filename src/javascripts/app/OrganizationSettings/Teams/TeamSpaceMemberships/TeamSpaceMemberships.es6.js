@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import * as types from 'app/OrganizationSettings/PropTypes.es6';
 import { hasReadOnlyPermission } from 'redux/selectors/teams.es6';
-import { getCurrentTeamSpaceMembershipList } from 'redux/selectors/teamSpaceMemberships.es6';
+import { getTeamSpaceMembershipsOfCurrentTeamToDisplay } from 'redux/selectors/teamSpaceMemberships.es6';
 import TeamSpaceMembershipForm from './TeamSpaceMembershipForm.es6';
 import TeamSpaceMembershipRow from './TeamSpaceMembershipRow.es6';
 
@@ -19,7 +19,7 @@ import {
 export class TeamSpaceMemberships extends React.Component {
   static propTypes = {
     showingForm: PropTypes.bool.isRequired,
-    readOnlyPermission: PropTypes.bool.isRequired,
+    hideCreator: PropTypes.bool.isRequired,
     onFormDismissed: PropTypes.func.isRequired,
     memberships: PropTypes.arrayOf(
       PropTypes.oneOfType([types.TeamSpaceMembership, types.TeamSpaceMembershipPlaceholder])
@@ -31,7 +31,7 @@ export class TeamSpaceMemberships extends React.Component {
   };
 
   render() {
-    const { memberships, showingForm, onFormDismissed, readOnlyPermission } = this.props;
+    const { memberships, showingForm, onFormDismissed, hideCreator } = this.props;
     const { editingMembershipId } = this.state;
 
     return (
@@ -43,12 +43,8 @@ export class TeamSpaceMemberships extends React.Component {
             <TableCell>Space</TableCell>
             <TableCell>Space roles</TableCell>
             <TableCell>Created at</TableCell>
-            {!readOnlyPermission && (
-              <React.Fragment>
-                <TableCell>Created by</TableCell>
-                <TableCell width="200px" />
-              </React.Fragment>
-            )}
+            {!hideCreator && <TableCell>Created by</TableCell>}
+            <TableCell width="200px" />
           </TableRow>
         </TableHead>
         <TableBody>
@@ -75,6 +71,6 @@ export class TeamSpaceMemberships extends React.Component {
 }
 
 export default connect(state => ({
-  readOnlyPermission: hasReadOnlyPermission(state),
-  memberships: getCurrentTeamSpaceMembershipList(state)
+  hideCreator: hasReadOnlyPermission(state),
+  memberships: getTeamSpaceMembershipsOfCurrentTeamToDisplay(state)
 }))(TeamSpaceMemberships);

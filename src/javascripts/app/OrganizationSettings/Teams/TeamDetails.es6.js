@@ -15,8 +15,8 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { getTeams, getCurrentTeam, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
-import { getCurrentTeamSpaceMembershipList } from 'redux/selectors/teamSpaceMemberships.es6';
-import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
+import { getTeamSpaceMembershipsOfCurrentTeamToDisplay } from 'redux/selectors/teamSpaceMemberships.es6';
+import { getMembershipsOfCurrentTeamToDisplay } from 'redux/selectors/teamMemberships.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import Workbench from 'app/common/Workbench.es6';
 import Placeholder from 'app/common/Placeholder.es6';
@@ -342,8 +342,8 @@ export default connect(
     team: getTeams(state)[getCurrentTeam(state)],
     orgId: getOrgId(state),
     readOnlyPermission: hasReadOnlyPermission(state),
-    emptyTeamMemberships: getCurrentTeamMembershipList(state).length === 0,
-    emptyTeamSpaceMemberships: getCurrentTeamSpaceMembershipList(state).length === 0
+    emptyTeamMemberships: getMembershipsOfCurrentTeamToDisplay(state).length === 0,
+    emptyTeamSpaceMemberships: getTeamSpaceMembershipsOfCurrentTeamToDisplay(state).length === 0
   }),
   dispatch => ({
     removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })

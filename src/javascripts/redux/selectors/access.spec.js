@@ -12,8 +12,8 @@ describe('access selectors', () => {
       expect(hasAccess(initialState)).toBe(true);
     });
 
-    it('getReasonDenied should return undefined', () => {
-      expect(getReasonDenied(initialState)).toBeUndefined();
+    it('getReasonDenied should return null', () => {
+      expect(getReasonDenied(initialState)).toBeNull();
     });
 
     describe('access was denied', () => {
@@ -46,8 +46,8 @@ describe('access selectors', () => {
           expect(hasAccess(newLocationState)).toBe(true);
         });
 
-        it('getReasonDenied should return undefined', () => {
-          expect(getReasonDenied(newLocationState)).toBeUndefined();
+        it('getReasonDenied should return null', () => {
+          expect(getReasonDenied(newLocationState)).toBeNull();
         });
       });
     });
