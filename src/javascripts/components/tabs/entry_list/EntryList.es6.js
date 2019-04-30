@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 
 import cn from 'classnames';
@@ -51,6 +51,19 @@ const styles = {
   marginBottomXXS: css({
     marginBottom: '0.25rem'
   }),
+  sortable: css({
+    '&:hover': {
+      cursor: 'pointer',
+      backgroundColor: tokens.colorElementLight
+    }
+  }),
+  highlight: css({
+    backgroundColor: tokens.colorIceMid
+  }),
+  activeSort: css({
+    fontWeight: tokens.fontWeightDemiBold
+  }),
+
   /*
     We use visibility:hidden to preserve column width during search, sorting, or pagination.
   */
@@ -60,7 +73,7 @@ const styles = {
   /*
     We have to override inline styles set by TableHead.offsetTop
   */
-  secondRowOffset: css({
+  bulkActionsRow: css({
     top: '22px !important'
   })
 };
@@ -96,8 +109,8 @@ function SortableTableCell({ children, isSortable, isActiveSort, onClick, direct
   return (
     <TableCell
       className={cn({
-        'x--sortable': isSortable,
-        'x--active-sort': isActiveSort
+        [styles.sortable]: isSortable,
+        [styles.activeSort]: isActiveSort
       })}
       onClick={e => {
         if (isTargetInput(e)) {
@@ -121,6 +134,13 @@ function SortableTableCell({ children, isSortable, isActiveSort, onClick, direct
   );
 }
 
+SortableTableCell.propTypes = {
+  isSortable: PropTypes.bool.isRequired,
+  isActiveSort: PropTypes.bool.isRequired,
+  direction: PropTypes.oneOf(['ascending', 'descending']),
+  onClick: PropTypes.func.isRequired
+};
+
 function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm }) {
   return (
     <ModalConfirm
@@ -138,11 +158,17 @@ function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm }) {
   );
 }
 
+DeleteEntryConfirm.propTypes = {
+  itemsCount: PropTypes.number.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired
+};
+
 function BulkActionsRow({ colSpan, actions, selection }) {
   const [isConfirmVisibile, setConfirmVisibility] = useState(false);
   return (
     <TableRow>
-      <TableCell colSpan={colSpan} className={styles.secondRowOffset}>
+      <TableCell colSpan={colSpan} className={styles.bulkActionsRow}>
         <span className="f36-margin-right--s">
           {pluralize('entry', selection.size(), true)} selected:
         </span>
@@ -205,6 +231,12 @@ function BulkActionsRow({ colSpan, actions, selection }) {
   );
 }
 
+BulkActionsRow.propTypes = {
+  colSpan: PropTypes.number.isRequired,
+  actions: PropTypes.object.isRequired,
+  selection: PropTypes.object.isRequired
+};
+
 export default function EntryList({
   context,
   displayedFields = [],
@@ -212,7 +244,7 @@ export default function EntryList({
   fieldIsSortable,
   isOrderField,
   orderColumnBy,
-  hasHiddenFields,
+
   hiddenFields,
   removeDisplayField,
   addDisplayField,
@@ -293,7 +325,6 @@ export default function EntryList({
             <span className={styles.flexCenter}>
               Status
               <ViewCustomizer
-                hasHiddenFields={hasHiddenFields}
                 displayedFields={displayedFields}
                 hiddenFields={hiddenFields}
                 removeDisplayField={removeDisplayField}
@@ -343,9 +374,8 @@ export default function EntryList({
                       e.preventDefault();
                     }
                   }}
-                  className={cn({
-                    'ctf-ui-cursor--pointer': true,
-                    'x--highlight': selection.isSelected(entry),
+                  className={cn('ctf-ui-cursor--pointer', {
+                    [styles.highlight]: selection.isSelected(entry),
                     [styles.visibilityHidden]: context.isSearching
                   })}>
                   <TableCell>
@@ -388,6 +418,26 @@ export default function EntryList({
     </Table>
   );
 }
+
+EntryList.propTypes = {
+  context: PropTypes.object.isRequired,
+  displayedFields: PropTypes.array.isRequired,
+  displayFieldForFilteredContentType: PropTypes.func.isRequired,
+  fieldIsSortable: PropTypes.func.isRequired,
+  isOrderField: PropTypes.func.isRequired,
+  orderColumnBy: PropTypes.string,
+  hiddenFields: PropTypes.array,
+  removeDisplayField: PropTypes.func,
+  addDisplayField: PropTypes.func,
+  toggleContentType: PropTypes.func,
+  updateFieldOrder: PropTypes.func,
+  selection: PropTypes.object,
+  entries: PropTypes.array,
+  actions: PropTypes.object,
+  entryCache: PropTypes.object,
+  assetCache: PropTypes.object
+};
+
 function isTargetInput(e) {
   return e.target.tagName === 'INPUT';
 }

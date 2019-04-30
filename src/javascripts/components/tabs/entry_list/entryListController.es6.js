@@ -119,7 +119,6 @@ export default function register() {
           fieldIsSortable: $scope.fieldIsSortable,
           isOrderField: $scope.isOrderField,
           orderColumnBy: $scope.orderColumnBy,
-          hasHiddenFields: $scope.hasHiddenFields,
           hiddenFields: $scope.hiddenFields,
           removeDisplayField: $scope.removeDisplayField,
           addDisplayField: $scope.addDisplayField,
