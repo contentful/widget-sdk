@@ -28,7 +28,7 @@ export const getCurrentTeamSpaceMembershipList = state => {
   const currentTeamId = getCurrentTeam(state);
   return flow(
     getSpaceMembershipsByTeam,
-    // get team space memberships of currently active team (e.g. containg in url)
+    // get team space memberships of currently active team (e.g. containing in url)
     get(currentTeamId),
     defaultTo([]),
     sortBySpaceName,
