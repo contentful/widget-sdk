@@ -34,6 +34,22 @@ orbs:
               from: <<parameters.path>>
               to: s3://<<parameters.bucket>>
               arguments: '--acl public-read --recursive'
+  post-comment:
+    commands:
+      to-pr:
+        description: 'Post deployment URL to PR that triggered the build as a comment'
+        parameters:
+          env:
+            type: string
+            description: quirely or flinkly
+        steps:
+          - run:
+              name: Post deployment URL to GitHub
+              command: |
+                export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
+                curl -i -X POST --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"<<parameters.env>>\"}" \
+                -H 'content-type: application/json' \
+                https://tooling-lambdas.ctfl1.now.sh/user_interface/comments?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY
 
 executors:
   cypress-base-8:
@@ -288,6 +304,9 @@ workflows:
           region: 'eu-west-1'
           path: '~/workspace/output/files/preview'
           bucket: 'cf-preview-static-cdnorigin'
+          post-steps:
+            - post-comment/to-pr:
+                env: 'quirely'
           requires:
             - build-and-push-image
       - deploy-assets/to-s3:
@@ -301,6 +320,8 @@ workflows:
             - run:
                 name: Trigger Jenkins Staging Dependent Tests
                 command: bin/trigger-jenkins-dependent
+            - post-comment/to-pr:
+                env: 'flinkly'
           requires:
             - build-and-push-image
       - deploy-assets/to-s3:
