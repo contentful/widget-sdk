@@ -6,17 +6,20 @@ import tokens from '@contentful/forma-36-tokens';
 import {
   Button,
   Note,
-  Select,
-  Option,
   Notification,
   Typography,
   Heading,
-  Paragraph
+  Paragraph,
+  Form,
+  SelectField,
+  Option,
+  TextField
 } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import { fetchExtension } from 'app/settings/extensions/dialogs/GitHubFetcher.es6';
+import * as Random from 'utils/Random.es6';
 
 import AppIcon from '../_common/AppIcon.es6';
 import makeSidebar from './sidebar.es6';
@@ -67,6 +70,7 @@ export default class ApprovalWorkflowAppPage extends Component {
 
     this.state = {
       selectedContentTypeId: EMPTY_OPTION,
+      providedWebhookUrl: '',
       installed: props.app.installed,
       config: cloneDeep(props.app.config)
     };
@@ -122,11 +126,11 @@ export default class ApprovalWorkflowAppPage extends Component {
     try {
       const uie = await fetchExtension(UIE_GH_URL);
       const createdUie = await this.props.cmaClient.createExtension({
-        sys: { id: 'basic-approval-workflow' },
+        sys: { id: `basic-approval-workflow-${Random.id()}` },
         extension: { ...uie, name: 'Reviews App' }
       });
 
-      const { selectedContentTypeId } = this.state;
+      const { selectedContentTypeId, providedWebhookUrl } = this.state;
       const ct = this.props.contentTypes.find(ct => ct.sys.id === selectedContentTypeId);
       const ei = await this.props.cmaClient.getEditorInterface(ct.sys.id);
 
@@ -136,11 +140,12 @@ export default class ApprovalWorkflowAppPage extends Component {
           version: ei.sys.version
         },
         controls: ei.controls,
-        sidebar: makeSidebar(createdUie.sys.id)
+        sidebar: makeSidebar(createdUie.sys.id, providedWebhookUrl)
       });
 
       const config = {
         contentTypeId: ct.sys.id,
+        webhookUrl: providedWebhookUrl,
         extensionId: createdUie.sys.id
       };
 
@@ -190,9 +195,10 @@ export default class ApprovalWorkflowAppPage extends Component {
   };
 
   renderContent() {
-    const contentType = this.props.contentTypes.find(
-      ct => ct.sys.id === this.state.config.contentTypeId
-    );
+    const { contentTypes } = this.props;
+    const { selectedContentTypeId, providedWebhookUrl } = this.state;
+    const { contentTypeId, webhookUrl } = this.state.config;
+    const contentType = contentTypes.find(ct => ct.sys.id === contentTypeId);
 
     return (
       <Workbench.Content centered>
@@ -224,6 +230,11 @@ export default class ApprovalWorkflowAppPage extends Component {
                 Uninstall the app and configure it again for some other content type.
               </Paragraph>
             )}
+            {webhookUrl && (
+              <Paragraph>
+                Notifications will be sent to <code>{webhookUrl}</code>.
+              </Paragraph>
+            )}
             <Paragraph>
               If you’ll decide to uninstall the app, we will remove the UI Extension and restore the
               default sidebar for your content type. Review history and all comments will be deleted
@@ -234,20 +245,38 @@ export default class ApprovalWorkflowAppPage extends Component {
 
         {!this.state.installed && (
           <Typography>
-            <Heading>Select a content type</Heading>
-            <Paragraph>
-              Pick a content type for which you want to enable the approval workflow.
-            </Paragraph>
-            <Select onChange={e => this.setState({ selectedContentTypeId: e.target.value })}>
-              <Option key={EMPTY_OPTION} value={EMPTY_OPTION}>
-                Pick a content type
-              </Option>
-              {this.props.contentTypes.map(ct => (
-                <Option key={ct.sys.id} value={ct.sys.id}>
-                  {ct.name}
+            <Heading>Configuration</Heading>
+            <Form>
+              <SelectField
+                required={true}
+                name="contentType"
+                id="contentType"
+                labelText="Content type"
+                helpText="Pick a content type for which you want to enable the approval workflow."
+                value={selectedContentTypeId}
+                onChange={e => this.setState({ selectedContentTypeId: e.target.value })}>
+                <Option key={EMPTY_OPTION} value={EMPTY_OPTION}>
+                  Pick a content type
                 </Option>
-              ))}
-            </Select>
+                {contentTypes.map(ct => (
+                  <Option key={ct.sys.id} value={ct.sys.id}>
+                    {ct.name}
+                  </Option>
+                ))}
+              </SelectField>
+              <TextField
+                name="webhookUrl"
+                id="webhookUrl"
+                labelText="Webhook URL"
+                helpText="Optional. If provided, the URL will be called with notifications about all workflow events. Must be served over HTTPS with CORS enabled."
+                value={providedWebhookUrl}
+                onChange={e => this.setState({ providedWebhookUrl: e.target.value })}
+                textInputProps={{
+                  placeholder: 'https://my-webhook-target.com',
+                  maxLength: 512
+                }}
+              />
+            </Form>
           </Typography>
         )}
       </Workbench.Content>
