@@ -101,7 +101,6 @@ export default class LinkEditor extends React.Component {
     const handleEditLink = fetchEntityResult =>
       this.handleEditLink(fetchEntityResult.entity, index);
     const entityType = link.sys.linkType;
-    // TODO: Optimize fetching in this case, don't load thumbnail!
     return (
       <FetchedEntityCard
         entityType={entityType}

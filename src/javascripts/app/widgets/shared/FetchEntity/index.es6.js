@@ -15,7 +15,11 @@ export default class FetchEntity extends React.PureComponent {
     entityId: PropTypes.string.isRequired,
     entityType: PropTypes.oneOf(['Entry', 'Asset']).isRequired,
     localeCode: PropTypes.string,
+    fetchFile: PropTypes.bool,
     render: PropTypes.func.isRequired
+  };
+  static defaultProps = {
+    fetchFile: true
   };
   state = {
     requestStatus: RequestStatus.Pending
@@ -46,7 +50,7 @@ export default class FetchEntity extends React.PureComponent {
     }
   }
   fetchEntity = async () => {
-    const { widgetAPI, entityId, entityType, localeCode } = this.props;
+    const { widgetAPI, entityId, entityType, localeCode, fetchFile } = this.props;
 
     this.setStateSafe({
       requestStatus: RequestStatus.Pending
@@ -71,7 +75,9 @@ export default class FetchEntity extends React.PureComponent {
     }
 
     const entityHelpers = EntityHelpers.newForLocale(localeCode);
-    const entityFilePromise = entityHelpers.entityFile(entity);
+    const entityFilePromise = fetchFile
+      ? entityHelpers.entityFile(entity)
+      : Promise.resolve(undefined);
 
     const [entityTitle, entityDescription] = await Promise.all([
       entityHelpers.entityTitle(entity),
@@ -87,7 +93,7 @@ export default class FetchEntity extends React.PureComponent {
       entityFile: this.state.entityFile || undefined,
       entityStatus,
       contentTypeName: contentType && contentType.name,
-      requestStatus: RequestStatus.Pending // Wait for `entityFile`.
+      requestStatus: fetchFile ? RequestStatus.Pending : RequestStatus.Success
     });
 
     const entityFile = await entityFilePromise;

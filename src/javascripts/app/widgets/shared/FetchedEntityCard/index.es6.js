@@ -89,6 +89,7 @@ class FetchedEntityCard extends React.Component {
             entityId={entityId}
             entityType={entityType}
             localeCode={widgetAPI.field.locale}
+            fetchFile={entityType === 'Asset' || size !== 'small'}
             render={fetchEntityResult => {
               const isPending = fetchEntityResult.requestStatus === RequestStatus.Pending;
               const isLoading = isPending && !fetchEntityResult.entity;
@@ -99,8 +100,8 @@ class FetchedEntityCard extends React.Component {
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingEntryReferenceCard(fetchEntityResult);
               } else {
-                const isEntry = this.props.entityType === 'Entry';
-                const isSmallAsset = !isEntry && this.props.size === 'small';
+                const isEntry = entityType === 'Entry';
+                const isSmallAsset = !isEntry && size === 'small';
                 const WrapperComponent =
                   isEntry || isSmallAsset ? WrappedEntityCard : WrappedAssetCard;
                 const cardProps = {
