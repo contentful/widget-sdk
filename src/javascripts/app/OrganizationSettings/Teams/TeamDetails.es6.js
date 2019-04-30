@@ -15,8 +15,8 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { getTeams, getCurrentTeam, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
-import { getCurrentTeamSpaceMembershipList } from 'redux/selectors/teamSpaceMemberships.es6';
-import { getCurrentTeamMembershipList } from 'redux/selectors/teamMemberships.es6';
+import { getTeamSpaceMembershipsOfCurrentTeamToDisplay } from 'redux/selectors/teamSpaceMemberships.es6';
+import { getMembershipsOfCurrentTeamToDisplay } from 'redux/selectors/teamMemberships.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import Workbench from 'app/common/Workbench.es6';
 import Placeholder from 'app/common/Placeholder.es6';
@@ -191,11 +191,14 @@ class TeamDetails extends React.Component {
               <div className={styles.sidebar}>
                 <section className={styles.profileSection}>
                   <div className={styles.card}>
-                    <h2 className={styles.name} data-test-id="team-card-name">
+                    <h2 className={styles.name} data-test-id="team-card-name" title={team.name}>
                       {team.name}
                     </h2>
                     {team.description && (
-                      <div className={styles.description} data-test-id="team-card-description">
+                      <div
+                        className={styles.description}
+                        data-test-id="team-card-description"
+                        title={team.description}>
                         {team.description.split('\n').reduce((acc, cur, idx) => {
                           if (idx === 0) {
                             return [...acc, cur];
@@ -339,8 +342,8 @@ export default connect(
     team: getTeams(state)[getCurrentTeam(state)],
     orgId: getOrgId(state),
     readOnlyPermission: hasReadOnlyPermission(state),
-    emptyTeamMemberships: getCurrentTeamMembershipList(state).length === 0,
-    emptyTeamSpaceMemberships: getCurrentTeamSpaceMembershipList(state).length === 0
+    emptyTeamMemberships: getMembershipsOfCurrentTeamToDisplay(state).length === 0,
+    emptyTeamSpaceMemberships: getTeamSpaceMembershipsOfCurrentTeamToDisplay(state).length === 0
   }),
   dispatch => ({
     removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })

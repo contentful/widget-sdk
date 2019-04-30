@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { flow, map } from 'lodash/fp';
 import { get } from 'lodash';
 import getCurrentOrgSpaces from 'redux/selectors/getCurrentOrgSpaces.es6';
-import { getCurrentTeamSpaceMembershipList } from 'redux/selectors/teamSpaceMemberships.es6';
+import { getTeamSpaceMembershipsOfCurrentTeamToDisplay } from 'redux/selectors/teamSpaceMemberships.es6';
 import getRolesBySpace from 'redux/selectors/getRolesBySpace.es6';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor.es6';
 import { TableCell, TableRow, Button, Select, Option } from '@contentful/forma-36-react-components';
@@ -98,7 +98,7 @@ class TeamMembershipForm extends React.Component {
 }
 
 function getAvailableSpaces(state) {
-  const teamSpaceMemberships = getCurrentTeamSpaceMembershipList(state);
+  const teamSpaceMemberships = getTeamSpaceMembershipsOfCurrentTeamToDisplay(state);
   const unavailableSpaces = teamSpaceMemberships.map(membership =>
     get(membership, 'sys.space.sys.id')
   );

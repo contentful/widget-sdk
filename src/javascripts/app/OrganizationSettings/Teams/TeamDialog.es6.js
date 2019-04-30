@@ -68,7 +68,7 @@ class TeamDialog extends React.Component {
     const { name } = this.state;
     const { allTeams, initialTeam } = this.props;
 
-    if (isEmpty(name)) {
+    if (isEmpty(name.trim())) {
       return 'Choose a name for your new team';
     }
     if (

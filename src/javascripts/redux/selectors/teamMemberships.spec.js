@@ -1,5 +1,5 @@
 import reducer from 'redux/reducer/index.es6';
-import { getCurrentTeamMembershipList } from './teamMemberships.es6';
+import { getMembershipsOfCurrentTeamToDisplay } from './teamMemberships.es6';
 import routes from '../routes.es6';
 import { TEAM_MEMBERSHIPS, TEAMS, USERS } from '../datasets.es6';
 
@@ -138,7 +138,7 @@ describe('getCurrentTeamMembershipList', () => {
     });
 
     it('should return sorted team memberships with resolved links where possible', () => {
-      const teamMemberships = getCurrentTeamMembershipList(state);
+      const teamMemberships = getMembershipsOfCurrentTeamToDisplay(state);
       expect(teamMemberships).toEqual([
         {
           sys: {

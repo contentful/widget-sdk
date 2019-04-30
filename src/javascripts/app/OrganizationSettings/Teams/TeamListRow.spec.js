@@ -19,7 +19,7 @@ const renderComponent = (actions, team) => {
     <Provider store={store}>
       <Table>
         <TableBody>
-          <TeamListRow team={team} />
+          <TeamListRow team={team} showTeamLinks />
         </TableBody>
       </Table>
     </Provider>
