@@ -32,6 +32,8 @@ export default class FetchEntity extends React.PureComponent {
 
     const prevEntryId = prevUrl.pathname.split('/').pop();
 
+    // TODO: Find better way of detecting whether entity was edited than this path hack.
+    // TODO: This does not work in case of bulk editor edit.
     const hasUserJustEditedEntity = () =>
       currentUrl.pathname !== prevUrl.pathname && prevEntryId === this.props.entityId;
 
@@ -82,7 +84,7 @@ export default class FetchEntity extends React.PureComponent {
       entity,
       entityTitle,
       entityDescription,
-      entityFile: undefined,
+      entityFile: this.state.entityFile || undefined,
       entityStatus,
       contentTypeName: contentType && contentType.name,
       requestStatus: RequestStatus.Pending // Wait for `entityFile`.

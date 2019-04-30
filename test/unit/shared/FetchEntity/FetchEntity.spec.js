@@ -1,3 +1,4 @@
+import flushPromises from 'test/helpers/flushPromises';
 import React from 'react';
 import { mount } from 'enzyme';
 
@@ -113,6 +114,8 @@ describe('FetchEntity', () => {
     });
   });
 
+  const EXPECTED_RENDER_CALLS = 3;
+
   describe('(pending/success) props.render()', function() {
     beforeEach(function() {
       this.mount();
@@ -148,8 +151,30 @@ describe('FetchEntity', () => {
       });
     });
 
-    it('is called thrice in total', function() {
-      sandbox.assert.callCount(this.props.render, 3);
+    it('is called thrice in total (before fetch, fetch entry, fetch file)', function() {
+      sandbox.assert.callCount(this.props.render, EXPECTED_RENDER_CALLS);
+    });
+  });
+
+  describe('on navigation (widgetAPI.currentUrl', function() {
+    beforeEach(async function() {
+      const updateUrl = pathname =>
+        (this.props.widgetAPI = { ...this.props.widgetAPI, currentUrl: { pathname } });
+      updateUrl(`base/${this.entity.sys.id}`);
+      this.mount();
+      await flushPromises();
+      this.props.render.reset();
+      updateUrl(`base/other`);
+      this.wrapper.setProps(this.props);
+      await flushPromises();
+    });
+
+    it('updates and re-fetches all information', function() {
+      sandbox.assert.callCount(this.props.render, EXPECTED_RENDER_CALLS);
+    });
+
+    it('does not reset `entityFile` while waiting for it`s updated version', function() {
+      sinon.assert.alwaysCalledWith(this.props.render, sinon.match({ entityFile: 'FILE' }));
     });
   });
 });
