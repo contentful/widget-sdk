@@ -8,6 +8,7 @@ import { Typography, Paragraph, Heading } from '@contentful/forma-36-react-compo
 import { useCommentsFetcher } from './hooks.es6';
 import CreateComment from './CreateEntryComment.es6';
 import CommentThread from './CommentThread.es6';
+import CommentsPanelEmptyState from './CommentsPanelEmptyState.es6';
 import { CommentSkeletonGroup } from './CommentSkeleton.es6';
 import { fromFlatToThreads, isReply, isReplyToComment } from './utils.es6';
 
@@ -47,7 +48,7 @@ export const styles = {
     borderTop: `1px solid ${tokens.colorElementLight}`,
     padding: tokens.spacingS
   }),
-  emptyState: css({
+  errorState: css({
     display: 'flex',
     height: '100%',
     justifyContent: 'center',
@@ -58,14 +59,12 @@ export const styles = {
 
 export default function CommentsPanel({ spaceId, entryId, isVisible }) {
   const { isLoading, data, error } = useCommentsFetcher(spaceId, entryId);
-  const [comments, setComments] = useState([]);
-  const [isEmpty, setIsEmpty] = useState(null);
+  const [comments, setComments] = useState();
   const [shouldScroll, setShouldScroll] = useState(false);
   const listRef = useRef(null);
 
   const handleNewComment = comment => {
     setComments([...comments, comment]);
-    setIsEmpty(false);
     !isReply(comment) && setShouldScroll(true);
   };
 
@@ -76,7 +75,6 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
       return !(item == comment || isReply(item));
     });
     setComments(newList);
-    !newList.length && setIsEmpty(true);
   };
 
   // check for the first load of comments.
@@ -86,11 +84,6 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
     if (data) {
       setComments(data);
       setShouldScroll(true);
-      if (!data.length) {
-        setIsEmpty(true);
-      } else {
-        setIsEmpty(false);
-      }
     }
   }, [data]);
 
@@ -103,6 +96,7 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
     setShouldScroll(false);
   }, [shouldScroll]);
 
+  const isEmpty = !isLoading && !error && comments && comments.length === 0;
   const threads = fromFlatToThreads(comments);
 
   return (
@@ -111,14 +105,7 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
         className={`${styles.commentList} ${isLoading ? styles.commentListLoading : ''}`}
         ref={listRef}>
         {isLoading && <CommentSkeletonGroup />}
-        {!isLoading && isEmpty && (
-          <div className={styles.emptyState}>
-            <Typography>
-              <Heading>Start a conversation</Heading>
-              <Paragraph>No one has commented on this entry yet.</Paragraph>
-            </Typography>
-          </div>
-        )}
+        {isEmpty && <CommentsPanelEmptyState />}
         {threads.length > 0 &&
           threads.map(thread => (
             <CommentThread
@@ -129,7 +116,7 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
             />
           ))}
         {error && (
-          <div className={styles.emptyState}>
+          <div className={styles.errorState}>
             <Typography>
               <Heading>Something went wrong</Heading>
               <Paragraph>{`We couldn't fetch the comments because of a problem.`}</Paragraph>
