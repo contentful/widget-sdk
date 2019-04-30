@@ -45,6 +45,9 @@ const styles = {
     display: 'flex',
     alignItems: 'center'
   }),
+  tableCell: css({
+    wordBreak: 'break-all'
+  }),
   marginBottomXXS: css({
     marginBottom: '0.25rem'
   }),
@@ -351,7 +354,7 @@ export default function EntryList({
                   </TableCell>
                   {isContentTypeVisible && <TableCell>{contentTypeName(entry)}</TableCell>}
                   {displayedFields.map(field => (
-                    <TableCell key={field.id}>
+                    <TableCell key={field.id} className={styles.tableCell}>
                       <DisplayField
                         field={field}
                         entry={entry}

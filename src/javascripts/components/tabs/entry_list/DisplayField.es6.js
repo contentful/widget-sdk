@@ -112,6 +112,15 @@ const dataForArray = (entry, field, entryCache, assetCache) => {
   }
 };
 
+const toString = (entry, field) => {
+  const result = dataForField(entry, field);
+
+  if (_.isObject(result) || _.isArray(result)) {
+    return JSON.stringify(result);
+  }
+  return result;
+};
+
 export default function DisplayField({ entry, field, entryCache, assetCache }) {
   let result;
   switch (displayType(field)) {
@@ -187,7 +196,7 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
       break;
 
     default:
-      result = <span>{dataForField(entry, field)}</span>;
+      result = <span>{toString(entry, field)}</span>;
       break;
   }
 
