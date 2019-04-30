@@ -67,7 +67,10 @@ export default class LinkEditor extends React.Component {
   };
 
   handleRemoveLinkAt = (index, entity) => {
-    this.props.onUnlinkEntities([entity]);
+    if (entity) {
+      // Entity is not known when removing a "missing entity" link.
+      this.props.onUnlinkEntities([entity]);
+    }
     const newValue = this.getLinks().slice();
     newValue.splice(index, 1);
     this.props.onChange(newValue);

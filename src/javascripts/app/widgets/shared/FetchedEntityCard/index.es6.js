@@ -30,14 +30,14 @@ class FetchedEntityCard extends React.Component {
     onEntityFetchComplete: noop
   };
 
-  renderDeleteButton() {
+  renderDeleteButton(fetchEntityResult) {
     return (
       <IconButton
         iconProps={{ icon: 'Close' }}
         label={`Remove reference to ${this.props.entityType.toLowerCase()}`}
         onClick={event => {
           event.stopPropagation();
-          this.props.onRemove();
+          this.props.onRemove(fetchEntityResult);
         }}
         buttonType="muted"
         disabled={this.props.disabled}
@@ -46,7 +46,7 @@ class FetchedEntityCard extends React.Component {
     );
   }
 
-  renderMissingEntryReferenceCard() {
+  renderMissingEntryReferenceCard(fetchEntityResult) {
     const { entityType, className, selected } = this.props;
     return (
       <Card selected={selected} className={className}>
@@ -60,7 +60,7 @@ class FetchedEntityCard extends React.Component {
             }}>
             {entityType} missing or inaccessible
           </h1>
-          {this.renderDeleteButton()}
+          {this.renderDeleteButton(fetchEntityResult)}
         </div>
       </Card>
     );
@@ -97,7 +97,7 @@ class FetchedEntityCard extends React.Component {
               }
 
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
-                return this.renderMissingEntryReferenceCard();
+                return this.renderMissingEntryReferenceCard(fetchEntityResult);
               } else {
                 const isEntry = this.props.entityType === 'Entry';
                 const isSmallAsset = !isEntry && this.props.size === 'small';
