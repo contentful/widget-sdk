@@ -19,6 +19,9 @@ describe('Sidebar configuration', () => {
 
   before(() => {
     cy.setAuthTokenToLocalStorage();
+    
+    cy.resetAllFakeServers();
+    
     defaultRequestsMock();
     noExtensionsResponse();
     editorInterfaceResponse();
@@ -29,6 +32,7 @@ describe('Sidebar configuration', () => {
     cy.visit(
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`
     );
+
     cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
   });
 
@@ -57,7 +61,7 @@ describe('Sidebar configuration', () => {
         .should('not.be.checked');
     });
 
-    it('checks the sidebar by default', () => {
+    it('renders the page with a sidebar with no configurations', () => {
       cy.getByTestId('default-sidebar-column')
         .should('be.visible')
         .getAllByTestId('sidebar-widget-name')
@@ -68,8 +72,11 @@ describe('Sidebar configuration', () => {
     });
   });
 
+  // TODO: this seems not to be related to contract testing at all
   describe('Configuration of a custom sidebar', () => {
-    beforeEach(() => {
+    before(() => {
+      cy.resetAllFakeServers();
+
       cy.getByTestId('custom-sidebar-option')
         .find('input')
         .click();

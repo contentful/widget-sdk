@@ -25,6 +25,8 @@ describe('Schedule Publication', () => {
   }))
 
   function basicServerSetUpWithNoSchedules() {
+    cy.resetAllFakeServers();
+
     defaultRequestsMock({
       publicContentTypesResponse: singleContentTypeResponse
     });
@@ -44,12 +46,12 @@ describe('Schedule Publication', () => {
         status: 200,
         body: empty
       }
-    }).as('entrySchedules');
+    }).as('scheduled-actions/none');
 
     cy.route('**/channel/**', []).as('shareJS');
   }
 
-  function openEntryEditorWithScheduledPublicationFlag() {
+  before(() => {
     cy.setAuthTokenToLocalStorage();
     window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
 
@@ -57,10 +59,8 @@ describe('Schedule Publication', () => {
 
     cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
 
-    cy.wait([`@${state.Token.VALID}`, '@entrySchedules']);
-  }
-
-  beforeEach(openEntryEditorWithScheduledPublicationFlag);
+    cy.wait([`@${state.Token.VALID}`, '@scheduled-actions/none']);
+  });
 
   describe('opening the page', () => {
     it('renders schedule publication button', () => {
@@ -69,13 +69,9 @@ describe('Schedule Publication', () => {
   });
 
   describe('scheduling a publication', () => {
-    // Remove actual and expected interaction for 'scheduled-actions'
-    // They were already verified in other tests and we are not testing those here.
-    // In this test we need to ovewrite 'a request for entry schedules' to return
-    // one schedule instead of none
-    beforeEach(() => cy.resetFakeServer('scheduled-actions'));
+    before(() => {
+      cy.resetAllFakeServers();
 
-    it('by clicking on the button and confirming modal', () => {
       cy.addInteraction({
         provider: 'scheduled-actions',
         state: 'schedulePublicationPost',
@@ -91,7 +87,7 @@ describe('Schedule Publication', () => {
         willRespondWith: {
           status: 200
         }
-      }).as('schedulePOST');
+      }).as('scheduled-actions/create');
 
       cy.addInteraction({
         provider: 'scheduled-actions',
@@ -119,7 +115,7 @@ describe('Schedule Publication', () => {
             ]
           }
         }
-      }).as('oneSchedule');
+      }).as('scheduled-actions/one');
 
       cy.getByTestId('schedule-publication').click();
       cy.getByTestId('schedule-publication-modal')
@@ -128,9 +124,11 @@ describe('Schedule Publication', () => {
         .first()
         .click();
 
-      cy.wait(['@schedulePOST', '@oneSchedule']);
-
-      cy.getByTestId('scheduled-item').should('have.length', 1);
+      cy.wait(['@scheduled-actions/create', '@scheduled-actions/one']);
     })
+
+    it('submits the new scheduled publication and then re-fetch the list of scheduled publications', () => {
+      cy.getByTestId('scheduled-item').should('have.length', 1);
+    });
   })
 });
