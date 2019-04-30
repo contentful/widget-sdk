@@ -99,6 +99,7 @@ export default function CreateEntryComment({
         <div className={styles.replyActions}>
           <Button
             size="small"
+            loading={isLoading}
             onClick={() => handleSubmit()}
             buttonType="primary"
             className={css({ marginRight: tokens.spacingS })}>
