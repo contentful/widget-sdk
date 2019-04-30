@@ -17,7 +17,7 @@ describe('CommentsPanel', () => {
   };
 
   describe('initializing', () => {
-    useCommentsFetcher.mockReturnValueOnce({ isLoading: false, isError: false });
+    useCommentsFetcher.mockReturnValueOnce({ isLoading: false });
     render({ spaceId: 'a', entryId: 'b' });
 
     it('fetches all comments in the entry', () => {
@@ -25,16 +25,7 @@ describe('CommentsPanel', () => {
     });
   });
   describe('loading', () => {
-    useCommentsFetcher.mockReturnValueOnce({ isLoading: true, isError: false });
-    const component = render({ spaceId: 'a', entryId: 'b' });
-
-    it('matches the snapshot', () => {
-      expect(component).toMatchSnapshot();
-    });
-  });
-
-  describe('empty state', () => {
-    useCommentsFetcher.mockReturnValueOnce({ isLoading: false, isError: true });
+    useCommentsFetcher.mockReturnValueOnce({ isLoading: true });
     const component = render({ spaceId: 'a', entryId: 'b' });
 
     it('matches the snapshot', () => {
@@ -43,7 +34,7 @@ describe('CommentsPanel', () => {
   });
 
   describe('error', () => {
-    useCommentsFetcher.mockReturnValueOnce({ isLoading: false, isError: true });
+    useCommentsFetcher.mockReturnValueOnce({ isLoading: false, error: new Error('Bad API') });
     const component = render({ spaceId: 'a', entryId: 'b' });
 
     it('matches the snapshot', () => {

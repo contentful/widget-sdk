@@ -131,7 +131,10 @@ function CommentActions({ comment, onRemove, hasReplies }) {
       </CardActions>
       <RemovalConfirmationDialog
         isShown={showRemovalDialog}
-        onConfirm={onRemove}
+        onConfirm={() => {
+          setShowRemovalDialog(false);
+          onRemove();
+        }}
         onCancel={() => setShowRemovalDialog(false)}
       />
     </>
