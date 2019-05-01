@@ -304,9 +304,6 @@ workflows:
           region: 'eu-west-1'
           path: '~/workspace/output/files/preview'
           bucket: 'cf-preview-static-cdnorigin'
-          post-steps:
-            - post-comment/to-pr:
-                env: 'quirely'
           requires:
             - build-and-push-image
       - deploy-assets/to-s3:
