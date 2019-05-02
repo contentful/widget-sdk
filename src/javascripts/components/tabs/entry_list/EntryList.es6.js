@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 
 import cn from 'classnames';
-import { truncate, range } from 'lodash';
+import { range } from 'lodash';
 
 import {
   Table,
@@ -37,7 +37,6 @@ import { getModule } from 'NgRegistry.es6';
 
 import { css } from 'emotion';
 
-const spaceContext = getModule('spaceContext');
 const EntityState = getModule('data/CMA/EntityState.es6');
 
 const styles = {
@@ -52,6 +51,9 @@ const styles = {
     marginBottom: '0.25rem'
   }),
   sortable: css({
+    '&:focus': {
+      zIndex: 1
+    },
     '&:hover': {
       cursor: 'pointer',
       backgroundColor: tokens.colorElementLight
@@ -78,50 +80,35 @@ const styles = {
   })
 };
 
-// TODO This function is called repeatedly from the template.
-// Unfortunately, 'publishedCTs.get' has the side effect of
-// fetching the CT if it was not found. This results in problems
-// when we switch the space but this directive is still active. We
-// request a content type from the _new_ space which does not
-// exist.
-// The solution is to separate `entryTitle()` and similar
-// functions from the space context.
-const entryTitle = entry => {
-  let entryTitle = spaceContext.entryTitle(entry);
-  const length = 130;
-  if (entryTitle.length > length) {
-    entryTitle = truncate(entryTitle, length);
-  }
-  return entryTitle;
-};
-
-const contentTypeName = entry => {
-  const ctId = entry.getContentTypeId();
-  const ct = spaceContext.publishedCTs.get(ctId);
-  if (ct) {
-    return ct.getName();
-  } else {
-    return '';
-  }
-};
-
-function SortableTableCell({ children, isSortable, isActiveSort, onClick, direction }) {
+function SortableTableCell({ children, isSortable, isActiveSort, onClick, direction, ...rest }) {
   return (
     <TableCell
+      tabIndex={isSortable ? '0' : '-1'}
       className={cn({
         [styles.sortable]: isSortable,
         [styles.activeSort]: isActiveSort
       })}
+      onKeyDown={e => {
+        if (isTargetInput(e) || e.target.tagName === 'LABEL') {
+          return;
+        }
+        if (isHotkey(['enter', 'space'], e)) {
+          onClick(e);
+          e.preventDefault();
+        }
+      }}
       onClick={e => {
         if (isTargetInput(e)) {
           return;
         }
         onClick();
-      }}>
+      }}
+      {...rest}>
       <span className={styles.flexCenter}>
         {children}
         {isSortable && isActiveSort && (
           <IconButton
+            tabIndex="-1"
             className="f36-margin-left--xs"
             buttonType="muted"
             iconProps={{
@@ -135,8 +122,8 @@ function SortableTableCell({ children, isSortable, isActiveSort, onClick, direct
 }
 
 SortableTableCell.propTypes = {
-  isSortable: PropTypes.bool.isRequired,
-  isActiveSort: PropTypes.bool.isRequired,
+  isSortable: PropTypes.bool,
+  isActiveSort: PropTypes.bool,
   direction: PropTypes.oneOf(['ascending', 'descending']),
   onClick: PropTypes.func.isRequired
 };
@@ -244,7 +231,8 @@ export default function EntryList({
   fieldIsSortable,
   isOrderField,
   orderColumnBy,
-
+  entryTitleFormatter,
+  contentTypeNameFormatter,
   hiddenFields,
   removeDisplayField,
   addDisplayField,
@@ -274,37 +262,33 @@ export default function EntryList({
   );
 
   const columnLength =
-    // if no ct selected 2 cols, otherwise 1
+    // if no ct selected = 2 cols, otherwise = 1
     (hasContentTypeSelected ? 1 : 2) +
     // all displayed fields
     displayedFields.length +
     // status column
     1;
   return (
-    <Table>
+    <Table testId="entry-list" aria-label="Content Search Results">
       <TableHead offsetTop={isEdgeBrowser ? '0px' : '-20px'} isSticky>
-        <TableRow>
-          {hasContentTypeSelected & displayFieldName ? (
-            <SortableTableCell
-              isSortable={fieldIsSortable(displayFieldName)}
-              isActiveSort={isOrderField(displayFieldName)}
-              onClick={() => {
-                fieldIsSortable(displayFieldName) && orderColumnBy(displayFieldName);
-              }}
-              direction={context.view.order.direction}>
-              {selectAll}
-              <label htmlFor="select-all">Name</label>
-            </SortableTableCell>
-          ) : (
-            <React.Fragment>
-              <TableCell>
-                <span className={styles.flexCenter}>
-                  {selectAll}
-                  <label htmlFor="select-all">Name</label>
-                </span>
-              </TableCell>
-              {isContentTypeVisible && <TableCell>Content Type</TableCell>}
-            </React.Fragment>
+        <TableRow data-test-id="column-names">
+          <SortableTableCell
+            isSortable={
+              hasContentTypeSelected && displayFieldName && fieldIsSortable(displayFieldName)
+            }
+            isActiveSort={displayFieldName && isOrderField(displayFieldName)}
+            onClick={() => {
+              if (displayFieldName && fieldIsSortable(displayFieldName)) {
+                orderColumnBy(displayFieldName);
+              }
+            }}
+            direction={context.view.order.direction}
+            data-test-id="name">
+            {selectAll}
+            <label htmlFor="select-all">Name</label>
+          </SortableTableCell>
+          {!hasContentTypeSelected && isContentTypeVisible && (
+            <TableCell data-test-id="content-type">Content Type</TableCell>
           )}
 
           {displayedFields.map(field => {
@@ -316,12 +300,14 @@ export default function EntryList({
                 onClick={() => {
                   fieldIsSortable(field) && orderColumnBy(field);
                 }}
-                direction={context.view.order.direction}>
+                direction={context.view.order.direction}
+                aria-label={field.name}
+                data-test-id={field.name}>
                 {field.name}
               </SortableTableCell>
             );
           })}
-          <TableCell>
+          <TableCell data-test-id="status">
             <span className={styles.flexCenter}>
               Status
               <ViewCustomizer
@@ -377,8 +363,9 @@ export default function EntryList({
                   className={cn('ctf-ui-cursor--pointer', {
                     [styles.highlight]: selection.isSelected(entry),
                     [styles.visibilityHidden]: context.isSearching
-                  })}>
-                  <TableCell>
+                  })}
+                  data-test-id="entry-row">
+                  <TableCell data-test-id="name">
                     <span className={styles.flexCenter}>
                       <Checkbox
                         id="select-entry"
@@ -390,12 +377,19 @@ export default function EntryList({
                           e.preventDefault();
                         }}
                       />
-                      <label htmlFor="select-entry">{entryTitle(entry)}</label>
+                      <label htmlFor="select-entry">{entryTitleFormatter(entry)}</label>
                     </span>
                   </TableCell>
-                  {isContentTypeVisible && <TableCell>{contentTypeName(entry)}</TableCell>}
+                  {isContentTypeVisible && (
+                    <TableCell data-test-id="content-type">
+                      {contentTypeNameFormatter(entry)}
+                    </TableCell>
+                  )}
                   {displayedFields.map(field => (
-                    <TableCell key={field.id} className={styles.wordBreak}>
+                    <TableCell
+                      key={field.id}
+                      className={styles.wordBreak}
+                      data-test-id={field.name}>
                       <DisplayField
                         field={field}
                         entry={entry}
@@ -404,7 +398,7 @@ export default function EntryList({
                       />
                     </TableCell>
                   ))}
-                  <TableCell>
+                  <TableCell data-test-id="status">
                     <EntityStatusTag
                       statusLabel={EntityState.stateName(EntityState.getState(entry.data.sys))}
                     />
@@ -421,11 +415,13 @@ export default function EntryList({
 
 EntryList.propTypes = {
   context: PropTypes.object.isRequired,
+  entryTitleFormatter: PropTypes.func.isRequired,
+  contentTypeNameFormatter: PropTypes.func.isRequired,
   displayedFields: PropTypes.array.isRequired,
   displayFieldForFilteredContentType: PropTypes.func.isRequired,
   fieldIsSortable: PropTypes.func.isRequired,
   isOrderField: PropTypes.func.isRequired,
-  orderColumnBy: PropTypes.string,
+  orderColumnBy: PropTypes.func,
   hiddenFields: PropTypes.array,
   removeDisplayField: PropTypes.func,
   addDisplayField: PropTypes.func,

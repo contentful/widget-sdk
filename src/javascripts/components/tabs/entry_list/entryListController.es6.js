@@ -114,6 +114,8 @@ export default function register() {
       const resetSearchResults = _.debounce(() => {
         $scope.entryProps = {
           context: $scope.context,
+          entryTitleFormatter: $scope.entryTitle,
+          contentTypeNameFormatter: $scope.contentTypeName,
           displayedFields: $scope.displayedFields,
           displayFieldForFilteredContentType: $scope.displayFieldForFilteredContentType,
           fieldIsSortable: $scope.fieldIsSortable,
