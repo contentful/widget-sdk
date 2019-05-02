@@ -74,11 +74,11 @@ export default function wrapWithRetry(requestFn) {
       .then(() => requestFn(...call.args))
       .then(
         res => {
-          recordResponseTime(res, start, ...call.args);
+          recordResponseTime(res, start + call.wait, ...call.args);
           return res;
         },
         err => {
-          recordResponseTime(err, start, ...call.args);
+          recordResponseTime(err, start + call.wait, ...call.args);
           return $q.reject(err);
         }
       )
