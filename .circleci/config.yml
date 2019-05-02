@@ -314,9 +314,6 @@ workflows:
           path: '~/workspace/output/files/staging'
           bucket: 'cf-staging-static-cdnorigin'
           post-steps:
-            - run:
-                name: Trigger Jenkins Staging Dependent Tests
-                command: bin/trigger-jenkins-dependent
             - post-comment/to-pr:
                 env: 'flinkly'
           requires:
