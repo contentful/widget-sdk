@@ -4,14 +4,15 @@ import moment from 'moment-timezone';
 import {
   Button,
   Modal,
-  TextField,
   FieldGroup,
   Form,
   SelectField,
-  Option
+  Option,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import { createTimezonesByOffset } from './Utils.es6';
 import DatePicker from '../DatePicker/index.es6';
+import TimePicker from '../TimePicker/index.es6';
 
 const createTimezoneOptions = () => {
   const timezonesByOffset = createTimezonesByOffset();
@@ -31,11 +32,12 @@ class ScheduleDialog extends React.Component {
   state = {
     date: moment().format('YYYY-MM-DD'),
     time: moment().format('HH:mm'),
-    utcOffset: moment().utcOffset()
+    utcOffset: moment().utcOffset(),
+    timeZoneVisible: false
   };
 
   getScheduleDate = () => {
-    return moment(`${this.state.date} ${this.state.time}`, 'YYYY-MM-DD HH:mm')
+    return moment(`${this.state.date} ${this.state.time}`, 'YYYY-MM-DD HH:mm A')
       .utcOffset(this.state.utcOffset)
       .toDate();
   };
@@ -46,6 +48,7 @@ class ScheduleDialog extends React.Component {
     return (
       <Modal
         title="Schedule Publication"
+        size="small"
         shouldCloseOnEscapePress
         shouldCloseOnOverlayClick
         isShown
@@ -63,41 +66,48 @@ class ScheduleDialog extends React.Component {
                     }}
                     labelText="Date"
                     required
-                    helpText="Select a date"
                     minDate={moment().toDate()}
                   />
-                  <TextField
+                  <TimePicker
                     name="time"
-                    textInputProps={{
-                      type: 'time'
-                    }}
                     value={time}
-                    onChange={e => {
+                    onChange={time => {
                       this.setState({
-                        time: e.target.value
+                        time: `${time.hour}:${time.minute} ${time.daytime}`
                       });
                     }}
                     required
                     id="time"
                     labelText="Time"
-                    helpText="Please enter a time"
                   />
                 </FieldGroup>
-                <FieldGroup row>
-                  <SelectField
-                    name="timezone"
-                    id="timezone"
-                    onChange={e => {
-                      this.setState({
-                        utcOffset: Number(e.target.value)
-                      });
+
+                {!this.state.timeZoneVisible && (
+                  <TextLink
+                    onClick={() => {
+                      this.setState({ timeZoneVisible: true });
                     }}
-                    labelText="Timezone"
-                    value={utcOffset.toString()}
-                    helpText="Please select a Timezone">
-                    {createTimezoneOptions()}
-                  </SelectField>
-                </FieldGroup>
+                    icon="Plus">
+                    Add Timezone
+                  </TextLink>
+                )}
+
+                {this.state.timeZoneVisible && (
+                  <FieldGroup row>
+                    <SelectField
+                      name="timezone"
+                      id="timezone"
+                      onChange={e => {
+                        this.setState({
+                          utcOffset: Number(e.target.value)
+                        });
+                      }}
+                      labelText="Timezone"
+                      value={utcOffset.toString()}>
+                      {createTimezoneOptions()}
+                    </SelectField>
+                  </FieldGroup>
+                )}
               </Form>
             </Modal.Content>
             <Modal.Controls>

@@ -2,6 +2,9 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
 export const scheduleStyles = {
+  scheduledTo: css({
+    whiteSpace: 'nowrap'
+  }),
   schedule: css({
     display: 'flex',
     paddingLeft: '20px',
@@ -17,10 +20,10 @@ export const scheduleStyles = {
       backgroundColor: 'transparent',
       border: `2px solid ${tokens.colorElementDarkest}`
     },
-    '&:first-child::before': {
+    '&:first-of-type::before': {
       backgroundColor: tokens.colorElementMid
     },
-    '&:not(:first-child)::after': {
+    '&:not(:first-of-type)::after': {
       top: '-9px',
       left: '5px',
       position: 'absolute',
