@@ -21,7 +21,8 @@ class FetchedEntityCard extends React.Component {
     onEdit: PropTypes.func,
     onRemove: PropTypes.func,
     onClick: PropTypes.func,
-    onEntityFetchComplete: PropTypes.func
+    onEntityFetchComplete: PropTypes.func,
+    cardDragHandleComponent: PropTypes.element
   };
   static defaultProps = {
     className: '',
@@ -29,14 +30,14 @@ class FetchedEntityCard extends React.Component {
     onEntityFetchComplete: noop
   };
 
-  renderDeleteButton() {
+  renderDeleteButton(fetchEntityResult) {
     return (
       <IconButton
         iconProps={{ icon: 'Close' }}
         label={`Remove reference to ${this.props.entityType.toLowerCase()}`}
         onClick={event => {
           event.stopPropagation();
-          this.props.onRemove();
+          this.props.onRemove(fetchEntityResult);
         }}
         buttonType="muted"
         disabled={this.props.disabled}
@@ -45,7 +46,7 @@ class FetchedEntityCard extends React.Component {
     );
   }
 
-  renderMissingEntryReferenceCard() {
+  renderMissingEntryReferenceCard(fetchEntityResult) {
     const { entityType, className, selected } = this.props;
     return (
       <Card selected={selected} className={className}>
@@ -59,7 +60,7 @@ class FetchedEntityCard extends React.Component {
             }}>
             {entityType} missing or inaccessible
           </h1>
-          {this.renderDeleteButton()}
+          {this.renderDeleteButton(fetchEntityResult)}
         </div>
       </Card>
     );
@@ -76,7 +77,8 @@ class FetchedEntityCard extends React.Component {
       onRemove,
       onClick,
       readOnly,
-      size
+      size,
+      cardDragHandleComponent
     } = this.props;
 
     return (
@@ -87,6 +89,7 @@ class FetchedEntityCard extends React.Component {
             entityId={entityId}
             entityType={entityType}
             localeCode={widgetAPI.field.locale}
+            fetchFile={entityType === 'Asset' || size !== 'small'}
             render={fetchEntityResult => {
               const isPending = fetchEntityResult.requestStatus === RequestStatus.Pending;
               const isLoading = isPending && !fetchEntityResult.entity;
@@ -95,10 +98,10 @@ class FetchedEntityCard extends React.Component {
               }
 
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
-                return this.renderMissingEntryReferenceCard();
+                return this.renderMissingEntryReferenceCard(fetchEntityResult);
               } else {
-                const isEntry = this.props.entityType === 'Entry';
-                const isSmallAsset = !isEntry && this.props.size === 'small';
+                const isEntry = entityType === 'Entry';
+                const isSmallAsset = !isEntry && size === 'small';
                 const WrapperComponent =
                   isEntry || isSmallAsset ? WrappedEntityCard : WrappedAssetCard;
                 const cardProps = {
@@ -112,7 +115,8 @@ class FetchedEntityCard extends React.Component {
                   disabled,
                   onEdit: () => onEdit(fetchEntityResult),
                   onClick: () => onClick(fetchEntityResult),
-                  onRemove: () => onRemove(fetchEntityResult)
+                  onRemove: () => onRemove(fetchEntityResult),
+                  cardDragHandleComponent
                 };
                 return <WrapperComponent {...cardProps} />;
               }

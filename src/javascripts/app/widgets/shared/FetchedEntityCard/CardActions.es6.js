@@ -33,7 +33,7 @@ export class EntryActions extends React.PureComponent {
           </DropdownListItem>
         )}
         {onRemove && (
-          <DropdownListItem onClick={onRemove} disabled={isDisabled} testId="delete">
+          <DropdownListItem onClick={onRemove} isDisabled={isDisabled} testId="delete">
             Remove
           </DropdownListItem>
         )}
@@ -53,14 +53,14 @@ export class AssetActions extends React.PureComponent {
     return (
       <DropdownList className={styles.cardDropdown}>
         <DropdownListItem isTitle>Actions</DropdownListItem>
-        {onEdit && <DropdownListItem onClick={onEdit}>Edit</DropdownListItem>}
+        {onEdit && <DropdownListItem onClick={onEdit} testId="card-action-edit">Edit</DropdownListItem>}
         {entityFile && (
-          <DropdownListItem onClick={() => downloadAsset(entityFile.url)}>
+          <DropdownListItem onClick={() => downloadAsset(entityFile.url)} testId="card-action-download">
             Download
           </DropdownListItem>
         )}
         {onRemove && (
-          <DropdownListItem isDisabled={isDisabled} onClick={onRemove}>
+          <DropdownListItem isDisabled={isDisabled} onClick={onRemove} testId="card-action-remove">
             Remove
           </DropdownListItem>
         )}

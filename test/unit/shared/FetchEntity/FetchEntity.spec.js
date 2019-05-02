@@ -86,8 +86,8 @@ describe('FetchEntity', () => {
       widgetAPI: newMockWidgetAPI(this.entity, this.contentType)
     };
 
-    this.mount = function() {
-      this.wrapper = mount(<FetchEntity {...this.props} />);
+    this.mount = function(props = {}) {
+      this.wrapper = mount(<FetchEntity {...this.props} {...props} />);
     };
   });
 
@@ -176,5 +176,12 @@ describe('FetchEntity', () => {
     it('does not reset `entityFile` while waiting for it`s updated version', function() {
       sinon.assert.alwaysCalledWith(this.props.render, sinon.match({ entityFile: 'FILE' }));
     });
+  });
+
+  it('does not fetch `entityFile` if props.fetchFile=false', async function() {
+    this.mount({ fetchFile: false });
+    await flushPromises();
+    sandbox.assert.callCount(this.props.render, EXPECTED_RENDER_CALLS - 1);
+    sinon.assert.alwaysCalledWith(this.props.render, sinon.match({ entityFile: undefined }));
   });
 });
