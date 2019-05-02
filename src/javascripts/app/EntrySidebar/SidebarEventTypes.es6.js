@@ -8,6 +8,7 @@ export default {
   UPDATED_VERSIONS_WIDGET: 'sidebar:updated-versions-widget',
   UPDATED_PUBLICATION_WIDGET: 'sidebar:updated-publication-widget',
   UPDATED_SCHEDULE_WIDGET: 'sidebar:updated-schedule-widget',
+  UPDATED_TASKS_WIDGET: 'sidebar:updated-tasks-widget',
   UPDATED_FOCUSED_LOCALE: 'sidebar:updated-focused-locale',
 
   UPDATED_DOCUMENT_STATE: 'sidebar:updated-document-state',

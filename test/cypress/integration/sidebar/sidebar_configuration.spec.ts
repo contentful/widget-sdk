@@ -94,7 +94,7 @@ describe('Sidebar configuration', () => {
       ];
 
       cy.get('[data-react-beautiful-dnd-drag-handle]')
-        .eq(2)
+        .eq(3)
         .focus()
         .trigger('keydown', { keyCode: space })
         .wait(0.2 * 1000)

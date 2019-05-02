@@ -9,6 +9,7 @@ import {
   EntryConfiguration,
   Publication as PublicationWidget,
   Schedule as ScheduleWidget,
+  Tasks as TasksWidget,
   Versions as VersionsWidget,
   ContentPreview as ContentPreviewWidget,
   Links as LinksWidget,
@@ -110,6 +111,10 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
+          widgetId: TasksWidget.widgetId,
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
+        },
+        {
           widgetId: VersionsWidget.widgetId,
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
@@ -136,6 +141,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         items: [
           PublicationWidget,
           ScheduleWidget,
+          TasksWidget,
           VersionsWidget,
           {
             widgetId: 'some-extension-that-is-not-installed',
@@ -166,6 +172,10 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         },
         {
           widgetId: ScheduleWidget.widgetId,
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
+        },
+        {
+          widgetId: TasksWidget.widgetId,
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
@@ -213,6 +223,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         items: [
           PublicationWidget,
           ScheduleWidget,
+          TasksWidget,
           VersionsWidget,
           UsersWidget,
           {
