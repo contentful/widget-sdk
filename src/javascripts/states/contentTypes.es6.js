@@ -1,9 +1,9 @@
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 import base from 'states/Base.es6';
-import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import * as WidgetStore from 'widgets/WidgetStore.es6';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
+import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature.es6';
 
 const list = base({
   name: 'list',
@@ -61,10 +61,10 @@ const widgetResolvers = {
       return EditorInterfaceTransformer.fromAPI(ct, ei, widgets);
     }
   ],
-  hasCustomSidebarFeature: [
+  hasAdvancedExtensibility: [
     'spaceContext',
     spaceContext => {
-      return getOrgFeature(spaceContext.organization.sys.id, 'custom_sidebar', true);
+      return AdvancedExtensibilityFeature.isEnabled(spaceContext.organization.sys.id);
     }
   ]
 };
@@ -145,7 +145,7 @@ function editorBase(options, isNew) {
       'editorInterface',
       'publishedContentType',
       'contentTypeIds',
-      'hasCustomSidebarFeature',
+      'hasAdvancedExtensibility',
       (
         $scope,
         $stateParams,
@@ -154,7 +154,7 @@ function editorBase(options, isNew) {
         editorInterface,
         publishedContentType,
         contentTypeIds,
-        hasCustomSidebarFeature
+        hasAdvancedExtensibility
       ) => {
         $scope.context.isNew = isNew;
         $scope.contentType = contentType;
@@ -162,7 +162,7 @@ function editorBase(options, isNew) {
         $scope.editorInterface = editorInterface;
         $scope.publishedContentType = publishedContentType;
         $scope.contentTypeIds = contentTypeIds;
-        $scope.hasCustomSidebarFeature = hasCustomSidebarFeature;
+        $scope.hasAdvancedExtensibility = hasAdvancedExtensibility;
 
         contextHistory.set([
           crumbFactory.ContentTypeList(),

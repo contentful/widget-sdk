@@ -34,7 +34,7 @@ export default function EditorFieldTabs(props) {
             </Tab>
           )}
         </StateLink>
-        {props.hasCustomSidebarFeature && (
+        {props.hasAdvancedExtensibility && (
           <StateLink to="^.sidebar_configuration">
             {({ getHref }) => (
               <Tab
@@ -55,5 +55,5 @@ export default function EditorFieldTabs(props) {
 EditorFieldTabs.propTypes = {
   currentTab: PropTypes.string.isRequired,
   fieldsCount: PropTypes.number.isRequired,
-  hasCustomSidebarFeature: PropTypes.bool.isRequired
+  hasAdvancedExtensibility: PropTypes.bool.isRequired
 };

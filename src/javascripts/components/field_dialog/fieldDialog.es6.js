@@ -359,6 +359,11 @@ export default function register() {
     'spaceContext',
     ($scope, spaceContext) => {
       const isAdmin = !!spaceContext.getData('spaceMembership.admin', false);
+
+      const hasCustomEditor =
+        $scope.editorInterface.editor &&
+        $scope.editorInterface.editor.widgetNamespace === NAMESPACE_EXTENSION;
+
       const defaultWidgetId = getDefaultWidgetId(
         $scope.field,
         $scope.contentType.data.displayField
@@ -366,6 +371,7 @@ export default function register() {
 
       function updateProps() {
         $scope.appearanceTabProps = {
+          hasCustomEditor,
           availableWidgets: $scope.availableWidgets || [],
           selectedWidgetId: makeId($scope.widgetSettings.namespace, $scope.widgetSettings.id),
           widgetParams: $scope.widgetSettings.params,

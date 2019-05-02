@@ -40,8 +40,13 @@ export async function getForEditor(spaceId, envId, editorInterface = {}) {
     })
     .map(sidebarItem => sidebarItem.widgetId);
 
-  const extensionIds = uniq(editorExtensionIds.concat(sidebarExtensionIds));
-  const extensions = await ExtensionLoader.getExtensionsById(spaceId, envId, extensionIds);
+  const extensionIds = editorExtensionIds.concat(sidebarExtensionIds);
+
+  if (editorInterface.editor && editorInterface.editor.widgetNamespace === NAMESPACE_EXTENSION) {
+    extensionIds.push(editorInterface.editor.widgetId);
+  }
+
+  const extensions = await ExtensionLoader.getExtensionsById(spaceId, envId, uniq(extensionIds));
 
   return {
     [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),

@@ -4,11 +4,7 @@ import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers.es6';
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers.es6';
 import makeExtensionNavigationHandlers from './makeExtensionNavigationHandlers.es6';
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers.es6';
-import {
-  LOCATION_ENTRY_FIELD,
-  LOCATION_ENTRY_SIDEBAR,
-  LOCATION_ENTRY_FIELD_SIDEBAR
-} from '../WidgetLocations.es6';
+import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_FIELD_SIDEBAR } from '../WidgetLocations.es6';
 
 const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
 
@@ -46,6 +42,9 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
 
   const { $rootScope, $scope, spaceContext, TheLocaleStore } = dependencies;
 
+  const isFieldLevelExtension =
+    location === LOCATION_ENTRY_FIELD || location === LOCATION_ENTRY_FIELD_SIDEBAR;
+
   return {
     getData,
     install,
@@ -58,13 +57,12 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       environmentId: spaceContext.getEnvironmentId(),
       location,
       spaceMembership: spaceContext.space.data.spaceMembership,
-      current:
-        location === LOCATION_ENTRY_SIDEBAR
-          ? null
-          : {
-              field: $scope.widget.field,
-              locale: $scope.locale
-            },
+      current: isFieldLevelExtension
+        ? {
+            field: $scope.widget.field,
+            locale: $scope.locale
+          }
+        : null,
       locales: {
         available: TheLocaleStore.getPrivateLocales(),
         default: TheLocaleStore.getDefaultLocale()
@@ -154,7 +152,7 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
     });
 
     // Available for field-level extensions only:
-    if (location === LOCATION_ENTRY_FIELD || location === LOCATION_ENTRY_FIELD_SIDEBAR) {
+    if (isFieldLevelExtension) {
       K.onValueScope($scope, $scope.fieldLocale.access$, access => {
         api.send('isDisabledChanged', [!!access.disabled]);
       });

@@ -3,8 +3,6 @@ export const APP_NAME = 'AI image management';
 
 export const DEFAULT_WRAPPER_NAME = 'CustomImage';
 
-export const CUSTOM_SIDEBAR_FEATURE_ID = 'custom_sidebar';
-
 export const EXTENSIONS = {
   imageTagging: {
     name: 'Automatically tag images',

@@ -51,7 +51,8 @@ export function fromAPI(ct, ei, widgets) {
   return {
     sys: ei.sys,
     controls: syncControls(ct, ei.controls, widgets),
-    sidebar: ei.sidebar
+    sidebar: ei.sidebar,
+    editor: ei.editor
   };
 }
 
@@ -61,7 +62,8 @@ export function toAPI(ct, ei, widgets) {
   return {
     sys: ei.sys,
     controls: syncControls(ct, ei.controls, widgets).map(c => prepareAPIControl(c)),
-    sidebar: ei.sidebar
+    sidebar: ei.sidebar,
+    editor: ei.editor
   };
 }
 

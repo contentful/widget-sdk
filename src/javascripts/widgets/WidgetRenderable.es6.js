@@ -66,37 +66,47 @@ function buildOneRenderable(control, widgets) {
   );
 }
 
+function convertToRenderable(item, widgets) {
+  const renderable = {
+    widgetId: item.widgetId,
+    widgetNamespace: item.widgetNamespace
+  };
+
+  const namespaceWidgets = widgets[NAMESPACE_EXTENSION] || [];
+  const descriptor = namespaceWidgets.find(w => w.id === item.widgetId);
+
+  if (descriptor) {
+    Object.assign(renderable, { descriptor });
+  } else {
+    return Object.assign(renderable, { problem: 'missing' });
+  }
+
+  return deepFreeze(
+    Object.assign(renderable, {
+      parameters: {
+        instance:
+          applyDefaultValues(get(descriptor, ['parameters'], []), get(item, ['settings'], {})) ||
+          {},
+        installation:
+          applyDefaultValues(
+            get(descriptor, ['installationParameters', 'definitions'], []),
+            get(descriptor, ['installationParameters', 'values'], {})
+          ) || {}
+      }
+    })
+  );
+}
+
 export function buildSidebarRenderables(sidebar, widgets) {
   const items = sidebar.filter(item => item.widgetNamespace === NAMESPACE_EXTENSION);
 
   return items.map(item => {
-    const renderable = {
-      widgetId: item.widgetId,
-      widgetNamespace: item.widgetNamespace
-    };
-
-    const namespaceWidgets = widgets[NAMESPACE_EXTENSION] || [];
-    const descriptor = namespaceWidgets.find(w => w.id === item.widgetId);
-
-    if (descriptor) {
-      Object.assign(renderable, { descriptor });
-    } else {
-      return Object.assign(renderable, { problem: 'missing' });
-    }
-
-    return deepFreeze(
-      Object.assign(renderable, {
-        parameters: {
-          instance:
-            applyDefaultValues(get(descriptor, ['parameters'], []), get(item, ['settings'], {})) ||
-            {},
-          installation:
-            applyDefaultValues(
-              get(descriptor, ['installationParameters', 'definitions'], []),
-              get(descriptor, ['installationParameters', 'values'], {})
-            ) || {}
-        }
-      })
-    );
+    return convertToRenderable(item, widgets);
   });
+}
+
+export function buildEditorRenderable(editor, widgets) {
+  if (editor && editor.widgetNamespace === NAMESPACE_EXTENSION) {
+    return convertToRenderable(editor, widgets);
+  }
 }

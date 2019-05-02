@@ -42,7 +42,12 @@ react-component(
     .workbench-main
       .workbench-main__content.sticky-parent
         react-component(name="app/entity_editor/StatusNotification.es6" props="statusNotificationProps")
-        .entity-editor-form
+        react-component(
+          ng-if="editorData.editorExtension"
+          name="app/entry_editor/CustomEditorExtensionRenderer.es6"
+          props="customExtensionProps"
+        )
+        .entity-editor-form(ng-if="!editorData.editorExtension")
           cf-error-list.form-box-error(cf-error-path="['fields']")
           cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
           react-component(

@@ -6,6 +6,28 @@ import FieldDialogWidgetsList from './FieldDialogWidgetsList.es6';
 import WidgetParametersForm from 'widgets/WidgetParametersForm.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
+
+const styles = {
+  container: css({
+    position: 'relative'
+  }),
+  note: css({
+    marginBottom: tokens.spacingL
+  }),
+  overlay: css({
+    position: 'absolute',
+    zIndex: 2,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: tokens.colorWhite,
+    opacity: 0.6
+  })
+};
+
 export default class FieldDialogAppearanceTab extends React.Component {
   static propTypes = {
     isAdmin: PropTypes.bool.isRequired,
@@ -14,7 +36,8 @@ export default class FieldDialogAppearanceTab extends React.Component {
     selectedWidgetId: PropTypes.string.isRequired,
     widgetParams: PropTypes.object.isRequired,
     onSelect: PropTypes.func.isRequired,
-    onParametersUpdate: PropTypes.func.isRequired
+    onParametersUpdate: PropTypes.func.isRequired,
+    hasCustomEditor: PropTypes.bool.isRequired
   };
 
   getFormProps = widget => {
@@ -39,31 +62,42 @@ export default class FieldDialogAppearanceTab extends React.Component {
   };
 
   render() {
-    const { availableWidgets, defaultWidgetId, isAdmin } = this.props;
+    const { availableWidgets, defaultWidgetId, isAdmin, hasCustomEditor } = this.props;
     const widgetsCount = availableWidgets.length;
     const widget = availableWidgets.find(widget => widget.id === this.props.selectedWidgetId);
     return (
       <div>
-        {widgetsCount === 0 && (
-          <Note noteType="primary">No widgets for this field, please contact support.</Note>
+        {hasCustomEditor && (
+          <Note noteType="primary" className={styles.note}>
+            These settings are overwritten by custom content type extension. To change this, use the
+            default editor.
+          </Note>
         )}
-        {widgetsCount > 0 && (
-          <React.Fragment>
-            <FieldDialogWidgetsList
-              widgets={availableWidgets}
-              onSelect={this.props.onSelect}
-              selectedWidgetId={this.props.selectedWidgetId}
-              defaultWidgetId={defaultWidgetId}
-              isAdmin={isAdmin}
-            />
-            <div
-              className={classNames('modal-dialog__slice', {
-                'field-dialog__widget-options': availableWidgets.length > 1
-              })}>
-              {widget && <WidgetParametersForm key={widget.id} {...this.getFormProps(widget)} />}
-            </div>
-          </React.Fragment>
-        )}
+        <div className={styles.container}>
+          {hasCustomEditor && <div className={styles.overlay} />}
+          {widgetsCount === 0 && (
+            <Note noteType="primary" className={styles.note}>
+              No widgets for this field, please contact support.
+            </Note>
+          )}
+          {widgetsCount > 0 && (
+            <React.Fragment>
+              <FieldDialogWidgetsList
+                widgets={availableWidgets}
+                onSelect={this.props.onSelect}
+                selectedWidgetId={this.props.selectedWidgetId}
+                defaultWidgetId={defaultWidgetId}
+                isAdmin={isAdmin}
+              />
+              <div
+                className={classNames('modal-dialog__slice', {
+                  'field-dialog__widget-options': availableWidgets.length > 1
+                })}>
+                {widget && <WidgetParametersForm key={widget.id} {...this.getFormProps(widget)} />}
+              </div>
+            </React.Fragment>
+          )}
+        </div>
       </div>
     );
   }

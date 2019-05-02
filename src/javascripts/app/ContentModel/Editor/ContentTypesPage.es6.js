@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { get } from 'lodash';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import EditorFieldsHeader from './EditorFieldsHeader.es6';
-import ContentModelSidebar from './ContentModelSidebar.es6';
+import {
+  FieldsSection,
+  ContentTypeIdSection,
+  DocumentationSection
+} from './Sidebar/ContentModelSidebar.es6';
+import EntryEditorAppearanceSection from './Sidebar/EntryEditorAppearanceSection.es6';
 import PropTypes from 'prop-types';
 import EditorFieldTabs from './EditorFieldTabs.es6';
 import FieldsList from './FieldsTab/FieldsList.es6';
@@ -22,6 +27,10 @@ const styles = {
 
 export default function ContentTypesPage(props) {
   const showSidebar = props.currentTab === 'fields' || props.currentTab === 'preview';
+  const sidebarExtensions = useMemo(
+    () => props.extensions.filter(extension => extension.sidebar === true),
+    [props.extensions]
+  );
 
   return (
     <div className="workbench">
@@ -41,7 +50,7 @@ export default function ContentTypesPage(props) {
           <EditorFieldTabs
             fieldsCount={props.contentTypeData.fields.length}
             currentTab={props.currentTab}
-            hasCustomSidebarFeature={props.hasCustomSidebarFeature}
+            hasAdvancedExtensibility={props.hasAdvancedExtensibility}
           />
           <form name="contentTypeForm" className={styles.form}>
             {props.currentTab === 'fields' && (
@@ -65,7 +74,7 @@ export default function ContentTypesPage(props) {
                 />
               </React.Fragment>
             )}
-            {props.hasCustomSidebarFeature && (
+            {props.hasAdvancedExtensibility && (
               <React.Fragment>
                 {props.currentTab === 'sidebar_configuration' && (
                   <DocumentTitle
@@ -77,8 +86,8 @@ export default function ContentTypesPage(props) {
                     display: props.currentTab === 'sidebar_configuration' ? 'block' : 'none'
                   }}>
                   <SidebarConfiguration
-                    configuration={props.configuration}
-                    extensions={props.extensions}
+                    configuration={props.sidebarConfiguration}
+                    extensions={sidebarExtensions}
                     onUpdateConfiguration={props.actions.updateSidebarConfiguration}
                   />
                 </div>
@@ -88,12 +97,22 @@ export default function ContentTypesPage(props) {
         </div>
         {showSidebar && (
           <div className="workbench-main__sidebar">
-            <ContentModelSidebar
-              canEdit={props.canEdit}
-              contentTypeId={props.contentTypeData.sys.id}
-              fieldsUsed={props.contentTypeData.fields.length}
-              showNewFieldDialog={props.actions.showNewFieldDialog}
-            />
+            <div className="entity-sidebar entity-sidebar__text-profile">
+              <FieldsSection
+                canEdit={props.canEdit}
+                showNewFieldDialog={props.actions.showNewFieldDialog}
+                fieldsUsed={props.contentTypeData.fields.length}
+              />
+              {props.hasAdvancedExtensibility && (
+                <EntryEditorAppearanceSection
+                  extensions={props.extensions}
+                  editorConfiguration={props.editorConfiguration}
+                  updateEditorConfiguration={props.actions.updateEditorConfiguration}
+                />
+              )}
+              <ContentTypeIdSection contentTypeId={props.contentTypeData.sys.id} />
+              <DocumentationSection />
+            </div>
           </div>
         )}
       </div>
@@ -122,9 +141,11 @@ ContentTypesPage.propTypes = {
     undeleteField: PropTypes.func.isRequired,
     updateOrder: PropTypes.func.isRequired,
     updateSidebarConfiguration: PropTypes.func.isRequired,
+    updateEditorConfiguration: PropTypes.func.isRequired,
     loadPreview: PropTypes.func.isRequired
   }).isRequired,
-  hasCustomSidebarFeature: PropTypes.bool.isRequired,
-  configuration: PropTypes.array,
+  hasAdvancedExtensibility: PropTypes.bool.isRequired,
+  sidebarConfiguration: PropTypes.array,
+  editorConfiguration: PropTypes.object,
   extensions: PropTypes.array
 };

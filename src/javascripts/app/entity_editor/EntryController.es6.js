@@ -2,8 +2,10 @@ import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
 import { constant, keys, get } from 'lodash';
 import mitt from 'mitt';
-
+import createExtensionBridge from 'widgets/bridges/createExtensionBridge.es6';
 import { user$ } from 'services/TokenStore.es6';
+import * as WidgetLocations from 'widgets/WidgetLocations.es6';
+import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
 
 import * as Validator from './Validator.es6';
 import * as Focus from './Focus.es6';
@@ -23,6 +25,9 @@ const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
 const TheLocaleStore = getModule('TheLocaleStore');
 const DataFields = getModule('EntityEditor/DataFields');
+const $rootScope = getModule('$rootScope');
+const entitySelector = getModule('entitySelector');
+const entityCreator = getModule('entityCreator');
 
 /**
  * @ngdoc type
@@ -173,4 +178,23 @@ export default async function create($scope, editorData, preferences, trackLoadE
     const isMasterEnvironment = spaceContext.getEnvironmentId() === 'master';
     $scope.shouldDisplayCommentsToggle = isMasterEnvironment && variation;
   });
+
+  /* Custom Extension */
+
+  $scope.customExtensionProps = {
+    extension: editorData.editorExtension,
+    bridge: createExtensionBridge(
+      {
+        $rootScope,
+        $scope,
+        spaceContext,
+        TheLocaleStore,
+        entitySelector,
+        entityCreator,
+        Navigator,
+        SlideInNavigator
+      },
+      WidgetLocations.LOCATION_ENTRY_EDITOR
+    )
+  };
 }

@@ -47,8 +47,7 @@ export class ImageManagementInstaller extends Component {
       save: PropTypes.func.isRequired
     }).isRequired,
     existingContentTypeNames: PropTypes.array.isRequired,
-    onInstallCompleted: PropTypes.func.isRequired,
-    hasCustomSidebar: PropTypes.bool.isRequired
+    onInstallCompleted: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -64,7 +63,7 @@ export class ImageManagementInstaller extends Component {
         installing: true
       });
 
-      const config = await installApp(this.state.wrapperName, this.props.hasCustomSidebar);
+      const config = await installApp(this.state.wrapperName);
 
       await this.props.client.save(APP_ID, config);
       Analytics.track('aiImageManagement:installed');
@@ -98,8 +97,6 @@ export class ImageManagementInstaller extends Component {
   };
 
   render() {
-    const { hasCustomSidebar } = this.props;
-
     const wrapperNameValidationMessage = this.validateWrapperName(this.state.wrapperName);
 
     return (
@@ -111,8 +108,8 @@ export class ImageManagementInstaller extends Component {
         <Typography>
           <Heading className={styles.heading}>About</Heading>
           <Paragraph>
-            Simplify your image management with direct image upload in entries{' '}
-            {hasCustomSidebar ? ' and AI supported tag generation' : null}.{' '}
+            Simplify your image management with direct image upload in entries and AI supported tag
+            generation.{' '}
           </Paragraph>
           <Paragraph>Installing this app will add the following items to your space:</Paragraph>
         </Typography>
@@ -120,17 +117,14 @@ export class ImageManagementInstaller extends Component {
           <ListItem className={styles.installListItem}>
             A UI extension to directly upload images in your entries
           </ListItem>
-          {hasCustomSidebar ? (
-            <ListItem className={styles.installListItem}>
-              A UI extension to automatically tag images
-            </ListItem>
-          ) : null}
+          <ListItem className={styles.installListItem}>
+            A UI extension to automatically tag images
+          </ListItem>
           <ListItem className={styles.installListItem}>
             A new content type to wrap assets for storing custom metadata: Title, Image and Tags
           </ListItem>
           <ListItem className={styles.installListItem}>
-            Configure the new content type to use the new UI extension
-            {hasCustomSidebar ? 's' : null}
+            Configure the new content type to use the new UI extensions
           </ListItem>
         </List>
 

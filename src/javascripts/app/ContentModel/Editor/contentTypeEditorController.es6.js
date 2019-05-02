@@ -232,13 +232,17 @@ export default function register() {
         }
       );
 
-      $scope.sidebarExtensions = ($scope.widgets[NAMESPACE_EXTENSION] || []).filter(
-        widget => widget.sidebar === true
-      );
-
       const updateSidebarConfiguration = updatedSidebar => {
         if (!_.isEqual($scope.editorInterface.sidebar, updatedSidebar)) {
           $scope.editorInterface.sidebar = updatedSidebar;
+          $scope.$applyAsync();
+          setDirty();
+        }
+      };
+
+      const updateEditorConfiguration = updatedEditor => {
+        if (!_.isEqual($scope.editorInterface.editor, updatedEditor)) {
+          $scope.editorInterface.editor = updatedEditor;
           $scope.$applyAsync();
           setDirty();
         }
@@ -341,8 +345,9 @@ export default function register() {
         isNew: $scope.context.isNew,
         currentTab: getCurrentTab($state),
         canEdit: accessChecker.can('update', 'ContentType'),
-        configuration: $scope.editorInterface.sidebar,
-        extensions: $scope.sidebarExtensions,
+        sidebarConfiguration: $scope.editorInterface.sidebar,
+        editorConfiguration: $scope.editorInterface.editor,
+        extensions: $scope.widgets[NAMESPACE_EXTENSION] || [],
         actions: {
           showMetadataDialog,
           showNewFieldDialog,
@@ -357,11 +362,12 @@ export default function register() {
           deleteField,
           toggleFieldProperty,
           updateSidebarConfiguration,
+          updateEditorConfiguration,
           loadPreview
         },
         contentTypeName: $scope.contentType.getName(),
         contentTypeData: $scope.contentType.data,
-        hasCustomSidebarFeature: $scope.hasCustomSidebarFeature
+        hasAdvancedExtensibility: $scope.hasAdvancedExtensibility
       };
     }
   ]);

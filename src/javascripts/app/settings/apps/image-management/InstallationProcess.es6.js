@@ -75,14 +75,14 @@ const addExtensionsToEditorInterface = async (
     .catch(raiseInstallationError(`Failed to update editor interface for ${contentType.name}`));
 };
 
-export const installApp = async (wrapperName, hasCustomSidebar) => {
+export const installApp = async wrapperName => {
   const [imageTaggingExtension, imageUploaderExtension, contentType] = await Promise.all([
-    hasCustomSidebar ? installExtension(EXTENSIONS.imageTagging) : Promise.resolve(),
+    installExtension(EXTENSIONS.imageTagging),
     installExtension(EXTENSIONS.imageUploader),
     createContentType(wrapperName)
   ]);
 
-  const imageTaggingExtensionId = hasCustomSidebar ? imageTaggingExtension.sys.id : null;
+  const imageTaggingExtensionId = imageTaggingExtension.sys.id;
   const imageUploaderExtensionId = imageUploaderExtension.sys.id;
 
   await addExtensionsToEditorInterface(
@@ -109,14 +109,12 @@ const deleteExtension = id => {
   return Promise.resolve();
 };
 
-const removeExtensionsFromEditorInterface = async (config, hasCustomSidebar) => {
+const removeExtensionsFromEditorInterface = async config => {
   const editorInterface = await spaceContext.cma.getEditorInterface(config.contentTypeId);
 
-  if (hasCustomSidebar) {
-    editorInterface.sidebar = editorInterface.sidebar.filter(
-      s => s.widgetId !== config.imageTaggingExtensionId
-    );
-  }
+  editorInterface.sidebar = editorInterface.sidebar.filter(
+    s => s.widgetId !== config.imageTaggingExtensionId
+  );
 
   const imageControl = editorInterface.controls.find(
     c => c.widgetId === config.imageUploaderExtensionId
@@ -130,13 +128,13 @@ const removeExtensionsFromEditorInterface = async (config, hasCustomSidebar) => 
   await spaceContext.cma.updateEditorInterface(editorInterface);
 };
 
-export const uninstallApp = async (appConfig, hasCustomSidebar) => {
+export const uninstallApp = async appConfig => {
   const config = appConfig.config || {};
 
   await Promise.all([
     deleteExtension(config.imageTaggingExtensionId),
     deleteExtension(config.imageUploaderExtensionId),
-    removeExtensionsFromEditorInterface(config, hasCustomSidebar)
+    removeExtensionsFromEditorInterface(config)
   ]);
 
   return spaceContext.publishedCTs.refresh();

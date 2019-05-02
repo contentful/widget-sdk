@@ -6,7 +6,8 @@ describe('app/entity_editor/DataLoader.es6', () => {
     module('contentful/test', $provide => {
       $provide.constant('widgets/WidgetRenderable.es6', {
         buildRenderables: sinon.stub().returns({}),
-        buildSidebarRenderables: sinon.stub().returns([])
+        buildSidebarRenderables: sinon.stub().returns([]),
+        buildEditorRenderable: sinon.stub().returns(undefined)
       });
       $provide.constant('TheLocaleStore', {
         getPrivateLocales: sinon.stub().returns([])
@@ -105,6 +106,7 @@ describe('app/entity_editor/DataLoader.es6', () => {
         'fieldControls',
         'sidebar',
         'sidebarExtensions',
+        'editorExtension',
         'entityInfo',
         'openDoc',
         'editorInterface'
@@ -203,6 +205,7 @@ describe('app/entity_editor/DataLoader.es6', () => {
         'fieldControls',
         'sidebar',
         'sidebarExtensions',
+        'editorExtension',
         'entityInfo',
         'openDoc',
         'editorInterface'

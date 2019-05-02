@@ -45,7 +45,6 @@ export class ImageManagementGettingStarted extends Component {
       remove: PropTypes.func.isRequired
     }).isRequired,
     onUninstallCompleted: PropTypes.func.isRequired,
-    hasCustomSidebar: PropTypes.bool.isRequired,
     contentTypeName: PropTypes.string.isRequired
   };
 
@@ -64,7 +63,7 @@ export class ImageManagementGettingStarted extends Component {
     try {
       const appConfig = await this.props.client.get(APP_ID);
 
-      await uninstallApp(appConfig, this.props.hasCustomSidebar).catch(() =>
+      await uninstallApp(appConfig).catch(() =>
         Notification.warning('Some elements could not be deleted and have to be removed manually')
       );
 

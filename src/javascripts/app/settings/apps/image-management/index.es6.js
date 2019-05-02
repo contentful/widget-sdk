@@ -3,14 +3,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { getModule } from 'NgRegistry.es6';
-import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import AppIcon from '../_common/AppIcon.es6';
 import Workbench from 'app/common/Workbench.es6';
 import AppPageShell from '../_common/AppPageShell.es6';
 
 import { ImageManagementInstaller } from './ImageManagementInstaller.es6';
 import { ImageManagementGettingStarted } from './ImageManagementGettingStarted.es6';
-import { APP_ID, APP_NAME, CUSTOM_SIDEBAR_FEATURE_ID } from './Constants.es6';
+import { APP_ID, APP_NAME } from './Constants.es6';
 
 const spaceContext = getModule('spaceContext');
 
@@ -37,8 +36,7 @@ export default class ImageManagementApp extends Component {
       loading: true
     });
 
-    const [hasCustomSidebar, config, contentTypes] = await Promise.all([
-      getOrgFeature(spaceContext.organization.sys.id, CUSTOM_SIDEBAR_FEATURE_ID, true),
+    const [config, contentTypes] = await Promise.all([
       this.props.client.get(APP_ID),
       spaceContext.publishedCTs.getAllBare()
     ]);
@@ -46,7 +44,6 @@ export default class ImageManagementApp extends Component {
     this.setState({
       installed: config.installed,
       contentTypeName: config.config ? config.config.contentTypeName : null,
-      hasCustomSidebar: hasCustomSidebar,
       existingContentTypeNames: (contentTypes || []).map(ct => ct.name),
       loading: false
     });
@@ -71,14 +68,14 @@ export default class ImageManagementApp extends Component {
             <ImageManagementGettingStarted
               client={this.props.client}
               onUninstallCompleted={this.reloadConfig}
-              hasCustomSidebar={this.state.hasCustomSidebar}
+              hasAdvancedExtensibility={this.state.hasAdvancedExtensibility}
               contentTypeName={this.state.contentTypeName}
             />
           ) : (
             <ImageManagementInstaller
               client={this.props.client}
               onInstallCompleted={this.reloadConfig}
-              hasCustomSidebar={this.state.hasCustomSidebar}
+              hasAdvancedExtensibility={this.state.hasAdvancedExtensibility}
               existingContentTypeNames={this.state.existingContentTypeNames}
             />
           )}

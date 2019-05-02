@@ -8,7 +8,6 @@ import ExtensionDevelopmentMode from './ExtensionDevelopmentMode.es6';
 import Channel from './ExtensionIFrameChannel.es6';
 import ExtensionAPI from './ExtensionAPI.es6';
 
-const WIDTH = { width: '100%' };
 const SANDBOX = 'allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms';
 
 function isAppDomain(src) {
@@ -39,7 +38,8 @@ export default class ExtensionIFrameRenderer extends React.Component {
       instance: PropTypes.object.isRequired,
       installation: PropTypes.object.isRequired,
       invocation: PropTypes.object
-    }).isRequired
+    }).isRequired,
+    isFullSize: PropTypes.bool
   };
 
   // There's no need to update. Once the iframe is loaded
@@ -60,7 +60,12 @@ export default class ExtensionIFrameRenderer extends React.Component {
     const src = get(this.props, ['descriptor', 'src'], '');
     const isDevMode = src.startsWith('http://localhost');
 
-    const iframe = <iframe style={WIDTH} ref={this.initialize} onLoad={this.onLoad} />;
+    const style = {
+      width: '100%',
+      height: this.props.isFullSize ? '100%' : 'auto'
+    };
+
+    const iframe = <iframe style={style} ref={this.initialize} onLoad={this.onLoad} />;
     if (isDevMode) {
       return <ExtensionDevelopmentMode>{iframe}</ExtensionDevelopmentMode>;
     }

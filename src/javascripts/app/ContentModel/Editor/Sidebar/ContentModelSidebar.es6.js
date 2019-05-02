@@ -1,13 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextInput, Button } from '@contentful/forma-36-react-components';
+import {
+  TextInput,
+  Button,
+  Paragraph,
+  List,
+  ListItem
+} from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 
-export default function ContentModalSidebar(props) {
+export function FieldsSection(props) {
   return (
-    <div className="entity-sidebar entity-sidebar__text-profile">
+    <React.Fragment>
       <h2 className="entity-sidebar__heading">Fields</h2>
-      <p>The content type has used {props.fieldsUsed} out of 50 fields.</p>
+      <Paragraph>The content type has used {props.fieldsUsed} out of 50 fields.</Paragraph>
       {props.canEdit && (
         <Button
           testId="add-field-button"
@@ -21,8 +27,26 @@ export default function ContentModalSidebar(props) {
           Add field
         </Button>
       )}
+    </React.Fragment>
+  );
+}
+
+FieldsSection.propTypes = {
+  canEdit: PropTypes.bool.isRequired,
+  showNewFieldDialog: PropTypes.shape({
+    isDisabled: PropTypes.func.isRequired,
+    execute: PropTypes.func.isRequired
+  }).isRequired,
+  fieldsUsed: PropTypes.number.isRequired
+};
+
+export function ContentTypeIdSection(props) {
+  return (
+    <React.Fragment>
       <h2 className="entity-sidebar__heading">Content type ID</h2>
-      <p>Use this ID to retrieve everything related to this content type via the API.</p>
+      <Paragraph>
+        Use this ID to retrieve everything related to this content type via the API.
+      </Paragraph>
       <TextInput
         value={props.contentTypeId}
         name="contentTypeIdInput"
@@ -31,9 +55,20 @@ export default function ContentModalSidebar(props) {
         withCopyButton
         disabled
       />
+    </React.Fragment>
+  );
+}
+
+ContentTypeIdSection.propTypes = {
+  contentTypeId: PropTypes.string.isRequired
+};
+
+export function DocumentationSection() {
+  return (
+    <React.Fragment>
       <h2 className="entity-sidebar__heading">Documentation</h2>
-      <ul>
-        <li>
+      <List>
+        <ListItem>
           Read more about content types in our{' '}
           <KnowledgeBase
             target="contentModellingBasics"
@@ -41,19 +76,12 @@ export default function ContentModalSidebar(props) {
             inlineText
           />
           .
-        </li>
-        <li>
+        </ListItem>
+        <ListItem>
           To learn more about the various ways of disabling and deleting fields have a look at the{' '}
           <KnowledgeBase target="field_lifecycle" text="field lifecycle" inlineText />.
-        </li>
-      </ul>
-    </div>
+        </ListItem>
+      </List>
+    </React.Fragment>
   );
 }
-
-ContentModalSidebar.propTypes = {
-  contentTypeId: PropTypes.string,
-  canEdit: PropTypes.bool.isRequired,
-  fieldsUsed: PropTypes.number.isRequired,
-  showNewFieldDialog: PropTypes.object.isRequired
-};

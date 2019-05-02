@@ -2,12 +2,16 @@ import { get, find, isPlainObject, cloneDeep, memoize } from 'lodash';
 import { caseof as caseofEq } from 'sum-types/caseof-eq';
 import { deepFreeze } from 'utils/Freeze.es6';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache.es6';
-import { buildRenderables, buildSidebarRenderables } from 'widgets/WidgetRenderable.es6';
+import {
+  buildRenderables,
+  buildSidebarRenderables,
+  buildEditorRenderable
+} from 'widgets/WidgetRenderable.es6';
 import { getModule } from 'NgRegistry.es6';
 import { assetContentType } from 'legacy-client';
-import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import * as WidgetStore from 'widgets/WidgetStore.es6';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
+import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
@@ -113,15 +117,15 @@ async function loadEditorData(loader, id) {
   const entity = await loader.getEntity(id);
   const contentTypeId = get(entity, ['data', 'sys', 'contentType', 'sys', 'id']);
 
-  const [contentType, editorInterface, hasCustomSidebarFeature] = await Promise.all([
+  const [contentType, editorInterface, hasAdvancedExtensibility] = await Promise.all([
     loader.getContentType(contentTypeId),
     loader.getEditorInterface(contentTypeId),
-    loader.hasCustomSidebarFeature()
+    loader.hasAdvancedExtensibility()
   ]);
 
   const widgets = await loader.getWidgets(editorInterface);
 
-  const { controls, sidebar } = EditorInterfaceTransformer.fromAPI(
+  const { controls, sidebar, editor } = EditorInterfaceTransformer.fromAPI(
     contentType.data,
     editorInterface,
     widgets
@@ -131,10 +135,12 @@ async function loadEditorData(loader, id) {
   // sidebar with the API. The feature check only happens here.
   // If a user has no feature, we undefine any config they may
   // have so they see the default one.
-  const sidebarConfig = hasCustomSidebarFeature ? sidebar : undefined;
+  const sidebarConfig = hasAdvancedExtensibility ? sidebar : undefined;
+  const editorConfig = hasAdvancedExtensibility ? editor : undefined;
 
   const fieldControls = buildRenderables(controls, widgets);
   const sidebarExtensions = buildSidebarRenderables(sidebarConfig || [], widgets);
+  const editorExtension = buildEditorRenderable(editorConfig, widgets);
 
   const entityInfo = makeEntityInfo(entity, contentType);
   const openDoc = loader.getOpenDoc(entity, contentType);
@@ -145,6 +151,7 @@ async function loadEditorData(loader, id) {
     fieldControls,
     sidebar: sidebarConfig,
     sidebarExtensions,
+    editorExtension,
     entityInfo,
     openDoc,
     editorInterface
@@ -173,8 +180,8 @@ function makeEntryLoader(spaceContext) {
         editorInterface
       );
     },
-    hasCustomSidebarFeature() {
-      return getOrgFeature(spaceContext.organization.sys.id, 'custom_sidebar', true);
+    hasAdvancedExtensibility() {
+      return AdvancedExtensibilityFeature.isEnabled(spaceContext.organization.sys.id);
     },
     getOpenDoc: makeDocOpener(spaceContext)
   };
@@ -205,7 +212,7 @@ function makeAssetLoader(spaceContext) {
       );
     },
     getWidgets: () => widgets,
-    hasCustomSidebarFeature: () => false,
+    hasAdvancedExtensibility: () => false,
     getOpenDoc: makeDocOpener(spaceContext)
   };
 }
