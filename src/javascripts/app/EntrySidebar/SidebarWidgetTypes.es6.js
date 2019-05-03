@@ -8,5 +8,6 @@ export default {
   ACTIVITY: 'entry-activity-widget',
   INFO_PANEL: 'info-panel',
   SCHEDULE: 'schedule-widget',
+  TASKS: 'content-workflows-tasks-widget',
   COMMENTS_PANEL: 'comments-panel'
 };

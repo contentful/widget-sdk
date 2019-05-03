@@ -124,6 +124,13 @@ export default ({ $scope, emitter }) => {
     });
   });
 
+  const initializeTasksWidget = once(() => {
+    const notifyUpdate = update => {
+      emitter.emit(SidebarEventTypes.UPDATED_TASKS_WIDGET, update);
+    };
+    notifyUpdate({});
+  });
+
   const initializeInfoPanel = once(() => {
     const updateProps = update => {
       emitter.emit(SidebarEventTypes.UPDATED_INFO_PANEL, {
@@ -223,6 +230,9 @@ export default ({ $scope, emitter }) => {
         break;
       case SidebarWidgetTypes.SCHEDULE:
         initializeScheduleWidget();
+        break;
+      case SidebarWidgetTypes.TASKS:
+        initializeTasksWidget();
         break;
       case SidebarWidgetTypes.INFO_PANEL:
         initializeInfoPanel();

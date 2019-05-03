@@ -21,7 +21,7 @@ Note: this setting currently works only with quirely api (`preview` and
 proxy in our lab setup.
 
 - Go to Stoplight app and configure mocking. You can choose an individual
-endpoint and select a status code under Mockng, or you can mock the entire API
+endpoint and select a status code under Mocking, or you can mock the entire API
 via API settings -> Prism -> Global Mocking.
 
 ## Current limitations

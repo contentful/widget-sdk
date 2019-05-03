@@ -73,6 +73,12 @@ export default function WrappedSidebarWidgetItem(props) {
         <SidebarWidgetItem {...props} />
       </BooleanFeatureFlag>
     );
+  } else if (props.id === SidebarWidgetTypes.TASKS) {
+    return (
+      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.TASKS}>
+        <SidebarWidgetItem {...props} />
+      </BooleanFeatureFlag>
+    );
   }
   return <SidebarWidgetItem {...props} />;
 }
