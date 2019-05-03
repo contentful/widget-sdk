@@ -60,10 +60,14 @@ export default class ExtensionIFrameRenderer extends React.Component {
     const src = get(this.props, ['descriptor', 'src'], '');
     const isDevMode = src.startsWith('http://localhost');
 
-    const style = {
-      width: '100%',
-      height: this.props.isFullSize ? '100%' : 'auto'
-    };
+    const style = { width: '100%' };
+    if (this.props.isFullSize) {
+      // Setting `height` inline style overrides `height` element attribute
+      // which is used by the Extension IFrame Channel to handle height changes.
+      // For this reason we only define the property if in full size mode
+      // (impossible to resize the IFrame or use autoresizer in the SDK).
+      style.height = '100%';
+    }
 
     const iframe = <iframe style={style} ref={this.initialize} onLoad={this.onLoad} />;
     if (isDevMode) {
