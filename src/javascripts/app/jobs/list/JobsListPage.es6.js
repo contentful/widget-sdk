@@ -14,7 +14,7 @@ import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const styles = {
   container: css({
-    maxWidth: '600px',
+    maxWidth: '700px',
     margin: `${tokens.spacingXl} auto`
   }),
   intro: css({
