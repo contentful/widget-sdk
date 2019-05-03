@@ -27,4 +27,20 @@ describe('BooleanFeatureFlag Component', () => {
     expect(getCurrentVariation).toHaveBeenCalledWith('ff');
     expect(wrapper).toMatchSnapshot();
   });
+
+  describe('render prop', () => {
+    it('invokes child function with current variation', async () => {
+      getCurrentVariation.mockResolvedValue(true);
+
+      const renderProp = jest.fn().mockImplementation(() => 1);
+      const wrapper = Enzyme.mount(
+        <BooleanFeatureFlag featureFlagKey="ff">{renderProp}</BooleanFeatureFlag>
+      );
+
+      await flushPromises();
+      wrapper.update();
+
+      expect(renderProp).toHaveBeenCalledWith({ currentVariation: true });
+    });
+  });
 });
