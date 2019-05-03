@@ -22,20 +22,10 @@ header.workbench-header
 
   .workbench-header__actions(
     ng-show="!showNoAssetsAdvice() && !shouldHide('create', 'asset')")
-    button.btn-action(
-      cf-context-menu-trigger
-      ng-disabled="shouldDisable('create', 'asset')"
-      data-test-id="add-asset-menu-trigger")
-      cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-      | Add asset
-    .context-menu(
-      role="menu" cf-context-menu
-      aria-label="Add Assets" data-test-id="add-asset-menu")
-      ul.context-menu__items
-        li(role="menuitem" ng-click="newAsset()")
-          | Single asset
-        li(role="menuitem" ng-click="createMultipleAssets()" ng-show="canUploadMultipleAssets()")
-          | Multiple assets
+    react-component(
+      name="components/tabs/asset_list/AddAssetButton.es6"
+      props="{ canUploadMultipleAssets: canUploadMultipleAssets, createMultipleAssets: createMultipleAssets, newAsset: newAsset }"
+      )
 
 .workbench-main(ng-hide="showNoAssetsAdvice()")
   .workbench-main__left-sidebar(style="max-height: 100vh; overflow-y: hidden")
