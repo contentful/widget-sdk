@@ -3,7 +3,6 @@
   "authUrl": "//localhost:5000",
   "apiUrl": "//localhost:5000",
   "uploadApiUrl": "//localhost:5000",
-  "mockApiUrl": "//localhost:5000",
   "otUrl": ["//ot.localhost:5000"],
   "assetUrl": "//localhost:5000",
   "marketingUrl": "//localhost:5000",

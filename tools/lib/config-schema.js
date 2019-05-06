@@ -38,7 +38,6 @@ const URL_KEYS = [
   'asset',
   'marketing',
   'toolsService',
-  'mockApi',
   'microBackends'
 ];
 
@@ -69,7 +68,7 @@ module.exports = strictObject(
 function hosts() {
   const props = {};
   for (const key of URL_KEYS) {
-    props[key + 'Url'] = urlSchema;
+    props[`${key}Url`] = urlSchema;
   }
   props['otUrl'] = urlsArraySchema;
 

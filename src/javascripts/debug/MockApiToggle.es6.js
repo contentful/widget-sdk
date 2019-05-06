@@ -2,11 +2,11 @@ import React from 'react';
 import { getStore } from 'TheStore/index.es6';
 import { omit } from 'lodash';
 import { addNotification } from 'debug/DevNotifications.es6';
-import { mockApiUrl } from 'Config.es6';
+import { MOCK_APIS } from 'Config.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const $window = getModule('$window');
-const location = getModule('$location');
+const $location = getModule('$location');
 
 const store = getStore().forKey('use_mock_api');
 
@@ -17,29 +17,37 @@ const store = getStore().forKey('use_mock_api');
  * This is currently supported only on `preview` and `dev-on-preview` envs.
  */
 export function init() {
-  const urlParams = location.search();
+  const urlParams = $location.search();
+  const mockApiIdFromUrl = urlParams['use_mock_api'];
+  const mockApiId = mockApiIdFromUrl || store.get();
 
-  if (urlParams['use_mock_api']) {
-    // Only set flag if current config has mock api url
-    // (i.e. preview & dev-on-preview)
-    if (mockApiUrl) {
-      store.set(urlParams['use_mock_api'] === 'true');
+  if (mockApiId) {
+    const mockApiInfo = MOCK_APIS[mockApiId];
+
+    $location.search(omit(urlParams, 'use_mock_api'));
+
+    if (mockApiInfo && mockApiIdFromUrl) {
+      store.set(mockApiId);
+      // Ensure that there are absolutely no endpoints instantiated
+      // that are still using the config's api url.
+      setTimeout(() => $window.location.reload());
+    } else if (mockApiInfo) {
+      showNotification(mockApiInfo);
+    } else {
+      store.remove(); // No reason to keep an unknown ID around in our store.
     }
-    // Update url without reloading
-    location.search(omit(urlParams, 'use_mock_api'));
   }
+}
 
-  if (store.get()) {
-    addNotification(
-      <h5>
-        {'Using mock API '}
-        <button className="btn-link" style={{ display: 'inline' }} onClick={disableMockApi}>
-          clear
-        </button>
-      </h5>,
-      <a href={mockApiUrl}>{mockApiUrl}</a>
-    );
-  }
+function showNotification({ name, url }) {
+  addNotification(
+    <h5>
+      {'Using'} <a href={url}>“{name}”</a> {'mock API '}
+      <button className="btn-link" style={{ display: 'inline' }} onClick={disableMockApi}>
+        clear
+      </button>
+    </h5>
+  );
 }
 
 function disableMockApi() {

@@ -3,7 +3,6 @@
   "authUrl": "//be.flinkly.com",
   "apiUrl": "//api.flinkly.com",
   "uploadApiUrl": "//upload.flinkly.com",
-  "mockApiUrl": "",
   "otUrl": [
     "https://ot.flinkly.com",
     "https://ot1.flinkly.com",

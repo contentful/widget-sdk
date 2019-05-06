@@ -3,7 +3,6 @@
   "authUrl": "//be.joistio.com:8888",
   "apiUrl": "//api.joistio.com:8888",
   "uploadApiUrl": "//upload.joistio.com:8888",
-  "mockApiUrl": "//mock-proxy.joistio.com:8888",
   "otUrl": ["//ot.joistio.com:8888"],
   "assetUrl": "//static.joistio.com:8888",
   "marketingUrl": "//www.joistio.com:8888",

@@ -3,7 +3,6 @@
   "authUrl": "https://be.flinkly.com",
   "apiUrl": "https://api.flinkly.com",
   "uploadApiUrl": "http://upload.flinkly.com",
-  "mockApiUrl": "",
   "assetUrl": "//localhost:3001",
   "otUrl": [
     "https://ot.flinkly.com",
