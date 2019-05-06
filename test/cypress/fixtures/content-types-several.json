@@ -1,0 +1,127 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "total": 3,
+  "skip": 0,
+  "limit": 1000,
+  "items": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "gni2ifncgx0l"
+          }
+        },
+        "id": "testContentType1",
+        "type": "ContentType",
+        "createdAt": "2019-04-08T09:12:00.101Z",
+        "updatedAt": "2019-04-08T09:12:00.101Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 1
+      },
+      "displayField": "fieldID",
+      "name": "Test Content Type 1",
+      "description": "",
+      "fields": [
+        {
+          "id": "fieldID1",
+          "apiName": "testFieldName",
+          "name": "Test field name",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "gni2ifncgx0l"
+          }
+        },
+        "id": "testContentType2",
+        "type": "ContentType",
+        "createdAt": "2019-04-08T09:12:00.101Z",
+        "updatedAt": "2019-04-08T09:12:00.101Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 1
+      },
+      "displayField": "fieldID",
+      "name": "Test Content Type 2",
+      "description": "",
+      "fields": [
+        {
+          "id": "fieldID2",
+          "apiName": "testFieldName",
+          "name": "Test field name",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "gni2ifncgx0l"
+          }
+        },
+        "id": "testContentType3",
+        "type": "ContentType",
+        "createdAt": "2019-04-08T09:12:00.101Z",
+        "updatedAt": "2019-04-08T09:12:00.101Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 1
+      },
+      "displayField": "fieldID",
+      "name": "Test Content Type 3",
+      "description": "",
+      "fields": [
+        {
+          "id": "fieldID3",
+          "apiName": "testFieldName",
+          "name": "Test field name",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    }
+  ]
+}

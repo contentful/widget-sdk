@@ -69,7 +69,8 @@ export enum Extensions {
 
 export enum ContentTypes {
   EDITORINTERFACE = 'content_types/editor_interface',
-  SINGLE = 'content_types/single'
+  SINGLE = 'content_types/single',
+  SEVERAL = 'content_types/several'
 }
 
 export enum Apps {
