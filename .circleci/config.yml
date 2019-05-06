@@ -50,6 +50,33 @@ orbs:
                 curl -i -X POST --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"<<parameters.env>>\"}" \
                 -H 'content-type: application/json' \
                 https://tooling-lambdas.ctfl1.now.sh/user_interface/comments?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY
+  estivador:
+    commands:
+      install:
+        description: 'Download estivador and validate checksum'
+        steps:
+          - run:
+              name: Install estivador
+              working_directory: ~/bin
+              command: |
+                curl -fsSLO https://contentful-lab-assets.s3.amazonaws.com/estivador && chmod +x estivador
+                echo "$(curl -sSL https://contentful-lab-assets.s3.amazonaws.com/estivador.sum)" | sha512sum -c
+
+  compose:
+    commands:
+      install:
+        description: 'Download & install docker-compose'
+        parameters:
+          version:
+            type: string
+            default: '1.22.0'
+        steps:
+          - run:
+              name: Install docker-compose
+              command: |
+                curl -L https://github.com/docker/compose/releases/download/<< parameters.version >>/docker-compose-`uname -s`-`uname -m` > docker-compose
+                sudo mv docker-compose /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose
+                docker-compose --version
 
 executors:
   cypress-base-8:
@@ -68,11 +95,8 @@ jobs:
       DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
     steps:
       - checkout
-      - run:
-          name: Install docker-compose
-          command: |
-            sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
+      - compose/install
+      - estivador/install
       - run:
           name: Setup environment variables
           command: |
@@ -93,11 +117,9 @@ jobs:
       - run:
           name: Push production image to our docker repo
           command: |
-            curl -fsSLO https://contentful-lab-assets.s3.amazonaws.com/estivador && chmod +x estivador
-            echo "$(curl -sSL https://contentful-lab-assets.s3.amazonaws.com/estivador.sum)" | sha512sum -c
-            ./estivador docker-ecr-login
-            ./estivador put-image
-            ./estivador promote-image
+            ~/bin/estivador docker-ecr-login
+            ~/bin/estivador put-image
+            ~/bin/estivador promote-image
       - persist_to_workspace:
           root: .
           paths:
@@ -215,17 +237,8 @@ jobs:
       - run:
           name: Add lab repository
           command: git clone git@github.com:contentful/api_integration_suite.git .
-      - run:
-          name: Install docker-compose
-          command: |
-            sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
-      - run:
-          name: Download estivador, validate checksum and log into private registry
-          command: |
-            curl -fsSLO https://contentful-lab-assets.s3.amazonaws.com/estivador && chmod +x estivador
-            echo "$(curl -sSL https://contentful-lab-assets.s3.amazonaws.com/estivador.sum)" | sha512sum -c
-            ./estivador docker-ecr-login
+      - compose/install
+      - estivador/install
       - run: mkdir -p $COMPONENTS_ROOT/lab/artifacts
       - run:
           name: Add e2e-tests repository
@@ -244,6 +257,7 @@ jobs:
       - run:
           name: Pull lab images
           command: |
+            ~/bin/estivador docker-ecr-login
             make pull
             docker images --format "table {{.Repository}}\t{{.Tag}}"
       - run:
