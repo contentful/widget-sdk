@@ -91,15 +91,15 @@ export default class ExtensionAPI {
       user: {
         sys: {
           type: 'User',
-          id: spaceMember.user.sys.id
+          id: spaceMember.sys.user.sys.id
         },
-        firstName: spaceMember.user.firstName,
-        lastName: spaceMember.user.lastName,
-        email: spaceMember.user.email,
-        avatarUrl: spaceMember.user.avatarUrl,
+        firstName: spaceMember.sys.user.firstName,
+        lastName: spaceMember.sys.user.lastName,
+        email: spaceMember.sys.user.email,
+        avatarUrl: spaceMember.sys.user.avatarUrl,
         spaceMember: {
           sys: {
-            type: 'SpaceMembership',
+            type: 'SpaceMember',
             id: spaceMember.sys.id
           },
           admin: !!spaceMember.admin,

@@ -565,7 +565,16 @@ describe('Extension SDK', () => {
           sys: {},
           spaceMember: {
             admin: false,
-            sys: { id: 'SMID' },
+            sys: {
+              id: 'SMID',
+              user: {
+                sys: { id: 'b33ts' },
+                firstName: 'Dwight',
+                lastName: 'Schrute',
+                email: 'dwight@dundermifflin.com',
+                avatarUrl: 'https://avatar.com/x.jpg'
+              }
+            },
             roles: [
               {
                 sys: 'OMITTED',
@@ -574,14 +583,7 @@ describe('Extension SDK', () => {
                 policies: [],
                 permissions: {}
               }
-            ],
-            user: {
-              sys: { id: 'b33ts' },
-              firstName: 'Dwight',
-              lastName: 'Schrute',
-              email: 'dwight@dundermifflin.com',
-              avatarUrl: 'https://avatar.com/x.jpg'
-            }
+            ]
           }
         }
       };
@@ -596,7 +598,7 @@ describe('Extension SDK', () => {
         avatarUrl: 'https://avatar.com/x.jpg',
         spaceMember: {
           admin: false,
-          sys: { id: 'SMID', type: 'SpaceMembership' },
+          sys: { id: 'SMID', type: 'SpaceMember' },
           roles: [
             {
               name: 'Assistant to the regional manager',

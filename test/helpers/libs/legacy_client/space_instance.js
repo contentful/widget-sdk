@@ -38,7 +38,9 @@ export default function spaceInstanceDescription(serverSpaceData) {
         const admin = { sys: { id: 'admin' } };
         this.space.data.spaceMember = {
           admin: true,
-          user: admin
+          sys: {
+            user: admin
+          }
         };
         expect(this.space.isAdmin(admin)).toBe(true);
         expect(this.space.isAdmin(user)).toBe(false);
@@ -48,7 +50,9 @@ export default function spaceInstanceDescription(serverSpaceData) {
         const user = { sys: { id: 'uid' } };
         this.space.data.spaceMember = {
           admin: false,
-          user: user
+          sys: {
+            user: user
+          }
         };
         expect(this.space.isAdmin(user)).toBe(false);
       });
