@@ -14,8 +14,9 @@ describe('Apps Page', () => {
     pactfileWriteMode: 'merge'
   }))
 
-  beforeEach(() => {
-    cy.setAuthTokenToLocalStorage();
+  function setUpFakeServersAndVisitPage() {
+    cy.resetAllFakeServers();
+
     defaultRequestsMock();
     noInstalledAppsResponse();
     spaceProductCatalogFeaturesResponse();
@@ -23,26 +24,44 @@ describe('Apps Page', () => {
     cy.visit(`/spaces/${defaultSpaceId}/apps`);
 
     cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
-  });
+  }
 
+  // TODO: Does the alpha feature flag changes the communication with the server side?
   describe('Opening the Apps page with disabled Alpha feature', () => {
+    before(() => {
+      cy.setAuthTokenToLocalStorage();
+      
+      setUpFakeServersAndVisitPage();
+    });
+
     it('Renders the page', () => {
       cy.getByTestId('workbench-title').should('to.have.text', 'Apps');
+      // TODO: Does this assertion belongs to contract test?
       cy.getByTestId('cf-ui-note')
         .should('be.visible')
         .and('contain', 'Alpha feature');
     });
 
+    // TODO: Does this test belongs to contract test?
     it('Enable alpha feature button is enabled', () => {
       cy.getByTestId('enable-apps').should('be.enabled');
     });
 
+    // TODO: Does this test belongs to contract test?
     it('Installing of Apps is disabled', () => {
       cy.getByTestId('disabled-apps').should('be.visible');
     });
   });
 
+  // TODO: What happens with the server interactions here? Are they the same as before?
+  // If so, we should not do a contract test here?
   describe('Enable Alpha Apps feature', () => {
+    beforeEach(() => {
+      cy.setAuthTokenToLocalStorage();
+      
+      setUpFakeServersAndVisitPage();
+    });
+
     it('Enable alpha feature button enables the feature correctly', () => {
       cy.getByTestId('enable-apps')
         .should('have.text', 'Enable alpha feature')

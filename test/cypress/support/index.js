@@ -50,6 +50,10 @@ before(() => {
     pactfileWriteMode: 'merge'
   });
 });
-afterEach(() => cy.verifyAndResetAllFakeServers());
+afterEach(() => {
+  cy.verifyAllFakeServerInteractions();
+
+  cy.writeAllFakeServerPacts();
+});
 after(() => cy.writePactsAndStopAllFakeServers());
 after(() => cy.stopGateway());

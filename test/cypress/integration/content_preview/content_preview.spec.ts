@@ -28,8 +28,11 @@ const previewResponseBody = {
 };
 
 describe('Content Preview Page', () => {
-  beforeEach(() => {
+  before(() => {
     cy.setAuthTokenToLocalStorage();
+
+    cy.resetAllFakeServers();
+
     defaultRequestsMock();
 
     cy.visit(`/spaces/${defaultSpaceId}/settings/content_preview/new`);
@@ -45,13 +48,14 @@ describe('Content Preview Page', () => {
         .should('contain', 'Content preview URLs');
     });
 
+    // TODO: Does this test belongs to contract tests?
     it('has a save button disabled', () => {
       cy.getByTestId('save-content-preview').should('be.disabled');
     });
   });
 
   describe('saving the content preview', () => {
-    beforeEach(() => {
+    before(() => {
       cy.addInteraction({
         provider: 'preview_environments',
         state: 'canAddPreviewEnvironments',
@@ -67,10 +71,8 @@ describe('Content Preview Page', () => {
           status: 201,
           body: previewResponseBody
         }
-      }).as('addPreviewEnvironments');
-    });
+      }).as('preview_environments/add');
 
-    it('submit the form correctly', () => {
       cy.getByTestId('cf-ui-text-input')
         .type(defaultPreviewName)
         .should('have.value', defaultPreviewName);
@@ -81,9 +83,13 @@ describe('Content Preview Page', () => {
         .should('be.enabled')
         .click();
 
-      cy.wait('@addPreviewEnvironments')
+      cy.wait('@preview_environments/add');
+    });
 
+    it('submit the form correctly', () => {
       cy.getByTestId('cf-ui-notification').should('contain', 'success');
+      // TODO: Does this test belongs to contract tests?
+      // NOTE: the app will navigate away from this page after a short time
       cy.url().should('include', defaultPreviewId);
     });
   });

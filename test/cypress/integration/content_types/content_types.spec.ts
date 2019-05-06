@@ -17,8 +17,10 @@ describe('Content types list page', () => {
   );
 
   context('with no content types', () => {
-    beforeEach(() => {
+    before(() => {
       cy.setAuthTokenToLocalStorage();
+
+      cy.resetAllFakeServers();
 
       defaultRequestsMock();
 
@@ -41,6 +43,7 @@ describe('Content types list page', () => {
         '@noContentTypesWithQuery'
       ]);
     });
+
     describe('Opening the page', () => {
       it('Renders the page with no content types', () => {
         cy.getByTestId('create-content-type-empty-state')
@@ -55,6 +58,8 @@ describe('Content types list page', () => {
 
     describe('The "Add content type" button', () => {
       it('redirects correctly', () => {
+        cy.resetAllFakeServers();
+
         cy.addInteraction({
           provider: 'extensions',
           state: 'noExtensions',
@@ -79,15 +84,21 @@ describe('Content types list page', () => {
 
         cy.getByTestId('create-content-type-empty-state').click();
 
-        cy.wait(['@noContentTypes', '@noExtensions']);
+        cy.wait([
+          '@noContentTypes',
+          '@noExtensions'
+        ]);
 
         cy.url().should('contain', '/content_types_new/fields');
       });
     });
   });
+
   context('with several content types', () => {
-    beforeEach(() => {
+    before(() => {
       cy.setAuthTokenToLocalStorage();
+
+      cy.resetAllFakeServers();
 
       defaultRequestsMock();
 
@@ -109,7 +120,8 @@ describe('Content types list page', () => {
         `@${state.PreviewEnvironments.NONE}`,
         `@${state.ContentTypes.SEVERAL}`
       ]);
-    });
+    })
+
     describe('Opening the page', () => {
       it('Renders the page with several content types', () => {
         cy.getByTestId('cf-ui-table').should('be.visible');
