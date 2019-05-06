@@ -1,0 +1,14 @@
+#!/bin/bash
+# This script triggers a new Job of the project-sniffer-dashboard on CircleCI.
+
+# Trigger build & deploy of User Interface Project Sniffer Dashboard
+echo "Trigger project-sniffer-dashboard for user_interface commit: ${CIRCLE_SHA1}."
+
+AUTH="${CIRCLE_TOKEN}:"
+HEADER="Content-Type: application/json"
+DATA="{ \"build_parameters\": { \"COMMIT_SHA\": \"${CIRCLE_SHA1}\" } }"
+URL="https://circleci.com/api/v1.1/project/github/contentful/project-sniffer-dashboard"
+CURL="curl -X POST -i --user '$AUTH' --header '$HEADER' --data '$DATA' --url '$URL'"
+
+echo "$CURL"
+eval "$CURL"

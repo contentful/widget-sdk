@@ -282,7 +282,7 @@ jobs:
           when: always
           command: |
             if [[ "$CIRCLE_NODE_INDEX" == "0" ]]; then
-              $COMPONENTS_ROOT/user_interface/bin/trigger-jenkins-sniffer
+              $COMPONENTS_ROOT/user_interface/bin/trigger-sniffer
             fi
       - store_artifacts:
           path: ~/components/lab/artifacts
