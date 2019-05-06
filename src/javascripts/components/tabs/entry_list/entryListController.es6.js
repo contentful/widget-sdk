@@ -109,6 +109,7 @@ export default function register() {
           space: spaceContext.space.data,
           currentTotal: $scope.paginator.getTotal()
         };
+        $scope.$applyAsync();
       });
 
       const resetSearchResults = _.debounce(() => {
@@ -146,6 +147,8 @@ export default function register() {
           entryCache: $scope.entryCache,
           assetCache: $scope.assetCache
         };
+
+        $scope.$applyAsync();
       });
 
       const trackEnforcedButtonClick = err => {
@@ -171,25 +174,20 @@ export default function register() {
         ],
         () => {
           resetSearchResults();
-          $scope.$applyAsync();
         }
       );
       $scope.$watchCollection('entries', () => {
         resetSearchResults();
-        $scope.$applyAsync();
       });
       $scope.$watchCollection('entryCache.queue', () => {
         resetSearchResults();
-        $scope.$applyAsync();
       });
       $scope.$watchCollection('assetCache.queue', () => {
         resetSearchResults();
-        $scope.$applyAsync();
       });
 
       $scope.$watchCollection('selection.getSelected()', () => {
         resetSearchResults();
-        $scope.$applyAsync();
       });
       resetSearchResults();
 
@@ -335,7 +333,7 @@ export default function register() {
         return _.get($scope, ['context', 'view'].concat(path));
       }
 
-      $controller('EntryListActionsController', { $scope: $scope });
+      $controller('EntryListActionsController', { $scope });
     }
   ]);
 }
