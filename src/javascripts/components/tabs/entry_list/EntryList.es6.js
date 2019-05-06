@@ -154,9 +154,9 @@ DeleteEntryConfirm.propTypes = {
 function BulkActionsRow({ colSpan, actions, selection }) {
   const [isConfirmVisibile, setConfirmVisibility] = useState(false);
   return (
-    <TableRow>
+    <TableRow data-test-id="bulk-actions">
       <TableCell colSpan={colSpan} className={styles.bulkActionsRow}>
-        <span className="f36-margin-right--s">
+        <span className="f36-margin-right--s" data-test-id="label">
           {pluralize('entry', selection.size(), true)} selected:
         </span>
         {actions.showDuplicate && actions.showDuplicate() && (
