@@ -22,11 +22,13 @@ const addMasterEnvironment = flow(
 class SpaceUsage extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
-    spaceId: PropTypes.string.isRequired
+    spaceId: PropTypes.string.isRequired,
+    environmentId: PropTypes.string //TODO make this required
   };
 
   state = {
-    resources: undefined
+    spaceResources: {},
+    envResources: {}
   };
 
   componentDidMount() {
@@ -34,17 +36,19 @@ class SpaceUsage extends React.Component {
   }
 
   fetchPlan = async () => {
-    const { spaceId } = this.props;
-    const service = createResourceService(spaceId);
+    const { spaceId, environmentId } = this.props;
+    const spaceScopedService = createResourceService(spaceId);
+    const envScopedService = createResourceService(spaceId, 'space', environmentId);
     const isPermanent = resource => resource.kind === 'permanent';
 
     try {
       this.setState({
-        resources: flow(
+        spaceResources: flow(
           filter(isPermanent),
           keyBy('sys.id'),
           update('environment', addMasterEnvironment)
-        )(await service.getAll())
+        )(await spaceScopedService.getAll()),
+        envResources: flow(keyBy('sys.id'))(await envScopedService.getAll())
       });
     } catch (e) {
       ReloadNotification.apiErrorHandler(e);
@@ -52,7 +56,8 @@ class SpaceUsage extends React.Component {
   };
 
   render() {
-    const { resources } = this.state;
+    console.log(this.state)
+    const { spaceResources, envResources } = this.state;
     return (
       <React.Fragment>
         <DocumentTitle title="Usage" />
@@ -62,10 +67,16 @@ class SpaceUsage extends React.Component {
             <Workbench.Title>Space usage</Workbench.Title>
           </Workbench.Header>
           <Workbench.Content>
-            <ResourceUsageList resources={resources} />
+            <ResourceUsageList
+              spaceResources={spaceResources}
+              envResources={envResources}
+              environment={this.props.environmentId}
+            />
           </Workbench.Content>
           <Workbench.Sidebar>
-            <SpaceUsageSidebar resources={resources} />
+            <SpaceUsageSidebar resources={spaceResources} spaceResources={spaceResources}
+            envResources={envResources}
+            environmentId={this.props.environmentId} />
           </Workbench.Sidebar>
         </Workbench>
       </React.Fragment>

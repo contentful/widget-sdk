@@ -11,8 +11,38 @@ const getLimitsReachedResources = resources => {
     .map(resource => resourceHumanNameMap[resource.sys.id]);
 };
 
-const SpaceUsageSidebar = ({ resources }) => {
-  const limitsReachedResources = getLimitsReachedResources(resources);
+const limitsReachedMessage = (spaceResources, envResources, envId) => {
+  if (spaceResources.length > 0) {
+    return (
+      <p className="note-box--info">
+        You have reached the limit for
+        {spaceResources.length > 2
+          ? ' a few of your space resources'
+          : ` ${spaceResources.join(' and ')}`}
+        {envResources.length > 0
+          ? `, and other limits in your ${envId} environment. `
+          : '. '}
+        Consider upgrading your space plan.
+      </p>
+    );
+  } else if (envResources.length > 0) {
+    return (
+      <p className="note-box--info">
+        You have reached the limit for
+        {envResources.length > 2
+          ? ` a few resources `
+          : ` ${envResources.join(' and ')} `}
+        in your {envId} environment. Consider upgrading your space plan.
+      </p>
+    )
+  } else return '';
+}
+
+const SpaceUsageSidebar = (props) => {
+  console.log({props})
+  const { spaceResources, envResources, environmentId} = props
+  const limitsReachedSpaceResources = getLimitsReachedResources(spaceResources);
+  const limitsReachedEnvResources = getLimitsReachedResources(envResources);
 
   return (
     <div className="entity-sidebar">
@@ -25,15 +55,7 @@ const SpaceUsageSidebar = ({ resources }) => {
         </a>
       </p>
 
-      {limitsReachedResources.length > 0 && (
-        <p className="note-box--info">
-          You have reached the limit for
-          {limitsReachedResources.length > 2
-            ? ' a few of your space resources. '
-            : ` ${limitsReachedResources.join(' and ')}. `}
-          Consider upgrading your space plan.
-        </p>
-      )}
+      {limitsReachedMessage(limitsReachedSpaceResources, limitsReachedEnvResources, environmentId)}
 
       <h3 className="entity-sidebar__heading">Need help?</h3>
       <p className="entity-sidebar__help-text">
@@ -48,7 +70,9 @@ const SpaceUsageSidebar = ({ resources }) => {
 };
 
 SpaceUsageSidebar.propTypes = {
-  resources: PropTypes.object
+  spaceResources: PropTypes.object,
+  envResources: PropTypes.object,
+  environmentId: PropTypes.string
 };
 
 SpaceUsageSidebar.defaultProps = {

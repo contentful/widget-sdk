@@ -10,7 +10,6 @@ const SPACE_SETTINGS_SECTIONS = [
   'apiKey',
   'webhooks',
   'previews',
-  'usage',
   'apps'
 ];
 

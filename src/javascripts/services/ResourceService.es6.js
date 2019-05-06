@@ -9,8 +9,8 @@ import {
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { snakeCase, camelCase } from 'lodash';
 
-export default function createResourceService(id, type = 'space') {
-  const endpoint = createEndpoint(id, type);
+export default function createResourceService(id, type = 'space', envId) {
+  const endpoint = createEndpoint(id, type, envId);
 
   return {
     get,
@@ -71,10 +71,16 @@ export default function createResourceService(id, type = 'space') {
   }
 }
 
-function createEndpoint(id, type) {
-  const endpointFactory = type === 'space' ? createSpaceEndpoint : createOrganizationEndpoint;
+function createEndpoint(id, type, envId) {
+  if (type === 'organization') {
+    return createOrganizationEndpoint(id);
+  }
 
-  return endpointFactory(id);
+  if (envId) {
+    return createSpaceEndpoint(id, envId);
+  }
+
+  return createSpaceEndpoint(id);
 }
 
 function createResourceFromTokenData(resourceType, limit, usage) {

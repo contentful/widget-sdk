@@ -15,7 +15,8 @@ export default {
       } else {
         $scope.props = {
           spaceId: spaceContext.getId(),
-          orgId: spaceContext.organization.sys.id
+          orgId: spaceContext.organization.sys.id,
+          environmentId: spaceContext.getEnvironmentId()
         };
       }
     }
