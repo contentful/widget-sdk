@@ -268,6 +268,7 @@ export default function EntryList({
     displayedFields.length +
     // status column
     1;
+
   return (
     <Table testId="entry-list" aria-label="Content Search Results">
       <TableHead offsetTop={isEdgeBrowser ? '0px' : '-20px'} isSticky>
@@ -327,7 +328,7 @@ export default function EntryList({
         )}
       </TableHead>
       <TableBody>
-        {context.isSearching &&
+        {(context.isSearching || entries.length === 0) &&
           range(0, entries.length || 10).map((_, i) => {
             return (
               <TableRow key={i}>
