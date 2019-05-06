@@ -39,7 +39,7 @@ export default function makeFetchWithAuth(auth) {
         }
       },
       error => {
-        // true if the request was rejected in prefligh. Auth token is invalid
+        // true if the request was rejected in preflight. Auth token is invalid
         const isPreflightError = error.status === -1;
 
         if (!isPreflightError) {

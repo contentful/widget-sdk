@@ -41,9 +41,11 @@ export default function newEntityBatchLoaderFn({ getResources, newEntityNotFound
         requestedIdsCharacterCount: validIds.join('').length
       };
       // Though not expected, let's keep an eye on 504s and other potential weird
-      // stuff that we don't know about.
-      const message = 'BatchingApiClient: Failed bulk fetching entities';
-      logger.logServerError(message, { error, data });
+      // stuff that we don't know about. Ignore -1 as it's about network issues.
+      if (error && error.status !== -1) {
+        const message = 'BatchingApiClient: Failed bulk fetching entities';
+        logger.logServerError(message, { error, data });
+      }
     }
   };
 }
