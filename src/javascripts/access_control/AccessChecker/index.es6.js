@@ -502,18 +502,33 @@ function createResponseAttributeGetter(attrName) {
 
 function getPermissions(action, entity) {
   const response = { shouldHide: false, shouldDisable: false };
+  const entitiesForUsageCheck = ['Entry', 'Asset', 'ContentType'];
 
   if (!spaceAuthContext) {
     return response;
   }
   response.can = cache.getResponse(action, entity);
-  if (response.can) {
+  const newEnforcement = spaceAuthContext.newEnforcement;
+  if (response.can && !newEnforcement) {
     return response;
   }
 
-  const reasons = spaceAuthContext.reasonsDenied(action, entity);
+  let reasons = spaceAuthContext.reasonsDenied(action, entity);
+
+  if (newEnforcement) {
+    if (entitiesForUsageCheck.includes(entity) && action === 'create' && newEnforcement) {
+      const newReasonsDenied = newEnforcement.reasonsDenied(action, entity);
+      if (reasons === newReasonsDenied) {
+        reasons = newReasonsDenied;
+      }
+      spaceAuthContext.reasonsDenied = newEnforcement.reasonsDenied;
+      response.enforcement = getEnforcement(action, entity);
+    }
+  } else {
+    response.enforcement = getEnforcement(action, entity);
+  }
+
   response.reasons = reasons && reasons.length > 0 ? reasons : null;
-  response.enforcement = getEnforcement(action, entity);
   response.shouldDisable = !!response.reasons;
   response.shouldHide = !response.shouldDisable;
 

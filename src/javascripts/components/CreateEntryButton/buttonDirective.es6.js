@@ -3,6 +3,7 @@ import _ from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Menu from 'components/CreateEntryButton/index.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
 export default function register() {
   registerDirective('cfCreateEntryButton', () => ({
@@ -10,7 +11,11 @@ export default function register() {
       $scope.$watchCollection(
         () => {
           const contentTypes = _.get($scope, attr.contentTypes, []);
-          const disabled = contentTypes.length === 0;
+
+          const disabled =
+            accessChecker.shouldDisable(accessChecker.Action.CREATE, 'entry') ||
+            contentTypes.length === 0;
+
           return {
             contentTypes,
             suggestedContentTypeId: _.get($scope, attr.suggestedContentTypeId),

@@ -161,6 +161,7 @@ class CreateEntryButton extends React.Component {
 
   render() {
     const { size, testId } = this.props;
+
     return (
       <span
         style={{ position: 'relative' }}

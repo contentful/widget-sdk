@@ -1,6 +1,48 @@
 import { registerFactory } from 'NgRegistry.es6';
 import worf from '@contentful/worf';
 import * as logger from 'services/logger.es6';
+import createResourceService from 'services/ResourceService.es6';
+import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
+
+const performNewUsageCheck = async (spaceId, environmentId) => {
+  const service = createResourceService(spaceId);
+  const result = await service.canCreateEnvironmentResources(environmentId);
+
+  delete result.Locale;
+  delete result.Record;
+
+  return generateEnforcements(result);
+};
+
+function generateEnforcements(creationStatusPerEntity) {
+  const enforcements = [];
+  let reasonsDenied;
+
+  for (const entity in creationStatusPerEntity) {
+    if (!creationStatusPerEntity[entity]) {
+      const enforcement = {
+        additionalPolicies: [],
+        deniedPermissions: {
+          deniedPerms: {},
+          reason: 'usageExceeded'
+        }
+      };
+      enforcement['deniedPermissions']['deniedPerms'][entity] = ['create'];
+
+      enforcements.push({ Enforcement: enforcement });
+
+      reasonsDenied = (action, entityType) => {
+        return [
+          'usageExceeded',
+          `You do not have permissions to ${action} on ${entityType}, please contact your administrator for more information.`
+        ];
+      };
+    }
+  }
+
+  return { enforcements, reasonsDenied };
+}
 
 export default function register() {
   registerFactory('authorization', [
@@ -11,7 +53,7 @@ export default function register() {
       Authorization.prototype = {
         authContext: null,
         spaceContext: null,
-        update: function(tokenLookup, space, enforcements, environmentId) {
+        update: async function(tokenLookup, space, enforcements, environmentId) {
           this.authContext = null;
           this.spaceContext = null;
           this._tokenLookup = tokenLookup;
@@ -53,6 +95,14 @@ export default function register() {
 
           if (space && this.authContext.hasSpace(space.getId())) {
             this.spaceContext = this.authContext.space(space.getId());
+
+            const allowNewUsageCheck = await getCurrentVariation(ENVIRONMENT_USAGE_ENFORCEMENT);
+            if (!allowNewUsageCheck) {
+              this.spaceContext.newEnforcement = await performNewUsageCheck(
+                this.spaceContext.space.sys.id,
+                this.spaceContext.environment.sys.id
+              );
+            }
           }
 
           accessChecker.setAuthContext({
