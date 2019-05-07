@@ -44,11 +44,19 @@ const styles = {
     display: 'flex',
     alignItems: 'center'
   }),
-  wordBreak: css({
-    wordBreak: 'break-all'
+  justifySpaceBetween: css({
+    justifyContent: 'space-between'
   }),
+  table: css({
+    tableLayout: 'fixed'
+  }),
+
+  tableCell: css({}),
   marginBottomXXS: css({
     marginBottom: '0.25rem'
+  }),
+  fullWidth: css({
+    width: '100%'
   }),
   sortable: css({
     '&:focus': {
@@ -65,6 +73,31 @@ const styles = {
   activeSort: css({
     fontWeight: tokens.fontWeightDemiBold
   }),
+  secretiveLink: css({
+    display: 'block',
+    width: '100%',
+    color: tokens.colorTextMid,
+    textDecoration: 'none',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    '&:link': {
+      textDecoration: 'none'
+    },
+    '&:focus': {
+      outline: 'none',
+      boxShadow: 'unset'
+    }
+  }),
+  /*
+    TODO: consolidate with #grid tokens 
+  */
+  mediumCell: css({
+    width: '15%'
+  }),
+  largeCell: css({
+    width: '21%'
+  }),
 
   /*
     We use visibility:hidden to preserve column width during search, sorting, or pagination.
@@ -80,11 +113,19 @@ const styles = {
   })
 };
 
-function SortableTableCell({ children, isSortable, isActiveSort, onClick, direction, ...rest }) {
+function SortableTableCell({
+  children,
+  isSortable,
+  isActiveSort,
+  onClick,
+  direction,
+  className,
+  ...rest
+}) {
   return (
     <TableCell
       tabIndex={isSortable ? '0' : '-1'}
-      className={cn({
+      className={cn(className, {
         [styles.sortable]: isSortable,
         [styles.activeSort]: isActiveSort
       })}
@@ -122,6 +163,7 @@ function SortableTableCell({ children, isSortable, isActiveSort, onClick, direct
 }
 
 SortableTableCell.propTypes = {
+  className: PropTypes.string,
   isSortable: PropTypes.bool,
   isActiveSort: PropTypes.bool,
   direction: PropTypes.oneOf(['ascending', 'descending']),
@@ -163,6 +205,7 @@ function BulkActionsRow({ colSpan, actions, selection }) {
           <TextLink
             className="f36-margin-right--s"
             linkType="secondary"
+            data-test-id="duplicate"
             onClick={() => actions.duplicateSelected()}>
             Duplicate
           </TextLink>
@@ -174,7 +217,7 @@ function BulkActionsRow({ colSpan, actions, selection }) {
               className="f36-margin-right--s"
               linkType="negative"
               onClick={() => setConfirmVisibility(true)}
-              data-test-id="delete-entry">
+              data-test-id="delete">
               Delete
             </TextLink>
             {isConfirmVisibile && (
@@ -193,6 +236,7 @@ function BulkActionsRow({ colSpan, actions, selection }) {
           <TextLink
             className="f36-margin-right--s"
             linkType="secondary"
+            data-test-id="archive"
             onClick={() => actions.archiveSelected()}>
             Archive
           </TextLink>
@@ -201,6 +245,7 @@ function BulkActionsRow({ colSpan, actions, selection }) {
           <TextLink
             className="f36-margin-right--s"
             linkType="secondary"
+            data-test-id="unarchive"
             onClick={() => actions.unarchiveSelected()}>
             Unarchive
           </TextLink>
@@ -209,6 +254,7 @@ function BulkActionsRow({ colSpan, actions, selection }) {
           <TextLink
             className="f36-margin-right--s"
             linkType="positive"
+            data-test-id="publish"
             onClick={() => actions.publishSelected()}>
             {actions.publishButtonName()}
           </TextLink>
@@ -222,6 +268,29 @@ BulkActionsRow.propTypes = {
   colSpan: PropTypes.number.isRequired,
   actions: PropTypes.object.isRequired,
   selection: PropTypes.object.isRequired
+};
+
+/**
+ * Provides right click => open in a new tab flow
+ */
+function SecretiveLink({ href, children, ...rest }) {
+  return (
+    <TextLink
+      className={styles.secretiveLink}
+      tabIndex="-1"
+      href={href}
+      rel="noopener noreferrer"
+      linkType="secondary"
+      target="_blank"
+      onClick={e => e.preventDefault()}
+      {...rest}>
+      {children}
+    </TextLink>
+  );
+}
+
+SecretiveLink.propTypes = {
+  href: PropTypes.string.isRequired
 };
 
 export default function EntryList({
@@ -270,10 +339,11 @@ export default function EntryList({
     1;
 
   return (
-    <Table testId="entry-list" aria-label="Content Search Results">
+    <Table className={styles.table} testId="entry-list" aria-label="Content Search Results">
       <TableHead offsetTop={isEdgeBrowser ? '0px' : '-20px'} isSticky>
         <TableRow data-test-id="column-names">
           <SortableTableCell
+            className={styles.largeCell}
             isSortable={
               hasContentTypeSelected && displayFieldName && fieldIsSortable(displayFieldName)
             }
@@ -285,11 +355,15 @@ export default function EntryList({
             }}
             direction={context.view.order.direction}
             data-test-id="name">
-            {selectAll}
-            <label htmlFor="select-all">Name</label>
+            <label htmlFor="select-all" className="f36-padding-left--s">
+              {selectAll}
+              Name
+            </label>
           </SortableTableCell>
           {!hasContentTypeSelected && isContentTypeVisible && (
-            <TableCell data-test-id="content-type">Content Type</TableCell>
+            <TableCell data-test-id="content-type" className={styles.mediumCell}>
+              Content Type
+            </TableCell>
           )}
 
           {displayedFields.map(field => {
@@ -303,13 +377,14 @@ export default function EntryList({
                 }}
                 direction={context.view.order.direction}
                 aria-label={field.name}
-                data-test-id={field.name}>
+                data-test-id={field.name}
+                className={styles.mediumCell}>
                 {field.name}
               </SortableTableCell>
             );
           })}
-          <TableCell data-test-id="status">
-            <span className={styles.flexCenter}>
+          <TableCell data-test-id="status" className={styles.mediumCell}>
+            <span className={cn(styles.flexCenter, styles.justifySpaceBetween)}>
               Status
               <ViewCustomizer
                 displayedFields={displayedFields}
@@ -342,7 +417,7 @@ export default function EntryList({
           })}
         {entries.map(entry => (
           <StateLink to="^.detail" params={{ entryId: entry.getId() }} key={entry.getId()}>
-            {({ onClick }) => {
+            {({ onClick, getHref }) => {
               return (
                 <TableRow
                   tabIndex="0"
@@ -366,43 +441,51 @@ export default function EntryList({
                     [styles.visibilityHidden]: context.isSearching
                   })}
                   data-test-id="entry-row">
-                  <TableCell data-test-id="name">
+                  <TableCell data-test-id="name" className={cn(styles.tableCell, styles.largeCell)}>
                     <span className={styles.flexCenter}>
-                      <Checkbox
-                        id="select-entry"
-                        name="select-entry"
-                        className={cn('f36-margin-right--xs', styles.marginBottomXXS)}
-                        checked={selection.isSelected(entry)}
-                        onChange={e => {
-                          selection.toggle(entry, e);
-                          e.preventDefault();
-                        }}
-                      />
-                      <label htmlFor="select-entry">{entryTitleFormatter(entry)}</label>
+                      <label className="f36-padding-left--s">
+                        <Checkbox
+                          className={cn('f36-margin-right--xs', styles.marginBottomXXS)}
+                          checked={selection.isSelected(entry)}
+                          onChange={e => {
+                            selection.toggle(entry, e);
+                            e.preventDefault();
+                          }}
+                        />
+                      </label>
+                      <SecretiveLink href={getHref()}>{entryTitleFormatter(entry)}</SecretiveLink>
                     </span>
                   </TableCell>
                   {isContentTypeVisible && (
-                    <TableCell data-test-id="content-type">
-                      {contentTypeNameFormatter(entry)}
+                    <TableCell
+                      data-test-id="content-type"
+                      className={cn(styles.tableCell, styles.mediumCell)}>
+                      <SecretiveLink href={getHref()}>
+                        {contentTypeNameFormatter(entry)}
+                      </SecretiveLink>
                     </TableCell>
                   )}
                   {displayedFields.map(field => (
                     <TableCell
                       key={field.id}
-                      className={styles.wordBreak}
+                      className={cn(styles.tableCell, styles.mediumCell)}
                       data-test-id={field.name}>
-                      <DisplayField
-                        field={field}
-                        entry={entry}
-                        entryCache={entryCache}
-                        assetCache={assetCache}
-                      />
+                      <SecretiveLink href={getHref()}>
+                        <DisplayField
+                          field={field}
+                          entry={entry}
+                          entryCache={entryCache}
+                          assetCache={assetCache}
+                        />
+                      </SecretiveLink>
                     </TableCell>
                   ))}
-                  <TableCell data-test-id="status">
-                    <EntityStatusTag
-                      statusLabel={EntityState.stateName(EntityState.getState(entry.data.sys))}
-                    />
+                  <TableCell data-test-id="status" className={styles.mediumCell}>
+                    <SecretiveLink href={getHref()}>
+                      <EntityStatusTag
+                        statusLabel={EntityState.stateName(EntityState.getState(entry.data.sys))}
+                      />
+                    </SecretiveLink>
                   </TableCell>
                 </TableRow>
               );
@@ -436,5 +519,5 @@ EntryList.propTypes = {
 };
 
 function isTargetInput(e) {
-  return e.target.tagName === 'INPUT';
+  return e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL';
 }

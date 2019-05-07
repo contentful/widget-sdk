@@ -187,7 +187,7 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
                   </div>
                 </li>
               );
-            } else if (!isEntryArray(entry, field) && !isAssetArray(entry, field)) {
+            } else {
               return <li key={index}>{dataForField(entry, field)}</li>;
             }
           })}
