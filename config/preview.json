@@ -3,7 +3,6 @@
   "authUrl": "//be.quirely.com",
   "apiUrl": "//api.quirely.com",
   "uploadApiUrl": "//upload.quirely.com",
-  "mockApiUrl": "https://pcfjmbizecazdxcwy.stoplight-proxy.io",
   "otUrl": [
     "//ot1.quirely.com",
     "//ot2.quirely.com",

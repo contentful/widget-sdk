@@ -3,7 +3,6 @@
   "authUrl": "//be.contentful.com",
   "apiUrl": "//api.contentful.com",
   "uploadApiUrl": "//upload.contentful.com",
-  "mockApiUrl": "",
   "otUrl": [
     "//ot1.contentful.com",
     "//ot2.contentful.com",

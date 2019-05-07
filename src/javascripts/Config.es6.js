@@ -17,19 +17,37 @@ function readInjectedConfig() {
   }
 }
 
+export const MOCK_APIS = {
+  gatekeeper: {
+    name: 'Gatekeeper',
+    url: 'https://pcfjmbizecazdxcwy.stoplight-proxy.io'
+  },
+  comments: {
+    name: 'Comments',
+    url: 'http://efbnibwtyzjteg4gr.stoplight-proxy.io'
+  },
+  tasks: {
+    name: 'Tasks',
+    url: 'https://xuybd3r75narrebtz.stoplight-proxy.io'
+  },
+  'disco-lab': {
+    name: 'Disco Lab',
+    url: 'http://6ryugnmcvdcwsggmd.stoplight-proxy.io'
+  }
+};
+
 /**
  * Given a path return the URL for the CMA.
  *
  * In production returns something like `//api.contentful.com/path`.
  *
- * If a flag to mock all requests is set via url param, returns Stoplight url
- * (this works for quirely only)
+ * If one of above MOCK_APIS keys is set via `use_mock_api=` url param,
+ * then this returns a Stoplight url.
  */
-export const mockApiUrl = settings.mockApiUrl;
-
 export function apiUrl(path) {
-  const isUsingMockApi = getStore().get('use_mock_api');
-  const baseUrl = isUsingMockApi ? mockApiUrl : settings.apiUrl;
+  const mockApiId = getStore().get('use_mock_api');
+  const mockApiInfo = MOCK_APIS[mockApiId];
+  const baseUrl = mockApiInfo ? mockApiInfo.url : settings.apiUrl;
   return baseUrl + ensureLeadingSlash(path);
 }
 

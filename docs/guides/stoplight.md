@@ -2,8 +2,7 @@ Mocking the API with Stoplight
 ==============================
 
 We use [Stoplight][stoplight] to describe API endpoints and mock the response.
-You can use the shared account in Shared-CF-Engineering folder in Lastpass or
-get an individual one.
+You can ask in Slack #dev-frontend for an account.
 
 Stoplight is a tool for API design that comes with a proxy (Prism) that lets
 you mock and transform API responses. It is currently adopted by Ruby chapter
@@ -11,24 +10,29 @@ and Business Velocity team.
 
 ## Quick start
 
-- Use query param `use_mock_api=true` to route ALL requests to Stoplight. Once
-it's enabled, you see in dev console that all api requests now go to urls
-like `https://pcfjmbizecazdxcwy.stoplight-proxy.io/token` instead of
-`https://api.quirely.com/token`.
+- Use query param `use_mock_api=<mock-api-id>` where `<mock-api-id>` is one
+of `gatekeeper`, `comments`, `tasks` or `disco-labs` to route ALL requests
+to the respective endpoint in Stoplight.
+Once it's enabled, you should see a notification at the bottom right corner
+in the web app and the dev console should show that all api requests now go
+to urls like `https://pcfjmbizecazdxcwy.stoplight-proxy.io/token` instead
+of `https://api.quirely.com/token`.
 
-Note: this setting currently works only with quirely api (`preview` and
-`dev-on-preview` environments). This is until we include a standalone Stoplight
-proxy in our lab setup.
+**Note:** For each stoplight endpoint this currently only works for either
+quirely or flinkly, depending on the endpoint settings' Prism proxy setup
+which can be configured to redirect requests to endpoints not mocked in
+Stoplight to either https://api.quirely.com or https://api.flinkly.com
 
-- Go to Stoplight app and configure mocking. You can choose an individual
-endpoint and select a status code under Mocking, or you can mock the entire API
-via API settings -> Prism -> Global Mocking.
+- Go to Stoplight and select the Contentful endpoint of your choice. Go to
+API settings -> Prism -> Status. This is where you can configure to which 
+environment - quirely or flinkly - requests should be redirected.
 
 ## Current limitations
 
-- Works only with quirely for now
-- Currently we only have Stoplight endpoints for gatekeeper subscription APIs
-and some effort is needed to add the rest of the API.
+- Depending on Stoplight endpoint config, only works with quirely or flinkly
+for now.
+- Currently we only have Stoplight endpoints for a handful of endpoints and
+more effort is needed to add the rest of the API.
 
 ## Client side mock XHR tool
 
