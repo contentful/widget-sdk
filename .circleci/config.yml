@@ -308,6 +308,9 @@ workflows:
           post-steps:
             - store_test_results:
                 path: cypress/reports
+            - run:
+                name: publish-pact-contracts
+                command: LOGLEVEL=warn bin/publish-pact-contracts
           start: npm start
           wait-on: 'http://localhost:3001'
           store_artifacts: true
