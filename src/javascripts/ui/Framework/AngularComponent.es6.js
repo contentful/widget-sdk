@@ -5,6 +5,19 @@ import { getModule } from 'NgRegistry.es6';
 const $rootScope = getModule('$rootScope');
 const $compile = getModule('$compile');
 
+/**
+ * Allows to use an Angular directive from within React.
+ *
+ * Important: Don't overuse this and use very cautious with bigger directives -
+ *  especially if they are resource intensive or involve data fetching - as this
+ *  is unpredictable black magic and not well optimized or tested.
+ *
+ * @example
+ * <AngularComponent
+ *   template={'<cf-thumbnail file="file" size="30" fit="thumb" focus="faces" />'}
+ *   scope={{ file }}
+ * />
+ */
 export default class AngularComponent extends React.Component {
   static propTypes = {
     template: PropTypes.string,
