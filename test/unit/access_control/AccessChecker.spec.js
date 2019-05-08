@@ -77,7 +77,8 @@ describe('Access Checker', () => {
     mockSpace = { sys: { id: '1234' }, organization: { sys: {} } };
     mockSpaceAuthContext = {
       reasonsDenied: reasonsDeniedStub,
-      isPermissionDenied: isPermissionDeniedStub
+      isPermissionDenied: isPermissionDeniedStub,
+      newEnforcement: []
     };
     mockOrgEndpoint = sinon.stub();
     mockSpaceEndpoint = sinon.stub();

@@ -68,7 +68,7 @@ function shouldPerformNewUsageCheck(action, newEnforcement, entity) {
   return (
     action === 'create' &&
     newEnforcement.length !== 0 &&
-    reasonsDenied().length !== 0 &&
+    reasonsDenied(action, entity).length !== 0 &&
     isEntityDenied(entity, deniedEntities)
   );
 }

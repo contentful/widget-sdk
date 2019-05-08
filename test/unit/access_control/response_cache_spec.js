@@ -6,6 +6,15 @@ describe('Response Cache', () => {
   let cache, canStub;
   const entry = { sys: { id: 'eid', type: 'Entry' } };
   const asset = { sys: { id: 'aid', type: 'Asset' } };
+  const newEnforcementsAvailable = {
+    reasonsDenied: () => ['reason'],
+    deniedEntities: ['Entry']
+  };
+
+  const noNewEnforcements = {
+    reasonsDenied: () => [],
+    deniedEntities: []
+  };
 
   beforeEach(function() {
     module('contentful/test');
@@ -15,8 +24,8 @@ describe('Response Cache', () => {
   });
 
   function callTwice(action, entity) {
-    cache.getResponse(action, entity);
-    cache.getResponse(action, entity);
+    cache.getResponse(action, entity, noNewEnforcements);
+    cache.getResponse(action, entity, noNewEnforcements);
   }
 
   function callTwiceAssertOnce(action, entity) {
@@ -24,8 +33,13 @@ describe('Response Cache', () => {
     sinon.assert.calledOnce(canStub.withArgs(action, entity));
   }
 
+  it('Returns false when the new enforcements exist', () => {
+    const result = cache.getResponse('create', 'Entry', newEnforcementsAvailable);
+    sinon.assert.match(result, false);
+  });
+
   it('Calls "can" when getting response for the first time', () => {
-    cache.getResponse('create', 'Entry');
+    cache.getResponse('create', 'Entry', noNewEnforcements);
     sinon.assert.calledOnce(canStub.withArgs('create', 'Entry'));
   });
 
