@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Fullscreen from 'components/shared/Fullscreen.es6';
 import { Button } from '@contentful/forma-36-react-components';
+import Icon from 'ui/Components/Icon.es6';
 import { get } from 'lodash';
 import { createEndpoint } from 'data/EndpointFactory.es6';
 import { Notification } from '@contentful/forma-36-react-components';
@@ -93,6 +94,7 @@ export default class UserInvitation extends React.Component {
             {errored && (
               <React.Fragment>
                 <div className="user-invitation--error">
+                  <Icon name="invitation-not-found" />
                   <h2 className="user-invitation--title">This invitation doesn’t exist.</h2>
                   <p className="user-invitation--error-details">
                     If you’ve arrived here by accident, it means that you may have been invited with

@@ -94,6 +94,7 @@ import FieldLocation from 'svg/field-location.es6';
 import FieldReference from 'svg/field-reference.es6';
 import FieldRichTextSmall from 'svg/field-richtext-small.es6';
 import FieldRichText from 'svg/field-richtext.es6';
+import InvitationNotFound from 'svg/invitation-not-found.es6';
 
 const SVGs = {
   'home-welcome': HomeWelcomeIcon,
@@ -165,6 +166,7 @@ const SVGs = {
   'media-references-widget': MediaReferencesWidget,
   'slug-widget': SlugWidget,
   'arrow-up': ArrowUp,
+  'invitation-not-found': InvitationNotFound,
 
   // fields
   'field-json-small': FieldJSONSmall,
