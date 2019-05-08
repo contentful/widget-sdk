@@ -16,6 +16,7 @@ export default class WrappedEntityCard extends React.Component {
     entityFile: PropTypes.object,
     entityTitle: PropTypes.string,
     entityStatus: PropTypes.string,
+    href: PropTypes.string,
     isLoading: PropTypes.bool,
     className: PropTypes.string,
     size: PropTypes.string,
@@ -59,6 +60,7 @@ export default class WrappedEntityCard extends React.Component {
       entityStatus,
       isLoading,
       onClick,
+      href,
       cardDragHandleComponent
     } = this.props;
 
@@ -67,6 +69,9 @@ export default class WrappedEntityCard extends React.Component {
         title={entityTitle || 'Untitled'}
         contentType={contentTypeName || (entityType === 'Asset' ? 'Asset' : null)}
         className={className}
+        href={href}
+        target={href ? '_blank' : undefined}
+        rel={href ? 'noopener' : undefined}
         description={entityDescription}
         size={size}
         selected={selected}

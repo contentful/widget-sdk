@@ -10,6 +10,7 @@ export default class WrappedAssetCard extends React.Component {
     entityTitle: PropTypes.string,
     entityStatus: PropTypes.string,
     isLoading: PropTypes.bool,
+    href: PropTypes.string,
     className: PropTypes.string,
     disabled: PropTypes.bool,
     selected: PropTypes.bool,
@@ -76,6 +77,7 @@ export default class WrappedAssetCard extends React.Component {
       entityTitle,
       className,
       selected,
+      href,
       entityStatus,
       isLoading,
       onClick,
@@ -87,6 +89,9 @@ export default class WrappedAssetCard extends React.Component {
         type={entityFile ? this.getFileType(entityFile) : 'archive'} // Default to archive if file doesn't exist
         title={entityTitle || 'Untitled'}
         className={className}
+        href={href}
+        target={href ? '_blank' : undefined}
+        rel={href ? 'noopener' : undefined}
         selected={selected}
         status={entityStatus}
         src={entityFile ? `${entityFile.url}?h=${300}` : ''}

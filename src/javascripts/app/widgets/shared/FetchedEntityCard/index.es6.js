@@ -7,6 +7,7 @@ import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchE
 import WrappedEntityCard from './WrappedEntityCard.es6';
 import WrappedAssetCard from './WrappedAssetCard.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
+import StateLink from 'app/common/StateLink.es6';
 
 class FetchedEntityCard extends React.Component {
   static propTypes = {
@@ -102,6 +103,10 @@ class FetchedEntityCard extends React.Component {
               } else {
                 const isEntry = entityType === 'Entry';
                 const isSmallAsset = !isEntry && size === 'small';
+                const entityId = fetchEntityResult.entity
+                  ? fetchEntityResult.entity.sys.id
+                  : undefined;
+
                 const WrapperComponent =
                   isEntry || isSmallAsset ? WrappedEntityCard : WrappedAssetCard;
                 const cardProps = {
@@ -114,11 +119,27 @@ class FetchedEntityCard extends React.Component {
                   selected,
                   disabled,
                   onEdit: () => onEdit(fetchEntityResult),
-                  onClick: () => onClick(fetchEntityResult),
+                  onClick: event => {
+                    event.preventDefault();
+                    onClick(fetchEntityResult);
+                  },
                   onRemove: () => onRemove(fetchEntityResult),
                   cardDragHandleComponent
                 };
-                return <WrapperComponent {...cardProps} />;
+                return (
+                  <StateLink
+                    to={entityType === 'Asset' ? 'spaces.detail.assets.detail' : '^.detail'}
+                    params={{ [entityType === 'Asset' ? 'assetId' : 'entryId']: entityId }}>
+                    {({ getHref }) => (
+                      <WrapperComponent
+                        {...{
+                          ...cardProps,
+                          href: getHref()
+                        }}
+                      />
+                    )}
+                  </StateLink>
+                );
               }
             }}
           />
