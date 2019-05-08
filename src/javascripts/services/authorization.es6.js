@@ -15,12 +15,15 @@ const performNewUsageCheck = async (spaceId, environmentId) => {
   return generateEnforcements(result);
 };
 
-function generateEnforcements(creationStatusPerEntity) {
+function generateEnforcements(allowedToCreate) {
   const enforcements = [];
-  let reasonsDenied;
+  let reasonsDenied = () => [];
+  const deniedEntities = [];
 
-  for (const entity in creationStatusPerEntity) {
-    if (!creationStatusPerEntity[entity]) {
+  for (const entity in allowedToCreate) {
+    if (!allowedToCreate[entity]) {
+      deniedEntities.push(entity);
+
       const enforcement = {
         additionalPolicies: [],
         deniedPermissions: {
@@ -41,7 +44,7 @@ function generateEnforcements(creationStatusPerEntity) {
     }
   }
 
-  return { enforcements, reasonsDenied };
+  return { enforcements, reasonsDenied, deniedEntities };
 }
 
 export default function register() {
@@ -95,9 +98,11 @@ export default function register() {
 
           if (space && this.authContext.hasSpace(space.getId())) {
             this.spaceContext = this.authContext.space(space.getId());
+            this.spaceContext.newEnforcement = [];
 
             const allowNewUsageCheck = await getCurrentVariation(ENVIRONMENT_USAGE_ENFORCEMENT);
-            if (!allowNewUsageCheck) {
+
+            if (allowNewUsageCheck) {
               this.spaceContext.newEnforcement = await performNewUsageCheck(
                 this.spaceContext.space.sys.id,
                 this.spaceContext.environment.sys.id

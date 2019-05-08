@@ -10,7 +10,8 @@ export default function NoEntriesAdvice({
   contentTypes,
   suggestedContentTypeId,
   hasArchivedEntries,
-  loadArchived
+  loadArchived,
+  disabled
 }) {
   return (
     <Advice data-test-id="no-entries-advice">
@@ -24,7 +25,7 @@ export default function NoEntriesAdvice({
 
       <Advice.Action>
         <CreateEntryButton
-          disabled={false}
+          disabled={disabled}
           contentTypes={contentTypes}
           onSelect={onCreate}
           suggestedContentTypeId={suggestedContentTypeId}
@@ -50,5 +51,6 @@ NoEntriesAdvice.propTypes = {
   contentTypes: PropTypes.array,
   suggestedContentTypeId: PropTypes.string,
   hasArchivedEntries: PropTypes.bool,
-  loadArchived: PropTypes.func.isRequired
+  loadArchived: PropTypes.func.isRequired,
+  disabled: PropTypes.bool
 };

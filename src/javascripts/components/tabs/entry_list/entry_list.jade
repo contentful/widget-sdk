@@ -70,7 +70,7 @@ header.workbench-header
 .workbench-main.x--content(ng-show="showNoEntriesAdvice()")
   react-component(
     name="components/tabs/entry_list/NoEntriesAdvice/index.es6"
-    props="{contentTypes: accessibleCts, suggestedContentTypeId: context.view.contentTypeId, onCreate: newEntry, hasArchivedEntries: hasArchivedEntries, loadArchived: loadArchived}"
+    props="{contentTypes: accessibleCts, suggestedContentTypeId: context.view.contentTypeId, onCreate: newEntry, hasArchivedEntries: hasArchivedEntries, loadArchived: loadArchived, disabled: shouldDisable('create', 'entry')}"
     ng-show="hasContentType"
   )
 

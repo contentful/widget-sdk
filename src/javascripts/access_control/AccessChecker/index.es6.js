@@ -15,6 +15,8 @@ import { chain, get, set, some, forEach, values, find } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements.es6';
 import * as logger from 'services/logger.es6';
 
+import _ from 'lodash';
+
 export { wasForbidden } from './Utils.es6';
 
 /**
@@ -266,6 +268,7 @@ export function canPerformActionOnEntryOfType(action, ctId) {
       }
     }
   };
+
   return canPerformActionOnEntity(action, entity);
 }
 
@@ -502,27 +505,29 @@ function createResponseAttributeGetter(attrName) {
 
 function getPermissions(action, entity) {
   const response = { shouldHide: false, shouldDisable: false };
-  const entitiesForUsageCheck = ['Entry', 'Asset', 'ContentType'];
 
   if (!spaceAuthContext) {
     return response;
   }
-  response.can = cache.getResponse(action, entity);
+
   const newEnforcement = spaceAuthContext.newEnforcement;
-  if (response.can && !newEnforcement) {
+  response.can = cache.getResponse(action, entity, newEnforcement);
+
+  if (response.can) {
     return response;
   }
 
   let reasons = spaceAuthContext.reasonsDenied(action, entity);
 
-  if (newEnforcement) {
-    if (entitiesForUsageCheck.includes(entity) && action === 'create' && newEnforcement) {
+  if (newEnforcement.length > 0 && newEnforcement.reasonsDenied().length > 0) {
+    if (compareEntityForUsageCheck && action === 'create') {
       const newReasonsDenied = newEnforcement.reasonsDenied(action, entity);
-      if (reasons === newReasonsDenied) {
+
+      if (_.isEqual(reasons, newReasonsDenied)) {
         reasons = newReasonsDenied;
+        spaceAuthContext.reasonsDenied = newEnforcement.reasonsDenied;
+        response.enforcement = getEnforcement(action, entity);
       }
-      spaceAuthContext.reasonsDenied = newEnforcement.reasonsDenied;
-      response.enforcement = getEnforcement(action, entity);
     }
   } else {
     response.enforcement = getEnforcement(action, entity);
@@ -533,6 +538,15 @@ function getPermissions(action, entity) {
   response.shouldHide = !response.shouldDisable;
 
   return response;
+}
+
+function compareEntityForUsageCheck(entity) {
+  const entitiesForUsageCheck = ['Entry', 'Asset', 'ContentType'];
+  let entityType = entity;
+
+  if (entity.sys) entityType = entity.sys.type;
+
+  return entitiesForUsageCheck.includes(entityType);
 }
 
 function getEnforcement(action, entity) {
