@@ -13,22 +13,14 @@ export function getResponse(action, entity, newEnforcement) {
     return false;
   }
 
-  const { reasonsDenied, deniedEntities } = newEnforcement;
   const key = getCanResponseKey(action, entity);
 
   if (key) {
     let response = cache[key];
     if (![true, false].includes(response)) {
-      response = context.can(action, entity);
-
-      if (
-        action === 'create' &&
-        newEnforcement.length !== 0 &&
-        reasonsDenied().length !== 0 &&
-        isEntityDenied(entity, deniedEntities)
-      ) {
-        response = false;
-      }
+      response = shouldPerformNewUsageCheck(action, newEnforcement, entity)
+        ? false
+        : context.can(action, entity);
 
       cache[key] = response;
     }
@@ -36,16 +28,11 @@ export function getResponse(action, entity, newEnforcement) {
     return response;
   }
 
-  if (
-    action === 'create' &&
-    newEnforcement.length !== 0 &&
-    reasonsDenied().length !== 0 &&
-    isEntityDenied(entity, deniedEntities)
-  ) {
-    return false;
-  }
+  const result = shouldPerformNewUsageCheck(action, newEnforcement, entity)
+    ? false
+    : context.can(action, entity);
 
-  return context.can(action, entity);
+  return result;
 }
 
 function getCanResponseKey(action, entity) {
@@ -73,4 +60,15 @@ function isEntityDenied(entity, deniedEntities) {
   if (entity.sys) entityType = get(entity, 'sys.type');
 
   return deniedEntities.includes(entityType);
+}
+
+function shouldPerformNewUsageCheck(action, newEnforcement, entity) {
+  const { reasonsDenied, deniedEntities } = newEnforcement;
+
+  return (
+    action === 'create' &&
+    newEnforcement.length !== 0 &&
+    reasonsDenied().length !== 0 &&
+    isEntityDenied(entity, deniedEntities)
+  );
 }

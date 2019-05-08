@@ -1,5 +1,6 @@
 import { isArray, get } from 'lodash';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import createResourceService from 'services/ResourceService.es6';
 
 // 30 seconds
 // This is the Varnish caching time for this endpoint
@@ -66,6 +67,57 @@ export async function refresh(spaceId) {
       enforcements[spaceId] = newEnforcements;
     }
   }
+}
+
+/**
+ * Performs checks based on entities' limits and usages within a given environment
+ * and generates enforcements accordingly.
+ *
+ * NB: When the `ENVIRONMENT_USAGE_ENFORCEMENT` feature flag is enabled,
+ * Worf's usage checking ability is ignored and this method is invoked.
+ * This is because Worf doesn't check usages on non master environments.
+ */
+export async function newUsageChecker(spaceId, environmentId) {
+  const service = createResourceService(spaceId);
+  const result = await service.canCreateEnvironmentResources(environmentId);
+
+  delete result.Locale;
+  delete result.Record;
+
+  return generateNewUsageCheckEnforcements(result);
+}
+
+// generate enforcements based on the new usage check
+function generateNewUsageCheckEnforcements(allowedToCreate) {
+  const enforcements = [];
+  let reasonsDenied = () => [];
+  const deniedEntities = [];
+
+  for (const entity in allowedToCreate) {
+    if (!allowedToCreate[entity]) {
+      deniedEntities.push(entity);
+
+      const enforcement = {
+        additionalPolicies: [],
+        deniedPermissions: {
+          deniedPerms: {},
+          reason: 'usageExceeded'
+        }
+      };
+      enforcement['deniedPermissions']['deniedPerms'][entity] = ['create'];
+
+      enforcements.push({ Enforcement: enforcement });
+
+      reasonsDenied = (action, entityType) => {
+        return [
+          'usageExceeded',
+          `You do not have permissions to ${action} on ${entityType}, please contact your administrator for more information.`
+        ];
+      };
+    }
+  }
+
+  return { enforcements, reasonsDenied, deniedEntities };
 }
 
 async function fetchEnforcements(spaceId) {

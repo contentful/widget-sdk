@@ -1,51 +1,9 @@
 import { registerFactory } from 'NgRegistry.es6';
 import worf from '@contentful/worf';
 import * as logger from 'services/logger.es6';
-import createResourceService from 'services/ResourceService.es6';
 import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
-
-const performNewUsageCheck = async (spaceId, environmentId) => {
-  const service = createResourceService(spaceId);
-  const result = await service.canCreateEnvironmentResources(environmentId);
-
-  delete result.Locale;
-  delete result.Record;
-
-  return generateEnforcements(result);
-};
-
-function generateEnforcements(allowedToCreate) {
-  const enforcements = [];
-  let reasonsDenied = () => [];
-  const deniedEntities = [];
-
-  for (const entity in allowedToCreate) {
-    if (!allowedToCreate[entity]) {
-      deniedEntities.push(entity);
-
-      const enforcement = {
-        additionalPolicies: [],
-        deniedPermissions: {
-          deniedPerms: {},
-          reason: 'usageExceeded'
-        }
-      };
-      enforcement['deniedPermissions']['deniedPerms'][entity] = ['create'];
-
-      enforcements.push({ Enforcement: enforcement });
-
-      reasonsDenied = (action, entityType) => {
-        return [
-          'usageExceeded',
-          `You do not have permissions to ${action} on ${entityType}, please contact your administrator for more information.`
-        ];
-      };
-    }
-  }
-
-  return { enforcements, reasonsDenied, deniedEntities };
-}
+import { newUsageChecker } from 'services/EnforcementsService.es6';
 
 export default function register() {
   registerFactory('authorization', [
@@ -103,7 +61,7 @@ export default function register() {
             const allowNewUsageCheck = await getCurrentVariation(ENVIRONMENT_USAGE_ENFORCEMENT);
 
             if (allowNewUsageCheck) {
-              this.spaceContext.newEnforcement = await performNewUsageCheck(
+              this.spaceContext.newEnforcement = await newUsageChecker(
                 this.spaceContext.space.sys.id,
                 this.spaceContext.environment.sys.id
               );

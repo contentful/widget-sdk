@@ -510,7 +510,7 @@ function getPermissions(action, entity) {
     return response;
   }
 
-  const newEnforcement = spaceAuthContext.newEnforcement;
+  const { newEnforcement } = spaceAuthContext;
   response.can = cache.getResponse(action, entity, newEnforcement);
 
   if (response.can) {
@@ -519,16 +519,10 @@ function getPermissions(action, entity) {
 
   let reasons = spaceAuthContext.reasonsDenied(action, entity);
 
-  if (newEnforcement.length > 0 && newEnforcement.reasonsDenied().length > 0) {
-    if (compareEntityForUsageCheck && action === 'create') {
-      const newReasonsDenied = newEnforcement.reasonsDenied(action, entity);
-
-      if (_.isEqual(reasons, newReasonsDenied)) {
-        reasons = newReasonsDenied;
-        spaceAuthContext.reasonsDenied = newEnforcement.reasonsDenied;
-        response.enforcement = getEnforcement(action, entity);
-      }
-    }
+  if (isValidForNewUsageCheck(action, entity, reasons, newEnforcement)) {
+    reasons = newEnforcement.reasonsDenied(action, entity);
+    spaceAuthContext.reasonsDenied = newEnforcement.reasonsDenied;
+    response.enforcement = getEnforcement(action, entity);
   } else {
     response.enforcement = getEnforcement(action, entity);
   }
@@ -538,6 +532,17 @@ function getPermissions(action, entity) {
   response.shouldHide = !response.shouldDisable;
 
   return response;
+}
+
+// check for enforcements generated for entities not within their limits
+function isValidForNewUsageCheck(action, entity, reasons, newEnforcement) {
+  return (
+    newEnforcement.length > 0 &&
+    newEnforcement.reasonsDenied().length > 0 &&
+    compareEntityForUsageCheck &&
+    action === 'create' &&
+    _.isEqual(reasons, newEnforcement.reasonsDenied(action, entity))
+  );
 }
 
 function compareEntityForUsageCheck(entity) {
