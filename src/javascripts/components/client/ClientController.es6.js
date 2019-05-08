@@ -38,6 +38,12 @@ export default function register() {
           type: 'LOCATION_CHANGED',
           payload: { location: pickSerializable(window.location) }
         });
+
+        spaceAndTokenWatchHandler({
+          tokenLookup: TokenStore.getTokenLookup(),
+          space: spaceContext.space,
+          enforcements: EnforcementsService.getEnforcements(spaceContext.getId())
+        });
       });
 
       // TODO remove this eventually. All components should access it as a service
