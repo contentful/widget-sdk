@@ -196,7 +196,7 @@ export function getOrganizations() {
   Gets the current user value of the user$ stream
  */
 export function getUser() {
-  return K.getValue(user$);
+  return tokenInfoMVar.read().then(() => deepFreezeClone(K.getValue(userBus.property)));
 }
 
 /*

@@ -91,7 +91,7 @@ describe('LaunchDarkly', () => {
       }
     };
 
-    getUser.mockReturnValue(user);
+    getUser.mockResolvedValue(user);
   });
 
   afterEach(() => {

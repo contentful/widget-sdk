@@ -9,6 +9,7 @@ import { go } from 'states/Navigator.es6';
 import { refresh as refreshToken } from 'services/TokenStore.es6';
 import { article } from 'utils/StringUtils.es6';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
+import { User as UserPropType } from 'app/OrganizationSettings/PropTypes.es6';
 
 export default class UserInvitation extends React.Component {
   static propTypes = {
@@ -17,7 +18,8 @@ export default class UserInvitation extends React.Component {
       role: PropTypes.string.isRequired,
       inviterName: PropTypes.string.isRequired
     }),
-    errored: PropTypes.bool
+    errored: PropTypes.bool,
+    user: UserPropType
   };
 
   state = {
@@ -79,8 +81,9 @@ export default class UserInvitation extends React.Component {
   };
 
   render() {
-    const { invitation = {}, errored } = this.props;
+    const { invitation = {}, errored, user = {} } = this.props;
     const { organizationName, role, inviterName } = invitation;
+    const { email } = user;
     const { accepting } = this.state;
 
     return (
@@ -90,8 +93,13 @@ export default class UserInvitation extends React.Component {
             {errored && (
               <React.Fragment>
                 <div className="user-invitation--error">
-                  <h2 className="user-invitation--title">Oops... This invitation doesn’t exist.</h2>
-                  <p className="user-invitation--error-details">It’s either deleted or expired.</p>
+                  <h2 className="user-invitation--title">This invitation doesn’t exist.</h2>
+                  <p className="user-invitation--error-details">
+                    If you’ve arrived here by accident, it means that you may have been invited with
+                    an email different than the one you’re logged in with — <strong>{email}</strong>
+                    . Ask the person you sent you the invitation if they can invite you with this
+                    email.
+                  </p>
                 </div>
               </React.Fragment>
             )}

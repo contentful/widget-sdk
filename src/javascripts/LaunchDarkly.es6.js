@@ -164,7 +164,7 @@ export async function getVariation(flagName, { organizationId, spaceId } = {}) {
     return getFlagOverride(flagName);
   }
 
-  const user = getUser();
+  const user = await getUser();
 
   // If the client doesn't exist, initialize with a basic LD user
   // object (no org or space data)
