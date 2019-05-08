@@ -1,7 +1,7 @@
 import { getSpace, getOrganization } from 'services/TokenStore.es6';
 import {
   canCreate,
-  canCreatePerResourceType,
+  canCreateResources,
   generateMessage,
   isLegacyOrganization,
   getLegacyLimit,
@@ -17,8 +17,7 @@ export default function createResourceService(id, type = 'space', envId) {
     get,
     getAll,
     canCreate: resourceType => get(resourceType).then(canCreate),
-    canCreateEnvironmentResources: environmentId =>
-      getAll(environmentId).then(canCreatePerResourceType),
+    canCreateEnvironmentResources: environmentId => getAll(environmentId).then(canCreateResources),
     messagesFor: resourceType => get(resourceType).then(generateMessage),
     async messages() {
       const resources = await getAll();

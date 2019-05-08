@@ -21,7 +21,6 @@ export const resourceHumanNameMap = {
 };
 
 export const canCreate = resource => !resourceMaximumLimitReached(resource);
-export const canCreatePerResourceType = resources => resourcesMaximumLimitReached(resources);
 
 /**
  * Returns the whole resource metadata object from the Redux store, given the resources in the store.
@@ -132,35 +131,24 @@ export function resourceMaximumLimitReached(resource) {
   return Boolean(limitMaximum && usage >= limitMaximum);
 }
 
-/**
- * Convert a string to Pascal Case (removing non alphabetic characters).
- *
- * @example
- * 'hello_world'.toPascalCase() // Will return `HelloWorld`.
- * 'fOO BAR'.toPascalCase()     // Will return `FooBar`.
- *
- * @returns {string}
- *   The Pascal Cased string.
- */
-String.prototype.toPascalCase = function() {
-  return this.match(/[a-z]+/gi)
+function convertToPascalCase(value) {
+  return value
+    .match(/[a-z]+/gi)
     .map(function(word) {
       return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
     })
     .join('');
-};
+}
 
-export function resourcesMaximumLimitReached(resources) {
-  const resourcesWithLimitReachedValue = {};
+export function canCreateResources(resources) {
+  const allowedToCreate = {};
   resources.forEach(resource => {
-    resourcesWithLimitReachedValue[resource.name.toPascalCase()] = !resourceMaximumLimitReached(
-      resource
-    );
+    allowedToCreate[convertToPascalCase(resource.name)] = !resourceMaximumLimitReached(resource);
   });
 
   // record is the true source for usage on Entry and Asset
-  resourcesWithLimitReachedValue['Entry'] = resourcesWithLimitReachedValue['Record'];
-  resourcesWithLimitReachedValue['Asset'] = resourcesWithLimitReachedValue['Record'];
+  allowedToCreate['Entry'] = allowedToCreate['Record'];
+  allowedToCreate['Asset'] = allowedToCreate['Record'];
 
-  return resourcesWithLimitReachedValue;
+  return allowedToCreate;
 }
