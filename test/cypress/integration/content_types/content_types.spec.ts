@@ -2,7 +2,7 @@ import { defaultRequestsMock } from '../../util/factories';
 import * as state from '../../util/interactionState';
 import { defaultSpaceId, getExtensions, getContentTypes } from '../../util/requests';
 import {
-  editorInterfaceResponse,
+  editorInterfaceWithoutSidebarResponse,
   allContentTypesResponse,
   defaultContentTypeResponse,
   defaultPublishedContentTypeResponse
@@ -145,7 +145,7 @@ describe('Content type page', () => {
 
     defaultRequestsMock();
     noExtensionsResponse();
-    editorInterfaceResponse();
+    editorInterfaceWithoutSidebarResponse();
     allContentTypesResponse();
     defaultContentTypeResponse();
     defaultPublishedContentTypeResponse();
