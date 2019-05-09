@@ -152,7 +152,6 @@ angular
       ngRequire('search/listQuery.es6').default();
       ngRequire('services/promisedLoader.es6').default();
       ngRequire('components/tabs/asset_list/assetSearchController.es6').default();
-      ngRequire('components/tabs/entry_list/cfFieldDisplayDirective.es6').default();
       ngRequire('components/tabs/entry_list/displayFieldsController.es6').default();
       ngRequire('components/tabs/entry_list/entryListActionsController.es6').default();
       ngRequire('components/tabs/entry_list/entryListColumnsController.es6').default();

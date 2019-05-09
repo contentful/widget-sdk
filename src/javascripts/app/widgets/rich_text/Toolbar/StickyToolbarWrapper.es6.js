@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Sticky from 'react-sticky-el';
-import { isIE } from 'app/widgets/rich_text/helpers/browser.es6';
+import { isIE } from 'utils/browser.es6';
 
 const StickyToolbarWrapper = ({ children, isDisabled }) =>
   isIE() ? (

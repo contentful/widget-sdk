@@ -5,7 +5,7 @@ import { truncate } from 'utils/StringUtils.es6';
 import { INLINES } from '@contentful/rich-text-types';
 import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity/index.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
-import { isIE, isEdge } from 'app/widgets/rich_text/helpers/browser.es6';
+import { isIE, isEdge } from 'utils/browser.es6';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag.es6';
 
 const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
