@@ -6,6 +6,8 @@ import makeExtensionNavigationHandlers from './makeExtensionNavigationHandlers.e
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers.es6';
 import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_FIELD_SIDEBAR } from '../WidgetLocations.es6';
 
+import createAppsClient from 'app/settings/apps/AppsClient.es6';
+
 const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
 
 const ERROR_MESSAGES = {
@@ -169,5 +171,14 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
         $scope.fieldLocale.setActive(isActive);
       });
     }
+
+    api.registerHandler('alpha', ({ command, args }) => {
+      if (command === 'proxyGetRequest' && args) {
+        const client = createAppsClient(spaceContext.getId());
+        return client.proxyGetRequest(args.appId, args.url, args.headers);
+      }
+
+      throw new Error('Unknown alpha command.');
+    });
   }
 }

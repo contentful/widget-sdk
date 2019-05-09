@@ -2,9 +2,9 @@ const JSON_MIME_TYPE = 'application/json';
 
 module.exports = sendRequest;
 
-function sendRequest(context, options, fetch) {
+function sendRequest(context, options, fetch, forceGet) {
   return fetch(options.url, {
-    method: options.method,
+    method: forceGet ? 'GET' : options.method,
     body:
       findContentType(options.headers) === JSON_MIME_TYPE
         ? JSON.stringify(options.body)
