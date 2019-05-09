@@ -72,7 +72,7 @@ LinkOpen.propTypes = {
 /**
  * Styles the content as an inline code fragment
  */
-export function CodeFragment({ children }) {
+export function CodeFragment({ children, style }) {
   return (
     <span
       style={{
@@ -86,12 +86,14 @@ export function CodeFragment({ children }) {
         lineHeight: '22px',
         padding: '0 5px',
         overflow: 'hidden',
-        textOverflow: 'ellipsis'
+        textOverflow: 'ellipsis',
+        ...style
       }}>
       {children}
     </span>
   );
 }
 CodeFragment.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
+  style: PropTypes.object
 };

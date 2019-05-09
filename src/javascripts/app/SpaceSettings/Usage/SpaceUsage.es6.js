@@ -23,12 +23,12 @@ class SpaceUsage extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired,
-    environmentId: PropTypes.string //TODO make this required
+    environmentId: PropTypes.string.isRequired
   };
 
   state = {
     spaceResources: undefined,
-    envResources: undefined
+    environmentResources: undefined
   };
 
   componentDidMount() {
@@ -48,7 +48,7 @@ class SpaceUsage extends React.Component {
           keyBy('sys.id'),
           update('environment', addMasterEnvironment)
         )(await spaceScopedService.getAll()),
-        envResources: flow(keyBy('sys.id'))(await envScopedService.getAll())
+        environmentResources: flow(keyBy('sys.id'))(await envScopedService.getAll())
       });
     } catch (e) {
       ReloadNotification.apiErrorHandler(e);
@@ -56,7 +56,7 @@ class SpaceUsage extends React.Component {
   };
 
   render() {
-    const { spaceResources, envResources } = this.state;
+    const { spaceResources, environmentResources } = this.state;
     return (
       <React.Fragment>
         <DocumentTitle title="Usage" />
@@ -68,14 +68,14 @@ class SpaceUsage extends React.Component {
           <Workbench.Content>
             <ResourceUsageList
               spaceResources={spaceResources}
-              envResources={envResources}
-              environment={this.props.environmentId}
+              environmentResources={environmentResources}
+              environmentId={this.props.environmentId}
             />
           </Workbench.Content>
           <Workbench.Sidebar>
             <SpaceUsageSidebar
               spaceResources={spaceResources}
-              envResources={envResources}
+              environmentResources={environmentResources}
               environmentId={this.props.environmentId}
             />
           </Workbench.Sidebar>

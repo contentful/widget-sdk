@@ -1,10 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import EnvironmentIcon from 'svg/environment.es6';
+import { css } from 'emotion';
+import { CodeFragment } from 'ui/Content.es6';
 import { Typography, Heading, Paragraph } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import { ResourceUsageHighlight, ResourceUsage } from './ResourceUsage.es6';
-
-const ResourceUsageList = ({ spaceResources, envResources, environment }) =>
+import cn from 'classnames';
+const styles = {
+  environmentUsageParent: css({
+    marginTop: tokens.spacing2Xl
+  }),
+  environmentLabelParent:
+    css({
+      display: 'flex'
+    }) +
+    ' ' +
+    cn({
+      'f36-font-weight--medium': true
+    }),
+  environmentLabel: css({
+    marginLeft: tokens.spacingS
+  })
+};
+const ResourceUsageList = ({ spaceResources, environmentResources, environmentId }) =>
   spaceResources ? (
     <div className="resource-list">
       <section className="resource-list__highlights">
@@ -16,8 +34,8 @@ const ResourceUsageList = ({ spaceResources, envResources, environment }) =>
         <ResourceUsage resource={spaceResources['role']} />
         <ResourceUsage resource={spaceResources['environment']} showMaximumLimit />
       </section>
-      {envResources ? (
-        <section>
+      {environmentResources && (
+        <section className={styles.environmentUsageParent}>
           <Typography>
             <Heading>Environment Usage</Heading>
             <Paragraph>
@@ -25,23 +43,28 @@ const ResourceUsageList = ({ spaceResources, envResources, environment }) =>
               view usage for other environments.
             </Paragraph>
             <Paragraph>
-              Current environment: <EnvironmentIcon style={{ display: 'inline' }} /> {environment}
+              <span className={styles.environmentLabelParent}>
+                {'Current environment: '}
+                <span className={styles.environmentLabel}>
+                  <CodeFragment>{environmentId}</CodeFragment>
+                </span>
+              </span>
             </Paragraph>
           </Typography>
-          <ResourceUsage resource={envResources['entry']} />
-          <ResourceUsage resource={envResources['asset']} />
-          <ResourceUsage resource={envResources['record']} description="Entries + Assets" />
-          <ResourceUsage resource={envResources['content_type']} />
-          <ResourceUsage resource={envResources['locale']} />
+          <ResourceUsage resource={environmentResources['entry']} />
+          <ResourceUsage resource={environmentResources['asset']} />
+          <ResourceUsage resource={environmentResources['record']} description="Entries + Assets" />
+          <ResourceUsage resource={environmentResources['content_type']} />
+          <ResourceUsage resource={environmentResources['locale']} />
         </section>
-      ) : null}
+      )}
     </div>
   ) : null;
 
 ResourceUsageList.propTypes = {
   spaceResources: PropTypes.object,
-  envResources: PropTypes.object,
-  environment: PropTypes.string
+  environmentResources: PropTypes.object,
+  environmentId: PropTypes.string
 };
 
 export default ResourceUsageList;
