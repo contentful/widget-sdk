@@ -78,6 +78,47 @@ orbs:
                 sudo mv docker-compose /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose
                 docker-compose --version
 
+  saucelabs:
+    jobs:
+      run:
+        description: 'Run cross-browser tests on SauceLabs'
+        parameters:
+          browser:
+            type: string
+            default: 'chrome'
+          platform:
+            type: string
+            default: 'Windows 10'
+          selenium:
+            type: string
+            default: ''
+        docker:
+          - image: 806120774687.dkr.ecr.us-east-1.amazonaws.com/contentful/e2e-tests:master
+            aws_auth:
+              aws_access_key_id: $AWS_ACCESS_KEY_ID
+              aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
+        working_directory: /app
+        steps:
+          - run:
+              name: Run e2e-tests for << parameters.browser >> browser
+              command: |
+                pytest -n=2 -d --max-worker-restart=2 --instafail --tb=short \
+                --junit-xml=test-results/pytest/pytest-test-results.xml \
+                --html=test-results/pytest/e2e-test-report.html \
+                --pricing=v1 -m 'cross_browser' --driver SauceLabs \
+                --capability browserName '<< parameters.browser >>' \
+                --capability platform '<< parameters.platform >>' \
+                --capability seleniumVersion '<< parameters.selenium >>'
+          - store_artifacts:
+              path: test-results
+          - store_test_results:
+              path: test-results
+
+saucelabs_filters: &saucelabs_filters
+  filters:
+    branches:
+      only: master
+
 executors:
   cypress-base-8:
     docker:
@@ -344,6 +385,32 @@ workflows:
           bucket: 'static.cdnorigin.contentful.com'
           requires:
             - build-and-push-image
+      - saucelabs/run:
+          name: run-win10-ie-tests
+          browser: 'internet explorer'
+          requires:
+            - deploy-assets-to-staging
+          <<: *saucelabs_filters
+      - saucelabs/run:
+          name: run-win10-edge-tests
+          browser: 'MicrosoftEdge'
+          selenium: '3.14.0'
+          requires:
+            - deploy-assets-to-staging
+          <<: *saucelabs_filters
+      - saucelabs/run:
+          name: run-win10-firefox-tests
+          browser: 'firefox'
+          requires:
+            - deploy-assets-to-staging
+          <<: *saucelabs_filters
+      - saucelabs/run:
+          name: run-osx10-safari-tests
+          platform: 'OS X 10.11'
+          browser: 'safari'
+          requires:
+            - deploy-assets-to-staging
+          <<: *saucelabs_filters
 
 notify:
   webhooks:
