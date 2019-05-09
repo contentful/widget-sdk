@@ -27,8 +27,8 @@ class SpaceUsage extends React.Component {
   };
 
   state = {
-    spaceResources: {},
-    envResources: {}
+    spaceResources: undefined,
+    envResources: undefined
   };
 
   componentDidMount() {
@@ -56,7 +56,6 @@ class SpaceUsage extends React.Component {
   };
 
   render() {
-    console.log(this.state)
     const { spaceResources, envResources } = this.state;
     return (
       <React.Fragment>
@@ -74,9 +73,11 @@ class SpaceUsage extends React.Component {
             />
           </Workbench.Content>
           <Workbench.Sidebar>
-            <SpaceUsageSidebar resources={spaceResources} spaceResources={spaceResources}
-            envResources={envResources}
-            environmentId={this.props.environmentId} />
+            <SpaceUsageSidebar
+              spaceResources={spaceResources}
+              envResources={envResources}
+              environmentId={this.props.environmentId}
+            />
           </Workbench.Sidebar>
         </Workbench>
       </React.Fragment>

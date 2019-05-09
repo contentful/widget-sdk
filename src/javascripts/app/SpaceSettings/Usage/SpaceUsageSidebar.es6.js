@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { pickBy, has } from 'lodash';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 import { resourceMaximumLimitReached, resourceHumanNameMap } from 'utils/ResourceUtils.es6';
 
@@ -19,9 +19,7 @@ const limitsReachedMessage = (spaceResources, envResources, envId) => {
         {spaceResources.length > 2
           ? ' a few of your space resources'
           : ` ${spaceResources.join(' and ')}`}
-        {envResources.length > 0
-          ? `, and other limits in your ${envId} environment. `
-          : '. '}
+        {envResources.length > 0 ? `, and other limits in your ${envId} environment. ` : '. '}
         Consider upgrading your space plan.
       </p>
     );
@@ -29,19 +27,16 @@ const limitsReachedMessage = (spaceResources, envResources, envId) => {
     return (
       <p className="note-box--info">
         You have reached the limit for
-        {envResources.length > 2
-          ? ` a few resources `
-          : ` ${envResources.join(' and ')} `}
+        {envResources.length > 2 ? ` a few resources ` : ` ${envResources.join(' and ')} `}
         in your {envId} environment. Consider upgrading your space plan.
       </p>
-    )
+    );
   } else return '';
-}
+};
 
-const SpaceUsageSidebar = (props) => {
-  console.log({props})
-  const { spaceResources, envResources, environmentId} = props
-  const limitsReachedSpaceResources = getLimitsReachedResources(spaceResources);
+const SpaceUsageSidebar = ({ spaceResources, envResources, environmentId }) => {
+  const spaceOnlyResources = pickBy(spaceResources, (_, key) => !has(envResources, key));
+  const limitsReachedSpaceResources = getLimitsReachedResources(spaceOnlyResources);
   const limitsReachedEnvResources = getLimitsReachedResources(envResources);
 
   return (
@@ -76,7 +71,8 @@ SpaceUsageSidebar.propTypes = {
 };
 
 SpaceUsageSidebar.defaultProps = {
-  resources: {}
+  spaceResources: {},
+  envResources: {}
 };
 
 export default SpaceUsageSidebar;
