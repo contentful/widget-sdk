@@ -1,8 +1,8 @@
 import { defaultRequestsMock } from '../../util/factories';
 import {
   allContentTypesResponse,
-  concreteContentTypeResponse,
-  concretePublishedContentTypeResponse
+  defaultContentTypeResponse,
+  defaultPublishedContentTypeResponse
 } from '../../interactions/content_types';
 import { noExtensionsResponse } from '../../interactions/extensions';
 import { editorInterfaceWithoutSidebarResponse } from '../../interactions/content_types';
@@ -28,8 +28,8 @@ describe('Sidebar configuration', () => {
     noExtensionsResponse();
     editorInterfaceWithoutSidebarResponse();
     allContentTypesResponse();
-    concreteContentTypeResponse();
-    concretePublishedContentTypeResponse();
+    defaultContentTypeResponse();
+    defaultPublishedContentTypeResponse();
 
     cy.visit(
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`

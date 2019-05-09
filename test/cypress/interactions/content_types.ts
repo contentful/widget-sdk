@@ -82,7 +82,7 @@ export function allContentTypesResponse() {
   }).as(state.ContentTypes.SINGLE);
 }
 
-export function concreteContentTypeResponse() {
+export function defaultContentTypeResponse() {
   cy.addInteraction({
     provider: 'content_types',
     state: state.ContentType.DEFAULT,
@@ -95,7 +95,7 @@ export function concreteContentTypeResponse() {
   }).as(state.ContentType.DEFAULT);
 }
 
-export function concretePublishedContentTypeResponse() {
+export function defaultPublishedContentTypeResponse() {
   cy.addInteraction({
     provider: 'content_types',
     state: state.ContentType.PUBLISHED,

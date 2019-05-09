@@ -1,6 +1,14 @@
 import { defaultRequestsMock } from '../../util/factories';
 import * as state from '../../util/interactionState';
 import { defaultSpaceId, getExtensions, getContentTypes } from '../../util/requests';
+import {
+  editorInterfaceResponse,
+  allContentTypesResponse,
+  defaultContentTypeResponse,
+  defaultPublishedContentTypeResponse
+} from '../../interactions/content_types';
+import { noExtensionsResponse } from '../../interactions/extensions';
+import { defaultContentTypeId } from '../../util/requests';
 
 const empty = require('../../fixtures/empty.json');
 const severalContentTypes = require('../../fixtures/content-types-several.json');
@@ -84,10 +92,7 @@ describe('Content types list page', () => {
 
         cy.getByTestId('create-content-type-empty-state').click();
 
-        cy.wait([
-          '@noContentTypes',
-          '@noExtensions'
-        ]);
+        cy.wait(['@noContentTypes', '@noExtensions']);
 
         cy.url().should('contain', '/content_types_new/fields');
       });
@@ -120,7 +125,7 @@ describe('Content types list page', () => {
         `@${state.PreviewEnvironments.NONE}`,
         `@${state.ContentTypes.SEVERAL}`
       ]);
-    })
+    });
 
     describe('Opening the page', () => {
       it('Renders the page with several content types', () => {
@@ -128,6 +133,36 @@ describe('Content types list page', () => {
         cy.getByTestId('create-content-type').should('be.visible');
         cy.getAllByTestId('content-type-item').should('have.length', severalContentTypes.total);
       });
+    });
+  });
+});
+
+describe('Content type page', () => {
+  before(() => {
+    cy.setAuthTokenToLocalStorage();
+
+    cy.resetAllFakeServers();
+
+    defaultRequestsMock();
+    noExtensionsResponse();
+    editorInterfaceResponse();
+    allContentTypesResponse();
+    defaultContentTypeResponse();
+    defaultPublishedContentTypeResponse();
+
+    cy.visit(`/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`);
+
+    cy.wait([
+      `@${state.Token.VALID}`,
+      `@${state.PreviewEnvironments.NONE}`,
+      `@${state.ContentType.DEFAULT}`
+    ]);
+  });
+  describe('Opening the page for default content type', () => {
+    it('renders the page', () => {
+      cy.get('[name=contentTypeForm]').should('be.visible');
+      cy.getByTestId('save-content-type').should('be.enabled');
+      cy.getByTestId('add-field-button').should('be.enabled');
     });
   });
 });
