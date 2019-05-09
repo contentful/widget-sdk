@@ -52,14 +52,18 @@ module.exports = {
     // POST /apps/spaces/:spaceId/:appId/request
     if (method === 'POST' && appAction === 'request') {
       // Context keeps the values that are available for the custom request options.
-      const context = {
-        ...apps[appId].secrets
-      };
+      const app = apps[appId] || {};
+      const context = { ...app.secrets };
+
+      // For the time being we only need GET requests for Optimizely.
+      // Let's limit HTTP methods available to this app for extra
+      // security until we've got proper Secrets API.
+      const forceGet = appId === 'optimizely';
 
       let resp, body;
 
       try {
-        resp = await sendRequest(context, req.body, dependencies.fetch);
+        resp = await sendRequest(context, req.body, dependencies.fetch, forceGet);
         body = await resp.text();
       } catch (err) {
         return respond("Bad request. Make sure you've passed valid request options.", 400, [

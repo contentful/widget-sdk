@@ -39,6 +39,7 @@ export default function createAppsClient(spaceId) {
     getAll,
     get,
     save,
+    proxyGetRequest,
     remove
   };
 
@@ -72,6 +73,14 @@ export default function createAppsClient(spaceId) {
     return backend.call(appId, {
       method: 'PUT',
       body: JSON.stringify(config),
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  function proxyGetRequest(appId, url, headers) {
+    return backend.call(appId + '/request', {
+      method: 'POST',
+      body: JSON.stringify({ method: 'GET', url, headers }),
       headers: { 'Content-Type': 'application/json' }
     });
   }
