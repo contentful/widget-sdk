@@ -90,6 +90,13 @@ const styles = {
     }
   }),
   /*
+    We want to make area around checkbox clickable
+  */
+  nameCell: css({
+    paddingTop: 0,
+    paddingBottom: 0
+  }),
+  /*
     TODO: consolidate with #grid tokens 
   */
   mediumCell: css({
@@ -273,10 +280,10 @@ BulkActionsRow.propTypes = {
 /**
  * Provides right click => open in a new tab flow
  */
-function SecretiveLink({ href, children, ...rest }) {
+function SecretiveLink({ href, className, children, ...rest }) {
   return (
     <TextLink
-      className={styles.secretiveLink}
+      className={cn(styles.secretiveLink, className)}
       tabIndex="-1"
       href={href}
       rel="noopener noreferrer"
@@ -290,7 +297,8 @@ function SecretiveLink({ href, children, ...rest }) {
 }
 
 SecretiveLink.propTypes = {
-  href: PropTypes.string.isRequired
+  href: PropTypes.string.isRequired,
+  className: PropTypes.string
 };
 
 export default function EntryList({
@@ -441,9 +449,11 @@ export default function EntryList({
                     [styles.visibilityHidden]: context.isSearching
                   })}
                   data-test-id="entry-row">
-                  <TableCell data-test-id="name" className={cn(styles.tableCell, styles.largeCell)}>
+                  <TableCell
+                    data-test-id="name"
+                    className={cn(styles.tableCell, styles.nameCell, styles.largeCell)}>
                     <span className={styles.flexCenter}>
-                      <label className="f36-padding-left--s">
+                      <label className="f36-padding-left--s f36-padding-top--m f36-padding-bottom--m">
                         <Checkbox
                           className={cn('f36-margin-right--xs', styles.marginBottomXXS)}
                           checked={selection.isSelected(entry)}
@@ -453,7 +463,11 @@ export default function EntryList({
                           }}
                         />
                       </label>
-                      <SecretiveLink href={getHref()}>{entryTitleFormatter(entry)}</SecretiveLink>
+                      <SecretiveLink
+                        className="f36-padding-top--m f36-padding-bottom--m"
+                        href={getHref()}>
+                        {entryTitleFormatter(entry)}
+                      </SecretiveLink>
                     </span>
                   </TableCell>
                   {isContentTypeVisible && (
