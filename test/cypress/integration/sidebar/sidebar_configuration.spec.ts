@@ -5,26 +5,28 @@ import {
   concretePublishedContentTypeResponse
 } from '../../interactions/content_types';
 import { noExtensionsResponse } from '../../interactions/extensions';
-import { editorInterfaceResponse } from '../../interactions/content_types';
+import { editorInterfaceWithoutSidebarResponse } from '../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../util/requests';
 import * as state from '../../util/interactionState';
 
 describe('Sidebar configuration', () => {
-  before(() => cy.startFakeServer({
-    consumer: 'user_interface',
-    provider: 'extensions',
-    cors: true,
-    pactfileWriteMode: 'merge'
-  }))
+  before(() =>
+    cy.startFakeServer({
+      consumer: 'user_interface',
+      provider: 'extensions',
+      cors: true,
+      pactfileWriteMode: 'merge'
+    })
+  );
 
   before(() => {
     cy.setAuthTokenToLocalStorage();
-    
+
     cy.resetAllFakeServers();
-    
+
     defaultRequestsMock();
     noExtensionsResponse();
-    editorInterfaceResponse();
+    editorInterfaceWithoutSidebarResponse();
     allContentTypesResponse();
     concreteContentTypeResponse();
     concretePublishedContentTypeResponse();

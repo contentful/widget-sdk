@@ -2,7 +2,7 @@ import { defaultRequestsMock } from '../../util/factories';
 import { singleUser } from '../../interactions/users';
 import {
   singleContentTypeResponse,
-  editorInterfaceResponse
+  editorInterfaceWithoutSidebarResponse
 } from '../../interactions/content_types';
 import {
   singleEntryResponse,
@@ -17,12 +17,14 @@ const empty = require('../../fixtures/empty.json');
 const featureFlag = 'feature-pul-04-2019-scheduled-publication-enabled';
 
 describe('Schedule Publication', () => {
-  before(() => cy.startFakeServer({
-    consumer: 'user_interface',
-    provider: 'scheduled-actions',
-    cors: true,
-    pactfileWriteMode: 'merge'
-  }))
+  before(() =>
+    cy.startFakeServer({
+      consumer: 'user_interface',
+      provider: 'scheduled-actions',
+      cors: true,
+      pactfileWriteMode: 'merge'
+    })
+  );
 
   function basicServerSetUpWithNoSchedules() {
     cy.resetAllFakeServers();
@@ -34,7 +36,7 @@ describe('Schedule Publication', () => {
     singleEntryResponse();
     noEntryLinksResponse();
     noEntrySnapshotsResponse();
-    editorInterfaceResponse();
+    editorInterfaceWithoutSidebarResponse();
     microbackendStreamToken();
 
     cy.addInteraction({
@@ -55,7 +57,7 @@ describe('Schedule Publication', () => {
     cy.setAuthTokenToLocalStorage();
     window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
 
-    basicServerSetUpWithNoSchedules()
+    basicServerSetUpWithNoSchedules();
 
     cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
 
@@ -125,10 +127,10 @@ describe('Schedule Publication', () => {
         .click();
 
       cy.wait(['@scheduled-actions/create', '@scheduled-actions/one']);
-    })
+    });
 
     it('submits the new scheduled publication and then re-fetch the list of scheduled publications', () => {
       cy.getByTestId('scheduled-item').should('have.length', 1);
     });
-  })
+  });
 });

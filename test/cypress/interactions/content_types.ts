@@ -10,7 +10,8 @@ import {
 
 const empty = require('../fixtures/empty.json');
 const contentTypeSingle = require('../fixtures/content-types-single.json');
-const editorInterfaceResponseBody = require('../fixtures/editor-interface.json');
+const editorInterfaceWithoutSidebarResponseBody = require('../fixtures/editor-interface-without-sidebar.json');
+const editorInterfaceWithSidebarResponseBody = require('../fixtures/editor-interface-with-sidebar.json');
 const contentType = require('../fixtures/content-type.json');
 const query = 'limit=1000';
 
@@ -42,17 +43,30 @@ export function singleContentTypeResponse() {
   }).as(state.PublicContentTypes.SINGLE);
 }
 
-export function editorInterfaceResponse() {
+export function editorInterfaceWithoutSidebarResponse() {
   cy.addInteraction({
     provider: 'content_types',
-    state: state.ContentTypes.EDITORINTERFACE,
+    state: state.ContentTypes.EDITORINTERFACE_WITH_NO_SIDEBAR,
     uponReceiving: 'a request for editor interfaces',
     withRequest: getEditorInterface(),
     willRespondWith: {
       status: 200,
-      body: editorInterfaceResponseBody
+      body: editorInterfaceWithoutSidebarResponseBody
     }
-  }).as(state.ContentTypes.EDITORINTERFACE);
+  }).as(state.ContentTypes.EDITORINTERFACE_WITH_NO_SIDEBAR);
+}
+
+export function editorInterfaceWithSidebarResponse() {
+  cy.addInteraction({
+    provider: 'content_types',
+    state: state.ContentTypes.EDITORINTERFACE_WITH_SIDEBAR,
+    uponReceiving: 'a request for editor interfaces',
+    withRequest: getEditorInterface(),
+    willRespondWith: {
+      status: 200,
+      body: editorInterfaceWithSidebarResponseBody
+    }
+  }).as(state.ContentTypes.EDITORINTERFACE_WITH_SIDEBAR);
 }
 
 export function allContentTypesResponse() {

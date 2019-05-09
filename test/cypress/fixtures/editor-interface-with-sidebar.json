@@ -1,0 +1,98 @@
+{
+  "sys": {
+    "id": "default",
+    "type": "EditorInterface",
+    "space": {
+      "sys": {
+        "id": "swjgng0od8ld",
+        "type": "Link",
+        "linkType": "Space"
+      }
+    },
+    "version": 12,
+    "createdAt": "2019-05-07T08:50:25.836Z",
+    "createdBy": {
+      "sys": {
+        "id": "5z9k0oLCXYtnmDvaw3VC71",
+        "type": "Link",
+        "linkType": "User"
+      }
+    },
+    "updatedAt": "2019-05-08T09:56:53.837Z",
+    "updatedBy": {
+      "sys": {
+        "id": "5z9k0oLCXYtnmDvaw3VC71",
+        "type": "Link",
+        "linkType": "User"
+      }
+    },
+    "contentType": {
+      "sys": {
+        "id": "customSidebar",
+        "type": "Link",
+        "linkType": "ContentType"
+      }
+    },
+    "environment": {
+      "sys": {
+        "id": "master",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    }
+  },
+  "sidebar": [
+    {
+      "settings": {},
+      "widgetId": "schedule-widget",
+      "widgetNamespace": "sidebar-builtin"
+    },
+    {
+      "settings": {},
+      "widgetId": "content-workflows-tasks-widget",
+      "widgetNamespace": "sidebar-builtin"
+    },
+    {
+      "settings": {},
+      "widgetId": "publication-widget",
+      "widgetNamespace": "sidebar-builtin"
+    },
+    {
+      "disabled": true,
+      "widgetId": "content-preview-widget",
+      "widgetNamespace": "sidebar-builtin"
+    },
+    {
+      "disabled": true,
+      "widgetId": "incoming-links-widget",
+      "widgetNamespace": "sidebar-builtin"
+    },
+    {
+      "disabled": true,
+      "widgetId": "translation-widget",
+      "widgetNamespace": "sidebar-builtin"
+    },
+    {
+      "disabled": true,
+      "widgetId": "versions-widget",
+      "widgetNamespace": "sidebar-builtin"
+    },
+    {
+      "disabled": true,
+      "widgetId": "users-widget",
+      "widgetNamespace": "sidebar-builtin"
+    },
+    {
+      "disabled": true,
+      "widgetId": "entry-activity-widget",
+      "widgetNamespace": "sidebar-builtin"
+    }
+  ],
+  "controls": [
+    {
+      "fieldId": "number",
+      "widgetId": "numberEditor",
+      "widgetNamespace": "builtin"
+    }
+  ]
+}

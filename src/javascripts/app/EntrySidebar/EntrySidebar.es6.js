@@ -155,7 +155,7 @@ export default class EntrySidebar extends Component {
       <React.Fragment>
         <CommentsPanelContainer emitter={this.props.emitter} />
         <EntryInfoPanelContainer emitter={this.props.emitter} />
-        <div className="entity-sidebar entity-editor-sidebar">
+        <div className="entity-sidebar entity-editor-sidebar" data-test-id="entry-editor-sidebar">
           {this.renderWidgets(sidebarItems)}
           {this.renderLegacyExtensions(legacyExtensions)}
         </div>
