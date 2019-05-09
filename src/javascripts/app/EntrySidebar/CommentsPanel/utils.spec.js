@@ -1,9 +1,9 @@
-import { getUser } from 'services/TokenStore.es6';
+import { getUserSync } from 'services/TokenStore.es6';
 import * as utils from './utils.es6';
 import * as spaceContextMocked from 'ng/spaceContext';
 
 jest.mock('services/TokenStore.es6', () => ({
-  getUser: jest.fn()
+  getUserSync: jest.fn()
 }));
 
 const mockComment = {
@@ -22,12 +22,12 @@ describe('Comments utils', () => {
   };
   const setIsAuthor = isAuthor => {
     const id = isAuthor ? mockComment.sys.createdBy.sys.id : 'notthesameid';
-    getUser.mockReturnValue({ sys: { id } });
+    getUserSync.mockReturnValue({ sys: { id } });
   };
 
   beforeEach(() => {
     spaceContextMocked.getData.mockReset();
-    getUser.mockReset();
+    getUserSync.mockReset();
   });
 
   describe('#isCommentAuthor', () => {

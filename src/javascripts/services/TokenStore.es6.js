@@ -200,6 +200,14 @@ export function getUser() {
 }
 
 /*
+  Synchronous version of getUser above. Used in cases where you know the token is loaded
+  and do not want to deal with waiting for the async getUser call.
+ */
+export function getUserSync() {
+  return K.getValue(user$);
+}
+
+/*
   Gets the current spaces keyed by organization
   of the spacesByOrganization$ stream
  */

@@ -99,7 +99,7 @@ export default class UserInvitation extends React.Component {
                   <p className="user-invitation--error-details">
                     If you’ve arrived here by accident, it means that you may have been invited with
                     an email different than the one you’re logged in with — <strong>{email}</strong>
-                    . Ask the person you sent you the invitation if they can invite you with this
+                    . Ask the person who sent you the invitation if they can invite you with this
                     email.
                   </p>
                 </div>
