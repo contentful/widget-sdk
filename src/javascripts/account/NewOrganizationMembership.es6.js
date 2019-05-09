@@ -222,11 +222,25 @@ export default function($scope) {
           orgId
         };
 
+        let invitationCreationHandler;
+
         if (hasSsoEnabled) {
-          yield createOrgMemberships(invitationMetadata);
+          invitationCreationHandler = createOrgMemberships;
         } else {
-          yield sendInvites(invitationMetadata);
+          invitationCreationHandler = sendInvites;
         }
+
+        // Warn the user if they are going to close the tab until the invitations
+        // are all created
+        const closeTabWarning = evt => {
+          evt.preventDefault();
+          evt.returnValue = '';
+        };
+        window.addEventListener('beforeunload', closeTabWarning);
+
+        yield invitationCreationHandler(invitationMetadata);
+
+        window.removeEventListener('beforeunload', closeTabWarning);
 
         const organization = yield* getOrgInfo(orgId);
 
