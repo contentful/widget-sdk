@@ -191,12 +191,13 @@ describe('ResourceService', () => {
   });
 
   it('should return the expected object definition', function() {
-    expect(Object.keys(this.ResourceService).length).toBe(5);
+    expect(Object.keys(this.ResourceService).length).toBe(6);
     expect(this.ResourceService.get).toBeDefined();
     expect(this.ResourceService.getAll).toBeDefined();
     expect(this.ResourceService.canCreate).toBeDefined();
     expect(this.ResourceService.messagesFor).toBeDefined();
     expect(this.ResourceService.messages).toBeDefined();
+    expect(this.ResourceService.canCreateEnvironmentResources).toBeDefined();
   });
 
   describe('#get', () => {
@@ -297,6 +298,14 @@ describe('ResourceService', () => {
     it('should return false if the maximum limit is reached', async function() {
       const status = await this.ResourceService.canCreate('entry');
       expect(status).toBe(false);
+    });
+  });
+
+  describe('#canCreateEnvironmentResources', () => {
+    it('should return a promise-like object', function() {
+      expect(this.isPromiseLike(this.ResourceService.canCreateEnvironmentResources('envId'))).toBe(
+        true
+      );
     });
   });
 

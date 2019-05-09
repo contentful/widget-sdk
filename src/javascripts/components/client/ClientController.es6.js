@@ -4,6 +4,7 @@ import { pick, isObject } from 'lodash';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed.es6';
 import * as logger from 'services/logger.es6';
 import * as Intercom from 'services/intercom.es6';
+import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
 
 export default function register() {
   registerController('ClientController', [
@@ -18,6 +19,7 @@ export default function register() {
     'navigation/NavState.es6',
     'services/EnforcementsService.es6',
     'redux/store.es6',
+    'utils/LaunchDarkly/index.es6',
     function ClientController(
       $scope,
       $state,
@@ -29,7 +31,8 @@ export default function register() {
       CreateSpace,
       NavState,
       EnforcementsService,
-      { default: store }
+      { default: store },
+      { getCurrentVariation }
     ) {
       const refreshNavState = NavState.makeStateRefresher($state, spaceContext);
 
@@ -110,7 +113,15 @@ export default function register() {
           return;
         }
 
-        authorization.update(tokenLookup, space, enforcements, spaceContext.getEnvironmentId());
+        const allowNewUsageCheck = getCurrentVariation(ENVIRONMENT_USAGE_ENFORCEMENT);
+
+        authorization.update(
+          tokenLookup,
+          space,
+          enforcements,
+          spaceContext.getEnvironmentId(),
+          allowNewUsageCheck
+        );
 
         refreshNavState();
       }

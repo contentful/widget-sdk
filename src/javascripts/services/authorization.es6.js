@@ -1,8 +1,6 @@
 import { registerFactory } from 'NgRegistry.es6';
 import worf from '@contentful/worf';
 import * as logger from 'services/logger.es6';
-import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { newUsageChecker } from 'services/EnforcementsService.es6';
 
 export default function register() {
@@ -14,7 +12,13 @@ export default function register() {
       Authorization.prototype = {
         authContext: null,
         spaceContext: null,
-        update: async function(tokenLookup, space, enforcements, environmentId) {
+        update: async function(
+          tokenLookup,
+          space,
+          enforcements,
+          environmentId,
+          allowNewUsageCheck
+        ) {
           this.authContext = null;
           this.spaceContext = null;
           this._tokenLookup = tokenLookup;
@@ -58,9 +62,7 @@ export default function register() {
             this.spaceContext = this.authContext.space(space.getId());
             this.spaceContext.newEnforcement = [];
 
-            const allowNewUsageCheck = await getCurrentVariation(ENVIRONMENT_USAGE_ENFORCEMENT);
-
-            if (allowNewUsageCheck) {
+            if (await allowNewUsageCheck) {
               this.spaceContext.newEnforcement = await newUsageChecker(
                 this.spaceContext.space.sys.id,
                 this.spaceContext.environment.sys.id

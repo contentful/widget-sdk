@@ -38,6 +38,7 @@ describe('Client Controller', () => {
       });
       $provide.constant('services/logger.es6', this.logger);
     });
+
     this.tokenStore = this.$inject('services/TokenStore.es6');
     this.tokenStore.refresh = sinon.stub().resolves();
     this.tokenStore.user$ = K.createMockProperty();
@@ -127,7 +128,10 @@ describe('Client Controller', () => {
       sinon.assert.calledWith(
         this.authorizationStubs.update.secondCall,
         sinon.match.any,
-        this.spaceContext.space
+        this.spaceContext.space,
+        sinon.match.any,
+        sinon.match.any,
+        sinon.match.any
       );
     });
 
