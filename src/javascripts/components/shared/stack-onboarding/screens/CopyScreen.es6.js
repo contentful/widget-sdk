@@ -7,10 +7,10 @@ import ScreenHeader from 'components/shared/stack-onboarding/screens/Header.es6'
 import { getCredentials } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import { getModule } from 'NgRegistry.es6';
 
-import FullScreen from 'components/react/molecules/FullScreen.es6';
+import FullScreen from 'components/shared/stack-onboarding/components/FullScreen.es6';
 import Skip from 'components/shared/stack-onboarding/components/Skip.es6';
-import Button from 'components/react/atoms/Button.es6';
-import Code from 'components/react/atoms/Code.es6';
+import Button from 'components/shared/stack-onboarding/components/Button.es6';
+import Code from 'components/shared/stack-onboarding/components/Code.es6';
 
 const $stateParams = getModule('$stateParams');
 

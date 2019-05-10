@@ -1,7 +1,7 @@
 import React from 'react';
-import Tabs from 'components/react/molecules/Tabs.es6';
-import Code from 'components/react/atoms/Code.es6';
-import A from 'components/react/atoms/Anchor.es6';
+import Tabs from 'components/shared/stack-onboarding/components/Tabs.es6';
+import Code from 'components/shared/stack-onboarding/components/Code.es6';
+import ExternalTextLink from 'app/common/ExternalTextLink.es6';
 import {
   getCredentials,
   isOnboardingComplete,
@@ -54,7 +54,9 @@ class DeploymentStrategies extends React.Component {
     /* eslint-disable react/jsx-key */
     const steps = [
       <div className="modern-stack-onboarding--deployment-list-text">
-        <A href="https://github.com/netlify/netlifyctl#installation">Install the Netlify CLI</A>{' '}
+        <ExternalTextLink href="https://github.com/netlify/netlifyctl#installation">
+          Install the Netlify CLI
+        </ExternalTextLink>{' '}
         (This is a free account. You may create an account and login through your CLI).
       </div>,
       this.renderCode('netlifyctl login'),
@@ -68,7 +70,7 @@ class DeploymentStrategies extends React.Component {
     return (
       <div className="modern-stack-onboarding--deployment-strategy">
         <h4 className="modern-stack-onboarding--deployment-strategy-title">
-          <A href="https://www.netlify.com/">Netlify</A>
+          <ExternalTextLink href="https://www.netlify.com/">Netlify</ExternalTextLink>
           {' CLI commands'}
         </h4>
         {this.renderList(steps)}
@@ -83,9 +85,9 @@ class DeploymentStrategies extends React.Component {
     /* eslint-disable react/jsx-key */
     const deploySteps = [
       <div className="modern-stack-onboarding--deployment-list-text">
-        <A href="https://devcenter.heroku.com/articles/heroku-cli#download-and-install">
+        <ExternalTextLink href="https://devcenter.heroku.com/articles/heroku-cli#download-and-install">
           Install the Heroku CLI
-        </A>
+        </ExternalTextLink>
         {' (This is a free account. You may create an account and login through your CLI).'}
       </div>,
       this.renderCode('heroku login'),
@@ -104,12 +106,12 @@ class DeploymentStrategies extends React.Component {
         {this.renderCode('git commit --allow-empty -m "empty commit to rebuild website"')}
         <div style={{ marginTop: '10px' }}>
           {'To build a new version on Heroku, the commit should be empty. '}
-          <A
+          <ExternalTextLink
             href={
               'https://www.contentful.com/developers/docs/tutorials/general/automate-site-builds-with-webhooks/#heroku'
             }>
             {'Set up webhooks'}
-          </A>
+          </ExternalTextLink>
           {' to rebuild automatically.'}
         </div>
       </div>,
@@ -120,7 +122,7 @@ class DeploymentStrategies extends React.Component {
       <h4
         className="modern-stack-onboarding--deployment-strategy-title"
         style={{ marginBottom: 0, marginRight: '20px' }}>
-        <A href="https://www.heroku.com/">Heroku</A>
+        <ExternalTextLink href="https://www.heroku.com/">Heroku</ExternalTextLink>
         {' CLI commands'}
       </h4>
     );
@@ -145,7 +147,7 @@ class DeploymentStrategies extends React.Component {
       <div className="modern-stack-onboarding--deployment-strategy-title-container">
         <div>
           <h4 className="modern-stack-onboarding--deployment-strategy-title">
-            <A href="https://www.heroku.com/">Heroku</A>
+            <ExternalTextLink href="https://www.heroku.com/">Heroku</ExternalTextLink>
             {' CLI commands for redeploy'}
           </h4>
           <div className="modern-stack-onboarding--deployment-strategy-subtitle">

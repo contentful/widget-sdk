@@ -1,8 +1,7 @@
 import React from 'react';
 import WithLink from 'components/shared/stack-onboarding/components/WithLink.es6';
-
-import FullScreen from 'components/react/molecules/FullScreen.es6';
-import Button from 'components/react/atoms/Button.es6';
+import FullScreen from 'components/shared/stack-onboarding/components/FullScreen.es6';
+import Button from 'components/shared/stack-onboarding/components/Button.es6';
 import Skip from 'components/shared/stack-onboarding/components/Skip.es6';
 import Icon from 'ui/Components/Icon.es6';
 

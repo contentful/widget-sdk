@@ -2,6 +2,25 @@ import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 
 export default function register() {
+  // this directive is used only in cf_location_editor.jade
+  registerDirective('uiHideOnClick', [
+    '$document',
+    $document => ({
+      restrict: 'A',
+      link: function(_scope, element) {
+        $document.on('click', hideElement);
+
+        element.on('$destroy', () => {
+          $document.off('click', hideElement);
+        });
+
+        function hideElement() {
+          element.hide();
+        }
+      }
+    })
+  ]);
+
   registerDirective('cfLocationEditor', [
     '$controller',
     'app/widgets/location/Map.es6',

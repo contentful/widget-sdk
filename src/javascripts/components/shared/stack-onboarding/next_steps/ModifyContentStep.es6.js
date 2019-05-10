@@ -5,8 +5,8 @@ import { href } from 'states/Navigator.es6';
 import { getUser } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 
 import { Step } from 'app/home/welcome/OnboardingWithTeaSteps.es6';
-import Code from 'components/react/atoms/Code.es6';
-import A from 'components/react/atoms/Anchor.es6';
+import Code from 'components/shared/stack-onboarding/components/Code.es6';
+import ExternalTextLink from 'app/common/ExternalTextLink.es6';
 
 import { env } from 'Config.es6';
 
@@ -67,7 +67,7 @@ const ModifyContentStep = props => {
         <h5>Modify and publish content</h5>
         <p>
           Enter these snippets in your terminal to modify the author name and publish&nbsp;
-          <A href={href(personEntry)}>the Person entry</A>.
+          <ExternalTextLink href={href(personEntry)}>the Person entry</ExternalTextLink>.
         </p>
         <p>Re-deploy to view this update to the blog.</p>
         <Code
@@ -80,9 +80,9 @@ const ModifyContentStep = props => {
         <br />
         <p>
           Learn more about the&nbsp;
-          <A href="https://www.contentful.com/developers/docs/references/content-management-api/">
+          <ExternalTextLink href="https://www.contentful.com/developers/docs/references/content-management-api/">
             Content Management API
-          </A>
+          </ExternalTextLink>
           .
         </p>
       </div>

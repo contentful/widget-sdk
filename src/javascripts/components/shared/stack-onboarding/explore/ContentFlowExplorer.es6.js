@@ -1,6 +1,6 @@
 import React from 'react';
-import Tabs from 'components/react/molecules/Tabs.es6';
-import Browser from 'components/react/molecules/Browser.es6';
+import Tabs from 'components/shared/stack-onboarding/components/Tabs.es6';
+import Browser from 'components/shared/stack-onboarding/components/Browser.es6';
 import CodeSnippets from 'components/shared/stack-onboarding/explore/CodeSnippets.es6';
 import DataFlow from 'components/shared/stack-onboarding/explore/DataFlow.es6';
 
