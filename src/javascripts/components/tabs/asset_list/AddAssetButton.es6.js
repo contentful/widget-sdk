@@ -1,33 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
 import {
   Button,
-  Icon,
   Dropdown,
   DropdownList,
   DropdownListItem
 } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
-
-const styles = { icon: css({ verticalAlign: 'sub', marginRight: tokens.spacingXs }) };
 
 class AddAssetButton extends React.Component {
   static propTypes = {
     canUploadMultipleAssets: PropTypes.func.isRequired,
     createMultipleAssets: PropTypes.func.isRequired,
-    newAsset: PropTypes.func.isRequired
+    newAsset: PropTypes.func.isRequired,
+    testId: PropTypes.string.isRequired
   };
   state = { isDropdownOpen: false };
 
   setOpen = isDropdownOpen => this.setState({ isDropdownOpen });
   addAssetButton = (
     <Button
+      icon="PlusCircle"
       onClick={() => this.setOpen(!this.state.isDropdownOpen)}
+      testId={this.props.testId}
       id="add-new-asset-button"
       aria-haspopup="true"
       aria-controls="new-asset-menu">
-      <Icon color="white" icon="PlusCircle" className={styles.icon} />
       Add Asset
     </Button>
   );
@@ -44,9 +41,13 @@ class AddAssetButton extends React.Component {
         role="menu"
         aria-labelledby="add-new-asset-button">
         <DropdownList>
-          <DropdownListItem onClick={newAsset}>Single asset</DropdownListItem>
+          <DropdownListItem onClick={newAsset} testId="add-single-asset-button">
+            Single asset
+          </DropdownListItem>
           {canUploadMultipleAssets() && (
-            <DropdownListItem onClick={createMultipleAssets}>Multiple assets</DropdownListItem>
+            <DropdownListItem onClick={createMultipleAssets} testId="add-multiple-assets-button">
+              Multiple assets
+            </DropdownListItem>
           )}
         </DropdownList>
       </Dropdown>
