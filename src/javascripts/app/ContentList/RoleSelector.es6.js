@@ -6,8 +6,7 @@ import { makeCtor } from 'utils/TaggedValues.es6';
 
 import React from 'react';
 import { createStore, makeReducer } from 'ui/Framework/Store.es6';
-import { byName as Colors } from 'Styles/Colors.es6';
-
+import tokens from '@contentful/forma-36-tokens';
 import { Notification } from '@contentful/forma-36-react-components';
 import { fetchAll } from 'data/CMA/FetchAll.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -241,8 +240,8 @@ function renderRolesContainer(state, actions) {
   return (
     <div
       style={{
-        border: `1px solid ${Colors.iceDark}`,
-        backgroundColor: Colors.elementLightest,
+        border: `1px solid ${tokens.colorIceDark}`,
+        backgroundColor: tokens.colorElementLightest,
         // We want to show half of a role if the container scrolls
         maxHeight: '157px',
         position: 'relative',
@@ -308,7 +307,7 @@ function renderRoles(roles, toggleSelection) {
                 style={{
                   fontFamily: 'FontAwesome',
                   fontSize: '18px',
-                  color: selected ? Colors.greenDark : Colors.textLightest
+                  color: selected ? tokens.colorGreenDark : tokens.colorTextLightest
                 }}>
                 {selected ? '\uf058' : '\uf055'}
               </div>

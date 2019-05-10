@@ -1,5 +1,5 @@
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
-import * as Colors from 'Styles/Colors.es6';
+import tokens from '@contentful/forma-36-tokens';
 import { dragHandle, status, titleText, actions } from './TemplateCommons.es6';
 
 /**
@@ -85,7 +85,7 @@ function content() {
         style: {
           flexShrink: '0',
           margin: '1px 10px -1px 10px',
-          color: Colors.byName.textLight,
+          color: tokens.colorTextLight,
           maxWidth: '30%',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',

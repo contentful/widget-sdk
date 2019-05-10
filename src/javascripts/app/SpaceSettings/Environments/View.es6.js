@@ -16,7 +16,7 @@ import {
   Tag,
   TextLink
 } from '@contentful/forma-36-react-components';
-import { byName as Colors } from 'Styles/Colors.es6';
+import tokens from '@contentful/forma-36-tokens';
 
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
 import Icon from 'ui/Components/Icon.es6';
@@ -304,7 +304,7 @@ function UsageTooltip({ resource }) {
       html={tooltipContent}
       position="bottom-end"
       style={{
-        color: Colors.elementDarkest,
+        color: tokens.colorElementDarkest,
         marginLeft: '0.2em'
       }}
       arrow

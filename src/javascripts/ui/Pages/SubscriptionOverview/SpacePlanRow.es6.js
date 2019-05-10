@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { joinAnd } from 'utils/StringUtils.es6';
+import tokens from '@contentful/forma-36-tokens';
 
 import { get } from 'lodash';
 
@@ -15,7 +16,6 @@ import HelpIcon from 'ui/Components/HelpIcon.es6';
 import Tooltip from 'ui/Components/Tooltip.es6';
 import Price from 'ui/Components/Price.es6';
 import ContextMenu from 'ui/Components/ContextMenu.es6';
-import { byName } from 'Styles/Colors.es6';
 
 function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }) {
   const space = plan.space;
@@ -85,7 +85,7 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
             style={{ fontSize: '12px' }}
             tooltip="This space is part of your Enterprise deal with Contentful"
             className="help-icon">
-            <span style={{ color: byName.orangeLight }}>★</span>
+            <span style={{ color: tokens.colorOrangeLight }}>★</span>
           </Tooltip>
         )}
       </td>

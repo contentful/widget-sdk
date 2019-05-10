@@ -1,6 +1,13 @@
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
-import { triangleDown } from 'Styles/index.es6';
+import tokens from '@contentful/forma-36-tokens';
 import { extend, omit } from 'lodash';
+
+function triangleDown(width = 4, color = tokens.colorTextDark) {
+  return {
+    border: `${width}px solid transparent`,
+    borderTopColor: color
+  };
+}
 
 export default function() {
   return h('div.account-dropdown.app-top-bar__child', { style: { position: 'relative' } }, [
@@ -27,7 +34,7 @@ export default function() {
           }
         }),
         h('span', {
-          style: extend(triangleDown(4, '#fff'), {
+          style: extend(triangleDown(4, tokens.colorWhite), {
             margin: '2px 0 0 10px'
           })
         })

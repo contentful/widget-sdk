@@ -1,6 +1,6 @@
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
+import tokens from '@contentful/forma-36-tokens';
 import { isBoolean } from 'lodash';
-import { byName as Colors } from 'Styles/Colors.es6';
 
 /**
  * @ngdoc method
@@ -137,7 +137,7 @@ function navbarDropdownItem(data) {
       ),
       data.tooltip &&
         h('i.fa.fa-question-circle', {
-          style: { marginLeft: '10px', color: Colors.elementMid, cursor: 'pointer' },
+          style: { marginLeft: '10px', color: tokens.colorElementMid, cursor: 'pointer' },
           tooltip: data.tooltip,
           tooltipPlacement: 'bottom'
         })

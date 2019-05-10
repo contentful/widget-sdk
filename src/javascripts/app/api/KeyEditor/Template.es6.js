@@ -1,5 +1,5 @@
 import { h, icons } from 'utils/legacy-html-hyperscript/index.es6';
-import * as Colors from 'Styles/Colors.es6';
+import tokens from '@contentful/forma-36-tokens';
 
 export default function() {
   const title = [
@@ -70,7 +70,7 @@ function main() {
           margin: '1.5rem auto 0',
           padding: '0 5em',
           maxWidth: '90em',
-          color: Colors.byName.textMid
+          color: tokens.colorTextMid
         }
       },
       [

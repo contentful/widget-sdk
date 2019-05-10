@@ -2,13 +2,13 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { kebabCase } from 'lodash';
+import tokens from '@contentful/forma-36-tokens';
 
 import HelpIcon from 'ui/Components/HelpIcon.es6';
 import Tooltip from 'ui/Components/Tooltip.es6';
 import Icon from 'ui/Components/Icon.es6';
 import PlanFeatures from 'components/shared/space-wizard/PlanFeatures.es6';
 import { formatPrice, unavailabilityTooltipNode } from './WizardUtils.es6';
-import { byName as colors } from 'Styles/Colors.es6';
 
 class SpacePlanItem extends React.Component {
   static displayName = 'SpacePlanItem';
@@ -80,7 +80,7 @@ class SpacePlanItem extends React.Component {
               position: 'absolute',
               right: '19px',
               bottom: '25px',
-              color: colors.elementDarkest
+              color: tokens.colorElementDarkest
             }}
             width={800}
             tooltip={unavailabilityTooltip}>

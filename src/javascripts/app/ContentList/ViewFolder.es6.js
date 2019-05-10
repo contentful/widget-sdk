@@ -2,14 +2,13 @@ import { get as getAtPath } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
+import { ModalConfirm } from '@contentful/forma-36-react-components';
 import { assign, filter } from 'utils/Collections.es6';
 import openRoleSelector from './RoleSelector.es6';
 import openInputDialog from 'app/InputDialog.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
-import { getModule } from 'NgRegistry.es6';
 import { htmlEncode } from 'utils/encoder.es6';
-
-const modalDialog = getModule('modalDialog');
 
 export default function ViewFolder({ folder, state, actions }) {
   const { canEdit, roleAssignment, tracking } = state;
@@ -112,17 +111,28 @@ function renameFolder(folder, UpdateFolder) {
 }
 
 function deleteFolder(folder, DeleteFolder) {
-  modalDialog
-    .openConfirmDeleteDialog({
-      title: 'Delete folder',
-      confirmLabel: 'Delete folder',
-      message: `You are about to delete the folder
-      <span class="modal-dialog__highlight">${htmlEncode(folder.title)}</span>.
-      Deleting this folder will also remove all the saved views inside. If you
-      want to keep your views, please drag them into another folder before
-      deleting the folder.`
-    })
-    .promise.then(() => DeleteFolder(folder));
+  return ModalLauncher.open(({ isShown, onClose }) => (
+    <ModalConfirm
+      isShown={isShown}
+      title="Delete folder"
+      intent="negative"
+      onConfirm={() => {
+        onClose(true);
+      }}
+      onCancel={() => {
+        onClose(false);
+      }}
+      confirmLabel="Delete folder">
+      You are about to delete the folder{' '}
+      <span className="modal-dialog__highlight">{htmlEncode(folder.title)}</span>. Deleting this
+      folder will also remove all the saved views inside. If you want to keep your views, please
+      drag them into another folder before deleting the folder.
+    </ModalConfirm>
+  )).then(confirmed => {
+    if (confirmed) {
+      DeleteFolder(folder);
+    }
+  });
 }
 
 function editViewRoles(view, endpoint, tracking, UpdateView) {
@@ -147,16 +157,27 @@ function editViewTitle(view, tracking, UpdateView) {
 }
 
 function deleteView(view, tracking, DeleteView) {
-  modalDialog
-    .openConfirmDeleteDialog({
-      title: 'Delete view',
-      message: `Do you really want to delete the view
-      <span class="modal-dialog__highlight">${htmlEncode(view.title)}</span>?`
-    })
-    .promise.then(() => {
+  return ModalLauncher.open(({ isShown, onClose }) => (
+    <ModalConfirm
+      title="Delete view"
+      confirmLabel="Delete view"
+      intent="negative"
+      isShown={isShown}
+      onConfirm={() => {
+        onClose(true);
+      }}
+      onCancel={() => {
+        onClose(false);
+      }}>
+      Do you really want to delete the view{' '}
+      <span className="modal-dialog__highlight">{htmlEncode(view.title)}</span>?
+    </ModalConfirm>
+  )).then(confirmed => {
+    if (confirmed) {
       tracking.viewDeleted(view);
       DeleteView(view);
-    });
+    }
+  });
 }
 
 function isViewVisible(view, roleAssignment) {

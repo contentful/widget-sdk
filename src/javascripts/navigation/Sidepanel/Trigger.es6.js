@@ -3,9 +3,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { caseof } from 'sum-types';
+import tokens from '@contentful/forma-36-tokens';
 
-import { byName as colors } from 'Styles/Colors.es6';
-import { oneLineTruncate } from 'Styles/index.es6';
 import Logo from 'svg/logo-label.es6';
 import EnvironmentIcon from 'svg/environment.es6';
 import Hamburger from 'svg/hamburger.es6';
@@ -13,6 +12,12 @@ import Hamburger from 'svg/hamburger.es6';
 import { navState$, NavStates } from 'navigation/NavState.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
+
+const oneLineTruncate = {
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis'
+};
 
 export default class Trigger extends React.Component {
   static propTypes = {
@@ -118,7 +123,7 @@ function organizationName(orgName) {
       data-test-id="sidepanel-trigger-text-subtitle"
       style={{
         ...oneLineTruncate,
-        color: colors.textLight,
+        color: tokens.colorTextLight,
         fontSize: '12px',
         lineHeight: '1.5'
       }}>
@@ -139,7 +144,7 @@ function environmentLabel(env) {
         alignItems: 'center',
         fontSize: '12px',
         lineHeight: '1.5',
-        color: isMaster ? colors.greenLight : colors.orangeLight
+        color: isMaster ? tokens.colorGreenLight : tokens.colorOrangeLight
       }}>
       <EnvironmentIcon
         style={{

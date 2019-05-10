@@ -2,14 +2,13 @@ import React from 'react';
 import { makeCtor } from 'utils/TaggedValues.es6';
 import { assign } from 'utils/Collections.es6';
 import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import { forScopedViews as trackingForScopedViews } from 'analytics/events/SearchAndViews.es6';
 
 import { createStore, makeReducer, combineStoreComponents } from 'ui/Framework/Store.es6';
 
 import initSavedViewsComponent from './SavedViewsComponent.es6';
 import SaveCurrentViewDialog from './SaveViewDialog.es6';
-
-import { byName as colors } from 'Styles/Colors.es6';
 
 const Select = makeCtor('Select');
 
@@ -64,8 +63,8 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
             paddingTop: '1rem',
             paddingRight: '1.5rem',
             paddingLeft: '1.5rem',
-            backgroundColor: colors.elementLightest,
-            borderBottom: `1px solid ${colors.elementMid}`
+            backgroundColor: tokens.colorElementLightest,
+            borderBottom: `1px solid ${tokens.colorElementMid}`
           }}>
           <Tabs role="tablist">
             <Tab

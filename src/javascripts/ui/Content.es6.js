@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { byName as Colors } from 'Styles/Colors.es6';
+import tokens from '@contentful/forma-36-tokens';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
-import { monospaceFontFamily } from 'Styles/index.es6';
 
 /**
  * @ngdoc service
@@ -78,11 +77,11 @@ export function CodeFragment({ children }) {
     <span
       style={{
         display: 'inline-block',
-        color: Colors.textMid,
-        background: Colors.elementLightest,
-        border: `1px solid ${Colors.elementMid}`,
+        color: tokens.colorTextMid,
+        background: tokens.colorElementLightest,
+        border: `1px solid ${tokens.colorElementMid}`,
         borderRadius: '2px',
-        fontFamily: monospaceFontFamily,
+        fontFamily: '"Menlo", "Andale mono", monospace',
         fontSize: '13px',
         lineHeight: '22px',
         padding: '0 5px',

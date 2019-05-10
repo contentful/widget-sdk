@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink.es6';
 import { CodeFragment } from 'ui/Content.es6';
-import { byName as Colors } from 'Styles/Colors.es6';
 import { find } from 'lodash';
 import { filter, concat } from 'utils/Collections.es6';
 import InfoIcon from 'svg/info.es6';
@@ -38,15 +38,15 @@ function Hint() {
       style={{
         display: 'flex',
         alignItems: 'center',
-        background: Colors.iceMid,
-        border: '1px solid ' + Colors.elementLight,
+        background: tokens.colorIceMid,
+        border: '1px solid ' + tokens.colorElementLight,
         padding: '15px',
         margin: '1.5em 0'
       }}>
       <InfoIcon />
       <p
         style={{
-          color: Colors.textLight,
+          color: tokens.colorTextLight,
           margin: '0',
           marginLeft: '10px'
         }}>

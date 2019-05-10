@@ -1,7 +1,10 @@
+import tokens from '@contentful/forma-36-tokens';
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
-import { byName } from 'Styles/Colors.es6';
-import { genBoxShadow } from 'Styles/index.es6';
 import BackgroundIcon from 'svg/header-illustration-wide.es6';
+
+export function genBoxShadow(x = 0, y = 2, blur = 3, spread = 0) {
+  return `${x}px ${y}px ${blur}px ${spread}px rgba(0, 0, 0, 0.08)`;
+}
 
 export default function() {
   return h('.auto-create-space-modal.modal-background', [
@@ -142,7 +145,7 @@ function projectStatusItem({ title, bodyCopy, btnText, btnId }) {
     'div',
     {
       style: {
-        border: `1px solid ${byName.elementMid}`,
+        border: `1px solid ${tokens.colorElementMid}`,
         padding: '24px 15px 20px',
         width: '220px',
         justifyContent: 'space-around',
@@ -308,7 +311,7 @@ function chosenProjectList(items) {
         height: '1px',
         margin: '15px auto',
         width: '350px',
-        background: byName.elementLight
+        background: tokens.colorElementLight
       }
     }),
     h(

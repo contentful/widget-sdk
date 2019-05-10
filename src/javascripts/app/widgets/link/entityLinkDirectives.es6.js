@@ -1,12 +1,12 @@
 import { registerValue, registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { caseofEq } from 'sum-types';
+import tokens from '@contentful/forma-36-tokens';
 import assetCardTemplateDef from 'app/widgets/link/AssetCardTemplate.es6';
 import entityLinkTemplateDef from 'app/widgets/link/EntityLinkTemplate.es6';
 import userLinkTemplateDef from 'app/widgets/link/UserLinkTemplate.es6';
 import { makeEntityRef } from 'states/Navigator.es6';
 import * as EntityState from 'data/CMA/EntityState.es6';
-import { byName as colorsByName } from 'Styles/Colors.es6';
 
 export default function register() {
   /**
@@ -82,10 +82,10 @@ export default function register() {
        */
       function entityStateColor(state) {
         return caseofEq(state, [
-          [EntityState.State.Archived(), _.constant(colorsByName.redLight)],
-          [EntityState.State.Draft(), _.constant(colorsByName.orangeLight)],
-          [EntityState.State.Published(), _.constant(colorsByName.greenLight)],
-          [EntityState.State.Changed(), _.constant(colorsByName.blueLight)]
+          [EntityState.State.Archived(), _.constant(tokens.colorRedLight)],
+          [EntityState.State.Draft(), _.constant(tokens.colorOrangeLight)],
+          [EntityState.State.Published(), _.constant(tokens.colorGreenLight)],
+          [EntityState.State.Changed(), _.constant(tokens.colorBlueLight)]
         ]);
       }
 

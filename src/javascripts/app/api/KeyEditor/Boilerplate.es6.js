@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { find } from 'lodash';
-import { byName as Colors } from 'Styles/Colors.es6';
+import tokens from '@contentful/forma-36-tokens';
 import marked from 'marked';
 
 export default class Boilerplate extends React.Component {
@@ -24,9 +24,9 @@ export default class Boilerplate extends React.Component {
       <div
         data-test-id="apiKey.boilerplate"
         style={{
-          color: Colors.textMid,
-          backgroundColor: Colors.iceMid,
-          border: `1px solid ${Colors.iceDark}`,
+          color: tokens.colorTextMid,
+          backgroundColor: tokens.colorIceMid,
+          border: `1px solid ${tokens.colorIceDark}`,
           padding: '0.75em 2em',
           marginBottom: '4em'
         }}>

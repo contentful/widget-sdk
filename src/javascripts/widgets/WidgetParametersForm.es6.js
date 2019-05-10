@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { TextField, SelectField, Option } from '@contentful/forma-36-react-components';
-import { byName as Colors } from 'Styles/Colors.es6';
+import tokens from '@contentful/forma-36-tokens';
 
 const handleStringChange = (onChange, e) => {
   const { value } = e.target;
@@ -124,9 +124,9 @@ const WidgetParameterControl = ({ definition, value, isMissing, onChange }) => {
     <div className="cfnext-form__field">
       <label style={{ marginBottom: '2px' }}>
         <strong>{name}</strong>{' '}
-        {required && <span style={{ color: Colors.textLight }}>(required)</span>}
+        {required && <span style={{ color: tokens.colorTextLight }}>(required)</span>}
       </label>
-      {description && <p style={{ color: Colors.textMid }}>{description}</p>}
+      {description && <p style={{ color: tokens.colorTextMid }}>{description}</p>}
       <Control definition={definition} value={value} onChange={onChange} />
       {isMissing && <p className="cfnext-form__field-error">This value is required.</p>}
     </div>

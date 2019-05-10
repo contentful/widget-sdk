@@ -1,11 +1,11 @@
 import * as Tippy from 'react-tippy';
 import React from 'react';
 import PropTypes from 'prop-types';
+import tokens from '@contentful/forma-36-tokens';
 
 import copyToClipboard from 'utils/DomClipboardCopy.es6';
 
 import CopyIcon from 'svg/CopyIcon.es6';
-import { byName as Colors } from 'Styles/Colors.es6';
 
 /**
  * The `copyIconButton` component shows a copy icon and copies the
@@ -78,7 +78,7 @@ class CopyIconButton extends React.Component {
               self.setState({ showCopiedTooltip: false });
             });
           }}>
-          <CopyIcon color={Colors.textLightest} />
+          <CopyIcon color={tokens.colorTextLightest} />
         </Tippy.Tooltip>
       </span>
     );

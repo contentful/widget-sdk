@@ -1,8 +1,7 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-
+import tokens from '@contentful/forma-36-tokens';
 import { href } from 'states/Navigator.es6';
-import { byName as colors } from 'Styles/Colors.es6';
 import { billing, invoices } from './links.es6';
 
 import Icon from 'ui/Components/Icon.es6';
@@ -21,7 +20,7 @@ export function hasAnyInaccessibleSpaces(plans) {
 function Sidebar({ grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, basePlan }) {
   // TODO - add these styles to stylesheets
   const iconStyle = {
-    fill: colors.blueDarkest,
+    fill: tokens.colorBlueDark,
     paddingRight: '6px',
     position: 'relative',
     bottom: '-0.125em'

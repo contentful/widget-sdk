@@ -1,5 +1,5 @@
+import tokens from '@contentful/forma-36-tokens';
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
-import { byName } from 'Styles/Colors.es6';
 
 export default function template() {
   return h('span', null, [
@@ -21,7 +21,7 @@ function renderValidationIcon({ ngShow, tooltip }) {
     position: 'relative',
     top: '3px',
     fontSize: '14px',
-    color: byName.redLight
+    color: tokens.colorRedLight
   };
 
   return h('i.fa.fa-exclamation-triangle', {

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { byName as colors } from 'Styles/Colors.es6';
+import tokens from '@contentful/forma-36-tokens';
 
 export class ProgressBar extends React.Component {
   static propTypes = {
@@ -20,11 +20,11 @@ export class ProgressBar extends React.Component {
     const percentual = this.getPercentual();
 
     if (percentual >= 100) {
-      return colors.redLight;
+      return tokens.colorRedLight;
     } else if (percentual >= 75) {
-      return colors.orangeLight;
+      return tokens.colorOrangeLight;
     }
-    return colors.greenLight;
+    return tokens.colorGreenLight;
   };
 
   render() {

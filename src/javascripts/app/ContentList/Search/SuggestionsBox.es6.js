@@ -1,7 +1,7 @@
 import React from 'react';
 import { get } from 'lodash';
+import tokens from '@contentful/forma-36-tokens';
 import Keys from './Keys.es6';
-import { byName as colors } from 'Styles/Colors.es6';
 import PropTypes from 'prop-types';
 import { truncate } from 'utils/StringUtils.es6';
 import InfoIcon from 'svg/info.es6';
@@ -46,7 +46,7 @@ export default function SuggestionsBox({
         <div
           data-test-id="contentType"
           style={{
-            color: colors.textLightest,
+            color: tokens.colorTextLightest,
             flex: '0 0 30%'
           }}>
           {field.contentType ? field.contentType.name : 'All content types'}
@@ -55,7 +55,7 @@ export default function SuggestionsBox({
           data-test-id="description"
           style={{
             flex: '0 0 30%',
-            color: colors.textLight
+            color: tokens.colorTextLight
           }}>
           {field.description}
         </div>
@@ -87,15 +87,15 @@ const SearchHelpBanner = () => (
     style={{
       display: 'flex',
       alignItems: 'center',
-      background: colors.iceMid,
-      borderTop: '1px solid ' + colors.elementLight,
+      background: tokens.colorIceMid,
+      borderTop: '1px solid ' + tokens.colorElementLight,
       height: '56px',
       padding: '15px 20px'
     }}>
     <InfoIcon />
     <p
       style={{
-        color: colors.textLight,
+        color: tokens.colorTextLight,
         margin: '0',
         marginLeft: '10px'
       }}>
@@ -162,7 +162,7 @@ class SuggestionsList extends React.Component {
         data-test-id="suggestions"
         style={{
           zIndex: 1,
-          border: `solid ${colors.blueMid}`,
+          border: `solid ${tokens.colorBlueMid}`,
           borderWidth: '0 1px 1px 1px',
           background: 'white'
         }}>

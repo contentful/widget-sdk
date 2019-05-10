@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import tokens from '@contentful/forma-36-tokens';
 import Tooltip from 'ui/Components/Tooltip.es6';
-import { byName as colors } from 'Styles/Colors.es6';
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
 
 class HelpIcon extends React.Component {
@@ -16,7 +16,7 @@ class HelpIcon extends React.Component {
     return (
       <Tooltip tooltip={children} options={{ width: tooltipWidth || 200 }} className="help-icon">
         <span className="help-icon__img">
-          <QuestionMarkIcon color={colors.textLight} />
+          <QuestionMarkIcon color={tokens.colorTextLight} />
         </span>
       </Tooltip>
     );

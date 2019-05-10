@@ -233,8 +233,6 @@ export default function register() {
 
       return {
         open: openDialog,
-        openConfirmDialog: openConfirmDialog,
-        openConfirmDeleteDialog: openConfirmDeleteDialog,
         getOpened: getOpened,
         closeAll: closeAll,
         richtextLayout: richtextLayout
@@ -273,44 +271,6 @@ export default function register() {
         const dialog = new Dialog(params);
         dialog.attach();
         return dialog;
-      }
-
-      /**
-       * @ngdoc method
-       * @name modalDialog#openConfirmDialog
-       * @description
-       * Generic method for opening confirmation dialogs. It has sensible
-       * defaults (no accidental closing actions) and always returns promise.
-       * This promise will be resolved with object containing two properties:
-       * "confirmed" and "cancelled" when user interacts with dialog.
-       *
-       * @param {object} params
-       * @returns {Promise<object>}
-       */
-      function openConfirmDialog(params) {
-        params = _.defaults(params || {}, {
-          ignoreEsc: true,
-          backgroundClose: false
-        });
-
-        return openDialog(params).promise.then(
-          () => ({
-            confirmed: true,
-            cancelled: false
-          }),
-          () => ({
-            confirmed: false,
-            cancelled: true
-          })
-        );
-      }
-
-      function openConfirmDeleteDialog(params) {
-        params = _.defaults(params || {}, {
-          template: 'modal_dialog_warning',
-          confirmLabel: 'Delete'
-        });
-        return openDialog(params);
       }
 
       /**

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { byName as Colors } from 'Styles/Colors.es6';
+import tokens from '@contentful/forma-36-tokens';
 import { assign } from 'utils/Collections.es6';
 import { DocsLink } from 'ui/Content.es6';
 import EnvironmentSelector from './EnvironmentSelector.es6';
@@ -151,7 +151,7 @@ function Separator() {
       style={{
         height: '1px',
         width: '100%',
-        backgroundColor: Colors.elementMid,
+        backgroundColor: tokens.colorElementMid,
         margin: '2.5em 0'
       }}
     />
