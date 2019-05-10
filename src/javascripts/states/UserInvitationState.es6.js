@@ -2,12 +2,14 @@ import makeState from 'states/Base.es6';
 import { createEndpoint } from 'data/EndpointFactory.es6';
 import { go } from 'states/Navigator.es6';
 import { Notification } from '@contentful/forma-36-react-components';
+import { getUser } from 'services/TokenStore.es6';
+import _ from 'lodash';
 
 export default makeState({
   name: 'invitations',
   url: '/invitations/:invitationId',
   template:
-    '<react-component name="components/shared/UserInvitation.es6" props="props"></react-component>',
+    '<react-component name="components/shared/UserInvitation.es6" props="props" watch-depth="reference"></react-component>',
   loadingText: 'Loading your invitation…',
   resolve: {
     invitationData: [
@@ -42,20 +44,22 @@ export default makeState({
 
         return { invitation };
       }
-    ]
+    ],
+    user: [getUser]
   },
   controller: [
     'invitationData',
+    'user',
     '$scope',
-    (invitationData, $scope) => {
+    (invitationData, user, $scope) => {
       $scope.context.ready = true;
       $scope.props = {};
 
       const { invitation, error } = invitationData;
 
+      $scope.props.user = user;
+
       if (error) {
-        // Right now the error is being handled in a generic way, so just tell the component that
-        // an error happened.
         $scope.props.errored = true;
       } else {
         $scope.props.invitation = invitation;

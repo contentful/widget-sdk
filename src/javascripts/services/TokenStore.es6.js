@@ -196,6 +196,14 @@ export function getOrganizations() {
   Gets the current user value of the user$ stream
  */
 export function getUser() {
+  return tokenInfoMVar.read().then(() => deepFreezeClone(K.getValue(userBus.property)));
+}
+
+/*
+  Synchronous version of getUser above. Used in cases where you know the token is loaded
+  and do not want to deal with waiting for the async getUser call.
+ */
+export function getUserSync() {
   return K.getValue(user$);
 }
 
