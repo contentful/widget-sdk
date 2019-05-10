@@ -1,21 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import WidgetParametersForm from 'widgets/WidgetParametersForm.es6';
 import { Modal, Button } from '@contentful/forma-36-react-components';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
-
-function useFormState(initialState) {
-  const [formState, setFormState] = useState(initialState);
-
-  const updateField = (field, value) => {
-    setFormState({
-      ...formState,
-      [field]: value
-    });
-  };
-
-  return [formState, updateField];
-}
+import useFormState from 'app/common/hooks/useFormState.es6';
 
 export default function EditorInstanceParametersConfigurationModal(props) {
   const { extension } = props;

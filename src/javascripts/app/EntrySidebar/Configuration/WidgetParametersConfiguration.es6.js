@@ -1,22 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Heading, Button } from '@contentful/forma-36-react-components';
 import { closeWidgetConfiguration, updateWidgetSettings } from './SidebarConfigurationReducer.es6';
 import WidgetParametersForm from 'widgets/WidgetParametersForm.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
-
-function useFormState(initialState) {
-  const [formState, setFormState] = useState(initialState);
-
-  const updateField = (field, value) => {
-    setFormState({
-      ...formState,
-      [field]: value
-    });
-  };
-
-  return [formState, updateField];
-}
+import useFormState from 'app/common/hooks/useFormState.es6';
 
 function WidgetParametersConfiguration({ widget, dispatch }) {
   const [formState, updateValue] = useFormState(widget.settings || {});
