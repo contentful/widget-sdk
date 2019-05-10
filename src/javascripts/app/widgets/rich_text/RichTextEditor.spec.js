@@ -6,7 +6,7 @@ import Toolbar from './Toolbar/index.es6';
 
 jest.mock('ng/EntityHelpers', () => ({}), { virtual: true });
 jest.mock('ng/data/CMA/EntityState.es6', () => ({}), { virtual: true });
-jest.mock('ng/ui/cf/thumbnailHelpers.es6', () => ({}), { virtual: true });
+jest.mock('ui/cf/thumbnailHelpers.es6', () => ({}), { virtual: true });
 jest.mock('access_control/AccessChecker/index.es6', () => ({}), { virtual: true });
 jest.mock('utils/browser.es6', () => ({}), { virtual: true });
 jest.mock('redux/store.es6', () => ({}), { virtual: true });

@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry.es6';
 
 // TODO: Use widgetApi instead!
-const thumbnailHelpers = getModule('ui/cf/thumbnailHelpers.es6');
+import { isValidImage, getExternalImageUrl } from 'ui/cf/thumbnailHelpers.es6';
 
 const dimensions = { width: 70, height: 70 };
 
@@ -21,11 +20,11 @@ class Thumbnail extends React.Component {
 
   render() {
     const { thumbnail } = this.props;
-    const valid = thumbnail && thumbnailHelpers.isValidImage(thumbnail.contentType);
+    const valid = thumbnail && isValidImage(thumbnail.contentType);
     if (!valid) {
       return null;
     }
-    const imgUrl = thumbnailHelpers.getExternalImageUrl(thumbnail.url);
+    const imgUrl = getExternalImageUrl(thumbnail.url);
 
     return (
       <img

@@ -2,6 +2,7 @@ import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import $ from 'jquery';
 import mimetype from '@contentful/mimetype';
+import { isValidImage, getExternalImageUrl } from 'ui/cf/thumbnailHelpers.es6';
 
 export default function register() {
   /**
@@ -16,8 +17,7 @@ export default function register() {
    */
 
   registerDirective('cfThumbnail', [
-    'ui/cf/thumbnailHelpers.es6',
-    ({ isValidImage, getExternalImageUrl }) => {
+    () => {
       const groupToIconMap = {
         image: 'image',
         video: 'video',
