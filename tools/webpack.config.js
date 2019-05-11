@@ -91,7 +91,7 @@ module.exports = () => {
       filename: '[name]',
       path: P.resolve(__dirname, '..', 'public', 'app'),
       publicPath: '/app/',
-      chunkFilename: 'chunk_[name]_[hash].js'
+      chunkFilename: 'chunk_[name]_[contenthash].js'
     },
     mode: isProd ? 'production' : 'development',
     module: {
