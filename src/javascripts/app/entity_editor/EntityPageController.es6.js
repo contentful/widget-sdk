@@ -1,5 +1,5 @@
 import { track } from 'analytics/Analytics.es6';
-import * as Telemetry from 'Telemetry.es6';
+import * as Telemetry from 'i13n/Telemetry.es6';
 import { cloneDeep, find, mapValues } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { deepFreeze } from 'utils/Freeze.es6';

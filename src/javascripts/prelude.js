@@ -82,7 +82,7 @@ angular
 
       // Start telemetry and expose it as a global.
       // It can be used by E2E or Puppeteer scripts.
-      const Telemetry = $injector.get('Telemetry.es6');
+      const Telemetry = $injector.get('i13n/Telemetry.es6');
       window.cfTelemetry = Telemetry;
       Telemetry.init();
 
