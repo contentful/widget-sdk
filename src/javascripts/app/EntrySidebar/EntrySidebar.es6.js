@@ -10,7 +10,7 @@ import {
 import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer.es6';
-import { ScheduleWidgetContainer } from 'app/jobs/index.es6';
+import { JobsWidgetContainer } from 'app/jobs/index.es6';
 import TasksWidgetContainer from './TasksWidget/TasksWidgetContainer.es6';
 import ContentPreviewWidget from './ContentPreviewWidget/ContentPreviewWidget.es6';
 import IncomingLinksWidgetContainer from './IncomingLinksWidget/IncomingLinksWidgetContainer.es6';
@@ -25,7 +25,7 @@ import CommentsPanelContainer from './CommentsPanel/CommentsPanelContainer.es6';
 
 const ComponentsMap = {
   [SidebarWidgetTypes.PUBLICATION]: PublicationWidgetContainer,
-  [SidebarWidgetTypes.SCHEDULE]: ScheduleWidgetContainer,
+  [SidebarWidgetTypes.JOBS]: JobsWidgetContainer,
   [SidebarWidgetTypes.TASKS]: TasksWidgetContainer,
   [SidebarWidgetTypes.CONTENT_PREVIEW]: ContentPreviewWidget,
   [SidebarWidgetTypes.INCOMING_LINKS]: IncomingLinksWidgetContainer,

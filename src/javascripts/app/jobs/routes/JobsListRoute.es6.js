@@ -19,7 +19,7 @@ export default class JobsListRoute extends Component {
 
   render() {
     return (
-      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.SCHEDULE}>
+      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
         {({ currentVariation }) => {
           if (currentVariation === true) {
             return (

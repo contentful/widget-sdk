@@ -7,7 +7,7 @@ export default {
   VERSIONS: 'versions-widget',
   ACTIVITY: 'entry-activity-widget',
   INFO_PANEL: 'info-panel',
-  SCHEDULE: 'schedule-widget',
+  JOBS: 'jobs-widget',
   TASKS: 'content-workflows-tasks-widget',
   COMMENTS_PANEL: 'comments-panel'
 };

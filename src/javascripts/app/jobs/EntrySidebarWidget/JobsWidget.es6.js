@@ -6,12 +6,12 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
 
-import ScheduleTimeline from './ScheduleTimeline/index.es6';
-import ScheduleFetcher from './ScheduleFetcher.es6';
-import { createSchedule } from './ScheduleService.es6';
-import NewSchedule from './NewSchedule.es6';
+import JobsTimeline from './JobsTimeline/index.es6';
+import JobsFetcher from './JobsFetcher.es6';
+import { createJob } from './JobsService.es6';
+import NewJob from './NewJob.es6';
 
-import { createSpaceEndpoint } from './ScheduleEndpointFactory.es6';
+import { createSpaceEndpoint } from './JobsEndpointFactory.es6';
 
 const styles = {
   root: css({
@@ -31,19 +31,19 @@ const styles = {
   })
 };
 
-export default class ScheduleWidget extends React.Component {
+export default class JobWidget extends React.Component {
   static propTypes = {
     spaceId: PropTypes.string.isRequired,
     envId: PropTypes.string.isRequired,
     entityInfo: PropTypes.object.isRequired
   };
   state = {
-    // used to re-fetch schedules after creation
+    // used to re-fetch Jobs after creation
     fetcherKey: 0
   };
   endpoint = createSpaceEndpoint(this.props.spaceId, this.props.envId);
-  handleScheduleCreate = scheduleDto => {
-    createSchedule(this.endpoint, this.props.entityInfo.id, scheduleDto).then(() => {
+  handleJobCreate = jobDto => {
+    createJob(this.endpoint, this.props.entityInfo.id, jobDto).then(() => {
       this.setState({
         fetcherKey: this.state.fetcherKey + 1
       });
@@ -52,7 +52,7 @@ export default class ScheduleWidget extends React.Component {
   render() {
     return (
       <div className={styles.root}>
-        <ScheduleFetcher
+        <JobsFetcher
           key={this.state.fetcherKey}
           endpoint={this.endpoint}
           entryId={this.props.entityInfo.id}>
@@ -68,20 +68,20 @@ export default class ScheduleWidget extends React.Component {
               // Implement proper error handling
               return 'Error';
             }
-            const hasScheduledActions = data.scheduleCollection.items.length > 0;
+            const hasScheduledActions = data.jobCollection.items.length > 0;
 
             return (
               <React.Fragment>
                 <div className={styles.heading}>Scheduled Publication</div>
                 {hasScheduledActions ? (
-                  <ScheduleTimeline schedules={data.scheduleCollection.items} />
+                  <JobsTimeline jobs={data.jobCollection.items} />
                 ) : (
-                  <NewSchedule onCreate={this.handleScheduleCreate} />
+                  <NewJob onCreate={this.handleJobCreate} />
                 )}
               </React.Fragment>
             );
           }}
-        </ScheduleFetcher>
+        </JobsFetcher>
       </div>
     );
   }

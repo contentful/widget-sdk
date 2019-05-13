@@ -1,1 +1,1 @@
-export { default as ScheduleWidgetContainer } from './ScheduleWidget/ScheduleWidgetContainer.es6';
+export { default as JobsWidgetContainer } from './EntrySidebarWidget/JobsWidgetContainer.es6';
