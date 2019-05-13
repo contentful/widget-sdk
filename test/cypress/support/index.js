@@ -40,7 +40,8 @@ before(() => {
       'locales',
       'microbackend',
       'token',
-      'users'
+      'users',
+      'resources'
     ],
     cors: true,
     pactfileWriteMode: 'merge',
