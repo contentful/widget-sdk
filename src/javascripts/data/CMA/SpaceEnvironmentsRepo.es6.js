@@ -1,8 +1,6 @@
 import { pick } from 'lodash';
 import { get } from 'utils/Collections.es6';
 import { makeCtor } from 'utils/TaggedValues.es6';
-import store from 'redux/store.es6';
-import { deleteEnvironmentSuccess } from 'redux/actions/environments.es6';
 
 // Hardcoded limit for v1 orgs is 100 + 1 (master).
 // It is less for all v2 space plans.
@@ -63,12 +61,6 @@ export function create(spaceEndpoint) {
   }
 
   function remove(id) {
-    store.dispatch(
-      deleteEnvironmentSuccess({
-        spaceId: spaceEndpoint.spaceId,
-        envId: id
-      })
-    );
     return spaceEndpoint({
       method: 'DELETE',
       path: ['environments', id]
