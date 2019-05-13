@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import SidebarEventTypes from '../SidebarEventTypes.es6';
-import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
+import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes.es6';
 import ScheduleWidget from './ScheduleWidget.es6';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.es6';
 import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
