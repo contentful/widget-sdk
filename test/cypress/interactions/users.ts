@@ -4,7 +4,10 @@ import { getUsers, defaultSpaceId } from '../util/requests';
 const users = require('../fixtures/users.json');
 
 export function singleUser() {
-  const query = 'limit=100&skip=0';
+  const query = {
+    limit: '100',
+    skip: '0'
+  };
   cy.addInteraction({
     provider: 'users',
     state: state.Users.SINGLE,

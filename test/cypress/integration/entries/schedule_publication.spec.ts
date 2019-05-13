@@ -22,7 +22,8 @@ describe('Schedule Publication', () => {
       consumer: 'user_interface',
       provider: 'scheduled-actions',
       cors: true,
-      pactfileWriteMode: 'merge'
+      pactfileWriteMode: 'merge',
+      spec: 3
     })
   );
 
@@ -61,7 +62,11 @@ describe('Schedule Publication', () => {
 
     cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
 
-    cy.wait([`@${state.Token.VALID}`, '@scheduled-actions/none']);
+    cy.wait([
+      `@${state.Token.VALID}`,
+      '@scheduled-actions/none',
+      `@${state.PreviewEnvironments.NONE}`
+    ]);
   });
 
   describe('opening the page', () => {

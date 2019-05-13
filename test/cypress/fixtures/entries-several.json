@@ -1,0 +1,160 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "total": 3,
+  "skip": 0,
+  "limit": 40,
+  "items": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "fuuami4adicz"
+          }
+        },
+        "id": "testEntryId3",
+        "type": "Entry",
+        "createdAt": "2019-05-07T11:38:57.320Z",
+        "updatedAt": "2019-05-07T11:39:00.262Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userId"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userId"
+          }
+        },
+        "publishedCounter": 0,
+        "version": 3,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "testContentType"
+          }
+        }
+      },
+      "fields": {
+        "E3VfaKnCE3oP0lOw": {
+          "en-US": "three"
+        }
+      }
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "fuuami4adicz"
+          }
+        },
+        "id": "testEntryId2",
+        "type": "Entry",
+        "createdAt": "2019-05-07T11:38:51.352Z",
+        "updatedAt": "2019-05-07T11:38:54.548Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userId"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userId"
+          }
+        },
+        "publishedCounter": 0,
+        "version": 3,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "testContentType"
+          }
+        }
+      },
+      "fields": {
+        "E3VfaKnCE3oP0lOw": {
+          "en-US": "two"
+        }
+      }
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "fuuami4adicz"
+          }
+        },
+        "id": "testEntryId1",
+        "type": "Entry",
+        "createdAt": "2019-05-07T11:38:44.841Z",
+        "updatedAt": "2019-05-07T11:38:48.879Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userId"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userId"
+          }
+        },
+        "publishedCounter": 0,
+        "version": 4,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "testContentType"
+          }
+        }
+      },
+      "fields": {
+        "E3VfaKnCE3oP0lOw": {
+          "en-US": "one"
+        }
+      }
+    }
+  ]
+}

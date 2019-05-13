@@ -47,7 +47,8 @@ before(() => {
       'users'
     ],
     cors: true,
-    pactfileWriteMode: 'merge'
+    pactfileWriteMode: 'merge',
+    spec: 3
   });
 });
 afterEach(() => {

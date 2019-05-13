@@ -85,6 +85,15 @@ export function getExtensions(
   };
 }
 
+export function getEntries(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
+  return {
+    method: 'GET',
+    path: `/spaces/${spaceId}/entries`,
+    headers: defaultHeader,
+    query
+  };
+}
+
 export function getEntry(
   spaceId: string = defaultSpaceId,
   entryId: string = defaultEntryId
@@ -108,7 +117,7 @@ export function getEntryLinks(spaceId: string = defaultSpaceId, query?: Query): 
 export function getEntrySnapshots(
   spaceId: string = defaultSpaceId,
   entryId: string = defaultEntryId,
-  query?: string
+  query?: Query
 ): RequestOptions {
   return {
     method: 'GET',

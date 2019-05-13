@@ -7,12 +7,15 @@ import { spaceProductCatalogFeaturesResponse } from '../../interactions/product_
 const baseUrl = Cypress.config().baseUrl;
 
 describe('Apps Page', () => {
-  before(() => cy.startFakeServer({
-    consumer: 'user_interface',
-    provider: 'apps',
-    cors: true,
-    pactfileWriteMode: 'merge'
-  }))
+  before(() =>
+    cy.startFakeServer({
+      consumer: 'user_interface',
+      provider: 'apps',
+      cors: true,
+      pactfileWriteMode: 'merge',
+      spec: 3
+    })
+  );
 
   function setUpFakeServersAndVisitPage() {
     cy.resetAllFakeServers();
@@ -30,7 +33,7 @@ describe('Apps Page', () => {
   describe('Opening the Apps page with disabled Alpha feature', () => {
     before(() => {
       cy.setAuthTokenToLocalStorage();
-      
+
       setUpFakeServersAndVisitPage();
     });
 
@@ -58,7 +61,7 @@ describe('Apps Page', () => {
   describe('Enable Alpha Apps feature', () => {
     beforeEach(() => {
       cy.setAuthTokenToLocalStorage();
-      
+
       setUpFakeServersAndVisitPage();
     });
 

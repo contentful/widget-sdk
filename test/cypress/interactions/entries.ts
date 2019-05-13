@@ -13,18 +13,20 @@ const entryResponseBody = require('../fixtures/entry.json');
 export function singleEntryResponse() {
   cy.addInteraction({
     provider: 'entries',
-    state: state.Entries.EMPTY,
+    state: state.Entries.NONE,
     uponReceiving: 'a request for entry object',
     withRequest: getEntry(),
     willRespondWith: {
       status: 200,
       body: entryResponseBody
     }
-  }).as(state.Entries.EMPTY);
+  }).as(state.Entries.NONE);
 }
 
 export function noEntryLinksResponse() {
-  const query = `links_to_entry=${defaultEntryId}`;
+  const query = {
+    links_to_entry: `${defaultEntryId}`
+  };
   cy.addInteraction({
     provider: 'entries',
     state: state.Entries.LINKS,
@@ -38,7 +40,9 @@ export function noEntryLinksResponse() {
 }
 
 export function noEntrySnapshotsResponse() {
-  const query = 'limit=7';
+  const query = {
+    limit: '7'
+  };
   cy.addInteraction({
     provider: 'entries',
     state: state.Entries.SNAPSHOTS,

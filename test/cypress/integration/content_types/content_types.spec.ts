@@ -12,7 +12,10 @@ import { defaultContentTypeId } from '../../util/requests';
 
 const empty = require('../../fixtures/empty.json');
 const severalContentTypes = require('../../fixtures/content-types-several.json');
-const query = 'limit=1000&order=name';
+const query = {
+  limit: '1000',
+  order: 'name'
+};
 
 describe('Content types list page', () => {
   before(() =>
@@ -20,7 +23,8 @@ describe('Content types list page', () => {
       consumer: 'user_interface',
       provider: 'extensions',
       cors: true,
-      pactfileWriteMode: 'merge'
+      pactfileWriteMode: 'merge',
+      spec: 3
     })
   );
 

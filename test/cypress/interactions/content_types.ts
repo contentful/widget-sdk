@@ -13,7 +13,9 @@ const contentTypeSingle = require('../fixtures/content-types-single.json');
 const editorInterfaceWithoutSidebarResponseBody = require('../fixtures/editor-interface-without-sidebar.json');
 const editorInterfaceWithSidebarResponseBody = require('../fixtures/editor-interface-with-sidebar.json');
 const contentType = require('../fixtures/content-type.json');
-const query = 'limit=1000';
+const query = {
+  limit: '1000'
+};
 
 export function noPublicContentTypesResponse() {
   return cy

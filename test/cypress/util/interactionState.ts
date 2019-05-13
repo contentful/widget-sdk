@@ -49,7 +49,8 @@ export enum PublicContentTypes {
 }
 
 export enum Entries {
-  EMPTY = 'entries/emtpy',
+  NONE = 'entries/none',
+  SEVERAL = 'entries/several',
   LINKS = 'entries/links',
   SNAPSHOTS = 'entries/snapshots'
 }
