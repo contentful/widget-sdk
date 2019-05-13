@@ -30,6 +30,7 @@ const angular = node => {
     'angular.config',
     'angular.controller',
     'angular.constant',
+    'angular.getModule',
     '$rootScope',
     '$window',
     '$location',

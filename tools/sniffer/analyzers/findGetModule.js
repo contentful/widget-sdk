@@ -52,6 +52,7 @@ module.exports = function findGetModule({ src, ast }) {
               case 'getModule':
               case 'getModules': {
                 modules = [...modules, ...readArgsAsDeps(args)];
+                modules.push('angular.getModule');
                 break;
               }
 

@@ -85,6 +85,7 @@ describe('analyze', () => {
     expect(modules).toEqual([
       'NgRegistry',
       '$state',
+      'angular.getModule',
       '$timeout',
       'access_control/SpaceMembershipRepository',
       'angular.controller',
