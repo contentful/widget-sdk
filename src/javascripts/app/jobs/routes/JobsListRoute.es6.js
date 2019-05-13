@@ -6,9 +6,10 @@ import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
 import * as FeatureFlagKey from 'featureFlags.es6';
+import { scheduledJobsMock } from '../helpers/jobs_mocks.es6';
 
 const JobsFetcher = createFetcherComponent(async ({ _spaceId }) => {
-  return Promise.resolve([]);
+  return Promise.resolve(scheduledJobsMock);
 });
 
 export default class JobsListRoute extends Component {
@@ -30,6 +31,7 @@ export default class JobsListRoute extends Component {
                   if (isError) {
                     return <StateRedirect to="spaces.detail.entries.list" />;
                   }
+
                   return <JobsListPage jobs={data} />;
                 }}
               </JobsFetcher>
