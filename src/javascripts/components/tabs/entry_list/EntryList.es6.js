@@ -257,6 +257,15 @@ function BulkActionsRow({ colSpan, actions, selection }) {
             Unarchive
           </TextLink>
         )}
+        {actions.showUnpublish && actions.showUnpublish() && (
+          <TextLink
+            className="f36-margin-right--s"
+            linkType="secondary"
+            data-test-id="unpublish"
+            onClick={() => actions.unpublishSelected()}>
+            Unpublish
+          </TextLink>
+        )}
         {actions.showPublish && actions.showPublish() && (
           <TextLink
             className="f36-margin-right--s"
