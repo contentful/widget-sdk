@@ -15,6 +15,7 @@ describe('Client Controller', () => {
       disable: sinon.stub()
     };
     this.isAnalyticsAllowed = sinon.stub().returns(true);
+    this.getCurrentVariation = sinon.stub();
 
     module('contentful/test', $provide => {
       $provide.value('analytics/Analytics.es6', {
@@ -29,6 +30,10 @@ describe('Client Controller', () => {
           hasSpace: sinon.stub()
         }
       };
+
+      $provide.constant('utils/LaunchDarkly/index.es6', {
+        getCurrentVariation: this.getCurrentVariation
+      });
       $provide.constant('authorization', this.authorizationStubs);
       $provide.value('services/EnforcementsService.es6', {
         getEnforcements: this.getEnforcements
@@ -91,6 +96,7 @@ describe('Client Controller', () => {
       this.token = { sys: {} };
       this.enforcements = [];
       this.envId = 'ENV ID';
+      this.getCurrentVariation = this.getCurrentVariation.resolves(false);
 
       this.spaceContext = this.$inject('spaceContext');
       this.spaceContext.getEnvironmentId = () => this.envId;
@@ -106,7 +112,8 @@ describe('Client Controller', () => {
         this.token,
         this.spaceContext.space,
         this.enforcements,
-        this.envId
+        this.envId,
+        this.getCurrentVariation()
       );
     });
 
@@ -126,12 +133,9 @@ describe('Client Controller', () => {
       this.$apply();
 
       sinon.assert.calledWith(
-        this.authorizationStubs.update.secondCall,
+        this.authorizationStubs.update,
         sinon.match.any,
-        this.spaceContext.space,
-        sinon.match.any,
-        sinon.match.any,
-        sinon.match.any
+        this.spaceContext.space
       );
     });
 
@@ -144,7 +148,7 @@ describe('Client Controller', () => {
       this.$apply();
 
       sinon.assert.calledWith(
-        this.authorizationStubs.update.secondCall,
+        this.authorizationStubs.update,
         sinon.match.any,
         sinon.match.any,
         enforcements
@@ -153,7 +157,7 @@ describe('Client Controller', () => {
 
     it('updates nav state', function() {
       this.$apply();
-      sinon.assert.calledOnce(this.refreshNavState);
+      sinon.assert.called(this.refreshNavState);
     });
   });
 
