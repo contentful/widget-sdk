@@ -172,10 +172,11 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       });
     }
 
-    api.registerHandler('alpha', ({ command, args }) => {
+    api.registerHandler('alpha', async ({ command, args }) => {
       if (command === 'proxyGetRequest' && args) {
         const client = createAppsClient(spaceContext.getId());
-        return client.proxyGetRequest(args.appId, args.url, args.headers);
+        const res = await client.proxyGetRequest(args.appId, args.url, args.headers);
+        return res.json();
       }
 
       throw new Error('Unknown alpha command.');
