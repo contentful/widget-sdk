@@ -1,26 +1,34 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import { TextLink, Button } from '@contentful/forma-36-react-components';
+
+import { supportUrl } from 'Config.es6';
+import * as Intercom from 'services/intercom.es6';
 
 class ContactUsButton extends React.Component {
   static propTypes = {
     noIcon: PropTypes.bool,
     buttonType: PropTypes.oneOf(['link', 'button']),
-    children: PropTypes.node,
+    children: PropTypes.node
+  };
 
-    contactUs: PropTypes.func.isRequired
+  onClick = () => {
+    // Open intercom if it's possible, otherwise go to support page.
+    if (Intercom.isEnabled()) {
+      Intercom.open();
+    } else {
+      window.open(supportUrl);
+    }
   };
 
   render() {
-    const { noIcon, buttonType, children, contactUs, ...otherProps } = this.props;
+    const { noIcon, buttonType, children, ...otherProps } = this.props;
 
     const isLink = !buttonType || buttonType === 'link';
     const ButtonComponent = isLink ? TextLink : Button;
 
     const props = {
-      onClick: contactUs,
+      onClick: this.onClick,
       ...otherProps
     };
 
@@ -32,9 +40,4 @@ class ContactUsButton extends React.Component {
   }
 }
 
-export default connect(
-  null,
-  dispatch => ({
-    contactUs: () => dispatch({ type: 'CONTACT_US' })
-  })
-)(ContactUsButton);
+export default ContactUsButton;
