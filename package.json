@@ -22,7 +22,7 @@
     "@contentful/rich-text-plain-text-renderer": "^11.0.0",
     "@contentful/rich-text-types": "^11.0.0",
     "@contentful/sharejs": "^2.10.4",
-    "@contentful/validation": "^9.1.1",
+    "@contentful/validation": "^9.2.0",
     "@contentful/widget-map": "^1.2.3",
     "@contentful/worf": "^3.13.0",
     "@productboard/slate-edit-list": "^0.19.1",

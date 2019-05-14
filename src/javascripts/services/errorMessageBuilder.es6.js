@@ -35,6 +35,10 @@ export default function register() {
         return 'Input does not match the expected format. Please edit and try again.';
       },
 
+      prohibitRegexp: function() {
+        return 'Input does not match the expected format. Please edit and try again.';
+      },
+
       in: function(error) {
         return 'Must be one of ' + error.expected.join(', ') + '.';
       },
