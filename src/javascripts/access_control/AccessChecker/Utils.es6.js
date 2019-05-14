@@ -3,6 +3,8 @@ import * as K from 'utils/kefir.es6';
 import { get, isString } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
+import _ from 'lodash';
+
 const $q = getModule('$q');
 const $rootScope = getModule('$rootScope');
 
@@ -68,6 +70,33 @@ export function isAuthor(entity) {
 
 export function getContentTypeIdFor(entry) {
   return get(entry, 'data.sys.contentType.sys.id');
+}
+
+// check for enforcements generated for entities not within their limits
+export function shouldPerformNewUsageCheck(action, entity, newEnforcement, reasons) {
+  const { reasonsDenied, deniedEntities } = newEnforcement;
+  const isValidEntity = verifyEntityForNewUsageCheck(entity, deniedEntities);
+
+  let result =
+    action === 'create' &&
+    Object.keys(newEnforcement).length > 0 &&
+    isValidEntity &&
+    reasonsDenied().length > 0;
+
+  if (reasons) {
+    result = result && (reasons.length === 0 || _.isEqual(reasons, reasonsDenied(action, entity)));
+  }
+
+  return result;
+}
+
+function verifyEntityForNewUsageCheck(entity, deniedEntities) {
+  const entitiesForUsageCheck = deniedEntities || ['Entry', 'Asset', 'ContentType'];
+  let entityType = entity;
+
+  if (entity && entity.sys) entityType = get(entity, 'sys.type');
+
+  return entitiesForUsageCheck.includes(entityType);
 }
 
 function getAuthorIdFor(entry) {

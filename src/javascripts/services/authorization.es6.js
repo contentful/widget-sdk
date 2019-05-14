@@ -60,7 +60,7 @@ export default function register() {
 
           if (space && this.authContext.hasSpace(space.getId())) {
             this.spaceContext = this.authContext.space(space.getId());
-            this.spaceContext.newEnforcement = [];
+            this.spaceContext.newEnforcement = {};
 
             if (await allowNewUsageCheck) {
               this.spaceContext.newEnforcement = await newUsageChecker(

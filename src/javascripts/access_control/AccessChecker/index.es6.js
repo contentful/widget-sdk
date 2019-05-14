@@ -15,7 +15,7 @@ import { chain, get, set, some, forEach, values, find } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements.es6';
 import * as logger from 'services/logger.es6';
 
-import _ from 'lodash';
+import { shouldPerformNewUsageCheck } from './Utils.es6';
 
 export { wasForbidden } from './Utils.es6';
 
@@ -519,39 +519,17 @@ function getPermissions(action, entity) {
 
   let reasons = spaceAuthContext.reasonsDenied(action, entity);
 
-  if (isValidForNewUsageCheck(action, entity, reasons, newEnforcement)) {
+  if (shouldPerformNewUsageCheck(action, entity, newEnforcement, reasons)) {
     reasons = newEnforcement.reasonsDenied(action, entity);
     spaceAuthContext.reasonsDenied = newEnforcement.reasonsDenied;
-    response.enforcement = getEnforcement(action, entity);
-  } else {
-    response.enforcement = getEnforcement(action, entity);
   }
 
+  response.enforcement = getEnforcement(action, entity);
   response.reasons = reasons && reasons.length > 0 ? reasons : null;
   response.shouldDisable = !!response.reasons;
   response.shouldHide = !response.shouldDisable;
 
   return response;
-}
-
-// check for enforcements generated for entities not within their limits
-function isValidForNewUsageCheck(action, entity, reasons, newEnforcement) {
-  return (
-    newEnforcement.length > 0 &&
-    newEnforcement.reasonsDenied().length > 0 &&
-    compareEntityForUsageCheck &&
-    action === 'create' &&
-    _.isEqual(reasons, newEnforcement.reasonsDenied(action, entity))
-  );
-}
-
-function compareEntityForUsageCheck(entity) {
-  const entitiesForUsageCheck = ['Entry', 'Asset', 'ContentType'];
-  let entityType = entity;
-
-  if (entity.sys) entityType = entity.sys.type;
-
-  return entitiesForUsageCheck.includes(entityType);
 }
 
 function getEnforcement(action, entity) {

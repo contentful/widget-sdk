@@ -11,10 +11,7 @@ describe('Response Cache', () => {
     deniedEntities: ['Entry']
   };
 
-  const noNewEnforcements = {
-    reasonsDenied: () => [],
-    deniedEntities: []
-  };
+  const noNewEnforcements = {};
 
   beforeEach(function() {
     module('contentful/test');

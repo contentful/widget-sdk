@@ -31,8 +31,21 @@ describe('ResourceUtils', () => {
         reachedMaxLimit: createResource('content_type', { maximum: 20, included: 10 }, 20),
         overMaxLimit: createResource('content_type', { maximum: 20, included: 10 }, 25)
       },
+      assets: {
+        reachedMaxLimit: createResource('asset', { maximum: 10, included: 5 }, 10)
+      },
+      record: {
+        reachedMaxLimit: createResource('record', { maximum: 10, included: 5 }, 10)
+      },
       apiKeys: createResource('locale', { maximum: null, included: null }, 2)
     };
+
+    this.multipleResources = [
+      this.resources.entries.notReachedAnyLimit,
+      this.resources.assets.reachedMaxLimit,
+      this.resources.contentTypes.notReachedAnyLimit,
+      this.resources.record.reachedMaxLimit
+    ];
 
     this.storeResources = {
       space_1234: {
@@ -83,6 +96,17 @@ describe('ResourceUtils', () => {
 
     it('should return true if you inquire about a resource without a max limit', function() {
       expect(this.ResourceUtils.canCreate(this.resources.apiKeys)).toBe(true);
+    });
+  });
+
+  describe('#canCreateResources', () => {
+    it('should return an object with appropriate entity type and boolean value', function() {
+      expect(this.ResourceUtils.canCreateResources(this.multipleResources)).toEqual({
+        Entry: false,
+        ContentType: true,
+        Asset: false,
+        Record: false
+      });
     });
   });
 

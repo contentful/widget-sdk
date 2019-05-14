@@ -23,6 +23,25 @@ export const resourceHumanNameMap = {
 export const canCreate = resource => !resourceMaximumLimitReached(resource);
 
 /**
+ * Returns an object with entities and their corresponding create status.
+ * @param  {object} resources    Resources in the Redux store
+ *
+ * @return {Object}              {entity: true/false}
+ */
+export const canCreateResources = resources => {
+  const allowedToCreate = {};
+  resources.forEach(resource => {
+    allowedToCreate[convertToPascalCase(resource.name)] = !resourceMaximumLimitReached(resource);
+  });
+
+  // record is the true source for usage on Entry and Asset
+  allowedToCreate['Entry'] = allowedToCreate['Record'];
+  allowedToCreate['Asset'] = allowedToCreate['Record'];
+
+  return allowedToCreate;
+};
+
+/**
  * Returns the whole resource metadata object from the Redux store, given the resources in the store.
  * @param  {object} resources    Resources in the Redux store
  * @param  {string} spaceId      Space id
@@ -138,17 +157,4 @@ function convertToPascalCase(value) {
       return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
     })
     .join('');
-}
-
-export function canCreateResources(resources) {
-  const allowedToCreate = {};
-  resources.forEach(resource => {
-    allowedToCreate[convertToPascalCase(resource.name)] = !resourceMaximumLimitReached(resource);
-  });
-
-  // record is the true source for usage on Entry and Asset
-  allowedToCreate['Entry'] = allowedToCreate['Record'];
-  allowedToCreate['Asset'] = allowedToCreate['Record'];
-
-  return allowedToCreate;
 }

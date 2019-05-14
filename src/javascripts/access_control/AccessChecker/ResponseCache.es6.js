@@ -1,4 +1,5 @@
 import { isObject, get, isString } from 'lodash';
+import { shouldPerformNewUsageCheck } from './Utils.es6';
 
 let cache = {};
 let context = null;
@@ -18,21 +19,14 @@ export function getResponse(action, entity, newEnforcement) {
   if (key) {
     let response = cache[key];
     if (![true, false].includes(response)) {
-      response = shouldPerformNewUsageCheck(action, newEnforcement, entity)
-        ? false
-        : context.can(action, entity);
-
+      response = getCanResponse(action, entity, context, newEnforcement);
       cache[key] = response;
     }
 
     return response;
   }
 
-  const result = shouldPerformNewUsageCheck(action, newEnforcement, entity)
-    ? false
-    : context.can(action, entity);
-
-  return result;
+  return getCanResponse(action, entity, context, newEnforcement);
 }
 
 function getCanResponseKey(action, entity) {
@@ -54,21 +48,16 @@ function getCanResponseKey(action, entity) {
   }
 }
 
-function isEntityDenied(entity, deniedEntities) {
-  let entityType = entity;
+// Override Worf's `can` response to false
+// when
+// 1. user is allowed to carry out `action` on `entity` and
+// 2. the new usage checker method is expected to be performed
+function getCanResponse(action, entity, context, newEnforcement) {
+  const isAllowed = context.can(action, entity);
 
-  if (entity.sys) entityType = get(entity, 'sys.type');
+  if (isAllowed && shouldPerformNewUsageCheck(action, entity, newEnforcement)) {
+    return false;
+  }
 
-  return deniedEntities.includes(entityType);
-}
-
-function shouldPerformNewUsageCheck(action, newEnforcement, entity) {
-  const { reasonsDenied, deniedEntities } = newEnforcement;
-
-  return (
-    action === 'create' &&
-    newEnforcement.length !== 0 &&
-    reasonsDenied(action, entity).length !== 0 &&
-    isEntityDenied(entity, deniedEntities)
-  );
+  return isAllowed;
 }
