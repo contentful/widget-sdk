@@ -8,7 +8,7 @@ import { NAMESPACE_EXTENSION, NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNa
 import {
   EntryConfiguration,
   Publication as PublicationWidget,
-  Schedule as ScheduleWidget,
+  Jobs as JobsWidget,
   Tasks as TasksWidget,
   Versions as VersionsWidget,
   ContentPreview as ContentPreviewWidget,
@@ -107,7 +107,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
-          widgetId: ScheduleWidget.widgetId,
+          widgetId: JobsWidget.widgetId,
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
@@ -140,7 +140,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         configurableWidget: null,
         items: [
           PublicationWidget,
-          ScheduleWidget,
+          JobsWidget,
           TasksWidget,
           VersionsWidget,
           {
@@ -171,7 +171,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
-          widgetId: ScheduleWidget.widgetId,
+          widgetId: JobsWidget.widgetId,
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
@@ -222,7 +222,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         configurableWidget: null,
         items: [
           PublicationWidget,
-          ScheduleWidget,
+          JobsWidget,
           TasksWidget,
           VersionsWidget,
           UsersWidget,
