@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import WebhookEditor from '../WebhookEditor.es6';
-import AdminOnly from 'app/common/AdminOnly.es6';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 
 export class WebhookNewRoute extends React.Component {
   static propTypes = {
@@ -15,17 +16,19 @@ export class WebhookNewRoute extends React.Component {
   };
 
   render() {
+    if (!getSectionVisibility()['webhooks']) {
+      return <ForbiddenPage />;
+    }
+
     return (
-      <AdminOnly>
-        <React.Fragment>
-          <DocumentTitle title={['New Webhook', 'Webhooks']} />
-          <WebhookEditor
-            initialWebhook={this.state.webhook}
-            registerSaveAction={this.props.registerSaveAction}
-            setDirty={this.props.setDirty}
-          />
-        </React.Fragment>
-      </AdminOnly>
+      <React.Fragment>
+        <DocumentTitle title={['New Webhook', 'Webhooks']} />
+        <WebhookEditor
+          initialWebhook={this.state.webhook}
+          registerSaveAction={this.props.registerSaveAction}
+          setDirty={this.props.setDirty}
+        />
+      </React.Fragment>
     );
   }
 }
