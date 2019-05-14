@@ -3,8 +3,8 @@ import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import navBar from 'navigation/templates/NavBar.es6';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
-import { getOrganization } from 'services/TokenStore.es6';
-import getOrgStatus from '../data/OrganizationStatus.es6';
+import * as TokenStore from 'services/TokenStore.es6';
+import * as TeamsFeature from 'app/OrganizationSettings/Teams/TeamsFeature.es6';
 import { SSO_SELF_CONFIG_FLAG } from 'featureFlags.es6';
 import { getOrgFeature } from '../data/CMA/ProductCatalog.es6';
 import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
@@ -27,8 +27,7 @@ export default function register() {
       controller: [
         '$scope',
         '$stateParams',
-        'services/TokenStore.es6',
-        function($scope, $stateParams, TokenStore) {
+        function($scope, $stateParams) {
           const nav = this;
 
           // Prevent unnecessary calls from watchers
@@ -42,7 +41,6 @@ export default function register() {
 
           async function updateNav() {
             const orgId = (nav.orgId = $stateParams.orgId);
-            const org = await getOrganization(orgId);
 
             Promise.all([
               getVariation(SSO_SELF_CONFIG_FLAG, { organizationId: orgId }),
@@ -50,13 +48,6 @@ export default function register() {
             ]).then(([variation, ssoFeatureEnabled]) => {
               nav.ssoEnabled = variation && ssoFeatureEnabled;
             });
-
-            Promise.all([getOrgFeature(orgId, 'teams'), getOrgStatus(org)]).then(
-              ([hasTeamsFeature, { isEnterprise, pricingVersion }]) => {
-                const isLegacyEnterprise = isEnterprise && pricingVersion === 1;
-                nav.teamsEnabled = hasTeamsFeature || isLegacyEnterprise;
-              }
-            );
 
             TokenStore.getOrganization(orgId).then(org => {
               const FeatureService = createLegacyFeatureService(orgId, 'organization');
@@ -67,6 +58,10 @@ export default function register() {
               FeatureService.get('offsiteBackup').then(featureEnabled => {
                 nav.hasOffsiteBackup = featureEnabled;
               });
+              TeamsFeature.isEnabled(org).then(enabled => {
+                nav.teamsEnabled = enabled;
+              });
+
               nav.hasBillingTab = org.isBillable && isOwner(org);
               nav.hasSettingsTab = isOwner(org);
             });

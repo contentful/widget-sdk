@@ -9,14 +9,7 @@ describe('data/User', () => {
       spacesByOrganization$: K.createMockProperty(null)
     };
 
-    this.contentPreview = {
-      contentPreviewsBus$: K.createMockProperty({})
-    };
-
     this.spaceContext = {
-      publishedCTs: {
-        items$: K.createMockProperty([])
-      },
       organization: {},
       space: {
         data: {}
@@ -42,10 +35,6 @@ describe('data/User', () => {
       $provide.value('services/TokenStore.es6', this.tokenStore);
       $provide.constant('spaceContext', this.spaceContext);
       $provide.value('$stateParams', this.$stateParams);
-      $provide.constant('contentPreview', this.contentPreview);
-      $provide.value('data/OrganizationStatus.es6', {
-        default: () => ({ then: cb => cb({}) }) // simulate promise for instant resolution
-      });
     });
 
     this.moment = this.$inject('moment');
@@ -65,8 +54,7 @@ describe('data/User', () => {
           spacesByOrg = K.getValue(this.tokenStore.spacesByOrganization$),
           org = this.spaceContext.organization,
           orgId,
-          space = this.spaceContext.space.data,
-          publishedCTs = []
+          space = this.spaceContext.space.data
         } = params;
 
         this.tokenStore.organizations$.set(orgs);
@@ -74,57 +62,32 @@ describe('data/User', () => {
         this.spaceContext.organization = org;
         this.spaceContext.space.data = space;
         this.$stateParams.orgId = orgId;
-        this.spaceContext.publishedCTs.items$.set(publishedCTs);
         this.$rootScope.$broadcast('$stateChangeSuccess', null, { orgId });
         this.tokenStore.user$.set(user);
         this.$apply();
       };
     });
-    it('emits [user, org, spacesByOrg, space, contentPreviews, publishedCTs, organizationStatus] where space, contentPreviews, publishedCTs and organizationStatus are optional', function() {
+    it('emits [user, org, spacesByOrg, space] where space is optional', function() {
       const user = { email: 'a@b.c' };
       const orgs = [{ name: '1', sys: { id: 1 } }, { name: '2', sys: { id: 2 } }];
       const org = { name: 'some org', sys: { id: 'some-org-1' } };
 
       sinon.assert.notCalled(this.spy);
 
-      this.set({ user, orgs, spacesByOrg: {}, org: null, orgId: 1, publishedCTs: [] });
+      this.set({ user, orgs, spacesByOrg: {}, org: null, orgId: 1 });
       sinon.assert.calledOnce(this.spy);
 
-      sinon.assert.calledWithExactly(this.spy, [
-        user,
-        orgs[0],
-        {},
-        this.spaceContext.space.data,
-        {},
-        [],
-        {}
-      ]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data]);
 
       this.spy.reset();
       this.set({ org });
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [
-        user,
-        org,
-        {},
-        this.spaceContext.space.data,
-        {},
-        [],
-        {}
-      ]);
+      sinon.assert.calledWithExactly(this.spy, [user, org, {}, this.spaceContext.space.data]);
 
       this.spy.reset();
       this.set({ org: null, space: { fields: [], sys: { id: 'space-1' } } });
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [
-        user,
-        orgs[0],
-        {},
-        this.spaceContext.space.data,
-        {},
-        [],
-        {}
-      ]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data]);
     });
     it('emits a value only when the user is valid and the org and spacesByOrg are not falsy', function() {
       const orgs = [{ name: '1', sys: { id: 1 } }, { name: '2', sys: { id: 2 } }];
@@ -145,15 +108,14 @@ describe('data/User', () => {
       // all valid valus, hence spy must be called
       this.set({ user, orgs, spacesByOrg: {}, orgId: 1 });
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, [], {}]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}]);
     });
     it('skips duplicates', function() {
       const setter = this.set.bind(this, {
         user: { email: 'a@b.c' },
         org: { name: 'org-1', sys: { id: 1 } },
         spacesByOrg: {},
-        space: { name: 'space-1', sys: { id: 'space-1' } },
-        publishedCTs: []
+        space: { name: 'space-1', sys: { id: 'space-1' } }
       });
       setter();
       sinon.assert.calledOnce(this.spy);

@@ -149,8 +149,7 @@ describe('LaunchDarkly', () => {
           isAutomationTestUser: true,
           currentUserIsCurrentOrgCreator: false,
           currentUserSignInCount: 10,
-          currentUserSpaceRole: [],
-          isExampleSpace: false
+          currentUserSpaceRole: []
         });
       });
     });

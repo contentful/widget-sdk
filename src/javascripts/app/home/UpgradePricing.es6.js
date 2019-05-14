@@ -4,7 +4,7 @@ import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import Icon from 'ui/Components/Icon.es6';
 import { websiteUrl } from 'Config.es6';
 import { track } from 'analytics/Analytics.es6';
-import getOrganizationStatus from 'data/OrganizationStatus.es6';
+import isLegacyEnterprise from 'data/isLegacyEnterprise.es6';
 import { UPGRADE_PRICING_FLAG } from 'featureFlags.es6';
 import { getModule } from 'NgRegistry.es6';
 
@@ -26,8 +26,7 @@ export default class UpgradePricing extends React.Component {
       return false;
     }
 
-    const { isEnterprise } = await getOrganizationStatus(org);
-    if (isEnterprise) {
+    if (isLegacyEnterprise(org)) {
       return false;
     }
 

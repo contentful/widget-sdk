@@ -26,7 +26,7 @@ describe('Apps Page', () => {
 
     cy.visit(`/spaces/${defaultSpaceId}/apps`);
 
-    cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
+    cy.wait([`@${state.Token.VALID}`, `@${state.Apps.NONE_INSTALLED}`]);
   }
 
   // TODO: Does the alpha feature flag changes the communication with the server side?

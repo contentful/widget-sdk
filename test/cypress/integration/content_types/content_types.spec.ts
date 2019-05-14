@@ -51,7 +51,6 @@ describe('Content types list page', () => {
 
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.PreviewEnvironments.NONE}`,
         '@noContentTypesWithQuery'
       ]);
     });
@@ -126,7 +125,6 @@ describe('Content types list page', () => {
 
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.PreviewEnvironments.NONE}`,
         `@${state.ContentTypes.SEVERAL}`
       ]);
     });
@@ -158,7 +156,6 @@ describe('Content type page', () => {
 
     cy.wait([
       `@${state.Token.VALID}`,
-      `@${state.PreviewEnvironments.NONE}`,
       `@${state.ContentType.DEFAULT}`
     ]);
   });

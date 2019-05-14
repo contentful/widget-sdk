@@ -4,7 +4,6 @@ import * as K from 'test/helpers/mocks/kefir';
 
 describe('cfOnboardingSteps Directive', () => {
   beforeEach(function() {
-    this.previews$ = K.createMockProperty([]);
     this.organizations = [
       {
         sys: { id: 'firstorg' }
@@ -37,11 +36,12 @@ describe('cfOnboardingSteps Directive', () => {
         showDialog: this.createSpaceDialog
       });
       $provide.constant('contentPreview', {
-        // using this instead of our added on `.resolves` since that uses
-        // $q internally but this directive uses native Promises and that
-        // causes things to fail
-        contentPreviewsBus$: this.previews$,
-        getAll: sinon.stub().callsFake(() => Promise.resolve(this.contentPreviews))
+        getAll: sinon.stub().callsFake(() => {
+          // using this instead of our added on `.resolves` since that uses
+          // $q internally but this directive uses native Promises and that
+          // causes things to fail
+          return Promise.resolve(this.contentPreviews);
+        })
       });
       $provide.value('components/shared/auto_create_new_space/CreateModernOnboarding.es6', {
         getStoragePrefix: 'ctfl:userSysId:modernStackOnboarding',

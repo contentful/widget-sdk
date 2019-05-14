@@ -36,7 +36,7 @@ export function singleContentTypeResponse() {
   cy.addInteraction({
     provider: 'content_types',
     state: state.ContentTypes.SINGLE,
-    uponReceiving: 'a request for all public content types',
+    uponReceiving: 'a request for a single public content types',
     withRequest: getPublicContentTypes(defaultSpaceId, query),
     willRespondWith: {
       status: 200,

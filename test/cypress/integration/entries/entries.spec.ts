@@ -54,7 +54,6 @@ describe('Entries page', () => {
 
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.PreviewEnvironments.NONE}`,
         `@${state.Entries.NONE}`,
         '@entries/archived-none'
       ]);
@@ -105,7 +104,6 @@ describe('Entries page', () => {
 
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.PreviewEnvironments.NONE}`,
         `@${state.Entries.NONE}`,
         '@entries/archived-none'
       ]);
@@ -147,7 +145,6 @@ describe('Entries page', () => {
 
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.PreviewEnvironments.NONE}`,
         `@${state.Entries.SEVERAL}`
       ]);
     });

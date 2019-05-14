@@ -39,7 +39,6 @@ before(() => {
       'content_types',
       'locales',
       'microbackend',
-      'plans',
       'preview_environments',
       'product_catalog_features',
       'token',

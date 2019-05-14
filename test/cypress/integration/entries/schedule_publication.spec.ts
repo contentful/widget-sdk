@@ -64,8 +64,8 @@ describe('Schedule Publication', () => {
 
     cy.wait([
       `@${state.Token.VALID}`,
-      '@scheduled-actions/none',
-      `@${state.PreviewEnvironments.NONE}`
+      `@${state.Entries.NONE}`,
+      '@scheduled-actions/none'
     ]);
   });
 

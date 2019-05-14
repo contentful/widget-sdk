@@ -6,10 +6,6 @@ export enum Token {
   VALID = 'token/valid'
 }
 
-export enum Plans {
-  FREE = 'plans/free'
-}
-
 export enum OrgProductCatalogFeatures {
   SEVERAL = 'org_product_catalog_features/several'
 }

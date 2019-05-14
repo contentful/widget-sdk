@@ -1,64 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get, debounce } from 'lodash';
 import CloseIcon from 'svg/close.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
-import hasOrgTeamFeature from 'redux/selectors/hasOrgTeamFeature.es6';
-import { getOrgConstants } from 'redux/selectors/getOrgConstants.es6';
-import { fetchOrgConstants } from 'redux/actions/orgConstants/actionCreators.es6';
 import SidepanelOrgs from './SidepanelOrgs.es6';
 import SidepanelSpaces from './SidepanelSpaces.es6';
 import SidepanelProjects from './__PROTOTYPE__SidepanelProjects.es6';
 import SidepanelNoOrgs from './SidepanelNoOrgs.es6';
 import { Spinner } from '@contentful/forma-36-react-components';
 import OrgActions from './OrgActions.es6';
+import * as TeamsFeature from 'app/OrganizationSettings/Teams/TeamsFeature.es6';
 
-class Sidepanel extends React.Component {
+export default class Sidepanel extends React.Component {
   static propTypes = {
     sidePanelIsShown: PropTypes.bool,
     closeOrgsDropdown: PropTypes.func,
     closeSidePanel: PropTypes.func,
     gotoOrgSettings: PropTypes.func,
     viewingOrgSettings: PropTypes.any,
-    currOrg: PropTypes.object,
-    teamsFeatureEnabled: PropTypes.bool,
-    orgConstants: PropTypes.object,
-    fetchOrgConstants: PropTypes.func
+    currOrg: PropTypes.object
   };
-
-  componentDidUpdate(prevProps) {
-    const { currOrg } = this.props;
-    if (currOrg && prevProps.currOrg !== currOrg) {
-      this.debouncedFetchOrgConstants(this.props.currOrg.sys.id);
-    }
-  }
-
-  debouncedFetchOrgConstants = debounce(this.props.fetchOrgConstants, 200);
-
-  renderOrgSettingsForMembers() {
-    const { orgConstants, teamsFeatureEnabled, gotoOrgSettings, viewingOrgSettings } = this.props;
-    const isEnterprise = get(orgConstants, ['isEnterprise'], false);
-    const isLegacy = get(orgConstants, ['isLegacy'], false);
-    const isLegacyEnterprise = isLegacy && isEnterprise;
-    // who can see the Teams button:
-    // - members of V1 Enterprise orgs
-    // - members of V2 orgs with the Teams feature enabled
-    const shouldSeeTeams = teamsFeatureEnabled || isLegacyEnterprise;
-    const isLoading = get(orgConstants, ['meta', 'isPending'], true);
-
-    return isLoading ? (
-      <Spinner size="small" style={{ margin: '10px 20px' }} />
-    ) : (
-      shouldSeeTeams && (
-        <OrgActions
-          gotoOrgSettings={gotoOrgSettings}
-          viewingOrgSettings={viewingOrgSettings}
-          showOrgSettingsAsTeams={true}
-        />
-      )
-    );
-  }
 
   render() {
     const {
@@ -88,7 +48,12 @@ class Sidepanel extends React.Component {
                 showOrgSettingsAsTeams={false}
               />
             ) : (
-              this.renderOrgSettingsForMembers()
+              <OrgSettingsForMembers
+                gotoOrgSettings={gotoOrgSettings}
+                viewingOrgSettings={viewingOrgSettings}
+                currOrg={currOrg}
+                key={currOrg.sys.id}
+              />
             )}
           </React.Fragment>
         )}
@@ -105,15 +70,37 @@ class Sidepanel extends React.Component {
   }
 }
 
-export default connect(
-  (state, { currOrg }) => {
-    const orgId = get(currOrg, 'sys.id', null);
-    return {
-      teamsFeatureEnabled: hasOrgTeamFeature(state, { orgId }),
-      orgConstants: getOrgConstants(state, { orgId })
-    };
-  },
-  dispatch => ({
-    fetchOrgConstants: orgId => dispatch(fetchOrgConstants(orgId))
-  })
-)(Sidepanel);
+class OrgSettingsForMembers extends React.Component {
+  static propTypes = {
+    gotoOrgSettings: PropTypes.func,
+    viewingOrgSettings: PropTypes.any,
+    currOrg: PropTypes.object
+  };
+
+  state = { isLoading: true };
+
+  async componentDidMount() {
+    this.setState({
+      isLoading: false,
+      shouldSeeTeams: await TeamsFeature.isEnabled(this.props.currOrg)
+    });
+  }
+
+  render() {
+    if (this.state.isLoading) {
+      return <Spinner size="small" style={{ margin: '10px 20px' }} />;
+    }
+
+    if (this.state.shouldSeeTeams) {
+      return (
+        <OrgActions
+          gotoOrgSettings={this.props.gotoOrgSettings}
+          viewingOrgSettings={this.props.viewingOrgSettings}
+          showOrgSettingsAsTeams={true}
+        />
+      );
+    }
+
+    return null;
+  }
+}

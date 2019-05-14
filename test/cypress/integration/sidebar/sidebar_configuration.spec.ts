@@ -36,7 +36,7 @@ describe('Sidebar configuration', () => {
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`
     );
 
-    cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
+    cy.wait([`@${state.Token.VALID}`]);
   });
 
   const widgetNames = [

@@ -159,14 +159,6 @@ export function postStreamToken(): RequestOptions {
   };
 }
 
-export function getPlans(orgId: string = defaultOrgId): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/organizations/${orgId}/plans`,
-    headers: defaultHeader
-  };
-}
-
 export function getPreviewEnvironments(
   spaceId: string = defaultSpaceId,
   query?: Query
