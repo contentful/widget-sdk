@@ -1,7 +1,8 @@
 import { registerController } from 'NgRegistry.es6';
 import { onValueScope } from 'utils/kefir.es6';
-import { pick, isObject } from 'lodash';
+import { get, pick, isObject } from 'lodash';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed.es6';
+import isEnterprise from 'data/OrganizationStatus.es6';
 import * as logger from 'services/logger.es6';
 import * as Intercom from 'services/intercom.es6';
 import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
@@ -79,6 +80,8 @@ export default function register() {
         spaceAndTokenWatchHandler
       );
 
+      $scope.$watch('spaceContext.space.data.organization', handleIntercom);
+
       onValueScope($scope, TokenStore.user$, handleUser);
 
       $scope.showCreateSpaceDialog = CreateSpace.showDialog;
@@ -134,6 +137,8 @@ export default function register() {
         refreshNavState();
       }
 
+      let isIntercomDisabledBecauseOfAnalytics = false;
+
       function handleUser(user) {
         if (!isObject(user)) {
           return;
@@ -144,13 +149,31 @@ export default function register() {
         if (isAnalyticsAllowed(user)) {
           logger.enable(user);
           Analytics.enable(user);
+          isIntercomDisabledBecauseOfAnalytics = false;
         } else {
           logger.disable();
           Analytics.disable();
           // Intercom is enabled by default, but because it is loaded by Segment,
           // it will only be available when Analytics/Segment is.
           Intercom.disable();
+          isIntercomDisabledBecauseOfAnalytics = true;
         }
+      }
+
+      function handleIntercom(organization, prevOrganization) {
+        if (
+          get(organization, 'sys.id') === get(prevOrganization, 'sys.id') ||
+          isIntercomDisabledBecauseOfAnalytics
+        ) {
+          return; // No change or suboptimal analytics dependency handled in handleUser()
+        }
+        isEnterprise(organization).then(status => {
+          if (status.isPaid) {
+            Intercom.enable();
+          } else {
+            Intercom.disable();
+          }
+        });
       }
     }
   ]);
