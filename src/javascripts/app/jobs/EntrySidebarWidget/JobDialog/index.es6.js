@@ -23,7 +23,7 @@ const createTimezoneOptions = () => {
   });
 };
 
-class ScheduleDialog extends React.Component {
+class JobDialog extends React.Component {
   static propTypes = {
     onCreate: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired
@@ -36,7 +36,7 @@ class ScheduleDialog extends React.Component {
     timeZoneVisible: false
   };
 
-  getScheduleDate = () => {
+  getScheduledAtDate = () => {
     return moment(`${this.state.date} ${this.state.time}`, 'YYYY-MM-DD HH:mm A')
       .utcOffset(this.state.utcOffset)
       .toDate();
@@ -116,7 +116,7 @@ class ScheduleDialog extends React.Component {
                 onClick={() => {
                   onCreate({
                     actionType: 'publish',
-                    scheduledAt: this.getScheduleDate()
+                    scheduledAt: this.getScheduledAtDate()
                   });
                 }}>
                 Schedule
@@ -132,4 +132,4 @@ class ScheduleDialog extends React.Component {
   }
 }
 
-export default ScheduleDialog;
+export default JobDialog;

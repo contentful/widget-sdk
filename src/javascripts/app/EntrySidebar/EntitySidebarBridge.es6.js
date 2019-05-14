@@ -110,7 +110,7 @@ export default ({ $scope, emitter }) => {
 
   const initializeScheduleWidget = once(() => {
     const notifyUpdate = update => {
-      emitter.emit(SidebarEventTypes.UPDATED_SCHEDULE_WIDGET, {
+      emitter.emit(SidebarEventTypes.UPDATED_JOBS_WIDGET, {
         ...update,
         entityInfo: $scope.entityInfo,
         spaceId: spaceContext.space.getId(),
@@ -228,7 +228,7 @@ export default ({ $scope, emitter }) => {
       case SidebarWidgetTypes.PUBLICATION:
         initializePublication();
         break;
-      case SidebarWidgetTypes.SCHEDULE:
+      case SidebarWidgetTypes.JOBS:
         initializeScheduleWidget();
         break;
       case SidebarWidgetTypes.TASKS:

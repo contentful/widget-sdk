@@ -67,9 +67,9 @@ export default function WrappedSidebarWidgetItem(props) {
         <SidebarWidgetItem {...props} />
       </BooleanFeatureFlag>
     );
-  } else if (props.id === SidebarWidgetTypes.SCHEDULE) {
+  } else if (props.id === SidebarWidgetTypes.JOBS) {
     return (
-      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.SCHEDULE}>
+      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
         <SidebarWidgetItem {...props} />
       </BooleanFeatureFlag>
     );

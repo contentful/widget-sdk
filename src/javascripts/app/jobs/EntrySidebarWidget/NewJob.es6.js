@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Button } from '@contentful/forma-36-react-components';
-import ScheduleDialog from './ScheduleDialog/index.es6';
+import JobDialog from './JobDialog/index.es6';
 
-export default class NewSchedule extends React.Component {
+export default class NewJob extends React.Component {
   static propTypes = {
     onCreate: PropTypes.func.isRequired
   };
@@ -27,12 +27,12 @@ export default class NewSchedule extends React.Component {
           Schedule Publication
         </Button>
         {this.state.isDialogShown && (
-          <ScheduleDialog
-            onCreate={newSchedule => {
+          <JobDialog
+            onCreate={newJob => {
               this.setState({
                 isDialogShown: false
               });
-              this.props.onCreate(newSchedule);
+              this.props.onCreate(newJob);
             }}
             onCancel={() => {
               this.setState({

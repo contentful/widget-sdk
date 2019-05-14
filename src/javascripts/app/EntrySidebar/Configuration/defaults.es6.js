@@ -8,8 +8,8 @@ export const Publication = {
   description: 'Built-in - View entry status, publish, etc.'
 };
 
-export const Schedule = {
-  widgetId: SidebarWidgetTypes.SCHEDULE,
+export const Jobs = {
+  widgetId: SidebarWidgetTypes.JOBS,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
   name: 'Scheduled Publishing & Status',
   description: 'Built-in - View entry status, schedule publish, etc.'
@@ -67,7 +67,7 @@ export const EntryActivity = {
 
 export const defaultWidgetsMap = {
   [Publication.widgetId]: Publication,
-  [Schedule.widgetId]: Schedule,
+  [Jobs.widgetId]: Jobs,
   [Tasks.widgetId]: Tasks,
   [ContentPreview.widgetId]: ContentPreview,
   [Links.widgetId]: Links,
@@ -79,7 +79,7 @@ export const defaultWidgetsMap = {
 
 export const EntryConfiguration = [
   Publication,
-  Schedule,
+  Jobs,
   Tasks,
   ContentPreview,
   Links,

@@ -21,7 +21,7 @@ const tagTypeForStatus = {
   cancelled: 'muted'
 };
 
-const Schedule = ({ scheduledAt, actionType, status }) => (
+const Job = ({ scheduledAt, actionType, status }) => (
   <li className={styles.schedule}>
     <span className={styles.scheduledTo}>Scheduled to</span>
     <span className={styles.info}>
@@ -36,11 +36,11 @@ const Schedule = ({ scheduledAt, actionType, status }) => (
   </li>
 );
 
-export const schedulePropTypes = {
+export const propTypes = {
   scheduledAt: PropTypes.instanceOf(Date),
   actionType: PropTypes.string.isRequired,
   status: PropTypes.oneOf(['pending', 'cancelled', 'success', 'error'])
 };
-Schedule.propTypes = schedulePropTypes;
+Job.propTypes = propTypes;
 
-export default Schedule;
+export default Job;

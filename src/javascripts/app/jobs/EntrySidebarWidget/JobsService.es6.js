@@ -2,18 +2,18 @@ const ALPHA_HEADER = {
   'x-contentful-enable-alpha-feature': 'scheduled-actions'
 };
 
-export function createSchedule(endpoint, entryId, scheduleDto) {
+export function createJob(endpoint, entryId, jobDto) {
   return endpoint(
     {
       method: 'POST',
-      data: scheduleDto,
+      data: jobDto,
       path: ['entries', entryId, 'schedules']
     },
     ALPHA_HEADER
   );
 }
 
-export function getSchedulesWithEntryId(endpoint, entryId) {
+export function getJobsWithEntryId(endpoint, entryId) {
   return endpoint(
     {
       method: 'GET',
