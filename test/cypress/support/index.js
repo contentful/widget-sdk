@@ -39,10 +39,7 @@ before(() => {
       'content_types',
       'locales',
       'microbackend',
-      'preview_environments',
-      'product_catalog_features',
       'token',
-      'ui_config',
       'users'
     ],
     cors: true,

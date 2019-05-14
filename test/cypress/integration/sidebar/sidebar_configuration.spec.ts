@@ -36,7 +36,7 @@ describe('Sidebar configuration', () => {
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`
     );
 
-    cy.wait([`@${state.Token.VALID}`]);
+    cy.wait([`@${state.Token.VALID}`, `@${state.ContentTypes.EDITORINTERFACE_WITH_NO_SIDEBAR}`]);
   });
 
   const widgetNames = [

@@ -30,6 +30,14 @@ const previewResponseBody = {
 
 describe('Content Preview Page', () => {
   before(() => {
+    cy.startFakeServer({
+      consumer: 'user_interface',
+      provider: 'preview_environments',
+      cors: true,
+      pactfileWriteMode: 'merge',
+      spec: 3
+    });
+
     cy.setAuthTokenToLocalStorage();
 
     cy.resetAllFakeServers();

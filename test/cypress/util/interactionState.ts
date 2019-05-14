@@ -14,11 +14,6 @@ export enum SpaceProductCatalogFeatures {
   SEVERAL = 'space_product_catalog_features/several'
 }
 
-export enum UIConfig {
-  NONE = 'ui_config/none',
-  USER = 'ui_config/me/user'
-}
-
 export enum PreviewEnvironments {
   NONE = 'preview_environments/none'
 }

@@ -8,9 +8,12 @@ const baseUrl = Cypress.config().baseUrl;
 
 describe('Apps Page', () => {
   before(() =>
-    cy.startFakeServer({
+    cy.startFakeServers({
       consumer: 'user_interface',
-      provider: 'apps',
+      providers: [
+        'apps',
+        'product_catalog_features'
+      ],
       cors: true,
       pactfileWriteMode: 'merge',
       spec: 3
