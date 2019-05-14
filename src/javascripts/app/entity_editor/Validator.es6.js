@@ -17,9 +17,7 @@ import { isEmpty, assign, get as getAtPath, isEqual } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as Path from 'utils/Path.es6';
 import * as Schema from '@contentful/validation';
-import { getModule } from 'NgRegistry.es6';
-
-const errorMessageBuilder = getModule('errorMessageBuilder');
+import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilder.es6';
 
 /**
  * @ngdoc method

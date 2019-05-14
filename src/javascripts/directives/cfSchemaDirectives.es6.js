@@ -1,5 +1,6 @@
 import { registerDirective, registerFactory } from 'NgRegistry.es6';
 import validation from '@contentful/validation';
+import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilder.es6';
 
 export default function register() {
   /**
@@ -11,9 +12,8 @@ export default function register() {
    * @property {SchemaController} $scope.schema
    */
   registerDirective('cfContentTypeSchema', [
-    'errorMessageBuilder',
     'SchemaController',
-    (errorMessageBuilder, SchemaController) => ({
+    SchemaController => ({
       restrict: 'A',
       scope: true,
       controller: [

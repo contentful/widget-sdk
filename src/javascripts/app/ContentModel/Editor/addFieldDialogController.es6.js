@@ -4,6 +4,7 @@ import * as random from 'utils/Random.es6';
 import * as stringUtils from 'utils/StringUtils.es6';
 import * as fieldFactory from 'services/fieldFactory.es6';
 import fieldDecorator from 'components/field_dialog/fieldDecorator.es6';
+import fieldErrorMessageBuilder from 'services/errorMessageBuilder/fieldErrorMessageBuilder.es6';
 
 export default function register() {
   /**
@@ -22,8 +23,7 @@ export default function register() {
     '$scope',
     '$controller',
     '$q',
-    'fieldErrorMessageBuilder',
-    function AddFieldDialogController($scope, $controller, $q, buildMessage) {
+    function AddFieldDialogController($scope, $controller, $q) {
       $scope.viewState = $controller('ViewStateController', {
         $scope: $scope,
         defaultState: 'fieldSelection'
@@ -39,7 +39,7 @@ export default function register() {
         errors: function(field) {
           return fieldDecorator.validateInContentType(field, $scope.contentType.data);
         },
-        buildMessage: buildMessage
+        buildMessage: fieldErrorMessageBuilder
       };
 
       // Initial dialog state

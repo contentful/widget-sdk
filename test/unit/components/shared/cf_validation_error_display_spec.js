@@ -12,7 +12,8 @@ describe('ErrorPathController', () => {
   beforeEach(function() {
     const $rootScope = this.$inject('$rootScope');
     const $controller = this.$inject('$controller');
-    const errorMessageBuilder = this.$inject('errorMessageBuilder');
+    const errorMessageBuilder = this.$inject('services/errorMessageBuilder/errorMessageBuilder.es6')
+      .default;
 
     scope = $rootScope.$new();
 
