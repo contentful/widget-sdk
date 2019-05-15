@@ -1,4 +1,5 @@
 import { assign, get } from 'lodash';
+import _ from 'lodash';
 
 export const resourceHumanNameMap = {
   api_key: 'API Keys',
@@ -154,7 +155,7 @@ function convertToPascalCase(value) {
   return value
     .match(/[a-z]+/gi)
     .map(function(word) {
-      return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
+      return _.upperFirst(word);
     })
     .join('');
 }
