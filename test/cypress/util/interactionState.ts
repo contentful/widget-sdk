@@ -7,7 +7,8 @@ export enum Token {
 }
 
 export enum Resources {
-  NONE = 'resources/none'
+  NONE = 'resources/none',
+  DEFAULT = 'resources'
 }
 
 export enum OrgProductCatalogFeatures {

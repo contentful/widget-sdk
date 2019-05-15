@@ -1,0 +1,160 @@
+{
+  "total": 17,
+  "sys": {
+    "type": "Array"
+  },
+  "items": [
+    {
+      "name": "Space",
+      "usage": 0,
+      "limits": {
+        "included": null,
+        "maximum": null
+      },
+      "parent": null,
+      "kind": "permanent",
+      "sys": {
+        "type": "SpaceResource",
+        "id": "space"
+      }
+    },
+    {
+      "name": "Space membership",
+      "usage": 0,
+      "limits": {
+        "included": null,
+        "maximum": null
+      },
+      "parent": null,
+      "kind": "permanent",
+      "sys": {
+        "type": "SpaceResource",
+        "id": "space_membership"
+      }
+    },
+    {
+      "name": "Content type",
+      "usage": 0,
+      "limits": {
+        "included": 70,
+        "maximum": 70
+      },
+      "parent": null,
+      "kind": "permanent",
+      "sys": {
+        "type": "SpaceResource",
+        "id": "content_type"
+      }
+    },
+    {
+      "name": "Record",
+      "usage": 0,
+      "limits": {
+        "included": 60,
+        "maximum": 60000
+      },
+      "parent": null,
+      "kind": "permanent",
+      "sys": {
+        "type": "SpaceResource",
+        "id": "record"
+      }
+    },
+    {
+      "name": "Entry",
+      "usage": 0,
+      "limits": {
+        "included": 60,
+        "maximum": 60
+      },
+      "parent": {
+        "name": "Record",
+        "usage": 0,
+        "limits": {
+          "included": 60,
+          "maximum": 60000
+        },
+        "parent": null,
+        "kind": "permanent",
+        "sys": {
+          "type": "SpaceResource",
+          "id": "record"
+        }
+      },
+      "kind": "permanent",
+      "sys": {
+        "type": "SpaceResource",
+        "id": "entry"
+      }
+    },
+    {
+      "name": "Asset",
+      "usage": 0,
+      "limits": {
+        "included": 60,
+        "maximum": 60
+      },
+      "parent": {
+        "name": "Record",
+        "usage": 0,
+        "limits": {
+          "included": 60,
+          "maximum": 60
+        },
+        "parent": null,
+        "kind": "permanent",
+        "sys": {
+          "type": "SpaceResource",
+          "id": "record"
+        }
+      },
+      "kind": "permanent",
+      "sys": {
+        "type": "SpaceResource",
+        "id": "asset"
+      }
+    },
+    {
+      "name": "Organization membership",
+      "usage": 0,
+      "limits": {
+        "included": null,
+        "maximum": null
+      },
+      "parent": null,
+      "kind": "permanent",
+      "sys": {
+        "type": "SpaceResource",
+        "id": "organization_membership"
+      }
+    },
+    {
+      "name": "Role",
+      "usage": 0,
+      "limits": {
+        "included": 7,
+        "maximum": 7
+      },
+      "parent": null,
+      "kind": "permanent",
+      "sys": {
+        "type": "SpaceResource",
+        "id": "role"
+      }
+    },
+    {
+      "name": "Locale",
+      "usage": 0,
+      "limits": {
+        "included": 6,
+        "maximum": 6
+      },
+      "parent": null,
+      "kind": "permanent",
+      "sys": {
+        "type": "SpaceResource",
+        "id": "locale"
+      }
+    }
+  ]
+}
