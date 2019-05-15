@@ -28,25 +28,6 @@ module.exports = function findAngular({ ast }) {
             usages.push(usage);
           }
         }
-      } else if (
-        path.node.type === 'Identifier' &&
-        path.parentPath.node.type === 'MemberExpression'
-      ) {
-        const name = path.node.name;
-        if (
-          name === 'directive' ||
-          name === 'service' ||
-          name === 'factory' ||
-          name === 'controller' ||
-          name === 'config' ||
-          name === 'constant' ||
-          name === 'value'
-        ) {
-          if (path.parentPath.get('object').node.type === 'CallExpression') {
-            const usage = `angular.${name}`;
-            usages.push(usage);
-          }
-        }
       }
     }
   });

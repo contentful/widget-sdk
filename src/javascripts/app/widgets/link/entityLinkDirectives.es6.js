@@ -1,4 +1,4 @@
-import { registerValue, registerDirective, registerController } from 'NgRegistry.es6';
+import { registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { caseofEq } from 'sum-types';
 import tokens from '@contentful/forma-36-tokens';
@@ -10,58 +10,50 @@ import * as EntityState from 'data/CMA/EntityState.es6';
 
 export default function register() {
   /**
-   * @ngdoc service
-   * @module cf.app
-   * @name createEntityLinkDirective
-   * @description
    * Creates a definition object for an entity link directive.
    * Entity link directives share both controller and an isolated
    * scope configuration, but differ in a template.
    */
-  registerValue('createEntityLinkDirective', template => ({
-    restrict: 'E',
-    scope: {
-      // entity to be rendered:
-      entity: '<',
-      // instance of entity helpers bound to a specific locale
-      // TODO instead of passing the helpers object the 'entity' should
-      // be a special purpose object with all the properties requested
-      // from the helper. This object should be build by the user of
-      // this directive.
-      entityHelpers: '<',
-      // collection of action functions
-      // supported actions are:
-      // - `remove()` If this function is defined, the directive adds
-      //   a button with a cross icon that calls this function
-      // - `edit()` If this function is defined, the directive adds
-      //   a button with a pen icon that calls this function. Also
-      //   clicking on any part of the entity link will call this
-      //   function.
-      actions: '<?',
-      contentType: '<?',
-      // object of visual configuration options
-      // valid options are
-      // - draggable
-      // - largeImage: If true, show a 270px preview of an image asset
-      // - showDetails:  Show description and thumbnail for entries
-      // - disableTooltip
-      // - link: Provide a link to entity editor. This has no effect if
-      //   the 'edit' action is specified.
-      config: '<'
-    },
-    controller: 'EntityLinkController',
-    template: template
-  }));
+  function createEntityLinkDirective(template) {
+    return {
+      restrict: 'E',
+      scope: {
+        // entity to be rendered:
+        entity: '<',
+        // instance of entity helpers bound to a specific locale
+        // TODO instead of passing the helpers object the 'entity' should
+        // be a special purpose object with all the properties requested
+        // from the helper. This object should be build by the user of
+        // this directive.
+        entityHelpers: '<',
+        // collection of action functions
+        // supported actions are:
+        // - `remove()` If this function is defined, the directive adds
+        //   a button with a cross icon that calls this function
+        // - `edit()` If this function is defined, the directive adds
+        //   a button with a pen icon that calls this function. Also
+        //   clicking on any part of the entity link will call this
+        //   function.
+        actions: '<?',
+        contentType: '<?',
+        // object of visual configuration options
+        // valid options are
+        // - draggable
+        // - largeImage: If true, show a 270px preview of an image asset
+        // - showDetails:  Show description and thumbnail for entries
+        // - disableTooltip
+        // - link: Provide a link to entity editor. This has no effect if
+        //   the 'edit' action is specified.
+        config: '<'
+      },
+      controller: 'EntityLinkController',
+      template: template
+    };
+  }
 
-  registerDirective('cfAssetCard', [
-    'createEntityLinkDirective',
-    create => create(assetCardTemplateDef())
-  ]);
+  registerDirective('cfAssetCard', [() => createEntityLinkDirective(assetCardTemplateDef())]);
 
-  registerDirective('cfEntityLink', [
-    'createEntityLinkDirective',
-    create => create(entityLinkTemplateDef())
-  ]);
+  registerDirective('cfEntityLink', [() => createEntityLinkDirective(entityLinkTemplateDef())]);
 
   registerDirective('cfUserLink', () => ({
     restrict: 'E',
