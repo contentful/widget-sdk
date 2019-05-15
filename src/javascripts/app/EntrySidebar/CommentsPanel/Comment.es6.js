@@ -62,7 +62,6 @@ export default function Comment({ comment, onRemoved, className, hasReplies }) {
     sys: { createdBy, createdAt }
   } = comment;
   const creationDate = moment(createdAt, moment.ISO_8601);
-
   const handleRemove = async () => {
     const {
       sys: { space, reference: entry, id: commentId }
@@ -77,23 +76,26 @@ export default function Comment({ comment, onRemoved, className, hasReplies }) {
   };
 
   return (
-    <div className={cx([styles.comment, className])}>
+    <div className={cx([styles.comment, className])} data-test-id="comment">
       <header className={styles.header}>
-        <img className={styles.avatar} src={createdBy.avatarUrl} />
+        <img className={styles.avatar} src={createdBy.avatarUrl} data-test-id="comment.avatar" />
         <div className={styles.meta}>
-          <Heading element="h4" className={styles.userName}>
+          <Heading element="h4" className={styles.userName} data-test-id="comment.user">
             {renderUserName(createdBy)}
           </Heading>
           <time
             dateTime={creationDate.toISOString()}
             title={creationDate.format('LLLL')}
-            className={styles.timestamp}>
+            className={styles.timestamp}
+            data-test-id="comment.timestamp">
             {creationDate.fromNow()}
           </time>
         </div>
         <CommentActions comment={comment} onRemove={handleRemove} hasReplies={hasReplies} />
       </header>
-      <div className={styles.commentBody}>{comment.body}</div>
+      <div className={styles.commentBody} data-test-id="comment.body">
+        {comment.body}
+      </div>
     </div>
   );
 }
@@ -124,9 +126,11 @@ function CommentActions({ comment, onRemove, hasReplies }) {
 
   return (
     <>
-      <CardActions onClick={e => e.stopPropagation()}>
+      <CardActions onClick={e => e.stopPropagation()} data-test-id="comment.menu">
         <DropdownList>
-          <DropdownListItem onClick={() => setShowRemovalDialog(true)}>Remove</DropdownListItem>
+          <DropdownListItem onClick={() => setShowRemovalDialog(true)} testId="comment.menu.remove">
+            Remove
+          </DropdownListItem>
         </DropdownList>
       </CardActions>
       <RemovalConfirmationDialog
@@ -136,6 +140,7 @@ function CommentActions({ comment, onRemove, hasReplies }) {
           onRemove();
         }}
         onCancel={() => setShowRemovalDialog(false)}
+        data-test-id="comment.removal-confirmation"
       />
     </>
   );
