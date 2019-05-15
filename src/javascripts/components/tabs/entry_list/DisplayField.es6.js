@@ -171,28 +171,32 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
             'linked-entries': isEntryArray(entry, field),
             'linked-assets': isAssetArray(entry, field)
           })}>
-          {dataForArray(entry, field, entryCache, assetCache).map((entity, index) => {
-            if (isEntryArray(entry, field)) {
-              return (
-                <li key={index}>
-                  <span>{entity}</span>
-                </li>
-              );
-            } else if (isAssetArray(entry, field)) {
-              return (
-                <li key={index}>
-                  <div className="file-preview">
-                    <AngularComponent
-                      template={'<cf-thumbnail file="file" size="30" fit="thumb" focus="faces" />'}
-                      scope={{ file: entity }}
-                    />
-                  </div>
-                </li>
-              );
-            } else {
-              return <li key={index}>{dataForField(entry, field)}</li>;
-            }
-          })}
+          {!isEntryArray(entry, field) && !isAssetArray(entry, field) ? (
+            <li>{JSON.stringify(dataForField(entry, field))}</li>
+          ) : (
+            dataForArray(entry, field, entryCache, assetCache).map((entity, index) => {
+              if (isEntryArray(entry, field)) {
+                return (
+                  <li key={index}>
+                    <span>{entity}</span>
+                  </li>
+                );
+              } else if (isAssetArray(entry, field)) {
+                return (
+                  <li key={index}>
+                    <div className="file-preview">
+                      <AngularComponent
+                        template={
+                          '<cf-thumbnail file="file" size="30" fit="thumb" focus="faces" />'
+                        }
+                        scope={{ file: entity }}
+                      />
+                    </div>
+                  </li>
+                );
+              }
+            })
+          )}
         </ul>
       );
       break;
