@@ -100,16 +100,18 @@ const isAssetArray = (entity, field) => {
 const dataForArray = (entry, field, entryCache, assetCache) => {
   const items = dataForField(entry, field);
   if (hasItemsOfType(items, 'Entry')) {
-    return _.map(filterVisibleItems(items, entryCache, assetCache), entry =>
-      dataForEntry(entry, entryCache)
+    return filterVisibleItems(items, entryCache, assetCache).map(entryLink =>
+      dataForEntry(entryLink, entryCache)
     );
   }
 
   if (hasItemsOfType(items, 'Asset')) {
-    return _.map(filterVisibleItems(items, entryCache, assetCache), entry =>
-      dataForAsset(entry, assetCache)
+    return filterVisibleItems(items, entryCache, assetCache).map(assetLink =>
+      dataForAsset(assetLink, assetCache)
     );
   }
+
+  return [];
 };
 
 const toString = (entry, field) => {
