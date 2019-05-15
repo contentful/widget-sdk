@@ -45,10 +45,11 @@ export default class Pagination extends React.Component {
     const { isFirstPage, isLastPage } = this.state;
 
     return (
-      <div className="pagination">
+      <div className="pagination" data-test-id="pagination">
         <nav className="pagination__nav">
           <p className="pagination__text">View</p>
           <Select
+            data-test-id="pagination.limit"
             value={`${limit}`} // TODO: this component should not require string as a value
             onChange={this.handleLimitChange}
             width="small"
@@ -61,10 +62,11 @@ export default class Pagination extends React.Component {
         </nav>
 
         <nav className="pagination__nav">
-          <p className="pagination__text">
+          <p className="pagination__text" data-test-id="pagination.description">
             Showing {`${Math.min(skip + 1, total)} - ${Math.min(skip + limit, total)}`} of {total}
           </p>{' '}
           <Button
+            testId="pagination.previous"
             disabled={isFirstPage || loading}
             onClick={this.handlePreviousClick}
             buttonType="muted"
@@ -72,6 +74,7 @@ export default class Pagination extends React.Component {
             Previous
           </Button>{' '}
           <Button
+            testId="pagination.next"
             disabled={isLastPage || loading}
             onClick={this.handleNextClick}
             buttonType="muted"
