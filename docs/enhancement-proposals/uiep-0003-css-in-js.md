@@ -1,9 +1,12 @@
----
-id: UIEP-0003
-title: CSS-in-JS using emotion
-champions: ['Mudit Ameta (@zeusdeux)', 'Alex Suevalov (@suevalov)']
-endDate: March 4th, 2019
----
+> id: UIEP-0003
+>
+> title: CSS-in-JS using emotion
+>
+> champion(s): Mudit Ameta (@zeusdeux), Alex Suevalov (@suevalov)
+>
+> end date: March 4th, 2019
+>
+> status: Approved
 
 # [UIEP-0003] CSS-in-JS using [emotion](https://emotion.sh)
 

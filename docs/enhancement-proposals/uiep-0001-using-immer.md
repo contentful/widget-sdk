@@ -1,9 +1,12 @@
----
-id: UIEP-0001
-title: Using immer
-champions: ['Alex Suevalov (@suevalov)']
-endDate: February 21th, 2019
----
+> id: UIEP-0001
+>
+> title: Using immer
+>
+> champion(s): Alex Suevalov (@suevalov)
+>
+> end date: February 21th, 2019
+>
+> status: Approved
 
 # [UIEP-0001] Using `immer`
 
