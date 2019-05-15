@@ -1,12 +1,5 @@
-import { runTask } from 'utils/Concurrent.es6';
 import { get, reduce } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-
-export function resolveReferences(params) {
-  return runTask(resolveReferences_, params);
-}
 /**
  * @description
  *
@@ -20,7 +13,7 @@ export function resolveReferences(params) {
  * @param {string} params.defaultLocale
  * @returns {Promise<string>} - url with resolved references (if any)
  */
-function* resolveReferences_({ url, entry, defaultLocale }) {
+export async function resolveReferences({ cma, url, entry, defaultLocale }) {
   // Pattern that denotes usage of incoming links
   const REFERENCES_PATTERN = /linkedBy/g;
   // Pattern to strip out the placeholders from the url
@@ -63,7 +56,7 @@ function* resolveReferences_({ url, entry, defaultLocale }) {
   for (let i = 0; i < numberOfIncomingLinksToResolve; i += 1) {
     let linkedByEntries = entriesWithFetchedIncomingLinks.find(id => id === currentEntry.sys.id);
     if (!linkedByEntries) {
-      linkedByEntries = yield spaceContext.cma.getEntries({
+      linkedByEntries = await cma.getEntries({
         // get the incoming links for the current entry
         links_to_entry: currentEntry.sys.id
       });

@@ -1,6 +1,7 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
+import { resolveReferences } from 'services/ContentPreviewHelper.es6';
 
 export default function register() {
   /**
@@ -16,15 +17,13 @@ export default function register() {
     'TheLocaleStore',
     'data/Entries',
     'TheStore/index.es6',
-    'services/ContentPreviewHelper.es6',
     (
       $q,
       $rootScope,
       spaceContext,
       TheLocaleStore,
       { internalToExternal: internalToExternalFieldIds },
-      { getStore },
-      { resolveReferences }
+      { getStore }
     ) => {
       const store = getStore();
 
@@ -424,6 +423,7 @@ export default function register() {
           });
 
         return resolveReferences({
+          cma: spaceContext.cma,
           url: processedUrl,
           entry: internalToExternalFieldIds(entry, contentType),
           defaultLocale: defaultLocale
