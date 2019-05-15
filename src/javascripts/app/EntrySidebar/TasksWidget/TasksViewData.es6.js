@@ -22,9 +22,15 @@ export function createTasksViewData(comments = []) {
   const tasks = comments.filter(comment => comment);
 
   return {
-    helpText: tasks.length === 0 ? 'No tasks were defined yet.' : undefined,
+    helpText:
+      tasks.length === 0
+        ? 'No tasks were defined yet.'
+        : `There are ${tasks.length} pending tasks.`,
     tasks: tasks.map(task => ({
-      key: task.sys.id
+      body: task.body,
+      key: task.sys.id,
+      assignedTo: task.sys.createdBy, // TODO: Replace with assigned to information
+      resolved: false // TODO: Replace with resolved flag
       // TODO: Add more stuff from comments into this view data object.
     }))
   };
