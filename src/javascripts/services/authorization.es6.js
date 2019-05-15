@@ -1,7 +1,6 @@
 import { registerFactory } from 'NgRegistry.es6';
 import worf from '@contentful/worf';
 import * as logger from 'services/logger.es6';
-import { newUsageChecker } from 'services/EnforcementsService.es6';
 
 export default function register() {
   registerFactory('authorization', [
@@ -12,13 +11,7 @@ export default function register() {
       Authorization.prototype = {
         authContext: null,
         spaceContext: null,
-        update: async function(
-          tokenLookup,
-          space,
-          enforcements,
-          environmentId,
-          allowNewUsageCheck
-        ) {
+        update: function(tokenLookup, space, enforcements, environmentId, newEnforcement) {
           this.authContext = null;
           this.spaceContext = null;
           this._tokenLookup = tokenLookup;
@@ -60,14 +53,7 @@ export default function register() {
 
           if (space && this.authContext.hasSpace(space.getId())) {
             this.spaceContext = this.authContext.space(space.getId());
-            this.spaceContext.newEnforcement = {};
-
-            if (await allowNewUsageCheck) {
-              this.spaceContext.newEnforcement = await newUsageChecker(
-                this.spaceContext.space.sys.id,
-                this.spaceContext.environment.sys.id
-              );
-            }
+            this.spaceContext.newEnforcement = newEnforcement;
           }
 
           accessChecker.setAuthContext({

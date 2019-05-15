@@ -108,19 +108,27 @@ export default function register() {
         ]);
       }
 
-      function spaceAndTokenWatchHandler({ tokenLookup, space, enforcements }) {
+      async function spaceAndTokenWatchHandler({ tokenLookup, space, enforcements }) {
         if (!tokenLookup) {
           return;
         }
 
-        const allowNewUsageCheck = getCurrentVariation(ENVIRONMENT_USAGE_ENFORCEMENT);
+        const allowNewUsageCheck = await getCurrentVariation(ENVIRONMENT_USAGE_ENFORCEMENT);
+        let newEnforcement = {};
+
+        if (allowNewUsageCheck) {
+          newEnforcement = await EnforcementsService.newUsageChecker(
+            spaceContext.getId(),
+            spaceContext.getEnvironmentId()
+          );
+        }
 
         authorization.update(
           tokenLookup,
           space,
           enforcements,
           spaceContext.getEnvironmentId(),
-          allowNewUsageCheck
+          newEnforcement
         );
 
         refreshNavState();

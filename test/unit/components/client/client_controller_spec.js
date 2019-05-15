@@ -10,6 +10,7 @@ describe('Client Controller', () => {
 
   beforeEach(function() {
     this.getEnforcements = sinon.stub();
+    this.newUsageChecker = sinon.stub();
     this.logger = {
       enable: sinon.stub(),
       disable: sinon.stub()
@@ -35,7 +36,13 @@ describe('Client Controller', () => {
         getCurrentVariation: this.getCurrentVariation
       });
       $provide.constant('authorization', this.authorizationStubs);
+
       $provide.value('services/EnforcementsService.es6', {
+        getEnforcements: this.getEnforcements,
+        newUsageChecker: this.newUsageChecker
+      });
+      $provide.constant('services/EnforcementsService.es6', {
+        newUsageChecker: this.newUsageChecker,
         getEnforcements: this.getEnforcements
       });
       $provide.constant('analytics/isAnalyticsAllowed.es6', {
@@ -95,11 +102,16 @@ describe('Client Controller', () => {
     beforeEach(function() {
       this.token = { sys: {} };
       this.enforcements = [];
+      this.newEnforcement = {};
+
       this.envId = 'ENV ID';
-      this.getCurrentVariation = this.getCurrentVariation.resolves(false);
+      this.spaceId = 'Space ID';
+      this.getCurrentVariation = this.getCurrentVariation.withArgs('flag').resolves(false);
+      this.newUsageChecker.withArgs(1, 2).resolves(this.newEnforcement);
 
       this.spaceContext = this.$inject('spaceContext');
       this.spaceContext.getEnvironmentId = () => this.envId;
+      this.spaceContext.getId = () => this.spaceId;
       this.spaceContext.space = null;
       this.tokenStore.getTokenLookup.returns(this.token);
       this.getEnforcements.returns(this.enforcements);
@@ -113,7 +125,7 @@ describe('Client Controller', () => {
         this.spaceContext.space,
         this.enforcements,
         this.envId,
-        this.getCurrentVariation()
+        this.newEnforcement
       );
     });
 
