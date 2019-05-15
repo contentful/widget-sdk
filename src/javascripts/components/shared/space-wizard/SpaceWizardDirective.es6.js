@@ -7,7 +7,8 @@ export default function register() {
     'redux/store.es6',
     'analytics/Analytics.es6',
     'redux/actions/spaceWizard/actionCreators.es6',
-    ($state, $rootScope, { default: ReduxStore }, Analytics, actionCreators) => {
+    'contentPreview',
+    ($state, $rootScope, { default: ReduxStore }, Analytics, actionCreators, contentPreview) => {
       const { reset: resetActionCreator } = actionCreators;
       return {
         link: function($scope) {
@@ -43,6 +44,7 @@ export default function register() {
             onTemplateCreated: function() {
               // Picked up by the learn page which then refreshes itself
               $rootScope.$broadcast('spaceTemplateCreated');
+              contentPreview.clearCache();
             },
             onDimensionsChange: function() {
               $scope.dialog.reposition();

@@ -27,6 +27,7 @@ export default function register() {
     'analytics/events/SpaceCreation.es6',
     'services/SpaceTemplateLoader.es6',
     'services/ResourceService.es6',
+    'contentPreview',
     function(
       $scope,
       $rootScope,
@@ -41,7 +42,8 @@ export default function register() {
       spaceTemplateCreator,
       spaceTemplateEvents,
       { getTemplatesList, getTemplate },
-      { default: createResourceService }
+      { default: createResourceService },
+      contentPreview
     ) {
       const controller = this;
       const DEFAULT_LOCALE = 'en-US';
@@ -294,6 +296,7 @@ export default function register() {
           .then(() => {
             // Picked up by the learn page which then refreshes itself
             $rootScope.$broadcast('spaceTemplateCreated');
+            contentPreview.clearCache();
           });
       }
 

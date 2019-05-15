@@ -12,17 +12,10 @@ export default function register() {
    */
   registerFactory('contentPreview', [
     '$q',
-    '$rootScope',
     'spaceContext',
     'TheLocaleStore',
     'data/Entries',
-    (
-      $q,
-      $rootScope,
-      spaceContext,
-      TheLocaleStore,
-      { internalToExternal: internalToExternalFieldIds }
-    ) => {
+    ($q, spaceContext, TheLocaleStore, { internalToExternal: internalToExternalFieldIds }) => {
       let cache;
 
       const store = getStore();
@@ -48,9 +41,6 @@ export default function register() {
       // the decision to have a limit comes from Product, and consists of having a better
       // control of overusage of our platform
       const MAX_PREVIEW_ENVIRONMENTS = 100;
-
-      // we need to download content previews again after finishing with space template creation
-      $rootScope.$on('spaceTemplateCreated', clearCache);
 
       return {
         getAll,
