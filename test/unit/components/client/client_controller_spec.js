@@ -137,12 +137,13 @@ describe('Client Controller', () => {
       sinon.assert.calledWith(this.authorizationStubs.update.secondCall, newToken);
     });
 
-    it('on spaceContext.space update', function() {
+    it('on spaceContext.space update', async function() {
       const space = {
         getId: () => 'SPACE ID'
       };
       this.spaceContext.space = space;
       this.$apply();
+      await new Promise(resolve => setTimeout(resolve, 0));
 
       sinon.assert.calledWith(
         this.authorizationStubs.update,
@@ -151,13 +152,14 @@ describe('Client Controller', () => {
       );
     });
 
-    it('on enforcements update', function() {
+    it('on enforcements update', async function() {
       this.$apply();
 
       const enforcements = [{ sys: { id: 'E_1' } }];
       this.getEnforcements.returns(enforcements);
 
       this.$apply();
+      await new Promise(resolve => setTimeout(resolve, 0));
 
       sinon.assert.calledWith(
         this.authorizationStubs.update,
