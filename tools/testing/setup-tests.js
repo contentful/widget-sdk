@@ -1,12 +1,19 @@
 const Enzyme = require('enzyme');
 const EnzymeAdapter = require('enzyme-adapter-react-16');
+const ReactTestingLibrary = require('react-testing-library');
 require('@babel/polyfill');
 // https://github.com/FormidableLabs/enzyme-matchers
-require('jest-enzyme');
+require('jest-dom/extend-expect');
 require('jest-extended');
 
 // Setup enzyme's react adapter
 Enzyme.configure({ adapter: new EnzymeAdapter() });
+
+// Configure React Testing Library to use `data-test-id`
+// instead of the default `data-testid`
+ReactTestingLibrary.configure({
+  testIdAttribute: 'data-test-id'
+});
 
 // We shouldn't allow failed prop types in tests
 const error = console.error;
