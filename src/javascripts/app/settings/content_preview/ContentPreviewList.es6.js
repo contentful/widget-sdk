@@ -2,31 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import StateLink from 'app/common/StateLink.es6';
 import Icon from 'ui/Components/Icon.es6';
-import CreatePreviewButton from './CreatePreviewButton.es6';
-
-const placeholderContentPreviews = [
-  {
-    sys: {
-      id: 'fake-1'
-    },
-    name: 'Main Website',
-    description: 'Content preview for the main website'
-  },
-  {
-    sys: {
-      id: 'fake-2'
-    },
-    name: 'Landing Page',
-    description: 'Content preview for the landing page'
-  },
-  {
-    sys: {
-      id: 'fake-3'
-    },
-    name: 'Event Page',
-    description: 'Content preview for the event page'
-  }
-];
+import { EmptyState, Button } from '@contentful/forma-36-react-components';
+import EmptyStateIllustration from 'svg/content-preview-empty-state.es6';
 
 const ContentPreviewItem = ({ preview }) => (
   <React.Fragment>
@@ -68,26 +45,29 @@ export default class ContentPreviewList extends Component {
 
   renderPlaceholderList() {
     return (
-      <React.Fragment>
-        {placeholderContentPreviews.map(preview => (
-          <div
-            className="entity-list__item content-preview-list__placeholder x--with-icon"
-            key={preview.sys.id}>
-            <ContentPreviewItem preview={preview} />
+      <EmptyState
+        headingProps={{ text: 'Set up content preview ' }}
+        customImageElement={
+          <div style={{ width: '280px' }}>
+            <EmptyStateIllustration />
           </div>
-        ))}
-        <div className="cfnext-advice-box content-preview-list__advice">
-          <div className="cfnext-advice-box__frame">
-            <h1 className="cfnext-advice-box__title">
-              Whoops, looks like you haven‘t set up a content preview
-            </h1>
-            <div className="cfnext-advice-box__sub-title" />
-            <div className="content-preview-list__advice-button-container">
-              <CreatePreviewButton />
-            </div>
-          </div>
-        </div>
-      </React.Fragment>
+        }
+        descriptionProps={{
+          text:
+            'To view your content in a live environment, set up content preview. Learn how to set up a custom content preview for this space in our guide.'
+        }}>
+        <StateLink to="^.new">
+          {({ onClick }) => (
+            <Button
+              icon="PlusCircle"
+              buttonType="primary"
+              onClick={onClick}
+              testId="add-content-preview-button">
+              Set up content preview
+            </Button>
+          )}
+        </StateLink>
+      </EmptyState>
     );
   }
 
