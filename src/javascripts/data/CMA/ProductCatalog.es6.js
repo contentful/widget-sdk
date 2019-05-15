@@ -1,7 +1,15 @@
 import DataLoader from 'dataloader';
-import { memoize, get } from 'lodash';
+import { memoize, get, uniq } from 'lodash';
 
 import { createOrganizationEndpoint, createSpaceEndpoint } from '../EndpointFactory.es6';
+
+// Features used commonly: we fetch them (using the same request)
+// together with the first feature directly requested from the API.
+// There is no prefetching! Just doing carpooling for HTTP.
+// Please remember these are sent as query string parameters, so
+// we may hit the URL length limit some day.
+const COMMON_FOR_SPACE = ['basic_apps'];
+const COMMON_FOR_ORG = ['custom_sidebar', 'teams', 'self_configure_sso'];
 
 // This module exposes two methods for getting feature statuses
 // from the Product Catalog API:
@@ -54,9 +62,11 @@ const getLoaderForSpace = memoize(spaceId => {
   return getLoaderForEndpoint(createSpaceEndpoint(spaceId));
 });
 
-const load = async (loader, featureId, defaultValue = false) => {
+const load = async (loader, featureId, defaultValue = false, common = []) => {
+  const featureIds = uniq([featureId, ...common]);
+
   try {
-    const enabled = await loader.load(featureId);
+    const [enabled] = await Promise.all(featureIds.map(id => loader.load(id)));
     return typeof enabled === 'boolean' ? enabled : defaultValue;
   } catch (err) {
     return defaultValue;
@@ -64,9 +74,9 @@ const load = async (loader, featureId, defaultValue = false) => {
 };
 
 export const getOrgFeature = (orgId, featureId, defaultValue) => {
-  return load(getLoaderForOrg(orgId), featureId, defaultValue);
+  return load(getLoaderForOrg(orgId), featureId, defaultValue, COMMON_FOR_ORG);
 };
 
 export const getSpaceFeature = (spaceId, featureId, defaultValue) => {
-  return load(getLoaderForSpace(spaceId), featureId, defaultValue);
+  return load(getLoaderForSpace(spaceId), featureId, defaultValue, COMMON_FOR_SPACE);
 };

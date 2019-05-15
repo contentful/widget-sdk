@@ -8,9 +8,12 @@ const baseUrl = Cypress.config().baseUrl;
 
 describe('Apps Page', () => {
   before(() =>
-    cy.startFakeServer({
+    cy.startFakeServers({
       consumer: 'user_interface',
-      provider: 'apps',
+      providers: [
+        'apps',
+        'product_catalog_features'
+      ],
       cors: true,
       pactfileWriteMode: 'merge',
       spec: 3
@@ -26,7 +29,7 @@ describe('Apps Page', () => {
 
     cy.visit(`/spaces/${defaultSpaceId}/apps`);
 
-    cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
+    cy.wait([`@${state.Token.VALID}`, `@${state.Apps.NONE_INSTALLED}`]);
   }
 
   // TODO: Does the alpha feature flag changes the communication with the server side?

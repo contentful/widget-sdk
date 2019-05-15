@@ -1,6 +1,5 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
-import * as K from 'utils/kefir.es6';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 
 export default function register() {
@@ -51,27 +50,6 @@ export default function register() {
       // control of overusage of our platform
       const MAX_PREVIEW_ENVIRONMENTS = 100;
 
-      // build a bus that emits content previews object keyed by content preview id
-      // every 2.5 seconds. This is ok for now since we cache content previews and hence
-      // polling doesn't really cause unnecessary api calls.
-      // Duplicates are skipped.
-
-      const contentPreviewsBus$ = K.withInterval(2500, emitter => {
-        const emitValue = emitter.value.bind(emitter);
-
-        try {
-          getAll().then(emitValue); // swallow errors, same reason as below
-        } catch (_e) {
-          // swallow as emitting an error actually
-          // causes all streams that are built on
-          // this one to stop emitting.
-          // Also, it is ok if this errors as we
-          // retry every 2500ms anyway.
-        }
-      })
-        .skipDuplicates(_.isEqual)
-        .toProperty(() => {});
-
       // we need to download content previews again after finishing with space template creation
       $rootScope.$on('spaceTemplateCreated', () => {
         previewEnvironmentsCache.clearAll();
@@ -92,8 +70,7 @@ export default function register() {
         urlFormatIsValid: urlFormatIsValid,
         getSelected: getSelected,
         setSelected: setSelected,
-        contentPreviewsBus$: contentPreviewsBus$,
-        MAX_PREVIEW_ENVIRONMENTS: MAX_PREVIEW_ENVIRONMENTS
+        MAX_PREVIEW_ENVIRONMENTS
       };
 
       /**

@@ -1,7 +1,6 @@
 import moment from 'moment';
 import { isEqual, find, get } from 'lodash';
 import { organizations$, user$, spacesByOrganization$ } from 'services/TokenStore.es6';
-import getOrganizationStatus from 'data/OrganizationStatus.es6';
 
 import { combine, onValue, getValue, createPropertyBus } from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -9,25 +8,16 @@ import { getModule } from 'NgRegistry.es6';
 const $rootScope = getModule('$rootScope');
 const $stateParams = getModule('$stateParams');
 const spaceContext = getModule('spaceContext');
-const { contentPreviewsBus$ } = getModule('contentPreview');
 
 /**
  * @description
  * A stream combining user, current org, current space and spaces grouped by org id
  */
 export const userDataBus$ = combine(
-  [user$, getCurrentOrgSpaceAndPublishedCTsBus(), spacesByOrganization$, contentPreviewsBus$],
-  (user, [org, space, publishedCTs, organizationStatus], spacesByOrg, contentPreviews) => [
-    user,
-    org,
-    spacesByOrg,
-    space,
-    contentPreviews,
-    publishedCTs,
-    organizationStatus
-  ]
+  [user$, getCurrentOrgSpaceBus(), spacesByOrganization$],
+  (user, [org, space], spacesByOrg) => [user, org, spacesByOrg, space]
 )
-  .filter(([user, org, spacesByOrg]) => user && user.email && org && spacesByOrg) // space is a Maybe and so is contentPreviews
+  .filter(([user, org, spacesByOrg]) => user && user.email && org && spacesByOrg) // space is a maybe
   .skipDuplicates(isEqual)
   .toProperty();
 
@@ -188,35 +178,25 @@ export function getUserSpaceRoles(space) {
  * there are two streams, one for curr space and one for
  * the curr org.
  */
-function getCurrentOrgSpaceAndPublishedCTsBus() {
-  const currOrgSpaceAndPublishedCTsBus = createPropertyBus([]);
-  const currOrgSpaceAndPublishedCTsUpdater = updateCurrOrgSpaceAndPublishedCTs(
-    currOrgSpaceAndPublishedCTsBus
-  );
+function getCurrentOrgSpaceBus() {
+  const currOrgSpaceBus = createPropertyBus([]);
+  const currOrgSpaceUpdater = updateCurrOrgSpace(currOrgSpaceBus);
 
   // emit when orgs stream emits
-  onValue(organizations$.filter(orgs => orgs && orgs.length), currOrgSpaceAndPublishedCTsUpdater);
+  onValue(organizations$.filter(orgs => orgs && orgs.length), currOrgSpaceUpdater);
   // emit when ever state changes (for e.g., space was changed)
-  $rootScope.$on('$stateChangeSuccess', currOrgSpaceAndPublishedCTsUpdater);
-  // emit when publishedCTs.items$ emits
-  onValue(spaceContext.publishedCTs.items$, currOrgSpaceAndPublishedCTsUpdater);
+  $rootScope.$on('$stateChangeSuccess', currOrgSpaceUpdater);
 
-  return currOrgSpaceAndPublishedCTsBus.property;
+  return currOrgSpaceBus.property;
 }
 
-function updateCurrOrgSpaceAndPublishedCTs(bus) {
+function updateCurrOrgSpace(bus) {
   return _ => {
     const orgId = $stateParams.orgId;
     const orgs = getValue(organizations$);
     const org = getCurrOrg(orgs, orgId);
     const space = getCurrSpace();
-    const publishedCTs = getValue(spaceContext.publishedCTs.items$);
-
-    // This is async, but handled gracefully and heavily cached
-    getOrganizationStatus(org).then(
-      organizationStatus => bus.set([org, space, publishedCTs, organizationStatus]),
-      () => bus.set([org, space, publishedCTs])
-    );
+    bus.set([org, space]);
   };
 }
 

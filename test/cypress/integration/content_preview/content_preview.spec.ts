@@ -6,6 +6,7 @@ import {
   defaultPreviewId,
   defaultPreviewDescription
 } from '../../util/requests';
+import { noPreviewEnvironmentsResponse } from '../../interactions/preview_environments';
 
 const previewResponseBody = {
   name: defaultPreviewName,
@@ -29,11 +30,20 @@ const previewResponseBody = {
 
 describe('Content Preview Page', () => {
   before(() => {
+    cy.startFakeServer({
+      consumer: 'user_interface',
+      provider: 'preview_environments',
+      cors: true,
+      pactfileWriteMode: 'merge',
+      spec: 3
+    });
+
     cy.setAuthTokenToLocalStorage();
 
     cy.resetAllFakeServers();
 
     defaultRequestsMock();
+    noPreviewEnvironmentsResponse();
 
     cy.visit(`/spaces/${defaultSpaceId}/settings/content_preview/new`);
 

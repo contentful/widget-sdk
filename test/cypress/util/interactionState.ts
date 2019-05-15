@@ -6,21 +6,12 @@ export enum Token {
   VALID = 'token/valid'
 }
 
-export enum Plans {
-  FREE = 'plans/free'
-}
-
 export enum OrgProductCatalogFeatures {
   SEVERAL = 'org_product_catalog_features/several'
 }
 
 export enum SpaceProductCatalogFeatures {
   SEVERAL = 'space_product_catalog_features/several'
-}
-
-export enum UIConfig {
-  NONE = 'ui_config/none',
-  USER = 'ui_config/me/user'
 }
 
 export enum PreviewEnvironments {

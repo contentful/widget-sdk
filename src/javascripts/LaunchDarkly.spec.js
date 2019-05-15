@@ -4,7 +4,6 @@ import ldClient from 'ldclient-js';
 import { getVariation, clearCache } from './LaunchDarkly.es6';
 import { getOrganization, getSpace, getUser } from 'services/TokenStore.es6';
 import { launchDarkly } from 'Config.es6';
-import getOrgStatus from 'data/OrganizationStatus.es6';
 import { logError } from 'services/logger.es6';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags.es6';
 
@@ -36,8 +35,6 @@ jest.mock('services/TokenStore.es6', () => ({
   getUser: jest.fn(),
   getSpacesByOrganization: jest.fn()
 }));
-
-jest.mock('data/OrganizationStatus.es6', () => jest.fn());
 
 jest.mock('debug/EnforceFlags.es6', () => ({
   isFlagOverridden: jest.fn(),
@@ -233,7 +230,6 @@ describe('LaunchDarkly', () => {
 
     it('should provide org data if given valid orgId', async () => {
       getOrganization.mockResolvedValueOnce(organization);
-      getOrgStatus.mockResolvedValueOnce({ isPaid: true, isEnterprise: true });
 
       await getVariation('FLAG', { organizationId: 'org_5678' });
 
@@ -254,12 +250,12 @@ describe('LaunchDarkly', () => {
 
           currentOrgId: 'abcd_org',
           currentOrgPricingVersion: 'pricing_version_2',
-          currentOrgPlanIsEnterprise: true,
+          currentOrgPlanIsEnterprise: false,
           currentOrgHasSpace: false,
           currentUserOrgRole: 'org role',
           currentUserHasAtleastOneSpace: false,
           currentUserIsCurrentOrgCreator: false,
-          isNonPayingUser: false
+          isNonPayingUser: true
         }
       });
     });

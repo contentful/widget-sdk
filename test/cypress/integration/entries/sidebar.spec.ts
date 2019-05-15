@@ -43,7 +43,6 @@ describe('Entries page', () => {
 
         cy.wait([
           `@${state.Token.VALID}`,
-          `@${state.PreviewEnvironments.NONE}`,
           `@${state.ContentTypes.EDITORINTERFACE_WITH_NO_SIDEBAR}`
         ]);
 
@@ -74,7 +73,6 @@ describe('Entries page', () => {
       it('shows the customised sidebar', () => {
         cy.wait([
           `@${state.Token.VALID}`,
-          `@${state.PreviewEnvironments.NONE}`,
           `@${state.ContentTypes.EDITORINTERFACE_WITH_SIDEBAR}`
         ]);
         cy.getByTestId('entry-editor-sidebar')

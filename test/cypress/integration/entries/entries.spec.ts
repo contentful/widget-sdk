@@ -54,7 +54,6 @@ describe('Entries page', () => {
 
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.PreviewEnvironments.NONE}`,
         `@${state.Entries.NONE}`,
         '@entries/archived-none'
       ]);
@@ -105,7 +104,6 @@ describe('Entries page', () => {
 
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.PreviewEnvironments.NONE}`,
         `@${state.Entries.NONE}`,
         '@entries/archived-none'
       ]);
@@ -147,14 +145,12 @@ describe('Entries page', () => {
 
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.PreviewEnvironments.NONE}`,
         `@${state.Entries.SEVERAL}`
       ]);
     });
 
     describe('opening the page', () => {
       it('renders entries page correctly', () => {
-        cy.getByTestId('cf-ui-tab-panel').should('be.visible');
         cy.getByTestId('entry-list').should('be.visible');
         cy.getAllByTestId('entry-row').should('have.length', severalEntriesResponse.total);
       });
