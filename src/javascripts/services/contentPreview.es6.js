@@ -1,6 +1,5 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
-import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 import { resolveReferences } from 'services/ContentPreviewHelper.es6';
 
 export default function register() {
@@ -25,6 +24,8 @@ export default function register() {
       { internalToExternal: internalToExternalFieldIds },
       { getStore }
     ) => {
+      let cache;
+
       const store = getStore();
 
       const ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
@@ -50,25 +51,24 @@ export default function register() {
       const MAX_PREVIEW_ENVIRONMENTS = 100;
 
       // we need to download content previews again after finishing with space template creation
-      $rootScope.$on('spaceTemplateCreated', () => {
-        previewEnvironmentsCache.clearAll();
-      });
+      $rootScope.$on('spaceTemplateCreated', clearCache);
 
       return {
-        getAll: getAll,
-        get: get,
-        getForContentType: getForContentType,
-        canCreate: canCreate,
-        create: create,
-        update: update,
-        remove: remove,
+        getAll,
+        clearCache,
+        get,
+        getForContentType,
+        canCreate,
+        create,
+        update,
+        remove,
         new: makeNew,
-        toInternal: toInternal,
-        getInvalidFields: getInvalidFields,
-        replaceVariablesInUrl: replaceVariablesInUrl,
-        urlFormatIsValid: urlFormatIsValid,
-        getSelected: getSelected,
-        setSelected: setSelected,
+        toInternal,
+        getInvalidFields,
+        replaceVariablesInUrl,
+        urlFormatIsValid,
+        getSelected,
+        setSelected,
         MAX_PREVIEW_ENVIRONMENTS
       };
 
@@ -121,8 +121,8 @@ export default function register() {
        * Uses cached version if available, otherwise fetches from server and caches response.
        */
       function getAll() {
-        if (previewEnvironmentsCache.getAll()) {
-          return $q.resolve(previewEnvironmentsCache.getAll());
+        if (cache) {
+          return $q.resolve(cache);
         } else {
           return spaceContext.space
             .endpoint('preview_environments')
@@ -137,7 +137,12 @@ export default function register() {
         environments.forEach(environment => {
           cacheVal[environment.sys.id] = environment;
         });
-        return previewEnvironmentsCache.setAll(cacheVal);
+        cache = cacheVal;
+        return cache;
+      }
+
+      function clearCache() {
+        cache = undefined;
       }
 
       /**
@@ -237,7 +242,9 @@ export default function register() {
       }
 
       function updateCache(env) {
-        return previewEnvironmentsCache.set(env);
+        cache = cache || {};
+        cache[env.sys.id] = env;
+        return env;
       }
 
       /**
@@ -258,10 +265,11 @@ export default function register() {
           spaceContext.space
             .endpoint('preview_environments', env.id)
             .delete()
-            // We first clear the whole cache (there's no way to be more picky).
-            .then(() => previewEnvironmentsCache.clearAll())
-            // Then we repopulate the cache.
-            .then(() => getAll())
+            // We first clear the whole cache then we repopulate the cache.
+            .then(() => {
+              clearCache();
+              return getAll();
+            })
             // This method, historically, resolves with nothing.
             .then(() => {})
         );
@@ -370,10 +378,7 @@ export default function register() {
         const nonExistentFields = _.difference(tokens, _.map(fields, 'apiName'));
         const invalidTypeFields = _.intersection(tokens, objectFields);
 
-        return {
-          nonExistentFields: nonExistentFields,
-          invalidTypeFields: invalidTypeFields
-        };
+        return { nonExistentFields, invalidTypeFields };
       }
 
       function extractFieldTokensFromUrl(url) {
@@ -426,7 +431,7 @@ export default function register() {
           cma: spaceContext.cma,
           url: processedUrl,
           entry: internalToExternalFieldIds(entry, contentType),
-          defaultLocale: defaultLocale
+          defaultLocale
         });
       }
 

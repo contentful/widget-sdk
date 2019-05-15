@@ -6,7 +6,6 @@ import * as ShareJSConnection from 'data/sharejs/Connection.es6';
 import createApiKeyRepo from 'data/CMA/ApiKeyRepo.es6';
 import shouldUseEnvEndpoint from 'data/shouldUseEnvEndpoint.es6';
 import APIClient from 'data/APIClient.es6';
-import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 import * as logger from 'services/logger.es6';
 import * as Telemetry from 'i13n/Telemetry.es6';
 import createUserCache from 'data/userCache.es6';
@@ -158,7 +157,8 @@ export default function register() {
 
           self.user = K.getValue(TokenStore.user$);
 
-          previewEnvironmentsCache.clearAll();
+          $injector.get('contentPreview').clearCache();
+
           self.netlifyAppConfig = createCachedAppConfig({
             spaceId: space.getId(),
             appId: 'netlify',
