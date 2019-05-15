@@ -7,32 +7,29 @@ import {
   DropdownListItem
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 
 const styles = {
   task: css({
+    display: 'flex',
+    cursor: 'pointer',
+    alignItems: 'start',
     backgroundColor: tokens.colorWhite,
     borderBottom: `1px solid ${tokens.colorElementMid}`,
     padding: tokens.spacingS
   }),
 
-  summary: css({
+  body: css({
     flex: '1 1 0',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis'
   }),
 
-  previewContent: css({
-    display: 'flex',
-    cursor: 'pointer',
-    alignItems: 'start'
-  }),
-
-  summaryExpanded: css({
-    flex: '1 1 0',
-    whiteSpace: 'expanded',
-    overflow: 'visible'
+  bodyExpanded: css({
+    whiteSpace: 'normal',
+    overflow: 'visible',
+    textOverflow: 'clip'
   }),
 
   checkbox: css({
@@ -50,7 +47,15 @@ const styles = {
 
   actions: css({
     display: 'inline-flex',
-    marginLeft: tokens.spacingXs
+    marginLeft: 0,
+    width: 0,
+    overflow: 'hidden',
+    transition: 'ease 0.2s'
+  }),
+
+  actionsVisible: css({
+    marginLeft: tokens.spacingXs,
+    width: '18px'
   })
 };
 
@@ -79,29 +84,27 @@ export default class Task extends React.PureComponent {
     return (
       <div
         className={styles.task}
-        onClick={this.handleTaskExpand}
         onMouseEnter={this.handleTaskHover}
         onMouseLeave={this.handleTaskHover}>
-        <div className={styles.previewContent}>
-          <input type="checkbox" className={styles.checkbox} checked={resolved} />
-          <div className={this.state.isExpanded ? styles.summaryExpanded : styles.summary}>
-            {body}
-          </div>
-
-          <Tooltip
-            content={`Assigned to ${assignedTo.firstName} ${assignedTo.lastName}`}
-            place="left">
-            <img src={assignedTo.avatarUrl} className={styles.avatar} />
-          </Tooltip>
-
-          {this.state.hasVisibleActions && (
-            <CardActions className={styles.actions}>
-              <DropdownList>
-                <DropdownListItem>Some action</DropdownListItem>
-              </DropdownList>
-            </CardActions>
-          )}
+        <input type="checkbox" className={styles.checkbox} checked={resolved} />
+        <div
+          className={cx(styles.body, this.state.isExpanded && styles.bodyExpanded)}
+          onClick={this.handleTaskExpand}>
+          {body}
         </div>
+
+        <Tooltip
+          content={`Assigned to ${assignedTo.firstName} ${assignedTo.lastName}`}
+          place="left">
+          <img src={assignedTo.avatarUrl} className={styles.avatar} />
+        </Tooltip>
+
+        <CardActions
+          className={cx(styles.actions, this.state.hasVisibleActions && styles.actionsVisible)}>
+          <DropdownList>
+            <DropdownListItem>Some action</DropdownListItem>
+          </DropdownList>
+        </CardActions>
       </div>
     );
   }
