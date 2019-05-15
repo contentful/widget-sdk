@@ -1,6 +1,7 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { resolveReferences } from 'services/ContentPreviewHelper.es6';
+import { getStore } from 'TheStore/index.es6';
 
 export default function register() {
   /**
@@ -15,14 +16,12 @@ export default function register() {
     'spaceContext',
     'TheLocaleStore',
     'data/Entries',
-    'TheStore/index.es6',
     (
       $q,
       $rootScope,
       spaceContext,
       TheLocaleStore,
-      { internalToExternal: internalToExternalFieldIds },
-      { getStore }
+      { internalToExternal: internalToExternalFieldIds }
     ) => {
       let cache;
 
