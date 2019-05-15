@@ -7,9 +7,14 @@ import { createOrganizationEndpoint, createSpaceEndpoint } from '../EndpointFact
 // together with the first feature directly requested from the API.
 // There is no prefetching! Just doing carpooling for HTTP.
 // Please remember these are sent as query string parameters, so
-// we may hit the URL length limit some day.
+// we may hit the URL length limit (~8k chars) some day.
 const COMMON_FOR_SPACE = ['basic_apps'];
-const COMMON_FOR_ORG = ['custom_sidebar', 'teams', 'self_configure_sso'];
+const COMMON_FOR_ORG = [
+  'custom_sidebar',
+  'teams',
+  'self_configure_sso',
+  'talk_to_us_customer_support_chat'
+];
 
 // This module exposes two methods for getting feature statuses
 // from the Product Catalog API:

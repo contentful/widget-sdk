@@ -2,7 +2,7 @@ import { registerController } from 'NgRegistry.es6';
 import { onValueScope } from 'utils/kefir.es6';
 import { get, pick, isObject } from 'lodash';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed.es6';
-import isEnterprise from 'data/OrganizationStatus.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import * as logger from 'services/logger.es6';
 import * as Intercom from 'services/intercom.es6';
 import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
@@ -35,6 +35,7 @@ export default function register() {
       { default: store },
       { getCurrentVariation }
     ) {
+      let isIntercomDisabledBecauseOfAnalytics;
       const refreshNavState = NavState.makeStateRefresher($state, spaceContext);
 
       $rootScope.$on('$locationChangeSuccess', function() {
@@ -137,8 +138,6 @@ export default function register() {
         refreshNavState();
       }
 
-      let isIntercomDisabledBecauseOfAnalytics = false;
-
       function handleUser(user) {
         if (!isObject(user)) {
           return;
@@ -160,20 +159,23 @@ export default function register() {
         }
       }
 
-      function handleIntercom(organization, prevOrganization) {
+      async function handleIntercom(organization, prevOrganization) {
         if (
-          get(organization, 'sys.id') === get(prevOrganization, 'sys.id') ||
-          isIntercomDisabledBecauseOfAnalytics
+          isIntercomDisabledBecauseOfAnalytics ||
+          get(organization, 'sys.id') === get(prevOrganization, 'sys.id')
         ) {
           return; // No change or suboptimal analytics dependency handled in handleUser()
         }
-        isEnterprise(organization).then(status => {
-          if (status.isPaid) {
-            Intercom.enable();
-          } else {
-            Intercom.disable();
-          }
-        });
+        const isEnabled = await getOrgFeature(
+          organization.sys.id,
+          'talk_to_us_customer_support_chat',
+          true
+        );
+        if (isEnabled) {
+          Intercom.enable();
+        } else {
+          Intercom.disable();
+        }
       }
     }
   ]);
