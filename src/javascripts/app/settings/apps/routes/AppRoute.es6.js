@@ -19,7 +19,6 @@ const APP_ID_TO_COMPONENT = {
 
 export default class AppRoute extends Component {
   static propTypes = {
-    hasBasicApps: PropTypes.bool.isRequired,
     spaceId: PropTypes.string.isRequired,
     appId: PropTypes.string.isRequired
   };
@@ -31,9 +30,8 @@ export default class AppRoute extends Component {
 
   render() {
     const Component = APP_ID_TO_COMPONENT[this.props.appId];
-    const available = this.props.hasBasicApps && Component;
 
-    if (!available) {
+    if (!Component) {
       return <StateRedirect to="^.list" />;
     }
 
