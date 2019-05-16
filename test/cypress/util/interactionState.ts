@@ -46,6 +46,11 @@ export enum Entries {
   SNAPSHOTS = 'entries/snapshots'
 }
 
+export enum Assets {
+  NONE = 'assets/none',
+  SEVERAL = 'assets/several'
+}
+
 export enum Microbackends {
   STREAMTOKEN = 'microbackends/streamtoken'
 }

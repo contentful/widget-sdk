@@ -1,0 +1,139 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "total": 3,
+  "skip": 0,
+  "limit": 40,
+  "items": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "fuuami4adicz"
+          }
+        },
+        "id": "Asset3",
+        "type": "Asset",
+        "createdAt": "2019-05-14T14:04:09.670Z",
+        "updatedAt": "2019-05-14T14:04:13.236Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userID"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userID"
+          }
+        },
+        "publishedCounter": 0,
+        "version": 5
+      },
+      "fields": {
+        "title": {
+          "en-US": "Asset3"
+        }
+      }
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "fuuami4adicz"
+          }
+        },
+        "id": "Asset2",
+        "type": "Asset",
+        "createdAt": "2019-05-14T14:04:01.740Z",
+        "updatedAt": "2019-05-14T14:04:04.832Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userID"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userID"
+          }
+        },
+        "publishedCounter": 0,
+        "version": 5
+      },
+      "fields": {
+        "title": {
+          "en-US": "Asset2"
+        }
+      }
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "fuuami4adicz"
+          }
+        },
+        "id": "Asset1",
+        "type": "Asset",
+        "createdAt": "2019-05-14T14:03:49.915Z",
+        "updatedAt": "2019-05-14T14:03:55.488Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userID"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userID"
+          }
+        },
+        "publishedCounter": 0,
+        "version": 4
+      },
+      "fields": {
+        "title": {
+          "en-US": "Asset1"
+        }
+      }
+    }
+  ]
+}

@@ -85,6 +85,15 @@ export function getExtensions(
   };
 }
 
+export function getAssets(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
+  return {
+    method: 'GET',
+    path: `/spaces/${spaceId}/assets`,
+    headers: defaultHeader,
+    query
+  };
+}
+
 export function getEntries(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
   return {
     method: 'GET',
