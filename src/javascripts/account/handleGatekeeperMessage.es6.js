@@ -96,7 +96,9 @@ export default function register() {
 
         if (message) {
           if (level.match(/error/)) {
-            Notification.error(message);
+            Notification.error(message, {
+              id: 'gatekeeper-error'
+            });
           } else {
             Notification.success(message);
           }

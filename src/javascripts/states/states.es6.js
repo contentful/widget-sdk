@@ -33,7 +33,10 @@ export function loadAll() {
       controller: function() {
         Notification.error(
           'We were unable to process your request. ' +
-            'If this problem persists, please contact support'
+            'If this problem persists, please contact support',
+          {
+            id: 'load-all-error-notification'
+          }
         );
       }
     }
