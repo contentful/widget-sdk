@@ -27,25 +27,21 @@ export default class ScheduleWidgetContainer extends Component {
 
   async componentDidMount() {
     this.props.emitter.on(SidebarEventTypes.UPDATED_TASKS_WIDGET, this.onUpdateTasksWidget);
-
-    const { spaceId, entityInfo } = this.props;
-    console.log('this.props', this.props);
-
     this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.TASKS);
   }
 
   onUpdateTasksWidget = async update => {
-    console.log('update!!!!!', update);
     const { spaceId, entityInfo } = update;
 
     let comments;
     try {
       comments = await fetchComments(spaceId, entityInfo.id);
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.log('ERROR', e);
     }
-    console.log('comments', comments);
     const tasksViewData = createTasksViewData(comments);
+    // eslint-disable-next-line no-console
     console.log('tasksViewData', tasksViewData);
 
     this.setState({ tasksViewData });
