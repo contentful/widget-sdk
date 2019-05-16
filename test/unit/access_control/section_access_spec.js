@@ -50,7 +50,7 @@ describe('Section Access', () => {
     it('returns home screen sref when not activated and admin', () => {
       spaceContext.space = {
         data: {
-          spaceMember: { admin: true },
+          spaceMembership: { admin: true },
           activatedAt: null
         }
       };
@@ -61,7 +61,7 @@ describe('Section Access', () => {
     it('returns first available screen sref when activated and admin', () => {
       spaceContext.space = {
         data: {
-          spaceMember: { admin: true },
+          spaceMembership: { admin: true },
           activatedAt: 'activatedAt'
         }
       };
@@ -72,7 +72,7 @@ describe('Section Access', () => {
     it('returns home screen sref when user is author or editor', () => {
       spaceContext.space = {
         data: {
-          spaceMember: { roles: [{ name: 'Author' }] },
+          spaceMembership: { roles: [{ name: 'Author' }] },
           activatedAt: 'activatedAt'
         }
       };

@@ -35,7 +35,7 @@ export function create({ space, organization }) {
   }
 
   function isSuperUser() {
-    const isSpaceAdmin = space ? get(space, 'spaceMember.admin') : false;
+    const isSpaceAdmin = space ? get(space, 'spaceMembership.admin') : false;
     const isOrganizationAdmin = OrganizationRoles.isAdmin(organization);
     const isOrganizationOwner = OrganizationRoles.isOwner(organization);
     return isSpaceAdmin || isOrganizationAdmin || isOrganizationOwner;

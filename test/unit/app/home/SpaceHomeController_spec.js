@@ -19,7 +19,7 @@ describe('SpaceHomeController', function() {
         readOnlyAt: undefined,
         name: 'spaceName',
         organization: { name: 'organizationName' },
-        spaceMember: {
+        spaceMembership: {
           admin: isAdmin,
           roles: [isAuthor ? { name: 'Author' } : {}, isEditor ? { name: 'Editor' } : {}]
         }

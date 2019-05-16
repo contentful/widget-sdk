@@ -26,14 +26,12 @@ describe('data/UiConfig/Store.es6', () => {
       };
       const spaceData = {
         sys: { id: 'spaceid' },
-        spaceMember: {
+        spaceMembership: {
           admin: isAdmin,
-          sys: {
-            user: {
-              firstName: 'x',
-              lastName: 'y',
-              sys: { id: 'userid' }
-            }
+          user: {
+            firstName: 'x',
+            lastName: 'y',
+            sys: { id: 'userid' }
           }
         }
       };

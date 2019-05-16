@@ -26,8 +26,8 @@ Space.prototype.isOwner = function(user) {
 };
 
 Space.prototype.isAdmin = function(user) {
-  const membership = this.data.spaceMember;
-  return user && user.sys.id === membership.sys.user.sys.id && membership.admin === true;
+  const membership = this.data.spaceMembership;
+  return user && user.sys.id === membership.user.sys.id && membership.admin === true;
 };
 
 Space.prototype.getOrganizationId = function() {

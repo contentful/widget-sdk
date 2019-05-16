@@ -127,7 +127,7 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   render() {
-    const isAdmin = spaceContext.getData('spaceMember.admin', false);
+    const isAdmin = spaceContext.getData('spaceMembership.admin', false);
 
     return (
       <SidebarContentPreview

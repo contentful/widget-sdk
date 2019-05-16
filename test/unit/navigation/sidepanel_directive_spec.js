@@ -91,7 +91,7 @@ describe('cfNavSidepanel directive', () => {
       const rewrittenSpaces = Object.keys(spacesByOrg).reduce((acc, orgId) => {
         return Object.assign(acc, {
           [orgId]: spacesByOrg[orgId].map(space => {
-            return Object.assign({ spaceMember: { admin: testEnvironments } }, space);
+            return Object.assign({ spaceMembership: { admin: testEnvironments } }, space);
           })
         });
       }, {});

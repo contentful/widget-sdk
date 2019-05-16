@@ -128,7 +128,7 @@ describe('Access Checker', () => {
           sys: { id: 'orgid' },
           subscriptionPlan: { limits: { features: { customRoles: hasFeature } } }
         },
-        spaceMember: { admin: isSpaceAdmin, roles: [{ name: userRoleName }] }
+        spaceMembership: { admin: isSpaceAdmin, roles: [{ name: userRoleName }] }
       });
 
       feature.enabled = hasFeature;

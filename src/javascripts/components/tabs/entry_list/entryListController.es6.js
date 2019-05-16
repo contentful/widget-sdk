@@ -67,7 +67,7 @@ export default function register() {
             getCurrentView: () => _.cloneDeep(_.get($scope, ['context', 'view'], {})),
             // a view can be assigned to roles only in the Entry List
             roleAssignment: {
-              membership: spaceContext.space.data.spaceMember,
+              membership: spaceContext.space.data.spaceMembership,
               endpoint: spaceContext.endpoint
             }
           });

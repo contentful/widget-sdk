@@ -87,7 +87,7 @@ describe('createExtensionBridge', () => {
         getId: () => 'sid',
         getEnvironmentId: () => 'eid',
         cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
-        space: { data: { spaceMember: 'MEMBERSHIP ' } }
+        space: { data: { spaceMembership: 'MEMBERSHIP ' } }
       },
       TheLocaleStore: {
         getPrivateLocales: () => [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
@@ -128,7 +128,7 @@ describe('createExtensionBridge', () => {
           available: [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
           default: { code: 'pl', name: 'Polski', default: true }
         },
-        spaceMember: 'MEMBERSHIP ',
+        spaceMembership: 'MEMBERSHIP ',
         editorInterface: {
           controls: [],
           sidebar: []

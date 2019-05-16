@@ -15,11 +15,10 @@ describe('Extension SDK', () => {
     spaceContext.space = {
       data: {
         sys: {},
-        spaceMember: {
-          sys: {
-            user: {
-              sys: {}
-            }
+        spaceMembership: {
+          sys: {},
+          user: {
+            sys: {}
           },
           roles: []
         }
@@ -563,18 +562,9 @@ describe('Extension SDK', () => {
       spaceContext.space = {
         data: {
           sys: {},
-          spaceMember: {
+          spaceMembership: {
             admin: false,
-            sys: {
-              id: 'SMID',
-              user: {
-                sys: { id: 'b33ts' },
-                firstName: 'Dwight',
-                lastName: 'Schrute',
-                email: 'dwight@dundermifflin.com',
-                avatarUrl: 'https://avatar.com/x.jpg'
-              }
-            },
+            sys: { id: 'SMID' },
             roles: [
               {
                 sys: 'OMITTED',
@@ -583,7 +573,14 @@ describe('Extension SDK', () => {
                 policies: [],
                 permissions: {}
               }
-            ]
+            ],
+            user: {
+              sys: { id: 'b33ts' },
+              firstName: 'Dwight',
+              lastName: 'Schrute',
+              email: 'dwight@dundermifflin.com',
+              avatarUrl: 'https://avatar.com/x.jpg'
+            }
           }
         }
       };
@@ -596,9 +593,9 @@ describe('Extension SDK', () => {
         lastName: 'Schrute',
         email: 'dwight@dundermifflin.com',
         avatarUrl: 'https://avatar.com/x.jpg',
-        spaceMember: {
+        spaceMembership: {
           admin: false,
-          sys: { id: 'SMID', type: 'SpaceMember' },
+          sys: { id: 'SMID', type: 'SpaceMembership' },
           roles: [
             {
               name: 'Assistant to the regional manager',

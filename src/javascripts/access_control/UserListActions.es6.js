@@ -41,7 +41,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
       ? 'admin_removal_confirm_dialog'
       : 'user_removal_confirm_dialog';
 
-    const currentUserId = spaceContext.getData('spaceMember.user.sys.id');
+    const currentUserId = spaceContext.getData('spaceMembership.user.sys.id');
     const isCurrentUser = currentUserId === user.id;
 
     return openDialog(templateName, controller);

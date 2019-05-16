@@ -19,7 +19,7 @@ const MOCK_REQUESTS = [
     match: 'GET https://api.contentful.com/token',
     response: {
       includes: {
-        SpaceMember: [
+        SpaceMembership: [
           {
             admin: true,
             sys: {
