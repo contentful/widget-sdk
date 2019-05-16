@@ -5,19 +5,13 @@ import { CodeFragment } from 'ui/Content.es6';
 import { Typography, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { ResourceUsageHighlight, ResourceUsage } from './ResourceUsage.es6';
-import cn from 'classnames';
 const styles = {
   environmentUsageParent: css({
     marginTop: tokens.spacing2Xl
   }),
-  environmentLabelParent:
-    css({
-      display: 'flex'
-    }) +
-    ' ' +
-    cn({
-      'f36-font-weight--medium': true
-    }),
+  environmentLabelParent: css({
+    display: 'flex'
+  }),
   environmentLabel: css({
     marginLeft: tokens.spacingS
   })
@@ -44,7 +38,7 @@ const ResourceUsageList = ({ spaceResources, environmentResources, environmentId
             </Paragraph>
             <Paragraph>
               <span className={styles.environmentLabelParent}>
-                {'Current environment: '}
+                <span className={'f36-font-weight--medium'}>{'Current environment: '}</span>
                 <span className={styles.environmentLabel}>
                   <CodeFragment>{environmentId}</CodeFragment>
                 </span>
