@@ -10,7 +10,9 @@ export default function register() {
       $scope.$watchCollection(
         () => {
           const contentTypes = _.get($scope, attr.contentTypes, []);
+
           const disabled = contentTypes.length === 0;
+
           return {
             contentTypes,
             suggestedContentTypeId: _.get($scope, attr.suggestedContentTypeId),

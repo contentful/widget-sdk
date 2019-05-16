@@ -1,6 +1,7 @@
 import { getSpace, getOrganization } from 'services/TokenStore.es6';
 import {
   canCreate,
+  canCreateResources,
   generateMessage,
   isLegacyOrganization,
   getLegacyLimit,
@@ -16,6 +17,7 @@ export default function createResourceService(id, type = 'space', envId) {
     get,
     getAll,
     canCreate: resourceType => get(resourceType).then(canCreate),
+    canCreateEnvironmentResources: environmentId => getAll(environmentId).then(canCreateResources),
     messagesFor: resourceType => get(resourceType).then(generateMessage),
     async messages() {
       const resources = await getAll();
@@ -29,7 +31,7 @@ export default function createResourceService(id, type = 'space', envId) {
     }
   };
 
-  async function get(resourceType) {
+  async function get(resourceType, environmentId) {
     if (!resourceType) {
       throw new Error('resourceType not supplied to ResourceService.get');
     }
@@ -44,11 +46,14 @@ export default function createResourceService(id, type = 'space', envId) {
       return createResourceFromTokenData(resourceType, limit, usage);
     } else {
       const apiResourceType = snakeCase(resourceType);
+      let path = ['resources', apiResourceType];
+
+      if (environmentId) path = ['environments', environmentId, 'resources', apiResourceType];
 
       return endpoint(
         {
           method: 'GET',
-          path: ['resources', apiResourceType]
+          path
         },
         {
           'x-contentful-enable-alpha-feature': 'subscriptions-api'
@@ -57,11 +62,14 @@ export default function createResourceService(id, type = 'space', envId) {
     }
   }
 
-  async function getAll() {
+  async function getAll(environmentId) {
+    let path = ['resources'];
+    if (environmentId) path = ['environments', environmentId, 'resources'];
+
     const raw = await endpoint(
       {
         method: 'GET',
-        path: ['resources']
+        path
       },
       {
         'x-contentful-enable-alpha-feature': 'subscriptions-api'

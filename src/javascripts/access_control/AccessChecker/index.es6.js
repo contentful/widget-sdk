@@ -15,6 +15,8 @@ import { chain, get, set, some, forEach, values, find } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements.es6';
 import * as logger from 'services/logger.es6';
 
+import { shouldPerformNewUsageCheck } from './Utils.es6';
+
 export { wasForbidden } from './Utils.es6';
 
 /**
@@ -266,6 +268,7 @@ export function canPerformActionOnEntryOfType(action, ctId) {
       }
     }
   };
+
   return canPerformActionOnEntity(action, entity);
 }
 
@@ -506,14 +509,23 @@ function getPermissions(action, entity) {
   if (!spaceAuthContext) {
     return response;
   }
-  response.can = cache.getResponse(action, entity);
+
+  const { newEnforcement } = spaceAuthContext;
+  response.can = cache.getResponse(action, entity, newEnforcement);
+
   if (response.can) {
     return response;
   }
 
-  const reasons = spaceAuthContext.reasonsDenied(action, entity);
-  response.reasons = reasons && reasons.length > 0 ? reasons : null;
+  let reasons = spaceAuthContext.reasonsDenied(action, entity);
+
+  if (shouldPerformNewUsageCheck(action, entity, newEnforcement, reasons)) {
+    reasons = newEnforcement.reasonsDenied(action, entity);
+    spaceAuthContext.reasonsDenied = newEnforcement.reasonsDenied;
+  }
+
   response.enforcement = getEnforcement(action, entity);
+  response.reasons = reasons && reasons.length > 0 ? reasons : null;
   response.shouldDisable = !!response.reasons;
   response.shouldHide = !response.shouldDisable;
 

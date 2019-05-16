@@ -26,7 +26,7 @@ describe('Content types list page', () => {
       pactfileWriteMode: 'merge',
       spec: 3
     })
-  );
+);
 
   context('with no content types', () => {
     before(() => {
@@ -144,6 +144,20 @@ describe('Content type page', () => {
     cy.setAuthTokenToLocalStorage();
 
     cy.resetAllFakeServers();
+
+    cy.startFakeServer({
+      consumer: 'user_interface',
+      provider: 'resources',
+      cors: true,
+      pactfileWriteMode: 'merge'
+    })
+
+    cy.startFakeServer({
+      consumer: 'user_interface',
+      provider: 'extensions',
+      cors: true,
+      pactfileWriteMode: 'merge'
+    })
 
     defaultRequestsMock();
     noExtensionsResponse();

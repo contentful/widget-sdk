@@ -1,4 +1,5 @@
 import { assign, get } from 'lodash';
+import _ from 'lodash';
 
 export const resourceHumanNameMap = {
   api_key: 'API Keys',
@@ -21,6 +22,25 @@ export const resourceHumanNameMap = {
 };
 
 export const canCreate = resource => !resourceMaximumLimitReached(resource);
+
+/**
+ * Returns an object with entities and their corresponding create status.
+ * @param  {object} resources    Resources in the Redux store
+ *
+ * @return {Object}              {entity: true/false}
+ */
+export const canCreateResources = resources => {
+  const allowedToCreate = {};
+  resources.forEach(resource => {
+    allowedToCreate[convertToPascalCase(resource.name)] = !resourceMaximumLimitReached(resource);
+  });
+
+  // record is the true source for usage on Entry and Asset
+  allowedToCreate['Entry'] = allowedToCreate['Record'];
+  allowedToCreate['Asset'] = allowedToCreate['Record'];
+
+  return allowedToCreate;
+};
 
 /**
  * Returns the whole resource metadata object from the Redux store, given the resources in the store.
@@ -129,4 +149,13 @@ export function resourceMaximumLimitReached(resource) {
   const usage = resource.usage;
 
   return Boolean(limitMaximum && usage >= limitMaximum);
+}
+
+function convertToPascalCase(value) {
+  return value
+    .match(/[a-z]+/gi)
+    .map(function(word) {
+      return _.upperFirst(word);
+    })
+    .join('');
 }

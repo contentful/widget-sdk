@@ -6,6 +6,11 @@ export enum Token {
   VALID = 'token/valid'
 }
 
+export enum Resources {
+  NONE = 'resources/none',
+  DEFAULT = 'resources'
+}
+
 export enum OrgProductCatalogFeatures {
   SEVERAL = 'org_product_catalog_features/several'
 }

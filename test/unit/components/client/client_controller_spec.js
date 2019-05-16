@@ -10,11 +10,13 @@ describe('Client Controller', () => {
 
   beforeEach(function() {
     this.getEnforcements = sinon.stub();
+    this.newUsageChecker = sinon.stub();
     this.logger = {
       enable: sinon.stub(),
       disable: sinon.stub()
     };
     this.isAnalyticsAllowed = sinon.stub().returns(true);
+    this.getCurrentVariation = sinon.stub();
 
     module('contentful/test', $provide => {
       $provide.value('analytics/Analytics.es6', {
@@ -29,8 +31,18 @@ describe('Client Controller', () => {
           hasSpace: sinon.stub()
         }
       };
+
+      $provide.constant('utils/LaunchDarkly/index.es6', {
+        getCurrentVariation: this.getCurrentVariation
+      });
       $provide.constant('authorization', this.authorizationStubs);
+
       $provide.value('services/EnforcementsService.es6', {
+        getEnforcements: this.getEnforcements,
+        newUsageChecker: this.newUsageChecker
+      });
+      $provide.constant('services/EnforcementsService.es6', {
+        newUsageChecker: this.newUsageChecker,
         getEnforcements: this.getEnforcements
       });
       $provide.constant('analytics/isAnalyticsAllowed.es6', {
@@ -38,6 +50,7 @@ describe('Client Controller', () => {
       });
       $provide.constant('services/logger.es6', this.logger);
     });
+
     this.tokenStore = this.$inject('services/TokenStore.es6');
     this.tokenStore.refresh = sinon.stub().resolves();
     this.tokenStore.user$ = K.createMockProperty();
@@ -89,10 +102,16 @@ describe('Client Controller', () => {
     beforeEach(function() {
       this.token = { sys: {} };
       this.enforcements = [];
+      this.newEnforcement = {};
+
       this.envId = 'ENV ID';
+      this.spaceId = 'Space ID';
+      this.getCurrentVariation = this.getCurrentVariation.withArgs('flag').resolves(false);
+      this.newUsageChecker.withArgs(1, 2).resolves(this.newEnforcement);
 
       this.spaceContext = this.$inject('spaceContext');
       this.spaceContext.getEnvironmentId = () => this.envId;
+      this.spaceContext.getId = () => this.spaceId;
       this.spaceContext.space = null;
       this.tokenStore.getTokenLookup.returns(this.token);
       this.getEnforcements.returns(this.enforcements);
@@ -105,7 +124,8 @@ describe('Client Controller', () => {
         this.token,
         this.spaceContext.space,
         this.enforcements,
-        this.envId
+        this.envId,
+        this.newEnforcement
       );
     });
 
@@ -117,30 +137,32 @@ describe('Client Controller', () => {
       sinon.assert.calledWith(this.authorizationStubs.update.secondCall, newToken);
     });
 
-    it('on spaceContext.space update', function() {
+    it('on spaceContext.space update', async function() {
       const space = {
         getId: () => 'SPACE ID'
       };
       this.spaceContext.space = space;
       this.$apply();
+      await new Promise(resolve => setTimeout(resolve, 0));
 
       sinon.assert.calledWith(
-        this.authorizationStubs.update.secondCall,
+        this.authorizationStubs.update,
         sinon.match.any,
         this.spaceContext.space
       );
     });
 
-    it('on enforcements update', function() {
+    it('on enforcements update', async function() {
       this.$apply();
 
       const enforcements = [{ sys: { id: 'E_1' } }];
       this.getEnforcements.returns(enforcements);
 
       this.$apply();
+      await new Promise(resolve => setTimeout(resolve, 0));
 
       sinon.assert.calledWith(
-        this.authorizationStubs.update.secondCall,
+        this.authorizationStubs.update,
         sinon.match.any,
         sinon.match.any,
         enforcements
@@ -149,7 +171,7 @@ describe('Client Controller', () => {
 
     it('updates nav state', function() {
       this.$apply();
-      sinon.assert.calledOnce(this.refreshNavState);
+      sinon.assert.called(this.refreshNavState);
     });
   });
 

@@ -4,6 +4,7 @@ import { pick, isObject } from 'lodash';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed.es6';
 import * as logger from 'services/logger.es6';
 import * as Intercom from 'services/intercom.es6';
+import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
 
 export default function register() {
   registerController('ClientController', [
@@ -18,6 +19,7 @@ export default function register() {
     'navigation/NavState.es6',
     'services/EnforcementsService.es6',
     'redux/store.es6',
+    'utils/LaunchDarkly/index.es6',
     function ClientController(
       $scope,
       $state,
@@ -29,7 +31,8 @@ export default function register() {
       CreateSpace,
       NavState,
       EnforcementsService,
-      { default: store }
+      { default: store },
+      { getCurrentVariation }
     ) {
       const refreshNavState = NavState.makeStateRefresher($state, spaceContext);
 
@@ -37,6 +40,12 @@ export default function register() {
         store.dispatch({
           type: 'LOCATION_CHANGED',
           payload: { location: pickSerializable(window.location) }
+        });
+
+        spaceAndTokenWatchHandler({
+          tokenLookup: TokenStore.getTokenLookup(),
+          space: spaceContext.space,
+          enforcements: EnforcementsService.getEnforcements(spaceContext.getId())
         });
       });
 
@@ -99,12 +108,28 @@ export default function register() {
         ]);
       }
 
-      function spaceAndTokenWatchHandler({ tokenLookup, space, enforcements }) {
+      async function spaceAndTokenWatchHandler({ tokenLookup, space, enforcements }) {
         if (!tokenLookup) {
           return;
         }
 
-        authorization.update(tokenLookup, space, enforcements, spaceContext.getEnvironmentId());
+        const allowNewUsageCheck = await getCurrentVariation(ENVIRONMENT_USAGE_ENFORCEMENT);
+        let newEnforcement = {};
+
+        if (allowNewUsageCheck) {
+          newEnforcement = await EnforcementsService.newUsageChecker(
+            spaceContext.getId(),
+            spaceContext.getEnvironmentId()
+          );
+        }
+
+        authorization.update(
+          tokenLookup,
+          space,
+          enforcements,
+          spaceContext.getEnvironmentId(),
+          newEnforcement
+        );
 
         refreshNavState();
       }

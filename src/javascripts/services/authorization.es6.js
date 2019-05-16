@@ -11,7 +11,7 @@ export default function register() {
       Authorization.prototype = {
         authContext: null,
         spaceContext: null,
-        update: function(tokenLookup, space, enforcements, environmentId) {
+        update: function(tokenLookup, space, enforcements, environmentId, newEnforcement) {
           this.authContext = null;
           this.spaceContext = null;
           this._tokenLookup = tokenLookup;
@@ -53,6 +53,7 @@ export default function register() {
 
           if (space && this.authContext.hasSpace(space.getId())) {
             this.spaceContext = this.authContext.space(space.getId());
+            this.spaceContext.newEnforcement = newEnforcement;
           }
 
           accessChecker.setAuthContext({

@@ -27,6 +27,32 @@ describe('Access Checker', () => {
     ac.setAuthContext({ authContext, spaceAuthContext: mockSpaceAuthContext });
   }
 
+  function setupForNewUsageEnforcement(permissionDenied) {
+    getResStub.withArgs('create', 'Asset').returns(false);
+    triggerChange();
+
+    const spaceAuthContext = {
+      reasonsDenied: sinon.stub().returns([]),
+      isPermissionDenied: sinon.stub().returns(permissionDenied),
+      newEnforcement: {
+        reasonsDenied: () => [
+          'usageExceeded',
+          `You do not have permissions to create on Asset, please contact your administrator for more information.`
+        ],
+        enforcements: []
+      }
+    };
+
+    const organizationCanStub = sinon.stub().returns('YES WE CAN');
+
+    ac.setAuthContext({
+      authContext: makeAuthContext({
+        orgid: organizationCanStub
+      }),
+      spaceAuthContext
+    });
+  }
+
   afterEach(() => {
     enforcements = OrganizationRoles = policyChecker = ac = getResStub = reasonsDeniedStub = isPermissionDeniedStub = broadcastStub = mockSpaceEndpoint = feature = null;
   });
@@ -77,7 +103,8 @@ describe('Access Checker', () => {
     mockSpace = { sys: { id: '1234' }, organization: { sys: {} } };
     mockSpaceAuthContext = {
       reasonsDenied: reasonsDeniedStub,
-      isPermissionDenied: isPermissionDeniedStub
+      isPermissionDenied: isPermissionDeniedStub,
+      newEnforcement: {}
     };
     mockOrgEndpoint = sinon.stub();
     mockSpaceEndpoint = sinon.stub();
@@ -307,6 +334,24 @@ describe('Access Checker', () => {
         expect(response.shouldDisable).toBe(false);
         expect(ac.shouldHide('read', 'entry')).toBe(response.shouldHide);
         expect(ac.shouldDisable('read', 'entry')).toBe(response.shouldDisable);
+      });
+
+      describe('when enforcements from new usage checker exists', () => {
+        it('should disable, but not hide', () => {
+          setupForNewUsageEnforcement(false);
+          const response = ac.getResponseByActionAndEntity('create', 'asset');
+
+          expect(response.shouldDisable).toBe(true);
+          expect(response.shouldHide).toBe(false);
+          expect(ac.shouldHide('create', 'asset')).toBe(response.shouldHide);
+          expect(ac.shouldDisable('create', 'asset')).toBe(response.shouldDisable);
+        });
+
+        it('should disable and hide when permissions is denied ', () => {
+          setupForNewUsageEnforcement(true);
+          expect(ac.shouldHide('create', 'asset')).toBe(true);
+          expect(ac.shouldDisable('create', 'asset')).toBe(true);
+        });
       });
 
       it('returns false for unknown actions', () => {

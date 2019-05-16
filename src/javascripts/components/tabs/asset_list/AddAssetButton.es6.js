@@ -12,7 +12,8 @@ class AddAssetButton extends React.Component {
     canUploadMultipleAssets: PropTypes.func.isRequired,
     createMultipleAssets: PropTypes.func.isRequired,
     newAsset: PropTypes.func.isRequired,
-    testId: PropTypes.string.isRequired
+    testId: PropTypes.string.isRequired,
+    disabled: PropTypes.bool
   };
   state = { isDropdownOpen: false };
 
@@ -22,6 +23,7 @@ class AddAssetButton extends React.Component {
       icon="PlusCircle"
       onClick={() => this.setOpen(!this.state.isDropdownOpen)}
       testId={this.props.testId}
+      disabled={this.props.disabled}
       id="add-new-asset-button"
       aria-haspopup="true"
       aria-controls="new-asset-menu">

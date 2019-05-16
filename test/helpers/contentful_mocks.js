@@ -1,4 +1,5 @@
 import createLaunchDarklyMock from './mocks/LaunchDarkly';
+import * as enforcementsServiceMock from './mocks/EnforcementsService';
 import _ from 'lodash';
 
 angular
@@ -63,6 +64,8 @@ angular
           };
         }
       ]);
+
+      $provide.value('services/EnforcementsService', enforcementsServiceMock);
 
       $provide.constant('LaunchDarkly.es6', {
         getVariation: sinon.stub().resolves(false)

@@ -24,7 +24,7 @@ header.workbench-header
     ng-show="!showNoAssetsAdvice() && !shouldHide('create', 'asset')")
     react-component(
       name="components/tabs/asset_list/AddAssetButton.es6"
-      props="{ canUploadMultipleAssets: canUploadMultipleAssets, createMultipleAssets: createMultipleAssets, newAsset: newAsset, testId: 'add-asset-menu-trigger' }"
+      props="{ canUploadMultipleAssets: canUploadMultipleAssets, createMultipleAssets: createMultipleAssets, newAsset: newAsset, testId: 'add-asset-menu-trigger', disabled: shouldDisable('create', 'asset') }"
       )
 
 .workbench-main(ng-hide="showNoAssetsAdvice()")

@@ -39,6 +39,7 @@ import './mocks/space_context';
 import './mocks/the_store';
 import './mocks/timing';
 import './mocks/widget_api';
+import './mocks/EnforcementsService';
 
 import installTestCaseContext from './TestCaseContext';
 installTestCaseContext();

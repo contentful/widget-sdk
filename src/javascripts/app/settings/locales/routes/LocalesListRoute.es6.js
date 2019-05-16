@@ -24,7 +24,7 @@ const LocalesFetcher = createFetcherComponent(() => {
   return Promise.all([
     spaceContext.localeRepo.getAll(),
     isLegacyOrganization(spaceContext.organization),
-    createResourceService(spaceContext.getId()).get('locale'),
+    createResourceService(spaceContext.getId()).get('locale', spaceContext.getEnvironmentId()),
     createLegacyFeatureService(spaceContext.getId()).get('multipleLocales'),
     OrganizationRoles.isOwnerOrAdmin(spaceContext.organization),
     EnvironmentUtils.isInsideMasterEnv(spaceContext),
