@@ -10,7 +10,8 @@ const PREFIXES = [
   'extensions',
   'locales',
   'user_states',
-  'states'
+  'states',
+  'resources'
 ];
 
 // Given a path return `true` if the environment endpoint

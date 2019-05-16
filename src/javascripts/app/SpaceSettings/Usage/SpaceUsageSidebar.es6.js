@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-
+import { pickBy, has } from 'lodash';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
+import { CodeFragment } from 'ui/Content.es6';
 import { resourceMaximumLimitReached, resourceHumanNameMap } from 'utils/ResourceUtils.es6';
+import { Note } from '@contentful/forma-36-react-components';
 
 // Return a list with the names of the resources that reached the limit
 const getLimitsReachedResources = resources => {
@@ -11,8 +13,10 @@ const getLimitsReachedResources = resources => {
     .map(resource => resourceHumanNameMap[resource.sys.id]);
 };
 
-const SpaceUsageSidebar = ({ resources }) => {
-  const limitsReachedResources = getLimitsReachedResources(resources);
+const SpaceUsageSidebar = ({ spaceResources, environmentResources, environmentId }) => {
+  const spaceOnlyResources = pickBy(spaceResources, (_, key) => !has(environmentResources, key));
+  const limitsReachedSpaceResources = getLimitsReachedResources(spaceOnlyResources);
+  const limitsReachedEnvResources = getLimitsReachedResources(environmentResources);
 
   return (
     <div className="entity-sidebar">
@@ -24,17 +28,11 @@ const SpaceUsageSidebar = ({ resources }) => {
           Technical limits apply
         </a>
       </p>
-
-      {limitsReachedResources.length > 0 && (
-        <p className="note-box--info">
-          You have reached the limit for
-          {limitsReachedResources.length > 2
-            ? ' a few of your space resources. '
-            : ` ${limitsReachedResources.join(' and ')}. `}
-          Consider upgrading your space plan.
-        </p>
-      )}
-
+      <LimitsReachedMessage
+        spaceResources={limitsReachedSpaceResources}
+        environmentResources={limitsReachedEnvResources}
+        environmentId={environmentId}
+      />
       <h3 className="entity-sidebar__heading">Need help?</h3>
       <p className="entity-sidebar__help-text">
         {`Do you need help to upgrade or downgrade?
@@ -48,11 +46,63 @@ const SpaceUsageSidebar = ({ resources }) => {
 };
 
 SpaceUsageSidebar.propTypes = {
-  resources: PropTypes.object
+  spaceResources: PropTypes.object,
+  environmentResources: PropTypes.object,
+  environmentId: PropTypes.string
 };
 
 SpaceUsageSidebar.defaultProps = {
-  resources: {}
+  spaceResources: {},
+  environmentResources: {}
 };
 
 export default SpaceUsageSidebar;
+
+function LimitsReachedMessage({ spaceResources, environmentResources, environmentId }) {
+  const result = [];
+  const envCodeFragment = (
+    <CodeFragment style={{ display: 'inline' }}>{environmentId}</CodeFragment>
+  );
+  // create space message and concatenate environment message if necessary
+  if (spaceResources.length > 0) {
+    result.push(
+      <Fragment key="space-limit-msg">
+        You have reached the space limit for
+        {spaceResources.length > 2
+          ? ' a few of your space resources'
+          : ` ${spaceResources.join(' and ')}`}
+        {environmentResources.length > 0 ? (
+          <Fragment>
+            {' and other limits in your '}
+            {envCodeFragment}
+            {' environment. '}
+          </Fragment>
+        ) : (
+          '.'
+        )}
+      </Fragment>
+    );
+    // if no space resources are at limit, just create environment limit message
+  } else if (environmentResources.length > 0) {
+    result.push(
+      <Fragment key="env-limit-msg">
+        You have reached the limit for
+        {environmentResources.length > 2
+          ? ` a few resources `
+          : ` ${environmentResources.join(' and ')} `}
+        in your {envCodeFragment} {'environment. '}
+      </Fragment>
+    );
+  }
+  // only add upgrade message if there are any other messages
+  if (result.length > 0) {
+    result.push(<Fragment key="upgrade-msg"> Consider upgrading your space plan.</Fragment>);
+  }
+  return result.length > 0 ? <Note>{result}</Note> : null;
+}
+
+LimitsReachedMessage.propTypes = {
+  environmentResources: PropTypes.array,
+  spaceResources: PropTypes.array,
+  environmentId: PropTypes.string
+};
