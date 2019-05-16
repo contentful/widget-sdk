@@ -11,7 +11,7 @@ export function isCommentAuthor(comment) {
 }
 
 export function canRemoveComment(comment) {
-  const isAdmin = spaceContext.getData('spaceMembership.admin', false);
+  const isAdmin = spaceContext.getData('spaceMember.admin', false);
   return isAdmin || isCommentAuthor(comment);
 }
 

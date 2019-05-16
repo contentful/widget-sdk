@@ -24,7 +24,7 @@
     "@contentful/sharejs": "^2.10.4",
     "@contentful/validation": "^9.2.0",
     "@contentful/widget-map": "^1.2.3",
-    "@contentful/worf": "^3.13.0",
+    "@contentful/worf": "^3.14.0",
     "@productboard/slate-edit-list": "^0.19.1",
     "@typeform/embed": "^0.6.1",
     "@wikifactory/slate-trailing-block": "^0.6.0",

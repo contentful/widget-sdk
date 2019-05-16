@@ -98,7 +98,7 @@ angular
                 subscription: {},
                 subscriptionPlan: { limits: {} }
               },
-              spaceMembership: {
+              spaceMember: {
                 isAdmin: true
               }
             },

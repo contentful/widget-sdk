@@ -58,7 +58,7 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       spaceId: spaceContext.getId(),
       environmentId: spaceContext.getEnvironmentId(),
       location,
-      spaceMembership: spaceContext.space.data.spaceMembership,
+      spaceMember: spaceContext.space.data.spaceMember,
       current: isFieldLevelExtension
         ? {
             field: $scope.widget.field,
