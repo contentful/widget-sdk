@@ -33,7 +33,6 @@ describe('Assets Page', () => {
 
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.PreviewEnvironments.NONE}`,
         `@${state.Assets.NONE}`
       ]);
     });
@@ -70,7 +69,6 @@ describe('Assets Page', () => {
 
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.PreviewEnvironments.NONE}`,
         `@${state.Assets.SEVERAL}`
       ]);
     });
