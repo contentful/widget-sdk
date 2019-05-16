@@ -145,9 +145,9 @@ function editViewRoles(view, endpoint, tracking, UpdateView) {
 
 function editViewTitle(view, tracking, UpdateView) {
   openInputDialog({
-    title: 'Rename view',
-    message: 'New name for the view',
-    confirmLabel: 'Rename view',
+    title: 'Edit view',
+    message: 'View name',
+    confirmLabel: 'Save',
     input: { value: view.title, min: 1, max: 32 }
   }).promise.then(title => {
     view = assign(view, { title });
@@ -169,7 +169,7 @@ function deleteView(view, tracking, DeleteView) {
       onCancel={() => {
         onClose(false);
       }}>
-      Do you really want to delete the view{' '}
+      Are you sure you want to delete the view{' '}
       <span className="modal-dialog__highlight">{htmlEncode(view.title)}</span>?
     </ModalConfirm>
   )).then(confirmed => {

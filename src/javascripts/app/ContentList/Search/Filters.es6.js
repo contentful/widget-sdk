@@ -73,10 +73,10 @@ export const ValueInput = {
 // The generic filters applicable to all content types
 // TODO: Use "entry" and "asset" instead of "item".
 const sysFieldFilters = [
-  ['updatedAt', 'Date', 'Time an item was last changed'],
-  ['createdAt', 'Date', 'Time an item was created'],
-  ['publishedAt', 'Date', 'Time an item was last published'],
-  ['firstPublishedAt', 'Date', 'Date an item was published for the very first time'],
+  ['updatedAt', 'Date', 'Date an item was last updated'],
+  ['createdAt', 'Date', 'Date an item was created'],
+  ['publishedAt', 'Date', 'Date an item was last published'],
+  ['firstPublishedAt', 'Date', 'Date an item was first published'],
   ['updatedBy', 'User', 'The user who last updated an item'],
   ['createdBy', 'User', 'The user who created an item'],
   ['publishedBy', 'User', 'The user who last published an item'],
