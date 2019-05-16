@@ -269,11 +269,11 @@ export default function register() {
          *
          * @param {Client.Entity} entity
          * @param {string} internalFieldId
-         * @param {string?} localeCode
+         * @param {string?} internalLocaleCode
          * @return {any}
          */
-        getFieldValue: function(entity, fieldId, localeCode) {
-          const values = _.get(entity, ['data', 'fields', fieldId]);
+        getFieldValue: function(entity, internalFieldId, internalLocaleCode) {
+          const values = _.get(entity, ['data', 'fields', internalFieldId]);
           if (!_.isObject(values)) {
             return;
           }
@@ -281,10 +281,8 @@ export default function register() {
           const defaultLocale = TheLocaleStore.getDefaultLocale();
           const defaultLocaleCode = defaultLocale && defaultLocale.internal_code;
           const firstLocaleCode = Object.keys(values)[0];
-
-          localeCode = localeCode || defaultLocaleCode || firstLocaleCode;
-
-          return values[localeCode] || values[defaultLocaleCode] || values[firstLocaleCode];
+          const relevantLocaleCode = internalLocaleCode || defaultLocaleCode || firstLocaleCode;
+          return values[relevantLocaleCode] || values[defaultLocaleCode] || values[firstLocaleCode];
         },
 
         /**

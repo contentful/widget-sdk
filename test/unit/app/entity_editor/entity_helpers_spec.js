@@ -2,6 +2,10 @@ import _ from 'lodash';
 
 describe('EntityHelpers', () => {
   const REWRITTEN_URL = 'http://rewritten.url/file.txt';
+  const INTERNAL_LOCALE_BY_LOCALE = {
+    'en-US': 'en-US',
+    de: 'de-internal'
+  };
   const throwingFn = () => {
     throw new Error('Should not end up here!');
   };
@@ -9,6 +13,9 @@ describe('EntityHelpers', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.constant('assetUrlFilter', _.constant(REWRITTEN_URL));
+      $provide.constant('TheLocaleStore', {
+        toInternalCode: code => INTERNAL_LOCALE_BY_LOCALE[code]
+      });
     });
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();
@@ -38,23 +45,49 @@ describe('EntityHelpers', () => {
   function itConvertsToEntryAndCallsMethod(methodName, spaceContextMethodName) {
     spaceContextMethodName = spaceContextMethodName || methodName;
 
-    it(`#${methodName}() converts data to entry and calls spaceContext.${spaceContextMethodName}()`, async function() {
-      this.spaceContext.publishedCTs.fetch.resolves({
-        data: { fields: [{ apiName: 'testField', id: 'realid' }] }
+    describe(`#${methodName}()`, function() {
+      const contentType = {
+        fields: [{ apiName: 'fieldA', id: 'fieldA' }, { apiName: 'fieldB', id: 'fieldBRealId' }]
+      };
+      const fields = {
+        fieldA: { 'en-US': 'en' },
+        fieldB: { 'en-US': 'valEN', de: 'valDE' },
+        unknownField: {}
+      };
+      const entry = {
+        sys: { type: 'Entry', contentType: { sys: { id: 'ctId' } } },
+        fields
+      };
+
+      beforeEach(function() {
+        this.spaceContext.publishedCTs.fetch.resolves({ data: contentType });
       });
 
-      await this.helpers[methodName]({
-        sys: { type: 'Entry', contentType: { sys: { id: 'ctid' } } },
-        fields: { testField: {} }
+      it(`converts data to entry and calls spaceContext.${spaceContextMethodName}()`, async function() {
+        const transformedFields = {
+          fieldA: fields.fieldA,
+          fieldBRealId: { 'en-US': 'valEN', 'de-internal': 'valDE' }
+        };
+
+        await this.helpers[methodName](entry);
+
+        sinon.assert.calledOnce(this.spaceContext[spaceContextMethodName]);
+        const [entity, locale] = this.spaceContext[spaceContextMethodName].firstCall.args;
+
+        expect(entity.data.fields).toEqual(transformedFields);
+        expect(entity.getType()).toBe('Entry');
+        expect(entity.getContentTypeId()).toBe('ctId');
+        expect(locale).toBe('en-US');
       });
 
-      sinon.assert.calledOnce(this.spaceContext[spaceContextMethodName]);
-      const [entity, locale] = this.spaceContext[spaceContextMethodName].firstCall.args;
-
-      expect(entity.data.fields).toEqual({ realid: {} });
-      expect(entity.getType()).toBe('Entry');
-      expect(entity.getContentTypeId()).toBe('ctid');
-      expect(locale).toBe('en-US');
+      it(`passes internal locale to spaceContext`, async function() {
+        const helpers = this.EntityHelpers.newForLocale('de');
+        await helpers[methodName]({
+          sys: { type: 'Entry' }
+        });
+        const locale = this.spaceContext[spaceContextMethodName].firstCall.args[1];
+        expect(locale).toBe('de-internal');
+      });
     });
   }
 
