@@ -76,6 +76,11 @@ const styles = {
     width: '18px'
   }),
 
+  editForm: css({
+    width: '100%',
+    padding: tokens.spacingS
+  }),
+
   editActions: css({
     display: 'flex'
   }),
@@ -150,48 +155,24 @@ export default class Task extends React.PureComponent {
     return (
       <React.Fragment>
         <TextLink onClick={this.handleEditClick}>Edit task</TextLink> /{' '}
-        <TextLink onClick={this.handleDeleteClick}>Delete task</TextLink>
+        <TextLink linkType="negative" onClick={this.handleDeleteClick}>
+          Delete task
+        </TextLink>
       </React.Fragment>
     );
   };
 
-  renderEditForm = () => {
-    return (
-      <Form spacing="condensed" onClick={e => e.stopPropagation()}>
-        <TextField name="body" id="body" labelText="Edit task" textarea value={this.props.body} />
-        <SelectField name="assignee" id="assignee" labelText="Assigned to">
-          <Option value="1">User 1</Option>
-          <Option value="2">User 2</Option>
-          <Option value="3">User 3</Option>
-        </SelectField>
-        <div className={styles.editActions}>
-          <Button buttonType="positive" className={styles.editSubmit}>
-            Submit
-          </Button>
-          <Button buttonType="muted" onClick={this.handleCancelEdit}>
-            Cancel
-          </Button>
-        </div>
-      </Form>
-    );
-  };
-
-  render() {
+  renderDetails = () => {
     const { body, assignedTo, resolved } = this.props;
     return (
-      <div
-        className={styles.task}
-        onMouseEnter={this.handleTaskHover}
-        onMouseLeave={this.handleTaskHover}
-        onKeyDown={this.handleTaskKeyDown}
-        tabIndex={0}>
+      <React.Fragment>
         <div className={styles.checkboxWrapper}>
           <input type="checkbox" checked={resolved} />
         </div>
         <div
           className={cx(styles.body, this.state.isExpanded && styles.bodyExpanded)}
           onClick={this.handleTaskExpand}>
-          {!this.state.hasEditForm && body}
+          {body}
           {this.state.isExpanded && (
             <React.Fragment>
               {this.state.hasEditForm && this.renderEditForm()}
@@ -206,6 +187,44 @@ export default class Task extends React.PureComponent {
           )}
         </div>
         <div className={styles.avatarWrapper}>{this.renderAvatar()}</div>
+      </React.Fragment>
+    );
+  };
+
+  renderEditForm = () => {
+    const { body, assignedTo } = this.props;
+
+    return (
+      <Form spacing="condensed" onClick={e => e.stopPropagation()} className={styles.editForm}>
+        <TextField name="body" id="body" labelText="Edit task" textarea value={body} />
+        <SelectField name="assignee" id="assignee" labelText="Assign to">
+          <Option value="1">
+            {assignedTo.firstName} {assignedTo.lastName}
+          </Option>
+          <Option value="2">User 2</Option>
+          <Option value="3">User 3</Option>
+        </SelectField>
+        <div className={styles.editActions}>
+          <Button buttonType="positive" className={styles.editSubmit} size="small">
+            Save task
+          </Button>
+          <Button buttonType="muted" onClick={this.handleCancelEdit} size="small">
+            Cancel
+          </Button>
+        </div>
+      </Form>
+    );
+  };
+
+  render() {
+    return (
+      <div
+        className={styles.task}
+        onMouseEnter={this.handleTaskHover}
+        onMouseLeave={this.handleTaskHover}
+        onKeyDown={this.handleTaskKeyDown}
+        tabIndex={0}>
+        {this.state.hasEditForm ? this.renderEditForm() : this.renderDetails()}
       </div>
     );
   }
