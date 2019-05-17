@@ -15,22 +15,18 @@ const RESIZE_MODES = {
   width: file => ({
     initialValue: `${file.details.image.width}`,
     regex: NUMBER_REGEX,
-    title: 'Please provide desired width',
+    title: 'Set width',
     message: `
-      Expected value is a number of pixels between 1 and 9999.
-      Provided value will be used as a new width of your image.
-      Its height will be automatically computed to maintain the original aspect ratio.
+      The original aspect ratio is maintained when a new width is set.
     `,
     valueToUrl: value => url(file, `w=${value}&fit=scale`)
   }),
   height: file => ({
     initialValue: `${file.details.image.height}`,
     regex: NUMBER_REGEX,
-    title: 'Please provide desired height',
+    title: 'Set height',
     message: `
-      Expected value is a number of pixels between 1 and 9999.
-      Provided value will be used as a new height of your image.
-      Its width will be automatically computed to maintain the original aspect ratio.
+      The original aspect ratio is maintained when a new height is set.
     `,
     valueToUrl: value => url(file, `h=${value}&fit=scale`)
   }),
