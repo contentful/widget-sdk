@@ -1,11 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Tooltip,
-  CardActions,
-  DropdownList,
-  DropdownListItem
-} from '@contentful/forma-36-react-components';
+import { Tooltip, TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
 
@@ -16,14 +11,28 @@ const styles = {
     alignItems: 'start',
     backgroundColor: tokens.colorWhite,
     borderBottom: `1px solid ${tokens.colorElementMid}`,
-    padding: tokens.spacingS
+    ':hover, :focus': {
+      backgroundColor: tokens.colorElementLightest
+    }
   }),
 
   body: css({
     flex: '1 1 0',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis'
+    textOverflow: 'ellipsis',
+    padding: tokens.spacingS
+  }),
+
+  checkboxWrapper: css({
+    padding: tokens.spacingS,
+    paddingRight: 0
+  }),
+
+  avatarWrapper: css({
+    display: 'inline-flex',
+    padding: tokens.spacingS,
+    paddingLeft: 0
   }),
 
   bodyExpanded: css({
@@ -32,8 +41,10 @@ const styles = {
     textOverflow: 'clip'
   }),
 
-  checkbox: css({
-    marginRight: tokens.spacingXs
+  meta: css({
+    marginTop: tokens.spacingXs,
+    color: tokens.colorTextLight,
+    lineHeight: tokens.lineHeightDefault
   }),
 
   avatar: css({
@@ -41,8 +52,7 @@ const styles = {
     width: '18px',
     height: '18px',
     background: tokens.colorElementLight,
-    borderRadius: '100%',
-    marginLeft: tokens.spacingS
+    borderRadius: '100%'
   }),
 
   actions: css({
@@ -71,6 +81,15 @@ export default class Task extends React.PureComponent {
     hasVisibleActions: false
   };
 
+  handleTaskKeyDown = event => {
+    const ENTER_KEY_CODE = 13;
+
+    if (event.keyCode === ENTER_KEY_CODE) {
+      event.stopPropagation();
+      this.setState(prevState => ({ isExpanded: !prevState.isExpanded }));
+    }
+  };
+
   handleTaskExpand = () => {
     this.setState(prevState => ({ isExpanded: !prevState.isExpanded }));
   };
@@ -79,32 +98,66 @@ export default class Task extends React.PureComponent {
     this.setState(prevState => ({ hasVisibleActions: !prevState.hasVisibleActions }));
   };
 
+  handleEditClick = event => {
+    event.stopPropagation();
+    // eslint-disable-next-line no-console
+    console.log('edit');
+  };
+
+  handleDeleteClick = event => {
+    event.stopPropagation();
+    // eslint-disable-next-line no-console
+    console.log('delete');
+  };
+
+  renderAvatar = () => {
+    const { assignedTo } = this.props;
+    const assigneeName = `${assignedTo.firstName} ${assignedTo.lastName}`;
+
+    return (
+      <Tooltip content={`Assigned to ${assigneeName}`} place="left">
+        <img src={assignedTo.avatarUrl} className={styles.avatar} />
+      </Tooltip>
+    );
+  };
+
+  renderActions = () => {
+    // TODO: Check roles/permissions before rendering actions
+    return (
+      <React.Fragment>
+        <TextLink onClick={this.handleEditClick}>Edit task</TextLink> /{' '}
+        <TextLink onClick={this.handleDeleteClick}>Delete task</TextLink>
+      </React.Fragment>
+    );
+  };
+
   render() {
     const { body, assignedTo, resolved } = this.props;
     return (
       <div
         className={styles.task}
         onMouseEnter={this.handleTaskHover}
-        onMouseLeave={this.handleTaskHover}>
-        <input type="checkbox" className={styles.checkbox} checked={resolved} />
+        onMouseLeave={this.handleTaskHover}
+        onKeyDown={this.handleTaskKeyDown}
+        tabIndex={0}>
+        <div className={styles.checkboxWrapper}>
+          <input type="checkbox" checked={resolved} />
+        </div>
         <div
           className={cx(styles.body, this.state.isExpanded && styles.bodyExpanded)}
           onClick={this.handleTaskExpand}>
           {body}
+          {this.state.isExpanded && (
+            <div className={styles.meta}>
+              <div>
+                Created by {assignedTo.firstName} {assignedTo.lastName}
+              </div>
+              <div>Created at {assignedTo.sys.createdAt}</div>
+              <div>{this.renderActions()}</div>
+            </div>
+          )}
         </div>
-
-        <Tooltip
-          content={`Assigned to ${assignedTo.firstName} ${assignedTo.lastName}`}
-          place="left">
-          <img src={assignedTo.avatarUrl} className={styles.avatar} />
-        </Tooltip>
-
-        <CardActions
-          className={cx(styles.actions, this.state.hasVisibleActions && styles.actionsVisible)}>
-          <DropdownList>
-            <DropdownListItem>Some action</DropdownListItem>
-          </DropdownList>
-        </CardActions>
+        <div className={styles.avatarWrapper}>{this.renderAvatar()}</div>
       </div>
     );
   }
