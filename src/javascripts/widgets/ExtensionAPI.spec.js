@@ -14,9 +14,8 @@ describe('ExtensionAPI', () => {
       entryData: { sys: {}, fields: {} },
       contentTypeData: {},
       editorInterface: {},
-      spaceMembership: {
-        sys: {},
-        user: { sys: {}, firstName: 'Jakub' },
+      spaceMember: {
+        sys: { user: { sys: {}, firstName: 'Jakub' } },
         roles: []
       },
       parameters: {

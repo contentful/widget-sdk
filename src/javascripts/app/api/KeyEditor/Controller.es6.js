@@ -95,7 +95,7 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments) {
     initKeyEditor({
       data: deepFreeze({
         spaceId: spaceContext.getId(),
-        isAdmin: !!spaceContext.getData(['spaceMembership', 'admin']),
+        isAdmin: !!spaceContext.getData(['spaceMember', 'admin']),
         canEdit,
         deliveryToken: apiKey.accessToken,
         previewToken: get(apiKey, 'preview_api_key.accessToken'),

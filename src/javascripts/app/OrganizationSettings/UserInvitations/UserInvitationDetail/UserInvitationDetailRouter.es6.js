@@ -53,15 +53,16 @@ const InvitationDetailFetcher = createFetcherComponent(async ({ orgId, invitatio
   } else if (membership) {
     const includePaths = ['roles', 'sys.space'];
     const [user, createdBy, spaceMemberships] = await Promise.all([
-      getUser(endpoint, membership.user.sys.id),
+      getUser(endpoint, membership.sys.user.sys.id),
       getUser(endpoint, membership.sys.createdBy.sys.id),
       getSpaceMemberships(endpoint, {
-        'sys.user.sys.id': membership.user.sys.id,
+        'sys.user.sys.id': membership.sys.user.sys.id,
         include: includePaths.join(',')
       }).then(({ items, includes }) => ResolveLinks({ paths: includePaths, items, includes }))
     ]);
 
     membership.user = user;
+    membership.sys.user = user;
     membership.spaceMemberships = spaceMemberships;
     membership.sys.createdBy = createdBy;
   }

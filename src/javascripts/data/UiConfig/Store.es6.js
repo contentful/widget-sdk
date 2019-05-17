@@ -26,8 +26,8 @@ const ALPHA_HEADER = { 'x-contentful-enable-alpha-feature': 'user_ui_config' };
  * @returns {Promise<UIConfigStore>}
  */
 export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrator) {
-  const membership = space.data.spaceMembership;
-  const userId = membership.user.sys.id;
+  const membership = space.data.spaceMember;
+  const userId = membership.sys.user.sys.id;
   const getPrivateViewsDefaults = () => Defaults.getPrivateViews(userId);
   const getEntryViewsDefaults = () => Defaults.getEntryViews(publishedCTs.getAllBare());
 

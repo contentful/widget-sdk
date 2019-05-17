@@ -166,9 +166,9 @@ export function isUserOrgCreator(user, org) {
  * @returns {string[]}
  */
 export function getUserSpaceRoles(space) {
-  const adminRole = space.spaceMembership.admin ? ['admin'] : [];
+  const adminRole = space.spaceMember.admin ? ['admin'] : [];
   // we keep everything lower-case, just to avoid possible naming issues
-  const nonAdminRoles = space.spaceMembership.roles.map(({ name }) => name && name.toLowerCase());
+  const nonAdminRoles = space.spaceMember.roles.map(({ name }) => name && name.toLowerCase());
   return adminRole.concat(nonAdminRoles);
 }
 

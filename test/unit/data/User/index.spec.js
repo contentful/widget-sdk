@@ -301,7 +301,7 @@ describe('data/User', () => {
   describe('#getUserSpaceRoles', () => {
     it('includes "admin" in the array in case of admin', function() {
       const space = {
-        spaceMembership: {
+        spaceMember: {
           admin: true,
           roles: []
         }
@@ -312,7 +312,7 @@ describe('data/User', () => {
 
     it('does not include "admin" in the array in case of not admin', function() {
       const space = {
-        spaceMembership: {
+        spaceMember: {
           admin: false,
           roles: [{ name: 'Some' }]
         }
@@ -323,7 +323,7 @@ describe('data/User', () => {
 
     it('converts role names to lowercase', function() {
       const space = {
-        spaceMembership: {
+        spaceMember: {
           admin: false,
           roles: [{ name: 'SoMe' }]
         }
