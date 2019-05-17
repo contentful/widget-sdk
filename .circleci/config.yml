@@ -269,6 +269,7 @@ jobs:
       E2E_TESTS_VERSION: master
       GATEKEEPER_VERSION: production
       WEB_CONCURRENCY: 0
+      RAILS_ENV: acceptance
       RAILS_MAX_THREADS: 8
     working_directory: /home/circleci/components/lab
     steps:
