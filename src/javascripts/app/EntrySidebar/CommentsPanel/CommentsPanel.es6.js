@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
@@ -97,12 +97,15 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
   }, [shouldScroll]);
 
   const isEmpty = !isLoading && !error && comments && comments.length === 0;
-  const threads = fromFlatToThreads(comments);
+  const threads = useMemo(() => fromFlatToThreads(comments), [comments]);
 
   return (
-    <div className={`${styles.root} ${isVisible ? styles.visible : styles.hidden}`}>
+    <div
+      className={`${styles.root} ${isVisible ? styles.visible : styles.hidden}`}
+      data-test-id="comments">
       <div
         className={`${styles.commentList} ${isLoading ? styles.commentListLoading : ''}`}
+        data-test-id="comments.list"
         ref={listRef}>
         {isLoading && <CommentSkeletonGroup />}
         {isEmpty && <CommentsPanelEmptyState />}
@@ -116,7 +119,7 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
             />
           ))}
         {error && (
-          <div className={styles.errorState}>
+          <div className={styles.errorState} data-test-id="comments.error">
             <Typography>
               <Heading>Something went wrong</Heading>
               <Paragraph>{`We couldn't fetch the comments because of a problem.`}</Paragraph>
@@ -125,7 +128,7 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
         )}
       </div>
 
-      <div className={styles.commentForm}>
+      <div className={styles.commentForm} data-test-id="comments.form">
         <CreateComment spaceId={spaceId} entryId={entryId} onNewComment={handleNewComment} />
       </div>
     </div>

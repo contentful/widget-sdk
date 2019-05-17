@@ -55,7 +55,10 @@ export default function CommentThread({ thread, onRemoved, onNewReply }) {
 
   return (
     <div ref={ref}>
-      <Card className={styles.root} onClick={() => setReplyingMode(true)}>
+      <Card
+        className={styles.root}
+        onClick={() => setReplyingMode(true)}
+        data-test-id="comments.thread">
         <Comment comment={comment} onRemoved={onRemoved} hasReplies={!!replies.length} />
 
         {replies.length ? (

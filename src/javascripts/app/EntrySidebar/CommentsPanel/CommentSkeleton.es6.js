@@ -21,6 +21,12 @@ export default function CommentSkeleton() {
   );
 }
 
-export function CommentSkeletonGroup({ number = 5 }) {
-  return range(number).map(n => <CommentSkeleton key={n} />);
+export function CommentSkeletonGroup() {
+  return (
+    <div data-test-id="comments.loading">
+      {range(5).map(n => (
+        <CommentSkeleton key={n} />
+      ))}
+    </div>
+  );
 }

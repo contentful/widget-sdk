@@ -21,7 +21,7 @@ const styles = {
 
 export default function CommentsPanelEmptyState() {
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test-id="comments.empty">
       <CommentsPanelEmptyIcon />
       <Typography className={styles.text}>
         <Heading>Start a conversation</Heading>
