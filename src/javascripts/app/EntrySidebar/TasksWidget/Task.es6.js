@@ -1,6 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Tooltip, TextLink } from '@contentful/forma-36-react-components';
+import {
+  Tooltip,
+  TextLink,
+  Form,
+  TextField,
+  SelectField,
+  Option,
+  Button
+} from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
 
@@ -66,6 +74,14 @@ const styles = {
   actionsVisible: css({
     marginLeft: tokens.spacingXs,
     width: '18px'
+  }),
+
+  editActions: css({
+    display: 'flex'
+  }),
+
+  editSubmit: css({
+    marginRight: tokens.spacingS
   })
 };
 
@@ -78,7 +94,8 @@ export default class Task extends React.PureComponent {
 
   state = {
     isExpanded: false,
-    hasVisibleActions: false
+    hasVisibleActions: false,
+    hasEditForm: false
   };
 
   handleTaskKeyDown = event => {
@@ -102,12 +119,19 @@ export default class Task extends React.PureComponent {
     event.stopPropagation();
     // eslint-disable-next-line no-console
     console.log('edit');
+
+    this.setState({ hasEditForm: true });
   };
 
   handleDeleteClick = event => {
     event.stopPropagation();
     // eslint-disable-next-line no-console
     console.log('delete');
+  };
+
+  handleCancelEdit = event => {
+    event.stopPropagation();
+    this.setState({ hasEditForm: false });
   };
 
   renderAvatar = () => {
@@ -131,6 +155,27 @@ export default class Task extends React.PureComponent {
     );
   };
 
+  renderEditForm = () => {
+    return (
+      <Form spacing="condensed" onClick={e => e.stopPropagation()}>
+        <TextField name="body" id="body" labelText="Edit task" textarea value={this.props.body} />
+        <SelectField name="assignee" id="assignee" labelText="Assigned to">
+          <Option value="1">User 1</Option>
+          <Option value="2">User 2</Option>
+          <Option value="3">User 3</Option>
+        </SelectField>
+        <div className={styles.editActions}>
+          <Button buttonType="positive" className={styles.editSubmit}>
+            Submit
+          </Button>
+          <Button buttonType="muted" onClick={this.handleCancelEdit}>
+            Cancel
+          </Button>
+        </div>
+      </Form>
+    );
+  };
+
   render() {
     const { body, assignedTo, resolved } = this.props;
     return (
@@ -146,15 +191,18 @@ export default class Task extends React.PureComponent {
         <div
           className={cx(styles.body, this.state.isExpanded && styles.bodyExpanded)}
           onClick={this.handleTaskExpand}>
-          {body}
+          {!this.state.hasEditForm && body}
           {this.state.isExpanded && (
-            <div className={styles.meta}>
-              <div>
-                Created by {assignedTo.firstName} {assignedTo.lastName}
+            <React.Fragment>
+              {this.state.hasEditForm && this.renderEditForm()}
+              <div className={styles.meta}>
+                <div>
+                  Created by {assignedTo.firstName} {assignedTo.lastName}
+                </div>
+                <div>Created at {assignedTo.sys.createdAt}</div>
+                <div>{this.renderActions()}</div>
               </div>
-              <div>Created at {assignedTo.sys.createdAt}</div>
-              <div>{this.renderActions()}</div>
-            </div>
+            </React.Fragment>
           )}
         </div>
         <div className={styles.avatarWrapper}>{this.renderAvatar()}</div>
