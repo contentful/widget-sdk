@@ -107,7 +107,8 @@
     "sortablejs": "^1.6.1",
     "speakingurl": "^13.0.0",
     "stream-combiner": "^0.2.1",
-    "sum-types": "^0.9.4"
+    "sum-types": "^0.9.4",
+    "tti-polyfill": "^0.2.2"
   },
   "devDependencies": {
     "@babel/cli": "7.2.3",

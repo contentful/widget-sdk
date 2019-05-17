@@ -20,6 +20,8 @@ export default function register() {
     'services/EnforcementsService.es6',
     'redux/store.es6',
     'utils/LaunchDarkly/index.es6',
+    'i13n/AppPerformance/index.es6',
+
     function ClientController(
       $scope,
       $state,
@@ -32,9 +34,17 @@ export default function register() {
       NavState,
       EnforcementsService,
       { default: store },
-      { getCurrentVariation }
+      { getCurrentVariation },
+      AppPerformanceTiming
     ) {
       const refreshNavState = NavState.makeStateRefresher($state, spaceContext);
+
+      const unlistenStateChange = $rootScope.$on('$stateChangeSuccess', (_e, stateParams) => {
+        AppPerformanceTiming.track({
+          stateName: stateParams.name
+        });
+        unlistenStateChange();
+      });
 
       $rootScope.$on('$locationChangeSuccess', function() {
         store.dispatch({
