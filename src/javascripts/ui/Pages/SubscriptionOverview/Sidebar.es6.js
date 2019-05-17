@@ -17,7 +17,7 @@ export function hasAnyInaccessibleSpaces(plans) {
   });
 }
 
-function Sidebar({ grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, basePlan }) {
+function Sidebar({ grandTotal, spacePlans, organizationId, isOrgOwner, isOrgBillable, basePlan }) {
   // TODO - add these styles to stylesheets
   const iconStyle = {
     fill: tokens.colorBlueDark,
@@ -41,7 +41,7 @@ function Sidebar({ grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, bas
               <Icon name="invoice" style={iconStyle} />
               <a
                 className="text-link"
-                href={href(invoices(orgId))}
+                href={href(invoices(organizationId))}
                 data-test-id="subscription-page.sidebar.invoice-link">
                 View invoices
               </a>
@@ -57,7 +57,7 @@ function Sidebar({ grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, bas
               <Icon name="invoice" style={iconStyle} />
               <a
                 className="text-link"
-                href={href(invoices(orgId))}
+                href={href(invoices(organizationId))}
                 data-test-id="subscription-page.sidebar.invoice-link">
                 View invoices
               </a>
@@ -75,7 +75,7 @@ function Sidebar({ grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, bas
           <Icon name="invoice" style={iconStyle} />
           <a
             className="text-link"
-            href={href(billing(orgId))}
+            href={href(billing(organizationId))}
             data-test-id="subscription-page.sidebar.add-payment-link">
             Enter payment details
           </a>
@@ -114,7 +114,7 @@ function Sidebar({ grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, bas
 Sidebar.propTypes = {
   basePlan: PropTypes.object.isRequired,
   grandTotal: PropTypes.number.isRequired,
-  orgId: PropTypes.string.isRequired,
+  organizationId: PropTypes.string.isRequired,
   isOrgOwner: PropTypes.bool.isRequired,
   isOrgBillable: PropTypes.bool.isRequired,
   spacePlans: PropTypes.array.isRequired

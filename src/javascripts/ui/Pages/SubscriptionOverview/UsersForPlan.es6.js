@@ -6,7 +6,7 @@ import { memberships as orgMemberships } from './links.es6';
 
 import Pluralized from 'ui/Components/Pluralized.es6';
 
-function UsersForPlan({ usersMeta, orgId }) {
+function UsersForPlan({ usersMeta, organizationId }) {
   const { numFree, numPaid, cost } = usersMeta;
   const numTotal = numFree + numPaid;
 
@@ -29,7 +29,7 @@ function UsersForPlan({ usersMeta, orgId }) {
         )}
         <a
           className="text-link"
-          href={href(orgMemberships(orgId))}
+          href={href(orgMemberships(organizationId))}
           data-test-id="subscription-page.org-memberships-link">
           Manage users
         </a>
@@ -40,7 +40,7 @@ function UsersForPlan({ usersMeta, orgId }) {
 
 UsersForPlan.propTypes = {
   usersMeta: PropTypes.object.isRequired,
-  orgId: PropTypes.string.isRequired
+  organizationId: PropTypes.string.isRequired
 };
 
 export default UsersForPlan;

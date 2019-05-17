@@ -215,10 +215,10 @@ export function changeSpace({ space, selectedPlan, onConfirm }) {
 
     const spaceId = space.sys.id;
     const endpoint = createSpaceEndpoint(spaceId);
-    const planId = get(selectedPlan, 'sys.id');
+    const productRatePlanId = get(selectedPlan, 'sys.id');
 
     try {
-      await changeSpaceApiCall(endpoint, planId);
+      await changeSpaceApiCall(endpoint, productRatePlanId);
     } catch (e) {
       dispatch(actions.spaceChangeFailure(e));
       dispatch(actions.spaceChangePending(false));
@@ -232,7 +232,7 @@ export function changeSpace({ space, selectedPlan, onConfirm }) {
     );
 
     // We don't fire a "success" event since we close the modal directly
-    onConfirm();
+    onConfirm(productRatePlanId);
   };
 }
 
