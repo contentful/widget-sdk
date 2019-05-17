@@ -107,8 +107,7 @@ export default class Task extends React.PureComponent {
     const ENTER_KEY_CODE = 13;
 
     if (event.keyCode === ENTER_KEY_CODE) {
-      event.stopPropagation();
-      this.setState(prevState => ({ isExpanded: !prevState.isExpanded }));
+      this.handleTaskExpand();
     }
   };
 
@@ -196,7 +195,14 @@ export default class Task extends React.PureComponent {
 
     return (
       <Form spacing="condensed" onClick={e => e.stopPropagation()} className={styles.editForm}>
-        <TextField name="body" id="body" labelText="Edit task" textarea value={body} />
+        <TextField
+          name="body"
+          id="body"
+          labelText="Edit task"
+          textarea
+          value={body}
+          textInputProps={{ rows: 4 }}
+        />
         <SelectField name="assignee" id="assignee" labelText="Assign to">
           <Option value="1">
             {assignedTo.firstName} {assignedTo.lastName}
@@ -206,10 +212,10 @@ export default class Task extends React.PureComponent {
         </SelectField>
         <div className={styles.editActions}>
           <Button buttonType="positive" className={styles.editSubmit} size="small">
-            Save task
+            Save changes
           </Button>
           <Button buttonType="muted" onClick={this.handleCancelEdit} size="small">
-            Cancel
+            Cancel editing
           </Button>
         </div>
       </Form>
