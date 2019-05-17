@@ -39,13 +39,18 @@ export default class SearchFilter extends React.Component {
       ${filter.value ? 'search__filter-pill--active' : ''}
     `;
     return (
-      <div className={classNames}>
-        <div className="search__filter-pill-label users-search__filter-pill-label">{label}</div>
+      <div className={classNames} data-test-id="search-filter">
+        <div
+          className="search__filter-pill-label users-search__filter-pill-label"
+          data-test-id="search-filter.label">
+          {label}
+        </div>
         <div className="search__select-value users-search__select-value">
           <select
             className="search__select users-search__select"
             value={filter.value}
             onChange={this.handleChange}
+            data-test-id="search-filter.options"
             style={{ width: this.getSelectWidth() }}>
             {options.map(option => (
               <option key={option.value} value={option.value}>
