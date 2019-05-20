@@ -230,6 +230,16 @@ jest.mock('lodash/memoize', () => a => a); // The original lodash/memoize should
 jest.mock('lodash/memoize', () => a => a, { virtual: true }); // The original lodash/memoize isn’t required
 ```
 
+#### Mock Angular modules
+
+All ES6 modules import their Angular dependencies via `getModule(name)`. These modules can be mocked by their name prefixed by `ng/`: 
+
+```js
+import * as logger from 'ng/logger';
+
+jest.mock('ng/logger', () => ({ logServerError: jest.fn() }));
+```
+
 ## Skipping tests
 
 Don’t run these tests:
