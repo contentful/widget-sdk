@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  cypress: cypress-io/cypress@1.5.1
+  cypress: cypress-io/cypress@1.7.0
   deploy-assets:
     orbs:
       aws-s3: circleci/aws-s3@1.0.4
@@ -345,8 +345,10 @@ workflows:
       - cypress/run:
           name: run-contract-tests
           executor: cypress-base-8
+          no-workspace: true
           pre-steps:
             - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
+            - run: npm install -g wait-on
           post-steps:
             - store_test_results:
                 path: cypress/reports
