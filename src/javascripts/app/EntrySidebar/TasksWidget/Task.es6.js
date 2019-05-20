@@ -242,7 +242,7 @@ export default class Task extends React.PureComponent {
             Save changes
           </Button>
           <Button buttonType="muted" onClick={this.handleCancelEdit} size="small">
-            Cancel editing
+            Cancel
           </Button>
         </div>
       </Form>
