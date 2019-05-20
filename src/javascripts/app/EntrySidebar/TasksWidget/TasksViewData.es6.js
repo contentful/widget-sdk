@@ -13,10 +13,10 @@ export default TaskViewData;
 /**
  * Creates a TaskViewData object that can be used with the TasksWidget react component.
  *
- * @param {API.Comment>} comments
- * @returns TaskViewData{}
+ * @param {Array<API.Comment>} comments
+ * @returns {TaskViewData}
  */
-export function createTasksViewData(comments = []) {
+export function createTasksViewDataFromComments(comments = []) {
   // TODO: Filter out comments that aren't assigned (normal comments) once the backend
   //  supports assignable comments (aka. tasks).
   const tasks = comments.filter(comment => comment);
@@ -35,5 +35,15 @@ export function createTasksViewData(comments = []) {
       resolved: false // TODO: Replace with resolved flag
       // TODO: Add more stuff from comments into this view data object.
     }))
+  };
+}
+
+/**
+ * @returns {TaskViewData}
+ */
+export function createLoadingStateTasksViewData() {
+  return {
+    helpText: 'Loading...', // TODO: Probably shouldn't just be a help text.
+    tasks: []
   };
 }

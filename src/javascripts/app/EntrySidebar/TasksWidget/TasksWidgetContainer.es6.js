@@ -6,15 +6,15 @@ import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.es6';
 import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
 import * as FeatureFlagKey from 'featureFlags.es6';
-import { createTasksViewData } from './TasksViewData.es6';
+import {
+  createTasksViewDataFromComments,
+  createLoadingStateTasksViewData
+} from './TasksViewData.es6';
 import { fetchComments } from '../CommentsPanel/hooks.es6';
 import TasksWidget from './TasksWidget.es6';
 
 // TODO: Move this to './TasksViewData.es6'
-const loadingTasksViewData = {
-  helpText: 'Loading...',
-  tasks: []
-};
+const loadingTasksViewData = createLoadingStateTasksViewData();
 
 export default class ScheduleWidgetContainer extends Component {
   static propTypes = {
@@ -40,7 +40,7 @@ export default class ScheduleWidgetContainer extends Component {
       // eslint-disable-next-line no-console
       console.log('ERROR', e);
     }
-    const tasksViewData = createTasksViewData(comments);
+    const tasksViewData = createTasksViewDataFromComments(comments);
     // eslint-disable-next-line no-console
     console.log('tasksViewData', tasksViewData);
 
