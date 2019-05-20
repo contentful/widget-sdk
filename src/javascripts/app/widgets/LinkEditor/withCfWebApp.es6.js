@@ -82,7 +82,7 @@ export default function withCfWebApp(LinkEditor) {
     }
 
     handleChange = links => {
-      const value = links.length === 0 ? undefined : links;
+      const value = links && links.length === 0 ? undefined : links;
       this.props.onChange(value);
     };
 
