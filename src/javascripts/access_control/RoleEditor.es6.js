@@ -295,7 +295,7 @@ class RoleEditor extends React.Component {
 
     const stateUpdates = [];
     stateUpdates.push(set('isLegacy', ResourceUtils.isLegacyOrganization(organization)));
-    let autofixedInternals;
+    let autofixedInternals = null;
 
     if (!featureEnabled) {
       stateUpdates.push(set('hasCustomRolesFeature', false), set('canModifyRoles', false));
