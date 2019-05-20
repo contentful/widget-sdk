@@ -10,14 +10,16 @@ import {
   SkeletonBodyText,
   TextLink,
   Typography,
-  Paragraph
+  Paragraph,
+  Heading
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink.es6';
 import Workbench from 'app/common/Workbench.es6';
 import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar.es6';
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+import EmptyStateIllustration from 'svg/connected-forms-illustration.es6';
 
-import EmptyExtensionIcon from './icons/EmptyExtensionIcon.es6';
 import ExtensionsActions from './ExtensionsActions.es6';
 import * as ExtensionLoader from 'widgets/ExtensionLoader.es6';
 
@@ -35,7 +37,8 @@ const styles = {
   deleteDropdownButton: css({
     margin: tokens.spacingM,
     marginBottom: 0
-  })
+  }),
+  svgContainer: css({ width: '280px' })
 };
 
 function deleteExtension(id, refresh) {
@@ -107,26 +110,21 @@ DeleteButton.propTypes = {
 };
 
 const EmptyState = () => (
-  <div className="empty-state" data-test-id="extensions.empty">
-    <div style={{ transform: 'scale(0.75)' }}>
-      <EmptyExtensionIcon />
+  <EmptyStateContainer data-test-id="extensions.empty">
+    <div className={styles.svgContainer}>
+      <EmptyStateIllustration />
     </div>
-    <div className="empty-state__title">There are no extensions installed in this space</div>
-    <div className="empty-state__description">
-      Contentful UI Extensions are small applications that run inside the Web App. Click on{' '}
-      {'"Add extension"'} to explore your options. You can also read how to{' '}
-      <DocsLink
-        href="https://www.contentful.com/developers/docs/concepts/uiextensions/"
-        title="get started with extensions"
-      />{' '}
-      or head to the{' '}
+    <Heading>Customize your experience by connecting to your favorite services</Heading>
+    <Paragraph>
+      Add UI extensions to customize and extend the functionality of the Contentful web app. To
+      explore your options, click on Add Extension or read the UI extension documentation{' '}
       <DocsLink
         href="https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md"
-        title="API Reference of the UI Extensions SDK"
+        title="UI extension documentation"
       />
       .
-    </div>
-  </div>
+    </Paragraph>
+  </EmptyStateContainer>
 );
 
 export const ExtensionListShell = props => (

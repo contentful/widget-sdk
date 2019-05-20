@@ -1,9 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SpaceIcon from 'svg/space.es6';
+import { css } from 'emotion';
 import FolderIcon from 'svg/folder.es6';
 import SpaceWithEnvironments from './SpaceWithEnvironments.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+import { Button, Heading, Paragraph } from '@contentful/forma-36-react-components';
+import EmptyStateAdminIllustration from 'svg/folder-illustration.es6';
+import EmptyStatePractitionerIllustration from 'svg/folder-illustration.es6';
+
+const styles = { svgContainer: css({ width: '150px' }) };
 
 function OrgSpacesHeader({ canCreateSpaceInCurrOrg, showCreateSpaceModal }) {
   return (
@@ -93,29 +99,34 @@ SpaceList.propTypes = {
   setOpenedSpaceId: PropTypes.func,
   environmentsEnabled: PropTypes.bool
 };
+const getAdminEmptyState = showCreateSpaceModal => (
+  <EmptyStateContainer>
+    <div className={styles.svgContainer}>
+      <EmptyStateAdminIllustration />
+    </div>
+    <Heading>Starting something new?</Heading>
+    <Paragraph>A space is an area to manage and store content for a specific project.</Paragraph>
+    <Button testId="sidepanel-create-space-btn" onClick={showCreateSpaceModal}>
+      Add a space
+    </Button>
+  </EmptyStateContainer>
+);
 
+const getPractitionerEmptyState = () => (
+  <EmptyStateContainer>
+    <div className={styles.svgContainer}>
+      <EmptyStatePractitionerIllustration />
+    </div>
+    <Heading>No spaces, yet</Heading>
+    <Paragraph> Have a chat with your admin to get access to a space.</Paragraph>
+  </EmptyStateContainer>
+);
 function NoSpacesMsg({ canCreateSpaceInCurrOrg, showCreateSpaceModal }) {
   return (
     <div className="nav-sidepanel__no-spaces" data-test-id="sidepanel-no-spaces">
-      <SpaceIcon />
-      <p className="nav-sidepanel__no-spaces-heading">
-        {canCreateSpaceInCurrOrg
-          ? 'Let’s go - create your first space!'
-          : 'Uh oh! Nothing to see here'}
-      </p>
-      <p>
-        {canCreateSpaceInCurrOrg
-          ? 'A space is a place where you keep all the content related to a single project.'
-          : 'Seems like you don’t have access to any of your organization’s spaces. Contact your organization admin to add you to spaces.'}
-      </p>
-      {canCreateSpaceInCurrOrg && (
-        <button
-          className="btn-action nav-sidepanel__no-spaces-create-cta"
-          data-test-id="sidepanel-create-space-btn"
-          onClick={showCreateSpaceModal}>
-          Create Space
-        </button>
-      )}
+      {canCreateSpaceInCurrOrg
+        ? getAdminEmptyState(showCreateSpaceModal)
+        : getPractitionerEmptyState()}
     </div>
   );
 }
