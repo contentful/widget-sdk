@@ -10,6 +10,7 @@ import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 import * as logger from 'services/logger.es6';
 import * as Telemetry from 'i13n/Telemetry.es6';
 import createUserCache from 'data/userCache.es6';
+import * as EntityFieldValueHelpers from './EntityFieldValueHelpers.es6';
 
 export default function register() {
   /**
@@ -273,16 +274,14 @@ export default function register() {
          * @return {any}
          */
         getFieldValue: function(entity, internalFieldId, internalLocaleCode) {
-          const values = _.get(entity, ['data', 'fields', internalFieldId]);
-          if (!_.isObject(values)) {
-            return;
-          }
+          const defaultInternalLocaleCode = getDefaultInternalLocaleCode();
 
-          const defaultLocale = TheLocaleStore.getDefaultLocale();
-          const defaultLocaleCode = defaultLocale && defaultLocale.internal_code;
-          const firstLocaleCode = Object.keys(values)[0];
-          const relevantLocaleCode = internalLocaleCode || defaultLocaleCode || firstLocaleCode;
-          return values[relevantLocaleCode] || values[defaultLocaleCode] || values[firstLocaleCode];
+          return EntityFieldValueHelpers.getFieldValue({
+            entity: entity.data,
+            internalFieldId,
+            internalLocaleCode,
+            defaultInternalLocaleCode
+          });
         },
 
         /**
@@ -301,46 +300,28 @@ export default function register() {
          */
         entryTitle: function(entry, localeCode, modelValue) {
           const defaultTitle = modelValue ? null : 'Untitled';
-          let title, displayField;
-
+          let title = defaultTitle;
           try {
             const contentTypeId = entry.getContentTypeId();
             const contentType = this.publishedCTs.get(contentTypeId);
-            if (!contentType) {
-              return defaultTitle;
-            }
-            displayField = contentType.data.displayField;
-            if (!displayField) {
-              return defaultTitle;
-            } else {
-              // when localization for a field is "turned off",
-              // we don't clean up the "old" localized data, so it is still in the response.
-              // Therefore, we're checking if displayField is localizable.
-              const displayFieldInfo = _.find(contentType.data.fields, { id: displayField });
+            const defaultInternalLocaleCode = getDefaultInternalLocaleCode();
 
-              if (displayFieldInfo.localized) {
-                title = this.getFieldValue(entry, displayField, localeCode);
-              } else {
-                title = this.getFieldValue(entry, displayField);
-              }
-
-              // TODO: Display meaningful title in case of non-string displayField.
-              if (!title || title.match(/^\s*$/)) {
-                return defaultTitle;
-              } else {
-                return title;
-              }
-            }
+            title = EntityFieldValueHelpers.getEntryTitle({
+              entry: entry.data,
+              contentType: contentType.data,
+              internalLocaleCode: localeCode,
+              defaultInternalLocaleCode,
+              defaultTitle
+            });
           } catch (error) {
             // TODO: Don't use try catch. Instead, handle undefined/unexpected values.
             logger.logWarn('Failed to determine entry title', {
               error: error,
-              entrySys: _.get(entry, 'data.sys'),
-              entryTitle: title,
-              ctDisplayField: displayField
+              entrySys: _.get(entry, 'data.sys')
             });
-            return defaultTitle;
           }
+
+          return title;
         },
 
         /**
@@ -420,24 +401,26 @@ export default function register() {
          */
         assetTitle: function(asset, localeCode, modelValue) {
           const defaultTitle = modelValue ? null : 'Untitled';
-          let title;
 
+          let title = defaultTitle;
           try {
-            title = this.getFieldValue(asset, 'title', localeCode);
-            if (!title || title.match(/^\s*$/)) {
-              return defaultTitle;
-            } else {
-              return title;
-            }
+            const defaultInternalLocaleCode = getDefaultInternalLocaleCode();
+
+            title = EntityFieldValueHelpers.getAssetTitle({
+              asset: asset.data,
+              defaultTitle,
+              internalLocaleCode: localeCode,
+              defaultInternalLocaleCode
+            });
           } catch (error) {
             // TODO: Don't use try catch. Instead, handle undefined/unexpected values.
             logger.logWarn('Failed to determine asset title', {
               error: error,
-              assetSys: _.get(asset, 'data.sys'),
-              assetTitle: title
+              assetSys: _.get(asset, 'data.sys')
             });
-            return defaultTitle;
           }
+
+          return title;
         },
 
         /**
@@ -527,6 +510,17 @@ export default function register() {
             }
           }
         );
+      }
+
+      /**
+       * Returns an internal code of a default locale.
+       *
+       * @returns {String?}
+       */
+      function getDefaultInternalLocaleCode() {
+        const defaultLocale = TheLocaleStore.getDefaultLocale();
+
+        return _.get(defaultLocale, 'internal_code');
       }
     }
   ]);
