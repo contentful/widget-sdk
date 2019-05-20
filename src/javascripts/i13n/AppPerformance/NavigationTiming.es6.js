@@ -6,6 +6,6 @@ export function track(Telemetry) {
 
     Telemetry.record(APPLICATION_DOM_CONTENT_LOADED, navigationTiming.domContentLoadedEventEnd);
   } catch (error) {
-    //ignore errors
+    // An error may occur if the browser does not support the metric.
   }
 }

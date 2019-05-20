@@ -1,3 +1,4 @@
+import { once } from 'lodash';
 import * as Telemetry from '../Telemetry.es6';
 
 import * as Tti from './Tti.es6';
@@ -11,7 +12,7 @@ import * as PaintTiming from './PaintTiming.es6';
  * @export
  * @param {String} { stateName }
  */
-export function track({ stateName }) {
+export const track = once(({ stateName }) => {
   try {
     const TelemetryWithStateName = {
       ...Telemetry,
@@ -25,6 +26,8 @@ export function track({ stateName }) {
     PaintTiming.track(TelemetryWithStateName);
     Tti.track(TelemetryWithStateName);
   } catch (error) {
-    // overprotective try-catch
+    // Although this should never happen
+    // because individual metrics are wrapped with try/catch,
+    // no error in the instrumentation should break the app.
   }
-}
+});

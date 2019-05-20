@@ -6,6 +6,6 @@ export function track(Telemetry) {
 
     Telemetry.record(APPLICATION_FIRST_CONTENTFUL_PAINT, contentfulPaint.startTime);
   } catch (error) {
-    //ignore errors
+    // An error may occur if the browser does not support the metric.
   }
 }
