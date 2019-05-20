@@ -72,6 +72,13 @@ angular
       }
       $injector.get('Debug.es6').init(window);
       $injector.get('Authentication.es6').init();
+
+      // Start telemetry and expose it as a global.
+      // It can be used by E2E or Puppeteer scripts.
+      const Telemetry = $injector.get('i13n/Telemetry.es6');
+      window.cfTelemetry = Telemetry;
+      Telemetry.init();
+
       $injector.get('services/TokenStore.es6').init();
       $injector.get('utils/LaunchDarkly').init();
       $injector.get('navigation/stateChangeHandlers').setup();
@@ -79,12 +86,6 @@ angular
       $injector.get('states/states.es6').loadAll();
       $injector.get('dialogsInitController').init();
       $injector.get('components/shared/auto_create_new_space').init();
-
-      // Start telemetry and expose it as a global.
-      // It can be used by E2E or Puppeteer scripts.
-      const Telemetry = $injector.get('i13n/Telemetry.es6');
-      window.cfTelemetry = Telemetry;
-      Telemetry.init();
 
       moment.locale('en', {
         calendar: {

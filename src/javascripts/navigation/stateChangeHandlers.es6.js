@@ -2,6 +2,7 @@ import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import * as logger from 'services/logger.es6';
+import * as AppPerformanceMetrics from 'i13n/AppPerformance/index.es6';
 
 export default function register() {
   /**
@@ -45,6 +46,13 @@ export default function register() {
         $rootScope.$on('$stateChangeStart', stateChangeStartHandler);
         $rootScope.$on('$stateChangeError', stateChangeErrorHandler);
         $rootScope.$on('$stateNotFound', stateChangeErrorHandler);
+
+        const unlistenStateChange = $rootScope.$on('$stateChangeSuccess', (_e, toState) => {
+          AppPerformanceMetrics.track({
+            stateName: toState.name
+          });
+          unlistenStateChange();
+        });
       }
 
       function stateChangeSuccessHandler(
