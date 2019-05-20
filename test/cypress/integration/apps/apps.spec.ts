@@ -93,16 +93,12 @@ describe('Apps Page', () => {
         cy.getByTestId('enable-apps').click();
       });
 
-      it('Apps links are correct', () => {
+      it('App titles are correct', () => {
         cy.getByTestId('app-title')
-          .find('a')
-          .each(($btn, index) => {
-            const { title, expectedUrl } = apps[index];
-
-            cy.wrap($btn)
-              .should('have.text', title)
-              .should('have.attr', 'href')
-              .and('eq', expectedUrl);
+          .find('h3')
+          .each(($h3, index) => {
+            cy.wrap($h3)
+              .should('have.text', apps[index].title);
           });
       });
 

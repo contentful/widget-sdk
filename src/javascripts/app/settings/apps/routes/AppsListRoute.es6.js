@@ -23,7 +23,6 @@ const AppsFetcher = createFetcherComponent(async ({ spaceId }) => {
 
 export default class AppsListRoute extends Component {
   static propTypes = {
-    hasBasicApps: PropTypes.bool.isRequired,
     spaceId: PropTypes.string.isRequired
   };
 
@@ -38,7 +37,7 @@ export default class AppsListRoute extends Component {
             if (isError) {
               return <StateRedirect to="spaces.detail.entries.list" />;
             }
-            return <AppsListPage hasBasicApps={this.props.hasBasicApps} apps={data} />;
+            return <AppsListPage apps={data} />;
           }}
         </AppsFetcher>
       </AdminOnly>

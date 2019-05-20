@@ -85,7 +85,6 @@ const appGroupPropType = PropTypes.arrayOf(
 
 export default class AppsListPage extends Component {
   static propTypes = {
-    hasBasicApps: PropTypes.bool.isRequired,
     apps: PropTypes.shape({
       installed: appGroupPropType,
       rest: appGroupPropType
@@ -101,7 +100,6 @@ export default class AppsListPage extends Component {
     return (
       <AppsListShell>
         <DocumentTitle title="Apps" />
-        {this.props.hasBasicApps ? this.renderDisclaimer() : this.renderPricingInfo()}
         {this.renderApps()}
       </AppsListShell>
     );
@@ -178,11 +176,15 @@ export default class AppsListPage extends Component {
   }
 
   renderApps() {
-    const { hasBasicApps, apps } = this.props;
-    const canUse = hasBasicApps && this.state.optedIn;
+    const { apps } = this.props;
+    const hasAtLeastOneAppInstalled = apps.installed.length > 0;
+    const isAtLeastOneAppEnabled = apps.rest.filter(app => app.enabled).length > 0;
+    const hasApps = hasAtLeastOneAppInstalled || isAtLeastOneAppEnabled;
+    const canUse = hasApps && this.state.optedIn;
 
     return (
       <React.Fragment>
+        {hasApps ? this.renderDisclaimer() : this.renderPricingInfo()}
         {apps.installed.length > 0 && (
           <AppsList title="Installed" overlayed={!canUse}>
             {apps.installed.map(app => (
