@@ -2,7 +2,7 @@ import stream from 'getstream';
 
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
 import * as logger from 'services/logger.es6';
-import * as Telemetry from 'Telemetry.es6';
+import * as Telemetry from 'i13n/Telemetry.es6';
 import { services } from 'Config.es6';
 
 // same key as in microbackend

@@ -126,5 +126,6 @@ window.libs = [
   ['immer', require('immer')],
   ['fclone', require('fclone')],
   ['getstream', require('getstream')],
-  ['react-modal', require('react-modal')]
+  ['react-modal', require('react-modal')],
+  ['tti-polyfill', require('tti-polyfill')]
 ];

@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { getModule } from 'NgRegistry.es6';
 import { getEndpoint } from './Utils.es6';
-import * as Telemetry from 'Telemetry.es6';
+import * as Telemetry from 'i13n/Telemetry.es6';
 
 const $q = getModule('$q');
 const $timeout = getModule('$timeout');

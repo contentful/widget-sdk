@@ -1,7 +1,7 @@
 import wrapWithRetry from 'data/Request/Retry.es6';
 import wrapWithAuth from 'data/Request/Auth.es6';
 import { getEndpoint } from 'data/Request/Utils.es6';
-import * as Telemetry from 'Telemetry.es6';
+import * as Telemetry from 'i13n/Telemetry.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const $http = getModule('$http');

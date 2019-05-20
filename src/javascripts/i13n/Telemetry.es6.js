@@ -1,4 +1,4 @@
-import createMicroBackendsClient from './MicroBackendsClient.es6';
+import createMicroBackendsClient from 'MicroBackendsClient.es6';
 import { gitRevision as uiVersion } from 'Config.es6';
 
 // How often measurements should be sent.
