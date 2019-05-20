@@ -111,8 +111,6 @@ export default function register() {
         resetUsageProps();
       }, 3000);
 
-      
-
       $scope.$watch('paginator.getTotal()', debouncedResetAssets);
 
       $scope.$watch(

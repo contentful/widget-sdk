@@ -17,13 +17,17 @@ export default function register() {
     '$filter',
     ($q, spaceContext, TheLocaleStore, $filter) => {
       const assetUrlFilter = $filter('assetUrl');
+      const toInternalLocaleCode = localeCode =>
+        TheLocaleStore.toInternalCode(localeCode) || localeCode;
 
       return {
         newForLocale: newForLocale,
         contentTypeFieldLinkCtIds: contentTypeFieldLinkCtIds
       };
 
-      function newForLocale(locale) {
+      function newForLocale(localeCode) {
+        const internalLocaleCode = toInternalLocaleCode(localeCode);
+
         return {
           /**
            * Returns a string representing the entity's title in a given locale.
@@ -35,7 +39,7 @@ export default function register() {
            * @param {string} locale
            * @return {string|null}
            */
-          entityTitle: spaceContextDelegator('entityTitle', locale),
+          entityTitle: spaceContextDelegator('entityTitle'),
           /**
            * Returns a string representing the entity's description.
            * Asset: Description field.
@@ -48,7 +52,7 @@ export default function register() {
            * @param {string} locale
            * @return {string}
            */
-          entityDescription: spaceContextDelegator('entityDescription', locale),
+          entityDescription: spaceContextDelegator('entityDescription'),
           /**
            * Returns an object representing the main file associated with the entity.
            * Asset: The asset's file if it has one or `null`.
@@ -59,26 +63,26 @@ export default function register() {
            * @param {string} locale
            * @return {object|null}
            */
-          entityFile: entity => entityFile(entity, locale),
-          entryImage: spaceContextDelegator('entryImage', locale),
-          assetFile: asset => assetFile(asset, locale),
+          entityFile: entity => entityFile(entity, localeCode),
+          entryImage: spaceContextDelegator('entryImage'),
+          assetFile: asset => assetFile(asset, localeCode),
           assetFileUrl: assetFileUrl
         };
-      }
 
-      /**
-       * Create a function that delegates to given space context method
-       * with the given locale code.
-       *
-       * The argument of the returned function is external entity data.
-       * This data is transformed into an entity for the space context
-       * method to work.
-       */
-      function spaceContextDelegator(methodName, localeCode) {
-        return async function(data) {
-          const entity = await dataToEntity(data);
-          return spaceContext[methodName](entity, localeCode);
-        };
+        /**
+         * Create a function that delegates to given space context method
+         * with the given locale code.
+         *
+         * The argument of the returned function is external entity data.
+         * This data is transformed into an entity for the space context
+         * method to work.
+         */
+        function spaceContextDelegator(methodName) {
+          return async function(data) {
+            const entity = await dataToEntity(data);
+            return spaceContext[methodName](entity, internalLocaleCode);
+          };
+        }
       }
 
       /**
@@ -96,14 +100,8 @@ export default function register() {
               return _.transform(
                 ct.data.fields,
                 (acc, ctField) => {
-                  let field = _.get(data, ['fields', ctField.apiName]);
+                  const field = _.get(data, ['fields', ctField.apiName]);
                   if (field) {
-                    // map field locales from `code` to `internal_code` if locale is available
-                    field = _.mapKeys(
-                      field,
-                      // the locale might be missing in some cases, e.g. it was deleted
-                      (_, localeCode) => TheLocaleStore.toInternalCode(localeCode) || localeCode
-                    );
                     acc[ctField.id] = field;
                   }
                 },
@@ -115,24 +113,40 @@ export default function register() {
           });
         }
 
-        return prepareFields.then(fields => ({
-          data: { fields: fields, sys: data.sys },
-          getType: _.constant(data.sys.type),
-          getContentTypeId: _.constant(ctId)
-        }));
+        return prepareFields.then(fields => {
+          const renamedFields = renameFieldLocales(fields);
+          return {
+            data: { fields: renamedFields, sys: data.sys },
+            getType: _.constant(data.sys.type),
+            getContentTypeId: _.constant(ctId)
+          };
+        });
       }
 
-      function entityFile(entity, locale) {
+      /**
+       * Maps field locales from `code` to `internal_code` if locale is available.
+       * The locale might be missing in some cases, e.g. it was deleted.
+       */
+      function renameFieldLocales(fields) {
+        return _.mapValues(fields, field =>
+          _.mapKeys(field, (_, localeCode) => toInternalLocaleCode(localeCode))
+        );
+      }
+
+      function entityFile(entity, localeCode) {
         if (entity.sys.type === 'Entry') {
-          return newForLocale(locale).entryImage(entity);
+          return newForLocale(localeCode).entryImage(entity);
         } else if (entity.sys.type === 'Asset') {
-          return assetFile(entity, locale);
+          return assetFile(entity, localeCode);
         }
         return $q.resolve(null);
       }
 
-      function assetFile(data, locale) {
-        return $q.resolve(spaceContext.getFieldValue({ data: data }, 'file', locale));
+      function assetFile(data, localeCode) {
+        const internalLocaleCode = toInternalLocaleCode(localeCode);
+        return dataToEntity(data).then(entity =>
+          spaceContext.getFieldValue(entity, 'file', internalLocaleCode)
+        );
       }
 
       function assetFileUrl(file) {
