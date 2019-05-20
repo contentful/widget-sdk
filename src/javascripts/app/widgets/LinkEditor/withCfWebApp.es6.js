@@ -5,7 +5,7 @@ import {
   canCreateAsset,
   Action
 } from 'access_control/AccessChecker/index.es6';
-import { find } from 'lodash';
+import { noop, find } from 'lodash';
 import { newConfigFromField } from 'search/EntitySelector/Config.es6';
 import * as slideInNavigator from 'navigation/SlideInNavigator/index.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -36,7 +36,12 @@ export default function withCfWebApp(LinkEditor) {
       widgetAPI: PropTypes.object.isRequired,
       loadEvents: PropTypes.shape({
         emit: PropTypes.func.isRequired
-      }).isRequired
+      }).isRequired,
+      onChange: PropTypes.func
+    };
+
+    static defaultProps = {
+      onChange: noop
     };
 
     state = { contentTypes: [] };
@@ -76,6 +81,11 @@ export default function withCfWebApp(LinkEditor) {
       slideInLinkedEntityAndTrack(slide, action, useBulkEditor);
     }
 
+    handleChange = links => {
+      const value = links.length === 0 ? undefined : links;
+      this.props.onChange(value);
+    };
+
     render() {
       const { type, widgetAPI } = this.props;
       const { contentTypes } = this.state;
@@ -108,7 +118,8 @@ export default function withCfWebApp(LinkEditor) {
           }
         },
         onUnlinkEntities: entities => trackLinksChanged('reference_editor_action:delete', entities),
-        onLinkFetchComplete: this.handleLinkRendered
+        onLinkFetchComplete: this.handleLinkRendered,
+        onChange: this.handleChange
       };
       return <LinkEditor {...props} />;
     }
