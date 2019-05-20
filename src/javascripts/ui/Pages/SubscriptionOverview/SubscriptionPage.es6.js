@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { css } from 'emotion';
 
 import { Notification } from '@contentful/forma-36-react-components';
 
@@ -14,6 +15,21 @@ import BasePlan from './BasePlan.es6';
 import UsersForPlan from './UsersForPlan.es6';
 import SpacePlans from './SpacePlans.es6';
 import Sidebar from './Sidebar.es6';
+
+const styles = {
+  content: css({
+    // TODO: $rhythm for emotion?
+    padding: '1.28rem 2rem 0'
+  }),
+  header: css({
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gridGap: '45px',
+    '& > div': {
+      margin: '1em 0 3em'
+    }
+  })
+};
 
 const notificationMessage = (space, currentSpacePlan, newSpacePlan) => {
   let notificationMsg = `Space ${space.name} successfully`;
@@ -52,8 +68,6 @@ export default function SubscriptionPage({ organizationId, data }) {
           const newSpacePlans = _.reject(spacePlans, sp => sp.space.sys.id === space.sys.id);
 
           setSpacePlans(newSpacePlans);
-
-          Notification.success(`Space ${space.name} successfully deleted`);
         }
       });
     };
@@ -101,22 +115,20 @@ export default function SubscriptionPage({ organizationId, data }) {
 
   return (
     <Workbench title="Subscription" icon="subscription" testId="subscription-page">
-      <Workbench.Content>
-        <div style={{ padding: '0px 2rem' }}>
-          <div className="header">
-            <BasePlan basePlan={basePlan} organizationId={organizationId} />
-            <UsersForPlan usersMeta={usersMeta} organizationId={organizationId} />
-          </div>
-          <SpacePlans
-            basePlan={basePlan}
-            spacePlans={spacePlans}
-            upgradedSpace={changedSpace}
-            onCreateSpace={createSpace}
-            onChangeSpace={changeSpace}
-            onDeleteSpace={deleteSpace}
-            isOrgOwner={isOwner(organization)}
-          />
+      <Workbench.Content className={styles.content}>
+        <div className={styles.header}>
+          <BasePlan basePlan={basePlan} organizationId={organizationId} />
+          <UsersForPlan usersMeta={usersMeta} organizationId={organizationId} />
         </div>
+        <SpacePlans
+          basePlan={basePlan}
+          spacePlans={spacePlans}
+          upgradedSpace={changedSpace}
+          onCreateSpace={createSpace}
+          onChangeSpace={changeSpace}
+          onDeleteSpace={deleteSpace}
+          isOrgOwner={isOwner(organization)}
+        />
       </Workbench.Content>
       <Workbench.Sidebar>
         <Sidebar

@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import { css } from 'emotion';
 import { joinAnd } from 'utils/StringUtils.es6';
 import tokens from '@contentful/forma-36-tokens';
+import { TableRow, TableCell } from '@contentful/forma-36-react-components';
 
 import { get } from 'lodash';
 
@@ -16,6 +18,13 @@ import HelpIcon from 'ui/Components/HelpIcon.es6';
 import Tooltip from 'ui/Components/Tooltip.es6';
 import Price from 'ui/Components/Price.es6';
 import ContextMenu from 'ui/Components/ContextMenu.es6';
+
+const styles = {
+  dotsRow: css({
+    textAlign: 'right',
+    verticalAlign: 'middle'
+  })
+};
 
 function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }) {
   const space = plan.space;
@@ -77,8 +86,8 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
   const className = upgraded ? 'x--success' : '';
 
   return (
-    <tr className={className} key={key}>
-      <td>
+    <TableRow className={className} key={key}>
+      <TableCell>
         <strong>{get(space, 'name', '-')}</strong>
         {plan.committed && (
           <Tooltip
@@ -88,8 +97,8 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
             <span style={{ color: tokens.colorOrangeLight }}>★</span>
           </Tooltip>
         )}
-      </td>
-      <td>
+      </TableCell>
+      <TableCell>
         <strong>{plan.name}</strong>
         {hasAnyFeatures && (
           <HelpIcon>
@@ -98,18 +107,18 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
         )}
         <br />
         {!isEnterprisePlan(basePlan) && <Price value={plan.price} unit="month" />}
-      </td>
-      <td>{createdBy}</td>
-      <td>{createdAt}</td>
-      <td style={{ textAlign: 'right', verticalAlign: 'middle' }}>
+      </TableCell>
+      <TableCell>{createdBy}</TableCell>
+      <TableCell>{createdAt}</TableCell>
+      <TableCell className={styles.dotsRow}>
         {space && (
           <ContextMenu
             data-test-id="subscription-page.spaces-list.space-context-menu"
             items={contextMenuItems}
           />
         )}
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 }
 

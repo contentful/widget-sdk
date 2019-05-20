@@ -67,7 +67,7 @@ const fetch = organizationId => async () => {
   const productRatePlans = await getRatePlans(endpoint);
 
   if (!productRatePlans) {
-    throw new Error('Rate plans not fetched');
+    throw new Error();
   }
 
   // spaces that current user has access to
@@ -101,10 +101,10 @@ export default function SubscriptionPageRouter({ onReady, orgId }) {
   }
 
   return (
-    <React.Fragment>
+    <>
       <DocumentTitle title="Subscription" />
       <SubscriptionPage organizationId={orgId} data={data} />
-    </React.Fragment>
+    </>
   );
 }
 
