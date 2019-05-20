@@ -24,8 +24,15 @@ const styles = {
     alignItems: 'start',
     backgroundColor: tokens.colorWhite,
     borderBottom: `1px solid ${tokens.colorElementMid}`,
-    ':hover, :focus': {
+    outline: 'none',
+    ':hover': {
       backgroundColor: tokens.colorElementLightest
+    },
+    ':focus': {
+      backgroundColor: tokens.colorElementLightest,
+      outline: `1px solid ${tokens.colorPrimary}`,
+      borderRadius: '2px',
+      boxShadow: tokens.glowPrimary
     }
   }),
 
