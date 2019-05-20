@@ -1,0 +1,2 @@
+# ignore nested node_modules
+**/node_modules/**
