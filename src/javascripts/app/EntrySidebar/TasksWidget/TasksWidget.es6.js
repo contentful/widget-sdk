@@ -33,7 +33,12 @@ export default class ScheduleWidget extends React.PureComponent {
           <ol className={styles.list}>
             {tasks.map(task => (
               <li className={styles.listItem} key={`task-${task.key}`}>
-                <Task body={task.body} assignedTo={task.assignedTo} resolved={task.resolved} />
+                <Task
+                  body={task.body}
+                  assignedTo={task.assignedTo}
+                  resolved={task.resolved}
+                  createdAt={task.createdAt}
+                />
               </li>
             ))}
           </ol>

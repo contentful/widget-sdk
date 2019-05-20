@@ -7,10 +7,15 @@ import {
   TextField,
   SelectField,
   Option,
-  Button
+  Button,
+  TabFocusTrap
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
+import RelativeDateTime from 'components/shared/RelativeDateTime/index.es6';
+import isHotKey from 'is-hotkey';
+import TaskDeleteDialog from './TaskDeleteDialog.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 const styles = {
   task: css({
@@ -85,8 +90,16 @@ const styles = {
     display: 'flex'
   }),
 
+  editTaskLink: css({
+    marginRight: tokens.spacingS
+  }),
+
   editSubmit: css({
     marginRight: tokens.spacingS
+  }),
+
+  tabFocusTrap: css({
+    width: '100%'
   })
 };
 
@@ -94,6 +107,7 @@ export default class Task extends React.PureComponent {
   static propTypes = {
     assignedTo: PropTypes.object,
     body: PropTypes.string,
+    createdAt: PropTypes.string,
     resolved: PropTypes.bool
   };
 
@@ -104,9 +118,7 @@ export default class Task extends React.PureComponent {
   };
 
   handleTaskKeyDown = event => {
-    const ENTER_KEY_CODE = 13;
-
-    if (event.keyCode === ENTER_KEY_CODE) {
+    if (isHotKey('enter', event)) {
       this.handleTaskExpand();
     }
   };
@@ -121,16 +133,23 @@ export default class Task extends React.PureComponent {
 
   handleEditClick = event => {
     event.stopPropagation();
-    // eslint-disable-next-line no-console
-    console.log('edit');
-
     this.setState({ hasEditForm: true });
   };
 
-  handleDeleteClick = event => {
+  handleDeleteClick = async event => {
     event.stopPropagation();
-    // eslint-disable-next-line no-console
-    console.log('delete');
+    return ModalLauncher.open(({ isShown, onClose }) => (
+      <TaskDeleteDialog
+        key={Date.now()}
+        isShown={isShown}
+        onCancel={() => onClose(false)}
+        onConfirm={() => {
+          // eslint-disable-next-line no-console
+          console.log('delete');
+          onClose(true);
+        }}
+      />
+    ));
   };
 
   handleCancelEdit = event => {
@@ -153,7 +172,9 @@ export default class Task extends React.PureComponent {
     // TODO: Check roles/permissions before rendering actions
     return (
       <React.Fragment>
-        <TextLink onClick={this.handleEditClick}>Edit task</TextLink> /{' '}
+        <TextLink onClick={this.handleEditClick} className={styles.editTaskLink}>
+          Edit task
+        </TextLink>
         <TextLink linkType="negative" onClick={this.handleDeleteClick}>
           Delete task
         </TextLink>
@@ -162,12 +183,9 @@ export default class Task extends React.PureComponent {
   };
 
   renderDetails = () => {
-    const { body, assignedTo, resolved } = this.props;
+    const { body, assignedTo, createdAt } = this.props;
     return (
       <React.Fragment>
-        <div className={styles.checkboxWrapper}>
-          <input type="checkbox" checked={resolved} />
-        </div>
         <div
           className={cx(styles.body, this.state.isExpanded && styles.bodyExpanded)}
           onClick={this.handleTaskExpand}>
@@ -179,7 +197,9 @@ export default class Task extends React.PureComponent {
                 <div>
                   Created by {assignedTo.firstName} {assignedTo.lastName}
                 </div>
-                <div>Created at {assignedTo.sys.createdAt}</div>
+                <div>
+                  Created <RelativeDateTime value={createdAt} />
+                </div>
                 <div>{this.renderActions()}</div>
               </div>
             </React.Fragment>
@@ -223,6 +243,8 @@ export default class Task extends React.PureComponent {
   };
 
   render() {
+    const { resolved } = this.props;
+
     return (
       <div
         className={styles.task}
@@ -230,7 +252,12 @@ export default class Task extends React.PureComponent {
         onMouseLeave={this.handleTaskHover}
         onKeyDown={this.handleTaskKeyDown}
         tabIndex={0}>
-        {this.state.hasEditForm ? this.renderEditForm() : this.renderDetails()}
+        <TabFocusTrap className={styles.tabFocusTrap}>
+          <div className={styles.checkboxWrapper}>
+            <input type="checkbox" checked={resolved} />
+          </div>
+          {this.state.hasEditForm ? this.renderEditForm() : this.renderDetails()}
+        </TabFocusTrap>
       </div>
     );
   }

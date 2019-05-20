@@ -31,6 +31,7 @@ export function createTasksViewData(comments = []) {
       key: task.sys.id,
       assignedTo: task.sys.createdBy, // TODO: Replace with assigned to information
       createdBy: task.sys.createdBy,
+      createdAt: task.sys.createdAt,
       resolved: false // TODO: Replace with resolved flag
       // TODO: Add more stuff from comments into this view data object.
     }))
