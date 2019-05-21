@@ -20,9 +20,15 @@ describe('intercom', () => {
     expect(IntercomMock).toHaveBeenCalledWith('showNewMessage', 'initial message');
   });
 
-  it('should disable', () => {
+  it('can be disabled', () => {
     Intercom.disable();
     expect(Intercom.isEnabled()).toBe(false);
+  });
+
+  it('can be re-enabled', () => {
+    Intercom.disable();
+    Intercom.enable();
+    expect(Intercom.isEnabled()).toBe(true);
   });
 
   it('should not open the dialog if disabled', async () => {
