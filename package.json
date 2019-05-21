@@ -123,7 +123,7 @@
     "@babel/register": "7.0.0",
     "@babel/traverse": "7.2.3",
     "@contentful/cypress-pact": "^2.0.1",
-    "@contentful/micro-backends": "^0.5.1",
+    "@contentful/micro-backends": "^0.5.3",
     "@cypress/webpack-preprocessor": "^4.0.3",
     "@pact-foundation/pact": "^8.2.2",
     "@pact-foundation/pact-web": "^8.2.2",
