@@ -58,15 +58,14 @@ const fetch = organizationId => async () => {
   }
 
   const endpoint = createOrganizationEndpoint(organizationId);
-  const plans = await getPlansWithSpaces(endpoint);
 
-  if (!plans) {
-    throw new Error();
-  }
+  const [plans, productRatePlans, numMemberships] = Promise.all([
+    getPlansWithSpaces(endpoint),
+    getRatePlans(endpoint),
+    fetchNumMemberships(organizationId)
+  ]);
 
-  const productRatePlans = await getRatePlans(endpoint);
-
-  if (!productRatePlans) {
+  if (!plans || !productRatePlans) {
     throw new Error();
   }
 
@@ -75,8 +74,6 @@ const fetch = organizationId => async () => {
 
   const basePlan = getBasePlan(plans);
   const spacePlans = getSpacePlans(plans, accessibleSpaces);
-
-  const numMemberships = await fetchNumMemberships(organizationId);
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
   const grandTotal = calculateTotalPrice({
     allPlans: plans.items,

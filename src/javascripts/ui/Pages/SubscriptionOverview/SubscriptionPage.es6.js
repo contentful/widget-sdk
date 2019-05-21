@@ -31,7 +31,7 @@ const styles = {
   })
 };
 
-const notificationMessage = (space, currentSpacePlan, newSpacePlan) => {
+const getNotificationMessage = (space, currentSpacePlan, newSpacePlan) => {
   let notificationMsg = `Space ${space.name} successfully`;
 
   if (currentSpacePlan) {
@@ -105,7 +105,7 @@ export default function SubscriptionPage({ organizationId, data }) {
           setSpacePlans(newSpacePlans);
           setChangedSpace(space.sys.id);
 
-          Notification.success(notificationMessage(space, currentSpacePlan, newSpacePlan));
+          Notification.success(getNotificationMessage(space, currentSpacePlan, newSpacePlan));
         }
       });
     };
