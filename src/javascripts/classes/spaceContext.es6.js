@@ -277,7 +277,7 @@ export default function register() {
           const defaultInternalLocaleCode = getDefaultInternalLocaleCode();
 
           return EntityFieldValueHelpers.getFieldValue({
-            entity: entity.data,
+            entity: _.get(entity, 'data'),
             internalFieldId,
             internalLocaleCode,
             defaultInternalLocaleCode
