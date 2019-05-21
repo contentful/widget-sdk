@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -18,9 +19,13 @@ const styles = {
   })
 };
 
-const EmptyStateContainer = ({ children, ...other }) => {
+const EmptyStateContainer = ({
+  children,
+  ['data-test-id']: dataTestId = 'cf-ui-empty-state',
+  ...other
+}) => {
   return (
-    <div className={styles.container} data-test-id="cf-ui-empty-state" {...other}>
+    <div className={styles.container} data-test-id={dataTestId} {...other}>
       <div className={styles.column}>
         {React.Children.map(children, (child, i) => (
           <div key={i} className={styles.element}>
@@ -31,5 +36,7 @@ const EmptyStateContainer = ({ children, ...other }) => {
     </div>
   );
 };
+
+EmptyStateContainer.propTypes = {'data-test-id': PropTypes.string };
 
 export default EmptyStateContainer;

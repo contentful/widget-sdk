@@ -1,40 +1,25 @@
 import React from 'react';
-import cn from 'classnames';
-import { Icon } from '@contentful/forma-36-react-components';
-
-import tokens from '@contentful/forma-36-tokens';
-import { css } from 'emotion';
-
-const styles = {
-  icon: css({
-    width: tokens.spacing4Xl,
-    height: tokens.spacing4Xl
-  })
-};
+import { Heading, Paragraph, TextLink } from '@contentful/forma-36-react-components';
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+import BinocularsIllustration from 'svg/binoculars-illustration.es6';
+import { websiteUrl } from 'Config.es6';
 
 export default function NoSearchResultsAdvice() {
   return (
-    <div className={cn('advice', 'advice--row-aligned')}>
-      <Icon
-        className={cn(styles.icon, 'f36-margin-right--s')}
-        icon="Search"
-        size="large"
-        color="muted"
-      />
-      <div className={cn('advice__frame', 'advice__frame--no-margin', 'advice__frame--align-left')}>
-        <div className={cn('advice__title', 'advice__title--normal')}>
-          Sadly, we didn&#39;t find anything matching your search
-        </div>
-        <p className="advice__subtext">
-          Have you tried a different search term or filter? Here&#39;s&nbsp;
-          <a
-            href="https://www.contentful.com/r/knowledgebase/content-search/"
-            target="_blank"
-            rel="noopener noreferrer">
-            how search works
-          </a>
-        </p>
+    <EmptyStateContainer data-test-id="no-search-results-empty-state">
+      <div style={{ width: '280px' }}>
+        <BinocularsIllustration />
       </div>
-    </div>
+      <Heading>No search results?</Heading>
+      <Paragraph>
+        Try a different search term or filter.{' '}
+        <TextLink
+          href={websiteUrl('/r/knowledgebase/content-search/')}
+          target="_blank"
+          rel="noopener noreferrer">
+          Here’s how search works
+        </TextLink>
+      </Paragraph>
+    </EmptyStateContainer>
   );
 }

@@ -19,6 +19,7 @@ import Workbench from 'app/common/Workbench.es6';
 import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar.es6';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import EmptyStateIllustration from 'svg/connected-forms-illustration.es6';
+import { websiteUrl } from 'Config.es6';
 
 import ExtensionsActions from './ExtensionsActions.es6';
 import * as ExtensionLoader from 'widgets/ExtensionLoader.es6';
@@ -117,9 +118,9 @@ const EmptyState = () => (
     <Heading>Customize your experience by connecting to your favorite services</Heading>
     <Paragraph>
       Add UI extensions to customize and extend the functionality of the Contentful web app. To
-      explore your options, click on Add Extension or read the UI extension documentation{' '}
+      explore your options, click on Add Extension or read the{' '}
       <DocsLink
-        href="https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md"
+        href={websiteUrl('/developers/docs/extensibility/ui-extensions/sdk-reference/')}
         title="UI extension documentation"
       />
       .

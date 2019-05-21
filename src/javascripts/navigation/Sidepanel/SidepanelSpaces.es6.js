@@ -7,7 +7,7 @@ import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import { Button, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import EmptyStateAdminIllustration from 'svg/folder-illustration.es6';
-import EmptyStatePractitionerIllustration from 'svg/folder-illustration.es6';
+import EmptyStatePractitionerIllustration from 'svg/coffee-cup-illustration.es6';
 
 const styles = { svgContainer: css({ width: '150px' }) };
 
