@@ -35,7 +35,7 @@ describe('createSnaphotExtensionBridge', () => {
         getId: () => 'spaceId',
         getEnvironmentId: () => 'environmentId',
         cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
-        space: { data: { spaceMember: 'MEMBERSHIP ' } }
+        space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
       },
       TheLocaleStore: {
         getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
@@ -58,7 +58,8 @@ describe('createSnaphotExtensionBridge', () => {
         current: { field: 'FIELD', locale: { code: 'pl' } },
         entryData: { fields: {}, sys: {} },
         locales: { available: [{ code: 'pl' }, { code: 'en' }], default: { code: 'pl' } },
-        spaceMember: 'MEMBERSHIP ',
+        spaceMember: 'MEMBER ',
+        spaceMembership: 'MEMBERSHIP ',
         editorInterface: {
           controls: [],
           sidebar: []

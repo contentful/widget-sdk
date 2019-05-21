@@ -3,7 +3,7 @@ import { LOCATION_ENTRY_FIELD } from './WidgetLocations.es6';
 
 describe('ExtensionAPI', () => {
   const createAPI = extraConfig => {
-    return new ExtensionAPI({
+    const config = {
       extensionId: 'my-extension-id',
       spaceId: 'my-space-id',
       environmentId: 'master',
@@ -18,12 +18,18 @@ describe('ExtensionAPI', () => {
         sys: { user: { sys: {}, firstName: 'Jakub' } },
         roles: []
       },
+      spaceMembership: {
+        sys: { user: { sys: {}, firstName: 'Jakub' } },
+        roles: []
+      },
       parameters: {
         instance: { test: true },
         installation: { hello: 'world' }
       },
       ...extraConfig
-    });
+    };
+
+    return new ExtensionAPI(config);
   };
 
   describe('#connect()', () => {
@@ -161,6 +167,16 @@ describe('ExtensionAPI', () => {
             ]
           }
         })
+      );
+    });
+
+    it('accepts the absence of a spaceMembership object', () => {
+      const api = createAPI({ spaceMembership: null });
+      expect(api.spaceMembership).toBeNull();
+      api.connect();
+
+      expect(api.channel.connect).toHaveBeenCalledWith(
+        expect.objectContaining({ user: expect.objectContaining({ spaceMembership: null }) })
       );
     });
   });

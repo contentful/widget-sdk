@@ -17,7 +17,8 @@ const REQUIRED_CONFIG_KEYS = [
   'locales', // `{ available, default }` with all private locales and the default.
   'entryData', // API Entry entity. Using internal IDs (ShareJS format).
   'contentTypeData', // API ContentType entity. Using internal IDs (ShareJS format).
-  'spaceMember', // API SpaceMembership entity.
+  'spaceMember', // API SpaceMember entity.
+  'spaceMembership', // API SpaceMembership entity.
   'parameters', // UI Extension parameters.
   'editorInterface',
 
@@ -77,6 +78,7 @@ export default class ExtensionAPI {
   connect() {
     const {
       spaceMember,
+      spaceMembership,
       current,
       entryData,
       locales,
@@ -97,17 +99,22 @@ export default class ExtensionAPI {
         lastName: spaceMember.sys.user.lastName,
         email: spaceMember.sys.user.email,
         avatarUrl: spaceMember.sys.user.avatarUrl,
-        spaceMember: {
-          sys: {
-            type: 'SpaceMember',
-            id: spaceMember.sys.id
-          },
-          admin: !!spaceMember.admin,
-          roles: spaceMember.roles.map(role => ({
-            name: role.name,
-            description: role.description
-          }))
-        }
+        // There could be a case where spaceMembership is not present
+        // because the user has access to the space via a team.
+        // In this case we just return null for spaceMembership
+        spaceMembership: spaceMembership
+          ? {
+              sys: {
+                type: 'SpaceMembership',
+                id: spaceMember.sys.id
+              },
+              admin: !!spaceMember.admin,
+              roles: spaceMember.roles.map(role => ({
+                name: role.name,
+                description: role.description
+              }))
+            }
+          : null
       },
       field: current
         ? {
