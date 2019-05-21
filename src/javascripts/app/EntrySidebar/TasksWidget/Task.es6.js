@@ -61,7 +61,8 @@ const styles = {
   bodyExpanded: css({
     whiteSpace: 'normal',
     overflow: 'visible',
-    textOverflow: 'clip'
+    textOverflow: 'clip',
+    wordBreak: 'break-word'
   }),
 
   meta: css({
