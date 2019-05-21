@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import cn from 'classnames';
 
@@ -9,6 +10,16 @@ import UserNameFormatter from 'components/shared/UserNameFormatter/FetchAndForma
 
 import { getModule } from 'NgRegistry.es6';
 const spaceContext = getModule('spaceContext');
+
+import { css } from 'emotion';
+
+const styles = {
+  textOverflow: css({
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
+  })
+};
 
 const displayType = field => {
   if (
@@ -123,22 +134,32 @@ const toString = (entry, field) => {
   return result;
 };
 
+function DateFieldValue({ value }) {
+  return (
+    <span className={styles.textOverflow}>
+      <RelativeDateTime value={value} />
+    </span>
+  );
+}
+
+DateFieldValue.propTypes = {
+  value: PropTypes.string.isRequired
+};
+
 export default function DisplayField({ entry, field, entryCache, assetCache }) {
   let result;
   switch (displayType(field)) {
     case 'updatedAt':
-      result = entry.getUpdatedAt() && <RelativeDateTime value={entry.getUpdatedAt()} />;
+      result = entry.getUpdatedAt() && <DateFieldValue value={entry.getUpdatedAt()} />;
       break;
     case 'createdAt':
-      result = entry.getCreatedAt() && <RelativeDateTime value={entry.getCreatedAt()} />;
+      result = entry.getCreatedAt() && <DateFieldValue value={entry.getCreatedAt()} />;
       break;
     case 'publishedAt':
-      result = entry.getPublishedAt() && <RelativeDateTime value={entry.getPublishedAt()} />;
+      result = entry.getPublishedAt() && <DateFieldValue value={entry.getPublishedAt()} />;
       break;
     case 'Date':
-      result = dataForField(entry, field) && (
-        <RelativeDateTime value={dataForField(entry, field)} />
-      );
+      result = dataForField(entry, field) && <DateFieldValue value={dataForField(entry, field)} />;
       break;
     case 'author':
       result = <UserNameFormatter userId={entry.getUpdatedBy().sys.id} />;
@@ -151,7 +172,9 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
       break;
     case 'Entry':
       result = (
-        <span className="linked-entries">{dataForLinkedEntry(entry, field, entryCache)}</span>
+        <span className={cn('linked-entries', styles.textOverflow)}>
+          {dataForLinkedEntry(entry, field, entryCache)}
+        </span>
       );
       break;
     case 'Asset':
@@ -172,13 +195,17 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
             'linked-assets': isAssetArray(entry, field)
           })}>
           {!isEntryArray(entry, field) && !isAssetArray(entry, field) ? (
-            <li>{JSON.stringify(dataForField(entry, field))}</li>
+            <li>
+              <span className={styles.textOverflow}>
+                {JSON.stringify(dataForField(entry, field))}
+              </span>
+            </li>
           ) : (
             dataForArray(entry, field, entryCache, assetCache).map((entity, index) => {
               if (isEntryArray(entry, field)) {
                 return (
                   <li key={index}>
-                    <span>{entity}</span>
+                    <span className={styles.textOverflow}>{entity}</span>
                   </li>
                 );
               } else if (isAssetArray(entry, field)) {
@@ -202,7 +229,7 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
       break;
 
     default:
-      result = <span>{toString(entry, field)}</span>;
+      result = <span className={styles.textOverflow}>{toString(entry, field)}</span>;
       break;
   }
 

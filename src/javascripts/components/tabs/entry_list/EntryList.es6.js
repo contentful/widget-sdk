@@ -78,16 +78,22 @@ const styles = {
     width: '100%',
     color: tokens.colorTextMid,
     textDecoration: 'none',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
+    '& > span': {
+      width: 'inherit'
+    },
     '&:link': {
       textDecoration: 'none'
     },
     '&:focus': {
       outline: 'none',
-      boxShadow: 'unset'
+      boxShadow: 'unset',
+      textDecoration: 'none'
     }
+  }),
+  textOverflow: css({
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
   }),
   /*
     We want to make area around checkbox clickable
@@ -473,7 +479,10 @@ export default function EntryList({
                         />
                       </label>
                       <SecretiveLink
-                        className="f36-padding-top--m f36-padding-bottom--m"
+                        className={cn(
+                          'f36-padding-top--m f36-padding-bottom--m',
+                          styles.textOverflow
+                        )}
                         href={getHref()}>
                         {entryTitleFormatter(entry)}
                       </SecretiveLink>
