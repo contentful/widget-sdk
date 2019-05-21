@@ -59,10 +59,18 @@ const styles = {
   }),
 
   bodyExpanded: css({
-    whiteSpace: 'normal',
-    overflow: 'visible',
     textOverflow: 'clip',
-    wordBreak: 'break-word'
+    whiteSpace: '-moz-pre-wrap',
+    // eslint-disable-next-line no-dupe-keys
+    whiteSpace: '-o-pre-wrap',
+    // eslint-disable-next-line no-dupe-keys
+    whiteSpace: '-pre-wrap',
+    // eslint-disable-next-line no-dupe-keys
+    whiteSpace: 'pre-wrap',
+    // eslint-disable-next-line no-dupe-keys
+    whiteSpace: 'pre-line',
+    wordWrap: 'break-word',
+    overflow: 'hidden'
   }),
 
   meta: css({
