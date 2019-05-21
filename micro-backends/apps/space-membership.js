@@ -39,7 +39,7 @@ module.exports = async (libs, spaceId, token, api = 'https://api.contentful.com'
   }
 
   const _ = libs.lodash;
-  const memberships = _.get(await res.json(), ['includes', 'SpaceMembership'], []);
+  const memberships = _.get(await res.json(), ['includes', 'SpaceMember'], []);
   const membership = memberships.find(m => _.get(m, ['sys', 'space', 'sys', 'id']) === spaceId);
 
   if (membership) {

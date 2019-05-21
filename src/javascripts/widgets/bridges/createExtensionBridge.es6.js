@@ -58,6 +58,7 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       spaceId: spaceContext.getId(),
       environmentId: spaceContext.getEnvironmentId(),
       location,
+      spaceMember: spaceContext.space.data.spaceMember,
       spaceMembership: spaceContext.space.data.spaceMembership,
       current: isFieldLevelExtension
         ? {

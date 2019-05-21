@@ -15,10 +15,19 @@ describe('Extension SDK', () => {
     spaceContext.space = {
       data: {
         sys: {},
+        spaceMember: {
+          sys: {
+            user: {
+              sys: {}
+            }
+          },
+          roles: []
+        },
         spaceMembership: {
-          sys: {},
-          user: {
-            sys: {}
+          sys: {
+            user: {
+              sys: {}
+            }
           },
           roles: []
         }
@@ -564,7 +573,16 @@ describe('Extension SDK', () => {
           sys: {},
           spaceMembership: {
             admin: false,
-            sys: { id: 'SMID' },
+            sys: {
+              id: 'SMID',
+              user: {
+                sys: { id: 'b33ts' },
+                firstName: 'Dwight',
+                lastName: 'Schrute',
+                email: 'dwight@dundermifflin.com',
+                avatarUrl: 'https://avatar.com/x.jpg'
+              }
+            },
             roles: [
               {
                 sys: 'OMITTED',
@@ -573,14 +591,29 @@ describe('Extension SDK', () => {
                 policies: [],
                 permissions: {}
               }
-            ],
-            user: {
-              sys: { id: 'b33ts' },
-              firstName: 'Dwight',
-              lastName: 'Schrute',
-              email: 'dwight@dundermifflin.com',
-              avatarUrl: 'https://avatar.com/x.jpg'
-            }
+            ]
+          },
+          spaceMember: {
+            admin: false,
+            sys: {
+              id: 'SMID',
+              user: {
+                sys: { id: 'b33ts' },
+                firstName: 'Dwight',
+                lastName: 'Schrute',
+                email: 'dwight@dundermifflin.com',
+                avatarUrl: 'https://avatar.com/x.jpg'
+              }
+            },
+            roles: [
+              {
+                sys: 'OMITTED',
+                name: 'Assistant to the regional manager',
+                description: 'Not “Assistant regional manager”',
+                policies: [],
+                permissions: {}
+              }
+            ]
           }
         }
       };

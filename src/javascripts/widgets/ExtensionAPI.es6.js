@@ -17,6 +17,7 @@ const REQUIRED_CONFIG_KEYS = [
   'locales', // `{ available, default }` with all private locales and the default.
   'entryData', // API Entry entity. Using internal IDs (ShareJS format).
   'contentTypeData', // API ContentType entity. Using internal IDs (ShareJS format).
+  'spaceMember', // API SpaceMember entity.
   'spaceMembership', // API SpaceMembership entity.
   'parameters', // UI Extension parameters.
   'editorInterface',
@@ -59,7 +60,7 @@ export default class ExtensionAPI {
       environmentId,
       contentTypeData,
       entryData,
-      spaceMembership
+      spaceMember
     } = this;
 
     return {
@@ -69,13 +70,14 @@ export default class ExtensionAPI {
       contentType: get(contentTypeData, ['sys', 'id']),
       entry: get(entryData, ['sys', 'id']),
       field: get(current, ['field', 'id']),
-      user: get(spaceMembership, ['user', 'sys', 'id'])
+      user: get(spaceMember, ['sys', 'user', 'sys', 'id'])
     };
   }
 
   // Sends initial data to the IFrame of an extension.
   connect() {
     const {
+      spaceMember,
       spaceMembership,
       current,
       entryData,
@@ -91,23 +93,28 @@ export default class ExtensionAPI {
       user: {
         sys: {
           type: 'User',
-          id: spaceMembership.user.sys.id
+          id: spaceMember.sys.user.sys.id
         },
-        firstName: spaceMembership.user.firstName,
-        lastName: spaceMembership.user.lastName,
-        email: spaceMembership.user.email,
-        avatarUrl: spaceMembership.user.avatarUrl,
-        spaceMembership: {
-          sys: {
-            type: 'SpaceMembership',
-            id: spaceMembership.sys.id
-          },
-          admin: !!spaceMembership.admin,
-          roles: spaceMembership.roles.map(role => ({
-            name: role.name,
-            description: role.description
-          }))
-        }
+        firstName: spaceMember.sys.user.firstName,
+        lastName: spaceMember.sys.user.lastName,
+        email: spaceMember.sys.user.email,
+        avatarUrl: spaceMember.sys.user.avatarUrl,
+        // There could be a case where spaceMembership is not present
+        // because the user has access to the space via a team.
+        // In this case we just return null for spaceMembership
+        spaceMembership: spaceMembership
+          ? {
+              sys: {
+                type: 'SpaceMembership',
+                id: spaceMember.sys.id
+              },
+              admin: !!spaceMember.admin,
+              roles: spaceMember.roles.map(role => ({
+                name: role.name,
+                description: role.description
+              }))
+            }
+          : null
       },
       field: current
         ? {

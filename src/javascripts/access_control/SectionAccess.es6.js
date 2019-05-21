@@ -25,9 +25,9 @@ export function getFirstAccessibleSref() {
   const section = SECTION_ACCESS_ORDER.find(section => visibility[section[0]]);
 
   const firstAccessible = Array.isArray(section) ? section[1] : null;
-  const userIsAdmin = spaceContext.getData('spaceMembership.admin', false);
+  const userIsAdmin = spaceContext.getData('spaceMember.admin', false);
   const userIsAuthorOrEditor = accessChecker.isAuthorOrEditor(
-    spaceContext.getData('spaceMembership.roles', false)
+    spaceContext.getData('spaceMember.roles', false)
   );
   const notActivated = !spaceContext.getData('activatedAt');
 

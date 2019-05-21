@@ -25,6 +25,7 @@ export default function createDialogExtensionBridge(dependencies, openDialog, on
       spaceId: spaceContext.getId(),
       environmentId: spaceContext.getEnvironmentId(),
       location: LOCATION_DIALOG,
+      spaceMember: spaceContext.space.data.spaceMember,
       spaceMembership: spaceContext.space.data.spaceMembership,
       current: null,
       locales: {

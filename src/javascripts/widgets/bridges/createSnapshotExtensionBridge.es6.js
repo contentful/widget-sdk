@@ -27,6 +27,7 @@ export default function createSnapshotExtensionBridge(dependencies) {
       spaceId: spaceContext.getId(),
       environmentId: spaceContext.getEnvironmentId(),
       location: LOCATION_ENTRY_FIELD,
+      spaceMember: spaceContext.space.data.spaceMember,
       spaceMembership: spaceContext.space.data.spaceMembership,
       current: {
         field: $scope.widget.field,
