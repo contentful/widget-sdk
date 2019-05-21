@@ -1,18 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Tooltip,
-  TextLink,
-  Form,
-  TextField,
-  SelectField,
-  Option,
   Button,
-  TabFocusTrap
+  CardActions,
+  DropdownList,
+  DropdownListItem,
+  Form,
+  Option,
+  SelectField,
+  TabFocusTrap,
+  TextField,
+  Tooltip
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
-import RelativeDateTime from 'components/shared/RelativeDateTime/index.es6';
+import moment from 'moment';
 import isHotKey from 'is-hotkey';
 import TaskDeleteDialog from './TaskDeleteDialog.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
@@ -52,7 +54,8 @@ const styles = {
   avatarWrapper: css({
     display: 'inline-flex',
     padding: tokens.spacingS,
-    paddingLeft: 0
+    paddingLeft: 0,
+    alignItems: 'flex-start'
   }),
 
   bodyExpanded: css({
@@ -64,7 +67,8 @@ const styles = {
   meta: css({
     marginTop: tokens.spacingXs,
     color: tokens.colorTextLight,
-    lineHeight: tokens.lineHeightDefault
+    lineHeight: tokens.lineHeightDefault,
+    fontSize: tokens.fontSizeS
   }),
 
   avatar: css({
@@ -90,7 +94,8 @@ const styles = {
 
   editForm: css({
     width: '100%',
-    padding: tokens.spacingS
+    padding: tokens.spacingS,
+    paddingLeft: '2.5rem'
   }),
 
   editActions: css({
@@ -178,21 +183,22 @@ export default class Task extends React.PureComponent {
   renderActions = () => {
     // TODO: Check roles/permissions before rendering actions
     return (
-      <React.Fragment>
-        <TextLink onClick={this.handleEditClick} className={styles.editTaskLink}>
-          Edit task
-        </TextLink>
-        <TextLink linkType="negative" onClick={this.handleDeleteClick}>
-          Delete task
-        </TextLink>
-      </React.Fragment>
+      <CardActions className={cx(styles.actions, this.state.isExpanded && styles.actionsVisible)}>
+        <DropdownList>
+          <DropdownListItem onClick={this.handleEditClick}>Edit task</DropdownListItem>
+          <DropdownListItem onClick={this.handleDeleteClick}>Delete task</DropdownListItem>
+        </DropdownList>
+      </CardActions>
     );
   };
 
   renderDetails = () => {
-    const { body, assignedTo, createdAt } = this.props;
+    const { body, assignedTo, createdAt, resolved } = this.props;
     return (
       <React.Fragment>
+        <div className={styles.checkboxWrapper}>
+          <input type="checkbox" checked={resolved} />
+        </div>
         <div
           className={cx(styles.body, this.state.isExpanded && styles.bodyExpanded)}
           onClick={this.handleTaskExpand}>
@@ -201,18 +207,22 @@ export default class Task extends React.PureComponent {
             <React.Fragment>
               {this.state.hasEditForm && this.renderEditForm()}
               <div className={styles.meta}>
-                <div>
-                  Created by {assignedTo.firstName} {assignedTo.lastName}
-                </div>
-                <div>
-                  Created <RelativeDateTime value={createdAt} />
-                </div>
-                <div>{this.renderActions()}</div>
+                Created{' '}
+                <time
+                  dateTime={moment(createdAt, moment.ISO_8601).toISOString()}
+                  title={moment(createdAt, moment.ISO_8601).format('LLLL')}
+                  className={styles.timestamp}>
+                  {moment(createdAt, moment.ISO_8601).fromNow()}
+                </time>{' '}
+                by {assignedTo.firstName} {assignedTo.lastName}
               </div>
             </React.Fragment>
           )}
         </div>
-        <div className={styles.avatarWrapper}>{this.renderAvatar()}</div>
+        <div className={styles.avatarWrapper}>
+          {this.renderAvatar()}
+          {this.renderActions()}
+        </div>
       </React.Fragment>
     );
   };
@@ -250,8 +260,6 @@ export default class Task extends React.PureComponent {
   };
 
   render() {
-    const { resolved } = this.props;
-
     return (
       <div
         className={styles.task}
@@ -260,9 +268,6 @@ export default class Task extends React.PureComponent {
         onKeyDown={this.handleTaskKeyDown}
         tabIndex={0}>
         <TabFocusTrap className={styles.tabFocusTrap}>
-          <div className={styles.checkboxWrapper}>
-            <input type="checkbox" checked={resolved} />
-          </div>
           {this.state.hasEditForm ? this.renderEditForm() : this.renderDetails()}
         </TabFocusTrap>
       </div>
