@@ -44,8 +44,7 @@ before(() => {
       'resources'
     ],
     cors: true,
-    pactfileWriteMode: 'merge',
-    spec: 3
+    pactfileWriteMode: 'merge'
   });
 });
 afterEach(() => {

@@ -23,8 +23,7 @@ describe('Content types list page', () => {
       consumer: 'user_interface',
       provider: 'extensions',
       cors: true,
-      pactfileWriteMode: 'merge',
-      spec: 3
+      pactfileWriteMode: 'merge'
     })
 );
 

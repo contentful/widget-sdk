@@ -15,8 +15,7 @@ describe('Apps Page', () => {
         'product_catalog_features'
       ],
       cors: true,
-      pactfileWriteMode: 'merge',
-      spec: 3
+      pactfileWriteMode: 'merge'
     })
   );
 
