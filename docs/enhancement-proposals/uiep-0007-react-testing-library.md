@@ -1,10 +1,10 @@
-> id: UIEP-007
+> id: UIEP-0007
 > title: Replace Enzyme with React Testing Library
 > champions: Gui Barbosa (@guilebarbosa)
 > endDate: May 24, 2019
 > status: Open
 
-# [UIEP-007] Replace Enzyme with React Testing Library
+# [UIEP-0007] Replace Enzyme with React Testing Library
 
 ## Introduction
 We’ve been moving fast on the adoption of Hooks, but Enzyme is falling behind on adapting the library to support the new features of React. Currently, we can’t easily test components using hooks and I’m afraid that Enzyme will continue to be slower than others due to its complexity. The same happened when React introduced Fragments
