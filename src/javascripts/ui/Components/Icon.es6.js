@@ -95,6 +95,7 @@ import FieldReference from 'svg/field-reference.es6';
 import FieldRichTextSmall from 'svg/field-richtext-small.es6';
 import FieldRichText from 'svg/field-richtext.es6';
 import InvitationNotFound from 'svg/invitation-not-found.es6';
+import ScheduleCalendar from 'svg/schedule-calendar.es6';
 
 const SVGs = {
   'home-welcome': HomeWelcomeIcon,
@@ -186,6 +187,7 @@ const SVGs = {
   'field-decimal': FieldDecimal,
   'field-boolean': FieldBoolean,
   'field-calendar': FieldCalendar,
+  'schedule-calendar': ScheduleCalendar,
   'field-media': FieldMedia,
   'field-location': FieldLocation,
   'field-reference': FieldReference,

@@ -196,14 +196,17 @@ export function getSpaceProductCatalogFeatures(spaceId: string = defaultSpaceId)
   };
 }
 
-export function getEntrySchedules(
+export function getEntryJobs(
   spaceId: string = defaultSpaceId,
   entryId: string = defaultEntryId
 ): RequestOptions {
   return {
     method: 'GET',
-    path: `/spaces/${spaceId}/environments/master/entries/${entryId}/schedules`,
-    headers: defaultHeader
+    path: `/spaces/${spaceId}/jobs`,
+    headers: { ...defaultHeader, 'x-contentful-enable-alpha-feature': 'jobs' },
+    query: {
+      'sys.entity.sys.id': entryId
+    }
   };
 }
 

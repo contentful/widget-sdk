@@ -11,7 +11,7 @@ import {
 } from '../../interactions/entries';
 import { microbackendStreamToken } from '../../interactions/microbackend';
 import * as state from '../../util/interactionState';
-import { defaultEntryId, defaultSpaceId, getEntrySchedules } from '../../util/requests';
+import { defaultEntryId, defaultSpaceId, getEntryJobs } from '../../util/requests';
 
 const empty = require('../../fixtures/empty.json');
 const featureFlag = 'feature-pul-04-2019-scheduled-publication-enabled';
@@ -20,14 +20,14 @@ describe('Schedule Publication', () => {
   before(() =>
     cy.startFakeServer({
       consumer: 'user_interface',
-      provider: 'scheduled-actions',
+      provider: 'jobs',
       cors: true,
       pactfileWriteMode: 'merge',
       spec: 3
     })
   );
 
-  function basicServerSetUpWithNoSchedules() {
+  function basicServerSetUpWithnoJobs() {
     cy.resetAllFakeServers();
 
     defaultRequestsMock({
@@ -41,15 +41,15 @@ describe('Schedule Publication', () => {
     microbackendStreamToken();
 
     cy.addInteraction({
-      provider: 'scheduled-actions',
-      state: 'noSchedules',
-      uponReceiving: 'a request for entry schedules',
-      withRequest: getEntrySchedules(),
+      provider: 'jobs',
+      state: 'noJobs',
+      uponReceiving: 'a request for entry jobs',
+      withRequest: getEntryJobs(),
       willRespondWith: {
         status: 200,
         body: empty
       }
-    }).as('scheduled-actions/none');
+    }).as('jobs/none');
 
     cy.route('**/channel/**', []).as('shareJS');
   }
@@ -58,15 +58,12 @@ describe('Schedule Publication', () => {
     cy.setAuthTokenToLocalStorage();
     window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
 
-    basicServerSetUpWithNoSchedules();
+    basicServerSetUpWithnoJobs();
 
     cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
 
-    cy.wait([
-      `@${state.Token.VALID}`,
-      `@${state.Entries.NONE}`,
-      '@scheduled-actions/none'
-    ]);
+    cy.wait([`@${state.Token.VALID}`, `@${state.Entries.NONE}`]);
+    cy.wait(['@jobs/none'], { timeout: 10000 });
   });
 
   describe('opening the page', () => {
@@ -80,27 +77,29 @@ describe('Schedule Publication', () => {
       cy.resetAllFakeServers();
 
       cy.addInteraction({
-        provider: 'scheduled-actions',
+        provider: 'jobs',
         state: 'schedulePublicationPost',
         uponReceiving: 'a post request for scheduling publication',
         withRequest: {
           method: 'POST',
-          path: `/spaces/${defaultSpaceId}/environments/master/entries/${defaultEntryId}/schedules`,
+          path: `/spaces/${defaultSpaceId}/jobs`,
           headers: {
             Accept: 'application/json, text/plain, */*',
-            'x-contentful-enable-alpha-feature': 'scheduled-actions'
+            'x-contentful-enable-alpha-feature': 'jobs'
           }
+          // TODO: test body and figure out how to be with datetime.
         },
+
         willRespondWith: {
           status: 200
         }
-      }).as('scheduled-actions/create');
+      }).as('jobs/create');
 
       cy.addInteraction({
-        provider: 'scheduled-actions',
+        provider: 'jobs',
         state: 'oneSchedule',
         uponReceiving: 'a request for entry schedules',
-        withRequest: getEntrySchedules(),
+        withRequest: getEntryJobs(),
         willRespondWith: {
           status: 200,
           body: {
@@ -122,7 +121,7 @@ describe('Schedule Publication', () => {
             ]
           }
         }
-      }).as('scheduled-actions/one');
+      }).as('jobs/one');
 
       cy.getByTestId('schedule-publication').click();
       cy.getByTestId('schedule-publication-modal')
@@ -131,7 +130,7 @@ describe('Schedule Publication', () => {
         .first()
         .click();
 
-      cy.wait(['@scheduled-actions/create', '@scheduled-actions/one']);
+      cy.wait(['@jobs/create', '@jobs/one']);
     });
 
     it('submits the new scheduled publication and then re-fetch the list of scheduled publications', () => {

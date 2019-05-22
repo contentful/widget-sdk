@@ -1,8 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-const MediaEmptyStateIllustration = () => {
+const MediaEmptyStateIllustration = ({ className }) => {
   return (
-    <svg id="Layer_1" viewBox="0 0 320 199.59">
+    <svg className={className} id="Layer_1" viewBox="0 0 320 199.59">
       <linearGradient
         id="SVGID_1_"
         x2="300.731"
@@ -121,6 +122,10 @@ const MediaEmptyStateIllustration = () => {
       />
     </svg>
   );
+};
+
+MediaEmptyStateIllustration.propTypes = {
+  className: PropTypes.string
 };
 
 export default MediaEmptyStateIllustration;

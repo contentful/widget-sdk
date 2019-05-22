@@ -4,6 +4,7 @@ import { Tag } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import moment from 'moment';
+import { stateName, getState } from 'data/CMA/EntityState.es6';
 import {
   Table,
   TableHead,
@@ -13,6 +14,8 @@ import {
   Paragraph,
   Icon
 } from '@contentful/forma-36-react-components';
+import { EntityStatusTag } from 'components/shared/EntityStatusTag.es6';
+import { getEntryTitle } from 'classes/EntityFieldValueHelpers.es6';
 
 const styles = {
   statusTag: css({
@@ -26,12 +29,21 @@ const styles = {
   }),
   scheduledTimeTableHeader: css({
     width: '260px'
+  }),
+  statusTransition: css({
+    display: 'flex',
+    alignItems: 'center'
   })
 };
 export default class JobsTable extends Component {
   static propTypes = {
     description: PropTypes.string,
-    jobs: PropTypes.array // Todo: Define propTypes when api clear
+    jobs: PropTypes.array, // Todo: Define propTypes when api clear
+    usersData: PropTypes.object,
+    contentTypesData: PropTypes.object,
+    entriesData: PropTypes.object,
+    showStatusTransition: PropTypes.bool,
+    defaultLocale: PropTypes.object
   };
 
   tagTypeByStatus = {
@@ -63,8 +75,24 @@ export default class JobsTable extends Component {
     );
   };
 
+  renderStatusTransition = entry => (
+    <span className={styles.statusTransition} color="secondary">
+      <EntityStatusTag statusLabel={stateName(getState(entry.sys))} />
+      <Icon color="secondary" icon="ChevronRight" />
+      <Tag tagType="positive">Published</Tag>
+    </span>
+  );
+
   render() {
-    const { jobs, description } = this.props;
+    const {
+      jobs,
+      description,
+      usersData,
+      entriesData,
+      contentTypesData,
+      showStatusTransition,
+      defaultLocale
+    } = this.props;
     return (
       <div>
         <Paragraph className="f36-margin-bottom--s">{description}</Paragraph>
@@ -78,24 +106,40 @@ export default class JobsTable extends Component {
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
-          {jobs && (
-            <TableBody>
-              {jobs.map(job => (
-                <TableRow key={job.id}>
+          <TableBody>
+            {jobs.map(job => {
+              const user = usersData[job.sys.createdBy.sys.id];
+              const entry = entriesData[job.sys.entity.sys.id];
+              const contentType = contentTypesData[entry.sys.contentType.sys.id];
+
+              const entryTitle = getEntryTitle({
+                entry,
+                contentType,
+                internallocaleCode: defaultLocale.internal_code,
+                defaultInternalLocaleCode: defaultLocale.internal_code,
+                defaultTitle: 'Untilted'
+              });
+
+              return (
+                <TableRow key={job.sys.id}>
                   <TableCell>
                     {moment
                       .utc(job.scheduledAt)
                       .local()
                       .format('ddd, MMM Do, YYYY - hh:mm A')}
                   </TableCell>
-                  <TableCell>{job.actionPayload.name}</TableCell>
-                  <TableCell>{job.actionPayload.contentTypeName}</TableCell>
-                  <TableCell>{job.sys.createdBy.name}</TableCell>
-                  <TableCell>{this.renderTag(job)}</TableCell>
+                  <TableCell>{entryTitle}</TableCell>
+                  <TableCell>{contentType.name}</TableCell>
+                  <TableCell>{user.firstName}</TableCell>
+                  <TableCell>
+                    {showStatusTransition
+                      ? this.renderStatusTransition(entry)
+                      : this.renderTag(job)}
+                  </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          )}
+              );
+            })}
+          </TableBody>
         </Table>
       </div>
     );

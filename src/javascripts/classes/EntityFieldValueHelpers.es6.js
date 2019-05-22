@@ -16,8 +16,7 @@ export function getFieldValue({
 
   const firstLocaleCode = Object.keys(values)[0];
 
-  const relevantLocaleCode = internalLocaleCode || defaultInternalLocaleCode || firstLocaleCode;
-  return values[relevantLocaleCode] || values[defaultInternalLocaleCode] || values[firstLocaleCode];
+  return values[internalLocaleCode] || values[defaultInternalLocaleCode] || values[firstLocaleCode];
 }
 
 export function getAssetTitle({

@@ -8,8 +8,19 @@ export default {
     {
       name: 'list',
       url: '',
+
       component: JobsListRoute,
-      mapInjectedToProps: ['$stateParams', ({ spaceId }) => ({ spaceId })]
+      mapInjectedToProps: [
+        '$stateParams',
+        'spaceContext',
+        'TheLocaleStore',
+        ({ spaceId }, spaceContext, TheLocaleStore) => ({
+          spaceId,
+          environmentId: spaceContext.getEnvironmentId(),
+          defaultLocale: TheLocaleStore.getDefaultLocale(),
+          contentTypes: spaceContext.publishedCTs.getAllBare()
+        })
+      ]
     }
   ]
 };

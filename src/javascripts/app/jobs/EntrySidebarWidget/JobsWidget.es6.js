@@ -8,10 +8,10 @@ import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-
 
 import JobsTimeline from './JobsTimeline/index.es6';
 import JobsFetcher from './JobsFetcher.es6';
-import { createJob } from './JobsService.es6';
+import { createJob } from '../DataManagement/JobsService.es6';
 import NewJob from './NewJob.es6';
 
-import { createSpaceEndpoint } from './JobsEndpointFactory.es6';
+import { createSpaceEndpoint } from '../DataManagement/JobsEndpointFactory.es6';
 
 const styles = {
   root: css({
@@ -43,7 +43,7 @@ export default class JobWidget extends React.Component {
   };
   endpoint = createSpaceEndpoint(this.props.spaceId, this.props.envId);
   handleJobCreate = jobDto => {
-    createJob(this.endpoint, this.props.entityInfo.id, jobDto).then(() => {
+    createJob(this.endpoint, jobDto).then(() => {
       this.setState({
         fetcherKey: this.state.fetcherKey + 1
       });
