@@ -221,10 +221,36 @@ export function getEntryJobs(spaceId: string = defaultSpaceId, query?: Query): R
   };
 }
 
-export function getUsers(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
+export function getEntryComments(
+    spaceId: string = defaultSpaceId,
+    entryId: string = defaultEntryId
+): RequestOptions {
+  return {
+    method: 'GET',
+    path: `/spaces/${spaceId}/entries/${entryId}/comments`,
+    headers: defaultHeader
+  };
+}
+
+export function getSpaceUsers(
+    spaceId: string = defaultSpaceId,
+    query?: Query
+): RequestOptions {
   return {
     method: 'GET',
     path: `/spaces/${spaceId}/users`,
+    headers: defaultHeader,
+    query
+  };
+}
+
+export function getOrgUsers(
+    orgId: string = defaultOrgId,
+    query?: Query
+): RequestOptions {
+  return {
+    method: 'GET',
+    path: `/organizations/${orgId}/users`,
     headers: defaultHeader,
     query
   };

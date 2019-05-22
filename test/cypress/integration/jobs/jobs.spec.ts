@@ -9,7 +9,7 @@ import {
   jobsErrorResponse
 } from '../../interactions/jobs';
 import { singleEntryWithQuery } from '../../interactions/entries';
-import { defaultUserWithQuery } from '../../interactions/users';
+import { singleSpecificSpaceUserResponse } from '../../interactions/users';
 
 const featureFlag = 'feature-pul-04-2019-scheduled-publication-enabled';
 
@@ -57,7 +57,7 @@ describe('Jobs page', () => {
         });
         severalJobsResponse();
         singleEntryWithQuery();
-        defaultUserWithQuery();
+        singleSpecificSpaceUserResponse();
 
         cy.setAuthTokenToLocalStorage();
         window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));

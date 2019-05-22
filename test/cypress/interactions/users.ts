@@ -1,5 +1,11 @@
 import * as state from '../util/interactionState';
-import { getUsers, defaultSpaceId, defaultUserId } from '../util/requests';
+import {
+  getSpaceUsers,
+  getOrgUsers,
+  defaultOrgId,
+  defaultSpaceId,
+  defaultUserId
+} from '../util/requests';
 
 const users = require('../fixtures/users.json');
 
@@ -11,8 +17,8 @@ export function singleUser() {
   cy.addInteraction({
     provider: 'users',
     state: state.Users.SINGLE,
-    uponReceiving: 'a request for all users',
-    withRequest: getUsers(defaultSpaceId, query),
+    uponReceiving: 'a request for all space users',
+    withRequest: getSpaceUsers(defaultSpaceId, query),
     willRespondWith: {
       status: 200,
       body: users
@@ -20,15 +26,34 @@ export function singleUser() {
   }).as(state.Users.SINGLE);
 }
 
-export function defaultUserWithQuery() {
+export function singleSpecificSpaceUserResponse() {
+  const query = {
+    'sys.id[in]': defaultUserId
+  };
   cy.addInteraction({
     provider: 'users',
     state: state.Users.QUERY,
-    uponReceiving: 'a request for all users with query',
-    withRequest: getUsers(defaultSpaceId, { 'sys.id[in]': defaultUserId }),
+    uponReceiving: 'a request for a specific space user',
+    withRequest: getSpaceUsers(defaultSpaceId, query),
     willRespondWith: {
       status: 200,
       body: users
     }
   }).as(state.Users.QUERY);
+}
+
+export function singleSpecificOrgUserResponse() {
+  const query = {
+    'sys.id[in]': defaultUserId
+  };
+  cy.addInteraction({
+    provider: 'users',
+    state: state.Users.SINGLE,
+    uponReceiving: 'a request for a specific organization user',
+    withRequest: getOrgUsers(defaultOrgId, query),
+    willRespondWith: {
+      status: 200,
+      body: users
+    }
+  }).as(state.Users.SINGLE);
 }

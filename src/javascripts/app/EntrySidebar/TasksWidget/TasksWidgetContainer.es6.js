@@ -50,7 +50,7 @@ export default class ScheduleWidgetContainer extends Component {
     return (
       <ErrorHandler>
         <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.TASKS}>
-          <EntrySidebarWidget title="Tasks">
+          <EntrySidebarWidget testId="sidebar-tasks-widget" title="Tasks">
             <TasksWidget viewData={tasksViewData} />
           </EntrySidebarWidget>
         </BooleanFeatureFlag>
