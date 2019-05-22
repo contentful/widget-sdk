@@ -61,7 +61,7 @@ async function fetchUsers(spaceId, userIds) {
 async function fetchComments(spaceId, entryId) {
   const endpoint = createSpaceEndpoint(spaceId);
   const { items: comments } = await getAll(endpoint, entryId);
-  const commentCreatorIds = uniq(map(comments.items, 'sys.createdBy.sys.id'));
+  const commentCreatorIds = uniq(map(comments, 'sys.createdBy.sys.id'));
   const users = await fetchUsers(spaceId, commentCreatorIds);
   const resolvedComments = resolveLinks({
     paths: ['sys.createdBy'],
