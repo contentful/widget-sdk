@@ -5,18 +5,20 @@ import Workbench from 'app/common/Workbench.es6';
 import { WhatIsContentPreview } from './ContentPreviewSidebar.es6';
 import CreatePreviewButton from './CreatePreviewButton.es6';
 import ContentPreviewList from './ContentPreviewList.es6';
+import { CONTENT_PREVIEW_LIMIT } from 'services/contentPreview.es6';
 
-const CreatePreviewSection = ({ canCreate, maxPreview }) => {
+const CreatePreviewSection = ({ canCreate }) => {
   return (
     <div style={{ marginBottom: 20 }}>
       {canCreate && <CreatePreviewButton />}
-      {!canCreate && <Note>You can‘t create more than {maxPreview} preview environments</Note>}
+      {!canCreate && (
+        <Note>You can‘t create more than {CONTENT_PREVIEW_LIMIT} preview environments</Note>
+      )}
     </div>
   );
 };
 CreatePreviewSection.propTypes = {
-  canCreate: PropTypes.bool.isRequired,
-  maxPreview: PropTypes.number.isRequired
+  canCreate: PropTypes.bool.isRequired
 };
 
 export const ContentPreviewListPageSkeleton = () => (
@@ -42,12 +44,11 @@ export default class ContentPreviewListPage extends Component {
         name: PropTypes.string.isRequired,
         description: PropTypes.string.isRequired
       })
-    ).isRequired,
-    maxContentPreviews: PropTypes.number.isRequired
+    ).isRequired
   };
 
   render() {
-    const { contentPreviews, maxContentPreviews } = this.props;
+    const { contentPreviews } = this.props;
     return (
       <Workbench>
         <Workbench.Header>
@@ -59,10 +60,7 @@ export default class ContentPreviewListPage extends Component {
         </Workbench.Content>
         <Workbench.Sidebar className="content-preview-sidebar">
           {contentPreviews.length > 0 && (
-            <CreatePreviewSection
-              canCreate={contentPreviews.length < maxContentPreviews}
-              maxPreview={maxContentPreviews}
-            />
+            <CreatePreviewSection canCreate={contentPreviews.length < CONTENT_PREVIEW_LIMIT} />
           )}
           <WhatIsContentPreview />
         </Workbench.Sidebar>

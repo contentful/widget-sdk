@@ -7,13 +7,12 @@ import BuildButton from './BuildButton.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
-const contentPreview = getModule('contentPreview');
 
 const validId = id => typeof id === 'string' && id.length > 0;
 
 const getContentPreviewIdsFor = async contentType => {
   const ctId = get(contentType, ['sys', 'id']);
-  const contentPreviews = await contentPreview.getForContentType(ctId);
+  const contentPreviews = await spaceContext.contentPreview.getForContentType(ctId);
 
   return (Array.isArray(contentPreviews) ? contentPreviews : []).map(p => p.envId);
 };
@@ -53,7 +52,7 @@ export default class NetlifyBuildButton extends Component {
       // content type or we cannot get selected content preview
       // at all - just use the first one what matches behavior
       // of the preview button.
-      let selectedPreviewId = contentPreview.getSelected();
+      let selectedPreviewId = spaceContext.contentPreview.getSelected();
 
       if (!contentPreviewIds.includes(selectedPreviewId)) {
         selectedPreviewId = contentPreviewIds[0];

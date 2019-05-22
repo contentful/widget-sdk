@@ -44,4 +44,4 @@ Although LaunchDarkly allows for watching a feature flag via `client.on`, in alm
 
 ## Notes
 
-I removed the `isExampleSpace` targeting rule since 1) it isn't used anymore, and 2) it keeps the code a lot simpler (it was the only use of `contentPreviews` and `publishedCTs`, both of which come from streams and would require a more extensive refactoring).
+I removed the `isExampleSpace` targeting rule since 1) it isn't used anymore, and 2) it keeps the code a lot simpler.

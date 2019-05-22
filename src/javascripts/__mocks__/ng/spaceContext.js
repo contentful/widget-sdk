@@ -41,6 +41,15 @@ export const widgets = {
   refresh: jest.fn().mockResolvedValue([])
 };
 
+export const contentPreview = {
+  replaceVariablesInUrl: jest.fn(),
+  getForContentType: jest.fn(),
+  getSelected: jest.fn(),
+  create: jest.fn(),
+  update: jest.fn(),
+  remove: jest.fn()
+};
+
 export const getData = jest.fn();
 
 export const netlifyAppConfig = {

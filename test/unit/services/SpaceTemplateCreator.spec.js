@@ -22,10 +22,6 @@ describe('Space Template creation service', () => {
         'setActiveLocales'
       ]);
 
-      $provide.constant('contentPreview', {
-        getAll: stubs.getContentPreview,
-        create: stubs.createContentPreview
-      });
       $provide.value('analytics/Analytics.es6', { track: _.noop });
       $provide.value('services/SpaceTemplateCreator/enrichTemplate.es6', {
         // we don't care about template info, because we describe enrichTemplate
@@ -154,6 +150,10 @@ describe('Space Template creation service', () => {
         },
         cma: {
           updateEditorInterface: sinon.stub().resolves()
+        },
+        contentPreview: {
+          getAll: stubs.getContentPreview,
+          create: stubs.createContentPreview
         }
       };
 

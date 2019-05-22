@@ -1,7 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import * as mockedSpaceContext from 'ng/spaceContext';
-import * as mockedContentPreview from 'ng/contentPreview';
 
 import SidebarContentPreviewContainer from './SidebarContentPreviewContainer.es6';
 
@@ -54,19 +53,19 @@ describe('entity_editor/Components/SidebarContentPreviewContainer.es6', () => {
         return true;
       }
     });
-    mockedContentPreview.replaceVariablesInUrl.mockImplementation(url => {
+    mockedSpaceContext.contentPreview.replaceVariablesInUrl.mockImplementation(url => {
       return new Promise(resolve => {
         resolve(url.replace(`{entry.fields.slug}`, 'VALUE'));
       });
     });
-    mockedContentPreview.getForContentType.mockResolvedValue(contentPreviews);
-    mockedContentPreview.getSelected.mockReturnValue(contentPreviews[0].envId);
+    mockedSpaceContext.contentPreview.getForContentType.mockResolvedValue(contentPreviews);
+    mockedSpaceContext.contentPreview.getSelected.mockReturnValue(contentPreviews[0].envId);
   });
   afterEach(() => {
     mockedSpaceContext.getData.mockReset();
-    mockedContentPreview.getForContentType.mockReset();
-    mockedContentPreview.getSelected.mockReset();
-    mockedContentPreview.replaceVariablesInUrl.mockReset();
+    mockedSpaceContext.contentPreview.getForContentType.mockReset();
+    mockedSpaceContext.contentPreview.getSelected.mockReset();
+    mockedSpaceContext.contentPreview.replaceVariablesInUrl.mockReset();
   });
 
   it('compiles the preview URL only when the user clicks the open preview button', async () => {
@@ -83,19 +82,19 @@ describe('entity_editor/Components/SidebarContentPreviewContainer.es6', () => {
 
     await wrapper.instance().componentDidMount();
 
-    expect(mockedContentPreview.replaceVariablesInUrl).not.toHaveBeenCalled();
+    expect(mockedSpaceContext.contentPreview.replaceVariablesInUrl).not.toHaveBeenCalled();
 
     wrapper.setProps({
       entry
     });
 
-    expect(mockedContentPreview.replaceVariablesInUrl).not.toHaveBeenCalled();
+    expect(mockedSpaceContext.contentPreview.replaceVariablesInUrl).not.toHaveBeenCalled();
 
     wrapper.find('[data-test-id="open-preview"]').simulate('click');
     await flushPromises();
     wrapper.update();
 
-    expect(mockedContentPreview.replaceVariablesInUrl).toHaveBeenCalledTimes(1);
+    expect(mockedSpaceContext.contentPreview.replaceVariablesInUrl).toHaveBeenCalledTimes(1);
     expect(window.open).toHaveBeenCalledWith('https://google.com/search?q=VALUE');
   });
 });

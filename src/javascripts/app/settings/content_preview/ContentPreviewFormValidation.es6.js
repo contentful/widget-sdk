@@ -1,7 +1,5 @@
-import { values } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
-
-const contentPreview = getModule('contentPreview');
+import _ from 'lodash';
+import { VALID_URL_PATTERN, ENTRY_FIELD_PATTERN } from 'services/contentPreview.es6';
 
 function getWarnings(config) {
   const warnings = [];
@@ -10,7 +8,7 @@ function getWarnings(config) {
       warnings.push(message + fields.join(', '));
     }
   }
-  const invalidFields = contentPreview.getInvalidFields(config.url, config.contentTypeFields);
+  const invalidFields = getInvalidFields(config.url, config.contentTypeFields);
   appendWarningIfPresent(
     invalidFields.nonExistentFields,
     "Fields with the following IDs don't exist in the content type: "
@@ -25,7 +23,7 @@ function getWarnings(config) {
 function validateConfig(config) {
   if (config.enabled && !config.url) {
     return 'Please provide a URL.';
-  } else if (config.url && !contentPreview.urlFormatIsValid(config.url)) {
+  } else if (config.url && !VALID_URL_PATTERN.test(config.url)) {
     return 'URL is invalid';
   } else {
     const warnings = getWarnings(config);
@@ -43,7 +41,7 @@ export default function validate(name, config) {
     });
   }
 
-  values(config).forEach(item => {
+  _.values(config).forEach(item => {
     const error = validateConfig(item);
     if (error) {
       errors.push({
@@ -55,4 +53,32 @@ export default function validate(name, config) {
   });
 
   return errors;
+}
+
+function getInvalidFields(url, fields) {
+  const tokens = extractFieldTokensFromUrl(url);
+
+  const objectFields = _.map(
+    _.filter(fields, field => _.includes(['Array', 'Link', 'Object', 'Location'], field.type)),
+    'apiName'
+  );
+
+  const nonExistentFields = _.difference(tokens, _.map(fields, 'apiName'));
+  const invalidTypeFields = _.intersection(tokens, objectFields);
+
+  return { nonExistentFields, invalidTypeFields };
+}
+
+function extractFieldTokensFromUrl(url) {
+  const tokens = [];
+  let match;
+
+  do {
+    match = ENTRY_FIELD_PATTERN.exec(url);
+    if (match) {
+      tokens.push(match[1]);
+    }
+  } while (match);
+
+  return _.uniq(tokens);
 }

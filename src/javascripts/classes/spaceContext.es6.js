@@ -10,6 +10,7 @@ import * as logger from 'services/logger.es6';
 import * as Telemetry from 'i13n/Telemetry.es6';
 import createUserCache from 'data/userCache.es6';
 import * as EntityFieldValueHelpers from './EntityFieldValueHelpers.es6';
+import createContentPreview from 'services/contentPreview.es6';
 
 export default function register() {
   /**
@@ -157,7 +158,7 @@ export default function register() {
 
           self.user = K.getValue(TokenStore.user$);
 
-          $injector.get('contentPreview').clearCache();
+          self.contentPreview = createContentPreview({ space, cma: self.cma });
 
           self.netlifyAppConfig = createCachedAppConfig({
             spaceId: space.getId(),
@@ -459,6 +460,7 @@ export default function register() {
         spaceContext.uiConfig = null;
         spaceContext.space = null;
         spaceContext.users = null;
+        spaceContext.contentPreview = null;
         if (spaceContext.docPool) {
           spaceContext.docPool.destroy();
           spaceContext.docPool = null;

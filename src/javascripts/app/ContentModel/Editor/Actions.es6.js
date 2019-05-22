@@ -19,7 +19,6 @@ const $q = getModule('$q');
 const $state = getModule('$state');
 const Command = getModule('command');
 const closeState = getModule('navigation/closeState');
-const contentPreview = getModule('contentPreview');
 
 /**
  * @description
@@ -266,7 +265,7 @@ export default function create($scope, contentTypeIds) {
         .then(setPristine)
         .then(() => {
           setPristine();
-          contentPreview.clearCache();
+          spaceContext.contentPreview.clearCache();
           return spaceContext.uiConfig;
         })
         .then(uiConfig => {

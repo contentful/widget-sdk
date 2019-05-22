@@ -16,7 +16,6 @@ const $rootScope = getModule('$rootScope');
 const spaceContext = getModule('spaceContext');
 const modalDialog = getModule('modalDialog');
 const $state = getModule('$state');
-const contentPreview = getModule('contentPreview');
 
 const DEFAULT_LOCALE = 'en-US';
 
@@ -84,7 +83,6 @@ export default function(org, templateName, modalTemplate = autoCreateSpaceTempla
       yield* applyTemplate(spaceContext, template);
       yield spaceContext.publishedCTs.refresh();
       $rootScope.$broadcast('spaceTemplateCreated');
-      contentPreview.clearCache();
       // TODO: Handle error when space creation fails
       // Right now, we just show the green check marking
       // space creation as successful irrespective

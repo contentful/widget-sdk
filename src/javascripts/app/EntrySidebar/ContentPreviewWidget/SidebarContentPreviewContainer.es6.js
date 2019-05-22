@@ -6,7 +6,6 @@ import * as Analytics from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
-const contentPreview = getModule('contentPreview');
 const TheLocaleStore = getModule('TheLocaleStore');
 const Entries = getModule('data/Entries');
 
@@ -37,7 +36,7 @@ export class SidebarContentPreviewContainer extends Component {
     // getForContentType does not return API objects, but some non-standard
     // internal representation with `envId` property
     // TODO: refactor to use just API objects
-    const contentPreviews = await contentPreview
+    const contentPreviews = await spaceContext.contentPreview
       .getForContentType(this.props.contentType.sys.id)
       .then(previews => previews || []);
     const selectedContentPreview = this.getSelectedContentPreview(contentPreviews);
@@ -51,7 +50,7 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   getSelectedContentPreview = contentPreviews => {
-    const selectedContentPreviewId = contentPreview.getSelected();
+    const selectedContentPreviewId = spaceContext.contentPreview.getSelected();
     return (
       contentPreviews.find(preview => preview.envId === selectedContentPreviewId) ||
       contentPreviews[0] ||
@@ -61,7 +60,7 @@ export class SidebarContentPreviewContainer extends Component {
 
   getCompiledUrls = async (contentPreviews, entry, contentType) => {
     const selectedContentPreview = this.getSelectedContentPreview(contentPreviews);
-    const compiledUrl = await contentPreview.replaceVariablesInUrl(
+    const compiledUrl = await spaceContext.contentPreview.replaceVariablesInUrl(
       selectedContentPreview.url,
       Entries.internalToExternal(entry, contentType),
       TheLocaleStore.getDefaultLocale().code
@@ -124,7 +123,7 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   onChangeContentPreview = preview => {
-    contentPreview.setSelected(preview);
+    spaceContext.contentPreview.setSelected(preview);
     this.setState({ selectedContentPreview: preview });
   };
 

@@ -11,18 +11,6 @@ describe('cfOnboardingSteps Directive', () => {
     ];
 
     this.createSpaceDialog = sinon.stub();
-    this.contentPreviews = {
-      previewId: {
-        configurations: [
-          {
-            contentType: 'contentTypeId',
-            enabled: true,
-            example: true,
-            url: 'https://potato.media'
-          }
-        ]
-      }
-    };
     module('contentful/test', $provide => {
       $provide.value('utils/LaunchDarkly/index.es6', {
         onFeatureFlag: sinon.stub(),
@@ -34,14 +22,6 @@ describe('cfOnboardingSteps Directive', () => {
       });
       $provide.value('services/CreateSpace.es6', {
         showDialog: this.createSpaceDialog
-      });
-      $provide.constant('contentPreview', {
-        getAll: sinon.stub().callsFake(() => {
-          // using this instead of our added on `.resolves` since that uses
-          // $q internally but this directive uses native Promises and that
-          // causes things to fail
-          return Promise.resolve(this.contentPreviews);
-        })
       });
       $provide.value('components/shared/auto_create_new_space/CreateModernOnboarding.es6', {
         getStoragePrefix: 'ctfl:userSysId:modernStackOnboarding',
@@ -60,8 +40,8 @@ describe('cfOnboardingSteps Directive', () => {
       this.element = this.$compile('<cf-onboarding-steps />');
       this.controller = this.element.isolateScope().onboarding;
       // Begin test code: test-ps-02-2018-tea-onboarding-steps
-      // manually set loading content previews to false
-      this.controller.isContentPreviewsLoading = false;
+      // manually set loading of modern stack onboarding to false
+      this.controller.isModernStackLoading = false;
       this.$apply();
       // End test code: test-ps-02-2018-tea-onboarding-steps
     };

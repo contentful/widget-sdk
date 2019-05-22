@@ -20,7 +20,6 @@ import { TextField } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry.es6';
 
 const $rootScope = getModule('$rootScope');
-const contentPreview = getModule('contentPreview');
 
 class EnterpriseSpaceWizard extends React.Component {
   static propTypes = {
@@ -108,7 +107,6 @@ class EnterpriseSpaceWizard extends React.Component {
 
   static handleTemplateCreated() {
     $rootScope.$broadcast('spaceTemplateCreated');
-    contentPreview.clearCache();
   }
 
   static isValidName(name) {

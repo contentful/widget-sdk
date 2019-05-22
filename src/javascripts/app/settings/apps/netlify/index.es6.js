@@ -9,7 +9,6 @@ import AppPageShell from '../_common/AppPageShell.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
-const contentPreview = getModule('contentPreview');
 
 const NetlifyFetcher = createFetcherComponent(({ client }) => {
   return Promise.all([
@@ -17,7 +16,7 @@ const NetlifyFetcher = createFetcherComponent(({ client }) => {
     NetlifyClient.createTicket(),
     spaceContext.publishedCTs.getAllBare(),
     // We'll be updating content previews. Keep the content preview cache warm:
-    contentPreview.getAll()
+    spaceContext.contentPreview.getAll()
   ]);
 });
 
