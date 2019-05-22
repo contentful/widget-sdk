@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Heading, Paragraph, SelectField, Option } from '@contentful/forma-36-react-components';
 
 Projects.propTypes = {
-  allProjects: PropTypes.array.isRequired,
-  selectedProject: PropTypes.string.isRequired,
+  allProjects: PropTypes.array,
+  selectedProject: PropTypes.string,
   onProjectChange: PropTypes.func.isRequired
 };
 
@@ -16,15 +16,16 @@ export default function Projects({ allProjects, selectedProject, onProjectChange
         Works only with Optimizely Full Stack projects
       </Paragraph>
       <SelectField
+        name="project"
         className="f36-margin-top--m"
         id="project"
         labelText="Project"
         required={true}
-        value={selectedProject}
+        value={selectedProject || ''}
         onChange={onProjectChange}
         selectProps={{ value: selectedProject, isDisabled: !allProjects }}
         width="large">
-        <Option>Select Optimizely Project</Option>
+        <Option value="">Select Optimizely Project</Option>
         {allProjects &&
           allProjects.map(p => (
             <Option key={p.id} value={p.id}>

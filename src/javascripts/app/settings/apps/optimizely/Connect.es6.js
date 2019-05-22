@@ -43,6 +43,8 @@ export default function Connect({
         Connect your Optimizely account to get started.
         <section className={styles.form}>
           <TextField
+            id="pat"
+            name="pat"
             labelText="Personal Access Token"
             textInputProps={{ type: 'password', disabled: isConnected || isConnecting }}
             value={pat}

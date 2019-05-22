@@ -74,16 +74,18 @@ export default function ContentTypes({
       </Button>
       {addedContentTypes.length > 0 ? (
         <Table className={styles.table}>
-          {addedContentTypes.map(id => (
-            <ContentTypeRow
-              key={id}
-              contentTypeId={id}
-              allContentTypes={allContentTypes}
-              allReferenceFields={allReferenceFields}
-              onClickEdit={onClickEdit}
-              onClickDelete={onDeleteContentType}
-            />
-          ))}
+          <tbody>
+            {addedContentTypes.map(id => (
+              <ContentTypeRow
+                key={id}
+                contentTypeId={id}
+                allContentTypes={allContentTypes}
+                allReferenceFields={allReferenceFields}
+                onClickEdit={onClickEdit}
+                onClickDelete={onDeleteContentType}
+              />
+            ))}
+          </tbody>
         </Table>
       ) : null}
       <ContentTypeSelectionModal

@@ -66,12 +66,14 @@ export default function ContentTypeSelectionModal({
               </Paragraph>
             )}
             <SelectField
+              id="content-types"
+              name="content-types"
               labelText="Content Type"
               selectProps={{ width: 'medium', isDisabled: editingMode }}
               onChange={e =>
                 onSelectContentType(allContentTypes.find(ct => ct.sys.id === e.target.value))
               }
-              value={selectedContentType}
+              value={selectedContentType || ''}
               required>
               {allContentTypes
                 .filter(ct => editingMode || isContentTypeValidSelection(ct, addedContentTypes))

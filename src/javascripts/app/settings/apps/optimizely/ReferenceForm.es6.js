@@ -31,7 +31,7 @@ export default function ReferenceForm({ allContentTypes, selectedContentType, fi
 
   return (
     <section className={styles.referenceForm}>
-      <FormLabel>Reference Fields</FormLabel>
+      <FormLabel htmlFor="">Reference Fields</FormLabel>
       <section className={styles.referenceGrid}>
         <div className={styles.referenceColumn}>
           {ids
