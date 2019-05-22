@@ -59,7 +59,7 @@ const fetch = organizationId => async () => {
 
   const endpoint = createOrganizationEndpoint(organizationId);
 
-  const [plans, productRatePlans, numMemberships] = Promise.all([
+  const [plans, productRatePlans, numMemberships] = await Promise.all([
     getPlansWithSpaces(endpoint),
     getRatePlans(endpoint),
     fetchNumMemberships(organizationId)
