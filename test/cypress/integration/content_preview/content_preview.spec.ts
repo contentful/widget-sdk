@@ -34,8 +34,7 @@ describe('Content Preview Page', () => {
       consumer: 'user_interface',
       provider: 'preview_environments',
       cors: true,
-      pactfileWriteMode: 'merge',
-      spec: 3
+      pactfileWriteMode: 'merge'
     });
 
     cy.setAuthTokenToLocalStorage();

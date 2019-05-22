@@ -16,8 +16,7 @@ describe('Assets Page', () => {
         consumer: 'user_interface',
         provider: 'assets',
         cors: true,
-        pactfileWriteMode: 'merge',
-        spec: 3
+        pactfileWriteMode: 'merge'
       });
 
       cy.setAuthTokenToLocalStorage();
@@ -53,8 +52,7 @@ describe('Assets Page', () => {
         consumer: 'user_interface',
         provider: 'assets',
         cors: true,
-        pactfileWriteMode: 'merge',
-        spec: 3
+        pactfileWriteMode: 'merge'
       });
 
       cy.setAuthTokenToLocalStorage();
