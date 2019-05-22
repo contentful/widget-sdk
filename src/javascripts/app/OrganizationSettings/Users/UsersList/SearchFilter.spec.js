@@ -1,4 +1,5 @@
 import React from 'react';
+import 'jest-dom/extend-expect';
 import { render, cleanup, fireEvent } from 'react-testing-library';
 import SearchFilter from './SearchFilter.es6';
 
