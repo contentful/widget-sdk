@@ -7,6 +7,7 @@ import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
 const contentPreview = getModule('contentPreview');
+const TheLocaleStore = getModule('TheLocaleStore');
 
 const getEmptyContentPreview = () => ({
   compiledUrl: '',
@@ -62,7 +63,8 @@ export class SidebarContentPreviewContainer extends Component {
     const compiledUrl = await contentPreview.replaceVariablesInUrl(
       selectedContentPreview.url,
       entry,
-      contentType
+      contentType,
+      TheLocaleStore.getDefaultLocale().code
     );
 
     return {

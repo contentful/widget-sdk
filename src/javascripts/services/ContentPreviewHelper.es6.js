@@ -10,10 +10,10 @@ import { get, reduce } from 'lodash';
  * @param {Object} params
  * @param {string} params.url
  * @param {API.Entry} params.entry
- * @param {string} params.defaultLocale
+ * @param {string} params.localeCode
  * @returns {Promise<string>} - url with resolved references (if any)
  */
-export async function resolveReferences({ cma, url, entry, defaultLocale }) {
+export async function resolveReferences({ cma, url, entry, localeCode }) {
   // Pattern that denotes usage of incoming links
   const REFERENCES_PATTERN = /linkedBy/g;
   // Pattern to strip out the placeholders from the url
@@ -46,8 +46,8 @@ export async function resolveReferences({ cma, url, entry, defaultLocale }) {
   );
 
   // This object is what is used in the final interpolation
-  // It also handles locales by converting entry.fields.slug to entry.fields[defaultLocale].slug
-  const dataToInterpolate = createInterpolationDataObject(entry, defaultLocale);
+  // It also handles locales by converting entry.fields.slug to entry.fields[localeCode].slug
+  const dataToInterpolate = createInterpolationDataObject(entry, localeCode);
   // This keeps track of entries whose incoming links were fetched already.
   const entriesWithFetchedIncomingLinks = [];
   let currentEntry = dataToInterpolate;
@@ -69,7 +69,7 @@ export async function resolveReferences({ cma, url, entry, defaultLocale }) {
       return url.match(/^https?:\/\/.+?\//)[0];
     } else {
       // add the incoming link to the current entry
-      currentEntry.linkedBy = createInterpolationDataObject(firstLinkedByEntry, defaultLocale);
+      currentEntry.linkedBy = createInterpolationDataObject(firstLinkedByEntry, localeCode);
       // make current entry the first incoming one we resolved to and continue the process
       currentEntry = currentEntry.linkedBy;
     }
@@ -85,18 +85,18 @@ export async function resolveReferences({ cma, url, entry, defaultLocale }) {
  * @description
  *
  * Create an object that mimics the shape of an entry but has
- * defaultLocale data only and a linkedBy property which holds
+ * localeCode data only and a linkedBy property which holds
  * the first incoming link to the top level entry.
  *
  * @param {API.entry} entry
- * @param {string} defaultLocale
+ * @param {string} localeCode
  * @returns {Object}
  */
-function createInterpolationDataObject(entry, defaultLocale) {
+function createInterpolationDataObject(entry, localeCode) {
   const entryFields = reduce(
     entry.fields,
     (acc, fieldData, fieldName) => {
-      acc[fieldName] = fieldData[defaultLocale];
+      acc[fieldName] = fieldData[localeCode];
       return acc;
     },
     {}

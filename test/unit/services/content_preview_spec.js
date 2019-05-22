@@ -15,7 +15,6 @@ describe('contentPreview', () => {
 
     module('contentful/test', $provide => {
       $provide.constant('TheLocaleStore', {
-        getDefaultLocale: _.constant({ code: 'en' }),
         toPublicCode: sinon.stub().returns('en')
       });
       $provide.constant('TheStore/index.es6', {
@@ -319,7 +318,8 @@ describe('contentPreview', () => {
       this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[0].url,
         makeEntry('entry-1').data,
-        makeCt('ct-1')
+        makeCt('ct-1'),
+        'en'
       );
       expect(this.compiledUrl).toBe('https://www.test.com/entry-1/Title/my-slug');
     });
@@ -328,7 +328,8 @@ describe('contentPreview', () => {
       this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         'https://www.test.com/{entry.sys.id}/{entry.fields.title}/{entry.fields.slug}',
         makeEntry('entry-1').data,
-        makeCt('ct-1')
+        makeCt('ct-1'),
+        'en'
       );
       expect(this.compiledUrl).toBe('https://www.test.com/entry-1/Title/my-slug');
     });
@@ -337,7 +338,8 @@ describe('contentPreview', () => {
       this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         'https://www.test.com/{entry.sys.id}/{entry.fields.random_field}/{entry.fields.slug}',
         makeEntry('entry-1').data,
-        makeCt('ct-1')
+        makeCt('ct-1'),
+        'en'
       );
       expect(this.compiledUrl).toBe(
         'https://www.test.com/entry-1/fields.random_field_ NOT_FOUND/my-slug'
@@ -348,7 +350,8 @@ describe('contentPreview', () => {
       this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[1].url,
         makeEntry('entry-1').data,
-        makeCt('ct-1')
+        makeCt('ct-1'),
+        'en'
       );
       expect(this.compiledUrl).toBe('https://www.test.com/{entry_field.invalid}');
     });
@@ -361,7 +364,8 @@ describe('contentPreview', () => {
       this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         'http://test-domain.com/{entry_id}/{entry_field.empty}',
         makeEntry('entry-1').data,
-        makeCt('ct-1')
+        makeCt('ct-1'),
+        'en'
       );
       expect(this.compiledUrl).toBe('http://test-domain.com/entry-1/');
     });
@@ -370,7 +374,8 @@ describe('contentPreview', () => {
       this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         'http://test-domain.com/{entry_id}/{entry_field.undefined}',
         makeEntry('entry-1').data,
-        makeCt('ct-1')
+        makeCt('ct-1'),
+        'en'
       );
       expect(this.compiledUrl).toBe('http://test-domain.com/entry-1/');
     });
@@ -379,7 +384,8 @@ describe('contentPreview', () => {
       this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[1].url,
         makeEntry('entry-1').data,
-        makeCt('ct-1')
+        makeCt('ct-1'),
+        'en'
       );
       expect(this.compiledUrl).toBe('https://www.test.com/{entry_field.invalid}');
     });
@@ -389,7 +395,8 @@ describe('contentPreview', () => {
       await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[2].url,
         makeEntry('entry-3').data,
-        makeCt('ct-3')
+        makeCt('ct-3'),
+        'en'
       );
 
       expect(
@@ -412,7 +419,8 @@ describe('contentPreview', () => {
       this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[2].url,
         makeEntry('entry-3').data,
-        makeCt('ct-3')
+        makeCt('ct-3'),
+        'en'
       );
 
       expect(this.compiledUrl).toBe('https://www.test.com/some');
@@ -432,7 +440,8 @@ describe('contentPreview', () => {
       this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[3].url,
         makeEntry('entry-4').data,
-        makeCt('ct-4')
+        makeCt('ct-4'),
+        'en'
       );
 
       expect(this.compiledUrl).toBe('https://www.test.com/new-value');
@@ -473,7 +482,8 @@ describe('contentPreview', () => {
       this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[4].url,
         makeEntry('entry-5').data,
-        makeCt('ct-5')
+        makeCt('ct-5'),
+        'en'
       );
 
       expect(this.compiledUrl).toBe(

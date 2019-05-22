@@ -13,9 +13,8 @@ export default function register() {
   registerFactory('contentPreview', [
     '$q',
     'spaceContext',
-    'TheLocaleStore',
     'data/Entries',
-    ($q, spaceContext, TheLocaleStore, { internalToExternal: internalToExternalFieldIds }) => {
+    ($q, spaceContext, { internalToExternal: internalToExternalFieldIds }) => {
       let cache;
 
       const store = getStore();
@@ -395,10 +394,8 @@ export default function register() {
        * @description
        * Returns the compiled URL with the entry data.
        * Entry ID and field tokens are substituted for the actual values for that entry.
-       * Always uses the default locale value.
        */
-      function replaceVariablesInUrl(urlTemplate, entry, contentType) {
-        const defaultLocale = TheLocaleStore.getDefaultLocale().code;
+      function replaceVariablesInUrl(urlTemplate, entry, contentType, localeCode) {
         const processedUrl = urlTemplate
           .replace(ENTRY_ID_PATTERN, entry.sys.id)
           .replace(ENTRY_FIELD_PATTERN, (match, fieldId) => {
@@ -411,7 +408,7 @@ export default function register() {
               return match;
             }
 
-            const fieldValue = _.get(entry, ['fields', internalId, defaultLocale]);
+            const fieldValue = _.get(entry, ['fields', internalId, localeCode]);
 
             return _.toString(fieldValue);
           });
@@ -420,7 +417,7 @@ export default function register() {
           cma: spaceContext.cma,
           url: processedUrl,
           entry: internalToExternalFieldIds(entry, contentType),
-          defaultLocale
+          localeCode
         });
       }
 
