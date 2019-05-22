@@ -11,9 +11,8 @@ export default function register() {
    * This service fetches, caches and exposes data and helper functions relating to Content Preview
    */
   registerFactory('contentPreview', [
-    '$q',
     'spaceContext',
-    ($q, spaceContext) => {
+    spaceContext => {
       let cache;
 
       const store = getStore();
@@ -109,7 +108,7 @@ export default function register() {
        */
       function getAll() {
         if (cache) {
-          return $q.resolve(cache);
+          return Promise.resolve(cache);
         } else {
           return spaceContext.space
             .endpoint('preview_environments')
@@ -144,7 +143,8 @@ export default function register() {
        */
       function get(id) {
         return getAll().then(
-          environments => environments[id] || $q.reject('Preview environment could not be found')
+          environments =>
+            environments[id] || Promise.reject('Preview environment could not be found')
         );
       }
 
@@ -245,7 +245,7 @@ export default function register() {
        */
       function remove(env) {
         if (!env) {
-          return $q.reject('No environment specified for deletion');
+          return Promise.reject('No environment specified for deletion');
         }
 
         return (
