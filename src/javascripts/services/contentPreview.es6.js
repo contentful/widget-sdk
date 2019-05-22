@@ -13,8 +13,7 @@ export default function register() {
   registerFactory('contentPreview', [
     '$q',
     'spaceContext',
-    'data/Entries',
-    ($q, spaceContext, { internalToExternal: internalToExternalFieldIds }) => {
+    ($q, spaceContext) => {
       let cache;
 
       const store = getStore();
@@ -394,21 +393,17 @@ export default function register() {
        * @description
        * Returns the compiled URL with the entry data.
        * Entry ID and field tokens are substituted for the actual values for that entry.
+       * Both `entry` and `localeCode` use public IDs.
        */
-      function replaceVariablesInUrl(urlTemplate, entry, contentType, localeCode) {
+      function replaceVariablesInUrl(urlTemplate, entry, localeCode) {
         const processedUrl = urlTemplate
           .replace(ENTRY_ID_PATTERN, entry.sys.id)
           .replace(ENTRY_FIELD_PATTERN, (match, fieldId) => {
-            const internalId = _.get(
-              _.find(contentType.fields, _.matches({ apiName: fieldId })),
-              'id'
-            );
-
-            if (!_.has(entry, ['fields', internalId])) {
+            if (!_.has(entry, ['fields', fieldId])) {
               return match;
             }
 
-            const fieldValue = _.get(entry, ['fields', internalId, localeCode]);
+            const fieldValue = _.get(entry, ['fields', fieldId, localeCode]);
 
             return _.toString(fieldValue);
           });
@@ -416,7 +411,7 @@ export default function register() {
         return resolveReferences({
           cma: spaceContext.cma,
           url: processedUrl,
-          entry: internalToExternalFieldIds(entry, contentType),
+          entry,
           localeCode
         });
       }
