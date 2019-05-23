@@ -1,50 +1,63 @@
 import React from 'react';
-import Enzyme from 'enzyme';
+import 'jest-dom/extend-expect';
+import { render, cleanup, fireEvent } from 'react-testing-library';
 
 import Pagination from './Pagination.es6';
-import { Button, Select } from '@contentful/forma-36-react-components';
+
+afterEach(cleanup);
 
 describe('Pagination', () => {
   const onChangeFn = jest.fn();
 
   const mount = (skip, limit, total, loading) => {
-    return Enzyme.shallow(
+    return render(
       <Pagination skip={skip} limit={limit} total={total} loading={loading} onChange={onChangeFn} />
     );
   };
 
   it('disables the Previous button if it is the first page', () => {
-    const component = mount(0, 10, 100, false);
-    expect(component).toMatchSnapshot();
+    const { getByTestId } = mount(0, 10, 100, false);
+    const previous = getByTestId('pagination.previous');
+    expect(previous).toBeDisabled();
   });
 
   it('enables the Previous and Next buttons if it is not the first page or last pages', () => {
-    const component = mount(10, 10, 100, false);
-    expect(component).toMatchSnapshot();
+    const { getByTestId } = mount(10, 10, 100, false);
+    const previous = getByTestId('pagination.previous');
+    const next = getByTestId('pagination.next');
+    expect(previous).not.toBeDisabled();
+    expect(next).not.toBeDisabled();
   });
 
   it('disables the Next button if it is the last page', () => {
-    const component = mount(90, 10, 100, false);
-    expect(component).toMatchSnapshot();
+    const { getByTestId } = mount(90, 10, 100, false);
+    const next = getByTestId('pagination.next');
+    expect(next).toBeDisabled();
   });
 
   it('disables the Next and Previous buttons there is only one avialable page', () => {
-    const component = mount(0, 10, 10, false);
-    expect(component).toMatchSnapshot();
+    const { getByTestId } = mount(0, 10, 10, false);
+    const previous = getByTestId('pagination.previous');
+    const next = getByTestId('pagination.next');
+    expect(previous).toBeDisabled();
+    expect(next).toBeDisabled();
   });
 
   it('disables the Next and Previous buttons there is loading', () => {
-    const component = mount(20, 10, 100, true);
-    expect(component).toMatchSnapshot();
+    const { getByTestId } = mount(20, 10, 100, true);
+    const previous = getByTestId('pagination.previous');
+    const next = getByTestId('pagination.next');
+    expect(previous).toBeDisabled();
+    expect(next).toBeDisabled();
   });
 
   it('triggers onChange on the Next button click', () => {
     const currentSkip = 10;
     const limit = 10;
     const desiredSkip = currentSkip + limit;
-    const component = mount(currentSkip, limit, 100, false);
-    const nextBtn = component.find(Button).at(1);
-    nextBtn.simulate('click');
+    const { getByTestId } = mount(currentSkip, limit, 100, false);
+    const next = getByTestId('pagination.next');
+    fireEvent.click(next);
     expect(onChangeFn).toHaveBeenCalledWith({ skip: desiredSkip, limit });
   });
 
@@ -52,16 +65,16 @@ describe('Pagination', () => {
     const currentSkip = 10;
     const limit = 10;
     const desiredSkip = currentSkip - limit;
-    const component = mount(currentSkip, limit, 100, false);
-    const nextBtn = component.find(Button).at(0);
-    nextBtn.simulate('click');
+    const { getByTestId } = mount(currentSkip, limit, 100, false);
+    const previous = getByTestId('pagination.previous');
+    fireEvent.click(previous);
     expect(onChangeFn).toHaveBeenCalledWith({ skip: desiredSkip, limit });
   });
 
   it('trigger onChange on the limit selector change', () => {
-    const component = mount(10, 10, 100, false);
-    const limitSelector = component.find(Select);
-    limitSelector.simulate('change', { target: { value: 25 } });
+    const { getByTestId } = mount(10, 10, 100, false);
+    const limitSelector = getByTestId('pagination.limit');
+    fireEvent.change(limitSelector, { target: { value: 25 } });
     expect(onChangeFn).toHaveBeenCalledWith({ skip: 10, limit: 25 });
   });
 });

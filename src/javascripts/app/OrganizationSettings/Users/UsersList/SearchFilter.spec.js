@@ -1,5 +1,6 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import 'jest-dom/extend-expect';
+import { render, cleanup, fireEvent } from 'react-testing-library';
 import SearchFilter from './SearchFilter.es6';
 
 describe('SearchFilter', () => {
@@ -10,47 +11,54 @@ describe('SearchFilter', () => {
     { label: 'Kiwi', value: 'kiwi' }
   ];
 
-  let onChangeCb, component;
+  const onChangeCb = jest.fn();
+  const initialProps = {
+    id: 'fruit',
+    label: 'Fruit',
+    options,
+    onChange: onChangeCb,
+    filter: {
+      key: 'fruit',
+      value: 'papaya',
+      operator: null
+    }
+  };
+  const build = (props = initialProps) => {
+    return render(<SearchFilter {...props} />);
+  };
 
-  beforeEach(() => {
-    onChangeCb = jest.fn();
-    component = mount(
-      <SearchFilter
-        id="fruit"
-        label="Fruit"
-        filter={{
-          key: 'fruit',
-          value: 'papaya',
-          operator: null
-        }}
-        options={options}
-        onChange={onChangeCb}
-      />
-    );
+  afterEach(cleanup);
+  afterEach(onChangeCb.mockReset);
+
+  it('displays the correct label', () => {
+    const { getByTestId } = build();
+    expect(getByTestId('search-filter.label')).toHaveTextContent('Fruit');
   });
 
-  it('renders the component', () => {
-    expect(component).toMatchSnapshot();
+  it('selects the correct option', () => {
+    const { getByDisplayValue } = build();
+    const select = getByDisplayValue('Papaya');
+    expect(select).not.toBeNull();
   });
 
-  it('accepts empty values', () => {
-    component.setProps({
-      filters: {
-        key: 'foo',
-        value: null
-      }
-    });
-    expect(component).toMatchSnapshot();
+  it('selects different options', () => {
+    const { getByDisplayValue, rerender } = build();
+    const filter = { key: 'fruit', value: 'banana' };
+    const newProps = { ...initialProps, filter };
+    rerender(<SearchFilter {...newProps} />);
+    const select = getByDisplayValue('Banana');
+    expect(select).not.toBeNull();
   });
 
   it('calls the onChange callback with the updated filter', () => {
-    const select = component.find('select');
-    select.simulate('change', { target: { value: '' } });
+    const { getByTestId } = build();
+    const selectEl = getByTestId('search-filter.options');
+    fireEvent.change(selectEl, { target: { value: 'kiwi' } });
     expect(onChangeCb).toHaveBeenCalledWith({
       id: 'fruit',
       key: 'fruit',
       operator: null,
-      value: ''
+      value: 'kiwi'
     });
   });
 });

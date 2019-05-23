@@ -90,6 +90,7 @@ export default function CreateEntryComment({
         rows={active ? 4 : 1}
         onKeyDown={handleKeyPress}
         disabled={isLoading}
+        testId="comments.form.textarea"
         placeholder={placeholder}
       />
       {active && error && (
@@ -102,10 +103,15 @@ export default function CreateEntryComment({
             loading={isLoading}
             onClick={() => handleSubmit()}
             buttonType="primary"
+            testId="comments.form.submit"
             className={css({ marginRight: tokens.spacingS })}>
             {sendButtonLabel}
           </Button>
-          <Button size="small" buttonType="muted" onClick={handleCancel}>
+          <Button
+            size="small"
+            buttonType="muted"
+            onClick={handleCancel}
+            testId="comments.form.cancel">
             Cancel
           </Button>
         </div>
