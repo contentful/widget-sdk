@@ -7,7 +7,6 @@ import {
 } from '../../interactions/content_types';
 import {
   singleEntryResponse,
-  noEntryLinksResponse,
   noEntrySnapshotsResponse
 } from '../../interactions/entries';
 import { microbackendStreamToken } from '../../interactions/microbackend';
@@ -32,7 +31,6 @@ describe('Tasks (based on `comments` endpoint)', () => {
     cy.setAuthTokenToLocalStorage();
     window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
     basicServerSetUpWithEntry();
-
     cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
   }
   );
@@ -43,7 +41,6 @@ describe('Tasks (based on `comments` endpoint)', () => {
     });
     singleUser();
     singleEntryResponse();
-    noEntryLinksResponse();
     noEntrySnapshotsResponse();
     editorInterfaceWithoutSidebarResponse();
     microbackendStreamToken();
@@ -70,7 +67,6 @@ describe('Tasks (based on `comments` endpoint)', () => {
 
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.Entries.NONE}`,
         '@tasks/empty'
       ]);
     });
@@ -87,7 +83,6 @@ describe('Tasks (based on `comments` endpoint)', () => {
 
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.Entries.NONE}`,
         '@tasks/several',
         `@${state.Users.SINGLE}`
       ]);
