@@ -12,11 +12,11 @@ import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import { getSubscriptionState } from 'account/AccountUtils.es6';
 
 const spaceContext = getModule('spaceContext');
 const ResourceService = getModule('services/ResourceService.es6');
 const OrganizationRoles = getModule('services/OrganizationRoles.es6');
-const TheAccountView = getModule('TheAccountView');
 
 const LocalesFetcher = createFetcherComponent(() => {
   const createResourceService = ResourceService.default;
@@ -28,7 +28,6 @@ const LocalesFetcher = createFetcherComponent(() => {
     createLegacyFeatureService(spaceContext.getId()).get('multipleLocales'),
     OrganizationRoles.isOwnerOrAdmin(spaceContext.organization),
     EnvironmentUtils.isInsideMasterEnv(spaceContext),
-    TheAccountView.getSubscriptionState(),
     _.get(spaceContext.organization, ['subscriptionPlan', 'name'])
   ]);
 });
@@ -62,7 +61,6 @@ class LocalesListRoute extends React.Component {
               isMultipleLocalesFeatureEnabled,
               isOwnerOrAdmin,
               insideMasterEnv,
-              subscriptionState,
               subscriptionPlanName
             ] = data;
             if (isLegacy) {
@@ -72,7 +70,7 @@ class LocalesListRoute extends React.Component {
                   canCreateMultipleLocales={isMultipleLocalesFeatureEnabled}
                   canChangeSpace={isOwnerOrAdmin}
                   localeResource={localeResource}
-                  subscriptionState={subscriptionState}
+                  subscriptionState={getSubscriptionState()}
                   insideMasterEnv={insideMasterEnv}
                   subscriptionPlanName={subscriptionPlanName}
                   getComputeLocalesUsageForOrganization={
@@ -86,7 +84,7 @@ class LocalesListRoute extends React.Component {
                 locales={locales}
                 canChangeSpace={isOwnerOrAdmin}
                 localeResource={localeResource}
-                subscriptionState={subscriptionState}
+                subscriptionState={getSubscriptionState()}
                 insideMasterEnv={insideMasterEnv}
                 upgradeSpace={() =>
                   this.props.showUpgradeSpaceDialog({

@@ -55,10 +55,6 @@ describe('Role List Directive', () => {
       rolesResource: this.rolesResource
     });
 
-    this.mockService('TheAccountView', {
-      getSubscriptionState: sinon.stub().returns({ path: ['stateref'] })
-    });
-
     const UserListHandler = this.$inject('UserListHandler');
 
     UserListHandler.create = sinon.stub().returns({

@@ -28,11 +28,11 @@ import getLocales from './getLocales.es6';
 import * as PolicyBuilder from 'access_control/PolicyBuilder/index.es6';
 import * as logger from 'services/logger.es6';
 import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
+import { getSubscriptionState } from 'account/AccountUtils.es6';
 
 const $state = getModule('$state');
 const spaceContext = getModule('spaceContext');
 const createRoleRemover = getModule('createRoleRemover');
-const TheAccountView = getModule('TheAccountView');
 const UserListHandler = getModule('UserListHandler');
 const RoleRepository = getModule('access_control/RoleRepository.es6');
 const createResourceService = getModule('services/ResourceService.es6');
@@ -75,7 +75,7 @@ class RoleEditor extends React.Component {
       hasCustomRolesFeature: undefined,
       loading: undefined,
       saving: false,
-      accountUpgradeState: TheAccountView.getSubscriptionState(),
+      accountUpgradeState: getSubscriptionState(),
       dirty: isDuplicate,
       internal
     };

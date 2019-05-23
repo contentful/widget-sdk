@@ -3,6 +3,7 @@ import _ from 'lodash';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import { Notification } from '@contentful/forma-36-react-components';
+import { getSubscriptionState } from 'account/AccountUtils.es6';
 
 export default function register() {
   registerDirective('cfApiKeyList', () => ({
@@ -17,7 +18,6 @@ export default function register() {
     '$state',
     '$q',
     'spaceContext',
-    'TheAccountView',
     'command',
     'access_control/AccessChecker/index.es6',
     'services/ResourceService.es6',
@@ -26,7 +26,6 @@ export default function register() {
       $state,
       $q,
       spaceContext,
-      TheAccountView,
       Command,
       accessChecker,
       { default: createResourceService }
@@ -53,7 +52,7 @@ export default function register() {
         }
       ];
 
-      $scope.subscriptionState = TheAccountView.getSubscriptionState();
+      $scope.subscriptionState = getSubscriptionState();
 
       $scope.createApiKey = Command.create(create, {
         disabled: function() {
