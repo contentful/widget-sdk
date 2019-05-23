@@ -164,8 +164,6 @@ export default class Task extends React.PureComponent {
         isShown={isShown}
         onCancel={() => onClose(false)}
         onConfirm={() => {
-          // eslint-disable-next-line no-console
-          console.log('delete');
           onClose(true);
         }}
       />

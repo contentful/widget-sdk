@@ -37,13 +37,11 @@ export default class ScheduleWidgetContainer extends Component {
     try {
       comments = await fetchComments(spaceId, entityInfo.id);
     } catch (e) {
+      comments = [];
       // eslint-disable-next-line no-console
       console.log('ERROR', e);
     }
     const tasksViewData = createTasksViewDataFromComments(comments);
-    // eslint-disable-next-line no-console
-    console.log('tasksViewData', tasksViewData);
-
     this.setState({ tasksViewData });
   };
 
