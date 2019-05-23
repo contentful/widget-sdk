@@ -4,10 +4,11 @@ import { css } from 'emotion';
 import TaskViewData from './TasksViewData.es6';
 import Task from './Task.es6';
 import Visible from 'components/shared/Visible/index.es6';
+import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   list: css({
-    border: '1px solid #d3dce0',
+    border: `1px solid ${tokens.colorElementMid}`,
     borderBottom: '0'
   }),
   listItem: css({
