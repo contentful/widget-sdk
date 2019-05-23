@@ -38,6 +38,18 @@ const styles = {
     }
   }),
 
+  taskHasEditForm: css({
+    ':hover': {
+      backgroundColor: tokens.colorWhite
+    },
+    ':focus': {
+      backgroundColor: tokens.colorWhite,
+      outline: 'none',
+      borderRadius: 0,
+      boxShadow: 'none'
+    }
+  }),
+
   body: css({
     flex: '1 1 0',
     whiteSpace: 'nowrap',
@@ -175,12 +187,15 @@ export default class Task extends React.PureComponent {
     this.setState({ hasEditForm: false });
   };
 
+  renderFullName = userObject => {
+    return `${userObject.firstName} ${userObject.lastName}`;
+  };
+
   renderAvatar = () => {
     const { assignedTo } = this.props;
-    const assigneeName = `${assignedTo.firstName} ${assignedTo.lastName}`;
 
     return (
-      <Tooltip content={`Assigned to ${assigneeName}`} place="left">
+      <Tooltip content={`Assigned to ${this.renderFullName(assignedTo)}`} place="left">
         <img src={assignedTo.avatarUrl} className={styles.avatar} />
       </Tooltip>
     );
@@ -220,7 +235,7 @@ export default class Task extends React.PureComponent {
                   className={styles.timestamp}>
                   {moment(createdAt, moment.ISO_8601).fromNow()}
                 </time>{' '}
-                by {assignedTo.firstName} {assignedTo.lastName}
+                by {this.renderFullName(assignedTo)}
               </div>
             </React.Fragment>
           )}
@@ -247,9 +262,7 @@ export default class Task extends React.PureComponent {
           textInputProps={{ rows: 4, autoFocus: true }}
         />
         <SelectField name="assignee" id="assignee" labelText="Assign to">
-          <Option value="1">
-            {assignedTo.firstName} {assignedTo.lastName}
-          </Option>
+          <Option value="1">{this.renderFullName(assignedTo)}</Option>
           <Option value="2">User 2</Option>
           <Option value="3">User 3</Option>
         </SelectField>
@@ -268,7 +281,7 @@ export default class Task extends React.PureComponent {
   render() {
     return (
       <div
-        className={styles.task}
+        className={cx(styles.task, this.state.hasEditForm && styles.taskHasEditForm)}
         onMouseEnter={this.handleTaskHover}
         onMouseLeave={this.handleTaskHover}
         onKeyDown={this.handleTaskKeyDown}
