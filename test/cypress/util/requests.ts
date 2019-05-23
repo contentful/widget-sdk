@@ -221,7 +221,7 @@ export function getEntryJobs(spaceId: string = defaultSpaceId, query?: Query): R
   };
 }
 
-export function getEntryComments(
+export function getEntryCommentsAndTasks(
     spaceId: string = defaultSpaceId,
     entryId: string = defaultEntryId
 ): RequestOptions {

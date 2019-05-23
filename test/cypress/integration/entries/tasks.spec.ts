@@ -1,5 +1,6 @@
 import { defaultRequestsMock } from '../../util/factories';
 import { singleUser, singleSpecificOrgUserResponse } from '../../interactions/users';
+import { successfulGetEntryTasksInteraction } from '../../interactions/tasks';
 
 import {
   singleContentTypeResponse,
@@ -11,7 +12,7 @@ import {
 } from '../../interactions/entries';
 import { microbackendStreamToken } from '../../interactions/microbackend';
 import * as state from '../../util/interactionState';
-import { defaultEntryId, defaultSpaceId, getEntryComments } from '../../util/requests';
+import { defaultEntryId, defaultSpaceId } from '../../util/requests';
 
 const empty = require('../../fixtures/empty.json');
 const severalTasks = require('../../fixtures/tasks-several.json');
@@ -48,22 +49,9 @@ describe('Tasks (based on `comments` endpoint)', () => {
     cy.route('**/channel/**', []).as('shareJS');
   }
 
-  function addTaskListInteraction(state: string, body: Object) {
-    return cy.addInteraction({
-      provider: 'tasks',
-      state,
-      uponReceiving: 'a request for entry comments',
-      withRequest: getEntryComments(),
-      willRespondWith: {
-        status: 200,
-        body
-      }
-    });
-  }
-
   describe('opening entry without tasks', () => {
     beforeEach(() => {
-      addTaskListInteraction('noTasks', empty).as('tasks/empty');
+      successfulGetEntryTasksInteraction('noTasks', empty).as('tasks/empty');
 
       cy.wait([
         `@${state.Token.VALID}`,
@@ -78,7 +66,7 @@ describe('Tasks (based on `comments` endpoint)', () => {
 
   describe('opening entry with tasks', () => {
     beforeEach(() => {
-      addTaskListInteraction('someTasks', severalTasks).as('tasks/several');
+      successfulGetEntryTasksInteraction('someTasks', severalTasks).as('tasks/several');
       singleSpecificOrgUserResponse();
 
       cy.wait([
