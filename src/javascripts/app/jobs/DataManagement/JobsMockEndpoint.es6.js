@@ -14,8 +14,9 @@ const mockSchedules = [
   {
     sys: {
       id: '4VRHYuaEZWusk6kgqqSeoG',
-      createdBy: {
+      scheduledBy: {
         sys: {
+          type: 'Link',
           id: '4A3fIQBI2IaKZamCHiOJac'
         }
       },

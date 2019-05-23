@@ -114,7 +114,8 @@ export default ({ $scope, emitter }) => {
         ...update,
         entityInfo: $scope.entityInfo,
         spaceId: spaceContext.space.getId(),
-        envId: spaceContext.getEnvironmentId()
+        environmentId: spaceContext.getEnvironmentId(),
+        userId: spaceContext.user.sys.id
       });
     };
 

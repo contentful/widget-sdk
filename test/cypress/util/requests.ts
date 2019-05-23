@@ -215,7 +215,7 @@ export function getSpaceProductCatalogFeatures(spaceId: string = defaultSpaceId)
 export function getEntryJobs(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
   return {
     method: 'GET',
-    path: `/spaces/${spaceId}/jobs`,
+    path: `/spaces/${spaceId}/environments/master/jobs`,
     headers: { ...defaultHeader, 'x-contentful-enable-alpha-feature': 'jobs' },
     query
   };

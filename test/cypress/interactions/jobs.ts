@@ -98,7 +98,7 @@ export function jobIsCreatedPostResponse() {
     uponReceiving: 'a post request for scheduling publication',
     withRequest: {
       method: 'POST',
-      path: `/spaces/${defaultSpaceId}/jobs`,
+      path: `/spaces/${defaultSpaceId}/environments/master/jobs`,
       headers: {
         Accept: 'application/json, text/plain, */*',
         'x-contentful-enable-alpha-feature': 'jobs'

@@ -21,7 +21,7 @@ const tagTypeForStatus = {
   cancelled: 'muted'
 };
 
-const Job = ({ scheduledAt, actionType, status }) => (
+const Job = ({ scheduledAt, action, status }) => (
   <li className={styles.schedule}>
     <span className={styles.scheduledTo}>Scheduled to</span>
     <span className={styles.info}>
@@ -29,7 +29,7 @@ const Job = ({ scheduledAt, actionType, status }) => (
         className={cn(styles.actionType)}
         tagType={tagTypeForStatus[status]}
         testId="scheduled-item">
-        {actionType}
+        {action}
       </Tag>
       {FormattedTime(scheduledAt)}
     </span>
@@ -37,8 +37,8 @@ const Job = ({ scheduledAt, actionType, status }) => (
 );
 
 export const propTypes = {
-  scheduledAt: PropTypes.instanceOf(Date),
-  actionType: PropTypes.string.isRequired,
+  scheduledAt: PropTypes.string.isRequired,
+  action: PropTypes.string.isRequired,
   status: PropTypes.oneOf(['pending', 'cancelled', 'success', 'error'])
 };
 Job.propTypes = propTypes;

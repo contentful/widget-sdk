@@ -115,7 +115,6 @@ class JobDialog extends React.Component {
                 type="submit"
                 onClick={() => {
                   onCreate({
-                    actionType: 'publish',
                     scheduledAt: this.getScheduledAtDate()
                   });
                 }}>

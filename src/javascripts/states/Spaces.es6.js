@@ -81,7 +81,8 @@ const spaceEnvironment = {
     // Some of the settings states are not children of environments
     // conceptually. However, we want to prevent users going to space
     // settings and switching to the master environment in the process.
-    settings
+    settings,
+    jobs
   ]
 };
 

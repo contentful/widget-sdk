@@ -10,6 +10,7 @@ import JobsTimeline from './JobsTimeline/index.es6';
 import JobsFetcher from './JobsFetcher.es6';
 import { createJob } from '../DataManagement/JobsService.es6';
 import NewJob from './NewJob.es6';
+import { create } from './JobsFactory.es6';
 
 import { createSpaceEndpoint } from '../DataManagement/JobsEndpointFactory.es6';
 
@@ -34,15 +35,27 @@ const styles = {
 export default class JobWidget extends React.Component {
   static propTypes = {
     spaceId: PropTypes.string.isRequired,
-    envId: PropTypes.string.isRequired,
+    environmentId: PropTypes.string.isRequired,
+    userId: PropTypes.string.isRequired,
     entityInfo: PropTypes.object.isRequired
   };
   state = {
     // used to re-fetch Jobs after creation
     fetcherKey: 0
   };
-  endpoint = createSpaceEndpoint(this.props.spaceId, this.props.envId);
-  handleJobCreate = jobDto => {
+  endpoint = createSpaceEndpoint(this.props.spaceId, this.props.environmentId);
+  handleJobCreate = ({ scheduledAt }) => {
+    const { spaceId, environmentId, userId, entityInfo } = this.props;
+
+    const jobDto = create({
+      spaceId,
+      environmentId,
+      userId,
+      entityId: entityInfo.id,
+      action: 'publish',
+      scheduledAt
+    });
+
     createJob(this.endpoint, jobDto).then(() => {
       this.setState({
         fetcherKey: this.state.fetcherKey + 1

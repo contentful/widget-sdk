@@ -9,8 +9,8 @@ const JobsTimeline = ({ jobs }) => (
     <CurrentStatus status={'draft'} />
     {jobs.map(schedule => (
       <Job
-        key={schedule.actionType}
-        actionType={schedule.actionType}
+        key={schedule.action}
+        action={schedule.action}
         scheduledAt={schedule.scheduledAt}
         status={schedule.status}
       />

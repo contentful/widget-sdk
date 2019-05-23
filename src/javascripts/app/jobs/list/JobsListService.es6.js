@@ -41,7 +41,7 @@ export async function getJobsData(spaceEndpoint, query) {
     .filter(j => j.sys.entity.sys.linkType === 'Entry')
     .map(j => j.sys.entity.sys.id);
 
-  const userIds = jobs.map(j => j.sys.createdBy.sys.id);
+  const userIds = jobs.map(j => j.sys.scheduledBy.sys.id);
 
   const [entriesCollection, usersCollection] = await Promise.all([
     getEntriesWithIds(spaceEndpoint, entryIds),

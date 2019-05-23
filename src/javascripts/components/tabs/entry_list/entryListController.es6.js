@@ -80,6 +80,7 @@ export default function register() {
 
       $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(spaceContext.organization);
       $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);
+      $scope.environmentId = spaceContext.getEnvironmentId();
 
       $scope.entityStatus = entityStatus;
 

@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { TextLink } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import StateLink from 'app/common/StateLink.es6';
@@ -16,24 +17,28 @@ const styles = {
   })
 };
 
-export default class JobsPageLink extends Component {
-  render() {
-    return (
-      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
-        {({ currentVariation }) => {
-          return currentVariation === true ? (
-            <div className={styles.linkContainer}>
-              <StateLink to="spaces.detail.jobs">
-                {({ getHref }) => (
-                  <TextLink href={getHref()} icon="ExternalLink">
-                    Scheduled Jobs
-                  </TextLink>
-                )}
-              </StateLink>
-            </div>
-          ) : null;
-        }}
-      </BooleanFeatureFlag>
-    );
+export default function JobsPageLink({ environmentId }) {
+  let path;
+  if (environmentId === 'master') {
+    path = 'spaces.detail.jobs';
+  } else {
+    path = 'spaces.detail.environment.jobs';
   }
+  return (
+    <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
+      <div className={styles.linkContainer}>
+        <StateLink to={path}>
+          {({ getHref }) => (
+            <TextLink href={getHref()} icon="ExternalLink">
+              Scheduled Jobs
+            </TextLink>
+          )}
+        </StateLink>
+      </div>
+    </BooleanFeatureFlag>
+  );
 }
+
+JobsPageLink.propTypes = {
+  environmentId: PropTypes.string
+};

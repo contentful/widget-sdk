@@ -35,6 +35,118 @@ const styles = {
     alignItems: 'center'
   })
 };
+
+function StatusTag({ job }) {
+  const typeByStatus = {
+    error: 'negative',
+    success: 'positive',
+    pending: 'primary',
+    cancelled: 'secondary'
+  };
+  const StatusIcon = () => {
+    switch (job.sys.status) {
+      case 'error':
+        return <Icon className={styles.statusTagIcon} icon="ErrorCircle" color="negative" />;
+      case 'success':
+        return <Icon className={styles.statusTagIcon} icon="CheckCircle" color="positive" />;
+      case 'cancelled':
+        return <Icon className={styles.statusTagIcon} icon="CheckCircle" color="secondary" />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <Tag className={styles.statusTag} tagType={typeByStatus[job.sys.status]}>
+      {StatusIcon()}
+      {job.action}
+    </Tag>
+  );
+}
+
+StatusTag.propTypes = {
+  job: PropTypes.object
+};
+
+function StatusTransition({ entry }) {
+  return (
+    <span className={styles.statusTransition} color="secondary">
+      <EntityStatusTag statusLabel={stateName(getState(entry.sys))} />
+      <Icon color="secondary" icon="ChevronRight" />
+      <Tag tagType="positive">Published</Tag>
+    </span>
+  );
+}
+
+StatusTransition.propTypes = {
+  entry: PropTypes.object
+};
+
+function JobWithExsitingEntryRow({
+  job,
+  user,
+  entry,
+  contentType,
+  defaultLocale,
+  showStatusTransition
+}) {
+  const entryTitle = getEntryTitle({
+    entry,
+    contentType,
+    internallocaleCode: defaultLocale.internal_code,
+    defaultInternalLocaleCode: defaultLocale.internal_code,
+    defaultTitle: 'Untilted'
+  });
+
+  return (
+    <TableRow key={job.sys.id} data-test-id="scheduled-job">
+      <TableCell>
+        {moment
+          .utc(job.scheduledAt)
+          .local()
+          .format('ddd, MMM Do, YYYY - hh:mm A')}
+      </TableCell>
+      <TableCell>{entryTitle}</TableCell>
+      <TableCell>{contentType.name}</TableCell>
+      <TableCell>{user.firstName}</TableCell>
+      <TableCell>
+        {showStatusTransition ? <StatusTransition entry={entry} /> : <StatusTag job={job} />}
+      </TableCell>
+    </TableRow>
+  );
+}
+
+JobWithExsitingEntryRow.propTypes = {
+  job: PropTypes.object,
+  user: PropTypes.object,
+  entry: PropTypes.object,
+  contentType: PropTypes.object,
+  defaultLocale: PropTypes.object,
+  showStatusTransition: PropTypes.bool
+};
+
+function JobWithMissingEntryRow({ job, user }) {
+  return (
+    <TableRow key={job.sys.id} data-test-id="scheduled-job">
+      <TableCell>
+        {moment
+          .utc(job.scheduledAt)
+          .local()
+          .format('ddd, MMM Do, YYYY - hh:mm A')}
+      </TableCell>
+      <TableCell>Entry missing or inaccessible</TableCell>
+      <TableCell />
+      <TableCell>{user.firstName}</TableCell>
+      <TableCell />
+    </TableRow>
+  );
+}
+
+JobWithMissingEntryRow.propTypes = {
+  job: PropTypes.object,
+  user: PropTypes.object
+};
+
 export default class JobsTable extends Component {
   static propTypes = {
     description: PropTypes.string,
@@ -45,43 +157,6 @@ export default class JobsTable extends Component {
     showStatusTransition: PropTypes.bool,
     defaultLocale: PropTypes.object
   };
-
-  tagTypeByStatus = {
-    error: 'negative',
-    success: 'positive',
-    pending: 'primary',
-    cancelled: 'secondary'
-  };
-
-  renderTag = job => {
-    const StatusIcon = () => {
-      switch (job.sys.status) {
-        case 'error':
-          return <Icon className={styles.statusTagIcon} icon="ErrorCircle" color="negative" />;
-        case 'success':
-          return <Icon className={styles.statusTagIcon} icon="CheckCircle" color="positive" />;
-        case 'cancelled':
-          return <Icon className={styles.statusTagIcon} icon="CheckCircle" color="secondary" />;
-        default:
-          return null;
-      }
-    };
-
-    return (
-      <Tag className={styles.statusTag} tagType={this.tagTypeByStatus[job.sys.status]}>
-        {StatusIcon()}
-        {job.actionType}
-      </Tag>
-    );
-  };
-
-  renderStatusTransition = entry => (
-    <span className={styles.statusTransition} color="secondary">
-      <EntityStatusTag statusLabel={stateName(getState(entry.sys))} />
-      <Icon color="secondary" icon="ChevronRight" />
-      <Tag tagType="positive">Published</Tag>
-    </span>
-  );
 
   render() {
     const {
@@ -108,36 +183,25 @@ export default class JobsTable extends Component {
           </TableHead>
           <TableBody>
             {jobs.map(job => {
-              const user = usersData[job.sys.createdBy.sys.id];
+              const user = usersData[job.sys.scheduledBy.sys.id];
+
               const entry = entriesData[job.sys.entity.sys.id];
-              const contentType = contentTypesData[entry.sys.contentType.sys.id];
 
-              const entryTitle = getEntryTitle({
-                entry,
-                contentType,
-                internallocaleCode: defaultLocale.internal_code,
-                defaultInternalLocaleCode: defaultLocale.internal_code,
-                defaultTitle: 'Untilted'
-              });
-
-              return (
-                <TableRow key={job.sys.id} data-test-id="scheduled-job">
-                  <TableCell>
-                    {moment
-                      .utc(job.scheduledAt)
-                      .local()
-                      .format('ddd, MMM Do, YYYY - hh:mm A')}
-                  </TableCell>
-                  <TableCell>{entryTitle}</TableCell>
-                  <TableCell>{contentType.name}</TableCell>
-                  <TableCell>{user.firstName}</TableCell>
-                  <TableCell>
-                    {showStatusTransition
-                      ? this.renderStatusTransition(entry)
-                      : this.renderTag(job)}
-                  </TableCell>
-                </TableRow>
-              );
+              if (entry) {
+                const contentType = contentTypesData[entry.sys.contentType.sys.id];
+                return (
+                  <JobWithExsitingEntryRow
+                    job={job}
+                    user={user}
+                    entry={entry}
+                    contentType={contentType}
+                    defaultLocale={defaultLocale}
+                    showStatusTransition={showStatusTransition}
+                  />
+                );
+              } else {
+                return <JobWithMissingEntryRow job={job} user={user} />;
+              }
             })}
           </TableBody>
         </Table>

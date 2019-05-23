@@ -7,14 +7,15 @@ import ErrorHandler from 'components/shared/ErrorHandlerComponent.es6';
 import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
 import * as FeatureFlagKey from 'featureFlags.es6';
 
-export default class JobWidgetContainer extends Component {
+export default class JobsWidgetContainer extends Component {
   static propTypes = {
     emitter: PropTypes.object.isRequired
   };
 
   state = {
     spaceId: undefined,
-    envId: undefined,
+    environmentId: undefined,
+    userId: undefined,
     entityInfo: undefined
   };
 
@@ -32,14 +33,19 @@ export default class JobWidgetContainer extends Component {
   };
 
   render() {
-    const { spaceId, envId, entityInfo } = this.state;
+    const { spaceId, environmentId, userId, entityInfo } = this.state;
     if (!spaceId) {
       return null;
     }
     return (
       <ErrorHandler>
         <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
-          <JobsWidget spaceId={spaceId} envId={envId} entityInfo={entityInfo} />
+          <JobsWidget
+            spaceId={spaceId}
+            environmentId={environmentId}
+            userId={userId}
+            entityInfo={entityInfo}
+          />
         </BooleanFeatureFlag>
       </ErrorHandler>
     );

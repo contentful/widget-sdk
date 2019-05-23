@@ -9,7 +9,7 @@
     {
       "sys": {
         "id": "jobID",
-        "createdBy": {
+        "scheduledBy": {
           "sys": {
             "id": "userID"
           }
@@ -29,7 +29,7 @@
     {
       "sys": {
         "id": "jobID2",
-        "createdBy": {
+        "scheduledBy": {
           "sys": {
             "id": "userID"
           }
@@ -49,7 +49,7 @@
     {
       "sys": {
         "id": "jobID3",
-        "createdBy": {
+        "scheduledBy": {
           "sys": {
             "id": "userID"
           }
