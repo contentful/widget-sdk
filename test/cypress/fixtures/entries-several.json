@@ -115,7 +115,7 @@
             "id": "fuuami4adicz"
           }
         },
-        "id": "testEntryId1",
+        "id": "testEntryId",
         "type": "Entry",
         "createdAt": "2019-05-07T11:38:44.841Z",
         "updatedAt": "2019-05-07T11:38:48.879Z",
@@ -151,7 +151,7 @@
         }
       },
       "fields": {
-        "E3VfaKnCE3oP0lOw": {
+        "fieldID": {
           "en-US": "one"
         }
       }

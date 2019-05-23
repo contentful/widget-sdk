@@ -96,7 +96,7 @@ export default class JobsTable extends Component {
     return (
       <div>
         <Paragraph className="f36-margin-bottom--s">{description}</Paragraph>
-        <Table className={styles.table}>
+        <Table className={styles.table} data-test-id="jobs-table">
           <TableHead>
             <TableRow>
               <TableCell className={styles.scheduledTimeTableHeader}>Scheduled Time</TableCell>
@@ -121,7 +121,7 @@ export default class JobsTable extends Component {
               });
 
               return (
-                <TableRow key={job.sys.id}>
+                <TableRow key={job.sys.id} data-test-id="scheduled-job">
                   <TableCell>
                     {moment
                       .utc(job.scheduledAt)

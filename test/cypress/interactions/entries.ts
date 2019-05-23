@@ -4,11 +4,14 @@ import {
   getEntryLinks,
   getEntrySnapshots,
   defaultEntryId,
-  defaultSpaceId
+  defaultSpaceId,
+  getEntriesWithEnvironment,
+  defaultEnvironment
 } from '../util/requests';
 
 const empty = require('../fixtures/empty.json');
 const entryResponseBody = require('../fixtures/entry.json');
+const severalEntriesResponseBody = require('../fixtures/entries-several.json');
 
 export function singleEntryResponse() {
   cy.addInteraction({
@@ -53,4 +56,19 @@ export function noEntrySnapshotsResponse() {
       body: empty
     }
   }).as(state.Entries.SNAPSHOTS);
+}
+
+export function singleEntryWithQuery() {
+  cy.addInteraction({
+    provider: 'entries',
+    state: state.Entries.QUERY,
+    uponReceiving: 'a request for entry with query',
+    withRequest: getEntriesWithEnvironment(defaultSpaceId, defaultEnvironment, {
+      'sys.id[in]': defaultEntryId
+    }),
+    willRespondWith: {
+      status: 200,
+      body: severalEntriesResponseBody
+    }
+  }).as(state.Entries.QUERY);
 }

@@ -32,7 +32,8 @@ export enum Environments {
 }
 
 export enum Users {
-  SINGLE = 'users/single'
+  SINGLE = 'users/single',
+  QUERY = 'users/with-query'
 }
 
 export enum Locales {
@@ -48,12 +49,21 @@ export enum Entries {
   NONE = 'entries/none',
   SEVERAL = 'entries/several',
   LINKS = 'entries/links',
-  SNAPSHOTS = 'entries/snapshots'
+  SNAPSHOTS = 'entries/snapshots',
+  QUERY = 'entries/with-query'
 }
 
 export enum Assets {
   NONE = 'assets/none',
   SEVERAL = 'assets/several'
+}
+
+export enum Jobs {
+  NONE = 'jobs/none',
+  SINGLE = 'jobs/single',
+  SEVERAL = 'jobs/several',
+  ERROR = 'jobs/error',
+  CREATED = 'jobs/created'
 }
 
 export enum Microbackends {

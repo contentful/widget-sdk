@@ -11,6 +11,7 @@ export const defaultPreviewId = '0xi0FU6rvrUVlJtPFuaUyl';
 export const defaultHeader = {
   Accept: 'application/json, text/plain, */*'
 };
+export const defaultUserId = 'userID';
 
 export function getPublicContentTypes(
   spaceId: string = defaultSpaceId,
@@ -103,6 +104,19 @@ export function getEntries(spaceId: string = defaultSpaceId, query?: Query): Req
   };
 }
 
+export function getEntriesWithEnvironment(
+  spaceId: string = defaultSpaceId,
+  environmentId: string = defaultEnvironment,
+  query?: Query
+): RequestOptions {
+  return {
+    method: 'GET',
+    path: `/spaces/${spaceId}/environments/${environmentId}/entries`,
+    headers: defaultHeader,
+    query
+  };
+}
+
 export function getEntry(
   spaceId: string = defaultSpaceId,
   entryId: string = defaultEntryId
@@ -144,19 +158,21 @@ export function getApps(spaceId: string = defaultSpaceId): RequestOptions {
   };
 }
 
-export function getEnvironments(spaceId: string = defaultSpaceId): RequestOptions {
+export function getEnvironments(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
   return {
     method: 'GET',
     path: `/spaces/${spaceId}/environments`,
-    headers: defaultHeader
+    headers: defaultHeader,
+    query
   };
 }
 
-export function getLocales(spaceId: string = defaultSpaceId): RequestOptions {
+export function getLocales(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
   return {
     method: 'GET',
     path: `/spaces/${spaceId}/locales`,
-    headers: defaultHeader
+    headers: defaultHeader,
+    query
   };
 }
 
@@ -196,17 +212,12 @@ export function getSpaceProductCatalogFeatures(spaceId: string = defaultSpaceId)
   };
 }
 
-export function getEntryJobs(
-  spaceId: string = defaultSpaceId,
-  entryId: string = defaultEntryId
-): RequestOptions {
+export function getEntryJobs(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
   return {
     method: 'GET',
     path: `/spaces/${spaceId}/jobs`,
     headers: { ...defaultHeader, 'x-contentful-enable-alpha-feature': 'jobs' },
-    query: {
-      'sys.entity.sys.id': entryId
-    }
+    query
   };
 }
 

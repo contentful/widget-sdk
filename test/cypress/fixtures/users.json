@@ -16,7 +16,7 @@
       "confirmed": false,
       "sys": {
         "type": "User",
-        "id": "userId",
+        "id": "userID",
         "version": 11,
         "createdAt": "2019-01-08T12:34:16Z",
         "updatedAt": "2019-03-11T14:01:06Z"
