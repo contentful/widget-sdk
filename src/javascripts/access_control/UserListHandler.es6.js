@@ -102,26 +102,30 @@ export default function register() {
         }
 
         function prepareUsers(users) {
-          return _(users)
-            .map(user => {
-              const id = user.sys.id;
+          return (
+            _(users)
+              .map(user => {
+                const id = user.sys.id;
 
-              return {
-                id,
-                membership: membershipMap[id],
-                isAdmin: adminMap[id],
-                roles: userRolesMap[id] || [],
-                roleNames: getRoleNamesForUser(id),
-                avatarUrl: user.avatarUrl,
-                name:
-                  user.firstName && user.lastName
-                    ? getName(user)
-                    : user.email || NOT_DEFINED_USER_NAME,
-                confirmed: user.activated
-              };
-            })
-            .sortBy('name')
-            .value();
+                return {
+                  id,
+                  membership: membershipMap[id],
+                  isAdmin: adminMap[id],
+                  roles: userRolesMap[id] || [],
+                  roleNames: getRoleNamesForUser(id),
+                  avatarUrl: user.avatarUrl,
+                  name:
+                    user.firstName && user.lastName
+                      ? getName(user)
+                      : user.email || NOT_DEFINED_USER_NAME,
+                  confirmed: user.activated
+                };
+              })
+              // remove users without a space membership
+              .filter(user => !!user.membership)
+              .sortBy('name')
+              .value()
+          );
         }
 
         function getName(user) {
