@@ -103,8 +103,7 @@ const styles = {
 
   editForm: css({
     width: '100%',
-    padding: tokens.spacingS,
-    paddingLeft: '2.5rem'
+    padding: tokens.spacingS
   }),
 
   editActions: css({
