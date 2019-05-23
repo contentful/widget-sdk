@@ -39,6 +39,7 @@ const styles = {
   }),
 
   taskHasEditForm: css({
+    cursor: 'default',
     ':hover': {
       backgroundColor: tokens.colorWhite
     },
