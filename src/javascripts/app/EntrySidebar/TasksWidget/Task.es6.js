@@ -246,7 +246,7 @@ export default class Task extends React.PureComponent {
           labelText="Edit task"
           textarea
           value={body}
-          textInputProps={{ rows: 4 }}
+          textInputProps={{ rows: 4, autoFocus: true }}
         />
         <SelectField name="assignee" id="assignee" labelText="Assign to">
           <Option value="1">
