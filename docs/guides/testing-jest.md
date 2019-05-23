@@ -4,7 +4,7 @@
 
 - [Running tests](#running-tests)
 - [Filename conventions](#filename-conventions)
-- [About Enzyme and Jest](#about-enzyme-and-jest)
+- [_(Deprecated)_ Testing components with Enzyme](#enzyme)
 - [Writing tests](#writing-tests)
   - [Testing basic component rendering](#testing-basic-component-rendering)
   - [Testing events](#testing-events)
@@ -53,7 +53,7 @@ The files can be located at any depth under the `src/javascripts` folder.
 
 It's recommended to put the test files next to the code they are testing so that relative imports appear shorter. For example, if `App.spec.js` and `App.js` are in the same folder, the test just needs to import App from './App' instead of a long relative path. Colocation also helps find tests more quickly in larger projects.
 
-## About Enzyme and Jest
+## _(Deprecated)_ Testing components with Enzyme
 
 ### Enzyme
 
@@ -135,52 +135,63 @@ Jest stores snapshots besides your tests in files like `__snapshots__/Label.spec
 That's enought for most non-interactive components:
 
 ```js
-import { shallow } from 'enzyme';
+import { render, cleanup } from 'react-testing-library';
+import Comment from './comment.es6';
 
-describe('Label component', () => {
-  it('renders a label', () => {
-    const wrapper = shallow(<Label>Hello Jest!</Label>);
-    expect(wrapper).toMatchSnapshot();
-  });
+describe('Comment component', () => {
+  // Always unmount the component and clean up the DOM after the tests
+  afterEach(cleanup);
 
-  it('renders a small label', () => {
-    const wrapper = shallow(<Label small>Hello Jest!</Label>);
-    expect(wrapper).toMatchSnapshot();
-  });
-});
+  it('renders the comment body', () => {
+    const { getByTestId } = render(<Commment text="Hello world" />);
+    const body = getByTestId('comment.body');
+    expect(body.textContent).toBe('Hello world');
+  })
+})
 ```
 
 ### Testing events
 
-You can simulate an event like click or change and then compare component to a snapshot:
+You can simulate an event like click or change and then check for the changes in the DOM:
 
 ```js
 it('renders Markdown in preview mode', () => {
-  const wrapper = shallow(<MarkdownEditor value="*Hello* Jest!" />);
+  const { queryByTestId, getByTestId } = render(<MarkdownEditor value="*Hello* Jest!" />);
 
-  expect(wrapper).toMatchSnapshot();
+  expect(queryByTestId('markdown.preview')).toBeNull();
 
-  wrapper.find('[name="toggle-preview"]').simulate('click');
+  fireEvent.click(getByTestId('markdown.toggle-preview'));
 
-  expect(wrapper).toMatchSnapshot();
+  expect(getByTestId('markdown.preview')).toContainHTML('<strong>Hello</strong> Jest!');
 });
+```
+
+You can use custom Jest DOM matchers by including them in the test file, like so:
+
+```js
+
+import 'jest-dom/extend-expect';
+
+// ...
+
+expect(body).toHaveTextContent('Hello world');
+
 ```
 
 ### Testing event handlers
 
-Similar to events testing but instead of testing component’s rendered output with a snapshot use Jest’s mock function to test an event handler itself:
+<!-- Similar to events testing but instead of testing component’s rendered output with a snapshot use Jest’s mock function to test an event handler itself: -->
 
 ```js
-it('passes a selected value to the onChange handler', () => {
+import { render, cleanup, fireEvent } from 'react-testing-library';
+
+it('it calls the onChange handler with the selected value', () => {
   const value = '2';
   const onChange = jest.fn();
-  const wrapper = shallow(<Select items={ITEMS} onChange={onChange} />);
+  const { getByTestId } = render(<Select items={items} onChange={onChange} />);
+  const selectEl = getByTestId('select');
 
-  expect(wrapper).toMatchSnapshot();
-
-  wrapper.find('select').simulate('change', {
-    target: { value }
-  });
+  fireEvent.change(selectEl, {target: { value }});
 
   expect(onChange).toBeCalledWith(value);
 });
@@ -188,7 +199,7 @@ it('passes a selected value to the onChange handler', () => {
 
 ### Matchers
 
-Refer to [Jest Cheet sheet](https://github.com/sapegin/jest-cheat-sheet#matchers) to learn matchers;
+Refer to [Jest Cheet sheet](https://github.com/sapegin/jest-cheat-sheet#matchers) and [jest-dom](https://github.com/testing-library/jest-dom#readme) to learn about matchers;
 
 ### Async tests
 
@@ -232,7 +243,7 @@ jest.mock('lodash/memoize', () => a => a, { virtual: true }); // The original lo
 
 #### Mock Angular modules
 
-All ES6 modules import their Angular dependencies via `getModule(name)`. These modules can be mocked by their name prefixed by `ng/`: 
+All ES6 modules import their Angular dependencies via `getModule(name)`. These modules can be mocked by their name prefixed by `ng/`:
 
 ```js
 import * as logger from 'ng/logger';
