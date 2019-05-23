@@ -2,7 +2,7 @@
 > title: Replace Enzyme with React Testing Library
 > champions: Gui Barbosa (@guilebarbosa)
 > endDate: May 24, 2019
-> status: Open
+> status: Approved
 
 # [UIEP-0007] Replace Enzyme with React Testing Library
 
