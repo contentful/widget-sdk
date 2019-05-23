@@ -3,15 +3,27 @@ import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 
-import { Heading, Paragraph, TextField, Button } from '@contentful/forma-36-react-components';
+import {
+  Heading,
+  Paragraph,
+  HelpText,
+  TextLink,
+  TextField,
+  Button
+} from '@contentful/forma-36-react-components';
 
 const styles = {
   form: css({
     marginTop: tokens.spacingM,
     display: 'grid',
     gridTemplateColumns: 'auto 12rem',
-    gridColumnGap: tokens.spacingS,
-    alignItems: 'end'
+    gridColumnGap: tokens.spacingS
+  }),
+  button: css({
+    marginTop: '1.8rem'
+  }),
+  deepLink: css({
+    marginTop: tokens.spacingS
   })
 };
 
@@ -42,21 +54,32 @@ export default function Connect({
       <Paragraph className="f36-margin-top--m">
         Connect your Optimizely account to get started.
         <section className={styles.form}>
-          <TextField
-            id="pat"
-            name="pat"
-            labelText="Personal Access Token"
-            textInputProps={{ type: 'password', disabled: isConnected || isConnecting }}
-            value={pat}
-            onChange={onPATChange}
-            required
-          />
-          <ConnectButton
-            isConnecting={isConnecting}
-            isConnected={isConnected}
-            onClickConnect={onClickConnect}
-            onClickDisconnect={onClickDisconnect}
-          />
+          <div>
+            <TextField
+              id="pat"
+              name="pat"
+              labelText="Personal Access Token"
+              textInputProps={{ type: 'password', disabled: isConnected || isConnecting }}
+              value={pat}
+              onChange={onPATChange}
+              required
+            />
+            <HelpText className={styles.deepLink}>
+              Get a personal access token in the{' '}
+              <TextLink href="https://app.optimizely.com/v2/profile/api">
+                Optimizely web app
+              </TextLink>
+              .
+            </HelpText>
+          </div>
+          <div className={styles.button}>
+            <ConnectButton
+              isConnecting={isConnecting}
+              isConnected={isConnected}
+              onClickConnect={onClickConnect}
+              onClickDisconnect={onClickDisconnect}
+            />
+          </div>
         </section>
       </Paragraph>
     </div>

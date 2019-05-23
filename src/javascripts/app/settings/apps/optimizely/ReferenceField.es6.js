@@ -13,12 +13,14 @@ ReferenceField.propTypes = {
 
 export default function ReferenceField({ id, checked, contentType, onSelect }) {
   const field = findFieldById(id, contentType);
+  const disabled = !hasFieldLinkValidations(field);
 
   return (
     <div>
       <CheckboxField
+        id={`reference-field-${id}`}
         checked={checked || !hasFieldLinkValidations(field)}
-        disabled={!hasFieldLinkValidations(field)}
+        disabled={disabled}
         onChange={e => onSelect({ id, checked: e.target.checked })}
         labelText={field.name}
         labelIsLight={true}

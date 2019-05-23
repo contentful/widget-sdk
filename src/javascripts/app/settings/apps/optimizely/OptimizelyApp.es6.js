@@ -345,7 +345,7 @@ export default class OptimizelyApp extends Component {
           {!this.props.app.installed && this.state.isVariationContainerInstalled ? (
             <VariationContainerError />
           ) : (
-            <div className="optimizely-app__config">
+            <div className="f36-margin-bottom--2xl">
               <div>
                 <Note>
                   Let us know how we can improve the Optimizely app.{' '}
