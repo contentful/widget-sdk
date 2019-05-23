@@ -120,7 +120,7 @@ export default class EntryActivityContainer extends Component {
   onUpdateDocumentState = async stateChange => {
     const { name: verb, path = [] } = stateChange;
     const sidebar = this.props.bridge.getData();
-    const userId = get(sidebar, 'spaceMember.user.sys.id');
+    const userId = get(sidebar, 'spaceMember.sys.user.sys.id');
     const entrySys = get(sidebar, 'entryData.sys');
 
     await this.entryfeed.addActivity({
