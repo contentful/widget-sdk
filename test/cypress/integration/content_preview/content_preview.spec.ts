@@ -30,23 +30,15 @@ const previewResponseBody = {
 
 describe('Content Preview Page', () => {
   before(() => {
-    cy.startFakeServer({
-      consumer: 'user_interface',
-      provider: 'preview_environments',
-      cors: true,
-      pactfileWriteMode: 'merge'
-    });
-
     cy.setAuthTokenToLocalStorage();
 
     cy.resetAllFakeServers();
 
     defaultRequestsMock();
-    noPreviewEnvironmentsResponse();
 
     cy.visit(`/spaces/${defaultSpaceId}/settings/content_preview/new`);
 
-    cy.wait([`@${state.Token.VALID}`, `@${state.PreviewEnvironments.NONE}`]);
+    cy.wait([`@${state.Token.VALID}`]);
   });
 
   describe('opening the page', () => {
@@ -65,6 +57,15 @@ describe('Content Preview Page', () => {
 
   describe('saving the content preview', () => {
     before(() => {
+      cy.startFakeServer({
+        consumer: 'user_interface',
+        provider: 'preview_environments',
+        cors: true,
+        pactfileWriteMode: 'merge'
+      });
+
+      noPreviewEnvironmentsResponse();
+
       cy.addInteraction({
         provider: 'preview_environments',
         state: 'canAddPreviewEnvironments',

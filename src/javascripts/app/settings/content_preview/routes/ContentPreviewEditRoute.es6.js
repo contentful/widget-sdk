@@ -14,7 +14,6 @@ const spaceContext = getModule('spaceContext');
 const ContentTypesFetcher = createFetcherComponent(({ contentPreviewId }) => {
   return Promise.all([
     spaceContext.publishedCTs.refreshBare(),
-    spaceContext.contentPreview.canCreate(),
     spaceContext.contentPreview.get(contentPreviewId)
   ]);
 });
@@ -37,10 +36,7 @@ export default class ContentPreviewEditRoute extends Component {
             if (isError) {
               return <StateRedirect to="^.list" />;
             }
-            const [contentTypes, canCreate, preview] = data;
-            if (!canCreate) {
-              return <StateRedirect to="^.list" />;
-            }
+            const [contentTypes, preview] = data;
             const initialValue = spaceContext.contentPreview.toInternal(preview, contentTypes);
             return (
               <React.Fragment>

@@ -145,29 +145,6 @@ describe('contentPreview', () => {
     });
   });
 
-  describe('#canCreate', () => {
-    it('resolves to true when limit is not reached', function() {
-      this.contentPreview.canCreate().then(allowed => {
-        expect(allowed).toBe(true);
-      });
-    });
-
-    it('resolves to false when limit is reached', async function() {
-      // Create 100 preview environments
-      const createPromises = times(100, idx => {
-        const internal = this.contentPreview.toInternal(makeEnv('foo' + idx), [makeCt('ct-1')]);
-        this.space.post.resolves(makeEnv('foo' + idx));
-        return this.contentPreview.create(internal);
-      });
-
-      await Promise.all(createPromises);
-
-      const canCreate = await this.contentPreview.canCreate();
-
-      expect(canCreate).toBe(false);
-    });
-  });
-
   describe('#create', () => {
     beforeEach(async function() {
       const internal = this.contentPreview.toInternal(makeEnv('foo'), [makeCt('ct-1')]);
@@ -183,9 +160,37 @@ describe('contentPreview', () => {
     });
 
     it('sends environment in payload', function() {
-      const payload = this.space.payload.args[0][0];
+      const payload = this.space.payload.args[1][0];
       expect(payload.name).toBe('PE - foo');
       expect(payload.configurations.length).toBe(1);
+    });
+
+    it('fails when limit is reached', async function() {
+      // Start with no previews
+      this.space.get.resolves({ items: [] });
+      this.contentPreview.clearCache();
+
+      const create = idx => {
+        const internal = this.contentPreview.toInternal(makeEnv('foo' + idx), [makeCt('ct-1')]);
+        this.space.post.resolves(makeEnv('foo' + idx));
+        return this.contentPreview.create(internal);
+      };
+
+      // Create 100 preview environments (indexes are 0...99)
+      await times(100).reduce(async (acc, idx) => {
+        await acc;
+        return create(idx);
+      }, Promise.resolve());
+
+      // Create preview number 101 (index is 100)
+      try {
+        await create(100);
+
+        // Should never reach this
+        expect(true).toBe(false);
+      } catch (err) {
+        expect(err).toBe('Cannot create more than 100 previews.');
+      }
     });
   });
 

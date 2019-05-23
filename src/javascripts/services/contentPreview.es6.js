@@ -7,7 +7,9 @@ export const ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
 
 export const VALID_URL_PATTERN = /^https?:\/\/.+/;
 
-export const CONTENT_PREVIEW_LIMIT = 100;
+// The number was arbitrarily selected by the Product.
+// TODO: there's no backend enforcement.
+const CONTENT_PREVIEW_LIMIT = 100;
 
 /**
  * @ngdoc service
@@ -30,7 +32,6 @@ export default function create({ space, cma }) {
     clearCache,
     get,
     getForContentType,
-    canCreate,
     create,
     update,
     remove,
@@ -130,19 +131,6 @@ export default function create({ space, cma }) {
 
   /**
    * @ngdoc method
-   * @name contentPreview#canCreate
-   * @returns {Promise<boolean>}
-   *
-   * @description
-   * Resolves to true if the user has less than the max number of preview environments
-   * and can thus still create more.
-   */
-  function canCreate() {
-    return getAll().then(environments => Object.keys(environments).length < CONTENT_PREVIEW_LIMIT);
-  }
-
-  /**
-   * @ngdoc method
    * @name contentPreview#getForContentType
    * @param {string} contentTypeId
    * @returns {Promise<environments>}
@@ -175,14 +163,22 @@ export default function create({ space, cma }) {
    * @returns {Promise<environment>}
    *
    * @description
-   * Creates the preview environment and updates the cached `previewEnvironments`
+   * Creates the preview environment and updates the cache.
    */
   function create(env) {
-    const external = toExternal(env);
-    return space
-      .endpoint('preview_environments')
-      .payload(external)
-      .post()
+    return getAll()
+      .then(environments => {
+        const canCreate = Object.keys(environments).length < CONTENT_PREVIEW_LIMIT;
+
+        if (!canCreate) {
+          return Promise.reject(`Cannot create more than ${CONTENT_PREVIEW_LIMIT} previews.`);
+        }
+
+        return space
+          .endpoint('preview_environments')
+          .payload(toExternal(env))
+          .post();
+      })
       .then(updateCache);
   }
 
