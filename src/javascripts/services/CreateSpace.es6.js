@@ -36,6 +36,8 @@ export async function showDialog(organizationId) {
     Notification.error(
       'You don’t have rights to create a space, plase contact your organization’s administrator.'
     );
+
+    return;
   }
 
   if (isLegacyOrganization(organization)) {

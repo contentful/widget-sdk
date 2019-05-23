@@ -19,9 +19,9 @@ export default function register() {
             onCancel: function() {
               $scope.dialog.cancel();
             },
-            onConfirm: function() {
+            onConfirm: function(productRatePlanId) {
               if ($scope.onSubmit) {
-                $scope.onSubmit().then(() => {
+                $scope.onSubmit(productRatePlanId).then(() => {
                   $scope.dialog.confirm();
                 });
               } else {

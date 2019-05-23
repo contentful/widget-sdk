@@ -124,13 +124,13 @@ export async function getPlansWithSpaces(endpoint) {
   };
 }
 
-export function changeSpace(endpoint, planId) {
+export function changeSpace(endpoint, productRatePlanId) {
   return endpoint(
     {
       method: 'PUT',
       path: [],
       data: {
-        productRatePlanId: planId
+        productRatePlanId: productRatePlanId
       }
     },
     alphaHeader

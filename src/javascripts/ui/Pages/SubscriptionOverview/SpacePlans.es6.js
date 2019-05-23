@@ -1,5 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
+
+import {
+  Paragraph,
+  Heading,
+  TextLink,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody
+} from '@contentful/forma-36-react-components';
 
 import { calculatePlansCost } from 'utils/SubscriptionUtils.es6';
 
@@ -8,6 +20,12 @@ import Price from 'ui/Components/Price.es6';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider.es6';
 
 import SpacePlanRow from './SpacePlanRow.es6';
+
+const styles = {
+  total: css({
+    marginBottom: '1.5em'
+  })
+};
 
 function SpacePlans({
   basePlan,
@@ -23,67 +41,63 @@ function SpacePlans({
   const totalCost = calculatePlansCost({ plans: spacePlans });
 
   return (
-    <div>
-      <h2 className="section-title">Spaces</h2>
-      <p style={{ marginBottom: '1.5em' }}>
+    <>
+      <Heading className="section-title">Spaces</Heading>
+      <Paragraph className={styles.total}>
         {!hasSpacePlans && "Your organization doesn't have any spaces. "}
         {hasSpacePlans && (
-          <span>
+          <>
             Your organization has{' '}
             <b>
               <Pluralized text="space" count={numSpaces} />
             </b>
             {'. '}
-          </span>
+          </>
         )}
         {!isEnterprisePlan(basePlan) && totalCost > 0 && (
-          <span>
+          <>
             The total for your spaces is{' '}
             <b>
               <Price value={totalCost} />
             </b>{' '}
             per month.{' '}
-          </span>
+          </>
         )}
-        <a className="text-link" onClick={onCreateSpace}>
-          Create Space
-        </a>
-      </p>
+        <TextLink onClick={onCreateSpace}>Create Space</TextLink>
+      </Paragraph>
 
       {hasSpacePlans && (
-        <div className="table spaces-table">
-          <table>
-            <thead className="table__head">
-              <tr>
-                <th style={{ width: '33%' }}>Name</th>
-                <th style={{ width: '20%' }}>
-                  {isEnterprisePlan(basePlan) ? 'Space type' : 'Space type / price'}
-                </th>
-                <th style={{ width: '25%' }}>Created by</th>
-                <th style={{ width: '15%' }}>Created on</th>
-                <th> </th>
-              </tr>
-            </thead>
-            <tbody className="table__body">
-              {spacePlans.map(plan => {
-                const isUpgraded = Boolean(plan.space && plan.space.sys.id === upgradedSpace);
-                return (
-                  <SpacePlanRow
-                    key={plan.sys.id || (plan.space && plan.space.sys.id)}
-                    upgraded={isUpgraded}
-                    basePlan={basePlan}
-                    plan={plan}
-                    onChangeSpace={onChangeSpace}
-                    onDeleteSpace={onDeleteSpace}
-                    isOrgOwner={isOrgOwner}
-                  />
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell style={{ width: '33%' }}>Name</TableCell>
+              <TableCell style={{ width: '20%' }}>
+                {isEnterprisePlan(basePlan) ? 'Space type' : 'Space type / price'}
+              </TableCell>
+              <TableCell style={{ width: '25%' }}>Created by</TableCell>
+              <TableCell style={{ width: '15%' }}>Created on</TableCell>
+              <TableCell> </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {spacePlans.map(plan => {
+              const isUpgraded = Boolean(plan.space && plan.space.sys.id === upgradedSpace);
+              return (
+                <SpacePlanRow
+                  key={plan.sys.id || (plan.space && plan.space.sys.id)}
+                  upgraded={isUpgraded}
+                  basePlan={basePlan}
+                  plan={plan}
+                  onChangeSpace={onChangeSpace}
+                  onDeleteSpace={onDeleteSpace}
+                  isOrgOwner={isOrgOwner}
+                />
+              );
+            })}
+          </TableBody>
+        </Table>
       )}
-    </div>
+    </>
   );
 }
 

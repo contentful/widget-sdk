@@ -1,29 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
+
+import { Paragraph, Heading, TextLink } from '@contentful/forma-36-react-components';
 
 import { joinAnd } from 'utils/StringUtils.es6';
-
 import { getEnabledFeatures } from 'utils/SubscriptionUtils.es6';
 import { websiteUrl } from 'Config.es6';
+
+const styles = {
+  container: css({
+    gridColumn: 1,
+    gridRow: 1
+  })
+};
 
 function BasePlan({ basePlan }) {
   const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({ name }) => name);
 
   return (
-    <div className="platform">
-      <h2 className="section-title">Platform</h2>
-      <p data-test-id="subscription-page.base-plan-details">
+    <div className={styles.container}>
+      <Heading className="section-title">Platform</Heading>
+      <Paragraph testId="subscription-page.base-plan-details">
         <b>{basePlan.name}</b>
         {enabledFeaturesNames.length
           ? ` – includes ${joinAnd(enabledFeaturesNames)}. `
           : ' – doesn’t include enterprise features. '}
-        <a
-          className="text-link"
+        <TextLink
           href={websiteUrl('/pricing/#platform-features')}
-          data-test-id="subscription-page.org-usage-link">
+          testId="subscription-page.org-usage-link">
           Platform features
-        </a>
-      </p>
+        </TextLink>
+      </Paragraph>
     </div>
   );
 }
