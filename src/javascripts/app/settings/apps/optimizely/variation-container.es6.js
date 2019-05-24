@@ -89,6 +89,15 @@ export async function create(optimizelyProjectId) {
   return createdUie.sys.id;
 }
 
+export async function updateUiExtension(extensionId, optimizelyProjectId) {
+  const uie = await spaceContext.cma.getExtension(extensionId);
+
+  return spaceContext.cma.updateExtension({
+    ...uie,
+    parameters: { optimizelyProjectId }
+  });
+}
+
 export function updateContentTypes(contentTypes, referenceFieldsMap) {
   return Promise.all(contentTypes.map(id => updateContentTypeById(id, referenceFieldsMap[id])));
 }
