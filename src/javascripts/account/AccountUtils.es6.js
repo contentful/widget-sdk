@@ -21,7 +21,7 @@ const getPageRouteRef = (page = '') => {
 
 const goToPage = (page = '') => {
   const ref = getPageRouteRef(page);
-  return Navigator.go(ref);
+  return ref && Navigator.go(ref);
 };
 
 /**
