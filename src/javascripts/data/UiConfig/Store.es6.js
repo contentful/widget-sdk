@@ -48,6 +48,7 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
 
   const api = deepFreeze({
     addOrEditCt,
+    addToDefault,
     entries: {
       shared: forScope(SHARED_VIEWS, ENTRY_VIEWS_KEY, getEntryViewsDefaults, membership.admin),
       private: forScope(PRIVATE_VIEWS, ENTRY_VIEWS_KEY, getPrivateViewsDefaults, true)
@@ -187,21 +188,37 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
    * editor. It expects content type data object, not @contentful/client entity.
    */
   function addOrEditCt(ct) {
-    const { folder, folderIndex, folderExists } = findCtFolder();
+    const { folder, folderIndex, folderExists } = findFolder(f => f.title === 'Content Type');
     const canEdit = membership.admin;
 
     if (folderExists && canEdit) {
       const { viewIndex, viewExists } = findCtViewIndex(folder, ct);
-      return viewExists ? updateCtView(folderIndex, viewIndex, ct) : createCtView(folderIndex, ct);
+      if (viewExists) {
+        return updateCtView(folderIndex, viewIndex, ct);
+      } else {
+        return createViewInFolder(folderIndex, Defaults.createContentTypeView(ct.sys.id, ct.name));
+      }
     } else {
-      // Nothing was updated but the caller shouldn't know.
+      // Nothing was updated but we don't fail.
       return Promise.resolve(state[SHARED_VIEWS]);
     }
   }
 
-  function findCtFolder() {
+  function addToDefault(view) {
+    const { folderIndex, folderExists } = findFolder(f => f.id === 'default');
+    const canEdit = membership.admin;
+
+    if (folderExists && canEdit) {
+      return createViewInFolder(folderIndex, view);
+    } else {
+      // Nothing was updated but we don't fail.
+      return Promise.resolve(state[SHARED_VIEWS]);
+    }
+  }
+
+  function findFolder(predicate) {
     const folders = getPath(state, [SHARED_VIEWS, ENTRY_VIEWS_KEY], []);
-    const index = findIndex(folders, folder => folder.title === 'Content Type');
+    const index = findIndex(folders, predicate);
 
     return { folder: folders[index], folderIndex: index, folderExists: index > -1 };
   }
@@ -222,11 +239,9 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
     return save(SHARED_VIEWS, updated);
   }
 
-  function createCtView(folderIndex, ct) {
+  function createViewInFolder(folderIndex, view) {
     const path = [ENTRY_VIEWS_KEY, folderIndex, 'views'];
-    const updated = update(state[SHARED_VIEWS], path, views => {
-      return concat(views, [Defaults.createContentTypeView(ct)]);
-    });
+    const updated = update(state[SHARED_VIEWS], path, views => concat(views, [view]));
 
     return save(SHARED_VIEWS, updated);
   }

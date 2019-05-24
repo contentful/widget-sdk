@@ -85,10 +85,10 @@ function contentTypeViews(contentTypes) {
   return map(contentTypes, createContentTypeView);
 }
 
-export function createContentTypeView(ct) {
+export function createContentTypeView(ctId, title) {
   return {
-    title: ct.name,
-    contentTypeId: ct.sys.id,
+    title,
+    contentTypeId: ctId,
     id: random.id(),
     order: SystemFields.getDefaultOrder(),
     displayedFieldIds: SystemFields.getDefaultFieldIds(),

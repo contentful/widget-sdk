@@ -4,6 +4,7 @@ import { hasVariationContainerInFieldLinkValidations } from './ReferenceField.es
 
 import { fetchExtension } from 'app/settings/extensions/dialogs/GitHubFetcher.es6';
 import * as Random from 'utils/Random.es6';
+import { createContentTypeView } from 'data/UiConfig/Defaults.es6';
 
 const spaceContext = getModule('spaceContext');
 
@@ -28,19 +29,8 @@ function createContentType() {
   });
 }
 
-export async function create(optimizelyProjectId) {
-  const [_ct, uie] = await Promise.all([createContentType(), fetchExtension(constants.UIE_GH_URL)]);
-
-  const [createdUie, ei] = await Promise.all([
-    spaceContext.cma.createExtension({
-      sys: { id: `optimizely-app-${Random.id()}` },
-      extension: { ...uie, name: 'Optimizely App' },
-      parameters: { optimizelyProjectId }
-    }),
-    spaceContext.cma.getEditorInterface(constants.VARIATION_CONTAINER_CT_ID)
-  ]);
-
-  await spaceContext.cma.updateEditorInterface({
+function updateEditorInterface(ei, uie) {
+  return spaceContext.cma.updateEditorInterface({
     sys: {
       contentType: { sys: { id: constants.VARIATION_CONTAINER_CT_ID } },
       version: ei.sys.version
@@ -48,7 +38,7 @@ export async function create(optimizelyProjectId) {
     controls: ei.controls,
     sidebar: [
       {
-        widgetId: createdUie.sys.id,
+        widgetId: uie.sys.id,
         widgetNamespace: 'extension'
       },
       {
@@ -61,12 +51,40 @@ export async function create(optimizelyProjectId) {
       }
     ],
     editor: {
-      widgetId: createdUie.sys.id,
+      widgetId: uie.sys.id,
       widgetNamespace: 'extension'
     }
   });
+}
 
-  await spaceContext.publishedCTs.refresh();
+async function createSavedView() {
+  const view = createContentTypeView(constants.VARIATION_CONTAINER_CT_ID, 'Optimizely experiments');
+
+  try {
+    const uiConfig = await spaceContext.uiConfig;
+    return uiConfig.addToDefault(view);
+  } catch (err) {
+    /* Creating a saved view is not critical and we don't report if it fails */
+  }
+}
+
+export async function create(optimizelyProjectId) {
+  const [_ct, uie] = await Promise.all([createContentType(), fetchExtension(constants.UIE_GH_URL)]);
+
+  const [createdUie, ei] = await Promise.all([
+    spaceContext.cma.createExtension({
+      sys: { id: `optimizely-app-${Random.id()}` },
+      extension: { ...uie, name: 'Optimizely App' },
+      parameters: { optimizelyProjectId }
+    }),
+    spaceContext.cma.getEditorInterface(constants.VARIATION_CONTAINER_CT_ID)
+  ]);
+
+  await Promise.all([
+    updateEditorInterface(ei, createdUie),
+    createSavedView(),
+    spaceContext.publishedCTs.refresh()
+  ]);
 
   return createdUie.sys.id;
 }
