@@ -1,41 +1,37 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import Advice from 'components/tabs/Advice/index.es6';
-import EmptyContentIcon from 'svg/empty-content-model.es6';
-import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
-import CreateContentTypeCta from 'components/tabs/CreateContentTypeCta/index.es6';
+import { Heading, Paragraph, TextLink, Button } from '@contentful/forma-36-react-components';
+import EmptyStateContainer, {
+  defaultSVGStyle
+} from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+import ContentTypeIllustration from 'svg/connected-forms-illustration.es6';
+import StateLink from 'app/common/StateLink.es6';
+import { websiteUrl } from 'Config.es6';
 
-export default function NoContentTypeAdvice({
-  title = 'Alright, let’s create your content model!'
-}) {
+export default function NoContentTypeAdvice() {
   return (
-    <Advice data-test-id="no-content-type-advice">
-      <Advice.Icon>
-        <EmptyContentIcon />
-      </Advice.Icon>
-      <Advice.Title>{title}</Advice.Title>
-      <Advice.Description>
-        The content model is comprised of content types. They work like a stencil which defines the
-        structure of your content. Get started by creating your first content type.
-      </Advice.Description>
-
-      <Advice.Action>
-        <CreateContentTypeCta size="large" testId="create-content-type-empty-state" />
-      </Advice.Action>
-      <Advice.AdditionalInfo>
-        No clue what purpose the content model serves? Read our documentation on{' '}
-        <KnowledgeBase
-          target="content_model"
-          text="content modeling"
-          inlineText="true"
-          cssClass="text-link--standard"
-        />
-        .
-      </Advice.AdditionalInfo>
-    </Advice>
+    <EmptyStateContainer data-test-id="no-content-type-advice">
+      <div className={defaultSVGStyle}>
+        <ContentTypeIllustration />
+      </div>
+      <Heading>It all starts with a brilliant content model</Heading>
+      <Paragraph>
+        Looks like you need a content model. What’s a content model? Good question! A content model
+        structures and organizes your content. It’s made up of content types— get started by adding
+        the first one. Learn more in the{' '}
+        <TextLink
+          href={websiteUrl('developers/docs/concepts/data-model/')}
+          target="_blank"
+          rel="noopener noreferrer">
+          content modeling documentation
+        </TextLink>
+      </Paragraph>
+      <StateLink to="spaces.detail.content_types.new">
+        {({ onClick }) => (
+          <Button testId="create-content-type-empty-state" onClick={onClick}>
+            Add content type
+          </Button>
+        )}
+      </StateLink>
+    </EmptyStateContainer>
   );
 }
-
-NoContentTypeAdvice.propTypes = {
-  title: PropTypes.string
-};

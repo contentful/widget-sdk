@@ -18,7 +18,6 @@ const styles = {
     textAlign: 'center'
   })
 };
-
 const EmptyStateContainer = ({
   children,
   ['data-test-id']: dataTestId = 'cf-ui-empty-state',
@@ -37,6 +36,8 @@ const EmptyStateContainer = ({
   );
 };
 
-EmptyStateContainer.propTypes = {'data-test-id': PropTypes.string };
+EmptyStateContainer.propTypes = { 'data-test-id': PropTypes.string };
 
 export default EmptyStateContainer;
+
+export const defaultSVGStyle = css({ width: '25vw', minWidth: '280px', marginLeft: '-2vw' });

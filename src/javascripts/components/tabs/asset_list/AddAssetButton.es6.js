@@ -20,7 +20,6 @@ class AddAssetButton extends React.Component {
   setOpen = isDropdownOpen => this.setState({ isDropdownOpen });
   addAssetButton = (
     <Button
-      icon="PlusCircle"
       onClick={() => this.setOpen(!this.state.isDropdownOpen)}
       testId={this.props.testId}
       disabled={this.props.disabled}

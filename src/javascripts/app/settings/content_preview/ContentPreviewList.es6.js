@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
 import StateLink from 'app/common/StateLink.es6';
 import Icon from 'ui/Components/Icon.es6';
-import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+import EmptyStateContainer, {
+  defaultSVGStyle
+} from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import { Button, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import EmptyStateIllustration from 'svg/content-preview-empty-state.es6';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
-
-const styles = { svgContainer: css({ width: '280px' }) };
 
 const ContentPreviewItem = ({ preview }) => (
   <React.Fragment>
@@ -51,7 +50,7 @@ export default class ContentPreviewList extends Component {
   renderPlaceholderList() {
     return (
       <EmptyStateContainer>
-        <div className={styles.svgContainer}>
+        <div className={defaultSVGStyle}>
           <EmptyStateIllustration />
         </div>
         <Heading>Set up content preview</Heading>

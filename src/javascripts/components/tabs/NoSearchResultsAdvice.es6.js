@@ -1,13 +1,16 @@
 import React from 'react';
+import { css } from 'emotion';
 import { Heading, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import BinocularsIllustration from 'svg/binoculars-illustration.es6';
 import { websiteUrl } from 'Config.es6';
 
+const styles = { svgContainer: css({ width: '30vw' }) };
+
 export default function NoSearchResultsAdvice() {
   return (
     <EmptyStateContainer data-test-id="no-search-results-empty-state">
-      <div style={{ width: '280px' }}>
+      <div className={styles.svgContainer}>
         <BinocularsIllustration />
       </div>
       <Heading>No search results?</Heading>

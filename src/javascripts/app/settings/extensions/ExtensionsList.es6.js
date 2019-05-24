@@ -17,7 +17,9 @@ import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink.es6';
 import Workbench from 'app/common/Workbench.es6';
 import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar.es6';
-import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+import EmptyStateContainer, {
+  defaultSVGStyle
+} from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import EmptyStateIllustration from 'svg/connected-forms-illustration.es6';
 import { websiteUrl } from 'Config.es6';
 
@@ -112,7 +114,7 @@ DeleteButton.propTypes = {
 
 const EmptyState = () => (
   <EmptyStateContainer data-test-id="extensions.empty">
-    <div className={styles.svgContainer}>
+    <div className={defaultSVGStyle}>
       <EmptyStateIllustration />
     </div>
     <Heading>Customize your experience by connecting to your favorite services</Heading>

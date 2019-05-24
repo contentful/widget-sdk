@@ -229,6 +229,7 @@ export default function register() {
 
       K.onValueScope($scope, spaceContext.publishedCTs.items$, cts => {
         $scope.hasContentType = cts.length > 0;
+        $scope.canEditCT = !accessChecker.shouldDisable(accessChecker.Action.CREATE, 'contentType');
         updateAccessibleCts();
       });
 
