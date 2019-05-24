@@ -58,7 +58,7 @@ async function fetchUsers(spaceId, userIds) {
  * Get all comments as well as all the users associated with the comments
  * and return the resolved items
  */
-async function fetchComments(spaceId, entryId) {
+export async function fetchComments(spaceId, entryId) {
   const endpoint = createSpaceEndpoint(spaceId);
   const { items: comments } = await getAll(endpoint, entryId);
   const commentCreatorIds = uniq(map(comments, 'sys.createdBy.sys.id'));

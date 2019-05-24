@@ -127,7 +127,12 @@ export default ({ $scope, emitter }) => {
 
   const initializeTasksWidget = once(() => {
     const notifyUpdate = update => {
-      emitter.emit(SidebarEventTypes.UPDATED_TASKS_WIDGET, update);
+      emitter.emit(SidebarEventTypes.UPDATED_TASKS_WIDGET, {
+        ...update,
+        entityInfo: $scope.entityInfo,
+        spaceId: spaceContext.space.getId(),
+        envId: spaceContext.getEnvironmentId()
+      });
     };
     notifyUpdate({});
   });
