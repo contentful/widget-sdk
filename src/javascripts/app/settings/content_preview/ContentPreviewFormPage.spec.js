@@ -3,7 +3,7 @@ import _ from 'lodash';
 import ContentPreviewFormPage from './ContentPreviewFormPage.es6';
 import Enzyme from 'enzyme';
 import { Notification } from '@contentful/forma-36-react-components';
-import contentPreview from 'ng/contentPreview';
+import { contentPreview } from 'ng/spaceContext';
 import * as Analytics from 'analytics/Analytics.es6';
 import $state from 'ng/$state';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
@@ -143,7 +143,6 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
     });
 
     it('shows error if a content type is active but has invalid URL', () => {
-      contentPreview.urlFormatIsValid.mockImplementationOnce(() => false);
       const { wrapper } = render();
       updateName(wrapper, 'test name');
       wrapper.find('input#ct-1-checkbox').simulate('change', { target: { checked: true } });

@@ -16,14 +16,14 @@ export default function template() {
           borderRadius: 0,
           backgroundColor: '#fff'
         },
-        ngIf: 'onboarding.isContentPreviewsLoading'
+        ngIf: 'onboarding.isModernStackLoading'
       },
       [h('.loading-box__spinner'), h('.loader_message', ['Initializing steps...'])]
     ),
     h(
       'div',
       {
-        ngIf: '!onboarding.isContentPreviewsLoading'
+        ngIf: '!onboarding.isModernStackLoading'
       },
       [
         h(

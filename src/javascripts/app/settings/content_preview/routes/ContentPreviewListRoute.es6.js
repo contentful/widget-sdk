@@ -10,10 +10,10 @@ import ContentPreviewListPage, {
 } from '../ContentPreviewListPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
-const contentPreview = getModule('contentPreview');
+const spaceContext = getModule('spaceContext');
 
 const ContentPreviewsFetcher = createFetcherComponent(() => {
-  return contentPreview.getAll().then(previews => values(previews));
+  return spaceContext.contentPreview.getAll().then(previews => values(previews));
 });
 
 export default class ContentPreviewListRoute extends Component {
@@ -34,10 +34,7 @@ export default class ContentPreviewListRoute extends Component {
           return (
             <React.Fragment>
               <DocumentTitle title="Content Preview" />
-              <ContentPreviewListPage
-                contentPreviews={data}
-                maxContentPreviews={contentPreview.MAX_PREVIEW_ENVIRONMENTS}
-              />
+              <ContentPreviewListPage contentPreviews={data} />
             </React.Fragment>
           );
         }}

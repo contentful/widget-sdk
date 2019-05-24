@@ -13,8 +13,6 @@ export default function register() {
     'analytics/Analytics.es6',
     'services/CreateSpace.es6',
     'components/shared/auto_create_new_space/CreateModernOnboarding.es6',
-    'data/ContentPreview',
-    'contentPreview',
     'services/TokenStore.es6',
     'TheStore/index.es6',
     'components/shared/auto_create_new_space/index.es6',
@@ -26,8 +24,6 @@ export default function register() {
       Analytics,
       CreateSpace,
       modernOnboarding,
-      { isExampleSpace },
-      { getAll: getAllContentPreviews },
       { getOrganizations },
       { getStore },
       { getKey: getSpaceAutoCreatedKey }
@@ -152,41 +148,29 @@ export default function register() {
               };
             }
 
-            // delay execution of a fn that returns a promise by `ms` milliseconds
-            const delay = (fn, ms) => new Promise(resolve => setTimeout(resolve, ms)).then(fn);
-
-            async function updateNextStepsState(delayMs = 0) {
+            async function updateNextStepsState() {
               controller.isTEASpace = false;
-              controller.isContentPreviewsLoading = true;
+              controller.isModernStackLoading = true;
 
               try {
-                const publishedCTs = K.getValue(spaceContext.publishedCTs.items$);
-                // delaying function call by a few ms to let the api response
-                // be consistent. Without the delay, this returns previews at times
-                // and not at other times. This should even that behaviour out.
-                const previewsPromise = delay(getAllContentPreviews, delayMs);
-                const modernStackVariationPromise = LD.getCurrentVariation(
+                const modernStackOnboarding = await LD.getCurrentVariation(
                   MODERN_STACK_ONBOARDING_FEATURE_FLAG
                 );
-                const [previews, modernStackOnboarding] = await Promise.all([
-                  previewsPromise,
-                  modernStackVariationPromise
-                ]);
-
                 await updateModernStackOnboardingData(modernStackOnboarding);
 
-                controller.isTEASpace = isExampleSpace(previews, publishedCTs);
+                // We mark a space as a TEA space if it has the `layoutHighlightedCourse`
+                // content type (being a part of the TEA template).
+                const publishedCTs = K.getValue(spaceContext.publishedCTs.items$) || [];
+                controller.isTEASpace = publishedCTs.some(({ sys: { id } }) => {
+                  return id === 'layoutHighlightedCourse';
+                });
               } finally {
-                controller.isContentPreviewsLoading = false;
+                controller.isModernStackLoading = false;
               }
             }
 
             // update all flags once the empty space is loaded with the selected template
-            $scope.$on('spaceTemplateCreated', async () => {
-              // wait for three seconds before requesting the content previews to account for eventual
-              // consistency on the CMA
-              updateNextStepsState(3000);
-            });
+            $scope.$on('spaceTemplateCreated', updateNextStepsState);
 
             LD.onFeatureFlag($scope, MODERN_STACK_ONBOARDING_FEATURE_FLAG, flag => {
               controller.isModernStackOnboardingFeatureEnabled = flag;

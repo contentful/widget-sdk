@@ -28,7 +28,7 @@ import {
 import * as Analytics from 'analytics/Analytics.es6';
 
 const $state = getModule('$state');
-const contentPreview = getModule('contentPreview');
+const spaceContext = getModule('spaceContext');
 
 export const ContentPreviewFormPageSkeleton = props => (
   <Workbench>
@@ -172,7 +172,7 @@ export default class ContentPreviewFormPage extends Component {
     }
 
     this.setState({ busy: true });
-    return contentPreview
+    return spaceContext.contentPreview
       .remove({
         id: this.state.preview.id
       })
@@ -199,7 +199,7 @@ export default class ContentPreviewFormPage extends Component {
     const action = this.props.isNew ? 'create' : 'update';
 
     this.setState({ busy: true });
-    return contentPreview[action](this.state.preview).then(
+    return spaceContext.contentPreview[action](this.state.preview).then(
       env => {
         this.updateField('version', env.sys.version);
 

@@ -8,7 +8,6 @@ import * as notify from './Notifications.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField.es6';
-import previewEnvironmentsCache from 'data/previewEnvironmentsCache.es6';
 import * as logger from 'services/logger.es6';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
 import ContentTypeForbiddenRemoval from './Dialogs/ContenTypeForbiddenRemoval.es6';
@@ -266,7 +265,7 @@ export default function create($scope, contentTypeIds) {
         .then(setPristine)
         .then(() => {
           setPristine();
-          previewEnvironmentsCache.clearAll();
+          spaceContext.contentPreview.clearCache();
           return spaceContext.uiConfig;
         })
         .then(uiConfig => {

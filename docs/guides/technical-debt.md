@@ -40,4 +40,3 @@ that should be rewritten
 
 * `spaceContext`
 * `accessChecker`
-* `data/previewEnvironmentCache`

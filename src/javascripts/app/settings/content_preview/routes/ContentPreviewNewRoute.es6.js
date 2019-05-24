@@ -10,11 +10,8 @@ import ContentPreviewFormPage, {
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const spaceContext = getModule('spaceContext');
-const contentPreview = getModule('contentPreview');
 
-const ContentTypesFetcher = createFetcherComponent(() => {
-  return Promise.all([spaceContext.publishedCTs.refreshBare(), contentPreview.canCreate()]);
-});
+const ContentTypesFetcher = createFetcherComponent(() => spaceContext.publishedCTs.refreshBare());
 
 export default class ContentPreviewNewRoute extends Component {
   static propTypes = {
@@ -33,12 +30,8 @@ export default class ContentPreviewNewRoute extends Component {
             if (isError) {
               return <StateRedirect to="^.list" />;
             }
-            const [contentTypes, canCreate] = data;
-            if (!canCreate) {
-              return <StateRedirect to="^.list" />;
-            }
 
-            const initialValue = contentPreview.toInternal(
+            const initialValue = spaceContext.contentPreview.toInternal(
               {
                 name: '',
                 description: '',
@@ -46,7 +39,7 @@ export default class ContentPreviewNewRoute extends Component {
                   version: 0
                 }
               },
-              contentTypes
+              data
             );
 
             return (

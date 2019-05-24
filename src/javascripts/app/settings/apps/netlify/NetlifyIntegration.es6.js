@@ -3,7 +3,6 @@ import { getPostPublishUrl } from './BuildButton/PubNubClient.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const contentPreview = getModule('contentPreview');
 const spaceContext = getModule('spaceContext');
 
 const ARTIFACT_KEYS = ['buildHookUrl', 'buildHookId', 'contentPreviewId'];
@@ -55,7 +54,7 @@ export async function install({ config, contentTypeIds, appsClient, accessToken 
 
   // Create content previews for all sites.
   const contentPreviewPromises = config.sites.map(siteConfig => {
-    return contentPreview.create({
+    return spaceContext.contentPreview.create({
       name: `${siteConfig.name} (Netlify app)`,
       description: `Created by the Netlify app. Previews "${
         siteConfig.netlifySiteName
@@ -181,7 +180,7 @@ async function removeExistingArtifacts(appsClient, accessToken) {
   // ...remove content previews for it.
   const contentPreviewRemovalPromises = siteConfigs.map(siteConfig => {
     if (siteConfig.contentPreviewId) {
-      return contentPreview.remove({ id: siteConfig.contentPreviewId });
+      return spaceContext.contentPreview.remove({ id: siteConfig.contentPreviewId });
     } else {
       return Promise.resolve();
     }
