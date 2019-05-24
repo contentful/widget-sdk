@@ -85,6 +85,10 @@ describe('Apps Page', () => {
         {
           title: 'Basic approval workflow',
           expectedUrl: `/spaces/${defaultSpaceId}/apps/basicApprovalWorkflow`
+        },
+        {
+          title: 'Optimizely',
+          expectedUrl: `/spaces/${defaultSpaceId}/apps/optimizely`
         }
       ];
 
