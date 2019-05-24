@@ -6,7 +6,7 @@
     {
       "body": "Translate all the things",
       "sys": {
-        "id": "1b1rb5yVjpWqye9f1dUjOV",
+        "id": "taskId1",
         "type": "Comment",
         "commentType": "Entry",
         "space": {
@@ -46,7 +46,7 @@
     {
       "body": "Walk the dog",
       "sys": {
-        "id": "2jLDISRTASfMbn6jkT9v5G",
+        "id": "taskId2",
         "type": "Comment",
         "commentType": "Entry",
         "space": {
@@ -86,7 +86,7 @@
     {
       "body": "Do something else!",
       "sys": {
-        "id": "2EBV21qnQZDyg0c9lRmiJl",
+        "id": "taskId3",
         "type": "Comment",
         "commentType": "Entry",
         "space": {
