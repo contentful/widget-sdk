@@ -1,61 +1,49 @@
 import React from 'react';
-import Enzyme from 'enzyme';
+import 'jest-dom/extend-expect';
+import { render, cleanup, fireEvent } from 'react-testing-library';
 import WebhookHttpBasicDialog from './WebhookHttpBasicDialog.es6';
 import base64safe from '../base64safe.es6';
 
 describe('webhooks/dialogs/WebhookHttpBasicDialog', () => {
-  const selectors = {
-    confirm: '[data-test-id="add-http-header-button"]',
-    cancel: '[data-test-id="close-add-http-header-dialog-button"]',
-    userInput: 'input#http-basic-user',
-    passwordInput: 'input#http-basic-password'
-  };
+  afterEach(cleanup);
 
-  const render = () => {
+  const renderComponent = () => {
     const stubs = {
       onConfirm: jest.fn(),
       onCancel: jest.fn()
     };
-    const wrapper = Enzyme.mount(
-      <WebhookHttpBasicDialog isShown onCancel={stubs.onCancel} onConfirm={stubs.onConfirm} />
-    );
-    return { wrapper, stubs };
+    return [
+      render(
+        <WebhookHttpBasicDialog isShown onCancel={stubs.onCancel} onConfirm={stubs.onConfirm} />
+      ),
+      stubs
+    ];
   };
 
   it('confirm is disabled by default', () => {
-    const { wrapper, stubs } = render();
-    expect(wrapper.find(selectors.confirm)).toBeDisabled();
-    wrapper.find(selectors.cancel).simulate('click');
+    const [{ getByTestId }, stubs] = renderComponent();
+    expect(getByTestId('add-http-header-button')).toBeDisabled();
+    fireEvent.click(getByTestId('close-add-http-header-dialog-button'));
     expect(stubs.onCancel).toHaveBeenCalledTimes(1);
   });
 
   it('confirm is enabled when values are provided', () => {
-    const { wrapper, stubs } = render();
+    const [{ getByLabelText, getByTestId }, stubs] = renderComponent();
 
     const user = 'angela_merkel';
     const password = '12345';
 
-    wrapper.find(selectors.userInput).simulate('change', { target: { value: user } });
-    wrapper.find(selectors.passwordInput).simulate('change', { target: { value: password } });
-    expect(wrapper.find(selectors.confirm)).not.toBeDisabled();
+    fireEvent.change(getByLabelText('User'), { target: { value: user } });
+    fireEvent.change(getByLabelText('Password'), { target: { value: password } });
 
-    wrapper.find(selectors.confirm).simulate('click');
+    const confirmButton = getByTestId('add-http-header-button');
+
+    expect(confirmButton).not.toBeDisabled();
+    fireEvent.click(confirmButton);
 
     expect(stubs.onConfirm).toHaveBeenCalledWith({
       key: 'Authorization',
       value: 'Basic ' + base64safe([user || '', password || ''].join(':'))
     });
-  });
-
-  it('has correct text', () => {
-    const { wrapper } = render();
-    expect(wrapper).toIncludeText(
-      'This form will automatically generate a secure Authorization header containing correctly formated HTTP Basic Auth information.'
-    );
-    expect(wrapper).toIncludeText(
-      'Some APIs require only the username or only the password, so the form can be confirmed with only one value provided.'
-    );
-
-    expect(wrapper.find(selectors.confirm)).toHaveText('Add HTTP Basic Auth header');
   });
 });

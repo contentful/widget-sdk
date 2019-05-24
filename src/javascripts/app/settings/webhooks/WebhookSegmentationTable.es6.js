@@ -31,7 +31,10 @@ export default class WebhookSegmentationTable extends React.Component {
     const { values, onChange } = this.props;
 
     return (
-      <td key={key} className={entityType === '*' ? 'x--highlighted-cell' : ''}>
+      <td
+        data-test-id="checkbox-row"
+        key={key}
+        className={entityType === '*' ? 'x--highlighted-cell' : ''}>
         <label>
           <input
             type="checkbox"

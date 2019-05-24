@@ -1,5 +1,6 @@
 import React from 'react';
-import Enzyme from 'enzyme';
+import { render, cleanup } from 'react-testing-library';
+import 'jest-dom/extend-expect';
 import WebhookListRoute from './WebhookListRoute.es6';
 import * as $stateMocked from 'ng/$state';
 import * as spaceContextMocked from 'ng/spaceContext';
@@ -32,18 +33,16 @@ describe('WebhookListRoute', () => {
     AccessCheckerMocked.getSectionVisibility.mockReset();
   });
 
+  afterEach(cleanup);
+
   const setSectionVisibility = isVisible => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ webhooks: isVisible }));
-  };
-
-  const selectors = {
-    forbiddenPage: '[data-test-id="webhooks.forbidden"]'
   };
 
   it('should be resticted for non-admins and redirect should be called', () => {
     expect.assertions(3);
     setSectionVisibility(false);
-    Enzyme.mount(<WebhookListRoute />);
+    render(<WebhookListRoute />);
     expect($stateMocked.go).toHaveBeenCalledTimes(1);
     expect($stateMocked.go).toHaveBeenCalledWith(
       'spaces.detail.entries.list',
@@ -57,19 +56,19 @@ describe('WebhookListRoute', () => {
     expect.assertions(3);
     setSectionVisibility(false);
 
-    const wrapper = Enzyme.mount(<WebhookListRoute templateId="algolia-index-entries" />);
+    const { getByTestId } = render(<WebhookListRoute templateId="algolia-index-entries" />);
 
     expect($stateMocked.go).not.toHaveBeenCalled();
     expect(spaceContextMocked.webhookRepo.getAll).not.toHaveBeenCalled();
-    expect(wrapper.find(selectors.forbiddenPage)).toExist();
+    expect(getByTestId('webhooks.forbidden')).toBeInTheDocument();
   });
 
   it('should fetch webhooks if admin reaches that page', () => {
     expect.assertions(3);
     setSectionVisibility(true);
-    const wrapper = Enzyme.mount(<WebhookListRoute />);
+    const { queryByTestId } = render(<WebhookListRoute />);
     expect($stateMocked.go).not.toHaveBeenCalled();
     expect(spaceContextMocked.webhookRepo.getAll).toHaveBeenCalledTimes(1);
-    expect(wrapper.find(selectors.forbiddenPage)).not.toExist();
+    expect(queryByTestId('webhooks.forbidden')).toBeNull();
   });
 });

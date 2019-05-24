@@ -51,8 +51,14 @@ export class WebhookHealth extends React.Component {
       <React.Fragment>
         {status === LOADING && <span>Loading…</span>}
         {status === NODATA && <span>No data collected yet</span>}
-        {hasValidStatus && <span className="webhook-call__status-indicator" data-status={status} />}
-        {hasValidStatus && <span>{percentage}%</span>}
+        {hasValidStatus && (
+          <span
+            data-test-id="health-status-indicator"
+            className="webhook-call__status-indicator"
+            data-status={status}
+          />
+        )}
+        {hasValidStatus && <span data-test-id="health-percentage">{percentage}%</span>}
       </React.Fragment>
     );
   }

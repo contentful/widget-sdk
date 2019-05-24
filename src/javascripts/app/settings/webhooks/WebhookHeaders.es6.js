@@ -53,7 +53,7 @@ export class WebhookHeaders extends React.Component {
         }}>
         {headers.map((h, i) => {
           return (
-            <div className="webhook-editor__settings-row" key={`${i}`}>
+            <div data-test-id="setting-row" className="webhook-editor__settings-row" key={`${i}`}>
               <input
                 type="text"
                 className="cfnext-form__input"
@@ -79,7 +79,10 @@ export class WebhookHeaders extends React.Component {
                   readOnly={true}
                 />
               )}
-              <button className="btn-link" onClick={() => this.remove(i)}>
+              <button
+                className="btn-link"
+                data-test-id="remove-header"
+                onClick={() => this.remove(i)}>
                 Remove
               </button>
             </div>

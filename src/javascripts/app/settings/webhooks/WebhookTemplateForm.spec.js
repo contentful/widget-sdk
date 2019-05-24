@@ -1,6 +1,6 @@
 import React from 'react';
-import Enzyme from 'enzyme';
-import { TextField, Button } from '@contentful/forma-36-react-components';
+import 'jest-dom/extend-expect';
+import { render, cleanup, getByTestId, fireEvent } from 'react-testing-library';
 import { cloneDeep } from 'lodash';
 import { WebhookTemplateForm } from './WebhookTemplateForm.es6';
 import * as AnalyticsMocked from 'analytics/Analytics.es6';
@@ -31,7 +31,7 @@ const TEMPLATE = {
 const VALID_FORM_VALUES = {
   url: 'http://x',
   pass: 'secret',
-  contentTypeId: 'ctid'
+  contentTypeId: 'x'
 };
 
 const TEMPLATE_CONTENT_TYPES = [
@@ -44,6 +44,17 @@ describe('WebhookTemplateForm', () => {
     AnalyticsMocked.track.mockClear();
   });
 
+  afterEach(cleanup);
+
+  const selectors = {
+    textField: container => getByTestId(container, 'webhook-template-field--url'),
+    passwordField: container => getByTestId(container, 'webhook-template-field--pass'),
+    contentTypeSelect: container =>
+      getByTestId(container, 'webhook-template-field--content-type-selector'),
+    createButton: container => getByTestId(container, 'webhook-template-field--create-button'),
+    cancelButton: container => getByTestId(container, 'webhook-template-field--cancel-button')
+  };
+
   const mount = () => {
     const stubs = {
       onClose: jest.fn(),
@@ -52,7 +63,7 @@ describe('WebhookTemplateForm', () => {
     };
     const template = { ...cloneDeep(TEMPLATE), mapParamsToDefinition: stubs.map };
 
-    const wrapper = Enzyme.mount(
+    const { container } = render(
       <WebhookTemplateForm
         template={template}
         onClose={stubs.onClose}
@@ -62,77 +73,63 @@ describe('WebhookTemplateForm', () => {
       />
     );
 
-    return [wrapper, stubs];
+    return [container, stubs];
   };
 
-  const findField = (wrapper, i) => wrapper.find('.webhook-template-form__field').at(i);
-
   it('renders text field', () => {
-    const [wrapper] = mount();
-    const textField = findField(wrapper, 0).find(TextField);
-    expect(textField.prop('textInputProps').type).toBe('text');
+    const [container] = mount();
+    expect(selectors.textField(container)).toHaveAttribute('type', 'text');
   });
 
   it('renders password field', () => {
-    const [wrapper] = mount();
-    const passField = findField(wrapper, 1).find(TextField);
-    expect(passField.prop('textInputProps').type).toBe('password');
+    const [container] = mount();
+    expect(selectors.passwordField(container)).toHaveAttribute('type', 'password');
   });
 
   it('renders content type selector', () => {
-    const [wrapper] = mount();
-    const ctSelect = findField(wrapper, 2).find('select');
-    const options = ctSelect.children().map(opt => opt.text());
-    expect(options).toEqual(['Select...', 'X', 'Y']);
+    const [container] = mount();
+    const options = selectors.contentTypeSelect(container).querySelectorAll('option');
+
+    const expectations = ['Select...', 'X', 'Y'];
+    options.forEach((option, index) => {
+      expect(option).toHaveTextContent(expectations[index]);
+    });
   });
 
   it('closes dialog if cancel is clicked', () => {
-    const [wrapper, stubs] = mount();
-    const cancelBtn = wrapper.find(Button).at(1);
-    cancelBtn.simulate('click');
+    const [container, stubs] = mount();
+    fireEvent.click(selectors.cancelButton(container));
     expect(stubs.onClose).toHaveBeenCalledTimes(1);
   });
 
   it('disables create button if not all values are provided', () => {
-    const [wrapper, stubs] = mount();
-    const createBtn = wrapper.find(Button).at(0);
-    expect(createBtn.prop('disabled')).toBe(true);
-
-    createBtn.simulate('click');
+    const [container, stubs] = mount();
+    const createBtn = selectors.createButton(container);
+    expect(createBtn).toBeDisabled();
+    fireEvent.click(createBtn);
     expect(stubs.onCreate).not.toHaveBeenCalled();
   });
 
-  it('updates parameter values', () => {
-    const [wrapper] = mount();
+  it('enables create button when all values are provided', async () => {
+    const [container, stubs] = mount();
 
-    const f1 = findField(wrapper, 0).find(TextField);
-    f1.prop('onChange')({ target: { value: 'http://x' } });
-    expect(wrapper.state('fields').url).toBe('http://x');
+    await fireEvent.change(selectors.textField(container), {
+      target: { value: VALID_FORM_VALUES.url }
+    });
+    await fireEvent.change(selectors.passwordField(container), {
+      target: { value: VALID_FORM_VALUES.pass }
+    });
+    await fireEvent.change(selectors.contentTypeSelect(container), {
+      target: { value: VALID_FORM_VALUES.contentTypeId }
+    });
 
-    const f2 = findField(wrapper, 1).find(TextField);
-    f2.prop('onChange')({ target: { value: 'secret' } });
-    expect(wrapper.state('fields').pass).toBe('secret');
+    const createButton = selectors.createButton(container);
 
-    const f3 = findField(wrapper, 2).find('select');
-    f3.prop('onChange')({ target: { value: 'ctid' } });
-    expect(wrapper.state('fields').contentTypeId).toBe('ctid');
-  });
+    expect(createButton).not.toBeDisabled();
 
-  it('enables create button when all values are provided', () => {
-    const [wrapper] = mount();
-    wrapper.setState({ fields: VALID_FORM_VALUES });
-    const createBtn = wrapper.find(Button).at(0);
-    expect(createBtn.prop('disabled')).toBe(false);
-  });
-
-  it('maps params to webhook and calls onCreate callback', async () => {
-    const [wrapper, stubs] = mount();
-    wrapper.setState({ fields: VALID_FORM_VALUES });
-
-    const createBtn = wrapper.find(Button).at(0);
     stubs.map.mockReset().mockReturnValue({ mapped: true });
 
-    await createBtn.prop('onClick')();
+    fireEvent.click(createButton);
 
     expect(stubs.map).toHaveBeenCalledTimes(1);
     expect(stubs.map).toHaveBeenCalledWith(

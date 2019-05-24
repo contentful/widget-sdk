@@ -1,5 +1,6 @@
 import React from 'react';
-import Enzyme from 'enzyme';
+import 'jest-dom/extend-expect';
+import { render, cleanup } from 'react-testing-library';
 import WebhookList from './WebhookList.es6';
 import * as spaceContextMocked from 'ng/spaceContext';
 
@@ -12,17 +13,20 @@ describe('WebhookList', () => {
       }
     });
   });
-  const mount = webhooks => {
-    return Enzyme.mount(
+
+  afterEach(cleanup);
+
+  const renderComponent = webhooks => {
+    return render(
       <WebhookList webhooks={webhooks} hasAwsProxy={false} openTemplateDialog={() => {}} />
     );
   };
 
   it('renders empty list of webhooks', () => {
-    const wrapper = mount([]);
-    const rows = wrapper.find('table tbody tr');
-    expect(rows).toHaveLength(1);
-    expect(rows.find('td')).toHaveText('Add a webhook, then manage it in this space.');
+    const { getByTestId } = renderComponent([]);
+    expect(getByTestId('empty-webhook-row')).toHaveTextContent(
+      'Add a webhook, then manage it in this space.'
+    );
   });
 
   it('renders non-empty list of webhooks', () => {
@@ -33,14 +37,15 @@ describe('WebhookList', () => {
       transformation: { method: 'PUT' },
       sys: { id: 'wh2' }
     };
-    const wrapper = mount([wh1, wh2]);
+    const { getAllByTestId } = renderComponent([wh1, wh2]);
 
-    const rows = wrapper.find('table tbody tr');
+    const rows = getAllByTestId('webhook-row');
     expect(rows).toHaveLength(2);
-    expect(rows.find('td').first()).toHaveText('wh1');
 
-    const urls = rows.find('code');
-    expect(urls.at(0)).toHaveText('POST http://test.com');
-    expect(urls.at(1)).toHaveText('PUT http://google.com');
+    expect(getAllByTestId('webhook-name')[0]).toHaveTextContent('wh1');
+    expect(getAllByTestId('webhook-name')[1]).toHaveTextContent('wh2');
+
+    expect(getAllByTestId('webhook-code')[0]).toHaveTextContent('POST http://test.com');
+    expect(getAllByTestId('webhook-code')[1]).toHaveTextContent('PUT http://google.com');
   });
 });

@@ -1,5 +1,6 @@
 import React from 'react';
-import Enzyme from 'enzyme';
+import 'jest-dom/extend-expect';
+import { render, cleanup } from 'react-testing-library';
 import * as spaceContextMocked from 'ng/spaceContext';
 import WebhookHealth from './WebhookHealth.es6';
 
@@ -8,15 +9,17 @@ describe('WebhookHealth', () => {
     spaceContextMocked.webhookRepo.logs.getHealth.mockReset();
   });
 
+  afterEach(cleanup);
+
   const stubAndMount = (calls = {}) => {
     const getStub = jest.fn().mockResolvedValue({ calls });
     spaceContextMocked.webhookRepo.logs.getHealth = getStub;
-    return [Enzyme.mount(<WebhookHealth webhookId="whid" />), getStub];
+    return [render(<WebhookHealth webhookId="whid" />), getStub];
   };
 
   it('starts in the loading state', () => {
-    const [wrapper] = stubAndMount();
-    expect(wrapper.find('span').text()).toBe('Loading…');
+    const [{ container }] = stubAndMount();
+    expect(container).toHaveTextContent('Loading…');
   });
 
   it('fetches health status when mounted', () => {
@@ -30,7 +33,7 @@ describe('WebhookHealth', () => {
     const ERROR = new Error('failed to fetch');
     const getStub = jest.fn().mockRejectedValue(ERROR);
     spaceContextMocked.webhookRepo.logs.getHealth = getStub;
-    const wrapper = Enzyme.mount(<WebhookHealth webhookId="whid" />);
+    const { container } = render(<WebhookHealth webhookId="whid" />);
 
     try {
       await getStub();
@@ -38,29 +41,23 @@ describe('WebhookHealth', () => {
       expect(err).toBe(ERROR);
     }
 
-    wrapper.update();
-    expect(wrapper.find('span').text()).toBe('No data collected yet');
+    expect(container).toHaveTextContent('No data collected yet');
   });
 
   it('calculates percentage when fetched', async () => {
     expect.assertions(1);
-    const [wrapper, getStub] = stubAndMount({ total: 2, healthy: 1 });
+    const [{ getByTestId }, getStub] = stubAndMount({ total: 2, healthy: 1 });
     await getStub();
-    wrapper.update();
-    expect(
-      wrapper
-        .find('span')
-        .at(1)
-        .text()
-    ).toBe('50%');
+
+    expect(getByTestId('health-percentage')).toHaveTextContent('50%');
   });
 
   const testStatus = async (calls, expected) => {
     expect.assertions(1);
-    const [wrapper, getStub] = stubAndMount(calls);
+    const [{ getByTestId }, getStub] = stubAndMount(calls);
     await getStub();
-    wrapper.update();
-    expect(wrapper.find('.webhook-call__status-indicator').prop('data-status')).toBe(expected);
+
+    expect(getByTestId('health-status-indicator')).toHaveAttribute('data-status', expected);
   };
 
   it('shows red light', testStatus.bind(null, { total: 2, healthy: 1 }, 'failure'));

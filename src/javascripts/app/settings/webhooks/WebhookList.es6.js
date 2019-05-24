@@ -58,12 +58,17 @@ export class WebhookList extends React.Component {
                       }}
                       key={wh.sys.id}>
                       {({ onClick }) => (
-                        <TableRow onClick={onClick} style={{ cursor: 'pointer' }}>
+                        <TableRow
+                          testId="webhook-row"
+                          onClick={onClick}
+                          style={{ cursor: 'pointer' }}>
                           <TableCell>
-                            <strong className="x--ellipsis">{wh.name}</strong>
+                            <strong data-test-id="webhook-name" className="x--ellipsis">
+                              {wh.name}
+                            </strong>
                           </TableCell>
                           <TableCell>
-                            <code className="x--ellipsis">
+                            <code data-test-id="webhook-code" className="x--ellipsis">
                               {get(wh, ['transformation', 'method'], 'POST')} {wh.url}
                             </code>
                           </TableCell>
@@ -79,7 +84,7 @@ export class WebhookList extends React.Component {
                   );
                 })}
               {webhooks.length < 1 && (
-                <TableRow>
+                <TableRow testId="empty-webhook-row">
                   <TableCell colSpan="4">Add a webhook, then manage it in this space.</TableCell>
                 </TableRow>
               )}

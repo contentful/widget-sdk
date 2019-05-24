@@ -120,6 +120,7 @@ export class WebhookTemplateForm extends React.Component {
                   required
                   labelText={field.title}
                   textInputProps={{
+                    testId: `webhook-template-field--${field.name}`,
                     type: field.type,
                     placeholder: field.placeholder,
                     disabled: notAvailable
@@ -134,6 +135,7 @@ export class WebhookTemplateForm extends React.Component {
                   {templateContentTypes.length > 0 && (
                     <select
                       className="cfnext-select-box"
+                      data-test-id="webhook-template-field--content-type-selector"
                       id={id}
                       value={this.state.fields[field.name] || ''}
                       disabled={notAvailable}
@@ -176,13 +178,17 @@ export class WebhookTemplateForm extends React.Component {
         )}
         <div className="webhook-template-form__actions">
           <Button
+            testId="webhook-template-field--create-button"
             onClick={this.onCreateClick}
             disabled={!this.isFormValid(this.state.fields) || notAvailable}
             loading={this.state.busy}
             buttonType="primary">
             Create webhook
           </Button>
-          <Button onClick={this.props.onClose} buttonType="muted">
+          <Button
+            onClick={this.props.onClose}
+            buttonType="muted"
+            testId="webhook-template-field--cancel-button">
             Cancel
           </Button>
         </div>

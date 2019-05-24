@@ -58,6 +58,8 @@ const createFetcherComponent = mapPropsToFetch => {
       children: PropTypes.func.isRequired
     };
 
+    _isMounted = false;
+
     state = {
       isLoading: true,
       isLoaded: false,
@@ -67,17 +69,26 @@ const createFetcherComponent = mapPropsToFetch => {
     };
 
     componentDidMount() {
+      this._isMounted = true;
       this.fetch();
+    }
+
+    componentWillUnmount() {
+      this._isMounted = false;
     }
 
     fetch = () => {
       this.setState({ isLoading: true });
       mapPropsToFetch(this.props)
         .then(data => {
-          this.setState({ isLoading: false, isLoaded: true, isError: false, data, error: null });
+          if (this._isMounted) {
+            this.setState({ isLoading: false, isLoaded: true, isError: false, data, error: null });
+          }
         })
         .catch(error => {
-          this.setState({ isLoading: false, isLoaded: false, isError: true, data: null, error });
+          if (this._isMounted) {
+            this.setState({ isLoading: false, isLoaded: false, isError: true, data: null, error });
+          }
         });
     };
 

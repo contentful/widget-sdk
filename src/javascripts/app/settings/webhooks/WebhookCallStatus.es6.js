@@ -50,7 +50,11 @@ export default class WebhookCallStatus extends React.Component {
 
     return (
       <div className="webhook-call__status">
-        <span className="webhook-call__status-indicator" data-status={status} />
+        <span
+          data-test-id="status-indicator"
+          className="webhook-call__status-indicator"
+          data-status={status}
+        />
         {code && <span>HTTP {code}</span>}
         {error && <span>{error}</span>}
         {!error && !code && <span>Unknown error</span>}

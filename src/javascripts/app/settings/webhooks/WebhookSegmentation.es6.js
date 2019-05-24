@@ -13,7 +13,12 @@ export default class WebhookSegmentation extends React.Component {
     return (
       <div className="webhook-editor__settings-option">
         <label>
-          <input type="radio" checked={checked} onChange={onChange} />
+          <input
+            data-test-id="webhook-editor-setting-option"
+            type="radio"
+            checked={checked}
+            onChange={onChange}
+          />
           {` ${caption}`}
         </label>
       </div>
