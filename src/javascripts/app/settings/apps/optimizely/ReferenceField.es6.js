@@ -1,8 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { CheckboxField } from '@contentful/forma-36-react-components';
+import { CheckboxField, Tooltip, Icon } from '@contentful/forma-36-react-components';
 import constants from './constants.es6';
+import { css } from 'emotion';
+
+const styles = {
+  container: css({
+    position: 'relative'
+  }),
+  tooltip: css({
+    'z-index': '99999'
+  }),
+  tooltipContainer: css({
+    display: 'inline',
+    position: 'absolute',
+    top: '0.15rem'
+  })
+};
 
 ReferenceField.propTypes = {
   id: PropTypes.string.isRequired,
@@ -16,15 +31,25 @@ export default function ReferenceField({ id, checked, contentType, onSelect }) {
   const disabled = !hasFieldLinkValidations(field);
 
   return (
-    <div>
+    <div className={styles.container}>
       <CheckboxField
         id={`reference-field-${id}`}
-        checked={checked || !hasFieldLinkValidations(field)}
+        checked={checked || disabled}
         disabled={disabled}
         onChange={e => onSelect({ id, checked: e.target.checked })}
         labelText={field.name}
         labelIsLight={true}
       />
+      {disabled ? (
+        <div className={styles.tooltipContainer}>
+          <Tooltip
+            className={styles.tooltip}
+            content="This field has no validations. All content types are implicitly accepted."
+            place="right">
+            <Icon color="muted" icon="HelpCircle" />
+          </Tooltip>
+        </div>
+      ) : null}
     </div>
   );
 }
