@@ -9,16 +9,25 @@ Event for the editor load sequence.
 
 ## Schema
 
-Snowplow schema: [slide_in_editor/1.0.0.json](https://github.com/contentful/com.contentful-schema-registry/blob/master/schemas/com.contentful/editor_load/jsonschema/1-0-0)
+Snowplow schema: [editor_load/1.1.0.json](https://github.com/contentful/com.contentful-schema-registry/blob/master/schemas/com.contentful/editor_load/jsonschema/1-1-0)
 
 ## Use-cases
 
-We track all of the following cases using the "`load_editor`" event:
+We track all of the following cases using the "`editor_load`" event:
 
 * Initial load
   * `action`: `"init"`
   * `slide_uuid`
   * `total_slide_count`
+* Editor main entry is loaded
+  * `action`: `"entity_loaded"`
+  * `slide_uuid`
+  * `slide_level` (zero-indexed)
+  * `link_count`
+  * `rich_text_editor_instance_count`
+  * `link_field_editor_instance_count`: refers to reference and media fields
+  * `total_slide_count`
+  * `load_ms`: number of ms since initial load
 * ShareJS connects
   * `action`: `"sharejs_connected"`
   * `slide_uuid`
@@ -47,3 +56,5 @@ We track all of the following cases using the "`load_editor`" event:
   * `link_field_editor_instance_count`: refers to reference and media fields
   * `total_slide_count`
   * `load_ms`: number of ms since initial load
+
+*Note:* Either `sharejs_connected` or `links_rendered` can finish first, depending on ShareJS and CMA speed and whether there are any links to be rendered in the first place.

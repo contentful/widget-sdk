@@ -66,7 +66,13 @@ export const validEvents = {
     'open_create',
     'delete'
   ],
-  editor_load: ['init', 'sharejs_connected', 'links_rendered', 'fully_interactive'],
+  editor_load: [
+    'init',
+    'entity_loaded',
+    'sharejs_connected',
+    'links_rendered',
+    'fully_interactive'
+  ],
   translation_sidebar: [
     'toggle_widget_mode',
     'deselect_active_locale',

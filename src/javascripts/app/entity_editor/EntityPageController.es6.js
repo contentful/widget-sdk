@@ -1,6 +1,6 @@
 import { track } from 'analytics/Analytics.es6';
 import * as Telemetry from 'i13n/Telemetry.es6';
-import { cloneDeep, find, mapValues } from 'lodash';
+import { noop, cloneDeep, find, mapValues } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { deepFreeze } from 'utils/Freeze.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -205,16 +205,15 @@ export default ($scope, $state) => {
         } else {
           let editorData;
           const loadStartMs = Date.now();
-          const trackLoadEvent = createLoadEventTracker(
-            loadStartMs,
-            () => $scope.slideStates,
-            () => editorData
-          );
-          if (slide.type === 'Entry') {
-            trackLoadEvent('init');
-          }
+          const trackLoadEvent =
+            slide.type === 'Entry'
+              ? createLoadEventTracker(loadStartMs, () => $scope.slideStates, () => editorData)
+              : noop;
+          trackLoadEvent('init');
+
           entityLoads[loaderKey] = loadEntity(spaceContext, entityId).then(data => {
             editorData = data;
+            trackLoadEvent('entity_loaded');
             recordEntityEditorLoadTime(entityType, loadStartMs);
             // Only add if data is still required once loaded:
             if ($scope.entityLoads[loaderKey]) {

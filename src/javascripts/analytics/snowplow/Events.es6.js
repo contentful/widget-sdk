@@ -108,6 +108,7 @@ registerTranslationSidebarEvent('translation_sidebar:update_active_locales');
 registerTranslationSidebarEvent('translation_sidebar:change_focused_locale');
 
 registerEditorLoadEvent('editor_load:init');
+registerEditorLoadEvent('editor_load:entity_loaded');
 registerEditorLoadEvent('editor_load:sharejs_connected');
 registerEditorLoadEvent('editor_load:links_rendered');
 registerEditorLoadEvent('editor_load:fully_interactive');
