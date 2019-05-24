@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { track } from 'analytics/Analytics.es6';
 import * as logger from 'services/logger.es6';
 import { getReactJoyride } from './utils.es6';
-import styles from './styles.es6';
 import WalkthroughComponent from './WalkthroughComponent.es6';
 import { Button, IconButton, Subheading, Spinner } from '@contentful/forma-36-react-components';
 import { fetchUserState, updateUserState } from 'utils/StatePersistenceApi.es6';
 import { getCurrentStateName } from 'states/Navigator.es6';
+import styles from './styles.es6';
 
 const walkthroughKey = 'author_editor_space_home_walkthrough';
 const trackingGroupId = 'author_editor_continuous_onboarding';

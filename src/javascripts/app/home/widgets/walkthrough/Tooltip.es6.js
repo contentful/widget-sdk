@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { snakeCase } from 'lodash';
-import styles from './styles.es6';
 import { track } from 'analytics/Analytics.es6';
 import { Button, IconButton, Subheading } from '@contentful/forma-36-react-components';
 import { getCurrentStateName } from 'states/Navigator.es6';
+import styles from './styles.es6';
 
 const trackingGroupId = 'author_editor_continuous_onboarding';
 

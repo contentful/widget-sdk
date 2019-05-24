@@ -21,8 +21,6 @@ export default {
     margin: 0
   }),
   tooltipIllustration: css({
-    width: '242px',
-    height: '220px',
     margin: '22px 32px 0px 32px',
     backgroundSize: 'cover'
   }),
