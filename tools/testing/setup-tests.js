@@ -21,6 +21,11 @@ console.error = (warning, ...args) => {
   if (/(Invalid prop|Failed prop type)/gi.test(warning)) {
     throw new Error(warning);
   }
+  // todo: remove once we upgrade to react-dom@16.9.0
+  // https://github.com/testing-library/react-testing-library/issues/281
+  if (/Warning.*not wrapped in act/.test(warning)) {
+    return;
+  }
 
   error.apply(console, [warning, ...args]);
 };

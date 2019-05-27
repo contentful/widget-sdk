@@ -28,7 +28,7 @@ import { DocsLink, LinkOpen } from 'ui/Content.es6';
 
 import * as Config from 'Config.es6';
 import * as ResourceManager from './Resource.es6';
-import openCreateDialog from './CreateDialog.es6';
+import { openGenerateTokenDialog } from './GenerateCMATokenDialog.es6';
 import { track } from 'analytics/Analytics.es6';
 
 import Paginator from 'ui/Components/Paginator.es6';
@@ -117,7 +117,7 @@ export function initController($scope, auth) {
       return state;
     },
     [OpenCreateDialog]: state => {
-      openCreateDialog(tokenResourceManager, actions.Reload);
+      openGenerateTokenDialog(tokenResourceManager.create, actions.Reload);
       return state;
     },
     [ReceiveResponse]: (state, result) =>
