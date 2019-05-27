@@ -13,10 +13,6 @@ export function disable() {
   enabled = false;
 }
 
-export function enable() {
-  enabled = true;
-}
-
 export function open(initialContent) {
   if (!enabled) {
     return Promise.resolve();

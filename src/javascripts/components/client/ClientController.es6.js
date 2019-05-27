@@ -1,8 +1,7 @@
 import { registerController } from 'NgRegistry.es6';
 import { onValueScope } from 'utils/kefir.es6';
-import { get, pick, isObject } from 'lodash';
+import { pick, isObject } from 'lodash';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed.es6';
-import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import * as logger from 'services/logger.es6';
 import * as Intercom from 'services/intercom.es6';
 import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
@@ -35,7 +34,6 @@ export default function register() {
       { default: store },
       { getCurrentVariation }
     ) {
-      let isIntercomDisabledBecauseOfAnalytics;
       const refreshNavState = NavState.makeStateRefresher($state, spaceContext);
 
       $rootScope.$on('$locationChangeSuccess', function() {
@@ -80,8 +78,6 @@ export default function register() {
         }),
         spaceAndTokenWatchHandler
       );
-
-      $scope.$watch('spaceContext.space.data.organization', handleIntercom);
 
       onValueScope($scope, TokenStore.user$, handleUser);
 
@@ -148,32 +144,11 @@ export default function register() {
         if (isAnalyticsAllowed(user)) {
           logger.enable(user);
           Analytics.enable(user);
-          isIntercomDisabledBecauseOfAnalytics = false;
         } else {
           logger.disable();
           Analytics.disable();
           // Intercom is enabled by default, but because it is loaded by Segment,
           // it will only be available when Analytics/Segment is.
-          Intercom.disable();
-          isIntercomDisabledBecauseOfAnalytics = true;
-        }
-      }
-
-      async function handleIntercom(organization, prevOrganization) {
-        if (
-          isIntercomDisabledBecauseOfAnalytics ||
-          get(organization, 'sys.id') === get(prevOrganization, 'sys.id')
-        ) {
-          return; // No change or suboptimal analytics dependency handled in handleUser()
-        }
-        const isEnabled = await getOrgFeature(
-          organization.sys.id,
-          'talk_to_us_customer_support_chat',
-          true
-        );
-        if (isEnabled) {
-          Intercom.enable();
-        } else {
           Intercom.disable();
         }
       }
