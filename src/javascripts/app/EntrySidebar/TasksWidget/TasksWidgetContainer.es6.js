@@ -45,13 +45,93 @@ export default class ScheduleWidgetContainer extends Component {
     this.setState({ tasksViewData });
   };
 
+  handleCreateDraft() {
+    const user = {
+      firstName: 'Mike',
+      lastName: 'Mitchell',
+      avatarUrl:
+        'https://www.gravatar.com/avatar/02c899bec697256cc19c993945ce9b1e?s=50&d=https%3A%2F%2Fstatic.flinkly.com%2Fgatekeeper%2Fusers%2Fdefault-a4327b54b8c7431ea8ddd9879449e35f051f43bd767d83c5ff351aed9db5986e.png',
+      sys: {
+        createdAt: '2018-11-02T10:07:46Z',
+        updatedAt: '2019-05-08T08:58:33Z'
+      }
+    };
+
+    const newTask = {
+      isDraft: true,
+      body: '',
+      key: `${Date.now()}`,
+      assignedTo: user, // TODO: Replace with assigned to information
+      createdBy: user,
+      createdAt: `${new Date().toISOString()}`,
+      resolved: false // TODO: Replace with resolved flag,
+    };
+
+    this.setState(prevState => ({
+      ...prevState,
+      tasksViewData: {
+        ...prevState.tasksViewData,
+        tasks: [...prevState.tasksViewData.tasks, newTask]
+      }
+    }));
+  }
+
+  handleCancelDraft() {
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        tasksViewData: {
+          ...prevState.tasksViewData,
+          tasks: prevState.tasksViewData.tasks.slice(0, -1)
+        }
+      };
+    });
+  }
+
+  handleCreateTask(taskKey, taskBody) {
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        tasksViewData: {
+          ...prevState.tasksViewData,
+          tasks: prevState.tasksViewData.tasks.map(task => {
+            if (task.key === taskKey) {
+              console.log({ task });
+
+              const newTask = {
+                ...task,
+                isDraft: false,
+                body: taskBody
+              };
+
+              console.log({ newTask });
+
+              return newTask;
+            } else {
+              return { ...task };
+            }
+          })
+        }
+      };
+    });
+  }
+
   render() {
     const tasksViewData = this.state.tasksViewData;
+
+    console.log({ tasksViewData });
+
     return (
       <ErrorHandler>
         <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.TASKS}>
           <EntrySidebarWidget testId="sidebar-tasks-widget" title="Tasks">
-            <TasksWidget viewData={tasksViewData} />
+            <TasksWidget
+              viewData={tasksViewData}
+              onCreateDraft={() => this.handleCreateDraft()}
+              onCancelDraft={() => this.handleCancelDraft()}
+              onCreateTask={(taskKey, taskBody) => this.handleCreateTask(taskKey, taskBody)}
+              onUpdateTask={(taskKey, taskBody) => this.handleCreateTask(taskKey, taskBody)}
+            />
           </EntrySidebarWidget>
         </BooleanFeatureFlag>
       </ErrorHandler>

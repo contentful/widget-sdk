@@ -141,13 +141,19 @@ export default class Task extends React.PureComponent {
     assignedTo: PropTypes.object,
     body: PropTypes.string,
     createdAt: PropTypes.string,
-    resolved: PropTypes.bool
+    resolved: PropTypes.bool,
+    isDraft: PropTypes.bool,
+    taskKey: PropTypes.string,
+    onCancelDraft: PropTypes.func,
+    onCreateTask: PropTypes.func,
+    onUpdateTask: PropTypes.func
   };
 
   state = {
     isExpanded: false,
     hasVisibleActions: false,
-    hasEditForm: false
+    hasEditForm: false,
+    body: ''
   };
 
   handleTaskKeyDown = event => {
@@ -169,6 +175,15 @@ export default class Task extends React.PureComponent {
     this.setState({ hasEditForm: true });
   };
 
+  handleSubmit = (isDraft, taskKey) => {
+    if (isDraft) {
+      this.props.onCreateTask(taskKey, this.state.body);
+    } else {
+      this.props.onUpdateTask(taskKey, this.state.body);
+      this.setState({ hasEditForm: false, isDraft: false });
+    }
+  };
+
   handleDeleteClick = async event => {
     event.stopPropagation();
     return ModalLauncher.open(({ isShown, onClose }) => (
@@ -183,9 +198,14 @@ export default class Task extends React.PureComponent {
     ));
   };
 
-  handleCancelEdit = event => {
+  handleCancelEdit = (event, isDraft) => {
     event.stopPropagation();
-    this.setState({ hasEditForm: false });
+
+    if (isDraft) {
+      this.props.onCancelDraft();
+    } else {
+      this.setState({ hasEditForm: false });
+    }
   };
 
   renderFullName = userObject => {
@@ -249,17 +269,29 @@ export default class Task extends React.PureComponent {
     );
   };
 
+  handleBodyUpdate = event => {
+    this.setState({
+      body: event.target.value
+    });
+  };
+
   renderEditForm = () => {
-    const { body, assignedTo } = this.props;
+    const { taskKey, body, assignedTo, isDraft } = this.props;
+
+    const bodyLabel = isDraft ? 'Create task' : 'Edit task';
+    const ctaLabel = isDraft ? 'Create task' : 'Save changes';
+    const ctaContext = isDraft ? 'primary' : 'positive';
 
     return (
       <Form spacing="condensed" onClick={e => e.stopPropagation()} className={styles.editForm}>
         <TextField
           name="body"
           id="body"
-          labelText="Edit task"
+          labelText={bodyLabel}
           textarea
-          value={body}
+          defaultValue={body}
+          value={this.state.body}
+          onBlur={event => this.handleBodyUpdate(event)}
           textInputProps={{ rows: 4, autoFocus: true }}
         />
         <SelectField name="assignee" id="assignee" labelText="Assign to">
@@ -268,10 +300,17 @@ export default class Task extends React.PureComponent {
           <Option value="3">User 3</Option>
         </SelectField>
         <div className={styles.editActions}>
-          <Button buttonType="positive" className={styles.editSubmit} size="small">
-            Save changes
+          <Button
+            buttonType={ctaContext}
+            className={styles.editSubmit}
+            onClick={() => this.handleSubmit(isDraft, taskKey)}
+            size="small">
+            {ctaLabel}
           </Button>
-          <Button buttonType="muted" onClick={this.handleCancelEdit} size="small">
+          <Button
+            buttonType="muted"
+            onClick={event => this.handleCancelEdit(event, isDraft)}
+            size="small">
             Cancel
           </Button>
         </div>
@@ -282,13 +321,18 @@ export default class Task extends React.PureComponent {
   render() {
     return (
       <div
-        className={cx(styles.task, this.state.hasEditForm && styles.taskHasEditForm)}
+        className={cx(
+          styles.task,
+          (this.state.hasEditForm || this.props.isDraft) && styles.taskHasEditForm
+        )}
         onMouseEnter={this.handleTaskHover}
         onMouseLeave={this.handleTaskHover}
         onKeyDown={this.handleTaskKeyDown}
         tabIndex={0}>
         <TabFocusTrap className={styles.tabFocusTrap}>
-          {this.state.hasEditForm ? this.renderEditForm() : this.renderDetails()}
+          {this.state.hasEditForm || this.props.isDraft
+            ? this.renderEditForm()
+            : this.renderDetails()}
         </TabFocusTrap>
       </div>
     );
