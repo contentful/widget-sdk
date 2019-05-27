@@ -27,7 +27,10 @@ export function SidebarWidgetItem({
   if (isProblem) {
     return (
       <Note noteType="warning" className="sidebar-configuration__problem-item">
-        <code>{name || id}</code> is saved in configuration, but not installed in this environment.
+        <div className="sidebar-configuration__problem-item-text">
+          <code>{name || id}</code> is saved in configuration, but not installed in this
+          environment.
+        </div>
         {removeBtn}
       </Note>
     );
@@ -47,7 +50,7 @@ export function SidebarWidgetItem({
 
 SidebarWidgetItem.propTypes = {
   id: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
+  name: PropTypes.string,
   isDraggable: PropTypes.bool.isRequired,
   isRemovable: PropTypes.bool.isRequired,
   isProblem: PropTypes.bool.isRequired,

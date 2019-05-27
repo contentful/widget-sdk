@@ -90,7 +90,7 @@ export const reducer = createImmerReducer({
     }
     const added = state.availableItems[index];
     state.availableItems.splice(index, 1);
-    state.items = [...state.items, added];
+    state.items = [added, ...state.items];
   },
   [CHANGE_ITEM_POSITION]: (state, action) => {
     const [removed] = state.items.splice(action.payload.sourceIndex, 1);

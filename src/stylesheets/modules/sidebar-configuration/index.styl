@@ -38,6 +38,9 @@
     position: relative
     margin-bottom: $rhythm(1)
 
+  .sidebar-configuration__problem-item-text
+    padding-right: $rhythm(1)
+
   .draggable-item
     margin-bottom: $rhythm(1)
 
@@ -69,6 +72,10 @@
     line-height: 2
     border-bottom: 1px solid $colors.element-dark
     letter-spacing: 1px
+    text-overflow: ellipsis
+    white-space: nowrap
+    overflow: hidden
+    padding-right: $rhythm(1)
     margin-bottom: $rhythm(1)
 
 
@@ -96,6 +103,10 @@
 
   .sidebar-configuration__available-widget-name
     font-weight: bold
+    text-overflow: ellipsis
+    white-space: nowrap
+    overflow: hidden
+    max-width: 280px
 
   .sidebar-configuration__available-widget-actions
     display: flex

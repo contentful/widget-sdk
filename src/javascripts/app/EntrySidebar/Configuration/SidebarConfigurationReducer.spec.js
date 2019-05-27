@@ -72,7 +72,12 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
 
   it('should add item from available to items', () => {
     const initialState = {
-      items: [],
+      items: [
+        {
+          widgetId: '3',
+          widgetNamespace: 'second'
+        }
+      ],
       availableItems: [
         { widgetId: '1', widgetNamespace: 'first' },
         { widgetId: '2', widgetNamespace: 'second' }
@@ -87,7 +92,10 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
     );
 
     const expectedState = {
-      items: [{ widgetId: '1', widgetNamespace: 'first' }],
+      items: [
+        { widgetId: '1', widgetNamespace: 'first' },
+        { widgetId: '3', widgetNamespace: 'second' }
+      ],
       availableItems: [{ widgetId: '2', widgetNamespace: 'second' }]
     };
 
