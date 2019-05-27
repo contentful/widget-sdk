@@ -82,7 +82,9 @@ function createEntryStatusView(status) {
 }
 
 function contentTypeViews(contentTypes) {
-  return map(contentTypes, createContentTypeView);
+  return map(contentTypes, ct => {
+    return createContentTypeView(ct.sys.id, ct.name);
+  });
 }
 
 export function createContentTypeView(ctId, title) {
