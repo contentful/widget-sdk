@@ -9,6 +9,7 @@ import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const ModalDialog = getModule('modalDialog');
+const $state = getModule('$state');
 
 /**
  * This module exports a function to open the confirmation dialog to
@@ -29,10 +30,22 @@ const reduce = makeReducer({
   [TriggerDelete](state, _, { runDelete, environment, closeDialog, dispatch }) {
     runDelete(environment.id).then(
       () => {
-        Notification.success(
-          `The environment “${escape(environment.id)}” has been successfully deleted.`
-        );
         closeDialog(true);
+        const activeEnvId = $state.params.environmentId;
+        if (environment.id === activeEnvId) {
+          $state
+            .go('spaces.detail.settings.environments')
+            .then(() =>
+              Notification.success(
+                'The current environment has been successfully deleted, master will be loaded.'
+              )
+            )
+            .then(() => setTimeout(() => window.location.reload(), 2000));
+        } else {
+          Notification.success(
+            `The environment “${escape(environment.id)}” has been successfully deleted.`
+          );
+        }
       },
       () => {
         Notification.error(
@@ -143,6 +156,7 @@ function SpaceEnvironmentsDeleteDialog({
     </div>
   );
 }
+
 SpaceEnvironmentsDeleteDialog.propTypes = {
   inputValue: PropTypes.string,
   inProgress: PropTypes.bool,
