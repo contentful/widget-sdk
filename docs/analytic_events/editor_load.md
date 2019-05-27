@@ -30,6 +30,7 @@ We track all of the following cases using the "`editor_load`" event:
   * `load_ms`: number of ms since initial load
 * ShareJS connects
   * `action`: `"sharejs_connected"`
+  * `slides_controller_uuid`
   * `slide_uuid`
   * `slide_level` (zero-indexed)
   * `link_count`
@@ -39,6 +40,7 @@ We track all of the following cases using the "`editor_load`" event:
   * `load_ms`: number of ms since initial load
 * All initially fetched external links have rendered
   * `action`: `"links_rendered"`
+  * `slides_controller_uuid`
   * `slide_uuid`
   * `slide_level` (zero-indexed)
   * `link_count`
@@ -49,6 +51,7 @@ We track all of the following cases using the "`editor_load`" event:
 * Page is fully interactive (shareJS is connected, all links are rendered and
   all field editors are present on the page)
   * `action`: `"fully_interactive"`
+  * `slides_controller_uuid`
   * `slide_uuid`
   * `slide_level` (zero-indexed)
   * `link_count`
@@ -58,3 +61,8 @@ We track all of the following cases using the "`editor_load`" event:
   * `load_ms`: number of ms since initial load
 
 *Note:* Either `sharejs_connected` or `links_rendered` can finish first, depending on ShareJS and CMA speed and whether there are any links to be rendered in the first place.
+
+## Change-log
+### Version `1-1-0`
+ - Introduced action `"entry_loaded"`
+ - Added `slides_controller_uuid` to identify which slides were visible in the same browser/tab around the same time.

@@ -12,6 +12,7 @@ import {
   getSlideAsString,
   goToPreviousSlideOrExit
 } from 'navigation/SlideInNavigator/index.es6';
+import * as random from 'utils/Random.es6';
 
 const entityLoaders = {
   Entry: loadEntry,
@@ -41,9 +42,11 @@ export default ($scope, $state) => {
   $scope.editorsData = {};
   $scope.context.ready = true;
 
-  setEntities();
-
   const isTopLayer = ($scope.isTopLayer = index => index + 1 === $scope.slideStates.length);
+  const getSlideStates = () => $scope.slideStates;
+  const slidesControllerUuid = random.id();
+
+  setEntities();
 
   $scope.getSlideAsString = getSlideAsString;
 
@@ -204,10 +207,16 @@ export default ($scope, $state) => {
           entityLoads[loaderKey] = ongoingLoad;
         } else {
           let editorData;
+          const getEditorData = () => editorData;
           const loadStartMs = Date.now();
           const trackLoadEvent =
             slide.type === 'Entry'
-              ? createLoadEventTracker(loadStartMs, () => $scope.slideStates, () => editorData)
+              ? createLoadEventTracker({
+                  loadStartMs,
+                  getSlideStates,
+                  getEditorData,
+                  slidesControllerUuid
+                })
               : noop;
           trackLoadEvent('init');
 

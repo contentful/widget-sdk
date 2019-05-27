@@ -9,14 +9,20 @@ const TheLocaleStore = getModule('TheLocaleStore');
 
 const LOAD_EVENT_CATEGORY = 'editor_load';
 
-export function createLoadEventTracker(loadStartMs, getSlideStates, getEditorData) {
+export function createLoadEventTracker({
+  loadStartMs,
+  getSlideStates,
+  getEditorData,
+  slidesControllerUuid
+}) {
   const slideUuid = random.id();
 
   return function trackEditorLoadEvent(eventName) {
     const slideStates = getSlideStates();
     const totalSlideCount = keys(slideStates).length;
+    const baseData = { slidesControllerUuid, slideUuid, totalSlideCount };
     if (eventName === 'init') {
-      return track(`${LOAD_EVENT_CATEGORY}:init`, { slideUuid, totalSlideCount });
+      return track(`${LOAD_EVENT_CATEGORY}:init`, baseData);
     }
     const editorData = getEditorData();
     const { fields: fieldTypes } = editorData.contentType.data;
@@ -48,12 +54,11 @@ export function createLoadEventTracker(loadStartMs, getSlideStates, getEditorDat
     const linkCount =
       singleReferenceFieldLinkCount + multiReferenceFieldLinkCount + richTextFieldLinkCount;
     track(`${LOAD_EVENT_CATEGORY}:${eventName}`, {
-      slideUuid,
+      ...baseData,
       slideLevel: findIndex(slideStates, state => state.slide.id === entityId),
       linkCount,
       richTextEditorInstanceCount,
       linkFieldEditorInstanceCount,
-      totalSlideCount,
       loadMs: new Date().getTime() - loadStartMs
     });
   };
