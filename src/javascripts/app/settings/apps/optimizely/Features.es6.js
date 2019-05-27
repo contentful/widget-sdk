@@ -18,7 +18,7 @@ export default class Features extends Component {
         <Heading>Features</Heading>
         <Paragraph className="f36-margin-top--m">
           Optimizely integration enables:
-          <List className="f36-margin-top--m">
+          <List className="f36-margin-top--m f36-margin-bottom--m">
             <ListItem className={styles.featuresListItem}>
               Loading experiments from Optimizely
             </ListItem>
@@ -27,6 +27,11 @@ export default class Features extends Component {
               Seeing all experiments connected with Contentful (drafts, running, ended)
             </ListItem>
           </List>
+          Check out{' '}
+          <a href="https://www.contentful.com/developers/docs/extensibility/optimizely">
+            documentation
+          </a>{' '}
+          for more information.
         </Paragraph>
       </div>
     );
