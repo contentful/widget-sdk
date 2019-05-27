@@ -41,7 +41,6 @@ angular
       ngRequire('access_control/RoleListDirective.es6').default();
       ngRequire('access_control/UserInvitationNoteDirectives.es6').default();
       ngRequire('access_control/UserSpaceInvitationController.es6').default();
-      ngRequire('account/handleGatekeeperMessage.es6').default();
       ngRequire('account/cfNewOrganizationMembership.es6').default();
       ngRequire('analytics/analyticsConsole.es6').default();
       ngRequire('analytics/segment.es6').default();

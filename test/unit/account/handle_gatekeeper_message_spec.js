@@ -6,7 +6,7 @@ describe('Gatekeeper Message Handler', () => {
     module('contentful/test', $provide => {
       $provide.value('$window', this.window);
     });
-    this.handle = this.$inject('handleGatekeeperMessage');
+    this.handle = this.$inject('account/handleGatekeeperMessage.es6').default;
   });
 
   describe('actions on message', () => {

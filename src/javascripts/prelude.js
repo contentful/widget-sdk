@@ -98,6 +98,24 @@ angular
         }
       });
     }
+  ])
+  // Listen to postMessage events and check if they are coming from
+  // GK iframes. If so, handle messages accordingly
+  .run([
+    '$injector',
+    $injector => {
+      const handleGKMessage = $injector.get('account/handleGatekeeperMessage.es6').default;
+      const Config = $injector.get('Config.es6');
+      const {
+        config: { authUrl }
+      } = Config.readInjectedConfig();
+      const cb = evt => {
+        if (evt.origin.includes(authUrl)) {
+          handleGKMessage(evt.data);
+        }
+      };
+      window.addEventListener('message', cb);
+    }
   ]);
 
 angular
