@@ -186,6 +186,9 @@ export default class OptimizelyApp extends Component {
 
       await variationContainer.removeFromContentTypes(this.findRemovedContentTypes());
 
+      const { extensionId } = this.lastSavedConfig || this.props.app.config;
+      await variationContainer.updateUiExtension(extensionId, this.state.selectedProject);
+
       await this.props.client.save(this.props.app.id, config);
       this.setState({ busyWith: null, config });
       Notification.success('Optimizely app updated successfully.');
