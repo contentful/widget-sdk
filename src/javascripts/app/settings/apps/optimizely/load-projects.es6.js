@@ -1,5 +1,9 @@
 import constants from './constants.es6';
 
+function isActiveFullStackProject(project) {
+  return project.status === 'active' && project.platform === 'custom';
+}
+
 export function loadProjectsFromOptimizely(pat) {
   return new Promise(async resolve => {
     const result = await fetch('https://api.optimizely.com/v2/projects', {
@@ -12,7 +16,12 @@ export function loadProjectsFromOptimizely(pat) {
       return resolve([null, new Error('Failed to pull projects from Optimizely')]);
     }
 
-    resolve([await result.json()]);
+    try {
+      const projects = await result.json();
+      resolve([projects.filter(isActiveFullStackProject)]);
+    } catch (err) {
+      resolve([null, err]);
+    }
   });
 }
 
@@ -35,14 +44,11 @@ export function loadProjectsViaProxy(microBackendsClient) {
       return resolve([null, new Error('Failed to pull projects from Optimizely')]);
     }
 
-    let proxyResponseBody;
-
     try {
-      proxyResponseBody = JSON.parse(proxyResponse.body);
+      const projects = JSON.parse(proxyResponse.body);
+      resolve([projects.filter(isActiveFullStackProject)]);
     } catch (err) {
       return resolve([null, err]);
     }
-
-    resolve([proxyResponseBody]);
   });
 }

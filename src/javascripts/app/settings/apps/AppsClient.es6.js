@@ -12,23 +12,19 @@ const OPTIMIZELY_APP_FEATURE = 'optimizely_app';
 const KNOWN_APPS = {
   netlify: {
     title: 'Netlify',
-    featureId: BASIC_APPS_FEATURE,
-    priceLine: 'Free!'
+    featureId: BASIC_APPS_FEATURE
   },
   algolia: {
     title: 'Algolia',
-    featureId: BASIC_APPS_FEATURE,
-    priceLine: 'Free!'
+    featureId: BASIC_APPS_FEATURE
   },
   [IMAGE_MANAGEMENT_APP_ID]: {
     title: IMAGE_MANAGEMENT_APP_NAME,
-    featureId: BASIC_APPS_FEATURE,
-    priceLine: 'Free!'
+    featureId: BASIC_APPS_FEATURE
   },
   basicApprovalWorkflow: {
     title: 'Basic approval workflow',
-    featureId: BASIC_APPS_FEATURE,
-    priceLine: 'Free!'
+    featureId: BASIC_APPS_FEATURE
   },
   optimizely: {
     title: 'Optimizely',

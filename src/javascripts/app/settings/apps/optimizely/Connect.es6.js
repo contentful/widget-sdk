@@ -53,35 +53,35 @@ export default function Connect({
       <Heading>Connect Optimizely</Heading>
       <Paragraph className="f36-margin-top--m">
         Connect your Optimizely account to get started.
-        <section className={styles.form}>
-          <div>
-            <TextField
-              id="pat"
-              name="pat"
-              labelText="Personal Access Token"
-              textInputProps={{ type: 'password', disabled: isConnected || isConnecting }}
-              value={pat}
-              onChange={onPATChange}
-              required
-            />
-            <HelpText className={styles.deepLink}>
-              Get a personal access token in the{' '}
-              <TextLink href="https://app.optimizely.com/v2/profile/api">
-                Optimizely web app
-              </TextLink>
-              .
-            </HelpText>
-          </div>
-          <div className={styles.button}>
-            <ConnectButton
-              isConnecting={isConnecting}
-              isConnected={isConnected}
-              onClickConnect={onClickConnect}
-              onClickDisconnect={onClickDisconnect}
-            />
-          </div>
-        </section>
       </Paragraph>
+      <section className={styles.form}>
+        <div>
+          <TextField
+            id="pat"
+            name="pat"
+            labelText="Personal Access Token"
+            textInputProps={{ type: 'password', disabled: isConnected || isConnecting }}
+            value={pat}
+            onChange={onPATChange}
+            required
+          />
+          <HelpText className={styles.deepLink}>
+            Get a personal access token in the{' '}
+            <TextLink href="https://app.optimizely.com/v2/profile/api" target="_blank">
+              Optimizely web app
+            </TextLink>
+            .
+          </HelpText>
+        </div>
+        <div className={styles.button}>
+          <ConnectButton
+            isConnecting={isConnecting}
+            isConnected={isConnected}
+            onClickConnect={onClickConnect}
+            onClickDisconnect={onClickDisconnect}
+          />
+        </div>
+      </section>
     </div>
   );
 }

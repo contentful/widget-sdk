@@ -21,14 +21,14 @@ export default function Projects({ allProjects, selectedProject, onProjectChange
         id="project"
         labelText="Project"
         required={true}
-        value={selectedProject || ''}
+        value={selectedProject ? selectedProject.toString() : ''}
         onChange={onProjectChange}
-        selectProps={{ value: selectedProject, isDisabled: !allProjects }}
+        selectProps={{ isDisabled: !allProjects }}
         width="large">
         <Option value="">Select Optimizely Project</Option>
         {allProjects &&
           allProjects.map(p => (
-            <Option key={p.id} value={p.id}>
+            <Option key={p.id} value={p.id.toString()}>
               {p.name}
             </Option>
           ))}
