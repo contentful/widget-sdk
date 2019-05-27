@@ -9,7 +9,8 @@ import {
   Tabs,
   Tab,
   TabPanel,
-  Heading
+  Heading,
+  Paragraph
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -28,21 +29,24 @@ import TeamSpaceMemberships from './TeamSpaceMemberships/TeamSpaceMemberships.es
 import TeamDialog from './TeamDialog.es6';
 import ROUTES from 'redux/routes.es6';
 import ellipsisStyle from './ellipsisStyle.es6';
+import TeamsEmptyStateImage from 'svg/add-user-illustration.es6';
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 
-const AddButton = ({ label, onClick, disabled }) => (
+const AddButton = ({ label, onClick, disabled, className }) => (
   <Button
     testId="add-button"
-    size="small"
     buttonType="primary"
     onClick={onClick}
-    disabled={disabled}>
+    disabled={disabled}
+    className={className}>
     {label}
   </Button>
 );
 AddButton.propTypes = {
   onClick: PropTypes.func,
   label: PropTypes.string.isRequired,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  className: PropTypes.string
 };
 AddButton.defaultProps = {
   onClick: () => {},
@@ -102,7 +106,8 @@ const styles = {
     }
   }),
   name: css(ellipsisStyle),
-  description: css(ellipsisStyle)
+  description: css(ellipsisStyle),
+  svgContainer: css({ width: '15vw', minWidth: '280px', marginLeft: '-1vw' })
 };
 
 class TeamDetails extends React.Component {
@@ -123,9 +128,20 @@ class TeamDetails extends React.Component {
       component: TeamMemberships,
       actionLabel: 'Add a team member',
       emptyStateMessage: () => ({
-        title: `Team ${this.props.team.name} has no members 🐚`,
-        text: 'They’re not gonna magically appear.',
-        readOnly: `You don't have permission to add new members`
+        title: 'Better together',
+        text: (
+          <>
+            Add the first team member to{' '}
+            <span className="f36-font-weight--demi-bold">{this.props.team.name}</span>
+          </>
+        ),
+        readOnly: (
+          <>
+            To add a team member to{' '}
+            <span className="f36-font-weight--demi-bold">{this.props.team.name}</span>, contact your
+            admin
+          </>
+        )
       })
     },
     spaceMemberships: {
@@ -133,9 +149,14 @@ class TeamDetails extends React.Component {
       component: TeamSpaceMemberships,
       actionLabel: 'Add to space',
       emptyStateMessage: () => ({
-        title: `Team ${this.props.team.name} is not in any space yet 🐚`,
-        text: 'Give every team member access to spaces by creating team space memberships',
-        readOnly: `You don't have permission to add the team to a space`
+        title: `Where will this team work`,
+        text: 'Give every team member access to one or more spaces',
+        readOnly: (
+          <>
+            To grant <span className="f36-font-weight--demi-bold">{this.props.team.name}</span>{' '}
+            access to more or one spaces, contact your admin
+          </>
+        )
       })
     }
   };
@@ -291,25 +312,26 @@ class TeamDetails extends React.Component {
                           />
                         </TabPanel>
                       ) : null}
-                      {this.isSelected(id) && this.isListEmpty() && !readOnlyPermission && (
-                        <Placeholder
-                          testId="empty-placeholder"
-                          title={emptyStateMessage().title}
-                          text={emptyStateMessage().text}
-                          button={
-                            <AddButton
-                              onClick={() => this.setState({ showingForm: true })}
-                              label={actionLabel}
-                            />
-                          }
-                        />
-                      )}
-                      {this.isSelected(id) && this.isListEmpty() && readOnlyPermission && (
-                        <Placeholder
-                          testId="empty-placeholder"
-                          title={emptyStateMessage().title}
-                          text={emptyStateMessage().readOnly}
-                        />
+                      {this.isSelected(id) && this.isListEmpty() && (
+                        <EmptyStateContainer data-test-id="empty-placeholder">
+                          <div className={styles.svgContainer}>
+                            <TeamsEmptyStateImage />
+                          </div>
+                          <Heading>{emptyStateMessage().title}</Heading>
+                          {!readOnlyPermission && (
+                            <>
+                              <Paragraph>{emptyStateMessage().text}</Paragraph>
+                              <AddButton
+                                className="f36-margin-top--l"
+                                onClick={() => this.setState({ showingForm: true })}
+                                label={actionLabel}
+                              />
+                            </>
+                          )}
+                          {readOnlyPermission && (
+                            <Paragraph>{emptyStateMessage().readOnly}</Paragraph>
+                          )}
+                        </EmptyStateContainer>
                       )}
                     </React.Fragment>
                   )

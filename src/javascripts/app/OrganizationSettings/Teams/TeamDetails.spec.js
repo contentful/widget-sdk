@@ -214,9 +214,8 @@ describe('TeamDetails', () => {
         it('should show empty placeholder without add member button', () => {
           const { wrapper } = renderComponent(actions);
 
-          const placeholder = wrapper.find(Placeholder).filter({ testId: 'empty-placeholder' });
+          const placeholder = wrapper.find('EmptyStateContainer[data-test-id="empty-placeholder"]');
           expect(placeholder).toHaveLength(1);
-          expect(placeholder.props().title).toContain('Team A');
           const addMemberButton = placeholder.find(Button).filter({ testId: 'add-button' });
           expect(addMemberButton).toHaveLength(0);
         });
@@ -330,14 +329,12 @@ describe('TeamDetails', () => {
           };
 
           it('should show empty placeholder with add member button', () => {
-            const placeholder = getWrapperWithTeamMemberTabActive()
-              .find(Placeholder)
-              .filter({ testId: 'empty-placeholder' });
+            const placeholder = getWrapperWithTeamMemberTabActive().find(
+              'EmptyStateContainer[data-test-id="empty-placeholder"]'
+            );
             expect(placeholder).toHaveLength(1);
-            expect(placeholder.props().title).toContain('Team A Team has no members');
             const addMemberButton = placeholder.find(Button).filter({ testId: 'add-button' });
             expect(addMemberButton).toHaveLength(1);
-            expect(addMemberButton).toHaveText('Add a team member');
           });
 
           it('should not render TeamMemberships', () => {
@@ -442,11 +439,10 @@ describe('TeamDetails', () => {
           };
 
           it('should show empty placeholder with add space membership button', () => {
-            const placeholder = getWrapperWithSpaceMembershipTabActive()
-              .find(Placeholder)
-              .filter({ testId: 'empty-placeholder' });
+            const placeholder = getWrapperWithSpaceMembershipTabActive().find(
+              'EmptyStateContainer[data-test-id="empty-placeholder"]'
+            );
             expect(placeholder).toHaveLength(1);
-            expect(placeholder.props().title).toContain('Team A Team is not in any space yet');
             const addSpaceMembershipButton = placeholder
               .find(Button)
               .filter({ testId: 'add-button' });
