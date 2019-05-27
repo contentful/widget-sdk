@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReferenceForm, { hasReferenceFieldsLinkingToEntry } from './ReferenceForm.es6';
+import constants from './constants.es6';
 
 import {
   Modal,
@@ -105,16 +106,17 @@ export default function ContentTypeSelectionModal({
 }
 
 export function getContentTypesNotAddedYet(all, added) {
-  return all.filter(ct => !added.includes(ct.sys.id) && hasReferenceFieldsLinkingToEntry(ct));
+  return all.filter(ct => isContentTypeValidSelection(ct, added));
 }
 
 export function isContentTypeAlreadyAdded(contentType, addedContentTypes) {
-  return !addedContentTypes.includes(contentType.sys.id);
+  return addedContentTypes.includes(contentType.sys.id);
 }
 
 export function isContentTypeValidSelection(contentType, addedContentTypes) {
   return (
-    isContentTypeAlreadyAdded(contentType, addedContentTypes) &&
+    contentType.sys.id !== constants.VARIATION_CONTAINER_CT_ID &&
+    !isContentTypeAlreadyAdded(contentType, addedContentTypes) &&
     hasReferenceFieldsLinkingToEntry(contentType)
   );
 }
