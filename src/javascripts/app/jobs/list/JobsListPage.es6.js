@@ -19,6 +19,7 @@ import { createSpaceEndpoint } from '../DataManagement/JobsEndpointFactory.es6';
 
 import { getJobsData } from './JobsListService.es6';
 import JobsEmptyStateMessage from './JobsEmptyStateMessage.es6';
+import UnknownErrorMessage from 'components/shared/UnknownErrorMessage.es6';
 
 function normalizeCollection(items) {
   return _.fromPairs(items.map(i => [i.sys.id, i]));
@@ -108,8 +109,8 @@ export default class JobsListPage extends Component {
       }
     },
     erroredJobs: {
-      title: 'Errored Jobs',
-      description: 'A list of errored jobs.',
+      title: 'Failed Jobs',
+      description: 'A list of failed jobs.',
       emptyStateMessage: {
         title: 'All Jobs executed successfully',
         text: 'If Jobs fail to excecute they will show up here'
@@ -165,13 +166,7 @@ export default class JobsListPage extends Component {
                 return <JobsListPageLoading />;
               }
               if (isError) {
-                return (
-                  <JobsEmptyStateMessage
-                    title="Something went wrong"
-                    text="We are sorry but something went wrong"
-                    data-test-id="cf-ui-jobs-state-error"
-                  />
-                );
+                return <UnknownErrorMessage data-test-id="cf-ui-jobs-state-error" />;
               }
 
               const [jobs, entries, users, contentTypes] = data;
