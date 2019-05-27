@@ -215,6 +215,7 @@ export default ($scope, $state) => {
                   loadStartMs,
                   getSlideStates,
                   getEditorData,
+                  slide,
                   slidesControllerUuid
                 })
               : noop;

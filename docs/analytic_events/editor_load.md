@@ -9,7 +9,7 @@ Event for the editor load sequence.
 
 ## Schema
 
-Snowplow schema: [editor_load/1.1.0.json](https://github.com/contentful/com.contentful-schema-registry/blob/master/schemas/com.contentful/editor_load/jsonschema/1-1-0)
+Snowplow schema: [editor_load/2.0.0.json](https://github.com/contentful/com.contentful-schema-registry/blob/master/schemas/com.contentful/editor_load/jsonschema/2-0-0)
 
 ## Use-cases
 
@@ -60,9 +60,12 @@ We track all of the following cases using the "`editor_load`" event:
   * `total_slide_count`
   * `load_ms`: number of ms since initial load
 
-*Note:* Either `sharejs_connected` or `links_rendered` can finish first, depending on ShareJS and CMA speed and whether there are any links to be rendered in the first place.
+*Notes:*
+ - Either `sharejs_connected` or `links_rendered` can finish first, depending on ShareJS and CMA speed and whether there are any links to be rendered in the first place.
+ - We currently only trigger this event for entry editor slides, not for asset and bulk editor slides.
 
 ## Change-log
-### Version `1-1-0`
+### Version `2-0-0`
  - Introduced action `"entry_loaded"`
  - Added `slides_controller_uuid` to identify which slides were visible in the same browser/tab around the same time.
+ - `slide_level` will now always be set, also for the `"init"` event.
