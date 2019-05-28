@@ -12,3 +12,4 @@ export const TASKS = 'feature-05-2019-content-workflows-tasks';
 export const QUICK_NAVIGATION = 'feature-ht-04-2019-quick-navigation';
 export const ENTRY_COMMENTS = 'feature-04-2019-entry-comments';
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'feature-dw-04-2019-environment-usage-enforcements';
+export const TEAMS_ITERATION_2 = 'feature-bv-04-2019-teams-iteration-2';

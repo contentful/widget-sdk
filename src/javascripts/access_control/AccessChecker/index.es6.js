@@ -453,10 +453,9 @@ function collectResponses() {
   responses = replacement;
 }
 
-const canChangeLocales = space =>
+const canModifySpaceSettings = space =>
   get(space, 'spaceMember.admin') ||
-  find(get(space, 'spaceMember.roles', []), role => get(role, 'permissions.Settings') === 'all') !==
-    undefined;
+  !!find(get(space, 'spaceMember.roles', []), { permissions: { Settings: 'all' } });
 
 function collectSectionVisibility() {
   sectionVisibility = {
@@ -466,10 +465,11 @@ function collectSectionVisibility() {
     apiKey: isAllowed(Action.READ, 'settings') && !shouldHide(Action.READ, 'apiKey'),
     settings: !shouldHide(Action.UPDATE, 'settings'),
     // don't use worf here, as it allows things that result in 403
-    locales: canChangeLocales(space),
+    locales: canModifySpaceSettings(space),
     // don't use worf here, as it allows things that result in 403
     extensions: get(space, 'spaceMember.admin'),
     users: !shouldHide(Action.UPDATE, 'settings'),
+    teams: canModifySpaceSettings(space),
     roles: !shouldHide(Action.UPDATE, 'settings'),
     environments: isAllowed(Action.READ, 'settings') && can(Action.MANAGE, 'Environments'),
     usage: !shouldHide(Action.UPDATE, 'settings'),
