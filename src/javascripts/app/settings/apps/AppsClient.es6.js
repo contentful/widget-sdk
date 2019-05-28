@@ -29,7 +29,7 @@ const KNOWN_APPS = {
   optimizely: {
     title: 'Optimizely',
     featureId: OPTIMIZELY_APP_FEATURE,
-    priceLine: 'Early access programme only'
+    priceLine: 'Available on Scale and Performance platforms only'
   }
 };
 
