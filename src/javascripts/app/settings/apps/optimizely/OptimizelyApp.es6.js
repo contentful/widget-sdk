@@ -157,6 +157,8 @@ export default class OptimizelyApp extends Component {
         this.state.referenceFields
       );
 
+      await spaceContext.publishedCTs.refresh();
+
       await this.props.client.save(this.props.app.id, config);
       this.setState({ busyWith: null, installed: true, config });
       Notification.success('Optimizely app installed successfully.');
@@ -186,6 +188,8 @@ export default class OptimizelyApp extends Component {
 
       await variationContainer.removeFromContentTypes(this.findRemovedContentTypes());
 
+      await spaceContext.publishedCTs.refresh();
+
       const { extensionId } = this.lastSavedConfig || this.props.app.config;
       await variationContainer.updateUiExtension(extensionId, this.state.selectedProject);
 
@@ -207,6 +211,7 @@ export default class OptimizelyApp extends Component {
       this.setState({ busyWith: constants.UNINSTALL });
 
       await variationContainer.removeFromContentTypes(this.state.addedContentTypes);
+      await spaceContext.publishedCTs.refresh();
 
       await this.props.client.remove(this.props.app.id);
 

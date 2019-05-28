@@ -80,11 +80,7 @@ export async function create(optimizelyProjectId) {
     spaceContext.cma.getEditorInterface(constants.VARIATION_CONTAINER_CT_ID)
   ]);
 
-  await Promise.all([
-    updateEditorInterface(ei, createdUie),
-    createSavedView(),
-    spaceContext.publishedCTs.refresh()
-  ]);
+  await Promise.all([updateEditorInterface(ei, createdUie), createSavedView()]);
 
   return createdUie.sys.id;
 }
