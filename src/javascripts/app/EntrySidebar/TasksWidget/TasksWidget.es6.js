@@ -30,7 +30,7 @@ export default class ScheduleWidget extends React.PureComponent {
   };
 
   render() {
-    const { helpText, tasks } = this.props.viewData;
+    const { helpText, tasks, hasNewTaskForm } = this.props.viewData;
 
     return (
       <React.Fragment>
@@ -58,12 +58,14 @@ export default class ScheduleWidget extends React.PureComponent {
             ))}
           </ol>
         </Visible>
-        <TextLink
-          icon="Plus"
-          className={styles.addTaskCta}
-          onClick={() => this.props.onCreateDraft()}>
-          Create new task
-        </TextLink>
+        {!hasNewTaskForm && (
+          <TextLink
+            icon="Plus"
+            className={styles.addTaskCta}
+            onClick={() => this.props.onCreateDraft()}>
+            Create new task
+          </TextLink>
+        )}
       </React.Fragment>
     );
   }

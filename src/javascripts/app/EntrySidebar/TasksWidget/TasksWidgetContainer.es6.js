@@ -71,6 +71,7 @@ export default class ScheduleWidgetContainer extends Component {
       ...prevState,
       tasksViewData: {
         ...prevState.tasksViewData,
+        hasNewTaskForm: true,
         tasks: [...prevState.tasksViewData.tasks, newTask]
       }
     }));
@@ -82,6 +83,7 @@ export default class ScheduleWidgetContainer extends Component {
         ...prevState,
         tasksViewData: {
           ...prevState.tasksViewData,
+          hasNewTaskForm: false,
           tasks: prevState.tasksViewData.tasks.slice(0, -1)
         }
       };
@@ -94,6 +96,7 @@ export default class ScheduleWidgetContainer extends Component {
         ...prevState,
         tasksViewData: {
           ...prevState.tasksViewData,
+          hasNewTaskForm: false,
           tasks: prevState.tasksViewData.tasks.map(task => {
             if (task.key === taskKey) {
               console.log({ task });
