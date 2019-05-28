@@ -4,9 +4,11 @@
 >
 > champions: Joshua Smock (@jo-sm)
 >
-> endDate: May 22, 2019
+> endDate: May 24, 2019
 >
-> status: *Open*
+> Pull request: https://github.com/contentful/user_interface/pull/4367
+>
+> status: *Approved*
 
 # [UIEP-0006] Deprecate non-React based state management
 
@@ -56,7 +58,7 @@ Going forward we should use either hooks or `setState` [f.n. 1], but since the e
 
 ## Outcome
 
-TBD
+This UIEP was approved on May 24, 2019 with 5 for, 2 against, and 1 abstention. The proposal originally stated that hooks were the preferred way of managing React component state, but after some discussion the proposal was changed to reflect that any React-based state management approach is preferred over non-React. This restriction is meant to be enforced in PR code reviews, rather than by an automated ESLint rule.
 
 ----
 
