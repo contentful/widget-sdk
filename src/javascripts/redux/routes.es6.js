@@ -7,8 +7,7 @@ import {
   TEAM_MEMBERSHIPS,
   TEAM_SPACE_MEMBERSHIPS,
   TEAMS,
-  USERS,
-  __PROTOTYPE__PROJECTS
+  USERS
 } from './datasets.es6';
 
 /**
@@ -40,15 +39,6 @@ const ROUTES = {
               ORG_SPACES,
               { orgRoles: ['admin', 'owner'], datasets: [ORG_SPACE_ROLES] }
             ]
-          }
-        }
-      },
-      projects: {
-        path: '/projects',
-        requiredDataSets: [USERS, ORG_SPACES, __PROTOTYPE__PROJECTS, ORG_MEMBERSHIPS],
-        children: {
-          project: {
-            path: '/:projectId'
           }
         }
       }
