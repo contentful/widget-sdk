@@ -2,7 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { TextLink, Button, Heading } from '@contentful/forma-36-react-components';
+import {
+  TextLink,
+  Button,
+  Heading,
+  ModalConfirm,
+  Typography,
+  Paragraph
+} from '@contentful/forma-36-react-components';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 import StateLink from 'app/common/StateLink.es6';
 import AppIcon from '../_common/AppIcon.es6';
 
@@ -40,7 +48,10 @@ export default class AppListItem extends Component {
       title: PropTypes.string.isRequired,
       installed: PropTypes.bool.isRequired,
       enabled: PropTypes.bool,
-      priceLine: PropTypes.string
+      priceLine: PropTypes.shape({
+        list: PropTypes.string.isRequired,
+        modal: PropTypes.string.isRequired
+      })
     }).isRequired
   };
 
@@ -52,7 +63,11 @@ export default class AppListItem extends Component {
           <Heading element="h3" className={styles.titleText}>
             {title}
           </Heading>
-          {priceLine && <TextLink disabled>{priceLine}</TextLink>}
+          {!enabled && priceLine && (
+            <TextLink icon="HelpCircle" onClick={this.openPricingInfo}>
+              {priceLine.list}
+            </TextLink>
+          )}
         </div>
         <div className={styles.actions}>
           {installed && (
@@ -81,6 +96,26 @@ export default class AppListItem extends Component {
       </React.Fragment>
     );
   }
+
+  openPricingInfo = () =>
+    ModalLauncher.open(({ isShown, onClose }) => (
+      <ModalConfirm
+        isShown={isShown}
+        intent="positive"
+        title="Not included in your pricing plan"
+        confirmLabel="Contact us"
+        cancelLabel="Close"
+        onConfirm={() => {
+          window.open('https://www.contentful.com/contact/sales/');
+          onClose();
+        }}
+        onCancel={onClose}>
+        <Typography>
+          <Paragraph>{this.props.app.priceLine.modal}</Paragraph>
+          <Paragraph>Contact us if you are interested in using this feature.</Paragraph>
+        </Typography>
+      </ModalConfirm>
+    ));
 
   render() {
     const { app } = this.props;
