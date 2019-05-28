@@ -113,6 +113,18 @@ export default class ScheduleWidgetContainer extends Component {
     });
   }
 
+  handleDeleteTask(taskKey) {
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        tasksViewData: {
+          ...prevState.tasksViewData,
+          tasks: prevState.tasksViewData.tasks.filter(task => task.key !== taskKey)
+        }
+      };
+    });
+  }
+
   render() {
     const tasksViewData = this.state.tasksViewData;
 
@@ -126,6 +138,7 @@ export default class ScheduleWidgetContainer extends Component {
               onCancelDraft={() => this.handleCancelDraft()}
               onCreateTask={(taskKey, taskBody) => this.handleCreateTask(taskKey, taskBody)}
               onUpdateTask={(taskKey, taskBody) => this.handleCreateTask(taskKey, taskBody)}
+              onDeleteTask={taskKey => this.handleDeleteTask(taskKey)}
             />
           </EntrySidebarWidget>
         </BooleanFeatureFlag>

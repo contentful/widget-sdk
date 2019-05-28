@@ -155,6 +155,7 @@ export default class Task extends React.PureComponent {
     onCancelDraft: PropTypes.func,
     onCreateTask: PropTypes.func,
     onUpdateTask: PropTypes.func,
+    onDeleteTask: PropTypes.func,
     isLoading: PropTypes.bool
   };
 
@@ -193,7 +194,7 @@ export default class Task extends React.PureComponent {
     }
   };
 
-  handleDeleteClick = async event => {
+  handleDeleteClick = async (event, taskKey) => {
     event.stopPropagation();
     return ModalLauncher.open(({ isShown, onClose }) => (
       <TaskDeleteDialog
@@ -201,6 +202,7 @@ export default class Task extends React.PureComponent {
         isShown={isShown}
         onCancel={() => onClose(false)}
         onConfirm={() => {
+          this.props.onDeleteTask(taskKey);
           onClose(true);
         }}
       />
@@ -231,20 +233,22 @@ export default class Task extends React.PureComponent {
     );
   };
 
-  renderActions = () => {
+  renderActions = taskKey => {
     // TODO: Check roles/permissions before rendering actions
     return (
       <CardActions className={cx(styles.actions, this.state.isExpanded && styles.actionsVisible)}>
         <DropdownList>
           <DropdownListItem onClick={this.handleEditClick}>Edit task</DropdownListItem>
-          <DropdownListItem onClick={this.handleDeleteClick}>Delete task</DropdownListItem>
+          <DropdownListItem onClick={event => this.handleDeleteClick(event, taskKey)}>
+            Delete task
+          </DropdownListItem>
         </DropdownList>
       </CardActions>
     );
   };
 
   renderDetails = () => {
-    const { body, assignedTo, createdAt, resolved } = this.props;
+    const { body, assignedTo, createdAt, resolved, taskKey } = this.props;
     return (
       <React.Fragment>
         <div className={styles.checkboxWrapper}>
@@ -272,7 +276,7 @@ export default class Task extends React.PureComponent {
         </div>
         <div className={styles.avatarWrapper}>
           {this.renderAvatar()}
-          {this.renderActions()}
+          {this.renderActions(taskKey)}
         </div>
       </React.Fragment>
     );

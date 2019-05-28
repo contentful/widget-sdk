@@ -33,7 +33,8 @@ export default class ScheduleWidget extends React.PureComponent {
     onCreateDraft: PropTypes.func,
     onCancelDraft: PropTypes.func,
     onCreateTask: PropTypes.func,
-    onUpdateTask: PropTypes.func
+    onUpdateTask: PropTypes.func,
+    onDeleteTask: PropTypes.func
   };
 
   renderLoadingState() {
@@ -83,6 +84,7 @@ export default class ScheduleWidget extends React.PureComponent {
                       onUpdateTask={(taskKey, taskBody) =>
                         this.props.onUpdateTask(taskKey, taskBody)
                       }
+                      onDeleteTask={taskKey => this.props.onDeleteTask(taskKey)}
                     />
                   </li>
                 ))}
