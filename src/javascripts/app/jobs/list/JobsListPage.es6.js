@@ -116,7 +116,7 @@ export default class JobsListPage extends Component {
         text: 'If Jobs fail to excecute they will show up here'
       },
       query: {
-        'sys.status': 'error'
+        'sys.status': 'failed'
       }
     }
   };
