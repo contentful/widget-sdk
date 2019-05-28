@@ -7,7 +7,10 @@ const allJobsQuery = {
   order: '-sys.scheduledAt',
   'sys.status': 'pending'
 };
-const entryIdQuery = { 'sys.entity.sys.id': defaultEntryId };
+const entryIdQuery = {
+  'sys.entity.sys.id': defaultEntryId,
+  'sys.status': 'pending'
+};
 
 export function noJobsResponse() {
   cy.addInteraction({
