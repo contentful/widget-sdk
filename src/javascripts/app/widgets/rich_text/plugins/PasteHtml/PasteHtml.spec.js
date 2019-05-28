@@ -70,6 +70,11 @@ describe('PasteHtml Plugin', () => {
       )
     ],
     [
+      'ignores empty anchor',
+      '<a>Herren</a>',
+      document({}, block(BLOCKS.PARAGRAPH, {}, text({}, leaf('Herren'))))
+    ],
+    [
       'supports paragraph',
       `<p>Herren</p>`,
       document({}, block(BLOCKS.PARAGRAPH, {}, text({}, leaf('Herren'))))

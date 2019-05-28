@@ -118,14 +118,20 @@ const listItems = {
 const links = {
   deserialize(el, next) {
     if (el.tagName.toLowerCase() === 'a') {
-      return {
-        object: 'inline',
-        type: INLINES.HYPERLINK,
-        nodes: next(el.childNodes),
-        data: {
-          uri: el.getAttribute('href')
-        }
-      };
+      // we only support links with href,
+      // if href is not defined, we should serialize as text
+      if (el.getAttribute('href')) {
+        return {
+          object: 'inline',
+          type: INLINES.HYPERLINK,
+          nodes: next(el.childNodes),
+          data: {
+            uri: el.getAttribute('href')
+          }
+        };
+      } else {
+        return next(el.childNodes);
+      }
     }
   }
 };
