@@ -111,7 +111,7 @@ export default class AppListItem extends Component {
         }}
         onCancel={onClose}>
         <Typography>
-          <Paragraph>{this.props.app.priceLine.modal}.</Paragraph>
+          <Paragraph>{this.props.app.priceLine.modal}</Paragraph>
           <Paragraph>Contact us if you are interested in using this feature.</Paragraph>
         </Typography>
       </ModalConfirm>
