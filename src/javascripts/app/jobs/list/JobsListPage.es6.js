@@ -116,7 +116,7 @@ export default class JobsListPage extends Component {
         text: 'Scheduled entries that have failed to publish, it will show up here.'
       },
       query: {
-        'sys.status': 'error'
+        'sys.status': 'failed'
       }
     }
   };
