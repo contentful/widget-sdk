@@ -50,7 +50,7 @@ export default function register() {
         function reset() {
           return $q
             .all({
-              memberships: spaceContext.memberships.getAll(),
+              memberships: spaceContext.members.getAll(),
               roles: RoleRepository.getInstance(spaceContext.space).getAll(),
               rolesResource: createResourceService(spaceContext.getId()).get('role'),
               users: getAllUsers()
