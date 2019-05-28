@@ -61,7 +61,7 @@ export function createLoadEventTracker({
     const slideLevel = findIndex(slideStates, state => isEqual(state.slide, slide));
     const baseData = { slidesControllerUuid, slideUuid, totalSlideCount, slideLevel };
     if (eventName === 'init') {
-      return track(`${LOAD_EVENT_CATEGORY}:init`, baseData);
+      return track(`${LOAD_EVENT_CATEGORY}:init`, { ...baseData, loadMs: 0 });
     }
     const detailData = getDetailEventData(slideStates);
     track(`${LOAD_EVENT_CATEGORY}:${eventName}`, {

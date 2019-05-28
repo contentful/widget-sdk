@@ -19,6 +19,7 @@ We track all of the following cases using the "`editor_load`" event:
   * `action`: `"init"`
   * `slide_uuid`
   * `total_slide_count`
+  * `load_ms`: `0`
 * Editor main entry is loaded
   * `action`: `"entity_loaded"`
   * `slide_uuid`
@@ -69,3 +70,4 @@ We track all of the following cases using the "`editor_load`" event:
  - Introduced action `"entry_loaded"`
  - Added `slides_controller_uuid` to identify which slides were visible in the same browser/tab around the same time.
  - `slide_level` will now always be set, also for the `"init"` event.
+ - `init` action events now always have a `load_ms` set to `0`. This was not previously set for these events while the field was required by the schema, meaning all the `init` events were lost.
