@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 
 const TaskViewData = {
   helpText: PropTypes.string,
+  isLoading: PropTypes.bool,
   hasNewTaskForm: PropTypes.bool,
   tasks: PropTypes.arrayOf(
     PropTypes.shape({
@@ -27,6 +28,7 @@ export function createTasksViewDataFromComments(comments = []) {
       tasks.length === 0
         ? 'No tasks were defined yet.'
         : `There are ${tasks.length} pending tasks.`,
+    isLoading: false,
     hasNewTaskForm: false,
     tasks: tasks.map(task => ({
       body: task.body,
@@ -47,6 +49,7 @@ export function createTasksViewDataFromComments(comments = []) {
 export function createLoadingStateTasksViewData() {
   return {
     helpText: 'Loading...', // TODO: Probably shouldn't just be a help text.
+    isLoading: true,
     hasNewTaskForm: false,
     tasks: []
   };

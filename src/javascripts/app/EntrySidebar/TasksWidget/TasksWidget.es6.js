@@ -5,7 +5,11 @@ import TaskViewData from './TasksViewData.es6';
 import Task from './Task.es6';
 import Visible from 'components/shared/Visible/index.es6';
 import tokens from '@contentful/forma-36-tokens';
-import { TextLink } from '@contentful/forma-36-react-components';
+import {
+  TextLink,
+  SkeletonContainer,
+  SkeletonBodyText
+} from '@contentful/forma-36-react-components';
 
 const styles = {
   list: css({
@@ -17,6 +21,9 @@ const styles = {
   }),
   addTaskCta: css({
     marginTop: tokens.spacingS
+  }),
+  loadingSkeletonContainer: css({
+    margin: '18px 0 10px'
   })
 };
 
@@ -29,42 +36,67 @@ export default class ScheduleWidget extends React.PureComponent {
     onUpdateTask: PropTypes.func
   };
 
+  renderLoadingState() {
+    return (
+      <React.Fragment>
+        <SkeletonContainer svgHeight={18} className={styles.loadingSkeletonContainer}>
+          <SkeletonBodyText numberOfLines={1} />
+        </SkeletonContainer>
+        <ol className={styles.list}>
+          <Task isLoading />
+          <Task isLoading />
+          <Task isLoading />
+        </ol>
+      </React.Fragment>
+    );
+  }
+
   render() {
-    const { helpText, tasks, hasNewTaskForm } = this.props.viewData;
+    const { helpText, tasks, hasNewTaskForm, isLoading } = this.props.viewData;
 
     return (
       <React.Fragment>
-        <Visible if={helpText}>
-          <p className="entity-sidebar__help-text" role="note">
-            {helpText}
-          </p>
-        </Visible>
-        <Visible if={tasks}>
-          <ol className={styles.list}>
-            {tasks.map(task => (
-              <li className={styles.listItem} key={task.key} data-test-id="task">
-                <Task
-                  body={task.body}
-                  assignedTo={task.assignedTo}
-                  resolved={task.resolved}
-                  createdAt={task.createdAt}
-                  isDraft={task.isDraft}
-                  taskKey={task.key}
-                  onCancelDraft={() => this.props.onCancelDraft()}
-                  onCreateTask={(taskKey, taskBody) => this.props.onCreateTask(taskKey, taskBody)}
-                  onUpdateTask={(taskKey, taskBody) => this.props.onUpdateTask(taskKey, taskBody)}
-                />
-              </li>
-            ))}
-          </ol>
-        </Visible>
-        {!hasNewTaskForm && (
-          <TextLink
-            icon="Plus"
-            className={styles.addTaskCta}
-            onClick={() => this.props.onCreateDraft()}>
-            Create new task
-          </TextLink>
+        {isLoading ? (
+          this.renderLoadingState()
+        ) : (
+          <React.Fragment>
+            <Visible if={helpText}>
+              <p className="entity-sidebar__help-text" role="note">
+                {helpText}
+              </p>
+            </Visible>
+            <Visible if={tasks}>
+              <ol className={styles.list}>
+                {tasks.map(task => (
+                  <li className={styles.listItem} key={task.key} data-test-id="task">
+                    <Task
+                      body={task.body}
+                      assignedTo={task.assignedTo}
+                      resolved={task.resolved}
+                      createdAt={task.createdAt}
+                      isDraft={task.isDraft}
+                      taskKey={task.key}
+                      onCancelDraft={() => this.props.onCancelDraft()}
+                      onCreateTask={(taskKey, taskBody) =>
+                        this.props.onCreateTask(taskKey, taskBody)
+                      }
+                      onUpdateTask={(taskKey, taskBody) =>
+                        this.props.onUpdateTask(taskKey, taskBody)
+                      }
+                    />
+                  </li>
+                ))}
+              </ol>
+            </Visible>
+            {!hasNewTaskForm && (
+              <TextLink
+                icon="Plus"
+                className={styles.addTaskCta}
+                onClick={() => this.props.onCreateDraft()}>
+                Create new task
+              </TextLink>
+            )}{' '}
+          </React.Fragment>
         )}
       </React.Fragment>
     );

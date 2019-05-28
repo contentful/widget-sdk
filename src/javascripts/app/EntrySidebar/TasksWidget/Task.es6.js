@@ -10,7 +10,9 @@ import {
   SelectField,
   TabFocusTrap,
   TextField,
-  Tooltip
+  Tooltip,
+  SkeletonContainer,
+  SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
@@ -35,6 +37,20 @@ const styles = {
       outline: `1px solid ${tokens.colorPrimary}`,
       borderRadius: '2px',
       boxShadow: tokens.glowPrimary
+    }
+  }),
+
+  taskLoading: css({
+    padding: tokens.spacingS,
+    cursor: 'default',
+    ':hover': {
+      backgroundColor: tokens.colorWhite
+    },
+    ':focus': {
+      backgroundColor: tokens.colorWhite,
+      outline: 'none',
+      borderRadius: 0,
+      boxShadow: 'none'
     }
   }),
 
@@ -73,14 +89,6 @@ const styles = {
 
   bodyExpanded: css({
     textOverflow: 'clip',
-    whiteSpace: '-moz-pre-wrap',
-    // eslint-disable-next-line no-dupe-keys
-    whiteSpace: '-o-pre-wrap',
-    // eslint-disable-next-line no-dupe-keys
-    whiteSpace: '-pre-wrap',
-    // eslint-disable-next-line no-dupe-keys
-    whiteSpace: 'pre-wrap',
-    // eslint-disable-next-line no-dupe-keys
     whiteSpace: 'pre-line',
     wordWrap: 'break-word',
     overflow: 'hidden'
@@ -146,7 +154,8 @@ export default class Task extends React.PureComponent {
     taskKey: PropTypes.string,
     onCancelDraft: PropTypes.func,
     onCreateTask: PropTypes.func,
-    onUpdateTask: PropTypes.func
+    onUpdateTask: PropTypes.func,
+    isLoading: PropTypes.bool
   };
 
   state = {
@@ -318,23 +327,41 @@ export default class Task extends React.PureComponent {
     );
   };
 
-  render() {
+  renderLoadingState() {
     return (
-      <div
-        className={cx(
-          styles.task,
-          (this.state.hasEditForm || this.props.isDraft) && styles.taskHasEditForm
-        )}
-        onMouseEnter={this.handleTaskHover}
-        onMouseLeave={this.handleTaskHover}
-        onKeyDown={this.handleTaskKeyDown}
-        tabIndex={0}>
-        <TabFocusTrap className={styles.tabFocusTrap}>
-          {this.state.hasEditForm || this.props.isDraft
-            ? this.renderEditForm()
-            : this.renderDetails()}
-        </TabFocusTrap>
+      <div className={cx(styles.task, styles.taskLoading)}>
+        <SkeletonContainer svgHeight={18}>
+          <SkeletonBodyText numberOfLines={1} />
+        </SkeletonContainer>
       </div>
+    );
+  }
+
+  render() {
+    const { isLoading } = this.props;
+
+    return (
+      <React.Fragment>
+        {isLoading ? (
+          this.renderLoadingState()
+        ) : (
+          <div
+            className={cx(
+              styles.task,
+              (this.state.hasEditForm || this.props.isDraft) && styles.taskHasEditForm
+            )}
+            onMouseEnter={this.handleTaskHover}
+            onMouseLeave={this.handleTaskHover}
+            onKeyDown={this.handleTaskKeyDown}
+            tabIndex={0}>
+            <TabFocusTrap className={styles.tabFocusTrap}>
+              {this.state.hasEditForm || this.props.isDraft
+                ? this.renderEditForm()
+                : this.renderDetails()}
+            </TabFocusTrap>
+          </div>
+        )}
+      </React.Fragment>
     );
   }
 }
