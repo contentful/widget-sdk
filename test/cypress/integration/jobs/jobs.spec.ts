@@ -44,7 +44,7 @@ describe('Jobs page', () => {
           .find('svg')
           .should('be.visible')
           .getByTestId('cf-ui-heading')
-          .should('contain', 'no Jobs scheduled');
+          .should('contain', 'Nothing is scheduled');
       });
     });
   });

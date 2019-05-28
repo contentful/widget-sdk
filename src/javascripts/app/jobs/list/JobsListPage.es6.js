@@ -44,7 +44,7 @@ const JobsListShell = props => (
   <Workbench>
     <Workbench.Header>
       <Workbench.Icon icon="schedule-calendar" scale="1" />
-      <Workbench.Title>Jobs Schedule</Workbench.Title>
+      <Workbench.Title>Scheduled Content</Workbench.Title>
     </Workbench.Header>
     <Workbench.Content className="f36-padding--xl">
       <div>{props.children}</div>
@@ -86,11 +86,11 @@ export default class JobsListPage extends Component {
 
   tabs = {
     scheduledJobs: {
-      title: 'Scheduled Jobs',
-      description: 'A list of entries scheduled to change status.',
+      title: 'Scheduled',
+      description: 'Entries that are currently scheduled to publish.',
       emptyStateMessage: {
-        title: 'There are no Jobs scheduled',
-        text: 'Entries that are scheduled for publishing will show up here'
+        title: 'Nothing is scheduled at the moment',
+        text: 'Entries that are scheduled to publish will show up here'
       },
       query: {
         'sys.status': 'pending',
@@ -98,22 +98,22 @@ export default class JobsListPage extends Component {
       }
     },
     completedJobs: {
-      title: 'Completed Jobs',
-      description: 'A list of completed jobs',
+      title: 'Completed',
+      description: 'Entries that were successfully published',
       emptyStateMessage: {
-        title: 'No Jobs completed yet',
-        text: 'As soon as Jobs are complete they will show up here'
+        title: 'No entries have been successfully published yet',
+        text: 'Successfully published entries will show up here'
       },
       query: {
         'sys.status': 'done'
       }
     },
     erroredJobs: {
-      title: 'Failed Jobs',
-      description: 'A list of failed jobs.',
+      title: 'Failed',
+      description: 'Entries that failed to publish',
       emptyStateMessage: {
-        title: 'All Jobs executed successfully',
-        text: 'If Jobs fail to excecute they will show up here'
+        title: 'Nothing here :)',
+        text: 'Scheduled entries that have failed to publish, it will show up here.'
       },
       query: {
         'sys.status': 'error'
@@ -128,7 +128,7 @@ export default class JobsListPage extends Component {
   render() {
     return (
       <JobsListShell>
-        <DocumentTitle title="Jobs Schedule" />
+        <DocumentTitle title="Scheduled Content" />
         {this.renderJobs()}
       </JobsListShell>
     );

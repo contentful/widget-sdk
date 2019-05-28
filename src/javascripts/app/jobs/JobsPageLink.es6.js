@@ -30,7 +30,7 @@ export default function JobsPageLink({ environmentId }) {
         <StateLink to={path}>
           {({ getHref }) => (
             <TextLink href={getHref()} icon="ExternalLink">
-              Scheduled Jobs
+              Scheduled Content
             </TextLink>
           )}
         </StateLink>
