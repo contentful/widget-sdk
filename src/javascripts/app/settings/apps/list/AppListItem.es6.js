@@ -48,7 +48,10 @@ export default class AppListItem extends Component {
       title: PropTypes.string.isRequired,
       installed: PropTypes.bool.isRequired,
       enabled: PropTypes.bool,
-      priceLine: PropTypes.string
+      priceLine: PropTypes.shape({
+        list: PropTypes.string.isRequired,
+        modal: PropTypes.string.isRequired
+      })
     }).isRequired
   };
 
