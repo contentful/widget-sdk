@@ -26,7 +26,7 @@ export default function register() {
       const publish = $scope.publishSelected;
       $scope.publishSelected = function(...args) {
         const contentTypes = getContentTypes();
-        publish.apply(controller, args).then(results => {
+        return publish.apply(controller, args).then(results => {
           results.succeeded.forEach(entryEventTracker('publish', 'content-list', contentTypes));
         });
       };
@@ -40,7 +40,7 @@ export default function register() {
 
       function duplicate() {
         const contentTypes = getContentTypes();
-        listActionsController.duplicate().then(results => {
+        return listActionsController.duplicate().then(results => {
           const succeeded = results.succeeded;
           succeeded.forEach(entryEventTracker('create', 'content-list__duplicate', contentTypes));
           $scope.entries.unshift(...succeeded);

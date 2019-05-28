@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 
@@ -17,7 +17,8 @@ import {
   ModalConfirm,
   Paragraph,
   SkeletonContainer,
-  SkeletonBodyText
+  SkeletonBodyText,
+  Spinner
 } from '@contentful/forma-36-react-components';
 
 import tokens from '@contentful/forma-36-tokens';
@@ -206,91 +207,148 @@ DeleteEntryConfirm.propTypes = {
   onConfirm: PropTypes.func.isRequired
 };
 
-function BulkActionsRow({ colSpan, actions, selection }) {
-  const [isConfirmVisibile, setConfirmVisibility] = useState(false);
-  return (
-    <TableRow data-test-id="bulk-actions">
-      <TableCell colSpan={colSpan} className={styles.bulkActionsRow}>
-        <span className="f36-margin-right--s" data-test-id="label">
-          {pluralize('entry', selection.size(), true)} selected:
-        </span>
-        {actions.showDuplicate && actions.showDuplicate() && (
-          <TextLink
-            className="f36-margin-right--s"
-            linkType="secondary"
-            data-test-id="duplicate"
-            onClick={() => actions.duplicateSelected()}>
-            Duplicate
-          </TextLink>
-        )}
+export class BulkActionsRow extends React.Component {
+  state = { pendingMessage: undefined, isConfirmVisible: false };
 
-        {actions.showDelete && actions.showDelete() && (
-          <React.Fragment>
-            <TextLink
-              className="f36-margin-right--s"
-              linkType="negative"
-              onClick={() => setConfirmVisibility(true)}
-              data-test-id="delete">
-              Delete
-            </TextLink>
-            {isConfirmVisibile && (
-              <DeleteEntryConfirm
-                itemsCount={selection.size()}
-                onConfirm={() => {
-                  actions.deleteSelected();
-                  setConfirmVisibility(false);
-                }}
-                onCancel={() => setConfirmVisibility(false)}
-              />
+  static propTypes = {
+    colSpan: PropTypes.number.isRequired,
+    actions: PropTypes.object.isRequired,
+    selection: PropTypes.object.isRequired
+  };
+
+  getPendingMessage = pendingAction => {
+    const { selection } = this.props;
+    return `${pendingAction} ${pluralize('entry', selection.size(), true)}`;
+  };
+
+  setConfirmVisibility = isConfirmVisible => this.setState({ isConfirmVisible });
+
+  fireAction = async actionName => {
+    const { actions } = this.props;
+    let pendingMessage;
+    let action;
+
+    switch (actionName) {
+      case 'duplicate':
+        pendingMessage = this.getPendingMessage('Duplicating');
+        action = actions.duplicateSelected;
+        break;
+      case 'delete':
+        pendingMessage = this.getPendingMessage('Deleting');
+        action = actions.deleteSelected;
+        break;
+      case 'archive':
+        pendingMessage = this.getPendingMessage('Archiving');
+        action = actions.deleteSelected;
+        break;
+      case 'unarchive':
+        pendingMessage = this.getPendingMessage('Unarchiving');
+        action = actions.unarchiveSelected;
+        break;
+      case 'unpublish':
+        pendingMessage = this.getPendingMessage('Unpublishing');
+        action = actions.unpublishSelected;
+        break;
+      case 'publish':
+        pendingMessage = this.getPendingMessage('Publishing');
+        action = actions.publishSelected;
+        break;
+      default:
+        return;
+    }
+    this.setState({ pendingMessage });
+    await action();
+    this.setState({ pendingMessage: undefined });
+  };
+
+  render() {
+    const { isConfirmVisible, pendingMessage } = this.state;
+    const { colSpan, actions, selection } = this.props;
+    return (
+      <TableRow testId="bulk-actions">
+        {pendingMessage && (
+          <TableCell colSpan={colSpan} className={styles.bulkActionsRow}>
+            {pendingMessage} <Spinner />
+          </TableCell>
+        )}
+        {!pendingMessage && (
+          <TableCell colSpan={colSpan} className={styles.bulkActionsRow}>
+            <span className="f36-margin-right--s" data-test-id="label">
+              {pluralize('entry', selection.size(), true)} selected:
+            </span>
+            {actions.showDuplicate && actions.showDuplicate() && (
+              <TextLink
+                className="f36-margin-right--s"
+                linkType="secondary"
+                testId="duplicate"
+                onClick={() => this.fireAction('duplicate')}>
+                Duplicate
+              </TextLink>
             )}
-          </React.Fragment>
-        )}
-        {actions.showArchive && actions.showArchive() && (
-          <TextLink
-            className="f36-margin-right--s"
-            linkType="secondary"
-            data-test-id="archive"
-            onClick={() => actions.archiveSelected()}>
-            Archive
-          </TextLink>
-        )}
-        {actions.showUnarchive && actions.showUnarchive() && (
-          <TextLink
-            className="f36-margin-right--s"
-            linkType="secondary"
-            data-test-id="unarchive"
-            onClick={() => actions.unarchiveSelected()}>
-            Unarchive
-          </TextLink>
-        )}
-        {actions.showUnpublish && actions.showUnpublish() && (
-          <TextLink
-            className="f36-margin-right--s"
-            linkType="secondary"
-            data-test-id="unpublish"
-            onClick={() => actions.unpublishSelected()}>
-            Unpublish
-          </TextLink>
-        )}
-        {actions.showPublish && actions.showPublish() && (
-          <TextLink
-            className="f36-margin-right--s"
-            linkType="positive"
-            data-test-id="publish"
-            onClick={() => actions.publishSelected()}>
-            {actions.publishButtonName()}
-          </TextLink>
-        )}
-      </TableCell>
-    </TableRow>
-  );
-}
 
-BulkActionsRow.propTypes = {
-  colSpan: PropTypes.number.isRequired,
-  actions: PropTypes.object.isRequired,
-  selection: PropTypes.object.isRequired
-};
+            {actions.showDelete && actions.showDelete() && (
+              <React.Fragment>
+                <TextLink
+                  className="f36-margin-right--s"
+                  linkType="negative"
+                  onClick={() => this.setConfirmVisibility(true)}
+                  testId="delete">
+                  Delete
+                </TextLink>
+                {isConfirmVisible && (
+                  <DeleteEntryConfirm
+                    itemsCount={selection.size()}
+                    onConfirm={() => {
+                      this.fireAction('delete');
+                      this.setConfirmVisibility(false);
+                    }}
+                    onCancel={() => this.setConfirmVisibility(false)}
+                  />
+                )}
+              </React.Fragment>
+            )}
+            {actions.showArchive && actions.showArchive() && (
+              <TextLink
+                className="f36-margin-right--s"
+                linkType="secondary"
+                testId="archive"
+                onClick={() => this.fireAction('archive')}>
+                Archive
+              </TextLink>
+            )}
+            {actions.showUnarchive && actions.showUnarchive() && (
+              <TextLink
+                className="f36-margin-right--s"
+                linkType="secondary"
+                testId="unarchive"
+                onClick={() => this.fireAction('unarchive')}>
+                Unarchive
+              </TextLink>
+            )}
+            {actions.showUnpublish && actions.showUnpublish() && (
+              <TextLink
+                className="f36-margin-right--s"
+                linkType="secondary"
+                testId="unpublish"
+                onClick={() => this.fireAction('unpublish')}>
+                Unpublish
+              </TextLink>
+            )}
+            {actions.showPublish && actions.showPublish() && (
+              <TextLink
+                className="f36-margin-right--s"
+                linkType="positive"
+                testId="publish"
+                onClick={() => this.fireAction('publish')}>
+                {actions.publishButtonName()}
+              </TextLink>
+            )}
+          </TableCell>
+        )}
+      </TableRow>
+    );
+  }
+}
 
 /**
  * Provides right click => open in a new tab flow
@@ -364,7 +422,7 @@ export default function EntryList({
   return (
     <Table className={styles.table} testId="entry-list" aria-label="Content Search Results">
       <TableHead offsetTop={isEdgeBrowser ? '0px' : '-20px'} isSticky>
-        <TableRow data-test-id="column-names">
+        <TableRow testId="column-names">
           <SortableTableCell
             className={styles.largeCell}
             isSortable={
@@ -377,14 +435,14 @@ export default function EntryList({
               }
             }}
             direction={context.view.order.direction}
-            data-test-id="name">
+            testId="name">
             <label htmlFor="select-all" className="f36-padding-left--s">
               {selectAll}
               Name
             </label>
           </SortableTableCell>
           {!hasContentTypeSelected && isContentTypeVisible && (
-            <TableCell data-test-id="content-type" className={styles.mediumCell}>
+            <TableCell testId="content-type" className={styles.mediumCell}>
               Content Type
             </TableCell>
           )}
@@ -400,13 +458,13 @@ export default function EntryList({
                 }}
                 direction={context.view.order.direction}
                 aria-label={field.name}
-                data-test-id={field.name}
+                testId={field.name}
                 className={styles.mediumCell}>
                 {field.name}
               </SortableTableCell>
             );
           })}
-          <TableCell data-test-id="status" className={styles.mediumCell}>
+          <TableCell testId="status" className={styles.mediumCell}>
             <span className={cn(styles.flexCenter, styles.justifySpaceBetween)}>
               Status
               <ViewCustomizer
@@ -463,9 +521,9 @@ export default function EntryList({
                     [styles.highlight]: selection.isSelected(entry),
                     [styles.visibilityHidden]: context.isSearching
                   })}
-                  data-test-id="entry-row">
+                  testId="entry-row">
                   <TableCell
-                    data-test-id="name"
+                    testId="name"
                     className={cn(styles.tableCell, styles.nameCell, styles.largeCell)}>
                     <span className={styles.flexCenter}>
                       <label className="f36-padding-left--s f36-padding-top--m f36-padding-bottom--m">
@@ -490,7 +548,7 @@ export default function EntryList({
                   </TableCell>
                   {isContentTypeVisible && (
                     <TableCell
-                      data-test-id="content-type"
+                      testId="content-type"
                       className={cn(styles.tableCell, styles.mediumCell)}>
                       <SecretiveLink href={getHref()}>
                         {contentTypeNameFormatter(entry)}
@@ -501,7 +559,7 @@ export default function EntryList({
                     <TableCell
                       key={field.id}
                       className={cn(styles.tableCell, styles.mediumCell)}
-                      data-test-id={field.name}>
+                      testId={field.name}>
                       <SecretiveLink href={getHref()}>
                         <DisplayField
                           field={field}
@@ -512,7 +570,7 @@ export default function EntryList({
                       </SecretiveLink>
                     </TableCell>
                   ))}
-                  <TableCell data-test-id="status" className={styles.mediumCell}>
+                  <TableCell testId="status" className={styles.mediumCell}>
                     <SecretiveLink href={getHref()}>
                       <EntityStatusTag
                         statusLabel={EntityState.stateName(EntityState.getState(entry.data.sys))}
