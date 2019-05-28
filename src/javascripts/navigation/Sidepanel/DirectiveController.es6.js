@@ -12,8 +12,6 @@ import * as AccessChecker from 'access_control/AccessChecker/index.es6';
 import * as LD from 'utils/LaunchDarkly/index.es6';
 import * as logger from 'services/logger.es6';
 
-import { open as openProjectsCreationModal } from 'app/__PROTOTYPE__Projects/ProjectCreationModal.es6';
-
 import renderSidepanel from './SidepanelView.es6';
 
 const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
@@ -48,10 +46,7 @@ export default function createController($scope, $window) {
     createNewOrg,
     openedSpaceId: null,
     setOpenedSpaceId,
-    environmentsEnabled: false,
-
-    showCreateProjectModal,
-    goToProject
+    environmentsEnabled: false
   };
 
   function render() {
@@ -137,32 +132,9 @@ export default function createController($scope, $window) {
     });
   }
 
-  function goToProject(projectId) {
-    const {
-      currOrg: {
-        sys: { id: orgId }
-      }
-    } = state;
-
-    closeSidePanel();
-
-    Navigator.go({
-      path: ['projects', 'home'],
-      params: {
-        orgId,
-        projectId
-      }
-    });
-  }
-
   function showCreateSpaceModal() {
     closeSidePanel();
     CreateSpace.showDialog(state.currOrg.sys.id);
-  }
-
-  function showCreateProjectModal() {
-    closeSidePanel();
-    openProjectsCreationModal(state.currOrg.sys.id);
   }
 
   function handleEsc(ev) {

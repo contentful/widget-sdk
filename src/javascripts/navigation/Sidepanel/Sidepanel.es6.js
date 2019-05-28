@@ -4,7 +4,6 @@ import CloseIcon from 'svg/close.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import SidepanelOrgs from './SidepanelOrgs.es6';
 import SidepanelSpaces from './SidepanelSpaces.es6';
-import SidepanelProjects from './__PROTOTYPE__SidepanelProjects.es6';
 import SidepanelNoOrgs from './SidepanelNoOrgs.es6';
 import { Spinner } from '@contentful/forma-36-react-components';
 import OrgActions from './OrgActions.es6';
@@ -39,7 +38,6 @@ export default class Sidepanel extends React.Component {
         {currOrg && (
           <React.Fragment>
             <SidepanelOrgs {...this.props} />
-            <SidepanelProjects {...this.props} />
             <SidepanelSpaces {...this.props} />
             {isOwnerOrAdmin(currOrg) ? (
               <OrgActions
