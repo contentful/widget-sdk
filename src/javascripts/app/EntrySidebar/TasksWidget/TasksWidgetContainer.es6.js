@@ -99,17 +99,11 @@ export default class ScheduleWidgetContainer extends Component {
           hasNewTaskForm: false,
           tasks: prevState.tasksViewData.tasks.map(task => {
             if (task.key === taskKey) {
-              console.log({ task });
-
-              const newTask = {
+              return {
                 ...task,
                 isDraft: false,
                 body: taskBody
               };
-
-              console.log({ newTask });
-
-              return newTask;
             } else {
               return { ...task };
             }
@@ -121,8 +115,6 @@ export default class ScheduleWidgetContainer extends Component {
 
   render() {
     const tasksViewData = this.state.tasksViewData;
-
-    console.log({ tasksViewData });
 
     return (
       <ErrorHandler>
