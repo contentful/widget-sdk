@@ -4,6 +4,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import { ADMIN_ROLE_ID } from './constants.es6';
+import { getSubscriptionState } from 'account/AccountUtils.es6';
 
 export default function register() {
   registerDirective('cfRoleList', () => ({
@@ -20,7 +21,6 @@ export default function register() {
     'access_control/AccessChecker',
     'UserListController/jumpToRole',
     'spaceContext',
-    'TheAccountView',
     (
       $scope,
       $state,
@@ -28,8 +28,7 @@ export default function register() {
       createRoleRemover,
       accessChecker,
       jumpToRoleMembers,
-      spaceContext,
-      TheAccountView
+      spaceContext
     ) => {
       const listHandler = UserListHandler.create();
       const organization = spaceContext.organization;
@@ -50,7 +49,7 @@ export default function register() {
       $scope.duplicateRole = duplicateRole;
       $scope.jumpToRoleMembers = jumpToRoleMembers;
       $scope.jumpToAdminRoleMembers = jumpToAdminRoleMembers;
-      $scope.accountUpgradeState = TheAccountView.getSubscriptionState();
+      $scope.accountUpgradeState = getSubscriptionState();
       $scope.canUpgrade = isOwnerOrAdmin(organization);
 
       function isTranslator(role) {

@@ -1,6 +1,7 @@
 import { registerDirective, registerController } from 'NgRegistry.es6';
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import { goToUsers } from 'account/AccountUtils.es6';
 
 export default function register() {
   registerDirective('cfAddUsersToSpaceNote', () => {
@@ -77,12 +78,11 @@ export default function register() {
   registerController('UserInvitationNotesController', [
     '$scope',
     'spaceContext',
-    'TheAccountView',
-    ($scope, spaceContext, TheAccountView) => {
+    ($scope, spaceContext) => {
       const organization = spaceContext.organization;
 
       $scope.canInviteUsersToOrganization = () => isOwnerOrAdmin(organization);
-      $scope.goToOrganizationUsers = TheAccountView.goToUsers;
+      $scope.goToOrganizationUsers = goToUsers;
     }
   ]);
 }
