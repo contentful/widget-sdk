@@ -29,7 +29,11 @@ const KNOWN_APPS = {
   optimizely: {
     title: 'Optimizely',
     featureId: OPTIMIZELY_APP_FEATURE,
-    priceLine: 'Available on Scale and Performance platforms only'
+    priceLine: {
+      list: 'Enterprise plan only',
+      modal:
+        'Optimizely App is available on our enterprise-grade Professional and Scale platforms (via Committed, annual plans).'
+    }
   }
 };
 

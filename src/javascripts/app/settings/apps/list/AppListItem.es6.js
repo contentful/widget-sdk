@@ -62,7 +62,7 @@ export default class AppListItem extends Component {
           </Heading>
           {!enabled && priceLine && (
             <TextLink icon="HelpCircle" onClick={this.openPricingInfo}>
-              {priceLine}
+              {priceLine.list}
             </TextLink>
           )}
         </div>
@@ -108,10 +108,8 @@ export default class AppListItem extends Component {
         }}
         onCancel={onClose}>
         <Typography>
-          <Paragraph>{this.props.app.priceLine}.</Paragraph>
-          <Paragraph>
-            Contact us if you are interested in using {this.props.app.title} App.
-          </Paragraph>
+          <Paragraph>{this.props.app.priceLine.modal}.</Paragraph>
+          <Paragraph>Contact us if you are interested in using this feature.</Paragraph>
         </Typography>
       </ModalConfirm>
     ));
