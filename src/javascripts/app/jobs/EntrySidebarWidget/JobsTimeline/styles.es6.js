@@ -3,14 +3,17 @@ import tokens from '@contentful/forma-36-tokens';
 
 export const scheduleStyles = {
   scheduledTo: css({
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
+    width: '50%'
   }),
   schedule: css({
     display: 'flex',
+    flexWrap: 'wrap',
     paddingLeft: '20px',
     position: 'relative',
+    color: tokens.colorTextLight,
     '&::before': {
-      top: '1px',
+      top: '2px',
       left: '0px',
       content: `''`,
       width: '10px',
@@ -18,7 +21,7 @@ export const scheduleStyles = {
       position: 'absolute',
       borderRadius: '10px',
       backgroundColor: 'transparent',
-      border: `2px solid ${tokens.colorElementDarkest}`
+      border: `1px solid ${tokens.colorElementDarkest}`
     },
     '&:first-of-type::before': {
       backgroundColor: tokens.colorElementMid
@@ -28,8 +31,8 @@ export const scheduleStyles = {
       left: '5px',
       position: 'absolute',
       content: `''`,
-      width: '4px',
-      height: '10px',
+      width: '2px',
+      height: '11px',
       background: tokens.colorElementDarkest
     }
   }),
@@ -45,6 +48,6 @@ export const scheduleStyles = {
     width: '100%'
   }),
   date: css({
-    marginLeft: 'auto'
+    color: tokens.colorTextLight
   })
 };
