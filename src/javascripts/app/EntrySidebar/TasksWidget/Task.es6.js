@@ -350,31 +350,28 @@ export default class Task extends React.PureComponent {
     );
   }
 
+  renderTask() {
+    const { isDraft } = this.props;
+
+    return (
+      <div
+        className={cx(styles.task, (this.state.hasEditForm || isDraft) && styles.taskHasEditForm)}
+        onMouseEnter={this.handleTaskHover}
+        onMouseLeave={this.handleTaskHover}
+        onKeyDown={this.handleTaskKeyDown}
+        tabIndex={0}>
+        <TabFocusTrap className={styles.tabFocusTrap}>
+          {this.state.hasEditForm || isDraft ? this.renderEditForm() : this.renderDetails()}
+        </TabFocusTrap>
+      </div>
+    );
+  }
+
   render() {
     const { isLoading } = this.props;
 
     return (
-      <React.Fragment>
-        {isLoading ? (
-          this.renderLoadingState()
-        ) : (
-          <div
-            className={cx(
-              styles.task,
-              (this.state.hasEditForm || this.props.isDraft) && styles.taskHasEditForm
-            )}
-            onMouseEnter={this.handleTaskHover}
-            onMouseLeave={this.handleTaskHover}
-            onKeyDown={this.handleTaskKeyDown}
-            tabIndex={0}>
-            <TabFocusTrap className={styles.tabFocusTrap}>
-              {this.state.hasEditForm || this.props.isDraft
-                ? this.renderEditForm()
-                : this.renderDetails()}
-            </TabFocusTrap>
-          </div>
-        )}
-      </React.Fragment>
+      <React.Fragment>{isLoading ? this.renderLoadingState() : this.renderTask()}</React.Fragment>
     );
   }
 }
