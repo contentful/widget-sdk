@@ -113,9 +113,10 @@ const styles = {
   }),
 
   actions: css({
-    display: 'inline-flex',
+    display: 'inline-block',
     marginLeft: 0,
     width: 0,
+    height: '18px',
     overflow: 'hidden',
     transition: `width ${tokens.transitionDurationShort} ${
       tokens.transitionEasingDefault
