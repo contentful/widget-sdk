@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 
 const TaskViewData = {
   helpText: PropTypes.string,
+  isLoading: PropTypes.bool,
+  hasNewTaskForm: PropTypes.bool,
   tasks: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.string.isRequired
@@ -26,13 +28,17 @@ export function createTasksViewDataFromComments(comments = []) {
       tasks.length === 0
         ? 'No tasks were defined yet.'
         : `There are ${tasks.length} pending tasks.`,
+    isLoading: false,
+    hasNewTaskForm: false,
     tasks: tasks.map(task => ({
       body: task.body,
       key: task.sys.id,
       assignedTo: task.sys.createdBy, // TODO: Replace with assigned to information
       createdBy: task.sys.createdBy,
       createdAt: task.sys.createdAt,
-      resolved: false // TODO: Replace with resolved flag
+      resolved: false, // TODO: Replace with resolved flag
+      isDraft: false,
+      validationMessage: ''
       // TODO: Add more stuff from comments into this view data object.
     }))
   };
@@ -43,7 +49,8 @@ export function createTasksViewDataFromComments(comments = []) {
  */
 export function createLoadingStateTasksViewData() {
   return {
-    helpText: 'Loading...', // TODO: Probably shouldn't just be a help text.
+    isLoading: true,
+    hasNewTaskForm: false,
     tasks: []
   };
 }

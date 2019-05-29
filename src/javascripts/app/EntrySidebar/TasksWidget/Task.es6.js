@@ -10,7 +10,9 @@ import {
   SelectField,
   TabFocusTrap,
   TextField,
-  Tooltip
+  Tooltip,
+  SkeletonContainer,
+  SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
@@ -26,15 +28,32 @@ const styles = {
     alignItems: 'start',
     backgroundColor: tokens.colorWhite,
     borderBottom: `1px solid ${tokens.colorElementMid}`,
+    transition: `background-color ${tokens.transitionDurationShort} ${
+      tokens.transitionEasingDefault
+    }`,
     outline: 'none',
     ':hover': {
-      backgroundColor: tokens.colorElementLightest
+      backgroundColor: tokens.colorElementLight
     },
     ':focus': {
-      backgroundColor: tokens.colorElementLightest,
+      backgroundColor: tokens.colorElementLight,
       outline: `1px solid ${tokens.colorPrimary}`,
       borderRadius: '2px',
       boxShadow: tokens.glowPrimary
+    }
+  }),
+
+  taskLoading: css({
+    padding: tokens.spacingS,
+    cursor: 'default',
+    ':hover': {
+      backgroundColor: tokens.colorWhite
+    },
+    ':focus': {
+      backgroundColor: tokens.colorWhite,
+      outline: 'none',
+      borderRadius: 0,
+      boxShadow: 'none'
     }
   }),
 
@@ -73,14 +92,6 @@ const styles = {
 
   bodyExpanded: css({
     textOverflow: 'clip',
-    whiteSpace: '-moz-pre-wrap',
-    // eslint-disable-next-line no-dupe-keys
-    whiteSpace: '-o-pre-wrap',
-    // eslint-disable-next-line no-dupe-keys
-    whiteSpace: '-pre-wrap',
-    // eslint-disable-next-line no-dupe-keys
-    whiteSpace: 'pre-wrap',
-    // eslint-disable-next-line no-dupe-keys
     whiteSpace: 'pre-line',
     wordWrap: 'break-word',
     overflow: 'hidden'
@@ -88,7 +99,7 @@ const styles = {
 
   meta: css({
     marginTop: tokens.spacingXs,
-    color: tokens.colorTextLight,
+    color: tokens.colorTextMid,
     lineHeight: tokens.lineHeightDefault,
     fontSize: tokens.fontSizeS
   }),
@@ -102,11 +113,14 @@ const styles = {
   }),
 
   actions: css({
-    display: 'inline-flex',
+    display: 'inline-block',
     marginLeft: 0,
     width: 0,
+    height: '18px',
     overflow: 'hidden',
-    transition: 'ease 0.2s'
+    transition: `width ${tokens.transitionDurationShort} ${
+      tokens.transitionEasingDefault
+    }, margin-left ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`
   }),
 
   actionsVisible: css({
@@ -141,13 +155,23 @@ export default class Task extends React.PureComponent {
     assignedTo: PropTypes.object,
     body: PropTypes.string,
     createdAt: PropTypes.string,
-    resolved: PropTypes.bool
+    resolved: PropTypes.bool,
+    isDraft: PropTypes.bool,
+    taskKey: PropTypes.string,
+    onCancelDraft: PropTypes.func,
+    onCreateTask: PropTypes.func,
+    onUpdateTask: PropTypes.func,
+    onDeleteTask: PropTypes.func,
+    onCompleteTask: PropTypes.func,
+    isLoading: PropTypes.bool,
+    validationMessage: PropTypes.string
   };
 
   state = {
     isExpanded: false,
     hasVisibleActions: false,
-    hasEditForm: false
+    hasEditForm: false,
+    body: ''
   };
 
   handleTaskKeyDown = event => {
@@ -169,7 +193,16 @@ export default class Task extends React.PureComponent {
     this.setState({ hasEditForm: true });
   };
 
-  handleDeleteClick = async event => {
+  handleSubmit = (isDraft, taskKey) => {
+    if (isDraft) {
+      this.props.onCreateTask(taskKey, this.state.body);
+    } else {
+      this.props.onUpdateTask(taskKey, this.state.body);
+      this.setState({ hasEditForm: false, isDraft: false });
+    }
+  };
+
+  handleDeleteClick = async (event, taskKey) => {
     event.stopPropagation();
     return ModalLauncher.open(({ isShown, onClose }) => (
       <TaskDeleteDialog
@@ -177,15 +210,21 @@ export default class Task extends React.PureComponent {
         isShown={isShown}
         onCancel={() => onClose(false)}
         onConfirm={() => {
+          this.props.onDeleteTask(taskKey);
           onClose(true);
         }}
       />
     ));
   };
 
-  handleCancelEdit = event => {
+  handleCancelEdit = (event, isDraft) => {
     event.stopPropagation();
-    this.setState({ hasEditForm: false });
+
+    if (isDraft) {
+      this.props.onCancelDraft();
+    } else {
+      this.setState({ hasEditForm: false });
+    }
   };
 
   renderFullName = userObject => {
@@ -202,24 +241,30 @@ export default class Task extends React.PureComponent {
     );
   };
 
-  renderActions = () => {
+  renderActions = taskKey => {
     // TODO: Check roles/permissions before rendering actions
     return (
       <CardActions className={cx(styles.actions, this.state.isExpanded && styles.actionsVisible)}>
         <DropdownList>
           <DropdownListItem onClick={this.handleEditClick}>Edit task</DropdownListItem>
-          <DropdownListItem onClick={this.handleDeleteClick}>Delete task</DropdownListItem>
+          <DropdownListItem onClick={event => this.handleDeleteClick(event, taskKey)}>
+            Delete task
+          </DropdownListItem>
         </DropdownList>
       </CardActions>
     );
   };
 
   renderDetails = () => {
-    const { body, assignedTo, createdAt, resolved } = this.props;
+    const { body, assignedTo, createdAt, resolved, taskKey } = this.props;
     return (
       <React.Fragment>
         <div className={styles.checkboxWrapper}>
-          <input type="checkbox" checked={resolved} />
+          <input
+            type="checkbox"
+            checked={resolved}
+            onChange={() => this.props.onCompleteTask(taskKey)}
+          />
         </div>
         <div
           className={cx(styles.body, this.state.isExpanded && styles.bodyExpanded)}
@@ -243,24 +288,37 @@ export default class Task extends React.PureComponent {
         </div>
         <div className={styles.avatarWrapper}>
           {this.renderAvatar()}
-          {this.renderActions()}
+          {this.renderActions(taskKey)}
         </div>
       </React.Fragment>
     );
   };
 
+  handleBodyUpdate = event => {
+    this.setState({
+      body: event.target.value
+    });
+  };
+
   renderEditForm = () => {
-    const { body, assignedTo } = this.props;
+    const { taskKey, body, assignedTo, isDraft, validationMessage } = this.props;
+
+    const bodyLabel = isDraft ? 'Create task' : 'Edit task';
+    const ctaLabel = isDraft ? 'Create task' : 'Save changes';
+    const ctaContext = isDraft ? 'primary' : 'positive';
+    const characterLimit = 3000;
 
     return (
       <Form spacing="condensed" onClick={e => e.stopPropagation()} className={styles.editForm}>
         <TextField
           name="body"
           id="body"
-          labelText="Edit task"
+          labelText={bodyLabel}
           textarea
           value={body}
-          textInputProps={{ rows: 4, autoFocus: true }}
+          onBlur={event => this.handleBodyUpdate(event)}
+          textInputProps={{ rows: 4, autoFocus: true, maxLength: characterLimit }}
+          validationMessage={validationMessage}
         />
         <SelectField name="assignee" id="assignee" labelText="Assign to">
           <Option value="1">{this.renderFullName(assignedTo)}</Option>
@@ -268,10 +326,17 @@ export default class Task extends React.PureComponent {
           <Option value="3">User 3</Option>
         </SelectField>
         <div className={styles.editActions}>
-          <Button buttonType="positive" className={styles.editSubmit} size="small">
-            Save changes
+          <Button
+            buttonType={ctaContext}
+            className={styles.editSubmit}
+            onClick={() => this.handleSubmit(isDraft, taskKey)}
+            size="small">
+            {ctaLabel}
           </Button>
-          <Button buttonType="muted" onClick={this.handleCancelEdit} size="small">
+          <Button
+            buttonType="muted"
+            onClick={event => this.handleCancelEdit(event, isDraft)}
+            size="small">
             Cancel
           </Button>
         </div>
@@ -279,18 +344,38 @@ export default class Task extends React.PureComponent {
     );
   };
 
-  render() {
+  renderLoadingState() {
+    return (
+      <div className={cx(styles.task, styles.taskLoading)}>
+        <SkeletonContainer svgHeight={18}>
+          <SkeletonBodyText numberOfLines={1} />
+        </SkeletonContainer>
+      </div>
+    );
+  }
+
+  renderTask() {
+    const { isDraft } = this.props;
+
     return (
       <div
-        className={cx(styles.task, this.state.hasEditForm && styles.taskHasEditForm)}
+        className={cx(styles.task, (this.state.hasEditForm || isDraft) && styles.taskHasEditForm)}
         onMouseEnter={this.handleTaskHover}
         onMouseLeave={this.handleTaskHover}
         onKeyDown={this.handleTaskKeyDown}
         tabIndex={0}>
         <TabFocusTrap className={styles.tabFocusTrap}>
-          {this.state.hasEditForm ? this.renderEditForm() : this.renderDetails()}
+          {this.state.hasEditForm || isDraft ? this.renderEditForm() : this.renderDetails()}
         </TabFocusTrap>
       </div>
+    );
+  }
+
+  render() {
+    const { isLoading } = this.props;
+
+    return (
+      <React.Fragment>{isLoading ? this.renderLoadingState() : this.renderTask()}</React.Fragment>
     );
   }
 }
