@@ -299,6 +299,7 @@ export default class Task extends React.PureComponent {
     const bodyLabel = isDraft ? 'Create task' : 'Edit task';
     const ctaLabel = isDraft ? 'Create task' : 'Save changes';
     const ctaContext = isDraft ? 'primary' : 'positive';
+    const characterLimit = 3000;
 
     return (
       <Form spacing="condensed" onClick={e => e.stopPropagation()} className={styles.editForm}>
@@ -310,7 +311,7 @@ export default class Task extends React.PureComponent {
           defaultValue={body}
           value={this.state.body}
           onBlur={event => this.handleBodyUpdate(event)}
-          textInputProps={{ rows: 4, autoFocus: true }}
+          textInputProps={{ rows: 4, autoFocus: true, maxLength: characterLimit }}
         />
         <SelectField name="assignee" id="assignee" labelText="Assign to">
           <Option value="1">{this.renderFullName(assignedTo)}</Option>
