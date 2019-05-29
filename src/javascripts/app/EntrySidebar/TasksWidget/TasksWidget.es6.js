@@ -34,7 +34,8 @@ export default class ScheduleWidget extends React.PureComponent {
     onCancelDraft: PropTypes.func,
     onCreateTask: PropTypes.func,
     onUpdateTask: PropTypes.func,
-    onDeleteTask: PropTypes.func
+    onDeleteTask: PropTypes.func,
+    onCompleteTask: PropTypes.func
   };
 
   renderLoadingState() {
@@ -85,6 +86,7 @@ export default class ScheduleWidget extends React.PureComponent {
                         this.props.onUpdateTask(taskKey, taskBody)
                       }
                       onDeleteTask={taskKey => this.props.onDeleteTask(taskKey)}
+                      onCompleteTask={taskKey => this.props.onCompleteTask(taskKey)}
                       validationMessage={task.validationMessage}
                     />
                   </li>

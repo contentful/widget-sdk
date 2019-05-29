@@ -162,6 +162,7 @@ export default class Task extends React.PureComponent {
     onCreateTask: PropTypes.func,
     onUpdateTask: PropTypes.func,
     onDeleteTask: PropTypes.func,
+    onCompleteTask: PropTypes.func,
     isLoading: PropTypes.bool,
     validationMessage: PropTypes.string
   };
@@ -259,7 +260,11 @@ export default class Task extends React.PureComponent {
     return (
       <React.Fragment>
         <div className={styles.checkboxWrapper}>
-          <input type="checkbox" checked={resolved} />
+          <input
+            type="checkbox"
+            checked={resolved}
+            onChange={() => this.props.onCompleteTask(taskKey)}
+          />
         </div>
         <div
           className={cx(styles.body, this.state.isExpanded && styles.bodyExpanded)}
