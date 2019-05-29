@@ -161,7 +161,8 @@ export default class Task extends React.PureComponent {
     onCreateTask: PropTypes.func,
     onUpdateTask: PropTypes.func,
     onDeleteTask: PropTypes.func,
-    isLoading: PropTypes.bool
+    isLoading: PropTypes.bool,
+    validationMessage: PropTypes.string
   };
 
   state = {
@@ -294,7 +295,7 @@ export default class Task extends React.PureComponent {
   };
 
   renderEditForm = () => {
-    const { taskKey, body, assignedTo, isDraft } = this.props;
+    const { taskKey, body, assignedTo, isDraft, validationMessage } = this.props;
 
     const bodyLabel = isDraft ? 'Create task' : 'Edit task';
     const ctaLabel = isDraft ? 'Create task' : 'Save changes';
@@ -312,6 +313,7 @@ export default class Task extends React.PureComponent {
           value={this.state.body}
           onBlur={event => this.handleBodyUpdate(event)}
           textInputProps={{ rows: 4, autoFocus: true, maxLength: characterLimit }}
+          validationMessage={validationMessage}
         />
         <SelectField name="assignee" id="assignee" labelText="Assign to">
           <Option value="1">{this.renderFullName(assignedTo)}</Option>

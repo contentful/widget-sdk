@@ -91,6 +91,29 @@ export default class ScheduleWidgetContainer extends Component {
   }
 
   handleCreateTask(taskKey, taskBody) {
+    if (!taskBody) {
+      this.setState(prevState => {
+        return {
+          ...prevState,
+          tasksViewData: {
+            ...prevState.tasksViewData,
+            tasks: prevState.tasksViewData.tasks.map(task => {
+              if (task.key === taskKey) {
+                return {
+                  ...task,
+                  validationMessage: 'Your task cannot be empty'
+                };
+              } else {
+                return { ...task };
+              }
+            })
+          }
+        };
+      });
+
+      return;
+    }
+
     this.setState(prevState => {
       return {
         ...prevState,

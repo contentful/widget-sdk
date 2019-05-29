@@ -85,6 +85,7 @@ export default class ScheduleWidget extends React.PureComponent {
                         this.props.onUpdateTask(taskKey, taskBody)
                       }
                       onDeleteTask={taskKey => this.props.onDeleteTask(taskKey)}
+                      validationMessage={task.validationMessage}
                     />
                   </li>
                 ))}

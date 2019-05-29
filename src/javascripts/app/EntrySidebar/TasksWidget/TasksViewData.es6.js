@@ -37,7 +37,8 @@ export function createTasksViewDataFromComments(comments = []) {
       createdBy: task.sys.createdBy,
       createdAt: task.sys.createdAt,
       resolved: false, // TODO: Replace with resolved flag
-      isDraft: false
+      isDraft: false,
+      validationMessage: ''
       // TODO: Add more stuff from comments into this view data object.
     }))
   };
