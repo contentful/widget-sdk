@@ -239,7 +239,7 @@ export class BulkActionsRow extends React.Component {
         break;
       case 'archive':
         pendingMessage = this.getPendingMessage('Archiving');
-        action = actions.deleteSelected;
+        action = actions.archiveSelected;
         break;
       case 'unarchive':
         pendingMessage = this.getPendingMessage('Unarchiving');
