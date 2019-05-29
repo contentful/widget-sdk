@@ -35,7 +35,7 @@ export default class Features extends Component {
         <Paragraph>
           Check out{' '}
           <TextLink
-            href="https://www.contentful.com/developers/docs/extensibility/optimizely"
+            href="https://www.contentful.com/developers/docs/extensibility/apps/optimizely/"
             target="_blank">
             documentation
           </TextLink>{' '}
