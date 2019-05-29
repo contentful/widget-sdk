@@ -49,7 +49,6 @@ export function createTasksViewDataFromComments(comments = []) {
  */
 export function createLoadingStateTasksViewData() {
   return {
-    helpText: 'Loading...', // TODO: Probably shouldn't just be a help text.
     isLoading: true,
     hasNewTaskForm: false,
     tasks: []
