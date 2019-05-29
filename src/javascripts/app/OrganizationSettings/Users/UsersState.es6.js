@@ -1,23 +1,10 @@
-import {
-  reactStateWrapper,
-  organizationBase
-} from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
+import { reactStateWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
 
-export const inviteUsersState = organizationBase({
+export const inviteUsersState = reactStateWrapper({
   name: 'new',
   title: 'Invite new users',
   url: '/:orgId/invite',
-  controller: [
-    '$stateParams',
-    '$scope',
-    ($stateParams, $scope) => {
-      $scope.properties = {
-        orgId: $stateParams.orgId,
-        context: $scope.context
-      };
-    }
-  ],
-  template: '<cf-new-organization-membership properties="properties" />'
+  componentPath: 'app/OrganizationSettings/Users/NewUser/NewUserBridge.es6'
 });
 
 export const userDetailState = reactStateWrapper({
