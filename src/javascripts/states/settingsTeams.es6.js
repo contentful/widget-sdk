@@ -1,10 +1,11 @@
-import base from 'states/Base.es6';
+import { reactStateWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
 
-const list = base({
+const list = reactStateWrapper({
   name: 'list',
-  url: '',
+  title: 'Space teams',
   loadingText: 'Loading teams…',
-  template: '<react-component name="access_control/SpaceTeamsPage.es6" />'
+  url: '',
+  componentPath: 'access_control/SpaceTeamsPage.es6'
 });
 
 export default {
