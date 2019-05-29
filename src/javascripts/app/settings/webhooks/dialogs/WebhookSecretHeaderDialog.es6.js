@@ -42,7 +42,7 @@ export class WebhookSecretHeaderForm extends Component {
           <div style={{ marginTop: 10 }} />
           <TextField
             id="secret-header-value"
-            name="secret-header-key"
+            name="secret-header-value"
             value={this.state.value || ''}
             onChange={e => this.setState({ value: e.target.value })}
             required

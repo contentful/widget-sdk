@@ -1,56 +1,48 @@
 import React from 'react';
-import Enzyme from 'enzyme';
+import 'jest-dom/extend-expect';
+import { render, cleanup, fireEvent } from 'react-testing-library';
 import WebhookSecretHeaderDialog from './WebhookSecretHeaderDialog.es6';
 
-describe('webhooks/dialogs/WebhookSecretHeaderDialog', () => {
-  const selectors = {
-    confirm: '[data-test-id="add-secret-header-button"]',
-    cancel: '[data-test-id="close-secret-header-button"]',
-    keyInput: 'input#secret-header-key',
-    valueInput: 'input#secret-header-value'
-  };
+const selectors = {
+  confirmTestId: 'add-secret-header-button',
+  cancelTestId: 'close-secret-header-button'
+};
 
-  const render = () => {
+describe('webhooks/dialogs/WebhookSecretHeaderDialog', () => {
+  afterEach(cleanup);
+
+  const renderComponent = () => {
     const stubs = {
       onConfirm: jest.fn(),
       onCancel: jest.fn()
     };
-    const wrapper = Enzyme.mount(
+    const wrapper = render(
       <WebhookSecretHeaderDialog isShown onCancel={stubs.onCancel} onConfirm={stubs.onConfirm} />
     );
-    return { wrapper, stubs };
+    return [wrapper, stubs];
   };
 
   it('confirm is disabled by default', () => {
-    const { wrapper, stubs } = render();
-    expect(wrapper.find(selectors.confirm)).toBeDisabled();
-    wrapper.find(selectors.cancel).simulate('click');
+    const [{ getByTestId }, stubs] = renderComponent();
+    expect(getByTestId(selectors.confirmTestId)).toBeDisabled();
+    fireEvent.click(getByTestId(selectors.cancelTestId));
     expect(stubs.onCancel).toHaveBeenCalledTimes(1);
   });
 
   it('confirm is enabled when values are provided', () => {
-    const { wrapper, stubs } = render();
+    const [{ getByLabelText, getByTestId }, stubs] = renderComponent();
 
     const key = 'some_key';
     const value = 'some_value';
 
-    wrapper.find(selectors.keyInput).simulate('change', { target: { value: key } });
-    wrapper.find(selectors.valueInput).simulate('change', { target: { value: value } });
-    expect(wrapper.find(selectors.confirm)).not.toBeDisabled();
+    fireEvent.change(getByLabelText('Key', { exact: false }), { target: { value: key } });
+    fireEvent.change(getByLabelText('Value', { exact: false }), { target: { value: value } });
 
-    wrapper.find(selectors.confirm).simulate('click');
+    fireEvent.click(getByTestId(selectors.confirmTestId));
 
     expect(stubs.onConfirm).toHaveBeenCalledWith({
       key,
       value
     });
-  });
-
-  it('has correct text', () => {
-    const { wrapper } = render();
-    expect(wrapper).toIncludeText(
-      'Values of secret headers are only used when calling the Webhook URL. They are hidden in the Web App, API responses and logs. To modify a secret header you need to remove and recreate it.'
-    );
-    expect(wrapper.find(selectors.confirm)).toHaveText('Add secret header');
   });
 });

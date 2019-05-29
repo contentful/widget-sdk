@@ -61,6 +61,7 @@ export default class WebhookForm extends React.Component {
             </label>
             <div className="webhook-editor__settings-row">
               <select
+                data-test-id="webhook-method-select"
                 className="cfnext-select-box"
                 id="webhook-method"
                 value={get(webhook, ['transformation', 'method'], METHODS[0])}
@@ -107,6 +108,7 @@ export default class WebhookForm extends React.Component {
           <div className="cfnext-form__field">
             <label htmlFor="webhook-content-type">Content type</label>
             <select
+              data-test-id="content-type-select"
               className="cfnext-select-box"
               id="webhook-content-type"
               value={contentType}

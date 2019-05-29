@@ -1,12 +1,15 @@
 import React from 'react';
-import Enzyme from 'enzyme';
+import 'jest-dom/extend-expect';
+import { render, cleanup, fireEvent } from 'react-testing-library';
 import WebhookFilters from './WebhookFilters.es6';
 import { transformFiltersToList, transformListToFilters } from './WebhookFiltersState.es6';
 
 describe('WebhookFilters', () => {
-  const shallow = filters => {
+  afterEach(cleanup);
+
+  const renderComponent = filters => {
     const onChangeStub = jest.fn();
-    const wrapper = Enzyme.shallow(
+    const wrapper = render(
       <WebhookFilters
         filters={transformFiltersToList(filters)}
         onChange={list => onChangeStub(transformListToFilters(list))}
@@ -16,39 +19,37 @@ describe('WebhookFilters', () => {
     return [wrapper, onChangeStub];
   };
 
-  const findFilterRows = wrapper => wrapper.find('.webhook-editor__settings-row');
-
   const assertFilterValues = (filterRow, path, constraint, value) => {
-    const selectBoxes = filterRow.find('select');
-    const valueInput = filterRow.find('input').first();
+    const selectBoxes = filterRow.querySelectorAll('select');
+    const valueInput = filterRow.querySelector('input');
 
-    expect(selectBoxes.at(0).prop('value')).toBe(path);
-    expect(selectBoxes.at(1).prop('value')).toBe(constraint);
-    expect(valueInput.prop('value')).toBe(value);
+    expect(selectBoxes[0].value).toBe(path);
+    expect(selectBoxes[1].value).toBe(constraint);
+    expect(valueInput.value).toBe(value);
   };
 
   it('lists no filters when an empty array is given', () => {
-    const [wrapper] = shallow([]);
-    const filterRows = findFilterRows(wrapper);
+    const [{ queryAllByTestId }] = renderComponent([]);
+    const filterRows = queryAllByTestId('filter-setting-row');
     expect(filterRows).toHaveLength(0);
   });
 
   it('adds default filter if anything but list given', () => {
-    const [wrapper] = shallow(undefined);
-    const filterRows = findFilterRows(wrapper);
+    const [{ getAllByTestId }] = renderComponent(undefined);
+    const filterRows = getAllByTestId('filter-setting-row');
     expect(filterRows).toHaveLength(1);
-    assertFilterValues(filterRows.first(), 'sys.environment.sys.id', 0, 'master');
+    assertFilterValues(filterRows[0], 'sys.environment.sys.id', '0', 'master');
   });
 
   it('lists existing filters', () => {
-    const [wrapper] = shallow([
+    const [{ getAllByTestId }] = renderComponent([
       { in: [{ doc: 'sys.environment.sys.id' }, ['master', 'staging']] },
       { not: { regexp: [{ doc: 'sys.contentType.sys.id' }, { pattern: 'foobar' }] } }
     ]);
-    const filterRows = findFilterRows(wrapper);
+    const filterRows = getAllByTestId('filter-setting-row');
     expect(filterRows).toHaveLength(2);
-    assertFilterValues(filterRows.at(0), 'sys.environment.sys.id', 2, 'master,staging');
-    assertFilterValues(filterRows.at(1), 'sys.contentType.sys.id', 5, 'foobar');
+    assertFilterValues(filterRows[0], 'sys.environment.sys.id', '2', 'master,staging');
+    assertFilterValues(filterRows[1], 'sys.contentType.sys.id', '5', 'foobar');
   });
 
   it('deletes a filter', () => {
@@ -57,15 +58,12 @@ describe('WebhookFilters', () => {
       { not: { regexp: [{ doc: 'sys.contentType.sys.id' }, { pattern: 'foobar' }] } }
     ];
 
-    const [wrapper, onChangeStub] = shallow(filters);
-    const filterRows = findFilterRows(wrapper);
+    const [{ getAllByTestId }, onChangeStub] = renderComponent(filters);
+    const filterRows = getAllByTestId('filter-setting-row');
     expect(filterRows).toHaveLength(2);
 
-    const removeBtn = filterRows
-      .first()
-      .find('button')
-      .first();
-    removeBtn.simulate('click');
+    const removeBtn = filterRows[0].querySelector('[data-test-id="remove-webhook-filter"]');
+    fireEvent.click(removeBtn);
     expect(onChangeStub).toHaveBeenCalledWith([filters[1]]);
   });
 
@@ -75,12 +73,13 @@ describe('WebhookFilters', () => {
       { not: { regexp: [{ doc: 'sys.contentType.sys.id' }, { pattern: 'foobar' }] } }
     ];
 
-    const [wrapper, onChangeStub] = shallow(filters);
-    const filterRows = findFilterRows(wrapper);
+    const [{ getAllByTestId, getByTestId }, onChangeStub] = renderComponent(filters);
+    const filterRows = getAllByTestId('filter-setting-row');
     expect(filterRows).toHaveLength(2);
 
-    const addBtn = wrapper.find('.cfnext-form__field > button').first();
-    addBtn.simulate('click');
+    const addBtn = getByTestId('add-webhook-filter');
+    fireEvent.click(addBtn);
+
     expect(onChangeStub).toHaveBeenCalledWith([
       ...filters,
       { equals: [{ doc: 'sys.environment.sys.id' }, ''] }

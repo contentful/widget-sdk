@@ -64,7 +64,7 @@ export default class WebhookFilters extends React.Component {
 
   renderFilter(filter, index) {
     return (
-      <div key={index} className="webhook-editor__settings-row">
+      <div key={index} data-test-id="filter-setting-row" className="webhook-editor__settings-row">
         <select
           onChange={e => this.updateByIndex(index, { path: e.target.value })}
           className="cfnext-select-box"
@@ -91,7 +91,10 @@ export default class WebhookFilters extends React.Component {
           value={filter.value}
         />
 
-        <button className="btn-link" onClick={() => this.removeByIndex(index)}>
+        <button
+          data-test-id="remove-webhook-filter"
+          className="btn-link"
+          onClick={() => this.removeByIndex(index)}>
           Remove
         </button>
       </div>

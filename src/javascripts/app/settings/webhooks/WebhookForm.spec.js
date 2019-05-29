@@ -1,51 +1,47 @@
 import React from 'react';
-import Enzyme from 'enzyme';
+import 'jest-dom/extend-expect';
+import { render, cleanup, fireEvent } from 'react-testing-library';
 import WebhookForm from './WebhookForm.es6';
 
 describe('WebhookForm', () => {
-  const mount = () => {
+  afterEach(cleanup);
+
+  const renderComponent = () => {
     const onChangeStub = jest.fn();
-    const wrapper = Enzyme.mount(<WebhookForm webhook={{}} onChange={onChangeStub} />);
+    const wrapper = render(<WebhookForm webhook={{}} onChange={onChangeStub} />);
 
     return [wrapper, onChangeStub];
   };
 
   it('renders and updates details', () => {
-    const [wrapper, onChangeStub] = mount();
+    const [{ getByLabelText }, onChangeStub] = renderComponent();
 
-    const name = wrapper.find('#webhook-name');
-    const url = wrapper.find('#webhook-url');
+    const name = getByLabelText('Name', { exact: false });
+    const url = getByLabelText('URL', { exact: false });
 
-    expect(name.prop('value')).toBe('');
-    expect(url.prop('value')).toBe('');
+    expect(name.value).toBe('');
+    expect(url.value).toBe('');
 
-    name.simulate('change', { target: { value: 'webhook' } });
+    fireEvent.change(name, { target: { value: 'webhook' } });
     expect(onChangeStub).toHaveBeenCalledWith({ name: 'webhook' });
 
-    url.simulate('change', { target: { value: 'http://test.com' } });
+    fireEvent.change(url, { target: { value: 'http://test.com' } });
     expect(onChangeStub).toHaveBeenCalledWith({ url: 'http://test.com' });
   });
 
   it('renders and updates transformation properties', () => {
-    const [wrapper, onChangeStub] = mount();
+    const [{ getByTestId }, onChangeStub] = renderComponent();
 
-    const method = wrapper.find('#webhook-method');
-    const contentType = wrapper.find('#webhook-content-type');
+    const method = getByTestId('webhook-method-select');
+    const contentType = getByTestId('content-type-select');
 
-    expect(method.prop('value')).toBe('POST');
-    expect(contentType.prop('value')).toBe('application/vnd.contentful.management.v1+json');
+    expect(method.value).toBe('POST');
+    expect(contentType.value).toBe('application/vnd.contentful.management.v1+json');
 
-    contentType.simulate('change', { target: { value: 'application/json' } });
+    fireEvent.change(contentType, { target: { value: 'application/json' } });
+
     expect(onChangeStub).toHaveBeenCalledWith({
       transformation: { contentType: 'application/json' }
     });
-
-    wrapper.setProps({
-      webhook: { transformation: { contentType: 'application/json' } }
-    });
-
-    method.simulate('change', { target: { value: 'GET' } });
-    const finalWebhook = { transformation: { contentType: 'application/json', method: 'GET' } };
-    expect(onChangeStub).toHaveBeenCalledWith(finalWebhook);
   });
 });
