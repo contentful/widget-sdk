@@ -17,6 +17,9 @@ const migratedStates = [
     v2: 'account.organizations.subscription_new'
   }
 ];
+
+const iframeTemplate = getReactTemplate('account/AccountView.es6');
+
 /**
  * Define a state for an old GK iframe view
  */
@@ -26,7 +29,11 @@ export function iframeStateWrapper(definition = {}) {
     params: {
       pathSuffix: ''
     },
-    template: getIframeTemplate(title)
+    resolve: {
+      useNewView: () => {}
+    },
+    controller: getController(title),
+    template: iframeTemplate
   };
 
   return organizationBase(Object.assign(defaults, definition));
@@ -61,13 +68,13 @@ export function conditionalIframeWrapper(definition = {}) {
   const { title, componentPath, featureFlag } = definition;
 
   const defaults = {
-    controller: getController(),
+    controller: getController(title),
     resolve: {
       useNewView: () => (featureFlag ? getCurrentVariation(featureFlag) : false)
     },
     template: `
       <div>
-        <div ng-if="useNewView === false">${getIframeTemplate(title)}</div>
+        <div ng-if="useNewView === false">${iframeTemplate}</div>
         <div ng-if="useNewView === true">${getReactTemplate(componentPath)}</div>
       </div>
     `
@@ -76,7 +83,7 @@ export function conditionalIframeWrapper(definition = {}) {
   return organizationBase(Object.assign(defaults, definition));
 }
 
-function getController() {
+function getController(title) {
   return [
     '$scope',
     '$stateParams',
@@ -85,6 +92,7 @@ function getController() {
       $scope.useNewView = useNewView;
       $scope.properties = {
         ...$stateParams,
+        title,
         context: $scope.context,
         onReady: () => {
           $scope.context.ready = true;
@@ -101,19 +109,6 @@ function getController() {
 
 function getReactTemplate(componentPath) {
   return `<react-component name="${componentPath}" props="properties" />`;
-}
-
-function getIframeTemplate(title) {
-  return `
-    <div>
-      <div class="workbench-header__wrapper">
-        <header class="workbench-header">
-          <h1 class="workbench-header__title">${title}</h1>
-        </header>
-      </div>
-      <cf-account-view context="context" />
-    </div>
-  `;
 }
 
 export function organizationBase(definition) {

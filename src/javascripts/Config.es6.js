@@ -5,7 +5,7 @@ import { sample } from 'lodash';
 const injected = readInjectedConfig();
 const settings = injected.config;
 
-function readInjectedConfig() {
+export function readInjectedConfig() {
   // TODO Should throw when config is not injected, but currently required for tests
   const defaultValue = { config: { environment: 'development' } };
   const el = document.querySelector('meta[name="external-config"]');

@@ -1,121 +1,108 @@
-import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
+import { getModule } from 'NgRegistry.es6';
+import * as Authentication from 'Authentication.es6';
+import * as TokenStore from 'services/TokenStore.es6';
+import * as Analytics from 'analytics/Analytics.es6';
+import * as UrlSyncHelper from 'account/UrlSyncHelper.es6';
+import * as createSpace from 'services/CreateSpace.es6';
 
-export default function register() {
-  registerFactory('handleGatekeeperMessage', [
-    '$location',
-    '$state',
-    'modalDialog',
-    'Authentication.es6',
-    'services/TokenStore.es6',
-    'services/CreateSpace.es6',
-    'analytics/Analytics.es6',
-    'account/UrlSyncHelper.es6',
-    (
-      $location,
-      $state,
-      modalDialog,
-      Authentication,
-      TokenStore,
-      CreateSpace,
-      analytics,
-      UrlSyncHelper
-    ) => {
-      return function handleGatekeeperMessage(data) {
-        const match = makeMessageMatcher(data);
+const $state = getModule('$state');
+const $rootScope = getModule('$rootScope');
+const $location = getModule('$location');
+const modalDialog = getModule('modalDialog');
 
-        if (match('create', 'UserCancellation')) {
-          Authentication.cancelUser();
-        } else if (match('new', 'space')) {
-          CreateSpace.showDialog(data.organizationId);
-        } else if (match('delete', 'space')) {
-          TokenStore.refresh();
-        } else if (data.type === 'analytics') {
-          trackGKEvent(data);
-        } else if (data.type === 'flash') {
-          showNotification(data);
-        } else if (match('navigate', 'location')) {
-          $location.url(data.path);
-        } else if (match('update', 'location')) {
-          UrlSyncHelper.updateWebappUrl(data.path);
-        } else if (matchesError(data, 401)) {
-          Authentication.redirectToLogin();
-        } else if (matchesError(data)) {
-          showErrorModal(data);
-        } else {
-          TokenStore.refresh();
-        }
-      };
+export default function handleGatekeeperMessage(data) {
+  const match = makeMessageMatcher(data);
 
-      function matchesError(data, errorCode) {
-        if (data.type !== 'error') {
-          return false;
-        }
+  if (match('create', 'UserCancellation')) {
+    Authentication.cancelUser();
+  } else if (match('new', 'space')) {
+    createSpace.showDialog(data.organizationId);
+  } else if (match('delete', 'space')) {
+    TokenStore.refresh();
+  } else if (data.type === 'analytics') {
+    trackGKEvent(data);
+  } else if (data.type === 'flash') {
+    showNotification(data);
+  } else if (match('navigate', 'location')) {
+    $rootScope.$apply(() => $location.url(data.path));
+  } else if (match('update', 'location')) {
+    UrlSyncHelper.updateWebappUrl(data.path);
+  } else if (matchesError(data, 401)) {
+    Authentication.redirectToLogin();
+  } else if (matchesError(data)) {
+    showErrorModal(data);
+  } else {
+    TokenStore.refresh();
+  }
+}
 
-        if (errorCode) {
-          return data.status === errorCode;
-        } else {
-          return /^(4|5)[0-9]{2}$/.test(data.status);
-        }
-      }
+function matchesError(data, errorCode) {
+  if (data.type !== 'error') {
+    return false;
+  }
 
-      function makeMessageMatcher(data) {
-        return function matchMessage(action, type) {
-          const messageAction = _.get(data, 'action', '').toLowerCase();
-          const messageType = _.get(data, 'type', '').toLowerCase();
+  if (errorCode) {
+    return data.status === errorCode;
+  } else {
+    return /^(4|5)[0-9]{2}$/.test(data.status);
+  }
+}
 
-          return action.toLowerCase() === messageAction && type.toLowerCase() === messageType;
-        };
-      }
+function makeMessageMatcher(data) {
+  return function matchMessage(action, type) {
+    const messageAction = _.get(data, 'action', '').toLowerCase();
+    const messageType = _.get(data, 'type', '').toLowerCase();
 
-      function showErrorModal(data) {
-        const defaultTitle = 'Something went wrong';
-        const defaultMessage =
-          'An error has occurred. We have been automatically notified and will investigate. If it re-occurs, please contact support.';
+    return action.toLowerCase() === messageAction && type.toLowerCase() === messageType;
+  };
+}
 
-        modalDialog
-          .open({
-            title: _.unescape(data.heading) || defaultTitle,
-            message: _.unescape(data.body) || defaultMessage,
-            ignoreEsc: true,
-            backgroundClose: false
-          })
-          .promise.then(() => {
-            $state.go('home');
-          });
-      }
+function showErrorModal(data) {
+  const defaultTitle = 'Something went wrong';
+  const defaultMessage =
+    'An error has occurred. We have been automatically notified and will investigate. If it re-occurs, please contact support.';
 
-      function showNotification(data) {
-        const level = _.get(data, 'resource.type', 'info');
-        const message = _.get(data, 'resource.message');
+  modalDialog
+    .open({
+      title: _.unescape(data.heading) || defaultTitle,
+      message: _.unescape(data.body) || defaultMessage,
+      ignoreEsc: true,
+      backgroundClose: false
+    })
+    .promise.then(() => {
+      $state.go('home');
+    });
+}
 
-        if (!level) {
-          return;
-        }
+function showNotification(data) {
+  const level = _.get(data, 'resource.type', 'info');
+  const message = _.get(data, 'resource.message');
 
-        if (message) {
-          if (level.match(/error/)) {
-            Notification.error(message, {
-              id: 'gatekeeper-error'
-            });
-          } else {
-            Notification.success(message);
-          }
-        }
-      }
+  if (!level) {
+    return;
+  }
 
-      function trackGKEvent({ event, data: eventData }) {
-        if (event && eventData) {
-          const newData = Object.assign({}, eventData);
-
-          if (newData.fromState === '$state.current.name') {
-            newData.fromState = $state.current.name;
-          }
-
-          analytics.track(event, newData);
-        }
-      }
+  if (message) {
+    if (level.match(/error/)) {
+      Notification.error(message, {
+        id: 'gatekeeper-error'
+      });
+    } else {
+      Notification.success(message);
     }
-  ]);
+  }
+}
+
+function trackGKEvent({ event, data: eventData }) {
+  if (event && eventData) {
+    const newData = Object.assign({}, eventData);
+
+    if (newData.fromState === '$state.current.name') {
+      newData.fromState = $state.current.name;
+    }
+
+    Analytics.track(event, newData);
+  }
 }

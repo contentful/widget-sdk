@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import base from 'states/Base.es6';
+import { iframeStateWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
 
 const user = userBase({
   name: 'user',
@@ -38,26 +38,14 @@ const userCancellation = userBase({
 });
 
 function userBase(definition) {
-  const defaults = {
-    loadingText: 'Loading your account…',
-    params: {
-      pathSuffix: ''
-    },
-    template: `
-      <div class="workbench-header__wrapper">
-        <header class="workbench-header">
-          <h1 class="workbench-header__title">${definition.title}</h1>
-        </header>
-      </div>
-      <cf-account-view context="context"></cf-account-view>
-    `.trim()
-  };
-
-  const wrapped = base(Object.assign({}, definition, defaults));
-
-  delete wrapped.title;
-
-  return wrapped;
+  return iframeStateWrapper(
+    Object.assign(
+      {
+        loadingText: 'Loading your account…'
+      },
+      definition
+    )
+  );
 }
 
 export default base({
