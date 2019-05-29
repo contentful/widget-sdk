@@ -315,8 +315,7 @@ export default class Task extends React.PureComponent {
           id="body"
           labelText={bodyLabel}
           textarea
-          defaultValue={body}
-          value={this.state.body}
+          value={body}
           onBlur={event => this.handleBodyUpdate(event)}
           textInputProps={{ rows: 4, autoFocus: true, maxLength: characterLimit }}
           validationMessage={validationMessage}
