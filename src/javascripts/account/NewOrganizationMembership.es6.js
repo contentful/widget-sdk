@@ -88,7 +88,7 @@ export default function($scope) {
   progress$.onValue(onProgressValue);
   progress$.onError(onProgressError);
 
-  $scope.component = '<noscript></noscript>';
+  $scope.component = null;
   $scope.$on('$destroy', () => {
     progress$.offValue(onProgressValue);
     progress$.offError(onProgressError);
