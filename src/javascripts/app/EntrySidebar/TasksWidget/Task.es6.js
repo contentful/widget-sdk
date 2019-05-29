@@ -28,12 +28,15 @@ const styles = {
     alignItems: 'start',
     backgroundColor: tokens.colorWhite,
     borderBottom: `1px solid ${tokens.colorElementMid}`,
+    transition: `background-color ${tokens.transitionDurationShort} ${
+      tokens.transitionEasingDefault
+    }`,
     outline: 'none',
     ':hover': {
-      backgroundColor: tokens.colorElementLightest
+      backgroundColor: tokens.colorElementLight
     },
     ':focus': {
-      backgroundColor: tokens.colorElementLightest,
+      backgroundColor: tokens.colorElementLight,
       outline: `1px solid ${tokens.colorPrimary}`,
       borderRadius: '2px',
       boxShadow: tokens.glowPrimary
@@ -96,7 +99,7 @@ const styles = {
 
   meta: css({
     marginTop: tokens.spacingXs,
-    color: tokens.colorTextLight,
+    color: tokens.colorTextMid,
     lineHeight: tokens.lineHeightDefault,
     fontSize: tokens.fontSizeS
   }),
@@ -114,7 +117,9 @@ const styles = {
     marginLeft: 0,
     width: 0,
     overflow: 'hidden',
-    transition: 'ease 0.2s'
+    transition: `width ${tokens.transitionDurationShort} ${
+      tokens.transitionEasingDefault
+    }, margin-left ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`
   }),
 
   actionsVisible: css({
