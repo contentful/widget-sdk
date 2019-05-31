@@ -9,18 +9,29 @@ Event for the editor load sequence.
 
 ## Schema
 
-Snowplow schema: [slide_in_editor/1.0.0.json](https://github.com/contentful/com.contentful-schema-registry/blob/master/schemas/com.contentful/editor_load/jsonschema/1-0-0)
+Snowplow schema: [editor_load/2.0.0.json](https://github.com/contentful/com.contentful-schema-registry/blob/master/schemas/com.contentful/editor_load/jsonschema/2-0-0)
 
 ## Use-cases
 
-We track all of the following cases using the "`load_editor`" event:
+We track all of the following cases using the "`editor_load`" event:
 
 * Initial load
   * `action`: `"init"`
   * `slide_uuid`
   * `total_slide_count`
+  * `load_ms`: `0`
+* Editor main entry is loaded
+  * `action`: `"entity_loaded"`
+  * `slide_uuid`
+  * `slide_level` (zero-indexed)
+  * `link_count`
+  * `rich_text_editor_instance_count`
+  * `link_field_editor_instance_count`: refers to reference and media fields
+  * `total_slide_count`
+  * `load_ms`: number of ms since initial load
 * ShareJS connects
   * `action`: `"sharejs_connected"`
+  * `slides_controller_uuid`
   * `slide_uuid`
   * `slide_level` (zero-indexed)
   * `link_count`
@@ -30,6 +41,7 @@ We track all of the following cases using the "`load_editor`" event:
   * `load_ms`: number of ms since initial load
 * All initially fetched external links have rendered
   * `action`: `"links_rendered"`
+  * `slides_controller_uuid`
   * `slide_uuid`
   * `slide_level` (zero-indexed)
   * `link_count`
@@ -40,6 +52,7 @@ We track all of the following cases using the "`load_editor`" event:
 * Page is fully interactive (shareJS is connected, all links are rendered and
   all field editors are present on the page)
   * `action`: `"fully_interactive"`
+  * `slides_controller_uuid`
   * `slide_uuid`
   * `slide_level` (zero-indexed)
   * `link_count`
@@ -47,3 +60,14 @@ We track all of the following cases using the "`load_editor`" event:
   * `link_field_editor_instance_count`: refers to reference and media fields
   * `total_slide_count`
   * `load_ms`: number of ms since initial load
+
+*Notes:*
+ - Either `sharejs_connected` or `links_rendered` can finish first, depending on ShareJS and CMA speed and whether there are any links to be rendered in the first place.
+ - We currently only trigger this event for entry editor slides, not for asset and bulk editor slides.
+
+## Change-log
+### Version `2-0-0`
+ - Introduced action `"entry_loaded"`
+ - Added `slides_controller_uuid` to identify which slides were visible in the same browser/tab around the same time.
+ - `slide_level` will now always be set, also for the `"init"` event.
+ - `init` action events now always have a `load_ms` set to `0`. This was not previously set for these events while the field was required by the schema, meaning all the `init` events were lost.

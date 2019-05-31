@@ -1,6 +1,6 @@
 import { track } from 'analytics/Analytics.es6';
 import * as Telemetry from 'i13n/Telemetry.es6';
-import { cloneDeep, find, mapValues } from 'lodash';
+import { noop, cloneDeep, find, mapValues } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { deepFreeze } from 'utils/Freeze.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -12,6 +12,7 @@ import {
   getSlideAsString,
   goToPreviousSlideOrExit
 } from 'navigation/SlideInNavigator/index.es6';
+import * as random from 'utils/Random.es6';
 
 const entityLoaders = {
   Entry: loadEntry,
@@ -41,9 +42,11 @@ export default ($scope, $state) => {
   $scope.editorsData = {};
   $scope.context.ready = true;
 
-  setEntities();
-
   const isTopLayer = ($scope.isTopLayer = index => index + 1 === $scope.slideStates.length);
+  const getSlideStates = () => $scope.slideStates;
+  const slidesControllerUuid = random.id();
+
+  setEntities();
 
   $scope.getSlideAsString = getSlideAsString;
 
@@ -204,17 +207,23 @@ export default ($scope, $state) => {
           entityLoads[loaderKey] = ongoingLoad;
         } else {
           let editorData;
+          const getEditorData = () => editorData;
           const loadStartMs = Date.now();
-          const trackLoadEvent = createLoadEventTracker(
-            loadStartMs,
-            () => $scope.slideStates,
-            () => editorData
-          );
-          if (slide.type === 'Entry') {
-            trackLoadEvent('init');
-          }
+          const trackLoadEvent =
+            slide.type === 'Entry'
+              ? createLoadEventTracker({
+                  loadStartMs,
+                  getSlideStates,
+                  getEditorData,
+                  slide,
+                  slidesControllerUuid
+                })
+              : noop;
+          trackLoadEvent('init');
+
           entityLoads[loaderKey] = loadEntity(spaceContext, entityId).then(data => {
             editorData = data;
+            trackLoadEvent('entity_loaded');
             recordEntityEditorLoadTime(entityType, loadStartMs);
             // Only add if data is still required once loaded:
             if ($scope.entityLoads[loaderKey]) {

@@ -1,6 +1,6 @@
 import * as K from 'utils/kefir.es6';
 import { track } from 'analytics/Analytics.es6';
-import { keys, once, sum, sumBy, values, findIndex } from 'lodash';
+import { isEqual, keys, once, sum, sumBy, values, findIndex } from 'lodash';
 import { getRichTextEntityLinks } from '@contentful/rich-text-links';
 import * as random from 'utils/Random.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -9,19 +9,19 @@ const TheLocaleStore = getModule('TheLocaleStore');
 
 const LOAD_EVENT_CATEGORY = 'editor_load';
 
-export function createLoadEventTracker(loadStartMs, getSlideStates, getEditorData) {
+export function createLoadEventTracker({
+  loadStartMs,
+  getSlideStates,
+  getEditorData,
+  slide,
+  slidesControllerUuid
+}) {
   const slideUuid = random.id();
 
-  return function trackEditorLoadEvent(eventName) {
-    const slideStates = getSlideStates();
-    const totalSlideCount = keys(slideStates).length;
-    if (eventName === 'init') {
-      return track(`${LOAD_EVENT_CATEGORY}:init`, { slideUuid, totalSlideCount });
-    }
+  const getDetailEventData = once(() => {
     const editorData = getEditorData();
     const { fields: fieldTypes } = editorData.contentType.data;
     const { fields } = editorData.entity.data;
-    const entityId = editorData.entity.getId();
     const enabledFieldTypes = fieldTypes.filter(field => !field.disabled);
     const richTextFieldTypes = enabledFieldTypes.filter(isRichTextField);
     const singleReferenceFieldTypes = enabledFieldTypes.filter(isSingleReferenceField);
@@ -47,13 +47,26 @@ export function createLoadEventTracker(loadStartMs, getSlideStates, getEditorDat
     );
     const linkCount =
       singleReferenceFieldLinkCount + multiReferenceFieldLinkCount + richTextFieldLinkCount;
-    track(`${LOAD_EVENT_CATEGORY}:${eventName}`, {
-      slideUuid,
-      slideLevel: findIndex(slideStates, state => state.slide.id === entityId),
+
+    return {
       linkCount,
       richTextEditorInstanceCount,
-      linkFieldEditorInstanceCount,
-      totalSlideCount,
+      linkFieldEditorInstanceCount
+    };
+  });
+
+  return function trackEditorLoadEvent(eventName) {
+    const slideStates = getSlideStates();
+    const totalSlideCount = keys(slideStates).length;
+    const slideLevel = findIndex(slideStates, state => isEqual(state.slide, slide));
+    const baseData = { slidesControllerUuid, slideUuid, totalSlideCount, slideLevel };
+    if (eventName === 'init') {
+      return track(`${LOAD_EVENT_CATEGORY}:init`, { ...baseData, loadMs: 0 });
+    }
+    const detailData = getDetailEventData(slideStates);
+    track(`${LOAD_EVENT_CATEGORY}:${eventName}`, {
+      ...baseData,
+      ...detailData,
       loadMs: new Date().getTime() - loadStartMs
     });
   };

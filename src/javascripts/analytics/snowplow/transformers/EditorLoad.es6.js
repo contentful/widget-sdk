@@ -11,6 +11,7 @@ const extractAction = eventName => eventName.split(':')[1];
 export default addUserOrgSpace((eventName, data) => ({
   data: {
     action: extractAction(eventName),
+    slides_controller_uuid: data.slidesControllerUuid,
     slide_uuid: data.slideUuid,
     slide_level: data.slideLevel,
     link_count: data.linkCount,
