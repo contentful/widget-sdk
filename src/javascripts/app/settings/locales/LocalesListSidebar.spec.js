@@ -1,22 +1,17 @@
 import React from 'react';
-import Enzyme from 'enzyme';
+import 'jest-dom/extend-expect';
+import { render, cleanup, fireEvent } from 'react-testing-library';
 import LocalesListSidebar from './LocalesListSidebar.es6';
 import * as $stateMocked from 'ng/$state';
 
 describe('settings/locales/LocalesListSidebar', () => {
-  const selectors = {
-    addLocaleButton: '[data-test-id="add-locales-button"]',
-    documentationSection: '[data-test-id="locales-documentation"]',
-    usagesSection: '[data-test-id="locales-usage"]',
-    changeSpaceSection: '[data-test-id="change-space-block"]',
-    upgradeSpaceButton: '[data-test-id="locales-change"]'
-  };
+  afterEach(cleanup);
 
-  const mount = props => {
+  const renderComponent = props => {
     const stubs = {
       upgradeSpace: jest.fn()
     };
-    const wrapper = Enzyme.mount(
+    const { queryByTestId } = render(
       <LocalesListSidebar
         upgradeSpace={stubs.upgradeSpace}
         subscriptionState={{
@@ -27,7 +22,15 @@ describe('settings/locales/LocalesListSidebar', () => {
         {...props}
       />
     );
-    return { wrapper, stubs };
+
+    return {
+      addLocaleButton: queryByTestId('add-locales-button'),
+      documentationSection: queryByTestId('locales-documentation'),
+      usagesSection: queryByTestId('locales-usage'),
+      changeSpaceSection: queryByTestId('change-space-block'),
+      upgradeSpaceButton: queryByTestId('locales-change'),
+      stubs
+    };
   };
 
   beforeEach(() => {
@@ -38,7 +41,12 @@ describe('settings/locales/LocalesListSidebar', () => {
   describe('if environment is not "master"', () => {
     it('add button and documentation are shown', () => {
       expect.assertions(5);
-      const { wrapper } = mount({
+      const {
+        addLocaleButton,
+        documentationSection,
+        usagesSection,
+        upgradeSpaceButton
+      } = renderComponent({
         insideMasterEnv: false,
         canChangeSpace: false,
         localeResource: {
@@ -48,12 +56,14 @@ describe('settings/locales/LocalesListSidebar', () => {
           }
         }
       });
-      expect(wrapper.find(selectors.addLocaleButton)).toHaveText('Add Locale');
-      expect(wrapper.find(selectors.documentationSection)).toExist();
-      expect(wrapper.find(selectors.usagesSection)).not.toExist();
-      expect(wrapper.find(selectors.upgradeSpaceButton)).not.toExist();
+      expect(addLocaleButton).toHaveTextContent('Add Locale');
 
-      wrapper.find(selectors.addLocaleButton).simulate('click');
+      expect(documentationSection).toBeInTheDocument();
+      expect(usagesSection).not.toBeInTheDocument();
+      expect(upgradeSpaceButton).not.toBeInTheDocument();
+
+      fireEvent.click(addLocaleButton);
+
       expect($stateMocked.go).toHaveBeenCalledWith('^.new', undefined, undefined);
     });
   });
@@ -62,7 +72,13 @@ describe('settings/locales/LocalesListSidebar', () => {
     describe('if limit is not reached', () => {
       it('all sections and texts are shown correctly', () => {
         expect.assertions(7);
-        const { wrapper } = mount({
+        const {
+          addLocaleButton,
+          documentationSection,
+          usagesSection,
+          upgradeSpaceButton,
+          changeSpaceSection
+        } = renderComponent({
           insideMasterEnv: true,
           canChangeSpace: false,
           localeResource: {
@@ -72,15 +88,15 @@ describe('settings/locales/LocalesListSidebar', () => {
             }
           }
         });
-        expect(wrapper.find(selectors.documentationSection)).toExist();
-        expect(wrapper.find(selectors.addLocaleButton)).toHaveText('Add Locale');
-        expect(wrapper.find(selectors.usagesSection)).toIncludeText(
+        expect(documentationSection).toBeInTheDocument();
+        expect(addLocaleButton).toHaveTextContent('Add Locale');
+        expect(usagesSection).toHaveTextContent(
           'You are using 1 out of 2 locales available in this space.'
         );
-        expect(wrapper.find(selectors.changeSpaceSection)).not.toExist();
-        expect(wrapper.find(selectors.upgradeSpaceButton)).not.toExist();
+        expect(changeSpaceSection).not.toBeInTheDocument();
+        expect(upgradeSpaceButton).not.toBeInTheDocument();
 
-        wrapper.find(selectors.addLocaleButton).simulate('click');
+        fireEvent.click(addLocaleButton);
         expect($stateMocked.go).toHaveBeenCalledTimes(1);
         expect($stateMocked.go).toHaveBeenCalledWith('^.new', undefined, undefined);
       });
@@ -89,7 +105,7 @@ describe('settings/locales/LocalesListSidebar', () => {
     describe('if limit is reached and user can change space', () => {
       it('all sections and texts are shown correctly if limit is more than 1', () => {
         expect.assertions(4);
-        const { wrapper } = mount({
+        const { documentationSection, addLocaleButton, usagesSection } = renderComponent({
           insideMasterEnv: true,
           canChangeSpace: true,
           localeResource: {
@@ -99,12 +115,12 @@ describe('settings/locales/LocalesListSidebar', () => {
             }
           }
         });
-        expect(wrapper.find(selectors.documentationSection)).toExist();
-        expect(wrapper.find(selectors.addLocaleButton)).not.toExist();
-        expect(wrapper.find(selectors.usagesSection)).toIncludeText(
+        expect(documentationSection).toBeInTheDocument();
+        expect(addLocaleButton).not.toBeInTheDocument();
+        expect(usagesSection).toHaveTextContent(
           'You are using 2 out of 2 locales available in this space.'
         );
-        expect(wrapper.find(selectors.usagesSection)).toIncludeText(
+        expect(usagesSection).toHaveTextContent(
           'Delete an existing locale or change the space to add more.'
         );
       });
@@ -112,7 +128,7 @@ describe('settings/locales/LocalesListSidebar', () => {
       it('all sections and texts are shown correctly if limit is 1', () => {
         expect.assertions(4);
 
-        const { wrapper } = mount({
+        const { documentationSection, addLocaleButton, usagesSection } = renderComponent({
           insideMasterEnv: true,
           canChangeSpace: true,
           localeResource: {
@@ -122,21 +138,24 @@ describe('settings/locales/LocalesListSidebar', () => {
             }
           }
         });
-        expect(wrapper.find(selectors.documentationSection)).toExist();
-        expect(wrapper.find(selectors.addLocaleButton)).not.toExist();
-        expect(wrapper.find(selectors.usagesSection)).toIncludeText(
+        expect(documentationSection).toBeInTheDocument();
+        expect(addLocaleButton).not.toBeInTheDocument();
+        expect(usagesSection).toHaveTextContent(
           'You are using 1 out of 1 locale available in this space.'
         );
-        expect(wrapper.find(selectors.usagesSection)).toIncludeText(
-          'Change the space to add more.'
-        );
+        expect(usagesSection).toHaveTextContent('Change the space to add more.');
       });
     });
 
     describe('if limit is reached and user cannot change space', () => {
       it('all sections and texts are shown correctly if limit is more than 1', () => {
         expect.assertions(5);
-        const { wrapper } = mount({
+        const {
+          documentationSection,
+          addLocaleButton,
+          upgradeSpaceButton,
+          usagesSection
+        } = renderComponent({
           insideMasterEnv: true,
           canChangeSpace: false,
           localeResource: {
@@ -146,20 +165,25 @@ describe('settings/locales/LocalesListSidebar', () => {
             }
           }
         });
-        expect(wrapper.find(selectors.documentationSection)).toExist();
-        expect(wrapper.find(selectors.addLocaleButton)).not.toExist();
-        expect(wrapper.find(selectors.upgradeSpaceButton)).not.toExist();
-        expect(wrapper.find(selectors.usagesSection)).toIncludeText(
+        expect(documentationSection).toBeInTheDocument();
+        expect(addLocaleButton).not.toBeInTheDocument();
+        expect(upgradeSpaceButton).not.toBeInTheDocument();
+        expect(usagesSection).toHaveTextContent(
           'You are using 2 out of 2 locales available in this space.'
         );
-        expect(wrapper.find(selectors.usagesSection)).toIncludeText(
+        expect(usagesSection).toHaveTextContent(
           'Delete an existing locale or ask the administrator of your organization to change the space to add more.'
         );
       });
 
       it('all sections and texts are shown correctly if limit is 1', () => {
         expect.assertions(5);
-        const { wrapper } = mount({
+        const {
+          documentationSection,
+          addLocaleButton,
+          upgradeSpaceButton,
+          usagesSection
+        } = renderComponent({
           insideMasterEnv: true,
           canChangeSpace: false,
           localeResource: {
@@ -169,13 +193,13 @@ describe('settings/locales/LocalesListSidebar', () => {
             }
           }
         });
-        expect(wrapper.find(selectors.documentationSection)).toExist();
-        expect(wrapper.find(selectors.addLocaleButton)).not.toExist();
-        expect(wrapper.find(selectors.upgradeSpaceButton)).not.toExist();
-        expect(wrapper.find(selectors.usagesSection)).toIncludeText(
+        expect(documentationSection).toBeInTheDocument();
+        expect(addLocaleButton).not.toBeInTheDocument();
+        expect(upgradeSpaceButton).not.toBeInTheDocument();
+        expect(usagesSection).toHaveTextContent(
           'You are using 1 out of 1 locale available in this space.'
         );
-        expect(wrapper.find(selectors.usagesSection)).toIncludeText(
+        expect(usagesSection).toHaveTextContent(
           'Ask the administrator of your organization to change the space to add more.'
         );
       });

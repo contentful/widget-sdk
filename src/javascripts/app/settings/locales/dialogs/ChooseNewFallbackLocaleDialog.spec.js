@@ -1,63 +1,54 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import 'jest-dom/extend-expect';
+import { render, cleanup, fireEvent } from 'react-testing-library';
 import ChooseNewFallbackLocaleDialog from './ChooseNewFallbackLocaleDialog.es6';
 
 describe('locales/components/ChooseNewFallbackLocaleDialog', () => {
-  const selectors = {
-    confirmChangeLocale: '[data-test-id="choose-locale-confirm"]',
-    cancelChangeLocale: '[data-test-id="choose-locale-cancel"]',
-    chooseLocaleSelect: '[data-test-id="choose-fallback-locale-select"]'
-  };
+  afterEach(cleanup);
 
-  const renderComponent = props => (
-    <ChooseNewFallbackLocaleDialog
-      isShown
-      onConfirm={() => {}}
-      onCancel={() => {}}
-      locale={{
-        name: 'German',
-        code: 'de'
-      }}
-      dependantLocales={[
-        {
-          name: 'Polish',
-          code: 'pl'
-        },
-        {
-          name: 'French',
-          code: 'fr'
-        }
-      ]}
-      availableLocales={[
-        {
-          name: 'Russian',
-          code: 'ru'
-        },
-        {
-          name: 'English',
-          code: 'en'
-        }
-      ]}
-      {...props}
-    />
-  );
-
-  it('should match snapshot', () => {
-    const wrapper = shallow(renderComponent());
-    expect(wrapper).toMatchSnapshot();
-  });
+  const renderComponent = props =>
+    render(
+      <ChooseNewFallbackLocaleDialog
+        isShown
+        onConfirm={() => {}}
+        onCancel={() => {}}
+        locale={{
+          name: 'German',
+          code: 'de'
+        }}
+        dependantLocales={[
+          {
+            name: 'Polish',
+            code: 'pl'
+          },
+          {
+            name: 'French',
+            code: 'fr'
+          }
+        ]}
+        availableLocales={[
+          {
+            name: 'Russian',
+            code: 'ru'
+          },
+          {
+            name: 'English',
+            code: 'en'
+          }
+        ]}
+        {...props}
+      />
+    );
 
   it('it is possible to invoke cancel by clicking on two buttons', () => {
     const stubs = {
       onCancel: jest.fn()
     };
-    const wrapper = mount(
-      renderComponent({
-        onCancel: stubs.onCancel
-      })
-    );
+    const { getByTestId } = renderComponent({
+      onCancel: stubs.onCancel
+    });
 
-    wrapper.find(selectors.cancelChangeLocale).simulate('click');
+    fireEvent.click(getByTestId('choose-locale-cancel'));
     expect(stubs.onCancel).toHaveBeenCalledTimes(1);
   });
 
@@ -65,17 +56,19 @@ describe('locales/components/ChooseNewFallbackLocaleDialog', () => {
     const stubs = {
       onConfirm: jest.fn()
     };
-    const wrapper = mount(
-      renderComponent({
-        onConfirm: stubs.onConfirm
-      })
-    );
+    const { getByTestId } = renderComponent({
+      onConfirm: stubs.onConfirm
+    });
+
+    const confirmChangeLocale = getByTestId('choose-locale-confirm');
+    const chooseLocaleSelect = getByTestId('choose-fallback-locale-select');
+
     // click with 'none' selected
-    wrapper.find(selectors.confirmChangeLocale).simulate('click');
+    fireEvent.click(confirmChangeLocale);
     expect(stubs.onConfirm).toHaveBeenCalledWith('');
     // select 'en' and click again
-    wrapper.find(selectors.chooseLocaleSelect).simulate('change', { target: { value: 'en' } });
-    wrapper.find(selectors.confirmChangeLocale).simulate('click');
+    fireEvent.change(chooseLocaleSelect, { target: { value: 'en' } });
+    fireEvent.click(confirmChangeLocale);
     expect(stubs.onConfirm).toHaveBeenCalledWith('en');
     expect(stubs.onConfirm).toHaveBeenCalledTimes(2);
   });

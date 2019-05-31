@@ -1,52 +1,43 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import 'jest-dom/extend-expect';
+import { render, cleanup, fireEvent } from 'react-testing-library';
 import LocaleCodeChangeConfirmDialog from './LocaleCodeChangeConfirmDialog.es6';
 
 describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
-  const selectors = {
-    repeatLocaleInput: 'input[data-test-id="repeat-locale-input"]',
-    confirmChangeLocale: '[data-test-id="change-locale-confirm"]',
-    cancelChangeLocale: '[data-test-id="change-locale-cancel"]'
-  };
+  afterEach(cleanup);
 
-  const renderComponent = props => (
-    <LocaleCodeChangeConfirmDialog
-      isShown
-      onConfirm={() => {}}
-      onCancel={() => {}}
-      locale={{
-        name: 'German',
-        code: 'de'
-      }}
-      previousLocale={{
-        name: 'Russian',
-        code: 'ru'
-      }}
-      {...props}
-    />
-  );
-
-  it('should match snapshot', () => {
-    const wrapper = shallow(renderComponent());
-    expect(wrapper).toMatchSnapshot();
-  });
+  const renderComponent = props =>
+    render(
+      <LocaleCodeChangeConfirmDialog
+        isShown
+        onConfirm={() => {}}
+        onCancel={() => {}}
+        locale={{
+          name: 'German',
+          code: 'de'
+        }}
+        previousLocale={{
+          name: 'Russian',
+          code: 'ru'
+        }}
+        {...props}
+      />
+    );
 
   it('confirm button should be disabled by default', () => {
-    const wrapper = mount(renderComponent());
-    expect(wrapper.find(selectors.confirmChangeLocale)).toBeDisabled();
+    const { getByTestId } = renderComponent();
+    expect(getByTestId('change-locale-confirm')).toBeDisabled();
   });
 
   it('it is possible to invoke cancel by clicking on two buttons', () => {
     const stubs = {
       onCancel: jest.fn()
     };
-    const wrapper = mount(
-      renderComponent({
-        onCancel: stubs.onCancel
-      })
-    );
+    const { getByTestId } = renderComponent({
+      onCancel: stubs.onCancel
+    });
 
-    wrapper.find(selectors.cancelChangeLocale).simulate('click');
+    fireEvent.click(getByTestId('change-locale-cancel'));
     expect(stubs.onCancel).toHaveBeenCalledTimes(1);
   });
 
@@ -56,19 +47,24 @@ describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
       onCancel: jest.fn()
     };
 
-    const wrapper = mount(
-      renderComponent({
-        ...stubs
-      })
-    );
-    wrapper.find(selectors.repeatLocaleInput).simulate('change', { target: { value: 'ru' } });
-    expect(wrapper.find(selectors.confirmChangeLocale)).not.toBeDisabled();
-    wrapper.find(selectors.confirmChangeLocale).simulate('click');
-    wrapper
-      .find(selectors.repeatLocaleInput)
-      .simulate('change', { target: { value: 'something' } });
-    expect(wrapper.find(selectors.confirmChangeLocale)).toBeDisabled();
-    wrapper.find(selectors.confirmChangeLocale).simulate('click');
+    const { getByTestId } = renderComponent({
+      ...stubs
+    });
+
+    const repeatLocaleInput = getByTestId('repeat-locale-input');
+    const confirmChangeLocale = getByTestId('change-locale-confirm');
+
+    fireEvent.change(repeatLocaleInput, { target: { value: 'ru' } });
+
+    expect(confirmChangeLocale).not.toBeDisabled();
+
+    fireEvent.click(confirmChangeLocale);
+
+    fireEvent.change(repeatLocaleInput, { target: { value: 'something' } });
+
+    expect(confirmChangeLocale).toBeDisabled();
+
+    fireEvent.click(confirmChangeLocale);
 
     expect(stubs.onConfirm).toHaveBeenCalledTimes(1);
   });
