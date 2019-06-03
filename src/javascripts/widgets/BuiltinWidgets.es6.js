@@ -281,7 +281,9 @@ export function create() {
     fieldTypes: ['Assets'],
     name: 'Asset gallery',
     icon: 'media-previews',
-    template: '<cf-reference-editor type="Asset" variant="card" load-events="loadEvents" />'
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <CfLinkEditor type="Asset" style="card" widgetApi={widgetApi} loadEvents={loadEvents} />
+    )
   });
 
   registerWidget('slugEditor', {

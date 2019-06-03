@@ -55,6 +55,13 @@ export default class LinkEditor extends React.Component {
     return type === TYPES.ASSET && style === STYLE.CARD ? VIEW_MODE.GRID : VIEW_MODE.LIST;
   }
 
+  getCardStyle() {
+    if (this.getViewMode() === VIEW_MODE.GRID) {
+      return 'small'; // Image gallery case.
+    }
+    return this.props.style === STYLE.LINK ? 'small' : 'default';
+  }
+
   handleEditLink = (entity, index) => {
     this.props.actions.editLinkedEntity(entity, index);
   };
@@ -96,7 +103,7 @@ export default class LinkEditor extends React.Component {
     this.handleAddLinks(entities);
   };
 
-  renderCard(link, index) {
+  renderCard(link, index, cardStyle) {
     const { isSingle, isDisabled, onLinkFetchComplete } = this.props;
     const handleEditLink = fetchEntityResult =>
       this.handleEditLink(fetchEntityResult.entity, index);
@@ -105,7 +112,7 @@ export default class LinkEditor extends React.Component {
       <FetchedEntityCard
         entityType={entityType}
         entityId={link.sys.id}
-        size={this.props.style === STYLE.LINK ? 'small' : 'default'}
+        size={cardStyle}
         readOnly={false}
         disabled={isDisabled}
         editable={true}
@@ -124,7 +131,10 @@ export default class LinkEditor extends React.Component {
 
   render() {
     const { type, isDisabled, isSingle, canCreateEntity, contentTypes } = this.props;
-    const items = linksToListItems(this.getLinks(), (link, index) => this.renderCard(link, index));
+    const cardStyle = this.getCardStyle();
+    const items = linksToListItems(this.getLinks(), (link, index) =>
+      this.renderCard(link, index, cardStyle)
+    );
     const showLinkButtons = !isDisabled && (!isSingle || items.length === 0);
     const isGrid = this.getViewMode() === VIEW_MODE.GRID;
     return (
