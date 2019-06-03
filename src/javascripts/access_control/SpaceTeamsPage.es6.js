@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { map, find } from 'lodash';
+import { map, find, filter } from 'lodash';
 import {
   Table,
   TableBody,
@@ -22,14 +22,14 @@ import StateRedirect from '../app/common/StateRedirect.es6';
 import DocumentTitle from '../components/shared/DocumentTitle.es6';
 import { joinWithAnd } from '../utils/StringUtils.es6';
 
-import { getAllTeamsSpaceMemberships } from './TeamRepository.es6';
+import { getAllTeamsMemberships, getAllTeamsSpaceMemberships } from './TeamRepository.es6';
 
 import getSpacesByOrgId from 'redux/selectors/getSpacesByOrgId.es6';
 
 const TeamListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
 
-  const promises = [getAllTeamsSpaceMemberships(endpoint)];
+  const promises = [getAllTeamsSpaceMemberships(endpoint), getAllTeamsMemberships(endpoint)];
 
   return Promise.all(promises);
 });
@@ -103,7 +103,7 @@ class SpaceTeamsPage extends React.Component {
             return <StateRedirect to="spaces.detail.entries.list" />;
           }
 
-          const [TSMS] = data;
+          const [teamSpaceMemberships, spaceMemberships] = data;
 
           return (
             <React.Fragment>
@@ -119,7 +119,7 @@ class SpaceTeamsPage extends React.Component {
                   <div className={styles.contentAlignment}>
                     <Heading className={styles.header}>
                       Teams in <span className={styles.headerTeamName}>{spaceName}</span>
-                      {` space (${TSMS.length})`}
+                      {` space (${teamSpaceMemberships.length})`}
                     </Heading>
                     <Table>
                       <TableHead>
@@ -131,25 +131,44 @@ class SpaceTeamsPage extends React.Component {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {TSMS.map(({ sys: { id, team: { name, description } }, roles, admin }) => (
-                          <TableRow key={id}>
-                            <TableCell className={css(cell)}>
-                              <div className={styles.cellTeamName}>{name}</div>
-                              <div className={styles.cellTeamDescription}>{description}</div>
-                            </TableCell>
-                            <TableCell className={styles.cellRoles}>
-                              {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
-                            </TableCell>
-                            <TableCell className={css(cell)} />
-                            <TableCell>
-                              <IconButton
-                                label="Action"
-                                buttonType="secondary"
-                                iconProps={{ icon: 'MoreHorizontal' }}
-                              />
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                        {teamSpaceMemberships.map(
+                          ({
+                            sys: {
+                              id,
+                              team: {
+                                name,
+                                description,
+                                sys: { id: teamId }
+                              }
+                            },
+                            roles,
+                            admin
+                          }) => (
+                            <TableRow key={id}>
+                              <TableCell className={css(cell)}>
+                                <div className={styles.cellTeamName}>{name}</div>
+                                <div className={styles.cellTeamDescription}>{description}</div>
+                              </TableCell>
+                              <TableCell className={styles.cellRoles}>
+                                {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
+                              </TableCell>
+                              <TableCell className={css(cell)}>
+                                {
+                                  filter(spaceMemberships, {
+                                    sys: { team: { sys: { id: teamId } } }
+                                  }).length
+                                }
+                              </TableCell>
+                              <TableCell>
+                                <IconButton
+                                  label="Action"
+                                  buttonType="secondary"
+                                  iconProps={{ icon: 'MoreHorizontal' }}
+                                />
+                              </TableCell>
+                            </TableRow>
+                          )
+                        )}
                       </TableBody>
                     </Table>
                   </div>

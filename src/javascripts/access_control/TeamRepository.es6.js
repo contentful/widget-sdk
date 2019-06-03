@@ -23,3 +23,14 @@ export async function getAllTeamsSpaceMemberships(endpoint) {
   );
   return ResolveLinks({ paths: includePaths, items, includes });
 }
+
+export async function getAllTeamsMemberships(endpoint) {
+  const { items } = await fetchAllWithIncludes(
+    endpoint,
+    ['team_memberships'],
+    BATCH_LIMIT,
+    {},
+    ALPHA_HEADER
+  );
+  return items;
+}
