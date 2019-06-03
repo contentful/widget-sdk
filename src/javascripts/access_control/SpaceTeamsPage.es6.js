@@ -10,6 +10,7 @@ import {
   TableHead,
   Heading
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import { css } from 'emotion';
 
@@ -39,7 +40,36 @@ const styles = {
     flexDirection: 'column'
   }),
   contentAlignment: css({
-    maxWidth: '1800px'
+    maxWidth: '1800px',
+    marginRight: tokens.spacingL,
+    marginLeft: tokens.spacingL
+  }),
+  header: css({
+    fontWeight: 500,
+    fontSize: '2rem',
+    marginBottom: tokens.spacingM
+  }),
+  headerTeamName: css({
+    fontWeight: 700
+  }),
+  cellTeamName: css({
+    fontWeight: 700
+  }),
+  cellTeamDescription: css({
+    maxWidth: '20rem',
+    overflow: 'hidden',
+    display: '-webkit-box',
+    '-webkit-line-clamp': '2',
+    '-moz-line-clamp': '2',
+    '-webkit-box-orient': 'vertical'
+  }),
+  cellRoles: css({
+    maxWidth: '20rem',
+    whiteSpace: 'nowrap',
+    overflowX: 'hidden',
+    textOverflow: 'ellipsis',
+    lineHeight: '1.2em',
+    paddingRight: '4rem'
   })
 };
 
@@ -82,7 +112,10 @@ class SpaceTeamsPage extends React.Component {
                 </Workbench.Header>
                 <Workbench.Content className={styles.content}>
                   <div className={styles.contentAlignment}>
-                    <Heading>{`Teams in ${spaceName} space (${TSMS.length})`}</Heading>
+                    <Heading className={styles.header}>
+                      Teams in <span className={styles.headerTeamName}>{spaceName}</span>
+                      {` space (${TSMS.length})`}
+                    </Heading>
                     <Table>
                       <TableHead>
                         <TableRow>
@@ -95,11 +128,11 @@ class SpaceTeamsPage extends React.Component {
                       <TableBody>
                         {TSMS.map(({ sys: { id, team: { name, description } }, roles, admin }) => (
                           <TableRow key={id}>
-                            <TableCell>
-                              <div>{name}</div>
-                              <div>{description}</div>
+                            <TableCell className={css({ paddingRight: '4rem' })}>
+                              <div className={styles.cellTeamName}>{name}</div>
+                              <div className={styles.cellTeamDescription}>{description}</div>
                             </TableCell>
-                            <TableCell>
+                            <TableCell className={styles.cellRoles}>
                               {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
                             </TableCell>
                             <TableCell />
