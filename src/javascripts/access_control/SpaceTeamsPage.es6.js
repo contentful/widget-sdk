@@ -35,7 +35,7 @@ const TeamListFetcher = createFetcherComponent(({ orgId }) => {
 });
 
 const cell = {
-  paddingRight: '9rem'
+  paddingRight: '180px'
 };
 
 const styles = {
@@ -45,23 +45,27 @@ const styles = {
     flexDirection: 'column'
   }),
   contentAlignment: css({
-    maxWidth: '1800px',
     marginRight: tokens.spacingL,
     marginLeft: tokens.spacingL
   }),
   header: css({
-    fontWeight: 500,
-    fontSize: '2rem',
-    marginBottom: tokens.spacingM
+    fontWeight: tokens.fontWeightNormal,
+    fontSize: tokens.fontSize2Xl,
+    marginBottom: tokens.spacingM,
+    marginTop: tokens.spacingM
   }),
   headerTeamName: css({
-    fontWeight: 700
+    fontWeight: tokens.fontWeightMedium
+  }),
+  row: css({
+    height: '95px'
   }),
   cellTeamName: css({
-    fontWeight: 700
+    fontWeight: tokens.fontWeightMedium,
+    color: tokens.colorTextDark
   }),
   cellTeamDescription: css({
-    maxWidth: '20rem',
+    maxWidth: '230px',
     overflow: 'hidden',
     display: '-webkit-box',
     '-webkit-line-clamp': '2',
@@ -69,7 +73,7 @@ const styles = {
     '-webkit-box-orient': 'vertical'
   }),
   cellRoles: css({
-    maxWidth: '20rem',
+    maxWidth: '410px',
     whiteSpace: 'nowrap',
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
@@ -144,7 +148,7 @@ class SpaceTeamsPage extends React.Component {
                             roles,
                             admin
                           }) => (
-                            <TableRow key={id}>
+                            <TableRow key={id} className={styles.row}>
                               <TableCell className={css(cell)}>
                                 <div className={styles.cellTeamName}>{name}</div>
                                 <div className={styles.cellTeamDescription}>{description}</div>
