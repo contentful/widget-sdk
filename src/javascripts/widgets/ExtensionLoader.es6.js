@@ -24,9 +24,14 @@ import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 // entities) should be done with a client that always
 // does HTTP.
 
+// Produces a key for memoization. `_.memoize` by default
+// only uses first argument to the function being memoized
+// as a cache key.
+const makeMemoizationKey = (spaceId, envId) => [spaceId, envId].join('!');
+
 const getEndpointForSpaceEnv = memoize((spaceId, envId) => {
   return createSpaceEndpoint(spaceId, envId);
-});
+}, makeMemoizationKey);
 
 const getLoaderForSpaceEnv = memoize((spaceId, envId) => {
   const endpoint = getEndpointForSpaceEnv(spaceId, envId);
@@ -48,7 +53,7 @@ const getLoaderForSpaceEnv = memoize((spaceId, envId) => {
       return extension || null;
     });
   });
-});
+}, makeMemoizationKey);
 
 export async function getExtensionsById(spaceId, envId, extensionIds) {
   const loader = getLoaderForSpaceEnv(spaceId, envId);
