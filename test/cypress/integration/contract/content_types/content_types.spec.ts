@@ -140,13 +140,6 @@ describe('Content type page', () => {
 
     cy.startFakeServer({
       consumer: 'user_interface',
-      provider: 'resources',
-      cors: true,
-      pactfileWriteMode: 'merge'
-    });
-
-    cy.startFakeServer({
-      consumer: 'user_interface',
       provider: 'extensions',
       cors: true,
       pactfileWriteMode: 'merge'
