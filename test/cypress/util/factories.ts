@@ -3,7 +3,6 @@ import { noEnforcementsResponse } from '../interactions/enforcements';
 import { noPublicContentTypesResponse } from '../interactions/content_types';
 import { masterEnvironmentResponse } from '../interactions/environments';
 import { defaultLocaleResponse } from '../interactions/locales';
-import { defaultResourcesResponse } from '../interactions/resources';
 
 type DefaultHandlers = {
   tokenResponse: Function;
@@ -11,7 +10,6 @@ type DefaultHandlers = {
   publicContentTypesResponse: Function;
   environmentResponse: Function;
   localeResponse: Function;
-  resourcesResponse: Function;
 };
 
 const defaultHandlers: DefaultHandlers = {
@@ -19,8 +17,7 @@ const defaultHandlers: DefaultHandlers = {
   enforcementsResponse: noEnforcementsResponse,
   publicContentTypesResponse: noPublicContentTypesResponse,
   environmentResponse: masterEnvironmentResponse,
-  localeResponse: defaultLocaleResponse,
-  resourcesResponse: defaultResourcesResponse
+  localeResponse: defaultLocaleResponse
 };
 
 export function defaultRequestsMock(customHandlers: Partial<DefaultHandlers> = {}) {
@@ -35,5 +32,4 @@ export function defaultRequestsMock(customHandlers: Partial<DefaultHandlers> = {
   handlers.publicContentTypesResponse();
   handlers.environmentResponse();
   handlers.localeResponse();
-  handlers.resourcesResponse();
 }

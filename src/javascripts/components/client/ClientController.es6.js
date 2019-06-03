@@ -42,11 +42,13 @@ export default function register() {
           payload: { location: pickSerializable(window.location) }
         });
 
-        spaceAndTokenWatchHandler({
-          tokenLookup: TokenStore.getTokenLookup(),
-          space: spaceContext.space,
-          enforcements: EnforcementsService.getEnforcements(spaceContext.getId())
-        });
+        if (shouldCheckUsageForCurrentLocation()) {
+          spaceAndTokenWatchHandler({
+            tokenLookup: TokenStore.getTokenLookup(),
+            space: spaceContext.space,
+            enforcements: EnforcementsService.getEnforcements(spaceContext.getId())
+          });
+        }
       });
 
       // TODO remove this eventually. All components should access it as a service
@@ -113,14 +115,17 @@ export default function register() {
           return;
         }
 
-        const allowNewUsageCheck = await getCurrentVariation(ENVIRONMENT_USAGE_ENFORCEMENT);
         let newEnforcement = {};
 
-        if (allowNewUsageCheck) {
-          newEnforcement = await EnforcementsService.newUsageChecker(
-            spaceContext.getId(),
-            spaceContext.getEnvironmentId()
-          );
+        if (shouldCheckUsageForCurrentLocation()) {
+          const allowNewUsageCheck = await getCurrentVariation(ENVIRONMENT_USAGE_ENFORCEMENT);
+
+          if (allowNewUsageCheck) {
+            newEnforcement = await EnforcementsService.newUsageChecker(
+              spaceContext.getId(),
+              spaceContext.getEnvironmentId()
+            );
+          }
         }
 
         authorization.update(
@@ -151,6 +156,16 @@ export default function register() {
           // it will only be available when Analytics/Segment is.
           Intercom.disable();
         }
+      }
+
+      // usage/limits enforcement should happen only
+      // on pages specific to entities
+      function shouldCheckUsageForCurrentLocation() {
+        const relevantPages = ['content_types', 'entries', 'assets'];
+        const splitPathName = window.location.pathname.split('/');
+        const currentPage = splitPathName[splitPathName.length - 1];
+
+        return relevantPages.includes(currentPage);
       }
     }
   ]);
