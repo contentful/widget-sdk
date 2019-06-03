@@ -8,7 +8,8 @@ import {
   TableRow,
   TableCell,
   TableHead,
-  Heading
+  Heading,
+  IconButton
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import getOrgId from 'redux/selectors/getOrgId.es6';
@@ -32,6 +33,10 @@ const TeamListFetcher = createFetcherComponent(({ orgId }) => {
 
   return Promise.all(promises);
 });
+
+const cell = {
+  paddingRight: '9rem'
+};
 
 const styles = {
   content: css({
@@ -69,7 +74,7 @@ const styles = {
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
     lineHeight: '1.2em',
-    paddingRight: '4rem'
+    ...cell
   })
 };
 
@@ -128,15 +133,21 @@ class SpaceTeamsPage extends React.Component {
                       <TableBody>
                         {TSMS.map(({ sys: { id, team: { name, description } }, roles, admin }) => (
                           <TableRow key={id}>
-                            <TableCell className={css({ paddingRight: '4rem' })}>
+                            <TableCell className={css(cell)}>
                               <div className={styles.cellTeamName}>{name}</div>
                               <div className={styles.cellTeamDescription}>{description}</div>
                             </TableCell>
                             <TableCell className={styles.cellRoles}>
                               {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
                             </TableCell>
-                            <TableCell />
-                            <TableCell />
+                            <TableCell className={css(cell)} />
+                            <TableCell>
+                              <IconButton
+                                label="Action"
+                                buttonType="secondary"
+                                iconProps={{ icon: 'MoreHorizontal' }}
+                              />
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
