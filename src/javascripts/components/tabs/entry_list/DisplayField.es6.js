@@ -190,7 +190,7 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
     case 'Array':
       result = (
         <ul
-          className={cn({
+          className={cn(styles.textOverflow, {
             'linked-entries': isEntryArray(entry, field),
             'linked-assets': isAssetArray(entry, field)
           })}>
