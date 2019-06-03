@@ -24,7 +24,7 @@ export default class NewJob extends React.Component {
               isDialogShown: true
             });
           }}>
-          Schedule Publication
+          Schedule to publish
         </Button>
         {this.state.isDialogShown && (
           <JobDialog

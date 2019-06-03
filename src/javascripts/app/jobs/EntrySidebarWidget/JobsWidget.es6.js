@@ -85,7 +85,7 @@ export default class JobWidget extends React.Component {
 
             return (
               <React.Fragment>
-                <div className={styles.heading}>Scheduled Publication</div>
+                <div className={styles.heading}>Schedule</div>
                 {hasScheduledActions ? (
                   <JobsTimeline jobs={data.jobCollection.items} />
                 ) : (

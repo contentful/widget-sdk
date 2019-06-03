@@ -47,7 +47,7 @@ class JobDialog extends React.Component {
     const { onCreate, onCancel } = this.props;
     return (
       <Modal
-        title="Schedule Publication"
+        title="Schedule to publish"
         size="small"
         shouldCloseOnEscapePress
         shouldCloseOnOverlayClick
@@ -64,7 +64,7 @@ class JobDialog extends React.Component {
                     onChange={date => {
                       this.setState({ date: moment(date).format('YYYY-MM-DD') });
                     }}
-                    labelText="Date"
+                    labelText="Publish on"
                     required
                     minDate={moment().toDate()}
                   />
