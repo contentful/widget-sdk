@@ -17,8 +17,7 @@ import Workbench from 'app/common/Workbench.es6';
 import pluralize from 'pluralize';
 import { orgRoles } from 'utils/MembershipUtils.es6';
 import { useAddToOrg } from './hooks.es6';
-import { parseEmails } from './utils.es6';
-import { isValidEmail } from 'utils/StringUtils.es6';
+import { isValidEmail, parseList } from 'utils/StringUtils.es6';
 
 export default function NewUser({ orgId }) {
   const [{ isLoading, error, data }, addToOrg, resetAsyncFn] = useAddToOrg(orgId);
@@ -32,7 +31,7 @@ export default function NewUser({ orgId }) {
     const {
       target: { value }
     } = evt;
-    const parsed = parseEmails(value);
+    const parsed = parseList(value);
     const invalid = parsed.filter(email => !isValidEmail(email));
     setSubmitted(false);
     setEmailsValue(value);
