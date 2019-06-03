@@ -1,13 +1,13 @@
-import { defaultRequestsMock } from '../../util/factories';
+import { defaultRequestsMock } from '../../../util/factories';
 import {
   allContentTypesResponse,
   defaultContentTypeResponse,
   defaultPublishedContentTypeResponse
-} from '../../interactions/content_types';
-import { noExtensionsResponse } from '../../interactions/extensions';
-import { editorInterfaceWithoutSidebarResponse } from '../../interactions/content_types';
-import { defaultContentTypeId, defaultSpaceId } from '../../util/requests';
-import * as state from '../../util/interactionState';
+} from '../../../interactions/content_types';
+import { noExtensionsResponse } from '../../../interactions/extensions';
+import { editorInterfaceWithoutSidebarResponse } from '../../../interactions/content_types';
+import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
+import * as state from '../../../util/interactionState';
 
 describe('Sidebar configuration', () => {
   before(() =>
@@ -35,7 +35,7 @@ describe('Sidebar configuration', () => {
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`
     );
 
-    cy.wait([`@${state.Token.VALID}`, `@${state.ContentTypes.EDITORINTERFACE_WITH_NO_SIDEBAR}`]);
+    cy.wait([`@${state.Token.VALID}`, `@${state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR}`]);
   });
 
   const widgetNames = [

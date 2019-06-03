@@ -1,8 +1,8 @@
 import { getEntryJobs, defaultSpaceId, defaultEntryId } from '../util/requests';
 import * as state from '../util/interactionState';
 
-const empty = require('../fixtures/empty.json');
-export const severalJobsResponseBody = require('../fixtures/jobs-several.json');
+const empty = require('../fixtures/responses/empty.json');
+export const severalJobsResponseBody = require('../fixtures/responses/jobs-several.json');
 const allJobsQuery = {
   order: '-sys.scheduledAt',
   'sys.status': 'pending'

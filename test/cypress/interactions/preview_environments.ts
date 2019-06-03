@@ -1,7 +1,7 @@
 import * as state from '../util/interactionState';
 import { getPreviewEnvironments, defaultSpaceId } from '../util/requests';
 
-const empty = require('../fixtures/empty.json');
+const empty = require('../fixtures/responses/empty.json');
 
 export function noPreviewEnvironmentsResponse() {
   const query = {

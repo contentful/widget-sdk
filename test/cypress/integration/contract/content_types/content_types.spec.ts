@@ -1,17 +1,17 @@
-import { defaultRequestsMock } from '../../util/factories';
-import * as state from '../../util/interactionState';
-import { defaultSpaceId, getExtensions, getContentTypes } from '../../util/requests';
+import { defaultRequestsMock } from '../../../util/factories';
+import * as state from '../../../util/interactionState';
+import { defaultSpaceId, getExtensions, getContentTypes } from '../../../util/requests';
 import {
   editorInterfaceWithoutSidebarResponse,
   allContentTypesResponse,
   defaultContentTypeResponse,
   defaultPublishedContentTypeResponse
-} from '../../interactions/content_types';
-import { noExtensionsResponse } from '../../interactions/extensions';
-import { defaultContentTypeId } from '../../util/requests';
+} from '../../../interactions/content_types';
+import { noExtensionsResponse } from '../../../interactions/extensions';
+import { defaultContentTypeId } from '../../../util/requests';
 
-const empty = require('../../fixtures/empty.json');
-const severalContentTypes = require('../../fixtures/content-types-several.json');
+const empty = require('../../../fixtures/responses/empty.json');
+const severalContentTypes = require('../../../fixtures/responses/content-types-several.json');
 const query = {
   limit: '1000',
   order: 'name'
@@ -25,7 +25,7 @@ describe('Content types list page', () => {
       cors: true,
       pactfileWriteMode: 'merge'
     })
-);
+  );
 
   context('with no content types', () => {
     before(() => {
@@ -48,10 +48,7 @@ describe('Content types list page', () => {
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);
 
-      cy.wait([
-        `@${state.Token.VALID}`,
-        '@noContentTypesWithQuery'
-      ]);
+      cy.wait([`@${state.Token.VALID}`, '@noContentTypesWithQuery']);
     });
 
     describe('Opening the page', () => {
@@ -122,10 +119,7 @@ describe('Content types list page', () => {
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);
 
-      cy.wait([
-        `@${state.Token.VALID}`,
-        `@${state.ContentTypes.SEVERAL}`
-      ]);
+      cy.wait([`@${state.Token.VALID}`, `@${state.ContentTypes.SEVERAL}`]);
     });
 
     describe('Opening the page', () => {
@@ -149,14 +143,14 @@ describe('Content type page', () => {
       provider: 'resources',
       cors: true,
       pactfileWriteMode: 'merge'
-    })
+    });
 
     cy.startFakeServer({
       consumer: 'user_interface',
       provider: 'extensions',
       cors: true,
       pactfileWriteMode: 'merge'
-    })
+    });
 
     defaultRequestsMock();
     noExtensionsResponse();
@@ -167,10 +161,7 @@ describe('Content type page', () => {
 
     cy.visit(`/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`);
 
-    cy.wait([
-      `@${state.Token.VALID}`,
-      `@${state.ContentType.DEFAULT}`
-    ]);
+    cy.wait([`@${state.Token.VALID}`, `@${state.ContentType.DEFAULT}`]);
   });
   describe('Opening the page for default content type', () => {
     it('renders the page', () => {

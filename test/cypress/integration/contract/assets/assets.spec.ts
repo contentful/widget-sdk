@@ -1,13 +1,13 @@
-import { defaultRequestsMock } from '../../util/factories';
-import { singleUser } from '../../interactions/users';
-import * as state from '../../util/interactionState';
-import { defaultSpaceId } from '../../util/requests';
+import { defaultRequestsMock } from '../../../util/factories';
+import { singleUser } from '../../../interactions/users';
+import * as state from '../../../util/interactionState';
+import { defaultSpaceId } from '../../../util/requests';
 import {
   noAssetsResponse,
   noArchivedAssetsResponse,
   severalAssetsResponse,
   severalAssetsBody
-} from '../../interactions/assets';
+} from '../../../interactions/assets';
 
 describe('Assets Page', () => {
   context('no assets in the space', () => {
@@ -30,10 +30,7 @@ describe('Assets Page', () => {
 
       cy.visit(`/spaces/${defaultSpaceId}/assets`);
 
-      cy.wait([
-        `@${state.Token.VALID}`,
-        `@${state.Assets.NONE}`
-      ]);
+      cy.wait([`@${state.Token.VALID}`, `@${state.Assets.NONE}`]);
     });
     describe('opening the page', () => {
       it('renders add asset button for empty state on assets list page', () => {
@@ -65,10 +62,7 @@ describe('Assets Page', () => {
 
       cy.visit(`/spaces/${defaultSpaceId}/assets`);
 
-      cy.wait([
-        `@${state.Token.VALID}`,
-        `@${state.Assets.SEVERAL}`
-      ]);
+      cy.wait([`@${state.Token.VALID}`, `@${state.Assets.SEVERAL}`]);
     });
     describe('opening the page', () => {
       it('renders table with items on assets list page', () => {

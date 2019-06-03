@@ -1,15 +1,15 @@
-import { defaultRequestsMock } from '../../util/factories';
-import * as state from '../../util/interactionState';
-import { defaultSpaceId } from '../../util/requests';
-import { singleContentTypeResponse } from '../../interactions/content_types';
+import { defaultRequestsMock } from '../../../util/factories';
+import * as state from '../../../util/interactionState';
+import { defaultSpaceId } from '../../../util/requests';
+import { singleContentTypeResponse } from '../../../interactions/content_types';
 import {
   noJobsResponse,
   severalJobsResponseBody,
   severalJobsResponse,
   jobsErrorResponse
-} from '../../interactions/jobs';
-import { singleEntryWithQuery } from '../../interactions/entries';
-import { singleSpecificSpaceUserResponse } from '../../interactions/users';
+} from '../../../interactions/jobs';
+import { singleEntryWithQuery } from '../../../interactions/entries';
+import { singleSpecificSpaceUserResponse } from '../../../interactions/users';
 
 const featureFlag = 'feature-pul-04-2019-scheduled-publication-enabled';
 

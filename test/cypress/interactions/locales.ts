@@ -1,7 +1,7 @@
 import * as state from '../util/interactionState';
 import { getLocales, defaultSpaceId } from '../util/requests';
 
-const locales = require('../fixtures/locales.json');
+const locales = require('../fixtures/responses/locales.json');
 const query = {
   limit: '100',
   skip: '0'

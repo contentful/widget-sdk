@@ -1,7 +1,7 @@
 import * as state from '../util/interactionState';
 import { HTTPMethod } from '@pact-foundation/pact/common/request';
 
-const token = require('../fixtures/token.json');
+const token = require('../fixtures/responses/token.json');
 
 export function validTokenResponse() {
   cy.addInteraction({

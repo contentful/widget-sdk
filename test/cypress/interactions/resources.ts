@@ -1,8 +1,8 @@
 import * as state from '../util/interactionState';
 import { defaultSpaceId, defaultEnvironment } from '../util/requests';
 
-const empty = require('../fixtures/empty.json');
-const resources = require('../fixtures/resources.json');
+const empty = require('../fixtures/responses/empty.json');
+const resources = require('../fixtures/responses/resources.json');
 
 export function emptyResourcesResponse() {
   cy.addInteraction({
@@ -18,7 +18,7 @@ export function emptyResourcesResponse() {
     },
     willRespondWith: {
       status: 200,
-      body: empty 
+      body: empty
     }
   }).as(state.Resources.NONE);
 }
@@ -37,7 +37,7 @@ export function defaultResourcesResponse() {
     },
     willRespondWith: {
       status: 200,
-      body: resources 
+      body: resources
     }
   }).as(state.Resources.DEFAULT);
 }

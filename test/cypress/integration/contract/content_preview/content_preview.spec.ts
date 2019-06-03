@@ -1,12 +1,12 @@
-import { defaultRequestsMock } from '../../util/factories';
-import * as state from '../../util/interactionState';
+import { defaultRequestsMock } from '../../../util/factories';
+import * as state from '../../../util/interactionState';
 import {
   defaultSpaceId,
   defaultPreviewName,
   defaultPreviewId,
   defaultPreviewDescription
-} from '../../util/requests';
-import { noPreviewEnvironmentsResponse } from '../../interactions/preview_environments';
+} from '../../../util/requests';
+import { noPreviewEnvironmentsResponse } from '../../../interactions/preview_environments';
 
 const previewResponseBody = {
   name: defaultPreviewName,

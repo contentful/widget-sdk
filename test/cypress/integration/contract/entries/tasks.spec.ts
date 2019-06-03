@@ -1,21 +1,18 @@
-import { defaultRequestsMock } from '../../util/factories';
-import { singleUser, singleSpecificOrgUserResponse } from '../../interactions/users';
-import { successfulGetEntryTasksInteraction } from '../../interactions/tasks';
+import { defaultRequestsMock } from '../../../util/factories';
+import { singleUser, singleSpecificOrgUserResponse } from '../../../interactions/users';
+import { successfulGetEntryTasksInteraction } from '../../../interactions/tasks';
 
 import {
   singleContentTypeResponse,
   editorInterfaceWithoutSidebarResponse
-} from '../../interactions/content_types';
-import {
-  singleEntryResponse,
-  noEntrySnapshotsResponse
-} from '../../interactions/entries';
-import { microbackendStreamToken } from '../../interactions/microbackend';
-import * as state from '../../util/interactionState';
-import { defaultEntryId, defaultSpaceId } from '../../util/requests';
+} from '../../../interactions/content_types';
+import { singleEntryResponse, noEntrySnapshotsResponse } from '../../../interactions/entries';
+import { microbackendStreamToken } from '../../../interactions/microbackend';
+import * as state from '../../../util/interactionState';
+import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 
-const empty = require('../../fixtures/empty.json');
-const severalTasks = require('../../fixtures/tasks-several.json');
+const empty = require('../../../fixtures/responses/empty.json');
+const severalTasks = require('../../../fixtures/responses/tasks-several.json');
 const featureFlag = 'feature-05-2019-content-workflows-tasks';
 
 describe('Tasks (based on `comments` endpoint)', () => {
@@ -33,8 +30,7 @@ describe('Tasks (based on `comments` endpoint)', () => {
     window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
     basicServerSetUpWithEntry();
     cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
-  }
-  );
+  });
 
   function basicServerSetUpWithEntry() {
     defaultRequestsMock({
@@ -53,10 +49,7 @@ describe('Tasks (based on `comments` endpoint)', () => {
     beforeEach(() => {
       successfulGetEntryTasksInteraction('noTasks', empty).as('tasks/empty');
 
-      cy.wait([
-        `@${state.Token.VALID}`,
-        '@tasks/empty'
-      ]);
+      cy.wait([`@${state.Token.VALID}`, '@tasks/empty']);
     });
 
     it('renders "Tasks" sidebar section', () => {
@@ -69,11 +62,7 @@ describe('Tasks (based on `comments` endpoint)', () => {
       successfulGetEntryTasksInteraction('someTasks', severalTasks).as('tasks/several');
       singleSpecificOrgUserResponse();
 
-      cy.wait([
-        `@${state.Token.VALID}`,
-        '@tasks/several',
-        `@${state.Users.SINGLE}`
-      ]);
+      cy.wait([`@${state.Token.VALID}`, '@tasks/several', `@${state.Users.SINGLE}`]);
     });
 
     it('renders list of tasks', () => {

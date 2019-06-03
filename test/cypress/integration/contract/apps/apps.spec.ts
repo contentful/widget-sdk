@@ -1,8 +1,8 @@
-import { defaultRequestsMock } from '../../util/factories';
-import * as state from '../../util/interactionState';
-import { defaultSpaceId } from '../../util/requests';
-import { noInstalledAppsResponse } from '../../interactions/apps';
-import { spaceProductCatalogFeaturesResponse } from '../../interactions/product_catalog_features';
+import { defaultRequestsMock } from '../../../util/factories';
+import * as state from '../../../util/interactionState';
+import { defaultSpaceId } from '../../../util/requests';
+import { noInstalledAppsResponse } from '../../../interactions/apps';
+import { spaceProductCatalogFeaturesResponse } from '../../../interactions/product_catalog_features';
 
 const baseUrl = Cypress.config().baseUrl;
 
@@ -10,10 +10,7 @@ describe('Apps Page', () => {
   before(() =>
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: [
-        'apps',
-        'product_catalog_features'
-      ],
+      providers: ['apps', 'product_catalog_features'],
       cors: true,
       pactfileWriteMode: 'merge'
     })
@@ -100,8 +97,7 @@ describe('Apps Page', () => {
         cy.getByTestId('app-title')
           .find('h3')
           .each(($h3, index) => {
-            cy.wrap($h3)
-              .should('have.text', apps[index].title);
+            cy.wrap($h3).should('have.text', apps[index].title);
           });
       });
 

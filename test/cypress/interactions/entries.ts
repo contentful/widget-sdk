@@ -9,9 +9,9 @@ import {
   defaultEnvironment
 } from '../util/requests';
 
-const empty = require('../fixtures/empty.json');
-const entryResponseBody = require('../fixtures/entry.json');
-const severalEntriesResponseBody = require('../fixtures/entries-several.json');
+const empty = require('../fixtures/responses/empty.json');
+const entryResponseBody = require('../fixtures/responses/entry.json');
+const severalEntriesResponseBody = require('../fixtures/responses/entries-several.json');
 
 export function singleEntryResponse() {
   cy.addInteraction({

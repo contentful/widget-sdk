@@ -1,7 +1,7 @@
 import * as state from '../util/interactionState';
 import { getEnvironments, defaultSpaceId } from '../util/requests';
 
-const environments = require('../fixtures/environments.json');
+const environments = require('../fixtures/responses/environments.json');
 const query = { limit: '101' };
 
 export function masterEnvironmentResponse() {

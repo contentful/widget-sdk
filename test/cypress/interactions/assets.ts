@@ -1,8 +1,8 @@
 import * as state from '../util/interactionState';
 import { getAssets, defaultSpaceId } from '../util/requests';
 
-const empty = require('../fixtures/empty.json');
-export const severalAssetsBody = require('../fixtures/assets-several.json');
+const empty = require('../fixtures/responses/empty.json');
+export const severalAssetsBody = require('../fixtures/responses/assets-several.json');
 const query = {
   limit: '40',
   order: '-sys.updatedAt',

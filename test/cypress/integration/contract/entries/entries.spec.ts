@@ -1,11 +1,11 @@
-import { singleUser } from '../../interactions/users';
-import { singleContentTypeResponse } from '../../interactions/content_types';
-import { defaultRequestsMock } from '../../util/factories';
-import * as state from '../../util/interactionState';
-import { defaultSpaceId, getEntries } from '../../util/requests';
+import { singleUser } from '../../../interactions/users';
+import { singleContentTypeResponse } from '../../../interactions/content_types';
+import { defaultRequestsMock } from '../../../util/factories';
+import * as state from '../../../util/interactionState';
+import { defaultSpaceId, getEntries } from '../../../util/requests';
 
-const empty = require('../../fixtures/empty.json');
-const severalEntriesResponse = require('../../fixtures/entries-several.json');
+const empty = require('../../../fixtures/responses/empty.json');
+const severalEntriesResponse = require('../../../fixtures/responses/entries-several.json');
 const query = {
   limit: '40',
   order: '-sys.updatedAt',
@@ -52,11 +52,7 @@ describe('Entries page', () => {
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
 
-      cy.wait([
-        `@${state.Token.VALID}`,
-        `@${state.Entries.NONE}`,
-        '@entries/archived-none'
-      ]);
+      cy.wait([`@${state.Token.VALID}`, `@${state.Entries.NONE}`, '@entries/archived-none']);
     });
 
     describe('opening the page', () => {
@@ -102,11 +98,7 @@ describe('Entries page', () => {
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
 
-      cy.wait([
-        `@${state.Token.VALID}`,
-        `@${state.Entries.NONE}`,
-        '@entries/archived-none'
-      ]);
+      cy.wait([`@${state.Token.VALID}`, `@${state.Entries.NONE}`, '@entries/archived-none']);
     });
 
     describe('opening the page', () => {
@@ -143,10 +135,7 @@ describe('Entries page', () => {
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
 
-      cy.wait([
-        `@${state.Token.VALID}`,
-        `@${state.Entries.SEVERAL}`
-      ]);
+      cy.wait([`@${state.Token.VALID}`, `@${state.Entries.SEVERAL}`]);
     });
 
     describe('opening the page', () => {

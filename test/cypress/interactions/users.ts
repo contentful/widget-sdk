@@ -7,7 +7,7 @@ import {
   defaultUserId
 } from '../util/requests';
 
-const users = require('../fixtures/users.json');
+const users = require('../fixtures/responses/users.json');
 
 export function singleUser() {
   const query = {

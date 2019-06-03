@@ -1,8 +1,8 @@
 import * as state from '../util/interactionState';
 import { getOrgProductCatalogFeatures, getSpaceProductCatalogFeatures } from '../util/requests';
 
-const productCatalogOrg = require('../fixtures/product-catalog-org.json');
-const productCatalogSpace = require('../fixtures/product-catalog-space.json');
+const productCatalogOrg = require('../fixtures/responses/product-catalog-org.json');
+const productCatalogSpace = require('../fixtures/responses/product-catalog-space.json');
 
 export function orgProductCatalogFeaturesResponse() {
   cy.addInteraction({

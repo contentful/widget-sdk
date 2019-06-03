@@ -1,22 +1,22 @@
-import { defaultRequestsMock } from '../../util/factories';
-import { singleUser } from '../../interactions/users';
+import { defaultRequestsMock } from '../../../util/factories';
+import { singleUser } from '../../../interactions/users';
 import {
   singleContentTypeResponse,
   editorInterfaceWithoutSidebarResponse
-} from '../../interactions/content_types';
+} from '../../../interactions/content_types';
 import {
   singleEntryResponse,
   noEntryLinksResponse,
   noEntrySnapshotsResponse
-} from '../../interactions/entries';
-import { microbackendStreamToken } from '../../interactions/microbackend';
-import * as state from '../../util/interactionState';
-import { defaultEntryId, defaultSpaceId } from '../../util/requests';
+} from '../../../interactions/entries';
+import { microbackendStreamToken } from '../../../interactions/microbackend';
+import * as state from '../../../util/interactionState';
+import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import {
   singleJobForEntryResponse,
   jobIsCreatedPostResponse,
   noJobsForSpecificEntryIdResponse
-} from '../../interactions/jobs';
+} from '../../../interactions/jobs';
 
 const featureFlag = 'feature-pul-04-2019-scheduled-publication-enabled';
 

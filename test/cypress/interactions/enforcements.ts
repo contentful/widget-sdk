@@ -1,7 +1,7 @@
 import { getEnforcements } from '../util/requests';
 import * as state from '../util/interactionState';
 
-const empty = require('../fixtures/empty.json');
+const empty = require('../fixtures/responses/empty.json');
 
 export function noEnforcementsResponse() {
   return cy
