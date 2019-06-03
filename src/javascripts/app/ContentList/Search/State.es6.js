@@ -309,6 +309,8 @@ export function makeReducer(dispatch, submitSearch) {
       [ValueInput.Select]: options => {
         if (options.length === 1) {
           value = options[0][1];
+        } else if (filterField.type === 'Boolean') {
+          value = options[0][0];
         }
       },
       _: () => {
