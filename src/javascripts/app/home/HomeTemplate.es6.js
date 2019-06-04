@@ -19,7 +19,9 @@ export default function template() {
         h('react-component', { name: 'app/home/welcome/Welcome.es6', props: 'welcomeProps' }),
         h('react-component', { name: 'app/home/UpgradePricing.es6' }),
         h('cf-onboarding-steps'),
-        h('cf-developer-resources'),
+        h('react-component', {
+          name: 'app/home/developer_resources/DeveloperResourcesComponent.es6'
+        }),
         h('cf-contact-us-space-home')
       ])
     ]),

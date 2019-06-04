@@ -14,7 +14,7 @@ export default class Welcome extends React.Component {
 
   scrollToDeveloperResources = () => {
     document
-      .querySelector('cf-developer-resources')
+      .querySelector('#get-sdk-section')
       .scrollIntoView({ block: 'start', behavior: 'smooth' });
   };
 
