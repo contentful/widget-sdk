@@ -6,6 +6,7 @@ import { get } from 'lodash';
 
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService.es6';
 import { getStoreResource } from 'utils/ResourceUtils.es6';
+import { isMaster } from 'utils/EnvironmentUtils.es6';
 import { TextLink } from '@contentful/forma-36-react-components';
 
 import * as actionCreators from 'redux/actions/recordsResourceUsage/actionCreators.es6';
@@ -13,6 +14,7 @@ import * as actionCreators from 'redux/actions/recordsResourceUsage/actionCreato
 export class RecordsResourceUsage extends React.Component {
   static propTypes = {
     space: PropTypes.object.isRequired,
+    environmentId: PropTypes.string.isRequired,
     currentTotal: PropTypes.number.isRequired,
     getResource: PropTypes.func.isRequired,
     resources: PropTypes.object.isRequired
@@ -20,17 +22,25 @@ export class RecordsResourceUsage extends React.Component {
 
   componentDidUpdate(prevProps) {
     const { currentTotal: previousTotal } = prevProps;
-    const { getResource, space, currentTotal } = this.props;
+    const { getResource, space, environmentId, currentTotal } = this.props;
 
     if (previousTotal !== currentTotal) {
-      getResource({ spaceId: space.sys.id, resourceName: 'record' });
+      getResource({
+        spaceId: space.sys.id,
+        environmentId,
+        resourceName: 'record'
+      });
     }
   }
 
   componentDidMount() {
-    const { getResource, space } = this.props;
+    const { getResource, space, environmentId } = this.props;
 
-    getResource({ spaceId: space.sys.id, resourceName: 'record' });
+    getResource({
+      spaceId: space.sys.id,
+      environmentId,
+      resourceName: 'record'
+    });
   }
 
   resource() {
@@ -60,6 +70,7 @@ export class RecordsResourceUsage extends React.Component {
 
   render() {
     const resource = this.resource();
+    const { environmentId } = this.props;
 
     if (!resource) {
       return null;
@@ -86,7 +97,7 @@ export class RecordsResourceUsage extends React.Component {
             Usage: {usage} / {limit} entries and assets{' '}
           </span>
         )}
-        {usagePercentage >= warnThreshold && (
+        {usagePercentage >= warnThreshold && isMaster(environmentId) && (
           <TextLink onClick={this.upgradeSpace.bind(this)}>Upgrade space</TextLink>
         )}
       </div>
