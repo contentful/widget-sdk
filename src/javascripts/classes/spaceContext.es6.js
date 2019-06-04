@@ -114,7 +114,9 @@ export default function register() {
           // `space` is @contentful/client.Space instance!
           let space = client.newSpace(spaceData);
 
-          space = space.makeEnvironment(environmentId || 'master', shouldUseEnvEndpoint);
+          if (environmentId) {
+            space = space.makeEnvironment(environmentId, shouldUseEnvEndpoint);
+          }
 
           self.endpoint = createSpaceEndpoint(Config.apiUrl(), space.getId(), Auth, environmentId);
 

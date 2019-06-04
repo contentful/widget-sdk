@@ -8,11 +8,7 @@ describe('RecordsResourceUsage', function() {
       getResource: sinon.stub()
     };
 
-    this.environment = {
-      sys: {
-        id: 'env_1234'
-      }
-    };
+    this.environmentId = 'env_1234';
 
     this.space = {
       sys: {
@@ -47,7 +43,7 @@ describe('RecordsResourceUsage', function() {
       return shallow(
         <RecordsResourceUsage
           space={this.space}
-          environment={this.environment}
+          environmentId={this.environmentId}
           currentTotal={0}
           getResource={this.stubs.getResource}
           resources={this.resources}

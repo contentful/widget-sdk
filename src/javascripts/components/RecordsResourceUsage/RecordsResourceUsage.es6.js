@@ -14,7 +14,7 @@ import * as actionCreators from 'redux/actions/recordsResourceUsage/actionCreato
 export class RecordsResourceUsage extends React.Component {
   static propTypes = {
     space: PropTypes.object.isRequired,
-    environment: PropTypes.object,
+    environmentId: PropTypes.string.isRequired,
     currentTotal: PropTypes.number.isRequired,
     getResource: PropTypes.func.isRequired,
     resources: PropTypes.object.isRequired
@@ -22,23 +22,23 @@ export class RecordsResourceUsage extends React.Component {
 
   componentDidUpdate(prevProps) {
     const { currentTotal: previousTotal } = prevProps;
-    const { getResource, space, environment, currentTotal } = this.props;
+    const { getResource, space, environmentId, currentTotal } = this.props;
 
     if (previousTotal !== currentTotal) {
       getResource({
         spaceId: space.sys.id,
-        environmentId: environment.sys.id,
+        environmentId,
         resourceName: 'record'
       });
     }
   }
 
   componentDidMount() {
-    const { getResource, space, environment } = this.props;
+    const { getResource, space, environmentId } = this.props;
 
     getResource({
       spaceId: space.sys.id,
-      environmentId: environment.sys.id,
+      environmentId,
       resourceName: 'record'
     });
   }
@@ -70,7 +70,7 @@ export class RecordsResourceUsage extends React.Component {
 
   render() {
     const resource = this.resource();
-    const { environment } = this.props;
+    const { environmentId } = this.props;
 
     if (!resource) {
       return null;
@@ -97,7 +97,7 @@ export class RecordsResourceUsage extends React.Component {
             Usage: {usage} / {limit} entries and assets{' '}
           </span>
         )}
-        {usagePercentage >= warnThreshold && isMaster(environment) && (
+        {usagePercentage >= warnThreshold && isMaster(environmentId) && (
           <TextLink onClick={this.upgradeSpace.bind(this)}>Upgrade space</TextLink>
         )}
       </div>

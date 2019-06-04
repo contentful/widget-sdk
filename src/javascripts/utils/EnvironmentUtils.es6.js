@@ -1,11 +1,9 @@
-import { get } from 'lodash';
-
 export function isInsideMasterEnv(spaceContext) {
-  return isMaster(spaceContext.space.environment);
+  return isMaster(spaceContext.getEnvironmentId());
 }
 
-export function isMaster(environment) {
+export function isMaster(environmentId) {
   // if environment is not available, we assume it's the master environment.
   // TODO: Add aliases check when aliases become available.
-  return get(environment, 'sys.id', 'master') === 'master';
+  return environmentId === 'master';
 }

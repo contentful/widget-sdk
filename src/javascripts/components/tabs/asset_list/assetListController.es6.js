@@ -100,7 +100,7 @@ export default function register() {
       const resetUsageProps = debounce(() => {
         $scope.usageProps = {
           space: spaceContext.space.data,
-          environment: spaceContext.space.environment,
+          environmentId: spaceContext.getEnvironmentId(),
           currentTotal: $scope.paginator.getTotal()
         };
       });

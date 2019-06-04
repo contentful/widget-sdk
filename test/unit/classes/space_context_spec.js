@@ -73,7 +73,7 @@ describe('spaceContext', () => {
     });
 
     it('creates environment aware space context', function() {
-      expect(this.spaceContext.space.environment.sys.id).toEqual('master');
+      expect(this.spaceContext.space.environment).toBeUndefined();
       this.spaceContext.resetWithSpace({ sys: { id: 'withenv' } }, 'envid');
       expect(this.spaceContext.space.environment.sys.id).toEqual('envid');
     });
