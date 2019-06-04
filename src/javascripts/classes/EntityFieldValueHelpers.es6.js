@@ -72,7 +72,11 @@ export function getEntryTitle({
         defaultInternalLocaleCode
       });
     } else {
-      title = getFieldValue({ entity: entry, internalFieldId: displayField });
+      title = getFieldValue({
+        entity: entry,
+        internalFieldId: displayField,
+        defaultInternalLocaleCode
+      });
     }
 
     // TODO: Display meaningful title in case of non-string displayField.
