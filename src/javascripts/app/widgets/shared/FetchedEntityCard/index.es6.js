@@ -23,7 +23,8 @@ class FetchedEntityCard extends React.Component {
     onRemove: PropTypes.func,
     onClick: PropTypes.func,
     onEntityFetchComplete: PropTypes.func,
-    cardDragHandleComponent: PropTypes.element
+    cardDragHandleComponent: PropTypes.element,
+    cardComponent: PropTypes.func
   };
   static defaultProps = {
     className: '',
@@ -79,7 +80,8 @@ class FetchedEntityCard extends React.Component {
       onClick,
       readOnly,
       size,
-      cardDragHandleComponent
+      cardDragHandleComponent,
+      cardComponent
     } = this.props;
 
     return (
@@ -106,7 +108,12 @@ class FetchedEntityCard extends React.Component {
                   ? fetchEntityResult.entity.sys.id
                   : undefined;
 
-                const WrapperComponent = isEntry ? WrappedEntityCard : WrappedAssetCard;
+                const WrapperComponent = cardComponent
+                  ? cardComponent
+                  : isEntry
+                  ? WrappedEntityCard
+                  : WrappedAssetCard;
+
                 const cardProps = {
                   entityType,
                   ...fetchEntityResult,
