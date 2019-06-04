@@ -97,7 +97,7 @@ export class RecordsResourceUsage extends React.Component {
             Usage: {usage} / {limit} entries and assets{' '}
           </span>
         )}
-        {usagePercentage >= warnThreshold && !isMaster(environment) && (
+        {usagePercentage >= warnThreshold && isMaster(environment) && (
           <TextLink onClick={this.upgradeSpace.bind(this)}>Upgrade space</TextLink>
         )}
       </div>
