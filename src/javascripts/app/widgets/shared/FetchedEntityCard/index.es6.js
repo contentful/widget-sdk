@@ -2,6 +2,7 @@ import { once, noop } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Card, IconButton } from '@contentful/forma-36-react-components';
+import classNames from 'classnames';
 
 import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity/index.es6';
 import WrappedEntityCard from './WrappedEntityCard.es6';
@@ -48,10 +49,16 @@ class FetchedEntityCard extends React.Component {
     );
   }
 
-  renderMissingEntryReferenceCard(fetchEntityResult) {
-    const { entityType, className, selected } = this.props;
+  renderMissingEntityReferenceCard(fetchEntityResult) {
+    const { entityType, className, selected, cardDragHandleComponent } = this.props;
+
     return (
-      <Card selected={selected} className={className}>
+      <Card
+        selected={selected}
+        className={classNames(className, [
+          `${className}--missing`,
+          cardDragHandleComponent && `${className}--has-drag-handle`
+        ])}>
         <div style={{ display: 'flex' }}>
           <h1
             style={{
@@ -101,7 +108,7 @@ class FetchedEntityCard extends React.Component {
               }
 
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
-                return this.renderMissingEntryReferenceCard(fetchEntityResult);
+                return this.renderMissingEntityReferenceCard(fetchEntityResult);
               } else {
                 const isEntry = entityType === 'Entry';
                 const entityId = fetchEntityResult.entity
