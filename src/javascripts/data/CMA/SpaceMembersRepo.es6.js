@@ -1,7 +1,7 @@
 import { fetchAll } from './FetchAll.es6';
 
 const headers = {
-  // 'x-contentful-enable-alpha-feature': 'comments-api'
+  'x-contentful-enable-alpha-feature': 'teams-api'
 };
 
 export default function create(endpoint) {
@@ -17,7 +17,7 @@ export default function create(endpoint) {
     },
 
     getAll() {
-      return fetchAll(endpoint, ['space_members']);
+      return fetchAll(endpoint, ['space_members'], 100, {}, headers);
     }
   };
 }
