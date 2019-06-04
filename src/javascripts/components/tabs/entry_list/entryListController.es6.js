@@ -171,19 +171,15 @@ export default function register() {
           'context.view.displayedFieldIds',
           'orderColumnBy',
           'paginator.getPage()',
-          'paginator.getTotal()'
+          'paginator.getTotal()',
+          'entryCache.inProgress',
+          'assetCache.inProgress'
         ],
         () => {
           resetSearchResults();
         }
       );
       $scope.$watchCollection('entries', () => {
-        resetSearchResults();
-      });
-      $scope.$watchCollection('entryCache.queue', () => {
-        resetSearchResults();
-      });
-      $scope.$watchCollection('assetCache.queue', () => {
         resetSearchResults();
       });
 
