@@ -4,8 +4,8 @@ import { omit } from 'lodash';
 import { addNotification } from 'debug/DevNotifications.es6';
 import { MOCK_APIS } from 'Config.es6';
 import { getModule } from 'NgRegistry.es6';
+import window from 'utils/ngCompat/window.es6';
 
-const $window = getModule('$window');
 const $location = getModule('$location');
 
 const store = getStore().forKey('use_mock_api');
@@ -30,7 +30,7 @@ export function init() {
       store.set(mockApiId);
       // Ensure that there are absolutely no endpoints instantiated
       // that are still using the config's api url.
-      setTimeout(() => $window.location.reload());
+      setTimeout(() => window.location.reload());
     } else if (mockApiInfo) {
       showNotification(mockApiInfo);
     } else {
@@ -52,5 +52,5 @@ function showNotification({ name, url }) {
 
 function disableMockApi() {
   store.remove();
-  $window.location.reload();
+  window.location.reload();
 }

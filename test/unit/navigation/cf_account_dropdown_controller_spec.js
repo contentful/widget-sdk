@@ -7,7 +7,9 @@ describe('Account Dropdown Controller', () => {
     module('contentful/test', $provide => {
       $provide.value('analytics/Analytics.es6', stubs.analytics);
       $provide.value('Authentication.es6', stubs.authentication);
-      $provide.value('$window', stubs.window);
+      $provide.value('utils/ngCompat/window.es6', {
+        default: stubs.window
+      });
     });
 
     this.stubs.analytics = { track: sinon.stub(), disable: sinon.stub() };

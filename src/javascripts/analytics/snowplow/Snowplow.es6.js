@@ -1,10 +1,8 @@
 import { once } from 'lodash';
 import { snowplow as snowplowConfig, domain } from 'Config.es6';
 import { getSchema as getSchemaForEvent, transform } from 'analytics/snowplow/Events.es6';
-import { getModule } from 'NgRegistry.es6';
 import * as LazyLoader from 'utils/LazyLoader.es6';
-
-const $window = getModule('$window');
+import window from 'utils/ngCompat/window.es6';
 
 /**
  * @ngdoc service
@@ -25,8 +23,8 @@ let isDisabled = false;
 // window['snowplow'].q. Finally it replaces window['snowplow'] with an object
 // {push: push}, where push is sends events to snowplow.
 function initSnowplow() {
-  $window.GlobalSnowplowNamespace = [namespace];
-  $window[namespace] = snowplow;
+  window.GlobalSnowplowNamespace = [namespace];
+  window[namespace] = snowplow;
   LazyLoader.get('snowplow');
 
   snowplowSend('newTracker', 'co', snowplowConfig.collector_endpoint, {

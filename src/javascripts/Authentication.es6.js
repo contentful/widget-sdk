@@ -5,9 +5,9 @@ import { getStore } from 'TheStore/index.es6';
 import * as Config from 'Config.es6';
 import postForm from 'data/Request/PostForm.es6';
 import { getModule } from 'NgRegistry.es6';
+import window from 'utils/ngCompat/window.es6';
 
 const $location = getModule('$location');
-const $window = getModule('$window');
 
 /**
  * @name Authentication
@@ -204,7 +204,7 @@ function updateToken(value) {
 }
 
 function setLocation(url) {
-  $window.location = url;
+  window.location = url;
 }
 
 /**

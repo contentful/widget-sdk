@@ -4,16 +4,19 @@ describe('Snowplow service', () => {
   beforeEach(function() {
     this.LazyLoader = { get: sinon.stub() };
     this.Events = { getSchema: sinon.stub(), transform: sinon.stub() };
+    this.window = {};
 
     module('contentful/test', $provide => {
       $provide.constant('utils/LazyLoader.es6', this.LazyLoader);
       $provide.constant('analytics/snowplow/Events.es6', this.Events);
+      $provide.constant('utils/ngCompat/window.es6', {
+        default: this.window
+      });
     });
 
-    this.$window = this.$inject('$window');
     this.Snowplow = this.$inject('analytics/snowplow/Snowplow.es6');
     this.getLastEvent = function() {
-      return _.last(this.$window.snowplow.q);
+      return _.last(this.window.snowplow.q);
     };
   });
 
@@ -23,7 +26,7 @@ describe('Snowplow service', () => {
     });
 
     it('creates global `snowplow` object', function() {
-      expect(typeof this.$window.snowplow).toBe('object');
+      expect(typeof this.window.snowplow).toBe('object');
     });
 
     it('loads external script', function() {
@@ -43,9 +46,9 @@ describe('Snowplow service', () => {
     });
 
     it('calling #track does not add event to queue', function() {
-      const queueSize = this.$window.snowplow.q.length;
+      const queueSize = this.window.snowplow.q.length;
       this.Snowplow.track('learn:language_selected');
-      expect(this.$window.snowplow.q.length).toBe(queueSize);
+      expect(this.window.snowplow.q.length).toBe(queueSize);
     });
   });
 

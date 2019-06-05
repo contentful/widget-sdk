@@ -6,6 +6,7 @@ import $ from 'jquery';
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import keycodes from 'utils/keycodes.es6';
 import * as logger from 'services/logger.es6';
+import window from 'utils/ngCompat/window.es6';
 
 export default function register() {
   /**
@@ -34,10 +35,9 @@ export default function register() {
   registerFactory('modalDialog', [
     '$compile',
     '$q',
-    '$window',
     '$rootScope',
     '$timeout',
-    ($compile, $q, $window, $rootScope, $timeout) => {
+    ($compile, $q, $rootScope, $timeout) => {
       const opened = [];
 
       function Dialog(params) {
@@ -131,7 +131,7 @@ export default function register() {
                 }
               }
 
-              $($window).on('keyup', this._handleKeys);
+              $(window).on('keyup', this._handleKeys);
 
               this.domElement.addClass('is-visible');
             }, this)
@@ -141,7 +141,7 @@ export default function register() {
         reposition: function() {
           if (this.domElement) {
             const elem = this.domElement.find('.modal-dialog').first();
-            const topOffset = Math.max(($window.innerHeight - elem.height()) / 2, 0);
+            const topOffset = Math.max((window.innerHeight - elem.height()) / 2, 0);
             elem.css({ top: topOffset + 'px' });
           }
         },
@@ -153,7 +153,7 @@ export default function register() {
           let destroyed = false;
 
           reposition();
-          $($window).on('resize', debouncedReposition);
+          $(window).on('resize', debouncedReposition);
 
           const repositionOff = $rootScope.$on('centerOn:reposition', () => {
             if (!destroyed) {
@@ -163,7 +163,7 @@ export default function register() {
 
           elem.on('$destroy', () => {
             destroyed = true;
-            $($window).off('resize', debouncedReposition);
+            $(window).off('resize', debouncedReposition);
             repositionOff();
           });
         },
@@ -216,7 +216,7 @@ export default function register() {
           this._isDestroyed = true;
 
           const self = this;
-          $($window).off('keyup', this._handleKeys);
+          $(window).off('keyup', this._handleKeys);
           function destroyModal() {
             if (self.domElement) {
               self.scope.$destroy();

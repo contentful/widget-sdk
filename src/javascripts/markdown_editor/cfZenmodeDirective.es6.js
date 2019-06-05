@@ -1,16 +1,16 @@
 import { registerDirective } from 'NgRegistry.es6';
 import $ from 'jquery';
 import keycodes from 'utils/keycodes.es6';
+import window from 'utils/ngCompat/window.es6';
 
 export default function register() {
   registerDirective('cfZenmode', [
-    '$window',
     'modalDialog',
     'TheLocaleStore',
     'markdown_editor/markdown_editor.es6',
     'markdown_editor/markdown_actions.es6',
-    ($window, modalDialog, LocaleStore, MarkdownEditor, actions) => {
-      const win = $($window);
+    (modalDialog, LocaleStore, MarkdownEditor, actions) => {
+      const win = $(window);
 
       // This is persisted accross Zen Mode instances
       let initialShowPreview = true;

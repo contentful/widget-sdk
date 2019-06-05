@@ -4,7 +4,9 @@ describe('Gatekeeper Message Handler', () => {
   beforeEach(function() {
     this.window = { location: '' };
     module('contentful/test', $provide => {
-      $provide.value('$window', this.window);
+      $provide.value('utils/ngCompat/window.es6', {
+        default: this.window
+      });
     });
     this.handle = this.$inject('account/handleGatekeeperMessage.es6').default;
   });

@@ -1,6 +1,8 @@
 import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import $ from 'jquery';
+import window from 'utils/ngCompat/window.es6';
+import * as HomeAnalyticsEvents from 'analytics/events/home.es6';
 
 export default function register() {
   /**
@@ -17,9 +19,7 @@ export default function register() {
 
   registerDirective('cfTrackCopyEvent', [
     '$document',
-    '$window',
-    'analytics/events/home.es6',
-    ($document, $window, analyticsEvents) => ({
+    $document => ({
       restrict: 'A',
       scope: true,
       link: function(scope, element) {
@@ -31,12 +31,12 @@ export default function register() {
 
         function handleKeydown(event) {
           if (event.key === 'c' && event.metaKey) {
-            const selection = $window.getSelection();
+            const selection = window.getSelection();
             const selectedNode = _.get(selection, 'anchorNode.parentNode');
             // Only track event if selected text is contained in this section
             if ($.contains(element[0], selectedNode)) {
               const language = scope.resources.selected;
-              analyticsEvents.commandCopied(language, selection.toString());
+              HomeAnalyticsEvents.commandCopied(language, selection.toString());
             }
           }
         }

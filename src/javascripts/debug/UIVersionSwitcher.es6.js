@@ -9,8 +9,8 @@ import React from 'react';
 import { addNotification } from 'debug/DevNotifications.es6';
 import qs from 'qs';
 import { getModule } from 'NgRegistry.es6';
+import window from 'utils/ngCompat/window.es6';
 
-const $window = getModule('$window');
 const location = getModule('$location');
 
 /**
@@ -25,7 +25,7 @@ export function init() {
   if (uiVersion) {
     setVersionCookie(uiVersion);
     // This will reload the app with new ui version
-    $window.location.search = '?' + qs.stringify(omit(urlParams, 'ui_version'));
+    window.location.search = '?' + qs.stringify(omit(urlParams, 'ui_version'));
   }
   addVersionNotification();
 }
@@ -66,5 +66,5 @@ function renderVersionNotification(gitRevision) {
 
 function removeUiVersion() {
   Cookies.remove('ui_version');
-  $window.location.reload();
+  window.location.reload();
 }

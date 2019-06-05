@@ -2,14 +2,14 @@ import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { WALK_FOR_ME } from 'featureFlags.es6';
 import * as LazyLoader from 'utils/LazyLoader.es6';
+import window from 'utils/ngCompat/window.es6';
 
 export default function register() {
   registerDirective('cfRolesForWalkMe', [
     '$rootScope',
-    '$window',
     'spaceContext',
     'utils/LaunchDarkly/index.es6',
-    ($rootScope, $window, spaceContext, LD) => {
+    ($rootScope, spaceContext, LD) => {
       const isAdminAttr = 'data-space-role-is-admin';
       const roleNamesAttr = 'data-space-role-names';
       let lastVariation = null;
@@ -23,7 +23,7 @@ export default function register() {
               // if the last variation was for a targeted space
               // when you move out of it, reload to unload WalkMe scripts
               if (lastVariation && variation !== lastVariation) {
-                $window.location.reload();
+                window.location.reload();
               }
 
               if (variation && variation !== lastVariation) {
@@ -36,7 +36,7 @@ export default function register() {
                 $el.attr(roleNamesAttr, JSON.stringify(spaceRoleNames));
 
                 // load walkMe
-                $window._walkmeConfig = { smartLoad: true };
+                window._walkmeConfig = { smartLoad: true };
                 // variation will be the key into lazy_loader
                 // this is to make it easy to handle requests for
                 // different files to be loaded for different spaces

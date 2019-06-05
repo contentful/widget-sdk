@@ -9,7 +9,9 @@ describe('Analytics', () => {
     const analyticsConsole = makeMock(['setSessionData', 'add']);
 
     module('contentful/test', $provide => {
-      $provide.constant('analytics/segment', this.segment);
+      $provide.constant('analytics/segment.es6', {
+        default: this.segment
+      });
       $provide.constant('analytics/snowplow/Snowplow.es6', this.Snowplow);
       $provide.constant('analytics/console', analyticsConsole);
     });

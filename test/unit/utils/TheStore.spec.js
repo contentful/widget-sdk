@@ -35,7 +35,7 @@ describe('TheStore', () => {
 
     this.system = createIsolatedSystem();
 
-    this.system.set('global/window', {
+    this.system.set('utils/ngCompat/window.es6', {
       default: {
         addEventListener: this.listeners.addEventListener,
         removeEventListener: this.listeners.removeEventListener,

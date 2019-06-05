@@ -11,8 +11,7 @@ describe('Authentication.es6', () => {
 
     module('contentful/test', $provide => {
       $provide.value('$http', this.$http);
-      $provide.constant('global/window', { default: this.window });
-      $provide.constant('$window', this.window);
+      $provide.constant('utils/ngCompat/window.es6', { default: this.window });
     });
 
     this.$http.resolves({ data: { access_token: 'NEW TOKEN' } });

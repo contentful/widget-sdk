@@ -3,9 +3,9 @@ import { getStore } from 'TheStore/index.es6';
 import { uniq, without, omit } from 'lodash';
 import { addNotification } from 'debug/DevNotifications.es6';
 import Cookies from 'js-cookie';
+import window from 'utils/ngCompat/window.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $window = getModule('$window');
 const location = getModule('$location');
 
 const ENABLE_FLAGS_KEY = 'ui_enable_flags';
@@ -123,7 +123,7 @@ function renderFlagsListItem(flag, removeFn) {
       className="btn-link"
       onClick={() => {
         removeFn(flag);
-        $window.location.reload();
+        window.location.reload();
       }}
       style={{ float: 'right', marginLeft: '3px' }}>
       Clear

@@ -4,8 +4,8 @@ import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData.es6';
 import _ from 'lodash';
 import { getModule } from 'NgRegistry.es6';
+import segment from 'analytics/segment.es6';
 
-const segment = getModule('analytics/segment');
 const analyticsConsole = getModule('analytics/console');
 
 function removeCircularRefs(obj) {

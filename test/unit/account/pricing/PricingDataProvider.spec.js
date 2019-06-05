@@ -83,7 +83,7 @@ describe('account/pricing/PricingDataProvider.es6', () => {
       // errors if they are not set explicitly.
       // TODO: provide them in isolated system's AngularSystem.
       system.set('$location', {});
-      system.set('$window', {});
+      system.set('utils/ngCompat/window.es6', { default: {} });
       system.set('$http', {});
 
       system.set('data/CMA/FetchAll.es6', { fetchAll });

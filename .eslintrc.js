@@ -13,13 +13,7 @@ module.exports = {
         moduleDirectory: ['src/javascripts', 'node_modules']
       }
     },
-    'import/core-modules': [
-      'legacy-client',
-      'localesList',
-      'marked',
-      'searchParser',
-      'global/window'
-    ]
+    'import/core-modules': ['legacy-client', 'localesList', 'marked', 'searchParser']
   },
   plugins: ['react-hooks'],
   env: {

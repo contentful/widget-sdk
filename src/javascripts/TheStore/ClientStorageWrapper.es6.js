@@ -1,4 +1,4 @@
-import window from 'global/window';
+import window from 'utils/ngCompat/window.es6';
 
 export default function createClientStorageWrapper(storageType) {
   const wrapper = {};

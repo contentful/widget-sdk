@@ -14,9 +14,9 @@ import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import { deepFreezeClone, deepFreeze } from 'utils/Freeze.es6';
 import { isEqual, groupBy, map, get, find, cloneDeep } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
+import window from 'utils/ngCompat/window.es6';
 
 const $q = getModule('$q');
-const $window = getModule('$window');
 
 // Refresh token info every 5 minutes
 const TOKEN_INFO_REFRESH_INTERVAL = 5 * 60 * 1000;
@@ -73,10 +73,10 @@ export function getTokenLookup() {
  */
 export function init() {
   const offToken = K.onValue(auth.token$, refresh);
-  const refreshInterval = $window.setInterval(refresh, TOKEN_INFO_REFRESH_INTERVAL);
+  const refreshInterval = window.setInterval(refresh, TOKEN_INFO_REFRESH_INTERVAL);
 
   return function deinit() {
-    $window.clearInterval(refreshInterval);
+    window.clearInterval(refreshInterval);
     offToken();
   };
 }

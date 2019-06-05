@@ -1,8 +1,6 @@
 import { extend } from 'lodash';
 import * as K from 'utils/kefir.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const $window = getModule('$window');
+import window from 'utils/ngCompat/window.es6';
 
 /**
  * Create a XHR debugger.
@@ -19,7 +17,7 @@ export function create() {
     responseText: ''
   };
 
-  const OrigXHR = $window.XMLHttpRequest;
+  const OrigXHR = window.XMLHttpRequest;
   const XHR = createMockClass(rules, OrigXHR);
 
   enable();
@@ -32,10 +30,10 @@ export function create() {
   };
 
   function enable() {
-    $window.XMLHttpRequest = XHR;
+    window.XMLHttpRequest = XHR;
   }
   function restore() {
-    $window.XMLHttpRequest = OrigXHR;
+    window.XMLHttpRequest = OrigXHR;
   }
 
   /**

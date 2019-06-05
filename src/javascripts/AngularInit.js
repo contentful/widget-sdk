@@ -43,7 +43,6 @@ angular
       ngRequire('access_control/UserSpaceInvitationController.es6').default();
       ngRequire('account/cfNewOrganizationMembership.es6').default();
       ngRequire('analytics/analyticsConsole.es6').default();
-      ngRequire('analytics/segment.es6').default();
       ngRequire('app/ContentModel/Editor/addFieldDialogController.es6').default();
       ngRequire('app/ContentModel/Editor/apiNameController.es6').default();
       ngRequire('app/ContentModel/Editor/cfApiNameShadowDirective.es6').default();

@@ -28,11 +28,6 @@ require('codemirror/mode/htmlmixed/htmlmixed');
 // pick it up and properly register the libraries during initial
 // invocation.
 window.libs = [
-  // Stubbable globals, like `window`, go here.
-  // This is so that tests can stub out `window` based functions like
-  // addEventListener and localStorage.
-  ['global/window', window],
-
   ['angular', window.angular],
 
   ['@contentful/asn1js', require('@contentful/asn1js')],

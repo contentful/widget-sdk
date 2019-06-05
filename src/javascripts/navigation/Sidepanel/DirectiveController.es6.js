@@ -16,11 +16,11 @@ import renderSidepanel from './SidepanelView.es6';
 
 const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
 
-export default function createController($scope, $window) {
-  $window.on('keyup', handleEsc);
+export default function createController($scope, winJqueryObject) {
+  winJqueryObject.on('keyup', handleEsc);
 
   $scope.$on('$destroy', () => {
-    $window.off('keyup', handleEsc);
+    winJqueryObject.off('keyup', handleEsc);
   });
 
   let navState;

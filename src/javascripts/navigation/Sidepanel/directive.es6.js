@@ -1,5 +1,6 @@
 import { registerDirective } from 'NgRegistry.es6';
 import $ from 'jquery';
+import window from 'utils/ngCompat/window.es6';
 
 export default function register() {
   /**
@@ -9,9 +10,8 @@ export default function register() {
    * This directive display the new navigation side panel.
    */
   registerDirective('cfNavSidepanel', [
-    '$window',
     'navigation/Sidepanel/DirectiveController.es6',
-    ($window, { default: createController }) => ({
+    ({ default: createController }) => ({
       restrict: 'E',
       template: '<cf-component-bridge component="component" />',
       scope: {
@@ -20,7 +20,7 @@ export default function register() {
       controller: [
         '$scope',
         $scope => {
-          createController($scope, $($window));
+          createController($scope, $(window));
         }
       ]
     })
