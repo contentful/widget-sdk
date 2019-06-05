@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 describe('cfMarkdownEditor', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.markdownEditorActions = { trackMarkdownEditorAction: sinon.stub() };
     module('contentful/test', $provide => {
       $provide.constant('TheLocaleStore', {
@@ -28,7 +28,12 @@ describe('cfMarkdownEditor', () => {
     // resolve lazy-load promise:
     this.scope.$apply();
 
+    await new Promise(resolve => {
+      window.requestAnimationFrame(resolve);
+    });
+
     // can get CodeMirror instance from DOM node now:
+
     this.editor = elem.find('.CodeMirror').get(0).CodeMirror;
 
     this.textarea = elem
