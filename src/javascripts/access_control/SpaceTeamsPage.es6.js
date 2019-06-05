@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { map, find, filter } from 'lodash';
+import { map, find } from 'lodash';
 import {
   Table,
   TableBody,
@@ -17,23 +17,19 @@ import { css } from 'emotion';
 
 import Workbench from 'app/common/Workbench.es6';
 import createFetcherComponent, { FetcherLoading } from '../app/common/createFetcherComponent.es6';
-import { createOrganizationEndpoint, createSpaceEndpoint } from '../data/EndpointFactory.es6';
+import { createSpaceEndpoint } from '../data/EndpointFactory.es6';
 import StateRedirect from '../app/common/StateRedirect.es6';
 import DocumentTitle from '../components/shared/DocumentTitle.es6';
 import { joinWithAnd } from '../utils/StringUtils.es6';
 
-import { getAllTeamsMemberships, getTeamsSpaceMembershipsOfSpace } from './TeamRepository.es6';
+import { getTeamsSpaceMembershipsOfSpace } from './TeamRepository.es6';
 
 import getSpacesByOrgId from 'redux/selectors/getSpacesByOrgId.es6';
 
-const TeamListFetcher = createFetcherComponent(({ orgId, spaceId }) => {
-  const orgEndpoint = createOrganizationEndpoint(orgId);
+const TeamListFetcher = createFetcherComponent(({ spaceId }) => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
 
-  const promises = [
-    getTeamsSpaceMembershipsOfSpace(spaceEndpoint),
-    getAllTeamsMemberships(orgEndpoint)
-  ];
+  const promises = [getTeamsSpaceMembershipsOfSpace(spaceEndpoint)];
 
   return Promise.all(promises);
 });
@@ -88,22 +84,20 @@ const styles = {
 
 class SpaceTeamsPage extends React.Component {
   static propTypes = {
-    orgId: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired,
     onReady: PropTypes.func.isRequired,
     spaceName: PropTypes.string.isRequired
   };
 
   componentDidMount() {
-    const { onReady } = this.props;
-    onReady();
+    this.props.onReady();
   }
 
   render() {
-    const { orgId, spaceId, spaceName } = this.props;
+    const { spaceId, spaceName } = this.props;
 
     return (
-      <TeamListFetcher orgId={orgId} spaceId={spaceId}>
+      <TeamListFetcher spaceId={spaceId}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
             return <FetcherLoading message="Loading teams..." />;
@@ -112,7 +106,7 @@ class SpaceTeamsPage extends React.Component {
             return <StateRedirect to="spaces.detail.entries.list" />;
           }
 
-          const [teamSpaceMemberships, spaceMemberships] = data;
+          const [teamSpaceMemberships] = data;
 
           return (
             <React.Fragment>
@@ -144,11 +138,7 @@ class SpaceTeamsPage extends React.Component {
                           ({
                             sys: {
                               id,
-                              team: {
-                                name,
-                                description,
-                                sys: { id: teamId }
-                              }
+                              team: { name, description, memberCount }
                             },
                             roles,
                             admin
@@ -161,13 +151,7 @@ class SpaceTeamsPage extends React.Component {
                               <TableCell className={styles.cellRoles}>
                                 {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
                               </TableCell>
-                              <TableCell className={css(cell)}>
-                                {
-                                  filter(spaceMemberships, {
-                                    sys: { team: { sys: { id: teamId } } }
-                                  }).length
-                                }
-                              </TableCell>
+                              <TableCell className={css(cell)}>{memberCount}</TableCell>
                               <TableCell>
                                 <IconButton
                                   label="Action"
@@ -194,7 +178,6 @@ class SpaceTeamsPage extends React.Component {
 export default connect((state, { spaceId }) => {
   const orgId = getOrgId(state);
   return {
-    orgId,
     spaceName: find(getSpacesByOrgId(state)[orgId], { sys: { id: spaceId } }).name
   };
 })(SpaceTeamsPage);
