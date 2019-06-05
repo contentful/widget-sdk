@@ -36,12 +36,12 @@ const cell = {
 };
 
 const styles = {
-  content: css({
+  contentAlignment: css({
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'column'
   }),
-  contentAlignment: css({
+  content: css({
     marginRight: tokens.spacingL,
     marginLeft: tokens.spacingL
   }),
@@ -57,21 +57,22 @@ const styles = {
   row: css({
     height: '95px'
   }),
+  rolesColumn: css({
+    width: '30%'
+  }),
   cellTeamName: css({
     fontWeight: tokens.fontWeightMedium,
     color: tokens.colorTextDark
   }),
   cellTeamDescription: css({
-    maxWidth: '230px',
+    // maxWidth: '230px',
     overflow: 'hidden',
     display: '-webkit-box',
-    '-webkit-line-clamp': '2',
-    '-moz-line-clamp': '2',
-    '-webkit-box-orient': 'vertical'
+    WebkitLineClamp: '2',
+    MozLineClamp: '2',
+    WebkitBoxOrient: 'vertical'
   }),
   cellRoles: css({
-    maxWidth: '410px',
-    whiteSpace: 'nowrap',
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
     lineHeight: '1.2em',
@@ -114,8 +115,8 @@ export default class SpaceTeamsPage extends React.Component {
                     <Workbench.Title>Teams</Workbench.Title>
                   </Workbench.Header.Left>
                 </Workbench.Header>
-                <Workbench.Content className={styles.content}>
-                  <div className={styles.contentAlignment}>
+                <Workbench.Content className={styles.contentAlignment}>
+                  <div className={styles.content}>
                     <Heading className={styles.header}>
                       Teams in <span className={styles.headerTeamName}>{space.name}</span>
                       {` space (${teamSpaceMemberships.length})`}
@@ -124,7 +125,7 @@ export default class SpaceTeamsPage extends React.Component {
                       <TableHead>
                         <TableRow>
                           <TableCell>Team</TableCell>
-                          <TableCell>Role</TableCell>
+                          <TableCell className={styles.rolesColumn}>Role</TableCell>
                           <TableCell>Members</TableCell>
                           <TableCell />
                         </TableRow>
