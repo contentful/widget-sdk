@@ -1,3 +1,5 @@
+import { get, find } from 'lodash';
+
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import Base from 'states/Base.es6';
 import { getStore } from 'TheStore/index.es6';
@@ -120,7 +122,15 @@ export function organizationBase(definition) {
       'access_control/AccessChecker/index.es6',
       'services/TokenStore.es6',
       async ($state, $stateParams, accessChecker, TokenStore) => {
-        const org = await TokenStore.getOrganization($stateParams.orgId);
+        let orgId;
+        if ($stateParams.orgId) {
+          orgId = $stateParams.orgId;
+        } else if ($stateParams.spaceId) {
+          const spaces = await TokenStore.getSpaces();
+          const space = find(spaces, { sys: { id: $stateParams.spaceId } });
+          orgId = get(space, 'organization.sys.id');
+        }
+        const org = await TokenStore.getOrganization(orgId);
 
         Analytics.trackContextChange(null, org);
 
