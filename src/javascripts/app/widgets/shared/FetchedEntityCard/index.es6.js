@@ -33,9 +33,10 @@ class FetchedEntityCard extends React.Component {
     onEntityFetchComplete: noop
   };
 
-  renderDeleteButton(fetchEntityResult) {
+  renderDeleteButton(fetchEntityResult, className) {
     return (
       <IconButton
+        className={`${className}__delete-cta`}
         iconProps={{ icon: 'Close' }}
         label={`Remove reference to ${this.props.entityType.toLowerCase()}`}
         onClick={event => {
@@ -69,7 +70,7 @@ class FetchedEntityCard extends React.Component {
             }}>
             {entityType} missing or inaccessible
           </h1>
-          {this.renderDeleteButton(fetchEntityResult)}
+          {this.renderDeleteButton(fetchEntityResult, className)}
         </div>
       </Card>
     );
