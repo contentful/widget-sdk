@@ -1,7 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { map, find } from 'lodash';
+import { map } from 'lodash';
 import {
   Table,
   TableBody,
@@ -11,9 +10,9 @@ import {
   Heading,
   IconButton
 } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
-import getOrgId from 'redux/selectors/getOrgId.es6';
 import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
+import { getSpace } from 'services/TokenStore.es6';
 
 import Workbench from 'app/common/Workbench.es6';
 import createFetcherComponent, { FetcherLoading } from '../app/common/createFetcherComponent.es6';
@@ -24,12 +23,10 @@ import { joinWithAnd } from '../utils/StringUtils.es6';
 
 import { getTeamsSpaceMembershipsOfSpace } from './TeamRepository.es6';
 
-import getSpacesByOrgId from 'redux/selectors/getSpacesByOrgId.es6';
-
 const TeamListFetcher = createFetcherComponent(({ spaceId }) => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
 
-  const promises = [getTeamsSpaceMembershipsOfSpace(spaceEndpoint)];
+  const promises = [getTeamsSpaceMembershipsOfSpace(spaceEndpoint), getSpace(spaceId)];
 
   return Promise.all(promises);
 });
@@ -82,11 +79,10 @@ const styles = {
   })
 };
 
-class SpaceTeamsPage extends React.Component {
+export default class SpaceTeamsPage extends React.Component {
   static propTypes = {
     spaceId: PropTypes.string.isRequired,
-    onReady: PropTypes.func.isRequired,
-    spaceName: PropTypes.string.isRequired
+    onReady: PropTypes.func.isRequired
   };
 
   componentDidMount() {
@@ -94,7 +90,7 @@ class SpaceTeamsPage extends React.Component {
   }
 
   render() {
-    const { spaceId, spaceName } = this.props;
+    const { spaceId } = this.props;
 
     return (
       <TeamListFetcher spaceId={spaceId}>
@@ -106,7 +102,7 @@ class SpaceTeamsPage extends React.Component {
             return <StateRedirect to="spaces.detail.entries.list" />;
           }
 
-          const [teamSpaceMemberships] = data;
+          const [teamSpaceMemberships, space] = data;
 
           return (
             <React.Fragment>
@@ -121,7 +117,7 @@ class SpaceTeamsPage extends React.Component {
                 <Workbench.Content className={styles.content}>
                   <div className={styles.contentAlignment}>
                     <Heading className={styles.header}>
-                      Teams in <span className={styles.headerTeamName}>{spaceName}</span>
+                      Teams in <span className={styles.headerTeamName}>{space.name}</span>
                       {` space (${teamSpaceMemberships.length})`}
                     </Heading>
                     <Table>
@@ -174,10 +170,3 @@ class SpaceTeamsPage extends React.Component {
     );
   }
 }
-
-export default connect((state, { spaceId }) => {
-  const orgId = getOrgId(state);
-  return {
-    spaceName: find(getSpacesByOrgId(state)[orgId], { sys: { id: spaceId } }).name
-  };
-})(SpaceTeamsPage);
