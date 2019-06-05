@@ -3,6 +3,7 @@ import { track } from 'analytics/Analytics.es6';
 import { stateName } from 'data/CMA/EntityState.es6';
 import * as K from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as logger from 'services/logger.es6';
 
 const spaceContext = getModule('spaceContext');
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index.es6';
@@ -18,7 +19,7 @@ export default function install(entityInfo, document, lifeline$) {
   });
 }
 
-export async function trackEntryView({
+async function trackEntryViewAsync({
   editorData,
   entityInfo,
   editorType,
@@ -43,6 +44,22 @@ export async function trackEntryView({
     currentSlideLevel,
     editorType,
     editorData
+  });
+}
+
+export function trackEntryView({ editorData, entityInfo, editorType, currentSlideLevel, locale }) {
+  requestIdleCallback(async () => {
+    try {
+      await trackEntryViewAsync({
+        editorData,
+        entityInfo,
+        editorType,
+        currentSlideLevel,
+        locale
+      });
+    } catch (error) {
+      logger.logError(error);
+    }
   });
 }
 

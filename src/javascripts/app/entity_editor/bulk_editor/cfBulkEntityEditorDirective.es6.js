@@ -6,7 +6,6 @@ import * as Navigator from 'states/Navigator.es6';
 import { makeNotify } from 'app/entity_editor/Notifications.es6';
 import { truncate } from 'utils/StringUtils.es6';
 import * as Focus from 'app/entity_editor/Focus.es6';
-import * as logger from 'services/logger.es6';
 
 export default function register() {
   /**
@@ -140,17 +139,13 @@ export default function register() {
               if (editorData) {
                 setupEditor(editorData);
 
-                try {
-                  trackEntryView({
-                    editorData: $scope.editorData,
-                    entityInfo: $scope.entityInfo,
-                    currentSlideLevel: 0,
-                    locale: localeStore.getDefaultLocale().internal_code,
-                    editorType: 'bulk_editor'
-                  });
-                } catch (error) {
-                  logger.logError(error);
-                }
+                trackEntryView({
+                  editorData: $scope.editorData,
+                  entityInfo: $scope.entityInfo,
+                  currentSlideLevel: 0,
+                  locale: localeStore.getDefaultLocale().internal_code,
+                  editorType: 'bulk_editor'
+                });
               }
             });
 
