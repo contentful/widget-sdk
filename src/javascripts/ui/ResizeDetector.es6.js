@@ -2,6 +2,36 @@ import * as K from 'utils/kefir.es6';
 import makeDetector from 'element-resize-detector';
 
 /**
+ * Subscribes to the element resize events using element-resize-detector
+ */
+const observeWithPolyfill = (element, cb) => {
+  const detector = makeDetector({ strategy: 'scroll' });
+  detector.listenTo(element, cb);
+
+  return () => {
+    detector.uninstall(element);
+  };
+};
+
+/**
+ * Creates an instance of ResizeObserver.
+ * Tries to use native ResizeObserver if available
+ * otherwise, uses polyfillObserver.
+ */
+const createResizeObserver = polyfillObserver => (element, cb) => {
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(cb);
+    ro.observe(element);
+    return () => {
+      ro.unobserve(element);
+      ro.disconnect();
+    };
+  }
+
+  return polyfillObserver(element, cb);
+};
+
+/**
  * Create a stream that emits an event whenever the size of the element changes.
  *
  * This function uses the [`element-resize-detector`][erd-lib] internally. This
@@ -16,15 +46,12 @@ import makeDetector from 'element-resize-detector';
  */
 export function observeResize(element) {
   return K.stream(emitter => {
-    const detector = makeDetector({ strategy: 'scroll' });
-    detector.listenTo(element, listen);
+    const cb = () => emitter.emit();
+
+    const unobserve = createResizeObserver(observeWithPolyfill)(element, cb);
 
     return () => {
-      detector.uninstall(element);
+      unobserve();
     };
-
-    function listen() {
-      emitter.emit();
-    }
   });
 }
