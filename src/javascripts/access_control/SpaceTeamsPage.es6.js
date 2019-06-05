@@ -17,19 +17,23 @@ import { css } from 'emotion';
 
 import Workbench from 'app/common/Workbench.es6';
 import createFetcherComponent, { FetcherLoading } from '../app/common/createFetcherComponent.es6';
-import { createOrganizationEndpoint } from '../data/EndpointFactory.es6';
+import { createOrganizationEndpoint, createSpaceEndpoint } from '../data/EndpointFactory.es6';
 import StateRedirect from '../app/common/StateRedirect.es6';
 import DocumentTitle from '../components/shared/DocumentTitle.es6';
 import { joinWithAnd } from '../utils/StringUtils.es6';
 
-import { getAllTeamsMemberships, getAllTeamsSpaceMemberships } from './TeamRepository.es6';
+import { getAllTeamsMemberships, getTeamsSpaceMembershipsOfSpace } from './TeamRepository.es6';
 
 import getSpacesByOrgId from 'redux/selectors/getSpacesByOrgId.es6';
 
-const TeamListFetcher = createFetcherComponent(({ orgId }) => {
-  const endpoint = createOrganizationEndpoint(orgId);
+const TeamListFetcher = createFetcherComponent(({ orgId, spaceId }) => {
+  const orgEndpoint = createOrganizationEndpoint(orgId);
+  const spaceEndpoint = createSpaceEndpoint(spaceId);
 
-  const promises = [getAllTeamsSpaceMemberships(endpoint), getAllTeamsMemberships(endpoint)];
+  const promises = [
+    getTeamsSpaceMembershipsOfSpace(spaceEndpoint),
+    getAllTeamsMemberships(orgEndpoint)
+  ];
 
   return Promise.all(promises);
 });
@@ -85,6 +89,7 @@ const styles = {
 class SpaceTeamsPage extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
+    spaceId: PropTypes.string.isRequired,
     onReady: PropTypes.func.isRequired,
     spaceName: PropTypes.string.isRequired
   };
@@ -95,10 +100,10 @@ class SpaceTeamsPage extends React.Component {
   }
 
   render() {
-    const { orgId, spaceName } = this.props;
+    const { orgId, spaceId, spaceName } = this.props;
 
     return (
-      <TeamListFetcher orgId={orgId}>
+      <TeamListFetcher orgId={orgId} spaceId={spaceId}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
             return <FetcherLoading message="Loading teams..." />;

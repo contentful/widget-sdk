@@ -1,4 +1,4 @@
-import { fetchAll, fetchAllWithIncludes } from 'data/CMA/FetchAll.es6';
+import { fetchAllWithIncludes } from 'data/CMA/FetchAll.es6';
 import ResolveLinks from '../data/LinkResolver.es6';
 
 const ALPHA_HEADER = { 'x-contentful-enable-alpha-feature': 'teams-api' };
@@ -8,14 +8,14 @@ const BATCH_LIMIT = 100;
  * Get all teams in the organization
  * @param {endpoint} endpoint organization endpoint
  */
-export function getAllTeams(endpoint, params) {
-  return fetchAll(endpoint, ['teams'], BATCH_LIMIT, params, ALPHA_HEADER);
+export function getAllTeams(endpoint) {
+  return fetchAllWithIncludes(endpoint, ['teams'], BATCH_LIMIT, {}, ALPHA_HEADER);
 }
 
-export async function getAllTeamsSpaceMemberships(endpoint) {
+export async function getAllTeamsSpaceMemberships(orgEndpoint) {
   const includePaths = ['roles', 'sys.team'];
   const { items, includes } = await fetchAllWithIncludes(
-    endpoint,
+    orgEndpoint,
     ['team_space_memberships'],
     BATCH_LIMIT,
     { include: includePaths.join(',') },
@@ -24,9 +24,21 @@ export async function getAllTeamsSpaceMemberships(endpoint) {
   return ResolveLinks({ paths: includePaths, items, includes });
 }
 
-export async function getAllTeamsMemberships(endpoint) {
+export async function getTeamsSpaceMembershipsOfSpace(spaceEndpoint) {
+  const includePaths = ['roles', 'sys.team'];
+  const { items, includes } = await fetchAllWithIncludes(
+    spaceEndpoint,
+    ['team_space_memberships'],
+    BATCH_LIMIT,
+    { include: includePaths.join(',') },
+    ALPHA_HEADER
+  );
+  return ResolveLinks({ paths: includePaths, items, includes });
+}
+
+export async function getAllTeamsMemberships(orgEndpoint) {
   const { items } = await fetchAllWithIncludes(
-    endpoint,
+    orgEndpoint,
     ['team_memberships'],
     BATCH_LIMIT,
     {},
