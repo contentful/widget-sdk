@@ -1,10 +1,8 @@
-import * as Wrapper from 'markdown_editor/codemirror_wrapper.es6';
-import * as Commands from 'markdown_editor/commands.es6';
 import { isFunction } from 'lodash';
 import * as CodeMirror from 'codemirror';
-import { getModule } from 'NgRegistry.es6';
 
-const $timeout = getModule('$timeout');
+import * as Wrapper from 'markdown_editor/codemirror_wrapper.es6';
+import * as Commands from 'markdown_editor/commands.es6';
 
 export function create(textarea, options) {
   const editor = Wrapper.create(textarea, options, CodeMirror);
@@ -67,7 +65,7 @@ export function create(textarea, options) {
   function tiePreviewToEditor(el) {
     const fraction = editor.getScrollFraction();
 
-    $timeout(() => {
+    requestAnimationFrame(() => {
       const top = el.get(0).scrollHeight * fraction;
       el.scrollTop(top);
     });
@@ -90,7 +88,7 @@ export function create(textarea, options) {
     const top = previewElement.scrollTop();
     const position = height === 0 ? 0 : top / height;
 
-    $timeout(() => {
+    requestAnimationFrame(() => {
       editor.scrollToFraction(position);
     });
   }
