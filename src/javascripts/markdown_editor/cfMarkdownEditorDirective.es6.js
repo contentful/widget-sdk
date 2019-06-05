@@ -105,11 +105,14 @@ export default function register() {
           }
 
           function initEditorOrRenderError() {
-            try {
-              initEditor();
-            } catch (e) {
-              scope.hasCrashed = true;
-            }
+            // offloading initialization of the MD editor from the main thread
+            requestAnimationFrame(() => {
+              try {
+                initEditor();
+              } catch (e) {
+                scope.hasCrashed = true;
+              }
+            });
           }
 
           function initEditor() {
