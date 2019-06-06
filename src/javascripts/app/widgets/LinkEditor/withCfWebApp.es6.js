@@ -72,9 +72,16 @@ export default function withCfWebApp(LinkEditor) {
           const path = [entryId, field.id, field.internalLocale, index];
           slide = { type: 'BulkEditor', path };
         } else {
+          let refCount = 0;
+          try {
+            refCount = widgetAPI.field.getValue().length;
+          } catch (_e) {
+            // widgetAPI.field.getValue() may return undefined
+          }
+
           trackOpenSlideInInsteadOfBulk({
             parentEntryId: entryId,
-            refCount: widgetAPI.field.getValue().length
+            refCount
           });
         }
       }
