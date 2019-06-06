@@ -37,3 +37,20 @@ export async function remove(endpoint, entryId, commentId) {
     alphaHeader
   );
 }
+
+export async function update(endpoint, entryId, comment) {
+  const headers = {
+    'X-Contentful-Version': comment.sys.version,
+    ...alphaHeader
+  };
+  return endpoint(
+    {
+      method: 'PUT',
+      path: ['entries', entryId, 'comments', comment.sys.id],
+      data: {
+        body: comment.body
+      }
+    },
+    headers
+  );
+}

@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import TaskViewData from './TasksViewData.es6';
+import TasksViewData from './TasksViewData.es6';
+import TasksInteractor from './TasksInteractor.es6';
 import Task from './Task.es6';
 import Visible from 'components/shared/Visible/index.es6';
 import tokens from '@contentful/forma-36-tokens';
@@ -29,7 +30,8 @@ const styles = {
 
 export default class TasksWidget extends React.PureComponent {
   static propTypes = {
-    viewData: PropTypes.shape(TaskViewData),
+    viewData: PropTypes.shape(TasksViewData),
+    tasksInteractor: PropTypes.shape(TasksInteractor),
     onCreateDraft: PropTypes.func,
     onCancelDraft: PropTypes.func,
     onCreateTask: PropTypes.func,
@@ -54,7 +56,8 @@ export default class TasksWidget extends React.PureComponent {
   }
 
   render() {
-    const { helpText, tasks, hasNewTaskForm, isLoading } = this.props.viewData;
+    const { viewData, tasksInteractor } = this.props;
+    const { helpText, tasks, showCreateAction, isLoading } = viewData;
 
     return (
       <React.Fragment>
@@ -78,14 +81,18 @@ export default class TasksWidget extends React.PureComponent {
                       createdAt={task.createdAt}
                       isDraft={task.isDraft}
                       taskKey={task.key}
-                      onCancelDraft={() => this.props.onCancelDraft()}
-                      onCreateTask={(taskKey, taskBody) =>
-                        this.props.onCreateTask(taskKey, taskBody)
+                      onCancelDraft={() => tasksInteractor.cancelTaskDraft()}
+                      onCreateTask={(_taskKey, taskBody) =>
+                        // TODO: User ID
+                        tasksInteractor.saveTaskDraft(taskBody)
                       }
                       onUpdateTask={(taskKey, taskBody) =>
-                        this.props.onUpdateTask(taskKey, taskBody)
+                        tasksInteractor.updateTask(taskKey, {
+                          body: taskBody,
+                          version: task.version
+                        })
                       }
-                      onDeleteTask={taskKey => this.props.onDeleteTask(taskKey)}
+                      onDeleteTask={taskKey => tasksInteractor.deleteTask(taskKey)}
                       onCompleteTask={taskKey => this.props.onCompleteTask(taskKey)}
                       validationMessage={task.validationMessage}
                     />
@@ -93,11 +100,11 @@ export default class TasksWidget extends React.PureComponent {
                 ))}
               </ol>
             </Visible>
-            {!hasNewTaskForm && (
+            {showCreateAction && (
               <TextLink
                 icon="Plus"
                 className={styles.addTaskCta}
-                onClick={() => this.props.onCreateDraft()}>
+                onClick={() => tasksInteractor.startTaskDraft()}>
                 Create new task
               </TextLink>
             )}{' '}

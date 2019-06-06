@@ -111,7 +111,8 @@ export function createPropertyBus(initialValue, scope) {
   return {
     property,
     end: streamBus.end,
-    set: streamBus.emit
+    set: streamBus.emit,
+    error: streamBus.error
   };
 }
 
