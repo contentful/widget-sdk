@@ -64,7 +64,6 @@ angular
     '$document',
     '$injector',
     ($document, $injector) => {
-      $injector.get('requestIdleCallback.es6');
       const Config = $injector.get('Config.es6');
       if (Config.env === 'development') {
         Error.stackTraceLimit = 100;
