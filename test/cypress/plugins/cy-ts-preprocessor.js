@@ -4,6 +4,7 @@ const webpackOptions = {
   resolve: {
     extensions: ['.ts', '.js']
   },
+  performance: false,
   module: {
     rules: [
       {
@@ -11,7 +12,10 @@ const webpackOptions = {
         exclude: [/node_modules/],
         use: [
           {
-            loader: 'ts-loader'
+            loader: 'ts-loader',
+            options: {
+              configFile: 'test/tsconfig.json'
+            }
           }
         ]
       }

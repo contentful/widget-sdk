@@ -1,19 +1,25 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "types": ["cypress", "node"],
+    "baseUrl": "../node_modules",
+    "incremental": true,
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2015",
+    "types": ["cypress", "cypress-testing-library"],
     "lib": ["es2015", "dom"],
     "strict": true,
     "noEmitOnError": true,
     "noErrorTruncation": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "pretty": true
   },
-  "include": [
-    "**/*",
-    "../node_modules/cypress",
-    "../node_modules/cypress-testing-library",
-    "../node_modules/@contentful/cypress-pact"
-  ]
+  "compileOnSave": false,
+  "include": ["**/*.ts", "../node_modules/@contentful/cypress-pact"]
 }
