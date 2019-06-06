@@ -41,8 +41,7 @@ export async function trackEntryView({
       )
     ],
     currentSlideLevel,
-    editorType,
-    editorData
+    editorType
   });
 }
 
