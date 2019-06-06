@@ -65,8 +65,7 @@ class FetchedEntityCard extends React.Component {
             style={{
               margin: 0,
               fontSize: '.875rem', // Equal to 14px when browser text size is set to 100%
-              lineHeight: 1.5,
-              flex: '1 1 0'
+              lineHeight: 1.5
             }}>
             {entityType} missing or inaccessible
           </h1>
