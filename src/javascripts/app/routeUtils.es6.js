@@ -123,11 +123,12 @@ export function organizationBase(definition) {
       'services/TokenStore.es6',
       async ($state, $stateParams, accessChecker, TokenStore) => {
         let orgId;
+        let space;
         if ($stateParams.orgId) {
           orgId = $stateParams.orgId;
         } else if ($stateParams.spaceId) {
           const spaces = await TokenStore.getSpaces();
-          const space = find(spaces, { sys: { id: $stateParams.spaceId } });
+          space = find(spaces, { sys: { id: $stateParams.spaceId } });
           orgId = get(space, 'organization.sys.id');
         }
         const org = await TokenStore.getOrganization(orgId);
@@ -135,7 +136,11 @@ export function organizationBase(definition) {
         Analytics.trackContextChange(null, org);
 
         const migration = migratedStates.find(state => $state.is(state.v1));
-        accessChecker.setOrganization(org);
+        if (space) {
+          accessChecker.setSpace(space);
+        } else {
+          accessChecker.setOrganization(org);
+        }
         store.set('lastUsedOrg', $stateParams.orgId);
 
         const isLegacy = isLegacyOrganization(org);

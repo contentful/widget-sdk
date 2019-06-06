@@ -1,4 +1,4 @@
-import { iframeStateWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
+import { iframeStateWrapper } from 'app/routeUtils.es6';
 
 const newOrg = {
   name: 'new',

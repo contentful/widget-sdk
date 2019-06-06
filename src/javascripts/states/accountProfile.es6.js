@@ -1,5 +1,5 @@
 import base from 'states/Base.es6';
-import { iframeStateWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
+import { iframeStateWrapper } from 'app/routeUtils.es6';
 
 const user = userBase({
   name: 'user',
