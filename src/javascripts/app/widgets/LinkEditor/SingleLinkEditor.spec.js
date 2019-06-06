@@ -12,7 +12,9 @@ const link = {
 };
 
 jest.mock('./withCfWebApp.es6.js', () => ({}), { virtual: true });
-jest.mock('../shared/FetchedEntityCard/index.es6', () => ({}), { virtual: true });
+jest.mock('../shared/FetchedEntityCard/index.es6', () => ({ WrappedEntityCard: {} }), {
+  virtual: true
+});
 
 function mount(customProps) {
   const props = {

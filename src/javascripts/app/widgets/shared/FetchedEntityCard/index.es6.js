@@ -165,3 +165,4 @@ class FetchedEntityCard extends React.Component {
 }
 
 export default FetchedEntityCard;
+export { WrappedEntityCard, WrappedAssetCard };
