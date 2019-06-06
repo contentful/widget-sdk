@@ -18,15 +18,14 @@ export default function register() {
    */
 
   registerDirective('cfTrackCopyEvent', [
-    '$document',
-    $document => ({
+    () => ({
       restrict: 'A',
       scope: true,
       link: function(scope, element) {
-        $document.on('keydown', handleKeydown);
+        $(window.document).on('keydown', handleKeydown);
 
         scope.$on('$destroy', () => {
-          $document.off('keydown', handleKeydown);
+          $(window.document).off('keydown', handleKeydown);
         });
 
         function handleKeydown(event) {

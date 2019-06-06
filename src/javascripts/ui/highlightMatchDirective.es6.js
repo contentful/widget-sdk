@@ -1,10 +1,11 @@
 import { registerDirective } from 'NgRegistry.es6';
+import $ from 'jquery';
+import window from 'utils/ngCompat/window.es6';
 
 export default function register() {
   registerDirective('uiHighlightMatch', [
-    '$document',
-    $document => {
-      const document = $document.get(0);
+    () => {
+      const documentElem = $(window.document).get(0);
       return {
         restrict: 'A',
         scope: {
@@ -22,12 +23,16 @@ export default function register() {
               const match = base.substring(start, end);
               const suffix = base.substring(end);
 
-              const strong = document.createElement('strong');
+              const strong = documentElem.createElement('strong');
               strong.textContent = match;
 
               $el
                 .empty()
-                .append([document.createTextNode(prefix), strong, document.createTextNode(suffix)]);
+                .append([
+                  documentElem.createTextNode(prefix),
+                  strong,
+                  documentElem.createTextNode(suffix)
+                ]);
             } else {
               $el.text(base);
             }

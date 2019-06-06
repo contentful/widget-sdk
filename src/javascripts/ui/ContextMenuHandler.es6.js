@@ -1,5 +1,6 @@
 import { assign } from 'lodash';
 import $ from 'jquery';
+import window from 'utils/ngCompat/window.es6';
 
 /**
  * @ngdoc service
@@ -43,10 +44,10 @@ const MENU_SELECTOR = '[cf-context-menu]';
 
 let currentOpenMenu = null;
 
-export default function attach($document) {
-  $document.on('click', handleClick);
+export default function attach() {
+  $(window.document).on('click', handleClick);
   return function detach() {
-    $document.off('click', handleClick);
+    $(window.document).off('click', handleClick);
   };
 }
 

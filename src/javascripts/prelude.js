@@ -61,9 +61,8 @@ angular
     }
   ])
   .run([
-    '$document',
     '$injector',
-    ($document, $injector) => {
+    $injector => {
       const Config = $injector.get('Config.es6');
       if (Config.env === 'development') {
         Error.stackTraceLimit = 100;
@@ -82,7 +81,7 @@ angular
       $injector.get('services/TokenStore.es6').init();
       $injector.get('utils/LaunchDarkly').init();
       $injector.get('navigation/stateChangeHandlers').setup();
-      $injector.get('ui/ContextMenuHandler.es6').default($document);
+      $injector.get('ui/ContextMenuHandler.es6').default();
       $injector.get('states/states.es6').loadAll();
       $injector.get('dialogsInitController').init();
       $injector.get('components/shared/auto_create_new_space').init();
