@@ -4,7 +4,7 @@ import * as JobsService from '../DataManagement/JobsService.es6';
 const JobsFetcher = createFetcherComponent(async props => {
   const jobCollection = await JobsService.getJobs(props.endpoint, {
     'sys.entity.sys.id': props.entryId,
-    'sys.status': 'pending'
+    order: '-sys.scheduledAt'
   });
 
   return {

@@ -1,16 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import moment from 'moment';
 
 import tokens from '@contentful/forma-36-tokens';
 
 import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
-
 import JobsTimeline from './JobsTimeline/index.es6';
 import JobsFetcher from './JobsFetcher.es6';
 import { createJob } from '../DataManagement/JobsService.es6';
 import NewJob from './NewJob.es6';
 import { create } from './JobsFactory.es6';
+import FailedScheduleNote from './FailedScheduleNote/index.es6';
 
 import { createSpaceEndpoint } from '../DataManagement/JobsEndpointFactory.es6';
 
@@ -37,7 +38,8 @@ export default class JobWidget extends React.Component {
     spaceId: PropTypes.string.isRequired,
     environmentId: PropTypes.string.isRequired,
     userId: PropTypes.string.isRequired,
-    entityInfo: PropTypes.object.isRequired
+    entityInfo: PropTypes.object.isRequired,
+    entity: PropTypes.object.isRequired
   };
   state = {
     // used to re-fetch Jobs after creation
@@ -62,6 +64,27 @@ export default class JobWidget extends React.Component {
       });
     });
   };
+
+  isPublishedAfterLastFailedJob = job =>
+    moment(this.props.entity.publishedAt).isBefore(job.scheduledAt);
+
+  renderFailedScheduleNote = data => {
+    const recentJob = data.jobCollection.items[0];
+    const prevJob = data.jobCollection.items[1];
+
+    if (!recentJob) {
+      return null;
+    }
+
+    const entryHasBeenPublishedAfterLastFailedJob = this.isPublishedAfterLastFailedJob(recentJob);
+
+    return (
+      entryHasBeenPublishedAfterLastFailedJob && (
+        <FailedScheduleNote recentJob={recentJob} prevJob={prevJob} />
+      )
+    );
+  };
+
   render() {
     return (
       <div className={styles.root}>
@@ -81,13 +104,18 @@ export default class JobWidget extends React.Component {
               // Implement proper error handling
               return 'Error';
             }
-            const hasScheduledActions = data.jobCollection.items.length > 0;
+
+            const pendingJobs = data.jobCollection.items.filter(
+              schedule => schedule.sys.status === 'pending'
+            );
+            const hasScheduledActions = pendingJobs.length > 0;
 
             return (
               <React.Fragment>
                 <div className={styles.heading}>Schedule</div>
+                {this.renderFailedScheduleNote(data)}
                 {hasScheduledActions ? (
-                  <JobsTimeline jobs={data.jobCollection.items} />
+                  <JobsTimeline jobs={pendingJobs} />
                 ) : (
                   <NewJob onCreate={this.handleJobCreate} />
                 )}

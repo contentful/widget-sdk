@@ -113,6 +113,7 @@ export default ({ $scope, emitter }) => {
       emitter.emit(SidebarEventTypes.UPDATED_JOBS_WIDGET, {
         ...update,
         entityInfo: $scope.entityInfo,
+        entity: $scope.editorData.entity.data,
         spaceId: spaceContext.space.getId(),
         environmentId: spaceContext.getEnvironmentId(),
         userId: spaceContext.user.sys.id

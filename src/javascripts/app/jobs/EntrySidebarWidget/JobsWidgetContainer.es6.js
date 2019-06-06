@@ -16,7 +16,9 @@ export default class JobsWidgetContainer extends Component {
     spaceId: undefined,
     environmentId: undefined,
     userId: undefined,
-    entityInfo: undefined
+    entityInfo: undefined,
+    status: undefined,
+    entity: undefined
   };
 
   componentDidMount() {
@@ -33,10 +35,11 @@ export default class JobsWidgetContainer extends Component {
   };
 
   render() {
-    const { spaceId, environmentId, userId, entityInfo } = this.state;
+    const { spaceId, environmentId, userId, entityInfo, entity } = this.state;
     if (!spaceId) {
       return null;
     }
+
     return (
       <ErrorHandler>
         <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
@@ -44,6 +47,7 @@ export default class JobsWidgetContainer extends Component {
             spaceId={spaceId}
             environmentId={environmentId}
             userId={userId}
+            entity={entity}
             entityInfo={entityInfo}
           />
         </BooleanFeatureFlag>

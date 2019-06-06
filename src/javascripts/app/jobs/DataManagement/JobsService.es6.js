@@ -1,5 +1,5 @@
 const ALPHA_HEADER = {
-  'x-contentful-enable-alpha-feature': 'jobs'
+  'x-contentful-enable-alpha-feature': 'scheduled-jobs'
 };
 
 export function createJob(endpoint, jobDto) {

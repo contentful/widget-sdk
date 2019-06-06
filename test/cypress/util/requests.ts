@@ -227,7 +227,7 @@ export function getEntryJobs(spaceId: string = defaultSpaceId, query?: Query): R
   return {
     method: 'GET',
     path: `/spaces/${spaceId}/environments/master/jobs`,
-    headers: { ...defaultHeader, 'x-contentful-enable-alpha-feature': 'jobs' },
+    headers: { ...defaultHeader, 'x-contentful-enable-alpha-feature': 'scheduled-jobs' },
     query
   };
 }

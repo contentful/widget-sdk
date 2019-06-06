@@ -29,7 +29,28 @@ const mockSchedules = [
       },
       status: 'pending'
     },
-    scheduledAt: '2019-05-24T14:00:35Z',
+    scheduledAt: '2019-08-24T14:00:35Z',
+    action: 'publish'
+  },
+  {
+    sys: {
+      id: '4VRHYuaEZWusk6kgqqSeoG',
+      scheduledBy: {
+        sys: {
+          type: 'Link',
+          id: '4A3fIQBI2IaKZamCHiOJac'
+        }
+      },
+      entity: {
+        sys: {
+          type: 'Link',
+          linkType: 'Entry',
+          id: '20zKlMRvQQ0UQccawgA2iI'
+        }
+      },
+      status: 'failed'
+    },
+    scheduledAt: '2019-08-24T14:00:35Z',
     action: 'publish'
   }
 ];

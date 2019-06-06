@@ -8,8 +8,8 @@ const allJobsQuery = {
   'sys.status': 'pending'
 };
 const entryIdQuery = {
-  'sys.entity.sys.id': defaultEntryId,
-  'sys.status': 'pending'
+  order: '-sys.scheduledAt',
+  'sys.entity.sys.id': defaultEntryId
 };
 
 export function noJobsResponse() {
@@ -104,7 +104,7 @@ export function jobIsCreatedPostResponse() {
       path: `/spaces/${defaultSpaceId}/environments/master/jobs`,
       headers: {
         Accept: 'application/json, text/plain, */*',
-        'x-contentful-enable-alpha-feature': 'jobs'
+        'x-contentful-enable-alpha-feature': 'scheduled-jobs'
       }
       // TODO: test body and figure out how to be with datetime.
     },
