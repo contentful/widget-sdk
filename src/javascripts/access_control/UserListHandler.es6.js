@@ -44,7 +44,8 @@ export default function register() {
           getUsersByRole,
           getRoleOptions,
           getRoleOptionsBut,
-          isLastAdmin
+          isLastAdmin,
+          hasTeamSpaceMemberships
         };
 
         function reset() {
@@ -65,7 +66,7 @@ export default function register() {
           userRolesMap = {};
 
           _.forEach(data.memberships, membership => {
-            const userId = membership.user.sys.id;
+            const userId = membership.sys.user.sys.id;
             adminMap[userId] = membership.admin;
             membershipMap[userId] = membership;
 
@@ -113,6 +114,11 @@ export default function register() {
                 roles: userRolesMap[id] || [],
                 roleNames: getRoleNamesForUser(id),
                 avatarUrl: user.avatarUrl,
+                // This is a hack while we work on the new Users page.
+                // ETA: July 2019
+                isMemberViaTeam: membershipMap[id].relatedMemberships.some(
+                  m => m.sys.linkType === 'TeamSpaceMembership'
+                ),
                 name:
                   user.firstName && user.lastName
                     ? getName(user)
@@ -154,6 +160,12 @@ export default function register() {
         function isLastAdmin(userId) {
           const adminCount = _.filter(adminMap, _.identity).length;
           return adminMap[userId] && adminCount < 2;
+        }
+
+        function hasTeamSpaceMemberships() {
+          return users.some(user =>
+            user.membership.relatedMemberships.some(m => m.sys.linkType === 'TeamSpaceMembership')
+          );
         }
 
         function getRoleOptions() {
