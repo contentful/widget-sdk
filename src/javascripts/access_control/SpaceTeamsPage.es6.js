@@ -23,6 +23,7 @@ import { joinWithAnd } from 'utils/StringUtils.es6';
 import ellipsisStyle from 'ellipsisStyle.es6';
 
 import { getTeamsSpaceMembershipsOfSpace } from './TeamRepository.es6';
+import pluralize from 'pluralize';
 
 const TeamListFetcher = createFetcherComponent(({ spaceId }) => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
@@ -131,7 +132,7 @@ export default class SpaceTeamsPage extends React.Component {
                         <TableRow>
                           <TableCell>Team</TableCell>
                           <TableCell className={styles.rolesColumn}>Role</TableCell>
-                          <TableCell>Members</TableCell>
+                          <TableCell />
                           <TableCell />
                         </TableRow>
                       </TableHead>
@@ -153,7 +154,9 @@ export default class SpaceTeamsPage extends React.Component {
                               <TableCell className={styles.cellRoles}>
                                 {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
                               </TableCell>
-                              <TableCell className={css(cell)}>{memberCount}</TableCell>
+                              <TableCell className={css(cell)}>
+                                {pluralize('member', memberCount, true)}
+                              </TableCell>
                               <TableCell>
                                 <IconButton
                                   label="Action"
