@@ -1,4 +1,3 @@
-import * as K from 'test/helpers/mocks/kefir';
 import React from 'react';
 import { observeResize } from 'ui/ResizeDetector.es6';
 import _ from 'lodash';
@@ -42,27 +41,4 @@ describe('ui/ResizeDetector.es6', () => {
     // resolves without timing out.
     yield resizeDetected;
   });
-
-  it('removes helper elements when unsubscribed', function*() {
-    const inner = this.container.find('#inner');
-    const resize$ = observeResize(inner.get(0));
-    expect(inner.children().length).toBe(0);
-    const off = K.onValue(resize$, _.noop);
-    // Not sure why we need to wait so long
-    yield rafWait(5);
-    expect(inner.children().length).toBe(1);
-    off();
-    yield rafWait();
-    expect(inner.children().length).toBe(0);
-  });
-
-  function rafWait(n = 1) {
-    return new Promise(resolve => {
-      window.requestAnimationFrame(resolve);
-    }).then(() => {
-      if (n > 0) {
-        return rafWait(n - 1);
-      }
-    });
-  }
 });
