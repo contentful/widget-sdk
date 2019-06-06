@@ -105,7 +105,12 @@ const getAdminEmptyState = showCreateSpaceModal => (
       <EmptyStateAdminIllustration />
     </div>
     <Heading>Starting something new?</Heading>
-    <Paragraph>A space is an area to manage and store content for a specific project.</Paragraph>
+    <Paragraph>
+      A space is an area to manage and store content
+      {/* <br> tag is needed to fix text overflow in IE. The EmptyStateContainer uses flex-box, and it doesn't work as expected in IE.*/}
+      <br />
+      for a specific project.
+    </Paragraph>
     <Button testId="sidepanel-create-space-btn" onClick={showCreateSpaceModal}>
       Add a space
     </Button>
