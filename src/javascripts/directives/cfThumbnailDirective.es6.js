@@ -2,7 +2,7 @@ import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import $ from 'jquery';
 import mimetype from '@contentful/mimetype';
-import { isValidImage, getExternalImageUrl } from 'ui/cf/thumbnailHelpers.es6';
+import { isValidImage, getExternalImageUrl } from 'directives/thumbnailHelpers.es6';
 
 export default function register() {
   /**

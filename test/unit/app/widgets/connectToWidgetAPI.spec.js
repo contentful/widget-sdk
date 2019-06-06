@@ -15,7 +15,7 @@ describe('connectToWidgetAPI', () => {
     this.system.set('app/widgets/WidgetApi/BatchingApiClient/index.es6', {
       getBatchingApiClient: v => v
     });
-    this.system.set('ui/cf/thumbnailHelpers.es6', {});
+    this.system.set('directives/thumbnailHelpers.es6', {});
 
     const getModuleStub = sinon.stub();
     getModuleStub

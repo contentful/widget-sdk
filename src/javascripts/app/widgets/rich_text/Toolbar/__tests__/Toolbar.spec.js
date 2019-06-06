@@ -10,7 +10,7 @@ import { BLOCKS, INLINES } from '@contentful/rich-text-types';
 
 jest.mock('ng/EntityHelpers', () => ({}), { virtual: true });
 jest.mock('ng/data/CMA/EntityState.es6', () => ({}), { virtual: true });
-jest.mock('ui/cf/thumbnailHelpers.es6', () => ({}), { virtual: true });
+jest.mock('directives/thumbnailHelpers.es6', () => ({}), { virtual: true });
 
 const fakeProps = () => ({
   isDisabled: false,

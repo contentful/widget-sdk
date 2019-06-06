@@ -34,6 +34,7 @@ export default function() {
       {
         uiCommand: 'apiKeyEditor.save',
         dataTestId: 'apiKey.save',
+        // todo: remove cfWhenDisabled.es6 after refactoring this template
         cfWhenDisabled: 'create.apiKey'
       },
       ['Save']

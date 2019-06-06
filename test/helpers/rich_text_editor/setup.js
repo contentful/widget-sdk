@@ -21,7 +21,7 @@ export const CONTENT_TYPE_DATA_OBJECT = {
 
 export const stubAll = async ({ isolatedSystem, angularStubs = {} }) => {
   // TODO: Instead of stubbing all kind of services, stub `buildWidgetApi.es6`!
-  isolatedSystem.set('ui/cf/thumbnailHelpers.es6', {});
+  isolatedSystem.set('directives/thumbnailHelpers.es6', {});
   isolatedSystem.set('search/EntitySelector/Config.es6', {
     newConfigFromRichTextField: sinon.stub().returns({})
   });
