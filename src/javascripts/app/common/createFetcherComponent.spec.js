@@ -1,8 +1,11 @@
 import React from 'react';
-import Enzyme from 'enzyme';
+import 'jest-dom/extend-expect';
+import { render, cleanup } from 'react-testing-library';
 import createFetcherComponent, { FetcherLoading } from './createFetcherComponent';
 
 describe('createFetcherComponent', () => {
+  afterEach(cleanup);
+
   it('should create fetcher component and renders LoadingComponent', () => {
     const promiseStub = jest.fn().mockResolvedValue({});
 
@@ -10,7 +13,7 @@ describe('createFetcherComponent', () => {
       return promiseStub(param1, param2);
     });
 
-    const wrapper = Enzyme.mount(
+    render(
       <Component param1="1" param2="2">
         {({ isLoading }) => {
           if (isLoading) {
@@ -22,14 +25,5 @@ describe('createFetcherComponent', () => {
     );
 
     expect(promiseStub).toHaveBeenCalledWith('1', '2');
-    expect(wrapper.childAt(0)).toMatchInlineSnapshot(`
-<FetcherLoading
-  message="Loading test component..."
->
-  <Delayed
-    delay={300}
-  />
-</FetcherLoading>
-`);
   });
 });
