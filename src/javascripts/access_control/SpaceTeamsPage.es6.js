@@ -15,11 +15,12 @@ import tokens from '@contentful/forma-36-tokens';
 import { getSpace } from 'services/TokenStore.es6';
 
 import Workbench from 'app/common/Workbench.es6';
-import createFetcherComponent, { FetcherLoading } from '../app/common/createFetcherComponent.es6';
-import { createSpaceEndpoint } from '../data/EndpointFactory.es6';
-import StateRedirect from '../app/common/StateRedirect.es6';
-import DocumentTitle from '../components/shared/DocumentTitle.es6';
-import { joinWithAnd } from '../utils/StringUtils.es6';
+import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
+import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import StateRedirect from 'app/common/StateRedirect.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import { joinWithAnd } from 'utils/StringUtils.es6';
+import ellipsisStyle from 'ellipsisStyle.es6';
 
 import { getTeamsSpaceMembershipsOfSpace } from './TeamRepository.es6';
 
@@ -62,10 +63,13 @@ const styles = {
   }),
   cellTeamName: css({
     fontWeight: tokens.fontWeightMedium,
-    color: tokens.colorTextDark
+    color: tokens.colorTextDark,
+    maxWidth: '400px',
+    whiteSpace: 'nowrap',
+    ...ellipsisStyle
   }),
   cellTeamDescription: css({
-    // maxWidth: '230px',
+    maxWidth: '400px',
     overflow: 'hidden',
     display: '-webkit-box',
     WebkitLineClamp: '2',
@@ -73,6 +77,7 @@ const styles = {
     WebkitBoxOrient: 'vertical'
   }),
   cellRoles: css({
+    maxWidth: '400px',
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
     lineHeight: '1.2em',
