@@ -5,6 +5,7 @@ export const defaultOrgId = Cypress.env('orgId');
 export const defaultContentTypeId = 'testContentType';
 export const defaultEnvironment = 'master';
 export const defaultEntryId = 'testEntryId';
+export const defaultAssetId = 'testAssetId';
 export const defaultPreviewName = 'Test Name';
 export const defaultPreviewDescription = 'Test Description';
 export const defaultPreviewId = '0xi0FU6rvrUVlJtPFuaUyl';
@@ -92,6 +93,16 @@ export function getAssets(spaceId: string = defaultSpaceId, query?: Query): Requ
     path: `/spaces/${spaceId}/assets`,
     headers: defaultHeader,
     query
+  };
+}
+export function getAsset(
+  spaceId: string = defaultSpaceId,
+  assetId: string = defaultAssetId
+): RequestOptions {
+  return {
+    method: 'GET',
+    path: `/spaces/${spaceId}/assets/${assetId}`,
+    headers: defaultHeader
   };
 }
 

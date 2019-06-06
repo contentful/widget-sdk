@@ -49,13 +49,15 @@ export enum Entries {
   NONE = 'entries/none',
   SEVERAL = 'entries/several',
   LINKS = 'entries/links',
+  ASSET_LINKS = 'entries/asset-links',
   SNAPSHOTS = 'entries/snapshots',
   QUERY = 'entries/with-query'
 }
 
 export enum Assets {
   NONE = 'assets/none',
-  SEVERAL = 'assets/several'
+  SEVERAL = 'assets/several',
+  DEFAULT = 'assets/default'
 }
 
 export enum Jobs {

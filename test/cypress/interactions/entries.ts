@@ -6,7 +6,8 @@ import {
   defaultEntryId,
   defaultSpaceId,
   getEntriesWithEnvironment,
-  defaultEnvironment
+  defaultEnvironment,
+  defaultAssetId
 } from '../util/requests';
 
 const empty = require('../fixtures/responses/empty.json');
@@ -40,6 +41,22 @@ export function noEntryLinksResponse() {
       body: empty
     }
   }).as(state.Entries.LINKS);
+}
+
+export function noAssetLinksResponse() {
+  const query = {
+    links_to_asset: `${defaultAssetId}`
+  };
+  cy.addInteraction({
+    provider: 'entries',
+    state: state.Entries.ASSET_LINKS,
+    uponReceiving: 'a request for asset links',
+    withRequest: getEntryLinks(defaultSpaceId, query),
+    willRespondWith: {
+      status: 200,
+      body: empty
+    }
+  }).as(state.Entries.ASSET_LINKS);
 }
 
 export function noEntrySnapshotsResponse() {

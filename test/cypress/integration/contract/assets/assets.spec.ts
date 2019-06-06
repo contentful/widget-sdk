@@ -1,15 +1,17 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { singleUser } from '../../../interactions/users';
 import * as state from '../../../util/interactionState';
-import { defaultSpaceId } from '../../../util/requests';
+import { defaultSpaceId, defaultAssetId } from '../../../util/requests';
 import {
   noAssetsResponse,
   noArchivedAssetsResponse,
   severalAssetsResponse,
-  severalAssetsBody
+  severalAssetsBody,
+  defaultAssetResponse
 } from '../../../interactions/assets';
+import { noAssetLinksResponse } from '../../../interactions/entries';
 
-describe('Assets Page', () => {
+describe('Assets List Page', () => {
   context('no assets in the space', () => {
     before(() => {
       cy.startFakeServer({
@@ -69,6 +71,38 @@ describe('Assets Page', () => {
         cy.getByTestId('add-asset-menu-trigger').should('be.enabled');
         cy.getByTestId('assets-table').should('be.visible');
         cy.getAllByTestId('asset-table-row').should('have.length', severalAssetsBody.total);
+      });
+    });
+  });
+});
+
+describe('Asset Page', () => {
+  context('asset with empty fields', () => {
+    before(() => {
+      cy.startFakeServer({
+        consumer: 'user_interface',
+        provider: 'assets',
+        cors: true,
+        pactfileWriteMode: 'merge'
+      });
+
+      cy.setAuthTokenToLocalStorage();
+
+      cy.resetAllFakeServers();
+
+      defaultRequestsMock();
+      defaultAssetResponse();
+      singleUser();
+      noAssetLinksResponse();
+      cy.route('**/channel/**', []).as('shareJS');
+
+      cy.visit(`/spaces/${defaultSpaceId}/assets/${defaultAssetId}`);
+      cy.wait([`@${state.Token.VALID}`, `@${state.Assets.DEFAULT}`]);
+    });
+    describe('opening the page', () => {
+      it('renders asset fields and actions', () => {
+        cy.getByTestId('change-state-published').should('be.visible');
+        cy.getAllByTestId('entity-field-controls').should('have.length', 3);
       });
     });
   });

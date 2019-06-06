@@ -1,0 +1,39 @@
+{
+  "sys": {
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "fuuami4adicz"
+      }
+    },
+    "id": "testAssetId",
+    "type": "Asset",
+    "createdAt": "2019-06-05T12:58:33.867Z",
+    "updatedAt": "2019-06-05T12:58:33.867Z",
+    "environment": {
+      "sys": {
+        "id": "master",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    },
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "userID"
+      }
+    },
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "userID"
+      }
+    },
+    "publishedCounter": 0,
+    "version": 1
+  },
+  "fields": {}
+}

@@ -1,8 +1,9 @@
 import * as state from '../util/interactionState';
-import { getAssets, defaultSpaceId } from '../util/requests';
+import { getAssets, defaultSpaceId, defaultAssetId, getAsset } from '../util/requests';
 
 const empty = require('../fixtures/responses/empty.json');
 export const severalAssetsBody = require('../fixtures/responses/assets-several.json');
+const assetResponseBody = require('../fixtures/responses/asset.json');
 const query = {
   limit: '40',
   order: '-sys.updatedAt',
@@ -51,4 +52,17 @@ export function severalAssetsResponse() {
       body: severalAssetsBody
     }
   }).as(state.Assets.SEVERAL);
+}
+
+export function defaultAssetResponse() {
+  cy.addInteraction({
+    provider: 'assets',
+    state: state.Assets.DEFAULT,
+    uponReceiving: 'a request for default asset',
+    withRequest: getAsset(defaultSpaceId, defaultAssetId),
+    willRespondWith: {
+      status: 200,
+      body: assetResponseBody
+    }
+  }).as(state.Assets.DEFAULT);
 }
