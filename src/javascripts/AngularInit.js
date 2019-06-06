@@ -169,7 +169,6 @@ angular
       ngRequire('markdown_editor/cfMarkdownActionDirective.es6').default();
       ngRequire('markdown_editor/cfMarkdownEditorDirective.es6').default();
       ngRequire('markdown_editor/cfZenmodeDirective.es6').default();
-      ngRequire('markdown_editor/linkOrganizer.es6').default();
       ngRequire('markdown_editor/markdownPreviewDirective.es6').default();
       ngRequire('navigation/Breadcrumbs/BreadcrumbDirective.es6').default();
       ngRequire('navigation/Sidepanel/TriggerDirective.es6').default();

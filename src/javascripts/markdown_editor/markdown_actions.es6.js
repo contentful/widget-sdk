@@ -5,11 +5,11 @@ import { fileNameToTitle, truncate } from 'utils/StringUtils.es6';
 import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions.es6';
 import { track } from 'analytics/Analytics.es6';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator.es6';
+import LinkOrganizer from './linkOrganizer.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const modalDialog = getModule('modalDialog');
 const assetUrl = getModule('assetUrlFilter');
-const LinkOrganizer = getModule('LinkOrganizer');
 const entitySelector = getModule('entitySelector');
 const $state = getModule('$state');
 

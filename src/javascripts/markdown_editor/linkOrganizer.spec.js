@@ -1,19 +1,12 @@
-'use strict';
+import LinkOrganizer from './linkOrganizer.es6';
 
 describe('Link organizer', () => {
-  let LinkOrganizer;
-
-  beforeEach(function() {
-    module('contentful/test');
-    LinkOrganizer = this.$inject('LinkOrganizer');
-  });
-
   describe('Inline link finder', () => {
     it('Finds all inline links in text', () => {
       const subject =
         'test [link](http://url.com) test [link2](http://url2.com) test [link3](http://url.com)';
       const found = LinkOrganizer.findInline(subject);
-      expect(found.length).toBe(3);
+      expect(found).toHaveLength(3);
       expect(found[0].match).toBe('[link](http://url.com)');
       expect(found[0].text).toBe('link');
       expect(found[0].href).toBe('http://url.com');
@@ -23,7 +16,7 @@ describe('Link organizer', () => {
     it('Finds and standardizes title', () => {
       const subject = 'test [x](http://url.com   "title!") [y](http://xyz.com title 2   )';
       const found = LinkOrganizer.findInline(subject);
-      expect(found.length).toBe(2);
+      expect(found).toHaveLength(2);
       expect(found[0].title).toBe('title!');
       expect(found[1].title).toBe('title 2');
     });
@@ -33,7 +26,7 @@ describe('Link organizer', () => {
     it('Finds all references in text', () => {
       const subject = 'test [x][1] test [y][2] [with space separator] [3]';
       const found = LinkOrganizer.findRefs(subject);
-      expect(found.length).toBe(3);
+      expect(found).toHaveLength(3);
       expect(found[0].match).toBe('[x][1]');
       expect(found[2].match).toBe('[with space separator] [3]');
       expect(found[1].text).toBe('y');
@@ -51,7 +44,7 @@ describe('Link organizer', () => {
 
     it('Finds all labels', () => {
       const found = LinkOrganizer.findLabels(subject);
-      expect(found.length).toBe(4);
+      expect(found).toHaveLength(4);
       expect(found[0].id).toBe('1');
       expect(found[2].id).toBe('string');
       expect(found[0].href).toBe('http://test.com');
