@@ -222,8 +222,8 @@ export function getEntryJobs(spaceId: string = defaultSpaceId, query?: Query): R
 }
 
 export function getEntryCommentsAndTasks(
-    spaceId: string = defaultSpaceId,
-    entryId: string = defaultEntryId
+  spaceId: string = defaultSpaceId,
+  entryId: string = defaultEntryId
 ): RequestOptions {
   return {
     method: 'GET',
@@ -232,10 +232,7 @@ export function getEntryCommentsAndTasks(
   };
 }
 
-export function getSpaceUsers(
-    spaceId: string = defaultSpaceId,
-    query?: Query
-): RequestOptions {
+export function getSpaceUsers(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
   return {
     method: 'GET',
     path: `/spaces/${spaceId}/users`,
@@ -244,10 +241,7 @@ export function getSpaceUsers(
   };
 }
 
-export function getOrgUsers(
-    orgId: string = defaultOrgId,
-    query?: Query
-): RequestOptions {
+export function getOrgUsers(orgId: string = defaultOrgId, query?: Query): RequestOptions {
   return {
     method: 'GET',
     path: `/organizations/${orgId}/users`,
