@@ -12,8 +12,9 @@ import {
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { getSpace } from 'services/TokenStore.es6';
+import pluralize from 'pluralize';
 
+import { getSpace } from 'services/TokenStore.es6';
 import Workbench from 'app/common/Workbench.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
@@ -23,9 +24,8 @@ import { joinWithAnd } from 'utils/StringUtils.es6';
 import ellipsisStyle from 'ellipsisStyle.es6';
 
 import { getTeamsSpaceMembershipsOfSpace } from './TeamRepository.es6';
-import pluralize from 'pluralize';
 
-const TeamListFetcher = createFetcherComponent(({ spaceId }) => {
+export const TeamListFetcher = createFetcherComponent(({ spaceId }) => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
 
   const promises = [getTeamsSpaceMembershipsOfSpace(spaceEndpoint), getSpace(spaceId)];
@@ -123,7 +123,7 @@ export default class SpaceTeamsPage extends React.Component {
                 </Workbench.Header>
                 <Workbench.Content className={styles.contentAlignment}>
                   <div className={styles.content}>
-                    <Heading className={styles.header}>
+                    <Heading className={styles.header} testId="header">
                       Teams in <span className={styles.headerTeamName}>{space.name}</span>
                       {` space (${teamSpaceMemberships.length})`}
                     </Heading>
@@ -161,19 +161,23 @@ export default class SpaceTeamsPage extends React.Component {
                               roles,
                               admin
                             }) => (
-                              <TableRow key={id} className={styles.row}>
-                                <TableCell className={css(cell)}>
+                              <TableRow
+                                key={id}
+                                testId={`membership-row-${id}`}
+                                className={styles.row}>
+                                <TableCell className={css(cell)} testId={`team-cell-${id}`}>
                                   <div className={styles.cellTeamName}>{name}</div>
                                   <div className={styles.cellTeamDescription}>{description}</div>
                                 </TableCell>
-                                <TableCell className={styles.cellRoles}>
+                                <TableCell className={styles.cellRoles} testId={`roles-cell-${id}`}>
                                   {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
                                 </TableCell>
-                                <TableCell className={css(cell)}>
+                                <TableCell className={css(cell)} testId={`member-count-cell-${id}`}>
                                   {pluralize('member', memberCount, true)}
                                 </TableCell>
                                 <TableCell>
                                   <IconButton
+                                    testId={`action-button-${id}`}
                                     label="Action"
                                     buttonType="secondary"
                                     iconProps={{ icon: 'MoreHorizontal' }}
