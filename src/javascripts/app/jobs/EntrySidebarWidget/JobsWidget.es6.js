@@ -5,7 +5,12 @@ import moment from 'moment';
 
 import tokens from '@contentful/forma-36-tokens';
 
-import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
+import {
+  SkeletonContainer,
+  SkeletonBodyText,
+  Note,
+  TextLink
+} from '@contentful/forma-36-react-components';
 import JobsTimeline from './JobsTimeline/index.es6';
 import JobsFetcher from './JobsFetcher.es6';
 import { createJob } from '../DataManagement/JobsService.es6';
@@ -102,7 +107,12 @@ export default class JobWidget extends React.Component {
             }
             if (isError) {
               // Implement proper error handling
-              return 'Error';
+              return (
+                <Note noteType="warning">
+                  {`We were unable to load the schedule for this entry. `}
+                  <TextLink onClick={() => window.location.reload()}>Please refresh.</TextLink>
+                </Note>
+              );
             }
 
             const pendingJobs = data.jobCollection.items.filter(
