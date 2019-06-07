@@ -137,36 +137,51 @@ export default class SpaceTeamsPage extends React.Component {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {teamSpaceMemberships.map(
-                          ({
-                            sys: {
-                              id,
-                              team: { name, description, memberCount }
-                            },
-                            roles,
-                            admin
-                          }) => (
-                            <TableRow key={id} className={styles.row}>
-                              <TableCell className={css(cell)}>
-                                <div className={styles.cellTeamName}>{name}</div>
-                                <div className={styles.cellTeamDescription}>{description}</div>
-                              </TableCell>
-                              <TableCell className={styles.cellRoles}>
-                                {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
-                              </TableCell>
-                              <TableCell className={css(cell)}>
-                                {pluralize('member', memberCount, true)}
-                              </TableCell>
-                              <TableCell>
-                                <IconButton
-                                  label="Action"
-                                  buttonType="secondary"
-                                  iconProps={{ icon: 'MoreHorizontal' }}
-                                />
-                              </TableCell>
-                            </TableRow>
+                        {teamSpaceMemberships
+                          .sort(
+                            (
+                              {
+                                sys: {
+                                  team: { name: nameA }
+                                }
+                              },
+                              {
+                                sys: {
+                                  team: { name: nameB }
+                                }
+                              }
+                            ) => nameA.localeCompare(nameB)
                           )
-                        )}
+                          .map(
+                            ({
+                              sys: {
+                                id,
+                                team: { name, description, memberCount }
+                              },
+                              roles,
+                              admin
+                            }) => (
+                              <TableRow key={id} className={styles.row}>
+                                <TableCell className={css(cell)}>
+                                  <div className={styles.cellTeamName}>{name}</div>
+                                  <div className={styles.cellTeamDescription}>{description}</div>
+                                </TableCell>
+                                <TableCell className={styles.cellRoles}>
+                                  {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
+                                </TableCell>
+                                <TableCell className={css(cell)}>
+                                  {pluralize('member', memberCount, true)}
+                                </TableCell>
+                                <TableCell>
+                                  <IconButton
+                                    label="Action"
+                                    buttonType="secondary"
+                                    iconProps={{ icon: 'MoreHorizontal' }}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            )
+                          )}
                       </TableBody>
                     </Table>
                   </div>
