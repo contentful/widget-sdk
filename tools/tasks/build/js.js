@@ -27,7 +27,6 @@ function bundleAppJs() {
 
   return prodBundleSteeam;
 }
-// gulp.task('build/js/app', bundleAppJs);
 
 /**
  * Concatenates and minifies application JS files to
@@ -49,7 +48,6 @@ function bundleTestJs() {
 
   return testBundleStream;
 }
-// gulp.task('build/js/test', bundleTestJs);
 
 function generateBundleFromFiles({ bundlePath, manifestPath, files, isTestBuild = false }) {
   if (isTestBuild) {

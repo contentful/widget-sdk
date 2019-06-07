@@ -19,8 +19,6 @@ function processJadeTemplates() {
     .pipe(dest);
 }
 
-// gulp.task('templates', templates);
-
 module.exports = {
   TEMPLATES_SRC,
   processJadeTemplates

@@ -60,6 +60,4 @@ function styles() {
   );
 }
 
-// gulp.task('build/styles', gulp.series(gulp.parallel(buildStatic, processStylesheets), styles));
-
 module.exports = gulp.series(gulp.parallel(buildStatic, processStylesheets), styles);

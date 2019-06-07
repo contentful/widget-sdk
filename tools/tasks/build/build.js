@@ -17,8 +17,6 @@ const buildTest = gulp.series(
   )
 );
 
-// gulp.task('build-test', buildTest);
-
 const buildApp = gulp.series(
   clean,
   gulp.parallel(
@@ -29,7 +27,6 @@ const buildApp = gulp.series(
     buildStyles
   )
 );
-// gulp.task('build-app', buildApp);
 
 module.exports = {
   buildTest,

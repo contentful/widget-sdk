@@ -21,5 +21,4 @@ function processStatic() {
  * Copy all non-JS and non-CSS files from `public/app` to `build` and
  * create a manifest for them.
  */
-// gulp.task('build/static', gulp.series(copyStatic, processStatic));
 module.exports = gulp.series(copyStatic, processStatic);

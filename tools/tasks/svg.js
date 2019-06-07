@@ -52,5 +52,4 @@ async function copySvg() {
   );
 }
 
-// gulp.task('copy-svg')
 module.exports = copySvg;

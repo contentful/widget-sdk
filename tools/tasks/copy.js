@@ -17,5 +17,4 @@ function copyImages() {
     .pipe(gulp.dest('./public/app/images'));
 }
 
-// gulp.task('copy-static')
 module.exports = gulp.parallel(copySvg, copyImages, copyStatics);

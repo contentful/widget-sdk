@@ -39,14 +39,10 @@ function processVendorStylesheets() {
       .pipe(gulp.dest('./public/app'))
   );
 }
-// gulp.task('stylesheets/vendor', processVendorStylesheets);
 
 function processAppStylesheets() {
   return buildStylus('src/stylesheets/main.styl', './public/app');
 }
-// gulp.task('stylesheets/app', processAppStylesheets);
-
-// gulp.task('stylesheets', gulp.parallel(processVendorStylesheets, processAppStylesheets));
 
 const processStylesheets = gulp.parallel(processVendorStylesheets, processAppStylesheets);
 

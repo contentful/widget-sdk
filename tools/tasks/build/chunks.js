@@ -34,6 +34,6 @@ function buildNonMinifiedChunks() {
 }
 
 module.exports = {
-  buildMinifiedChunks, // gulp.task('build/chunks', buildMinifiedChunks);
-  buildNonMinifiedChunks // gulp.task('build/chunks/test', buildNonMinifiedChunks);
+  buildMinifiedChunks,
+  buildNonMinifiedChunks
 };

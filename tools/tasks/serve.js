@@ -15,6 +15,4 @@ function serve() {
 
   return serveWithWatcher(configName, watchFiles, patternTaskMap);
 }
-// gulp.task('serve', serve);
-
 module.exports = serve;
