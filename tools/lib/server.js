@@ -98,6 +98,19 @@ function createServer(configName, getBuild) {
     const app = express();
     const config = createWebpackConfig();
     const compiler = webpack(config);
+    const webpackDevMiddleware = middleware(compiler, {
+      publicPath: '/app/',
+      watchOptions: {
+        aggregateTimeout: 300,
+        poll: 1000
+      },
+      stats: {
+        colors: true,
+        modules: false,
+        providedExports: false,
+        usedExports: false
+      }
+    });
     const PORT = Number.parseInt(process.env.PORT, 10) || 3001;
 
     app.use(
@@ -108,21 +121,7 @@ function createServer(configName, getBuild) {
       })
     );
 
-    app.use(
-      middleware(compiler, {
-        publicPath: '/app/',
-        watchOptions: {
-          aggregateTimeout: 300,
-          poll: 1000
-        },
-        stats: {
-          colors: true,
-          modules: false,
-          providedExports: false,
-          usedExports: false
-        }
-      })
-    );
+    app.use(webpackDevMiddleware);
 
     app.use(express.static(publicDir));
     app.use('/docs/', docIndex);
@@ -154,13 +153,26 @@ function createServer(configName, getBuild) {
     app.use(function(_req, res) {
       res.sendStatus(404).end();
     });
-    app.listen(PORT, err => {
-      if (err) {
-        reject(err);
-      }
 
-      console.log(`Serving application at http://localhost:${PORT}`);
-      resolve();
+    /**
+     * This bit below makes sure that the server starts up only after
+     * the first webpack build completes. Since there isn't a "once"
+     * version of this method, I have elected to take this approach
+     * to prevent app.listen being called after every webpack build.
+     */
+    let serverStarted = false;
+    webpackDevMiddleware.waitUntilValid(() => {
+      if (!serverStarted) {
+        app.listen(PORT, err => {
+          serverStarted = true;
+          if (err) {
+            reject(err);
+          }
+
+          console.log(`Serving application at http://localhost:${PORT}`);
+          resolve();
+        });
+      }
     });
   });
 }
