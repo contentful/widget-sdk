@@ -12,7 +12,7 @@ const uglify = composer(terser, console);
  * Concatenates and minifies application JS files to
  * `application.min.js` and creates a manifest.
  */
-gulp.task('build/js/app', () => {
+function bundleAppJs() {
   // The main production application
   const prodBundleSteeam = generateBundleFromFiles({
     bundlePath: 'app/application.min.js',
@@ -26,13 +26,14 @@ gulp.task('build/js/app', () => {
   });
 
   return prodBundleSteeam;
-});
+}
+// gulp.task('build/js/app', bundleAppJs);
 
 /**
  * Concatenates and minifies application JS files to
  * `application.min.js` and creates a manifest.
  */
-gulp.task('build/js/test', () => {
+function bundleTestJs() {
   // The "test" application, bundled with test dependencies
   const testBundleStream = generateBundleFromFiles({
     bundlePath: 'app/test-bundle.min.js',
@@ -47,7 +48,8 @@ gulp.task('build/js/test', () => {
   });
 
   return testBundleStream;
-});
+}
+// gulp.task('build/js/test', bundleTestJs);
 
 function generateBundleFromFiles({ bundlePath, manifestPath, files, isTestBuild = false }) {
   if (isTestBuild) {
@@ -76,3 +78,8 @@ function generateBundleFromFiles({ bundlePath, manifestPath, files, isTestBuild 
       .pipe(writeFile())
   );
 }
+
+module.exports = {
+  bundleAppJs,
+  bundleTestJs
+};

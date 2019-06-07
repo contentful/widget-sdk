@@ -74,7 +74,7 @@ module.exports.serveWatch = function serveWatch(configName, watchFiles, patternT
     }
   });
 
-  createServer(configName, buildList.resolve);
+  return createServer(configName, buildList.resolve);
 };
 
 /**
@@ -91,74 +91,77 @@ module.exports.serveWatch = function serveWatch(configName, watchFiles, patternT
  *   the returned promise resolves.
  */
 function createServer(configName, getBuild) {
-  const publicDir = P.resolve(P.resolve('public'));
-  const docIndex = sendIndex(P.join(publicDir, 'docs'));
+  return new Promise((resolve, reject) => {
+    const publicDir = P.resolve(P.resolve('public'));
+    const docIndex = sendIndex(P.join(publicDir, 'docs'));
 
-  const app = express();
-  const config = createWebpackConfig();
-  const compiler = webpack(config);
-  const PORT = Number.parseInt(process.env.PORT, 10) || 3001;
+    const app = express();
+    const config = createWebpackConfig();
+    const compiler = webpack(config);
+    const PORT = Number.parseInt(process.env.PORT, 10) || 3001;
 
-  app.use(
-    '/_microbackends',
-    MicroBackends.createMiddleware({
-      backendsDir: P.resolve(__dirname, '../../micro-backends'),
-      isolationType: process.env.MICRO_BACKENDS_ISOLATION_TYPE || 'subprocess'
-    })
-  );
-
-  app.use(
-    middleware(compiler, {
-      publicPath: '/app/',
-      watchOptions: {
-        aggregateTimeout: 300,
-        poll: 1000
-      },
-      stats: {
-        colors: true,
-        modules: false,
-        providedExports: false,
-        usedExports: false
-      }
-    })
-  );
-
-  app.use(express.static(publicDir));
-  app.use('/docs/', docIndex);
-  app.get('*', function(req, res, next) {
-    if (!req.accepts('html')) {
-      next();
-      return;
-    }
-
-    getBuild().then(
-      function() {
-        return readJSON(`config/${configName}.json`).then(function(config) {
-          const index = IndexPage.renderDev(config);
-          res
-            .status(200)
-            .type('html')
-            .end(index);
-        });
-      },
-      function(err) {
-        res
-          .status(500)
-          .type('text')
-          .send(err.message + '\n' + err.err.message)
-          .end();
-      }
+    app.use(
+      '/_microbackends',
+      MicroBackends.createMiddleware({
+        backendsDir: P.resolve(__dirname, '../../micro-backends'),
+        isolationType: process.env.MICRO_BACKENDS_ISOLATION_TYPE || 'subprocess'
+      })
     );
-  });
-  app.use(function(_req, res) {
-    res.sendStatus(404).end();
-  });
-  app.listen(PORT, err => {
-    if (err) {
-      throw err;
-    }
 
-    console.log(`Serving application at http://localhost:${PORT}`);
+    app.use(
+      middleware(compiler, {
+        publicPath: '/app/',
+        watchOptions: {
+          aggregateTimeout: 300,
+          poll: 1000
+        },
+        stats: {
+          colors: true,
+          modules: false,
+          providedExports: false,
+          usedExports: false
+        }
+      })
+    );
+
+    app.use(express.static(publicDir));
+    app.use('/docs/', docIndex);
+    app.get('*', function(req, res, next) {
+      if (!req.accepts('html')) {
+        next();
+        return;
+      }
+
+      getBuild().then(
+        function() {
+          return readJSON(`config/${configName}.json`).then(function(config) {
+            const index = IndexPage.renderDev(config);
+            res
+              .status(200)
+              .type('html')
+              .end(index);
+          });
+        },
+        function(err) {
+          res
+            .status(500)
+            .type('text')
+            .send(err.message + '\n' + err.err.message)
+            .end();
+        }
+      );
+    });
+    app.use(function(_req, res) {
+      res.sendStatus(404).end();
+    });
+    app.listen(PORT, err => {
+      if (err) {
+        reject(err);
+      }
+
+      console.log(`Serving application at http://localhost:${PORT}`);
+      resolve();
+    });
   });
 }
 

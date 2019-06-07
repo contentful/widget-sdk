@@ -1,6 +1,11 @@
 const gulp = require('gulp');
-const clean = require('gulp-clean');
+const gulpClean = require('gulp-clean');
 
-gulp.task('clean', function() {
-  return gulp.src(['./public/app', './build/*'], { read: false, allowEmpty: true }).pipe(clean());
-});
+// gulp.task('clean')
+function clean() {
+  return gulp
+    .src(['./public/app', './build/*'], { read: false, allowEmpty: true })
+    .pipe(gulpClean());
+}
+
+module.exports = clean;

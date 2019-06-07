@@ -12,6 +12,8 @@ const rework = require('rework');
 const reworkUrlRewrite = require('rework-plugin-url');
 const path = require('path');
 const rev = require('gulp-rev');
+const { processStylesheets } = require('../stylesheets');
+const buildStatic = require('./static');
 
 /**
  * Copy the application’s main JS and CSS files from `public/app` to
@@ -23,7 +25,7 @@ const rev = require('gulp-rev');
  * - Extracts source maps contained in the files and writes them
  *   to a separate `.maps` file.
  */
-const styles = () => {
+function styles() {
   const staticManifest = require('../../../build/static-manifest.json');
   const manifestResolver = createManifestResolver(staticManifest, '/app');
   return (
@@ -56,6 +58,8 @@ const styles = () => {
       .pipe(rev.manifest('build/styles-manifest.json'))
       .pipe(writeFile())
   );
-};
+}
 
-gulp.task('build/styles', gulp.series(gulp.parallel('build/static', 'stylesheets'), styles));
+// gulp.task('build/styles', gulp.series(gulp.parallel(buildStatic, processStylesheets), styles));
+
+module.exports = gulp.series(gulp.parallel(buildStatic, processStylesheets), styles);

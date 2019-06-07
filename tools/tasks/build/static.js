@@ -1,9 +1,11 @@
 const gulp = require('gulp');
 const glob = require('glob');
-const { changeBase, writeFile } = require('../helpers');
 const rev = require('gulp-rev');
 
-const processStatic = () => {
+const { changeBase, writeFile } = require('../helpers');
+const copyStatic = require('../copy');
+
+function processStatic() {
   const files = glob.sync('public/app/**/*.!(js|css)');
 
   return gulp
@@ -13,10 +15,11 @@ const processStatic = () => {
     .pipe(writeFile())
     .pipe(rev.manifest('build/static-manifest.json'))
     .pipe(writeFile());
-};
+}
 
 /**
  * Copy all non-JS and non-CSS files from `public/app` to `build` and
  * create a manifest for them.
  */
-gulp.task('build/static', gulp.series('copy-static', processStatic));
+// gulp.task('build/static', gulp.series(copyStatic, processStatic));
+module.exports = gulp.series(copyStatic, processStatic);

@@ -1,14 +1,20 @@
-const gulp = require('gulp');
-const serve = require('../lib/server').serveWatch;
-const { TEMPLATES_SRC } = require('./templates');
+const serveWithWatcher = require('../lib/server').serveWatch;
+const { TEMPLATES_SRC, processJadeTemplates } = require('./templates');
+const { processAppStylesheets } = require('./stylesheets');
 
 const STYLESHEETS_SRC = 'src/stylesheets/**/*';
 
-gulp.task('serve', function() {
+function serve() {
   const configName = process.env.UI_CONFIG || 'development';
   const watchFiles = !process.env.NO_WATCHING;
 
-  const patternTaskMap = [[TEMPLATES_SRC, ['templates']], [STYLESHEETS_SRC, ['stylesheets/app']]];
+  const patternTaskMap = [
+    [TEMPLATES_SRC, [processJadeTemplates]],
+    [STYLESHEETS_SRC, [processAppStylesheets]]
+  ];
 
-  return serve(configName, watchFiles, patternTaskMap);
-});
+  return serveWithWatcher(configName, watchFiles, patternTaskMap);
+}
+// gulp.task('serve', serve);
+
+module.exports = serve;
