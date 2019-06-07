@@ -356,7 +356,7 @@ workflows:
                 name: publish-pact-contracts
                 command: LOGLEVEL=warn bin/publish-pact-contracts
           start: npm start
-          wait-on: 'http-get://localhost:3001 --delay 50000'
+          wait-on: 'http-get://localhost:3001 --delay 60000'
           store_artifacts: true
       - deploy-assets/to-s3:
           name: deploy-assets-to-preview
