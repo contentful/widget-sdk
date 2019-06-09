@@ -1,4 +1,3 @@
-const gulp = require('gulp');
 const path = require('path');
 const FS = require('../lib/utils').FS;
 const React = require('react');
@@ -23,11 +22,11 @@ require('@babel/register')({
  * The SVG files are put into 'public/app/svg'. Once can reference them
  * from stylesheets using `url("/app/svg/my-file.svg")`.
  */
-gulp.task('copy-svg', async function(done) {
+async function copySvg() {
   const targetDir = path.resolve('public', 'app', 'svg');
   await FS.mkdirsAsync(targetDir);
 
-  await Promise.all(
+  return Promise.all(
     [
       'chevron-blue',
       'dd-arrow-down',
@@ -51,6 +50,6 @@ gulp.task('copy-svg', async function(done) {
       );
     })
   );
+}
 
-  done();
-});
+module.exports = copySvg;

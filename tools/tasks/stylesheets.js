@@ -20,7 +20,7 @@ const VENDOR_STYLESHEETS_SRC = assertFilesExist([
   './node_modules/@contentful/forma-36-fcss/dist/styles.css'
 ]);
 
-gulp.task('stylesheets/vendor', function() {
+function processVendorStylesheets() {
   // Use `base: '.'` for correct source map paths
   return (
     gulp
@@ -38,10 +38,15 @@ gulp.task('stylesheets/vendor', function() {
       .pipe(sourceMaps.write({ sourceRoot: '/' }))
       .pipe(gulp.dest('./public/app'))
   );
-});
+}
 
-gulp.task('stylesheets/app', function() {
+function processAppStylesheets() {
   return buildStylus('src/stylesheets/main.styl', './public/app');
-});
+}
 
-gulp.task('stylesheets', gulp.parallel('stylesheets/vendor', 'stylesheets/app'));
+const processStylesheets = gulp.parallel(processVendorStylesheets, processAppStylesheets);
+
+module.exports = {
+  processAppStylesheets,
+  processStylesheets
+};

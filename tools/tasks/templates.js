@@ -5,9 +5,7 @@ const { passError } = require('./helpers');
 
 const TEMPLATES_SRC = 'src/javascripts/**/*.jade';
 
-module.exports.TEMPLATES_SRC = TEMPLATES_SRC;
-
-gulp.task('templates', function() {
+function processJadeTemplates() {
   const dest = gulp.dest('./public/app');
   return gulp
     .src(TEMPLATES_SRC)
@@ -19,4 +17,9 @@ gulp.task('templates', function() {
       })
     )
     .pipe(dest);
-});
+}
+
+module.exports = {
+  TEMPLATES_SRC,
+  processJadeTemplates
+};
