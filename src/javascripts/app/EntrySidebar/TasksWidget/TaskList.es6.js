@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import TasksViewData from './TasksViewData.es6';
+import { TaskListViewData } from './TasksViewData.es6';
 import TasksInteractor from './TasksInteractor.es6';
 import Task from './Task.es6';
 import Visible from 'components/shared/Visible/index.es6';
 import tokens from '@contentful/forma-36-tokens';
 import {
   TextLink,
+  ValidationMessage,
   SkeletonContainer,
   SkeletonBodyText
 } from '@contentful/forma-36-react-components';
@@ -30,14 +31,8 @@ const styles = {
 
 export default class TasksWidget extends React.PureComponent {
   static propTypes = {
-    viewData: PropTypes.shape(TasksViewData),
-    tasksInteractor: PropTypes.shape(TasksInteractor),
-    onCreateDraft: PropTypes.func,
-    onCancelDraft: PropTypes.func,
-    onCreateTask: PropTypes.func,
-    onUpdateTask: PropTypes.func,
-    onDeleteTask: PropTypes.func,
-    onCompleteTask: PropTypes.func
+    viewData: PropTypes.shape(TaskListViewData),
+    tasksInteractor: PropTypes.shape(TasksInteractor)
   };
 
   renderLoadingState() {
@@ -47,9 +42,9 @@ export default class TasksWidget extends React.PureComponent {
           <SkeletonBodyText numberOfLines={1} />
         </SkeletonContainer>
         <ol className={styles.list}>
-          <Task isLoading />
-          <Task isLoading />
-          <Task isLoading />
+          <Task isLoading viewData={{}} />
+          <Task isLoading viewData={{}} />
+          <Task isLoading viewData={{}} />
         </ol>
       </React.Fragment>
     );
@@ -57,7 +52,7 @@ export default class TasksWidget extends React.PureComponent {
 
   render() {
     const { viewData, tasksInteractor } = this.props;
-    const { helpText, tasks, showCreateAction, isLoading } = viewData;
+    const { statusText, errorMessage, tasks, hasCreateAction, isLoading } = viewData;
 
     return (
       <React.Fragment>
@@ -65,42 +60,39 @@ export default class TasksWidget extends React.PureComponent {
           this.renderLoadingState()
         ) : (
           <React.Fragment>
-            <Visible if={helpText}>
+            <Visible if={statusText}>
               <p className="entity-sidebar__help-text" role="note">
-                {helpText}
+                {statusText}
               </p>
             </Visible>
-            <Visible if={tasks}>
+            <Visible if={tasks.length}>
               <ol className={styles.list}>
-                {tasks.map(task => (
-                  <li className={styles.listItem} key={task.key} data-test-id="task">
+                {tasks.map(taskViewData => (
+                  <li className={styles.listItem} key={taskViewData.key} data-test-id="task">
                     <Task
-                      body={task.body}
-                      assignedTo={task.assignedTo}
-                      resolved={task.resolved}
-                      createdAt={task.createdAt}
-                      isDraft={task.isDraft}
-                      taskKey={task.key}
+                      viewData={taskViewData}
                       onCancelDraft={() => tasksInteractor.cancelTaskDraft()}
-                      onCreateTask={(_taskKey, taskBody) =>
+                      onCreateTask={(key, body) =>
                         // TODO: User ID
-                        tasksInteractor.saveTaskDraft(taskBody)
+                        tasksInteractor.saveTaskDraft(key, body)
                       }
-                      onUpdateTask={(taskKey, taskBody) =>
-                        tasksInteractor.updateTask(taskKey, {
-                          body: taskBody,
-                          version: task.version
+                      onUpdateTask={(key, newBody) =>
+                        tasksInteractor.updateTask(key, {
+                          body: newBody,
+                          version: taskViewData.version
                         })
                       }
-                      onDeleteTask={taskKey => tasksInteractor.deleteTask(taskKey)}
-                      onCompleteTask={taskKey => this.props.onCompleteTask(taskKey)}
-                      validationMessage={task.validationMessage}
+                      onDeleteTask={key => tasksInteractor.deleteTask(key)}
+                      onCompleteTask={_key => {}}
                     />
                   </li>
                 ))}
               </ol>
             </Visible>
-            {showCreateAction && (
+            <Visible if={errorMessage}>
+              <ValidationMessage>{errorMessage}</ValidationMessage>
+            </Visible>
+            {hasCreateAction && (
               <TextLink
                 icon="Plus"
                 className={styles.addTaskCta}

@@ -12,10 +12,17 @@ export default TasksInteractor;
 /**
  * @param {TasksStore} tasksStore
  * @param {function} setState
+ * @param {function} getState
  * @returns {TasksInteractor}
  */
-export function createTasksStoreInteractor(tasksStore, setState) {
+export function createTasksStoreInteractor(tasksStore, setState, getState) {
   const setIsCreatingDraft = value => setState({ isCreatingDraft: value });
+  const setTaskError = (key, error) => {
+    const { tasksErrors = {} } = getState();
+    tasksErrors[key] = error;
+    setState({ tasksErrors });
+  };
+  const resetTaskError = key => setTaskError(key, null);
 
   return {
     startTaskDraft() {
@@ -23,35 +30,37 @@ export function createTasksStoreInteractor(tasksStore, setState) {
     },
     cancelTaskDraft() {
       setIsCreatingDraft(false);
+      resetTaskError('<<DRAFT-TASK>>');
     },
-    async saveTaskDraft(body, assigneeUserId) {
+    async saveTaskDraft(key, body, assigneeUserId) {
+      resetTaskError('<<DRAFT-TASK>>');
       const assignedTo = createUserLink(assigneeUserId);
       const task = { body, assignedTo };
       try {
         await tasksStore.add(task);
-      } catch (e) {
-        // TODO
+      } catch (error) {
+        setTaskError(key, error);
         return;
       }
       setIsCreatingDraft(false);
     },
-    deleteTask(key) {
+    async deleteTask(key) {
+      resetTaskError(key);
       try {
-        tasksStore.remove(key);
-      } catch (e) {
-        // TODO
-        return;
+        await tasksStore.remove(key);
+      } catch (error) {
+        setTaskError(key, error);
       }
     },
-    updateTask(key, { version, body }) {
+    async updateTask(key, { version, body }) {
+      resetTaskError(key);
       try {
-        tasksStore.update({
+        await tasksStore.update({
           sys: { id: key, version },
           body
         });
-      } catch (e) {
-        // TODO
-        return;
+      } catch (error) {
+        setTaskError(key, error);
       }
     }
   };

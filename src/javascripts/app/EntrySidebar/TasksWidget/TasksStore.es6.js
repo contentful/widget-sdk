@@ -15,8 +15,7 @@ export function createTasksStoreForEntry(endpoint, entryId) {
   fetchComments(spaceId, entryId).then(
     commentsWithResolvedUsers => {
       // TODO: Exclude non-Task comments once backend supports them.
-      const tasksWithResolvedUsers = commentsWithResolvedUsers.filter(comment => comment);
-
+      const tasksWithResolvedUsers = commentsWithResolvedUsers.map(toMockTask);
       tasksBus.set(tasksWithResolvedUsers);
     },
     error => {
@@ -34,8 +33,9 @@ export function createTasksStoreForEntry(endpoint, entryId) {
         throw error;
       }
       newTask.sys.createdBy = currentUser; // TODO: Don't resolve users in here (see above)
-      tasksBus.set([...getItems(), newTask]);
-      return newTask;
+      const newMockTask = toMockTask(newTask);
+      tasksBus.set([...getItems(), newMockTask]);
+      return newMockTask;
     },
     remove: async taskId => {
       try {
@@ -50,6 +50,7 @@ export function createTasksStoreForEntry(endpoint, entryId) {
       try {
         updatedTask = await update(endpoint, entryId, task);
       } catch (error) {
+        // TODO: Introduce Store specific errors rather than passing client errors.
         throw error;
       }
       tasksBus.set(
@@ -57,4 +58,24 @@ export function createTasksStoreForEntry(endpoint, entryId) {
       );
     }
   };
+
+  /**
+   * Mocks task specific properties of the comment that are not yet given by the API.
+   * This allows us to treat comments like tasks in the rest of the code base.
+   *
+   * TODO: Remove once we have backend for this.
+   *
+   * @param {API.Comment} comment
+   * @returns {API.Task}
+   */
+  function toMockTask(comment) {
+    return {
+      isResolved: false,
+      ...comment,
+      sys: {
+        assignedTo: currentUser, // TODO: Should just be a link, not a whole User object.
+        ...comment.sys
+      }
+    };
+  }
 }

@@ -13,7 +13,7 @@ const Visible = props => {
 };
 
 Visible.propTypes = {
-  if: PropTypes.bool
+  if: PropTypes.any
 };
 
 export default Visible;

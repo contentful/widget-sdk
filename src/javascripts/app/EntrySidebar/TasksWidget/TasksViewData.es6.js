@@ -1,73 +1,58 @@
 import PropTypes from 'prop-types';
 
-const TaskViewData = {
-  helpText: PropTypes.string,
-  isLoading: PropTypes.bool,
-  showCreateAction: PropTypes.bool,
-  tasks: PropTypes.arrayOf(
-    PropTypes.shape({
-      key: PropTypes.string.isRequired
-    })
-  ).isRequired
+export const TaskViewData = {
+  key: PropTypes.string.isRequired,
+  body: PropTypes.string,
+  assignee: PropTypes.object,
+  creator: PropTypes.object, // TODO: Don't inject domain object.
+  createdAt: PropTypes.string,
+  isDone: PropTypes.bool,
+  isDraft: PropTypes.bool,
+  validationMessage: PropTypes.string
 };
-export default TaskViewData;
 
-// TODO: Remove
-const user = {
-  firstName: 'Mike',
-  lastName: 'Mitchell',
-  avatarUrl:
-    'https://www.gravatar.com/avatar/02c899bec697256cc19c993945ce9b1e?s=50&d=https%3A%2F%2Fstatic.flinkly.com%2Fgatekeeper%2Fusers%2Fdefault-a4327b54b8c7431ea8ddd9879449e35f051f43bd767d83c5ff351aed9db5986e.png',
-  sys: {
-    createdAt: '2018-11-02T10:07:46Z',
-    updatedAt: '2019-05-08T08:58:33Z'
-  }
+export const TaskListViewData = {
+  statusText: PropTypes.string,
+  isLoading: PropTypes.bool,
+  errorMessage: PropTypes.string,
+  hasCreateAction: PropTypes.bool,
+  tasks: PropTypes.arrayOf(PropTypes.shape(TaskViewData)).isRequired
 };
 
 const DRAFT_TASK_DATA = {
-  isDraft: true,
+  key: '<<DRAFT-TASK>>',
   body: '',
-  key: `<<DRAFT-TASK>>`,
-  version: 0,
-  assignedTo: {},
-  createdBy: user,
-  createdAt: `${new Date().toISOString()}`,
-  resolved: false
+  assignee: null,
+  creator: null,
+  createdAt: null,
+  isDone: false,
+  isDraft: true,
+  validationMessage: null,
+  version: 0
 };
 
 /**
- * Creates a TaskViewData object that can be used with the TasksWidget react component.
+ * Creates a TaskViewData object that can be used with the TaskList react component.
  *
  * @param {Array<API.Comment>} tasks
- * @returns {TaskViewData}
+ * @param {Object} anotherNaiveStore
+ * @returns {TaskListViewData}
  */
-export function createTasksViewDataFromComments(tasks, { isCreatingDraft }) {
-  const pendingTasksCount = tasks.length; // Update once we have this in backend.
-  const draftTasksViewData = isCreatingDraft ? [DRAFT_TASK_DATA] : [];
-
+export function createTaskListViewData(tasks, { isCreatingDraft, tasksErrors, loadingError }) {
+  const draftTasksViewData = isCreatingDraft ? [maybeWithError(DRAFT_TASK_DATA, tasksErrors)] : [];
   return {
-    helpText:
-      tasks.length === 0
-        ? 'No tasks were defined yet.'
-        : `There are ${pendingTasksCount} pending tasks.`,
-    isLoading: false,
-    showCreateAction: !isCreatingDraft,
-    tasks: [...tasks.map(createTaskViewData), ...draftTasksViewData]
-  };
-}
-
-function createTaskViewData(task) {
-  return {
-    body: task.body,
-    key: task.sys.id,
-    version: task.sys.version,
-    assignedTo: task.sys.createdBy, // TODO: Replace with assigned to information
-    createdBy: task.sys.createdBy,
-    createdAt: task.sys.createdAt,
-    resolved: false, // TODO: Replace with resolved flag
-    isDraft: false,
-    validationMessage: ''
-    // TODO: Add more stuff from comments into this view data object.
+    statusText: !tasks
+      ? null
+      : tasks.length === 0
+      ? 'No tasks were defined yet.'
+      : `There are ${getPendingTasksCount(tasks)} pending tasks.`,
+    isLoading: !loadingError && !tasks,
+    errorMessage: loadingError ? `Error ${tasks ? 'syncing' : 'loading'} tasks` : null,
+    hasCreateAction: !isCreatingDraft && !loadingError,
+    tasks: [
+      ...(tasks || []).map(task => createTaskViewData(task, tasksErrors)),
+      ...draftTasksViewData
+    ]
   };
 }
 
@@ -76,8 +61,42 @@ function createTaskViewData(task) {
  */
 export function createLoadingStateTasksViewData() {
   return {
+    statusText: null,
     isLoading: true,
-    showCreateAction: false,
+    errorMessage: null,
+    hasCreateAction: false,
     tasks: []
   };
+}
+
+/**
+ * @param {API.Comment} task
+ * @param {Object}
+ * @returns {TaskViewData}
+ */
+function createTaskViewData(task, tasksErrors) {
+  return maybeWithError(
+    {
+      body: task.body,
+      key: task.sys.id,
+      assignee: task.sys.assignedTo,
+      creator: task.sys.createdBy,
+      createdAt: task.sys.createdAt,
+      isDone: task.isResolved,
+      isDraft: false,
+      validationMessage: null,
+      version: task.sys.version
+    },
+    tasksErrors
+  );
+}
+
+function maybeWithError(taskViewData, tasksErrors) {
+  const taskError = tasksErrors && tasksErrors[taskViewData.key];
+  const validationMessage = taskError ? taskError.message || 'Unknown error' : null;
+  return { ...taskViewData, validationMessage };
+}
+
+function getPendingTasksCount(tasks) {
+  return tasks.length; // TODO: Update once we have this in backend.
 }
