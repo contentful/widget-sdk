@@ -5,7 +5,11 @@ import {
   getContentTypes,
   getContentType,
   getContentTypePublished,
-  defaultSpaceId
+  defaultSpaceId,
+  defaultContentTypeId,
+  putContentType,
+  putContentTypePublished,
+  putEditorInterface
 } from '../util/requests';
 
 const empty = require('../fixtures/responses/empty.json');
@@ -16,6 +20,9 @@ const contentType = require('../fixtures/responses/content-type.json');
 const query = {
   limit: '1000'
 };
+const сontentTypeWithCustomSidebarRequestBody = require('../fixtures/requests/content-type-with-custom-sidebar.json');
+const editorInterfaceWithCustomSidebarRequestBody = require('../fixtures/requests/editor-interface-with-custom-sidebar.json');
+const editorInterfaceWithCustomSidebarResponseBody = require('../fixtures/responses/editor-interface-with-custom-sidebar.json');
 
 export function noPublicContentTypesResponse() {
   return cy
@@ -108,4 +115,51 @@ export function defaultPublishedContentTypeResponse() {
       body: contentType
     }
   }).as('publishedContentType');
+}
+
+export function defaultContentTypeWithCustomSidebarCreatedResponse() {
+  cy.addInteraction({
+    provider: 'content_types',
+    state: state.ContentType.DEFAULT,
+    uponReceiving: 'a put request for saving content type with custom sidebar',
+    withRequest: putContentType(
+      defaultContentTypeId,
+      defaultSpaceId,
+      сontentTypeWithCustomSidebarRequestBody
+    ),
+    willRespondWith: {
+      status: 200,
+      body: contentType
+    }
+  }).as('content-type-custom-sidebar-created');
+}
+
+export function defaultPublishedContentTypeWithCustomSidebarCreatedResponse() {
+  cy.addInteraction({
+    provider: 'content_types',
+    state: state.ContentType.DEFAULT,
+    uponReceiving: 'a put request for saving published content type with custom sidebar',
+    withRequest: putContentTypePublished(defaultContentTypeId, defaultSpaceId),
+    willRespondWith: {
+      status: 200,
+      body: contentType
+    }
+  }).as('content-type-published-custom-sidebar-created');
+}
+
+export function editorInterfaceWithCustomSidebarSavedResponse() {
+  cy.addInteraction({
+    provider: 'content_types',
+    state: state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR,
+    uponReceiving: 'a put request for saving editor interface with custom sidebar',
+    withRequest: putEditorInterface(
+      defaultContentTypeId,
+      defaultSpaceId,
+      editorInterfaceWithCustomSidebarRequestBody
+    ),
+    willRespondWith: {
+      status: 200,
+      body: editorInterfaceWithCustomSidebarResponseBody
+    }
+  }).as('editor-interface-sidebar-saved');
 }

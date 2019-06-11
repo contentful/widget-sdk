@@ -1,0 +1,38 @@
+{
+  "sys": {
+    "id": "default",
+    "type": "EditorInterface",
+    "space": { "sys": { "id": "fuuami4adicz", "type": "Link", "linkType": "Space" } },
+    "version": 2,
+    "createdAt": "2019-04-08T09:12:00.280Z",
+    "createdBy": { "sys": { "id": "userId", "type": "Link", "linkType": "User" } },
+    "updatedAt": "2019-04-08T09:12:00.995Z",
+    "updatedBy": { "sys": { "id": "userId", "type": "Link", "linkType": "User" } },
+    "contentType": {
+      "sys": { "id": "testContentType", "type": "Link", "linkType": "ContentType" }
+    },
+    "environment": { "sys": { "id": "master", "type": "Link", "linkType": "Environment" } }
+  },
+  "controls": [
+    {
+      "fieldId": "testFieldName",
+      "widgetId": "singleLine",
+      "widgetNamespace": "builtin"
+    }
+  ],
+  "sidebar": [
+    { "widgetId": "jobs-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
+    {
+      "widgetId": "content-workflows-tasks-widget",
+      "widgetNamespace": "sidebar-builtin",
+      "settings": {}
+    },
+    { "widgetId": "content-preview-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
+    { "widgetId": "incoming-links-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
+    { "widgetId": "translation-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
+    { "widgetId": "versions-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
+    { "widgetId": "users-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
+    { "widgetId": "entry-activity-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
+    { "widgetId": "publication-widget", "widgetNamespace": "sidebar-builtin", "disabled": true }
+  ]
+}

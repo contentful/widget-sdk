@@ -3,7 +3,10 @@ import {
   allContentTypesResponse,
   defaultContentTypeResponse,
   defaultPublishedContentTypeResponse,
-  editorInterfaceWithoutSidebarResponse
+  editorInterfaceWithoutSidebarResponse,
+  defaultContentTypeWithCustomSidebarCreatedResponse,
+  defaultPublishedContentTypeWithCustomSidebarCreatedResponse,
+  editorInterfaceWithCustomSidebarSavedResponse
 } from '../../../interactions/content_types';
 import { noExtensionsResponse } from '../../../interactions/extensions';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
@@ -45,6 +48,41 @@ describe('Sidebar configuration', () => {
         .should('be.visible')
         .should('have.attr', 'href')
         .and('eq', expectedUrl);
+    });
+  });
+
+  describe('Saving the content type with configured custom sidebar', () => {
+    before(() => {
+      cy.resetAllFakeServers();
+      cy.getByTestId('custom-sidebar-option')
+        .find('input')
+        .click();
+    });
+
+    it('checks that content type with a custom sidebar has been successfully saved', () => {
+      
+      defaultContentTypeWithCustomSidebarCreatedResponse();
+      defaultPublishedContentTypeWithCustomSidebarCreatedResponse();
+      editorInterfaceWithoutSidebarResponse();
+      editorInterfaceWithCustomSidebarSavedResponse();
+
+      cy.getByTestId('sidebar-widget-item')
+        .eq(0)
+        .getByTestId('cf-ui-icon-button')
+        .click();
+      cy.getByTestId('save-content-type').click();
+
+      cy.wait([
+        '@content-type-custom-sidebar-created',
+        '@content-type-published-custom-sidebar-created',
+        `@${state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR}`,
+        `@editor-interface-sidebar-saved`
+      ]);
+
+      cy.getByTestId('cf-notification-container').should(
+        'contain',
+        'Content type saved successfully'
+      );
     });
   });
 });

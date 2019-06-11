@@ -15,5 +15,6 @@
   "reporter": "junit",
   "reporterOptions": {
     "mochaFile": "cypress/reports/cypress/cypress-test-results.[hash].xml"
-  }
+  },
+  "chromeWebSecurity": false
 }

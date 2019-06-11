@@ -46,12 +46,36 @@ export function getContentType(
   };
 }
 
+export function putContentType(
+  contentTypeId: string = defaultContentTypeId,
+  spaceId: string = defaultSpaceId,
+  body?: Object
+): RequestOptions {
+  return {
+    method: 'PUT',
+    path: `/spaces/${spaceId}/content_types/${contentTypeId}`,
+    headers: defaultHeader,
+    body
+  };
+}
+
 export function getContentTypePublished(
   contentTypeId: string = defaultContentTypeId,
   spaceId: string = defaultSpaceId
 ): RequestOptions {
   return {
     method: 'GET',
+    path: `/spaces/${spaceId}/content_types/${contentTypeId}/published`,
+    headers: defaultHeader
+  };
+}
+
+export function putContentTypePublished(
+  contentTypeId: string = defaultContentTypeId,
+  spaceId: string = defaultSpaceId
+): RequestOptions {
+  return {
+    method: 'PUT',
     path: `/spaces/${spaceId}/content_types/${contentTypeId}/published`,
     headers: defaultHeader
   };
@@ -65,6 +89,19 @@ export function getEditorInterface(
     method: 'GET',
     path: `/spaces/${spaceId}/content_types/${contentTypeId}/editor_interface`,
     headers: defaultHeader
+  };
+}
+
+export function putEditorInterface(
+  contentTypeId: string = defaultContentTypeId,
+  spaceId: string = defaultSpaceId,
+  body?: Object
+): RequestOptions {
+  return {
+    method: 'PUT',
+    path: `/spaces/${spaceId}/content_types/${contentTypeId}/editor_interface`,
+    headers: defaultHeader,
+    body
   };
 }
 
