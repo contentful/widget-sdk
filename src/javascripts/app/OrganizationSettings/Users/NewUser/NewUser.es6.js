@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useReducer } from 'react';
 import PropTypes from 'prop-types';
 import {
   Typography,
@@ -19,35 +19,58 @@ import { orgRoles } from 'utils/MembershipUtils.es6';
 import { useAddToOrg } from './hooks.es6';
 import { isValidEmail, parseList } from 'utils/StringUtils.es6';
 
+const initialState = {
+  submitted: false,
+  emailsValue: '',
+  emailList: [],
+  invalidAddresses: []
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'SUBMITTED':
+      return { ...state, submitted: true };
+    case 'EMAILS_CHANGED': {
+      const parsed = parseList(action.payload);
+      const invalid = parsed.filter(email => !isValidEmail(email));
+      return {
+        ...state,
+        submitted: false,
+        emailsValue: action.payload,
+        emailList: parsed,
+        invalidAddresses: invalid
+      };
+    }
+    case 'ROLE_CHANGED':
+      return { ...state, orgRole: action.payload, submitted: false };
+    case 'RESET':
+      return { ...initialState };
+  }
+};
+
 export default function NewUser({ orgId }) {
   const [{ isLoading, error, data }, addToOrg, resetAsyncFn] = useAddToOrg(orgId);
-  const [submitted, setSubmitted] = useState(false);
-  const [emailsValue, setEmailsValue] = useState('');
-  const [emailList, setEmailList] = useState([]);
-  const [invalidAddresses, setInvalidAddresses] = useState([]);
-  const [orgRole, setOrgRole] = useState('');
+  const [{ submitted, emailsValue, emailList, invalidAddresses, orgRole }, dispatch] = useReducer(
+    reducer,
+    initialState
+  );
 
   const handleEmailsChange = evt => {
     const {
       target: { value }
     } = evt;
-    const parsed = parseList(value);
-    const invalid = parsed.filter(email => !isValidEmail(email));
-    setSubmitted(false);
-    setEmailsValue(value);
-    setEmailList(parsed);
-    setInvalidAddresses(invalid);
+    dispatch({ type: 'EMAILS_CHANGED', payload: value });
   };
 
   const handleRoleChange = evt => {
     const {
       target: { value }
     } = evt;
-    setOrgRole(value);
+    dispatch({ type: 'ROLE_CHANGED', payload: value });
   };
 
   const handleSubmit = () => {
-    setSubmitted(true);
+    dispatch({ type: 'SUBMITTED' });
 
     if (emailList.length === 0 || invalidAddresses.length || !orgRole) return;
 
@@ -55,11 +78,7 @@ export default function NewUser({ orgId }) {
   };
 
   const reset = () => {
-    setSubmitted(false);
-    setEmailsValue('');
-    setEmailList([]);
-    setInvalidAddresses([]);
-    setOrgRole('');
+    dispatch({ type: 'RESET' });
     resetAsyncFn();
   };
 
