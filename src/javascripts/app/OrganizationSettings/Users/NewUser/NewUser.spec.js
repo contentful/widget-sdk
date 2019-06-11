@@ -13,8 +13,10 @@ const generateAddresses = number => {
   return Array.from(new Array(number), (_, index) => `foo+${index}@bar.com`);
 };
 
+const mockOnReady = jest.fn();
+
 const build = () => {
-  return render(<NewUser orgId="myorg" />);
+  return render(<NewUser orgId="myorg" onReady={mockOnReady} />);
 };
 
 const submitForm = (wrapper, emails = '', role = '') => {
@@ -38,6 +40,12 @@ const submitForm = (wrapper, emails = '', role = '') => {
 
 describe('NewUser', () => {
   afterEach(cleanup);
+  afterEach(mockOnReady.mockReset);
+
+  it('dismisses the loading state', () => {
+    build();
+    expect(mockOnReady).toHaveBeenCalled();
+  });
 
   it('validates the presence of at least one email addresses', () => {
     const wrapper = build();
