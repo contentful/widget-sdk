@@ -28,6 +28,7 @@ import StateLink from 'app/common/StateLink.es6';
 
 import ViewCustomizer from './ViewCustomizer/index.es6';
 import DisplayField from './DisplayField.es6';
+import SecretiveLink from 'components/shared/SecretiveLink.es6';
 
 import { EntityStatusTag } from 'components/shared/EntityStatusTag.es6';
 
@@ -73,23 +74,6 @@ const styles = {
   }),
   activeSort: css({
     fontWeight: tokens.fontWeightDemiBold
-  }),
-  secretiveLink: css({
-    display: 'block',
-    width: '100%',
-    color: tokens.colorTextMid,
-    textDecoration: 'none',
-    '& > span': {
-      width: 'inherit'
-    },
-    '&:link': {
-      textDecoration: 'none'
-    },
-    '&:focus': {
-      outline: 'none',
-      boxShadow: 'unset',
-      textDecoration: 'none'
-    }
   }),
   textOverflow: css({
     overflow: 'hidden',
@@ -349,30 +333,6 @@ export class BulkActionsRow extends React.Component {
     );
   }
 }
-
-/**
- * Provides right click => open in a new tab flow
- */
-function SecretiveLink({ href, className, children, ...rest }) {
-  return (
-    <TextLink
-      className={cn(styles.secretiveLink, className)}
-      tabIndex="-1"
-      href={href}
-      rel="noopener noreferrer"
-      linkType="secondary"
-      target="_blank"
-      onClick={e => e.preventDefault()}
-      {...rest}>
-      {children}
-    </TextLink>
-  );
-}
-
-SecretiveLink.propTypes = {
-  href: PropTypes.string.isRequired,
-  className: PropTypes.string
-};
 
 export default function EntryList({
   context,

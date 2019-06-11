@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Tag } from '@contentful/forma-36-react-components';
+import isHotkey from 'is-hotkey';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import moment from 'moment';
@@ -16,6 +17,8 @@ import {
 } from '@contentful/forma-36-react-components';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag.es6';
 import { getEntryTitle } from 'classes/EntityFieldValueHelpers.es6';
+import StateLink from 'app/common/StateLink.es6';
+import SecretiveLink from 'components/shared/SecretiveLink.es6';
 
 const styles = {
   statusTag: css({
@@ -99,20 +102,39 @@ function JobWithExsitingEntryRow({
   });
 
   return (
-    <TableRow key={job.sys.id} data-test-id="scheduled-job">
-      <TableCell>
-        {moment
-          .utc(job.scheduledAt)
-          .local()
-          .format('ddd, MMM Do, YYYY - hh:mm A')}
-      </TableCell>
-      <TableCell>{entryTitle}</TableCell>
-      <TableCell>{contentType.name}</TableCell>
-      <TableCell>{user.firstName}</TableCell>
-      <TableCell>
-        {showStatusTransition ? <StatusTransition entry={entry} /> : <StatusTag job={job} />}
-      </TableCell>
-    </TableRow>
+    <StateLink to="spaces.detail.entries.detail" params={{ entryId: entry.sys.id }}>
+      {({ onClick, getHref }) => (
+        <TableRow
+          key={job.sys.id}
+          data-test-id="scheduled-job"
+          tabIndex="0"
+          onClick={e => {
+            onClick(e);
+          }}
+          onKeyDown={e => {
+            if (isHotkey(['enter', 'space'], e)) {
+              onClick(e);
+              e.preventDefault();
+            }
+          }}>
+          <TableCell>
+            {moment
+              .utc(job.scheduledAt)
+              .local()
+              .format('ddd, MMM Do, YYYY - hh:mm A')}
+          </TableCell>
+          <TableCell>
+            {' '}
+            <SecretiveLink href={getHref()}>{entryTitle}</SecretiveLink>
+          </TableCell>
+          <TableCell>{contentType.name}</TableCell>
+          <TableCell>{user.firstName}</TableCell>
+          <TableCell>
+            {showStatusTransition ? <StatusTransition entry={entry} /> : <StatusTag job={job} />}
+          </TableCell>
+        </TableRow>
+      )}
+    </StateLink>
   );
 }
 
