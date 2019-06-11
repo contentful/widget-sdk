@@ -4,8 +4,9 @@ import SpaceTeamsPage from './SpaceTeamsPage.es6';
 import { render, waitForElement, cleanup } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 
-import { getTeamsSpaceMembershipsOfSpace as getTeamsSpaceMembershipsOfSpaceMock } from './TeamRepository.es6';
 import { createSpaceEndpoint as createSpaceEndpointMock } from 'data/EndpointFactory.es6';
+import { getTeamsSpaceMembershipsOfSpace as getTeamsSpaceMembershipsOfSpaceMock } from './TeamRepository.es6';
+import { getSectionVisibility as getSectionVisibilityMock } from './AccessChecker/index.es6';
 
 jest.mock('./TeamRepository.es6', () => ({
   getTeamsSpaceMembershipsOfSpace: jest.fn()
@@ -19,6 +20,10 @@ jest.mock('data/EndpointFactory.es6', () => ({
   createSpaceEndpoint: jest.fn()
 }));
 
+jest.mock('./AccessChecker/index.es6', () => ({
+  getSectionVisibility: jest.fn()
+}));
+
 const build = () => {
   return render(<SpaceTeamsPage spaceId="mySpace" onReady={noop} />);
 };
@@ -27,6 +32,7 @@ describe('SpaceTeamsPage', () => {
   beforeEach(() => {
     getTeamsSpaceMembershipsOfSpaceMock.mockReturnValue(Promise.resolve([]));
     createSpaceEndpointMock.mockReturnValue(Promise.resolve({}));
+    getSectionVisibilityMock.mockReturnValue({ teams: true });
   });
 
   afterEach(() => {
@@ -154,6 +160,18 @@ describe('SpaceTeamsPage', () => {
       expect(countCell1).toHaveTextContent('1 member');
       const countCell2 = getByTestId('member-count-cell-membership2');
       expect(countCell2).toHaveTextContent('99 members');
+    });
+  });
+
+  describe('missing authorization', () => {
+    beforeEach(() => {
+      getSectionVisibilityMock.mockReturnValue({ teams: false });
+    });
+
+    it('should show placeholder instead of table', () => {
+      const { baseElement, queryByTestId } = build();
+      expect(queryByTestId('membership-table')).not.toBeInTheDocument();
+      expect(baseElement).toHaveTextContent('Access forbidden');
     });
   });
 });
