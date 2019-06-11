@@ -130,7 +130,8 @@ export const validEvents = {
   aiImageManagement: ['installed', 'uninstalled'],
   approval: ['installed', 'uninstalled'],
   sso: ['start_setup', 'connection_test_result', 'contact_support', 'enable'],
-  quick_navigation: ['opened_by_shortcut']
+  quick_navigation: ['opened_by_shortcut'],
+  perf: ['dom_content_loaded', 'first_contentful_paint', 'time_to_interactive']
 };
 
 export const validateEvent = eventName => {

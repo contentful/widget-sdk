@@ -153,6 +153,10 @@ registerEvent('global:app_loaded', 'app_open', AppOpen);
 registerEvent('invite_user:learn', 'generic', InviteUserExperiment);
 registerEvent('invite_user:create_space', 'generic', InviteUserExperiment);
 
+registerGenericEvent('perf:dom_content_loaded');
+registerGenericEvent('perf:first_contentful_paint');
+registerGenericEvent('perf:time_to_interactive');
+
 registerEvent('personal_access_token:action', 'personal_access_token', (_, data) => {
   return {
     data: {
