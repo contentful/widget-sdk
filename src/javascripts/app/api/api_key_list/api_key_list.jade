@@ -14,14 +14,10 @@ react-component(
       name="app/api/ApiKeysNavigation.es6"
       props="{ currentTab: 'cda-tokens' }"
     )
-    .api-key-list.entity-list
-      a.entity-list__item.x--with-icon(
-        ng-repeat="apiKey in apiKeys track by apiKey.sys.id"
-        ui-sref="^.detail({ apiKeyId: apiKey.sys.id })")
-        span
-          h3.entity-list__heading {{apiKey.name}}
-          span.entity-list__description {{apiKey.description}}
-        cf-icon(name="dd-arrow-down")
+    react-component(
+      name="app/api/api_key_list/ApiKeyList.es6"
+      props="{ apiKeys: {{apiKeys}} }"
+    )
 
   //- Empty state
   .workbench-main__content(
@@ -32,13 +28,9 @@ react-component(
       name="app/api/ApiKeysNavigation.es6"
       props="{ currentTab: 'cda-tokens' }"
     )
-    .api-key-list
-      a.entity-list__item.x--with-icon.api-key-list__placeholder(
-        ng-repeat="apiKey in placeholderApiKeys track by $index")
-        span
-          h3.api-key-list__heading {{apiKey.name}}
-          span.api-key-list__description {{apiKey.description}}
-        cf-icon(name="dd-arrow-down")
+    react-component(
+      name="app/api/api_key_list/ApiKeyList.es6"
+    )
     .cfnext-advice-box.api-key-list__advice
       .cfnext-advice-box__frame
         h1.cfnext-advice-box__title

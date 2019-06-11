@@ -37,21 +37,6 @@ export default function register() {
 
       $scope.context.ready = false;
 
-      $scope.placeholderApiKeys = [
-        {
-          name: 'Website key',
-          description: 'Use this key in your website'
-        },
-        {
-          name: 'iOS key',
-          description: 'Use this key in your iOS app'
-        },
-        {
-          name: 'Android key',
-          description: 'Use this key in your Android app'
-        }
-      ];
-
       $scope.subscriptionState = getSubscriptionState();
 
       $scope.createApiKey = Command.create(create, {

@@ -14,7 +14,7 @@ describe('StateLink', () => {
 
   it('should render <a>', () => {
     const { container } = render(<StateLink to="home.list" />);
-    expect(container.querySelector('a')).toHaveAttribute('href', 'http://url-for-state-home.list');
+    expect(container.querySelector('a')).toHaveAttribute('href', 'home.list');
 
     fireEvent.click(container.querySelector('a'));
 
