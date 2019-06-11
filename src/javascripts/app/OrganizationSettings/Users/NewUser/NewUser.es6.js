@@ -1,4 +1,4 @@
-import React, { useMemo, useReducer } from 'react';
+import React, { useMemo, useReducer, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Typography,
@@ -48,7 +48,7 @@ const reducer = (state, action) => {
   }
 };
 
-export default function NewUser({ orgId }) {
+export default function NewUser({ orgId, onReady }) {
   const [{ isLoading, error, data }, addToOrg, resetAsyncFn] = useAddToOrg(orgId);
   const [{ submitted, emailsValue, emailList, invalidAddresses, orgRole }, dispatch] = useReducer(
     reducer,
@@ -111,6 +111,11 @@ export default function NewUser({ orgId }) {
     return '';
   }, [orgRole, submitted]);
 
+  // dismiss the loading state of the Angular UI router state
+  useEffect(() => {
+    onReady();
+  }, [onReady]);
+
   return (
     <Workbench title="Invite users">
       <Workbench.Content centered>
@@ -168,7 +173,8 @@ export default function NewUser({ orgId }) {
 }
 
 NewUser.propTypes = {
-  orgId: PropTypes.string.isRequired
+  orgId: PropTypes.string.isRequired,
+  onReady: PropTypes.func.isRequired
 };
 
 const NewUserProgress = ({ emailList }) => {

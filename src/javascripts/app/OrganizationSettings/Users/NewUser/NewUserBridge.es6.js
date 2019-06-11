@@ -10,9 +10,8 @@ export default function NewUserBridge({ onReady, context, orgId }) {
   useEffect(() => {
     getVariation('feature-bv-05-2019-new-invitation-flow')
       .then(variation => setVariation(variation))
-      .catch(() => setVariation(false))
-      .finally(onReady);
-  }, [onReady]);
+      .catch(() => setVariation(false));
+  }, []);
 
   if (variation) {
     return <NewUser onReady={onReady} orgId={orgId} />;

@@ -233,12 +233,14 @@ export function isValidEmail(string) {
 /**
  * Get a string with words separated by comma or line breaks
  * and return an array of unique items
+ *
+ * parseList('apple, orange, banana') // -> ['apple', 'orange', 'banana']
  */
-export function parseList(emails = '') {
-  const list = emails
+export function parseList(phrase = '') {
+  const list = phrase
     .split(/\n|,/)
     .map(_.trim)
-    .filter(email => email.length > 0);
+    .filter(item => item.length > 0);
 
   return _.uniq(list);
 }
