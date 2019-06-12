@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { map } from 'lodash';
+import { map, truncate } from 'lodash';
 import {
   Table,
   TableBody,
@@ -172,7 +172,10 @@ export default class SpaceTeamsPage extends React.Component {
                                 className={styles.row}>
                                 <TableCell className={css(cell)} testId={`team-cell-${id}`}>
                                   <div className={styles.cellTeamName}>{name}</div>
-                                  <div className={styles.cellTeamDescription}>{description}</div>
+                                  {/*This truncation is a fallback for IE and pre-68 FF, which don't support css line-clamp*/}
+                                  <div className={styles.cellTeamDescription}>
+                                    {truncate(description, { length: 130 })}
+                                  </div>
                                 </TableCell>
                                 <TableCell className={styles.cellRoles} testId={`roles-cell-${id}`}>
                                   {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
