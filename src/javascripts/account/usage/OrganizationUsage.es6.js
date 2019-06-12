@@ -32,9 +32,13 @@ export class WorkbenchContent extends React.Component {
     isPoC: PropTypes.objectOf(PropTypes.bool),
     periodicUsage: PropTypes.object,
     apiRequestIncludedLimit: PropTypes.number,
-    assetBandwidthUsage: PropTypes.number,
-    assetBandwidthIncludedLimit: PropTypes.number,
-    assetBandwidthUOM: PropTypes.string,
+    assetBandwidthData: PropTypes.shape({
+      usage: PropTypes.number,
+      unitOfMeasure: PropTypes.string,
+      limits: PropTypes.shape({
+        included: PropTypes.number
+      })
+    }),
     isLoading: PropTypes.bool,
     periods: PropTypes.arrayOf(PropTypes.object),
     resources: PropTypes.arrayOf(PropTypes.object)
@@ -49,9 +53,7 @@ export class WorkbenchContent extends React.Component {
       isPoC,
       periodicUsage,
       apiRequestIncludedLimit,
-      assetBandwidthUsage,
-      assetBandwidthIncludedLimit,
-      assetBandwidthUOM,
+      assetBandwidthData,
       isLoading,
       periods,
       resources
@@ -70,9 +72,7 @@ export class WorkbenchContent extends React.Component {
               isPoC,
               periodicUsage,
               apiRequestIncludedLimit,
-              assetBandwidthUsage,
-              assetBandwidthIncludedLimit,
-              assetBandwidthUOM,
+              assetBandwidthData,
               isLoading
             }}
           />
@@ -170,23 +170,18 @@ export class OrganizationUsage extends React.Component {
           periods,
           {
             limits: { included: apiRequestIncludedLimit }
-          },
-          {
-            usage: assetBandwidthUsage,
-            unitOfMeasure: assetBandwidthUOM,
-            limits: { included: assetBandwidthIncludedLimit }
           }
         ] = await Promise.all([
           OrganizationMembershipRepository.getAllSpaces(this.endpoint),
           PricingDataProvider.getPlansWithSpaces(this.endpoint),
           getPeriods(this.endpoint),
-          service.get('api_request'),
-          service.get('asset_bandwidth')
+          service.get('api_request')
         ]);
         const spaceNames = flow(
           keyBy('sys.id'),
           mapValues('name')
         )(spaces);
+
         const isPoC = flow(
           keyBy('space.sys.id'),
           mapValues(
@@ -196,16 +191,15 @@ export class OrganizationUsage extends React.Component {
             )
           )
         )(plans.items);
+
         this.setState({
           spaceNames,
           isPoC,
           periods: periods.items,
           apiRequestIncludedLimit,
-          assetBandwidthUsage,
-          assetBandwidthIncludedLimit,
-          assetBandwidthUOM,
           hasSpaces: spaces.length !== 0
         });
+
         await this.loadPeriodData(0);
       } else {
         this.setState({ resources: await service.getAll(), isLoading: false }, onReady);
@@ -222,9 +216,13 @@ export class OrganizationUsage extends React.Component {
     }
   }
 
-  async loadPeriodData(newIndex) {
+  loadPeriodData = async newIndex => {
+    const { orgId } = this.props;
     const { periods } = this.state;
+
+    const service = ResourceService.default(orgId, 'organization');
     const newPeriod = periods[newIndex];
+
     if (isNumber(this.state.selectedPeriodIndex)) {
       const oldPeriod = periods[this.state.selectedPeriodIndex];
       Analytics.track('usage:period_selected', {
@@ -232,20 +230,36 @@ export class OrganizationUsage extends React.Component {
         newPeriod: pick(['startDate', 'endDate'], newPeriod)
       });
     }
+
     try {
-      const [org, cma, cda, cpa] = await Promise.all([
+      const promises = [
         getOrgUsage(this.endpoint, newPeriod.sys.id),
         ...['cma', 'cda', 'cpa'].map(api => getApiUsage(this.endpoint, newPeriod.sys.id, api))
-      ]);
+      ];
+
+      if (newIndex === 0) {
+        promises.push(service.get('asset_bandwidth'));
+      } else {
+        // If the current usage period is not the first (current/most recent), we return null
+        // for the asset bandwidth information.
+        //
+        // We don't have historical (or day-to-day) AB usage and can only show data for the user's
+        // current usage period.
+        promises.push(Promise.resolve(null));
+      }
+
+      const [org, cma, cda, cpa, assetBandwidthData] = await Promise.all(promises);
+
       this.setState({
         isLoading: false,
         periodicUsage: { org, apis: { cma, cda, cpa } },
-        selectedPeriodIndex: newIndex
+        selectedPeriodIndex: newIndex,
+        assetBandwidthData
       });
     } catch (e) {
       ReloadNotification.trigger();
     }
-  }
+  };
 
   async setPeriodIndex(e) {
     this.setState({ isLoading: true });
@@ -261,9 +275,7 @@ export class OrganizationUsage extends React.Component {
       periods,
       periodicUsage,
       apiRequestIncludedLimit,
-      assetBandwidthUsage,
-      assetBandwidthIncludedLimit,
-      assetBandwidthUOM,
+      assetBandwidthData,
       committed,
       resources,
       hasSpaces
@@ -296,9 +308,7 @@ export class OrganizationUsage extends React.Component {
               isPoC,
               periodicUsage,
               apiRequestIncludedLimit,
-              assetBandwidthUsage,
-              assetBandwidthIncludedLimit,
-              assetBandwidthUOM,
+              assetBandwidthData,
               isLoading,
               periods,
               resources

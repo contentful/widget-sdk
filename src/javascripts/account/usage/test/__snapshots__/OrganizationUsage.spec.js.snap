@@ -44,9 +44,15 @@ exports[`OrganizationUsage should render page without errors 1`] = `
   <Workbench.Content>
     <WorkbenchContent
       apiRequestIncludedLimit={1000000}
-      assetBandwidthIncludedLimit={2000}
-      assetBandwidthUOM="MB"
-      assetBandwidthUsage={200}
+      assetBandwidthData={
+        Object {
+          "limits": Object {
+            "included": 2000,
+          },
+          "unitOfMeasure": "MB",
+          "usage": 200,
+        }
+      }
       committed={true}
       hasSpaces={true}
       isLoading={false}
@@ -103,9 +109,6 @@ exports[`WorkbenchActions should render 1`] = `""`;
 exports[`WorkbenchContent should render 1`] = `
 <OrganizationUsagePage
   apiRequestIncludedLimit={1000}
-  assetBandwidthIncludedLimit={50}
-  assetBandwidthUOM="GB"
-  assetBandwidthUsage={100}
   isLoading={false}
   isPoC={
     Object {
