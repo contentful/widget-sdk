@@ -37,8 +37,6 @@ describe('cfEntityLink directive', () => {
         }
       );
 
-      const scope = element.isolateScope();
-      scope.useRedesignedCardTemplate = false;
       this.$apply();
       return element.get(0);
     };

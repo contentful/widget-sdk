@@ -1,5 +1,5 @@
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
-import { dragHandle, status, titleText, actions } from './TemplateCommons.es6';
+import { status, titleText } from './TemplateCommons.es6';
 
 export default function() {
   return h(
@@ -21,15 +21,6 @@ export default function() {
         fit: 'thumb',
         role: '{{hasTooltip && "button"}}',
         cfContextMenuTrigger: true
-      }),
-      dragHandle({
-        position: 'absolute',
-        top: '0',
-        left: '0',
-        padding: '1px',
-        margin: '4px',
-        borderRadius: '3px',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)'
       }),
       status({
         position: 'absolute',
@@ -59,16 +50,7 @@ function contextMenu() {
       role: 'menu',
       cfContextMenu: true
     },
-    [
-      details(),
-      h(
-        'div',
-        {
-          style: { display: 'flex' }
-        },
-        [actions('asset-card__action')]
-      )
-    ]
+    [details()]
   );
 }
 

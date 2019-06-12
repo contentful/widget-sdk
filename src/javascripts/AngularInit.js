@@ -74,10 +74,10 @@ angular
       ngRequire('app/entry_editor/formWidgetsController.es6').default();
       ngRequire('app/home/cfTrackCopyEvent.es6').default();
       ngRequire('app/home/contactUs/contactUsSpaceHomeDirective.es6').default();
-      ngRequire('data/entries.es6').default();
       ngRequire('app/home/onboarding_steps/cfOnboardingStepsDirective.es6').default();
       ngRequire('app/snapshots/cfSnapshotPresenter.es6').default();
       ngRequire('app/snapshots/cfSnapshotSelector.es6').default();
+      ngRequire('data/entries.es6').default();
       ngRequire('app/snapshots/snapshotComparator.es6').default();
       ngRequire('app/widgets/cfBooleanEditorDirective.es6').default();
       ngRequire('app/widgets/cfCheckboxEditorDirective.es6').default();
@@ -89,7 +89,6 @@ angular
       ngRequire('app/widgets/dropdown/cfDropdownEditorDirective.es6').default();
       ngRequire('app/widgets/json/cfJsonEditorCodeEditorDirective.es6').default();
       ngRequire('app/widgets/json/cfJsonEditorDirective.es6').default();
-      ngRequire('app/widgets/link/cfReferenceEditorDirective.es6').default();
       ngRequire('app/widgets/link/entityLinkDirectives.es6').default();
       ngRequire('app/widgets/location/cfLocationEditorDirective.es6').default();
       ngRequire('app/widgets/location/searchController.es6').default();
@@ -157,6 +156,7 @@ angular
       ngRequire('directives/cfFocusOnRenderDirective.es6').default();
       ngRequire('directives/cfFocusOtInputDirective.es6').default();
       ngRequire('directives/cfSchemaDirectives.es6').default();
+      ngRequire('directives/cfThumbnailDirective.es6').default();
       ngRequire('directives/cfValidateDirective.es6').default();
       ngRequire('directives/cfWhenDisabled.es6').default();
       ngRequire('directives/tooltipDirective.es6').default();
@@ -185,7 +185,6 @@ angular
       ngRequire('states/config.es6').default();
       ngRequire('ui/Framework/CfComponentBridgeDirective.es6').default();
       ngRequire('ui/Framework/ReactDirective.es6').default();
-      ngRequire('directives/cfThumbnailDirective.es6').default();
       ngRequire('ui/cfIconDirective.es6').default();
       ngRequire('ui/cfUiSticky.es6').default();
       ngRequire('ui/cfUiTab.es6').default();

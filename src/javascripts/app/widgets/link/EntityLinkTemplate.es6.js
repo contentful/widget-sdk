@@ -1,6 +1,4 @@
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
-import { dragHandle, actions } from './TemplateCommons.es6';
-import LegacyEntityLinkTemplate from './LegacyEntityLinkTemplate.es6';
 
 /**
  * Creates the template for entity links used by the `cfEntityLink`
@@ -8,28 +6,11 @@ import LegacyEntityLinkTemplate from './LegacyEntityLinkTemplate.es6';
  */
 
 export default function() {
-  // Using triple equals to protect against slow feature flag loading
-
-  return h('div', [
-    h('div', { ngIf: 'useRedesignedCardTemplate === false' }, [LegacyEntityLinkTemplate()]),
-    h('div', { ngIf: 'useRedesignedCardTemplate === true' }, [
-      entityCard(),
-      entityCardMinimized(),
-      entityCardMissing()
-    ])
-  ]);
+  return h('div', [entityCard(), entityCardMinimized(), entityCardMissing()]);
 }
 
 function entityCardMissing() {
   return h('article.ReferenceCard.ReferenceCard--missing', { ngIf: 'missing' }, [
-    h(
-      'div.ReferenceCard__handle',
-      {
-        ngIf: 'config.draggable'
-      },
-      [dragHandle({})]
-    ),
-
     h(
       'a.ReferenceCard__wrapper',
       {
@@ -48,9 +29,7 @@ function entityCardMissing() {
           ]
         )
       ]
-    ),
-
-    h('div.ReferenceCard__actions', [actions('ReferenceCard__action')])
+    )
   ]);
 }
 
@@ -78,14 +57,6 @@ function entityCardMinimized() {
 
 function entityCard() {
   return h('article.ReferenceCard', { ngIf: '!config.minimized && !missing' }, [
-    h(
-      'div.ReferenceCard__handle',
-      {
-        ngIf: 'config.draggable'
-      },
-      [dragHandle({})]
-    ),
-
     h(
       'a.ReferenceCard__wrapper',
       {
@@ -134,8 +105,6 @@ function entityCard() {
           )
         ])
       ]
-    ),
-
-    h('div.ReferenceCard__actions', [actions('ReferenceCard__action')])
+    )
   ]);
 }
