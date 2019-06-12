@@ -29,6 +29,12 @@ npx cypress open
 ```
 
 ```bash
+# Run the tests in interactive mode. Delete folders Logs/ and Pacts/ before running.
+npm run cypress
+# This will open Cypress console, where you can select the spec you need. Folders logs/ and pacts/ will be deleted (we use pactfileWriteMode: ‘merge’ and any existing pacts should be deleted before running the tests).
+```
+
+```bash
 # Run a specific test
 npx cypress run --spec "<path-a-spec-file>"
 ```
