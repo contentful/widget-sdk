@@ -5,12 +5,8 @@ import { render, waitForElement, cleanup } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 
 import { createSpaceEndpoint as createSpaceEndpointMock } from 'data/EndpointFactory.es6';
-import { getTeamsSpaceMembershipsOfSpace as getTeamsSpaceMembershipsOfSpaceMock } from './TeamRepository.es6';
-import { getSectionVisibility as getSectionVisibilityMock } from './AccessChecker/index.es6';
-
-jest.mock('./TeamRepository.es6', () => ({
-  getTeamsSpaceMembershipsOfSpace: jest.fn()
-}));
+import { getTeamsSpaceMembershipsOfSpace as getTeamsSpaceMembershipsOfSpaceMock } from '../TeamRepository.es6';
+import { getSectionVisibility as getSectionVisibilityMock } from '../AccessChecker/index.es6';
 
 jest.mock('services/TokenStore.es6', () => ({
   getSpace: jest.fn().mockReturnValue(Promise.resolve({ name: 'TestSpace' }))
@@ -20,7 +16,11 @@ jest.mock('data/EndpointFactory.es6', () => ({
   createSpaceEndpoint: jest.fn()
 }));
 
-jest.mock('./AccessChecker/index.es6', () => ({
+jest.mock('../TeamRepository.es6', () => ({
+  getTeamsSpaceMembershipsOfSpace: jest.fn()
+}));
+
+jest.mock('../AccessChecker/index.es6', () => ({
   getSectionVisibility: jest.fn()
 }));
 

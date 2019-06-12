@@ -24,8 +24,8 @@ import { joinWithAnd } from 'utils/StringUtils.es6';
 import ellipsisStyle from 'ellipsisStyle.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 
-import { getTeamsSpaceMembershipsOfSpace } from './TeamRepository.es6';
-import { getSectionVisibility } from './AccessChecker/index.es6';
+import { getTeamsSpaceMembershipsOfSpace } from '../TeamRepository.es6';
+import { getSectionVisibility } from '../AccessChecker/index.es6';
 
 export const TeamListFetcher = createFetcherComponent(({ spaceId }) => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
