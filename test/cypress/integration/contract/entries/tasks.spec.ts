@@ -1,6 +1,6 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { singleUser, singleSpecificOrgUserResponse } from '../../../interactions/users';
-import { successfulGetEntryTasksInteraction } from '../../../interactions/tasks';
+import { successfulGetEntryTasksInteraction, tasksErrorResponse } from '../../../interactions/tasks';
 
 import {
   singleContentTypeResponse,
@@ -15,7 +15,7 @@ const empty = require('../../../fixtures/responses/empty.json');
 const severalTasks = require('../../../fixtures/responses/tasks-several.json');
 const featureFlag = 'feature-05-2019-content-workflows-tasks';
 
-describe('Tasks (based on `comments` endpoint)', () => {
+describe('Tasks entry editor sidebar', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
     cy.startFakeServer({
@@ -45,24 +45,37 @@ describe('Tasks (based on `comments` endpoint)', () => {
     cy.route('**/channel/**', []).as('shareJS');
   }
 
-  describe('opening entry without tasks', () => {
+  describe('tasks service error', () => {
     beforeEach(() => {
-      successfulGetEntryTasksInteraction('noTasks', empty).as('tasks/empty');
+      tasksErrorResponse();
 
-      cy.wait([`@${state.Token.VALID}`, '@tasks/empty']);
+      cy.wait([`@${state.Token.VALID}`, `@${state.Tasks.ERROR}`]);
+    });
+
+    it('renders "Tasks" sidebar section with an error', () => {
+      cy.getByTestId('task-list-error').should('be.visible');
+    });
+  });
+
+  context('no tasks on the entry', () => {
+    beforeEach(() => {
+      successfulGetEntryTasksInteraction('noTasks', empty).as(state.Tasks.NONE);
+
+      cy.wait([`@${state.Token.VALID}`, `@${state.Tasks.NONE}`]);
     });
 
     it('renders "Tasks" sidebar section', () => {
       cy.getByTestId('sidebar-tasks-widget').should('be.visible');
+      cy.get('[data-test-id="task-list-error"]').should('have.length', 0)
     });
   });
 
-  describe('opening entry with tasks', () => {
+  describe('several tasks on the entry', () => {
     beforeEach(() => {
-      successfulGetEntryTasksInteraction('someTasks', severalTasks).as('tasks/several');
+      successfulGetEntryTasksInteraction('someTasks', severalTasks).as(state.Tasks.SEVERAL);
       singleSpecificOrgUserResponse();
 
-      cy.wait([`@${state.Token.VALID}`, '@tasks/several', `@${state.Users.SINGLE}`]);
+      cy.wait([`@${state.Token.VALID}`, `@${state.Tasks.SEVERAL}`, `@${state.Users.SINGLE}`]);
     });
 
     it('renders list of tasks', () => {

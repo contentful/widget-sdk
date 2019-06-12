@@ -69,6 +69,12 @@ export enum Jobs {
   CANCEL = 'jobs/cancel'
 }
 
+export enum Tasks {
+  NONE = 'tasks/none',
+  SEVERAL = 'tasks/several',
+  ERROR = 'tasks/error'
+}
+
 export enum Microbackends {
   STREAMTOKEN = 'microbackends/streamtoken'
 }

@@ -90,9 +90,12 @@ export default class TaskList extends React.PureComponent {
                 {tasks.map(taskViewData => this.renderTask(taskViewData))}
               </ol>
             </Visible>
-            {errorMessage && <ValidationMessage>{errorMessage}</ValidationMessage>}
+            {errorMessage && (
+              <ValidationMessage testId="task-list-error">{errorMessage}</ValidationMessage>
+            )}
             {hasCreateAction && (
               <TextLink
+                testId="create-task"
                 icon="Plus"
                 className={styles.addTaskCta}
                 onClick={() => tasksInteractor.startTaskDraft()}>

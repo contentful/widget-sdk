@@ -300,6 +300,7 @@ export default class Task extends React.Component {
         <TextField
           name="body"
           id="body"
+          testId="task-title"
           labelText={bodyLabel}
           textarea
           value={body}
