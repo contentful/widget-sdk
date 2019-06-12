@@ -114,7 +114,53 @@ orbs:
           - store_test_results:
               path: test-results
 
-saucelabs_filters: &saucelabs_filters
+  ui-extensions-sdk:
+    jobs:
+      run:
+        description: 'Run ui-extensions-sdk integration suite'
+        docker:
+          - image: cypress/browsers:node8.15.1-chrome73
+        environment:
+          CYPRESS_baseUrl: http://localhost:3001
+          TEST_LOCAL_SDK: false
+          UI_CONFIG: dev-on-production
+        working_directory: /home/circleci/components/ui-extensions-sdk
+        steps:
+          - run:
+              name: Provide NPM Token
+              command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          - run:
+              name: Install global dependencies
+              command: npm install -g wait-on
+          - checkout:
+              path: /home/circleci/components/user_interface
+          - run:
+              name: Install user_interface dependencies
+              working_directory: /home/circleci/components/user_interface
+              command: npm ci
+          - run:
+              name: Clone master branch of ui-extensions-sdk
+              command: git clone git@github.com:contentful/ui-extensions-sdk.git .
+          - run:
+              name: Install ui-extensions-sdk dependencies
+              command: npm ci
+          - run:
+              name: Start user_interface locally
+              working_directory: /home/circleci/components/user_interface
+              command: npm start
+              background: true
+          - run:
+              name: Wait http://localhost:3001 to be ready
+              command: npx wait-on http-get://localhost:3001
+          - run:
+              name: Run integration tests
+              command: npm run integration
+          - store_test_results:
+              path: test/cypress/reports
+          - store_artifacts:
+              path: test/cypress/screenshots
+
+only_master_filters: &only_master_filters
   filters:
     branches:
       only: master
@@ -388,32 +434,35 @@ workflows:
           bucket: 'static.cdnorigin.contentful.com'
           requires:
             - build-and-push-image
+      - ui-extensions-sdk/run:
+          name: run-ui-extensions-integration
+          <<: *only_master_filters
       - saucelabs/run:
           name: run-win10-ie-tests
           browser: 'internet explorer'
           requires:
             - deploy-assets-to-staging
-          <<: *saucelabs_filters
+          <<: *only_master_filters
       - saucelabs/run:
           name: run-win10-edge-tests
           browser: 'MicrosoftEdge'
           selenium: '3.14.0'
           requires:
             - deploy-assets-to-staging
-          <<: *saucelabs_filters
+          <<: *only_master_filters
       - saucelabs/run:
           name: run-win10-firefox-tests
           browser: 'firefox'
           requires:
             - deploy-assets-to-staging
-          <<: *saucelabs_filters
+          <<: *only_master_filters
       - saucelabs/run:
           name: run-osx10-safari-tests
           platform: 'OS X 10.11'
           browser: 'safari'
           requires:
             - deploy-assets-to-staging
-          <<: *saucelabs_filters
+          <<: *only_master_filters
 
 notify:
   webhooks:
