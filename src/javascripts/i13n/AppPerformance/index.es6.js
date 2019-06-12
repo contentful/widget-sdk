@@ -27,7 +27,7 @@ export const track = once(({ stateName }) => {
           .split('-')
           .slice(1)
           .join('_');
-        Analytics.track(`perf:${analyticsName}`, { value });
+        Analytics.track(`perf:${analyticsName}`, { value, stateName: stateName });
       }
     };
 
