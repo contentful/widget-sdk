@@ -2,6 +2,7 @@ import { once, noop } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Card, IconButton } from '@contentful/forma-36-react-components';
+import classNames from 'classnames';
 
 import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity/index.es6';
 import WrappedEntityCard from './WrappedEntityCard.es6';
@@ -23,7 +24,8 @@ class FetchedEntityCard extends React.Component {
     onRemove: PropTypes.func,
     onClick: PropTypes.func,
     onEntityFetchComplete: PropTypes.func,
-    cardDragHandleComponent: PropTypes.element
+    cardDragHandleComponent: PropTypes.element,
+    cardComponent: PropTypes.func
   };
   static defaultProps = {
     className: '',
@@ -31,9 +33,10 @@ class FetchedEntityCard extends React.Component {
     onEntityFetchComplete: noop
   };
 
-  renderDeleteButton(fetchEntityResult) {
+  renderDeleteButton(fetchEntityResult, className) {
     return (
       <IconButton
+        className={`${className}__delete-cta`}
         iconProps={{ icon: 'Close' }}
         label={`Remove reference to ${this.props.entityType.toLowerCase()}`}
         onClick={event => {
@@ -47,21 +50,26 @@ class FetchedEntityCard extends React.Component {
     );
   }
 
-  renderMissingEntryReferenceCard(fetchEntityResult) {
-    const { entityType, className, selected } = this.props;
+  renderMissingEntityReferenceCard(fetchEntityResult) {
+    const { entityType, className, selected, cardDragHandleComponent } = this.props;
+
     return (
-      <Card selected={selected} className={className}>
+      <Card
+        selected={selected}
+        className={classNames(className, [
+          `${className}--missing`,
+          cardDragHandleComponent && `${className}--has-drag-handle`
+        ])}>
         <div style={{ display: 'flex' }}>
           <h1
             style={{
               margin: 0,
               fontSize: '.875rem', // Equal to 14px when browser text size is set to 100%
-              lineHeight: 1.5,
-              flex: '1 1 0'
+              lineHeight: 1.5
             }}>
             {entityType} missing or inaccessible
           </h1>
-          {this.renderDeleteButton(fetchEntityResult)}
+          {this.renderDeleteButton(fetchEntityResult, className)}
         </div>
       </Card>
     );
@@ -79,7 +87,8 @@ class FetchedEntityCard extends React.Component {
       onClick,
       readOnly,
       size,
-      cardDragHandleComponent
+      cardDragHandleComponent,
+      cardComponent
     } = this.props;
 
     return (
@@ -99,16 +108,19 @@ class FetchedEntityCard extends React.Component {
               }
 
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
-                return this.renderMissingEntryReferenceCard(fetchEntityResult);
+                return this.renderMissingEntityReferenceCard(fetchEntityResult);
               } else {
                 const isEntry = entityType === 'Entry';
-                const isSmallAsset = !isEntry && size === 'small';
                 const entityId = fetchEntityResult.entity
                   ? fetchEntityResult.entity.sys.id
                   : undefined;
 
-                const WrapperComponent =
-                  isEntry || isSmallAsset ? WrappedEntityCard : WrappedAssetCard;
+                const WrapperComponent = cardComponent
+                  ? cardComponent
+                  : isEntry
+                  ? WrappedEntityCard
+                  : WrappedAssetCard;
+
                 const cardProps = {
                   entityType,
                   ...fetchEntityResult,
@@ -152,3 +164,4 @@ class FetchedEntityCard extends React.Component {
 }
 
 export default FetchedEntityCard;
+export { WrappedEntityCard, WrappedAssetCard };

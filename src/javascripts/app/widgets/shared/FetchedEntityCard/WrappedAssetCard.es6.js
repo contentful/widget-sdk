@@ -18,7 +18,8 @@ export default class WrappedAssetCard extends React.Component {
     onRemove: PropTypes.func,
     onClick: PropTypes.func,
     readOnly: PropTypes.bool,
-    cardDragHandleComponent: PropTypes.element
+    cardDragHandleComponent: PropTypes.element,
+    size: PropTypes.string
   };
 
   static defaultProps = {
@@ -81,7 +82,8 @@ export default class WrappedAssetCard extends React.Component {
       entityStatus,
       isLoading,
       onClick,
-      cardDragHandleComponent
+      cardDragHandleComponent,
+      size
     } = this.props;
 
     return (
@@ -94,12 +96,19 @@ export default class WrappedAssetCard extends React.Component {
         rel={href ? 'noopener' : undefined}
         selected={selected}
         status={entityStatus}
-        src={entityFile ? `${entityFile.url}?h=${300}` : ''}
+        src={
+          entityFile
+            ? size === 'small'
+              ? `${entityFile.url}?w=150&h=150&fit=thumb`
+              : `${entityFile.url}?h=300`
+            : ''
+        }
         isLoading={isLoading}
         onClick={onClick}
         dropdownListElements={this.renderAssetActions(entityFile)}
         cardDragHandleComponent={cardDragHandleComponent}
         withDragHandle={!!cardDragHandleComponent}
+        size={size}
       />
     );
   }

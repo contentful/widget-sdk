@@ -2,7 +2,7 @@ import { noop } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import CfPropTypes from 'utils/CfPropTypes.es6';
-import FetchedEntityCard from '../shared/FetchedEntityCard/index.es6';
+import FetchedEntityCard, { WrappedEntityCard } from '../shared/FetchedEntityCard/index.es6';
 import LinkingActions from './LinkingActions.es6';
 import { TYPES, entityToLink } from './Util.es6';
 import SortableLinkList, { DragHandle, linksToListItems } from './SortableLinkList.es6';
@@ -51,8 +51,23 @@ export default class LinkEditor extends React.Component {
   }
 
   getViewMode() {
-    const { type, style } = this.props;
-    return type === TYPES.ASSET && style === STYLE.CARD ? VIEW_MODE.GRID : VIEW_MODE.LIST;
+    const { type, style, isSingle } = this.props;
+    return type === TYPES.ASSET && style === STYLE.CARD && !isSingle
+      ? VIEW_MODE.GRID
+      : VIEW_MODE.LIST;
+  }
+
+  getCardProps() {
+    if (this.getViewMode() === VIEW_MODE.GRID) {
+      return {
+        size: 'small' // Image gallery case
+      };
+    }
+
+    const size = this.props.style === STYLE.LINK ? 'small' : 'default';
+    const cardComponent = size === 'small' ? WrappedEntityCard : null;
+
+    return { size, cardComponent };
   }
 
   handleEditLink = (entity, index) => {
@@ -96,7 +111,7 @@ export default class LinkEditor extends React.Component {
     this.handleAddLinks(entities);
   };
 
-  renderCard(link, index) {
+  renderCard(link, index, cardProps) {
     const { isSingle, isDisabled, onLinkFetchComplete } = this.props;
     const handleEditLink = fetchEntityResult =>
       this.handleEditLink(fetchEntityResult.entity, index);
@@ -105,7 +120,6 @@ export default class LinkEditor extends React.Component {
       <FetchedEntityCard
         entityType={entityType}
         entityId={link.sys.id}
-        size={this.props.style === STYLE.LINK ? 'small' : 'default'}
         readOnly={false}
         disabled={isDisabled}
         editable={true}
@@ -118,13 +132,17 @@ export default class LinkEditor extends React.Component {
         }}
         className="link-editor__entity-card"
         cardDragHandleComponent={isSingle ? null : <DragHandle />}
+        {...cardProps}
       />
     );
   }
 
   render() {
     const { type, isDisabled, isSingle, canCreateEntity, contentTypes } = this.props;
-    const items = linksToListItems(this.getLinks(), (link, index) => this.renderCard(link, index));
+    const cardProps = this.getCardProps();
+    const items = linksToListItems(this.getLinks(), (link, index) =>
+      this.renderCard(link, index, cardProps)
+    );
     const showLinkButtons = !isDisabled && (!isSingle || items.length === 0);
     const isGrid = this.getViewMode() === VIEW_MODE.GRID;
     return (
