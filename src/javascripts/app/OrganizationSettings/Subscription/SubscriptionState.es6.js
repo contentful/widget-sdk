@@ -1,4 +1,4 @@
-import { reactStateWrapper } from 'app/routeUtils.es6';
+import { reactStateWrapper } from 'states/utils.es6';
 
 export default reactStateWrapper({
   name: 'subscription_new',

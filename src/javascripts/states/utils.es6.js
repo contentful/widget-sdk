@@ -1,11 +1,12 @@
 import { get, find } from 'lodash';
 
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
-import Base from 'states/Base.es6';
+import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { getStore } from 'TheStore/index.es6';
 import * as Analytics from 'analytics/Analytics.es6';
-import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
-import { go } from 'states/Navigator.es6';
+
+import Base from './Base.es6';
+import { go } from './Navigator.es6';
 
 const store = getStore();
 

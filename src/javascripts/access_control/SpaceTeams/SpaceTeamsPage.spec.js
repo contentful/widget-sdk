@@ -9,7 +9,7 @@ import { getTeamsSpaceMembershipsOfSpace as getTeamsSpaceMembershipsOfSpaceMock 
 import { getSectionVisibility as getSectionVisibilityMock } from '../AccessChecker/index.es6';
 
 jest.mock('services/TokenStore.es6', () => ({
-  getSpace: jest.fn().mockReturnValue(Promise.resolve({ name: 'TestSpace' }))
+  getSpace: jest.fn().mockResolvedValue({ name: 'TestSpace' })
 }));
 
 jest.mock('data/EndpointFactory.es6', () => ({
@@ -30,8 +30,8 @@ const build = () => {
 
 describe('SpaceTeamsPage', () => {
   beforeEach(() => {
-    getTeamsSpaceMembershipsOfSpaceMock.mockReturnValue(Promise.resolve([]));
-    createSpaceEndpointMock.mockReturnValue(Promise.resolve({}));
+    getTeamsSpaceMembershipsOfSpaceMock.mockResolvedValue([]);
+    createSpaceEndpointMock.mockResolvedValue({});
     getSectionVisibilityMock.mockReturnValue({ teams: true });
   });
 
@@ -63,59 +63,57 @@ describe('SpaceTeamsPage', () => {
 
   describe('api returns space memberships', () => {
     beforeEach(() => {
-      getTeamsSpaceMembershipsOfSpaceMock.mockReturnValue(
-        Promise.resolve([
-          {
-            admin: true,
-            roles: [],
-            sys: {
-              type: 'TeamSpaceMembership',
-              id: 'membership1',
-              team: {
-                sys: {
-                  type: 'Team',
-                  id: 'team1'
-                },
-                description: 'This is the first test team',
-                memberCount: 1,
-                name: 'TestTeam1'
-              }
-            }
-          },
-          {
-            admin: false,
-            roles: [
-              {
-                sys: {
-                  type: 'Role',
-                  id: 'role1'
-                },
-                name: 'Role 1'
+      getTeamsSpaceMembershipsOfSpaceMock.mockResolvedValue([
+        {
+          admin: true,
+          roles: [],
+          sys: {
+            type: 'TeamSpaceMembership',
+            id: 'membership1',
+            team: {
+              sys: {
+                type: 'Team',
+                id: 'team1'
               },
-              {
-                sys: {
-                  type: 'Role',
-                  id: 'role2'
-                },
-                name: 'Role 2'
-              }
-            ],
-            sys: {
-              type: 'TeamSpaceMembership',
-              id: 'membership2',
-              team: {
-                sys: {
-                  type: 'Team',
-                  id: 'team2'
-                },
-                description: 'This is the second test team',
-                memberCount: 99,
-                name: 'TestTeam2'
-              }
+              description: 'This is the first test team',
+              memberCount: 1,
+              name: 'TestTeam1'
             }
           }
-        ])
-      );
+        },
+        {
+          admin: false,
+          roles: [
+            {
+              sys: {
+                type: 'Role',
+                id: 'role1'
+              },
+              name: 'Role 1'
+            },
+            {
+              sys: {
+                type: 'Role',
+                id: 'role2'
+              },
+              name: 'Role 2'
+            }
+          ],
+          sys: {
+            type: 'TeamSpaceMembership',
+            id: 'membership2',
+            team: {
+              sys: {
+                type: 'Team',
+                id: 'team2'
+              },
+              description: 'This is the second test team',
+              memberCount: 99,
+              name: 'TestTeam2'
+            }
+          }
+        }
+      ]);
     });
 
     it('should render correct count', async () => {

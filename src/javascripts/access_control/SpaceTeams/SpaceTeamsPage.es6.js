@@ -10,13 +10,13 @@ import {
   Heading,
   IconButton
 } from '@contentful/forma-36-react-components';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 
 import { getSpace } from 'services/TokenStore.es6';
 import Workbench from 'app/common/Workbench.es6';
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
+import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
@@ -27,19 +27,20 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import { getTeamsSpaceMembershipsOfSpace } from '../TeamRepository.es6';
 import { getSectionVisibility } from '../AccessChecker/index.es6';
 
-export const TeamListFetcher = createFetcherComponent(({ spaceId }) => {
+export const TeamListFetcher = createFetcherComponent(async ({ spaceId, onReady }) => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
 
   const promises = [getTeamsSpaceMembershipsOfSpace(spaceEndpoint), getSpace(spaceId)];
 
-  return Promise.all(promises);
+  const data = await Promise.all(promises);
+  onReady();
+  return data;
 });
 
-const cell = {
-  paddingRight: '180px'
-};
-
 const styles = {
+  cell: css({
+    paddingRight: '180px'
+  }),
   contentAlignment: css({
     display: 'flex',
     alignItems: 'center',
@@ -83,8 +84,7 @@ const styles = {
     maxWidth: '400px',
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
-    lineHeight: '1.2em',
-    ...cell
+    lineHeight: '1.2em'
   })
 };
 
@@ -94,27 +94,37 @@ export default class SpaceTeamsPage extends React.Component {
     onReady: PropTypes.func.isRequired
   };
 
-  componentDidMount() {
-    this.props.onReady();
-  }
-
   render() {
-    const { spaceId } = this.props;
-    if (!getSectionVisibility()['teams']) {
+    const { spaceId, onReady } = this.props;
+    if (!getSectionVisibility().teams) {
       return <ForbiddenPage />;
     }
 
     return (
-      <TeamListFetcher spaceId={spaceId}>
+      <TeamListFetcher spaceId={spaceId} onReady={onReady}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
-            return <FetcherLoading message="Loading teams..." />;
+            return null;
           }
           if (isError) {
             return <StateRedirect to="spaces.detail.entries.list" />;
           }
 
           const [teamSpaceMemberships, space] = data;
+          const sortedMemberships = teamSpaceMemberships.sort(
+            (
+              {
+                sys: {
+                  team: { name: nameA }
+                }
+              },
+              {
+                sys: {
+                  team: { name: nameB }
+                }
+              }
+            ) => nameA.localeCompare(nameB)
+          );
 
           return (
             <React.Fragment>
@@ -129,8 +139,8 @@ export default class SpaceTeamsPage extends React.Component {
                 <Workbench.Content className={styles.contentAlignment}>
                   <div className={styles.content}>
                     <Heading className={styles.header} testId="header">
-                      Teams in <span className={styles.headerTeamName}>{space.name}</span>
-                      {` space (${teamSpaceMemberships.length})`}
+                      Teams in <span className={styles.headerTeamName}>{space.name}</span> space (
+                      {teamSpaceMemberships.length})
                     </Heading>
                     <Table testId="membership-table">
                       <TableHead>
@@ -142,58 +152,45 @@ export default class SpaceTeamsPage extends React.Component {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {teamSpaceMemberships
-                          .sort(
-                            (
-                              {
-                                sys: {
-                                  team: { name: nameA }
-                                }
-                              },
-                              {
-                                sys: {
-                                  team: { name: nameB }
-                                }
-                              }
-                            ) => nameA.localeCompare(nameB)
+                        {sortedMemberships.map(
+                          ({
+                            sys: {
+                              id,
+                              team: { name, description, memberCount }
+                            },
+                            roles,
+                            admin
+                          }) => (
+                            <TableRow
+                              key={id}
+                              testId={`membership-row-${id}`}
+                              className={styles.row}>
+                              <TableCell className={styles.cell} testId={`team-cell-${id}`}>
+                                <div className={styles.cellTeamName}>{name}</div>
+                                {/*This truncation is a fallback for IE and pre-68 FF, which don't support css line-clamp*/}
+                                <div className={styles.cellTeamDescription}>
+                                  {truncate(description, { length: 130 })}
+                                </div>
+                              </TableCell>
+                              <TableCell
+                                className={cx(styles.cellRoles, styles.cell)}
+                                testId={`roles-cell-${id}`}>
+                                {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
+                              </TableCell>
+                              <TableCell className={styles.cell} testId={`member-count-cell-${id}`}>
+                                {pluralize('member', memberCount, true)}
+                              </TableCell>
+                              <TableCell>
+                                <IconButton
+                                  testId={`action-button-${id}`}
+                                  label="Action"
+                                  buttonType="secondary"
+                                  iconProps={{ icon: 'MoreHorizontal' }}
+                                />
+                              </TableCell>
+                            </TableRow>
                           )
-                          .map(
-                            ({
-                              sys: {
-                                id,
-                                team: { name, description, memberCount }
-                              },
-                              roles,
-                              admin
-                            }) => (
-                              <TableRow
-                                key={id}
-                                testId={`membership-row-${id}`}
-                                className={styles.row}>
-                                <TableCell className={css(cell)} testId={`team-cell-${id}`}>
-                                  <div className={styles.cellTeamName}>{name}</div>
-                                  {/*This truncation is a fallback for IE and pre-68 FF, which don't support css line-clamp*/}
-                                  <div className={styles.cellTeamDescription}>
-                                    {truncate(description, { length: 130 })}
-                                  </div>
-                                </TableCell>
-                                <TableCell className={styles.cellRoles} testId={`roles-cell-${id}`}>
-                                  {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
-                                </TableCell>
-                                <TableCell className={css(cell)} testId={`member-count-cell-${id}`}>
-                                  {pluralize('member', memberCount, true)}
-                                </TableCell>
-                                <TableCell>
-                                  <IconButton
-                                    testId={`action-button-${id}`}
-                                    label="Action"
-                                    buttonType="secondary"
-                                    iconProps={{ icon: 'MoreHorizontal' }}
-                                  />
-                                </TableCell>
-                              </TableRow>
-                            )
-                          )}
+                        )}
                       </TableBody>
                     </Table>
                   </div>

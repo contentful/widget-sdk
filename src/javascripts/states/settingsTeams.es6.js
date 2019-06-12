@@ -1,4 +1,4 @@
-import { reactStateWrapper } from 'app/routeUtils.es6';
+import { reactStateWrapper } from './utils.es6';
 
 const list = reactStateWrapper({
   name: 'list',
