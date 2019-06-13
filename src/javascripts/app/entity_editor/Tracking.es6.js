@@ -1,4 +1,4 @@
-import { get, flatten, uniqBy } from 'lodash';
+import { get, flatten, uniqBy, pick } from 'lodash';
 import { track } from 'analytics/Analytics.es6';
 import { stateName } from 'data/CMA/EntityState.es6';
 import * as K from 'utils/kefir.es6';
@@ -41,7 +41,11 @@ export async function trackEntryView({
       )
     ],
     currentSlideLevel,
-    editorType
+    editorType,
+    // Needed for UIE tracking:
+    // TODO: do not use "editorData", just pass required properties
+    // TODO: add a test covering this
+    editorData: pick(editorData, ['fieldControls', 'sidebar', 'sidebarExtensions'])
   });
 }
 
