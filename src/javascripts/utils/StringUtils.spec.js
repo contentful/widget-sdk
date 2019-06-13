@@ -162,6 +162,42 @@ describe('utils/StringUtils.es6', () => {
     });
   });
 
+  describe('parseList', () => {
+    it('returns an empty array', () => {
+      const result = utils.parseList('');
+      expect(result).toEqual([]);
+    });
+
+    it('parses words separated by comma', () => {
+      const result = utils.parseList('banana, apple, pear');
+      expect(result).toEqual(['banana', 'apple', 'pear']);
+    });
+
+    it('parses words separated by line breaks', () => {
+      const result = utils.parseList(`
+        banana
+        apple
+        pear
+      `);
+      expect(result).toEqual(['banana', 'apple', 'pear']);
+    });
+
+    it('removes empty spaces', () => {
+      const result = utils.parseList('   banana,     apple    ,pear    ');
+      expect(result).toEqual(['banana', 'apple', 'pear']);
+    });
+
+    it('ignores empty items', () => {
+      const result = utils.parseList('banana, , pear');
+      expect(result).toEqual(['banana', 'pear']);
+    });
+
+    it('returns unique items', () => {
+      const result = utils.parseList('banana, banana, apple, pear, pear, pear');
+      expect(result).toEqual(['banana', 'apple', 'pear']);
+    });
+  });
+
   describe('joinWithAnd', () => {
     const getItems = () => {
       return {

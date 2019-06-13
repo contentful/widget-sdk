@@ -230,6 +230,21 @@ export function isValidEmail(string) {
   return emailRegex.test(string);
 }
 
+/**
+ * Get a string with words separated by comma or line breaks
+ * and return an array of unique items
+ *
+ * parseList('apple, orange, banana') // -> ['apple', 'orange', 'banana']
+ */
+export function parseList(phrase = '') {
+  const list = phrase
+    .split(/\n|,/)
+    .map(_.trim)
+    .filter(item => item.length > 0);
+
+  return _.uniq(list);
+}
+
 export const urlRegex = /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?$/;
 
 export function isValidUrl(value) {
