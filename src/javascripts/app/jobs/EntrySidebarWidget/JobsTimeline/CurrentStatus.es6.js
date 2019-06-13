@@ -7,7 +7,8 @@ import { scheduleStyles as styles } from './styles.es6';
 const tagTypeForStatus = {
   draft: 'warning',
   published: 'positive',
-  archived: 'negative'
+  archived: 'negative',
+  changed: 'primary'
 };
 
 const CurrentStatus = ({ status }) => (
@@ -22,7 +23,7 @@ const CurrentStatus = ({ status }) => (
 );
 
 export const schedulePropTypes = {
-  status: PropTypes.oneOf(['draft', 'published', 'archived'])
+  status: PropTypes.oneOf(['draft', 'published', 'archived', 'changed'])
 };
 CurrentStatus.propTypes = schedulePropTypes;
 

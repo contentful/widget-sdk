@@ -84,7 +84,7 @@ export default class JobWidget extends React.Component {
     const entryHasBeenPublishedAfterLastFailedJob = this.isPublishedAfterLastFailedJob(recentJob);
 
     return (
-      entryHasBeenPublishedAfterLastFailedJob && (
+      !entryHasBeenPublishedAfterLastFailedJob && (
         <FailedScheduleNote recentJob={recentJob} prevJob={prevJob} />
       )
     );
@@ -119,13 +119,12 @@ export default class JobWidget extends React.Component {
               schedule => schedule.sys.status === 'pending'
             );
             const hasScheduledActions = pendingJobs.length > 0;
-
             return (
               <React.Fragment>
                 <div className={styles.heading}>Schedule</div>
                 {this.renderFailedScheduleNote(data)}
                 {hasScheduledActions ? (
-                  <JobsTimeline jobs={pendingJobs} />
+                  <JobsTimeline jobs={pendingJobs} entity={this.props.entity} />
                 ) : (
                   <NewJob onCreate={this.handleJobCreate} />
                 )}

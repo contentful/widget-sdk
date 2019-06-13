@@ -5,11 +5,12 @@ import Job, { propTypes as jobPropTypes } from './Job.es6';
 import CurrentStatus from './CurrentStatus.es6';
 import { TextLink } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
+import { stateName, getState } from 'data/CMA/EntityState.es6';
 
-const JobsTimeline = ({ jobs }) => (
+const JobsTimeline = ({ jobs, entity }) => (
   <div>
     <ul>
-      <CurrentStatus status={'draft'} />
+      <CurrentStatus status={stateName(getState(entity.sys))} />
       {jobs.map(schedule => (
         <Job
           key={schedule.action}
@@ -30,7 +31,8 @@ const JobsTimeline = ({ jobs }) => (
 );
 
 JobsTimeline.propTypes = {
-  jobs: PropTypes.arrayOf(PropTypes.shape(jobPropTypes))
+  jobs: PropTypes.arrayOf(PropTypes.shape(jobPropTypes)),
+  entity: PropTypes.object
 };
 
 export default JobsTimeline;
