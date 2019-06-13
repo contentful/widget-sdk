@@ -76,6 +76,10 @@ export default function register() {
       $scope.openRoleChangeDialog = decorateWithReload(actions.openRoleChangeDialog);
       $scope.canModifyUsers = accessChecker.canModifyUsers;
       $scope.openSpaceInvitationDialog = openSpaceInvitationDialog;
+      $scope.teamsAlertProps = {
+        children: `Some of the users here might have access to this space via a team. We’re currently working on giving space admins the ability to manage teams’ access to their space, but until then only organization admins can manage that access.`,
+        style: { marginTop: '20px' }
+      };
 
       reload();
 
@@ -109,6 +113,7 @@ export default function register() {
       }
 
       function onResetResponse() {
+        $scope.hasTeamSpaceMemberships = userListHandler.hasTeamSpaceMemberships();
         $scope.spaceUsersCount = userListHandler.getUserCount();
         $scope.by = userListHandler.getGroupedUsers();
         $scope.context.ready = true;

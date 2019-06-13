@@ -40,6 +40,7 @@ export default function register() {
     'data/CMA/LocaleRepo.es6',
     'data/CMA/SpaceEnvironmentsRepo.es6',
     'data/CMA/WebhookRepo.es6',
+    'data/CMA/SpaceMembersRepo.es6',
     'app/settings/apps/CachedAppConfig.es6',
     'saved-views-migrator',
     (
@@ -61,6 +62,7 @@ export default function register() {
       { default: createLocaleRepo },
       { create: createEnvironmentsRepo },
       { default: createWebhookRepo },
+      { default: createSpaceMembersRepo },
       { default: createCachedAppConfig },
       { create: createViewMigrator }
     ) => {
@@ -142,6 +144,7 @@ export default function register() {
           );
 
           self.memberships = MembershipRepo.create(self.endpoint);
+          self.members = createSpaceMembersRepo(self.endpoint);
 
           self.docPool = DocumentPool.create(self.docConnection, self.endpoint);
 

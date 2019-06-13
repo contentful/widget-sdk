@@ -28,6 +28,7 @@ export default function register() {
         let membershipMap = {};
         let roleNameMap = {};
         let userRolesMap = {};
+        let spaceMembershipMap = {};
 
         return {
           reset,
@@ -44,13 +45,15 @@ export default function register() {
           getUsersByRole,
           getRoleOptions,
           getRoleOptionsBut,
-          isLastAdmin
+          isLastAdmin,
+          hasTeamSpaceMemberships
         };
 
         function reset() {
           return $q
             .all({
-              memberships: spaceContext.memberships.getAll(),
+              memberships: spaceContext.members.getAll(),
+              spaceMemberships: spaceContext.memberships.getAll(),
               roles: RoleRepository.getInstance(spaceContext.space).getAll(),
               rolesResource: createResourceService(spaceContext.getId()).get('role'),
               users: getAllUsers()
@@ -61,11 +64,12 @@ export default function register() {
         function processData(data) {
           adminMap = {};
           membershipMap = {};
+          spaceMembershipMap = {};
           roleNameMap = {};
           userRolesMap = {};
 
           _.forEach(data.memberships, membership => {
-            const userId = membership.user.sys.id;
+            const userId = membership.sys.user.sys.id;
             adminMap[userId] = membership.admin;
             membershipMap[userId] = membership;
 
@@ -73,6 +77,11 @@ export default function register() {
             _.forEach(membership.roles, role => {
               userRolesMap[userId].push(role.sys.id);
             });
+          });
+
+          _.forEach(data.spaceMemberships, membership => {
+            const userId = membership.user.sys.id;
+            spaceMembershipMap[userId] = membership;
           });
 
           _.forEach(data.roles, role => {
@@ -102,30 +111,32 @@ export default function register() {
         }
 
         function prepareUsers(users) {
-          return (
-            _(users)
-              .map(user => {
-                const id = user.sys.id;
+          return _(users)
+            .map(user => {
+              const id = user.sys.id;
 
-                return {
-                  id,
-                  membership: membershipMap[id],
-                  isAdmin: adminMap[id],
-                  roles: userRolesMap[id] || [],
-                  roleNames: getRoleNamesForUser(id),
-                  avatarUrl: user.avatarUrl,
-                  name:
-                    user.firstName && user.lastName
-                      ? getName(user)
-                      : user.email || NOT_DEFINED_USER_NAME,
-                  confirmed: user.activated
-                };
-              })
-              // remove users without a space membership
-              .filter(user => !!user.membership)
-              .sortBy('name')
-              .value()
-          );
+              return {
+                id,
+                membership: membershipMap[id],
+                spaceMembership: spaceMembershipMap[id],
+                isAdmin: adminMap[id],
+                roles: userRolesMap[id] || [],
+                roleNames: getRoleNamesForUser(id),
+                avatarUrl: user.avatarUrl,
+                // This is a hack while we work on the new Users page.
+                // ETA: July 2019
+                isMemberViaTeam: membershipMap[id].relatedMemberships.some(
+                  m => m.sys.linkType === 'TeamSpaceMembership'
+                ),
+                name:
+                  user.firstName && user.lastName
+                    ? getName(user)
+                    : user.email || NOT_DEFINED_USER_NAME,
+                confirmed: user.activated
+              };
+            })
+            .sortBy('name')
+            .value();
         }
 
         function getName(user) {
@@ -158,6 +169,12 @@ export default function register() {
         function isLastAdmin(userId) {
           const adminCount = _.filter(adminMap, _.identity).length;
           return adminMap[userId] && adminCount < 2;
+        }
+
+        function hasTeamSpaceMemberships() {
+          return users.some(user =>
+            user.membership.relatedMemberships.some(m => m.sys.linkType === 'TeamSpaceMembership')
+          );
         }
 
         function getRoleOptions() {

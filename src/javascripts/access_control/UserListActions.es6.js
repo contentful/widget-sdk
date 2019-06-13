@@ -53,7 +53,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
         removeUser: Command.create(
           () =>
             spaceContext.memberships
-              .remove(user.membership)
+              .remove(user.spaceMembership)
               .then(() => {
                 Notification.success('User successfully removed from this space.');
                 if (isCurrentUser) {
@@ -91,7 +91,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
         changeRole: Command.create(
           () =>
             spaceContext.memberships
-              .changeRoleTo(user.membership, [scope.input.id])
+              .changeRoleTo(user.spaceMembership, [scope.input.id])
               .then(() => {
                 Notification.success('User role successfully changed.');
               })

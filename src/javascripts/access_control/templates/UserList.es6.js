@@ -57,7 +57,7 @@ function userContextMenu() {
     h(
       'button.user-list__actions.user-list__actions--disabled.btn-inline',
       {
-        ngIf: '!canModifyUsers()'
+        ngIf: '!canModifyUsers() || user.isMemberViaTeam'
       },
       ['&bullet;&bullet;&bullet;']
     ),
@@ -67,7 +67,7 @@ function userContextMenu() {
         type: 'button',
         ariaLabel: 'Actions',
         cfContextMenuTrigger: true,
-        ngIf: 'canModifyUsers()'
+        ngIf: 'canModifyUsers() && !user.isMemberViaTeam'
       },
       ['&bullet;&bullet;&bullet;']
     ),
@@ -118,6 +118,11 @@ function sidebar() {
         dataTestId: 'add-users-to-space'
       },
       [h('cf-icon.btn-icon.inverted', { name: 'plus' }), 'Add users to space']
-    )
+    ),
+    h('react-component', {
+      ngIf: 'hasTeamSpaceMemberships',
+      name: '@contentful/forma-36-react-components/Note',
+      props: 'teamsAlertProps'
+    })
   ]);
 }
