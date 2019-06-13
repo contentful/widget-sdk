@@ -28,6 +28,7 @@ export default function register() {
         let membershipMap = {};
         let roleNameMap = {};
         let userRolesMap = {};
+        let spaceMembershipMap = {};
 
         return {
           reset,
@@ -52,6 +53,7 @@ export default function register() {
           return $q
             .all({
               memberships: spaceContext.members.getAll(),
+              spaceMemberships: spaceContext.memberships.getAll(),
               roles: RoleRepository.getInstance(spaceContext.space).getAll(),
               rolesResource: createResourceService(spaceContext.getId()).get('role'),
               users: getAllUsers()
@@ -62,6 +64,7 @@ export default function register() {
         function processData(data) {
           adminMap = {};
           membershipMap = {};
+          spaceMembershipMap = {};
           roleNameMap = {};
           userRolesMap = {};
 
@@ -74,6 +77,11 @@ export default function register() {
             _.forEach(membership.roles, role => {
               userRolesMap[userId].push(role.sys.id);
             });
+          });
+
+          _.forEach(data.spaceMemberships, membership => {
+            const userId = membership.user.sys.id;
+            spaceMembershipMap[userId] = membership;
           });
 
           _.forEach(data.roles, role => {
@@ -110,6 +118,7 @@ export default function register() {
               return {
                 id,
                 membership: membershipMap[id],
+                spaceMembership: spaceMembershipMap[id],
                 isAdmin: adminMap[id],
                 roles: userRolesMap[id] || [],
                 roleNames: getRoleNamesForUser(id),
