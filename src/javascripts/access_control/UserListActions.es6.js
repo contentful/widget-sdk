@@ -53,7 +53,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
         removeUser: Command.create(
           () =>
             spaceContext.memberships
-              .remove(user.membership)
+              .remove(user.spaceMembership)
               .then(() => {
                 Notification.success('User successfully removed from this space.');
                 if (isCurrentUser) {
