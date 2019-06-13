@@ -7,7 +7,6 @@ import $ from 'jquery';
  *
  * - `FieldValidationDialogController`
  * - `cfValidationsettings`
- * - `cfValidationValues`
  * - `cfValidationLinkType`
  * - `cfValidationDateSelect`
  *

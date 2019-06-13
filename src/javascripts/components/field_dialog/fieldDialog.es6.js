@@ -126,10 +126,8 @@ export default function register() {
           checked: enabled,
           helpText,
           className: 'validation-checkboxfield',
-          checkboxProps: {
-            name: 'isthisenabled',
-            'aria-label': `${enabled ? 'Disable' : 'Enable'} validation`
-          },
+          name: 'isthisenabled',
+          'aria-label': `${enabled ? 'Disable' : 'Enable'} validation`,
           onChange: e => {
             validation.enabled = e.target.checked;
             $scope.$digest();
@@ -260,7 +258,7 @@ export default function register() {
                 $scope.currentTitleField
               } is set as the title field. Please enable the field to select it as the Entry title.`
             : undefined,
-        light: true,
+        labelIsLight: true,
         onChange: e => {
           $scope.field.isTitle = e.target.checked;
           fieldDecorator.update($scope.decoratedField, $scope.field, $scope.contentType);
@@ -277,7 +275,7 @@ export default function register() {
           2,
           'locales'
         )}`,
-        light: true,
+        labelIsLight: true,
         onChange: e => {
           $scope.field.localized = e.target.checked;
           $scope.$digest();

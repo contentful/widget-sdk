@@ -7,6 +7,7 @@ import LinkEditor, {
   SingleLinkEditor,
   withCfWebApp as linkEditorWithCfWebApp
 } from 'app/widgets/LinkEditor/index.es6';
+import TagEditorField from 'app/widgets/TagEditor/TagEditorField.es6';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -202,7 +203,7 @@ export function create() {
     fieldTypes: ['Symbols'],
     name: 'Tag',
     icon: 'tags',
-    template: '<cf-tag-editor />'
+    buildTemplate: ({ widgetApi }) => <TagEditorField widgetApi={widgetApi} />
   });
 
   registerWidget('fileEditor', {

@@ -27,6 +27,18 @@ export default function register() {
               $scope.validate();
             }
           });
+
+          $scope.updateValidationSettingsValue = items => {
+            $scope.validation.settings = items;
+            $scope.validator.run();
+            $scope.$applyAsync();
+          };
+
+          $scope.updateValidationMessageValue = value => {
+            $scope.validation.message = value;
+            $scope.validator.run();
+            $scope.$applyAsync();
+          };
         }
       ]
     })

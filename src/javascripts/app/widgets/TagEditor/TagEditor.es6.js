@@ -1,26 +1,53 @@
 import React, { useState } from 'react';
+import { noop } from 'lodash';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import { TextInput, Pill } from '@contentful/forma-36-react-components';
+
+import { sortableContainer, sortableElement } from 'react-sortable-hoc';
+import arraySwap from 'utils/arraySwap.es6';
 import isHotkey from 'is-hotkey';
 import TagEditorConstraints from './TagEditorConstraints.es6';
 
 const styles = {
   dropContainer: css({
+    whiteSpace: 'nowrap',
     display: 'flex',
     flexWrap: 'wrap'
-  }),
-  dragContainer: css({
-    display: 'inline-block',
-    marginRight: tokens.spacingM,
-    marginBottom: tokens.spacingM
   }),
   input: css({
     marginTop: tokens.spacingS,
     marginBottom: tokens.spacingM
+  }),
+  pill: css({
+    cursor: 'grab',
+    userSelect: 'none',
+    maxWidth: 200,
+    marginRight: tokens.spacingS,
+    marginBottom: tokens.spacingS
   })
 };
+
+const SortablePill = sortableElement(({ label, isDisabled, index, onRemove }) => (
+  <Pill
+    tabIndex={0}
+    testId="tag-editor-pill"
+    className={styles.pill}
+    status="primary"
+    label={label}
+    onClose={() => {
+      if (!isDisabled) {
+        onRemove(index);
+      }
+    }}
+    onDrag={noop}
+  />
+));
+
+const SortableContainer = sortableContainer(({ children }) => (
+  <div className={styles.dropContainer}>{children}</div>
+));
 
 function TagEditor(props) {
   const [value, setValue] = useState('');
@@ -46,29 +73,24 @@ function TagEditor(props) {
           setValue(e.target.value);
         }}
       />
-
-      <div className={styles.dropContainer}>
+      <SortableContainer
+        axis="xy"
+        distance={10}
+        onSortEnd={({ oldIndex, newIndex }) => {
+          props.onUpdate(arraySwap(props.items, oldIndex, newIndex));
+        }}>
         {items.map((item, index) => {
           return (
-            <div key={item + index} className={styles.dragContainer}>
-              <Pill
-                data-test-id="tag-editor-pill"
-                status="primary"
-                label={item}
-                onClose={() => {
-                  if (!isDisabled) {
-                    if (items.length === 1) {
-                      onRemoveLast();
-                    } else {
-                      onRemove(index);
-                    }
-                  }
-                }}
-              />
-            </div>
+            <SortablePill
+              label={item}
+              index={index}
+              key={item + index}
+              isDisabled={isDisabled}
+              onRemove={items.length === 1 ? onRemoveLast : onRemove}
+            />
           );
         })}
-      </div>
+      </SortableContainer>
       {constraints && (
         <TagEditorConstraints constraints={constraints} constraintsType={constraintsType} />
       )}
@@ -83,7 +105,8 @@ TagEditor.propTypes = {
   onAdd: PropTypes.func.isRequired,
   onRemove: PropTypes.func.isRequired,
   onRemoveLast: PropTypes.func.isRequired,
-  isDisabled: PropTypes.bool.isRequired
+  isDisabled: PropTypes.bool.isRequired,
+  onUpdate: PropTypes.func.isRequired
 };
 
 export default TagEditor;

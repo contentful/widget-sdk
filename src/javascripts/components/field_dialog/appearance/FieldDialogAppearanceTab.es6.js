@@ -37,7 +37,7 @@ export default class FieldDialogAppearanceTab extends React.Component {
     widgetParams: PropTypes.object.isRequired,
     onSelect: PropTypes.func.isRequired,
     onParametersUpdate: PropTypes.func.isRequired,
-    hasCustomEditor: PropTypes.bool.isRequired
+    hasCustomEditor: PropTypes.bool
   };
 
   getFormProps = widget => {

@@ -15,7 +15,8 @@ function getConstraintsType(sizeConstraints) {
   }
 }
 
-export default function TagEditorField({ field }) {
+export default function TagEditorField({ widgetApi }) {
+  const field = widgetApi.field;
   const [items, setItems] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
 
@@ -54,6 +55,10 @@ export default function TagEditorField({ field }) {
       onRemove={index => {
         field.removeValueAt(index);
       }}
+      onUpdate={items => {
+        field.setValue(items);
+        setItems(items);
+      }}
       onRemoveLast={() => {
         field.removeValue();
       }}
@@ -62,5 +67,7 @@ export default function TagEditorField({ field }) {
 }
 
 TagEditorField.propTypes = {
-  field: PropTypes.object.isRequired
+  widgetApi: PropTypes.shape({
+    field: PropTypes.object.isRequired
+  }).isRequired
 };

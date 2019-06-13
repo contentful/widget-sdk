@@ -7,8 +7,12 @@ $content-type-field-empty-style()
   margin: 1em 0 1em 0
 
 .ct-field-draggable
+  cursor: grab
   user-select: none
   margin: 0 0 1em 0
+  outline: none
+  &:focus
+    box-shadow: 0px 0px 7px #3c80cf
 
 .ct-field
   padding-right: 1em

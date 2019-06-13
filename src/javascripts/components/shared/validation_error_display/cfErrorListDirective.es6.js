@@ -8,7 +8,9 @@ export default function register() {
    */
   registerDirective('cfErrorList', () => ({
     restrict: 'E',
-    template: JST['cf_error_list'],
+    template: `<ul>
+      <li ng-repeat="(index, error) in errors.messages track by index">{{error}}</li>
+    </ul>`,
 
     link: function(scope, element, attrs) {
       scope.$watchCollection('errors.messages', messages => {

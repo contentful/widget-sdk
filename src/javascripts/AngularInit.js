@@ -79,7 +79,6 @@ angular
       ngRequire('app/snapshots/cfSnapshotPresenter.es6').default();
       ngRequire('app/snapshots/cfSnapshotSelector.es6').default();
       ngRequire('app/snapshots/snapshotComparator.es6').default();
-      ngRequire('app/widgets/TagEditor/cfTagEditorDirective.es6').default();
       ngRequire('app/widgets/cfBooleanEditorDirective.es6').default();
       ngRequire('app/widgets/cfCheckboxEditorDirective.es6').default();
       ngRequire('app/widgets/cfFileEditorDirective.es6').default();
@@ -110,7 +109,6 @@ angular
       ngRequire('components/client/dialogsInitController.es6').default();
       ngRequire('components/field_dialog/cfValidationDateSelectDirective.es6').default();
       ngRequire('components/field_dialog/cfValidationSettingsDirective.es6').default();
-      ngRequire('components/field_dialog/cfValidationValuesDirective.es6').default();
       ngRequire('components/field_dialog/imageDimensionsValidationController.es6').default();
       ngRequire('components/field_dialog/validationAssetTypesController.es6').default();
       ngRequire('components/field_dialog/validationLinkTypeController.es6').default();

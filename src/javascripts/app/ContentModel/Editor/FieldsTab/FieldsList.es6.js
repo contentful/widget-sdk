@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import cn from 'classnames';
 import PropTypes from 'prop-types';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { sortableContainer, sortableElement } from 'react-sortable-hoc';
+import arraySwap from 'utils/arraySwap.es6';
 import {
   Dropdown,
   DropdownList,
@@ -179,12 +180,40 @@ class FieldItem extends Component {
   }
 }
 
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-  return result;
-};
+const SortableContainer = sortableContainer(({ children }) => {
+  return <div className="ct-fields-drop-container">{children}</div>;
+});
+
+const SortableItem = sortableElement(({ field, isTitle, canEdit, actions }) => {
+  return (
+    <div className="ct-field-draggable" tabIndex={0}>
+      <FieldItem
+        key={`field-${field.id}`}
+        canEdit={canEdit}
+        isTitle={isTitle}
+        field={field}
+        onSettingsClick={() => {
+          actions.openFieldDialog(field);
+        }}
+        onSetAsTitle={() => {
+          actions.setFieldAsTitle(field);
+        }}
+        onToggleDisabled={() => {
+          actions.toggleFieldProperty(field, 'disabled', isTitle);
+        }}
+        onToggleOmitted={() => {
+          actions.toggleFieldProperty(field, 'omitted', isTitle);
+        }}
+        onDelete={() => {
+          actions.deleteField(field, isTitle);
+        }}
+        onUndelete={() => {
+          actions.undeleteField(field);
+        }}
+      />
+    </div>
+  );
+});
 
 export default class FieldsList extends Component {
   static propTypes = {
@@ -211,16 +240,11 @@ export default class FieldsList extends Component {
     }
   }
 
-  onDragEnd = result => {
-    // dropped outside the list
-    if (!result.destination) {
-      return;
-    }
+  onSortEnd = ({ oldIndex, newIndex }) => {
+    const reorderedFields = arraySwap(this.props.fields, oldIndex, newIndex);
 
-    const orderedFields = reorder(this.props.fields, result.source.index, result.destination.index);
-
-    this.setState({ optimisticFields: orderedFields });
-    this.props.actions.updateOrder(orderedFields);
+    this.setState({ optimisticFields: reorderedFields });
+    this.props.actions.updateOrder(reorderedFields);
   };
 
   render() {
@@ -232,53 +256,21 @@ export default class FieldsList extends Component {
 
     const fields = this.state.optimisticFields || this.props.fields;
     return (
-      <DragDropContext onDragEnd={this.onDragEnd}>
-        <Droppable droppableId="droppable">
-          {provided => (
-            <div ref={provided.innerRef} className="ct-fields-drop-container">
-              {fields.map((field, index) => {
-                const isTitle = displayField === field.id;
-                return (
-                  <Draggable key={field.id} draggableId={field.id} index={index}>
-                    {provided => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="ct-field-draggable">
-                        <FieldItem
-                          key={`field-${field.id}`}
-                          canEdit={canEdit}
-                          isTitle={isTitle}
-                          field={field}
-                          onSettingsClick={() => {
-                            this.props.actions.openFieldDialog(field);
-                          }}
-                          onSetAsTitle={() => {
-                            this.props.actions.setFieldAsTitle(field);
-                          }}
-                          onToggleDisabled={() => {
-                            this.props.actions.toggleFieldProperty(field, 'disabled', isTitle);
-                          }}
-                          onToggleOmitted={() => {
-                            this.props.actions.toggleFieldProperty(field, 'omitted', isTitle);
-                          }}
-                          onDelete={() => {
-                            this.props.actions.deleteField(field, isTitle);
-                          }}
-                          onUndelete={() => {
-                            this.props.actions.undeleteField(field);
-                          }}
-                        />
-                      </div>
-                    )}
-                  </Draggable>
-                );
-              })}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <SortableContainer axis="y" onSortEnd={this.onSortEnd} distance={10}>
+        {fields.map((field, index) => {
+          const isTitle = displayField === field.id;
+          return (
+            <SortableItem
+              field={field}
+              key={field.id}
+              index={index}
+              canEdit={canEdit}
+              isTitle={isTitle}
+              actions={this.props.actions}
+            />
+          );
+        })}
+      </SortableContainer>
     );
   }
 }
