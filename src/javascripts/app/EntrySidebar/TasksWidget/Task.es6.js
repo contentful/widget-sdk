@@ -300,7 +300,7 @@ export default class Task extends React.Component {
         <TextField
           name="body"
           id="body"
-          testId="task-title"
+          testId="task-title-input"
           labelText={bodyLabel}
           textarea
           value={body}
@@ -315,6 +315,7 @@ export default class Task extends React.Component {
         </SelectField>
         <div className={styles.editActions}>
           <Button
+            testId="save-task"
             buttonType={ctaContext}
             className={styles.editSubmit}
             onClick={() => this.handleSubmit()}

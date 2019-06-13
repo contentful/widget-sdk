@@ -1,15 +1,15 @@
-import { defaultRequestsMock } from '../../../util/factories';
-import { singleUser, singleSpecificOrgUserResponse } from '../../../interactions/users';
-import { successfulGetEntryTasksInteraction, tasksErrorResponse } from '../../../interactions/tasks';
+import {defaultRequestsMock} from '../../../util/factories';
+import {singleUser, singleSpecificOrgUserResponse} from '../../../interactions/users';
+import {successfulGetEntryTasksInteraction, tasksErrorResponse, taskCreatedResponse} from '../../../interactions/tasks';
 
 import {
   singleContentTypeResponse,
   editorInterfaceWithoutSidebarResponse
 } from '../../../interactions/content_types';
-import { singleEntryResponse, noEntrySnapshotsResponse } from '../../../interactions/entries';
-import { microbackendStreamToken } from '../../../interactions/microbackend';
+import {singleEntryResponse, noEntrySnapshotsResponse} from '../../../interactions/entries';
+import {microbackendStreamToken} from '../../../interactions/microbackend';
 import * as state from '../../../util/interactionState';
-import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
+import {defaultEntryId, defaultSpaceId} from '../../../util/requests';
 
 const empty = require('../../../fixtures/responses/empty.json');
 const severalTasks = require('../../../fixtures/responses/tasks-several.json');
@@ -45,7 +45,7 @@ describe('Tasks entry editor sidebar', () => {
     cy.route('**/channel/**', []).as('shareJS');
   }
 
-  describe('tasks service error', () => {
+  context('tasks service error', () => {
     beforeEach(() => {
       tasksErrorResponse();
 
@@ -53,7 +53,7 @@ describe('Tasks entry editor sidebar', () => {
     });
 
     it('renders "Tasks" sidebar section with an error', () => {
-      cy.getByTestId('task-list-error').should('be.visible');
+      getTaskListErrors().should('be.visible');
     });
   });
 
@@ -65,12 +65,37 @@ describe('Tasks entry editor sidebar', () => {
     });
 
     it('renders "Tasks" sidebar section', () => {
-      cy.getByTestId('sidebar-tasks-widget').should('be.visible');
-      cy.get('[data-test-id="task-list-error"]').should('have.length', 0)
+      getTasksSidebarSection().should('be.visible');
+      getTaskListErrors().should('have.length', 0)
+    });
+
+    describe('creating a new task', () => {
+      const newTaskTitle = 'Great new task!';
+
+      beforeEach(() => {
+        taskCreatedResponse(newTaskTitle);
+      });
+
+      it('creates task on API and adds it to task list', () => {
+        getCreateTaskAction()
+          .should('be.enabled')
+          .click();
+        getDraftTask().should('be.visible');
+        getDraftTaskInput()
+          .type(newTaskTitle)
+          .should('have.value', newTaskTitle);
+        getDraftTaskSaveAction()
+          .click();
+
+        cy.wait([`@${state.Tasks.CREATE}`]);
+
+        getDraftTask().should('have.length', 0);
+        getTasks().should('have.length', 1);
+      })
     });
   });
 
-  describe('several tasks on the entry', () => {
+  context('several tasks on the entry', () => {
     beforeEach(() => {
       successfulGetEntryTasksInteraction('someTasks', severalTasks).as(state.Tasks.SEVERAL);
       singleSpecificOrgUserResponse();
@@ -79,10 +104,20 @@ describe('Tasks entry editor sidebar', () => {
     });
 
     it('renders list of tasks', () => {
-      cy.getAllByTestId('task').should('have.length', 3);
+      getTasks().should('have.length', 3);
     });
   });
 
   // TODO: Test case for receiving a list of mixed tasks/comments after the backend
   //  has implemented `assignedTo` and we can distinguish the two.
 });
+
+const getTasksSidebarSection = () => cy.getByTestId('sidebar-tasks-widget');
+const getCreateTaskAction = () => getTasksSidebarSection().getByTestId('create-task');
+const getTaskListErrors = () => getTasksSidebarSection()
+  .get('[data-test-id="task-list-error"]');
+const getTasks = () => getTasksSidebarSection().getAllByTestId('task');
+const getDraftTask = () => getTasksSidebarSection().get('[data-test-id="task-draft"]');
+const getDraftTaskInput = () => getDraftTask()
+  .getByTestId('task-title-input').find('textarea');
+const getDraftTaskSaveAction = () => getDraftTask().getByTestId('save-task');

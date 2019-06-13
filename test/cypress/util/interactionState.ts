@@ -72,7 +72,8 @@ export enum Jobs {
 export enum Tasks {
   NONE = 'tasks/none',
   SEVERAL = 'tasks/several',
-  ERROR = 'tasks/error'
+  ERROR = 'tasks/error',
+  CREATE = 'tasks/create'
 }
 
 export enum Microbackends {

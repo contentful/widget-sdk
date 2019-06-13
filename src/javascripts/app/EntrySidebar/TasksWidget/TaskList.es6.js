@@ -29,7 +29,7 @@ const styles = {
   })
 };
 
-export default class TaskList extends React.PureComponent {
+export default class TasksWidget extends React.PureComponent {
   static propTypes = {
     viewData: PropTypes.shape(TaskListViewData),
     tasksInteractor: PropTypes.shape(TasksInteractor)
@@ -51,11 +51,11 @@ export default class TaskList extends React.PureComponent {
   }
 
   renderTask(taskViewData) {
-    const { key, version } = taskViewData;
+    const { key, version, isDraft } = taskViewData;
     const { tasksInteractor } = this.props;
 
     return (
-      <li className={styles.listItem} key={taskViewData.key} data-test-id="task">
+      <li className={styles.listItem} key={key} data-test-id={isDraft ? 'task-draft' : 'task'}>
         <Task
           viewData={taskViewData}
           onEdit={() => tasksInteractor.startEditingTask(key)}
