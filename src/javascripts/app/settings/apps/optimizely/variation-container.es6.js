@@ -18,6 +18,7 @@ function createContentType() {
     fields: [
       { id: 'experimentTitle', name: 'Experiment title', type: 'Symbol' },
       { id: 'experimentId', name: 'Experiment ID', type: 'Symbol' },
+      { id: 'experimentKey', name: 'Experiment Key', type: 'Symbol' },
       { id: 'meta', name: 'Meta', type: 'Object' },
       {
         id: 'variations',
