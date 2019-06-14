@@ -71,11 +71,10 @@ export default class JobWidget extends React.Component {
   };
 
   isPublishedAfterLastFailedJob = job =>
-    moment(this.props.entity.publishedAt).isBefore(job.scheduledAt);
+    moment(this.props.entity.publishedAt).isAfter(job.scheduledAt);
 
   renderFailedScheduleNote = data => {
     const recentJob = data.jobCollection.items[0];
-    const prevJob = data.jobCollection.items[1];
 
     if (!recentJob) {
       return null;
@@ -84,9 +83,8 @@ export default class JobWidget extends React.Component {
     const entryHasBeenPublishedAfterLastFailedJob = this.isPublishedAfterLastFailedJob(recentJob);
 
     return (
-      !entryHasBeenPublishedAfterLastFailedJob && (
-        <FailedScheduleNote recentJob={recentJob} prevJob={prevJob} />
-      )
+      !entryHasBeenPublishedAfterLastFailedJob &&
+      recentJob.sys.status === 'failed' && <FailedScheduleNote recentJob={recentJob} />
     );
   };
 
