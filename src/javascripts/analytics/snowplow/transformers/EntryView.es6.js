@@ -1,6 +1,5 @@
 import { getSchema } from 'analytics/snowplow/Schemas.es6';
 import { addUserOrgSpace } from './Decorators.es6';
-import { getWidgetTrackingContexts } from 'widgets/WidgetTracking.es6';
 
 export default addUserOrgSpace((_, data) => ({
   data: {
@@ -12,7 +11,7 @@ export default addUserOrgSpace((_, data) => ({
   },
   contexts: [
     ...data.referencesCTMetadata.map(refMetadata => getReferenceContext(refMetadata, data.entryId)),
-    ...getWidgetTrackingContexts(data.editorData)
+    ...data.widgetTrackingContexts
   ]
 }));
 

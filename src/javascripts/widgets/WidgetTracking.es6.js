@@ -1,32 +1,35 @@
-import { get } from 'lodash';
+import { get, identity } from 'lodash';
 import { getSchema } from 'analytics/snowplow/Schemas.es6';
 import { NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
 import { toInternalFieldType } from './FieldTypes.es6';
 import * as WidgetLocations from './WidgetLocations.es6';
 
-// `editorData` is a data structured returned by `loadEntry`
-// and `loadAsset` methods of `app/entity_editor/DataLoader`.
-export function getWidgetTrackingContexts(editorData) {
-  return [...getExtensionTrackingContexts(editorData), getSidebarTrackingContext(editorData)];
+// Arguments are expected to be produced in `app/entity_editor/DataLoader#loadEditorData()`.
+export function getWidgetTrackingContexts({
+  fieldControls,
+  sidebar,
+  sidebarExtensions,
+  editorExtension
+}) {
+  return [
+    ...getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editorExtension }),
+    getSidebarTrackingContext({ fieldControls, sidebar })
+  ];
 }
 
-function getExtensionTrackingContexts(editorData) {
-  const schema = getSchema('extension_render').path;
-
+function getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editorExtension }) {
   const extensionsByLocation = {
-    [WidgetLocations.LOCATION_ENTRY_FIELD]: getExtensions(editorData, ['fieldControls', 'form']),
-    [WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR]: getExtensions(editorData, [
-      'fieldControls',
-      'sidebar'
-    ]),
-    [WidgetLocations.LOCATION_ENTRY_SIDEBAR]: getExtensions(editorData, ['sidebarExtensions'])
+    [WidgetLocations.LOCATION_ENTRY_FIELD]: getExtensions(fieldControls, ['form']),
+    [WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR]: getExtensions(fieldControls, ['sidebar']),
+    [WidgetLocations.LOCATION_ENTRY_SIDEBAR]: getExtensions(sidebarExtensions),
+    [WidgetLocations.LOCATION_ENTRY_EDITOR]: getExtensions([editorExtension])
   };
 
   return Object.keys(extensionsByLocation).reduce(
     (acc, location) => [
       ...acc,
       ...extensionsByLocation[location].reduce(
-        (acc, widget) => [...acc, { schema, data: makeExtensionEventData(location, widget) }],
+        (acc, widget) => [...acc, makeExtensionEvent(location, widget)],
         []
       )
     ],
@@ -34,29 +37,30 @@ function getExtensionTrackingContexts(editorData) {
   );
 }
 
-function makeExtensionEventData(location, widget) {
+function makeExtensionEvent(location, widget) {
   return {
-    location,
-    extension_id: get(widget, ['descriptor', 'id']),
-    extension_name: get(widget, ['descriptor', 'name']),
-    // Until schema reaches 2.0 both `field_id` and `field_type` need
-    // to be empty strings if the extension is not rendered for a field.
-    field_id: typeof widget.fieldId === 'string' ? widget.fieldId : '',
-    field_type: widget.field ? toInternalFieldType(widget.field) : '',
-    installation_params: Object.keys(get(widget, ['parameters', 'installation'], {})),
-    instance_params: Object.keys(get(widget, ['parameters', 'instance'], {})),
-    sidebar: !!widget.sidebar,
-    src: typeof widget.src === 'string' ? widget.src : null
+    schema: getSchema('extension_render').path,
+    data: {
+      location,
+      extension_id: get(widget, ['descriptor', 'id']),
+      extension_name: get(widget, ['descriptor', 'name']),
+      // Until schema reaches 2.0 both `field_id` and `field_type` need
+      // to be empty strings if the extension is not rendered for a field.
+      field_id: typeof widget.fieldId === 'string' ? widget.fieldId : '',
+      field_type: widget.field ? toInternalFieldType(widget.field) : '',
+      installation_params: Object.keys(get(widget, ['parameters', 'installation'], {})),
+      instance_params: Object.keys(get(widget, ['parameters', 'instance'], {})),
+      sidebar: !!widget.sidebar,
+      src: typeof widget.src === 'string' ? widget.src : null
+    }
   };
 }
 
-function getSidebarTrackingContext(editorData) {
+function getSidebarTrackingContext({ fieldControls, sidebar }) {
   const schema = getSchema('sidebar_render').path;
 
-  const legacySidebarExtensions = getExtensions(editorData, ['fieldControls', 'sidebar']);
+  const legacySidebarExtensions = getExtensions(fieldControls, ['sidebar']);
   const has_legacy_extensions = legacySidebarExtensions.length > 0;
-
-  const sidebar = get(editorData, ['sidebar']);
 
   if (!Array.isArray(sidebar)) {
     return {
@@ -77,10 +81,11 @@ function getSidebarTrackingContext(editorData) {
   };
 }
 
-function getExtensions(editorData, path) {
-  const locationWidgets = get(editorData, path);
+function getExtensions(container, path) {
+  const locationWidgets = Array.isArray(path) ? get(container, path) : container;
+
   if (Array.isArray(locationWidgets)) {
-    return locationWidgets.filter(w => w.widgetNamespace === NAMESPACE_EXTENSION);
+    return locationWidgets.filter(identity).filter(w => w.widgetNamespace === NAMESPACE_EXTENSION);
   } else {
     return [];
   }

@@ -103,13 +103,14 @@ describe('app/entity_editor/DataLoader.es6', () => {
       expect(Object.keys(data)).toEqual([
         'entity',
         'contentType',
+        'entityInfo',
+        'openDoc',
+        'editorInterface',
+        'widgetTrackingContexts',
         'fieldControls',
         'sidebar',
         'sidebarExtensions',
-        'editorExtension',
-        'entityInfo',
-        'openDoc',
-        'editorInterface'
+        'editorExtension'
       ]);
     });
 
@@ -202,13 +203,14 @@ describe('app/entity_editor/DataLoader.es6', () => {
       expect(Object.keys(data)).toEqual([
         'entity',
         'contentType',
+        'entityInfo',
+        'openDoc',
+        'editorInterface',
+        'widgetTrackingContexts',
         'fieldControls',
         'sidebar',
         'sidebarExtensions',
-        'editorExtension',
-        'entityInfo',
-        'openDoc',
-        'editorInterface'
+        'editorExtension'
       ]);
     });
   });

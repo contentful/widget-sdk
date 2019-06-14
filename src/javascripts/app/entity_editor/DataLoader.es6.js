@@ -12,6 +12,7 @@ import { assetContentType } from 'legacy-client';
 import * as WidgetStore from 'widgets/WidgetStore.es6';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
 import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature.es6';
+import { getWidgetTrackingContexts } from 'widgets/WidgetTracking.es6';
 
 const TheLocaleStore = getModule('TheLocaleStore');
 
@@ -145,16 +146,23 @@ async function loadEditorData(loader, id) {
   const entityInfo = makeEntityInfo(entity, contentType);
   const openDoc = loader.getOpenDoc(entity, contentType);
 
-  return Object.freeze({
-    entity,
-    contentType,
+  const widgetData = {
     fieldControls,
     sidebar: sidebarConfig,
     sidebarExtensions,
-    editorExtension,
+    editorExtension
+  };
+
+  const widgetTrackingContexts = getWidgetTrackingContexts(widgetData);
+
+  return Object.freeze({
+    entity,
+    contentType,
     entityInfo,
     openDoc,
-    editorInterface
+    editorInterface,
+    widgetTrackingContexts,
+    ...widgetData
   });
 }
 

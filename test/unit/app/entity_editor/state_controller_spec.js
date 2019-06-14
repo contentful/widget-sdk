@@ -22,7 +22,7 @@ describe('entityEditor/StateController', () => {
     this.scope = this.rootScope.$new();
     this.scope.editorContext = this.$inject('mocks/entityEditor/Context').create();
     this.scope.entityInfo = {};
-    this.scope.editorData = { fieldControls: {} };
+    this.scope.editorData = { widgetTrackingContexts: [] };
 
     this.spaceContext = this.$inject('spaceContext');
 
@@ -279,7 +279,7 @@ describe('entityEditor/StateController', () => {
               eventOrigin: eventOrigin,
               contentType: { data: { name: 'foo' } },
               response: { data: this.entity },
-              editorData: { fieldControls: {} }
+              widgetTrackingContexts: []
             });
           });
         }
