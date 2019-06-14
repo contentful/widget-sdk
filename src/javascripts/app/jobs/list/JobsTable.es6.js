@@ -21,6 +21,9 @@ import StateLink from 'app/common/StateLink.es6';
 import SecretiveLink from 'components/shared/SecretiveLink.es6';
 
 const styles = {
+  jobRow: css({
+    cursor: 'pointer'
+  }),
   statusTag: css({
     display: 'flex'
   }),
@@ -105,6 +108,7 @@ function JobWithExsitingEntryRow({
     <StateLink to="spaces.detail.entries.detail" params={{ entryId: entry.sys.id }}>
       {({ onClick, getHref }) => (
         <TableRow
+          className={styles.jobRow}
           key={job.sys.id}
           data-test-id="scheduled-job"
           tabIndex="0"
