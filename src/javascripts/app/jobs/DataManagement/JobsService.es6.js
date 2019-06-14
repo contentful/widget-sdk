@@ -29,3 +29,13 @@ export function getJobs(endpoint, query) {
     ALPHA_HEADER
   );
 }
+
+export function cancelJob(endpoint, jobId) {
+  return endpoint(
+    {
+      method: 'DELETE',
+      path: ['jobs', jobId]
+    },
+    ALPHA_HEADER
+  );
+}

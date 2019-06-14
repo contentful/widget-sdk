@@ -102,11 +102,13 @@ export class TimePicker extends Component {
   state = {
     hour: Number(
       moment()
+        .add(0.5, 'hours')
         .local()
         .format(getTimeFormatByLocale())
     ),
     minute: Number(
       moment()
+        .add(0.5, 'hours')
         .local()
         .format('mm')
     ),

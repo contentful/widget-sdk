@@ -6,42 +6,20 @@ export const scheduleStyles = {
     whiteSpace: 'nowrap',
     width: '50%'
   }),
-  schedule: css({
+  schedule: css({}),
+  scheduleHeader: css({
     display: 'flex',
-    flexWrap: 'wrap',
-    paddingLeft: '20px',
-    position: 'relative',
-    color: tokens.colorTextLight,
-    '&::before': {
-      top: '2px',
-      left: '0px',
-      content: `''`,
-      width: '10px',
-      height: '10px',
-      position: 'absolute',
-      borderRadius: '10px',
-      backgroundColor: 'transparent',
-      border: `1px solid ${tokens.colorElementDarkest}`
-    },
-    '&:first-of-type::before': {
-      backgroundColor: tokens.colorElementMid
-    },
-    '&:not(:first-of-type)::after': {
-      top: '-9px',
-      left: '5px',
-      position: 'absolute',
-      content: `''`,
-      width: '2px',
-      height: '11px',
-      background: tokens.colorElementDarkest
-    }
+    alignContent: 'center',
+    marginBottom: tokens.spacingS
   }),
-  info: css({
-    marginLeft: 'auto',
-    display: 'flex',
-    justifyContent: 'right',
-    flexWrap: 'wrap',
-    textAlign: 'right'
+  scheduleIcon: css({
+    marginRight: tokens.spacingXs
+  }),
+  scheduleDropdownToggle: css({
+    height: '1rem',
+    span: {
+      padding: '0px'
+    }
   }),
   actionType: css({
     display: 'block',

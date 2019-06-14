@@ -9,11 +9,12 @@ import {
   SkeletonContainer,
   SkeletonBodyText,
   Note,
-  TextLink
+  TextLink,
+  Notification
 } from '@contentful/forma-36-react-components';
 import JobsTimeline from './JobsTimeline/index.es6';
 import JobsFetcher from './JobsFetcher.es6';
-import { createJob } from '../DataManagement/JobsService.es6';
+import { createJob, cancelJob } from '../DataManagement/JobsService.es6';
 import NewJob from './NewJob.es6';
 import { create } from './JobsFactory.es6';
 import FailedScheduleNote from './FailedScheduleNote/index.es6';
@@ -70,6 +71,15 @@ export default class JobWidget extends React.Component {
     });
   };
 
+  handleCancellation = jobId => {
+    cancelJob(this.endpoint, jobId).then(() => {
+      this.setState({
+        fetcherKey: this.state.fetcherKey + 1
+      });
+      Notification.success('Schedule cancelled');
+    });
+  };
+
   isPublishedAfterLastFailedJob = job =>
     moment(this.props.entity.publishedAt).isAfter(job.scheduledAt);
 
@@ -122,7 +132,7 @@ export default class JobWidget extends React.Component {
                 <div className={styles.heading}>Schedule</div>
                 {this.renderFailedScheduleNote(data)}
                 {hasScheduledActions ? (
-                  <JobsTimeline jobs={pendingJobs} entity={this.props.entity} />
+                  <JobsTimeline jobs={pendingJobs} onCancel={this.handleCancellation} />
                 ) : (
                   <NewJob onCreate={this.handleJobCreate} />
                 )}
