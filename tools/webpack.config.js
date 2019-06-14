@@ -77,7 +77,6 @@ module.exports = () => {
         './vendor/jquery-shim.js',
         // Custom jQuery UI build: see the file for version and contents
         './vendor/jquery-ui/jquery-ui.js',
-        './node_modules/jquery-textrange/jquery-textrange.js',
         './node_modules/angular/angular.js',
         './node_modules/angular-animate/angular-animate.js',
         './node_modules/angular-sanitize/angular-sanitize.js',
