@@ -91,7 +91,7 @@
     "react-modal": "3.6.1",
     "react-player": "^1.8.0",
     "react-redux": "^5.0.7",
-    "react-sortable-hoc": "^1.8.3",
+    "react-sortable-hoc": "1.9.1",
     "react-sticky-el": "^1.0.20",
     "react-tippy": "^1.2.2",
     "redux": "^4.0.1",
@@ -225,7 +225,9 @@
     "yargs": "^4.2.0"
   },
   "scripts": {
+    "clean-logs-pacts": "rm -rf logs/ pacts/",
     "start": "gulp all serve",
+    "cypress": "npm run clean-logs-pacts && npx cypress open",
     "test": "NODE_OPTIONS=--max-old-space-size=4096 TZ=UTC node run-tests.js",
     "test:once": "TZ=UTC node run-tests.js --once",
     "hint": "eslint src test tools micro-backends",
