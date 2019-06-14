@@ -27,7 +27,7 @@ const styles = {
   })
 };
 
-export default class ScheduleWidget extends React.PureComponent {
+export default class TasksWidget extends React.PureComponent {
   static propTypes = {
     viewData: PropTypes.shape(TaskViewData),
     onCreateDraft: PropTypes.func,

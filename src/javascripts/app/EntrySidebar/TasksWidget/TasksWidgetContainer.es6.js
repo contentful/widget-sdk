@@ -16,7 +16,17 @@ import TasksWidget from './TasksWidget.es6';
 // TODO: Move this to './TasksViewData.es6'
 const loadingTasksViewData = createLoadingStateTasksViewData();
 
-export default class ScheduleWidgetContainer extends Component {
+export default function TasksWidgetContainerWithFeatureFlag(props) {
+  return (
+    <ErrorHandler>
+      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.TASKS}>
+        <TasksWidgetContainer {...props} />
+      </BooleanFeatureFlag>
+    </ErrorHandler>
+  );
+}
+
+export class TasksWidgetContainer extends Component {
   static propTypes = {
     emitter: PropTypes.object.isRequired
   };
@@ -172,21 +182,17 @@ export default class ScheduleWidgetContainer extends Component {
     const tasksViewData = this.state.tasksViewData;
 
     return (
-      <ErrorHandler>
-        <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.TASKS}>
-          <EntrySidebarWidget testId="sidebar-tasks-widget" title="Tasks">
-            <TasksWidget
-              viewData={tasksViewData}
-              onCreateDraft={() => this.handleCreateDraft()}
-              onCancelDraft={() => this.handleCancelDraft()}
-              onCreateTask={(taskKey, taskBody) => this.handleCreateTask(taskKey, taskBody)}
-              onUpdateTask={(taskKey, taskBody) => this.handleCreateTask(taskKey, taskBody)}
-              onDeleteTask={taskKey => this.handleDeleteTask(taskKey)}
-              onCompleteTask={taskKey => this.handleCompleteTask(taskKey)}
-            />
-          </EntrySidebarWidget>
-        </BooleanFeatureFlag>
-      </ErrorHandler>
+      <EntrySidebarWidget testId="sidebar-tasks-widget" title="Tasks">
+        <TasksWidget
+          viewData={tasksViewData}
+          onCreateDraft={() => this.handleCreateDraft()}
+          onCancelDraft={() => this.handleCancelDraft()}
+          onCreateTask={(taskKey, taskBody) => this.handleCreateTask(taskKey, taskBody)}
+          onUpdateTask={(taskKey, taskBody) => this.handleCreateTask(taskKey, taskBody)}
+          onDeleteTask={taskKey => this.handleDeleteTask(taskKey)}
+          onCompleteTask={taskKey => this.handleCompleteTask(taskKey)}
+        />
+      </EntrySidebarWidget>
     );
   }
 }
