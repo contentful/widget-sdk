@@ -119,6 +119,7 @@ class JobDialog extends React.Component {
             </Modal.Content>
             <Modal.Controls>
               <Button
+                data-test-id="schedule-publication"
                 type="submit"
                 onClick={() => {
                   onCreate({

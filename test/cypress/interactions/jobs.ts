@@ -1,4 +1,4 @@
-import { getEntryJobs, defaultSpaceId, defaultEntryId } from '../util/requests';
+import { getEntryJobs, cancelJob, defaultSpaceId, defaultEntryId, defaultJobId } from '../util/requests';
 import * as state from '../util/interactionState';
 
 const empty = require('../fixtures/responses/empty.json');
@@ -51,6 +51,19 @@ export function severalJobsResponse() {
   }).as(state.Jobs.SEVERAL);
 }
 
+export function cancelJobResponse() {
+  cy.addInteraction({
+    provider: 'jobs',
+    state: state.Jobs.CANCEL,
+    uponReceiving: 'a request for all jobs',
+    withRequest: cancelJob(),
+    willRespondWith: {
+      status: 200,
+      body: empty
+    }
+  }).as(state.Jobs.CANCEL);
+}
+
 export function jobsErrorResponse() {
   cy.addInteraction({
     provider: 'jobs',
@@ -82,7 +95,7 @@ export function singleJobForEntryResponse() {
         items: [
           {
             sys: {
-              id: 'scheduleId',
+              id: defaultJobId,
               status: 'pending'
             },
             actionType: 'publish',

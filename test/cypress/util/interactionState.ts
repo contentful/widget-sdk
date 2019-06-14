@@ -65,7 +65,8 @@ export enum Jobs {
   SINGLE = 'jobs/single',
   SEVERAL = 'jobs/several',
   ERROR = 'jobs/error',
-  CREATED = 'jobs/created'
+  CREATED = 'jobs/created',
+  CANCEL = 'jobs/cancel'
 }
 
 export enum Microbackends {

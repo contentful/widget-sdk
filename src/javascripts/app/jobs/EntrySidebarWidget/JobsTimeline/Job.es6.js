@@ -39,7 +39,7 @@ class Job extends Component {
   };
 
   render() {
-    const { scheduledAt, action, job, onCancel } = this.props;
+    const { scheduledAt, action, id, onCancel } = this.props;
     return (
       <Card className={styles.schedule}>
         <div className={styles.scheduleHeader}>
@@ -57,13 +57,15 @@ class Job extends Component {
               <Button
                 className={styles.scheduleDropdownToggle}
                 buttonType="naked"
-                testId="cancel-job"
+                data-test-id="cancel-job-ddl"
                 icon="MoreHorizontal"
                 onClick={() => this.setState({ isDropdownOpen: !this.state.isDropdownOpen })}
               />
             }>
             <DropdownList>
-              <DropdownListItem onClick={this.toggleCancelDialog}>Cancel Schedule</DropdownListItem>
+              <DropdownListItem testId="cancel-job" onClick={this.toggleCancelDialog}>
+                Cancel Schedule
+              </DropdownListItem>
             </DropdownList>
           </Dropdown>
         </div>
@@ -71,8 +73,10 @@ class Job extends Component {
         <CancellationModal
           isShown={this.state.isCancellationDialogOpen}
           onClose={this.toggleCancelDialog}
-          onConfirm={() => onCancel(job.sys.id)}
-        />
+          onConfirm={() => onCancel(id)}>
+          This entry is scheduled to {action} on {FormattedTime(scheduledAt)}. <br />
+          Are you sure you want to cancel?
+        </CancellationModal>
       </Card>
     );
   }
@@ -82,7 +86,7 @@ export const propTypes = {
   scheduledAt: PropTypes.string.isRequired,
   action: PropTypes.string.isRequired,
   status: PropTypes.oneOf(['pending', 'cancelled', 'success', 'error']),
-  job: PropTypes.object.isRequired,
+  id: PropTypes.string.isRequired,
   onCancel: PropTypes.func.isRequired
 };
 Job.propTypes = propTypes;

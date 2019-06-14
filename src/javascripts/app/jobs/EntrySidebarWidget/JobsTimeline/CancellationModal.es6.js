@@ -2,14 +2,14 @@ import React from 'react';
 import { Modal, Button } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 
-const CancellationModal = ({ onConfirm, onClose, isShown }) => (
+const CancellationModal = ({ onConfirm, onClose, isShown, children }) => (
   <Modal isShown={isShown} onClose={onClose} testId="job-cancellation-modal">
     {({ onClose }) => (
       <React.Fragment>
         <Modal.Header title="Cancel Schedule?" onClose={onClose} />
-        <Modal.Content>Are you sure you want to cancel the schedule for this entry? </Modal.Content>
+        <Modal.Content>{children}</Modal.Content>
         <Modal.Controls>
-          <Button onClick={onConfirm} buttonType="positive">
+          <Button data-test-id="confirm-job-cancellation" onClick={onConfirm} buttonType="negative">
             Cancel the schedule
           </Button>
           <Button onClick={onClose} buttonType="muted">
@@ -24,7 +24,8 @@ const CancellationModal = ({ onConfirm, onClose, isShown }) => (
 CancellationModal.propTypes = {
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
-  isShown: PropTypes.bool.isRequired
+  isShown: PropTypes.bool.isRequired,
+  children: PropTypes.node.isRequired
 };
 
 export default CancellationModal;

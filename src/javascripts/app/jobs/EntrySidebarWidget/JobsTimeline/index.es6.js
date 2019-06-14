@@ -10,7 +10,7 @@ const JobsTimeline = ({ jobs, onCancel }) => (
     <ul>
       {jobs.map(schedule => (
         <Job
-          job={schedule}
+          id={schedule.sys.id}
           key={schedule.action}
           action={schedule.action}
           scheduledAt={schedule.scheduledAt}
