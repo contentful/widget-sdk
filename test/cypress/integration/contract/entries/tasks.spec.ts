@@ -1,6 +1,6 @@
 import {defaultRequestsMock} from '../../../util/factories';
 import {singleUser, singleSpecificOrgUserResponse} from '../../../interactions/users';
-import {successfulGetEntryTasksInteraction, tasksErrorResponse, taskCreatedResponse} from '../../../interactions/tasks';
+import {successfulGetEntryTasksInteraction, tasksErrorResponse, taskCreatedResponse, taskNotCreatedErrorResponse} from '../../../interactions/tasks';
 
 import {
   singleContentTypeResponse,
@@ -28,9 +28,13 @@ describe('Tasks entry editor sidebar', () => {
 
     cy.setAuthTokenToLocalStorage();
     window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
+  });
+
+  function visitEntry() {
     basicServerSetUpWithEntry();
     cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
-  });
+    cy.wait([`@${state.Token.VALID}`]);
+  }
 
   function basicServerSetUpWithEntry() {
     defaultRequestsMock({
@@ -48,50 +52,25 @@ describe('Tasks entry editor sidebar', () => {
   context('tasks service error', () => {
     beforeEach(() => {
       tasksErrorResponse();
-
-      cy.wait([`@${state.Token.VALID}`, `@${state.Tasks.ERROR}`]);
+      visitEntry();
+      cy.wait([`@${state.Tasks.ERROR}`]);
     });
 
     it('renders "Tasks" sidebar section with an error', () => {
-      getTaskListErrors().should('be.visible');
+      getTaskListError().should('be.visible');
     });
   });
 
   context('no tasks on the entry', () => {
     beforeEach(() => {
       successfulGetEntryTasksInteraction('noTasks', empty).as(state.Tasks.NONE);
-
-      cy.wait([`@${state.Token.VALID}`, `@${state.Tasks.NONE}`]);
+      visitEntry();
+      cy.wait([`@${state.Tasks.NONE}`]);
     });
 
     it('renders "Tasks" sidebar section', () => {
       getTasksSidebarSection().should('be.visible');
-      getTaskListErrors().should('have.length', 0)
-    });
-
-    describe('creating a new task', () => {
-      const newTaskTitle = 'Great new task!';
-
-      beforeEach(() => {
-        taskCreatedResponse(newTaskTitle);
-      });
-
-      it('creates task on API and adds it to task list', () => {
-        getCreateTaskAction()
-          .should('be.enabled')
-          .click();
-        getDraftTask().should('be.visible');
-        getDraftTaskInput()
-          .type(newTaskTitle)
-          .should('have.value', newTaskTitle);
-        getDraftTaskSaveAction()
-          .click();
-
-        cy.wait([`@${state.Tasks.CREATE}`]);
-
-        getDraftTask().should('have.length', 0);
-        getTasks().should('have.length', 1);
-      })
+      getTaskListError().should('have.length', 0)
     });
   });
 
@@ -99,13 +78,69 @@ describe('Tasks entry editor sidebar', () => {
     beforeEach(() => {
       successfulGetEntryTasksInteraction('someTasks', severalTasks).as(state.Tasks.SEVERAL);
       singleSpecificOrgUserResponse();
-
-      cy.wait([`@${state.Token.VALID}`, `@${state.Tasks.SEVERAL}`, `@${state.Users.SINGLE}`]);
+      visitEntry();
+      cy.wait([`@${state.Tasks.SEVERAL}`, `@${state.Users.SINGLE}`]);
     });
 
     it('renders list of tasks', () => {
       getTasks().should('have.length', 3);
     });
+  });
+
+  describe('creating a new task', () => {
+    const newTaskTitle = 'Great new task!';
+
+    beforeEach(() => {
+      successfulGetEntryTasksInteraction('noTasks', empty).as(state.Tasks.NONE);
+    });
+
+    context('task creation error', () => {
+      beforeEach(() => {
+        taskNotCreatedErrorResponse();
+        visitEntry();
+        cy.wait([`@${state.Tasks.NONE}`]);
+      });
+
+      it('creates task on API and adds it to task list', () => {
+        createNewTaskAndSave(newTaskTitle);
+        cy.wait([`@${state.Tasks.ERROR}`]);
+
+        getTasks().should('have.length', 0);
+        getDraftTask().should('have.length', 1);
+        // Can't use 'be.visible' because of element partly covered in sidebar.
+        getDraftTaskError().should('not.have.css', 'display', 'none')
+      })
+    });
+
+    context('task creation successful', () => {
+      beforeEach(() => {
+        taskCreatedResponse(newTaskTitle);
+        visitEntry();
+        cy.wait([`@${state.Tasks.NONE}`]);
+      });
+
+      it('creates task on API and adds it to task list', () => {
+        createNewTaskAndSave(newTaskTitle);
+
+        cy.wait([`@${state.Tasks.CREATE}`]);
+
+        getDraftTask().should('have.length', 0);
+        getTasks().should('have.length', 1);
+      })
+    });
+
+    function createNewTaskAndSave(taskTitle) {
+      getCreateTaskAction()
+        .should('be.enabled')
+        .click();
+      getDraftTask().should('be.visible');
+      getDraftTaskInput()
+        .type(taskTitle)
+        .should('have.value', taskTitle);
+      getDraftTaskSaveAction()
+        .click();
+    }
+
   });
 
   // TODO: Test case for receiving a list of mixed tasks/comments after the backend
@@ -114,10 +149,13 @@ describe('Tasks entry editor sidebar', () => {
 
 const getTasksSidebarSection = () => cy.getByTestId('sidebar-tasks-widget');
 const getCreateTaskAction = () => getTasksSidebarSection().getByTestId('create-task');
-const getTaskListErrors = () => getTasksSidebarSection()
+const getTaskListError = () => getTasksSidebarSection()
   .get('[data-test-id="task-list-error"]');
-const getTasks = () => getTasksSidebarSection().getAllByTestId('task');
+const getTasks = () => getTasksSidebarSection().get('[data-test-id="task"]');
 const getDraftTask = () => getTasksSidebarSection().get('[data-test-id="task-draft"]');
 const getDraftTaskInput = () => getDraftTask()
   .getByTestId('task-title-input').find('textarea');
 const getDraftTaskSaveAction = () => getDraftTask().getByTestId('save-task');
+//const getDraftTaskError = () => getDraftTask().getByTestId('cf-ui-validation-message');
+const getDraftTaskError = () => getDraftTask().queryByTestId('cf-ui-validation-message');
+
