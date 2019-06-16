@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
 
 export const TaskViewData = {
-  key: PropTypes.string.isRequired,
+  key: PropTypes.string,
   body: PropTypes.string,
   assignee: PropTypes.object,
   creator: PropTypes.object, // TODO: Don't inject domain object.
   createdAt: PropTypes.string,
   isDone: PropTypes.bool,
   isDraft: PropTypes.bool,
+  isInEditMode: PropTypes.bool,
   validationMessage: PropTypes.string
 };
 
@@ -19,14 +20,17 @@ export const TaskListViewData = {
   tasks: PropTypes.arrayOf(PropTypes.shape(TaskViewData)).isRequired
 };
 
+const DRAFT_TASK_KEY = '<<DRAFT-TASK>>';
+
 const DRAFT_TASK_DATA = {
-  key: '<<DRAFT-TASK>>',
+  key: DRAFT_TASK_KEY,
   body: '',
   assignee: null,
   creator: null,
   createdAt: null,
   isDone: false,
   isDraft: true,
+  isInEditMode: true,
   validationMessage: null,
   version: 0
 };
@@ -35,10 +39,13 @@ const DRAFT_TASK_DATA = {
  * Creates a TaskViewData object that can be used with the TaskList react component.
  *
  * @param {Array<API.Comment>} tasks
- * @param {Object} anotherNaiveStore
+ * @param {Object} tasksInEditMode
+ * @param {Object} tasksErrors
+ * @param {Object} loadingError
  * @returns {TaskListViewData}
  */
-export function createTaskListViewData(tasks, { isCreatingDraft, tasksErrors, loadingError }) {
+export function createTaskListViewData(tasks, { tasksInEditMode, tasksErrors, loadingError }) {
+  const isCreatingDraft = tasksInEditMode[DRAFT_TASK_KEY];
   const draftTasksViewData = isCreatingDraft ? [maybeWithError(DRAFT_TASK_DATA, tasksErrors)] : [];
   return {
     statusText: !tasks
@@ -50,7 +57,7 @@ export function createTaskListViewData(tasks, { isCreatingDraft, tasksErrors, lo
     errorMessage: loadingError ? `Error ${tasks ? 'syncing' : 'loading'} tasks` : null,
     hasCreateAction: !isCreatingDraft && !loadingError,
     tasks: [
-      ...(tasks || []).map(task => createTaskViewData(task, tasksErrors)),
+      ...(tasks || []).map(task => createTaskViewData(task, tasksInEditMode, tasksErrors)),
       ...draftTasksViewData
     ]
   };
@@ -74,16 +81,18 @@ export function createLoadingStateTasksViewData() {
  * @param {Object}
  * @returns {TaskViewData}
  */
-function createTaskViewData(task, tasksErrors) {
+function createTaskViewData(task, tasksInEditMode, tasksErrors) {
+  const { id } = task.sys;
   return maybeWithError(
     {
       body: task.body,
-      key: task.sys.id,
+      key: id,
       assignee: task.sys.assignedTo,
       creator: task.sys.createdBy,
       createdAt: task.sys.createdAt,
       isDone: task.isResolved,
       isDraft: false,
+      isInEditMode: !!tasksInEditMode[id],
       validationMessage: null,
       version: task.sys.version
     },

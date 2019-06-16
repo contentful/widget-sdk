@@ -30,6 +30,7 @@ export class TasksWidgetContainer extends Component {
   state = {
     loadingError: null,
     tasks: null,
+    tasksInEditMode: {},
     tasksErrors: {}
   };
 

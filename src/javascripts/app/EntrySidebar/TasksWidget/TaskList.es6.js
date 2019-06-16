@@ -29,7 +29,7 @@ const styles = {
   })
 };
 
-export default class TasksWidget extends React.PureComponent {
+export default class TaskList extends React.PureComponent {
   static propTypes = {
     viewData: PropTypes.shape(TaskListViewData),
     tasksInteractor: PropTypes.shape(TasksInteractor)
@@ -50,6 +50,26 @@ export default class TasksWidget extends React.PureComponent {
     );
   }
 
+  renderTask(taskViewData) {
+    const { key, version } = taskViewData;
+    const { tasksInteractor } = this.props;
+
+    return (
+      <li className={styles.listItem} key={taskViewData.key} data-test-id="task">
+        <Task
+          viewData={taskViewData}
+          onEdit={() => tasksInteractor.startEditingTask(key)}
+          onCancel={() => tasksInteractor.cancelTaskChanges(key)}
+          onSave={(body, assigneeUserId) =>
+            tasksInteractor.saveTaskChanges(key, { body, assigneeUserId, version })
+          }
+          onDeleteTask={() => tasksInteractor.deleteTask(key)}
+          onCompleteTask={() => {}} // TODO
+        />
+      </li>
+    );
+  }
+
   render() {
     const { viewData, tasksInteractor } = this.props;
     const { statusText, errorMessage, tasks, hasCreateAction, isLoading } = viewData;
@@ -67,31 +87,10 @@ export default class TasksWidget extends React.PureComponent {
             </Visible>
             <Visible if={tasks.length}>
               <ol className={styles.list}>
-                {tasks.map(taskViewData => (
-                  <li className={styles.listItem} key={taskViewData.key} data-test-id="task">
-                    <Task
-                      viewData={taskViewData}
-                      onCancelDraft={() => tasksInteractor.cancelTaskDraft()}
-                      onCreateTask={(key, body) =>
-                        // TODO: User ID
-                        tasksInteractor.saveTaskDraft(key, body)
-                      }
-                      onUpdateTask={(key, newBody) =>
-                        tasksInteractor.updateTask(key, {
-                          body: newBody,
-                          version: taskViewData.version
-                        })
-                      }
-                      onDeleteTask={key => tasksInteractor.deleteTask(key)}
-                      onCompleteTask={_key => {}}
-                    />
-                  </li>
-                ))}
+                {tasks.map(taskViewData => this.renderTask(taskViewData))}
               </ol>
             </Visible>
-            <Visible if={errorMessage}>
-              <ValidationMessage>{errorMessage}</ValidationMessage>
-            </Visible>
+            {errorMessage && <ValidationMessage>{errorMessage}</ValidationMessage>}
             {hasCreateAction && (
               <TextLink
                 icon="Plus"

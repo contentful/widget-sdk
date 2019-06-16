@@ -153,23 +153,22 @@ export default class Task extends React.Component {
   static propTypes = {
     viewData: PropTypes.shape(TaskViewData),
     isLoading: PropTypes.bool,
-    onCancelDraft: PropTypes.func,
-    onCreateTask: PropTypes.func,
-    onUpdateTask: PropTypes.func,
+    onEdit: PropTypes.func,
+    onCancel: PropTypes.func,
+    onSave: PropTypes.func,
     onDeleteTask: PropTypes.func,
     onCompleteTask: PropTypes.func
   };
 
   state = {
     isExpanded: false,
-    hasEditForm: false,
     body: ''
   };
 
   componentDidUpdate(prevProps) {
-    const { validationMessage } = this.props.viewData;
+    const { isInEditMode, validationMessage } = this.props.viewData;
     if (
-      !this.state.hasEditForm &&
+      !isInEditMode &&
       validationMessage &&
       validationMessage !== prevProps.viewData.validationMessage
     ) {
@@ -190,15 +189,15 @@ export default class Task extends React.Component {
 
   handleEditClick = event => {
     event.stopPropagation();
-    this.setState({ hasEditForm: true });
+    this.props.onEdit();
   };
 
-  handleSubmit = (isDraft, key) => {
+  handleSubmit = () => {
     const { body } = this.state;
-    isDraft ? this.props.onCreateTask(key, body) : this.props.onUpdateTask(key, body);
+    this.props.onSave(body);
   };
 
-  handleDeleteClick = async (event, key) => {
+  handleDeleteClick = async event => {
     event.stopPropagation();
     return ModalLauncher.open(({ isShown, onClose }) => (
       <TaskDeleteDialog
@@ -206,21 +205,16 @@ export default class Task extends React.Component {
         isShown={isShown}
         onCancel={() => onClose(false)}
         onConfirm={() => {
-          this.props.onDeleteTask(key);
+          this.props.onDeleteTask();
           onClose(true);
         }}
       />
     ));
   };
 
-  handleCancelEdit = (event, isDraft) => {
+  handleCancelEdit = event => {
     event.stopPropagation();
-
-    if (isDraft) {
-      this.props.onCancelDraft();
-    } else {
-      this.setState({ hasEditForm: false });
-    }
+    this.props.onCancel();
   };
 
   renderFullName = userObject => {
@@ -240,13 +234,13 @@ export default class Task extends React.Component {
     );
   };
 
-  renderActions = key => {
+  renderActions = () => {
     // TODO: Check roles/permissions before rendering actions
     return (
       <CardActions className={cx(styles.actions, this.state.isExpanded && styles.actionsVisible)}>
         <DropdownList>
           <DropdownListItem onClick={this.handleEditClick}>Edit task</DropdownListItem>
-          <DropdownListItem onClick={event => this.handleDeleteClick(event, key)}>
+          <DropdownListItem onClick={event => this.handleDeleteClick(event)}>
             Delete task
           </DropdownListItem>
         </DropdownList>
@@ -256,12 +250,12 @@ export default class Task extends React.Component {
 
   renderDetails = () => {
     const { isExpanded } = this.state;
-    const { key, body, creator, createdAt, isDone } = this.props.viewData;
+    const { body, creator, createdAt, isDone } = this.props.viewData;
 
     return (
       <React.Fragment>
         <div className={styles.checkboxWrapper}>
-          <input type="checkbox" checked={isDone} onChange={() => this.props.onCompleteTask(key)} />
+          <input type="checkbox" checked={isDone} onChange={() => this.props.onCompleteTask()} />
         </div>
         <div
           className={cx(styles.body, isExpanded && styles.bodyExpanded)}
@@ -284,7 +278,7 @@ export default class Task extends React.Component {
         </div>
         <div className={styles.avatarWrapper}>
           {this.renderAvatar()}
-          {this.renderActions(key)}
+          {this.renderActions()}
         </div>
       </React.Fragment>
     );
@@ -295,7 +289,7 @@ export default class Task extends React.Component {
   };
 
   renderEditForm = () => {
-    const { key, body, assignee, isDraft, validationMessage } = this.props.viewData;
+    const { body, assignee, isDraft, validationMessage } = this.props.viewData;
     const bodyLabel = isDraft ? 'Create task' : 'Edit task';
     const ctaLabel = isDraft ? 'Create task' : 'Save changes';
     const ctaContext = isDraft ? 'primary' : 'positive';
@@ -322,14 +316,11 @@ export default class Task extends React.Component {
           <Button
             buttonType={ctaContext}
             className={styles.editSubmit}
-            onClick={() => this.handleSubmit(isDraft, key)}
+            onClick={() => this.handleSubmit()}
             size="small">
             {ctaLabel}
           </Button>
-          <Button
-            buttonType="muted"
-            onClick={event => this.handleCancelEdit(event, isDraft)}
-            size="small">
+          <Button buttonType="muted" onClick={event => this.handleCancelEdit(event)} size="small">
             Cancel
           </Button>
         </div>
@@ -348,16 +339,15 @@ export default class Task extends React.Component {
   }
 
   renderTask() {
-    const { hasEditForm } = this.state;
-    const { isDraft } = this.props.viewData;
+    const { isInEditMode } = this.props.viewData;
 
     return (
       <div
-        className={cx(styles.task, (hasEditForm || isDraft) && styles.taskHasEditForm)}
+        className={cx(styles.task, isInEditMode && styles.taskHasEditForm)}
         onKeyDown={this.handleTaskKeyDown}
         tabIndex={0}>
         <TabFocusTrap className={styles.tabFocusTrap}>
-          {hasEditForm || isDraft ? this.renderEditForm() : this.renderDetails()}
+          {isInEditMode ? this.renderEditForm() : this.renderDetails()}
         </TabFocusTrap>
       </div>
     );

@@ -2,12 +2,14 @@ import PropTypes from 'prop-types';
 
 const TasksInteractor = {
   startTaskDraft: PropTypes.func.isRequired,
-  cancelTaskDraft: PropTypes.func.isRequired,
-  saveTaskDraft: PropTypes.func.isRequired,
-  deleteTask: PropTypes.func.isRequired,
-  updateTask: PropTypes.func.isRequired
+  startEditingTask: PropTypes.func.isRequired,
+  cancelTaskChanges: PropTypes.func.isRequired,
+  saveTaskChanges: PropTypes.func.isRequired,
+  deleteTask: PropTypes.func.isRequired
 };
 export default TasksInteractor;
+
+const DRAFT_KEY = '<<DRAFT-TASK>>';
 
 /**
  * @param {TasksStore} tasksStore
@@ -16,49 +18,47 @@ export default TasksInteractor;
  * @returns {TasksInteractor}
  */
 export function createTasksStoreInteractor(tasksStore, setState, getState) {
-  const setIsCreatingDraft = value => setState({ isCreatingDraft: value });
+  const setIsBeingEdited = (key, isInEditMode) => {
+    const { tasksInEditMode = {} } = getState();
+    setState({ tasksInEditMode: { ...tasksInEditMode, [key]: isInEditMode } });
+  };
   const setTaskError = (key, error) => {
     const { tasksErrors = {} } = getState();
-    tasksErrors[key] = error;
-    setState({ tasksErrors });
+    setState({ tasksErrors: { ...tasksErrors, [key]: error } });
   };
   const resetTaskError = key => setTaskError(key, null);
 
   return {
     startTaskDraft() {
-      setIsCreatingDraft(true);
+      setIsBeingEdited(DRAFT_KEY, true);
     },
-    cancelTaskDraft() {
-      setIsCreatingDraft(false);
-      resetTaskError('<<DRAFT-TASK>>');
+    startEditingTask(key) {
+      setIsBeingEdited(key, true);
     },
-    async saveTaskDraft(key, body, assigneeUserId) {
-      resetTaskError('<<DRAFT-TASK>>');
+    cancelTaskChanges(key) {
+      setIsBeingEdited(key, false);
+      resetTaskError(key);
+    },
+    async saveTaskChanges(key, { body, assigneeUserId, version = 0 }) {
+      resetTaskError(key);
       const assignedTo = createUserLink(assigneeUserId);
       const task = { body, assignedTo };
+      const store =
+        version > 0
+          ? () => tasksStore.update({ sys: { id: key, version }, ...task })
+          : () => tasksStore.add(task);
       try {
-        await tasksStore.add(task);
+        await store();
       } catch (error) {
         setTaskError(key, error);
         return;
       }
-      setIsCreatingDraft(false);
+      setIsBeingEdited(key, false);
     },
     async deleteTask(key) {
       resetTaskError(key);
       try {
         await tasksStore.remove(key);
-      } catch (error) {
-        setTaskError(key, error);
-      }
-    },
-    async updateTask(key, { version, body }) {
-      resetTaskError(key);
-      try {
-        await tasksStore.update({
-          sys: { id: key, version },
-          body
-        });
       } catch (error) {
         setTaskError(key, error);
       }
