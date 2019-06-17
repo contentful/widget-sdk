@@ -1,7 +1,6 @@
 import { get, identity } from 'lodash';
 import { getSchema } from 'analytics/snowplow/Schemas.es6';
 import { NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
-import { toInternalFieldType } from './FieldTypes.es6';
 import * as WidgetLocations from './WidgetLocations.es6';
 
 // Arguments are expected to be produced in `app/entity_editor/DataLoader#loadEditorData()`.
@@ -44,14 +43,9 @@ function makeExtensionEvent(location, widget) {
       location,
       extension_id: get(widget, ['descriptor', 'id']),
       extension_name: get(widget, ['descriptor', 'name']),
-      // Until schema reaches 2.0 both `field_id` and `field_type` need
-      // to be empty strings if the extension is not rendered for a field.
-      field_id: typeof widget.fieldId === 'string' ? widget.fieldId : '',
-      field_type: widget.field ? toInternalFieldType(widget.field) : '',
+      src: typeof widget.src === 'string' ? widget.src : null,
       installation_params: Object.keys(get(widget, ['parameters', 'installation'], {})),
-      instance_params: Object.keys(get(widget, ['parameters', 'instance'], {})),
-      sidebar: !!widget.sidebar,
-      src: typeof widget.src === 'string' ? widget.src : null
+      instance_params: Object.keys(get(widget, ['parameters', 'instance'], {}))
     }
   };
 }
