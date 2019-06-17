@@ -28,9 +28,7 @@ const styles = {
     alignItems: 'start',
     backgroundColor: tokens.colorWhite,
     borderBottom: `1px solid ${tokens.colorElementMid}`,
-    transition: `background-color ${tokens.transitionDurationShort} ${
-      tokens.transitionEasingDefault
-    }`,
+    transition: `background-color ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`,
     outline: 'none',
     ':hover': {
       backgroundColor: tokens.colorElementLight
@@ -118,9 +116,7 @@ const styles = {
     width: 0,
     height: '18px',
     overflow: 'hidden',
-    transition: `width ${tokens.transitionDurationShort} ${
-      tokens.transitionEasingDefault
-    }, margin-left ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`
+    transition: `width ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}, margin-left ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`
   }),
 
   actionsVisible: css({

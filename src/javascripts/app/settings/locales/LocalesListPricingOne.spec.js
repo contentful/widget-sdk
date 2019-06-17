@@ -1,6 +1,6 @@
 import React from 'react';
 import 'jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from 'react-testing-library';
+import { render, cleanup, fireEvent } from '@testing-library/react';
 import * as $stateMocked from 'ng/$state';
 import { Notification } from '@contentful/forma-36-react-components';
 import { AddLocaleButton, LocalesAdvice } from './LocalesListPricingOne.es6';

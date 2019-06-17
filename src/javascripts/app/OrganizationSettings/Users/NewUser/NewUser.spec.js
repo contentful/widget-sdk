@@ -1,6 +1,6 @@
 import React from 'react';
 import NewUser from './NewUser.es6';
-import { render, cleanup, fireEvent } from 'react-testing-library';
+import { render, cleanup, fireEvent } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 
 const mockSubmitFn = jest.fn();

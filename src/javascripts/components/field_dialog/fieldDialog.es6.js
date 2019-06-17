@@ -254,9 +254,7 @@ export default function register() {
         checked: $scope.field.isTitle,
         helpText:
           $scope.currentTitleField && !$scope.field.disabled
-            ? `Currently ${
-                $scope.currentTitleField
-              } is set as the title field. Please enable the field to select it as the Entry title.`
+            ? `Currently ${$scope.currentTitleField} is set as the title field. Please enable the field to select it as the Entry title.`
             : undefined,
         labelIsLight: true,
         onChange: e => {

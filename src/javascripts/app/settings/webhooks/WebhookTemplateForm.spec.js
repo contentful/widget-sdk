@@ -1,6 +1,6 @@
 import React from 'react';
 import 'jest-dom/extend-expect';
-import { render, cleanup, getByTestId, fireEvent } from 'react-testing-library';
+import { render, cleanup, getByTestId, fireEvent } from '@testing-library/react';
 import { cloneDeep } from 'lodash';
 import { WebhookTemplateForm } from './WebhookTemplateForm.es6';
 import * as AnalyticsMocked from 'analytics/Analytics.es6';

@@ -29,15 +29,11 @@ const ModifyContentStep = props => {
   modifyContentCurlSnippet += " -H 'Content-Type: application/vnd.contentful.management.v1+json'";
   modifyContentCurlSnippet += " -H 'X-Contentful-Content-Type: person'";
   modifyContentCurlSnippet += ` --data-binary '{"fields":${JSON.stringify(updatedFields)}}'`;
-  modifyContentCurlSnippet += ` https://api.${domain}.com/spaces/${spaceId}/entries/${
-    entry.sys.id
-  }`;
+  modifyContentCurlSnippet += ` https://api.${domain}.com/spaces/${spaceId}/entries/${entry.sys.id}`;
 
   let publishContentCurlSnippet = `${commonSnippetChunk}`;
   publishContentCurlSnippet += ` -H 'X-Contentful-Version: ${entry.sys.version + 1}'`;
-  publishContentCurlSnippet += ` https://api.${domain}.com/spaces/${spaceId}/entries/${
-    entry.sys.id
-  }/published\n`;
+  publishContentCurlSnippet += ` https://api.${domain}.com/spaces/${spaceId}/entries/${entry.sys.id}/published\n`;
 
   // replace single quotes with double because windows doesn't seem to like
   // single quotes very much and errors when you paste and run the snippets in cmd

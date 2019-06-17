@@ -52,9 +52,7 @@ export default {
       transformation: {
         contentType: 'application/json',
         body: JSON.stringify({
-          text: `Published a new ${contentType.name}: *<${contentType.appUrlPointers}|{ ${
-            contentType.titlePointer
-          } }>*`
+          text: `Published a new ${contentType.name}: *<${contentType.appUrlPointers}|{ ${contentType.titlePointer} }>*`
         })
       }
     };

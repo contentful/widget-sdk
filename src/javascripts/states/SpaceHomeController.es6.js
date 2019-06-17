@@ -11,9 +11,7 @@ export const spaceHomeController = ($scope, space, accessChecker, Config) => {
   const spaceId = space.sys.id;
   const spaceName = space.name;
   const orgName = space.organization.name;
-  $scope.supportUrl = `${
-    Config.supportUrl
-  }?read-only-space=true&space-id=${spaceId}&space-name=${spaceName}`;
+  $scope.supportUrl = `${Config.supportUrl}?read-only-space=true&space-id=${spaceId}&space-name=${spaceName}`;
   $scope.isAuthorOrEditor = accessChecker.isAuthorOrEditor(get(space, 'spaceMember.roles'));
   $scope.spaceHomeProps = { spaceName, orgName };
   $scope.isSpaceAdmin = get(space, 'spaceMember.admin');

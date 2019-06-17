@@ -21,9 +21,7 @@ class Workbench extends React.Component {
         const childrenOfType = filterByType(type);
         if (childrenOfType.length > 1) {
           throw new Error(
-            `Workbench should have no more than 1 child with type ${type.displayName}, but it has ${
-              childrenOfType.length
-            }`
+            `Workbench should have no more than 1 child with type ${type.displayName}, but it has ${childrenOfType.length}`
           );
         }
       };
@@ -32,9 +30,7 @@ class Workbench extends React.Component {
 
       if (contentChildren.length !== 1) {
         return new Error(
-          `Workbench should have 1 child with type Workbench.Content, but has ${
-            contentChildren.length
-          }`
+          `Workbench should have 1 child with type Workbench.Content, but has ${contentChildren.length}`
         );
       }
 

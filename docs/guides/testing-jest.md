@@ -135,7 +135,7 @@ Jest stores snapshots besides your tests in files like `__snapshots__/Label.spec
 That's enought for most non-interactive components:
 
 ```js
-import { render, cleanup } from 'react-testing-library';
+import { render, cleanup } from '@testing-library/react';
 import Comment from './comment.es6';
 
 describe('Comment component', () => {
@@ -183,7 +183,7 @@ expect(body).toHaveTextContent('Hello world');
 <!-- Similar to events testing but instead of testing component’s rendered output with a snapshot use Jest’s mock function to test an event handler itself: -->
 
 ```js
-import { render, cleanup, fireEvent } from 'react-testing-library';
+import { render, cleanup, fireEvent } from '@testing-library/react';
 
 it('it calls the onChange handler with the selected value', () => {
   const value = '2';

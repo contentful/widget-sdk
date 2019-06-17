@@ -30,20 +30,20 @@ export async function install({ config, contentTypeIds, appsClient, accessToken 
   });
 
   // Create Netlify notification hooks for all sites.
-  const netlifyHookPromises = uniqBy(config.sites, s => s.netlifySiteId).reduce((
-    acc,
-    siteConfig
-  ) => {
-    const url = getPostPublishUrl(siteConfig.channel);
-    const promisesForSite = NETLIFY_HOOK_EVENTS.map(event => {
-      return NetlifyClient.createNotificationHook(siteConfig.netlifySiteId, accessToken, {
-        event,
-        url
+  const netlifyHookPromises = uniqBy(config.sites, s => s.netlifySiteId).reduce(
+    (acc, siteConfig) => {
+      const url = getPostPublishUrl(siteConfig.channel);
+      const promisesForSite = NETLIFY_HOOK_EVENTS.map(event => {
+        return NetlifyClient.createNotificationHook(siteConfig.netlifySiteId, accessToken, {
+          event,
+          url
+        });
       });
-    });
 
-    return acc.concat([Promise.all(promisesForSite)]);
-  }, []);
+      return acc.concat([Promise.all(promisesForSite)]);
+    },
+    []
+  );
 
   const netlifyHooks = await Promise.all(netlifyHookPromises);
 
@@ -56,9 +56,7 @@ export async function install({ config, contentTypeIds, appsClient, accessToken 
   const contentPreviewPromises = config.sites.map(siteConfig => {
     return spaceContext.contentPreview.create({
       name: `${siteConfig.name} (Netlify app)`,
-      description: `Created by the Netlify app. Previews "${
-        siteConfig.netlifySiteName
-      }" Netlify site.`,
+      description: `Created by the Netlify app. Previews "${siteConfig.netlifySiteName}" Netlify site.`,
       configs: contentTypeIds.map(ctId => {
         return { contentType: ctId, enabled: true, url: siteConfig.netlifySiteUrl };
       })

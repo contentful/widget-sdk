@@ -1,6 +1,6 @@
 import React from 'react';
 import 'jest-dom/extend-expect';
-import { render, cleanup, fireEvent, getByTestId } from 'react-testing-library';
+import { render, cleanup, fireEvent, getByTestId } from '@testing-library/react';
 import { WebhookHeaders } from './WebhookHeaders.es6';
 
 describe('WebhookHeaders', () => {

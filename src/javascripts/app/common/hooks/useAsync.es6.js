@@ -32,16 +32,19 @@ export const useAsyncFn = (fn, isLoading = false) => {
     isLoading
   });
   const isMounted = useRefMounted();
-  const runAsync = useCallback(async (...args) => {
-    dispatch({ type: ASYNC_INIT });
+  const runAsync = useCallback(
+    async (...args) => {
+      dispatch({ type: ASYNC_INIT });
 
-    try {
-      const data = await fn(...args);
-      if (isMounted.current) dispatch({ type: ASYNC_SUCCESS, payload: data });
-    } catch (error) {
-      if (isMounted.current) dispatch({ type: ASYNC_FAILURE, error });
-    }
-  }, [fn, isMounted]);
+      try {
+        const data = await fn(...args);
+        if (isMounted.current) dispatch({ type: ASYNC_SUCCESS, payload: data });
+      } catch (error) {
+        if (isMounted.current) dispatch({ type: ASYNC_FAILURE, error });
+      }
+    },
+    [fn, isMounted]
+  );
 
   return [state, runAsync, () => dispatch({ type: ASYNC_RESET })];
 };

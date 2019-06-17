@@ -45,6 +45,7 @@ function PillsWrapper({ searchBoxHasFocus, actions, children }) {
   const [isOverflownY, setOverflownY] = useState(false);
   const el = useRef(null);
 
+  // eslint-disable-next-line
   useLayoutEffect(() => {
     if (el.current) {
       // HACK: fixes the scroll position after selecting entity

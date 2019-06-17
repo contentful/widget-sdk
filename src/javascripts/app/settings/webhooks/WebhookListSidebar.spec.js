@@ -1,6 +1,6 @@
 import React from 'react';
 import 'jest-dom/extend-expect';
-import { cleanup, render } from 'react-testing-library';
+import { cleanup, render } from '@testing-library/react';
 import WebhookListSidebar from './WebhookListSidebar.es6';
 
 describe('WebhookListSidebar', () => {

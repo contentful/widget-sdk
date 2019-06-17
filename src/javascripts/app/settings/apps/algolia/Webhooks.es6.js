@@ -40,9 +40,7 @@ function createPublishWebhook(record, context) {
 
   return {
     name: `Algolia App: Index ${contentType.name} (${record.localeCode})`,
-    url: `https://${context.config.appId}.algolia.net/1/indexes/${
-      record.index
-    }/{ /payload/sys/id }`,
+    url: `https://${context.config.appId}.algolia.net/1/indexes/${record.index}/{ /payload/sys/id }`,
     topics: ['Entry.publish'],
     filters: [
       { equals: [{ doc: 'sys.environment.sys.id' }, 'master'] },
@@ -66,9 +64,7 @@ function createUnpublishWebhook(record, context) {
   return {
     name: `Algolia App: Delete ${contentType.name} (${record.localeCode})`,
 
-    url: `https://${context.config.appId}.algolia.net/1/indexes/${
-      record.index
-    }/{ /payload/sys/id }`,
+    url: `https://${context.config.appId}.algolia.net/1/indexes/${record.index}/{ /payload/sys/id }`,
     topics: ['Entry.unpublish'],
     filters: [
       { equals: [{ doc: 'sys.environment.sys.id' }, 'master'] },
@@ -103,9 +99,7 @@ function createTransformField(field, record) {
   }
 
   if (field.helper && field.helperParameter) {
-    return `{ ${field.helper} ${field.helperParameter} /payload/fields/${field.id}/${
-      record.localeCode
-    } }`;
+    return `{ ${field.helper} ${field.helperParameter} /payload/fields/${field.id}/${record.localeCode} }`;
   } else if (field.helper) {
     return `{ ${field.helper} /payload/fields/${field.id}/${record.localeCode} }`;
   }

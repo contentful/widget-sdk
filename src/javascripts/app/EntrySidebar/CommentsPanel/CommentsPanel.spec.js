@@ -1,6 +1,6 @@
 import React from 'react';
 import 'jest-dom/extend-expect';
-import { render, within, fireEvent, cleanup } from 'react-testing-library';
+import { render, within, fireEvent, cleanup } from '@testing-library/react';
 
 import CommentsPanel from './CommentsPanel.es6';
 import { useCommentsFetcher, useCommentCreator } from './hooks.es6';

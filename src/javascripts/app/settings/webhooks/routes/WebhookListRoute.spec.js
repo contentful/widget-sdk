@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup } from 'react-testing-library';
+import { render, cleanup } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 import WebhookListRoute from './WebhookListRoute.es6';
 import * as $stateMocked from 'ng/$state';

@@ -1,6 +1,6 @@
 import React from 'react';
 import 'jest-dom/extend-expect';
-import { render, cleanup } from 'react-testing-library';
+import { render, cleanup } from '@testing-library/react';
 import * as spaceContextMocked from 'ng/spaceContext';
 import WebhookHealth from './WebhookHealth.es6';
 

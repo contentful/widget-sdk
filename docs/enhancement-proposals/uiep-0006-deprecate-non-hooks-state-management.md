@@ -48,7 +48,7 @@ There are three main risks.
 3. Hooks have a learning curve
 4. Existing React code that uses non-React state management should most likely be migrated at some point
 
-The main risks is 1 and 2. I do not feel that 1. is a strong risk as we already are writing components using hooks, but especially more complicated components using `useEffect` will be challenging to test without `react-testing-library`. 2 is a potential risk but since the API is public and React major versions do not change significantly often this is an acceptable risk. 3. is a risk with any new technology so I also don't feel it's a strong risk. 4. is more of a potential risk due to tech debt when refactoring components and is dependent on if we as a chapter feel it is something that needs to be migrated.
+The main risks is 1 and 2. I do not feel that 1. is a strong risk as we already are writing components using hooks, but especially more complicated components using `useEffect` will be challenging to test without `@testing-library/react`. 2 is a potential risk but since the API is public and React major versions do not change significantly often this is an acceptable risk. 3. is a risk with any new technology so I also don't feel it's a strong risk. 4. is more of a potential risk due to tech debt when refactoring components and is dependent on if we as a chapter feel it is something that needs to be migrated.
 
 ## Migration
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import 'jest-dom/extend-expect';
-import { render, cleanup } from 'react-testing-library';
+import { render, cleanup } from '@testing-library/react';
 import Comment from './Comment.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as spaceContextMocked from 'ng/spaceContext';

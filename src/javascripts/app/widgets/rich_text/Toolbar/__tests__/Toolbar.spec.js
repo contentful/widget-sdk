@@ -156,9 +156,7 @@ describe('Toolbar', () => {
     }
   });
 
-  it(`hides the ${
-    BLOCKS.EMBEDDED_ASSET
-  } dropdown option when the user has no asset access permissions`, () => {
+  it(`hides the ${BLOCKS.EMBEDDED_ASSET} dropdown option when the user has no asset access permissions`, () => {
     const props = fakeProps();
     props.permissions.canAccessAssets = false;
     props.richTextAPI.widgetAPI.field.validations = [
