@@ -11,8 +11,6 @@ const VENDOR_STYLESHEETS_SRC = assertFilesExist([
   './vendor/font-awesome/font-awesome.css',
   // Not sure if we need this
   './vendor/html5reset-1.6.1.css',
-  // Custom jQuery UI build: see the file for version and contents
-  './vendor/jquery-ui/jquery-ui.css',
   './node_modules/codemirror/lib/codemirror.css',
   // Add angular styles since we are disabling inline-styles in ngCsp
   './node_modules/angular/angular-csp.css',

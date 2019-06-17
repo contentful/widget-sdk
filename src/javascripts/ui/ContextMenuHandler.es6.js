@@ -124,6 +124,7 @@ function repositionMenu($menu) {
       left: '',
       right: ''
     })
+    // todo: delete jquery-ui once we migrate away from this directive
     .position(
       assign(getPositioning(position), {
         of: $trigger

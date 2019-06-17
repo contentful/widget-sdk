@@ -12,9 +12,7 @@ function copyStatics() {
 }
 
 function copyImages() {
-  return gulp
-    .src(['src/images/**/*', './vendor/jquery-ui/images/*'])
-    .pipe(gulp.dest('./public/app/images'));
+  return gulp.src(['src/images/**/*']).pipe(gulp.dest('./public/app/images'));
 }
 
 module.exports = gulp.parallel(copySvg, copyImages, copyStatics);
