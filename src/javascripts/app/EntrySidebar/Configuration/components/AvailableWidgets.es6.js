@@ -18,11 +18,12 @@ export default function AvailableItems(props) {
       {builtin.length > 0 && (
         <React.Fragment>
           <SectionHeading className="f36-margin-bottom--xs">Built-in</SectionHeading>
-          <div className="sidebar-configuraiton__available-widgets-section f36-margin-bottom--l">
-            {builtin.map(item => (
+          <div className="f36-margin-bottom--l">
+            {builtin.map((item, index) => (
               <AvailableWidget
                 key={`${item.widgetNamespace},${item.widgetId}`}
                 name={item.name}
+                index={index}
                 widgetNamespace={item.widgetNamespace}
                 onClick={() => {
                   props.onAddItem(item);
@@ -34,11 +35,12 @@ export default function AvailableItems(props) {
       )}
       <SectionHeading className="f36-margin-bottom--xs">UI Extensions</SectionHeading>
       {extensions.length > 0 && (
-        <div className="sidebar-configuraiton__available-widgets-section f36-margin-bottom--l">
-          {extensions.map(item => (
+        <div className="f36-margin-bottom--l">
+          {extensions.map((item, index) => (
             <AvailableWidget
               key={`${item.widgetNamespace},${item.widgetId}`}
               name={item.name}
+              index={index}
               widgetNamespace={item.widgetNamespace}
               onClick={() => {
                 props.onAddItem(item);

@@ -1,4 +1,3 @@
-import { EntryConfiguration } from 'app/EntrySidebar/Configuration/defaults.es6';
 import { NAMESPACE_EXTENSION, NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces.es6';
 import { pick } from 'lodash/fp';
 
@@ -54,8 +53,8 @@ export const createEditorControlsConfig = uploaderExtensionId => [
   }
 ];
 
-export const createEditorSidebarConfig = taggingExtensionId => {
-  const defaultSidebar = EntryConfiguration.map(pick(['widgetId', 'widgetNamespace']));
+export const createEditorSidebarConfig = (taggingExtensionId, defaultWidgets) => {
+  const defaultSidebar = defaultWidgets.map(pick(['widgetId', 'widgetNamespace']));
 
   return [
     defaultSidebar[0],

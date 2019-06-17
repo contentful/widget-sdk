@@ -113,7 +113,6 @@ window.libs = [
   ['detect-browser', require('detect-browser')],
   ['mitt', require('mitt')],
   ['react-player', require('react-player')],
-  ['react-beautiful-dnd', require('react-beautiful-dnd')],
   ['react-sortable-hoc', require('react-sortable-hoc')],
   ['@typeform/embed', require('@typeform/embed/dist/embed')],
   ['emotion', require('emotion')],

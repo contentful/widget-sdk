@@ -1,4 +1,4 @@
-import { EntryConfiguration, defaultWidgetsMap } from '../defaults.es6';
+import { defaultWidgetsMap } from '../defaults.es6';
 import { difference, isArray } from 'lodash';
 import { SidebarType } from '../constants.es6';
 import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
@@ -7,7 +7,7 @@ import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNa
  * Converts internal state for configuration reducer
  * to data that can be used in API call for saving configuration
  */
-export function convertInternalStateToConfiguration(state) {
+export function convertInternalStateToConfiguration(state, initialItems) {
   if (state.sidebarType === SidebarType.default) {
     return undefined;
   }
@@ -15,7 +15,7 @@ export function convertInternalStateToConfiguration(state) {
   const selectedDefaultIds = state.items
     .filter(widget => widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN)
     .map(widget => widget.widgetId);
-  const defaultIds = EntryConfiguration.map(widget => widget.widgetId);
+  const defaultIds = initialItems.map(widget => widget.widgetId);
   const missingBuiltinIds = difference(defaultIds, selectedDefaultIds);
 
   const selectedItems = state.items
@@ -26,13 +26,13 @@ export function convertInternalStateToConfiguration(state) {
       settings: widget.settings || {}
     }));
 
-  const missingItems = EntryConfiguration.filter(widget =>
-    missingBuiltinIds.includes(widget.widgetId)
-  ).map(widget => ({
-    widgetId: widget.widgetId,
-    widgetNamespace: widget.widgetNamespace,
-    disabled: true
-  }));
+  const missingItems = initialItems
+    .filter(widget => missingBuiltinIds.includes(widget.widgetId))
+    .map(widget => ({
+      widgetId: widget.widgetId,
+      widgetNamespace: widget.widgetNamespace,
+      disabled: true
+    }));
 
   return [...selectedItems, ...missingItems];
 }
@@ -51,11 +51,11 @@ function convertExtensionToWidgetConfiguration(extension) {
  * to initial state of configuration reducer, enriches save configuration
  * with additional data needed to render UI
  */
-export function convertConfigirationToInternalState(configuration, extensions) {
+export function convertConfigirationToInternalState(configuration, extensions, initialItems) {
   if (!isArray(configuration)) {
     return {
       sidebarType: SidebarType.default,
-      items: EntryConfiguration,
+      items: initialItems,
       availableItems: extensions.map(convertExtensionToWidgetConfiguration),
       configurableWidget: null
     };
@@ -103,7 +103,7 @@ export function convertConfigirationToInternalState(configuration, extensions) {
   const availableItems = [];
 
   // add all disabled and missing built-in items to available list
-  EntryConfiguration.forEach(buildInWidget => {
+  initialItems.forEach(buildInWidget => {
     const foundWidget = items.find(widget => {
       return (
         widget.widgetId === buildInWidget.widgetId &&

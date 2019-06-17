@@ -60,14 +60,13 @@ describe('Sidebar configuration', () => {
     });
 
     it('checks that content type with a custom sidebar has been successfully saved', () => {
-      
       defaultContentTypeWithCustomSidebarCreatedResponse();
       defaultPublishedContentTypeWithCustomSidebarCreatedResponse();
       editorInterfaceWithoutSidebarResponse();
       editorInterfaceWithCustomSidebarSavedResponse();
 
       cy.getByTestId('sidebar-widget-item')
-        .eq(0)
+        .first()
         .getByTestId('cf-ui-icon-button')
         .click();
       cy.getByTestId('save-content-type').click();

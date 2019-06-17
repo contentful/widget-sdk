@@ -1,5 +1,7 @@
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
 import { NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNamespaces.es6';
+import * as FeatureFlagKey from 'featureFlags.es6';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 
 export const Publication = {
   widgetId: SidebarWidgetTypes.PUBLICATION,
@@ -90,3 +92,37 @@ export const EntryConfiguration = [
 ];
 
 export const AssetConfiguration = [Publication, Links, Translation, Users];
+
+const availabilityMap = {
+  [Publication.widgetId]: true,
+  [Jobs.widgetId]: () =>
+    getCurrentVariation(FeatureFlagKey.JOBS).then(variation => Boolean(variation)),
+  [Tasks.widgetId]: () =>
+    getCurrentVariation(FeatureFlagKey.TASKS).then(variation => Boolean(variation)),
+  [ContentPreview.widgetId]: true,
+  [Links.widgetId]: true,
+  [Translation.widgetId]: true,
+  [Versions.widgetId]: true,
+  [Users.widgetId]: true,
+  [EntryActivity.widgetId]: () =>
+    getCurrentVariation(FeatureFlagKey.ENTRY_ACTIVITY).then(variation => Boolean(variation))
+};
+
+export const getEntryConfiguration = async () => {
+  const availability = await Promise.all(
+    EntryConfiguration.map(widget => {
+      const value = availabilityMap[widget.widgetId];
+      if (typeof value === 'function') {
+        return value();
+      }
+      return value;
+    })
+  );
+
+  return EntryConfiguration.filter((item, index) => {
+    if (availability[index]) {
+      return item;
+    }
+    return null;
+  }).filter(item => item !== null);
+};

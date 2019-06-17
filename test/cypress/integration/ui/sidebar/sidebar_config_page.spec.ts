@@ -86,18 +86,19 @@ describe('Sidebar configuration', () => {
       const arrowDown: number = 40;
       const widgetsReordered = [
         'Publish & Status',
-        'Links',
         'Preview',
-        'Translation',
+        'Links',
         'Versions',
+        'Translation',
         'Users',
         'Entry activity'
       ];
 
-      cy.get('[data-react-beautiful-dnd-drag-handle]')
+      cy.get('[data-test-id="sidebar-widget-item-draggable"]')
         .eq(3)
         .focus()
-        .trigger('keydown', { keyCode: space })
+        .wait(0.2 * 1000)
+        .trigger('keydown', { keyCode: space, force: true })
         .wait(0.2 * 1000)
         .trigger('keydown', { keyCode: arrowDown, force: true })
         .wait(0.2 * 1000)

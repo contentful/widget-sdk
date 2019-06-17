@@ -50,16 +50,6 @@
   ],
   "sidebar": [
     {
-      "widgetId": "jobs-widget",
-      "widgetNamespace": "sidebar-builtin",
-      "settings": {}
-    },
-    {
-      "widgetId": "content-workflows-tasks-widget",
-      "widgetNamespace": "sidebar-builtin",
-      "settings": {}
-    },
-    {
       "widgetId": "content-preview-widget",
       "widgetNamespace": "sidebar-builtin",
       "settings": {}

@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import arraySwap from 'utils/arraySwap.es6';
 
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { sortableContainer, sortableElement, sortableHandle } from 'react-sortable-hoc';
 
 import { css } from 'emotion';
 
@@ -26,11 +27,35 @@ const styles = {
     display: 'flex'
   }),
   listItem: css({
-    display: 'flex',
-    alignItems: 'center'
+    'button > span': {
+      paddingLeft: 0,
+      display: 'flex',
+      alignItems: 'center'
+    }
   }),
-  dragHandle: css({})
+  dragHandle: css({
+    svg: {
+      width: 30,
+      verticalAlign: 'middle'
+    }
+  }),
+  sortableHelper: css({
+    zIndex: 9999
+  })
 };
+
+const SortableContainer = sortableContainer(({ children }) => <div>{children}</div>);
+const SortableItem = sortableElement(({ name, onClick }) => (
+  <DropdownListItem onClick={onClick} className={styles.listItem}>
+    <SortHandle />
+    <span>{name}</span>
+  </DropdownListItem>
+));
+const SortHandle = sortableHandle(() => (
+  <span className={styles.dragHandle}>
+    <Icon icon="Drag" color="muted" />
+  </span>
+));
 
 export default class ViewCustomizer extends React.Component {
   static propTypes = {
@@ -57,19 +82,11 @@ export default class ViewCustomizer extends React.Component {
     }
   }
 
-  onDragEnd = result => {
-    if (!result.destination) {
-      return;
-    }
+  onSortEnd = ({ oldIndex, newIndex }) => {
+    const reorderedFields = arraySwap(this.props.displayedFields, oldIndex, newIndex);
 
-    const orderedFields = reorder(
-      this.props.displayedFields,
-      result.source.index,
-      result.destination.index
-    );
-
-    this.setState({ optimisticFields: orderedFields });
-    this.props.updateFieldOrder(orderedFields);
+    this.setState({ optimisticFields: reorderedFields });
+    this.props.updateFieldOrder(reorderedFields);
   };
 
   render() {
@@ -102,36 +119,22 @@ export default class ViewCustomizer extends React.Component {
               Content Type
             </DropdownListItem>
           )}
-          <DragDropContext onDragEnd={this.onDragEnd}>
-            <Droppable droppableId="droppable">
-              {provided => (
-                <div ref={provided.innerRef}>
-                  {fields.map((fieldInfo, index) => (
-                    <Draggable
-                      key={fieldInfo.id}
-                      draggableId={fieldInfo.id}
-                      index={index}
-                      disableInteractiveElementBlocking={true}>
-                      {provided => (
-                        <div ref={provided.innerRef} {...provided.draggableProps}>
-                          <DropdownListItem
-                            onClick={() => this.props.removeDisplayField(fieldInfo)}>
-                            <span className={styles.listItem}>
-                              <span className={styles.dragHandle} {...provided.dragHandleProps}>
-                                <Icon icon="Drag" color="muted" />
-                              </span>
-                              <span>{fieldInfo.name}</span>
-                            </span>
-                          </DropdownListItem>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-
+          <SortableContainer
+            useDragHandle
+            axis="y"
+            onSortEnd={this.onSortEnd}
+            helperClass={styles.sortableHelper}>
+            {fields.map((fieldInfo, index) => (
+              <SortableItem
+                key={fieldInfo.id}
+                name={fieldInfo.name}
+                index={index}
+                onClick={() => {
+                  this.props.removeDisplayField(fieldInfo);
+                }}
+              />
+            ))}
+          </SortableContainer>
           <DropdownListItem isDisabled>Status</DropdownListItem>
           {hasHiddenFields && (
             <React.Fragment>
@@ -160,11 +163,4 @@ export default class ViewCustomizer extends React.Component {
       </Dropdown>
     );
   }
-}
-
-function reorder(list, startIndex, endIndex) {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-  return result;
 }

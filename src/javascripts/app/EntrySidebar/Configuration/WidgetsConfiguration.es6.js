@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import {
   selectSidebarType,
   removeItemFromSidebar,
@@ -20,7 +22,36 @@ import DefaultSidebar from './components/DefaultSidebar.es6';
 import CustomSidebar from './components/CustomSidebar.es6';
 import AvailableWidgets from './components/AvailableWidgets.es6';
 
-export default function WidgetsConfiguration({ state, dispatch }) {
+const styles = {
+  options: css({
+    display: 'flex'
+  }),
+  container: css({
+    display: 'flex',
+    marginTop: tokens.spacingL,
+    marginBottom: tokens.spacingM
+  }),
+  mainColumn: css({
+    minWidth: '400px',
+    width: '400px',
+    border: `1px solid ${tokens.colorElementMid}`,
+    backgroundColor: tokens.colorWhite,
+    minHeight: '500px',
+    padding: `${tokens.spacingM} ${tokens.spacingL} ${tokens.spacingL}`,
+    boxShadow: tokens.boxShadowDefault
+  }),
+  additionalColumn: css({
+    minWidth: '400px',
+    width: '400px',
+    border: `1px solid ${tokens.colorElementMid}`,
+    borderLeft: 'none',
+    minHeight: '500px',
+    padding: `${tokens.spacingM} ${tokens.spacingL}`,
+    boxShadow: tokens.boxShadowDefault
+  })
+};
+
+export default function WidgetsConfiguration({ state, dispatch, defaultAvailableItems }) {
   return (
     <React.Fragment>
       <Heading className="f36-margin-bottom--s">Sidebar configuration</Heading>
@@ -28,7 +59,7 @@ export default function WidgetsConfiguration({ state, dispatch }) {
         Configure the sidebar for this content type.
       </Paragraph>
       <FieldGroup>
-        <div className="sidebar-configuration__options">
+        <div className={styles.options}>
           <RadioButtonField
             testId="default-sidebar-option"
             labelText="Use default sidebar"
@@ -57,17 +88,15 @@ export default function WidgetsConfiguration({ state, dispatch }) {
           />
         </div>
       </FieldGroup>
-      <div className="sidebar-configuration__container f36-margin-top--l f36-margin-bottom--m">
+      <div className={styles.container}>
         {state.sidebarType === SidebarType.default && (
-          <div className="sidebar-configuration__main-column" data-test-id="default-sidebar-column">
-            <DefaultSidebar />
+          <div className={styles.mainColumn} data-test-id="default-sidebar-column">
+            <DefaultSidebar items={defaultAvailableItems} />
           </div>
         )}
         {state.sidebarType === SidebarType.custom && (
           <React.Fragment>
-            <div
-              className="sidebar-configuration__main-column"
-              data-test-id="custom-sidebar-column">
+            <div className={styles.mainColumn} data-test-id="custom-sidebar-column">
               <CustomSidebar
                 items={state.items}
                 onRemoveItem={widget => {
@@ -81,9 +110,7 @@ export default function WidgetsConfiguration({ state, dispatch }) {
                 }}
               />
             </div>
-            <div
-              className="sidebar-configuration__additional-column"
-              data-test-id="available-sidebar-items">
+            <div className={styles.additionalColumn} data-test-id="available-sidebar-items">
               <AvailableWidgets
                 items={state.availableItems}
                 onAddItem={item => {
@@ -108,5 +135,6 @@ export default function WidgetsConfiguration({ state, dispatch }) {
 
 WidgetsConfiguration.propTypes = {
   state: PropTypes.object.isRequired,
-  dispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired,
+  defaultAvailableItems: PropTypes.array.isRequired
 };

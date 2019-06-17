@@ -27,9 +27,9 @@ export const dataFetchReducer = (_, action) => {
  * to reset the state of the async operation. This will erase data and error.
  * @param {function(): Promise} fn
  */
-export const useAsyncFn = fn => {
+export const useAsyncFn = (fn, isLoading = false) => {
   const [state, dispatch] = useReducer(dataFetchReducer, {
-    isLoading: false
+    isLoading
   });
   const isMounted = useRefMounted();
   const runAsync = useCallback(async (...args) => {
@@ -52,7 +52,7 @@ export const useAsyncFn = fn => {
  * @param {function(): Promise} fn
  */
 export default function useAsync(fn) {
-  const [state, runAsync] = useAsyncFn(fn);
+  const [state, runAsync] = useAsyncFn(fn, true);
 
   useEffect(() => {
     runAsync();

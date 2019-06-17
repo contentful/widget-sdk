@@ -26,10 +26,13 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
   describe('convertInternalStateToConfiguration', () => {
     it('should be nullable if default config is selected', () => {
       expect(
-        convertInternalStateToConfiguration({
-          sidebarType: SidebarType.default,
-          items: EntryConfiguration
-        })
+        convertInternalStateToConfiguration(
+          {
+            sidebarType: SidebarType.default,
+            items: EntryConfiguration
+          },
+          EntryConfiguration
+        )
       ).toBeUndefined();
     });
 
@@ -51,7 +54,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         sidebarType: SidebarType.custom,
         items
       };
-      const configuration = convertInternalStateToConfiguration(state);
+      const configuration = convertInternalStateToConfiguration(state, EntryConfiguration);
       expect(getAllKeys(configuration)).toEqual([
         'widgetId',
         'widgetNamespace',
@@ -74,9 +77,15 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         items: EntryConfiguration,
         availableItems: []
       };
-      expect(convertConfigirationToInternalState(null, [])).toEqual(defaultState);
-      expect(convertConfigirationToInternalState(undefined, [])).toEqual(defaultState);
-      expect(convertConfigirationToInternalState({ foo: 'bar' }, [])).toEqual(defaultState);
+      expect(convertConfigirationToInternalState(null, [], EntryConfiguration)).toEqual(
+        defaultState
+      );
+      expect(convertConfigirationToInternalState(undefined, [], EntryConfiguration)).toEqual(
+        defaultState
+      );
+      expect(convertConfigirationToInternalState({ foo: 'bar' }, [], EntryConfiguration)).toEqual(
+        defaultState
+      );
     });
 
     it('should split configuration to items and availableItems', () => {
@@ -85,7 +94,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         widgetNamespace: widget.widgetNamespace,
         disabled: true
       }));
-      const state = convertConfigirationToInternalState(allDisabled, []);
+      const state = convertConfigirationToInternalState(allDisabled, [], EntryConfiguration);
       expect(state).toEqual({
         sidebarType: SidebarType.custom,
         configurableWidget: null,
@@ -133,7 +142,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         }
       ];
 
-      const state = convertConfigirationToInternalState(configuration, []);
+      const state = convertConfigirationToInternalState(configuration, [], EntryConfiguration);
 
       expect(state).toEqual({
         sidebarType: SidebarType.custom,
@@ -212,10 +221,14 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         }
       ];
 
-      const state = convertConfigirationToInternalState(configuration, [
-        { id: 'netlify-extension', name: 'Netlify Extension' },
-        { id: 'custom-publish-button', name: 'Custom Publish button' }
-      ]);
+      const state = convertConfigirationToInternalState(
+        configuration,
+        [
+          { id: 'netlify-extension', name: 'Netlify Extension' },
+          { id: 'custom-publish-button', name: 'Custom Publish button' }
+        ],
+        EntryConfiguration
+      );
 
       expect(state).toEqual({
         sidebarType: SidebarType.custom,

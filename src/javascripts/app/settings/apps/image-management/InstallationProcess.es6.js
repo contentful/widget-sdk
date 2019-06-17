@@ -1,6 +1,7 @@
 import { getModule } from 'NgRegistry.es6';
 import * as Fetcher from 'app/settings/extensions/dialogs/GitHubFetcher.es6';
 import * as stringUtils from 'utils/StringUtils.es6';
+import { getEntryConfiguration } from 'app/EntrySidebar/Configuration/defaults.es6';
 
 import {
   createContentTypeConfig,
@@ -67,7 +68,8 @@ const addExtensionsToEditorInterface = async (
   editorInterface.controls = createEditorControlsConfig(imageUploaderExtensionId);
 
   if (imageTaggingExtensionId) {
-    editorInterface.sidebar = createEditorSidebarConfig(imageTaggingExtensionId);
+    const defaultWidgets = await getEntryConfiguration();
+    editorInterface.sidebar = createEditorSidebarConfig(imageTaggingExtensionId, defaultWidgets);
   }
 
   await spaceContext.cma

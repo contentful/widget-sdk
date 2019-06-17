@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { get } from 'lodash';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -31,6 +31,8 @@ export default function ContentTypesPage(props) {
     () => props.extensions.filter(extension => extension.sidebar === true),
     [props.extensions]
   );
+
+  const [sidebarConfiguration, updateSidebarConfiguration] = useState(props.sidebarConfiguration);
 
   return (
     <div className="workbench">
@@ -74,24 +76,22 @@ export default function ContentTypesPage(props) {
                 />
               </React.Fragment>
             )}
-            {props.hasAdvancedExtensibility && (
-              <React.Fragment>
-                {props.currentTab === 'sidebar_configuration' && (
-                  <DocumentTitle
-                    title={['Sidebar Configuration', props.contentTypeData.name, 'Content Model']}
-                  />
-                )}
-                <div
-                  style={{
-                    display: props.currentTab === 'sidebar_configuration' ? 'block' : 'none'
-                  }}>
+            {props.hasAdvancedExtensibility && props.currentTab === 'sidebar_configuration' && (
+              <>
+                <DocumentTitle
+                  title={['Sidebar Configuration', props.contentTypeData.name, 'Content Model']}
+                />
+                <div>
                   <SidebarConfiguration
-                    configuration={props.sidebarConfiguration}
+                    configuration={sidebarConfiguration}
                     extensions={sidebarExtensions}
-                    onUpdateConfiguration={props.actions.updateSidebarConfiguration}
+                    onUpdateConfiguration={configuration => {
+                      updateSidebarConfiguration(configuration);
+                      props.actions.updateSidebarConfiguration(configuration);
+                    }}
                   />
                 </div>
-              </React.Fragment>
+              </>
             )}
           </form>
         </div>

@@ -44,16 +44,6 @@
   "sidebar": [
     {
       "settings": {},
-      "widgetId": "schedule-widget",
-      "widgetNamespace": "sidebar-builtin"
-    },
-    {
-      "settings": {},
-      "widgetId": "content-workflows-tasks-widget",
-      "widgetNamespace": "sidebar-builtin"
-    },
-    {
-      "settings": {},
       "widgetId": "publication-widget",
       "widgetNamespace": "sidebar-builtin"
     },
