@@ -42,7 +42,8 @@ before(() => {
       'locales',
       'microbackend',
       'token',
-      'users'
+      'users',
+      'product_catalog_features'
     ],
     cors: true,
     pactfileWriteMode: 'merge'
