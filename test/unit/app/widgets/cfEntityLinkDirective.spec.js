@@ -37,8 +37,6 @@ describe('cfEntityLink directive', () => {
         }
       );
 
-      const scope = element.isolateScope();
-      scope.useRedesignedCardTemplate = false;
       this.$apply();
       return element.get(0);
     };
@@ -94,46 +92,6 @@ describe('cfEntityLink directive', () => {
       titleEl.click();
       sinon.assert.calledOnce(this.edit);
     });
-
-    it('is run when the edit button is clicked', function() {
-      const editButton = findById(this.el, 'entity-edit');
-      editButton.click();
-      sinon.assert.calledOnce(this.edit);
-    });
-  });
-
-  it('runs remove action when the remove button is clicked', function() {
-    const remove = sinon.spy();
-    const el = this.compile(
-      {},
-      {
-        remove: remove
-      }
-    );
-    const removeButton = findById(el, 'entity-remove');
-    removeButton.click();
-    sinon.assert.calledOnce(remove);
-  });
-
-  it('links to entity', function() {
-    // We need to load the states to calculate the hrefs
-    this.$inject('states/states.es6').loadAll();
-    const el = this.compile(
-      {
-        sys: {
-          id: 'EID',
-          type: 'Entry'
-        }
-      },
-      {},
-      {
-        link: true
-      }
-    );
-    const content = findById(el, 'entity-link-content');
-    expect(content.getAttribute('href')).toBe('/spaces//entries/EID');
-    const edit = findById(el, 'entity-edit');
-    expect(edit.getAttribute('href')).toBe('/spaces//entries/EID');
   });
 
   describe('"data-entity-state" attribute', () => {

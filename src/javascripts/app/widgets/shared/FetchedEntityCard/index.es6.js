@@ -62,10 +62,12 @@ class FetchedEntityCard extends React.Component {
         ])}>
         <div style={{ display: 'flex' }}>
           <h1
+            className={`${className}__title`}
             style={{
               margin: 0,
               fontSize: '.875rem', // Equal to 14px when browser text size is set to 100%
-              lineHeight: 1.5
+              lineHeight: 1.5,
+              flex: '1 1 auto'
             }}>
             {entityType} missing or inaccessible
           </h1>

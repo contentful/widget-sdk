@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import sinon from 'sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 

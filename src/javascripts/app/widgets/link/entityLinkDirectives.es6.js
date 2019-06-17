@@ -38,7 +38,6 @@ export default function register() {
         contentType: '<?',
         // object of visual configuration options
         // valid options are
-        // - draggable
         // - largeImage: If true, show a 270px preview of an image asset
         // - showDetails:  Show description and thumbnail for entries
         // - disableTooltip
@@ -66,9 +65,8 @@ export default function register() {
 
   registerController('EntityLinkController', [
     '$scope',
-    'utils/LaunchDarkly/index.es6',
     'analytics/Analytics.es6',
-    ($scope, LD, Analytics) => {
+    ($scope, Analytics) => {
       /**
        * Given an entity state we return
        */
@@ -80,12 +78,6 @@ export default function register() {
           [EntityState.State.Changed(), _.constant(tokens.colorBlueLight)]
         ]);
       }
-
-      const REFERENCE_CARD_REDESIGN_FEATURE_FLAG = 'feature-at-06-2018-reference-cards-redesign';
-
-      LD.onFeatureFlag($scope, REFERENCE_CARD_REDESIGN_FEATURE_FLAG, isEnabled => {
-        $scope.useRedesignedCardTemplate = isEnabled;
-      });
 
       const data = $scope.entity;
       $scope.config = { ...($scope.config || {}) };

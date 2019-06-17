@@ -151,6 +151,7 @@ export default class LinkEditor extends React.Component {
           useDragHandle={true}
           axis={isGrid ? 'xy' : 'y'}
           items={items}
+          onSortStart={(_, event) => event.preventDefault()} // Fixes dragging in Firefox
           onSortEnd={({ oldIndex, newIndex }) => this.handleLinkSortEnd(oldIndex, newIndex)}
         />
         {showLinkButtons && (
