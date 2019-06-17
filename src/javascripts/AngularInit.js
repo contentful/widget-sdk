@@ -190,6 +190,5 @@ angular
       ngRequire('ui/cfUiTab.es6').default();
       ngRequire('ui/highlightMatchDirective.es6').default();
       ngRequire('ui/loader.es6').default();
-      ngRequire('ui/sortable.es6').default();
     }
   ]);

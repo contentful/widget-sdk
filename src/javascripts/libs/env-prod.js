@@ -8,7 +8,6 @@
  */
 
 require('@babel/polyfill');
-require('angular-ui-sortable');
 // Polyfill for Element.closest used to support Slatejs in IE.
 require('element-closest');
 

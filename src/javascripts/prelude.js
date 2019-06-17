@@ -38,13 +38,7 @@ angular.module('contentful/init', []);
  * @ngdoc module
  * @name contentful
  */
-angular.module('contentful', [
-  'contentful/init',
-  'ngAnimate',
-  'ngSanitize',
-  'ui.sortable',
-  'ui.router'
-]);
+angular.module('contentful', ['contentful/init', 'ngAnimate', 'ngSanitize', 'ui.router']);
 
 /**
  * @ngdoc module
