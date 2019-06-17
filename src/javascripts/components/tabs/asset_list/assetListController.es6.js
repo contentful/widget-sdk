@@ -96,6 +96,20 @@ export default function register() {
           });
       };
 
+      const resetPaginatorProps = () => {
+        $scope.paginatorProps = {
+          page: $scope.paginator.getPage(),
+          pageCount: $scope.paginator.getPageCount(),
+          select: page => {
+            $scope.paginator.setPage(page);
+            $scope.$applyAsync();
+          }
+        };
+      };
+      resetPaginatorProps();
+      $scope.$watch('paginator.getPage()', resetPaginatorProps);
+      $scope.$watch('paginator.getTotal()', resetPaginatorProps);
+
       // These are the props that are sent to the RecordsResourceUsage component
       const resetUsageProps = debounce(() => {
         $scope.usageProps = {
