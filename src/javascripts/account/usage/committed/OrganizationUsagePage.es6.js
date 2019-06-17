@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { map, sum } from 'lodash';
+import { map, sum, get } from 'lodash';
 import * as Config from 'Config.es6';
 import { getModule } from 'NgRegistry.es6';
 
@@ -37,9 +37,13 @@ export default class OrganizationUsagePage extends React.Component {
     }).isRequired,
     period: periodPropType,
     apiRequestIncludedLimit: PropTypes.number.isRequired,
-    assetBandwidthIncludedLimit: PropTypes.number.isRequired,
-    assetBandwidthUsage: PropTypes.number.isRequired,
-    assetBandwidthUOM: PropTypes.string.isRequired,
+    assetBandwidthData: PropTypes.shape({
+      usage: PropTypes.number,
+      unitOfMeasure: PropTypes.string,
+      limits: PropTypes.shape({
+        included: PropTypes.number
+      })
+    }),
     isLoading: PropTypes.bool.isRequired
   };
 
@@ -61,9 +65,7 @@ export default class OrganizationUsagePage extends React.Component {
         apis
       },
       apiRequestIncludedLimit,
-      assetBandwidthIncludedLimit,
-      assetBandwidthUsage,
-      assetBandwidthUOM,
+      assetBandwidthData,
       spaceNames,
       period,
       isLoading,
@@ -103,9 +105,9 @@ export default class OrganizationUsagePage extends React.Component {
           </div>
         ))}
         <AssetBandwidthSection
-          assetBandwidthIncludedLimit={assetBandwidthIncludedLimit}
-          assetBandwidthUsage={assetBandwidthUsage}
-          assetBandwidthUOM={assetBandwidthUOM}
+          limit={get(assetBandwidthData, ['limits', 'included'])}
+          usage={get(assetBandwidthData, ['usage'])}
+          uom={get(assetBandwidthData, ['unitOfMeasure'])}
         />
       </div>
     );
