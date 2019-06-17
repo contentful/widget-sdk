@@ -13,6 +13,7 @@ import home from './spaceHome.es6';
 import stackOnboarding from './stackOnboarding.es6';
 import settings from './settings.es6';
 import jobs from 'app/jobs/routes/index.es6';
+import pageExtensions from 'app/pageExtensions/routes/index.es6';
 
 const store = getStore();
 
@@ -82,7 +83,8 @@ const spaceEnvironment = {
     // conceptually. However, we want to prevent users going to space
     // settings and switching to the master environment in the process.
     settings,
-    jobs
+    jobs,
+    pageExtensions
   ]
 };
 
@@ -133,7 +135,8 @@ const spaceDetail = {
     spaceEnvironment,
     stackOnboarding,
     apps,
-    jobs
+    jobs,
+    pageExtensions
   ]
 };
 
