@@ -149,6 +149,14 @@ export default function register() {
           entryCache: $scope.entryCache,
           assetCache: $scope.assetCache
         };
+        $scope.paginatorProps = {
+          page: $scope.paginator.getPage(),
+          pageCount: $scope.paginator.getPageCount(),
+          select: page => {
+            $scope.paginator.setPage(page);
+            $scope.$applyAsync();
+          }
+        };
 
         $scope.$applyAsync();
       });
@@ -163,6 +171,8 @@ export default function register() {
           reason
         });
       };
+
+      $scope.$watch('paginator.getPage()', resetSearchResults);
 
       $scope.$watchGroup(
         [
