@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 
 import Job, { propTypes as jobPropTypes } from './Job.es6';
 import { TextLink } from '@contentful/forma-36-react-components';
-import StateLink from 'app/common/StateLink.es6';
 
-const JobsTimeline = ({ jobs, onCancel }) => (
+import { JobsStateLink } from 'app/jobs/JobsPageLink.es6';
+
+const JobsTimeline = ({ environmentId, jobs, onCancel }) => (
   <div>
     <ul>
       {jobs.map(schedule => (
@@ -19,19 +20,20 @@ const JobsTimeline = ({ jobs, onCancel }) => (
         />
       ))}
     </ul>
-    <StateLink to="spaces.detail.environment.jobs">
+    <JobsStateLink environmentId={environmentId}>
       {({ getHref }) => (
         <TextLink linkType="muted" className="f36-margin-top--m" href={getHref()}>
           View all scheduled entries
         </TextLink>
       )}
-    </StateLink>
+    </JobsStateLink>
   </div>
 );
 
 JobsTimeline.propTypes = {
   jobs: PropTypes.arrayOf(PropTypes.shape(jobPropTypes)),
-  onCancel: PropTypes.func.isRequired
+  onCancel: PropTypes.func.isRequired,
+  environmentId: PropTypes.string.isRequired
 };
 
 export default JobsTimeline;

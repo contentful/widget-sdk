@@ -132,7 +132,11 @@ export default class JobWidget extends React.Component {
                 <div className={styles.heading}>Schedule</div>
                 {this.renderFailedScheduleNote(data)}
                 {hasScheduledActions ? (
-                  <JobsTimeline jobs={pendingJobs} onCancel={this.handleCancellation} />
+                  <JobsTimeline
+                    environmentId={this.props.environmentId}
+                    jobs={pendingJobs}
+                    onCancel={this.handleCancellation}
+                  />
                 ) : (
                   <NewJob onCreate={this.handleJobCreate} />
                 )}
