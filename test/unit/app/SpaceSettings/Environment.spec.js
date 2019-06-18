@@ -23,6 +23,10 @@ describe('app/SpaceSettings/Environments', () => {
       $provide.value('services/OrganizationRoles.es6', { isOwnerOrAdmin });
     });
 
+    this.ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
+    this.ComponentLibrary.Notification.success = sinon.stub();
+    this.ComponentLibrary.Notification.error = sinon.stub();
+
     const { createComponent } = this.$inject('app/SpaceSettings/Environments/State.es6');
     const spaceContext = this.$inject('mocks/spaceContext').init();
     this.$inject('$state').href = () => 'href';
@@ -165,6 +169,7 @@ describe('app/SpaceSettings/Environments', () => {
     this.container.find('spaceEnvironmentsDeleteDialog', 'confirmId').setValue('e1');
     this.container.find('spaceEnvironmentsDeleteDialog', 'delete').click();
     this.$flush();
+
     this.container.find('environment.e1').assertNonExistent();
   });
 
