@@ -37,9 +37,11 @@ export const TeamListFetcher = createFetcherComponent(async ({ spaceId, onReady 
   return data;
 });
 
+const columnMaxWidth = '350px';
+
 const styles = {
   cell: css({
-    paddingRight: '180px'
+    paddingRight: '160px'
   }),
   contentAlignment: css({
     display: 'flex',
@@ -47,8 +49,9 @@ const styles = {
     flexDirection: 'column'
   }),
   content: css({
-    marginRight: tokens.spacingL,
-    marginLeft: tokens.spacingL
+    width: '100%',
+    paddingRight: tokens.spacingL,
+    paddingLeft: tokens.spacingL
   }),
   header: css({
     fontWeight: tokens.fontWeightNormal,
@@ -68,12 +71,12 @@ const styles = {
   cellTeamName: css({
     fontWeight: tokens.fontWeightMedium,
     color: tokens.colorTextDark,
-    maxWidth: '400px',
+    maxWidth: columnMaxWidth,
     whiteSpace: 'nowrap',
     ...ellipsisStyle
   }),
   cellTeamDescription: css({
-    maxWidth: '400px',
+    maxWidth: columnMaxWidth,
     overflow: 'hidden',
     display: '-webkit-box',
     WebkitLineClamp: '2',
@@ -81,7 +84,7 @@ const styles = {
     WebkitBoxOrient: 'vertical'
   }),
   cellRoles: css({
-    maxWidth: '400px',
+    maxWidth: columnMaxWidth,
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
     lineHeight: '1.2em'
