@@ -7,13 +7,15 @@ import {
   TableRow,
   TableCell,
   TableHead,
-  IconButton
+  IconButton,
+  Button
 } from '@contentful/forma-36-react-components';
 import { cx } from 'emotion';
 import pluralize from 'pluralize';
 
 import Workbench from 'app/common/Workbench.es6';
 import { joinWithAnd } from 'utils/StringUtils.es6';
+import { go } from 'states/Navigator.es6';
 
 import LoadingPlaceholder from './LoadingPlaceholder.es6';
 import styles from './styles.es6';
@@ -21,11 +23,20 @@ import styles from './styles.es6';
 export default class SpaceTeamsPagePresentation extends React.Component {
   static propTypes = {
     memberships: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+    teams: PropTypes.array.isRequired,
     isLoading: PropTypes.bool.isRequired
   };
 
+  goToAddTeams() {
+    go({
+      path: ['spaces', 'detail', 'settings', 'teams', 'add']
+    });
+  }
+
   render() {
-    const { memberships, isLoading } = this.props;
+    const { memberships, teams, isLoading } = this.props;
+    const addTeamsButtonDisabled = memberships.length === teams.length;
+
     return (
       <Workbench>
         <Workbench.Header>
@@ -33,6 +44,11 @@ export default class SpaceTeamsPagePresentation extends React.Component {
             <Workbench.Icon icon="page-teams" />
             <Workbench.Title>Teams {!isLoading && `(${memberships.length})`}</Workbench.Title>
           </Workbench.Header.Left>
+          <Workbench.Header.Actions>
+            <Button disabled={addTeamsButtonDisabled} onClick={() => this.goToAddTeams()}>
+              Add team
+            </Button>
+          </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content className={styles.contentAlignment}>
           <div className={styles.content}>

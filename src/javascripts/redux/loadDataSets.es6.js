@@ -26,7 +26,7 @@ const loaders = state => {
   return {
     [USERS]: () => getAllUsers(createOrganizationEndpoint(orgId)),
     [TEAMS]: () => {
-      const service = createTeamService(state);
+      const service = createTeamService(orgId);
       return service.getAll();
     },
     [ORG_MEMBERSHIPS]: () => getAllMemberships(createOrganizationEndpoint(orgId)),
