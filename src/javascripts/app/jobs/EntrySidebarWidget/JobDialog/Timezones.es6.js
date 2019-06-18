@@ -165,7 +165,7 @@ const getTimezoneI18nName = s => {
   return s;
 };
 
-export const createTimezonesByOffset = () =>
+const createTimezonesByOffset = () =>
   moment.tz
     .names()
     .filter(tz => {
@@ -199,3 +199,12 @@ export const createTimezonesByOffset = () =>
             },
       {}
     );
+
+export const getTimezoneOptions = () => {
+  const timezonesByOffset = createTimezonesByOffset();
+  return Object.keys(timezonesByOffset).map(offset => {
+    const i18n = timezonesByOffset[offset].i18nTimezones.join(', ');
+    const timezone = moment.tz(timezonesByOffset[offset].name).format('Z');
+    return { timezone, offset, label: `(GMT${timezone}) ${i18n}` };
+  });
+};
