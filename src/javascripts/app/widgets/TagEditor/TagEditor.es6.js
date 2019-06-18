@@ -23,7 +23,7 @@ const styles = {
   pill: css({
     cursor: 'grab',
     userSelect: 'none',
-    maxWidth: 200,
+    maxWidth: 300,
     marginRight: tokens.spacingS,
     marginBottom: tokens.spacingS
   })
