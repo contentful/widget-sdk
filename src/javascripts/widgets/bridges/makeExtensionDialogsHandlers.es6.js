@@ -8,6 +8,8 @@ import { getExtensionsById } from '../ExtensionLoader.es6';
 import ExtensionIFrameRenderer from '../ExtensionIFrameRenderer.es6';
 import * as Dialogs from '../ExtensionDialogs.es6';
 import { applyDefaultValues } from '../WidgetParametersUtils.es6';
+import trackExtensionRender from '../TrackExtensionRender.es6';
+import { LOCATION_DIALOG } from '../WidgetLocations.es6';
 
 import createDialogExtensionBridge from './createDialogExtensionBridge.es6';
 
@@ -77,6 +79,8 @@ export default function makeExtensionDialogsHandlers(dependencies) {
         // Parameters passed directly to the dialog.
         invocation: options.parameters || {}
       };
+
+      trackExtensionRender(LOCATION_DIALOG, extension, parameters);
 
       return (
         <Modal

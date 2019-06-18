@@ -2,6 +2,7 @@ import { get, identity } from 'lodash';
 import { getSchema } from 'analytics/snowplow/Schemas.es6';
 import { NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
 import * as WidgetLocations from './WidgetLocations.es6';
+import { makeEventFromWidget } from './TrackExtensionRender.es6';
 
 // Arguments are expected to be produced in `app/entity_editor/DataLoader#loadEditorData()`.
 export function getWidgetTrackingContexts({
@@ -39,14 +40,7 @@ function getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editor
 function makeExtensionEvent(location, widget) {
   return {
     schema: getSchema('extension_render').path,
-    data: {
-      location,
-      extension_id: get(widget, ['descriptor', 'id']),
-      extension_name: get(widget, ['descriptor', 'name']),
-      src: typeof widget.src === 'string' ? widget.src : null,
-      installation_params: Object.keys(get(widget, ['parameters', 'installation'], {})),
-      instance_params: Object.keys(get(widget, ['parameters', 'instance'], {}))
-    }
+    data: makeEventFromWidget(location, widget)
   };
 }
 

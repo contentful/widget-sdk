@@ -25,6 +25,7 @@ import ExtensionInstallTransform from './transformers/ExtensionInstall.es6';
 import WebhookEditorTransform from './transformers/WebhookEditor.es6';
 import FeatureTextEditorTransform from './transformers/FeatureTextEditor.es6';
 import SSOSelfConfigurationTransformer from './transformers/SSOSelfConfiguration.es6';
+import ExtensionRenderTransformer from './transformers/ExtensionRender.es6';
 
 /**
  * @ngdoc module
@@ -44,6 +45,7 @@ registerEvent('global:state_changed', 'page_view', PageViewTransform);
 
 registerEvent('extension:save', 'ui_extension_save', ExtensionSaveTransform);
 registerEvent('extension:install', 'ui_extension_install', ExtensionInstallTransform);
+registerEvent('extension:render', 'extension_render', ExtensionRenderTransformer);
 
 registerGenericEvent('learn:language_selected');
 registerGenericEvent('learn:resource_selected');

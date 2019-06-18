@@ -4,6 +4,8 @@ import { get } from 'lodash';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { applyDefaultValues } from 'widgets/WidgetParametersUtils.es6';
+import trackExtensionRender from 'widgets/TrackExtensionRender.es6';
+import { LOCATION_PAGE } from 'widgets/WidgetLocations.es6';
 
 export default function PageExtension(props) {
   const parameters = {
@@ -16,6 +18,8 @@ export default function PageExtension(props) {
       path: props.path
     }
   };
+
+  trackExtensionRender(LOCATION_PAGE, props.extension, parameters);
 
   return (
     <>
