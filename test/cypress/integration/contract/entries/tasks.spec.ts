@@ -1,21 +1,21 @@
-import { defaultRequestsMock } from '../../../util/factories';
-import { singleUser, singleSpecificOrgUserResponse } from '../../../interactions/users';
-import { successfulGetEntryTasksInteraction } from '../../../interactions/tasks';
+import {defaultRequestsMock} from '../../../util/factories';
+import {singleUser, singleSpecificOrgUserResponse} from '../../../interactions/users';
+import {successfulGetEntryTasksInteraction, tasksErrorResponse, taskCreatedResponse, taskNotCreatedErrorResponse} from '../../../interactions/tasks';
 
 import {
   singleContentTypeResponse,
   editorInterfaceWithoutSidebarResponse
 } from '../../../interactions/content_types';
-import { singleEntryResponse, noEntrySnapshotsResponse } from '../../../interactions/entries';
-import { microbackendStreamToken } from '../../../interactions/microbackend';
+import {singleEntryResponse, noEntrySnapshotsResponse} from '../../../interactions/entries';
+import {microbackendStreamToken} from '../../../interactions/microbackend';
 import * as state from '../../../util/interactionState';
-import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
+import {defaultEntryId, defaultSpaceId} from '../../../util/requests';
 
 const empty = require('../../../fixtures/responses/empty.json');
 const severalTasks = require('../../../fixtures/responses/tasks-several.json');
 const featureFlag = 'feature-05-2019-content-workflows-tasks';
 
-describe('Tasks (based on `comments` endpoint)', () => {
+describe('Tasks entry editor sidebar', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
     cy.startFakeServer({
@@ -28,9 +28,13 @@ describe('Tasks (based on `comments` endpoint)', () => {
 
     cy.setAuthTokenToLocalStorage();
     window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
+  });
+
+  function visitEntry() {
     basicServerSetUpWithEntry();
     cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
-  });
+    cy.wait([`@${state.Token.VALID}`]);
+  }
 
   function basicServerSetUpWithEntry() {
     defaultRequestsMock({
@@ -45,31 +49,113 @@ describe('Tasks (based on `comments` endpoint)', () => {
     cy.route('**/channel/**', []).as('shareJS');
   }
 
-  describe('opening entry without tasks', () => {
+  context('tasks service error', () => {
     beforeEach(() => {
-      successfulGetEntryTasksInteraction('noTasks', empty).as('tasks/empty');
-
-      cy.wait([`@${state.Token.VALID}`, '@tasks/empty']);
+      tasksErrorResponse();
+      visitEntry();
+      cy.wait([`@${state.Tasks.ERROR}`]);
     });
 
-    it('renders "Tasks" sidebar section', () => {
-      cy.getByTestId('sidebar-tasks-widget').should('be.visible');
+    it('renders "Tasks" sidebar section with an error', () => {
+      getTaskListError().should('be.visible');
     });
   });
 
-  describe('opening entry with tasks', () => {
+  context('no tasks on the entry', () => {
     beforeEach(() => {
-      successfulGetEntryTasksInteraction('someTasks', severalTasks).as('tasks/several');
-      singleSpecificOrgUserResponse();
+      successfulGetEntryTasksInteraction('noTasks', empty).as(state.Tasks.NONE);
+      visitEntry();
+      cy.wait([`@${state.Tasks.NONE}`]);
+    });
 
-      cy.wait([`@${state.Token.VALID}`, '@tasks/several', `@${state.Users.SINGLE}`]);
+    it('renders "Tasks" sidebar section', () => {
+      getTasksSidebarSection().should('be.visible');
+      getTaskListError().should('have.length', 0)
+    });
+  });
+
+  context('several tasks on the entry', () => {
+    beforeEach(() => {
+      successfulGetEntryTasksInteraction('someTasks', severalTasks).as(state.Tasks.SEVERAL);
+      singleSpecificOrgUserResponse();
+      visitEntry();
+      cy.wait([`@${state.Tasks.SEVERAL}`, `@${state.Users.SINGLE}`]);
     });
 
     it('renders list of tasks', () => {
-      cy.getAllByTestId('task').should('have.length', 3);
+      getTasks().should('have.length', 3);
     });
+  });
+
+  describe('creating a new task', () => {
+    const newTaskTitle = 'Great new task!';
+
+    beforeEach(() => {
+      successfulGetEntryTasksInteraction('noTasks', empty).as(state.Tasks.NONE);
+    });
+
+    context('task creation error', () => {
+      beforeEach(() => {
+        taskNotCreatedErrorResponse();
+        visitEntry();
+        cy.wait([`@${state.Tasks.NONE}`]);
+      });
+
+      it('creates task on API and adds it to task list', () => {
+        createNewTaskAndSave(newTaskTitle);
+        cy.wait([`@${state.Tasks.ERROR}`]);
+
+        getTasks().should('have.length', 0);
+        getDraftTask().should('have.length', 1);
+        // Can't use 'be.visible' because of element partly covered in sidebar.
+        getDraftTaskError().should('not.have.css', 'display', 'none')
+      })
+    });
+
+    context('task creation successful', () => {
+      beforeEach(() => {
+        taskCreatedResponse(newTaskTitle);
+        visitEntry();
+        cy.wait([`@${state.Tasks.NONE}`]);
+      });
+
+      it('creates task on API and adds it to task list', () => {
+        createNewTaskAndSave(newTaskTitle);
+
+        cy.wait([`@${state.Tasks.CREATE}`]);
+
+        getDraftTask().should('have.length', 0);
+        getTasks().should('have.length', 1);
+      })
+    });
+
+    function createNewTaskAndSave(taskTitle) {
+      getCreateTaskAction()
+        .should('be.enabled')
+        .click();
+      getDraftTask().should('be.visible');
+      getDraftTaskInput()
+        .type(taskTitle)
+        .should('have.value', taskTitle);
+      getDraftTaskSaveAction()
+        .click();
+    }
+
   });
 
   // TODO: Test case for receiving a list of mixed tasks/comments after the backend
   //  has implemented `assignedTo` and we can distinguish the two.
 });
+
+const getTasksSidebarSection = () => cy.getByTestId('sidebar-tasks-widget');
+const getCreateTaskAction = () => getTasksSidebarSection().getByTestId('create-task');
+const getTaskListError = () => getTasksSidebarSection()
+  .get('[data-test-id="task-list-error"]');
+const getTasks = () => getTasksSidebarSection().get('[data-test-id="task"]');
+const getDraftTask = () => getTasksSidebarSection().get('[data-test-id="task-draft"]');
+const getDraftTaskInput = () => getDraftTask()
+  .getByTestId('task-title-input').find('textarea');
+const getDraftTaskSaveAction = () => getDraftTask().getByTestId('save-task');
+//const getDraftTaskError = () => getDraftTask().getByTestId('cf-ui-validation-message');
+const getDraftTaskError = () => getDraftTask().queryByTestId('cf-ui-validation-message');
+

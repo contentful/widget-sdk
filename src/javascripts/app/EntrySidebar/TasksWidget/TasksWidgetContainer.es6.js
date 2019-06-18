@@ -6,15 +6,11 @@ import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.es6';
 import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
 import * as FeatureFlagKey from 'featureFlags.es6';
-import {
-  createTasksViewDataFromComments,
-  createLoadingStateTasksViewData
-} from './TasksViewData.es6';
-import { fetchComments } from '../CommentsPanel/hooks.es6';
-import TasksWidget from './TasksWidget.es6';
-
-// TODO: Move this to './TasksViewData.es6'
-const loadingTasksViewData = createLoadingStateTasksViewData();
+import { createTaskListViewData, createLoadingStateTasksViewData } from './TasksViewData.es6';
+import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import { createTasksStoreForEntry } from './TasksStore.es6';
+import { createTasksStoreInteractor } from './TasksInteractor.es6';
+import TaskList from './TaskList.es6';
 
 export default function TasksWidgetContainerWithFeatureFlag(props) {
   return (
@@ -32,10 +28,13 @@ export class TasksWidgetContainer extends Component {
   };
 
   state = {
-    tasksViewData: loadingTasksViewData
+    loadingError: null,
+    tasks: null,
+    tasksInEditMode: {},
+    tasksErrors: {}
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     this.props.emitter.on(SidebarEventTypes.UPDATED_TASKS_WIDGET, this.onUpdateTasksWidget);
     this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.TASKS);
   }
@@ -43,155 +42,40 @@ export class TasksWidgetContainer extends Component {
   onUpdateTasksWidget = async update => {
     const { spaceId, entityInfo } = update;
 
-    let comments;
-    try {
-      comments = await fetchComments(spaceId, entityInfo.id);
-    } catch (e) {
-      comments = [];
-    }
-    const tasksViewData = createTasksViewDataFromComments(comments);
-    this.setState({ tasksViewData });
+    // TODO: Pass tasksStore instead. Wrap in a factory function though to not trigger
+    //  any fetching in case the feature flag is turned off!
+    const endpoint = createSpaceEndpoint(spaceId);
+    const tasksStore = createTasksStoreForEntry(endpoint, entityInfo.id);
+
+    // TODO: Replace this whole component with a react independent controller.
+    //  Do not pass setState but a more abstract store.
+    const tasksInteractor = createTasksStoreInteractor(
+      tasksStore,
+      val => this.setState(val),
+      () => this.state
+    );
+    this.setState({ tasksInteractor });
+
+    tasksStore.items$.onValue(tasks => {
+      if (!tasks) {
+        return;
+      }
+      this.setState({ tasks, loadingError: null });
+    });
+    tasksStore.items$.onError(error => {
+      this.setState({ loadingError: error });
+    });
   };
 
-  handleCreateDraft() {
-    const user = {
-      firstName: 'Mike',
-      lastName: 'Mitchell',
-      avatarUrl:
-        'https://www.gravatar.com/avatar/02c899bec697256cc19c993945ce9b1e?s=50&d=https%3A%2F%2Fstatic.flinkly.com%2Fgatekeeper%2Fusers%2Fdefault-a4327b54b8c7431ea8ddd9879449e35f051f43bd767d83c5ff351aed9db5986e.png',
-      sys: {
-        createdAt: '2018-11-02T10:07:46Z',
-        updatedAt: '2019-05-08T08:58:33Z'
-      }
-    };
-
-    const newTask = {
-      isDraft: true,
-      body: '',
-      key: `${Date.now()}`,
-      assignedTo: user, // TODO: Replace with assigned to information
-      createdBy: user,
-      createdAt: `${new Date().toISOString()}`,
-      resolved: false // TODO: Replace with resolved flag,
-    };
-
-    this.setState(prevState => ({
-      ...prevState,
-      tasksViewData: {
-        ...prevState.tasksViewData,
-        hasNewTaskForm: true,
-        tasks: [...prevState.tasksViewData.tasks, newTask]
-      }
-    }));
-  }
-
-  handleCancelDraft() {
-    this.setState(prevState => {
-      return {
-        ...prevState,
-        tasksViewData: {
-          ...prevState.tasksViewData,
-          hasNewTaskForm: false,
-          tasks: prevState.tasksViewData.tasks.slice(0, -1)
-        }
-      };
-    });
-  }
-
-  handleCreateTask(taskKey, taskBody) {
-    if (!taskBody) {
-      this.setState(prevState => {
-        return {
-          ...prevState,
-          tasksViewData: {
-            ...prevState.tasksViewData,
-            tasks: prevState.tasksViewData.tasks.map(task => {
-              if (task.key === taskKey) {
-                return {
-                  ...task,
-                  validationMessage: 'Your task cannot be empty'
-                };
-              } else {
-                return { ...task };
-              }
-            })
-          }
-        };
-      });
-
-      return;
-    }
-
-    this.setState(prevState => {
-      return {
-        ...prevState,
-        tasksViewData: {
-          ...prevState.tasksViewData,
-          hasNewTaskForm: false,
-          tasks: prevState.tasksViewData.tasks.map(task => {
-            if (task.key === taskKey) {
-              return {
-                ...task,
-                isDraft: false,
-                body: taskBody
-              };
-            } else {
-              return { ...task };
-            }
-          })
-        }
-      };
-    });
-  }
-
-  handleCompleteTask(taskKey) {
-    this.setState(prevState => {
-      return {
-        ...prevState,
-        tasksViewData: {
-          ...prevState.tasksViewData,
-          hasNewTaskForm: false,
-          tasks: prevState.tasksViewData.tasks.map(task => {
-            if (task.key === taskKey) {
-              return {
-                ...task,
-                resolved: !task.resolved
-              };
-            } else {
-              return { ...task };
-            }
-          })
-        }
-      };
-    });
-  }
-
-  handleDeleteTask(taskKey) {
-    this.setState(prevState => {
-      return {
-        ...prevState,
-        tasksViewData: {
-          ...prevState.tasksViewData,
-          tasks: prevState.tasksViewData.tasks.filter(task => task.key !== taskKey)
-        }
-      };
-    });
-  }
-
   render() {
-    const tasksViewData = this.state.tasksViewData;
-
+    const { tasksInteractor, tasks, loadingError } = this.state;
+    const tasksViewData =
+      tasks || loadingError
+        ? createTaskListViewData(tasks, this.state)
+        : createLoadingStateTasksViewData();
     return (
       <EntrySidebarWidget testId="sidebar-tasks-widget" title="Tasks">
-        <TasksWidget
-          viewData={tasksViewData}
-          onCreateDraft={() => this.handleCreateDraft()}
-          onCancelDraft={() => this.handleCancelDraft()}
-          onCreateTask={(taskKey, taskBody) => this.handleCreateTask(taskKey, taskBody)}
-          onUpdateTask={(taskKey, taskBody) => this.handleCreateTask(taskKey, taskBody)}
-          onDeleteTask={taskKey => this.handleDeleteTask(taskKey)}
-          onCompleteTask={taskKey => this.handleCompleteTask(taskKey)}
-        />
+        <TaskList viewData={tasksViewData} tasksInteractor={tasksInteractor} />
       </EntrySidebarWidget>
     );
   }

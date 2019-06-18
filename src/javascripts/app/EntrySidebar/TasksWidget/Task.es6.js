@@ -6,6 +6,7 @@ import {
   DropdownList,
   DropdownListItem,
   Form,
+  Notification,
   Option,
   SelectField,
   TabFocusTrap,
@@ -14,12 +15,14 @@ import {
   SkeletonContainer,
   SkeletonBodyText
 } from '@contentful/forma-36-react-components';
+import Visible from 'components/shared/Visible/index.es6';
 import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
 import moment from 'moment';
 import isHotKey from 'is-hotkey';
 import TaskDeleteDialog from './TaskDeleteDialog.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import { TaskViewData } from './TasksViewData.es6';
 
 const styles = {
   task: css({
@@ -146,29 +149,33 @@ const styles = {
   })
 };
 
-export default class Task extends React.PureComponent {
+export default class Task extends React.Component {
   static propTypes = {
-    assignedTo: PropTypes.object,
-    body: PropTypes.string,
-    createdAt: PropTypes.string,
-    resolved: PropTypes.bool,
-    isDraft: PropTypes.bool,
-    taskKey: PropTypes.string,
-    onCancelDraft: PropTypes.func,
-    onCreateTask: PropTypes.func,
-    onUpdateTask: PropTypes.func,
-    onDeleteTask: PropTypes.func,
-    onCompleteTask: PropTypes.func,
+    viewData: PropTypes.shape(TaskViewData),
     isLoading: PropTypes.bool,
-    validationMessage: PropTypes.string
+    onEdit: PropTypes.func,
+    onCancel: PropTypes.func,
+    onSave: PropTypes.func,
+    onDeleteTask: PropTypes.func,
+    onCompleteTask: PropTypes.func
   };
 
   state = {
     isExpanded: false,
-    hasVisibleActions: false,
-    hasEditForm: false,
     body: ''
   };
+
+  componentDidUpdate(prevProps) {
+    const { isInEditMode, validationMessage } = this.props.viewData;
+    if (
+      !isInEditMode &&
+      validationMessage &&
+      validationMessage !== prevProps.viewData.validationMessage
+    ) {
+      // We don't have a place on the actual task card to show a deletion error.
+      Notification.error(validationMessage);
+    }
+  }
 
   handleTaskKeyDown = event => {
     if (isHotKey('enter', event)) {
@@ -180,25 +187,17 @@ export default class Task extends React.PureComponent {
     this.setState(prevState => ({ isExpanded: !prevState.isExpanded }));
   };
 
-  handleTaskHover = () => {
-    this.setState(prevState => ({ hasVisibleActions: !prevState.hasVisibleActions }));
-  };
-
   handleEditClick = event => {
     event.stopPropagation();
-    this.setState({ hasEditForm: true });
+    this.props.onEdit();
   };
 
-  handleSubmit = (isDraft, taskKey) => {
-    if (isDraft) {
-      this.props.onCreateTask(taskKey, this.state.body);
-    } else {
-      this.props.onUpdateTask(taskKey, this.state.body);
-      this.setState({ hasEditForm: false, isDraft: false });
-    }
+  handleSubmit = () => {
+    const { body } = this.state;
+    this.props.onSave(body);
   };
 
-  handleDeleteClick = async (event, taskKey) => {
+  handleDeleteClick = async event => {
     event.stopPropagation();
     return ModalLauncher.open(({ isShown, onClose }) => (
       <TaskDeleteDialog
@@ -206,44 +205,42 @@ export default class Task extends React.PureComponent {
         isShown={isShown}
         onCancel={() => onClose(false)}
         onConfirm={() => {
-          this.props.onDeleteTask(taskKey);
+          this.props.onDeleteTask();
           onClose(true);
         }}
       />
     ));
   };
 
-  handleCancelEdit = (event, isDraft) => {
+  handleCancelEdit = event => {
     event.stopPropagation();
-
-    if (isDraft) {
-      this.props.onCancelDraft();
-    } else {
-      this.setState({ hasEditForm: false });
-    }
+    this.props.onCancel();
   };
 
   renderFullName = userObject => {
-    return `${userObject.firstName} ${userObject.lastName}`;
+    return userObject ? `${userObject.firstName} ${userObject.lastName}` : 'unknown user';
   };
 
   renderAvatar = () => {
-    const { assignedTo } = this.props;
+    const { assignee } = this.props.viewData;
 
+    if (!assignee) {
+      return <div />;
+    }
     return (
-      <Tooltip content={`Assigned to ${this.renderFullName(assignedTo)}`} place="left">
-        <img src={assignedTo.avatarUrl} className={styles.avatar} />
+      <Tooltip content={`Assigned to ${this.renderFullName(assignee)}`} place="left">
+        <img src={assignee.avatarUrl} className={styles.avatar} onClick={this.handleTaskExpand} />
       </Tooltip>
     );
   };
 
-  renderActions = taskKey => {
+  renderActions = () => {
     // TODO: Check roles/permissions before rendering actions
     return (
       <CardActions className={cx(styles.actions, this.state.isExpanded && styles.actionsVisible)}>
         <DropdownList>
           <DropdownListItem onClick={this.handleEditClick}>Edit task</DropdownListItem>
-          <DropdownListItem onClick={event => this.handleDeleteClick(event, taskKey)}>
+          <DropdownListItem onClick={event => this.handleDeleteClick(event)}>
             Delete task
           </DropdownListItem>
         </DropdownList>
@@ -252,53 +249,47 @@ export default class Task extends React.PureComponent {
   };
 
   renderDetails = () => {
-    const { body, assignedTo, createdAt, resolved, taskKey } = this.props;
+    const { isExpanded } = this.state;
+    const { body, creator, createdAt, isDone } = this.props.viewData;
+
     return (
       <React.Fragment>
         <div className={styles.checkboxWrapper}>
-          <input
-            type="checkbox"
-            checked={resolved}
-            onChange={() => this.props.onCompleteTask(taskKey)}
-          />
+          <input type="checkbox" checked={isDone} onChange={() => this.props.onCompleteTask()} />
         </div>
         <div
-          className={cx(styles.body, this.state.isExpanded && styles.bodyExpanded)}
+          className={cx(styles.body, isExpanded && styles.bodyExpanded)}
           onClick={this.handleTaskExpand}>
           {body}
-          {this.state.isExpanded && (
-            <React.Fragment>
-              {this.state.hasEditForm && this.renderEditForm()}
-              <div className={styles.meta}>
-                Created{' '}
+          <Visible if={isExpanded}>
+            <div className={styles.meta}>
+              Created{' '}
+              <Visible if={createdAt}>
                 <time
                   dateTime={moment(createdAt, moment.ISO_8601).toISOString()}
                   title={moment(createdAt, moment.ISO_8601).format('LLLL')}
                   className={styles.timestamp}>
                   {moment(createdAt, moment.ISO_8601).fromNow()}
                 </time>{' '}
-                by {this.renderFullName(assignedTo)}
-              </div>
-            </React.Fragment>
-          )}
+              </Visible>
+              by {this.renderFullName(creator)}
+            </div>
+          </Visible>
         </div>
         <div className={styles.avatarWrapper}>
           {this.renderAvatar()}
-          {this.renderActions(taskKey)}
+          {this.renderActions()}
         </div>
       </React.Fragment>
     );
   };
 
   handleBodyUpdate = event => {
-    this.setState({
-      body: event.target.value
-    });
+    this.setState({ body: event.target.value });
   };
 
   renderEditForm = () => {
-    const { taskKey, body, assignedTo, isDraft, validationMessage } = this.props;
-
+    const { body, assignee, isDraft, validationMessage } = this.props.viewData;
     const bodyLabel = isDraft ? 'Create task' : 'Edit task';
     const ctaLabel = isDraft ? 'Create task' : 'Save changes';
     const ctaContext = isDraft ? 'primary' : 'positive';
@@ -309,6 +300,7 @@ export default class Task extends React.PureComponent {
         <TextField
           name="body"
           id="body"
+          testId="task-title-input"
           labelText={bodyLabel}
           textarea
           value={body}
@@ -317,22 +309,20 @@ export default class Task extends React.PureComponent {
           validationMessage={validationMessage}
         />
         <SelectField name="assignee" id="assignee" labelText="Assign to">
-          <Option value="1">{this.renderFullName(assignedTo)}</Option>
+          <Option value="1">{this.renderFullName(assignee)}</Option>
           <Option value="2">User 2</Option>
           <Option value="3">User 3</Option>
         </SelectField>
         <div className={styles.editActions}>
           <Button
+            testId="save-task"
             buttonType={ctaContext}
             className={styles.editSubmit}
-            onClick={() => this.handleSubmit(isDraft, taskKey)}
+            onClick={() => this.handleSubmit()}
             size="small">
             {ctaLabel}
           </Button>
-          <Button
-            buttonType="muted"
-            onClick={event => this.handleCancelEdit(event, isDraft)}
-            size="small">
+          <Button buttonType="muted" onClick={event => this.handleCancelEdit(event)} size="small">
             Cancel
           </Button>
         </div>
@@ -351,17 +341,15 @@ export default class Task extends React.PureComponent {
   }
 
   renderTask() {
-    const { isDraft } = this.props;
+    const { isInEditMode } = this.props.viewData;
 
     return (
       <div
-        className={cx(styles.task, (this.state.hasEditForm || isDraft) && styles.taskHasEditForm)}
-        onMouseEnter={this.handleTaskHover}
-        onMouseLeave={this.handleTaskHover}
+        className={cx(styles.task, isInEditMode && styles.taskHasEditForm)}
         onKeyDown={this.handleTaskKeyDown}
         tabIndex={0}>
         <TabFocusTrap className={styles.tabFocusTrap}>
-          {this.state.hasEditForm || isDraft ? this.renderEditForm() : this.renderDetails()}
+          {isInEditMode ? this.renderEditForm() : this.renderDetails()}
         </TabFocusTrap>
       </div>
     );

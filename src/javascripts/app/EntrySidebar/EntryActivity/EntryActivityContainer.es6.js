@@ -165,7 +165,7 @@ export default class EntryActivityContainer extends Component {
                   justifyContent: 'center'
                 })}>
                 <div className="loading-box__message">
-                  <ValidationMessage>Error fetching the entry activity</ValidationMessage>
+                  <ValidationMessage>Error loading the entry activity</ValidationMessage>
                 </div>
               </div>
             )}

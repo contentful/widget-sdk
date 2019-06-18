@@ -1,6 +1,10 @@
-// All states for the interaction split into endpoint gropus
+// All states for the interaction split into endpoint groups
 // States should be unique on every test run
 // Every new state should be added to this module
+
+// TODO: Have states to represent the internal state of the server
+//  side before the request and separate interaction states named
+//  after the actual interactions.
 
 export enum Token {
   VALID = 'token/valid'
@@ -67,6 +71,13 @@ export enum Jobs {
   ERROR = 'jobs/error',
   CREATED = 'jobs/created',
   CANCEL = 'jobs/cancel'
+}
+
+export enum Tasks {
+  NONE = 'tasks/none',
+  SEVERAL = 'tasks/several',
+  ERROR = 'tasks/error',
+  CREATE = 'tasks/create'
 }
 
 export enum Microbackends {
