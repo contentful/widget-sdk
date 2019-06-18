@@ -125,9 +125,7 @@ angular
       ngRequire(
         'components/shared/persistent_notification/cfPersistentNotificationDirective.es6'
       ).default();
-      ngRequire(
-        'components/shared/search_results_paginator/searchResultsPaginatorDirective.es6'
-      ).default();
+
       ngRequire('components/shared/space-wizard/SpaceWizardDirective.es6').default();
       ngRequire('components/shared/validation_error_display/cfErrorListDirective.es6').default();
       ngRequire(

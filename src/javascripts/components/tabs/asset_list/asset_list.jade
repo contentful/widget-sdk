@@ -152,7 +152,12 @@ header.workbench-header
                 ui-sref="{{linkToAsset}}")
                 <react-component name="@contentful/forma-36-react-components/Tag" props="entityStatus.getProps(asset)"></react-component>
 
-    cf-search-results-paginator(paginator="paginator" pages="7")
+    .f36-margin-top--s
+      react-component(
+        ng-show="paginator.getPageCount()"
+        name="ui/Components/Paginator.es6"
+        props="paginatorProps"
+      )
     react-component(
       name="components/tabs/NoSearchResultsAdvice.es6"
       ng-show="hasNoSearchResults()"

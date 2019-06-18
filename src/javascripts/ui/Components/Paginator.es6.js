@@ -17,7 +17,7 @@ const DISPLAY_PAGES = 3 + NO_OF_NEIGHBORS * 2;
  * `select` argument.
  */
 
-function Paginator({ select, page, pageCount }) {
+function Paginator({ select = _.noop, page = 0, pageCount = 0 }) {
   if (pageCount < 2) {
     return null;
   }
@@ -40,17 +40,17 @@ function Paginator({ select, page, pageCount }) {
         Previous
       </span>
       <div data-test-id="paginator.pages">
-        {pages.map(value => {
+        {pages.map((value, idx) => {
           if (value === null) {
             return (
-              <span key={`page-null`} className="search-results-paginator__page x--dots">
+              <span key={idx} className="search-results-paginator__page x--dots">
                 …
               </span>
             );
           } else {
             return (
               <span
-                key={`page-${value}`}
+                key={idx}
                 className={`search-results-paginator__page ${
                   value === page ? 'x--active-page' : ''
                 }`}
@@ -114,9 +114,9 @@ function getLabels(list) {
 }
 
 Paginator.propTypes = {
-  select: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  pageCount: PropTypes.number.isRequired
+  select: PropTypes.func,
+  page: PropTypes.number,
+  pageCount: PropTypes.number
 };
 
 export default Paginator;

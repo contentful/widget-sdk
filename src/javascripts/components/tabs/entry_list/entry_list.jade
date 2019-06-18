@@ -60,7 +60,12 @@ header.workbench-header
       watch-depth="reference"
     )
 
-    cf-search-results-paginator(paginator="paginator" pages="7" ng-show="hasPage()")
+    .f36-margin-top--s.f36-margin-bottom--s
+      react-component(
+        ng-show="paginator.getPageCount() && hasPage()"
+        name="ui/Components/Paginator.es6"
+        props="paginatorProps"
+      )
 
     react-component(
       name="components/tabs/NoSearchResultsAdvice.es6"
