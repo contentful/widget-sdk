@@ -28,7 +28,7 @@ header.workbench-header
 
 .workbench-main(ng-hide="showNoEntriesAdvice()")
   .workbench-main__left-sidebar(style="max-height: 100vh; overflow-y: hidden")
-    react-component(name="app/jobs/JobsPageLink.es6" props="{environmentId: environmentId }")
+    react-component(name="app/jobs/JobsPageLink.es6" props="{isMasterEnvironment: isMasterEnvironment}")
     .saved-views-wrapper(
       ng-if="savedViewsState === 'loading'"
       style="padding: 4rem 1rem; text-align: center")

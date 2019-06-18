@@ -133,7 +133,7 @@ export default function register() {
 
       function jump(roleId) {
         targetRoleId = roleId;
-        if (spaceContext.getEnvironmentId() === 'master') {
+        if (spaceContext.isMasterEnvironment()) {
           $state.go('spaces.detail.settings.users.list');
         } else {
           $state.go('spaces.detail.environment.settings.users.list');

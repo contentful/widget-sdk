@@ -5,12 +5,15 @@ import FolderIcon from 'svg/folder.es6';
 import EnvironmentIcon from 'svg/environment.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
+import { getModule } from 'NgRegistry.es6';
+const spaceContext = getModule('spaceContext');
 
 function EnvironmentList({ environments, isCurrSpace, currentEnvId, goToSpace, space }) {
   return (
     <ul>
       {(environments || []).map(env => {
         const envId = env.sys.id;
+        const isMasterEnvironment = spaceContext.isMasterEnvironment(env);
         const environmentClassNames = `
         nav-sidepanel__environments-list-item
         ${
@@ -26,10 +29,10 @@ function EnvironmentList({ environments, isCurrSpace, currentEnvId, goToSpace, s
             className={environmentClassNames}
             onClick={e => {
               e.stopPropagation();
-              goToSpace(space.sys.id, envId);
+              goToSpace(space.sys.id, envId, isMasterEnvironment);
             }}>
             <a
-              href={`/spaces/${space.sys.id}${envId === 'master' ? '' : `/environments/${envId}`}`}
+              href={`/spaces/${space.sys.id}${isMasterEnvironment ? '' : `/environments/${envId}`}`}
               onClick={e => {
                 if (e.shiftKey || e.ctrlKey || e.metaKey) {
                   // allow to open in a new tab/window normally
@@ -98,17 +101,16 @@ export default class SpaceWithEnvironments extends React.Component {
 
     const envs = allEnvs.filter(env => env.sys.status.sys.id === 'ready');
 
-    const goToSpace = envId => {
+    const goToSpace = (envId, isMasterEnv) => {
       this.props.setOpenedSpaceId(null);
-      this.props.goToSpace(this.props.space.sys.id, envId);
+      this.props.goToSpace(this.props.space.sys.id, envId, isMasterEnv);
     };
 
     this.setState({ loading: false });
-
-    if (envs.length === 0 || (envs.length === 1 && envs[0].sys.id === 'master')) {
+    if (envs.length === 0 || (envs.length === 1 && spaceContext.isMasterEnvironment(envs[0]))) {
       goToSpace();
     } else if (envs.length === 1) {
-      goToSpace(envs[0].sys.id);
+      goToSpace(envs[0].sys.id, spaceContext.isMasterEnvironment(envs[0]));
     } else {
       this.setState({ environments: envs }, () => {
         this.props.setOpenedSpaceId(this.props.space.sys.id);

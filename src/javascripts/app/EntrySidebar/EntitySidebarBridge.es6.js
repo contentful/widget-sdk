@@ -18,7 +18,7 @@ const entityCreator = getModule('entityCreator');
 
 export default ({ $scope, emitter }) => {
   const isEntry = $scope.entityInfo.type === 'Entry';
-  const isMasterEnvironment = spaceContext.getEnvironmentId() === 'master';
+  const isMasterEnvironment = spaceContext.isMasterEnvironment();
 
   const initializeIncomingLinks = once(() => {
     emitter.emit(SidebarEventTypes.UPDATED_INCOMING_LINKS_WIDGET, {

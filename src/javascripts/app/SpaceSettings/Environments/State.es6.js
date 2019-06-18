@@ -17,7 +17,7 @@ import { openCreateDialog, openEditDialog } from './EditDialog.es6';
 import { openDeleteDialog } from './DeleteDialog.es6';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService.es6';
 import View from './View.es6';
-
+const spaceContext = getModule('spaceContext');
 const environmentsFlagName = 'feature-dv-11-2017-environments';
 
 export default {
@@ -192,9 +192,10 @@ function makeEnvironmentModel(environment) {
     // TODO we should encode all possible values here.
     [otherwise, () => 'inProgress']
   ]);
+
   return {
     id: environment.sys.id,
-    isMaster: environment.sys.id === 'master',
+    isMaster: spaceContext.isMasterEnvironment(environment),
     status,
     payload: environment
   };

@@ -8,6 +8,8 @@ import { filter, concat } from 'utils/Collections.es6';
 import InfoIcon from 'svg/info.es6';
 import CopyButton from 'ui/Components/CopyIconButton.es6';
 import { Tag } from '@contentful/forma-36-react-components';
+import { getModule } from 'NgRegistry.es6';
+const spaceContext = getModule('spaceContext');
 
 function makeLink(env) {
   return {
@@ -98,7 +100,7 @@ function List({ canEdit, spaceEnvironments, envs, updateEnvs }) {
           <div style={{ display: 'inline-block', marginLeft: '6px' }} />
           <CopyButton value={env.sys.id} />
           <div style={{ display: 'inline-block', marginLeft: '2em' }} />
-          {env.sys.id === 'master' && <Tag tagType="muted">Default environment</Tag>}
+          {spaceContext.isMasterEnvironment(env) && <Tag tagType="muted">Default environment</Tag>}
         </div>
       ))}
     </div>

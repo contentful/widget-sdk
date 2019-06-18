@@ -122,6 +122,9 @@ function getType(entity) {
 }
 
 function isNonMasterEnv(entity) {
+  // We need to determine the env we are navigating to based on the entity
+  // entity will have a link to an environment (but wont have alias information)
+  // this will work as long as APIs re-write env ids with alias ids in responses
   const spaceEnvId = get(entity, 'sys.environment.sys.id');
   const isMasterEnv = spaceEnvId === 'master';
 

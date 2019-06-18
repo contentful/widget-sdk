@@ -6,7 +6,6 @@ import Paginator from 'classes/Paginator.es6';
 import { createSelection } from 'classes/Selection.es6';
 import * as entityStatus from 'app/entity_editor/EntityStatus.es6';
 import { getBlankEntryView as getBlankView } from 'data/UiConfig/Blanks.es6';
-import * as EnvironmentUtils from 'utils/EnvironmentUtils.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
 
 export default function register() {
@@ -79,8 +78,8 @@ export default function register() {
       );
 
       $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(spaceContext.organization);
-      $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);
       $scope.environmentId = spaceContext.getEnvironmentId();
+      $scope.isMasterEnvironment = spaceContext.isMasterEnvironment();
 
       $scope.entityStatus = entityStatus;
 
@@ -109,6 +108,7 @@ export default function register() {
         $scope.usageProps = {
           space: spaceContext.space.data,
           environmentId: spaceContext.getEnvironmentId(),
+          isMasterEnvironment: spaceContext.isMasterEnvironment(),
           currentTotal: $scope.paginator.getTotal()
         };
         $scope.$applyAsync();

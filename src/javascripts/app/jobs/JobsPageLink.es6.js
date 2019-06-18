@@ -20,26 +20,21 @@ const styles = {
   })
 };
 
-export function JobsStateLink({ environmentId, children }) {
-  let path;
-  if (environmentId === 'master') {
-    path = 'spaces.detail.jobs';
-  } else {
-    path = 'spaces.detail.environment.jobs';
-  }
+export function JobsStateLink({ isMasterEnvironment, children }) {
+  const path = `spaces.detail.${isMasterEnvironment ? '' : 'environment.'}jobs`;
   return <StateLink to={path}>{children}</StateLink>;
 }
 
 JobsStateLink.propTypes = {
-  environmentId: PropTypes.string,
+  isMasterEnvironment: PropTypes.bool,
   children: PropTypes.func.isRequired
 };
 
-export default function JobsPageLink({ environmentId }) {
+export default function JobsPageLink({ isMasterEnvironment }) {
   return (
     <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
       <div className={styles.linkContainer}>
-        <JobsStateLink environmentId={environmentId}>
+        <JobsStateLink isMasterEnvironment={isMasterEnvironment}>
           {({ getHref }) => (
             <React.Fragment>
               <TextLink href={getHref()} icon="ExternalLink">
@@ -55,5 +50,5 @@ export default function JobsPageLink({ environmentId }) {
 }
 
 JobsPageLink.propTypes = {
-  environmentId: PropTypes.string
+  isMasterEnvironment: PropTypes.bool
 };

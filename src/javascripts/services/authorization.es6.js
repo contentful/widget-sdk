@@ -11,7 +11,14 @@ export default function register() {
       Authorization.prototype = {
         authContext: null,
         spaceContext: null,
-        update: function(tokenLookup, space, enforcements, environmentId, newEnforcement) {
+        update: function(
+          tokenLookup,
+          space,
+          enforcements,
+          environmentId,
+          isMasterEnvironment,
+          newEnforcement
+        ) {
           this.authContext = null;
           this.spaceContext = null;
           this._tokenLookup = tokenLookup;
@@ -20,7 +27,7 @@ export default function register() {
           const environment = {
             sys: {
               id: environmentId,
-              isMaster: environmentId === 'master'
+              isMaster: isMasterEnvironment
             }
           };
 

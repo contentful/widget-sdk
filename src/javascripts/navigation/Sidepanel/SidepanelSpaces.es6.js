@@ -168,5 +168,6 @@ SidepanelSpaces.propTypes = {
   canCreateSpaceInCurrOrg: PropTypes.bool,
   showCreateSpaceModal: PropTypes.func.isRequired,
   spacesByOrg: PropTypes.object.isRequired,
-  currOrg: PropTypes.object
+  currOrg: PropTypes.object,
+  goToSpace: PropTypes.func
 };

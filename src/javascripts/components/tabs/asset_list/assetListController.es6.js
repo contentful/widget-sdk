@@ -7,7 +7,6 @@ import { createSelection } from 'classes/Selection.es6';
 import * as entityStatus from 'app/entity_editor/EntityStatus.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import { getBlankAssetView as getBlankView } from 'data/UiConfig/Blanks.es6';
-import * as EnvironmentUtils from 'utils/EnvironmentUtils.es6';
 
 export default function register() {
   registerController('AssetListController', [
@@ -68,7 +67,7 @@ export default function register() {
       $scope.paginator = searchController.paginator;
 
       $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(spaceContext.organization);
-      $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);
+      $scope.isMasterEnvironment = spaceContext.isMasterEnvironment();
 
       const trackEnforcedButtonClick = err => {
         // If we get reason(s), that means an enforcement is present
@@ -115,6 +114,7 @@ export default function register() {
         $scope.usageProps = {
           space: spaceContext.space.data,
           environmentId: spaceContext.getEnvironmentId(),
+          isMasterEnvironment: spaceContext.isMasterEnvironment(),
           currentTotal: $scope.paginator.getTotal()
         };
       });

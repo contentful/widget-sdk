@@ -175,7 +175,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
   getVariation(ENTRY_COMMENTS, {
     organizationId: get(spaceContext, 'organization.sys.id')
   }).then(variation => {
-    const isMasterEnvironment = spaceContext.getEnvironmentId() === 'master';
+    const isMasterEnvironment = spaceContext.isMasterEnvironment();
     $scope.shouldDisplayCommentsToggle = isMasterEnvironment && variation;
   });
 

@@ -112,8 +112,8 @@ export default function createController($scope, winJqueryObject) {
     });
   }
 
-  function goToSpace(spaceId, envId) {
-    envId = envId === 'master' ? undefined : envId;
+  function goToSpace(spaceId, envId, isMaster) {
+    envId = isMaster ? undefined : envId;
     const path = ['spaces', 'detail'].concat(envId ? ['environment'] : []);
 
     closeSidePanel();
