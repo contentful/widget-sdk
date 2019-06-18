@@ -4,7 +4,15 @@ import 'jest-dom/extend-expect';
 import JobDialog from './index.es6';
 
 describe('JobDialog', () => {
+  let dateNowSpy;
   afterEach(cleanup);
+  beforeAll(() => {
+    dateNowSpy = jest.spyOn(Date, 'now');
+  });
+
+  afterAll(() => {
+    dateNowSpy.mockRestore();
+  });
 
   const build = () => {
     const props = {
@@ -45,7 +53,7 @@ describe('JobDialog', () => {
     ['2018-06-18T23:55', '2018-06-19T00:25:00.000+00:00'],
     ['2018-12-31T23:52', '2019-01-01T00:22:00.000+00:00']
   ])('default values are +30min in the future: %p => %p', async (now, expected) => {
-    jest.spyOn(Date, 'now').mockImplementationOnce(jest.fn(() => new Date(now).valueOf()));
+    dateNowSpy.mockImplementationOnce(jest.fn(() => new Date(now).valueOf()));
 
     const [{ getByTestId }, props] = build();
 
