@@ -1,20 +1,34 @@
 import React from 'react';
-import Enzyme from 'enzyme';
+import 'jest-dom/extend-expect';
+import { render, cleanup, waitForElement, fireEvent } from '@testing-library/react';
 import { flatten, concat } from 'lodash';
 
 import { ContentTypesPage as Page } from './ContentTypeListPage.es6';
 
 import * as spaceContextMocked from 'ng/spaceContext';
-import flushPromises from 'testHelpers/flushPromises';
 import * as contentTypeFactory from 'testHelpers/contentTypeFactory';
+
+jest.mock(
+  'lodash/debounce',
+  () => {
+    return fn => {
+      return fn;
+    };
+  },
+  { virtual: true }
+);
 
 jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'not-ie' })
 }));
 
-jest.mock('./ContentTypeList/index.es6', () => jest.fn().mockReturnValue(true), { virtual: true });
-
-jest.useFakeTimers();
+jest.mock(
+  './ContentTypeList/index.es6',
+  () => {
+    return props => props.contentTypes.map(item => item.sys.id).join(',');
+  },
+  { virtual: true }
+);
 
 jest.mock(
   'access_control/AccessChecker/index.es6',
@@ -41,118 +55,104 @@ const mockContentTypeList = [
   contentTypeFactory.createPublished()
 ];
 
-function mount({ props = {}, items = [] }) {
+function renderComponent({ props = {}, items = [] }) {
   const getStub = jest.fn().mockResolvedValue({ items });
   spaceContextMocked.endpoint = getStub;
 
-  const wrapper = Enzyme.mount(<Page {...props} />);
+  const wrapper = render(<Page {...props} />);
 
   return [wrapper, getStub];
 }
 
-async function waitForUpdate(wrapper) {
-  await flushPromises();
-  wrapper.update();
-}
-
 describe('ContentTypeList Page', () => {
+  afterEach(cleanup);
+
   it('renders loader', () => {
-    const [wrapper, getStub] = mount({ items: mockContentTypeList });
+    const [{ container }, getStub] = renderComponent({ items: mockContentTypeList });
 
     expect(getStub).toHaveBeenCalledTimes(1);
-    expect(wrapper.find(selectors.contentLoader)).toExist();
+    expect(container.querySelector(selectors.contentLoader)).toBeInTheDocument();
   });
 
   it('renders results once loaded', async () => {
-    const [wrapper] = mount({ items: mockContentTypeList });
+    const [{ container }] = renderComponent({ items: mockContentTypeList });
 
-    await waitForUpdate(wrapper);
+    await waitForElement(() => {
+      return container.querySelector(selectors.contentTypeList);
+    });
 
-    expect(wrapper.find(selectors.contentLoader)).not.toExist();
-    expect(wrapper.find(selectors.contentTypeList)).toExist();
-    expect(wrapper.find(selectors.searchBox)).toExist();
-    expect(wrapper.find(selectors.statusFilter)).toExist();
-
-    expect(wrapper.find(selectors.contentTypeList).props().contentTypes).toEqual(
-      mockContentTypeList
-    );
+    expect(container.querySelector(selectors.contentLoader)).not.toBeInTheDocument();
+    expect(container.querySelector(selectors.searchBox)).toBeInTheDocument();
+    expect(container.querySelector(selectors.statusFilter)).toBeInTheDocument();
   });
 
   it('renders empty page if no content types loaded', async () => {
-    const [wrapper] = mount({ items: [] });
+    const [{ container }] = renderComponent({ items: [] });
 
-    await waitForUpdate(wrapper);
+    await waitForElement(() => {
+      return container.querySelector(selectors.emptyState);
+    });
 
-    expect(wrapper.find(selectors.contentTypeList)).not.toExist();
-    expect(wrapper.find(selectors.emptyState)).toExist();
+    expect(container.querySelector(selectors.contentTypeList)).not.toBeInTheDocument();
   });
 
   it('renders predefined search text', async () => {
     const searchText = 'initial search text 42';
-    const [wrapper] = mount({
+    const [{ container }] = renderComponent({
       props: { searchText },
       items: mockContentTypeList
     });
-    await waitForUpdate(wrapper);
-    expect(wrapper.find('ContentTypeListSearch').props().initialValue).toEqual(searchText);
+
+    await waitForElement(() => {
+      return container.querySelector(selectors.searchBox);
+    });
+
+    expect(container.querySelector(selectors.searchBox).value).toEqual(searchText);
   });
 
   describe('Search Box', () => {
-    let wrapper;
     const contentTypes = [
       contentTypeFactory.createPublished({ name: 'aaa' }),
       contentTypeFactory.createPublished({ name: 'bbb' })
     ];
 
-    function setSearchValueAndUpdate(value) {
-      wrapper.find(selectors.searchBox).simulate('change', { target: { value } });
-
-      // we need to simulate timers because search box change event is debounced
-      jest.runAllTimers();
-      wrapper.update();
-    }
-
-    beforeEach(async () => {
-      const [page] = mount({
+    it('filters results by search box value', async () => {
+      const [{ container }] = renderComponent({
         items: contentTypes
       });
 
-      await waitForUpdate(page);
-      wrapper = page;
-    });
+      await waitForElement(() => {
+        return container.querySelector(selectors.searchBox);
+      });
 
-    it('filters results by search box value', async () => {
-      setSearchValueAndUpdate('a');
+      fireEvent.change(container.querySelector(selectors.searchBox), {
+        target: { value: 'a' }
+      });
 
-      expect(wrapper.find(selectors.contentTypeList).props().contentTypes).toEqual([
-        contentTypes[0]
-      ]);
+      expect(container.querySelector(selectors.contentTypeList).textContent).toMatchInlineSnapshot(
+        `"content-type-id11"`
+      );
     });
 
     it('renders no results', async () => {
-      setSearchValueAndUpdate('x');
-
-      expect(wrapper.find(selectors.contentTypeList)).not.toExist();
-      expect(wrapper.find(selectors.noSearchResults)).toExist();
-    });
-
-    it('invokes onSearchChange()', async () => {
-      const onSearchChange = jest.fn();
-      wrapper = mount({
-        props: { onSearchChange },
+      const [{ container }] = renderComponent({
         items: contentTypes
-      })[0];
-      await waitForUpdate(wrapper);
-      const searchText = 'My great search';
-      setSearchValueAndUpdate(searchText);
-      expect(onSearchChange).toHaveBeenCalledTimes(1);
-      expect(onSearchChange).toHaveBeenCalledWith(searchText);
+      });
+
+      await waitForElement(() => {
+        return container.querySelector(selectors.searchBox);
+      });
+
+      fireEvent.change(container.querySelector(selectors.searchBox), {
+        target: { value: 'x' }
+      });
+
+      expect(container.querySelector(selectors.contentTypeList)).not.toBeInTheDocument();
+      expect(container.querySelector(selectors.noSearchResults)).toBeInTheDocument();
     });
   });
 
   describe('Status filter', () => {
-    let wrapper;
-
     const contentTypesByStatus = {
       draft: [contentTypeFactory.createDraft(), contentTypeFactory.createDraft()],
       published: [contentTypeFactory.createPublished(), contentTypeFactory.createPublished()],
@@ -161,17 +161,16 @@ describe('ContentTypeList Page', () => {
 
     const contentTypes = flatten(Object.values(contentTypesByStatus));
 
-    beforeEach(async () => {
-      const [page] = mount({
+    it('highlights default status (All) after page load', async () => {
+      const [{ container, getByTestId }] = renderComponent({
         items: contentTypes
       });
 
-      await waitForUpdate(page);
-      wrapper = page;
-    });
+      await waitForElement(() => {
+        return container.querySelector(selectors.statusFilter);
+      });
 
-    it('highlights default status (All) after page load', async () => {
-      expect(wrapper.find(selectors.statusFilter).props().status).toBeUndefined();
+      expect(getByTestId('status-undefined')).toBeInTheDocument();
     });
 
     /* eslint-disable-next-line no-restricted-syntax */
@@ -183,16 +182,19 @@ describe('ContentTypeList Page', () => {
       ${undefined} | ${contentTypes}
     `('filters list', ({ status, expectedResult }) => {
       it(`by status: ${status || 'All'}`, async () => {
-        wrapper
-          .find(selectors.statusFilter)
-          .find(`[data-test-id="status-${status}"]`)
-          .simulate('click');
+        const [{ container, getByTestId }] = renderComponent({
+          items: contentTypes
+        });
 
-        await waitForUpdate(wrapper);
+        await waitForElement(() => {
+          return container.querySelector(selectors.statusFilter);
+        });
 
-        expect(wrapper.find(selectors.contentTypeList)).toExist();
-        expect(wrapper.find(selectors.contentTypeList).props().contentTypes).toEqual(
-          expectedResult
+        fireEvent.click(getByTestId(`status-${status}`));
+
+        expect(container.querySelector(selectors.contentTypeList)).toBeInTheDocument();
+        expect(container.querySelector(selectors.contentTypeList).textContent).toEqual(
+          expectedResult.map(item => item.sys.id).join(',')
         );
       });
     });

@@ -107,7 +107,9 @@ class ContentTypeList extends Component {
                         {numFields(contentType)}
                       </TableCell>
                       <TableCell className="x--small-cell" data-test-id="cell-date">
-                        <RelativeDateTime value={contentType.sys.updatedAt} />
+                        {contentType.sys.updatedAt ? (
+                          <RelativeDateTime value={contentType.sys.updatedAt} />
+                        ) : null}
                       </TableCell>
                       <TableCell className="x--small-cell" data-test-id="cell-created-by">
                         <FetchAndFormatUserName

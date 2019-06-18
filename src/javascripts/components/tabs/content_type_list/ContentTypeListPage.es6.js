@@ -58,7 +58,6 @@ export class ContentTypesPage extends React.Component {
       <Workbench.Sidebar className="ct-filter-sidebar">
         {!isLoading && (
           <ContentTypeListFilter
-            data-test-id="status-filter"
             status={status}
             onChange={status => {
               this.setState({ status });
@@ -121,15 +120,20 @@ export class ContentTypesPage extends React.Component {
             ) : (
               <React.Fragment>
                 {filteredContentTypes.length > 0 && (
-                  <ContentTypeList
-                    data-test-id="content-type-list"
-                    contentTypes={filteredContentTypes}
-                  />
+                  <div data-test-id="content-type-list">
+                    <ContentTypeList contentTypes={filteredContentTypes} />
+                  </div>
                 )}
                 {contentTypes.length > 0 && filteredContentTypes.length === 0 && (
-                  <NoSearchResultsAdvice data-test-id="no-search-results" />
+                  <div data-test-id="no-search-results">
+                    <NoSearchResultsAdvice />
+                  </div>
                 )}
-                {contentTypes.length === 0 && <NoContentTypeAdvice data-test-id="empty-state" />}
+                {contentTypes.length === 0 && (
+                  <div data-test-id="empty-state">
+                    <NoContentTypeAdvice />
+                  </div>
+                )}
               </React.Fragment>
             )}
           </Workbench.Content>

@@ -22,7 +22,7 @@ ListItem.propTypes = {
 
 export default function ContentTypeListFilter({ status, onChange }) {
   return (
-    <div className="view-folder">
+    <div className="view-folder" data-test-id="status-filter">
       <div className="view-folder__title view-folder__header">Filter by status</div>
       <ul className="view-folder__list">
         <ListItem

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { TextInput } from '@contentful/forma-36-react-components';
 
 export default class ContentTypeListSearch extends React.Component {
@@ -11,15 +11,15 @@ export default class ContentTypeListSearch extends React.Component {
   state = {
     value: this.props.initialValue
   };
-  debouncedOnChangeCallback = debounce(() => {
-    this.props.onChange(this.state.value);
+  debouncedOnChangeCallback = debounce(value => {
+    this.props.onChange(value);
   }, 200);
   handleChange = e => {
     const value = e.target.value;
     this.setState({
       value
     });
-    this.debouncedOnChangeCallback();
+    this.debouncedOnChangeCallback(value);
   };
   render() {
     return (
