@@ -42,12 +42,12 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'column',
-    marginTop: tokens.spacingL
+    marginTop: tokens.spacingXl
   }),
   content: css({
     width: '100%',
-    paddingRight: tokens.spacingL,
-    paddingLeft: tokens.spacingL
+    paddingRight: tokens.spacing2Xl,
+    paddingLeft: tokens.spacing2Xl
   }),
   row: css({
     height: '95px'
@@ -56,7 +56,7 @@ const styles = {
     width: '30%'
   }),
   cell: css({
-    paddingRight: '160px'
+    paddingRight: '140px'
   }),
   cellTeamName: css({
     fontWeight: tokens.fontWeightMedium,
