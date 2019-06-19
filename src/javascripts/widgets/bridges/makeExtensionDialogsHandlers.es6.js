@@ -61,26 +61,25 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       ...extension.extension
     };
 
+    const defainitions = get(extension, ['extension', 'parameters', 'installation'], []);
+    const values = extension.parameters || {};
+    const parameters = {
+      // No instance parameters for dialogs.
+      instance: {},
+      // Regular installation parameters.
+      installation: applyDefaultValues(defainitions, values),
+      // Parameters passed directly to the dialog.
+      invocation: options.parameters || {}
+    };
+
+    trackExtensionRender(LOCATION_DIALOG, extension, parameters);
+
     return ModalLauncher.open(({ isShown, onClose }) => {
       // We're passing `openDialog` (function above) down
       // to the bridge so it doesn't circularly imports
       // this module. You can open dialogs from dialogs
       // (INCEPTION HORN).
       const bridge = createDialogExtensionBridge(dependencies, openDialog, onClose);
-
-      const parameters = {
-        // No instance parameters for dialogs.
-        instance: {},
-        // Regular installation parameters.
-        installation: applyDefaultValues(
-          get(extension, ['extension', 'parameters', 'installation'], []),
-          extension.parameters || {}
-        ),
-        // Parameters passed directly to the dialog.
-        invocation: options.parameters || {}
-      };
-
-      trackExtensionRender(LOCATION_DIALOG, extension, parameters);
 
       return (
         <Modal

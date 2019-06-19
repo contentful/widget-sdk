@@ -30,11 +30,14 @@ export function makeEventFromWidget(location, widget) {
 
 // Keep both Segment and Snowplow payloads in sync.
 function assertEventProps(data) {
-  if (
-    Object.keys(data)
-      .sort()
-      .join(',') === EXPECTED_EVENT_PROPS.sort().join(',')
-  ) {
+  const actual = Object.keys(data)
+    .sort()
+    .join(',');
+  const expected = EXPECTED_EVENT_PROPS.slice()
+    .sort()
+    .join(',');
+
+  if (actual === expected) {
     return data;
   } else {
     throw new Error(`You need to provide ${EXPECTED_EVENT_PROPS.join(', ')}.`);

@@ -201,10 +201,11 @@ export default function register() {
                       eventOrigin: eventOrigin,
                       contentType: contentType,
                       response: { data: entity },
-                      widgetTrackingContexts: _.get($scope, [
-                        'editorData',
-                        'widgetTrackingContexts'
-                      ])
+                      widgetTrackingContexts: _.get(
+                        $scope,
+                        ['editorData', 'widgetTrackingContexts'],
+                        []
+                      )
                     });
                   }
                   trackVersioning.publishedRestored(entity);
