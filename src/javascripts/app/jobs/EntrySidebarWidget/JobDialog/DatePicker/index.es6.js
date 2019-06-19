@@ -9,6 +9,7 @@ import styles from './styles.es6';
 export class DatePicker extends Component {
   static propTypes = {
     required: PropTypes.bool,
+    value: PropTypes.instanceOf(Date),
     minDate: PropTypes.instanceOf(Date),
     maxDate: PropTypes.instanceOf(Date),
     onChange: PropTypes.func,
@@ -25,9 +26,8 @@ export class DatePicker extends Component {
   };
 
   state = {
-    value: moment()
+    validationError: null
   };
-
   componentDidMount() {
     this.pikaday = new Pikaday({
       field: this.datePickerNode,
@@ -85,7 +85,7 @@ export class DatePicker extends Component {
           textInputProps={{
             readOnly: true
           }}
-          value={moment(this.state.value).format('ddd, MMM Do, YYYY')}
+          value={moment(this.props.value).format('ddd, MMM Do, YYYY')}
           validationMessage={this.state.validationError}
           id={id}
           onFocus={this.handleOpen}

@@ -17,23 +17,32 @@ const styles = {
   })
 };
 
-export default function JobsPageLink({ environmentId }) {
+export function JobsStateLink({ environmentId, children }) {
   let path;
   if (environmentId === 'master') {
     path = 'spaces.detail.jobs';
   } else {
     path = 'spaces.detail.environment.jobs';
   }
+  return <StateLink to={path}>{children}</StateLink>;
+}
+
+JobsStateLink.propTypes = {
+  environmentId: PropTypes.string,
+  children: PropTypes.func.isRequired
+};
+
+export default function JobsPageLink({ environmentId }) {
   return (
     <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
       <div className={styles.linkContainer}>
-        <StateLink to={path}>
+        <JobsStateLink environmentId={environmentId}>
           {({ getHref }) => (
             <TextLink href={getHref()} icon="ExternalLink">
               Scheduled Content
             </TextLink>
           )}
-        </StateLink>
+        </JobsStateLink>
       </div>
     </BooleanFeatureFlag>
   );
