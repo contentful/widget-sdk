@@ -46,15 +46,6 @@ describe('SpaceTeamsPage', () => {
       expect(build).not.toThrow();
     });
 
-    it('header should contain space name and team count', async () => {
-      const { getByTestId } = build();
-
-      // ensure rendering finished
-      const header = await waitForElement(() => getByTestId('header'));
-      expect(header).toHaveTextContent('TestSpace');
-      expect(header).toHaveTextContent('(0)');
-    });
-
     it('should create space endpoint', () => {
       build();
       expect(createSpaceEndpointMock).toHaveBeenCalled();
@@ -116,48 +107,36 @@ describe('SpaceTeamsPage', () => {
       ]);
     });
 
-    it('should render correct count', async () => {
-      const { getByTestId } = build();
+    it('should render 2 rows and action buttons', async () => {
+      const { getAllByTestId } = build();
 
       // ensure rendering finished
-      const header = await waitForElement(() => getByTestId('header'));
-      expect(header).toHaveTextContent('(2)');
-    });
-
-    it('should render rows with action buttons', async () => {
-      const { getByTestId } = build();
-
-      // ensure rendering finished
-      await waitForElement(() => getByTestId('membership-row-membership1'));
-      getByTestId('action-button-membership1');
-      getByTestId('membership-row-membership2');
-      getByTestId('action-button-membership2');
+      const rows = await waitForElement(() => getAllByTestId('membership-row'));
+      expect(rows).toHaveLength(2);
+      expect(getAllByTestId('action-button')).toHaveLength(2);
     });
 
     it('should render cells with team details', async () => {
-      const { getByTestId } = build();
+      const { getAllByTestId } = build();
 
       // ensure rendering finished
-      const teamCell1 = await waitForElement(() => getByTestId('team-cell-membership1'));
-      expect(teamCell1).toHaveTextContent('TestTeam1');
-      expect(teamCell1).toHaveTextContent('This is the first test team');
-      const teamCell2 = getByTestId('team-cell-membership2');
-      expect(teamCell2).toHaveTextContent('TestTeam2');
-      expect(teamCell2).toHaveTextContent('This is the second test team');
+      const teamCells = await waitForElement(() => getAllByTestId('team-cell'));
+      expect(teamCells[0]).toHaveTextContent('TestTeam1');
+      expect(teamCells[0]).toHaveTextContent('This is the first test team');
+      expect(teamCells[1]).toHaveTextContent('TestTeam2');
+      expect(teamCells[1]).toHaveTextContent('This is the second test team');
     });
 
     it('should render cells with membership details', async () => {
-      const { getByTestId } = build();
+      const { getAllByTestId } = build();
 
       // ensure rendering finished
-      const roleCell1 = await waitForElement(() => getByTestId('roles-cell-membership1'));
-      expect(roleCell1).toHaveTextContent('Admin');
-      const roleCell2 = getByTestId('roles-cell-membership2');
-      expect(roleCell2).toHaveTextContent('Role 1 and Role 2');
-      const countCell1 = getByTestId('member-count-cell-membership1');
-      expect(countCell1).toHaveTextContent('1 member');
-      const countCell2 = getByTestId('member-count-cell-membership2');
-      expect(countCell2).toHaveTextContent('99 members');
+      const roleCells = await waitForElement(() => getAllByTestId('roles-cell'));
+      const membershipCells = getAllByTestId('member-count-cell');
+      expect(roleCells[0]).toHaveTextContent('Admin');
+      expect(roleCells[1]).toHaveTextContent('Role 1 and Role 2');
+      expect(membershipCells[0]).toHaveTextContent('1 member');
+      expect(membershipCells[1]).toHaveTextContent('99 members');
     });
   });
 

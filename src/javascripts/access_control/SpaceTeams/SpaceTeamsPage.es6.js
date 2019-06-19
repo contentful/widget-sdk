@@ -171,11 +171,8 @@ export default class SpaceTeamsPage extends React.Component {
                               roles,
                               admin
                             }) => (
-                              <TableRow
-                                key={id}
-                                testId={`membership-row-${id}`}
-                                className={styles.row}>
-                                <TableCell className={styles.cell} testId={`team-cell-${id}`}>
+                              <TableRow key={id} testId="membership-row" className={styles.row}>
+                                <TableCell className={styles.cell} testId="team-cell">
                                   <div className={styles.cellTeamName}>{name}</div>
                                   {/*This truncation is a fallback for IE and pre-68 FF, which don't support css line-clamp*/}
                                   <div className={styles.cellTeamDescription}>
@@ -184,17 +181,15 @@ export default class SpaceTeamsPage extends React.Component {
                                 </TableCell>
                                 <TableCell
                                   className={cx(styles.cellRoles, styles.cell)}
-                                  testId={`roles-cell-${id}`}>
+                                  testId="roles-cell">
                                   {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
                                 </TableCell>
-                                <TableCell
-                                  className={styles.cell}
-                                  testId={`member-count-cell-${id}`}>
+                                <TableCell className={styles.cell} testId="member-count-cell">
                                   {pluralize('member', memberCount, true)}
                                 </TableCell>
                                 <TableCell>
                                   <IconButton
-                                    testId={`action-button-${id}`}
+                                    testId="action-button"
                                     label="Action"
                                     buttonType="secondary"
                                     iconProps={{ icon: 'MoreHorizontal' }}
