@@ -1,6 +1,5 @@
 import { get, extend, snakeCase } from 'lodash';
 import { getSchema } from 'analytics/snowplow/Schemas.es6';
-import { getWidgetTrackingContexts } from 'widgets/WidgetTracking.es6';
 
 /**
  * @ngdoc service
@@ -29,9 +28,7 @@ export default function(_eventName, eventData) {
     });
   }
 
-  if (get(eventData, ['actionData', 'entity']) === 'Entry') {
-    getWidgetTrackingContexts(eventData.editorData).forEach(ctx => contexts.push(ctx));
-  }
+  (eventData.widgetTrackingContexts || []).forEach(ctx => contexts.push(ctx));
 
   return { data: {}, contexts };
 }

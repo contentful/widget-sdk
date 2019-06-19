@@ -111,7 +111,7 @@ export const validEvents = {
     'sidebar_link_click',
     'query'
   ],
-  extension: ['save', 'install'],
+  extension: ['save', 'install', 'render'],
   entity_button: ['click'],
   ui_webhook_editor: ['save'],
   usage: ['period_selected'],

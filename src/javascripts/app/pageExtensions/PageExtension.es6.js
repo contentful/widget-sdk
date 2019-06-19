@@ -4,42 +4,53 @@ import { get } from 'lodash';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { applyDefaultValues } from 'widgets/WidgetParametersUtils.es6';
+import trackExtensionRender from 'widgets/TrackExtensionRender.es6';
+import { LOCATION_PAGE } from 'widgets/WidgetLocations.es6';
 
-export default function PageExtension(props) {
-  const parameters = {
-    instance: {},
-    installation: applyDefaultValues(
-      get(props.extension, ['extension', 'parameters', 'installation'], []),
-      props.extension.parameters || {}
-    ),
-    invocation: {
-      path: props.path
-    }
+export default class PageExtension extends React.Component {
+  static propTypes = {
+    path: PropTypes.string.isRequired,
+    extension: PropTypes.shape({
+      sys: PropTypes.shape({
+        id: PropTypes.string.isRequired
+      }).isRequired,
+      extension: PropTypes.shape({
+        name: PropTypes.string.isRequired
+      }).isRequired,
+      parameters: PropTypes.object
+    }).isRequired,
+    bridge: PropTypes.object.isRequired
   };
 
-  return (
-    <>
-      <DocumentTitle title={props.extension.extension.name} />
-      <ExtensionIFrameRenderer
-        bridge={props.bridge}
-        descriptor={{ ...props.extension.extension, id: props.extension.sys.id }}
-        parameters={parameters}
-        isFullSize
-      />
-    </>
-  );
-}
+  componentDidMount() {
+    trackExtensionRender(LOCATION_PAGE, this.props.extension, this.prepareParameters());
+  }
 
-PageExtension.propTypes = {
-  path: PropTypes.string.isRequired,
-  extension: PropTypes.shape({
-    sys: PropTypes.shape({
-      id: PropTypes.string.isRequired
-    }).isRequired,
-    extension: PropTypes.shape({
-      name: PropTypes.string.isRequired
-    }).isRequired,
-    parameters: PropTypes.object
-  }).isRequired,
-  bridge: PropTypes.object.isRequired
-};
+  prepareParameters() {
+    const { extension, path } = this.props;
+    const definitions = get(extension, ['extension', 'parameters', 'installation'], []);
+    const values = extension.parameters || {};
+
+    return {
+      instance: {},
+      installation: applyDefaultValues(definitions, values),
+      invocation: { path }
+    };
+  }
+
+  render() {
+    const { extension, bridge } = this.props;
+
+    return (
+      <>
+        <DocumentTitle title={extension.extension.name} />
+        <ExtensionIFrameRenderer
+          bridge={bridge}
+          descriptor={{ ...extension.extension, id: extension.sys.id }}
+          parameters={this.prepareParameters()}
+          isFullSize
+        />
+      </>
+    );
+  }
+}
