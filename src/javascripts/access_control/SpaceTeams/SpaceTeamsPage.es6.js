@@ -1,13 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { map, truncate } from 'lodash';
+import { map, truncate, range } from 'lodash';
 import {
   Table,
   TableBody,
   TableRow,
   TableCell,
   TableHead,
-  IconButton
+  IconButton,
+  SkeletonContainer,
+  SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -25,18 +27,12 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import { getTeamsSpaceMembershipsOfSpace } from '../TeamRepository.es6';
 import { getSectionVisibility } from '../AccessChecker/index.es6';
 
-export const TeamListFetcher = createFetcherComponent(async ({ spaceId, onReady }) => {
+export const TeamListFetcher = createFetcherComponent(async ({ spaceId }) => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
 
   const promises = [getTeamsSpaceMembershipsOfSpace(spaceEndpoint)];
 
-  let data;
-  try {
-    data = await Promise.all(promises);
-  } finally {
-    onReady();
-  }
-  return data;
+  return await Promise.all(promises);
 });
 
 const columnMaxWidth = '350px';
@@ -85,6 +81,21 @@ const styles = {
   })
 };
 
+const LoadingPlaceholder = () => (
+  <TableRow>
+    <TableCell colSpan="4">
+      <SkeletonContainer
+        data-test-id="content-loader"
+        ariaLabel="Loading Space teams list"
+        svgWidth="100%">
+        {range(2).map((_, index) => (
+          <SkeletonBodyText key={index} numberOfLines={2} offsetTop={index * 75} />
+        ))}
+      </SkeletonContainer>
+    </TableCell>
+  </TableRow>
+);
+
 export default class SpaceTeamsPage extends React.Component {
   static propTypes = {
     spaceId: PropTypes.string.isRequired,
@@ -93,6 +104,7 @@ export default class SpaceTeamsPage extends React.Component {
 
   render() {
     const { spaceId, onReady } = this.props;
+    onReady();
     if (!getSectionVisibility().teams) {
       return <ForbiddenPage />;
     }
@@ -107,11 +119,8 @@ export default class SpaceTeamsPage extends React.Component {
               </div>
             );
           }
-          if (isLoading) {
-            return null;
-          }
 
-          const [teamSpaceMemberships] = data;
+          const [teamSpaceMemberships] = data || [[]];
           const sortedMemberships = teamSpaceMemberships.sort(
             (
               {
@@ -134,7 +143,9 @@ export default class SpaceTeamsPage extends React.Component {
                 <Workbench.Header>
                   <Workbench.Header.Left>
                     <Workbench.Icon icon="page-teams" />
-                    <Workbench.Title>Teams ({teamSpaceMemberships.length})</Workbench.Title>
+                    <Workbench.Title>
+                      Teams {!isLoading && `(${teamSpaceMemberships.length})`}
+                    </Workbench.Title>
                   </Workbench.Header.Left>
                 </Workbench.Header>
                 <Workbench.Content className={styles.contentAlignment}>
@@ -149,45 +160,49 @@ export default class SpaceTeamsPage extends React.Component {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {sortedMemberships.map(
-                          ({
-                            sys: {
-                              id,
-                              team: { name, description, memberCount }
-                            },
-                            roles,
-                            admin
-                          }) => (
-                            <TableRow
-                              key={id}
-                              testId={`membership-row-${id}`}
-                              className={styles.row}>
-                              <TableCell className={styles.cell} testId={`team-cell-${id}`}>
-                                <div className={styles.cellTeamName}>{name}</div>
-                                {/*This truncation is a fallback for IE and pre-68 FF, which don't support css line-clamp*/}
-                                <div className={styles.cellTeamDescription}>
-                                  {truncate(description, { length: 130 })}
-                                </div>
-                              </TableCell>
-                              <TableCell
-                                className={cx(styles.cellRoles, styles.cell)}
-                                testId={`roles-cell-${id}`}>
-                                {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
-                              </TableCell>
-                              <TableCell className={styles.cell} testId={`member-count-cell-${id}`}>
-                                {pluralize('member', memberCount, true)}
-                              </TableCell>
-                              <TableCell>
-                                <IconButton
-                                  testId={`action-button-${id}`}
-                                  label="Action"
-                                  buttonType="secondary"
-                                  iconProps={{ icon: 'MoreHorizontal' }}
-                                />
-                              </TableCell>
-                            </TableRow>
-                          )
-                        )}
+                        {isLoading && <LoadingPlaceholder />}
+                        {!isLoading &&
+                          sortedMemberships.map(
+                            ({
+                              sys: {
+                                id,
+                                team: { name, description, memberCount }
+                              },
+                              roles,
+                              admin
+                            }) => (
+                              <TableRow
+                                key={id}
+                                testId={`membership-row-${id}`}
+                                className={styles.row}>
+                                <TableCell className={styles.cell} testId={`team-cell-${id}`}>
+                                  <div className={styles.cellTeamName}>{name}</div>
+                                  {/*This truncation is a fallback for IE and pre-68 FF, which don't support css line-clamp*/}
+                                  <div className={styles.cellTeamDescription}>
+                                    {truncate(description, { length: 130 })}
+                                  </div>
+                                </TableCell>
+                                <TableCell
+                                  className={cx(styles.cellRoles, styles.cell)}
+                                  testId={`roles-cell-${id}`}>
+                                  {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
+                                </TableCell>
+                                <TableCell
+                                  className={styles.cell}
+                                  testId={`member-count-cell-${id}`}>
+                                  {pluralize('member', memberCount, true)}
+                                </TableCell>
+                                <TableCell>
+                                  <IconButton
+                                    testId={`action-button-${id}`}
+                                    label="Action"
+                                    buttonType="secondary"
+                                    iconProps={{ icon: 'MoreHorizontal' }}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            )
+                          )}
                       </TableBody>
                     </Table>
                   </div>
