@@ -4,6 +4,7 @@ import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers.es6';
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers.es6';
 import makeExtensionNavigationHandlers from './makeExtensionNavigationHandlers.es6';
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers.es6';
+import makePageExtensionHandlers from './makePageExtensionHandlers.es6';
 import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_FIELD_SIDEBAR } from '../WidgetLocations.es6';
 
 import createAppsClient from 'app/settings/apps/AppsClient.es6';
@@ -182,5 +183,7 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
 
       throw new Error('Unknown alpha command.');
     });
+
+    api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
   }
 }

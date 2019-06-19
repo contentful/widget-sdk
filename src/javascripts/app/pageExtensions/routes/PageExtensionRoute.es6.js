@@ -66,12 +66,7 @@ export default function PageExtensionRoute(props) {
         }
 
         return (
-          <PageExtension
-            bridge={props.bridge}
-            extension={extensionResponse}
-            extensionId={props.extensionId}
-            path={props.path}
-          />
+          <PageExtension bridge={props.bridge} extension={extensionResponse} path={props.path} />
         );
       }}
     </PageExtensionFetcher>
@@ -81,7 +76,7 @@ export default function PageExtensionRoute(props) {
 PageExtensionRoute.propTypes = {
   extensionId: PropTypes.string.isRequired,
   orgId: PropTypes.string.isRequired,
-  path: PropTypes.string.isRequire,
-  cma: PropTypes.object.isRequire,
-  bridge: PropTypes.object.isRequire
+  path: PropTypes.string.isRequired,
+  cma: PropTypes.object.isRequired,
+  bridge: PropTypes.object.isRequired
 };

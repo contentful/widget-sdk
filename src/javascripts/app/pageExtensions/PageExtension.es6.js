@@ -22,7 +22,7 @@ export default function PageExtension(props) {
       <DocumentTitle title={props.extension.extension.name} />
       <ExtensionIFrameRenderer
         bridge={props.bridge}
-        descriptor={{ id: props.extensionId, ...props.extension }}
+        descriptor={{ ...props.extension.extension, id: props.extension.sys.id }}
         parameters={parameters}
         isFullSize
       />
@@ -31,10 +31,14 @@ export default function PageExtension(props) {
 }
 
 PageExtension.propTypes = {
-  extensionId: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,
   extension: PropTypes.shape({
-    extension: PropTypes.object.isRequired,
+    sys: PropTypes.shape({
+      id: PropTypes.string.isRequired
+    }).isRequired,
+    extension: PropTypes.shape({
+      name: PropTypes.string.isRequired
+    }).isRequired,
     parameters: PropTypes.object
   }).isRequired,
   bridge: PropTypes.object.isRequired

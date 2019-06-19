@@ -1,11 +1,12 @@
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers.es6';
 import makeExtensionNavigationHandlers from './makeExtensionNavigationHandlers.es6';
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers.es6';
+import makePageExtensionHandlers from './makePageExtensionHandlers.es6';
 import { LOCATION_PAGE } from '../WidgetLocations.es6';
 
-const REQUIRED_DEPENDENCIES = ['$rootScope', 'spaceContext', 'TheLocaleStore'];
+const REQUIRED_DEPENDENCIES = ['$rootScope', 'spaceContext', 'TheLocaleStore', 'Navigator'];
 
-export default function createPageExtensionBridge(dependencies) {
+export default function createPageExtensionBridge(dependencies, currentExtensionId) {
   REQUIRED_DEPENDENCIES.forEach(key => {
     if (!(key in dependencies)) {
       throw new Error(`"${key}" not provided to the extension bridge.`);
@@ -41,6 +42,10 @@ export default function createPageExtensionBridge(dependencies) {
   function install(api) {
     api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
+    api.registerHandler(
+      'navigateToPageExtension',
+      makePageExtensionHandlers(dependencies, currentExtensionId, true)
+    );
 
     const navigationHandler = makeExtensionNavigationHandlers(dependencies);
     api.registerHandler('navigateToContentEntity', async options => {

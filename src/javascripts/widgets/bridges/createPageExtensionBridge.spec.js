@@ -15,19 +15,25 @@ describe('createPageExtensionBridge', () => {
       updateEntry: jest.fn(),
       getEntry: jest.fn(() => Promise.resolve('Entry data'))
     };
-    const bridge = createPageExtensionBridge({
-      $rootScope: {},
-      spaceContext: {
-        getId: () => 'spaceId',
-        getEnvironmentId: () => 'environmentId',
-        cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
-        space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
+    const bridge = createPageExtensionBridge(
+      {
+        $rootScope: {},
+        spaceContext: {
+          getId: () => 'spaceId',
+          getEnvironmentId: () => 'environmentId',
+          cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
+          space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
+        },
+        TheLocaleStore: {
+          getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
+          getDefaultLocale: () => ({ code: 'pl' })
+        },
+        Navigator: {
+          go: jest.fn()
+        }
       },
-      TheLocaleStore: {
-        getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
-        getDefaultLocale: () => ({ code: 'pl' })
-      }
-    });
+      'test-id'
+    );
 
     return [bridge, stubs];
   };

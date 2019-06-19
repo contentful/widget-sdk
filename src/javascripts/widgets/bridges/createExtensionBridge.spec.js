@@ -365,6 +365,20 @@ describe('createExtensionBridge', () => {
     expect(Notification.success).toBeCalledWith('test');
   });
 
+  it('registers navigateToPageExtension', async () => {
+    const [bridge] = makeBridge();
+    const api = makeStubbedApi();
+    bridge.install(api);
+
+    const registerCall = api.registerHandler.mock.calls[7];
+    expect(registerCall[0]).toBe('navigateToPageExtension');
+    const navigateToPageExtension = registerCall[1];
+    expect(typeof navigateToPageExtension).toBe('function');
+
+    const result = await navigateToPageExtension({ extensionId: 'test-id' });
+    expect(result).toEqual({ navigated: true });
+  });
+
   it('registers invalid and active handlers', () => {
     const [bridge, stubs] = makeBridge();
     const api = makeStubbedApi();
