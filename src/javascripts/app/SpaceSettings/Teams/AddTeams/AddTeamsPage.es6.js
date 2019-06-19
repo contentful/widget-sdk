@@ -7,27 +7,23 @@ import {
   Button,
   Select,
   Option,
-  FieldGroup,
-  RadioButtonField,
-  CheckboxField,
-  Notification
+  Notification,
+  IconButton
 } from '@contentful/forma-36-react-components';
 import _ from 'lodash';
 import * as tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import Workbench from 'app/common/Workbench.es6';
 import { useAsyncFn } from 'app/common/hooks/useAsync.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository.es6';
 import { go } from 'states/Navigator.es6';
+import RoleSelector from './RoleSelector.es6';
 
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
 
 const classes = {
-  hero: css({
-    marginBottom: tokens.spacingL
-  }),
   workbench: css({
     display: 'flex'
   }),
@@ -35,60 +31,54 @@ const classes = {
     width: '800px',
     margin: `${tokens.spacing2Xl} auto 80px`
   }),
-  container: css({
+
+  sectionHeading: css({
+    color: tokens.colorTextLight
+  }),
+  teamTitle: css({
+    marginBottom: tokens.spacingM
+  }),
+
+  select: css({
+    marginBottom: tokens.spacingL
+  }),
+
+  teamsAndRolesLists: css({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between'
   }),
-  sectionHeading: css({
-    color: tokens.colorTextLight
+
+  teamsContainer: css({
+    flexBasis: '60%',
+    marginRight: tokens.spacing2Xl
   }),
-  teams: {
-    container: css({
-      flexBasis: '73%',
-      marginRight: tokens.spacingL
-    }),
-    list: css({
-      height: '350px',
-      overflow: 'scroll',
-      wordBreak: 'break-word',
-      marginLeft: tokens.spacingL
-    })
-  },
-  roles: {
-    container: css({
-      flexBasis: '27%'
-    }),
-    list: css({
-      marginLeft: '20px',
-      wordBreak: 'break-word'
-    }),
-    item: css({
-      display: 'block',
-      marginBottom: tokens.spacingXs
-    })
-  },
-  addTeams: {
-    workbench: css({
-      display: 'flex'
-    }),
-    container: css({
-      width: '800px',
-      margin: '0 auto 80px'
-    }),
-    select: css({
-      marginBottom: tokens.spacingL
-    })
-  },
+  teamsList: css({
+    height: '450px',
+    overflow: 'scroll',
+    wordBreak: 'break-word'
+  }),
+
+  submitButton: css({
+    marginTop: tokens.spacing2Xl
+  }),
+
+  rolesContainer: css({
+    flexBasis: '40%'
+  }),
+
   teamInfo: {
     container: css({
-      padding: tokens.spacingM,
+      padding: `${tokens.spacingM} ${tokens.spacingM} ${tokens.spacingM} ${tokens.spacingXl}`,
       marginBottom: tokens.spacingM,
       color: tokens.colorTextMid,
       '&:hover': {
         backgroundColor: tokens.colorElementLightest,
-        cursor: 'pointer'
-      }
+        '& .team-info__close-button': {
+          opacity: 1
+        }
+      },
+      position: 'relative'
     }),
     title: css({
       marginBottom: tokens.spacingXs
@@ -96,6 +86,12 @@ const classes = {
     name: css({
       wordBreak: 'break-word',
       marginRight: tokens.spacingM
+    }),
+    close: css({
+      position: 'absolute',
+      right: `10px`,
+      top: '10px',
+      opacity: 0
     })
   }
 };
@@ -106,7 +102,7 @@ const closeTabWarning = evt => {
 };
 
 const reducer = createImmerReducer({
-  SET_ADMIN: (state, action) => {
+  SELECT_ADMIN: (state, action) => {
     if (action.payload === true) {
       state.selectedRoleIds = [];
     }
@@ -119,7 +115,7 @@ const reducer = createImmerReducer({
     state.shouldShowControls = true;
 
     if (state.selectedTeamIds.length === 1) {
-      window.addEventListener('beforeunload', closeTabWarning);
+      // window.addEventListener('beforeunload', closeTabWarning);
     }
   },
   REMOVE_TEAM: (state, action) => {
@@ -129,8 +125,8 @@ const reducer = createImmerReducer({
       window.removeEventListener('beforeunload', closeTabWarning);
     }
   },
-  CHECK_ROLE: (state, action) => {
-    if (action.payload.checked) {
+  SELECT_ROLE: (state, action) => {
+    if (action.payload.isSelected) {
       state.selectedRoleIds.push(action.payload.id);
     } else {
       state.selectedRoleIds = state.selectedRoleIds.filter(id => id !== action.payload.id);
@@ -164,6 +160,8 @@ const submit = (spaceId, teams, dispatch) => async ({
     // Do nothing, we handle the errors after
   }
 
+  // We keep the user on this page and show a notification telling them all the
+  // teams erred
   if (erredTeams.length > 0 && erredTeams.length === promises.length) {
     Notification.error(`Could not add ${pluralize('team', erredTeams.length)} to the space.`);
 
@@ -172,6 +170,8 @@ const submit = (spaceId, teams, dispatch) => async ({
     return;
   }
 
+  // If any teams were successfully added, we show a success message with the number
+  // of teams added
   Notification.success(
     `${pluralize(
       'team',
@@ -180,6 +180,7 @@ const submit = (spaceId, teams, dispatch) => async ({
     )} successfully added to space`
   );
 
+  // Show an error notification for any erred teams as well
   erredTeams.forEach(teamId => {
     const team = teams.find(team => team.sys.id === teamId);
 
@@ -231,11 +232,11 @@ export default function AddTeamsPage({ teams, roles, spaceId }) {
       <Workbench.Content>
         <Typography>
           <div className={classes.workbenchContent}>
-            <div className={classes.hero}>
+            <div>
               <Heading>Add teams from your organization</Heading>
               <Select
                 disabled={isLoading}
-                className={classes.addTeams.select}
+                className={classes.select}
                 onChange={e => dispatch({ type: 'ADD_TEAM', payload: e.target.value })}>
                 <Option>Select...</Option>
                 {teams
@@ -247,14 +248,14 @@ export default function AddTeamsPage({ teams, roles, spaceId }) {
                   ))}
               </Select>
             </div>
-            <div className={classes.container}>
-              <div className={classes.teams.container}>
+            <div className={classes.teamsAndRolesLists}>
+              <div className={classes.teamsContainer}>
                 {shouldShowControls && (
                   <>
-                    <SectionHeading className={classes.sectionHeading}>
+                    <SectionHeading className={cx(classes.sectionHeading, classes.teamTitle)}>
                       {pluralize('team', selectedTeamIds.length, true)}
                     </SectionHeading>
-                    <div className={classes.teams.list}>
+                    <div className={classes.teamsList}>
                       {selectedTeamIds.length !== 0 &&
                         selectedTeamIds.map(id => {
                           const team = teams.find(t => t.sys.id === id);
@@ -269,62 +270,31 @@ export default function AddTeamsPage({ teams, roles, spaceId }) {
                         })}
                     </div>
                     <Button
+                      className={classes.submitButton}
                       disabled={submitButtonDisabled}
                       loading={isLoading}
                       onClick={() => doSubmit(state)}>
-                      Add teams
+                      Add {pluralize('team', selectedTeamIds.length)}
                     </Button>
                   </>
                 )}
               </div>
-              <div className={classes.roles.container}>
+              <div className={classes.rolesContainer}>
                 {shouldShowControls && (
                   <>
                     <SectionHeading className={classes.sectionHeading}>
                       Assign role set to {pluralize('team', selectedTeamIds.length)}
                     </SectionHeading>
-                    <FieldGroup>
-                      <RadioButtonField
-                        labelText="Admin"
-                        helpText="Manages everything in the space"
-                        name="admin"
-                        id="admin_true"
-                        value={true}
-                        checked={adminRoleSelected === true}
-                        disabled={isLoading}
-                        onChange={() => dispatch({ type: 'SET_ADMIN', payload: true })}
-                      />
-                      <RadioButtonField
-                        labelText="Non-admin"
-                        name="admin"
-                        id="admin_false"
-                        value={false}
-                        checked={adminRoleSelected === false}
-                        disabled={isLoading}
-                        onChange={() => dispatch({ type: 'SET_ADMIN', payload: false })}
-                      />
-                      <div className={classes.roles.list}>
-                        {roles.map(role => (
-                          <div key={role.sys.id} className={classes.roles.item}>
-                            <CheckboxField
-                              id={role.sys.id}
-                              labelText={role.name}
-                              checked={Boolean(selectedRoleIds.find(id => role.sys.id === id))}
-                              disabled={adminRoleSelected === true || isLoading}
-                              onChange={e =>
-                                dispatch({
-                                  type: 'CHECK_ROLE',
-                                  payload: {
-                                    checked: e.target.checked,
-                                    id: role.sys.id
-                                  }
-                                })
-                              }
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </FieldGroup>
+                    <RoleSelector
+                      roles={roles}
+                      onRoleSelected={(id, isSelected) =>
+                        dispatch({ type: 'SELECT_ROLE', payload: { id, isSelected } })
+                      }
+                      onAdminSelected={isSelected =>
+                        dispatch({ type: 'SELECT_ADMIN', payload: isSelected })
+                      }
+                      disabled={isLoading}
+                    />
                   </>
                 )}
               </div>
@@ -345,12 +315,20 @@ AddTeamsPage.propTypes = {
 
 function TeamInfo({ team, onClick }) {
   return (
-    <div className={classes.teamInfo.container} onClick={onClick}>
+    <div className={classes.teamInfo.container}>
       <div className={classes.teamInfo.title}>
         <strong className={classes.teamInfo.name}>{_.truncate(team.name, { length: 25 })}</strong>{' '}
         {pluralize('member', team.memberCount, true)}
       </div>
       <div>{_.truncate(team.description, { length: 60 })}</div>
+      <IconButton
+        iconProps={{
+          icon: 'Close'
+        }}
+        className={cx(classes.teamInfo.close, 'team-info__close-button')}
+        onClick={onClick}
+        buttonType="secondary"
+      />
     </div>
   );
 }

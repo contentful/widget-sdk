@@ -1,10 +1,12 @@
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { fetchAll } from 'data/CMA/FetchAll.es6';
+import getOrgId from 'redux/selectors/getOrgId.es6';
 
 const ALPHA_HEADER = { 'x-contentful-enable-alpha-feature': 'teams-api' };
 const BATCH_LIMIT = 100;
 
-export default function createTeamService(orgId) {
+export default function createTeamService(state) {
+  const orgId = getOrgId(state);
   const endpoint = createOrganizationEndpoint(orgId);
 
   return {

@@ -10,7 +10,6 @@ import removeFromDataset from './utils/removeFromDataset.es6';
 import { isTaken } from 'utils/ServerErrorUtils.es6';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
 import { createSpaceRoleLinks } from 'access_control/utils.es6';
-import getOrgId from 'redux/selectors/getOrgId.es6';
 
 const userToString = ({ firstName, lastName, email }) =>
   firstName ? `${firstName} ${lastName}` : email;
@@ -25,8 +24,7 @@ export default ({ dispatch, getState }) => next => async action => {
     case 'CREATE_NEW_TEAM': {
       next(action);
       const team = action.payload.team;
-      const orgId = getOrgId(getState());
-      const service = createTeamService(orgId);
+      const service = createTeamService(getState());
       try {
         const newTeam = await service.create(action.payload.team);
         dispatch({ type: 'ADD_TO_DATASET', payload: { item: newTeam, dataset: TEAMS } });

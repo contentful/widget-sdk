@@ -8,7 +8,8 @@ import {
   TableCell,
   TableHead,
   IconButton,
-  Button
+  Button,
+  Tooltip
 } from '@contentful/forma-36-react-components';
 import { cx } from 'emotion';
 import pluralize from 'pluralize';
@@ -45,9 +46,17 @@ export default class SpaceTeamsPagePresentation extends React.Component {
             <Workbench.Title>Teams {!isLoading && `(${memberships.length})`}</Workbench.Title>
           </Workbench.Header.Left>
           <Workbench.Header.Actions>
-            <Button disabled={addTeamsButtonDisabled} onClick={() => this.goToAddTeams()}>
-              Add team
-            </Button>
+            <Tooltip
+              place="left"
+              content={
+                addTeamsButtonDisabled && !isLoading
+                  ? 'All teams in the organization are already in this space'
+                  : ''
+              }>
+              <Button disabled={addTeamsButtonDisabled} onClick={() => this.goToAddTeams()}>
+                Add team
+              </Button>
+            </Tooltip>
           </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content className={styles.contentAlignment}>
