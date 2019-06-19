@@ -7,19 +7,17 @@ import {
   TableRow,
   TableCell,
   TableHead,
-  Heading,
   IconButton
 } from '@contentful/forma-36-react-components';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 
-import { getSpace } from 'services/TokenStore.es6';
 import Workbench from 'app/common/Workbench.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
-import StateRedirect from 'app/common/StateRedirect.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import UnknownErrorMessage from 'components/shared/UnknownErrorMessage.es6';
 import { joinWithAnd } from 'utils/StringUtils.es6';
 import ellipsisStyle from 'ellipsisStyle.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
@@ -30,43 +28,39 @@ import { getSectionVisibility } from '../AccessChecker/index.es6';
 export const TeamListFetcher = createFetcherComponent(async ({ spaceId, onReady }) => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
 
-  const promises = [getTeamsSpaceMembershipsOfSpace(spaceEndpoint), getSpace(spaceId)];
+  const promises = [getTeamsSpaceMembershipsOfSpace(spaceEndpoint)];
 
-  const data = await Promise.all(promises);
-  onReady();
+  let data;
+  try {
+    data = await Promise.all(promises);
+  } finally {
+    onReady();
+  }
   return data;
 });
 
 const columnMaxWidth = '350px';
 
 const styles = {
-  cell: css({
-    paddingRight: '160px'
-  }),
   contentAlignment: css({
     display: 'flex',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    marginTop: tokens.spacingL
   }),
   content: css({
     width: '100%',
     paddingRight: tokens.spacingL,
     paddingLeft: tokens.spacingL
   }),
-  header: css({
-    fontWeight: tokens.fontWeightNormal,
-    fontSize: tokens.fontSize2Xl,
-    marginBottom: tokens.spacingM,
-    marginTop: tokens.spacingM
-  }),
-  headerTeamName: css({
-    fontWeight: tokens.fontWeightMedium
-  }),
   row: css({
     height: '95px'
   }),
   rolesColumn: css({
     width: '30%'
+  }),
+  cell: css({
+    paddingRight: '160px'
   }),
   cellTeamName: css({
     fontWeight: tokens.fontWeightMedium,
@@ -106,14 +100,18 @@ export default class SpaceTeamsPage extends React.Component {
     return (
       <TeamListFetcher spaceId={spaceId} onReady={onReady}>
         {({ isLoading, isError, data }) => {
+          if (isError) {
+            return (
+              <div className={styles.contentAlignment}>
+                <UnknownErrorMessage />
+              </div>
+            );
+          }
           if (isLoading) {
             return null;
           }
-          if (isError) {
-            return <StateRedirect to="spaces.detail.entries.list" />;
-          }
 
-          const [teamSpaceMemberships, space] = data;
+          const [teamSpaceMemberships] = data;
           const sortedMemberships = teamSpaceMemberships.sort(
             (
               {
@@ -136,15 +134,11 @@ export default class SpaceTeamsPage extends React.Component {
                 <Workbench.Header>
                   <Workbench.Header.Left>
                     <Workbench.Icon icon="page-teams" />
-                    <Workbench.Title>Teams</Workbench.Title>
+                    <Workbench.Title>Teams ({teamSpaceMemberships.length})</Workbench.Title>
                   </Workbench.Header.Left>
                 </Workbench.Header>
                 <Workbench.Content className={styles.contentAlignment}>
                   <div className={styles.content}>
-                    <Heading className={styles.header} testId="header">
-                      Teams in <span className={styles.headerTeamName}>{space.name}</span> space (
-                      {teamSpaceMemberships.length})
-                    </Heading>
                     <Table testId="membership-table">
                       <TableHead>
                         <TableRow>
