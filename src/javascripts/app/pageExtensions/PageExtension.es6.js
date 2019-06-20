@@ -42,7 +42,7 @@ export default class PageExtension extends React.Component {
     const { extension, bridge } = this.props;
 
     return (
-      <>
+      <div data-test-id="page-extension">
         <DocumentTitle title={extension.extension.name} />
         <ExtensionIFrameRenderer
           bridge={bridge}
@@ -50,7 +50,7 @@ export default class PageExtension extends React.Component {
           parameters={this.prepareParameters()}
           isFullSize
         />
-      </>
+      </div>
     );
   }
 }
