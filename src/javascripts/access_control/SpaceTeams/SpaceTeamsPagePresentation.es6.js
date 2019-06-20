@@ -7,7 +7,6 @@ import {
   TableRow,
   TableCell,
   TableHead,
-  IconButton,
   Button,
   Tooltip
 } from '@contentful/forma-36-react-components';
@@ -61,7 +60,12 @@ const SpaceTeamsPagePresentation = ({ memberships, teams, isLoading }) => {
             <TableHead>
               <TableRow>
                 <TableCell>Team</TableCell>
-                <TableCell className={styles.rolesColumn}>Role</TableCell>
+                {!isLoading && (
+                  <>
+                    <TableCell>Members</TableCell>
+                    <TableCell className={styles.rolesColumn}>Role</TableCell>
+                  </>
+                )}
                 <TableCell />
                 <TableCell />
               </TableRow>
