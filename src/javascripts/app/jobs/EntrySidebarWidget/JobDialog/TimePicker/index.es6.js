@@ -14,14 +14,15 @@ const AMPM = 'h';
 const TWENTYFOUR = 'HH';
 
 const getTimeFormatByLocale = () => {
-  if (!navigator) {
-    return TWENTYFOUR;
-  }
-  const language = navigator.languages != undefined ? navigator.languages[0] : navigator.language;
-  if (!language) {
-    return TWENTYFOUR;
-  }
-  return navigator.language === 'en-GB' || navigator.language === 'en-US' ? AMPM : TWENTYFOUR;
+  return TWENTYFOUR;
+  // if (!navigator) {
+  //   return TWENTYFOUR;
+  // }
+  // const language = navigator.languages != undefined ? navigator.languages[0] : navigator.language;
+  // if (!language) {
+  //   return TWENTYFOUR;
+  // }
+  // return navigator.language === 'en-GB' || navigator.language === 'en-US' ? AMPM : TWENTYFOUR;
 };
 
 const pad = n => (n < 10 ? '0' + n : n);

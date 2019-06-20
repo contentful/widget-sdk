@@ -112,8 +112,8 @@ export default ({ $scope, emitter }) => {
     const notifyUpdate = update => {
       emitter.emit(SidebarEventTypes.UPDATED_JOBS_WIDGET, {
         ...update,
-        entityInfo: $scope.entityInfo,
-        entity: $scope.editorData.entity.data,
+        entityInfo: { ...$scope.entityInfo },
+        entity: { ...$scope.editorData.entity.data },
         spaceId: spaceContext.space.getId(),
         environmentId: spaceContext.getEnvironmentId(),
         userId: spaceContext.user.sys.id
@@ -123,6 +123,13 @@ export default ({ $scope, emitter }) => {
     notifyUpdate({
       status: $scope.state.current,
       updatedAt: K.getValue($scope.otDoc.sysProperty).updatedAt
+    });
+
+    K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
+      notifyUpdate({
+        status: $scope.state.current,
+        updatedAt: sys.updatedAt
+      });
     });
   });
 

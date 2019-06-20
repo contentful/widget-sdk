@@ -47,15 +47,16 @@ export default class JobWidget extends React.Component {
     entityInfo: PropTypes.object.isRequired,
     entity: PropTypes.object.isRequired
   };
+
   state = {
-    // used to re-fetch Jobs after creation
-    fetcherKey: 0
+    fetcherKey: '1'
   };
+
   endpoint = createSpaceEndpoint(this.props.spaceId, this.props.environmentId);
   handleJobCreate = ({ scheduledAt }) => {
     const { spaceId, environmentId, userId, entityInfo } = this.props;
 
-    const jobDto = create({
+    const createJobDto = create({
       spaceId,
       environmentId,
       userId,
@@ -64,9 +65,9 @@ export default class JobWidget extends React.Component {
       scheduledAt
     });
 
-    createJob(this.endpoint, jobDto).then(() => {
+    createJob(this.endpoint, createJobDto).then(() => {
       this.setState({
-        fetcherKey: this.state.fetcherKey + 1
+        fetcherKey: this.state.fetcherKey + '1'
       });
     });
   };
@@ -74,14 +75,11 @@ export default class JobWidget extends React.Component {
   handleCancellation = jobId => {
     cancelJob(this.endpoint, jobId).then(() => {
       this.setState({
-        fetcherKey: this.state.fetcherKey + 1
+        fetcherKey: this.state.fetcherKey + '1'
       });
       Notification.success('Schedule cancelled');
     });
   };
-
-  isPublishedAfterLastFailedJob = job =>
-    moment(this.props.entity.publishedAt).isAfter(job.scheduledAt);
 
   renderFailedScheduleNote = data => {
     const recentJob = data.jobCollection.items[0];
@@ -90,19 +88,31 @@ export default class JobWidget extends React.Component {
       return null;
     }
 
-    const entryHasBeenPublishedAfterLastFailedJob = this.isPublishedAfterLastFailedJob(recentJob);
+    const entryPublishedAfterLastFailedJob = moment(this.props.entity.sys.publishedAt).isAfter(
+      recentJob.scheduledAt
+    );
 
     return (
-      !entryHasBeenPublishedAfterLastFailedJob &&
+      !entryPublishedAfterLastFailedJob &&
       recentJob.sys.status === 'failed' && <FailedScheduleNote recentJob={recentJob} />
     );
   };
+
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.entity.sys.publishedAt !== prevProps.entity.sys.publishedAt) {
+      this.setState({
+        fetcherKey: this.state.fetcherKey + '1'
+      });
+    }
+  }
 
   render() {
     return (
       <div className={styles.root}>
         <JobsFetcher
           key={this.state.fetcherKey}
+          publishedAt={this.props.entity.sys.publishedAt}
           endpoint={this.endpoint}
           entryId={this.props.entityInfo.id}>
           {({ isLoading, isError, data }) => {
@@ -127,6 +137,7 @@ export default class JobWidget extends React.Component {
               schedule => schedule.sys.status === 'pending'
             );
             const hasScheduledActions = pendingJobs.length > 0;
+
             return (
               <React.Fragment>
                 <div className={styles.heading}>Schedule</div>
