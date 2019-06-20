@@ -375,7 +375,7 @@ describe('createExtensionBridge', () => {
     const navigateToPageExtension = registerCall[1];
     expect(typeof navigateToPageExtension).toBe('function');
 
-    const result = await navigateToPageExtension({ extensionId: 'test-id' });
+    const result = await navigateToPageExtension({ id: 'test-id' });
     expect(result).toEqual({ navigated: true });
   });
 

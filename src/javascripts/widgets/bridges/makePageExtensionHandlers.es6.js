@@ -3,24 +3,28 @@ export default function makePageExtensionHandlers(
   currentExtensionId,
   isOnPageExtensionPage = false
 ) {
-  return async function navigate(options) {
-    const { extensionId, path } = options;
+  return async function navigate(options = {}) {
+    const { id, path } = options;
 
-    if (!extensionId) {
-      throw new Error('The `extensionId` option is required!');
+    if (!id) {
+      throw new Error('The `id` option is required!');
     }
 
     if (path && !path.startsWith('/')) {
       throw new Error('The `path` option must start with a slash!');
     }
 
-    const navigatingToNewExtensionPage = currentExtensionId !== extensionId;
+    const navigatingToNewExtensionPage = currentExtensionId !== id;
+    const envId = spaceContext.getEnvironmentId();
 
     await Navigator.go({
-      path: ['spaces', 'detail', 'pageExtensions'],
+      path: ['spaces', 'detail'].concat(envId && envId !== 'master' ? ['environment'] : [], [
+        'pageExtensions'
+      ]),
       params: {
         spaceId: spaceContext.cma.spaceId,
-        extensionId,
+        environmentId: envId,
+        extensionId: id,
         path
       },
       options: {
