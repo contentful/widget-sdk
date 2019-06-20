@@ -1,6 +1,6 @@
 import { registerFactory, registerDirective } from 'NgRegistry.es6';
 import spaceNavTemplateDef from 'navigation/SpaceNavTemplate.es6';
-import { ENVIRONMENTS_FLAG, TEAMS_ITERATION_2 } from 'featureFlags.es6';
+import { ENVIRONMENTS_FLAG, TEAMS_IN_SPACES } from 'featureFlags.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
 // We don't want to display the following sections within the context of
@@ -49,8 +49,8 @@ export default function register() {
               controller.usageEnabled = org.pricingVersion === 'pricing_version_2';
             });
 
-            LD.onFeatureFlag($scope, TEAMS_ITERATION_2, teamIteration2 => {
-              controller.teamsIteration2FF = teamIteration2;
+            LD.onFeatureFlag($scope, TEAMS_IN_SPACES, teamsInSpacesFF => {
+              controller.teamsInSpacesFF = teamsInSpacesFF;
             });
             getOrgFeature(orgId, 'teams').then(value => {
               controller.hasOrgTeamFeature = value;

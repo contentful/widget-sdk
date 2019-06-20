@@ -37,7 +37,7 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
       title: 'Users'
     },
     teams: {
-      if: 'nav.teamsIteration2FF && nav.hasOrgTeamFeature && nav.canNavigateTo("teams")',
+      if: 'nav.teamsInSpacesFF && nav.hasOrgTeamFeature && nav.canNavigateTo("teams")',
       sref: makeRef('settings.teams.list'),
       rootSref: makeRef('settings.teams'),
       dataViewType: 'spaces-settings-teams',

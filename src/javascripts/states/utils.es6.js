@@ -134,7 +134,7 @@ export function organizationBase(definition) {
         }
         const org = await TokenStore.getOrganization(orgId);
 
-        Analytics.trackContextChange(null, org);
+        Analytics.trackContextChange(space || null, org);
 
         const migration = migratedStates.find(state => $state.is(state.v1));
         if (space) {
@@ -142,7 +142,7 @@ export function organizationBase(definition) {
         } else {
           accessChecker.setOrganization(org);
         }
-        store.set('lastUsedOrg', $stateParams.orgId);
+        store.set('lastUsedOrg', orgId);
 
         const isLegacy = isLegacyOrganization(org);
 
@@ -154,7 +154,7 @@ export function organizationBase(definition) {
           if (shouldRedirectToV2) {
             go({
               path: migration.v2.split('.'),
-              params: { orgId: $stateParams.orgId }
+              params: { orgId }
             });
           }
         }
