@@ -16,17 +16,14 @@ const archivedQuery = {
   limit: '0',
   'sys.archivedAt[exists]': 'true'
 };
-
 describe('Entries page', () => {
+  beforeEach(() => {
+    cy.resetAllFakeServers();
+  });
   context('no content types in the space', () => {
-    before(() => {
-      cy.resetAllFakeServers();
-
+    beforeEach(() => {
       defaultRequestsMock({});
-
       singleUser();
-
-      cy.setAuthTokenToLocalStorage();
 
       cy.addInteraction({
         provider: 'entries',
@@ -63,16 +60,11 @@ describe('Entries page', () => {
     });
   });
   context('no entries in the space', () => {
-    before(() => {
-      cy.resetAllFakeServers();
-
+    beforeEach(() => {
       defaultRequestsMock({
         publicContentTypesResponse: singleContentTypeResponse
       });
-
       singleUser();
-
-      cy.setAuthTokenToLocalStorage();
 
       cy.addInteraction({
         provider: 'entries',
@@ -113,14 +105,9 @@ describe('Entries page', () => {
   });
 
   context('several entries in the space', () => {
-    before(() => {
-      cy.resetAllFakeServers();
-
+    beforeEach(() => {
       defaultRequestsMock({});
-
       singleUser();
-
-      cy.setAuthTokenToLocalStorage();
 
       cy.addInteraction({
         provider: 'entries',

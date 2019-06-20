@@ -11,22 +11,24 @@ import {
 } from '../../../interactions/assets';
 import { noAssetLinksResponse } from '../../../interactions/entries';
 
-describe('Assets List Page', () => {
+describe('Assets', () => {
+  before(() =>
+    cy.startFakeServer({
+      consumer: 'user_interface',
+      provider: 'assets',
+      cors: true,
+      pactfileWriteMode: 'merge'
+    })
+  );
+
+  beforeEach(() => {
+    cy.resetAllFakeServers();
+
+    defaultRequestsMock();
+    singleUser();
+  });
   context('no assets in the space', () => {
-    before(() => {
-      cy.startFakeServer({
-        consumer: 'user_interface',
-        provider: 'assets',
-        cors: true,
-        pactfileWriteMode: 'merge'
-      });
-
-      cy.setAuthTokenToLocalStorage();
-
-      cy.resetAllFakeServers();
-
-      defaultRequestsMock();
-      singleUser();
+    beforeEach(() => {
       noAssetsResponse();
       noArchivedAssetsResponse();
 
@@ -46,20 +48,7 @@ describe('Assets List Page', () => {
   });
 
   context('several assets in the space', () => {
-    before(() => {
-      cy.startFakeServer({
-        consumer: 'user_interface',
-        provider: 'assets',
-        cors: true,
-        pactfileWriteMode: 'merge'
-      });
-
-      cy.setAuthTokenToLocalStorage();
-
-      cy.resetAllFakeServers();
-
-      defaultRequestsMock();
-      singleUser();
+    beforeEach(() => {
       severalAssetsResponse();
 
       cy.visit(`/spaces/${defaultSpaceId}/assets`);
@@ -74,25 +63,10 @@ describe('Assets List Page', () => {
       });
     });
   });
-});
 
-describe('Asset Page', () => {
   context('asset with empty fields', () => {
-    before(() => {
-      cy.startFakeServer({
-        consumer: 'user_interface',
-        provider: 'assets',
-        cors: true,
-        pactfileWriteMode: 'merge'
-      });
-
-      cy.setAuthTokenToLocalStorage();
-
-      cy.resetAllFakeServers();
-
-      defaultRequestsMock();
+    beforeEach(() => {
       defaultAssetResponse();
-      singleUser();
       noAssetLinksResponse();
       cy.route('**/channel/**', []).as('shareJS');
 

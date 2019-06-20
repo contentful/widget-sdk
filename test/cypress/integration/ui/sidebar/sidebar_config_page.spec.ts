@@ -17,9 +17,7 @@ describe('Sidebar configuration', () => {
     })
   );
 
-  before(() => {
-    cy.setAuthTokenToLocalStorage();
-
+  beforeEach(() => {
     cy.resetAllFakeServers();
 
     defaultRequestsMock();
@@ -36,15 +34,7 @@ describe('Sidebar configuration', () => {
     cy.wait([`@${state.Token.VALID}`, `@${state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR}`]);
   });
 
-  const widgetNames = [
-    'Publish & Status',
-    'Preview',
-    'Links',
-    'Translation',
-    'Versions',
-    'Users',
-    'Entry activity'
-  ];
+  const widgetNames = ['Publish & Status', 'Preview', 'Links', 'Translation', 'Versions', 'Users'];
 
   describe('Opening the page with no configuration saved', () => {
     it('displays sidebar options correctly', () => {
@@ -68,9 +58,7 @@ describe('Sidebar configuration', () => {
   });
 
   describe('Enabling of a custom sidebar configuration option', () => {
-    before(() => {
-      cy.resetAllFakeServers();
-
+    beforeEach(() => {
       cy.getByTestId('custom-sidebar-option')
         .find('input')
         .click();

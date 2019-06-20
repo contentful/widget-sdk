@@ -11,6 +11,7 @@ import {
 import { noExtensionsResponse } from '../../../interactions/extensions';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
 import * as state from '../../../util/interactionState';
+import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('Sidebar configuration', () => {
   before(() =>
@@ -22,10 +23,10 @@ describe('Sidebar configuration', () => {
     })
   );
 
-  before(() => {
-    cy.setAuthTokenToLocalStorage();
-
+  beforeEach(() => {
     cy.resetAllFakeServers();
+
+    cy.enableFeatureFlags([FeatureFlag.ENTRY_ACTIVITY]);
 
     defaultRequestsMock();
     noExtensionsResponse();
@@ -52,7 +53,7 @@ describe('Sidebar configuration', () => {
   });
 
   describe('Saving the content type with configured custom sidebar', () => {
-    before(() => {
+    beforeEach(() => {
       cy.resetAllFakeServers();
       cy.getByTestId('custom-sidebar-option')
         .find('input')

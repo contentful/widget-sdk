@@ -14,16 +14,13 @@ import * as state from '../../../util/interactionState';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 
 describe('Entries page', () => {
+  beforeEach(() => {
+    cy.resetAllFakeServers();
+    basicServerSetUp();
+  });
+
   context('with no sidebar in the editor_interface', () => {
-    before(() => {
-      cy.setAuthTokenToLocalStorage();
-
-      cy.resetAllFakeServers();
-
-      defaultRequestsMock({ publicContentTypesResponse: singleContentTypeResponse });
-      singleUser();
-      singleEntryResponse();
-      cy.route('**/channel/**', []).as('shareJS');
+    beforeEach(() => {
       noEntryLinksResponse();
       noEntrySnapshotsResponse();
       editorInterfaceWithoutSidebarResponse();
@@ -31,15 +28,7 @@ describe('Entries page', () => {
     });
     describe('Opening the Entry page', () => {
       it('shows the default sidebar', () => {
-        const widgetNames = [
-          'Status',
-          'Preview',
-          'Links',
-          'Translation',
-          'Versions',
-          'Users',
-          'Entry activity'
-        ];
+        const widgetNames = ['Status', 'Preview', 'Links', 'Translation', 'Versions', 'Users'];
 
         cy.wait([
           `@${state.Token.VALID}`,
@@ -57,15 +46,7 @@ describe('Entries page', () => {
   });
 
   context('with a sidebar in the editor_interface', () => {
-    before(() => {
-      cy.setAuthTokenToLocalStorage();
-
-      cy.resetAllFakeServers();
-
-      defaultRequestsMock({ publicContentTypesResponse: singleContentTypeResponse });
-      singleUser();
-      singleEntryResponse();
-      cy.route('**/channel/**', []).as('shareJS');
+    beforeEach(() => {
       editorInterfaceWithSidebarResponse();
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
     });
@@ -80,3 +61,10 @@ describe('Entries page', () => {
     });
   });
 });
+
+function basicServerSetUp() {
+  defaultRequestsMock({ publicContentTypesResponse: singleContentTypeResponse });
+  singleUser();
+  singleEntryResponse();
+  cy.route('**/channel/**', []).as('shareJS');
+}

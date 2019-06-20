@@ -3,6 +3,7 @@ import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
 import { noInstalledAppsResponse } from '../../../interactions/apps';
 import { spaceProductCatalogFeaturesResponse } from '../../../interactions/product_catalog_features';
+import { FeatureFlag } from '../../../util/featureFlag';
 
 const baseUrl = Cypress.config().baseUrl;
 
@@ -17,16 +18,16 @@ describe('Apps Page', () => {
   );
 
   before(() => {
-    cy.setAuthTokenToLocalStorage();
-
     cy.resetAllFakeServers();
+
+    cy.setAuthTokenToLocalStorage();
+    cy.enableFeatureFlags([FeatureFlag.DEFAULT]);
 
     defaultRequestsMock();
     noInstalledAppsResponse();
     spaceProductCatalogFeaturesResponse();
 
     cy.visit(`/spaces/${defaultSpaceId}/apps`);
-
     cy.wait([`@${state.Token.VALID}`]);
   });
 
@@ -48,12 +49,11 @@ describe('Apps Page', () => {
   });
 
   describe('Enable Alpha Apps feature', () => {
-    before(() =>
-      cy
-        .getByTestId('enable-apps')
+    before(() => {
+      cy.getByTestId('enable-apps')
         .should('have.text', 'Enable alpha feature')
-        .click()
-    );
+        .click();
+    });
 
     const apps = [
       { title: 'Netlify', expectedUrl: `/spaces/${defaultSpaceId}/apps/netlify` },

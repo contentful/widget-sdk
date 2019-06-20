@@ -29,9 +29,7 @@ const previewResponseBody = {
 };
 
 describe('Content Preview Page', () => {
-  before(() => {
-    cy.setAuthTokenToLocalStorage();
-
+  beforeEach(() => {
     cy.resetAllFakeServers();
 
     defaultRequestsMock();
@@ -56,7 +54,7 @@ describe('Content Preview Page', () => {
   });
 
   describe('saving the content preview', () => {
-    before(() => {
+    beforeEach(() => {
       cy.startFakeServer({
         consumer: 'user_interface',
         provider: 'preview_environments',

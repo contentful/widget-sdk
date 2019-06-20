@@ -17,7 +17,7 @@ const query = {
   order: 'name'
 };
 
-describe('Content types list page', () => {
+describe('Content types', () => {
   before(() =>
     cy.startFakeServer({
       consumer: 'user_interface',
@@ -27,12 +27,12 @@ describe('Content types list page', () => {
     })
   );
 
+  beforeEach(() => {
+    cy.resetAllFakeServers();
+  });
+
   context('with no content types', () => {
-    before(() => {
-      cy.setAuthTokenToLocalStorage();
-
-      cy.resetAllFakeServers();
-
+    beforeEach(() => {
       defaultRequestsMock();
 
       cy.addInteraction({
@@ -65,8 +65,6 @@ describe('Content types list page', () => {
 
     describe('The "Add content type" button', () => {
       it('redirects correctly', () => {
-        cy.resetAllFakeServers();
-
         cy.addInteraction({
           provider: 'extensions',
           state: 'noExtensions',
@@ -99,11 +97,7 @@ describe('Content types list page', () => {
   });
 
   context('with several content types', () => {
-    before(() => {
-      cy.setAuthTokenToLocalStorage();
-
-      cy.resetAllFakeServers();
-
+    beforeEach(() => {
       defaultRequestsMock();
 
       cy.addInteraction({
@@ -130,37 +124,26 @@ describe('Content types list page', () => {
       });
     });
   });
-});
 
-describe('Content type page', () => {
-  before(() => {
-    cy.setAuthTokenToLocalStorage();
+  context('content type with one field', () => {
+    beforeEach(() => {
+      defaultRequestsMock();
+      noExtensionsResponse();
+      editorInterfaceWithoutSidebarResponse();
+      allContentTypesResponse();
+      defaultContentTypeResponse();
+      defaultPublishedContentTypeResponse();
 
-    cy.resetAllFakeServers();
+      cy.visit(`/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`);
 
-    cy.startFakeServer({
-      consumer: 'user_interface',
-      provider: 'extensions',
-      cors: true,
-      pactfileWriteMode: 'merge'
+      cy.wait([`@${state.Token.VALID}`, `@${state.ContentType.DEFAULT}`]);
     });
-
-    defaultRequestsMock();
-    noExtensionsResponse();
-    editorInterfaceWithoutSidebarResponse();
-    allContentTypesResponse();
-    defaultContentTypeResponse();
-    defaultPublishedContentTypeResponse();
-
-    cy.visit(`/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`);
-
-    cy.wait([`@${state.Token.VALID}`, `@${state.ContentType.DEFAULT}`]);
-  });
-  describe('Opening the page for default content type', () => {
-    it('renders the page', () => {
-      cy.get('[name=contentTypeForm]').should('be.visible');
-      cy.getByTestId('save-content-type').should('be.enabled');
-      cy.getByTestId('add-field-button').should('be.enabled');
+    describe('Opening the page for default content type', () => {
+      it('renders the page', () => {
+        cy.get('[name=contentTypeForm]').should('be.visible');
+        cy.getByTestId('save-content-type').should('be.enabled');
+        cy.getByTestId('add-field-button').should('be.enabled');
+      });
     });
   });
 });

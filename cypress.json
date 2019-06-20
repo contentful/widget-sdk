@@ -16,5 +16,6 @@
   "reporterOptions": {
     "mochaFile": "cypress/reports/cypress/cypress-test-results.[hash].xml"
   },
-  "chromeWebSecurity": false
+  "chromeWebSecurity": false,
+  "blacklistHosts": ["*.launchdarkly.com"]
 }

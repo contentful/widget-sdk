@@ -10,29 +10,29 @@ import {
 } from '../../../interactions/jobs';
 import { singleEntryWithQuery } from '../../../interactions/entries';
 import { singleSpecificSpaceUserResponse } from '../../../interactions/users';
-
-const featureFlag = 'feature-pul-04-2019-scheduled-publication-enabled';
+import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('Jobs page', () => {
-  beforeEach(() => {
-    cy.resetAllFakeServers();
-
+  before(() =>
     cy.startFakeServer({
       consumer: 'user_interface',
       provider: 'jobs',
       cors: true,
       pactfileWriteMode: 'merge',
       spec: 3
-    });
+    })
+  );
+
+  beforeEach(() => {
+    cy.resetAllFakeServers();
+    cy.enableFeatureFlags([FeatureFlag.SCHEDULED_PUBLICATION]);
   });
+
   context('no jobs in the space', () => {
     describe('opening the page', () => {
       beforeEach(() => {
         defaultRequestsMock();
         noJobsResponse();
-
-        cy.setAuthTokenToLocalStorage();
-        window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
 
         cy.visit(`/spaces/${defaultSpaceId}/jobs`);
         cy.wait([`@${state.Token.VALID}`]);
@@ -59,9 +59,6 @@ describe('Jobs page', () => {
         singleEntryWithQuery();
         singleSpecificSpaceUserResponse();
 
-        cy.setAuthTokenToLocalStorage();
-        window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
-
         cy.visit(`/spaces/${defaultSpaceId}/jobs`);
         cy.wait([`@${state.Token.VALID}`]);
         cy.wait([`@${state.Jobs.SEVERAL}`, `@${state.Entries.QUERY}`, `@${state.Users.QUERY}`], {
@@ -82,9 +79,6 @@ describe('Jobs page', () => {
       beforeEach(() => {
         defaultRequestsMock();
         jobsErrorResponse();
-
-        cy.setAuthTokenToLocalStorage();
-        window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
 
         cy.visit(`/spaces/${defaultSpaceId}/jobs`);
         cy.wait([`@${state.Token.VALID}`]);

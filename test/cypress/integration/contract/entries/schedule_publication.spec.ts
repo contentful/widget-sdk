@@ -18,19 +18,20 @@ import {
   cancelJobResponse,
   noJobsForSpecificEntryIdResponse
 } from '../../../interactions/jobs';
-
-const featureFlag = 'feature-pul-04-2019-scheduled-publication-enabled';
+import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('Schedule Publication', () => {
-  beforeEach(() => {
+  before(() =>
     cy.startFakeServer({
       consumer: 'user_interface',
       provider: 'jobs',
       cors: true,
       pactfileWriteMode: 'merge'
-    });
-    cy.setAuthTokenToLocalStorage();
-    window.localStorage.setItem('ui_enable_flags', JSON.stringify([featureFlag]));
+    })
+  );
+
+  beforeEach(() => {
+    cy.enableFeatureFlags([FeatureFlag.SCHEDULED_PUBLICATION]);
     basicServerSetUp();
   });
 

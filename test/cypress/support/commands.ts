@@ -3,6 +3,8 @@ declare global {
   namespace Cypress {
     interface Chainable {
       setAuthTokenToLocalStorage: typeof setAuthTokenToLocalStorage;
+      enableFeatureFlags: typeof enableFeatureFlags;
+      disableFeatureFlags: typeof disableFeatureFlags;
     }
   }
   interface Window {
@@ -11,18 +13,43 @@ declare global {
     unfetch: any;
   }
 }
+
 /**
- * Custom cypress command for login
+ * Custom cypress command for app authentication
  *
  * @returns {void}
- * @example cy.login()
+ * @example cy.setAuthTokenToLocalStorage()
  */
 export function setAuthTokenToLocalStorage() {
   const TOKEN = Cypress.env('token');
   window.localStorage.setItem('token', TOKEN);
 }
 
+/**
+ * Enable app feature flag
+ *
+ * @returns {void}
+ * @example
+ * import { FeatureFlag } from '../util/featureFlag';
+ * cy.enableFeatureFlags([FeatureFlag.ENVIRONMENTS])
+ */
+export function enableFeatureFlags(flags: Array<string>): void {
+  const enabled = JSON.parse(window.localStorage.getItem('ui_enable_flags') || '[]');
+  const merged = Cypress._.union(enabled, flags);
+  window.localStorage.setItem('ui_enable_flags', JSON.stringify(merged));
+}
+
+export function disableFeatureFlags(flags: Array<string>): void {
+  const enabled = JSON.parse(window.localStorage.getItem('ui_enable_flags') || '[]');
+  let sorted = enabled.filter(function(el) {
+    return !flags.includes(el);
+  });
+  window.localStorage.setItem('ui_enable_flags', JSON.stringify(sorted));
+}
+
 Cypress.Commands.add('setAuthTokenToLocalStorage', setAuthTokenToLocalStorage);
+Cypress.Commands.add('enableFeatureFlags', enableFeatureFlags);
+Cypress.Commands.add('disableFeatureFlags', disableFeatureFlags);
 
 Cypress.Commands.overwrite('visit', (visit, url) => {
   cy.readFile('test/cypress/support/unfetch.js').then(polyfill => {

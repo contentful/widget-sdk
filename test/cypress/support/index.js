@@ -28,6 +28,8 @@ configure({ testIdAttribute: 'data-test-id' });
 // cypress-pact plugin
 import '@contentful/cypress-pact/add-commands';
 
+import { FeatureFlag } from '../util/featureFlag';
+
 before(() => cy.startGateway(5000));
 before(() => {
   cy.startFakeServers({
@@ -45,6 +47,11 @@ before(() => {
     cors: true,
     pactfileWriteMode: 'merge'
   });
+});
+beforeEach(() => {
+  cy.setAuthTokenToLocalStorage();
+  // set default feature flags enabled on LaunchDarkly
+  cy.enableFeatureFlags([FeatureFlag.DEFAULT]);
 });
 afterEach(() => {
   cy.verifyAllFakeServerInteractions();
