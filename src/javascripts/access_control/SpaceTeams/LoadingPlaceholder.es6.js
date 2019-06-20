@@ -8,7 +8,7 @@ import {
 import { range } from 'lodash';
 
 export default () => (
-  <TableRow>
+  <TableRow testId="loading-placeholder">
     <TableCell colSpan="4">
       <SkeletonContainer
         data-test-id="content-loader"

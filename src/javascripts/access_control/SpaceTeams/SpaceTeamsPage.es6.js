@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 
 import { getTeamsSpaceMembershipsOfSpace } from '../TeamRepository.es6';
@@ -61,7 +62,10 @@ export default class SpaceTeamsPage extends React.Component {
           );
 
           return (
-            <SpaceTeamsPagePresentation memberships={sortedMemberships} isLoading={isLoading} />
+            <>
+              <DocumentTitle title="Teams in Space" />
+              <SpaceTeamsPagePresentation memberships={sortedMemberships} isLoading={isLoading} />
+            </>
           );
         }}
       </Fetcher>
