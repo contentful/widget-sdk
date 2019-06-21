@@ -8,17 +8,15 @@ import { FeatureFlag } from '../../../util/featureFlag';
 const baseUrl = Cypress.config().baseUrl;
 
 describe('Apps Page', () => {
-  before(() =>
+  before(() => {
+    cy.resetAllFakeServers();
+
     cy.startFakeServers({
       consumer: 'user_interface',
       providers: ['apps', 'product_catalog_features'],
       cors: true,
       pactfileWriteMode: 'merge'
-    })
-  );
-
-  before(() => {
-    cy.resetAllFakeServers();
+    });
 
     cy.setAuthTokenToLocalStorage();
     cy.enableFeatureFlags([FeatureFlag.DEFAULT]);
@@ -50,9 +48,7 @@ describe('Apps Page', () => {
 
   describe('Enable Alpha Apps feature', () => {
     before(() => {
-      cy.getByTestId('enable-apps')
-        .should('have.text', 'Enable alpha feature')
-        .click();
+      cy.getByTestId('enable-apps').click();
     });
 
     const apps = [
@@ -82,8 +78,14 @@ describe('Apps Page', () => {
     });
 
     it('Install button works correctly', () => {
-      cy.getByTestId('install-app')
-        .click()
+      cy.server();
+      cy.route('**/preview_environments**', 'fixture:responses/empty.json').as(
+        'previewEnvironments'
+      );
+      cy.getByTestId('install-app').click();
+      cy.getByTestId('workbench-title')
+        .should('contain', 'App:')
+        .and('contain', 'Netlify')
         .url()
         .should('eq', `${baseUrl}${apps[0].expectedUrl}`);
     });

@@ -52,13 +52,12 @@ describe('Entries page', () => {
       cy.wait([`@${state.Token.VALID}`, `@${state.Entries.NONE}`, '@entries/archived-none']);
     });
 
-    describe('opening the page', () => {
-      it('renders entries page correctly', () => {
-        cy.getByTestId('no-content-type-advice').should('be.visible');
-        cy.getByTestId('create-content-type-empty-state').should('be.enabled');
-      });
+    it('renders entries page correctly', () => {
+      cy.getByTestId('no-content-type-advice').should('be.visible');
+      cy.getByTestId('create-content-type-empty-state').should('be.enabled');
     });
   });
+
   context('no entries in the space', () => {
     beforeEach(() => {
       defaultRequestsMock({
@@ -93,14 +92,12 @@ describe('Entries page', () => {
       cy.wait([`@${state.Token.VALID}`, `@${state.Entries.NONE}`, '@entries/archived-none']);
     });
 
-    describe('opening the page', () => {
-      it('renders entries page correctly', () => {
-        cy.getByTestId('no-entries-advice').should('be.visible');
-        cy.getByTestId('create-entry')
-          .should('be.visible')
-          .find('button')
-          .should('be.enabled');
-      });
+    it('renders entries page correctly', () => {
+      cy.getByTestId('no-entries-advice').should('be.visible');
+      cy.getByTestId('create-entry')
+        .should('be.visible')
+        .find('button')
+        .should('be.enabled');
     });
   });
 
@@ -125,11 +122,9 @@ describe('Entries page', () => {
       cy.wait([`@${state.Token.VALID}`, `@${state.Entries.SEVERAL}`]);
     });
 
-    describe('opening the page', () => {
-      it('renders entries page correctly', () => {
-        cy.getByTestId('entry-list').should('be.visible');
-        cy.getAllByTestId('entry-row').should('have.length', severalEntriesResponse.total);
-      });
+    it('renders entries page correctly', () => {
+      cy.getByTestId('entry-list').should('be.visible');
+      cy.getAllByTestId('entry-row').should('have.length', severalEntriesResponse.total);
     });
   });
 });

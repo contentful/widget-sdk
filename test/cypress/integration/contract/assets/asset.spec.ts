@@ -1,0 +1,38 @@
+import { defaultRequestsMock } from '../../../util/factories';
+import { singleUser } from '../../../interactions/users';
+import * as state from '../../../util/interactionState';
+import { defaultSpaceId, defaultAssetId } from '../../../util/requests';
+import { defaultAssetResponse } from '../../../interactions/assets';
+import { noAssetLinksResponse } from '../../../interactions/entries';
+
+describe('Asset Page', () => {
+  before(() =>
+    cy.startFakeServer({
+      consumer: 'user_interface',
+      provider: 'assets',
+      cors: true,
+      pactfileWriteMode: 'merge'
+    })
+  );
+
+  context('asset with empty fields', () => {
+    beforeEach(() => {
+      cy.resetAllFakeServers();
+
+      defaultRequestsMock();
+      singleUser();
+
+      defaultAssetResponse();
+      noAssetLinksResponse();
+      cy.route('**/channel/**', []).as('shareJS');
+
+      cy.visit(`/spaces/${defaultSpaceId}/assets/${defaultAssetId}`);
+      cy.wait([`@${state.Token.VALID}`, `@${state.Assets.DEFAULT}`]);
+    });
+
+    it('renders asset fields and actions', () => {
+      cy.getByTestId('change-state-published').should('be.visible');
+      cy.getAllByTestId('entity-field-controls').should('have.length', 3);
+    });
+  });
+});

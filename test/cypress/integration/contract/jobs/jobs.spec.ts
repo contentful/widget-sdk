@@ -29,69 +29,63 @@ describe('Jobs page', () => {
   });
 
   context('no jobs in the space', () => {
-    describe('opening the page', () => {
-      beforeEach(() => {
-        defaultRequestsMock();
-        noJobsResponse();
+    beforeEach(() => {
+      defaultRequestsMock();
+      noJobsResponse();
 
-        cy.visit(`/spaces/${defaultSpaceId}/jobs`);
-        cy.wait([`@${state.Token.VALID}`]);
-        cy.wait([`@${state.Jobs.NONE}`], { timeout: 10000 });
-      });
-      it('renders illustration and heading for empty state', () => {
-        cy.getByTestId('cf-ui-tab-panel')
-          .should('be.visible')
-          .find('svg')
-          .should('be.visible')
-          .getByTestId('cf-ui-heading')
-          .should('contain', 'Nothing is scheduled');
-      });
+      cy.visit(`/spaces/${defaultSpaceId}/jobs`);
+      cy.wait([`@${state.Token.VALID}`]);
+      cy.wait([`@${state.Jobs.NONE}`], { timeout: 10000 });
+    });
+    it('renders illustration and heading for empty state', () => {
+      cy.getByTestId('cf-ui-tab-panel')
+        .should('be.visible')
+        .find('svg')
+        .should('be.visible')
+        .getByTestId('cf-ui-heading')
+        .should('contain', 'Nothing is scheduled');
     });
   });
 
   context('several jobs in the space', () => {
-    describe('opening the page', () => {
-      beforeEach(() => {
-        defaultRequestsMock({
-          publicContentTypesResponse: singleContentTypeResponse
-        });
-        severalJobsResponse();
-        singleEntryWithQuery();
-        singleSpecificSpaceUserResponse();
+    beforeEach(() => {
+      defaultRequestsMock({
+        publicContentTypesResponse: singleContentTypeResponse
+      });
+      severalJobsResponse();
+      singleEntryWithQuery();
+      singleSpecificSpaceUserResponse();
 
-        cy.visit(`/spaces/${defaultSpaceId}/jobs`);
-        cy.wait([`@${state.Token.VALID}`]);
-        cy.wait([`@${state.Jobs.SEVERAL}`, `@${state.Entries.QUERY}`, `@${state.Users.QUERY}`], {
-          timeout: 10000
-        });
+      cy.visit(`/spaces/${defaultSpaceId}/jobs`);
+      cy.wait([`@${state.Token.VALID}`]);
+      cy.wait([`@${state.Jobs.SEVERAL}`, `@${state.Entries.QUERY}`, `@${state.Users.QUERY}`], {
+        timeout: 10000
       });
-      it('renders list of jobs', () => {
-        cy.getByTestId('jobs-table')
-          .should('be.visible')
-          .getAllByTestId('scheduled-job')
-          .should('have.length', severalJobsResponseBody.total);
-      });
+    });
+    it('renders list of jobs', () => {
+      cy.getByTestId('jobs-table')
+        .should('be.visible')
+        .getAllByTestId('scheduled-job')
+        .should('have.length', severalJobsResponseBody.total);
     });
   });
 
   context('error state', () => {
-    describe('opening the page', () => {
-      beforeEach(() => {
-        defaultRequestsMock();
-        jobsErrorResponse();
+    beforeEach(() => {
+      defaultRequestsMock();
+      jobsErrorResponse();
 
-        cy.visit(`/spaces/${defaultSpaceId}/jobs`);
-        cy.wait([`@${state.Token.VALID}`]);
-        cy.wait([`@${state.Jobs.ERROR}`], { timeout: 10000 });
-      });
-      it('renders illustration and heading for error state', () => {
-        cy.getByTestId('cf-ui-tab-panel')
-          .should('be.visible')
-          .find('svg')
-          .should('be.visible')
-          .getByTestId('cf-ui-jobs-state-error')
-          .should('contain', 'Something went wrong');
-      });
+      cy.visit(`/spaces/${defaultSpaceId}/jobs`);
+      cy.wait([`@${state.Token.VALID}`]);
+      cy.wait([`@${state.Jobs.ERROR}`], { timeout: 10000 });
+    });
+    it('renders illustration and heading for error state', () => {
+      cy.getByTestId('cf-ui-tab-panel')
+        .should('be.visible')
+        .find('svg')
+        .should('be.visible')
+        .getByTestId('cf-ui-jobs-state-error')
+        .should('contain', 'Something went wrong');
     });
   });
 });
