@@ -14,19 +14,27 @@ const AMPM = 'h';
 const TWENTYFOUR = 'HH';
 
 const getTimeFormatByLocale = () => {
-  if (!navigator) {
-    return TWENTYFOUR;
-  }
-  const language = navigator.languages != undefined ? navigator.languages[0] : navigator.language;
-  if (!language) {
-    return TWENTYFOUR;
-  }
-  return navigator.language === 'en-GB' || navigator.language === 'en-US' ? AMPM : TWENTYFOUR;
+  return TWENTYFOUR;
+  // if (!navigator) {
+  //   return TWENTYFOUR;
+  // }
+  // const language = navigator.languages != undefined ? navigator.languages[0] : navigator.language;
+  // if (!language) {
+  //   return TWENTYFOUR;
+  // }
+  // return navigator.language === 'en-GB' || navigator.language === 'en-US' ? AMPM : TWENTYFOUR;
 };
 
-const pad = n => (n < 10 ? '0' + n : n);
+const pad = n => {
+  const nValue = Number.parseInt(n, 10);
+  if (nValue < 10) {
+    return `0${nValue}`;
+  } else {
+    return n;
+  }
+};
 
-export function TimePicker({ labelText = 'Time', helpText, validationMessage, onChange, value }) {
+export function TimePicker({ helpText, validationMessage, onChange, value }) {
   const momentValue = moment(value, 'HH:mm').local();
 
   const timeFormat = getTimeFormatByLocale();
@@ -36,25 +44,26 @@ export function TimePicker({ labelText = 'Time', helpText, validationMessage, on
   const hours = momentValue.format(timeFormat);
 
   const handleChange = results => {
-    onChange(`${results.hours}:${results.minutes} ${results.timeFormat}`);
+    onChange(moment(`${results.hours}:${results.minutes}`, 'HH:mm').format('HH:mm'));
   };
   return (
     <div className={styles.timePicker}>
       <FormLabel required={true} htmlFor="scheduleTimeForm">
-        {labelText}
+        Time
       </FormLabel>
       <div className={styles.inputWrapper} id="scheduleTimeForm">
         <div className={styles.timeField}>
           <input
             className={styles.timeInput}
             name="hour"
+            data-test-id="hours"
             type="number"
             min="0"
             max="23"
             value={pad(hours)}
             onChange={e => {
               handleChange({
-                hours: Number(e.target.value),
+                hours: pad(Math.min(parseInt(e.target.value, 10), 23)),
                 minutes: minutes,
                 timeFormat: timeFormat
               });
@@ -64,6 +73,7 @@ export function TimePicker({ labelText = 'Time', helpText, validationMessage, on
           <input
             className={styles.timeInput}
             type="number"
+            data-test-id="minutes"
             name="minute"
             value={pad(minutes)}
             min="0"
@@ -71,7 +81,7 @@ export function TimePicker({ labelText = 'Time', helpText, validationMessage, on
             onChange={e => {
               handleChange({
                 hours: hours,
-                minutes: Number(e.target.value),
+                minutes: pad(Math.min(parseInt(e.target.value, 10), 59)),
                 timeFormat: timeFormat
               });
             }}
@@ -106,7 +116,6 @@ TimePicker.propTypes = {
   onChange: PropTypes.func.isRequired,
   required: PropTypes.bool,
   helpText: PropTypes.string,
-  labelText: PropTypes.string,
   validationMessage: PropTypes.string,
   id: PropTypes.string,
   name: PropTypes.string

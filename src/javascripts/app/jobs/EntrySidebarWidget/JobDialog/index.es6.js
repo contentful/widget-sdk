@@ -21,12 +21,15 @@ function TimezoneNote({ date, time, utcOffset }) {
   const localTimezoneName = moment.tz.guess();
 
   return (
-    <Note className="f36-margin-top--s" snoteType="primary" title={'Timezone changed'}>
+    <Note
+      testId="timezone-note"
+      className="f36-margin-top--s"
+      noteType="primary"
+      title="Timezone changed">
       The scheduled time you have selected will be:{' '}
-      {moment
-        .utc(date + ' ' + time)
-        .zone(utcOffset + localOffset * -1)
-        .format('ddd, MMM Do, YYYY - hh:mm A')}
+      {moment(formatScheduledAtDate({ date, time, utcOffset })).format(
+        'ddd, MMM Do, YYYY - hh:mm A'
+      )}
       <br />
       in your local time. ({moment.tz.zone(localTimezoneName).abbr(localOffset)}
       {moment().format('Z')} {localTimezoneName})
@@ -40,11 +43,13 @@ TimezoneNote.propTypes = {
   utcOffset: PropTypes.number
 };
 
-const formatScheduledAtDate = ({ date, time, utcOffset }) => {
-  return moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm A')
-    .utcOffset(utcOffset)
+function formatScheduledAtDate({ date, time, utcOffset }) {
+  const res = moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm A')
+    .utcOffset(utcOffset, true)
     .toISOString(true);
-};
+
+  return res;
+}
 
 function JobDialog({ onCreate, onCancel }) {
   const now = moment(Date.now());
@@ -95,7 +100,7 @@ function JobDialog({ onCreate, onCancel }) {
                 <SelectField
                   name="timezone"
                   id="timezone"
-                  data-test-id="timezone"
+                  testId="timezone"
                   onChange={e => {
                     setUtcOffset(Number(e.target.value));
                   }}
