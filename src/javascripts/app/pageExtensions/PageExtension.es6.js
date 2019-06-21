@@ -1,11 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
+import { css } from 'emotion';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { applyDefaultValues } from 'widgets/WidgetParametersUtils.es6';
 import trackExtensionRender from 'widgets/TrackExtensionRender.es6';
 import { LOCATION_PAGE } from 'widgets/WidgetLocations.es6';
+
+const styles = {
+  root: css({
+    height: '100%',
+    width: '100%'
+  })
+};
 
 export default class PageExtension extends React.Component {
   static propTypes = {
@@ -42,7 +50,7 @@ export default class PageExtension extends React.Component {
     const { extension, bridge } = this.props;
 
     return (
-      <div data-test-id="page-extension">
+      <div data-test-id="page-extension" className={styles.root}>
         <DocumentTitle title={extension.extension.name} />
         <ExtensionIFrameRenderer
           bridge={bridge}
