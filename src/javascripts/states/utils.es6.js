@@ -3,7 +3,6 @@ import { get, find } from 'lodash';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { getStore } from 'TheStore/index.es6';
-import * as Analytics from 'analytics/Analytics.es6';
 
 import Base from './Base.es6';
 import { go } from './Navigator.es6';
@@ -133,8 +132,6 @@ export function organizationBase(definition) {
           orgId = get(space, 'organization.sys.id');
         }
         const org = await TokenStore.getOrganization(orgId);
-
-        Analytics.trackContextChange(space || null, org);
 
         const migration = migratedStates.find(state => $state.is(state.v1));
         if (space) {
