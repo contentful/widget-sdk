@@ -25,7 +25,7 @@ const getTimeFormatByLocale = () => {
   // return navigator.language === 'en-GB' || navigator.language === 'en-US' ? AMPM : TWENTYFOUR;
 };
 
-const pad = n => (n < 10 ? '0' + n : n);
+// const pad = n => (n < 10 ? '0' + n : n);
 
 export function TimePicker({ labelText = 'Time', helpText, validationMessage, onChange, value }) {
   const momentValue = moment(value, 'HH:mm').local();
@@ -37,7 +37,7 @@ export function TimePicker({ labelText = 'Time', helpText, validationMessage, on
   const hours = momentValue.format(timeFormat);
 
   const handleChange = results => {
-    onChange(`${results.hours}:${results.minutes} ${results.timeFormat}`);
+    onChange(`${results.hours}:${results.minutes}`);
   };
   return (
     <div className={styles.timePicker}>
@@ -52,10 +52,10 @@ export function TimePicker({ labelText = 'Time', helpText, validationMessage, on
             type="number"
             min="0"
             max="23"
-            value={pad(hours)}
+            value={hours}
             onChange={e => {
               handleChange({
-                hours: Number(e.target.value),
+                hours: Math.min(Number(e.target.value), 23),
                 minutes: minutes,
                 timeFormat: timeFormat
               });
@@ -66,7 +66,7 @@ export function TimePicker({ labelText = 'Time', helpText, validationMessage, on
             className={styles.timeInput}
             type="number"
             name="minute"
-            value={pad(minutes)}
+            value={minutes}
             min="0"
             max="59"
             onChange={e => {
