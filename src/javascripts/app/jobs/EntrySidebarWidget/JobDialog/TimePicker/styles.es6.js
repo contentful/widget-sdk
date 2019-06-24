@@ -37,6 +37,7 @@ const styles = {
     fontFamily: 'Avenir Next',
     border: 'none',
     margin: 0,
+    '-moz-appearance': 'textfield',
     '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': {
       WebkitAppearance: 'none',
       margin: 0
