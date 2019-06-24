@@ -1,168 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EntrySidebar/TranslationWidget when single locale mode is not supported when single locale mode is off should match snapshot 1`] = `
-<EntrySidebarWidget
-  testId="sidebar-translation-widget"
-  title="Translation"
->
-  <TranslationWidgetPills
-    emitter={
-      Object {
-        "emit": [MockFunction],
-      }
-    }
-    localeData={
-      Object {
-        "activeLocales": Array [
-          Object {
-            "code": "en",
-            "default": true,
-            "internal_code": "en-US",
-            "name": "English (United States)",
-          },
-          Object {
-            "code": "de",
-            "default": false,
-            "internal_code": "de-DE",
-            "name": "German (Germany)",
-          },
-          Object {
-            "code": "es",
-            "default": false,
-            "internal_code": "es-AR",
-            "name": "Spanish (Argentina)",
-          },
-          Object {
-            "code": "ru",
-            "default": false,
-            "internal_code": "ru",
-            "name": "Russian",
-          },
-        ],
-        "errors": Object {},
-        "focusedLocale": Object {
-          "code": "en",
-          "default": true,
-          "internal_code": "en-US",
-          "name": "English (United States)",
-        },
-        "isLocaleActive": [Function],
-        "isSingleLocaleModeOn": false,
-        "isSingleLocaleModeSupported": false,
-        "privateLocales": Array [
-          Object {
-            "code": "en",
-            "default": true,
-            "internal_code": "en-US",
-            "name": "English (United States)",
-          },
-          Object {
-            "code": "de",
-            "default": false,
-            "internal_code": "de-DE",
-            "name": "German (Germany)",
-          },
-          Object {
-            "code": "es",
-            "default": false,
-            "internal_code": "es-AR",
-            "name": "Spanish (Argentina)",
-          },
-          Object {
-            "code": "ru",
-            "default": false,
-            "internal_code": "ru",
-            "name": "Russian",
-          },
-        ],
-      }
-    }
-  />
-</EntrySidebarWidget>
-`;
-
-exports[`EntrySidebar/TranslationWidget when single locale mode is not supported when single locale mode is on should match snapshot 1`] = `
-<EntrySidebarWidget
-  testId="sidebar-translation-widget"
-  title="Translation"
->
-  <TranslationWidgetPills
-    emitter={
-      Object {
-        "emit": [MockFunction],
-      }
-    }
-    localeData={
-      Object {
-        "activeLocales": Array [
-          Object {
-            "code": "en",
-            "default": true,
-            "internal_code": "en-US",
-            "name": "English (United States)",
-          },
-          Object {
-            "code": "de",
-            "default": false,
-            "internal_code": "de-DE",
-            "name": "German (Germany)",
-          },
-          Object {
-            "code": "es",
-            "default": false,
-            "internal_code": "es-AR",
-            "name": "Spanish (Argentina)",
-          },
-          Object {
-            "code": "ru",
-            "default": false,
-            "internal_code": "ru",
-            "name": "Russian",
-          },
-        ],
-        "errors": Object {},
-        "focusedLocale": Object {
-          "code": "en",
-          "default": true,
-          "internal_code": "en-US",
-          "name": "English (United States)",
-        },
-        "isLocaleActive": [Function],
-        "isSingleLocaleModeOn": true,
-        "isSingleLocaleModeSupported": false,
-        "privateLocales": Array [
-          Object {
-            "code": "en",
-            "default": true,
-            "internal_code": "en-US",
-            "name": "English (United States)",
-          },
-          Object {
-            "code": "de",
-            "default": false,
-            "internal_code": "de-DE",
-            "name": "German (Germany)",
-          },
-          Object {
-            "code": "es",
-            "default": false,
-            "internal_code": "es-AR",
-            "name": "Spanish (Argentina)",
-          },
-          Object {
-            "code": "ru",
-            "default": false,
-            "internal_code": "ru",
-            "name": "Russian",
-          },
-        ],
-      }
-    }
-  />
-</EntrySidebarWidget>
-`;
-
-exports[`EntrySidebar/TranslationWidget when single locale mode is supported when single locale mode is off should match snapshot 1`] = `
+exports[`EntrySidebar/TranslationWidget when single locale mode is off should match snapshot 1`] = `
 <EntrySidebarWidget
   headerNode={
     <Select
@@ -256,7 +94,6 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is supported whe
         },
         "isLocaleActive": [Function],
         "isSingleLocaleModeOn": false,
-        "isSingleLocaleModeSupported": true,
         "privateLocales": Array [
           Object {
             "code": "en",
@@ -289,7 +126,7 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is supported whe
 </EntrySidebarWidget>
 `;
 
-exports[`EntrySidebar/TranslationWidget when single locale mode is supported when single locale mode is on should match snapshot 1`] = `
+exports[`EntrySidebar/TranslationWidget when single locale mode is on should match snapshot 1`] = `
 <EntrySidebarWidget
   headerNode={
     <Select
@@ -362,7 +199,6 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is supported whe
         },
         "isLocaleActive": [Function],
         "isSingleLocaleModeOn": true,
-        "isSingleLocaleModeSupported": true,
         "privateLocales": Array [
           Object {
             "code": "en",
