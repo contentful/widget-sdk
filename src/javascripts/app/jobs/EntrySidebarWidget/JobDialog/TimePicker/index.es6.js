@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import { isNaN } from 'lodash';
 import {
   Select,
   HelpText,
@@ -9,21 +10,7 @@ import {
   Option
 } from '@contentful/forma-36-react-components';
 import styles from './styles.es6';
-
-const AMPM = 'h';
-const TWENTYFOUR = 'HH';
-
-const getTimeFormatByLocale = () => {
-  return TWENTYFOUR;
-  // if (!navigator) {
-  //   return TWENTYFOUR;
-  // }
-  // const language = navigator.languages != undefined ? navigator.languages[0] : navigator.language;
-  // if (!language) {
-  //   return TWENTYFOUR;
-  // }
-  // return navigator.language === 'en-GB' || navigator.language === 'en-US' ? AMPM : TWENTYFOUR;
-};
+import { getPreferredTimeFormat, TimeFormat } from './TimeFormatDetector.es6';
 
 const pad = n => {
   const nValue = Number.parseInt(n, 10);
@@ -37,14 +24,20 @@ const pad = n => {
 export function TimePicker({ helpText, validationMessage, onChange, value }) {
   const momentValue = moment(value, 'HH:mm').local();
 
-  const timeFormat = getTimeFormatByLocale();
-  const [daytime, setDaytime] = useState(momentValue.format('A'));
+  const preferredTimeFormat = getPreferredTimeFormat();
+  const [timeFormat, setTimeFormat] = useState(momentValue.format('A'));
 
   const minutes = momentValue.format('m');
-  const hours = momentValue.format(timeFormat);
+  const hours = momentValue.format(preferredTimeFormat);
 
   const handleChange = results => {
-    onChange(moment(`${results.hours}:${results.minutes}`, 'HH:mm').format('HH:mm'));
+    let inputFormat;
+    if (preferredTimeFormat === TimeFormat.H24) {
+      inputFormat = moment(`${results.hours}:${results.minutes}`, 'HH:mm');
+    } else {
+      inputFormat = moment(`${results.hours}:${results.minutes} ${results.timeFormat}`, 'hh:mm A');
+    }
+    onChange(inputFormat.format('HH:mm'));
   };
   return (
     <div className={styles.timePicker}>
@@ -58,12 +51,21 @@ export function TimePicker({ helpText, validationMessage, onChange, value }) {
             name="hour"
             data-test-id="hours"
             type="number"
-            min="0"
-            max="23"
+            min={preferredTimeFormat === TimeFormat.H12 ? 1 : 0}
+            max={preferredTimeFormat === TimeFormat.H12 ? 12 : 23}
             value={pad(hours)}
             onChange={e => {
+              let value = parseInt(e.target.value, 10);
+              if (isNaN(value)) {
+                value = preferredTimeFormat === TimeFormat.H12 ? 12 : 0;
+              }
+              if (preferredTimeFormat === TimeFormat.H12) {
+                value = value === 0 ? 12 : Math.min(value, 12);
+              } else {
+                value = Math.min(value, 23);
+              }
               handleChange({
-                hours: pad(Math.min(parseInt(e.target.value, 10), 23)),
+                hours: pad(value),
                 minutes: minutes,
                 timeFormat: timeFormat
               });
@@ -87,18 +89,19 @@ export function TimePicker({ helpText, validationMessage, onChange, value }) {
             }}
           />
         </div>
-        {timeFormat === AMPM && (
+        {preferredTimeFormat === TimeFormat.H12 && (
           <Select
             className={styles.daytimeSelect}
             name="daytime"
-            value={daytime}
+            value={timeFormat}
+            data-test-id="ampm"
             onChange={e => {
-              setDaytime(e.target.value);
               handleChange({
                 hours: hours,
                 minutes: minutes,
                 timeFormat: e.target.value
               });
+              setTimeFormat(e.target.value);
             }}>
             <Option value="AM">AM</Option>
             <Option value="PM">PM</Option>
