@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import * as Fetcher from './GitHubFetcher.es6';
+import * as Fetcher from './ExtensionFetcher.es6';
 import ExamplePickerModal from './ExamplePickerModal.es6';
 
 const BTN_SELECTOR = '[data-test-id="install-extension"]';

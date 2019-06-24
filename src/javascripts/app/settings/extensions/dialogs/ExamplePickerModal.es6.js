@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Button } from '@contentful/forma-36-react-components';
 
-import * as Fetcher from './GitHubFetcher.es6';
+import * as Fetcher from './ExtensionFetcher.es6';
 
 const EXAMPLES = [
   {

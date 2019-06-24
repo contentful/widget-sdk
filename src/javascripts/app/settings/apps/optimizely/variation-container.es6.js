@@ -2,7 +2,7 @@ import { getModule } from 'NgRegistry.es6';
 import constants from './constants.es6';
 import { hasVariationContainerInFieldLinkValidations } from './ReferenceField.es6';
 
-import { fetchExtension } from 'app/settings/extensions/dialogs/GitHubFetcher.es6';
+import { fetchExtension } from 'app/settings/extensions/dialogs/ExtensionFetcher.es6';
 import * as Random from 'utils/Random.es6';
 import { createContentTypeView } from 'data/UiConfig/Defaults.es6';
 

@@ -18,7 +18,7 @@ import {
 import Workbench from 'app/common/Workbench.es6';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 import * as Analytics from 'analytics/Analytics.es6';
-import { fetchExtension } from 'app/settings/extensions/dialogs/GitHubFetcher.es6';
+import { fetchExtension } from 'app/settings/extensions/dialogs/ExtensionFetcher.es6';
 import * as Random from 'utils/Random.es6';
 
 import AppIcon from '../_common/AppIcon.es6';

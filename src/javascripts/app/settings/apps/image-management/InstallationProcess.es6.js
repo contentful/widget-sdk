@@ -1,5 +1,5 @@
 import { getModule } from 'NgRegistry.es6';
-import * as Fetcher from 'app/settings/extensions/dialogs/GitHubFetcher.es6';
+import * as Fetcher from 'app/settings/extensions/dialogs/ExtensionFetcher.es6';
 import * as stringUtils from 'utils/StringUtils.es6';
 import { getEntryConfiguration } from 'app/EntrySidebar/Configuration/defaults.es6';
 

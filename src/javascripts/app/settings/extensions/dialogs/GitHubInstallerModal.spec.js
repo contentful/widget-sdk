@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import * as Fetcher from './GitHubFetcher.es6';
+import * as Fetcher from './ExtensionFetcher.es6';
 import GitHubInstallerModal from './GitHubInstallerModal.es6';
 
 const VALID_URL = 'https://github.com/jelz/sample/blob/master/extension.json';

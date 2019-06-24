@@ -15,8 +15,12 @@ function isValidGHUserContentUrl(url) {
   return url.startsWith('https://raw.githubusercontent.com/') && url.endsWith('extension.json');
 }
 
+function isValidContentfulExtsUrl(url) {
+  return /https:\/\/[^.\s]+\.contentfulexts\.com\/extension\.json/.test(url)
+}
+
 function getDescriptorUrl(url) {
-  if (isValidGHUserContentUrl(url)) {
+  if (isValidGHUserContentUrl(url) || isValidContentfulExtsUrl(url)) {
     return url;
   } else {
     const { repo, branch, filepath } = parseGithubUrl(url) || {};
@@ -27,7 +31,7 @@ function getDescriptorUrl(url) {
 export function isValidSource(url) {
   url = (url || '').trim();
 
-  if (isValidGHUserContentUrl(url)) {
+  if (isValidGHUserContentUrl(url) || isValidContentfulExtsUrl(url)) {
     return true;
   }
 

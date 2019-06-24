@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ModalConfirm, TextField } from '@contentful/forma-36-react-components';
-import * as Fetcher from './GitHubFetcher.es6';
+import * as Fetcher from './ExtensionFetcher.es6';
 
 class GithubInstaller extends React.Component {
   static propTypes = {
