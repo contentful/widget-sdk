@@ -4,9 +4,11 @@ describe('cfMarkdownEditor', () => {
   beforeEach(async function() {
     this.markdownEditorActions = { trackMarkdownEditorAction: sinon.stub() };
     module('contentful/test', $provide => {
-      $provide.constant('TheLocaleStore', {
-        getDefaultLocale: () => ({ code: 'some random locale' }),
-        getLocales: () => [{ code: 'en-US' }]
+      $provide.constant('services/localeStore.es6', {
+        default: {
+          getDefaultLocale: () => ({ code: 'some random locale' }),
+          getLocales: () => [{ code: 'en-US' }]
+        }
       });
       $provide.value('analytics/MarkdownEditorActions.es6', this.markdownEditorActions);
     });

@@ -2,10 +2,10 @@ import qs from 'qs';
 import { getModule } from 'NgRegistry.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import { includes, get, orderBy, compact } from 'lodash';
+import TheLocaleStore from 'services/localeStore.es6';
 
 const spaceContext = getModule('spaceContext');
 const EntityHelpers = getModule('EntityHelpers');
-const TheLocaleStore = getModule('TheLocaleStore');
 
 const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
 const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);

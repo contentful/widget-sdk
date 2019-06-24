@@ -1,10 +1,17 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import * as mockedSpaceContext from 'ng/spaceContext';
-
 import SidebarContentPreviewContainer from './SidebarContentPreviewContainer.es6';
-
 import flushPromises from 'testHelpers/flushPromises';
+
+jest.mock(
+  'services/localeStore.es6',
+  () => ({
+    toPublicCode: _ => _,
+    getDefaultLocale: () => ({ code: 'en_US' })
+  }),
+  { virtual: true }
+);
 
 const contentPreviews = [
   {

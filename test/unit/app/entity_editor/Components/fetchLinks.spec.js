@@ -36,12 +36,14 @@ describe('fetchLinks', () => {
       .withArgs('spaceContext')
       .returns(this.spaceContext)
       .withArgs('EntityHelpers')
-      .returns(EntityHelpers)
-      .withArgs('TheLocaleStore')
-      .returns(TheLocaleStore);
+      .returns(EntityHelpers);
 
     system.set('NgRegistry.es6', {
       getModule: getModuleStub
+    });
+
+    system.set('services/localeStore.es6', {
+      default: TheLocaleStore
     });
 
     system.set('states/Navigator.es6', this.navigator);

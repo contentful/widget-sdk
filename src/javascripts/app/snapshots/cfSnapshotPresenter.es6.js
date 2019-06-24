@@ -6,6 +6,7 @@ import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
 import createSnapshotExtensionBridge from 'widgets/bridges/createSnapshotExtensionBridge.es6';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import { userInputFromDatetime } from 'app/widgets/datetime/data.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 export default function register() {
   /**
@@ -22,8 +23,7 @@ export default function register() {
     'utils/LaunchDarkly/index.es6',
     'utils/locales.es6',
     'spaceContext',
-    'TheLocaleStore',
-    (LD, { isRtlLocale }, spaceContext, TheLocaleStore) => {
+    (LD, { isRtlLocale }, spaceContext) => {
       return {
         restrict: 'E',
         template: JST.cf_snapshot_presenter(),

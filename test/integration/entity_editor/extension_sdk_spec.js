@@ -7,8 +7,11 @@ describe('Extension SDK', () => {
   beforeEach(function() {
     module('contentful/test');
 
-    const { registerFactory } = this.$inject('NgRegistry.es6');
-    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
+    const { registerConstant } = this.$inject('NgRegistry.es6');
+    registerConstant('services/localeStore.es6', {
+      default: fakeLocaleStore
+    });
 
     const spaceContext = this.$inject('mocks/spaceContext').init();
     const createDocument = this.$inject('mocks/entityEditor/Document').create;
@@ -440,7 +443,7 @@ describe('Extension SDK', () => {
 
   describe('#locales', () => {
     beforeEach(function() {
-      const LocaleStore = this.$inject('TheLocaleStore');
+      const LocaleStore = this.$inject('services/localeStore.es6').default;
       LocaleStore.setLocales([
         { code: 'en', internal_code: 'en-internal', default: true },
         { code: 'de', internal_code: 'de-internal' }

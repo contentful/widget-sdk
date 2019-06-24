@@ -23,8 +23,11 @@ describe('cfZenmode', () => {
   beforeEach(function() {
     module('contentful/test');
 
-    const { registerFactory } = this.$inject('NgRegistry.es6');
-    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
+    const { registerConstant } = this.$inject('NgRegistry.es6');
+    registerConstant('services/localeStore.es6', {
+      default: fakeLocaleStore
+    });
     const scopeProps = { zenApi: apiMock, preview: {} };
     const elem = this.$compile('<cf-zenmode zen-api="zenApi" />', scopeProps);
     this.scope = elem.isolateScope();

@@ -15,6 +15,12 @@ describe('cfWidgetApi directive', () => {
 
     const $controller = this.$inject('$controller');
 
+    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
+    const { registerConstant } = this.$inject('NgRegistry.es6');
+    registerConstant('services/localeStore.es6', {
+      default: fakeLocaleStore
+    });
+
     this.scope = this.$inject('$rootScope').$new();
     this.widget = {
       field: {},
@@ -27,9 +33,6 @@ describe('cfWidgetApi directive', () => {
         sys: {}
       }
     };
-
-    const { registerFactory } = this.$inject('NgRegistry.es6');
-    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
 
     this.getWidgetApi = function() {
       _.extend(this.scope, {

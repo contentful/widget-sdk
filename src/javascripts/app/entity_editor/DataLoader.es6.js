@@ -7,14 +7,12 @@ import {
   buildSidebarRenderables,
   buildEditorRenderable
 } from 'widgets/WidgetRenderable.es6';
-import { getModule } from 'NgRegistry.es6';
 import { assetContentType } from 'legacy-client';
 import * as WidgetStore from 'widgets/WidgetStore.es6';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
 import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature.es6';
 import { getWidgetTrackingContexts } from 'widgets/WidgetTracking.es6';
-
-const TheLocaleStore = getModule('TheLocaleStore');
+import TheLocaleStore from 'services/localeStore.es6';
 
 /**
  * @ngdoc service

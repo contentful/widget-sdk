@@ -6,10 +6,10 @@ import window from 'utils/ngCompat/window.es6';
 export default function register() {
   registerDirective('cfZenmode', [
     'modalDialog',
-    'TheLocaleStore',
     'markdown_editor/markdown_editor.es6',
     'markdown_editor/markdown_actions.es6',
-    (modalDialog, LocaleStore, MarkdownEditor, actions) => {
+    'services/localeStore.es6',
+    (modalDialog, MarkdownEditor, actions, { default: TheLocaleStore }) => {
       const win = $(window);
 
       // This is persisted accross Zen Mode instances
@@ -58,9 +58,9 @@ export default function register() {
 
           function initEditor(editorInstance) {
             editor = editorInstance;
-            const defaultLocale = LocaleStore.getDefaultLocale();
+            const defaultLocale = TheLocaleStore.getDefaultLocale();
 
-            const locales = LocaleStore.getLocales();
+            const locales = TheLocaleStore.getLocales();
             const fieldLocaleCode = scope.zenApi.getLocale();
             const locale = locales.find(locale => locale.code === fieldLocaleCode);
 

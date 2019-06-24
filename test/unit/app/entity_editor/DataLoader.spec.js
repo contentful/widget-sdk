@@ -9,8 +9,10 @@ describe('app/entity_editor/DataLoader.es6', () => {
         buildSidebarRenderables: sinon.stub().returns([]),
         buildEditorRenderable: sinon.stub().returns(undefined)
       });
-      $provide.constant('TheLocaleStore', {
-        getPrivateLocales: sinon.stub().returns([])
+      $provide.constant('services/localeStore.es6', {
+        default: {
+          getPrivateLocales: sinon.stub().returns([])
+        }
       });
       $provide.constant('data/CMA/ProductCatalog.es6', {
         getOrgFeature: () => Promise.resolve(true)
@@ -48,7 +50,7 @@ describe('app/entity_editor/DataLoader.es6', () => {
       }
     };
 
-    this.localeStore = this.$inject('TheLocaleStore');
+    this.localeStore = this.$inject('services/localeStore.es6').default;
 
     const DataLoader = this.$inject('app/entity_editor/DataLoader.es6');
     this.loadEntry = _.partial(DataLoader.loadEntry, this.spaceContext);

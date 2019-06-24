@@ -33,7 +33,13 @@ beforeEach(function() {
         self.$injector = $injector;
       });
     }
-    return this.$injector.get(serviceName);
+    try {
+      return this.$injector.get(serviceName);
+    } catch (e) {
+      // eslint-disable-next-line
+      console.error(`Couldn't inject ${serviceName}`);
+      throw e;
+    }
   };
 
   /**

@@ -8,7 +8,7 @@ describe('entitySelector', () => {
     this.entitySelector = this.$inject('entitySelector');
     this.openDialogStub = sinon.stub().returns({ promise: this.$q.resolve() });
     this.$inject('modalDialog').open = this.openDialogStub;
-    this.$inject('TheLocaleStore').getDefaultLocale = () => ({ code: 'de-DE' });
+    this.$inject('services/localeStore.es6').default.getDefaultLocale = () => ({ code: 'de-DE' });
 
     this.open = (field, links) => {
       const promise = this.entitySelector.openFromField(field, links);

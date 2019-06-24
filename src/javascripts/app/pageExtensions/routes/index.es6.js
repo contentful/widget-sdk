@@ -1,6 +1,7 @@
 import PageExtensionRoute from './PageExtensionRoute.es6';
 import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge.es6';
 import * as Navigator from 'states/Navigator.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 export default {
   name: 'pageExtensions',
@@ -10,10 +11,8 @@ export default {
     '$rootScope',
     '$stateParams',
     'spaceContext',
-    'TheLocaleStore',
-    ($rootScope, $stateParams, spaceContext, TheLocaleStore) => {
+    ($rootScope, $stateParams, spaceContext) => {
       const { extensionId, path = '' } = $stateParams;
-
       return {
         extensionId,
         orgId: spaceContext.organization.sys.id,

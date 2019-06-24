@@ -5,6 +5,7 @@ import moment from 'moment';
 import * as K from 'utils/kefir.es6';
 import createInputUpdater from 'ui/inputUpdater.es6';
 import { slugify } from 'services/slug.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 export default function register() {
   /**
@@ -31,8 +32,7 @@ export default function register() {
    * so we don't duplicate our API error and custom check inside this directive.
    */
   registerDirective('cfSlugEditor', [
-    'TheLocaleStore',
-    TheLocaleStore => ({
+    () => ({
       restrict: 'E',
       scope: {},
       require: '^cfWidgetApi',

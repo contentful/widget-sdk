@@ -36,9 +36,9 @@ export default function register() {
   registerController('WidgetApiController', [
     '$scope',
     'spaceContext',
-    'TheLocaleStore',
     'EntityHelpers',
-    function($scope, spaceContext, TheLocaleStore, EntityHelpers) {
+    'services/localeStore.es6',
+    function($scope, spaceContext, EntityHelpers, { default: TheLocaleStore }) {
       const {
         locale,
         fieldLocale,

@@ -35,10 +35,14 @@ describe('entityEditor/Document', () => {
     };
 
     // TheLocaleStore has to be re-registered with the mock
-    const { registerFactory } = this.$inject('NgRegistry.es6');
-    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
+    const { registerConstant } = this.$inject('NgRegistry.es6');
+    registerConstant('services/localeStore.es6', {
+      default: fakeLocaleStore
+    });
 
-    this.localeStore = this.$inject('TheLocaleStore');
+    this.localeStore = this.$inject('services/localeStore.es6').default;
+
     this.localeStore.setLocales([{ internal_code: 'en' }]);
 
     this.contentType = {

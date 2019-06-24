@@ -20,11 +20,11 @@ import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 import * as logger from 'services/logger.es6';
 import { getVariation } from 'LaunchDarkly.es6';
 import { ENTRY_COMMENTS } from 'featureFlags.es6';
+import TheLocaleStore from 'services/localeStore.es6';
+import { buildFieldsApi } from 'app/entity_editor/dataFields.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
-const TheLocaleStore = getModule('TheLocaleStore');
-const DataFields = getModule('EntityEditor/DataFields');
 const $rootScope = getModule('$rootScope');
 const entitySelector = getModule('entitySelector');
 const entityCreator = getModule('entityCreator');
@@ -140,7 +140,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
    * for every widget. Instead, we share this version in every
    * cfWidgetApi instance.
    */
-  $scope.fields = DataFields.create(entityInfo.contentType.fields, $scope.otDoc);
+  $scope.fields = buildFieldsApi(entityInfo.contentType.fields, $scope.otDoc);
 
   $scope.localeData = {};
 

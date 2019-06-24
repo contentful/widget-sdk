@@ -1,34 +1,47 @@
-'use strict';
 import _ from 'lodash';
+import * as Entries from './entries.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
-describe('data/Entries', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.entries = this.$inject('data/Entries');
+jest.mock(
+  'services/localeStore.es6',
+  () => ({
+    toPublicCode: jest.fn(),
+    toInternalCode: jest.fn()
+  }),
+  { virtual: true }
+);
 
-    const localeStore = _.extend(this.$inject('TheLocaleStore'), {
-      toPublicCode: (this.toPublicCode = sinon.stub()),
-      toInternalCode: (this.toInternalCode = sinon.stub())
-    });
-
-    const { registerFactory } = this.$inject('NgRegistry.es6');
-    registerFactory('TheLocaleStore', () => localeStore);
+describe('data/entries.es6', () => {
+  beforeEach(() => {
+    TheLocaleStore.toPublicCode.mockReset();
+    TheLocaleStore.toInternalCode.mockReset();
   });
+
+  const mockLocaleStore = (method, inputArg, outputArg) => {
+    TheLocaleStore[method].mockImplementation(what => {
+      if (what === inputArg) {
+        return outputArg;
+      }
+      return what;
+    });
+  };
 
   describe('path transformation', () => {
     const ctData = { fields: [{ id: 'internal-id', apiName: 'external-id' }] };
 
     it('transforms internal path to external', function() {
+      mockLocaleStore('toPublicCode', 'internal-lang', 'public-lang');
+
       const internal = ['fields', 'internal-id', 'internal-lang'];
-      this.toPublicCode.withArgs('internal-lang').returns('public-lang');
-      const external = this.entries.internalPathToExternal(ctData, internal);
+      const external = Entries.internalPathToExternal(ctData, internal);
       expect(external).toEqual(['fields', 'external-id', 'public-lang']);
     });
 
-    it('transforms internal path to external', function() {
+    it('transforms external path to internal', function() {
+      mockLocaleStore('toInternalCode', 'public-lang', 'internal-lang');
+
       const external = ['fields', 'external-id', 'public-lang'];
-      this.toInternalCode.withArgs('public-lang').returns('internal-lang');
-      const internal = this.entries.externalPathToInternal(ctData, external);
+      const internal = Entries.externalPathToInternal(ctData, external);
       expect(internal).toEqual(['fields', 'internal-id', 'internal-lang']);
     });
   });
@@ -69,10 +82,16 @@ describe('data/Entries', () => {
     };
 
     it('transforms internal representation to external', function() {
-      this.toPublicCode.withArgs('internal-lang-1').returns('public-lang-1');
-      this.toPublicCode.withArgs('internal-lang-2').returns('public-lang-2');
+      TheLocaleStore.toPublicCode.mockImplementation(value => {
+        if (value === 'internal-lang-1') {
+          return 'public-lang-1';
+        } else if (value === 'internal-lang-2') {
+          return 'public-lang-2';
+        }
+        return value;
+      });
 
-      const external = this.entries.internalToExternal(internalData, ctData);
+      const external = Entries.internalToExternal(internalData, ctData);
       // test structure
       expect(external).toEqual(externalData);
       // test cloning
@@ -81,10 +100,16 @@ describe('data/Entries', () => {
     });
 
     it('transforms external representation to internal', function() {
-      this.toInternalCode.withArgs('public-lang-1').returns('internal-lang-1');
-      this.toInternalCode.withArgs('public-lang-2').returns('internal-lang-2');
+      TheLocaleStore.toInternalCode.mockImplementation(value => {
+        if (value === 'public-lang-1') {
+          return 'internal-lang-1';
+        } else if (value === 'public-lang-2') {
+          return 'internal-lang-2';
+        }
+        return value;
+      });
 
-      const internal = this.entries.externalToInternal(externalData, ctData);
+      const internal = Entries.externalToInternal(externalData, ctData);
       // test structure
       expect(internal).toEqual(internalData);
       // test cloning

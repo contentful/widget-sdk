@@ -2,9 +2,9 @@ import { clone, find, isObject, isString, pick } from 'lodash';
 import mimetype from '@contentful/mimetype';
 import getLinkedContentTypeIdsForNodeType from 'app/widgets/rich_text/plugins/shared/GetLinkedContentTypeIdsForNodeType.es6';
 import { getModule } from 'NgRegistry.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 const ListQuery = getModule('ListQuery');
-const TheLocaleStore = getModule('TheLocaleStore');
 const spaceContext = getModule('spaceContext');
 
 const getDefaultLocaleCode = () => TheLocaleStore.getDefaultLocale().code;

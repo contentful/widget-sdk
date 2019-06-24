@@ -1,4 +1,5 @@
 import JobsListRoute from './JobsListRoute.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 export default {
   name: 'jobs',
@@ -13,8 +14,7 @@ export default {
       mapInjectedToProps: [
         '$stateParams',
         'spaceContext',
-        'TheLocaleStore',
-        ({ spaceId }, spaceContext, TheLocaleStore) => ({
+        ({ spaceId }, spaceContext) => ({
           spaceId,
           environmentId: spaceContext.getEnvironmentId(),
           defaultLocale: TheLocaleStore.getDefaultLocale(),

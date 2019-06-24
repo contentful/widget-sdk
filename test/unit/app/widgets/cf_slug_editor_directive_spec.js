@@ -10,8 +10,10 @@ describe('SlugEditor directive', () => {
     ];
 
     module('contentful/test', $provide => {
-      $provide.constant('TheLocaleStore', {
-        getPrivateLocales: () => this.locales
+      $provide.constant('services/localeStore.es6', {
+        default: {
+          getPrivateLocales: () => this.locales
+        }
       });
       $provide.constant('lodash/debounce', _.identity);
     });

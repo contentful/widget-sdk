@@ -11,8 +11,8 @@ import { getModule } from 'NgRegistry.es6';
 import * as Config from 'Config.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
-const TheLocaleStore = getModule('TheLocaleStore');
 const spaceContext = getModule('spaceContext');
 
 const WebhooksFetcher = createFetcherComponent(() => {

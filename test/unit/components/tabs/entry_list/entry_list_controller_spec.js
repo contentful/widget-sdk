@@ -39,9 +39,11 @@ describe('Entry List Controller', () => {
         }
       });
 
-      $provide.constant('TheLocaleStore', {
-        resetWithSpace: sinon.stub(),
-        getDefaultLocale: sinon.stub().returns({ internal_code: 'en-US' })
+      $provide.constant('services/localeStore.es6', {
+        default: {
+          resetWithSpace: sinon.stub(),
+          getDefaultLocale: sinon.stub().returns({ internal_code: 'en-US' })
+        }
       });
 
       $provide.value('app/ContentList/Search', {

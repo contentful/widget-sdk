@@ -10,9 +10,9 @@ import {
 import { enrichTemplate } from './enrichTemplate.es6';
 import * as Config from 'Config.es6';
 import { getModule } from 'NgRegistry.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 const $rootScope = getModule('$rootScope');
-const TheLocaleStore = getModule('TheLocaleStore');
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 

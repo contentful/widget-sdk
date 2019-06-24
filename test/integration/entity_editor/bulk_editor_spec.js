@@ -7,10 +7,13 @@ describe('bulk editor', () => {
       $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
     });
 
-    const { registerFactory } = this.$inject('NgRegistry.es6');
-    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
+    const { registerConstant } = this.$inject('NgRegistry.es6');
+    registerConstant('services/localeStore.es6', {
+      default: fakeLocaleStore
+    });
 
-    const TheLocaleStore = this.$inject('TheLocaleStore');
+    const TheLocaleStore = this.$inject('services/localeStore.es6').default;
     this.setLocales = TheLocaleStore.setLocales;
     this.setLocales([{ code: 'DEF', name: 'Default' }, { code: 'EN', name: 'English' }]);
 

@@ -15,23 +15,23 @@ export default function register() {
     '$controller',
     '$state',
     'spaceContext',
-    'TheLocaleStore',
     'entityCreator',
     'analytics/Analytics.es6',
     'services/BulkAssetsCreator.es6',
     'access_control/AccessChecker/index.es6',
     'app/ContentList/SavedViewsSidebar.es6',
+    'services/localeStore.es6',
     function AssetListController(
       $scope,
       $controller,
       $state,
       spaceContext,
-      TheLocaleStore,
       entityCreator,
       Analytics,
       BulkAssetsCreator,
       accessChecker,
-      { default: createSavedViewsSidebar }
+      { default: createSavedViewsSidebar },
+      { default: TheLocaleStore }
     ) {
       const searchController = $controller('AssetSearchController', { $scope: $scope });
 

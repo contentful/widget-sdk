@@ -23,8 +23,8 @@ import * as Reverter from './document/Reverter.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
 import * as Status from 'data/document/status.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
-const TheLocaleStore = getModule('TheLocaleStore');
 const ShareJS = getModule('data/ShareJS/Utils');
 const PresenceHub = getModule('entityEditor/Document/PresenceHub');
 

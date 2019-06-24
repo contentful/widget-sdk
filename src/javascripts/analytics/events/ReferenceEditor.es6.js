@@ -1,7 +1,5 @@
 import { track } from 'analytics/Analytics.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const localeStore = getModule('TheLocaleStore');
+import localeStore from 'services/localeStore.es6';
 
 export function onEntryCreate({ contentType }) {
   track('reference_editor:create_entry', {

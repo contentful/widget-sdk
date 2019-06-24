@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import * as DOM from 'test/helpers/DOM';
-import { forEach, identity, clone } from 'lodash';
+import { forEach, clone } from 'lodash';
 
 /**
  * Tests the integration of the 'cfEntityField' directive with
@@ -23,8 +23,11 @@ describe('entity editor field integration', () => {
 
     this.createDocument = this.$inject('mocks/entityEditor/Document').create;
 
-    const { registerFactory } = this.$inject('NgRegistry.es6');
-    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', identity]);
+    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
+    const { registerConstant } = this.$inject('NgRegistry.es6');
+    registerConstant('services/localeStore.es6', {
+      default: fakeLocaleStore
+    });
 
     this.widget = {
       isVisible: true,

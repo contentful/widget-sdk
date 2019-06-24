@@ -43,9 +43,9 @@ export default function register() {
     '$controller',
     '$timeout',
     'spaceContext',
-    'TheLocaleStore',
+    'services/localeStore.es6',
     'app/entity_editor/Tracking.es6', // { trackEntryView }
-    ($q, $controller, $timeout, spaceContext, localeStore, { trackEntryView }) => {
+    ($q, $controller, $timeout, spaceContext, { default: localeStore }, { trackEntryView }) => {
       return {
         restrict: 'E',
         scope: {
@@ -187,18 +187,18 @@ export default function register() {
     '$scope',
     '$controller',
     'spaceContext',
-    'EntityEditor/DataFields',
-    'TheLocaleStore',
+    'app/entity_editor/dataFields.es6',
     'app/entity_editor/Validator.es6',
     'app/entity_editor/DocumentErrorHandler.es6',
+    'services/localeStore.es6',
     function(
       $scope,
       $controller,
       spaceContext,
-      DataFields,
-      localeStore,
+      { buildFieldsApi },
       Validator,
-      { default: initDocErrorHandler }
+      { default: initDocErrorHandler },
+      { default: localeStore }
     ) {
       const editorData = $scope.editorData;
       const entityInfo = (this.entityInfo = editorData.entityInfo);
@@ -261,7 +261,7 @@ export default function register() {
        * cfWidgetApi instance.
        */
       const fields = entityInfo.contentType.fields;
-      $scope.fields = DataFields.create(fields, $scope.otDoc);
+      $scope.fields = buildFieldsApi(fields, $scope.otDoc);
     }
   ]);
 }

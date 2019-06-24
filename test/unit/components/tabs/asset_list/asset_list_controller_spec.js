@@ -57,8 +57,11 @@ describe('Asset List Controller', () => {
       });
     });
 
-    const { registerFactory } = this.$inject('NgRegistry.es6');
-    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
+    const { registerConstant } = this.$inject('NgRegistry.es6');
+    registerConstant('services/localeStore.es6', {
+      default: fakeLocaleStore
+    });
 
     ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
     ComponentLibrary.Notification.error = stubs.error;

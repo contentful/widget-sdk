@@ -13,12 +13,9 @@ describe('ReferenceEditor', () => {
       getActiveLocales: sinon.stub()
     };
 
-    this.getModule = sinon
-      .stub()
-      .withArgs('TheLocaleStore')
-      .returns(this.TheLocaleStore);
-
-    system.set('NgRegistry.es6', { getModule: this.getModule });
+    system.set('services/localeStore.es6', {
+      default: this.TheLocaleStore
+    });
     system.set('analytics/Analytics.es6', this.analytics);
 
     const referenceEditorEvents = yield system.import('analytics/events/ReferenceEditor.es6');

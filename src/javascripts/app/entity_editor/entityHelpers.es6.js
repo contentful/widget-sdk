@@ -13,9 +13,9 @@ export default function register() {
   registerFactory('EntityHelpers', [
     '$q',
     'spaceContext',
-    'TheLocaleStore',
+    'services/localeStore.es6',
     '$filter',
-    ($q, spaceContext, TheLocaleStore, $filter) => {
+    ($q, spaceContext, { default: TheLocaleStore }, $filter) => {
       const assetUrlFilter = $filter('assetUrl');
       const toInternalLocaleCode = localeCode =>
         TheLocaleStore.toInternalCode(localeCode) || localeCode;

@@ -7,13 +7,13 @@ import { create as createToken } from 'app/api/CMATokens/Resource.es6';
 import * as auth from 'Authentication.es6';
 import { getValue } from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as Entries from 'data/entries.es6';
 
 const modalDialog = getModule('modalDialog');
 const $rootScope = getModule('$rootScope');
 const client = getModule('client');
 const spaceContext = getModule('spaceContext');
 const $state = getModule('$state');
-const Entries = getModule('data/Entries');
 
 const DEFAULT_LOCALE = 'en-US';
 

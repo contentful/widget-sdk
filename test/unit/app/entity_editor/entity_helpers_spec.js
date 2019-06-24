@@ -13,8 +13,10 @@ describe('EntityHelpers', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.constant('assetUrlFilter', _.constant(REWRITTEN_URL));
-      $provide.constant('TheLocaleStore', {
-        toInternalCode: code => INTERNAL_LOCALE_BY_LOCALE[code]
+      $provide.constant('services/localeStore.es6', {
+        default: {
+          toInternalCode: code => INTERNAL_LOCALE_BY_LOCALE[code]
+        }
       });
     });
 

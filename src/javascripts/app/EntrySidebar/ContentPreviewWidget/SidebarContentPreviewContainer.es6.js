@@ -4,10 +4,10 @@ import { get } from 'lodash';
 import SidebarContentPreview from './SidebarContentPreview.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
+import TheLocaleStore from 'services/localeStore.es6';
+import * as Entries from 'data/entries.es6';
 
 const spaceContext = getModule('spaceContext');
-const TheLocaleStore = getModule('TheLocaleStore');
-const Entries = getModule('data/Entries');
 
 const getEmptyContentPreview = () => ({
   compiledUrl: '',

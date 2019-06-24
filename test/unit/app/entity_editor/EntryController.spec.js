@@ -27,9 +27,12 @@ describe('Entry Editor Controller', function() {
       );
     });
 
-    const { registerFactory, registerController } = this.$inject('NgRegistry.es6');
+    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
+    const { registerConstant, registerController } = this.$inject('NgRegistry.es6');
     registerController('FormWidgetsController', function() {});
-    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+    registerConstant('services/localeStore.es6', {
+      default: fakeLocaleStore
+    });
 
     const createDocument = this.$inject('mocks/entityEditor/Document').create;
 

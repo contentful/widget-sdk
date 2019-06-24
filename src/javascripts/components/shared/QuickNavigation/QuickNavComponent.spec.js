@@ -11,6 +11,12 @@ jest.mock('react-modal', () => {
   return ReactModalMock;
 });
 
+jest.mock('services/localeStore', () => ({
+  getDefaultLocale: () => ({
+    code: 'en-US'
+  })
+}));
+
 jest.mock('TheStore/index.es6', () => ({
   getStore: jest.fn()
 }));
@@ -24,14 +30,6 @@ jest.mock(
   'ng/EntityHelpers',
   () => ({
     newForLocale: () => ({ entityTitle: () => 'title' })
-  }),
-  { virtual: true }
-);
-
-jest.mock(
-  'ng/TheLocaleStore',
-  () => ({
-    getDefaultLocale: () => ({ code: 'code' })
   }),
   { virtual: true }
 );

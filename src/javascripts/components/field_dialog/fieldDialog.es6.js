@@ -10,6 +10,7 @@ import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces
 import fieldDecorator from 'components/field_dialog/fieldDecorator.es6';
 import validationDecorator from 'components/field_dialog/validationDecorator.es6';
 import fieldErrorMessageBuilder from 'services/errorMessageBuilder/fieldErrorMessageBuilder.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 // TODO: This dialog should be completely rewritten!
 
@@ -237,8 +238,7 @@ export default function register() {
 
   registerController('FieldDialogSettingsController', [
     '$scope',
-    'TheLocaleStore',
-    ($scope, TheLocaleStore) => {
+    $scope => {
       $scope.schema = {
         errors: function(decoratedField) {
           return fieldDecorator.validateInContentType(decoratedField, $scope.contentType.data);

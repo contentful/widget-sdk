@@ -29,9 +29,11 @@ describe('Space Template creation service', () => {
         enrichTemplate: (_templateInfo, template) => enrichTemplate(template)
       });
 
-      $provide.constant('TheLocaleStore', {
-        refresh: stubs.refreshLocaleStore,
-        setActiveLocales: stubs.setActiveLocales
+      $provide.constant('services/localeStore.es6', {
+        default: {
+          refresh: stubs.refreshLocaleStore,
+          setActiveLocales: stubs.setActiveLocales
+        }
       });
     });
 

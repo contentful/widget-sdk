@@ -12,8 +12,11 @@ describe('entityEditor/StateController', () => {
       });
     });
 
-    const { registerFactory } = this.$inject('NgRegistry.es6');
-    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
+    const { registerConstant } = this.$inject('NgRegistry.es6');
+    registerConstant('services/localeStore.es6', {
+      default: fakeLocaleStore
+    });
 
     const $q = this.$inject('$q');
     const createDocument = this.$inject('mocks/entityEditor/Document').create;

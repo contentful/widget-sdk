@@ -4,6 +4,8 @@ import * as K from 'utils/kefir.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as versionPicker from 'app/snapshots/VersionPicker.es6';
 import * as trackVersioning from 'analytics/events/versioning.es6';
+import TheLocaleStore from 'services/localeStore.es6';
+import * as Entries from 'data/entries.es6';
 
 export default function register() {
   /**
@@ -29,10 +31,8 @@ export default function register() {
     '$state',
     '$stateParams',
     'spaceContext',
-    'data/Entries',
     'command',
-    'TheLocaleStore',
-    ($scope, $q, $state, $stateParams, spaceContext, Entries, Command, TheLocaleStore) => {
+    ($scope, $q, $state, $stateParams, spaceContext, Command) => {
       $scope.versionPicker = versionPicker.create();
       $scope.snapshotCount = $stateParams.snapshotCount;
 

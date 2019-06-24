@@ -8,22 +8,22 @@ import * as LazyLoader from 'utils/LazyLoader.es6';
 export default function register() {
   registerDirective('cfMarkdownEditor', [
     '$timeout',
-    'TheLocaleStore',
     'utils/LaunchDarkly/index.es6',
     'markdown_editor/markdown_editor.es6',
     'markdown_editor/markdown_actions.es6',
     'markdown_editor/PreviewGenerator.es6',
     'utils/locales.es6',
     'analytics/MarkdownEditorActions.es6',
+    'services/localeStore.es6',
     (
       $timeout,
-      LocaleStore,
       LD,
       MarkdownEditor,
       actions,
       { default: makePreview },
       { isRtlLocale },
-      { trackMarkdownEditorAction }
+      { trackMarkdownEditorAction },
+      { default: TheLocaleStore }
     ) => {
       const EDITOR_DIRECTIONS = {
         LTR: 'ltr',
@@ -123,9 +123,9 @@ export default function register() {
             editor = MarkdownEditor.create(textarea, {
               direction: scope.direction
             });
-            const defaultLocale = LocaleStore.getDefaultLocale();
+            const defaultLocale = TheLocaleStore.getDefaultLocale();
 
-            const locales = LocaleStore.getLocales();
+            const locales = TheLocaleStore.getLocales();
             const locale = locales.find(locale => locale.code === field.locale);
             scope.actions = actions.create(editor, locale, defaultLocale.code, { zen: false });
             scope.history = editor.history;

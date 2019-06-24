@@ -3,9 +3,7 @@ import { track } from 'analytics/Analytics.es6';
 import { isEqual, keys, once, sum, sumBy, values, findIndex } from 'lodash';
 import { getRichTextEntityLinks } from '@contentful/rich-text-links';
 import * as random from 'utils/Random.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const TheLocaleStore = getModule('TheLocaleStore');
+import TheLocaleStore from 'services/localeStore.es6';
 
 const LOAD_EVENT_CATEGORY = 'editor_load';
 

@@ -3,9 +3,7 @@ import { groupBy, isEmpty, keys } from 'lodash';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import DocumentStatusCode from 'data/document/statusCode.es6';
 import { onFeatureFlag } from 'utils/LaunchDarkly/index.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const TheLocaleStore = getModule('TheLocaleStore');
+import TheLocaleStore from 'services/localeStore.es6';
 
 const FEATURE_FLAG_TRANSLATION_WIDGET_DROPDOWN = 'feature-at-03-2019-translation-widget-dropdown';
 

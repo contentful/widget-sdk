@@ -10,12 +10,12 @@ import installTracking from './Tracking.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 import { keys } from 'lodash';
 import setLocaleData from 'app/entity_editor/setLocaleData.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 import { getModule } from 'NgRegistry.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
-const TheLocaleStore = getModule('TheLocaleStore');
 
 /**
  * @param {Object} $scope

@@ -11,6 +11,7 @@ import * as Telemetry from 'i13n/Telemetry.es6';
 import createUserCache from 'data/userCache.es6';
 import * as EntityFieldValueHelpers from './EntityFieldValueHelpers.es6';
 import createContentPreview from 'services/contentPreview.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 export default function register() {
   /**
@@ -26,7 +27,6 @@ export default function register() {
     '$rootScope',
     '$injector',
     'client',
-    'TheLocaleStore',
     'Config.es6',
     'Authentication.es6',
     'services/TokenStore.es6',
@@ -48,7 +48,6 @@ export default function register() {
       $rootScope,
       $injector,
       client,
-      TheLocaleStore,
       Config,
       Auth,
       TokenStore,

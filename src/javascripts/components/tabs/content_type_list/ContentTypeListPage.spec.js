@@ -8,15 +8,7 @@ import { ContentTypesPage as Page } from './ContentTypeListPage.es6';
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as contentTypeFactory from 'testHelpers/contentTypeFactory';
 
-jest.mock(
-  'lodash/debounce',
-  () => {
-    return fn => {
-      return fn;
-    };
-  },
-  { virtual: true }
-);
+jest.mock('lodash/debounce', () => fn => fn, { virtual: true });
 
 jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'not-ie' })
