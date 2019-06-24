@@ -11,9 +11,9 @@ import ROUTES from 'redux/routes.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import { getMemberCountsByTeam } from 'redux/selectors/teamMemberships.es6';
 import { hasReadOnlyPermission } from 'redux/selectors/teams.es6';
+import ellipsisStyle from 'ellipsisStyle.es6';
 
 import TeamDialog from './TeamDialog.es6';
-import ellipsisStyle from './ellipsisStyle.es6';
 
 const styles = {
   name: css({

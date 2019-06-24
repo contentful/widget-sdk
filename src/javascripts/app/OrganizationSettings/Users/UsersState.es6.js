@@ -1,4 +1,4 @@
-import { reactStateWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
+import { reactStateWrapper } from 'states/utils.es6';
 
 export const inviteUsersState = reactStateWrapper({
   name: 'new',

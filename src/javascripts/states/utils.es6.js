@@ -1,9 +1,11 @@
+import { get, find } from 'lodash';
+
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
-import Base from 'states/Base.es6';
-import { getStore } from 'TheStore/index.es6';
-import * as Analytics from 'analytics/Analytics.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
-import { go } from 'states/Navigator.es6';
+import { getStore } from 'TheStore/index.es6';
+
+import Base from './Base.es6';
+import { go } from './Navigator.es6';
 
 const store = getStore();
 
@@ -120,13 +122,24 @@ export function organizationBase(definition) {
       'access_control/AccessChecker/index.es6',
       'services/TokenStore.es6',
       async ($state, $stateParams, accessChecker, TokenStore) => {
-        const org = await TokenStore.getOrganization($stateParams.orgId);
-
-        Analytics.trackContextChange(null, org);
+        let orgId;
+        let space;
+        if ($stateParams.orgId) {
+          orgId = $stateParams.orgId;
+        } else if ($stateParams.spaceId) {
+          const spaces = await TokenStore.getSpaces();
+          space = find(spaces, { sys: { id: $stateParams.spaceId } });
+          orgId = get(space, 'organization.sys.id');
+        }
+        const org = await TokenStore.getOrganization(orgId);
 
         const migration = migratedStates.find(state => $state.is(state.v1));
-        accessChecker.setOrganization(org);
-        store.set('lastUsedOrg', $stateParams.orgId);
+        if (space) {
+          accessChecker.setSpace(space);
+        } else {
+          accessChecker.setOrganization(org);
+        }
+        store.set('lastUsedOrg', orgId);
 
         const isLegacy = isLegacyOrganization(org);
 
@@ -138,7 +151,7 @@ export function organizationBase(definition) {
           if (shouldRedirectToV2) {
             go({
               path: migration.v2.split('.'),
-              params: { orgId: $stateParams.orgId }
+              params: { orgId }
             });
           }
         }

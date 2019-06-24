@@ -22,15 +22,15 @@ import getOrgId from 'redux/selectors/getOrgId.es6';
 import Workbench from 'app/common/Workbench.es6';
 import Placeholder from 'app/common/Placeholder.es6';
 import Icon from 'ui/Components/Icon.es6';
-import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
+import ellipsisStyle from 'ellipsisStyle.es6';
+import TeamsEmptyStateImage from 'svg/add-user-illustration.es6';
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+import ROUTES from 'redux/routes.es6';
 
+import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
 import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
 import TeamSpaceMemberships from './TeamSpaceMemberships/TeamSpaceMemberships.es6';
 import TeamDialog from './TeamDialog.es6';
-import ROUTES from 'redux/routes.es6';
-import ellipsisStyle from './ellipsisStyle.es6';
-import TeamsEmptyStateImage from 'svg/add-user-illustration.es6';
-import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 
 const AddButton = ({ label, onClick, disabled, className }) => (
   <Button

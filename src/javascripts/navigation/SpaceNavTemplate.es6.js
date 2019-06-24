@@ -36,6 +36,14 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
       dataViewType: 'spaces-settings-users',
       title: 'Users'
     },
+    teams: {
+      if: 'nav.teamsInSpacesFF && nav.hasOrgTeamFeature && nav.canNavigateTo("teams")',
+      sref: makeRef('settings.teams.list'),
+      rootSref: makeRef('settings.teams'),
+      dataViewType: 'spaces-settings-teams',
+      label: 'new',
+      title: 'Teams'
+    },
     roles: {
       if: 'nav.canNavigateTo("roles")',
       sref: makeRef('settings.roles.list'),
@@ -98,6 +106,7 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     },
     dropdownItems.settings,
     dropdownItems.users,
+    dropdownItems.teams,
     dropdownItems.roles,
     dropdownItems.environments,
     dropdownItems.keys,
@@ -110,6 +119,7 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     dropdownItems.settings,
     dropdownItems.locales,
     dropdownItems.users,
+    dropdownItems.teams,
     dropdownItems.roles,
     dropdownItems.keys,
     dropdownItems.webhooks,

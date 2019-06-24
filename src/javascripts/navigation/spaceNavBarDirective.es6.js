@@ -1,11 +1,14 @@
 import { registerFactory, registerDirective } from 'NgRegistry.es6';
 import spaceNavTemplateDef from 'navigation/SpaceNavTemplate.es6';
+import { ENVIRONMENTS_FLAG, TEAMS_IN_SPACES } from 'featureFlags.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
 // We don't want to display the following sections within the context of
 // a sandbox space environment.
 const SPACE_SETTINGS_SECTIONS = [
   'settings',
   'users',
+  'teams',
   'roles',
   'apiKey',
   'webhooks',
@@ -32,8 +35,10 @@ export default function register() {
         controllerAs: 'nav',
 
         controller: [
+          '$scope',
+          'utils/LaunchDarkly/index.es6',
           '$stateParams',
-          function($stateParams) {
+          function($scope, LD, $stateParams) {
             const controller = this;
             const orgId = spaceContext.organization.sys.id;
 
@@ -42,6 +47,13 @@ export default function register() {
 
             TokenStore.getOrganization(orgId).then(org => {
               controller.usageEnabled = org.pricingVersion === 'pricing_version_2';
+            });
+
+            LD.onFeatureFlag($scope, TEAMS_IN_SPACES, teamsInSpacesFF => {
+              controller.teamsInSpacesFF = teamsInSpacesFF;
+            });
+            getOrgFeature(orgId, 'teams').then(value => {
+              controller.hasOrgTeamFeature = value;
             });
 
             function canNavigateTo(section) {
@@ -85,7 +97,7 @@ export default function register() {
             }
           );
 
-          LD.onFeatureFlag($scope, 'feature-dv-11-2017-environments', environmentsEnabled => {
+          LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG, environmentsEnabled => {
             $scope.environmentsEnabled = environmentsEnabled;
           });
 
