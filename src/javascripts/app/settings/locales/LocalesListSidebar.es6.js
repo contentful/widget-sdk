@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { Button } from '@contentful/forma-36-react-components';
 import Pluralized from 'ui/Components/Pluralized.es6';
 import StateLink from 'app/common/StateLink.es6';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
-import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
 
 const DocumentationsSection = () => (
   <div data-test-id="locales-documentation">
@@ -21,6 +19,7 @@ const DocumentationsSection = () => (
 export default class LocalesListSidebar extends React.Component {
   static propTypes = {
     localeResource: PropTypes.object.isRequired,
+    allowedToEnforceLimits: PropTypes.bool.isRequired,
     insideMasterEnv: PropTypes.bool.isRequired,
     canChangeSpace: PropTypes.bool.isRequired,
     subscriptionState: PropTypes.object.isRequired,
@@ -29,14 +28,6 @@ export default class LocalesListSidebar extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {};
-  }
-
-  componentDidMount() {
-    getCurrentVariation(ENVIRONMENT_USAGE_ENFORCEMENT).then(allowedToEnforceLimits => {
-      this.setState({ allowedToEnforceLimits });
-    });
   }
 
   renderAddButton() {
@@ -108,8 +99,7 @@ export default class LocalesListSidebar extends React.Component {
   }
 
   render() {
-    const { insideMasterEnv } = this.props;
-    const { allowedToEnforceLimits } = this.state;
+    const { insideMasterEnv, allowedToEnforceLimits } = this.props;
 
     return (
       <div className="entity-sidebar">

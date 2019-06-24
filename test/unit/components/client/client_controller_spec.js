@@ -16,7 +16,7 @@ describe('Client Controller', () => {
       disable: sinon.stub()
     };
     this.isAnalyticsAllowed = sinon.stub().returns(true);
-    this.getCurrentVariation = sinon.stub();
+    this.getSpaceFeature = sinon.stub();
 
     module('contentful/test', $provide => {
       $provide.value('analytics/Analytics.es6', {
@@ -32,8 +32,8 @@ describe('Client Controller', () => {
         }
       };
 
-      $provide.constant('utils/LaunchDarkly/index.es6', {
-        getCurrentVariation: this.getCurrentVariation
+      $provide.constant('data/CMA/ProductCatalog.es6', {
+        getSpaceFeature: this.getSpaceFeature
       });
       $provide.constant('authorization', this.authorizationStubs);
 
@@ -106,7 +106,7 @@ describe('Client Controller', () => {
 
       this.envId = 'ENV ID';
       this.spaceId = 'Space ID';
-      this.getCurrentVariation = this.getCurrentVariation.withArgs('flag').resolves(false);
+      this.getSpaceFeature = this.getSpaceFeature.withArgs(this.spaceId, 'flag').resolves(false);
       this.newUsageChecker.withArgs(1, 2).resolves(this.newEnforcement);
 
       this.spaceContext = this.$inject('spaceContext');

@@ -19,7 +19,7 @@ export default function register() {
     'navigation/NavState.es6',
     'services/EnforcementsService.es6',
     'redux/store.es6',
-    'utils/LaunchDarkly/index.es6',
+    'data/CMA/ProductCatalog.es6',
     function ClientController(
       $scope,
       $state,
@@ -32,7 +32,7 @@ export default function register() {
       NavState,
       EnforcementsService,
       { default: store },
-      { getCurrentVariation }
+      { getSpaceFeature }
     ) {
       const refreshNavState = NavState.makeStateRefresher($state, spaceContext);
 
@@ -115,26 +115,19 @@ export default function register() {
           return;
         }
 
+        const environmentId = spaceContext.getEnvironmentId();
         let newEnforcement = {};
 
         if (shouldCheckUsageForCurrentLocation()) {
-          const allowNewUsageCheck = await getCurrentVariation(ENVIRONMENT_USAGE_ENFORCEMENT);
+          const spaceId = spaceContext.getId();
+          const allowNewUsageCheck = await getSpaceFeature(spaceId, ENVIRONMENT_USAGE_ENFORCEMENT);
 
           if (allowNewUsageCheck) {
-            newEnforcement = await EnforcementsService.newUsageChecker(
-              spaceContext.getId(),
-              spaceContext.getEnvironmentId()
-            );
+            newEnforcement = await EnforcementsService.newUsageChecker(spaceId, environmentId);
           }
         }
 
-        authorization.update(
-          tokenLookup,
-          space,
-          enforcements,
-          spaceContext.getEnvironmentId(),
-          newEnforcement
-        );
+        authorization.update(tokenLookup, space, enforcements, environmentId, newEnforcement);
 
         refreshNavState();
       }

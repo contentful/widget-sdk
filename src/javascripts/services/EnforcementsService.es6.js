@@ -73,7 +73,7 @@ export async function refresh(spaceId) {
  * Performs checks based on entities' limits and usages within a given environment
  * and generates enforcements accordingly.
  *
- * NB: When the `ENVIRONMENT_USAGE_ENFORCEMENT` feature flag is enabled,
+ * NB: When the `ENVIRONMENT_USAGE_ENFORCEMENT` product catalog flag is enabled,
  * Worf's usage checking ability is ignored and this method is invoked.
  * This is because Worf doesn't check usages on non master environments.
  */
