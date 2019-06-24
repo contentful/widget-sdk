@@ -37,7 +37,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
 };
 
 describe('Teams in space page', () => {
-  before(() => {
+  beforeEach(() => {
     cy.startFakeServers({
       consumer: 'user_interface',
       providers: ['teams'],
@@ -47,7 +47,7 @@ describe('Teams in space page', () => {
   });
 
   context('opening the page with no teams in the space', () => {
-    before(() => {
+    beforeEach(() => {
       loadPageWithServerState('empty', empty, 'request for empty member list');
     });
 
@@ -58,7 +58,7 @@ describe('Teams in space page', () => {
   });
 
   context('opening the page with teams in the space', () => {
-    before(() => {
+    beforeEach(() => {
       loadPageWithServerState(
         '3_memberships',
         {
