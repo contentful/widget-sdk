@@ -8,7 +8,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import useClickOutside from 'app/common/hooks/useClickOutside.es6';
 
-const RowMenu = ({ membershipId, isOpen, setOpen }) => {
+const RowMenu = ({ isOpen, setOpen, setEditing }) => {
   const ref = useRef();
   useClickOutside(ref, isOpen, () => setOpen(false));
 
@@ -17,7 +17,7 @@ const RowMenu = ({ membershipId, isOpen, setOpen }) => {
       isOpen={isOpen}
       toggleElement={
         <IconButton
-          testId={`action-button-${membershipId}`}
+          testId={'action-button'}
           label="Action"
           buttonType="secondary"
           iconProps={{ icon: 'MoreHorizontal' }}
@@ -26,7 +26,7 @@ const RowMenu = ({ membershipId, isOpen, setOpen }) => {
       }>
       <div ref={ref}>
         <DropdownList>
-          <DropdownListItem onClick={() => alert('Wow, so much edit!')}>
+          <DropdownListItem onClick={() => setEditing(true) || setOpen(false)}>
             Change team role
           </DropdownListItem>
         </DropdownList>
@@ -36,9 +36,9 @@ const RowMenu = ({ membershipId, isOpen, setOpen }) => {
 };
 
 RowMenu.propTypes = {
-  membershipId: PropTypes.string.isRequired,
   setOpen: PropTypes.func.isRequired,
-  isOpen: PropTypes.bool.isRequired
+  isOpen: PropTypes.bool.isRequired,
+  setEditing: PropTypes.func.isRequired
 };
 
 export default RowMenu;

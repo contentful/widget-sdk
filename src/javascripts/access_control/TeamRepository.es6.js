@@ -47,6 +47,31 @@ export async function getAllTeamsMemberships(orgEndpoint) {
   return items;
 }
 
+export async function updateTeamSpaceMembership(
+  spaceEndpoint,
+  {
+    sys: {
+      version,
+      id,
+      team: {
+        sys: { id: teamId }
+      }
+    }
+  },
+  admin,
+  roles
+) {
+  return spaceEndpoint(
+    {
+      method: 'PUT',
+      path: ['team_space_memberships', id],
+      data: { admin, roles },
+      version: version
+    },
+    { ...ALPHA_HEADER, 'x-contentful-team': teamId }
+  );
+}
+
 export async function createTeamSpaceMembership(spaceEndpoint, teamId, { admin, roles }) {
   let data;
 

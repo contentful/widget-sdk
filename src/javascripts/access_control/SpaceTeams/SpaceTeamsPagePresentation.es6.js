@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { map, truncate } from 'lodash';
 import {
   Table,
   TableBody,
@@ -10,23 +9,30 @@ import {
   Button,
   Tooltip
 } from '@contentful/forma-36-react-components';
-import { cx } from 'emotion';
-import pluralize from 'pluralize';
 
 import Workbench from 'app/common/Workbench.es6';
-import { joinWithAnd } from 'utils/StringUtils.es6';
+import { SpaceRole as SpaceRoleProp } from 'app/OrganizationSettings/PropTypes.es6';
 import { go } from 'states/Navigator.es6';
 
 import LoadingPlaceholder from './LoadingPlaceholder.es6';
-import RowMenu from './RowMenu.es6';
 import styles from './styles.es6';
+import MembershipRow from './MembershipRow.es6';
 
 const goToAddTeams = () => go({
   path: ['spaces', 'detail', 'settings', 'teams', 'add']
-});
-
-const SpaceTeamsPagePresentation = ({ memberships, teams, isLoading }) => {
+});const SpaceTeamsPagePresentation = ({
+  memberships,
+ teams, isLoading,
+  isPending,
+  availableRoles,
+  onUpdateTeamSpaceMembership
+}) => {
   const [openMenu, setOpenMenu] = useState(null);
+  const [editingRow, setEditingRow] = useState(null);
+
+  useEffect(() => {
+    !isPending && setEditingRow(null);
+  }, [isPending]);
 
   const addTeamsButtonDisabled = memberships.length === teams.length;
 
@@ -73,39 +79,26 @@ const SpaceTeamsPagePresentation = ({ memberships, teams, isLoading }) => {
             <TableBody>
               {isLoading && <LoadingPlaceholder />}
               {!isLoading &&
-              memberships.map(
-                ({
-                   sys: {
-                     id,
-                     team: { name, description, memberCount }
-                   },
-                   roles,
-                   admin
-                 }) => (
-                  <TableRow key={id} testId="membership-row" className={styles.row}>
-                    <TableCell className={styles.cell} testId="team-cell">
-                      <div className={styles.cellTeamName}>{name}</div>
-                      {/*This truncation is a fallback for IE and pre-68 FF, which don't support css line-clamp*/}
-                      <div className={styles.cellTeamDescription}>
-                        {truncate(description, { length: 130 })}
-                      </div>
-                    </TableCell>
-                    <TableCell className={styles.cell} testId="member-count-cell">
-                      {pluralize('member', memberCount, true)}
-                    </TableCell>
-                    <TableCell className={cx(styles.cellRoles, styles.cell)} testId="roles-cell">
-                      {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
-                    </TableCell>
-                    <TableCell>
-                      <RowMenu
-                        membershipId={id}
-                        isOpen={openMenu === id}
-                        setOpen={open => setOpenMenu(open ? id : null)}
-                      />
-                    </TableCell>
-                  </TableRow>
-                )
-              )}
+              memberships.map(membership => {
+                const {
+                    sys: { id: membershipId }
+                  } = membership;
+                  return (
+                    <MembershipRow
+                      key={membershipId}
+                    {...{
+                      setMenuOpen: open => setOpenMenu(open ? membershipId : null),
+                      menuIsOpen: openMenu === membershipId,
+                      setEditing: edit => setEditingRow(edit ? membershipId : null),
+                        isEditing: editingRow === membershipId,
+                      membership,
+                        availableRoles,
+                        onUpdateTeamSpaceMembership,
+                      isPending
+                    }}
+                    />
+                );
+              })}
             </TableBody>
           </Table>
         </div>
@@ -117,7 +110,10 @@ const SpaceTeamsPagePresentation = ({ memberships, teams, isLoading }) => {
 SpaceTeamsPagePresentation.propTypes = {
   memberships: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   teams: PropTypes.array.isRequired,
-  isLoading: PropTypes.bool.isRequired
+  isLoading: PropTypes.bool.isRequired,
+  availableRoles: PropTypes.arrayOf(SpaceRoleProp),
+  onUpdateTeamSpaceMembership: PropTypes.func.isRequired,
+  isPending: PropTypes.bool.isRequired
 };
 
 export default SpaceTeamsPagePresentation;

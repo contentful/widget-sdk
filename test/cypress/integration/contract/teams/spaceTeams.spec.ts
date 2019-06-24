@@ -15,6 +15,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
   orgProductCatalogFeaturesResponse();
 
   const getMembershipsInteraction = 'spaces/team_space_memberships';
+  const getRolesInteraction = 'spaces/roles';
   const getTeamsInteraction = 'org/teams';
 
   cy.addInteraction({
@@ -49,9 +50,50 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
     }
   }).as(getTeamsInteraction);
 
+  cy.addInteraction({
+    provider: 'roles',
+    state: 'default',
+    uponReceiving: 'request available roles of space',
+    withRequest: {
+      method: 'GET',
+      path: `/spaces/${defaultSpaceId}/roles`,
+      query: { limit: '100', skip: '0' },
+      headers: defaultHeader
+    },
+    willRespondWith: {
+      status: 200,
+      body: {
+        items: [
+          {
+            name: 'Role 1',
+            sys: { id: 'role1' }
+          },
+          {
+            name: 'Role 2',
+            sys: { id: 'role2' }
+          },
+          {
+            name: 'Role 3',
+            sys: { id: 'role3' }
+          },
+          {
+            name: 'Role 4',
+            sys: { id: 'role3' }
+          }
+          ,
+          {
+            name: 'Role 5',
+            sys: { id: 'role3' }
+          }
+
+        ]
+      }
+    }
+  }).as(getRolesInteraction);
+
   cy.visit(`/spaces/${defaultSpaceId}/settings/teams`);
 
-  cy.wait([`@${state.Token.VALID}`, `@${getMembershipsInteraction}`, `@${getTeamsInteraction}`]);
+  cy.wait([`@${state.Token.VALID}`, `@${getRolesInteraction}`, `@${getMembershipsInteraction}`, `@${getTeamsInteraction}`]);
 };
 
 const membership1 = {

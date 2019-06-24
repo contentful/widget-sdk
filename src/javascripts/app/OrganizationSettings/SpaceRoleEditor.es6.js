@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { without } from 'lodash';
+import { without, truncate } from 'lodash';
 import { SpaceRole as SpaceRoleProp } from 'app/OrganizationSettings/PropTypes.es6';
 import {
   Button,
@@ -16,7 +16,7 @@ class SpaceRoleEditor extends React.Component {
     onChange: PropTypes.func.isRequired,
     isDisabled: PropTypes.bool,
     options: PropTypes.arrayOf(SpaceRoleProp),
-    value: PropTypes.array
+    value: PropTypes.arrayOf(PropTypes.string)
   };
 
   static defaultProps = {
@@ -81,7 +81,7 @@ class SpaceRoleEditor extends React.Component {
             buttonType="naked"
             indicateDropdown
             onClick={this.toggleDropdown}>
-            {selectedNames || 'Select a role'}
+            {truncate(selectedNames) || 'Select a role'}
           </Button>
         }>
         <DropdownList maxHeight={300}>

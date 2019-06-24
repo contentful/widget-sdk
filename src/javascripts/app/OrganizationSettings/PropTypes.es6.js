@@ -77,6 +77,7 @@ export const Filter = PropTypes.shape({
 
 export const Team = PropTypes.shape({
   name: PropTypes.string.isRequired,
+  memberCount: PropTypes.number,
   description: PropTypes.string,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired

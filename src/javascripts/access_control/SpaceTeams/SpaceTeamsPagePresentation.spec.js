@@ -3,7 +3,17 @@ import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation.es6';
 import { cleanup, render } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 
-const build = props => render(<SpaceTeamsPagePresentation {...props} />);
+const build = props =>
+  render(
+    <SpaceTeamsPagePresentation
+      {...{
+        ...props,
+        isPending: false,
+        availableRoles: [],
+        onUpdateTeamSpaceMembership: () => {}
+      }}
+    />
+  );
 
 let isLoading;
 let memberships;
