@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, TableCell, TableRow } from '@contentful/forma-36-react-components';
+import { Button, TableCell, TableRow, Notification } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { cx, css } from 'emotion';
@@ -66,20 +66,26 @@ const MembershipRow = ({
             <Button
               buttonType="positive"
               onClick={async () => {
-                const newRoles = availableRoles.filter(({ sys: { id } }) =>
-                  selectedRoleIds.includes(id)
-                );
-                const updatedMembership = await onUpdateTeamSpaceMembership(
-                  persistedMembership,
-                  selectedRoleIds[0] === ADMIN_ROLE_ID,
-                  newRoles.map(({ sys: { id } }) => ({
-                    sys: { id, type: 'Link', linkType: 'Role' }
-                  }))
-                );
-                setPersistedMembership(
-                  set(membership, 'sys.version', updatedMembership.sys.version)
-                );
-                setPersistedRoles(isEmpty(newRoles) ? [ADMIN_ROLE] : newRoles);
+                try {
+                  const newRoles = availableRoles.filter(({ sys: { id } }) =>
+                    selectedRoleIds.includes(id)
+                  );
+                  const updatedMembership = await onUpdateTeamSpaceMembership(
+                    persistedMembership,
+                    selectedRoleIds[0] === ADMIN_ROLE_ID,
+                    newRoles.map(({ sys: { id } }) => ({
+                      sys: { id, type: 'Link', linkType: 'Role' }
+                    }))
+                  );
+                  setPersistedMembership(
+                    set(membership, 'sys.version', updatedMembership.sys.version)
+                  );
+                  setPersistedRoles(isEmpty(newRoles) ? [ADMIN_ROLE] : newRoles);
+                  Notification.success(`Successfully changed roles for Team ${name}`);
+                } catch (e) {
+                  Notification.error(`Could not change roles for Team ${name}`);
+                  setSelectedRoles(map(persistedRoles, 'sys.id'));
+                }
               }}
               className={css({ marginRight: tokens.spacingM })}
               disabled={!haveRolesChanged || isPending}
