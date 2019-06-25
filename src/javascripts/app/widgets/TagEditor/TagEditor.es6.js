@@ -3,9 +3,9 @@ import { noop } from 'lodash';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
-import { TextInput, Pill } from '@contentful/forma-36-react-components';
+import { TextInput, Pill, Icon } from '@contentful/forma-36-react-components';
 
-import { sortableContainer, sortableElement } from 'react-sortable-hoc';
+import { sortableContainer, sortableElement, sortableHandle } from 'react-sortable-hoc';
 import arraySwap from 'utils/arraySwap.es6';
 import isHotkey from 'is-hotkey';
 import TagEditorConstraints from './TagEditorConstraints.es6';
@@ -21,16 +21,30 @@ const styles = {
     marginBottom: tokens.spacingM
   }),
   pill: css({
-    cursor: 'grab',
-    userSelect: 'none',
     marginRight: tokens.spacingS,
     marginBottom: tokens.spacingS
+  }),
+  handle: css({
+    lineHeight: '1.5rem',
+    padding: '0.375rem 0.625rem',
+    paddingRight: 0,
+    cursor: 'grab',
+    userSelect: 'none',
+    svg: {
+      fill: tokens.colorTextLightest,
+      verticalAlign: 'middle'
+    }
   })
 };
 
+const SortableHandle = sortableHandle(() => (
+  <div className={styles.handle}>
+    <Icon icon="Drag" color="muted" />
+  </div>
+));
+
 const SortablePill = sortableElement(({ label, isDisabled, index, onRemove }) => (
   <Pill
-    tabIndex={0}
     testId="tag-editor-pill"
     className={styles.pill}
     status="primary"
@@ -41,6 +55,7 @@ const SortablePill = sortableElement(({ label, isDisabled, index, onRemove }) =>
       }
     }}
     onDrag={noop}
+    dragHandleComponent={<SortableHandle />}
   />
 ));
 
@@ -73,6 +88,7 @@ function TagEditor(props) {
         }}
       />
       <SortableContainer
+        useDragHandle
         axis="xy"
         distance={10}
         onSortEnd={({ oldIndex, newIndex }) => {
