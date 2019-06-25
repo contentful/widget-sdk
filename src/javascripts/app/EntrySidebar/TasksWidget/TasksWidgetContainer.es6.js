@@ -6,11 +6,12 @@ import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.es6';
 import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
 import * as FeatureFlagKey from 'featureFlags.es6';
-import { createTaskListViewData, createLoadingStateTasksViewData } from './TasksViewData.es6';
+import { createTaskListViewData } from './ViewData/TaskViewData.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { createTasksStoreForEntry } from './TasksStore.es6';
 import { createTasksStoreInteractor } from './TasksInteractor.es6';
-import TaskList from './TaskList.es6';
+import { onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util.es6';
+import TaskList from './View/TaskList.es6';
 
 export default function TasksWidgetContainerWithFeatureFlag(props) {
   return (
@@ -31,7 +32,8 @@ export class TasksWidgetContainer extends Component {
     loadingError: null,
     tasks: null,
     tasksInEditMode: {},
-    tasksErrors: {}
+    tasksErrors: {},
+    users: []
   };
 
   componentDidMount() {
@@ -39,8 +41,14 @@ export class TasksWidgetContainer extends Component {
     this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.TASKS);
   }
 
+  componentWillUnmount() {
+    this.props.emitter.off(SidebarEventTypes.UPDATED_TASKS_WIDGET, this.onUpdateTasksWidget);
+    this.offTasksFetching && this.offTasksFetching();
+    this.offUsersFetching && this.offUsersFetching();
+  }
+
   onUpdateTasksWidget = async update => {
-    const { spaceId, entityInfo } = update;
+    const { spaceId, entityInfo, users } = update;
 
     // TODO: Pass tasksStore instead. Wrap in a factory function though to not trigger
     //  any fetching in case the feature flag is turned off!
@@ -56,23 +64,31 @@ export class TasksWidgetContainer extends Component {
     );
     this.setState({ tasksInteractor });
 
-    tasksStore.items$.onValue(tasks => {
-      if (!tasks) {
-        return;
-      }
-      this.setState({ tasks, loadingError: null });
-    });
-    tasksStore.items$.onError(error => {
-      this.setState({ loadingError: error });
-    });
+    this.fetchTasks(tasksStore);
+    this.fetchUsers(users);
   };
 
+  fetchTasks(tasksStore) {
+    this.offTasksFetching = onStoreFetchingStatusChange(tasksStore, status => {
+      this.setState({ tasksFetchingStatus: status });
+    });
+  }
+
+  async fetchUsers(usersCache) {
+    this.offUsersFetching = onPromiseFetchingStatusChange(usersCache.getAll(), status => {
+      this.setState({ usersFetchingStatus: status });
+    });
+  }
+
   render() {
-    const { tasksInteractor, tasks, loadingError } = this.state;
-    const tasksViewData =
-      tasks || loadingError
-        ? createTaskListViewData(tasks, this.state)
-        : createLoadingStateTasksViewData();
+    const { tasksInteractor, tasksFetchingStatus, usersFetchingStatus } = this.state;
+    const { tasksInEditMode, tasksErrors } = this.state;
+    const localState = { tasksInEditMode, tasksErrors };
+    const tasksViewData = createTaskListViewData(
+      tasksFetchingStatus,
+      usersFetchingStatus,
+      localState
+    );
     return (
       <EntrySidebarWidget testId="sidebar-tasks-widget" title="Tasks">
         <TaskList viewData={tasksViewData} tasksInteractor={tasksInteractor} />

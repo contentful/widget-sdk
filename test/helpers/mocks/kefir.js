@@ -14,14 +14,10 @@ export function extractValues(stream) {
 }
 
 export function createMockProperty(initial) {
-  const bus = Kefir.createBus();
-  let current = initial;
-  const property = bus.stream.toProperty(() => current);
-  property.end = bus.end;
-  property.set = value => {
-    current = value;
-    bus.emit(value);
-  };
+  const { property, end, set, error } = Kefir.createPropertyBus(initial);
+  property.end = end;
+  property.set = set;
+  property.error = error;
   return property;
 }
 

@@ -1,27 +1,22 @@
 import * as K from 'utils/kefir.es6';
-// TODO: Don't rely on the comment hooks:
-import { fetchComments } from '../CommentsPanel/hooks.es6';
-import { create, remove, update } from 'data/CMA/CommentsRepo.es6';
+import { getAll, create, remove, update } from 'data/CMA/CommentsRepo.es6';
 import { getUserSync } from 'services/TokenStore.es6';
 
 export function createTasksStoreForEntry(endpoint, entryId) {
-  const { spaceId } = endpoint;
   const currentUser = getUserSync();
   const tasksBus = K.createPropertyBus(null);
   const items$ = tasksBus.property;
   const getItems = () => K.getValue(items$);
 
-  // TODO: Users should NOT be resolved at this level, move outside!
-  fetchComments(spaceId, entryId).then(
-    commentsWithResolvedUsers => {
-      // TODO: Exclude non-Task comments once backend supports them.
-      const tasksWithResolvedUsers = commentsWithResolvedUsers.map(toMockTask);
-      tasksBus.set(tasksWithResolvedUsers);
-    },
-    error => {
-      tasksBus.error(error);
-    }
-  );
+  // TODO: Remove mock user stuff once we have assignedTo in backend:
+  let mocksCount = 0;
+  const mockUsers = [
+    createUserLink(currentUser.sys.id),
+    createUserLink('59fjBVO6euH3jBh9DW92js'), // Danny's user on Flinkly
+    createUserLink('non_existant_user_id')
+  ];
+
+  initialFetch();
 
   return {
     items$,
@@ -32,7 +27,6 @@ export function createTasksStoreForEntry(endpoint, entryId) {
       } catch (error) {
         throw error;
       }
-      newTask.sys.createdBy = currentUser; // TODO: Don't resolve users in here (see above)
       const newMockTask = toMockTask(newTask);
       tasksBus.set([...getItems(), newMockTask]);
       return newMockTask;
@@ -53,11 +47,29 @@ export function createTasksStoreForEntry(endpoint, entryId) {
         // TODO: Introduce Store specific errors rather than passing client errors.
         throw error;
       }
+      const updatedMockTask = toMockTask(updatedTask);
       tasksBus.set(
-        getItems().map(task => (task.sys.id === updatedTask.sys.id ? updatedTask : task))
+        getItems().map(task => (task.sys.id === updatedTask.sys.id ? updatedMockTask : task))
       );
-    }
+    },
+    destroy: () => tasksBus.end()
   };
+
+  async function initialFetch() {
+    let comments;
+    try {
+      const { items } = await getAll(endpoint, entryId);
+      comments = items;
+    } catch (error) {
+      tasksBus.error(error);
+    }
+
+    if (comments) {
+      const tasksOrComments = comments.map(toMockTask);
+      const tasks = tasksOrComments.filter(isTaskComment);
+      tasksBus.set(tasks);
+    }
+  }
 
   /**
    * Mocks task specific properties of the comment that are not yet given by the API.
@@ -69,13 +81,20 @@ export function createTasksStoreForEntry(endpoint, entryId) {
    * @returns {API.Task}
    */
   function toMockTask(comment) {
+    const mockUserLink = mockUsers[mocksCount++ % mockUsers.length];
     return {
-      isResolved: false,
-      ...comment,
-      sys: {
-        assignedTo: currentUser, // TODO: Should just be a link, not a whole User object.
-        ...comment.sys
-      }
+      assignedTo: mockUserLink,
+      isResolved: false, // TODO: Rename this to what we will use in API.
+      status: 'open',
+      ...comment
     };
   }
+}
+
+function isTaskComment(comment) {
+  return !!(comment && comment.assignedTo);
+}
+
+function createUserLink(id) {
+  return { sys: { type: 'Link', linkType: 'User', id } };
 }
