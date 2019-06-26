@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Icon from 'ui/Components/Icon.es6';
 import StateLink from 'app/common/StateLink.es6';
+import cn from 'classnames';
 
 class Workbench extends React.Component {
   static propTypes = {
@@ -104,14 +105,15 @@ Workbench.Icon.propTypes = {
   icon: PropTypes.string
 };
 
-Workbench.Title = ({ children }) => (
-  <h1 className="workbench-header__title" data-test-id="workbench-title">
+Workbench.Title = ({ className, children }) => (
+  <h1 className={cn(className, 'workbench-header__title')} data-test-id="workbench-title">
     {children}
   </h1>
 );
 Workbench.Title.displayName = 'Workbench.Title';
 Workbench.Title.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
+  className: PropTypes.string
 };
 
 Workbench.Header.Back = class HeaderBack extends React.Component {

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextLink } from '@contentful/forma-36-react-components';
+import { TextLink, Tag } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import StateLink from 'app/common/StateLink.es6';
 import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
@@ -14,6 +14,9 @@ const styles = {
     backgroundColor: tokens.colorElementLightest,
     borderRight: `1px solid ${tokens.colorElementDarkest}`,
     boxShadow: '1px 0 2px 0 rgba(0,0,0,0.09)'
+  }),
+  jobsAlphaTag: css({
+    marginLeft: tokens.spacingXs
   })
 };
 
@@ -38,9 +41,12 @@ export default function JobsPageLink({ environmentId }) {
       <div className={styles.linkContainer}>
         <JobsStateLink environmentId={environmentId}>
           {({ getHref }) => (
-            <TextLink href={getHref()} icon="ExternalLink">
-              Scheduled Content
-            </TextLink>
+            <React.Fragment>
+              <TextLink href={getHref()} icon="ExternalLink">
+                Scheduled Content
+              </TextLink>
+              <Tag className={styles.jobsAlphaTag}>ALPHA</Tag>
+            </React.Fragment>
           )}
         </JobsStateLink>
       </div>

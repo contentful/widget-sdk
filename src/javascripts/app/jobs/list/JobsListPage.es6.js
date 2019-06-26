@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Workbench from 'app/common/Workbench.es6';
+import { css } from 'emotion';
 import {
   SkeletonContainer,
   SkeletonText,
   Tabs,
   Tab,
-  TabPanel
+  TabPanel,
+  Tag
 } from '@contentful/forma-36-react-components';
 import JobsTable from './JobsTable.es6';
 
@@ -24,6 +26,17 @@ import UnknownErrorMessage from 'components/shared/UnknownErrorMessage.es6';
 function normalizeCollection(items) {
   return _.fromPairs(items.map(i => [i.sys.id, i]));
 }
+
+const styles = {
+  alphaTag: css({
+    lineHeight: '30px',
+    marginTop: '2px',
+    fontSize: '1rem'
+  }),
+  workbenchTitle: css({
+    marginRight: '0.5rem'
+  })
+};
 
 const JobsFetcher = createFetcherComponent(
   async ({ spaceId, environmentId, contentTypes, query }) => {
@@ -44,7 +57,8 @@ const JobsListShell = props => (
   <Workbench>
     <Workbench.Header>
       <Workbench.Icon icon="schedule-calendar" scale="1" />
-      <Workbench.Title>Scheduled Content</Workbench.Title>
+      <Workbench.Title className={styles.workbenchTitle}>Scheduled Content</Workbench.Title>
+      <Tag className={styles.alphaTag}>ALPHA</Tag>
     </Workbench.Header>
     <Workbench.Content className="f36-padding--xl">
       <div>{props.children}</div>
