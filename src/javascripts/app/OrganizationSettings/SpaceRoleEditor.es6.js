@@ -76,6 +76,7 @@ class SpaceRoleEditor extends React.Component {
         style={{ maxWidth: '100%' }}
         toggleElement={
           <Button
+            testId="space-role-editor.button"
             disabled={isDisabled}
             className="select-button"
             buttonType="naked"
@@ -87,6 +88,7 @@ class SpaceRoleEditor extends React.Component {
         <DropdownList maxHeight={300}>
           <DropdownListItem>
             <CheckboxField
+              testId="space-role-editor.admin-option"
               labelIsLight
               labelText={ADMIN_ROLE.name}
               checked={isAdmin}
@@ -97,6 +99,7 @@ class SpaceRoleEditor extends React.Component {
           {options.map(option => (
             <DropdownListItem key={option.sys.id}>
               <CheckboxField
+                testId="space-role-editor.role-option"
                 labelIsLight
                 labelText={option.name}
                 checked={value.includes(option.sys.id)}

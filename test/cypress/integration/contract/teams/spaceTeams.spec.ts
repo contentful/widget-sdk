@@ -78,12 +78,12 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
           },
           {
             name: 'Role 4',
-            sys: { id: 'role3' }
+            sys: { id: 'role4' }
           }
           ,
           {
             name: 'Role 5',
-            sys: { id: 'role3' }
+            sys: { id: 'role5' }
           }
 
         ]
@@ -264,6 +264,41 @@ describe('Teams in space page', () => {
           cy.wrap(rows[2]).contains('td', 'Role 2 and Role 3').should('be.visible');
         }
       );
+    });
+
+    context('changing role of Team 1', () => {
+      beforeEach(() => {
+        const editmembershipInteraction = 'editMembership';
+        cy.addInteraction({
+          provider: 'teams',
+          state: 'initial roles',
+          uponReceiving: 'change role of team',
+          withRequest: {
+            method: 'PUT',
+            path: `/spaces/${defaultSpaceId}/team_space_memberships/TSM1`,
+            headers: defaultHeader
+          },
+          willRespondWith: {
+            status: 200,
+            body: { sys: { version: 1 } }
+          }
+        }).as(editmembershipInteraction);
+
+        cy.getByTestId('row-menu').first().click();
+        cy.getByTestId('change-role').click();
+        cy.getByTestId('space-role-editor.button').click();
+        cy.getAllByTestId('space-role-editor.role-option')
+          .first().click();
+        cy.getByTestId('confirm-change-role').click();
+
+        cy.wait(`@${editmembershipInteraction}`);
+      });
+
+      it('should have changed role', () => {
+        cy.getAllByTestId('membership-row').first().as('firstRow');
+        cy.get('@firstRow').contains('td', 'Role 1').should('be.visible');
+        cy.get('@firstRow').contains('td', 'Team 1').should('be.visible');
+      });
     });
   });
 });

@@ -64,6 +64,7 @@ const MembershipRow = ({
             />
             <span className={css({ flexGrow: 1 })} />
             <Button
+              testId="confirm-change-role"
               buttonType="positive"
               onClick={async () => {
                 try {

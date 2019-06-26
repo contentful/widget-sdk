@@ -14,6 +14,7 @@ const RowMenu = ({ isOpen, setOpen, setEditing }) => {
 
   return (
     <Dropdown
+      testId="row-menu"
       isOpen={isOpen}
       toggleElement={
         <IconButton
@@ -26,7 +27,7 @@ const RowMenu = ({ isOpen, setOpen, setEditing }) => {
       }>
       <div ref={ref}>
         <DropdownList>
-          <DropdownListItem onClick={() => setEditing(true) || setOpen(false)}>
+          <DropdownListItem testId="change-role" onClick={() => setEditing(true) || setOpen(false)}>
             Change team role
           </DropdownListItem>
         </DropdownList>
