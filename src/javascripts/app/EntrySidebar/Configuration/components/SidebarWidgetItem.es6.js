@@ -105,8 +105,10 @@ export function SidebarWidgetItem({
   const content = (
     <div className={styles.item} data-test-id="sidebar-widget-item">
       {isDraggable && <Icon className={styles.itemDrag} icon="Drag" />}
-      <div className={styles.itemHeader} data-test-id="sidebar-widget-name">
-        <div className={styles.itemName}>{name}</div>
+      <div className={styles.itemHeader}>
+        <div className={styles.itemName} data-test-id="sidebar-widget-name">
+          {name}
+        </div>
         {availabilityStatus && renderAvailabilityStatus()}
         {isRemovable && removeBtn}
       </div>
