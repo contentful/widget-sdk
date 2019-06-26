@@ -12,7 +12,7 @@ jest.mock('./TimeFormatDetector.es6', () => ({
 
 describe('TimePicker', () => {
   let dateNowSpy;
-  let timeFormatDetectorMock;
+
   afterEach(cleanup);
   beforeAll(() => {
     dateNowSpy = jest.spyOn(Date, 'now');
@@ -20,7 +20,6 @@ describe('TimePicker', () => {
 
   afterAll(() => {
     dateNowSpy.mockRestore();
-    timeFormatDetectorMock.mockRestore();
   });
 
   const build = ({ value }) => {

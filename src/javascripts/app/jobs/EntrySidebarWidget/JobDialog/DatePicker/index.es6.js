@@ -14,7 +14,7 @@ export class DatePicker extends Component {
     maxDate: PropTypes.instanceOf(Date),
     onChange: PropTypes.func,
     helpText: PropTypes.string,
-    labelText: PropTypes.string,
+    labelText: PropTypes.string.isRequired,
     id: PropTypes.string,
     name: PropTypes.string
   };
@@ -36,9 +36,7 @@ export class DatePicker extends Component {
       yearRange: 5,
       theme: cn(styles.datePicker, 'hide-carret'),
       onSelect: value => {
-        this.setState({ value: moment(value) }, () => {
-          this.props.onChange(value);
-        });
+        this.props.onChange(value);
       }
     });
   }
@@ -55,14 +53,8 @@ export class DatePicker extends Component {
     }
   };
 
-  handleBlur = e => {
-    if (!this.state.value.isValid()) {
-      this.setState({
-        validationError: 'Date is invalid'
-      });
-    }
-    const target = e.relatedTarget || document.activeElement;
-    if (this.pikaday && !document.querySelector('.pika-single').contains(target)) {
+  handleBlur = () => {
+    if (this.pikaday) {
       this.pikaday.hide();
     }
   };
@@ -70,20 +62,20 @@ export class DatePicker extends Component {
   render() {
     const { labelText, required, name, helpText, id } = this.props;
     return (
-      <div
-        className={styles.datePickerWrapper}
-        ref={ref => {
-          if (ref) {
-            this.datePickerNode = ref;
-          }
-        }}>
+      <div className={styles.datePickerWrapper}>
         <TextField
           labelText={labelText}
           helpText={helpText}
           required={required}
           name={name}
           textInputProps={{
-            readOnly: true
+            testId: 'date-input',
+            readOnly: true,
+            inputRef: ref => {
+              if (ref) {
+                this.datePickerNode = ref;
+              }
+            }
           }}
           value={moment(this.props.value).format('ddd, MMM Do, YYYY')}
           validationMessage={this.state.validationError}
