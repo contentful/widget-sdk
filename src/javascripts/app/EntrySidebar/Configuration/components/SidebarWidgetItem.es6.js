@@ -3,16 +3,15 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import { sortableElement } from 'react-sortable-hoc';
-import { IconButton, Icon, Note } from '@contentful/forma-36-react-components';
+import { IconButton, Icon, Note, Tag } from '@contentful/forma-36-react-components';
 
 const styles = {
   closeButton: css({
-    position: 'absolute',
-    right: tokens.spacingM,
-    top: tokens.spacingXs,
-    cursor: 'pointer'
+    cursor: 'pointer',
+    marginLeft: tokens.spacingXs
   }),
-  itemName: css({
+  itemHeader: css({
+    display: 'flex',
     flexGrow: '1',
     fontSize: tokens.fontSizeS,
     fontWeight: tokens.fontWeightNormal,
@@ -24,8 +23,10 @@ const styles = {
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    paddingRight: tokens.spacingS,
     marginBottom: tokens.spacingS
+  }),
+  itemName: css({
+    flex: '1 1 auto'
   }),
   itemDrag: css({
     position: 'absolute',
@@ -74,7 +75,8 @@ export function SidebarWidgetItem({
   isRemovable,
   isProblem,
   onRemoveClick,
-  children
+  children,
+  availabilityStatus
 }) {
   const removeBtn = (
     <IconButton
@@ -85,6 +87,8 @@ export function SidebarWidgetItem({
       label={`Remove ${name} from your sidebar`}
     />
   );
+
+  const renderAvailabilityStatus = () => <Tag>{availabilityStatus}</Tag>;
 
   if (isProblem) {
     return (
@@ -101,9 +105,10 @@ export function SidebarWidgetItem({
   const content = (
     <div className={styles.item} data-test-id="sidebar-widget-item">
       {isDraggable && <Icon className={styles.itemDrag} icon="Drag" />}
-      {isRemovable && removeBtn}
-      <div className={styles.itemName} data-test-id="sidebar-widget-name">
-        {name}
+      <div className={styles.itemHeader} data-test-id="sidebar-widget-name">
+        <div className={styles.itemName}>{name}</div>
+        {availabilityStatus && renderAvailabilityStatus()}
+        {isRemovable && removeBtn}
       </div>
       <div>{children}</div>
     </div>
@@ -123,7 +128,8 @@ SidebarWidgetItem.propTypes = {
   isRemovable: PropTypes.bool.isRequired,
   isProblem: PropTypes.bool.isRequired,
   onRemoveClick: PropTypes.func,
-  index: PropTypes.number
+  index: PropTypes.number,
+  availabilityStatus: PropTypes.oneOf(['alpha', 'beta'])
 };
 
 SidebarWidgetItem.defaultProps = {
