@@ -9,6 +9,9 @@ describe('JobDialog', () => {
   afterEach(cleanup);
   beforeAll(() => {
     dateNowSpy = jest.spyOn(Date, 'now');
+    dateNowSpy.mockImplementation(
+      jest.fn(() => new Date('2017-06-18T00:00:00.000+00:00').valueOf())
+    );
   });
 
   afterAll(() => {
@@ -89,12 +92,30 @@ describe('JobDialog', () => {
         exact: false
       })
     ).toBeInTheDocument();
-
     await schedulePublication(renderResult);
-
     expect(props.onCreate).toHaveBeenCalledWith({
       scheduledAt: expected
     });
+  });
+
+  it('prevents to schedule a publication if selected date is in the past', async () => {
+    mockDateOnce(dateNowSpy, moment(Date.now()).subtract(1, 'hours'));
+
+    const [renderResult, props] = build();
+
+    await schedulePublication(renderResult);
+    expect(renderResult.getByTestId('job-dialog-validation-message')).toBeInTheDocument();
+    expect(props.onCreate).not.toHaveBeenCalled();
+  });
+
+  it('allows to schedule a publication if selected date is in the future', async () => {
+    mockDateOnce(dateNowSpy, moment(Date.now()).add(1, 'hours'));
+
+    const [renderResult, props] = build();
+
+    await schedulePublication(renderResult);
+    expect(renderResult.queryByTestId('job-dialog-validation-message')).toBeNull();
+    expect(props.onCreate).toHaveBeenCalled();
   });
 });
 

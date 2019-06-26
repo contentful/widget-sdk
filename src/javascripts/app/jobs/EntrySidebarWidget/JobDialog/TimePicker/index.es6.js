@@ -21,7 +21,7 @@ const pad = n => {
   }
 };
 
-export function TimePicker({ helpText, validationMessage, onChange, value }) {
+export function TimePicker({ helpText, validationMessage, onChange, onBlur, value }) {
   const momentValue = moment(value, 'HH:mm').local();
 
   const preferredTimeFormat = getPreferredTimeFormat();
@@ -54,6 +54,7 @@ export function TimePicker({ helpText, validationMessage, onChange, value }) {
             min={preferredTimeFormat === TimeFormat.H12 ? 1 : 0}
             max={preferredTimeFormat === TimeFormat.H12 ? 12 : 23}
             value={pad(hours)}
+            onBlur={onBlur}
             onChange={e => {
               let value = parseInt(e.target.value, 10);
               if (isNaN(value)) {
@@ -77,6 +78,7 @@ export function TimePicker({ helpText, validationMessage, onChange, value }) {
             type="number"
             data-test-id="minutes"
             name="minute"
+            onBlur={onBlur}
             value={pad(minutes)}
             min="0"
             max="59"
@@ -95,6 +97,7 @@ export function TimePicker({ helpText, validationMessage, onChange, value }) {
             name="daytime"
             value={timeFormat}
             data-test-id="ampm"
+            onBlur={onBlur}
             onChange={e => {
               handleChange({
                 hours: hours,
@@ -117,6 +120,7 @@ export function TimePicker({ helpText, validationMessage, onChange, value }) {
 TimePicker.propTypes = {
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  onBlur: PropTypes.func,
   required: PropTypes.bool,
   helpText: PropTypes.string,
   validationMessage: PropTypes.string,

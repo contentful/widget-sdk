@@ -57,7 +57,19 @@ function JobDialog({ onCreate, onCancel }) {
 
   const [date, setDate] = useState(suggestedDate.format('YYYY-MM-DD'));
   const [time, setTime] = useState(suggestedDate.format('HH:mm'));
+  const [formError, setFormError] = useState('');
   const [utcOffset, setUtcOffset] = useState(suggestedDate.utcOffset());
+
+  const validateForm = onFormValid => {
+    if (moment(formatScheduledAtDate({ date, time, utcOffset })).isAfter(moment.now())) {
+      setFormError(null);
+      if (onFormValid) {
+        onFormValid();
+      }
+    } else {
+      setFormError("The selected time can't be in the past");
+    }
+  };
 
   return (
     <Modal
@@ -90,6 +102,7 @@ function JobDialog({ onCreate, onCancel }) {
                   onChange={time => {
                     setTime(time);
                   }}
+                  onBlur={() => validateForm()}
                   required
                   id="time"
                   labelText="Time"
@@ -101,6 +114,7 @@ function JobDialog({ onCreate, onCancel }) {
                   name="timezone"
                   id="timezone"
                   testId="timezone"
+                  onBlur={() => validateForm()}
                   onChange={e => {
                     setUtcOffset(Number(e.target.value));
                   }}
@@ -118,15 +132,25 @@ function JobDialog({ onCreate, onCancel }) {
                   <TimezoneNote date={date} time={time} utcOffset={utcOffset} />
                 )}
               </FieldGroup>
+              {formError && (
+                <FieldGroup>
+                  <Note noteType="negative" testId="job-dialog-validation-message">
+                    {formError}
+                  </Note>
+                </FieldGroup>
+              )}
             </Form>
           </Modal.Content>
           <Modal.Controls>
             <Button
               data-test-id="schedule-publication"
               type="submit"
+              disabled={!!formError}
               onClick={() => {
-                onCreate({
-                  scheduledAt: formatScheduledAtDate({ date, time, utcOffset })
+                validateForm(() => {
+                  onCreate({
+                    scheduledAt: formatScheduledAtDate({ date, time, utcOffset })
+                  });
                 });
               }}>
               Schedule
