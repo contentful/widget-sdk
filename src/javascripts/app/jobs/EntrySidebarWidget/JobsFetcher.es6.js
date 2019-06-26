@@ -6,7 +6,6 @@ const JobsFetcher = createFetcherComponent(async props => {
     'sys.entity.sys.id': props.entryId,
     order: '-sys.scheduledAt'
   });
-
   return {
     jobCollection
   };

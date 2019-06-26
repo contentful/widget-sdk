@@ -18,7 +18,7 @@ export default class NewJob extends React.Component {
           icon="Clock"
           buttonType="muted"
           isFullWidth
-          testId="schedule-publication"
+          data-test-id="schedule-publication"
           onClick={() => {
             this.setState({
               isDialogShown: true

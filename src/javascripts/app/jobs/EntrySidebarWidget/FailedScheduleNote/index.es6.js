@@ -17,7 +17,7 @@ export class FailedScheduleNote extends Component {
 
   render() {
     return (
-      <Note className="f36-margin-bottom--m" noteType="negative">
+      <Note className="f36-margin-bottom--m" noteType="negative" testId="failed-job-note">
         {this.renderFailureText()}
       </Note>
     );

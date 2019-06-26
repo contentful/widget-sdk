@@ -44,7 +44,6 @@ export default class JobWidget extends React.Component {
     spaceId: PropTypes.string.isRequired,
     environmentId: PropTypes.string.isRequired,
     userId: PropTypes.string.isRequired,
-    entityInfo: PropTypes.object.isRequired,
     entity: PropTypes.object.isRequired
   };
 
@@ -54,13 +53,13 @@ export default class JobWidget extends React.Component {
 
   endpoint = createSpaceEndpoint(this.props.spaceId, this.props.environmentId);
   handleJobCreate = ({ scheduledAt }) => {
-    const { spaceId, environmentId, userId, entityInfo } = this.props;
+    const { spaceId, environmentId, userId, entity } = this.props;
 
     const createJobDto = create({
       spaceId,
       environmentId,
       userId,
-      entityId: entityInfo.id,
+      entityId: entity.sys.id,
       action: 'publish',
       scheduledAt
     });
@@ -83,19 +82,21 @@ export default class JobWidget extends React.Component {
 
   renderFailedScheduleNote = data => {
     const recentJob = data.jobCollection.items[0];
-
     if (!recentJob) {
       return null;
     }
 
-    const entryPublishedAfterLastFailedJob = moment(this.props.entity.sys.publishedAt).isAfter(
-      recentJob.scheduledAt
-    );
+    if (this.props.entity.sys.publishedAt) {
+      const entryPublishedAfterLastFailedJob = moment(this.props.entity.sys.publishedAt).isAfter(
+        recentJob.scheduledAt
+      );
 
-    return (
-      !entryPublishedAfterLastFailedJob &&
-      recentJob.sys.status === 'failed' && <FailedScheduleNote recentJob={recentJob} />
-    );
+      if (entryPublishedAfterLastFailedJob) {
+        return null;
+      }
+    }
+
+    return recentJob.sys.status === 'failed' && <FailedScheduleNote recentJob={recentJob} />;
   };
 
   componentDidUpdate(prevProps) {
@@ -114,11 +115,11 @@ export default class JobWidget extends React.Component {
           key={this.state.fetcherKey}
           publishedAt={this.props.entity.sys.publishedAt}
           endpoint={this.endpoint}
-          entryId={this.props.entityInfo.id}>
+          entryId={this.props.entity.sys.id}>
           {({ isLoading, isError, data }) => {
             if (isLoading) {
               return (
-                <SkeletonContainer>
+                <SkeletonContainer data-test-id="jobs-skeleton">
                   <SkeletonBodyText numberOfLines={2} />
                 </SkeletonContainer>
               );
