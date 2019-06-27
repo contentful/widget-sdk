@@ -1,8 +1,12 @@
 import PropTypes from 'prop-types';
+import { sortBy } from 'lodash';
 
 export const UserViewData = {
+  isLoading: PropTypes.bool,
   key: PropTypes.string,
-  fullName: PropTypes.string
+  label: PropTypes.string,
+  avatarUrl: PropTypes.string,
+  isRemovedFromSpace: PropTypes.bool
 };
 
 export const UserSelectorViewData = {
@@ -13,9 +17,10 @@ export const UserSelectorViewData = {
 
 export function createSpaceUserSelectorViewData(usersFetchingStatus) {
   const { isLoading = true, data } = usersFetchingStatus;
+  const usersVD = (data || []).map(createUserViewData);
   return {
     isLoading,
-    availableUsers: (data || []).map(createUserViewData),
+    availableUsers: sortBy(usersVD, user => user.label.toLowerCase()),
     selectedUser: null
   };
 }
@@ -33,7 +38,7 @@ function createUserViewData(user) {
   return {
     isLoading: false,
     key: user.sys.id,
-    fullName: `${user.firstName} ${user.lastName}`,
+    label: getUserLabel(user),
     avatarUrl: user.avatarUrl,
     isRemovedFromSpace: false
   };
@@ -43,7 +48,7 @@ function createMissingUserViewDataFromLink(userLink) {
   return {
     isLoading: false,
     key: userLink.sys.id,
-    fullName: null,
+    label: null,
     avatarUrl: null,
     isRemovedFromSpace: true
   };
@@ -53,8 +58,13 @@ function createLoadingUserViewDataFromLink(userLink) {
   return {
     isLoading: true,
     key: userLink.sys.id,
-    fullName: null,
+    label: null,
     avatarUrl: null,
     isRemovedFromSpace: null
   };
+}
+
+function getUserLabel(user) {
+  const name = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+  return name || user.email;
 }

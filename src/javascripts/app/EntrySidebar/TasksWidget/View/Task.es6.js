@@ -97,7 +97,7 @@ export default class Task extends React.Component {
       ? 'Loading...'
       : user.isRemovedFromSpace
       ? 'User was removed from this space'
-      : `Assigned to ${user.fullName}`;
+      : `Assigned to ${user.label}`;
     return (
       <Tooltip content={tooltip} place="left">
         <img src={user.avatarUrl} className={styles.avatar} onClick={this.handleTaskExpand} />
@@ -143,7 +143,7 @@ export default class Task extends React.Component {
                   {moment(createdAt, moment.ISO_8601).fromNow()}
                 </time>{' '}
               </Visible>
-              by {creator.fullName}
+              by {creator.label}
             </div>
           </Visible>
         </div>
@@ -217,10 +217,10 @@ export default class Task extends React.Component {
             Unknown user (removed from space)
           </Option>
         )}
-        {availableUsers.map(({ key, fullName }) => {
+        {availableUsers.map(({ key, label }) => {
           return (
             <Option key={key} value={key}>
-              {fullName}
+              {label}
             </Option>
           );
         })}
