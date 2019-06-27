@@ -13,6 +13,8 @@ import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { getSubscriptionState } from 'account/AccountUtils.es6';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
+import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
 
 const spaceContext = getModule('spaceContext');
 const ResourceService = getModule('services/ResourceService.es6');
@@ -28,6 +30,7 @@ const LocalesFetcher = createFetcherComponent(() => {
     createLegacyFeatureService(spaceContext.getId()).get('multipleLocales'),
     OrganizationRoles.isOwnerOrAdmin(spaceContext.organization),
     EnvironmentUtils.isInsideMasterEnv(spaceContext),
+    getSpaceFeature(spaceContext.getId(), ENVIRONMENT_USAGE_ENFORCEMENT),
     _.get(spaceContext.organization, ['subscriptionPlan', 'name'])
   ]);
 });
@@ -61,6 +64,7 @@ class LocalesListRoute extends React.Component {
               isMultipleLocalesFeatureEnabled,
               isOwnerOrAdmin,
               insideMasterEnv,
+              allowedToEnforceLimits,
               subscriptionPlanName
             ] = data;
             if (isLegacy) {
@@ -82,6 +86,7 @@ class LocalesListRoute extends React.Component {
             return (
               <LocalesListPricingTwo
                 locales={locales}
+                allowedToEnforceLimits={allowedToEnforceLimits}
                 canChangeSpace={isOwnerOrAdmin}
                 localeResource={localeResource}
                 subscriptionState={getSubscriptionState()}

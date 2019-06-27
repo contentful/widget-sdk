@@ -13,6 +13,7 @@ describe('settings/locales/LocalesListSidebar', () => {
     };
     const { queryByTestId } = render(
       <LocalesListSidebar
+        allowedToEnforceLimits={false}
         upgradeSpace={stubs.upgradeSpace}
         subscriptionState={{
           path: ['account', 'organizations', 'subscription_new'],
@@ -39,32 +40,67 @@ describe('settings/locales/LocalesListSidebar', () => {
   });
 
   describe('if environment is not "master"', () => {
-    it('add button and documentation are shown', () => {
-      expect.assertions(5);
-      const {
-        addLocaleButton,
-        documentationSection,
-        usagesSection,
-        upgradeSpaceButton
-      } = renderComponent({
-        insideMasterEnv: false,
-        canChangeSpace: false,
-        localeResource: {
-          usage: 1,
-          limits: {
-            maximum: 2
+    describe('if environment usage enforcement is not enabled', () => {
+      it('add button and documentation are shown', () => {
+        expect.assertions(5);
+        const {
+          addLocaleButton,
+          documentationSection,
+          usagesSection,
+          upgradeSpaceButton
+        } = renderComponent({
+          insideMasterEnv: false,
+          canChangeSpace: false,
+          localeResource: {
+            usage: 1,
+            limits: {
+              maximum: 2
+            }
           }
-        }
+        });
+        expect(addLocaleButton).toHaveTextContent('Add Locale');
+
+        expect(documentationSection).toBeInTheDocument();
+        expect(usagesSection).not.toBeInTheDocument();
+        expect(upgradeSpaceButton).not.toBeInTheDocument();
+
+        fireEvent.click(addLocaleButton);
+
+        expect($stateMocked.go).toHaveBeenCalledWith('^.new', undefined, undefined);
       });
-      expect(addLocaleButton).toHaveTextContent('Add Locale');
+    });
 
-      expect(documentationSection).toBeInTheDocument();
-      expect(usagesSection).not.toBeInTheDocument();
-      expect(upgradeSpaceButton).not.toBeInTheDocument();
+    describe('if environment usage enforcement is enabled and limit is reached', () => {
+      it('shows all sections and buttons correctly', () => {
+        expect.assertions(5);
 
-      fireEvent.click(addLocaleButton);
+        const {
+          documentationSection,
+          addLocaleButton,
+          upgradeSpaceButton,
+          usagesSection
+        } = renderComponent({
+          allowedToEnforceLimits: true,
+          insideMasterEnv: false,
+          canChangeSpace: true,
+          localeResource: {
+            usage: 2,
+            limits: {
+              maximum: 2
+            }
+          }
+        });
 
-      expect($stateMocked.go).toHaveBeenCalledWith('^.new', undefined, undefined);
+        expect(documentationSection).toBeInTheDocument();
+        expect(addLocaleButton).not.toBeInTheDocument();
+        expect(upgradeSpaceButton).toBeInTheDocument();
+        expect(usagesSection).toHaveTextContent(
+          'You are using 2 out of 2 locales available in this space.'
+        );
+        expect(usagesSection).toHaveTextContent(
+          'Delete an existing locale or change the space to add more.'
+        );
+      });
     });
   });
 

@@ -8,6 +8,7 @@ import LocalesTable from './LocalesTable.es6';
 class LocalesListPricingTwo extends React.Component {
   static propTypes = {
     locales: PropTypes.arrayOf(PropTypes.object).isRequired,
+    allowedToEnforceLimits: PropTypes.bool.isRequired,
     canChangeSpace: PropTypes.bool.isRequired,
     localeResource: PropTypes.object.isRequired,
     insideMasterEnv: PropTypes.bool.isRequired,
@@ -40,6 +41,7 @@ class LocalesListPricingTwo extends React.Component {
           <LocalesListSidebar
             insideMasterEnv={this.props.insideMasterEnv}
             localeResource={this.props.localeResource}
+            allowedToEnforceLimits={this.props.allowedToEnforceLimits}
             canChangeSpace={this.props.canChangeSpace}
             subscriptionState={this.props.subscriptionState}
             upgradeSpace={this.props.upgradeSpace}

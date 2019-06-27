@@ -1,4 +1,5 @@
 // TODO: Get rid of `RTL_SUPPORT_FEATURE_FLAG` as it serves `true` for all.
+// Launch Darkly Feature Flags
 export const RTL_SUPPORT_FEATURE_FLAG = 'feature-at-03-2018-rtl-support';
 export const WALK_FOR_ME = 'feature-fe-10-2017-walkme-integration-eli-lilly';
 export const CONTACT_US_SPACE_HOME = 'feature-ps-10-2017-contact-us-space-home';
@@ -11,5 +12,7 @@ export const JOBS = 'feature-pul-04-2019-scheduled-publication-enabled';
 export const TASKS = 'feature-05-2019-content-workflows-tasks';
 export const QUICK_NAVIGATION = 'feature-ht-04-2019-quick-navigation';
 export const ENTRY_COMMENTS = 'feature-04-2019-entry-comments';
-export const ENVIRONMENT_USAGE_ENFORCEMENT = 'feature-dw-04-2019-environment-usage-enforcements';
 export const TEAMS_IN_SPACES = 'feature-bv-04-2019-teams-iteration-2';
+
+// Gatekeeper Product Catalog Flags
+export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';
