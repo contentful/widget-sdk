@@ -103,6 +103,12 @@ export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
     return result.filter(identity);
   };
 
+  const getExtensionById = async extensionId => {
+    const result = await getExtensionsById([extensionId]);
+
+    return result.length > 0 ? result[0] : null;
+  };
+
   const getAllExtensions = async () => {
     const { items } = await spaceEndpoint({ method: 'GET', path: '/extensions' });
     const maybeResolvedExtensions = await resolveExtensionDefinitions(items || [], orgEndpoint);
@@ -131,6 +137,7 @@ export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
     cacheExtension,
     evictExtension,
     getAllExtensions,
-    getExtensionsById
+    getExtensionsById,
+    getExtensionById
   };
 }
