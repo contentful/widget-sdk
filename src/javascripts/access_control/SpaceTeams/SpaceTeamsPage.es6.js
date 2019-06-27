@@ -19,9 +19,12 @@ import { ADMIN_ROLE_ID } from '../constants.es6';
 import styles from './styles.es6';
 import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation.es6';
 
+const spaceContext = getModule('spaceContext');
+
 const initialState = {
   isPending: false,
   memberships: [],
+  teams: [],
   availableRoles: []
 };
 
@@ -137,6 +140,8 @@ const SpaceTeamsPage = ({ spaceId, onReady }) => {
   if (!getSectionVisibility().teams) {
     return <ForbiddenPage />;
   }
+  const readOnly = !spaceContext.getData('spaceMember.admin', false);
+
   if (error) {
     return (
       <div className={styles.contentAlignment}>
@@ -151,6 +156,7 @@ const SpaceTeamsPage = ({ spaceId, onReady }) => {
         {...{
           memberships,
           availableRoles,
+          readOnly,
           teams,
           isLoading,
           isPending,

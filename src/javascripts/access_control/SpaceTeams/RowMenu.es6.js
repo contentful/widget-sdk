@@ -8,7 +8,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import useClickOutside from 'app/common/hooks/useClickOutside.es6';
 
-const RowMenu = ({ isOpen, setOpen, setEditing }) => {
+const RowMenu = ({ isOpen, setOpen, setEditing, disabled }) => {
   const ref = useRef();
   useClickOutside(ref, isOpen, () => setOpen(false));
 
@@ -18,6 +18,7 @@ const RowMenu = ({ isOpen, setOpen, setEditing }) => {
       isOpen={isOpen}
       toggleElement={
         <IconButton
+          disabled={disabled}
           testId={'action-button'}
           label="Action"
           buttonType="secondary"
@@ -39,7 +40,8 @@ const RowMenu = ({ isOpen, setOpen, setEditing }) => {
 RowMenu.propTypes = {
   setOpen: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  setEditing: PropTypes.func.isRequired
+  setEditing: PropTypes.func.isRequired,
+  disabled: PropTypes.bool
 };
 
 export default RowMenu;

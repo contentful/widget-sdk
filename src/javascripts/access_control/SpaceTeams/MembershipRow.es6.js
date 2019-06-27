@@ -25,7 +25,8 @@ const MembershipRow = ({
   isEditing,
   setEditing,
   onUpdateTeamSpaceMembership,
-  isPending
+  isPending,
+  readOnly
 }) => {
   const {
     sys: {
@@ -87,7 +88,9 @@ const MembershipRow = ({
             {isEmpty(roles) ? 'Admin' : joinWithAnd(map(roles, 'name'))}
           </TableCell>
           <TableCell>
-            <RowMenu isOpen={menuIsOpen} setOpen={setMenuOpen} setEditing={setEditing} />
+            {!readOnly && (
+              <RowMenu isOpen={menuIsOpen} setOpen={setMenuOpen} setEditing={setEditing} />
+            )}
           </TableCell>
         </>
       )}
@@ -103,7 +106,8 @@ MembershipRow.propTypes = {
   isEditing: PropTypes.bool.isRequired,
   setEditing: PropTypes.func.isRequired,
   onUpdateTeamSpaceMembership: PropTypes.func.isRequired,
-  isPending: PropTypes.bool.isRequired
+  isPending: PropTypes.bool.isRequired,
+  readOnly: PropTypes.bool.isRequired
 };
 
 export default MembershipRow;

@@ -20,13 +20,16 @@ import MembershipRow from './MembershipRow.es6';
 
 const goToAddTeams = () => go({
   path: ['spaces', 'detail', 'settings', 'teams', 'add']
-});const SpaceTeamsPagePresentation = ({
-  memberships,
- teams, isLoading,
-  isPending,
-  availableRoles,
-  onUpdateTeamSpaceMembership
-}) => {
+});
+const SpaceTeamsPagePresentation = ({
+                                      memberships,
+                                      teams,
+                                      isLoading,
+                                      isPending,
+                                      availableRoles,
+                                      onUpdateTeamSpaceMembership,
+                                      readOnly
+                                    }) => {
   const [openMenu, setOpenMenu] = useState(null);
   const [editingRow, setEditingRow] = useState(null);
 
@@ -82,22 +85,23 @@ const goToAddTeams = () => go({
               {!isLoading &&
               memberships.map(membership => {
                 const {
-                    sys: { id: membershipId }
-                  } = membership;
-                  return (
-                    <MembershipRow
-                      key={membershipId}
+                  sys: { id: membershipId }
+                } = membership;
+                return (
+                  <MembershipRow
+                    key={membershipId}
                     {...{
+                      readOnly,
                       setMenuOpen: open => setOpenMenu(open ? membershipId : null),
                       menuIsOpen: openMenu === membershipId,
                       setEditing: edit => setEditingRow(edit ? membershipId : null),
-                        isEditing: editingRow === membershipId,
+                      isEditing: editingRow === membershipId,
                       membership,
-                        availableRoles,
-                        onUpdateTeamSpaceMembership,
+                      availableRoles,
+                      onUpdateTeamSpaceMembership,
                       isPending
                     }}
-                    />
+                  />
                 );
               })}
             </TableBody>
@@ -114,7 +118,8 @@ SpaceTeamsPagePresentation.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   availableRoles: PropTypes.arrayOf(SpaceRoleProp),
   onUpdateTeamSpaceMembership: PropTypes.func.isRequired,
-  isPending: PropTypes.bool.isRequired
+  isPending: PropTypes.bool.isRequired,
+  readOnly: PropTypes.bool.isRequired
 };
 
 export default SpaceTeamsPagePresentation;
