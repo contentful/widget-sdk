@@ -293,15 +293,17 @@ export function getEntryCommentsAndTasks(
   };
 }
 
-export function postEntryCommentOrTask(
+export function postEntryTask(
   spaceId: string = defaultSpaceId,
-  entryId: string = defaultEntryId
+  entryId: string = defaultEntryId,
+task: Object
 ): RequestOptions {
   return {
     method: 'POST',
     path: `/spaces/${spaceId}/entries/${entryId}/comments`,
-    headers: defaultHeader
-  };
+    headers: defaultHeader,
+    body: task
+  }
 }
 
 export function getSpaceUsers(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {

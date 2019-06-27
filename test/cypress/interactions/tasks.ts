@@ -1,5 +1,5 @@
 import * as state from '../util/interactionState';
-import { getEntryCommentsAndTasks, postEntryCommentOrTask } from '../util/requests';
+import { defaultSpaceId, defaultEntryId, getEntryCommentsAndTasks, postEntryTask } from '../util/requests';
 const empty = require('../fixtures/responses/empty.json');
 const severalTasks = require('../fixtures/responses/tasks-several.json');
 
@@ -36,33 +36,47 @@ export function tasksErrorResponse() {
   }).as(state.Tasks.ERROR);
 }
 
-export function taskCreatedResponse(taskTitle) {
-  const taskTemplate = severalTasks.items[0];
+export function taskCreateRequest({ title, assigneeId }) {
   const newTask = {
-    ...taskTemplate,
-    body: taskTitle
+    body: title,
+    assignedTo: {
+      sys: {
+        type: 'Link',
+        linkType: 'User',
+        id: assigneeId,
+      }
+    },
+    status: 'open'
   };
-  cy.addInteraction({
+  const interactionRequestInfo = {
     provider,
-    state: 'noTasks',
     uponReceiving: request.CREATE_TASK,
-    withRequest: postEntryCommentOrTask(),
-    willRespondWith: {
-      status: 200,
-      body: newTask
+    withRequest: postEntryTask(defaultSpaceId, defaultEntryId, newTask),
+  };
+  return {
+    successResponse() {
+      const newTaskSys = severalTasks.items[0].sys;
+      cy.addInteraction({
+        ...interactionRequestInfo,
+        state: 'noTasks',
+        willRespondWith: {
+          status: 200,
+          body: {
+            sys: newTaskSys,
+            ...newTask,
+          }
+        }
+      }).as(state.Tasks.CREATE);
+    },
+    errorResponse() {
+      cy.addInteraction({
+        ...interactionRequestInfo,
+        state: 'serverIsDown',
+        willRespondWith: {
+          status: 500,
+          body: empty
+        }
+      }).as(state.Tasks.ERROR);
     }
-  }).as(state.Tasks.CREATE);
-}
-
-export function taskNotCreatedErrorResponse() {
-  cy.addInteraction({
-    provider,
-    state: 'serverIsDown',
-    uponReceiving: request.CREATE_TASK,
-    withRequest: postEntryCommentOrTask(),
-    willRespondWith: {
-      status: 500,
-      body: empty
-    }
-  }).as(state.Tasks.ERROR);
+  }
 }

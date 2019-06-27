@@ -5,6 +5,14 @@
   "items": [
     {
       "body": "Translate all the things",
+      "assignedTo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "userID"
+        }
+      },
+      "status": "open",
       "sys": {
         "id": "taskId1",
         "type": "Comment",
@@ -45,6 +53,14 @@
     },
     {
       "body": "Walk the dog",
+      "assignedTo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "userID"
+        }
+      },
+      "status": "open",
       "sys": {
         "id": "taskId2",
         "type": "Comment",
@@ -85,6 +101,14 @@
     },
     {
       "body": "Do something else!",
+      "assignedTo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "userID"
+        }
+      },
+      "status": "open",
       "sys": {
         "id": "taskId3",
         "type": "Comment",
