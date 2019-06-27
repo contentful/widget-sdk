@@ -262,11 +262,12 @@ export function getOrgProductCatalogFeatures(orgId: string = defaultOrgId): Requ
   };
 }
 
-export function getSpaceProductCatalogFeatures(spaceId: string = defaultSpaceId): RequestOptions {
+export function getSpaceProductCatalogFeatures(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
   return {
     method: 'GET',
     path: `/spaces/${spaceId}/product_catalog_features`,
-    headers: defaultHeader
+    headers: defaultHeader,
+    query
   };
 }
 

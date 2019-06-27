@@ -11,8 +11,8 @@ export enum Token {
 }
 
 export enum Resources {
-  NONE = 'resources/none',
-  DEFAULT = 'resources'
+  DEFAULT = 'resources',
+  LIMITS_REACHED = 'resources/limits_reached'
 }
 
 export enum OrgProductCatalogFeatures {
@@ -20,7 +20,8 @@ export enum OrgProductCatalogFeatures {
 }
 
 export enum SpaceProductCatalogFeatures {
-  SEVERAL = 'space_product_catalog_features/several'
+  SEVERAL = 'space_product_catalog_features/several',
+  USAGE_ENFORCEMENT = 'space_product_catalog_features/env_usage_enforcements'
 }
 
 export enum PreviewEnvironments {

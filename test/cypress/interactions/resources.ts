@@ -1,26 +1,26 @@
 import * as state from '../util/interactionState';
 import { defaultSpaceId, defaultEnvironment } from '../util/requests';
 
-const empty = require('../fixtures/responses/empty.json');
 const resources = require('../fixtures/responses/resources.json');
+const resourcesWithLimitsReached = require('../fixtures/responses/resources-with-limits-reached.json');
 
-export function emptyResourcesResponse() {
+export function limitsReachedResourcesResponse() {
   cy.addInteraction({
     provider: 'resources',
-    state: 'resources',
-    uponReceiving: 'a request for empty resources',
+    state: state.Resources.LIMITS_REACHED,
+    uponReceiving: 'a request for resources with limits reached',
     withRequest: {
       method: 'GET',
-      path: `/spaces/${defaultSpaceId}/environments/master/resources`,
+      path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironment}/resources`,
       headers: {
         Accept: 'application/json, text/plain, */*'
       }
     },
     willRespondWith: {
       status: 200,
-      body: empty
+      body: resourcesWithLimitsReached
     }
-  }).as(state.Resources.NONE);
+  }).as(state.Resources.LIMITS_REACHED);
 }
 
 export function defaultResourcesResponse() {

@@ -1,0 +1,118 @@
+{
+  "total": 5,
+  "sys": {
+    "type": "Array"
+  },
+  "items": [
+    {
+      "name": "Entry",
+      "usage": 1,
+      "limits": {
+        "included": 3,
+        "maximum": 3
+      },
+      "parent": {
+        "name": "Record",
+        "usage": 3,
+        "limits": {
+          "included": 3,
+          "maximum": 3
+        },
+        "parent": null,
+        "kind": "permanent",
+        "period": null,
+        "sys": {
+          "type": "EnvironmentResource",
+          "id": "record"
+        },
+        "unitOfMeasure": null
+      },
+      "kind": "permanent",
+      "period": null,
+      "sys": {
+        "type": "EnvironmentResource",
+        "id": "entry"
+      },
+      "unitOfMeasure": null
+    },
+    {
+      "name": "Asset",
+      "usage": 3,
+      "limits": {
+        "included": 3,
+        "maximum": 3
+      },
+      "parent": {
+        "name": "Record",
+        "usage": 3,
+        "limits": {
+          "included": 3,
+          "maximum": 3
+        },
+        "parent": null,
+        "kind": "permanent",
+        "period": null,
+        "sys": {
+          "type": "EnvironmentResource",
+          "id": "record"
+        },
+        "unitOfMeasure": null
+      },
+      "kind": "permanent",
+      "period": null,
+      "sys": {
+        "type": "EnvironmentResource",
+        "id": "asset"
+      },
+      "unitOfMeasure": null
+    },
+    {
+      "name": "Record",
+      "usage": 3,
+      "limits": {
+        "included": 3,
+        "maximum": 3
+      },
+      "parent": null,
+      "kind": "permanent",
+      "period": null,
+      "sys": {
+        "type": "EnvironmentResource",
+        "id": "record"
+      },
+      "unitOfMeasure": null
+    },
+    {
+      "name": "Locale",
+      "usage": 2,
+      "limits": {
+        "included": 2,
+        "maximum": 2
+      },
+      "parent": null,
+      "kind": "permanent",
+      "period": null,
+      "sys": {
+        "type": "EnvironmentResource",
+        "id": "locale"
+      },
+      "unitOfMeasure": null
+    },
+    {
+      "name": "Content type",
+      "usage": 3,
+      "limits": {
+        "included": 3,
+        "maximum": 3
+      },
+      "parent": null,
+      "kind": "permanent",
+      "period": null,
+      "sys": {
+        "type": "EnvironmentResource",
+        "id": "content_type"
+      },
+      "unitOfMeasure": null
+    }
+  ]
+}
