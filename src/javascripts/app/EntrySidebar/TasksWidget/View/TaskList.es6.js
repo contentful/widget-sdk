@@ -1,33 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
-import { TaskListViewData } from './TasksViewData.es6';
-import TasksInteractor from './TasksInteractor.es6';
+import { TaskListViewData } from '../ViewData/TaskViewData.es6';
+import TasksInteractor from '../TasksInteractor.es6';
 import Task from './Task.es6';
 import Visible from 'components/shared/Visible/index.es6';
-import tokens from '@contentful/forma-36-tokens';
 import {
   TextLink,
   ValidationMessage,
   SkeletonContainer,
   SkeletonBodyText
 } from '@contentful/forma-36-react-components';
-
-const styles = {
-  list: css({
-    border: `1px solid ${tokens.colorElementMid}`,
-    borderBottom: '0'
-  }),
-  listItem: css({
-    marginBottom: '0'
-  }),
-  addTaskCta: css({
-    marginTop: tokens.spacingS
-  }),
-  loadingSkeletonContainer: css({
-    margin: '18px 0 10px'
-  })
-};
+import { taskListStyles as styles } from './styles.es6';
 
 export default class TasksWidget extends React.PureComponent {
   static propTypes = {

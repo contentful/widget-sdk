@@ -16,138 +16,13 @@ import {
   SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import Visible from 'components/shared/Visible/index.es6';
-import tokens from '@contentful/forma-36-tokens';
-import { css, cx } from 'emotion';
+import { cx } from 'emotion';
 import moment from 'moment';
 import isHotKey from 'is-hotkey';
 import TaskDeleteDialog from './TaskDeleteDialog.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
-import { TaskViewData } from './TasksViewData.es6';
-
-const styles = {
-  task: css({
-    display: 'flex',
-    cursor: 'pointer',
-    alignItems: 'start',
-    backgroundColor: tokens.colorWhite,
-    borderBottom: `1px solid ${tokens.colorElementMid}`,
-    transition: `background-color ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`,
-    outline: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorElementLight
-    },
-    ':focus': {
-      backgroundColor: tokens.colorElementLight,
-      outline: `1px solid ${tokens.colorPrimary}`,
-      borderRadius: '2px',
-      boxShadow: tokens.glowPrimary
-    }
-  }),
-
-  taskLoading: css({
-    padding: tokens.spacingS,
-    cursor: 'default',
-    ':hover': {
-      backgroundColor: tokens.colorWhite
-    },
-    ':focus': {
-      backgroundColor: tokens.colorWhite,
-      outline: 'none',
-      borderRadius: 0,
-      boxShadow: 'none'
-    }
-  }),
-
-  taskHasEditForm: css({
-    cursor: 'default',
-    ':hover': {
-      backgroundColor: tokens.colorWhite
-    },
-    ':focus': {
-      backgroundColor: tokens.colorWhite,
-      outline: 'none',
-      borderRadius: 0,
-      boxShadow: 'none'
-    }
-  }),
-
-  body: css({
-    flex: '1 1 0',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    padding: tokens.spacingS
-  }),
-
-  checkboxWrapper: css({
-    padding: tokens.spacingS,
-    paddingRight: 0
-  }),
-
-  avatarWrapper: css({
-    display: 'inline-flex',
-    padding: tokens.spacingS,
-    paddingLeft: 0,
-    alignItems: 'flex-start'
-  }),
-
-  bodyExpanded: css({
-    textOverflow: 'clip',
-    whiteSpace: 'pre-line',
-    wordWrap: 'break-word',
-    overflow: 'hidden'
-  }),
-
-  meta: css({
-    marginTop: tokens.spacingXs,
-    color: tokens.colorTextMid,
-    lineHeight: tokens.lineHeightDefault,
-    fontSize: tokens.fontSizeS
-  }),
-
-  avatar: css({
-    display: 'block',
-    width: '18px',
-    height: '18px',
-    background: tokens.colorElementLight,
-    borderRadius: '100%'
-  }),
-
-  actions: css({
-    display: 'inline-block',
-    marginLeft: 0,
-    width: 0,
-    height: '18px',
-    overflow: 'hidden',
-    transition: `width ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}, margin-left ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`
-  }),
-
-  actionsVisible: css({
-    marginLeft: tokens.spacingXs,
-    width: '18px'
-  }),
-
-  editForm: css({
-    width: '100%',
-    padding: tokens.spacingS
-  }),
-
-  editActions: css({
-    display: 'flex'
-  }),
-
-  editTaskLink: css({
-    marginRight: tokens.spacingS
-  }),
-
-  editSubmit: css({
-    marginRight: tokens.spacingS
-  }),
-
-  tabFocusTrap: css({
-    width: '100%'
-  })
-};
+import { TaskViewData } from '../ViewData/TaskViewData.es6';
+import { taskStyles as styles } from './styles.es6';
 
 export default class Task extends React.Component {
   static propTypes = {
@@ -217,22 +92,18 @@ export default class Task extends React.Component {
     this.props.onCancel();
   };
 
-  renderFullName = userObject => {
-    return userObject ? `${userObject.firstName} ${userObject.lastName}` : 'unknown user';
-  };
-
-  renderAvatar = () => {
-    const { assignee } = this.props.viewData;
-
-    if (!assignee) {
-      return <div />;
-    }
+  renderAvatar(user) {
+    const tooltip = user.isLoading
+      ? 'Loading...'
+      : user.isRemovedFromSpace
+      ? 'User was removed from this space'
+      : `Assigned to ${user.label}`;
     return (
-      <Tooltip content={`Assigned to ${this.renderFullName(assignee)}`} place="left">
-        <img src={assignee.avatarUrl} className={styles.avatar} onClick={this.handleTaskExpand} />
+      <Tooltip content={tooltip} place="left">
+        <img src={user.avatarUrl} className={styles.avatar} onClick={this.handleTaskExpand} />
       </Tooltip>
     );
-  };
+  }
 
   renderActions = () => {
     // TODO: Check roles/permissions before rendering actions
@@ -250,7 +121,7 @@ export default class Task extends React.Component {
 
   renderDetails = () => {
     const { isExpanded } = this.state;
-    const { body, creator, createdAt, isDone } = this.props.viewData;
+    const { body, creator, createdAt, isDone, assignee } = this.props.viewData;
 
     return (
       <React.Fragment>
@@ -272,12 +143,12 @@ export default class Task extends React.Component {
                   {moment(createdAt, moment.ISO_8601).fromNow()}
                 </time>{' '}
               </Visible>
-              by {this.renderFullName(creator)}
+              by {creator.label}
             </div>
           </Visible>
         </div>
         <div className={styles.avatarWrapper}>
-          {this.renderAvatar()}
+          {this.renderAvatar(assignee)}
           {this.renderActions()}
         </div>
       </React.Fragment>
@@ -289,7 +160,7 @@ export default class Task extends React.Component {
   };
 
   renderEditForm = () => {
-    const { body, assignee, isDraft, validationMessage } = this.props.viewData;
+    const { body, isDraft, validationMessage } = this.props.viewData;
     const bodyLabel = isDraft ? 'Create task' : 'Edit task';
     const ctaLabel = isDraft ? 'Create task' : 'Save changes';
     const ctaContext = isDraft ? 'primary' : 'positive';
@@ -308,11 +179,7 @@ export default class Task extends React.Component {
           textInputProps={{ rows: 4, autoFocus: true, maxLength: characterLimit }}
           validationMessage={validationMessage}
         />
-        <SelectField name="assignee" id="assignee" labelText="Assign to">
-          <Option value="1">{this.renderFullName(assignee)}</Option>
-          <Option value="2">User 2</Option>
-          <Option value="3">User 3</Option>
-        </SelectField>
+        {this.renderAssigneeSelector()}
         <div className={styles.editActions}>
           <Button
             testId="save-task"
@@ -329,6 +196,37 @@ export default class Task extends React.Component {
       </Form>
     );
   };
+
+  renderAssigneeSelector() {
+    const EMPTY = '<<EMPTY>>';
+    const { assignableUsersInfo } = this.props.viewData;
+    const { availableUsers, selectedUser } = assignableUsersInfo;
+
+    const currentKey = selectedUser ? selectedUser.key : EMPTY;
+    const isCurrentUserRemoved = selectedUser && selectedUser.isRemovedFromSpace;
+
+    return (
+      <SelectField name="assignee" id="assignee" labelText="Assign to" value={currentKey}>
+        {!selectedUser && (
+          <Option disabled key={EMPTY} value={EMPTY}>
+            Please select a user
+          </Option>
+        )}
+        {isCurrentUserRemoved && (
+          <Option key={currentKey} value={currentKey}>
+            Unknown user (removed from space)
+          </Option>
+        )}
+        {availableUsers.map(({ key, label }) => {
+          return (
+            <Option key={key} value={key}>
+              {label}
+            </Option>
+          );
+        })}
+      </SelectField>
+    );
+  }
 
   renderLoadingState() {
     return (

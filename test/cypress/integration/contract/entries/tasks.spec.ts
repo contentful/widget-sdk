@@ -1,5 +1,5 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import { singleUser, singleSpecificOrgUserResponse } from '../../../interactions/users';
+import { singleUser } from '../../../interactions/users';
 import {
   successfulGetEntryTasksInteraction,
   tasksErrorResponse,
@@ -83,9 +83,8 @@ describe('Tasks entry editor sidebar', () => {
   context('several tasks on the entry', () => {
     beforeEach(() => {
       successfulGetEntryTasksInteraction('someTasks', severalTasks).as(state.Tasks.SEVERAL);
-      singleSpecificOrgUserResponse();
       visitEntry();
-      cy.wait([`@${state.Tasks.SEVERAL}`, `@${state.Users.SINGLE}`]);
+      cy.wait([`@${state.Tasks.SEVERAL}`]);
     });
 
     it('renders list of tasks', () => {
@@ -139,7 +138,9 @@ describe('Tasks entry editor sidebar', () => {
       getCreateTaskAction()
         .should('be.enabled')
         .click();
-      getDraftTask().should('be.visible');
+      getDraftTask()
+        .should('have.length', 1)
+        .should('be.visible');
       getDraftTaskInput()
         .type(taskTitle)
         .should('have.value', taskTitle);
