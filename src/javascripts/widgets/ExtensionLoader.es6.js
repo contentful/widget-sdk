@@ -45,28 +45,30 @@ export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
   const getExtensionDefinitionUUID = extension => get(extension, ['extensionDefinition', 'uuid']);
 
   const mergeExtensionsAndDefinitions = (extensions, definitions) => {
-    return extensions.map(extension => {
-      const definitionId = getExtensionDefinitionUUID(extension);
+    return extensions
+      .map(extension => {
+        const definitionId = getExtensionDefinitionUUID(extension);
 
-      if (definitionId) {
-        const definition = definitions.find(
-          definition => get(definition, ['sys', 'uuid']) === definitionId
-        );
+        if (definitionId) {
+          const definition = definitions.find(
+            definition => get(definition, ['sys', 'uuid']) === definitionId
+          );
 
-        if (definition) {
-          return {
-            ...extension,
-            extension: omit(definition, ['sys'])
-          };
+          if (definition) {
+            return {
+              ...extension,
+              extension: omit(definition, ['sys'])
+            };
+          }
+
+          // So what are we going to do about this then?
+          // Dropping the extension for now
+          return null;
         }
 
-        // So what are we going to do about this then?
-        // Dropping the extension for now
-        return null;
-      }
-
-      return extension;
-    });
+        return extension;
+      })
+      .filter(identity);
   };
 
   const resolveExtensionDefinitions = async extensions => {
