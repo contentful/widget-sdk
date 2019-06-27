@@ -72,7 +72,7 @@ const MembershipRow = ({
                 }
               }}
               className={css({ marginRight: tokens.spacingM })}
-              disabled={!haveRolesChanged || isPending}
+              disabled={!haveRolesChanged || isEmpty(selectedRoleIds) || isPending}
               loading={isPending}>
               Change role
             </Button>
