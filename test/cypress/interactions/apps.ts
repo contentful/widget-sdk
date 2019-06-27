@@ -5,7 +5,7 @@ export function noInstalledAppsResponse() {
   return cy
     .addInteraction({
       provider: 'apps',
-      state: state.Apps.NONE_INSTALLED,
+      state: state.Apps.NONE,
       uponReceiving: 'a request for all installed Apps',
       withRequest: getApps(),
       willRespondWith: {
@@ -13,5 +13,5 @@ export function noInstalledAppsResponse() {
         body: {}
       }
     })
-    .as(state.Apps.NONE_INSTALLED);
+    .as(state.Apps.NONE);
 }

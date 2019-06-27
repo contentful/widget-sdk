@@ -101,5 +101,10 @@ export enum ContentTypes {
 }
 
 export enum Apps {
-  NONE_INSTALLED = 'microbackends/apps/spaces/space_id'
+  NONE = 'microbackends/apps/spaces/space_id'
+}
+
+export enum Webhooks {
+  NONE = 'settings/webhooks/none',
+  ERROR = 'settings/webhooks/error'
 }

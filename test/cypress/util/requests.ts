@@ -301,7 +301,7 @@ export function postEntryCommentOrTask(
     method: 'POST',
     path: `/spaces/${spaceId}/entries/${entryId}/comments`,
     headers: defaultHeader
-  }
+  };
 }
 
 export function getSpaceUsers(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
@@ -317,6 +317,15 @@ export function getOrgUsers(orgId: string = defaultOrgId, query?: Query): Reques
   return {
     method: 'GET',
     path: `/organizations/${orgId}/users`,
+    headers: defaultHeader,
+    query
+  };
+}
+
+export function getWebhooks(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
+  return {
+    method: 'GET',
+    path: `/spaces/${spaceId}/webhook_definitions`,
     headers: defaultHeader,
     query
   };
