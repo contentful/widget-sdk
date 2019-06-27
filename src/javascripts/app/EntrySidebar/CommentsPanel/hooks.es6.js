@@ -4,7 +4,7 @@ import resolveLinks from 'data/LinkResolver.es6';
 import { getSpace, getUserSync } from 'services/TokenStore.es6';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getUsers } from 'access_control/OrganizationMembershipRepository.es6';
-import { getAll, create } from 'data/CMA/CommentsRepo.es6';
+import { getAllForEntry, create } from 'data/CMA/CommentsRepo.es6';
 import useAsync, { useAsyncFn } from 'app/common/hooks/useAsync.es6';
 
 /**
@@ -33,7 +33,7 @@ export const useCommentCreator = (spaceId, entryId, parentCommentId) => {
   const endpoint = createSpaceEndpoint(spaceId);
 
   return useAsyncFn(async body => {
-    const comment = await create(endpoint, entryId, body, parentCommentId);
+    const comment = await create(endpoint, entryId, { body, parentCommentId });
     comment.sys.createdBy = user;
     return comment;
   });
@@ -60,7 +60,7 @@ async function fetchUsers(spaceId, userIds) {
  */
 export async function fetchComments(spaceId, entryId) {
   const endpoint = createSpaceEndpoint(spaceId);
-  const { items: comments } = await getAll(endpoint, entryId);
+  const { items: comments } = await getAllForEntry(endpoint, entryId);
   const commentCreatorIds = uniq(map(comments, 'sys.createdBy.sys.id'));
   const users = commentCreatorIds.length ? await fetchUsers(spaceId, commentCreatorIds) : [];
   const resolvedComments = resolveLinks({

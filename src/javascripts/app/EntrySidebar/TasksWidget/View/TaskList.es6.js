@@ -43,8 +43,8 @@ export default class TasksWidget extends React.PureComponent {
           viewData={taskViewData}
           onEdit={() => tasksInteractor.startEditingTask(key)}
           onCancel={() => tasksInteractor.cancelTaskChanges(key)}
-          onSave={(body, assigneeUserId) =>
-            tasksInteractor.saveTaskChanges(key, { body, assigneeUserId, version })
+          onSave={({ body, assigneeKey, isDone }) =>
+            tasksInteractor.saveTaskChanges(key, { body, assigneeKey, isDone, version })
           }
           onDeleteTask={() => tasksInteractor.deleteTask(key)}
           onCompleteTask={() => {}} // TODO

@@ -11,7 +11,7 @@ export const TaskViewData = {
   version: PropTypes.number,
   body: PropTypes.string,
   assignee: PropTypes.object,
-  creator: PropTypes.object, // TODO: Don't inject domain object.
+  creator: PropTypes.object,
   createdAt: PropTypes.string,
   isDone: PropTypes.bool,
   isDraft: PropTypes.bool,
@@ -82,9 +82,8 @@ export function createTaskListViewData(
     const { id } = task.sys;
     let taskVD = createTaskViewData(task, usersFetchingStatus);
 
-    const spaceUsersSelectorVD = getSpaceUsersSelectorVD();
-
     if (tasksInEditMode[id]) {
+      const spaceUsersSelectorVD = getSpaceUsersSelectorVD();
       taskVD = decorateTaskViewDataWithEditMode(taskVD, spaceUsersSelectorVD);
     }
     const error = tasksErrors[id];
