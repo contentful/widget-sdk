@@ -101,6 +101,11 @@ const useFetching = spaceId => {
 
     const { availableRoles } = state;
     const newRoles = availableRoles.filter(({ sys: { id } }) => selectedRoleIds.includes(id));
+    const {
+      sys: {
+        team: { name: teamName }
+      }
+    } = membership;
 
     try {
       const updatedMembership = await updateTeamSpaceMembership(
@@ -112,9 +117,9 @@ const useFetching = spaceId => {
         }))
       );
       dispatch({ type: 'UPDATE_SUCCESS', payload: { updatedMembership } });
-      Notification.success(`Successfully changed roles for Team ${name}`);
+      Notification.success(`Successfully changed roles for Team ${teamName}`);
     } catch (e) {
-      Notification.error(`Could not change roles for Team ${name}`);
+      Notification.error(`Could not change roles for Team ${teamName}`);
       dispatch({ type: 'ERROR' });
       throw e;
     }
