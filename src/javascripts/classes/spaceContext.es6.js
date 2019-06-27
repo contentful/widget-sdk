@@ -138,7 +138,7 @@ export default function register() {
             Auth
           );
 
-          self.extensionsLoader = createExtensionLoader(self.organizationEndpoint, self.endpoint);
+          self.extensionLoader = createExtensionLoader(self.organizationEndpoint, self.endpoint);
 
           // TODO: publicly accessible docConnection is
           // used only in a process of creating space out
