@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, TableCell, TableRow, Notification } from '@contentful/forma-36-react-components';
+import { Button, TableCell, TableRow } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { cx, css } from 'emotion';
-import { truncate, map, intersection, isEmpty, set } from 'lodash';
+import { truncate, map, intersection, isEmpty } from 'lodash';
 
 import { joinWithAnd } from 'utils/StringUtils.es6';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor.es6';
@@ -12,7 +12,7 @@ import {
   SpaceRole as SpaceRoleProp,
   TeamSpaceMembership as TeamSpaceMembershipProp
 } from 'app/OrganizationSettings/PropTypes.es6';
-import { ADMIN_ROLE, ADMIN_ROLE_ID } from 'access_control/constants.es6';
+import { ADMIN_ROLE } from 'access_control/constants.es6';
 
 import RowMenu from './RowMenu.es6';
 import styles from './styles.es6';
@@ -27,21 +27,19 @@ const MembershipRow = ({
   onUpdateTeamSpaceMembership,
   isPending
 }) => {
-  const [persistedMembership, setPersistedMembership] = useState(membership);
   const {
     sys: {
       id: membershipId,
       team: { name, description, memberCount }
     },
     roles
-  } = persistedMembership;
+  } = membership;
 
-  const [persistedRoles, setPersistedRoles] = useState(isEmpty(roles) ? [ADMIN_ROLE] : roles);
-  const persistedRoleIds = map(persistedRoles, 'sys.id');
-  const [selectedRoleIds, setSelectedRoles] = useState(persistedRoleIds);
+  const roleIds = map(isEmpty(roles) ? [ADMIN_ROLE] : roles, 'sys.id');
+  const [selectedRoleIds, setSelectedRoles] = useState(roleIds);
   const haveRolesChanged = !(
-    intersection(selectedRoleIds, persistedRoleIds).length === selectedRoleIds.length &&
-    selectedRoleIds.length === persistedRoleIds.length
+    intersection(selectedRoleIds, roleIds).length === selectedRoleIds.length &&
+    selectedRoleIds.length === roleIds.length
   );
 
   return (
@@ -68,24 +66,9 @@ const MembershipRow = ({
               buttonType="positive"
               onClick={async () => {
                 try {
-                  const newRoles = availableRoles.filter(({ sys: { id } }) =>
-                    selectedRoleIds.includes(id)
-                  );
-                  const updatedMembership = await onUpdateTeamSpaceMembership(
-                    persistedMembership,
-                    selectedRoleIds[0] === ADMIN_ROLE_ID,
-                    newRoles.map(({ sys: { id } }) => ({
-                      sys: { id, type: 'Link', linkType: 'Role' }
-                    }))
-                  );
-                  setPersistedMembership(
-                    set(membership, 'sys.version', updatedMembership.sys.version)
-                  );
-                  setPersistedRoles(isEmpty(newRoles) ? [ADMIN_ROLE] : newRoles);
-                  Notification.success(`Successfully changed roles for Team ${name}`);
+                  await onUpdateTeamSpaceMembership(membership, selectedRoleIds);
                 } catch (e) {
-                  Notification.error(`Could not change roles for Team ${name}`);
-                  setSelectedRoles(map(persistedRoles, 'sys.id'));
+                  setSelectedRoles(roleIds);
                 }
               }}
               className={css({ marginRight: tokens.spacingM })}
@@ -101,9 +84,7 @@ const MembershipRow = ({
       ) : (
         <>
           <TableCell className={cx(styles.cellRoles, styles.cell)} testId="roles-cell">
-            {persistedRoles.includes(ADMIN_ROLE)
-              ? 'Admin'
-              : joinWithAnd(map(persistedRoles, 'name'))}
+            {isEmpty(roles) ? 'Admin' : joinWithAnd(map(roles, 'name'))}
           </TableCell>
           <TableCell>
             <RowMenu isOpen={menuIsOpen} setOpen={setMenuOpen} setEditing={setEditing} />

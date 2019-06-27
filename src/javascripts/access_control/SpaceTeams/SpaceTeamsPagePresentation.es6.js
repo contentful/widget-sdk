@@ -30,6 +30,7 @@ const goToAddTeams = () => go({
   const [openMenu, setOpenMenu] = useState(null);
   const [editingRow, setEditingRow] = useState(null);
 
+  // close editing mode after pending no more
   useEffect(() => {
     !isPending && setEditingRow(null);
   }, [isPending]);
