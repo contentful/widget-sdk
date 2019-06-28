@@ -132,13 +132,14 @@ export default function register() {
           self.webhookRepo = createWebhookRepo(space);
           self.localeRepo = createLocaleRepo(self.endpoint);
           self.organization = deepFreezeClone(self.getData('organization'));
-          self.organizationEndpoint = createOrganizationEndpoint(
+
+          const organizationEndpoint = createOrganizationEndpoint(
             Config.apiUrl(),
             self.organization.sys.id,
             Auth
           );
 
-          self.extensionLoader = createExtensionLoader(self.organizationEndpoint, self.endpoint);
+          self.extensionLoader = createExtensionLoader(organizationEndpoint, self.endpoint);
 
           // TODO: publicly accessible docConnection is
           // used only in a process of creating space out
