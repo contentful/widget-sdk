@@ -14,7 +14,12 @@ export default class PublicationWidgetContainer extends Component {
     status: '',
     updatedAt: null,
     isSaving: false,
-    showDiscardButton: false
+    showDiscardButton: false,
+
+    spaceId: undefined,
+    environmentId: undefined,
+    userId: undefined,
+    entity: undefined
   };
 
   componentDidMount() {
@@ -37,7 +42,7 @@ export default class PublicationWidgetContainer extends Component {
   };
 
   render() {
-    const { commands } = this.state;
+    const { commands, spaceId, environmentId, entity, userId } = this.state;
 
     const revert = get(commands, 'revertToPrevious');
     const primary = get(commands, 'primary');
@@ -51,6 +56,10 @@ export default class PublicationWidgetContainer extends Component {
         revert={revert}
         isSaving={this.state.isSaving}
         updatedAt={this.state.updatedAt}
+        spaceId={spaceId}
+        environmentId={environmentId}
+        userId={userId}
+        entity={entity}
       />
     );
   }

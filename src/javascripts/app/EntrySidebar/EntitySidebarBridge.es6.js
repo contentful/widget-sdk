@@ -71,6 +71,10 @@ export default ({ $scope, emitter }) => {
     const notifyUpdate = update => {
       emitter.emit(SidebarEventTypes.UPDATED_PUBLICATION_WIDGET, {
         ...update,
+        entity: { ...$scope.editorData.entity.data },
+        spaceId: spaceContext.space.getId(),
+        environmentId: spaceContext.getEnvironmentId(),
+        userId: spaceContext.user.sys.id,
         commands: {
           primary: $scope.state.primary,
           secondary: $scope.state.secondary,
@@ -105,31 +109,6 @@ export default ({ $scope, emitter }) => {
           });
         }, 1000);
       }
-    });
-  });
-
-  const initializeScheduleWidget = once(() => {
-    const notifyUpdate = update => {
-      emitter.emit(SidebarEventTypes.UPDATED_JOBS_WIDGET, {
-        ...update,
-        entityInfo: { ...$scope.entityInfo },
-        entity: { ...$scope.editorData.entity.data },
-        spaceId: spaceContext.space.getId(),
-        environmentId: spaceContext.getEnvironmentId(),
-        userId: spaceContext.user.sys.id
-      });
-    };
-
-    notifyUpdate({
-      status: $scope.state.current,
-      updatedAt: K.getValue($scope.otDoc.sysProperty).updatedAt
-    });
-
-    K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
-      notifyUpdate({
-        status: $scope.state.current,
-        updatedAt: sys.updatedAt
-      });
     });
   });
 
@@ -242,9 +221,6 @@ export default ({ $scope, emitter }) => {
         break;
       case SidebarWidgetTypes.PUBLICATION:
         initializePublication();
-        break;
-      case SidebarWidgetTypes.JOBS:
-        initializeScheduleWidget();
         break;
       case SidebarWidgetTypes.TASKS:
         initializeTasksWidget();

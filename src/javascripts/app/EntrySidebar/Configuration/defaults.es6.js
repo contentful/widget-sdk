@@ -10,13 +10,6 @@ export const Publication = {
   description: 'Built-in - View entry status, publish, etc.'
 };
 
-export const Jobs = {
-  widgetId: SidebarWidgetTypes.JOBS,
-  widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
-  name: 'Scheduled Publishing & Status',
-  description: 'Built-in - View entry status, schedule publish, etc.'
-};
-
 export const Tasks = {
   widgetId: SidebarWidgetTypes.TASKS,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
@@ -70,7 +63,6 @@ export const EntryActivity = {
 
 export const defaultWidgetsMap = {
   [Publication.widgetId]: Publication,
-  [Jobs.widgetId]: Jobs,
   [Tasks.widgetId]: Tasks,
   [ContentPreview.widgetId]: ContentPreview,
   [Links.widgetId]: Links,
@@ -82,7 +74,6 @@ export const defaultWidgetsMap = {
 
 export const EntryConfiguration = [
   Publication,
-  Jobs,
   Tasks,
   ContentPreview,
   Links,
@@ -96,8 +87,6 @@ export const AssetConfiguration = [Publication, Links, Translation, Users];
 
 const availabilityMap = {
   [Publication.widgetId]: true,
-  [Jobs.widgetId]: () =>
-    getCurrentVariation(FeatureFlagKey.JOBS).then(variation => Boolean(variation)),
   [Tasks.widgetId]: () =>
     getCurrentVariation(FeatureFlagKey.TASKS).then(variation => Boolean(variation)),
   [ContentPreview.widgetId]: true,

@@ -11,6 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
+import { JobsWidgetContainer } from 'app/jobs/index.es6';
 
 const PublicationStatus = ({ status }) => (
   <div className="entity-sidebar__state">
@@ -58,7 +59,12 @@ export default class PublicationWidget extends React.PureComponent {
     updatedAt: PropTypes.string,
     revert: CommandPropType,
     primary: CommandPropType,
-    secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired
+    secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
+
+    spaceId: PropTypes.string,
+    environmentId: PropTypes.string,
+    userId: PropTypes.string,
+    entity: PropTypes.object
   };
 
   state = {
@@ -66,7 +72,18 @@ export default class PublicationWidget extends React.PureComponent {
   };
 
   render() {
-    const { primary, status, secondary, isSaving, updatedAt, revert } = this.props;
+    const {
+      primary,
+      status,
+      secondary,
+      isSaving,
+      updatedAt,
+      revert,
+      spaceId,
+      environmentId,
+      userId,
+      entity
+    } = this.props;
     const secondaryActionsDisabled = every(secondary || [], action => action.isDisabled());
     return (
       <EntrySidebarWidget title="Status">
@@ -151,6 +168,12 @@ export default class PublicationWidget extends React.PureComponent {
             </button>
           )}
         </div>
+        <JobsWidgetContainer
+          spaceId={spaceId}
+          environmentId={environmentId}
+          userId={userId}
+          entity={entity}
+        />
       </EntrySidebarWidget>
     );
   }
