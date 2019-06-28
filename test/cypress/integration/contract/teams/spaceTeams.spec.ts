@@ -179,8 +179,9 @@ describe('Teams in space page', () => {
 
     it('renders the table with 3 rows', () => {
       cy.getByTestId('membership-table').should('be.visible');
-      cy.queryAllByTestId('membership-row').as('rows');
+      cy.getAllByTestId('membership-row').as('rows');
 
+      cy.get('@rows').should('have.length', 3);
       cy.get('@rows').then(
         (rows) => {
           cy.wrap(rows[0]).as('row0');
