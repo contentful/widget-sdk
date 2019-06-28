@@ -23,6 +23,8 @@ describe('JobWidget', () => {
       spaceId: 'spaceId',
       environmentId: 'enviromentId',
       userId: 'userId',
+      isSaving: false,
+      secondary: [],
       entity
     };
 

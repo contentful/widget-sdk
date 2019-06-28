@@ -84,6 +84,7 @@ export default class PublicationWidget extends React.PureComponent {
       canSchedule && (
         <DropdownListItem
           className={styles.scheduleListItem}
+          testId="schedule-publication"
           onClick={() => {
             this.props.onScheduledPublishClick();
             this.setState({ isOpenDropdown: false });
