@@ -22,6 +22,38 @@ import { uniq, get, identity, omit } from 'lodash';
 // rendered. Management views (managing `Extension`
 // entities) should be done with a client that always
 // does HTTP.
+const isBasedOnExtensionDefinition = extension =>
+  get(extension, ['extensionDefinition', 'sys', 'linkType']) === 'ExtensionDefinition';
+
+const getExtensionDefinitionUUID = extension =>
+  get(extension, ['extensionDefinition', 'sys', 'uuid']);
+
+const mergeExtensionsAndDefinitions = (extensions, definitions) => {
+  return extensions
+    .map(extension => {
+      const definitionId = getExtensionDefinitionUUID(extension);
+
+      if (definitionId) {
+        const definition = definitions.find(
+          definition => get(definition, ['sys', 'uuid']) === definitionId
+        );
+
+        if (definition) {
+          return {
+            ...extension,
+            extension: omit(definition, ['sys'])
+          };
+        }
+
+        // Dropping the extension
+        return null;
+      }
+
+      return extension;
+    })
+    .filter(identity);
+};
+
 export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
   const loadExtensionDefinitions = async uuids => {
     if (!Array.isArray(uuids) || uuids.length < 1) {
@@ -37,38 +69,6 @@ export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
     });
 
     return definitionResult.items || [];
-  };
-
-  const isBasedOnExtensionDefinition = extension =>
-    get(extension, ['extensionDefinition', 'linkType']) === 'ExtensionDefinition';
-
-  const getExtensionDefinitionUUID = extension => get(extension, ['extensionDefinition', 'uuid']);
-
-  const mergeExtensionsAndDefinitions = (extensions, definitions) => {
-    return extensions
-      .map(extension => {
-        const definitionId = getExtensionDefinitionUUID(extension);
-
-        if (definitionId) {
-          const definition = definitions.find(
-            definition => get(definition, ['sys', 'uuid']) === definitionId
-          );
-
-          if (definition) {
-            return {
-              ...extension,
-              extension: omit(definition, ['sys'])
-            };
-          }
-
-          // So what are we going to do about this then?
-          // Dropping the extension for now
-          return null;
-        }
-
-        return extension;
-      })
-      .filter(identity);
   };
 
   const resolveExtensionDefinitions = async extensions => {

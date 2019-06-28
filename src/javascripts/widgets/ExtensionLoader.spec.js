@@ -13,8 +13,11 @@ const makeExtensionWithDefinition = (id, uuid) => ({
     id
   },
   extensionDefinition: {
-    linkType: 'ExtensionDefinition',
-    uuid
+    sys: {
+      type: 'Link',
+      linkType: 'ExtensionDefinition',
+      uuid
+    }
   }
 });
 
