@@ -171,6 +171,7 @@ export default function JobWidget({
               environmentId={environmentId}
               jobs={pendingJobs}
               onCancel={handleCancel}
+              isReadOnly={primary.isDisabled()}
             />
           )}
           {isDialogShown && (

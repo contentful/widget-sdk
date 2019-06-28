@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { every } from 'lodash';
+import { css } from 'emotion';
 import {
   Button,
   Dropdown,
@@ -9,6 +10,7 @@ import {
   DropdownListItem,
   Icon
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
 
 const PublicationStatus = ({ status }) => (
@@ -50,6 +52,16 @@ const CommandPropType = PropTypes.shape({
   inProgress: PropTypes.func.isRequired
 });
 
+const styles = {
+  scheduleListItem: css({
+    display: 'flex',
+    alignItems: 'center'
+  }),
+  scheduledIcon: css({
+    marginRight: tokens.spacing2Xs
+  })
+};
+
 export default class PublicationWidget extends React.PureComponent {
   static propTypes = {
     status: PropTypes.string.isRequired,
@@ -68,8 +80,13 @@ export default class PublicationWidget extends React.PureComponent {
 
   renderScheduledPublicationCta = () =>
     status !== 'archived' && (
-      <DropdownListItem onClick={this.props.onScheduledPublishClick}>
-        Schedule publication
+      <DropdownListItem
+        className={styles.scheduleListItem}
+        onClick={this.props.onScheduledPublishClick}>
+        <div className={styles.scheduleListItem}>
+          <Icon icon="Clock" color="muted" className={styles.scheduledIcon} />
+          Schedule publication
+        </div>
       </DropdownListItem>
     );
 

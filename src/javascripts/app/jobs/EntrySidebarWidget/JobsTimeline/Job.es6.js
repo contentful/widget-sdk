@@ -39,7 +39,7 @@ class Job extends Component {
   };
 
   render() {
-    const { scheduledAt, action, id, onCancel } = this.props;
+    const { scheduledAt, action, id, onCancel, isReadOnly } = this.props;
     return (
       <Card className={styles.schedule}>
         <div className={styles.scheduleHeader}>
@@ -50,36 +50,41 @@ class Job extends Component {
             testId="scheduled-item">
             {action}
           </Tag>
-          <Dropdown
-            isOpen={this.state.isDropdownOpen}
-            onClose={() => this.setState({ isDropdownOpen: false })}
-            toggleElement={
-              <Button
-                className={styles.scheduleDropdownToggle}
-                buttonType="naked"
-                data-test-id="cancel-job-ddl"
-                icon="MoreHorizontal"
-                onClick={() => this.setState({ isDropdownOpen: !this.state.isDropdownOpen })}
-              />
-            }>
-            <DropdownList>
-              <DropdownListItem testId="cancel-job" onClick={this.toggleCancelDialog}>
-                Cancel Schedule
-              </DropdownListItem>
-            </DropdownList>
-          </Dropdown>
+          {!isReadOnly && (
+            <>
+              <Dropdown
+                isOpen={this.state.isDropdownOpen}
+                onClose={() => this.setState({ isDropdownOpen: false })}
+                toggleElement={
+                  <Button
+                    className={styles.scheduleDropdownToggle}
+                    buttonType="naked"
+                    data-test-id="cancel-job-ddl"
+                    icon="MoreHorizontal"
+                    onClick={() => this.setState({ isDropdownOpen: !this.state.isDropdownOpen })}
+                  />
+                }>
+                <DropdownList>
+                  <DropdownListItem testId="cancel-job" onClick={this.toggleCancelDialog}>
+                    Cancel Schedule
+                  </DropdownListItem>
+                </DropdownList>
+              </Dropdown>
+
+              <CancellationModal
+                isShown={this.state.isCancellationDialogOpen}
+                onClose={this.toggleCancelDialog}
+                onConfirm={() => {
+                  this.toggleCancelDialog();
+                  onCancel(id);
+                }}>
+                This entry is scheduled to {action} on {FormattedTime(scheduledAt)}. <br />
+                Are you sure you want to cancel?
+              </CancellationModal>
+            </>
+          )}
         </div>
         <span className={styles.date}>{FormattedTime(scheduledAt)}</span>
-        <CancellationModal
-          isShown={this.state.isCancellationDialogOpen}
-          onClose={this.toggleCancelDialog}
-          onConfirm={() => {
-            this.toggleCancelDialog();
-            onCancel(id);
-          }}>
-          This entry is scheduled to {action} on {FormattedTime(scheduledAt)}. <br />
-          Are you sure you want to cancel?
-        </CancellationModal>
       </Card>
     );
   }
@@ -90,7 +95,8 @@ export const propTypes = {
   action: PropTypes.string.isRequired,
   status: PropTypes.oneOf(['pending', 'cancelled', 'success', 'error']),
   id: PropTypes.string.isRequired,
-  onCancel: PropTypes.func.isRequired
+  onCancel: PropTypes.func.isRequired,
+  isReadOnly: PropTypes.func.isRequired
 };
 Job.propTypes = propTypes;
 

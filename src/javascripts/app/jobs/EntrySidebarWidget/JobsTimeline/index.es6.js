@@ -6,7 +6,7 @@ import { TextLink } from '@contentful/forma-36-react-components';
 
 import { JobsStateLink } from 'app/jobs/JobsPageLink.es6';
 
-const JobsTimeline = ({ environmentId, jobs, onCancel }) => (
+const JobsTimeline = ({ environmentId, jobs, onCancel, isReadOnly }) => (
   <div>
     <header className="entity-sidebar__header">
       <h2 className="entity-sidebar__heading">Schedule</h2>
@@ -20,6 +20,7 @@ const JobsTimeline = ({ environmentId, jobs, onCancel }) => (
           scheduledAt={job.scheduledAt}
           status={job.status}
           onCancel={onCancel}
+          isReadOnly={isReadOnly}
         />
       ))}
     </ul>
@@ -36,7 +37,8 @@ const JobsTimeline = ({ environmentId, jobs, onCancel }) => (
 JobsTimeline.propTypes = {
   jobs: PropTypes.array.isRequired,
   onCancel: PropTypes.func.isRequired,
-  environmentId: PropTypes.string.isRequired
+  environmentId: PropTypes.string.isRequired,
+  isReadOnly: PropTypes.bool.isRequired
 };
 
 export default JobsTimeline;
