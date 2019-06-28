@@ -1,9 +1,7 @@
-import { getModule } from 'NgRegistry.es6';
 import { get, uniq } from 'lodash';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
 import { toInternalFieldType } from './FieldTypes.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
-const spaceContext = getModule('spaceContext');
 
 export function getBuiltinsOnly() {
   return {
@@ -11,8 +9,8 @@ export function getBuiltinsOnly() {
   };
 }
 
-export async function getForContentTypeManagement() {
-  const extensions = await spaceContext.extensionLoader.getAllExtensions();
+export async function getForContentTypeManagement(extensionLoader) {
+  const extensions = await extensionLoader.getAllExtensions();
 
   return {
     [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),
@@ -20,7 +18,7 @@ export async function getForContentTypeManagement() {
   };
 }
 
-export async function getForEditor(editorInterface = {}) {
+export async function getForEditor(extensionLoader, editorInterface = {}) {
   const editorExtensionIds = (editorInterface.controls || [])
     .filter(control => {
       // Due to backwards compatibility `widgetNamespace` is not
@@ -47,7 +45,7 @@ export async function getForEditor(editorInterface = {}) {
     extensionIds.push(editorInterface.editor.widgetId);
   }
 
-  const extensions = await spaceContext.extensionLoader.getExtensionsById(uniq(extensionIds));
+  const extensions = await extensionLoader.getExtensionsById(uniq(extensionIds));
 
   return {
     [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),

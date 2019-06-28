@@ -6,21 +6,20 @@ import {
   NAMESPACE_SIDEBAR_BUILTIN
 } from './WidgetNamespaces.es6';
 
-import * as spaceContextMocked from 'ng/spaceContext';
-
 jest.mock('./BuiltinWidgets.es6', () => ({
   create: () => []
 }));
 
 describe('WidgetStore', () => {
-  const loaderMock = spaceContextMocked.extensionLoader;
+  let loaderMock;
 
   beforeEach(() => {
-    Object.keys(spaceContextMocked.extensionLoader).forEach(key => {
-      if (spaceContextMocked.extensionLoader[key].mock) {
-        spaceContextMocked.extensionLoader[key] = jest.fn();
-      }
-    });
+    loaderMock = {
+      cacheExtension: jest.fn(),
+      evictExtension: jest.fn(),
+      getAllExtensions: jest.fn(),
+      getExtensionsById: jest.fn()
+    };
   });
 
   describe('#getBuiltinsOnly()', () => {
@@ -37,7 +36,7 @@ describe('WidgetStore', () => {
     it('returns an object of all widget namespaces', async () => {
       loaderMock.getAllExtensions.mockImplementationOnce(() => []);
 
-      const widgets = await WidgetStore.getForContentTypeManagement();
+      const widgets = await WidgetStore.getForContentTypeManagement(loaderMock);
 
       expect(loaderMock.getAllExtensions).toHaveBeenCalledWith();
       expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
@@ -64,7 +63,7 @@ describe('WidgetStore', () => {
 
       loaderMock.getAllExtensions.mockImplementationOnce(() => [entity]);
 
-      const widgets = await WidgetStore.getForContentTypeManagement();
+      const widgets = await WidgetStore.getForContentTypeManagement(loaderMock);
       const [extension] = widgets[NAMESPACE_EXTENSION];
 
       expect(loaderMock.getAllExtensions).toHaveBeenCalledWith();
@@ -84,7 +83,7 @@ describe('WidgetStore', () => {
     it('handles lack of editor interface', async () => {
       loaderMock.getExtensionsById.mockImplementationOnce(() => []);
 
-      const widgets = await WidgetStore.getForEditor();
+      const widgets = await WidgetStore.getForEditor(loaderMock);
 
       expect(loaderMock.getExtensionsById).toHaveBeenCalledWith([]);
       expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
@@ -93,7 +92,7 @@ describe('WidgetStore', () => {
     it('does not load extensions when only builtins are used', async () => {
       loaderMock.getExtensionsById.mockImplementationOnce(() => []);
 
-      const widgets = await WidgetStore.getForEditor({
+      const widgets = await WidgetStore.getForEditor(loaderMock, {
         controls: [{ widgetId: 'singleLine', widgetNamespace: NAMESPACE_BUILTIN }],
         sidebar: [{ widgetId: 'publish-widget', widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN }]
       });
@@ -105,7 +104,7 @@ describe('WidgetStore', () => {
     it('loads extensions if needed', async () => {
       loaderMock.getExtensionsById.mockImplementationOnce(() => []);
 
-      await WidgetStore.getForEditor({
+      await WidgetStore.getForEditor(loaderMock, {
         controls: [
           { widgetId: 'singleLine', widgetNamespace: NAMESPACE_BUILTIN },
           { widgetId: 'singleLine' },

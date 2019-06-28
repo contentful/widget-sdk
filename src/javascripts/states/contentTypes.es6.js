@@ -43,8 +43,9 @@ const sidebarConfiguration = {
 
 const widgetResolvers = {
   widgets: [
-    () => {
-      return WidgetStore.getForContentTypeManagement();
+    'spaceContext',
+    spaceContext => {
+      return WidgetStore.getForContentTypeManagement(spaceContext.extensionLoader);
     }
   ],
   editorInterface: [
