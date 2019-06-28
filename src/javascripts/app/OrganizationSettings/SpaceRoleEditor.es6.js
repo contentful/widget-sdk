@@ -1,15 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { without, truncate } from 'lodash';
-import { SpaceRole as SpaceRoleProp } from 'app/OrganizationSettings/PropTypes.es6';
+import { css } from 'emotion';
 import {
   Button,
   CheckboxField,
+  Checkbox,
   Dropdown,
   DropdownList,
   DropdownListItem
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+
+import { SpaceRole as SpaceRoleProp } from 'app/OrganizationSettings/PropTypes.es6';
 import { ADMIN_ROLE, ADMIN_ROLE_ID } from 'access_control/constants.es6';
+
+const styles = {
+  adminListItem: css({
+    display: 'grid',
+    gridTemplateColumns: 'min-content 10rem',
+    gridColumnGap: '4px',
+    alignItems: 'center',
+    color: tokens.colorTextDark
+  }),
+  adminSubtitle: css({
+    color: tokens.colorTextLight,
+    gridColumnStart: 2,
+    maxWidth: '200px',
+    whiteSpace: 'normal'
+  })
+};
 
 class SpaceRoleEditor extends React.Component {
   static propTypes = {
@@ -32,13 +52,15 @@ class SpaceRoleEditor extends React.Component {
     this.props.onChange([ADMIN_ROLE_ID]);
   };
 
-  setRole = roleId => ({ target: { checked } }) => {
+  toggleRole = roleId => event => {
+    event.stopPropagation();
     const isAdmin = roleId === ADMIN_ROLE_ID;
+    const checked = this.props.value.includes(roleId);
 
     if (checked) {
-      isAdmin ? this.setAdmin() : this.addRole(roleId);
-    } else {
       this.removeRole(roleId);
+    } else {
+      isAdmin ? this.setAdmin() : this.addRole(roleId);
     }
   };
 
@@ -86,26 +108,38 @@ class SpaceRoleEditor extends React.Component {
           </Button>
         }>
         <DropdownList maxHeight={300}>
-          <DropdownListItem>
-            <CheckboxField
-              testId="space-role-editor.admin-option"
-              labelIsLight
-              labelText={ADMIN_ROLE.name}
-              checked={isAdmin}
-              onChange={this.setRole(ADMIN_ROLE_ID)}
-              id={ADMIN_ROLE_ID}
-            />
+          <DropdownListItem onClick={this.toggleRole(ADMIN_ROLE_ID)}>
+            <div className={styles.adminListItem}>
+              <Checkbox
+                testId="space-role-editor.admin-option"
+                labelText={ADMIN_ROLE.name}
+                checked={isAdmin}
+                onChange={this.toggleRole(ADMIN_ROLE_ID)}
+                onClick={event => {
+                  event.stopPropagation();
+                }}
+                id={ADMIN_ROLE_ID}
+              />
+              <div>{ADMIN_ROLE.name}</div>
+              <div className={styles.adminSubtitle}>Can manage everything in the space</div>
+            </div>
           </DropdownListItem>
-          {options.map(option => (
-            <DropdownListItem key={option.sys.id}>
+        </DropdownList>
+        <DropdownList border="top">
+          <DropdownListItem isTitle={true}>other roles</DropdownListItem>
+          {options.map(({ name, sys: { id } }) => (
+            <DropdownListItem key={id} onClick={this.toggleRole(id)}>
               <CheckboxField
                 testId="space-role-editor.role-option"
                 labelIsLight
-                labelText={option.name}
-                checked={value.includes(option.sys.id)}
-                value={option.sys.id}
-                onChange={this.setRole(option.sys.id)}
-                id={option.sys.id}
+                labelText={name}
+                checked={value.includes(id)}
+                value={id}
+                onChange={this.toggleRole(id)}
+                onClick={event => {
+                  event.stopPropagation();
+                }}
+                id={id}
               />
             </DropdownListItem>
           ))}
