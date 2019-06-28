@@ -9,7 +9,6 @@ import {
   DropdownListItem,
   Icon
 } from '@contentful/forma-36-react-components';
-import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
 
 const PublicationStatus = ({ status }) => (
@@ -59,22 +58,29 @@ export default class PublicationWidget extends React.PureComponent {
     revert: CommandPropType,
     primary: CommandPropType,
     secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
-
-    spaceId: PropTypes.string,
-    environmentId: PropTypes.string,
-    userId: PropTypes.string,
-    entity: PropTypes.object
+    onScheduledPublishClick: PropTypes.func.isRequired,
+    isDisabled: PropTypes.bool.isRequired
   };
 
   state = {
     isOpenDropdown: false
   };
 
+  renderScheduledPublicationCta = () =>
+    status !== 'archived' && (
+      <DropdownListItem onClick={this.props.onScheduledPublishClick}>
+        Schedule publication
+      </DropdownListItem>
+    );
+
   render() {
-    const { primary, status, secondary, isSaving, updatedAt, revert } = this.props;
+    const { primary, status, secondary, isSaving, updatedAt, revert, isDisabled } = this.props;
     const secondaryActionsDisabled = every(secondary || [], action => action.isDisabled());
     return (
-      <EntrySidebarWidget title="Status">
+      <div>
+        <header className="entity-sidebar__header">
+          <h2 className="entity-sidebar__heading">Status</h2>
+        </header>
         <PublicationStatus status={status} />
         <div className="entity-sidebar__state-select">
           <div className="publish-buttons-row">
@@ -83,7 +89,7 @@ export default class PublicationWidget extends React.PureComponent {
                 <Button
                   isFullWidth
                   buttonType="positive"
-                  disabled={primary.isDisabled()}
+                  disabled={primary.isDisabled() || isDisabled}
                   loading={primary.inProgress()}
                   testId={`change-state-${primary.targetStateId}`}
                   onClick={() => {
@@ -105,7 +111,7 @@ export default class PublicationWidget extends React.PureComponent {
                 <Button
                   className="secondary-publish-button"
                   isFullWidth
-                  disabled={secondaryActionsDisabled}
+                  disabled={isDisabled || secondaryActionsDisabled}
                   testId="change-state-menu-trigger"
                   buttonType="positive"
                   indicateDropdown
@@ -129,6 +135,7 @@ export default class PublicationWidget extends React.PureComponent {
                       {action.label}
                     </DropdownListItem>
                   ))}
+                {this.renderScheduledPublicationCta()}
               </DropdownList>
             </Dropdown>
           </div>
@@ -156,7 +163,7 @@ export default class PublicationWidget extends React.PureComponent {
             </button>
           )}
         </div>
-      </EntrySidebarWidget>
+      </div>
     );
   }
 }

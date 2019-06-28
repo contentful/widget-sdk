@@ -1,9 +1,8 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
 import moment from 'moment';
 
-import tokens from '@contentful/forma-36-tokens';
+import ErrorHandler from 'components/shared/ErrorHandlerComponent.es6';
 
 import {
   SkeletonContainer,
@@ -12,6 +11,8 @@ import {
   TextLink,
   Notification
 } from '@contentful/forma-36-react-components';
+import StatusButton from './StatusButton.es6';
+import JobDialog from './JobDialog/index.es6';
 
 import * as EndpointFactory from 'data/EndpointFactory.es6';
 
@@ -21,27 +22,8 @@ import usePrevious from 'app/common/hooks/usePrevious.es6';
 import JobsTimeline from './JobsTimeline/index.es6';
 
 import * as JobsService from '../DataManagement/JobsService.es6';
-import NewJob from './NewJob.es6';
 import { create as createDto } from './JobsFactory.es6';
 import FailedScheduleNote from './FailedScheduleNote/index.es6';
-
-const styles = {
-  root: css({
-    paddingTop: tokens.spacingM
-  }),
-  skeleton: css({}),
-  heading: css({
-    fontSize: tokens.fontSizeS,
-    fontWeight: tokens.fontWeightNormal,
-    textTransform: 'uppercase',
-    color: tokens.colorTextLight,
-    borderBottom: `1px solid ${tokens.colorElementDark}`,
-    marginBottom: tokens.spacingM,
-    marginTop: tokens.spacingM,
-    lineHeight: tokens.lineHeightDefault,
-    letterSpacing: tokens.letterSpacingWide
-  })
-};
 
 function shouldShowErrorNote(lastJob, entity) {
   if (!lastJob) {
@@ -85,8 +67,20 @@ function getPublishedAt(entity) {
   }
 }
 
-export default function JobWidget({ spaceId, environmentId, userId, entity }) {
+export default function JobWidget({
+  spaceId,
+  environmentId,
+  userId,
+  entity,
+  status,
+  primary,
+  secondary,
+  revert,
+  isSaving,
+  updatedAt
+}) {
   const [jobs, setJobs] = useState([]);
+  const [isDialogShown, setIsDialogShown] = useState(false);
   const publishedAt = getPublishedAt(entity);
   const [{ isLoading, error }, runAsync] = useAsyncFn(
     useCallback(async () => {
@@ -147,7 +141,7 @@ export default function JobWidget({ spaceId, environmentId, userId, entity }) {
   }, [showToast]);
 
   return (
-    <div className={styles.root}>
+    <ErrorHandler>
       {isLoading && (
         <SkeletonContainer data-test-id="jobs-skeleton">
           <SkeletonBodyText numberOfLines={2} />
@@ -161,26 +155,59 @@ export default function JobWidget({ spaceId, environmentId, userId, entity }) {
       )}
       {!isLoading && !error && (
         <>
-          <div className={styles.heading}>Schedule</div>
+          <StatusButton
+            status={status}
+            primary={primary}
+            secondary={secondary}
+            revert={revert}
+            isSaving={isSaving}
+            updatedAt={updatedAt}
+            onScheduledPublishClick={() => setIsDialogShown(true)}
+            isDisabled={hasScheduledActions}
+          />
           {shouldShowErrorNote(lastJob, entity) && <FailedScheduleNote job={lastJob} />}
-          {hasScheduledActions ? (
+          {hasScheduledActions && (
             <JobsTimeline
               environmentId={environmentId}
               jobs={pendingJobs}
               onCancel={handleCancel}
             />
-          ) : (
-            <NewJob onCreate={handleCreate} />
+          )}
+          {isDialogShown && (
+            <JobDialog
+              onCreate={newJob => {
+                handleCreate(newJob);
+                setIsDialogShown(false);
+              }}
+              onCancel={() => {
+                setIsDialogShown(false);
+              }}
+            />
           )}
         </>
       )}
-    </div>
+    </ErrorHandler>
   );
 }
+
+const CommandPropType = PropTypes.shape({
+  label: PropTypes.string,
+  targetStateId: PropTypes.string,
+  execute: PropTypes.func.isRequired,
+  isAvailable: PropTypes.func.isRequired,
+  isDisabled: PropTypes.func.isRequired,
+  inProgress: PropTypes.func.isRequired
+});
 
 JobWidget.propTypes = {
   spaceId: PropTypes.string.isRequired,
   environmentId: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,
-  entity: PropTypes.object.isRequired
+  entity: PropTypes.object.isRequired,
+  status: PropTypes.string,
+  isSaving: PropTypes.bool.isRequired,
+  updatedAt: PropTypes.string,
+  revert: CommandPropType,
+  primary: CommandPropType,
+  secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired
 };

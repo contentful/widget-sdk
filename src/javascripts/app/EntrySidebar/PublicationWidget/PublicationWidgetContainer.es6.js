@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes.es6';
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
 import PublicationWidget from './PublicationWidget.es6';
+import { JobsWidget } from 'app/jobs/index.es6';
+import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
+import * as FeatureFlagKey from 'featureFlags.es6';
 
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
@@ -49,18 +52,33 @@ export default class PublicationWidgetContainer extends Component {
     const secondary = get(commands, 'secondary', []);
 
     return (
-      <PublicationWidget
-        status={this.state.status}
-        primary={primary}
-        secondary={secondary}
-        revert={revert}
-        isSaving={this.state.isSaving}
-        updatedAt={this.state.updatedAt}
-        spaceId={spaceId}
-        environmentId={environmentId}
-        userId={userId}
-        entity={entity}
-      />
+      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
+        {({ currentVariation }) => {
+          return currentVariation ? (
+            <JobsWidget
+              spaceId={spaceId}
+              environmentId={environmentId}
+              userId={userId}
+              entity={entity}
+              status={this.state.status}
+              primary={primary}
+              secondary={secondary}
+              revert={revert}
+              isSaving={this.state.isSaving}
+              updatedAt={this.state.updatedAt}
+            />
+          ) : (
+            <PublicationWidget
+              status={this.state.status}
+              primary={primary}
+              secondary={secondary}
+              revert={revert}
+              isSaving={this.state.isSaving}
+              updatedAt={this.state.updatedAt}
+            />
+          );
+        }}
+      </BooleanFeatureFlag>
     );
   }
 }

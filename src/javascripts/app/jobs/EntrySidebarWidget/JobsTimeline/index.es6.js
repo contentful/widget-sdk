@@ -8,6 +8,9 @@ import { JobsStateLink } from 'app/jobs/JobsPageLink.es6';
 
 const JobsTimeline = ({ environmentId, jobs, onCancel }) => (
   <div>
+    <header className="entity-sidebar__header">
+      <h2 className="entity-sidebar__heading">Schedule</h2>
+    </header>
     <ul>
       {jobs.map(job => (
         <Job
