@@ -96,7 +96,7 @@ export const propTypes = {
   status: PropTypes.oneOf(['pending', 'cancelled', 'success', 'error']),
   id: PropTypes.string.isRequired,
   onCancel: PropTypes.func.isRequired,
-  isReadOnly: PropTypes.func.isRequired
+  isReadOnly: PropTypes.bool.isRequired
 };
 Job.propTypes = propTypes;
 

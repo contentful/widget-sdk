@@ -78,17 +78,24 @@ export default class PublicationWidget extends React.PureComponent {
     isOpenDropdown: false
   };
 
-  renderScheduledPublicationCta = () =>
-    status !== 'archived' && (
-      <DropdownListItem
-        className={styles.scheduleListItem}
-        onClick={this.props.onScheduledPublishClick}>
-        <div className={styles.scheduleListItem}>
-          <Icon icon="Clock" color="muted" className={styles.scheduledIcon} />
-          Schedule publication
-        </div>
-      </DropdownListItem>
+  renderScheduledPublicationCta = () => {
+    const canSchedule = this.props.status === 'draft' || this.props.status === 'changes';
+    return (
+      canSchedule && (
+        <DropdownListItem
+          className={styles.scheduleListItem}
+          onClick={() => {
+            this.props.onScheduledPublishClick();
+            this.setState({ isOpenDropdown: false });
+          }}>
+          <div className={styles.scheduleListItem}>
+            <Icon icon="Clock" color="muted" className={styles.scheduledIcon} />
+            Schedule publication
+          </div>
+        </DropdownListItem>
+      )
     );
+  };
 
   render() {
     const { primary, status, secondary, isSaving, updatedAt, revert, isDisabled } = this.props;
