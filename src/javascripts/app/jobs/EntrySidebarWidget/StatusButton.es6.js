@@ -79,7 +79,13 @@ export default class PublicationWidget extends React.PureComponent {
   };
 
   renderScheduledPublicationCta = () => {
+    if (this.props.primary.targetStateId === 'published') {
+      if (this.props.primary.isDisabled()) {
+        return null;
+      }
+    }
     const canSchedule = this.props.status === 'draft' || this.props.status === 'changes';
+
     return (
       canSchedule && (
         <DropdownListItem

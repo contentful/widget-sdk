@@ -18,8 +18,8 @@ describe('JobWidget', () => {
     jest.clearAllMocks();
   });
 
-  const build = ({ entity = createEntry() } = {}) => {
-    const props = {
+  const build = props => {
+    const resultProps = {
       spaceId: 'spaceId',
       environmentId: 'enviromentId',
       userId: 'userId',
@@ -54,18 +54,19 @@ describe('JobWidget', () => {
           isRestricted: () => {}
         }
       ],
-      entity
+      entity: createEntry(),
+      ...props
     };
 
-    return [render(<JobWidget {...props} />), props];
+    return [render(<JobWidget {...resultProps} />), resultProps];
   };
 
-  it('renders scheduling widget', async () => {
+  it.each([['draft'], ['changes']])('renders scheduling widget for %p status', async status => {
     getJobs.mockResolvedValueOnce({ items: [] });
-    const [renderResult] = build();
+    const [renderResult] = build({ entity: createEntry(), status });
 
     expect(renderResult.getByTestId('jobs-skeleton')).toBeInTheDocument();
-    expect(renderResult.queryByTestId('change-state-published')).toBeNull();
+    expect(renderResult.queryByTestId('change-state-menu-trigger')).toBeNull();
     expect(getJobs).toHaveBeenCalledWith(expect.any(Function), {
       order: '-sys.scheduledAt',
       'sys.entity.sys.id': defaultEntryId()
@@ -75,6 +76,61 @@ describe('JobWidget', () => {
     expect(renderResult.queryByTestId('jobs-skeleton')).toBeNull();
     fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
     expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
+    expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
+  });
+
+  it.each([['published'], ['archived']])(
+    'does not render scheduled publish cta for %p status',
+    async status => {
+      getJobs.mockResolvedValueOnce({ items: [] });
+      const [renderResult] = build({ entity: createEntry(), status });
+
+      expect(renderResult.queryByTestId('change-state-menu-trigger')).toBeNull();
+      expect(getJobs).toHaveBeenCalledWith(expect.any(Function), {
+        order: '-sys.scheduledAt',
+        'sys.entity.sys.id': defaultEntryId()
+      });
+
+      await wait();
+      fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
+      expect(renderResult.queryByTestId('schedule-publication')).toBeNull();
+      expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
+    }
+  );
+
+  it('disables the status button when there is an active job', async () => {
+    getJobs.mockResolvedValueOnce({ items: [createPendingJob()] });
+    const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
+    const [renderResult] = build({ entity: publishedEntry });
+    await wait();
+    expect(renderResult.getByTestId('change-state-menu-trigger')).toBeDisabled();
+    expect(renderResult.getByTestId('change-state-published')).toBeDisabled();
+  });
+
+  it('does not render scheduled publication cta if primary action is not allowed', async () => {
+    getJobs.mockResolvedValueOnce({ items: [] });
+    const [renderResult] = build({
+      entity: createEntry(),
+      primary: {
+        label: 'Publish',
+        targetStateId: 'published',
+        execute: () => {},
+        isAvailable: () => {},
+        isDisabled: () => true,
+        inProgress: () => {},
+        isRestricted: () => {}
+      }
+    });
+
+    expect(renderResult.queryByTestId('change-state-menu-trigger')).toBeNull();
+    expect(getJobs).toHaveBeenCalledWith(expect.any(Function), {
+      order: '-sys.scheduledAt',
+      'sys.entity.sys.id': defaultEntryId()
+    });
+
+    await wait();
+    fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
+    expect(renderResult.queryByTestId('schedule-publication')).toBeNull();
     expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
   });
 
