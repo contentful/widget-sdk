@@ -177,29 +177,26 @@ describe('Teams in space page', () => {
       );
     });
 
-    it('renders the table with 3 rows', () => {
+    it('renders the table with 3 teams', () => {
       cy.getByTestId('membership-table').should('be.visible');
-      cy.queryAllByTestId('membership-row').as('rows');
 
-      cy.get('@rows').then(
+      cy.getAllByTestId('membership-row').should('have.length', 3);
+      cy.getAllByTestId('membership-row').then(
         (rows) => {
-          cy.wrap(rows[0]).as('row0');
-          cy.get('@row0').should('be.visible');
-          cy.get('@row0').contains('td', '500 members').should('be.visible');
-          cy.get('@row0').contains('td', 'Team 1').should('be.visible');
-          cy.get('@row0').contains('td', 'Admin').should('be.visible');
+          cy.wrap(rows[0]).should('be.visible');
+          cy.wrap(rows[0]).contains('td', '500 members').should('be.visible');
+          cy.wrap(rows[0]).contains('td', 'Team 1').should('be.visible');
+          cy.wrap(rows[0]).contains('td', 'Admin').should('be.visible');
 
-          cy.wrap(rows[1]).as('row1');
-          cy.get('@row1').should('be.visible');
-          cy.get('@row1').contains('td', '0 members').should('be.visible');
-          cy.get('@row1').contains('td', 'Team 2').should('be.visible');
-          cy.get('@row1').contains('td', 'Role 1').should('be.visible');
+          cy.wrap(rows[1]).should('be.visible');
+          cy.wrap(rows[1]).contains('td', '0 members').should('be.visible');
+          cy.wrap(rows[1]).contains('td', 'Team 2').should('be.visible');
+          cy.wrap(rows[1]).contains('td', 'Role 1').should('be.visible');
 
-          cy.wrap(rows[2]).as('row2');
-          cy.get('@row2').should('be.visible');
-          cy.get('@row2').contains('td', '1 member').should('be.visible');
-          cy.get('@row2').contains('td', 'Team 3').should('be.visible');
-          cy.get('@row2').contains('td', 'Role 2 and Role 3').should('be.visible');
+          cy.wrap(rows[2]).should('be.visible');
+          cy.wrap(rows[2]).contains('td', '1 member').should('be.visible');
+          cy.wrap(rows[2]).contains('td', 'Team 3').should('be.visible');
+          cy.wrap(rows[2]).contains('td', 'Role 2 and Role 3').should('be.visible');
         }
       );
     });
