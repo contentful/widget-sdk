@@ -20,7 +20,7 @@ const contentType = require('../fixtures/responses/content-type.json');
 const query = {
   limit: '1000'
 };
-const сontentTypeWithCustomSidebarRequestBody = require('../fixtures/requests/content-type-with-custom-sidebar.json');
+const contentTypeWithCustomSidebarRequestBody = require('../fixtures/requests/content-type-with-custom-sidebar.json');
 const editorInterfaceWithCustomSidebarRequestBody = require('../fixtures/requests/editor-interface-with-custom-sidebar.json');
 const editorInterfaceWithCustomSidebarResponseBody = require('../fixtures/responses/editor-interface-with-custom-sidebar.json');
 
@@ -125,7 +125,7 @@ export function defaultContentTypeWithCustomSidebarCreatedResponse() {
     withRequest: putContentType(
       defaultContentTypeId,
       defaultSpaceId,
-      сontentTypeWithCustomSidebarRequestBody
+      contentTypeWithCustomSidebarRequestBody
     ),
     willRespondWith: {
       status: 200,
