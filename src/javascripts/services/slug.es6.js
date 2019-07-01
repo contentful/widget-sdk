@@ -46,15 +46,21 @@ function supportedLanguage(locale) {
  * is used as the symbol language. Otherwise, the symbol language
  * is english.
  * Slug suggestions are limited to 75 characters.
+ *
+ * @param {string} text To be turned into a slug.
+ * @param {string?} locale
+ * @returns {string} Slug for provided text.
  */
-export function slugify(text, locale) {
+export function slugify(text, locale = 'en') {
   return getSlug(text, {
     separator: '-',
     lang: supportedLanguage(locale) || 'en',
     truncate: 75,
     custom: {
       "'": '',
-      '`': ''
+      '`': '',
+      '’': '',
+      '‘': ''
     }
   });
 }
