@@ -108,7 +108,7 @@ export default class PublicationWidget extends React.PureComponent {
     const { primary, status, secondary, isSaving, updatedAt, revert, isDisabled } = this.props;
     const secondaryActionsDisabled = every(secondary || [], action => action.isDisabled());
     return (
-      <div>
+      <div data-test-id="status-widget">
         <header className="entity-sidebar__header">
           <h2 className="entity-sidebar__heading">Status</h2>
         </header>

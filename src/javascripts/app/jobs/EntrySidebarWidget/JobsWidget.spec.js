@@ -7,7 +7,7 @@ import JobWidget from './JobsWidget.es6';
 import { getJobs } from '../DataManagement/JobsService.es6';
 
 jest.mock('../DataManagement/JobsService.es6');
-describe('JobWidget', () => {
+describe('<JobWidget />', () => {
   beforeEach(() => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
@@ -61,42 +61,21 @@ describe('JobWidget', () => {
     return [render(<JobWidget {...resultProps} />), resultProps];
   };
 
-  it.each([['draft'], ['changes']])('renders scheduling widget for %p status', async status => {
+  it('renders skeleton before <StatusButton />', async () => {
     getJobs.mockResolvedValueOnce({ items: [] });
-    const [renderResult] = build({ entity: createEntry(), status });
+    const [renderResult] = build({ entity: createEntry() });
 
     expect(renderResult.getByTestId('jobs-skeleton')).toBeInTheDocument();
-    expect(renderResult.queryByTestId('change-state-menu-trigger')).toBeNull();
-    expect(getJobs).toHaveBeenCalledWith(expect.any(Function), {
-      order: '-sys.scheduledAt',
-      'sys.entity.sys.id': defaultEntryId()
-    });
+    expect(renderResult.queryByTestId('status-widget')).toBeNull();
+
+    expectJobsApiHaveBeenCalled(getJobs);
 
     await wait();
+
     expect(renderResult.queryByTestId('jobs-skeleton')).toBeNull();
-    fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
-    expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
+    expect(renderResult.getByTestId('status-widget')).toBeInTheDocument();
     expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
   });
-
-  it.each([['published'], ['archived']])(
-    'does not render scheduled publish cta for %p status',
-    async status => {
-      getJobs.mockResolvedValueOnce({ items: [] });
-      const [renderResult] = build({ entity: createEntry(), status });
-
-      expect(renderResult.queryByTestId('change-state-menu-trigger')).toBeNull();
-      expect(getJobs).toHaveBeenCalledWith(expect.any(Function), {
-        order: '-sys.scheduledAt',
-        'sys.entity.sys.id': defaultEntryId()
-      });
-
-      await wait();
-      fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
-      expect(renderResult.queryByTestId('schedule-publication')).toBeNull();
-      expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
-    }
-  );
 
   it('disables the status button when there is an active job', async () => {
     getJobs.mockResolvedValueOnce({ items: [createPendingJob()] });
@@ -123,10 +102,7 @@ describe('JobWidget', () => {
     });
 
     expect(renderResult.queryByTestId('change-state-menu-trigger')).toBeNull();
-    expect(getJobs).toHaveBeenCalledWith(expect.any(Function), {
-      order: '-sys.scheduledAt',
-      'sys.entity.sys.id': defaultEntryId()
-    });
+    expectJobsApiHaveBeenCalled(getJobs);
 
     await wait();
     fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
@@ -213,6 +189,13 @@ describe('JobWidget', () => {
     });
   });
 });
+
+function expectJobsApiHaveBeenCalled(mock) {
+  expect(mock).toHaveBeenCalledWith(expect.any(Function), {
+    order: '-sys.scheduledAt',
+    'sys.entity.sys.id': defaultEntryId()
+  });
+}
 
 function defaultEntryId() {
   return 'entryId';
