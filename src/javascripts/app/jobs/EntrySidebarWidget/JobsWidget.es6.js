@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-
+import { css } from 'emotion';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.es6';
 
 import {
@@ -24,6 +24,12 @@ import JobsTimeline from './JobsTimeline/index.es6';
 import * as JobsService from '../DataManagement/JobsService.es6';
 import { create as createDto } from './JobsFactory.es6';
 import FailedScheduleNote from './FailedScheduleNote/index.es6';
+
+const styles = {
+  jobsSkeleton: css({
+    maxHeight: '40px'
+  })
+};
 
 function shouldShowErrorNote(lastJob, entity) {
   if (!lastJob) {
@@ -143,7 +149,7 @@ export default function JobWidget({
   return (
     <ErrorHandler>
       {isLoading && (
-        <SkeletonContainer data-test-id="jobs-skeleton">
+        <SkeletonContainer data-test-id="jobs-skeleton" className={styles.jobsSkeleton}>
           <SkeletonBodyText numberOfLines={2} />
         </SkeletonContainer>
       )}
