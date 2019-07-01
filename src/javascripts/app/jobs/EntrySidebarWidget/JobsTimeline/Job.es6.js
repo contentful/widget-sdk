@@ -73,7 +73,10 @@ class Job extends Component {
         <CancellationModal
           isShown={this.state.isCancellationDialogOpen}
           onClose={this.toggleCancelDialog}
-          onConfirm={() => onCancel(id)}>
+          onConfirm={() => {
+            this.toggleCancelDialog();
+            onCancel(id);
+          }}>
           This entry is scheduled to {action} on {FormattedTime(scheduledAt)}. <br />
           Are you sure you want to cancel?
         </CancellationModal>

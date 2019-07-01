@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import moment from 'moment';
@@ -12,14 +12,18 @@ import {
   TextLink,
   Notification
 } from '@contentful/forma-36-react-components';
-import JobsTimeline from './JobsTimeline/index.es6';
-import JobsFetcher from './JobsFetcher.es6';
-import { createJob, cancelJob } from '../DataManagement/JobsService.es6';
-import NewJob from './NewJob.es6';
-import { create } from './JobsFactory.es6';
-import FailedScheduleNote from './FailedScheduleNote/index.es6';
 
-import { createSpaceEndpoint } from '../DataManagement/JobsEndpointFactory.es6';
+import * as EndpointFactory from 'data/EndpointFactory.es6';
+
+import { useAsyncFn } from 'app/common/hooks/useAsync.es6';
+import usePrevious from 'app/common/hooks/usePrevious.es6';
+
+import JobsTimeline from './JobsTimeline/index.es6';
+
+import * as JobsService from '../DataManagement/JobsService.es6';
+import NewJob from './NewJob.es6';
+import { create as createDto } from './JobsFactory.es6';
+import FailedScheduleNote from './FailedScheduleNote/index.es6';
 
 const styles = {
   root: css({
@@ -39,124 +43,144 @@ const styles = {
   })
 };
 
-export default class JobWidget extends React.Component {
-  static propTypes = {
-    spaceId: PropTypes.string.isRequired,
-    environmentId: PropTypes.string.isRequired,
-    userId: PropTypes.string.isRequired,
-    entity: PropTypes.object.isRequired
-  };
+function shouldShowErrorNote(lastJob, entity) {
+  if (!lastJob) {
+    return false;
+  }
 
-  state = {
-    fetcherKey: '1'
-  };
+  if (entity.sys.publishedAt) {
+    const entryPublishedAfterLastFailedJob = moment(entity.sys.publishedAt).isAfter(
+      lastJob.scheduledAt
+    );
 
-  endpoint = createSpaceEndpoint(this.props.spaceId, this.props.environmentId);
-  handleJobCreate = ({ scheduledAt }) => {
-    const { spaceId, environmentId, userId, entity } = this.props;
-
-    const createJobDto = create({
-      spaceId,
-      environmentId,
-      userId,
-      entityId: entity.sys.id,
-      action: 'publish',
-      scheduledAt
-    });
-
-    createJob(this.endpoint, createJobDto).then(() => {
-      this.setState({
-        fetcherKey: this.state.fetcherKey + '1'
-      });
-    });
-  };
-
-  handleCancellation = jobId => {
-    cancelJob(this.endpoint, jobId).then(() => {
-      this.setState({
-        fetcherKey: this.state.fetcherKey + '1'
-      });
-      Notification.success('Schedule cancelled');
-    });
-  };
-
-  renderFailedScheduleNote = data => {
-    const recentJob = data.jobCollection.items[0];
-    if (!recentJob) {
-      return null;
-    }
-
-    if (this.props.entity.sys.publishedAt) {
-      const entryPublishedAfterLastFailedJob = moment(this.props.entity.sys.publishedAt).isAfter(
-        recentJob.scheduledAt
-      );
-
-      if (entryPublishedAfterLastFailedJob) {
-        return null;
-      }
-    }
-
-    return recentJob.sys.status === 'failed' && <FailedScheduleNote recentJob={recentJob} />;
-  };
-
-  componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    if (this.props.entity.sys.publishedAt !== prevProps.entity.sys.publishedAt) {
-      this.setState({
-        fetcherKey: this.state.fetcherKey + '1'
-      });
+    if (entryPublishedAfterLastFailedJob) {
+      return false;
     }
   }
 
-  render() {
-    return (
-      <div className={styles.root}>
-        <JobsFetcher
-          key={this.state.fetcherKey}
-          publishedAt={this.props.entity.sys.publishedAt}
-          endpoint={this.endpoint}
-          entryId={this.props.entity.sys.id}>
-          {({ isLoading, isError, data }) => {
-            if (isLoading) {
-              return (
-                <SkeletonContainer data-test-id="jobs-skeleton">
-                  <SkeletonBodyText numberOfLines={2} />
-                </SkeletonContainer>
-              );
-            }
-            if (isError) {
-              // Implement proper error handling
-              return (
-                <Note noteType="warning">
-                  {`We were unable to load the schedule for this entry. `}
-                  <TextLink onClick={() => window.location.reload()}>Please refresh.</TextLink>
-                </Note>
-              );
-            }
+  const isFailed = lastJob.sys.status === 'failed';
+  return isFailed;
+}
 
-            const pendingJobs = data.jobCollection.items.filter(
-              schedule => schedule.sys.status === 'pending'
-            );
-            const hasScheduledActions = pendingJobs.length > 0;
+function shouldShowSuccessToast(prevLastJob, lastJob, entity) {
+  if (entity.sys.publishedAt && prevLastJob && lastJob) {
+    if (
+      prevLastJob.sys.id === lastJob.sys.id &&
+      prevLastJob.sys.status === 'pending' &&
+      lastJob.sys.status === 'done'
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
 
-            return (
-              <React.Fragment>
-                <div className={styles.heading}>Schedule</div>
-                {this.renderFailedScheduleNote(data)}
-                {hasScheduledActions ? (
-                  <JobsTimeline
-                    environmentId={this.props.environmentId}
-                    jobs={pendingJobs}
-                    onCancel={this.handleCancellation}
-                  />
-                ) : (
-                  <NewJob onCreate={this.handleJobCreate} />
-                )}
-              </React.Fragment>
-            );
-          }}
-        </JobsFetcher>
-      </div>
-    );
+function getPublishedAt(entity) {
+  // HACK: sys.publishedAt from the api and sharejs can be different
+  // therefore we cut precision to reduce number of false positives
+  if (entity.sys.publishedAt) {
+    return moment(entity.sys.publishedAt)
+      .milliseconds(0)
+      .toISOString();
   }
 }
+
+export default function JobWidget({ spaceId, environmentId, userId, entity }) {
+  const [jobs, setJobs] = useState([]);
+  const publishedAt = getPublishedAt(entity);
+  const [{ isLoading, error }, runAsync] = useAsyncFn(
+    useCallback(async () => {
+      const jobCollection = await JobsService.getJobs(
+        EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
+        {
+          'sys.entity.sys.id': entity.sys.id,
+          order: '-sys.scheduledAt'
+        }
+      );
+      // TODO: remove after implementing status filter in the api
+      setJobs(jobCollection.items.filter(j => j.sys.status !== 'canceled'));
+
+      return jobCollection;
+    }, [spaceId, environmentId, entity.sys.id]),
+    true
+  );
+
+  useEffect(() => {
+    runAsync();
+  }, [runAsync, publishedAt]);
+
+  const handleCreate = ({ scheduledAt }) => {
+    JobsService.createJob(
+      EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
+      createDto({
+        spaceId,
+        environmentId,
+        userId,
+        entityId: entity.sys.id,
+        action: 'publish',
+        scheduledAt
+      })
+    ).then(job => {
+      setJobs([job, ...jobs]);
+    });
+  };
+
+  const handleCancel = jobId => {
+    JobsService.cancelJob(EndpointFactory.createSpaceEndpoint(spaceId, environmentId), jobId).then(
+      () => {
+        setJobs(jobs.slice(1));
+        Notification.success('Schedule cancelled');
+      }
+    );
+  };
+
+  const pendingJobs = jobs.filter(job => job.sys.status === 'pending');
+  const hasScheduledActions = pendingJobs.length > 0;
+
+  const lastJob = jobs[0];
+  const prevLastJob = usePrevious(lastJob);
+  const showToast = shouldShowSuccessToast(prevLastJob, lastJob, entity);
+  useEffect(() => {
+    if (showToast) {
+      Notification.success('Entry was successfully published.');
+    }
+  }, [showToast]);
+
+  return (
+    <div className={styles.root}>
+      {isLoading && (
+        <SkeletonContainer data-test-id="jobs-skeleton">
+          <SkeletonBodyText numberOfLines={2} />
+        </SkeletonContainer>
+      )}
+      {error && (
+        <Note noteType="warning">
+          We were unable to load the schedule for this entry.{' '}
+          <TextLink onClick={() => window.location.reload()}>Please refresh.</TextLink>
+        </Note>
+      )}
+      {!isLoading && !error && (
+        <>
+          <div className={styles.heading}>Schedule</div>
+          {shouldShowErrorNote(lastJob, entity) && <FailedScheduleNote job={lastJob} />}
+          {hasScheduledActions ? (
+            <JobsTimeline
+              environmentId={environmentId}
+              jobs={pendingJobs}
+              onCancel={handleCancel}
+            />
+          ) : (
+            <NewJob onCreate={handleCreate} />
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+JobWidget.propTypes = {
+  spaceId: PropTypes.string.isRequired,
+  environmentId: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
+  entity: PropTypes.object.isRequired
+};

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Job, { propTypes as jobPropTypes } from './Job.es6';
+import Job from './Job.es6';
 import { TextLink } from '@contentful/forma-36-react-components';
 
 import { JobsStateLink } from 'app/jobs/JobsPageLink.es6';
@@ -9,13 +9,13 @@ import { JobsStateLink } from 'app/jobs/JobsPageLink.es6';
 const JobsTimeline = ({ environmentId, jobs, onCancel }) => (
   <div>
     <ul>
-      {jobs.map(schedule => (
+      {jobs.map(job => (
         <Job
-          id={schedule.sys.id}
-          key={schedule.action}
-          action={schedule.action}
-          scheduledAt={schedule.scheduledAt}
-          status={schedule.status}
+          id={job.sys.id}
+          key={job.action}
+          action={job.action}
+          scheduledAt={job.scheduledAt}
+          status={job.status}
           onCancel={onCancel}
         />
       ))}
@@ -31,7 +31,7 @@ const JobsTimeline = ({ environmentId, jobs, onCancel }) => (
 );
 
 JobsTimeline.propTypes = {
-  jobs: PropTypes.arrayOf(PropTypes.shape(jobPropTypes)),
+  jobs: PropTypes.array.isRequired,
   onCancel: PropTypes.func.isRequired,
   environmentId: PropTypes.string.isRequired
 };

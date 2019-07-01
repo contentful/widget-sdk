@@ -5,20 +5,15 @@ import { Note } from '@contentful/forma-36-react-components';
 
 export class FailedScheduleNote extends Component {
   static propTypes = {
-    recentJob: PropTypes.object
+    job: PropTypes.object
   };
-
-  renderFailureText = () =>
-    `Due to validation errors this entry failed to publish on: ${moment(
-      this.props.recentJob.scheduledAt
-    ).format(
-      'ddd, MMM Do, YYYY - hh:mm A'
-    )}. Please check individual fields and attempt to publish again.`;
 
   render() {
     return (
       <Note className="f36-margin-bottom--m" noteType="negative" testId="failed-job-note">
-        {this.renderFailureText()}
+        Due to validation errors this entry failed to publish on:{' '}
+        {moment(this.props.job.scheduledAt).format('ddd, MMM Do, YYYY - hh:mm A')}. Please check
+        individual fields and attempt to publish again.
       </Note>
     );
   }

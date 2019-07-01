@@ -123,7 +123,15 @@ export function jobIsCreatedPostResponse() {
     },
 
     willRespondWith: {
-      status: 200
+      status: 200,
+      body: {
+        sys: {
+          id: defaultJobId,
+          status: 'pending'
+        },
+        actionType: 'publish',
+        scheduledAt: '2050-08-08T06:10:52.066Z'
+      }
     }
   }).as(state.Jobs.CREATED);
 }

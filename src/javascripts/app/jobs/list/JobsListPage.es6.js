@@ -17,7 +17,7 @@ import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 
-import { createSpaceEndpoint } from '../DataManagement/JobsEndpointFactory.es6';
+import * as EndpointFactory from 'data/EndpointFactory.es6';
 
 import { getJobsData } from './JobsListService.es6';
 import JobsEmptyStateMessage from './JobsEmptyStateMessage.es6';
@@ -40,7 +40,7 @@ const styles = {
 
 const JobsFetcher = createFetcherComponent(
   async ({ spaceId, environmentId, contentTypes, query }) => {
-    const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
+    const spaceEndpoint = EndpointFactory.createSpaceEndpoint(spaceId, environmentId);
 
     const { jobs, entries, users } = await getJobsData(spaceEndpoint, query);
 

@@ -46,7 +46,7 @@ describe('Schedule Publication', () => {
       cy.resetAllFakeServers();
 
       jobIsCreatedPostResponse();
-      singleJobForEntryResponse();
+
       cy.getByTestId('schedule-publication').click();
       cy.getByTestId('schedule-publication-modal')
         .should('be.visible')
@@ -54,7 +54,7 @@ describe('Schedule Publication', () => {
         .first()
         .click();
 
-      cy.wait([`@${state.Jobs.CREATED}`, `@${state.Jobs.SINGLE}`]);
+      cy.wait([`@${state.Jobs.CREATED}`]);
       cy.getByTestId('scheduled-item').should('have.length', 1);
     });
   });
@@ -72,7 +72,7 @@ describe('Schedule Publication', () => {
       cy.resetAllFakeServers();
 
       cancelJobResponse();
-      noJobsForSpecificEntryIdResponse();
+      
       cy.getByTestId('cancel-job-ddl').click();
       cy.getByTestId('cancel-job').click();
       cy.getByTestId('job-cancellation-modal')
@@ -80,7 +80,7 @@ describe('Schedule Publication', () => {
         .find('[data-test-id="confirm-job-cancellation"]')
         .first()
         .click();
-      cy.wait([`@${state.Jobs.CANCEL}`, `@${state.Jobs.NONE}`]);
+      cy.wait([`@${state.Jobs.CANCEL}`]);
       cy.getByTestId('schedule-publication').should('be.visible');
     });
   });
