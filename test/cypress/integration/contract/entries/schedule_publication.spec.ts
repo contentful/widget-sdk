@@ -47,7 +47,9 @@ describe('Schedule Publication', () => {
 
       jobIsCreatedPostResponse();
 
+      cy.getByTestId('change-state-menu-trigger').click();
       cy.getByTestId('schedule-publication').click();
+
       cy.getByTestId('schedule-publication-modal')
         .should('be.visible')
         .find('[data-test-id="schedule-publication"]')
@@ -72,7 +74,7 @@ describe('Schedule Publication', () => {
       cy.resetAllFakeServers();
 
       cancelJobResponse();
-      
+
       cy.getByTestId('cancel-job-ddl').click();
       cy.getByTestId('cancel-job').click();
       cy.getByTestId('job-cancellation-modal')
