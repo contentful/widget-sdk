@@ -57,6 +57,7 @@ const MembershipRow = ({
         <TableCell colSpan={2}>
           <div className={css({ display: 'flex' })}>
             <SpaceRoleEditor
+              buttonProps={{ className: styles.roleEditorButton }}
               onChange={setSelectedRoles}
               options={availableRoles}
               value={selectedRoleIds}

@@ -45,5 +45,9 @@ export default {
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
     lineHeight: '1.2em'
+  }),
+  roleEditorButton: css({
+    minWidth: '200px',
+    maxWidth: '200px'
   })
 };

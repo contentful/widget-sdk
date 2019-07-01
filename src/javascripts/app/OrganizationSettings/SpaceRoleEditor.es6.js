@@ -36,12 +36,16 @@ class SpaceRoleEditor extends React.Component {
     onChange: PropTypes.func.isRequired,
     isDisabled: PropTypes.bool,
     options: PropTypes.arrayOf(SpaceRoleProp),
-    value: PropTypes.arrayOf(PropTypes.string)
+    value: PropTypes.arrayOf(PropTypes.string),
+    className: PropTypes.string,
+    buttonProps: PropTypes.shape({ className: PropTypes.string })
   };
 
   static defaultProps = {
     options: [],
-    value: []
+    value: [],
+    className: '',
+    buttonProps: { className: '' }
   };
 
   state = {
@@ -83,7 +87,7 @@ class SpaceRoleEditor extends React.Component {
   };
 
   render() {
-    const { options, value, isDisabled } = this.props;
+    const { options, value, isDisabled, className, buttonProps } = this.props;
     const isAdmin = value.includes(ADMIN_ROLE_ID);
 
     const selectedNames = [ADMIN_ROLE, ...options]
@@ -93,6 +97,7 @@ class SpaceRoleEditor extends React.Component {
 
     return (
       <Dropdown
+        className={className}
         isOpen={this.state.isOpen}
         onClose={this.closeDropdown}
         style={{ maxWidth: '100%' }}
@@ -100,7 +105,7 @@ class SpaceRoleEditor extends React.Component {
           <Button
             testId="space-role-editor.button"
             disabled={isDisabled}
-            className="select-button"
+            className={`select-button${buttonProps.className ? ` ${buttonProps.className}` : ''}`}
             buttonType="naked"
             indicateDropdown
             onClick={this.toggleDropdown}>
