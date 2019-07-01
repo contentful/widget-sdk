@@ -25,6 +25,7 @@ export default function AvailableItems(props) {
                 name={item.name}
                 index={index}
                 widgetNamespace={item.widgetNamespace}
+                availabilityStatus={item.availabilityStatus}
                 onClick={() => {
                   props.onAddItem(item);
                 }}

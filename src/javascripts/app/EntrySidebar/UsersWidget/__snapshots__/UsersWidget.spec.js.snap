@@ -39,6 +39,10 @@ exports[`EntrySidebar/UsersWidget it should show "No other users online" if user
   border-bottom: 1px solid #c3cfd5;
   margin-bottom: 1.5rem;
   margin-top: 1.5rem;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 
 .emotion-0 {

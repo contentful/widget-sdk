@@ -21,7 +21,8 @@ export const Tasks = {
   widgetId: SidebarWidgetTypes.TASKS,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
   name: 'Tasks',
-  description: 'Built-in - Assign tasks to be completed before publishing.'
+  description: 'Built-in - Assign tasks to be completed before publishing.',
+  availabilityStatus: 'alpha'
 };
 
 export const ContentPreview = {

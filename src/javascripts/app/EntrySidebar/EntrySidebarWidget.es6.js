@@ -10,7 +10,8 @@ const headerClassName = css({
   justifyContent: 'space-between',
   borderBottom: `1px solid ${tokens.colorElementDark}`,
   marginBottom: tokens.spacingL,
-  marginTop: tokens.spacingL
+  marginTop: tokens.spacingL,
+  alignItems: 'center'
 });
 
 const titleClassName = css({

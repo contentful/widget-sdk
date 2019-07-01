@@ -8,9 +8,13 @@ export default function DefaultSidebar(props) {
   return (
     <React.Fragment>
       <Subheading className="f36-margin-bottom--m">Default sidebar</Subheading>
-      {props.items.map(({ name, widgetId, widgetNamespace, description }) => {
+      {props.items.map(({ name, widgetId, widgetNamespace, description, availabilityStatus }) => {
         return (
-          <SidebarWidgetItem key={`${widgetNamespace},${widgetId}`} name={name} id={widgetId}>
+          <SidebarWidgetItem
+            key={`${widgetNamespace},${widgetId}`}
+            name={name}
+            id={widgetId}
+            availabilityStatus={availabilityStatus}>
             <Paragraph>{description}</Paragraph>
           </SidebarWidgetItem>
         );

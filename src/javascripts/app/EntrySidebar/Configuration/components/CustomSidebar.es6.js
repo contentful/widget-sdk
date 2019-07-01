@@ -15,7 +15,8 @@ function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
       id={widget.widgetId}
       name={widget.name}
       isProblem={widget.problem}
-      onRemoveClick={onRemoveClick}>
+      onRemoveClick={onRemoveClick}
+      availabilityStatus={widget.availabilityStatus}>
       {widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN && (
         <Paragraph>{widget.description}</Paragraph>
       )}

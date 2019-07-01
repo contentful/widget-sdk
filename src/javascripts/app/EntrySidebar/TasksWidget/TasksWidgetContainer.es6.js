@@ -12,6 +12,7 @@ import { createTasksStoreForEntry } from './TasksStore.es6';
 import { createTasksStoreInteractor } from './TasksInteractor.es6';
 import { onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util.es6';
 import TaskList from './View/TaskList.es6';
+import { Tag } from '@contentful/forma-36-react-components';
 
 export default function TasksWidgetContainerWithFeatureFlag(props) {
   return (
@@ -90,7 +91,7 @@ export class TasksWidgetContainer extends Component {
       localState
     );
     return (
-      <EntrySidebarWidget testId="sidebar-tasks-widget" title="Tasks">
+      <EntrySidebarWidget testId="sidebar-tasks-widget" title="Tasks" headerNode={<Tag>Alpha</Tag>}>
         <TaskList viewData={tasksViewData} tasksInteractor={tasksInteractor} />
       </EntrySidebarWidget>
     );
