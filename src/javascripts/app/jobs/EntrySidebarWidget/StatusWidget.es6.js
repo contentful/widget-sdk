@@ -8,7 +8,8 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem,
-  Icon
+  Icon,
+  Tag
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
@@ -19,6 +20,7 @@ import CommandPropType from 'app/entity_editor/CommandPropType.es6';
 
 const styles = {
   scheduleListItem: css({
+    lineHeight: '1rem',
     display: 'flex',
     alignItems: 'center'
   }),
@@ -66,7 +68,7 @@ export default class StatusWidget extends React.PureComponent {
           }}>
           <div className={styles.scheduleListItem}>
             <Icon icon="Clock" color="muted" className={styles.scheduledIcon} />
-            Schedule publication
+            Schedule publication <Tag className="f36-margin-left--2xs">Alpha</Tag>
           </div>
         </DropdownListItem>
       )
