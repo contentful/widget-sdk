@@ -42,6 +42,10 @@ orbs:
           env:
             type: string
             description: quirely or flinkly
+          url:
+            type: string
+            description: url to POST comment data to
+            default: 'https://tooling-lambdas.ctfl.now.sh/user_interface/comments'
         steps:
           - run:
               name: Post deployment URL to GitHub
@@ -49,7 +53,7 @@ orbs:
                 export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
                 curl -i -X POST --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"<<parameters.env>>\"}" \
                 -H 'content-type: application/json' \
-                https://tooling-lambdas.ctfl1.now.sh/user_interface/comments?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY
+                <<parameters.url>>?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY || echo "Comment won't be posted to ${PR_NUMBER:-$CIRCLE_BRANCH}. Continuing anyway."
   estivador:
     commands:
       install:
