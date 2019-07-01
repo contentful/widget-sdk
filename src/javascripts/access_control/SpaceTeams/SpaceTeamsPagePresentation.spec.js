@@ -10,7 +10,9 @@ const build = props =>
         ...props,
         isPending: false,
         availableRoles: [],
-        onUpdateTeamSpaceMembership: () => {}
+        onUpdateTeamSpaceMembership: () => {},
+        readOnly: false,
+        currentUserAdminSpaceMemberships: []
       }}
     />
   );
