@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, TableCell, TableRow } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
@@ -38,6 +38,12 @@ const MembershipRow = ({
 
   const roleIds = map(isEmpty(roles) ? [ADMIN_ROLE] : roles, 'sys.id');
   const [selectedRoleIds, setSelectedRoles] = useState(roleIds);
+
+  // reset selected roles when starting to edit
+  useEffect(() => {
+    !isEditing && setSelectedRoles(roleIds);
+  }, [isEditing, roleIds]);
+
   const haveRolesChanged = !(
     intersection(selectedRoleIds, roleIds).length === selectedRoleIds.length &&
     selectedRoleIds.length === roleIds.length
