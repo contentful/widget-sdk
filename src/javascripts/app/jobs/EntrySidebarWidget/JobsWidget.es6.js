@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { css } from 'emotion';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.es6';
+import CommandPropType from 'app/entity_editor/CommandPropType.es6';
 
 import {
   SkeletonContainer,
@@ -11,7 +12,7 @@ import {
   TextLink,
   Notification
 } from '@contentful/forma-36-react-components';
-import StatusButton from './StatusButton.es6';
+import StatusWidget from './StatusWidget.es6';
 import JobDialog from './JobDialog/index.es6';
 
 import * as EndpointFactory from 'data/EndpointFactory.es6';
@@ -90,15 +91,11 @@ export default function JobWidget({
   const publishedAt = getPublishedAt(entity);
   const [{ isLoading, error }, runAsync] = useAsyncFn(
     useCallback(async () => {
-      const jobCollection = await JobsService.getJobs(
+      const jobCollection = await JobsService.getNotCanceledJobsForEntity(
         EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
-        {
-          'sys.entity.sys.id': entity.sys.id,
-          order: '-sys.scheduledAt'
-        }
+        entity.sys.id
       );
-      // TODO: remove after implementing status filter in the api
-      setJobs(jobCollection.items.filter(j => j.sys.status !== 'canceled'));
+      setJobs(jobCollection);
 
       return jobCollection;
     }, [spaceId, environmentId, entity.sys.id]),
@@ -161,7 +158,7 @@ export default function JobWidget({
       )}
       {!isLoading && !error && (
         <>
-          <StatusButton
+          <StatusWidget
             status={status}
             primary={primary}
             secondary={secondary}
@@ -196,15 +193,6 @@ export default function JobWidget({
     </ErrorHandler>
   );
 }
-
-const CommandPropType = PropTypes.shape({
-  label: PropTypes.string,
-  targetStateId: PropTypes.string,
-  execute: PropTypes.func.isRequired,
-  isAvailable: PropTypes.func.isRequired,
-  isDisabled: PropTypes.func.isRequired,
-  inProgress: PropTypes.func.isRequired
-});
 
 JobWidget.propTypes = {
   spaceId: PropTypes.string.isRequired,

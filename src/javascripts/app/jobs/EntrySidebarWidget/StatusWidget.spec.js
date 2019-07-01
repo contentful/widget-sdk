@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
-import StatusButton from './StatusButton.es6';
+import StatusWidget from './StatusWidget.es6';
 import 'jest-dom/extend-expect';
 
 const createCommand = props => ({
@@ -23,10 +23,10 @@ const selectors = {
   actionRestrictionNote: renderResult => renderResult.getByTestId('action-restriction-note')
 };
 
-describe('<StatusButton />', () => {
+describe('<StatusWidget />', () => {
   const renderWidget = props => {
     const renderResult = render(
-      <StatusButton
+      <StatusWidget
         isSaving={false}
         onScheduledPublishClick={jest.fn()}
         isDisabled={false}

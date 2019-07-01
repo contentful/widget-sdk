@@ -11,6 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
+import CommandPropType from 'app/entity_editor/CommandPropType.es6';
 
 const PublicationStatus = ({ status }) => (
   <div className="entity-sidebar__state">
@@ -41,15 +42,6 @@ const RestrictedNote = ({ actionName }) => (
 RestrictedNote.propTypes = {
   actionName: PropTypes.string.isRequired
 };
-
-const CommandPropType = PropTypes.shape({
-  label: PropTypes.string,
-  targetStateId: PropTypes.string,
-  execute: PropTypes.func.isRequired,
-  isAvailable: PropTypes.func.isRequired,
-  isDisabled: PropTypes.func.isRequired,
-  inProgress: PropTypes.func.isRequired
-});
 
 export default class PublicationWidget extends React.PureComponent {
   static propTypes = {

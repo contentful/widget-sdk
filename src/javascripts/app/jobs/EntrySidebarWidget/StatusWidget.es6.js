@@ -12,45 +12,10 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
+import StatusBadge from './StatusBadge.es6';
+import ActionRestrictedNote from './ActionRestrictedNote.es6';
 
-const PublicationStatus = ({ status }) => (
-  <div className="entity-sidebar__state">
-    <span
-      className="entity-sidebar__state-indicator"
-      data-state={status}
-      data-test-id="entity-state"
-    />
-    <strong>Status: </strong>
-    {status === 'archived' && <span>Archived</span>}
-    {status === 'draft' && <span>Draft</span>}
-    {status === 'published' && <span>Published</span>}
-    {status === 'changes' && <span>Published (pending changes)</span>}
-  </div>
-);
-
-PublicationStatus.propTypes = {
-  status: PropTypes.string.isRequired
-};
-
-const RestrictedNote = ({ actionName }) => (
-  <p className="f36-color--text-light f36-margin-top--xs" data-test-id="action-restriction-note">
-    <Icon icon="Lock" color="muted" className="action-restricted__icon" />
-    You do not have permission to {actionName.toLowerCase()}.
-  </p>
-);
-
-RestrictedNote.propTypes = {
-  actionName: PropTypes.string.isRequired
-};
-
-const CommandPropType = PropTypes.shape({
-  label: PropTypes.string,
-  targetStateId: PropTypes.string,
-  execute: PropTypes.func.isRequired,
-  isAvailable: PropTypes.func.isRequired,
-  isDisabled: PropTypes.func.isRequired,
-  inProgress: PropTypes.func.isRequired
-});
+import CommandPropType from 'app/entity_editor/CommandPropType.es6';
 
 const styles = {
   scheduleListItem: css({
@@ -62,7 +27,7 @@ const styles = {
   })
 };
 
-export default class PublicationWidget extends React.PureComponent {
+export default class StatusWidget extends React.PureComponent {
   static propTypes = {
     status: PropTypes.string.isRequired,
     isSaving: PropTypes.bool.isRequired,
@@ -79,11 +44,15 @@ export default class PublicationWidget extends React.PureComponent {
   };
 
   renderScheduledPublicationCta = () => {
+    // do not show cta if entity is published
     if (this.props.primary.targetStateId === 'published') {
+      // primary action can be either publish or unachrive
+      // TODO: revisit after support for sched. pub archived entries
       if (this.props.primary.isDisabled()) {
         return null;
       }
     }
+
     const canSchedule = this.props.status === 'draft' || this.props.status === 'changes';
 
     return (
@@ -112,7 +81,7 @@ export default class PublicationWidget extends React.PureComponent {
         <header className="entity-sidebar__header">
           <h2 className="entity-sidebar__heading">Status</h2>
         </header>
-        <PublicationStatus status={status} />
+        <StatusBadge status={status} />
         <div className="entity-sidebar__state-select">
           <div className="publish-buttons-row">
             {status !== 'published' && primary && (
@@ -170,7 +139,7 @@ export default class PublicationWidget extends React.PureComponent {
               </DropdownList>
             </Dropdown>
           </div>
-          {primary && primary.isRestricted() && <RestrictedNote actionName={primary.label} />}
+          {primary && primary.isRestricted() && <ActionRestrictedNote actionName={primary.label} />}
         </div>
         <div className="entity-sidebar__status-more">
           {updatedAt && (
