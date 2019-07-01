@@ -25,7 +25,7 @@ export default function makeExtensionNavigationHandlers({
   async function makeEntity(options) {
     if (typeof options.id === 'string') {
       try {
-        return await spaceContext.cma.getEntry(options.id);
+        return await getEntity(options);
       } catch (err) {
         throw new Error(`Failed to fetch an entity with the following ID: ${options.id}`);
       }
@@ -59,6 +59,14 @@ export default function makeExtensionNavigationHandlers({
       SlideInNavigator.goToSlideInEntity(entity.sys);
     } else {
       await Navigator.go(Navigator.makeEntityRef(entity));
+    }
+  }
+
+  function getEntity(options) {
+    if (options.entityType === 'Asset') {
+      return spaceContext.cma.getAsset(options.id);
+    } else {
+      return spaceContext.cma.getEntry(options.id);
     }
   }
 }
