@@ -37,7 +37,7 @@ export default class Task extends React.Component {
 
   state = {
     isExpanded: false,
-    body: ''
+    pendingChanges: {}
   };
 
   componentDidUpdate(prevProps) {
@@ -49,6 +49,9 @@ export default class Task extends React.Component {
     ) {
       // We don't have a place on the actual task card to show a deletion error.
       Notification.error(validationMessage);
+    }
+    if (isInEditMode !== prevProps.viewData.isInEditMode) {
+      this.setState({ pendingChanges: {} });
     }
   }
 
@@ -67,9 +70,36 @@ export default class Task extends React.Component {
     this.props.onEdit();
   };
 
+  addChange(change) {
+    this.setState({ pendingChanges: { ...this.state.pendingChanges, ...change } });
+  }
+
+  getChangedValue() {
+    const { pendingChanges } = this.state;
+    const { viewData } = this.props;
+    return {
+      body: viewData.body,
+      assigneeKey: viewData.assignee && viewData.assignee.key,
+      isDone: viewData.isDone,
+      ...pendingChanges
+    };
+  }
+
+  handleBodyUpdate = event => {
+    this.addChange({ body: event.target.value });
+  };
+
+  handleAssigneeUpdate = event => {
+    this.addChange({ assigneeKey: event.target.value });
+  };
+
   handleSubmit = () => {
-    const { body } = this.state;
-    this.props.onSave(body);
+    this.props.onSave(this.getChangedValue());
+  };
+
+  handleCancelEdit = event => {
+    event.stopPropagation();
+    this.props.onCancel();
   };
 
   handleDeleteClick = async event => {
@@ -85,11 +115,6 @@ export default class Task extends React.Component {
         }}
       />
     ));
-  };
-
-  handleCancelEdit = event => {
-    event.stopPropagation();
-    this.props.onCancel();
   };
 
   renderAvatar(user) {
@@ -148,15 +173,11 @@ export default class Task extends React.Component {
           </Visible>
         </div>
         <div className={styles.avatarWrapper}>
-          {this.renderAvatar(assignee)}
+          {assignee && this.renderAvatar(assignee)}
           {this.renderActions()}
         </div>
       </React.Fragment>
     );
-  };
-
-  handleBodyUpdate = event => {
-    this.setState({ body: event.target.value });
   };
 
   renderEditForm = () => {
@@ -206,8 +227,14 @@ export default class Task extends React.Component {
     const isCurrentUserRemoved = selectedUser && selectedUser.isRemovedFromSpace;
 
     return (
-      <SelectField name="assignee" id="assignee" labelText="Assign to" value={currentKey}>
-        {!selectedUser && (
+      <SelectField
+        name="assignee"
+        id="assignee"
+        testId="task-assignee-select"
+        labelText="Assign to"
+        value={currentKey}
+        onChange={this.handleAssigneeUpdate}>
+        {currentKey === EMPTY && (
           <Option disabled key={EMPTY} value={EMPTY}>
             Please select a user
           </Option>

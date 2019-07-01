@@ -3,8 +3,7 @@ import { singleUser } from '../../../interactions/users';
 import {
   successfulGetEntryTasksInteraction,
   tasksErrorResponse,
-  taskCreatedResponse,
-  taskNotCreatedErrorResponse
+  taskCreateRequest
 } from '../../../interactions/tasks';
 
 import {
@@ -93,7 +92,7 @@ describe('Tasks entry editor sidebar', () => {
   });
 
   describe('creating a new task', () => {
-    const newTaskTitle = 'Great new task!';
+    const newTaskData = { title: 'Great new task!', assigneeId: 'userID' };
 
     beforeEach(() => {
       successfulGetEntryTasksInteraction('noTasks', empty).as(state.Tasks.NONE);
@@ -101,13 +100,13 @@ describe('Tasks entry editor sidebar', () => {
 
     context('task creation error', () => {
       beforeEach(() => {
-        taskNotCreatedErrorResponse();
+        taskCreateRequest(newTaskData).errorResponse();
         visitEntry();
         cy.wait([`@${state.Tasks.NONE}`]);
       });
 
       it('creates task on API and adds it to task list', () => {
-        createNewTaskAndSave(newTaskTitle);
+        createNewTaskAndSave(newTaskData);
         cy.wait([`@${state.Tasks.ERROR}`]);
 
         getTasks().should('have.length', 0);
@@ -119,13 +118,13 @@ describe('Tasks entry editor sidebar', () => {
 
     context('task creation successful', () => {
       beforeEach(() => {
-        taskCreatedResponse(newTaskTitle);
+        taskCreateRequest(newTaskData).successResponse();
         visitEntry();
         cy.wait([`@${state.Tasks.NONE}`]);
       });
 
       it('creates task on API and adds it to task list', () => {
-        createNewTaskAndSave(newTaskTitle);
+        createNewTaskAndSave(newTaskData);
 
         cy.wait([`@${state.Tasks.CREATE}`]);
 
@@ -134,7 +133,7 @@ describe('Tasks entry editor sidebar', () => {
       });
     });
 
-    function createNewTaskAndSave(taskTitle) {
+    function createNewTaskAndSave({ title, assigneeId }) {
       getCreateTaskAction()
         .should('be.enabled')
         .click();
@@ -142,14 +141,12 @@ describe('Tasks entry editor sidebar', () => {
         .should('have.length', 1)
         .should('be.visible');
       getDraftTaskInput()
-        .type(taskTitle)
-        .should('have.value', taskTitle);
+        .type(title)
+        .should('have.value', title);
+      getDraftAssigneeSelector().select(assigneeId);
       getDraftTaskSaveAction().click();
     }
   });
-
-  // TODO: Test case for receiving a list of mixed tasks/comments after the backend
-  //  has implemented `assignedTo` and we can distinguish the two.
 });
 
 const getTasksSidebarSection = () => cy.getByTestId('sidebar-tasks-widget');
@@ -161,5 +158,8 @@ const getDraftTaskInput = () =>
   getDraftTask()
     .getByTestId('task-title-input')
     .find('textarea');
+const getDraftAssigneeSelector = () => getDraftTask()
+  .getByTestId('task-assignee-select')
+  .getByTestId('cf-ui-select');
 const getDraftTaskSaveAction = () => getDraftTask().getByTestId('save-task');
 const getDraftTaskError = () => getDraftTask().queryByTestId('cf-ui-validation-message');

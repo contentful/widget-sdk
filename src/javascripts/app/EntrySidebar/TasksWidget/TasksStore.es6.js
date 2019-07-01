@@ -1,20 +1,27 @@
 import * as K from 'utils/kefir.es6';
-import { getAll, create, remove, update } from 'data/CMA/CommentsRepo.es6';
-import { getUserSync } from 'services/TokenStore.es6';
+import {
+  getAllForEntry,
+  createAssigned as create,
+  remove,
+  update
+} from 'data/CMA/CommentsRepo.es6';
 
+// TODO: Introduce Store specific errors rather than passing client errors.
+
+/**
+ * Creates a task store containing all an entry's tasks.
+ *
+ * NOTE: Does currently not sync with the API, so there might be new tasks created
+ *  or existing ones updated since the store creation.
+ *
+ * @param {SpaceEndpoint} endpoint
+ * @param {string} entryId
+ * @returns {TaskStore}
+ */
 export function createTasksStoreForEntry(endpoint, entryId) {
-  const currentUser = getUserSync();
   const tasksBus = K.createPropertyBus(null);
   const items$ = tasksBus.property;
   const getItems = () => K.getValue(items$);
-
-  // TODO: Remove mock user stuff once we have assignedTo in backend:
-  let mocksCount = 0;
-  const mockUsers = [
-    createUserLink(currentUser.sys.id),
-    createUserLink('59fjBVO6euH3jBh9DW92js'), // Danny's user on Flinkly
-    createUserLink('non_existant_user_id')
-  ];
 
   initialFetch();
 
@@ -22,14 +29,14 @@ export function createTasksStoreForEntry(endpoint, entryId) {
     items$,
     add: async task => {
       let newTask;
+      const { sys: _sys, ...data } = task;
       try {
-        newTask = await create(endpoint, entryId, task.body, null);
+        newTask = await create(endpoint, entryId, data);
       } catch (error) {
         throw error;
       }
-      const newMockTask = toMockTask(newTask);
-      tasksBus.set([...getItems(), newMockTask]);
-      return newMockTask;
+      tasksBus.set([...getItems(), newTask]);
+      return newTask;
     },
     remove: async taskId => {
       try {
@@ -44,57 +51,29 @@ export function createTasksStoreForEntry(endpoint, entryId) {
       try {
         updatedTask = await update(endpoint, entryId, task);
       } catch (error) {
-        // TODO: Introduce Store specific errors rather than passing client errors.
         throw error;
       }
-      const updatedMockTask = toMockTask(updatedTask);
       tasksBus.set(
-        getItems().map(task => (task.sys.id === updatedTask.sys.id ? updatedMockTask : task))
+        getItems().map(task => (task.sys.id === updatedTask.sys.id ? updatedTask : task))
       );
     },
     destroy: () => tasksBus.end()
   };
 
   async function initialFetch() {
-    let comments;
+    let tasksAndComments;
     try {
-      const { items } = await getAll(endpoint, entryId);
-      comments = items;
+      const { items } = await getAllForEntry(endpoint, entryId);
+      tasksAndComments = items;
     } catch (error) {
       tasksBus.error(error);
+      return;
     }
-
-    if (comments) {
-      const tasksOrComments = comments.map(toMockTask);
-      const tasks = tasksOrComments.filter(isTaskComment);
-      tasksBus.set(tasks);
-    }
-  }
-
-  /**
-   * Mocks task specific properties of the comment that are not yet given by the API.
-   * This allows us to treat comments like tasks in the rest of the code base.
-   *
-   * TODO: Remove once we have backend for this.
-   *
-   * @param {API.Comment} comment
-   * @returns {API.Task}
-   */
-  function toMockTask(comment) {
-    const mockUserLink = mockUsers[mocksCount++ % mockUsers.length];
-    return {
-      assignedTo: mockUserLink,
-      isResolved: false, // TODO: Rename this to what we will use in API.
-      status: 'open',
-      ...comment
-    };
+    const tasks = tasksAndComments.filter(isTaskComment);
+    tasksBus.set(tasks);
   }
 }
 
 function isTaskComment(comment) {
   return !!(comment && comment.assignedTo);
-}
-
-function createUserLink(id) {
-  return { sys: { type: 'Link', linkType: 'User', id } };
 }
