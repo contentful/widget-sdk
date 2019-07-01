@@ -131,8 +131,13 @@ export function getRoles(endpoint, query) {
   });
 }
 
-export function getAllRoles(endpoint, params) {
-  return fetchAll(endpoint, ['roles'], BATCH_LIMIT, params);
+export async function getAllRoles(endpoint, params) {
+  try {
+    const roles = await fetchAllWithIncludes(endpoint, ['roles'], BATCH_LIMIT, params);
+    return roles.items;
+  } catch (e) {
+    throw e;
+  }
 }
 
 export function getInvitations(endpoint, query) {
