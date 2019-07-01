@@ -25,6 +25,9 @@ console.error = (warning, ...args) => {
   }
 
   error.apply(console, [warning, ...args]);
+  if (/(Invalid prop|Failed prop type)/gi.test(warning)) {
+    throw new Error(warning);
+  }
 };
 
 // Do not allow uncaught promises
