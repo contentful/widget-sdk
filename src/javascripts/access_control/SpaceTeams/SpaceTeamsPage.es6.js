@@ -1,6 +1,6 @@
 import React, { useCallback, useReducer } from 'react';
 import PropTypes from 'prop-types';
-import { findIndex, clone } from 'lodash';
+import { findIndex, clone, filter } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import { fetchAllWithIncludes } from 'data/CMA/FetchAll.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
@@ -141,6 +141,13 @@ const SpaceTeamsPage = ({ spaceId, onReady }) => {
     return <ForbiddenPage />;
   }
   const readOnly = !spaceContext.getData('spaceMember.admin', false);
+  const spaceMember = spaceContext.getData('spaceMember');
+  const [{ relatedMemberships: currentUserSpaceMemberships }] = resolveLinks({
+    paths: ['relatedMemberships'],
+    includes: { TeamSpaceMembership: memberships },
+    items: [spaceMember]
+  });
+  const currentUserAdminSpaceMemberships = filter(currentUserSpaceMemberships, { admin: true });
 
   if (error) {
     return (
@@ -160,7 +167,8 @@ const SpaceTeamsPage = ({ spaceId, onReady }) => {
           teams,
           isLoading,
           isPending,
-          onUpdateTeamSpaceMembership
+          onUpdateTeamSpaceMembership,
+          currentUserAdminSpaceMemberships
         }}
       />
     </>

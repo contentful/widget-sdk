@@ -9,6 +9,7 @@ import { truncate, map, intersection, isEmpty } from 'lodash';
 import { joinWithAnd } from 'utils/StringUtils.es6';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor.es6';
 import {
+  SpaceMembership as SpaceMembershipProp,
   SpaceRole as SpaceRoleProp,
   TeamSpaceMembership as TeamSpaceMembershipProp
 } from 'app/OrganizationSettings/PropTypes.es6';
@@ -16,6 +17,7 @@ import { ADMIN_ROLE } from 'access_control/constants.es6';
 
 import RowMenu from './RowMenu.es6';
 import styles from './styles.es6';
+import DowngradeOwnAdminMembershipConfirmation from './DowngradeOwnAdminMembershipConfirmation.es6';
 
 const MembershipRow = ({
   membership,
@@ -26,7 +28,8 @@ const MembershipRow = ({
   setEditing,
   onUpdateTeamSpaceMembership,
   isPending,
-  readOnly
+  readOnly,
+  currentUserAdminSpaceMemberships
 }) => {
   const {
     sys: {
@@ -38,6 +41,14 @@ const MembershipRow = ({
 
   const roleIds = map(isEmpty(roles) ? [ADMIN_ROLE] : roles, 'sys.id');
   const [selectedRoleIds, setSelectedRoles] = useState(roleIds);
+  const [isShowingUpdateConfirmation, showUpdateConfirmation] = useState(false);
+  const onUpdate = async () => {
+    try {
+      await onUpdateTeamSpaceMembership(membership, selectedRoleIds);
+    } catch (e) {
+      setSelectedRoles(roleIds);
+    }
+  };
 
   // reset selected roles when starting to edit
   useEffect(() => {
@@ -48,9 +59,17 @@ const MembershipRow = ({
     intersection(selectedRoleIds, roleIds).length === selectedRoleIds.length &&
     selectedRoleIds.length === roleIds.length
   );
+  const isLastAdminMembership =
+    currentUserAdminSpaceMemberships.length === 1 &&
+    currentUserAdminSpaceMemberships[0].sys.id === membershipId;
 
   return (
     <TableRow key={membershipId} testId="membership-row" className={styles.row}>
+      <DowngradeOwnAdminMembershipConfirmation
+        isShown={isShowingUpdateConfirmation}
+        close={() => showUpdateConfirmation(false)}
+        onConfirm={() => showUpdateConfirmation(false) || onUpdate()}
+      />
       <TableCell className={styles.cell} testId="team-cell">
         <div className={styles.cellTeamName}>{name}</div>
         {/*This truncation is a fallback for IE and pre-68 FF, which don't support css line-clamp*/}
@@ -73,11 +92,11 @@ const MembershipRow = ({
               testId="confirm-change-role"
               buttonType="positive"
               onClick={async () => {
-                try {
-                  await onUpdateTeamSpaceMembership(membership, selectedRoleIds);
-                } catch (e) {
-                  setSelectedRoles(roleIds);
+                if (isLastAdminMembership) {
+                  showUpdateConfirmation(true);
+                  return;
                 }
+                await onUpdate();
               }}
               className={css({ marginRight: tokens.spacingM })}
               disabled={!haveRolesChanged || isEmpty(selectedRoleIds) || isPending}
@@ -114,7 +133,10 @@ MembershipRow.propTypes = {
   setEditing: PropTypes.func.isRequired,
   onUpdateTeamSpaceMembership: PropTypes.func.isRequired,
   isPending: PropTypes.bool.isRequired,
-  readOnly: PropTypes.bool.isRequired
+  readOnly: PropTypes.bool.isRequired,
+  currentUserAdminSpaceMemberships: PropTypes.arrayOf(
+    PropTypes.oneOfType([SpaceMembershipProp, TeamSpaceMembershipProp])
+  ).isRequired
 };
 
 export default MembershipRow;

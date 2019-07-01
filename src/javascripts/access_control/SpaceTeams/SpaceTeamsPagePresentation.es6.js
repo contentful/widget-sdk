@@ -11,7 +11,11 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import Workbench from 'app/common/Workbench.es6';
-import { SpaceRole as SpaceRoleProp } from 'app/OrganizationSettings/PropTypes.es6';
+import {
+  SpaceMembership as SpaceMembershipProp,
+  SpaceRole as SpaceRoleProp,
+  TeamSpaceMembership as TeamSpaceMembershipProp
+} from 'app/OrganizationSettings/PropTypes.es6';
 import { go } from 'states/Navigator.es6';
 
 import LoadingPlaceholder from './LoadingPlaceholder.es6';
@@ -21,6 +25,7 @@ import MembershipRow from './MembershipRow.es6';
 const goToAddTeams = () => go({
   path: ['spaces', 'detail', 'settings', 'teams', 'add']
 });
+
 const SpaceTeamsPagePresentation = ({
                                       memberships,
                                       teams,
@@ -28,8 +33,9 @@ const SpaceTeamsPagePresentation = ({
                                       isPending,
                                       availableRoles,
                                       onUpdateTeamSpaceMembership,
-                                      readOnly
-                                    }) => {
+                                      readOnly,
+  currentUserAdminSpaceMemberships
+}) => {
   const [openMenu, setOpenMenu] = useState(null);
   const [editingRow, setEditingRow] = useState(null);
 
@@ -99,11 +105,12 @@ const SpaceTeamsPagePresentation = ({
                       membership,
                       availableRoles,
                       onUpdateTeamSpaceMembership,
-                      isPending
-                    }}
-                  />
-                );
-              })}
+                      isPending,
+                        currentUserAdminSpaceMemberships
+                      }}
+                    />
+                  );
+                })}
             </TableBody>
           </Table>
         </div>
@@ -119,7 +126,10 @@ SpaceTeamsPagePresentation.propTypes = {
   availableRoles: PropTypes.arrayOf(SpaceRoleProp),
   onUpdateTeamSpaceMembership: PropTypes.func.isRequired,
   isPending: PropTypes.bool.isRequired,
-  readOnly: PropTypes.bool.isRequired
+  readOnly: PropTypes.bool.isRequired,
+  currentUserAdminSpaceMemberships: PropTypes.arrayOf(
+    PropTypes.oneOfType([SpaceMembershipProp, TeamSpaceMembershipProp])
+  ).isRequired
 };
 
 export default SpaceTeamsPagePresentation;
