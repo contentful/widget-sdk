@@ -200,6 +200,14 @@ export function getEntrySnapshots(
   };
 }
 
+export function postEntry(spaceId: string = defaultSpaceId): RequestOptions {
+  return {
+    method: 'POST',
+    path: `/spaces/${spaceId}/entries`,
+    headers: defaultHeader
+  };
+}
+
 export function getApps(spaceId: string = defaultSpaceId): RequestOptions {
   return {
     method: 'GET',

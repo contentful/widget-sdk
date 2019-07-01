@@ -1,8 +1,17 @@
 import { singleUser } from '../../../interactions/users';
-import { singleContentTypeResponse } from '../../../interactions/content_types';
+import {
+  singleContentTypeResponse,
+  editorInterfaceWithoutSidebarResponse
+} from '../../../interactions/content_types';
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId, getEntries } from '../../../util/requests';
+import {
+  singleEntryResponse,
+  noEntryLinksResponse,
+  noEntrySnapshotsResponse,
+  postSingleEntryRequest
+} from '../../../interactions/entries';
 
 const empty = require('../../../fixtures/responses/empty.json');
 const severalEntriesResponse = require('../../../fixtures/responses/entries-several.json');
@@ -16,7 +25,7 @@ const archivedQuery = {
   limit: '0',
   'sys.archivedAt[exists]': 'true'
 };
-describe('Entries page', () => {
+describe('Entries list page', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
   });
@@ -98,6 +107,17 @@ describe('Entries page', () => {
         .should('be.visible')
         .find('button')
         .should('be.enabled');
+    });
+    it('redirects to the entry page after click on create button', () => {
+      postSingleEntryRequest();
+      singleEntryResponse();
+      noEntryLinksResponse();
+      noEntrySnapshotsResponse();
+      editorInterfaceWithoutSidebarResponse();
+
+      cy.getByTestId('create-entry').click();
+      cy.getByTestId('entity-field-controls').should('be.visible');
+      cy.getByTestId('entry-editor-sidebar').should('be.visible');
     });
   });
 

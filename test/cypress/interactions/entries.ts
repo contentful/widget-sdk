@@ -7,7 +7,8 @@ import {
   defaultSpaceId,
   getEntriesWithEnvironment,
   defaultEnvironment,
-  defaultAssetId
+  defaultAssetId,
+  postEntry
 } from '../util/requests';
 
 const empty = require('../fixtures/responses/empty.json');
@@ -88,4 +89,17 @@ export function singleEntryWithQuery() {
       body: severalEntriesResponseBody
     }
   }).as(state.Entries.QUERY);
+}
+
+export function postSingleEntryRequest(body: Object = entryResponseBody) {
+  cy.addInteraction({
+    provider: 'entries',
+    state: state.Entries.POST,
+    uponReceiving: 'post request for entry',
+    withRequest: postEntry(),
+    willRespondWith: {
+      status: 201,
+      body: body
+    }
+  }).as(state.Entries.POST);
 }

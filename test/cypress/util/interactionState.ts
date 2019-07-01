@@ -55,7 +55,8 @@ export enum Entries {
   LINKS = 'entries/links',
   ASSET_LINKS = 'entries/asset-links',
   SNAPSHOTS = 'entries/snapshots',
-  QUERY = 'entries/with-query'
+  QUERY = 'entries/with-query',
+  POST = 'entries/post'
 }
 
 export enum Assets {
