@@ -83,7 +83,7 @@ describe('Schedule Publication', () => {
         .first()
         .click();
       cy.wait([`@${state.Jobs.CANCEL}`]);
-      cy.getByTestId('schedule-publication').should('be.visible');
+      cy.getByTestId('change-state-menu-trigger').should('be.visible');
     });
   });
 });
