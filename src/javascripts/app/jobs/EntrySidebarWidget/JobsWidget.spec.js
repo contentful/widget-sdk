@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, wait } from '@testing-library/react';
+import { render, cleanup, wait, fireEvent } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 
 import { Notification } from '@contentful/forma-36-react-components';
@@ -24,7 +24,36 @@ describe('JobWidget', () => {
       environmentId: 'enviromentId',
       userId: 'userId',
       isSaving: false,
-      secondary: [],
+      status: 'draft',
+      primary: {
+        label: 'Publish',
+        targetStateId: 'published',
+        execute: () => {},
+        isAvailable: () => {},
+        isDisabled: () => false,
+        inProgress: () => {},
+        isRestricted: () => {}
+      },
+      revert: {
+        label: 'Publish',
+        targetStateId: 'published',
+        execute: () => {},
+        isAvailable: () => {},
+        isDisabled: () => false,
+        inProgress: () => {},
+        isRestricted: () => {}
+      },
+      secondary: [
+        {
+          label: 'Archive',
+          targetStateId: 'published',
+          execute: () => {},
+          isAvailable: () => {},
+          isDisabled: () => false,
+          inProgress: () => {},
+          isRestricted: () => {}
+        }
+      ],
       entity
     };
 
@@ -36,15 +65,16 @@ describe('JobWidget', () => {
     const [renderResult] = build();
 
     expect(renderResult.getByTestId('jobs-skeleton')).toBeInTheDocument();
-    expect(renderResult.queryByTestId('schedule-publication')).toBeNull();
+    expect(renderResult.queryByTestId('change-state-published')).toBeNull();
     expect(getJobs).toHaveBeenCalledWith(expect.any(Function), {
       order: '-sys.scheduledAt',
       'sys.entity.sys.id': defaultEntryId()
     });
 
     await wait();
-    expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
     expect(renderResult.queryByTestId('jobs-skeleton')).toBeNull();
+    fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
+    expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
     expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
   });
 
@@ -58,6 +88,7 @@ describe('JobWidget', () => {
       const [renderResult] = build(unpublishedEntry);
 
       await wait();
+      fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
       expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
       expect(renderResult.getByTestId('failed-job-note')).toBeInTheDocument();
     });
@@ -71,7 +102,7 @@ describe('JobWidget', () => {
       const [renderResult] = build(publishedEntry);
 
       await wait();
-
+      fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
       expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
       expect(renderResult.getByTestId('failed-job-note')).toBeInTheDocument();
     });
