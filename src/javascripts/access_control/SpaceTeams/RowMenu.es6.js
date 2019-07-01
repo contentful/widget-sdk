@@ -21,7 +21,7 @@ const RowMenu = ({ isOpen, setOpen, setEditing, disabled }) => {
           disabled={disabled}
           testId={'action-button'}
           label="Action"
-          buttonType="secondary"
+          buttonType="primary"
           iconProps={{ icon: 'MoreHorizontal' }}
           onClick={() => setOpen(!isOpen)}
         />
