@@ -1,6 +1,7 @@
 import React from 'react';
-import Enzyme from 'enzyme';
+import { render, cleanup, fireEvent } from '@testing-library/react';
 import PublicationWidget from './PublicationWidget.es6';
+import 'jest-dom/extend-expect';
 
 const createCommand = props => ({
   isDisabled: () => false,
@@ -10,17 +11,31 @@ const createCommand = props => ({
   ...props
 });
 
+const selectors = {
+  statusState: renderResult => renderResult.getByTestId('entity-state'),
+  stateText: renderResult => renderResult.container.querySelector('.entity-sidebar__state'),
+  dateText: renderResult => renderResult.container.querySelector('.entity-sidebar__last-saved'),
+  publishBtn: renderResult => renderResult.getByTestId('change-state-published'),
+  secondaryArchiveBtn: renderResult => renderResult.getByTestId('change-state-archived'),
+  secondaryDropdownTrigger: renderResult => renderResult.getByTestId('change-state-menu-trigger'),
+  revertButton: renderResult => renderResult.getByTestId('discard-changed-button'),
+  secondaryUnpublishBtn: renderResult => renderResult.getByTestId('change-state-draft'),
+  actionRestrictionNote: renderResult => renderResult.getByTestId('action-restriction-note')
+};
+
 describe('app/EntrySidebar/PublicationWidget', () => {
-  const render = (props, renderFn = Enzyme.mount) => {
-    const wrapper = renderFn(<PublicationWidget isSaving={false} {...props} />);
-    return { wrapper };
+  const renderWidget = props => {
+    const renderResult = render(<PublicationWidget isSaving={false} {...props} />);
+    return { renderResult };
   };
+
+  afterEach(cleanup);
 
   it('shows proper buttons for "Draft" status', () => {
     const stubs = {
       onPublishClick: jest.fn()
     };
-    const { wrapper } = render({
+    const { renderResult } = renderWidget({
       status: 'draft',
       updatedAt: '2018-01-14T15:15:49.230Z',
       primary: createCommand({
@@ -37,43 +52,30 @@ describe('app/EntrySidebar/PublicationWidget', () => {
       ]
     });
 
-    const selectors = {
-      statusState: '[data-test-id="entity-state"]',
-      stateText: '.entity-sidebar__state',
-      dateText: '.entity-sidebar__last-saved',
-      publishBtn: '.primary-publish-button[data-test-id="change-state-published"]',
-      secondaryArchiveBtn:
-        '[data-test-id="change-state-menu"] [data-test-id="change-state-archived"]',
-      secondaryDropdownTrigger: '[data-test-id="change-state-menu-trigger"]',
-      revertButton: '[data-test-id="discard-changed-button"]'
-    };
+    expect(selectors.stateText(renderResult).textContent).toBe('Status: Draft');
+    expect(selectors.dateText(renderResult).textContent).toBe('Last saved 01/14/2018');
 
-    expect(wrapper.find(selectors.statusState).prop('data-state')).toEqual('draft');
-    expect(wrapper.find(selectors.stateText)).toHaveText('Status: Draft');
-    expect(wrapper.find(selectors.dateText)).toHaveText('Last saved 01/14/2018');
-
-    expect(wrapper.find(selectors.publishBtn)).toExist();
-    expect(wrapper.find(selectors.publishBtn)).not.toBeDisabled();
-    expect(wrapper.find(selectors.publishBtn)).toHaveText('Publish');
-    wrapper.find(selectors.publishBtn).simulate('click');
+    expect(selectors.publishBtn(renderResult)).toBeInTheDocument();
+    expect(selectors.publishBtn(renderResult)).not.toBeDisabled();
+    expect(selectors.publishBtn(renderResult).textContent).toBe('Publish');
+    fireEvent.click(selectors.publishBtn(renderResult));
     expect(stubs.onPublishClick).toHaveBeenCalled();
 
-    expect(wrapper.find(selectors.revertButton)).not.toExist();
+    expect(renderResult.queryByTestId('discard-changed-button')).toBeNull();
+    expect(renderResult.queryByTestId('change-state-archived')).toBeNull();
 
-    expect(wrapper.find(selectors.secondaryArchiveBtn)).not.toExist();
+    fireEvent.click(selectors.secondaryDropdownTrigger(renderResult));
 
-    wrapper.find(selectors.secondaryDropdownTrigger).simulate('click');
-
-    expect(wrapper.find(selectors.secondaryArchiveBtn)).toExist();
-    expect(wrapper.find(selectors.secondaryArchiveBtn)).not.toBeDisabled();
-    expect(wrapper.find(selectors.secondaryArchiveBtn)).toHaveText('Archive');
+    expect(selectors.secondaryArchiveBtn(renderResult)).toBeInTheDocument();
+    expect(selectors.secondaryArchiveBtn(renderResult)).not.toBeDisabled();
+    expect(selectors.secondaryArchiveBtn(renderResult).textContent).toBe('Archive');
   });
 
   it('shows proper buttons for "Pending" status', () => {
     const stubs = {
       onPublishClick: jest.fn()
     };
-    const { wrapper } = render({
+    const { renderResult } = renderWidget({
       status: 'changes',
       updatedAt: '2018-01-14T15:15:49.230Z',
       primary: createCommand({
@@ -94,47 +96,36 @@ describe('app/EntrySidebar/PublicationWidget', () => {
       ]
     });
 
-    const selectors = {
-      statusState: '[data-test-id="entity-state"]',
-      stateText: '.entity-sidebar__state',
-      dateText: '.entity-sidebar__last-saved',
-      publishBtn: '.primary-publish-button[data-test-id="change-state-published"]',
-      secondaryArchiveBtn:
-        '[data-test-id="change-state-menu"] [data-test-id="change-state-archived"]',
-      secondaryUnpublishBtn:
-        '[data-test-id="change-state-menu"] [data-test-id="change-state-draft"]',
-      secondaryDropdownTrigger: '[data-test-id="change-state-menu-trigger"]'
-    };
+    expect(selectors.stateText(renderResult).textContent).toBe(
+      'Status: Published (pending changes)'
+    );
+    expect(selectors.dateText(renderResult).textContent).toBe('Last saved 01/14/2018');
 
-    expect(wrapper.find(selectors.statusState).prop('data-state')).toEqual('changes');
-    expect(wrapper.find(selectors.stateText)).toHaveText('Status: Published (pending changes)');
-    expect(wrapper.find(selectors.dateText)).toHaveText('Last saved 01/14/2018');
-
-    expect(wrapper.find(selectors.publishBtn)).toExist();
-    expect(wrapper.find(selectors.publishBtn)).not.toBeDisabled();
-    expect(wrapper.find(selectors.publishBtn)).toHaveText('Publish changes');
-    wrapper.find(selectors.publishBtn).simulate('click');
+    expect(selectors.publishBtn(renderResult)).toBeInTheDocument();
+    expect(selectors.publishBtn(renderResult)).not.toBeDisabled();
+    expect(selectors.publishBtn(renderResult).textContent).toBe('Publish changes');
+    fireEvent.click(selectors.publishBtn(renderResult));
     expect(stubs.onPublishClick).toHaveBeenCalled();
 
-    expect(wrapper.find(selectors.secondaryArchiveBtn)).not.toExist();
-    expect(wrapper.find(selectors.secondaryUnpublishBtn)).not.toExist();
+    expect(renderResult.queryByTestId('change-state-archived')).toBeNull();
+    expect(renderResult.queryByTestId('change-state-draft')).toBeNull();
 
-    wrapper.find(selectors.secondaryDropdownTrigger).simulate('click');
+    fireEvent.click(selectors.secondaryDropdownTrigger(renderResult));
 
-    expect(wrapper.find(selectors.secondaryArchiveBtn)).toExist();
-    expect(wrapper.find(selectors.secondaryArchiveBtn)).not.toBeDisabled();
-    expect(wrapper.find(selectors.secondaryArchiveBtn)).toHaveText('Archive');
+    expect(selectors.secondaryArchiveBtn(renderResult)).toBeInTheDocument();
+    expect(selectors.secondaryArchiveBtn(renderResult)).not.toBeDisabled();
+    expect(selectors.secondaryArchiveBtn(renderResult).textContent).toBe('Archive');
 
-    expect(wrapper.find(selectors.secondaryUnpublishBtn)).toExist();
-    expect(wrapper.find(selectors.secondaryUnpublishBtn)).not.toBeDisabled();
-    expect(wrapper.find(selectors.secondaryUnpublishBtn)).toHaveText('Unpublish');
+    expect(selectors.secondaryUnpublishBtn(renderResult)).toBeInTheDocument();
+    expect(selectors.secondaryUnpublishBtn(renderResult)).not.toBeDisabled();
+    expect(selectors.secondaryUnpublishBtn(renderResult).textContent).toBe('Unpublish');
   });
 
   it('shows proper buttons for "Published" status', () => {
     const stubs = {
       revertOnClick: jest.fn()
     };
-    const { wrapper } = render({
+    const { renderResult } = renderWidget({
       status: 'published',
       updatedAt: '2018-01-14T15:15:49.230Z',
       primary: createCommand({
@@ -157,51 +148,38 @@ describe('app/EntrySidebar/PublicationWidget', () => {
       ]
     });
 
-    const selectors = {
-      statusState: '[data-test-id="entity-state"]',
-      stateText: '.entity-sidebar__state',
-      dateText: '.entity-sidebar__last-saved',
-      publishBtn: '.primary-publish-button[data-test-id="change-state-published"]',
-      secondaryArchiveBtn:
-        '[data-test-id="change-state-menu"] [data-test-id="change-state-archived"]',
-      secondaryUnpublishBtn:
-        '[data-test-id="change-state-menu"] [data-test-id="change-state-draft"]',
-      secondaryDropdownTrigger: '[data-test-id="change-state-menu-trigger"]',
-      revertButton: '[data-test-id="discard-changed-button"]',
-      actionRestrictionNote: '[data-test-id="action-restriction-note"]'
-    };
+    expect(selectors.stateText(renderResult).textContent).toBe('Status: Published');
+    expect(selectors.dateText(renderResult).textContent).toBe('Last saved 01/14/2018');
 
-    expect(wrapper.find(selectors.statusState).prop('data-state')).toEqual('published');
-    expect(wrapper.find(selectors.stateText)).toHaveText('Status: Published');
-    expect(wrapper.find(selectors.dateText)).toHaveText('Last saved 01/14/2018');
+    expect(renderResult.queryByTestId('change-state-published')).toBeNull();
 
-    expect(wrapper.find(selectors.publishBtn)).not.toExist();
+    expect(renderResult.queryByTestId('change-state-archived')).toBeNull();
+    expect(renderResult.queryByTestId('change-state-draft')).toBeNull();
 
-    expect(wrapper.find(selectors.secondaryArchiveBtn)).not.toExist();
-    expect(wrapper.find(selectors.secondaryUnpublishBtn)).not.toExist();
-
-    expect(wrapper.find(selectors.revertButton)).toExist();
-    wrapper.find(selectors.revertButton).simulate('click');
+    expect(selectors.revertButton(renderResult)).toBeInTheDocument();
+    fireEvent.click(selectors.revertButton(renderResult));
     expect(stubs.revertOnClick).toHaveBeenCalled();
 
-    expect(wrapper.find(selectors.secondaryDropdownTrigger)).toHaveText('Change status');
-    wrapper.find(selectors.secondaryDropdownTrigger).simulate('click');
+    expect(selectors.secondaryDropdownTrigger(renderResult).textContent).toBe('Change status');
+    fireEvent.click(selectors.secondaryDropdownTrigger(renderResult));
 
-    expect(wrapper.find(selectors.secondaryArchiveBtn)).toExist();
-    expect(wrapper.find(selectors.secondaryArchiveBtn)).not.toBeDisabled();
-    expect(wrapper.find(selectors.secondaryArchiveBtn)).toHaveText('Archive');
+    expect(selectors.secondaryArchiveBtn(renderResult)).toBeInTheDocument();
+    expect(selectors.secondaryArchiveBtn(renderResult)).not.toBeDisabled();
+    expect(selectors.secondaryArchiveBtn(renderResult).textContent).toBe('Archive');
 
-    expect(wrapper.find(selectors.secondaryUnpublishBtn)).toExist();
-    expect(wrapper.find(selectors.secondaryUnpublishBtn)).not.toBeDisabled();
-    expect(wrapper.find(selectors.actionRestrictionNote)).not.toExist();
-    expect(wrapper.find(selectors.secondaryUnpublishBtn)).toHaveText('Unpublish');
+    expect(selectors.secondaryUnpublishBtn(renderResult)).toBeInTheDocument();
+    expect(selectors.secondaryUnpublishBtn(renderResult)).not.toBeDisabled();
+
+    expect(renderResult.queryByTestId('action-restriction-note')).toBeNull();
+
+    expect(selectors.secondaryUnpublishBtn(renderResult).textContent).toBe('Unpublish');
   });
 
   it('shows the action restrtiction note for publish action', () => {
     const stubs = {
       onPublishClick: jest.fn()
     };
-    const { wrapper } = render({
+    const { renderResult } = renderWidget({
       status: 'draft',
       updatedAt: '2018-01-14T15:15:49.230Z',
       primary: createCommand({
@@ -219,16 +197,10 @@ describe('app/EntrySidebar/PublicationWidget', () => {
       ]
     });
 
-    const selectors = {
-      statusState: '[data-test-id="entity-state"]',
-      actionRestrictionNote: '[data-test-id="action-restriction-note"]',
-      publishBtn: '[data-test-id="change-state-published"]'
-    };
-
-    expect(wrapper.find(selectors.publishBtn)).toExist();
-    expect(wrapper.find(selectors.publishBtn)).toBeDisabled();
-    expect(wrapper.find(selectors.actionRestrictionNote)).toExist();
-    expect(wrapper.find(selectors.actionRestrictionNote)).toHaveText(
+    expect(selectors.publishBtn(renderResult)).toBeInTheDocument();
+    expect(selectors.publishBtn(renderResult)).toBeDisabled();
+    expect(selectors.actionRestrictionNote(renderResult)).toBeInTheDocument();
+    expect(selectors.actionRestrictionNote(renderResult).textContent).toBe(
       'You do not have permission to publish.'
     );
   });
