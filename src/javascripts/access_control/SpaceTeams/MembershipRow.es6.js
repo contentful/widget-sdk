@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, TableCell, TableRow } from '@contentful/forma-36-react-components';
+import { Button, TableCell, TableRow, Tooltip } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { cx, css } from 'emotion';
@@ -63,6 +63,24 @@ const MembershipRow = ({
     currentUserAdminSpaceMemberships.length === 1 &&
     currentUserAdminSpaceMemberships[0].sys.id === membershipId;
 
+  const confirmButton = (
+    <Button
+      testId="confirm-change-role"
+      buttonType="positive"
+      onClick={async () => {
+        if (isLastAdminMembership) {
+          showUpdateConfirmation(true);
+          return;
+        }
+        await onUpdate();
+      }}
+      className={css({ marginRight: tokens.spacingM })}
+      disabled={!haveRolesChanged || isEmpty(selectedRoleIds) || isPending}
+      loading={isPending}>
+      Change role
+    </Button>
+  );
+
   return (
     <TableRow key={membershipId} testId="membership-row" className={styles.row}>
       <DowngradeOwnAdminMembershipConfirmation
@@ -88,21 +106,17 @@ const MembershipRow = ({
               value={selectedRoleIds}
             />
             <span className={css({ flexGrow: 1 })} />
-            <Button
-              testId="confirm-change-role"
-              buttonType="positive"
-              onClick={async () => {
-                if (isLastAdminMembership) {
-                  showUpdateConfirmation(true);
-                  return;
-                }
-                await onUpdate();
-              }}
-              className={css({ marginRight: tokens.spacingM })}
-              disabled={!haveRolesChanged || isEmpty(selectedRoleIds) || isPending}
-              loading={isPending}>
-              Change role
-            </Button>
+            {!haveRolesChanged && (
+              <Tooltip content="Please change at least one role before saving or cancel the editing">
+                {confirmButton}
+              </Tooltip>
+            )}
+            {isEmpty(selectedRoleIds) && (
+              <Tooltip content="Please select at least one role to assign to this team">
+                {confirmButton}
+              </Tooltip>
+            )}
+            {haveRolesChanged && !isEmpty(selectedRoleIds) && confirmButton}
             <Button buttonType="muted" onClick={() => setEditing(false)}>
               Cancel
             </Button>
