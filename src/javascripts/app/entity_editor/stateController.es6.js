@@ -298,7 +298,7 @@ export default function register() {
 
       function showConfirmationMessage(props) {
         return modalDialog.open({
-          template: '<cf-state-change-confirmation-dialog class="modal-background"/>',
+          template: '<cf-state-change-confirmation-dialog />',
           backgroundClose: true,
           scopeData: {
             action: props.action,
