@@ -8,7 +8,6 @@ import { NAMESPACE_EXTENSION, NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNa
 import {
   EntryConfiguration,
   Publication as PublicationWidget,
-  Jobs as JobsWidget,
   Tasks as TasksWidget,
   Versions as VersionsWidget,
   ContentPreview as ContentPreviewWidget,
@@ -117,10 +116,6 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
-          widgetId: JobsWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
-        },
-        {
           widgetId: TasksWidget.widgetId,
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
           availabilityStatus: 'alpha'
@@ -151,7 +146,6 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         configurableWidget: null,
         items: [
           PublicationWidget,
-          JobsWidget,
           TasksWidget,
           VersionsWidget,
           {
@@ -179,10 +173,6 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
       const configuration = [
         {
           widgetId: PublicationWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
-        },
-        {
-          widgetId: JobsWidget.widgetId,
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
@@ -238,7 +228,6 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         configurableWidget: null,
         items: [
           PublicationWidget,
-          JobsWidget,
           TasksWidget,
           VersionsWidget,
           UsersWidget,

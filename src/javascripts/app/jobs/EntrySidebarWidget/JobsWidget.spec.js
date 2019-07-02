@@ -1,13 +1,13 @@
 import React from 'react';
-import { render, cleanup, wait } from '@testing-library/react';
+import { render, cleanup, wait, fireEvent } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 
 import { Notification } from '@contentful/forma-36-react-components';
 import JobWidget from './JobsWidget.es6';
-import { getJobs } from '../DataManagement/JobsService.es6';
+import { getNotCanceledJobsForEntity } from '../DataManagement/JobsService.es6';
 
 jest.mock('../DataManagement/JobsService.es6');
-describe('JobWidget', () => {
+describe('<JobWidget />', () => {
   beforeEach(() => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
@@ -18,31 +18,101 @@ describe('JobWidget', () => {
     jest.clearAllMocks();
   });
 
-  const build = ({ entity = createEntry() } = {}) => {
-    const props = {
+  const build = props => {
+    const resultProps = {
       spaceId: 'spaceId',
       environmentId: 'enviromentId',
       userId: 'userId',
-      entity
+      isSaving: false,
+      status: 'draft',
+      primary: {
+        label: 'Publish',
+        targetStateId: 'published',
+        execute: () => {},
+        isAvailable: () => {},
+        isDisabled: () => false,
+        inProgress: () => {},
+        isRestricted: () => {}
+      },
+      revert: {
+        label: 'Publish',
+        targetStateId: 'published',
+        execute: () => {},
+        isAvailable: () => {},
+        isDisabled: () => false,
+        inProgress: () => {},
+        isRestricted: () => {}
+      },
+      secondary: [
+        {
+          label: 'Archive',
+          targetStateId: 'published',
+          execute: () => {},
+          isAvailable: () => {},
+          isDisabled: () => false,
+          inProgress: () => {},
+          isRestricted: () => {}
+        }
+      ],
+      entity: createEntry(),
+      ...props
     };
 
-    return [render(<JobWidget {...props} />), props];
+    return [render(<JobWidget {...resultProps} />), resultProps];
   };
 
-  it('renders scheduling widget', async () => {
-    getJobs.mockResolvedValueOnce({ items: [] });
-    const [renderResult] = build();
+  it('renders skeleton before <StatusButton />', async () => {
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
+    const [renderResult] = build({ entity: createEntry() });
 
     expect(renderResult.getByTestId('jobs-skeleton')).toBeInTheDocument();
-    expect(renderResult.queryByTestId('schedule-publication')).toBeNull();
-    expect(getJobs).toHaveBeenCalledWith(expect.any(Function), {
-      order: '-sys.scheduledAt',
-      'sys.entity.sys.id': defaultEntryId()
-    });
+    expect(renderResult.queryByTestId('status-widget')).toBeNull();
+
+    expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
+      expect.any(Function),
+      defaultEntryId()
+    );
 
     await wait();
-    expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
+
     expect(renderResult.queryByTestId('jobs-skeleton')).toBeNull();
+    expect(renderResult.getByTestId('status-widget')).toBeInTheDocument();
+    expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
+  });
+
+  it('disables the status button when there is an active job', async () => {
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
+    const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
+    const [renderResult] = build({ entity: publishedEntry });
+    await wait();
+    expect(renderResult.getByTestId('change-state-menu-trigger')).toBeDisabled();
+    expect(renderResult.getByTestId('change-state-published')).toBeDisabled();
+  });
+
+  it('does not render scheduled publication cta if primary action is not allowed', async () => {
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
+    const [renderResult] = build({
+      entity: createEntry(),
+      primary: {
+        label: 'Publish',
+        targetStateId: 'published',
+        execute: () => {},
+        isAvailable: () => {},
+        isDisabled: () => true,
+        inProgress: () => {},
+        isRestricted: () => {}
+      }
+    });
+
+    expect(renderResult.queryByTestId('change-state-menu-trigger')).toBeNull();
+    expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
+      expect.any(Function),
+      defaultEntryId()
+    );
+
+    await wait();
+    fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
+    expect(renderResult.queryByTestId('schedule-publication')).toBeNull();
     expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
   });
 
@@ -51,11 +121,12 @@ describe('JobWidget', () => {
       const failedJob = createFailedJob({
         scheduledAt: '2019-06-21T05:01:00.000Z'
       });
-      getJobs.mockResolvedValueOnce({ items: [failedJob] });
+      getNotCanceledJobsForEntity.mockResolvedValueOnce([failedJob]);
       const unpublishedEntry = { sys: { id: 'entryId' } };
       const [renderResult] = build(unpublishedEntry);
 
       await wait();
+      fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
       expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
       expect(renderResult.getByTestId('failed-job-note')).toBeInTheDocument();
     });
@@ -64,12 +135,12 @@ describe('JobWidget', () => {
       const failedJob = createFailedJob({
         scheduledAt: '2019-06-21T05:01:00.000Z'
       });
-      getJobs.mockResolvedValueOnce({ items: [failedJob] });
+      getNotCanceledJobsForEntity.mockResolvedValueOnce([failedJob]);
       const publishedEntry = { sys: { id: 'entryId', publishedAt: '2019-06-21T05:00:00.000Z' } };
       const [renderResult] = build(publishedEntry);
 
       await wait();
-
+      fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
       expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
       expect(renderResult.getByTestId('failed-job-note')).toBeInTheDocument();
     });
@@ -77,7 +148,7 @@ describe('JobWidget', () => {
 
   describe('on new props', () => {
     it('does not rerender if publishedAt date is the same', async () => {
-      getJobs.mockResolvedValueOnce({ items: [createPendingJob()] });
+      getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
       const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
       const [renderResult, props] = build({ entity: publishedEntry });
 
@@ -89,37 +160,37 @@ describe('JobWidget', () => {
       renderResult.rerender(<JobWidget {...props} entity={publishedEntryWithSameDate} />);
       await wait();
 
-      expect(getJobs).toHaveBeenCalledTimes(1);
+      expect(getNotCanceledJobsForEntity).toHaveBeenCalledTimes(1);
     });
 
     it('rerenders if publishedAt date changed', async () => {
-      getJobs.mockResolvedValueOnce({ items: [createPendingJob()] });
+      getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
       const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
       const [renderResult, props] = build({ entity: publishedEntry });
 
       await wait();
 
-      getJobs.mockResolvedValueOnce({ items: [createPendingJob()] });
+      getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
       const newPublishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T06:00:00.000Z' } });
       renderResult.rerender(<JobWidget {...props} entity={newPublishedEntry} />);
       await wait();
 
-      expect(getJobs).toHaveBeenCalledTimes(2);
+      expect(getNotCanceledJobsForEntity).toHaveBeenCalledTimes(2);
     });
 
     it('shows toast when entry was successfully published on schedule', async () => {
-      getJobs.mockResolvedValueOnce({ items: [createPendingJob()] });
+      getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
       const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
       const [renderResult, props] = build({ entity: publishedEntry });
 
       await wait();
 
-      getJobs.mockResolvedValueOnce({ items: [createDoneJob()] });
+      getNotCanceledJobsForEntity.mockResolvedValueOnce([createDoneJob()]);
       const newPublishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T06:00:00.000Z' } });
       renderResult.rerender(<JobWidget {...props} entity={newPublishedEntry} />);
       await wait();
 
-      expect(getJobs).toHaveBeenCalledTimes(2);
+      expect(getNotCanceledJobsForEntity).toHaveBeenCalledTimes(2);
       expect(Notification.success).toHaveBeenCalledWith('Entry was successfully published.');
     });
   });

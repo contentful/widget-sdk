@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes.es6';
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
 import PublicationWidget from './PublicationWidget.es6';
+import { JobsWidget } from 'app/jobs/index.es6';
+import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
+import * as FeatureFlagKey from 'featureFlags.es6';
 
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
@@ -14,7 +17,11 @@ export default class PublicationWidgetContainer extends Component {
     status: '',
     updatedAt: null,
     isSaving: false,
-    showDiscardButton: false
+    showDiscardButton: false,
+    spaceId: undefined,
+    environmentId: undefined,
+    userId: undefined,
+    entity: undefined
   };
 
   componentDidMount() {
@@ -37,21 +44,49 @@ export default class PublicationWidgetContainer extends Component {
   };
 
   render() {
-    const { commands } = this.state;
+    const {
+      commands,
+      spaceId,
+      environmentId,
+      entity,
+      userId,
+      status,
+      isSaving,
+      updatedAt
+    } = this.state;
 
     const revert = get(commands, 'revertToPrevious');
     const primary = get(commands, 'primary');
     const secondary = get(commands, 'secondary', []);
 
     return (
-      <PublicationWidget
-        status={this.state.status}
-        primary={primary}
-        secondary={secondary}
-        revert={revert}
-        isSaving={this.state.isSaving}
-        updatedAt={this.state.updatedAt}
-      />
+      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
+        {({ currentVariation }) => {
+          return currentVariation ? (
+            <JobsWidget
+              spaceId={spaceId}
+              environmentId={environmentId}
+              userId={userId}
+              entity={entity}
+              status={status}
+              primary={primary}
+              secondary={secondary}
+              revert={revert}
+              isSaving={isSaving}
+              updatedAt={updatedAt}
+            />
+          ) : (
+            <PublicationWidget
+              status={this.state.status}
+              primary={primary}
+              secondary={secondary}
+              revert={revert}
+              isSaving={this.state.isSaving}
+              updatedAt={this.state.updatedAt}
+            />
+          );
+        }}
+      </BooleanFeatureFlag>
     );
   }
 }

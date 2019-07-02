@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
-import PublicationWidget from './PublicationWidget.es6';
+import StatusWidget from './StatusWidget.es6';
 import 'jest-dom/extend-expect';
 
 const createCommand = props => ({
@@ -23,9 +23,16 @@ const selectors = {
   actionRestrictionNote: renderResult => renderResult.getByTestId('action-restriction-note')
 };
 
-describe('app/EntrySidebar/PublicationWidget', () => {
+describe('<StatusWidget />', () => {
   const renderWidget = props => {
-    const renderResult = render(<PublicationWidget isSaving={false} {...props} />);
+    const renderResult = render(
+      <StatusWidget
+        isSaving={false}
+        onScheduledPublishClick={jest.fn()}
+        isDisabled={false}
+        {...props}
+      />
+    );
     return { renderResult };
   };
 
@@ -69,6 +76,8 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     expect(selectors.secondaryArchiveBtn(renderResult)).toBeInTheDocument();
     expect(selectors.secondaryArchiveBtn(renderResult)).not.toBeDisabled();
     expect(selectors.secondaryArchiveBtn(renderResult).textContent).toBe('Archive');
+
+    expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
   });
 
   it('shows proper buttons for "Pending" status', () => {
@@ -119,6 +128,8 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     expect(selectors.secondaryUnpublishBtn(renderResult)).toBeInTheDocument();
     expect(selectors.secondaryUnpublishBtn(renderResult)).not.toBeDisabled();
     expect(selectors.secondaryUnpublishBtn(renderResult).textContent).toBe('Unpublish');
+
+    expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
   });
 
   it('shows proper buttons for "Published" status', () => {
@@ -169,6 +180,8 @@ describe('app/EntrySidebar/PublicationWidget', () => {
 
     expect(selectors.secondaryUnpublishBtn(renderResult)).toBeInTheDocument();
     expect(selectors.secondaryUnpublishBtn(renderResult)).not.toBeDisabled();
+
+    expect(renderResult.queryByTestId('schedule-publication')).toBeNull();
 
     expect(renderResult.queryByTestId('action-restriction-note')).toBeNull();
 

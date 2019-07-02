@@ -13,12 +13,6 @@ export function createJob(endpoint, jobDto) {
   );
 }
 
-export function getJobsWithEntryId(endpoint, entryId) {
-  return getJobs(endpoint, {
-    'sys.entity.sys.id': entryId
-  });
-}
-
 export function getJobs(endpoint, query) {
   return endpoint(
     {
@@ -28,6 +22,16 @@ export function getJobs(endpoint, query) {
     },
     ALPHA_HEADER
   );
+}
+
+export async function getNotCanceledJobsForEntity(endpoint, entityId) {
+  const { items } = await getJobs(endpoint, {
+    'sys.entity.sys.id': entityId,
+    order: '-sys.scheduledAt'
+  });
+
+  // TODO: remove after implementing status filter in the api
+  return items.filter(j => j.sys.status !== 'canceled');
 }
 
 export function cancelJob(endpoint, jobId) {

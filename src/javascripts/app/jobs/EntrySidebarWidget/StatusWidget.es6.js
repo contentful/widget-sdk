@@ -2,48 +2,34 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { every } from 'lodash';
+import { css } from 'emotion';
 import {
   Button,
   Dropdown,
   DropdownList,
   DropdownListItem,
-  Icon
+  Icon,
+  Tag
 } from '@contentful/forma-36-react-components';
-import EntrySidebarWidget from '../EntrySidebarWidget.es6';
+import tokens from '@contentful/forma-36-tokens';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
+import StatusBadge from './StatusBadge.es6';
+import ActionRestrictedNote from './ActionRestrictedNote.es6';
+
 import CommandPropType from 'app/entity_editor/CommandPropType.es6';
 
-const PublicationStatus = ({ status }) => (
-  <div className="entity-sidebar__state">
-    <span
-      className="entity-sidebar__state-indicator"
-      data-state={status}
-      data-test-id="entity-state"
-    />
-    <strong>Status: </strong>
-    {status === 'archived' && <span>Archived</span>}
-    {status === 'draft' && <span>Draft</span>}
-    {status === 'published' && <span>Published</span>}
-    {status === 'changes' && <span>Published (pending changes)</span>}
-  </div>
-);
-
-PublicationStatus.propTypes = {
-  status: PropTypes.string.isRequired
+const styles = {
+  scheduleListItem: css({
+    lineHeight: '1rem',
+    display: 'flex',
+    alignItems: 'center'
+  }),
+  scheduledIcon: css({
+    marginRight: tokens.spacing2Xs
+  })
 };
 
-const RestrictedNote = ({ actionName }) => (
-  <p className="f36-color--text-light f36-margin-top--xs" data-test-id="action-restriction-note">
-    <Icon icon="Lock" color="muted" className="action-restricted__icon" />
-    You do not have permission to {actionName.toLowerCase()}.
-  </p>
-);
-
-RestrictedNote.propTypes = {
-  actionName: PropTypes.string.isRequired
-};
-
-export default class PublicationWidget extends React.PureComponent {
+export default class StatusWidget extends React.PureComponent {
   static propTypes = {
     status: PropTypes.string.isRequired,
     isSaving: PropTypes.bool.isRequired,
@@ -51,23 +37,53 @@ export default class PublicationWidget extends React.PureComponent {
     revert: CommandPropType,
     primary: CommandPropType,
     secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
-
-    spaceId: PropTypes.string,
-    environmentId: PropTypes.string,
-    userId: PropTypes.string,
-    entity: PropTypes.object
+    onScheduledPublishClick: PropTypes.func.isRequired,
+    isDisabled: PropTypes.bool.isRequired
   };
 
   state = {
     isOpenDropdown: false
   };
 
+  renderScheduledPublicationCta = () => {
+    // do not show cta if entity is published
+    if (this.props.primary.targetStateId === 'published') {
+      // primary action can be either publish or unachrive
+      // TODO: revisit after support for sched. pub archived entries
+      if (this.props.primary.isDisabled()) {
+        return null;
+      }
+    }
+
+    const canSchedule = this.props.status === 'draft' || this.props.status === 'changes';
+
+    return (
+      canSchedule && (
+        <DropdownListItem
+          className={styles.scheduleListItem}
+          testId="schedule-publication"
+          onClick={() => {
+            this.props.onScheduledPublishClick();
+            this.setState({ isOpenDropdown: false });
+          }}>
+          <div className={styles.scheduleListItem}>
+            <Icon icon="Clock" color="muted" className={styles.scheduledIcon} />
+            Schedule publication <Tag className="f36-margin-left--2xs">Alpha</Tag>
+          </div>
+        </DropdownListItem>
+      )
+    );
+  };
+
   render() {
-    const { primary, status, secondary, isSaving, updatedAt, revert } = this.props;
+    const { primary, status, secondary, isSaving, updatedAt, revert, isDisabled } = this.props;
     const secondaryActionsDisabled = every(secondary || [], action => action.isDisabled());
     return (
-      <EntrySidebarWidget title="Status">
-        <PublicationStatus status={status} />
+      <div data-test-id="status-widget">
+        <header className="entity-sidebar__header">
+          <h2 className="entity-sidebar__heading">Status</h2>
+        </header>
+        <StatusBadge status={status} />
         <div className="entity-sidebar__state-select">
           <div className="publish-buttons-row">
             {status !== 'published' && primary && (
@@ -75,7 +91,7 @@ export default class PublicationWidget extends React.PureComponent {
                 <Button
                   isFullWidth
                   buttonType="positive"
-                  disabled={primary.isDisabled()}
+                  disabled={primary.isDisabled() || isDisabled}
                   loading={primary.inProgress()}
                   testId={`change-state-${primary.targetStateId}`}
                   onClick={() => {
@@ -97,7 +113,7 @@ export default class PublicationWidget extends React.PureComponent {
                 <Button
                   className="secondary-publish-button"
                   isFullWidth
-                  disabled={secondaryActionsDisabled}
+                  disabled={isDisabled || secondaryActionsDisabled}
                   testId="change-state-menu-trigger"
                   buttonType="positive"
                   indicateDropdown
@@ -121,10 +137,11 @@ export default class PublicationWidget extends React.PureComponent {
                       {action.label}
                     </DropdownListItem>
                   ))}
+                {this.renderScheduledPublicationCta()}
               </DropdownList>
             </Dropdown>
           </div>
-          {primary && primary.isRestricted() && <RestrictedNote actionName={primary.label} />}
+          {primary && primary.isRestricted() && <ActionRestrictedNote actionName={primary.label} />}
         </div>
         <div className="entity-sidebar__status-more">
           {updatedAt && (
@@ -148,7 +165,7 @@ export default class PublicationWidget extends React.PureComponent {
             </button>
           )}
         </div>
-      </EntrySidebarWidget>
+      </div>
     );
   }
 }

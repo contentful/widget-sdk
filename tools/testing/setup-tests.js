@@ -18,9 +18,6 @@ ReactTestingLibrary.configure({
 // We shouldn't allow failed prop types in tests
 const error = console.error;
 console.error = (warning, ...args) => {
-  if (/(Invalid prop|Failed prop type)/gi.test(warning)) {
-    throw new Error(warning);
-  }
   // todo: remove once we upgrade to react-dom@16.9.0
   // https://github.com/testing-library/react-testing-library/issues/281
   if (/Warning.*not wrapped in act/.test(warning)) {
@@ -28,6 +25,9 @@ console.error = (warning, ...args) => {
   }
 
   error.apply(console, [warning, ...args]);
+  if (/(Invalid prop|Failed prop type)/gi.test(warning)) {
+    throw new Error(warning);
+  }
 };
 
 // Do not allow uncaught promises

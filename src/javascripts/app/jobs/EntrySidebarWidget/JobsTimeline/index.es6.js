@@ -1,13 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import cn from 'classnames';
+import { css } from 'emotion';
 
 import Job from './Job.es6';
-import { TextLink } from '@contentful/forma-36-react-components';
+import { TextLink, Tag } from '@contentful/forma-36-react-components';
 
 import { JobsStateLink } from 'app/jobs/JobsPageLink.es6';
 
-const JobsTimeline = ({ environmentId, jobs, onCancel }) => (
+const styles = {
+  alphaSideBarHeading: css({
+    display: 'flex'
+  }),
+  alphaTag: css({
+    marginLeft: 'auto'
+  })
+};
+
+const JobsTimeline = ({ environmentId, jobs, onCancel, isReadOnly }) => (
   <div>
+    <header className="entity-sidebar__header">
+      <h2 className={cn(styles.alphaSideBarHeading, 'entity-sidebar__heading')}>
+        Schedule <Tag className={styles.alphaTag}>Alpha</Tag>
+      </h2>
+    </header>
     <ul>
       {jobs.map(job => (
         <Job
@@ -17,6 +33,7 @@ const JobsTimeline = ({ environmentId, jobs, onCancel }) => (
           scheduledAt={job.scheduledAt}
           status={job.status}
           onCancel={onCancel}
+          isReadOnly={isReadOnly}
         />
       ))}
     </ul>
@@ -33,7 +50,8 @@ const JobsTimeline = ({ environmentId, jobs, onCancel }) => (
 JobsTimeline.propTypes = {
   jobs: PropTypes.array.isRequired,
   onCancel: PropTypes.func.isRequired,
-  environmentId: PropTypes.string.isRequired
+  environmentId: PropTypes.string.isRequired,
+  isReadOnly: PropTypes.bool.isRequired
 };
 
 export default JobsTimeline;

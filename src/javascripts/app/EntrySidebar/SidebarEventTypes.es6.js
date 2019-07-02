@@ -7,7 +7,6 @@ export default {
   UPDATED_INCOMING_LINKS_WIDGET: 'sidebar:updated-incoming-links-widget',
   UPDATED_VERSIONS_WIDGET: 'sidebar:updated-versions-widget',
   UPDATED_PUBLICATION_WIDGET: 'sidebar:updated-publication-widget',
-  UPDATED_JOBS_WIDGET: 'sidebar:updated-jobs-widget',
   UPDATED_TASKS_WIDGET: 'sidebar:updated-tasks-widget',
   UPDATED_FOCUSED_LOCALE: 'sidebar:updated-focused-locale',
 
