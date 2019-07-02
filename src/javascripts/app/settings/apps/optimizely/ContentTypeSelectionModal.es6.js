@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReferenceForm, { hasReferenceFieldsLinkingToEntry } from './ReferenceForm.es6';
 import constants from './constants.es6';
-
+import { every } from 'lodash';
+import { hasFieldLinkValidations, findFieldById } from './ReferenceField.es6';
 import {
   Modal,
   Button,
@@ -44,6 +45,14 @@ export default function ContentTypeSelectionModal({
   }
 
   const editingMode = addedContentTypes.includes(selectedContentType);
+  const allReferencesUnchecked = every(
+    allReferenceFields[selectedContentType],
+    (checked, fieldId) =>
+      !checked &&
+      hasFieldLinkValidations(
+        findFieldById(fieldId, allContentTypes.find(ct => ct.sys.id === selectedContentType))
+      )
+  );
 
   return (
     <Modal
@@ -92,7 +101,7 @@ export default function ContentTypeSelectionModal({
             />
           </Modal.Content>
           <Modal.Controls>
-            <Button buttonType="primary" onClick={onSave}>
+            <Button buttonType="primary" onClick={onSave} disabled={allReferencesUnchecked}>
               Save
             </Button>
             <Button buttonType="muted" onClick={onCancel}>

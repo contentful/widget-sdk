@@ -54,7 +54,7 @@ export default function ReferenceField({ id, checked, contentType, onSelect }) {
   );
 }
 
-function findFieldById(id, contentType) {
+export function findFieldById(id, contentType) {
   return contentType.fields.find(field => field.id === id);
 }
 
