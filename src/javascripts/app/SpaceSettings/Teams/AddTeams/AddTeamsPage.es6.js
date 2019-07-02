@@ -15,7 +15,6 @@ import * as tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { css, cx } from 'emotion';
 import Workbench from 'app/common/Workbench.es6';
-import { useAsyncFn } from 'app/common/hooks/useAsync.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository.es6';
 import { go } from 'states/Navigator.es6';
@@ -96,6 +95,8 @@ const classes = {
   }
 };
 
+const makeLink = id => ({ sys: { id, type: 'Link', linkType: 'Role' } });
+
 const closeTabWarning = evt => {
   evt.preventDefault();
   evt.returnValue = '';
@@ -115,7 +116,7 @@ const reducer = createImmerReducer({
     state.shouldShowControls = true;
 
     if (state.selectedTeamIds.length === 1) {
-      // window.addEventListener('beforeunload', closeTabWarning);
+      window.addEventListener('beforeunload', closeTabWarning);
     }
   },
   REMOVE_TEAM: (state, action) => {
@@ -137,20 +138,14 @@ const reducer = createImmerReducer({
   }
 });
 
-const submit = (spaceId, teams, dispatch) => async ({
-  selectedTeamIds,
-  selectedRoleIds,
-  adminRoleSelected
-}) => {
+const submit = async ({ spaceId, teams, selectedTeamIds, selectedRoleIds, adminRoleSelected }) => {
   const endpoint = createSpaceEndpoint(spaceId);
-
-  dispatch({ type: 'SUBMIT', payload: true });
 
   const erredTeams = [];
   const promises = selectedTeamIds.map(teamId =>
     createTeamSpaceMembership(endpoint, teamId, {
       admin: adminRoleSelected,
-      roles: selectedRoleIds.map(id => ({ sys: { id, type: 'Link', linkType: 'Role' } }))
+      roles: selectedRoleIds.map(makeLink)
     }).catch(() => erredTeams.push(teamId))
   );
 
@@ -164,8 +159,6 @@ const submit = (spaceId, teams, dispatch) => async ({
   // teams erred
   if (erredTeams.length > 0 && erredTeams.length === promises.length) {
     Notification.error(`Could not add ${pluralize('team', erredTeams.length)} to the space.`);
-
-    dispatch({ type: 'SUBMIT', payload: false });
 
     return;
   }
@@ -207,8 +200,6 @@ export default function AddTeamsPage({ teams, roles, spaceId }) {
     };
   }, [spaceId]);
 
-  const [, doSubmit] = useAsyncFn(submit(spaceId, teams, dispatch));
-
   const {
     adminRoleSelected,
     selectedTeamIds,
@@ -237,68 +228,74 @@ export default function AddTeamsPage({ teams, roles, spaceId }) {
               <Select
                 disabled={isLoading}
                 className={classes.select}
+                testId="teams-select"
                 onChange={e => dispatch({ type: 'ADD_TEAM', payload: e.target.value })}>
-                <Option>Select...</Option>
+                <Option value="">Select...</Option>
                 {teams
                   .filter(team => !selectedTeamIds.includes(team.sys.id))
                   .map(team => (
-                    <Option value={team.sys.id} key={team.sys.id}>
+                    <Option testId={`${team.sys.id}-option`} value={team.sys.id} key={team.sys.id}>
                       {team.name}
                     </Option>
                   ))}
               </Select>
             </div>
-            <div className={classes.teamsAndRolesLists}>
-              <div className={classes.teamsContainer}>
-                {shouldShowControls && (
-                  <>
-                    <SectionHeading className={cx(classes.sectionHeading, classes.teamTitle)}>
-                      {pluralize('team', selectedTeamIds.length, true)}
-                    </SectionHeading>
-                    <div className={classes.teamsList}>
-                      {selectedTeamIds.length !== 0 &&
-                        selectedTeamIds.map(id => {
-                          const team = teams.find(t => t.sys.id === id);
+            {shouldShowControls && (
+              <div data-test-id="teams-and-roles-lists" className={classes.teamsAndRolesLists}>
+                <div className={classes.teamsContainer}>
+                  <SectionHeading className={cx(classes.sectionHeading, classes.teamTitle)}>
+                    {pluralize('team', selectedTeamIds.length, true)}
+                  </SectionHeading>
+                  <div className={classes.teamsList} data-test-id="teams-list">
+                    {selectedTeamIds.length !== 0 &&
+                      selectedTeamIds.map(id => {
+                        const team = teams.find(t => t.sys.id === id);
 
-                          return (
-                            <TeamInfo
-                              key={team.sys.id}
-                              team={team}
-                              onClick={() => dispatch({ type: 'REMOVE_TEAM', payload: id })}
-                            />
-                          );
-                        })}
-                    </div>
-                    <Button
-                      className={classes.submitButton}
-                      disabled={submitButtonDisabled}
-                      loading={isLoading}
-                      onClick={() => doSubmit(state)}>
-                      Add {pluralize('team', selectedTeamIds.length)}
-                    </Button>
-                  </>
-                )}
+                        return (
+                          <TeamInfo
+                            key={team.sys.id}
+                            team={team}
+                            onClick={() => dispatch({ type: 'REMOVE_TEAM', payload: id })}
+                          />
+                        );
+                      })}
+                  </div>
+                  <Button
+                    className={classes.submitButton}
+                    disabled={submitButtonDisabled}
+                    loading={isLoading}
+                    testId="submit-button"
+                    onClick={async () => {
+                      dispatch({ type: 'SUBMIT', payload: true });
+                      submit({
+                        spaceId,
+                        teams,
+                        selectedTeamIds,
+                        selectedRoleIds,
+                        adminRoleSelected
+                      });
+                      dispatch({ type: 'SUBMIT', payload: false });
+                    }}>
+                    Add {pluralize('team', selectedTeamIds.length)}
+                  </Button>
+                </div>
+                <div className={classes.rolesContainer}>
+                  <SectionHeading className={classes.sectionHeading}>
+                    Assign role set to {pluralize('team', selectedTeamIds.length)}
+                  </SectionHeading>
+                  <RoleSelector
+                    roles={roles}
+                    onRoleSelected={(id, isSelected) =>
+                      dispatch({ type: 'SELECT_ROLE', payload: { id, isSelected } })
+                    }
+                    onAdminSelected={isSelected =>
+                      dispatch({ type: 'SELECT_ADMIN', payload: isSelected })
+                    }
+                    disabled={isLoading}
+                  />
+                </div>
               </div>
-              <div className={classes.rolesContainer}>
-                {shouldShowControls && (
-                  <>
-                    <SectionHeading className={classes.sectionHeading}>
-                      Assign role set to {pluralize('team', selectedTeamIds.length)}
-                    </SectionHeading>
-                    <RoleSelector
-                      roles={roles}
-                      onRoleSelected={(id, isSelected) =>
-                        dispatch({ type: 'SELECT_ROLE', payload: { id, isSelected } })
-                      }
-                      onAdminSelected={isSelected =>
-                        dispatch({ type: 'SELECT_ADMIN', payload: isSelected })
-                      }
-                      disabled={isLoading}
-                    />
-                  </>
-                )}
-              </div>
-            </div>
+            )}
           </div>
         </Typography>
       </Workbench.Content>
@@ -315,7 +312,7 @@ AddTeamsPage.propTypes = {
 
 function TeamInfo({ team, onClick }) {
   return (
-    <div className={classes.teamInfo.container}>
+    <div className={classes.teamInfo.container} data-test-id="team">
       <div className={classes.teamInfo.title}>
         <strong className={classes.teamInfo.name}>{_.truncate(team.name, { length: 25 })}</strong>{' '}
         {pluralize('member', team.memberCount, true)}
@@ -325,6 +322,8 @@ function TeamInfo({ team, onClick }) {
         iconProps={{
           icon: 'Close'
         }}
+        label="close"
+        testId={`${team.sys.id}-close`}
         className={cx(classes.teamInfo.close, 'team-info__close-button')}
         onClick={onClick}
         buttonType="secondary"

@@ -48,7 +48,8 @@ export default function RoleSelector({ roles, onRoleSelected, onAdminSelected, d
         helpText="Manages everything in the space"
         name="admin"
         id="admin_true"
-        value={true}
+        value="true"
+        testId="RoleSelector__admin_true"
         checked={adminRoleSelected === true}
         disabled={disabled}
         onChange={() => {
@@ -60,10 +61,11 @@ export default function RoleSelector({ roles, onRoleSelected, onAdminSelected, d
         <>
           <RadioButtonField
             labelIsLight
-            labelText="Non-admin"
+            labelText="Other roles"
             name="admin"
             id="admin_false"
-            value={false}
+            value="false"
+            testId="RoleSelector__admin_false"
             checked={adminRoleSelected === false}
             disabled={disabled}
             onChange={() => {
@@ -78,6 +80,7 @@ export default function RoleSelector({ roles, onRoleSelected, onAdminSelected, d
                   labelIsLight
                   id={role.sys.id}
                   labelText={role.name}
+                  testId={`RoleSelector__role_${role.sys.id}`}
                   checked={Boolean(selectedRoleIds.find(id => role.sys.id === id))}
                   disabled={adminRoleSelected === true || disabled}
                   onChange={e => {
