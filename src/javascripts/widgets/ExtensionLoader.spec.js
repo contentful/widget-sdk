@@ -8,7 +8,7 @@ const makeExtension = id => ({
   }
 });
 
-const makeExtensionWithDefinition = (id, uuid) => ({
+const makeExtensionWithDefinition = (id, definitionId) => ({
   sys: {
     id
   },
@@ -16,7 +16,7 @@ const makeExtensionWithDefinition = (id, uuid) => ({
     sys: {
       type: 'Link',
       linkType: 'ExtensionDefinition',
-      uuid
+      id: definitionId
     }
   }
 });
@@ -53,8 +53,8 @@ describe('ExtensionLoader', () => {
         Promise.resolve({
           items: [
             makeExtension('id1'),
-            makeExtensionWithDefinition('id2', 'uuid2'),
-            makeExtensionWithDefinition('id3', 'uuid3')
+            makeExtensionWithDefinition('id2', 'definitionId2'),
+            makeExtensionWithDefinition('id3', 'definitionId3')
           ]
         })
       );
@@ -63,7 +63,7 @@ describe('ExtensionLoader', () => {
         Promise.resolve({
           items: [
             {
-              sys: { uuid: 'uuid2' },
+              sys: { id: 'definitionId2' },
               src: 'http://localhost:2222',
               name: 'Test',
               locations: ['entry-sidebar']
@@ -79,14 +79,14 @@ describe('ExtensionLoader', () => {
         method: 'GET',
         path: '/extension_definitions',
         query: {
-          'sys.uuid[in]': 'uuid2,uuid3'
+          'sys.id[in]': 'definitionId2,definitionId3'
         }
       });
 
       expect(result).toEqual([
         makeExtension('id1'),
         {
-          ...makeExtensionWithDefinition('id2', 'uuid2'),
+          ...makeExtensionWithDefinition('id2', 'definitionId2'),
           extension: {
             src: 'http://localhost:2222',
             name: 'Test',
@@ -135,7 +135,7 @@ describe('ExtensionLoader', () => {
     it('resolves extension definitions', async () => {
       spaceEndpoint.mockReturnValue(
         Promise.resolve({
-          items: [makeExtensionWithDefinition('id2', 'uuid2')]
+          items: [makeExtensionWithDefinition('id2', 'definitionId2')]
         })
       );
 
@@ -143,7 +143,7 @@ describe('ExtensionLoader', () => {
         Promise.resolve({
           items: [
             {
-              sys: { uuid: 'uuid2' },
+              sys: { id: 'definitionId2' },
               src: 'http://localhost:2222',
               name: 'Test',
               locations: ['entry-sidebar']
@@ -164,13 +164,13 @@ describe('ExtensionLoader', () => {
         method: 'GET',
         path: '/extension_definitions',
         query: {
-          'sys.uuid[in]': 'uuid2'
+          'sys.id[in]': 'definitionId2'
         }
       });
 
       expect(result).toEqual([
         {
-          ...makeExtensionWithDefinition('id2', 'uuid2'),
+          ...makeExtensionWithDefinition('id2', 'definitionId2'),
           extension: {
             src: 'http://localhost:2222',
             name: 'Test',

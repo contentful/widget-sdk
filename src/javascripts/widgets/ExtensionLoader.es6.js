@@ -25,17 +25,16 @@ import { uniq, get, identity, omit } from 'lodash';
 const isBasedOnExtensionDefinition = extension =>
   get(extension, ['extensionDefinition', 'sys', 'linkType']) === 'ExtensionDefinition';
 
-const getExtensionDefinitionUUID = extension =>
-  get(extension, ['extensionDefinition', 'sys', 'uuid']);
+const getExtensionDefinitionID = extension => get(extension, ['extensionDefinition', 'sys', 'id']);
 
 const mergeExtensionsAndDefinitions = (extensions, definitions) => {
   return extensions
     .map(extension => {
-      const definitionId = getExtensionDefinitionUUID(extension);
+      const definitionId = getExtensionDefinitionID(extension);
 
       if (definitionId) {
         const definition = definitions.find(
-          definition => get(definition, ['sys', 'uuid']) === definitionId
+          definition => get(definition, ['sys', 'id']) === definitionId
         );
 
         if (definition) {
@@ -55,8 +54,8 @@ const mergeExtensionsAndDefinitions = (extensions, definitions) => {
 };
 
 export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
-  const loadExtensionDefinitions = async uuids => {
-    if (!Array.isArray(uuids) || uuids.length < 1) {
+  const loadExtensionDefinitions = async definitionIds => {
+    if (!Array.isArray(definitionIds) || definitionIds.length < 1) {
       return [];
     }
 
@@ -64,7 +63,7 @@ export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
       method: 'GET',
       path: '/extension_definitions',
       query: {
-        'sys.uuid[in]': uniq(uuids).join(',')
+        'sys.id[in]': uniq(definitionIds).join(',')
       }
     });
 
@@ -72,11 +71,11 @@ export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
   };
 
   const resolveExtensionDefinitions = async extensions => {
-    const definitionUUIDs = extensions
+    const definitionIDs = extensions
       .filter(isBasedOnExtensionDefinition)
-      .map(getExtensionDefinitionUUID);
+      .map(getExtensionDefinitionID);
 
-    const definitions = await loadExtensionDefinitions(definitionUUIDs);
+    const definitions = await loadExtensionDefinitions(definitionIDs);
 
     return mergeExtensionsAndDefinitions(extensions, definitions);
   };
