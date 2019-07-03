@@ -66,11 +66,13 @@ const reducer = (state, action) => {
 
 export default function Autocomplete({
   items = [],
+  disabled = false,
   children,
   onChange,
   onQueryChange,
   placeholder = 'Search',
-  width
+  width,
+  className
 }) {
   const [{ isOpen, query, highlightedItemIndex }, dispatch] = useReducer(reducer, initialState);
 
@@ -120,6 +122,8 @@ export default function Autocomplete({
     <Dropdown
       isOpen={isOpen && !!items.length}
       onClose={() => dispatch({ type: TOGGLED_LIST })}
+      disabled={disabled}
+      className={className}
       toggleElement={
         <TextInput
           value={query}
@@ -155,7 +159,9 @@ Autocomplete.propTypes = {
   onChange: PropTypes.func.isRequired,
   onQueryChange: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
-  width: PropTypes.string
+  width: PropTypes.string,
+  disabled: PropTypes.bool,
+  className: PropTypes.string
 };
 
 function getNavigationDirection(isDown, isUp) {

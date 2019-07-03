@@ -4,8 +4,8 @@ import useAsync from 'app/common/hooks/useAsync.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { getSpace } from 'services/TokenStore.es6';
-import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { getAllTeams } from 'access_control/TeamRepository.es6';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import { getAllTeams, getTeamsSpaceMembershipsOfSpace } from 'access_control/TeamRepository.es6';
 import { getInstance as createRoleRepo } from 'access_control/RoleRepository.es6';
 import AddTeamsPage from './AddTeamsPage.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -19,14 +19,19 @@ const fetch = (spaceId, onReady) => async () => {
     }
   } = await getSpace(spaceId);
 
-  const endpoint = createOrganizationEndpoint(organizationId);
+  const orgEndpoint = createOrganizationEndpoint(organizationId);
+  const spaceEndpoint = createSpaceEndpoint(spaceId);
   const roleRepo = createRoleRepo(spaceContext.space);
 
-  const [roles, teams] = await Promise.all([roleRepo.getAll(), getAllTeams(endpoint)]);
+  const [roles, teams, teamSpaceMemberships] = await Promise.all([
+    roleRepo.getAll(),
+    getAllTeams(orgEndpoint),
+    getTeamsSpaceMembershipsOfSpace(spaceEndpoint)
+  ]);
 
   onReady();
 
-  return { teams, roles };
+  return { teams, teamSpaceMemberships, roles };
 };
 
 export default function AddTeamsRouter({ onReady, spaceId }) {

@@ -17,8 +17,15 @@ jest.mock('data/EndpointFactory.es6', () => ({
   createSpaceEndpoint: jest.fn()
 }));
 
-const mount = ({ teams = [], roles = [] } = {}) => {
-  return render(<AddTeamsPage teams={teams} roles={roles} spaceId="space_1234" />);
+const mount = ({ teams = [], roles = [], teamSpaceMemberships = [] } = {}) => {
+  return render(
+    <AddTeamsPage
+      teams={teams}
+      roles={roles}
+      teamSpaceMemberships={teamSpaceMemberships}
+      spaceId="space_1234"
+    />
+  );
 };
 
 const teams = [
@@ -83,12 +90,13 @@ describe('AddTeamsPage', () => {
   });
 
   it('should show the teams and roles lists once a team has been selected', async () => {
-    const { queryByTestId } = mount({ teams });
+    const { queryByTestId, queryAllByTestId } = mount({ teams });
 
     expect(queryByTestId('teams-and-roles-lists')).toBeNull();
     expect(queryByTestId('submit-button')).toBeNull();
 
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_1234' } });
+    fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
+    fireEvent.click(queryAllByTestId('autocomplete.dropdown-list-item')[0]);
 
     expect(queryByTestId('teams-and-roles-lists')).toBeDefined();
     expect(queryByTestId('submit-button')).toBeDefined();
@@ -99,7 +107,8 @@ describe('AddTeamsPage', () => {
 
     expect(queryAllByTestId('team')).toHaveLength(0);
 
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_1234' } });
+    fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
+    fireEvent.click(queryAllByTestId('autocomplete.dropdown-list-item')[0]);
 
     expect(queryAllByTestId('team')).toHaveLength(1);
   });
@@ -107,11 +116,12 @@ describe('AddTeamsPage', () => {
   it('should remove a team from the list when the X is clicked on the team', () => {
     const { queryAllByTestId, queryByTestId } = mount({ teams });
 
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_1234' } });
+    fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
+    fireEvent.click(queryAllByTestId('autocomplete.dropdown-list-item')[0]);
 
     expect(queryAllByTestId('team')).toHaveLength(1);
 
-    fireEvent.click(queryByTestId('team_1234-close'));
+    fireEvent.click(queryAllByTestId('team-close')[0]);
 
     expect(queryAllByTestId('team')).toHaveLength(0);
   });
@@ -119,11 +129,14 @@ describe('AddTeamsPage', () => {
   it('should still display the teams and roles lists if all teams are removed from the list', () => {
     const { queryAllByTestId, queryByTestId } = mount({ teams });
 
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_1234' } });
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_5678' } });
+    fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
+    fireEvent.click(queryAllByTestId('autocomplete.dropdown-list-item')[0]);
 
-    fireEvent.click(queryByTestId('team_1234-close'));
-    fireEvent.click(queryByTestId('team_5678-close'));
+    fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
+    fireEvent.click(queryAllByTestId('autocomplete.dropdown-list-item')[0]);
+
+    fireEvent.click(queryAllByTestId('team-close')[0]);
+    fireEvent.click(queryAllByTestId('team-close')[0]);
 
     expect(queryAllByTestId('team')).toHaveLength(0);
     expect(queryByTestId('teams-and-roles-lists')).toBeDefined();
@@ -131,11 +144,12 @@ describe('AddTeamsPage', () => {
   });
 
   it('should remove a team that is selected from the select box from the options', () => {
-    const { queryByTestId } = mount({ teams });
+    const { queryByTestId, queryAllByTestId } = mount({ teams });
 
     expect(queryByTestId('team_1234-option')).toBeDefined();
 
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_1234' } });
+    fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
+    fireEvent.click(queryAllByTestId('autocomplete.dropdown-list-item')[0]);
 
     expect(queryByTestId('team_1234-option')).toBeNull();
   });

@@ -5,8 +5,6 @@ import {
   Heading,
   SectionHeading,
   Button,
-  Select,
-  Option,
   Notification,
   IconButton
 } from '@contentful/forma-36-react-components';
@@ -15,6 +13,7 @@ import * as tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { css, cx } from 'emotion';
 import Workbench from 'app/common/Workbench.es6';
+import Autocomplete from 'app/common/Autocomplete.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository.es6';
 import { go } from 'states/Navigator.es6';
@@ -39,7 +38,8 @@ const classes = {
   }),
 
   select: css({
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
+    width: '100%'
   }),
 
   teamsAndRolesLists: css({
@@ -68,8 +68,8 @@ const classes = {
 
   teamInfo: {
     container: css({
-      padding: `${tokens.spacingM} ${tokens.spacingM} ${tokens.spacingM} ${tokens.spacingXl}`,
-      marginBottom: tokens.spacingM,
+      // padding: `${tokens.spacingM} ${tokens.spacingM} ${tokens.spacingM} ${tokens.spacingXl}`,
+      // marginBottom: tokens.spacingM,
       color: tokens.colorTextMid,
       '&:hover': {
         backgroundColor: tokens.colorElementLightest,
@@ -114,6 +114,7 @@ const reducer = createImmerReducer({
     state.selectedTeamIds.push(action.payload);
 
     state.shouldShowControls = true;
+    state.searchTerm = '';
 
     if (state.selectedTeamIds.length === 1) {
       window.addEventListener('beforeunload', closeTabWarning);
@@ -135,6 +136,9 @@ const reducer = createImmerReducer({
   },
   SUBMIT: (state, action) => {
     state.isLoading = action.payload;
+  },
+  SEARCH: (state, action) => {
+    state.searchTerm = action.payload.toLowerCase();
   }
 });
 
@@ -185,13 +189,14 @@ const submit = async ({ spaceId, teams, selectedTeamIds, selectedRoleIds, adminR
   });
 };
 
-export default function AddTeamsPage({ teams, roles, spaceId }) {
+export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, spaceId }) {
   const [state, dispatch] = useReducer(reducer, {
     adminRoleSelected: true,
     selectedTeamIds: [],
     selectedRoleIds: [],
     shouldShowControls: false,
-    isLoading: false
+    isLoading: false,
+    searchTerm: ''
   });
 
   useEffect(() => {
@@ -205,13 +210,23 @@ export default function AddTeamsPage({ teams, roles, spaceId }) {
     selectedTeamIds,
     selectedRoleIds,
     shouldShowControls,
-    isLoading
+    isLoading,
+    searchTerm
   } = state;
 
   const submitButtonDisabled =
     selectedTeamIds.length === 0 ||
     (adminRoleSelected === false && selectedRoleIds.length === 0) ||
     isLoading;
+
+  const teamsInAutocomplete = teams
+    .filter(
+      team =>
+        !selectedTeamIds.includes(team.sys.id) &&
+        !teamSpaceMemberships.find(tsm => tsm.sys.team.sys.id === team.sys.id) &&
+        team.name.toLowerCase().includes(searchTerm)
+    )
+    .filter((_, i) => i < 5);
 
   return (
     <Workbench className={classes.workbench}>
@@ -225,20 +240,19 @@ export default function AddTeamsPage({ teams, roles, spaceId }) {
           <div className={classes.workbenchContent}>
             <div>
               <Heading>Add teams from your organization</Heading>
-              <Select
+              <Autocomplete
                 disabled={isLoading}
                 className={classes.select}
-                testId="teams-select"
-                onChange={e => dispatch({ type: 'ADD_TEAM', payload: e.target.value })}>
-                <Option value="">Select...</Option>
-                {teams
-                  .filter(team => !selectedTeamIds.includes(team.sys.id))
-                  .map(team => (
-                    <Option testId={`${team.sys.id}-option`} value={team.sys.id} key={team.sys.id}>
-                      {team.name}
-                    </Option>
-                  ))}
-              </Select>
+                width="full"
+                onChange={team => dispatch({ type: 'ADD_TEAM', payload: team.sys.id })}
+                onQueryChange={value => dispatch({ type: 'SEARCH', payload: value })}
+                items={teamsInAutocomplete}>
+                {items =>
+                  items.map(team => {
+                    return <TeamInfo key={team.sys.id} team={team} />;
+                  })
+                }
+              </Autocomplete>
             </div>
             {shouldShowControls && (
               <div data-test-id="teams-and-roles-lists" className={classes.teamsAndRolesLists}>
@@ -255,7 +269,8 @@ export default function AddTeamsPage({ teams, roles, spaceId }) {
                           <TeamInfo
                             key={team.sys.id}
                             team={team}
-                            onClick={() => dispatch({ type: 'REMOVE_TEAM', payload: id })}
+                            withCloseButton={true}
+                            onCloseClick={() => dispatch({ type: 'REMOVE_TEAM', payload: id })}
                           />
                         );
                       })}
@@ -276,7 +291,7 @@ export default function AddTeamsPage({ teams, roles, spaceId }) {
                       });
                       dispatch({ type: 'SUBMIT', payload: false });
                     }}>
-                    Add {pluralize('team', selectedTeamIds.length)}
+                    Confirm selection and add {pluralize('team', selectedTeamIds.length)}
                   </Button>
                 </div>
                 <div className={classes.rolesContainer}>
@@ -307,10 +322,11 @@ AddTeamsPage.propTypes = {
   teams: PropTypes.array,
   onSubmit: PropTypes.func,
   roles: PropTypes.array,
-  spaceId: PropTypes.string
+  spaceId: PropTypes.string,
+  teamSpaceMemberships: PropTypes.array
 };
 
-function TeamInfo({ team, onClick }) {
+function TeamInfo({ team, withCloseButton = false, onCloseClick }) {
   return (
     <div className={classes.teamInfo.container} data-test-id="team">
       <div className={classes.teamInfo.title}>
@@ -318,21 +334,24 @@ function TeamInfo({ team, onClick }) {
         {pluralize('member', team.memberCount, true)}
       </div>
       <div>{_.truncate(team.description, { length: 60 })}</div>
-      <IconButton
-        iconProps={{
-          icon: 'Close'
-        }}
-        label="close"
-        testId={`${team.sys.id}-close`}
-        className={cx(classes.teamInfo.close, 'team-info__close-button')}
-        onClick={onClick}
-        buttonType="secondary"
-      />
+      {withCloseButton && (
+        <IconButton
+          iconProps={{
+            icon: 'Close'
+          }}
+          label="close"
+          testId="team-close"
+          className={cx(classes.teamInfo.close, 'team-info__close-button')}
+          onClick={onCloseClick}
+          buttonType="secondary"
+        />
+      )}
     </div>
   );
 }
 
 TeamInfo.propTypes = {
   team: PropTypes.object,
-  onClick: PropTypes.func
+  withCloseButton: PropTypes.bool,
+  onCloseClick: PropTypes.func
 };
