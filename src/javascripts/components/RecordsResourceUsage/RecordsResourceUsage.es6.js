@@ -6,7 +6,6 @@ import { get } from 'lodash';
 
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService.es6';
 import { getStoreResource } from 'utils/ResourceUtils.es6';
-import { isMaster } from 'utils/EnvironmentUtils.es6';
 import { TextLink } from '@contentful/forma-36-react-components';
 
 import * as actionCreators from 'redux/actions/recordsResourceUsage/actionCreators.es6';
@@ -15,6 +14,7 @@ export class RecordsResourceUsage extends React.Component {
   static propTypes = {
     space: PropTypes.object.isRequired,
     environmentId: PropTypes.string.isRequired,
+    isMasterEnvironment: PropTypes.bool.isRequired,
     currentTotal: PropTypes.number.isRequired,
     getResource: PropTypes.func.isRequired,
     resources: PropTypes.object.isRequired
@@ -70,7 +70,7 @@ export class RecordsResourceUsage extends React.Component {
 
   render() {
     const resource = this.resource();
-    const { environmentId } = this.props;
+    const { isMasterEnvironment } = this.props;
 
     if (!resource) {
       return null;
@@ -97,7 +97,7 @@ export class RecordsResourceUsage extends React.Component {
             Usage: {usage} / {limit} entries and assets{' '}
           </span>
         )}
-        {usagePercentage >= warnThreshold && isMaster(environmentId) && (
+        {usagePercentage >= warnThreshold && isMasterEnvironment && (
           <TextLink onClick={this.upgradeSpace.bind(this)}>Upgrade space</TextLink>
         )}
       </div>

@@ -18,13 +18,14 @@ export const ServerError = makeCtor('ServerError');
  *
  * The repo offers the following functions
  * - getAll()
+ * - get({id})
  * - create({id, name})
  * - update(environment)
  * - remove(id)
  */
 
 export function create(spaceEndpoint) {
-  return { getAll, create, remove, update };
+  return { getAll, create, remove, update, get };
 
   /**
    * Returns a list of all environments for the given space
@@ -35,6 +36,16 @@ export function create(spaceEndpoint) {
       path: ['environments'],
       query: { limit: ENVIRONMENTS_LIMIT }
     }).then(response => response.items);
+  }
+
+  /**
+   * Returns the selected environment if it exists for the given space
+   */
+  function get({ id }) {
+    return spaceEndpoint({
+      method: 'GET',
+      path: ['environments', id]
+    }).then(response => response, mapUpdateError);
   }
 
   /**

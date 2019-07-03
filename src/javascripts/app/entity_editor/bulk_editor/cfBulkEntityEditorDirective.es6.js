@@ -78,7 +78,8 @@ export default function register() {
                   type: 'Entry',
                   environment: {
                     sys: {
-                      id: spaceContext.getEnvironmentId()
+                      id: spaceContext.getEnvironmentId(),
+                      isMasterEnvironment: spaceContext.isMasterEnvironment()
                     }
                   },
                   space: {

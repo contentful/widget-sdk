@@ -12,6 +12,8 @@ import Hamburger from 'svg/hamburger.es6';
 import { navState$, NavStates } from 'navigation/NavState.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import { getModule } from 'NgRegistry.es6';
+const spaceContext = getModule('spaceContext');
 
 const oneLineTruncate = {
   overflow: 'hidden',
@@ -135,7 +137,7 @@ function organizationName(orgName) {
 function environmentLabel(env) {
   // TODO The 'Space' nav state should always have an environment
   const envId = env ? env.sys.id : 'master';
-  const isMaster = envId === 'master';
+  const isMaster = env ? spaceContext.isMasterEnvironment(env) : true;
   return (
     <div
       key={envId}

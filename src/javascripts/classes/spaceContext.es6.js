@@ -116,6 +116,7 @@ export default function register() {
           let space = client.newSpace(spaceData);
 
           if (environmentId) {
+            // creates env aware routes on space
             space = space.makeEnvironment(environmentId, shouldUseEnvEndpoint);
           }
 
@@ -177,7 +178,6 @@ export default function register() {
           $rootScope.$broadcast('spaceContextUpdated');
 
           const start = Date.now();
-
           return $q
             .all([
               maybeFetchEnvironments(self.endpoint).then(environments => {
@@ -195,7 +195,14 @@ export default function register() {
                   self.publishedCTs,
                   createViewMigrator(ctMap)
                 );
-              })
+              }),
+
+              // if env exists, use new cma client to attach full env to space context (so we have aliases etc)
+              // environmentId &&
+              environmentId &&
+                createEnvironmentsRepo(self.endpoint)
+                  .get({ id: environmentId })
+                  .then(env => (space.environment = env))
             ])
             .then(() => {
               Telemetry.record('space_context_http_time', Date.now() - start);
@@ -226,6 +233,20 @@ export default function register() {
           if (this.space) {
             return _.get(this, ['space', 'environment', 'sys', 'id'], 'master');
           }
+        },
+
+        /**
+         * @name spaceContext#isMasterEnvironment
+         * @description
+         * Returns whether the current environment is aliased to 'master'
+         * @returns boolean
+         */
+        isMasterEnvironment: function(
+          env = _.get(this, ['space', 'environment'], { sys: { id: 'master' } })
+        ) {
+          //TODO add alias logic here
+          //env attached to space context should be full env object including aliases
+          return env.sys.id === 'master';
         },
 
         /**

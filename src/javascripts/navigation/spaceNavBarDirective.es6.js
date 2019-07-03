@@ -102,9 +102,9 @@ export default function register() {
           });
 
           $scope.$watch(
-            () => spaceContext.getEnvironmentId(),
-            envId => {
-              $scope.isMaster = envId === 'master';
+            () => spaceContext.isMasterEnvironment(),
+            isMasterEnvironment => {
+              $scope.isMaster = isMasterEnvironment;
             }
           );
         }

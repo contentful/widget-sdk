@@ -111,6 +111,7 @@ describe('Client Controller', () => {
 
       this.spaceContext = this.$inject('spaceContext');
       this.spaceContext.getEnvironmentId = () => this.envId;
+      this.spaceContext.isMasterEnvironment = () => this.envId === 'master';
       this.spaceContext.getId = () => this.spaceId;
       this.spaceContext.space = null;
       this.tokenStore.getTokenLookup.returns(this.token);
@@ -125,6 +126,7 @@ describe('Client Controller', () => {
         this.spaceContext.space,
         this.enforcements,
         this.envId,
+        this.spaceContext.isMasterEnvironment(),
         this.newEnforcement
       );
     });

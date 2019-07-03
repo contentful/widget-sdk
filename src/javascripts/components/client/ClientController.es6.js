@@ -127,7 +127,14 @@ export default function register() {
           }
         }
 
-        authorization.update(tokenLookup, space, enforcements, environmentId, newEnforcement);
+        authorization.update(
+          tokenLookup,
+          space,
+          enforcements,
+          environmentId,
+          spaceContext.isMasterEnvironment(),
+          newEnforcement
+        );
 
         refreshNavState();
       }

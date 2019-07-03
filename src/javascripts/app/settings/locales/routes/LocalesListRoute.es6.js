@@ -7,7 +7,6 @@ import LocalesListPricingTwo from '../LocalesListPricingTwo.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
-import * as EnvironmentUtils from 'utils/EnvironmentUtils.es6';
 import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
@@ -29,7 +28,7 @@ const LocalesFetcher = createFetcherComponent(() => {
     createResourceService(spaceContext.getId()).get('locale', spaceContext.getEnvironmentId()),
     createLegacyFeatureService(spaceContext.getId()).get('multipleLocales'),
     OrganizationRoles.isOwnerOrAdmin(spaceContext.organization),
-    EnvironmentUtils.isInsideMasterEnv(spaceContext),
+    spaceContext.isMasterEnvironment(),
     getSpaceFeature(spaceContext.getId(), ENVIRONMENT_USAGE_ENFORCEMENT),
     _.get(spaceContext.organization, ['subscriptionPlan', 'name'])
   ]);

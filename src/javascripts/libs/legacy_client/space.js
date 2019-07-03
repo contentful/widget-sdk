@@ -48,9 +48,6 @@ Space.prototype.makeEnvironment = function(environmentId, shouldUseEnvEndpoint) 
   const pctx = new PersistenceContext(this.endpoint());
   const space = new Space(this.data, pctx);
 
-  // Construct environment data.
-  space.environment = { sys: { id: environmentId, space: space } };
-
   // We need to overide the endpoint so environment-scoped
   // endpoints are used when applicable.
   space.endpoint = function() {

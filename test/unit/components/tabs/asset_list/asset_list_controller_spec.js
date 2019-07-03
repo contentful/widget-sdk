@@ -52,9 +52,6 @@ describe('Asset List Controller', () => {
       $provide.value('utils/ResourceUtils.es6', {
         isLegacyOrganization: () => false
       });
-      $provide.value('utils/EnvironmentUtils.es6', {
-        isInsideMasterEnv: () => false
-      });
     });
 
     const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');

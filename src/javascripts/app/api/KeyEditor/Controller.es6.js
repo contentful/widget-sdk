@@ -147,11 +147,6 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments) {
     }
 
     const toPersist = Object.assign({}, apiKey, model);
-    // no need to send `environments` over the wire if in default state
-    // TODO remove when space environments go public
-    if (toPersist.environments.length === 1 && toPersist.environments[0].sys.id === 'master') {
-      delete toPersist.environments;
-    }
 
     return spaceContext.apiKeyRepo.save(toPersist).then(newKey => {
       apiKey = newKey;
