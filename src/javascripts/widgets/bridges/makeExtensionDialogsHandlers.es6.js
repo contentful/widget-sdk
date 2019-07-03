@@ -4,7 +4,6 @@ import { get } from 'lodash';
 import { Modal } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 
-import { getExtensionsById } from '../ExtensionLoader.es6';
 import ExtensionIFrameRenderer from '../ExtensionIFrameRenderer.es6';
 import * as Dialogs from '../ExtensionDialogs.es6';
 import { applyDefaultValues } from '../WidgetParametersUtils.es6';
@@ -46,11 +45,7 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       throw new Error('No Extension ID provided.');
     }
 
-    const [extension] = await getExtensionsById(
-      spaceContext.getId(),
-      spaceContext.getEnvironmentId(),
-      [options.id]
-    );
+    const [extension] = await spaceContext.extensionLoader.getExtensionsById([options.id]);
 
     if (!extension) {
       throw new Error('no extension found');
