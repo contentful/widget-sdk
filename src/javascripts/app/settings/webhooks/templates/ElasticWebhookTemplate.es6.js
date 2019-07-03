@@ -39,13 +39,6 @@ export default {
       description: <p>Name of an index in which you want to store your documents.</p>
     },
     {
-      name: 'type',
-      type: 'text',
-      title: 'Type name',
-      defaultValue: 'entry',
-      description: <p>Name of the type for your documents.</p>
-    },
-    {
       name: 'user',
       type: 'text',
       placeholder: 'elastic',
@@ -76,12 +69,12 @@ export default {
     }
   ],
   mapParamsToDefinition: [
-    ({ endpoint, index, type, user, password }, name) => {
+    ({ endpoint, index, user, password }, name) => {
       endpoint = endpoint.replace(/\/+$/, '');
 
       return {
         name,
-        url: `${endpoint}/${index}/${type}/{ /payload/sys/id }`,
+        url: `${endpoint}/${index}/_doc/{ /payload/sys/id }`,
         topics: ['Entry.publish'],
         filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
         headers: [
@@ -97,12 +90,12 @@ export default {
         }
       };
     },
-    ({ endpoint, index, type, user, password }) => {
+    ({ endpoint, index, user, password }) => {
       endpoint = endpoint.replace(/\/+$/, '');
 
       return {
         name: 'Elasticsearch - Delete unpublished entries',
-        url: `${endpoint}/${index}/${type}/{ /payload/sys/id }`,
+        url: `${endpoint}/${index}/_doc/{ /payload/sys/id }`,
         topics: ['Entry.unpublish'],
         filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
         headers: [
