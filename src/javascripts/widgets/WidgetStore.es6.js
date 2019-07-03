@@ -1,4 +1,4 @@
-import { get, uniq } from 'lodash';
+import { get, uniq, identity } from 'lodash';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
 import { toInternalFieldType } from './FieldTypes.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
@@ -29,7 +29,9 @@ export async function getForEditor(spaceId, envId, editorInterface = {}) {
       // this scenario gracefully.
       return control.widgetNamespace !== NAMESPACE_BUILTIN;
     })
-    .map(control => control.widgetId);
+    .map(control => control.widgetId)
+    // `widgetId` is not required in `controls`, we use a builtin default if not provided.
+    .filter(identity);
 
   const sidebarExtensionIds = (editorInterface.sidebar || [])
     .filter(sidebarItem => {
