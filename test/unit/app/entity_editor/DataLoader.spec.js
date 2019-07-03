@@ -47,6 +47,12 @@ describe('app/entity_editor/DataLoader.es6', () => {
       },
       organization: {
         sys: { id: 'orgid' }
+      },
+      extensionLoader: {
+        cacheExtension: sinon.stub(),
+        evictExtension: sinon.stub(),
+        getAllExtensions: sinon.stub().returns(Promise.resolve([])),
+        getExtensionsById: sinon.stub().returns(Promise.resolve([]))
       }
     };
 

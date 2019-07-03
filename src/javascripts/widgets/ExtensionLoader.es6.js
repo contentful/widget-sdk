@@ -1,6 +1,5 @@
 import DataLoader from 'dataloader';
-import { memoize, get } from 'lodash';
-import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import { uniq, get, identity, pick } from 'lodash';
 
 // This module exposes 2 retrieval methods:
 // - `getExtensionsById` allows to get extensions
@@ -8,8 +7,8 @@ import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 // - `getAllExtensions` returns all extensions.
 //
 // While the methods are used, a cache is build up.
-// Once cached extension will be used up until the
-// end of a user session when using `getExtensionsById`.
+// Once cached extension will be used until the current
+// space cahnges when using `getExtensionsById`.
 //
 // `getAllExtensions` always evicts the whole cache.
 // `cacheExtension` allows to replace a single item
@@ -23,73 +22,127 @@ import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 // rendered. Management views (managing `Extension`
 // entities) should be done with a client that always
 // does HTTP.
+const isBasedOnExtensionDefinition = extension =>
+  get(extension, ['extensionDefinition', 'sys', 'linkType']) === 'ExtensionDefinition';
 
-// Produces a key for memoization. `_.memoize` by default
-// only uses first argument to the function being memoized
-// as a cache key.
-const makeMemoizationKey = (spaceId, envId) => [spaceId, envId].join('!');
+const getExtensionDefinitionID = extension => get(extension, ['extensionDefinition', 'sys', 'id']);
 
-const getEndpointForSpaceEnv = memoize((spaceId, envId) => {
-  return createSpaceEndpoint(spaceId, envId);
-}, makeMemoizationKey);
+const mergeExtensionsAndDefinitions = (extensions, definitions) => {
+  return extensions
+    .map(extension => {
+      const definitionId = getExtensionDefinitionID(extension);
 
-const getLoaderForSpaceEnv = memoize((spaceId, envId) => {
-  const endpoint = getEndpointForSpaceEnv(spaceId, envId);
+      if (definitionId) {
+        const definition = definitions.find(
+          definition => get(definition, ['sys', 'id']) === definitionId
+        );
 
-  return new DataLoader(async extensionIds => {
-    const { items } = await endpoint({
+        if (definition) {
+          return {
+            ...extension,
+            extension: pick(definition, ['name', 'src', 'fieldTypes', 'parameters'])
+          };
+        }
+
+        // Dropping the extension
+        return null;
+      }
+
+      return extension;
+    })
+    .filter(identity);
+};
+
+export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
+  const loadExtensionDefinitions = async definitionIds => {
+    if (!Array.isArray(definitionIds) || definitionIds.length < 1) {
+      return [];
+    }
+
+    const definitionResult = await orgEndpoint({
       method: 'GET',
-      // TODO: It still loads all extensions.
-      // Once we modify the API we should do the following:
-      // /extensions?sys.id[in]=${extensionIds.join(',')}
-      path: '/extensions'
+      path: '/extension_definitions',
+      query: {
+        'sys.id[in]': uniq(definitionIds).join(',')
+      }
     });
 
-    return extensionIds.map(extensionId => {
-      const extension = (items || []).find(item => {
-        return extensionId === get(item, ['sys', 'id']);
-      });
+    return definitionResult.items || [];
+  };
 
-      return extension || null;
+  const resolveExtensionDefinitions = async extensions => {
+    const definitionIDs = extensions
+      .filter(isBasedOnExtensionDefinition)
+      .map(getExtensionDefinitionID);
+
+    const definitions = await loadExtensionDefinitions(definitionIDs);
+
+    return mergeExtensionsAndDefinitions(extensions, definitions);
+  };
+
+  const loadExtensions = async extensionIds => {
+    if (!Array.isArray(extensionIds) || extensionIds.length === 0) {
+      return [];
+    }
+
+    const { items } = await spaceEndpoint({
+      method: 'GET',
+      path: '/extensions',
+      query: {
+        'sys.id[in]': extensionIds.join(',')
+      }
     });
-  });
-}, makeMemoizationKey);
 
-export async function getExtensionsById(spaceId, envId, extensionIds) {
-  const loader = getLoaderForSpaceEnv(spaceId, envId);
+    const withDefinitions = await resolveExtensionDefinitions(items || [], orgEndpoint);
 
-  const extensions = await loader.loadMany(extensionIds);
+    return extensionIds.map(id =>
+      withDefinitions.find(extension => get(extension, ['sys', 'id']) === id)
+    );
+  };
 
-  return extensions.filter(extension => !!extension);
-}
+  const extensionLoader = new DataLoader(loadExtensions);
 
-export async function getAllExtensions(spaceId, envId) {
-  const endpoint = getEndpointForSpaceEnv(spaceId, envId);
+  const getExtensionsById = async extensionIds => {
+    const result = await extensionLoader.loadMany(extensionIds);
 
-  const { items } = await endpoint({ method: 'GET', path: '/extensions' });
+    return result.filter(identity);
+  };
 
-  const loader = getLoaderForSpaceEnv(spaceId, envId);
+  const getExtensionById = async extensionId => {
+    const result = await getExtensionsById([extensionId]);
 
-  // We cannot prime over existing cache entries.
-  // Evict all the cached items first and then prime.
-  loader.clearAll();
-  (items || []).forEach(extension => {
-    loader.prime(extension.sys.id, extension);
-  });
+    return result.length > 0 ? result[0] : null;
+  };
 
-  return items;
-}
+  const getAllExtensions = async () => {
+    const { items } = await spaceEndpoint({ method: 'GET', path: '/extensions' });
+    const maybeResolvedExtensions = await resolveExtensionDefinitions(items || [], orgEndpoint);
+    const resolvedExtensions = maybeResolvedExtensions.filter(identity);
 
-export function evictExtension(spaceId, envId, extensionId) {
-  const loader = getLoaderForSpaceEnv(spaceId, envId);
+    // We cannot prime over existing cache entries.
+    // Evict all the cached items first and then prime.
+    extensionLoader.clearAll();
+    resolvedExtensions.forEach(extension => {
+      extensionLoader.prime(extension.sys.id, extension);
+    });
 
-  loader.clear(extensionId);
-}
+    return resolvedExtensions;
+  };
 
-export function cacheExtension(spaceId, envId, extension) {
-  const loader = getLoaderForSpaceEnv(spaceId, envId);
-  const key = extension.sys.id;
+  const evictExtension = id => extensionLoader.clear(id);
 
-  // As above, cache eviction is needed before priming.
-  loader.clear(key).prime(key, extension);
+  const cacheExtension = extension => {
+    const key = extension.sys.id;
+
+    // As above, cache eviction is needed before priming.
+    extensionLoader.clear(key).prime(key, extension);
+  };
+
+  return {
+    cacheExtension,
+    evictExtension,
+    getAllExtensions,
+    getExtensionsById,
+    getExtensionById
+  };
 }

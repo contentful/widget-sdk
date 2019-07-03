@@ -180,11 +180,7 @@ function makeEntryLoader(spaceContext) {
       return spaceContext.cma.getEditorInterface(contentTypeId);
     }),
     getWidgets(editorInterface) {
-      return WidgetStore.getForEditor(
-        spaceContext.getId(),
-        spaceContext.getEnvironmentId(),
-        editorInterface
-      );
+      return WidgetStore.getForEditor(spaceContext.extensionLoader, editorInterface);
     },
     hasAdvancedExtensibility() {
       return AdvancedExtensibilityFeature.isEnabled(spaceContext.organization.sys.id);

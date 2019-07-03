@@ -6,15 +6,22 @@ import {
   NAMESPACE_SIDEBAR_BUILTIN
 } from './WidgetNamespaces.es6';
 
-jest.mock('./ExtensionLoader.es6', () => ({
-  getAllExtensions: jest.fn(),
-  getExtensionsById: jest.fn()
-}));
 jest.mock('./BuiltinWidgets.es6', () => ({
   create: () => []
 }));
 
 describe('WidgetStore', () => {
+  let loaderMock;
+
+  beforeEach(() => {
+    loaderMock = {
+      cacheExtension: jest.fn(),
+      evictExtension: jest.fn(),
+      getAllExtensions: jest.fn(),
+      getExtensionsById: jest.fn()
+    };
+  });
+
   describe('#getBuiltinsOnly()', () => {
     it('returns only builtins', () => {
       const widgets = WidgetStore.getBuiltinsOnly();
@@ -27,12 +34,11 @@ describe('WidgetStore', () => {
 
   describe('#getForContentTypeManagement()', () => {
     it('returns an object of all widget namespaces', async () => {
-      const { getAllExtensions } = jest.requireMock('./ExtensionLoader.es6');
-      getAllExtensions.mockImplementationOnce(() => []);
+      loaderMock.getAllExtensions.mockImplementationOnce(() => []);
 
-      const widgets = await WidgetStore.getForContentTypeManagement('sid', 'eid');
+      const widgets = await WidgetStore.getForContentTypeManagement(loaderMock);
 
-      expect(getAllExtensions).toHaveBeenCalledWith('sid', 'eid');
+      expect(loaderMock.getAllExtensions).toHaveBeenCalledWith();
       expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
       expect(widgets[NAMESPACE_BUILTIN].map(w => w.id)).toEqual(
         createBuiltinWidgetList().map(b => b.id)
@@ -55,13 +61,12 @@ describe('WidgetStore', () => {
         parameters: { test: true }
       };
 
-      const { getAllExtensions } = jest.requireMock('./ExtensionLoader.es6');
-      getAllExtensions.mockImplementationOnce(() => [entity]);
+      loaderMock.getAllExtensions.mockImplementationOnce(() => [entity]);
 
-      const widgets = await WidgetStore.getForContentTypeManagement('sid', 'eid');
+      const widgets = await WidgetStore.getForContentTypeManagement(loaderMock);
       const [extension] = widgets[NAMESPACE_EXTENSION];
 
-      expect(getAllExtensions).toHaveBeenCalledWith('sid', 'eid');
+      expect(loaderMock.getAllExtensions).toHaveBeenCalledWith();
       expect(extension.name).toEqual('NAME');
       expect(extension.src).toEqual('SRC');
       expect(extension.sidebar).toEqual(true);
@@ -76,33 +81,30 @@ describe('WidgetStore', () => {
 
   describe('#getForEditor()', () => {
     it('handles lack of editor interface', async () => {
-      const { getExtensionsById } = jest.requireMock('./ExtensionLoader.es6');
-      getExtensionsById.mockImplementationOnce(() => []);
+      loaderMock.getExtensionsById.mockImplementationOnce(() => []);
 
-      const widgets = await WidgetStore.getForEditor('sid', 'eid');
+      const widgets = await WidgetStore.getForEditor(loaderMock);
 
-      expect(getExtensionsById).toHaveBeenCalledWith('sid', 'eid', []);
+      expect(loaderMock.getExtensionsById).toHaveBeenCalledWith([]);
       expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
     });
 
     it('does not load extensions when only builtins are used', async () => {
-      const { getExtensionsById } = jest.requireMock('./ExtensionLoader.es6');
-      getExtensionsById.mockImplementationOnce(() => []);
+      loaderMock.getExtensionsById.mockImplementationOnce(() => []);
 
-      const widgets = await WidgetStore.getForEditor('sid', 'eid', {
+      const widgets = await WidgetStore.getForEditor(loaderMock, {
         controls: [{ widgetId: 'singleLine', widgetNamespace: NAMESPACE_BUILTIN }],
         sidebar: [{ widgetId: 'publish-widget', widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN }]
       });
 
-      expect(getExtensionsById).toHaveBeenCalledWith('sid', 'eid', []);
+      expect(loaderMock.getExtensionsById).toHaveBeenCalledWith([]);
       expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
     });
 
     it('loads extensions if needed', async () => {
-      const { getExtensionsById } = jest.requireMock('./ExtensionLoader.es6');
-      getExtensionsById.mockImplementationOnce(() => []);
+      loaderMock.getExtensionsById.mockImplementationOnce(() => []);
 
-      await WidgetStore.getForEditor('sid', 'eid', {
+      await WidgetStore.getForEditor(loaderMock, {
         controls: [
           { widgetId: 'singleLine', widgetNamespace: NAMESPACE_BUILTIN },
           { widgetId: 'singleLine' },
@@ -115,7 +117,7 @@ describe('WidgetStore', () => {
         ]
       });
 
-      expect(getExtensionsById).toHaveBeenCalledWith('sid', 'eid', [
+      expect(loaderMock.getExtensionsById).toHaveBeenCalledWith([
         'singleLine',
         'maybe-extension',
         'extension-for-sure',

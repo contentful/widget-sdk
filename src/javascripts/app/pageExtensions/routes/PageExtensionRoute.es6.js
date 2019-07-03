@@ -13,10 +13,10 @@ import {
 import Placeholder from 'app/common/Placeholder.es6';
 import BinocularsIllustration from 'svg/binoculars-illustration.es6';
 
-const PageExtensionFetcher = createFetcherComponent(({ extensionId, orgId, cma }) => {
+const PageExtensionFetcher = createFetcherComponent(({ extensionId, orgId, extensionLoader }) => {
   return Promise.all([
     advancedExtensibilityFeature.isEnabled(orgId),
-    cma.getExtension(extensionId)
+    extensionLoader.getExtensionById(extensionId)
   ]);
 });
 
@@ -42,7 +42,10 @@ function ErrorMessage() {
 
 export default function PageExtensionRoute(props) {
   return (
-    <PageExtensionFetcher extensionId={props.extensionId} orgId={props.orgId} cma={props.cma}>
+    <PageExtensionFetcher
+      extensionId={props.extensionId}
+      orgId={props.orgId}
+      extensionLoader={props.extensionLoader}>
       {({ isLoading, isError, data }) => {
         if (isLoading) {
           return (
@@ -77,6 +80,6 @@ PageExtensionRoute.propTypes = {
   extensionId: PropTypes.string.isRequired,
   orgId: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,
-  cma: PropTypes.object.isRequired,
+  extensionLoader: PropTypes.object.isRequired,
   bridge: PropTypes.object.isRequired
 };

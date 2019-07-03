@@ -45,10 +45,7 @@ const widgetResolvers = {
   widgets: [
     'spaceContext',
     spaceContext => {
-      return WidgetStore.getForContentTypeManagement(
-        spaceContext.getId(),
-        spaceContext.getEnvironmentId()
-      );
+      return WidgetStore.getForContentTypeManagement(spaceContext.extensionLoader);
     }
   ],
   editorInterface: [

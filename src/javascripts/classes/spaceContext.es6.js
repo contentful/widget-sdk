@@ -43,6 +43,7 @@ export default function register() {
     'data/CMA/SpaceMembersRepo.es6',
     'app/settings/apps/CachedAppConfig.es6',
     'saved-views-migrator',
+    'widgets/ExtensionLoader.es6',
     (
       $q,
       $rootScope,
@@ -56,14 +57,15 @@ export default function register() {
       accessChecker,
       MembershipRepo,
       PublishedCTRepo,
-      { createSpaceEndpoint },
+      { createSpaceEndpoint, createOrganizationEndpoint },
       { default: createUiConfigStore },
       { default: createLocaleRepo },
       { create: createEnvironmentsRepo },
       { default: createWebhookRepo },
       { default: createSpaceMembersRepo },
       { default: createCachedAppConfig },
-      { create: createViewMigrator }
+      { create: createViewMigrator },
+      { createExtensionLoader }
     ) => {
       const publishedCTsBus$ = K.createPropertyBus([]);
 
@@ -130,6 +132,14 @@ export default function register() {
           self.webhookRepo = createWebhookRepo(space);
           self.localeRepo = createLocaleRepo(self.endpoint);
           self.organization = deepFreezeClone(self.getData('organization'));
+
+          const organizationEndpoint = createOrganizationEndpoint(
+            Config.apiUrl(),
+            self.organization.sys.id,
+            Auth
+          );
+
+          self.extensionLoader = createExtensionLoader(organizationEndpoint, self.endpoint);
 
           // TODO: publicly accessible docConnection is
           // used only in a process of creating space out

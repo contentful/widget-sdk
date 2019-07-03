@@ -10,7 +10,6 @@ import {
 import ExamplePickerModal from './dialogs/ExamplePickerModal.es6';
 import GitHubInstallerModal from './dialogs/GitHubInstallerModal.es6';
 import { toInternalFieldType } from 'widgets/FieldTypes.es6';
-import * as ExtensionLoader from 'widgets/ExtensionLoader.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -24,7 +23,7 @@ function install({ extension, type, url }) {
   return spaceContext.cma
     .createExtension({ extension })
     .then(res => {
-      ExtensionLoader.cacheExtension(spaceContext.getId(), spaceContext.getEnvironmentId(), res);
+      spaceContext.extensionLoader.cacheExtension(res);
 
       return $state.go('^.detail', { extensionId: res.sys.id });
     })

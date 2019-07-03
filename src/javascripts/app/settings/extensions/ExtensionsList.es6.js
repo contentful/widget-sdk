@@ -24,7 +24,6 @@ import EmptyStateIllustration from 'svg/connected-forms-illustration.es6';
 import { websiteUrl } from 'Config.es6';
 
 import ExtensionsActions from './ExtensionsActions.es6';
-import * as ExtensionLoader from 'widgets/ExtensionLoader.es6';
 
 import { openGitHubInstaller } from './ExtensionsActions.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -51,7 +50,7 @@ function deleteExtension(id, refresh) {
     .then(
       () => {
         Notification.success('Your extension was successfully deleted.');
-        ExtensionLoader.evictExtension(spaceContext.getId(), spaceContext.getEnvironmentId(), id);
+        spaceContext.extensionLoader.evictExtension(id);
       },
       err => {
         Notification.error('There was an error while deleting your extension.');

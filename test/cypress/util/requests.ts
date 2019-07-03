@@ -116,12 +116,11 @@ export function getEnforcements(spaceId: string = defaultSpaceId): RequestOption
 }
 
 export function getExtensions(
-  spaceId: string = defaultSpaceId,
-  environmentId: string = defaultEnvironment
+  spaceId: string = defaultSpaceId
 ): RequestOptions {
   return {
     method: 'GET',
-    path: `/spaces/${spaceId}/environments/${environmentId}/extensions`,
+    path: `/spaces/${spaceId}/extensions`,
     headers: defaultHeader
   };
 }

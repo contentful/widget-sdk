@@ -16,7 +16,7 @@ export default {
       return {
         extensionId,
         orgId: spaceContext.organization.sys.id,
-        cma: spaceContext.cma,
+        extensionLoader: spaceContext.extensionLoader,
         bridge: createPageExtensionBridge(
           {
             $rootScope,

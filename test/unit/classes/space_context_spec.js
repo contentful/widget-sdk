@@ -14,9 +14,11 @@ describe('spaceContext', () => {
 
     module('contentful/test', $provide => {
       $provide.value('data/userCache.es6', sinon.stub());
+      $provide.value('widgets/ExtensionLoader.es6', { createExtensionLoader: sinon.stub() });
       $provide.value('access_control/AccessChecker/index.es6', this.AccessChecker);
       $provide.value('data/Endpoint.es6', {
-        createSpaceEndpoint: () => this.mockSpaceEndpoint.request
+        createSpaceEndpoint: () => this.mockSpaceEndpoint.request,
+        createOrganizationEndpoint: sinon.stub()
       });
       $provide.value('data/UiConfig/Store.es6', {
         default: sinon.stub().resolves({ store: true })
@@ -32,9 +34,22 @@ describe('spaceContext', () => {
     this.localeStore = this.$inject('services/localeStore.es6').default;
     this.localeStore.init = sinon.stub();
 
-    this.resetWithSpace = function(spaceData) {
-      spaceData = spaceData || { sys: { id: 'spaceid' }, spaceMember: {} };
-      this.spaceContext.resetWithSpace(spaceData);
+    this.makeSpaceData = (spaceId = 'hello', organizationId = 'orgid') => ({
+      sys: {
+        id: spaceId
+      },
+      organization: {
+        sys: {
+          type: 'Link',
+          linkType: 'Organization',
+          id: organizationId
+        }
+      },
+      spaceMember: {}
+    });
+
+    this.resetWithSpace = function(extraSpaceData = this.makeSpaceData()) {
+      this.spaceContext.resetWithSpace(extraSpaceData);
       this.$apply();
       return this.spaceContext.space;
     };
@@ -56,8 +71,7 @@ describe('spaceContext', () => {
 
   describe('#resetWithSpace()', () => {
     beforeEach(function() {
-      const spaceData = { sys: { id: 'hello' } };
-      this.result = this.spaceContext.resetWithSpace(spaceData);
+      this.result = this.spaceContext.resetWithSpace(this.makeSpaceData());
       this.space = this.spaceContext.space;
     });
 
@@ -67,7 +81,7 @@ describe('spaceContext', () => {
 
     it('creates environment aware space context', function() {
       expect(this.spaceContext.space.environment).toBeUndefined();
-      this.spaceContext.resetWithSpace({ sys: { id: 'withenv' } }, 'envid');
+      this.spaceContext.resetWithSpace(this.makeSpaceData('withenv'), 'envid');
       expect(this.spaceContext.space.environment.sys.id).toEqual('envid');
     });
 
@@ -110,12 +124,12 @@ describe('spaceContext', () => {
 
   describe('#getEnvironmentId()', () => {
     it('defaults to master if a space is set', function() {
-      this.spaceContext.resetWithSpace({ sys: { id: 'spaceid' } });
+      this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid'));
       expect(this.spaceContext.getEnvironmentId()).toBe('master');
     });
 
     it('returns non-default environment ID', function() {
-      this.spaceContext.resetWithSpace({ sys: { id: 'spaceid' } }, 'staging');
+      this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid'), 'staging');
       expect(this.spaceContext.getEnvironmentId()).toBe('staging');
     });
 
