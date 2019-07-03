@@ -1,5 +1,5 @@
 import DataLoader from 'dataloader';
-import { uniq, get, identity, omit } from 'lodash';
+import { uniq, get, identity, pick } from 'lodash';
 
 // This module exposes 2 retrieval methods:
 // - `getExtensionsById` allows to get extensions
@@ -40,7 +40,7 @@ const mergeExtensionsAndDefinitions = (extensions, definitions) => {
         if (definition) {
           return {
             ...extension,
-            extension: omit(definition, ['sys'])
+            extension: pick(definition, ['name', 'src', 'fieldTypes', 'parameters'])
           };
         }
 

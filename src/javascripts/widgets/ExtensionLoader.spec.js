@@ -66,7 +66,13 @@ describe('ExtensionLoader', () => {
               sys: { id: 'definitionId2' },
               src: 'http://localhost:2222',
               name: 'Test',
-              locations: ['entry-sidebar']
+              locations: ['entry-sidebar'],
+              parameters: {
+                instance: {
+                  param: 'foo'
+                }
+              },
+              fieldTypes: [{ type: 'Object' }]
             }
           ]
         })
@@ -90,7 +96,12 @@ describe('ExtensionLoader', () => {
           extension: {
             src: 'http://localhost:2222',
             name: 'Test',
-            locations: ['entry-sidebar']
+            parameters: {
+              instance: {
+                param: 'foo'
+              }
+            },
+            fieldTypes: [{ type: 'Object' }]
           }
         }
       ]);
@@ -173,8 +184,7 @@ describe('ExtensionLoader', () => {
           ...makeExtensionWithDefinition('id2', 'definitionId2'),
           extension: {
             src: 'http://localhost:2222',
-            name: 'Test',
-            locations: ['entry-sidebar']
+            name: 'Test'
           }
         }
       ]);
