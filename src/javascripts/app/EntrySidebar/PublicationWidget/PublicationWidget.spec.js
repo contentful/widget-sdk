@@ -1,207 +1,285 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
-import PublicationWidget from './PublicationWidget.es6';
+import { render as renderReact, cleanup, fireEvent } from '@testing-library/react';
 import 'jest-dom/extend-expect';
+import { mapValues, toArray } from 'lodash';
+import PublicationWidget from './PublicationWidget.es6';
 
 const createCommand = props => ({
   isDisabled: () => false,
   isAvailable: () => true,
+  isRestricted: () => false,
   inProgress: () => false,
-  execute: () => {},
+  execute: jest.fn(),
   ...props
 });
 
-const selectors = {
-  statusState: renderResult => renderResult.getByTestId('entity-state'),
-  stateText: renderResult => renderResult.container.querySelector('.entity-sidebar__state'),
-  dateText: renderResult => renderResult.container.querySelector('.entity-sidebar__last-saved'),
-  publishBtn: renderResult => renderResult.getByTestId('change-state-published'),
-  secondaryArchiveBtn: renderResult => renderResult.getByTestId('change-state-archived'),
-  secondaryDropdownTrigger: renderResult => renderResult.getByTestId('change-state-menu-trigger'),
-  revertButton: renderResult => renderResult.getByTestId('discard-changed-button'),
-  secondaryUnpublishBtn: renderResult => renderResult.getByTestId('change-state-draft'),
-  actionRestrictionNote: renderResult => renderResult.getByTestId('action-restriction-note')
+const commandTemplates = {
+  unavailable: {
+    label: 'Unavailable command',
+    targetStateId: 'unavailable-command',
+    isAvailable: () => false
+  },
+  enabled: {
+    label: 'Enabled command',
+    targetStateId: 'enabled-command'
+  },
+  disabled: {
+    label: 'Disabled command',
+    targetStateId: 'disabled-command',
+    isDisabled: () => true
+  },
+  restricted: {
+    label: 'Restricted command',
+    targetStateId: 'restricted-command',
+    isDisabled: () => true,
+    isRestricted: () => true
+  }
+};
+
+const createCommands = () => mapValues(commandTemplates, createCommand);
+
+const TEST_IDS = {
+  dateText: 'last-saved',
+  publishedStatus: 'entity-state',
+  revertButton: 'discard-changed-button',
+  primaryActionButton: 'primary-action-change-state',
+  primaryActionRestrictionNote: 'action-restriction-note',
+  secondaryActionsDropdown: 'change-state-menu-trigger'
+};
+const select = mapValues(TEST_IDS, testId => elem => elem.queryByTestId(testId));
+select.actionByCommand = (elem, { targetStateId }) =>
+  elem.queryByTestId(`change-state-${targetStateId}`);
+
+const render = props => {
+  const allProps = {
+    status: 'draft',
+    updatedAt: '2042-01-01T00:00:01.000Z',
+    secondary: [],
+    ...props
+  };
+  const wrapper = renderReact(<PublicationWidget isSaving={false} {...allProps} />);
+  return { wrapper, props: allProps };
 };
 
 describe('app/EntrySidebar/PublicationWidget', () => {
-  const renderWidget = props => {
-    const renderResult = render(<PublicationWidget isSaving={false} {...props} />);
-    return { renderResult };
-  };
-
   afterEach(cleanup);
 
-  it('shows proper buttons for "Draft" status', () => {
-    const stubs = {
-      onPublishClick: jest.fn()
-    };
-    const { renderResult } = renderWidget({
-      status: 'draft',
-      updatedAt: '2018-01-14T15:15:49.230Z',
-      primary: createCommand({
-        isRestricted: () => false,
-        label: 'Publish',
-        targetStateId: 'published',
-        execute: stubs.onPublishClick
-      }),
-      secondary: [
-        createCommand({
-          label: 'Archive',
-          targetStateId: 'archived'
-        })
-      ]
+  it('shows last changed date', () => {
+    const { wrapper } = render({
+      updatedAt: '1985-05-25T12:34:56.000Z'
     });
-
-    expect(selectors.stateText(renderResult).textContent).toBe('Status: Draft');
-    expect(selectors.dateText(renderResult).textContent).toBe('Last saved 01/14/2018');
-
-    expect(selectors.publishBtn(renderResult)).toBeInTheDocument();
-    expect(selectors.publishBtn(renderResult)).not.toBeDisabled();
-    expect(selectors.publishBtn(renderResult).textContent).toBe('Publish');
-    fireEvent.click(selectors.publishBtn(renderResult));
-    expect(stubs.onPublishClick).toHaveBeenCalled();
-
-    expect(renderResult.queryByTestId('discard-changed-button')).toBeNull();
-    expect(renderResult.queryByTestId('change-state-archived')).toBeNull();
-
-    fireEvent.click(selectors.secondaryDropdownTrigger(renderResult));
-
-    expect(selectors.secondaryArchiveBtn(renderResult)).toBeInTheDocument();
-    expect(selectors.secondaryArchiveBtn(renderResult)).not.toBeDisabled();
-    expect(selectors.secondaryArchiveBtn(renderResult).textContent).toBe('Archive');
+    expect(select.dateText(wrapper)).toHaveTextContent('Last saved 05/25/1985');
   });
 
-  it('shows proper buttons for "Pending" status', () => {
-    const stubs = {
-      onPublishClick: jest.fn()
+  describe('with "draft" status', () => {
+    const props = {
+      status: 'draft'
     };
-    const { renderResult } = renderWidget({
-      status: 'changes',
-      updatedAt: '2018-01-14T15:15:49.230Z',
-      primary: createCommand({
-        isRestricted: () => false,
-        label: 'Publish changes',
-        targetStateId: 'published',
-        execute: stubs.onPublishClick
-      }),
-      secondary: [
-        createCommand({
-          label: 'Archive',
-          targetStateId: 'archived'
-        }),
-        createCommand({
-          label: 'Unpublish',
-          targetStateId: 'draft'
-        })
-      ]
+
+    itRendersStatus(props, {
+      expectedText: 'Status: Draft'
     });
-
-    expect(selectors.stateText(renderResult).textContent).toBe(
-      'Status: Published (pending changes)'
-    );
-    expect(selectors.dateText(renderResult).textContent).toBe('Last saved 01/14/2018');
-
-    expect(selectors.publishBtn(renderResult)).toBeInTheDocument();
-    expect(selectors.publishBtn(renderResult)).not.toBeDisabled();
-    expect(selectors.publishBtn(renderResult).textContent).toBe('Publish changes');
-    fireEvent.click(selectors.publishBtn(renderResult));
-    expect(stubs.onPublishClick).toHaveBeenCalled();
-
-    expect(renderResult.queryByTestId('change-state-archived')).toBeNull();
-    expect(renderResult.queryByTestId('change-state-draft')).toBeNull();
-
-    fireEvent.click(selectors.secondaryDropdownTrigger(renderResult));
-
-    expect(selectors.secondaryArchiveBtn(renderResult)).toBeInTheDocument();
-    expect(selectors.secondaryArchiveBtn(renderResult)).not.toBeDisabled();
-    expect(selectors.secondaryArchiveBtn(renderResult).textContent).toBe('Archive');
-
-    expect(selectors.secondaryUnpublishBtn(renderResult)).toBeInTheDocument();
-    expect(selectors.secondaryUnpublishBtn(renderResult)).not.toBeDisabled();
-    expect(selectors.secondaryUnpublishBtn(renderResult).textContent).toBe('Unpublish');
+    itCanRenderRevert(props);
+    itRendersPrimaryActions(props);
+    itCanRenderSecondaryActions(props);
   });
 
-  it('shows proper buttons for "Published" status', () => {
-    const stubs = {
-      revertOnClick: jest.fn()
+  describe('with "changes" status', () => {
+    const props = {
+      status: 'changes'
     };
-    const { renderResult } = renderWidget({
-      status: 'published',
-      updatedAt: '2018-01-14T15:15:49.230Z',
-      primary: createCommand({
-        isAvailable: () => false,
-        isRestricted: () => false
-      }),
-      revert: createCommand({
-        isAvailable: () => true,
-        execute: stubs.revertOnClick
-      }),
-      secondary: [
-        createCommand({
-          label: 'Archive',
-          targetStateId: 'archived'
-        }),
-        createCommand({
-          label: 'Unpublish',
-          targetStateId: 'draft'
-        })
-      ]
+
+    itRendersStatus(props, {
+      expectedText: 'Status: Published (pending changes)'
     });
-
-    expect(selectors.stateText(renderResult).textContent).toBe('Status: Published');
-    expect(selectors.dateText(renderResult).textContent).toBe('Last saved 01/14/2018');
-
-    expect(renderResult.queryByTestId('change-state-published')).toBeNull();
-
-    expect(renderResult.queryByTestId('change-state-archived')).toBeNull();
-    expect(renderResult.queryByTestId('change-state-draft')).toBeNull();
-
-    expect(selectors.revertButton(renderResult)).toBeInTheDocument();
-    fireEvent.click(selectors.revertButton(renderResult));
-    expect(stubs.revertOnClick).toHaveBeenCalled();
-
-    expect(selectors.secondaryDropdownTrigger(renderResult).textContent).toBe('Change status');
-    fireEvent.click(selectors.secondaryDropdownTrigger(renderResult));
-
-    expect(selectors.secondaryArchiveBtn(renderResult)).toBeInTheDocument();
-    expect(selectors.secondaryArchiveBtn(renderResult)).not.toBeDisabled();
-    expect(selectors.secondaryArchiveBtn(renderResult).textContent).toBe('Archive');
-
-    expect(selectors.secondaryUnpublishBtn(renderResult)).toBeInTheDocument();
-    expect(selectors.secondaryUnpublishBtn(renderResult)).not.toBeDisabled();
-
-    expect(renderResult.queryByTestId('action-restriction-note')).toBeNull();
-
-    expect(selectors.secondaryUnpublishBtn(renderResult).textContent).toBe('Unpublish');
+    itCanRenderRevert(props);
+    itRendersPrimaryActions(props);
+    itCanRenderSecondaryActions(props);
   });
 
-  it('shows the action restrtiction note for publish action', () => {
-    const stubs = {
-      onPublishClick: jest.fn()
+  describe('with "archived" status', () => {
+    const props = {
+      status: 'archived'
     };
-    const { renderResult } = renderWidget({
-      status: 'draft',
-      updatedAt: '2018-01-14T15:15:49.230Z',
-      primary: createCommand({
-        isRestricted: () => true,
-        isDisabled: () => true,
-        label: 'Publish',
-        targetStateId: 'published',
-        execute: stubs.onPublishClick
-      }),
-      secondary: [
-        createCommand({
-          label: 'Archive',
-          targetStateId: 'archived'
-        })
-      ]
-    });
 
-    expect(selectors.publishBtn(renderResult)).toBeInTheDocument();
-    expect(selectors.publishBtn(renderResult)).toBeDisabled();
-    expect(selectors.actionRestrictionNote(renderResult)).toBeInTheDocument();
-    expect(selectors.actionRestrictionNote(renderResult).textContent).toBe(
-      'You do not have permission to publish.'
-    );
+    itRendersStatus(props, {
+      expectedText: 'Status: Archived'
+    });
+    itCanRenderRevert(props);
+    itRendersPrimaryActions(props);
+    itCanRenderSecondaryActions(props);
+  });
+
+  describe('with "published" status', () => {
+    const props = {
+      status: 'published'
+    };
+
+    itRendersStatus(props, {
+      expectedText: 'Status: Published'
+    });
+    itCanRenderRevert(props);
+    itCanRenderSecondaryActions(props);
+
+    // TODO: Instead of all this status depending logic, we should probably just
+    //  simply not pass a primary command or set its `isAvailable()` to `false`
+    //  and not render the primary action accordingly.
+    it('hides primary action button', () => {
+      const { wrapper } = render({
+        ...props,
+        primary: createCommand()
+      });
+
+      expect(select.primaryActionButton(wrapper)).not.toBeInTheDocument();
+    });
   });
 });
+
+function itRendersStatus(props, { expectedText }) {
+  test('renders status', () => {
+    const { wrapper, props: allProps } = render(props);
+    expect(select.publishedStatus(wrapper)).toHaveTextContent(expectedText);
+    expect(select.publishedStatus(wrapper)).toHaveAttribute('data-state', allProps.status);
+  });
+}
+
+function itCanRenderRevert(props) {
+  test('does not render revert action if "revert" prop is not defined', () => {
+    const { wrapper } = render(props);
+    expect(select.revertButton(wrapper)).not.toBeInTheDocument();
+  });
+
+  test('renders revert action if "revert" prop is defined', () => {
+    const revertCommand = createCommand({
+      label: 'Reeeeevert!!!', // This is ignored as shown in the label assertion.
+      isAvailable: () => true
+    });
+    const { wrapper } = render({
+      ...props,
+      revert: revertCommand
+    });
+    const revertButtonElem = select.revertButton(wrapper);
+    expect(revertButtonElem).toBeInTheDocument();
+    expect(revertButtonElem).not.toHaveTextContent(revertCommand.label);
+    expect(revertButtonElem).toHaveTextContent('Discard changes');
+    fireEvent.click(revertButtonElem);
+    expect(revertCommand.execute).toHaveBeenCalled();
+  });
+}
+
+function itRendersPrimaryActions(props) {
+  itRendersPrimaryAction(props, 'enabled', { expectClickable: true });
+  itRendersPrimaryAction(props, 'disabled', { expectClickable: false });
+  itRendersPrimaryAction(props, 'restricted', {
+    expectClickable: false,
+    restrictedText: 'You do not have permission to restricted command.'
+  });
+}
+
+function itRendersPrimaryAction(props, commandKey, { expectClickable, restrictedText = false }) {
+  describe(`${commandKey} primary action`, () => {
+    let wrapper, command;
+
+    beforeEach(() => {
+      command = createCommands()[commandKey];
+      if (!command) throw new Error(`No command for key ${commandKey}`);
+      wrapper = render({
+        ...props,
+        primary: command
+      }).wrapper;
+    });
+
+    it('renders button', () => {
+      expectPrimaryButton(wrapper, {
+        text: command.label,
+        isDisabled: command.isDisabled(),
+        restriction: restrictedText
+      });
+    });
+
+    it(`${expectClickable ? 'handles' : 'prevents'} button click`, () => {
+      fireEvent.click(select.primaryActionButton(wrapper));
+      expectClickable
+        ? expect(command.execute).toHaveBeenCalled()
+        : expect(command.execute).not.toHaveBeenCalled();
+    });
+  });
+}
+
+function itCanRenderSecondaryActions(props) {
+  describe('secondary actions', () => {
+    let wrapper, commands, elems;
+
+    const selectCommandElems = () =>
+      mapValues(commands, command => select.actionByCommand(wrapper, command));
+
+    beforeEach(() => {
+      commands = createCommands();
+      wrapper = render({
+        ...props,
+        secondary: toArray(commands)
+      }).wrapper;
+      elems = selectCommandElems();
+    });
+
+    it('are hidden within dropdown', () => {
+      expect.assertions(4);
+      toArray(elems).forEach(elem => expect(elem).not.toBeInTheDocument());
+    });
+
+    describe('when opening the secondary actions dropdown', () => {
+      beforeEach(() => {
+        fireEvent.click(select.secondaryActionsDropdown(wrapper));
+        elems = selectCommandElems();
+      });
+
+      // TODO: Unavailable actions being rendered seems like a bug.
+      it.skip('does not render unavailable action', () => {
+        expect(elems.unavailable).toBeInTheDocument();
+      });
+
+      it('renders available, enabled action', () => {
+        expect(elems.enabled).toBeInTheDocument();
+        expect(elems.enabled).toHaveTextContent(commands.enabled.label);
+        expectDisabled({ key: 'enabled', isDisabled: false });
+      });
+
+      // TODO: Fix bug! Disable button for disabled actions
+      it.skip('renders disabled action', () => {
+        expect(elems.disabled).toBeInTheDocument();
+        expect(elems.disabled).toHaveTextContent(commands.disabled.label);
+        expectDisabled({ key: 'disabled', isDisabled: true });
+      });
+
+      // TODO: Fix bug! Disable button for restricted actions.
+      it.skip('renders disabled restricted action', () => {
+        expect(elems.restricted).toBeInTheDocument();
+        expect(elems.restricted).toHaveTextContent(commands.restricted.label);
+        expectDisabled({ key: 'restricted', isDisabled: true });
+      });
+    });
+
+    function expectDisabled({ key, isDisabled }) {
+      const actionStub = commands[key].execute;
+      const actionElem = elems[key].querySelector('button');
+      expect(actionStub).toBeCalledTimes(0);
+      fireEvent.click(actionElem);
+      expect(actionStub).toBeCalledTimes(isDisabled ? 0 : 1);
+    }
+  });
+}
+
+function expectPrimaryButton(wrapper, { text, isDisabled, restriction = false }) {
+  const elem = select.primaryActionButton(wrapper);
+  expect(elem).toBeInTheDocument();
+  expect(elem).toHaveTextContent(text);
+  isDisabled ? expect(elem).toBeDisabled() : expect(elem).not.toBeDisabled();
+
+  const note = select.primaryActionRestrictionNote(wrapper);
+  if (restriction) {
+    expect(note).toBeInTheDocument();
+    expect(note).toHaveTextContent(restriction);
+  } else {
+    expect(note).not.toBeInTheDocument();
+  }
+}

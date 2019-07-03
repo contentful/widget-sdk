@@ -14,12 +14,7 @@ import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
 import CommandPropType from 'app/entity_editor/CommandPropType.es6';
 
 const PublicationStatus = ({ status }) => (
-  <div className="entity-sidebar__state">
-    <span
-      className="entity-sidebar__state-indicator"
-      data-state={status}
-      data-test-id="entity-state"
-    />
+  <div className="published-status" data-state={status} data-test-id="entity-state">
     <strong>Status: </strong>
     {status === 'archived' && <span>Archived</span>}
     {status === 'draft' && <span>Draft</span>}
@@ -77,7 +72,7 @@ export default class PublicationWidget extends React.PureComponent {
                   buttonType="positive"
                   disabled={primary.isDisabled()}
                   loading={primary.inProgress()}
-                  testId={`change-state-${primary.targetStateId}`}
+                  testId="primary-action-change-state"
                   onClick={() => {
                     primary.execute();
                   }}
@@ -134,7 +129,7 @@ export default class PublicationWidget extends React.PureComponent {
                   'x--active': isSaving
                 })}
               />
-              <span className="entity-sidebar__last-saved">
+              <span className="entity-sidebar__last-saved" data-test-id="last-saved">
                 Last saved <RelativeTimeData value={updatedAt} />
               </span>
             </div>
