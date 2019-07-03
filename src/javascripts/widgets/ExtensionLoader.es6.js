@@ -7,8 +7,8 @@ import { uniq, get, identity, pick } from 'lodash';
 // - `getAllExtensions` returns all extensions.
 //
 // While the methods are used, a cache is build up.
-// Once cached extension will be used up until the
-// end of a user session when using `getExtensionsById`.
+// Once cached extension will be used until the current
+// space cahnges when using `getExtensionsById`.
 //
 // `getAllExtensions` always evicts the whole cache.
 // `cacheExtension` allows to replace a single item
