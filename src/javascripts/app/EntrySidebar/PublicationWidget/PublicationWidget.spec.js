@@ -1,5 +1,5 @@
 import React from 'react';
-import { render as renderReact, cleanup, fireEvent } from '@testing-library/react';
+import { render as renderReact, within, cleanup, fireEvent } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 import { mapValues, toArray } from 'lodash';
 import PublicationWidget from './PublicationWidget.es6';
@@ -44,8 +44,10 @@ const TEST_IDS = {
   revertButton: 'discard-changed-button',
   primaryActionButton: 'primary-action-change-state',
   primaryActionRestrictionNote: 'action-restriction-note',
-  secondaryActionsDropdown: 'change-state-menu-trigger'
+  secondaryActionsDropdown: 'change-state-menu-trigger',
+  restrictedActionIcon: 'action-restriction-icon'
 };
+
 const select = mapValues(TEST_IDS, testId => elem => elem.queryByTestId(testId));
 select.actionByCommand = (elem, { targetStateId }) =>
   elem.queryByTestId(`change-state-${targetStateId}`);
@@ -233,9 +235,8 @@ function itCanRenderSecondaryActions(props) {
         elems = selectCommandElems();
       });
 
-      // TODO: Unavailable actions being rendered seems like a bug.
-      it.skip('does not render unavailable action', () => {
-        expect(elems.unavailable).toBeInTheDocument();
+      it('does not render unavailable action', () => {
+        expect(elems.unavailable).not.toBeInTheDocument();
       });
 
       it('renders available, enabled action', () => {
@@ -244,18 +245,18 @@ function itCanRenderSecondaryActions(props) {
         expectDisabled({ key: 'enabled', isDisabled: false });
       });
 
-      // TODO: Fix bug! Disable button for disabled actions
-      it.skip('renders disabled action', () => {
+      it('renders disabled action', () => {
         expect(elems.disabled).toBeInTheDocument();
         expect(elems.disabled).toHaveTextContent(commands.disabled.label);
         expectDisabled({ key: 'disabled', isDisabled: true });
+        expect(select.restrictedActionIcon(within(elems.disabled))).not.toBeInTheDocument();
       });
 
-      // TODO: Fix bug! Disable button for restricted actions.
-      it.skip('renders disabled restricted action', () => {
+      it('renders disabled restricted action', () => {
         expect(elems.restricted).toBeInTheDocument();
         expect(elems.restricted).toHaveTextContent(commands.restricted.label);
         expectDisabled({ key: 'restricted', isDisabled: true });
+        expect(select.restrictedActionIcon(within(elems.restricted))).toBeInTheDocument();
       });
     });
 
