@@ -39,14 +39,16 @@ export function tasksErrorResponse() {
 export function taskCreateRequest({ title, assigneeId }) {
   const newTask = {
     body: title,
-    assignedTo: {
-      sys: {
-        type: 'Link',
-        linkType: 'User',
-        id: assigneeId,
-      }
-    },
-    status: 'open'
+    assignment: {
+      assignedTo: {
+        sys: {
+          type: 'Link',
+          linkType: 'User',
+          id: assigneeId,
+        }
+      },
+      status: 'open'
+    }
   };
   const interactionRequestInfo = {
     provider,

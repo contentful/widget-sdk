@@ -115,9 +115,10 @@ export function createLoadingStateTasksViewData() {
  */
 function createTaskViewData(task, usersFetchingStatus) {
   const { id } = task.sys;
-  const assignee = task.assignedTo
-    ? createUserViewDataFromLinkAndFetcher(task.assignedTo, usersFetchingStatus)
-    : null;
+  const assignee =
+    task.assignment && task.assignment.assignedTo
+      ? createUserViewDataFromLinkAndFetcher(task.assignment.assignedTo, usersFetchingStatus)
+      : null;
   const creator = task.sys.createdBy
     ? createUserViewDataFromLinkAndFetcher(task.sys.createdBy, usersFetchingStatus)
     : null;
@@ -129,7 +130,7 @@ function createTaskViewData(task, usersFetchingStatus) {
     creator,
     assignee,
     body: task.body,
-    isDone: task.status === 'resolved',
+    isDone: task.assignment && task.assignment.status === 'resolved',
     isDraft: id === DRAFT_TASK_KEY,
     isInEditMode: false,
     assignableUsersInfo: null,
