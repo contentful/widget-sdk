@@ -81,6 +81,10 @@ export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
   };
 
   const loadExtensions = async extensionIds => {
+    if (!Array.isArray(extensionIds) || extensionIds.length === 0) {
+      return [];
+    }
+
     const { items } = await spaceEndpoint({
       method: 'GET',
       path: '/extensions',
