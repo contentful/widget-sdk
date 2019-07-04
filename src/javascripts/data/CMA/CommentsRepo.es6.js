@@ -44,8 +44,10 @@ export async function createAssigned(endpoint, entryId, { body, assignedTo, stat
       path: ['entries', entryId, 'comments'],
       data: {
         body,
-        assignedTo,
-        status
+        assignment: {
+          assignedTo,
+          status
+        }
       }
     },
     alphaHeader

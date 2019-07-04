@@ -75,5 +75,5 @@ export function createTasksStoreForEntry(endpoint, entryId) {
 }
 
 function isTaskComment(comment) {
-  return !!(comment && comment.assignedTo);
+  return !!(comment && comment.assignment);
 }
