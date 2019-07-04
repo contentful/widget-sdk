@@ -110,3 +110,8 @@ export enum Webhooks {
   NONE = 'settings/webhooks/none',
   ERROR = 'settings/webhooks/error'
 }
+
+export enum Webhook {
+  DEFAULT = 'settings/webhooks/id/default',
+  CALLS_NONE = 'settings/webhooks/id/calls/none'
+}

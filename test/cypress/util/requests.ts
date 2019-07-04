@@ -15,6 +15,7 @@ export const defaultHeader = {
 export const defaultUserId = 'userID';
 
 export const defaultJobId = 'jobID';
+export const defaultWebhookId = 'webhookId';
 
 export function getPublicContentTypes(
   spaceId: string = defaultSpaceId,
@@ -304,14 +305,14 @@ export function getEntryCommentsAndTasks(
 export function postEntryTask(
   spaceId: string = defaultSpaceId,
   entryId: string = defaultEntryId,
-task: Object
+  task: Object
 ): RequestOptions {
   return {
     method: 'POST',
     path: `/spaces/${spaceId}/entries/${entryId}/comments`,
     headers: defaultHeader,
     body: task
-  }
+  };
 }
 
 export function getSpaceUsers(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
@@ -336,6 +337,39 @@ export function getWebhooks(spaceId: string = defaultSpaceId, query?: Query): Re
   return {
     method: 'GET',
     path: `/spaces/${spaceId}/webhook_definitions`,
+    headers: defaultHeader,
+    query
+  };
+}
+
+export function getWebhook(
+  spaceId: string = defaultSpaceId,
+  webhookId: string = defaultWebhookId
+): RequestOptions {
+  return {
+    method: 'GET',
+    path: `/spaces/${spaceId}/webhook_definitions/${webhookId}`,
+    headers: defaultHeader
+  };
+}
+
+export function postWebhook(spaceId: string = defaultSpaceId, body?: Object): RequestOptions {
+  return {
+    method: 'POST',
+    path: `/spaces/${spaceId}/webhook_definitions`,
+    headers: defaultHeader,
+    body
+  };
+}
+
+export function getWebhookCalls(
+  spaceId: string = defaultSpaceId,
+  webhookId: string = defaultWebhookId,
+  query?: Query
+): RequestOptions {
+  return {
+    method: 'GET',
+    path: `/spaces/${spaceId}/webhooks/${webhookId}/calls`,
     headers: defaultHeader,
     query
   };

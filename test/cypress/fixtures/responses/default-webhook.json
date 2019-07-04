@@ -1,0 +1,37 @@
+{
+  "name": "Webhook",
+  "url": "https://www.contentful.com/",
+  "httpBasicUsername": null,
+  "topics": ["*.*"],
+  "filters": null,
+  "transformation": null,
+  "sys": {
+    "type": "WebhookDefinition",
+    "id": "webhookId",
+    "version": 0,
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "spaceId"
+      }
+    },
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "userId"
+      }
+    },
+    "createdAt": "2019-07-03T13:46:46Z",
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "userId"
+      }
+    },
+    "updatedAt": "2019-07-03T13:46:46Z"
+  },
+  "headers": []
+}

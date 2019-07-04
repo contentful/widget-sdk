@@ -158,8 +158,9 @@ const getDraftTaskInput = () =>
   getDraftTask()
     .getByTestId('task-title-input')
     .find('textarea');
-const getDraftAssigneeSelector = () => getDraftTask()
-  .getByTestId('task-assignee-select')
-  .getByTestId('cf-ui-select');
+const getDraftAssigneeSelector = () =>
+  getDraftTask()
+    .getByTestId('task-assignee-select')
+    .getByTestId('cf-ui-select');
 const getDraftTaskSaveAction = () => getDraftTask().getByTestId('save-task');
 const getDraftTaskError = () => getDraftTask().queryByTestId('cf-ui-validation-message');
