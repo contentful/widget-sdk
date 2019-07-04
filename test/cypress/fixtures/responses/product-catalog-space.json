@@ -16,6 +16,21 @@
         }
       },
       "enabled": true
+    },
+    {
+      "sys": {
+        "type": "Feature",
+        "id": "fuuami4adicz-environment_usage_enforcements",
+        "feature_id": "environment_usage_enforcements",
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "fuuami4adicz"
+          }
+        }
+      },
+      "enabled": true
     }
   ]
 }

@@ -5,6 +5,8 @@ import {
 } from '../../../interactions/content_types';
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
+import { limitsReachedResourcesResponse } from '../../../interactions/resources';
+import { spaceProductCatalogUsageEnforcementResponse } from '../../../interactions/product_catalog_features';
 import { defaultSpaceId, getEntries } from '../../../util/requests';
 import {
   singleEntryResponse,
@@ -29,6 +31,7 @@ describe('Entries list page', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
   });
+
   context('no content types in the space', () => {
     beforeEach(() => {
       defaultRequestsMock({});
@@ -145,6 +148,43 @@ describe('Entries list page', () => {
     it('renders entries page correctly', () => {
       cy.getByTestId('entry-list').should('be.visible');
       cy.getAllByTestId('entry-row').should('have.length', severalEntriesResponse.total);
+    });
+  });
+
+  context('with several entries in the space and usage limits reached', () => {
+    beforeEach(() => {
+      cy.startFakeServers({
+        consumer: 'user_interface',
+        providers: ['resources', 'product_catalog_features'],
+        cors: true,
+        pactfileWriteMode: 'merge'
+      });
+
+      defaultRequestsMock({});
+      singleUser();
+
+      cy.addInteraction({
+        provider: 'entries',
+        state: 'severalEntries',
+        uponReceiving: 'a request for entries',
+        withRequest: getEntries(defaultSpaceId, query),
+        willRespondWith: {
+          status: 200,
+          body: severalEntriesResponse
+        }
+      }).as(state.Entries.SEVERAL);
+
+      const productCatalogQuery = 'sys.featureId[]=environment_usage_enforcements&sys.featureId[]=basic_apps'
+      spaceProductCatalogUsageEnforcementResponse(productCatalogQuery);
+      limitsReachedResourcesResponse();
+
+      cy.visit(`/spaces/${defaultSpaceId}/entries`);
+      cy.wait([`@${state.Token.VALID}`, `@${state.Entries.SEVERAL}`, `@${state.SpaceProductCatalogFeatures.USAGE_ENFORCEMENT}`, `@${state.Resources.LIMITS_REACHED}`, ]);
+
+    });
+
+    it('renders a disabled "Add Entry" button', () => {
+      cy.getByTestId('cta').should('be.disabled');
     });
   });
 });

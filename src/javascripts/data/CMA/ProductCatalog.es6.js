@@ -33,7 +33,9 @@ const getLoaderForEndpoint = endpoint => {
   return new DataLoader(async featureIds => {
     // API quirk:
     // We're using QS array, not `sys.featureId[in]=comma,separated,ids`.
-    const qs = featureIds.map(featureId => `sys.featureId[]=${featureId}`).join('&');
+    const qs = featureIds
+      .map(featureId => `${encodeURIComponent('sys.featureId[]')}=${encodeURIComponent(featureId)}`)
+      .join('&');
 
     const { items } = await endpoint({
       method: 'GET',
