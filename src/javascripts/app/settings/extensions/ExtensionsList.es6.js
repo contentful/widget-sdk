@@ -205,9 +205,13 @@ export class ExtensionsList extends React.Component {
     const body = extensions.map(extension => (
       <tr key={extension.id}>
         <td>
-          <StateLink to="^.detail" params={{ extensionId: extension.id }}>
-            {extension.name}
-          </StateLink>
+          {extension.isBasedOnDefinition ? (
+            extension.name
+          ) : (
+            <StateLink to="^.detail" params={{ extensionId: extension.id }}>
+              {extension.name}
+            </StateLink>
+          )}
         </td>
         <td>{extension.hosting}</td>
         <td>{extension.fieldTypes}</td>
