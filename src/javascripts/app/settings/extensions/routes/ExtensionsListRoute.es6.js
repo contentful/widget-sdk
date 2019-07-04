@@ -12,13 +12,14 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 // Takes API Extension entity and prepares it for the view.
-const prepareExtension = ({ sys, extension, parameters }) => {
+const prepareExtension = ({ sys, extension, extensionDefinition, parameters }) => {
   const fieldTypes = (extension.fieldTypes || []).map(toInternalFieldType);
   return {
     id: sys.id,
     name: extension.name,
     fieldTypes: fieldTypes.length > 0 ? fieldTypes.join(', ') : 'none',
     hosting: typeof extension.srcdoc === 'string' ? 'Contentful' : 'self-hosted',
+    isBasedOnDefinition: !!get(extensionDefinition, ['sys', 'id']),
     parameterCounts: {
       instanceDefinitions: get(extension, ['parameters', 'instance', 'length']),
       installationDefinitions: get(extension, ['parameters', 'installation', 'length']),
@@ -29,8 +30,8 @@ const prepareExtension = ({ sys, extension, parameters }) => {
 
 const extensionNameComparator = (a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase());
 
-const ExtensionsFetcher = createFetcherComponent(async ({ cma }) => {
-  const { items } = await cma.getExtensions();
+const ExtensionsFetcher = createFetcherComponent(async ({ extensionLoader }) => {
+  const items = await extensionLoader.getAllExtensions();
 
   return (items || []).map(prepareExtension).sort(extensionNameComparator);
 });
@@ -39,7 +40,7 @@ class ExtensionsListRoute extends React.Component {
   static propTypes = {
     extensionUrl: PropTypes.string,
     extensionUrlReferrer: PropTypes.string,
-    cma: PropTypes.shape({ getExtensions: PropTypes.func.isRequired }).isRequired
+    extensionLoader: PropTypes.shape({ getAllExtensions: PropTypes.func.isRequired }).isRequired
   };
 
   render() {
@@ -51,7 +52,7 @@ class ExtensionsListRoute extends React.Component {
     }
 
     return (
-      <ExtensionsFetcher cma={this.props.cma}>
+      <ExtensionsFetcher extensionLoader={this.props.extensionLoader}>
         {({ isLoading, isError, data, fetch }) => {
           if (isLoading) {
             return <ExtensionListShell />;
