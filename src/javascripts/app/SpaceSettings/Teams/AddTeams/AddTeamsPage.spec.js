@@ -1,9 +1,11 @@
 import React from 'react';
-import { render, fireEvent, cleanup, wait } from '@testing-library/react';
+import { render, fireEvent, cleanup, wait, within } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository.es6';
 import { go } from 'states/Navigator.es6';
 import AddTeamsPage from './AddTeamsPage.es6';
+
+import 'jest-dom/extend-expect';
 
 jest.mock('states/Navigator.es6', () => ({
   go: jest.fn().mockResolvedValue(true)
@@ -64,6 +66,21 @@ const roles = [
   }
 ];
 
+const searchAndSelectTeam = (teamName, { queryByTestId }) => {
+  fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
+  fireEvent.change(queryByTestId('autocomplete.input'), { target: { value: teamName } });
+
+  const option = queryByTestId('autocomplete.dropdown-list-item');
+  const button = within(option).getByTestId('cf-ui-dropdown-list-item-button');
+
+  fireEvent.click(button);
+};
+
+const getAutocompleteOptions = ({ queryByTestId, queryAllByTestId }) => {
+  fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
+  return queryAllByTestId('autocomplete.dropdown-list-item');
+};
+
 describe('AddTeamsPage', () => {
   let notificationErrorSpy;
   let notificationSuccessSpy;
@@ -86,72 +103,71 @@ describe('AddTeamsPage', () => {
   it('should show the search box on initial load (no interaction)', () => {
     const { queryByTestId } = mount();
 
-    expect(queryByTestId('teams-select')).toBeDefined();
+    expect(queryByTestId('autocomplete.input')).toBeVisible();
   });
 
   it('should show the teams and roles lists once a team has been selected', async () => {
-    const { queryByTestId, queryAllByTestId } = mount({ teams });
+    const { queryByTestId } = mount({ teams });
 
     expect(queryByTestId('teams-and-roles-lists')).toBeNull();
     expect(queryByTestId('submit-button')).toBeNull();
 
-    fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
-    fireEvent.click(queryAllByTestId('autocomplete.dropdown-list-item')[0]);
+    searchAndSelectTeam('Test team', { queryByTestId });
 
-    expect(queryByTestId('teams-and-roles-lists')).toBeDefined();
-    expect(queryByTestId('submit-button')).toBeDefined();
+    expect(queryByTestId('teams-and-roles-lists')).toBeVisible();
+    expect(queryByTestId('submit-button')).toBeVisible();
   });
 
   it('should add a team to the list when selected', () => {
     const { queryAllByTestId, queryByTestId } = mount({ teams });
 
-    expect(queryAllByTestId('team')).toHaveLength(0);
+    expect(queryAllByTestId('team-in-list')).toHaveLength(0);
 
-    fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
-    fireEvent.click(queryAllByTestId('autocomplete.dropdown-list-item')[0]);
+    searchAndSelectTeam('Test team', { queryByTestId });
 
-    expect(queryAllByTestId('team')).toHaveLength(1);
+    expect(queryAllByTestId('team-in-list')).toHaveLength(1);
   });
 
   it('should remove a team from the list when the X is clicked on the team', () => {
     const { queryAllByTestId, queryByTestId } = mount({ teams });
 
-    fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
-    fireEvent.click(queryAllByTestId('autocomplete.dropdown-list-item')[0]);
+    searchAndSelectTeam('Test team', { queryByTestId });
 
-    expect(queryAllByTestId('team')).toHaveLength(1);
+    expect(queryAllByTestId('team-in-list')).toHaveLength(1);
 
-    fireEvent.click(queryAllByTestId('team-close')[0]);
+    fireEvent.click(queryByTestId('team-in-list.close'));
 
-    expect(queryAllByTestId('team')).toHaveLength(0);
+    expect(queryAllByTestId('team-in-list')).toHaveLength(0);
   });
 
   it('should still display the teams and roles lists if all teams are removed from the list', () => {
     const { queryAllByTestId, queryByTestId } = mount({ teams });
 
-    fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
-    fireEvent.click(queryAllByTestId('autocomplete.dropdown-list-item')[0]);
+    searchAndSelectTeam('Test team', { queryByTestId });
+    searchAndSelectTeam('Awesome other team', { queryByTestId });
 
-    fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
-    fireEvent.click(queryAllByTestId('autocomplete.dropdown-list-item')[0]);
-
-    fireEvent.click(queryAllByTestId('team-close')[0]);
-    fireEvent.click(queryAllByTestId('team-close')[0]);
+    fireEvent.click(queryAllByTestId('team-in-list.close')[0]);
+    fireEvent.click(queryAllByTestId('team-in-list.close')[0]);
 
     expect(queryAllByTestId('team')).toHaveLength(0);
-    expect(queryByTestId('teams-and-roles-lists')).toBeDefined();
-    expect(queryByTestId('submit-button')).toBeDefined();
+    expect(queryByTestId('teams-and-roles-lists')).toBeVisible();
+    expect(queryByTestId('submit-button')).toBeVisible();
   });
 
   it('should remove a team that is selected from the select box from the options', () => {
     const { queryByTestId, queryAllByTestId } = mount({ teams });
 
-    expect(queryByTestId('team_1234-option')).toBeDefined();
+    let options;
 
-    fireEvent.keyDown(queryByTestId('autocomplete.input'), { keyCode: 40 });
-    fireEvent.click(queryAllByTestId('autocomplete.dropdown-list-item')[0]);
+    options = getAutocompleteOptions({ queryByTestId, queryAllByTestId });
 
-    expect(queryByTestId('team_1234-option')).toBeNull();
+    expect(options).toHaveLength(3);
+
+    searchAndSelectTeam('Test team', { queryByTestId });
+
+    options = getAutocompleteOptions({ queryByTestId, queryAllByTestId });
+
+    expect(options).toHaveLength(2);
   });
 
   it('should hide the other roles radio if none are available', () => {
@@ -159,7 +175,7 @@ describe('AddTeamsPage', () => {
 
     helpers = mount({ teams });
 
-    fireEvent.change(helpers.queryByTestId('teams-select'), { target: { value: 'team_1234' } });
+    searchAndSelectTeam('Test team', { queryByTestId: helpers.queryByTestId });
 
     expect(helpers.queryByTestId('RoleSelector__admin_false')).toBeNull();
 
@@ -167,7 +183,7 @@ describe('AddTeamsPage', () => {
 
     helpers = mount({ teams, roles });
 
-    fireEvent.change(helpers.queryByTestId('teams-select'), { target: { value: 'team_1234' } });
+    searchAndSelectTeam('Test team', { queryByTestId: helpers.queryByTestId });
 
     expect(helpers.queryByTestId('RoleSelector__admin_false')).not.toBeNull();
   });
@@ -175,11 +191,11 @@ describe('AddTeamsPage', () => {
   it('should disable the submit button if no teams are added', () => {
     const { queryByTestId } = mount({ teams });
 
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_1234' } });
+    searchAndSelectTeam('Test team', { queryByTestId });
 
     expect(queryByTestId('submit-button').hasAttribute('disabled')).toBeFalse();
 
-    fireEvent.click(queryByTestId('team_1234-close'));
+    fireEvent.click(queryByTestId('team-in-list.close'));
 
     expect(queryByTestId('submit-button').hasAttribute('disabled')).toBeTrue();
   });
@@ -187,7 +203,7 @@ describe('AddTeamsPage', () => {
   it('should disable the submit button if non-admin is selected but no role is selected', () => {
     const { queryByTestId, getByText } = mount({ teams, roles });
 
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_1234' } });
+    searchAndSelectTeam('Test team', { queryByTestId });
 
     expect(queryByTestId('submit-button').hasAttribute('disabled')).toBeFalse();
 
@@ -201,8 +217,9 @@ describe('AddTeamsPage', () => {
 
     const { queryByTestId } = mount({ teams });
 
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_1234' } });
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_5678' } });
+    searchAndSelectTeam('Test team', { queryByTestId });
+    searchAndSelectTeam('Awesome other team', { queryByTestId });
+
     fireEvent.click(queryByTestId('submit-button'));
 
     expect(createTeamSpaceMembership).toHaveBeenCalledTimes(2);
@@ -213,8 +230,9 @@ describe('AddTeamsPage', () => {
 
     const { queryByTestId } = mount({ teams });
 
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_1234' } });
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_5678' } });
+    searchAndSelectTeam('Test team', { queryByTestId });
+    searchAndSelectTeam('Awesome other team', { queryByTestId });
+
     fireEvent.click(queryByTestId('submit-button'));
 
     await wait();
@@ -229,9 +247,10 @@ describe('AddTeamsPage', () => {
 
     const { queryByTestId } = mount({ teams });
 
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_1234' } });
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_5678' } });
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_0987' } });
+    searchAndSelectTeam('Test team', { queryByTestId });
+    searchAndSelectTeam('Awesome other team', { queryByTestId });
+    searchAndSelectTeam('Third team', { queryByTestId });
+
     fireEvent.click(queryByTestId('submit-button'));
 
     await wait();
@@ -246,8 +265,9 @@ describe('AddTeamsPage', () => {
 
     const { queryByTestId } = mount({ teams });
 
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_1234' } });
-    fireEvent.change(queryByTestId('teams-select'), { target: { value: 'team_5678' } });
+    searchAndSelectTeam('Test team', { queryByTestId });
+    searchAndSelectTeam('Awesome other team', { queryByTestId });
+
     fireEvent.click(queryByTestId('submit-button'));
 
     await wait();

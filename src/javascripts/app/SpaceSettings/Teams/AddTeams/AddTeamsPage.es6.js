@@ -14,6 +14,7 @@ import pluralize from 'pluralize';
 import { css, cx } from 'emotion';
 import Workbench from 'app/common/Workbench.es6';
 import Autocomplete from 'app/common/Autocomplete.es6';
+import { useAsyncFn } from 'app/common/hooks/useAsync.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository.es6';
 import { go } from 'states/Navigator.es6';
@@ -68,8 +69,9 @@ const classes = {
 
   teamInfo: {
     container: css({
-      // padding: `${tokens.spacingM} ${tokens.spacingM} ${tokens.spacingM} ${tokens.spacingXl}`,
-      // marginBottom: tokens.spacingM,
+      padding: `${tokens.spacingM} ${tokens.spacingM} ${tokens.spacingM} ${tokens.spacingXl}`,
+      marginBottom: tokens.spacingM,
+
       color: tokens.colorTextMid,
       '&:hover': {
         backgroundColor: tokens.colorElementLightest,
@@ -91,6 +93,16 @@ const classes = {
       right: `10px`,
       top: '10px',
       opacity: 0
+    })
+  },
+
+  autocompleteTeam: {
+    title: css({
+      marginBottom: tokens.spacingXs
+    }),
+    name: css({
+      wordBreak: 'break-word',
+      marginRight: tokens.spacingM
     })
   }
 };
@@ -142,8 +154,14 @@ const reducer = createImmerReducer({
   }
 });
 
-const submit = async ({ spaceId, teams, selectedTeamIds, selectedRoleIds, adminRoleSelected }) => {
+const submit = (spaceId, teams, dispatch) => async ({
+  selectedTeamIds,
+  selectedRoleIds,
+  adminRoleSelected
+}) => {
   const endpoint = createSpaceEndpoint(spaceId);
+
+  dispatch({ type: 'SUBMIT', payload: true });
 
   const erredTeams = [];
   const promises = selectedTeamIds.map(teamId =>
@@ -163,6 +181,8 @@ const submit = async ({ spaceId, teams, selectedTeamIds, selectedRoleIds, adminR
   // teams erred
   if (erredTeams.length > 0 && erredTeams.length === promises.length) {
     Notification.error(`Could not add ${pluralize('team', erredTeams.length)} to the space.`);
+
+    dispatch({ type: 'SUBMIT', payload: false });
 
     return;
   }
@@ -198,6 +218,8 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
     isLoading: false,
     searchTerm: ''
   });
+
+  const [, doSubmit] = useAsyncFn(submit(spaceId, teams, dispatch));
 
   useEffect(() => {
     return () => {
@@ -249,7 +271,7 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
                 items={teamsInAutocomplete}>
                 {items =>
                   items.map(team => {
-                    return <TeamInfo key={team.sys.id} team={team} />;
+                    return <AutocompleteTeam key={team.sys.id} team={team} />;
                   })
                 }
               </Autocomplete>
@@ -269,7 +291,6 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
                           <TeamInfo
                             key={team.sys.id}
                             team={team}
-                            withCloseButton={true}
                             onCloseClick={() => dispatch({ type: 'REMOVE_TEAM', payload: id })}
                           />
                         );
@@ -280,17 +301,7 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
                     disabled={submitButtonDisabled}
                     loading={isLoading}
                     testId="submit-button"
-                    onClick={async () => {
-                      dispatch({ type: 'SUBMIT', payload: true });
-                      submit({
-                        spaceId,
-                        teams,
-                        selectedTeamIds,
-                        selectedRoleIds,
-                        adminRoleSelected
-                      });
-                      dispatch({ type: 'SUBMIT', payload: false });
-                    }}>
+                    onClick={() => doSubmit(state)}>
                     Confirm selection and add {pluralize('team', selectedTeamIds.length)}
                   </Button>
                 </div>
@@ -326,26 +337,24 @@ AddTeamsPage.propTypes = {
   teamSpaceMemberships: PropTypes.array
 };
 
-function TeamInfo({ team, withCloseButton = false, onCloseClick }) {
+function TeamInfo({ team, onCloseClick }) {
   return (
-    <div className={classes.teamInfo.container} data-test-id="team">
+    <div className={classes.teamInfo.container} data-test-id="team-in-list">
       <div className={classes.teamInfo.title}>
         <strong className={classes.teamInfo.name}>{_.truncate(team.name, { length: 25 })}</strong>{' '}
         {pluralize('member', team.memberCount, true)}
       </div>
       <div>{_.truncate(team.description, { length: 60 })}</div>
-      {withCloseButton && (
-        <IconButton
-          iconProps={{
-            icon: 'Close'
-          }}
-          label="close"
-          testId="team-close"
-          className={cx(classes.teamInfo.close, 'team-info__close-button')}
-          onClick={onCloseClick}
-          buttonType="secondary"
-        />
-      )}
+      <IconButton
+        iconProps={{
+          icon: 'Close'
+        }}
+        label="close"
+        testId="team-in-list.close"
+        className={cx(classes.teamInfo.close, 'team-info__close-button')}
+        onClick={onCloseClick}
+        buttonType="secondary"
+      />
     </div>
   );
 }
@@ -354,4 +363,25 @@ TeamInfo.propTypes = {
   team: PropTypes.object,
   withCloseButton: PropTypes.bool,
   onCloseClick: PropTypes.func
+};
+
+// The reason that this is separate is because the Autocomplete uses the DropdownItem internally
+// which has its own padding. The styles for AutocompleteTeam and TeamInfo are the same except
+// for the padding/margins on the container
+function AutocompleteTeam({ team }) {
+  return (
+    <div data-test-id="autocomplete-team">
+      <div className={classes.autocompleteTeam.title}>
+        <strong className={classes.autocompleteTeam.name}>
+          {_.truncate(team.name, { length: 25 })}
+        </strong>{' '}
+        {pluralize('member', team.memberCount, true)}
+      </div>
+      <div>{_.truncate(team.description, { length: 90 })}</div>
+    </div>
+  );
+}
+
+AutocompleteTeam.propTypes = {
+  team: PropTypes.object
 };
