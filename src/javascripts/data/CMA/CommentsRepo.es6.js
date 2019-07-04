@@ -90,3 +90,24 @@ export async function update(endpoint, entryId, comment) {
     headers
   );
 }
+
+export async function updateAssigned(endpoint, entryId, { sys, body, assignedTo, status }) {
+  const headers = {
+    'X-Contentful-Version': sys.version,
+    ...alphaHeader
+  };
+  return endpoint(
+    {
+      method: 'PUT',
+      path: ['entries', entryId, 'comments', sys.id],
+      data: {
+        body,
+        assignment: {
+          assignedTo,
+          status
+        }
+      }
+    },
+    headers
+  );
+}

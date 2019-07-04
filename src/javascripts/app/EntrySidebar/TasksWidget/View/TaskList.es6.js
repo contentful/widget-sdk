@@ -47,7 +47,10 @@ export default class TasksWidget extends React.PureComponent {
             tasksInteractor.saveTaskChanges(key, { body, assigneeKey, isDone, version })
           }
           onDeleteTask={() => tasksInteractor.deleteTask(key)}
-          onCompleteTask={() => {}} // TODO
+          onStatusChange={async ({ body, assigneeKey, isDone }, callback) => {
+            await tasksInteractor.saveTaskChanges(key, { body, assigneeKey, isDone, version });
+            callback();
+          }}
         />
       </li>
     );

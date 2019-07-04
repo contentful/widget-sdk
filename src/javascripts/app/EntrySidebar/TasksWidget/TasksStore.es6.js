@@ -3,7 +3,7 @@ import {
   getAllForEntry,
   createAssigned as create,
   remove,
-  update
+  updateAssigned as update
 } from 'data/CMA/CommentsRepo.es6';
 
 // TODO: Introduce Store specific errors rather than passing client errors.
