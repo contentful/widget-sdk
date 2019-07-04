@@ -9,24 +9,27 @@ import {
 import useClickOutside from 'app/common/hooks/useClickOutside.es6';
 
 const RowMenu = ({ isOpen, setOpen, setEditing, disabled }) => {
-  const ref = useRef();
-  useClickOutside(ref, isOpen, () => setOpen(false));
+  const refDropDown = useRef();
+  const refButton = useRef();
+  useClickOutside([refButton, refDropDown], isOpen, () => setOpen(false));
 
   return (
     <Dropdown
       testId="row-menu"
       isOpen={isOpen}
       toggleElement={
-        <IconButton
-          disabled={disabled}
-          testId={'action-button'}
-          label="Action"
-          buttonType="primary"
-          iconProps={{ icon: 'MoreHorizontal' }}
-          onClick={() => setOpen(!isOpen)}
-        />
+        <div ref={refButton}>
+          <IconButton
+            disabled={disabled}
+            testId={'action-button'}
+            label="Action"
+            buttonType="primary"
+            iconProps={{ icon: 'MoreHorizontal' }}
+            onClick={() => setOpen(!isOpen)}
+          />
+        </div>
       }>
-      <div ref={ref}>
+      <div ref={refDropDown}>
         <DropdownList>
           <DropdownListItem testId="change-role" onClick={() => setEditing(true) || setOpen(false)}>
             Change team role

@@ -53,7 +53,8 @@ const MembershipRow = ({
   // reset selected roles when starting to edit
   useEffect(() => {
     !isEditing && setSelectedRoles(roleIds);
-  }, [isEditing, roleIds]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditing]);
 
   const haveRolesChanged = !(
     intersection(selectedRoleIds, roleIds).length === selectedRoleIds.length &&
@@ -93,21 +94,17 @@ const MembershipRow = ({
         {/*This truncation is a fallback for IE and pre-68 FF, which don't support css line-clamp*/}
         <div className={styles.cellTeamDescription}>{truncate(description, { length: 130 })}</div>
       </TableCell>
-      <TableCell className={styles.cell} testId="member-count-cell">
-        {pluralize('member', memberCount, true)}
-      </TableCell>
       {isEditing ? (
-        <TableCell colSpan={2}>
-          <div className={css({ display: 'flex' })}>
+        <TableCell colSpan={3}>
+          <div className={styles.roleForm}>
             <SpaceRoleEditor
               buttonProps={{ className: styles.roleEditorButton }}
               onChange={setSelectedRoles}
               options={availableRoles}
               value={selectedRoleIds}
             />
-            <span className={css({ flexGrow: 1 })} />
             {!haveRolesChanged && (
-              <Tooltip content="Please change at least one role before saving or cancel the editing">
+              <Tooltip content="Please change at least one role to be able to save">
                 {confirmButton}
               </Tooltip>
             )}
@@ -124,6 +121,9 @@ const MembershipRow = ({
         </TableCell>
       ) : (
         <>
+          <TableCell className={styles.cell} testId="member-count-cell">
+            {pluralize('member', memberCount, true)}
+          </TableCell>
           <TableCell className={cx(styles.cellRoles, styles.cell)} testId="roles-cell">
             {isEmpty(roles) ? 'Admin' : joinWithAnd(map(roles, 'name'))}
           </TableCell>

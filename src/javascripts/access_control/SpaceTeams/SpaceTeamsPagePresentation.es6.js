@@ -9,6 +9,7 @@ import {
   Button,
   Tooltip
 } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
 
 import Workbench from 'app/common/Workbench.es6';
 import {
@@ -76,8 +77,8 @@ const SpaceTeamsPagePresentation = ({
                 <TableCell>Team</TableCell>
                 {!isLoading && (
                   <>
-                    <TableCell>Members</TableCell>
-                    <TableCell className={styles.rolesColumn}>Role</TableCell>
+                    <TableCell className={css({ width: '19em' })}>Members</TableCell>
+                    <TableCell>Role</TableCell>
                   </>
                 )}
                 <TableCell />

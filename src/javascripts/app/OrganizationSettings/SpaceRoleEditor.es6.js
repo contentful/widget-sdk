@@ -90,10 +90,24 @@ class SpaceRoleEditor extends React.Component {
     const { options, value, isDisabled, className, buttonProps } = this.props;
     const isAdmin = value.includes(ADMIN_ROLE_ID);
 
-    const selectedNames = [ADMIN_ROLE, ...options]
+    const sortedOptions = [...options].sort(({ name: nameA }, { name: nameB }) =>
+      nameA.localeCompare(nameB)
+    );
+    const selectedNames = [ADMIN_ROLE, ...sortedOptions]
       .filter(option => value.includes(option.sys.id))
-      .map(role => role.name)
-      .join(', ');
+      .map(role => role.name);
+
+    let rolesSummary;
+    if (selectedNames.length === 0) {
+      rolesSummary = 'Select a role';
+    }
+    if (selectedNames.length === 1) {
+      rolesSummary = truncate(selectedNames[0]);
+    }
+    if (selectedNames.length > 1) {
+      rolesSummary = `${truncate(selectedNames[0], { length: 25 })} and ${selectedNames.length -
+        1} more`;
+    }
 
     return (
       <Dropdown
@@ -109,10 +123,10 @@ class SpaceRoleEditor extends React.Component {
             buttonType="naked"
             indicateDropdown
             onClick={this.toggleDropdown}>
-            {truncate(selectedNames) || 'Select a role'}
+            {rolesSummary}
           </Button>
         }>
-        <DropdownList maxHeight={300}>
+        <DropdownList>
           <DropdownListItem onClick={this.toggleRole(ADMIN_ROLE_ID)}>
             <div className={styles.adminListItem}>
               <Checkbox
@@ -130,9 +144,9 @@ class SpaceRoleEditor extends React.Component {
             </div>
           </DropdownListItem>
         </DropdownList>
-        <DropdownList border="top">
+        <DropdownList border="top" maxHeight={305}>
           <DropdownListItem isTitle={true}>other roles</DropdownListItem>
-          {options.map(({ name, sys: { id } }) => (
+          {sortedOptions.map(({ name, sys: { id } }) => (
             <DropdownListItem key={id} onClick={this.toggleRole(id)}>
               <CheckboxField
                 testId="space-role-editor.role-option"
