@@ -53,7 +53,10 @@ export default class SpaceTeamsPagePresentation extends React.Component {
                   ? 'All teams in the organization are already in this space'
                   : ''
               }>
-              <Button disabled={addTeamsButtonDisabled} onClick={() => this.goToAddTeams()}>
+              <Button
+                testId="add-teams"
+                disabled={addTeamsButtonDisabled}
+                onClick={() => this.goToAddTeams()}>
                 Add team
               </Button>
             </Tooltip>
