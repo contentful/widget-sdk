@@ -23,7 +23,7 @@ export default {
           return {
             extensionUrl: decodeURI($stateParams.extensionUrl || ''),
             extensionUrlReferrer: $stateParams.referrer || null,
-            cma: spaceContext.cma
+            extensionLoader: spaceContext.extensionLoader
           };
         }
       ]

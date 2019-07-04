@@ -205,9 +205,13 @@ export class ExtensionsList extends React.Component {
     const body = extensions.map(extension => (
       <tr key={extension.id}>
         <td>
-          <StateLink to="^.detail" params={{ extensionId: extension.id }}>
-            {extension.name}
-          </StateLink>
+          {extension.isBasedOnDefinition ? (
+            extension.name
+          ) : (
+            <StateLink to="^.detail" params={{ extensionId: extension.id }}>
+              {extension.name}
+            </StateLink>
+          )}
         </td>
         <td>{extension.hosting}</td>
         <td>{extension.fieldTypes}</td>
@@ -218,21 +222,27 @@ export class ExtensionsList extends React.Component {
           {`${extension.parameterCounts.installationValues || 0} value(s)`}
         </td>
         <td className="x--small-cell">
-          <div>
-            <StateLink to="^.detail" params={{ extensionId: extension.id }}>
-              {({ getHref }) => (
-                <TextLink href={getHref()} linkType="primary">
-                  Edit
-                </TextLink>
-              )}
-            </StateLink>
-          </div>
-          <div>
-            <DeleteButton
-              extension={extension}
-              onClick={() => deleteExtension(extension.id, refresh)}
-            />
-          </div>
+          {extension.isBasedOnDefinition ? (
+            <div>Use the API to manage definition based extensions</div>
+          ) : (
+            <div>
+              <div>
+                <StateLink to="^.detail" params={{ extensionId: extension.id }}>
+                  {({ getHref }) => (
+                    <TextLink href={getHref()} linkType="primary">
+                      Edit
+                    </TextLink>
+                  )}
+                </StateLink>
+              </div>
+              <div>
+                <DeleteButton
+                  extension={extension}
+                  onClick={() => deleteExtension(extension.id, refresh)}
+                />
+              </div>
+            </div>
+          )}
         </td>
       </tr>
     ));
