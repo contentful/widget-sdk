@@ -15,7 +15,6 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
   orgProductCatalogFeaturesResponse();
 
   const getMembershipsInteraction = 'spaces/team_space_memberships';
-  const getRolesInteraction = 'spaces/roles';
   const getTeamsInteraction = 'org/teams';
 
   cy.addInteraction({
@@ -52,7 +51,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
 
   cy.visit(`/spaces/${defaultSpaceId}/settings/teams`);
 
-  cy.wait([`@${state.Token.VALID}`, `@${getRolesInteraction}`, `@${getMembershipsInteraction}`, `@${getTeamsInteraction}`]);
+  cy.wait([`@${state.Token.VALID}`, `@${getMembershipsInteraction}`, `@${getTeamsInteraction}`]);
 };
 
 const membership1 = {

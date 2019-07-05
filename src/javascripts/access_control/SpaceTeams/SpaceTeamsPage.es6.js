@@ -19,10 +19,7 @@ export const Fetcher = createFetcherComponent(async ({ spaceId, orgId }) => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
   const orgEndpoint = createOrganizationEndpoint(orgId);
 
-  const promises = [
-    getTeamsSpaceMembershipsOfSpace(spaceEndpoint),
-    getAllTeams(orgEndpoint)
-  ];
+  const promises = [getTeamsSpaceMembershipsOfSpace(spaceEndpoint), getAllTeams(orgEndpoint)];
 
   return await Promise.all(promises);
 });
@@ -58,6 +55,7 @@ export default class SpaceTeamsPage extends React.Component {
           }
 
           const [teamSpaceMemberships, teams] = data || [[], []];
+
           const sortedMemberships = teamSpaceMemberships.sort(
             (
               {
@@ -76,7 +74,11 @@ export default class SpaceTeamsPage extends React.Component {
           return (
             <>
               <DocumentTitle title="Teams in Space" />
-              <SpaceTeamsPagePresentation memberships={sortedMemberships} teams={teams} isLoading={isLoading} />
+              <SpaceTeamsPagePresentation
+                memberships={sortedMemberships}
+                teams={teams}
+                isLoading={isLoading}
+              />
             </>
           );
         }}
