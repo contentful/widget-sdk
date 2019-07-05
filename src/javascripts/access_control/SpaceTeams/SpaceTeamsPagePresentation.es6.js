@@ -22,18 +22,19 @@ import LoadingPlaceholder from './LoadingPlaceholder.es6';
 import styles from './styles.es6';
 import MembershipRow from './MembershipRow.es6';
 
-const goToAddTeams = () => go({
-  path: ['spaces', 'detail', 'settings', 'teams', 'add']
-});
+const goToAddTeams = () =>
+  go({
+    path: ['spaces', 'detail', 'settings', 'teams', 'add']
+  });
 
 const SpaceTeamsPagePresentation = ({
-                                      memberships,
-                                      teams,
-                                      isLoading,
-                                      isPending,
-                                      availableRoles,
-                                      onUpdateTeamSpaceMembership,
-                                      readOnly,
+  memberships,
+  teams,
+  isLoading,
+  isPending,
+  availableRoles,
+  onUpdateTeamSpaceMembership,
+  readOnly,
   currentUserAdminSpaceMemberships
 }) => {
   const [openMenu, setOpenMenu] = useState(null);
@@ -61,10 +62,7 @@ const SpaceTeamsPagePresentation = ({
                 ? 'All teams in the organization are already in this space'
                 : ''
             }>
-            <Button
-              testId="add-teams"
-              disabled={addTeamsButtonDisabled}
-              onClick={goToAddTeams}>
+            <Button testId="add-teams" disabled={addTeamsButtonDisabled} onClick={goToAddTeams}>
               Add team
             </Button>
           </Tooltip>
@@ -83,29 +81,28 @@ const SpaceTeamsPagePresentation = ({
                   </>
                 )}
                 <TableCell />
-                <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
               {isLoading && <LoadingPlaceholder />}
               {!isLoading &&
-              memberships.map(membership => {
-                const {
-                  sys: { id: membershipId }
-                } = membership;
-                return (
-                  <MembershipRow
-                    key={membershipId}
-                    {...{
-                      readOnly,
-                      setMenuOpen: open => setOpenMenu(open ? membershipId : null),
-                      menuIsOpen: openMenu === membershipId,
-                      setEditing: edit => setEditingRow(edit ? membershipId : null),
-                      isEditing: editingRow === membershipId,
-                      membership,
-                      availableRoles,
-                      onUpdateTeamSpaceMembership,
-                      isPending,
+                memberships.map(membership => {
+                  const {
+                    sys: { id: membershipId }
+                  } = membership;
+                  return (
+                    <MembershipRow
+                      key={membershipId}
+                      {...{
+                        readOnly,
+                        setMenuOpen: open => setOpenMenu(open ? membershipId : null),
+                        menuIsOpen: openMenu === membershipId,
+                        setEditing: edit => setEditingRow(edit ? membershipId : null),
+                        isEditing: editingRow === membershipId,
+                        membership,
+                        availableRoles,
+                        onUpdateTeamSpaceMembership,
+                        isPending,
                         currentUserAdminSpaceMemberships
                       }}
                     />

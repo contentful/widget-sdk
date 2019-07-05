@@ -116,26 +116,6 @@ const role1 = {
   sys: { id: 'role1' }
 };
 
-const membership1 = {
-  admin: true,
-  roles: [],
-  sys: {
-    type: 'TeamSpaceMembership',
-    id: 'TSM1',
-    team: {
-      sys: {
-        type: 'Link',
-        linkType: 'Team',
-        id: 'team1'
-      }
-    }
-  }
-};
-const role1 = {
-  name: 'Role 1',
-  sys: { id: 'role1' }
-};
-
 describe('Teams in space page', () => {
   before(() => {
     cy.startFakeServers({
