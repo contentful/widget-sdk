@@ -116,9 +116,7 @@ export function getEnforcements(spaceId: string = defaultSpaceId): RequestOption
   };
 }
 
-export function getExtensions(
-  spaceId: string = defaultSpaceId
-): RequestOptions {
+export function getExtensions(spaceId: string = defaultSpaceId): RequestOptions {
   return {
     method: 'GET',
     path: `/spaces/${spaceId}/extensions`,
@@ -262,7 +260,10 @@ export function getOrgProductCatalogFeatures(orgId: string = defaultOrgId): Requ
   };
 }
 
-export function getSpaceProductCatalogFeatures(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
+export function getSpaceProductCatalogFeatures(
+  spaceId: string = defaultSpaceId,
+  query?: Query
+): RequestOptions {
   return {
     method: 'GET',
     path: `/spaces/${spaceId}/product_catalog_features`,
@@ -349,6 +350,17 @@ export function getWebhook(
   return {
     method: 'GET',
     path: `/spaces/${spaceId}/webhook_definitions/${webhookId}`,
+    headers: defaultHeader
+  };
+}
+
+export function getWebhooksCallsState(
+  spaceId: string = defaultSpaceId,
+  webhookId: string = defaultWebhookId
+): RequestOptions {
+  return {
+    method: 'GET',
+    path: `/spaces/${spaceId}/webhooks/${webhookId}/health`,
     headers: defaultHeader
   };
 }

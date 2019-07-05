@@ -1,10 +1,12 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
-import { defaultSpaceId } from '../../../util/requests';
+import { defaultSpaceId, defaultWebhookId } from '../../../util/requests';
 import {
   defaultWebhookCreatedSuccessResponse,
   defaultWebhookResponse,
-  noWebhookCallsResponse
+  noWebhookCallsResponse,
+  customWebhookSingleEventResponse,
+  webhookCallSuccessfulResponse
 } from '../../../interactions/webhooks';
 
 describe('Webhook', () => {
@@ -52,6 +54,23 @@ describe('Webhook', () => {
         'contain',
         `Webhook "${newWebhook.name}" saved successfully.`
       );
+    });
+  });
+
+  context('webhook, that triggers deletion of asset is configured', () => {
+    beforeEach(() => {
+      cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks/${defaultWebhookId}`);
+      cy.wait([`@${state.Token.VALID}`]);
+    });
+
+    it('renders webhook call result', () => {
+      customWebhookSingleEventResponse();
+      webhookCallSuccessfulResponse();
+
+      cy.wait([`@${state.Webhook.SINGLE_EVENT}`, `@${state.Webhook.CALL_SUCCESSFUL}`]);
+
+      cy.getByTestId('status-indicator').should('be.visible');
+      cy.getByTestId('cf-ui-table-row').should('have.length', 1);
     });
   });
 });

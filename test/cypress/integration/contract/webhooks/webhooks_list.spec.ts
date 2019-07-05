@@ -1,7 +1,12 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
-import { noWebhooksResponse, webhooksErrorResponse } from '../../../interactions/webhooks';
+import {
+  noWebhooksResponse,
+  webhooksErrorResponse,
+  singleWebhookResponse,
+  noWebhooksCallsResponse
+} from '../../../interactions/webhooks';
 
 describe('Webhooks', () => {
   before(() =>
@@ -46,5 +51,23 @@ describe('Webhooks', () => {
 
     it.skip('renders error message', () => {});
     //Test will be added after fixing https://contentful.atlassian.net/browse/EXT-907.
+  });
+
+  context('single webhook in the space configured', () => {
+    beforeEach(() => {
+      singleWebhookResponse();
+      noWebhooksCallsResponse();
+
+      cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks`);
+      cy.wait([`@${state.Token.VALID}`]);
+      cy.wait([`@${state.Webhooks.SINGLE}`], { timeout: 10000 });
+    });
+
+    it('renders title and table raw', () => {
+      cy.getByTestId('workbench-title')
+        .should('be.visible')
+        .and('contain', 'Webhooks (1)');
+      cy.getByTestId('webhook-row').should('have.length', 1);
+    });
   });
 });

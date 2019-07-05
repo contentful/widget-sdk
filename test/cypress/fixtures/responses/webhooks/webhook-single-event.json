@@ -1,0 +1,39 @@
+{
+  "name": "Webhook",
+  "url": "https://www.contentful.com/",
+  "httpBasicUsername": null,
+  "topics": ["Asset.delete"],
+  "filters": [],
+  "transformation": {
+    "method": "GET"
+  },
+  "sys": {
+    "type": "WebhookDefinition",
+    "id": "webhookId",
+    "version": 0,
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "spaceId"
+      }
+    },
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "userId"
+      }
+    },
+    "createdAt": "2019-07-04T13:22:48Z",
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "userId"
+      }
+    },
+    "updatedAt": "2019-07-04T13:22:48Z"
+  },
+  "headers": []
+}

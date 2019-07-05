@@ -107,11 +107,15 @@ export enum Apps {
 }
 
 export enum Webhooks {
-  NONE = 'settings/webhooks/none',
-  ERROR = 'settings/webhooks/error'
+  NONE = 'webhooks/none',
+  ERROR = 'webhooks/error',
+  SINGLE = 'webhooks/single',
+  CALLS_NONE = 'webhooks/id/health'
 }
 
 export enum Webhook {
-  DEFAULT = 'settings/webhooks/id/default',
-  CALLS_NONE = 'settings/webhooks/id/calls/none'
+  DEFAULT = 'webhooks/id/default',
+  CALLS_NONE = 'webhooks/id/calls/none',
+  SINGLE_EVENT = 'webhooks/id/single_event',
+  CALL_SUCCESSFUL = 'webhooks/id/calls/successful'
 }

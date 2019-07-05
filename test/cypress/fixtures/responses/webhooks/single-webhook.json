@@ -1,0 +1,47 @@
+{
+  "total": 1,
+  "limit": 100,
+  "skip": 0,
+  "sys": {
+    "type": "Array"
+  },
+  "items": [
+    {
+      "name": "Webhook",
+      "url": "https://www.contentful.com/",
+      "httpBasicUsername": null,
+      "topics": ["*.*"],
+      "filters": null,
+      "transformation": null,
+      "sys": {
+        "type": "WebhookDefinition",
+        "id": "webhookId",
+        "version": 0,
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "spaceId"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userId"
+          }
+        },
+        "createdAt": "2019-07-04T14:12:42Z",
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "userId"
+          }
+        },
+        "updatedAt": "2019-07-04T14:12:42Z"
+      },
+      "headers": []
+    }
+  ]
+}
