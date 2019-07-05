@@ -14,6 +14,7 @@ import {
   TeamSpaceMembership as TeamSpaceMembershipProp
 } from 'app/OrganizationSettings/PropTypes.es6';
 import { ADMIN_ROLE } from 'access_control/constants.es6';
+import { href } from 'states/Navigator.es6';
 
 import RowMenu from './RowMenu.es6';
 import styles from './styles.es6';
@@ -42,9 +43,12 @@ const MembershipRow = ({
   const roleIds = map(isEmpty(roles) ? [ADMIN_ROLE] : roles, 'sys.id');
   const [selectedRoleIds, setSelectedRoles] = useState(roleIds);
   const [isShowingUpdateConfirmation, showUpdateConfirmation] = useState(false);
-  const onUpdate = async () => {
+  const onUpdate = async (lostAccess = false) => {
     try {
       await onUpdateTeamSpaceMembership(membership, selectedRoleIds);
+      if (lostAccess) {
+        window.location.replace(href({ path: ['^', '^'] }));
+      }
     } catch (e) {
       setSelectedRoles(roleIds);
     }
@@ -87,7 +91,7 @@ const MembershipRow = ({
       <DowngradeOwnAdminMembershipConfirmation
         isShown={isShowingUpdateConfirmation}
         close={() => showUpdateConfirmation(false)}
-        onConfirm={() => showUpdateConfirmation(false) || onUpdate()}
+        onConfirm={() => showUpdateConfirmation(false) || onUpdate(true)}
       />
       <TableCell className={styles.cell} testId="team-cell">
         <div className={styles.cellTeamName}>{name}</div>
