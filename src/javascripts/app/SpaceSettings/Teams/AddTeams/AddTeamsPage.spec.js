@@ -177,7 +177,7 @@ describe('AddTeamsPage', () => {
 
     searchAndSelectTeam('Test team', { queryByTestId: helpers.queryByTestId });
 
-    expect(helpers.queryByTestId('RoleSelector__admin_false')).toBeNull();
+    expect(helpers.queryByTestId('RoleSelector.admin_false')).toBeNull();
 
     cleanup();
 
@@ -185,7 +185,7 @@ describe('AddTeamsPage', () => {
 
     searchAndSelectTeam('Test team', { queryByTestId: helpers.queryByTestId });
 
-    expect(helpers.queryByTestId('RoleSelector__admin_false')).not.toBeNull();
+    expect(helpers.queryByTestId('RoleSelector.admin_false')).not.toBeNull();
   });
 
   it('should disable the submit button if no teams are added', () => {

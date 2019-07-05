@@ -22,7 +22,7 @@ import RoleSelector from './RoleSelector.es6';
 
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
 
-const classes = {
+const styles = {
   workbench: css({
     display: 'flex'
   }),
@@ -120,7 +120,7 @@ const reducer = createImmerReducer({
       state.selectedRoleIds = [];
     }
 
-    state.adminRoleSelected = action.payload;
+    state.adminSelected = action.payload;
   },
   ADD_TEAM: (state, action) => {
     state.selectedTeamIds.push(action.payload);
@@ -133,7 +133,7 @@ const reducer = createImmerReducer({
     }
   },
   REMOVE_TEAM: (state, action) => {
-    state.selectedTeamIds = state.selectedTeamIds.filter(id => id !== action.payload);
+    state.selectedTeamIds = _.pull(state.selectedTeamIds, action.payload);
 
     if (state.selectedTeamIds.length === 0) {
       window.removeEventListener('beforeunload', closeTabWarning);
@@ -143,7 +143,7 @@ const reducer = createImmerReducer({
     if (action.payload.isSelected) {
       state.selectedRoleIds.push(action.payload.id);
     } else {
-      state.selectedRoleIds = state.selectedRoleIds.filter(id => id !== action.payload.id);
+      state.selectedRoleIds = _.pull(state.selectedRoleIds, action.payload.id);
     }
   },
   SUBMIT: (state, action) => {
@@ -157,7 +157,7 @@ const reducer = createImmerReducer({
 const submit = (spaceId, teams, dispatch) => async ({
   selectedTeamIds,
   selectedRoleIds,
-  adminRoleSelected
+  adminSelected
 }) => {
   const endpoint = createSpaceEndpoint(spaceId);
 
@@ -166,16 +166,12 @@ const submit = (spaceId, teams, dispatch) => async ({
   const erredTeams = [];
   const promises = selectedTeamIds.map(teamId =>
     createTeamSpaceMembership(endpoint, teamId, {
-      admin: adminRoleSelected,
+      admin: adminSelected,
       roles: selectedRoleIds.map(makeLink)
     }).catch(() => erredTeams.push(teamId))
   );
 
-  try {
-    await Promise.all(promises);
-  } catch (e) {
-    // Do nothing, we handle the errors after
-  }
+  await Promise.all(promises);
 
   // We keep the user on this page and show a notification telling them all the
   // teams erred
@@ -211,7 +207,7 @@ const submit = (spaceId, teams, dispatch) => async ({
 
 export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, spaceId }) {
   const [state, dispatch] = useReducer(reducer, {
-    adminRoleSelected: true,
+    adminSelected: true,
     selectedTeamIds: [],
     selectedRoleIds: [],
     shouldShowControls: false,
@@ -225,10 +221,10 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
     return () => {
       window.removeEventListener('beforeunload', closeTabWarning);
     };
-  }, [spaceId]);
+  }, []);
 
   const {
-    adminRoleSelected,
+    adminSelected,
     selectedTeamIds,
     selectedRoleIds,
     shouldShowControls,
@@ -238,20 +234,21 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
 
   const submitButtonDisabled =
     selectedTeamIds.length === 0 ||
-    (adminRoleSelected === false && selectedRoleIds.length === 0) ||
+    (adminSelected === false && selectedRoleIds.length === 0) ||
     isLoading;
 
-  const teamsInAutocomplete = teams
+  const teamsInAutocomplete = _(teams)
     .filter(
       team =>
         !selectedTeamIds.includes(team.sys.id) &&
         !teamSpaceMemberships.find(tsm => tsm.sys.team.sys.id === team.sys.id) &&
         team.name.toLowerCase().includes(searchTerm)
     )
-    .filter((_, i) => i < 5);
+    .take(5)
+    .value();
 
   return (
-    <Workbench className={classes.workbench}>
+    <Workbench className={styles.workbench}>
       <Workbench.Header>
         <Workbench.Header.Back to="spaces.detail.settings.teams.list" />
         <Workbench.Icon icon="page-teams" />
@@ -259,30 +256,26 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
       </Workbench.Header>
       <Workbench.Content>
         <Typography>
-          <div className={classes.workbenchContent}>
+          <div className={styles.workbenchContent}>
             <div>
               <Heading>Add teams from your organization</Heading>
               <Autocomplete
                 disabled={isLoading}
-                className={classes.select}
+                className={styles.select}
                 width="full"
                 onChange={team => dispatch({ type: 'ADD_TEAM', payload: team.sys.id })}
                 onQueryChange={value => dispatch({ type: 'SEARCH', payload: value })}
                 items={teamsInAutocomplete}>
-                {items =>
-                  items.map(team => {
-                    return <AutocompleteTeam key={team.sys.id} team={team} />;
-                  })
-                }
+                {items => items.map(team => <AutocompleteTeam key={team.sys.id} team={team} />)}
               </Autocomplete>
             </div>
             {shouldShowControls && (
-              <div data-test-id="teams-and-roles-lists" className={classes.teamsAndRolesLists}>
-                <div className={classes.teamsContainer}>
-                  <SectionHeading className={cx(classes.sectionHeading, classes.teamTitle)}>
+              <div data-test-id="teams-and-roles-lists" className={styles.teamsAndRolesLists}>
+                <div className={styles.teamsContainer}>
+                  <SectionHeading className={cx(styles.sectionHeading, styles.teamTitle)}>
                     {pluralize('team', selectedTeamIds.length, true)}
                   </SectionHeading>
-                  <div className={classes.teamsList} data-test-id="teams-list">
+                  <div className={styles.teamsList} data-test-id="teams-list">
                     {selectedTeamIds.length !== 0 &&
                       selectedTeamIds.map(id => {
                         const team = teams.find(t => t.sys.id === id);
@@ -297,7 +290,7 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
                       })}
                   </div>
                   <Button
-                    className={classes.submitButton}
+                    className={styles.submitButton}
                     disabled={submitButtonDisabled}
                     loading={isLoading}
                     testId="submit-button"
@@ -305,15 +298,17 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
                     Confirm selection and add {pluralize('team', selectedTeamIds.length)}
                   </Button>
                 </div>
-                <div className={classes.rolesContainer}>
-                  <SectionHeading className={classes.sectionHeading}>
+                <div className={styles.rolesContainer}>
+                  <SectionHeading className={styles.sectionHeading}>
                     Assign role set to {pluralize('team', selectedTeamIds.length)}
                   </SectionHeading>
                   <RoleSelector
                     roles={roles}
+                    selectedRoleIds={selectedRoleIds}
                     onRoleSelected={(id, isSelected) =>
                       dispatch({ type: 'SELECT_ROLE', payload: { id, isSelected } })
                     }
+                    adminSelected={adminSelected}
                     onAdminSelected={isSelected =>
                       dispatch({ type: 'SELECT_ADMIN', payload: isSelected })
                     }
@@ -330,18 +325,17 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
 }
 
 AddTeamsPage.propTypes = {
-  teams: PropTypes.array,
-  onSubmit: PropTypes.func,
-  roles: PropTypes.array,
-  spaceId: PropTypes.string,
-  teamSpaceMemberships: PropTypes.array
+  teams: PropTypes.array.isRequired,
+  roles: PropTypes.array.isRequired,
+  spaceId: PropTypes.string.isRequired,
+  teamSpaceMemberships: PropTypes.array.isRequired
 };
 
 function TeamInfo({ team, onCloseClick }) {
   return (
-    <div className={classes.teamInfo.container} data-test-id="team-in-list">
-      <div className={classes.teamInfo.title}>
-        <strong className={classes.teamInfo.name}>{_.truncate(team.name, { length: 25 })}</strong>{' '}
+    <div className={styles.teamInfo.container} data-test-id="team-in-list">
+      <div className={styles.teamInfo.title}>
+        <strong className={styles.teamInfo.name}>{_.truncate(team.name, { length: 25 })}</strong>{' '}
         {pluralize('member', team.memberCount, true)}
       </div>
       <div>{_.truncate(team.description, { length: 60 })}</div>
@@ -351,7 +345,7 @@ function TeamInfo({ team, onCloseClick }) {
         }}
         label="close"
         testId="team-in-list.close"
-        className={cx(classes.teamInfo.close, 'team-info__close-button')}
+        className={cx(styles.teamInfo.close, 'team-info__close-button')}
         onClick={onCloseClick}
         buttonType="secondary"
       />
@@ -360,9 +354,8 @@ function TeamInfo({ team, onCloseClick }) {
 }
 
 TeamInfo.propTypes = {
-  team: PropTypes.object,
-  withCloseButton: PropTypes.bool,
-  onCloseClick: PropTypes.func
+  team: PropTypes.object.isRequired,
+  onCloseClick: PropTypes.func.isRequired
 };
 
 // The reason that this is separate is because the Autocomplete uses the DropdownItem internally
@@ -371,8 +364,8 @@ TeamInfo.propTypes = {
 function AutocompleteTeam({ team }) {
   return (
     <div data-test-id="autocomplete-team">
-      <div className={classes.autocompleteTeam.title}>
-        <strong className={classes.autocompleteTeam.name}>
+      <div className={styles.autocompleteTeam.title}>
+        <strong className={styles.autocompleteTeam.name}>
           {_.truncate(team.name, { length: 25 })}
         </strong>{' '}
         {pluralize('member', team.memberCount, true)}
@@ -383,5 +376,5 @@ function AutocompleteTeam({ team }) {
 }
 
 AutocompleteTeam.propTypes = {
-  team: PropTypes.object
+  team: PropTypes.object.isRequired
 };

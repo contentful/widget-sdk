@@ -1,9 +1,7 @@
-import React, { useReducer } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { FieldGroup, RadioButtonField, CheckboxField } from '@contentful/forma-36-react-components';
-
-import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
 
 const classes = {
   container: css({
@@ -15,31 +13,14 @@ const classes = {
   })
 };
 
-const roleSelectorReducer = createImmerReducer({
-  SELECT_ADMIN: (state, action) => {
-    if (action.payload === true) {
-      state.selectedRoleIds = [];
-    }
-
-    state.adminRoleSelected = action.payload;
-  },
-  SELECT_ROLE: (state, action) => {
-    if (action.payload.isSelected) {
-      state.selectedRoleIds.push(action.payload.id);
-    } else {
-      state.selectedRoleIds = state.selectedRoleIds.filter(id => id !== action.payload.id);
-    }
-  }
-});
-
-export default function RoleSelector({ roles, onRoleSelected, onAdminSelected, disabled }) {
-  const [state, dispatch] = useReducer(roleSelectorReducer, {
-    adminRoleSelected: true,
-    selectedRoleIds: []
-  });
-
-  const { adminRoleSelected, selectedRoleIds } = state;
-
+export default function RoleSelector({
+  roles,
+  selectedRoleIds,
+  onRoleSelected,
+  adminSelected,
+  onAdminSelected,
+  disabled
+}) {
   return (
     <FieldGroup>
       <RadioButtonField
@@ -49,11 +30,10 @@ export default function RoleSelector({ roles, onRoleSelected, onAdminSelected, d
         name="admin"
         id="admin_true"
         value="true"
-        testId="RoleSelector__admin_true"
-        checked={adminRoleSelected === true}
+        testId="RoleSelector.admin_true"
+        checked={adminSelected}
         disabled={disabled}
         onChange={() => {
-          dispatch({ type: 'SELECT_ADMIN', payload: true });
           onAdminSelected(true);
         }}
       />
@@ -65,11 +45,10 @@ export default function RoleSelector({ roles, onRoleSelected, onAdminSelected, d
             name="admin"
             id="admin_false"
             value="false"
-            testId="RoleSelector__admin_false"
-            checked={adminRoleSelected === false}
+            testId="RoleSelector.admin_false"
+            checked={adminSelected === false}
             disabled={disabled}
             onChange={() => {
-              dispatch({ type: 'SELECT_ADMIN', payload: false });
               onAdminSelected(false);
             }}
           />
@@ -80,16 +59,11 @@ export default function RoleSelector({ roles, onRoleSelected, onAdminSelected, d
                   labelIsLight
                   id={role.sys.id}
                   labelText={role.name}
-                  testId={`RoleSelector__role_${role.sys.id}`}
                   checked={Boolean(selectedRoleIds.find(id => role.sys.id === id))}
-                  disabled={adminRoleSelected === true || disabled}
+                  disabled={adminSelected || disabled}
                   onChange={e => {
                     const isChecked = e.target.checked;
 
-                    dispatch({
-                      type: 'SELECT_ROLE',
-                      payload: { id: role.sys.id, isSelected: isChecked }
-                    });
                     onRoleSelected(role.sys.id, isChecked);
                   }}
                 />
@@ -106,5 +80,7 @@ RoleSelector.propTypes = {
   roles: PropTypes.array.isRequired,
   onRoleSelected: PropTypes.func.isRequired,
   onAdminSelected: PropTypes.func.isRequired,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  adminSelected: PropTypes.bool,
+  selectedRoleIds: PropTypes.array.isRequired
 };

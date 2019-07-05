@@ -23,13 +23,19 @@ const fetch = (spaceId, onReady) => async () => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
   const roleRepo = createRoleRepo(spaceContext.space);
 
-  const [roles, teams, teamSpaceMemberships] = await Promise.all([
-    roleRepo.getAll(),
-    getAllTeams(orgEndpoint),
-    getTeamsSpaceMembershipsOfSpace(spaceEndpoint)
-  ]);
+  let roles;
+  let teams;
+  let teamSpaceMemberships;
 
-  onReady();
+  try {
+    [roles, teams, teamSpaceMemberships] = await Promise.all([
+      roleRepo.getAll(),
+      getAllTeams(orgEndpoint),
+      getTeamsSpaceMembershipsOfSpace(spaceEndpoint)
+    ]);
+  } finally {
+    onReady();
+  }
 
   return { teams, teamSpaceMemberships, roles };
 };
