@@ -59,16 +59,17 @@ describe('Webhook', () => {
 
   context('webhook, that triggers deletion of asset is configured', () => {
     beforeEach(() => {
+      customWebhookSingleEventResponse();
+      webhookCallSuccessfulResponse();
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks/${defaultWebhookId}`);
-      cy.wait([`@${state.Token.VALID}`]);
+      cy.wait([
+        `@${state.Token.VALID}`,
+        `@${state.Webhook.SINGLE_EVENT}`,
+        `@${state.Webhook.CALL_SUCCESSFUL}`
+      ]);
     });
 
     it('renders webhook call result', () => {
-      customWebhookSingleEventResponse();
-      webhookCallSuccessfulResponse();
-
-      cy.wait([`@${state.Webhook.SINGLE_EVENT}`, `@${state.Webhook.CALL_SUCCESSFUL}`]);
-
       cy.getByTestId('status-indicator').should('be.visible');
       cy.getByTestId('cf-ui-table-row').should('have.length', 1);
     });
