@@ -29,6 +29,7 @@ describe('<StatusWidget />', () => {
       <StatusWidget
         isSaving={false}
         onScheduledPublishClick={jest.fn()}
+        isScheduledPublishDisabled={false}
         isDisabled={false}
         {...props}
       />

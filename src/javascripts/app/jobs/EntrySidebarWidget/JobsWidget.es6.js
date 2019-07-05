@@ -12,6 +12,7 @@ import {
   TextLink,
   Notification
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import StatusWidget from './StatusWidget.es6';
 import JobDialog from './JobDialog/index.es6';
 
@@ -28,7 +29,8 @@ import FailedScheduleNote from './FailedScheduleNote/index.es6';
 
 const styles = {
   jobsSkeleton: css({
-    maxHeight: '40px'
+    maxHeight: '40px',
+    marginTop: tokens.spacingM
   })
 };
 
@@ -89,7 +91,7 @@ export default function JobWidget({
   const [jobs, setJobs] = useState([]);
   const [isDialogShown, setIsDialogShown] = useState(false);
   const publishedAt = getPublishedAt(entity);
-  const [{ isLoading, error }, runAsync] = useAsyncFn(
+  const [{ isLoading, error }, fetchJobs] = useAsyncFn(
     useCallback(async () => {
       const jobCollection = await JobsService.getNotCanceledJobsForEntity(
         EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
@@ -103,8 +105,8 @@ export default function JobWidget({
   );
 
   useEffect(() => {
-    runAsync();
-  }, [runAsync, publishedAt]);
+    fetchJobs();
+  }, [fetchJobs, publishedAt]);
 
   const handleCreate = ({ scheduledAt }) => {
     JobsService.createJob(
@@ -145,29 +147,30 @@ export default function JobWidget({
 
   return (
     <ErrorHandler>
+      <StatusWidget
+        status={status}
+        primary={primary}
+        secondary={secondary}
+        revert={revert}
+        isSaving={isSaving}
+        updatedAt={updatedAt}
+        onScheduledPublishClick={() => setIsDialogShown(true)}
+        isScheduledPublishDisabled={Boolean(error)}
+        isDisabled={hasScheduledActions || isLoading}
+      />
       {isLoading && (
         <SkeletonContainer data-test-id="jobs-skeleton" className={styles.jobsSkeleton}>
           <SkeletonBodyText numberOfLines={2} />
         </SkeletonContainer>
       )}
       {error && (
-        <Note noteType="warning">
+        <Note noteType="warning" className="f36-margin-top--m">
           We were unable to load the schedule for this entry.{' '}
-          <TextLink onClick={() => window.location.reload()}>Please refresh.</TextLink>
+          <TextLink onClick={() => fetchJobs()}>Please refresh.</TextLink>
         </Note>
       )}
       {!isLoading && !error && (
         <>
-          <StatusWidget
-            status={status}
-            primary={primary}
-            secondary={secondary}
-            revert={revert}
-            isSaving={isSaving}
-            updatedAt={updatedAt}
-            onScheduledPublishClick={() => setIsDialogShown(true)}
-            isDisabled={hasScheduledActions}
-          />
           {shouldShowErrorNote(lastJob, entity) && <FailedScheduleNote job={lastJob} />}
           {hasScheduledActions && (
             <JobsTimeline

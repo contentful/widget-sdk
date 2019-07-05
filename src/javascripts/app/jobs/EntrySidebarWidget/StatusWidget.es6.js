@@ -38,6 +38,7 @@ export default class StatusWidget extends React.PureComponent {
     primary: CommandPropType,
     secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
     onScheduledPublishClick: PropTypes.func.isRequired,
+    isScheduledPublishDisabled: PropTypes.bool.isRequired,
     isDisabled: PropTypes.bool.isRequired
   };
 
@@ -46,6 +47,11 @@ export default class StatusWidget extends React.PureComponent {
   };
 
   renderScheduledPublicationCta = () => {
+    // disabled by the parent component (e.g. error during jobs fetching)
+    if (this.props.isScheduledPublishDisabled) {
+      return null;
+    }
+
     // do not show cta if entity is published
     if (this.props.primary.targetStateId === 'published') {
       // primary action can be either publish or unachrive

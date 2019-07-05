@@ -66,7 +66,8 @@ describe('<JobWidget />', () => {
     const [renderResult] = build({ entity: createEntry() });
 
     expect(renderResult.getByTestId('jobs-skeleton')).toBeInTheDocument();
-    expect(renderResult.queryByTestId('status-widget')).toBeNull();
+    expect(renderResult.getByTestId('change-state-published')).toBeInTheDocument();
+    expect(renderResult.getByTestId('change-state-published').disabled).toBe(true);
 
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
       expect.any(Function),
@@ -76,8 +77,28 @@ describe('<JobWidget />', () => {
     await wait();
 
     expect(renderResult.queryByTestId('jobs-skeleton')).toBeNull();
-    expect(renderResult.getByTestId('status-widget')).toBeInTheDocument();
+    expect(renderResult.getByTestId('change-state-published').disabled).toBe(false);
     expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
+  });
+
+  it('does not render scheduled publication cta if jobs fetching failed', async () => {
+    getNotCanceledJobsForEntity.mockRejectedValueOnce();
+    const [renderResult] = build({ entity: createEntry() });
+
+    expect(renderResult.getByTestId('jobs-skeleton')).toBeInTheDocument();
+    expect(renderResult.getByTestId('change-state-published')).toBeInTheDocument();
+    expect(renderResult.getByTestId('change-state-published').disabled).toBe(true);
+
+    expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
+      expect.any(Function),
+      defaultEntryId()
+    );
+
+    await wait();
+
+    expect(renderResult.queryByTestId('jobs-skeleton')).toBeNull();
+    expect(renderResult.getByTestId('change-state-published').disabled).toBe(false);
+    expect(renderResult.queryByTestId('schedule-publication')).toBeNull();
   });
 
   it('disables the status button when there is an active job', async () => {
@@ -104,7 +125,6 @@ describe('<JobWidget />', () => {
       }
     });
 
-    expect(renderResult.queryByTestId('change-state-menu-trigger')).toBeNull();
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
       expect.any(Function),
       defaultEntryId()
