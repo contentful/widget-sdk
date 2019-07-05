@@ -15,8 +15,12 @@ import tokens from '@contentful/forma-36-tokens';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
 import StatusBadge from './StatusBadge.es6';
 import ActionRestrictedNote from './ActionRestrictedNote.es6';
+import RestrictedAction from './RestrictedAction.es6';
 
 import CommandPropType from 'app/entity_editor/CommandPropType.es6';
+
+// TODO: This code started as a copy of <PublicationWidget />, there should be
+//  some shared code as there are still a lot of similarities.
 
 const styles = {
   scheduleListItem: css({
@@ -99,7 +103,7 @@ export default class StatusWidget extends React.PureComponent {
                   buttonType="positive"
                   disabled={primary.isDisabled() || isDisabled}
                   loading={primary.inProgress()}
-                  testId={`change-state-${primary.targetStateId}`}
+                  testId="primary-action-change-state"
                   onClick={() => {
                     primary.execute();
                   }}
@@ -132,17 +136,25 @@ export default class StatusWidget extends React.PureComponent {
               <DropdownList testId="change-state-menu">
                 <DropdownListItem isTitle>Change status to</DropdownListItem>
                 {secondary &&
-                  secondary.map(action => (
-                    <DropdownListItem
-                      key={action.label}
-                      testId={`change-state-${action.targetStateId}`}
-                      onClick={() => {
-                        action.execute();
-                        this.setState({ isOpenDropdown: false });
-                      }}>
-                      {action.label}
-                    </DropdownListItem>
-                  ))}
+                  secondary.map(
+                    action =>
+                      action.isAvailable() && (
+                        <DropdownListItem
+                          key={action.label}
+                          testId={`change-state-${action.targetStateId}`}
+                          onClick={() => {
+                            action.execute();
+                            this.setState({ isOpenDropdown: false });
+                          }}
+                          isDisabled={action.isDisabled()}>
+                          {action.isRestricted() ? (
+                            <RestrictedAction actionName={action.label} />
+                          ) : (
+                            action.label
+                          )}
+                        </DropdownListItem>
+                      )
+                  )}
                 {this.renderScheduledPublicationCta()}
               </DropdownList>
             </Dropdown>
@@ -157,7 +169,7 @@ export default class StatusWidget extends React.PureComponent {
                   'x--active': isSaving
                 })}
               />
-              <span className="entity-sidebar__last-saved">
+              <span className="entity-sidebar__last-saved" data-test-id="last-saved">
                 Last saved <RelativeTimeData value={updatedAt} />
               </span>
             </div>

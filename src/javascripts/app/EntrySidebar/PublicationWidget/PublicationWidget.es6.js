@@ -13,7 +13,10 @@ import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
 import CommandPropType from 'app/entity_editor/CommandPropType.es6';
 
-const PublicationStatus = ({ status }) => (
+// TODO: <StatusWidget /> started as a copy of this, there should be
+//  some shared code as there are still a lot of similarities.
+
+const StatusBadge = ({ status }) => (
   <div className="published-status" data-state={status} data-test-id="entity-state">
     <strong>Status: </strong>
     {status === 'archived' && <span>Archived</span>}
@@ -23,18 +26,18 @@ const PublicationStatus = ({ status }) => (
   </div>
 );
 
-PublicationStatus.propTypes = {
+StatusBadge.propTypes = {
   status: PropTypes.string.isRequired
 };
 
-const RestrictedActionNote = ({ actionName }) => (
+const ActionRestrictedNote = ({ actionName }) => (
   <p className="f36-color--text-light f36-margin-top--xs" data-test-id="action-restriction-note">
     <Icon icon="Lock" color="muted" className="action-restricted__icon" />
     You do not have permission to {actionName.toLowerCase()}.
   </p>
 );
 
-RestrictedActionNote.propTypes = {
+ActionRestrictedNote.propTypes = {
   actionName: PropTypes.string.isRequired
 };
 
@@ -78,7 +81,7 @@ export default class PublicationWidget extends React.PureComponent {
     const secondaryActionsDisabled = every(secondary || [], action => action.isDisabled());
     return (
       <EntrySidebarWidget title="Status">
-        <PublicationStatus status={status} />
+        <StatusBadge status={status} />
         <div className="entity-sidebar__state-select">
           <div className="publish-buttons-row">
             {status !== 'published' && primary && (
@@ -143,7 +146,7 @@ export default class PublicationWidget extends React.PureComponent {
               </DropdownList>
             </Dropdown>
           </div>
-          {primary && primary.isRestricted() && <RestrictedActionNote actionName={primary.label} />}
+          {primary && primary.isRestricted() && <ActionRestrictedNote actionName={primary.label} />}
         </div>
         <div className="entity-sidebar__status-more">
           {updatedAt && (

@@ -6,6 +6,14 @@ import { Notification } from '@contentful/forma-36-react-components';
 import JobWidget from './JobsWidget.es6';
 import { getNotCanceledJobsForEntity } from '../DataManagement/JobsService.es6';
 
+const commandTemplate = {
+  execute: () => {},
+  isAvailable: () => true,
+  isDisabled: () => false,
+  inProgress: () => false,
+  isRestricted: () => false
+};
+
 jest.mock('../DataManagement/JobsService.es6');
 describe('<JobWidget />', () => {
   beforeEach(() => {
@@ -27,32 +35,20 @@ describe('<JobWidget />', () => {
       isSaving: false,
       status: 'draft',
       primary: {
+        ...commandTemplate,
         label: 'Publish',
-        targetStateId: 'published',
-        execute: () => {},
-        isAvailable: () => {},
-        isDisabled: () => false,
-        inProgress: () => {},
-        isRestricted: () => {}
+        targetStateId: 'published'
       },
       revert: {
+        ...commandTemplate,
         label: 'Publish',
-        targetStateId: 'published',
-        execute: () => {},
-        isAvailable: () => {},
-        isDisabled: () => false,
-        inProgress: () => {},
-        isRestricted: () => {}
+        targetStateId: 'published'
       },
       secondary: [
         {
+          ...commandTemplate,
           label: 'Archive',
-          targetStateId: 'published',
-          execute: () => {},
-          isAvailable: () => {},
-          isDisabled: () => false,
-          inProgress: () => {},
-          isRestricted: () => {}
+          targetStateId: 'published'
         }
       ],
       entity: createEntry(),
@@ -67,8 +63,8 @@ describe('<JobWidget />', () => {
     const [renderResult] = build({ entity: createEntry() });
 
     expect(renderResult.getByTestId('jobs-skeleton')).toBeInTheDocument();
-    expect(renderResult.getByTestId('change-state-published')).toBeInTheDocument();
-    expect(renderResult.getByTestId('change-state-published').disabled).toBe(true);
+    expect(renderResult.getByTestId('primary-action-change-state')).toBeInTheDocument();
+    expect(renderResult.getByTestId('primary-action-change-state').disabled).toBe(true);
 
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
       expect.any(Function),
@@ -76,9 +72,10 @@ describe('<JobWidget />', () => {
     );
 
     await wait();
+    ('primary-action-change-state');
 
     expect(renderResult.queryByTestId('jobs-skeleton')).toBeNull();
-    expect(renderResult.getByTestId('change-state-published').disabled).toBe(false);
+    expect(renderResult.getByTestId('primary-action-change-state').disabled).toBe(false);
     expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
   });
 
@@ -87,8 +84,8 @@ describe('<JobWidget />', () => {
     const [renderResult] = build({ entity: createEntry() });
 
     expect(renderResult.getByTestId('jobs-skeleton')).toBeInTheDocument();
-    expect(renderResult.getByTestId('change-state-published')).toBeInTheDocument();
-    expect(renderResult.getByTestId('change-state-published').disabled).toBe(true);
+    expect(renderResult.getByTestId('primary-action-change-state')).toBeInTheDocument();
+    expect(renderResult.getByTestId('primary-action-change-state').disabled).toBe(true);
 
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
       expect.any(Function),
@@ -98,7 +95,7 @@ describe('<JobWidget />', () => {
     await wait();
 
     expect(renderResult.queryByTestId('jobs-skeleton')).toBeNull();
-    expect(renderResult.getByTestId('change-state-published').disabled).toBe(false);
+    expect(renderResult.getByTestId('primary-action-change-state').disabled).toBe(false);
     expect(renderResult.queryByTestId('schedule-publication')).toBeNull();
   });
 
@@ -108,7 +105,7 @@ describe('<JobWidget />', () => {
     const [renderResult] = build({ entity: publishedEntry });
     await wait();
     expect(renderResult.getByTestId('change-state-menu-trigger')).toBeDisabled();
-    expect(renderResult.getByTestId('change-state-published')).toBeDisabled();
+    expect(renderResult.getByTestId('primary-action-change-state')).toBeDisabled();
   });
 
   it('does not render scheduled publication cta if primary action is not allowed', async () => {
@@ -116,13 +113,10 @@ describe('<JobWidget />', () => {
     const [renderResult] = build({
       entity: createEntry(),
       primary: {
+        ...commandTemplate,
         label: 'Publish',
         targetStateId: 'published',
-        execute: () => {},
-        isAvailable: () => {},
-        isDisabled: () => true,
-        inProgress: () => {},
-        isRestricted: () => {}
+        isDisabled: () => true
       }
     });
 
