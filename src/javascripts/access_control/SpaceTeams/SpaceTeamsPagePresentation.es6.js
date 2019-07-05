@@ -59,11 +59,15 @@ const SpaceTeamsPagePresentation = ({
           <Tooltip
             place="left"
             content={
-              addTeamsButtonDisabled && !isLoading
-                ? 'All teams in the organization are already in this space'
-                : ''
+              !isLoading &&
+              ((addTeamsButtonDisabled &&
+                'All teams in the organization are already in this space') ||
+                (readOnly && 'You don’t have permission to add teams to this space'))
             }>
-            <Button testId="add-teams" disabled={addTeamsButtonDisabled} onClick={goToAddTeams}>
+            <Button
+              testId="add-teams"
+              disabled={addTeamsButtonDisabled || readOnly}
+              onClick={goToAddTeams}>
               Add team
             </Button>
           </Tooltip>
