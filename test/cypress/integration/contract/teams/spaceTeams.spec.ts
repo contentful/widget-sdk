@@ -1,6 +1,6 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
-import { defaultHeader, defaultSpaceId } from '../../../util/requests';
+import { defaultHeader, defaultSpaceId, defaultOrgId } from '../../../util/requests';
 import { orgProductCatalogFeaturesResponse } from '../../../interactions/product_catalog_features';
 
 const empty = require('../../../fixtures/responses/empty.json');
@@ -15,6 +15,9 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
   orgProductCatalogFeaturesResponse();
 
   const getMembershipsInteraction = 'spaces/team_space_memberships';
+  const getRolesInteraction = 'spaces/roles';
+  const getTeamsInteraction = 'org/teams';
+
   cy.addInteraction({
     provider: 'teams',
     state: stateName,
@@ -31,16 +34,52 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
     }
   }).as(getMembershipsInteraction);
 
+  cy.addInteraction({
+    provider: 'teams',
+    state: 'no-teams',
+    uponReceiving: 'request for teams in org',
+    withRequest: {
+      method: 'GET',
+      path: `/organizations/${defaultOrgId}/teams`,
+      query: { limit: '100', skip: '0' },
+      headers: defaultHeader
+    },
+    willRespondWith: {
+      status: 200,
+      body: empty
+    }
+  }).as(getTeamsInteraction);
+
   cy.visit(`/spaces/${defaultSpaceId}/settings/teams`);
 
-  cy.wait([`@${state.Token.VALID}`, `@${getMembershipsInteraction}`]);
+  cy.wait([`@${state.Token.VALID}`, `@${getRolesInteraction}`, `@${getMembershipsInteraction}`, `@${getTeamsInteraction}`]);
+};
+
+const membership1 = {
+  admin: true,
+  roles: [],
+  sys: {
+    type: 'TeamSpaceMembership',
+    id: 'TSM1',
+    team: {
+      sys: {
+        type: 'Link',
+        linkType: 'Team',
+        id: 'team1'
+      }
+    }
+  }
+};
+const role1 = {
+  name: 'Role 1',
+  sys: { id: 'role1' }
 };
 
 describe('Teams in space page', () => {
-  beforeEach(() => {
+  before(() => {
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: ['teams'],
+      providers: ['teams', 'roles'],
       cors: true,
       pactfileWriteMode: 'merge'
     });
@@ -85,10 +124,7 @@ describe('Teams in space page', () => {
               }
             ],
             Role: [
-              {
-                name: 'Role 1',
-                sys: { id: 'role1' }
-              },
+              role1,
               {
                 name: 'Role 2',
                 sys: { id: 'role2' }
@@ -100,21 +136,7 @@ describe('Teams in space page', () => {
             ]
           },
           items: [
-            {
-              admin: true,
-              roles: [],
-              sys: {
-                type: 'TeamSpaceMembership',
-                id: 'TSM1',
-                team: {
-                  sys: {
-                    type: 'Link',
-                    linkType: 'Team',
-                    id: 'team1'
-                  }
-                }
-              }
-            },
+            membership1,
             {
               admin: false,
               roles: [
@@ -162,6 +184,7 @@ describe('Teams in space page', () => {
               sys: {
                 type: 'TeamSpaceMembership',
                 id: 'TSM3',
+                version: 0,
                 team: {
                   sys: {
                     type: 'Link',
