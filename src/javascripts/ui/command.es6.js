@@ -76,9 +76,11 @@ export default function register() {
         }
 
         const self = this;
-        this._inProgress = (this._run() || $q.reject()).finally(() => {
+        const handleInProgress = () => {
           self._inProgress = null;
-        });
+        };
+
+        this._inProgress = (this._run() || $q.reject()).then(handleInProgress, handleInProgress);
 
         return this._inProgress;
       };

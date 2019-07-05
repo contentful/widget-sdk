@@ -25,7 +25,8 @@ class StateChangeConfirmation extends React.Component {
       id: PropTypes.string,
       type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY])
     }),
-    dialogSessionId: PropTypes.string.isRequired
+    dialogSessionId: PropTypes.string.isRequired,
+    isShown: PropTypes.bool
   };
 
   handleClick = ({ linkEntityId, incomingLinksCount }) => {
@@ -65,7 +66,7 @@ class StateChangeConfirmation extends React.Component {
   };
 
   render() {
-    const { action, entityInfo, onCancel } = this.props;
+    const { action, entityInfo, onCancel, isShown } = this.props;
 
     return (
       <FetchLinksToEntity
@@ -80,7 +81,7 @@ class StateChangeConfirmation extends React.Component {
 
           return (
             <ModalConfirm
-              isShown
+              isShown={isShown}
               testId="state-change-confirmation-dialog"
               intent="negative"
               title={requestState !== RequestState.PENDING ? title : ''}
