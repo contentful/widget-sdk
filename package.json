@@ -83,7 +83,7 @@
     "react-codemirror": "^1.0.0",
     "react-dom": "16.8.6",
     "react-helmet": "^5.2.0",
-    "react-highlight-words": "^0.10.0",
+    "react-highlight-words": "^0.16.0",
     "react-joyride": "2.0.4",
     "react-modal": "3.6.1",
     "react-player": "^1.8.0",
