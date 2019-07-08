@@ -13,7 +13,8 @@ describe('Sidebar configuration', () => {
   before(() =>
     cy.startFakeServer({
       consumer: 'user_interface',
-      provider: 'extensions'
+      provider: 'extensions',
+      spec: 2
     })
   );
 

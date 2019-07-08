@@ -14,7 +14,8 @@ describe('Webhooks', () => {
       consumer: 'user_interface',
       provider: 'webhooks',
       cors: true,
-      pactfileWriteMode: 'merge'
+      pactfileWriteMode: 'merge',
+      spec: 2
     })
   );
 

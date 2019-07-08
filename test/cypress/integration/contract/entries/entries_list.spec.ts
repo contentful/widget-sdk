@@ -157,7 +157,8 @@ describe('Entries list page', () => {
         consumer: 'user_interface',
         providers: ['resources', 'product_catalog_features'],
         cors: true,
-        pactfileWriteMode: 'merge'
+        pactfileWriteMode: 'merge',
+        spec: 2
       });
 
       defaultRequestsMock({});

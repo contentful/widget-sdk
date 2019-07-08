@@ -15,7 +15,8 @@ describe('Apps Page', () => {
       consumer: 'user_interface',
       providers: ['apps', 'product_catalog_features'],
       cors: true,
-      pactfileWriteMode: 'merge'
+      pactfileWriteMode: 'merge',
+      spec: 2
     });
 
     cy.setAuthTokenToLocalStorage();

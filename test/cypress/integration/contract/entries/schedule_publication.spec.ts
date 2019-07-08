@@ -26,7 +26,8 @@ describe('Schedule Publication', () => {
       consumer: 'user_interface',
       provider: 'jobs',
       cors: true,
-      pactfileWriteMode: 'merge'
+      pactfileWriteMode: 'merge',
+      spec: 2
     })
   );
 
