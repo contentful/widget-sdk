@@ -7,13 +7,14 @@ const build = props => render(<SpaceTeamsPagePresentation {...props} />);
 
 let isLoading;
 let memberships;
+let teams;
 
 describe('SpaceTeamsPage', () => {
   afterEach(cleanup);
 
   describe('being rendered', () => {
     it('should not break', () => {
-      expect(() => build({ memberships: [], isLoading: false })).not.toThrow();
+      expect(() => build({ memberships: [], teams: [], isLoading: false })).not.toThrow();
     });
   });
 
@@ -40,16 +41,30 @@ describe('SpaceTeamsPage', () => {
         }
       ];
     });
+    teams = [
+      {
+        name: 'Team 1',
+        sys: {
+          id: 'team_1234'
+        }
+      },
+      {
+        name: 'Team 2',
+        sys: {
+          id: 'team_5678'
+        }
+      }
+    ];
 
     it('should render 0 rows', () => {
-      const { queryAllByTestId } = build({ memberships, isLoading });
+      const { queryAllByTestId } = build({ memberships, teams, isLoading });
 
       const rows = queryAllByTestId('membership-row');
       expect(rows).toHaveLength(0);
     });
 
     it('should render loading placeholder', () => {
-      const { queryByTestId } = build({ memberships, isLoading });
+      const { queryByTestId } = build({ memberships, teams, isLoading });
 
       expect(queryByTestId('loading-placeholder')).toBeInTheDocument();
     });
@@ -62,7 +77,7 @@ describe('SpaceTeamsPage', () => {
     });
 
     it('should render 0 rows', () => {
-      const { queryAllByTestId } = build({ memberships, isLoading });
+      const { queryAllByTestId } = build({ memberships, teams, isLoading });
 
       const rows = queryAllByTestId('membership-row');
       expect(rows).toHaveLength(0);
@@ -126,7 +141,7 @@ describe('SpaceTeamsPage', () => {
     });
 
     it('should render 2 rows and action buttons', () => {
-      const { getAllByTestId } = build({ memberships, isLoading });
+      const { getAllByTestId } = build({ memberships, teams, isLoading });
 
       const rows = getAllByTestId('membership-row');
       expect(rows).toHaveLength(2);
@@ -134,7 +149,7 @@ describe('SpaceTeamsPage', () => {
     });
 
     it('should render cells with team details', () => {
-      const { getAllByTestId } = build({ memberships, isLoading });
+      const { getAllByTestId } = build({ memberships, teams, isLoading });
 
       const teamCells = getAllByTestId('team-cell');
       expect(teamCells[0]).toHaveTextContent('TestTeam1');
@@ -144,7 +159,7 @@ describe('SpaceTeamsPage', () => {
     });
 
     it('should render cells with membership details', () => {
-      const { getAllByTestId } = build({ memberships, isLoading });
+      const { getAllByTestId } = build({ memberships, teams, isLoading });
 
       const roleCells = getAllByTestId('roles-cell');
       const membershipCells = getAllByTestId('member-count-cell');
@@ -152,6 +167,25 @@ describe('SpaceTeamsPage', () => {
       expect(roleCells[1]).toHaveTextContent('Role 1 and Role 2');
       expect(membershipCells[0]).toHaveTextContent('1 member');
       expect(membershipCells[1]).toHaveTextContent('99 members');
+    });
+
+    it('should disable the Add Teams button if number of memberships equals number of teams', () => {
+      let helpers;
+      let addTeamsButton;
+
+      helpers = build({ memberships, teams: [], isLoading });
+
+      addTeamsButton = helpers.getByTestId('add-teams');
+
+      expect(addTeamsButton.hasAttribute('disabled')).toBeFalse();
+
+      cleanup();
+
+      helpers = build({ memberships, teams, isLoading });
+
+      addTeamsButton = helpers.getByTestId('add-teams');
+
+      expect(addTeamsButton.hasAttribute('disabled')).toBeTrue();
     });
   });
 });

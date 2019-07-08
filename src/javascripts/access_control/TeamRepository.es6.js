@@ -46,3 +46,25 @@ export async function getAllTeamsMemberships(orgEndpoint) {
   );
   return items;
 }
+
+export async function createTeamSpaceMembership(spaceEndpoint, teamId, { admin, roles }) {
+  let data;
+
+  if (admin) {
+    data = { admin: true };
+  } else {
+    data = { roles };
+  }
+
+  return spaceEndpoint(
+    {
+      method: 'POST',
+      path: ['team_space_memberships'],
+      data
+    },
+    {
+      'x-contentful-team': teamId,
+      ...ALPHA_HEADER
+    }
+  );
+}

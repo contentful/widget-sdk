@@ -1,22 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
+
+import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 
-import { getTeamsSpaceMembershipsOfSpace } from '../TeamRepository.es6';
+import { getTeamsSpaceMembershipsOfSpace, getAllTeams } from '../TeamRepository.es6';
 import { getSectionVisibility } from '../AccessChecker/index.es6';
+import { getModule } from 'NgRegistry.es6';
 
 import styles from './styles.es6';
 import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation.es6';
 
-const Fetcher = createFetcherComponent(async ({ spaceId }) => {
+export const Fetcher = createFetcherComponent(async ({ spaceId, orgId }) => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
+  const orgEndpoint = createOrganizationEndpoint(orgId);
 
-  const promises = [getTeamsSpaceMembershipsOfSpace(spaceEndpoint)];
+  const promises = [getTeamsSpaceMembershipsOfSpace(spaceEndpoint), getAllTeams(orgEndpoint)];
 
   return await Promise.all(promises);
 });
@@ -28,14 +31,20 @@ export default class SpaceTeamsPage extends React.Component {
   };
 
   render() {
+    const spaceContext = getModule('spaceContext');
+    const {
+      sys: { id: orgId }
+    } = spaceContext.organization;
+
     const { spaceId, onReady } = this.props;
     onReady();
+
     if (!getSectionVisibility().teams) {
       return <ForbiddenPage />;
     }
 
     return (
-      <Fetcher spaceId={spaceId} onReady={onReady}>
+      <Fetcher orgId={orgId} spaceId={spaceId} onReady={onReady}>
         {({ isLoading, isError, data }) => {
           if (isError) {
             return (
@@ -45,7 +54,8 @@ export default class SpaceTeamsPage extends React.Component {
             );
           }
 
-          const [teamSpaceMemberships] = data || [[]];
+          const [teamSpaceMemberships, teams] = data || [[], []];
+
           const sortedMemberships = teamSpaceMemberships.sort(
             (
               {
@@ -64,7 +74,11 @@ export default class SpaceTeamsPage extends React.Component {
           return (
             <>
               <DocumentTitle title="Teams in Space" />
-              <SpaceTeamsPagePresentation memberships={sortedMemberships} isLoading={isLoading} />
+              <SpaceTeamsPagePresentation
+                memberships={sortedMemberships}
+                teams={teams}
+                isLoading={isLoading}
+              />
             </>
           );
         }}
