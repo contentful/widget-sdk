@@ -21,6 +21,7 @@ export default function ListItem({
       onClick={() => onSelect(contentType)}>
       <Highlighter
         searchWords={[searchTerm]}
+        autoEscape={true}
         textToHighlight={label}
         highlightClassName="context-menu__highlighted-text"
       />
