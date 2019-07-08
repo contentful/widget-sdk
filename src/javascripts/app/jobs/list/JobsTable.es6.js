@@ -44,16 +44,27 @@ const styles = {
 
 function StatusTag({ job }) {
   const typeByStatus = {
-    error: 'negative',
-    success: 'positive',
+    failed: 'negative',
+    done: 'positive',
     pending: 'primary',
     cancelled: 'secondary'
   };
+
+  const getStatusLabel = () => {
+    switch (job.sys.status) {
+      case 'failed':
+        return `${job.action} failed`;
+      case 'done':
+        return `${job.action}ed`;
+      default:
+        return job.action;
+    }
+  };
   const StatusIcon = () => {
     switch (job.sys.status) {
-      case 'error':
+      case 'failed':
         return <Icon className={styles.statusTagIcon} icon="ErrorCircle" color="negative" />;
-      case 'success':
+      case 'done':
         return <Icon className={styles.statusTagIcon} icon="CheckCircle" color="positive" />;
       case 'cancelled':
         return <Icon className={styles.statusTagIcon} icon="CheckCircle" color="secondary" />;
@@ -65,7 +76,7 @@ function StatusTag({ job }) {
   return (
     <Tag className={styles.statusTag} tagType={typeByStatus[job.sys.status]}>
       {StatusIcon()}
-      {job.action}
+      {getStatusLabel()}
     </Tag>
   );
 }
