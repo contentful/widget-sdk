@@ -1,10 +1,19 @@
+import { fireEvent } from '@testing-library/react';
+import { forEach, mapValues } from 'lodash';
 import StatusWidget from './StatusWidget.es6';
 import {
   createPublicationWidgetTest,
   createCommands,
+  TEST_IDS as COMMON_TEST_IDS,
   DEFAULT_TEST_PROPS,
   expectPrimaryButton
 } from '../../EntrySidebar/PublicationWidget/__test__/PublicationWidgetTest.es6';
+
+const TEST_IDS = {
+  ...COMMON_TEST_IDS,
+  scheduleAction: 'schedule-publication'
+};
+const select = mapValues(TEST_IDS, testId => elem => elem.queryByTestId(testId));
 
 describe(
   'app/jobs/StatusWidget',
@@ -44,7 +53,30 @@ function describeStatusWidgetSpecifics(render) {
       });
       expectPrimaryButton(wrapper, { isDisabled: true });
     });
+  });
 
-    // TODO: Test more StatusWidget specifics.
+  describe('schedule button', () => {
+    const scheduleActionShownByStatus = {
+      draft: true,
+      changes: true,
+      archived: false,
+      published: false
+    };
+
+    forEach(scheduleActionShownByStatus, (expectIsShown, status) => {
+      it(`is ${expectIsShown ? '' : 'not '}shown on status "${status}"`, () => {
+        const { wrapper } = render({ status });
+
+        expectScheduleActionIsShown(wrapper, false);
+        fireEvent.click(select.secondaryActionsDropdown(wrapper));
+        expectScheduleActionIsShown(wrapper, expectIsShown);
+      });
+    });
+
+    function expectScheduleActionIsShown(wrapper, expectIsShown) {
+      expectIsShown
+        ? expect(select.scheduleAction(wrapper)).toBeInTheDocument()
+        : expect(select.scheduleAction(wrapper)).not.toBeInTheDocument();
+    }
   });
 }

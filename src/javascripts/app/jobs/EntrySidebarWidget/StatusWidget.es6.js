@@ -50,6 +50,10 @@ export default class StatusWidget extends React.PureComponent {
     isOpenDropdown: false
   };
 
+  canSchedule = () => {
+    return this.props.status === 'draft' || this.props.status === 'changes';
+  };
+
   renderScheduledPublicationCta = () => {
     // disabled by the parent component (e.g. error during jobs fetching)
     if (this.props.isScheduledPublishDisabled) {
@@ -58,17 +62,15 @@ export default class StatusWidget extends React.PureComponent {
 
     // do not show cta if entity is published
     if (this.props.primary.targetStateId === 'published') {
-      // primary action can be either publish or unachrive
+      // primary action can be either publish or unarchive
       // TODO: revisit after support for sched. pub archived entries
       if (this.props.primary.isDisabled()) {
         return null;
       }
     }
 
-    const canSchedule = this.props.status === 'draft' || this.props.status === 'changes';
-
     return (
-      canSchedule && (
+      this.canSchedule() && (
         <DropdownListItem
           className={styles.scheduleListItem}
           testId="schedule-publication"
@@ -87,7 +89,8 @@ export default class StatusWidget extends React.PureComponent {
 
   render() {
     const { primary, status, secondary, isSaving, updatedAt, revert, isDisabled } = this.props;
-    const secondaryActionsDisabled = every(secondary || [], action => action.isDisabled());
+    const secondaryActionsDisabled =
+      every(secondary || [], action => action.isDisabled()) && !this.canSchedule();
     return (
       <div data-test-id="status-widget">
         <header className="entity-sidebar__header">
