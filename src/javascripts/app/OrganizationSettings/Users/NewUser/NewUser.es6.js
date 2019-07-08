@@ -1,4 +1,4 @@
-import React, { useMemo, useReducer, useEffect } from 'react';
+import React, { useMemo, useReducer, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
   Typography,
@@ -18,12 +18,14 @@ import pluralize from 'pluralize';
 import { orgRoles } from 'utils/MembershipUtils.es6';
 import { useAddToOrg } from './hooks.es6';
 import { isValidEmail, parseList } from 'utils/StringUtils.es6';
+import SpaceMembershipList from './SpaceMembershipList.es6';
 
 const initialState = {
   submitted: false,
   emailsValue: '',
   emailList: [],
-  invalidAddresses: []
+  invalidAddresses: [],
+  spaces: []
 };
 
 const reducer = (state, action) => {
@@ -41,6 +43,8 @@ const reducer = (state, action) => {
         invalidAddresses: invalid
       };
     }
+    case 'SPACE_MEMBERSHIPS_CHANGED':
+      return { ...state, spaceMemberships: [...state.spaces, action.payload] };
     case 'ROLE_CHANGED':
       return { ...state, orgRole: action.payload, submitted: false };
     case 'RESET':
@@ -116,6 +120,10 @@ export default function NewUser({ orgId, onReady }) {
     onReady();
   }, [onReady]);
 
+  const handleSpaceSelected = useCallback(space => {
+    dispatch({ type: 'SPACE_MEMBERSHIPS_CHANGED', payload: space });
+  }, []);
+
   return (
     <Workbench title="Invite users">
       <Workbench.Content centered>
@@ -124,7 +132,7 @@ export default function NewUser({ orgId, onReady }) {
         {data && <NewUserSuccess emailList={emailList} onRestart={reset} />}
 
         {!data && !error && !isLoading && (
-          <Form>
+          <Form spacing="condensed">
             <Heading>Invite users to your organization</Heading>
             <TextField
               id="emails"
@@ -140,8 +148,8 @@ export default function NewUser({ orgId, onReady }) {
               helpText="Up to 100 email addresses, separated by comma or line breaks"
             />
 
+            <Subheading element="h3">Role</Subheading>
             <FieldGroup>
-              <Subheading element="h3">Role</Subheading>
               {orgRoles.map(role => (
                 <RadioButtonField
                   testId="new-user.role"
@@ -162,8 +170,14 @@ export default function NewUser({ orgId, onReady }) {
               <ValidationMessage testId="new-user.org-role.error">{orgRoleError}</ValidationMessage>
             )}
 
-            <Button testId="new-user.submit" loading={isLoading} onClick={handleSubmit}>
-              Submit
+            <Subheading element="h3">Spaces</Subheading>
+            <SpaceMembershipList orgId={orgId} onChange={handleSpaceSelected} />
+            <Button
+              buttonType="positive"
+              testId="new-user.submit"
+              loading={isLoading}
+              onClick={handleSubmit}>
+              Send invitations
             </Button>
           </Form>
         )}
