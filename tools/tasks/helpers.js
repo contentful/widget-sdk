@@ -6,19 +6,13 @@
 const fs = require('fs');
 const S = require('../lib/stream-utils');
 const path = require('path');
-const stylus = require('gulp-stylus');
-const nib = require('nib');
 const gulp = require('gulp');
-const sourceMaps = require('gulp-sourcemaps');
-const prefixer = require('autoprefixer-stylus');
 const _ = require('lodash');
-const { browserslist } = require('../../package.json');
 
 module.exports.assertFilesExist = assertFilesExist;
 module.exports.passError = passError;
 module.exports.mapFileContents = mapFileContents;
 module.exports.changeBase = changeBase;
-module.exports.buildStylus = buildStylus;
 module.exports.mapSourceMapPaths = mapSourceMapPaths;
 
 module.exports.writeFile = writeFile;
@@ -58,33 +52,6 @@ function changeBase(base) {
     file.path = filePath;
     return file;
   });
-}
-
-function buildStylus(sources, dest) {
-  assertFilesExist([sources]);
-  dest = gulp.dest(dest);
-  return gulp
-    .src(sources)
-    .pipe(
-      stylus({
-        use: [
-          nib(),
-          prefixer({
-            browsers: browserslist
-          })
-        ],
-        sourcemap: { inline: true }
-      })
-    )
-    .pipe(sourceMaps.init())
-    .on('error', passError(dest))
-    .pipe(
-      mapSourceMapPaths(function(src) {
-        return path.join('src/stylesheets', src);
-      })
-    )
-    .pipe(sourceMaps.write({ sourceRoot: '/' }))
-    .pipe(dest);
 }
 
 /**

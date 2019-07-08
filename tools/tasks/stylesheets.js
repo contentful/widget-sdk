@@ -1,5 +1,5 @@
 const gulp = require('gulp');
-const { assertFilesExist, mapFileContents, buildStylus } = require('./helpers');
+const { assertFilesExist, mapFileContents } = require('./helpers');
 const sourceMaps = require('gulp-sourcemaps');
 const concat = require('gulp-concat');
 
@@ -39,7 +39,13 @@ function processVendorStylesheets() {
 }
 
 function processAppStylesheets() {
-  return buildStylus('src/stylesheets/main.styl', './public/app');
+  // Use `base: '.'` for correct source map paths
+  return gulp
+    .src('./src/stylesheets/legacy-styles.css', { base: '.' })
+    .pipe(sourceMaps.init())
+    .pipe(concat('main.css'))
+    .pipe(sourceMaps.write({ sourceRoot: '/' }))
+    .pipe(gulp.dest('./public/app'));
 }
 
 const processStylesheets = gulp.parallel(processVendorStylesheets, processAppStylesheets);
