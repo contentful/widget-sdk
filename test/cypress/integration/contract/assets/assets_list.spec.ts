@@ -15,7 +15,8 @@ describe('Assets List Page', () => {
       consumer: 'user_interface',
       provider: 'assets',
       cors: true,
-      pactfileWriteMode: 'merge'
+      pactfileWriteMode: 'merge',
+      spec: 2
     })
   );
 

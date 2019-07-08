@@ -19,7 +19,7 @@ describe('Jobs page', () => {
       provider: 'jobs',
       cors: true,
       pactfileWriteMode: 'merge',
-      spec: 3
+      spec: 2
     })
   );
 

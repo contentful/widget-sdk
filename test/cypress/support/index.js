@@ -46,7 +46,8 @@ before(() => {
       'product_catalog_features'
     ],
     cors: true,
-    pactfileWriteMode: 'merge'
+    pactfileWriteMode: 'merge',
+    spec: 2
   });
 });
 beforeEach(() => {

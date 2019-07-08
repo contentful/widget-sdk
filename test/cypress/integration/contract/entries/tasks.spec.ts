@@ -26,7 +26,7 @@ describe('Tasks entry editor sidebar', () => {
       provider: 'tasks',
       cors: true,
       pactfileWriteMode: 'merge',
-      spec: 3
+      spec: 2
     })
   );
 

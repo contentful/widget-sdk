@@ -9,7 +9,8 @@ describe('Webhooks List Page', () => {
   before(() =>
     cy.startFakeServer({
       consumer: 'user_interface',
-      provider: 'webhooks'
+      provider: 'webhooks',
+      spec: 2
     })
   );
 

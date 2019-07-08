@@ -42,7 +42,8 @@ describe('Teams in space page', () => {
       consumer: 'user_interface',
       providers: ['teams'],
       cors: true,
-      pactfileWriteMode: 'merge'
+      pactfileWriteMode: 'merge',
+      spec: 2
     });
   });
 

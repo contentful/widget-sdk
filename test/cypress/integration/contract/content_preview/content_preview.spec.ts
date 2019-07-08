@@ -59,7 +59,8 @@ describe('Content Preview Page', () => {
         consumer: 'user_interface',
         provider: 'preview_environments',
         cors: true,
-        pactfileWriteMode: 'merge'
+        pactfileWriteMode: 'merge',
+        spec: 2
       });
 
       noPreviewEnvironmentsResponse();

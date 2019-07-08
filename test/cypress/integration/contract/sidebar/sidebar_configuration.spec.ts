@@ -19,7 +19,8 @@ describe('Sidebar configuration', () => {
       consumer: 'user_interface',
       provider: 'extensions',
       cors: true,
-      pactfileWriteMode: 'merge'
+      pactfileWriteMode: 'merge',
+      spec: 2
     })
   );
 
