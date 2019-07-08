@@ -106,8 +106,11 @@ export default class Task extends React.Component {
 
   handleStatusChange = () => {
     this.setState({ isUpdating: true });
-    this.addChange({ isDone: !this.props.viewData.isDone });
-    this.props.onStatusChange(this.getChangedValue(), () => this.setState({ isUpdating: false }));
+    const newViewData = {
+      ...this.getChangedValue(),
+      isDone: !this.props.viewData.isDone
+    };
+    this.props.onStatusChange(newViewData, () => this.setState({ isUpdating: false }));
   };
 
   handleDeleteClick = async event => {
