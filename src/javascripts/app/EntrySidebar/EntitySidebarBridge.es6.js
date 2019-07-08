@@ -74,6 +74,7 @@ export default ({ $scope, emitter }) => {
         entity: { ...$scope.editorData.entity.data },
         spaceId: spaceContext.space.getId(),
         environmentId: spaceContext.getEnvironmentId(),
+        isMasterEnvironment: spaceContext.isMasterEnvironment(),
         userId: spaceContext.user.sys.id,
         commands: {
           primary: $scope.state.primary,

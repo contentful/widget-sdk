@@ -22,6 +22,7 @@ describe('<JobWidget />', () => {
     const resultProps = {
       spaceId: 'spaceId',
       environmentId: 'enviromentId',
+      isMasterEnvironment: false,
       userId: 'userId',
       isSaving: false,
       status: 'draft',

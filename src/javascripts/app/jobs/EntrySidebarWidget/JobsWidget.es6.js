@@ -79,6 +79,7 @@ function getPublishedAt(entity) {
 export default function JobWidget({
   spaceId,
   environmentId,
+  isMasterEnvironment,
   userId,
   entity,
   status,
@@ -174,7 +175,7 @@ export default function JobWidget({
           {shouldShowErrorNote(lastJob, entity) && <FailedScheduleNote job={lastJob} />}
           {hasScheduledActions && (
             <JobsTimeline
-              environmentId={environmentId}
+              isMasterEnvironment={isMasterEnvironment}
               jobs={pendingJobs}
               onCancel={handleCancel}
               isReadOnly={primary.isDisabled()}
@@ -200,6 +201,7 @@ export default function JobWidget({
 JobWidget.propTypes = {
   spaceId: PropTypes.string.isRequired,
   environmentId: PropTypes.string.isRequired,
+  isMasterEnvironment: PropTypes.bool.isRequired,
   userId: PropTypes.string.isRequired,
   entity: PropTypes.object.isRequired,
   status: PropTypes.string,

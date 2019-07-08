@@ -48,6 +48,7 @@ export default class PublicationWidgetContainer extends Component {
       commands,
       spaceId,
       environmentId,
+      isMasterEnvironment,
       entity,
       userId,
       status,
@@ -66,6 +67,7 @@ export default class PublicationWidgetContainer extends Component {
             <JobsWidget
               spaceId={spaceId}
               environmentId={environmentId}
+              isMasterEnvironment={isMasterEnvironment}
               userId={userId}
               entity={entity}
               status={status}

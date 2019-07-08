@@ -17,7 +17,7 @@ const styles = {
   })
 };
 
-const JobsTimeline = ({ environmentId, jobs, onCancel, isReadOnly }) => (
+const JobsTimeline = ({ isMasterEnvironment, jobs, onCancel, isReadOnly }) => (
   <div>
     <header className="entity-sidebar__header">
       <h2 className={cn(styles.alphaSideBarHeading, 'entity-sidebar__heading')}>
@@ -37,7 +37,7 @@ const JobsTimeline = ({ environmentId, jobs, onCancel, isReadOnly }) => (
         />
       ))}
     </ul>
-    <JobsStateLink environmentId={environmentId}>
+    <JobsStateLink isMasterEnvironment={isMasterEnvironment}>
       {({ getHref }) => (
         <TextLink linkType="muted" className="f36-margin-top--m" href={getHref()}>
           View all scheduled entries
@@ -50,7 +50,7 @@ const JobsTimeline = ({ environmentId, jobs, onCancel, isReadOnly }) => (
 JobsTimeline.propTypes = {
   jobs: PropTypes.array.isRequired,
   onCancel: PropTypes.func.isRequired,
-  environmentId: PropTypes.string.isRequired,
+  isMasterEnvironment: PropTypes.bool.isRequired,
   isReadOnly: PropTypes.bool.isRequired
 };
 
