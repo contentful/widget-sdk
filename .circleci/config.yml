@@ -381,6 +381,15 @@ jobs:
       - store_test_results:
           path: ~/components/lab/artifacts/test-results
 
+  publish-pact-contracts:
+    docker:
+      - image: pactfoundation/pact-cli:latest
+    working_directory: ~/user_interface
+    steps:
+      - attach_workspace:
+          at: ~/user_interface
+      - run: /pact/entrypoint.sh publish ~/user_interface/pacts --consumer-app-version=$CIRCLE_SHA1 --tag=$CIRCLE_BRANCH
+
 workflows:
   build:
     jobs:
@@ -402,12 +411,16 @@ workflows:
           post-steps:
             - store_test_results:
                 path: cypress/reports
-            - run:
-                name: publish-pact-contracts
-                command: LOGLEVEL=warn bin/publish-pact-contracts
+            - persist_to_workspace:
+                root: ~/project
+                paths:
+                  - pacts/*
           start: npm start
           wait-on: 'http-get://localhost:3001'
           store_artifacts: true
+      - publish-pact-contracts:
+          requires:
+            - run-contract-tests
       - deploy-assets/to-s3:
           name: deploy-assets-to-preview
           access_key_id: '${AWS_S3_PREVIEW_ACCESS_KEY_ID}'
