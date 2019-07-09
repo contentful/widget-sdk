@@ -19,7 +19,8 @@ function getUsers(endpoint, ids) {
     method: 'GET',
     path: ['users'],
     query: {
-      'sys.id[in]': uniq(ids).join(',')
+      'sys.id[in]': uniq(ids).join(','),
+      limit: 1000
     }
   });
 }
