@@ -13,9 +13,6 @@ import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
 import CommandPropType from 'app/entity_editor/CommandPropType.es6';
 
-// TODO: <StatusWidget /> started as a copy of this, there should be
-//  some shared code as there are still a lot of similarities.
-
 const StatusBadge = ({ status }) => (
   <div className="published-status" data-state={status} data-test-id="entity-state">
     <strong>Status: </strong>
