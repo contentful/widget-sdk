@@ -12,6 +12,7 @@ export function isValidImage(fileContentType) {
     'image/bmp',
     'image/x-windows-bmp',
     'image/gif',
+    'image/webp',
     // This is not a valid MIME type but we supported it in the past.
     'image/jpg',
     'image/jpeg',
