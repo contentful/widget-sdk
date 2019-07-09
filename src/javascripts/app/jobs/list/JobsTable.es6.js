@@ -142,7 +142,9 @@ function JobWithExsitingEntryRow({
             <SecretiveLink href={getHref()}>{entryTitle}</SecretiveLink>
           </TableCell>
           <TableCell>{contentType.name}</TableCell>
-          <TableCell>{user.firstName}</TableCell>
+          <TableCell>
+            <UserInfo user={user} />
+          </TableCell>
           <TableCell>
             {showStatusTransition ? <StatusTransition entry={entry} /> : <StatusTag job={job} />}
           </TableCell>
@@ -172,7 +174,9 @@ function JobWithMissingEntryRow({ job, user }) {
       </TableCell>
       <TableCell>Entry missing or inaccessible</TableCell>
       <TableCell />
-      <TableCell>{user.firstName}</TableCell>
+      <TableCell>
+        <UserInfo user={user} />
+      </TableCell>
       <TableCell />
     </TableRow>
   );
@@ -245,4 +249,7 @@ export default class JobsTable extends Component {
       </div>
     );
   }
+}
+function UserInfo({ user }) {
+  return user && user.firstName;
 }
