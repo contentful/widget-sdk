@@ -6,7 +6,7 @@ import {
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { limitsReachedResourcesResponse } from '../../../interactions/resources';
-import { spaceProductCatalogUsageEnforcementResponse } from '../../../interactions/product_catalog_features';
+import { spaceProductCatalogFeaturesResponse } from '../../../interactions/product_catalog_features';
 import { defaultSpaceId, getEntries } from '../../../util/requests';
 import {
   singleEntryResponse,
@@ -119,7 +119,9 @@ describe('Entries list page', () => {
       editorInterfaceWithoutSidebarResponse();
 
       cy.getByTestId('create-entry').click();
-      cy.wait([`@${state.Entries.LINKS}`]);
+
+      cy.wait([`@${state.Entries.NO_LINKS_TO_DEFAULT_ENTRY}`]);
+
       cy.getByTestId('entity-field-controls').should('be.visible');
       cy.getByTestId('entry-editor-sidebar').should('be.visible');
     });
@@ -176,17 +178,16 @@ describe('Entries list page', () => {
         }
       }).as(state.Entries.SEVERAL);
 
-      const productCatalogQuery =
-        'sys.featureId[]=environment_usage_enforcements&sys.featureId[]=basic_apps';
-      spaceProductCatalogUsageEnforcementResponse(productCatalogQuery);
+      const productCatalogQuery = 'sys.featureId[]=environment_usage_enforcements&sys.featureId[]=basic_apps'
+      spaceProductCatalogFeaturesResponse(productCatalogQuery);
       limitsReachedResourcesResponse();
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
       cy.wait([
         `@${state.Token.VALID}`,
         `@${state.Entries.SEVERAL}`,
-        `@${state.SpaceProductCatalogFeatures.USAGE_ENFORCEMENT}`,
-        `@${state.Resources.LIMITS_REACHED}`
+        `@${state.ProductCatalogFeatures.SPACE_WITH_SEVERAL_FEATURES}`,
+        `@${state.Resources.SEVERAL_WITH_LIMITS_REACHED}`
       ]);
     });
 

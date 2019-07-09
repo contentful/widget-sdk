@@ -16,6 +16,7 @@ export function singleUser() {
   };
   cy.addInteraction({
     provider: 'users',
+    // TODO: What happens if we have several users? This does not look ok
     state: state.Users.SINGLE,
     uponReceiving: 'a request for all space users',
     withRequest: getSpaceUsers(defaultSpaceId, query),
@@ -33,14 +34,15 @@ export function singleSpecificSpaceUserResponse() {
   };
   cy.addInteraction({
     provider: 'users',
-    state: state.Users.QUERY,
+    // TODO: This is bad test design, we should have several users to check that we can ge specific user from several
+    state: state.Users.SINGLE,
     uponReceiving: 'a request for a specific space user',
     withRequest: getSpaceUsers(defaultSpaceId, query),
     willRespondWith: {
       status: 200,
       body: users
     }
-  }).as(state.Users.QUERY);
+  }).as(state.Users.SINGLE);
 }
 
 export function singleSpecificOrgUserResponse() {
@@ -49,6 +51,7 @@ export function singleSpecificOrgUserResponse() {
   };
   cy.addInteraction({
     provider: 'users',
+    // TODO: This is bad test design, we should have several users to check that we can ge specific user from several
     state: state.Users.SINGLE,
     uponReceiving: 'a request for a specific organization user',
     withRequest: getOrgUsers(defaultOrgId, query),

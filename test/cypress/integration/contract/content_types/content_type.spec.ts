@@ -34,7 +34,7 @@ describe('Content type page', () => {
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`);
 
-      cy.wait([`@${state.Token.VALID}`, `@${state.ContentType.DEFAULT}`]);
+      cy.wait([`@${state.Token.VALID}`, `@${state.ContentTypes.DEFAULT_CONTENT_TYPE_IS_PUBLISHED}`]);
     });
     it('renders the page', () => {
       cy.get('[name=contentTypeForm]').should('be.visible');

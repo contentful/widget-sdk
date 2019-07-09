@@ -33,7 +33,7 @@ export function tasksErrorResponse() {
       status: 500,
       body: empty
     }
-  }).as(state.Tasks.ERROR);
+  }).as(state.Tasks.INTERNAL_SERVER_ERROR);
 }
 
 export function taskCreateRequest({ title, assigneeId }) {
@@ -58,9 +58,9 @@ export function taskCreateRequest({ title, assigneeId }) {
   return {
     successResponse() {
       const newTaskSys = severalTasks.items[0].sys;
-      cy.addInteraction({
+      return cy.addInteraction({
         ...interactionRequestInfo,
-        state: 'noTasks',
+        state: state.Tasks.NONE,
         willRespondWith: {
           status: 200,
           body: {
@@ -68,17 +68,17 @@ export function taskCreateRequest({ title, assigneeId }) {
             ...newTask,
           }
         }
-      }).as(state.Tasks.CREATE);
+      });
     },
     errorResponse() {
-      cy.addInteraction({
+      return cy.addInteraction({
         ...interactionRequestInfo,
-        state: 'serverIsDown',
+        state: state.Tasks.INTERNAL_SERVER_ERROR,
         willRespondWith: {
           status: 500,
           body: empty
         }
-      }).as(state.Tasks.ERROR);
+      });
     }
   }
 }

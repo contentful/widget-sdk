@@ -50,8 +50,8 @@ describe('Webhook', () => {
 
       cy.wait([
         '@default-webhook-created-successfully',
-        `@${state.Webhook.DEFAULT}`,
-        `@${state.Webhook.CALLS_NONE}`
+        `@${state.Webhooks.SINGLE}`,
+        `@${state.Webhooks.NO_CALLS}`
       ]);
 
       cy.getByTestId('cf-notification-container').should(
@@ -64,12 +64,12 @@ describe('Webhook', () => {
   context('webhook, that triggers deletion of asset is configured', () => {
     beforeEach(() => {
       customWebhookSingleEventResponse();
-      webhookCallSuccessfulResponse();
+      webhookCallSuccessfulResponse().as('fetch-webhook-calls-was-successful');
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks/${defaultWebhookId}`);
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.Webhook.SINGLE_EVENT}`,
-        `@${state.Webhook.CALL_SUCCESSFUL}`
+        `@${state.Webhooks.SINGLE_EVENT}`,
+        '@fetch-webhook-calls-was-successful'
       ]);
     });
 
@@ -86,8 +86,8 @@ describe('Webhook', () => {
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks/${defaultWebhookId}`);
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.Webhook.DEFAULT}`,
-        `@${state.Webhook.CALLS_NONE}`
+        `@${state.Webhooks.SINGLE}`,
+        `@${state.Webhooks.NO_CALLS}`
       ]);
     });
 
@@ -113,7 +113,7 @@ describe('Webhook', () => {
       cy.getByTestId('webhook-remove').click();
       cy.getByTestId('remove-webhook-confirm').click();
 
-      cy.wait([`@${state.Webhooks.ERROR}`]);
+      cy.wait([`@${state.Webhooks.INTERNAL_SERVER_ERROR}`]);
       cy.verifyNotification('error', ``);
     });
   });

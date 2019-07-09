@@ -4,6 +4,7 @@ import {
   getEntryLinks,
   getEntrySnapshots,
   defaultEntryId,
+  defaultEntry,
   defaultSpaceId,
   getEntriesWithEnvironment,
   defaultEnvironment,
@@ -12,20 +13,19 @@ import {
 } from '../util/requests';
 
 const empty = require('../fixtures/responses/empty.json');
-const entryResponseBody = require('../fixtures/responses/entry.json');
 const severalEntriesResponseBody = require('../fixtures/responses/entries-several.json');
 
 export function singleEntryResponse() {
   cy.addInteraction({
     provider: 'entries',
-    state: state.Entries.NONE,
-    uponReceiving: 'a request for entry object',
+    state: state.Entries.SEVERAL,
+    uponReceiving: 'a request for the default entry',
     withRequest: getEntry(),
     willRespondWith: {
       status: 200,
-      body: entryResponseBody
+      body: defaultEntry
     }
-  }).as(state.Entries.NONE);
+  }).as(state.Entries.SEVERAL);
 }
 
 export function noEntryLinksResponse() {
@@ -34,14 +34,14 @@ export function noEntryLinksResponse() {
   };
   cy.addInteraction({
     provider: 'entries',
-    state: state.Entries.LINKS,
-    uponReceiving: 'a request for entry links',
+    state: state.Entries.NO_LINKS_TO_DEFAULT_ENTRY,
+    uponReceiving: 'a query for links to the default entry',
     withRequest: getEntryLinks(defaultSpaceId, query),
     willRespondWith: {
       status: 200,
       body: empty
     }
-  }).as(state.Entries.LINKS);
+  }).as(state.Entries.NO_LINKS_TO_DEFAULT_ENTRY);
 }
 
 export function noAssetLinksResponse() {
@@ -50,14 +50,14 @@ export function noAssetLinksResponse() {
   };
   cy.addInteraction({
     provider: 'entries',
-    state: state.Entries.ASSET_LINKS,
-    uponReceiving: 'a request for asset links',
+    state: state.Entries.NO_LINKS_TO_DEFAULT_ASSET,
+    uponReceiving: 'a query for links to the default asset',
     withRequest: getEntryLinks(defaultSpaceId, query),
     willRespondWith: {
       status: 200,
       body: empty
     }
-  }).as(state.Entries.ASSET_LINKS);
+  }).as(state.Entries.NO_LINKS_TO_DEFAULT_ASSET);
 }
 
 export function noEntrySnapshotsResponse() {
@@ -66,20 +66,20 @@ export function noEntrySnapshotsResponse() {
   };
   cy.addInteraction({
     provider: 'entries',
-    state: state.Entries.SNAPSHOTS,
+    state: state.Entries.NO_SNAPSHOTS_FOR_DEFAULT_ENTRY,
     uponReceiving: 'a request for entry snapshots',
     withRequest: getEntrySnapshots(defaultSpaceId, defaultEntryId, query),
     willRespondWith: {
       status: 200,
       body: empty
     }
-  }).as(state.Entries.SNAPSHOTS);
+  }).as(state.Entries.NO_SNAPSHOTS_FOR_DEFAULT_ENTRY);
 }
 
 export function singleEntryWithQuery() {
   cy.addInteraction({
     provider: 'entries',
-    state: state.Entries.QUERY,
+    state: state.Entries.SEVERAL,
     uponReceiving: 'a request for entry with query',
     withRequest: getEntriesWithEnvironment(defaultSpaceId, defaultEnvironment, {
       'sys.id[in]': defaultEntryId
@@ -88,18 +88,18 @@ export function singleEntryWithQuery() {
       status: 200,
       body: severalEntriesResponseBody
     }
-  }).as(state.Entries.QUERY);
+  }).as(state.Entries.SEVERAL);
 }
 
-export function postSingleEntryRequest(body: Object = entryResponseBody) {
+export function postSingleEntryRequest() {
   cy.addInteraction({
     provider: 'entries',
-    state: state.Entries.POST,
+    state: state.Entries.NONE,
     uponReceiving: 'post request for entry',
     withRequest: postEntry(),
     willRespondWith: {
       status: 201,
-      body: body
+      body: defaultEntry
     }
-  }).as(state.Entries.POST);
+  }).as(state.Entries.NONE);
 }

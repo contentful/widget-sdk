@@ -10,12 +10,12 @@ const query = {
 export function defaultLocaleResponse() {
   cy.addInteraction({
     provider: 'locales',
-    state: state.Locales.DEFAULT,
+    state: state.Locales.ONLY_ENGLISH,
     uponReceiving: 'a request for all locales',
     withRequest: getLocales(defaultSpaceId, query),
     willRespondWith: {
       status: 200,
       body: locales
     }
-  }).as(state.Locales.DEFAULT);
+  }).as(state.Locales.ONLY_ENGLISH);
 }

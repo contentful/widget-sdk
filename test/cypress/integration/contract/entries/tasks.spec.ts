@@ -58,7 +58,7 @@ describe('Tasks entry editor sidebar', () => {
     beforeEach(() => {
       tasksErrorResponse();
       visitEntry();
-      cy.wait([`@${state.Tasks.ERROR}`]);
+      cy.wait([`@${state.Tasks.INTERNAL_SERVER_ERROR}`]);
     });
 
     it('renders "Tasks" sidebar section with an error', () => {
@@ -100,14 +100,17 @@ describe('Tasks entry editor sidebar', () => {
 
     context('task creation error', () => {
       beforeEach(() => {
-        taskCreateRequest(newTaskData).errorResponse();
         visitEntry();
+
         cy.wait([`@${state.Tasks.NONE}`]);
       });
 
       it('creates task on API and adds it to task list', () => {
+        taskCreateRequest(newTaskData).errorResponse().as('task-creation-failed');
+
         createNewTaskAndSave(newTaskData);
-        cy.wait([`@${state.Tasks.ERROR}`]);
+
+        cy.wait(['@task-creation-failed']);
 
         getTasks().should('have.length', 0);
         getDraftTask().should('have.length', 1);
@@ -118,15 +121,17 @@ describe('Tasks entry editor sidebar', () => {
 
     context('task creation successful', () => {
       beforeEach(() => {
-        taskCreateRequest(newTaskData).successResponse();
         visitEntry();
+
         cy.wait([`@${state.Tasks.NONE}`]);
       });
 
       it('creates task on API and adds it to task list', () => {
+        taskCreateRequest(newTaskData).successResponse().as('task-creation-successful');
+
         createNewTaskAndSave(newTaskData);
 
-        cy.wait([`@${state.Tasks.CREATE}`]);
+        cy.wait(['@task-creation-successful']);
 
         getDraftTask().should('have.length', 0);
         getTasks().should('have.length', 1);
