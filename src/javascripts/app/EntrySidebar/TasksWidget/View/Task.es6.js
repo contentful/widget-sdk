@@ -163,7 +163,7 @@ export default class Task extends React.Component {
       <React.Fragment>
         <div className={styles.checkboxWrapper}>
           {isUpdating ? (
-            <Spinner size="small" />
+            <Spinner size="small" className={styles.taskLoadingSpinner} />
           ) : (
             <input
               type="checkbox"
