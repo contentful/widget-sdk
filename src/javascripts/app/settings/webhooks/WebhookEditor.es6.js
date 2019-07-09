@@ -160,6 +160,7 @@ class WebhookEditor extends React.Component {
               <Tabs role="tablist" className="f36-margin-left--xl">
                 <Tab
                   id="webhook_settings"
+                  testId="webhook-settings"
                   selected={tab === TABS.SETTINGS}
                   onSelect={() => this.setState({ tab: TABS.SETTINGS })}>
                   Webhook settings

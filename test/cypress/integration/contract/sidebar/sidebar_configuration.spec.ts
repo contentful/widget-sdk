@@ -80,10 +80,7 @@ describe('Sidebar configuration', () => {
         `@editor-interface-sidebar-saved`
       ]);
 
-      cy.getByTestId('cf-notification-container').should(
-        'contain',
-        'Content type saved successfully'
-      );
+      cy.verifyNotification('success', 'Content type saved successfully');
     });
   });
 });

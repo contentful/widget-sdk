@@ -386,3 +386,14 @@ export function getWebhookCalls(
     query
   };
 }
+
+export function deleteWebhook(
+  spaceId: string = defaultSpaceId,
+  webhookId: string = defaultWebhookId
+): RequestOptions {
+  return {
+    method: 'DELETE',
+    path: `/spaces/${spaceId}/webhook_definitions/${webhookId}`,
+    headers: defaultHeader
+  };
+}

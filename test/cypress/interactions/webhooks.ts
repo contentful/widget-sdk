@@ -6,7 +6,8 @@ import {
   postWebhook,
   defaultWebhookId,
   getWebhookCalls,
-  getWebhooksCallsState
+  getWebhooksCallsState,
+  deleteWebhook
 } from '../util/requests';
 
 const empty = require('../fixtures/responses/empty.json');
@@ -144,4 +145,28 @@ export function noWebhooksCallsResponse() {
       }
     })
     .as(state.Webhooks.CALLS_NONE);
+}
+
+export function defaultWebhookDeletedSuccessResponse() {
+  cy.addInteraction({
+    provider: 'webhooks',
+    state: state.Webhook.DEFAULT,
+    uponReceiving: 'Delete request for deletion default webhook',
+    withRequest: deleteWebhook(defaultSpaceId, defaultWebhookId),
+    willRespondWith: {
+      status: 204
+    }
+  }).as(state.Webhooks.NONE);
+}
+
+export function defaultWebhookDeletedErrorResponse() {
+  cy.addInteraction({
+    provider: 'webhooks',
+    state: state.Webhook.DEFAULT,
+    uponReceiving: 'Delete request with error response for deletion default webhook',
+    withRequest: deleteWebhook(defaultSpaceId, defaultWebhookId),
+    willRespondWith: {
+      status: 500
+    }
+  }).as(state.Webhooks.ERROR);
 }

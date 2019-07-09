@@ -5,6 +5,7 @@ declare global {
       setAuthTokenToLocalStorage: typeof setAuthTokenToLocalStorage;
       enableFeatureFlags: typeof enableFeatureFlags;
       disableFeatureFlags: typeof disableFeatureFlags;
+      verifyNotification: typeof verifyNotification;
     }
   }
   interface Window {
@@ -47,9 +48,17 @@ export function disableFeatureFlags(flags: Array<string>): void {
   window.localStorage.setItem('ui_enable_flags', JSON.stringify(sorted));
 }
 
+export function verifyNotification(type: 'success' | 'error', message: string) {
+  cy.getByTestId('cf-ui-notification')
+    .should('contain', message)
+    .should('have.attr', 'data-intent')
+    .and('be.eq', type);
+}
+
 Cypress.Commands.add('setAuthTokenToLocalStorage', setAuthTokenToLocalStorage);
 Cypress.Commands.add('enableFeatureFlags', enableFeatureFlags);
 Cypress.Commands.add('disableFeatureFlags', disableFeatureFlags);
+Cypress.Commands.add('verifyNotification', verifyNotification);
 
 Cypress.Commands.overwrite('visit', (visit, url) => {
   cy.readFile('test/cypress/support/unfetch.js').then(polyfill => {

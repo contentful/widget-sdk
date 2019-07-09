@@ -6,10 +6,18 @@ import {
   defaultWebhookResponse,
   noWebhookCallsResponse,
   customWebhookSingleEventResponse,
-  webhookCallSuccessfulResponse
+  webhookCallSuccessfulResponse,
+  defaultWebhookDeletedSuccessResponse,
+  noWebhooksResponse,
+  defaultWebhookDeletedErrorResponse
 } from '../../../interactions/webhooks';
 
 describe('Webhook', () => {
+  const newWebhook = {
+    name: 'Webhook',
+    url: 'https://www.contentful.com/'
+  };
+
   before(() =>
     cy.startFakeServer({
       consumer: 'user_interface',
@@ -30,11 +38,6 @@ describe('Webhook', () => {
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks/new`);
       cy.wait([`@${state.Token.VALID}`]);
     });
-
-    const newWebhook = {
-      name: 'Webhook',
-      url: 'https://www.contentful.com/'
-    };
 
     it('checks that default webhook is successfully created', () => {
       defaultWebhookCreatedSuccessResponse();
@@ -73,6 +76,45 @@ describe('Webhook', () => {
     it('renders webhook call result', () => {
       cy.getByTestId('status-indicator').should('be.visible');
       cy.getByTestId('cf-ui-table-row').should('have.length', 1);
+    });
+  });
+
+  context('removing a webhook', () => {
+    beforeEach(() => {
+      defaultWebhookResponse();
+      noWebhookCallsResponse();
+      cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks/${defaultWebhookId}`);
+      cy.wait([
+        `@${state.Token.VALID}`,
+        `@${state.Webhook.DEFAULT}`,
+        `@${state.Webhook.CALLS_NONE}`
+      ]);
+    });
+
+    it('checks that default webhook is removed successfully', () => {
+      defaultWebhookDeletedSuccessResponse();
+      noWebhooksResponse();
+
+      cy.getByTestId('webhook-settings').click();
+      cy.getByTestId('webhook-remove').click();
+      cy.getByTestId('remove-webhook-confirm').click();
+
+      cy.wait([`@${state.Webhooks.NONE}`]);
+      cy.verifyNotification('success', `Webhook "${newWebhook.name}" deleted successfully.`);
+    });
+
+    //Test will be added after fixing https://contentful.atlassian.net/browse/EXT-981. As currently server error is not handled.
+    it.skip('checks that error response is handled properly', () => {
+      defaultWebhookDeletedErrorResponse();
+
+      cy.getByTestId('cf-ui-tab')
+        .first()
+        .click();
+      cy.getByTestId('webhook-remove').click();
+      cy.getByTestId('remove-webhook-confirm').click();
+
+      cy.wait([`@${state.Webhooks.ERROR}`]);
+      cy.verifyNotification('error', ``);
     });
   });
 });
