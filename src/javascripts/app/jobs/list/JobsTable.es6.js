@@ -120,7 +120,6 @@ function JobWithExsitingEntryRow({
       {({ onClick, getHref }) => (
         <TableRow
           className={styles.jobRow}
-          key={job.sys.id}
           data-test-id="scheduled-job"
           tabIndex="0"
           onClick={e => {
@@ -164,7 +163,7 @@ JobWithExsitingEntryRow.propTypes = {
 
 function JobWithMissingEntryRow({ job, user }) {
   return (
-    <TableRow key={job.sys.id} data-test-id="scheduled-job">
+    <TableRow data-test-id="scheduled-job">
       <TableCell>
         {moment
           .utc(job.scheduledAt)
@@ -228,6 +227,7 @@ export default class JobsTable extends Component {
                 const contentType = contentTypesData[entry.sys.contentType.sys.id];
                 return (
                   <JobWithExsitingEntryRow
+                    key={job.sys.id}
                     job={job}
                     user={user}
                     entry={entry}
@@ -237,7 +237,7 @@ export default class JobsTable extends Component {
                   />
                 );
               } else {
-                return <JobWithMissingEntryRow job={job} user={user} />;
+                return <JobWithMissingEntryRow key={job.sys.id} job={job} user={user} />;
               }
             })}
           </TableBody>
