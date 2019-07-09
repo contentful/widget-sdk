@@ -21,7 +21,7 @@ const RowMenu = ({ isOpen, setOpen, setEditing, disabled }) => {
         <div ref={refButton}>
           <IconButton
             disabled={disabled}
-            testId={'action-button'}
+            testId="row-menu.action-button"
             label="Action"
             buttonType="primary"
             iconProps={{ icon: 'MoreHorizontal' }}

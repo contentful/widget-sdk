@@ -3,16 +3,19 @@ import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation.es6';
 import { cleanup, render } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 
-const build = props =>
+const build = (props = {}) =>
   render(
     <SpaceTeamsPagePresentation
       {...{
-        ...props,
-        isPending: false,
+        memberships: [],
+        teams: [],
         availableRoles: [],
         onUpdateTeamSpaceMembership: () => {},
+        isLoading: false,
+        isPending: false,
         readOnly: false,
-        currentUserAdminSpaceMemberships: []
+        currentUserAdminSpaceMemberships: [],
+        ...props
       }}
     />
   );
@@ -26,7 +29,7 @@ describe('SpaceTeamsPage', () => {
 
   describe('being rendered', () => {
     it('should not break', () => {
-      expect(() => build({ memberships: [], teams: [], isLoading: false })).not.toThrow();
+      expect(() => build()).not.toThrow();
     });
   });
 
@@ -157,7 +160,7 @@ describe('SpaceTeamsPage', () => {
 
       const rows = getAllByTestId('membership-row');
       expect(rows).toHaveLength(2);
-      expect(getAllByTestId('action-button')).toHaveLength(2);
+      expect(getAllByTestId('row-menu.action-button')).toHaveLength(2);
     });
 
     it('should render cells with team details', () => {

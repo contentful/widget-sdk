@@ -12,7 +12,11 @@ import useAsync from 'app/common/hooks/useAsync.es6';
 import resolveLinks from 'data/LinkResolver.es6';
 import { getModule } from 'NgRegistry.es6';
 
-import { getTeamsSpaceMembershipsOfSpace, updateTeamSpaceMembership, getAllTeams } from '../TeamRepository.es6';
+import {
+  getTeamsSpaceMembershipsOfSpace,
+  updateTeamSpaceMembership,
+  getAllTeams
+} from '../TeamRepository.es6';
 import { getSectionVisibility } from '../AccessChecker/index.es6';
 import { ADMIN_ROLE_ID } from '../constants.es6';
 
@@ -158,20 +162,18 @@ const SpaceTeamsPage = ({ spaceId, onReady }) => {
   }
 
   return (
-    <>
-      <SpaceTeamsPagePresentation
-        {...{
-          memberships,
-          availableRoles,
-          readOnly,
-          teams,
-          isLoading,
-          isPending,
-          onUpdateTeamSpaceMembership,
-          currentUserAdminSpaceMemberships
-        }}
-      />
-    </>
+    <SpaceTeamsPagePresentation
+      {...{
+        memberships,
+        availableRoles,
+        readOnly,
+        teams,
+        isLoading,
+        isPending,
+        onUpdateTeamSpaceMembership,
+        currentUserAdminSpaceMemberships
+      }}
+    />
   );
 };
 

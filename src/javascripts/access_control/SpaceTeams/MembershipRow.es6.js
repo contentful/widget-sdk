@@ -94,9 +94,13 @@ const MembershipRow = ({
         onConfirm={() => showUpdateConfirmation(false) || onUpdate(true)}
       />
       <TableCell className={styles.cell} testId="team-cell">
-        <div className={styles.cellTeamName}>{name}</div>
+        <div className={styles.cellTeamName} data-test-id="team.name">
+          {name}
+        </div>
         {/*This truncation is a fallback for IE and pre-68 FF, which don't support css line-clamp*/}
-        <div className={styles.cellTeamDescription}>{truncate(description, { length: 130 })}</div>
+        <div className={styles.cellTeamDescription} data-test-id="team.description">
+          {truncate(description, { length: 130 })}
+        </div>
       </TableCell>
       {isEditing ? (
         <TableCell colSpan={3}>
