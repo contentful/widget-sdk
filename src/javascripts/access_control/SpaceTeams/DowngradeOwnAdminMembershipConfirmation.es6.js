@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { TextInput, ModalConfirm } from '@contentful/forma-36-react-components';
 
 const DowngradeOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm }) => {
-  const [repeat, setRepeat] = useState('');
+  const [userConfirmationInput, setUserConfirmationInput] = useState('');
 
   useEffect(() => {
-    !isShown && setRepeat('');
+    !isShown && setUserConfirmationInput('');
   }, [isShown]);
 
   return (
@@ -19,7 +19,7 @@ const DowngradeOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm }) 
       intent="negative"
       confirmLabel="Confirm update"
       cancelLabel="Keep admin privileges"
-      isConfirmDisabled={repeat !== 'I UNDERSTAND'}>
+      isConfirmDisabled={userConfirmationInput !== 'I UNDERSTAND'}>
       <>
         <p>
           You are about to remove your own admin privileges for this space. This can not be undone
@@ -30,7 +30,10 @@ const DowngradeOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm }) 
           If you definitely want to delete this user, please type &quot;I UNDERSTAND&quot; in the
           field below:
         </p>
-        <TextInput value={repeat} onChange={({ target: { value } }) => setRepeat(value)} />
+        <TextInput
+          value={userConfirmationInput}
+          onChange={({ target: { value } }) => setUserConfirmationInput(value)}
+        />
       </>
     </ModalConfirm>
   );

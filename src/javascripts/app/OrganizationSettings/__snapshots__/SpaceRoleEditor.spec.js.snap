@@ -440,7 +440,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                   >
                     <li
                       class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
-                      data-test-id="cf-ui-dropdown-list-item"
+                      data-test-id="space-role-editor.admin-option"
                     >
                       <button
                         class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
@@ -457,7 +457,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                             <input
                               aria-label="Admin"
                               class="ControlledInput__ControlledInput___2XK3j"
-                              data-test-id="space-role-editor.admin-option"
+                              data-test-id="ctf-ui-checkbox"
                               id="__cf_builtin_admin"
                               type="checkbox"
                               value=""
@@ -488,7 +488,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                     </li>
                     <li
                       class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
-                      data-test-id="cf-ui-dropdown-list-item"
+                      data-test-id="space-role-editor.role-option"
                     >
                       <button
                         class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
@@ -501,7 +501,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                         >
                           <div
                             class="ControlledInputField__ControlledInputField___2uIG9"
-                            data-test-id="space-role-editor.role-option"
+                            data-test-id="cf-ui-checkbox-field"
                           >
                             <input
                               aria-label="Police officer"
@@ -526,7 +526,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                     </li>
                     <li
                       class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
-                      data-test-id="cf-ui-dropdown-list-item"
+                      data-test-id="space-role-editor.role-option"
                     >
                       <button
                         class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
@@ -539,7 +539,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                         >
                           <div
                             class="ControlledInputField__ControlledInputField___2uIG9"
-                            data-test-id="space-role-editor.role-option"
+                            data-test-id="cf-ui-checkbox-field"
                           >
                             <input
                               aria-label="Thief"
@@ -611,11 +611,11 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                       isDisabled={false}
                       isTitle={false}
                       onClick={[Function]}
-                      testId="cf-ui-dropdown-list-item"
+                      testId="space-role-editor.admin-option"
                     >
                       <li
                         className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
-                        data-test-id="cf-ui-dropdown-list-item"
+                        data-test-id="space-role-editor.admin-option"
                       >
                         <button
                           className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
@@ -639,10 +639,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                   disabled={false}
                                   id="__cf_builtin_admin"
                                   labelText="Admin"
-                                  onChange={[Function]}
-                                  onClick={[Function]}
                                   required={false}
-                                  testId="space-role-editor.admin-option"
+                                  testId="ctf-ui-checkbox"
                                   type="checkbox"
                                 >
                                   <ControlledInput
@@ -650,22 +648,19 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                     disabled={false}
                                     id="__cf_builtin_admin"
                                     labelText="Admin"
-                                    onChange={[Function]}
-                                    onClick={[Function]}
                                     required={false}
-                                    testId="space-role-editor.admin-option"
+                                    testId="ctf-ui-checkbox"
                                     type="checkbox"
                                   >
                                     <input
                                       aria-label="Admin"
                                       checked={false}
                                       className="ControlledInput__ControlledInput___2XK3j"
-                                      data-test-id="space-role-editor.admin-option"
+                                      data-test-id="ctf-ui-checkbox"
                                       disabled={false}
                                       id="__cf_builtin_admin"
                                       onBlur={[Function]}
                                       onChange={[Function]}
-                                      onClick={[Function]}
                                       onFocus={[Function]}
                                       required={false}
                                       type="checkbox"
@@ -722,11 +717,11 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                       isTitle={false}
                       key="police"
                       onClick={[Function]}
-                      testId="cf-ui-dropdown-list-item"
+                      testId="space-role-editor.role-option"
                     >
                       <li
                         className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
-                        data-test-id="cf-ui-dropdown-list-item"
+                        data-test-id="space-role-editor.role-option"
                       >
                         <button
                           className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
@@ -750,7 +745,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                 labelText="Police officer"
                                 onChange={[Function]}
                                 onClick={[Function]}
-                                testId="space-role-editor.role-option"
+                                testId="cf-ui-checkbox-field"
                                 value="police"
                               >
                                 <ControlledInputField
@@ -761,12 +756,12 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                   labelText="Police officer"
                                   onChange={[Function]}
                                   onClick={[Function]}
-                                  testId="space-role-editor.role-option"
+                                  testId="cf-ui-checkbox-field"
                                   value="police"
                                 >
                                   <div
                                     className="ControlledInputField__ControlledInputField___2uIG9"
-                                    data-test-id="space-role-editor.role-option"
+                                    data-test-id="cf-ui-checkbox-field"
                                     onClick={[Function]}
                                   >
                                     <ControlledInput
@@ -827,11 +822,11 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                       isTitle={false}
                       key="thief"
                       onClick={[Function]}
-                      testId="cf-ui-dropdown-list-item"
+                      testId="space-role-editor.role-option"
                     >
                       <li
                         className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
-                        data-test-id="cf-ui-dropdown-list-item"
+                        data-test-id="space-role-editor.role-option"
                       >
                         <button
                           className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
@@ -855,7 +850,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                 labelText="Thief"
                                 onChange={[Function]}
                                 onClick={[Function]}
-                                testId="space-role-editor.role-option"
+                                testId="cf-ui-checkbox-field"
                                 value="thief"
                               >
                                 <ControlledInputField
@@ -866,12 +861,12 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                   labelText="Thief"
                                   onChange={[Function]}
                                   onClick={[Function]}
-                                  testId="space-role-editor.role-option"
+                                  testId="cf-ui-checkbox-field"
                                   value="thief"
                                 >
                                   <div
                                     className="ControlledInputField__ControlledInputField___2uIG9"
-                                    data-test-id="space-role-editor.role-option"
+                                    data-test-id="cf-ui-checkbox-field"
                                     onClick={[Function]}
                                   >
                                     <ControlledInput

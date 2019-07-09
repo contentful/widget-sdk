@@ -127,18 +127,11 @@ class SpaceRoleEditor extends React.Component {
           </Button>
         }>
         <DropdownList>
-          <DropdownListItem onClick={this.toggleRole(ADMIN_ROLE_ID)}>
+          <DropdownListItem
+            testId="space-role-editor.admin-option"
+            onClick={this.toggleRole(ADMIN_ROLE_ID)}>
             <div className={styles.adminListItem}>
-              <Checkbox
-                testId="space-role-editor.admin-option"
-                labelText={ADMIN_ROLE.name}
-                checked={isAdmin}
-                onChange={this.toggleRole(ADMIN_ROLE_ID)}
-                onClick={event => {
-                  event.stopPropagation();
-                }}
-                id={ADMIN_ROLE_ID}
-              />
+              <Checkbox labelText={ADMIN_ROLE.name} checked={isAdmin} id={ADMIN_ROLE_ID} />
               <div>{ADMIN_ROLE.name}</div>
               <div className={styles.adminSubtitle}>Can manage everything in the space</div>
             </div>
@@ -147,13 +140,19 @@ class SpaceRoleEditor extends React.Component {
         <DropdownList border="top" maxHeight={305}>
           <DropdownListItem isTitle={true}>other roles</DropdownListItem>
           {sortedOptions.map(({ name, sys: { id } }) => (
-            <DropdownListItem key={id} onClick={this.toggleRole(id)}>
+            // Allow the whole list item to be clicked
+            <DropdownListItem
+              key={id}
+              testId="space-role-editor.role-option"
+              onClick={this.toggleRole(id)}>
               <CheckboxField
-                testId="space-role-editor.role-option"
                 labelIsLight
                 labelText={name}
                 checked={value.includes(id)}
                 value={id}
+                // Somehow clicking the Checkbox label triggers two bubbling click events,
+                //  one for the label and one for the checkbox.
+                // Therefore use onChange and stop click propagation when the field is clicked directly
                 onChange={this.toggleRole(id)}
                 onClick={event => {
                   event.stopPropagation();
