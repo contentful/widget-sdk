@@ -1,10 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
-import { Heading, Paragraph, TextLink, Note } from '@contentful/forma-36-react-components';
+import {
+  DisplayText,
+  Heading,
+  Paragraph,
+  TextLink,
+  Note,
+  Typography
+} from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import { href } from 'states/Navigator.es6';
-import { billing, invoices } from './links.es6';
+import { billing } from './links.es6';
 
 import Icon from 'ui/Components/Icon.es6';
 import Price from 'ui/Components/Price.es6';
@@ -21,6 +28,9 @@ const styles = {
   }),
   linkWithIcon: css({
     marginTop: tokens.spacingXs
+  }),
+  grandTotal: css({
+    marginBottom: tokens.spacingM
   })
 };
 
@@ -31,37 +41,20 @@ export function hasAnyInaccessibleSpaces(plans) {
   });
 }
 
-function PayingOnDemandOrgCopy({ grandTotal, isOrgOwner, organizationId }) {
+function PayingOnDemandOrgCopy({ grandTotal }) {
   return (
     <>
-      <Heading className="entity-sidebar__heading">Grand total</Heading>
-      <Paragraph data-test-id="subscription-page.sidebar.grand-total">
-        Your grand total is <Price value={grandTotal} style={{ fontWeight: 'bold' }} /> per month.
-      </Paragraph>
-      {isOrgOwner && (
-        <Paragraph style={{ marginBottom: '28px' }}>
-          <Icon name="invoice" className={styles.icon} />
-          <TextLink
-            href={href(invoices(organizationId))}
-            className={styles.linkWithIcon}
-            testId="subscription-page.sidebar.invoice-link">
-            View invoices
-          </TextLink>
-        </Paragraph>
-      )}
+      <Heading className="entity-sidebar__heading">Monthly total</Heading>
+      <DisplayText
+        element="h2"
+        data-test-id="subscription-page.sidebar.grand-total"
+        className={styles.grandTotal}>
+        <Price value={grandTotal} />
+      </DisplayText>
       <Note>
         <Paragraph>
-          Note that the monthly invoice amount might deviate from the total shown above. This
-          happens when you hit overages or make changes to your subscription during a billing cycle.
-        </Paragraph>
-        <Paragraph>
-          <Icon name="invoice" className={styles.icon} />
-          <TextLink
-            href={href(invoices(organizationId))}
-            className={styles.linkWithIcon}
-            testId="subscription-page.sidebar.invoice-link">
-            View invoices
-          </TextLink>
+          The amount on your invoice might differ from the amount shown above because of usage
+          overages or changes you make to the subscription during a billing cycle.
         </Paragraph>
       </Note>
     </>
@@ -90,27 +83,24 @@ function InaccessibleSpacesCopy({ isOrgOwner }) {
   return (
     <>
       <Heading className="entity-sidebar__heading">Spaces without permission</Heading>
-      <Paragraph>
-        Some of your spaces are not accessible, which means you cannot view the content or usage of
-        those spaces.
-      </Paragraph>
-      <Paragraph>
-        However, since you’re an organization {isOrgOwner ? 'owner' : 'admin'} you can grant
-        yourself access by going to <i>users</i> and adding yourself to the space.
-      </Paragraph>
+      <Typography>
+        <Paragraph>
+          You can’t see usage or content for some of your spaces because you’re not a member of
+          those spaces.
+        </Paragraph>
+        <Paragraph>
+          However, since you’re an organization {isOrgOwner ? 'owner' : 'admin'} you can grant
+          yourself access by going to <i>users</i> and adding yourself to the space.
+        </Paragraph>
+      </Typography>
     </>
   );
 }
 
-function NonEnterpriseCopy({ isOrgBillable }) {
+function NonEnterpriseCopy() {
   return (
     <>
       <Heading className="entity-sidebar__heading">Help</Heading>
-      <Paragraph>
-        {isOrgBillable && 'Do you need to upgrade or downgrade your spaces?'}
-        {!isOrgBillable && 'Do you have any questions about our pricing?'}
-        <> Don’t hesitate to talk to our customer success team.</>
-      </Paragraph>
       <Paragraph>
         <ContactUsButton
           className={styles.linkWithIcon}
