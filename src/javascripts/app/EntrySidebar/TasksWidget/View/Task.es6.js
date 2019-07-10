@@ -205,6 +205,7 @@ export default class Task extends React.Component {
     const ctaLabel = isDraft ? 'Create task' : 'Save changes';
     const ctaContext = isDraft ? 'primary' : 'positive';
     const characterLimit = 3000;
+    const hasAssignee = !!this.state.pendingChanges.assigneeKey;
 
     return (
       <Form spacing="condensed" onClick={e => e.stopPropagation()} className={styles.editForm}>
@@ -226,6 +227,7 @@ export default class Task extends React.Component {
             buttonType={ctaContext}
             className={styles.editSubmit}
             onClick={() => this.handleSubmit()}
+            disabled={isDraft && !hasAssignee}
             size="small">
             {ctaLabel}
           </Button>
