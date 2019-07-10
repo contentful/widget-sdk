@@ -2,12 +2,13 @@ import React, { useReducer, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import isHotKey from 'is-hotkey';
 import {
-  TextField,
+  TextInput,
   Dropdown,
   DropdownList,
   DropdownListItem,
   SkeletonBodyText,
-  SkeletonContainer
+  SkeletonContainer,
+  ValidationMessage
 } from '@contentful/forma-36-react-components';
 
 const TOGGLED_LIST = 'TOGGLED_LIST';
@@ -125,25 +126,23 @@ export default function Autocomplete({
   return (
     <>
       <Dropdown
-        isOpen={isOpen && (items.length || isLoading)}
+        isOpen={isOpen && (items.length > 0 || isLoading)}
         onClose={() => dispatch({ type: TOGGLED_LIST })}
         className={className}
         toggleElement={
-          <TextField
+          <TextInput
             className={className}
             value={query}
             onChange={handleQueryChanged}
             onFocus={() => toggleList(true)}
             onKeyDown={handleKeyDown}
-            textInputProps={{
-              disabled,
-              placeholder,
-              width
-            }}
+            disabled={disabled}
+            placeholder={placeholder}
+            width={width}
             testId="autocomplete.input"
-            validationMessage={validationMessage}
           />
         }>
+        {validationMessage && <ValidationMessage>{validationMessage}</ValidationMessage>}
         <DropdownList testId="autocomplete.dropdown-list">
           {isLoading ? (
             <OptionSkeleton />
