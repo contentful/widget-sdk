@@ -106,7 +106,7 @@ export default class StatusWidget extends React.PureComponent {
                   buttonType="positive"
                   disabled={primary.isDisabled() || isDisabled}
                   loading={primary.inProgress()}
-                  testId="primary-action-change-state"
+                  testId={`change-state-${primary.targetStateId}`}
                   onClick={() => {
                     primary.execute();
                   }}

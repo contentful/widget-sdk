@@ -88,7 +88,7 @@ export default class PublicationWidget extends React.PureComponent {
                   buttonType="positive"
                   disabled={primary.isDisabled()}
                   loading={primary.inProgress()}
-                  testId="primary-action-change-state"
+                  testId={`change-state-${primary.targetStateId}`}
                   onClick={() => {
                     primary.execute();
                   }}

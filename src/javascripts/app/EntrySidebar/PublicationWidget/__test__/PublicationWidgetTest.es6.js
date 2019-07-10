@@ -41,13 +41,16 @@ export const TEST_IDS = {
   dateText: 'last-saved',
   publishedStatus: 'entity-state',
   revertButton: 'discard-changed-button',
-  primaryActionButton: 'primary-action-change-state',
   primaryActionRestrictionNote: 'action-restriction-note',
   secondaryActionsDropdown: 'change-state-menu-trigger',
   restrictedActionIcon: 'action-restriction-icon'
 };
 
 export const select = mapValues(TEST_IDS, testId => elem => elem.queryByTestId(testId));
+select.primaryActionButton = elem => {
+  // TODO: Use test-id once we do not need dynamic test id on this button for e2e tests.
+  return elem.container.querySelector('.primary-publish-button');
+};
 select.actionByCommand = (elem, { targetStateId }) =>
   elem.queryByTestId(`change-state-${targetStateId}`);
 

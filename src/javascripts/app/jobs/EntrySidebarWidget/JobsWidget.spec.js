@@ -63,8 +63,8 @@ describe('<JobWidget />', () => {
     const [renderResult] = build({ entity: createEntry() });
 
     expect(renderResult.getByTestId('jobs-skeleton')).toBeInTheDocument();
-    expect(renderResult.getByTestId('primary-action-change-state')).toBeInTheDocument();
-    expect(renderResult.getByTestId('primary-action-change-state').disabled).toBe(true);
+    expect(renderResult.getByTestId('change-state-published')).toBeInTheDocument();
+    expect(renderResult.getByTestId('change-state-published').disabled).toBe(true);
 
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
       expect.any(Function),
@@ -72,10 +72,10 @@ describe('<JobWidget />', () => {
     );
 
     await wait();
-    ('primary-action-change-state');
+    ('change-state-published');
 
     expect(renderResult.queryByTestId('jobs-skeleton')).toBeNull();
-    expect(renderResult.getByTestId('primary-action-change-state').disabled).toBe(false);
+    expect(renderResult.getByTestId('change-state-published').disabled).toBe(false);
     expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
   });
 
@@ -84,8 +84,8 @@ describe('<JobWidget />', () => {
     const [renderResult] = build({ entity: createEntry() });
 
     expect(renderResult.getByTestId('jobs-skeleton')).toBeInTheDocument();
-    expect(renderResult.getByTestId('primary-action-change-state')).toBeInTheDocument();
-    expect(renderResult.getByTestId('primary-action-change-state').disabled).toBe(true);
+    expect(renderResult.getByTestId('change-state-published')).toBeInTheDocument();
+    expect(renderResult.getByTestId('change-state-published').disabled).toBe(true);
 
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
       expect.any(Function),
@@ -95,7 +95,7 @@ describe('<JobWidget />', () => {
     await wait();
 
     expect(renderResult.queryByTestId('jobs-skeleton')).toBeNull();
-    expect(renderResult.getByTestId('primary-action-change-state').disabled).toBe(false);
+    expect(renderResult.getByTestId('change-state-published').disabled).toBe(false);
     expect(renderResult.queryByTestId('schedule-publication')).toBeNull();
   });
 
@@ -105,7 +105,7 @@ describe('<JobWidget />', () => {
     const [renderResult] = build({ entity: publishedEntry });
     await wait();
     expect(renderResult.getByTestId('change-state-menu-trigger')).toBeDisabled();
-    expect(renderResult.getByTestId('primary-action-change-state')).toBeDisabled();
+    expect(renderResult.getByTestId('change-state-published')).toBeDisabled();
   });
 
   it('does not render scheduled publication cta if primary action is not allowed', async () => {

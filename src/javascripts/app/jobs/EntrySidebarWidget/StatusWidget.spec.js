@@ -47,11 +47,12 @@ function describeStatusWidgetSpecifics(render) {
     });
 
     it('does not overrules disabled primary command', () => {
+      const primary = commands.disabled;
       const { wrapper } = render({
         isDisabled: false,
-        primary: commands.disabled
+        primary
       });
-      expectPrimaryButton(wrapper, { isDisabled: true });
+      expectPrimaryButton(wrapper, primary, { isDisabled: true });
     });
   });
 
