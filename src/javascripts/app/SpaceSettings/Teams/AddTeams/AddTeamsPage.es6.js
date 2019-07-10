@@ -242,13 +242,13 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
     isLoading;
 
   const availableTeams = teams.filter(
-    team =>
-      !selectedTeamIds.includes(team.sys.id) &&
-      !teamSpaceMemberships.find(tsm => tsm.sys.team.sys.id === team.sys.id)
+    team => !teamSpaceMemberships.find(tsm => tsm.sys.team.sys.id === team.sys.id)
   );
 
   const teamsInAutocomplete = _(availableTeams)
-    .filter(team => team.name.toLowerCase().includes(searchTerm))
+    .filter(
+      team => !selectedTeamIds.includes(team.sys.id) && team.name.toLowerCase().includes(searchTerm)
+    )
     .take(5)
     .value();
 
