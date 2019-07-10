@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Action } from 'data/CMA/EntityActions.es6';
-import Dialog from '../Dialog/index.es6';
+import { ModalConfirm } from '@contentful/forma-36-react-components';
 import { EntityType, getNumberOfLinks } from '../constants.es6';
 import FetchLinksToEntity, { RequestState } from '../FetchLinksToEntity/index.es6';
 import {
@@ -25,7 +25,8 @@ class StateChangeConfirmation extends React.Component {
       id: PropTypes.string,
       type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY])
     }),
-    dialogSessionId: PropTypes.string.isRequired
+    dialogSessionId: PropTypes.string.isRequired,
+    isShown: PropTypes.bool
   };
 
   handleClick = ({ linkEntityId, incomingLinksCount }) => {
@@ -65,7 +66,7 @@ class StateChangeConfirmation extends React.Component {
   };
 
   render() {
-    const { action, entityInfo, onCancel } = this.props;
+    const { action, entityInfo, onCancel, isShown } = this.props;
 
     return (
       <FetchLinksToEntity
@@ -79,41 +80,33 @@ class StateChangeConfirmation extends React.Component {
           });
 
           return (
-            <Dialog testId="state-change-confirmation-dialog">
-              {requestState !== RequestState.PENDING && <Dialog.Header>{title}</Dialog.Header>}
-              <Dialog.Body>
-                {requestState === RequestState.PENDING && <Loader />}
-                {requestState === RequestState.SUCCESS && (
-                  <IncomingLinksList
-                    origin={IncomingLinksOrigin.DIALOG}
-                    entityId={entityInfo.id}
-                    entityType={entityInfo.type}
-                    links={links}
-                    message={body}
-                    onClick={this.handleClick}
-                    onComponentMount={() => {
-                      this.handleDialogOpen(links.length);
-                    }}
-                  />
-                )}
-                {requestState === RequestState.ERROR && <IncomingLinksListError />}
-              </Dialog.Body>
-              {requestState !== RequestState.PENDING && (
-                <Dialog.Controls>
-                  <button
-                    className="btn-caution"
-                    data-test-id="confirm"
-                    onClick={() => {
-                      this.handleConfirm(links.length);
-                    }}>
-                    {confirm}
-                  </button>
-                  <button className="btn-secondary-action" data-test-id="cancel" onClick={onCancel}>
-                    Cancel
-                  </button>
-                </Dialog.Controls>
+            <ModalConfirm
+              isShown={isShown}
+              testId="state-change-confirmation-dialog"
+              intent="negative"
+              title={requestState !== RequestState.PENDING ? title : ''}
+              onConfirm={() => this.handleConfirm(links.length)}
+              confirmLabel={confirm}
+              confirmTestId="confirm"
+              onCancel={() => onCancel()}
+              cancelTestId="cancel"
+              isConfirmLoading={requestState === RequestState.PENDING}>
+              {requestState === RequestState.PENDING && <Loader />}
+              {requestState === RequestState.SUCCESS && (
+                <IncomingLinksList
+                  origin={IncomingLinksOrigin.DIALOG}
+                  entityId={entityInfo.id}
+                  entityType={entityInfo.type}
+                  links={links}
+                  message={body}
+                  onClick={this.handleClick}
+                  onComponentMount={() => {
+                    this.handleDialogOpen(links.length);
+                  }}
+                />
               )}
-            </Dialog>
+              {requestState === RequestState.ERROR && <IncomingLinksListError />}
+            </ModalConfirm>
           );
         }}
       />

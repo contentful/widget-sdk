@@ -10,6 +10,12 @@ describe('entityEditor/StateController', () => {
       $provide.constant('navigation/SlideInNavigator/index.es6', {
         goToPreviousSlideOrExit: this.stubs.goToPreviousSlideOrExit
       });
+
+      $provide.constant('app/common/ModalLauncher.es6', {
+        default: {
+          open: sinon.stub().resolves(true)
+        }
+      });
     });
 
     const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
@@ -18,7 +24,6 @@ describe('entityEditor/StateController', () => {
       default: fakeLocaleStore
     });
 
-    const $q = this.$inject('$q');
     const createDocument = this.$inject('mocks/entityEditor/Document').create;
 
     this.rootScope = this.$inject('$rootScope');
@@ -32,10 +37,6 @@ describe('entityEditor/StateController', () => {
     this.$inject('access_control/AccessChecker').canPerformActionOnEntity = sinon
       .stub()
       .returns(true);
-
-    const dialogDefer = $q.defer();
-    this.$inject('modalDialog').open = sinon.stub().returns({ promise: dialogDefer.promise });
-    dialogDefer.resolve();
 
     const warnings = this.$inject('app/entity_editor/PublicationWarnings/index.es6');
     warnings.create = sinon.stub().returns({
@@ -102,6 +103,7 @@ describe('entityEditor/StateController', () => {
     it('makes delete request', function() {
       this.controller.delete.execute();
       this.$apply();
+
       sinon.assert.calledWith(
         this.spaceEndpoint,
         sinon.match({

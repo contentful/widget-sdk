@@ -17,6 +17,7 @@ import flushPromises from 'test/helpers/flushPromises';
 
 describe('StateChangeConfirmationDialog', () => {
   const defaultProps = {
+    isShown: true,
     onCancel: _.noop,
     onConfirm: _.noop,
     action: Action.Unpublish(),
@@ -73,9 +74,10 @@ describe('StateChangeConfirmationDialog', () => {
 
     assertBasicElementsExist(wrapper);
 
-    expect(getElement(wrapper, 'header').text()).toEqual(actionMessages.title);
-    expect(getElement(wrapper, 'content').text()).toEqual(actionMessages.body);
-    expect(getElement(wrapper, 'confirm').text()).toEqual(actionMessages.confirm);
+    expect(getElement(wrapper, 'cf-ui-modal-header').text()).toEqual(actionMessages.title);
+    expect(getElement(wrapper, 'cf-ui-modal-content').text()).toEqual(actionMessages.body);
+
+    expect(getElement(wrapper, 'confirm').text()).toContain(actionMessages.confirm);
     expect(getElement(wrapper, 'link').exists()).toBeFalsy();
   });
 
@@ -97,8 +99,8 @@ describe('StateChangeConfirmationDialog', () => {
     assertBasicElementsExist(wrapper);
 
     assertMessageEquals(getContentText(wrapper), actionMessages.body);
-    expect(getElement(wrapper, 'header').text()).toEqual(actionMessages.title);
-    expect(getElement(wrapper, 'confirm').text()).toEqual(actionMessages.confirm);
+    expect(getElement(wrapper, 'cf-ui-modal-header').text()).toEqual(actionMessages.title);
+    expect(getElement(wrapper, 'confirm').text()).toContain(actionMessages.confirm);
     assertLinksExist(wrapper, links);
   });
 
@@ -128,8 +130,8 @@ describe('StateChangeConfirmationDialog', () => {
     assertMessageEquals(getContentText(wrapper), actionMessages.body, {
       numberOfLinks: 2
     });
-    expect(getElement(wrapper, 'header').text()).toEqual(actionMessages.title);
-    expect(getElement(wrapper, 'confirm').text()).toEqual(actionMessages.confirm);
+    expect(getElement(wrapper, 'cf-ui-modal-header').text()).toEqual(actionMessages.title);
+    expect(getElement(wrapper, 'confirm').text()).toContain(actionMessages.confirm);
 
     assertElementExists(wrapper, 'links');
     assertLinksExist(wrapper, links);
@@ -178,16 +180,16 @@ describe('StateChangeConfirmationDialog', () => {
 });
 
 function getContentText(wrapper) {
-  return getElement(wrapper, 'content')
+  return getElement(wrapper, 'cf-ui-modal-content')
     .find('p')
     .text();
 }
 
 function assertBasicElementsExist(wrapper) {
   assertElementExists(wrapper, 'state-change-confirmation-dialog');
-  assertElementExists(wrapper, 'header');
-  assertElementExists(wrapper, 'content');
-  assertElementExists(wrapper, 'controls');
+  assertElementExists(wrapper, 'cf-ui-modal-header');
+  assertElementExists(wrapper, 'cf-ui-modal-content');
+  assertElementExists(wrapper, 'cf-ui-modal-controls');
   assertElementExists(wrapper, 'confirm');
   assertElementExists(wrapper, 'cancel');
 }

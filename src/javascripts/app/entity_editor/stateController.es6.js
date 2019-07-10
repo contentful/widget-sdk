@@ -1,4 +1,5 @@
 import { registerController } from 'NgRegistry.es6';
+import React from 'react';
 import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { caseofEq as caseof, otherwise } from 'sum-types';
@@ -6,6 +7,8 @@ import { State, Action } from 'data/CMA/EntityState.es6';
 import { Notification } from 'app/entity_editor/Notifications.es6';
 import { registerUnpublishedReferencesWarning } from 'app/entity_editor/PublicationWarnings/UnpublishedReferencesWarning/index.es6';
 import * as trackVersioning from 'analytics/events/versioning.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
+import * as random from 'utils/Random.es6';
 
 export default function register() {
   registerController('entityEditor/StateController', [
@@ -15,11 +18,11 @@ export default function register() {
     'validator',
     'otDoc',
     'command',
-    'modalDialog',
     'spaceContext',
     'analytics/Analytics.es6',
     'navigation/SlideInNavigator/index.es6',
     'app/entity_editor/PublicationWarnings/index.es6',
+    'app/entity_editor/Components/StateChangeConfirmationDialog/index.es6',
     function(
       $scope,
       $q,
@@ -27,11 +30,11 @@ export default function register() {
       validator,
       otDoc,
       Command,
-      modalDialog,
       spaceContext,
       Analytics,
       { goToPreviousSlideOrExit },
-      { create: createPublicationWarnings }
+      { create: createPublicationWarnings },
+      { default: StateChangeConfirmationDialog }
     ) {
       const controller = this;
       const permissions = otDoc.permissions;
@@ -297,14 +300,19 @@ export default function register() {
       }
 
       function showConfirmationMessage(props) {
-        return modalDialog.open({
-          template: '<cf-state-change-confirmation-dialog class="modal-background"/>',
-          backgroundClose: true,
-          scopeData: {
-            action: props.action,
-            entityInfo: $scope.entityInfo
-          }
-        }).promise;
+        return ModalLauncher.open(({ isShown, onClose }) => (
+          <StateChangeConfirmationDialog
+            dialogSessionId={random.id()}
+            isShown={isShown}
+            action={props.action}
+            entityInfo={$scope.entityInfo}
+            onConfirm={() => onClose(true)}
+            onCancel={() => onClose(false)}
+          />
+        )).then(wasConfirmed => {
+          if (wasConfirmed) return;
+          return Promise.reject();
+        });
       }
     }
   ]);

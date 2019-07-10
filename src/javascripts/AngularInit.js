@@ -49,9 +49,6 @@ angular
       ngRequire('app/ContentModel/Editor/contentTypeEditorController.es6').default();
       ngRequire('app/api/api_key_list/apiKeyListDirective.es6').default();
       ngRequire('app/asset_editor/cfAssetEditorDirective.es6').default();
-      ngRequire(
-        'app/entity_editor/Components/StateChangeConfirmationDialog/cfStateChangeConfirmationDialog.es6'
-      ).default();
       ngRequire('search/EntitySelector/entitySelector.es6').default();
       ngRequire('app/entity_editor/bulk_editor/cfBulkEditorDirective.es6').default();
       ngRequire('app/entity_editor/bulk_editor/cfBulkEntityEditorDirective.es6').default();
@@ -122,7 +119,6 @@ angular
       ngRequire(
         'components/shared/persistent_notification/cfPersistentNotificationDirective.es6'
       ).default();
-
       ngRequire('components/shared/space-wizard/SpaceWizardDirective.es6').default();
       ngRequire('components/shared/validation_error_display/cfErrorListDirective.es6').default();
       ngRequire(
