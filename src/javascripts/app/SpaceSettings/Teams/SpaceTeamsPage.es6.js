@@ -11,14 +11,13 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import useAsync from 'app/common/hooks/useAsync.es6';
 import resolveLinks from 'data/LinkResolver.es6';
 import { getModule } from 'NgRegistry.es6';
-
 import {
   getTeamsSpaceMembershipsOfSpace,
   updateTeamSpaceMembership,
   getAllTeams
-} from '../TeamRepository.es6';
-import { getSectionVisibility } from '../AccessChecker/index.es6';
-import { ADMIN_ROLE_ID } from '../constants.es6';
+} from 'access_control/TeamRepository.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
 
 import styles from './styles.es6';
 import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation.es6';

@@ -19,9 +19,9 @@ import {
 } from 'app/OrganizationSettings/PropTypes.es6';
 import { go } from 'states/Navigator.es6';
 
-import LoadingPlaceholder from './LoadingPlaceholder.es6';
+import LoadingPlaceholder from './List/LoadingPlaceholder.es6';
 import styles from './styles.es6';
-import MembershipRow from './MembershipRow.es6';
+import MembershipRow from './List/MembershipRow.es6';
 
 const goToAddTeams = () =>
   go({
