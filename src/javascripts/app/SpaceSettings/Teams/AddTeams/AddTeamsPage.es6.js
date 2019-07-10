@@ -59,7 +59,7 @@ const styles = {
   }),
   teamsList: css({
     height: '450px',
-    overflow: 'scroll',
+    overflow: 'auto',
     wordBreak: 'break-word'
   }),
 
