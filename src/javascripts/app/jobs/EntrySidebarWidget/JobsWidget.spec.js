@@ -6,6 +6,14 @@ import { Notification } from '@contentful/forma-36-react-components';
 import JobWidget from './JobsWidget.es6';
 import { getNotCanceledJobsForEntity } from '../DataManagement/JobsService.es6';
 
+const commandTemplate = {
+  execute: () => {},
+  isAvailable: () => true,
+  isDisabled: () => false,
+  inProgress: () => false,
+  isRestricted: () => false
+};
+
 jest.mock('../DataManagement/JobsService.es6');
 describe('<JobWidget />', () => {
   beforeEach(() => {
@@ -27,32 +35,20 @@ describe('<JobWidget />', () => {
       isSaving: false,
       status: 'draft',
       primary: {
+        ...commandTemplate,
         label: 'Publish',
-        targetStateId: 'published',
-        execute: () => {},
-        isAvailable: () => {},
-        isDisabled: () => false,
-        inProgress: () => {},
-        isRestricted: () => {}
+        targetStateId: 'published'
       },
       revert: {
+        ...commandTemplate,
         label: 'Publish',
-        targetStateId: 'published',
-        execute: () => {},
-        isAvailable: () => {},
-        isDisabled: () => false,
-        inProgress: () => {},
-        isRestricted: () => {}
+        targetStateId: 'published'
       },
       secondary: [
         {
+          ...commandTemplate,
           label: 'Archive',
-          targetStateId: 'published',
-          execute: () => {},
-          isAvailable: () => {},
-          isDisabled: () => false,
-          inProgress: () => {},
-          isRestricted: () => {}
+          targetStateId: 'published'
         }
       ],
       entity: createEntry(),
@@ -76,6 +72,7 @@ describe('<JobWidget />', () => {
     );
 
     await wait();
+    ('change-state-published');
 
     expect(renderResult.queryByTestId('jobs-skeleton')).toBeNull();
     expect(renderResult.getByTestId('change-state-published').disabled).toBe(false);
@@ -116,13 +113,10 @@ describe('<JobWidget />', () => {
     const [renderResult] = build({
       entity: createEntry(),
       primary: {
+        ...commandTemplate,
         label: 'Publish',
         targetStateId: 'published',
-        execute: () => {},
-        isAvailable: () => {},
-        isDisabled: () => true,
-        inProgress: () => {},
-        isRestricted: () => {}
+        isDisabled: () => true
       }
     });
 

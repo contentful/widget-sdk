@@ -84,7 +84,7 @@ module.exports = {
       }
     },
     {
-      files: ['src/**/*.spec.js', 'src/javascripts/__mocks__/**/*.js'],
+      files: ['src/**/*.spec.js', 'src/**/__test__/**/*.js', 'src/javascripts/__mocks__/**/*.js'],
       plugins: ['jest', 'rulesdir'],
       rules: {
         'jest/no-disabled-tests': 'warn',
@@ -93,7 +93,7 @@ module.exports = {
         'jest/no-jest-import': 'warn',
         'jest/prefer-to-have-length': 'warn',
         'jest/valid-expect': 'error',
-        'jest/consistent-test-it': 'warn',
+        'jest/consistent-test-it': ['warn', { fn: 'it' }],
         'jest/no-jasmine-globals': 'warn',
         'jest/no-test-prefixes': 'error',
         'jest/prefer-to-be-null': 'warn',

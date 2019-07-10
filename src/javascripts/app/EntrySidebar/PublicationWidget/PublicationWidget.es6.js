@@ -13,13 +13,8 @@ import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
 import CommandPropType from 'app/entity_editor/CommandPropType.es6';
 
-const PublicationStatus = ({ status }) => (
-  <div className="entity-sidebar__state">
-    <span
-      className="entity-sidebar__state-indicator"
-      data-state={status}
-      data-test-id="entity-state"
-    />
+const StatusBadge = ({ status }) => (
+  <div className="published-status" data-state={status} data-test-id="entity-state">
     <strong>Status: </strong>
     {status === 'archived' && <span>Archived</span>}
     {status === 'draft' && <span>Draft</span>}
@@ -28,18 +23,34 @@ const PublicationStatus = ({ status }) => (
   </div>
 );
 
-PublicationStatus.propTypes = {
+StatusBadge.propTypes = {
   status: PropTypes.string.isRequired
 };
 
-const RestrictedNote = ({ actionName }) => (
+const ActionRestrictedNote = ({ actionName }) => (
   <p className="f36-color--text-light f36-margin-top--xs" data-test-id="action-restriction-note">
     <Icon icon="Lock" color="muted" className="action-restricted__icon" />
     You do not have permission to {actionName.toLowerCase()}.
   </p>
 );
 
-RestrictedNote.propTypes = {
+ActionRestrictedNote.propTypes = {
+  actionName: PropTypes.string.isRequired
+};
+
+const RestrictedAction = ({ actionName }) => (
+  <React.Fragment>
+    <Icon
+      icon="Lock"
+      color="muted"
+      className="action-restricted__icon"
+      testId="action-restriction-icon"
+    />
+    {actionName}
+  </React.Fragment>
+);
+
+RestrictedAction.propTypes = {
   actionName: PropTypes.string.isRequired
 };
 
@@ -67,7 +78,7 @@ export default class PublicationWidget extends React.PureComponent {
     const secondaryActionsDisabled = every(secondary || [], action => action.isDisabled());
     return (
       <EntrySidebarWidget title="Status">
-        <PublicationStatus status={status} />
+        <StatusBadge status={status} />
         <div className="entity-sidebar__state-select">
           <div className="publish-buttons-row">
             {status !== 'published' && primary && (
@@ -110,21 +121,29 @@ export default class PublicationWidget extends React.PureComponent {
               <DropdownList testId="change-state-menu">
                 <DropdownListItem isTitle>Change status to</DropdownListItem>
                 {secondary &&
-                  secondary.map(action => (
-                    <DropdownListItem
-                      key={action.label}
-                      testId={`change-state-${action.targetStateId}`}
-                      onClick={() => {
-                        action.execute();
-                        this.setState({ isOpenDropdown: false });
-                      }}>
-                      {action.label}
-                    </DropdownListItem>
-                  ))}
+                  secondary.map(
+                    action =>
+                      action.isAvailable() && (
+                        <DropdownListItem
+                          key={action.label}
+                          testId={`change-state-${action.targetStateId}`}
+                          onClick={() => {
+                            action.execute();
+                            this.setState({ isOpenDropdown: false });
+                          }}
+                          isDisabled={action.isDisabled()}>
+                          {action.isRestricted() ? (
+                            <RestrictedAction actionName={action.label} />
+                          ) : (
+                            action.label
+                          )}
+                        </DropdownListItem>
+                      )
+                  )}
               </DropdownList>
             </Dropdown>
           </div>
-          {primary && primary.isRestricted() && <RestrictedNote actionName={primary.label} />}
+          {primary && primary.isRestricted() && <ActionRestrictedNote actionName={primary.label} />}
         </div>
         <div className="entity-sidebar__status-more">
           {updatedAt && (
@@ -134,7 +153,7 @@ export default class PublicationWidget extends React.PureComponent {
                   'x--active': isSaving
                 })}
               />
-              <span className="entity-sidebar__last-saved">
+              <span className="entity-sidebar__last-saved" data-test-id="last-saved">
                 Last saved <RelativeTimeData value={updatedAt} />
               </span>
             </div>
