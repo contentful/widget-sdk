@@ -69,6 +69,9 @@ export enum Jobs {
 export enum Tasks {
   NONE = 'tasks/none',
   SEVERAL = 'tasks/several',
+  SEVERAL_ONE_OPEN = 'tasks/several-one-open',
+  SEVERAL_ONE_RESOLVED = 'tasks/several-one-resolved',
+  SEVERAL_ONE_REOPENED = 'tasks/several-one-reopened',
   INTERNAL_SERVER_ERROR = 'tasks/internal-server-error'
 }
 
