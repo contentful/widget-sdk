@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { without, truncate } from 'lodash';
+import { without } from 'lodash';
 import { css } from 'emotion';
 import {
   Button,
@@ -28,6 +28,11 @@ const styles = {
     gridColumnStart: 2,
     maxWidth: '200px',
     whiteSpace: 'normal'
+  }),
+  rolesSummary: css({
+    display: 'inline-block',
+    overflowX: 'hidden',
+    textOverflow: 'ellipsis'
   })
 };
 
@@ -102,11 +107,15 @@ class SpaceRoleEditor extends React.Component {
       rolesSummary = 'Select a role';
     }
     if (selectedNames.length === 1) {
-      rolesSummary = truncate(selectedNames[0]);
+      rolesSummary = selectedNames[0];
     }
     if (selectedNames.length > 1) {
-      rolesSummary = `${truncate(selectedNames[0], { length: 25 })} and ${selectedNames.length -
-        1} more`;
+      rolesSummary = (
+        <span className={css({ display: 'flex', alignItems: 'center' })}>
+          <span className={styles.rolesSummary}>{selectedNames[0]}</span>&nbsp;and{' '}
+          {selectedNames.length - 1} more
+        </span>
+      );
     }
 
     return (
