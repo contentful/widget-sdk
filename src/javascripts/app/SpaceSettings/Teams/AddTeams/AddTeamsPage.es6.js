@@ -257,6 +257,7 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
       <div>
         <Heading>Add teams from your organization</Heading>
         <Autocomplete
+          placeholder="Search for a team"
           disabled={isLoading}
           className={styles.select}
           width="full"

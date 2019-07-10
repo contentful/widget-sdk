@@ -128,6 +128,7 @@ export default function Autocomplete({
         <TextInput
           value={query}
           onChange={handleQueryChanged}
+          onFocus={() => toggleList(true)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           width={width}
