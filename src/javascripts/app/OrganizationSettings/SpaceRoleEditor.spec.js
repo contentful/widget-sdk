@@ -65,9 +65,10 @@ describe('SpaceRoleEditor', () => {
     const component = render({ value: ['police'] });
     component.find('button').simulate('click');
     component
-      .find('input')
-      .at(2)
-      .simulate('change', { target: { checked: true } });
+      .find('[data-test-id="space-role-editor.role-option"]')
+      .at(1)
+      .find('button')
+      .simulate('click');
     expect(changeCb).toHaveBeenCalledWith(['police', 'thief']);
   });
 });

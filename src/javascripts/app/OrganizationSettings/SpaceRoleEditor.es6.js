@@ -4,7 +4,6 @@ import { without } from 'lodash';
 import { css } from 'emotion';
 import {
   Button,
-  CheckboxField,
   Checkbox,
   Dropdown,
   DropdownList,
@@ -16,9 +15,9 @@ import { SpaceRole as SpaceRoleProp } from 'app/OrganizationSettings/PropTypes.e
 import { ADMIN_ROLE, ADMIN_ROLE_ID } from 'access_control/constants.es6';
 
 const styles = {
-  adminListItem: css({
+  roleListItem: css({
     display: 'grid',
-    gridTemplateColumns: 'min-content 10rem',
+    gridTemplateColumns: 'min-content auto',
     gridColumnGap: '4px',
     alignItems: 'center',
     color: tokens.colorTextDark
@@ -139,7 +138,7 @@ class SpaceRoleEditor extends React.Component {
           <DropdownListItem
             testId="space-role-editor.admin-option"
             onClick={this.toggleRole(ADMIN_ROLE_ID)}>
-            <div className={styles.adminListItem}>
+            <div className={styles.roleListItem}>
               <Checkbox labelText={ADMIN_ROLE.name} checked={isAdmin} id={ADMIN_ROLE_ID} />
               <div>{ADMIN_ROLE.name}</div>
               <div className={styles.adminSubtitle}>Can manage everything in the space</div>
@@ -154,20 +153,12 @@ class SpaceRoleEditor extends React.Component {
               key={id}
               testId="space-role-editor.role-option"
               onClick={this.toggleRole(id)}>
-              <CheckboxField
-                labelIsLight
-                labelText={name}
-                checked={value.includes(id)}
-                value={id}
-                // Somehow clicking the Checkbox label triggers two bubbling click events,
-                //  one for the label and one for the checkbox.
-                // Therefore use onChange and stop click propagation when the field is clicked directly
-                onChange={this.toggleRole(id)}
-                onClick={event => {
-                  event.stopPropagation();
-                }}
-                id={id}
-              />
+              <div className={styles.roleListItem}>
+                {/* We don't use CheckboxField, as it emits double click events */}
+                {/* https://codesandbox.io/embed/cocky-wiles-r03rq */}
+                <Checkbox labelText={name} checked={value.includes(id)} id={id} />
+                <div>{name}</div>
+              </div>
             </DropdownListItem>
           ))}
         </DropdownList>
