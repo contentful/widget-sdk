@@ -5,7 +5,7 @@ import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
-import { SectionHeading, IconButton } from '@contentful/forma-36-react-components';
+import { SectionHeading, IconButton, Icon } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import SpacesAutoComplete from 'app/common/SpacesAutocomplete.es6';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor.es6';
@@ -22,14 +22,25 @@ const styles = {
   listItem: css({
     display: 'flex',
     justifyContent: 'space-between',
+    padding: '5px 10px',
+    margin: 0,
+    alignItems: 'center',
+    ':hover': {
+      backgroundColor: tokens.colorElementLightest
+    }
+  }),
+  leftColumn: css({
+    display: 'flex',
+    justifyContent: 'flex-start',
     alignItems: 'center'
   }),
   spaceName: css({
-    fontWeight: tokens.fontWeightDemiBold,
-    width: '30%'
+    fontWeight: tokens.fontWeightMedium,
+    width: 200
   }),
-  roleEditor: css({
-    width: '40%'
+  roleEditor: css({}),
+  errorIcon: css({
+    marginLeft: tokens.spacingS
   })
 };
 
@@ -49,13 +60,13 @@ const reducer = createImmerReducer({
 });
 
 /**
- * Holds an object of space memberships and role ids keyed by space id,
+ * Holds an object of space memberships and role ids key'd by space id,
  * At this state, admin is held as a role with a fake id for simplicity.
  * The objects will be converted to a real space membership shape in SpaceMembershipRepo.invite
  * Calls a callback when memberships change
  * { SPACE_ID: [ROLE_ID_1, ROLE_ID_2] }
  */
-export default function SpaceMembershipList({ orgId, onChange }) {
+export default function SpaceMembershipList({ orgId, submitted = false, onChange }) {
   const [{ spaceMemberships }, dispatch] = useReducer(reducer, { spaceMemberships: {} });
   const [allRoles, setAllRoles] = useState([]);
 
@@ -85,7 +96,11 @@ export default function SpaceMembershipList({ orgId, onChange }) {
     [spaceMemberships]
   );
 
-  useEffect(() => onChange(spaceMemberships), [onChange, spaceMemberships]);
+  useEffect(() => {
+    if (!Object.keys(spaceMemberships).length) return;
+
+    onChange(Object.values(spaceMemberships));
+  }, [onChange, spaceMemberships]);
 
   return (
     <>
@@ -100,19 +115,25 @@ export default function SpaceMembershipList({ orgId, onChange }) {
       <ul className={styles.list}>
         {Object.values(spaceMemberships).map(({ space, roles }) => (
           <li key={space.sys.id} className={styles.listItem}>
-            <strong className={styles.spaceName}>{space.name}</strong>
-            <div className={styles.roleEditor}>
+            <div className={styles.leftColumn}>
+              <strong className={styles.spaceName}>{space.name}</strong>
+              {/* <div className={styles.roleEditor}> */}
               <SpaceRoleEditor
                 value={roles}
                 isDisabled={isLoading}
                 options={allRoles[space.sys.id]}
                 onChange={handleRoleChanged(space.sys.id)}
               />
+              {submitted && !roles.length && (
+                <Icon icon="ErrorCircle" color="negative" className={styles.errorIcon} />
+              )}
+              {/* </div> */}
             </div>
             <IconButton
               buttonType="secondary"
               iconProps={{ icon: 'Close' }}
               onClick={() => handleSpaceRemoved(space.sys.id)}
+              label="Remove space"
             />
           </li>
         ))}
@@ -123,5 +144,6 @@ export default function SpaceMembershipList({ orgId, onChange }) {
 
 SpaceMembershipList.propTypes = {
   orgId: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  submitted: PropTypes.bool
 };
