@@ -30,7 +30,8 @@ describe('createPageExtensionBridge', () => {
         },
         Navigator: {
           go: jest.fn()
-        }
+        },
+        entitySelector: {}
       },
       'test-id'
     );
@@ -65,6 +66,20 @@ describe('createPageExtensionBridge', () => {
     });
   });
   describe('#install()', () => {
+    it('registers all required methods', () => {
+      const [bridge] = makeBridge();
+      const api = { registerHandler: jest.fn() };
+      bridge.install(api);
+
+      expect(api.registerHandler.mock.calls.map(item => item[0]).sort()).toEqual([
+        'callSpaceMethod',
+        'navigateToContentEntity',
+        'navigateToPageExtension',
+        'notify',
+        'openDialog'
+      ]);
+    });
+
     it('registers space method handlers', async () => {
       const [bridge, stubs] = makeBridge();
       const api = { registerHandler: jest.fn() };

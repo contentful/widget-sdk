@@ -11,7 +11,8 @@ export default {
     '$rootScope',
     '$stateParams',
     'spaceContext',
-    ($rootScope, $stateParams, spaceContext) => {
+    'entitySelector',
+    ($rootScope, $stateParams, spaceContext, entitySelector) => {
       const { extensionId, path = '' } = $stateParams;
       return {
         extensionId,
@@ -22,7 +23,8 @@ export default {
             $rootScope,
             spaceContext,
             TheLocaleStore,
-            Navigator
+            Navigator,
+            entitySelector
           },
           extensionId
         ),

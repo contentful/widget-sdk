@@ -2,9 +2,16 @@ import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandle
 import makeExtensionNavigationHandlers from './makeExtensionNavigationHandlers.es6';
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers.es6';
 import makePageExtensionHandlers from './makePageExtensionHandlers.es6';
+import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers.es6';
 import { LOCATION_PAGE } from '../WidgetLocations.es6';
 
-const REQUIRED_DEPENDENCIES = ['$rootScope', 'spaceContext', 'TheLocaleStore', 'Navigator'];
+const REQUIRED_DEPENDENCIES = [
+  '$rootScope',
+  'spaceContext',
+  'TheLocaleStore',
+  'Navigator',
+  'entitySelector'
+];
 
 export default function createPageExtensionBridge(dependencies, currentExtensionId) {
   REQUIRED_DEPENDENCIES.forEach(key => {
@@ -46,6 +53,8 @@ export default function createPageExtensionBridge(dependencies, currentExtension
       'navigateToPageExtension',
       makePageExtensionHandlers(dependencies, currentExtensionId, true)
     );
+
+    api.registerHandler('openDialog', makeExtensionDialogsHandler(dependencies));
 
     const navigationHandler = makeExtensionNavigationHandlers(dependencies);
     api.registerHandler('navigateToContentEntity', async options => {
