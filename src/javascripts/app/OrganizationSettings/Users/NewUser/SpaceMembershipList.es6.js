@@ -47,15 +47,17 @@ const styles = {
 const reducer = createImmerReducer({
   SPACE_ADDED: (state, action) => {
     const space = action.payload;
-    state.spaceMemberships[space.sys.id] = { space, roles: [] };
+    state.spaceMemberships.push({ space, roles: [] });
   },
   SPACE_REMOVED: (state, action) => {
     const spaceId = action.payload;
-    delete state.spaceMemberships[spaceId];
+    const index = state.spaceMemberships.indexOf(membership => membership.space.sys.id === spaceId);
+    state.spaceMemberships.splice(index, 1);
   },
   ROLES_CHANGED: (state, action) => {
     const { spaceId, roles = [] } = action.payload;
-    state.spaceMemberships[spaceId].roles = roles;
+    const item = state.spaceMemberships.find(membership => membership.space.sys.id === spaceId);
+    item.roles = roles;
   }
 });
 
@@ -64,10 +66,10 @@ const reducer = createImmerReducer({
  * At this state, admin is held as a role with a fake id for simplicity.
  * The objects will be converted to a real space membership shape in SpaceMembershipRepo.invite
  * Calls a callback when memberships change
- * { SPACE_ID: [ROLE_ID_1, ROLE_ID_2] }
+ * [{ space: {}, roles: [ROLE_ID_1, ROLE_ID_2]]
  */
 export default function SpaceMembershipList({ orgId, submitted = false, onChange }) {
-  const [{ spaceMemberships }, dispatch] = useReducer(reducer, { spaceMemberships: {} });
+  const [{ spaceMemberships }, dispatch] = useReducer(reducer, { spaceMemberships: [] });
   const [allRoles, setAllRoles] = useState([]);
 
   const getRoles = useCallback(async () => {
@@ -91,15 +93,12 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
     dispatch({ type: 'SPACE_REMOVED', payload: spaceId });
   };
 
-  const selectedSpaces = useMemo(
-    () => Object.values(spaceMemberships).map(membership => membership.space),
-    [spaceMemberships]
-  );
+  const selectedSpaces = useMemo(() => spaceMemberships.map(membership => membership.space), [
+    spaceMemberships
+  ]);
 
   useEffect(() => {
-    if (!Object.keys(spaceMemberships).length) return;
-
-    onChange(Object.values(spaceMemberships));
+    onChange(spaceMemberships);
   }, [onChange, spaceMemberships]);
 
   return (
@@ -113,7 +112,7 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
         )} selected`}</SectionHeading>
       )}
       <ul className={styles.list}>
-        {Object.values(spaceMemberships).map(({ space, roles }) => (
+        {spaceMemberships.map(({ space, roles }) => (
           <li key={space.sys.id} className={styles.listItem}>
             <div className={styles.leftColumn}>
               <strong className={styles.spaceName}>{space.name}</strong>
