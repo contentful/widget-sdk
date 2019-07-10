@@ -4,12 +4,12 @@ import { postStreamToken } from '../util/requests';
 export function microbackendStreamToken() {
   cy.addInteraction({
     provider: 'microbackend',
-    state: state.Microbackends.STREAMTOKEN,
+    state: state.Microbackends.OK,
     uponReceiving: 'a request for streamtoken',
     withRequest: postStreamToken(),
     willRespondWith: {
       status: 200,
       body: {}
     }
-  }).as(state.Microbackends.STREAMTOKEN);
+  }).as(state.Microbackends.OK);
 }

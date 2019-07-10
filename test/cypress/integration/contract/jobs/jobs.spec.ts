@@ -58,7 +58,7 @@ describe('Jobs page', () => {
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
       cy.wait([`@${state.Token.VALID}`]);
-      cy.wait([`@${state.Jobs.SEVERAL}`, `@${state.Entries.QUERY}`, `@${state.Users.QUERY}`], {
+      cy.wait([`@${state.Jobs.SEVERAL}`, `@${state.Entries.SEVERAL}`, `@${state.Users.SINGLE}`], {
         timeout: 10000
       });
     });
@@ -77,7 +77,7 @@ describe('Jobs page', () => {
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
       cy.wait([`@${state.Token.VALID}`]);
-      cy.wait([`@${state.Jobs.ERROR}`], { timeout: 10000 });
+      cy.wait([`@${state.Jobs.INTERNAL_SERVER_ERROR}`], { timeout: 10000 });
     });
     it('renders illustration and heading for error state', () => {
       cy.getByTestId('cf-ui-tab-panel')

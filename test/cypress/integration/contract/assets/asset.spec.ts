@@ -28,7 +28,7 @@ describe('Asset Page', () => {
       cy.route('**/channel/**', []).as('shareJS');
 
       cy.visit(`/spaces/${defaultSpaceId}/assets/${defaultAssetId}`);
-      cy.wait([`@${state.Token.VALID}`, `@${state.Assets.DEFAULT}`]);
+      cy.wait([`@${state.Token.VALID}`, `@${state.Assets.SEVERAL}`]);
     });
 
     it('renders asset fields and actions', () => {

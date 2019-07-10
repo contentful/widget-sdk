@@ -6,6 +6,7 @@ import {
   getContentType,
   getContentTypePublished,
   defaultSpaceId,
+  defaultContentType,
   defaultContentTypeId,
   putContentType,
   putContentTypePublished,
@@ -16,7 +17,6 @@ const empty = require('../fixtures/responses/empty.json');
 const contentTypeSingle = require('../fixtures/responses/content-types-single.json');
 const editorInterfaceWithoutSidebarResponseBody = require('../fixtures/responses/editor-interface-without-sidebar.json');
 const editorInterfaceWithSidebarResponseBody = require('../fixtures/responses/editor-interface-with-sidebar.json');
-const contentType = require('../fixtures/responses/content-type.json');
 const query = {
   limit: '1000'
 };
@@ -94,33 +94,33 @@ export function allContentTypesResponse() {
 export function defaultContentTypeResponse() {
   cy.addInteraction({
     provider: 'content_types',
-    state: state.ContentType.DEFAULT,
+    state: state.ContentTypes.SEVERAL,
     uponReceiving: 'a request for a conrete content type',
     withRequest: getContentType(),
     willRespondWith: {
       status: 200,
-      body: contentType
+      body: defaultContentType
     }
-  }).as(state.ContentType.DEFAULT);
+  }).as(state.ContentTypes.SEVERAL);
 }
 
 export function defaultPublishedContentTypeResponse() {
   cy.addInteraction({
     provider: 'content_types',
-    state: state.ContentType.PUBLISHED,
+    state: state.ContentTypes.DEFAULT_CONTENT_TYPE_IS_PUBLISHED,
     uponReceiving: 'a request for a published version of concrete content type',
     withRequest: getContentTypePublished(),
     willRespondWith: {
       status: 200,
-      body: contentType
+      body: defaultContentType
     }
-  }).as('publishedContentType');
+  }).as(state.ContentTypes.DEFAULT_CONTENT_TYPE_IS_PUBLISHED);
 }
 
 export function defaultContentTypeWithCustomSidebarCreatedResponse() {
   cy.addInteraction({
     provider: 'content_types',
-    state: state.ContentType.DEFAULT,
+    state: state.ContentTypes.SEVERAL,
     uponReceiving: 'a put request for saving content type with custom sidebar',
     withRequest: putContentType(
       defaultContentTypeId,
@@ -129,7 +129,7 @@ export function defaultContentTypeWithCustomSidebarCreatedResponse() {
     ),
     willRespondWith: {
       status: 200,
-      body: contentType
+      body: defaultContentType
     }
   }).as('content-type-custom-sidebar-created');
 }
@@ -137,12 +137,12 @@ export function defaultContentTypeWithCustomSidebarCreatedResponse() {
 export function defaultPublishedContentTypeWithCustomSidebarCreatedResponse() {
   cy.addInteraction({
     provider: 'content_types',
-    state: state.ContentType.DEFAULT,
+    state: state.ContentTypes.SEVERAL,
     uponReceiving: 'a put request for saving published content type with custom sidebar',
     withRequest: putContentTypePublished(defaultContentTypeId, defaultSpaceId),
     willRespondWith: {
       status: 200,
-      body: contentType
+      body: defaultContentType
     }
   }).as('content-type-published-custom-sidebar-created');
 }

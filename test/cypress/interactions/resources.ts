@@ -7,7 +7,7 @@ const resourcesWithLimitsReached = require('../fixtures/responses/resources-with
 export function limitsReachedResourcesResponse() {
   cy.addInteraction({
     provider: 'resources',
-    state: state.Resources.LIMITS_REACHED,
+    state: state.Resources.SEVERAL_WITH_LIMITS_REACHED,
     uponReceiving: 'a request for resources with limits reached',
     withRequest: {
       method: 'GET',
@@ -20,7 +20,7 @@ export function limitsReachedResourcesResponse() {
       status: 200,
       body: resourcesWithLimitsReached
     }
-  }).as(state.Resources.LIMITS_REACHED);
+  }).as(state.Resources.SEVERAL_WITH_LIMITS_REACHED);
 }
 
 export function defaultResourcesResponse() {
@@ -39,5 +39,5 @@ export function defaultResourcesResponse() {
       status: 200,
       body: resources
     }
-  }).as(state.Resources.DEFAULT);
+  }).as(state.Resources.SEVERAL);
 }

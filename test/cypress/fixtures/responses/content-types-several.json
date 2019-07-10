@@ -15,7 +15,7 @@
             "id": "gni2ifncgx0l"
           }
         },
-        "id": "testContentType1",
+        "id": "testContentType",
         "type": "ContentType",
         "createdAt": "2019-04-08T09:12:00.101Z",
         "updatedAt": "2019-04-08T09:12:00.101Z",
@@ -29,11 +29,11 @@
         "revision": 1
       },
       "displayField": "fieldID",
-      "name": "Test Content Type 1",
+      "name": "Test Content Type",
       "description": "",
       "fields": [
         {
-          "id": "fieldID1",
+          "id": "fieldID",
           "apiName": "testFieldName",
           "name": "Test field name",
           "type": "Symbol",

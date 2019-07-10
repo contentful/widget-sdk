@@ -45,8 +45,8 @@ describe('Schedule Publication', () => {
         [
           `@${state.Token.VALID}`,
           `@${state.Enforcements.NONE}`,
-          `@${state.Entries.LINKS}`,
-          `@${state.Entries.SNAPSHOTS}`,
+          `@${state.Entries.NO_LINKS_TO_DEFAULT_ENTRY}`,
+          `@${state.Entries.NO_SNAPSHOTS_FOR_DEFAULT_ENTRY}`,
           `@${state.Jobs.NONE}`
         ],
         { timeout: 10000 }
@@ -56,7 +56,7 @@ describe('Schedule Publication', () => {
     it('submits the new scheduled publication and then re-fetch the list of scheduled publications', () => {
       cy.resetAllFakeServers();
 
-      jobIsCreatedPostResponse();
+      jobIsCreatedPostResponse().as('job-created-successfully');
 
       cy.getByTestId('change-state-menu-trigger').click();
       cy.getByTestId('schedule-publication').click();
@@ -67,7 +67,7 @@ describe('Schedule Publication', () => {
         .first()
         .click();
 
-      cy.wait([`@${state.Jobs.CREATED}`]);
+      cy.wait(['@job-created-successfully']);
       cy.getByTestId('scheduled-item').should('have.length', 1);
       cy.getByTestId('change-state-published').should('be.disabled');
     });
@@ -83,7 +83,7 @@ describe('Schedule Publication', () => {
         [
           `@${state.Token.VALID}`,
           `@${state.Enforcements.NONE}`,
-          `@${state.Entries.LINKS}`,
+          `@${state.Entries.NO_LINKS_TO_DEFAULT_ENTRY}`,
           `@${state.Jobs.SINGLE}`
         ],
         { timeout: 10000 }
@@ -93,7 +93,7 @@ describe('Schedule Publication', () => {
     it('cancels publication after clicking on the grey button', () => {
       cy.resetAllFakeServers();
 
-      cancelJobResponse();
+      cancelJobResponse().as('job-cancelled');
 
       cy.getByTestId('cancel-job-ddl').click();
       cy.getByTestId('cancel-job').click();
@@ -102,7 +102,7 @@ describe('Schedule Publication', () => {
         .find('[data-test-id="confirm-job-cancellation"]')
         .first()
         .click();
-      cy.wait([`@${state.Jobs.CANCEL}`]);
+      cy.wait(['@job-cancelled']);
       cy.getByTestId('change-state-menu-trigger').should('be.visible');
       cy.getByTestId('change-state-published').should('be.enabled');
     });
@@ -116,8 +116,8 @@ describe('Schedule Publication', () => {
         [
           `@${state.Token.VALID}`,
           `@${state.Enforcements.NONE}`,
-          `@${state.Entries.LINKS}`,
-          `@${state.Jobs.FAILED}`
+          `@${state.Entries.NO_LINKS_TO_DEFAULT_ENTRY}`,
+          `@${state.Jobs.JOB_EXECUTION_FAILED}`
         ],
         { timeout: 10000 }
       );
@@ -136,8 +136,8 @@ describe('Schedule Publication', () => {
         [
           `@${state.Token.VALID}`,
           `@${state.Enforcements.NONE}`,
-          `@${state.Entries.LINKS}`,
-          `@${state.Jobs.ERROR}`
+          `@${state.Entries.NO_LINKS_TO_DEFAULT_ENTRY}`,
+          `@${state.Jobs.INTERNAL_SERVER_ERROR}`
         ],
         { timeout: 10000 }
       );

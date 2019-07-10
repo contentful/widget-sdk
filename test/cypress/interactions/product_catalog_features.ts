@@ -9,38 +9,26 @@ const productCatalogSpace = require('../fixtures/responses/product-catalog-space
 export function orgProductCatalogFeaturesResponse() {
   cy.addInteraction({
     provider: 'product_catalog_features',
-    state: state.OrgProductCatalogFeatures.SEVERAL,
+    state: state.ProductCatalogFeatures.ORG_WITH_SEVERAL_FEATURES,
     uponReceiving: 'a request for all org product catalog features',
     withRequest: getOrgProductCatalogFeatures(),
     willRespondWith: {
       status: 200,
       body: productCatalogOrg
     }
-  }).as(state.OrgProductCatalogFeatures.SEVERAL);
+  }).as(state.ProductCatalogFeatures.ORG_WITH_SEVERAL_FEATURES);
 }
 
 export function spaceProductCatalogFeaturesResponse(query? :Query) {
+  const queryDesc = query ? ` (with query "${query}")` : ''
   cy.addInteraction({
     provider: 'product_catalog_features',
-    state: state.SpaceProductCatalogFeatures.SEVERAL,
-    uponReceiving: 'a request for all space product catalog features',
+    state: state.ProductCatalogFeatures.SPACE_WITH_SEVERAL_FEATURES,
+    uponReceiving: `a request for all space product catalog features${queryDesc}`,
     withRequest: getSpaceProductCatalogFeatures(defaultSpaceId, query),
     willRespondWith: {
       status: 200,
       body: productCatalogSpace
     }
-  }).as(state.SpaceProductCatalogFeatures.SEVERAL);
-}
-
-export function spaceProductCatalogUsageEnforcementResponse(query? :Query) {
-  cy.addInteraction({
-    provider: 'product_catalog_features',
-    state: state.SpaceProductCatalogFeatures.USAGE_ENFORCEMENT,
-    uponReceiving: 'a request for the env usage enforcements space scoped product catalog feature',
-    withRequest: getSpaceProductCatalogFeatures(defaultSpaceId, query),
-    willRespondWith: {
-      status: 200,
-      body: productCatalogSpace
-    }
-  }).as(state.SpaceProductCatalogFeatures.USAGE_ENFORCEMENT);
+  }).as(state.ProductCatalogFeatures.SPACE_WITH_SEVERAL_FEATURES);
 }

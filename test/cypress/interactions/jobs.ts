@@ -58,36 +58,36 @@ export function severalJobsResponse() {
 }
 
 export function cancelJobResponse() {
-  cy.addInteraction({
+  return cy.addInteraction({
     provider: 'jobs',
-    state: state.Jobs.CANCEL,
+    state: state.Jobs.SINGLE,
     uponReceiving: 'a request for all jobs',
     withRequest: cancelJob(),
     willRespondWith: {
       status: 200,
       body: empty
     }
-  }).as(state.Jobs.CANCEL);
+  });
 }
 
 export function jobsErrorResponse() {
   cy.addInteraction({
     provider: 'jobs',
-    state: 'noJobsError',
+    state: state.Jobs.INTERNAL_SERVER_ERROR,
     uponReceiving: 'a request for all jobs',
     withRequest: getEntryJobs(defaultSpaceId, allJobsQuery),
     willRespondWith: {
       status: 500,
       body: empty
     }
-  }).as(state.Jobs.ERROR);
+  }).as(state.Jobs.INTERNAL_SERVER_ERROR);
 }
 
 export function singleJobForEntryResponse() {
   cy.addInteraction({
     provider: 'jobs',
     state: state.Jobs.SINGLE,
-    uponReceiving: 'a request for entry schedules',
+    uponReceiving: 'a request for the default entry schedules',
     withRequest: getEntryJobs(defaultSpaceId, entryIdQuery),
     willRespondWith: {
       status: 200,
@@ -115,7 +115,7 @@ export function singleJobForEntryResponse() {
 export function singleFailedJobForEntryResponse() {
   cy.addInteraction({
     provider: 'jobs',
-    state: state.Jobs.FAILED,
+    state: state.Jobs.JOB_EXECUTION_FAILED,
     uponReceiving: 'a request for entry schedules',
     withRequest: getEntryJobs(defaultSpaceId, entryIdQuery),
     willRespondWith: {
@@ -139,13 +139,13 @@ export function singleFailedJobForEntryResponse() {
         ]
       }
     }
-  }).as(state.Jobs.FAILED);
+  }).as(state.Jobs.JOB_EXECUTION_FAILED);
 }
 
 export function jobIsCreatedPostResponse() {
-  cy.addInteraction({
+  return cy.addInteraction({
     provider: 'jobs',
-    state: state.Jobs.CREATED,
+    state: state.Jobs.NONE,
     uponReceiving: 'a post request for scheduling publication',
     withRequest: {
       method: 'POST',
@@ -168,18 +168,18 @@ export function jobIsCreatedPostResponse() {
         scheduledAt: '2050-08-08T06:10:52.066Z'
       }
     }
-  }).as(state.Jobs.CREATED);
+  });
 }
 
 export function unavailableJobsForEntryResponse() {
   cy.addInteraction({
     provider: 'jobs',
-    state: state.Jobs.ERROR,
+    state: state.Jobs.INTERNAL_SERVER_ERROR,
     uponReceiving: 'a request for entry schedules',
     withRequest: getEntryJobs(defaultSpaceId, entryIdQuery),
     willRespondWith: {
       status: 500,
       body: {}
     }
-  }).as(state.Jobs.ERROR);
+  }).as(state.Jobs.INTERNAL_SERVER_ERROR);
 }

@@ -42,14 +42,14 @@ export function noWebhooksResponse() {
 export function webhooksErrorResponse() {
   cy.addInteraction({
     provider: 'webhooks',
-    state: 'noWebhooksError',
+    state: state.Webhooks.INTERNAL_SERVER_ERROR,
     uponReceiving: 'a request for all webhooks',
     withRequest: getWebhooks(defaultSpaceId, queryWebhooksLimit),
     willRespondWith: {
       status: 500,
       body: empty
     }
-  }).as(state.Webhooks.ERROR);
+  }).as(state.Webhooks.INTERNAL_SERVER_ERROR);
 }
 
 export function defaultWebhookCreatedSuccessResponse() {
@@ -68,53 +68,53 @@ export function defaultWebhookCreatedSuccessResponse() {
 export function defaultWebhookResponse() {
   cy.addInteraction({
     provider: 'webhooks',
-    state: state.Webhook.DEFAULT,
+    state: state.Webhooks.SINGLE,
     uponReceiving: 'a get request for default webhook',
     withRequest: getWebhook(defaultSpaceId, defaultWebhookId),
     willRespondWith: {
       status: 200,
       body: defaultWebhookResponseBody
     }
-  }).as(state.Webhook.DEFAULT);
+  }).as(state.Webhooks.SINGLE);
 }
 
 export function noWebhookCallsResponse() {
   cy.addInteraction({
     provider: 'webhooks',
-    state: state.Webhook.DEFAULT,
+    state: state.Webhooks.NO_CALLS,
     uponReceiving: 'a get request for all webhook calls',
     withRequest: getWebhookCalls(defaultSpaceId, defaultWebhookId, queryCallsLimit),
     willRespondWith: {
       status: 200,
       body: empty
     }
-  }).as(state.Webhook.CALLS_NONE);
+  }).as(state.Webhooks.NO_CALLS);
 }
 
 export function customWebhookSingleEventResponse() {
   cy.addInteraction({
     provider: 'webhooks',
-    state: state.Webhook.SINGLE_EVENT,
+    state: state.Webhooks.SINGLE_EVENT,
     uponReceiving: 'a get request for custom webhook',
     withRequest: getWebhook(defaultSpaceId, defaultWebhookId),
     willRespondWith: {
       status: 200,
       body: webhookSingleEventResponseBody
     }
-  }).as(state.Webhook.SINGLE_EVENT);
+  }).as(state.Webhooks.SINGLE_EVENT);
 }
 
 export function webhookCallSuccessfulResponse() {
-  cy.addInteraction({
+  return cy.addInteraction({
     provider: 'webhooks',
-    state: state.Webhook.SINGLE_EVENT,
+    state: state.Webhooks.SINGLE_EVENT,
     uponReceiving: 'a get request for all webhook calls',
     withRequest: getWebhookCalls(defaultSpaceId, defaultWebhookId, queryCallsLimit),
     willRespondWith: {
       status: 200,
       body: webhookSuccessfulCallResponseBody
     }
-  }).as(state.Webhook.CALL_SUCCESSFUL);
+  });
 }
 
 export function singleWebhookResponse() {
@@ -136,7 +136,7 @@ export function noWebhooksCallsResponse() {
   return cy
     .addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.CALLS_NONE,
+      state: state.Webhooks.NO_CALLS,
       uponReceiving: 'a request for calls state of each webhook',
       withRequest: getWebhooksCallsState(defaultSpaceId, defaultWebhookId),
       willRespondWith: {
@@ -144,29 +144,29 @@ export function noWebhooksCallsResponse() {
         body: noWebhookCallsResponseBody
       }
     })
-    .as(state.Webhooks.CALLS_NONE);
+    .as(state.Webhooks.NO_CALLS);
 }
 
 export function defaultWebhookDeletedSuccessResponse() {
   cy.addInteraction({
     provider: 'webhooks',
-    state: state.Webhook.DEFAULT,
+    state: state.Webhooks.SINGLE,
     uponReceiving: 'Delete request for deletion default webhook',
     withRequest: deleteWebhook(defaultSpaceId, defaultWebhookId),
     willRespondWith: {
       status: 204
     }
-  }).as(state.Webhooks.NONE);
+  }).as(state.Webhooks.SINGLE);
 }
 
 export function defaultWebhookDeletedErrorResponse() {
   cy.addInteraction({
     provider: 'webhooks',
-    state: state.Webhook.DEFAULT,
+    state: state.Webhooks.INTERNAL_SERVER_ERROR,
     uponReceiving: 'Delete request with error response for deletion default webhook',
     withRequest: deleteWebhook(defaultSpaceId, defaultWebhookId),
     willRespondWith: {
       status: 500
     }
-  }).as(state.Webhooks.ERROR);
+  }).as(state.Webhooks.INTERNAL_SERVER_ERROR);
 }

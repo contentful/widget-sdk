@@ -40,7 +40,10 @@ describe('Sidebar configuration', () => {
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`
     );
 
-    cy.wait([`@${state.Token.VALID}`]);
+    cy.wait([
+      `@${state.Token.VALID}`,
+      `@${state.ContentTypes.DEFAULT_CONTENT_TYPE_IS_PUBLISHED}`
+    ]);
   });
 
   describe('Opening the page with no configuration saved', () => {

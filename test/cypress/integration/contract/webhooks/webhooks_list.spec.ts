@@ -47,7 +47,7 @@ describe('Webhooks', () => {
 
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks`);
       cy.wait([`@${state.Token.VALID}`]);
-      cy.wait([`@${state.Webhooks.ERROR}`], { timeout: 10000 });
+      cy.wait([`@${state.Webhooks.INTERNAL_SERVER_ERROR}`], { timeout: 10000 });
     });
 
     it.skip('renders error message', () => {});

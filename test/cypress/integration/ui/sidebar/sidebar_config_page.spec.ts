@@ -32,7 +32,11 @@ describe('Sidebar configuration', () => {
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`
     );
 
-    cy.wait([`@${state.Token.VALID}`, `@${state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR}`]);
+    cy.wait([
+      `@${state.Token.VALID}`,
+      `@${state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR}`,
+      `@${state.ContentTypes.DEFAULT_CONTENT_TYPE_IS_PUBLISHED}`
+    ]);
   });
 
   const widgetNames = ['Publish & Status', 'Preview', 'Links', 'Translation', 'Versions', 'Users'];
