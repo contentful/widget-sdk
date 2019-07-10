@@ -439,6 +439,15 @@ export function canCreateSpaceInOrganization(organizationId) {
   }
 }
 
+export function canAccessSpaceEnvironments(space) {
+  return (
+    get(space, 'spaceMember.admin') ||
+    get(space, ['spaceMembership', 'roles']).some(role =>
+      get(role, ['permissions', 'Environments']).find(permission => permission === Action.READ)
+    )
+  );
+}
+
 function collectResponses() {
   const replacement = {};
 

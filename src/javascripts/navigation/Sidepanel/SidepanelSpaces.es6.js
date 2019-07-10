@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import FolderIcon from 'svg/folder.es6';
 import SpaceWithEnvironments from './SpaceWithEnvironments.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import { canAccessSpaceEnvironments } from 'access_control/AccessChecker/index.es6';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import { Button, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import EmptyStateAdminIllustration from 'svg/folder-illustration.es6';
@@ -47,7 +47,7 @@ function SpaceList(props) {
       {spaces.map((space, index) => {
         const isCurrSpace = space.sys.id === currentSpaceId;
 
-        if (environmentsEnabled && accessChecker.can('manage', 'Environments')) {
+        if (environmentsEnabled && canAccessSpaceEnvironments(space)) {
           return (
             <SpaceWithEnvironments
               index={index}
