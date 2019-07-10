@@ -28,6 +28,7 @@ const spaceContext = getModule('spaceContext');
 const $rootScope = getModule('$rootScope');
 const entitySelector = getModule('entitySelector');
 const entityCreator = getModule('entityCreator');
+const Navigator = getModule('states/Navigator.es6');
 
 /**
  * @ngdoc type

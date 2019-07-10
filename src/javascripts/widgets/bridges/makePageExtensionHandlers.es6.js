@@ -25,7 +25,7 @@ export default function makePageExtensionHandlers(
         spaceId: spaceContext.cma.spaceId,
         environmentId: envId,
         extensionId: id,
-        path
+        path: path || ''
       },
       options: {
         // if we are navigating to a new extension page OR we are not on the extension page, we want to notify a state change of the URL

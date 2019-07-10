@@ -66,7 +66,7 @@ describe('makePageExtensionHandlers', () => {
       params: {
         environmentId: 'master',
         extensionId: 'extension-id',
-        path: undefined,
+        path: '',
         spaceId: 'space-id'
       },
       path: ['spaces', 'detail', 'pageExtensions']
@@ -85,7 +85,7 @@ describe('makePageExtensionHandlers', () => {
       params: {
         environmentId: 'master',
         extensionId: 'extension-id',
-        path: undefined,
+        path: '',
         spaceId: 'space-id'
       },
       path: ['spaces', 'detail', 'pageExtensions']
