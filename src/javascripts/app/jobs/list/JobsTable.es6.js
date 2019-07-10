@@ -120,7 +120,6 @@ function JobWithExsitingEntryRow({
       {({ onClick, getHref }) => (
         <TableRow
           className={styles.jobRow}
-          key={job.sys.id}
           data-test-id="scheduled-job"
           tabIndex="0"
           onClick={e => {
@@ -143,7 +142,9 @@ function JobWithExsitingEntryRow({
             <SecretiveLink href={getHref()}>{entryTitle}</SecretiveLink>
           </TableCell>
           <TableCell>{contentType.name}</TableCell>
-          <TableCell>{user.firstName}</TableCell>
+          <TableCell>
+            <UserInfo user={user} />
+          </TableCell>
           <TableCell>
             {showStatusTransition ? <StatusTransition entry={entry} /> : <StatusTag job={job} />}
           </TableCell>
@@ -164,7 +165,7 @@ JobWithExsitingEntryRow.propTypes = {
 
 function JobWithMissingEntryRow({ job, user }) {
   return (
-    <TableRow key={job.sys.id} data-test-id="scheduled-job">
+    <TableRow data-test-id="scheduled-job">
       <TableCell>
         {moment
           .utc(job.scheduledAt)
@@ -173,7 +174,9 @@ function JobWithMissingEntryRow({ job, user }) {
       </TableCell>
       <TableCell>Entry missing or inaccessible</TableCell>
       <TableCell />
-      <TableCell>{user.firstName}</TableCell>
+      <TableCell>
+        <UserInfo user={user} />
+      </TableCell>
       <TableCell />
     </TableRow>
   );
@@ -228,6 +231,7 @@ export default class JobsTable extends Component {
                 const contentType = contentTypesData[entry.sys.contentType.sys.id];
                 return (
                   <JobWithExsitingEntryRow
+                    key={job.sys.id}
                     job={job}
                     user={user}
                     entry={entry}
@@ -237,7 +241,7 @@ export default class JobsTable extends Component {
                   />
                 );
               } else {
-                return <JobWithMissingEntryRow job={job} user={user} />;
+                return <JobWithMissingEntryRow key={job.sys.id} job={job} user={user} />;
               }
             })}
           </TableBody>
@@ -245,4 +249,7 @@ export default class JobsTable extends Component {
       </div>
     );
   }
+}
+function UserInfo({ user }) {
+  return user && user.firstName;
 }
