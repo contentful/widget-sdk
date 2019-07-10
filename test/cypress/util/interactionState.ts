@@ -72,7 +72,8 @@ export enum Jobs {
   SEVERAL = 'jobs/several',
   ERROR = 'jobs/error',
   CREATED = 'jobs/created',
-  CANCEL = 'jobs/cancel'
+  CANCEL = 'jobs/cancel',
+  FAILED = 'jobs/failed'
 }
 
 export enum Tasks {

@@ -119,6 +119,7 @@ describe('Entries list page', () => {
       editorInterfaceWithoutSidebarResponse();
 
       cy.getByTestId('create-entry').click();
+      cy.wait([`@${state.Entries.LINKS}`]);
       cy.getByTestId('entity-field-controls').should('be.visible');
       cy.getByTestId('entry-editor-sidebar').should('be.visible');
     });
@@ -175,13 +176,18 @@ describe('Entries list page', () => {
         }
       }).as(state.Entries.SEVERAL);
 
-      const productCatalogQuery = 'sys.featureId[]=environment_usage_enforcements&sys.featureId[]=basic_apps'
+      const productCatalogQuery =
+        'sys.featureId[]=environment_usage_enforcements&sys.featureId[]=basic_apps';
       spaceProductCatalogUsageEnforcementResponse(productCatalogQuery);
       limitsReachedResourcesResponse();
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
-      cy.wait([`@${state.Token.VALID}`, `@${state.Entries.SEVERAL}`, `@${state.SpaceProductCatalogFeatures.USAGE_ENFORCEMENT}`, `@${state.Resources.LIMITS_REACHED}`, ]);
-
+      cy.wait([
+        `@${state.Token.VALID}`,
+        `@${state.Entries.SEVERAL}`,
+        `@${state.SpaceProductCatalogFeatures.USAGE_ENFORCEMENT}`,
+        `@${state.Resources.LIMITS_REACHED}`
+      ]);
     });
 
     it('renders a disabled "Add Entry" button', () => {

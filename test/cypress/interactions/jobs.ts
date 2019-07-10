@@ -1,4 +1,10 @@
-import { getEntryJobs, cancelJob, defaultSpaceId, defaultEntryId, defaultJobId } from '../util/requests';
+import {
+  getEntryJobs,
+  cancelJob,
+  defaultSpaceId,
+  defaultEntryId,
+  defaultJobId
+} from '../util/requests';
 import * as state from '../util/interactionState';
 
 const empty = require('../fixtures/responses/empty.json');
@@ -106,6 +112,35 @@ export function singleJobForEntryResponse() {
     }
   }).as(state.Jobs.SINGLE);
 }
+export function singleFailedJobForEntryResponse() {
+  cy.addInteraction({
+    provider: 'jobs',
+    state: state.Jobs.FAILED,
+    uponReceiving: 'a request for entry schedules',
+    withRequest: getEntryJobs(defaultSpaceId, entryIdQuery),
+    willRespondWith: {
+      status: 200,
+      body: {
+        sys: {
+          type: 'Array'
+        },
+        total: 1,
+        skip: 0,
+        limit: 1000,
+        items: [
+          {
+            sys: {
+              id: defaultJobId,
+              status: 'failed'
+            },
+            actionType: 'publish',
+            scheduledAt: '2050-08-08T06:10:52.066Z'
+          }
+        ]
+      }
+    }
+  }).as(state.Jobs.FAILED);
+}
 
 export function jobIsCreatedPostResponse() {
   cy.addInteraction({
@@ -134,4 +169,17 @@ export function jobIsCreatedPostResponse() {
       }
     }
   }).as(state.Jobs.CREATED);
+}
+
+export function unavailableJobsForEntryResponse() {
+  cy.addInteraction({
+    provider: 'jobs',
+    state: state.Jobs.ERROR,
+    uponReceiving: 'a request for entry schedules',
+    withRequest: getEntryJobs(defaultSpaceId, entryIdQuery),
+    willRespondWith: {
+      status: 500,
+      body: {}
+    }
+  }).as(state.Jobs.ERROR);
 }
