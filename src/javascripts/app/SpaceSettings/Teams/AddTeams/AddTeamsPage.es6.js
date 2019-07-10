@@ -12,15 +12,19 @@ import _ from 'lodash';
 import * as tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { css, cx } from 'emotion';
+
 import Workbench from 'app/common/Workbench.es6';
 import Autocomplete from 'app/common/Autocomplete.es6';
 import { useAsyncFn } from 'app/common/hooks/useAsync.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository.es6';
 import { go } from 'states/Navigator.es6';
-import RoleSelector from './RoleSelector.es6';
-
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
+import EmptyStateTeams from 'svg/empty-state-teams.es6';
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+import StateLink from 'app/common/StateLink.es6';
+
+import RoleSelector from './RoleSelector.es6';
 
 const styles = {
   workbench: css({
@@ -237,88 +241,105 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
     (adminSelected === false && selectedRoleIds.length === 0) ||
     isLoading;
 
-  const teamsInAutocomplete = _(teams)
-    .filter(
-      team =>
-        !selectedTeamIds.includes(team.sys.id) &&
-        !teamSpaceMemberships.find(tsm => tsm.sys.team.sys.id === team.sys.id) &&
-        team.name.toLowerCase().includes(searchTerm)
-    )
+  const availableTeams = teams.filter(
+    team =>
+      !selectedTeamIds.includes(team.sys.id) &&
+      !teamSpaceMemberships.find(tsm => tsm.sys.team.sys.id === team.sys.id)
+  );
+
+  const teamsInAutocomplete = _(availableTeams)
+    .filter(team => team.name.toLowerCase().includes(searchTerm))
     .take(5)
     .value();
+
+  const content = (
+    <div className={styles.workbenchContent}>
+      <div>
+        <Heading>Add teams from your organization</Heading>
+        <Autocomplete
+          disabled={isLoading}
+          className={styles.select}
+          width="full"
+          onChange={team => dispatch({ type: 'ADD_TEAM', payload: team.sys.id })}
+          onQueryChange={value => dispatch({ type: 'SEARCH', payload: value })}
+          items={teamsInAutocomplete}>
+          {items => items.map(team => <AutocompleteTeam key={team.sys.id} team={team} />)}
+        </Autocomplete>
+      </div>
+      {shouldShowControls && (
+        <div data-test-id="teams-and-roles-lists" className={styles.teamsAndRolesLists}>
+          <div className={styles.teamsContainer}>
+            <SectionHeading className={cx(styles.sectionHeading, styles.teamTitle)}>
+              {pluralize('team', selectedTeamIds.length, true)}
+            </SectionHeading>
+            <div className={styles.teamsList} data-test-id="teams-list">
+              {selectedTeamIds.length !== 0 &&
+                selectedTeamIds.map(id => {
+                  const team = teams.find(t => t.sys.id === id);
+
+                  return (
+                    <TeamInfo
+                      key={team.sys.id}
+                      team={team}
+                      onCloseClick={() => dispatch({ type: 'REMOVE_TEAM', payload: id })}
+                    />
+                  );
+                })}
+            </div>
+            <Button
+              className={styles.submitButton}
+              disabled={submitButtonDisabled}
+              loading={isLoading}
+              testId="submit-button"
+              onClick={() => doSubmit(state)}>
+              Confirm selection and add {pluralize('team', selectedTeamIds.length)}
+            </Button>
+          </div>
+          <div className={styles.rolesContainer}>
+            <SectionHeading className={styles.sectionHeading}>
+              Assign role set to {pluralize('team', selectedTeamIds.length)}
+            </SectionHeading>
+            <RoleSelector
+              roles={roles}
+              selectedRoleIds={selectedRoleIds}
+              onRoleSelected={(id, isSelected) =>
+                dispatch({ type: 'SELECT_ROLE', payload: { id, isSelected } })
+              }
+              adminSelected={adminSelected}
+              onAdminSelected={isSelected =>
+                dispatch({ type: 'SELECT_ADMIN', payload: isSelected })
+              }
+              disabled={isLoading}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  const noTeamsAvailablePlaceholder = (
+    <EmptyStateContainer>
+      <EmptyStateTeams />
+      <Heading>No Teams are available to be added to this space</Heading>
+      <StateLink to="^.list">
+        {({ onClick }) => (
+          <Button buttonType="primary" onClick={onClick}>
+            Back to Teams list
+          </Button>
+        )}
+      </StateLink>
+    </EmptyStateContainer>
+  );
 
   return (
     <Workbench className={styles.workbench}>
       <Workbench.Header>
-        <Workbench.Header.Back to="spaces.detail.settings.teams.list" />
+        <Workbench.Header.Back to="^.list" />
         <Workbench.Icon icon="page-teams" />
         <Workbench.Title>Add teams</Workbench.Title>
       </Workbench.Header>
       <Workbench.Content>
-        <Typography>
-          <div className={styles.workbenchContent}>
-            <div>
-              <Heading>Add teams from your organization</Heading>
-              <Autocomplete
-                disabled={isLoading}
-                className={styles.select}
-                width="full"
-                onChange={team => dispatch({ type: 'ADD_TEAM', payload: team.sys.id })}
-                onQueryChange={value => dispatch({ type: 'SEARCH', payload: value })}
-                items={teamsInAutocomplete}>
-                {items => items.map(team => <AutocompleteTeam key={team.sys.id} team={team} />)}
-              </Autocomplete>
-            </div>
-            {shouldShowControls && (
-              <div data-test-id="teams-and-roles-lists" className={styles.teamsAndRolesLists}>
-                <div className={styles.teamsContainer}>
-                  <SectionHeading className={cx(styles.sectionHeading, styles.teamTitle)}>
-                    {pluralize('team', selectedTeamIds.length, true)}
-                  </SectionHeading>
-                  <div className={styles.teamsList} data-test-id="teams-list">
-                    {selectedTeamIds.length !== 0 &&
-                      selectedTeamIds.map(id => {
-                        const team = teams.find(t => t.sys.id === id);
-
-                        return (
-                          <TeamInfo
-                            key={team.sys.id}
-                            team={team}
-                            onCloseClick={() => dispatch({ type: 'REMOVE_TEAM', payload: id })}
-                          />
-                        );
-                      })}
-                  </div>
-                  <Button
-                    className={styles.submitButton}
-                    disabled={submitButtonDisabled}
-                    loading={isLoading}
-                    testId="submit-button"
-                    onClick={() => doSubmit(state)}>
-                    Confirm selection and add {pluralize('team', selectedTeamIds.length)}
-                  </Button>
-                </div>
-                <div className={styles.rolesContainer}>
-                  <SectionHeading className={styles.sectionHeading}>
-                    Assign role set to {pluralize('team', selectedTeamIds.length)}
-                  </SectionHeading>
-                  <RoleSelector
-                    roles={roles}
-                    selectedRoleIds={selectedRoleIds}
-                    onRoleSelected={(id, isSelected) =>
-                      dispatch({ type: 'SELECT_ROLE', payload: { id, isSelected } })
-                    }
-                    adminSelected={adminSelected}
-                    onAdminSelected={isSelected =>
-                      dispatch({ type: 'SELECT_ADMIN', payload: isSelected })
-                    }
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-        </Typography>
+        <Typography>{availableTeams.length > 0 ? content : noTeamsAvailablePlaceholder}</Typography>
       </Workbench.Content>
     </Workbench>
   );
