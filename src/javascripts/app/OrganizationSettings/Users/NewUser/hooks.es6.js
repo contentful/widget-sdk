@@ -61,9 +61,9 @@ async function addToOrg(endpoint, emails, role, suppressInvitation) {
  * @param {Array} spaceMemberships An array with objects containing the space and the role ids. { space: {}, roles: []}
  */
 async function addToSpaces(emails, spaceMemberships) {
-  const requests = spaceMemberships.map(async ({ space, roles }) => {
+  const requests = spaceMemberships.flatMap(({ space, roles }) => {
     const spaceEndpoint = createSpaceEndpoint(space.sys.id);
-    emails.forEach(async email => {
+    return emails.map(async email => {
       const invite = createSpaceMembershipRepo(spaceEndpoint).invite;
       try {
         await invite(email, roles);
