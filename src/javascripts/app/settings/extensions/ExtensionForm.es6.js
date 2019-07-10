@@ -56,19 +56,18 @@ const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
       </div>
 
       <div className="cfnext-form__field">
-        <Label text="Sidebar extension" />
+        <Label text="Legacy sidebar extension" />
         <p>
           Sidebar extension, if used with a field control, will remove itself from the entry editor
           and instead render itself the sidebar.
         </p>
-        <p>When not assigned to a field type it can still be used in a custom sidebar.</p>
         <label>
           <input
             type="checkbox"
             checked={entity.extension.sidebar}
             onChange={() => updateExtensionProp('sidebar', !entity.extension.sidebar)}
           />{' '}
-          Yes, this is a sidebar extension
+          Yes, this is a legacy sidebar extension
         </label>
       </div>
 

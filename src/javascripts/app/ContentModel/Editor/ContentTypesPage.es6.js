@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { get } from 'lodash';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -27,10 +27,6 @@ const styles = {
 
 export default function ContentTypesPage(props) {
   const showSidebar = props.currentTab === 'fields' || props.currentTab === 'preview';
-  const sidebarExtensions = useMemo(
-    () => props.extensions.filter(extension => extension.sidebar === true),
-    [props.extensions]
-  );
 
   const [sidebarConfiguration, updateSidebarConfiguration] = useState(props.sidebarConfiguration);
 
@@ -84,7 +80,7 @@ export default function ContentTypesPage(props) {
                 <div>
                   <SidebarConfiguration
                     configuration={sidebarConfiguration}
-                    extensions={sidebarExtensions}
+                    extensions={props.extensions}
                     onUpdateConfiguration={configuration => {
                       updateSidebarConfiguration(configuration);
                       props.actions.updateSidebarConfiguration(configuration);
