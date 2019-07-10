@@ -28,7 +28,8 @@ export function singleUser() {
 
 export function singleSpecificSpaceUserResponse() {
   const query = {
-    'sys.id[in]': defaultUserId
+    limit: '1000',
+    'sys.id[in]': defaultUserId    
   };
   cy.addInteraction({
     provider: 'users',
