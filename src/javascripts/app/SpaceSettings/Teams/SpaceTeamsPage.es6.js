@@ -18,6 +18,7 @@ import {
 } from 'access_control/TeamRepository.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 import styles from './styles.es6';
 import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation.es6';
@@ -161,18 +162,21 @@ const SpaceTeamsPage = ({ spaceId, onReady }) => {
   }
 
   return (
-    <SpaceTeamsPagePresentation
-      {...{
-        memberships,
-        availableRoles,
-        readOnly,
-        teams,
-        isLoading,
-        isPending,
-        onUpdateTeamSpaceMembership,
-        currentUserAdminSpaceMemberships
-      }}
-    />
+    <>
+      <DocumentTitle title="Teams" />
+      <SpaceTeamsPagePresentation
+        {...{
+          memberships,
+          availableRoles,
+          readOnly,
+          teams,
+          isLoading,
+          isPending,
+          onUpdateTeamSpaceMembership,
+          currentUserAdminSpaceMemberships
+        }}
+      />
+    </>
   );
 };
 
