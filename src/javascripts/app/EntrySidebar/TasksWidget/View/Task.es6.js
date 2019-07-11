@@ -88,7 +88,7 @@ export default class Task extends React.Component {
   }
 
   handleBodyUpdate = event => {
-    this.addChange({ body: event.target.value });
+    this.addChange({ body: event.target.value.trim() });
   };
 
   handleAssigneeUpdate = event => {
@@ -205,7 +205,8 @@ export default class Task extends React.Component {
     const ctaLabel = isDraft ? 'Create task' : 'Save changes';
     const ctaContext = isDraft ? 'primary' : 'positive';
     const characterLimit = 3000;
-    const hasAssignee = !!this.state.pendingChanges.assigneeKey;
+    const hasNoAssignee = !this.state.pendingChanges.assigneeKey;
+    const hasEmptyPendingBody = this.state.pendingChanges.body === '';
 
     return (
       <Form spacing="condensed" onClick={e => e.stopPropagation()} className={styles.editForm}>
@@ -216,7 +217,7 @@ export default class Task extends React.Component {
           labelText={bodyLabel}
           textarea
           value={body}
-          onBlur={event => this.handleBodyUpdate(event)}
+          onChange={event => this.handleBodyUpdate(event)}
           textInputProps={{ rows: 4, autoFocus: true, maxLength: characterLimit }}
           validationMessage={validationMessage}
         />
@@ -227,7 +228,7 @@ export default class Task extends React.Component {
             buttonType={ctaContext}
             className={styles.editSubmit}
             onClick={() => this.handleSubmit()}
-            disabled={isDraft && !hasAssignee}
+            disabled={(isDraft && hasNoAssignee) || hasEmptyPendingBody}
             size="small">
             {ctaLabel}
           </Button>
