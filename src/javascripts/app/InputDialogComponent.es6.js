@@ -6,7 +6,9 @@ export default class InputDialog extends React.Component {
   static propTypes = {
     params: PropTypes.shape({
       message: PropTypes.string,
-      title: PropTypes.string
+      title: PropTypes.string,
+      confirmLabel: PropTypes.string,
+      cancelLabel: PropTypes.string
     }).isRequired,
     onCancel: PropTypes.func.isRequired,
     initialValue: PropTypes.string.isRequired,

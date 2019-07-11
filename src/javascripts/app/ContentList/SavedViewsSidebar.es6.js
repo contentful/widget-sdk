@@ -47,7 +47,7 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
       // it causes nasty DnD bugs
       return (
         <TabPanel id={value} key={value}>
-          {component.view}
+          {component.view /* eslint-disable-line react/prop-types */}
         </TabPanel>
       );
     }
@@ -69,23 +69,29 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
           <Tabs role="tablist">
             <Tab
               id={VIEWS_SHARED}
+              // eslint-disable-next-line react/prop-types
               selected={selector.state === VIEWS_SHARED}
               onSelect={() => {
+                // eslint-disable-next-line react/prop-types
                 selector.actions.Select(VIEWS_SHARED);
               }}>
               Shared views
             </Tab>
             <Tab
               id={VIEWS_PRIVATE}
+              // eslint-disable-next-line react/prop-types
               selected={selector.state === VIEWS_PRIVATE}
               onSelect={() => {
+                // eslint-disable-next-line react/prop-types
                 selector.actions.Select(VIEWS_PRIVATE);
               }}>
               My views
             </Tab>
           </Tabs>
         </div>
+        {/* eslint-disable-next-line react/prop-types */}
         <Views selected={selector.state} value={VIEWS_SHARED} component={sharedViews} />
+        {/* eslint-disable-next-line react/prop-types */}
         <Views selected={selector.state} value={VIEWS_PRIVATE} component={privateViews} />
       </div>
     );

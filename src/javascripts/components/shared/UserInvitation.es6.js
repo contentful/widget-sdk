@@ -17,7 +17,10 @@ export default class UserInvitation extends React.Component {
     invitation: PropTypes.shape({
       organizationName: PropTypes.string.isRequired,
       role: PropTypes.string.isRequired,
-      inviterName: PropTypes.string.isRequired
+      inviterName: PropTypes.string.isRequired,
+      sys: PropTypes.shape({
+        id: PropTypes.string
+      })
     }),
     errored: PropTypes.bool,
     user: UserPropType

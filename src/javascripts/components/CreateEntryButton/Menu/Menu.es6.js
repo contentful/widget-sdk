@@ -109,10 +109,11 @@ function renderMenu({
 }) {
   /* eslint-enable react/prop-types */
   const suggestedContentType = getContentTypeById(contentTypes, suggestedContentTypeId);
-  const isSearchable = contentTypes.length > MAX_ITEMS_WITHOUT_SEARCH;
+  const isSearchable =
+    contentTypes.length > MAX_ITEMS_WITHOUT_SEARCH; /* eslint-disable-line react/prop-types */
   const filteredContentTypes = getFilteredContentTypesByInputValue(contentTypes, inputValue);
 
-  const hasSearchValue = inputValue.length > 0;
+  const hasSearchValue = inputValue.length > 0; /* eslint-disable-line react/prop-types */
   const searchResultsTitle =
     filteredContentTypes.length === 1 ? `1 result` : `${filteredContentTypes.length} results`;
 
