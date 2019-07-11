@@ -42,7 +42,8 @@ function getCustomizedLabels(config) {
 export class HyperlinkDialogForm extends React.Component {
   static propTypes = {
     labels: PropTypes.shape({
-      title: PropTypes.string
+      title: PropTypes.string,
+      confirm: PropTypes.string
     }),
     value: PropTypes.shape({
       text: PropTypes.string,
