@@ -208,6 +208,14 @@ export default class Task extends React.Component {
     const hasNoAssignee = !this.state.pendingChanges.assigneeKey;
     const hasEmptyPendingBody = this.state.pendingChanges.body === '';
 
+    const isInvalid = () => {
+      if (isDraft) {
+        if (hasNoAssignee || hasEmptyPendingBody) return true;
+      } else {
+        if (hasEmptyPendingBody) return true;
+      }
+    };
+
     return (
       <Form spacing="condensed" onClick={e => e.stopPropagation()} className={styles.editForm}>
         <TextField
@@ -228,7 +236,7 @@ export default class Task extends React.Component {
             buttonType={ctaContext}
             className={styles.editSubmit}
             onClick={() => this.handleSubmit()}
-            disabled={(isDraft && hasNoAssignee) || hasEmptyPendingBody}
+            disabled={isInvalid()}
             size="small">
             {ctaLabel}
           </Button>
