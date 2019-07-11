@@ -11,7 +11,7 @@ import {
   isAuthor
 } from './Utils.es6';
 import { capitalize, capitalizeFirst } from 'utils/StringUtils.es6';
-import { chain, get, set, some, forEach, values, find } from 'lodash';
+import { chain, get, set, some, forEach, values, find, isArray } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements.es6';
 import * as logger from 'services/logger.es6';
 
@@ -440,11 +440,16 @@ export function canCreateSpaceInOrganization(organizationId) {
 }
 
 export function canAccessSpaceEnvironments(space) {
+  const spaceMemberRoles = get(space, ['spaceMember', 'roles']);
   return (
     get(space, 'spaceMember.admin') ||
-    get(space, ['spaceMember', 'roles']).some(role =>
-      get(role, ['permissions', 'Environments']).find(permission => permission === Action.READ)
-    )
+    (isArray(spaceMemberRoles) &&
+      spaceMemberRoles.some(role => {
+        const environmentsPermissions = get(role, ['permissions', 'Environments']);
+        return isArray(environmentsPermissions)
+          ? environmentsPermissions.find(permission => permission === Action.READ)
+          : environmentsPermissions === 'all';
+      }))
   );
 }
 
