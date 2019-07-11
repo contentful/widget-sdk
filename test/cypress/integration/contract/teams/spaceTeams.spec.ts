@@ -15,6 +15,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
   orgProductCatalogFeaturesResponse();
 
   const getMembershipsInteraction = 'spaces/team_space_memberships';
+  const getRolesInteraction = 'spaces/roles';
   const getTeamsInteraction = 'org/teams';
 
   cy.addInteraction({
@@ -49,9 +50,50 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
     }
   }).as(getTeamsInteraction);
 
+  cy.addInteraction({
+    provider: 'roles',
+    state: 'default',
+    uponReceiving: 'request available roles of space',
+    withRequest: {
+      method: 'GET',
+      path: `/spaces/${defaultSpaceId}/roles`,
+      query: { limit: '100', skip: '0' },
+      headers: defaultHeader
+    },
+    willRespondWith: {
+      status: 200,
+      body: {
+        items: [
+          {
+            name: 'Role 1',
+            sys: { id: 'role1' }
+          },
+          {
+            name: 'Role 2',
+            sys: { id: 'role2' }
+          },
+          {
+            name: 'Role 3',
+            sys: { id: 'role3' }
+          },
+          {
+            name: 'Role 4',
+            sys: { id: 'role4' }
+          }
+          ,
+          {
+            name: 'Role 5',
+            sys: { id: 'role5' }
+          }
+
+        ]
+      }
+    }
+  }).as(getRolesInteraction);
+
   cy.visit(`/spaces/${defaultSpaceId}/settings/teams`);
 
-  cy.wait([`@${state.Token.VALID}`, `@${getMembershipsInteraction}`, `@${getTeamsInteraction}`]);
+  cy.wait([`@${state.Token.VALID}`, `@${getRolesInteraction}`, `@${getMembershipsInteraction}`, `@${getTeamsInteraction}`]);
 };
 
 const membership1 = {
@@ -222,6 +264,41 @@ describe('Teams in space page', () => {
           cy.wrap(rows[2]).contains('td', 'Role 2 and Role 3').should('be.visible');
         }
       );
+    });
+
+    context('changing role of Team 1', () => {
+      beforeEach(() => {
+        const editmembershipInteraction = 'editMembership';
+        cy.addInteraction({
+          provider: 'teams',
+          state: 'initial roles',
+          uponReceiving: 'change role of team',
+          withRequest: {
+            method: 'PUT',
+            path: `/spaces/${defaultSpaceId}/team_space_memberships/TSM1`,
+            headers: defaultHeader
+          },
+          willRespondWith: {
+            status: 200,
+            body: { ...membership1, sys: { version: 1, ...membership1.sys }, admin: false, roles: [role1] }
+          }
+        }).as(editmembershipInteraction);
+
+        cy.getByTestId('row-menu').first().click();
+        cy.getByTestId('change-role').click();
+        cy.getByTestId('space-role-editor.button').click();
+        cy.getAllByTestId('space-role-editor.role-option')
+          .first().click();
+        cy.getByTestId('confirm-change-role').click();
+
+        cy.wait(`@${editmembershipInteraction}`);
+      });
+
+      it('should have changed role', () => {
+        cy.getAllByTestId('membership-row').first().as('firstRow');
+        cy.get('@firstRow').contains('td', 'Role 1').should('be.visible');
+        cy.get('@firstRow').contains('td', 'Team 1').should('be.visible');
+      });
     });
   });
 });

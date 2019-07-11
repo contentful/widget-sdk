@@ -1,8 +1,13 @@
 import { useEffect } from 'react';
+import { isArray, every } from 'lodash';
 
 export default function useClickOutside(ref, isActive, cb) {
   // run callback function if target is not inside ref
   const handleClickOutside = evt => {
+    if (isArray(ref)) {
+      every(ref, r => !r.current.contains(evt.target)) && cb();
+      return;
+    }
     !ref.current.contains(evt.target) && cb();
   };
 

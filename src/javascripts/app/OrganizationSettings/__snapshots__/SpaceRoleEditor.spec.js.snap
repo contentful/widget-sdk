@@ -2,6 +2,12 @@
 
 exports[`SpaceRoleEditor renders the component 1`] = `
 <SpaceRoleEditor
+  buttonProps={
+    Object {
+      "className": "",
+    }
+  }
+  className=""
   onChange={[MockFunction]}
   options={
     Array [
@@ -22,6 +28,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
   value={Array []}
 >
   <Dropdown
+    className=""
     isOpen={false}
     onClose={[Function]}
     position="bottom-left"
@@ -40,7 +47,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
         isFullWidth={false}
         loading={false}
         onClick={[Function]}
-        testId="cf-ui-button"
+        testId="space-role-editor.button"
         type="button"
       >
         Select a role
@@ -66,12 +73,12 @@ exports[`SpaceRoleEditor renders the component 1`] = `
         isFullWidth={false}
         loading={false}
         onClick={[Function]}
-        testId="cf-ui-button"
+        testId="space-role-editor.button"
         type="button"
       >
         <button
           className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
-          data-test-id="cf-ui-button"
+          data-test-id="space-role-editor.button"
           disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
@@ -161,7 +168,31 @@ exports[`SpaceRoleEditor renders the component 1`] = `
 `;
 
 exports[`SpaceRoleEditor shows a list of options 1`] = `
+.emotion-1 {
+  display: grid;
+  grid-template-columns: min-content auto;
+  grid-column-gap: 4px;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: #2a3039;
+}
+
+.emotion-0 {
+  color: #8091a5;
+  grid-column-start: 2;
+  max-width: 200px;
+  white-space: normal;
+}
+
 <SpaceRoleEditor
+  buttonProps={
+    Object {
+      "className": "",
+    }
+  }
+  className=""
   onChange={[MockFunction]}
   options={
     Array [
@@ -182,6 +213,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
   value={Array []}
 >
   <Dropdown
+    className=""
     isOpen={true}
     onClose={[Function]}
     position="bottom-left"
@@ -200,7 +232,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
         isFullWidth={false}
         loading={false}
         onClick={[Function]}
-        testId="cf-ui-button"
+        testId="space-role-editor.button"
         type="button"
       >
         Select a role
@@ -226,12 +258,12 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
         isFullWidth={false}
         loading={false}
         onClick={[Function]}
-        testId="cf-ui-button"
+        testId="space-role-editor.button"
         type="button"
       >
         <button
           className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
-          data-test-id="cf-ui-button"
+          data-test-id="space-role-editor.button"
           disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
@@ -333,7 +365,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
           >
             <button
               class="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
-              data-test-id="cf-ui-button"
+              data-test-id="space-role-editor.button"
               type="button"
             >
               <span
@@ -373,7 +405,25 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
       >
         <Portal
           containerInfo={
-            <div>
+            .emotion-1 {
+  display: grid;
+  grid-template-columns: min-content auto;
+  grid-column-gap: 4px;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: #2a3039;
+}
+
+.emotion-0 {
+  color: #8091a5;
+  grid-column-start: 2;
+  max-width: 200px;
+  white-space: normal;
+}
+
+<div>
               <div
                 class="DropdownContainer__DropdownContainer___3WlJM"
                 style="top: 0px; left: 0px;"
@@ -386,88 +436,117 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                   <ul
                     class="DropdownList__DropdownList___2EMLM"
                     data-test-id="cf-ui-dropdown-list"
-                    style="max-height: 300px; overflow-y: auto;"
+                    style="max-height: auto; overflow-y: visible;"
                   >
                     <li
-                      class="DropdownListItem__DropdownListItem___LOUnP"
+                      class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                      data-test-id="space-role-editor.admin-option"
+                    >
+                      <button
+                        class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                        data-test-id="cf-ui-dropdown-list-item-button"
+                        type="button"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                          tabindex="-1"
+                        >
+                          <div
+                            class="emotion-1"
+                          >
+                            <input
+                              aria-label="Admin"
+                              class="ControlledInput__ControlledInput___2XK3j"
+                              data-test-id="ctf-ui-checkbox"
+                              id="__cf_builtin_admin"
+                              type="checkbox"
+                              value=""
+                            />
+                            <div>
+                              Admin
+                            </div>
+                            <div
+                              class="emotion-0"
+                            >
+                              Can manage everything in the space
+                            </div>
+                          </div>
+                        </span>
+                      </button>
+                    </li>
+                  </ul>
+                  <ul
+                    class="DropdownList__DropdownList___2EMLM DropdownList__DropdownList--border-top___ojlyY"
+                    data-test-id="cf-ui-dropdown-list"
+                    style="max-height: 305px; overflow-y: auto;"
+                  >
+                    <li
+                      class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem--title___CyVKB"
                       data-test-id="cf-ui-dropdown-list-item"
                     >
-                      <div
-                        class="ControlledInputField__ControlledInputField___2uIG9"
-                        data-test-id="cf-ui-checkbox-field"
-                      >
-                        <input
-                          aria-label="Admin"
-                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                          data-test-id="cf-ui-controlled-input"
-                          id="__cf_builtin_admin"
-                          type="checkbox"
-                          value=""
-                        />
-                        <div>
-                          <label
-                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                            data-test-id="cf-ui-form-label"
-                            for="__cf_builtin_admin"
-                          >
-                            Admin
-                          </label>
-                        </div>
-                      </div>
+                      other roles
                     </li>
                     <li
-                      class="DropdownListItem__DropdownListItem___LOUnP"
-                      data-test-id="cf-ui-dropdown-list-item"
+                      class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                      data-test-id="space-role-editor.role-option"
                     >
-                      <div
-                        class="ControlledInputField__ControlledInputField___2uIG9"
-                        data-test-id="cf-ui-checkbox-field"
+                      <button
+                        class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                        data-test-id="cf-ui-dropdown-list-item-button"
+                        type="button"
                       >
-                        <input
-                          aria-label="Police officer"
-                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                          data-test-id="cf-ui-controlled-input"
-                          id="police"
-                          type="checkbox"
-                          value="police"
-                        />
-                        <div>
-                          <label
-                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                            data-test-id="cf-ui-form-label"
-                            for="police"
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                          tabindex="-1"
+                        >
+                          <div
+                            class="emotion-1"
                           >
-                            Police officer
-                          </label>
-                        </div>
-                      </div>
+                            <input
+                              aria-label="Police officer"
+                              class="ControlledInput__ControlledInput___2XK3j"
+                              data-test-id="ctf-ui-checkbox"
+                              id="police"
+                              type="checkbox"
+                              value=""
+                            />
+                            <div>
+                              Police officer
+                            </div>
+                          </div>
+                        </span>
+                      </button>
                     </li>
                     <li
-                      class="DropdownListItem__DropdownListItem___LOUnP"
-                      data-test-id="cf-ui-dropdown-list-item"
+                      class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                      data-test-id="space-role-editor.role-option"
                     >
-                      <div
-                        class="ControlledInputField__ControlledInputField___2uIG9"
-                        data-test-id="cf-ui-checkbox-field"
+                      <button
+                        class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                        data-test-id="cf-ui-dropdown-list-item-button"
+                        type="button"
                       >
-                        <input
-                          aria-label="Thief"
-                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                          data-test-id="cf-ui-controlled-input"
-                          id="thief"
-                          type="checkbox"
-                          value="thief"
-                        />
-                        <div>
-                          <label
-                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                            data-test-id="cf-ui-form-label"
-                            for="thief"
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                          tabindex="-1"
+                        >
+                          <div
+                            class="emotion-1"
                           >
-                            Thief
-                          </label>
-                        </div>
-                      </div>
+                            <input
+                              aria-label="Thief"
+                              class="ControlledInput__ControlledInput___2XK3j"
+                              data-test-id="ctf-ui-checkbox"
+                              id="thief"
+                              type="checkbox"
+                              value=""
+                            />
+                            <div>
+                              Thief
+                            </div>
+                          </div>
+                        </span>
+                      </button>
                     </li>
                   </ul>
                 </div>
@@ -501,7 +580,6 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                 offset={0}
               >
                 <DropdownList
-                  maxHeight={300}
                   testId="cf-ui-dropdown-list"
                 >
                   <ul
@@ -509,8 +587,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                     data-test-id="cf-ui-dropdown-list"
                     style={
                       Object {
-                        "maxHeight": 300,
-                        "overflowY": "auto",
+                        "maxHeight": "auto",
+                        "overflowY": "visible",
                       }
                     }
                   >
@@ -518,79 +596,105 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                       isActive={false}
                       isDisabled={false}
                       isTitle={false}
+                      onClick={[Function]}
+                      testId="space-role-editor.admin-option"
+                    >
+                      <li
+                        className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                        data-test-id="space-role-editor.admin-option"
+                      >
+                        <button
+                          className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                          data-test-id="cf-ui-dropdown-list-item-button"
+                          onClick={[Function]}
+                          onMouseDown={[Function]}
+                          type="button"
+                        >
+                          <TabFocusTrap
+                            className="DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                          >
+                            <span
+                              className="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                              tabIndex={-1}
+                            >
+                              <div
+                                className="emotion-1"
+                              >
+                                <Checkbox
+                                  checked={false}
+                                  disabled={false}
+                                  id="__cf_builtin_admin"
+                                  labelText="Admin"
+                                  required={false}
+                                  testId="ctf-ui-checkbox"
+                                  type="checkbox"
+                                >
+                                  <ControlledInput
+                                    checked={false}
+                                    disabled={false}
+                                    id="__cf_builtin_admin"
+                                    labelText="Admin"
+                                    required={false}
+                                    testId="ctf-ui-checkbox"
+                                    type="checkbox"
+                                  >
+                                    <input
+                                      aria-label="Admin"
+                                      checked={false}
+                                      className="ControlledInput__ControlledInput___2XK3j"
+                                      data-test-id="ctf-ui-checkbox"
+                                      disabled={false}
+                                      id="__cf_builtin_admin"
+                                      onBlur={[Function]}
+                                      onChange={[Function]}
+                                      onFocus={[Function]}
+                                      required={false}
+                                      type="checkbox"
+                                    />
+                                  </ControlledInput>
+                                </Checkbox>
+                                <div>
+                                  Admin
+                                </div>
+                                <div
+                                  className="emotion-0"
+                                >
+                                  Can manage everything in the space
+                                </div>
+                              </div>
+                            </span>
+                          </TabFocusTrap>
+                        </button>
+                      </li>
+                    </DropdownListItem>
+                  </ul>
+                </DropdownList>
+                <DropdownList
+                  border="top"
+                  maxHeight={305}
+                  testId="cf-ui-dropdown-list"
+                >
+                  <ul
+                    className="DropdownList__DropdownList___2EMLM DropdownList__DropdownList--border-top___ojlyY"
+                    data-test-id="cf-ui-dropdown-list"
+                    style={
+                      Object {
+                        "maxHeight": 305,
+                        "overflowY": "auto",
+                      }
+                    }
+                  >
+                    <DropdownListItem
+                      isActive={false}
+                      isDisabled={false}
+                      isTitle={true}
                       testId="cf-ui-dropdown-list-item"
                     >
                       <li
-                        className="DropdownListItem__DropdownListItem___LOUnP"
+                        className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem--title___CyVKB"
                         data-test-id="cf-ui-dropdown-list-item"
                       >
-                        <CheckboxField
-                          checked={false}
-                          id="__cf_builtin_admin"
-                          inputType="checkbox"
-                          labelIsLight={true}
-                          labelText="Admin"
-                          onChange={[Function]}
-                          testId="cf-ui-checkbox-field"
-                        >
-                          <ControlledInputField
-                            checked={false}
-                            id="__cf_builtin_admin"
-                            inputType="checkbox"
-                            labelIsLight={true}
-                            labelText="Admin"
-                            onChange={[Function]}
-                            testId="cf-ui-checkbox-field"
-                          >
-                            <div
-                              className="ControlledInputField__ControlledInputField___2uIG9"
-                              data-test-id="cf-ui-checkbox-field"
-                            >
-                              <ControlledInput
-                                checked={false}
-                                className="ControlledInputField__ControlledInputField__input___3OMYB"
-                                disabled={false}
-                                id="__cf_builtin_admin"
-                                labelText="Admin"
-                                onChange={[Function]}
-                                required={false}
-                                testId="cf-ui-controlled-input"
-                                type="checkbox"
-                              >
-                                <input
-                                  aria-label="Admin"
-                                  checked={false}
-                                  className="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                                  data-test-id="cf-ui-controlled-input"
-                                  disabled={false}
-                                  id="__cf_builtin_admin"
-                                  onBlur={[Function]}
-                                  onChange={[Function]}
-                                  onFocus={[Function]}
-                                  required={false}
-                                  type="checkbox"
-                                />
-                              </ControlledInput>
-                              <div>
-                                <FormLabel
-                                  className="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                                  htmlFor="__cf_builtin_admin"
-                                  required={false}
-                                  requiredText="required"
-                                  testId="cf-ui-form-label"
-                                >
-                                  <label
-                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                                    data-test-id="cf-ui-form-label"
-                                    htmlFor="__cf_builtin_admin"
-                                  >
-                                    Admin
-                                  </label>
-                                </FormLabel>
-                              </div>
-                            </div>
-                          </ControlledInputField>
-                        </CheckboxField>
+                        other roles
                       </li>
                     </DropdownListItem>
                     <DropdownListItem
@@ -598,83 +702,70 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                       isDisabled={false}
                       isTitle={false}
                       key="police"
-                      testId="cf-ui-dropdown-list-item"
+                      onClick={[Function]}
+                      testId="space-role-editor.role-option"
                     >
                       <li
-                        className="DropdownListItem__DropdownListItem___LOUnP"
-                        data-test-id="cf-ui-dropdown-list-item"
+                        className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                        data-test-id="space-role-editor.role-option"
                       >
-                        <CheckboxField
-                          checked={false}
-                          id="police"
-                          inputType="checkbox"
-                          labelIsLight={true}
-                          labelText="Police officer"
-                          onChange={[Function]}
-                          testId="cf-ui-checkbox-field"
-                          value="police"
+                        <button
+                          className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                          data-test-id="cf-ui-dropdown-list-item-button"
+                          onClick={[Function]}
+                          onMouseDown={[Function]}
+                          type="button"
                         >
-                          <ControlledInputField
-                            checked={false}
-                            id="police"
-                            inputType="checkbox"
-                            labelIsLight={true}
-                            labelText="Police officer"
-                            onChange={[Function]}
-                            testId="cf-ui-checkbox-field"
-                            value="police"
+                          <TabFocusTrap
+                            className="DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
                           >
-                            <div
-                              className="ControlledInputField__ControlledInputField___2uIG9"
-                              data-test-id="cf-ui-checkbox-field"
+                            <span
+                              className="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                              tabIndex={-1}
                             >
-                              <ControlledInput
-                                checked={false}
-                                className="ControlledInputField__ControlledInputField__input___3OMYB"
-                                disabled={false}
-                                id="police"
-                                labelText="Police officer"
-                                onChange={[Function]}
-                                required={false}
-                                testId="cf-ui-controlled-input"
-                                type="checkbox"
-                                value="police"
+                              <div
+                                className="emotion-1"
                               >
-                                <input
-                                  aria-label="Police officer"
+                                <Checkbox
                                   checked={false}
-                                  className="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                                  data-test-id="cf-ui-controlled-input"
                                   disabled={false}
                                   id="police"
-                                  onBlur={[Function]}
-                                  onChange={[Function]}
-                                  onFocus={[Function]}
+                                  labelText="Police officer"
                                   required={false}
+                                  testId="ctf-ui-checkbox"
                                   type="checkbox"
-                                  value="police"
-                                />
-                              </ControlledInput>
-                              <div>
-                                <FormLabel
-                                  className="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                                  htmlFor="police"
-                                  required={false}
-                                  requiredText="required"
-                                  testId="cf-ui-form-label"
                                 >
-                                  <label
-                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                                    data-test-id="cf-ui-form-label"
-                                    htmlFor="police"
+                                  <ControlledInput
+                                    checked={false}
+                                    disabled={false}
+                                    id="police"
+                                    labelText="Police officer"
+                                    required={false}
+                                    testId="ctf-ui-checkbox"
+                                    type="checkbox"
                                   >
-                                    Police officer
-                                  </label>
-                                </FormLabel>
+                                    <input
+                                      aria-label="Police officer"
+                                      checked={false}
+                                      className="ControlledInput__ControlledInput___2XK3j"
+                                      data-test-id="ctf-ui-checkbox"
+                                      disabled={false}
+                                      id="police"
+                                      onBlur={[Function]}
+                                      onChange={[Function]}
+                                      onFocus={[Function]}
+                                      required={false}
+                                      type="checkbox"
+                                    />
+                                  </ControlledInput>
+                                </Checkbox>
+                                <div>
+                                  Police officer
+                                </div>
                               </div>
-                            </div>
-                          </ControlledInputField>
-                        </CheckboxField>
+                            </span>
+                          </TabFocusTrap>
+                        </button>
                       </li>
                     </DropdownListItem>
                     <DropdownListItem
@@ -682,83 +773,70 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                       isDisabled={false}
                       isTitle={false}
                       key="thief"
-                      testId="cf-ui-dropdown-list-item"
+                      onClick={[Function]}
+                      testId="space-role-editor.role-option"
                     >
                       <li
-                        className="DropdownListItem__DropdownListItem___LOUnP"
-                        data-test-id="cf-ui-dropdown-list-item"
+                        className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                        data-test-id="space-role-editor.role-option"
                       >
-                        <CheckboxField
-                          checked={false}
-                          id="thief"
-                          inputType="checkbox"
-                          labelIsLight={true}
-                          labelText="Thief"
-                          onChange={[Function]}
-                          testId="cf-ui-checkbox-field"
-                          value="thief"
+                        <button
+                          className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                          data-test-id="cf-ui-dropdown-list-item-button"
+                          onClick={[Function]}
+                          onMouseDown={[Function]}
+                          type="button"
                         >
-                          <ControlledInputField
-                            checked={false}
-                            id="thief"
-                            inputType="checkbox"
-                            labelIsLight={true}
-                            labelText="Thief"
-                            onChange={[Function]}
-                            testId="cf-ui-checkbox-field"
-                            value="thief"
+                          <TabFocusTrap
+                            className="DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
                           >
-                            <div
-                              className="ControlledInputField__ControlledInputField___2uIG9"
-                              data-test-id="cf-ui-checkbox-field"
+                            <span
+                              className="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                              tabIndex={-1}
                             >
-                              <ControlledInput
-                                checked={false}
-                                className="ControlledInputField__ControlledInputField__input___3OMYB"
-                                disabled={false}
-                                id="thief"
-                                labelText="Thief"
-                                onChange={[Function]}
-                                required={false}
-                                testId="cf-ui-controlled-input"
-                                type="checkbox"
-                                value="thief"
+                              <div
+                                className="emotion-1"
                               >
-                                <input
-                                  aria-label="Thief"
+                                <Checkbox
                                   checked={false}
-                                  className="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                                  data-test-id="cf-ui-controlled-input"
                                   disabled={false}
                                   id="thief"
-                                  onBlur={[Function]}
-                                  onChange={[Function]}
-                                  onFocus={[Function]}
+                                  labelText="Thief"
                                   required={false}
+                                  testId="ctf-ui-checkbox"
                                   type="checkbox"
-                                  value="thief"
-                                />
-                              </ControlledInput>
-                              <div>
-                                <FormLabel
-                                  className="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                                  htmlFor="thief"
-                                  required={false}
-                                  requiredText="required"
-                                  testId="cf-ui-form-label"
                                 >
-                                  <label
-                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                                    data-test-id="cf-ui-form-label"
-                                    htmlFor="thief"
+                                  <ControlledInput
+                                    checked={false}
+                                    disabled={false}
+                                    id="thief"
+                                    labelText="Thief"
+                                    required={false}
+                                    testId="ctf-ui-checkbox"
+                                    type="checkbox"
                                   >
-                                    Thief
-                                  </label>
-                                </FormLabel>
+                                    <input
+                                      aria-label="Thief"
+                                      checked={false}
+                                      className="ControlledInput__ControlledInput___2XK3j"
+                                      data-test-id="ctf-ui-checkbox"
+                                      disabled={false}
+                                      id="thief"
+                                      onBlur={[Function]}
+                                      onChange={[Function]}
+                                      onFocus={[Function]}
+                                      required={false}
+                                      type="checkbox"
+                                    />
+                                  </ControlledInput>
+                                </Checkbox>
+                                <div>
+                                  Thief
+                                </div>
                               </div>
-                            </div>
-                          </ControlledInputField>
-                        </CheckboxField>
+                            </span>
+                          </TabFocusTrap>
+                        </button>
                       </li>
                     </DropdownListItem>
                   </ul>

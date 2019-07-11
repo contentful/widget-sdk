@@ -9,18 +9,14 @@ export default {
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'column',
-    marginTop: tokens.spacingXl
+    paddingTop: 0
   }),
   content: css({
     width: '100%',
-    paddingRight: tokens.spacing2Xl,
-    paddingLeft: tokens.spacing2Xl
+    padding: tokens.spacingXl
   }),
   row: css({
     height: '95px'
-  }),
-  rolesColumn: css({
-    width: '30%'
   }),
   cell: css({
     paddingRight: '140px'
@@ -45,5 +41,14 @@ export default {
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
     lineHeight: '1.2em'
+  }),
+  roleEditorButton: css({
+    minWidth: '300px',
+    maxWidth: '300px',
+    marginRight: tokens.spacingM
+  }),
+  roleForm: css({
+    display: 'flex',
+    justifyContent: 'flex-end'
   })
 };

@@ -43,9 +43,10 @@ describe('SpaceRoleEditor', () => {
     component.props({ value: [ADMIN_ROLE_ID] });
     component.find('button').simulate('click');
     component
-      .find('input')
-      .at(1)
-      .simulate('change', { target: { checked: true } });
+      .find('[data-test-id="space-role-editor.role-option"]')
+      .at(0)
+      .find('button')
+      .simulate('click');
     expect(changeCb).toHaveBeenCalledWith(['police']);
   });
 
@@ -54,9 +55,9 @@ describe('SpaceRoleEditor', () => {
     component.props({ value: ['police', 'thief'] });
     component.find('button').simulate('click');
     component
-      .find('input')
-      .at(0)
-      .simulate('change', { target: { checked: true } });
+      .find('[data-test-id="space-role-editor.admin-option"]')
+      .find('button')
+      .simulate('click');
     expect(changeCb).toHaveBeenCalledWith([ADMIN_ROLE_ID]);
   });
 
@@ -64,9 +65,10 @@ describe('SpaceRoleEditor', () => {
     const component = render({ value: ['police'] });
     component.find('button').simulate('click');
     component
-      .find('input')
-      .at(2)
-      .simulate('change', { target: { checked: true } });
+      .find('[data-test-id="space-role-editor.role-option"]')
+      .at(1)
+      .find('button')
+      .simulate('click');
     expect(changeCb).toHaveBeenCalledWith(['police', 'thief']);
   });
 });

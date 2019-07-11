@@ -1,122 +1,137 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { map, truncate } from 'lodash';
 import {
   Table,
   TableBody,
   TableRow,
   TableCell,
   TableHead,
-  IconButton,
   Button,
   Tooltip
 } from '@contentful/forma-36-react-components';
-import { cx } from 'emotion';
-import pluralize from 'pluralize';
+import { css } from 'emotion';
 
 import Workbench from 'app/common/Workbench.es6';
-import { joinWithAnd } from 'utils/StringUtils.es6';
+import {
+  SpaceMembership as SpaceMembershipProp,
+  SpaceRole as SpaceRoleProp,
+  TeamSpaceMembership as TeamSpaceMembershipProp
+} from 'app/OrganizationSettings/PropTypes.es6';
 import { go } from 'states/Navigator.es6';
 
 import LoadingPlaceholder from './LoadingPlaceholder.es6';
 import styles from './styles.es6';
+import MembershipRow from './MembershipRow.es6';
 
-export default class SpaceTeamsPagePresentation extends React.Component {
-  static propTypes = {
-    memberships: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-    teams: PropTypes.array.isRequired,
-    isLoading: PropTypes.bool.isRequired
-  };
+const goToAddTeams = () =>
+  go({
+    path: ['spaces', 'detail', 'settings', 'teams', 'add']
+  });
 
-  goToAddTeams() {
-    go({
-      path: ['spaces', 'detail', 'settings', 'teams', 'add']
-    });
-  }
+const SpaceTeamsPagePresentation = ({
+  memberships,
+  teams,
+  isLoading,
+  isPending,
+  availableRoles,
+  onUpdateTeamSpaceMembership,
+  readOnly,
+  currentUserAdminSpaceMemberships
+}) => {
+  const [openMenu, setOpenMenu] = useState(null);
+  const [editingRow, setEditingRow] = useState(null);
 
-  render() {
-    const { memberships, teams, isLoading } = this.props;
-    const addTeamsButtonDisabled = memberships.length === teams.length;
+  // close editing mode after pending no more
+  useEffect(() => {
+    !isPending && setEditingRow(null);
+  }, [isPending]);
 
-    return (
-      <Workbench>
-        <Workbench.Header>
-          <Workbench.Header.Left>
-            <Workbench.Icon icon="page-teams" />
-            <Workbench.Title>Teams {!isLoading && `(${memberships.length})`}</Workbench.Title>
-          </Workbench.Header.Left>
-          <Workbench.Header.Actions>
-            <Tooltip
-              place="left"
-              content={
-                addTeamsButtonDisabled && !isLoading
-                  ? 'All teams in the organization are already in this space'
-                  : ''
-              }>
-              <Button
-                testId="add-teams"
-                disabled={addTeamsButtonDisabled}
-                onClick={() => this.goToAddTeams()}>
-                Add team
-              </Button>
-            </Tooltip>
-          </Workbench.Header.Actions>
-        </Workbench.Header>
-        <Workbench.Content className={styles.contentAlignment}>
-          <div className={styles.content}>
-            <Table testId="membership-table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Team</TableCell>
-                  <TableCell className={styles.rolesColumn}>Role</TableCell>
-                  <TableCell />
-                  <TableCell />
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {isLoading && <LoadingPlaceholder />}
-                {!isLoading &&
-                  memberships.map(
-                    ({
-                      sys: {
-                        id,
-                        team: { name, description, memberCount }
-                      },
-                      roles,
-                      admin
-                    }) => (
-                      <TableRow key={id} testId="membership-row" className={styles.row}>
-                        <TableCell className={styles.cell} testId="team-cell">
-                          <div className={styles.cellTeamName}>{name}</div>
-                          {/*This truncation is a fallback for IE and pre-68 FF, which don't support css line-clamp*/}
-                          <div className={styles.cellTeamDescription}>
-                            {truncate(description, { length: 130 })}
-                          </div>
-                        </TableCell>
-                        <TableCell
-                          className={cx(styles.cellRoles, styles.cell)}
-                          testId="roles-cell">
-                          {admin ? 'Admin' : joinWithAnd(map(roles, 'name'))}
-                        </TableCell>
-                        <TableCell className={styles.cell} testId="member-count-cell">
-                          {pluralize('member', memberCount, true)}
-                        </TableCell>
-                        <TableCell>
-                          <IconButton
-                            testId="action-button"
-                            label="Action"
-                            buttonType="secondary"
-                            iconProps={{ icon: 'MoreHorizontal' }}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    )
-                  )}
-              </TableBody>
-            </Table>
-          </div>
-        </Workbench.Content>
-      </Workbench>
-    );
-  }
-}
+  const addTeamsButtonDisabled = memberships.length === teams.length;
+
+  return (
+    <Workbench>
+      <Workbench.Header>
+        <Workbench.Header.Left>
+          <Workbench.Icon icon="page-teams" />
+          <Workbench.Title>Teams {!isLoading && `(${memberships.length})`}</Workbench.Title>
+        </Workbench.Header.Left>
+        <Workbench.Header.Actions>
+          <Tooltip
+            place="left"
+            content={
+              !isLoading &&
+              ((addTeamsButtonDisabled &&
+                'All teams in the organization are already in this space') ||
+                (readOnly && 'You don’t have permission to add teams to this space'))
+            }>
+            <Button
+              testId="add-teams"
+              disabled={addTeamsButtonDisabled || readOnly}
+              onClick={goToAddTeams}>
+              Add team
+            </Button>
+          </Tooltip>
+        </Workbench.Header.Actions>
+      </Workbench.Header>
+      <Workbench.Content className={styles.contentAlignment}>
+        <div className={styles.content}>
+          <Table testId="membership-table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Team</TableCell>
+                {!isLoading && (
+                  <>
+                    <TableCell className={css({ width: '19em' })}>Members</TableCell>
+                    <TableCell>Role</TableCell>
+                  </>
+                )}
+                <TableCell />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {isLoading && <LoadingPlaceholder />}
+              {!isLoading &&
+                memberships.map(membership => {
+                  const {
+                    sys: { id: membershipId }
+                  } = membership;
+                  return (
+                    <MembershipRow
+                      key={membershipId}
+                      {...{
+                        readOnly,
+                        setMenuOpen: open => setOpenMenu(open ? membershipId : null),
+                        menuIsOpen: openMenu === membershipId,
+                        setEditing: edit => setEditingRow(edit ? membershipId : null),
+                        isEditing: editingRow === membershipId,
+                        membership,
+                        availableRoles,
+                        onUpdateTeamSpaceMembership,
+                        isPending,
+                        currentUserAdminSpaceMemberships
+                      }}
+                    />
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </div>
+      </Workbench.Content>
+    </Workbench>
+  );
+};
+
+SpaceTeamsPagePresentation.propTypes = {
+  memberships: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+  teams: PropTypes.array.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  availableRoles: PropTypes.arrayOf(SpaceRoleProp),
+  onUpdateTeamSpaceMembership: PropTypes.func.isRequired,
+  isPending: PropTypes.bool.isRequired,
+  readOnly: PropTypes.bool.isRequired,
+  currentUserAdminSpaceMemberships: PropTypes.arrayOf(
+    PropTypes.oneOfType([SpaceMembershipProp, TeamSpaceMembershipProp])
+  ).isRequired
+};
+
+export default SpaceTeamsPagePresentation;
