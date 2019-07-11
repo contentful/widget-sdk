@@ -144,7 +144,7 @@
     "chalk": "^2.4.2",
     "chokidar": "^1.4.3",
     "codecov": "^3.1.0",
-    "contentful-ui-extensions-sdk": "^3.9.0",
+    "contentful-ui-extensions-sdk": "^3.4.1",
     "cypress": "^3.3.1",
     "cypress-testing-library": "^2.6.0",
     "enzyme": "3.8.0",
