@@ -1,0 +1,66 @@
+{
+  "name": "Webhook",
+  "url": "https://www.contentful.com/",
+  "httpBasicUsername": null,
+  "topics": ["Asset.create"],
+  "filters": [
+    {
+      "not": {
+        "equals": [
+          {
+            "doc": "sys.id"
+          },
+          "master"
+        ]
+      }
+    }
+  ],
+  "transformation": {
+    "method": "GET",
+    "contentType": "application/json",
+    "includeContentLength": true,
+    "body": {}
+  },
+  "sys": {
+    "type": "WebhookDefinition",
+    "id": "webhookId",
+    "version": 0,
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "spaceId"
+      }
+    },
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "userId"
+      }
+    },
+    "createdAt": "2019-07-08T19:24:11Z",
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "userId"
+      }
+    },
+    "updatedAt": "2019-07-08T19:24:11Z"
+  },
+  "headers": [
+    {
+      "key": "custom_header",
+      "value": "123"
+    },
+    {
+      "key": "secret_header",
+      "secret": true
+    },
+    {
+      "key": "Authorization",
+      "secret": true
+    }
+  ]
+}

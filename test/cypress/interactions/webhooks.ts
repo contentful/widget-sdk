@@ -17,6 +17,7 @@ const webhookSingleEventResponseBody = require('../fixtures/responses/webhooks/w
 const webhookSuccessfulCallResponseBody = require('../fixtures/responses/webhooks/webhook-call-successful.json');
 const singleWebhookResponseBody = require('../fixtures/responses/webhooks/single-webhook.json');
 const noWebhookCallsResponseBody = require('../fixtures/responses/webhooks/no-webhook-calls.json');
+const webhookCustomAllSettingsResponseBody = require('../fixtures/responses/webhooks/custom-webhook.json');
 const queryWebhooksLimit = {
   limit: '100'
 };
@@ -104,6 +105,19 @@ export function customWebhookSingleEventResponse() {
   }).as(state.Webhooks.SINGLE_EVENT);
 }
 
+export function customWebhookAllSettingsResponse() {
+  cy.addInteraction({
+    provider: 'webhooks',
+    state: state.Webhooks.ALL_SETTINGS,
+    uponReceiving: 'a get request for custom webhook with all the settings set',
+    withRequest: getWebhook(defaultSpaceId, defaultWebhookId),
+    willRespondWith: {
+      status: 200,
+      body: webhookCustomAllSettingsResponseBody
+    }
+  }).as(state.Webhooks.ALL_SETTINGS);
+}
+
 export function webhookCallSuccessfulResponse() {
   return cy.addInteraction({
     provider: 'webhooks',
@@ -156,7 +170,7 @@ export function defaultWebhookDeletedSuccessResponse() {
     willRespondWith: {
       status: 204
     }
-  }).as(state.Webhooks.SINGLE);
+  }).as('default-webhook-deleted-successfully');
 }
 
 export function defaultWebhookDeletedErrorResponse() {

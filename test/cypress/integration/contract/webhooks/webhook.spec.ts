@@ -9,7 +9,8 @@ import {
   webhookCallSuccessfulResponse,
   defaultWebhookDeletedSuccessResponse,
   noWebhooksResponse,
-  defaultWebhookDeletedErrorResponse
+  defaultWebhookDeletedErrorResponse,
+  customWebhookAllSettingsResponse
 } from '../../../interactions/webhooks';
 
 describe('Webhook', () => {
@@ -79,6 +80,42 @@ describe('Webhook', () => {
     });
   });
 
+  context('webhook with all custom settings is configured', () => {
+    beforeEach(() => {
+      customWebhookAllSettingsResponse();
+      noWebhookCallsResponse();
+      cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks/${defaultWebhookId}`);
+      cy.wait([`@${state.Webhooks.ALL_SETTINGS}`, `@${state.Webhooks.NO_CALLS}`]);
+    });
+
+    it('renders webhook page', () => {
+      cy.getByTestId('webhook-settings').click();
+      cy.getByTestId('webhook-method-select').should('have.value', 'GET');
+      cy.getByTestId('filter-entity-type').should('have.value', 'sys.id');
+      cy.getByTestId('filter-operation').should('contain', 'not equals');
+      cy.getByTestId('filter-value').should('have.value', 'master');
+      cy.get('[data-test-id="setting-row"]').should('have.length', 3);
+      cy.getByTestId('custom_header-key').should('have.value', 'custom_header');
+      cy.getByTestId('custom_header-value').should('have.value', '123');
+      cy.getByTestId('secret_header-key')
+        .should('have.value', 'secret_header')
+        .and('have.attr', 'disabled');
+      cy.getByTestId('secret_header-value').should('have.attr', 'readonly');
+      cy.get('[data-test-id="secret_header-value"]')
+        .invoke('attr', 'placeholder')
+        .should('be.eq', 'Value of this header is secret');
+      cy.getByTestId('Authorization-key')
+        .should('have.value', 'Authorization')
+        .and('have.attr', 'disabled');
+      cy.getByTestId('Authorization-value').should('have.attr', 'readonly');
+      cy.get('[data-test-id="secret_header-value"]')
+        .invoke('attr', 'placeholder')
+        .should('be.eq', 'Value of this header is secret');
+      cy.getByTestId('content-type-select').should('contain', 'application/json');
+      cy.get('.CodeMirror-line').should('have.text', '{}');
+    });
+  });
+
   context('removing a webhook', () => {
     beforeEach(() => {
       defaultWebhookResponse();
@@ -99,7 +136,7 @@ describe('Webhook', () => {
       cy.getByTestId('webhook-remove').click();
       cy.getByTestId('remove-webhook-confirm').click();
 
-      cy.wait([`@${state.Webhooks.NONE}`]);
+      cy.wait(['@default-webhook-deleted-successfully', `@${state.Webhooks.NONE}`]);
       cy.verifyNotification('success', `Webhook "${newWebhook.name}" deleted successfully.`);
     });
 

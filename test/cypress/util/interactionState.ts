@@ -97,5 +97,6 @@ export enum Webhooks {
   INTERNAL_SERVER_ERROR = 'webhooks/error',
   SINGLE = 'webhooks/single',
   NO_CALLS = 'webhooks/no-calls',
-  SINGLE_EVENT = 'webhooks/single_event'
+  SINGLE_EVENT = 'webhooks/single_event',
+  ALL_SETTINGS = 'webhooks/all-settings'
 }

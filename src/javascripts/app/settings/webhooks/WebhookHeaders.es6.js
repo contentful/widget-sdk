@@ -55,6 +55,7 @@ export class WebhookHeaders extends React.Component {
           return (
             <div data-test-id="setting-row" className="webhook-editor__settings-row" key={`${i}`}>
               <input
+                data-test-id={`${h.key}-key`}
                 type="text"
                 className="cfnext-form__input"
                 placeholder="Key"
@@ -64,6 +65,7 @@ export class WebhookHeaders extends React.Component {
               />
               {!h.secret && (
                 <input
+                  data-test-id={`${h.key}-value`}
                   type="text"
                   className="cfnext-form__input"
                   placeholder="Value"
@@ -73,6 +75,7 @@ export class WebhookHeaders extends React.Component {
               )}
               {h.secret && (
                 <input
+                  data-test-id={`${h.key}-value`}
                   type="password"
                   className="cfnext-form__input"
                   placeholder="Value of this header is secret"

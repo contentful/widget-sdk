@@ -35,6 +35,14 @@ describe('Entries page', () => {
           `@${state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR}`
         ]);
 
+        cy.wait(
+          [
+            `@${state.Entries.NO_LINKS_TO_DEFAULT_ENTRY}`,
+            `@${state.Entries.NO_SNAPSHOTS_FOR_DEFAULT_ENTRY}`
+          ],
+          { timeout: 10000 }
+        );
+
         cy.getByTestId('entry-editor-sidebar')
           .find('h2')
           .should('have.length', widgetNames.length)

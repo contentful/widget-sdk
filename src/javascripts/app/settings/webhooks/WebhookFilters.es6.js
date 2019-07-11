@@ -68,6 +68,7 @@ export default class WebhookFilters extends React.Component {
         <select
           onChange={e => this.updateByIndex(index, { path: e.target.value })}
           className="cfnext-select-box"
+          data-test-id="filter-entity-type"
           value={filter.path}>
           {PATHS.map(p => (
             <option key={p} value={p}>
@@ -79,6 +80,7 @@ export default class WebhookFilters extends React.Component {
         <select
           onChange={e => this.updateByIndex(index, { constraint: e.target.value })}
           className="cfnext-select-box"
+          data-test-id="filter-operation"
           value={filter.constraint}>
           {CONSTRAINT_TYPES.map(this.renderConstraintOption)}
         </select>
@@ -88,6 +90,7 @@ export default class WebhookFilters extends React.Component {
           placeholder={this.getPlaceholder(filter.constraint)}
           className="cfnext-form__input"
           type="text"
+          data-test-id="filter-value"
           value={filter.value}
         />
 
