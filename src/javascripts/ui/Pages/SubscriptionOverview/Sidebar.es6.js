@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
+import StateLink from 'app/common/StateLink.es6';
 import {
   DisplayText,
   Heading,
@@ -79,7 +80,7 @@ function NonPayingOrgCopy({ organizationId }) {
   );
 }
 
-function InaccessibleSpacesCopy({ isOrgOwner }) {
+function InaccessibleSpacesCopy({ isOrgOwner, organizationId: orgId }) {
   return (
     <>
       <Heading className="entity-sidebar__heading">Spaces without permission</Heading>
@@ -90,7 +91,11 @@ function InaccessibleSpacesCopy({ isOrgOwner }) {
         </Paragraph>
         <Paragraph>
           However, since you’re an organization {isOrgOwner ? 'owner' : 'admin'} you can grant
-          yourself access by going to <i>users</i> and adding yourself to the space.
+          yourself access by going to{' '}
+          <StateLink to="account.organizations.users.list" params={{ orgId }}>
+            Users
+          </StateLink>{' '}
+          and adding yourself to the space.
         </Paragraph>
       </Typography>
     </>
