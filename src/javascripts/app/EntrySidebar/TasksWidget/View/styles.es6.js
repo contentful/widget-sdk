@@ -37,6 +37,10 @@ export const taskStyles = {
     }
   }),
 
+  taskLoadingSpinner: css({
+    marginRight: tokens.spacing2Xs
+  }),
+
   taskLoading: css({
     padding: tokens.spacingS,
     cursor: 'default',

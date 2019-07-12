@@ -13,7 +13,8 @@ import {
   TextField,
   Tooltip,
   SkeletonContainer,
-  SkeletonBodyText
+  SkeletonBodyText,
+  Spinner
 } from '@contentful/forma-36-react-components';
 import Visible from 'components/shared/Visible/index.es6';
 import { cx } from 'emotion';
@@ -32,12 +33,13 @@ export default class Task extends React.Component {
     onCancel: PropTypes.func,
     onSave: PropTypes.func,
     onDeleteTask: PropTypes.func,
-    onCompleteTask: PropTypes.func
+    onStatusChange: PropTypes.func
   };
 
   state = {
     isExpanded: false,
-    pendingChanges: {}
+    pendingChanges: {},
+    isUpdating: false
   };
 
   componentDidUpdate(prevProps) {
@@ -102,6 +104,15 @@ export default class Task extends React.Component {
     this.props.onCancel();
   };
 
+  handleStatusChange = () => {
+    this.setState({ isUpdating: true });
+    const newViewData = {
+      ...this.getChangedValue(),
+      isDone: !this.props.viewData.isDone
+    };
+    this.props.onStatusChange(newViewData, () => this.setState({ isUpdating: false }));
+  };
+
   handleDeleteClick = async event => {
     event.stopPropagation();
     return ModalLauncher.open(({ isShown, onClose }) => (
@@ -145,13 +156,21 @@ export default class Task extends React.Component {
   };
 
   renderDetails = () => {
-    const { isExpanded } = this.state;
+    const { isExpanded, isUpdating } = this.state;
     const { body, creator, createdAt, isDone, assignee } = this.props.viewData;
 
     return (
       <React.Fragment>
         <div className={styles.checkboxWrapper}>
-          <input type="checkbox" checked={isDone} onChange={() => this.props.onCompleteTask()} />
+          {isUpdating ? (
+            <Spinner size="small" className={styles.taskLoadingSpinner} />
+          ) : (
+            <input
+              type="checkbox"
+              checked={isDone}
+              onChange={event => this.handleStatusChange(event)}
+            />
+          )}
         </div>
         <div
           className={cx(styles.body, isExpanded && styles.bodyExpanded)}

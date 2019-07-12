@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { memoize } from 'lodash';
+import pluralize from 'pluralize';
 import {
   UserSelectorViewData,
   createSpaceUserSelectorViewData,
@@ -67,11 +68,7 @@ export function createTaskListViewData(
   const isCreatingDraft = tasksInEditMode[DRAFT_TASK_KEY];
   const draftTasksVD = isCreatingDraft ? [newTaskVD(DRAFT_TASK)] : [];
   return {
-    statusText: !tasks
-      ? null
-      : tasks.length === 0
-      ? 'No tasks were defined yet.'
-      : `There are ${getPendingTasksCount(tasks)} pending tasks.`,
+    statusText: tasks ? getPendingTasksMessage(tasks) : null,
     isLoading: tasksFetchingStatus.isLoading && !tasks,
     errorMessage: loadingError ? `Error ${tasks ? 'syncing' : 'loading'} tasks` : null,
     hasCreateAction: !isCreatingDraft && !loadingError,
@@ -154,6 +151,15 @@ function decorateTaskViewDataWithEditMode(taskVD, usersSelectorVD) {
   };
 }
 
+function getPendingTasksMessage(tasks) {
+  if (tasks.length === 0) {
+    return 'No tasks have been defined yet.';
+  }
+  const count = getPendingTasksCount(tasks);
+  const are = count !== 1 ? 'are' : 'is';
+  return `There ${are} ${pluralize('pending task', count, true)}.`;
+}
+
 function getPendingTasksCount(tasks) {
-  return tasks.filter(task => task.status === 'open').length;
+  return tasks.filter(task => task.assignment.status === 'open').length;
 }
