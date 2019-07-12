@@ -5,6 +5,23 @@ const styles = {
   timePicker: css({
     display: 'block'
   }),
+  selectedTime: css({
+    background: tokens.colorElementLightest
+  }),
+  dropdown: css({
+    width: '100%'
+  }),
+  dropdownContainer: css({
+    zIndex: 1001,
+    width: '165px',
+    '& > div': {
+      width: '100%',
+      button: {
+        width: '100%',
+        textAlign: 'center'
+      }
+    }
+  }),
   inputWrapper: css({
     display: 'flex',
     marginBottom: tokens.spacingXs,
@@ -18,7 +35,8 @@ const styles = {
       paddingRight: '2rem'
     }
   }),
-  timeField: css({
+  timeInput: css({
+    width: '100%',
     flexBasis: '100%',
     justifyContent: 'center',
     display: 'flex',
@@ -26,16 +44,11 @@ const styles = {
     border: `1px solid ${tokens.colorElementMid}`,
     paddingLeft: tokens.spacingXs,
     paddingRight: tokens.spacingXs,
-    height: '40px'
-  }),
-  timeInput: css({
-    height: '100%',
-    maxWidth: tokens.spacingL,
+    height: '40px',
     color: tokens.colorTextMid,
     textAlign: 'center',
     fontSize: tokens.fontSizeM,
     fontFamily: 'Avenir Next',
-    border: 'none',
     margin: 0,
     MozAppearance: 'textfield',
     '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': {

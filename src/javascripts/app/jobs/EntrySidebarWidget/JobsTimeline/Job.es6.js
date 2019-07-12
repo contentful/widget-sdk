@@ -19,7 +19,7 @@ const FormattedTime = time =>
   moment
     .utc(time)
     .local()
-    .format('ddd, MMM Do, YYYY - hh:mm A');
+    .format('ddd, MMM Do, YYYY - h:mm A');
 
 const tagTypeForAction = {
   publish: 'positive'

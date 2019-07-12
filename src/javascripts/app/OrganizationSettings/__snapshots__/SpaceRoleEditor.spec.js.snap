@@ -29,6 +29,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
 >
   <Dropdown
     className=""
+    getContainerRef={[Function]}
     isOpen={false}
     onClose={[Function]}
     position="bottom-left"
@@ -214,6 +215,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
 >
   <Dropdown
     className=""
+    getContainerRef={[Function]}
     isOpen={true}
     onClose={[Function]}
     position="bottom-left"
@@ -397,6 +399,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
             </button>
           </div>
         }
+        getRef={[Function]}
         onClose={[Function]}
         openSubmenu={[Function]}
         position="bottom-left"
@@ -484,7 +487,9 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                       class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem--title___CyVKB"
                       data-test-id="cf-ui-dropdown-list-item"
                     >
-                      other roles
+                      <span>
+                        other roles
+                      </span>
                     </li>
                     <li
                       class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
@@ -694,7 +699,9 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                         className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem--title___CyVKB"
                         data-test-id="cf-ui-dropdown-list-item"
                       >
-                        other roles
+                        <span>
+                          other roles
+                        </span>
                       </li>
                     </DropdownListItem>
                     <DropdownListItem

@@ -44,7 +44,7 @@ TimezoneNote.propTypes = {
 };
 
 function formatScheduledAtDate({ date, time, utcOffset }) {
-  const res = moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm A')
+  const res = moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm')
     .utcOffset(utcOffset, true)
     .toISOString(true);
 
@@ -53,7 +53,7 @@ function formatScheduledAtDate({ date, time, utcOffset }) {
 
 function JobDialog({ onCreate, onCancel }) {
   const now = moment(Date.now());
-  const suggestedDate = now.add(0.5, 'hours');
+  const suggestedDate = now.add(1, 'hours').startOf('hour');
 
   const [date, setDate] = useState(suggestedDate.format('YYYY-MM-DD'));
   const [time, setTime] = useState(suggestedDate.format('HH:mm'));
@@ -92,6 +92,7 @@ function JobDialog({ onCreate, onCancel }) {
                   }}
                   labelText="Publish on"
                   required
+                  onBlur={() => validateForm()}
                   value={moment(date).toDate()}
                   minDate={now.toDate()}
                   data-test-id="date"
@@ -99,6 +100,7 @@ function JobDialog({ onCreate, onCancel }) {
                 <TimePicker
                   name="time"
                   value={time}
+                  date={date}
                   onChange={time => {
                     setTime(time);
                   }}
@@ -114,10 +116,10 @@ function JobDialog({ onCreate, onCancel }) {
                   name="timezone"
                   id="timezone"
                   testId="timezone"
-                  onBlur={() => validateForm()}
                   onChange={e => {
                     setUtcOffset(Number(e.target.value));
                   }}
+                  onBlur={() => validateForm()}
                   labelText="Timezone"
                   value={utcOffset.toString()}>
                   {getTimezoneOptions().map(({ timezone, offset, label }) => (
@@ -145,7 +147,6 @@ function JobDialog({ onCreate, onCancel }) {
             <Button
               data-test-id="schedule-publication"
               type="submit"
-              disabled={!!formError}
               onClick={() => {
                 validateForm(() => {
                   onCreate({

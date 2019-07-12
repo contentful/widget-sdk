@@ -1,124 +1,230 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
+import isHotkey from 'is-hotkey';
 import PropTypes from 'prop-types';
+import { orderBy } from 'lodash';
 import moment from 'moment';
-import { isNaN } from 'lodash';
 import {
-  Select,
   HelpText,
   FormLabel,
   ValidationMessage,
-  Option
+  Dropdown,
+  DropdownListItem,
+  DropdownList
 } from '@contentful/forma-36-react-components';
 import styles from './styles.es6';
-import { getPreferredTimeFormat, TimeFormat } from './TimeFormatDetector.es6';
 
-const pad = n => {
-  const nValue = Number.parseInt(n, 10);
-  if (nValue < 10) {
-    return `0${nValue}`;
-  } else {
-    return n;
+const MOMENT_12H_FORMAT = 'h:mm A';
+const MOMENT_24H_FORMAT = 'HH:mm';
+
+function createHours() {
+  const hours = [];
+  for (let hour = 0; hour < 24; hour++) {
+    hours.push(
+      moment()
+        .startOf('day')
+        .add({ hour })
+    );
+    hours.push(
+      moment()
+        .startOf('day')
+        .add({
+          hour,
+          minute: 30
+        })
+    );
   }
-};
 
-export function TimePicker({ helpText, validationMessage, onChange, onBlur, value }) {
-  const momentValue = moment(value, 'HH:mm').local();
+  return orderBy(hours, time => time.toDate(), 'asc').map(m => m.format(MOMENT_12H_FORMAT));
+}
 
-  const preferredTimeFormat = getPreferredTimeFormat();
-  const [timeFormat, setTimeFormat] = useState(momentValue.format('A'));
+const allHourSuggestions = createHours();
 
-  const minutes = momentValue.format('m');
-  const hours = momentValue.format(preferredTimeFormat);
+function parseRawInput(raw) {
+  const meridiem = moment().format('A');
+  // In case an input value has no meridiem we'll add current meridiem
+  const normalisedValue = /[ap]m/gi.test(raw) ? raw : `${raw} ${meridiem}`;
+  return moment(normalisedValue, ['HH:mm', 'h:mm A', 'hh:mm', 'k:mm', 'kk:mm']);
+}
 
-  const handleChange = results => {
-    let inputFormat;
-    if (preferredTimeFormat === TimeFormat.H24) {
-      inputFormat = moment(`${results.hours}:${results.minutes}`, 'HH:mm');
+function roundDate(date, duration, method) {
+  return moment(Math[method](+date / +duration) * +duration);
+}
+
+function roundToHalfHour(value, method = 'ceil') {
+  const roundedTime =
+    moment(value, MOMENT_24H_FORMAT).minutes() % 30 !== 0
+      ? moment(roundDate(moment(value, MOMENT_24H_FORMAT), moment.duration(30, 'minutes'), method))
+      : moment(value, MOMENT_24H_FORMAT)[method === 'ceil' ? 'add' : 'subtract'](0.5, 'hours');
+
+  return roundedTime.isAfter(moment.now())
+    ? roundedTime.format(MOMENT_12H_FORMAT)
+    : moment(value, MOMENT_24H_FORMAT).format(MOMENT_12H_FORMAT);
+}
+
+function getSuggestionList(value, date) {
+  const before = [];
+  const after = [];
+  allHourSuggestions.forEach(m => {
+    if (
+      moment(m, MOMENT_12H_FORMAT).isBefore(moment(value, MOMENT_24H_FORMAT).subtract(1, 'hours'))
+    ) {
+      before.push(m);
     } else {
-      inputFormat = moment(`${results.hours}:${results.minutes} ${results.timeFormat}`, 'hh:mm A');
+      after.push(m);
     }
-    onChange(inputFormat.format('HH:mm'));
-  };
+  });
+
+  return after
+    .concat(before)
+    .filter(time => moment(`${date} ${time}`, `YYYY-MM-DD ${MOMENT_12H_FORMAT}`).isAfter(moment()));
+}
+
+export function TimePicker({ value, date, helpText, validationMessage, onChange, onBlur }) {
+  const [isTimeSuggestionOpen, setTimeSuggestionOpen] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(
+    moment(value, MOMENT_24H_FORMAT).format(MOMENT_12H_FORMAT)
+  );
+  const [dropdownContainer, setDropdownContainer] = useState(null);
+  const inputRef = useRef(null);
+
+  const getTimeFromUserInputOrDefaultToValue = useCallback(() => {
+    const parsedTime = parseRawInput(selectedTime);
+    if (parsedTime.isValid()) {
+      return parsedTime.format(MOMENT_12H_FORMAT);
+    } else {
+      return moment(value, MOMENT_24H_FORMAT).format(MOMENT_12H_FORMAT);
+    }
+  }, [selectedTime, value]);
+
+  const closeDropdown = useCallback(
+    event => {
+      if (dropdownContainer) {
+        const parent = dropdownContainer;
+        const activeElement = event.relatedTarget || document.activeElement;
+        if (activeElement === document.body) {
+          inputRef.current.focus();
+          return null;
+        }
+
+        const isDropdownListFocused = activeElement === parent || parent.contains(activeElement);
+
+        if (!isDropdownListFocused) {
+          setTimeSuggestionOpen(false);
+        }
+      }
+    },
+    [dropdownContainer]
+  );
+
+  const handleChange = useCallback(
+    val => {
+      setSelectedTime(val);
+
+      const parsedTime = parseRawInput(val);
+      if (parsedTime.isValid()) {
+        const time24H = parsedTime.format(MOMENT_24H_FORMAT);
+
+        onChange(time24H);
+      }
+    },
+    [onChange]
+  );
+
+  const handleKeyUp = useCallback(
+    event => {
+      if (isHotkey('arrowUp', event)) {
+        handleChange(roundToHalfHour(value, 'floor'));
+      }
+      if (isHotkey('arrowDown', event)) {
+        handleChange(roundToHalfHour(value, 'ceil'));
+      }
+      if (isHotkey('enter', event)) {
+        setTimeSuggestionOpen(false);
+      }
+    },
+    [value, handleChange]
+  );
+
+  const handleKeyDown = useCallback(event => {
+    if (isHotkey('arrowUp', event) || isHotkey('arrowDown', event)) {
+      event.preventDefault();
+    }
+  }, []);
+
+  const handleFocus = useCallback(e => {
+    e.preventDefault();
+    e.target.select();
+    setTimeSuggestionOpen(true);
+  }, []);
+
+  const handleBlur = useCallback(
+    e => {
+      const time = getTimeFromUserInputOrDefaultToValue();
+      setSelectedTime(time);
+      closeDropdown(e);
+      onBlur();
+    },
+    [getTimeFromUserInputOrDefaultToValue, setSelectedTime, closeDropdown, onBlur]
+  );
+
+  const filteredHours = getSuggestionList(value, date);
+
   return (
     <div className={styles.timePicker}>
       <FormLabel required={true} htmlFor="scheduleTimeForm">
         Time
       </FormLabel>
       <div className={styles.inputWrapper} id="scheduleTimeForm">
-        <div className={styles.timeField}>
-          <input
-            className={styles.timeInput}
-            name="hour"
-            data-test-id="hours"
-            type="number"
-            min={preferredTimeFormat === TimeFormat.H12 ? 1 : 0}
-            max={preferredTimeFormat === TimeFormat.H12 ? 12 : 23}
-            value={pad(hours)}
-            onBlur={onBlur}
-            onChange={e => {
-              let value = parseInt(e.target.value, 10);
-              if (isNaN(value)) {
-                value = preferredTimeFormat === TimeFormat.H12 ? 12 : 0;
-              }
-              if (preferredTimeFormat === TimeFormat.H12) {
-                value = value === 0 ? 12 : Math.min(value, 12);
-              } else {
-                value = Math.min(value, 23);
-              }
-              handleChange({
-                hours: pad(value),
-                minutes: minutes,
-                timeFormat: timeFormat
-              });
-            }}
-          />
-          <span>:</span>
-          <input
-            className={styles.timeInput}
-            type="number"
-            data-test-id="minutes"
-            name="minute"
-            onBlur={onBlur}
-            value={pad(minutes)}
-            min="0"
-            max="59"
-            onChange={e => {
-              handleChange({
-                hours: hours,
-                minutes: pad(Math.min(parseInt(e.target.value, 10), 59)),
-                timeFormat: timeFormat
-              });
-            }}
-          />
-        </div>
-        {preferredTimeFormat === TimeFormat.H12 && (
-          <Select
-            className={styles.daytimeSelect}
-            name="daytime"
-            value={timeFormat}
-            data-test-id="ampm"
-            onBlur={onBlur}
-            onChange={e => {
-              handleChange({
-                hours: hours,
-                minutes: minutes,
-                timeFormat: e.target.value
-              });
-              setTimeFormat(e.target.value);
-            }}>
-            <Option value="AM">AM</Option>
-            <Option value="PM">PM</Option>
-          </Select>
-        )}
+        <Dropdown
+          className={styles.dropdown}
+          dropdownContainerClassName={styles.dropdownContainer}
+          getContainerRef={setDropdownContainer}
+          toggleElement={
+            <input
+              ref={inputRef}
+              className={styles.timeInput}
+              name="time input"
+              data-test-id="time"
+              value={selectedTime}
+              onKeyUp={handleKeyUp}
+              onKeyDown={handleKeyDown}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onChange={e => handleChange(e.target.value)}
+            />
+          }
+          isOpen={isTimeSuggestionOpen}>
+          <DropdownList maxHeight={200}>
+            {filteredHours.map(hour => {
+              return (
+                <DropdownListItem
+                  testId="time-suggestion"
+                  className={
+                    moment(value, MOMENT_24H_FORMAT).format(MOMENT_12H_FORMAT) === hour
+                      ? styles.selectedTime
+                      : null
+                  }
+                  onClick={() => {
+                    handleChange(hour);
+                    setTimeSuggestionOpen(false);
+                  }}
+                  key={hour}>
+                  {hour}
+                </DropdownListItem>
+              );
+            })}
+          </DropdownList>
+        </Dropdown>
+        {helpText && <HelpText>{helpText}</HelpText>}
+        {validationMessage && <ValidationMessage>{validationMessage}</ValidationMessage>}
       </div>
-      {helpText && <HelpText>{helpText}</HelpText>}
-      {validationMessage && <ValidationMessage>{validationMessage}</ValidationMessage>}
     </div>
   );
 }
 
 TimePicker.propTypes = {
   value: PropTypes.string.isRequired,
+  date: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onBlur: PropTypes.func,
   required: PropTypes.bool,
@@ -126,6 +232,10 @@ TimePicker.propTypes = {
   validationMessage: PropTypes.string,
   id: PropTypes.string,
   name: PropTypes.string
+};
+
+TimePicker.defaultProps = {
+  onBlur: () => {}
 };
 
 export default TimePicker;
