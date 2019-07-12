@@ -24,22 +24,34 @@ const BUSY_STATE_INSTALLATION = 'installation';
 const BUSY_STATE_UPDATE = 'update';
 const BUSY_STATE_UNINSTALLATION = 'uninstallation';
 
+const BUSY_STATE_TO_TEXT = {
+  [BUSY_STATE_INSTALLATION]: 'Installing the app',
+  [BUSY_STATE_UPDATE]: 'Updating configuration',
+  [BUSY_STATE_UNINSTALLATION]: 'Uninstalling the app'
+};
+
 const styles = {
   renderer: css({
-    position: 'relative',
     height: '100%',
     width: '100%'
   }),
   overlay: css({
-    backgroundColor: 'rgba(255,255,255,.5)',
-    position: 'absolute',
+    backgroundColor: 'rgba(0,0,0,.3)',
+    position: 'fixed',
+    zIndex: 9999,
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
+    paddingTop: '200px',
+    textAlign: 'center'
+  }),
+  busyText: css({
+    display: 'inline-block',
+    padding: '20px 30px',
+    borderRadius: '25px',
     fontSize: '24px',
-    textAlign: 'center',
-    paddingTop: '100px'
+    backgroundColor: 'white'
   })
 };
 
@@ -309,7 +321,9 @@ export default class AppRoute extends Component {
       <Workbench.Content>
         <div className={styles.renderer}>
           {this.state.busyWith && (
-            <div className={styles.overlay}>I am busy with {this.state.busyWith}</div>
+            <div className={styles.overlay}>
+              <p className={styles.busyText}>{BUSY_STATE_TO_TEXT[this.state.busyWith]}</p>
+            </div>
           )}
           <ExtensionIFrameRenderer
             bridge={this.props.bridge}
