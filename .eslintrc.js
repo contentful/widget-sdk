@@ -90,7 +90,11 @@ module.exports = {
       }
     },
     {
-      files: ['src/**/*.spec.js', 'src/**/__test__/**/*.js', 'src/javascripts/__mocks__/**/*.js'],
+      files: [
+        'src/**/*.spec.js',
+        'src/**/__test__/**/*.js',
+        'src/javascripts/**/__mocks__/**/*.js'
+      ],
       plugins: ['jest', 'rulesdir'],
       rules: {
         'jest/no-disabled-tests': 'warn',
