@@ -153,7 +153,7 @@ function decorateTaskViewDataWithEditMode(taskVD, usersSelectorVD) {
 
 function getPendingTasksMessage(tasks) {
   if (tasks.length === 0) {
-    return 'No tasks were defined yet.';
+    return 'No tasks have been defined yet.';
   }
   const count = getPendingTasksCount(tasks);
   const are = count !== 1 ? 'are' : 'is';
