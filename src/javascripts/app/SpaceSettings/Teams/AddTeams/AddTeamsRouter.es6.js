@@ -45,13 +45,22 @@ const fetch = (spaceId, onReady) => async () => {
 
 export default function AddTeamsRouter({ onReady, spaceId }) {
   const { error, data } = useAsync(useCallback(fetch(spaceId, onReady), [spaceId]));
-  const page = (!getSectionVisibility().teams && <ForbiddenPage />) ||
-    (!error && data && <AddTeamsPage spaceId={spaceId} {...data} />) || <UnknownErrorMessage />;
+
+  const hasAccess = getSectionVisibility().teams;
+  const hasError = error || !data;
+
+  let page;
+  if (!hasError) {
+    page = <AddTeamsPage spaceId={spaceId} {...data} />;
+  }
+  if (!hasAccess) {
+    page = <ForbiddenPage />;
+  }
 
   return (
     <>
       <DocumentTitle title="Add teams" />
-      {page}
+      {page || <UnknownErrorMessage />}
     </>
   );
 }
