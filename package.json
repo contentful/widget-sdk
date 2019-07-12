@@ -124,6 +124,7 @@
     "@pact-foundation/pact": "^8.2.4",
     "@pact-foundation/pact-web": "^8.2.4",
     "@testing-library/react": "8.0.1",
+    "@testing-library/user-event": "^4.1.0",
     "@types/classnames": "^2.2.8",
     "@types/enzyme": "^3.9.3",
     "@types/lodash": "^4.14.134",

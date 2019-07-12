@@ -287,7 +287,7 @@ export default class Task extends React.Component {
 
   renderLoadingState() {
     return (
-      <div className={cx(styles.task, styles.taskLoading)}>
+      <div className={cx(styles.task, styles.taskLoading)} data-test-id="task-loading-placeholder">
         <SkeletonContainer svgHeight={18}>
           <SkeletonBodyText numberOfLines={1} />
         </SkeletonContainer>
