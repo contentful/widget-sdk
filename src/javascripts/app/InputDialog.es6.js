@@ -44,7 +44,13 @@ export default function open(params = {}) {
         isValid(trimmed) && $scope.dialog.confirm(trimmed);
       };
 
-      $scope.props = { params, confirm, onCancel, initialValue: value, onConfirm, isValid };
+      $scope.props = {
+        params,
+        onCancel,
+        initialValue: value,
+        onConfirm,
+        isValid
+      };
       if (isFinite(input.max)) {
         $scope.props.maxLength = input.max;
       }

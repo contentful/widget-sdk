@@ -6,7 +6,7 @@ function isActiveFullStackProject(project) {
 
 export function loadProjectsFromOptimizely(pat) {
   return new Promise(async resolve => {
-    const result = await fetch('https://api.optimizely.com/v2/projects', {
+    const result = await window.fetch('https://api.optimizely.com/v2/projects', {
       headers: {
         Authorization: `Bearer ${pat}`
       }

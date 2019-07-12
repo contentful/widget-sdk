@@ -16,7 +16,10 @@ const ERROR_CHECKS = [
   {
     message: NOT_RENAMEABLE_MESSAGE,
     check: function(err) {
-      return status === 403 && get(err, ['body', 'sys', 'id']) === 'FallbackLocaleNotRenameable';
+      return (
+        get(err, 'statusCode') === 403 &&
+        get(err, ['body', 'sys', 'id']) === 'FallbackLocaleNotRenameable'
+      );
     }
   }
 ];

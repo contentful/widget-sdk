@@ -12,7 +12,7 @@ export default function createMicroBackendsClient({ backendName, withAuth, baseU
   async function call(path, opts) {
     const token = withAuth ? await getToken() : null;
 
-    return fetch(url(path), prepareOpts(opts, token));
+    return window.fetch(url(path), prepareOpts(opts, token));
   }
 
   function url(path) {

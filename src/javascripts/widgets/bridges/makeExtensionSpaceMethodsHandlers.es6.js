@@ -91,7 +91,7 @@ function trackEntryAction(action, contentTypeId, data) {
 
 async function createUpload(spaceId, base64Data) {
   // Convert raw Base64 string to Uint8Array so we can post the binary to upload API
-  const raw = atob(base64Data);
+  const raw = window.atob(base64Data);
   const rawLength = raw.length;
   const binary = new Uint8Array(new ArrayBuffer(rawLength));
 
@@ -102,14 +102,16 @@ async function createUpload(spaceId, base64Data) {
   const token = await getToken();
 
   // We're preferring `fetch` over `createEndpoint` to be able to send binary data
-  return fetch(uploadApiUrl(`/spaces/${spaceId}/uploads`), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/octet-stream',
-      Authorization: `Bearer ${token}`
-    },
-    body: binary
-  }).then(resp => resp.json());
+  return window
+    .fetch(uploadApiUrl(`/spaces/${spaceId}/uploads`), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        Authorization: `Bearer ${token}`
+      },
+      body: binary
+    })
+    .then(resp => resp.json());
 }
 
 // Assets are processed asynchronously, so we have to poll the asset endpoint to wait until they're processed.

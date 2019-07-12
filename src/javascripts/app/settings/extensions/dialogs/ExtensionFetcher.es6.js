@@ -16,7 +16,7 @@ function isValidGHUserContentUrl(url) {
 }
 
 function isValidContentfulExtsUrl(url) {
-  return /https:\/\/[^.\s]+\.contentfulexts\.com\/extension\.json/.test(url)
+  return /https:\/\/[^.\s]+\.contentfulexts\.com\/extension\.json/.test(url);
 }
 
 function getDescriptorUrl(url) {
@@ -48,7 +48,8 @@ export function isValidSource(url) {
 export function fetchExtension(url) {
   const descriptorUrl = getDescriptorUrl((url || '').trim());
 
-  return fetch(descriptorUrl)
+  return window
+    .fetch(descriptorUrl)
     .then(res => {
       if (res.status >= 400) {
         return Promise.reject(new Error(ERRORS.DESCRIPTOR));
@@ -59,7 +60,7 @@ export function fetchExtension(url) {
     .then(descriptor => {
       if (typeof descriptor.srcdoc === 'string') {
         const srcdocUrl = new URL(descriptor.srcdoc, descriptorUrl);
-        return fetch(srcdocUrl.toString()).then(res => {
+        return window.fetch(srcdocUrl.toString()).then(res => {
           if (res.status >= 400) {
             return Promise.reject(new Error(ERRORS.SRCDOC));
           } else {

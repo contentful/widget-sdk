@@ -88,7 +88,7 @@ export default class BuildButton extends Component {
       userId: spaceContext.user.sys.id
     });
 
-    const res = await fetch(this.props.netlifySite.buildHookUrl, { method: 'POST' });
+    const res = await window.fetch(this.props.netlifySite.buildHookUrl, { method: 'POST' });
 
     Analytics.track('netlify:build_triggered');
 

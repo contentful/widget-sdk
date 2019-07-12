@@ -35,7 +35,7 @@ function FilterOperator({ op, operators = [], onChange }) {
 function FilterValue({ valueInput, value, isFocused, onChange, onRemove }) {
   const inputRef = el => {
     if (isFocused && el) {
-      requestAnimationFrame(() => el.focus());
+      window.requestAnimationFrame(() => el.focus());
     }
   };
 
@@ -150,7 +150,7 @@ export default function FilterPill({
       data-test-id={testId}
       ref={el => {
         if (isFocused && el) {
-          requestAnimationFrame(() => el.focus());
+          window.requestAnimationFrame(() => el.focus());
         }
       }}
       tabIndex="0"

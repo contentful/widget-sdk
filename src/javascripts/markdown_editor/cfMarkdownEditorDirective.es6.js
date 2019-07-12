@@ -106,7 +106,7 @@ export default function register() {
 
           function initEditorOrRenderError() {
             // offloading initialization of the MD editor from the main thread
-            requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => {
               try {
                 initEditor();
               } catch (e) {
@@ -138,7 +138,7 @@ export default function register() {
             scope.isReady = true;
 
             editor.events.onPaste(editor => {
-              const characterCountSelection = getSelection().toString().length;
+              const characterCountSelection = window.getSelection().toString().length;
               const characterCountBefore = editor.getValue().length;
               setTimeout(() => {
                 const characterCountAfter = editor.getValue().length;

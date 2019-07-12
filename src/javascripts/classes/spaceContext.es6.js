@@ -502,9 +502,6 @@ export default function register() {
           spaceContext.docConnection.close();
           spaceContext.docConnection = null;
         }
-        if (self.publishedCTs) {
-          self.publishedCTs = null;
-        }
       }
 
       /**

@@ -16,11 +16,11 @@ export const TimeFormat = {
 };
 
 function tryGetLanguage() {
-  return navigator.language;
+  return window.navigator.language;
 }
 
 function tryGetFromLanguages() {
-  return get(navigator, ['languages', 0], tryGetLanguage());
+  return get(window.navigator, ['languages', 0], tryGetLanguage());
 }
 
 const h12Langs = ['en-GB', 'en-US'];
@@ -30,7 +30,7 @@ const h12Langs = ['en-GB', 'en-US'];
  * @returns {TimeFormat}
  */
 export function getPreferredTimeFormat() {
-  if (!navigator) {
+  if (!window.navigator) {
     return TimeFormat.H24;
   }
 

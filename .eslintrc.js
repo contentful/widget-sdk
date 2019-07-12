@@ -17,14 +17,20 @@ module.exports = {
   },
   plugins: ['react-hooks'],
   env: {
-    browser: true,
+    /* 
+      We are setting `browser: false` and manually allowing which globals we want.
+      This ensures that we catch overridden names such as `Navigator` .
+    */
+    browser: false,
     node: true
   },
   globals: {
     setTimeout: false,
     Promise: false,
     ArrayBuffer: false,
-    Uint8Array: false
+    Uint8Array: false,
+    window: true,
+    document: true
   },
   parser: 'babel-eslint',
   rules: {

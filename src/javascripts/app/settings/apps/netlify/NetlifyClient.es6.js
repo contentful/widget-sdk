@@ -13,7 +13,7 @@ async function request(method, url, accessToken, body) {
   body = typeof body === 'object' ? JSON.stringify(body) : '';
   body = method === 'GET' ? undefined : body;
 
-  const res = await fetch(API_BASE + url, { method, headers, body });
+  const res = await window.fetch(API_BASE + url, { method, headers, body });
 
   if (res.ok) {
     return res.status === 204 ? null : res.json();

@@ -65,7 +65,7 @@ export function create(textarea, options) {
   function tiePreviewToEditor(el) {
     const fraction = editor.getScrollFraction();
 
-    requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
       const top = el.get(0).scrollHeight * fraction;
       el.scrollTop(top);
     });
@@ -88,7 +88,7 @@ export function create(textarea, options) {
     const top = previewElement.scrollTop();
     const position = height === 0 ? 0 : top / height;
 
-    requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
       editor.scrollToFraction(position);
     });
   }

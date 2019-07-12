@@ -20,7 +20,7 @@ const observeWithPolyfill = (element, cb) => {
  */
 const createResizeObserver = polyfillObserver => (element, cb) => {
   if ('ResizeObserver' in window) {
-    const ro = new ResizeObserver(cb);
+    const ro = new window.ResizeObserver(cb);
     ro.observe(element);
     return () => {
       ro.unobserve(element);

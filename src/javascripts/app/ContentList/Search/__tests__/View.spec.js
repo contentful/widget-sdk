@@ -21,7 +21,7 @@ describe('app/ContentList/Search/View.es6', () => {
     const defaultProps = {
       isSearching: false,
       isTyping: false,
-      focus,
+      focus: window.focus,
       searchBoxHasFocus: false,
       contentTypeId: '',
       contentTypeFilter: Filters.contentTypeFilter(contentTypes),
