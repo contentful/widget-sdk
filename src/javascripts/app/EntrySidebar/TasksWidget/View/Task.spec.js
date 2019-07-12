@@ -1,5 +1,5 @@
 import React from 'react';
-import { render as renderReact, cleanup } from '@testing-library/react';
+import { render as renderReact, cleanup, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-dom/extend-expect';
 import { forEach } from 'lodash';
@@ -52,7 +52,7 @@ MOCKS.TaskViewData = {
 const TEST_IDS = {
   loadingPlaceholder: 'task-loading-placeholder',
   titleInputWrapper: 'task-title-input',
-  assigneeSelector: 'task-assignee-select',
+  assigneeSelectorWrapper: 'task-assignee-select',
   saveButton: 'save-task'
 };
 
@@ -72,6 +72,9 @@ describe('<Task />', () => {
     Object.defineProperty(elems, 'titleInput', {
       get: () => elems.titleInputWrapper.querySelector('textarea')
     });
+    Object.defineProperty(elems, 'assigneeSelector', {
+      get: () => elems.assigneeSelectorWrapper.querySelector('select')
+    });
     return { wrapper, elems, props: allProps };
   }
 
@@ -80,7 +83,13 @@ describe('<Task />', () => {
   describe('edit mode', () => {
     let elems;
     const changeTitle = () => userEvent.type(elems.titleInput, 'some text');
-    const changeAssignee = () => userEvent.selectOptions(elems.assigneeSelector, [1]);
+    const changeAssignee = () => {
+      // userEvent currently doesn't fire onChange events on select elements
+      // See: https://github.com/testing-library/user-event/pull/131
+      fireEvent.change(elems.assigneeSelector, {
+        target: { value: 'user-id-1' }
+      });
+    };
 
     beforeEach(() => {
       const viewData = MOCKS.TaskViewData.draft;
