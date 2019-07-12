@@ -4,7 +4,17 @@ import makeExtensionNotificationHandlers from './makeExtensionNotificationHandle
 import { LOCATION_APP } from '../WidgetLocations.es6';
 import * as Random from 'utils/Random.es6';
 
-const REQUIRED_DEPENDENCIES = ['$rootScope', 'spaceContext', 'TheLocaleStore', 'appBus'];
+import {
+  APP_UPDATE_STARTED,
+  APP_EXTENSION_UPDATED,
+  APP_EXTENSION_UPDATE_FAILED,
+  APP_MISCONFIGURED,
+  APP_CONFIGURED,
+  APP_UPDATE_FAILED,
+  APP_UPDATE_FINALIZED
+} from 'app/settings/AppsBeta/AppHookBus.es6';
+
+const REQUIRED_DEPENDENCIES = ['$rootScope', 'spaceContext', 'TheLocaleStore', 'appHookBus'];
 
 export default function createAppExtensionBridge(dependencies) {
   REQUIRED_DEPENDENCIES.forEach(key => {
@@ -13,7 +23,7 @@ export default function createAppExtensionBridge(dependencies) {
     }
   });
 
-  const { $rootScope, spaceContext, TheLocaleStore, appBus } = dependencies;
+  const { $rootScope, spaceContext, TheLocaleStore, appHookBus } = dependencies;
 
   let currentInstallationRequestId = null;
 
@@ -46,15 +56,17 @@ export default function createAppExtensionBridge(dependencies) {
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
 
     api.registerHandler('callAppMethod', methodName => {
-      const isInstalled = isPlainObject(appBus.parameters);
+      const parameters = appHookBus.getParameters();
+      const isInstalled = isPlainObject(parameters);
+
       if (methodName === 'isInstalled') {
         return isInstalled;
       } else if (methodName === 'getParameters') {
-        return isInstalled ? appBus.parameters : null;
+        return isInstalled ? parameters : null;
       }
     });
 
-    appBus.on(appBus.EVENTS.APP_UPDATE_STARTED, () => {
+    appHookBus.on(APP_UPDATE_STARTED, () => {
       if (!currentInstallationRequestId) {
         currentInstallationRequestId = Random.id();
         api.send('appHook', [
@@ -63,7 +75,7 @@ export default function createAppExtensionBridge(dependencies) {
       }
     });
 
-    appBus.on(appBus.EVENTS.APP_EXTENSION_UPDATED, ({ installationRequestId }) => {
+    appHookBus.on(APP_EXTENSION_UPDATED, ({ installationRequestId }) => {
       if (installationRequestId === currentInstallationRequestId) {
         api.send('appHook', [
           { stage: 'postInstall', installationRequestId: currentInstallationRequestId }
@@ -71,7 +83,7 @@ export default function createAppExtensionBridge(dependencies) {
       }
     });
 
-    appBus.on(appBus.EVENTS.APP_EXTENSION_UPDATE_FAILED, ({ installationRequestId }) => {
+    appHookBus.on(APP_EXTENSION_UPDATE_FAILED, ({ installationRequestId }) => {
       if (installationRequestId === currentInstallationRequestId) {
         currentInstallationRequestId = null;
       }
@@ -84,19 +96,15 @@ export default function createAppExtensionBridge(dependencies) {
 
       if (stage === 'preInstall') {
         if (result === false) {
-          appBus.emit(appBus.EVENTS.APP_MISCONFIGURED);
+          appHookBus.emit(APP_MISCONFIGURED);
           currentInstallationRequestId = null;
         } else {
-          appBus.emit(appBus.EVENTS.APP_CONFIGURED, { installationRequestId, parameters: result });
+          appHookBus.emit(APP_CONFIGURED, { installationRequestId, parameters: result });
         }
       }
 
       if (stage === 'postInstall') {
-        if (result === false) {
-          appBus.emit(appBus.EVENTS.APP_UPDATE_FAILED);
-        } else {
-          appBus.emit(appBus.EVENTS.APP_UPDATE_FINALIZED);
-        }
+        appHookBus.emit(result === false ? APP_UPDATE_FAILED : APP_UPDATE_FINALIZED);
         currentInstallationRequestId = null;
       }
     });

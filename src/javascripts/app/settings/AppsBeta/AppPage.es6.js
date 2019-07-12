@@ -3,12 +3,22 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { get, pick } from 'lodash';
 
-import { Button, Notification } from '@contentful/forma-36-react-components';
+import { Button, Notification, Tag, Icon } from '@contentful/forma-36-react-components';
 
 import AdminOnly from 'app/common/AdminOnly.es6';
 import Workbench from 'app/common/Workbench.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+
+import {
+  APP_UPDATE_STARTED,
+  APP_EXTENSION_UPDATED,
+  APP_EXTENSION_UPDATE_FAILED,
+  APP_MISCONFIGURED,
+  APP_CONFIGURED,
+  APP_UPDATE_FAILED,
+  APP_UPDATE_FINALIZED
+} from './AppHookBus.es6';
 
 const BUSY_STATE_INSTALLATION = 'installation';
 const BUSY_STATE_UPDATE = 'update';
@@ -74,12 +84,27 @@ function fetchExtensionDefinition() {
 
 export default class AppRoute extends Component {
   static propTypes = {
+    goBackToList: PropTypes.func.isRequired,
     spaceId: PropTypes.string.isRequired,
     environmentId: PropTypes.string.isRequired,
     appId: PropTypes.string.isRequired,
-    bridge: PropTypes.object.isRequired,
-    appBus: PropTypes.object.isRequired,
-    cma: PropTypes.object.isRequired
+    bridge: PropTypes.shape({
+      getData: PropTypes.func.isRequired,
+      install: PropTypes.func.isRequired,
+      apply: PropTypes.func.isRequired
+    }).isRequired,
+    appHookBus: PropTypes.shape({
+      on: PropTypes.func.isRequired,
+      emit: PropTypes.func.isRequired,
+      setParameters: PropTypes.func.isRequired,
+      unsetParameters: PropTypes.func.isRequired
+    }).isRequired,
+    cma: PropTypes.shape({
+      getExtension: PropTypes.func.isRequired,
+      createExtension: PropTypes.func.isRequired,
+      updateExtension: PropTypes.func.isRequired,
+      deleteExtension: PropTypes.func.isRequired
+    }).isRequired
   };
 
   constructor(props) {
@@ -94,45 +119,41 @@ export default class AppRoute extends Component {
   }
 
   async componentDidMount() {
-    const { appBus } = this.props;
+    const { appHookBus, cma } = this.props;
 
     const extensionDefinition = await fetchExtensionDefinition();
     const isInstalled = await this.isInstalled();
 
     try {
-      const extension = await this.props.cma.getExtension(id);
-      appBus.parameters = extension.parameters || null;
+      const extension = await cma.getExtension(id);
+      appHookBus.setParameters(extension.parameters);
     } catch (err) {
       // ignore...
     }
 
     this.setState({ ready: true, extensionDefinition, isInstalled });
 
-    appBus.on(appBus.EVENTS.APP_CONFIGURED, async ({ installationRequestId, parameters }) => {
+    appHookBus.on(APP_CONFIGURED, async ({ installationRequestId, parameters }) => {
       let current;
       try {
-        current = await this.props.cma.getExtension(id);
+        current = await cma.getExtension(id);
       } catch (err) {
         // ignore...
       }
 
       try {
         if (current) {
-          await this.props.cma.updateExtension({ ...current, parameters });
+          await cma.updateExtension({ ...current, parameters });
         } else {
-          await this.props.cma.createExtension({
+          await cma.createExtension({
             sys: { id },
             extension: pick(this.state.extensionDefinition, ['name', 'src', 'parameters']),
             parameters
           });
         }
 
-        appBus.parameters = parameters;
-
-        appBus.emit(appBus.EVENTS.APP_EXTENSION_UPDATED, {
-          installationRequestId,
-          extensionId: id
-        });
+        appHookBus.setParameters(parameters);
+        appHookBus.emit(APP_EXTENSION_UPDATED, { installationRequestId, extensionId: id });
       } catch (err) {
         const isValidationError = get(err, ['data', 'sys', 'id']) === 'ValidationFailed';
         const errors = get(err, ['data', 'details', 'errors'], []);
@@ -145,16 +166,16 @@ export default class AppRoute extends Component {
 
         const isInstalled = await this.isInstalled();
         this.setState({ isInstalled, busyWith: false });
-        appBus.emit(appBus.EVENTS.APP_EXTENSION_UPDATE_FAILED, { installationRequestId });
+        appHookBus.emit(APP_EXTENSION_UPDATE_FAILED, { installationRequestId });
       }
     });
 
-    appBus.on(appBus.EVENTS.APP_MISCONFIGURED, async () => {
+    appHookBus.on(APP_MISCONFIGURED, async () => {
       const isInstalled = await this.isInstalled();
       this.setState({ isInstalled, busyWith: false });
     });
 
-    appBus.on(appBus.EVENTS.APP_UPDATE_FINALIZED, async () => {
+    appHookBus.on(APP_UPDATE_FINALIZED, async () => {
       if (this.state.busyWith === BUSY_STATE_UPDATE) {
         Notification.success('The app configuration was updated successfully.');
       } else {
@@ -165,14 +186,13 @@ export default class AppRoute extends Component {
       this.setState({ isInstalled, busyWith: false });
     });
 
-    appBus.on(appBus.EVENTS.APP_UPDATE_FAILED, async () => {
+    appHookBus.on(APP_UPDATE_FAILED, async () => {
       try {
         await this.props.cma.deleteExtension(id);
       } catch (err) {
         // ignore
       }
 
-      appBus.parameters = null;
       Notification.error('Failed to install the app.');
       this.setState({ isInstalled: false, busyWith: false });
     });
@@ -190,27 +210,28 @@ export default class AppRoute extends Component {
   };
 
   update = busyWith => {
-    const { appBus } = this.props;
     this.setState({ busyWith });
-    appBus.emit(appBus.EVENTS.APP_UPDATE_STARTED);
+    this.props.appHookBus.emit(APP_UPDATE_STARTED);
   };
 
   uninstall = async () => {
     this.setState({ busyWith: BUSY_STATE_UNINSTALLATION });
+    this.props.appHookBus.unsetParameters();
 
     try {
       await this.props.cma.deleteExtension(id);
       const isInstalled = await this.isInstalled();
-      this.setState({ isInstalled, busyWith: false });
 
       if (isInstalled) {
-        Notification.error('Failed to uninstall the app.');
+        Notification.error('Failed to fully uninstall the app.');
       } else {
         Notification.success('The app was uninstalled successfully.');
       }
     } catch (err) {
-      Notification.error('Failed to uninstall the app.');
+      Notification.error('Failed to fully uninstall the app.');
     }
+
+    this.props.goBackToList();
   };
 
   render() {
@@ -224,21 +245,31 @@ export default class AppRoute extends Component {
       <AdminOnly>
         <DocumentTitle title={extensionDefinition.name} />
         <Workbench>
-          {this.renderHeader(extensionDefinition)}
-          {this.renderContent(extensionDefinition)}
+          {this.renderHeader()}
+          {this.renderContent()}
         </Workbench>
       </AdminOnly>
     );
   }
 
-  renderHeader({ name }) {
-    const { isInstalled, busyWith } = this.state;
+  renderHeader() {
+    const { isInstalled, busyWith, extensionDefinition } = this.state;
 
     return (
       <Workbench.Header>
         <Workbench.Header.Back to="^.list" />
         <Workbench.Title>
-          App: {name} ({isInstalled ? '' : 'not '}installed)
+          {`App: ${extensionDefinition.name} `}
+          {!isInstalled && (
+            <Tag tagType="negative">
+              <Icon icon="ErrorCircle" /> Not installed yet
+            </Tag>
+          )}
+          {isInstalled && (
+            <Tag tagType="positive">
+              <Icon icon="CheckCircle" /> Installed
+            </Tag>
+          )}
         </Workbench.Title>
         <Workbench.Header.Actions>
           {!isInstalled && (
@@ -273,7 +304,7 @@ export default class AppRoute extends Component {
     );
   }
 
-  renderContent({ src }) {
+  renderContent() {
     return (
       <Workbench.Content>
         <div className={styles.renderer}>
@@ -282,7 +313,7 @@ export default class AppRoute extends Component {
           )}
           <ExtensionIFrameRenderer
             bridge={this.props.bridge}
-            descriptor={{ id: null, src }}
+            descriptor={{ id: null, src: this.state.extensionDefinition.src }}
             parameters={this.parameters}
             isFullSize
           />
