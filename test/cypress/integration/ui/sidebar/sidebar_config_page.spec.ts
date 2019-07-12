@@ -1,11 +1,11 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import {
-  allContentTypesResponse,
-  defaultContentTypeResponse,
-  defaultPublishedContentTypeResponse
+  getDefaultContentTypeInDefaultSpace,
+  getPublishedVersionOfDefaultContentType,
+  getAllContentTypesInDefaultSpace
 } from '../../../interactions/content_types';
 import { noExtensionsResponse } from '../../../interactions/extensions';
-import { editorInterfaceWithoutSidebarResponse } from '../../../interactions/content_types';
+import { getEditorInterfaceForDefaultContentType } from '../../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
 import * as state from '../../../util/interactionState';
 
@@ -23,10 +23,10 @@ describe('Sidebar configuration', () => {
 
     defaultRequestsMock();
     noExtensionsResponse();
-    editorInterfaceWithoutSidebarResponse();
-    allContentTypesResponse();
-    defaultContentTypeResponse();
-    defaultPublishedContentTypeResponse();
+    getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
+    getAllContentTypesInDefaultSpace.willReturnOneContentType();
+    getDefaultContentTypeInDefaultSpace.willReturnTheDefaultContentType();
+    getPublishedVersionOfDefaultContentType.willReturnThePublishedVersion();
 
     cy.visit(
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`

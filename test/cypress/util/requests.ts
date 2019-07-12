@@ -23,97 +23,6 @@ export const defaultUserId = 'userID';
 export const defaultJobId = 'jobID';
 export const defaultWebhookId = 'webhookId';
 
-export function getPublicContentTypes(
-  spaceId: string = defaultSpaceId,
-  query?: Query
-): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/public/content_types`,
-    headers: defaultHeader,
-    query
-  };
-}
-
-export function getContentTypes(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/content_types`,
-    headers: defaultHeader,
-    query
-  };
-}
-
-export function getContentType(
-  contentTypeId: string = defaultContentTypeId,
-  spaceId: string = defaultSpaceId
-): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/content_types/${contentTypeId}`,
-    headers: defaultHeader
-  };
-}
-
-export function putContentType(
-  contentTypeId: string = defaultContentTypeId,
-  spaceId: string = defaultSpaceId,
-  body?: Object
-): RequestOptions {
-  return {
-    method: 'PUT',
-    path: `/spaces/${spaceId}/content_types/${contentTypeId}`,
-    headers: defaultHeader,
-    body
-  };
-}
-
-export function getContentTypePublished(
-  contentTypeId: string = defaultContentTypeId,
-  spaceId: string = defaultSpaceId
-): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/content_types/${contentTypeId}/published`,
-    headers: defaultHeader
-  };
-}
-
-export function putContentTypePublished(
-  contentTypeId: string = defaultContentTypeId,
-  spaceId: string = defaultSpaceId
-): RequestOptions {
-  return {
-    method: 'PUT',
-    path: `/spaces/${spaceId}/content_types/${contentTypeId}/published`,
-    headers: defaultHeader
-  };
-}
-
-export function getEditorInterface(
-  contentTypeId: string = defaultContentTypeId,
-  spaceId: string = defaultSpaceId
-): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/content_types/${contentTypeId}/editor_interface`,
-    headers: defaultHeader
-  };
-}
-
-export function putEditorInterface(
-  contentTypeId: string = defaultContentTypeId,
-  spaceId: string = defaultSpaceId,
-  body?: Object
-): RequestOptions {
-  return {
-    method: 'PUT',
-    path: `/spaces/${spaceId}/content_types/${contentTypeId}/editor_interface`,
-    headers: defaultHeader,
-    body
-  };
-}
-
 export function getEnforcements(spaceId: string = defaultSpaceId): RequestOptions {
   return {
     method: 'GET',
@@ -126,25 +35,6 @@ export function getExtensions(spaceId: string = defaultSpaceId): RequestOptions 
   return {
     method: 'GET',
     path: `/spaces/${spaceId}/extensions`,
-    headers: defaultHeader
-  };
-}
-
-export function getAssets(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/assets`,
-    headers: defaultHeader,
-    query
-  };
-}
-export function getAsset(
-  spaceId: string = defaultSpaceId,
-  assetId: string = defaultAssetId
-): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/assets/${assetId}`,
     headers: defaultHeader
   };
 }
@@ -209,14 +99,6 @@ export function postEntry(spaceId: string = defaultSpaceId): RequestOptions {
     method: 'POST',
     path: `/spaces/${spaceId}/entries`,
     headers: defaultHeader
-  };
-}
-
-export function getApps(spaceId: string = defaultSpaceId): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/_microbackends/backends/apps/spaces/${spaceId}/`,
-    headers: {}
   };
 }
 

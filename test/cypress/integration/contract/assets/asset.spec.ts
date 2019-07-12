@@ -2,7 +2,7 @@ import { defaultRequestsMock } from '../../../util/factories';
 import { singleUser } from '../../../interactions/users';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId, defaultAssetId } from '../../../util/requests';
-import { defaultAssetResponse } from '../../../interactions/assets';
+import { getDefaultAssetInDefaultSpace } from '../../../interactions/assets';
 import { noAssetLinksResponse } from '../../../interactions/entries';
 
 describe('Asset Page', () => {
@@ -23,7 +23,7 @@ describe('Asset Page', () => {
       defaultRequestsMock();
       singleUser();
 
-      defaultAssetResponse();
+      getDefaultAssetInDefaultSpace.willReturnTheDefaultAsset();
       noAssetLinksResponse();
       cy.route('**/channel/**', []).as('shareJS');
 

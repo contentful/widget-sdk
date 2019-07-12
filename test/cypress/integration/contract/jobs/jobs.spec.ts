@@ -1,7 +1,7 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
-import { singleContentTypeResponse } from '../../../interactions/content_types';
+import { getAllPublicContentTypesInDefaultSpace } from '../../../interactions/content_types';
 import {
   noJobsResponse,
   severalJobsResponseBody,
@@ -58,7 +58,7 @@ describe('Jobs page', () => {
         spec: 2
       });
       defaultRequestsMock({
-        publicContentTypesResponse: singleContentTypeResponse
+        publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType
       });
       severalJobsResponse();
       singleEntryWithQuery();

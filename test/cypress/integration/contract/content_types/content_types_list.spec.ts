@@ -1,13 +1,15 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
-import { defaultSpaceId, getExtensions, getContentTypes } from '../../../util/requests';
-
+import { 
+  defaultSpaceId,
+  getExtensions
+} from '../../../util/requests';
+import {
+  getAllContentTypesInDefaultSpace,
+  getFirst1000ContentTypesInDefaultSpaceOrderedByName
+} from '../../../interactions/content_types';
 const empty = require('../../../fixtures/responses/empty.json');
 const severalContentTypes = require('../../../fixtures/responses/content-types-several.json');
-const query = {
-  limit: '1000',
-  order: 'name'
-};
 
 describe('Content types list page', () => {
   beforeEach(() => {
@@ -18,20 +20,11 @@ describe('Content types list page', () => {
     beforeEach(() => {
       defaultRequestsMock();
 
-      cy.addInteraction({
-        provider: 'content_types',
-        state: 'noContentTypesWithQuery',
-        uponReceiving: 'a request for all content types',
-        withRequest: getContentTypes(defaultSpaceId, query),
-        willRespondWith: {
-          status: 200,
-          body: empty
-        }
-      }).as('noContentTypesWithQuery');
+      getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnNoContentTypes();
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);
 
-      cy.wait([`@${state.Token.VALID}`, '@noContentTypesWithQuery']);
+      cy.wait([`@${state.Token.VALID}`, `@${state.ContentTypes.NONE}`]);
     });
 
     it('Renders the page with no content types', () => {
@@ -64,20 +57,11 @@ describe('Content types list page', () => {
         }
       }).as('noExtensions');
 
-      cy.addInteraction({
-        provider: 'content_types',
-        state: 'noContentTypes',
-        uponReceiving: 'a request for all content types',
-        withRequest: getContentTypes(),
-        willRespondWith: {
-          status: 200,
-          body: empty
-        }
-      }).as('noContentTypes');
+      getAllContentTypesInDefaultSpace.willReturnNoContentTypes()
 
       cy.getByTestId('create-content-type-empty-state').click();
 
-      cy.wait(['@noContentTypes', '@noExtensions']);
+      cy.wait([`@${state.ContentTypes.NONE}`, '@noExtensions']);
 
       cy.url().should('contain', '/content_types_new/fields');
     });
@@ -87,16 +71,7 @@ describe('Content types list page', () => {
     beforeEach(() => {
       defaultRequestsMock();
 
-      cy.addInteraction({
-        provider: 'content_types',
-        state: state.ContentTypes.SEVERAL,
-        uponReceiving: 'a request for all content types',
-        withRequest: getContentTypes(defaultSpaceId, query),
-        willRespondWith: {
-          status: 200,
-          body: severalContentTypes
-        }
-      }).as(state.ContentTypes.SEVERAL);
+      getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnSeveralContentTypes();
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);
 

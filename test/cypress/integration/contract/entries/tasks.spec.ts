@@ -9,8 +9,8 @@ import {
 } from '../../../interactions/tasks';
 
 import {
-  singleContentTypeResponse,
-  editorInterfaceWithoutSidebarResponse
+  getEditorInterfaceForDefaultContentType,
+  getAllPublicContentTypesInDefaultSpace
 } from '../../../interactions/content_types';
 import { singleEntryResponse, noEntrySnapshotsResponse } from '../../../interactions/entries';
 import { microbackendStreamToken } from '../../../interactions/microbackend';
@@ -46,12 +46,12 @@ describe('Tasks entry editor sidebar', () => {
 
   function basicServerSetUpWithEntry() {
     defaultRequestsMock({
-      publicContentTypesResponse: singleContentTypeResponse
+      publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType
     });
     singleUser();
     singleEntryResponse();
     noEntrySnapshotsResponse();
-    editorInterfaceWithoutSidebarResponse();
+    getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
     microbackendStreamToken();
 
     cy.route('**/channel/**', []).as('shareJS');

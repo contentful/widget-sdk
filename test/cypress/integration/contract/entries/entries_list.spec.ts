@@ -1,7 +1,7 @@
 import { singleUser } from '../../../interactions/users';
 import {
-  singleContentTypeResponse,
-  editorInterfaceWithoutSidebarResponse
+  getAllPublicContentTypesInDefaultSpace,
+  getEditorInterfaceForDefaultContentType
 } from '../../../interactions/content_types';
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
@@ -80,7 +80,7 @@ describe('Entries list page', () => {
   context('no entries in the space', () => {
     beforeEach(() => {
       defaultRequestsMock({
-        publicContentTypesResponse: singleContentTypeResponse
+        publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType
       });
       singleUser();
 
@@ -123,7 +123,7 @@ describe('Entries list page', () => {
       singleEntryResponse();
       noEntryLinksResponse();
       noEntrySnapshotsResponse();
-      editorInterfaceWithoutSidebarResponse();
+      getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
 
       cy.getByTestId('create-entry').click();
 

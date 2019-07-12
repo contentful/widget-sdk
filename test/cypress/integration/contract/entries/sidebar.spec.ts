@@ -1,9 +1,8 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { singleUser } from '../../../interactions/users';
 import {
-  singleContentTypeResponse,
-  editorInterfaceWithoutSidebarResponse,
-  editorInterfaceWithSidebarResponse
+  getAllPublicContentTypesInDefaultSpace,
+  getEditorInterfaceForDefaultContentType
 } from '../../../interactions/content_types';
 import {
   singleEntryResponse,
@@ -23,7 +22,7 @@ describe('Entries page', () => {
     beforeEach(() => {
       noEntryLinksResponse();
       noEntrySnapshotsResponse();
-      editorInterfaceWithoutSidebarResponse();
+      getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
     });
     describe('Opening the Entry page', () => {
@@ -55,7 +54,7 @@ describe('Entries page', () => {
 
   context('with a sidebar in the editor_interface', () => {
     beforeEach(() => {
-      editorInterfaceWithSidebarResponse();
+      getEditorInterfaceForDefaultContentType.willReturnOneWithSidebar();
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
     });
     describe('Opening the Entry page', () => {
@@ -79,7 +78,7 @@ function basicServerSetUp() {
     pactfileWriteMode: 'merge',
     spec: 2
   });
-  defaultRequestsMock({ publicContentTypesResponse: singleContentTypeResponse });
+  defaultRequestsMock({ publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType });
   singleUser();
   singleEntryResponse();
   cy.route('**/channel/**', []).as('shareJS');

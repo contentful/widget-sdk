@@ -1,8 +1,8 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { singleUser } from '../../../interactions/users';
 import {
-  singleContentTypeResponse,
-  editorInterfaceWithoutSidebarResponse
+  getAllPublicContentTypesInDefaultSpace,
+  getEditorInterfaceForDefaultContentType
 } from '../../../interactions/content_types';
 import {
   singleEntryResponse,
@@ -151,13 +151,13 @@ function basicServerSetUp() {
   });
 
   defaultRequestsMock({
-    publicContentTypesResponse: singleContentTypeResponse
+    publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType
   });
   singleUser();
   singleEntryResponse();
   noEntryLinksResponse();
   noEntrySnapshotsResponse();
-  editorInterfaceWithoutSidebarResponse();
+  getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
 
   cy.route('**/channel/**', []).as('shareJS');
 }

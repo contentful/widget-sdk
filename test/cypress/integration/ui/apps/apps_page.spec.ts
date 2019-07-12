@@ -1,7 +1,7 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
-import { noInstalledAppsResponse } from '../../../interactions/apps';
+import { getAllInstalledAppsInDefaultSpace  } from '../../../interactions/apps';
 import { spaceProductCatalogFeaturesResponse } from '../../../interactions/product_catalog_features';
 import { FeatureFlag } from '../../../util/featureFlag';
 
@@ -23,7 +23,7 @@ describe('Apps Page', () => {
     cy.enableFeatureFlags([FeatureFlag.DEFAULT]);
 
     defaultRequestsMock();
-    noInstalledAppsResponse();
+    getAllInstalledAppsInDefaultSpace.willReturnNoInstalledApps();
     spaceProductCatalogFeaturesResponse();
 
     cy.visit(`/spaces/${defaultSpaceId}/apps`);

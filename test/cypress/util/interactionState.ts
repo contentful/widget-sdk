@@ -84,6 +84,7 @@ export enum Extensions {
 }
 
 export enum ContentTypes {
+  NONE = 'content_types/none',
   EDITORINTERFACE_WITHOUT_SIDEBAR = 'content_types/editor_interface_without_sidebar',
   EDITORINTERFACE_WITH_SIDEBAR = 'content_types/editor_interface_with_sidebar',
   SINGLE = 'content_types/single',
