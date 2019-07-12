@@ -27,6 +27,7 @@ const MembershipRow = ({
   setMenuOpen,
   isEditing,
   setEditing,
+  onRemoveTeamSpaceMembership,
   onUpdateTeamSpaceMembership,
   isPending,
   readOnly,
@@ -137,7 +138,12 @@ const MembershipRow = ({
           </TableCell>
           <TableCell>
             {!readOnly && (
-              <RowMenu isOpen={menuIsOpen} setOpen={setMenuOpen} setEditing={setEditing} />
+              <RowMenu
+                isOpen={menuIsOpen}
+                setOpen={setMenuOpen}
+                setEditing={setEditing}
+                onRemove={() => onRemoveTeamSpaceMembership(membership)}
+              />
             )}
           </TableCell>
         </>
@@ -154,6 +160,7 @@ MembershipRow.propTypes = {
   isEditing: PropTypes.bool.isRequired,
   setEditing: PropTypes.func.isRequired,
   onUpdateTeamSpaceMembership: PropTypes.func.isRequired,
+  onRemoveTeamSpaceMembership: PropTypes.func.isRequired,
   isPending: PropTypes.bool.isRequired,
   readOnly: PropTypes.bool.isRequired,
   currentUserAdminSpaceMemberships: PropTypes.arrayOf(

@@ -72,6 +72,28 @@ export async function updateTeamSpaceMembership(
   );
 }
 
+export async function deleteTeamSpaceMembership(
+  spaceEndpoint,
+  {
+    sys: {
+      version,
+      id,
+      team: {
+        sys: { id: teamId }
+      }
+    }
+  }
+) {
+  return spaceEndpoint(
+    {
+      method: 'DELETE',
+      path: ['team_space_memberships', id],
+      version: version
+    },
+    { ...ALPHA_HEADER, 'x-contentful-team': teamId }
+  );
+}
+
 export async function createTeamSpaceMembership(spaceEndpoint, teamId, { admin, roles }) {
   let data;
 

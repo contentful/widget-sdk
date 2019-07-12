@@ -8,7 +8,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import useClickOutside from 'app/common/hooks/useClickOutside.es6';
 
-const RowMenu = ({ isOpen, setOpen, setEditing, disabled }) => {
+const RowMenu = ({ isOpen, setOpen, setEditing, disabled, onRemove }) => {
   const refDropDown = useRef();
   const refButton = useRef();
   useClickOutside([refButton, refDropDown], isOpen, () => setOpen(false));
@@ -34,6 +34,9 @@ const RowMenu = ({ isOpen, setOpen, setEditing, disabled }) => {
           <DropdownListItem testId="change-role" onClick={() => setEditing(true) || setOpen(false)}>
             Change team role
           </DropdownListItem>
+          <DropdownListItem testId="delete-team-space-membership" onClick={onRemove}>
+            Remove team from space
+          </DropdownListItem>
         </DropdownList>
       </div>
     </Dropdown>
@@ -44,6 +47,7 @@ RowMenu.propTypes = {
   setOpen: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   setEditing: PropTypes.func.isRequired,
+  onRemove: PropTypes.func.isRequired,
   disabled: PropTypes.bool
 };
 

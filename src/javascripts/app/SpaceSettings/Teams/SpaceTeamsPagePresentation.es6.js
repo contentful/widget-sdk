@@ -35,6 +35,7 @@ const SpaceTeamsPagePresentation = ({
   isPending,
   availableRoles,
   onUpdateTeamSpaceMembership,
+  onRemoveTeamSpaceMembership,
   readOnly,
   currentUserAdminSpaceMemberships
 }) => {
@@ -108,6 +109,7 @@ const SpaceTeamsPagePresentation = ({
                         membership,
                         availableRoles,
                         onUpdateTeamSpaceMembership,
+                        onRemoveTeamSpaceMembership,
                         isPending,
                         currentUserAdminSpaceMemberships
                       }}
@@ -128,6 +130,7 @@ SpaceTeamsPagePresentation.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   availableRoles: PropTypes.arrayOf(SpaceRoleProp),
   onUpdateTeamSpaceMembership: PropTypes.func.isRequired,
+  onRemoveTeamSpaceMembership: PropTypes.func.isRequired,
   isPending: PropTypes.bool.isRequired,
   readOnly: PropTypes.bool.isRequired,
   currentUserAdminSpaceMemberships: PropTypes.arrayOf(
