@@ -72,7 +72,6 @@ describe('<JobWidget />', () => {
     );
 
     await wait();
-    ('change-state-published');
 
     expect(renderResult.queryByTestId('jobs-skeleton')).toBeNull();
     expect(renderResult.getByTestId('change-state-published').disabled).toBe(false);
