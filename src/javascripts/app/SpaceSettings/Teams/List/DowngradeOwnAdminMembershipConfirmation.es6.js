@@ -27,7 +27,7 @@ const DowngradeOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm }) 
           need the help of an org admin to assign a new space admin.
         </p>
         <p>
-          If you definitely want to delete this user, please type &quot;I UNDERSTAND&quot; in the
+          If you definitely want to change this role, please type &quot;I UNDERSTAND&quot; in the
           field below:
         </p>
         <TextInput

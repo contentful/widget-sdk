@@ -5,7 +5,7 @@ const list = reactStateWrapper({
   title: 'Space teams',
   loadingText: 'Loading teams…',
   url: '',
-  componentPath: 'access_control/SpaceTeams/SpaceTeamsPage.es6'
+  componentPath: 'app/SpaceSettings/Teams/SpaceTeamsPage.es6'
 });
 
 const add = reactStateWrapper({

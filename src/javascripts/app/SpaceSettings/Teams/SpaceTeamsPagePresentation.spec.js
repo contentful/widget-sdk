@@ -188,7 +188,7 @@ describe('SpaceTeamsPage', () => {
       let helpers;
       let addTeamsButton;
 
-      helpers = build({ memberships, teams: [], isLoading });
+      helpers = build({ memberships, teams: [{ sys: { id: 'team1' } }], isLoading });
 
       addTeamsButton = helpers.getByTestId('add-teams');
 

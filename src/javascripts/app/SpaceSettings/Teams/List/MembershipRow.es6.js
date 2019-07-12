@@ -17,7 +17,7 @@ import { ADMIN_ROLE } from 'access_control/constants.es6';
 import { href } from 'states/Navigator.es6';
 
 import RowMenu from './RowMenu.es6';
-import styles from './styles.es6';
+import styles from '../styles.es6';
 import DowngradeOwnAdminMembershipConfirmation from './DowngradeOwnAdminMembershipConfirmation.es6';
 
 const MembershipRow = ({

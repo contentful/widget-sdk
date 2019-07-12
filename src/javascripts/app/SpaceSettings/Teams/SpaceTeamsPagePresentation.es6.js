@@ -19,9 +19,9 @@ import {
 } from 'app/OrganizationSettings/PropTypes.es6';
 import { go } from 'states/Navigator.es6';
 
-import LoadingPlaceholder from './LoadingPlaceholder.es6';
+import LoadingPlaceholder from './List/LoadingPlaceholder.es6';
 import styles from './styles.es6';
-import MembershipRow from './MembershipRow.es6';
+import MembershipRow from './List/MembershipRow.es6';
 
 const goToAddTeams = () =>
   go({
@@ -46,7 +46,8 @@ const SpaceTeamsPagePresentation = ({
     !isPending && setEditingRow(null);
   }, [isPending]);
 
-  const addTeamsButtonDisabled = memberships.length === teams.length;
+  const noTeamsInOrg = teams.length === 0;
+  const allTeamsAdded = memberships.length === teams.length;
 
   return (
     <Workbench>
@@ -60,13 +61,13 @@ const SpaceTeamsPagePresentation = ({
             place="left"
             content={
               !isLoading &&
-              ((addTeamsButtonDisabled &&
-                'All teams in the organization are already in this space') ||
-                (readOnly && 'You don’t have permission to add teams to this space'))
+              ((readOnly && 'You don’t have permission to add teams to this space') ||
+                (noTeamsInOrg && 'This organization has no team to add to this space') ||
+                (allTeamsAdded && 'All teams in the organization are already in this space'))
             }>
             <Button
               testId="add-teams"
-              disabled={addTeamsButtonDisabled || readOnly}
+              disabled={noTeamsInOrg || allTeamsAdded || readOnly}
               onClick={goToAddTeams}>
               Add team
             </Button>

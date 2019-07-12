@@ -100,8 +100,8 @@ describe('AddTeamsPage', () => {
 
   afterEach(cleanup);
 
-  it('should show the search box on initial load (no interaction)', () => {
-    const { queryByTestId } = mount();
+  it('should show the search box on initial load (at least one team, no interaction)', () => {
+    const { queryByTestId } = mount({ teams: [{ sys: { id: 'team1' }, name: 'Team 1' }] });
 
     expect(queryByTestId('autocomplete.input')).toBeVisible();
   });
