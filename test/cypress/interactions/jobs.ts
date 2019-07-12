@@ -104,7 +104,7 @@ export function singleJobForEntryResponse() {
               id: defaultJobId,
               status: 'pending'
             },
-            actionType: 'publish',
+            action: 'publish',
             scheduledAt: '2050-08-08T06:10:52.066Z'
           }
         ]
@@ -133,7 +133,7 @@ export function singleFailedJobForEntryResponse() {
               id: defaultJobId,
               status: 'failed'
             },
-            actionType: 'publish',
+            action: 'publish',
             scheduledAt: '2050-08-08T06:10:52.066Z'
           }
         ]
@@ -164,7 +164,7 @@ export function jobIsCreatedPostResponse() {
           id: defaultJobId,
           status: 'pending'
         },
-        actionType: 'publish',
+        action: 'publish',
         scheduledAt: '2050-08-08T06:10:52.066Z'
       }
     }
