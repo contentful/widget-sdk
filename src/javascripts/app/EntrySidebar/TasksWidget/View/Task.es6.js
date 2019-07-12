@@ -205,14 +205,16 @@ export default class Task extends React.Component {
     const ctaLabel = isDraft ? 'Create task' : 'Save changes';
     const ctaContext = isDraft ? 'primary' : 'positive';
     const characterLimit = 3000;
-    const hasNoAssignee = !this.state.pendingChanges.assigneeKey;
-    const hasEmptyPendingBody = this.state.pendingChanges.body === '';
 
     const isInvalid = () => {
-      if (isDraft) {
-        if (hasNoAssignee || hasEmptyPendingBody) return true;
+      const hasNoPendingChanges = Object.keys(this.state.pendingChanges).length === 0;
+      const hasNoAssignee = !this.state.pendingChanges.assigneeKey;
+      const hasEmptyPendingBody = !this.state.pendingChanges.body;
+
+      if (hasNoPendingChanges || (isDraft && hasNoAssignee) || hasEmptyPendingBody) {
+        return true;
       } else {
-        if (hasEmptyPendingBody) return true;
+        return false;
       }
     };
 
