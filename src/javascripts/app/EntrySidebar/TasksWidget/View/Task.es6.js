@@ -98,6 +98,11 @@ export default class Task extends React.Component {
     return !isEqual(this.getOriginalValue(), this.getChangedValue());
   }
 
+  canSave() {
+    const { body, assigneeKey } = this.getChangedValue();
+    return this.hasChanges() && !!body && !!assigneeKey;
+  }
+
   handleBodyUpdate = event => {
     this.addChange({ body: event.target.value.trim() });
   };
@@ -217,17 +222,6 @@ export default class Task extends React.Component {
     const ctaContext = isDraft ? 'primary' : 'positive';
     const characterLimit = 3000;
 
-    const isInvalid = () => {
-      const hasNoAssignee = !this.state.pendingChanges.assigneeKey;
-      const hasEmptyPendingBody = !this.state.pendingChanges.body;
-
-      if (!this.hasChanges() || (isDraft && hasNoAssignee) || hasEmptyPendingBody) {
-        return true;
-      } else {
-        return false;
-      }
-    };
-
     return (
       <Form spacing="condensed" onClick={e => e.stopPropagation()} className={styles.editForm}>
         <TextField
@@ -248,7 +242,7 @@ export default class Task extends React.Component {
             buttonType={ctaContext}
             className={styles.editSubmit}
             onClick={() => this.handleSubmit()}
-            disabled={isInvalid()}
+            disabled={!this.canSave()}
             size="small">
             {ctaLabel}
           </Button>
