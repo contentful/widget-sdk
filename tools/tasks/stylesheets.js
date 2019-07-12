@@ -8,6 +8,9 @@ const CSS_COMMENT_RE = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//g;
 const VENDOR_STYLESHEETS_SRC = assertFilesExist([
   './node_modules/react-tippy/dist/tippy.css',
   './vendor/font-awesome/font-awesome.css',
+  // todo: remove this after we migrate core-field-editors repo
+  // to use forma
+  'src/stylesheets/field-editors-styles.css',
   // Not sure if we need this
   './vendor/html5reset-1.6.1.css',
   './node_modules/codemirror/lib/codemirror.css',
