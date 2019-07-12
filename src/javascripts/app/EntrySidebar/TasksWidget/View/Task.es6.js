@@ -20,6 +20,7 @@ import Visible from 'components/shared/Visible/index.es6';
 import { cx } from 'emotion';
 import moment from 'moment';
 import isHotKey from 'is-hotkey';
+import { isEqual } from 'lodash';
 import TaskDeleteDialog from './TaskDeleteDialog.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { TaskViewData } from '../ViewData/TaskViewData.es6';
@@ -78,13 +79,23 @@ export default class Task extends React.Component {
 
   getChangedValue() {
     const { pendingChanges } = this.state;
+    return {
+      ...this.getOriginalValue(),
+      ...pendingChanges
+    };
+  }
+
+  getOriginalValue() {
     const { viewData } = this.props;
     return {
       body: viewData.body,
       assigneeKey: viewData.assignee && viewData.assignee.key,
-      isDone: viewData.isDone,
-      ...pendingChanges
+      isDone: viewData.isDone
     };
+  }
+
+  hasChanges() {
+    return !isEqual(this.getOriginalValue(), this.getChangedValue());
   }
 
   handleBodyUpdate = event => {
@@ -207,11 +218,10 @@ export default class Task extends React.Component {
     const characterLimit = 3000;
 
     const isInvalid = () => {
-      const hasNoPendingChanges = Object.keys(this.state.pendingChanges).length === 0;
       const hasNoAssignee = !this.state.pendingChanges.assigneeKey;
       const hasEmptyPendingBody = !this.state.pendingChanges.body;
 
-      if (hasNoPendingChanges || (isDraft && hasNoAssignee) || hasEmptyPendingBody) {
+      if (!this.hasChanges() || (isDraft && hasNoAssignee) || hasEmptyPendingBody) {
         return true;
       } else {
         return false;
