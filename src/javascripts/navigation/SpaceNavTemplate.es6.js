@@ -20,8 +20,16 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     extensions: {
       if: 'nav.canNavigateTo("extensions")',
       sref: makeRef('settings.extensions.list'),
+      rootSref: makeRef('settings.extensions'),
       dataViewType: 'spaces-settings-extensions',
       title: 'Extensions'
+    },
+    appsBeta: {
+      if: 'nav.canNavigateTo("appsBeta")',
+      sref: makeRef('appsBeta.list'),
+      rootSref: makeRef('appsBeta'),
+      dataViewType: 'apps-beta',
+      title: 'Apps Beta'
     },
     settings: {
       if: 'nav.canNavigateTo("settings")',
@@ -99,6 +107,7 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     },
     dropdownItems.locales,
     dropdownItems.extensions,
+    dropdownItems.appsBeta,
     {
       separator: true,
       label: 'Space settings',
@@ -124,6 +133,7 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     dropdownItems.keys,
     dropdownItems.webhooks,
     dropdownItems.extensions,
+    dropdownItems.appsBeta,
     dropdownItems.previews,
     dropdownItems.usage
   ];

@@ -6,6 +6,7 @@ import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
 import contentTypes from './contentTypes.es6';
 import apps from 'app/settings/apps/routes/index.es6';
+import appsBeta from 'app/settings/AppsBeta/index.es6';
 import api from 'app/api/State.es6';
 import entries from './entries.es6';
 import assets from './assets.es6';
@@ -79,6 +80,7 @@ const spaceEnvironment = {
     entries.withoutSnapshots,
     assets,
     api,
+    appsBeta,
     // Some of the settings states are not children of environments
     // conceptually. However, we want to prevent users going to space
     // settings and switching to the master environment in the process.
@@ -135,6 +137,7 @@ const spaceDetail = {
     spaceEnvironment,
     stackOnboarding,
     apps,
+    appsBeta,
     jobs,
     pageExtensions
   ]
