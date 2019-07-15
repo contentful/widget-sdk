@@ -17,6 +17,8 @@ export const TaskViewData = {
   isDone: PropTypes.bool,
   isDraft: PropTypes.bool,
   isInEditMode: PropTypes.bool,
+  canEdit: PropTypes.bool,
+  canUpdateStatus: PropTypes.bool,
   validationMessage: PropTypes.string,
   assignableUsersInfo: PropTypes.shape(UserSelectorViewData)
 };
@@ -52,12 +54,14 @@ const DRAFT_TASK = {
  * @param {Object} usersFetchingStatus
  * @param {Object} .tasksInEditMode
  * @param {Object} .tasksErrors
+ * @param {TaskPermissionChecker} permissionChecker
  * @returns {TaskListViewData}
  */
 export function createTaskListViewData(
   tasksFetchingStatus,
   usersFetchingStatus,
-  { tasksInEditMode, tasksErrors }
+  { tasksInEditMode, tasksErrors },
+  permissionChecker
 ) {
   if (!tasksFetchingStatus || tasksFetchingStatus.isLoading) {
     return createLoadingStateTasksViewData();
@@ -89,6 +93,8 @@ export function createTaskListViewData(
     if (error) {
       taskVD = decorateTaskViewDataWithError(taskVD, error);
     }
+    taskVD.canEdit = permissionChecker.canEdit(task);
+    taskVD.canUpdateStatus = permissionChecker.canUpdateStatus(task);
 
     return taskVD;
   }
@@ -114,10 +120,9 @@ export function createLoadingStateTasksViewData() {
  */
 function createTaskViewData(task, usersFetchingStatus) {
   const { id } = task.sys;
-  const assignee =
-    task.assignment && task.assignment.assignedTo
-      ? createUserViewDataFromLinkAndFetcher(task.assignment.assignedTo, usersFetchingStatus)
-      : null;
+  const assignee = task.assignment.assignedTo
+    ? createUserViewDataFromLinkAndFetcher(task.assignment.assignedTo, usersFetchingStatus)
+    : null;
   const creator = task.sys.createdBy
     ? createUserViewDataFromLinkAndFetcher(task.sys.createdBy, usersFetchingStatus)
     : null;
@@ -129,9 +134,11 @@ function createTaskViewData(task, usersFetchingStatus) {
     creator,
     assignee,
     body: task.body,
-    isDone: !!task.assignment && task.assignment.status === 'resolved',
+    isDone: task.assignment.status === 'resolved',
     isDraft: id === DRAFT_TASK_KEY,
     isInEditMode: false,
+    canEdit: false,
+    canUpdateStatus: false,
     assignableUsersInfo: null,
     validationMessage: null
   };

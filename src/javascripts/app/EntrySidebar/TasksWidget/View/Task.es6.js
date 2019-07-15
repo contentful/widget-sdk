@@ -157,9 +157,8 @@ export default class Task extends React.Component {
     );
   }
 
-  renderActions = () => {
-    // TODO: Check roles/permissions before rendering actions
-    return (
+  renderActions = () =>
+    this.props.viewData.canEdit && (
       <CardActions className={cx(styles.actions, this.state.isExpanded && styles.actionsVisible)}>
         <DropdownList>
           <DropdownListItem testId="edit-task" onClick={this.handleEditClick}>
@@ -171,7 +170,6 @@ export default class Task extends React.Component {
         </DropdownList>
       </CardActions>
     );
-  };
 
   renderDetails = () => {
     const { isExpanded, isUpdating } = this.state;
