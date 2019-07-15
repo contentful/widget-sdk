@@ -8,7 +8,7 @@ import {
   severalJobsResponse,
   jobsErrorResponse
 } from '../../../interactions/jobs';
-import { singleEntryWithQuery } from '../../../interactions/entries';
+import { queryForDefaultEntryInsideEnvironment } from '../../../interactions/entries';
 import { singleSpecificSpaceUserResponse } from '../../../interactions/users';
 import { FeatureFlag } from '../../../util/featureFlag';
 
@@ -61,7 +61,7 @@ describe('Jobs page', () => {
         publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType
       });
       severalJobsResponse();
-      singleEntryWithQuery();
+      queryForDefaultEntryInsideEnvironment.willFindIt();
       singleSpecificSpaceUserResponse();
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);

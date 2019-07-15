@@ -3,7 +3,7 @@ import { singleUser } from '../../../interactions/users';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId, defaultAssetId } from '../../../util/requests';
 import { getDefaultAssetInDefaultSpace } from '../../../interactions/assets';
-import { noAssetLinksResponse } from '../../../interactions/entries';
+import { queryLinksToDefaultAsset } from '../../../interactions/entries';
 
 describe('Asset Page', () => {
   before(() =>
@@ -24,7 +24,7 @@ describe('Asset Page', () => {
       singleUser();
 
       getDefaultAssetInDefaultSpace.willReturnTheDefaultAsset();
-      noAssetLinksResponse();
+      queryLinksToDefaultAsset.willReturnNone();
       cy.route('**/channel/**', []).as('shareJS');
 
       cy.visit(`/spaces/${defaultSpaceId}/assets/${defaultAssetId}`);

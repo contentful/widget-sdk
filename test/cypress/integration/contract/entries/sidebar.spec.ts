@@ -5,9 +5,9 @@ import {
   getEditorInterfaceForDefaultContentType
 } from '../../../interactions/content_types';
 import {
-  singleEntryResponse,
-  noEntryLinksResponse,
-  noEntrySnapshotsResponse
+  getDefaultEntry,
+  queryLinksToDefaultEntry,
+  getFirst7SnapshotsOfDefaultEntry
 } from '../../../interactions/entries';
 import * as state from '../../../util/interactionState';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
@@ -20,8 +20,8 @@ describe('Entries page', () => {
 
   context('with no sidebar in the editor_interface', () => {
     beforeEach(() => {
-      noEntryLinksResponse();
-      noEntrySnapshotsResponse();
+      queryLinksToDefaultEntry.willReturnNone();
+      getFirst7SnapshotsOfDefaultEntry.willReturnNone();
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
     });
@@ -80,6 +80,6 @@ function basicServerSetUp() {
   });
   defaultRequestsMock({ publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType });
   singleUser();
-  singleEntryResponse();
+  getDefaultEntry.willReturnIt();
   cy.route('**/channel/**', []).as('shareJS');
 }

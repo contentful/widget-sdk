@@ -1,5 +1,5 @@
 import { validTokenResponse } from '../interactions/token';
-import { noEnforcementsResponse } from '../interactions/enforcements';
+import { getAllEnforcementsForDefaultSpace } from '../interactions/enforcements';
 import { getAllPublicContentTypesInDefaultSpace } from '../interactions/content_types';
 import { masterEnvironmentResponse } from '../interactions/environments';
 import { defaultLocaleResponse } from '../interactions/locales';
@@ -14,7 +14,7 @@ type DefaultHandlers = {
 
 const defaultHandlers: DefaultHandlers = {
   tokenResponse: validTokenResponse,
-  enforcementsResponse: noEnforcementsResponse,
+  enforcementsResponse: getAllEnforcementsForDefaultSpace.willReturnNone,
   publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnNoContentTypes,
   environmentResponse: masterEnvironmentResponse,
   localeResponse: defaultLocaleResponse

@@ -5,9 +5,9 @@ import {
   getEditorInterfaceForDefaultContentType
 } from '../../../interactions/content_types';
 import {
-  singleEntryResponse,
-  noEntryLinksResponse,
-  noEntrySnapshotsResponse
+  getDefaultEntry,
+  queryLinksToDefaultEntry,
+  getFirst7SnapshotsOfDefaultEntry
 } from '../../../interactions/entries';
 import * as state from '../../../util/interactionState';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
@@ -154,9 +154,9 @@ function basicServerSetUp() {
     publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType
   });
   singleUser();
-  singleEntryResponse();
-  noEntryLinksResponse();
-  noEntrySnapshotsResponse();
+  getDefaultEntry.willReturnIt();
+  queryLinksToDefaultEntry.willReturnNone();
+  getFirst7SnapshotsOfDefaultEntry.willReturnNone();
   getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
 
   cy.route('**/channel/**', []).as('shareJS');

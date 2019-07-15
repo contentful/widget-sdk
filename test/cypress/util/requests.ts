@@ -7,7 +7,7 @@ export const defaultSpaceId = Cypress.env('spaceId');
 export const defaultOrgId = Cypress.env('orgId');
 export const defaultContentType = severalContentTypesBody.items[0]
 export const defaultContentTypeId = defaultContentType.sys.id;
-export const defaultEnvironment = 'master';
+export const defaultEnvironmentId = 'master';
 export const defaultEntry = severalEntriesBody.items[2];
 export const defaultEntryId = defaultEntry.sys.id;
 export const defaultAsset = severalAssetsBody.items[0]
@@ -23,14 +23,6 @@ export const defaultUserId = 'userID';
 export const defaultJobId = 'jobID';
 export const defaultWebhookId = 'webhookId';
 
-export function getEnforcements(spaceId: string = defaultSpaceId): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/enforcements`,
-    headers: defaultHeader
-  };
-}
-
 export function getExtensions(spaceId: string = defaultSpaceId): RequestOptions {
   return {
     method: 'GET',
@@ -45,60 +37,6 @@ export function getEntries(spaceId: string = defaultSpaceId, query?: Query): Req
     path: `/spaces/${spaceId}/entries`,
     headers: defaultHeader,
     query
-  };
-}
-
-export function getEntriesWithEnvironment(
-  spaceId: string = defaultSpaceId,
-  environmentId: string = defaultEnvironment,
-  query?: Query
-): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/environments/${environmentId}/entries`,
-    headers: defaultHeader,
-    query
-  };
-}
-
-export function getEntry(
-  spaceId: string = defaultSpaceId,
-  entryId: string = defaultEntryId
-): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/entries/${entryId}`,
-    headers: defaultHeader
-  };
-}
-
-export function getEntryLinks(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/entries`,
-    headers: defaultHeader,
-    query
-  };
-}
-
-export function getEntrySnapshots(
-  spaceId: string = defaultSpaceId,
-  entryId: string = defaultEntryId,
-  query?: Query
-): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/entries/${entryId}/snapshots`,
-    headers: defaultHeader,
-    query
-  };
-}
-
-export function postEntry(spaceId: string = defaultSpaceId): RequestOptions {
-  return {
-    method: 'POST',
-    path: `/spaces/${spaceId}/entries`,
-    headers: defaultHeader
   };
 }
 

@@ -12,7 +12,7 @@ import {
   getEditorInterfaceForDefaultContentType,
   getAllPublicContentTypesInDefaultSpace
 } from '../../../interactions/content_types';
-import { singleEntryResponse, noEntrySnapshotsResponse } from '../../../interactions/entries';
+import { getDefaultEntry, getFirst7SnapshotsOfDefaultEntry } from '../../../interactions/entries';
 import { microbackendStreamToken } from '../../../interactions/microbackend';
 import * as state from '../../../util/interactionState';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
@@ -49,8 +49,8 @@ describe('Tasks entry editor sidebar', () => {
       publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType
     });
     singleUser();
-    singleEntryResponse();
-    noEntrySnapshotsResponse();
+    getDefaultEntry.willReturnIt();
+    getFirst7SnapshotsOfDefaultEntry.willReturnNone();
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
     microbackendStreamToken();
 

@@ -1,5 +1,5 @@
 import * as state from '../util/interactionState';
-import { defaultSpaceId, defaultEnvironment } from '../util/requests';
+import { defaultSpaceId, defaultEnvironmentId } from '../util/requests';
 
 const resources = require('../fixtures/responses/resources.json');
 const resourcesWithLimitsReached = require('../fixtures/responses/resources-with-limits-reached.json');
@@ -11,7 +11,7 @@ export function limitsReachedResourcesResponse() {
     uponReceiving: 'a request for resources with limits reached',
     withRequest: {
       method: 'GET',
-      path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironment}/resources`,
+      path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/resources`,
       headers: {
         Accept: 'application/json, text/plain, */*'
       }
@@ -30,7 +30,7 @@ export function defaultResourcesResponse() {
     uponReceiving: 'a request for all resources',
     withRequest: {
       method: 'GET',
-      path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironment}/resources`,
+      path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/resources`,
       headers: {
         Accept: 'application/json, text/plain, */*'
       }

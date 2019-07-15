@@ -9,10 +9,10 @@ import { limitsReachedResourcesResponse } from '../../../interactions/resources'
 import { spaceProductCatalogFeaturesResponse } from '../../../interactions/product_catalog_features';
 import { defaultSpaceId, getEntries } from '../../../util/requests';
 import {
-  singleEntryResponse,
-  noEntryLinksResponse,
-  noEntrySnapshotsResponse,
-  postSingleEntryRequest
+  getDefaultEntry,
+  queryLinksToDefaultEntry,
+  getFirst7SnapshotsOfDefaultEntry,
+  createAnEntryInDefaultSpace
 } from '../../../interactions/entries';
 
 const empty = require('../../../fixtures/responses/empty.json');
@@ -119,10 +119,10 @@ describe('Entries list page', () => {
         .should('be.enabled');
     });
     it('redirects to the entry page after click on create button', () => {
-      postSingleEntryRequest();
-      singleEntryResponse();
-      noEntryLinksResponse();
-      noEntrySnapshotsResponse();
+      createAnEntryInDefaultSpace.willSucceed();
+      getDefaultEntry.willReturnIt();
+      queryLinksToDefaultEntry.willReturnNone();
+      getFirst7SnapshotsOfDefaultEntry.willReturnNone();
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
 
       cy.getByTestId('create-entry').click();
