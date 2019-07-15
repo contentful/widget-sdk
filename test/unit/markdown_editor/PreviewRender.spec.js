@@ -105,6 +105,22 @@ describe('markdown_editor/PreviewRender.es6', () => {
     });
   });
 
+  it('Restores special characters in query', () => {
+    const QUERIES_WITH_SPECIAL_CHARACTERS = [
+      'https://test.com?a=1&b=2',
+      'https://test.com?a=1&b="',
+      'https://test.com?a=1&b=2&c=?&d="'
+    ];
+
+    QUERIES_WITH_SPECIAL_CHARACTERS.forEach((uri, index) => {
+      const root = getRoot(`[test](${uri})`);
+      // paragraph is created -> getting children twice to get the anchor
+      const anchor = getChildren(getChildren(root));
+      expect(getHTML(anchor)).toBe('test');
+      expect(anchor.props.href).toBe(QUERIES_WITH_SPECIAL_CHARACTERS[index]);
+    });
+  });
+
   it('Handles different image srcs', () => {
     const tests = [
       ['![img1](//images.contentful.com/x.jpg)', 'h=200'],
