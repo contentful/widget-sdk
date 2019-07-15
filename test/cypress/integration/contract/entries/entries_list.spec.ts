@@ -80,7 +80,7 @@ describe('Entries list page', () => {
   context('no entries in the space', () => {
     beforeEach(() => {
       defaultRequestsMock({
-        publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType
+        publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
       });
       singleUser();
 

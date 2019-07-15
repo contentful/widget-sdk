@@ -58,7 +58,7 @@ describe('Jobs page', () => {
         spec: 2
       });
       defaultRequestsMock({
-        publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType
+        publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
       });
       severalJobsResponse();
       queryForDefaultEntryInsideEnvironment.willFindIt();

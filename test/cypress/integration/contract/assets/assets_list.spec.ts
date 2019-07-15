@@ -3,9 +3,9 @@ import { singleUser } from '../../../interactions/users';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
 import {
-  getAllNonArchivedAssetsInTheDefaultSpace,
+  queryAllNonArchivedAssetsInTheDefaultSpace,
   severalAssetsBody,
-  getAllArchivedAssetsInTheDefaultSpace
+  queryAllArchivedAssetsInTheDefaultSpace
 } from '../../../interactions/assets';
 
 describe('Assets List Page', () => {
@@ -27,8 +27,8 @@ describe('Assets List Page', () => {
   });
   context('no assets in the space', () => {
     beforeEach(() => {
-      getAllNonArchivedAssetsInTheDefaultSpace.willReturnNoAssets();
-      getAllArchivedAssetsInTheDefaultSpace.willReturnNoAssets();
+      queryAllNonArchivedAssetsInTheDefaultSpace.willFindNone();
+      queryAllArchivedAssetsInTheDefaultSpace.willFindNone();
 
       cy.visit(`/spaces/${defaultSpaceId}/assets`);
 
@@ -45,7 +45,7 @@ describe('Assets List Page', () => {
 
   context('several assets in the space', () => {
     beforeEach(() => {
-      getAllNonArchivedAssetsInTheDefaultSpace.willReturnSeveralAssets();
+      queryAllNonArchivedAssetsInTheDefaultSpace.willFindSeveral();
 
       cy.visit(`/spaces/${defaultSpaceId}/assets`);
 

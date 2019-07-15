@@ -78,7 +78,7 @@ function basicServerSetUp() {
     pactfileWriteMode: 'merge',
     spec: 2
   });
-  defaultRequestsMock({ publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType });
+  defaultRequestsMock({ publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne });
   singleUser();
   getDefaultEntry.willReturnIt();
   cy.route('**/channel/**', []).as('shareJS');

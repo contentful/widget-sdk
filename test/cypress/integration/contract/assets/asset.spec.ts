@@ -23,7 +23,7 @@ describe('Asset Page', () => {
       defaultRequestsMock();
       singleUser();
 
-      getDefaultAssetInDefaultSpace.willReturnTheDefaultAsset();
+      getDefaultAssetInDefaultSpace.willReturnIt();
       queryLinksToDefaultAsset.willReturnNone();
       cy.route('**/channel/**', []).as('shareJS');
 

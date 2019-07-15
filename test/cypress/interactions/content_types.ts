@@ -26,7 +26,7 @@ const getAllPublicContentTypesInDefaultSpaceRequest: RequestOptions = {
 }
 
 export const getAllPublicContentTypesInDefaultSpace = {
-  willReturnNoContentTypes() {
+  willReturnNone() {
     return cy.addInteraction({
       provider: 'content_types',
       state: state.PublicContentTypes.NONE,
@@ -38,7 +38,9 @@ export const getAllPublicContentTypesInDefaultSpace = {
       }
     }).as(state.PublicContentTypes.NONE);
   },
-  willReturnOneContentType() {
+  // TODO: Is not a good idea to test with a response of a single element against a collection
+  // Unless there is a good reason for not doing so, test with several
+  willReturnOne() {
     return cy.addInteraction({
       provider: 'content_types',
       state: state.PublicContentTypes.SINGLE,
@@ -62,7 +64,7 @@ function getAllContentTypesInDefaultSpaceRequest(query?: Query): RequestOptions 
 }
 
 export const getAllContentTypesInDefaultSpace = {
-  willReturnNoContentTypes() {
+  willReturnNone() {
     return cy.addInteraction({
       provider: 'content_types',
       state: state.ContentTypes.NONE,
@@ -74,7 +76,9 @@ export const getAllContentTypesInDefaultSpace = {
       }
     }).as(state.ContentTypes.NONE);
   },
-  willReturnOneContentType() {
+  // TODO: Is not a good idea to test with a response of a single element against a collection
+  // Unless there is a good reason for not doing so, test with several
+  willReturnOne() {
     return cy.addInteraction({
       provider: 'content_types',
       state: state.ContentTypes.SINGLE,
@@ -89,7 +93,7 @@ export const getAllContentTypesInDefaultSpace = {
 }
 
 export const getFirst1000ContentTypesInDefaultSpaceOrderedByName = {
-  willReturnNoContentTypes() {
+  willReturnNone() {
     return cy.addInteraction({
       provider: 'content_types',
       state: state.ContentTypes.NONE,
@@ -104,7 +108,7 @@ export const getFirst1000ContentTypesInDefaultSpaceOrderedByName = {
       }
     }).as(state.ContentTypes.NONE);
   },
-  willReturnSeveralContentTypes() {
+  willReturnSeveral() {
     return cy.addInteraction({
       provider: 'content_types',
       state: state.ContentTypes.SEVERAL,
@@ -154,8 +158,8 @@ export const getEditorInterfaceForDefaultContentType = {
   }
 }
 
-export const getDefaultContentTypeInDefaultSpace = {
-  willReturnTheDefaultContentType() {
+export const getDefaultContentType = {
+  willReturnIt() {
     return cy.addInteraction({
       provider: 'content_types',
       state: state.ContentTypes.SEVERAL,
@@ -174,7 +178,7 @@ export const getDefaultContentTypeInDefaultSpace = {
 }
 
 export const getPublishedVersionOfDefaultContentType = {
-  willReturnThePublishedVersion() {
+  willReturnIt() {
     return cy.addInteraction({
       provider: 'content_types',
       state: state.ContentTypes.DEFAULT_CONTENT_TYPE_IS_PUBLISHED,
@@ -193,7 +197,7 @@ export const getPublishedVersionOfDefaultContentType = {
 }
 
 export const saveDefaultContentTypeWithCustomSidebar = {
-  willBeSuccessful() {
+  willSucceed() {
     return cy.addInteraction({
       provider: 'content_types',
       state: state.ContentTypes.SEVERAL,
@@ -213,7 +217,7 @@ export const saveDefaultContentTypeWithCustomSidebar = {
 }
 
 export const publishDefaultContentType = {
-  willBeSuccessful() {
+  willSucceed() {
     return cy.addInteraction({
       provider: 'content_types',
       state: state.ContentTypes.SEVERAL,
@@ -232,7 +236,7 @@ export const publishDefaultContentType = {
 }
 
 export const saveDefaultContentTypeEditorInterface = {
-  willBeSuccessful() {
+  willSucceed() {
     return cy.addInteraction({
       provider: 'content_types',
       state: state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR,

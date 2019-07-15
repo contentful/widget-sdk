@@ -23,7 +23,7 @@ describe('Apps Page', () => {
     cy.enableFeatureFlags([FeatureFlag.DEFAULT]);
 
     defaultRequestsMock();
-    getAllInstalledAppsInDefaultSpace.willReturnNoInstalledApps();
+    getAllInstalledAppsInDefaultSpace.willReturnNone();
     spaceProductCatalogFeaturesResponse();
 
     cy.visit(`/spaces/${defaultSpaceId}/apps`);

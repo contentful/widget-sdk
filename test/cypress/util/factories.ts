@@ -15,7 +15,7 @@ type DefaultHandlers = {
 const defaultHandlers: DefaultHandlers = {
   tokenResponse: validTokenResponse,
   enforcementsResponse: getAllEnforcementsForDefaultSpace.willReturnNone,
-  publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnNoContentTypes,
+  publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnNone,
   environmentResponse: masterEnvironmentResponse,
   localeResponse: defaultLocaleResponse
 };

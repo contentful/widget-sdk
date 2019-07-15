@@ -1,7 +1,7 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import {
   getAllContentTypesInDefaultSpace,
-  getDefaultContentTypeInDefaultSpace,
+  getDefaultContentType,
   getPublishedVersionOfDefaultContentType,
   getEditorInterfaceForDefaultContentType,
   saveDefaultContentTypeWithCustomSidebar,
@@ -32,9 +32,9 @@ describe('Sidebar configuration', () => {
     defaultRequestsMock();
     noExtensionsResponse();
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
-    getAllContentTypesInDefaultSpace.willReturnOneContentType();
-    getDefaultContentTypeInDefaultSpace.willReturnTheDefaultContentType();
-    getPublishedVersionOfDefaultContentType.willReturnThePublishedVersion();
+    getAllContentTypesInDefaultSpace.willReturnOne();
+    getDefaultContentType.willReturnIt();
+    getPublishedVersionOfDefaultContentType.willReturnIt();
 
     cy.visit(
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`
@@ -65,10 +65,10 @@ describe('Sidebar configuration', () => {
     });
 
     it('checks that content type with a custom sidebar has been successfully saved', () => {
-      saveDefaultContentTypeWithCustomSidebar.willBeSuccessful();
-      publishDefaultContentType.willBeSuccessful();
+      saveDefaultContentTypeWithCustomSidebar.willSucceed();
+      publishDefaultContentType.willSucceed();
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
-      saveDefaultContentTypeEditorInterface.willBeSuccessful();
+      saveDefaultContentTypeEditorInterface.willSucceed();
 
       cy.getByTestId('sidebar-widget-item')
         .first()

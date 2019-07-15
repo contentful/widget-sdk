@@ -151,7 +151,7 @@ function basicServerSetUp() {
   });
 
   defaultRequestsMock({
-    publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType
+    publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
   });
   singleUser();
   getDefaultEntry.willReturnIt();

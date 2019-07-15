@@ -2,7 +2,7 @@ import * as state from '../util/interactionState';
 import { defaultSpaceId } from '../util/requests';
 
 export const getAllInstalledAppsInDefaultSpace = {
-  willReturnNoInstalledApps() {
+  willReturnNone() {
     return cy.addInteraction({
       provider: 'apps',
       state: state.Apps.NONE,

@@ -20,7 +20,7 @@ describe('Content types list page', () => {
     beforeEach(() => {
       defaultRequestsMock();
 
-      getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnNoContentTypes();
+      getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnNone();
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);
 
@@ -57,7 +57,7 @@ describe('Content types list page', () => {
         }
       }).as('noExtensions');
 
-      getAllContentTypesInDefaultSpace.willReturnNoContentTypes()
+      getAllContentTypesInDefaultSpace.willReturnNone()
 
       cy.getByTestId('create-content-type-empty-state').click();
 
@@ -71,7 +71,7 @@ describe('Content types list page', () => {
     beforeEach(() => {
       defaultRequestsMock();
 
-      getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnSeveralContentTypes();
+      getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnSeveral();
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);
 

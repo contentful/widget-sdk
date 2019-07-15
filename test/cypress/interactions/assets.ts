@@ -32,12 +32,12 @@ function queryAllAssetsInTheDefaultSpaceRequest(query: Query): RequestOptions {
   };
 }
 
-export const getAllNonArchivedAssetsInTheDefaultSpace = {
-  willReturnNoAssets() {
+export const queryAllNonArchivedAssetsInTheDefaultSpace = {
+  willFindNone() {
     return cy.addInteraction({
       provider: 'assets',
       state: state.Assets.NONE,
-      uponReceiving: `a request for all non archived assets in space "${defaultSpaceId}"`,
+      uponReceiving: `a query for all non archived assets in space "${defaultSpaceId}"`,
       withRequest: queryAllAssetsInTheDefaultSpaceRequest(nonArchivedAssetsQuery),
       willRespondWith: {
         status: 200,
@@ -45,11 +45,11 @@ export const getAllNonArchivedAssetsInTheDefaultSpace = {
       }
     }).as(state.Assets.NONE);
   },
-  willReturnSeveralAssets() {
+  willFindSeveral() {
     return cy.addInteraction({
       provider: 'assets',
       state: state.Assets.SEVERAL,
-      uponReceiving: `a request for all non archived assets in space "${defaultSpaceId}"`,
+      uponReceiving: `a query for all non archived assets in space "${defaultSpaceId}"`,
       withRequest: queryAllAssetsInTheDefaultSpaceRequest(nonArchivedAssetsQuery),
       willRespondWith: {
         status: 200,
@@ -59,12 +59,12 @@ export const getAllNonArchivedAssetsInTheDefaultSpace = {
   }
 };
 
-export const getAllArchivedAssetsInTheDefaultSpace = {
-  willReturnNoAssets() {
+export const queryAllArchivedAssetsInTheDefaultSpace = {
+  willFindNone() {
     return cy.addInteraction({
       provider: 'assets',
       state: 'noArchivedAssets',
-      uponReceiving: `a request for all archived assets in space "${defaultSpaceId}"`,
+      uponReceiving: `a query for all archived assets in space "${defaultSpaceId}"`,
       withRequest: queryAllAssetsInTheDefaultSpaceRequest(archivedAssetsQuery),
       willRespondWith: {
         status: 200,
@@ -75,11 +75,11 @@ export const getAllArchivedAssetsInTheDefaultSpace = {
 };
 
 export const getDefaultAssetInDefaultSpace = {
-  willReturnTheDefaultAsset() {
+  willReturnIt() {
     return cy.addInteraction({
       provider: 'assets',
       state: state.Assets.SEVERAL,
-      uponReceiving: 'a request for default asset',
+      uponReceiving: `a request to get the asset "${defaultAssetId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/assets/${defaultAssetId}`,

@@ -46,7 +46,7 @@ describe('Tasks entry editor sidebar', () => {
 
   function basicServerSetUpWithEntry() {
     defaultRequestsMock({
-      publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOneContentType
+      publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
     });
     singleUser();
     getDefaultEntry.willReturnIt();

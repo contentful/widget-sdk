@@ -4,7 +4,7 @@ import { defaultSpaceId } from '../../../util/requests';
 import {
   getEditorInterfaceForDefaultContentType,
   getAllContentTypesInDefaultSpace,
-  getDefaultContentTypeInDefaultSpace,
+  getDefaultContentType,
   getPublishedVersionOfDefaultContentType
 } from '../../../interactions/content_types';
 import { noExtensionsResponse } from '../../../interactions/extensions';
@@ -28,9 +28,9 @@ describe('Content type page', () => {
       defaultRequestsMock();
       noExtensionsResponse();
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
-      getAllContentTypesInDefaultSpace.willReturnOneContentType();
-      getDefaultContentTypeInDefaultSpace.willReturnTheDefaultContentType();
-      getPublishedVersionOfDefaultContentType.willReturnThePublishedVersion();
+      getAllContentTypesInDefaultSpace.willReturnOne();
+      getDefaultContentType.willReturnIt();
+      getPublishedVersionOfDefaultContentType.willReturnIt();
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`);
 
