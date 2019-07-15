@@ -4,7 +4,12 @@ import 'jest-dom/extend-expect';
 
 import { Notification } from '@contentful/forma-36-react-components';
 import JobWidget from './JobsWidget.es6';
-import { getNotCanceledJobsForEntity } from '../DataManagement/JobsService.es6';
+import {
+  getNotCanceledJobsForEntity,
+  createJob as createJobService,
+  cancelJob
+} from '../DataManagement/JobsService.es6';
+import * as JobsAnalytics from 'app/jobs/Analytics/JobsAnalytics.es6';
 
 const commandTemplate = {
   execute: () => {},
@@ -206,6 +211,56 @@ describe('<JobWidget />', () => {
 
       expect(getNotCanceledJobsForEntity).toHaveBeenCalledTimes(2);
       expect(Notification.success).toHaveBeenCalledWith('Entry was successfully published.');
+    });
+  });
+
+  describe('analytics', () => {
+    let job;
+
+    beforeEach(() => {
+      job = createPendingJob();
+    });
+
+    it('creates the job', async () => {
+      const createDialogSubmitSpy = jest.spyOn(JobsAnalytics, 'createDialogSubmit');
+
+      createJobService.mockResolvedValueOnce(job);
+      getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
+
+      const notPublishedEntry = { sys: { id: 'entryId' } };
+      const [renderResult] = build(notPublishedEntry);
+      await wait();
+
+      fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
+      fireEvent.click(renderResult.getByText('Schedule publication'));
+      fireEvent.click(renderResult.getByTestId('schedule-publication'));
+      await wait();
+
+      expect(createDialogSubmitSpy).toHaveBeenCalledTimes(1);
+      expect(createDialogSubmitSpy).toHaveBeenCalledWith({
+        jobId: job.sys.id,
+        scheduledAt: job.scheduledAt
+      });
+    });
+
+    it('cancels the job', async () => {
+      const cancelJobSpy = jest.spyOn(JobsAnalytics, 'cancelJob');
+
+      cancelJob.mockResolvedValueOnce();
+      getNotCanceledJobsForEntity.mockResolvedValueOnce([job]);
+      const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
+      const [renderResult] = build({ entity: publishedEntry });
+      await wait();
+
+      fireEvent.click(renderResult.getByTestId('cancel-job-ddl'));
+      fireEvent.click(renderResult.getByText('Cancel Schedule'));
+      fireEvent.click(renderResult.getByTestId('confirm-job-cancellation'));
+      await wait();
+
+      expect(cancelJobSpy).toHaveBeenCalledTimes(1);
+      expect(cancelJobSpy).toHaveBeenCalledWith({
+        jobId: job.sys.id
+      });
     });
   });
 });

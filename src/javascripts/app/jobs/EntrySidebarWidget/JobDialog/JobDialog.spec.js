@@ -5,6 +5,8 @@ import * as DateMocks from 'DateMocks';
 import JobDialog from './index.es6';
 import moment from 'moment';
 
+import * as JobsAnalytics from 'app/jobs/Analytics/JobsAnalytics.es6';
+
 describe('JobDialog', () => {
   let dateNowSpy;
   afterEach(cleanup);
@@ -115,6 +117,25 @@ describe('JobDialog', () => {
     await schedulePublication(renderResult);
     expect(renderResult.queryByTestId('job-dialog-validation-message')).toBeNull();
     expect(props.onCreate).toHaveBeenCalled();
+  });
+
+  describe('analytics', () => {
+    it('tracks opening the scheduling dialog', () => {
+      const createDialogOpenSpy = jest.spyOn(JobsAnalytics, 'createDialogOpen');
+
+      build();
+
+      expect(createDialogOpenSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('tracks closing the scheduling dialog', () => {
+      const createDialogCloseSpy = jest.spyOn(JobsAnalytics, 'createDialogClose');
+      const [renderResult] = build();
+
+      renderResult.unmount();
+
+      expect(createDialogCloseSpy).toHaveBeenCalledTimes(1);
+    });
   });
 });
 

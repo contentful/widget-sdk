@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
 import {
@@ -12,6 +12,7 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import { getTimezoneOptions } from './Timezones.es6';
+import { createDialogClose, createDialogOpen } from 'app/jobs/Analytics/JobsAnalytics.es6';
 
 import DatePicker from './DatePicker/index.es6';
 import TimePicker from './TimePicker/index.es6';
@@ -59,6 +60,11 @@ function JobDialog({ onCreate, onCancel }) {
   const [time, setTime] = useState(suggestedDate.format('HH:mm'));
   const [formError, setFormError] = useState('');
   const [utcOffset, setUtcOffset] = useState(suggestedDate.utcOffset());
+
+  useEffect(() => {
+    createDialogOpen();
+    return createDialogClose;
+  }, []);
 
   const validateForm = onFormValid => {
     if (moment(formatScheduledAtDate({ date, time, utcOffset })).isAfter(moment.now())) {
