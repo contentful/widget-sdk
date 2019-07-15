@@ -1,6 +1,9 @@
 import { isPlainObject } from 'lodash';
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers.es6';
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers.es6';
+import makePageExtensionHandlers from './makePageExtensionHandlers.es6';
+import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers.es6';
+import checkDependencies from './checkDependencies.es6';
 import { LOCATION_APP } from '../WidgetLocations.es6';
 import * as Random from 'utils/Random.es6';
 
@@ -14,16 +17,12 @@ import {
   APP_UPDATE_FINALIZED
 } from 'app/settings/AppsBeta/AppHookBus.es6';
 
-const REQUIRED_DEPENDENCIES = ['$rootScope', 'spaceContext', 'TheLocaleStore', 'appHookBus'];
-
 export default function createAppExtensionBridge(dependencies) {
-  REQUIRED_DEPENDENCIES.forEach(key => {
-    if (!(key in dependencies)) {
-      throw new Error(`"${key}" not provided to the extension bridge.`);
-    }
-  });
-
-  const { $rootScope, spaceContext, TheLocaleStore, appHookBus } = dependencies;
+  const { $rootScope, spaceContext, TheLocaleStore, appHookBus } = checkDependencies(
+    'AppExtensionBridge',
+    dependencies,
+    ['$rootScope', 'spaceContext', 'TheLocaleStore', 'appHookBus']
+  );
 
   let currentInstallationRequestId = null;
 
@@ -52,8 +51,14 @@ export default function createAppExtensionBridge(dependencies) {
   }
 
   function install(api) {
-    api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
+    api.registerHandler('openDialog', makeExtensionDialogsHandler(dependencies));
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
+    api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
+
+    api.registerHandler(
+      'callSpaceMethod',
+      makeExtensionSpaceMethodsHandlers(dependencies, { readOnly: true })
+    );
 
     api.registerHandler('callAppMethod', methodName => {
       const parameters = appHookBus.getParameters();
