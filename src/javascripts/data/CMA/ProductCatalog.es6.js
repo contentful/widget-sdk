@@ -80,5 +80,8 @@ export const getOrgFeature = (orgId, featureId, defaultValue) => {
 };
 
 export const getSpaceFeature = (spaceId, featureId, defaultValue) => {
+  if (!spaceId || !featureId) {
+    return Promise.reject('No spaceId or featureId provided when fetching a space feature');
+  }
   return load(getLoaderForSpace(spaceId), featureId, defaultValue, COMMON_FOR_SPACE);
 };
