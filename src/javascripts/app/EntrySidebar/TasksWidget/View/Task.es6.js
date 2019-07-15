@@ -171,9 +171,36 @@ export default class Task extends React.Component {
       </CardActions>
     );
 
+  renderCheckbox = () => {
+    const { isDone, canUpdateStatus } = this.props.viewData;
+
+    const checkbox = (
+      <input
+        type="checkbox"
+        data-test-id="status-checkbox"
+        checked={isDone}
+        onChange={event => this.handleStatusChange(event)}
+        disabled={!canUpdateStatus}
+        className={styles.checkboxDisabled}
+      />
+    );
+
+    if (!canUpdateStatus) {
+      return (
+        <Tooltip
+          data-test-id="disabled-task-tooltip"
+          content="You are not permitted to update this task">
+          {checkbox}
+        </Tooltip>
+      );
+    }
+
+    return checkbox;
+  };
+
   renderDetails = () => {
     const { isExpanded, isUpdating } = this.state;
-    const { body, creator, createdAt, isDone, assignee } = this.props.viewData;
+    const { body, creator, createdAt, assignee } = this.props.viewData;
 
     return (
       <React.Fragment>
@@ -181,12 +208,7 @@ export default class Task extends React.Component {
           {isUpdating ? (
             <Spinner size="small" className={styles.taskLoadingSpinner} />
           ) : (
-            <input
-              type="checkbox"
-              data-test-id="status-checkbox"
-              checked={isDone}
-              onChange={event => this.handleStatusChange(event)}
-            />
+            this.renderCheckbox()
           )}
         </div>
         <div
