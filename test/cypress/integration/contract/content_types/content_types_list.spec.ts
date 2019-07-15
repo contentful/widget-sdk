@@ -1,14 +1,13 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { 
-  defaultSpaceId,
-  getExtensions
+  defaultSpaceId
 } from '../../../util/requests';
 import {
   getAllContentTypesInDefaultSpace,
   getFirst1000ContentTypesInDefaultSpaceOrderedByName
 } from '../../../interactions/content_types';
-const empty = require('../../../fixtures/responses/empty.json');
+import { getAllExtensionsInDefaultSpace } from '../../../interactions/extensions';
 const severalContentTypes = require('../../../fixtures/responses/content-types-several.json');
 
 describe('Content types list page', () => {
@@ -45,23 +44,12 @@ describe('Content types list page', () => {
         pactfileWriteMode: 'merge',
         spec: 2
       });
-
-      cy.addInteraction({
-        provider: 'extensions',
-        state: 'noExtensions',
-        uponReceiving: 'a request for all extensions',
-        withRequest: getExtensions(),
-        willRespondWith: {
-          status: 200,
-          body: empty
-        }
-      }).as('noExtensions');
-
+      getAllExtensionsInDefaultSpace.willReturnNone()
       getAllContentTypesInDefaultSpace.willReturnNone()
 
       cy.getByTestId('create-content-type-empty-state').click();
 
-      cy.wait([`@${state.ContentTypes.NONE}`, '@noExtensions']);
+      cy.wait([`@${state.ContentTypes.NONE}`, `@${state.Extensions.NONE}`]);
 
       cy.url().should('contain', '/content_types_new/fields');
     });

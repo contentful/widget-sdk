@@ -8,7 +8,7 @@ import {
   publishDefaultContentType,
   saveDefaultContentTypeEditorInterface
 } from '../../../interactions/content_types';
-import { noExtensionsResponse } from '../../../interactions/extensions';
+import { getAllExtensionsInDefaultSpace } from '../../../interactions/extensions';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
 import * as state from '../../../util/interactionState';
 import { FeatureFlag } from '../../../util/featureFlag';
@@ -30,7 +30,7 @@ describe('Sidebar configuration', () => {
     cy.enableFeatureFlags([FeatureFlag.ENTRY_ACTIVITY]);
 
     defaultRequestsMock();
-    noExtensionsResponse();
+    getAllExtensionsInDefaultSpace.willReturnNone();
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
     getAllContentTypesInDefaultSpace.willReturnOne();
     getDefaultContentType.willReturnIt();

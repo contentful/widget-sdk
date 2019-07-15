@@ -4,7 +4,7 @@ import {
   getPublishedVersionOfDefaultContentType,
   getAllContentTypesInDefaultSpace
 } from '../../../interactions/content_types';
-import { noExtensionsResponse } from '../../../interactions/extensions';
+import { getAllExtensionsInDefaultSpace } from '../../../interactions/extensions';
 import { getEditorInterfaceForDefaultContentType } from '../../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
 import * as state from '../../../util/interactionState';
@@ -22,7 +22,7 @@ describe('Sidebar configuration', () => {
     cy.resetAllFakeServers();
 
     defaultRequestsMock();
-    noExtensionsResponse();
+    getAllExtensionsInDefaultSpace.willReturnNone();
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
     getAllContentTypesInDefaultSpace.willReturnOne();
     getDefaultContentType.willReturnIt();

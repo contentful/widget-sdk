@@ -23,27 +23,10 @@ export const defaultUserId = 'userID';
 export const defaultJobId = 'jobID';
 export const defaultWebhookId = 'webhookId';
 
-export function getExtensions(spaceId: string = defaultSpaceId): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/extensions`,
-    headers: defaultHeader
-  };
-}
-
 export function getEntries(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
   return {
     method: 'GET',
     path: `/spaces/${spaceId}/entries`,
-    headers: defaultHeader,
-    query
-  };
-}
-
-export function getEnvironments(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/environments`,
     headers: defaultHeader,
     query
   };

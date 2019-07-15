@@ -1,19 +1,23 @@
 import * as state from '../util/interactionState';
-import { getExtensions } from '../util/requests';
+import { defaultHeader, defaultSpaceId } from '../util/requests';
 
 const empty = require('../fixtures/responses/empty.json');
 
-export function noExtensionsResponse() {
-  return cy
-    .addInteraction({
+export const getAllExtensionsInDefaultSpace = {
+  willReturnNone() {
+    return cy.addInteraction({
       provider: 'extensions',
       state: state.Extensions.NONE,
-      uponReceiving: 'a request for all extensions',
-      withRequest: getExtensions(),
+      uponReceiving: `a request to get all extensions in the space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${defaultSpaceId}/extensions`,
+        headers: defaultHeader
+      },
       willRespondWith: {
         status: 200,
         body: empty
       }
-    })
-    .as(state.Extensions.NONE);
+    }).as(state.Extensions.NONE);
+  }
 }
