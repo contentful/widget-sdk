@@ -18,8 +18,8 @@ export const defaultPreviewId = '0xi0FU6rvrUVlJtPFuaUyl';
 export const defaultHeader = {
   Accept: 'application/json, text/plain, */*'
 };
+export const defaultTaskId = 'taskId1';
 export const defaultUserId = 'userID';
-
 export const defaultJobId = 'jobID';
 export const defaultWebhookId = 'webhookId';
 
@@ -321,6 +321,21 @@ export function postEntryTask(
     body: task
   };
 }
+
+export function putEntryTask(
+  spaceId: string = defaultSpaceId,
+  entryId: string = defaultEntryId,
+  taskId: string = defaultTaskId,
+  task: Object
+): RequestOptions {
+  return {
+    method: 'PUT',
+    path: `/spaces/${spaceId}/entries/${entryId}/comments/${taskId}`,
+    headers: defaultHeader,
+    body: task
+  }
+}
+
 
 export function getSpaceUsers(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
   return {

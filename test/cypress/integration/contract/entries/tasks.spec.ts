@@ -3,7 +3,9 @@ import { singleUser } from '../../../interactions/users';
 import {
   successfulGetEntryTasksInteraction,
   tasksErrorResponse,
-  taskCreateRequest
+  taskCreateRequest,
+  taskUpdateOpenRequest,
+  taskUpdateResolvedRequest
 } from '../../../interactions/tasks';
 
 import {
@@ -17,6 +19,7 @@ import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import { FeatureFlag } from '../../../util/featureFlag';
 
 const empty = require('../../../fixtures/responses/empty.json');
+const users = require('../../../fixtures/responses/users.json');
 const severalTasks = require('../../../fixtures/responses/tasks-several.json');
 
 describe('Tasks entry editor sidebar', () => {
@@ -68,9 +71,10 @@ describe('Tasks entry editor sidebar', () => {
 
   context('no tasks on the entry', () => {
     beforeEach(() => {
-      successfulGetEntryTasksInteraction('noTasks', empty).as(state.Tasks.NONE);
+      const stateName = state.Tasks.NONE;
+      successfulGetEntryTasksInteraction(stateName, severalTasks).as(stateName);
       visitEntry();
-      cy.wait([`@${state.Tasks.NONE}`]);
+      cy.wait([`@${stateName}`]);
     });
 
     it('renders "Tasks" sidebar section', () => {
@@ -81,13 +85,77 @@ describe('Tasks entry editor sidebar', () => {
 
   context('several tasks on the entry', () => {
     beforeEach(() => {
-      successfulGetEntryTasksInteraction('someTasks', severalTasks).as(state.Tasks.SEVERAL);
+      const stateName = state.Tasks.SEVERAL;
+      successfulGetEntryTasksInteraction(stateName, severalTasks).as(stateName);
       visitEntry();
-      cy.wait([`@${state.Tasks.SEVERAL}`]);
+      cy.wait([`@${stateName}`]);
     });
 
     it('renders list of tasks', () => {
       getTasks().should('have.length', 3);
+      severalTasks.items.forEach(({ assignment: { status } }, i: number) => {
+        expectTask(getTasks().eq(i), { isResolved: status === 'resolved' });
+      })
+    });
+
+    describe('updating a task', () => {
+      it('updates tasks without error', () => {
+        const updatedTaskData = {
+          title: 'Updated task body!',
+          assigneeId: users.items[1].sys.id
+        }
+        const stateName = state.Tasks.SEVERAL_ONE_OPEN;
+        taskUpdateOpenRequest(updatedTaskData, stateName).successResponse().as(stateName);
+        updateTaskAndSave(getTasks().first(), updatedTaskData);
+        cy.wait([`@${stateName}`]);
+      });
+
+      it('resolves tasks without error', () => {
+        const [openTask] = severalTasks.items;
+        const updatedTaskData = {
+          title: openTask.body,
+          assigneeId: openTask.assignment.assignedTo.sys.id,
+          taskId: openTask.sys.id
+        }
+        const stateName = state.Tasks.SEVERAL_ONE_RESOLVED;
+        taskUpdateResolvedRequest(updatedTaskData, stateName).successResponse().as(stateName);
+        const task = () => getTasks().first();
+        expectTask(task(), { isResolved: false });
+        getTaskCheckbox(task()).check();
+        cy.wait([`@${stateName}`]);
+        expectTask(task(), { isResolved: true });
+      });
+
+      it('reopens tasks without error', () => {
+        const [, resolvedTask] = severalTasks.items;
+        const updatedTaskData = {
+          title: resolvedTask.body,
+          assigneeId: resolvedTask.assignment.assignedTo.sys.id,
+          taskId: resolvedTask.sys.id
+        }
+        const stateName = state.Tasks.SEVERAL_ONE_REOPENED;
+        taskUpdateOpenRequest(updatedTaskData, stateName).successResponse().as(stateName);
+        const task = () => getTasks().eq(1);
+        getTaskCheckbox(task()).uncheck();
+        cy.wait([`@${stateName}`]);
+        expectTask(task(), { isResolved: false });
+      });
+
+      function updateTaskAndSave(task: Cypress.Chainable, { title, assigneeId }) {
+        task.click();
+        getTaskKebabMenu(task)
+          .should('be.enabled')
+          .click();
+        getTaskKebabMenuItems(task)
+          .getByTestId('edit-task')
+          .click();
+        getTaskBodyTextarea(task)
+          .should('have.text', severalTasks.items[0].body)
+          .clear()
+          .type(title);
+        selectTaskAssignee(assigneeId);
+        saveUpdatedTask();
+      }
     });
   });
 
@@ -163,9 +231,20 @@ const getDraftTaskInput = () =>
   getDraftTask()
     .getByTestId('task-title-input')
     .find('textarea');
-const getDraftAssigneeSelector = () =>
-  getDraftTask()
+const getDraftAssigneeSelector = () => getSelectElement(getDraftTask());
+const expectTask = (task: Cypress.Chainable, { isResolved }) =>
+  getTaskCheckbox(task)
+    .should('be.enabled')
+    .should(isResolved ? 'have.attr' : 'not.have.attr', 'checked');
+const getSelectElement = (chainable: Cypress.Chainable) =>
+  chainable
     .getByTestId('task-assignee-select')
     .getByTestId('cf-ui-select');
 const getDraftTaskSaveAction = () => getDraftTask().getByTestId('save-task');
 const getDraftTaskError = () => getDraftTask().queryByTestId('cf-ui-validation-message');
+const getTaskKebabMenu = (task: Cypress.Chainable) => task.getByTestId('cf-ui-icon-button');
+const getTaskKebabMenuItems = (task: Cypress.Chainable) => task.getByTestId('cf-ui-dropdown-list-item')
+const getTaskBodyTextarea = (task: Cypress.Chainable) => task.getByTestId('cf-ui-textarea')
+const selectTaskAssignee = (assigneeId: string) => getSelectElement(cy).select(assigneeId);
+const saveUpdatedTask = () => cy.getByTestId('save-task').click();
+const getTaskCheckbox = (task: Cypress.Chainable) => task.find('[data-test-id="status-checkbox"]');

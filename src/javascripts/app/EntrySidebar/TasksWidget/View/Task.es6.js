@@ -146,7 +146,9 @@ export default class Task extends React.Component {
     return (
       <CardActions className={cx(styles.actions, this.state.isExpanded && styles.actionsVisible)}>
         <DropdownList>
-          <DropdownListItem onClick={this.handleEditClick}>Edit task</DropdownListItem>
+          <DropdownListItem testId="edit-task" onClick={this.handleEditClick}>
+            Edit task
+          </DropdownListItem>
           <DropdownListItem onClick={event => this.handleDeleteClick(event)}>
             Delete task
           </DropdownListItem>
@@ -167,6 +169,7 @@ export default class Task extends React.Component {
           ) : (
             <input
               type="checkbox"
+              data-test-id="status-checkbox"
               checked={isDone}
               onChange={event => this.handleStatusChange(event)}
             />

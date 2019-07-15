@@ -63,7 +63,7 @@
             "id": "userID"
           }
         },
-        "status": "open"
+        "status": "resolved"
       },
       "sys": {
         "id": "taskId2",
