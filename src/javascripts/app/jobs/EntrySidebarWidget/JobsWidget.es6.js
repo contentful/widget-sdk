@@ -27,8 +27,8 @@ import * as JobsService from '../DataManagement/JobsService.es6';
 import { create as createDto } from './JobsFactory.es6';
 import FailedScheduleNote from './FailedScheduleNote/index.es6';
 import {
-  createDialogSubmit,
-  cancelJob as cancelJobTracking
+  createDialogSubmit as trackCreatedJob,
+  cancelJob as trackCancelledJob
 } from './../Analytics/JobsAnalytics.es6';
 
 const styles = {
@@ -125,7 +125,7 @@ export default function JobWidget({
         scheduledAt
       })
     ).then(job => {
-      createDialogSubmit({
+      trackCreatedJob({
         jobId: job.sys.id,
         scheduledAt: job.scheduledAt
       });
@@ -136,7 +136,7 @@ export default function JobWidget({
   const handleCancel = jobId => {
     JobsService.cancelJob(EndpointFactory.createSpaceEndpoint(spaceId, environmentId), jobId).then(
       () => {
-        cancelJobTracking({ jobId });
+        trackCancelledJob({ jobId });
         setJobs(jobs.slice(1));
         Notification.success('Schedule cancelled');
       }
