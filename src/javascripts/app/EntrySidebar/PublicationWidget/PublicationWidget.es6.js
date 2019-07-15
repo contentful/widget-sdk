@@ -9,12 +9,22 @@ import {
   DropdownListItem,
   Icon
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
 import CommandPropType from 'app/entity_editor/CommandPropType.es6';
 
 const StatusBadge = ({ status }) => (
-  <div className="published-status" data-state={status} data-test-id="entity-state">
+  <div
+    className={classNames('published-status', css({ marginBottom: tokens.spacing2Xs }))}
+    data-state={status}
+    data-test-id="entity-state">
+    <span
+      className="entity-sidebar__state-indicator"
+      data-state={status}
+      data-test-id="entity-status"
+    />
     <strong>Status: </strong>
     {status === 'archived' && <span>Archived</span>}
     {status === 'draft' && <span>Draft</span>}
