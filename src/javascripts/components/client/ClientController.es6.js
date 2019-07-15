@@ -120,7 +120,11 @@ export default function register() {
 
         if (shouldCheckUsageForCurrentLocation()) {
           const spaceId = spaceContext.getId();
-          const allowNewUsageCheck = await getSpaceFeature(spaceId, ENVIRONMENT_USAGE_ENFORCEMENT);
+          const allowNewUsageCheck = await getSpaceFeature(
+            spaceId,
+            ENVIRONMENT_USAGE_ENFORCEMENT,
+            false
+          );
 
           if (allowNewUsageCheck) {
             newEnforcement = await EnforcementsService.newUsageChecker(spaceId, environmentId);
