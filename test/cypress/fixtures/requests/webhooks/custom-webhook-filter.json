@@ -1,0 +1,8 @@
+{
+  "headers": [],
+  "topics": ["*.*"],
+  "name": "Webhook",
+  "url": "https://www.contentful.com/",
+  "transformation": { "method": "GET" },
+  "filters": [{ "in": [{ "doc": "sys.id" }, ["master"]] }]
+}

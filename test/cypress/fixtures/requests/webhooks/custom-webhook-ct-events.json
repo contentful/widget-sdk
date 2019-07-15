@@ -1,0 +1,7 @@
+{
+  "headers": [],
+  "topics": ["ContentType.*"],
+  "name": "Webhook",
+  "url": "https://www.contentful.com/",
+  "transformation": { "method": "GET" }
+}

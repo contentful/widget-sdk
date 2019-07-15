@@ -5,7 +5,8 @@
   "topics": ["*.*"],
   "filters": null,
   "transformation": {
-    "method": "GET"
+    "method": "GET",
+    "body": {}
   },
   "sys": {
     "type": "WebhookDefinition",
@@ -25,7 +26,7 @@
         "id": "userId"
       }
     },
-    "createdAt": "2019-07-03T13:46:46Z",
+    "createdAt": "2019-07-11T23:05:00Z",
     "updatedBy": {
       "sys": {
         "type": "Link",
@@ -33,7 +34,7 @@
         "id": "userId"
       }
     },
-    "updatedAt": "2019-07-03T13:46:46Z"
+    "updatedAt": "2019-07-11T23:05:00Z"
   },
   "headers": []
 }

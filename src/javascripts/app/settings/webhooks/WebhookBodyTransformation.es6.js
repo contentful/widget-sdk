@@ -74,6 +74,7 @@ export default class WebhookBodyTransformation extends React.Component {
           <label>
             <input
               type="radio"
+              data-test-id="customize-webhook-payload"
               checked={hasBodyTransformation}
               onChange={() => onChange(this.last)}
             />{' '}

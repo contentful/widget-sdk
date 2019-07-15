@@ -10,14 +10,37 @@ import {
   defaultWebhookDeletedSuccessResponse,
   noWebhooksResponse,
   defaultWebhookDeletedErrorResponse,
-  customWebhookAllSettingsResponse
+  customWebhookAllSettingsResponse,
+  customWebhookContentTypeEventsCreatedSuccessResponse,
+  customWebhookContentTypeEventsResponse,
+  customWebhookFilterCreatedSuccessResponse,
+  customWebhookFilterResponse,
+  customWebhookHeaderCreatedSuccessResponse,
+  customWebhookHeaderResponse,
+  customWebhookSecretHeaderCreatedSuccessResponse,
+  customWebhookSecretHeaderResponse,
+  customWebhookHTTPHeaderCreatedSuccessResponse,
+  customWebhookHTTPHeaderResponse,
+  customWebhookContentTypeHeaderCreatedSuccessResponse,
+  customWebhookContentTypeHeaderResponse,
+  customWebhookContentLengthHeaderCreatedSuccessResponse,
+  customWebhookContentLengthHeaderResponse,
+  customWebhookPayloadCreatedSuccessResponse,
+  customWebhookPayloadResponse
 } from '../../../interactions/webhooks';
 
 describe('Webhook', () => {
-  const newWebhook = {
+  const defaultWebhook = {
     name: 'Webhook',
+    method: 'GET',
     url: 'https://www.contentful.com/'
   };
+
+  function fillInDefaultWebhookDetails() {
+    cy.get('#webhook-name').type(defaultWebhook.name);
+    cy.get('#webhook-url').type(defaultWebhook.url);
+    cy.getByTestId('webhook-method-select').select(defaultWebhook.method);
+  }
 
   before(() =>
     cy.startFakeServer({
@@ -45,8 +68,7 @@ describe('Webhook', () => {
       defaultWebhookResponse();
       noWebhookCallsResponse();
 
-      cy.get('#webhook-name').type(newWebhook.name);
-      cy.get('#webhook-url').type(newWebhook.url);
+      fillInDefaultWebhookDetails();
       cy.getByTestId('webhook-save').click();
 
       cy.wait([
@@ -55,10 +77,166 @@ describe('Webhook', () => {
         `@${state.Webhooks.NO_CALLS}`
       ]);
 
-      cy.getByTestId('cf-notification-container').should(
-        'contain',
-        `Webhook "${newWebhook.name}" saved successfully.`
-      );
+      cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
+    });
+
+    it('checks that webhook, which triggers ContentType events, is successfully created', () => {
+      customWebhookContentTypeEventsCreatedSuccessResponse();
+      customWebhookContentTypeEventsResponse();
+      noWebhookCallsResponse();
+
+      fillInDefaultWebhookDetails();
+      cy.get("[data-test-id='webhook-editor-setting-option']")
+        .eq(1)
+        .click();
+      cy.get("[data-test-id='checkbox-row']")
+        .eq(0)
+        .click();
+      cy.getByTestId('webhook-save').click();
+
+      cy.wait([
+        '@custom-webhook-content-type-events-created-successfully',
+        `@${state.Webhooks.SINGLE}`,
+        `@${state.Webhooks.NO_CALLS}`
+      ]);
+
+      cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
+    });
+
+    it('checks that webhook with filter is successfully created', () => {
+      customWebhookFilterCreatedSuccessResponse();
+      customWebhookFilterResponse();
+      noWebhookCallsResponse();
+
+      fillInDefaultWebhookDetails();
+      cy.getByTestId('filter-entity-type').select('Entity ID (sys.id)');
+      cy.getByTestId('filter-operation').select('in');
+      cy.getByTestId('webhook-save').click();
+
+      cy.wait([
+        '@custom-webhook-filter-created-successfully',
+        `@${state.Webhooks.SINGLE}`,
+        `@${state.Webhooks.NO_CALLS}`
+      ]);
+
+      cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
+    });
+
+    it('checks that webhook with custom header is successfully created', () => {
+      customWebhookHeaderCreatedSuccessResponse();
+      customWebhookHeaderResponse();
+      noWebhookCallsResponse();
+
+      fillInDefaultWebhookDetails();
+      cy.getByTestId('add-custom-header').click();
+      cy.getByTestId('0-key').type('key');
+      cy.getByTestId('0-value').type('value');
+      cy.getByTestId('webhook-save').click();
+
+      cy.wait([
+        '@custom-webhook-header-created-successfully',
+        `@${state.Webhooks.SINGLE}`,
+        `@${state.Webhooks.NO_CALLS}`
+      ]);
+
+      cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
+    });
+
+    it('checks that webhook with secret header is successfully created', () => {
+      customWebhookSecretHeaderCreatedSuccessResponse();
+      customWebhookSecretHeaderResponse();
+      noWebhookCallsResponse();
+
+      fillInDefaultWebhookDetails();
+      cy.getByTestId('add-secret-header').click();
+      cy.get('#secret-header-key').type('key');
+      cy.get('#secret-header-value').type('value');
+      cy.getByTestId('add-secret-header-button').click();
+      cy.getByTestId('webhook-save').click();
+
+      cy.wait([
+        '@custom-webhook-secret-header-created-successfully',
+        `@${state.Webhooks.SINGLE}`,
+        `@${state.Webhooks.NO_CALLS}`
+      ]);
+
+      cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
+    });
+
+    it('checks that webhook with HTTP header is successfully created', () => {
+      customWebhookHTTPHeaderCreatedSuccessResponse();
+      customWebhookHTTPHeaderResponse();
+      noWebhookCallsResponse();
+
+      fillInDefaultWebhookDetails();
+      cy.getByTestId('add-http-basic-url-header').click();
+      cy.get('#http-basic-user').type('user');
+      cy.get('#http-basic-password').type('password');
+      cy.getByTestId('add-http-header-button').click();
+      cy.getByTestId('webhook-save').click();
+
+      cy.wait([
+        '@custom-webhook-http-header-created-successfully',
+        `@${state.Webhooks.SINGLE}`,
+        `@${state.Webhooks.NO_CALLS}`
+      ]);
+
+      cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
+    });
+
+    it('checks that webhook with content type header is successfully created', () => {
+      customWebhookContentTypeHeaderCreatedSuccessResponse();
+      customWebhookContentTypeHeaderResponse();
+      noWebhookCallsResponse();
+
+      fillInDefaultWebhookDetails();
+      cy.getByTestId('content-type-select').select('application/json');
+      cy.getByTestId('webhook-save').click();
+
+      cy.wait([
+        '@custom-webhook-content-type-header-created-successfully',
+        `@${state.Webhooks.SINGLE}`,
+        `@${state.Webhooks.NO_CALLS}`
+      ]);
+
+      cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
+    });
+
+    it('checks that webhook with content length header is successfully created', () => {
+      customWebhookContentLengthHeaderCreatedSuccessResponse();
+      customWebhookContentLengthHeaderResponse();
+      noWebhookCallsResponse();
+
+      fillInDefaultWebhookDetails();
+      cy.get('#webhook-content-length').click();
+      cy.getByTestId('webhook-save').click();
+
+      cy.wait([
+        '@custom-webhook-content-length-header-created-successfully',
+        `@${state.Webhooks.SINGLE}`,
+        `@${state.Webhooks.NO_CALLS}`
+      ]);
+
+      cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
+    });
+
+    it('checks that webhook with custom payload is successfully created', () => {
+      customWebhookPayloadCreatedSuccessResponse();
+      customWebhookPayloadResponse();
+      noWebhookCallsResponse();
+
+      fillInDefaultWebhookDetails();
+      cy.getAllByTestId('customize-webhook-payload').click();
+      cy.get('.CodeMirror textarea').type('{}', { force: true });
+      cy.getByTestId('webhook-save').click();
+
+      cy.wait([
+        '@custom-webhook-payload-created-successfully',
+        `@${state.Webhooks.SINGLE}`,
+        `@${state.Webhooks.NO_CALLS}`
+      ]);
+
+      cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
     });
   });
 
@@ -95,20 +273,20 @@ describe('Webhook', () => {
       cy.getByTestId('filter-operation').should('contain', 'not equals');
       cy.getByTestId('filter-value').should('have.value', 'master');
       cy.get('[data-test-id="setting-row"]').should('have.length', 3);
-      cy.getByTestId('custom_header-key').should('have.value', 'custom_header');
-      cy.getByTestId('custom_header-value').should('have.value', '123');
-      cy.getByTestId('secret_header-key')
+      cy.getByTestId('0-key').should('have.value', 'custom_header');
+      cy.getByTestId('0-value').should('have.value', '123');
+      cy.getByTestId('1-key')
         .should('have.value', 'secret_header')
         .and('have.attr', 'disabled');
-      cy.getByTestId('secret_header-value').should('have.attr', 'readonly');
-      cy.get('[data-test-id="secret_header-value"]')
+      cy.getByTestId('1-value').should('have.attr', 'readonly');
+      cy.get('[data-test-id="1-value"]')
         .invoke('attr', 'placeholder')
         .should('be.eq', 'Value of this header is secret');
-      cy.getByTestId('Authorization-key')
+      cy.getByTestId('2-key')
         .should('have.value', 'Authorization')
         .and('have.attr', 'disabled');
-      cy.getByTestId('Authorization-value').should('have.attr', 'readonly');
-      cy.get('[data-test-id="secret_header-value"]')
+      cy.getByTestId('2-value').should('have.attr', 'readonly');
+      cy.get('[data-test-id="2-value"]')
         .invoke('attr', 'placeholder')
         .should('be.eq', 'Value of this header is secret');
       cy.getByTestId('content-type-select').should('contain', 'application/json');
@@ -137,7 +315,7 @@ describe('Webhook', () => {
       cy.getByTestId('remove-webhook-confirm').click();
 
       cy.wait(['@default-webhook-deleted-successfully', `@${state.Webhooks.NONE}`]);
-      cy.verifyNotification('success', `Webhook "${newWebhook.name}" deleted successfully.`);
+      cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" deleted successfully.`);
     });
 
     //Test will be added after fixing https://contentful.atlassian.net/browse/EXT-981. As currently server error is not handled.

@@ -1,0 +1,7 @@
+{
+  "headers": [{ "key": "Authorization", "value": "Basic dXNlcjpwYXNzd29yZA==", "secret": true }],
+  "topics": ["*.*"],
+  "name": "Webhook",
+  "transformation": { "method": "GET" },
+  "url": "https://www.contentful.com/"
+}
