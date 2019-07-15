@@ -1,4 +1,13 @@
-import { cloneDeep, extend, isString, isObject, isArray, isNull, includes } from 'lodash';
+import {
+  cloneDeep,
+  extend,
+  isString,
+  isObject,
+  isArray,
+  isNull,
+  includes,
+  unescape as lodashUnescape
+} from 'lodash';
 import { getDomains } from 'services/TokenStore.es6';
 import sanitize from 'sanitize-html';
 import * as React from 'react';
@@ -344,8 +353,18 @@ function prepareChildren(nodes) {
   return nodes;
 }
 
+function fixDoubleEscapingQuery(href) {
+  const [location, ...query] = href.split('?');
+  // this fixes a double escape issue with React: https://shripadk.github.io/react/docs/jsx-gotchas.html#html-entities
+  // A more generic solution would be to use `dangerouslySetInnerHTML`, but that would be a security concern
+  return [location, ...query.map(lodashUnescape)].join('?');
+}
+
 function getSafeHref({ href }) {
   if (isString(href) && isHrefSafe(href)) {
+    if (href.includes('?')) {
+      return fixDoubleEscapingQuery(href);
+    }
     return href;
   } else {
     return null;
