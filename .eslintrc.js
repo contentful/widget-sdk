@@ -17,7 +17,7 @@ module.exports = {
   },
   plugins: ['react-hooks'],
   env: {
-    /* 
+    /*
       We are setting `browser: false` and manually allowing which globals we want.
       This ensures that we catch overridden names such as `Navigator` .
     */
@@ -38,6 +38,7 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'error',
     'react/display-name': 'off',
     'react/prop-types': ['error', { ignore: ['children'] }],
+    'react/jsx-no-target-blank': ['error', { enforceDynamicLinks: 'always' }],
     'no-template-curly-in-string': 'off',
     'no-useless-return': 'off',
     'no-mixed-operators': 'off',
