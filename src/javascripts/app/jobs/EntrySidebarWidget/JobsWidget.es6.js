@@ -26,7 +26,10 @@ import JobsTimeline from './JobsTimeline/index.es6';
 import * as JobsService from '../DataManagement/JobsService.es6';
 import { create as createDto } from './JobsFactory.es6';
 import FailedScheduleNote from './FailedScheduleNote/index.es6';
-import { createDialogSubmit, cancelJob } from './../Analytics/JobsAnalytics.es6';
+import {
+  createDialogSubmit,
+  cancelJob as cancelJobTracking
+} from './../Analytics/JobsAnalytics.es6';
 
 const styles = {
   jobsSkeleton: css({
@@ -133,7 +136,7 @@ export default function JobWidget({
   const handleCancel = jobId => {
     JobsService.cancelJob(EndpointFactory.createSpaceEndpoint(spaceId, environmentId), jobId).then(
       () => {
-        cancelJob({ jobId });
+        cancelJobTracking({ jobId });
         setJobs(jobs.slice(1));
         Notification.success('Schedule cancelled');
       }
