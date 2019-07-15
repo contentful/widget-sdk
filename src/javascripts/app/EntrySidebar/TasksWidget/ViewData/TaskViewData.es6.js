@@ -39,8 +39,10 @@ const DRAFT_TASK = {
     createdAt: null
   },
   body: '',
-  assignedTo: null,
-  status: 'open'
+  assignment: {
+    assignedTo: null,
+    status: 'open'
+  }
 };
 
 /**
@@ -127,7 +129,7 @@ function createTaskViewData(task, usersFetchingStatus) {
     creator,
     assignee,
     body: task.body,
-    isDone: task.assignment && task.assignment.status === 'resolved',
+    isDone: !!task.assignment && task.assignment.status === 'resolved',
     isDraft: id === DRAFT_TASK_KEY,
     isInEditMode: false,
     assignableUsersInfo: null,

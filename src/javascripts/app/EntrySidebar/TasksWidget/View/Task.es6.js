@@ -20,6 +20,7 @@ import Visible from 'components/shared/Visible/index.es6';
 import { cx } from 'emotion';
 import moment from 'moment';
 import isHotKey from 'is-hotkey';
+import { isEqual } from 'lodash';
 import TaskDeleteDialog from './TaskDeleteDialog.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { TaskViewData } from '../ViewData/TaskViewData.es6';
@@ -78,17 +79,32 @@ export default class Task extends React.Component {
 
   getChangedValue() {
     const { pendingChanges } = this.state;
-    const { viewData } = this.props;
     return {
-      body: viewData.body,
-      assigneeKey: viewData.assignee && viewData.assignee.key,
-      isDone: viewData.isDone,
+      ...this.getOriginalValue(),
       ...pendingChanges
     };
   }
 
+  getOriginalValue() {
+    const { viewData } = this.props;
+    return {
+      body: viewData.body,
+      assigneeKey: viewData.assignee && viewData.assignee.key,
+      isDone: viewData.isDone
+    };
+  }
+
+  hasChanges() {
+    return !isEqual(this.getOriginalValue(), this.getChangedValue());
+  }
+
+  canSave() {
+    const { body, assigneeKey } = this.getChangedValue();
+    return this.hasChanges() && !!body && !!assigneeKey;
+  }
+
   handleBodyUpdate = event => {
-    this.addChange({ body: event.target.value });
+    this.addChange({ body: event.target.value.trim() });
   };
 
   handleAssigneeUpdate = event => {
@@ -218,7 +234,7 @@ export default class Task extends React.Component {
           labelText={bodyLabel}
           textarea
           value={body}
-          onBlur={event => this.handleBodyUpdate(event)}
+          onChange={event => this.handleBodyUpdate(event)}
           textInputProps={{ rows: 4, autoFocus: true, maxLength: characterLimit }}
           validationMessage={validationMessage}
         />
@@ -229,6 +245,7 @@ export default class Task extends React.Component {
             buttonType={ctaContext}
             className={styles.editSubmit}
             onClick={() => this.handleSubmit()}
+            disabled={!this.canSave()}
             size="small">
             {ctaLabel}
           </Button>
@@ -279,7 +296,7 @@ export default class Task extends React.Component {
 
   renderLoadingState() {
     return (
-      <div className={cx(styles.task, styles.taskLoading)}>
+      <div className={cx(styles.task, styles.taskLoading)} data-test-id="task-loading-placeholder">
         <SkeletonContainer svgHeight={18}>
           <SkeletonBodyText numberOfLines={1} />
         </SkeletonContainer>
