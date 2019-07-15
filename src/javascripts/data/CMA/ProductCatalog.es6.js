@@ -1,5 +1,5 @@
 import DataLoader from 'dataloader';
-import { memoize, get, uniq } from 'lodash';
+import { memoize, get, uniq, isUndefined } from 'lodash';
 
 import { createOrganizationEndpoint, createSpaceEndpoint } from '../EndpointFactory.es6';
 
@@ -81,7 +81,9 @@ export const getOrgFeature = (orgId, featureId, defaultValue) => {
 
 export const getSpaceFeature = (spaceId, featureId, defaultValue) => {
   if (!spaceId || !featureId) {
-    return Promise.reject('No spaceId or featureId provided when fetching a space feature');
+    return isUndefined(defaultValue)
+      ? Promise.reject('No spaceId or featureId provided when fetching a space feature')
+      : Promise.resolve(defaultValue);
   }
   return load(getLoaderForSpace(spaceId), featureId, defaultValue, COMMON_FOR_SPACE);
 };
