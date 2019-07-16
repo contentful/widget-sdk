@@ -1,3 +1,5 @@
+export const MissingCurrentUserError = new TypeError('Expect `currentUser` to be a User object');
+
 /**
  * Creates a service that exposes some functions for Task permission
  * checking.
@@ -7,12 +9,11 @@
  * @param {API.User} currentUser
  * @returns {TaskPermissionChecker}
  */
-export default function create(currentUser) {
+export default function create(currentUser, isSpaceAdmin) {
   if (!currentUser || !currentUser.sys) {
-    throw new Error('Expect `currentUser` to be a User object');
+    throw MissingCurrentUserError;
   }
   const currentUserId = getUserId(currentUser);
-  const isSpaceAdmin = false; // TODO: !!! Get this information for real !!!
 
   return {
     canEdit,
@@ -20,11 +21,11 @@ export default function create(currentUser) {
   };
 
   function canEdit(task) {
-    return isSpaceAdmin || isTaskCreator(task);
+    return isSpaceAdmin(currentUser) || isTaskCreator(task);
   }
 
   function canUpdateStatus(task) {
-    return isSpaceAdmin || isTaskCreator(task) || isTaskAssignee(task);
+    return isSpaceAdmin(currentUser) || isTaskCreator(task) || isTaskAssignee(task);
   }
 
   function isTaskCreator(task) {

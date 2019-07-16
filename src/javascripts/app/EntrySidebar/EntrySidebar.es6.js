@@ -62,11 +62,12 @@ export default class EntrySidebar extends Component {
         widget: PropTypes.object.isRequired
       })
     ),
-    localeData: PropTypes.object.isRequired
+    localeData: PropTypes.object.isRequired,
+    isSpaceAdmin: PropTypes.func.isRequired
   };
 
   renderBuiltinWidget = sidebarItem => {
-    const { emitter, localeData, sidebarExtensionsBridge: bridge } = this.props;
+    const { emitter, sidebarExtensionsBridge: bridge } = this.props;
     const { widgetId, widgetNamespace } = sidebarItem;
     const defaultProps = { emitter, bridge };
 
@@ -80,10 +81,24 @@ export default class EntrySidebar extends Component {
       return null;
     }
 
-    const props =
-      widgetId === SidebarWidgetTypes.TRANSLATION ? { ...defaultProps, localeData } : defaultProps;
+    return (
+      <Component
+        {...defaultProps}
+        {...this.componentProps(widgetId)}
+        key={`${widgetNamespace},${widgetId}`}
+      />
+    );
+  };
 
-    return <Component {...props} key={`${widgetNamespace},${widgetId}`} />;
+  componentProps = component => {
+    switch (component) {
+      case SidebarWidgetTypes.TRANSLATION:
+        return { localeData: this.props.localeData };
+      case SidebarWidgetTypes.TASKS:
+        return { isSpaceAdmin: this.props.isSpaceAdmin };
+      default:
+        return {};
+    }
   };
 
   renderExtensionWidget = item => {

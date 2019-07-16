@@ -292,6 +292,7 @@ export default ({ $scope, emitter }) => {
     sidebarExtensionsBridge,
     isEntry,
     isMasterEnvironment,
+    isSpaceAdmin: user => spaceContext.space.isAdmin(user),
     emitter
   };
 };

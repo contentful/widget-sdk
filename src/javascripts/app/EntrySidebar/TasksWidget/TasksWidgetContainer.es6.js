@@ -29,6 +29,7 @@ export default function TasksWidgetContainerWithFeatureFlag(props) {
 
 export class TasksWidgetContainer extends Component {
   static propTypes = {
+    isSpaceAdmin: PropTypes.func.isRequired,
     emitter: PropTypes.object.isRequired
   };
 
@@ -67,7 +68,7 @@ export class TasksWidgetContainer extends Component {
       val => this.setState(val),
       () => this.state
     );
-    const taskPermissionChecker = createTaskPermissionChecker(currentUser);
+    const taskPermissionChecker = createTaskPermissionChecker(currentUser, this.props.isSpaceAdmin);
     this.setState({ tasksInteractor, taskPermissionChecker });
 
     this.fetchTasks(tasksStore);
