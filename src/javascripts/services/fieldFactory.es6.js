@@ -24,11 +24,6 @@ export const FIELD_TYPES = [
     icon: 'longtext'
   },
   {
-    name: 'StructuredText',
-    label: 'Structured text',
-    icon: 'longtext'
-  },
-  {
     name: 'Integer',
     icon: 'number'
   },

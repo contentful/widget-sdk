@@ -232,7 +232,7 @@ class RichTextOptions extends Component {
 
   render() {
     return (
-      <div className="rich-text-options" data-test-id="structured-text-options">
+      <div className="rich-text-options">
         <RichTextOptionsSection
           heading="Formatting options"
           actions={

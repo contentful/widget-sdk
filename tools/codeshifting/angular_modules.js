@@ -18,7 +18,6 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
       '@contentful/mimetype',
       '@contentful/sharejs/lib/client',
       '@contentful/validation',
-      '@contentful/widget-map',
       '@contentful/worf',
       'classnames',
       'codemirror',

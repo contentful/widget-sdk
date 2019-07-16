@@ -36,10 +36,7 @@ const validationLabels = {
     Text: 'Limit character count',
     Symbol: 'Limit character count',
     Object: 'Limit number of properties',
-    RichText: 'Limit character count',
-    // TODO: Remove when we are no longer using the legacy
-    // `StructuredText` identifier
-    StructuredText: 'Limit character count'
+    RichText: 'Limit character count'
   },
   range: 'Accept only specified number range',
   dateRange: 'Accept only specified date range',
@@ -58,10 +55,7 @@ const validationHelpText = {
     Text: 'Specify a minimum and/or maximum allowed number of characters',
     Symbol: 'Specify a minimum and/or maximum allowed number of characters',
     Object: 'Specify a minimum and/or maximum allowed number of properties',
-    RichText: 'Specify a minimum and/or maximum allowed number of characters',
-    // TODO: Remove when we are no longer using the legacy
-    // `StructuredText` identifier
-    StructuredText: 'Specify a minimum and/or maximum allowed number of characters'
+    RichText: 'Specify a minimum and/or maximum allowed number of characters'
   },
   range: 'Specify a minimum and/or maximum allowed number for this field',
   dateRange: 'Specify an early and/or latest allowed date for this field',
