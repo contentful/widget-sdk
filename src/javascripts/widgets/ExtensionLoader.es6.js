@@ -61,7 +61,7 @@ export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
 
     const definitionResult = await orgEndpoint({
       method: 'GET',
-      path: '/extension_definitions',
+      path: ['extension_definitions'],
       query: {
         'sys.id[in]': uniq(definitionIds).join(',')
       }
@@ -87,13 +87,13 @@ export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
 
     const { items } = await spaceEndpoint({
       method: 'GET',
-      path: '/extensions',
+      path: ['extensions'],
       query: {
         'sys.id[in]': extensionIds.join(',')
       }
     });
 
-    const withDefinitions = await resolveExtensionDefinitions(items || [], orgEndpoint);
+    const withDefinitions = await resolveExtensionDefinitions(items || []);
 
     return extensionIds.map(id =>
       withDefinitions.find(extension => get(extension, ['sys', 'id']) === id)
@@ -115,8 +115,12 @@ export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
   };
 
   const getAllExtensions = async () => {
-    const { items } = await spaceEndpoint({ method: 'GET', path: '/extensions' });
-    const maybeResolvedExtensions = await resolveExtensionDefinitions(items || [], orgEndpoint);
+    const { items } = await spaceEndpoint({
+      method: 'GET',
+      path: ['extensions']
+    });
+
+    const maybeResolvedExtensions = await resolveExtensionDefinitions(items || []);
     const resolvedExtensions = maybeResolvedExtensions.filter(identity);
 
     // We cannot prime over existing cache entries.

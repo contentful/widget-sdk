@@ -21,6 +21,7 @@ describe('createPageExtensionBridge', () => {
         spaceContext: {
           getId: () => 'spaceId',
           getEnvironmentId: () => 'environmentId',
+          isMasterEnvironment: () => false,
           cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
           space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
         },
@@ -31,7 +32,9 @@ describe('createPageExtensionBridge', () => {
         Navigator: {
           go: jest.fn()
         },
-        entitySelector: {}
+        entitySelector: {},
+        entityCreator: {},
+        SlideInNavigator: {}
       },
       'test-id'
     );

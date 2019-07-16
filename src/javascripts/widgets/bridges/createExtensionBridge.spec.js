@@ -86,6 +86,7 @@ describe('createExtensionBridge', () => {
       spaceContext: {
         getId: () => 'sid',
         getEnvironmentId: () => 'eid',
+        isMasterEnvironment: () => false,
         cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
         space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
       },

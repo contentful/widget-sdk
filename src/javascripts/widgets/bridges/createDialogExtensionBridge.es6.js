@@ -2,18 +2,15 @@ import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandle
 import makeExtensionNavigationHandlers from './makeExtensionNavigationHandlers.es6';
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers.es6';
 import makePageExtensionHandlers from './makePageExtensionHandlers.es6';
+import checkDependencies from './checkDependencies.es6';
 import { LOCATION_DIALOG } from '../WidgetLocations.es6';
 
-const REQUIRED_DEPENDENCIES = ['$rootScope', 'spaceContext', 'TheLocaleStore', 'Navigator'];
-
 export default function createDialogExtensionBridge(dependencies, openDialog, onClose) {
-  REQUIRED_DEPENDENCIES.forEach(key => {
-    if (!(key in dependencies)) {
-      throw new Error(`"${key}" not provided to the extension bridge.`);
-    }
-  });
-
-  const { $rootScope, spaceContext, TheLocaleStore } = dependencies;
+  const { $rootScope, spaceContext, TheLocaleStore } = checkDependencies(
+    'DialogExtensionBridge',
+    dependencies,
+    ['$rootScope', 'spaceContext', 'TheLocaleStore']
+  );
 
   return {
     getData,
@@ -41,19 +38,14 @@ export default function createDialogExtensionBridge(dependencies, openDialog, on
 
   function install(api) {
     api.registerHandler('closeDialog', onClose);
-
     api.registerHandler('openDialog', openDialog);
     api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
 
-    const navigationHandler = makeExtensionNavigationHandlers(dependencies);
-    api.registerHandler('navigateToContentEntity', async options => {
-      if (options.slideIn === true) {
-        throw new Error('Cannot open the slide-in editor from a dialog.');
-      } else {
-        return navigationHandler(options);
-      }
-    });
+    api.registerHandler(
+      'navigateToContentEntity',
+      makeExtensionNavigationHandlers(dependencies, { disableSlideIn: true })
+    );
   }
 }

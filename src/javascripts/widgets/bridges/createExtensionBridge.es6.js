@@ -5,6 +5,7 @@ import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandle
 import makeExtensionNavigationHandlers from './makeExtensionNavigationHandlers.es6';
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers.es6';
 import makePageExtensionHandlers from './makePageExtensionHandlers.es6';
+import checkDependencies from './checkDependencies.es6';
 import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_FIELD_SIDEBAR } from '../WidgetLocations.es6';
 
 import createAppsClient from 'app/settings/apps/AppsClient.es6';
@@ -16,17 +17,6 @@ const ERROR_MESSAGES = {
   MFAILREMOVAL: 'Could not remove value for field'
 };
 
-const REQUIRED_DEPENDENCIES = [
-  '$rootScope',
-  '$scope',
-  'spaceContext',
-  'TheLocaleStore',
-  'entitySelector',
-  'entityCreator',
-  'Navigator',
-  'SlideInNavigator'
-];
-
 // This module, given editor-specific Angular dependencies
 // as listed below, returns a framework-agnostic interface:
 //
@@ -37,13 +27,11 @@ const REQUIRED_DEPENDENCIES = [
 // - `apply` takes a function to be executed in the Angular
 //   context (using `$rootScope.$apply`).
 export default function createExtensionBridge(dependencies, location = LOCATION_ENTRY_FIELD) {
-  REQUIRED_DEPENDENCIES.forEach(key => {
-    if (!(key in dependencies)) {
-      throw new Error(`"${key}" not provided to the extension bridge.`);
-    }
-  });
-
-  const { $rootScope, $scope, spaceContext, TheLocaleStore } = dependencies;
+  const { $rootScope, $scope, spaceContext, TheLocaleStore } = checkDependencies(
+    'ExtensionBridge',
+    dependencies,
+    ['$rootScope', '$scope', 'spaceContext', 'TheLocaleStore']
+  );
 
   const isFieldLevelExtension =
     location === LOCATION_ENTRY_FIELD || location === LOCATION_ENTRY_FIELD_SIDEBAR;

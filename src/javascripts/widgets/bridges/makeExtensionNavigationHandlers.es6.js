@@ -1,12 +1,19 @@
-export default function makeExtensionNavigationHandlers({
-  spaceContext,
-  entityCreator,
-  Navigator,
-  SlideInNavigator
-}) {
+import checkDependencies from './checkDependencies.es6';
+
+export default function makeExtensionNavigationHandlers(dependencies, handlerOptions = {}) {
+  const { spaceContext, entityCreator, Navigator, SlideInNavigator } = checkDependencies(
+    'ExtensionNavigationHandlers',
+    dependencies,
+    ['spaceContext', 'entityCreator', 'Navigator', 'SlideInNavigator']
+  );
+
   return async function navigate(options) {
     if (!['Entry', 'Asset'].includes(options.entityType)) {
       throw new Error('Unknown entity type.');
+    }
+
+    if (handlerOptions.disableSlideIn === true && options.slideIn) {
+      throw new Error('Cannot open the slide-in editor from the current location.');
     }
 
     const entity = await makeEntity(options);
