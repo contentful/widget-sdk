@@ -177,6 +177,14 @@ export default class AppRoute extends Component {
       const extension = await this.props.repo.getExtensionForExtensionDefinition(definition);
       return [true, extension];
     } catch (err) {
+      // If there are 2 or more extensions for the same definition
+      // we cannot reliably tell which one is managed by the app.
+      // For the time being we just ask the customer to contact us.
+      if (err.extensionCount > 1) {
+        Notification.error('The app has crashed. Please contact support.');
+        this.props.goBackToList();
+      }
+
       return [false];
     }
   };

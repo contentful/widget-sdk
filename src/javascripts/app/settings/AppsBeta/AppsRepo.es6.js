@@ -59,7 +59,11 @@ export default function createAppsRepo(orgEndpoint, spaceEndpoint) {
     if (items.length === 1) {
       return items[0];
     } else {
-      throw new Error(`Expected exactly one Extension to be based on ExtensionDefinition ${id}.`);
+      const err = new Error(
+        `Expected exactly one Extension to be based on ExtensionDefinition ${id}.`
+      );
+      err.extensionCount = items.length;
+      throw err;
     }
   }
 }
