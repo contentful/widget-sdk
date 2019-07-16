@@ -13,6 +13,8 @@ import {
   APP_EXTENSION_UPDATE_FAILED,
   APP_MISCONFIGURED,
   APP_CONFIGURED,
+  APP_UPDATE_PLAN_PREPARATION_FAILED,
+  APP_UPDATE_PLAN_PREPARED,
   APP_UPDATE_FAILED,
   APP_UPDATE_FINALIZED
 } from 'app/settings/AppsBeta/AppHookBus.es6';
@@ -88,11 +90,15 @@ export default function createAppExtensionBridge(dependencies) {
       }
     });
 
-    appHookBus.on(APP_EXTENSION_UPDATE_FAILED, ({ installationRequestId }) => {
+    const cleanup = ({ installationRequestId }) => {
       if (installationRequestId === currentInstallationRequestId) {
         currentInstallationRequestId = null;
       }
-    });
+    };
+
+    appHookBus.on(APP_EXTENSION_UPDATE_FAILED, cleanup);
+    appHookBus.on(APP_UPDATE_FAILED, cleanup);
+    appHookBus.on(APP_UPDATE_FINALIZED, cleanup);
 
     api.registerHandler('appHookResult', ({ installationRequestId, stage, result }) => {
       if (installationRequestId !== currentInstallationRequestId) {
@@ -109,8 +115,12 @@ export default function createAppExtensionBridge(dependencies) {
       }
 
       if (stage === 'postInstall') {
-        appHookBus.emit(result === false ? APP_UPDATE_FAILED : APP_UPDATE_FINALIZED);
-        currentInstallationRequestId = null;
+        if (result === false) {
+          appHookBus.emit(APP_UPDATE_PLAN_PREPARATION_FAILED);
+          currentInstallationRequestId = null;
+        } else {
+          appHookBus.emit(APP_UPDATE_PLAN_PREPARED, { installationRequestId, plan: result });
+        }
       }
     });
   }

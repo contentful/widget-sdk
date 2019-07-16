@@ -6,6 +6,8 @@ export const APP_CONFIGURED = 'app-configured';
 export const APP_MISCONFIGURED = 'app-misconfigured';
 export const APP_EXTENSION_UPDATED = 'app-extension-updated';
 export const APP_EXTENSION_UPDATE_FAILED = 'app-extension-update-failed';
+export const APP_UPDATE_PLAN_PREPARED = 'app-update-plan-prepared';
+export const APP_UPDATE_PLAN_PREPARATION_FAILED = 'app-update-plan-preparation-failed';
 export const APP_UPDATE_FINALIZED = 'app-update-finalized';
 export const APP_UPDATE_FAILED = 'app-update-failed';
 

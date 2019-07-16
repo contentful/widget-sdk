@@ -18,9 +18,13 @@ import {
   APP_EXTENSION_UPDATE_FAILED,
   APP_MISCONFIGURED,
   APP_CONFIGURED,
+  APP_UPDATE_PLAN_PREPARATION_FAILED,
+  APP_UPDATE_PLAN_PREPARED,
   APP_UPDATE_FAILED,
   APP_UPDATE_FINALIZED
 } from './AppHookBus.es6';
+
+const executePlan = async () => {};
 
 const BUSY_STATE_INSTALLATION = 'installation';
 const BUSY_STATE_UPDATE = 'update';
@@ -128,9 +132,9 @@ export default class AppRoute extends Component {
 
     appHookBus.on(APP_CONFIGURED, async ({ installationRequestId, parameters }) => {
       try {
-        const [_, existingExtension] = await this.isInstalled();
+        const [isInstalled, existingExtension] = await this.isInstalled();
 
-        if (existingExtension) {
+        if (isInstalled) {
           await cma.updateExtension({
             ...existingExtension,
             parameters
@@ -163,23 +167,39 @@ export default class AppRoute extends Component {
       this.setState({ isInstalled, busyWith: false });
     });
 
-    appHookBus.on(APP_UPDATE_FINALIZED, async () => {
+    appHookBus.on(APP_UPDATE_PLAN_PREPARED, async ({ installationRequestId, plan }) => {
+      const [isInstalled, extension] = await this.isInstalled();
+
+      if (!isInstalled) {
+        Notification.error('Failed to install the app.');
+        this.setState({ isInstalled, busyWith: false });
+        appHookBus.emit(APP_UPDATE_FAILED, { installationRequestId });
+        return;
+      }
+
+      try {
+        await executePlan(plan, cma, extension);
+      } catch (err) {
+        Notification.error(
+          'Some of the app artifacts seem to be broken. Try to reinstall the app.'
+        );
+        this.setState({ isInstalled, busyWith: false });
+        appHookBus.emit(APP_UPDATE_FAILED, { installationRequestId });
+        return;
+      }
+
       if (this.state.busyWith === BUSY_STATE_UPDATE) {
         Notification.success('The app configuration was updated successfully.');
       } else {
         Notification.success('The app was installed successfully.');
       }
 
-      const [isInstalled, extension] = await this.isInstalled();
-
-      if (extension) {
-        appHookBus.setParameters(extension.parameters);
-      }
-
+      appHookBus.setParameters(extension.parameters);
       this.setState({ isInstalled, busyWith: false });
+      appHookBus.emit(APP_UPDATE_FINALIZED, { installationRequestId });
     });
 
-    appHookBus.on(APP_UPDATE_FAILED, async () => {
+    appHookBus.on(APP_UPDATE_PLAN_PREPARATION_FAILED, async () => {
       Notification.error('Failed to install the app.');
       const [isInstalled] = await this.isInstalled();
       this.setState({ isInstalled, busyWith: false });
