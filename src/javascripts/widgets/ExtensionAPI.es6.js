@@ -154,7 +154,11 @@ export default class ExtensionAPI {
 
   // Registers a regular handler intended to be called directly.
   registerHandler(name, fn) {
-    this.channel.handlers[name] = fn;
+    if (this.channel.handlers[name]) {
+      throw new Error('Cannot register handler for the same event twice.');
+    } else {
+      this.channel.handlers[name] = fn;
+    }
   }
 
   // Registers a handler that expects to receive a path.
