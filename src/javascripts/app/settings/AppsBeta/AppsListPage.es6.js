@@ -86,7 +86,8 @@ export default class AppsListPage extends React.Component {
     this.setState({
       apps: apps.map(app => ({
         id: app.sys.id,
-        title: app.extensionDefinition.name
+        title: app.extensionDefinition.name,
+        installed: !!app.extension
       }))
     });
   }

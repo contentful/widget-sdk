@@ -4,6 +4,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { TextLink, Heading } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
+import { InstalledTag } from './AppStateTags.es6';
 
 const styles = {
   item: css({
@@ -33,7 +34,8 @@ export default class AppListItem extends Component {
   static propTypes = {
     app: PropTypes.shape({
       id: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired
+      title: PropTypes.string.isRequired,
+      installed: PropTypes.bool.isRequired
     })
   };
 
@@ -47,6 +49,7 @@ export default class AppListItem extends Component {
             {app.title}
           </Heading>
         </div>
+        {app.installed && <InstalledTag />}
         <div className={styles.actions}>
           <StateLink to="^.detail" params={{ appId: app.id }}>
             {({ onClick }) => (

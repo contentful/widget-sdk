@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { countBy } from 'lodash';
 
 // App ID to ExtensionDefinition ID
 const APP_TO_EXTENSION_DEFINITION = {
@@ -24,12 +24,15 @@ export default function createAppsRepo(orgEndpoint, spaceEndpoint) {
       query: { 'sys.id[in]': ids }
     });
 
+    const extensions = await getExtensionsForExtensionDefinitions(items);
+
     return APP_ORDER.map(appId => {
+      const definitionId = APP_TO_EXTENSION_DEFINITION[appId];
+
       return {
         sys: { type: 'App', id: appId },
-        extensionDefinition: items.find(item => {
-          return get(item, ['sys', 'id']) === APP_TO_EXTENSION_DEFINITION[appId];
-        })
+        extensionDefinition: items.find(item => item.sys.id === definitionId),
+        extension: extensions.find(e => e.extensionDefinition.sys.id === definitionId)
       };
     }).filter(app => !!app.extensionDefinition);
   }
@@ -65,5 +68,24 @@ export default function createAppsRepo(orgEndpoint, spaceEndpoint) {
       err.extensionCount = items.length;
       throw err;
     }
+  }
+
+  async function getExtensionsForExtensionDefinitions(extensionDefinitions) {
+    const ids = extensionDefinitions.map(d => d.sys.id);
+
+    const { items } = await spaceEndpoint({
+      method: 'GET',
+      path: ['extensions'],
+      query: { 'extensionDefinition.sys.id[in]': ids.join(',') }
+    });
+
+    const extensionCountsByDefinition = countBy(items, e => e.extensionDefinition.sys.id);
+    const uniquelyUsedDefinitions = Object.keys(extensionCountsByDefinition).filter(
+      definitionId => {
+        return extensionCountsByDefinition[definitionId] === 1;
+      }
+    );
+
+    return items.filter(e => uniquelyUsedDefinitions.includes(e.extensionDefinition.sys.id));
   }
 }
