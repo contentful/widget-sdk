@@ -113,7 +113,10 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
       )}
       <ul className={styles.list}>
         {spaceMemberships.map(({ space, roles }) => (
-          <li key={space.sys.id} className={styles.listItem}>
+          <li
+            key={space.sys.id}
+            className={styles.listItem}
+            data-test-id="space-membership-list.item">
             <div className={styles.leftColumn}>
               <strong className={styles.spaceName}>{space.name}</strong>
               {/* <div className={styles.roleEditor}> */}
@@ -133,6 +136,7 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
               iconProps={{ icon: 'Close' }}
               onClick={() => handleSpaceRemoved(space.sys.id)}
               label="Remove space"
+              testId="space-membership-list.remove-button"
             />
           </li>
         ))}

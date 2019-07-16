@@ -438,7 +438,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                 >
                   <ul
                     class="DropdownList__DropdownList___2EMLM"
-                    data-test-id="cf-ui-dropdown-list"
+                    data-test-id="space-role-editor.options"
                     style="max-height: auto; overflow-y: visible;"
                   >
                     <li
@@ -585,11 +585,11 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                 offset={0}
               >
                 <DropdownList
-                  testId="cf-ui-dropdown-list"
+                  testId="space-role-editor.options"
                 >
                   <ul
                     className="DropdownList__DropdownList___2EMLM"
-                    data-test-id="cf-ui-dropdown-list"
+                    data-test-id="space-role-editor.options"
                     style={
                       Object {
                         "maxHeight": "auto",

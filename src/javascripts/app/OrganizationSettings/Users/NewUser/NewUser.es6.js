@@ -202,7 +202,7 @@ export default function NewUser({ orgId, onReady }) {
                 submitted={submitted}
               />
               {spaceMembershipsError && (
-                <ValidationMessage testId="new-user.spaceMemberships.error">
+                <ValidationMessage testId="new-user.space-memberships.error">
                   {spaceMembershipsError}
                 </ValidationMessage>
               )}
