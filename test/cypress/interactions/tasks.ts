@@ -1,5 +1,12 @@
 import * as state from '../util/interactionState';
-import { defaultSpaceId, defaultEntryId, defaultTaskId, getEntryCommentsAndTasks, postEntryTask, putEntryTask } from '../util/requests';
+import {
+  defaultSpaceId,
+  defaultEntryId,
+  defaultTaskId,
+  defaultHeader,
+  putEntryTask as putEntryTaskRequest
+} from '../util/requests';
+import { RequestOptions } from '@pact-foundation/pact-web';
 const empty = require('../fixtures/responses/empty.json');
 const severalTasks = require('../fixtures/responses/tasks-several.json');
 
@@ -11,38 +18,57 @@ enum Status {
 const provider = 'tasks';
 
 const request = {
-  GET_TASK_LIST: 'a request for entry comments and tasks',
-  CREATE_TASK: 'a POST request for creating an entry task',
+  GET_TASK_LIST: `a request to get all entry comments for entry "${defaultEntryId}"`,
+  CREATE_TASK: `a request to create a new task for entry "${defaultEntryId}"`,
   UPDATE_TASK: 'a PUT request for updating an entry task'
 };
 
-export function successfulGetEntryTasksInteraction(state: string, body: Object) {
-  return cy.addInteraction({
-    provider,
-    state,
-    uponReceiving: request.GET_TASK_LIST,
-    withRequest: getEntryCommentsAndTasks(),
-    willRespondWith: {
-      status: 200,
-      body
-    }
-  });
+const getEntryCommentsAndTasksRequest: RequestOptions = {
+  method: 'GET',
+  path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/comments`,
+  headers: defaultHeader
+};
+
+export const getAllCommentsForDefaultEntry = {
+  willReturnNone() {
+    return cy.addInteraction({
+      provider,
+      state: state.Tasks.NONE,
+      uponReceiving: request.GET_TASK_LIST,
+      withRequest: getEntryCommentsAndTasksRequest,
+      willRespondWith: {
+        status: 200,
+        body: empty
+      }
+    });
+  },
+  willReturnSeveral() {
+    return cy.addInteraction({
+      provider,
+      state: state.Tasks.SEVERAL,
+      uponReceiving: request.GET_TASK_LIST,
+      withRequest: getEntryCommentsAndTasksRequest,
+      willRespondWith: {
+        status: 200,
+        body: severalTasks
+      }
+    });
+  },
+  willFailWithAnInternalServerError() {
+    return cy.addInteraction({
+      provider,
+      state: state.Tasks.INTERNAL_SERVER_ERROR,
+      uponReceiving: request.GET_TASK_LIST,
+      withRequest: getEntryCommentsAndTasksRequest,
+      willRespondWith: {
+        status: 500,
+        body: empty
+      }
+    }).as(state.Tasks.INTERNAL_SERVER_ERROR);
+  }
 }
 
-export function tasksErrorResponse() {
-  cy.addInteraction({
-    provider,
-    state: 'serverIsDown',
-    uponReceiving: request.GET_TASK_LIST,
-    withRequest: getEntryCommentsAndTasks(),
-    willRespondWith: {
-      status: 500,
-      body: empty
-    }
-  }).as(state.Tasks.INTERNAL_SERVER_ERROR);
-}
-
-export function taskCreateRequest({ title, assigneeId }) {
+export function createTask({ title, assigneeId }) {
   const newTask = {
     body: title,
     assignment: {
@@ -59,10 +85,15 @@ export function taskCreateRequest({ title, assigneeId }) {
   const interactionRequestInfo = {
     provider,
     uponReceiving: request.CREATE_TASK,
-    withRequest: postEntryTask(defaultSpaceId, defaultEntryId, newTask),
+    withRequest: {
+      method: 'POST',
+      path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/comments`,
+      headers: defaultHeader,
+      body: newTask
+    } as RequestOptions
   };
   return {
-    successResponse() {
+    willSucceed() {
       const newTaskSys = severalTasks.items[0].sys;
       return cy.addInteraction({
         ...interactionRequestInfo,
@@ -76,7 +107,7 @@ export function taskCreateRequest({ title, assigneeId }) {
         }
       });
     },
-    errorResponse() {
+    willFailWithAnInternalServerError() {
       return cy.addInteraction({
         ...interactionRequestInfo,
         state: state.Tasks.INTERNAL_SERVER_ERROR,
@@ -89,7 +120,7 @@ export function taskCreateRequest({ title, assigneeId }) {
   }
 }
 
-function buildTaskUpdateRequest (status: Status) {
+function changeTaskStatus(status: Status) {
   return function ({ title, assigneeId, taskId = defaultTaskId }, stateName: state.Tasks) {
     const updatedTask = {
       body: title,
@@ -107,14 +138,19 @@ function buildTaskUpdateRequest (status: Status) {
     const interactionRequestInfo = {
       provider,
       uponReceiving: request.UPDATE_TASK,
-      withRequest: putEntryTask(defaultSpaceId, defaultEntryId, taskId, {
-        ...updatedTask,
-        assignment: { ...updatedTask.assignment, status }
-      }),
+      withRequest: {
+        method: 'PUT',
+        path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/comments/${taskId}`,
+        headers: defaultHeader,
+        body: {
+          ...updatedTask,
+          assignment: { ...updatedTask.assignment, status }
+        }
+      } as RequestOptions
     };
 
     return {
-      successResponse() {
+      willSucceed() {
         const { sys: newTaskSys } = severalTasks.items.find((task: any) => {
           return task.sys.id === taskId;
         });
@@ -131,7 +167,7 @@ function buildTaskUpdateRequest (status: Status) {
           }
         });
       },
-      errorResponse() {
+      willFailWithAnInternalServerError() {
         return cy.addInteraction({
           ...interactionRequestInfo,
           state: state.Tasks.INTERNAL_SERVER_ERROR,
@@ -145,5 +181,5 @@ function buildTaskUpdateRequest (status: Status) {
   }
 }
 
-export const taskUpdateOpenRequest = buildTaskUpdateRequest(Status.OPEN);
-export const taskUpdateResolvedRequest = buildTaskUpdateRequest(Status.RESOLVED);
+export const openTask = changeTaskStatus(Status.OPEN);
+export const resolveTask = changeTaskStatus(Status.RESOLVED);
