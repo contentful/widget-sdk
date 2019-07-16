@@ -80,7 +80,7 @@
     button.btn-secondary-action(type="button"
       aria-label="Delete file" tooltip="Delete file"
       ng-click="deleteFile()"
-      ng-show="fieldLocale.access.editable && file && (file.url || isUnprocessedFile(file))")
+      ng-show="isFileDeletionAvailable && fieldLocale.access.editable && file && (file.url || isUnprocessedFile(file))")
       i.fa.fa-trash
 
   .file-selector(ng-show="!file && fieldLocale.access.editable")
