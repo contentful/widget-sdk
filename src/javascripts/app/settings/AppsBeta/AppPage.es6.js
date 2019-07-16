@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-import { Button, Notification, Tag, Icon } from '@contentful/forma-36-react-components';
+import { Button, Notification } from '@contentful/forma-36-react-components';
+import { InstalledTag, NotInstalledTag } from './AppStateTags.es6';
 
 import AdminOnly from 'app/common/AdminOnly.es6';
 import Workbench from 'app/common/Workbench.es6';
@@ -53,6 +54,10 @@ const styles = {
     borderRadius: '25px',
     fontSize: '24px',
     backgroundColor: 'white'
+  }),
+  title: css({
+    display: 'flex',
+    alignItems: 'center'
   })
 };
 
@@ -255,17 +260,10 @@ export default class AppRoute extends Component {
       <Workbench.Header>
         <Workbench.Header.Back to="^.list" />
         <Workbench.Title>
-          {`App: ${extensionDefinition.name} `}
-          {!isInstalled && (
-            <Tag tagType="negative">
-              <Icon icon="ErrorCircle" /> Not installed yet
-            </Tag>
-          )}
-          {isInstalled && (
-            <Tag tagType="positive">
-              <Icon icon="CheckCircle" /> Installed
-            </Tag>
-          )}
+          <div className={styles.title}>
+            <span>{extensionDefinition.name}</span>
+            {isInstalled ? <InstalledTag /> : <NotInstalledTag />}
+          </div>
         </Workbench.Title>
         <Workbench.Header.Actions>
           {!isInstalled && (
