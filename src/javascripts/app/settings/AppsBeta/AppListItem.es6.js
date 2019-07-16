@@ -38,17 +38,17 @@ export default class AppListItem extends Component {
   };
 
   render() {
-    const { id, title } = this.props.app;
+    const { app } = this.props;
 
     return (
       <div className={styles.item}>
         <div className={styles.title} data-test-id="app-title">
           <Heading element="h3" className={styles.titleText}>
-            {title}
+            {app.title}
           </Heading>
         </div>
         <div className={styles.actions}>
-          <StateLink to="^.detail" params={{ appId: id }}>
+          <StateLink to="^.detail" params={{ appId: app.id }}>
             {({ onClick }) => (
               <TextLink onClick={onClick} linkType="primary">
                 Open

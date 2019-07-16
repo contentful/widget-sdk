@@ -5,6 +5,7 @@ import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge.e
 import * as Navigator from 'states/Navigator.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
+import createAppsRepo from './AppsRepo.es6';
 
 export default {
   name: 'appsBeta',
@@ -17,12 +18,9 @@ export default {
       component: AppsListPage,
       mapInjectedToProps: [
         'spaceContext',
-        spaceContext => {
-          return {
-            spaceId: spaceContext.getId(),
-            environmentId: spaceContext.getEnvironmentId()
-          };
-        }
+        spaceContext => ({
+          repo: createAppsRepo(spaceContext.orgEndpoint, spaceContext.endpoint)
+        })
       ]
     },
     {
@@ -36,6 +34,7 @@ export default {
         '$state',
         'entitySelector',
         ({ appId }, $rootScope, spaceContext, $state, entitySelector) => {
+          const repo = createAppsRepo(spaceContext.orgEndpoint, spaceContext.endpoint);
           const appHookBus = makeAppHookBus();
 
           const bridge = createAppExtensionBridge({
@@ -50,9 +49,8 @@ export default {
 
           return {
             goBackToList: () => $state.go('^.list'),
-            spaceId: spaceContext.getId(),
-            environmentId: spaceContext.getEnvironmentId(),
             appId,
+            repo,
             bridge,
             appHookBus,
             cma: spaceContext.cma

@@ -1,18 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+
 import tokens from '@contentful/forma-36-tokens';
-import Workbench from 'app/common/Workbench.es6';
-import AdminOnly from 'app/common/AdminOnly.es6';
-import AppsList from './AppsList.es6';
-import AppListItem from './AppListItem.es6';
 import {
   SkeletonContainer,
   SkeletonDisplayText,
   SkeletonText,
   SkeletonImage
 } from '@contentful/forma-36-react-components';
+
+import Workbench from 'app/common/Workbench.es6';
+import AdminOnly from 'app/common/AdminOnly.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+
+import AppListItem from './AppListItem.es6';
 
 const styles = {
   container: css({
@@ -21,6 +23,9 @@ const styles = {
   }),
   intro: css({
     marginBottom: tokens.spacingL
+  }),
+  list: css({
+    marginBottom: tokens.spacing3Xl
   })
 };
 
@@ -33,7 +38,7 @@ const AppsListShell = props => (
     <Workbench.Content centered>
       <div className={styles.container}>
         <p className={styles.intro}>
-          Extend the platform and integrate with services you’re using by adding apps.
+          Extend the platform and integrate with services you’re using by adding Apps.
         </p>
         <div>{props.children}</div>
       </div>
@@ -52,7 +57,7 @@ ItemSkeleton.propTypes = {
   baseTop: PropTypes.number
 };
 
-export const AppsListPageLoading = () => {
+const AppsListPageLoading = () => {
   return (
     <AppsListShell>
       <SkeletonContainer svgWidth={600} svgHeight={200} ariaLabel="Loading apps list...">
@@ -65,24 +70,47 @@ export const AppsListPageLoading = () => {
   );
 };
 
-const apps = [
-  {
-    id: 'netlify',
-    title: 'Netlify'
-  }
-];
+export default class AppsListPage extends React.Component {
+  static propTypes = {
+    repo: PropTypes.shape({
+      getApps: PropTypes.func.isRequired
+    }).isRequired
+  };
 
-export default function AppsListPage() {
-  return (
-    <AdminOnly>
-      <AppsListShell>
+  state = {};
+
+  async componentDidMount() {
+    // TODO: handle failure
+    const apps = await this.props.repo.getApps();
+
+    this.setState({
+      apps: apps.map(app => ({
+        id: app.sys.id,
+        title: app.extensionDefinition.name
+      }))
+    });
+  }
+
+  render() {
+    const { apps } = this.state;
+
+    return (
+      <AdminOnly>
         <DocumentTitle title="Apps" />
-        <AppsList>
+        {apps ? this.renderList(apps) : <AppsListPageLoading />}
+      </AdminOnly>
+    );
+  }
+
+  renderList(apps) {
+    return (
+      <AppsListShell>
+        <div className={styles.list}>
           {apps.map(app => (
             <AppListItem key={app.id} app={app} />
           ))}
-        </AppsList>
+        </div>
       </AppsListShell>
-    </AdminOnly>
-  );
+    );
+  }
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { get, pick } from 'lodash';
+import { pick } from 'lodash';
 
 import { Button, Notification, Tag, Icon } from '@contentful/forma-36-react-components';
 
@@ -9,6 +9,7 @@ import AdminOnly from 'app/common/AdminOnly.es6';
 import Workbench from 'app/common/Workbench.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 
 import {
   APP_UPDATE_STARTED,
@@ -55,51 +56,16 @@ const styles = {
   })
 };
 
-function hasParametersError(errors) {
-  if (Array.isArray(errors)) {
-    // Check if there's an error related to parameter validation.
-    return !!errors.find(e => get(e, ['path', 0]) === 'parameters');
-  } else {
-    return false;
-  }
-}
-
 const id = 'netlify-build-and-preview';
-
-function fetchExtensionDefinition() {
-  return Promise.resolve({
-    sys: {
-      id: 'some-uuid',
-      type: 'ExtensionDefinition'
-    },
-    name: 'Netlify build and preview',
-    description: 'Lorem ipsum dolor sit amet',
-    src: 'http://localhost:1234',
-    locations: ['app'],
-    parameters: {
-      installation: [
-        { id: 'buildHookIds', name: 'Netlify build hook IDs', required: true, type: 'Symbol' },
-        {
-          id: 'notificationHookIds',
-          name: 'Netlify notification hook IDs',
-          required: true,
-          type: 'Symbol'
-        },
-        { id: 'names', name: 'Human-readable site names', required: true, type: 'Symbol' },
-        { id: 'siteNames', name: 'Netlify site names', required: true, type: 'Symbol' },
-        { id: 'siteIds', name: 'Netlify site IDs', required: true, type: 'Symbol' },
-        { id: 'siteUrls', name: 'Netlify site URLs', required: true, type: 'Symbol' }
-      ]
-    }
-  });
-}
 
 export default class AppRoute extends Component {
   static propTypes = {
     goBackToList: PropTypes.func.isRequired,
-    spaceId: PropTypes.string.isRequired,
-    environmentId: PropTypes.string.isRequired,
     appId: PropTypes.string.isRequired,
+    repo: PropTypes.shape({
+      getExtensionDefinitionForApp: PropTypes.func.isRequired,
+      getExtensionForExtensionDefinition: PropTypes.func.isRequired
+    }).isRequired,
     bridge: PropTypes.shape({
       getData: PropTypes.func.isRequired,
       install: PropTypes.func.isRequired,
@@ -131,30 +97,37 @@ export default class AppRoute extends Component {
   }
 
   async componentDidMount() {
-    const { appHookBus, cma } = this.props;
-
-    const extensionDefinition = await fetchExtensionDefinition();
-    const isInstalled = await this.isInstalled();
-
     try {
-      const extension = await cma.getExtension(id);
-      appHookBus.setParameters(extension.parameters);
+      await this.initialize();
     } catch (err) {
-      // ignore...
+      Notification.error('Failed to load the app.');
+      this.props.goBackToList();
+    }
+  }
+
+  initialize = async () => {
+    const { appHookBus, appId, repo } = this.props;
+
+    const extensionDefinition = await repo.getExtensionDefinitionForApp(appId);
+    const [isInstalled, extension] = await this.isInstalled(extensionDefinition);
+
+    if (isInstalled && extension) {
+      appHookBus.setParameters(extension.parameters);
     }
 
+    this.setupListeners();
+
     this.setState({ ready: true, extensionDefinition, isInstalled });
+  };
+
+  setupListeners = () => {
+    const { appHookBus, cma } = this.props;
 
     appHookBus.on(APP_CONFIGURED, async ({ installationRequestId, parameters }) => {
-      let current;
       try {
-        current = await cma.getExtension(id);
-      } catch (err) {
-        // ignore...
-      }
+        const [isInstalled, current] = await this.isInstalled();
 
-      try {
-        if (current) {
+        if (isInstalled && current) {
           await cma.updateExtension({ ...current, parameters });
         } else {
           await cma.createExtension({
@@ -167,23 +140,15 @@ export default class AppRoute extends Component {
         appHookBus.setParameters(parameters);
         appHookBus.emit(APP_EXTENSION_UPDATED, { installationRequestId, extensionId: id });
       } catch (err) {
-        const isValidationError = get(err, ['data', 'sys', 'id']) === 'ValidationFailed';
-        const errors = get(err, ['data', 'details', 'errors'], []);
-
-        if (isValidationError && hasParametersError(errors)) {
-          Notification.error('Configuration provided is invalid.');
-        } else {
-          Notification.error('Failed to install the app.');
-        }
-
-        const isInstalled = await this.isInstalled();
+        Notification.error('Failed to install the app.');
+        const [isInstalled] = await this.isInstalled();
         this.setState({ isInstalled, busyWith: false });
         appHookBus.emit(APP_EXTENSION_UPDATE_FAILED, { installationRequestId });
       }
     });
 
     appHookBus.on(APP_MISCONFIGURED, async () => {
-      const isInstalled = await this.isInstalled();
+      const [isInstalled] = await this.isInstalled();
       this.setState({ isInstalled, busyWith: false });
     });
 
@@ -194,31 +159,26 @@ export default class AppRoute extends Component {
         Notification.success('The app was installed successfully.');
       }
 
-      const isInstalled = await this.isInstalled();
+      const [isInstalled] = await this.isInstalled();
       this.setState({ isInstalled, busyWith: false });
     });
 
     appHookBus.on(APP_UPDATE_FAILED, async () => {
-      try {
-        await this.props.cma.deleteExtension(id);
-      } catch (err) {
-        // ignore
-      }
-
       Notification.error('Failed to install the app.');
-      this.setState({ isInstalled: false, busyWith: false });
+      const [isInstalled] = await this.isInstalled();
+      this.setState({ isInstalled, busyWith: false });
     });
-  }
+  };
 
-  isInstalled = async () => {
+  isInstalled = async definition => {
+    definition = definition || this.state.extensionDefinition;
+
     try {
-      await this.props.cma.getExtension(id);
-      return true;
+      const extension = await this.props.repo.getExtensionForExtensionDefinition(definition);
+      return [true, extension];
     } catch (err) {
-      // ignore
+      return [false];
     }
-
-    return false;
   };
 
   update = busyWith => {
@@ -232,7 +192,7 @@ export default class AppRoute extends Component {
 
     try {
       await this.props.cma.deleteExtension(id);
-      const isInstalled = await this.isInstalled();
+      const [isInstalled] = await this.isInstalled();
 
       if (isInstalled) {
         Notification.error('Failed to fully uninstall the app.');
@@ -250,7 +210,7 @@ export default class AppRoute extends Component {
     const { ready, extensionDefinition } = this.state;
 
     if (!ready) {
-      return <div>Loading...</div>;
+      return <FetcherLoading message="Loading app..." />;
     }
 
     return (
