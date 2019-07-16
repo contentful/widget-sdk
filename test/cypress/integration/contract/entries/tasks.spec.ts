@@ -13,7 +13,7 @@ import {
   getAllPublicContentTypesInDefaultSpace
 } from '../../../interactions/content_types';
 import { getDefaultEntry, getFirst7SnapshotsOfDefaultEntry } from '../../../interactions/entries';
-import { microbackendStreamToken } from '../../../interactions/microbackend';
+import { generateMicrobackendStreamToken } from '../../../interactions/microbackend';
 import * as state from '../../../util/interactionState';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import { FeatureFlag } from '../../../util/featureFlag';
@@ -52,7 +52,7 @@ describe('Tasks entry editor sidebar', () => {
     getDefaultEntry.willReturnIt();
     getFirst7SnapshotsOfDefaultEntry.willReturnNone();
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
-    microbackendStreamToken();
+    generateMicrobackendStreamToken.willSucceed();
 
     cy.route('**/channel/**', []).as('shareJS');
   }

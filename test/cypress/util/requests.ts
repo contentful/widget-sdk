@@ -32,56 +32,6 @@ export function getEntries(spaceId: string = defaultSpaceId, query?: Query): Req
   };
 }
 
-export function getLocales(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/locales`,
-    headers: defaultHeader,
-    query
-  };
-}
-
-export function postStreamToken(): RequestOptions {
-  return {
-    method: 'POST',
-    path: `/_microbackends/backends/streamtoken/generate`,
-    headers: {}
-  };
-}
-
-export function getPreviewEnvironments(
-  spaceId: string = defaultSpaceId,
-  query?: Query
-): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/preview_environments`,
-    headers: defaultHeader,
-    query
-  };
-}
-
-export function getOrgProductCatalogFeatures(orgId: string = defaultOrgId): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/organizations/${orgId}/product_catalog_features`,
-    headers: defaultHeader
-  };
-}
-
-export function getSpaceProductCatalogFeatures(
-  spaceId: string = defaultSpaceId,
-  query?: Query
-): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/product_catalog_features`,
-    headers: defaultHeader,
-    query
-  };
-}
-
-
 export function getEntryCommentsAndTasks(
   spaceId: string = defaultSpaceId,
   entryId: string = defaultEntryId

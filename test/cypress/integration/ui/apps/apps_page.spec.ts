@@ -2,7 +2,7 @@ import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
 import { getAllInstalledAppsInDefaultSpace  } from '../../../interactions/apps';
-import { spaceProductCatalogFeaturesResponse } from '../../../interactions/product_catalog_features';
+import { getAllCatalogFeaturesForDefaultSpace } from '../../../interactions/product_catalog_features';
 import { FeatureFlag } from '../../../util/featureFlag';
 
 const baseUrl = Cypress.config().baseUrl;
@@ -24,7 +24,7 @@ describe('Apps Page', () => {
 
     defaultRequestsMock();
     getAllInstalledAppsInDefaultSpace.willReturnNone();
-    spaceProductCatalogFeaturesResponse();
+    getAllCatalogFeaturesForDefaultSpace.willFindSeveral();
 
     cy.visit(`/spaces/${defaultSpaceId}/apps`);
     cy.wait([`@${state.Token.VALID}`]);

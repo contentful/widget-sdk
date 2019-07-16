@@ -5,8 +5,8 @@ import {
 } from '../../../interactions/content_types';
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
-import { limitsReachedResourcesResponse } from '../../../interactions/resources';
-import { spaceProductCatalogFeaturesResponse } from '../../../interactions/product_catalog_features';
+import { getResourcesWithLimistReached } from '../../../interactions/resources';
+import { queryForTwoSpecificFeaturesInDefaultSpace } from '../../../interactions/product_catalog_features';
 import { defaultSpaceId, getEntries } from '../../../util/requests';
 import {
   getDefaultEntry,
@@ -186,9 +186,8 @@ describe('Entries list page', () => {
         }
       }).as(state.Entries.SEVERAL);
 
-      const productCatalogQuery = 'sys.featureId[]=environment_usage_enforcements&sys.featureId[]=basic_apps'
-      spaceProductCatalogFeaturesResponse(productCatalogQuery);
-      limitsReachedResourcesResponse();
+      queryForTwoSpecificFeaturesInDefaultSpace.willFindBothOfThem()
+      getResourcesWithLimistReached.willReturnSeveral();
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
       cy.wait([

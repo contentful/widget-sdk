@@ -6,7 +6,7 @@ import {
   defaultPreviewId,
   defaultPreviewDescription
 } from '../../../util/requests';
-import { noPreviewEnvironmentsResponse } from '../../../interactions/preview_environments';
+import { queryFirst100PreviewEnvironments } from '../../../interactions/preview_environments';
 
 const previewResponseBody = {
   name: defaultPreviewName,
@@ -63,7 +63,7 @@ describe('Content Preview Page', () => {
         spec: 2
       });
 
-      noPreviewEnvironmentsResponse();
+      queryFirst100PreviewEnvironments.willFindNone();
 
       cy.addInteraction({
         provider: 'preview_environments',
