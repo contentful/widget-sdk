@@ -15,21 +15,21 @@ export default function makePageExtensionHandlers(
     }
 
     const navigatingToNewExtensionPage = currentExtensionId !== id;
-    const envId = spaceContext.getEnvironmentId();
 
     await Navigator.go({
-      path: ['spaces', 'detail'].concat(envId && envId !== 'master' ? ['environment'] : [], [
-        'pageExtensions'
-      ]),
+      path: ['spaces', 'detail']
+        .concat(spaceContext.isMasterEnvironment() ? [] : ['environment'])
+        .concat(['pageExtensions']),
       params: {
-        spaceId: spaceContext.cma.spaceId,
-        environmentId: envId,
+        spaceId: spaceContext.getId(),
+        environmentId: spaceContext.getEnvironmentId(),
         extensionId: id,
         path: path || ''
       },
       options: {
-        // if we are navigating to a new extension page OR we are not on the extension page, we want to notify a state change of the URL
-        // otherwise, do NOT notify a state change to ensure that the iframe on the page extension page doesn't reload
+        // If we are navigating to a new extension page OR we are not on the extension page,
+        // we want to notify a state change of the URL. Otherwise, do NOT notify a state change
+        // to ensure that the iframe on the page extension page doesn't reload.
         notify: navigatingToNewExtensionPage || !isOnPageExtensionPage
       }
     });
