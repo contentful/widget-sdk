@@ -28,4 +28,10 @@ describe('checkDependencies', () => {
       checkDependencies('SomeModuleName', { test: true, extraProp: {} }, ['test']);
     }).not.toThrow();
   });
+
+  it('returns dependencies passed', () => {
+    const deps = { test: true };
+    const checked = checkDependencies('X', deps, ['test']);
+    expect(deps).toBe(checked);
+  });
 });
