@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { pick } from 'lodash';
 
 import { Button, Notification, Tag, Icon } from '@contentful/forma-36-react-components';
 
@@ -10,6 +9,7 @@ import Workbench from 'app/common/Workbench.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
+import * as Random from 'utils/Random.es6';
 
 import {
   APP_UPDATE_STARTED,
@@ -55,8 +55,6 @@ const styles = {
     backgroundColor: 'white'
   })
 };
-
-const id = 'netlify-build-and-preview';
 
 export default class AppRoute extends Component {
   static propTypes = {
@@ -121,24 +119,32 @@ export default class AppRoute extends Component {
   };
 
   setupListeners = () => {
-    const { appHookBus, cma } = this.props;
+    const { appHookBus, appId, cma } = this.props;
 
     appHookBus.on(APP_CONFIGURED, async ({ installationRequestId, parameters }) => {
       try {
-        const [isInstalled, current] = await this.isInstalled();
+        const [_, existingExtension] = await this.isInstalled();
 
-        if (isInstalled && current) {
-          await cma.updateExtension({ ...current, parameters });
+        if (existingExtension) {
+          await cma.updateExtension({
+            ...existingExtension,
+            parameters
+          });
         } else {
           await cma.createExtension({
-            sys: { id },
-            extension: pick(this.state.extensionDefinition, ['name', 'src', 'parameters']),
+            sys: { id: `${appId}-app-${Random.id()}` },
+            extensionDefinition: {
+              sys: {
+                type: 'Link',
+                linkType: 'ExtensionDefinition',
+                id: this.state.extensionDefinition.sys.id
+              }
+            },
             parameters
           });
         }
 
-        appHookBus.setParameters(parameters);
-        appHookBus.emit(APP_EXTENSION_UPDATED, { installationRequestId, extensionId: id });
+        appHookBus.emit(APP_EXTENSION_UPDATED, { installationRequestId });
       } catch (err) {
         Notification.error('Failed to install the app.');
         const [isInstalled] = await this.isInstalled();
@@ -159,7 +165,12 @@ export default class AppRoute extends Component {
         Notification.success('The app was installed successfully.');
       }
 
-      const [isInstalled] = await this.isInstalled();
+      const [isInstalled, extension] = await this.isInstalled();
+
+      if (extension) {
+        appHookBus.setParameters(extension.parameters);
+      }
+
       this.setState({ isInstalled, busyWith: false });
     });
 
@@ -199,7 +210,12 @@ export default class AppRoute extends Component {
     this.props.appHookBus.unsetParameters();
 
     try {
-      await this.props.cma.deleteExtension(id);
+      const [_, extension] = await this.isInstalled();
+
+      if (extension) {
+        await this.props.cma.deleteExtension(extension.sys.id);
+      }
+
       const [isInstalled] = await this.isInstalled();
 
       if (isInstalled) {
