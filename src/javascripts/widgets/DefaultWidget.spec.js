@@ -1,7 +1,6 @@
 import _ from 'lodash';
-import getDefaultWidgetId from './DefaultWidget.es6';
+import getDefaultWidgetId, { DEFAULTS } from './DefaultWidget.es6';
 import { FIELD_TYPES, toApiFieldType } from './FieldTypes.es6';
-import widgetMap from '@contentful/widget-map';
 
 describe('DefaultWidget', () => {
   it('with an unsupported field type', () => {
@@ -80,10 +79,13 @@ describe('DefaultWidget', () => {
   });
 
   it('returns default widget ID for each known field type', () => {
-    FIELD_TYPES.filter(t => t !== 'File') // `File` is not handled by the widget-map
-      .forEach(type => {
-        const id = getDefaultWidgetId(toApiFieldType(type), 'displayfieldid');
-        expect(id).toBe(widgetMap.DEFAULTS[type]);
-      });
+    FIELD_TYPES.forEach(type => {
+      const id = getDefaultWidgetId(toApiFieldType(type), 'displayfieldid');
+      expect(id).toBe(DEFAULTS[type]);
+    });
+  });
+
+  it('declares default widget IDs for all known field types', () => {
+    expect(Object.keys(DEFAULTS).sort()).toEqual(FIELD_TYPES.sort());
   });
 });
