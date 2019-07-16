@@ -29,7 +29,6 @@ export default function TasksWidgetContainerWithFeatureFlag(props) {
 
 export class TasksWidgetContainer extends Component {
   static propTypes = {
-    isSpaceAdmin: PropTypes.func.isRequired,
     emitter: PropTypes.object.isRequired
   };
 
@@ -54,7 +53,7 @@ export class TasksWidgetContainer extends Component {
   }
 
   onUpdateTasksWidget = async update => {
-    const { spaceId, entityInfo, users, currentUser } = update;
+    const { spaceId, entityInfo, users, currentUser, isSpaceAdmin } = update;
 
     // TODO: Pass tasksStore instead. Wrap in a factory function though to not trigger
     //  any fetching in case the feature flag is turned off!
@@ -68,7 +67,7 @@ export class TasksWidgetContainer extends Component {
       val => this.setState(val),
       () => this.state
     );
-    const taskPermissionChecker = createTaskPermissionChecker(currentUser, this.props.isSpaceAdmin);
+    const taskPermissionChecker = createTaskPermissionChecker(currentUser, isSpaceAdmin);
     this.setState({ tasksInteractor, taskPermissionChecker });
 
     this.fetchTasks(tasksStore);

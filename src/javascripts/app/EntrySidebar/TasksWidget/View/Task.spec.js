@@ -53,7 +53,10 @@ const TEST_IDS = {
   loadingPlaceholder: 'task-loading-placeholder',
   titleInputWrapper: 'task-title-input',
   assigneeSelectorWrapper: 'task-assignee-select',
-  saveButton: 'save-task'
+  statusCheckbox: 'status-checkbox',
+  disabledTaskTooltip: 'disabled-task-tooltip',
+  saveButton: 'save-task',
+  taskActions: 'task-actions'
 };
 
 describe('<Task />', () => {
@@ -133,6 +136,56 @@ describe('<Task />', () => {
     it('when set to "false", does not render a task placeholder', () => {
       const { elems } = render({ isLoading: false });
       expect(elems.loadingPlaceholder).not.toBeInTheDocument();
+    });
+  });
+
+  describe('when the task can be edited', () => {
+    it('renders the task actions', () => {
+      const { elems } = render({
+        viewData: {
+          ...MOCKS.TaskViewData.valid,
+          canEdit: true
+        }
+      });
+      expect(elems.taskActions).toBeInTheDocument();
+    });
+  });
+
+  describe('when the task cannot be edited', () => {
+    it('does not render the task actions', () => {
+      const { elems } = render({
+        viewData: {
+          ...MOCKS.TaskViewData.valid,
+          canEdit: false
+        }
+      });
+      expect(elems.taskActions).not.toBeInTheDocument();
+    });
+  });
+
+  describe('when the status can be updated', () => {
+    it('renders the task checkbox as usual', () => {
+      const { elems } = render({
+        viewData: {
+          ...MOCKS.TaskViewData.valid,
+          canUpdateStatus: true
+        }
+      });
+      expect(elems.statusCheckbox).not.toBeDisabled();
+      expect(elems.disabledTaskTooltip).not.toBeInTheDocument();
+    });
+  });
+
+  describe('when the status cannot be updated', () => {
+    it('disables the task checkbox and renders the disabled task tooltip', () => {
+      const { elems } = render({
+        viewData: {
+          ...MOCKS.TaskViewData.valid,
+          canUpdateStatus: false
+        }
+      });
+      expect(elems.statusCheckbox).toBeDisabled();
+      expect(elems.disabledTaskTooltip).toBeInTheDocument();
     });
   });
 });

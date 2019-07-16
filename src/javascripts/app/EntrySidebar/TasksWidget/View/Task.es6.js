@@ -159,7 +159,9 @@ export default class Task extends React.Component {
 
   renderActions = () =>
     this.props.viewData.canEdit && (
-      <CardActions className={cx(styles.actions, this.state.isExpanded && styles.actionsVisible)}>
+      <CardActions
+        data-test-id="task-actions"
+        className={cx(styles.actions, this.state.isExpanded && styles.actionsVisible)}>
         <DropdownList>
           <DropdownListItem testId="edit-task" onClick={this.handleEditClick}>
             Edit task
@@ -181,7 +183,7 @@ export default class Task extends React.Component {
         checked={isDone}
         onChange={event => this.handleStatusChange(event)}
         disabled={!canUpdateStatus}
-        className={styles.checkboxDisabled}
+        className={canUpdateStatus ? '' : styles.checkboxDisabled}
       />
     );
 

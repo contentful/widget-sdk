@@ -62,8 +62,7 @@ export default class EntrySidebar extends Component {
         widget: PropTypes.object.isRequired
       })
     ),
-    localeData: PropTypes.object.isRequired,
-    isSpaceAdmin: PropTypes.func.isRequired
+    localeData: PropTypes.object.isRequired
   };
 
   renderBuiltinWidget = sidebarItem => {
@@ -81,24 +80,14 @@ export default class EntrySidebar extends Component {
       return null;
     }
 
-    return (
-      <Component
-        {...defaultProps}
-        {...this.componentProps(widgetId)}
-        key={`${widgetNamespace},${widgetId}`}
-      />
-    );
-  };
+    const componentProps =
+      widgetId === SidebarWidgetTypes.TRANSLATION
+        ? { ...defaultProps, localeData: this.props.localeData }
+        : defaultProps;
 
-  componentProps = component => {
-    switch (component) {
-      case SidebarWidgetTypes.TRANSLATION:
-        return { localeData: this.props.localeData };
-      case SidebarWidgetTypes.TASKS:
-        return { isSpaceAdmin: this.props.isSpaceAdmin };
-      default:
-        return {};
-    }
+    return (
+      <Component {...defaultProps} {...componentProps} key={`${widgetNamespace},${widgetId}`} />
+    );
   };
 
   renderExtensionWidget = item => {

@@ -121,7 +121,8 @@ export default ({ $scope, emitter }) => {
         spaceId: spaceContext.space.getId(),
         envId: spaceContext.getEnvironmentId(),
         users: spaceContext.users,
-        currentUser: spaceContext.user
+        currentUser: spaceContext.user,
+        isSpaceAdmin: user => spaceContext.space.isAdmin(user)
       });
     };
     notifyUpdate({});
@@ -292,7 +293,6 @@ export default ({ $scope, emitter }) => {
     sidebarExtensionsBridge,
     isEntry,
     isMasterEnvironment,
-    isSpaceAdmin: user => spaceContext.space.isAdmin(user),
     emitter
   };
 };
