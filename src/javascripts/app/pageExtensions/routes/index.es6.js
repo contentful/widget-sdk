@@ -2,6 +2,7 @@ import PageExtensionRoute from './PageExtensionRoute.es6';
 import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge.es6';
 import * as Navigator from 'states/Navigator.es6';
 import TheLocaleStore from 'services/localeStore.es6';
+import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
 
 export default {
   name: 'pageExtensions',
@@ -12,7 +13,8 @@ export default {
     '$stateParams',
     'spaceContext',
     'entitySelector',
-    ($rootScope, $stateParams, spaceContext, entitySelector) => {
+    'entityCreator',
+    ($rootScope, $stateParams, spaceContext, entitySelector, entityCreator) => {
       const { extensionId, path = '' } = $stateParams;
       return {
         extensionId,
@@ -24,7 +26,9 @@ export default {
             spaceContext,
             TheLocaleStore,
             Navigator,
-            entitySelector
+            entitySelector,
+            entityCreator,
+            SlideInNavigator
           },
           extensionId
         ),

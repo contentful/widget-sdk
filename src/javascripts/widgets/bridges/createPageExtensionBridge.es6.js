@@ -3,24 +3,15 @@ import makeExtensionNavigationHandlers from './makeExtensionNavigationHandlers.e
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers.es6';
 import makePageExtensionHandlers from './makePageExtensionHandlers.es6';
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers.es6';
+import checkDependencies from './checkDependencies.es6';
 import { LOCATION_PAGE } from '../WidgetLocations.es6';
 
-const REQUIRED_DEPENDENCIES = [
-  '$rootScope',
-  'spaceContext',
-  'TheLocaleStore',
-  'Navigator',
-  'entitySelector'
-];
-
 export default function createPageExtensionBridge(dependencies, currentExtensionId) {
-  REQUIRED_DEPENDENCIES.forEach(key => {
-    if (!(key in dependencies)) {
-      throw new Error(`"${key}" not provided to the extension bridge.`);
-    }
-  });
-
-  const { $rootScope, spaceContext, TheLocaleStore } = dependencies;
+  const { $rootScope, spaceContext, TheLocaleStore } = checkDependencies(
+    'PageExtensionBridge',
+    dependencies,
+    ['$rootScope', 'spaceContext', 'TheLocaleStore']
+  );
 
   return {
     getData,
@@ -49,20 +40,16 @@ export default function createPageExtensionBridge(dependencies, currentExtension
   function install(api) {
     api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
+    api.registerHandler('openDialog', makeExtensionDialogsHandler(dependencies));
+
+    api.registerHandler(
+      'navigateToContentEntity',
+      makeExtensionNavigationHandlers(dependencies, { disableSlideIn: true })
+    );
+
     api.registerHandler(
       'navigateToPageExtension',
       makePageExtensionHandlers(dependencies, currentExtensionId, true)
     );
-
-    api.registerHandler('openDialog', makeExtensionDialogsHandler(dependencies));
-
-    const navigationHandler = makeExtensionNavigationHandlers(dependencies);
-    api.registerHandler('navigateToContentEntity', async options => {
-      if (options.slideIn === true) {
-        throw new Error('Cannot open the slide-in editor from a page extension.');
-      } else {
-        return navigationHandler(options);
-      }
-    });
   }
 }

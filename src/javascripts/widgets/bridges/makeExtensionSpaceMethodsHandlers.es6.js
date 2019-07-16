@@ -3,11 +3,17 @@ import * as Analytics from 'analytics/Analytics.es6';
 import { getToken } from 'Authentication.es6';
 import { uploadApiUrl } from 'Config.es6';
 
+import checkDependencies from './checkDependencies.es6';
+
 const ASSET_PROCESSING_POLL_MS = 500;
 
-export default function makeExtensionSpaceMethodsHandlers({ spaceContext }, options = {}) {
+export default function makeExtensionSpaceMethodsHandlers(dependencies, handlerOptions = {}) {
+  const { spaceContext } = checkDependencies('ExtensionSpaceMethodsHandlers', dependencies, [
+    'spaceContext'
+  ]);
+
   return async function(methodName, args) {
-    if (options.readOnly === true) {
+    if (handlerOptions.readOnly === true) {
       // When rendering an extension in the read-only mode we disable
       // any mutating CMA calls. This is used in snapshots right now.
       if (typeof methodName !== 'string' || !methodName.startsWith('get')) {

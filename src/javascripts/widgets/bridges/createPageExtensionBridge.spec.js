@@ -31,7 +31,9 @@ describe('createPageExtensionBridge', () => {
         Navigator: {
           go: jest.fn()
         },
-        entitySelector: {}
+        entitySelector: {},
+        entityCreator: {},
+        SlideInNavigator: {}
       },
       'test-id'
     );

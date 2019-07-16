@@ -11,6 +11,7 @@ import trackExtensionRender from '../TrackExtensionRender.es6';
 import { LOCATION_DIALOG } from '../WidgetLocations.es6';
 
 import createDialogExtensionBridge from './createDialogExtensionBridge.es6';
+import checkDependencies from './checkDependencies.es6';
 
 const SIMPLE_DIALOG_TYPE_TO_OPENER = {
   alert: Dialogs.openAlert,
@@ -19,7 +20,11 @@ const SIMPLE_DIALOG_TYPE_TO_OPENER = {
 };
 
 export default function makeExtensionDialogsHandlers(dependencies) {
-  const { entitySelector, spaceContext } = dependencies;
+  const { entitySelector, spaceContext } = checkDependencies(
+    'ExtensionDialogsHandlers',
+    dependencies,
+    ['entitySelector', 'spaceContext']
+  );
 
   return openDialog;
 
