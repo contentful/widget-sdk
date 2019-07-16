@@ -42,7 +42,11 @@ describe('ExtensionLoader', () => {
 
       const result = await loader.getAllExtensions();
 
-      expect(spaceEndpoint).toBeCalledWith({ method: 'GET', path: '/extensions' });
+      expect(spaceEndpoint).toBeCalledWith({
+        method: 'GET',
+        path: ['extensions']
+      });
+
       expect(orgEndpoint).not.toBeCalled();
 
       expect(result).toEqual([makeExtension('id1'), makeExtension('id2')]);
@@ -80,10 +84,14 @@ describe('ExtensionLoader', () => {
 
       const result = await loader.getAllExtensions();
 
-      expect(spaceEndpoint).toBeCalledWith({ method: 'GET', path: '/extensions' });
+      expect(spaceEndpoint).toBeCalledWith({
+        method: 'GET',
+        path: ['extensions']
+      });
+
       expect(orgEndpoint).toBeCalledWith({
         method: 'GET',
-        path: '/extension_definitions',
+        path: ['extension_definitions'],
         query: {
           'sys.id[in]': 'definitionId2,definitionId3'
         }
@@ -135,7 +143,7 @@ describe('ExtensionLoader', () => {
 
       expect(spaceEndpoint).toBeCalledWith({
         method: 'GET',
-        path: '/extensions',
+        path: ['extensions'],
         query: { 'sys.id[in]': 'id1,id2,id3' }
       });
       expect(orgEndpoint).not.toBeCalled();
@@ -167,13 +175,13 @@ describe('ExtensionLoader', () => {
 
       expect(spaceEndpoint).toBeCalledWith({
         method: 'GET',
-        path: '/extensions',
+        path: ['extensions'],
         query: { 'sys.id[in]': 'id2' }
       });
 
       expect(orgEndpoint).toBeCalledWith({
         method: 'GET',
-        path: '/extension_definitions',
+        path: ['extension_definitions'],
         query: {
           'sys.id[in]': 'definitionId2'
         }
