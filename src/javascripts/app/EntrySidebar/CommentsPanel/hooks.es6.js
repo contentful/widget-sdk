@@ -60,7 +60,8 @@ async function fetchUsers(spaceId, userIds) {
  */
 export async function fetchComments(spaceId, entryId) {
   const endpoint = createSpaceEndpoint(spaceId);
-  const { items: comments } = await getAllForEntry(endpoint, entryId);
+  const { items } = await getAllForEntry(endpoint, entryId);
+  const comments = items.filter(item => !item.assignment);
   const commentCreatorIds = uniq(map(comments, 'sys.createdBy.sys.id'));
   const users = commentCreatorIds.length ? await fetchUsers(spaceId, commentCreatorIds) : [];
   const resolvedComments = resolveLinks({
