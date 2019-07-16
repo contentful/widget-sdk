@@ -1,21 +1,22 @@
 import React from 'react';
 import { render, cleanup, fireEvent, wait, getByText } from '@testing-library/react';
 import 'jest-dom/extend-expect';
+import * as DateMocks from 'DateMocks';
 import JobDialog from './index.es6';
 import moment from 'moment';
+
+import * as JobsAnalytics from 'app/jobs/Analytics/JobsAnalytics.es6';
 
 describe('JobDialog', () => {
   let dateNowSpy;
   afterEach(cleanup);
   beforeAll(() => {
-    dateNowSpy = jest.spyOn(Date, 'now');
-    dateNowSpy.mockImplementation(
-      jest.fn(() => new Date('2017-06-18T00:00:00.000+00:00').valueOf())
-    );
+    dateNowSpy = DateMocks.spyOnDateNow();
+    DateMocks.mockNow(dateNowSpy, '2017-06-18T00:00:00.000+00:00');
   });
 
   afterAll(() => {
-    dateNowSpy.mockRestore();
+    jest.clearAllMocks();
   });
 
   const build = () => {
@@ -57,7 +58,7 @@ describe('JobDialog', () => {
     ['2018-06-18T23:55', '2018-06-19T00:00:00.000+00:00'],
     ['2018-12-31T23:52', '2019-01-01T00:00:00.000+00:00']
   ])('default values are the full hour in the future: %p => %p', async (now, expected) => {
-    mockDateOnce(dateNowSpy, now);
+    DateMocks.mockNowOnce(dateNowSpy, now);
 
     const [renderResult, props] = build();
 
@@ -73,7 +74,7 @@ describe('JobDialog', () => {
     ['2017-06-18T16:30', '(GMT+03:00)', '2017-06-18T17:00:00.000+03:00'],
     ['2017-06-18T16:30', '(GMT+01:00)', '2017-06-18T17:00:00.000+01:00']
   ])('allows to set timezone: %p + %p => %p', async (now, offset, expected) => {
-    mockDateOnce(dateNowSpy, now);
+    DateMocks.mockNowOnce(dateNowSpy, now);
 
     const [renderResult, props] = build();
 
@@ -99,7 +100,7 @@ describe('JobDialog', () => {
   });
 
   it('prevents to schedule a publication if selected date is in the past', async () => {
-    mockDateOnce(dateNowSpy, moment(Date.now()).subtract(1, 'hours'));
+    DateMocks.mockNowOnce(dateNowSpy, moment(Date.now()).subtract(1, 'hours'));
 
     const [renderResult, props] = build();
 
@@ -109,7 +110,7 @@ describe('JobDialog', () => {
   });
 
   it('allows to schedule a publication if selected date is in the future', async () => {
-    mockDateOnce(dateNowSpy, moment(Date.now()).add(1, 'hours'));
+    DateMocks.mockNowOnce(dateNowSpy, moment(Date.now()).add(1, 'hours'));
 
     const [renderResult, props] = build();
 
@@ -117,11 +118,26 @@ describe('JobDialog', () => {
     expect(renderResult.queryByTestId('job-dialog-validation-message')).toBeNull();
     expect(props.onCreate).toHaveBeenCalled();
   });
-});
 
-function mockDateOnce(dateNowSpy, now) {
-  dateNowSpy.mockImplementationOnce(jest.fn(() => new Date(now).valueOf()));
-}
+  describe('analytics', () => {
+    it('tracks opening the scheduling dialog', () => {
+      const createDialogOpenSpy = jest.spyOn(JobsAnalytics, 'createDialogOpen');
+
+      build();
+
+      expect(createDialogOpenSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('tracks closing the scheduling dialog', () => {
+      const createDialogCloseSpy = jest.spyOn(JobsAnalytics, 'createDialogClose');
+      const [renderResult] = build();
+
+      renderResult.unmount();
+
+      expect(createDialogCloseSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+});
 
 async function schedulePublication(container) {
   const cta = container.getByTestId('schedule-publication');
