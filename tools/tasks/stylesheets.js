@@ -6,7 +6,6 @@ const concat = require('gulp-concat');
 const CSS_COMMENT_RE = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//g;
 
 const VENDOR_STYLESHEETS_SRC = assertFilesExist([
-  './node_modules/react-tippy/dist/tippy.css',
   './vendor/font-awesome/font-awesome.css',
   // todo: remove this after we migrate core-field-editors repo
   // to use forma

@@ -88,7 +88,6 @@
     "react-redux": "^5.0.7",
     "react-sortable-hoc": "1.9.1",
     "react-sticky-el": "^1.0.20",
-    "react-tippy": "^1.2.2",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",

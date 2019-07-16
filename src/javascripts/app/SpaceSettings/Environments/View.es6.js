@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
+import { css } from 'emotion';
 import { get } from 'lodash';
 import * as Config from 'Config.es6';
 import { assign } from 'utils/Collections.es6';
@@ -8,6 +9,7 @@ import { caseofEq } from 'sum-types';
 import Workbench from 'app/common/Workbench.es6';
 import { LinkOpen, CodeFragment } from 'ui/Content.es6';
 import {
+  CopyButton,
   Table,
   TableHead,
   TableRow,
@@ -20,8 +22,7 @@ import tokens from '@contentful/forma-36-tokens';
 
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
 import Icon from 'ui/Components/Icon.es6';
-import CopyIconButton from 'ui/Components/CopyIconButton.es6';
-import { Tooltip } from 'react-tippy';
+import { Tooltip } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 export default function View({ state, actions }) {
@@ -111,6 +112,18 @@ const FAILED_TOOLTIP = [
   'delete it and create it again, if that doesn’t work contact support.'
 ].join('');
 
+const copyButtonStyleOverride = css({
+  button: {
+    backgroundColor: 'transparent',
+    border: 'none',
+    height: '1.7em',
+    width: '2em',
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
+  }
+});
+
 function EnvironmentTable({ environments }) {
   if (environments.length === 0) {
     return <div />;
@@ -133,7 +146,7 @@ function EnvironmentTable({ environments }) {
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <CodeFragment key="environment-code-fragment">{environment.id}</CodeFragment>
                   <div style={{ display: 'inline-block', marginLeft: '6px' }} />
-                  <CopyIconButton value={environment.id} />
+                  <CopyButton className={copyButtonStyleOverride} copyValue={environment.id} />
                   <div style={{ display: 'inline-block', marginLeft: '1.2em' }} />
                   {environment.isMaster && <Tag tagType="muted">Default environment</Tag>}
                 </div>
@@ -224,8 +237,6 @@ function Sidebar({
           You are using {usage}{' '}
           {limit ? `out of ${limit} environments available ` : pluralize('environment', usage)} in
           this space.
-          {/* Note: this results in semantically incorrect html (div within p) */}
-          {/* https://github.com/tvkhoa/react-tippy/pull/73 would fix it. */}
           {!isLegacyOrganization && <UsageTooltip resource={resource} />}
         </p>
         {!canCreateEnv && !isLegacyOrganization && (
@@ -301,15 +312,12 @@ function UsageTooltip({ resource }) {
 
   return (
     <Tooltip
-      html={tooltipContent}
-      position="bottom-end"
+      content={tooltipContent}
+      place="bottom"
       style={{
         color: tokens.colorElementDarkest,
         marginLeft: '0.2em'
-      }}
-      arrow
-      duration={0}
-      trigger="mouseenter">
+      }}>
       <span data-test-id="environments-usage-tooltip">
         <Icon name="question-mark" />
       </span>
