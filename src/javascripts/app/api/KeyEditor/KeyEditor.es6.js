@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
+import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { assign } from 'utils/Collections.es6';
 import { DocsLink } from 'ui/Content.es6';
 import EnvironmentSelector from './EnvironmentSelector.es6';
-import CopyIcon from 'svg/CopyIcon.es6';
-import copyToClipboard from 'utils/DomClipboardCopy.es6';
+import { CopyButton } from '@contentful/forma-36-react-components';
 import TextInput from './TextInput.es6';
 
 export default function({ data, initialValue, connect, trackCopy }) {
@@ -106,6 +106,18 @@ function Input({ canEdit, model, update, name }) {
   );
 }
 
+const copyButtonStyleOverride = css({
+  button: {
+    backgroundColor: 'transparent',
+    border: 'none',
+    height: '2em',
+    width: '1.2em',
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
+  }
+});
+
 function InputWithCopy({ value, name, track }) {
   return (
     <div className="cfnext-form__input-group--full-size">
@@ -121,15 +133,14 @@ function InputWithCopy({ value, name, track }) {
           e.target.select();
         }}
       />
-      <div
-        style={{ cursor: 'pointer', paddingTop: '3px' }}
-        onClick={() => {
-          copyToClipboard(value);
-          track();
-        }}
-        className="cfnext-form__icon-suffix copy-to-clipboard x--input-suffix">
-        <CopyIcon />
-      </div>
+      <CopyButton
+        className={cx(
+          copyButtonStyleOverride,
+          'cfnext-form__icon-suffix copy-to-clipboard x--input-suffix'
+        )}
+        copyValue={value}
+        onCopy={track}
+      />
     </div>
   );
 }
