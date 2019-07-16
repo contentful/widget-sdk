@@ -7,10 +7,9 @@ let Navigator;
 describe('makePageExtensionHandlers', () => {
   beforeEach(() => {
     spaceContext = {
-      cma: {
-        spaceId: 'space-id'
-      },
-      getEnvironmentId: jest.fn(() => 'master')
+      getId: () => 'space-id',
+      getEnvironmentId: jest.fn(() => 'master'),
+      isMasterEnvironment: jest.fn(() => true)
     };
 
     navigatorMock = jest.fn(x => Promise.resolve(x));
@@ -112,8 +111,8 @@ describe('makePageExtensionHandlers', () => {
   });
 
   it('should create the correct environment path', async () => {
-    const envMock = jest.fn(() => 'testEnv');
-    spaceContext.getEnvironmentId = envMock;
+    spaceContext.getEnvironmentId.mockReturnValueOnce('testEnv');
+    spaceContext.isMasterEnvironment.mockReturnValueOnce(false);
 
     const navigate = makePageExtensionHandlers({ spaceContext, Navigator }, 'extension-id');
 
