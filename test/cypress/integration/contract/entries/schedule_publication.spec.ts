@@ -12,12 +12,9 @@ import {
 import * as state from '../../../util/interactionState';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import {
-  singleJobForEntryResponse,
-  jobIsCreatedPostResponse,
-  cancelJobResponse,
-  noJobsForSpecificEntryIdResponse,
-  singleFailedJobForEntryResponse,
-  unavailableJobsForEntryResponse
+  createScheduledPublicationForDefaultSpace,
+  cancelDefaultJobInDefaultSpace,
+  queryAllScheduledJobsForDefaultEntry
 } from '../../../interactions/jobs';
 import { FeatureFlag } from '../../../util/featureFlag';
 
@@ -29,7 +26,7 @@ describe('Schedule Publication', () => {
 
   describe('scheduling a publication', () => {
     beforeEach(() => {
-      noJobsForSpecificEntryIdResponse();
+      queryAllScheduledJobsForDefaultEntry.willFindNone();
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(
         [
@@ -37,7 +34,7 @@ describe('Schedule Publication', () => {
           `@${state.Enforcements.NONE}`,
           `@${state.Entries.NO_LINKS_TO_DEFAULT_ENTRY}`,
           `@${state.Entries.NO_SNAPSHOTS_FOR_DEFAULT_ENTRY}`,
-          `@${state.Jobs.NONE}`
+          `@${state.Jobs.NO_JOBS_SCHEDULED_FOR_DEFAULT_ENTRY}`
         ],
         { timeout: 10000 }
       );
@@ -46,7 +43,9 @@ describe('Schedule Publication', () => {
     it('submits the new scheduled publication and then re-fetch the list of scheduled publications', () => {
       cy.resetAllFakeServers();
 
-      jobIsCreatedPostResponse().as('job-created-successfully');
+      createScheduledPublicationForDefaultSpace
+        .willSucceed()
+        .as('job-created-successfully');
 
       cy.getByTestId('change-state-menu-trigger').click();
       cy.getByTestId('schedule-publication').click();
@@ -65,8 +64,9 @@ describe('Schedule Publication', () => {
 
   describe('cancelling a publication', () => {
     beforeEach(() => {
-      singleJobForEntryResponse();
-      cancelJobResponse();
+      queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob();
+      // TODO: It seems the wrong place for this set up
+      cancelDefaultJobInDefaultSpace.willSucceed();
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(
@@ -74,7 +74,7 @@ describe('Schedule Publication', () => {
           `@${state.Token.VALID}`,
           `@${state.Enforcements.NONE}`,
           `@${state.Entries.NO_LINKS_TO_DEFAULT_ENTRY}`,
-          `@${state.Jobs.SINGLE}`
+          `@${state.Jobs.ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY}`
         ],
         { timeout: 10000 }
       );
@@ -83,7 +83,7 @@ describe('Schedule Publication', () => {
     it('cancels publication after clicking on the grey button', () => {
       cy.resetAllFakeServers();
 
-      cancelJobResponse().as('job-cancelled');
+      cancelDefaultJobInDefaultSpace.willSucceed().as('job-cancelled');
 
       cy.getByTestId('cancel-job-ddl').click();
       cy.getByTestId('cancel-job').click();
@@ -99,7 +99,7 @@ describe('Schedule Publication', () => {
   });
   describe('error states', () => {
     it('renders error note is the last job is failed', () => {
-      singleFailedJobForEntryResponse();
+      queryAllScheduledJobsForDefaultEntry.willFindOneFailedJob();
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(
@@ -119,7 +119,7 @@ describe('Schedule Publication', () => {
     });
 
     it('renders error note if jobs endpoint returns 500', () => {
-      unavailableJobsForEntryResponse();
+      queryAllScheduledJobsForDefaultEntry.willFailWithAnInternalServerError();
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(

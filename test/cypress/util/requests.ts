@@ -81,25 +81,6 @@ export function getSpaceProductCatalogFeatures(
   };
 }
 
-export function getEntryJobs(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/environments/master/jobs`,
-    headers: { ...defaultHeader, 'x-contentful-enable-alpha-feature': 'scheduled-jobs' },
-    query
-  };
-}
-
-export function cancelJob(
-  spaceId: string = defaultSpaceId,
-  jobId: string = defaultJobId
-): RequestOptions {
-  return {
-    method: 'DELETE',
-    path: `/spaces/${spaceId}/environments/master/jobs/${jobId}`,
-    headers: { ...defaultHeader, 'x-contentful-enable-alpha-feature': 'scheduled-jobs' }
-  };
-}
 
 export function getEntryCommentsAndTasks(
   spaceId: string = defaultSpaceId,

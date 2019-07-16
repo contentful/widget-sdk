@@ -59,11 +59,13 @@ export enum Assets {
 }
 
 export enum Jobs {
-  NONE = 'jobs/none',
-  SINGLE = 'jobs/single',
-  SEVERAL = 'jobs/several',
+  NO_JOBS_FOR_DEFAULT_SPACE = 'jobs/no-jobs-for-default-space',
+  ONE_JOB_FOR_DEFAULT_SPACE = 'jobs/one-job-for-default-space',
+  SEVERAL_JOBS_FOR_DEFAULT_SPACE = 'jobs/several-jobs-for-default-space',
   INTERNAL_SERVER_ERROR = 'jobs/internal-server-error',
-  JOB_EXECUTION_FAILED = 'jobs/job-execution-failed'
+  JOB_EXECUTION_FAILED = 'jobs/job-execution-failed',
+  NO_JOBS_SCHEDULED_FOR_DEFAULT_ENTRY = 'jobs/no-jobs-scheduled-for-default-entry',
+  ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY = 'jobs/one-pending-job-scheduled-for-default-entry'
 }
 
 export enum Tasks {

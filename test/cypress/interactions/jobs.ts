@@ -1,11 +1,11 @@
 import {
-  getEntryJobs,
-  cancelJob,
   defaultSpaceId,
   defaultEntryId,
-  defaultJobId
+  defaultJobId,
+  defaultHeader
 } from '../util/requests';
 import * as state from '../util/interactionState';
+import { Query, RequestOptions } from '@pact-foundation/pact-web';
 
 const empty = require('../fixtures/responses/empty.json');
 export const severalJobsResponseBody = require('../fixtures/responses/jobs-several.json');
@@ -18,168 +18,190 @@ const entryIdQuery = {
   'sys.entity.sys.id': defaultEntryId
 };
 
-export function noJobsResponse() {
-  cy.addInteraction({
-    provider: 'jobs',
-    state: 'noJobs',
-    uponReceiving: 'a request for all jobs',
-    withRequest: getEntryJobs(defaultSpaceId, allJobsQuery),
-    willRespondWith: {
-      status: 200,
-      body: empty
-    }
-  }).as(state.Jobs.NONE);
-}
-
-export function noJobsForSpecificEntryIdResponse() {
-  cy.addInteraction({
-    provider: 'jobs',
-    state: 'noJobsForSpecificEntry',
-    uponReceiving: 'a request for all jobs',
-    withRequest: getEntryJobs(defaultSpaceId, entryIdQuery),
-    willRespondWith: {
-      status: 200,
-      body: empty
-    }
-  }).as(state.Jobs.NONE);
-}
-
-export function severalJobsResponse() {
-  cy.addInteraction({
-    provider: 'jobs',
-    state: state.Jobs.SEVERAL,
-    uponReceiving: 'a request for all jobs',
-    withRequest: getEntryJobs(defaultSpaceId, allJobsQuery),
-    willRespondWith: {
-      status: 200,
-      body: severalJobsResponseBody
-    }
-  }).as(state.Jobs.SEVERAL);
-}
-
-export function cancelJobResponse() {
-  return cy.addInteraction({
-    provider: 'jobs',
-    state: state.Jobs.SINGLE,
-    uponReceiving: 'a request for all jobs',
-    withRequest: cancelJob(),
-    willRespondWith: {
-      status: 200,
-      body: empty
-    }
-  });
-}
-
-export function jobsErrorResponse() {
-  cy.addInteraction({
-    provider: 'jobs',
-    state: state.Jobs.INTERNAL_SERVER_ERROR,
-    uponReceiving: 'a request for all jobs',
-    withRequest: getEntryJobs(defaultSpaceId, allJobsQuery),
-    willRespondWith: {
-      status: 500,
-      body: empty
-    }
-  }).as(state.Jobs.INTERNAL_SERVER_ERROR);
-}
-
-export function singleJobForEntryResponse() {
-  cy.addInteraction({
-    provider: 'jobs',
-    state: state.Jobs.SINGLE,
-    uponReceiving: 'a request for the default entry schedules',
-    withRequest: getEntryJobs(defaultSpaceId, entryIdQuery),
-    willRespondWith: {
-      status: 200,
-      body: {
-        sys: {
-          type: 'Array'
-        },
-        total: 1,
-        skip: 0,
-        limit: 1000,
-        items: [
-          {
-            sys: {
-              id: defaultJobId,
-              status: 'pending'
-            },
-            action: 'publish',
-            scheduledAt: '2050-08-08T06:10:52.066Z'
-          }
-        ]
-      }
-    }
-  }).as(state.Jobs.SINGLE);
-}
-export function singleFailedJobForEntryResponse() {
-  cy.addInteraction({
-    provider: 'jobs',
-    state: state.Jobs.JOB_EXECUTION_FAILED,
-    uponReceiving: 'a request for entry schedules',
-    withRequest: getEntryJobs(defaultSpaceId, entryIdQuery),
-    willRespondWith: {
-      status: 200,
-      body: {
-        sys: {
-          type: 'Array'
-        },
-        total: 1,
-        skip: 0,
-        limit: 1000,
-        items: [
-          {
-            sys: {
-              id: defaultJobId,
-              status: 'failed'
-            },
-            action: 'publish',
-            scheduledAt: '2050-08-08T06:10:52.066Z'
-          }
-        ]
-      }
-    }
-  }).as(state.Jobs.JOB_EXECUTION_FAILED);
-}
-
-export function jobIsCreatedPostResponse() {
-  return cy.addInteraction({
-    provider: 'jobs',
-    state: state.Jobs.NONE,
-    uponReceiving: 'a post request for scheduling publication',
-    withRequest: {
-      method: 'POST',
-      path: `/spaces/${defaultSpaceId}/environments/master/jobs`,
-      headers: {
-        Accept: 'application/json, text/plain, */*',
-        'x-contentful-enable-alpha-feature': 'scheduled-jobs'
-      }
-      // TODO: test body and figure out how to be with datetime.
+function queryJobsForDefaultSpaceRequest(query: Query): RequestOptions {
+  return {
+    method: 'GET',
+    path: `/spaces/${defaultSpaceId}/environments/master/jobs`,
+    headers: {
+      ...defaultHeader, 
+      'x-contentful-enable-alpha-feature': 'scheduled-jobs'
     },
-
-    willRespondWith: {
-      status: 200,
-      body: {
-        sys: {
-          id: defaultJobId,
-          status: 'pending'
-        },
-        action: 'publish',
-        scheduledAt: '2050-08-08T06:10:52.066Z'
-      }
-    }
-  });
+    query
+  };
 }
 
-export function unavailableJobsForEntryResponse() {
-  cy.addInteraction({
-    provider: 'jobs',
-    state: state.Jobs.INTERNAL_SERVER_ERROR,
-    uponReceiving: 'a request for entry schedules',
-    withRequest: getEntryJobs(defaultSpaceId, entryIdQuery),
-    willRespondWith: {
-      status: 500,
-      body: {}
-    }
-  }).as(state.Jobs.INTERNAL_SERVER_ERROR);
+export const queryAllJobsForDefaultSpace = {
+  willFindNone() {
+    return cy.addInteraction({
+      provider: 'jobs',
+      state: state.Jobs.NO_JOBS_FOR_DEFAULT_SPACE,
+      uponReceiving: `a query for all jobs in space "${defaultSpaceId}"`,
+      withRequest: queryJobsForDefaultSpaceRequest(allJobsQuery),
+      willRespondWith: {
+        status: 200,
+        body: empty
+      }
+    }).as(state.Jobs.NO_JOBS_FOR_DEFAULT_SPACE);
+  },
+  willFindSeveral() {
+    return cy.addInteraction({
+      provider: 'jobs',
+      state: state.Jobs.SEVERAL_JOBS_FOR_DEFAULT_SPACE,
+      uponReceiving: `a query for all jobs in space "${defaultSpaceId}"`,
+      withRequest: queryJobsForDefaultSpaceRequest(allJobsQuery),
+      willRespondWith: {
+        status: 200,
+        body: severalJobsResponseBody
+      }
+    }).as(state.Jobs.SEVERAL_JOBS_FOR_DEFAULT_SPACE);
+  },
+  willFailWithAnInternalServerError() {
+    return cy.addInteraction({
+      provider: 'jobs',
+      state: state.Jobs.INTERNAL_SERVER_ERROR,
+      uponReceiving: `a query for all jobs in space "${defaultSpaceId}"`,
+      withRequest: queryJobsForDefaultSpaceRequest(allJobsQuery),
+      willRespondWith: {
+        status: 500,
+        body: empty
+      }
+    }).as(state.Jobs.INTERNAL_SERVER_ERROR);
+  }
+}
+
+export const queryAllScheduledJobsForDefaultEntry = {
+  willFindNone() {
+    return cy.addInteraction({
+      provider: 'jobs',
+      state: state.Jobs.NO_JOBS_SCHEDULED_FOR_DEFAULT_ENTRY,
+      uponReceiving: `a query for all scheduled jobs of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
+      withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
+      willRespondWith: {
+        status: 200,
+        body: empty
+      }
+    }).as(state.Jobs.NO_JOBS_SCHEDULED_FOR_DEFAULT_ENTRY);
+  },
+  willFindOnePendingJob() {
+    return cy.addInteraction({
+      provider: 'jobs',
+      state: state.Jobs.ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY,
+      uponReceiving: `a query for all scheduled jobs of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
+      withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
+      willRespondWith: {
+        status: 200,
+        body: {
+          sys: {
+            type: 'Array'
+          },
+          total: 1,
+          skip: 0,
+          limit: 1000,
+          items: [
+            {
+              sys: {
+                id: defaultJobId,
+                status: 'pending'
+              },
+              action: 'publish',
+              scheduledAt: '2050-08-08T06:10:52.066Z'
+            }
+          ]
+        }
+      }
+    }).as(state.Jobs.ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY);
+  },
+  willFindOneFailedJob() {
+    return cy.addInteraction({
+      provider: 'jobs',
+      state: state.Jobs.JOB_EXECUTION_FAILED,
+      uponReceiving: `a query for all scheduled jobs of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
+      withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
+      willRespondWith: {
+        status: 200,
+        body: {
+          sys: {
+            type: 'Array'
+          },
+          total: 1,
+          skip: 0,
+          limit: 1000,
+          items: [
+            {
+              sys: {
+                id: defaultJobId,
+                status: 'failed'
+              },
+              action: 'publish',
+              scheduledAt: '2050-08-08T06:10:52.066Z'
+            }
+          ]
+        }
+      }
+    }).as(state.Jobs.JOB_EXECUTION_FAILED);
+  },
+  willFailWithAnInternalServerError() {
+    return cy.addInteraction({
+      provider: 'jobs',
+      state: state.Jobs.INTERNAL_SERVER_ERROR,
+      uponReceiving: `a query for all scheduled jobs of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
+      withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
+      willRespondWith: {
+        status: 500,
+        body: {}
+      }
+    }).as(state.Jobs.INTERNAL_SERVER_ERROR);
+  }
+}
+
+export const cancelDefaultJobInDefaultSpace = {
+  willSucceed() {
+    return cy.addInteraction({
+      provider: 'jobs',
+      state: state.Jobs.ONE_JOB_FOR_DEFAULT_SPACE,
+      uponReceiving: `a request to cancel the job "${defaultJobId}" in space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'DELETE',
+        path: `/spaces/${defaultSpaceId}/environments/master/jobs/${defaultJobId}`,
+        headers: { 
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'scheduled-jobs'
+        }
+      },
+      willRespondWith: {
+        status: 200,
+        body: empty
+      }
+    });
+  }
+}
+
+export const createScheduledPublicationForDefaultSpace = {
+  willSucceed() {
+    return cy.addInteraction({
+      provider: 'jobs',
+      state: state.Jobs.NO_JOBS_FOR_DEFAULT_SPACE,
+      uponReceiving: `a request to create a scheduling publication for space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'POST',
+        path: `/spaces/${defaultSpaceId}/environments/master/jobs`,
+        headers: {
+          Accept: 'application/json, text/plain, */*',
+          'x-contentful-enable-alpha-feature': 'scheduled-jobs'
+        }
+        // TODO: test body and figure out how to be with datetime.
+      },
+      willRespondWith: {
+        status: 200,
+        body: {
+          sys: {
+            id: defaultJobId,
+            status: 'pending'
+          },
+          action: 'publish',
+          scheduledAt: '2050-08-08T06:10:52.066Z'
+        }
+      }
+    });
+  }
 }
