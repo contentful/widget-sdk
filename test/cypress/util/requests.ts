@@ -32,24 +32,6 @@ export function getEntries(spaceId: string = defaultSpaceId, query?: Query): Req
   };
 }
 
-export function getSpaceUsers(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/spaces/${spaceId}/users`,
-    headers: defaultHeader,
-    query
-  };
-}
-
-export function getOrgUsers(orgId: string = defaultOrgId, query?: Query): RequestOptions {
-  return {
-    method: 'GET',
-    path: `/organizations/${orgId}/users`,
-    headers: defaultHeader,
-    query
-  };
-}
-
 export function getWebhooks(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
   return {
     method: 'GET',

@@ -1,5 +1,5 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import { singleUser } from '../../../interactions/users';
+import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import {
   getAllCommentsForDefaultEntry,
   createTask,
@@ -47,7 +47,7 @@ describe('Tasks entry editor sidebar', () => {
     defaultRequestsMock({
       publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
     });
-    singleUser();
+    queryFirst100UsersInDefaultSpace.willFindSeveral();
     getDefaultEntry.willReturnIt();
     getFirst7SnapshotsOfDefaultEntry.willReturnNone();
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();

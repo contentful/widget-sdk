@@ -7,7 +7,7 @@ import {
   severalJobsResponseBody
 } from '../../../interactions/jobs';
 import { queryForDefaultEntryInsideEnvironment } from '../../../interactions/entries';
-import { singleSpecificSpaceUserResponse } from '../../../interactions/users';
+import { queryForDefaultUserDetails } from '../../../interactions/users';
 import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('Jobs page', () => {
@@ -60,7 +60,7 @@ describe('Jobs page', () => {
       });
       queryAllJobsForDefaultSpace.willFindSeveral();
       queryForDefaultEntryInsideEnvironment.willFindIt();
-      singleSpecificSpaceUserResponse();
+      queryForDefaultUserDetails.willFindTheUserDetails();
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
       cy.wait([`@${state.Token.VALID}`]);

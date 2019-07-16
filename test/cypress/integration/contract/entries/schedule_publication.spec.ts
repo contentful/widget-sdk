@@ -1,5 +1,5 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import { singleUser } from '../../../interactions/users';
+import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import {
   getAllPublicContentTypesInDefaultSpace,
   getEditorInterfaceForDefaultContentType
@@ -153,7 +153,7 @@ function basicServerSetUp() {
   defaultRequestsMock({
     publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
   });
-  singleUser();
+  queryFirst100UsersInDefaultSpace.willFindSeveral();
   getDefaultEntry.willReturnIt();
   queryLinksToDefaultEntry.willReturnNone();
   getFirst7SnapshotsOfDefaultEntry.willReturnNone();

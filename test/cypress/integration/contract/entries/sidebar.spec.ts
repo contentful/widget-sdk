@@ -1,5 +1,5 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import { singleUser } from '../../../interactions/users';
+import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import {
   getAllPublicContentTypesInDefaultSpace,
   getEditorInterfaceForDefaultContentType
@@ -79,7 +79,7 @@ function basicServerSetUp() {
     spec: 2
   });
   defaultRequestsMock({ publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne });
-  singleUser();
+  queryFirst100UsersInDefaultSpace.willFindSeveral();
   getDefaultEntry.willReturnIt();
   cy.route('**/channel/**', []).as('shareJS');
 }

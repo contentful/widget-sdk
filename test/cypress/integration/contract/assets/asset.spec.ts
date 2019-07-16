@@ -1,5 +1,5 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import { singleUser } from '../../../interactions/users';
+import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId, defaultAssetId } from '../../../util/requests';
 import { getDefaultAssetInDefaultSpace } from '../../../interactions/assets';
@@ -21,7 +21,7 @@ describe('Asset Page', () => {
       cy.resetAllFakeServers();
 
       defaultRequestsMock();
-      singleUser();
+      queryFirst100UsersInDefaultSpace.willFindSeveral();
 
       getDefaultAssetInDefaultSpace.willReturnIt();
       queryLinksToDefaultAsset.willReturnNone();

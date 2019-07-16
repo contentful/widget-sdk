@@ -1,4 +1,4 @@
-import { singleUser } from '../../../interactions/users';
+import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import {
   getAllPublicContentTypesInDefaultSpace,
   getEditorInterfaceForDefaultContentType
@@ -42,7 +42,7 @@ describe('Entries list page', () => {
   context('no content types in the space', () => {
     beforeEach(() => {
       defaultRequestsMock({});
-      singleUser();
+      queryFirst100UsersInDefaultSpace.willFindSeveral();
 
       cy.addInteraction({
         provider: 'entries',
@@ -82,7 +82,7 @@ describe('Entries list page', () => {
       defaultRequestsMock({
         publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
       });
-      singleUser();
+      queryFirst100UsersInDefaultSpace.willFindSeveral();
 
       cy.addInteraction({
         provider: 'entries',
@@ -137,7 +137,7 @@ describe('Entries list page', () => {
   context('several entries in the space', () => {
     beforeEach(() => {
       defaultRequestsMock({});
-      singleUser();
+      queryFirst100UsersInDefaultSpace.willFindSeveral();
 
       cy.addInteraction({
         provider: 'entries',
@@ -173,7 +173,7 @@ describe('Entries list page', () => {
       });
 
       defaultRequestsMock({});
-      singleUser();
+      queryFirst100UsersInDefaultSpace.willFindSeveral();
 
       cy.addInteraction({
         provider: 'entries',
