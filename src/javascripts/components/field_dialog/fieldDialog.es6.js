@@ -66,9 +66,6 @@ export default function register() {
     '$scope',
     '$timeout',
     function FieldDialogController($scope, $timeout) {
-      // TODO: Remove this when there are no more API references to the legacy
-      // `StructuredText` field type.
-      const RICH_TEXT_FIELD_TYPES = ['RichText', 'StructuredText'];
       const dialog = $scope.dialog;
 
       const contentTypeData = $scope.contentType.data;
@@ -77,7 +74,7 @@ export default function register() {
 
       $scope.validations = validationDecorator.decorateFieldValidations($scope.field);
 
-      if (RICH_TEXT_FIELD_TYPES.includes($scope.field.type)) {
+      if ($scope.field.type === 'RichText') {
         const validation = find($scope.field.validations, 'nodes');
         const nodeValidations = validation ? validation.nodes : {};
         $scope.nodeValidations = validationDecorator.decorateNodeValidations(nodeValidations);
@@ -298,10 +295,6 @@ export default function register() {
   registerController('FieldDialogValidationsController', [
     '$scope',
     $scope => {
-      // TODO: Remove this when there are no more API references to the legacy
-      // `StructuredText` field type.
-      const RICH_TEXT_FIELD_TYPES = ['RichText', 'StructuredText'];
-
       $scope.$watch('fieldValidationsForm.$invalid', isInvalid => {
         $scope.tab.invalid = isInvalid;
       });
@@ -332,7 +325,7 @@ export default function register() {
         $scope.showPredefinedValueWidgetHint = !isProper && properAvailable;
       });
 
-      if (RICH_TEXT_FIELD_TYPES.includes($scope.field.type)) {
+      if ($scope.field.type === 'RichText') {
         $scope.nodeValidationsEnabled = true;
       }
     }

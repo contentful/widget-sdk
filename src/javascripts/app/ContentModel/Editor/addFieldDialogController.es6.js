@@ -33,7 +33,7 @@ export default function register() {
       $scope.showFieldSelection = showFieldSelection;
       $scope.create = create;
       $scope.createAndConfigure = createAndConfigure;
-      setFieldGroupRows($scope);
+      $scope.fieldGroupRows = fieldGroupsToRows(fieldFactory.groups);
 
       $scope.schema = {
         errors: function(field) {
@@ -124,14 +124,6 @@ export default function register() {
           .then(field => {
             $scope.ctEditorController.openFieldDialog(field);
           }, _.noop);
-      }
-
-      function setFieldGroupRows(scope) {
-        // We don't want to show the StructuredText field in the dialog but we cannot remove
-        // it from the fieldFactory.groups because we still want to show it in the content type editor
-        // view so users are able to delete/disable it.
-        const fieldGroups = fieldFactory.groups.filter(group => group.name !== 'structured-text');
-        scope.fieldGroupRows = fieldGroupsToRows(fieldGroups);
       }
 
       function fieldGroupsToRows(fieldGroups) {
