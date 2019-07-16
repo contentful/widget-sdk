@@ -44,7 +44,6 @@ window.libs = [
   ['@contentful/mimetype', require('@contentful/mimetype')],
   ['@contentful/sharejs/lib/client', require('@contentful/sharejs/lib/client')],
   ['@contentful/validation', require('@contentful/validation')],
-  ['@contentful/widget-map', require('@contentful/widget-map')],
   ['@contentful/worf', require('@contentful/worf')],
 
   ['classnames', require('classnames')],
