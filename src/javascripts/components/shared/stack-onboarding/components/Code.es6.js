@@ -1,6 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CopyButton from 'ui/Components/CopyIconButton.es6';
+import { CopyButton } from '@contentful/forma-36-react-components';
+import { css, cx } from 'emotion';
+
+const copyButtonStyleOverride = css({
+  padding: '0.5em',
+  button: {
+    backgroundColor: 'transparent',
+    border: 'none',
+    height: '1.7em',
+    width: '2em',
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
+  }
+});
 
 class Code extends React.Component {
   static propTypes = {
@@ -9,8 +23,7 @@ class Code extends React.Component {
     copy: PropTypes.bool,
     onCopy: PropTypes.func,
     lineNumbers: PropTypes.bool,
-    className: PropTypes.string,
-    tooltipPosition: PropTypes.oneOf(['top', 'bottom', 'left', 'right'])
+    className: PropTypes.string
   };
 
   static defaultProps = {
@@ -34,7 +47,7 @@ class Code extends React.Component {
   };
 
   render() {
-    const { language, copy, onCopy, code, lineNumbers, className, tooltipPosition } = this.props;
+    const { language, copy, onCopy, code, lineNumbers, className } = this.props;
 
     return (
       <div className="code-block__wrapper">
@@ -47,9 +60,8 @@ class Code extends React.Component {
         </div>
         {copy && (
           <CopyButton
-            className={'code-block__copy-wrapper'}
-            value={Array.isArray(code) ? code.join('\n') : code}
-            tooltipPosition={tooltipPosition}
+            className={cx(copyButtonStyleOverride, 'code-block__copy-wrapper')}
+            copyValue={Array.isArray(code) ? code.join('\n') : code}
             onCopy={onCopy}
           />
         )}

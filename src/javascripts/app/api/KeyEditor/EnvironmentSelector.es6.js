@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink.es6';
 import { CodeFragment } from 'ui/Content.es6';
 import { find } from 'lodash';
 import { filter, concat } from 'utils/Collections.es6';
 import InfoIcon from 'svg/info.es6';
-import CopyButton from 'ui/Components/CopyIconButton.es6';
-import { Tag } from '@contentful/forma-36-react-components';
+import { CopyButton, Tag } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry.es6';
 const spaceContext = getModule('spaceContext');
 
@@ -62,6 +62,18 @@ function Hint() {
   );
 }
 
+const copyButtonStyleOverride = css({
+  button: {
+    backgroundColor: 'transparent',
+    border: 'none',
+    height: '1.7em',
+    width: '2em',
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
+  }
+});
+
 function List({ canEdit, spaceEnvironments, envs, updateEnvs }) {
   const isSelected = env => !!find(envs, { sys: { id: env.sys.id } });
 
@@ -98,7 +110,7 @@ function List({ canEdit, spaceEnvironments, envs, updateEnvs }) {
             <CodeFragment>{env.sys.id}</CodeFragment>
           </label>
           <div style={{ display: 'inline-block', marginLeft: '6px' }} />
-          <CopyButton value={env.sys.id} />
+          <CopyButton className={copyButtonStyleOverride} copyValue={env.sys.id} />
           <div style={{ display: 'inline-block', marginLeft: '2em' }} />
           {spaceContext.isMasterEnvironment(env) && <Tag tagType="muted">Default environment</Tag>}
         </div>
@@ -106,6 +118,7 @@ function List({ canEdit, spaceEnvironments, envs, updateEnvs }) {
     </div>
   );
 }
+
 List.propTypes = {
   canEdit: PropTypes.bool,
   spaceEnvironments: PropTypes.array,
