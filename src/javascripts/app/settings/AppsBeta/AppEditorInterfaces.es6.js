@@ -1,4 +1,4 @@
-import { isObject, identity, pick, isEqual } from 'lodash';
+import { isObject, identity, pick, isEqual, cloneDeep } from 'lodash';
 
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults.es6';
 import { isUnsignedInteger } from './validateTargetState.es6';
@@ -14,7 +14,7 @@ async function promiseAllSafe(promises) {
   return results.filter(identity);
 }
 
-function getDefaultSidebar() {
+export function getDefaultSidebar() {
   const defaultEntrySidebar = SidebarDefaults.EntryConfiguration;
   return defaultEntrySidebar.map(item => pick(item, ['widgetNamespace', 'widgetId']));
 }
@@ -57,7 +57,7 @@ export async function transformEditorInterfacesToTargetState(cma, targetState, e
 }
 
 function transformSingleEditorInterfaceToTargetState(ei, targetState, extensionId) {
-  const result = { ...ei };
+  const result = cloneDeep(ei);
 
   // Target state object for controls: `{ fieldId, settings? }`
   if (Array.isArray(targetState.controls)) {
@@ -84,9 +84,12 @@ function transformSingleEditorInterfaceToTargetState(ei, targetState, extensionI
 
     const widget = {
       widgetNamespace: NAMESPACE_EXTENSION,
-      widgetId: extensionId,
-      settings: targetSidebar.settings
+      widgetId: extensionId
     };
+
+    if (isObject(targetSidebar.settings)) {
+      widget.settings = targetSidebar.settings;
+    }
 
     // If position is defined use it for insertion.
     if (isUnsignedInteger(targetSidebar.position)) {
@@ -131,6 +134,7 @@ export async function removeAllEditorInterfaceReferences(cma, extensionId) {
 }
 
 function removeSingleEditorInterfaceReferences(ei, extensionId) {
+  ei = cloneDeep(ei);
   const result = { sys: ei.sys };
 
   if (Array.isArray(ei.controls)) {
