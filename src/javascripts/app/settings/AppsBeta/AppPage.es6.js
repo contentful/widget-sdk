@@ -208,10 +208,10 @@ export default class AppRoute extends Component {
       // Verify if uninstallation was completed.
       const { extension } = await this.checkAppStatus();
       if (extension) {
-        Notification.error('Failed to fully uninstall the app.');
-      } else {
-        Notification.success('The app was uninstalled successfully.');
+        throw new Error('Extension still exists.');
       }
+
+      Notification.success('The app was uninstalled successfully.');
     } catch (err) {
       Notification.error('Failed to fully uninstall the app.');
     }

@@ -51,19 +51,19 @@ export default function createAppsRepo(orgEndpoint, spaceEndpoint) {
   }
 
   async function getExtensionForExtensionDefinition(extensionDefinition) {
-    const id = extensionDefinition.sys.id;
+    const extensionDefinitionId = extensionDefinition.sys.id;
 
     const { items } = await spaceEndpoint({
       method: 'GET',
       path: ['extensions'],
-      query: { 'extensionDefinition.sys.id[in]': id }
+      query: { 'extensionDefinition.sys.id[in]': extensionDefinitionId }
     });
 
     if (items.length === 1) {
       return items[0];
     } else {
       const err = new Error(
-        `Expected exactly one Extension to be based on ExtensionDefinition ${id}.`
+        `Expected exactly one Extension to be based on ExtensionDefinition ${extensionDefinitionId}.`
       );
       err.extensionCount = items.length;
       throw err;
