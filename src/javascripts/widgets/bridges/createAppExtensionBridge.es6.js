@@ -7,17 +7,10 @@ import checkDependencies from './checkDependencies.es6';
 import { LOCATION_APP } from '../WidgetLocations.es6';
 import * as Random from 'utils/Random.es6';
 
-import {
-  APP_UPDATE_STARTED,
-  APP_EXTENSION_UPDATED,
-  APP_EXTENSION_UPDATE_FAILED,
-  APP_MISCONFIGURED,
-  APP_CONFIGURED,
-  APP_UPDATE_PLAN_PREPARATION_FAILED,
-  APP_UPDATE_PLAN_PREPARED,
-  APP_UPDATE_FAILED,
-  APP_UPDATE_FINALIZED
-} from 'app/settings/AppsBeta/AppHookBus.es6';
+import { APP_EVENTS_IN, APP_EVENTS_OUT } from 'app/settings/AppsBeta/AppHookBus.es6';
+
+const STAGE_PRE_INSTALL = 'preInstall';
+const STAGE_POST_INSTALL = 'postInstall';
 
 export default function createAppExtensionBridge(dependencies) {
   const { $rootScope, spaceContext, TheLocaleStore, appHookBus } = checkDependencies(
@@ -73,54 +66,53 @@ export default function createAppExtensionBridge(dependencies) {
       }
     });
 
-    appHookBus.on(APP_UPDATE_STARTED, () => {
-      if (!currentInstallationRequestId) {
-        currentInstallationRequestId = Random.id();
-        api.send('appHook', [
-          { stage: 'preInstall', installationRequestId: currentInstallationRequestId }
-        ]);
-      }
+    const preInstallMessage = () => ({
+      stage: STAGE_PRE_INSTALL,
+      installationRequestId: currentInstallationRequestId
     });
 
-    appHookBus.on(APP_EXTENSION_UPDATED, ({ installationRequestId }) => {
-      if (installationRequestId === currentInstallationRequestId) {
-        api.send('appHook', [
-          { stage: 'postInstall', installationRequestId: currentInstallationRequestId }
-        ]);
-      }
+    const postInstallMessage = ok => ({
+      ok,
+      stage: STAGE_POST_INSTALL,
+      installationRequestId: currentInstallationRequestId
     });
 
-    const cleanup = ({ installationRequestId }) => {
-      if (installationRequestId === currentInstallationRequestId) {
-        currentInstallationRequestId = null;
-      }
+    const postInstall = ok => {
+      return ({ installationRequestId }) => {
+        if (installationRequestId === currentInstallationRequestId) {
+          api.send('appHook', [postInstallMessage(ok)]);
+          currentInstallationRequestId = null;
+        }
+      };
     };
 
-    appHookBus.on(APP_EXTENSION_UPDATE_FAILED, cleanup);
-    appHookBus.on(APP_UPDATE_FAILED, cleanup);
-    appHookBus.on(APP_UPDATE_FINALIZED, cleanup);
+    appHookBus.on(APP_EVENTS_OUT.STARTED, () => {
+      if (!currentInstallationRequestId) {
+        currentInstallationRequestId = Random.id();
+        api.send('appHook', [preInstallMessage()]);
+      }
+    });
+
+    appHookBus.on(APP_EVENTS_OUT.FAILED, postInstall(false));
+    appHookBus.on(APP_EVENTS_OUT.SUCCEEDED, postInstall(true));
 
     api.registerHandler('appHookResult', ({ installationRequestId, stage, result }) => {
       if (installationRequestId !== currentInstallationRequestId) {
         return;
       }
 
-      if (stage === 'preInstall') {
-        if (result === false) {
-          appHookBus.emit(APP_MISCONFIGURED);
-          currentInstallationRequestId = null;
-        } else {
-          appHookBus.emit(APP_CONFIGURED, { installationRequestId, parameters: result });
-        }
+      if (stage !== STAGE_PRE_INSTALL) {
+        return;
       }
 
-      if (stage === 'postInstall') {
-        if (result === false) {
-          appHookBus.emit(APP_UPDATE_PLAN_PREPARATION_FAILED);
-          currentInstallationRequestId = null;
-        } else {
-          appHookBus.emit(APP_UPDATE_PLAN_PREPARED, { installationRequestId, plan: result });
-        }
+      if (result === false) {
+        appHookBus.emit(APP_EVENTS_IN.MISCONFIGURED);
+        currentInstallationRequestId = null;
+      } else {
+        appHookBus.emit(APP_EVENTS_IN.CONFIGURED, {
+          installationRequestId,
+          parameters: result
+        });
       }
     });
   }

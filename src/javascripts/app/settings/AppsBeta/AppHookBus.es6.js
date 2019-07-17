@@ -1,39 +1,55 @@
 import mitt from 'mitt';
 import { isObject } from 'lodash';
 
-export const APP_UPDATE_STARTED = 'app-update-started';
-export const APP_CONFIGURED = 'app-configured';
-export const APP_MISCONFIGURED = 'app-misconfigured';
-export const APP_EXTENSION_UPDATED = 'app-extension-updated';
-export const APP_EXTENSION_UPDATE_FAILED = 'app-extension-update-failed';
-export const APP_UPDATE_PLAN_PREPARED = 'app-update-plan-prepared';
-export const APP_UPDATE_PLAN_PREPARATION_FAILED = 'app-update-plan-preparation-failed';
-export const APP_UPDATE_FINALIZED = 'app-update-finalized';
-export const APP_UPDATE_FAILED = 'app-update-failed';
+/**
+ * A communication bus to be used to realize App lifecycle hooks.
+ *
+ * When a user clicks on "Install" (App not installed) or "Save configuration"
+ * (App installed, updating configuration), the `APP_EVENTS_OUT.STARTED` event
+ * is emitted by the Web App.
+ *
+ * A handler passed to `sdk.app.onConfigure(handler)` is invoked and its result
+ * is used as configuration. The configuration is included in the incoming
+ * `APP_EVENTS_IN.CONFIGURED` event. If no handler was registered, the event is
+ * still emitted but includes empty configuration. If the handler produced `false`,
+ * the `APP_EVENTS_IN.MISCONFIGURED` event with no configuration is emitted.
+ *
+ * Once the App is installed or updated, the Web App emits the
+ * `APP_EVENTS_OUT.SUCCEEDED` event. If the operation failed, the
+ * `APP_EVENTS_OUT.FAILED` event is emitted. Both can be handled with the SDK.
+ */
+
+export const APP_EVENTS_OUT = {
+  STARTED: 'app-events-out-started',
+  FAILED: 'app-events-out-failed',
+  SUCCEEDED: 'app-events-out-succeeded'
+};
+
+export const APP_EVENTS_IN = {
+  CONFIGURED: 'app-events-in-configured',
+  MISCONFIGURED: 'app-events-in-misconfigured'
+};
 
 export function makeAppHookBus() {
   const bus = mitt();
 
-  // TODO: remove
-  bus.on('*', (eventName, data) => {
-    console.log(eventName, data); // eslint-disable-line no-console
-  });
-
   let parameters = null;
 
   return {
-    on: (eventName, handler) => bus.on(eventName, handler),
-    emit: (eventName, data) => bus.emit(eventName, data),
+    on: (eventName, handler) => {
+      bus.on(eventName, handler);
+    },
+    emit: (eventName, data) => {
+      bus.emit(eventName, data);
+    },
     setParameters: value => {
-      if (isObject(value)) {
-        parameters = { ...value };
-      } else {
-        parameters = {};
-      }
+      parameters = isObject(value) ? { ...value } : {};
     },
     unsetParameters: () => {
       parameters = null;
     },
-    getParameters: () => parameters
+    getParameters: () => {
+      return parameters;
+    }
   };
 }
