@@ -31,9 +31,6 @@ ARG CIRCLE_BRANCH
 ARG CIRCLE_SHA1
 RUN bin/docker-entry configure-file-dist --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}"
 
-RUN yarn global add @build-tracker/cli
-RUN bt-cli --help
-
 #--
 
 FROM nginx:1.10-alpine as production
