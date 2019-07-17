@@ -24,9 +24,10 @@ const nameMapper = fileName => {
 const postCommentToPR = jsonPayload => {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify(jsonPayload);
-    const url = process.env.BUNDLESIZE_COMMENT_LAMBDA_URL;
+    const url = new URL(process.env.BUNDLESIZE_COMMENT_LAMBDA_URL);
     const options = {
-      ...new URL(url),
+      ...url,
+      hostname: url.host,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -34,7 +35,8 @@ const postCommentToPR = jsonPayload => {
         Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`
       }
     };
-    console.log(options);
+    delete options.host;
+    console.log(options, payload);
     const req = https.request(options, res => {
       let result = '';
       res.setEncoding('utf8');
@@ -62,6 +64,7 @@ const postCommentToPR = jsonPayload => {
     req.end();
   });
 };
+
 const pathToBuiltAssets =
   process.env.PATH_TO_BUILT_ASSETS || path.resolve(__dirname, '../build/app');
 
