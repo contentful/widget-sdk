@@ -16,7 +16,7 @@ orbs:
           - checkout
           - run:
               name: Install build-tracker CLI
-              command: npm install --no-save @build-tracker/cli
+              command: npm install --no-save --no-shrinkwrap @build-tracker/cli
           - run:
               name: Upload build to user_interface build tracker server
               command: |
