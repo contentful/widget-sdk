@@ -77,17 +77,22 @@ module.exports = {
   artifacts: [`${pathToBuiltAssets}/**/*.{js,css}`],
   getFilenameHash: getFilenameHash,
   nameMapper: nameMapper,
-  onCompare: async message => {
-    console.log(message);
+  onCompare: async data => {
+    const { markdown } = data;
+
     const pr = process.env.PR_NUMBER;
     if (!pr) {
       console.log('Not a PR. Not posting comment to GitHub issue');
     } else {
-      const postCommentResult = await postCommentToPR({
-        issue: pr,
-        message
-      });
-      console.log(postCommentResult);
+      if (!markdown) {
+        console.log('No markdown found.', JSON.stringify(data, null, 2));
+      } else {
+        const postCommentResult = await postCommentToPR({
+          issue: pr,
+          message: markdown
+        });
+        console.log(postCommentResult);
+      }
     }
     return Promise.resolve();
   }
