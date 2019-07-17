@@ -19,6 +19,9 @@ import { href } from 'states/Navigator.es6';
 import RowMenu from './RowMenu.es6';
 import styles from '../styles.es6';
 import DowngradeOwnAdminMembershipConfirmation from './DowngradeOwnAdminMembershipConfirmation.es6';
+import RemoveOwnAdminMembershipConfirmation from './RemoveOwnAdminMembershipConfirmation.es6';
+
+const navigateToDefaultLocation = () => window.location.replace(href({ path: ['^', '^'] }));
 
 const MembershipRow = ({
   membership,
@@ -44,14 +47,22 @@ const MembershipRow = ({
   const roleIds = map(isEmpty(roles) ? [ADMIN_ROLE] : roles, 'sys.id');
   const [selectedRoleIds, setSelectedRoles] = useState(roleIds);
   const [isShowingUpdateConfirmation, showUpdateConfirmation] = useState(false);
+  const [isShowingRemovalConfirmation, showRemovalConfirmation] = useState(false);
   const onUpdate = async (lostAccess = false) => {
     try {
       await onUpdateTeamSpaceMembership(membership, selectedRoleIds);
       if (lostAccess) {
-        window.location.replace(href({ path: ['^', '^'] }));
+        navigateToDefaultLocation();
       }
     } catch (e) {
       setSelectedRoles(roleIds);
+      throw e;
+    }
+  };
+  const onRemove = async (lostAccess = false) => {
+    await onRemoveTeamSpaceMembership(membership, selectedRoleIds);
+    if (lostAccess) {
+      navigateToDefaultLocation();
     }
   };
 
@@ -93,6 +104,11 @@ const MembershipRow = ({
         isShown={isShowingUpdateConfirmation}
         close={() => showUpdateConfirmation(false)}
         onConfirm={() => showUpdateConfirmation(false) || onUpdate(true)}
+      />
+      <RemoveOwnAdminMembershipConfirmation
+        isShown={isShowingRemovalConfirmation}
+        close={() => showRemovalConfirmation(false)}
+        onConfirm={() => showRemovalConfirmation(false) || onRemove(true)}
       />
       <TableCell className={styles.cell} testId="team-cell">
         <div className={styles.cellTeamName} data-test-id="team.name">
@@ -142,7 +158,13 @@ const MembershipRow = ({
                 isOpen={menuIsOpen}
                 setOpen={setMenuOpen}
                 setEditing={setEditing}
-                onRemove={() => onRemoveTeamSpaceMembership(membership)}
+                onRemove={async () => {
+                  if (isLastAdminMembership) {
+                    showRemovalConfirmation(true);
+                    return;
+                  }
+                  await onRemove();
+                }}
               />
             )}
           </TableCell>
