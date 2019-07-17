@@ -51,7 +51,8 @@ orbs:
               name: Post deployment URL to GitHub
               command: |
                 export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
-                curl -i -X POST --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"<<parameters.env>>\"}" \
+                curl -i -X POST \
+                --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"<<parameters.env>>\"}" \
                 -H 'content-type: application/json' \
                 <<parameters.url>>?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY || echo "Comment won't be posted to ${PR_NUMBER:-$CIRCLE_BRANCH}. Continuing anyway."
   estivador:
@@ -164,7 +165,7 @@ orbs:
           - store_artifacts:
               path: test/cypress/screenshots
 
-only_master_filters: &only_master_filters
+run_only_on_master_branch: &run_only_on_master_branch
   filters:
     branches:
       only: master
@@ -473,27 +474,27 @@ workflows:
           browser: 'internet explorer'
           requires:
             - deploy-assets-to-staging
-          <<: *only_master_filters
+          <<: *run_only_on_master_branch
       - saucelabs/run:
           name: run-win10-edge-tests
           browser: 'MicrosoftEdge'
           selenium: '3.14.0'
           requires:
             - deploy-assets-to-staging
-          <<: *only_master_filters
+          <<: *run_only_on_master_branch
       - saucelabs/run:
           name: run-win10-firefox-tests
           browser: 'firefox'
           requires:
             - deploy-assets-to-staging
-          <<: *only_master_filters
+          <<: *run_only_on_master_branch
       - saucelabs/run:
           name: run-osx10-safari-tests
           platform: 'OS X 10.11'
           browser: 'safari'
           requires:
             - deploy-assets-to-staging
-          <<: *only_master_filters
+          <<: *run_only_on_master_branch
 
 notify:
   webhooks:
