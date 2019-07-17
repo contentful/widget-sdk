@@ -5,6 +5,8 @@ import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults.es6';
 
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 
+import validateTargetState, { isUnsignedInteger } from './validateTargetState.es6';
+
 // Like `Promise.all` but rejecting input promises do not cause
 // the result promise to reject. They are simply omitted.
 async function promiseAllSafe(promises) {
@@ -51,56 +53,6 @@ export async function installOrUpdate(cma, checkAppStatus, { parameters, targetS
   const extensionId = updatedExtension.sys.id;
 
   await updateEditorInterfaces(cma, targetEditorInterfacesState, extensionId);
-}
-
-function validateTargetState(targetState) {
-  // Right now only target state of Editor Interfaces can be expressed.
-  const targetEditorInterfacesState = get(targetState, ['EditorInterface'], {});
-
-  if (!isObject(targetEditorInterfacesState)) {
-    throw new Error('Invalid target state declared for EditorInterface entities.');
-  }
-
-  Object.keys(targetEditorInterfacesState).forEach(ctId => {
-    const ei = targetEditorInterfacesState[ctId];
-
-    const validControls = !ei.controls || Array.isArray(ei.controls);
-    if (!validControls) {
-      throw new Error(`Invalid target controls declared for EditorInterface ${ctId}.`);
-    }
-
-    (ei.controls || []).forEach(control => {
-      const validControl = typeof control.fieldId === 'string' && isObject(control.settings || {});
-      if (!validControl) {
-        throw new Error(`Invalid target controls declared for EditorInterface ${ctId}.`);
-      }
-    });
-
-    const validSidebar = !ei.sidebar || isObject(ei.sidebar);
-    if (!validSidebar) {
-      throw new Error(`Invalid target sidebar declared for EditorInterface ${ctId}.`);
-    }
-
-    if (isObject(ei.sidebar)) {
-      const validPosition = !ei.sidebar.position || Number.isInteger(ei.sidebar.position);
-      const validSettings = isObject(ei.sidebar.settings || {});
-      if (!(validPosition && validSettings)) {
-        throw new Error(`Invalid target sidebar declared for EditorInterface ${ctId}.`);
-      }
-    }
-
-    const validEditor = !ei.editor || ei.editor === true || isObject(ei.editor);
-    if (!validEditor) {
-      throw new Error(`Invalid target editor declared for EditorInterface ${ctId}`);
-    }
-
-    if (isObject(ei.editor)) {
-      const validSettings = isObject(ei.editor.settings || {});
-      if (!validSettings) {
-        throw new Error(`Invalid target editor declared for EditorInterface ${ctId}.`);
-      }
-    }
-  });
 }
 
 /**
@@ -151,22 +103,25 @@ function updateEditorInterface(ei, targetState, extensionId) {
     });
   }
 
-  // Target state object for sidebar: `{ position?, settings? }`
-  if (isObject(targetState.sidebar)) {
-    // If there is no sidegar stored use the default one.
+  // Target state object for sidebar: `{ position?, settings? }`.
+  // It can also be `true` (it'll be put at the bottom of the sidebar with no settings).
+  if (targetState.sidebar === true || isObject(targetState.sidebar)) {
+    // If there is no sidebar stored use the default one.
     const sidebar = Array.isArray(result.sidebar) ? result.sidebar : getDefaultSidebar();
     // Remove existing use of the current extension.
     result.sidebar = sidebar.filter(widget => !isCurrentExtension(widget, extensionId));
 
+    const targetSidebar = isObject(targetState.sidebar) ? targetState.sidebar : {};
+
     const widget = {
       widgetNamespace: NAMESPACE_EXTENSION,
       widgetId: extensionId,
-      settings: targetState.sidebar.settings
+      settings: targetSidebar.settings
     };
 
     // If position is defined use it for insertion.
-    if (Number.isInteger(targetState.sidebar.position)) {
-      result.sidebar.splice(targetState.sidebar.position, 0, widget);
+    if (isUnsignedInteger(targetSidebar.position)) {
+      result.sidebar.splice(targetSidebar.position, 0, widget);
     } else {
       // Put it at the bottom if the position is not defined.
       result.sidebar.push(widget);
