@@ -202,9 +202,11 @@ const createTimezonesByOffset = () =>
 
 export const getTimezoneOptions = () => {
   const timezonesByOffset = createTimezonesByOffset();
-  return Object.keys(timezonesByOffset).map(offset => {
-    const i18n = timezonesByOffset[offset].i18nTimezones.join(', ');
-    const timezone = moment.tz(timezonesByOffset[offset].name).format('Z');
-    return { timezone, offset, label: `(GMT${timezone}) ${i18n}` };
-  });
+  return Object.keys(timezonesByOffset)
+    .sort((a, b) => a - b)
+    .map(offset => {
+      const i18n = timezonesByOffset[offset].i18nTimezones.join(', ');
+      const timezone = moment.tz(timezonesByOffset[offset].name).format('Z');
+      return { timezone, offset, label: `(GMT${timezone}) ${i18n}` };
+    });
 };
