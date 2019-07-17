@@ -209,7 +209,7 @@ describe('AppEditorInterfaces', () => {
 
       expect(cma.updateEditorInterface).toBeCalledTimes(1);
 
-      const defaultSidebar = getDefaultSidebar();
+      const defaultSidebar = await getDefaultSidebar();
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
         sidebar: [

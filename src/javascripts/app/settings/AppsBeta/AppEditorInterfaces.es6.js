@@ -14,8 +14,8 @@ async function promiseAllSafe(promises) {
   return results.filter(identity);
 }
 
-export function getDefaultSidebar() {
-  const defaultEntrySidebar = SidebarDefaults.EntryConfiguration;
+export async function getDefaultSidebar() {
+  const defaultEntrySidebar = await SidebarDefaults.getEntryConfiguration();
   return defaultEntrySidebar.map(item => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
@@ -43,12 +43,19 @@ function isCurrentExtension(widget, extensionId) {
 export async function transformEditorInterfacesToTargetState(cma, targetState, extensionId) {
   const editorInterfaceIds = Object.keys(targetState);
   const editorInterfacePromises = editorInterfaceIds.map(id => cma.getEditorInterface(id));
-  const editorInterfaces = await promiseAllSafe(editorInterfacePromises);
+  const [editorInterfaces, defaultSidebar] = await Promise.all([
+    promiseAllSafe(editorInterfacePromises),
+    getDefaultSidebar()
+  ]);
 
   const updatePromises = editorInterfaces
     .map(ei => {
-      const targetStateForCurrent = targetState[ei.sys.contentType.sys.id] || {};
-      return transformSingleEditorInterfaceToTargetState(ei, targetStateForCurrent, extensionId);
+      return transformSingleEditorInterfaceToTargetState(
+        ei,
+        defaultSidebar,
+        targetState[ei.sys.contentType.sys.id] || {},
+        extensionId
+      );
     })
     .filter((ei, i) => !isEqual(ei, editorInterfaces[i]))
     .map(ei => cma.updateEditorInterface(ei));
@@ -56,7 +63,7 @@ export async function transformEditorInterfacesToTargetState(cma, targetState, e
   await promiseAllSafe(updatePromises);
 }
 
-function transformSingleEditorInterfaceToTargetState(ei, targetState, extensionId) {
+function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetState, extensionId) {
   const result = cloneDeep(ei);
 
   // Target state object for controls: `{ fieldId, settings? }`
@@ -76,7 +83,7 @@ function transformSingleEditorInterfaceToTargetState(ei, targetState, extensionI
   // It can also be `true` (it'll be put at the bottom of the sidebar with no settings).
   if (targetState.sidebar === true || isObject(targetState.sidebar)) {
     // If there is no sidebar stored use the default one.
-    const sidebar = Array.isArray(result.sidebar) ? result.sidebar : getDefaultSidebar();
+    const sidebar = Array.isArray(result.sidebar) ? result.sidebar : defaultSidebar;
     // Remove existing use of the current extension.
     result.sidebar = sidebar.filter(widget => !isCurrentExtension(widget, extensionId));
 
