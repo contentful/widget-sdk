@@ -14,6 +14,7 @@ import {
 import Workbench from 'app/common/Workbench.es6';
 import AdminOnly from 'app/common/AdminOnly.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import * as Telemetry from 'i13n/Telemetry.es6';
 
 import AppListItem from './AppListItem.es6';
 
@@ -93,6 +94,7 @@ export default class AppsListPage extends React.Component {
         }))
       });
     } catch (err) {
+      Telemetry.count('apps.list-loading-failed');
       Notification.error('Failed to load apps.');
       this.props.goToContent();
     }

@@ -1,6 +1,8 @@
 import { isObject, identity, pick, isEqual, cloneDeep } from 'lodash';
 
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults.es6';
+import * as Telemetry from 'i13n/Telemetry.es6';
+
 import { isUnsignedInteger } from './validateTargetState.es6';
 
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
@@ -8,7 +10,13 @@ import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 // Like `Promise.all` but rejecting input promises do not cause
 // the result promise to reject. They are simply omitted.
 async function promiseAllSafe(promises) {
-  const guardedPromises = promises.map(p => p.then(identity, () => undefined));
+  const guardedPromises = promises.map(p => {
+    return p.then(identity, () => {
+      Telemetry.count('apps.ignored-editor-interface-failure');
+      return null;
+    });
+  });
+
   const results = await Promise.all(guardedPromises);
 
   return results.filter(identity);

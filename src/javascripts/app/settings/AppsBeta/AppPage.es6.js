@@ -10,6 +10,7 @@ import Workbench from 'app/common/Workbench.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
+import * as Telemetry from 'i13n/Telemetry.es6';
 
 import { installOrUpdate, uninstall } from './AppOperations.es6';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus.es6';
@@ -88,6 +89,7 @@ export default class AppRoute extends Component {
     try {
       await this.initialize();
     } catch (err) {
+      Telemetry.count('apps.app-loading-failed');
       Notification.error('Failed to load the app.');
       this.props.goBackToList();
     }
@@ -108,7 +110,10 @@ export default class AppRoute extends Component {
       // If there are 2 or more extensions for the same definition
       // we cannot reliably tell which one is managed by the App.
       // For the time being we just ask the customer to contact us.
+      // I think this is very unlikely to ever happen (requires manual
+      // API entity modification).
       if (err.extensionCount > 1) {
+        Telemetry.count('apps.non-unique-app-extension');
         Notification.error('The app has crashed. Please contact support.');
         this.props.goBackToList();
       }

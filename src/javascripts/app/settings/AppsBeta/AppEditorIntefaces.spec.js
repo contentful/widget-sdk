@@ -13,6 +13,8 @@ import {
 const CONTENT_TYPES = ['CT1', 'CT2'].map(id => ({ sys: { id } }));
 const EXTENSION_ID = 'extid';
 
+jest.mock('i13n/Telemetry.es6', () => ({ count: () => {} }));
+
 describe('AppEditorInterfaces', () => {
   let cma, transform, remove;
 
