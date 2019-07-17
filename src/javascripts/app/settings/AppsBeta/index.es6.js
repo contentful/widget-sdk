@@ -18,9 +18,13 @@ export default {
       component: AppsListPage,
       mapInjectedToProps: [
         'spaceContext',
-        spaceContext => ({
-          repo: createAppsRepo(spaceContext.orgEndpoint, spaceContext.endpoint)
-        })
+        '$state',
+        (spaceContext, $state) => {
+          return {
+            goToContent: () => $state.go('^.^.entries.list'),
+            repo: createAppsRepo(spaceContext.orgEndpoint, spaceContext.endpoint)
+          };
+        }
       ]
     },
     {

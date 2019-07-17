@@ -7,7 +7,8 @@ import {
   SkeletonContainer,
   SkeletonDisplayText,
   SkeletonText,
-  SkeletonImage
+  SkeletonImage,
+  Notification
 } from '@contentful/forma-36-react-components';
 
 import Workbench from 'app/common/Workbench.es6';
@@ -72,6 +73,7 @@ const AppsListPageLoading = () => {
 
 export default class AppsListPage extends React.Component {
   static propTypes = {
+    goToContent: PropTypes.func.isRequired,
     repo: PropTypes.shape({
       getApps: PropTypes.func.isRequired
     }).isRequired
@@ -80,16 +82,20 @@ export default class AppsListPage extends React.Component {
   state = {};
 
   async componentDidMount() {
-    // TODO: handle failure
-    const apps = await this.props.repo.getApps();
+    try {
+      const apps = await this.props.repo.getApps();
 
-    this.setState({
-      apps: apps.map(app => ({
-        id: app.sys.id,
-        title: app.extensionDefinition.name,
-        installed: !!app.extension
-      }))
-    });
+      this.setState({
+        apps: apps.map(app => ({
+          id: app.sys.id,
+          title: app.extensionDefinition.name,
+          installed: !!app.extension
+        }))
+      });
+    } catch (err) {
+      Notification.error('Failed to load apps.');
+      this.props.goToContent();
+    }
   }
 
   render() {
