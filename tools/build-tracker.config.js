@@ -23,8 +23,10 @@ const nameMapper = fileName => {
 module.exports = {
   applicationUrl: 'https://user-interface-build-tracker.herokuapp.com',
   buildUrlFormat: 'https://github.com/contentful/user_interface/commit/:revision',
-  baseDir: path.join(__dirname, '../build'),
-  artifacts: ['./build/**/*.{js,css}'],
+  // this is on the output of configure-file-dist.js which moves files
+  // into a different dir structure (as documented in that file)
+  baseDir: path.join(__dirname, process.env.PATH_TO_BUILT_ASSETS || '../build/app'),
+  artifacts: ['./*.{js,css}'],
   getFilenameHash: getFilenameHash,
   nameMapper: nameMapper,
   onCompare: data => {

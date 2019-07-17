@@ -1,6 +1,31 @@
 version: 2.1
 orbs:
   cypress: cypress-io/cypress@1.7.0
+  build-tracker:
+    commands:
+      jobs:
+        upload-build:
+          description: 'Upload build artifacts stats to https://user-interface-build-tracker.herokuapp.com'
+          parameters:
+            path:
+              type: string
+          docker:
+            - image: circleci/node:10.15.3
+          steps:
+            - attach_workspace:
+                at: ~/workspace
+            - checkout
+            - run:
+                name: Install build-tracker CLI
+                command: npm install -g @build-tracker/cli
+            - run:
+                name: Upload build to user_interface build tracker server
+                command: |
+                  export PATH_TO_BUILT_ASSETS=<<parameters.path>>
+                  bt-cli version
+                  bt-cli -vv stat-artifacts
+                  bt-cli -vv upload-build
+
   deploy-assets:
     orbs:
       aws-s3: circleci/aws-s3@1.0.4
@@ -34,6 +59,7 @@ orbs:
               from: <<parameters.path>>
               to: s3://<<parameters.bucket>>
               arguments: '--acl public-read --recursive'
+
   post-comment:
     commands:
       to-pr:
@@ -55,6 +81,7 @@ orbs:
                 --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"<<parameters.env>>\"}" \
                 -H 'content-type: application/json' \
                 <<parameters.url>>?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY || echo "Comment won't be posted to ${PR_NUMBER:-$CIRCLE_BRANCH}. Continuing anyway."
+
   estivador:
     commands:
       install:
@@ -437,6 +464,11 @@ workflows:
           wait-on: 'http-get://localhost:3001'
           command: npx cypress run --spec "test/cypress/integration/ui/**/*"
           store_artifacts: true
+      - build-tracker/upload-build:
+          name: upload-prod-build-to-build-tracker
+          path: '~/workspace/output/files/production/app'
+          requires:
+            - build-and-push-image
       - deploy-assets/to-s3:
           name: deploy-assets-to-preview
           access_key_id: '${AWS_S3_PREVIEW_ACCESS_KEY_ID}'
