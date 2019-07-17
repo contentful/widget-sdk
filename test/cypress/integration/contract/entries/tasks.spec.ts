@@ -17,7 +17,6 @@ import * as state from '../../../util/interactionState';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import { FeatureFlag } from '../../../util/featureFlag';
 
-const empty = require('../../../fixtures/responses/empty.json');
 const users = require('../../../fixtures/responses/users.json');
 const severalTasks = require('../../../fixtures/responses/tasks-several.json');
 

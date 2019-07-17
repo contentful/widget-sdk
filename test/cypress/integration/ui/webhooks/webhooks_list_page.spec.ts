@@ -1,7 +1,7 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
-import { noWebhooksResponse } from '../../../interactions/webhooks';
+import { queryFirst100WebhooksInDefaultSpace } from '../../../interactions/webhooks';
 
 const baseUrl = Cypress.config().baseUrl;
 
@@ -21,7 +21,7 @@ describe('Webhooks List Page', () => {
 
   context('no webhooks in the space configured', () => {
     beforeEach(() => {
-      noWebhooksResponse();
+      queryFirst100WebhooksInDefaultSpace.willFindNone();
 
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks`);
       cy.wait([`@${state.Token.VALID}`]);

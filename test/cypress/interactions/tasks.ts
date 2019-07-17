@@ -3,8 +3,7 @@ import {
   defaultSpaceId,
   defaultEntryId,
   defaultTaskId,
-  defaultHeader,
-  putEntryTask as putEntryTaskRequest
+  defaultHeader
 } from '../util/requests';
 import { RequestOptions } from '@pact-foundation/pact-web';
 const empty = require('../fixtures/responses/empty.json');
