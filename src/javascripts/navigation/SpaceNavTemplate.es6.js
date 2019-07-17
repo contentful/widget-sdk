@@ -25,7 +25,7 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
       title: 'Extensions'
     },
     appsBeta: {
-      if: 'nav.canNavigateTo("appsBeta")',
+      if: 'nav.appsBetaEnabled && nav.canNavigateTo("appsBeta")',
       sref: makeRef('appsBeta.list'),
       rootSref: makeRef('appsBeta'),
       dataViewType: 'apps-beta',
