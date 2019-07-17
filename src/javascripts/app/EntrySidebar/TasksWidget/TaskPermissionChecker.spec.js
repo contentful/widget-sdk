@@ -94,9 +94,20 @@ describe('TaskPermissionChecker', () => {
               task.sys.createdBy = { sys: { id: currentUser.sys.id } };
             });
 
-            it('returns true', () => {
+            it('returns false', () => {
               const { canUpdateStatus } = createTaskPermissionChecker(currentUser, isSpaceAdmin);
-              expect(canUpdateStatus(task)).toBe(true);
+              expect(canUpdateStatus(task)).toBe(false);
+            });
+
+            describe('when the current user is the task assignee', () => {
+              beforeEach(() => {
+                task.assignment.assignedTo = { sys: { id: currentUser.sys.id } };
+              });
+
+              it('returns true', () => {
+                const { canUpdateStatus } = createTaskPermissionChecker(currentUser, isSpaceAdmin);
+                expect(canUpdateStatus(task)).toBe(true);
+              });
             });
           });
 

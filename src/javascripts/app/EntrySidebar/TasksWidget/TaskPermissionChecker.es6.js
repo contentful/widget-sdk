@@ -25,7 +25,7 @@ export default function create(currentUser, isSpaceAdmin) {
   }
 
   function canUpdateStatus(task) {
-    return isSpaceAdmin(currentUser) || isTaskCreator(task) || isTaskAssignee(task);
+    return isSpaceAdmin(currentUser) || isTaskAssignee(task);
   }
 
   function isTaskCreator(task) {
