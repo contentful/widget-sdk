@@ -109,10 +109,7 @@ export default function createAppExtensionBridge(dependencies) {
         appHookBus.emit(APP_EVENTS_IN.MISCONFIGURED);
         currentInstallationRequestId = null;
       } else {
-        appHookBus.emit(APP_EVENTS_IN.CONFIGURED, {
-          installationRequestId,
-          parameters: result
-        });
+        appHookBus.emit(APP_EVENTS_IN.CONFIGURED, { installationRequestId, config: result });
       }
     });
   }

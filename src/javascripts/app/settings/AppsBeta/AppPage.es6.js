@@ -137,11 +137,11 @@ export default class AppRoute extends Component {
     });
   };
 
-  onAppConfigured = async ({ installationRequestId, parameters }) => {
+  onAppConfigured = async ({ installationRequestId, config }) => {
     const { cma, appHookBus } = this.props;
 
     try {
-      await installOrUpdate(cma, this.checkAppStatus, { parameters });
+      await installOrUpdate(cma, this.checkAppStatus, config);
 
       // Verify if installation was completed.
       const { extension } = await this.checkAppStatus();
