@@ -25,36 +25,35 @@ const postCommentToPR = jsonPayload => {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify(jsonPayload);
     const url = process.env.BUNDLESIZE_COMMENT_LAMBDA_URL;
-    const req = https.request(
-      {
-        ...new URL(url),
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(payload),
-          Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`
-        }
-      },
-      res => {
-        let result = '';
-        res.setEncoding('utf8');
-
-        console.log(`POST ${url}`);
-        console.log(`\t Status code: ${res.statusCode}`);
-        console.log(`\t Headers: ${res.headers}`);
-
-        res.on('data', chunk => (result += chunk));
-
-        res.on('end', () => {
-          if (res.statusCode >= 400) {
-            resolve(JSON.parse(result));
-          }
-          return resolve({
-            result
-          });
-        });
+    const options = {
+      ...new URL(url),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload),
+        Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`
       }
-    );
+    };
+    console.log(options);
+    const req = https.request(options, res => {
+      let result = '';
+      res.setEncoding('utf8');
+
+      console.log(`POST ${url}`);
+      console.log(`\t Status code: ${res.statusCode}`);
+      console.log(`\t Headers: ${res.headers}`);
+
+      res.on('data', chunk => (result += chunk));
+
+      res.on('end', () => {
+        if (res.statusCode >= 400) {
+          resolve(JSON.parse(result));
+        }
+        return resolve({
+          result
+        });
+      });
+    });
 
     req.on('error', reject);
     req.on('abort', reject);
@@ -63,26 +62,30 @@ const postCommentToPR = jsonPayload => {
     req.end();
   });
 };
+const pathToBuiltAssets =
+  process.env.PATH_TO_BUILT_ASSETS || path.resolve(__dirname, '../build/app');
 
 module.exports = {
   applicationUrl: 'https://user-interface-build-tracker.herokuapp.com',
   buildUrlFormat: 'https://github.com/contentful/user_interface/commit/:revision',
   // this is on the output of configure-file-dist.js which moves files
   // into a different dir structure (as documented in that file)
-  baseDir: path.join(__dirname, process.env.PATH_TO_BUILT_ASSETS || '../build/app'),
-  artifacts: ['./*.{js,css}'],
+  baseDir: pathToBuiltAssets,
+  artifacts: [`${pathToBuiltAssets}/**/*.{js,css}`],
   getFilenameHash: getFilenameHash,
   nameMapper: nameMapper,
-  onCompare: message => {
+  onCompare: async message => {
     console.log(message);
-    console.log(process.env);
     const pr = process.env.PR_NUMBER;
     if (!pr) {
-      return Promise.resolve('Not a PR. Not posting comment to GitHub issue');
+      console.log('Not a PR. Not posting comment to GitHub issue');
+    } else {
+      const postCommentResult = await postCommentToPR({
+        issue: pr,
+        message
+      });
+      console.log(postCommentResult);
     }
-    return postCommentToPR({
-      issue: pr,
-      message
-    });
+    return Promise.resolve();
   }
 };
