@@ -16,14 +16,14 @@ orbs:
           - checkout
           - run:
               name: Install build-tracker CLI
-              command: npm install -g @build-tracker/cli
+              command: npm install --no-save @build-tracker/cli
           - run:
               name: Upload build to user_interface build tracker server
               command: |
                 export PATH_TO_BUILT_ASSETS=<<parameters.path>>
-                bt-cli version
-                bt-cli -vv stat-artifacts
-                bt-cli -vv upload-build
+                npx bt-cli version
+                npx bt-cli -vv -c tools/build-tracker.config.js stat-artifacts
+                npx bt-cli -vv -c tools/build-tracker.config.js upload-build
 
   deploy-assets:
     orbs:
