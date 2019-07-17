@@ -10,8 +10,8 @@ import Workbench from 'app/common/Workbench.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
-import * as Random from 'utils/Random.es6';
 
+import { installOrUpdate, uninstall } from './AppOperations.es6';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus.es6';
 
 const BUSY_STATE_INSTALLATION = 'installation';
@@ -93,12 +93,17 @@ export default class AppRoute extends Component {
     }
   }
 
-  isInstalled = async definition => {
-    definition = definition || this.state.extensionDefinition;
+  checkAppStatus = async extensionDefinition => {
+    extensionDefinition = extensionDefinition || this.state.extensionDefinition;
+
+    const { repo, appId } = this.props;
+    const result = { appId, extensionDefinition };
 
     try {
-      const extension = await this.props.repo.getExtensionForExtensionDefinition(definition);
-      return [true, extension];
+      return {
+        ...result,
+        extension: await repo.getExtensionForExtensionDefinition(extensionDefinition)
+      };
     } catch (err) {
       // If there are 2 or more extensions for the same definition
       // we cannot reliably tell which one is managed by the App.
@@ -108,7 +113,7 @@ export default class AppRoute extends Component {
         this.props.goBackToList();
       }
 
-      return [false];
+      return result;
     }
   };
 
@@ -116,57 +121,68 @@ export default class AppRoute extends Component {
     const { appHookBus, appId, repo } = this.props;
 
     const extensionDefinition = await repo.getExtensionDefinitionForApp(appId);
-    const [isInstalled, extension] = await this.isInstalled(extensionDefinition);
+    const { extension } = await this.checkAppStatus(extensionDefinition);
 
-    if (isInstalled) {
+    if (extension) {
       appHookBus.setParameters(extension.parameters);
     }
 
     appHookBus.on(APP_EVENTS_IN.CONFIGURED, this.onAppConfigured);
     appHookBus.on(APP_EVENTS_IN.MISCONFIGURED, this.onAppMisconfigured);
 
-    this.setState({ ready: true, extensionDefinition, isInstalled });
+    this.setState({
+      ready: true,
+      isInstalled: !!extension,
+      extensionDefinition
+    });
   };
 
   onAppConfigured = async ({ installationRequestId, parameters }) => {
-    const { appId, cma, appHookBus } = this.props;
+    const { cma, appHookBus } = this.props;
 
     try {
-      const [isInstalled, existingExtension] = await this.isInstalled();
+      await installOrUpdate(cma, this.checkAppStatus, { parameters });
 
-      if (isInstalled) {
-        await cma.updateExtension({
-          ...existingExtension,
-          parameters
-        });
-      } else {
-        await cma.createExtension({
-          sys: { id: `${appId}-app-${Random.id()}` },
-          extensionDefinition: {
-            sys: {
-              type: 'Link',
-              linkType: 'ExtensionDefinition',
-              id: this.state.extensionDefinition.sys.id
-            }
-          },
-          parameters
-        });
+      // Verify if installation was completed.
+      const { extension } = await this.checkAppStatus();
+      if (!extension) {
+        // For whatever reason Extension entity wasn't created.
+        throw new Error('Extension does not exist.');
       }
 
-      Notification.success('The app was installed successfully.');
-      appHookBus.setParameters(parameters);
+      if (this.state.busyWith === BUSY_STATE_UPDATE) {
+        Notification.success('App configuration was updated successfully.');
+      } else {
+        Notification.success('The app was installed successfully.');
+      }
+
       this.setState({ isInstalled: true, busyWith: false });
+
+      appHookBus.setParameters(extension.parameters);
       appHookBus.emit(APP_EVENTS_OUT.SUCCEEDED, { installationRequestId });
     } catch (err) {
-      Notification.error('Failed to install the app.');
-      this.setState({ isInstalled: false, busyWith: false });
+      if (this.state.busyWith === BUSY_STATE_UPDATE) {
+        Notification.error('Failed to update app configuration.');
+      } else {
+        Notification.error('Failed to install the app.');
+      }
+
+      const { extension } = await this.checkAppStatus();
+      this.setState({ isInstalled: !!extension, busyWith: false });
+
+      if (extension) {
+        appHookBus.setParameters(extension.parameters);
+      } else {
+        appHookBus.unsetParameters();
+      }
+
       appHookBus.emit(APP_EVENTS_OUT.FAILED, { installationRequestId });
     }
   };
 
   onAppMisconfigured = async () => {
-    const [isInstalled] = await this.isInstalled();
-    this.setState({ isInstalled, busyWith: false });
+    const { extension } = await this.checkAppStatus();
+    this.setState({ isInstalled: !!extension, busyWith: false });
   };
 
   update = busyWith => {
@@ -176,18 +192,17 @@ export default class AppRoute extends Component {
 
   uninstall = async () => {
     this.setState({ busyWith: BUSY_STATE_UNINSTALLATION });
+
+    // Unset parameters immediately so they are not available
+    // via the SDK method anymore.
     this.props.appHookBus.unsetParameters();
 
     try {
-      const [_, extension] = await this.isInstalled();
+      await uninstall(this.props.cma, this.checkAppStatus);
 
+      // Verify if uninstallation was completed.
+      const { extension } = await this.checkAppStatus();
       if (extension) {
-        await this.props.cma.deleteExtension(extension.sys.id);
-      }
-
-      const [isInstalled] = await this.isInstalled();
-
-      if (isInstalled) {
         Notification.error('Failed to fully uninstall the app.');
       } else {
         Notification.success('The app was uninstalled successfully.');
