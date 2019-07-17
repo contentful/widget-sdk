@@ -49,6 +49,14 @@ describe('Jobs page', () => {
 
   context('several jobs in the space', () => {
     beforeEach(() => {
+      cy.resetAllFakeServers();
+      cy.startFakeServers({
+        consumer: 'user_interface',
+        providers: ['entries', 'users'],
+        cors: true,
+        pactfileWriteMode: 'merge',
+        spec: 2
+      });
       defaultRequestsMock({
         publicContentTypesResponse: singleContentTypeResponse
       });

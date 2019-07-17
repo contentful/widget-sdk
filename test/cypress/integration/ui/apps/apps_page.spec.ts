@@ -13,7 +13,7 @@ describe('Apps Page', () => {
 
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: ['apps'],
+      providers: ['apps', 'product_catalog_features'],
       cors: true,
       pactfileWriteMode: 'merge',
       spec: 2

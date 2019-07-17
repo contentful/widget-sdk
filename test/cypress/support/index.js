@@ -34,17 +34,7 @@ before(() => cy.startGateway(5000));
 before(() => {
   cy.startFakeServers({
     consumer: 'user_interface',
-    providers: [
-      'enforcements',
-      'entries',
-      'environments',
-      'content_types',
-      'locales',
-      'microbackend',
-      'token',
-      'users',
-      'product_catalog_features'
-    ],
+    providers: ['enforcements', 'environments', 'content_types', 'locales', 'token'],
     cors: true,
     pactfileWriteMode: 'merge',
     spec: 2
@@ -57,7 +47,6 @@ beforeEach(() => {
 });
 afterEach(() => {
   cy.verifyAllFakeServerInteractions();
-
   cy.writeAllFakeServerPacts();
 });
 after(() => cy.writePactsAndStopAllFakeServers());

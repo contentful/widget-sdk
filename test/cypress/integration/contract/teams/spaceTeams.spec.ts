@@ -120,7 +120,7 @@ describe('Teams in space page', () => {
   before(() => {
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: ['teams', 'roles'],
+      providers: ['teams', 'roles', 'product_catalog_features'],
       cors: true,
       pactfileWriteMode: 'merge',
       spec: 2

@@ -30,6 +30,13 @@ const archivedQuery = {
 describe('Entries list page', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
+    cy.startFakeServers({
+      consumer: 'user_interface',
+      providers: ['entries', 'users'],
+      cors: true,
+      pactfileWriteMode: 'merge',
+      spec: 2
+    });
   });
 
   context('no content types in the space', () => {
@@ -156,6 +163,7 @@ describe('Entries list page', () => {
 
   context('with several entries in the space and usage limits reached', () => {
     beforeEach(() => {
+      cy.resetAllFakeServers();
       cy.startFakeServers({
         consumer: 'user_interface',
         providers: ['resources', 'product_catalog_features'],

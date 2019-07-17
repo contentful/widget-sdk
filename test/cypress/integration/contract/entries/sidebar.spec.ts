@@ -71,6 +71,14 @@ describe('Entries page', () => {
 });
 
 function basicServerSetUp() {
+  cy.resetAllFakeServers();
+  cy.startFakeServers({
+    consumer: 'user_interface',
+    providers: ['entries', 'users'],
+    cors: true,
+    pactfileWriteMode: 'merge',
+    spec: 2
+  });
   defaultRequestsMock({ publicContentTypesResponse: singleContentTypeResponse });
   singleUser();
   singleEntryResponse();

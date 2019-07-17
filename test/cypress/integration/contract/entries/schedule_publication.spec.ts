@@ -22,16 +22,6 @@ import {
 import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('Schedule Publication', () => {
-  before(() =>
-    cy.startFakeServer({
-      consumer: 'user_interface',
-      provider: 'jobs',
-      cors: true,
-      pactfileWriteMode: 'merge',
-      spec: 2
-    })
-  );
-
   beforeEach(() => {
     cy.enableFeatureFlags([FeatureFlag.SCHEDULED_PUBLICATION]);
     basicServerSetUp();
@@ -152,6 +142,13 @@ describe('Schedule Publication', () => {
 
 function basicServerSetUp() {
   cy.resetAllFakeServers();
+  cy.startFakeServers({
+    consumer: 'user_interface',
+    providers: ['jobs', 'entries', 'users'],
+    cors: true,
+    pactfileWriteMode: 'merge',
+    spec: 2
+  });
 
   defaultRequestsMock({
     publicContentTypesResponse: singleContentTypeResponse

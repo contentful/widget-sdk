@@ -10,16 +10,6 @@ const query = {
 };
 
 describe('Content types list page', () => {
-  before(() =>
-    cy.startFakeServer({
-      consumer: 'user_interface',
-      provider: 'extensions',
-      cors: true,
-      pactfileWriteMode: 'merge',
-      spec: 2
-    })
-  );
-
   beforeEach(() => {
     cy.resetAllFakeServers();
   });
@@ -55,6 +45,14 @@ describe('Content types list page', () => {
     });
 
     it('redirects correctly by "Add content type" button', () => {
+      cy.startFakeServer({
+        consumer: 'user_interface',
+        provider: 'extensions',
+        cors: true,
+        pactfileWriteMode: 'merge',
+        spec: 2
+      });
+
       cy.addInteraction({
         provider: 'extensions',
         state: 'noExtensions',

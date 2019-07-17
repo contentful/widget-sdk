@@ -24,9 +24,9 @@ const severalTasks = require('../../../fixtures/responses/tasks-several.json');
 
 describe('Tasks entry editor sidebar', () => {
   before(() =>
-    cy.startFakeServer({
+    cy.startFakeServers({
       consumer: 'user_interface',
-      provider: 'tasks',
+      providers: ['tasks', 'entries', 'users', 'microbackend'],
       cors: true,
       pactfileWriteMode: 'merge',
       spec: 2

@@ -7,9 +7,9 @@ import { noAssetLinksResponse } from '../../../interactions/entries';
 
 describe('Asset Page', () => {
   before(() =>
-    cy.startFakeServer({
+    cy.startFakeServers({
       consumer: 'user_interface',
-      provider: 'assets',
+      providers: ['assets', 'entries', 'users'],
       cors: true,
       pactfileWriteMode: 'merge',
       spec: 2

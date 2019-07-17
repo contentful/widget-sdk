@@ -11,9 +11,9 @@ import {
 
 describe('Assets List Page', () => {
   before(() =>
-    cy.startFakeServer({
+    cy.startFakeServers({
       consumer: 'user_interface',
-      provider: 'assets',
+      providers: ['assets', 'users'],
       cors: true,
       pactfileWriteMode: 'merge',
       spec: 2
