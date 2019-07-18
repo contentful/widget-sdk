@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, ModalConfirm } from '@contentful/forma-36-react-components';
+import Highlight from './Highlight.es6';
 
-const DowngradeOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm }) => {
+const DowngradeOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm, teamName }) => {
   const [userConfirmationInput, setUserConfirmationInput] = useState('');
 
   useEffect(() => {
@@ -15,20 +16,25 @@ const DowngradeOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm }) 
       onClose={close}
       onConfirm={onConfirm}
       isShown={isShown}
-      title="Removing your own admin privileges"
+      title="Change role of team for this space"
       intent="negative"
-      confirmLabel="Confirm update"
-      cancelLabel="Keep admin privileges"
+      confirmLabel="Change role"
+      cancelLabel="Don't change role"
       isConfirmDisabled={userConfirmationInput !== 'I UNDERSTAND'}>
       <>
         <p>
-          You are about to lose your admin privileges for this space. This can not be undone and
-          there might be no space admin left who can fully control this space. In that case, you
-          would need the help of an org admin to assign a new space admin.
+          You are about to remove the admin role of the team {teamName}. This will result in you{' '}
+          {<Highlight>losing administrator role</Highlight>} for this space.
         </p>
         <p>
-          If you definitely want to change this role, please type &quot;I UNDERSTAND&quot; in the
-          field below:
+          If you change this role, there might not be a user who can fully control this space. It
+          will only be possibly to manage the space from your organization settings by an
+          organization administrator.
+        </p>
+        <p>
+          To confirm you want to change this role, please type
+          {<Highlight>&quot;I UNDERSTAND&quot;</Highlight>}
+          in the field below:
         </p>
         <TextInput
           value={userConfirmationInput}
@@ -42,7 +48,8 @@ const DowngradeOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm }) 
 DowngradeOwnAdminMembershipConfirmation.propTypes = {
   close: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  isShown: PropTypes.bool.isRequired
+  isShown: PropTypes.bool.isRequired,
+  teamName: PropTypes.string.isRequired
 };
 
 export default DowngradeOwnAdminMembershipConfirmation;

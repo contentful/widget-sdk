@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, ModalConfirm } from '@contentful/forma-36-react-components';
+import Highlight from './Highlight.es6';
 
-const RemoveOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm }) => {
+const RemoveOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm, teamName }) => {
   const [userConfirmationInput, setUserConfirmationInput] = useState('');
 
   useEffect(() => {
@@ -15,20 +16,25 @@ const RemoveOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm }) => 
       onClose={close}
       onConfirm={onConfirm}
       isShown={isShown}
-      title="Removing your own admin membership"
+      title="Remove team from this space"
       intent="negative"
-      confirmLabel="Confirm removal"
-      cancelLabel="Keep admin privileges"
+      confirmLabel="Remove"
+      cancelLabel="Don't remove"
       isConfirmDisabled={userConfirmationInput !== 'I UNDERSTAND'}>
       <>
         <p>
-          You are about to remove your space admin membership for this space. This can not be undone
-          and there might be no space admin left who can fully control this space. In that case, you
-          would need the help of an org admin to assign a new space admin.
+          You are about to remove the team {teamName} from this space. This will result in you{' '}
+          {<Highlight>losing administrator role</Highlight>} for this space.
         </p>
         <p>
-          If you definitely want to remove this team, please type &quot;I UNDERSTAND&quot; in the
-          field below:
+          If you remove this team, there might not be a user who can fully control this space. It
+          will only be possibly to manage the space from your organization settings by an
+          organization administrator.
+        </p>
+        <p>
+          To confirm you want to remove this team, please type
+          {<Highlight>&quot;I UNDERSTAND&quot;</Highlight>}
+          in the field below:
         </p>
         <TextInput
           value={userConfirmationInput}
@@ -42,7 +48,8 @@ const RemoveOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm }) => 
 RemoveOwnAdminMembershipConfirmation.propTypes = {
   close: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  isShown: PropTypes.bool.isRequired
+  isShown: PropTypes.bool.isRequired,
+  teamName: PropTypes.string.isRequired
 };
 
 export default RemoveOwnAdminMembershipConfirmation;
