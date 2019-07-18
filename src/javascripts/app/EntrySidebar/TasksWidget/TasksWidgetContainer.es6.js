@@ -67,7 +67,10 @@ export class TasksWidgetContainer extends Component {
       val => this.setState(val),
       () => this.state
     );
-    const taskPermissionChecker = createTaskPermissionChecker(currentUser, isSpaceAdmin);
+    const taskPermissionChecker = createTaskPermissionChecker(
+      currentUser,
+      isSpaceAdmin(currentUser)
+    );
     this.setState({ tasksInteractor, taskPermissionChecker });
 
     this.fetchTasks(tasksStore);

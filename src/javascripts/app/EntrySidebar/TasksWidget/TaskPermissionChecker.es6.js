@@ -1,4 +1,4 @@
-export const MissingCurrentUserError = new TypeError('Expect `currentUser` to be a User object');
+export const MissingCurrentUserError = new TypeError('Expected `currentUser` to be a User object');
 
 /**
  * Creates a service that exposes some functions for Task permission
@@ -7,6 +7,7 @@ export const MissingCurrentUserError = new TypeError('Expect `currentUser` to be
  * TODO: Consider using Worf instead and move into `AccessChecker`.
  *
  * @param {API.User} currentUser
+ * @param {boolean} isSpaceUser
  * @returns {TaskPermissionChecker}
  */
 export default function create(currentUser, isSpaceAdmin) {
@@ -21,11 +22,11 @@ export default function create(currentUser, isSpaceAdmin) {
   };
 
   function canEdit(task) {
-    return isSpaceAdmin(currentUser) || isTaskCreator(task);
+    return isSpaceAdmin || isTaskCreator(task);
   }
 
   function canUpdateStatus(task) {
-    return isSpaceAdmin(currentUser) || isTaskAssignee(task);
+    return isSpaceAdmin || isTaskAssignee(task);
   }
 
   function isTaskCreator(task) {

@@ -8,6 +8,7 @@ import Task from './Task.es6';
 
 // TODO: Move to a mocks folder and use in related tests.
 const MOCKS = {};
+
 MOCKS.UserViewData = {
   existingLoadedSpaceUser: {
     isLoading: false,
@@ -17,6 +18,7 @@ MOCKS.UserViewData = {
     isRemovedFromSpace: false
   }
 };
+
 MOCKS.TaskViewData = {
   valid: {
     key: 'task-id-1',
@@ -29,7 +31,9 @@ MOCKS.TaskViewData = {
     isDraft: false,
     isInEditMode: false,
     validationMessage: null,
-    assignableUsersInfo: null
+    assignableUsersInfo: null,
+    canEdit: false,
+    canUpdateStatus: false
   },
   draft: {
     key: '<<DRAFT-TASK>>',
@@ -47,6 +51,16 @@ MOCKS.TaskViewData = {
       availableUsers: [MOCKS.UserViewData.existingLoadedSpaceUser]
     }
   }
+};
+
+MOCKS.TaskViewData.validCanEdit = {
+  ...MOCKS.TaskViewData.valid,
+  canEdit: true
+};
+
+MOCKS.TaskViewData.validCanUpdateStatus = {
+  ...MOCKS.TaskViewData.valid,
+  canUpdateStatus: true
 };
 
 const TEST_IDS = {
@@ -139,53 +153,37 @@ describe('<Task />', () => {
     });
   });
 
+  describe('when the task cannot be edited', () => {
+    it('does not render the task actions', () => {
+      const { elems } = render();
+      expect(elems.taskActions).not.toBeInTheDocument();
+    });
+  });
+
   describe('when the task can be edited', () => {
     it('renders the task actions', () => {
       const { elems } = render({
-        viewData: {
-          ...MOCKS.TaskViewData.valid,
-          canEdit: true
-        }
+        viewData: MOCKS.TaskViewData.validCanEdit
       });
       expect(elems.taskActions).toBeInTheDocument();
     });
   });
 
-  describe('when the task cannot be edited', () => {
-    it('does not render the task actions', () => {
-      const { elems } = render({
-        viewData: {
-          ...MOCKS.TaskViewData.valid,
-          canEdit: false
-        }
-      });
-      expect(elems.taskActions).not.toBeInTheDocument();
+  describe('when the status cannot be updated', () => {
+    it('disables the task checkbox and renders the disabled task tooltip', () => {
+      const { elems } = render();
+      expect(elems.statusCheckbox).toBeDisabled();
+      expect(elems.disabledTaskTooltip).toBeInTheDocument();
     });
   });
 
   describe('when the status can be updated', () => {
     it('renders the task checkbox as usual', () => {
       const { elems } = render({
-        viewData: {
-          ...MOCKS.TaskViewData.valid,
-          canUpdateStatus: true
-        }
+        viewData: MOCKS.TaskViewData.validCanUpdateStatus
       });
       expect(elems.statusCheckbox).not.toBeDisabled();
       expect(elems.disabledTaskTooltip).not.toBeInTheDocument();
-    });
-  });
-
-  describe('when the status cannot be updated', () => {
-    it('disables the task checkbox and renders the disabled task tooltip', () => {
-      const { elems } = render({
-        viewData: {
-          ...MOCKS.TaskViewData.valid,
-          canUpdateStatus: false
-        }
-      });
-      expect(elems.statusCheckbox).toBeDisabled();
-      expect(elems.disabledTaskTooltip).toBeInTheDocument();
     });
   });
 });

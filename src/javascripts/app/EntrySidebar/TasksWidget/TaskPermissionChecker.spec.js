@@ -4,6 +4,25 @@ import createTaskPermissionChecker, {
 } from './TaskPermissionChecker.es6';
 
 describe('TaskPermissionChecker', () => {
+  let currentUser;
+  let task;
+  let isSpaceAdmin;
+
+  beforeEach(() => {
+    currentUser = {
+      sys: {
+        type: 'Link',
+        linkType: 'User',
+        id: 'user-id'
+      }
+    };
+
+    task = {
+      sys: {},
+      assignment: {}
+    };
+  });
+
   describe('create()', () => {
     describe('when the current user is not defined', () => {
       it('throws an error', () => {
@@ -18,30 +37,9 @@ describe('TaskPermissionChecker', () => {
     });
 
     describe('when the current user is defined', () => {
-      let currentUser;
-      let isSpaceAdmin;
-      let task;
-
-      beforeEach(() => {
-        currentUser = {
-          sys: {
-            type: 'Link',
-            linkType: 'User',
-            id: 'user-id'
-          }
-        };
-
-        task = {
-          sys: {},
-          assignment: {}
-        };
-
-        isSpaceAdmin = jest.fn();
-      });
-
       describe('when the current user is a space admin', () => {
         beforeEach(() => {
-          isSpaceAdmin.mockReturnValue(true);
+          isSpaceAdmin = true;
         });
 
         describe('canEdit()', () => {
@@ -61,7 +59,7 @@ describe('TaskPermissionChecker', () => {
 
       describe('when the current user is not a space admin', () => {
         beforeEach(() => {
-          isSpaceAdmin.mockReturnValue(false);
+          isSpaceAdmin = false;
         });
 
         describe('canEdit()', () => {
@@ -144,33 +142,27 @@ describe('TaskPermissionChecker', () => {
   });
 
   describe('createProhibitive()', () => {
-    const currentUser = {
-      sys: {
-        type: 'Link',
-        linkType: 'User',
-        id: 'user-id'
-      }
-    };
+    beforeEach(() => {
+      task = {
+        sys: {
+          createdBy: { sys: { id: currentUser.sys.id } }
+        },
+        assignment: {
+          assignedTo: { sys: { id: currentUser.sys.id } }
+        }
+      };
 
-    const task = {
-      sys: {
-        createdBy: { sys: { id: currentUser.sys.id } }
-      },
-      assignment: {
-        assignedTo: { sys: { id: currentUser.sys.id } }
-      }
-    };
+      isSpaceAdmin = true;
+    });
 
-    const isSpaceAdmin = () => true;
-
-    describe('canEdit', () => {
+    describe('canEdit()', () => {
       it('returns false', () => {
         const { canEdit } = createProhibitiveTaskPermissionChecker(currentUser, isSpaceAdmin);
         expect(canEdit(task)).toBe(false);
       });
     });
 
-    describe('canUpdateStatus', () => {
+    describe('canUpdateStatus()', () => {
       it('returns false', () => {
         const { canUpdateStatus } = createProhibitiveTaskPermissionChecker(
           currentUser,
