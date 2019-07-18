@@ -19,6 +19,7 @@ describe('Displayed Fields Controller', () => {
 
     const $controller = this.$inject('$controller');
     $controller('DisplayedFieldsController', { $scope: this.scope });
+    sinon.spy(this.scope, 'refreshDisplayFields');
   });
 
   describe('refreshes displayed fields', () => {
@@ -38,6 +39,7 @@ describe('Displayed Fields Controller', () => {
         }
       });
       this.scope.refreshDisplayFields();
+      this.scope.refreshDisplayFields.resetHistory();
     });
 
     it('gets display fields', function() {
@@ -69,5 +71,11 @@ describe('Displayed Fields Controller', () => {
     this.scope.context.view.displayedFieldIds = ['123'];
     this.scope.removeDisplayField({ id: '123' });
     expect(this.scope.context.view.displayedFieldIds).toEqual([]);
+  });
+
+  it('removes content type from displayed fields', function() {
+    this.scope.context.view.contentTypeHidden = false;
+    this.scope.toggleContentType();
+    expect(this.scope.context.view.contentTypeHidden).toEqual(true);
   });
 });

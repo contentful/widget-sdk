@@ -88,7 +88,7 @@ const styles = {
     paddingBottom: 0
   }),
   /*
-    TODO: consolidate with #grid tokens 
+    TODO: consolidate with #grid tokens
   */
   mediumCell: css({
     width: '15%'
@@ -555,12 +555,12 @@ EntryList.propTypes = {
   displayFieldForFilteredContentType: PropTypes.func.isRequired,
   fieldIsSortable: PropTypes.func.isRequired,
   isOrderField: PropTypes.func.isRequired,
-  orderColumnBy: PropTypes.func,
+  orderColumnBy: PropTypes.func.isRequired,
   hiddenFields: PropTypes.array,
-  removeDisplayField: PropTypes.func,
-  addDisplayField: PropTypes.func,
-  toggleContentType: PropTypes.func,
-  updateFieldOrder: PropTypes.func,
+  removeDisplayField: PropTypes.func.isRequired,
+  addDisplayField: PropTypes.func.isRequired,
+  toggleContentType: PropTypes.func.isRequired,
+  updateFieldOrder: PropTypes.func.isRequired,
   selection: PropTypes.object,
   entries: PropTypes.array,
   actions: PropTypes.object,
