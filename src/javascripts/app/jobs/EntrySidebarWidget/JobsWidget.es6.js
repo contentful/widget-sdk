@@ -27,7 +27,7 @@ import * as JobsService from '../DataManagement/JobsService.es6';
 import { create as createDto } from './JobsFactory.es6';
 import FailedScheduleNote from './FailedScheduleNote/index.es6';
 import {
-  createDialogSubmit as trackCreatedJob,
+  createJob as trackCreatedJob,
   cancelJob as trackCancelledJob
 } from './../Analytics/JobsAnalytics.es6';
 
