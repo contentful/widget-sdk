@@ -14,29 +14,33 @@ describe('JobsAnalytics', () => {
     jest.clearAllMocks();
   });
 
-  it('createDialogOpen', () => {
+  it('Dialog open', () => {
     JobsAnalytics.createDialogOpen();
 
-    expectTrackCalledOnceWith(JobsAnalytics.EventName.CreateDialogOpen, {
-      action: JobsAnalytics.JobAction.EntryPublish
+    expectTrackCalledOnceWith(JobsAnalytics.EventName.Dialog, {
+      purpose: JobsAnalytics.JobAction.EntryPublish,
+      name: 'jobs_create',
+      action: 'open'
     });
   });
 
-  it('createDialogClose', () => {
+  it('Dialog close', () => {
     JobsAnalytics.createDialogClose();
 
-    expectTrackCalledOnceWith(JobsAnalytics.EventName.CreateDialogClose, {
-      action: JobsAnalytics.JobAction.EntryPublish
+    expectTrackCalledOnceWith(JobsAnalytics.EventName.Dialog, {
+      purpose: JobsAnalytics.JobAction.EntryPublish,
+      name: 'jobs_create',
+      action: 'close'
     });
   });
 
-  it('createDialogSubmit', () => {
+  it('CreateJob', () => {
     const jobId = 'job-id';
     const scheduledFor = '2019-07-12T23:37:00.000+05:30';
 
-    JobsAnalytics.createDialogSubmit({ jobId, scheduledFor });
+    JobsAnalytics.createJob({ jobId, scheduledFor });
 
-    expectTrackCalledOnceWith(JobsAnalytics.EventName.CreateDialogSubmit, {
+    expectTrackCalledOnceWith(JobsAnalytics.EventName.CreateJob, {
       action: JobsAnalytics.JobAction.EntryPublish,
       job_id: jobId,
       scheduled_for: scheduledFor,

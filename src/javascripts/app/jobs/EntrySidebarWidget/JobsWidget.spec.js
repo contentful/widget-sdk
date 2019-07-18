@@ -222,7 +222,7 @@ describe('<JobWidget />', () => {
     });
 
     it('creates the job', async () => {
-      const createDialogSubmitSpy = jest.spyOn(JobsAnalytics, 'createDialogSubmit');
+      const createJobSpy = jest.spyOn(JobsAnalytics, 'createJob');
 
       createJobService.mockResolvedValueOnce(job);
       getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
@@ -236,8 +236,8 @@ describe('<JobWidget />', () => {
       fireEvent.click(renderResult.getByTestId('schedule-publication'));
       await wait();
 
-      expect(createDialogSubmitSpy).toHaveBeenCalledTimes(1);
-      expect(createDialogSubmitSpy).toHaveBeenCalledWith({
+      expect(createJobSpy).toHaveBeenCalledTimes(1);
+      expect(createJobSpy).toHaveBeenCalledWith({
         jobId: job.sys.id,
         scheduledAt: job.scheduledAt
       });
