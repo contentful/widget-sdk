@@ -249,7 +249,6 @@ jobs:
       - run: npm ci
       - run: tools/bin/validate-config.js config/*.json
       - run: npm run hint
-      - run: npm install -g license-checker
 
   oss-license-check:
     docker:
