@@ -74,7 +74,7 @@ const pathToBuiltAssets =
 
 module.exports = {
   applicationUrl: 'https://user-interface-build-tracker.herokuapp.com',
-  // buildUrlFormat: 'https://github.com/contentful/user_interface/commit/:revision',
+  buildUrlFormat: 'https://github.com/contentful/user_interface/commit/:revision',
   // this is on the output of configure-file-dist.js which moves files
   // into a different dir structure (as documented in that file)
   baseDir: pathToBuiltAssets,
