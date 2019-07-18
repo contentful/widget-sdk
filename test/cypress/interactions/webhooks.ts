@@ -230,8 +230,6 @@ const getDefaultWebhookRequest: RequestOptions = {
 }
 
 export const getDefaultWebhook = {
-  // TODO: Bad test design, same request + same state and we expect different states
-  // Either we have a different state for each one, or we ask for different webhook ids.
   willReturnTheDefaultWebhook() {
     return cy.addInteraction({
       provider: 'webhooks',
@@ -247,7 +245,7 @@ export const getDefaultWebhook = {
   willReturnACustomWebhookThatTriggersContentTypeEvents() {
     return cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.SINGLE,
+      state: state.Webhooks.DEFAULT_WEBHOOK_TRIGGERS_CONTENT_TYPE_EVENTS,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
@@ -256,10 +254,10 @@ export const getDefaultWebhook = {
       }
     }).as(state.Webhooks.SINGLE);
   },
-  willReturnACustomWebhookWithFilters() {
+  willReturnACustomWebhookWithFilter() {
     return cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.SINGLE,
+      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_FILTER,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
@@ -268,10 +266,10 @@ export const getDefaultWebhook = {
       }
     }).as(state.Webhooks.SINGLE);
   },
-  willReturnACustomWebhookWithCustomHeaders() {
+  willReturnACustomWebhookWithCustomHeader() {
     return cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.SINGLE,
+      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_CUSTOM_HEADER,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
@@ -280,10 +278,10 @@ export const getDefaultWebhook = {
       }
     }).as(state.Webhooks.SINGLE);
   },
-  willReturnACustomWebhookWithSecretHeaders() {
+  willReturnACustomWebhookWithSecretHeader() {
     return cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.SINGLE,
+      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_SECRET_HEADER,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
@@ -295,7 +293,7 @@ export const getDefaultWebhook = {
   willReturnACustomWebhookWithHTTPHeader() {
     return cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.SINGLE,
+      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_HTTP_HEADER,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
@@ -307,7 +305,7 @@ export const getDefaultWebhook = {
   willReturnACustomWebhookWithContentTypeHeader() {
     return cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.SINGLE,
+      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_CONTENT_TYPE_HEADER,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
@@ -319,7 +317,7 @@ export const getDefaultWebhook = {
   willReturnACustomWebhookWithContentLengthHeader() {
     return cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.SINGLE,
+      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_CONTENT_LENGTH_HEADER,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
@@ -331,7 +329,7 @@ export const getDefaultWebhook = {
   willReturnACustomWebhookWithPayload() {
     return cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.SINGLE,
+      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_PAYLOAD,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
@@ -340,30 +338,29 @@ export const getDefaultWebhook = {
       }
     }).as(state.Webhooks.SINGLE);
   },
-  // These two are fine, they user different states
   willReturnACustomWebhookWithSingleEvent() {
     return cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.SINGLE_EVENT,
+      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_SINGLE_EVENT,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
         body: webhookSingleEventResponseBody
       }
-    }).as(state.Webhooks.SINGLE_EVENT);
+    }).as(state.Webhooks.DEFAULT_WEBHOOK_HAS_SINGLE_EVENT);
   },
   willReturnACustomWebhookWithAllSetting() {
     return cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.ALL_SETTINGS,
+      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_ALL_SETTINGS,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
         body: webhookCustomAllSettingsResponseBody
       }
-    }).as(state.Webhooks.ALL_SETTINGS);
+    }).as(state.Webhooks.DEFAULT_WEBHOOK_HAS_ALL_SETTINGS);
   }
 }
 
@@ -380,19 +377,19 @@ export const queryFirst500DefaultWebhookCalls = {
   willReturnNone() {
     return cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.NO_CALLS,
+      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS,
       uponReceiving: `a request to get the first 500 calls for webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: queryFirst500DefaultWebhookCallsRequest,
       willRespondWith: {
         status: 200,
         body: empty
       }
-    }).as(state.Webhooks.NO_CALLS);
+    }).as(state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS);
   },
   willReturnOneSuccesfulCall() {
     return cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.SINGLE_EVENT,
+      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_SINGLE_EVENT,
       uponReceiving: `a request to get the first 500 calls for webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: queryFirst500DefaultWebhookCallsRequest,
       willRespondWith: {
@@ -407,7 +404,7 @@ export const getAllCallsForDefaultWebhook = {
   willReturnNone() {
     return cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.NO_CALLS,
+      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS,
       uponReceiving: `a request to get all calls state of webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
@@ -418,7 +415,7 @@ export const getAllCallsForDefaultWebhook = {
         status: 200,
         body: noWebhookCallsResponseBody
       }
-    }).as(state.Webhooks.NO_CALLS);
+    }).as(state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS);
   }
 }
 
