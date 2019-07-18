@@ -33,6 +33,6 @@ then
 	printf "Licenses of used packages in repository are compliant."
 	exit 0
 else
-	printf "Non-compliant packages in repository found, please refer to https://contentful.atlassian.net/wiki/spaces/SRT/pages/1305051346/Secure+Software+Development+Policy:\n%s" "$NONCOMPLIANTLICENSES"
+	printf "Non-compliant packages in repository found, please refer to https://contentful.atlassian.net/wiki/spaces/SRT/pages/1305051346/Secure+Software+Development+Policy:\n%s\n" "$NONCOMPLIANTLICENSES"
 	exit 1
 fi
