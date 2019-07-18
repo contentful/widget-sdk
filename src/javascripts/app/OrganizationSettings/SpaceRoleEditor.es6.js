@@ -134,7 +134,7 @@ class SpaceRoleEditor extends React.Component {
             {rolesSummary}
           </Button>
         }>
-        <DropdownList>
+        <DropdownList testId="space-role-editor.options">
           <DropdownListItem
             testId="space-role-editor.admin-option"
             onClick={this.toggleRole(ADMIN_ROLE_ID)}>

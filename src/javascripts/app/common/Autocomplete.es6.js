@@ -5,7 +5,10 @@ import {
   TextInput,
   Dropdown,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
+  SkeletonBodyText,
+  SkeletonContainer,
+  ValidationMessage
 } from '@contentful/forma-36-react-components';
 
 const TOGGLED_LIST = 'TOGGLED_LIST';
@@ -72,7 +75,9 @@ export default function Autocomplete({
   onQueryChange,
   placeholder = 'Search',
   width,
-  className
+  className,
+  validationMessage,
+  isLoading = false
 }) {
   const [{ isOpen, query, highlightedItemIndex }, dispatch] = useReducer(reducer, initialState);
 
@@ -94,7 +99,7 @@ export default function Autocomplete({
     const isEnter = isHotKey('enter', event);
     const isTab = isHotKey('tab', event) || isHotKey('shift+tab', event);
     const hasSelection = highlightedItemIndex !== null;
-    const lastIndex = items.length - 1;
+    const lastIndex = items.length ? items.length - 1 : 0;
     const direction = getNavigationDirection(isDown, isUp);
 
     if (direction) {
@@ -119,38 +124,46 @@ export default function Autocomplete({
   );
 
   return (
-    <Dropdown
-      isOpen={isOpen && !!items.length}
-      onClose={() => dispatch({ type: TOGGLED_LIST })}
-      disabled={disabled}
-      className={className}
-      toggleElement={
-        <TextInput
-          value={query}
-          onChange={handleQueryChanged}
-          onFocus={() => toggleList(true)}
-          onKeyDown={handleKeyDown}
-          placeholder={placeholder}
-          width={width}
-          testId="autocomplete.input"
-        />
-      }>
-      <DropdownList testId="autocomplete.dropdown-list">
-        {options.map(({ child, option }, index) => {
-          const isActive = index === highlightedItemIndex;
-          return (
-            <DropdownListItem
-              key={index}
-              isActive={isActive}
-              data-selected={isActive} // this should be coming from the component library
-              onClick={() => selectItem(option)}
-              testId="autocomplete.dropdown-list-item">
-              {child}
-            </DropdownListItem>
-          );
-        })}
-      </DropdownList>
-    </Dropdown>
+    <>
+      <Dropdown
+        isOpen={isOpen && (items.length > 0 || isLoading)}
+        onClose={() => dispatch({ type: TOGGLED_LIST })}
+        className={className}
+        toggleElement={
+          <TextInput
+            className={className}
+            value={query}
+            onChange={handleQueryChanged}
+            onFocus={() => toggleList(true)}
+            onKeyDown={handleKeyDown}
+            disabled={disabled}
+            placeholder={placeholder}
+            width={width}
+            testId="autocomplete.input"
+          />
+        }>
+        {validationMessage && <ValidationMessage>{validationMessage}</ValidationMessage>}
+        <DropdownList testId="autocomplete.dropdown-list">
+          {isLoading ? (
+            <OptionSkeleton />
+          ) : (
+            options.map(({ child, option }, index) => {
+              const isActive = index === highlightedItemIndex;
+              return (
+                <DropdownListItem
+                  key={index}
+                  isActive={isActive}
+                  data-selected={isActive} // this should be coming from the component library
+                  onClick={() => selectItem(option)}
+                  testId="autocomplete.dropdown-list-item">
+                  {child}
+                </DropdownListItem>
+              );
+            })
+          )}
+        </DropdownList>
+      </Dropdown>
+    </>
   );
 }
 
@@ -161,9 +174,33 @@ Autocomplete.propTypes = {
   onQueryChange: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
   width: PropTypes.string,
-  disabled: PropTypes.bool,
-  className: PropTypes.string
+  className: PropTypes.string,
+  validationMessage: PropTypes.string,
+  isLoading: PropTypes.bool,
+  disabled: PropTypes.bool
 };
+
+function OptionSkeleton() {
+  return (
+    <>
+      <DropdownListItem>
+        <SkeletonContainer svgWidth="200" svgHeight={20}>
+          <SkeletonBodyText numberOfLines={1} />
+        </SkeletonContainer>
+      </DropdownListItem>
+      <DropdownListItem>
+        <SkeletonContainer svgWidth="100" svgHeight={20}>
+          <SkeletonBodyText numberOfLines={1} />
+        </SkeletonContainer>
+      </DropdownListItem>
+      <DropdownListItem>
+        <SkeletonContainer svgWidth="150" svgHeight={20}>
+          <SkeletonBodyText numberOfLines={1} />
+        </SkeletonContainer>
+      </DropdownListItem>
+    </>
+  );
+}
 
 function getNavigationDirection(isDown, isUp) {
   if (isDown) return directions.DOWN;
