@@ -1,6 +1,6 @@
 import { registerFactory, registerDirective } from 'NgRegistry.es6';
 import spaceNavTemplateDef from 'navigation/SpaceNavTemplate.es6';
-import { ENVIRONMENTS_FLAG, TEAMS_IN_SPACES } from 'featureFlags.es6';
+import { ENVIRONMENTS_FLAG, TEAMS_IN_SPACES, APPS_BETA } from 'featureFlags.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
 // We don't want to display the following sections within the context of
@@ -51,6 +51,9 @@ export default function register() {
 
             LD.onFeatureFlag($scope, TEAMS_IN_SPACES, teamsInSpacesFF => {
               controller.teamsInSpacesFF = teamsInSpacesFF;
+            });
+            LD.onFeatureFlag($scope, APPS_BETA, appsBetaEnabled => {
+              controller.appsBetaEnabled = appsBetaEnabled;
             });
             getOrgFeature(orgId, 'teams').then(value => {
               controller.hasOrgTeamFeature = value;

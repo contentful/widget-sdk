@@ -133,13 +133,13 @@ export default function register() {
           self.localeRepo = createLocaleRepo(self.endpoint);
           self.organization = deepFreezeClone(self.getData('organization'));
 
-          const organizationEndpoint = createOrganizationEndpoint(
+          self.orgEndpoint = createOrganizationEndpoint(
             Config.apiUrl(),
             self.organization.sys.id,
             Auth
           );
 
-          self.extensionLoader = createExtensionLoader(organizationEndpoint, self.endpoint);
+          self.extensionLoader = createExtensionLoader(self.orgEndpoint, self.endpoint);
 
           // TODO: publicly accessible docConnection is
           // used only in a process of creating space out

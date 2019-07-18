@@ -13,6 +13,7 @@ export const TASKS = 'feature-05-2019-content-workflows-tasks';
 export const QUICK_NAVIGATION = 'feature-ht-04-2019-quick-navigation';
 export const ENTRY_COMMENTS = 'feature-04-2019-entry-comments';
 export const TEAMS_IN_SPACES = 'feature-bv-04-2019-teams-iteration-2';
+export const APPS_BETA = 'feature-ext-07-2019-apps-beta';
 
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';
