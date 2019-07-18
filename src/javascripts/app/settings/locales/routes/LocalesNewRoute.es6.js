@@ -21,6 +21,7 @@ class NewLocaleForm extends Component {
     spaceLocales: PropTypes.arrayOf(PropTypes.object).isRequired,
     saveLocale: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
+    goToList: PropTypes.func.isRequired,
     registerSaveAction: PropTypes.func.isRequired
   };
 
@@ -78,6 +79,7 @@ class NewLocaleForm extends Component {
         isSaving={this.state.isSaving}
         onSave={this.onSaveLocale}
         setDirty={this.props.setDirty}
+        goToList={this.props.goToList}
         registerSaveAction={this.props.registerSaveAction}
       />
     );
@@ -113,6 +115,7 @@ export default class LocalesNewRoute extends React.Component {
                 spaceLocales={spaceLocales}
                 saveLocale={this.save}
                 setDirty={this.props.setDirty}
+                goToList={this.props.goToList}
                 registerSaveAction={this.props.registerSaveAction}
               />
             );
@@ -125,5 +128,6 @@ export default class LocalesNewRoute extends React.Component {
 
 LocalesNewRoute.propTypes = {
   setDirty: PropTypes.func.isRequired,
-  registerSaveAction: PropTypes.func.isRequired
+  registerSaveAction: PropTypes.func.isRequired,
+  goToList: PropTypes.func.isRequired
 };

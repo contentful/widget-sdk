@@ -2,8 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
-import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
-import Workbench from 'app/common/Workbench.es6';
+import {
+  SkeletonContainer,
+  SkeletonBodyText,
+  Heading
+} from '@contentful/forma-36-react-components';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import Icon from 'ui/Components/Icon.es6';
 import ContentTypeList from './ContentTypeList/index.es6';
 import NoSearchResultsAdvice from 'components/tabs/NoSearchResultsAdvice.es6';
 import NoContentTypeAdvice from 'components/tabs/NoContentTypeAdvice/index.es6';
@@ -55,7 +60,7 @@ export class ContentTypesPage extends React.Component {
     }
 
     return (
-      <Workbench.Sidebar className="ct-filter-sidebar">
+      <Workbench.Sidebar position="left">
         {!isLoading && (
           <ContentTypeListFilter
             status={status}
@@ -79,32 +84,37 @@ export class ContentTypesPage extends React.Component {
       <React.Fragment>
         <DocumentTitle title="Content Model" />
         <Workbench>
-          <Workbench.Header>
-            <Workbench.Icon icon="page-ct" scale="0.75" />
-            <Workbench.Title>
-              Content Model{' '}
-              <KnowledgeBase target="content_model" cssClass="workbench-header__kb-link" />
-            </Workbench.Title>
-            <Workbench.Header.Search>
-              {contentTypes.length > 0 && (
-                <ContentTypeListSearch
-                  initialValue={searchTerm}
-                  onChange={value => {
-                    this.setState({
-                      searchTerm: value
-                    });
-                    this.props.onSearchChange(value);
-                  }}
-                />
-              )}
-            </Workbench.Header.Search>
-            <Workbench.Header.Actions>
-              {contentTypes.length > 0 && <CreateContentTypeCta testId="create-content-type" />}
-            </Workbench.Header.Actions>
-          </Workbench.Header>
+          <Workbench.Header
+            icon={<Icon name="page-ct" scale="0.75" />}
+            title={
+              <>
+                <Heading>Content Model</Heading>
+                <div className="workbench-header__kb-link">
+                  <KnowledgeBase target="content_model" />
+                </div>
+              </>
+            }
+            actions={
+              <>
+                {contentTypes.length > 0 && (
+                  <ContentTypeListSearch
+                    initialValue={searchTerm}
+                    onChange={value => {
+                      this.setState({
+                        searchTerm: value
+                      });
+                      this.props.onSearchChange(value);
+                    }}
+                  />
+                )}
+                {contentTypes.length > 0 && <CreateContentTypeCta testId="create-content-type" />}
+              </>
+            }
+          />
+
           {this.renderSidebar()}
 
-          <Workbench.Content centered className="ct-list-main">
+          <Workbench.Content type="full">
             {isLoading ? (
               <SkeletonContainer
                 data-test-id="content-loader"

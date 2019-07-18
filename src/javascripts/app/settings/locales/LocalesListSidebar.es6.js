@@ -102,10 +102,10 @@ export default class LocalesListSidebar extends React.Component {
     const { insideMasterEnv, allowedToEnforceLimits } = this.props;
 
     return (
-      <div className="entity-sidebar">
+      <>
         {allowedToEnforceLimits || insideMasterEnv ? this.renderUsage() : this.renderAddButton()}
         <DocumentationsSection />
-      </div>
+      </>
     );
   }
 }

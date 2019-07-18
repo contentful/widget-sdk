@@ -14,9 +14,9 @@ import {
   SkeletonDisplayText,
   Heading
 } from '@contentful/forma-36-react-components';
-import { getModule } from 'NgRegistry.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import Icon from 'ui/Components/Icon.es6';
 import validate from './ContentPreviewFormValidation.es6';
-import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { slugify } from 'services/slug.es6';
 import {
@@ -26,30 +26,36 @@ import {
   LegacyTokens
 } from './ContentPreviewSidebar.es6';
 import * as Analytics from 'analytics/Analytics.es6';
+import { getModule } from 'NgRegistry.es6';
 
 const $state = getModule('$state');
 const spaceContext = getModule('spaceContext');
 
 export const ContentPreviewFormPageSkeleton = props => (
   <Workbench>
-    <Workbench.Header>
-      <Workbench.Header.Back to="^.list" />
-      <Workbench.Icon icon="page-settings" />
-      <Workbench.Title>
-        {props.title || (
-          <SkeletonContainer svgHeight={21} clipId="title">
-            <SkeletonDisplayText lineHeight={21} />
-          </SkeletonContainer>
-        )}
-      </Workbench.Title>
-      <Workbench.Header.Actions>
-        {props.actions || (
+    <Workbench.Header
+      onBack={() => {
+        $state.go('^.list');
+      }}
+      icon={<Icon name="page-settings" scale="0.8" />}
+      title={
+        <>
+          {props.title && <Heading>{props.title}</Heading>}
+          {!props.title && (
+            <SkeletonContainer svgHeight={21} clipId="title">
+              <SkeletonDisplayText lineHeight={21} />
+            </SkeletonContainer>
+          )}
+        </>
+      }
+      actions={
+        props.actions || (
           <SkeletonContainer svgHeight={21} svgWidth={100} clipId="actions">
             <SkeletonDisplayText lineHeight={21} />
           </SkeletonContainer>
-        )}
-      </Workbench.Header.Actions>
-    </Workbench.Header>
+        )
+      }
+    />
     <Workbench.Content>
       {props.children || (
         <Form className="content-preview-editor">
@@ -62,7 +68,7 @@ export const ContentPreviewFormPageSkeleton = props => (
         </Form>
       )}
     </Workbench.Content>
-    <Workbench.Sidebar className="content-preview-sidebar">
+    <Workbench.Sidebar position="right">
       <WhatIsContentPreview />
       <TokensForContentPreview />
       <LinkedEntries />
@@ -295,6 +301,7 @@ export default class ContentPreviewFormPage extends Component {
             {!this.props.isNew && (
               <Button
                 testId="delete-content-preview"
+                className="f36-margin-right--m"
                 buttonType="muted"
                 onClick={this.remove}
                 loading={this.state.busy}>

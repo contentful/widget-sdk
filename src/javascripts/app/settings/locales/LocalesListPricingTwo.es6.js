@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Workbench from 'app/common/Workbench.es6';
+import Icon from 'ui/Components/Icon.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import { Heading } from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 import LocalesListSidebar from './LocalesListSidebar.es6';
 import LocalesTable from './LocalesTable.es6';
@@ -18,26 +20,26 @@ class LocalesListPricingTwo extends React.Component {
 
   renderTitle() {
     return (
-      <React.Fragment>
-        Locales
+      <>
+        <Heading>Locales</Heading>
         <span className="workbench-header__kb-link">
           <KnowledgeBase target="locale" />
         </span>
-      </React.Fragment>
+      </>
     );
   }
 
   render() {
     return (
-      <Workbench className="locale-list entity-list">
-        <Workbench.Header>
-          <Workbench.Icon icon="page-settings" />
-          <Workbench.Title>{this.renderTitle()}</Workbench.Title>
-        </Workbench.Header>
-        <Workbench.Content>
+      <Workbench testId="locale-list-workbench">
+        <Workbench.Header
+          icon={<Icon name="page-settings" scale="0.8" />}
+          title={this.renderTitle()}
+        />
+        <Workbench.Content type="full">
           <LocalesTable locales={this.props.locales} />
         </Workbench.Content>
-        <Workbench.Sidebar>
+        <Workbench.Sidebar position="right">
           <LocalesListSidebar
             insideMasterEnv={this.props.insideMasterEnv}
             localeResource={this.props.localeResource}

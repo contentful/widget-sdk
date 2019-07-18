@@ -31,6 +31,10 @@ window.libs = [
 
   ['@contentful/asn1js', require('@contentful/asn1js')],
   ['@contentful/forma-36-react-components', require('@contentful/forma-36-react-components')],
+  [
+    '@contentful/forma-36-react-components/dist/alpha',
+    require('@contentful/forma-36-react-components/dist/alpha')
+  ],
   ['@contentful/forma-36-tokens', require('@contentful/forma-36-tokens')],
   ['@contentful/contentful-slatejs-adapter', require('@contentful/contentful-slatejs-adapter')],
   [

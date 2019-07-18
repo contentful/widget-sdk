@@ -11,11 +11,17 @@ import {
   TextLink,
   Typography,
   Paragraph,
-  Heading
+  Heading,
+  Table,
+  TableHead,
+  TableBody,
+  TableCell,
+  TableRow
 } from '@contentful/forma-36-react-components';
+import Icon from 'ui/Components/Icon.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink.es6';
-import Workbench from 'app/common/Workbench.es6';
 import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar.es6';
 import EmptyStateContainer, {
   defaultSVGStyle
@@ -131,22 +137,21 @@ const EmptyState = () => (
 
 export const ExtensionListShell = props => (
   <Workbench>
-    <Workbench.Header>
-      <Workbench.Icon icon="page-settings" />
-      <Workbench.Title>{props.title || 'Extensions'}</Workbench.Title>
-      <Workbench.Header.Actions>{props.actions}</Workbench.Header.Actions>
-    </Workbench.Header>
-    <Workbench.Content>
+    <Workbench.Header
+      title={props.title || 'Extensions'}
+      icon={<Icon name="page-settings" scale="0.8" />}
+      actions={props.actions}
+    />
+    <Workbench.Content type="full">
       {props.children || (
         <React.Fragment>
-          <ExtensionsTable />
           <SkeletonContainer svgWidth={600} ariaLabel="Loading extensions list..." clipId="content">
             <SkeletonBodyText numberOfLines={5} offsetLeft={20} marginBottom={15} offsetTop={20} />
           </SkeletonContainer>
         </React.Fragment>
       )}
     </Workbench.Content>
-    <Workbench.Sidebar>
+    <Workbench.Sidebar position="right">
       <ExtensionsSidebar />
     </Workbench.Sidebar>
   </Workbench>
@@ -158,19 +163,19 @@ ExtensionListShell.propTypes = {
 };
 
 const ExtensionsTable = props => (
-  <table className="simple-table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Hosting</th>
-        <th>Field type(s)</th>
-        <th>Instance parameters</th>
-        <th>Installation parameters</th>
-        <th className="x--small-cell">Actions</th>
-      </tr>
-    </thead>
-    <tbody>{props.children}</tbody>
-  </table>
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell>Name</TableCell>
+        <TableCell>Hosting</TableCell>
+        <TableCell>Field type(s)</TableCell>
+        <TableCell>Instance parameters</TableCell>
+        <TableCell>Installation parameters</TableCell>
+        <TableCell className="x--small-cell">Actions</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>{props.children}</TableBody>
+  </Table>
 );
 
 export class ExtensionsList extends React.Component {
@@ -203,8 +208,8 @@ export class ExtensionsList extends React.Component {
     }
 
     const body = extensions.map(extension => (
-      <tr key={extension.id}>
-        <td>
+      <TableRow key={extension.id}>
+        <TableCell>
           {extension.isBasedOnDefinition ? (
             extension.name
           ) : (
@@ -212,16 +217,17 @@ export class ExtensionsList extends React.Component {
               {extension.name}
             </StateLink>
           )}
-        </td>
-        <td>{extension.hosting}</td>
-        <td>{extension.fieldTypes}</td>
-        <td>{`${extension.parameterCounts.instanceDefinitions || 0} definition(s)`}</td>
-        <td>
+        </TableCell>
+        <TableCell>{extension.hosting}</TableCell>
+        <TableCell>{extension.fieldTypes}</TableCell>
+        <TableCell>{`${extension.parameterCounts.instanceDefinitions ||
+          0} definition(s)`}</TableCell>
+        <TableCell>
           {`${extension.parameterCounts.installationDefinitions || 0} definition(s)`}
           <br />
           {`${extension.parameterCounts.installationValues || 0} value(s)`}
-        </td>
-        <td className="x--small-cell">
+        </TableCell>
+        <TableCell className="x--small-cell">
           {extension.isBasedOnDefinition ? (
             <div>Use the API to manage definition based extensions</div>
           ) : (
@@ -243,8 +249,8 @@ export class ExtensionsList extends React.Component {
               </div>
             </div>
           )}
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     ));
 
     return (

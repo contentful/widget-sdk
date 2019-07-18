@@ -36,7 +36,8 @@ export default {
         '$scope',
         '$stateParams',
         'spaceContext',
-        ($scope, $stateParams, spaceContext) => {
+        '$state',
+        ($scope, $stateParams, spaceContext, $state) => {
           return {
             extensionId: $stateParams.extensionId,
             registerSaveAction: save => {
@@ -47,7 +48,10 @@ export default {
               $scope.context.dirty = value;
               $scope.$applyAsync();
             },
-            cma: spaceContext.cma
+            cma: spaceContext.cma,
+            goToList: () => {
+              $state.go('^.list');
+            }
           };
         }
       ]

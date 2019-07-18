@@ -28,6 +28,7 @@ class EditLocaleForm extends Component {
     saveLocale: PropTypes.func.isRequired,
     removeLocale: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
+    goToList: PropTypes.func.isRequired,
     registerSaveAction: PropTypes.func.isRequired
   };
 
@@ -173,6 +174,7 @@ class EditLocaleForm extends Component {
         onDelete={isDefaultLocale ? null : this.onDeleteLocale}
         isDeleting={this.state.isDeleting}
         setDirty={this.props.setDirty}
+        goToList={this.props.goToList}
         registerSaveAction={this.props.registerSaveAction}
       />
     );
@@ -224,6 +226,7 @@ export default class LocalesEditRoute extends React.Component {
                 }
                 removeLocale={this.remove}
                 setDirty={this.props.setDirty}
+                goToList={this.props.goToList}
                 registerSaveAction={this.props.registerSaveAction}
               />
             </React.Fragment>
@@ -237,5 +240,6 @@ export default class LocalesEditRoute extends React.Component {
 LocalesEditRoute.propTypes = {
   localeId: PropTypes.string.isRequired,
   setDirty: PropTypes.func.isRequired,
+  goToList: PropTypes.func.isRequired,
   registerSaveAction: PropTypes.func.isRequired
 };

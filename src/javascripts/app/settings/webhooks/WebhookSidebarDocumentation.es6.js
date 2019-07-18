@@ -1,9 +1,10 @@
 import React from 'react';
+import { css, cx } from 'emotion';
 
 export default function WehhookSidebarDocumentation() {
   return (
     <React.Fragment>
-      <h2 className="entity-sidebar__heading">Documentation</h2>
+      <h2 className={cx('entity-sidebar__heading', css({ marginTop: 0 }))}>Documentation</h2>
       <div className="entity-sidebar__text-profile">
         <ul>
           <li>

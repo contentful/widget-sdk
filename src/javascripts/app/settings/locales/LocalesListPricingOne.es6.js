@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Icon from 'ui/Components/Icon.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import _ from 'lodash';
-import { Button, Notification } from '@contentful/forma-36-react-components';
-import Workbench from 'app/common/Workbench.es6';
+import { Button, Notification, Heading } from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 import LocalesTable from './LocalesTable.es6';
 import StateLink from 'app/common/StateLink.es6';
@@ -167,24 +168,26 @@ class LocalesListPricingOne extends React.Component {
 
   render() {
     return (
-      <Workbench className="locale-list entity-list">
-        <Workbench.Header>
-          <Workbench.Icon icon="page-settings" />
-          <Workbench.Title>
-            Locales
-            <span className="workbench-header__kb-link">
-              <KnowledgeBase target="locale" />
-            </span>
-          </Workbench.Title>
-          <Workbench.Header.Actions>
+      <Workbench testId="locale-list-workbench">
+        <Workbench.Header
+          icon={<Icon name="page-settings" scale="0.8" />}
+          title={
+            <>
+              <Heading>Locales</Heading>
+              <span className="workbench-header__kb-link">
+                <KnowledgeBase target="locale" />
+              </span>
+            </>
+          }
+          actions={
             <AddLocaleButton
               getComputeLocalesUsageForOrganization={
                 this.props.getComputeLocalesUsageForOrganization
               }
             />
-          </Workbench.Header.Actions>
-        </Workbench.Header>
-        <Workbench.Content>
+          }
+        />
+        <Workbench.Content type="full">
           <LocalesTable locales={this.props.locales} />
           <LocalesAdvice {...this.props} />
         </Workbench.Content>

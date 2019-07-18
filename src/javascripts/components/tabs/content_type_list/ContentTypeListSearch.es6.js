@@ -29,6 +29,8 @@ export default class ContentTypeListSearch extends React.Component {
         placeholder="Search for a content type"
         value={this.state.value}
         onChange={this.handleChange}
+        width="large"
+        className="f36-margin-right--m"
       />
     );
   }

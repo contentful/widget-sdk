@@ -5,9 +5,12 @@ import {
   Notification,
   SkeletonContainer,
   SkeletonBodyText,
-  SkeletonDisplayText
+  SkeletonDisplayText,
+  Heading,
+  Button
 } from '@contentful/forma-36-react-components';
-import Workbench from 'app/common/Workbench.es6';
+import Icon from 'ui/Components/Icon.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
 import StateLink from 'app/common/StateLink.es6';
@@ -20,18 +23,23 @@ const spaceContext = getModule('spaceContext');
 
 export const ExtensionEditorShell = props => (
   <Workbench>
-    <Workbench.Header>
-      <Workbench.Header.Back to="^.list" />
-      <Workbench.Icon icon="page-settings" />
-      <Workbench.Title>
-        {props.title || (
-          <SkeletonContainer svgHeight={21} clipId="header">
-            <SkeletonDisplayText lineHeight={21} />
-          </SkeletonContainer>
-        )}
-      </Workbench.Title>
-      <Workbench.Header.Actions>{props.actions}</Workbench.Header.Actions>
-    </Workbench.Header>
+    <Workbench.Header
+      onBack={() => {
+        props.goToList();
+      }}
+      icon={<Icon name="page-settings" scale="0.8" />}
+      title={
+        <>
+          {props.title && <Heading>{props.title}</Heading>}
+          {!props.title && (
+            <SkeletonContainer svgHeight={21} clipId="header">
+              <SkeletonDisplayText lineHeight={21} />
+            </SkeletonContainer>
+          )}
+        </>
+      }
+      actions={props.actions}
+    />
     <Workbench.Content>
       {props.children || (
         <SkeletonContainer svgWidth={600} ariaLabel="Loading extension..." clipId="content">
@@ -43,6 +51,7 @@ export const ExtensionEditorShell = props => (
 );
 
 ExtensionEditorShell.propTypes = {
+  goToList: PropTypes.func.isRequired,
   title: PropTypes.string,
   actions: PropTypes.node
 };
@@ -51,7 +60,8 @@ class ExtensionEditor extends React.Component {
   static propTypes = {
     entity: PropTypes.object.isRequired,
     setDirty: PropTypes.func.isRequired,
-    registerSaveAction: PropTypes.func.isRequired
+    registerSaveAction: PropTypes.func.isRequired,
+    goToList: PropTypes.func.isRequired
   };
 
   // TODO: use `getDerivedStateFromProps`
@@ -155,17 +165,17 @@ class ExtensionEditor extends React.Component {
       <React.Fragment>
         <StateLink to="^.list">
           {({ onClick }) => (
-            <button className="btn-secondary-action" onClick={onClick}>
+            <Button buttonType="muted" onClick={onClick} className="f36-margin-right--m">
               Close
-            </button>
+            </Button>
           )}
         </StateLink>
-        <button
-          className="btn-primary-action"
+        <Button
+          buttonType="positive"
           disabled={!dirty || this.state.saving}
           onClick={() => this.save()}>
           Save
-        </button>
+        </Button>
       </React.Fragment>
     );
   };
@@ -175,6 +185,7 @@ class ExtensionEditor extends React.Component {
 
     return (
       <ExtensionEditorShell
+        goToList={this.props.goToList}
         title={`Extension: ${this.state.initial.extension.name}${dirty ? '*' : ''}`}
         actions={this.renderActions(dirty)}>
         {this.renderContent()}

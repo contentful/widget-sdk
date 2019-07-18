@@ -41,7 +41,8 @@ export default {
         '<react-component name="app/settings/locales/routes/LocalesNewRoute.es6" props="props" />',
       controller: [
         '$scope',
-        $scope => {
+        '$state',
+        ($scope, $state) => {
           $scope.props = {
             registerSaveAction: save => {
               $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
@@ -50,6 +51,9 @@ export default {
             setDirty: value => {
               $scope.context.dirty = value;
               $scope.$applyAsync();
+            },
+            goToList: () => {
+              $state.go('^.list');
             }
           };
         }
@@ -63,7 +67,8 @@ export default {
       controller: [
         '$scope',
         '$stateParams',
-        ($scope, $stateParams) => {
+        '$state',
+        ($scope, $stateParams, $state) => {
           $scope.props = {
             localeId: $stateParams.localeId,
             registerSaveAction: save => {
@@ -73,6 +78,9 @@ export default {
             setDirty: value => {
               $scope.context.dirty = value;
               $scope.$applyAsync();
+            },
+            goToList: () => {
+              $state.go('^.list');
             }
           };
         }

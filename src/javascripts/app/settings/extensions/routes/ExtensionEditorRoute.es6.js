@@ -16,6 +16,7 @@ export class ExtensionEditorRoute extends React.Component {
     extensionId: PropTypes.string.isRequired,
     registerSaveAction: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
+    goToList: PropTypes.func.isRequired,
     cma: PropTypes.shape({ getExtension: PropTypes.func.isRequired }).isRequired
   };
 
@@ -40,6 +41,7 @@ export class ExtensionEditorRoute extends React.Component {
                 entity={data}
                 registerSaveAction={this.props.registerSaveAction}
                 setDirty={this.props.setDirty}
+                goToList={this.props.goToList}
               />
             </React.Fragment>
           );

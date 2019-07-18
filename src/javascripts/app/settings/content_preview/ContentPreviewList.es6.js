@@ -1,25 +1,28 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import StateLink from 'app/common/StateLink.es6';
-import Icon from 'ui/Components/Icon.es6';
-import EmptyStateContainer, {
-  defaultSVGStyle
-} from 'components/EmptyStateContainer/EmptyStateContainer.es6';
-import { Button, Heading, Paragraph } from '@contentful/forma-36-react-components';
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+import { css } from 'emotion';
+import {
+  Button,
+  Heading,
+  Paragraph,
+  Table,
+  TableHead,
+  TableBody,
+  TableCell,
+  TableRow
+} from '@contentful/forma-36-react-components';
 import EmptyStateIllustration from 'svg/content-preview-empty-state.es6';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 
-const ContentPreviewItem = ({ preview }) => (
-  <React.Fragment>
-    <span>
-      <h3 className="entity-list__heading">{preview.name}</h3>
-      <span className="entity-list__description">{preview.description}</span>
-    </span>
-    <Icon className="entity-list__icon" name="dd-arrow-down" />
-  </React.Fragment>
-);
-ContentPreviewItem.propTypes = {
-  preview: PropTypes.object.isRequired
+const styles = {
+  illustrationWrapper: css({
+    marginTop: 200,
+    width: '25vw',
+    minWidth: '280px',
+    marginLeft: '-2vw'
+  })
 };
 
 export default class ContentPreviewList extends Component {
@@ -36,21 +39,37 @@ export default class ContentPreviewList extends Component {
   };
 
   renderList() {
-    return this.props.contentPreviews.map(preview => (
-      <StateLink
-        className="entity-list__item x--with-icon"
-        key={preview.sys.id}
-        to="^.detail"
-        params={{ contentPreviewId: preview.sys.id }}>
-        <ContentPreviewItem preview={preview} />
-      </StateLink>
-    ));
+    return (
+      <Table style={{ width: '100%' }}>
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>Description</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {this.props.contentPreviews.map(preview => (
+            <StateLink
+              key={preview.sys.id}
+              to="^.detail"
+              params={{ contentPreviewId: preview.sys.id }}>
+              {({ onClick }) => (
+                <TableRow onClick={onClick} style={{ cursor: 'pointer' }}>
+                  <TableCell>{preview.name}</TableCell>
+                  <TableCell>{preview.description}</TableCell>
+                </TableRow>
+              )}
+            </StateLink>
+          ))}
+        </TableBody>
+      </Table>
+    );
   }
 
   renderPlaceholderList() {
     return (
       <EmptyStateContainer>
-        <div className={defaultSVGStyle}>
+        <div className={styles.illustrationWrapper}>
           <EmptyStateIllustration />
         </div>
         <Heading>Set up content preview</Heading>
@@ -73,9 +92,7 @@ export default class ContentPreviewList extends Component {
   render() {
     const { contentPreviews } = this.props;
     return (
-      <div className="content-preview-list entity-list">
-        {contentPreviews.length > 0 ? this.renderList() : this.renderPlaceholderList()}
-      </div>
+      <div>{contentPreviews.length > 0 ? this.renderList() : this.renderPlaceholderList()}</div>
     );
   }
 }

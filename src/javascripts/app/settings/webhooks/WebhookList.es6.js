@@ -2,13 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import StateLink from 'app/common/StateLink.es6';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import Icon from 'ui/Components/Icon.es6';
 import {
   Table,
   TableHead,
   TableCell,
   TableRow,
-  TableBody
+  TableBody,
+  Button
 } from '@contentful/forma-36-react-components';
 
 import WebhookHealth from './WebhookHealth.es6';
@@ -32,13 +34,22 @@ export class WebhookList extends React.Component {
     const { webhooks, openTemplateDialog } = this.props;
 
     return (
-      <Workbench testId="webhooks.list" className="webhook-list">
-        <Workbench.Header>
-          <Workbench.Icon icon="page-settings" />
-          <Workbench.Title>Webhooks ({webhooks.length})</Workbench.Title>
-        </Workbench.Header>
-        <Workbench.Content>
-          <Table style={{ tableLayout: 'fixed' }}>
+      <Workbench testId="webhooks.list">
+        <Workbench.Header
+          icon={<Icon name="page-settings" scale="0.8" />}
+          title={`Webhooks (${webhooks.length})`}
+          actions={
+            <StateLink to="^.new">
+              {({ onClick }) => (
+                <Button testId="add-webhook-button" icon="PlusCircle" isFullWidth onClick={onClick}>
+                  Add Webhook
+                </Button>
+              )}
+            </StateLink>
+          }
+        />
+        <Workbench.Content type="full">
+          <Table>
             <TableHead>
               <TableRow>
                 <TableCell style={{ width: '25%' }}>Webhook name</TableCell>
@@ -91,11 +102,8 @@ export class WebhookList extends React.Component {
             </TableBody>
           </Table>
         </Workbench.Content>
-        <Workbench.Sidebar>
-          <WebhookListSidebar
-            webhookCount={webhooks.length}
-            openTemplateDialog={openTemplateDialog}
-          />
+        <Workbench.Sidebar position="right">
+          <WebhookListSidebar openTemplateDialog={openTemplateDialog} />
         </Workbench.Sidebar>
       </Workbench>
     );

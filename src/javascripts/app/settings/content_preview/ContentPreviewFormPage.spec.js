@@ -19,7 +19,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
   });
 
   const selectors = {
-    headerTitle: '.workbench-header__title',
+    headerTitle: '[data-test-id="cf-ui-workbench-header"] [data-test-id="cf-ui-heading"]',
     saveBtn: '[data-test-id="save-content-preview"]',
     deleteBtn: '[data-test-id="delete-content-preview"]',
     nameInput: 'input#previewName',

@@ -1,12 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { orderBy } from 'lodash';
-import Workbench from 'app/common/Workbench.es6';
+import { Subheading, Form, Paragraph, Typography } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import Icon from 'ui/Components/Icon.es6';
 import { Button, Select, Option, Note, CheckboxField } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 import { create as createLocaleList } from './utils/LocaleList.es6';
 
-const FORM_SPACING = { marginBottom: 20 };
+const styles = {
+  actionButton: css({
+    marginLeft: tokens.spacingM
+  }),
+  note: css({
+    marginTop: tokens.spacingM
+  })
+};
 
 export default class LocaleEditForm extends Component {
   static propTypes = {
@@ -27,6 +38,7 @@ export default class LocaleEditForm extends Component {
     isDeleting: PropTypes.bool,
     onSave: PropTypes.func.isRequired,
     isSaving: PropTypes.bool.isRequired,
+    goToList: PropTypes.func.isRequired,
     registerSaveAction: PropTypes.func.isRequired
   };
 
@@ -103,130 +115,126 @@ export default class LocaleEditForm extends Component {
   render() {
     return (
       <Workbench>
-        <Workbench.Header>
-          <Workbench.Header.Back to="^.list" />
-          <Workbench.Icon icon="page-settings" />
-          <Workbench.Title>{this.state.locale.name || 'New locale'}</Workbench.Title>
-          {this.state.locale.default && (
-            <Workbench.Header.Description>Default locale</Workbench.Header.Description>
-          )}
-          <Workbench.Header.Actions>
-            <StateLink to="^.list">
-              {({ onClick }) => (
-                <Button onClick={onClick} buttonType="muted" testId="cancel-locale">
-                  Cancel
+        <Workbench.Header
+          onBack={() => {
+            this.props.goToList();
+          }}
+          icon={<Icon name="page-settings" scale="0.8" />}
+          title={`${this.state.locale.name || 'New locale'}${
+            this.state.locale.default ? ' / Default locale' : ''
+          }`}
+          actions={
+            <>
+              <StateLink to="^.list">
+                {({ onClick }) => (
+                  <Button
+                    onClick={onClick}
+                    buttonType="muted"
+                    testId="cancel-locale"
+                    className={styles.actionButton}>
+                    Cancel
+                  </Button>
+                )}
+              </StateLink>
+              {this.props.onDelete && (
+                <Button
+                  testId="delete-locale"
+                  buttonType="negative"
+                  loading={this.props.isDeleting}
+                  onClick={this.delete}
+                  className={styles.actionButton}>
+                  Delete
                 </Button>
               )}
-            </StateLink>
-            {this.props.onDelete && (
               <Button
-                testId="delete-locale"
-                buttonType="negative"
-                loading={this.props.isDeleting}
-                onClick={this.delete}>
-                Delete
+                testId="save-locale"
+                disabled={this.isSaveDisabled()}
+                loading={this.props.isSaving}
+                buttonType="positive"
+                onClick={this.save}
+                className={styles.actionButton}>
+                Save
               </Button>
-            )}
-            <Button
-              testId="save-locale"
-              disabled={this.isSaveDisabled()}
-              loading={this.props.isSaving}
-              buttonType="positive"
-              onClick={this.save}>
-              Save
-            </Button>
-          </Workbench.Header.Actions>
-        </Workbench.Header>
-        <Workbench.Content centered style={{ marginTop: 20 }}>
-          <div className="locale-editor">
-            <h1 className="locale-editor__group-title">Locale</h1>
-            <div className="locale-editor__group">
-              <div className="locale-editor__setting">
+            </>
+          }
+        />
+        <Workbench.Content>
+          <Form>
+            <Subheading element="h2">Locale</Subheading>
+
+            <Select
+              width="large"
+              testId="locale-code-select"
+              value={this.state.locale.code || ''}
+              onChange={e => this.updateLocaleCode(e.target.value)}>
+              <Option value="">Select a locale</Option>
+              {orderBy(this.state.locales, ['name'], ['asc']).map(locale => (
+                <Option key={locale.code} value={locale.code}>
+                  {locale.label}
+                </Option>
+              ))}
+            </Select>
+            {!this.state.locale.default && (
+              <Typography>
+                <Subheading>Fallback locale</Subheading>
+                <Paragraph>
+                  If no content is provided for the locale above, the Delivery API will return
+                  content in a locale specified below:
+                </Paragraph>
                 <Select
-                  testId="locale-code-select"
-                  value={this.state.locale.code || ''}
-                  onChange={e => this.updateLocaleCode(e.target.value)}>
-                  <Option value="">Select a locale</Option>
-                  {orderBy(this.state.locales, ['name'], ['asc']).map(locale => (
+                  testId="locale-fallback-code-select"
+                  value={this.state.locale.fallbackCode || ''}
+                  onChange={e => this.updateLocaleState('fallbackCode', e.target.value || null)}>
+                  <Option value="">None (no fallback)</Option>
+                  {this.state.fallbackLocales.map(locale => (
                     <Option key={locale.code} value={locale.code}>
                       {locale.label}
                     </Option>
                   ))}
                 </Select>
-              </div>
-              {!this.state.locale.default && (
-                <React.Fragment>
-                  <div className="locale-editor__setting">
-                    <h2>Fallback locale</h2>
-                    <p>
-                      If no content is provided for the locale above, the Delivery API will return
-                      content in a locale specified below:
-                    </p>
-                    <Select
-                      testId="locale-fallback-code-select"
-                      value={this.state.locale.fallbackCode || ''}
-                      onChange={e =>
-                        this.updateLocaleState('fallbackCode', e.target.value || null)
-                      }>
-                      <Option value="">None (no fallback)</Option>
-                      {this.state.fallbackLocales.map(locale => (
-                        <Option key={locale.code} value={locale.code}>
-                          {locale.label}
-                        </Option>
-                      ))}
-                    </Select>
-                  </div>
-                  <div style={FORM_SPACING} />
-                  <Note noteType="primary">
-                    If you have required fields in your content model,{' '}
-                    <strong>enable empty required fields</strong> (there’s a checkbox below). You
-                    need to do that because required fields can’t be published when content in a
-                    certain locale is not provided.
-                  </Note>
-                </React.Fragment>
-              )}
-            </div>
-            <h1 className="locale-editor__group-title">Locale settings</h1>
-            <div className="locale-editor__group">
-              <div style={FORM_SPACING}>
-                <CheckboxField
-                  id="contentDeliveryApi"
-                  name="contentDeliveryApi"
-                  disabled={this.state.locale.default || this.state.hasDependantLocales}
-                  checked={this.state.locale.contentDeliveryApi}
-                  onChange={e => this.updateLocaleState('contentDeliveryApi', e.target.checked)}
-                  labelText="Enable this locale in response"
-                  helpText={`Includes locale in the Delivery API response. ${
-                    this.state.hasDependantLocales
-                      ? "You can't change this because this locale is being used as a fallback."
-                      : ''
-                  }`}
-                />
-              </div>
-              <div style={FORM_SPACING}>
-                <CheckboxField
-                  id="contentManagementApi"
-                  name="contentManagementApi"
-                  disabled={this.state.locale.default}
-                  checked={this.state.locale.contentManagementApi}
-                  onChange={e => this.updateLocaleState('contentManagementApi', e.target.checked)}
-                  labelText="Enable editing for this locale"
-                  helpText="Displays locale to editors and enables it in Management API."
-                />
-              </div>
-              <div style={FORM_SPACING}>
-                <CheckboxField
-                  id="optional"
-                  name="optional"
-                  disabled={this.state.locale.default}
-                  checked={this.state.locale.optional}
-                  onChange={e => this.updateLocaleState('optional', e.target.checked)}
-                  labelText="Allow empty fields for this locale"
-                  helpText="Entries with required fields can still be published if locale is empty."
-                />
-              </div>
-            </div>
-          </div>
+                <Note noteType="primary" className={styles.note}>
+                  If you have required fields in your content model,{' '}
+                  <strong>enable empty required fields</strong> (there’s a checkbox below). You need
+                  to do that because required fields can’t be published when content in a certain
+                  locale is not provided.
+                </Note>
+              </Typography>
+            )}
+
+            <Subheading element="h2">Locale settings</Subheading>
+
+            <CheckboxField
+              id="contentDeliveryApi"
+              name="contentDeliveryApi"
+              disabled={this.state.locale.default || this.state.hasDependantLocales}
+              checked={this.state.locale.contentDeliveryApi}
+              onChange={e => this.updateLocaleState('contentDeliveryApi', e.target.checked)}
+              labelText="Enable this locale in response"
+              helpText={`Includes locale in the Delivery API response. ${
+                this.state.hasDependantLocales
+                  ? "You can't change this because this locale is being used as a fallback."
+                  : ''
+              }`}
+            />
+            <CheckboxField
+              id="contentManagementApi"
+              name="contentManagementApi"
+              disabled={this.state.locale.default}
+              checked={this.state.locale.contentManagementApi}
+              onChange={e => this.updateLocaleState('contentManagementApi', e.target.checked)}
+              labelText="Enable editing for this locale"
+              helpText="Displays locale to editors and enables it in Management API."
+            />
+            <CheckboxField
+              id="optional"
+              name="optional"
+              disabled={this.state.locale.default}
+              checked={this.state.locale.optional}
+              onChange={e => this.updateLocaleState('optional', e.target.checked)}
+              labelText="Allow empty fields for this locale"
+              helpText="Entries with required fields can still be published if locale is empty."
+            />
+          </Form>
         </Workbench.Content>
       </Workbench>
     );

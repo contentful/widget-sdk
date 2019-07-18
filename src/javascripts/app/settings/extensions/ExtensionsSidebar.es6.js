@@ -17,7 +17,7 @@ DocsLink.propTypes = {
 
 const Sidebar = () => {
   return (
-    <div className="entity-sidebar">
+    <>
       <h2 className="entity-sidebar__heading" style={{ marginTop: 0 }}>
         Documentation
       </h2>
@@ -53,7 +53,7 @@ const Sidebar = () => {
           </li>
         </ul>
       </div>
-    </div>
+    </>
   );
 };
 
