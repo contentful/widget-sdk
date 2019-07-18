@@ -157,10 +157,11 @@ export default class Task extends React.Component {
     );
   }
 
-  renderActions = () => {
-    // TODO: Check roles/permissions before rendering actions
-    return (
-      <CardActions className={cx(styles.actions, this.state.isExpanded && styles.actionsVisible)}>
+  renderActions = () =>
+    this.props.viewData.canEdit && (
+      <CardActions
+        data-test-id="task-actions"
+        className={cx(styles.actions, this.state.isExpanded && styles.actionsVisible)}>
         <DropdownList>
           <DropdownListItem testId="edit-task" onClick={this.handleEditClick}>
             Edit task
@@ -171,11 +172,37 @@ export default class Task extends React.Component {
         </DropdownList>
       </CardActions>
     );
+
+  renderCheckbox = () => {
+    const { isDone, canUpdateStatus } = this.props.viewData;
+
+    const checkbox = (
+      <input
+        type="checkbox"
+        data-test-id="status-checkbox"
+        checked={isDone}
+        onChange={event => this.handleStatusChange(event)}
+        disabled={!canUpdateStatus}
+        className={canUpdateStatus ? '' : styles.checkboxDisabled}
+      />
+    );
+
+    if (!canUpdateStatus) {
+      return (
+        <Tooltip
+          data-test-id="disabled-task-tooltip"
+          content="You are not permitted to update this task">
+          {checkbox}
+        </Tooltip>
+      );
+    }
+
+    return checkbox;
   };
 
   renderDetails = () => {
     const { isExpanded, isUpdating } = this.state;
-    const { body, creator, createdAt, isDone, assignee } = this.props.viewData;
+    const { body, creator, createdAt, assignee } = this.props.viewData;
 
     return (
       <React.Fragment>
@@ -183,12 +210,7 @@ export default class Task extends React.Component {
           {isUpdating ? (
             <Spinner size="small" className={styles.taskLoadingSpinner} />
           ) : (
-            <input
-              type="checkbox"
-              data-test-id="status-checkbox"
-              checked={isDone}
-              onChange={event => this.handleStatusChange(event)}
-            />
+            this.renderCheckbox()
           )}
         </div>
         <div

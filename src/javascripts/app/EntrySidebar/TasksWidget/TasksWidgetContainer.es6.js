@@ -10,6 +10,9 @@ import { createTaskListViewData } from './ViewData/TaskViewData.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { createTasksStoreForEntry } from './TasksStore.es6';
 import { createTasksStoreInteractor } from './TasksInteractor.es6';
+import createTaskPermissionChecker, {
+  createProhibitive as createProhibitiveTaskPermissionChecker
+} from './TaskPermissionChecker.es6';
 import { onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util.es6';
 import TaskList from './View/TaskList.es6';
 import { Tag } from '@contentful/forma-36-react-components';
@@ -34,7 +37,8 @@ export class TasksWidgetContainer extends Component {
     tasks: null,
     tasksInEditMode: {},
     tasksErrors: {},
-    users: []
+    users: [],
+    taskPermissionChecker: createProhibitiveTaskPermissionChecker()
   };
 
   componentDidMount() {
@@ -49,7 +53,7 @@ export class TasksWidgetContainer extends Component {
   }
 
   onUpdateTasksWidget = async update => {
-    const { spaceId, entityInfo, users } = update;
+    const { spaceId, entityInfo, users, currentUser, isSpaceAdmin } = update;
 
     // TODO: Pass tasksStore instead. Wrap in a factory function though to not trigger
     //  any fetching in case the feature flag is turned off!
@@ -63,7 +67,11 @@ export class TasksWidgetContainer extends Component {
       val => this.setState(val),
       () => this.state
     );
-    this.setState({ tasksInteractor });
+    const taskPermissionChecker = createTaskPermissionChecker(
+      currentUser,
+      isSpaceAdmin(currentUser)
+    );
+    this.setState({ tasksInteractor, taskPermissionChecker });
 
     this.fetchTasks(tasksStore);
     this.fetchUsers(users);
@@ -82,13 +90,19 @@ export class TasksWidgetContainer extends Component {
   }
 
   render() {
-    const { tasksInteractor, tasksFetchingStatus, usersFetchingStatus } = this.state;
+    const {
+      tasksInteractor,
+      tasksFetchingStatus,
+      usersFetchingStatus,
+      taskPermissionChecker
+    } = this.state;
     const { tasksInEditMode, tasksErrors } = this.state;
     const localState = { tasksInEditMode, tasksErrors };
     const tasksViewData = createTaskListViewData(
       tasksFetchingStatus,
       usersFetchingStatus,
-      localState
+      localState,
+      taskPermissionChecker
     );
     return (
       <EntrySidebarWidget testId="sidebar-tasks-widget" title="Tasks" headerNode={<Tag>Alpha</Tag>}>

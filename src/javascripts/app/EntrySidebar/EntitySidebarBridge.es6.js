@@ -120,7 +120,9 @@ export default ({ $scope, emitter }) => {
         entityInfo: $scope.entityInfo,
         spaceId: spaceContext.space.getId(),
         envId: spaceContext.getEnvironmentId(),
-        users: spaceContext.users
+        users: spaceContext.users,
+        currentUser: spaceContext.user,
+        isSpaceAdmin: user => spaceContext.space.isAdmin(user)
       });
     };
     notifyUpdate({});

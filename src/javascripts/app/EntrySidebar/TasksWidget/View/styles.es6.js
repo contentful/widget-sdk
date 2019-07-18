@@ -81,6 +81,11 @@ export const taskStyles = {
     paddingRight: 0
   }),
 
+  checkboxDisabled: css({
+    cursor: 'not-allowed',
+    opacity: 0.5
+  }),
+
   avatarWrapper: css({
     display: 'inline-flex',
     padding: tokens.spacingS,
