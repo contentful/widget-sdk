@@ -1,6 +1,18 @@
 import { makeAppHookBus } from './AppHookBus.es6';
 
 describe('AppHookBus', () => {
+  const extension = {
+    sys: { type: 'Extension', id: 'ext' },
+    extensionDefinition: {
+      sys: {
+        type: 'Link',
+        linkType: 'extensionDefinition',
+        id: 'def'
+      }
+    },
+    parameters: { test: true }
+  };
+
   it('exposes even emitter', () => {
     const bus = makeAppHookBus();
 
@@ -22,35 +34,41 @@ describe('AppHookBus', () => {
     expect(ySpy).toBeCalledWith('whyyy?');
   });
 
-  it('has no parameters by default', () => {
+  it('has no extension by default', () => {
     const bus = makeAppHookBus();
 
-    expect(bus.getParameters()).toBeNull();
+    expect(bus.getExtension()).toBeNull();
   });
 
-  it('allows to set parameters', () => {
+  it('allows to set extension', () => {
     const bus = makeAppHookBus();
 
-    bus.setParameters({ test: true });
+    bus.setExtension(extension);
 
-    expect(bus.getParameters()).toEqual({ test: true });
+    expect(bus.getExtension()).toEqual(extension);
   });
 
   it('defaults for empty parameters', () => {
     const bus = makeAppHookBus();
 
-    bus.setParameters(undefined);
+    const noParams = { ...extension };
+    delete noParams.parameters;
 
-    expect(bus.getParameters()).toEqual({});
+    bus.setExtension(noParams);
+
+    expect(bus.getExtension()).toEqual({
+      ...noParams,
+      parameters: {}
+    });
   });
 
-  it('allows to unset parameters', () => {
+  it('allows to unset extension', () => {
     const bus = makeAppHookBus();
 
-    bus.setParameters({ hello: 'world' });
-    expect(bus.getParameters()).toEqual({ hello: 'world' });
+    bus.setExtension(extension);
+    expect(bus.getExtension()).toEqual(extension);
 
-    bus.unsetParameters();
-    expect(bus.getParameters()).toBeNull();
+    bus.setExtension(null);
+    expect(bus.getExtension()).toBeNull();
   });
 });
