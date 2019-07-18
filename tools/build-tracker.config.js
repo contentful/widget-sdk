@@ -20,8 +20,10 @@ const nameMapper = fileName => {
   return `${name}.${extension}`;
 };
 
-const pathToBuiltAssets =
-  process.env.PATH_TO_BUILT_ASSETS || path.resolve(__dirname, '../build/app');
+const pathToBuiltAssets = path.resolve(
+  __dirname,
+  process.env.PATH_TO_BUILT_ASSETS || '../build/app'
+);
 
 module.exports = {
   applicationUrl: 'https://user-interface-build-tracker.herokuapp.com',

@@ -1,75 +1,7 @@
 version: 2.1
+
 orbs:
   cypress: cypress-io/cypress@1.7.0
-  build-tracker:
-    jobs:
-      upload-build:
-        description: 'Upload build artifacts stats to https://user-interface-build-tracker.herokuapp.com'
-        parameters:
-          path:
-            type: string
-        docker:
-          - image: circleci/node:10.15.3
-        steps:
-          - attach_workspace:
-              at: ~/workspace
-          - checkout
-          - run:
-              name: Install build-tracker CLI
-              command: npm install --no-save --no-shrinkwrap @build-tracker/cli@1.0.0-alpha.3
-          - run:
-              name: Upload build to user_interface build tracker server
-              command: |
-                export PATH_TO_BUILT_ASSETS=<<parameters.path>>
-                npx bt-cli version
-                npx bt-cli -vv -c tools/build-tracker.config.js stat-artifacts
-                npx bt-cli -c tools/build-tracker.config.js upload-build > uploadResult
-                # don't fail if upload fails as might happen when a job is re-run on the same commit
-                cat uploadResult | jq . || :
-          - post-comment/bundle-size:
-              buildUploadFile: 'uploadResult'
-
-  post-comment:
-    commands:
-      deployment:
-        description: 'Post deployment URLs to PR'
-        parameters:
-          env:
-            type: string
-            description: quirely or flinkly
-        steps:
-          - run:
-              name: Post deployment URL to GitHub
-              command: |
-                export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
-                export LAMBDA_URL="https://tooling-lambdas.ctfl.now.sh/user_interface/comments"
-                curl -i -X POST \
-                --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"<<parameters.env>>\"}" \
-                -H 'content-type: application/json' \
-                $LAMBDA_URL?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY || echo "Comment won't be posted to ${PR_NUMBER:-$CIRCLE_BRANCH}. Continuing anyway."
-
-      bundle-size:
-        description: 'Post bundle size comment to PR'
-        parameters:
-          buildUploadFile:
-            type: string
-            description: File containing data for the uploaded build
-        steps:
-          - run:
-              name: Post deployment URL to GitHub
-              command: |
-                export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
-                export LAMBDA_URL="https://tooling-lambdas.ctfl.now.sh/user_interface/bundlesizes"
-                export BUILD_TRACKER_MARKDOWN=$(cat <<parameters.buildUploadFile>> | jq .markdown | false || echo "")
-                export BUILD_TRACKER_URL='https://user-interface-build-tracker.herokuapp.com/'
-                # don't set COMMENT_MSG if there was no markdown as it probably means the build upload to our build tracker server failed
-                # not having this set will fail validation in the lambda that posts the comment which is what we want
-                export COMMENT_MSG=$([[ -n $BUILD_TRACKER_MARKDOWN ]] && echo "$BUILD_TRACKER_MARKDOWN<br />[Build tracker UI]($BUILD_TRACKER_URL)")
-                curl -i -X POST \
-                --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"message\": \"${COMMENT_MSG:-''}\"}" \
-                -H 'content-type: application/json' \
-                $LAMBDA_URL?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY || echo "Comment won't be posted to ${PR_NUMBER:-$CIRCLE_BRANCH}. Continuing anyway."
-
   deploy-assets:
     orbs:
       aws-s3: circleci/aws-s3@1.0.4
@@ -103,6 +35,70 @@ orbs:
               from: <<parameters.path>>
               to: s3://<<parameters.bucket>>
               arguments: '--acl public-read --recursive'
+
+  post-comment:
+    commands:
+      deployment:
+        description: 'Post deployment URLs to PR'
+        parameters:
+          env:
+            type: string
+            description: 'quirely or flinkly'
+        steps:
+          - run:
+              name: 'Post deployment URL to GitHub'
+              command: |
+                export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
+                export LAMBDA_URL="https://tooling-lambdas.ctfl.now.sh/user_interface/comments"
+                curl -i -X POST \
+                --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"<<parameters.env>>\"}" \
+                -H 'content-type: application/json' \
+                $LAMBDA_URL?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY || echo "Comment won't be posted to ${PR_NUMBER:-$CIRCLE_BRANCH}. Continuing anyway."
+
+  build-tracker:
+    jobs:
+      upload-build:
+        description: 'Upload build artifacts stats to https://user-interface-build-tracker.herokuapp.com'
+        parameters:
+          path:
+            type: string
+        docker:
+          - image: circleci/node:10.15.3
+        steps:
+          - attach_workspace:
+              at: ~/workspace
+          - checkout
+          - run:
+              name: Install build-tracker CLI
+              command: npm install --no-save --no-shrinkwrap @build-tracker/cli@1.0.0-alpha.3
+          - run:
+              name: Upload build to user_interface build tracker server and post comment
+              command: |
+                export PATH_TO_BUILT_ASSETS=<<parameters.path>>
+                npx bt-cli version
+                npx bt-cli -vv -c tools/build-tracker.config.js stat-artifacts
+                npx bt-cli --skip-dirty-check -c tools/build-tracker.config.js upload-build > buildUploadResult
+                # don't fail if upload fails as might happen when a job is re-run on the same commit
+                cat buildUploadResult | jq . || :
+                # Start comment posting routine. Note that this was
+                # originally in another step but the upload result
+                # file was always empty when accessed in another step
+                # ¯\_(ツ)_/¯
+                export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
+                export LAMBDA_URL="https://tooling-lambdas.ctfl.now.sh/user_interface/bundlesizes"
+                export BUILD_TRACKER_MARKDOWN=$(cat buildUploadResult | jq .markdown | cut -d '"' -f 2 || echo "")
+                export BUILD_TRACKER_URL="https://user-interface-build-tracker.herokuapp.com/"
+                # don't set COMMENT_MSG if there was no markdown as it probably means the build upload to our build tracker server failed
+                # not having this set will fail validation in the lambda that posts the comment which is what we want
+                export COMMENT_MSG=$([[ -n $BUILD_TRACKER_MARKDOWN ]] && echo "\"$BUILD_TRACKER_MARKDOWN<br />[Build tracker UI]($BUILD_TRACKER_URL)\"")
+                echo $PR_NUMBER
+                echo $LAMBDA_URL
+                echo $BUILD_TRACKER_MARKDOWN
+                echo $COMMENT_MSG
+                curl -i -X POST \
+                --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"message\": ${COMMENT_MSG:-''}}" \
+                -H 'content-type: application/json' \
+                $LAMBDA_URL?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY || echo "Comment won't be posted to ${PR_NUMBER:-$CIRCLE_BRANCH}. Continuing anyway."
 
   estivador:
     commands:
