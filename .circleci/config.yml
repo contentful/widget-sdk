@@ -257,10 +257,7 @@ jobs:
       CYPRESS_INSTALL_BINARY: 0
     steps:
       - checkout
-      - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-      - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
-      - run: npm ci
-      - run: tools/bin/validate-config.js config/*.json
+      - run: npm install --no-save --no-shrinkwrap license-checker
       - run: npm run oss-license-check
 
   run-jest-tests:
