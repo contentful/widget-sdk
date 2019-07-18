@@ -249,6 +249,20 @@ jobs:
       - run: npm ci
       - run: tools/bin/validate-config.js config/*.json
       - run: npm run hint
+      - run: npm install -g license-checker
+
+  oss-license-check:
+    docker:
+      - image: circleci/node:10.15.3
+    environment:
+      CYPRESS_INSTALL_BINARY: 0
+    steps:
+      - checkout
+      - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
+      - run: npm ci
+      - run: tools/bin/validate-config.js config/*.json
+      - run: npm run oss-license-check
 
   run-jest-tests:
     docker:
@@ -395,6 +409,7 @@ workflows:
     jobs:
       - build-and-push-image
       - lint
+      - oss-license-check
       - run-jest-tests
       - run-karma-tests
       - run-e2e-tests:
