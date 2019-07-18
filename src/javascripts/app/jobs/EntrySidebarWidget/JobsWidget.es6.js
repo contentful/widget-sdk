@@ -13,6 +13,7 @@ import {
   Notification
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+
 import StatusWidget from './StatusWidget.es6';
 import JobDialog from './JobDialog/index.es6';
 
@@ -20,6 +21,11 @@ import * as EndpointFactory from 'data/EndpointFactory.es6';
 
 import { useAsyncFn } from 'app/common/hooks/useAsync.es6';
 import usePrevious from 'app/common/hooks/usePrevious.es6';
+
+import * as logger from 'services/logger.es6';
+
+import { getModule } from 'NgRegistry.es6';
+const spaceContext = getModule('spaceContext');
 
 import JobsTimeline from './JobsTimeline/index.es6';
 
@@ -96,6 +102,10 @@ export default function JobWidget({
   const [jobs, setJobs] = useState([]);
   const [isDialogShown, setIsDialogShown] = useState(false);
   const publishedAt = getPublishedAt(entity);
+  const entryTitle = spaceContext.entryTitle({
+    getContentTypeId: () => entity.sys.contentType.sys.id,
+    data: entity
+  });
   const [{ isLoading, error }, fetchJobs] = useAsyncFn(
     useCallback(async () => {
       const jobCollection = await JobsService.getNotCanceledJobsForEntity(
@@ -113,24 +123,37 @@ export default function JobWidget({
     fetchJobs();
   }, [fetchJobs, publishedAt]);
 
-  const handleCreate = ({ scheduledAt }) => {
-    JobsService.createJob(
-      EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
-      createDto({
-        spaceId,
-        environmentId,
-        userId,
-        entityId: entity.sys.id,
-        action: 'publish',
-        scheduledAt
-      })
-    ).then(job => {
+  const createJob = async scheduledAt => {
+    try {
+      const job = await JobsService.createJob(
+        EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
+        createDto({
+          spaceId,
+          environmentId,
+          userId,
+          entityId: entity.sys.id,
+          action: 'publish',
+          scheduledAt
+        })
+      );
+      return job;
+    } catch (error) {
+      Notification.error(`${entryTitle} failed to schedule`);
+      logger.logError(error, `Entry failed to schedule`);
+    }
+  };
+
+  const handleCreate = async ({ scheduledAt }) => {
+    const job = await createJob(scheduledAt);
+    if (job && job.sys) {
+      Notification.success(`${entryTitle} was scheduled successfully`);
+      setIsDialogShown(false);
       trackCreatedJob({
         jobId: job.sys.id,
         scheduledAt: job.scheduledAt
       });
       setJobs([job, ...jobs]);
-    });
+    }
   };
 
   const handleCancel = jobId => {
@@ -154,7 +177,6 @@ export default function JobWidget({
       Notification.success('Entry was successfully published.');
     }
   }, [showToast]);
-
   return (
     <ErrorHandler>
       <StatusWidget
@@ -194,7 +216,6 @@ export default function JobWidget({
             <JobDialog
               onCreate={newJob => {
                 handleCreate(newJob);
-                setIsDialogShown(false);
               }}
               onCancel={() => {
                 setIsDialogShown(false);

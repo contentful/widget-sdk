@@ -20,6 +20,7 @@ const commandTemplate = {
 };
 
 jest.mock('../DataManagement/JobsService.es6');
+jest.mock('ng/spaceContext', () => ({ entryTitle: () => 'Test' }));
 describe('<JobWidget />', () => {
   beforeEach(() => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
@@ -241,6 +242,23 @@ describe('<JobWidget />', () => {
         jobId: job.sys.id,
         scheduledAt: job.scheduledAt
       });
+      expect(Notification.success).toHaveBeenCalledWith('Test was scheduled successfully');
+    });
+
+    it('shows an error toast if job creation failed', async () => {
+      createJobService.mockRejectedValueOnce(new Error());
+      getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
+
+      const notPublishedEntry = { sys: { id: 'entryId' } };
+      const [renderResult] = build(notPublishedEntry);
+      await wait();
+
+      fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
+      fireEvent.click(renderResult.getByText('Schedule publication'));
+      fireEvent.click(renderResult.getByTestId('schedule-publication'));
+      await wait();
+
+      expect(Notification.error).toHaveBeenCalledWith('Test failed to schedule');
     });
 
     it('cancels the job', async () => {
