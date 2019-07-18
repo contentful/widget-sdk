@@ -8,7 +8,7 @@ import {
   removeAllEditorInterfaceReferences
 } from './AppEditorInterfaces.es6';
 
-export async function installOrUpdate(cma, checkAppStatus, { parameters, targetState }) {
+export async function installOrUpdate(cma, checkAppStatus, { parameters, targetState } = {}) {
   validateTargetState(targetState);
 
   const extension = await createOrUpdateExtension(cma, checkAppStatus, parameters);
