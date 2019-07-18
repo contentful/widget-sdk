@@ -25,6 +25,7 @@ export function setMembership(membership, spaceAuthContext) {
 
   // Within a sandbox space environment all fields are freely editable. So if the space
   // environment is anything other than 'master', we allow them to edit.
+  // FIXME: This returns true when `spaceAuthContext` or one of the nested objects is missing
   isEnvironmentManager = !get(spaceAuthContext, ['environment', 'sys', 'isMaster'], isAdmin);
   fieldAccessCache = {};
 

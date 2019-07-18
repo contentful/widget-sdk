@@ -76,7 +76,8 @@ export default function register() {
         () => ({
           tokenLookup: TokenStore.getTokenLookup(),
           space: spaceContext.space,
-          enforcements: EnforcementsService.getEnforcements(spaceContext.getId())
+          enforcements: EnforcementsService.getEnforcements(spaceContext.getId()),
+          environmentId: spaceContext.getEnvironmentId()
         }),
         spaceAndTokenWatchHandler
       );
@@ -110,12 +111,16 @@ export default function register() {
         ]);
       }
 
-      async function spaceAndTokenWatchHandler({ tokenLookup, space, enforcements }) {
+      async function spaceAndTokenWatchHandler({
+        tokenLookup,
+        space,
+        enforcements,
+        environmentId
+      }) {
         if (!tokenLookup) {
           return;
         }
 
-        const environmentId = spaceContext.getEnvironmentId();
         let newEnforcement = {};
 
         if (shouldCheckUsageForCurrentLocation()) {
