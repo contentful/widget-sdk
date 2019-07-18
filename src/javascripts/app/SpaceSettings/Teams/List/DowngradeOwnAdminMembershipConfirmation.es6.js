@@ -33,7 +33,7 @@ const DowngradeOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm, te
         </p>
         <p>
           To confirm you want to change this role, please type
-          {<Highlight>&quot;I UNDERSTAND&quot;</Highlight>}
+          {<Highlight> &quot;I&nbsp;UNDERSTAND&quot; </Highlight>}
           in the field below:
         </p>
         <TextInput

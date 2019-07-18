@@ -126,7 +126,7 @@ const MembershipRow = ({
         isShown={isShowingRemoveConfirmation}
         intent="negative"
         confirmLabel="Remove"
-        cancelLabel="Don't remove"
+        cancelLabel="Cancel"
         title="Remove team from this space">
         <p>Are you sure you want to remove {<Highlight>{name}</Highlight>} from this space?</p>
       </ModalConfirm>

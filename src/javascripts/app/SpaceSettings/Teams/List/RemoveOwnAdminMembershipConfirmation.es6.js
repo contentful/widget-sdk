@@ -33,7 +33,7 @@ const RemoveOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm, teamN
         </p>
         <p>
           To confirm you want to remove this team, please type
-          {<Highlight>&quot;I UNDERSTAND&quot;</Highlight>}
+          {<Highlight> &quot;I&nbsp;UNDERSTAND&quot; </Highlight>}
           in the field below:
         </p>
         <TextInput
