@@ -1,15 +1,13 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
-import { singleContentTypeResponse } from '../../../interactions/content_types';
+import { getAllPublicContentTypesInDefaultSpace } from '../../../interactions/content_types';
 import {
-  noJobsResponse,
-  severalJobsResponseBody,
-  severalJobsResponse,
-  jobsErrorResponse
+  queryAllJobsForDefaultSpace,
+  severalJobsResponseBody
 } from '../../../interactions/jobs';
-import { singleEntryWithQuery } from '../../../interactions/entries';
-import { singleSpecificSpaceUserResponse } from '../../../interactions/users';
+import { queryForDefaultEntryInsideEnvironment } from '../../../interactions/entries';
+import { queryForDefaultUserDetails } from '../../../interactions/users';
 import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('Jobs page', () => {
@@ -31,11 +29,11 @@ describe('Jobs page', () => {
   context('no jobs in the space', () => {
     beforeEach(() => {
       defaultRequestsMock();
-      noJobsResponse();
+      queryAllJobsForDefaultSpace.willFindNone();
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
       cy.wait([`@${state.Token.VALID}`]);
-      cy.wait([`@${state.Jobs.NONE}`], { timeout: 10000 });
+      cy.wait([`@${state.Jobs.NO_JOBS_FOR_DEFAULT_SPACE}`], { timeout: 10000 });
     });
     it('renders illustration and heading for empty state', () => {
       cy.getByTestId('cf-ui-tab-panel')
@@ -58,15 +56,15 @@ describe('Jobs page', () => {
         spec: 2
       });
       defaultRequestsMock({
-        publicContentTypesResponse: singleContentTypeResponse
+        publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
       });
-      severalJobsResponse();
-      singleEntryWithQuery();
-      singleSpecificSpaceUserResponse();
+      queryAllJobsForDefaultSpace.willFindSeveral();
+      queryForDefaultEntryInsideEnvironment.willFindIt();
+      queryForDefaultUserDetails.willFindTheUserDetails();
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
       cy.wait([`@${state.Token.VALID}`]);
-      cy.wait([`@${state.Jobs.SEVERAL}`, `@${state.Entries.SEVERAL}`, `@${state.Users.SINGLE}`], {
+      cy.wait([`@${state.Jobs.SEVERAL_JOBS_FOR_DEFAULT_SPACE}`, `@${state.Entries.SEVERAL}`, `@${state.Users.SINGLE}`], {
         timeout: 10000
       });
     });
@@ -81,7 +79,7 @@ describe('Jobs page', () => {
   context('error state', () => {
     beforeEach(() => {
       defaultRequestsMock();
-      jobsErrorResponse();
+      queryAllJobsForDefaultSpace.willFailWithAnInternalServerError();
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
       cy.wait([`@${state.Token.VALID}`]);

@@ -1,8 +1,8 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
-import { noInstalledAppsResponse } from '../../../interactions/apps';
-import { spaceProductCatalogFeaturesResponse } from '../../../interactions/product_catalog_features';
+import { getAllInstalledAppsInDefaultSpace  } from '../../../interactions/apps';
+import { getAllCatalogFeaturesForDefaultSpace } from '../../../interactions/product_catalog_features';
 import { FeatureFlag } from '../../../util/featureFlag';
 
 const baseUrl = Cypress.config().baseUrl;
@@ -23,8 +23,8 @@ describe('Apps Page', () => {
     cy.enableFeatureFlags([FeatureFlag.DEFAULT]);
 
     defaultRequestsMock();
-    noInstalledAppsResponse();
-    spaceProductCatalogFeaturesResponse();
+    getAllInstalledAppsInDefaultSpace.willReturnNone();
+    getAllCatalogFeaturesForDefaultSpace.willFindSeveral();
 
     cy.visit(`/spaces/${defaultSpaceId}/apps`);
     cy.wait([`@${state.Token.VALID}`]);

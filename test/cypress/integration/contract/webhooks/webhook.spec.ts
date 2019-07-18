@@ -2,31 +2,19 @@ import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId, defaultWebhookId } from '../../../util/requests';
 import {
-  defaultWebhookCreatedSuccessResponse,
-  defaultWebhookResponse,
-  noWebhookCallsResponse,
-  customWebhookSingleEventResponse,
-  webhookCallSuccessfulResponse,
-  defaultWebhookDeletedSuccessResponse,
-  noWebhooksResponse,
-  defaultWebhookDeletedErrorResponse,
-  customWebhookAllSettingsResponse,
-  customWebhookContentTypeEventsCreatedSuccessResponse,
-  customWebhookContentTypeEventsResponse,
-  customWebhookFilterCreatedSuccessResponse,
-  customWebhookFilterResponse,
-  customWebhookHeaderCreatedSuccessResponse,
-  customWebhookHeaderResponse,
-  customWebhookSecretHeaderCreatedSuccessResponse,
-  customWebhookSecretHeaderResponse,
-  customWebhookHTTPHeaderCreatedSuccessResponse,
-  customWebhookHTTPHeaderResponse,
-  customWebhookContentTypeHeaderCreatedSuccessResponse,
-  customWebhookContentTypeHeaderResponse,
-  customWebhookContentLengthHeaderCreatedSuccessResponse,
-  customWebhookContentLengthHeaderResponse,
-  customWebhookPayloadCreatedSuccessResponse,
-  customWebhookPayloadResponse
+  createDefaultWebhook,
+  getDefaultWebhook,
+  queryFirst500DefaultWebhookCalls,
+  deleteDefaultWebhook,
+  queryFirst100WebhooksInDefaultSpace,
+  createCustomWebhookTriggeringContentTypeEvents,
+  createCustomWebhookWithFilters,
+  createCustomWebhookWithCustomHeader,
+  createCustomWebhookWithSecretHeader,
+  createCustomWebhookWithHTTPHeader,
+  createCustomWebhookWithContentTypeHeader,
+  createCustomWebhookWithContentLengthHeader,
+  createCustomWebhookWithCustomPayload
 } from '../../../interactions/webhooks';
 
 describe('Webhook', () => {
@@ -64,9 +52,9 @@ describe('Webhook', () => {
     });
 
     it('checks that default webhook is successfully created', () => {
-      defaultWebhookCreatedSuccessResponse();
-      defaultWebhookResponse();
-      noWebhookCallsResponse();
+      createDefaultWebhook.willSucceed();
+      getDefaultWebhook.willReturnTheDefaultWebhook();
+      queryFirst500DefaultWebhookCalls.willReturnNone();
 
       fillInDefaultWebhookDetails();
       cy.getByTestId('webhook-save').click();
@@ -74,16 +62,16 @@ describe('Webhook', () => {
       cy.wait([
         '@default-webhook-created-successfully',
         `@${state.Webhooks.SINGLE}`,
-        `@${state.Webhooks.NO_CALLS}`
+        `@${state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS}`
       ]);
 
       cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
     });
 
     it('checks that webhook, which triggers ContentType events, is successfully created', () => {
-      customWebhookContentTypeEventsCreatedSuccessResponse();
-      customWebhookContentTypeEventsResponse();
-      noWebhookCallsResponse();
+      createCustomWebhookTriggeringContentTypeEvents.willSucceed();
+      getDefaultWebhook.willReturnACustomWebhookThatTriggersContentTypeEvents();
+      queryFirst500DefaultWebhookCalls.willReturnNone();
 
       fillInDefaultWebhookDetails();
       cy.get("[data-test-id='webhook-editor-setting-option']")
@@ -97,16 +85,16 @@ describe('Webhook', () => {
       cy.wait([
         '@custom-webhook-content-type-events-created-successfully',
         `@${state.Webhooks.SINGLE}`,
-        `@${state.Webhooks.NO_CALLS}`
+        `@${state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS}`
       ]);
 
       cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
     });
 
     it('checks that webhook with filter is successfully created', () => {
-      customWebhookFilterCreatedSuccessResponse();
-      customWebhookFilterResponse();
-      noWebhookCallsResponse();
+      createCustomWebhookWithFilters.willSucceed();
+      getDefaultWebhook.willReturnACustomWebhookWithFilter();
+      queryFirst500DefaultWebhookCalls.willReturnNone();
 
       fillInDefaultWebhookDetails();
       cy.getByTestId('filter-entity-type').select('Entity ID (sys.id)');
@@ -116,16 +104,16 @@ describe('Webhook', () => {
       cy.wait([
         '@custom-webhook-filter-created-successfully',
         `@${state.Webhooks.SINGLE}`,
-        `@${state.Webhooks.NO_CALLS}`
+        `@${state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS}`
       ]);
 
       cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
     });
 
     it('checks that webhook with custom header is successfully created', () => {
-      customWebhookHeaderCreatedSuccessResponse();
-      customWebhookHeaderResponse();
-      noWebhookCallsResponse();
+      createCustomWebhookWithCustomHeader.willSucceed();
+      getDefaultWebhook.willReturnACustomWebhookWithCustomHeader();
+      queryFirst500DefaultWebhookCalls.willReturnNone();
 
       fillInDefaultWebhookDetails();
       cy.getByTestId('add-custom-header').click();
@@ -136,16 +124,16 @@ describe('Webhook', () => {
       cy.wait([
         '@custom-webhook-header-created-successfully',
         `@${state.Webhooks.SINGLE}`,
-        `@${state.Webhooks.NO_CALLS}`
+        `@${state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS}`
       ]);
 
       cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
     });
 
     it('checks that webhook with secret header is successfully created', () => {
-      customWebhookSecretHeaderCreatedSuccessResponse();
-      customWebhookSecretHeaderResponse();
-      noWebhookCallsResponse();
+      createCustomWebhookWithSecretHeader.willSucceed();
+      getDefaultWebhook.willReturnACustomWebhookWithSecretHeader();
+      queryFirst500DefaultWebhookCalls.willReturnNone();
 
       fillInDefaultWebhookDetails();
       cy.getByTestId('add-secret-header').click();
@@ -157,16 +145,16 @@ describe('Webhook', () => {
       cy.wait([
         '@custom-webhook-secret-header-created-successfully',
         `@${state.Webhooks.SINGLE}`,
-        `@${state.Webhooks.NO_CALLS}`
+        `@${state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS}`
       ]);
 
       cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
     });
 
     it('checks that webhook with HTTP header is successfully created', () => {
-      customWebhookHTTPHeaderCreatedSuccessResponse();
-      customWebhookHTTPHeaderResponse();
-      noWebhookCallsResponse();
+      createCustomWebhookWithHTTPHeader.willSucceed();
+      getDefaultWebhook.willReturnACustomWebhookWithHTTPHeader();
+      queryFirst500DefaultWebhookCalls.willReturnNone();
 
       fillInDefaultWebhookDetails();
       cy.getByTestId('add-http-basic-url-header').click();
@@ -178,16 +166,16 @@ describe('Webhook', () => {
       cy.wait([
         '@custom-webhook-http-header-created-successfully',
         `@${state.Webhooks.SINGLE}`,
-        `@${state.Webhooks.NO_CALLS}`
+        `@${state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS}`
       ]);
 
       cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
     });
 
     it('checks that webhook with content type header is successfully created', () => {
-      customWebhookContentTypeHeaderCreatedSuccessResponse();
-      customWebhookContentTypeHeaderResponse();
-      noWebhookCallsResponse();
+      createCustomWebhookWithContentTypeHeader.willSucceed();
+      getDefaultWebhook.willReturnACustomWebhookWithContentTypeHeader();
+      queryFirst500DefaultWebhookCalls.willReturnNone();
 
       fillInDefaultWebhookDetails();
       cy.getByTestId('content-type-select').select('application/json');
@@ -196,16 +184,16 @@ describe('Webhook', () => {
       cy.wait([
         '@custom-webhook-content-type-header-created-successfully',
         `@${state.Webhooks.SINGLE}`,
-        `@${state.Webhooks.NO_CALLS}`
+        `@${state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS}`
       ]);
 
       cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
     });
 
     it('checks that webhook with content length header is successfully created', () => {
-      customWebhookContentLengthHeaderCreatedSuccessResponse();
-      customWebhookContentLengthHeaderResponse();
-      noWebhookCallsResponse();
+      createCustomWebhookWithContentLengthHeader.willSucceed();
+      getDefaultWebhook.willReturnACustomWebhookWithContentLengthHeader();
+      queryFirst500DefaultWebhookCalls.willReturnNone();
 
       fillInDefaultWebhookDetails();
       cy.get('#webhook-content-length').click();
@@ -214,16 +202,16 @@ describe('Webhook', () => {
       cy.wait([
         '@custom-webhook-content-length-header-created-successfully',
         `@${state.Webhooks.SINGLE}`,
-        `@${state.Webhooks.NO_CALLS}`
+        `@${state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS}`
       ]);
 
       cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
     });
 
     it('checks that webhook with custom payload is successfully created', () => {
-      customWebhookPayloadCreatedSuccessResponse();
-      customWebhookPayloadResponse();
-      noWebhookCallsResponse();
+      createCustomWebhookWithCustomPayload.willSucceed();
+      getDefaultWebhook.willReturnACustomWebhookWithPayload();
+      queryFirst500DefaultWebhookCalls.willReturnNone();
 
       fillInDefaultWebhookDetails();
       cy.getAllByTestId('customize-webhook-payload').click();
@@ -233,7 +221,7 @@ describe('Webhook', () => {
       cy.wait([
         '@custom-webhook-payload-created-successfully',
         `@${state.Webhooks.SINGLE}`,
-        `@${state.Webhooks.NO_CALLS}`
+        `@${state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS}`
       ]);
 
       cy.verifyNotification('success', `Webhook "${defaultWebhook.name}" saved successfully.`);
@@ -242,12 +230,12 @@ describe('Webhook', () => {
 
   context('webhook, that triggers deletion of asset is configured', () => {
     beforeEach(() => {
-      customWebhookSingleEventResponse();
-      webhookCallSuccessfulResponse().as('fetch-webhook-calls-was-successful');
+      getDefaultWebhook.willReturnACustomWebhookWithSingleEvent();
+      queryFirst500DefaultWebhookCalls.willReturnOneSuccesfulCall().as('fetch-webhook-calls-was-successful');
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks/${defaultWebhookId}`);
       cy.wait([
         `@${state.Token.VALID}`,
-        `@${state.Webhooks.SINGLE_EVENT}`,
+        `@${state.Webhooks.DEFAULT_WEBHOOK_HAS_SINGLE_EVENT}`,
         '@fetch-webhook-calls-was-successful'
       ]);
     });
@@ -260,10 +248,14 @@ describe('Webhook', () => {
 
   context('webhook with all custom settings is configured', () => {
     beforeEach(() => {
-      customWebhookAllSettingsResponse();
-      noWebhookCallsResponse();
+      getDefaultWebhook.willReturnACustomWebhookWithAllSetting();
+      queryFirst500DefaultWebhookCalls.willReturnNone();
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks/${defaultWebhookId}`);
-      cy.wait([`@${state.Webhooks.ALL_SETTINGS}`, `@${state.Webhooks.NO_CALLS}`]);
+      cy.wait([
+        `@${state.Token.VALID}`,
+        `@${state.Webhooks.DEFAULT_WEBHOOK_HAS_ALL_SETTINGS}`,
+        `@${state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS}`
+      ]);
     });
 
     it('renders webhook page', () => {
@@ -296,19 +288,19 @@ describe('Webhook', () => {
 
   context('removing a webhook', () => {
     beforeEach(() => {
-      defaultWebhookResponse();
-      noWebhookCallsResponse();
+      getDefaultWebhook.willReturnTheDefaultWebhook();
+      queryFirst500DefaultWebhookCalls.willReturnNone();
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks/${defaultWebhookId}`);
       cy.wait([
         `@${state.Token.VALID}`,
         `@${state.Webhooks.SINGLE}`,
-        `@${state.Webhooks.NO_CALLS}`
+        `@${state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS}`
       ]);
     });
 
     it('checks that default webhook is removed successfully', () => {
-      defaultWebhookDeletedSuccessResponse();
-      noWebhooksResponse();
+      deleteDefaultWebhook.willSucceed();
+      queryFirst100WebhooksInDefaultSpace.willFindNone();
 
       cy.getByTestId('webhook-settings').click();
       cy.getByTestId('webhook-remove').click();
@@ -320,7 +312,7 @@ describe('Webhook', () => {
 
     //Test will be added after fixing https://contentful.atlassian.net/browse/EXT-981. As currently server error is not handled.
     it.skip('checks that error response is handled properly', () => {
-      defaultWebhookDeletedErrorResponse();
+      deleteDefaultWebhook.willFailWithAnInternalServerError();
 
       cy.getByTestId('cf-ui-tab')
         .first()

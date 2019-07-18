@@ -1,8 +1,8 @@
-import { validTokenResponse } from '../interactions/token';
-import { noEnforcementsResponse } from '../interactions/enforcements';
-import { noPublicContentTypesResponse } from '../interactions/content_types';
-import { masterEnvironmentResponse } from '../interactions/environments';
-import { defaultLocaleResponse } from '../interactions/locales';
+import { getTokenForUser } from '../interactions/token';
+import { getAllEnforcementsForDefaultSpace } from '../interactions/enforcements';
+import { getAllPublicContentTypesInDefaultSpace } from '../interactions/content_types';
+import { queryFirst101EnvironmentsInDefaultSpace } from '../interactions/environments';
+import { queryFirst100LocalesOfDefaultSpace } from '../interactions/locales';
 
 type DefaultHandlers = {
   tokenResponse: Function;
@@ -13,11 +13,11 @@ type DefaultHandlers = {
 };
 
 const defaultHandlers: DefaultHandlers = {
-  tokenResponse: validTokenResponse,
-  enforcementsResponse: noEnforcementsResponse,
-  publicContentTypesResponse: noPublicContentTypesResponse,
-  environmentResponse: masterEnvironmentResponse,
-  localeResponse: defaultLocaleResponse
+  tokenResponse: getTokenForUser.willReturnAValidToken,
+  enforcementsResponse: getAllEnforcementsForDefaultSpace.willReturnNone,
+  publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnNone,
+  environmentResponse: queryFirst101EnvironmentsInDefaultSpace.willFindOne,
+  localeResponse: queryFirst100LocalesOfDefaultSpace.willFindOne
 };
 
 export function defaultRequestsMock(customHandlers: Partial<DefaultHandlers> = {}) {

@@ -1,7 +1,7 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { defaultHeader, defaultSpaceId, defaultOrgId } from '../../../util/requests';
-import { orgProductCatalogFeaturesResponse } from '../../../interactions/product_catalog_features';
+import { getAllProductCatalogFeaturesForDefaultOrg } from '../../../interactions/product_catalog_features';
 
 const empty = require('../../../fixtures/responses/empty.json');
 
@@ -12,7 +12,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
 
   cy.setAuthTokenToLocalStorage();
 
-  orgProductCatalogFeaturesResponse();
+  getAllProductCatalogFeaturesForDefaultOrg.willFindSeveral();
 
   const getMembershipsInteraction = 'spaces/team_space_memberships';
   const getRolesInteraction = 'spaces/roles';

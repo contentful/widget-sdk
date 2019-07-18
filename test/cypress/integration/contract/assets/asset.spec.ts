@@ -1,9 +1,9 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import { singleUser } from '../../../interactions/users';
+import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId, defaultAssetId } from '../../../util/requests';
-import { defaultAssetResponse } from '../../../interactions/assets';
-import { noAssetLinksResponse } from '../../../interactions/entries';
+import { getDefaultAssetInDefaultSpace } from '../../../interactions/assets';
+import { queryLinksToDefaultAsset } from '../../../interactions/entries';
 
 describe('Asset Page', () => {
   before(() =>
@@ -21,10 +21,10 @@ describe('Asset Page', () => {
       cy.resetAllFakeServers();
 
       defaultRequestsMock();
-      singleUser();
+      queryFirst100UsersInDefaultSpace.willFindSeveral();
 
-      defaultAssetResponse();
-      noAssetLinksResponse();
+      getDefaultAssetInDefaultSpace.willReturnIt();
+      queryLinksToDefaultAsset.willReturnNone();
       cy.route('**/channel/**', []).as('shareJS');
 
       cy.visit(`/spaces/${defaultSpaceId}/assets/${defaultAssetId}`);

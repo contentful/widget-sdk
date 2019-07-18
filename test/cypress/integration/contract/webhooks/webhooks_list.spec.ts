@@ -2,10 +2,8 @@ import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
 import {
-  noWebhooksResponse,
-  webhooksErrorResponse,
-  singleWebhookResponse,
-  noWebhooksCallsResponse
+  queryFirst100WebhooksInDefaultSpace,
+  getAllCallsForDefaultWebhook
 } from '../../../interactions/webhooks';
 
 describe('Webhooks', () => {
@@ -26,7 +24,7 @@ describe('Webhooks', () => {
 
   context('no webhooks in the space configured', () => {
     beforeEach(() => {
-      noWebhooksResponse();
+      queryFirst100WebhooksInDefaultSpace.willFindNone();
 
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks`);
       cy.wait([`@${state.Token.VALID}`]);
@@ -43,7 +41,7 @@ describe('Webhooks', () => {
 
   context('server error', () => {
     beforeEach(() => {
-      webhooksErrorResponse();
+      queryFirst100WebhooksInDefaultSpace.willFailWithInternalServerError();
 
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks`);
       cy.wait([`@${state.Token.VALID}`]);
@@ -56,8 +54,8 @@ describe('Webhooks', () => {
 
   context('single webhook in the space configured', () => {
     beforeEach(() => {
-      singleWebhookResponse();
-      noWebhooksCallsResponse();
+      queryFirst100WebhooksInDefaultSpace.willFindOne();
+      getAllCallsForDefaultWebhook.willReturnNone();
 
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks`);
       cy.wait([`@${state.Token.VALID}`]);

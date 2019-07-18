@@ -1,12 +1,11 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import { singleUser } from '../../../interactions/users';
+import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
 import {
-  noAssetsResponse,
-  noArchivedAssetsResponse,
-  severalAssetsResponse,
-  severalAssetsBody
+  queryAllNonArchivedAssetsInTheDefaultSpace,
+  severalAssetsBody,
+  queryAllArchivedAssetsInTheDefaultSpace
 } from '../../../interactions/assets';
 
 describe('Assets List Page', () => {
@@ -24,12 +23,12 @@ describe('Assets List Page', () => {
     cy.resetAllFakeServers();
 
     defaultRequestsMock();
-    singleUser();
+    queryFirst100UsersInDefaultSpace.willFindSeveral();
   });
   context('no assets in the space', () => {
     beforeEach(() => {
-      noAssetsResponse();
-      noArchivedAssetsResponse();
+      queryAllNonArchivedAssetsInTheDefaultSpace.willFindNone();
+      queryAllArchivedAssetsInTheDefaultSpace.willFindNone();
 
       cy.visit(`/spaces/${defaultSpaceId}/assets`);
 
@@ -46,7 +45,7 @@ describe('Assets List Page', () => {
 
   context('several assets in the space', () => {
     beforeEach(() => {
-      severalAssetsResponse();
+      queryAllNonArchivedAssetsInTheDefaultSpace.willFindSeveral();
 
       cy.visit(`/spaces/${defaultSpaceId}/assets`);
 

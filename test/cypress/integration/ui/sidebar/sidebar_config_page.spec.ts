@@ -1,11 +1,11 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import {
-  allContentTypesResponse,
-  defaultContentTypeResponse,
-  defaultPublishedContentTypeResponse
+  getDefaultContentType,
+  getPublishedVersionOfDefaultContentType,
+  getAllContentTypesInDefaultSpace
 } from '../../../interactions/content_types';
-import { noExtensionsResponse } from '../../../interactions/extensions';
-import { editorInterfaceWithoutSidebarResponse } from '../../../interactions/content_types';
+import { getAllExtensionsInDefaultSpace } from '../../../interactions/extensions';
+import { getEditorInterfaceForDefaultContentType } from '../../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
 import * as state from '../../../util/interactionState';
 
@@ -22,11 +22,11 @@ describe('Sidebar configuration', () => {
     cy.resetAllFakeServers();
 
     defaultRequestsMock();
-    noExtensionsResponse();
-    editorInterfaceWithoutSidebarResponse();
-    allContentTypesResponse();
-    defaultContentTypeResponse();
-    defaultPublishedContentTypeResponse();
+    getAllExtensionsInDefaultSpace.willReturnNone();
+    getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
+    getAllContentTypesInDefaultSpace.willReturnOne();
+    getDefaultContentType.willReturnIt();
+    getPublishedVersionOfDefaultContentType.willReturnIt();
 
     cy.visit(
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`

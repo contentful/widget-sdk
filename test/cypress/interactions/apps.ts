@@ -1,17 +1,21 @@
 import * as state from '../util/interactionState';
-import { getApps } from '../util/requests';
+import { defaultSpaceId } from '../util/requests';
 
-export function noInstalledAppsResponse() {
-  return cy
-    .addInteraction({
+export const getAllInstalledAppsInDefaultSpace = {
+  willReturnNone() {
+    return cy.addInteraction({
       provider: 'apps',
       state: state.Apps.NONE,
-      uponReceiving: 'a request for all installed Apps',
-      withRequest: getApps(),
+      uponReceiving: `a request to get all installed apps in the space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/_microbackends/backends/apps/spaces/${defaultSpaceId}/`,
+        headers: {}
+      },
       willRespondWith: {
         status: 200,
         body: {}
       }
-    })
-    .as(state.Apps.NONE);
-}
+    }).as(state.Apps.NONE);
+  }
+};

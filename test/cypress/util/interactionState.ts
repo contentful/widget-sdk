@@ -59,11 +59,13 @@ export enum Assets {
 }
 
 export enum Jobs {
-  NONE = 'jobs/none',
-  SINGLE = 'jobs/single',
-  SEVERAL = 'jobs/several',
+  NO_JOBS_FOR_DEFAULT_SPACE = 'jobs/no-jobs-for-default-space',
+  ONE_JOB_FOR_DEFAULT_SPACE = 'jobs/one-job-for-default-space',
+  SEVERAL_JOBS_FOR_DEFAULT_SPACE = 'jobs/several-jobs-for-default-space',
   INTERNAL_SERVER_ERROR = 'jobs/internal-server-error',
-  JOB_EXECUTION_FAILED = 'jobs/job-execution-failed'
+  JOB_EXECUTION_FAILED = 'jobs/job-execution-failed',
+  NO_JOBS_SCHEDULED_FOR_DEFAULT_ENTRY = 'jobs/no-jobs-scheduled-for-default-entry',
+  ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY = 'jobs/one-pending-job-scheduled-for-default-entry'
 }
 
 export enum Tasks {
@@ -84,6 +86,7 @@ export enum Extensions {
 }
 
 export enum ContentTypes {
+  NONE = 'content_types/none',
   EDITORINTERFACE_WITHOUT_SIDEBAR = 'content_types/editor_interface_without_sidebar',
   EDITORINTERFACE_WITH_SIDEBAR = 'content_types/editor_interface_with_sidebar',
   SINGLE = 'content_types/single',
@@ -99,7 +102,15 @@ export enum Webhooks {
   NONE = 'webhooks/none',
   INTERNAL_SERVER_ERROR = 'webhooks/error',
   SINGLE = 'webhooks/single',
-  NO_CALLS = 'webhooks/no-calls',
-  SINGLE_EVENT = 'webhooks/single_event',
-  ALL_SETTINGS = 'webhooks/all-settings'
+  DEFAULT_WEBHOOK_TRIGGERS_CONTENT_TYPE_EVENTS = 'webhooks/default-webhook-triggers-content-type-events',
+  DEFAULT_WEBHOOK_HAS_FILTER = 'webhooks/default-webhook-has-filter',
+  DEFAULT_WEBHOOK_HAS_CUSTOM_HEADER = 'webhooks/default-webhook-has-custom-header',
+  DEFAULT_WEBHOOK_HAS_SECRET_HEADER = 'webhooks/default-webhook-has-secret-header',
+  DEFAULT_WEBHOOK_HAS_HTTP_HEADER = 'webhooks/default-webhook-has-http-header',
+  DEFAULT_WEBHOOK_HAS_CONTENT_TYPE_HEADER = 'webhooks/default-webhook-has-content-type-header',
+  DEFAULT_WEBHOOK_HAS_CONTENT_LENGTH_HEADER = 'webhooks/default-webhook-has-content-length-header',
+  DEFAULT_WEBHOOK_HAS_PAYLOAD = 'webhooks/default-webhook-has-payload',
+  DEFAULT_WEBHOOK_HAS_NO_CALLS = 'webhooks/default-webhook-has-no-calls',
+  DEFAULT_WEBHOOK_HAS_SINGLE_EVENT = 'webhooks/default-webhook-has-single-event',
+  DEFAULT_WEBHOOK_HAS_ALL_SETTINGS = 'webhooks/default-webhook-has-all-settings'
 }

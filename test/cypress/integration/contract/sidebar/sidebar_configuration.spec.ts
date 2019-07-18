@@ -1,14 +1,14 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import {
-  allContentTypesResponse,
-  defaultContentTypeResponse,
-  defaultPublishedContentTypeResponse,
-  editorInterfaceWithoutSidebarResponse,
-  defaultContentTypeWithCustomSidebarCreatedResponse,
-  defaultPublishedContentTypeWithCustomSidebarCreatedResponse,
-  editorInterfaceWithCustomSidebarSavedResponse
+  getAllContentTypesInDefaultSpace,
+  getDefaultContentType,
+  getPublishedVersionOfDefaultContentType,
+  getEditorInterfaceForDefaultContentType,
+  saveDefaultContentTypeWithCustomSidebar,
+  publishDefaultContentType,
+  saveDefaultContentTypeEditorInterface
 } from '../../../interactions/content_types';
-import { noExtensionsResponse } from '../../../interactions/extensions';
+import { getAllExtensionsInDefaultSpace } from '../../../interactions/extensions';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
 import * as state from '../../../util/interactionState';
 import { FeatureFlag } from '../../../util/featureFlag';
@@ -30,11 +30,11 @@ describe('Sidebar configuration', () => {
     cy.enableFeatureFlags([FeatureFlag.ENTRY_ACTIVITY]);
 
     defaultRequestsMock();
-    noExtensionsResponse();
-    editorInterfaceWithoutSidebarResponse();
-    allContentTypesResponse();
-    defaultContentTypeResponse();
-    defaultPublishedContentTypeResponse();
+    getAllExtensionsInDefaultSpace.willReturnNone();
+    getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
+    getAllContentTypesInDefaultSpace.willReturnOne();
+    getDefaultContentType.willReturnIt();
+    getPublishedVersionOfDefaultContentType.willReturnIt();
 
     cy.visit(
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`
@@ -65,10 +65,10 @@ describe('Sidebar configuration', () => {
     });
 
     it('checks that content type with a custom sidebar has been successfully saved', () => {
-      defaultContentTypeWithCustomSidebarCreatedResponse();
-      defaultPublishedContentTypeWithCustomSidebarCreatedResponse();
-      editorInterfaceWithoutSidebarResponse();
-      editorInterfaceWithCustomSidebarSavedResponse();
+      saveDefaultContentTypeWithCustomSidebar.willSucceed();
+      publishDefaultContentType.willSucceed();
+      getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
+      saveDefaultContentTypeEditorInterface.willSucceed();
 
       cy.getByTestId('sidebar-widget-item')
         .first()

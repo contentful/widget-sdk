@@ -1,14 +1,13 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import { singleUser } from '../../../interactions/users';
+import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import {
-  singleContentTypeResponse,
-  editorInterfaceWithoutSidebarResponse,
-  editorInterfaceWithSidebarResponse
+  getAllPublicContentTypesInDefaultSpace,
+  getEditorInterfaceForDefaultContentType
 } from '../../../interactions/content_types';
 import {
-  singleEntryResponse,
-  noEntryLinksResponse,
-  noEntrySnapshotsResponse
+  getDefaultEntry,
+  queryLinksToDefaultEntry,
+  getFirst7SnapshotsOfDefaultEntry
 } from '../../../interactions/entries';
 import * as state from '../../../util/interactionState';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
@@ -21,9 +20,9 @@ describe('Entries page', () => {
 
   context('with no sidebar in the editor_interface', () => {
     beforeEach(() => {
-      noEntryLinksResponse();
-      noEntrySnapshotsResponse();
-      editorInterfaceWithoutSidebarResponse();
+      queryLinksToDefaultEntry.willReturnNone();
+      getFirst7SnapshotsOfDefaultEntry.willReturnNone();
+      getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
     });
     describe('Opening the Entry page', () => {
@@ -55,7 +54,7 @@ describe('Entries page', () => {
 
   context('with a sidebar in the editor_interface', () => {
     beforeEach(() => {
-      editorInterfaceWithSidebarResponse();
+      getEditorInterfaceForDefaultContentType.willReturnOneWithSidebar();
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
     });
     describe('Opening the Entry page', () => {
@@ -79,8 +78,8 @@ function basicServerSetUp() {
     pactfileWriteMode: 'merge',
     spec: 2
   });
-  defaultRequestsMock({ publicContentTypesResponse: singleContentTypeResponse });
-  singleUser();
-  singleEntryResponse();
+  defaultRequestsMock({ publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne });
+  queryFirst100UsersInDefaultSpace.willFindSeveral();
+  getDefaultEntry.willReturnIt();
   cy.route('**/channel/**', []).as('shareJS');
 }

@@ -2,12 +2,12 @@ import { defaultRequestsMock } from '../../../util/factories';
 import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
 import {
-  editorInterfaceWithoutSidebarResponse,
-  allContentTypesResponse,
-  defaultContentTypeResponse,
-  defaultPublishedContentTypeResponse
+  getEditorInterfaceForDefaultContentType,
+  getAllContentTypesInDefaultSpace,
+  getDefaultContentType,
+  getPublishedVersionOfDefaultContentType
 } from '../../../interactions/content_types';
-import { noExtensionsResponse } from '../../../interactions/extensions';
+import { getAllExtensionsInDefaultSpace } from '../../../interactions/extensions';
 import { defaultContentTypeId } from '../../../util/requests';
 
 describe('Content type page', () => {
@@ -26,11 +26,11 @@ describe('Content type page', () => {
   context('content type with one field', () => {
     beforeEach(() => {
       defaultRequestsMock();
-      noExtensionsResponse();
-      editorInterfaceWithoutSidebarResponse();
-      allContentTypesResponse();
-      defaultContentTypeResponse();
-      defaultPublishedContentTypeResponse();
+      getAllExtensionsInDefaultSpace.willReturnNone();
+      getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
+      getAllContentTypesInDefaultSpace.willReturnOne();
+      getDefaultContentType.willReturnIt();
+      getPublishedVersionOfDefaultContentType.willReturnIt();
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`);
 
