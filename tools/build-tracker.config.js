@@ -36,7 +36,11 @@ const postCommentToPR = jsonPayload => {
       }
     };
     delete options.host;
+
+    console.log();
     console.log(options, payload);
+    console.log();
+
     const req = https.request(options, res => {
       let result = '';
       res.setEncoding('utf8');
@@ -77,23 +81,31 @@ module.exports = {
   artifacts: [`${pathToBuiltAssets}/**/*.{js,css}`],
   getFilenameHash: getFilenameHash,
   nameMapper: nameMapper,
-  onCompare: async data => {
-    const { markdown } = data;
-
+  onCompare: data => {
+    const markdown = data.markdown;
     const pr = process.env.PR_NUMBER;
+
     if (!pr) {
-      console.log('Not a PR. Not posting comment to GitHub issue');
-    } else {
-      if (!markdown) {
-        console.log('No markdown found.', JSON.stringify(data, null, 2));
-      } else {
-        const postCommentResult = await postCommentToPR({
-          issue: pr,
-          message: markdown
-        });
-        console.log(postCommentResult);
-      }
+      console.error('Not a PR. Not posting comment to GitHub issue');
+      return Promise.reject();
     }
-    return Promise.resolve();
+
+    if (!markdown) {
+      console.log();
+      console.error('No markdown found');
+      console.log(data);
+      console.log();
+      return Promise.reject();
+    }
+
+    return postCommentToPR({
+      issue: pr,
+      message: markdown
+    }).then(result => {
+      console.log('');
+      console.log(result);
+      console.log('');
+      return result;
+    });
   }
 };
