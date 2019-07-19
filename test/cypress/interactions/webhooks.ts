@@ -1,4 +1,3 @@
-import * as state from '../util/interactionState';
 import {
   defaultHeader,
   defaultSpaceId,
@@ -40,42 +39,65 @@ const queryFirst100WebhooksInDefaultSpaceRequest: RequestOptions = {
   }
 };
 
+enum States {
+  NONE = 'webhooks/none',
+  INTERNAL_SERVER_ERROR = 'webhooks/error',
+  SINGLE = 'webhooks/single',
+  DEFAULT_WEBHOOK_TRIGGERS_CONTENT_TYPE_EVENTS = 'webhooks/default-webhook-triggers-content-type-events',
+  DEFAULT_WEBHOOK_HAS_FILTER = 'webhooks/default-webhook-has-filter',
+  DEFAULT_WEBHOOK_HAS_CUSTOM_HEADER = 'webhooks/default-webhook-has-custom-header',
+  DEFAULT_WEBHOOK_HAS_SECRET_HEADER = 'webhooks/default-webhook-has-secret-header',
+  DEFAULT_WEBHOOK_HAS_HTTP_HEADER = 'webhooks/default-webhook-has-http-header',
+  DEFAULT_WEBHOOK_HAS_CONTENT_TYPE_HEADER = 'webhooks/default-webhook-has-content-type-header',
+  DEFAULT_WEBHOOK_HAS_CONTENT_LENGTH_HEADER = 'webhooks/default-webhook-has-content-length-header',
+  DEFAULT_WEBHOOK_HAS_PAYLOAD = 'webhooks/default-webhook-has-payload',
+  DEFAULT_WEBHOOK_HAS_NO_CALLS = 'webhooks/default-webhook-has-no-calls',
+  DEFAULT_WEBHOOK_HAS_SINGLE_EVENT = 'webhooks/default-webhook-has-single-event',
+  DEFAULT_WEBHOOK_HAS_ALL_SETTINGS = 'webhooks/default-webhook-has-all-settings'
+}
+
 export const queryFirst100WebhooksInDefaultSpace = {
   willFindNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.NONE,
+      state: States.NONE,
       uponReceiving: `a query for the first 100 webhooks in space "${defaultSpaceId}"`,
       withRequest: queryFirst100WebhooksInDefaultSpaceRequest,
       willRespondWith: {
         status: 200,
         body: empty
       }
-    }).as(state.Webhooks.NONE);
+    }).as('queryFirst100WebhooksInDefaultSpace');
+
+    return '@queryFirst100WebhooksInDefaultSpace';
   },
   willFindOne() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.SINGLE,
+      state: States.SINGLE,
       uponReceiving: `a query for the first 100 webhooks in space "${defaultSpaceId}"`,
       withRequest: queryFirst100WebhooksInDefaultSpaceRequest,
       willRespondWith: {
         status: 200,
         body: singleWebhookResponseBody
       }
-    }).as(state.Webhooks.SINGLE);
+    }).as('queryFirst100WebhooksInDefaultSpace');
+
+    return '@queryFirst100WebhooksInDefaultSpace';
   },
   willFailWithInternalServerError() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.INTERNAL_SERVER_ERROR,
+      state: States.INTERNAL_SERVER_ERROR,
       uponReceiving: `a query for the first 100 webhooks in space "${defaultSpaceId}"`,
       withRequest: queryFirst100WebhooksInDefaultSpaceRequest,
       willRespondWith: {
         status: 500,
         body: empty
       }
-    }).as(state.Webhooks.INTERNAL_SERVER_ERROR);
+    }).as('queryFirst100WebhooksInDefaultSpace');
+
+    return '@queryFirst100WebhooksInDefaultSpace';
   }
 }
 
@@ -92,14 +114,16 @@ export const createDefaultWebhook = {
   willSucceed() {
     cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.NONE,
+      state: States.NONE,
       uponReceiving: `a request to create default webhook in space "${defaultSpaceId}"`,
       withRequest: createWebhookInDefaultSpaceRequest(defaultWebhookRequestBody),
       willRespondWith: {
         status: 200,
         body: defaultWebhookResponseBody
       }
-    }).as('default-webhook-created-successfully');
+    }).as('createDefaultWebhook');
+
+    return '@createDefaultWebhook';
   }
 }
 
@@ -107,14 +131,16 @@ export const createCustomWebhookTriggeringContentTypeEvents = {
   willSucceed() {
     cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.NONE,
+      state: States.NONE,
       uponReceiving: `a request to create custom webhook, which triggers Content Type events, in space "${defaultSpaceId}"`,
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookContentTypeEventsRequestBody),
       willRespondWith: {
         status: 200,
         body: customWebhookContentTypeEventsResponseBody
       }
-    }).as('custom-webhook-content-type-events-created-successfully');
+    }).as('createCustomWebhookTriggeringContentTypeEvents');
+
+    return '@createCustomWebhookTriggeringContentTypeEvents';
   }
 }
 
@@ -122,14 +148,16 @@ export const createCustomWebhookWithFilters = {
   willSucceed() {
     cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.NONE,
+      state: States.NONE,
       uponReceiving: `a request to create custom webhook with filters in space "${defaultSpaceId}"`,
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookFilterRequestBody),
       willRespondWith: {
         status: 200,
         body: customWebhookFilterResponseBody
       }
-    }).as('custom-webhook-filter-created-successfully');
+    }).as('createCustomWebhookWithFilters');
+
+    return '@createCustomWebhookWithFilters';
   }
 }
 
@@ -137,14 +165,16 @@ export const createCustomWebhookWithCustomHeader = {
   willSucceed() {
     cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.NONE,
+      state: States.NONE,
       uponReceiving: `a request to create custom webhook with custom header in space "${defaultSpaceId}"`,
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookHeaderRequestBody),
       willRespondWith: {
         status: 200,
         body: customWebhookHeaderResponseBody
       }
-    }).as('custom-webhook-header-created-successfully');
+    }).as('createCustomWebhookWithCustomHeader');
+
+    return '@createCustomWebhookWithCustomHeader';
   }
 }
 
@@ -152,14 +182,16 @@ export const createCustomWebhookWithSecretHeader = {
   willSucceed() {
     cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.NONE,
+      state: States.NONE,
       uponReceiving: `a request to create custom webhook with secret header in space "${defaultSpaceId}"`,
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookSecretHeaderRequestBody),
       willRespondWith: {
         status: 200,
         body: customWebhookSecretHeaderResponseBody
       }
-    }).as('custom-webhook-secret-header-created-successfully');
+    }).as('createCustomWebhookWithSecretHeader');
+
+    return '@createCustomWebhookWithSecretHeader';
   }
 }
 
@@ -167,14 +199,16 @@ export const createCustomWebhookWithHTTPHeader = {
   willSucceed() {
     cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.NONE,
+      state: States.NONE,
       uponReceiving: `a request to create custom webhook with http header in space "${defaultSpaceId}"`,
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookHTTPRequestBody),
       willRespondWith: {
         status: 200,
         body: customWebhookHTTPResponseBody
       }
-    }).as('custom-webhook-http-header-created-successfully');
+    }).as('createCustomWebhookWithHTTPHeader');
+
+    return '@createCustomWebhookWithHTTPHeader';
   }
 }
 
@@ -182,14 +216,16 @@ export const createCustomWebhookWithContentTypeHeader = {
   willSucceed() {
     cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.NONE,
+      state: States.NONE,
       uponReceiving: `a request to create custom webhook with content type header in space "${defaultSpaceId}"`,
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookContentTypeHeaderRequestBody),
       willRespondWith: {
         status: 200,
         body: customWebhookContentTypeHeaderResponseBody
       }
-    }).as('custom-webhook-content-type-header-created-successfully');
+    }).as('createCustomWebhookWithContentTypeHeader');
+
+    return '@createCustomWebhookWithContentTypeHeader';
   }
 }
 
@@ -197,14 +233,16 @@ export const createCustomWebhookWithContentLengthHeader = {
   willSucceed() {
     cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.NONE,
+      state: States.NONE,
       uponReceiving: `a request to create custom webhook with content length header in space "${defaultSpaceId}"`,
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookContentLengthHeaderRequestBody),
       willRespondWith: {
         status: 200,
         body: customWebhookContentLengthHeaderResponseBody
       }
-    }).as('custom-webhook-content-length-header-created-successfully');
+    }).as('createCustomWebhookWithContentLengthHeader');
+
+    return '@createCustomWebhookWithContentLengthHeader';
   }
 }
 
@@ -212,14 +250,16 @@ export const createCustomWebhookWithCustomPayload = {
   willSucceed() {
     cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.NONE,
+      state: States.NONE,
       uponReceiving: `a request to create custom webhook with custom payload in space "${defaultSpaceId}"`,
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookPayloadRequestBody),
       willRespondWith: {
         status: 200,
         body: customWebhookPayloadResponseBody
       }
-    }).as('custom-webhook-payload-created-successfully');
+    }).as('createCustomWebhookWithCustomPayload');
+
+    return '@createCustomWebhookWithCustomPayload';
   }
 }
 
@@ -231,136 +271,158 @@ const getDefaultWebhookRequest: RequestOptions = {
 
 export const getDefaultWebhook = {
   willReturnTheDefaultWebhook() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.SINGLE,
+      state: States.SINGLE,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
         body: defaultWebhookResponseBody
       }
-    }).as(state.Webhooks.SINGLE);
+    }).as('getDefaultWebhook');
+
+    return '@getDefaultWebhook';
   },
   willReturnACustomWebhookThatTriggersContentTypeEvents() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.DEFAULT_WEBHOOK_TRIGGERS_CONTENT_TYPE_EVENTS,
+      state: States.DEFAULT_WEBHOOK_TRIGGERS_CONTENT_TYPE_EVENTS,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
         body: customWebhookContentTypeEventsResponseBody
       }
-    }).as(state.Webhooks.SINGLE);
+    }).as('getDefaultWebhook');
+
+    return '@getDefaultWebhook';
   },
   willReturnACustomWebhookWithFilter() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_FILTER,
+      state: States.DEFAULT_WEBHOOK_HAS_FILTER,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
         body: customWebhookFilterResponseBody
       }
-    }).as(state.Webhooks.SINGLE);
+    }).as('getDefaultWebhook');
+
+    return '@getDefaultWebhook';
   },
   willReturnACustomWebhookWithCustomHeader() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_CUSTOM_HEADER,
+      state: States.DEFAULT_WEBHOOK_HAS_CUSTOM_HEADER,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
         body: customWebhookHeaderResponseBody
       }
-    }).as(state.Webhooks.SINGLE);
+    }).as('getDefaultWebhook');
+
+    return '@getDefaultWebhook';
   },
   willReturnACustomWebhookWithSecretHeader() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_SECRET_HEADER,
+      state: States.DEFAULT_WEBHOOK_HAS_SECRET_HEADER,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
         body: customWebhookSecretHeaderResponseBody
       }
-    }).as(state.Webhooks.SINGLE);
+    }).as('getDefaultWebhook');
+
+    return '@getDefaultWebhook';
   },
   willReturnACustomWebhookWithHTTPHeader() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_HTTP_HEADER,
+      state: States.DEFAULT_WEBHOOK_HAS_HTTP_HEADER,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
         body: customWebhookHTTPResponseBody
       }
-    }).as(state.Webhooks.SINGLE);
+    }).as('getDefaultWebhook');
+
+    return '@getDefaultWebhook';
   },
   willReturnACustomWebhookWithContentTypeHeader() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_CONTENT_TYPE_HEADER,
+      state: States.DEFAULT_WEBHOOK_HAS_CONTENT_TYPE_HEADER,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
         body: customWebhookContentTypeHeaderResponseBody
       }
-    }).as(state.Webhooks.SINGLE);
+    }).as('getDefaultWebhook');
+
+    return '@getDefaultWebhook';
   },
   willReturnACustomWebhookWithContentLengthHeader() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_CONTENT_LENGTH_HEADER,
+      state: States.DEFAULT_WEBHOOK_HAS_CONTENT_LENGTH_HEADER,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
         body: customWebhookContentLengthHeaderResponseBody
       }
-    }).as(state.Webhooks.SINGLE);
+    }).as('getDefaultWebhook');
+
+    return '@getDefaultWebhook';
   },
   willReturnACustomWebhookWithPayload() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_PAYLOAD,
+      state: States.DEFAULT_WEBHOOK_HAS_PAYLOAD,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
         body: customWebhookPayloadResponseBody
       }
-    }).as(state.Webhooks.SINGLE);
+    }).as('getDefaultWebhook');
+
+    return '@getDefaultWebhook';
   },
   willReturnACustomWebhookWithSingleEvent() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_SINGLE_EVENT,
+      state: States.DEFAULT_WEBHOOK_HAS_SINGLE_EVENT,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
         body: webhookSingleEventResponseBody
       }
-    }).as(state.Webhooks.DEFAULT_WEBHOOK_HAS_SINGLE_EVENT);
+    }).as('getDefaultWebhook');
+
+    return '@getDefaultWebhook';
   },
   willReturnACustomWebhookWithAllSetting() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_ALL_SETTINGS,
+      state: States.DEFAULT_WEBHOOK_HAS_ALL_SETTINGS,
       uponReceiving: `a request to get the webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
         body: webhookCustomAllSettingsResponseBody
       }
-    }).as(state.Webhooks.DEFAULT_WEBHOOK_HAS_ALL_SETTINGS);
+    }).as('getDefaultWebhook');
+
+    return '@getDefaultWebhook';
   }
 }
 
@@ -375,36 +437,40 @@ const queryFirst500DefaultWebhookCallsRequest: RequestOptions = {
 
 export const queryFirst500DefaultWebhookCalls = {
   willReturnNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS,
+      state: States.DEFAULT_WEBHOOK_HAS_NO_CALLS,
       uponReceiving: `a request to get the first 500 calls for webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: queryFirst500DefaultWebhookCallsRequest,
       willRespondWith: {
         status: 200,
         body: empty
       }
-    }).as(state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS);
+    }).as('queryFirst500DefaultWebhookCalls');
+
+    return '@queryFirst500DefaultWebhookCalls';
   },
   willReturnOneSuccesfulCall() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_SINGLE_EVENT,
+      state: States.DEFAULT_WEBHOOK_HAS_SINGLE_EVENT,
       uponReceiving: `a request to get the first 500 calls for webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: queryFirst500DefaultWebhookCallsRequest,
       willRespondWith: {
         status: 200,
         body: webhookSuccessfulCallResponseBody
       }
-    });
+    }).as('queryFirst500DefaultWebhookCalls');
+
+    return '@queryFirst500DefaultWebhookCalls';
   }
 }
 
 export const getAllCallsForDefaultWebhook = {
   willReturnNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS,
+      state: States.DEFAULT_WEBHOOK_HAS_NO_CALLS,
       uponReceiving: `a request to get all calls state of webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
@@ -415,7 +481,9 @@ export const getAllCallsForDefaultWebhook = {
         status: 200,
         body: noWebhookCallsResponseBody
       }
-    }).as(state.Webhooks.DEFAULT_WEBHOOK_HAS_NO_CALLS);
+    }).as('getAllCallsForDefaultWebhook');
+
+    return '@getAllCallsForDefaultWebhook';
   }
 }
 
@@ -427,25 +495,29 @@ const deleteDefaultWebhookRequest: RequestOptions = {
 
 export const deleteDefaultWebhook = {
   willSucceed() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.SINGLE,
+      state: States.SINGLE,
       uponReceiving: `a request to delete webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: deleteDefaultWebhookRequest,
       willRespondWith: {
         status: 204
       }
-    }).as('default-webhook-deleted-successfully');
+    }).as('deleteDefaultWebhook');
+
+    return '@deleteDefaultWebhook';
   },
   willFailWithAnInternalServerError() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'webhooks',
-      state: state.Webhooks.INTERNAL_SERVER_ERROR,
+      state: States.INTERNAL_SERVER_ERROR,
       uponReceiving: `a request to delete webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: deleteDefaultWebhookRequest,
       willRespondWith: {
         status: 500
       }
-    }).as(state.Webhooks.INTERNAL_SERVER_ERROR);
+    }).as('willFailWithAnInternalServerError');
+
+    return '@willFailWithAnInternalServerError';
   }
 }

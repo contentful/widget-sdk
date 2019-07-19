@@ -4,6 +4,7 @@ import {
   getAllCommentsForDefaultEntry,
   createTask,
   openTask,
+  reopenTask,
   resolveTask
 } from '../../../interactions/tasks';
 
@@ -13,7 +14,6 @@ import {
 } from '../../../interactions/content_types';
 import { getDefaultEntry, getFirst7SnapshotsOfDefaultEntry } from '../../../interactions/entries';
 import { generateMicrobackendStreamToken } from '../../../interactions/microbackend';
-import * as state from '../../../util/interactionState';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import { FeatureFlag } from '../../../util/featureFlag';
 
@@ -37,29 +37,36 @@ describe('Tasks entry editor sidebar', () => {
   });
 
   function visitEntry() {
-    basicServerSetUpWithEntry();
+    const interactions = basicServerSetUpWithEntry();
+
     cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
-    cy.wait([`@${state.Token.VALID}`]);
+
+    cy.wait(interactions);
   }
 
-  function basicServerSetUpWithEntry() {
-    defaultRequestsMock({
-      publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
-    });
-    queryFirst100UsersInDefaultSpace.willFindSeveral();
-    getDefaultEntry.willReturnIt();
-    getFirst7SnapshotsOfDefaultEntry.willReturnNone();
-    getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
-    generateMicrobackendStreamToken.willSucceed();
-
+  function basicServerSetUpWithEntry(): string[] {
+    cy.server();
     cy.route('**/channel/**', []).as('shareJS');
+
+    return [
+      ...defaultRequestsMock({
+        publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
+      }),
+      queryFirst100UsersInDefaultSpace.willFindSeveral(),
+      getDefaultEntry.willReturnIt(),
+      getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
+      getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
+      generateMicrobackendStreamToken.willSucceed()
+    ];
   }
 
   context('tasks service error', () => {
     beforeEach(() => {
-      getAllCommentsForDefaultEntry.willFailWithAnInternalServerError();
+      const interaction = getAllCommentsForDefaultEntry.willFailWithAnInternalServerError();
+
       visitEntry();
-      cy.wait([`@${state.Tasks.INTERNAL_SERVER_ERROR}`]);
+
+      cy.wait(interaction);
     });
 
     it('renders "Tasks" sidebar section with an error', () => {
@@ -69,10 +76,11 @@ describe('Tasks entry editor sidebar', () => {
 
   context('no tasks on the entry', () => {
     beforeEach(() => {
-      const stateName = state.Tasks.NONE;
-      getAllCommentsForDefaultEntry.willReturnNone().as(stateName);
+      const interaction = getAllCommentsForDefaultEntry.willReturnNone();
+
       visitEntry();
-      cy.wait([`@${stateName}`]);
+
+      cy.wait(interaction);
     });
 
     it('renders "Tasks" sidebar section', () => {
@@ -83,14 +91,16 @@ describe('Tasks entry editor sidebar', () => {
 
   context('several tasks on the entry', () => {
     beforeEach(() => {
-      const stateName = state.Tasks.SEVERAL;
-      getAllCommentsForDefaultEntry.willReturnSeveral().as(stateName);
+      const interaction = getAllCommentsForDefaultEntry.willReturnSeveral();
+
       visitEntry();
-      cy.wait([`@${stateName}`]);
+
+      cy.wait(interaction);
     });
 
     it('renders list of tasks', () => {
       getTasks().should('have.length', 3);
+
       severalTasks.items.forEach(({ assignment: { status } }, i: number) => {
         expectTask(getTasks().eq(i), { isResolved: status === 'resolved' });
       })
@@ -102,10 +112,12 @@ describe('Tasks entry editor sidebar', () => {
           title: 'Updated task body!',
           assigneeId: users.items[1].sys.id
         }
-        const stateName = state.Tasks.SEVERAL_ONE_OPEN;
-        openTask(updatedTaskData, stateName).willSucceed().as(stateName);
+
+        const interaction = openTask(updatedTaskData).willSucceed();
+
         updateTaskAndSave(getTasks().first(), updatedTaskData);
-        cy.wait([`@${stateName}`]);
+
+        cy.wait(interaction);
       });
 
       it('resolves tasks without error', () => {
@@ -115,12 +127,14 @@ describe('Tasks entry editor sidebar', () => {
           assigneeId: openTask.assignment.assignedTo.sys.id,
           taskId: openTask.sys.id
         }
-        const stateName = state.Tasks.SEVERAL_ONE_RESOLVED;
-        resolveTask(updatedTaskData, stateName).willSucceed().as(stateName);
+        const interaction = resolveTask(updatedTaskData).willSucceed();
+
         const task = () => getTasks().first();
         expectTask(task(), { isResolved: false });
         getTaskCheckbox(task()).check();
-        cy.wait([`@${stateName}`]);
+
+        cy.wait(interaction);
+
         expectTask(task(), { isResolved: true });
       });
 
@@ -131,11 +145,13 @@ describe('Tasks entry editor sidebar', () => {
           assigneeId: resolvedTask.assignment.assignedTo.sys.id,
           taskId: resolvedTask.sys.id
         }
-        const stateName = state.Tasks.SEVERAL_ONE_REOPENED;
-        openTask(updatedTaskData, stateName).willSucceed().as(stateName);
+        const interaction = reopenTask(updatedTaskData).willSucceed();
+
         const task = () => getTasks().eq(1);
         getTaskCheckbox(task()).uncheck();
-        cy.wait([`@${stateName}`]);
+
+        cy.wait(interaction);
+
         expectTask(task(), { isResolved: false });
       });
 
@@ -160,23 +176,24 @@ describe('Tasks entry editor sidebar', () => {
   describe('creating a new task', () => {
     const newTaskData = { title: 'Great new task!', assigneeId: 'userID' };
 
+    let getAllCommentsInteraction: string
     beforeEach(() => {
-      getAllCommentsForDefaultEntry.willReturnNone().as(state.Tasks.NONE);
+      getAllCommentsInteraction = getAllCommentsForDefaultEntry.willReturnNone();
     });
 
     context('task creation error', () => {
       beforeEach(() => {
         visitEntry();
 
-        cy.wait([`@${state.Tasks.NONE}`]);
+        cy.wait(getAllCommentsInteraction);
       });
 
       it('creates task on API and adds it to task list', () => {
-        createTask(newTaskData).willFailWithAnInternalServerError().as('task-creation-failed');
+        const interaction = createTask(newTaskData).willFailWithAnInternalServerError();
 
         createNewTaskAndSave(newTaskData);
 
-        cy.wait(['@task-creation-failed']);
+        cy.wait(interaction);
 
         getTasks().should('have.length', 0);
         getDraftTask().should('have.length', 1);
@@ -189,15 +206,15 @@ describe('Tasks entry editor sidebar', () => {
       beforeEach(() => {
         visitEntry();
 
-        cy.wait([`@${state.Tasks.NONE}`]);
+        cy.wait(getAllCommentsInteraction);
       });
 
       it('creates task on API and adds it to task list', () => {
-        createTask(newTaskData).willSucceed().as('task-creation-successful');
+        const interaction = createTask(newTaskData).willSucceed();
 
         createNewTaskAndSave(newTaskData);
 
-        cy.wait(['@task-creation-successful']);
+        cy.wait(interaction);
 
         getDraftTask().should('have.length', 0);
         getTasks().should('have.length', 1);

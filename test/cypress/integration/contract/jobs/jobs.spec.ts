@@ -1,5 +1,4 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
 import { getAllPublicContentTypesInDefaultSpace } from '../../../interactions/content_types';
 import {
@@ -28,12 +27,13 @@ describe('Jobs page', () => {
 
   context('no jobs in the space', () => {
     beforeEach(() => {
-      defaultRequestsMock();
-      queryAllJobsForDefaultSpace.willFindNone();
+      const interactions = defaultRequestsMock();
+      const slowInteraction = queryAllJobsForDefaultSpace.willFindNone();
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
-      cy.wait([`@${state.Token.VALID}`]);
-      cy.wait([`@${state.Jobs.NO_JOBS_FOR_DEFAULT_SPACE}`], { timeout: 10000 });
+
+      cy.wait(interactions);
+      cy.wait(slowInteraction, { timeout: 10000 });
     });
     it('renders illustration and heading for empty state', () => {
       cy.getByTestId('cf-ui-tab-panel')
@@ -48,6 +48,7 @@ describe('Jobs page', () => {
   context('several jobs in the space', () => {
     beforeEach(() => {
       cy.resetAllFakeServers();
+      // TODO: move this to a before block
       cy.startFakeServers({
         consumer: 'user_interface',
         providers: ['entries', 'users'],
@@ -55,16 +56,18 @@ describe('Jobs page', () => {
         pactfileWriteMode: 'merge',
         spec: 2
       });
-      defaultRequestsMock({
+      const interactions = defaultRequestsMock({
         publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
       });
-      queryAllJobsForDefaultSpace.willFindSeveral();
-      queryForDefaultEntryInsideEnvironment.willFindIt();
-      queryForDefaultUserDetails.willFindTheUserDetails();
+      const slowInteractions = [
+        queryAllJobsForDefaultSpace.willFindSeveral(),
+        queryForDefaultEntryInsideEnvironment.willFindIt(),
+        queryForDefaultUserDetails.willFindTheUserDetails()
+      ];
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
-      cy.wait([`@${state.Token.VALID}`]);
-      cy.wait([`@${state.Jobs.SEVERAL_JOBS_FOR_DEFAULT_SPACE}`, `@${state.Entries.SEVERAL}`, `@${state.Users.SINGLE}`], {
+      cy.wait(interactions);
+      cy.wait(slowInteractions, {
         timeout: 10000
       });
     });
@@ -78,12 +81,12 @@ describe('Jobs page', () => {
 
   context('error state', () => {
     beforeEach(() => {
-      defaultRequestsMock();
-      queryAllJobsForDefaultSpace.willFailWithAnInternalServerError();
+      const interactions = defaultRequestsMock();
+      const slowInteraction = queryAllJobsForDefaultSpace.willFailWithAnInternalServerError();
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
-      cy.wait([`@${state.Token.VALID}`]);
-      cy.wait([`@${state.Jobs.INTERNAL_SERVER_ERROR}`], { timeout: 10000 });
+      cy.wait(interactions);
+      cy.wait(slowInteraction, { timeout: 10000 });
     });
     it('renders illustration and heading for error state', () => {
       cy.getByTestId('cf-ui-tab-panel')

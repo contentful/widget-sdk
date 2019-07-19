@@ -1,4 +1,3 @@
-import * as state from '../util/interactionState';
 import {
   defaultHeader,
   defaultSpaceId,
@@ -7,6 +6,10 @@ import {
 import { Query, RequestOptions } from '@pact-foundation/pact-web';
 
 const users = require('../fixtures/responses/users.json');
+
+enum States {
+  SINGLE = 'users/single'
+}
 
 function querySpaceUsersRequest(query: Query): RequestOptions {
   return {
@@ -19,9 +22,9 @@ function querySpaceUsersRequest(query: Query): RequestOptions {
 
 export const queryFirst100UsersInDefaultSpace = {
   willFindSeveral() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'users',
-      state: state.Users.SINGLE,
+      state: States.SINGLE,
       uponReceiving: `a query for the first 100 users in space "${defaultSpaceId}"`,
       withRequest: querySpaceUsersRequest({
         limit: '100',
@@ -31,16 +34,18 @@ export const queryFirst100UsersInDefaultSpace = {
         status: 200,
         body: users
       }
-    }).as(state.Users.SINGLE);
+    }).as('queryFirst100UsersInDefaultSpace');
+    
+    return '@queryFirst100UsersInDefaultSpace';
   }
 }
 
 export const queryForDefaultUserDetails = {
   willFindTheUserDetails() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'users',
       // TODO: This is bad test design, we should have several users to check that we can ge specific user from several
-      state: state.Users.SINGLE,
+      state: States.SINGLE,
       uponReceiving: `a query for the details of user "${defaultUserId}" in space "${defaultSpaceId}"`,
       withRequest: querySpaceUsersRequest({
         limit: '1000', // TODO: Why ask for 1000 if we want only one?
@@ -50,6 +55,8 @@ export const queryForDefaultUserDetails = {
         status: 200,
         body: users // TODO: this looks like a bug, there are two users here!
       }
-    }).as(state.Users.SINGLE);
+    }).as('queryForDefaultUserDetails');
+
+    return '@queryForDefaultUserDetails'
   }
 }

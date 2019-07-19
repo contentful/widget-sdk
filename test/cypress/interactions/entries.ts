@@ -1,4 +1,3 @@
-import * as state from '../util/interactionState';
 import {
   defaultHeader,
   defaultEntryId,
@@ -11,11 +10,19 @@ import {
 const empty = require('../fixtures/responses/empty.json');
 const severalEntriesResponseBody = require('../fixtures/responses/entries-several.json');
 
+enum States {
+  NONE = 'entries/none',
+  SEVERAL = 'entries/several',
+  NO_LINKS_TO_DEFAULT_ENTRY = 'entries/no-links-to-default-entry',
+  NO_LINKS_TO_DEFAULT_ASSET = 'entries/no-links-to-default-asset',
+  NO_SNAPSHOTS_FOR_DEFAULT_ENTRY = 'entries/no-snapshots-for-default-entry'
+}
+
 export const getDefaultEntry = {
   willReturnIt() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'entries',
-      state: state.Entries.SEVERAL,
+      state: States.SEVERAL,
       uponReceiving: `a request for the entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
@@ -26,15 +33,17 @@ export const getDefaultEntry = {
         status: 200,
         body: defaultEntry
       }
-    }).as(state.Entries.SEVERAL);
+    }).as('getDefaultEntry');
+
+    return '@getDefaultEntry';
   }
 };
 
 export const queryLinksToDefaultEntry = {
   willReturnNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'entries',
-      state: state.Entries.NO_LINKS_TO_DEFAULT_ENTRY,
+      state: States.NO_LINKS_TO_DEFAULT_ENTRY,
       uponReceiving: `a query for links to the entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
@@ -48,15 +57,17 @@ export const queryLinksToDefaultEntry = {
         status: 200,
         body: empty
       }
-    }).as(state.Entries.NO_LINKS_TO_DEFAULT_ENTRY);
+    }).as('queryLinksToDefaultEntry');
+
+    return '@queryLinksToDefaultEntry';
   }
 };
 
 export const queryLinksToDefaultAsset = {
   willReturnNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'entries',
-      state: state.Entries.NO_LINKS_TO_DEFAULT_ASSET,
+      state: States.NO_LINKS_TO_DEFAULT_ASSET,
       uponReceiving: `a query for links to the asset "${defaultAssetId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
@@ -70,15 +81,17 @@ export const queryLinksToDefaultAsset = {
         status: 200,
         body: empty
       }
-    }).as(state.Entries.NO_LINKS_TO_DEFAULT_ASSET);
+    }).as('queryLinksToDefaultAsset');
+
+    return '@queryLinksToDefaultAsset';
   }
 };
 
 export const getFirst7SnapshotsOfDefaultEntry = {
   willReturnNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'entries',
-      state: state.Entries.NO_SNAPSHOTS_FOR_DEFAULT_ENTRY,
+      state: States.NO_SNAPSHOTS_FOR_DEFAULT_ENTRY,
       uponReceiving: `a request to get the first 7 snapshots of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
@@ -92,15 +105,17 @@ export const getFirst7SnapshotsOfDefaultEntry = {
         status: 200,
         body: empty
       }
-    }).as(state.Entries.NO_SNAPSHOTS_FOR_DEFAULT_ENTRY);
+    }).as('getFirst7SnapshotsOfDefaultEntry');
+
+    return '@getFirst7SnapshotsOfDefaultEntry';
   }
 };
 
 export const queryForDefaultEntryInsideEnvironment ={
   willFindIt() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'entries',
-      state: state.Entries.SEVERAL,
+      state: States.SEVERAL,
       // TODO: Is this description accurate?
       uponReceiving: `a query for the entry "${defaultEntryId}" inside the environment "${defaultEnvironmentId}" in space "${defaultSpaceId}"`,
       withRequest: {
@@ -115,15 +130,17 @@ export const queryForDefaultEntryInsideEnvironment ={
         status: 200,
         body: severalEntriesResponseBody // TODO: This looks wrong (the response contains three entries)
       }
-    }).as(state.Entries.SEVERAL);
+    }).as('queryForDefaultEntryInsideEnvironment');
+
+    return '@queryForDefaultEntryInsideEnvironment';
   }
 };
 
 export const createAnEntryInDefaultSpace = {
   willSucceed() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'entries',
-      state: state.Entries.NONE,
+      state: States.NONE,
       uponReceiving: `a request to create an entry in "${defaultSpaceId}"`,
       withRequest: {
         method: 'POST',
@@ -134,6 +151,8 @@ export const createAnEntryInDefaultSpace = {
         status: 201,
         body: defaultEntry
       }
-    }).as(state.Entries.NONE);
+    }).as('createAnEntryInDefaultSpace');
+
+    return '@createAnEntryInDefaultSpace';
   }
 }

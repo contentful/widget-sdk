@@ -1,4 +1,3 @@
-import * as state from '../util/interactionState';
 import {
   defaultSpaceId,
   defaultEntryId,
@@ -8,6 +7,14 @@ import {
 import { RequestOptions } from '@pact-foundation/pact-web';
 const empty = require('../fixtures/responses/empty.json');
 const severalTasks = require('../fixtures/responses/tasks-several.json');
+
+export enum States {
+  NONE = 'tasks/none',
+  SEVERAL = 'tasks/several',
+  SEVERAL_ONE_OPEN = 'tasks/several-one-open',
+  SEVERAL_ONE_RESOLVED = 'tasks/several-one-resolved',
+  INTERNAL_SERVER_ERROR = 'tasks/internal-server-error'
+}
 
 enum Status {
   OPEN = 'open',
@@ -30,44 +37,51 @@ const getEntryCommentsAndTasksRequest: RequestOptions = {
 
 export const getAllCommentsForDefaultEntry = {
   willReturnNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider,
-      state: state.Tasks.NONE,
+      state: States.NONE,
       uponReceiving: request.GET_TASK_LIST,
       withRequest: getEntryCommentsAndTasksRequest,
       willRespondWith: {
         status: 200,
         body: empty
       }
-    });
+    }).as('getAllCommentsForDefaultEntry');
+
+    return '@getAllCommentsForDefaultEntry';
   },
   willReturnSeveral() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider,
-      state: state.Tasks.SEVERAL,
+      state: States.SEVERAL,
       uponReceiving: request.GET_TASK_LIST,
       withRequest: getEntryCommentsAndTasksRequest,
       willRespondWith: {
         status: 200,
         body: severalTasks
       }
-    });
+    }).as('getAllCommentsForDefaultEntry');
+
+    return '@getAllCommentsForDefaultEntry';;
   },
   willFailWithAnInternalServerError() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider,
-      state: state.Tasks.INTERNAL_SERVER_ERROR,
+      state: States.INTERNAL_SERVER_ERROR,
       uponReceiving: request.GET_TASK_LIST,
       withRequest: getEntryCommentsAndTasksRequest,
       willRespondWith: {
         status: 500,
         body: empty
       }
-    }).as(state.Tasks.INTERNAL_SERVER_ERROR);
+    }).as('getAllCommentsForDefaultEntry');
+
+    return '@getAllCommentsForDefaultEntry';
   }
 }
 
 export function createTask({ title, assigneeId }) {
+  const alias = `createTask-for-${assigneeId}`;
   const newTask = {
     body: title,
     assignment: {
@@ -94,9 +108,9 @@ export function createTask({ title, assigneeId }) {
   return {
     willSucceed() {
       const newTaskSys = severalTasks.items[0].sys;
-      return cy.addInteraction({
+      cy.addInteraction({
         ...interactionRequestInfo,
-        state: state.Tasks.NONE,
+        state: States.NONE,
         willRespondWith: {
           status: 200,
           body: {
@@ -104,23 +118,28 @@ export function createTask({ title, assigneeId }) {
             ...newTask,
           }
         }
-      });
+      }).as(alias);
+
+      return `@${alias}`;
     },
     willFailWithAnInternalServerError() {
-      return cy.addInteraction({
+      cy.addInteraction({
         ...interactionRequestInfo,
-        state: state.Tasks.INTERNAL_SERVER_ERROR,
+        state: States.INTERNAL_SERVER_ERROR,
         willRespondWith: {
           status: 500,
           body: empty
         }
-      });
+      }).as(alias);
+
+      return `@${alias}`;
     }
   }
 }
 
-function changeTaskStatus(status: Status) {
-  return function ({ title, assigneeId, taskId = defaultTaskId }, stateName: state.Tasks) {
+function changeTaskStatus(status: Status, stateName: States) {
+  return function ({ title, assigneeId, taskId = defaultTaskId }, ) {
+    const alias = `changeTask-${taskId}-to-${status}`
     const updatedTask = {
       body: title,
       assignment: {
@@ -153,7 +172,7 @@ function changeTaskStatus(status: Status) {
         const { sys: newTaskSys } = severalTasks.items.find((task: any) => {
           return task.sys.id === taskId;
         });
-        return cy.addInteraction({
+        cy.addInteraction({
           ...interactionRequestInfo,
           state: stateName,
           willRespondWith: {
@@ -164,21 +183,26 @@ function changeTaskStatus(status: Status) {
               assignment: { ...updatedTask.assignment, status },
             }
           }
-        });
+        }).as(alias);
+
+        return `@${alias}`;
       },
       willFailWithAnInternalServerError() {
-        return cy.addInteraction({
+        cy.addInteraction({
           ...interactionRequestInfo,
-          state: state.Tasks.INTERNAL_SERVER_ERROR,
+          state: States.INTERNAL_SERVER_ERROR,
           willRespondWith: {
             status: 500,
             body: empty
           }
-        });
+        }).as(alias);
+
+        return `@${alias}`;
       }
     }
   }
 }
 
-export const openTask = changeTaskStatus(Status.OPEN);
-export const resolveTask = changeTaskStatus(Status.RESOLVED);
+export const openTask = changeTaskStatus(Status.OPEN, States.SEVERAL_ONE_OPEN);
+export const reopenTask = changeTaskStatus(Status.OPEN, States.SEVERAL_ONE_RESOLVED);
+export const resolveTask = changeTaskStatus(Status.RESOLVED, States.SEVERAL_ONE_OPEN);

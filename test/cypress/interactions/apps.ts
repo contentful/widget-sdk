@@ -1,11 +1,14 @@
-import * as state from '../util/interactionState';
 import { defaultSpaceId } from '../util/requests';
+
+enum States {
+  NONE = 'microbackends/apps/none'
+}
 
 export const getAllInstalledAppsInDefaultSpace = {
   willReturnNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'apps',
-      state: state.Apps.NONE,
+      state: States.NONE,
       uponReceiving: `a request to get all installed apps in the space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
@@ -16,6 +19,8 @@ export const getAllInstalledAppsInDefaultSpace = {
         status: 200,
         body: {}
       }
-    }).as(state.Apps.NONE);
+    }).as('getAllInstalledAppsInDefaultSpace');
+
+    return '@getAllInstalledAppsInDefaultSpace'
   }
 };

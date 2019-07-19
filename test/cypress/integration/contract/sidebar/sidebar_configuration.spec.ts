@@ -10,7 +10,6 @@ import {
 } from '../../../interactions/content_types';
 import { getAllExtensionsInDefaultSpace } from '../../../interactions/extensions';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
-import * as state from '../../../util/interactionState';
 import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('Sidebar configuration', () => {
@@ -29,21 +28,20 @@ describe('Sidebar configuration', () => {
 
     cy.enableFeatureFlags([FeatureFlag.ENTRY_ACTIVITY]);
 
-    defaultRequestsMock();
-    getAllExtensionsInDefaultSpace.willReturnNone();
-    getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
-    getAllContentTypesInDefaultSpace.willReturnOne();
-    getDefaultContentType.willReturnIt();
-    getPublishedVersionOfDefaultContentType.willReturnIt();
+    const interactions = [
+      ...defaultRequestsMock(),
+      getAllExtensionsInDefaultSpace.willReturnNone(),
+      getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
+      getAllContentTypesInDefaultSpace.willReturnOne(),
+      getDefaultContentType.willReturnIt(),
+      getPublishedVersionOfDefaultContentType.willReturnIt()
+    ];
 
     cy.visit(
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`
     );
 
-    cy.wait([
-      `@${state.Token.VALID}`,
-      `@${state.ContentTypes.DEFAULT_CONTENT_TYPE_IS_PUBLISHED}`
-    ]);
+    cy.wait(interactions);
   });
 
   describe('Opening the page with no configuration saved', () => {
@@ -65,10 +63,12 @@ describe('Sidebar configuration', () => {
     });
 
     it('checks that content type with a custom sidebar has been successfully saved', () => {
-      saveDefaultContentTypeWithCustomSidebar.willSucceed();
-      publishDefaultContentType.willSucceed();
-      getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
-      saveDefaultContentTypeEditorInterface.willSucceed();
+      const interactions = [
+        saveDefaultContentTypeWithCustomSidebar.willSucceed(),
+        publishDefaultContentType.willSucceed(),
+        getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
+        saveDefaultContentTypeEditorInterface.willSucceed()
+      ];
 
       cy.getByTestId('sidebar-widget-item')
         .first()
@@ -76,12 +76,7 @@ describe('Sidebar configuration', () => {
         .click();
       cy.getByTestId('save-content-type').click();
 
-      cy.wait([
-        '@content-type-custom-sidebar-created',
-        '@content-type-published-custom-sidebar-created',
-        `@${state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR}`,
-        `@editor-interface-sidebar-saved`
-      ]);
+      cy.wait(interactions);
 
       cy.verifyNotification('success', 'Content type saved successfully');
     });

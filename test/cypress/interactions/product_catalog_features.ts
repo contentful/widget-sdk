@@ -1,4 +1,3 @@
-import * as state from '../util/interactionState';
 import {
   defaultHeader,
   defaultOrgId,
@@ -9,11 +8,16 @@ import { RequestOptions, Query } from '@pact-foundation/pact';
 const productCatalogOrg = require('../fixtures/responses/product-catalog-org.json');
 const productCatalogSpace = require('../fixtures/responses/product-catalog-space.json');
 
+enum States {
+  ORG_WITH_SEVERAL_FEATURES = 'product_catalog_features/org-with-several',
+  SPACE_WITH_SEVERAL_FEATURES = 'product_catalog_features/space-with-several'
+}
+
 export const getAllProductCatalogFeaturesForDefaultOrg = {
   willFindSeveral() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'product_catalog_features',
-      state: state.ProductCatalogFeatures.ORG_WITH_SEVERAL_FEATURES,
+      state: States.ORG_WITH_SEVERAL_FEATURES,
       uponReceiving: `a request to get all product catalog features for org "${defaultOrgId}"`,
       withRequest: {
         method: 'GET',
@@ -24,7 +28,9 @@ export const getAllProductCatalogFeaturesForDefaultOrg = {
         status: 200,
         body: productCatalogOrg
       }
-    }).as(state.ProductCatalogFeatures.ORG_WITH_SEVERAL_FEATURES);
+    }).as('getAllProductCatalogFeaturesForDefaultOrg');
+
+    return '@getAllProductCatalogFeaturesForDefaultOrg';
   }
 }
 
@@ -39,24 +45,26 @@ function productCatalogFeaturesForDefaultSpaceRequest(query?: Query): RequestOpt
 
 export const getAllCatalogFeaturesForDefaultSpace = {
   willFindSeveral() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'product_catalog_features',
-      state: state.ProductCatalogFeatures.SPACE_WITH_SEVERAL_FEATURES,
+      state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a request to get all features for space "${defaultSpaceId}"`,
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(),
       willRespondWith: {
         status: 200,
         body: productCatalogSpace
       }
-    }).as(state.ProductCatalogFeatures.SPACE_WITH_SEVERAL_FEATURES);
+    }).as('getAllCatalogFeaturesForDefaultSpace');
+
+    return '@getAllCatalogFeaturesForDefaultSpace'
   }
 }
 
 export const queryForTwoSpecificFeaturesInDefaultSpace = {
   willFindBothOfThem() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'product_catalog_features',
-      state: state.ProductCatalogFeatures.SPACE_WITH_SEVERAL_FEATURES,
+      state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for the "environment_usage_enforcements" and "basic_apps" features for space "${defaultSpaceId}"`,
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(
         'sys.featureId[]=environment_usage_enforcements&sys.featureId[]=basic_apps'
@@ -65,6 +73,8 @@ export const queryForTwoSpecificFeaturesInDefaultSpace = {
         status: 200,
         body: productCatalogSpace
       }
-    }).as(state.ProductCatalogFeatures.SPACE_WITH_SEVERAL_FEATURES);
+    }).as('queryForTwoSpecificFeaturesInDefaultSpace');
+
+    return '@queryForTwoSpecificFeaturesInDefaultSpace'
   }
 }

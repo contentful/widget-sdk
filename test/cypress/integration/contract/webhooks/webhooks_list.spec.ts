@@ -1,5 +1,4 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
 import {
   queryFirst100WebhooksInDefaultSpace,
@@ -17,18 +16,21 @@ describe('Webhooks', () => {
     })
   );
 
+  let interactions: string[]
   beforeEach(() => {
     cy.resetAllFakeServers();
-    defaultRequestsMock();
+
+    interactions = defaultRequestsMock();
   });
 
   context('no webhooks in the space configured', () => {
     beforeEach(() => {
-      queryFirst100WebhooksInDefaultSpace.willFindNone();
+      const slowInteraction = queryFirst100WebhooksInDefaultSpace.willFindNone();
 
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks`);
-      cy.wait([`@${state.Token.VALID}`]);
-      cy.wait([`@${state.Webhooks.NONE}`], { timeout: 10000 });
+
+      cy.wait(interactions);
+      cy.wait(slowInteraction, { timeout: 10000 });
     });
 
     it('renders table and heading', () => {
@@ -41,25 +43,29 @@ describe('Webhooks', () => {
 
   context('server error', () => {
     beforeEach(() => {
-      queryFirst100WebhooksInDefaultSpace.willFailWithInternalServerError();
+      const slowInteraction = queryFirst100WebhooksInDefaultSpace.willFailWithInternalServerError();
 
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks`);
-      cy.wait([`@${state.Token.VALID}`]);
-      cy.wait([`@${state.Webhooks.INTERNAL_SERVER_ERROR}`], { timeout: 10000 });
+
+      cy.wait(interactions);
+      cy.wait(slowInteraction, { timeout: 10000 });
     });
 
-    it.skip('renders error message', () => {});
+    it.skip('renders error message', () => { });
     //Test will be added after fixing https://contentful.atlassian.net/browse/EXT-907.
   });
 
   context('single webhook in the space configured', () => {
     beforeEach(() => {
-      queryFirst100WebhooksInDefaultSpace.willFindOne();
-      getAllCallsForDefaultWebhook.willReturnNone();
+      const slowInteractions = [
+        queryFirst100WebhooksInDefaultSpace.willFindOne(),
+        getAllCallsForDefaultWebhook.willReturnNone()
+      ];
 
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks`);
-      cy.wait([`@${state.Token.VALID}`]);
-      cy.wait([`@${state.Webhooks.SINGLE}`], { timeout: 10000 });
+
+      cy.wait(interactions);
+      cy.wait(slowInteractions, { timeout: 10000 });
     });
 
     it('renders title and table raw', () => {

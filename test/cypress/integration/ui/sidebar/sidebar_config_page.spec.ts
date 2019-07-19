@@ -7,7 +7,6 @@ import {
 import { getAllExtensionsInDefaultSpace } from '../../../interactions/extensions';
 import { getEditorInterfaceForDefaultContentType } from '../../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
-import * as state from '../../../util/interactionState';
 
 describe('Sidebar configuration', () => {
   before(() =>
@@ -21,22 +20,20 @@ describe('Sidebar configuration', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
 
-    defaultRequestsMock();
-    getAllExtensionsInDefaultSpace.willReturnNone();
-    getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
-    getAllContentTypesInDefaultSpace.willReturnOne();
-    getDefaultContentType.willReturnIt();
-    getPublishedVersionOfDefaultContentType.willReturnIt();
+    const interactions = [
+      ...defaultRequestsMock(),
+      getAllExtensionsInDefaultSpace.willReturnNone(),
+      getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
+      getAllContentTypesInDefaultSpace.willReturnOne(),
+      getDefaultContentType.willReturnIt(),
+      getPublishedVersionOfDefaultContentType.willReturnIt()
+    ];
 
     cy.visit(
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`
     );
 
-    cy.wait([
-      `@${state.Token.VALID}`,
-      `@${state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR}`,
-      `@${state.ContentTypes.DEFAULT_CONTENT_TYPE_IS_PUBLISHED}`
-    ]);
+    cy.wait(interactions);
   });
 
   const widgetNames = ['Publish & Status', 'Preview', 'Links', 'Translation', 'Versions', 'Users'];

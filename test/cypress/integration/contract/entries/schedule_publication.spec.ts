@@ -9,7 +9,6 @@ import {
   queryLinksToDefaultEntry,
   getFirst7SnapshotsOfDefaultEntry
 } from '../../../interactions/entries';
-import * as state from '../../../util/interactionState';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import {
   createScheduledPublicationForDefaultSpace,
@@ -19,23 +18,18 @@ import {
 import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('Schedule Publication', () => {
+  let interactions: string[]
   beforeEach(() => {
     cy.enableFeatureFlags([FeatureFlag.SCHEDULED_PUBLICATION]);
-    basicServerSetUp();
+    interactions = basicServerSetUp();
   });
 
   describe('scheduling a publication', () => {
     beforeEach(() => {
-      queryAllScheduledJobsForDefaultEntry.willFindNone();
+      interactions.push(queryAllScheduledJobsForDefaultEntry.willFindNone());
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(
-        [
-          `@${state.Token.VALID}`,
-          `@${state.Enforcements.NONE}`,
-          `@${state.Entries.NO_LINKS_TO_DEFAULT_ENTRY}`,
-          `@${state.Entries.NO_SNAPSHOTS_FOR_DEFAULT_ENTRY}`,
-          `@${state.Jobs.NO_JOBS_SCHEDULED_FOR_DEFAULT_ENTRY}`
-        ],
+        interactions,
         { timeout: 10000 }
       );
     });
@@ -43,9 +37,7 @@ describe('Schedule Publication', () => {
     it('submits the new scheduled publication and then re-fetch the list of scheduled publications', () => {
       cy.resetAllFakeServers();
 
-      createScheduledPublicationForDefaultSpace
-        .willSucceed()
-        .as('job-created-successfully');
+      const interaction = createScheduledPublicationForDefaultSpace.willSucceed()
 
       cy.getByTestId('change-state-menu-trigger').click();
       cy.getByTestId('schedule-publication').click();
@@ -56,7 +48,7 @@ describe('Schedule Publication', () => {
         .first()
         .click();
 
-      cy.wait(['@job-created-successfully']);
+      cy.wait(interaction);
       cy.getByTestId('scheduled-item').should('have.length', 1);
       cy.getByTestId('change-state-published').should('be.disabled');
     });
@@ -64,18 +56,15 @@ describe('Schedule Publication', () => {
 
   describe('cancelling a publication', () => {
     beforeEach(() => {
-      queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob();
-      // TODO: It seems the wrong place for this set up
-      cancelDefaultJobInDefaultSpace.willSucceed();
+      interactions.push(
+        queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
+        // TODO: It seems the wrong place for this set up
+        cancelDefaultJobInDefaultSpace.willSucceed()
+      );
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(
-        [
-          `@${state.Token.VALID}`,
-          `@${state.Enforcements.NONE}`,
-          `@${state.Entries.NO_LINKS_TO_DEFAULT_ENTRY}`,
-          `@${state.Jobs.ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY}`
-        ],
+        interactions,
         { timeout: 10000 }
       );
     });
@@ -83,7 +72,7 @@ describe('Schedule Publication', () => {
     it('cancels publication after clicking on the grey button', () => {
       cy.resetAllFakeServers();
 
-      cancelDefaultJobInDefaultSpace.willSucceed().as('job-cancelled');
+      const interaction = cancelDefaultJobInDefaultSpace.willSucceed();
 
       cy.getByTestId('cancel-job-ddl').click();
       cy.getByTestId('cancel-job').click();
@@ -92,23 +81,20 @@ describe('Schedule Publication', () => {
         .find('[data-test-id="confirm-job-cancellation"]')
         .first()
         .click();
-      cy.wait(['@job-cancelled']);
+
+      cy.wait(interaction);
+
       cy.getByTestId('change-state-menu-trigger').should('be.visible');
       cy.getByTestId('change-state-published').should('be.enabled');
     });
   });
   describe('error states', () => {
     it('renders error note is the last job is failed', () => {
-      queryAllScheduledJobsForDefaultEntry.willFindOneFailedJob();
+      interactions.push(queryAllScheduledJobsForDefaultEntry.willFindOneFailedJob());
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(
-        [
-          `@${state.Token.VALID}`,
-          `@${state.Enforcements.NONE}`,
-          `@${state.Entries.NO_LINKS_TO_DEFAULT_ENTRY}`,
-          `@${state.Jobs.JOB_EXECUTION_FAILED}`
-        ],
+        interactions,
         { timeout: 10000 }
       );
 
@@ -119,16 +105,11 @@ describe('Schedule Publication', () => {
     });
 
     it('renders error note if jobs endpoint returns 500', () => {
-      queryAllScheduledJobsForDefaultEntry.willFailWithAnInternalServerError();
+      interactions.push(queryAllScheduledJobsForDefaultEntry.willFailWithAnInternalServerError());
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(
-        [
-          `@${state.Token.VALID}`,
-          `@${state.Enforcements.NONE}`,
-          `@${state.Entries.NO_LINKS_TO_DEFAULT_ENTRY}`,
-          `@${state.Jobs.INTERNAL_SERVER_ERROR}`
-        ],
+        interactions,
         { timeout: 10000 }
       );
 
@@ -140,8 +121,9 @@ describe('Schedule Publication', () => {
   });
 });
 
-function basicServerSetUp() {
+function basicServerSetUp(): string[] {
   cy.resetAllFakeServers();
+  // TODO: move this to a before block
   cy.startFakeServers({
     consumer: 'user_interface',
     providers: ['jobs', 'entries', 'users'],
@@ -150,14 +132,17 @@ function basicServerSetUp() {
     spec: 2
   });
 
-  defaultRequestsMock({
-    publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
-  });
-  queryFirst100UsersInDefaultSpace.willFindSeveral();
-  getDefaultEntry.willReturnIt();
-  queryLinksToDefaultEntry.willReturnNone();
-  getFirst7SnapshotsOfDefaultEntry.willReturnNone();
-  getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
-
+  cy.server();
   cy.route('**/channel/**', []).as('shareJS');
+
+  return [
+    ...defaultRequestsMock({
+      publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
+    }),
+    queryFirst100UsersInDefaultSpace.willFindSeveral(),
+    getDefaultEntry.willReturnIt(),
+    queryLinksToDefaultEntry.willReturnNone(),
+    getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
+    getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar()
+  ];
 }

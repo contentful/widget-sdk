@@ -20,16 +20,18 @@ const defaultHandlers: DefaultHandlers = {
   localeResponse: queryFirst100LocalesOfDefaultSpace.willFindOne
 };
 
-export function defaultRequestsMock(customHandlers: Partial<DefaultHandlers> = {}) {
+export function defaultRequestsMock(customHandlers: Partial<DefaultHandlers> = {}): string[] {
   /*
    * This function provides a minimum amount of deafult requests
    * that is enough to render almost every page in the app.
    * It can be used only if these requests are not the main aspect of the test.
    */
   const handlers = Object.assign({}, defaultHandlers, customHandlers);
-  handlers.tokenResponse();
-  handlers.enforcementsResponse();
-  handlers.publicContentTypesResponse();
-  handlers.environmentResponse();
-  handlers.localeResponse();
+  return [
+    handlers.tokenResponse(),
+    handlers.enforcementsResponse(),
+    handlers.publicContentTypesResponse(),
+    handlers.environmentResponse(),
+    handlers.localeResponse()
+  ];
 }
