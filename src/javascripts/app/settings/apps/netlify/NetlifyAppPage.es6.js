@@ -4,7 +4,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { cloneDeep, uniqBy } from 'lodash';
 import { Button, Notification, Note } from '@contentful/forma-36-react-components';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 
@@ -30,6 +30,9 @@ const notifyError = (err, fallbackMessage) => {
 const styles = {
   section: css({
     marginBottom: tokens.spacingXl
+  }),
+  actionButton: css({
+    marginLeft: tokens.spacingM
   })
 };
 
@@ -42,6 +45,7 @@ export default class NetlifyAppPage extends Component {
       config: PropTypes.object.isRequired
     }).isRequired,
     ticketId: PropTypes.string.isRequired,
+    onGoBack: PropTypes.func.isRequired,
     contentTypeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
     client: PropTypes.shape({
       save: PropTypes.func.isRequired,
@@ -209,48 +213,53 @@ export default class NetlifyAppPage extends Component {
     const { installed, busyWith } = this.state;
 
     return (
-      <Workbench.Header>
-        <Workbench.Header.Back to="^.list" />
-        <Workbench.Icon>
-          <AppIcon appId="netlify" />
-        </Workbench.Icon>
-        <Workbench.Title>App: {this.props.app.title}</Workbench.Title>
-        <Workbench.Header.Actions>
-          {installed && (
-            <Button
-              buttonType="muted"
-              disabled={!!busyWith} // One can uninstall without a token.
-              loading={busyWith === 'uninstall'}
-              onClick={this.onUninstallClick}>
-              Uninstall
-            </Button>
-          )}
-          {installed && (
-            <Button
-              buttonType="positive"
-              disabled={this.isDisabled()}
-              loading={busyWith === 'update'}
-              onClick={this.onUpdateClick}>
-              Save
-            </Button>
-          )}
-          {!installed && (
-            <Button
-              buttonType="positive"
-              disabled={this.isDisabled()}
-              loading={busyWith === 'install'}
-              onClick={this.onInstallClick}>
-              Save
-            </Button>
-          )}
-        </Workbench.Header.Actions>
-      </Workbench.Header>
+      <Workbench.Header
+        onBack={() => {
+          this.props.onGoBack();
+        }}
+        icon={<AppIcon appId="netlify" />}
+        title={`App: ${this.props.app.title}`}
+        actions={
+          <>
+            {installed && (
+              <Button
+                className={styles.actionButton}
+                buttonType="muted"
+                disabled={!!busyWith} // One can uninstall without a token.
+                loading={busyWith === 'uninstall'}
+                onClick={this.onUninstallClick}>
+                Uninstall
+              </Button>
+            )}
+            {installed && (
+              <Button
+                className={styles.actionButton}
+                buttonType="positive"
+                disabled={this.isDisabled()}
+                loading={busyWith === 'update'}
+                onClick={this.onUpdateClick}>
+                Save
+              </Button>
+            )}
+            {!installed && (
+              <Button
+                className={styles.actionButton}
+                buttonType="positive"
+                disabled={this.isDisabled()}
+                loading={busyWith === 'install'}
+                onClick={this.onInstallClick}>
+                Save
+              </Button>
+            )}
+          </>
+        }
+      />
     );
   }
 
   renderContent() {
     return (
-      <Workbench.Content centered>
+      <Workbench.Content>
         <Note className={styles.section}>
           Let us know how we can improve the Netlify app.{' '}
           <FeedbackButton target="extensibility" about="Netlify app" />

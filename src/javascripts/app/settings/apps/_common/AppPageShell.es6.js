@@ -1,22 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import AppIcon from './AppIcon.es6';
+import Icon from 'ui/Components/Icon.es6';
 
 const AppPageShell = ({ appId }) => (
   <Workbench>
-    <Workbench.Header>
-      <Workbench.Header.Back to="^.list" />
-      {appId ? (
-        <Workbench.Icon>
-          <AppIcon appId={appId} />
-        </Workbench.Icon>
-      ) : (
-        <Workbench.Icon icon="page-apps" scale="1" />
-      )}
-    </Workbench.Header>
-    <Workbench.Content centered>
+    <Workbench.Header
+      icon={appId ? <AppIcon appId={appId} /> : <Icon name="page-apps" scale="1" />}
+    />
+    <Workbench.Content>
       <SkeletonContainer ariaLabel="Loading app..." svgWidth={600}>
         <SkeletonBodyText numberOfLines={5} marginBottom={15} offsetTop={60} />
       </SkeletonContainer>

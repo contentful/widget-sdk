@@ -6,7 +6,7 @@ import { get } from 'lodash';
 import * as Config from 'Config.es6';
 import { assign } from 'utils/Collections.es6';
 import { caseofEq } from 'sum-types';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { LinkOpen, CodeFragment } from 'ui/Content.es6';
 import {
   CopyButton,
@@ -30,14 +30,11 @@ export default function View({ state, actions }) {
     <React.Fragment>
       <DocumentTitle title="Environments" />
       <Workbench>
-        <Workbench.Header>
-          <Workbench.Icon icon="page-settings" />
-          <Workbench.Title>Environments</Workbench.Title>
-        </Workbench.Header>
-        <Workbench.Content>
+        <Workbench.Header icon={<Icon name="page-settings" scale="0.8" />} title="Environments" />
+        <Workbench.Content type="full">
           <EnvironmentList {...state} {...actions} />
         </Workbench.Content>
-        <Workbench.Sidebar>
+        <Workbench.Sidebar position="right">
           <Sidebar {...state} {...actions} />
         </Workbench.Sidebar>
       </Workbench>
@@ -230,8 +227,10 @@ function Sidebar({
   const limit = get(resource, 'limits.maximum', -1) + 1;
 
   return (
-    <div className="entity-sidebar">
-      <h2 className="entity-sidebar__heading">Usage</h2>
+    <>
+      <h2 className="entity-sidebar__heading" style={{ marginTop: 0 }}>
+        Usage
+      </h2>
       <div className="entity-sidebar__text-profile">
         <p data-test-id="environmentsUsage">
           You are using {usage}{' '}
@@ -283,7 +282,7 @@ function Sidebar({
           </li>
         </ul>
       </div>
-    </div>
+    </>
   );
 }
 Sidebar.propTypes = {

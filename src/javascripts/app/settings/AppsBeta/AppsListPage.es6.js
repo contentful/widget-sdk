@@ -11,7 +11,8 @@ import {
   Notification
 } from '@contentful/forma-36-react-components';
 
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import Icon from 'ui/Components/Icon.es6';
 import AdminOnly from 'app/common/AdminOnly.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import * as Telemetry from 'i13n/Telemetry.es6';
@@ -19,10 +20,6 @@ import * as Telemetry from 'i13n/Telemetry.es6';
 import AppListItem from './AppListItem.es6';
 
 const styles = {
-  container: css({
-    maxWidth: '600px',
-    margin: `${tokens.spacingXl} auto`
-  }),
   intro: css({
     marginBottom: tokens.spacingL
   }),
@@ -33,17 +30,12 @@ const styles = {
 
 const AppsListShell = props => (
   <Workbench>
-    <Workbench.Header>
-      <Workbench.Icon icon="page-apps" scale="1" />
-      <Workbench.Title>Apps</Workbench.Title>
-    </Workbench.Header>
-    <Workbench.Content centered>
-      <div className={styles.container}>
-        <p className={styles.intro}>
-          Extend the platform and integrate with services you’re using by adding Apps.
-        </p>
-        <div>{props.children}</div>
-      </div>
+    <Workbench.Header title="Apps" icon={<Icon name="page-apps" scale="1" />} />
+    <Workbench.Content type="text">
+      <p className={styles.intro}>
+        Extend the platform and integrate with services you’re using by adding Apps.
+      </p>
+      <div>{props.children}</div>
     </Workbench.Content>
   </Workbench>
 );

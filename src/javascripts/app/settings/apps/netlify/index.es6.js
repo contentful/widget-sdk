@@ -9,6 +9,7 @@ import AppPageShell from '../_common/AppPageShell.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
+const $state = getModule('$state');
 
 const NetlifyFetcher = createFetcherComponent(({ client }) => {
   return Promise.all([
@@ -45,6 +46,9 @@ export default class NetlifyApp extends Component {
               ticketId={ticketId}
               contentTypeIds={contentTypes.map(ct => ct.sys.id)}
               client={this.props.client}
+              onGoBack={() => {
+                $state.go('^.list');
+              }}
             />
           );
         }}

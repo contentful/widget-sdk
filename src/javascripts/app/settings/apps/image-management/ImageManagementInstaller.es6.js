@@ -34,9 +34,6 @@ const styles = {
   }),
   installListItem: css({
     listStyleType: 'disc'
-  }),
-  feedback: css({
-    marginTop: tokens.spacingXl
   })
 };
 
@@ -101,7 +98,7 @@ export class ImageManagementInstaller extends Component {
 
     return (
       <div>
-        <Note className={styles.feedback}>
+        <Note>
           Let us know how we can improve the AI image management app.{' '}
           <FeedbackButton target="extensibility" about="AI Image management app" />
         </Note>

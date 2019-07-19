@@ -4,7 +4,7 @@ import React from 'react';
 
 import { getModule } from 'NgRegistry.es6';
 import AppIcon from '../_common/AppIcon.es6';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import AppPageShell from '../_common/AppPageShell.es6';
 
 import { ImageManagementInstaller } from './ImageManagementInstaller.es6';
@@ -12,6 +12,7 @@ import { ImageManagementGettingStarted } from './ImageManagementGettingStarted.e
 import { APP_ID, APP_NAME } from './Constants.es6';
 
 const spaceContext = getModule('spaceContext');
+const $state = getModule('$state');
 
 export default class ImageManagementApp extends Component {
   static propTypes = {
@@ -56,14 +57,14 @@ export default class ImageManagementApp extends Component {
 
     return (
       <Workbench>
-        <Workbench.Header>
-          <Workbench.Header.Back to="^.list" />
-          <Workbench.Icon>
-            <AppIcon appId={APP_ID} />
-          </Workbench.Icon>
-          <Workbench.Title>App: {APP_NAME}</Workbench.Title>
-        </Workbench.Header>
-        <Workbench.Content centered>
+        <Workbench.Header
+          icon={<AppIcon appId={APP_ID} />}
+          title={`App: ${APP_NAME}`}
+          onBack={() => {
+            $state.go('^.list');
+          }}
+        />
+        <Workbench.Content>
           {this.state.installed ? (
             <ImageManagementGettingStarted
               client={this.props.client}

@@ -32,9 +32,6 @@ const styles = {
   }),
   uninstallListItem: css({
     listStyleType: 'disc'
-  }),
-  feedback: css({
-    marginTop: tokens.spacingXl
   })
 };
 
@@ -78,7 +75,7 @@ export class ImageManagementGettingStarted extends Component {
   render() {
     return (
       <div>
-        <Note className={styles.feedback}>
+        <Note>
           Let us know how we can improve the AI image management app.{' '}
           <FeedbackButton target="extensibility" about="AI Image management app" />
         </Note>

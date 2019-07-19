@@ -8,6 +8,7 @@ import AppPageShell from '../_common/AppPageShell.es6';
 import OptimizelyApp from './OptimizelyApp.es6';
 
 const spaceContext = getModule('spaceContext');
+const $state = getModule('$state');
 
 const OptimizelyFetcher = createFetcherComponent(async ({ client }) => {
   return Promise.all([client.get('optimizely'), spaceContext.cma.getContentTypes()]);
@@ -38,6 +39,9 @@ export default class Index extends Component {
               client={this.props.client}
               app={app}
               allContentTypes={allContentTypes.items}
+              onGoBack={() => {
+                $state.go('^.list');
+              }}
             />
           );
         }}

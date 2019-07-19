@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import Workbench from 'app/common/Workbench.es6';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 import AppsList from './AppsList.es6';
 import AppListItem from './AppListItem.es6';
@@ -14,17 +13,14 @@ import {
   SkeletonText,
   SkeletonImage
 } from '@contentful/forma-36-react-components';
-
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import Icon from 'ui/Components/Icon.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as Intercom from 'services/intercom.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { websiteUrl } from 'Config.es6';
 
 const styles = {
-  container: css({
-    maxWidth: '600px',
-    margin: `${tokens.spacingXl} auto`
-  }),
   intro: css({
     marginBottom: tokens.spacingL
   }),
@@ -38,17 +34,12 @@ const styles = {
 
 const AppsListShell = props => (
   <Workbench>
-    <Workbench.Header>
-      <Workbench.Icon icon="page-apps" scale="1" />
-      <Workbench.Title>Apps</Workbench.Title>
-    </Workbench.Header>
-    <Workbench.Content centered>
-      <div className={styles.container}>
-        <p className={styles.intro}>
-          Extend the platform and integrate with services you’re using by adding apps.
-        </p>
-        <div>{props.children}</div>
-      </div>
+    <Workbench.Header icon={<Icon name="page-apps" scale="1" />} title="Apps" />
+    <Workbench.Content type="text">
+      <p className={styles.intro}>
+        Extend the platform and integrate with services you’re using by adding apps.
+      </p>
+      <div>{props.children}</div>
     </Workbench.Content>
   </Workbench>
 );

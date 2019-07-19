@@ -14263,10 +14263,6 @@
   .user-invitations-list__email:hover {
     cursor: pointer;
   }
-  .algolia-app__config {
-    max-width: 800px;
-    margin: 0 auto;
-  }
   .algolia-app__config-section {
     margin-top: 3rem;
   }

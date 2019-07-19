@@ -7,7 +7,7 @@ import {
   Notification,
   Note
 } from '@contentful/forma-36-react-components';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
@@ -280,108 +280,111 @@ export default class AlgoliaAppPage extends Component {
 
     return (
       <Workbench>
-        <Workbench.Header>
-          <Workbench.Header.Back to="^.list" />
-          <Workbench.Icon>
-            <AppIcon appId="algolia" />
-          </Workbench.Icon>
-          <Workbench.Title>App: {this.props.app.title}</Workbench.Title>
-          <Workbench.Header.Actions>
-            {installed && (
-              <Button
-                buttonType="muted"
-                disabled={!!busyWith}
-                loading={busyWith === 'uninstall'}
-                onClick={this.onUninstallClick}>
-                Uninstall
-              </Button>
-            )}
-            {installed && (
-              <Button
-                buttonType="positive"
-                disabled={!!busyWith}
-                loading={busyWith === 'update'}
-                onClick={this.onUpdateClick}>
-                Save
-              </Button>
-            )}
-            {!installed && (
-              <Button
-                buttonType="positive"
-                disabled={!!busyWith}
-                loading={busyWith === 'install'}
-                onClick={this.onInstallClick}>
-                Save
-              </Button>
-            )}
-          </Workbench.Header.Actions>
-        </Workbench.Header>
-        <Workbench.Content centered>
-          <div className="algolia-app__config">
-            <div>
-              <Note>
-                Let us know how we can improve the Algolia app.{' '}
-                <FeedbackButton target="extensibility" about="Algolia app" />
-              </Note>
-            </div>
-
-            <div className="algolia-app__config-section">
-              <Heading>About</Heading>
-              <Paragraph>
-                By setting up this app the selected content type will be automatically indexed in
-                Algolia.{' '}
-                <a
-                  href="https://www.contentful.com/developers/docs/extensibility/apps/algolia/"
-                  target="_blank"
-                  rel="noopener noreferrer">
-                  Read the docs
-                </a>
-                .
-              </Paragraph>
-            </div>
-
-            <Setup
-              installed={this.state.installed}
-              appId={this.state.config.appId}
-              apiKey={this.state.apiKey}
-              onChange={this.onCredentialsChange}
-            />
-            {isDraftModalOpen && draftRecord ? (
-              <DraftRecordModal
-                isShown={true}
-                installed={this.state.installed}
-                apiKey={this.state.apiKey}
-                draftRecord={draftRecord}
-                contentType={this.findContentTypeById(draftRecord.contentTypeId)}
-                locales={this.props.locales}
-                onCredentialsChange={this.onCredentialsChange}
-                onIndexChange={this.onDraftIndexChange}
-                onLocaleChange={this.onDraftLocaleChange}
-                onFieldsChange={this.onDraftFieldsChange}
-                onClose={() => this.setState({ draftRecord: null })}
-                onSave={this.onSaveDraft}
-                onCancel={this.onCancelDraft}
-                onDelete={this.onDeleteRecord}
-              />
-            ) : null}
-            {isAPIKeyRequired ? (
-              <APIKeyModal
-                apiKey={this.state.apiKey}
-                onCredentialsChange={this.onCredentialsChange}
-                onClose={() => this.setState({ isAPIKeyRequired: false })}
-              />
-            ) : null}
-            <SelectContent
-              findContentTypeById={this.findContentTypeById}
-              allContentTypes={this.props.allContentTypes}
-              locales={this.props.locales}
-              draftRecord={draftRecord}
-              records={this.state.config.records}
-              onDraftContentTypeIdChange={this.onDraftContentTypeIdChange}
-              editDraft={this.editDraft}
-              editRecord={this.editRecord}
-            />
+        <Workbench.Header
+          onBack={() => {
+            $state.go('^.list');
+          }}
+          title={`App: ${this.props.app.title}`}
+          icon={<AppIcon appId="algolia" />}
+          actions={
+            <>
+              {installed && (
+                <Button
+                  className="f36-margin-left--m"
+                  buttonType="muted"
+                  disabled={!!busyWith}
+                  loading={busyWith === 'uninstall'}
+                  onClick={this.onUninstallClick}>
+                  Uninstall
+                </Button>
+              )}
+              {installed && (
+                <Button
+                  className="f36-margin-left--m"
+                  buttonType="positive"
+                  disabled={!!busyWith}
+                  loading={busyWith === 'update'}
+                  onClick={this.onUpdateClick}>
+                  Save
+                </Button>
+              )}
+              {!installed && (
+                <Button
+                  className="f36-margin-left--m"
+                  buttonType="positive"
+                  disabled={!!busyWith}
+                  loading={busyWith === 'install'}
+                  onClick={this.onInstallClick}>
+                  Save
+                </Button>
+              )}
+            </>
+          }
+        />
+        <Workbench.Content>
+          <div>
+            <Note>
+              Let us know how we can improve the Algolia app.{' '}
+              <FeedbackButton target="extensibility" about="Algolia app" />
+            </Note>
           </div>
+
+          <div className="algolia-app__config-section">
+            <Heading>About</Heading>
+            <Paragraph>
+              By setting up this app the selected content type will be automatically indexed in
+              Algolia.{' '}
+              <a
+                href="https://www.contentful.com/developers/docs/extensibility/apps/algolia/"
+                target="_blank"
+                rel="noopener noreferrer">
+                Read the docs
+              </a>
+              .
+            </Paragraph>
+          </div>
+
+          <Setup
+            installed={this.state.installed}
+            appId={this.state.config.appId}
+            apiKey={this.state.apiKey}
+            onChange={this.onCredentialsChange}
+          />
+          {isDraftModalOpen && draftRecord ? (
+            <DraftRecordModal
+              isShown={true}
+              installed={this.state.installed}
+              apiKey={this.state.apiKey}
+              draftRecord={draftRecord}
+              contentType={this.findContentTypeById(draftRecord.contentTypeId)}
+              locales={this.props.locales}
+              onCredentialsChange={this.onCredentialsChange}
+              onIndexChange={this.onDraftIndexChange}
+              onLocaleChange={this.onDraftLocaleChange}
+              onFieldsChange={this.onDraftFieldsChange}
+              onClose={() => this.setState({ draftRecord: null })}
+              onSave={this.onSaveDraft}
+              onCancel={this.onCancelDraft}
+              onDelete={this.onDeleteRecord}
+            />
+          ) : null}
+          {isAPIKeyRequired ? (
+            <APIKeyModal
+              apiKey={this.state.apiKey}
+              onCredentialsChange={this.onCredentialsChange}
+              onClose={() => this.setState({ isAPIKeyRequired: false })}
+            />
+          ) : null}
+          <SelectContent
+            findContentTypeById={this.findContentTypeById}
+            allContentTypes={this.props.allContentTypes}
+            locales={this.props.locales}
+            draftRecord={draftRecord}
+            records={this.state.config.records}
+            onDraftContentTypeIdChange={this.onDraftContentTypeIdChange}
+            editDraft={this.editDraft}
+            editRecord={this.editRecord}
+          />
         </Workbench.Content>
       </Workbench>
     );

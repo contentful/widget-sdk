@@ -15,7 +15,7 @@ import {
   Option,
   TextField
 } from '@contentful/forma-36-react-components';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import { fetchExtension } from 'app/settings/extensions/dialogs/ExtensionFetcher.es6';
@@ -62,7 +62,8 @@ export default class ApprovalWorkflowAppPage extends Component {
         }),
         name: PropTypes.string.isRequired
       })
-    ).isRequired
+    ).isRequired,
+    onGoBack: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -90,33 +91,35 @@ export default class ApprovalWorkflowAppPage extends Component {
     const validContentTypeSelected = typeof id === 'string' && id.length > 0 && id !== EMPTY_OPTION;
 
     return (
-      <Workbench.Header>
-        <Workbench.Header.Back to="^.list" />
-        <Workbench.Icon>
-          <AppIcon appId="basicApprovalWorkflow" />
-        </Workbench.Icon>
-        <Workbench.Title>App: {this.props.app.title}</Workbench.Title>
-        <Workbench.Header.Actions>
-          {installed && (
-            <Button
-              buttonType="muted"
-              disabled={busy}
-              loading={busy}
-              onClick={this.onUninstallClick}>
-              Uninstall
-            </Button>
-          )}
-          {!installed && (
-            <Button
-              buttonType="positive"
-              disabled={busy || !validContentTypeSelected}
-              loading={busy}
-              onClick={this.onInstallClick}>
-              Save
-            </Button>
-          )}
-        </Workbench.Header.Actions>
-      </Workbench.Header>
+      <Workbench.Header
+        onBack={() => {
+          this.props.onGoBack();
+        }}
+        icon={<AppIcon appId="basicApprovalWorkflow" />}
+        title={`App: ${this.props.app.title}`}
+        actions={
+          <>
+            {installed && (
+              <Button
+                buttonType="muted"
+                disabled={busy}
+                loading={busy}
+                onClick={this.onUninstallClick}>
+                Uninstall
+              </Button>
+            )}
+            {!installed && (
+              <Button
+                buttonType="positive"
+                disabled={busy || !validContentTypeSelected}
+                loading={busy}
+                onClick={this.onInstallClick}>
+                Save
+              </Button>
+            )}
+          </>
+        }
+      />
     );
   }
 
@@ -201,7 +204,7 @@ export default class ApprovalWorkflowAppPage extends Component {
     const contentType = contentTypes.find(ct => ct.sys.id === contentTypeId);
 
     return (
-      <Workbench.Content centered>
+      <Workbench.Content>
         <Note className={styles.section}>
           Let us know how we can improve the Basic approval workflow app.{' '}
           <FeedbackButton target="extensibility" about="Basic approval workflow app" />

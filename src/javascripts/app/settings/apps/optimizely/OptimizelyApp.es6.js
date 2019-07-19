@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { cloneDeep } from 'lodash';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as Intercom from 'services/intercom.es6';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
@@ -39,7 +39,8 @@ export default class OptimizelyApp extends Component {
       save: PropTypes.func.isRequired,
       remove: PropTypes.func.isRequired,
       proxyGetRequest: PropTypes.func.isRequired
-    }).isRequired
+    }).isRequired,
+    onGoBack: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -313,43 +314,48 @@ export default class OptimizelyApp extends Component {
 
     return (
       <Workbench>
-        <Workbench.Header>
-          <Workbench.Header.Back to="^.list" />
-          <Workbench.Icon>
-            <AppIcon appId="optimizely" />
-          </Workbench.Icon>
-          <Workbench.Title>App: {this.props.app.title}</Workbench.Title>
-          <Workbench.Header.Actions>
-            {installed && (
-              <Button
-                buttonType="muted"
-                disabled={!!busyWith}
-                loading={busyWith === 'uninstall'}
-                onClick={this.uninstall}>
-                Uninstall
-              </Button>
-            )}
-            {installed && (
-              <Button
-                buttonType="positive"
-                disabled={!!busyWith}
-                loading={busyWith === constants.UPDATE}
-                onClick={this.update}>
-                Save
-              </Button>
-            )}
-            {!installed && !isVariationContainerInstalled && (
-              <Button
-                buttonType="positive"
-                disabled={!!busyWith}
-                loading={busyWith === constants.INSTALL}
-                onClick={this.install}>
-                Save
-              </Button>
-            )}
-          </Workbench.Header.Actions>
-        </Workbench.Header>
-        <Workbench.Content centered>
+        <Workbench.Header
+          onBack={() => {
+            this.props.onGoBack();
+          }}
+          icon={<AppIcon appId="optimizely" />}
+          title={`App: ${this.props.app.title}`}
+          actions={
+            <>
+              {installed && (
+                <Button
+                  className="f36-margin-left--m"
+                  buttonType="muted"
+                  disabled={!!busyWith}
+                  loading={busyWith === 'uninstall'}
+                  onClick={this.uninstall}>
+                  Uninstall
+                </Button>
+              )}
+              {installed && (
+                <Button
+                  className="f36-margin-left--m"
+                  buttonType="positive"
+                  disabled={!!busyWith}
+                  loading={busyWith === constants.UPDATE}
+                  onClick={this.update}>
+                  Save
+                </Button>
+              )}
+              {!installed && !isVariationContainerInstalled && (
+                <Button
+                  className="f36-margin-left--m"
+                  buttonType="positive"
+                  disabled={!!busyWith}
+                  loading={busyWith === constants.INSTALL}
+                  onClick={this.install}>
+                  Save
+                </Button>
+              )}
+            </>
+          }
+        />
+        <Workbench.Content>
           {!this.props.app.installed && this.state.isVariationContainerInstalled ? (
             <VariationContainerError />
           ) : (

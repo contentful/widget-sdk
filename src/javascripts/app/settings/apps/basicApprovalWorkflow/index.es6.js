@@ -7,6 +7,7 @@ import AppPageShell from '../_common/AppPageShell.es6';
 import ApprovalWorkflowAppPage from './ApprovalWorkflowAppPage.es6';
 
 const spaceContext = getModule('spaceContext');
+const $state = getModule('$state');
 
 const ApprovalWorkflowFetcher = createFetcherComponent(({ client }) => {
   return Promise.all([client.get('basicApprovalWorkflow'), spaceContext.publishedCTs.getAllBare()]);
@@ -38,6 +39,9 @@ export default class ApprovalWorkflowApp extends Component {
               cmaClient={spaceContext.cma}
               app={app}
               contentTypes={contentTypes}
+              onGoBack={() => {
+                $state.go('^.list');
+              }}
             />
           );
         }}
