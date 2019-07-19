@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import arraySwap from 'utils/arraySwap.es6';
 
 import { sortableContainer, sortableElement, sortableHandle } from 'react-sortable-hoc';
@@ -61,10 +60,10 @@ export default class ViewCustomizer extends React.Component {
   static propTypes = {
     displayedFields: PropTypes.array,
     hiddenFields: PropTypes.array,
-    addDisplayField: PropTypes.func,
-    removeDisplayField: PropTypes.func,
-    toggleContentType: PropTypes.func,
-    updateFieldOrder: PropTypes.func,
+    addDisplayField: PropTypes.func.isRequired,
+    removeDisplayField: PropTypes.func.isRequired,
+    toggleContentType: PropTypes.func.isRequired,
+    updateFieldOrder: PropTypes.func.isRequired,
     isContentTypeHidden: PropTypes.bool
   };
   static defaultProps = {

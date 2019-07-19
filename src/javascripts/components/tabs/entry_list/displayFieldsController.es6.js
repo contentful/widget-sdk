@@ -1,5 +1,5 @@
 import { registerController } from 'NgRegistry.es6';
-import _ from 'lodash';
+import { isBoolean, reject, pull, remove, filter, map, find, uniq, sortBy, includes } from 'lodash';
 import * as SystemFields from 'data/SystemFields.es6';
 
 export default function register() {
@@ -10,12 +10,12 @@ export default function register() {
       function getAvailableFields(contentTypeId) {
         const filteredContentType = spaceContext.publishedCTs.get(contentTypeId);
         const contentTypeFields = filteredContentType
-          ? _.reject(filteredContentType.data.fields, { disabled: true })
+          ? reject(filteredContentType.data.fields, { disabled: true })
           : [];
         const fields = SystemFields.getList().concat(contentTypeFields);
 
         if (filteredContentType) {
-          _.remove(fields, field => field.id === filteredContentType.data.displayField);
+          remove(fields, { id: filteredContentType.data.displayField });
         }
         return fields;
       }
@@ -23,39 +23,38 @@ export default function register() {
       $scope.hiddenFields = [];
 
       $scope.refreshDisplayFields = () => {
-        const displayedFieldIds = _.uniq($scope.context.view.displayedFieldIds);
+        const displayedFieldIds = uniq($scope.context.view.displayedFieldIds);
         const fields = getAvailableFields($scope.context.view.contentTypeId);
         const unavailableFieldIds = [];
 
-        $scope.displayedFields = _.filter(
-          _.map(displayedFieldIds, id => {
-            const field = _.find(fields, { id: id });
+        $scope.displayedFields = filter(
+          map(displayedFieldIds, id => {
+            const field = find(fields, { id });
             if (!field) unavailableFieldIds.push(id);
             return field;
           })
         );
 
-        $scope.hiddenFields = _.sortBy(_.reject(fields, fieldIsDisplayed), 'name');
+        $scope.hiddenFields = sortBy(reject(fields, fieldIsDisplayed), 'name');
 
         cleanDisplayedFieldIds(unavailableFieldIds);
 
         function fieldIsDisplayed(field) {
-          return _.includes(displayedFieldIds, field.id);
+          return includes(displayedFieldIds, field.id);
         }
       };
 
       function cleanDisplayedFieldIds(unavailableFieldIds) {
-        $scope.context.view.displayedFieldIds = _.reject(
-          $scope.context.view.displayedFieldIds,
-          id => _.includes(unavailableFieldIds, id)
+        $scope.context.view.displayedFieldIds = reject($scope.context.view.displayedFieldIds, id =>
+          includes(unavailableFieldIds, id)
         );
       }
 
       $scope.$watch(
-        '[context.view.contentTypeId, context.view.displayedFieldIds]',
-        newValues => {
+        '[context.view.contentTypeId, context.view.contentTypeHidden, context.view.displayedFieldIds]',
+        ([contentTypeId, contentTypeHidden, displayedFieldIds]) => {
           // `view` can be `undefined`.
-          if (newValues[0] || newValues[1]) {
+          if (contentTypeId || isBoolean(contentTypeHidden) || displayedFieldIds) {
             $scope.refreshDisplayFields();
           }
         },
@@ -72,7 +71,7 @@ export default function register() {
       };
 
       $scope.removeDisplayField = field => {
-        _.remove($scope.context.view.displayedFieldIds, id => id === field.id);
+        pull($scope.context.view.displayedFieldIds, field.id);
         $scope.$applyAsync();
       };
 
@@ -83,8 +82,7 @@ export default function register() {
 
       $scope.updateFieldOrder = fields => {
         $scope.displayedFields = fields;
-        const fieldIds = $scope.displayedFields.map(field => field.id);
-        $scope.context.view.displayedFieldIds = fieldIds;
+        $scope.context.view.displayedFieldIds = map($scope.displayedFields, 'id');
         $scope.$applyAsync();
       };
     }
