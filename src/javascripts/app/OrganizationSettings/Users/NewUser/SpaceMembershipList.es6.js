@@ -72,14 +72,16 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
   const [{ spaceMemberships }, dispatch] = useReducer(reducer, { spaceMemberships: [] });
   const [allRoles, setAllRoles] = useState([]);
 
-  const getRoles = useCallback(async () => {
+  const getRoles = useCallback(() => {
     const endpoint = createOrganizationEndpoint(orgId);
-    const allRoles = await getAllRoles(endpoint);
-
-    setAllRoles(groupBy(allRoles, 'sys.space.sys.id'));
+    return getAllRoles(endpoint);
   }, [orgId]);
 
-  const { isLoading } = useAsync(getRoles);
+  const { isLoading, data } = useAsync(getRoles);
+
+  useEffect(() => {
+    data && setAllRoles(groupBy(data, 'sys.space.sys.id'));
+  }, [data]);
 
   const handleSpaceSelected = space => {
     dispatch({ type: 'SPACE_ADDED', payload: space });
@@ -119,7 +121,6 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
             data-test-id="space-membership-list.item">
             <div className={styles.leftColumn}>
               <strong className={styles.spaceName}>{space.name}</strong>
-              {/* <div className={styles.roleEditor}> */}
               <SpaceRoleEditor
                 value={roles}
                 isDisabled={isLoading}
@@ -129,7 +130,6 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
               {submitted && !roles.length && (
                 <Icon icon="ErrorCircle" color="negative" className={styles.errorIcon} />
               )}
-              {/* </div> */}
             </div>
             <IconButton
               buttonType="secondary"

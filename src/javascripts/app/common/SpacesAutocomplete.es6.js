@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Space } from 'app/OrganizationSettings/PropTypes.es6';
 import Autocomplete from './Autocomplete.es6';
@@ -18,12 +18,14 @@ export default function SpacesAutoComplete({
 
   const getSpaces = useCallback(async () => {
     const endpoint = createOrganizationEndpoint(orgId);
-    const allSpaces = await getAllSpaces(endpoint);
-    setSpaces(allSpaces);
-    return allSpaces;
+    return getAllSpaces(endpoint);
   }, [orgId]);
 
-  const { isLoading } = useAsync(getSpaces);
+  const { isLoading, data } = useAsync(getSpaces);
+
+  useEffect(() => {
+    data && setSpaces(data);
+  }, [data]);
 
   const handleChange = item => {
     onChange(item);
