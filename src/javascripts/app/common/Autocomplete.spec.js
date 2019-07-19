@@ -93,14 +93,16 @@ describe('Autocomplete', () => {
     it('navigates up', () => {
       // can't test this right now
     });
-    it('calls the onChange callback when the selecting an item with the enter key', () => {
+    it('calls the onChange and onQueryChange callbacks when the selecting an item with the enter key', () => {
       fireEvent.keyDown(input, { keyCode: 13 }); // select the first item
       expect(onChangeFn).toHaveBeenCalledWith(items[0]);
+      expect(onQueryChangeFn).toHaveBeenCalledWith('');
     });
-    it('calls the onChange callback when selecting an item with a mouse click', () => {
+    it('calls the onChange and onQueryChange callbacks when selecting an item with a mouse click', () => {
       const button = within(options[1]).getByTestId('cf-ui-dropdown-list-item-button');
       fireEvent.click(button); // select the second item
       expect(onChangeFn).toHaveBeenCalledWith(items[1]);
+      expect(onQueryChangeFn).toHaveBeenCalledWith('');
     });
     it('dismisses the dropdown when selecting with the enter key', () => {
       fireEvent.keyDown(input, { keyCode: 13 });
