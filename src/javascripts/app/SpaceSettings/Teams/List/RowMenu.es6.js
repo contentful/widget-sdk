@@ -34,7 +34,7 @@ const RowMenu = ({ isOpen, setOpen, setEditing, disabled, onRemove }) => {
           <DropdownListItem testId="change-role" onClick={() => setEditing(true) || setOpen(false)}>
             Change team role
           </DropdownListItem>
-          <DropdownListItem testId="remove-team-space-membership" onClick={onRemove}>
+          <DropdownListItem testId="remove-team" onClick={onRemove}>
             Remove team from space
           </DropdownListItem>
         </DropdownList>

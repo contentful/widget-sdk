@@ -27,6 +27,7 @@ const build = props =>
             isEditing: false,
             setEditing: noop,
             onUpdateTeamSpaceMembership: noop,
+            onRemoveTeamSpaceMembership: noop,
             isPending: false,
             readOnly: false,
             currentUserAdminSpaceMemberships: [],
