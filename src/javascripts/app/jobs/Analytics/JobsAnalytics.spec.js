@@ -19,7 +19,7 @@ describe('JobsAnalytics', () => {
 
     expectTrackCalledOnceWith(JobsAnalytics.EventName.Dialog, {
       purpose: JobsAnalytics.JobAction.EntryPublish,
-      name: 'jobs_create',
+      name: JobsAnalytics.EventName.CreateJob,
       action: 'open'
     });
   });
@@ -29,7 +29,7 @@ describe('JobsAnalytics', () => {
 
     expectTrackCalledOnceWith(JobsAnalytics.EventName.Dialog, {
       purpose: JobsAnalytics.JobAction.EntryPublish,
-      name: 'jobs_create',
+      name: JobsAnalytics.EventName.CreateJob,
       action: 'close'
     });
   });

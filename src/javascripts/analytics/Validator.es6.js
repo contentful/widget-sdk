@@ -8,7 +8,8 @@ export const validEvents = {
     'state_changed',
     'logout_clicked',
     'top_banner_dismissed',
-    'navigated'
+    'navigated',
+    'dialog'
   ],
   home: [
     'space_selected',
@@ -131,7 +132,8 @@ export const validEvents = {
   approval: ['installed', 'uninstalled'],
   sso: ['start_setup', 'connection_test_result', 'contact_support', 'enable'],
   quick_navigation: ['opened_by_shortcut'],
-  perf: ['dom_content_loaded', 'first_contentful_paint', 'time_to_interactive']
+  perf: ['dom_content_loaded', 'first_contentful_paint', 'time_to_interactive'],
+  jobs: ['cancel', 'create']
 };
 
 export const validateEvent = eventName => {

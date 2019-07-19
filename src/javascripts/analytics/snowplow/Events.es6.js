@@ -26,6 +26,9 @@ import WebhookEditorTransform from './transformers/WebhookEditor.es6';
 import FeatureTextEditorTransform from './transformers/FeatureTextEditor.es6';
 import SSOSelfConfigurationTransformer from './transformers/SSOSelfConfiguration.es6';
 import ExtensionRenderTransformer from './transformers/ExtensionRender.es6';
+import DialogTransformer from './transformers/Dialog.es6';
+import JobsCreateTransformer from './transformers/JobsCreate.es6';
+import JobsCancelTransformer from './transformers/JobsCancel.es6';
 
 /**
  * @ngdoc module
@@ -194,6 +197,10 @@ registerEvent('reference_editor_action:link', 'feature_reference_action', Refere
 registerEvent('ui_webhook_editor:save', 'ui_webhook_editor_save', WebhookEditorTransform);
 
 registerEvent('text_editor:action', 'feature_text_editor', FeatureTextEditorTransform);
+
+registerEvent('global:dialog', 'dialog', DialogTransformer);
+registerEvent('jobs:create', 'jobs_create', JobsCreateTransformer);
+registerEvent('jobs:cancel', 'jobs_cancel', JobsCancelTransformer);
 
 /**
  * Registers an event to be tracked by snowplow.

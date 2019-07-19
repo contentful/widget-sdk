@@ -244,6 +244,21 @@ registerSchema({
   version: '1-0-0'
 });
 
+registerSchema({
+  name: 'dialog',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'jobs_create',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'jobs_cancel',
+  version: '1-0-0'
+});
+
 function registerSchema(schema) {
   _schemas[schema.name] = schema;
   _schemas[schema.name].path = buildPath(schema);

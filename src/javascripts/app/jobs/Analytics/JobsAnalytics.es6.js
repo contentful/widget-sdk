@@ -4,9 +4,9 @@ import * as Analytics from 'analytics/Analytics.es6';
  * Exported for testing purposes. Do not use in production !!!
  */
 export const EventName = {
-  Dialog: 'dialog',
-  CancelJob: 'jobs_cancel',
-  CreateJob: 'job_create'
+  Dialog: 'global:dialog',
+  CancelJob: 'jobs:cancel',
+  CreateJob: 'jobs:create'
 };
 
 /**
@@ -20,7 +20,7 @@ export const JobAction = {
 export function createDialogOpen() {
   const payload = {
     purpose: JobAction.EntryPublish,
-    name: 'jobs_create',
+    name: EventName.CreateJob,
     action: 'open'
   };
 
@@ -30,7 +30,7 @@ export function createDialogOpen() {
 export function createDialogClose() {
   const payload = {
     purpose: JobAction.EntryPublish,
-    name: 'jobs_create',
+    name: EventName.CreateJob,
     action: 'close'
   };
 
