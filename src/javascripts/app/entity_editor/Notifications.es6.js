@@ -34,6 +34,7 @@
 import { makeSum, caseof } from 'sum-types';
 import { Notification as Notifier } from '@contentful/forma-36-react-components';
 import { get as getAtPath, first, template as _makeTemplate, assign } from 'lodash';
+import { joinAnd } from 'utils/StringUtils.es6';
 
 export const Notification = makeSum({
   Success: ['action'],
@@ -158,6 +159,9 @@ function publishErrorMessage(error) {
     } else {
       return publishServerFailMessage;
     }
+  } else if (errorId === 'ActionPreconditionsFailed') {
+    const errorMessages = error.data.details.errors.map(({ message }) => message);
+    return publishFail(joinAnd(errorMessages));
   } else {
     return publishServerFailMessage;
   }
