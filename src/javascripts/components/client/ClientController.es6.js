@@ -46,7 +46,8 @@ export default function register() {
           spaceAndTokenWatchHandler({
             tokenLookup: TokenStore.getTokenLookup(),
             space: spaceContext.space,
-            enforcements: EnforcementsService.getEnforcements(spaceContext.getId())
+            enforcements: EnforcementsService.getEnforcements(spaceContext.getId()),
+            environmentId: spaceContext.getEnvironmentId()
           });
         }
       });
