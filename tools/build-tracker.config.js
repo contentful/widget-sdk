@@ -32,6 +32,6 @@ module.exports = {
   // into a different dir structure (as documented in that file)
   baseDir: pathToBuiltAssets,
   artifacts: [`${pathToBuiltAssets}/**/*.{js,css}`],
-  getFilenameHash: getFilenameHash,
+  getFilenameHash,
   nameMapper
 };
