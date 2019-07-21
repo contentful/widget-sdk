@@ -90,7 +90,7 @@ orbs:
                 export BUILD_TRACKER_URL="https://user-interface-build-tracker.herokuapp.com/"
                 # don't set COMMENT_MSG if there was no markdown as it probably means the build upload to our build tracker server failed
                 # not having this set will fail validation in the lambda that posts the comment which is what we want
-                export COMMENT_MSG=$([[ -n $BUILD_TRACKER_MARKDOWN ]] && echo "\"$BUILD_TRACKER_MARKDOWN\\n\\n[Build tracker UI]($BUILD_TRACKER_URL)\"")
+                export COMMENT_MSG=$([[ -n $BUILD_TRACKER_MARKDOWN ]] && echo "\"# Bundle size report\\n\\n$BUILD_TRACKER_MARKDOWN\\n\\n[Build tracker UI]($BUILD_TRACKER_URL)\"")
                 echo $PR_NUMBER
                 echo $LAMBDA_URL
                 echo $BUILD_TRACKER_MARKDOWN
