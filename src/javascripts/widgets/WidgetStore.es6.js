@@ -10,7 +10,7 @@ export function getBuiltinsOnly() {
 }
 
 export async function getForContentTypeManagement(extensionLoader) {
-  const extensions = await extensionLoader.getAllExtensions();
+  const extensions = await extensionLoader.getAllExtensionsForListing();
 
   return {
     [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),
@@ -55,20 +55,26 @@ export async function getForEditor(extensionLoader, editorInterface = {}) {
   };
 }
 
-function buildExtensionWidget(data) {
-  const { src, srcdoc } = data.extension;
-  const base = src ? { src } : { srcdoc };
-  const fieldTypes = data.extension.fieldTypes || [];
+function buildExtensionWidget({ sys, extension, parameters }) {
+  const { src, srcdoc } = extension;
+
+  // We identify srcdoc-backed extensions by taking a look
+  // at `sys.srcdocSha256`. It'll be present if the Extension
+  // uses `srcdoc` even if `stripSrcdoc` QS paramter was used.
+  // If we know that srcdoc is used but we don't have its value
+  // (due to `stripSrcdoc`) we indicate it by `true`
+  const base = typeof sys.srcdocSha256 === 'string' ? { srcdoc: srcdoc || true } : { src };
+
   return {
     ...base,
-    id: data.sys.id,
-    name: data.extension.name,
-    fieldTypes: fieldTypes.map(toInternalFieldType),
-    sidebar: data.extension.sidebar,
-    parameters: get(data.extension, ['parameters', 'instance'], []),
+    id: sys.id,
+    name: extension.name,
+    fieldTypes: (extension.fieldTypes || []).map(toInternalFieldType),
+    sidebar: extension.sidebar,
+    parameters: get(extension, ['parameters', 'instance'], []),
     installationParameters: {
-      definitions: get(data.extension, ['parameters', 'installation'], []),
-      values: data.parameters || {}
+      definitions: get(extension, ['parameters', 'installation'], []),
+      values: parameters || {}
     }
   };
 }

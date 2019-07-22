@@ -13,12 +13,24 @@ import {
 import Placeholder from 'app/common/Placeholder.es6';
 import BinocularsIllustration from 'svg/binoculars-illustration.es6';
 
-const PageExtensionFetcher = createFetcherComponent(({ extensionId, orgId, extensionLoader }) => {
-  return Promise.all([
-    advancedExtensibilityFeature.isEnabled(orgId),
-    extensionLoader.getExtensionById(extensionId)
-  ]);
-});
+const PageExtensionFetcher = createFetcherComponent(
+  async ({ extensionId, orgId, extensionLoader }) => {
+    const [isEnabled, [extension]] = await Promise.all([
+      advancedExtensibilityFeature.isEnabled(orgId),
+      extensionLoader.getExtensionsById([extensionId])
+    ]);
+
+    if (!isEnabled) {
+      throw new Error('advanced extensibility not enabled');
+    }
+
+    if (!extension) {
+      throw new Error('no extension found ');
+    }
+
+    return extension;
+  }
+);
 
 const styles = {
   loading: css({ padding: tokens.spacingXl }),
@@ -62,15 +74,7 @@ export default function PageExtensionRoute(props) {
           return <ErrorMessage />;
         }
 
-        const [isEnabled, extensionResponse] = data;
-
-        if (!isEnabled) {
-          return <ErrorMessage />;
-        }
-
-        return (
-          <PageExtension bridge={props.bridge} extension={extensionResponse} path={props.path} />
-        );
+        return <PageExtension bridge={props.bridge} extension={data} path={props.path} />;
       }}
     </PageExtensionFetcher>
   );

@@ -30,7 +30,7 @@ describe('ExtensionsListRoute', () => {
     const wrapper = Enzyme.mount(
       <ExtensionsListRoute
         extensionLoader={{
-          getAllExtensions: () => {}
+          getAllExtensionsForListing: () => {}
         }}
       />
     );
@@ -40,15 +40,15 @@ describe('ExtensionsListRoute', () => {
   it('should show ExtensionsForbiddenPage if no access and reaches page via deeplink extensionUrl', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: false }));
     expect.assertions(4);
-    const getAllExtensions = jest.fn();
+    const getAllExtensionsForListing = jest.fn();
     const wrapper = Enzyme.mount(
       <ExtensionsListRoute
-        extensionLoader={{ getAllExtensions }}
+        extensionLoader={{ getAllExtensionsForListing }}
         extensionUrl="https://github.com/contentful/extensions/blob/master/samples/build-netlify/extension.json"
       />
     );
     expect($stateMocked.go).not.toHaveBeenCalled();
-    expect(getAllExtensions).not.toHaveBeenCalled();
+    expect(getAllExtensionsForListing).not.toHaveBeenCalled();
     expect(wrapper.find(selectors.forbiddenPage)).toExist();
 
     expect(
@@ -64,10 +64,12 @@ describe('ExtensionsListRoute', () => {
   it('should fetch extensions if access and  reaches page', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: true }));
     expect.assertions(3);
-    const getAllExtensions = jest.fn();
-    const wrapper = Enzyme.mount(<ExtensionsListRoute extensionLoader={{ getAllExtensions }} />);
+    const getAllExtensionsForListing = jest.fn();
+    const wrapper = Enzyme.mount(
+      <ExtensionsListRoute extensionLoader={{ getAllExtensionsForListing }} />
+    );
     expect($stateMocked.go).not.toHaveBeenCalled();
-    expect(getAllExtensions).toHaveBeenCalledTimes(1);
+    expect(getAllExtensionsForListing).toHaveBeenCalledTimes(1);
     expect(wrapper.find(selectors.forbiddenPage)).not.toExist();
   });
 });

@@ -1,27 +1,6 @@
 import DataLoader from 'dataloader';
 import { get, identity, pick } from 'lodash';
 
-// This module exposes 2 retrieval methods:
-// - `getExtensionsById` allows to get extensions
-//   of provided IDs.
-// - `getAllExtensions` returns all extensions.
-//
-// While the methods are used, a cache is build up.
-// Once cached extension will be used until the current
-// space cahnges when using `getExtensionsById`.
-//
-// `getAllExtensions` always evicts the whole cache.
-// `cacheExtension` allows to replace a single item
-// (for example when an extension was modified in
-// management views).
-// `evictExtension` removes a single item for the cache.
-//
-// Please note this module is intended to be used
-// to load extensions for entity editors where we
-// can live with slightly outdated extensions being
-// rendered. Management views (managing `Extension`
-// entities) should be done with a client that always
-// does HTTP.
 const isBasedOnExtensionDefinition = extension =>
   get(extension, ['extensionDefinition', 'sys', 'linkType']) === 'ExtensionDefinition';
 
@@ -88,51 +67,61 @@ export function createExtensionLoader(extensionDefinitionLoader, spaceEndpoint) 
 
   const extensionLoader = new DataLoader(loadExtensions);
 
+  // Given a list of IDs the `getExtensionsById` method returns
+  // a list of Extension entities with provided IDs. If there
+  // is no Extension for an ID, it is omittend in the result set.
+  //
+  // While the method us used, the cache is build up. Once cached
+  // extension will be used until the current space/environment
+  // changes or either `evictExtension` or `cacheExtension` is
+  // called.
+  //
+  // Please note this method is intended to be used to load
+  // extensions for entity editors where for performance reasons
+  // we can live with slightly outdated extensions being rendered.
   const getExtensionsById = async extensionIds => {
     const result = await extensionLoader.loadMany(extensionIds);
 
     return result.filter(identity);
   };
 
-  const getExtensionById = async extensionId => {
-    const result = await getExtensionsById([extensionId]);
-
-    return result.length > 0 ? result[0] : null;
-  };
-
-  const getAllExtensions = async () => {
-    const { items } = await spaceEndpoint({
-      method: 'GET',
-      path: ['extensions']
-    });
-
-    const maybeResolvedExtensions = await resolveExtensionDefinitions(items || []);
-    const resolvedExtensions = maybeResolvedExtensions.filter(identity);
-
-    // We cannot prime over existing cache entries.
-    // Evict all the cached items first and then prime.
-    extensionLoader.clearAll();
-    resolvedExtensions.forEach(extension => {
-      extensionLoader.prime(extension.sys.id, extension);
-    });
-
-    return resolvedExtensions;
-  };
-
+  // Removes extension from the cache.
+  // Use when an extension is removed from an environment.
   const evictExtension = id => extensionLoader.clear(id);
 
+  // Updates the cached version of an extension.
+  // Use when an extension is updated.
   const cacheExtension = extension => {
     const key = extension.sys.id;
 
-    // As above, cache eviction is needed before priming.
+    // We cannot prime over existing cache entries.
+    // Evict the cached item first and only then prime.
     extensionLoader.clear(key).prime(key, extension);
+  };
+
+  // Fetches all Extension entities in an environment to be
+  // used in listing views.
+  //
+  // Note they don't include srcdoc property so they cannot
+  // be used for rendering and (for the same reason) cannot
+  // be cached.
+  const getAllExtensionsForListing = async () => {
+    const { items } = await spaceEndpoint({
+      method: 'GET',
+      path: ['extensions'],
+      query: {
+        stripSrcdoc: 'true', // Yes this needs to be a string (it's a value in QS).
+        limit: 1000 // No srcdoc due to `stripSrcdoc`. We can safely fetch 1000.
+      }
+    });
+
+    return resolveExtensionDefinitions(items || []);
   };
 
   return {
     cacheExtension,
     evictExtension,
-    getAllExtensions,
     getExtensionsById,
-    getExtensionById
+    getAllExtensionsForListing
   };
 }

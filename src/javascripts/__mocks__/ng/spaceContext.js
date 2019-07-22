@@ -63,6 +63,6 @@ export const getEnvironmentId = jest.fn();
 export const extensionLoader = {
   cacheExtension: jest.fn(),
   evictExtension: jest.fn(),
-  getAllExtensions: jest.fn(),
-  getExtensionsById: jest.fn()
+  getExtensionsById: jest.fn(),
+  getAllExtensionsForListing: jest.fn()
 };

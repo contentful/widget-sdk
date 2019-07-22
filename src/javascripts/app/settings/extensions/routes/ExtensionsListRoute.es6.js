@@ -18,7 +18,7 @@ const prepareExtension = ({ sys, extension, extensionDefinition, parameters }) =
     id: sys.id,
     name: extension.name,
     fieldTypes: fieldTypes.length > 0 ? fieldTypes.join(', ') : 'none',
-    hosting: typeof extension.srcdoc === 'string' ? 'Contentful' : 'self-hosted',
+    hosting: typeof sys.srcdocSha256 === 'string' ? 'Contentful' : 'self-hosted',
     isBasedOnDefinition: !!get(extensionDefinition, ['sys', 'id']),
     parameterCounts: {
       instanceDefinitions: get(extension, ['parameters', 'instance', 'length']),
@@ -28,19 +28,19 @@ const prepareExtension = ({ sys, extension, extensionDefinition, parameters }) =
   };
 };
 
-const extensionNameComparator = (a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-
 const ExtensionsFetcher = createFetcherComponent(async ({ extensionLoader }) => {
-  const items = await extensionLoader.getAllExtensions();
+  const items = await extensionLoader.getAllExtensionsForListing();
 
-  return (items || []).map(prepareExtension).sort(extensionNameComparator);
+  return (items || []).map(prepareExtension);
 });
 
 class ExtensionsListRoute extends React.Component {
   static propTypes = {
     extensionUrl: PropTypes.string,
     extensionUrlReferrer: PropTypes.string,
-    extensionLoader: PropTypes.shape({ getAllExtensions: PropTypes.func.isRequired }).isRequired
+    extensionLoader: PropTypes.shape({
+      getAllExtensionsForListing: PropTypes.func.isRequired
+    }).isRequired
   };
 
   render() {

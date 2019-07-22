@@ -1,3 +1,5 @@
+import { omit } from 'lodash';
+
 import * as WidgetStore from './WidgetStore.es6';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
 import {
@@ -17,8 +19,8 @@ describe('WidgetStore', () => {
     loaderMock = {
       cacheExtension: jest.fn(),
       evictExtension: jest.fn(),
-      getAllExtensions: jest.fn(),
-      getExtensionsById: jest.fn()
+      getExtensionsById: jest.fn(),
+      getAllExtensionsForListing: jest.fn()
     };
   });
 
@@ -34,11 +36,11 @@ describe('WidgetStore', () => {
 
   describe('#getForContentTypeManagement()', () => {
     it('returns an object of all widget namespaces', async () => {
-      loaderMock.getAllExtensions.mockImplementationOnce(() => []);
+      loaderMock.getAllExtensionsForListing.mockImplementationOnce(() => []);
 
       const widgets = await WidgetStore.getForContentTypeManagement(loaderMock);
 
-      expect(loaderMock.getAllExtensions).toHaveBeenCalledWith();
+      expect(loaderMock.getAllExtensionsForListing).toHaveBeenCalledWith();
       expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
       expect(widgets[NAMESPACE_BUILTIN].map(w => w.id)).toEqual(
         createBuiltinWidgetList().map(b => b.id)
@@ -61,12 +63,20 @@ describe('WidgetStore', () => {
         parameters: { test: true }
       };
 
-      loaderMock.getAllExtensions.mockImplementationOnce(() => [entity]);
+      loaderMock.getAllExtensionsForListing.mockImplementationOnce(() => [
+        entity,
+        {
+          ...entity,
+          sys: { ...entity.sys, srcdocSha256: 'somecodesha' },
+          extension: omit(entity, ['src'])
+        }
+      ]);
 
       const widgets = await WidgetStore.getForContentTypeManagement(loaderMock);
-      const [extension] = widgets[NAMESPACE_EXTENSION];
+      const [extension, srcdocExtension] = widgets[NAMESPACE_EXTENSION];
 
-      expect(loaderMock.getAllExtensions).toHaveBeenCalledWith();
+      expect(loaderMock.getAllExtensionsForListing).toHaveBeenCalledWith();
+
       expect(extension.name).toEqual('NAME');
       expect(extension.src).toEqual('SRC');
       expect(extension.sidebar).toEqual(true);
@@ -76,6 +86,9 @@ describe('WidgetStore', () => {
         definitions: [{ id: 'test' }],
         values: { test: true }
       });
+
+      expect(srcdocExtension.src).toBeUndefined();
+      expect(srcdocExtension.srcdoc).toEqual(true);
     });
   });
 

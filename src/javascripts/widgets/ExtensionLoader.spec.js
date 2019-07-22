@@ -32,7 +32,7 @@ describe('ExtensionLoader', () => {
     loader = createExtensionLoader(extensionDefinitionLoader, spaceEndpoint);
   });
 
-  describe('getAllExtensions()', () => {
+  describe('getAllExtensionsForListing()', () => {
     it('gets all extensions for a space environment', async () => {
       spaceEndpoint.mockReturnValue(
         Promise.resolve({
@@ -40,11 +40,15 @@ describe('ExtensionLoader', () => {
         })
       );
 
-      const result = await loader.getAllExtensions();
+      const result = await loader.getAllExtensionsForListing();
 
       expect(spaceEndpoint).toBeCalledWith({
         method: 'GET',
-        path: ['extensions']
+        path: ['extensions'],
+        query: {
+          stripSrcdoc: 'true',
+          limit: 1000
+        }
       });
 
       expect(extensionDefinitionLoader.getByIds).toBeCalledWith([]);
@@ -81,11 +85,15 @@ describe('ExtensionLoader', () => {
         })
       );
 
-      const result = await loader.getAllExtensions();
+      const result = await loader.getAllExtensionsForListing();
 
       expect(spaceEndpoint).toBeCalledWith({
         method: 'GET',
-        path: ['extensions']
+        path: ['extensions'],
+        query: {
+          stripSrcdoc: 'true',
+          limit: 1000
+        }
       });
 
       expect(extensionDefinitionLoader.getByIds).toBeCalledWith(['definitionId2', 'definitionId3']);
@@ -106,21 +114,6 @@ describe('ExtensionLoader', () => {
           }
         }
       ]);
-    });
-
-    it('caches loaded extensions', async () => {
-      spaceEndpoint.mockReturnValue(
-        Promise.resolve({
-          items: [makeExtension('id1')]
-        })
-      );
-
-      await loader.getAllExtensions();
-      const result = await loader.getExtensionsById(['id1']);
-
-      expect(spaceEndpoint.mock.calls).toHaveLength(1);
-
-      expect(result).toEqual([makeExtension('id1')]);
     });
   });
 
@@ -181,6 +174,21 @@ describe('ExtensionLoader', () => {
           }
         }
       ]);
+    });
+
+    it('caches loaded extensions', async () => {
+      spaceEndpoint.mockReturnValue(
+        Promise.resolve({
+          items: [makeExtension('id1')]
+        })
+      );
+
+      await loader.getExtensionsById(['id1']);
+      const result = await loader.getExtensionsById(['id1']);
+
+      expect(spaceEndpoint).toBeCalledTimes(1);
+
+      expect(result).toEqual([makeExtension('id1')]);
     });
   });
 });
