@@ -1,12 +1,11 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { inRange } from 'lodash';
 import { assign } from 'utils/Collections.es6';
 import { DocsLink } from 'ui/Content.es6';
 import EnvironmentSelector from './EnvironmentSelector.es6';
-import { CopyButton, TextField } from '@contentful/forma-36-react-components';
+import { TextField } from '@contentful/forma-36-react-components';
 
 export default function({ data, initialValue, connect, trackCopy }) {
   update(initialValue);
@@ -28,7 +27,7 @@ function renderForm({ data, model, update, trackCopy }) {
         To query and get content using the APIs, client applications need to authenticate with both
         the Space ID and an access token.
       </div>
-      <div className="f36-margin-top--xl" />
+      <div className="f36-margin-top--l" />
       <Input
         canEdit={data.canEdit}
         model={model}
@@ -38,7 +37,7 @@ function renderForm({ data, model, update, trackCopy }) {
         label="Name"
         description="Can be platform or device specific names (i.e. marketing website, tablet, VR app)"
       />
-      <div className="f36-margin-top--xl" />
+      <div className="f36-margin-top--l" />
       <Input
         canEdit={data.canEdit}
         model={model}
@@ -47,38 +46,39 @@ function renderForm({ data, model, update, trackCopy }) {
         label="Description"
         description="You can provide an optional description for reference in the future"
       />
-      <div className="f36-margin-top--xl" />
-      <Section title="Space ID">
-        <InputWithCopy value={data.spaceId} name="space-id" track={() => trackCopy('space')} />
-      </Section>
-      <div className="f36-margin-top--xl" />
-      <Section key="content-delivery-api" title="Content Delivery API - access token">
-        <InputWithCopy
-          value={data.deliveryToken}
-          name="delivery-token"
-          track={() => {
-            trackCopy('cda');
-          }}
-        />
-      </Section>
+      <div className="f36-margin-top--l" />
+      <InputWithCopy
+        value={data.spaceId}
+        name="space-id"
+        label="Space ID"
+        track={() => trackCopy('space')}
+      />
+      <div className="f36-margin-top--l" />
+      <InputWithCopy
+        key="content-delivery-api"
+        value={data.deliveryToken}
+        name="delivery-token"
+        track={() => {
+          trackCopy('cda');
+        }}
+        label="Content Delivery API - access token"
+      />
       <Separator key="content-preview-api-separator" />
-      <Section
+      <InputWithCopy
         key="content-preview-api"
-        title="Content Preview API - access token"
+        value={data.previewToken}
+        name="preview-token"
+        track={() => {
+          trackCopy('cpa');
+        }}
+        label="Content Preview API - access token"
         description={
           <React.Fragment>
-            Preview unpublished content using this API (i.e. content with “Draft” status).
+            Preview unpublished content using this API (i.e. content with “Draft” status).{' '}
             <DocsLink key="content-preview-link" text="Read more" target="content_preview" />
           </React.Fragment>
-        }>
-        <InputWithCopy
-          value={data.previewToken}
-          name="preview-token"
-          track={() => {
-            trackCopy('cpa');
-          }}
-        />
-      </Section>
+        }
+      />
       {data.environmentsEnabled && <Separator />}
       {data.environmentsEnabled && (
         <Section
@@ -95,17 +95,15 @@ function renderForm({ data, model, update, trackCopy }) {
           />
         </Section>
       )}
-      <div className="f36-margin-top--xl" />
+      <div className="f36-margin-top--l" />
     </div>
   );
 }
 
 function Input({ canEdit, model, update, name, isRequired = false, label, description }) {
-  const id = name;
   const hasError = !inRange(model[name].value.length, model[name].minLength, model[name].maxLength);
   const textInputProps = {
     type: 'text',
-    name,
     value: model[name].value,
     onChange: e => update(assign(model, { [name]: { ...model[name], value: e.target.value } })),
     disabled: !canEdit,
@@ -113,59 +111,41 @@ function Input({ canEdit, model, update, name, isRequired = false, label, descri
   };
   const formLabelProps = isRequired
     ? {
-        htmlFor: id
+        htmlFor: name
       }
     : {};
 
   return (
     <TextField
-      id={id}
+      id={name}
+      name={name}
       labelText={label}
       helpText={description}
       required={isRequired}
       validationMessage={isRequired && hasError ? 'This field cannot be empty' : undefined}
-      {...textInputProps}
-      {...formLabelProps}
+      textInputProps={textInputProps}
+      formLabelProps={formLabelProps}
     />
   );
 }
 
-const copyButtonStyleOverride = css({
-  button: {
-    backgroundColor: 'transparent',
-    border: 'none',
-    height: '2em',
-    width: '1.2em',
-    '&:hover': {
-      backgroundColor: 'transparent'
-    }
-  }
-});
+function InputWithCopy({ value, name, track, label, description = '' }) {
+  const textInputProps = {
+    onCopy: track,
+    withCopyButton: true,
+    disabled: true
+  };
 
-function InputWithCopy({ value, name, track }) {
   return (
-    <div className="cfnext-form__input-group--full-size">
-      <input
-        className="cfnext-form__input--full-size"
-        type="text"
-        name={name}
-        readOnly
-        value={value}
-        style={{ cursor: 'pointer' }}
-        onClick={e => {
-          e.target.focus();
-          e.target.select();
-        }}
-      />
-      <CopyButton
-        className={cx(
-          copyButtonStyleOverride,
-          'cfnext-form__icon-suffix copy-to-clipboard x--input-suffix'
-        )}
-        copyValue={value}
-        onCopy={track}
-      />
-    </div>
+    <TextField
+      type="text"
+      id={name}
+      name={name}
+      labelText={label}
+      helpText={description}
+      value={value}
+      textInputProps={textInputProps}
+    />
   );
 }
 
