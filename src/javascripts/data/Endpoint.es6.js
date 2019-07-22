@@ -108,8 +108,12 @@ export function createOrganizationEndpoint(baseUrl, organizationId, auth) {
 
 export function createUsersEndpoint(baseUrl, auth) {
   const usersBaseUrl = joinPath([baseUrl, 'users', 'me']);
-
   return create(usersBaseUrl, auth);
+}
+
+export function createExtensionDefinitionsEndpoint(baseUrl, auth) {
+  const extensionDefinitionsBaseUrl = joinPath([baseUrl, 'extension_definitions']);
+  return create(extensionDefinitionsBaseUrl, auth);
 }
 
 /*

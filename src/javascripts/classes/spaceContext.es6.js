@@ -12,6 +12,7 @@ import createUserCache from 'data/userCache.es6';
 import * as EntityFieldValueHelpers from './EntityFieldValueHelpers.es6';
 import createContentPreview from 'services/contentPreview.es6';
 import TheLocaleStore from 'services/localeStore.es6';
+import createExtensionDefinitionLoader from 'app/settings/AppsBeta/ExtensionDefinitionLoader.es6';
 
 export default function register() {
   /**
@@ -57,7 +58,7 @@ export default function register() {
       accessChecker,
       MembershipRepo,
       PublishedCTRepo,
-      { createSpaceEndpoint, createOrganizationEndpoint },
+      { createSpaceEndpoint, createOrganizationEndpoint, createExtensionDefinitionsEndpoint },
       { default: createUiConfigStore },
       { default: createLocaleRepo },
       { create: createEnvironmentsRepo },
@@ -133,13 +134,26 @@ export default function register() {
           self.localeRepo = createLocaleRepo(self.endpoint);
           self.organization = deepFreezeClone(self.getData('organization'));
 
-          self.orgEndpoint = createOrganizationEndpoint(
+          const extensionDefinitionsEndpoint = createExtensionDefinitionsEndpoint(
+            Config.apiUrl(),
+            Auth
+          );
+
+          const orgEndpoint = createOrganizationEndpoint(
             Config.apiUrl(),
             self.organization.sys.id,
             Auth
           );
 
-          self.extensionLoader = createExtensionLoader(self.orgEndpoint, self.endpoint);
+          self.extensionDefinitionLoader = createExtensionDefinitionLoader(
+            extensionDefinitionsEndpoint,
+            orgEndpoint
+          );
+
+          self.extensionLoader = createExtensionLoader(
+            self.extensionDefinitionLoader,
+            self.endpoint
+          );
 
           // TODO: publicly accessible docConnection is
           // used only in a process of creating space out

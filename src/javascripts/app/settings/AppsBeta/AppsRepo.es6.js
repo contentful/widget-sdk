@@ -8,9 +8,13 @@ const APP_TO_EXTENSION_DEFINITION = {
 // Order on the list, values are App IDs
 const APP_ORDER = ['netlify'];
 
-export default function createAppsRepo(orgEndpoint, spaceEndpoint) {
+const DEV_APP_PREFIX = 'dev-app';
+const DEV_APP_SEPARATOR = '_';
+
+export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint) {
   return {
     getApps,
+    getDevApps,
     getExtensionDefinitionForApp,
     getExtensionForExtensionDefinition
   };
@@ -18,41 +22,56 @@ export default function createAppsRepo(orgEndpoint, spaceEndpoint) {
   async function getApps() {
     const ids = APP_ORDER.map(appId => APP_TO_EXTENSION_DEFINITION[appId]);
 
-    const { items } = await orgEndpoint({
-      method: 'GET',
-      path: ['extension_definitions'],
-      query: { 'sys.id[in]': ids }
-    });
-
-    const extensions = await getExtensionsForExtensionDefinitions(items);
+    const [extensionDefinitionMap, extensionMap] = await Promise.all([
+      extensionDefinitionLoader.getByIds(ids),
+      getExtensionsForExtensionDefinitions(ids)
+    ]);
 
     return APP_ORDER.map(appId => {
       const definitionId = APP_TO_EXTENSION_DEFINITION[appId];
 
       return {
         sys: { type: 'App', id: appId },
-        extensionDefinition: items.find(item => item.sys.id === definitionId),
-        extension: extensions.find(e => e.extensionDefinition.sys.id === definitionId)
+        extensionDefinition: extensionDefinitionMap[definitionId],
+        extension: extensionMap[definitionId]
       };
     }).filter(app => !!app.extensionDefinition);
   }
 
-  function getExtensionDefinitionForApp(appId) {
-    const extensionDefinitionId = APP_TO_EXTENSION_DEFINITION[appId];
+  // This mechanism is only for us for developing Apps Beta.
+  // TODO: remove or improve before we release.
+  async function getDevApps() {
+    const extensionDefinitions = await extensionDefinitionLoader.getAllForCurrentOrganization();
 
-    if (!extensionDefinitionId) {
-      return Promise.reject(new Error(`App ${appId} couldn't be found.`));
+    if (extensionDefinitions.length < 1) {
+      return [];
     }
 
-    return orgEndpoint({
-      method: 'GET',
-      path: ['extension_definitions', extensionDefinitionId]
+    const extensionDefinitionIds = extensionDefinitions.map(def => def.sys.id);
+    const extensionMap = await getExtensionsForExtensionDefinitions(extensionDefinitionIds);
+
+    return extensionDefinitions.map(def => {
+      return {
+        sys: {
+          type: 'DevApp',
+          id: [DEV_APP_PREFIX, DEV_APP_SEPARATOR, def.sys.id].join('')
+        },
+        extensionDefinition: def,
+        extension: extensionMap[def.sys.id]
+      };
     });
   }
 
-  async function getExtensionForExtensionDefinition(extensionDefinition) {
-    const extensionDefinitionId = extensionDefinition.sys.id;
+  function getExtensionDefinitionForApp(appId) {
+    if (appId.startsWith(DEV_APP_PREFIX + DEV_APP_SEPARATOR)) {
+      const [, extensionDefinitionId] = appId.split(DEV_APP_SEPARATOR);
+      return extensionDefinitionLoader.getById(extensionDefinitionId);
+    }
 
+    return extensionDefinitionLoader.getById(APP_TO_EXTENSION_DEFINITION[appId]);
+  }
+
+  async function getExtensionForExtensionDefinition(extensionDefinitionId) {
     const { items } = await spaceEndpoint({
       method: 'GET',
       path: ['extensions'],
@@ -70,13 +89,11 @@ export default function createAppsRepo(orgEndpoint, spaceEndpoint) {
     }
   }
 
-  async function getExtensionsForExtensionDefinitions(extensionDefinitions) {
-    const ids = extensionDefinitions.map(d => d.sys.id);
-
+  async function getExtensionsForExtensionDefinitions(extensionDefinitionIds) {
     const { items } = await spaceEndpoint({
       method: 'GET',
       path: ['extensions'],
-      query: { 'extensionDefinition.sys.id[in]': ids.join(',') }
+      query: { 'extensionDefinition.sys.id[in]': extensionDefinitionIds.join(',') }
     });
 
     const extensionCountsByDefinition = countBy(items, e => e.extensionDefinition.sys.id);
@@ -86,6 +103,8 @@ export default function createAppsRepo(orgEndpoint, spaceEndpoint) {
       }
     );
 
-    return items.filter(e => uniquelyUsedDefinitions.includes(e.extensionDefinition.sys.id));
+    return items
+      .filter(ext => uniquelyUsedDefinitions.includes(ext.extensionDefinition.sys.id))
+      .reduce((acc, ext) => ({ ...acc, [ext.extensionDefinition.sys.id]: ext }), {});
   }
 }

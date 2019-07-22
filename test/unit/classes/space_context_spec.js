@@ -18,7 +18,8 @@ describe('spaceContext', () => {
       $provide.value('access_control/AccessChecker/index.es6', this.AccessChecker);
       $provide.value('data/Endpoint.es6', {
         createSpaceEndpoint: () => this.mockSpaceEndpoint.request,
-        createOrganizationEndpoint: sinon.stub()
+        createOrganizationEndpoint: sinon.stub(),
+        createExtensionDefinitionsEndpoint: sinon.stub()
       });
       $provide.value('data/UiConfig/Store.es6', {
         default: sinon.stub().resolves({ store: true })

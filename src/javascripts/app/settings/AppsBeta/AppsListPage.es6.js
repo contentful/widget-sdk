@@ -8,7 +8,10 @@ import {
   SkeletonDisplayText,
   SkeletonText,
   SkeletonImage,
-  Notification
+  Notification,
+  Typography,
+  Heading,
+  Paragraph
 } from '@contentful/forma-36-react-components';
 
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
@@ -64,11 +67,20 @@ const AppsListPageLoading = () => {
   );
 };
 
+const prepareApp = app => {
+  return {
+    id: app.sys.id,
+    title: app.extensionDefinition.name,
+    installed: !!app.extension
+  };
+};
+
 export default class AppsListPage extends React.Component {
   static propTypes = {
     goToContent: PropTypes.func.isRequired,
     repo: PropTypes.shape({
-      getApps: PropTypes.func.isRequired
+      getApps: PropTypes.func.isRequired,
+      getDevApps: PropTypes.func.isRequired
     }).isRequired
   };
 
@@ -76,14 +88,15 @@ export default class AppsListPage extends React.Component {
 
   async componentDidMount() {
     try {
-      const apps = await this.props.repo.getApps();
+      const [apps, devApps] = await Promise.all([
+        this.props.repo.getApps(),
+        this.props.repo.getDevApps()
+      ]);
 
       this.setState({
-        apps: apps.map(app => ({
-          id: app.sys.id,
-          title: app.extensionDefinition.name,
-          installed: !!app.extension
-        }))
+        ready: true,
+        apps: apps.map(prepareApp),
+        devApps: devApps.map(prepareApp)
       });
     } catch (err) {
       Telemetry.count('apps.list-loading-failed');
@@ -93,24 +106,43 @@ export default class AppsListPage extends React.Component {
   }
 
   render() {
-    const { apps } = this.state;
-
     return (
       <AdminOnly>
         <DocumentTitle title="Apps" />
-        {apps ? this.renderList(apps) : <AppsListPageLoading />}
+        {this.state.ready ? this.renderList() : <AppsListPageLoading />}
       </AdminOnly>
     );
   }
 
-  renderList(apps) {
+  renderList() {
+    const { apps, devApps } = this.state;
+
     return (
       <AppsListShell>
-        <div className={styles.list}>
-          {apps.map(app => (
-            <AppListItem key={app.id} app={app} />
-          ))}
-        </div>
+        {apps.length > 0 && (
+          <div className={styles.list}>
+            {apps.map(app => (
+              <AppListItem key={app.id} app={app} />
+            ))}
+          </div>
+        )}
+        {devApps.length > 0 && (
+          <>
+            <Typography>
+              <Heading element="h2">Apps in development mode</Heading>
+              <Paragraph>
+                Apps that are currently in development in your organization. Please note that this
+                list is just a list of <code>ExtensionDefinition</code> entities in your
+                organization. Not all of them have to be Apps.
+              </Paragraph>
+            </Typography>
+            <div className={styles.list}>
+              {devApps.map(app => (
+                <AppListItem key={app.id} app={app} />
+              ))}
+            </div>
+          </>
+        )}
       </AppsListShell>
     );
   }

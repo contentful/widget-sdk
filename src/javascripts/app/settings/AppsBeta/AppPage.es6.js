@@ -66,8 +66,7 @@ export default class AppRoute extends Component {
     appHookBus: PropTypes.shape({
       on: PropTypes.func.isRequired,
       emit: PropTypes.func.isRequired,
-      setParameters: PropTypes.func.isRequired,
-      unsetParameters: PropTypes.func.isRequired
+      setExtension: PropTypes.func.isRequired
     }).isRequired,
     cma: PropTypes.shape({
       getExtension: PropTypes.func.isRequired,
@@ -104,7 +103,7 @@ export default class AppRoute extends Component {
     try {
       return {
         ...result,
-        extension: await repo.getExtensionForExtensionDefinition(extensionDefinition)
+        extension: await repo.getExtensionForExtensionDefinition(extensionDefinition.sys.id)
       };
     } catch (err) {
       // If there are 2 or more extensions for the same definition
@@ -128,10 +127,7 @@ export default class AppRoute extends Component {
     const extensionDefinition = await repo.getExtensionDefinitionForApp(appId);
     const { extension } = await this.checkAppStatus(extensionDefinition);
 
-    if (extension) {
-      appHookBus.setParameters(extension.parameters);
-    }
-
+    appHookBus.setExtension(extension);
     appHookBus.on(APP_EVENTS_IN.CONFIGURED, this.onAppConfigured);
     appHookBus.on(APP_EVENTS_IN.MISCONFIGURED, this.onAppMisconfigured);
 
@@ -163,7 +159,7 @@ export default class AppRoute extends Component {
 
       this.setState({ isInstalled: true, busyWith: false });
 
-      appHookBus.setParameters(extension.parameters);
+      appHookBus.setExtension(extension);
       appHookBus.emit(APP_EVENTS_OUT.SUCCEEDED, { installationRequestId });
     } catch (err) {
       if (this.state.busyWith === BUSY_STATE_UPDATE) {
@@ -175,12 +171,7 @@ export default class AppRoute extends Component {
       const { extension } = await this.checkAppStatus();
       this.setState({ isInstalled: !!extension, busyWith: false });
 
-      if (extension) {
-        appHookBus.setParameters(extension.parameters);
-      } else {
-        appHookBus.unsetParameters();
-      }
-
+      appHookBus.setExtension(extension);
       appHookBus.emit(APP_EVENTS_OUT.FAILED, { installationRequestId });
     }
   };
@@ -198,9 +189,9 @@ export default class AppRoute extends Component {
   uninstall = async () => {
     this.setState({ busyWith: BUSY_STATE_UNINSTALLATION });
 
-    // Unset parameters immediately so they are not available
-    // via the SDK method anymore.
-    this.props.appHookBus.unsetParameters();
+    // Unset extension immediately so its parameters are not exposed
+    // via the SDK as soon as the proces was initiated.
+    this.props.appHookBus.setExtension(null);
 
     try {
       await uninstall(this.props.cma, this.checkAppStatus);

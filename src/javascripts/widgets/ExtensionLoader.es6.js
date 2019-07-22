@@ -1,5 +1,5 @@
 import DataLoader from 'dataloader';
-import { uniq, get, identity, pick } from 'lodash';
+import { get, identity, pick } from 'lodash';
 
 // This module exposes 2 retrieval methods:
 // - `getExtensionsById` allows to get extensions
@@ -32,50 +32,36 @@ const mergeExtensionsAndDefinitions = (extensions, definitions) => {
     .map(extension => {
       const definitionId = getExtensionDefinitionID(extension);
 
-      if (definitionId) {
-        const definition = definitions.find(
-          definition => get(definition, ['sys', 'id']) === definitionId
-        );
+      if (!definitionId) {
+        // Do not resolve definition but return the extension.
+        // It should already have all the properties required
+        // defined inline on it.
+        return extension;
+      }
 
-        if (definition) {
-          return {
-            ...extension,
-            extension: pick(definition, ['name', 'src', 'fieldTypes', 'parameters'])
-          };
-        }
-
-        // Dropping the extension
+      const definition = definitions[definitionId];
+      if (!definition) {
+        // Extension exists and points to a definition but
+        // the definition doesn't exist. Drop the extension.
         return null;
       }
 
-      return extension;
+      // Enrich the extension with definition data.
+      return {
+        ...extension,
+        extension: pick(definition, ['name', 'src', 'fieldTypes', 'parameters'])
+      };
     })
     .filter(identity);
 };
 
-export function createExtensionLoader(orgEndpoint, spaceEndpoint) {
-  const loadExtensionDefinitions = async definitionIds => {
-    if (!Array.isArray(definitionIds) || definitionIds.length < 1) {
-      return [];
-    }
-
-    const definitionResult = await orgEndpoint({
-      method: 'GET',
-      path: ['extension_definitions'],
-      query: {
-        'sys.id[in]': uniq(definitionIds).join(',')
-      }
-    });
-
-    return definitionResult.items || [];
-  };
-
+export function createExtensionLoader(extensionDefinitionLoader, spaceEndpoint) {
   const resolveExtensionDefinitions = async extensions => {
     const definitionIDs = extensions
       .filter(isBasedOnExtensionDefinition)
       .map(getExtensionDefinitionID);
 
-    const definitions = await loadExtensionDefinitions(definitionIDs);
+    const definitions = await extensionDefinitionLoader.getByIds(definitionIDs);
 
     return mergeExtensionsAndDefinitions(extensions, definitions);
   };

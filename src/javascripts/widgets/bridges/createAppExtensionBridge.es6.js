@@ -1,4 +1,4 @@
-import { isPlainObject } from 'lodash';
+import { isObject } from 'lodash';
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers.es6';
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers.es6';
 import makePageExtensionHandlers from './makePageExtensionHandlers.es6';
@@ -8,6 +8,7 @@ import { LOCATION_APP } from '../WidgetLocations.es6';
 import * as Random from 'utils/Random.es6';
 
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from 'app/settings/AppsBeta/AppHookBus.es6';
+import getCurrentAppState from 'app/settings/AppsBeta/AppCurrentState.es6';
 
 const STAGE_PRE_INSTALL = 'preInstall';
 const STAGE_POST_INSTALL = 'postInstall';
@@ -56,13 +57,17 @@ export default function createAppExtensionBridge(dependencies) {
     );
 
     api.registerHandler('callAppMethod', methodName => {
-      const parameters = appHookBus.getParameters();
-      const isInstalled = isPlainObject(parameters);
+      const extension = appHookBus.getExtension();
+      const isInstalled = isObject(extension);
 
       if (methodName === 'isInstalled') {
         return isInstalled;
-      } else if (methodName === 'getParameters') {
-        return isInstalled ? parameters : null;
+      } else if (methodName === 'getParameters' && isInstalled) {
+        return extension.parameters;
+      } else if (methodName === 'getCurrentState' && isInstalled) {
+        return getCurrentAppState(spaceContext.cma, extension.sys.id);
+      } else {
+        return null;
       }
     });
 
