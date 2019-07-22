@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euf -o pipefail
+
+PACKAGELIST=( 
+	colors@0.6.0-1
+	flexbuffer@0.0.6
+	get-document@1.0.0
+	nvm@0.0.4
+	regexp-quote@0.0.0
+	ripemd160@0.2.0
+	pako@1.0.10
+	pako@1.0.6
+	uglify-js@2.2.5
+	@typeform/embed@0.6.1
+	cycle@1.0.3
+	filestack-loader@3.0.4
+	node-html-encoder@0.0.2
+	node-jsx@0.13.3)
+
+PKG_OUTPUT=$(echo ${PACKAGELIST[@]}| sed 's/ /;/g')
+
+check_licenses () {
+	npx license-checker \
+		--exclude 'MIT, Apache-2.0, BSD, ISC, Unlicense, Public Domain, WTFPL, CC0-1.0, CC-BY-3.0, CC-BY-4.0'  \
+		--excludePackages "${PKG_OUTPUT[@]}" \
+		--excludePrivatePackages --json | jq 'with_entries( select(.key|contains("contentful")|not ))'
+}
+
+NONCOMPLIANTLICENSES=$(check_licenses)
+
+if [ "$NONCOMPLIANTLICENSES" == "{}" ];
+then
+	printf "Licenses of used packages in repository are compliant."
+	exit 0
+else
+	printf "Non-compliant packages in repository found, please refer to https://contentful.atlassian.net/wiki/spaces/SRT/pages/1305051346/Secure+Software+Development+Policy:\n%s\n" "$NONCOMPLIANTLICENSES"
+	exit 1
+fi

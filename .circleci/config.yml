@@ -296,6 +296,14 @@ jobs:
       - run: tools/bin/validate-config.js config/*.json
       - run: npm run hint
 
+  oss-license-check:
+    docker:
+      - image: circleci/node:10.15.3
+    steps:
+      - checkout
+      - run: npm install --no-save --no-shrinkwrap license-checker
+      - run: bin/oss-license-check
+
   run-jest-tests:
     docker:
       - image: circleci/node:10.15.3
@@ -441,6 +449,7 @@ workflows:
     jobs:
       - build-and-push-image
       - lint
+      - oss-license-check
       - run-jest-tests
       - run-karma-tests
       - run-e2e-tests:
