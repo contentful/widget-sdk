@@ -170,9 +170,9 @@ only_master_filters: &only_master_filters
       only: master
 
 executors:
-  cypress-base-8:
+  cypress-base-10:
     docker:
-      - image: 'cypress/base:8'
+      - image: 'cypress/base:10'
     environment:
       NODE_ENV: dev
       UI_CONFIG: localhost
@@ -403,7 +403,7 @@ workflows:
       - deploy-micro-backends
       - cypress/run:
           name: run-contract-tests
-          executor: cypress-base-8
+          executor: cypress-base-10
           no-workspace: true
           pre-steps:
             - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
@@ -417,10 +417,25 @@ workflows:
                   - pacts/*
           start: npm start
           wait-on: 'http-get://localhost:3001'
+          command: npx cypress run --spec "test/cypress/integration/contract/**/*"
           store_artifacts: true
       - publish-pact-contracts:
           requires:
             - run-contract-tests
+      - cypress/run:
+          name: run-ui-integration-tests
+          executor: cypress-base-10
+          no-workspace: true
+          pre-steps:
+            - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
+            - run: npm install -g wait-on
+          post-steps:
+            - store_test_results:
+                path: cypress/reports
+          start: npm start
+          wait-on: 'http-get://localhost:3001'
+          command: npx cypress run --spec "test/cypress/integration/ui/**/*"
+          store_artifacts: true
       - deploy-assets/to-s3:
           name: deploy-assets-to-preview
           access_key_id: '${AWS_S3_PREVIEW_ACCESS_KEY_ID}'
