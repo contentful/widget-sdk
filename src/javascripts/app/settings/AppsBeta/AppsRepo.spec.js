@@ -120,6 +120,42 @@ describe('AppsRepo', () => {
         ])
       );
     });
+
+    it('does not include app extension if there are two extensions for its definition', async () => {
+      const loader = {
+        getByIds: jest.fn(() =>
+          Promise.resolve({
+            [NETLIFY_EXTENSION_DEFINITION_ID]: netlifyDefinition
+          })
+        )
+      };
+
+      const spaceEndpoint = jest.fn(() => {
+        return Promise.resolve({
+          items: [
+            { ...netlifyExtension, sys: { type: 'Extension', id: 'e1' } },
+            { ...netlifyExtension, sys: { type: 'Extension', id: 'e2' } }
+          ]
+        });
+      });
+
+      const repo = createAppsRepo(loader, spaceEndpoint);
+      const result = await repo.getApps();
+
+      expect(loader.getByIds).toBeCalledTimes(1);
+      expect(loader.getByIds).toBeCalledWith(
+        expect.arrayContaining([NETLIFY_EXTENSION_DEFINITION_ID])
+      );
+
+      expect(result).toEqual(
+        expect.arrayContaining([
+          {
+            sys: { type: 'App', id: NETLIFY_APP_ID },
+            extensionDefinition: netlifyDefinition
+          }
+        ])
+      );
+    });
   });
 
   describe('getExtensionDefinitionForApp', () => {
