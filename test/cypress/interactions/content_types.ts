@@ -106,7 +106,7 @@ export const getAllContentTypesInDefaultSpace = {
       }
     }).as('getAllContentTypesInDefaultSpace');
 
-    return '@getAllContentTypesInDefaultSpace'
+    return '@getAllContentTypesInDefaultSpace';
   }
 }
 

@@ -19,10 +19,10 @@ import './commands';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-import 'cypress-testing-library/add-commands';
+import '@testing-library/cypress/add-commands';
 
 // set a custom test id
-import { configure } from 'dom-testing-library';
+import { configure } from '@testing-library/dom';
 configure({ testIdAttribute: 'data-test-id' });
 
 // cypress-pact plugin

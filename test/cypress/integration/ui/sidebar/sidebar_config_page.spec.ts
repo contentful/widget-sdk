@@ -84,7 +84,7 @@ describe('Sidebar configuration', () => {
         'Entry activity'
       ];
 
-      cy.get('[data-test-id="sidebar-widget-item-draggable"]')
+      cy.getAllByTestId('sidebar-widget-item-draggable')
         .eq(3)
         .focus()
         .wait(0.2 * 1000)
@@ -100,9 +100,10 @@ describe('Sidebar configuration', () => {
     });
 
     it('moves widget from a custom sidebar to available items and vice versa', () => {
-      cy.getByTestId('sidebar-widget-item')
+      cy.getAllByTestId('sidebar-widget-item')
         .eq(0)
-        .getByTestId('cf-ui-icon-button')
+        .getAllByTestId('cf-ui-icon-button')
+        .eq(0)
         .click();
       cy.getAllByTestId('sidebar-widget-name')
         .should('have.length', widgetNames.length - 1)

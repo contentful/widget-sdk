@@ -70,10 +70,10 @@ describe('Sidebar configuration', () => {
         saveDefaultContentTypeEditorInterface.willSucceed()
       ];
 
-      cy.getByTestId('sidebar-widget-item')
+      cy.getAllByTestId('cf-ui-icon-button')
         .first()
-        .getByTestId('cf-ui-icon-button')
         .click();
+
       cy.getByTestId('save-content-type').click();
 
       cy.wait(interactions);
