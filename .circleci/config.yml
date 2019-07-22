@@ -258,7 +258,7 @@ jobs:
     steps:
       - checkout
       - run: npm install --no-save --no-shrinkwrap license-checker
-      - run: npm run oss-license-check
+      - run: bin/oss-license-check
 
   run-jest-tests:
     docker:

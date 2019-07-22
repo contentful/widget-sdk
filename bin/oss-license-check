@@ -20,7 +20,7 @@ PACKAGELIST=(
 PKG_OUTPUT=$(echo ${PACKAGELIST[@]}| sed 's/ /;/g')
 
 check_licenses () {
-	license-checker \
+	npx license-checker \
 		--exclude 'MIT, Apache-2.0, BSD, ISC, Unlicense, Public Domain, WTFPL, CC0-1.0, CC-BY-3.0, CC-BY-4.0'  \
 		--excludePackages "${PKG_OUTPUT[@]}" \
 		--excludePrivatePackages --json | jq 'with_entries( select(.key|contains("contentful")|not ))'
