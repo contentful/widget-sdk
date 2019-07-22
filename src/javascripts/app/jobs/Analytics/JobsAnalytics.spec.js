@@ -36,14 +36,14 @@ describe('JobsAnalytics', () => {
 
   it('CreateJob', () => {
     const jobId = 'job-id';
-    const scheduledFor = '2019-07-12T23:37:00.000+05:30';
+    const scheduledAt = '2019-07-12T23:37:00.000+05:30';
 
-    JobsAnalytics.createJob({ jobId, scheduledFor });
+    JobsAnalytics.createJob({ jobId, scheduledAt });
 
     expectTrackCalledOnceWith(JobsAnalytics.EventName.CreateJob, {
       action: JobsAnalytics.JobAction.EntryPublish,
       job_id: jobId,
-      scheduled_for: scheduledFor,
+      scheduled_for: scheduledAt,
       timezone_offset: -120
     });
   });

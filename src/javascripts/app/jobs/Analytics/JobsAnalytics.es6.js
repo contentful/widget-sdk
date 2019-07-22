@@ -37,11 +37,11 @@ export function createDialogClose() {
   return Analytics.track(EventName.Dialog, payload);
 }
 
-export function createJob({ jobId, scheduledFor }) {
+export function createJob({ jobId, scheduledAt }) {
   const payload = {
     action: JobAction.EntryPublish,
     job_id: jobId,
-    scheduled_for: scheduledFor,
+    scheduled_for: scheduledAt,
     timezone_offset: new Date().getTimezoneOffset()
   };
 
