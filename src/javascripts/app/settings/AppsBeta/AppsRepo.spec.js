@@ -211,7 +211,7 @@ describe('AppsRepo', () => {
 
   describe('getExtensionDefinitionForApp', () => {
     it('fetches definition by app ID', async () => {
-      const loader = { getById: jest.fn(() => 'DEFINITION') };
+      const loader = { getById: jest.fn(() => Promise.resolve('DEFINITION')) };
 
       const repo = createAppsRepo(loader);
       const result = await repo.getExtensionDefinitionForApp(NETLIFY_APP_ID);
@@ -239,7 +239,7 @@ describe('AppsRepo', () => {
     });
 
     it('derives extension definition ID from a dev app ID', async () => {
-      const loader = { getById: jest.fn(() => 'DEFINITION') };
+      const loader = { getById: jest.fn(() => Promise.resolve('DEFINITION')) };
 
       const repo = createAppsRepo(loader);
       const result = await repo.getExtensionDefinitionForApp('dev-app_my-definition');
