@@ -2,11 +2,11 @@
 import React from 'react';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import { inRange } from 'lodash';
 import { assign } from 'utils/Collections.es6';
 import { DocsLink } from 'ui/Content.es6';
 import EnvironmentSelector from './EnvironmentSelector.es6';
-import { CopyButton } from '@contentful/forma-36-react-components';
-import TextInput from './TextInput.es6';
+import { CopyButton, TextField } from '@contentful/forma-36-react-components';
 
 export default function({ data, initialValue, connect, trackCopy }) {
   update(initialValue);
@@ -29,17 +29,24 @@ function renderForm({ data, model, update, trackCopy }) {
         the Space ID and an access token.
       </div>
       <div className="f36-margin-top--xl" />
-      <Section
-        title="Name"
-        description="Can be platform or device specific names (i.e. marketing website, tablet, VR app)">
-        <Input canEdit={data.canEdit} model={model} name="name" update={update} />
-      </Section>
+      <Input
+        canEdit={data.canEdit}
+        model={model}
+        name="name"
+        update={update}
+        isRequired={true}
+        label="Name"
+        description="Can be platform or device specific names (i.e. marketing website, tablet, VR app)"
+      />
       <div className="f36-margin-top--xl" />
-      <Section
-        title="Description"
-        description="You can provide an optional description for reference in the future">
-        <Input canEdit={data.canEdit} model={model} name="description" update={update} />
-      </Section>
+      <Input
+        canEdit={data.canEdit}
+        model={model}
+        name="description"
+        update={update}
+        label="Description"
+        description="You can provide an optional description for reference in the future"
+      />
       <div className="f36-margin-top--xl" />
       <Section title="Space ID">
         <InputWithCopy value={data.spaceId} name="space-id" track={() => trackCopy('space')} />
@@ -93,15 +100,32 @@ function renderForm({ data, model, update, trackCopy }) {
   );
 }
 
-function Input({ canEdit, model, update, name }) {
+function Input({ canEdit, model, update, name, isRequired = false, label, description }) {
+  const id = name;
+  const hasError = !inRange(model[name].value.length, model[name].minLength, model[name].maxLength);
+  const textInputProps = {
+    type: 'text',
+    name,
+    value: model[name].value,
+    onChange: e => update(assign(model, { [name]: { ...model[name], value: e.target.value } })),
+    disabled: !canEdit,
+    error: hasError ? 'error' : undefined
+  };
+  const formLabelProps = isRequired
+    ? {
+        htmlFor: id
+      }
+    : {};
+
   return (
-    <TextInput
-      className="cfnext-form__input--full-size"
-      type="text"
-      name={name}
-      value={model[name]}
-      onChange={e => update(assign(model, { [name]: e.target.value }))}
-      disabled={!canEdit}
+    <TextField
+      id={id}
+      labelText={label}
+      helpText={description}
+      required={isRequired}
+      validationMessage={isRequired && hasError ? 'This field cannot be empty' : undefined}
+      {...textInputProps}
+      {...formLabelProps}
     />
   );
 }

@@ -1,5 +1,4 @@
 import { assign, get, inRange, isEqual } from 'lodash';
-import { truncate } from 'utils/StringUtils.es6';
 import { deepFreeze } from 'utils/Freeze.es6';
 import { concat } from 'utils/Collections.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
@@ -62,8 +61,16 @@ function mountContactUs($scope) {
 
 function makeApiKeyModel(apiKey) {
   return {
-    name: apiKey.name || '',
-    description: apiKey.description || '',
+    name: {
+      value: apiKey.name || '',
+      minLength: 1,
+      maxLength: 40
+    },
+    description: {
+      value: apiKey.description || '',
+      minLength: 0,
+      maxLength: 255
+    },
     environments: concat([], apiKey.environments || [])
   };
 }
@@ -80,6 +87,33 @@ function isApiKeyModelEqual(m1, m2) {
   );
 }
 
+const notify = {
+  saveSuccess: function(apiKey) {
+    Notification.success(`“${apiKey.name}” saved successfully`);
+  },
+
+  saveFail: function(error, apiKey) {
+    Notification.error(`“${apiKey.name}” could not be saved`);
+    // HTTP 422: Unprocessable entity
+    if (get(error, 'statusCode') !== 422) {
+      logger.logServerWarn('ApiKey could not be saved', { error });
+    }
+  },
+
+  saveNoEnvironments: function() {
+    Notification.error('At least one environment has to be selected.');
+  },
+
+  deleteSuccess: function(apiKey) {
+    Notification.success(`“${apiKey.name}” deleted successfully`);
+  },
+
+  deleteFail: function(error, apiKey) {
+    Notification.error(`“${apiKey.name}” could not be deleted`);
+    logger.logServerWarn('ApiKey could not be deleted', { error });
+  }
+};
+
 function mountKeyEditor($scope, apiKey, spaceEnvironments) {
   // `environments` key is present only if there are environments other than master enabled
   if (!Array.isArray(apiKey.environments) || apiKey.environments.length === 0) {
@@ -87,7 +121,6 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments) {
   }
 
   const canEdit = accessChecker.canModifyApiKeys();
-  const notify = makeNotifier(truncate(apiKey.name, 50));
   const model = makeApiKeyModel(apiKey);
   let pristineModel = makeApiKeyModel(apiKey);
 
@@ -105,7 +138,7 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments) {
       initialValue: model,
       connect: (updated, component) => {
         assign(model, updated);
-        $scope.context.title = model.name || 'New Api Key';
+        $scope.context.title = model.name.value || 'New Api Key';
         $scope.context.dirty = !isApiKeyModelEqual(model, pristineModel);
         $scope.keyEditorComponent = component;
         $scope.$applyAsync();
@@ -129,12 +162,20 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments) {
   function remove() {
     return spaceContext.apiKeyRepo
       .remove(apiKey.sys.id)
-      .then(() => $state.go('^.list').then(notify.deleteSuccess), notify.deleteFail);
+      .then(
+        () => $state.go('^.list').then(() => notify.deleteSuccess(apiKey)),
+        err => notify.deleteFail(err, apiKey)
+      );
   }
 
   function isSaveDisabled() {
     return (
-      !inRange(model.name.length, 1, 256) ||
+      !inRange(model.name.value.length, model.name.minLength, model.name.maxLength) ||
+      !inRange(
+        model.description.value.length,
+        model.description.minLength,
+        model.description.maxLength
+      ) ||
       accessChecker.shouldDisable('create', 'apiKey') ||
       !$scope.context.dirty
     );
@@ -145,43 +186,16 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments) {
       notify.saveNoEnvironments();
       return;
     }
-
     const toPersist = Object.assign({}, apiKey, model);
 
-    return spaceContext.apiKeyRepo.save(toPersist).then(newKey => {
-      apiKey = newKey;
-      pristineModel = makeApiKeyModel(apiKey);
-      $scope.context.dirty = false;
-      notify.saveSuccess();
-    }, notify.saveFail);
+    return spaceContext.apiKeyRepo.save(toPersist).then(
+      newKey => {
+        apiKey = newKey;
+        pristineModel = makeApiKeyModel(apiKey);
+        $scope.context.dirty = false;
+        notify.saveSuccess(newKey);
+      },
+      err => notify.saveFail(err, apiKey)
+    );
   }
-}
-
-function makeNotifier(title) {
-  return {
-    saveSuccess: function() {
-      Notification.success(`“${title}” saved successfully`);
-    },
-
-    saveFail: function(error) {
-      Notification.error(`“${title}” could not be saved`);
-      // HTTP 422: Unprocessable entity
-      if (get(error, 'statusCode') !== 422) {
-        logger.logServerWarn('ApiKey could not be saved', { error });
-      }
-    },
-
-    saveNoEnvironments: function() {
-      Notification.error('At least one environment has to be selected.');
-    },
-
-    deleteSuccess: function() {
-      Notification.success(`“${title}” deleted successfully`);
-    },
-
-    deleteFail: function(error) {
-      Notification.error(`“${title}” could not be deleted`);
-      logger.logServerWarn('ApiKey could not be deleted', { error });
-    }
-  };
 }
