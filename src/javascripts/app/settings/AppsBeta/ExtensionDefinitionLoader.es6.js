@@ -3,7 +3,8 @@ import { uniq, difference } from 'lodash';
 export default function createExtensionDefinitionLoader(extensionDefinitionsEndpoint, orgEndpoint) {
   return {
     getById,
-    getByIds
+    getByIds,
+    getAllForCurrentOrganization
   };
 
   async function getById(id) {
@@ -42,7 +43,7 @@ export default function createExtensionDefinitionLoader(extensionDefinitionsEndp
     // the public endpoint, try to fetch them from the
     // organization-scoped endpoint.
     const orgDefinitions =
-      missingIds.length > 0 ? await fetchFromOrganizationEndpoint(orgEndpoint, missingIds) : [];
+      missingIds.length > 0 ? await fetchFromOrganizationEndpoint(missingIds) : [];
 
     // Merge results, public definitions take precedence.
     const publicDefinitionsMap = makeMap(publicDefinitions);
@@ -62,11 +63,20 @@ export default function createExtensionDefinitionLoader(extensionDefinitionsEndp
     }, {});
   }
 
-  async function fetchFromOrganizationEndpoint(orgEndpoint, ids) {
+  async function fetchFromOrganizationEndpoint(ids) {
     const { items } = await orgEndpoint({
       method: 'GET',
       path: ['extension_definitions'],
       query: { 'sys.id[in]': ids.join(',') }
+    });
+
+    return items;
+  }
+
+  async function getAllForCurrentOrganization() {
+    const { items } = await orgEndpoint({
+      method: 'GET',
+      path: ['extension_definitions']
     });
 
     return items;

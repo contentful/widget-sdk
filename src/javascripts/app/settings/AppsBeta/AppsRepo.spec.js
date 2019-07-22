@@ -158,6 +158,57 @@ describe('AppsRepo', () => {
     });
   });
 
+  describe('getDevApps', () => {
+    it('returns fake dev apps for all extension definitions in the current org', async () => {
+      const definitions = [
+        { sys: { type: 'ExtensionDefinition', id: 'org-def-1' } },
+        { sys: { type: 'ExtensionDefinition', id: 'org-def-2' } }
+      ];
+
+      const extension = {
+        sys: { type: 'Extension', id: 'ext-for-def-2' },
+        extensionDefinition: {
+          sys: {
+            type: 'Link',
+            linkType: 'ExtensionDefinition',
+            id: 'org-def-2'
+          }
+        }
+      };
+
+      const loader = {
+        getAllForCurrentOrganization: jest.fn(() => Promise.resolve(definitions))
+      };
+
+      const spaceEndpoint = jest.fn(() => Promise.resolve({ items: [extension] }));
+
+      const repo = createAppsRepo(loader, spaceEndpoint);
+      const result = await repo.getDevApps();
+
+      expect(loader.getAllForCurrentOrganization).toBeCalledTimes(1);
+      expect(spaceEndpoint).toBeCalledTimes(1);
+      expect(spaceEndpoint).toBeCalledWith({
+        method: 'GET',
+        path: ['extensions'],
+        query: {
+          'extensionDefinition.sys.id[in]': 'org-def-1,org-def-2'
+        }
+      });
+
+      expect(result).toEqual([
+        {
+          sys: { type: 'DevApp', id: 'dev-app_org-def-1' },
+          extensionDefinition: definitions[0]
+        },
+        {
+          sys: { type: 'DevApp', id: 'dev-app_org-def-2' },
+          extensionDefinition: definitions[1],
+          extension
+        }
+      ]);
+    });
+  });
+
   describe('getExtensionDefinitionForApp', () => {
     it('fetches definition by app ID', async () => {
       const loader = { getById: jest.fn(() => 'DEFINITION') };
@@ -185,6 +236,17 @@ describe('AppsRepo', () => {
         expect(loader.getById).toBeCalledTimes(1);
         expect(err.message).toBe('boom');
       }
+    });
+
+    it('derives extension definition ID from a dev app ID', async () => {
+      const loader = { getById: jest.fn(() => 'DEFINITION') };
+
+      const repo = createAppsRepo(loader);
+      const result = await repo.getExtensionDefinitionForApp('dev-app_my-definition');
+
+      expect(loader.getById).toBeCalledTimes(1);
+      expect(loader.getById).toBeCalledWith('my-definition');
+      expect(result).toBe('DEFINITION');
     });
   });
 

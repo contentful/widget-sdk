@@ -8,9 +8,13 @@ const APP_TO_EXTENSION_DEFINITION = {
 // Order on the list, values are App IDs
 const APP_ORDER = ['netlify'];
 
+const DEV_APP_PREFIX = 'dev-app';
+const DEV_APP_SEPARATOR = '_';
+
 export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint) {
   return {
     getApps,
+    getDevApps,
     getExtensionDefinitionForApp,
     getExtensionForExtensionDefinition
   };
@@ -34,7 +38,34 @@ export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint)
     }).filter(app => !!app.extensionDefinition);
   }
 
+  async function getDevApps() {
+    const extensionDefinitions = await extensionDefinitionLoader.getAllForCurrentOrganization();
+
+    if (extensionDefinitions.length < 1) {
+      return [];
+    }
+
+    const extensionDefinitionIds = extensionDefinitions.map(def => def.sys.id);
+    const extensionMap = await getExtensionsForExtensionDefinitions(extensionDefinitionIds);
+
+    return extensionDefinitions.map(def => {
+      return {
+        sys: {
+          type: 'DevApp',
+          id: [DEV_APP_PREFIX, DEV_APP_SEPARATOR, def.sys.id].join('')
+        },
+        extensionDefinition: def,
+        extension: extensionMap[def.sys.id]
+      };
+    });
+  }
+
   function getExtensionDefinitionForApp(appId) {
+    if (appId.startsWith(DEV_APP_PREFIX + DEV_APP_SEPARATOR)) {
+      const [, extensionDefinitionId] = appId.split(DEV_APP_SEPARATOR);
+      return extensionDefinitionLoader.getById(extensionDefinitionId);
+    }
+
     return extensionDefinitionLoader.getById(APP_TO_EXTENSION_DEFINITION[appId]);
   }
 
