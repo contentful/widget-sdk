@@ -1,4 +1,5 @@
 version: 2.1
+
 orbs:
   cypress: cypress-io/cypress@1.7.0
   deploy-assets:
@@ -34,26 +35,71 @@ orbs:
               from: <<parameters.path>>
               to: s3://<<parameters.bucket>>
               arguments: '--acl public-read --recursive'
+
   post-comment:
     commands:
-      to-pr:
-        description: 'Post deployment URL to PR that triggered the build as a comment'
+      deployment:
+        description: 'Post deployment URLs to PR'
         parameters:
           env:
             type: string
-            description: quirely or flinkly
-          url:
-            type: string
-            description: url to POST comment data to
-            default: 'https://tooling-lambdas.ctfl.now.sh/user_interface/comments'
+            description: 'quirely or flinkly'
         steps:
           - run:
-              name: Post deployment URL to GitHub
+              name: 'Post deployment URL to GitHub'
               command: |
                 export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
-                curl -i -X POST --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"<<parameters.env>>\"}" \
+                export LAMBDA_URL="https://tooling-lambdas.ctfl.now.sh/user_interface/comments"
+                curl -i -X POST \
+                --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"<<parameters.env>>\"}" \
                 -H 'content-type: application/json' \
-                <<parameters.url>>?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY || echo "Comment won't be posted to ${PR_NUMBER:-$CIRCLE_BRANCH}. Continuing anyway."
+                $LAMBDA_URL?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY || echo "Comment won't be posted to ${PR_NUMBER:-$CIRCLE_BRANCH}. Continuing anyway."
+
+  build-tracker:
+    jobs:
+      upload-build:
+        description: 'Upload build artifacts stats to https://user-interface-build-tracker.herokuapp.com and post comment to PR'
+        parameters:
+          path:
+            type: string
+        docker:
+          - image: circleci/node:10.15.3
+        steps:
+          - attach_workspace:
+              at: ~/workspace
+          - checkout
+          - run:
+              name: Install build-tracker CLI
+              command: npm install --no-save --no-shrinkwrap @build-tracker/cli@1.0.0-alpha.3
+          - run:
+              name: Upload build to user_interface build tracker server and post comment
+              command: |
+                export PATH_TO_BUILT_ASSETS=<<parameters.path>>
+                npx bt-cli version
+                npx bt-cli -vv -c tools/build-tracker.config.js stat-artifacts
+                npx bt-cli --skip-dirty-check -c tools/build-tracker.config.js upload-build > buildUploadResult
+                # don't fail if upload fails as might happen when a job is re-run on the same commit
+                cat buildUploadResult | jq . || :
+                # Start comment posting routine. Note that this was
+                # originally in another step but the upload result
+                # file was always empty when accessed in another step
+                # ¯\_(ツ)_/¯
+                export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
+                export LAMBDA_URL="https://tooling-lambdas.ctfl.now.sh/user_interface/bundlesizes"
+                export BUILD_TRACKER_MARKDOWN=$(cat buildUploadResult | jq .markdown | cut -d '"' -f 2 || echo "")
+                export BUILD_TRACKER_URL="https://user-interface-build-tracker.herokuapp.com/"
+                # don't set COMMENT_MSG if there was no markdown as it probably means the build upload to our build tracker server failed
+                # not having this set will fail validation in the lambda that posts the comment which is what we want
+                export COMMENT_MSG=$([[ -n $BUILD_TRACKER_MARKDOWN ]] && echo "\"# Bundle size report\\n\\n$BUILD_TRACKER_MARKDOWN\\n\\n[Build tracker UI]($BUILD_TRACKER_URL)\"")
+                echo $PR_NUMBER
+                echo $LAMBDA_URL
+                echo $BUILD_TRACKER_MARKDOWN
+                echo $COMMENT_MSG
+                curl -i -X POST \
+                --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"message\": ${COMMENT_MSG:-''}}" \
+                -H 'content-type: application/json' \
+                $LAMBDA_URL?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY || echo "Comment won't be posted to ${PR_NUMBER:-$CIRCLE_BRANCH}. Continuing anyway."
+
   estivador:
     commands:
       install:
@@ -164,7 +210,7 @@ orbs:
           - store_artifacts:
               path: test/cypress/screenshots
 
-only_master_filters: &only_master_filters
+run_only_on_master_branch: &run_only_on_master_branch
   filters:
     branches:
       only: master
@@ -436,6 +482,11 @@ workflows:
           wait-on: 'http-get://localhost:3001'
           command: npx cypress run --spec "test/cypress/integration/ui/**/*"
           store_artifacts: true
+      - build-tracker/upload-build:
+          name: upload-prod-build-to-build-tracker
+          path: '~/workspace/output/files/production/app'
+          requires:
+            - build-and-push-image
       - deploy-assets/to-s3:
           name: deploy-assets-to-preview
           access_key_id: '${AWS_S3_PREVIEW_ACCESS_KEY_ID}'
@@ -453,7 +504,7 @@ workflows:
           path: '~/workspace/output/files/staging'
           bucket: 'cf-staging-static-cdnorigin'
           post-steps:
-            - post-comment/to-pr:
+            - post-comment/deployment:
                 env: 'flinkly'
           requires:
             - build-and-push-image
@@ -473,27 +524,27 @@ workflows:
           browser: 'internet explorer'
           requires:
             - deploy-assets-to-staging
-          <<: *only_master_filters
+          <<: *run_only_on_master_branch
       - saucelabs/run:
           name: run-win10-edge-tests
           browser: 'MicrosoftEdge'
           selenium: '3.14.0'
           requires:
             - deploy-assets-to-staging
-          <<: *only_master_filters
+          <<: *run_only_on_master_branch
       - saucelabs/run:
           name: run-win10-firefox-tests
           browser: 'firefox'
           requires:
             - deploy-assets-to-staging
-          <<: *only_master_filters
+          <<: *run_only_on_master_branch
       - saucelabs/run:
           name: run-osx10-safari-tests
           platform: 'OS X 10.11'
           browser: 'safari'
           requires:
             - deploy-assets-to-staging
-          <<: *only_master_filters
+          <<: *run_only_on_master_branch
 
 notify:
   webhooks:
