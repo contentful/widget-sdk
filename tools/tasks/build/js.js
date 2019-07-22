@@ -2,6 +2,7 @@ const gulp = require('gulp');
 const sourceMaps = require('gulp-sourcemaps');
 const concat = require('gulp-concat');
 const terser = require('terser');
+const sort = require('gulp-sort');
 const composer = require('gulp-uglify/composer');
 const rev = require('gulp-rev');
 const { writeFile, changeBase } = require('../helpers');
@@ -65,6 +66,9 @@ function generateBundleFromFiles({ bundlePath, manifestPath, files, isTestBuild 
       .src(files)
       .pipe(sourceMaps.init({ loadMaps: true }))
       .pipe(concat(bundlePath))
+      // Since the order of streams are not guaranteed, some plugins such as gulp-concat can cause the final file's content and hash to change.
+      // To avoid generating a new hash for unchanged source files
+      .pipe(sort())
       .pipe(uglify())
       .pipe(changeBase('build'))
       .pipe(rev())
