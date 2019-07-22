@@ -1,7 +1,10 @@
 const path = require('path');
 
 const getFileExtension = fileName => {
-  return fileName.split('.').pop();
+  return fileName
+    .split('.')
+    .splice(1)
+    .join('.');
 };
 
 const getFilenameHash = fileName => {
