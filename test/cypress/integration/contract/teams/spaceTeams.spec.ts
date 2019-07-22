@@ -1,6 +1,5 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { defaultHeader, defaultSpaceId, defaultOrgId } from '../../../util/requests';
-import { getAllProductCatalogFeaturesForDefaultOrg } from '../../../interactions/product_catalog_features';
 
 const empty = require('../../../fixtures/responses/empty.json');
 
@@ -88,8 +87,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
   }).as(getRolesInteraction);
 
   const interactions = [
-    ...defaultRequestsMock({}),
-    getAllProductCatalogFeaturesForDefaultOrg.willFindSeveral(),
+    ...defaultRequestsMock(),
     `@${getMembershipsInteraction}`,
     `@${getTeamsInteraction}`,
     `@${getRolesInteraction}`

@@ -207,7 +207,7 @@ export const getDefaultContentType = {
 
 export const getPublishedVersionOfDefaultContentType = {
   willReturnIt() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
       state: States.DEFAULT_CONTENT_TYPE_IS_PUBLISHED,
       uponReceiving: `a request to get the published version of content type "${defaultContentTypeId}" in space "${defaultSpaceId}"`,

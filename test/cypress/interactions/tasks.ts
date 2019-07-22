@@ -23,11 +23,7 @@ enum Status {
 
 const provider = 'tasks';
 
-const request = {
-  GET_TASK_LIST: `a request to get all entry comments for entry "${defaultEntryId}"`,
-  CREATE_TASK: `a request to create a new task for entry "${defaultEntryId}"`,
-  UPDATE_TASK: 'a PUT request for updating an entry task'
-};
+const GET_TASK_LIST = `a request to get all entry comments for entry "${defaultEntryId}"`
 
 const getEntryCommentsAndTasksRequest: RequestOptions = {
   method: 'GET',
@@ -40,7 +36,7 @@ export const getAllCommentsForDefaultEntry = {
     cy.addInteraction({
       provider,
       state: States.NONE,
-      uponReceiving: request.GET_TASK_LIST,
+      uponReceiving: GET_TASK_LIST,
       withRequest: getEntryCommentsAndTasksRequest,
       willRespondWith: {
         status: 200,
@@ -54,7 +50,7 @@ export const getAllCommentsForDefaultEntry = {
     cy.addInteraction({
       provider,
       state: States.SEVERAL,
-      uponReceiving: request.GET_TASK_LIST,
+      uponReceiving: GET_TASK_LIST,
       withRequest: getEntryCommentsAndTasksRequest,
       willRespondWith: {
         status: 200,
@@ -68,7 +64,7 @@ export const getAllCommentsForDefaultEntry = {
     cy.addInteraction({
       provider,
       state: States.INTERNAL_SERVER_ERROR,
-      uponReceiving: request.GET_TASK_LIST,
+      uponReceiving: GET_TASK_LIST,
       withRequest: getEntryCommentsAndTasksRequest,
       willRespondWith: {
         status: 500,
@@ -97,7 +93,7 @@ export function createTask({ title, assigneeId }) {
   };
   const interactionRequestInfo = {
     provider,
-    uponReceiving: request.CREATE_TASK,
+    uponReceiving: `a request to assign a new task to user "${assigneeId}" for entry "${defaultEntryId}"`,
     withRequest: {
       method: 'POST',
       path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/comments`,
@@ -136,10 +132,13 @@ export function createTask({ title, assigneeId }) {
     }
   }
 }
+const capitalize = (str: string): string => str.length > 0 ?
+  str[0].toUpperCase().concat(str.slice(1)) :
+  ''
 
 function changeTaskStatus(status: Status, stateName: States) {
   return function ({ title, assigneeId, taskId = defaultTaskId }, ) {
-    const alias = `changeTask-${taskId}-to-${status}`
+    const alias = `changeTask(${taskId})To${capitalize(status.toString())}`
     const updatedTask = {
       body: title,
       assignment: {
@@ -155,7 +154,7 @@ function changeTaskStatus(status: Status, stateName: States) {
 
     const interactionRequestInfo = {
       provider,
-      uponReceiving: request.UPDATE_TASK,
+      uponReceiving: `a request to change status of task "${taskId}" to "${status}"`,
       withRequest: {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/comments/${taskId}`,

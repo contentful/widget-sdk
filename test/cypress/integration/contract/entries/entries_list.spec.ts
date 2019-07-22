@@ -16,14 +16,14 @@ import {
 
 const empty = require('../../../fixtures/responses/empty.json');
 const severalEntriesResponse = require('../../../fixtures/responses/entries-several.json');
-const query = {
+const nonArchivedQuery = {
   limit: '40',
   order: '-sys.updatedAt',
   skip: '0',
   'sys.archivedAt[exists]': 'false'
 };
-const archivedQuery = {
-  limit: '0', // TODO: limit=0 ?? What does this mean?
+const archivedCountQuery = {
+  limit: '0',
   'sys.archivedAt[exists]': 'true'
 };
 describe('Entries list page', () => {
@@ -45,28 +45,28 @@ describe('Entries list page', () => {
       cy.addInteraction({
         provider: 'entries',
         state: 'noEntries',
-        uponReceiving: 'a request for non-archived entries',
-        withRequest: getEntries(defaultSpaceId, query),
+        uponReceiving: `a query for non-archived entries in "${defaultSpaceId}"`,
+        withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
           body: empty
         }
-      }).as('query-non-archived-entries');
+      }).as('queryNonArchivedEntries');
       // TODO: Move this to interactions/entries
       cy.addInteraction({
         provider: 'entries',
         state: 'noArchivedEntries',
-        uponReceiving: 'a request for archived entries',
-        withRequest: getEntries(defaultSpaceId, archivedQuery),
+        uponReceiving: `a query for the number of archived entries in "${defaultSpaceId}"`,
+        withRequest: getEntries(defaultSpaceId, archivedCountQuery),
         willRespondWith: {
           status: 200,
           body: empty
         }
-      }).as('query-archived-entries');
+      }).as('queryArchivedEntriesCount');
 
       const interactions = [
-        '@query-archived-entries',
-        '@query-non-archived-entries',
+        '@queryArchivedEntriesCount',
+        '@queryNonArchivedEntries',
         ...defaultRequestsMock({}),
         queryFirst100UsersInDefaultSpace.willFindSeveral()
       ]
@@ -88,28 +88,28 @@ describe('Entries list page', () => {
       cy.addInteraction({
         provider: 'entries',
         state: 'noEntries',
-        uponReceiving: 'a request for entries',
-        withRequest: getEntries(defaultSpaceId, query),
+        uponReceiving: `a query for non-archived entries in "${defaultSpaceId}"`,
+        withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
           body: empty
         }
-      }).as('query-non-archived-entries');
+      }).as('queryNonArchivedEntries');
       // TODO: Move this to interactions/entries
       cy.addInteraction({
         provider: 'entries',
         state: 'noArchivedEntries',
-        uponReceiving: 'a request for archived entries',
-        withRequest: getEntries(defaultSpaceId, archivedQuery),
+        uponReceiving: `a query for the number of archived entries in "${defaultSpaceId}"`,
+        withRequest: getEntries(defaultSpaceId, archivedCountQuery),
         willRespondWith: {
           status: 200,
           body: empty
         }
-      }).as('query-archived-entries');
+      }).as('queryArchivedEntriesCount');
 
       const interactions = [
-        '@query-archived-entries',
-        '@query-non-archived-entries',
+        '@queryNonArchivedEntries',
+        '@queryArchivedEntriesCount',
         ...defaultRequestsMock({
           publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
         }),
@@ -152,16 +152,16 @@ describe('Entries list page', () => {
       cy.addInteraction({
         provider: 'entries',
         state: 'severalEntries',
-        uponReceiving: 'a request for entries',
-        withRequest: getEntries(defaultSpaceId, query),
+        uponReceiving: `a query for non-archived entries in "${defaultSpaceId}"`,
+        withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
           body: severalEntriesResponse
         }
-      }).as('query-non-archived-entries');
+      }).as('queryNonArchivedEntries');
 
       const interactions = [
-        '@query-non-archived-entries',
+        '@queryNonArchivedEntries',
         ...defaultRequestsMock({}),
         queryFirst100UsersInDefaultSpace.willFindSeveral()
       ]
@@ -193,17 +193,17 @@ describe('Entries list page', () => {
       cy.addInteraction({
         provider: 'entries',
         state: 'severalEntries',
-        uponReceiving: 'a request for entries',
-        withRequest: getEntries(defaultSpaceId, query),
+        uponReceiving: `a query for non-archived entries in "${defaultSpaceId}"`,
+        withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
           body: severalEntriesResponse
         }
-      }).as('query-non-archived-entries');
+      }).as('queryNonArchivedEntries');
 
       const interactions = [
         ...defaultRequestsMock({}),
-        '@query-non-archived-entries',
+        '@queryNonArchivedEntries',
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryForTwoSpecificFeaturesInDefaultSpace.willFindBothOfThem(),
         getResourcesWithLimitsReached.willReturnSeveral()

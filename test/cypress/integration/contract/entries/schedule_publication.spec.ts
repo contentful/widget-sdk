@@ -57,9 +57,7 @@ describe('Schedule Publication', () => {
   describe('cancelling a publication', () => {
     beforeEach(() => {
       interactions.push(
-        queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
-        // TODO: It seems the wrong place for this set up
-        cancelDefaultJobInDefaultSpace.willSucceed()
+        queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob()
       );
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
