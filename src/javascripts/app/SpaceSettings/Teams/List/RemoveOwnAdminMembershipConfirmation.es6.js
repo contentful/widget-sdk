@@ -12,6 +12,7 @@ const RemoveOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm, teamN
 
   return (
     <ModalConfirm
+      testId="remove-own-admin-confirmation"
       onCancel={close}
       onClose={close}
       onConfirm={onConfirm}

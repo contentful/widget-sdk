@@ -121,6 +121,7 @@ const MembershipRow = ({
         teamName={name}
       />
       <ModalConfirm
+        testId="remove-team-confirmation"
         onCancel={() => showRemoveConfirmation(false)}
         onConfirm={() => showRemoveConfirmation(false) || onRemove()}
         isShown={isShowingRemoveConfirmation}
