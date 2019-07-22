@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -26,7 +26,6 @@ import RowMenu from './RowMenu.es6';
 import styles from '../styles.es6';
 import DowngradeOwnAdminMembershipConfirmation from './DowngradeOwnAdminMembershipConfirmation.es6';
 import RemoveOwnAdminMembershipConfirmation from './RemoveOwnAdminMembershipConfirmation.es6';
-import Highlight from './Highlight.es6';
 
 const navigateToDefaultLocation = () => window.location.replace(href({ path: ['^', '^'] }));
 
@@ -53,26 +52,59 @@ const MembershipRow = ({
 
   const roleIds = map(isEmpty(roles) ? [ADMIN_ROLE] : roles, 'sys.id');
   const [selectedRoleIds, setSelectedRoles] = useState(roleIds);
-  const [isShowingUpdateConfirmation, showUpdateConfirmation] = useState(false);
-  const [isShowingRemoveConfirmation, showRemoveConfirmation] = useState(false);
-  const [isRemovingOwnAdminConfirmation, showRemoveOwnAdminConfirmation] = useState(false);
-  const onUpdate = async (lostAccess = false) => {
-    try {
-      await onUpdateTeamSpaceMembership(membership, selectedRoleIds);
+  const [showUpdateConfirmation, setShowUpdateConfirmation] = useState(false);
+  const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
+  const [showRemoveOwnAdminConfirmation, setShowRemoveOwnAdminConfirmation] = useState(false);
+
+  const isLastAdminMembership =
+    currentUserAdminSpaceMemberships.length === 1 &&
+    currentUserAdminSpaceMemberships[0].sys.id === membershipId;
+
+  const haveRolesChanged = !(
+    intersection(selectedRoleIds, roleIds).length === selectedRoleIds.length &&
+    selectedRoleIds.length === roleIds.length
+  );
+
+  const onUpdateConfirmed = useCallback(
+    async (lostAccess = false) => {
+      try {
+        await onUpdateTeamSpaceMembership(membership, selectedRoleIds);
+        if (lostAccess) {
+          navigateToDefaultLocation();
+        }
+      } catch (e) {
+        setSelectedRoles(roleIds);
+        throw e;
+      }
+    },
+    [membership, onUpdateTeamSpaceMembership, roleIds, selectedRoleIds]
+  );
+
+  const onUpdate = useCallback(async () => {
+    if (isLastAdminMembership) {
+      setShowUpdateConfirmation(true);
+      return;
+    }
+    await onUpdateConfirmed();
+  }, [isLastAdminMembership, onUpdateConfirmed]);
+
+  const onRemove = useCallback(() => {
+    if (isLastAdminMembership) {
+      setShowRemoveOwnAdminConfirmation(true);
+    } else {
+      setShowRemoveConfirmation(true);
+    }
+  }, [isLastAdminMembership]);
+
+  const onRemoveConfirmed = useCallback(
+    async (lostAccess = false) => {
+      await onRemoveTeamSpaceMembership(membership, selectedRoleIds);
       if (lostAccess) {
         navigateToDefaultLocation();
       }
-    } catch (e) {
-      setSelectedRoles(roleIds);
-      throw e;
-    }
-  };
-  const onRemove = async (lostAccess = false) => {
-    await onRemoveTeamSpaceMembership(membership, selectedRoleIds);
-    if (lostAccess) {
-      navigateToDefaultLocation();
-    }
-  };
+    },
+    [membership, onRemoveTeamSpaceMembership, selectedRoleIds]
+  );
 
   // reset selected roles when starting to edit
   useEffect(() => {
@@ -80,25 +112,11 @@ const MembershipRow = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditing]);
 
-  const haveRolesChanged = !(
-    intersection(selectedRoleIds, roleIds).length === selectedRoleIds.length &&
-    selectedRoleIds.length === roleIds.length
-  );
-  const isLastAdminMembership =
-    currentUserAdminSpaceMemberships.length === 1 &&
-    currentUserAdminSpaceMemberships[0].sys.id === membershipId;
-
   const confirmButton = (
     <Button
       testId="confirm-change-role"
       buttonType="positive"
-      onClick={async () => {
-        if (isLastAdminMembership) {
-          showUpdateConfirmation(true);
-          return;
-        }
-        await onUpdate();
-      }}
+      onClick={onUpdate}
       className={css({ marginRight: tokens.spacingM })}
       disabled={!haveRolesChanged || isEmpty(selectedRoleIds) || isPending}
       loading={isPending}>
@@ -109,27 +127,39 @@ const MembershipRow = ({
   return (
     <TableRow key={membershipId} testId="membership-row" className={styles.row}>
       <DowngradeOwnAdminMembershipConfirmation
-        isShown={isShowingUpdateConfirmation}
-        close={() => showUpdateConfirmation(false)}
-        onConfirm={() => showUpdateConfirmation(false) || onUpdate(true)}
+        isShown={showUpdateConfirmation}
+        close={() => setShowUpdateConfirmation(false)}
+        onConfirm={() => {
+          setShowUpdateConfirmation(false);
+          onUpdateConfirmed(true);
+        }}
         teamName={name}
       />
       <RemoveOwnAdminMembershipConfirmation
-        isShown={isRemovingOwnAdminConfirmation}
-        close={() => showRemoveOwnAdminConfirmation(false)}
-        onConfirm={() => showRemoveOwnAdminConfirmation(false) || onRemove(true)}
+        isShown={showRemoveOwnAdminConfirmation}
+        close={() => setShowRemoveOwnAdminConfirmation(false)}
+        onConfirm={() => {
+          setShowRemoveOwnAdminConfirmation(false);
+          onRemoveConfirmed(true);
+        }}
         teamName={name}
       />
       <ModalConfirm
         testId="remove-team-confirmation"
-        onCancel={() => showRemoveConfirmation(false)}
-        onConfirm={() => showRemoveConfirmation(false) || onRemove()}
-        isShown={isShowingRemoveConfirmation}
+        onCancel={() => setShowRemoveConfirmation(false)}
+        onConfirm={() => {
+          setShowRemoveConfirmation(false);
+          onRemoveConfirmed();
+        }}
+        isShown={showRemoveConfirmation}
         intent="negative"
         confirmLabel="Remove"
         cancelLabel="Cancel"
         title="Remove team from this space">
-        <p>Are you sure you want to remove {<Highlight>{name}</Highlight>} from this space?</p>
+        <p>
+          Are you sure you want to remove {<strong className={styles.strong}>{name}</strong>} from
+          this space?
+        </p>
       </ModalConfirm>
       <TableCell className={styles.cell} testId="team-cell">
         <div className={styles.cellTeamName} data-test-id="team.name">
@@ -179,13 +209,7 @@ const MembershipRow = ({
                 isOpen={menuIsOpen}
                 setOpen={setMenuOpen}
                 setEditing={setEditing}
-                onRemove={() => {
-                  if (isLastAdminMembership) {
-                    showRemoveOwnAdminConfirmation(true);
-                  } else {
-                    showRemoveConfirmation(true);
-                  }
-                }}
+                onRemove={onRemove}
               />
             )}
           </TableCell>

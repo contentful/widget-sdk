@@ -113,54 +113,60 @@ const useFetching = spaceId => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isLoading, error } = useAsync(useCallback(fetch(spaceId, dispatch), []));
 
-  const onUpdateTeamSpaceMembership = async (membership, selectedRoleIds) => {
-    dispatch({ type: 'OPERATION_PENDING' });
+  const onUpdateTeamSpaceMembership = useCallback(
+    async (membership, selectedRoleIds) => {
+      dispatch({ type: 'OPERATION_PENDING' });
 
-    const { availableRoles } = state;
-    const newRoles = availableRoles.filter(({ sys: { id } }) => selectedRoleIds.includes(id));
-    const {
-      sys: {
-        team: { name: teamName }
+      const { availableRoles } = state;
+      const newRoles = availableRoles.filter(({ sys: { id } }) => selectedRoleIds.includes(id));
+      const {
+        sys: {
+          team: { name: teamName }
+        }
+      } = membership;
+
+      try {
+        const updatedMembership = await updateTeamSpaceMembership(
+          createSpaceEndpoint(spaceId),
+          membership,
+          selectedRoleIds[0] === ADMIN_ROLE_ID,
+          newRoles.map(({ sys: { id } }) => ({
+            sys: { id, type: 'Link', linkType: 'Role' }
+          }))
+        );
+        dispatch({ type: 'UPDATE_SUCCESS', payload: { updatedMembership } });
+        Notification.success(`Successfully changed roles for team ${teamName}`);
+      } catch (e) {
+        Notification.error(`Could not change roles for team ${teamName}`);
+        dispatch({ type: 'ERROR' });
+        throw e;
       }
-    } = membership;
+    },
+    [spaceId, state]
+  );
 
-    try {
-      const updatedMembership = await updateTeamSpaceMembership(
-        createSpaceEndpoint(spaceId),
-        membership,
-        selectedRoleIds[0] === ADMIN_ROLE_ID,
-        newRoles.map(({ sys: { id } }) => ({
-          sys: { id, type: 'Link', linkType: 'Role' }
-        }))
-      );
-      dispatch({ type: 'UPDATE_SUCCESS', payload: { updatedMembership } });
-      Notification.success(`Successfully changed roles for team ${teamName}`);
-    } catch (e) {
-      Notification.error(`Could not change roles for team ${teamName}`);
-      dispatch({ type: 'ERROR' });
-      throw e;
-    }
-  };
+  const onRemoveTeamSpaceMembership = useCallback(
+    async membership => {
+      dispatch({ type: 'OPERATION_PENDING' });
+      const {
+        sys: {
+          id: membershipId,
+          team: { name: teamName }
+        }
+      } = membership;
 
-  const onRemoveTeamSpaceMembership = async membership => {
-    dispatch({ type: 'OPERATION_PENDING' });
-    const {
-      sys: {
-        id: membershipId,
-        team: { name: teamName }
+      try {
+        await deleteTeamSpaceMembership(createSpaceEndpoint(spaceId), membership);
+        dispatch({ type: 'DELETE_SUCCESS', payload: { membershipId } });
+        Notification.success(`Successfully removed team ${teamName}`);
+      } catch (e) {
+        Notification.error(`Could not remove team ${teamName}`);
+        dispatch({ type: 'ERROR' });
+        throw e;
       }
-    } = membership;
-
-    try {
-      await deleteTeamSpaceMembership(createSpaceEndpoint(spaceId), membership);
-      dispatch({ type: 'DELETE_SUCCESS', payload: { membershipId } });
-      Notification.success(`Successfully removed team ${teamName}`);
-    } catch (e) {
-      Notification.error(`Could not remove team ${teamName}`);
-      dispatch({ type: 'ERROR' });
-      throw e;
-    }
-  };
+    },
+    [spaceId]
+  );
 
   return [{ ...state, isLoading, error }, onUpdateTeamSpaceMembership, onRemoveTeamSpaceMembership];
 };

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, ModalConfirm } from '@contentful/forma-36-react-components';
-import Highlight from './Highlight.es6';
+
+import styles from '../styles.es6';
 
 const RemoveOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm, teamName }) => {
   const [userConfirmationInput, setUserConfirmationInput] = useState('');
@@ -25,7 +26,7 @@ const RemoveOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm, teamN
       <>
         <p>
           You are about to remove the team {teamName} from this space. This will result in you{' '}
-          {<Highlight>losing administrator role</Highlight>} for this space.
+          {<strong className={styles.strong}>losing administrator role</strong>} for this space.
         </p>
         <p>
           If you remove this team, there might not be a user who can fully control this space. It
@@ -34,7 +35,7 @@ const RemoveOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm, teamN
         </p>
         <p>
           To confirm you want to remove this team, please type
-          {<Highlight> &quot;I&nbsp;UNDERSTAND&quot; </Highlight>}
+          {<strong className={styles.strong}> &quot;I&nbsp;UNDERSTAND&quot; </strong>}
           in the field below:
         </p>
         <TextInput

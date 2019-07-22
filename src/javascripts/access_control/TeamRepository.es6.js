@@ -1,5 +1,7 @@
+import { get } from 'lodash';
+
 import { fetchAllWithIncludes } from 'data/CMA/FetchAll.es6';
-import ResolveLinks from '../data/LinkResolver.es6';
+import ResolveLinks from 'data/LinkResolver.es6';
 
 const ALPHA_HEADER = { 'x-contentful-enable-alpha-feature': 'teams-api' };
 const BATCH_LIMIT = 100;
@@ -47,50 +49,26 @@ export async function getAllTeamsMemberships(orgEndpoint) {
   return items;
 }
 
-export async function updateTeamSpaceMembership(
-  spaceEndpoint,
-  {
-    sys: {
-      version,
-      id,
-      team: {
-        sys: { id: teamId }
-      }
-    }
-  },
-  admin,
-  roles
-) {
+export async function updateTeamSpaceMembership(spaceEndpoint, membership, admin, roles) {
   return spaceEndpoint(
     {
       method: 'PUT',
-      path: ['team_space_memberships', id],
+      path: ['team_space_memberships', get(membership, 'sys.id')],
       data: { admin, roles },
-      version: version
+      version: get(membership, 'sys.version')
     },
-    { ...ALPHA_HEADER, 'x-contentful-team': teamId }
+    { ...ALPHA_HEADER, 'x-contentful-team': get(membership, 'sys.team.sys.id') }
   );
 }
 
-export async function deleteTeamSpaceMembership(
-  spaceEndpoint,
-  {
-    sys: {
-      version,
-      id,
-      team: {
-        sys: { id: teamId }
-      }
-    }
-  }
-) {
+export async function deleteTeamSpaceMembership(spaceEndpoint, membership) {
   return spaceEndpoint(
     {
       method: 'DELETE',
-      path: ['team_space_memberships', id],
-      version: version
+      path: ['team_space_memberships', get(membership, 'sys.id')],
+      version: get(membership, 'sys.version')
     },
-    { ...ALPHA_HEADER, 'x-contentful-team': teamId }
+    { ...ALPHA_HEADER, 'x-contentful-team': get(membership, 'sys.team.sys.id') }
   );
 }
 
