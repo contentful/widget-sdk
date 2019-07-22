@@ -253,8 +253,6 @@ jobs:
   oss-license-check:
     docker:
       - image: circleci/node:10.15.3
-    environment:
-      CYPRESS_INSTALL_BINARY: 0
     steps:
       - checkout
       - run: npm install --no-save --no-shrinkwrap license-checker
