@@ -20,7 +20,7 @@ export default function createExtensionDefinitionLoader(extensionDefinitionsEndp
 
   async function getByIds(ids) {
     if (!Array.isArray(ids)) {
-      ids = [];
+      throw new Error('Expected an array of IDs.');
     }
 
     const uniqueIds = uniq(ids).filter(s => typeof s === 'string' && s.length > 0);

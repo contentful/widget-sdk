@@ -120,13 +120,11 @@ export default class AppsListPage extends React.Component {
     return (
       <AppsListShell>
         {apps.length > 0 && (
-          <>
-            <div className={styles.list}>
-              {apps.map(app => (
-                <AppListItem key={app.id} app={app} />
-              ))}
-            </div>
-          </>
+          <div className={styles.list}>
+            {apps.map(app => (
+              <AppListItem key={app.id} app={app} />
+            ))}
+          </div>
         )}
         {devApps.length > 0 && (
           <>

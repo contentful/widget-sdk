@@ -38,6 +38,8 @@ export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint)
     }).filter(app => !!app.extensionDefinition);
   }
 
+  // This mechanism is only for us for developing Apps Beta.
+  // TODO: remove or improve before we release.
   async function getDevApps() {
     const extensionDefinitions = await extensionDefinitionLoader.getAllForCurrentOrganization();
 
