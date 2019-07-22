@@ -22,14 +22,14 @@ const makeExtensionWithDefinition = (id, definitionId) => ({
 });
 
 describe('ExtensionLoader', () => {
-  let orgEndpoint;
+  let extensionDefinitionLoader;
   let spaceEndpoint;
   let loader;
 
   beforeEach(function() {
-    orgEndpoint = jest.fn();
+    extensionDefinitionLoader = { getByIds: jest.fn() };
     spaceEndpoint = jest.fn();
-    loader = createExtensionLoader(orgEndpoint, spaceEndpoint);
+    loader = createExtensionLoader(extensionDefinitionLoader, spaceEndpoint);
   });
 
   describe('getAllExtensions()', () => {
@@ -47,7 +47,7 @@ describe('ExtensionLoader', () => {
         path: ['extensions']
       });
 
-      expect(orgEndpoint).not.toBeCalled();
+      expect(extensionDefinitionLoader.getByIds).toBeCalledWith([]);
 
       expect(result).toEqual([makeExtension('id1'), makeExtension('id2')]);
     });
@@ -63,22 +63,21 @@ describe('ExtensionLoader', () => {
         })
       );
 
-      orgEndpoint.mockReturnValue(
+      extensionDefinitionLoader.getByIds.mockReturnValue(
         Promise.resolve({
-          items: [
-            {
-              sys: { id: 'definitionId2' },
-              src: 'http://localhost:2222',
-              name: 'Test',
-              locations: ['entry-sidebar'],
-              parameters: {
-                instance: {
-                  param: 'foo'
-                }
-              },
-              fieldTypes: [{ type: 'Object' }]
-            }
-          ]
+          definitionId2: {
+            sys: { id: 'definitionId2' },
+            src: 'http://localhost:2222',
+            name: 'Test',
+            locations: ['entry-sidebar'],
+            parameters: {
+              instance: {
+                param: 'foo'
+              }
+            },
+            fieldTypes: [{ type: 'Object' }]
+          },
+          definitionId3: null
         })
       );
 
@@ -89,13 +88,7 @@ describe('ExtensionLoader', () => {
         path: ['extensions']
       });
 
-      expect(orgEndpoint).toBeCalledWith({
-        method: 'GET',
-        path: ['extension_definitions'],
-        query: {
-          'sys.id[in]': 'definitionId2,definitionId3'
-        }
-      });
+      expect(extensionDefinitionLoader.getByIds).toBeCalledWith(['definitionId2', 'definitionId3']);
 
       expect(result).toEqual([
         makeExtension('id1'),
@@ -146,7 +139,7 @@ describe('ExtensionLoader', () => {
         path: ['extensions'],
         query: { 'sys.id[in]': 'id1,id2,id3' }
       });
-      expect(orgEndpoint).not.toBeCalled();
+      expect(extensionDefinitionLoader.getByIds).toBeCalledWith([]);
 
       expect(result).toEqual([makeExtension('id1'), makeExtension('id2')]);
     });
@@ -158,16 +151,14 @@ describe('ExtensionLoader', () => {
         })
       );
 
-      orgEndpoint.mockReturnValue(
+      extensionDefinitionLoader.getByIds.mockReturnValue(
         Promise.resolve({
-          items: [
-            {
-              sys: { id: 'definitionId2' },
-              src: 'http://localhost:2222',
-              name: 'Test',
-              locations: ['entry-sidebar']
-            }
-          ]
+          definitionId2: {
+            sys: { id: 'definitionId2' },
+            src: 'http://localhost:2222',
+            name: 'Test',
+            locations: ['entry-sidebar']
+          }
         })
       );
 
@@ -179,13 +170,7 @@ describe('ExtensionLoader', () => {
         query: { 'sys.id[in]': 'id2' }
       });
 
-      expect(orgEndpoint).toBeCalledWith({
-        method: 'GET',
-        path: ['extension_definitions'],
-        query: {
-          'sys.id[in]': 'definitionId2'
-        }
-      });
+      expect(extensionDefinitionLoader.getByIds).toBeCalledWith(['definitionId2']);
 
       expect(result).toEqual([
         {

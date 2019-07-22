@@ -22,7 +22,7 @@ export default {
         (spaceContext, $state) => {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
-            repo: createAppsRepo(spaceContext.orgEndpoint, spaceContext.endpoint)
+            repo: createAppsRepo(spaceContext.extensionDefinitionLoader, spaceContext.endpoint)
           };
         }
       ]
@@ -38,7 +38,10 @@ export default {
         '$state',
         'entitySelector',
         ({ appId }, $rootScope, spaceContext, $state, entitySelector) => {
-          const repo = createAppsRepo(spaceContext.orgEndpoint, spaceContext.endpoint);
+          const repo = createAppsRepo(
+            spaceContext.extensionDefinitionLoader,
+            spaceContext.endpoint
+          );
           const appHookBus = makeAppHookBus();
 
           const bridge = createAppExtensionBridge({

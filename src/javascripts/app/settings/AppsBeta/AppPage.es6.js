@@ -103,7 +103,7 @@ export default class AppRoute extends Component {
     try {
       return {
         ...result,
-        extension: await repo.getExtensionForExtensionDefinition(extensionDefinition)
+        extension: await repo.getExtensionForExtensionDefinition(extensionDefinition.sys.id)
       };
     } catch (err) {
       // If there are 2 or more extensions for the same definition
