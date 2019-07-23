@@ -70,9 +70,7 @@ class SpaceSettings extends React.Component {
                 Save
               </Button>
             </>
-          }>
-          <Workbench.Icon icon="page-settings" />
-        </Workbench.Header>
+          }></Workbench.Header>
         <Workbench.Content>
           <Form>
             <TextField
