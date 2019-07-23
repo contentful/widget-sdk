@@ -186,7 +186,8 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments) {
       notify.saveNoEnvironments();
       return;
     }
-    const toPersist = assignWith({}, apiKey, model, (_objValue, srcVal, key) => {
+
+    const toPersist = assignWith({}, Object.assign({}, apiKey, model), (_objValue, srcVal, key) => {
       if (key === 'name' || key === 'description') {
         return srcVal.value || '';
       }
