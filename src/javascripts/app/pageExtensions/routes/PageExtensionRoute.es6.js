@@ -15,7 +15,7 @@ import BinocularsIllustration from 'svg/binoculars-illustration.es6';
 
 const PageExtensionFetcher = createFetcherComponent(
   async ({ extensionId, orgId, extensionLoader }) => {
-    const [isEnabled, [extension]] = await Promise.all([
+    const [isEnabled, extensions] = await Promise.all([
       advancedExtensibilityFeature.isEnabled(orgId),
       extensionLoader.getExtensionsById([extensionId])
     ]);
@@ -24,6 +24,7 @@ const PageExtensionFetcher = createFetcherComponent(
       throw new Error('advanced extensibility not enabled');
     }
 
+    const [extension] = extensions;
     if (!extension) {
       throw new Error('no extension found ');
     }
