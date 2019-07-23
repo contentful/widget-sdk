@@ -274,6 +274,19 @@ export default function register() {
         },
 
         /**
+         * @name spaceContext#getAliasesIds
+         * @description
+         * Returns the ids of the environments aliases
+         * @returns array<string>
+         */
+        getAliasesIds: function(
+          env = _.get(this, ['space', 'environment'], { sys: { id: 'master' } })
+        ) {
+          if (!env.sys.aliases) return [];
+          return env.sys.aliases.map(({ sys }) => sys.id);
+        },
+
+        /**
          * @ngdoc method
          * @name spaceContext#getData
          * @param {string} path

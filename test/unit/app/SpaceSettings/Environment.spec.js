@@ -1,6 +1,8 @@
 import * as DOM from 'test/helpers/DOM';
 import $ from 'jquery';
 
+let spaceContext;
+
 describe('app/SpaceSettings/Environments', () => {
   const ENVIRONMENTS_LIMIT = 3;
 
@@ -28,7 +30,10 @@ describe('app/SpaceSettings/Environments', () => {
     this.ComponentLibrary.Notification.error = sinon.stub();
 
     const { createComponent } = this.$inject('app/SpaceSettings/Environments/State.es6');
-    const spaceContext = this.$inject('mocks/spaceContext').init();
+    spaceContext = this.$inject('mocks/spaceContext').init();
+
+    spaceContext.getAliasesIds.returns([]);
+
     this.$inject('$state').href = () => 'href';
 
     this.container = DOM.createView($('<div class=client>').get(0));
@@ -113,6 +118,21 @@ describe('app/SpaceSettings/Environments', () => {
 
       this.$flush();
       this.container.find('environmentList', 'environment.env_id').assertHasText('env_id');
+    });
+  });
+
+  describe('when environment has aliases', function() {
+    it('cannot be deleted when environment has aliases', function() {
+      this.putEnvironment({ id: 'e1', status: 'ready' });
+      spaceContext.getAliasesIds.returns(['master']);
+
+      this.init();
+
+      const deleteBtn = this.container.find('environment.e1', 'openDeleteDialog');
+      deleteBtn.assertIsDisabled();
+      deleteBtn.click();
+      this.$flush();
+      this.container.find('spaceEnvironmentsDeleteDialog').assertNonExistent();
     });
   });
 

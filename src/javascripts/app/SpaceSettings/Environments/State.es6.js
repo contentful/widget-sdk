@@ -196,6 +196,7 @@ function makeEnvironmentModel(environment) {
   return {
     id: environment.sys.id,
     isMaster: spaceContext.isMasterEnvironment(environment),
+    aliases: spaceContext.getAliasesIds(environment),
     status,
     payload: environment
   };

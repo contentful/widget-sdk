@@ -200,14 +200,32 @@ QuestionMarkWithTooltip.propTypes = {
 };
 
 function DeleteButton({ environment }) {
-  return (
+  const hasAliases = environment.aliases.length > 0;
+
+  const content = (
     <TextLink
       linkType="negative"
       testId="openDeleteDialog"
-      disabled={environment.isMaster}
+      disabled={environment.isMaster || hasAliases}
       onClick={environment.Delete}>
       Delete
     </TextLink>
+  );
+
+  if (!hasAliases) return content;
+
+  const tooltipContent = (
+    <div>
+      You cannot delete {`"${environment.id}"`}
+      <br />
+      as it is aliased to {`"${environment.aliases.join('", "')}"`}.
+    </div>
+  );
+
+  return (
+    <Tooltip content={tooltipContent} place="top" style={{ color: tokens.colorElementDarkest }}>
+      {content}
+    </Tooltip>
   );
 }
 DeleteButton.propTypes = {
