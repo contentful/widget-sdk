@@ -1,4 +1,5 @@
 import { flow, defaultTo, groupBy } from 'lodash/fp';
+import { createSelector } from 'reselect';
 
 import getTeamMemberships from './getTeamMemberships.es6';
 
@@ -10,11 +11,13 @@ import getTeamMemberships from './getTeamMemberships.es6';
  *
  * @return {Object}
  */
-export default flow(
+export default createSelector(
   getTeamMemberships,
-  defaultTo({}),
-  // get values from object...
-  Object.values,
-  // ... and group them by the team id instead
-  groupBy('sys.team.sys.id')
+  flow(
+    defaultTo({}),
+    // get values from object...
+    Object.values,
+    // ... and group them by the team id instead
+    groupBy('sys.team.sys.id')
+  )
 );
