@@ -12,7 +12,11 @@ export const getAllExtensionsInDefaultSpace = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/extensions`,
-        headers: defaultHeader
+        headers: defaultHeader,
+        query: {
+          limit: '1000',
+          stripSrcdoc: 'true',
+        }
       },
       willRespondWith: {
         status: 200,
