@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { get, orderBy, filter, flow } from 'lodash/fp';
 import { TableCell, TableRow, Button, Select, Option } from '@contentful/forma-36-react-components';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
-import { getMembershipsOfCurrentTeamToDisplay } from 'redux/selectors/teamMemberships.es6';
+import getMembershipsOfCurrentTeamToDisplay from 'redux/selectors/teamMemberships/getMembershipsOfCurrentTeamToDisplay.es6';
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes.es6';
 
 class TeamMembershipForm extends React.Component {
