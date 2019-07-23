@@ -22,6 +22,7 @@ import { go } from 'states/Navigator.es6';
 import LoadingPlaceholder from './List/LoadingPlaceholder.es6';
 import styles from './styles.es6';
 import MembershipRow from './List/MembershipRow.es6';
+import EmptyStatePlaceholder from './EmptyStatePlaceholder.es6';
 
 const goToAddTeams = () =>
   go({
@@ -29,16 +30,16 @@ const goToAddTeams = () =>
   });
 
 const SpaceTeamsPagePresentation = ({
-  memberships,
-  teams,
-  isLoading,
-  isPending,
-  availableRoles,
-  onUpdateTeamSpaceMembership,
-  onRemoveTeamSpaceMembership,
-  readOnly,
-  currentUserAdminSpaceMemberships
-}) => {
+                                      memberships,
+                                      teams,
+                                      isLoading,
+                                      isPending,
+                                      availableRoles,
+                                      onUpdateTeamSpaceMembership,
+                                      onRemoveTeamSpaceMembership,
+                                      readOnly,
+                                      currentUserAdminSpaceMemberships
+                                    }) => {
   const [openMenu, setOpenMenu] = useState(null);
   const [editingRow, setEditingRow] = useState(null);
 
@@ -49,6 +50,7 @@ const SpaceTeamsPagePresentation = ({
 
   const noTeamsInOrg = teams.length === 0;
   const allTeamsAdded = memberships.length === teams.length;
+  const empty = !isLoading && memberships.length === 0;
 
   return (
     <Workbench>
@@ -76,23 +78,25 @@ const SpaceTeamsPagePresentation = ({
         </Workbench.Header.Actions>
       </Workbench.Header>
       <Workbench.Content className={styles.contentAlignment}>
-        <div className={styles.content}>
-          <Table testId="membership-table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Team</TableCell>
-                {!isLoading && (
-                  <>
-                    <TableCell className={css({ width: '19em' })}>Members</TableCell>
-                    <TableCell>Role</TableCell>
-                  </>
-                )}
-                <TableCell />
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {isLoading && <LoadingPlaceholder />}
-              {!isLoading &&
+        {empty && <EmptyStatePlaceholder />}
+        {!empty && (
+          <div className={styles.content}>
+            <Table testId="membership-table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Team</TableCell>
+                  {!isLoading && (
+                    <>
+                      <TableCell className={css({ width: '19em' })}>Members</TableCell>
+                      <TableCell>Role</TableCell>
+                    </>
+                  )}
+                  <TableCell />
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {isLoading && <LoadingPlaceholder />}
+                {!isLoading &&
                 memberships.map(membership => {
                   const {
                     sys: { id: membershipId }
@@ -116,9 +120,10 @@ const SpaceTeamsPagePresentation = ({
                     />
                   );
                 })}
-            </TableBody>
-          </Table>
-        </div>
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </Workbench.Content>
     </Workbench>
   );
