@@ -1,4 +1,4 @@
-import { assign, get, inRange, isEqual } from 'lodash';
+import { assign, get, inRange, isEqual, assignWith } from 'lodash';
 import { deepFreeze } from 'utils/Freeze.es6';
 import { concat } from 'utils/Collections.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
@@ -186,7 +186,11 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments) {
       notify.saveNoEnvironments();
       return;
     }
-    const toPersist = Object.assign({}, apiKey, model);
+    const toPersist = assignWith({}, apiKey, model, (_objValue, srcVal, key) => {
+      if (key === 'name' || key === 'description') {
+        return srcVal.value || '';
+      }
+    });
 
     return spaceContext.apiKeyRepo.save(toPersist).then(
       newKey => {

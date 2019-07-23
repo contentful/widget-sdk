@@ -68,17 +68,7 @@ export default function create(spaceEndpoint) {
   function save(data) {
     const id = data.sys.id;
     const version = data.sys.version;
-    const {
-      name: { value: name },
-      description: { value: description },
-      environments
-    } = pick(data, ['name', 'description', 'environments']);
-
-    const payload = {
-      name,
-      description,
-      environments
-    };
+    const payload = pick(data, ['name', 'description', 'environments']);
 
     return spaceEndpoint({
       method: 'PUT',
