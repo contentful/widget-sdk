@@ -7,7 +7,7 @@ import EmptyStateContainer, {
 import Illustration from 'svg/add-team-to-space-illustration.es6';
 
 export default () => (
-  <EmptyStateContainer>
+  <EmptyStateContainer data-test-id="no-teams-in-space-placeholder">
     <div className={defaultSVGStyle}>
       <Illustration />
     </div>

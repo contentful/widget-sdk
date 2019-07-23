@@ -139,9 +139,8 @@ describe('Teams in space page', () => {
       loadPageWithServerState('empty', empty, 'request for empty member list');
     });
 
-    it('renders the table without rows', () => {
-      cy.getByTestId('membership-table').should('be.visible');
-      cy.queryByTestId('membership-row').should('not.exist');
+    it('renders empty placeholder', () => {
+      cy.getByTestId('no-teams-in-space-placeholder').should('be.visible');
     });
   });
 
