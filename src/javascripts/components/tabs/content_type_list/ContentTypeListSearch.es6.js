@@ -1,7 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import debounce from 'lodash/debounce';
 import { TextInput } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+
+const styles = {
+  input: css({
+    width: '100%',
+    maxWidth: '985px', // To match content list search width
+    marginRight: tokens.spacingM
+  })
+};
 
 export default class ContentTypeListSearch extends React.Component {
   static propTypes = {
@@ -30,7 +40,7 @@ export default class ContentTypeListSearch extends React.Component {
         value={this.state.value}
         onChange={this.handleChange}
         width="large"
-        className="f36-margin-right--m"
+        className={styles.input}
       />
     );
   }

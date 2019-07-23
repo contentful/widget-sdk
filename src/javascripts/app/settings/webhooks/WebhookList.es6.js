@@ -41,7 +41,7 @@ export class WebhookList extends React.Component {
           actions={
             <StateLink to="^.new">
               {({ onClick }) => (
-                <Button testId="add-webhook-button" icon="PlusCircle" isFullWidth onClick={onClick}>
+                <Button testId="add-webhook-button" icon="PlusCircle" onClick={onClick}>
                   Add Webhook
                 </Button>
               )}
