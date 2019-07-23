@@ -97,6 +97,15 @@ function moveFolder(foldersWithDefault, { oldIndex, newIndex }) {
   const defaultFolderIndex = foldersWithDefault.indexOf(defaultFolder);
   const folders = filter(foldersWithDefault, (_, i) => i !== defaultFolderIndex);
 
+  // we have to take into account position of the default folder
+  // before rearranging them
+  if (defaultFolderIndex < oldIndex) {
+    oldIndex--;
+  }
+  if (defaultFolderIndex < newIndex) {
+    newIndex--;
+  }
+
   // Move the dragged folder:
   const rearranged = move(folders, oldIndex, newIndex);
 
