@@ -37,7 +37,7 @@ export default function JobsPageLink({ isMasterEnvironment }) {
         <JobsStateLink isMasterEnvironment={isMasterEnvironment}>
           {({ getHref }) => (
             <React.Fragment>
-              <TextLink href={getHref()} icon="ExternalLink">
+              <TextLink href={getHref()} icon="Clock">
                 Scheduled Content
               </TextLink>
               <Tag className={styles.jobsAlphaTag}>ALPHA</Tag>
