@@ -9,7 +9,7 @@ import { Button, TableRow, TableCell, Spinner } from '@contentful/forma-36-react
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import ROUTES from 'redux/routes.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
-import { getMemberCountsByTeam } from 'redux/selectors/teamMemberships.es6';
+import getMemberCountsByTeam from 'redux/selectors/teamMemberships/getMemberCountsByTeam.es6';
 import { hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import ellipsisStyle from 'ellipsisStyle.es6';
 

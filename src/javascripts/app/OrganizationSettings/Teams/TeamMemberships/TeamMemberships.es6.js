@@ -10,7 +10,7 @@ import {
   TableRow,
   Button
 } from '@contentful/forma-36-react-components';
-import { getMembershipsOfCurrentTeamToDisplay } from 'redux/selectors/teamMemberships.es6';
+import getMembershipsOfCurrentTeamToDisplay from 'redux/selectors/teamMemberships/getMembershipsOfCurrentTeamToDisplay.es6';
 import { getCurrentTeam, getTeams, hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import { TeamMembership as TeamMembershipPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import TeamMembershipForm from './TeamMembershipForm.es6';
