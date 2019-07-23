@@ -4,8 +4,7 @@ import {
   getEditorInterfaceForDefaultContentType
 } from '../../../interactions/content_types';
 import { defaultRequestsMock } from '../../../util/factories';
-import * as state from '../../../util/interactionState';
-import { getResourcesWithLimistReached } from '../../../interactions/resources';
+import { getResourcesWithLimitsReached } from '../../../interactions/resources';
 import { queryForTwoSpecificFeaturesInDefaultSpace } from '../../../interactions/product_catalog_features';
 import { defaultSpaceId, getEntries } from '../../../util/requests';
 import {
@@ -17,19 +16,20 @@ import {
 
 const empty = require('../../../fixtures/responses/empty.json');
 const severalEntriesResponse = require('../../../fixtures/responses/entries-several.json');
-const query = {
+const nonArchivedQuery = {
   limit: '40',
   order: '-sys.updatedAt',
   skip: '0',
   'sys.archivedAt[exists]': 'false'
 };
-const archivedQuery = {
+const archivedCountQuery = {
   limit: '0',
   'sys.archivedAt[exists]': 'true'
 };
 describe('Entries list page', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
+    // TODO: Move this to a before block
     cy.startFakeServers({
       consumer: 'user_interface',
       providers: ['entries', 'users'],
@@ -41,34 +41,39 @@ describe('Entries list page', () => {
 
   context('no content types in the space', () => {
     beforeEach(() => {
-      defaultRequestsMock({});
-      queryFirst100UsersInDefaultSpace.willFindSeveral();
-
+      // TODO: Move this to interactions/entries
       cy.addInteraction({
         provider: 'entries',
         state: 'noEntries',
-        uponReceiving: 'a request for entries',
-        withRequest: getEntries(defaultSpaceId, query),
+        uponReceiving: `a query for non-archived entries in "${defaultSpaceId}"`,
+        withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
           body: empty
         }
-      }).as(state.Entries.NONE);
-
+      }).as('queryNonArchivedEntries');
+      // TODO: Move this to interactions/entries
       cy.addInteraction({
         provider: 'entries',
         state: 'noArchivedEntries',
-        uponReceiving: 'a request for archived entries',
-        withRequest: getEntries(defaultSpaceId, archivedQuery),
+        uponReceiving: `a query for the number of archived entries in "${defaultSpaceId}"`,
+        withRequest: getEntries(defaultSpaceId, archivedCountQuery),
         willRespondWith: {
           status: 200,
           body: empty
         }
-      }).as('entries/archived-none');
+      }).as('queryArchivedEntriesCount');
+
+      const interactions = [
+        '@queryArchivedEntriesCount',
+        '@queryNonArchivedEntries',
+        ...defaultRequestsMock({}),
+        queryFirst100UsersInDefaultSpace.willFindSeveral()
+      ]
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
 
-      cy.wait([`@${state.Token.VALID}`, `@${state.Entries.NONE}`, '@entries/archived-none']);
+      cy.wait(interactions);
     });
 
     it('renders entries page correctly', () => {
@@ -79,36 +84,41 @@ describe('Entries list page', () => {
 
   context('no entries in the space', () => {
     beforeEach(() => {
-      defaultRequestsMock({
-        publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
-      });
-      queryFirst100UsersInDefaultSpace.willFindSeveral();
-
+      // TODO: Move this to interactions/entries
       cy.addInteraction({
         provider: 'entries',
         state: 'noEntries',
-        uponReceiving: 'a request for entries',
-        withRequest: getEntries(defaultSpaceId, query),
+        uponReceiving: `a query for non-archived entries in "${defaultSpaceId}"`,
+        withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
           body: empty
         }
-      }).as(state.Entries.NONE);
-
+      }).as('queryNonArchivedEntries');
+      // TODO: Move this to interactions/entries
       cy.addInteraction({
         provider: 'entries',
         state: 'noArchivedEntries',
-        uponReceiving: 'a request for archived entries',
-        withRequest: getEntries(defaultSpaceId, archivedQuery),
+        uponReceiving: `a query for the number of archived entries in "${defaultSpaceId}"`,
+        withRequest: getEntries(defaultSpaceId, archivedCountQuery),
         willRespondWith: {
           status: 200,
           body: empty
         }
-      }).as('entries/archived-none');
+      }).as('queryArchivedEntriesCount');
+
+      const interactions = [
+        '@queryNonArchivedEntries',
+        '@queryArchivedEntriesCount',
+        ...defaultRequestsMock({
+          publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
+        }),
+        queryFirst100UsersInDefaultSpace.willFindSeveral()
+      ]
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
 
-      cy.wait([`@${state.Token.VALID}`, `@${state.Entries.NONE}`, '@entries/archived-none']);
+      cy.wait(interactions);
     });
 
     it('renders entries page correctly', () => {
@@ -119,15 +129,17 @@ describe('Entries list page', () => {
         .should('be.enabled');
     });
     it('redirects to the entry page after click on create button', () => {
-      createAnEntryInDefaultSpace.willSucceed();
-      getDefaultEntry.willReturnIt();
-      queryLinksToDefaultEntry.willReturnNone();
-      getFirst7SnapshotsOfDefaultEntry.willReturnNone();
-      getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
+      const interactions = [
+        createAnEntryInDefaultSpace.willSucceed(),
+        getDefaultEntry.willReturnIt(),
+        queryLinksToDefaultEntry.willReturnNone(),
+        getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
+        getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar()
+      ];
 
       cy.getByTestId('create-entry').click();
 
-      cy.wait([`@${state.Entries.NO_LINKS_TO_DEFAULT_ENTRY}`]);
+      cy.wait(interactions);
 
       cy.getByTestId('entity-field-controls').should('be.visible');
       cy.getByTestId('entry-editor-sidebar').should('be.visible');
@@ -136,23 +148,27 @@ describe('Entries list page', () => {
 
   context('several entries in the space', () => {
     beforeEach(() => {
-      defaultRequestsMock({});
-      queryFirst100UsersInDefaultSpace.willFindSeveral();
-
+      // TODO: Move this to interactions/entries
       cy.addInteraction({
         provider: 'entries',
         state: 'severalEntries',
-        uponReceiving: 'a request for entries',
-        withRequest: getEntries(defaultSpaceId, query),
+        uponReceiving: `a query for non-archived entries in "${defaultSpaceId}"`,
+        withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
           body: severalEntriesResponse
         }
-      }).as(state.Entries.SEVERAL);
+      }).as('queryNonArchivedEntries');
+
+      const interactions = [
+        '@queryNonArchivedEntries',
+        ...defaultRequestsMock({}),
+        queryFirst100UsersInDefaultSpace.willFindSeveral()
+      ]
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
 
-      cy.wait([`@${state.Token.VALID}`, `@${state.Entries.SEVERAL}`]);
+      cy.wait(interactions);
     });
 
     it('renders entries page correctly', () => {
@@ -164,6 +180,7 @@ describe('Entries list page', () => {
   context('with several entries in the space and usage limits reached', () => {
     beforeEach(() => {
       cy.resetAllFakeServers();
+      // TODO: Move this to a before block
       cy.startFakeServers({
         consumer: 'user_interface',
         providers: ['resources', 'product_catalog_features'],
@@ -172,30 +189,28 @@ describe('Entries list page', () => {
         spec: 2
       });
 
-      defaultRequestsMock({});
-      queryFirst100UsersInDefaultSpace.willFindSeveral();
-
+      // TODO: Move this to interactions/entries
       cy.addInteraction({
         provider: 'entries',
         state: 'severalEntries',
-        uponReceiving: 'a request for entries',
-        withRequest: getEntries(defaultSpaceId, query),
+        uponReceiving: `a query for non-archived entries in "${defaultSpaceId}"`,
+        withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
           body: severalEntriesResponse
         }
-      }).as(state.Entries.SEVERAL);
+      }).as('queryNonArchivedEntries');
 
-      queryForTwoSpecificFeaturesInDefaultSpace.willFindBothOfThem()
-      getResourcesWithLimistReached.willReturnSeveral();
+      const interactions = [
+        ...defaultRequestsMock({}),
+        '@queryNonArchivedEntries',
+        queryFirst100UsersInDefaultSpace.willFindSeveral(),
+        queryForTwoSpecificFeaturesInDefaultSpace.willFindBothOfThem(),
+        getResourcesWithLimitsReached.willReturnSeveral()
+      ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
-      cy.wait([
-        `@${state.Token.VALID}`,
-        `@${state.Entries.SEVERAL}`,
-        `@${state.ProductCatalogFeatures.SPACE_WITH_SEVERAL_FEATURES}`,
-        `@${state.Resources.SEVERAL_WITH_LIMITS_REACHED}`
-      ]);
+      cy.wait(interactions);
     });
 
     it('renders a disabled "Add Entry" button', () => {

@@ -1,13 +1,16 @@
 import { defaultHeader, defaultSpaceId } from '../util/requests';
-import * as state from '../util/interactionState';
 
 const empty = require('../fixtures/responses/empty.json');
 
+enum States {
+  NONE = 'enforcements/none'
+}
+
 export const getAllEnforcementsForDefaultSpace = {
   willReturnNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'enforcements',
-      state: state.Enforcements.NONE,
+      state: States.NONE,
       uponReceiving: `a request to get all enforcements for "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
@@ -18,6 +21,8 @@ export const getAllEnforcementsForDefaultSpace = {
         status: 200,
         body: empty
       }
-    }).as(state.Enforcements.NONE);
+    }).as('getAllEnforcementsForDefaultSpace');
+
+    return '@getAllEnforcementsForDefaultSpace'
   }
 };

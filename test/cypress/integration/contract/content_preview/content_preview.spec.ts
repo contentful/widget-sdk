@@ -1,5 +1,4 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import * as state from '../../../util/interactionState';
 import {
   defaultSpaceId,
   defaultPreviewName,
@@ -32,11 +31,11 @@ describe('Content Preview Page', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
 
-    defaultRequestsMock();
+    const interactions = defaultRequestsMock();
 
     cy.visit(`/spaces/${defaultSpaceId}/settings/content_preview/new`);
 
-    cy.wait([`@${state.Token.VALID}`]);
+    cy.wait(interactions);
   });
 
   describe('opening the page', () => {
@@ -55,6 +54,7 @@ describe('Content Preview Page', () => {
 
   describe('saving the content preview', () => {
     beforeEach(() => {
+      // TODO: move this to a before block
       cy.startFakeServer({
         consumer: 'user_interface',
         provider: 'preview_environments',
@@ -63,8 +63,7 @@ describe('Content Preview Page', () => {
         spec: 2
       });
 
-      queryFirst100PreviewEnvironments.willFindNone();
-
+      // TODO: This should be moved to interactions/preview_environments
       cy.addInteraction({
         provider: 'preview_environments',
         state: 'canAddPreviewEnvironments',
@@ -82,6 +81,11 @@ describe('Content Preview Page', () => {
         }
       }).as('preview_environments/add');
 
+      const interactions = [
+        '@preview_environments/add',
+        queryFirst100PreviewEnvironments.willFindNone()
+      ]
+
       cy.getByTestId('cf-ui-text-input')
         .type(defaultPreviewName)
         .should('have.value', defaultPreviewName);
@@ -92,7 +96,7 @@ describe('Content Preview Page', () => {
         .should('be.enabled')
         .click();
 
-      cy.wait('@preview_environments/add');
+      cy.wait(interactions);
     });
 
     it('submit the form correctly', () => {

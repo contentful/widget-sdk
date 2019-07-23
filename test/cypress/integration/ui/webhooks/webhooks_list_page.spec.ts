@@ -1,5 +1,4 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
 import { queryFirst100WebhooksInDefaultSpace } from '../../../interactions/webhooks';
 
@@ -14,18 +13,21 @@ describe('Webhooks List Page', () => {
     })
   );
 
+  let interactions: string[]
   beforeEach(() => {
     cy.resetAllFakeServers();
-    defaultRequestsMock();
+    
+    interactions = defaultRequestsMock();
   });
 
   context('no webhooks in the space configured', () => {
     beforeEach(() => {
-      queryFirst100WebhooksInDefaultSpace.willFindNone();
+      const slowInteraction = queryFirst100WebhooksInDefaultSpace.willFindNone();
 
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks`);
-      cy.wait([`@${state.Token.VALID}`]);
-      cy.wait([`@${state.Webhooks.NONE}`], { timeout: 10000 });
+
+      cy.wait(interactions);
+      cy.wait(slowInteraction, { timeout: 10000 });
     });
 
     it('redirects to new webhook page after clicking "Add Webhook" button', () => {

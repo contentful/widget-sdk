@@ -1,12 +1,14 @@
-import * as state from '../util/interactionState';
-
 const token = require('../fixtures/responses/token.json');
+
+enum States {
+  VALID = 'token/valid'
+}
 
 export const getTokenForUser = {
   willReturnAValidToken() {
     cy.addInteraction({
       provider: 'token',
-      state: state.Token.VALID,
+      state: States.VALID,
       uponReceiving: 'a request to get a token for the user',
       withRequest: {
         method: 'GET',
@@ -19,6 +21,8 @@ export const getTokenForUser = {
         status: 200,
         body: token
       }
-    }).as(state.Token.VALID);
+    }).as('getTokenForUser');
+
+    return '@getTokenForUser';
   }
 }

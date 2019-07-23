@@ -1,14 +1,17 @@
-import * as state from '../util/interactionState';
 import { defaultSpaceId, defaultHeader } from '../util/requests';
 
 // TODO: Only one environment in environments.json? Looks weird
 const environments = require('../fixtures/responses/environments.json');
 
+export enum States {
+  MASTER = 'environments/only-master'
+}
+
 export const queryFirst101EnvironmentsInDefaultSpace = {
   willFindOne() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'environments',
-      state: state.Environments.MASTER,
+      state: States.MASTER,
       uponReceiving: `a query for the first 101 environments in the space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
@@ -22,6 +25,8 @@ export const queryFirst101EnvironmentsInDefaultSpace = {
         status: 200,
         body: environments
       }
-    }).as(state.Environments.MASTER);
+    }).as('queryFirst101EnvironmentsInDefaultSpace');
+    
+    return '@queryFirst101EnvironmentsInDefaultSpace'
   }
 }

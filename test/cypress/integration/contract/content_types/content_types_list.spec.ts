@@ -1,6 +1,5 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import * as state from '../../../util/interactionState';
-import { 
+import {
   defaultSpaceId
 } from '../../../util/requests';
 import {
@@ -17,13 +16,14 @@ describe('Content types list page', () => {
 
   context('with no content types', () => {
     beforeEach(() => {
-      defaultRequestsMock();
-
-      getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnNone();
+      const interactions = [
+        ...defaultRequestsMock(),
+        getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnNone()
+      ];
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);
 
-      cy.wait([`@${state.Token.VALID}`, `@${state.ContentTypes.NONE}`]);
+      cy.wait(interactions);
     });
 
     it('Renders the page with no content types', () => {
@@ -37,6 +37,7 @@ describe('Content types list page', () => {
     });
 
     it('redirects correctly by "Add content type" button', () => {
+      // TODO: move this to a before block
       cy.startFakeServer({
         consumer: 'user_interface',
         provider: 'extensions',
@@ -44,12 +45,14 @@ describe('Content types list page', () => {
         pactfileWriteMode: 'merge',
         spec: 2
       });
-      getAllExtensionsInDefaultSpace.willReturnNone()
-      getAllContentTypesInDefaultSpace.willReturnNone()
+      const interactions = [
+        getAllExtensionsInDefaultSpace.willReturnNone(),
+        getAllContentTypesInDefaultSpace.willReturnNone()
+      ];
 
       cy.getByTestId('create-content-type-empty-state').click();
 
-      cy.wait([`@${state.ContentTypes.NONE}`, `@${state.Extensions.NONE}`]);
+      cy.wait(interactions);
 
       cy.url().should('contain', '/content_types_new/fields');
     });
@@ -57,13 +60,14 @@ describe('Content types list page', () => {
 
   context('with several content types', () => {
     beforeEach(() => {
-      defaultRequestsMock();
-
-      getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnSeveral();
+      const interactions = [
+        ...defaultRequestsMock(),
+        getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnSeveral()
+      ];
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);
 
-      cy.wait([`@${state.Token.VALID}`, `@${state.ContentTypes.SEVERAL}`]);
+      cy.wait(interactions);
     });
 
     it('Renders the page with several content types', () => {

@@ -4,7 +4,6 @@ import {
   defaultJobId,
   defaultHeader
 } from '../util/requests';
-import * as state from '../util/interactionState';
 import { Query, RequestOptions } from '@pact-foundation/pact-web';
 
 const empty = require('../fixtures/responses/empty.json');
@@ -17,6 +16,16 @@ const entryIdQuery = {
   order: '-sys.scheduledAt',
   'sys.entity.sys.id': defaultEntryId
 };
+
+enum States {
+  NO_JOBS_FOR_DEFAULT_SPACE = 'jobs/no-jobs-for-default-space',
+  ONE_JOB_FOR_DEFAULT_SPACE = 'jobs/one-job-for-default-space',
+  SEVERAL_JOBS_FOR_DEFAULT_SPACE = 'jobs/several-jobs-for-default-space',
+  INTERNAL_SERVER_ERROR = 'jobs/internal-server-error',
+  JOB_EXECUTION_FAILED = 'jobs/job-execution-failed',
+  NO_JOBS_SCHEDULED_FOR_DEFAULT_ENTRY = 'jobs/no-jobs-scheduled-for-default-entry',
+  ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY = 'jobs/one-pending-job-scheduled-for-default-entry'
+}
 
 function queryJobsForDefaultSpaceRequest(query: Query): RequestOptions {
   return {
@@ -32,60 +41,68 @@ function queryJobsForDefaultSpaceRequest(query: Query): RequestOptions {
 
 export const queryAllJobsForDefaultSpace = {
   willFindNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'jobs',
-      state: state.Jobs.NO_JOBS_FOR_DEFAULT_SPACE,
+      state: States.NO_JOBS_FOR_DEFAULT_SPACE,
       uponReceiving: `a query for all jobs in space "${defaultSpaceId}"`,
       withRequest: queryJobsForDefaultSpaceRequest(allJobsQuery),
       willRespondWith: {
         status: 200,
         body: empty
       }
-    }).as(state.Jobs.NO_JOBS_FOR_DEFAULT_SPACE);
+    }).as('queryAllJobsForDefaultSpace');
+
+    return '@queryAllJobsForDefaultSpace';
   },
   willFindSeveral() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'jobs',
-      state: state.Jobs.SEVERAL_JOBS_FOR_DEFAULT_SPACE,
+      state: States.SEVERAL_JOBS_FOR_DEFAULT_SPACE,
       uponReceiving: `a query for all jobs in space "${defaultSpaceId}"`,
       withRequest: queryJobsForDefaultSpaceRequest(allJobsQuery),
       willRespondWith: {
         status: 200,
         body: severalJobsResponseBody
       }
-    }).as(state.Jobs.SEVERAL_JOBS_FOR_DEFAULT_SPACE);
+    }).as('queryAllJobsForDefaultSpace');
+
+    return '@queryAllJobsForDefaultSpace';
   },
   willFailWithAnInternalServerError() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'jobs',
-      state: state.Jobs.INTERNAL_SERVER_ERROR,
+      state: States.INTERNAL_SERVER_ERROR,
       uponReceiving: `a query for all jobs in space "${defaultSpaceId}"`,
       withRequest: queryJobsForDefaultSpaceRequest(allJobsQuery),
       willRespondWith: {
         status: 500,
         body: empty
       }
-    }).as(state.Jobs.INTERNAL_SERVER_ERROR);
+    }).as('queryAllJobsForDefaultSpace');
+
+    return '@queryAllJobsForDefaultSpace';
   }
 }
 
 export const queryAllScheduledJobsForDefaultEntry = {
   willFindNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'jobs',
-      state: state.Jobs.NO_JOBS_SCHEDULED_FOR_DEFAULT_ENTRY,
+      state: States.NO_JOBS_SCHEDULED_FOR_DEFAULT_ENTRY,
       uponReceiving: `a query for all scheduled jobs of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
         status: 200,
         body: empty
       }
-    }).as(state.Jobs.NO_JOBS_SCHEDULED_FOR_DEFAULT_ENTRY);
+    }).as('queryAllScheduledJobsForDefaultEntry');
+
+    return '@queryAllScheduledJobsForDefaultEntry';
   },
   willFindOnePendingJob() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'jobs',
-      state: state.Jobs.ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY,
+      state: States.ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY,
       uponReceiving: `a query for all scheduled jobs of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
@@ -109,12 +126,14 @@ export const queryAllScheduledJobsForDefaultEntry = {
           ]
         }
       }
-    }).as(state.Jobs.ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY);
+    }).as('queryAllScheduledJobsForDefaultEntry');
+
+    return '@queryAllScheduledJobsForDefaultEntry';
   },
   willFindOneFailedJob() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'jobs',
-      state: state.Jobs.JOB_EXECUTION_FAILED,
+      state: States.JOB_EXECUTION_FAILED,
       uponReceiving: `a query for all scheduled jobs of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
@@ -138,27 +157,31 @@ export const queryAllScheduledJobsForDefaultEntry = {
           ]
         }
       }
-    }).as(state.Jobs.JOB_EXECUTION_FAILED);
+    }).as('queryAllScheduledJobsForDefaultEntry');
+
+    return '@queryAllScheduledJobsForDefaultEntry';
   },
   willFailWithAnInternalServerError() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'jobs',
-      state: state.Jobs.INTERNAL_SERVER_ERROR,
+      state: States.INTERNAL_SERVER_ERROR,
       uponReceiving: `a query for all scheduled jobs of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
         status: 500,
         body: {}
       }
-    }).as(state.Jobs.INTERNAL_SERVER_ERROR);
+    }).as('queryAllScheduledJobsForDefaultEntry');
+
+    return '@queryAllScheduledJobsForDefaultEntry';
   }
 }
 
 export const cancelDefaultJobInDefaultSpace = {
   willSucceed() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'jobs',
-      state: state.Jobs.ONE_JOB_FOR_DEFAULT_SPACE,
+      state: States.ONE_JOB_FOR_DEFAULT_SPACE,
       uponReceiving: `a request to cancel the job "${defaultJobId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'DELETE',
@@ -172,15 +195,17 @@ export const cancelDefaultJobInDefaultSpace = {
         status: 200,
         body: empty
       }
-    });
+    }).as('cancelDefaultJobInDefaultSpace');
+
+    return '@cancelDefaultJobInDefaultSpace';;
   }
 }
 
 export const createScheduledPublicationForDefaultSpace = {
   willSucceed() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'jobs',
-      state: state.Jobs.NO_JOBS_FOR_DEFAULT_SPACE,
+      state: States.NO_JOBS_FOR_DEFAULT_SPACE,
       uponReceiving: `a request to create a scheduling publication for space "${defaultSpaceId}"`,
       withRequest: {
         method: 'POST',
@@ -202,6 +227,8 @@ export const createScheduledPublicationForDefaultSpace = {
           scheduledAt: '2050-08-08T06:10:52.066Z'
         }
       }
-    });
+    }).as('createScheduledPublicationForDefaultSpace');
+
+    return '@createScheduledPublicationForDefaultSpace';;
   }
 }

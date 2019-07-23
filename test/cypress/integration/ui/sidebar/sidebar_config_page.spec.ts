@@ -7,7 +7,6 @@ import {
 import { getAllExtensionsInDefaultSpace } from '../../../interactions/extensions';
 import { getEditorInterfaceForDefaultContentType } from '../../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
-import * as state from '../../../util/interactionState';
 
 describe('Sidebar configuration', () => {
   before(() =>
@@ -21,22 +20,20 @@ describe('Sidebar configuration', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
 
-    defaultRequestsMock();
-    getAllExtensionsInDefaultSpace.willReturnNone();
-    getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar();
-    getAllContentTypesInDefaultSpace.willReturnOne();
-    getDefaultContentType.willReturnIt();
-    getPublishedVersionOfDefaultContentType.willReturnIt();
+    const interactions = [
+      ...defaultRequestsMock(),
+      getAllExtensionsInDefaultSpace.willReturnNone(),
+      getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
+      getAllContentTypesInDefaultSpace.willReturnOne(),
+      getDefaultContentType.willReturnIt(),
+      getPublishedVersionOfDefaultContentType.willReturnIt()
+    ];
 
     cy.visit(
       `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`
     );
 
-    cy.wait([
-      `@${state.Token.VALID}`,
-      `@${state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR}`,
-      `@${state.ContentTypes.DEFAULT_CONTENT_TYPE_IS_PUBLISHED}`
-    ]);
+    cy.wait(interactions);
   });
 
   const widgetNames = ['Publish & Status', 'Preview', 'Links', 'Translation', 'Versions', 'Users'];
@@ -87,7 +84,7 @@ describe('Sidebar configuration', () => {
         'Entry activity'
       ];
 
-      cy.get('[data-test-id="sidebar-widget-item-draggable"]')
+      cy.getAllByTestId('sidebar-widget-item-draggable')
         .eq(3)
         .focus()
         .wait(0.2 * 1000)
@@ -103,9 +100,10 @@ describe('Sidebar configuration', () => {
     });
 
     it('moves widget from a custom sidebar to available items and vice versa', () => {
-      cy.getByTestId('sidebar-widget-item')
+      cy.getAllByTestId('sidebar-widget-item')
         .eq(0)
-        .getByTestId('cf-ui-icon-button')
+        .getAllByTestId('cf-ui-icon-button')
+        .eq(0)
         .click();
       cy.getAllByTestId('sidebar-widget-name')
         .should('have.length', widgetNames.length - 1)

@@ -1,10 +1,12 @@
-import * as state from '../util/interactionState';
+enum States {
+  OK = 'microbackends/ok'
+}
 
 export const generateMicrobackendStreamToken = {
   willSucceed() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'microbackend',
-      state: state.Microbackends.OK,
+      state: States.OK,
       uponReceiving: 'a request to generate a streamtoken',
       withRequest: {
         method: 'POST',
@@ -15,6 +17,8 @@ export const generateMicrobackendStreamToken = {
         status: 200,
         body: {}
       }
-    }).as(state.Microbackends.OK);
+    }).as('generateMicrobackendStreamToken');
+
+    return '@generateMicrobackendStreamToken';
   }
 }

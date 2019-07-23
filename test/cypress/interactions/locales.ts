@@ -1,13 +1,16 @@
-import * as state from '../util/interactionState';
 import { defaultHeader, defaultSpaceId } from '../util/requests';
 
 const locales = require('../fixtures/responses/locales.json');
+
+enum States {
+  ONLY_ENGLISH = 'locales/only-english'
+}
 
 export const queryFirst100LocalesOfDefaultSpace = {
   willFindOne() {
     cy.addInteraction({
       provider: 'locales',
-      state: state.Locales.ONLY_ENGLISH,
+      state: States.ONLY_ENGLISH,
       uponReceiving: `a query for the first 100 locales of the "${defaultSpaceId}" space`,
       withRequest: {
         method: 'GET',
@@ -22,6 +25,8 @@ export const queryFirst100LocalesOfDefaultSpace = {
         status: 200,
         body: locales
       }
-    }).as(state.Locales.ONLY_ENGLISH);
+    }).as('queryFirst100LocalesOfDefaultSpace');
+
+    return '@queryFirst100LocalesOfDefaultSpace'
   }
 }

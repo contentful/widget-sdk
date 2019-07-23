@@ -1,7 +1,5 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import * as state from '../../../util/interactionState';
 import { defaultHeader, defaultSpaceId, defaultOrgId } from '../../../util/requests';
-import { getAllProductCatalogFeaturesForDefaultOrg } from '../../../interactions/product_catalog_features';
 
 const empty = require('../../../fixtures/responses/empty.json');
 
@@ -11,18 +9,15 @@ const teamHeaders = {
 };
 
 const loadPageWithServerState = (stateName, responseBody, message) => {
-  cy.resetAllFakeServers();
-
-  defaultRequestsMock({});
-
   cy.setAuthTokenToLocalStorage();
 
-  getAllProductCatalogFeaturesForDefaultOrg.willFindSeveral();
+  cy.resetAllFakeServers();
 
-  const getMembershipsInteraction = 'spaces/team_space_memberships';
-  const getRolesInteraction = 'spaces/roles';
-  const getTeamsInteraction = 'org/teams';
+  const getMembershipsInteraction = 'query_team_space_memberships';
+  const getRolesInteraction = 'query_space_roles';
+  const getTeamsInteraction = 'query_teams_in_org';
 
+  // TODO: Move this to interactions/teams
   cy.addInteraction({
     provider: 'teams',
     state: stateName,
@@ -38,7 +33,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
       body: responseBody
     }
   }).as(getMembershipsInteraction);
-
+  // TODO: Move this to interactions/teams
   cy.addInteraction({
     provider: 'teams',
     state: 'no-teams',
@@ -54,7 +49,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
       body: empty
     }
   }).as(getTeamsInteraction);
-
+  // TODO: Move this to interactions/teams
   cy.addInteraction({
     provider: 'roles',
     state: 'default',
@@ -96,9 +91,16 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
     }
   }).as(getRolesInteraction);
 
+  const interactions = [
+    ...defaultRequestsMock(),
+    `@${getMembershipsInteraction}`,
+    `@${getTeamsInteraction}`,
+    `@${getRolesInteraction}`
+  ]
+
   cy.visit(`/spaces/${defaultSpaceId}/settings/teams`);
 
-  cy.wait([`@${state.Token.VALID}`, `@${getRolesInteraction}`, `@${getMembershipsInteraction}`, `@${getTeamsInteraction}`]);
+  cy.wait(interactions);
 };
 
 const membership1 = {
@@ -189,11 +191,11 @@ describe('Teams in space page', () => {
               roles: [
                 {
                   sys:
-                    {
-                      type: 'Link',
-                      linkType: 'Role',
-                      id: 'role1'
-                    }
+                  {
+                    type: 'Link',
+                    linkType: 'Role',
+                    id: 'role1'
+                  }
                 }
               ],
               sys: {
@@ -213,19 +215,19 @@ describe('Teams in space page', () => {
               roles: [
                 {
                   sys:
-                    {
-                      type: 'Link',
-                      linkType: 'Role',
-                      id: 'role2'
-                    }
+                  {
+                    type: 'Link',
+                    linkType: 'Role',
+                    id: 'role2'
+                  }
                 },
                 {
                   sys:
-                    {
-                      type: 'Link',
-                      linkType: 'Role',
-                      id: 'role3'
-                    }
+                  {
+                    type: 'Link',
+                    linkType: 'Role',
+                    id: 'role3'
+                  }
                 }
               ],
               sys: {
@@ -274,6 +276,7 @@ describe('Teams in space page', () => {
     context('changing role of Team 1', () => {
       beforeEach(() => {
         const editmembershipInteraction = 'editMembership';
+        // TODO: Move this to interactions/team
         cy.addInteraction({
           provider: 'teams',
           state: 'initial roles',

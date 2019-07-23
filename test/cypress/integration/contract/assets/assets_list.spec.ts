@@ -1,6 +1,5 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
-import * as state from '../../../util/interactionState';
 import { defaultSpaceId } from '../../../util/requests';
 import {
   queryAllNonArchivedAssetsInTheDefaultSpace,
@@ -19,20 +18,25 @@ describe('Assets List Page', () => {
     })
   );
 
+  let interactions: string[]
   beforeEach(() => {
     cy.resetAllFakeServers();
 
-    defaultRequestsMock();
-    queryFirst100UsersInDefaultSpace.willFindSeveral();
+    interactions = [
+      ...defaultRequestsMock(),
+      queryFirst100UsersInDefaultSpace.willFindSeveral()
+    ];
   });
   context('no assets in the space', () => {
     beforeEach(() => {
-      queryAllNonArchivedAssetsInTheDefaultSpace.willFindNone();
-      queryAllArchivedAssetsInTheDefaultSpace.willFindNone();
+      interactions.push(
+        queryAllNonArchivedAssetsInTheDefaultSpace.willFindNone(),
+        queryAllArchivedAssetsInTheDefaultSpace.willFindNone()
+      )
 
       cy.visit(`/spaces/${defaultSpaceId}/assets`);
 
-      cy.wait([`@${state.Token.VALID}`, `@${state.Assets.NONE}`]);
+      cy.wait(interactions);
     });
     it('renders add asset button for empty state on assets list page', () => {
       cy.getByTestId('cf-ui-empty-state')
@@ -45,11 +49,11 @@ describe('Assets List Page', () => {
 
   context('several assets in the space', () => {
     beforeEach(() => {
-      queryAllNonArchivedAssetsInTheDefaultSpace.willFindSeveral();
+      interactions.push(queryAllNonArchivedAssetsInTheDefaultSpace.willFindSeveral());
 
       cy.visit(`/spaces/${defaultSpaceId}/assets`);
 
-      cy.wait([`@${state.Token.VALID}`, `@${state.Assets.SEVERAL}`]);
+      cy.wait(interactions);
     });
     it('renders table with items on assets list page', () => {
       cy.getByTestId('add-asset-menu-trigger').should('be.enabled');

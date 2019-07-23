@@ -1,4 +1,3 @@
-import * as state from '../util/interactionState';
 import {
   defaultSpaceId,
   defaultContentType,
@@ -16,6 +15,17 @@ const contentTypeWithCustomSidebarRequestBody = require('../fixtures/requests/co
 const editorInterfaceWithCustomSidebarRequestBody = require('../fixtures/requests/editor-interface-with-custom-sidebar.json');
 const editorInterfaceWithCustomSidebarResponseBody = require('../fixtures/responses/editor-interface-with-custom-sidebar.json');
 
+enum States {
+  NONE = 'content_types/none',
+  EDITORINTERFACE_WITHOUT_SIDEBAR = 'content_types/editor_interface_without_sidebar',
+  EDITORINTERFACE_WITH_SIDEBAR = 'content_types/editor_interface_with_sidebar',
+  SINGLE = 'content_types/single',
+  SEVERAL = 'content_types/several',
+  DEFAULT_CONTENT_TYPE_IS_PUBLISHED = 'content_types/default-content-type-is-published',
+  NO_PUBLIC_CONTENT_TYPES = 'content_types/no-public-content-types',
+  ONLY_ONE_CONTENT_TYPE_IS_PUBLIC = 'content_types/one-single-content-type'
+}
+
 const getAllPublicContentTypesInDefaultSpaceRequest: RequestOptions = {
   method: 'GET',
   path: `/spaces/${defaultSpaceId}/public/content_types`,
@@ -27,30 +37,34 @@ const getAllPublicContentTypesInDefaultSpaceRequest: RequestOptions = {
 
 export const getAllPublicContentTypesInDefaultSpace = {
   willReturnNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
-      state: state.PublicContentTypes.NONE,
+      state: States.NO_PUBLIC_CONTENT_TYPES,
       uponReceiving: `a request for all public content types in space "${defaultSpaceId}"`,
       withRequest: getAllPublicContentTypesInDefaultSpaceRequest,
       willRespondWith: {
         status: 200,
         body: empty
       }
-    }).as(state.PublicContentTypes.NONE);
+    }).as('getAllPublicContentTypesInDefaultSpace');
+
+    return '@getAllPublicContentTypesInDefaultSpace';
   },
   // TODO: Is not a good idea to test with a response of a single element against a collection
   // Unless there is a good reason for not doing so, test with several
   willReturnOne() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
-      state: state.PublicContentTypes.SINGLE,
+      state: States.ONLY_ONE_CONTENT_TYPE_IS_PUBLIC,
       uponReceiving: `a request for all public content types in space "${defaultSpaceId}"`,
       withRequest: getAllPublicContentTypesInDefaultSpaceRequest,
       willRespondWith: {
         status: 200,
         body: contentTypeSingle
       }
-    }).as(state.PublicContentTypes.SINGLE);
+    }).as('getAllPublicContentTypesInDefaultSpace');
+
+    return '@getAllPublicContentTypesInDefaultSpace'
   }
 }
 
@@ -65,38 +79,42 @@ function getAllContentTypesInDefaultSpaceRequest(query?: Query): RequestOptions 
 
 export const getAllContentTypesInDefaultSpace = {
   willReturnNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
-      state: state.ContentTypes.NONE,
+      state: States.NONE,
       uponReceiving: `a request for all content types in space "${defaultSpaceId}"`,
       withRequest: getAllContentTypesInDefaultSpaceRequest(),
       willRespondWith: {
         status: 200,
         body: empty
       }
-    }).as(state.ContentTypes.NONE);
+    }).as('getAllContentTypesInDefaultSpace');
+
+    return '@getAllContentTypesInDefaultSpace'
   },
   // TODO: Is not a good idea to test with a response of a single element against a collection
   // Unless there is a good reason for not doing so, test with several
   willReturnOne() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
-      state: state.ContentTypes.SINGLE,
+      state: States.SINGLE,
       uponReceiving: `a request for all content types in space "${defaultSpaceId}"`,
       withRequest: getAllContentTypesInDefaultSpaceRequest(),
       willRespondWith: {
         status: 200,
         body: contentTypeSingle
       }
-    }).as(state.ContentTypes.SINGLE);
+    }).as('getAllContentTypesInDefaultSpace');
+
+    return '@getAllContentTypesInDefaultSpace';
   }
 }
 
 export const getFirst1000ContentTypesInDefaultSpaceOrderedByName = {
   willReturnNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
-      state: state.ContentTypes.NONE,
+      state: States.NONE,
       uponReceiving: `a request for the first 1000 content types in space "${defaultSpaceId}" ordered by name`,
       withRequest: getAllContentTypesInDefaultSpaceRequest({
         limit: '1000',
@@ -106,12 +124,14 @@ export const getFirst1000ContentTypesInDefaultSpaceOrderedByName = {
         status: 200,
         body: empty
       }
-    }).as(state.ContentTypes.NONE);
+    }).as('getFirst1000ContentTypesInDefaultSpaceOrderedByName');
+
+    return '@getFirst1000ContentTypesInDefaultSpaceOrderedByName';
   },
   willReturnSeveral() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
-      state: state.ContentTypes.SEVERAL,
+      state: States.SEVERAL,
       uponReceiving: `a request for the first 1000 content types in space "${defaultSpaceId}" ordered by name`,
       withRequest: getAllContentTypesInDefaultSpaceRequest({
         limit: '1000',
@@ -121,7 +141,9 @@ export const getFirst1000ContentTypesInDefaultSpaceOrderedByName = {
         status: 200,
         body: severalContentTypes
       }
-    }).as(state.ContentTypes.SEVERAL);
+    }).as('getFirst1000ContentTypesInDefaultSpaceOrderedByName');
+
+    return '@getFirst1000ContentTypesInDefaultSpaceOrderedByName';
   }
 }
 
@@ -133,36 +155,40 @@ const getEditorInterfaceForDefaultContentTypeRequest: RequestOptions = {
 
 export const getEditorInterfaceForDefaultContentType = {
   willReturnOneWithoutSidebar() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
-      state: state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR,
+      state: States.EDITORINTERFACE_WITHOUT_SIDEBAR,
       uponReceiving: `a request for the editor interface of content type "${defaultContentTypeId}" in space "${defaultSpaceId}"`,
       withRequest: getEditorInterfaceForDefaultContentTypeRequest,
       willRespondWith: {
         status: 200,
         body: editorInterfaceWithoutSidebarResponseBody
       }
-    }).as(state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR);
+    }).as('getEditorInterfaceForDefaultContentType');
+
+    return '@getEditorInterfaceForDefaultContentType';
   },
   willReturnOneWithSidebar() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
-      state: state.ContentTypes.EDITORINTERFACE_WITH_SIDEBAR,
+      state: States.EDITORINTERFACE_WITH_SIDEBAR,
       uponReceiving: `a request for the editor interface of content type "${defaultContentTypeId}" in space "${defaultSpaceId}"`,
       withRequest: getEditorInterfaceForDefaultContentTypeRequest,
       willRespondWith: {
         status: 200,
         body: editorInterfaceWithSidebarResponseBody
       }
-    }).as(state.ContentTypes.EDITORINTERFACE_WITH_SIDEBAR);
+    }).as('getEditorInterfaceForDefaultContentType');
+
+    return '@getEditorInterfaceForDefaultContentType';
   }
 }
 
 export const getDefaultContentType = {
   willReturnIt() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
-      state: state.ContentTypes.SEVERAL,
+      state: States.SEVERAL,
       uponReceiving: `a request to get content type "${defaultContentTypeId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
@@ -173,15 +199,17 @@ export const getDefaultContentType = {
         status: 200,
         body: defaultContentType
       }
-    }).as(state.ContentTypes.SEVERAL);
+    }).as('getDefaultContentType');
+
+    return '@getDefaultContentType';
   }
 }
 
 export const getPublishedVersionOfDefaultContentType = {
   willReturnIt() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
-      state: state.ContentTypes.DEFAULT_CONTENT_TYPE_IS_PUBLISHED,
+      state: States.DEFAULT_CONTENT_TYPE_IS_PUBLISHED,
       uponReceiving: `a request to get the published version of content type "${defaultContentTypeId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
@@ -192,15 +220,17 @@ export const getPublishedVersionOfDefaultContentType = {
         status: 200,
         body: defaultContentType
       }
-    }).as(state.ContentTypes.DEFAULT_CONTENT_TYPE_IS_PUBLISHED);
+    }).as('getPublishedVersionOfDefaultContentType');
+
+    return '@getPublishedVersionOfDefaultContentType';
   }
 }
 
 export const saveDefaultContentTypeWithCustomSidebar = {
   willSucceed() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
-      state: state.ContentTypes.SEVERAL,
+      state: States.SEVERAL,
       uponReceiving: `a request to save content type "${defaultContentTypeId}" with custom sidebar`,
       withRequest: {
         method: 'PUT',
@@ -212,15 +242,17 @@ export const saveDefaultContentTypeWithCustomSidebar = {
         status: 200,
         body: defaultContentType
       }
-    }).as('content-type-custom-sidebar-created');
+    }).as('saveDefaultContentTypeWithCustomSidebar');
+
+    return '@saveDefaultContentTypeWithCustomSidebar';
   }
 }
 
 export const publishDefaultContentType = {
   willSucceed() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
-      state: state.ContentTypes.SEVERAL,
+      state: States.SEVERAL,
       uponReceiving: `a request to publish content type "${defaultContentTypeId}"`,
       withRequest: {
         method: 'PUT',
@@ -231,15 +263,17 @@ export const publishDefaultContentType = {
         status: 200,
         body: defaultContentType
       }
-    }).as('content-type-published-custom-sidebar-created');
+    }).as('publishDefaultContentType');
+
+    return '@publishDefaultContentType';
   }
 }
 
 export const saveDefaultContentTypeEditorInterface = {
   willSucceed() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'content_types',
-      state: state.ContentTypes.EDITORINTERFACE_WITHOUT_SIDEBAR,
+      state: States.EDITORINTERFACE_WITHOUT_SIDEBAR,
       uponReceiving: `a request to save the editor interface of content type "${defaultContentTypeId}"`,
       withRequest: {
         method: 'PUT',
@@ -251,6 +285,8 @@ export const saveDefaultContentTypeEditorInterface = {
         status: 200,
         body: editorInterfaceWithCustomSidebarResponseBody
       }
-    }).as('editor-interface-sidebar-saved');
+    }).as('saveDefaultContentTypeEditorInterface');
+
+    return '@saveDefaultContentTypeEditorInterface';
   }
 }

@@ -1,6 +1,5 @@
 import { RequestOptions, Query } from '@pact-foundation/pact-web';
 
-import * as state from '../util/interactionState';
 import {
   defaultSpaceId,
   defaultAssetId,
@@ -10,6 +9,11 @@ import {
 
 const empty = require('../fixtures/responses/empty.json');
 export const severalAssetsBody = require('../fixtures/responses/assets-several.json');
+
+enum States {
+  NONE = 'assets/none',
+  SEVERAL = 'assets/several'
+}
 
 const nonArchivedAssetsQuery = {
   limit: '40',
@@ -34,34 +38,38 @@ function queryAllAssetsInTheDefaultSpaceRequest(query: Query): RequestOptions {
 
 export const queryAllNonArchivedAssetsInTheDefaultSpace = {
   willFindNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'assets',
-      state: state.Assets.NONE,
+      state: States.NONE,
       uponReceiving: `a query for all non archived assets in space "${defaultSpaceId}"`,
       withRequest: queryAllAssetsInTheDefaultSpaceRequest(nonArchivedAssetsQuery),
       willRespondWith: {
         status: 200,
         body: empty
       }
-    }).as(state.Assets.NONE);
+    }).as('queryAllNonArchivedAssetsInTheDefaultSpace');
+
+    return '@queryAllNonArchivedAssetsInTheDefaultSpace';
   },
   willFindSeveral() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'assets',
-      state: state.Assets.SEVERAL,
+      state: States.SEVERAL,
       uponReceiving: `a query for all non archived assets in space "${defaultSpaceId}"`,
       withRequest: queryAllAssetsInTheDefaultSpaceRequest(nonArchivedAssetsQuery),
       willRespondWith: {
         status: 200,
         body: severalAssetsBody
       }
-    }).as(state.Assets.SEVERAL);
+    }).as('queryAllNonArchivedAssetsInTheDefaultSpace');
+
+    return '@queryAllNonArchivedAssetsInTheDefaultSpace';
   }
 };
 
 export const queryAllArchivedAssetsInTheDefaultSpace = {
   willFindNone() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'assets',
       state: 'noArchivedAssets',
       uponReceiving: `a query for all archived assets in space "${defaultSpaceId}"`,
@@ -70,15 +78,17 @@ export const queryAllArchivedAssetsInTheDefaultSpace = {
         status: 200,
         body: empty
       }
-    }).as('assets/archived-none');
+    }).as('queryAllArchivedAssetsInTheDefaultSpace');
+
+    return '@queryAllArchivedAssetsInTheDefaultSpace';
   }
 };
 
 export const getDefaultAssetInDefaultSpace = {
   willReturnIt() {
-    return cy.addInteraction({
+    cy.addInteraction({
       provider: 'assets',
-      state: state.Assets.SEVERAL,
+      state: States.SEVERAL,
       uponReceiving: `a request to get the asset "${defaultAssetId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
@@ -89,6 +99,8 @@ export const getDefaultAssetInDefaultSpace = {
         status: 200,
         body: defaultAsset
       }
-    }).as(state.Assets.SEVERAL);
+    }).as('getDefaultAssetInDefaultSpace');
+
+    return '@getDefaultAssetInDefaultSpace';
   }
 };
