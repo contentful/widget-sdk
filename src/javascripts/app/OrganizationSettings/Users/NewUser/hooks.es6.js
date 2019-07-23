@@ -3,26 +3,24 @@ import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFa
 import { createOrgMembership, invite } from 'access_control/OrganizationMembershipRepository.es6';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
 import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
-import { getOrganization } from 'services/TokenStore.es6';
 
 // Add a list of users to the organization
 // If the org has Single Sign On enabled, we create the org memberships directly
 // If not, we send invitations to the emails addresses
 // returns an object { failures, successes }
-export function useAddToOrg(orgId) {
+export function useAddToOrg(orgId, hasSsoEnabled) {
   const fn = async (emails, role, spaceMemberships, suppressInvitation) => {
-    const { hasSsoEnabled } = await getOrganization(orgId);
     const orgEndpoint = createOrganizationEndpoint(orgId);
 
     if (hasSsoEnabled) {
-      // if the org uses SSO, create invitations
-      return inviteToOrg(orgEndpoint, emails, role, spaceMemberships);
-    } else {
-      // if thre's no SSO enabled, add users to the org
+      // if the org is SSO enabled, create org memberships directly
       const { failures, successes } = await addToOrg(orgEndpoint, emails, role, suppressInvitation);
       // invite all successfuly added org members to the spaces
       await addToSpaces(successes, spaceMemberships);
       return { failures, successes };
+    } else {
+      // if the org does not use SSO, create invitations
+      return inviteToOrg(orgEndpoint, emails, role, spaceMemberships);
     }
   };
 
@@ -91,7 +89,7 @@ async function inviteToOrg(endpoint, emails, role, spaceMemberships) {
 
   const requests = emails.map(async email => {
     try {
-      invite(endpoint, {
+      await invite(endpoint, {
         role,
         email,
         spaceInvitations: convertSpaceMemberships(spaceMemberships)
@@ -114,7 +112,7 @@ function convertSpaceMemberships(spaceMemberships) {
     return {
       spaceId: space.sys.id,
       admin: hasAdminRole,
-      roleIds: roles
+      roleIds: hasAdminRole ? [] : roles
     };
   });
 }

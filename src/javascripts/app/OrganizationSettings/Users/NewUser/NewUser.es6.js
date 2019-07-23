@@ -1,7 +1,6 @@
 import React, { useMemo, useReducer, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Typography,
   Heading,
   Subheading,
   Paragraph,
@@ -11,7 +10,7 @@ import {
   RadioButtonField,
   Form,
   ValidationMessage,
-  TextLink
+  CheckboxField
 } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import pluralize from 'pluralize';
@@ -19,6 +18,8 @@ import { orgRoles } from 'utils/MembershipUtils.es6';
 import { useAddToOrg } from './hooks.es6';
 import { isValidEmail, parseList } from 'utils/StringUtils.es6';
 import SpaceMembershipList from './SpaceMembershipList.es6';
+import NewUserSuccess from './NewUserSuccess.es6';
+import NewUserProgress from './NewUserProgress.es6';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -33,7 +34,8 @@ const initialState = {
   emailsValue: '',
   emailList: [],
   invalidAddresses: [],
-  spaceMemberships: []
+  spaceMemberships: [],
+  suppressInvitation: true
 };
 
 const reducer = (state, action) => {
@@ -55,15 +57,25 @@ const reducer = (state, action) => {
       return { ...state, spaceMemberships: action.payload, submitted: false };
     case 'ROLE_CHANGED':
       return { ...state, orgRole: action.payload, submitted: false };
+    case 'NOTIFICATIONS_PREFERENCE_CHANGED':
+      return { ...state, suppressInvitation: !action.payload };
     case 'RESET':
       return { ...initialState };
   }
 };
 
-export default function NewUser({ orgId, onReady }) {
-  const [{ isLoading, error, data }, addToOrg, resetAsyncFn] = useAddToOrg(orgId);
+export default function NewUser({ orgId, onReady, hasSsoEnabled }) {
+  const [{ isLoading, error, data }, addToOrg, resetAsyncFn] = useAddToOrg(orgId, hasSsoEnabled);
   const [
-    { submitted, emailsValue, emailList, invalidAddresses, orgRole, spaceMemberships },
+    {
+      submitted,
+      emailsValue,
+      emailList,
+      invalidAddresses,
+      orgRole,
+      spaceMemberships,
+      suppressInvitation
+    },
     dispatch
   ] = useReducer(reducer, initialState);
 
@@ -88,7 +100,14 @@ export default function NewUser({ orgId, onReady }) {
     if (spaceMemberships.length && spaceMemberships.some(membership => !membership.roles.length))
       return;
 
-    addToOrg(emailList, orgRole, spaceMemberships);
+    addToOrg(emailList, orgRole, spaceMemberships, suppressInvitation);
+  };
+
+  const handleNotificationsPreferenceChange = evt => {
+    const {
+      target: { checked }
+    } = evt;
+    dispatch({ type: 'NOTIFICATIONS_PREFERENCE_CHANGED', payload: checked });
   };
 
   const reset = () => {
@@ -145,8 +164,14 @@ export default function NewUser({ orgId, onReady }) {
       <Workbench.Content centered>
         {error && <Paragraph>Something went wrong</Paragraph>}
         {isLoading && <NewUserProgress emailList={emailList} />}
-        {data && <NewUserSuccess emailList={emailList} onRestart={reset} />}
-
+        {data && (
+          <NewUserSuccess
+            failures={data.failures}
+            successes={data.successes}
+            onRestart={reset}
+            orgId={orgId}
+          />
+        )}
         {!data && !error && !isLoading && (
           <Form>
             <Heading>Invite users to your organization</Heading>
@@ -208,6 +233,17 @@ export default function NewUser({ orgId, onReady }) {
               )}
             </fieldset>
 
+            {hasSsoEnabled && (
+              <CheckboxField
+                id="sendNotifications"
+                checked={!suppressInvitation}
+                onChange={handleNotificationsPreferenceChange}
+                testId="new-user.notifications-checkbox"
+                labelText="Send email notifications"
+                helpText="Leave this unchecked if you want to inform your users yourself"
+              />
+            )}
+
             <Button
               buttonType="positive"
               testId="new-user.submit"
@@ -224,45 +260,6 @@ export default function NewUser({ orgId, onReady }) {
 
 NewUser.propTypes = {
   orgId: PropTypes.string.isRequired,
-  onReady: PropTypes.func.isRequired
-};
-
-const NewUserProgress = ({ emailList }) => {
-  return (
-    <Typography testId="new-user.progress">
-      <Heading>Hold on, {pluralize('users', emailList.length, true)} are being invited</Heading>
-      <Paragraph>This might take a while. Please keep this window open.</Paragraph>
-    </Typography>
-  );
-};
-
-NewUserProgress.propTypes = {
-  emailList: PropTypes.arrayOf(PropTypes.string)
-};
-
-const NewUserSuccess = ({ emailList, onRestart }) => {
-  return (
-    <Typography testId="new-user.success">
-      <Heading>Success!</Heading>
-      <Paragraph>{`You've successfully invited ${pluralize(
-        'users',
-        emailList.length,
-        true
-      )} to your organization.`}</Paragraph>
-      <Paragraph>
-        They will receive an invitation e-mail. You can review or revoke their access at any time.
-      </Paragraph>
-      <Paragraph>
-        <TextLink href="#">See all invitations</TextLink>
-      </Paragraph>
-      <Paragraph>
-        <TextLink onClick={onRestart}>Invite more people</TextLink>
-      </Paragraph>
-    </Typography>
-  );
-};
-
-NewUserSuccess.propTypes = {
-  emailList: PropTypes.arrayOf(PropTypes.string).isRequired,
-  onRestart: PropTypes.func.isRequired
+  onReady: PropTypes.func.isRequired,
+  hasSsoEnabled: PropTypes.bool.isRequired
 };

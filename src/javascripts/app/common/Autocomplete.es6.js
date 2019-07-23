@@ -85,6 +85,7 @@ export default function Autocomplete({
 
   const selectItem = item => {
     dispatch({ type: ITEM_SELECTED });
+    onQueryChange('');
     onChange(item);
   };
 
