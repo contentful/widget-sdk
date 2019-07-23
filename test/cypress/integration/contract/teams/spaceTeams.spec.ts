@@ -5,6 +5,11 @@ import { getAllProductCatalogFeaturesForDefaultOrg } from '../../../interactions
 
 const empty = require('../../../fixtures/responses/empty.json');
 
+const teamHeaders = {
+  ...defaultHeader,
+  'x-contentful-enable-alpha-feature': 'teams-api'
+};
+
 const loadPageWithServerState = (stateName, responseBody, message) => {
   cy.resetAllFakeServers();
 
@@ -26,7 +31,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
       method: 'GET',
       path: `/spaces/${defaultSpaceId}/team_space_memberships`,
       query: { include: 'roles,sys.team', limit: '100', skip: '0' },
-      headers: defaultHeader
+      headers: teamHeaders
     },
     willRespondWith: {
       status: 200,
@@ -42,7 +47,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
       method: 'GET',
       path: `/organizations/${defaultOrgId}/teams`,
       query: { limit: '100', skip: '0' },
-      headers: defaultHeader
+      headers: teamHeaders
     },
     willRespondWith: {
       status: 200,
@@ -276,7 +281,7 @@ describe('Teams in space page', () => {
           withRequest: {
             method: 'PUT',
             path: `/spaces/${defaultSpaceId}/team_space_memberships/TSM1`,
-            headers: defaultHeader
+            headers: teamHeaders
           },
           willRespondWith: {
             status: 200,
