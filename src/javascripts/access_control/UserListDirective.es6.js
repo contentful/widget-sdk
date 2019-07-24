@@ -1,7 +1,12 @@
-import { registerDirective, registerController, registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
-import template from 'access_control/templates/UserList.es6';
+
+import { registerDirective, registerController, registerFactory } from 'NgRegistry.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import * as TokenStore from 'services/TokenStore.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
+
+import template from './templates/UserList.es6';
 
 export default function register() {
   registerDirective('cfUserList', [
@@ -59,9 +64,8 @@ export default function register() {
     'spaceContext',
     'UserListHandler',
     'access_control/AccessChecker',
-    'services/TokenStore.es6',
     'access_control/UserListActions.es6',
-    ($scope, spaceContext, UserListHandler, accessChecker, TokenStore, UserListActions) => {
+    ($scope, spaceContext, UserListHandler, accessChecker, UserListActions) => {
       const userListHandler = UserListHandler.create();
       const actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
 
@@ -76,10 +80,18 @@ export default function register() {
       $scope.openRoleChangeDialog = decorateWithReload(actions.openRoleChangeDialog);
       $scope.canModifyUsers = accessChecker.canModifyUsers;
       $scope.openSpaceInvitationDialog = openSpaceInvitationDialog;
-      $scope.teamsAlertProps = {
-        children: `Some of the users here might have access to this space via a team. We’re currently working on giving space admins the ability to manage teams’ access to their space, but until then only organization admins can manage that access.`,
-        style: { marginTop: '20px' }
+
+      const organization = spaceContext.organization;
+      const orgId = organization.sys.id;
+
+      $scope.addUsersToSpaceNoteProps = {
+        orgId,
+        isOwnerOrAdmin: isOwnerOrAdmin(organization)
       };
+
+      getOrgFeature(orgId, 'teams', false).then(value => {
+        $scope.addUsersToSpaceNoteProps.hasTeamsFeature = value;
+      });
 
       reload();
 

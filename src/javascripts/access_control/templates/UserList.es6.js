@@ -106,9 +106,7 @@ function userContextMenu() {
 
 function sidebar() {
   return h('.entity-sidebar', [
-    h('h2.entity-sidebar__heading', ['Add users']),
-    h('cf-add-users-to-space-note'),
-    // @TODO: use `ui-command` for invitation
+    h('h2.entity-sidebar__heading', ['Adding and managing users']),
     h(
       'button.btn-action.x--block',
       {
@@ -120,9 +118,8 @@ function sidebar() {
       [h('cf-icon.btn-icon.inverted', { name: 'plus' }), 'Add users to space']
     ),
     h('react-component', {
-      ngIf: 'hasTeamSpaceMemberships',
-      name: '@contentful/forma-36-react-components/Note',
-      props: 'teamsAlertProps'
+      name: 'access_control/templates/AddUsersToSpaceNote.es6',
+      props: 'addUsersToSpaceNoteProps'
     })
   ]);
 }
