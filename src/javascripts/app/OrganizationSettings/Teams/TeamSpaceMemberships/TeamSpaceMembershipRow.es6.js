@@ -2,14 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { get, keyBy } from 'lodash';
 import { css } from 'emotion';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
 import { hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import * as types from 'app/OrganizationSettings/PropTypes.es6';
 import { TableCell, TableRow, Button, Spinner } from '@contentful/forma-36-react-components';
 import { joinWithAnd } from 'utils/StringUtils.es6';
-import getRolesBySpace from 'redux/selectors/getRolesBySpace.es6';
 
 class TeamMembershipRow extends React.Component {
   static propTypes = {
@@ -18,16 +16,12 @@ class TeamMembershipRow extends React.Component {
       types.TeamSpaceMembershipPlaceholder
     ]).isRequired,
     onEdit: PropTypes.func.isRequired,
-
-    roles: PropTypes.objectOf(PropTypes.arrayOf(types.SpaceRole)),
     readOnlyPermission: PropTypes.bool.isRequired,
     removeMembership: PropTypes.func.isRequired
   };
 
   getRoleNames() {
-    const { membership, roles } = this.props;
-    const spaceId = get(membership, 'sys.space.sys.id');
-    const spaceRoles = keyBy(roles[spaceId], 'sys.id');
+    const { membership } = this.props;
 
     if (membership.admin) {
       return 'Admin';
@@ -35,7 +29,7 @@ class TeamMembershipRow extends React.Component {
     if (membership.roles.length === 0) {
       return <span className={css({ fontStyle: 'italic' })}>deleted role</span>;
     }
-    return joinWithAnd(membership.roles.map(role => spaceRoles[role.sys.id].name));
+    return joinWithAnd(membership.roles.map(role => role.name));
   }
 
   render() {
@@ -92,8 +86,7 @@ class TeamMembershipRow extends React.Component {
 
 export default connect(
   state => ({
-    readOnlyPermission: hasReadOnlyPermission(state),
-    roles: getRolesBySpace(state)
+    readOnlyPermission: hasReadOnlyPermission(state)
   }),
   (dispatch, { membership }) => ({
     removeMembership: () =>
