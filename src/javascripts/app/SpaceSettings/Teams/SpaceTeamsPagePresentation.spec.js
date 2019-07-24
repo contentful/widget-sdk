@@ -1,7 +1,9 @@
 import React from 'react';
-import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation.es6';
+import { noop } from 'lodash';
 import { cleanup, render } from '@testing-library/react';
 import 'jest-dom/extend-expect';
+
+import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation.es6';
 
 const build = (props = {}) =>
   render(
@@ -10,7 +12,8 @@ const build = (props = {}) =>
         memberships: [],
         teams: [],
         availableRoles: [],
-        onUpdateTeamSpaceMembership: () => {},
+        onUpdateTeamSpaceMembership: noop,
+        onRemoveTeamSpaceMembership: noop,
         isLoading: false,
         isPending: false,
         readOnly: false,

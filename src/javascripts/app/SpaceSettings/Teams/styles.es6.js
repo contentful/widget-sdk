@@ -50,5 +50,8 @@ export default {
   roleForm: css({
     display: 'flex',
     justifyContent: 'flex-end'
+  }),
+  strong: css({
+    color: tokens.colorTextMid
   })
 };

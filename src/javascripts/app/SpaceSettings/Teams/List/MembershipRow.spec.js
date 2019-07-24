@@ -1,10 +1,13 @@
 import React from 'react';
-import { cleanup, render, fireEvent } from '@testing-library/react';
+import { cleanup, render, fireEvent, getByTestId } from '@testing-library/react';
 import { Table, TableBody } from '@contentful/forma-36-react-components';
 import 'jest-dom/extend-expect';
 import { noop } from 'lodash';
 
 import MembershipRow from './MembershipRow.es6';
+
+let onUpdateTeamSpaceMembership;
+let onRemoveTeamSpaceMembership;
 
 const build = props =>
   render(
@@ -26,7 +29,8 @@ const build = props =>
             setMenuOpen: noop,
             isEditing: false,
             setEditing: noop,
-            onUpdateTeamSpaceMembership: noop,
+            onUpdateTeamSpaceMembership,
+            onRemoveTeamSpaceMembership,
             isPending: false,
             readOnly: false,
             currentUserAdminSpaceMemberships: [],
@@ -38,6 +42,11 @@ const build = props =>
   );
 
 describe('MembershipRow', () => {
+  beforeEach(() => {
+    onUpdateTeamSpaceMembership = jest.fn(noop);
+    onRemoveTeamSpaceMembership = jest.fn(noop);
+  });
+
   afterEach(cleanup);
 
   describe('being rendered', () => {
@@ -105,6 +114,51 @@ describe('MembershipRow', () => {
         expect(await findByTestId('space-role-editor.admin-option')).toBeInTheDocument();
         expect(await findAllByTestId('space-role-editor.role-option')).toHaveLength(4);
       });
+    });
+
+    it('should delete with confirmation prompt', async () => {
+      const { findByTestId } = build({ menuIsOpen: true });
+      fireEvent.click(
+        getByTestId(await findByTestId('remove-team'), 'cf-ui-dropdown-list-item-button')
+      );
+
+      expect(await findByTestId('remove-team-confirmation')).toBeInTheDocument();
+
+      fireEvent.click(await findByTestId('cf-ui-modal-confirm-confirm-button'));
+
+      expect(onRemoveTeamSpaceMembership).toHaveBeenCalled();
+    });
+
+    it('should delete with admin loss confirmation prompt', async () => {
+      const lastMembership = {
+        admin: true,
+        sys: {
+          team: {
+            name: 'Team 0',
+            sys: { id: 'team0' }
+          },
+          id: 'lastAdminId'
+        }
+      };
+      const { findByTestId } = build({
+        menuIsOpen: true,
+        currentUserAdminSpaceMemberships: [lastMembership],
+        membership: lastMembership
+      });
+
+      fireEvent.click(
+        getByTestId(await findByTestId('remove-team'), 'cf-ui-dropdown-list-item-button')
+      );
+
+      const confirmationDialog = await findByTestId('remove-own-admin-confirmation');
+      expect(confirmationDialog).toBeInTheDocument();
+
+      fireEvent.change(getByTestId(confirmationDialog, 'cf-ui-text-input'), {
+        target: { value: 'I UNDERSTAND' }
+      });
+      fireEvent.click(await findByTestId('cf-ui-modal-confirm-confirm-button'));
+
+      expect(onRemoveTeamSpaceMembership).toHaveBeenCalled();
     });
   });
 });

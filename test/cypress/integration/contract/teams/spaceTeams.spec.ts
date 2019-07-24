@@ -308,5 +308,36 @@ describe('Teams in space page', () => {
         cy.get('@firstRow').contains('td', 'Team 1').should('be.visible');
       });
     });
+
+    context('remove team from space', () => {
+      beforeEach(() => {
+        const removeTeamInteraction = 'removeTeam';
+        cy.addInteraction({
+          provider: 'teams',
+          state: 'initial teams',
+          uponReceiving: 'remove team from space',
+          withRequest: {
+            method: 'DELETE',
+            path: `/spaces/${defaultSpaceId}/team_space_memberships/TSM1`,
+            headers: defaultHeader
+          },
+          willRespondWith: {
+            status: 200,
+            body: { ...membership1, sys: { version: 1, ...membership1.sys }, admin: false, roles: [role1] }
+          }
+        }).as(removeTeamInteraction);
+
+        cy.getByTestId('row-menu').first().click();
+        cy.getByTestId('remove-team').click();
+        cy.getByTestId('cf-ui-modal-confirm-confirm-button').click();
+
+        cy.wait(`@${removeTeamInteraction}`);
+      });
+
+      it.only('should have removed team from space', () => {
+        cy.getAllByTestId('membership-row').first().as('firstRow');
+        cy.get('@firstRow').contains('td', 'Team 1').should('not.exist');
+      });
+    });
   });
 });

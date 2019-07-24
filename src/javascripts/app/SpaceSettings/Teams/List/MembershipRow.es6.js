@@ -1,6 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Button, TableCell, TableRow, Tooltip } from '@contentful/forma-36-react-components';
+import {
+  Button,
+  TableCell,
+  TableRow,
+  Tooltip,
+  ModalConfirm
+} from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { cx, css } from 'emotion';
@@ -19,6 +25,9 @@ import { href } from 'states/Navigator.es6';
 import RowMenu from './RowMenu.es6';
 import styles from '../styles.es6';
 import DowngradeOwnAdminMembershipConfirmation from './DowngradeOwnAdminMembershipConfirmation.es6';
+import RemoveOwnAdminMembershipConfirmation from './RemoveOwnAdminMembershipConfirmation.es6';
+
+const navigateToDefaultLocation = () => window.location.replace(href({ path: ['^', '^'] }));
 
 const MembershipRow = ({
   membership,
@@ -27,6 +36,7 @@ const MembershipRow = ({
   setMenuOpen,
   isEditing,
   setEditing,
+  onRemoveTeamSpaceMembership,
   onUpdateTeamSpaceMembership,
   isPending,
   readOnly,
@@ -42,17 +52,59 @@ const MembershipRow = ({
 
   const roleIds = map(isEmpty(roles) ? [ADMIN_ROLE] : roles, 'sys.id');
   const [selectedRoleIds, setSelectedRoles] = useState(roleIds);
-  const [isShowingUpdateConfirmation, showUpdateConfirmation] = useState(false);
-  const onUpdate = async (lostAccess = false) => {
-    try {
-      await onUpdateTeamSpaceMembership(membership, selectedRoleIds);
-      if (lostAccess) {
-        window.location.replace(href({ path: ['^', '^'] }));
+  const [showUpdateConfirmation, setShowUpdateConfirmation] = useState(false);
+  const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
+  const [showRemoveOwnAdminConfirmation, setShowRemoveOwnAdminConfirmation] = useState(false);
+
+  const isLastAdminMembership =
+    currentUserAdminSpaceMemberships.length === 1 &&
+    currentUserAdminSpaceMemberships[0].sys.id === membershipId;
+
+  const haveRolesChanged = !(
+    intersection(selectedRoleIds, roleIds).length === selectedRoleIds.length &&
+    selectedRoleIds.length === roleIds.length
+  );
+
+  const onUpdateConfirmed = useCallback(
+    async (lostAccess = false) => {
+      try {
+        await onUpdateTeamSpaceMembership(membership, selectedRoleIds);
+        if (lostAccess) {
+          navigateToDefaultLocation();
+        }
+      } catch (e) {
+        setSelectedRoles(roleIds);
+        throw e;
       }
-    } catch (e) {
-      setSelectedRoles(roleIds);
+    },
+    [membership, onUpdateTeamSpaceMembership, roleIds, selectedRoleIds]
+  );
+
+  const onUpdate = useCallback(async () => {
+    if (isLastAdminMembership) {
+      setShowUpdateConfirmation(true);
+      return;
     }
-  };
+    await onUpdateConfirmed();
+  }, [isLastAdminMembership, onUpdateConfirmed]);
+
+  const onRemove = useCallback(() => {
+    if (isLastAdminMembership) {
+      setShowRemoveOwnAdminConfirmation(true);
+    } else {
+      setShowRemoveConfirmation(true);
+    }
+  }, [isLastAdminMembership]);
+
+  const onRemoveConfirmed = useCallback(
+    async (lostAccess = false) => {
+      await onRemoveTeamSpaceMembership(membership, selectedRoleIds);
+      if (lostAccess) {
+        navigateToDefaultLocation();
+      }
+    },
+    [membership, onRemoveTeamSpaceMembership, selectedRoleIds]
+  );
 
   // reset selected roles when starting to edit
   useEffect(() => {
@@ -60,25 +112,11 @@ const MembershipRow = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditing]);
 
-  const haveRolesChanged = !(
-    intersection(selectedRoleIds, roleIds).length === selectedRoleIds.length &&
-    selectedRoleIds.length === roleIds.length
-  );
-  const isLastAdminMembership =
-    currentUserAdminSpaceMemberships.length === 1 &&
-    currentUserAdminSpaceMemberships[0].sys.id === membershipId;
-
   const confirmButton = (
     <Button
       testId="confirm-change-role"
       buttonType="positive"
-      onClick={async () => {
-        if (isLastAdminMembership) {
-          showUpdateConfirmation(true);
-          return;
-        }
-        await onUpdate();
-      }}
+      onClick={onUpdate}
       className={css({ marginRight: tokens.spacingM })}
       disabled={!haveRolesChanged || isEmpty(selectedRoleIds) || isPending}
       loading={isPending}>
@@ -89,10 +127,40 @@ const MembershipRow = ({
   return (
     <TableRow key={membershipId} testId="membership-row" className={styles.row}>
       <DowngradeOwnAdminMembershipConfirmation
-        isShown={isShowingUpdateConfirmation}
-        close={() => showUpdateConfirmation(false)}
-        onConfirm={() => showUpdateConfirmation(false) || onUpdate(true)}
+        isShown={showUpdateConfirmation}
+        close={() => setShowUpdateConfirmation(false)}
+        onConfirm={() => {
+          setShowUpdateConfirmation(false);
+          onUpdateConfirmed(true);
+        }}
+        teamName={name}
       />
+      <RemoveOwnAdminMembershipConfirmation
+        isShown={showRemoveOwnAdminConfirmation}
+        close={() => setShowRemoveOwnAdminConfirmation(false)}
+        onConfirm={() => {
+          setShowRemoveOwnAdminConfirmation(false);
+          onRemoveConfirmed(true);
+        }}
+        teamName={name}
+      />
+      <ModalConfirm
+        testId="remove-team-confirmation"
+        onCancel={() => setShowRemoveConfirmation(false)}
+        onConfirm={() => {
+          setShowRemoveConfirmation(false);
+          onRemoveConfirmed();
+        }}
+        isShown={showRemoveConfirmation}
+        intent="negative"
+        confirmLabel="Remove"
+        cancelLabel="Cancel"
+        title="Remove team from this space">
+        <p>
+          Are you sure you want to remove {<strong className={styles.strong}>{name}</strong>} from
+          this space?
+        </p>
+      </ModalConfirm>
       <TableCell className={styles.cell} testId="team-cell">
         <div className={styles.cellTeamName} data-test-id="team.name">
           {name}
@@ -137,7 +205,12 @@ const MembershipRow = ({
           </TableCell>
           <TableCell>
             {!readOnly && (
-              <RowMenu isOpen={menuIsOpen} setOpen={setMenuOpen} setEditing={setEditing} />
+              <RowMenu
+                isOpen={menuIsOpen}
+                setOpen={setMenuOpen}
+                setEditing={setEditing}
+                onRemove={onRemove}
+              />
             )}
           </TableCell>
         </>
@@ -154,6 +227,7 @@ MembershipRow.propTypes = {
   isEditing: PropTypes.bool.isRequired,
   setEditing: PropTypes.func.isRequired,
   onUpdateTeamSpaceMembership: PropTypes.func.isRequired,
+  onRemoveTeamSpaceMembership: PropTypes.func.isRequired,
   isPending: PropTypes.bool.isRequired,
   readOnly: PropTypes.bool.isRequired,
   currentUserAdminSpaceMemberships: PropTypes.arrayOf(
