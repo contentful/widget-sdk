@@ -1,4 +1,4 @@
-import React, { useReducer, useMemo } from 'react';
+import React, { useReducer, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import isHotKey from 'is-hotkey';
 import {
@@ -76,9 +76,11 @@ export default function Autocomplete({
   placeholder = 'Search',
   width,
   className,
+  maxHeight,
   validationMessage,
   isLoading = false
 }) {
+  const listRef = useRef();
   const [{ isOpen, query, highlightedItemIndex }, dispatch] = useReducer(reducer, initialState);
 
   const toggleList = isOpen => dispatch({ type: TOGGLED_LIST, payload: isOpen });
@@ -95,16 +97,15 @@ export default function Autocomplete({
   };
 
   const handleKeyDown = event => {
-    const isDown = isHotKey('down', event);
-    const isUp = isHotKey('up', event);
     const isEnter = isHotKey('enter', event);
     const isTab = isHotKey('tab', event) || isHotKey('shift+tab', event);
     const hasSelection = highlightedItemIndex !== null;
     const lastIndex = items.length ? items.length - 1 : 0;
-    const direction = getNavigationDirection(isDown, isUp);
+    const direction = getNavigationDirection(event);
 
     if (direction) {
       const newIndex = getNewIndex(highlightedItemIndex, direction, lastIndex);
+      scrollToItem(listRef.current, newIndex);
       dispatch({ type: NAVIGATED_ITEMS, payload: newIndex });
     }
 
@@ -144,24 +145,26 @@ export default function Autocomplete({
           />
         }>
         {validationMessage && <ValidationMessage>{validationMessage}</ValidationMessage>}
-        <DropdownList testId="autocomplete.dropdown-list">
-          {isLoading ? (
-            <OptionSkeleton />
-          ) : (
-            options.map(({ child, option }, index) => {
-              const isActive = index === highlightedItemIndex;
-              return (
-                <DropdownListItem
-                  key={index}
-                  isActive={isActive}
-                  data-selected={isActive} // this should be coming from the component library
-                  onClick={() => selectItem(option)}
-                  testId="autocomplete.dropdown-list-item">
-                  {child}
-                </DropdownListItem>
-              );
-            })
-          )}
+        <DropdownList testId="autocomplete.dropdown-list" maxHeight={maxHeight}>
+          <div ref={listRef}>
+            {isLoading ? (
+              <OptionSkeleton />
+            ) : (
+              options.map(({ child, option }, index) => {
+                const isActive = index === highlightedItemIndex;
+                return (
+                  <DropdownListItem
+                    key={index}
+                    isActive={isActive}
+                    data-selected={isActive} // this should be coming from the component library
+                    onClick={() => selectItem(option)}
+                    testId="autocomplete.dropdown-list-item">
+                    {child}
+                  </DropdownListItem>
+                );
+              })
+            )}
+          </div>
         </DropdownList>
       </Dropdown>
     </>
@@ -176,6 +179,7 @@ Autocomplete.propTypes = {
   placeholder: PropTypes.string,
   width: PropTypes.string,
   className: PropTypes.string,
+  maxHeight: PropTypes.number,
   validationMessage: PropTypes.string,
   isLoading: PropTypes.bool,
   disabled: PropTypes.bool
@@ -203,12 +207,15 @@ function OptionSkeleton() {
   );
 }
 
-function getNavigationDirection(isDown, isUp) {
-  if (isDown) return directions.DOWN;
-  else if (isUp) return directions.UP;
+// Get the navigation direction based on keyboard events
+function getNavigationDirection(event) {
+  if (isHotKey('down', event)) return directions.DOWN;
+  else if (isHotKey('up', event)) return directions.UP;
   return null;
 }
 
+// Get the next index to navigate to based on the current index and
+// navigation direction
 function getNewIndex(currentIndex, direction, lastIndex) {
   const isDown = direction === directions.DOWN;
   const isUp = direction === directions.UP;
@@ -225,4 +232,11 @@ function getNewIndex(currentIndex, direction, lastIndex) {
   if (isUp && (hasNoSelection || isFirst)) return lastIndex;
 
   return currentIndex + direction;
+}
+
+// Find the DOM node of the selected item and scroll if necessary
+function scrollToItem(list, index) {
+  if (!list || !list.children.length) return;
+  const item = list.children[index];
+  item.scrollIntoView({ block: 'nearest' });
 }

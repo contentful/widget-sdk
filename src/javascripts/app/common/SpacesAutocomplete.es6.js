@@ -47,6 +47,7 @@ export default function SpacesAutoComplete({
 
   return (
     <Autocomplete
+      maxHeight={300}
       items={items}
       onChange={handleChange}
       onQueryChange={handleQueryChange}

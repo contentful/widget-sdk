@@ -19,6 +19,10 @@ jest.mock('data/EndpointFactory.es6', () => ({
   createSpaceEndpoint: jest.fn()
 }));
 
+// scrollIntoView is not available in JSDOM
+// eslint-disable-next-line
+Element.prototype.scrollIntoView = jest.fn();
+
 const mount = ({ teams = [], roles = [], teamSpaceMemberships = [] } = {}) => {
   return render(
     <AddTeamsPage
