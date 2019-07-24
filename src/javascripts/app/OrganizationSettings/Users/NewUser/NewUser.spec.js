@@ -97,6 +97,16 @@ describe('NewUser', () => {
     expect(mockOnReady).toHaveBeenCalled();
   });
 
+  it('does not show the owner role as an option to non owners', () => {
+    const { queryByLabelText } = build(false, false);
+    expect(queryByLabelText('Owner')).toBeNull();
+  });
+
+  it('shows the owner role as an option to org owners', () => {
+    const { getByLabelText } = build(false, true);
+    expect(getByLabelText('Owner')).toBeVisible();
+  });
+
   describe('validation fails', () => {
     it('validates the presence of at least one email addresses', async () => {
       const wrapper = build();
@@ -189,11 +199,13 @@ describe('NewUser', () => {
   });
 });
 
-function build(hasSsoEnabled = false) {
+function build(hasSsoEnabled = false, isOwner = true) {
   // useAddToOrg.mockReturnValue([{ loading: false }, mockSubmitFn]);
   getAllRoles.mockReturnValue(mockRoles);
   getAllSpaces.mockReturnValue(mockSpaces);
-  return render(<NewUser orgId="myorg" onReady={mockOnReady} hasSsoEnabled={hasSsoEnabled} />);
+  return render(
+    <NewUser orgId="myorg" onReady={mockOnReady} hasSsoEnabled={hasSsoEnabled} isOwner={isOwner} />
+  );
 }
 
 async function submitForm(wrapper, emails = '', role = '', spaceMemberships = []) {

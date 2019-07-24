@@ -4,22 +4,30 @@ import { getVariation } from 'LaunchDarkly.es6';
 import NewUser from './NewUser.es6';
 import AngularComponent from 'ui/Framework/AngularComponent.es6';
 import { getOrganization } from 'services/TokenStore.es6';
+import { isOwner } from 'services/OrganizationRoles.es6';
 
 export default function NewUserBridge({ onReady, context, orgId }) {
   const [variation, setVariation] = useState(null);
-  const [hasSsoEnabled, setHasSsoEnabled] = useState(false);
+  const [org, setOrg] = useState(null);
 
   useEffect(() => {
     Promise.all([getVariation('feature-bv-05-2019-new-invitation-flow'), getOrganization(orgId)])
       .then(([variation, organization]) => {
         setVariation(variation);
-        setHasSsoEnabled(organization.hasSsoEnabled);
+        setOrg(organization);
       })
       .catch(() => setVariation(false));
   }, [orgId]);
 
   if (variation) {
-    return <NewUser onReady={onReady} orgId={orgId} hasSsoEnabled={hasSsoEnabled} />;
+    return (
+      <NewUser
+        onReady={onReady}
+        orgId={orgId}
+        hasSsoEnabled={org.hasSsoEnabled}
+        isOwner={isOwner(org)}
+      />
+    );
   } else if (variation === false) {
     const scope = { properties: { context, orgId } };
     return (

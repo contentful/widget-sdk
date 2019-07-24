@@ -64,7 +64,7 @@ const reducer = (state, action) => {
   }
 };
 
-export default function NewUser({ orgId, onReady, hasSsoEnabled }) {
+export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
   const [{ isLoading, error, data }, addToOrg, resetAsyncFn] = useAddToOrg(orgId, hasSsoEnabled);
   const [
     {
@@ -150,6 +150,8 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled }) {
     }
   }, [spaceMemberships, submitted]);
 
+  const availableOrgRoles = isOwner ? orgRoles : orgRoles.filter(role => role.value !== 'owner');
+
   // dismiss the loading state of the Angular UI router state
   useEffect(() => {
     onReady();
@@ -194,7 +196,7 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled }) {
                 Role
               </Subheading>
               <FieldGroup>
-                {orgRoles.map(role => (
+                {availableOrgRoles.map(role => (
                   <RadioButtonField
                     testId="new-user.role"
                     id={role.value}
@@ -261,5 +263,6 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled }) {
 NewUser.propTypes = {
   orgId: PropTypes.string.isRequired,
   onReady: PropTypes.func.isRequired,
-  hasSsoEnabled: PropTypes.bool.isRequired
+  hasSsoEnabled: PropTypes.bool.isRequired,
+  isOwner: PropTypes.bool.isRequired
 };
