@@ -43,7 +43,6 @@ const styles = {
   }),
 
   select: css({
-    marginBottom: tokens.spacingL,
     width: '100%'
   }),
 
