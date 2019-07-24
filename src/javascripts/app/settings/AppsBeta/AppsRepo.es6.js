@@ -1,12 +1,17 @@
 import { countBy } from 'lodash';
 
 // App ID to ExtensionDefinition ID
+// https://contentful.atlassian.net/wiki/spaces/PROD/pages/1512800260/Contentful+Apps+organization
 const APP_TO_EXTENSION_DEFINITION = {
-  netlify: '3VJXxF6XcYPl4akixQuJlc'
+  netlify: '1VchawWvbIClHuMIyxwR5m',
+  gatsby: '35f8xJFaJpOUFAKepAWiUj',
+  optimizely: 'i43PggcHag2PCrGjYTiIX',
+  cloudinary: 'zjcnWgBknf9zB7IM9HZjE',
+  bynder: '5KySdUzG7OWuCE2V3fgtIa'
 };
 
 // Order on the list, values are App IDs
-const APP_ORDER = ['netlify'];
+const APP_ORDER = ['netlify', 'gatsby', 'optimizely', 'cloudinary', 'bynder'];
 
 const DEV_APP_PREFIX = 'dev-app';
 const DEV_APP_SEPARATOR = '_';

@@ -74,6 +74,10 @@ export async function transformEditorInterfacesToTargetState(cma, targetState, e
 function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetState, extensionId) {
   const result = cloneDeep(ei);
 
+  // If there is no target state for a property, we use a version
+  // without references instead.
+  const removeRefsResult = removeSingleEditorInterfaceReferences(ei, extensionId);
+
   // Target state object for controls: `{ fieldId, settings? }`
   if (Array.isArray(targetState.controls)) {
     targetState.controls.forEach(control => {
@@ -85,6 +89,8 @@ function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetS
         settings: control.settings
       };
     });
+  } else if (ei.controls) {
+    result.controls = removeRefsResult.controls;
   }
 
   // Target state object for sidebar: `{ position?, settings? }`.
@@ -113,6 +119,8 @@ function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetS
       // Put it at the bottom if the position is not defined.
       result.sidebar.push(widget);
     }
+  } else if (ei.sidebar) {
+    result.sidebar = removeRefsResult.sidebar;
   }
 
   // If editor target state is set to `true` we just use the Extension.
@@ -128,6 +136,8 @@ function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetS
       widgetId: extensionId,
       settings: targetState.editor.settings
     };
+  } else if (ei.editor) {
+    result.editor = removeRefsResult.editor;
   }
 
   return result;

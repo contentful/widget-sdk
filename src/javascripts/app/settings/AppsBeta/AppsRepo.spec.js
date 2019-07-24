@@ -1,13 +1,13 @@
 import createAppsRepo from './AppsRepo.es6';
 
 const NETLIFY_APP_ID = 'netlify';
-const NETLIFY_EXTENSION_DEFINITION_ID = '3VJXxF6XcYPl4akixQuJlc';
+const NETLIFY_EXTENSION_DEFINITION_ID = '1VchawWvbIClHuMIyxwR5m';
 
 describe('AppsRepo', () => {
   describe('getApps', () => {
     // These tests are using Netlify App and Definition IDs
-    // but they shouldn't break if we add more (we use only
-    // `arrayContaining`, `objectContaining`, not equality).
+    // but they don't break if we add more (in assertions we use
+    // only `arrayContaining`, `objectContaining`, not equality).
     const netlifyDefinition = {
       sys: { type: 'ExtensionDefinition', id: NETLIFY_EXTENSION_DEFINITION_ID },
       name: 'Netlify',
