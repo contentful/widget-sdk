@@ -27,6 +27,10 @@ function getData(eventData) {
   return data;
 }
 
+/**
+ *
+ * @param {*} contentTypeDto JSON Data Transfer Object; not a VO returned by the SDK.
+ */
 function countEntryReferenceFields(contentTypeDto) {
   return contentTypeDto.fields.filter(
     ({ items = {}, ...field }) =>
