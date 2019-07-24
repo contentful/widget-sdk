@@ -19,7 +19,7 @@ import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 import * as logger from 'services/logger.es6';
 import { getVariation } from 'LaunchDarkly.es6';
-import { ENTRY_COMMENTS } from 'featureFlags.es6';
+import { ENTRY_COMMENTS, ENTITY_EDITOR_CMA_EXPERIMENT } from 'featureFlags.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import { buildFieldsApi } from 'app/entity_editor/dataFields.es6';
 
@@ -173,11 +173,29 @@ export default async function create($scope, editorData, preferences, trackLoadE
     return localeCodes.length === 1 && localeCodes[0] === focusedLocale.internal_code;
   }
 
+  const organizationId = get(spaceContext, 'organization.sys.id');
+
   getVariation(ENTRY_COMMENTS, {
-    organizationId: get(spaceContext, 'organization.sys.id')
+    organizationId
   }).then(variation => {
     const isMasterEnvironment = spaceContext.isMasterEnvironment();
     $scope.shouldDisplayCommentsToggle = isMasterEnvironment && variation;
+  });
+  getVariation(ENTITY_EDITOR_CMA_EXPERIMENT, {
+    organizationId
+  }).then(intervalMs => {
+    $scope.onLocalChangeOff && $scope.onLocalChangeOff();
+    const isEnabled = intervalMs !== undefined && intervalMs > -1;
+
+    if (isEnabled) {
+      const throttledChanges$ = $scope.otDoc.docLocalChanges$.throttle(intervalMs);
+      $scope.onLocalChangeOff = K.onValueScope($scope, throttledChanges$, change => {
+        if (change && change.name === 'changed') {
+          // TODO:xxx Send actual request.
+          console.log('CHAAAAAANGE!!!!', change, intervalMs);
+        }
+      });
+    }
   });
 
   /* Custom Extension */
