@@ -185,14 +185,13 @@ export default function register() {
           .show()
           .then(() => {
             if (validator.run()) {
-              let contentType;
-              const entityInfo = $scope.entityInfo;
-              if (entityInfo.type === 'Entry') {
-                contentType = spaceContext.publishedCTs.get(entityInfo.contentTypeId);
-              }
-              const action = Action.Publish();
-              return applyAction(action).then(
+              return applyAction(Action.Publish()).then(
                 entity => {
+                  const entityInfo = $scope.entityInfo;
+                  let contentType;
+                  if (entityInfo.type === 'Entry') {
+                    contentType = spaceContext.publishedCTs.get(entityInfo.contentTypeId).data;
+                  }
                   if (contentType) {
                     let eventOrigin = 'entry-editor';
 
@@ -200,15 +199,16 @@ export default function register() {
                       eventOrigin = 'bulk-editor';
                     }
 
+                    const widgetTrackingContexts = _.get(
+                      $scope,
+                      ['editorData', 'widgetTrackingContexts'],
+                      []
+                    );
                     Analytics.track('entry:publish', {
-                      eventOrigin: eventOrigin,
+                      eventOrigin,
+                      widgetTrackingContexts,
                       contentType: contentType,
-                      response: { data: entity },
-                      widgetTrackingContexts: _.get(
-                        $scope,
-                        ['editorData', 'widgetTrackingContexts'],
-                        []
-                      )
+                      response: entity.data
                     });
                   }
                   trackVersioning.publishedRestored(entity);

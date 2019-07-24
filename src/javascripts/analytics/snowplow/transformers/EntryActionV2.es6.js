@@ -13,7 +13,7 @@ export default function(eventName, eventData) {
 function getData(eventData) {
   const data = getBaseData(eventData);
   const { contentType, eventOrigin } = eventData;
-  const entryId = get(eventData, 'response.data.sys.id');
+  const entryId = get(eventData, 'response.sys.id');
 
   if (entryId) {
     data['entry_id'] = entryId;
@@ -27,8 +27,8 @@ function getData(eventData) {
   return data;
 }
 
-function countEntryReferenceFields(contentType) {
-  return contentType.data.fields.filter(
+function countEntryReferenceFields(contentTypeDto) {
+  return contentTypeDto.fields.filter(
     ({ items = {}, ...field }) =>
       isEntryReferenceField(field) || (field.type === 'Array' && isEntryReferenceField(items))
   ).length;

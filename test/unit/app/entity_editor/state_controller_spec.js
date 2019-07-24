@@ -282,8 +282,8 @@ describe('entityEditor/StateController', () => {
 
             sinon.assert.calledWithExactly(this.analytics.track, 'entry:publish', {
               eventOrigin: eventOrigin,
-              contentType: { data: { name: 'foo' } },
-              response: { data: this.entity },
+              contentType: { name: 'foo' },
+              response: this.entity.data,
               widgetTrackingContexts: []
             });
           });

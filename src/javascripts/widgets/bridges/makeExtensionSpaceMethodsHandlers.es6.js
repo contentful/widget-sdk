@@ -91,7 +91,7 @@ function trackEntryAction(action, contentTypeId, data) {
       sys: { id: contentTypeId, type: 'ContentType' },
       fields: []
     },
-    response: { data }
+    response: data
   });
 }
 

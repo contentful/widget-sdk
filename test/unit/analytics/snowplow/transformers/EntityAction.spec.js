@@ -13,7 +13,7 @@ describe(PATH, () => {
         action: 'create'
       },
       response: {
-        data: { sys: { id: 'ct1', version: 2 } }
+        sys: { id: 'ct1', version: 2 }
       },
       userId: 'u1',
       spaceId: 's1',
@@ -41,13 +41,11 @@ describe(PATH, () => {
     const eventData = {
       actionData: { entity: 'Entry', action: 'create' },
       response: {
-        data: {
-          sys: {
-            id: 'e1',
-            version: 3,
-            revision: 0,
-            contentType: { sys: { id: 'ct2' } }
-          }
+        sys: {
+          id: 'e1',
+          version: 3,
+          revision: 0,
+          contentType: { sys: { id: 'ct2' } }
         }
       },
       userId: 'u1',

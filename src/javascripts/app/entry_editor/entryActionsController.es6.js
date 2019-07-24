@@ -95,7 +95,7 @@ export default function register() {
         const eventOrigin =
           options && options.duplicate ? 'entry-editor__duplicate' : 'entry-editor';
         return entry => {
-          trackEntryCreation(eventOrigin, contentType, entry);
+          trackEntryCreation(eventOrigin, contentType.data, entry.data);
           goToEntryDetail(entry);
         };
       }
