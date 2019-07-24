@@ -15,15 +15,13 @@ module.exports = {
             ? node.value.expression.type
             : ''
           : '';
-        if (nodeName === 'style') {
-          if (nodeValueType === 'ObjectExpression') {
-            context.report({
-              node,
-              message:
-                'Inline styles are disallowed in react components. Please use emotion instead along with @contentful/forma-36-tokens.'
-            });
-            return;
-          }
+        if (nodeName === 'style' && nodeValueType === 'ObjectExpression') {
+          context.report({
+            node,
+            message:
+              'Inline styles are disallowed in react components. Please use emotion instead along with @contentful/forma-36-tokens.'
+          });
+          return;
         }
       }
     };
