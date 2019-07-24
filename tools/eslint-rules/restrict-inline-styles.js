@@ -10,7 +10,11 @@ module.exports = {
     return {
       JSXAttribute(node) {
         const nodeName = node.name.name;
-        const nodeValueType = node.value.expression ? node.value.expression.type : '';
+        const nodeValueType = node.value
+          ? node.value.expression
+            ? node.value.expression.type
+            : ''
+          : '';
         if (nodeName === 'style') {
           if (nodeValueType === 'ObjectExpression') {
             context.report({
