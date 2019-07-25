@@ -506,8 +506,8 @@ class RoleEditor extends React.Component {
                   Can modify space settings. This permission allows users to modify locales,
                   webhooks, the space name, and logo image. It does
                   <strong> not </strong>
-                  grant permission to update user and team roles or remove users and teams from the
-                  space. This permission does not allow users to delete the space.
+                  grant permission to modify the roles or access of a user or team to this space.
+                  This permission does not allow users to delete the space.
                 </label>
               </div>
             </FormSection>
