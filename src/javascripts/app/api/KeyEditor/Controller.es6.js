@@ -64,12 +64,12 @@ function makeApiKeyModel(apiKey) {
     name: {
       value: apiKey.name || '',
       minLength: 1,
-      maxLength: 40
+      maxLength: 41
     },
     description: {
       value: apiKey.description || '',
       minLength: 0,
-      maxLength: 255
+      maxLength: 256
     },
     environments: concat([], apiKey.environments || [])
   };
