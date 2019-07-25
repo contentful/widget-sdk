@@ -123,7 +123,7 @@ function Input({ canEdit, model, update, name, isRequired = false, label, descri
       helpText={description}
       required={isRequired}
       validationMessage={
-        isRequired && hasError
+        hasError
           ? `This field needs to be between ${model[name].minLength} and ${model[name].maxLength} characters`
           : undefined
       }
