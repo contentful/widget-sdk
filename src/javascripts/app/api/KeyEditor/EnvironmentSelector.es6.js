@@ -1,4 +1,5 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
+/* eslint "rulesdir/enforce-getModule-call-inside-fn": "off" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
@@ -8,16 +9,46 @@ import { CodeFragment } from 'ui/Content.es6';
 import { find } from 'lodash';
 import { filter, concat } from 'utils/Collections.es6';
 import InfoIcon from 'svg/info.es6';
-import { CopyButton, Tag } from '@contentful/forma-36-react-components';
+import { CheckboxField, SectionHeading } from '@contentful/forma-36-react-components';
+import EnvOrAlias from 'app/common/EnvOrAlias.es6';
 import { getModule } from 'NgRegistry.es6';
 const spaceContext = getModule('spaceContext');
 
-function makeLink(env) {
+const styles = {
+  aliasSpacer: css({ marginBottom: tokens.spacingL }),
+  hint: css({
+    display: 'flex',
+    alignItems: 'center',
+    background: tokens.colorIceMid,
+    border: `1px solid ${tokens.colorElementLight}`,
+    padding: tokens.spacingM,
+    margin: `${tokens.spacingL} 0`
+  }),
+  hintParagraph: css({
+    color: tokens.colorTextLight,
+    margin: '0',
+    marginLeft: tokens.spacingS
+  }),
+  environmentDiv: css({
+    display: 'flex',
+    alignItems: 'center',
+    marginTop: tokens.spacingL
+  }),
+  label: css({
+    display: 'flex',
+    alignItems: 'baseline'
+  }),
+  toolTipFix: css({
+    bottom: 0
+  })
+};
+
+function makeLink(envOrAlias) {
   return {
     sys: {
       type: 'Link',
-      linkType: 'Environment',
-      id: env.sys.id
+      linkType: envOrAlias.sys.type,
+      id: envOrAlias.sys.id
     }
   };
 }
@@ -30,29 +61,20 @@ export default function EnvironmentSelector(props) {
     </div>
   );
 }
+
 EnvironmentSelector.propTypes = {
   isAdmin: PropTypes.bool,
-  spaceEnvironments: PropTypes.array.isRequired
+  canEdit: PropTypes.bool,
+  spaceEnvironments: PropTypes.array.isRequired,
+  spaceAliases: PropTypes.array.isRequired,
+  updateEnvOrAlias: PropTypes.func.isRequired
 };
 
 function Hint() {
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        background: tokens.colorIceMid,
-        border: '1px solid ' + tokens.colorElementLight,
-        padding: '15px',
-        margin: '1.5em 0'
-      }}>
+    <div className={styles.hint}>
       <InfoIcon />
-      <p
-        style={{
-          color: tokens.colorTextLight,
-          margin: '0',
-          marginLeft: '10px'
-        }}>
+      <p className={styles.hintParagraph}>
         You {`haven't`} set up any additional environments for this space. Head to the{' '}
         <StateLink key="state-link-environments" to="spaces.detail.settings.environments">
           environment settings
@@ -63,66 +85,118 @@ function Hint() {
   );
 }
 
-const copyButtonStyleOverride = css({
-  button: {
-    backgroundColor: 'transparent',
-    border: 'none',
-    height: '1.7em',
-    width: '2em',
-    '&:hover': {
-      backgroundColor: 'transparent'
-    }
-  }
-});
+function ListEnvironments({ environments, canEdit, isSelected, showDefault, toggleSelection }) {
+  return environments.map(environment => {
+    const isMaster = spaceContext.isMasterEnvironment(environment);
+    return (
+      <label key={environment.sys.id} className={styles.label}>
+        <div className={styles.environmentDiv}>
+          <CheckboxField
+            labelText=""
+            id={`environment-{environment.sys.id}`}
+            checked={isSelected(environment)}
+            disabled={!canEdit}
+            onChange={() => toggleSelection(environment)}
+          />
+          <CodeFragment>
+            <EnvOrAlias
+              isSelected={showDefault ? isMaster : false}
+              showAliasedTo={false}
+              isMaster={isMaster}
+              environmentId={environment.sys.id}
+            />
+          </CodeFragment>
+        </div>
+      </label>
+    );
+  });
+}
 
-function List({ canEdit, spaceEnvironments, envs, updateEnvs }) {
-  const isSelected = env => !!find(envs, { sys: { id: env.sys.id } });
+function ListAliases({ aliases, canEdit, isSelected, toggleSelection }) {
+  return aliases.map(alias => {
+    const isMaster = spaceContext.isMasterEnvironment(alias);
+    return (
+      <label key={alias.sys.id} className={styles.label}>
+        <div className={styles.environmentDiv}>
+          <CheckboxField
+            labelText=""
+            id={`alias-{alias.sys.id}`}
+            checked={isSelected(alias)}
+            disabled={!canEdit}
+            onChange={() => toggleSelection(alias)}
+          />
+          <CodeFragment>
+            <EnvOrAlias
+              isSelected={isMaster}
+              showAliasedTo={false}
+              isMaster={isMaster}
+              alias={alias.sys.id}
+              environmentId={alias.sys.id}
+            />
+          </CodeFragment>
+        </div>
+      </label>
+    );
+  });
+}
 
-  const toggleEnvironmentSelection = env => {
-    if (isSelected(env)) {
-      updateEnvs(filter(envs, cur => cur.sys.id !== env.sys.id));
+function List({ canEdit, spaceEnvironments, spaceAliases, selectedEnvOrAlias, updateEnvOrAlias }) {
+  const envAndAliasCount = spaceAliases.length + spaceEnvironments.length;
+  // Note that envs[] come from the api_keys endpoint which currently treats Environments and Aliases as Environments
+  const isSelected = envOrAlias => !!find(selectedEnvOrAlias, { sys: { id: envOrAlias.sys.id } });
+  const toggleSelection = envOrAlias => {
+    if (isSelected(envOrAlias)) {
+      updateEnvOrAlias(filter(selectedEnvOrAlias, cur => cur.sys.id !== envOrAlias.sys.id));
     } else {
-      updateEnvs(concat(envs, [makeLink(env)]));
+      updateEnvOrAlias(concat(selectedEnvOrAlias, [makeLink(envOrAlias)]));
     }
   };
 
+  if (spaceAliases.length > 0) {
+    return (
+      <>
+        <div className={styles.environmentDiv}>
+          <SectionHeading element="h4">Environment Aliases</SectionHeading>
+        </div>
+        <div className={styles.aliasSpacer}>
+          <ListAliases
+            aliases={spaceAliases}
+            isSelected={isSelected}
+            toggleSelection={toggleSelection}
+            canEdit={canEdit && envAndAliasCount > 1}
+          />
+        </div>
+        <SectionHeading element="h4">Environments</SectionHeading>
+        <div>
+          <ListEnvironments
+            showDefault={false}
+            environments={spaceEnvironments}
+            isSelected={isSelected}
+            toggleSelection={toggleSelection}
+            canEdit={canEdit && envAndAliasCount > 1}
+          />
+        </div>
+      </>
+    );
+  }
+
   return (
     <div>
-      {spaceEnvironments.map(env => (
-        <div
-          key={env.sys.id}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginTop: '10px'
-          }}>
-          <label
-            style={{
-              display: 'flex',
-              alignItems: 'baseline'
-            }}>
-            <input
-              type="checkbox"
-              style={{ marginRight: '10px' }}
-              checked={isSelected(env)}
-              disabled={!canEdit || spaceEnvironments.length < 2}
-              onChange={() => toggleEnvironmentSelection(env)}
-            />
-            <CodeFragment>{env.sys.id}</CodeFragment>
-          </label>
-          <div style={{ display: 'inline-block', marginLeft: '6px' }} />
-          <CopyButton className={copyButtonStyleOverride} copyValue={env.sys.id} />
-          <div style={{ display: 'inline-block', marginLeft: '2em' }} />
-          {spaceContext.isMasterEnvironment(env) && <Tag tagType="muted">Default environment</Tag>}
-        </div>
-      ))}
+      <ListEnvironments
+        showDefault={true}
+        environments={spaceEnvironments}
+        isSelected={isSelected}
+        toggleSelection={toggleSelection}
+        canEdit={canEdit && envAndAliasCount > 1}
+      />
     </div>
   );
 }
 
 List.propTypes = {
   canEdit: PropTypes.bool,
-  spaceEnvironments: PropTypes.array,
-  envs: PropTypes.array,
-  updateEnvs: PropTypes.func
+  spaceEnvironments: PropTypes.array.isRequired,
+  spaceAliases: PropTypes.array.isRequired,
+  selectedEnvOrAlias: PropTypes.array.isRequired,
+  updateEnvOrAlias: PropTypes.func.isRequired
 };
