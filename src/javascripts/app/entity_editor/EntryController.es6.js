@@ -181,6 +181,9 @@ export default async function create($scope, editorData, preferences, trackLoadE
     const isMasterEnvironment = spaceContext.isMasterEnvironment();
     $scope.shouldDisplayCommentsToggle = isMasterEnvironment && variation;
   });
+
+  // The following weirdness is for analysing the viability of replacing share.js with plain HTTP calls to the CMA.
+  // This is temporary until we have gathered enough data to make a decision.
   getVariation(ENTITY_EDITOR_CMA_EXPERIMENT, {
     organizationId
   }).then(intervalMs => {
@@ -191,8 +194,13 @@ export default async function create($scope, editorData, preferences, trackLoadE
       const throttledChanges$ = $scope.otDoc.docLocalChanges$.throttle(intervalMs);
       $scope.onLocalChangeOff = K.onValueScope($scope, throttledChanges$, change => {
         if (change && change.name === 'changed') {
-          // TODO:xxx Send actual request.
-          console.log('CHAAAAAANGE!!!!', change, intervalMs);
+          spaceContext.endpoint({
+            method: 'GET',
+            path: ['entries', `${entityInfo.id}.php`], // We're using .php after the entry id as this makes the traffic-manager reject the request without applying rate limits.
+            query: {
+              debounce: intervalMs
+            }
+          });
         }
       });
     }
