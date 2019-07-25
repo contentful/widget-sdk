@@ -1,4 +1,6 @@
 import React from 'react';
+import { css } from 'emotion';
+import cn from 'classnames';
 import { makeCtor } from 'utils/TaggedValues.es6';
 import { assign } from 'utils/Collections.es6';
 import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
@@ -14,6 +16,21 @@ const Select = makeCtor('Select');
 
 const VIEWS_SHARED = 'shared';
 const VIEWS_PRIVATE = 'private';
+
+const styles = {
+  tabPanel: css({
+    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'column'
+  }),
+  tabsWrapper: css({
+    paddingTop: tokens.spacingM,
+    paddingRight: tokens.spacingL,
+    paddingLeft: tokens.spacingM,
+    backgroundColor: tokens.colorElementLightest,
+    borderBottom: `1px solid ${tokens.colorElementMid}`
+  })
+};
 
 export default function({ entityFolders, loadView, getCurrentView, roleAssignment }) {
   const sharedViewsTracking = trackingForScopedViews(VIEWS_SHARED);
@@ -46,7 +63,7 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
       // Use `key` so tree is not reused between shared and private views:
       // it causes nasty DnD bugs
       return (
-        <TabPanel id={value} key={value}>
+        <TabPanel id={value} key={value} className={styles.tabPanel}>
           {component.view /* eslint-disable-line react/prop-types */}
         </TabPanel>
       );
@@ -57,15 +74,8 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
   // eslint-disable-next-line react/prop-types
   function render({ selector, sharedViews, privateViews }) {
     return (
-      <div className="saved-views-wrapper">
-        <div
-          style={{
-            paddingTop: '1rem',
-            paddingRight: '1.5rem',
-            paddingLeft: '1.5rem',
-            backgroundColor: tokens.colorElementLightest,
-            borderBottom: `1px solid ${tokens.colorElementMid}`
-          }}>
+      <div className={cn('saved-views-wrapper', styles.savedViewsWrapper)}>
+        <div className={styles.tabsWrapper}>
           <Tabs role="tablist">
             <Tab
               id={VIEWS_SHARED}

@@ -40,7 +40,7 @@ header.workbench-header
         name="@contentful/forma-36-react-components/Note"
         props="{noteType: 'warning', title: 'Failed to load views', children: 'Please refresh the page.'}")
 
-    div(ng-if="savedViewsState === 'ready'")
+    .saved-views-sidebar-wrapper(ng-if="savedViewsState === 'ready'")
       cf-component-store-bridge(component="savedViewsSidebar")
 
   .workbench-main__right-content
