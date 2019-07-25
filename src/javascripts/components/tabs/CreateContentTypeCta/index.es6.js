@@ -7,7 +7,8 @@ import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
 const styles = {
   button: css({
-    marginLeft: 'auto'
+    marginLeft: 'auto',
+    minWidth: '150px'
   })
 };
 
