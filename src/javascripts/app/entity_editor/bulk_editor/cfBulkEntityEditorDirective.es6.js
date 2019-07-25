@@ -192,6 +192,7 @@ export default function register() {
     'app/entity_editor/Validator.es6',
     'app/entity_editor/DocumentErrorHandler.es6',
     'services/localeStore.es6',
+    'app/entity_editor/NoShareJsCmaFakeRequestsExperiment.es6',
     function(
       $scope,
       $controller,
@@ -199,7 +200,8 @@ export default function register() {
       { buildFieldsApi },
       Validator,
       { default: initDocErrorHandler },
-      { default: localeStore }
+      { default: localeStore },
+      { default: setupNoShareJsCmaFakeRequestsExperiment }
     ) {
       const editorData = $scope.editorData;
       const entityInfo = (this.entityInfo = editorData.entityInfo);
@@ -247,6 +249,15 @@ export default function register() {
           data: data
         });
         $scope.title = truncate(title, 50);
+      });
+
+      const organizationId = _.get(spaceContext, 'organization.sys.id');
+
+      setupNoShareJsCmaFakeRequestsExperiment({
+        $scope,
+        organizationId,
+        entityInfo,
+        endpoint: spaceContext.endpoint
       });
 
       // Building the form
