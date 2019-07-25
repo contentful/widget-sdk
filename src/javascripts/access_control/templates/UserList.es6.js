@@ -46,7 +46,7 @@ function sidebar() {
         ngDisabled: '!canModifyUsers()',
         dataTestId: 'add-users-to-space'
       },
-      [h('cf-icon.btn-icon.inverted', { name: 'plus' }), 'Add users to space']
+      ['Add users']
     ),
     h('react-component', {
       name: 'access_control/templates/AddUsersToSpaceNote.es6',
