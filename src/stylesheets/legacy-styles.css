@@ -2342,9 +2342,9 @@
     margin: 8px 0;
   }
   .role-list .context-menu.x--arrow-up:before,
-  .user-list .context-menu.x--arrow-up:before,
+  .user-list .workbench-header__actions .context-menu.x--arrow-up:before,
   .role-list .context-menu.x--arrow-up:after,
-  .user-list .context-menu.x--arrow-up:after {
+  .user-list .workbench-header__actions .context-menu.x--arrow-up:after {
     left: 92%;
   }
   .user-list__actions,

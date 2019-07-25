@@ -5,14 +5,21 @@ import enhanceWithClickOutside from 'react-click-outside';
 
 class ContextMenu extends React.Component {
   static propTypes = {
-    items: PropTypes.array.isRequired,
+    items: PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string,
+        disabled: PropTypes.bool,
+        action: PropTypes.func,
+        otherProps: PropTypes.shape()
+      })
+    ),
     otherProps: PropTypes.object,
-    style: PropTypes.object
+    style: PropTypes.object,
+    isDisabled: PropTypes.bool
   };
 
   state = {
-    isOpen: false,
-    isDisabled: !(this.props.items && this.props.items.length)
+    isOpen: false
   };
 
   handleClickOutside = () => {
@@ -26,8 +33,10 @@ class ContextMenu extends React.Component {
   };
 
   render() {
-    const { isOpen, isDisabled } = this.state;
-    const { items, style: userStyles, ...otherProps } = this.props;
+    const { items, isDisabled: manuallyDisabled, style: userStyles, ...otherProps } = this.props;
+    const { isOpen } = this.state;
+
+    const isDisabled = manuallyDisabled || !(items && items.length);
 
     const styles = { ...(userStyles || {}), marginLeft: '10px', position: 'relative' };
 

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { includes, noop, once } from 'lodash';
 
 import { registerDirective, registerController, registerFactory } from 'NgRegistry.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
@@ -30,8 +30,9 @@ export default function register() {
         link
       };
 
-      function saveView(view) {
-        if (_.includes([VIEW_BY_NAME, VIEW_BY_ROLE], view)) {
+      function saveView(view, _, scope) {
+        if (includes([VIEW_BY_NAME, VIEW_BY_ROLE], view)) {
+          scope.userListProps.selectedView = scope.selectedView;
           store.set(view);
         }
       }
@@ -40,7 +41,8 @@ export default function register() {
         const roleId = popRoleId();
         scope.viewLabels = VIEW_LABELS;
         scope.selectedView = roleId ? VIEW_BY_ROLE : store.get() || VIEW_BY_NAME;
-        scope.jumpToRole = roleId ? _.once(jumpToRole) : _.noop;
+        scope.userListProps.selectedView = scope.selectedView;
+        scope.jumpToRole = roleId ? once(jumpToRole) : noop;
         scope.$watch('selectedView', saveView);
 
         function jumpToRole() {
@@ -79,6 +81,12 @@ export default function register() {
       $scope.openRoleChangeDialog = decorateWithReload(actions.openRoleChangeDialog);
       $scope.canModifyUsers = accessChecker.canModifyUsers;
       $scope.openSpaceInvitationDialog = openSpaceInvitationDialog;
+
+      $scope.userListProps = {
+        canModifyUsers: $scope.canModifyUsers(),
+        openRoleChangeDialog: $scope.openRoleChangeDialog,
+        openRemovalConfirmationDialog: $scope.openRemovalConfirmationDialog
+      };
 
       const organization = spaceContext.organization;
       const orgId = organization.sys.id;
@@ -126,7 +134,7 @@ export default function register() {
       function onResetResponse() {
         $scope.hasTeamSpaceMemberships = userListHandler.hasTeamSpaceMemberships();
         $scope.spaceUsersCount = userListHandler.getUserCount();
-        $scope.by = userListHandler.getGroupedUsers();
+        $scope.userListProps.by = userListHandler.getGroupedUsers();
         $scope.context.ready = true;
         $scope.jumpToRole();
       }
