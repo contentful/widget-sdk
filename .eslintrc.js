@@ -139,7 +139,8 @@ module.exports = {
       rules: {
         'import/no-unresolved': 'error',
         'rulesdir/relative-imports': 'error',
-        'rulesdir/restrict-angular-require': 'error'
+        'rulesdir/restrict-angular-require': 'error',
+        'rulesdir/restrict-forma-css-in-react-components': 'warn'
       },
       globals: {
         JST: false
