@@ -4,7 +4,6 @@ import * as K from 'utils/kefir.es6';
 import navBar from 'navigation/templates/NavBar.es6';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import * as TokenStore from 'services/TokenStore.es6';
-import * as TeamsFeature from 'app/OrganizationSettings/Teams/TeamsFeature.es6';
 import { SSO_SELF_CONFIG_FLAG } from 'featureFlags.es6';
 import { getOrgFeature } from '../data/CMA/ProductCatalog.es6';
 import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
@@ -57,9 +56,6 @@ export default function register() {
 
               FeatureService.get('offsiteBackup').then(featureEnabled => {
                 nav.hasOffsiteBackup = featureEnabled;
-              });
-              TeamsFeature.isEnabled(org).then(enabled => {
-                nav.teamsEnabled = enabled;
               });
 
               nav.hasBillingTab = org.isBillable && isOwner(org);
@@ -128,7 +124,6 @@ export default function register() {
           dataViewType: 'organization-users'
         },
         {
-          if: 'nav.teamsEnabled',
           title: 'Teams',
           label: 'new',
           sref: 'account.organizations.teams({orgId: nav.orgId})',
