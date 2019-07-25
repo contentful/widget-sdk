@@ -25,13 +25,12 @@ export default function create({ $scope, organizationId, entityInfo, endpoint })
       return;
     }
 
-    const throttledChanges$ = $scope.otDoc.docLocalChanges$.throttle(intervalMs, {
-      leading: false
-    });
-    onLocalChangeOff = K.onValueScope($scope, throttledChanges$, change => {
-      if (change && change.name === 'changed') {
-        endpoint(createRequest(intervalMs)).then(noop, noop);
-      }
+    const throttledRelevantChanges$ = $scope.otDoc.docLocalChanges$
+      .filter(change => change && change.name === 'changed')
+      .throttle(intervalMs, { leading: false });
+
+    onLocalChangeOff = K.onValueScope($scope, throttledRelevantChanges$, () => {
+      endpoint(createRequest(intervalMs)).then(noop, noop);
     });
   });
 
