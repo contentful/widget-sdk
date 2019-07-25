@@ -21,7 +21,6 @@ module.exports = {
             message:
               'Inline styles are disallowed in react components. Please use emotion instead along with @contentful/forma-36-tokens.'
           });
-          return;
         }
       }
     };
