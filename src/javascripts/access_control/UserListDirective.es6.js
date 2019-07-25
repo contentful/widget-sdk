@@ -5,6 +5,7 @@ import ReloadNotification from 'app/common/ReloadNotification.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
+import { getStore } from 'TheStore/index.es6';
 
 import template from './templates/UserList.es6';
 
@@ -12,10 +13,8 @@ export default function register() {
   registerDirective('cfUserList', [
     'UserListController/jumpToRole',
     '$timeout',
-    'TheStore',
-    (jumpToRole, $timeout, TheStore) => {
+    (jumpToRole, $timeout) => {
       const { popRoleId } = jumpToRole;
-      const { getStore } = TheStore;
       const store = getStore().forKey('userListView');
 
       const VIEW_BY_NAME = 'name';
