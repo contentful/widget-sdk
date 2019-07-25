@@ -19,9 +19,10 @@ import { getModule } from 'NgRegistry.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
 import * as logger from 'services/logger.es6';
 import { getVariation } from 'LaunchDarkly.es6';
-import { ENTRY_COMMENTS, ENTITY_EDITOR_CMA_EXPERIMENT } from 'featureFlags.es6';
+import { ENTRY_COMMENTS } from 'featureFlags.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import { buildFieldsApi } from 'app/entity_editor/dataFields.es6';
+import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsExperiment.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
@@ -182,28 +183,11 @@ export default async function create($scope, editorData, preferences, trackLoadE
     $scope.shouldDisplayCommentsToggle = isMasterEnvironment && variation;
   });
 
-  // The following weirdness is for analysing the viability of replacing share.js with plain HTTP calls to the CMA.
-  // This is temporary until we have gathered enough data to make a decision.
-  getVariation(ENTITY_EDITOR_CMA_EXPERIMENT, {
-    organizationId
-  }).then(intervalMs => {
-    $scope.onLocalChangeOff && $scope.onLocalChangeOff();
-    const isEnabled = intervalMs !== undefined && intervalMs > -1;
-
-    if (isEnabled) {
-      const throttledChanges$ = $scope.otDoc.docLocalChanges$.throttle(intervalMs);
-      $scope.onLocalChangeOff = K.onValueScope($scope, throttledChanges$, change => {
-        if (change && change.name === 'changed') {
-          spaceContext.endpoint({
-            method: 'GET',
-            path: ['entries', `${entityInfo.id}.php`], // We're using .php after the entry id as this makes the traffic-manager reject the request without applying rate limits.
-            query: {
-              debounce: intervalMs
-            }
-          });
-        }
-      });
-    }
+  setupNoShareJsCmaFakeRequestsExperiment({
+    $scope,
+    organizationId,
+    entityInfo,
+    endpoint: spaceContext.endpoint
   });
 
   /* Custom Extension */

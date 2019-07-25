@@ -8,9 +8,10 @@ import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking from './Tracking.es6';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge.es6';
-import { keys } from 'lodash';
+import { get, keys } from 'lodash';
 import setLocaleData from 'app/entity_editor/setLocaleData.es6';
 import TheLocaleStore from 'services/localeStore.es6';
+import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsExperiment.es6';
 
 import { getModule } from 'NgRegistry.es6';
 
@@ -93,6 +94,14 @@ export default async function create($scope, editorData, preferences) {
   $controller('FormWidgetsController', {
     $scope,
     controls: editorData.fieldControls.form
+  });
+
+  const organizationId = get(spaceContext, 'organization.sys.id');
+  setupNoShareJsCmaFakeRequestsExperiment({
+    $scope,
+    organizationId,
+    entityInfo,
+    endpoint: spaceContext.endpoint
   });
 
   function defaultLocaleIsFocused() {
