@@ -1,4 +1,5 @@
 import { registerController } from 'NgRegistry.es6';
+import { track } from 'analytics/Analytics.es6';
 import _ from 'lodash';
 
 export default function register() {
@@ -37,7 +38,7 @@ export default function register() {
         return invalidUsers.length;
       }
 
-      function inviteUsers() {
+      async function inviteUsers() {
         $scope.hasFailedInvitations = false;
         $scope.invitationsScheduled = $scope.users.length;
         $scope.invitationsDone = 0;
@@ -47,17 +48,33 @@ export default function register() {
           roleId: $scope.selectedRoles[user.sys.id]
         }));
         let currentInvitationId = 0;
+        let failedInvites = 0;
 
-        return $q.all(invitees.map(scheduleInvitation)).then(
-          () => {
-            $scope.dialog.confirm();
-          },
-          () => {
-            $scope.hasFailedInvitations = true;
-            $scope.invitationsScheduled = 0;
-            $scope.invitationsDone = 0;
-          }
+        const promises = invitees.map(invitee =>
+          scheduleInvitation(invitee).catch(() => (failedInvites += 1))
         );
+
+        await Promise.all(promises);
+
+        if (failedInvites === 0) {
+          track('teams_in_space:users_added', {
+            numErr: 0,
+            numSuccess: invitees.length
+          });
+
+          $scope.dialog.confirm();
+        } else {
+          $scope.hasFailedInvitations = true;
+          $scope.invitationsScheduled = 0;
+          $scope.invitationsDone = 0;
+
+          track('teams_in_space:users_added', {
+            numErr: failedInvites,
+            numSuccess: invitees.length - failedInvites
+          });
+
+          $scope.applyAsync();
+        }
 
         function scheduleInvitation(invitee) {
           const i = currentInvitationId;

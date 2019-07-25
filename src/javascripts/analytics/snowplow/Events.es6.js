@@ -162,6 +162,10 @@ registerGenericEvent('perf:dom_content_loaded');
 registerGenericEvent('perf:first_contentful_paint');
 registerGenericEvent('perf:time_to_interactive');
 
+registerGenericEvent('teams_in_space:teams_added');
+registerGenericEvent('teams_in_space:users_added');
+registerGenericEvent('teams_in_space:users_to_teams_page_navigation');
+
 registerEvent('personal_access_token:action', 'personal_access_token', (_, data) => {
   return {
     data: {
