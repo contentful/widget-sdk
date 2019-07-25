@@ -11,9 +11,10 @@ module.exports = {
       JSXAttribute(node) {
         const nodeName = node.name.name;
         const nodeValue = node.value ? node.value.value : '';
+        const f36ClassRegex = /\bf36-\b/;
 
         // nodeValue can be undefined hence the (nodeValue || '')
-        if (nodeName === 'className' && (nodeValue || '').startsWith('f36-')) {
+        if (nodeName === 'className' && (nodeValue || '').search(f36ClassRegex) > -1) {
           context.report({
             node,
             message:
