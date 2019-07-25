@@ -255,7 +255,7 @@ export default function register() {
 
         /**
          * @name spaceContext#isMasterEnvironment
-         * @param {envish} Environment or Alias
+         * @param {envOrAlias} Environment or Alias
          * @description
          * Returns whether the current environment is aliased to 'master'
          * or is 'master'
@@ -264,12 +264,12 @@ export default function register() {
          * @returns boolean
          */
         isMasterEnvironment: function(
-          envish = _.get(this, ['space', 'environment'], { sys: { id: 'master' } })
+          envOrAlias = _.get(this, ['space', 'environment'], { sys: { id: 'master' } })
         ) {
           if (
-            envish.sys.id === 'master' ||
-            (Array.isArray(envish.sys.aliases) &&
-              envish.sys.aliases.find(alias => alias.sys.id === 'master'))
+            envOrAlias.sys.id === 'master' ||
+            (Array.isArray(envOrAlias.sys.aliases) &&
+              envOrAlias.sys.aliases.find(alias => alias.sys.id === 'master'))
           ) {
             return true;
           }

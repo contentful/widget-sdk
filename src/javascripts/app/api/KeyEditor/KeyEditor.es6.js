@@ -83,15 +83,16 @@ function renderForm({ data, model, update, trackCopy }) {
       {data.environmentsEnabled && <Separator />}
       {data.environmentsEnabled && (
         <Section
-          title="Environments"
-          description="Select the environments this API key should have access to. At least one environment has to be selected.">
+          title="Environments and Aliases"
+          description="Select the environments and aliases this API key should have access to. At least one environment or alias has to be selected.">
           <EnvironmentSelector
             {...{
               canEdit: data.canEdit,
               isAdmin: data.isAdmin,
               spaceEnvironments: data.spaceEnvironments,
-              envs: model.environments,
-              updateEnvs: environments => update(assign(model, { environments }))
+              spaceAliases: data.spaceAliases,
+              selectedEnvOrAlias: model.environments,
+              updateEnvOrAlias: environments => update(assign(model, { environments }))
             }}
           />
         </Section>

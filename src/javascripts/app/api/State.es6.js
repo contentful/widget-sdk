@@ -9,6 +9,7 @@ import editorTemplate from './KeyEditor/Template.es6';
 import * as CMATokensPage from './CMATokens/Page.es6';
 import CMATokensPageTemplate from './CMATokens/PageTemplate.es6';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
+import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo.es6';
 import { redirectReadOnlySpace } from 'states/SpaceSettingsBase.es6';
 import { spaceResolver } from 'states/Resolvers.es6';
 
@@ -32,8 +33,9 @@ const apiKeyEditorState = {
     '$stateParams',
     'apiKey',
     'spaceEnvironments',
-    ($scope, $stateParams, apiKey, spaceEnvironments) => {
-      attachEditorController($scope, apiKey, spaceEnvironments);
+    'spaceAliases',
+    ($scope, $stateParams, apiKey, spaceEnvironments, spaceAliases) => {
+      attachEditorController($scope, apiKey, spaceEnvironments, spaceAliases);
 
       contextHistory.set([
         crumbFactory.CDAKeyList(),
@@ -53,6 +55,13 @@ const keyDetail = assign(
         'spaceContext',
         spaceContext => {
           const repo = SpaceEnvironmentRepo.create(spaceContext.endpoint);
+          return repo.getAll();
+        }
+      ],
+      spaceAliases: [
+        'spaceContext',
+        spaceContext => {
+          const repo = SpaceAliasesRepo.create(spaceContext.endpoint);
           return repo.getAll();
         }
       ],

@@ -12,12 +12,12 @@ import { CopyButton, Tag } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry.es6';
 const spaceContext = getModule('spaceContext');
 
-function makeLink(env) {
+function makeLink(envOrAlias) {
   return {
     sys: {
       type: 'Link',
-      linkType: 'Environment',
-      id: env.sys.id
+      linkType: envOrAlias.sys.type,
+      id: envOrAlias.sys.id
     }
   };
 }
@@ -32,7 +32,10 @@ export default function EnvironmentSelector(props) {
 }
 EnvironmentSelector.propTypes = {
   isAdmin: PropTypes.bool,
-  spaceEnvironments: PropTypes.array.isRequired
+  canEdit: PropTypes.bool,
+  spaceEnvironments: PropTypes.array.isRequired,
+  spaceAliases: PropTypes.array.isRequired,
+  updateEnvOrAlias: PropTypes.func.isRequired
 };
 
 function Hint() {
@@ -75,22 +78,29 @@ const copyButtonStyleOverride = css({
   }
 });
 
-function List({ canEdit, spaceEnvironments, envs, updateEnvs }) {
-  const isSelected = env => !!find(envs, { sys: { id: env.sys.id } });
+const environmentStyle = {};
 
-  const toggleEnvironmentSelection = env => {
-    if (isSelected(env)) {
-      updateEnvs(filter(envs, cur => cur.sys.id !== env.sys.id));
+const aliasStyle = {
+  border: `2px dashed ${tokens.colorElementLight}`
+};
+
+function List({ canEdit, spaceEnvironments, spaceAliases, selectedEnvOrAlias, updateEnvOrAlias }) {
+  const allEnvOrAlias = spaceAliases.concat(spaceEnvironments);
+  // Note that envs[] come from the api_keys endpoint which currently treats Environments and Aliases as Environments
+  const isSelected = envOrAlias => !!find(selectedEnvOrAlias, { sys: { id: envOrAlias.sys.id } });
+  const toggleEnvironmentSelection = envOrAlias => {
+    if (isSelected(envOrAlias)) {
+      updateEnvOrAlias(filter(selectedEnvOrAlias, cur => cur.sys.id !== envOrAlias.sys.id));
     } else {
-      updateEnvs(concat(envs, [makeLink(env)]));
+      updateEnvOrAlias(concat(selectedEnvOrAlias, [makeLink(envOrAlias)]));
     }
   };
 
   return (
     <div>
-      {spaceEnvironments.map(env => (
+      {allEnvOrAlias.map(envOrAlias => (
         <div
-          key={env.sys.id}
+          key={envOrAlias.sys.id}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -104,16 +114,22 @@ function List({ canEdit, spaceEnvironments, envs, updateEnvs }) {
             <input
               type="checkbox"
               style={{ marginRight: '10px' }}
-              checked={isSelected(env)}
-              disabled={!canEdit || spaceEnvironments.length < 2}
-              onChange={() => toggleEnvironmentSelection(env)}
+              checked={isSelected(envOrAlias)}
+              disabled={!canEdit || allEnvOrAlias.length < 2}
+              onChange={() => toggleEnvironmentSelection(envOrAlias)}
             />
-            <CodeFragment>{env.sys.id}</CodeFragment>
+            <CodeFragment
+              style={envOrAlias.sys.type === 'Environment' ? environmentStyle : aliasStyle}>
+              {envOrAlias.sys.id}
+            </CodeFragment>
           </label>
           <div style={{ display: 'inline-block', marginLeft: '6px' }} />
-          <CopyButton className={copyButtonStyleOverride} copyValue={env.sys.id} />
+          <CopyButton className={copyButtonStyleOverride} copyValue={envOrAlias.sys.id} />
           <div style={{ display: 'inline-block', marginLeft: '2em' }} />
-          {spaceContext.isMasterEnvironment(env) && <Tag tagType="muted">Default environment</Tag>}
+          {envOrAlias.sys.type === 'Environment' &&
+            spaceContext.isMasterEnvironment(envOrAlias) && (
+              <Tag tagType="muted">Default environment</Tag>
+            )}
         </div>
       ))}
     </div>
@@ -122,7 +138,8 @@ function List({ canEdit, spaceEnvironments, envs, updateEnvs }) {
 
 List.propTypes = {
   canEdit: PropTypes.bool,
-  spaceEnvironments: PropTypes.array,
-  envs: PropTypes.array,
-  updateEnvs: PropTypes.func
+  spaceEnvironments: PropTypes.array.isRequired,
+  spaceAliases: PropTypes.array.isRequired,
+  selectedEnvOrAlias: PropTypes.array.isRequired,
+  updateEnvOrAlias: PropTypes.func.isRequired
 };
