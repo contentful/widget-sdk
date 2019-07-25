@@ -44,11 +44,17 @@ const UserListReact = ({
                 items={[
                   {
                     label: 'Change role',
-                    action: () => openRoleChangeDialog(user)
+                    action: () => openRoleChangeDialog(user),
+                    otherProps: {
+                      'data-ui-trigger': 'user-change-role'
+                    }
                   },
                   {
                     label: 'Remove from this space',
-                    action: () => openRemovalConfirmationDialog(user)
+                    action: () => openRemovalConfirmationDialog(user),
+                    otherProps: {
+                      'data-ui-trigger': 'user-remove-from-space'
+                    }
                   }
                 ]}
               />
