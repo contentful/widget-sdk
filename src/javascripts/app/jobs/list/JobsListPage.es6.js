@@ -127,7 +127,7 @@ export default class JobsListPage extends Component {
       description: 'Entries that failed to publish',
       emptyStateMessage: {
         title: 'Nothing here :)',
-        text: 'Scheduled entries that have failed to publish, it will show up here.'
+        text: 'Scheduled entries that have failed to publish will show up here.'
       },
       query: {
         'sys.status': 'failed'
