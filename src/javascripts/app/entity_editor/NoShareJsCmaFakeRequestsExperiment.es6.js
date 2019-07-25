@@ -25,7 +25,9 @@ export default function create({ $scope, organizationId, entityInfo, endpoint })
       return;
     }
 
-    const throttledChanges$ = $scope.otDoc.docLocalChanges$.throttle(intervalMs);
+    const throttledChanges$ = $scope.otDoc.docLocalChanges$.throttle(intervalMs, {
+      leading: false
+    });
     onLocalChangeOff = K.onValueScope($scope, throttledChanges$, change => {
       if (change && change.name === 'changed') {
         endpoint(createRequest(intervalMs)).then(noop, noop);
