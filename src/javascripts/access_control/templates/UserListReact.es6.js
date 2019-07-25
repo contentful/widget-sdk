@@ -23,6 +23,10 @@ const UserListReact = ({
               <div className="user-list__roles">{user.roleNames}</div>
             </div>
             <ContextMenu
+              buttonProps={{
+                className: 'btn-inline btn-actions-nav user-list__actions',
+                'data-test-id': 'user-list.actions'
+              }}
               isDisabled={!canModifyUsers || user.numberOfTeamMemberships > 0}
               items={[
                 {

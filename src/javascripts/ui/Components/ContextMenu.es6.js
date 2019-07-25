@@ -13,7 +13,7 @@ class ContextMenu extends React.Component {
         otherProps: PropTypes.shape()
       })
     ),
-    otherProps: PropTypes.object,
+    buttonProps: PropTypes.shape(),
     style: PropTypes.object,
     isDisabled: PropTypes.bool
   };
@@ -33,7 +33,13 @@ class ContextMenu extends React.Component {
   };
 
   render() {
-    const { items, isDisabled: manuallyDisabled, style: userStyles, ...otherProps } = this.props;
+    const {
+      items,
+      isDisabled: manuallyDisabled,
+      style: userStyles,
+      buttonProps,
+      ...otherProps
+    } = this.props;
     const { isOpen } = this.state;
 
     const isDisabled = manuallyDisabled || !(items && items.length);
@@ -47,7 +53,11 @@ class ContextMenu extends React.Component {
           this.menuElement = menu;
         }}
         {...otherProps}>
-        <button disabled={isDisabled} className="btn-inline btn-actions-nav" onClick={this.toggle}>
+        <button
+          disabled={isDisabled}
+          className="btn-inline btn-actions-nav"
+          onClick={this.toggle}
+          {...buttonProps}>
           •••
         </button>
 
