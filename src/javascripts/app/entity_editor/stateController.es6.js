@@ -208,7 +208,7 @@ export default function register() {
                       eventOrigin,
                       widgetTrackingContexts,
                       contentType: contentType,
-                      response: entity.data
+                      response: entity
                     });
                   }
                   trackVersioning.publishedRestored(entity);

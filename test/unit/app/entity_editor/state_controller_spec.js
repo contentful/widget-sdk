@@ -283,7 +283,7 @@ describe('entityEditor/StateController', () => {
             sinon.assert.calledWithExactly(this.analytics.track, 'entry:publish', {
               eventOrigin: eventOrigin,
               contentType: { name: 'foo' },
-              response: this.entity.data,
+              response: this.entity,
               widgetTrackingContexts: []
             });
           });
