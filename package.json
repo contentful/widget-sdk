@@ -244,7 +244,7 @@
   "lint-staged": {
     "*.js": [
       "prettier --write",
-      "eslint --fix",
+      "eslint --fix --max-warnings 0",
       "git add"
     ],
     "*.json": [
