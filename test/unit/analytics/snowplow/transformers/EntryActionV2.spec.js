@@ -48,7 +48,7 @@ describe(PATH, () => {
   });
 
   it('adds the eventOrigin to the tracking data', function() {
-    const transformed = this.transform({ response: { data: { sys: { id: 'ENTRY_ID' } } } });
+    const transformed = this.transform({ response: { sys: { id: 'ENTRY_ID' } } });
     expect(transformed.data.entry_id).toEqual('ENTRY_ID');
   });
 
@@ -78,9 +78,7 @@ describe(PATH, () => {
     it('adds the number of entry reference fields to the tracking data', function() {
       const getEntryReferenceFieldCountWithFields = fields => {
         return this.transform({
-          contentType: {
-            data: { fields }
-          }
+          contentType: { fields }
         }).data.entry_ct_entry_reference_fields_count;
       };
 

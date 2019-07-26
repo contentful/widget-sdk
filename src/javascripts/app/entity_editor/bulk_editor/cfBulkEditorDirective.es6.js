@@ -154,8 +154,8 @@ export default function register() {
           return spaceContext.cma.createEntry(contentType.getId(), {}).then(entry => {
             Analytics.track('entry:create', {
               eventOrigin: 'bulk-editor',
-              contentType: contentType,
-              response: { data: entry }
+              contentType: contentType.data,
+              response: entry.data
             });
             track.addNew();
             return addLinks([linkEntity(entry)]);

@@ -208,15 +208,16 @@ export default function register() {
       };
 
       $scope.newEntry = contentTypeId => {
-        const contentType = spaceContext.publishedCTs.get(contentTypeId);
         entityCreator
           .newEntry(contentTypeId)
           .then(entry => {
+            const contentType = spaceContext.publishedCTs.get(contentTypeId).data;
             const eventOriginFlag = $scope.showNoEntriesAdvice() ? '--empty' : '';
+
             Analytics.track('entry:create', {
               eventOrigin: 'content-list' + eventOriginFlag,
               contentType: contentType,
-              response: entry
+              response: entry.data
             });
 
             // X.list -> X.detail

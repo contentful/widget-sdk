@@ -52,7 +52,7 @@ function getBaseEntityData(eventData) {
   return Object.assign(
     {
       action: eventData.actionData.action,
-      version: eventData.response.data.sys.version
+      version: eventData.response.sys.version
     },
     getBaseData(eventData)
   );
@@ -60,11 +60,11 @@ function getBaseEntityData(eventData) {
 
 function getEntitySpecificData(schemaName, eventData) {
   const data = {};
-  data[`${schemaName}_id`] = get(eventData, 'response.data.sys.id');
+  data[`${schemaName}_id`] = get(eventData, 'response.sys.id');
   // We track 2 additional fields on entries compared to all other entities
   if (eventData.actionData.entity === 'Entry') {
-    data['content_type_id'] = get(eventData, 'response.data.sys.contentType.sys.id');
-    data['revision'] = get(eventData, 'response.data.sys.revision');
+    data['content_type_id'] = get(eventData, 'response.sys.contentType.sys.id');
+    data['revision'] = get(eventData, 'response.sys.revision');
   }
   return data;
 }

@@ -5,7 +5,7 @@ import {
   canCreateAsset,
   Action
 } from 'access_control/AccessChecker/index.es6';
-import { noop, find } from 'lodash';
+import { noop, find, get } from 'lodash';
 import { newConfigFromField } from 'search/EntitySelector/Config.es6';
 import * as slideInNavigator from 'navigation/SlideInNavigator/index.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -158,8 +158,8 @@ async function createEntityOfType(type, contentType = null) {
   if (type === 'Entry') {
     track('entry:create', {
       eventOrigin: 'reference-editor',
-      contentType: { data: contentType },
-      response: legacyClientEntity
+      contentType: contentType,
+      response: get(legacyClientEntity, 'data')
     });
     track('reference_editor_action:create', { ctId });
   }

@@ -51,7 +51,7 @@ describe('Entry Actions Controller', () => {
 
     function itCreatesTheEntryWithReportingAndErrors(action) {
       let executeActionAndApplyScope;
-      const response = { getId: _.constant('NEW ID') };
+      const response = { getId: _.constant('NEW ID'), data: {} };
 
       beforeEach(function() {
         executeActionAndApplyScope = () => {
@@ -85,8 +85,8 @@ describe('Entry Actions Controller', () => {
           it('tracks the event', function() {
             sinon.assert.calledWithExactly(this.analytics.track, 'entry:create', {
               eventOrigin: action === 'add' ? 'entry-editor' : 'entry-editor__duplicate',
-              contentType: { data: { name: 'foo' } },
-              response: response
+              contentType: { name: 'foo' },
+              response: response.data
             });
           });
 

@@ -365,12 +365,12 @@ export default function register() {
 
               if (contentTypes.length === 1) {
                 const contentTypeId = contentTypes[0].sys.id;
-                const contentType = spaceContext.publishedCTs.get(contentTypeId);
+                const contentType = spaceContext.publishedCTs.get(contentTypeId).data;
                 entityCreator.newEntry(contentTypeId).then(function(entry) {
                   Analytics.track('entry:create', {
                     eventOrigin: 'onboarding',
                     contentType: contentType,
-                    response: entry
+                    response: entry.data
                   });
                   $state.go('spaces.detail.entries.detail', { entryId: entry.getId() });
                 });

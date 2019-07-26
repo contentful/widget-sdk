@@ -7,12 +7,14 @@ export default function register() {
     'spaceContext',
     'access_control/AccessChecker/index.es6',
     'analytics/Analytics.es6',
+    'services/logger.es6',
     function EntryListActionsController(
       $scope,
       $controller,
       spaceContext,
       accessChecker,
-      Analytics
+      Analytics,
+      logger
     ) {
       const listActionsController = $controller('ListActionsController', {
         $scope: $scope,
@@ -25,9 +27,8 @@ export default function register() {
       const controller = this;
       const publish = $scope.publishSelected;
       $scope.publishSelected = function(...args) {
-        const contentTypes = getContentTypes();
         return publish.apply(controller, args).then(results => {
-          results.succeeded.forEach(entryEventTracker('publish', 'content-list', contentTypes));
+          results.succeeded.forEach(entryEventTracker('publish', 'content-list'));
         });
       };
 
@@ -39,10 +40,9 @@ export default function register() {
       }
 
       function duplicate() {
-        const contentTypes = getContentTypes();
         return listActionsController.duplicate().then(results => {
           const succeeded = results.succeeded;
-          succeeded.forEach(entryEventTracker('create', 'content-list__duplicate', contentTypes));
+          succeeded.forEach(entryEventTracker('create', 'content-list__duplicate'));
           $scope.entries.unshift(...succeeded);
           $scope.paginator.setTotal(total => total + succeeded.length);
           // instead of the stuff done above, we should call updateEntries here
@@ -53,23 +53,23 @@ export default function register() {
         });
       }
 
-      // Returns an object having signature { [entryId]: [contentType] }.
-      function getContentTypes() {
-        return $scope.selection.getSelected().reduce((contentTypes, entry) => {
-          const contentTypeId = entry.data.sys.contentType.sys.id;
-          contentTypes[contentTypeId] = spaceContext.publishedCTs.get(contentTypeId);
-          return contentTypes;
-        }, {});
-      }
-
-      function entryEventTracker(action, origin, contentTypes) {
+      function entryEventTracker(action, origin) {
         return entry => {
-          const event = 'entry:' + action; // entry:create, entry:publish
-          Analytics.track(event, {
-            eventOrigin: origin,
-            contentType: contentTypes[entry.data.sys.contentType.sys.id],
-            response: entry
-          });
+          try {
+            const event = 'entry:' + action; // entry:create, entry:publish
+            const contentTypeId = entry.data.sys.contentType.sys.id;
+            const contentType = spaceContext.publishedCTs.get(contentTypeId).data;
+            Analytics.track(event, {
+              eventOrigin: origin,
+              contentType,
+              response: entry.data
+            });
+          } catch (error) {
+            logger.logError('Unexpected error during entryEventTracker call', {
+              err: error,
+              msg: error.message
+            });
+          }
         };
       }
     }
