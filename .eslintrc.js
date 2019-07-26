@@ -147,6 +147,13 @@ module.exports = {
       globals: {
         JST: false
       }
+    },
+    {
+      files: ['src/javascripts/svg/**/*.es6.js'],
+      plugins: ['rulesdir'],
+      rules: {
+        'rulesdir/restrict-inline-styles': 'off'
+      }
     }
   ]
 };
