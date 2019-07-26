@@ -31,7 +31,7 @@ export default function create({ $scope, organizationId, entityInfo, endpoint })
     const createRequest = () => ({
       method: 'GET',
       // .php will result in the request being rejected so it won't count towards rate limiting.
-      path: [PATH[entityInfo.type], `${entityInfo.id}.php`],
+      path: [PATH[entityInfo.type], entityInfo.id, 'edit.php'],
       query: { throttle: throttleMs }
     });
 
