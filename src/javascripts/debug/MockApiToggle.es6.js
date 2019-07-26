@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import { getStore } from 'TheStore/index.es6';
 import { omit } from 'lodash';

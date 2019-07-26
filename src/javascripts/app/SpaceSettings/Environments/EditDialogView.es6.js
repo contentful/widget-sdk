@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import * as Config from 'Config.es6';
 import React from 'react';
 import PropTypes from 'prop-types';

@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';

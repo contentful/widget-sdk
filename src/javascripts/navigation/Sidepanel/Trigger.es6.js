@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 /* eslint-disable camelcase */
 
 import React from 'react';

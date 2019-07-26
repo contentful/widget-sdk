@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React, { Component } from 'react';
 import { range } from 'lodash';
 

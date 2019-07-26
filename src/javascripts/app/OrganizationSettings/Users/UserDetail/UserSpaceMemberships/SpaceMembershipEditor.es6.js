@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getModule } from 'NgRegistry.es6';

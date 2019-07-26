@@ -141,10 +141,18 @@ module.exports = {
         'rulesdir/relative-imports': 'error',
         'rulesdir/restrict-angular-require': 'error',
         'rulesdir/restrict-forma-css-in-react-components': 'warn',
-        'rulesdir/restrict-non-f36-components': 'warn'
+        'rulesdir/restrict-non-f36-components': 'warn',
+        'rulesdir/restrict-inline-styles': 'error'
       },
       globals: {
         JST: false
+      }
+    },
+    {
+      files: ['src/javascripts/svg/**/*.es6.js'],
+      plugins: ['rulesdir'],
+      rules: {
+        'rulesdir/restrict-inline-styles': 'off'
       }
     }
   ]

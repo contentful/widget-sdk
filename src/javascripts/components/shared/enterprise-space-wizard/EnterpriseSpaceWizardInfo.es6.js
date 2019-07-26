@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 
 import { TextLink } from '@contentful/forma-36-react-components';

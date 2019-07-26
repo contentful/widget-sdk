@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 /**
  * Switches the UI version if a `ui_version` query string parameter is specified.
  * It also displays the version in the UI and provides an easy way to clear it.

@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import { get } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
