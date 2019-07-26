@@ -110,13 +110,23 @@ export function getSessionData(path, defaultValue) {
  * if it is on the valid events list.
  */
 export function track(event, data) {
-  data = _.isObject(data) ? _.cloneDeep(data) : {};
-  data = removeCircularRefs(Object.assign({}, getBasicPayload(), data));
+  try {
+    data = _.isObject(data) ? _.cloneDeep(data) : {};
+    data = removeCircularRefs(Object.assign({}, getBasicPayload(), data));
 
-  segment.track(event, data);
-  Snowplow.track(event, data);
-  analyticsConsole.add(event, data);
-  logEventPayloadSize(event, data);
+    segment.track(event, data);
+    Snowplow.track(event, data);
+    analyticsConsole.add(event, data);
+    logEventPayloadSize(event, data);
+  } catch (error) {
+    // ensure no errors caused by analytics will break business logic
+    logger.logError('Unexpected error during event tracking', {
+      error,
+      message: error.message,
+      event,
+      data
+    });
+  }
 }
 
 /**
@@ -129,19 +139,23 @@ export function track(event, data) {
 function logEventPayloadSize(event, safePayload) {
   if (typeof window.requestIdleCallback !== 'undefined') {
     window.requestIdleCallback(() => {
-      const size = JSON.stringify(safePayload).length;
+      try {
+        const size = JSON.stringify(safePayload).length;
 
-      // any of the payload fields has methods on the first level
-      const hasMethods = Object.entries(safePayload)
-        .flatMap(([_, v]) => Object.values(v))
-        .some(v => _.isFunction(v));
+        // any of the payload fields has methods on the first level
+        const hasMethods = Object.entries(safePayload || {})
+          .flatMap(([_, v]) => Object.values(v || {}))
+          .some(v => _.isFunction(v));
 
-      if (size > 1000 || hasMethods) {
-        logger.logWarn('Potentially bloated tracking event payload', {
-          event,
-          size,
-          hasMethods
-        });
+        if (size > 1000 || hasMethods) {
+          logger.logWarn('Potentially bloated tracking event payload', {
+            event,
+            size,
+            hasMethods
+          });
+        }
+      } catch (error) {
+        // ignore error
       }
     });
   }
