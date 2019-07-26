@@ -140,7 +140,8 @@ module.exports = {
         'import/no-unresolved': 'error',
         'rulesdir/relative-imports': 'error',
         'rulesdir/restrict-angular-require': 'error',
-        'rulesdir/restrict-forma-css-in-react-components': 'warn'
+        'rulesdir/restrict-forma-css-in-react-components': 'warn',
+        'rulesdir/restrict-non-f36-components': 'warn'
       },
       globals: {
         JST: false
