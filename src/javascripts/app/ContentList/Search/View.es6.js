@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 /* eslint-disable react/prop-types */
 // TODO: add prop-types
 

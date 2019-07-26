@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import * as React from 'react';
 
 export default function NoResults() {

@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 /* eslint-disable react/prop-types */
 import React from 'react';
 import tokens from '@contentful/forma-36-tokens';

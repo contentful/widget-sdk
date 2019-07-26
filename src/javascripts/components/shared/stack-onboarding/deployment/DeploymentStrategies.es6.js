@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import Tabs from 'components/shared/stack-onboarding/components/Tabs.es6';
 import Code from 'components/shared/stack-onboarding/components/Code.es6';

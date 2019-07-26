@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Spinner, Note } from '@contentful/forma-36-react-components';

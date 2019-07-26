@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import { omit, pick, negate, trim, sortedUniq, isObject, get } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';

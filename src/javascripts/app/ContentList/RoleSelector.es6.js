@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import { includes } from 'lodash';
 import { unshift, assign, update, set } from 'utils/Collections.es6';
 import * as K from 'utils/kefir.es6';

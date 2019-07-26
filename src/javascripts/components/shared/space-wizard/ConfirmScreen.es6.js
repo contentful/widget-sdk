@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { get, trim } from 'lodash';

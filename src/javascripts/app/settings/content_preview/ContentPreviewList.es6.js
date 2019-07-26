@@ -1,3 +1,4 @@
+/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import StateLink from 'app/common/StateLink.es6';
