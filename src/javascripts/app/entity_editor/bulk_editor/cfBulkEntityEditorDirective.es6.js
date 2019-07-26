@@ -251,18 +251,11 @@ export default function register() {
         $scope.title = truncate(title, 50);
       });
 
-      const organizationId = _.get(spaceContext, 'organization.sys.id');
-
-      setupNoShareJsCmaFakeRequestsExperiment({
-        $scope,
-        organizationId,
-        entityInfo,
-        endpoint: spaceContext.endpoint
-      });
+      setupNoShareJsCmaFakeRequestsExperiment({ $scope, spaceContext, entityInfo });
 
       // Building the form
       $controller('FormWidgetsController', {
-        $scope: $scope,
+        $scope,
         controls: editorData.fieldControls.form
       });
 

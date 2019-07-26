@@ -13,19 +13,18 @@ const PATH = {
  * with plain HTTP calls to the CMA.
  *
  * @param {Object} $scope entity editor scope. Expected to have a `otDoc` prop.
- * @param {string} organizationId
+ * @param {Object} spaceContext
  * @param {Object} entityInfo Expects an `id` and `type`.
- * @param {SpaceEndpoint} endpoint
  */
-export default function create({ $scope, organizationId, entityInfo, endpoint }) {
-  getVariation(ENTITY_EDITOR_CMA_EXPERIMENT, {
-    organizationId
-  }).then(variation => {
-    const isEnabled = variation !== undefined && variation > -1;
-    if (isEnabled) {
-      setupFakeRequests(variation);
-    }
+export default async function create({ $scope, spaceContext, entityInfo }) {
+  const variation = await getVariation(ENTITY_EDITOR_CMA_EXPERIMENT, {
+    organizationId: spaceContext.getData('organization.sys.id'),
+    spaceId: spaceContext.space.getId()
   });
+  const isEnabled = variation !== undefined && variation > -1;
+  if (isEnabled) {
+    setupFakeRequests(variation);
+  }
 
   function setupFakeRequests(throttleMs) {
     const createRequest = () => ({
@@ -40,7 +39,7 @@ export default function create({ $scope, organizationId, entityInfo, endpoint })
       .throttle(throttleMs, { leading: false });
 
     K.onValueScope($scope, throttledRelevantChanges$, () => {
-      endpoint(createRequest()).then(noop, noop);
+      spaceContext.endpoint(createRequest()).then(noop, noop);
     });
   }
 }

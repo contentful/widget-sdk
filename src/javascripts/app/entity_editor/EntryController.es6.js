@@ -174,21 +174,14 @@ export default async function create($scope, editorData, preferences, trackLoadE
     return localeCodes.length === 1 && localeCodes[0] === focusedLocale.internal_code;
   }
 
-  const organizationId = get(spaceContext, 'organization.sys.id');
-
   getVariation(ENTRY_COMMENTS, {
-    organizationId
+    organizationId: get(spaceContext, 'organization.sys.id')
   }).then(variation => {
     const isMasterEnvironment = spaceContext.isMasterEnvironment();
     $scope.shouldDisplayCommentsToggle = isMasterEnvironment && variation;
   });
 
-  setupNoShareJsCmaFakeRequestsExperiment({
-    $scope,
-    organizationId,
-    entityInfo,
-    endpoint: spaceContext.endpoint
-  });
+  setupNoShareJsCmaFakeRequestsExperiment({ $scope, spaceContext, entityInfo });
 
   /* Custom Extension */
 
