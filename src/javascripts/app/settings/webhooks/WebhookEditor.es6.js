@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { Button, Notification, Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import Icon from 'ui/Components/Icon.es6';
 import WebhookForm from './WebhookForm.es6';
 import WebhookSidebar from './WebhookSidebar.es6';
 import * as WebhookEditorActions from './WebhookEditorActions.es6';
@@ -108,81 +109,90 @@ class WebhookEditor extends React.Component {
     }
   };
 
+  renderTabs() {
+    const { tab } = this.state;
+    return (
+      <Tabs role="tablist" className="f36-margin-bottom--m">
+        <Tab
+          id="webhook_settings"
+          testId="webhook-settings-tab"
+          selected={tab === TABS.SETTINGS}
+          onSelect={() => this.setState({ tab: TABS.SETTINGS })}>
+          Webhook settings
+        </Tab>
+        <Tab
+          id="webhook_activity_log"
+          testId="webhook-activity-tab"
+          selected={tab === TABS.LOG}
+          onSelect={() => this.setState({ tab: TABS.LOG })}>
+          Activity log
+        </Tab>
+      </Tabs>
+    );
+  }
+
   render() {
     const { tab, webhook, fresh, dirty, busy } = this.state;
 
     return (
       <React.Fragment>
-        <Workbench className="webhook-editor">
-          <Workbench.Header>
-            <Workbench.Header.Back to="^.list" testId="webhook-back" />
-            <Workbench.Icon icon="page-settings" />
-            <Workbench.Title>
-              Webhook: {webhook.name || 'Unnamed'}
-              {dirty ? '*' : ''}
-            </Workbench.Title>
-            <Workbench.Header.Actions>
-              {tab === TABS.SETTINGS && !fresh && (
-                <Button
-                  testId="webhook-remove"
-                  buttonType="muted"
-                  onClick={() => {
-                    this.setState({ isDeleteDialogShown: true });
-                  }}>
-                  Remove
-                </Button>
-              )}
+        <Workbench testId="webhook-editor-page">
+          <Workbench.Header
+            onBack={() => {
+              $state.go('^.list');
+            }}
+            icon={<Icon name="page-settings" scale="0.8" />}
+            title={`Webhook: ${webhook.name || 'Unnamed'}${dirty ? '*' : ''}`}
+            actions={
+              <>
+                {tab === TABS.SETTINGS && !fresh && (
+                  <Button
+                    className="f36-margin-left--m"
+                    testId="webhook-remove"
+                    buttonType="muted"
+                    onClick={() => {
+                      this.setState({ isDeleteDialogShown: true });
+                    }}>
+                    Remove
+                  </Button>
+                )}
 
-              {tab === TABS.SETTINGS && (
-                <Button
-                  testId="webhook-save"
-                  buttonType="positive"
-                  disabled={!dirty}
-                  loading={busy}
-                  onClick={this.save}>
-                  Save
-                </Button>
-              )}
+                {tab === TABS.SETTINGS && (
+                  <Button
+                    className="f36-margin-left--m"
+                    testId="webhook-save"
+                    buttonType="positive"
+                    disabled={!dirty}
+                    loading={busy}
+                    onClick={this.save}>
+                    Save
+                  </Button>
+                )}
 
-              {tab === TABS.LOG && (
-                <Button
-                  testId="webhook-refresh-log"
-                  buttonType="muted"
-                  loading={busy}
-                  onClick={this.refreshLog}>
-                  Refresh log
-                </Button>
-              )}
-            </Workbench.Header.Actions>
-          </Workbench.Header>
-          {!fresh && (
-            <Workbench.Nav>
-              <Tabs role="tablist" className="f36-margin-left--xl">
-                <Tab
-                  id="webhook_settings"
-                  testId="webhook-settings"
-                  selected={tab === TABS.SETTINGS}
-                  onSelect={() => this.setState({ tab: TABS.SETTINGS })}>
-                  Webhook settings
-                </Tab>
-                <Tab
-                  id="webhook_activity_log"
-                  selected={tab === TABS.LOG}
-                  onSelect={() => this.setState({ tab: TABS.LOG })}>
-                  Activity log
-                </Tab>
-              </Tabs>
-            </Workbench.Nav>
-          )}
+                {tab === TABS.LOG && (
+                  <Button
+                    className="f36-margin-left--m"
+                    testId="webhook-refresh-log"
+                    buttonType="muted"
+                    loading={busy}
+                    onClick={this.refreshLog}>
+                    Refresh log
+                  </Button>
+                )}
+              </>
+            }
+          />
           {tab === TABS.SETTINGS && (
-            <Workbench.Content>
+            <Workbench.Content type="full" testId="webhook-settings">
+              {!fresh && this.renderTabs()}
               <TabPanel id="webhook_settings">
                 <WebhookForm webhook={webhook} onChange={this.onChange} />
               </TabPanel>
             </Workbench.Content>
           )}
           {tab === TABS.LOG && (
-            <Workbench.Content>
+            <Workbench.Content type="full" testId="webhook-activity">
+              {!fresh && this.renderTabs()}
               <TabPanel id="webhook_activity_log">
                 <WebhookActivityLog
                   webhookId={webhook.sys.id}
@@ -193,7 +203,7 @@ class WebhookEditor extends React.Component {
             </Workbench.Content>
           )}
           {tab === TABS.SETTINGS && (
-            <Workbench.Sidebar>
+            <Workbench.Sidebar position="right">
               <WebhookSidebar />
             </Workbench.Sidebar>
           )}

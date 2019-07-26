@@ -66,8 +66,16 @@ export default {
           mapInjectedToProps: [
             '$stateParams',
             'spaceContext',
-            ({ webhookId, callId }, { webhookRepo }) => {
-              return { webhookRepo, webhookId, callId };
+            '$state',
+            ({ webhookId, callId }, { webhookRepo }, $state) => {
+              return {
+                webhookRepo,
+                webhookId,
+                callId,
+                onGoBack: () => {
+                  $state.go('^');
+                }
+              };
             }
           ]
         }

@@ -41,7 +41,7 @@ export default class WebhookForm extends React.Component {
     const includeContentLength = get(webhook, ['transformation', 'includeContentLength'], false);
 
     return (
-      <div className="webhook-editor__settings">
+      <div className="webhook-editor__settings f36-padding-top--s">
         <FormSection title="Details">
           <div className="cfnext-form__field">
             <label htmlFor="webhook-name">

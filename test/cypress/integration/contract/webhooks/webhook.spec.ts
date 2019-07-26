@@ -39,7 +39,7 @@ describe('Webhook', () => {
     })
   );
 
-  let interactions: string[]
+  let interactions: string[];
   beforeEach(() => {
     cy.resetAllFakeServers();
 
@@ -243,7 +243,7 @@ describe('Webhook', () => {
     });
 
     it('renders webhook page', () => {
-      cy.getByTestId('webhook-settings').click();
+      cy.getByTestId('webhook-settings-tab').click();
       cy.getByTestId('webhook-method-select').should('have.value', 'GET');
       cy.getByTestId('filter-entity-type').should('have.value', 'sys.id');
       cy.getByTestId('filter-operation').should('contain', 'not equals');
@@ -288,7 +288,7 @@ describe('Webhook', () => {
         queryFirst100WebhooksInDefaultSpace.willFindNone()
       ];
 
-      cy.getByTestId('webhook-settings').click();
+      cy.getByTestId('webhook-settings-tab').click();
       cy.getByTestId('webhook-remove').click();
       cy.getByTestId('remove-webhook-confirm').click();
 

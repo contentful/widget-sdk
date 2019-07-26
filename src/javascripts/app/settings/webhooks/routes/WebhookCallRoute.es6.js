@@ -21,7 +21,8 @@ export class WebhookCallRoute extends React.Component {
       }).isRequired
     }).isRequired,
     webhookId: PropTypes.string.isRequired,
-    callId: PropTypes.string.isRequired
+    callId: PropTypes.string.isRequired,
+    onGoBack: PropTypes.func.isRequired
   };
 
   render() {
@@ -38,7 +39,7 @@ export class WebhookCallRoute extends React.Component {
             return <StateRedirect to="^.^.detail" />;
           }
           const [webhook, call] = data;
-          return <WebhookCall webhook={webhook} call={call} />;
+          return <WebhookCall webhook={webhook} call={call} onGoBack={this.props.onGoBack} />;
         }}
       </WebhookCallFetcher>
     );

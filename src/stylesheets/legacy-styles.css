@@ -2522,26 +2522,6 @@
   .settings-form__content {
     margin-left: 2.571428571428572em;
   }
-  .webhook-editor .x--clickable,
-  .webhook-call .x--clickable {
-    cursor: pointer;
-  }
-  .webhook-editor .x--ellipsis,
-  .webhook-call .x--ellipsis {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .webhook-editor .x--nowrap,
-  .webhook-call .x--nowrap {
-    display: block;
-    white-space: nowrap;
-  }
-  .webhook-editor code,
-  .webhook-call code {
-    font-size: 0.9em;
-  }
   .webhook-call__header {
     padding: 1.285714285714286em;
     display: -webkit-box;
@@ -2553,13 +2533,6 @@
   }
   .webhook-call__header-item {
     margin: 0 1.285714285714286em;
-  }
-  .webhook-call .workbench-main__content {
-    position: relative;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
   }
   .webhook-call__column {
     border-top: 1px solid #d3dce0;

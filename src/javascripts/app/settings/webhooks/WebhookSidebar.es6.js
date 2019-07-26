@@ -4,7 +4,7 @@ import WebhookSidebarDocumentation from './WebhookSidebarDocumentation.es6';
 
 export default function WebhookSidebar() {
   return (
-    <div className="entity-sidebar">
+    <>
       <WebhookSidebarDocumentation />
       <h2 className="entity-sidebar__heading">Webhook URL requirements</h2>
       <div className="entity-sidebar__text-profile">
@@ -29,6 +29,6 @@ export default function WebhookSidebar() {
           to obtain information about IP ranges we use to deliver webhook calls.
         </p>
       </div>
-    </div>
+    </>
   );
 }

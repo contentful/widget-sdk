@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import Icon from 'ui/Components/Icon.es6';
 import { get } from 'lodash';
 
 import WebhookCallStatus from './WebhookCallStatus.es6';
@@ -16,7 +17,8 @@ const parseJsonSafe = s => {
 export class WebhookCall extends React.Component {
   static propTypes = {
     webhook: PropTypes.object.isRequired,
-    call: PropTypes.object.isRequired
+    call: PropTypes.object.isRequired,
+    onGoBack: PropTypes.func.isRequired
   };
 
   render() {
@@ -31,15 +33,15 @@ export class WebhookCall extends React.Component {
     const resHeaders = get(call, ['response', 'headers']);
 
     return (
-      <Workbench className="webhook-call">
-        <Workbench.Header>
-          <Workbench.Header.Back to="^" />
-          <Workbench.Icon icon="page-settings" />
-          <Workbench.Title>
-            Call details for {webhook.name} at {call.requestAt}
-          </Workbench.Title>
-        </Workbench.Header>
-        <Workbench.Content>
+      <Workbench>
+        <Workbench.Header
+          onBack={() => {
+            this.props.onGoBack();
+          }}
+          title={`Call details for ${webhook.name} at ${call.requestAt}`}
+          icon={<Icon name="page-settings" scale="0.8" />}
+        />
+        <Workbench.Content type="full">
           <div className="webhook-call__details">
             <div className="webhook-call__header">
               <strong className="webhook-call__header-item x--ellipsis">{webhook.name}</strong>

@@ -14,7 +14,7 @@ class Workbench extends React.Component {
     children: function(props, propName) {
       const children = React.Children.toArray(props[propName]);
 
-      const allowedTypes = [Workbench.Content, Workbench.Sidebar, Workbench.Header, Workbench.Nav];
+      const allowedTypes = [Workbench.Content, Workbench.Sidebar, Workbench.Header];
       const typeNames = allowedTypes.map(type => type.displayName);
 
       const filterByType = type => children.filter(child => child.type === type);
@@ -45,7 +45,6 @@ class Workbench extends React.Component {
 
       validateSingleChildOfType(Workbench.Header);
       validateSingleChildOfType(Workbench.Sidebar);
-      validateSingleChildOfType(Workbench.Nav);
     }
   };
 
@@ -55,7 +54,6 @@ class Workbench extends React.Component {
     const header = childrenArray.find(child => child.type === Workbench.Header);
     const content = childrenArray.find(child => child.type === Workbench.Content);
     const sidebar = childrenArray.find(child => child.type === Workbench.Sidebar);
-    const nav = childrenArray.find(child => child.type === Workbench.Nav);
 
     return (
       <div className={classNames('workbench', className)} data-test-id={testId}>
@@ -74,7 +72,6 @@ class Workbench extends React.Component {
             </header>
           </div>
         )}
-        {nav && nav}
         <div className="workbench-main">
           {content}
           {sidebar && sidebar}
@@ -171,12 +168,6 @@ Workbench.Header.Actions = class HeaderActions extends React.Component {
   render() {
     return <div className="workbench-header__actions">{this.props.children}</div>;
   }
-};
-
-Workbench.Nav = ({ children }) => <div className="workbench-nav">{children}</div>;
-Workbench.Nav.displayName = 'Workbench.Nav';
-Workbench.Nav.propTypes = {
-  children: PropTypes.node
 };
 
 Workbench.Content = class Content extends React.Component {
