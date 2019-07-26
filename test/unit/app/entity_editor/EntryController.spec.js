@@ -73,11 +73,8 @@ describe('Entry Editor Controller', function() {
       return scope;
     };
 
-    this.spaceContext = _.extend(this.$inject('spaceContext'), {
-      entryTitle: function(entry) {
-        return _.get(entry, 'data.fields.title');
-      }
-    });
+    this.spaceContext = this.$inject('mocks/spaceContext').init();
+    this.spaceContext.entryTitle = entry => _.get(entry, 'data.fields.title');
 
     userBus.set(this.user);
     this.scope = this.createController();
