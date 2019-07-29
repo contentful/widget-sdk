@@ -134,7 +134,7 @@ export default function register() {
       function onResetResponse() {
         $scope.hasTeamSpaceMemberships = userListHandler.hasTeamSpaceMemberships();
         $scope.spaceUsersCount = userListHandler.getUserCount();
-        $scope.userListProps.by = userListHandler.getGroupedUsers();
+        $scope.userListProps.usersByView = userListHandler.getGroupedUsers();
         $scope.context.ready = true;
         $scope.jumpToRole();
       }

@@ -1,21 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Tooltip } from '@contentful/forma-36-react-components';
+import { Tooltip, SectionHeading } from '@contentful/forma-36-react-components';
 import pluralize from 'pluralize';
 
 import ContextMenu from 'ui/Components/ContextMenu.es6';
 
 const UserListReact = ({
-  by,
+  usersByView,
   selectedView,
   canModifyUsers,
   openRoleChangeDialog,
   openRemovalConfirmationDialog
 }) => (
   <>
-    {(by[selectedView] || []).map(item => (
+    {(usersByView[selectedView] || []).map(item => (
       <div key={item.label} className="user-list__group">
-        <h3>{item.label}</h3>
+        <SectionHeading element="h3">{item.label}</SectionHeading>
         {item.users.map(user => (
           <div key={user.id} className="user-list__item">
             <img src={user.avatarUrl} width="50" height="50" />
@@ -67,7 +67,7 @@ const UserListReact = ({
 );
 
 UserListReact.propTypes = {
-  by: PropTypes.objectOf(
+  usersByView: PropTypes.objectOf(
     PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string,
@@ -82,7 +82,7 @@ UserListReact.propTypes = {
 };
 
 UserListReact.defaultProps = {
-  by: {}
+  usersByView: {}
 };
 
 export default UserListReact;
