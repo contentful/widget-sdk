@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import cn from 'classnames';
+import moment from 'moment';
 
 import AngularComponent from 'ui/Framework/AngularComponent.es6';
 
@@ -17,6 +18,9 @@ const styles = {
   textOverflow: css({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
+  }),
+  noWrap: css({
     whiteSpace: 'nowrap'
   })
 };
@@ -134,7 +138,7 @@ const toString = (entry, field) => {
   return result;
 };
 
-function DateFieldValue({ value }) {
+function RelativeDateFieldValue({ value }) {
   return (
     <span className={styles.textOverflow}>
       <RelativeDateTime value={value} />
@@ -142,7 +146,17 @@ function DateFieldValue({ value }) {
   );
 }
 
-DateFieldValue.propTypes = {
+RelativeDateFieldValue.propTypes = {
+  value: PropTypes.string.isRequired
+};
+
+function AbsoluteDateFieldValue({ value }) {
+  return (
+    <span className={styles.noWrap}>{moment.parseZone(value).format('MM/DD/YYYY h:mm A Z')}</span>
+  );
+}
+
+AbsoluteDateFieldValue.propTypes = {
   value: PropTypes.string.isRequired
 };
 
@@ -150,17 +164,19 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
   let result;
   switch (displayType(field)) {
     case 'updatedAt':
-      result = entry.getUpdatedAt() && <DateFieldValue value={entry.getUpdatedAt()} />;
+      result = entry.getUpdatedAt() && <RelativeDateFieldValue value={entry.getUpdatedAt()} />;
       break;
     case 'createdAt':
-      result = entry.getCreatedAt() && <DateFieldValue value={entry.getCreatedAt()} />;
+      result = entry.getCreatedAt() && <RelativeDateFieldValue value={entry.getCreatedAt()} />;
       break;
     case 'publishedAt':
-      result = entry.getPublishedAt() && <DateFieldValue value={entry.getPublishedAt()} />;
+      result = entry.getPublishedAt() && <RelativeDateFieldValue value={entry.getPublishedAt()} />;
       break;
-    case 'Date':
-      result = dataForField(entry, field) && <DateFieldValue value={dataForField(entry, field)} />;
+    case 'Date': {
+      const value = dataForField(entry, field);
+      result = value && <AbsoluteDateFieldValue value={value} />;
       break;
+    }
     case 'author':
       result = <UserNameFormatter userId={entry.getUpdatedBy().sys.id} />;
       break;
