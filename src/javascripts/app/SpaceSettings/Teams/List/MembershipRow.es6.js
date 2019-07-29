@@ -168,7 +168,7 @@ const MembershipRow = ({
           this space?
         </Paragraph>
       </ModalConfirm>
-      <TableCell className={cx(styles.cell, styles.teamCell)} testId="team-cell">
+      <TableCell className={cx(styles.cell)} testId="team-cell">
         <div className={styles.teamNameCell} data-test-id="team.name">
           {name}
         </div>
@@ -177,11 +177,11 @@ const MembershipRow = ({
           {truncate(description, { length: 130 })}
         </div>
       </TableCell>
-      <TableCell className={cx(styles.cell, styles.membersCell)} testId="member-count-cell">
+      <TableCell className={cx(styles.cell)} testId="member-count-cell">
         {pluralize('member', memberCount, true)}
       </TableCell>
       {isEditing ? (
-        <TableCell className={styles.roleFormCell} colSpan={2}>
+        <TableCell colSpan={2}>
           <div className={styles.roleForm}>
             <SpaceRoleEditor
               buttonProps={{ className: styles.roleEditorButton }}

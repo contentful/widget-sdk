@@ -14,14 +14,14 @@ export default {
     maxWidth: tokens.contentWidthDefault,
     padding: tokens.spacingXl
   }),
+  table: css({
+    tableLayout: 'fixed'
+  }),
   row: css({
     height: '95px'
   }),
   cell: css({
     paddingRight: tokens.spacing3Xl
-  }),
-  teamCell: css({
-    width: '438px'
   }),
   teamNameCell: css({
     fontWeight: tokens.fontWeightMedium,
@@ -36,11 +36,16 @@ export default {
     MozLineClamp: '2',
     WebkitBoxOrient: 'vertical'
   }),
-  membersCell: css({
-    width: '245px'
+  teamColumn: css({
+    width: '40%'
+  }),
+  membersColumn: css({
+    width: '13%'
+  }),
+  rolesColumn: css({
+    width: '42%'
   }),
   rolesCell: css({
-    width: '575px',
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
     lineHeight: '1.2em'
@@ -49,9 +54,6 @@ export default {
     minWidth: '300px',
     maxWidth: '300px',
     marginRight: tokens.spacingM
-  }),
-  roleFormCell: css({
-    width: '511px'
   }),
   roleForm: css({
     display: 'flex',
