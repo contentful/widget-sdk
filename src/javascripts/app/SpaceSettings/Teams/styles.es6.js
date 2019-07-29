@@ -12,7 +12,7 @@ export default {
     paddingTop: 0
   }),
   content: css({
-    width: '100%',
+    maxWidth: tokens.contentWidthDefault,
     padding: tokens.spacingXl
   }),
   row: css({
