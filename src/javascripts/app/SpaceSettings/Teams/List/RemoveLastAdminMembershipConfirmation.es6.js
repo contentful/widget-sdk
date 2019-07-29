@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { TextInput, ModalConfirm } from '@contentful/forma-36-react-components';
+import { TextInput, ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
 
 import styles from '../styles.es6';
 
-const RemoveOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm, teamName }) => {
+const RemoveOwnAdminMembershipConfirmation = ({
+  close,
+  isShown,
+  onConfirm,
+  teamName,
+  isLastAdminMembership
+}) => {
   const [userConfirmationInput, setUserConfirmationInput] = useState('');
 
   useEffect(() => {
@@ -23,26 +29,27 @@ const RemoveOwnAdminMembershipConfirmation = ({ close, isShown, onConfirm, teamN
       confirmLabel="Remove"
       cancelLabel="Don't remove"
       isConfirmDisabled={userConfirmationInput !== 'I UNDERSTAND'}>
-      <>
-        <p>
+      <div className={styles.modalContent}>
+        <Paragraph>
           You are about to remove the team {teamName} from this space. This will result in you{' '}
           {<strong className={styles.strong}>losing administrator role</strong>} for this space.
-        </p>
-        <p>
-          If you remove this team, there might not be a user who can fully control this space. It
-          will only be possibly to manage the space from your organization settings by an
-          organization administrator.
-        </p>
-        <p>
+        </Paragraph>
+        {isLastAdminMembership && (
+          <Paragraph>
+            If you remove this team, there will not be a user who can fully control this space. It
+            will only be possibly to manage the space from your organization settings.
+          </Paragraph>
+        )}
+        <Paragraph>
           To confirm you want to remove this team, please type
           {<strong className={styles.strong}> &quot;I&nbsp;UNDERSTAND&quot; </strong>}
           in the field below:
-        </p>
+        </Paragraph>
         <TextInput
           value={userConfirmationInput}
           onChange={({ target: { value } }) => setUserConfirmationInput(value)}
         />
-      </>
+      </div>
     </ModalConfirm>
   );
 };
@@ -51,7 +58,8 @@ RemoveOwnAdminMembershipConfirmation.propTypes = {
   close: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
   isShown: PropTypes.bool.isRequired,
-  teamName: PropTypes.string.isRequired
+  teamName: PropTypes.string.isRequired,
+  isLastAdminMembership: PropTypes.bool.isRequired
 };
 
 export default RemoveOwnAdminMembershipConfirmation;

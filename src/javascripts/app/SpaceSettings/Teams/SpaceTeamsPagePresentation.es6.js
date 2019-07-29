@@ -30,16 +30,16 @@ const goToAddTeams = () =>
   });
 
 const SpaceTeamsPagePresentation = ({
-                                      memberships,
-                                      teams,
-                                      isLoading,
-                                      isPending,
-                                      availableRoles,
-                                      onUpdateTeamSpaceMembership,
-                                      onRemoveTeamSpaceMembership,
-                                      readOnly,
-                                      currentUserAdminSpaceMemberships
-                                    }) => {
+  memberships,
+  teams,
+  isLoading,
+  isPending,
+  availableRoles,
+  onUpdateTeamSpaceMembership,
+  onRemoveTeamSpaceMembership,
+  readOnly,
+  currentUserAdminSpaceMemberships
+}) => {
   const [openMenu, setOpenMenu] = useState(null);
   const [editingRow, setEditingRow] = useState(null);
 
@@ -97,29 +97,30 @@ const SpaceTeamsPagePresentation = ({
               <TableBody>
                 {isLoading && <LoadingPlaceholder />}
                 {!isLoading &&
-                memberships.map(membership => {
-                  const {
-                    sys: { id: membershipId }
-                  } = membership;
-                  return (
-                    <MembershipRow
-                      key={membershipId}
-                      {...{
-                        readOnly,
-                        setMenuOpen: open => setOpenMenu(open ? membershipId : null),
-                        menuIsOpen: openMenu === membershipId,
-                        setEditing: edit => setEditingRow(edit ? membershipId : null),
-                        isEditing: editingRow === membershipId,
-                        membership,
-                        availableRoles,
-                        onUpdateTeamSpaceMembership,
-                        onRemoveTeamSpaceMembership,
-                        isPending,
-                        currentUserAdminSpaceMemberships
-                      }}
-                    />
-                  );
-                })}
+                  memberships.map(membership => {
+                    const {
+                      sys: { id: membershipId }
+                    } = membership;
+                    return (
+                      <MembershipRow
+                        key={membershipId}
+                        {...{
+                          readOnly,
+                          setMenuOpen: open => setOpenMenu(open ? membershipId : null),
+                          menuIsOpen: openMenu === membershipId,
+                          setEditing: edit => setEditingRow(edit ? membershipId : null),
+                          isEditing: editingRow === membershipId,
+                          membership,
+                          memberships,
+                          availableRoles,
+                          onUpdateTeamSpaceMembership,
+                          onRemoveTeamSpaceMembership,
+                          isPending,
+                          currentUserAdminSpaceMemberships
+                        }}
+                      />
+                    );
+                  })}
               </TableBody>
             </Table>
           </div>
