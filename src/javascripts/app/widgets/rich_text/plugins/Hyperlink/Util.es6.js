@@ -62,7 +62,7 @@ async function insertLink(change, createHyperlinkDialog, logAction) {
       value: { text: change.value.fragment.text || '' }
     });
     if (showTextInput) {
-      if (change.value.blocks.last().isVoid) {
+      if (change.isVoid(change.value.blocks.last())) {
         change.insertBlock(BLOCKS.PARAGRAPH);
       }
       change.insertText(text).moveFocusForward(0 - text.length);
