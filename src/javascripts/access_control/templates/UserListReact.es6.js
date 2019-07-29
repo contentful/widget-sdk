@@ -28,7 +28,7 @@ const UserListReact = ({
               place="left"
               content={
                 user.numberOfTeamMemberships > 0
-                  ? `This member has space access through ${pluralize(
+                  ? `This user has space access through ${pluralize(
                       'team',
                       user.numberOfTeamMemberships,
                       true
