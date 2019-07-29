@@ -6,7 +6,9 @@ import {
   SectionHeading,
   Button,
   Notification,
-  IconButton
+  IconButton,
+  Subheading,
+  HelpText
 } from '@contentful/forma-36-react-components';
 import _ from 'lodash';
 import * as tokens from '@contentful/forma-36-tokens';
@@ -36,7 +38,10 @@ const styles = {
   }),
 
   sectionHeading: css({
-    color: tokens.colorTextLight
+    color: tokens.colorTextLight,
+    padding: `0 0 ${tokens.spacingM} 0`,
+    marginBottom: tokens.spacingL,
+    borderBottom: `1px solid ${tokens.colorElementDark}`
   }),
   teamTitle: css({
     marginBottom: tokens.spacingM
@@ -46,24 +51,28 @@ const styles = {
     width: '100%'
   }),
 
+  selectHelp: css({
+    marginTop: tokens.spacingS
+  }),
+
   teamsAndRolesLists: css({
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    marginTop: tokens.spacing2Xl
   }),
 
   teamsContainer: css({
     flexBasis: '60%',
-    marginRight: tokens.spacing2Xl
+    marginRight: '100px'
   }),
   teamsList: css({
-    height: '450px',
-    overflow: 'auto',
+    minHeight: '400px',
     wordBreak: 'break-word'
   }),
 
   submitButton: css({
-    marginTop: tokens.spacing2Xl
+    marginTop: tokens.spacing3Xl
   }),
 
   rolesContainer: css({
@@ -82,10 +91,11 @@ const styles = {
           opacity: 1
         }
       },
-      position: 'relative'
+      position: 'relative',
+      margin: 0
     }),
     title: css({
-      marginBottom: tokens.spacingXs
+      marginBottom: tokens.spacingS
     }),
     name: css({
       wordBreak: 'break-word',
@@ -254,7 +264,7 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
   const content = (
     <div className={styles.workbenchContent}>
       <div>
-        <Heading>Add teams from your organization</Heading>
+        <Subheading>To add teams to this space, search within your organization</Subheading>
         <Autocomplete
           placeholder="Search for a team"
           disabled={isLoading}
@@ -265,12 +275,16 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
           items={teamsInAutocomplete}>
           {items => items.map(team => <AutocompleteTeam key={team.sys.id} team={team} />)}
         </Autocomplete>
+        <HelpText className={styles.selectHelp}>
+          It is possible to add multiple teams. The role assignment will apply to all teams you are
+          adding.
+        </HelpText>
       </div>
       {shouldShowControls && (
         <div data-test-id="teams-and-roles-lists" className={styles.teamsAndRolesLists}>
           <div className={styles.teamsContainer}>
             <SectionHeading className={cx(styles.sectionHeading, styles.teamTitle)}>
-              {pluralize('team', selectedTeamIds.length, true)}
+              {pluralize('team', selectedTeamIds.length, true)} selected
             </SectionHeading>
             <div className={styles.teamsList} data-test-id="teams-list">
               {selectedTeamIds.length !== 0 &&
