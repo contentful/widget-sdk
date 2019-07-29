@@ -1,15 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { FieldGroup, RadioButtonField, CheckboxField } from '@contentful/forma-36-react-components';
+import { RadioButtonField, CheckboxField } from '@contentful/forma-36-react-components';
+import * as tokens from '@contentful/forma-36-tokens';
 
-const classes = {
+const styles = {
   container: css({
     flexBasis: '40%'
   }),
   list: css({
     marginLeft: '20px',
     wordBreak: 'break-word'
+  }),
+  otherRoles: css({
+    marginTop: tokens.spacingM
+  }),
+  role: css({
+    marginTop: tokens.spacingS
   })
 };
 
@@ -22,7 +29,7 @@ export default function RoleSelector({
   disabled
 }) {
   return (
-    <FieldGroup>
+    <>
       <RadioButtonField
         labelIsLight
         labelText="Admin"
@@ -45,6 +52,7 @@ export default function RoleSelector({
             name="admin"
             id="admin_false"
             value="false"
+            className={styles.otherRoles}
             testId="RoleSelector.admin_false"
             checked={adminSelected === false}
             disabled={disabled}
@@ -52,9 +60,9 @@ export default function RoleSelector({
               onAdminSelected(false);
             }}
           />
-          <div className={classes.list}>
+          <div className={styles.list}>
             {roles.map(role => (
-              <div key={role.sys.id}>
+              <div key={role.sys.id} className={styles.role}>
                 <CheckboxField
                   labelIsLight
                   id={role.sys.id}
@@ -72,7 +80,7 @@ export default function RoleSelector({
           </div>
         </>
       )}
-    </FieldGroup>
+    </>
   );
 }
 
