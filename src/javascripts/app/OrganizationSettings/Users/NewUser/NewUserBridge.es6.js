@@ -13,13 +13,13 @@ export default function NewUserBridge({ onReady, context, orgId }) {
   useEffect(() => {
     Promise.all([getVariation('feature-bv-05-2019-new-invitation-flow'), getOrganization(orgId)])
       .then(([variation, organization]) => {
-        setVariation(variation);
         setOrg(organization);
+        setVariation(variation);
       })
       .catch(() => setVariation(false));
   }, [orgId]);
 
-  if (variation) {
+  if (variation && org) {
     return (
       <NewUser
         onReady={onReady}
