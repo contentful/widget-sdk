@@ -1,6 +1,6 @@
 import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
-import { constant, keys, get } from 'lodash';
+import { constant, keys } from 'lodash';
 import mitt from 'mitt';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge.es6';
 import { user$ } from 'services/TokenStore.es6';
@@ -175,7 +175,8 @@ export default async function create($scope, editorData, preferences, trackLoadE
   }
 
   getVariation(ENTRY_COMMENTS, {
-    organizationId: get(spaceContext, 'organization.sys.id')
+    organizationId: spaceContext.getData('organization.sys.id'),
+    spaceId: spaceContext.space.getId()
   }).then(variation => {
     const isMasterEnvironment = spaceContext.isMasterEnvironment();
     $scope.shouldDisplayCommentsToggle = isMasterEnvironment && variation;
