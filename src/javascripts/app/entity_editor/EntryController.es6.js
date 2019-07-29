@@ -22,6 +22,7 @@ import { getVariation } from 'LaunchDarkly.es6';
 import { ENTRY_COMMENTS } from 'featureFlags.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import { buildFieldsApi } from 'app/entity_editor/dataFields.es6';
+import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsExperiment.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
@@ -179,6 +180,8 @@ export default async function create($scope, editorData, preferences, trackLoadE
     const isMasterEnvironment = spaceContext.isMasterEnvironment();
     $scope.shouldDisplayCommentsToggle = isMasterEnvironment && variation;
   });
+
+  setupNoShareJsCmaFakeRequestsExperiment({ $scope, spaceContext, entityInfo });
 
   /* Custom Extension */
 

@@ -82,6 +82,7 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
           // TODO should emit when calling setters
           changes: K.createMockStream(),
           localFieldChanges$: K.createMockStream(),
+          docLocalChanges$: K.createMockStream(),
 
           valuePropertyAt: sinon.spy(valuePropertyAt),
           sysProperty: sysProperty,
