@@ -5,7 +5,8 @@ import {
   TableCell,
   TableRow,
   Tooltip,
-  ModalConfirm
+  ModalConfirm,
+  Paragraph
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
@@ -156,10 +157,10 @@ const MembershipRow = ({
         confirmLabel="Remove"
         cancelLabel="Cancel"
         title="Remove team from this space">
-        <p>
+        <Paragraph>
           Are you sure you want to remove {<strong className={styles.strong}>{name}</strong>} from
           this space?
-        </p>
+        </Paragraph>
       </ModalConfirm>
       <TableCell className={styles.cell} testId="team-cell">
         <div className={styles.cellTeamName} data-test-id="team.name">
@@ -170,8 +171,11 @@ const MembershipRow = ({
           {truncate(description, { length: 130 })}
         </div>
       </TableCell>
+      <TableCell className={styles.cell} testId="member-count-cell">
+        {pluralize('member', memberCount, true)}
+      </TableCell>
       {isEditing ? (
-        <TableCell colSpan={3}>
+        <TableCell colSpan={2}>
           <div className={styles.roleForm}>
             <SpaceRoleEditor
               buttonProps={{ className: styles.roleEditorButton }}
@@ -197,9 +201,6 @@ const MembershipRow = ({
         </TableCell>
       ) : (
         <>
-          <TableCell className={styles.cell} testId="member-count-cell">
-            {pluralize('member', memberCount, true)}
-          </TableCell>
           <TableCell className={cx(styles.cellRoles, styles.cell)} testId="roles-cell">
             {isEmpty(roles) ? 'Admin' : joinWithAnd(map(roles, 'name'))}
           </TableCell>

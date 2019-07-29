@@ -19,7 +19,7 @@ export default {
     height: '95px'
   }),
   cell: css({
-    paddingRight: '140px'
+    paddingRight: tokens.spacing3Xl
   }),
   cellTeamName: css({
     fontWeight: tokens.fontWeightMedium,
@@ -37,7 +37,8 @@ export default {
     WebkitBoxOrient: 'vertical'
   }),
   cellRoles: css({
-    maxWidth: columnMaxWidth,
+    minWidth: '520px',
+    maxWidth: '520px',
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
     lineHeight: '1.2em'
