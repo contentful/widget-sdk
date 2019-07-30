@@ -30,7 +30,8 @@ const DowngradeOwnAdminMembershipConfirmation = ({
       isConfirmDisabled={userConfirmationInput !== 'I UNDERSTAND'}>
       <div className={styles.modalContent}>
         <Paragraph>
-          You are removing the admin role of the team {teamName}.{' '}
+          You are removing the admin role of the team{' '}
+          {<strong className={styles.strong}>{teamName}</strong>}.{' '}
           {isLastAdminMembership &&
             'This team has a user with the last administrator role for this space.'}
         </Paragraph>
