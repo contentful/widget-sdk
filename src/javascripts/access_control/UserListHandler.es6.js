@@ -45,8 +45,7 @@ export default function register() {
           getUsersByRole,
           getRoleOptions,
           getRoleOptionsBut,
-          isLastAdmin,
-          hasTeamSpaceMemberships
+          isLastAdmin
         };
 
         function reset() {
@@ -170,12 +169,6 @@ export default function register() {
         function isLastAdmin(userId) {
           const adminCount = _.filter(adminMap, _.identity).length;
           return adminMap[userId] && adminCount < 2;
-        }
-
-        function hasTeamSpaceMemberships() {
-          return users.some(user =>
-            user.membership.relatedMemberships.some(m => m.sys.linkType === 'TeamSpaceMembership')
-          );
         }
 
         function getRoleOptions() {

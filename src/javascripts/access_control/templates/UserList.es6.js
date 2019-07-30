@@ -6,7 +6,7 @@ export default function() {
     h('.workbench-main', [
       h('.workbench-main__content', [
         h('react-component', {
-          name: 'access_control/templates/UserListReact.es6',
+          name: 'access_control/UserListReact.es6',
           props: 'userListProps'
         })
       ]),

@@ -7,8 +7,6 @@ import * as TokenStore from 'services/TokenStore.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import { getStore } from 'TheStore/index.es6';
 
-import template from './templates/UserList.es6';
-
 export default function register() {
   registerDirective('cfUserList', [
     'UserListController/jumpToRole',
@@ -25,14 +23,14 @@ export default function register() {
 
       return {
         restrict: 'E',
-        template: template(),
+        template: '<react-component name="access_control/Users/UserList.es6" props="props" />',
         controller: 'UserListController',
         link
       };
 
       function saveView(view, _, scope) {
         if (includes([VIEW_BY_NAME, VIEW_BY_ROLE], view)) {
-          scope.userListProps.selectedView = scope.selectedView;
+          scope.props.selectedView = scope.selectedView;
           store.set(view);
         }
       }
@@ -41,7 +39,7 @@ export default function register() {
         const roleId = popRoleId();
         scope.viewLabels = VIEW_LABELS;
         scope.selectedView = roleId ? VIEW_BY_ROLE : store.get() || VIEW_BY_NAME;
-        scope.userListProps.selectedView = scope.selectedView;
+        scope.props.selectedView = scope.selectedView;
         scope.jumpToRole = roleId ? once(jumpToRole) : noop;
         scope.$watch('selectedView', saveView);
 
@@ -65,7 +63,7 @@ export default function register() {
     'spaceContext',
     'UserListHandler',
     'access_control/AccessChecker',
-    'access_control/UserListActions.es6',
+    'access_control/Users/UserListActions.es6',
     ($scope, spaceContext, UserListHandler, accessChecker, UserListActions) => {
       const userListHandler = UserListHandler.create();
       const actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
@@ -75,29 +73,20 @@ export default function register() {
         $scope.userQuota = q;
       });
 
-      $scope.openRemovalConfirmationDialog = decorateWithReload(
-        actions.openRemovalConfirmationDialog
-      );
-      $scope.openRoleChangeDialog = decorateWithReload(actions.openRoleChangeDialog);
-      $scope.canModifyUsers = accessChecker.canModifyUsers;
-      $scope.openSpaceInvitationDialog = openSpaceInvitationDialog;
-
-      $scope.userListProps = {
-        canModifyUsers: $scope.canModifyUsers(),
-        openRoleChangeDialog: $scope.openRoleChangeDialog,
-        openRemovalConfirmationDialog: $scope.openRemovalConfirmationDialog
-      };
-
       const organization = spaceContext.organization;
       const orgId = organization.sys.id;
 
-      $scope.addUsersToSpaceNoteProps = {
+      $scope.props = {
+        canModifyUsers: accessChecker.canModifyUsers(),
+        openSpaceInvitationDialog,
         orgId,
-        isOwnerOrAdmin: isOwnerOrAdmin(organization)
+        isOwnerOrAdmin: isOwnerOrAdmin(organization),
+        openRemovalConfirmationDialog: decorateWithReload(actions.openRemovalConfirmationDialog),
+        openRoleChangeDialog: decorateWithReload(actions.openRoleChangeDialog)
       };
 
       getOrgFeature(orgId, 'teams', false).then(value => {
-        $scope.addUsersToSpaceNoteProps.hasTeamsFeature = value;
+        $scope.props.hasTeamsFeature = value;
       });
 
       reload();
@@ -109,10 +98,10 @@ export default function register() {
       }
 
       function openSpaceInvitationDialog() {
-        $scope.isInvitingUsersToSpace = true;
+        $scope.props.isInvitingUsersToSpace = true;
 
         decorateWithReload(actions.openSpaceInvitationDialog)().finally(() => {
-          $scope.isInvitingUsersToSpace = false;
+          $scope.props.isInvitingUsersToSpace = false;
         });
       }
 
@@ -132,9 +121,11 @@ export default function register() {
       }
 
       function onResetResponse() {
-        $scope.hasTeamSpaceMemberships = userListHandler.hasTeamSpaceMemberships();
-        $scope.spaceUsersCount = userListHandler.getUserCount();
-        $scope.userListProps.usersByView = userListHandler.getGroupedUsers();
+        $scope.props = {
+          ...$scope.props,
+          spaceUsersCount: userListHandler.getUserCount(),
+          userGroupsByView: userListHandler.getGroupedUsers()
+        };
         $scope.context.ready = true;
         $scope.jumpToRole();
       }
