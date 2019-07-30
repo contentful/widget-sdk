@@ -52,6 +52,10 @@ export default function createAppExtensionBridge(dependencies) {
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
 
+    // TODO: consider `readOnly: true` for "app" location.
+    // Right now we create all the apps but in the future we want to open
+    // the framework. If we do so, we want to prevent apps from messing with
+    // a space before they are installed.
     api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
 
     api.registerHandler('callAppMethod', methodName => {

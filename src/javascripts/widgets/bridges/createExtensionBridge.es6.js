@@ -164,6 +164,7 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       });
     }
 
+    // TODO: alpha handlers - to be removed.
     api.registerHandler('alpha', async ({ command, args }) => {
       if (command === 'proxyGetRequest' && args) {
         const client = createAppsClient(spaceContext.getId());
@@ -173,6 +174,7 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
 
       throw new Error('Unknown alpha command.');
     });
+    // TODO: to be removed - end.
 
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
   }
