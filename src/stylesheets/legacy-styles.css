@@ -1336,7 +1336,7 @@ pre,
     right: -10px;
     background: #3072be;
     color: #fff;
-    padding: 3px 5px 2px 5px;
+    padding: 3px 5px;
     font-size: 10px;
     line-height: 10px;
     border-radius: 3px;
@@ -3654,7 +3654,7 @@ pre,
     right: 0;
     background: #3072be;
     color: #fff;
-    padding: 3px 5px 2px 5px;
+    padding: 3px 5px;
     font-size: 10px;
     line-height: 10px;
     border-radius: 3px;
