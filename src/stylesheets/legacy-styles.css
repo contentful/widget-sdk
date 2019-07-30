@@ -4,6 +4,14 @@
 [data-test-id] {
   font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol!important;
 }
+
+/* Monospace font styles */
+code,
+pre,
+.CodeMirror {
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
+}
+
   :-moz-ui-invalid {
     -webkit-box-shadow: none;
     box-shadow: none;
@@ -2109,7 +2117,7 @@
     background-color: inherit;
   }
   .code-block__line {
-    font-family: monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
     display: block;
     line-height: 0.6rem;
     padding-right: 2em;
@@ -5935,7 +5943,7 @@
     margin-top: 1.285714285714286em;
   }
   .validation-controls__re-pattern {
-    font-family: "Menlo", "Andale mono", monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
     width: 28em;
   }
   .validation-controls__re-flags-label {
@@ -5943,7 +5951,7 @@
     margin-right: 0.8em;
   }
   .validation-controls__re-flags {
-    font-family: "Menlo", "Andale mono", monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
     width: 4em;
   }
   .validation-controls__option-list {
@@ -9636,7 +9644,7 @@
     margin: 0 1.5em;
   }
   .json-editor__disabled-content {
-    font-family: "Menlo", "Andale mono", monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
     color: #8091a5;
     background: #f7f9fa;
     line-height: 1.5;
@@ -9761,7 +9769,7 @@
   .json-editor__editor .CodeMirror {
     height: auto;
     color: #2a3039;
-    font-family: "Menlo", "Andale mono", monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
   }
   .json-editor__editor .CodeMirror-scroll {
     min-height: 7.714285714285715em;
@@ -10876,11 +10884,11 @@
     filter: alpha(opacity=10);
   }
   .api-key-boilerplate-instructions code {
-    font-family: "Menlo", "Andale mono", monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
   }
   .api-key-boilerplate-instructions pre > code {
     font-size: 12px;
-    font-family: "Menlo", "Andale mono", monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
     white-space: pre-wrap;
     overflow-wrap: break-word;
     word-wrap: break-word;
