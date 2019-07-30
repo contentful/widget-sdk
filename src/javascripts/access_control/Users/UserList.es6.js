@@ -75,6 +75,16 @@ const UserList = ({
       <Workbench.Header
         title={`Users (${spaceUsersCount})`}
         icon={<Icon name="page-users" scale="0.75" />}
+        actions={
+          <Button
+            buttonType="primary"
+            testId="add-users-to-space"
+            disabled={!canModifyUsers || isInvitingUsersToSpace}
+            loading={isInvitingUsersToSpace}
+            onClick={openSpaceInvitationDialog}>
+            Add users
+          </Button>
+        }
       />
       <Workbench.Content className={styles.workbench.content}>
         {userGroups.map(userGroup => (
@@ -132,15 +142,6 @@ const UserList = ({
         <SectionHeading className={styles.sidebar.heading}>
           Adding and managing users
         </SectionHeading>
-        <Button
-          buttonType="primary"
-          isFullWidth
-          testId="add-users-to-space"
-          disabled={!canModifyUsers || isInvitingUsersToSpace}
-          loading={isInvitingUsersToSpace}
-          onClick={openSpaceInvitationDialog}>
-          Add users
-        </Button>
         <AddUsersToSpaceNote
           {...{
             orgId,
