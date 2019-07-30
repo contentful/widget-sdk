@@ -37,7 +37,7 @@ export default {
     WebkitBoxOrient: 'vertical'
   }),
   teamColumn: css({
-    width: '40%'
+    width: '39.9%'
   }),
   membersColumn: css({
     width: '13%'

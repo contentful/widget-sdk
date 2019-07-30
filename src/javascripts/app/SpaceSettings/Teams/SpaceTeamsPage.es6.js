@@ -135,7 +135,7 @@ const useFetching = spaceId => {
           }))
         );
         dispatch({ type: 'UPDATE_SUCCESS', payload: { updatedMembership } });
-        Notification.success(`Successfully changed roles for team ${teamName}`);
+        Notification.success('Team role successfully changed');
       } catch (e) {
         Notification.error(`Could not change roles for team ${teamName}`);
         dispatch({ type: 'ERROR' });

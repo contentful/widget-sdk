@@ -30,13 +30,19 @@ const DowngradeOwnAdminMembershipConfirmation = ({
       isConfirmDisabled={userConfirmationInput !== 'I UNDERSTAND'}>
       <div className={styles.modalContent}>
         <Paragraph>
-          You are about to remove the admin role of the team {teamName}. This will result in you{' '}
-          {<strong className={styles.strong}>losing administrator role</strong>} for this space.
+          You are removing the admin role of the team {teamName}.{' '}
+          {isLastAdminMembership &&
+            'This team has a user with the last administrator role for this space.'}
         </Paragraph>
+        {!isLastAdminMembership && (
+          <Paragraph>
+            If you change this role, you will lose your administrator role for this space and can
+            only manage this space from your organization settings.
+          </Paragraph>
+        )}
         {isLastAdminMembership && (
           <Paragraph>
-            If you change this role, there will not be a user who can fully control this space. It
-            will only be possibly to manage the space from your organization settings.
+            If you change this role, you can only manage this space from your organization settings.
           </Paragraph>
         )}
         <Paragraph>
