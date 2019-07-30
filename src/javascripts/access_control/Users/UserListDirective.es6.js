@@ -1,4 +1,4 @@
-import { includes, noop, once } from 'lodash';
+import { noop, once } from 'lodash';
 
 import { registerDirective, registerController, registerFactory } from 'NgRegistry.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
@@ -6,6 +6,8 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import { getStore } from 'TheStore/index.es6';
+
+import { VIEW_BY_NAME, VIEW_BY_ROLE, VIEW_LABELS } from './constants.es6';
 
 export default function register() {
   registerDirective('cfUserList', [
@@ -15,12 +17,6 @@ export default function register() {
       const { popRoleId } = jumpToRole;
       const store = getStore().forKey('userListView');
 
-      const VIEW_BY_NAME = 'name';
-      const VIEW_BY_ROLE = 'role';
-      const VIEW_LABELS = {};
-      VIEW_LABELS[VIEW_BY_NAME] = 'Show users in alphabetical order';
-      VIEW_LABELS[VIEW_BY_ROLE] = 'Show users grouped by role';
-
       return {
         restrict: 'E',
         template: '<react-component name="access_control/Users/UserList.es6" props="props" />',
@@ -28,21 +24,18 @@ export default function register() {
         link
       };
 
-      function saveView(view, _, scope) {
-        if (includes([VIEW_BY_NAME, VIEW_BY_ROLE], view)) {
-          scope.props.selectedView = scope.selectedView;
-          store.set(view);
-        }
-      }
-
       function link(scope, el) {
         const roleId = popRoleId();
         scope.viewLabels = VIEW_LABELS;
-        scope.selectedView = roleId ? VIEW_BY_ROLE : store.get() || VIEW_BY_NAME;
-        scope.props.selectedView = scope.selectedView;
+        scope.props.selectedView = roleId ? VIEW_BY_ROLE : store.get() || VIEW_BY_NAME;
+        scope.props.onChangeSelectedView = newView => {
+          scope.props.selectedView = newView;
+          scope.$applyAsync();
+          store.set(newView);
+        };
         scope.jumpToRole = roleId ? once(jumpToRole) : noop;
-        scope.$watch('selectedView', saveView);
 
+        // TODO: migrate the jumping
         function jumpToRole() {
           $timeout(() => {
             const groupHeader = el.find('#role-group-' + roleId).first();

@@ -1,6 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SectionHeading, Button, Tooltip } from '@contentful/forma-36-react-components';
+import {
+  SectionHeading,
+  Button,
+  Tooltip,
+  Select,
+  Option
+} from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -8,8 +14,10 @@ import pluralize from 'pluralize';
 
 import Icon from 'ui/Components/Icon.es6';
 import ContextMenu from 'ui/Components/ContextMenu.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 import AddUsersToSpaceNote from './AddUsersToSpaceNote.es6';
+import { VIEW_LABELS } from './constants.es6';
 
 const styles = {
   workbench: {
@@ -17,6 +25,10 @@ const styles = {
       padding: 0
     })
   },
+  groupSelect: css({
+    marginLeft: tokens.spacingM,
+    marginTop: tokens.spacingM
+  }),
   sidebar: {
     heading: css({
       color: tokens.colorTextLight,
@@ -66,91 +78,106 @@ const UserList = ({
   selectedView,
   spaceUsersCount,
   openRoleChangeDialog,
-  openRemovalConfirmationDialog
+  openRemovalConfirmationDialog,
+  onChangeSelectedView
 }) => {
   const userGroups = (userGroupsByView && userGroupsByView[selectedView]) || [];
 
   return (
-    <Workbench>
-      <Workbench.Header
-        title={`Users (${spaceUsersCount})`}
-        icon={<Icon name="page-users" scale="0.75" />}
-        actions={
-          <Button
-            buttonType="primary"
-            testId="add-users-to-space"
-            disabled={!canModifyUsers || isInvitingUsersToSpace}
-            loading={isInvitingUsersToSpace}
-            onClick={openSpaceInvitationDialog}>
-            Add users
-          </Button>
-        }
-      />
-      <Workbench.Content className={styles.workbench.content}>
-        {userGroups.map(userGroup => (
-          <div key={userGroup.id} className={styles.userListGroup}>
-            <SectionHeading element="h3">{userGroup.label}</SectionHeading>
-            {userGroup.users.map(user => (
-              <div key={user.id} className={styles.user}>
-                <img className={styles.userAvater} src={user.avatarUrl} width="50" height="50" />
-                <div>
-                  <strong>{user.name}</strong>
-                  {!user.confirmed && <small>This account is not confirmed</small>}
-                  <div>{user.roleNames}</div>
-                </div>
-                <Tooltip
-                  targetWrapperClassName={styles.userMenu}
-                  place="left"
-                  content={
-                    user.numberOfTeamMemberships > 0
-                      ? `This user has space access through ${pluralize(
-                          'team',
-                          user.numberOfTeamMemberships,
-                          true
-                        )}`
-                      : ''
-                  }>
-                  <ContextMenu
-                    buttonProps={{
-                      'data-test-id': 'user-list.actions'
-                    }}
-                    isDisabled={!canModifyUsers || user.numberOfTeamMemberships > 0}
-                    items={[
-                      {
-                        label: 'Change role',
-                        action: () => openRoleChangeDialog(user),
-                        otherProps: {
-                          'data-ui-trigger': 'user-change-role'
-                        }
-                      },
-                      {
-                        label: 'Remove from this space',
-                        action: () => openRemovalConfirmationDialog(user),
-                        otherProps: {
-                          'data-ui-trigger': 'user-remove-from-space'
-                        }
-                      }
-                    ]}
-                  />
-                </Tooltip>
-              </div>
-            ))}
-          </div>
-        ))}
-      </Workbench.Content>
-      <Workbench.Sidebar position="right">
-        <SectionHeading className={styles.sidebar.heading}>
-          Adding and managing users
-        </SectionHeading>
-        <AddUsersToSpaceNote
-          {...{
-            orgId,
-            isOwnerOrAdmin,
-            hasTeamsFeature
-          }}
+    <>
+      <DocumentTitle title="Users" />
+      <Workbench>
+        <Workbench.Header
+          title={`Users (${spaceUsersCount})`}
+          icon={<Icon name="page-users" scale="0.75" />}
+          actions={
+            <Button
+              buttonType="primary"
+              testId="add-users-to-space"
+              disabled={!canModifyUsers || isInvitingUsersToSpace}
+              loading={isInvitingUsersToSpace}
+              onClick={openSpaceInvitationDialog}>
+              Add users
+            </Button>
+          }
         />
-      </Workbench.Sidebar>
-    </Workbench>
+        <Workbench.Content className={styles.workbench.content}>
+          <Select
+            value={selectedView}
+            width="medium"
+            className={styles.groupSelect}
+            onChange={({ target: { value } }) => onChangeSelectedView(value)}>
+            {Object.keys(VIEW_LABELS).map(key => (
+              <Option key={key} value={key}>
+                {VIEW_LABELS[key]}
+              </Option>
+            ))}
+          </Select>
+          {userGroups.map(userGroup => (
+            <div key={userGroup.id} className={styles.userListGroup}>
+              <SectionHeading element="h3">{userGroup.label}</SectionHeading>
+              {userGroup.users.map(user => (
+                <div key={user.id} className={styles.user}>
+                  <img className={styles.userAvater} src={user.avatarUrl} width="50" height="50" />
+                  <div>
+                    <strong>{user.name}</strong>
+                    {!user.confirmed && <small>This account is not confirmed</small>}
+                    <div>{user.roleNames}</div>
+                  </div>
+                  <Tooltip
+                    targetWrapperClassName={styles.userMenu}
+                    place="left"
+                    content={
+                      user.numberOfTeamMemberships > 0
+                        ? `This user has space access through ${pluralize(
+                            'team',
+                            user.numberOfTeamMemberships,
+                            true
+                          )}`
+                        : ''
+                    }>
+                    <ContextMenu
+                      buttonProps={{
+                        'data-test-id': 'user-list.actions'
+                      }}
+                      isDisabled={!canModifyUsers || user.numberOfTeamMemberships > 0}
+                      items={[
+                        {
+                          label: 'Change role',
+                          action: () => openRoleChangeDialog(user),
+                          otherProps: {
+                            'data-ui-trigger': 'user-change-role'
+                          }
+                        },
+                        {
+                          label: 'Remove from this space',
+                          action: () => openRemovalConfirmationDialog(user),
+                          otherProps: {
+                            'data-ui-trigger': 'user-remove-from-space'
+                          }
+                        }
+                      ]}
+                    />
+                  </Tooltip>
+                </div>
+              ))}
+            </div>
+          ))}
+        </Workbench.Content>
+        <Workbench.Sidebar position="right">
+          <SectionHeading className={styles.sidebar.heading}>
+            Adding and managing users
+          </SectionHeading>
+          <AddUsersToSpaceNote
+            {...{
+              orgId,
+              isOwnerOrAdmin,
+              hasTeamsFeature
+            }}
+          />
+        </Workbench.Sidebar>
+      </Workbench>
+    </>
   );
 };
 
@@ -184,5 +211,6 @@ UserList.propTypes = {
   spaceUsersCount: PropTypes.number,
   openSpaceInvitationDialog: PropTypes.func.isRequired,
   openRoleChangeDialog: PropTypes.func.isRequired,
-  openRemovalConfirmationDialog: PropTypes.func.isRequired
+  openRemovalConfirmationDialog: PropTypes.func.isRequired,
+  onChangeSelectedView: PropTypes.func.isRequired
 };
