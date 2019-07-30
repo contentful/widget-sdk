@@ -204,7 +204,7 @@ export default class ApprovalWorkflowAppPage extends Component {
     const contentType = contentTypes.find(ct => ct.sys.id === contentTypeId);
 
     return (
-      <Workbench.Content>
+      <Workbench.Content type="text">
         <Note className={styles.section}>
           Let us know how we can improve the Basic approval workflow app.{' '}
           <FeedbackButton target="extensibility" about="Basic approval workflow app" />

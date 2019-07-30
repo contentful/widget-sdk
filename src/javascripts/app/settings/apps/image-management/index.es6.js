@@ -64,7 +64,7 @@ export default class ImageManagementApp extends Component {
             $state.go('^.list');
           }}
         />
-        <Workbench.Content>
+        <Workbench.Content type="text">
           {this.state.installed ? (
             <ImageManagementGettingStarted
               client={this.props.client}

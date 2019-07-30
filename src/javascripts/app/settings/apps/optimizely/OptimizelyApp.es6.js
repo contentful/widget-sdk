@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { cloneDeep } from 'lodash';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as Intercom from 'services/intercom.es6';
@@ -21,6 +23,15 @@ const $state = getModule('$state');
 const spaceContext = getModule('spaceContext');
 
 import { Button, Notification, Note } from '@contentful/forma-36-react-components';
+
+const styles = {
+  netlifyCta: css({
+    marginLeft: tokens.spacingM
+  }),
+  contentWrapper: css({
+    marginBottom: tokens.spacing2Xl
+  })
+};
 
 export default class OptimizelyApp extends Component {
   static propTypes = {
@@ -324,7 +335,7 @@ export default class OptimizelyApp extends Component {
             <>
               {installed && (
                 <Button
-                  className="f36-margin-left--m"
+                  className={styles.netlifyCta}
                   buttonType="muted"
                   disabled={!!busyWith}
                   loading={busyWith === 'uninstall'}
@@ -334,7 +345,7 @@ export default class OptimizelyApp extends Component {
               )}
               {installed && (
                 <Button
-                  className="f36-margin-left--m"
+                  className={styles.netlifyCta}
                   buttonType="positive"
                   disabled={!!busyWith}
                   loading={busyWith === constants.UPDATE}
@@ -344,7 +355,7 @@ export default class OptimizelyApp extends Component {
               )}
               {!installed && !isVariationContainerInstalled && (
                 <Button
-                  className="f36-margin-left--m"
+                  className={styles.netlifyCta}
                   buttonType="positive"
                   disabled={!!busyWith}
                   loading={busyWith === constants.INSTALL}
@@ -355,11 +366,11 @@ export default class OptimizelyApp extends Component {
             </>
           }
         />
-        <Workbench.Content>
+        <Workbench.Content type="text">
           {!this.props.app.installed && this.state.isVariationContainerInstalled ? (
             <VariationContainerError />
           ) : (
-            <div className="f36-margin-bottom--2xl">
+            <div className={styles.contentWrapper}>
               <div>
                 <Note>
                   Let us know how we can improve the Optimizely app.{' '}

@@ -3,7 +3,14 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { cloneDeep, uniqBy } from 'lodash';
-import { Button, Notification, Note } from '@contentful/forma-36-react-components';
+import {
+  Button,
+  Notification,
+  Note,
+  TextLink,
+  Subheading,
+  Paragraph
+} from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
@@ -259,25 +266,25 @@ export default class NetlifyAppPage extends Component {
 
   renderContent() {
     return (
-      <Workbench.Content>
+      <Workbench.Content type="text">
         <Note className={styles.section}>
           Let us know how we can improve the Netlify app.{' '}
           <FeedbackButton target="extensibility" about="Netlify app" />
         </Note>
 
         <div className={styles.section}>
-          <h3>About</h3>
-          <p>
+          <Subheading element="h3">About</Subheading>
+          <Paragraph>
             With this app developers can do a very quick set up, authors can control when the static
             pages are created and see the current status of the build process.{' '}
-            <a
+            <TextLink
               href="https://www.contentful.com/developers/docs/extensibility/apps/netlify/"
               target="_blank"
               rel="noopener noreferrer">
               Read the docs
-            </a>
+            </TextLink>
             .
-          </p>
+          </Paragraph>
         </div>
 
         <NetlifyConnection
@@ -288,11 +295,11 @@ export default class NetlifyAppPage extends Component {
         />
 
         <div className={styles.section}>
-          <h3>Build Netlify sites</h3>
-          <p>
+          <Subheading element="h3">Build Netlify sites</Subheading>
+          <Paragraph>
             Pick the Netlify sites you want to enable build for.
             {!this.state.token && ' Requires Netlify account.'}
-          </p>
+          </Paragraph>
           <NetlifyConfigEditor
             disabled={this.isDisabled()}
             siteConfigs={this.state.config.sites}

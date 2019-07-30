@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import {
   Heading,
   Paragraph,
   Button,
   Notification,
-  Note
+  Note,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import tokens from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
@@ -40,6 +43,12 @@ const DEFAULT_NEW_RECORD = {
 
 const notifyError = (err, fallbackMessage) => {
   Notification.error(err.useMessage ? err.message || fallbackMessage : fallbackMessage);
+};
+
+const styles = {
+  algoliaCta: css({
+    marginLeft: tokens.spacingM
+  })
 };
 
 export default class AlgoliaAppPage extends Component {
@@ -290,7 +299,7 @@ export default class AlgoliaAppPage extends Component {
             <>
               {installed && (
                 <Button
-                  className="f36-margin-left--m"
+                  className={styles.algoliaCta}
                   buttonType="muted"
                   disabled={!!busyWith}
                   loading={busyWith === 'uninstall'}
@@ -300,7 +309,7 @@ export default class AlgoliaAppPage extends Component {
               )}
               {installed && (
                 <Button
-                  className="f36-margin-left--m"
+                  className={styles.algoliaCta}
                   buttonType="positive"
                   disabled={!!busyWith}
                   loading={busyWith === 'update'}
@@ -310,7 +319,7 @@ export default class AlgoliaAppPage extends Component {
               )}
               {!installed && (
                 <Button
-                  className="f36-margin-left--m"
+                  className={styles.algoliaCta}
                   buttonType="positive"
                   disabled={!!busyWith}
                   loading={busyWith === 'install'}
@@ -321,7 +330,7 @@ export default class AlgoliaAppPage extends Component {
             </>
           }
         />
-        <Workbench.Content>
+        <Workbench.Content type="text">
           <div>
             <Note>
               Let us know how we can improve the Algolia app.{' '}
@@ -334,12 +343,12 @@ export default class AlgoliaAppPage extends Component {
             <Paragraph>
               By setting up this app the selected content type will be automatically indexed in
               Algolia.{' '}
-              <a
+              <TextLink
                 href="https://www.contentful.com/developers/docs/extensibility/apps/algolia/"
                 target="_blank"
                 rel="noopener noreferrer">
                 Read the docs
-              </a>
+              </TextLink>
               .
             </Paragraph>
           </div>

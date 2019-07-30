@@ -4,9 +4,10 @@ const blacklist = {
   ul: '<List />',
   select: '<Select />',
   textarea: '<Textarea />',
-  checkbox: '<Checkbox />',
-  text: '<TextInput />',
-  radio: '<RadioButton />',
+  input_checkbox: '<Checkbox />',
+  input_text: '<TextInput />',
+  input_number: '<TextInput />',
+  input_radio: '<RadioButton />',
   p: '<Paragraph />',
   h1: '<Heading />, <SubHeading />, <SectionHeading /> or <DisplayText />',
   h2: '<Heading />, <SubHeading />, <SectionHeading /> or <DisplayText />',
@@ -34,14 +35,15 @@ module.exports = {
         const typeAttributes = node.attributes
           .filter(att => att && att.name && att.name.name === 'type')
           .reduce((_, prev) => prev, undefined);
-        const typeValue = typeAttributes && typeAttributes.value.value;
+        const typeValue = typeAttributes && `_${typeAttributes.value.value}`;
+        const blackListKey = `${nodeName}${typeValue}`;
 
-        if (blacklist[typeValue || nodeName]) {
+        if (blacklist[blackListKey]) {
           context.report({
             node,
             messageId: 'useForma36',
             data: {
-              name: blacklist[typeValue || nodeName]
+              name: blacklist[blackListKey]
             }
           });
         }

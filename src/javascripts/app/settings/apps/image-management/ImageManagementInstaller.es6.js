@@ -9,7 +9,8 @@ import {
   Button,
   TextField,
   Heading,
-  Typography
+  Typography,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -125,12 +126,12 @@ export class ImageManagementInstaller extends Component {
           </ListItem>
         </List>
 
-        <a
+        <TextLink
           href="https://www.contentful.com/developers/docs/extensibility/apps/ai-image-management/"
           target="_blank"
           rel="noopener noreferrer">
           Learn more in the docs
-        </a>
+        </TextLink>
         <Typography>
           <Heading className={styles.heading}>Installation</Heading>
           <Paragraph>Choose the name for your new content type</Paragraph>

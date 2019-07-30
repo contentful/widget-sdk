@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { Button } from '@contentful/forma-36-react-components';
+import { Button, Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 
 const styles = {
   section: css({
     marginBottom: tokens.spacingXl
+  }),
+  connectAccountButton: css({
+    marginTop: tokens.spacingM
   })
 };
 
@@ -28,12 +31,15 @@ export default class NetlifyConnection extends Component {
   renderConnectButton() {
     return (
       <div className={styles.section}>
-        <h3>Netlify account</h3>
-        <p>
+        <Subheading element="h3">Netlify account</Subheading>
+        <Paragraph>
           Connect your Netlify account so you can trigger builds and view status in the Contentful
           Web App.
-        </p>
-        <Button buttonType="primary" onClick={this.props.onConnectClick}>
+        </Paragraph>
+        <Button
+          className={styles.connectAccountButton}
+          buttonType="primary"
+          onClick={this.props.onConnectClick}>
           Connect account
         </Button>
       </div>
@@ -45,27 +51,27 @@ export default class NetlifyConnection extends Component {
 
     return (
       <div className={styles.section}>
-        <h3>Netlify account</h3>
-        <p>
+        <Subheading element="h3">Netlify account</Subheading>
+        <Paragraph>
           Netlify account: <code>{this.props.email}</code>.
-        </p>
+        </Paragraph>
         {unavailable > 0 && (
-          <p>
+          <Paragraph>
             {unavailable} sites we can’t build (no Continuous Deployment configuration).{' '}
-            <a href="https://app.netlify.com/" target="_blank" rel="noopener noreferrer">
+            <TextLink href="https://app.netlify.com/" target="_blank" rel="noopener noreferrer">
               View more in Netlify App
-            </a>
-          </p>
+            </TextLink>
+          </Paragraph>
         )}
-        {buildable > 0 && <p>{buildable} sites we can build</p>}
+        {buildable > 0 && <Paragraph>{buildable} sites we can build</Paragraph>}
         {buildable < 1 && (
-          <p>
+          <Paragraph>
             There are no sites we can build. Navigate to the{' '}
-            <a href="https://app.netlify.com/" target="_blank" rel="noopener noreferrer">
+            <TextLink href="https://app.netlify.com/" target="_blank" rel="noopener noreferrer">
               Netlify App
-            </a>{' '}
+            </TextLink>{' '}
             to create one!
-          </p>
+          </Paragraph>
         )}
       </div>
     );
