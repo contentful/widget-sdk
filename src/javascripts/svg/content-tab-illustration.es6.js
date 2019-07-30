@@ -16,29 +16,17 @@ export default () => (
       <rect fill="#FFF" fillRule="nonzero" x={1} y={1} width={242} height={33} />
       <rect fill="#E5EBED" fillRule="nonzero" x={3} y={3} width={96} height={29} />
       <rect fill="#5B9FEF" fillRule="nonzero" x={99} y={3} width={20} height={29} />
-      <text
-        fontFamily="AvenirNext-Medium, Avenir Next"
-        fontSize={11}
-        fontWeight={400}
-        fill="#536171">
+      <text fontSize={11} fontWeight={400} fill="#536171">
         <tspan x={16} y={21}>
           Content Type
         </tspan>
       </text>
-      <text
-        fontFamily="AvenirNext-Medium, Avenir Next"
-        fontSize={11}
-        fontWeight={400}
-        fill="#C3CFD5">
+      <text fontSize={11} fontWeight={400} fill="#C3CFD5">
         <tspan x={128} y={21}>
           Search
         </tspan>
       </text>
-      <text
-        fontFamily="AvenirNext-Medium, Avenir Next"
-        fontSize={11}
-        fontWeight={400}
-        fill="#536171">
+      <text fontSize={11} fontWeight={400} fill="#536171">
         <tspan x={16} y={65}>
           All Entries found
         </tspan>

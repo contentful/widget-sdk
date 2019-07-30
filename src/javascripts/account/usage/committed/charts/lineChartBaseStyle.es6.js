@@ -39,7 +39,6 @@ export default {
     splitNumber: 4
   },
   textStyle: {
-    fontFamily: 'Avenir Next W01',
     fontSize: 11,
     fontWeight: 600,
     lineHeight: 15

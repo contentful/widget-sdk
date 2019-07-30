@@ -5,7 +5,7 @@ export default () => (
     <g fill="none" fillRule="evenodd">
       <g>
         <g transform="translate(0 -3)">
-          <text fontFamily="Avenir Next" fontSize="11" fill="#A3A9B2">
+          <text fontSize="11" fill="#A3A9B2">
             <tspan x="10" y="11.56">
               Breakfast
             </tspan>

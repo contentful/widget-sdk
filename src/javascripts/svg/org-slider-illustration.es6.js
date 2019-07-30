@@ -21,21 +21,13 @@ export default () => (
     <g stroke="none" strokeWidth={1} fill="none" fillRule="evenodd">
       <path d="M1.5.5v182h239V.5H1.5z" stroke="#E5EBED" fill="#F7F9FA" fillRule="nonzero" />
       <rect fill="#E5EBED" fillRule="nonzero" x={1} y={0} width={240} height={45} />
-      <text
-        fontFamily="AvenirNext-Medium, Avenir Next"
-        fontSize={13}
-        fontWeight={400}
-        fill="#536171">
+      <text fontSize={13} fontWeight={400} fill="#536171">
         <tspan x={59} y={27}>
           Organization
         </tspan>
       </text>
       <circle fill="#FFF" fillRule="nonzero" cx="31.5" cy="22.5" r="14.5" />
-      <text
-        fontFamily="AvenirNext-Medium, Avenir Next"
-        fontSize={13}
-        fontWeight={400}
-        fill="#536171">
+      <text fontSize={13} fontWeight={400} fill="#536171">
         <tspan x={15} y={75}>
           Spaces
         </tspan>
