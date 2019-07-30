@@ -51,10 +51,7 @@ export default function createAppExtensionBridge(dependencies) {
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
 
-    api.registerHandler(
-      'callSpaceMethod',
-      makeExtensionSpaceMethodsHandlers(dependencies, { readOnly: true })
-    );
+    api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
 
     api.registerHandler('callAppMethod', methodName => {
       const extension = appHookBus.getExtension();
