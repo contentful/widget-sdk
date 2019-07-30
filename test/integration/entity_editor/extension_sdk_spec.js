@@ -3,6 +3,11 @@ import _ from 'lodash';
 import $ from 'jquery';
 import APIClient from 'data/APIClient.es6';
 
+// TODO: This integration suite should be removed.
+// We want to drop Web App dependency on the SDK.
+// All the testing should be done here:
+// https://github.com/contentful/ui-extensions-sdk/tree/master/test
+
 describe('Extension SDK', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
@@ -460,6 +465,7 @@ describe('Extension SDK', () => {
     });
   });
 
+  // TODO: this does not test `getUsers` and all upload methods.
   describe('#space methods', () => {
     beforeEach(function() {
       const spaceContext = this.$inject('spaceContext');
@@ -473,11 +479,40 @@ describe('Extension SDK', () => {
           }
         }
       };
+      this.methods = [
+        'getContentType',
+        'getEntry',
+        'getEntrySnapshots',
+        'getAsset',
+        'getEditorInterface',
+        'getPublishedEntries',
+        'getPublishedAssets',
+        'getContentTypes',
+        'getEntries',
+        'getAssets',
+        'createContentType',
+        'createEntry',
+        'createAsset',
+        'updateContentType',
+        'updateEntry',
+        'updateAsset',
+        'deleteContentType',
+        'deleteEntry',
+        'deleteAsset',
+        'publishEntry',
+        'publishAsset',
+        'unpublishEntry',
+        'unpublishAsset',
+        'archiveEntry',
+        'archiveAsset',
+        'unarchiveEntry',
+        'unarchiveAsset'
+      ];
     });
 
     it('delegates to API client and responds with data', function*(api) {
       const { args } = this;
-      for (const method of Object.keys(api.space)) {
+      for (const method of this.methods) {
         const data = { sys: { type: 'bar' } };
         this.apiClient[method] = sinon
           .stub()
@@ -492,7 +527,8 @@ describe('Extension SDK', () => {
 
     it('delegates to API and throws error', function*(api) {
       const { args } = this;
-      for (const method of Object.keys(api.space)) {
+
+      for (const method of this.methods) {
         this.apiClient[method] = sinon
           .stub()
           .withArgs(args)
@@ -511,10 +547,9 @@ describe('Extension SDK', () => {
       }
     });
 
-    it('has a ApiClient method for each space method', function*(api) {
-      const widgetApiMethods = Object.keys(api.space);
+    it('has a ApiClient method for each space method', function() {
       const cma = new APIClient({});
-      for (const method of widgetApiMethods) {
+      for (const method of this.methods) {
         expect(typeof cma[method]).toBe('function');
       }
     });
