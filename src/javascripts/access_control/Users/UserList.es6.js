@@ -43,6 +43,8 @@ const styles = {
     borderTop: '1px solid #e5ebed',
     h3: {
       fontSize: tokens.fontSizeXl,
+      letterSpacing: 'inherit',
+      textTransform: 'none',
       margin: 0,
       display: 'inline-block',
       position: 'absolute',
