@@ -8,12 +8,11 @@ export default {
   url: '/extensions/:extensionId{path:PathSuffix}',
   component: PageExtensionRoute,
   mapInjectedToProps: [
-    '$rootScope',
     '$stateParams',
     'spaceContext',
     'entitySelector',
     'entityCreator',
-    ($rootScope, $stateParams, spaceContext, entitySelector, entityCreator) => {
+    ($stateParams, spaceContext, entitySelector, entityCreator) => {
       const { extensionId, path = '' } = $stateParams;
       return {
         extensionId,
@@ -21,7 +20,6 @@ export default {
         extensionLoader: spaceContext.extensionLoader,
         bridge: createPageExtensionBridge(
           {
-            $rootScope,
             spaceContext,
             Navigator,
             entitySelector,

@@ -15,18 +15,17 @@ const STAGE_PRE_INSTALL = 'preInstall';
 const STAGE_POST_INSTALL = 'postInstall';
 
 export default function createAppExtensionBridge(dependencies) {
-  const { $rootScope, spaceContext, appHookBus } = checkDependencies(
-    'AppExtensionBridge',
-    dependencies,
-    ['$rootScope', 'spaceContext', 'appHookBus']
-  );
+  const { spaceContext, appHookBus } = checkDependencies('AppExtensionBridge', dependencies, [
+    'spaceContext',
+    'appHookBus'
+  ]);
 
   let currentInstallationRequestId = null;
 
   return {
     getData,
     install,
-    apply: fn => $rootScope.$apply(fn)
+    apply: fn => fn()
   };
 
   function getData() {

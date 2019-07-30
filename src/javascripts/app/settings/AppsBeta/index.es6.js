@@ -32,11 +32,10 @@ export default {
       component: AppPage,
       mapInjectedToProps: [
         '$stateParams',
-        '$rootScope',
         'spaceContext',
         '$state',
         'entitySelector',
-        ({ appId }, $rootScope, spaceContext, $state, entitySelector) => {
+        ({ appId }, spaceContext, $state, entitySelector) => {
           const repo = createAppsRepo(
             spaceContext.extensionDefinitionLoader,
             spaceContext.endpoint
@@ -44,7 +43,6 @@ export default {
           const appHookBus = makeAppHookBus();
 
           const bridge = createAppExtensionBridge({
-            $rootScope,
             spaceContext,
             appHookBus,
             entitySelector,

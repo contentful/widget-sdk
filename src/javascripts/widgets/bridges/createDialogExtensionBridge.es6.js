@@ -7,15 +7,14 @@ import { LOCATION_DIALOG } from '../WidgetLocations.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 
 export default function createDialogExtensionBridge(dependencies, openDialog, onClose) {
-  const { $rootScope, spaceContext } = checkDependencies('DialogExtensionBridge', dependencies, [
-    '$rootScope',
+  const { spaceContext } = checkDependencies('DialogExtensionBridge', dependencies, [
     'spaceContext'
   ]);
 
   return {
     getData,
     install,
-    apply: fn => $rootScope.$apply(fn)
+    apply: fn => fn()
   };
 
   function getData() {

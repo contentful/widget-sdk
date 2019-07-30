@@ -8,15 +8,12 @@ import { LOCATION_PAGE } from '../WidgetLocations.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 
 export default function createPageExtensionBridge(dependencies, currentExtensionId) {
-  const { $rootScope, spaceContext } = checkDependencies('PageExtensionBridge', dependencies, [
-    '$rootScope',
-    'spaceContext'
-  ]);
+  const { spaceContext } = checkDependencies('PageExtensionBridge', dependencies, ['spaceContext']);
 
   return {
     getData,
     install,
-    apply: fn => $rootScope.$apply(fn)
+    apply: fn => fn()
   };
 
   function getData() {

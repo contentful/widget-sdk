@@ -16,7 +16,6 @@ describe('createPageExtensionBridge', () => {
     };
     const bridge = createPageExtensionBridge(
       {
-        $rootScope: {},
         spaceContext: {
           getId: () => 'spaceId',
           getEnvironmentId: () => 'environmentId',
