@@ -1,7 +1,6 @@
 import PageExtensionRoute from './PageExtensionRoute.es6';
 import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge.es6';
 import * as Navigator from 'states/Navigator.es6';
-import TheLocaleStore from 'services/localeStore.es6';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
 
 export default {
@@ -24,7 +23,6 @@ export default {
           {
             $rootScope,
             spaceContext,
-            TheLocaleStore,
             Navigator,
             entitySelector,
             entityCreator,

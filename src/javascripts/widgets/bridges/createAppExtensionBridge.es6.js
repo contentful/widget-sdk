@@ -6,6 +6,7 @@ import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers.es6';
 import checkDependencies from './checkDependencies.es6';
 import { LOCATION_APP } from '../WidgetLocations.es6';
 import * as Random from 'utils/Random.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from 'app/settings/AppsBeta/AppHookBus.es6';
 import getCurrentAppState from 'app/settings/AppsBeta/AppCurrentState.es6';
@@ -14,10 +15,10 @@ const STAGE_PRE_INSTALL = 'preInstall';
 const STAGE_POST_INSTALL = 'postInstall';
 
 export default function createAppExtensionBridge(dependencies) {
-  const { $rootScope, spaceContext, TheLocaleStore, appHookBus } = checkDependencies(
+  const { $rootScope, spaceContext, appHookBus } = checkDependencies(
     'AppExtensionBridge',
     dependencies,
-    ['$rootScope', 'spaceContext', 'TheLocaleStore', 'appHookBus']
+    ['$rootScope', 'spaceContext', 'appHookBus']
   );
 
   let currentInstallationRequestId = null;

@@ -3,7 +3,6 @@ import AppPage from './AppPage.es6';
 import { makeAppHookBus } from './AppHookBus.es6';
 import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge.es6';
 import * as Navigator from 'states/Navigator.es6';
-import TheLocaleStore from 'services/localeStore.es6';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
 import createAppsRepo from './AppsRepo.es6';
 
@@ -47,7 +46,6 @@ export default {
           const bridge = createAppExtensionBridge({
             $rootScope,
             spaceContext,
-            TheLocaleStore,
             appHookBus,
             entitySelector,
             Navigator,

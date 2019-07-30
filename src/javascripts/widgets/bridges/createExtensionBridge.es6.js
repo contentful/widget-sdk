@@ -1,5 +1,7 @@
 import * as K from 'utils/kefir.es6';
 import * as PathUtils from 'utils/Path.es6';
+import TheLocaleStore from 'services/localeStore.es6';
+
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers.es6';
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers.es6';
 import makeExtensionNavigationHandlers from './makeExtensionNavigationHandlers.es6';
@@ -27,11 +29,11 @@ const ERROR_MESSAGES = {
 // - `apply` takes a function to be executed in the Angular
 //   context (using `$rootScope.$apply`).
 export default function createExtensionBridge(dependencies, location = LOCATION_ENTRY_FIELD) {
-  const { $rootScope, $scope, spaceContext, TheLocaleStore } = checkDependencies(
-    'ExtensionBridge',
-    dependencies,
-    ['$rootScope', '$scope', 'spaceContext', 'TheLocaleStore']
-  );
+  const { $rootScope, $scope, spaceContext } = checkDependencies('ExtensionBridge', dependencies, [
+    '$rootScope',
+    '$scope',
+    'spaceContext'
+  ]);
 
   const isFieldLevelExtension =
     location === LOCATION_ENTRY_FIELD || location === LOCATION_ENTRY_FIELD_SIDEBAR;

@@ -5,13 +5,13 @@ import makePageExtensionHandlers from './makePageExtensionHandlers.es6';
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers.es6';
 import checkDependencies from './checkDependencies.es6';
 import { LOCATION_PAGE } from '../WidgetLocations.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 export default function createPageExtensionBridge(dependencies, currentExtensionId) {
-  const { $rootScope, spaceContext, TheLocaleStore } = checkDependencies(
-    'PageExtensionBridge',
-    dependencies,
-    ['$rootScope', 'spaceContext', 'TheLocaleStore']
-  );
+  const { $rootScope, spaceContext } = checkDependencies('PageExtensionBridge', dependencies, [
+    '$rootScope',
+    'spaceContext'
+  ]);
 
   return {
     getData,

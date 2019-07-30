@@ -5,12 +5,18 @@ import APIClient from 'data/APIClient.es6';
 
 describe('Extension SDK', () => {
   beforeEach(function() {
-    module('contentful/test');
+    module('contentful/test', $provide => {
+      const locales = [
+        { code: 'en', internal_code: 'en-internal', default: true },
+        { code: 'de', internal_code: 'de-internal' }
+      ];
 
-    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
-    const { registerConstant } = this.$inject('NgRegistry.es6');
-    registerConstant('services/localeStore.es6', {
-      default: fakeLocaleStore
+      $provide.value('services/localeStore.es6', {
+        default: {
+          getPrivateLocales: () => locales,
+          getDefaultLocale: () => locales[0]
+        }
+      });
     });
 
     const spaceContext = this.$inject('mocks/spaceContext').init();
@@ -68,7 +74,10 @@ describe('Extension SDK', () => {
             '<!doctype html>' +
             '<script src="/base/node_modules/contentful-ui-extensions-sdk/dist/cf-extension-api.js"></script>'
         },
-        parameters: {}
+        parameters: {
+          instance: {},
+          installation: {}
+        }
       },
       editorData: {
         editorInterface: {
@@ -442,14 +451,6 @@ describe('Extension SDK', () => {
   });
 
   describe('#locales', () => {
-    beforeEach(function() {
-      const LocaleStore = this.$inject('services/localeStore.es6').default;
-      LocaleStore.setLocales([
-        { code: 'en', internal_code: 'en-internal', default: true },
-        { code: 'de', internal_code: 'de-internal' }
-      ]);
-    });
-
     it('provides the default locale code', function*(api) {
       expect(api.locales.default).toEqual('en');
     });

@@ -10,13 +10,12 @@ function createMockProperty(initial) {
   return property;
 }
 
-jest.mock(
-  'Authentication.es6',
-  () => ({
-    getToken: () => '<TOKEN>'
-  }),
-  { virtual: true }
-);
+jest.mock('Authentication.es6', () => ({ getToken: () => '<TOKEN>' }));
+
+jest.mock('services/localeStore.es6', () => ({
+  getPrivateLocales: () => [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
+  getDefaultLocale: () => ({ code: 'pl', name: 'Polski', default: true })
+}));
 
 jest.mock('../ExtensionDialogs.es6', () => ({
   openAlert: jest.fn(() => Promise.resolve('ALERT RESULT')),
@@ -89,10 +88,6 @@ describe('createExtensionBridge', () => {
         isMasterEnvironment: () => false,
         cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
         space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
-      },
-      TheLocaleStore: {
-        getPrivateLocales: () => [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
-        getDefaultLocale: () => ({ code: 'pl', name: 'Polski', default: true })
       },
       entitySelector: { openFromExtension: stubs.openFromExtension },
       entityCreator: { newEntry: stubs.newEntry },

@@ -1,17 +1,17 @@
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers.es6';
 import checkDependencies from './checkDependencies.es6';
 import { LOCATION_ENTRY_FIELD } from '../WidgetLocations.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 // This is a UI Extension bridge to be used in the version
 // comparison view. It provides static initial data,
 // doesn't notify UI Extensions about changes and doesn't
 // handle any messages but non-mutating CMA calls.
 export default function createSnapshotExtensionBridge(dependencies) {
-  const { $scope, spaceContext, TheLocaleStore } = checkDependencies(
-    'SnapshotExtensionBridge',
-    dependencies,
-    ['$scope', 'spaceContext', 'TheLocaleStore']
-  );
+  const { $scope, spaceContext } = checkDependencies('SnapshotExtensionBridge', dependencies, [
+    '$scope',
+    'spaceContext'
+  ]);
 
   return {
     getData,
