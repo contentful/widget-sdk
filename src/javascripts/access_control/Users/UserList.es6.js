@@ -22,8 +22,8 @@ const styles = {
     })
   },
   groupSelect: css({
-    marginLeft: tokens.spacing2Xl,
-    marginTop: tokens.spacingM,
+    marginLeft: '67px',
+    marginTop: tokens.spacingXl,
     width: 'fit-content'
   }),
   sidebar: {
@@ -55,7 +55,7 @@ const styles = {
   user: css({
     display: 'flex',
     marginTop: tokens.spacingL,
-    paddingLeft: tokens.spacing2Xl,
+    paddingLeft: '67px',
     paddingRight: tokens.spacingXl
   }),
   userName: css({
