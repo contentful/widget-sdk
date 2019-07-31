@@ -38,13 +38,13 @@ const RemoveOwnAdminMembershipConfirmation = ({
         </Paragraph>
         {!isLastAdminMembership && (
           <Paragraph>
-            If you remove this team, you will lose your administrator role for this space and can
-            only manage this space from your organization settings.
+            If you remove this team, you will lose your administrator role for this space and the
+            team can only be managed by an organization admin.
           </Paragraph>
         )}
         {isLastAdminMembership && (
           <Paragraph>
-            If you remove this team, you can only manage this space from your organization settings.
+            If you remove this team, it can only be managed by an organization admin.
           </Paragraph>
         )}
         <Paragraph>
