@@ -4,18 +4,17 @@ import makeExtensionNotificationHandlers from './makeExtensionNotificationHandle
 import makePageExtensionHandlers from './makePageExtensionHandlers.es6';
 import checkDependencies from './checkDependencies.es6';
 import { LOCATION_DIALOG } from '../WidgetLocations.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 export default function createDialogExtensionBridge(dependencies, openDialog, onClose) {
-  const { $rootScope, spaceContext, TheLocaleStore } = checkDependencies(
-    'DialogExtensionBridge',
-    dependencies,
-    ['$rootScope', 'spaceContext', 'TheLocaleStore']
-  );
+  const { spaceContext } = checkDependencies('DialogExtensionBridge', dependencies, [
+    'spaceContext'
+  ]);
 
   return {
     getData,
     install,
-    apply: fn => $rootScope.$apply(fn)
+    apply: fn => fn()
   };
 
   function getData() {

@@ -1,13 +1,12 @@
 import createPageExtensionBridge from './createPageExtensionBridge.es6';
 import { LOCATION_PAGE } from '../WidgetLocations.es6';
 
-jest.mock(
-  'Authentication.es6',
-  () => ({
-    getToken: () => '<TOKEN>'
-  }),
-  { virtual: true }
-);
+jest.mock('Authentication.es6', () => ({ getToken: () => '<TOKEN>' }));
+
+jest.mock('services/localeStore.es6', () => ({
+  getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
+  getDefaultLocale: () => ({ code: 'pl' })
+}));
 
 describe('createPageExtensionBridge', () => {
   const makeBridge = () => {
@@ -17,17 +16,12 @@ describe('createPageExtensionBridge', () => {
     };
     const bridge = createPageExtensionBridge(
       {
-        $rootScope: {},
         spaceContext: {
           getId: () => 'spaceId',
           getEnvironmentId: () => 'environmentId',
           isMasterEnvironment: () => false,
           cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
           space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
-        },
-        TheLocaleStore: {
-          getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
-          getDefaultLocale: () => ({ code: 'pl' })
         },
         Navigator: {
           go: jest.fn()

@@ -1,13 +1,12 @@
 import createSnapshotExtensionBridge from './createSnapshotExtensionBridge.es6';
 import { LOCATION_ENTRY_FIELD } from '../WidgetLocations.es6';
 
-jest.mock(
-  'Authentication.es6',
-  () => ({
-    getToken: () => '<TOKEN>'
-  }),
-  { virtual: true }
-);
+jest.mock('Authentication.es6', () => ({ getToken: () => '<TOKEN>' }));
+
+jest.mock('services/localeStore.es6', () => ({
+  getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
+  getDefaultLocale: () => ({ code: 'pl' })
+}));
 
 describe('createSnaphotExtensionBridge', () => {
   const stubs = {
@@ -36,10 +35,6 @@ describe('createSnaphotExtensionBridge', () => {
         getEnvironmentId: () => 'environmentId',
         cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
         space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
-      },
-      TheLocaleStore: {
-        getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
-        getDefaultLocale: () => ({ code: 'pl' })
       }
     });
 

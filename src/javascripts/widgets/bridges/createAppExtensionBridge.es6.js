@@ -6,6 +6,7 @@ import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers.es6';
 import checkDependencies from './checkDependencies.es6';
 import { LOCATION_APP } from '../WidgetLocations.es6';
 import * as Random from 'utils/Random.es6';
+import TheLocaleStore from 'services/localeStore.es6';
 
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from 'app/settings/AppsBeta/AppHookBus.es6';
 import getCurrentAppState from 'app/settings/AppsBeta/AppCurrentState.es6';
@@ -14,18 +15,17 @@ const STAGE_PRE_INSTALL = 'preInstall';
 const STAGE_POST_INSTALL = 'postInstall';
 
 export default function createAppExtensionBridge(dependencies) {
-  const { $rootScope, spaceContext, TheLocaleStore, appHookBus } = checkDependencies(
-    'AppExtensionBridge',
-    dependencies,
-    ['$rootScope', 'spaceContext', 'TheLocaleStore', 'appHookBus']
-  );
+  const { spaceContext, appHookBus } = checkDependencies('AppExtensionBridge', dependencies, [
+    'spaceContext',
+    'appHookBus'
+  ]);
 
   let currentInstallationRequestId = null;
 
   return {
     getData,
     install,
-    apply: fn => $rootScope.$apply(fn)
+    apply: fn => fn()
   };
 
   function getData() {
@@ -51,6 +51,10 @@ export default function createAppExtensionBridge(dependencies) {
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
 
+    // TODO: consider `readOnly: true` for "app" location.
+    // Right now we create all the apps but in the future we want to open
+    // the framework. If we do so, we want to prevent apps from messing with
+    // a space before they are installed.
     api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
 
     api.registerHandler('callAppMethod', methodName => {

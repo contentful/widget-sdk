@@ -20,15 +20,30 @@ export default class Channel {
     this.win = win;
     this.id = random.id();
     this.messageQueue = [];
-
-    this.handlers = {
-      setHeight: val => iframe.setAttribute('height', val)
-    };
+    this.handlers = {};
 
     this.messageListener = ({ data }) => {
-      if (data.source === this.id) {
-        applyChanges(() => this._dispatch(data.method, data.id, data.params));
+      // Make sure the message comes from the same channel.
+      if (data.source !== this.id) {
+        return;
       }
+
+      // `setHeight` method acts directly on the `<iframe>` element
+      // of the Extension being rendered. We can handle the message
+      // without a handler. Thanks to that it is a universal way
+      // of setting the height of the `<iframe>` which cannot be
+      // cancelled by `applyChanges`.
+      if (data.method === 'setHeight' && !this.destroyed && this.iframe) {
+        this.iframe.setAttribute('height', data.params[0]);
+        return;
+      }
+
+      // Finally, dispatch all the other messages to be handled.
+      // Note that implementation of `applyChanges` may defer or even
+      // cancel message handling.
+      applyChanges(() => {
+        this._dispatch(data.method, data.id, data.params);
+      });
     };
 
     this.win.addEventListener('message', this.messageListener);

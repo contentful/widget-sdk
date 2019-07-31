@@ -193,7 +193,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
         $rootScope,
         $scope,
         spaceContext,
-        TheLocaleStore,
         entitySelector,
         entityCreator,
         Navigator,
