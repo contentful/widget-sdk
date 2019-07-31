@@ -59,6 +59,14 @@ const styles = {
     paddingLeft: tokens.spacing2Xl,
     paddingRight: tokens.spacingXl
   }),
+  userName: css({
+    display: 'block',
+    margin: `${tokens.spacing2Xs} 0`
+  }),
+  notConfirmed: css({
+    fontSize: tokens.fontSizeM,
+    color: tokens.colorTextLightest
+  }),
   userAvater: css({
     marginRight: tokens.spacingM
   }),
@@ -137,9 +145,10 @@ const UserList = ({
                 <div key={user.id} className={styles.user}>
                   <img className={styles.userAvater} src={user.avatarUrl} width="50" height="50" />
                   <div>
-                    <strong>{user.name}</strong>
-                    {/* TODO: add styling */}
-                    {!user.confirmed && <small>This account is not confirmed</small>}
+                    <strong className={styles.userName}>{user.name}</strong>
+                    {!user.confirmed && (
+                      <small className={styles.notConfirmed}>This account is not confirmed</small>
+                    )}
                     <div>{user.roleNames}</div>
                   </div>
                   <Tooltip
