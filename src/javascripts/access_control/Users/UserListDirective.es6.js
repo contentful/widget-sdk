@@ -5,7 +5,7 @@ import * as TokenStore from 'services/TokenStore.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import { getStore } from 'TheStore/index.es6';
 
-import { VIEW_BY_NAME, VIEW_BY_ROLE, VIEW_LABELS } from './constants.es6';
+import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants.es6';
 
 export default function register() {
   registerDirective('cfUserList', [
@@ -24,7 +24,6 @@ export default function register() {
 
       function link(scope) {
         const roleId = popRoleId();
-        scope.viewLabels = VIEW_LABELS;
         scope.props = {
           ...scope.props,
           selectedView: roleId ? VIEW_BY_ROLE : store.get() || VIEW_BY_NAME,
@@ -48,11 +47,6 @@ export default function register() {
     ($scope, spaceContext, UserListHandler, accessChecker, UserListActions) => {
       const userListHandler = UserListHandler.create();
       const actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
-
-      $scope.userQuota = { used: 1 };
-      $scope.$watch(accessChecker.getUserQuota, q => {
-        $scope.userQuota = q;
-      });
 
       const organization = spaceContext.organization;
       const orgId = organization.sys.id;
