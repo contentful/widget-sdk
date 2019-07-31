@@ -1,8 +1,9 @@
 import { cloneDeep, startsWith, find, get, has, map, memoize } from 'lodash';
-import { makeCtor } from 'utils/TaggedValues.es6';
 import { assign, push, concat } from 'utils/Collections.es6';
 import { getOperatorsByType, equality as equalityOperator } from './Operators.es6';
 import mimetype from '@contentful/mimetype';
+
+import ValueInput from './FilterValueInputs.es6';
 
 const CT_QUERY_KEY_PREFIX = 'fields';
 
@@ -54,21 +55,6 @@ export const Status = {
  *   If set, describes the content type of the field this filter
  *   filters. If null the filter applies to all content types.
  */
-
-/**
- * Input types for filter values.
- *
- * We render each value input differently. See './View' for details.
- */
-export const ValueInput = {
-  // Select box. Call the constructor with a list of [value, label] pairs
-  Select: makeCtor(),
-  // A simple text input
-  Text: makeCtor(),
-  Reference: makeCtor(),
-  Date: makeCtor(),
-  AssetDetailsSize: makeCtor()
-};
 
 // The generic filters applicable to all content types
 // TODO: Use "entry" and "asset" instead of "item".

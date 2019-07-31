@@ -1,12 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  SectionHeading,
-  Button,
-  Tooltip,
-  Select,
-  Option
-} from '@contentful/forma-36-react-components';
+import { SectionHeading, Button, Tooltip } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -15,6 +9,8 @@ import pluralize from 'pluralize';
 import Icon from 'ui/Components/Icon.es6';
 import ContextMenu from 'ui/Components/ContextMenu.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import FilterPill from 'app/ContentList/Search/FilterPill.es6';
+import ValueInput from 'app/ContentList/Search/FilterValueInputs.es6';
 
 import AddUsersToSpaceNote from './AddUsersToSpaceNote.es6';
 import { VIEW_LABELS } from './constants.es6';
@@ -26,8 +22,9 @@ const styles = {
     })
   },
   groupSelect: css({
-    marginLeft: tokens.spacingM,
-    marginTop: tokens.spacingM
+    marginLeft: tokens.spacing2Xl,
+    marginTop: tokens.spacingM,
+    width: 'fit-content'
   }),
   sidebar: {
     heading: css({
@@ -104,17 +101,17 @@ const UserList = ({
           }
         />
         <Workbench.Content className={styles.workbench.content}>
-          <Select
-            value={selectedView}
-            width="medium"
+          <FilterPill
             className={styles.groupSelect}
-            onChange={({ target: { value } }) => onChangeSelectedView(value)}>
-            {Object.keys(VIEW_LABELS).map(key => (
-              <Option key={key} value={key}>
-                {VIEW_LABELS[key]}
-              </Option>
-            ))}
-          </Select>
+            filter={{
+              label: 'Group by',
+              valueInput: ValueInput.Select(
+                Object.keys(VIEW_LABELS).map(key => [key, VIEW_LABELS[key]])
+              )
+            }}
+            value={selectedView}
+            onChange={onChangeSelectedView}
+          />
           {userGroups.map(userGroup => (
             <div key={userGroup.id} className={styles.userListGroup}>
               <SectionHeading element="h3">{userGroup.label}</SectionHeading>

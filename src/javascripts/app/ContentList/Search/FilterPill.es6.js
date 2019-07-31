@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { match } from 'utils/TaggedValues.es6';
-import { ValueInput } from './Filters.es6';
+import ValueInput from './FilterValueInputs.es6';
 import Date from './ValueInput/Date.es6';
 import FilterValueReference from './ValueInput/Reference.es6';
 import TextValueInput from './ValueInput/Text.es6';
@@ -132,6 +132,7 @@ function FilterSelect(props) {
 }
 
 export default function FilterPill({
+  className,
   filter,
   op = '',
   value = '',
@@ -146,7 +147,7 @@ export default function FilterPill({
 }) {
   return (
     <div
-      className="search__filter-pill"
+      className={`search__filter-pill${className ? ` ${className}` : ''}`}
       data-test-id={testId}
       ref={el => {
         if (isFocused && el) {
