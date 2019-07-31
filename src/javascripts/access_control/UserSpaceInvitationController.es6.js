@@ -1,5 +1,4 @@
 import { registerController } from 'NgRegistry.es6';
-import { track } from 'analytics/Analytics.es6';
 import _ from 'lodash';
 
 export default function register() {
@@ -17,7 +16,8 @@ export default function register() {
     '$q',
     '$timeout',
     'spaceContext',
-    function($scope, $q, $timeout, spaceContext) {
+    'analytics/Analytics.es6',
+    function($scope, $q, $timeout, spaceContext, { track }) {
       // A hash with user ids as keys, and role ids as values
       $scope.selectedRoles = {};
 
@@ -72,8 +72,6 @@ export default function register() {
             numErr: failedInvites,
             numSuccess: invitees.length - failedInvites
           });
-
-          $scope.applyAsync();
         }
 
         function scheduleInvitation(invitee) {
