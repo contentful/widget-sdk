@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-import { Button, Notification } from '@contentful/forma-36-react-components';
+import { Button, Notification, Spinner, Paragraph } from '@contentful/forma-36-react-components';
 import { InstalledTag, NotInstalledTag } from './AppStateTags.es6';
 
 import AdminOnly from 'app/common/AdminOnly.es6';
@@ -28,7 +28,8 @@ const BUSY_STATE_TO_TEXT = {
 const styles = {
   renderer: css({
     height: '100%',
-    width: '100%'
+    width: '100%',
+    padding: 0
   }),
   overlay: css({
     backgroundColor: 'rgba(0,0,0,.3)',
@@ -220,11 +221,26 @@ export default class AppRoute extends Component {
     return (
       <AdminOnly>
         <DocumentTitle title={extensionDefinition.name} />
+        {this.renderBusyOverlay()}
         <Workbench>
           {this.renderHeader()}
           {this.renderContent()}
         </Workbench>
       </AdminOnly>
+    );
+  }
+
+  renderBusyOverlay() {
+    if (!this.state.busyWith) {
+      return null;
+    }
+
+    return (
+      <div className={styles.overlay}>
+        <Paragraph className={styles.busyText}>
+          {BUSY_STATE_TO_TEXT[this.state.busyWith]} <Spinner />
+        </Paragraph>
+      </div>
     );
   }
 
@@ -275,20 +291,13 @@ export default class AppRoute extends Component {
 
   renderContent() {
     return (
-      <Workbench.Content>
-        <div className={styles.renderer}>
-          {this.state.busyWith && (
-            <div className={styles.overlay}>
-              <p className={styles.busyText}>{BUSY_STATE_TO_TEXT[this.state.busyWith]}</p>
-            </div>
-          )}
-          <ExtensionIFrameRenderer
-            bridge={this.props.bridge}
-            descriptor={{ id: null, src: this.state.extensionDefinition.src }}
-            parameters={this.parameters}
-            isFullSize
-          />
-        </div>
+      <Workbench.Content className={styles.renderer}>
+        <ExtensionIFrameRenderer
+          bridge={this.props.bridge}
+          descriptor={{ id: null, src: this.state.extensionDefinition.src }}
+          parameters={this.parameters}
+          isFullSize
+        />
       </Workbench.Content>
     );
   }
