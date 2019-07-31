@@ -1,5 +1,3 @@
-/* eslint-disable rulesdir/restrict-inline-styles */
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -25,7 +23,9 @@ const styles = {
   dotsRow: css({
     textAlign: 'right',
     verticalAlign: 'middle'
-  })
+  }),
+  tooltip: css({ fontSize: '12px' }),
+  tooltipSpan: css({ color: tokens.colorOrangeLight })
 };
 
 function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }) {
@@ -93,10 +93,9 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
         <strong>{get(space, 'name', '-')}</strong>
         {plan.committed && (
           <Tooltip
-            style={{ fontSize: '12px' }}
             tooltip="This space is part of your Enterprise deal with Contentful"
-            className="help-icon">
-            <span style={{ color: tokens.colorOrangeLight }}>★</span>
+            className={`help-icon ${styles.tooltip}`}>
+            <span className={styles.tooltipSpan}>★</span>
           </Tooltip>
         )}
       </TableCell>

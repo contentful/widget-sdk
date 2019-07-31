@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
-
 import React from 'react';
 import { match } from 'utils/TaggedValues.es6';
+import classNames from 'classnames';
+
 import ValueInput from './FilterValueInputs.es6';
 import Date from './ValueInput/Date.es6';
 import FilterValueReference from './ValueInput/Reference.es6';
@@ -147,7 +148,9 @@ export default function FilterPill({
 }) {
   return (
     <div
-      className={`search__filter-pill${className ? ` ${className}` : ''}`}
+      className={classNames('search__filter-pill', {
+        [className]: className
+      })}
       data-test-id={testId}
       ref={el => {
         if (isFocused && el) {
