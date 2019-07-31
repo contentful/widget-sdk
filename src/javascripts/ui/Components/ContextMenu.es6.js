@@ -27,6 +27,10 @@ class ContextMenu extends React.Component {
     testId: PropTypes.string
   };
 
+  static defaultProps = {
+    buttonProps: {}
+  };
+
   state = {
     isOpen: false
   };
