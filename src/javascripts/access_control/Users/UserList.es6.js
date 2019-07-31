@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { SectionHeading, Button, Tooltip } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import pluralize from 'pluralize';
+import { once } from 'lodash';
 
 import Icon from 'ui/Components/Icon.es6';
 import ContextMenu from 'ui/Components/ContextMenu.es6';
@@ -66,6 +67,10 @@ const styles = {
   })
 };
 
+const scrollToRole = once(roleGroupEl => {
+  roleGroupEl.current.scrollIntoView({ block: 'start' });
+});
+
 const UserList = ({
   canModifyUsers,
   openSpaceInvitationDialog,
@@ -78,9 +83,18 @@ const UserList = ({
   spaceUsersCount,
   openRoleChangeDialog,
   openRemovalConfirmationDialog,
-  onChangeSelectedView
+  onChangeSelectedView,
+  jumpToRole
 }) => {
   const userGroups = (userGroupsByView && userGroupsByView[selectedView]) || [];
+
+  const jumpToRoleId = `role-group-${jumpToRole}`;
+  const roleAnchorEl = useRef(null);
+  useEffect(() => {
+    if (userGroupsByView && jumpToRole && roleAnchorEl) {
+      scrollToRole(roleAnchorEl);
+    }
+  }, [userGroupsByView, jumpToRole]);
 
   return (
     <>
@@ -114,12 +128,17 @@ const UserList = ({
           />
           {userGroups.map(userGroup => (
             <div key={userGroup.id} className={styles.userListGroup}>
+              <span
+                id="scroll-to-anchor"
+                ref={userGroup.id === jumpToRoleId ? roleAnchorEl : null}
+              />
               <SectionHeading element="h3">{userGroup.label}</SectionHeading>
               {userGroup.users.map(user => (
                 <div key={user.id} className={styles.user}>
                   <img className={styles.userAvater} src={user.avatarUrl} width="50" height="50" />
                   <div>
                     <strong>{user.name}</strong>
+                    {/* TODO: add styling */}
                     {!user.confirmed && <small>This account is not confirmed</small>}
                     <div>{user.roleNames}</div>
                   </div>
@@ -203,6 +222,7 @@ UserList.propTypes = {
   ),
   selectedView: PropTypes.string.isRequired,
   orgId: PropTypes.string.isRequired,
+  jumpToRole: PropTypes.string,
   canModifyUsers: PropTypes.bool.isRequired,
   isOwnerOrAdmin: PropTypes.bool.isRequired,
   isInvitingUsersToSpace: PropTypes.bool,

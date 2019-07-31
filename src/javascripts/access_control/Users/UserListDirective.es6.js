@@ -1,5 +1,3 @@
-import { noop, once } from 'lodash';
-
 import { registerDirective, registerController, registerFactory } from 'NgRegistry.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
@@ -13,7 +11,7 @@ export default function register() {
   registerDirective('cfUserList', [
     'UserListController/jumpToRole',
     '$timeout',
-    (jumpToRole, $timeout) => {
+    jumpToRole => {
       const { popRoleId } = jumpToRole;
       const store = getStore().forKey('userListView');
 
@@ -24,29 +22,19 @@ export default function register() {
         link
       };
 
-      function link(scope, el) {
+      function link(scope) {
         const roleId = popRoleId();
         scope.viewLabels = VIEW_LABELS;
-        scope.props.selectedView = roleId ? VIEW_BY_ROLE : store.get() || VIEW_BY_NAME;
-        scope.props.onChangeSelectedView = newView => {
-          scope.props.selectedView = newView;
-          scope.$applyAsync();
-          store.set(newView);
+        scope.props = {
+          ...scope.props,
+          selectedView: roleId ? VIEW_BY_ROLE : store.get() || VIEW_BY_NAME,
+          onChangeSelectedView: newView => {
+            scope.props.selectedView = newView;
+            scope.$applyAsync();
+            store.set(newView);
+          },
+          jumpToRole: roleId
         };
-        scope.jumpToRole = roleId ? once(jumpToRole) : noop;
-
-        // TODO: migrate the jumping
-        function jumpToRole() {
-          $timeout(() => {
-            const groupHeader = el.find('#role-group-' + roleId).first();
-            const scrollContainer = el.find('.workbench-main__content').first();
-
-            if (groupHeader.length && scrollContainer.length) {
-              const scrollTo = scrollContainer.scrollTop() + groupHeader.position().top;
-              scrollContainer.scrollTop(scrollTo);
-            }
-          });
-        }
       }
     }
   ]);
@@ -120,7 +108,6 @@ export default function register() {
           userGroupsByView: userListHandler.getGroupedUsers()
         };
         $scope.context.ready = true;
-        $scope.jumpToRole();
       }
     }
   ]);
