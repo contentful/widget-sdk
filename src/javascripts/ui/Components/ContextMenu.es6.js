@@ -2,6 +2,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import enhanceWithClickOutside from 'react-click-outside';
+import { css } from 'emotion';
+
+const emotionStyles = {
+  contextMenu: css({
+    right: '-25px',
+    top: '30px'
+  })
+};
 
 class ContextMenu extends React.Component {
   static propTypes = {
@@ -15,7 +23,8 @@ class ContextMenu extends React.Component {
     ),
     buttonProps: PropTypes.shape(),
     style: PropTypes.object,
-    isDisabled: PropTypes.bool
+    isDisabled: PropTypes.bool,
+    testId: PropTypes.string
   };
 
   state = {
@@ -35,14 +44,15 @@ class ContextMenu extends React.Component {
   render() {
     const {
       items,
-      isDisabled: manuallyDisabled,
+      isDisabled: explicitlyDisabled,
       style: userStyles,
       buttonProps,
+      testId,
       ...otherProps
     } = this.props;
     const { isOpen } = this.state;
 
-    const isDisabled = manuallyDisabled || !(items && items.length);
+    const isDisabled = explicitlyDisabled || !(items && items.length);
 
     const styles = { ...(userStyles || {}), marginLeft: '10px', position: 'relative' };
 
@@ -52,22 +62,20 @@ class ContextMenu extends React.Component {
         ref={menu => {
           this.menuElement = menu;
         }}
+        data-test-id={testId}
         {...otherProps}>
         <button
           disabled={isDisabled}
-          className="btn-inline btn-actions-nav"
           onClick={this.toggle}
-          {...buttonProps}>
+          {...buttonProps}
+          className={`btn-inline btn-actions-nav${
+            buttonProps.className ? ` ${buttonProps.className}` : ''
+          }`}>
           •••
         </button>
 
         {isOpen ? (
-          <div
-            className="context-menu x--arrow-up x--arrow-right"
-            style={{
-              right: '-25px',
-              top: '30px'
-            }}>
+          <div className={`context-menu x--arrow-up x--arrow-right ${emotionStyles.contextMenu}`}>
             <ul className="context-menu__items">
               {items.map(item => {
                 const disabled = Boolean(item.disabled);

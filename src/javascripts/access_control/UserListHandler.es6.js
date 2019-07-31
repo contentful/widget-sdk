@@ -114,7 +114,6 @@ export default function register() {
             .map(user => {
               const id = user.sys.id;
               // This is a hack while we work on the new Users page.
-              // ETA: July 2019
               const numberOfTeamMemberships = membershipMap[id].relatedMemberships.filter(
                 ({ sys: { linkType } }) => linkType === 'TeamSpaceMembership'
               ).length;

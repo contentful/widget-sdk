@@ -122,7 +122,10 @@ const UserList = ({
             </Button>
           }
         />
-        <Workbench.Content className={styles.workbench.content}>
+        <Workbench.Content
+          testId="workbench.main__content"
+          // second class needed for e2e test only
+          className={`${styles.workbench.content} workbench-main__content`}>
           <FilterPill
             className={styles.groupSelect}
             filter={{
@@ -142,14 +145,26 @@ const UserList = ({
               />
               <SectionHeading element="h3">{userGroup.label}</SectionHeading>
               {userGroup.users.map(user => (
-                <div key={user.id} className={styles.user}>
+                <div
+                  key={user.id}
+                  data-test-id="user-list.item"
+                  // second class needed for e2e test only
+                  className={`${styles.user} user-list__item`}>
                   <img className={styles.userAvater} src={user.avatarUrl} width="50" height="50" />
                   <div>
-                    <strong className={styles.userName}>{user.name}</strong>
+                    <strong
+                      data-test-id="user-list.name"
+                      // second class needed for e2e test only
+                      className={`${styles.userName} user-list__name`}>
+                      {user.name}
+                    </strong>
                     {!user.confirmed && (
                       <small className={styles.notConfirmed}>This account is not confirmed</small>
                     )}
-                    <div>{user.roleNames}</div>
+                    {/*class needed for e2e test only*/}
+                    <div data-test-id="user-list.roles" className="user-list__roles">
+                      {user.roleNames}
+                    </div>
                   </div>
                   <Tooltip
                     targetWrapperClassName={styles.userMenu}
@@ -165,7 +180,9 @@ const UserList = ({
                     }>
                     <ContextMenu
                       buttonProps={{
-                        'data-test-id': 'user-list.actions'
+                        'data-test-id': 'user-list.actions',
+                        // needed for e2e test only
+                        className: 'user-list__actions'
                       }}
                       isDisabled={!canModifyUsers || user.numberOfTeamMemberships > 0}
                       items={[
@@ -180,6 +197,8 @@ const UserList = ({
                           label: 'Remove from this space',
                           action: () => openRemovalConfirmationDialog(user),
                           otherProps: {
+                            // needed for e2e test only
+                            'ui-command': 'removeUser',
                             'data-ui-trigger': 'user-remove-from-space'
                           }
                         }

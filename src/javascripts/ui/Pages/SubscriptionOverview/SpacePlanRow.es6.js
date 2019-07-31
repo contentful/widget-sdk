@@ -1,3 +1,4 @@
+/* eslint-disable rulesdir/restrict-inline-styles */
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -114,7 +115,7 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
       <TableCell className={styles.dotsRow}>
         {space && (
           <ContextMenu
-            data-test-id="subscription-page.spaces-list.space-context-menu"
+            testId="subscription-page.spaces-list.space-context-menu"
             items={contextMenuItems}
           />
         )}
