@@ -24,7 +24,7 @@ const styles = {
   groupSelect: css({
     marginLeft: '67px',
     marginTop: tokens.spacingXl,
-    width: 'fit-content'
+    display: 'inline-flex'
   }),
   sidebar: {
     heading: css({
