@@ -197,7 +197,6 @@ const UserList = ({
                           action: () => openRemovalConfirmationDialog(user),
                           otherProps: {
                             // needed for e2e test only
-                            'ui-command': 'removeUser',
                             'data-ui-trigger': 'user-remove-from-space'
                           }
                         }
