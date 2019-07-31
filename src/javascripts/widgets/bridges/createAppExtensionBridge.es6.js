@@ -88,6 +88,10 @@ export default function createAppExtensionBridge(dependencies) {
         if (installationRequestId === currentInstallationRequestId) {
           api.send('appHook', [postInstallMessage(ok)]);
           currentInstallationRequestId = null;
+
+          // This is useful because it will ensure that the user will see
+          // any updates made to content types after they navigate away from the app page.
+          spaceContext.publishedCTs.refresh();
         }
       };
     };
