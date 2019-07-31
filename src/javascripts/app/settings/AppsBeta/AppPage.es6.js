@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-import { Button, Notification } from '@contentful/forma-36-react-components';
+import { Button, Notification, Spinner, Paragraph } from '@contentful/forma-36-react-components';
 import { InstalledTag, NotInstalledTag } from './AppStateTags.es6';
 
 import AdminOnly from 'app/common/AdminOnly.es6';
@@ -279,7 +279,9 @@ export default class AppRoute extends Component {
         <div className={styles.renderer}>
           {this.state.busyWith && (
             <div className={styles.overlay}>
-              <p className={styles.busyText}>{BUSY_STATE_TO_TEXT[this.state.busyWith]}</p>
+              <Paragraph className={styles.busyText}>
+                {BUSY_STATE_TO_TEXT[this.state.busyWith]} <Spinner />
+              </Paragraph>
             </div>
           )}
           <ExtensionIFrameRenderer
