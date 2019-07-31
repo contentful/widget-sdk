@@ -41,8 +41,8 @@ const AddUsersToSpaceNote = ({ orgId, isOwnerOrAdmin, hasTeamsFeature }) => (
     </p>
     {hasTeamsFeature && (
       <p>
-        Some members of this space may have access through a team. In this case, it is only possible
-        to manage the settings of the team, rather than the individual members.
+        Some users of this space may have access through a team. In this case, it is only possible
+        to manage the settings of the team, rather than the individual users.
       </p>
     )}
     {!hasTeamsFeature && !isOwnerOrAdmin && (
