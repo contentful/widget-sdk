@@ -70,7 +70,8 @@ const styles = {
     marginRight: tokens.spacingM
   }),
   userMenu: css({
-    marginLeft: 'auto'
+    marginLeft: 'auto',
+    height: 'fit-content'
   })
 };
 
