@@ -2,8 +2,6 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import ellipsisStyle from 'ellipsisStyle.es6';
 
-const columnMaxWidth = '350px';
-
 export default {
   contentAlignment: css({
     display: 'flex',
@@ -11,33 +9,39 @@ export default {
     flexDirection: 'column',
     paddingTop: 0
   }),
-  content: css({
-    width: '100%',
-    padding: tokens.spacingXl
+  table: css({
+    marginTop: tokens.spacingXl,
+    tableLayout: 'fixed'
   }),
   row: css({
     height: '95px'
   }),
   cell: css({
-    paddingRight: '140px'
+    paddingRight: tokens.spacing3Xl
   }),
-  cellTeamName: css({
+  teamNameCell: css({
     fontWeight: tokens.fontWeightMedium,
     color: tokens.colorTextDark,
-    maxWidth: columnMaxWidth,
     whiteSpace: 'nowrap',
     ...ellipsisStyle
   }),
-  cellTeamDescription: css({
-    maxWidth: columnMaxWidth,
+  teamDescriptionCell: css({
     overflow: 'hidden',
     display: '-webkit-box',
     WebkitLineClamp: '2',
     MozLineClamp: '2',
     WebkitBoxOrient: 'vertical'
   }),
-  cellRoles: css({
-    maxWidth: columnMaxWidth,
+  teamColumn: css({
+    width: '39.9%'
+  }),
+  membersColumn: css({
+    width: '13%'
+  }),
+  rolesColumn: css({
+    width: '42%'
+  }),
+  rolesCell: css({
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
     lineHeight: '1.2em'
@@ -53,5 +57,10 @@ export default {
   }),
   strong: css({
     color: tokens.colorTextMid
+  }),
+  modalContent: css({
+    p: {
+      marginBottom: tokens.spacingM
+    }
   })
 };

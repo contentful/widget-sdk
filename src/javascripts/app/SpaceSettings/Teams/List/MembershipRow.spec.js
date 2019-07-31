@@ -24,6 +24,7 @@ const build = props =>
                 }
               }
             },
+            memberships: [],
             availableRoles: [],
             menuIsOpen: false,
             setMenuOpen: noop,

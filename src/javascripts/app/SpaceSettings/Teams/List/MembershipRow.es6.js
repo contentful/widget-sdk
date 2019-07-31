@@ -5,12 +5,13 @@ import {
   TableCell,
   TableRow,
   Tooltip,
-  ModalConfirm
+  ModalConfirm,
+  Paragraph
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { cx, css } from 'emotion';
-import { truncate, map, intersection, isEmpty } from 'lodash';
+import { truncate, map, intersection, isEmpty, filter } from 'lodash';
 
 import { joinWithAnd } from 'utils/StringUtils.es6';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor.es6';
@@ -24,13 +25,14 @@ import { href } from 'states/Navigator.es6';
 
 import RowMenu from './RowMenu.es6';
 import styles from '../styles.es6';
-import DowngradeOwnAdminMembershipConfirmation from './DowngradeOwnAdminMembershipConfirmation.es6';
-import RemoveOwnAdminMembershipConfirmation from './RemoveOwnAdminMembershipConfirmation.es6';
+import DowngradeLastAdminMembershipConfirmation from './DowngradeLastAdminMembershipConfirmation.es6';
+import RemoveLastAdminMembershipConfirmation from './RemoveLastAdminMembershipConfirmation.es6';
 
 const navigateToDefaultLocation = () => window.location.replace(href({ path: ['^', '^'] }));
 
 const MembershipRow = ({
   membership,
+  memberships,
   availableRoles,
   menuIsOpen,
   setMenuOpen,
@@ -47,7 +49,8 @@ const MembershipRow = ({
       id: membershipId,
       team: { name, description, memberCount }
     },
-    roles
+    roles,
+    admin
   } = membership;
 
   const roleIds = map(isEmpty(roles) ? [ADMIN_ROLE] : roles, 'sys.id');
@@ -56,9 +59,11 @@ const MembershipRow = ({
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
   const [showRemoveOwnAdminConfirmation, setShowRemoveOwnAdminConfirmation] = useState(false);
 
-  const isLastAdminMembership =
+  const isLastAdminMembershipOfUser =
     currentUserAdminSpaceMemberships.length === 1 &&
     currentUserAdminSpaceMemberships[0].sys.id === membershipId;
+
+  const isLastAdminMembership = admin && filter(memberships, { admin: true }).length === 1;
 
   const haveRolesChanged = !(
     intersection(selectedRoleIds, roleIds).length === selectedRoleIds.length &&
@@ -81,20 +86,20 @@ const MembershipRow = ({
   );
 
   const onUpdate = useCallback(async () => {
-    if (isLastAdminMembership) {
+    if (isLastAdminMembershipOfUser) {
       setShowUpdateConfirmation(true);
       return;
     }
     await onUpdateConfirmed();
-  }, [isLastAdminMembership, onUpdateConfirmed]);
+  }, [isLastAdminMembershipOfUser, onUpdateConfirmed]);
 
   const onRemove = useCallback(() => {
-    if (isLastAdminMembership) {
+    if (isLastAdminMembershipOfUser) {
       setShowRemoveOwnAdminConfirmation(true);
     } else {
       setShowRemoveConfirmation(true);
     }
-  }, [isLastAdminMembership]);
+  }, [isLastAdminMembershipOfUser]);
 
   const onRemoveConfirmed = useCallback(
     async (lostAccess = false) => {
@@ -126,22 +131,24 @@ const MembershipRow = ({
 
   return (
     <TableRow key={membershipId} testId="membership-row" className={styles.row}>
-      <DowngradeOwnAdminMembershipConfirmation
+      <DowngradeLastAdminMembershipConfirmation
         isShown={showUpdateConfirmation}
         close={() => setShowUpdateConfirmation(false)}
         onConfirm={() => {
           setShowUpdateConfirmation(false);
           onUpdateConfirmed(true);
         }}
+        isLastAdminMembership={isLastAdminMembership}
         teamName={name}
       />
-      <RemoveOwnAdminMembershipConfirmation
+      <RemoveLastAdminMembershipConfirmation
         isShown={showRemoveOwnAdminConfirmation}
         close={() => setShowRemoveOwnAdminConfirmation(false)}
         onConfirm={() => {
           setShowRemoveOwnAdminConfirmation(false);
           onRemoveConfirmed(true);
         }}
+        isLastAdminMembership={isLastAdminMembership}
         teamName={name}
       />
       <ModalConfirm
@@ -156,22 +163,25 @@ const MembershipRow = ({
         confirmLabel="Remove"
         cancelLabel="Cancel"
         title="Remove team from this space">
-        <p>
+        <Paragraph>
           Are you sure you want to remove {<strong className={styles.strong}>{name}</strong>} from
           this space?
-        </p>
+        </Paragraph>
       </ModalConfirm>
       <TableCell className={styles.cell} testId="team-cell">
-        <div className={styles.cellTeamName} data-test-id="team.name">
+        <div className={styles.teamNameCell} data-test-id="team.name">
           {name}
         </div>
         {/*This truncation is a fallback for IE and pre-68 FF, which don't support css line-clamp*/}
-        <div className={styles.cellTeamDescription} data-test-id="team.description">
+        <div className={styles.teamDescriptionCell} data-test-id="team.description">
           {truncate(description, { length: 130 })}
         </div>
       </TableCell>
+      <TableCell className={styles.cell} testId="member-count-cell">
+        {pluralize('member', memberCount, true)}
+      </TableCell>
       {isEditing ? (
-        <TableCell colSpan={3}>
+        <TableCell colSpan={2}>
           <div className={styles.roleForm}>
             <SpaceRoleEditor
               buttonProps={{ className: styles.roleEditorButton }}
@@ -197,10 +207,7 @@ const MembershipRow = ({
         </TableCell>
       ) : (
         <>
-          <TableCell className={styles.cell} testId="member-count-cell">
-            {pluralize('member', memberCount, true)}
-          </TableCell>
-          <TableCell className={cx(styles.cellRoles, styles.cell)} testId="roles-cell">
+          <TableCell className={cx(styles.rolesCell, styles.cell)} testId="roles-cell">
             {isEmpty(roles) ? 'Admin' : joinWithAnd(map(roles, 'name'))}
           </TableCell>
           <TableCell>
@@ -221,6 +228,7 @@ const MembershipRow = ({
 
 MembershipRow.propTypes = {
   membership: TeamSpaceMembershipProp.isRequired,
+  memberships: PropTypes.arrayOf(TeamSpaceMembershipProp).isRequired,
   availableRoles: PropTypes.arrayOf(SpaceRoleProp).isRequired,
   menuIsOpen: PropTypes.bool.isRequired,
   setMenuOpen: PropTypes.func.isRequired,
