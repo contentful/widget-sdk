@@ -32,9 +32,9 @@ const RemoveOwnAdminMembershipConfirmation = ({
       <div className={styles.modalContent}>
         <Paragraph>
           You are removing the team {<strong className={styles.strong}>{teamName}</strong>} from
-          this space.{' '}
+          this space.
           {isLastAdminMembership &&
-            'This team has a user with the last administrator role for this space.'}
+            ' This team has a user with the last administrator role for this space.'}
         </Paragraph>
         {!isLastAdminMembership && (
           <Paragraph>

@@ -9,8 +9,9 @@ import {
   Button,
   Tooltip
 } from '@contentful/forma-36-react-components';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 
-import Workbench from 'app/common/Workbench.es6';
+import Icon from 'ui/Components/Icon.es6';
 import {
   SpaceMembership as SpaceMembershipProp,
   SpaceRole as SpaceRoleProp,
@@ -53,12 +54,10 @@ const SpaceTeamsPagePresentation = ({
 
   return (
     <Workbench>
-      <Workbench.Header>
-        <Workbench.Header.Left>
-          <Workbench.Icon icon="page-teams" />
-          <Workbench.Title>Teams {!isLoading && `(${memberships.length})`}</Workbench.Title>
-        </Workbench.Header.Left>
-        <Workbench.Header.Actions>
+      <Workbench.Header
+        icon={<Icon name="page-teams" scale={0.75} />}
+        title={`Teams ${!isLoading ? `(${memberships.length})` : ''}`}
+        actions={
           <Tooltip
             place="left"
             content={
@@ -74,51 +73,49 @@ const SpaceTeamsPagePresentation = ({
               Add team
             </Button>
           </Tooltip>
-        </Workbench.Header.Actions>
-      </Workbench.Header>
-      <Workbench.Content className={styles.contentAlignment}>
+        }
+      />
+      <Workbench.Content className={styles.contentAlignment} type="default">
         {empty && <EmptyStatePlaceholder />}
         {!empty && (
-          <div className={styles.content}>
-            <Table testId="membership-table" className={styles.table}>
-              <TableHead>
-                <TableRow>
-                  <TableCell className={styles.teamColumn}>Team</TableCell>
-                  <TableCell className={styles.membersColumn}>Members</TableCell>
-                  <TableCell className={styles.rolesColumn}>Role</TableCell>
-                  <TableCell />
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {isLoading && <LoadingPlaceholder />}
-                {!isLoading &&
-                  memberships.map(membership => {
-                    const {
-                      sys: { id: membershipId }
-                    } = membership;
-                    return (
-                      <MembershipRow
-                        key={membershipId}
-                        {...{
-                          readOnly,
-                          setMenuOpen: open => setOpenMenu(open ? membershipId : null),
-                          menuIsOpen: openMenu === membershipId,
-                          setEditing: edit => setEditingRow(edit ? membershipId : null),
-                          isEditing: editingRow === membershipId,
-                          membership,
-                          memberships,
-                          availableRoles,
-                          onUpdateTeamSpaceMembership,
-                          onRemoveTeamSpaceMembership,
-                          isPending,
-                          currentUserAdminSpaceMemberships
-                        }}
-                      />
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </div>
+          <Table testId="membership-table" className={styles.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell className={styles.teamColumn}>Team</TableCell>
+                <TableCell className={styles.membersColumn}>Members</TableCell>
+                <TableCell className={styles.rolesColumn}>Role</TableCell>
+                <TableCell />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {isLoading && <LoadingPlaceholder />}
+              {!isLoading &&
+                memberships.map(membership => {
+                  const {
+                    sys: { id: membershipId }
+                  } = membership;
+                  return (
+                    <MembershipRow
+                      key={membershipId}
+                      {...{
+                        readOnly,
+                        setMenuOpen: open => setOpenMenu(open ? membershipId : null),
+                        menuIsOpen: openMenu === membershipId,
+                        setEditing: edit => setEditingRow(edit ? membershipId : null),
+                        isEditing: editingRow === membershipId,
+                        membership,
+                        memberships,
+                        availableRoles,
+                        onUpdateTeamSpaceMembership,
+                        onRemoveTeamSpaceMembership,
+                        isPending,
+                        currentUserAdminSpaceMemberships
+                      }}
+                    />
+                  );
+                })}
+            </TableBody>
+          </Table>
         )}
       </Workbench.Content>
     </Workbench>

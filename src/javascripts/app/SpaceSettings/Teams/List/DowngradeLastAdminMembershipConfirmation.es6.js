@@ -31,9 +31,9 @@ const DowngradeOwnAdminMembershipConfirmation = ({
       <div className={styles.modalContent}>
         <Paragraph>
           You are removing the admin role of the team{' '}
-          {<strong className={styles.strong}>{teamName}</strong>}.{' '}
+          {<strong className={styles.strong}>{teamName}</strong>}.
           {isLastAdminMembership &&
-            'This team has a user with the last administrator role for this space.'}
+            ' This team has a user with the last administrator role for this space.'}
         </Paragraph>
         {!isLastAdminMembership && (
           <Paragraph>

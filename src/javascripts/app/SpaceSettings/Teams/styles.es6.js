@@ -9,12 +9,8 @@ export default {
     flexDirection: 'column',
     paddingTop: 0
   }),
-  content: css({
-    minWidth: tokens.contentWidthDefault,
-    maxWidth: tokens.contentWidthDefault,
-    padding: tokens.spacingXl
-  }),
   table: css({
+    marginTop: tokens.spacingXl,
     tableLayout: 'fixed'
   }),
   row: css({
