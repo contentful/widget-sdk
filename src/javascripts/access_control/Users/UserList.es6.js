@@ -5,7 +5,6 @@ import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import pluralize from 'pluralize';
-import { once } from 'lodash';
 
 import Icon from 'ui/Components/Icon.es6';
 import ContextMenu from 'ui/Components/ContextMenu.es6';
@@ -75,9 +74,9 @@ const styles = {
   })
 };
 
-const scrollToRole = once(roleGroupEl => {
+const scrollToRole = roleGroupEl => {
   roleGroupEl.current.scrollIntoView({ block: 'start' });
-});
+};
 
 const UserList = ({
   canModifyUsers,
