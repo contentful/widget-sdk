@@ -75,7 +75,7 @@ const SpaceTeamsPagePresentation = ({
           </Tooltip>
         }
       />
-      <Workbench.Content className={styles.contentAlignment} type="default">
+      <Workbench.Content className={styles.content} type="default">
         {empty && <EmptyStatePlaceholder />}
         {!empty && (
           <Table testId="membership-table" className={styles.table}>
