@@ -11,14 +11,14 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { cx, css } from 'emotion';
-import { truncate, map, intersection, isEmpty, filter } from 'lodash';
+import { truncate, map, intersection, isEmpty, filter, some } from 'lodash';
 
 import { joinWithAnd } from 'utils/StringUtils.es6';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor.es6';
 import {
-  SpaceMembership as SpaceMembershipProp,
-  SpaceRole as SpaceRoleProp,
-  TeamSpaceMembership as TeamSpaceMembershipProp
+  SpaceMembership as SpaceMembershipPropType,
+  SpaceRole as SpaceRolePropType,
+  TeamSpaceMembership as TeamSpaceMembershipPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
 import { ADMIN_ROLE } from 'access_control/constants.es6';
 import { href } from 'states/Navigator.es6';
@@ -31,8 +31,9 @@ import RemoveLastAdminMembershipConfirmation from './RemoveLastAdminMembershipCo
 const navigateToDefaultLocation = () => window.location.replace(href({ path: ['^', '^'] }));
 
 const MembershipRow = ({
-  membership,
-  memberships,
+  teamSpaceMembership,
+  teamSpaceMemberships,
+  spaceMemberships,
   availableRoles,
   menuIsOpen,
   setMenuOpen,
@@ -51,7 +52,7 @@ const MembershipRow = ({
     },
     roles,
     admin
-  } = membership;
+  } = teamSpaceMembership;
 
   const roleIds = map(isEmpty(roles) ? [ADMIN_ROLE] : roles, 'sys.id');
   const [selectedRoleIds, setSelectedRoles] = useState(roleIds);
@@ -63,7 +64,10 @@ const MembershipRow = ({
     currentUserAdminSpaceMemberships.length === 1 &&
     currentUserAdminSpaceMemberships[0].sys.id === membershipId;
 
-  const isLastAdminMembership = admin && filter(memberships, { admin: true }).length === 1;
+  const isLastAdminMembership =
+    admin &&
+    !some(spaceMemberships, { admin: true }) &&
+    filter(teamSpaceMemberships, { admin: true }).length === 1;
 
   const haveRolesChanged = !(
     intersection(selectedRoleIds, roleIds).length === selectedRoleIds.length &&
@@ -73,7 +77,7 @@ const MembershipRow = ({
   const onUpdateConfirmed = useCallback(
     async (lostAccess = false) => {
       try {
-        await onUpdateTeamSpaceMembership(membership, selectedRoleIds);
+        await onUpdateTeamSpaceMembership(teamSpaceMembership, selectedRoleIds);
         if (lostAccess) {
           navigateToDefaultLocation();
         }
@@ -82,7 +86,7 @@ const MembershipRow = ({
         throw e;
       }
     },
-    [membership, onUpdateTeamSpaceMembership, roleIds, selectedRoleIds]
+    [teamSpaceMembership, onUpdateTeamSpaceMembership, roleIds, selectedRoleIds]
   );
 
   const onUpdate = useCallback(async () => {
@@ -103,12 +107,12 @@ const MembershipRow = ({
 
   const onRemoveConfirmed = useCallback(
     async (lostAccess = false) => {
-      await onRemoveTeamSpaceMembership(membership, selectedRoleIds);
+      await onRemoveTeamSpaceMembership(teamSpaceMembership, selectedRoleIds);
       if (lostAccess) {
         navigateToDefaultLocation();
       }
     },
-    [membership, onRemoveTeamSpaceMembership, selectedRoleIds]
+    [teamSpaceMembership, onRemoveTeamSpaceMembership, selectedRoleIds]
   );
 
   // reset selected roles when starting to edit
@@ -130,7 +134,7 @@ const MembershipRow = ({
   );
 
   return (
-    <TableRow key={membershipId} testId="membership-row" className={styles.row}>
+    <TableRow key={membershipId} testId="teamSpaceMembership-row" className={styles.row}>
       <DowngradeLastAdminMembershipConfirmation
         isShown={showUpdateConfirmation}
         close={() => setShowUpdateConfirmation(false)}
@@ -227,9 +231,10 @@ const MembershipRow = ({
 };
 
 MembershipRow.propTypes = {
-  membership: TeamSpaceMembershipProp.isRequired,
-  memberships: PropTypes.arrayOf(TeamSpaceMembershipProp).isRequired,
-  availableRoles: PropTypes.arrayOf(SpaceRoleProp).isRequired,
+  teamSpaceMembership: TeamSpaceMembershipPropType.isRequired,
+  teamSpaceMemberships: PropTypes.arrayOf(TeamSpaceMembershipPropType).isRequired,
+  spaceMemberships: PropTypes.arrayOf(SpaceMembershipPropType).isRequired,
+  availableRoles: PropTypes.arrayOf(SpaceRolePropType).isRequired,
   menuIsOpen: PropTypes.bool.isRequired,
   setMenuOpen: PropTypes.func.isRequired,
   isEditing: PropTypes.bool.isRequired,
@@ -239,7 +244,7 @@ MembershipRow.propTypes = {
   isPending: PropTypes.bool.isRequired,
   readOnly: PropTypes.bool.isRequired,
   currentUserAdminSpaceMemberships: PropTypes.arrayOf(
-    PropTypes.oneOfType([SpaceMembershipProp, TeamSpaceMembershipProp])
+    PropTypes.oneOfType([SpaceMembershipPropType, TeamSpaceMembershipPropType])
   ).isRequired
 };
 

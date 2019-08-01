@@ -13,9 +13,9 @@ import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 
 import Icon from 'ui/Components/Icon.es6';
 import {
-  SpaceMembership as SpaceMembershipProp,
-  SpaceRole as SpaceRoleProp,
-  TeamSpaceMembership as TeamSpaceMembershipProp
+  SpaceMembership as SpaceMembershipPropType,
+  SpaceRole as SpaceRolePropType,
+  TeamSpaceMembership as TeamSpaceMembershipPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
 import { go } from 'states/Navigator.es6';
 
@@ -30,7 +30,7 @@ const goToAddTeams = () =>
   });
 
 const SpaceTeamsPagePresentation = ({
-  memberships,
+  teamSpaceMemberships,
   teams,
   isLoading,
   isPending,
@@ -38,7 +38,8 @@ const SpaceTeamsPagePresentation = ({
   onUpdateTeamSpaceMembership,
   onRemoveTeamSpaceMembership,
   readOnly,
-  currentUserAdminSpaceMemberships
+  currentUserAdminSpaceMemberships,
+  spaceMemberships
 }) => {
   const [openMenu, setOpenMenu] = useState(null);
   const [editingRow, setEditingRow] = useState(null);
@@ -49,14 +50,14 @@ const SpaceTeamsPagePresentation = ({
   }, [isPending]);
 
   const noTeamsInOrg = teams.length === 0;
-  const allTeamsAdded = memberships.length === teams.length;
-  const empty = !isLoading && memberships.length === 0;
+  const allTeamsAdded = teamSpaceMemberships.length === teams.length;
+  const empty = !isLoading && teamSpaceMemberships.length === 0;
 
   return (
     <Workbench>
       <Workbench.Header
         icon={<Icon name="page-teams" scale={0.75} />}
-        title={`Teams ${!isLoading ? `(${memberships.length})` : ''}`}
+        title={`Teams ${!isLoading ? `(${teamSpaceMemberships.length})` : ''}`}
         actions={
           <Tooltip
             place="left"
@@ -90,10 +91,10 @@ const SpaceTeamsPagePresentation = ({
             <TableBody>
               {isLoading && <LoadingPlaceholder />}
               {!isLoading &&
-                memberships.map(membership => {
+                teamSpaceMemberships.map(teamSpaceMembership => {
                   const {
                     sys: { id: membershipId }
-                  } = membership;
+                  } = teamSpaceMembership;
                   return (
                     <MembershipRow
                       key={membershipId}
@@ -103,8 +104,9 @@ const SpaceTeamsPagePresentation = ({
                         menuIsOpen: openMenu === membershipId,
                         setEditing: edit => setEditingRow(edit ? membershipId : null),
                         isEditing: editingRow === membershipId,
-                        membership,
-                        memberships,
+                        teamSpaceMembership,
+                        teamSpaceMemberships,
+                        spaceMemberships,
                         availableRoles,
                         onUpdateTeamSpaceMembership,
                         onRemoveTeamSpaceMembership,
@@ -123,16 +125,17 @@ const SpaceTeamsPagePresentation = ({
 };
 
 SpaceTeamsPagePresentation.propTypes = {
-  memberships: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-  teams: PropTypes.array.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  availableRoles: PropTypes.arrayOf(SpaceRoleProp),
+  teamSpaceMemberships: PropTypes.arrayOf(TeamSpaceMembershipPropType),
+  spaceMemberships: PropTypes.arrayOf(SpaceMembershipPropType),
+  teams: PropTypes.array.isRequired,
+  availableRoles: PropTypes.arrayOf(SpaceRolePropType),
   onUpdateTeamSpaceMembership: PropTypes.func.isRequired,
   onRemoveTeamSpaceMembership: PropTypes.func.isRequired,
   isPending: PropTypes.bool.isRequired,
   readOnly: PropTypes.bool.isRequired,
   currentUserAdminSpaceMemberships: PropTypes.arrayOf(
-    PropTypes.oneOfType([SpaceMembershipProp, TeamSpaceMembershipProp])
+    PropTypes.oneOfType([SpaceMembershipPropType, TeamSpaceMembershipPropType])
   ).isRequired
 };
 

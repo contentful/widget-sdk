@@ -19,6 +19,7 @@ import {
 } from 'access_control/TeamRepository.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
+import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 import styles from './styles.es6';
@@ -28,7 +29,7 @@ const spaceContext = getModule('spaceContext');
 
 const initialState = {
   isPending: false,
-  memberships: [],
+  teamSpaceMemberships: [],
   teams: [],
   availableRoles: []
 };
@@ -38,10 +39,8 @@ const reducer = (state, { type, payload }) => {
     case 'ERROR':
       return { ...state, error: true, isPending: false };
     case 'INITIAL_FETCH_SUCCESS': {
-      const {
-        data: [memberships, availableRoles, teams]
-      } = payload;
-      const sortedMemberships = memberships.sort(
+      const { teamSpaceMemberships, spaceMemberships, availableRoles, teams } = payload;
+      const sortedTeamSpaceMemberships = teamSpaceMemberships.sort(
         (
           {
             sys: {
@@ -55,36 +54,43 @@ const reducer = (state, { type, payload }) => {
           }
         ) => nameA.localeCompare(nameB)
       );
-      return { ...state, availableRoles, teams, memberships: sortedMemberships, error: false };
+      return {
+        ...state,
+        availableRoles,
+        teams,
+        teamSpaceMemberships: sortedTeamSpaceMemberships,
+        spaceMemberships,
+        error: false
+      };
     }
     case 'OPERATION_PENDING': {
       return { ...state, isPending: true };
     }
     case 'UPDATE_SUCCESS': {
       const { updatedMembership } = payload;
-      const { memberships, availableRoles } = state;
+      const { teamSpaceMemberships, availableRoles } = state;
       const [updatedMembershipWithRoles] = resolveLinks({
         paths: ['roles'],
         includes: { Role: availableRoles },
         items: [updatedMembership]
       });
-      const index = findIndex(memberships, { sys: { id: updatedMembership.sys.id } });
-      const oldMembership = memberships[index];
+      const index = findIndex(teamSpaceMemberships, { sys: { id: updatedMembership.sys.id } });
+      const oldMembership = teamSpaceMemberships[index];
       const updatedMembershipResolvedLinks = {
         ...updatedMembershipWithRoles,
         sys: { ...updatedMembershipWithRoles.sys, team: oldMembership.sys.team }
       };
 
-      const updatedMemberships = clone(memberships);
-      updatedMemberships.splice(index, 1, updatedMembershipResolvedLinks);
-      return { ...state, memberships: updatedMemberships, isPending: false };
+      const updatedTeamSpaceMemberships = clone(teamSpaceMemberships);
+      updatedTeamSpaceMemberships.splice(index, 1, updatedMembershipResolvedLinks);
+      return { ...state, teamSpaceMemberships: updatedTeamSpaceMemberships, isPending: false };
     }
     case 'DELETE_SUCCESS': {
-      const { memberships } = state;
+      const { teamSpaceMemberships } = state;
       const { membershipId } = payload;
       return {
         ...state,
-        memberships: memberships.filter(({ sys: { id } }) => id !== membershipId),
+        teamSpaceMemberships: teamSpaceMemberships.filter(({ sys: { id } }) => id !== membershipId),
         isPending: false
       };
     }
@@ -101,12 +107,21 @@ const fetch = (spaceId, dispatch) => async () => {
   } = spaceContext.organization;
   const orgEndpoint = createOrganizationEndpoint(orgId);
 
-  const data = await Promise.all([
+  const [
+    teamSpaceMemberships,
+    spaceMemberships,
+    { items: availableRoles },
+    teams
+  ] = await Promise.all([
     getTeamsSpaceMembershipsOfSpace(spaceEndpoint),
-    (await fetchAllWithIncludes(spaceEndpoint, ['roles'], 100)).items,
+    SpaceMembershipRepository.create(spaceEndpoint).getAll(),
+    fetchAllWithIncludes(spaceEndpoint, ['roles'], 100),
     getAllTeams(orgEndpoint)
   ]);
-  dispatch({ type: 'INITIAL_FETCH_SUCCESS', payload: { data } });
+  dispatch({
+    type: 'INITIAL_FETCH_SUCCESS',
+    payload: { teamSpaceMemberships, availableRoles, teams, spaceMemberships }
+  });
 };
 
 const useFetching = spaceId => {
@@ -168,13 +183,17 @@ const useFetching = spaceId => {
     [spaceId]
   );
 
-  return [{ ...state, isLoading, error }, onUpdateTeamSpaceMembership, onRemoveTeamSpaceMembership];
+  return [{ state, isLoading, error }, onUpdateTeamSpaceMembership, onRemoveTeamSpaceMembership];
 };
 
 const SpaceTeamsPage = ({ spaceId, onReady }) => {
   onReady();
   const [
-    { error, memberships, teams, availableRoles, isLoading, isPending },
+    {
+      state: { teamSpaceMemberships, spaceMemberships, teams, availableRoles, isPending },
+      error,
+      isLoading
+    },
     onUpdateTeamSpaceMembership,
     onRemoveTeamSpaceMembership
   ] = useFetching(spaceId);
@@ -186,7 +205,7 @@ const SpaceTeamsPage = ({ spaceId, onReady }) => {
   const spaceMember = spaceContext.getData('spaceMember');
   const [{ relatedMemberships: currentUserSpaceMemberships }] = resolveLinks({
     paths: ['relatedMemberships'],
-    includes: { TeamSpaceMembership: memberships },
+    includes: { TeamSpaceMembership: teamSpaceMemberships },
     items: [spaceMember]
   });
   const currentUserAdminSpaceMemberships = filter(currentUserSpaceMemberships, { admin: true });
@@ -204,7 +223,8 @@ const SpaceTeamsPage = ({ spaceId, onReady }) => {
       <DocumentTitle title="Teams" />
       <SpaceTeamsPagePresentation
         {...{
-          memberships,
+          teamSpaceMemberships,
+          spaceMemberships,
           availableRoles,
           readOnly,
           teams,
