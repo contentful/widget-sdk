@@ -99,7 +99,7 @@ const UserList = ({
   const jumpToRoleId = `role-group-${jumpToRole}`;
   const roleAnchorEl = useRef(null);
   useEffect(() => {
-    if (userGroupsByView && jumpToRole && roleAnchorEl) {
+    if (userGroupsByView && jumpToRole && roleAnchorEl.current) {
       scrollToRole(roleAnchorEl);
     }
   }, [userGroupsByView, jumpToRole]);
