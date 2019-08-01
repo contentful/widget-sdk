@@ -97,3 +97,7 @@ by nginx and assets (js, css, etc) are fetched from S3.
 The fingerprinted asset files only depend on the current revision of the
 repository. They are included in the `user-interface` image together with
 manifest to link asset names to their fingerprinted files.
+
+Security and Compliance
+-----------------------
+Additionally to the CI tests, another important test is run. You can find more information under [Security and Compliance](../guides/security_and_compliance.md).

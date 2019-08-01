@@ -60,6 +60,7 @@ If you run into them you’ll need to run the application in the Lab.
 - [Running tests with Jest](./docs/guides/testing-jest.md)
 - [Running tests with Cypress](./docs/guides/testing-cypress.md)
 - [(Legacy) Running tests with Karma](./docs/guides/testing-karma.md)
+- [Security and Compliance Tests in CI](./docs/guides/security_and_compliance.md)
 
 ### Running a full Contentful Instance
 
