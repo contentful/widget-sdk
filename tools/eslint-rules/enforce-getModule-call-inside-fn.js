@@ -9,20 +9,17 @@ module.exports = {
   },
   create(context) {
     return {
-      CallExpression(node) {
-        const calleeType = node.callee ? node.callee.type : '';
-        const fnName = node.callee && node.callee.name ? node.callee.name : '';
+      // this selector matches a top level call to any function by it's name
+      'Program > VariableDeclaration > VariableDeclarator > CallExpression > Identifier': node => {
+        const calleeType = node.type;
+        const fnName = node.name;
 
         if (calleeType === 'Identifier' && fnName === 'getModule') {
-          const isTopLevelCall = node.parent.parent.parent.parent === null;
-
-          if (isTopLevelCall) {
-            context.report({
-              node,
-              message:
-                "Please use getModule inside the function that requires the dependency it's injecting. The current usage pattern blocks our migration to webpack for the application bundle."
-            });
-          }
+          context.report({
+            node,
+            message:
+              "Please use getModule inside the function that requires the dependency it's injecting. The current usage pattern blocks our migration to webpack for the application bundle."
+          });
         }
       }
     };
