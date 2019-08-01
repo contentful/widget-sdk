@@ -45,8 +45,7 @@ export default function register() {
           getUsersByRole,
           getRoleOptions,
           getRoleOptionsBut,
-          isLastAdmin,
-          hasTeamSpaceMemberships
+          isLastAdmin
         };
 
         function reset() {
@@ -114,6 +113,10 @@ export default function register() {
           return _(users)
             .map(user => {
               const id = user.sys.id;
+              // This is a hack while we work on the new Users page.
+              const numberOfTeamMemberships = membershipMap[id].relatedMemberships.filter(
+                ({ sys: { linkType } }) => linkType === 'TeamSpaceMembership'
+              ).length;
 
               return {
                 id,
@@ -123,11 +126,7 @@ export default function register() {
                 roles: userRolesMap[id] || [],
                 roleNames: getRoleNamesForUser(id),
                 avatarUrl: user.avatarUrl,
-                // This is a hack while we work on the new Users page.
-                // ETA: July 2019
-                isMemberViaTeam: membershipMap[id].relatedMemberships.some(
-                  m => m.sys.linkType === 'TeamSpaceMembership'
-                ),
+                numberOfTeamMemberships,
                 name:
                   user.firstName && user.lastName
                     ? getName(user)
@@ -169,12 +168,6 @@ export default function register() {
         function isLastAdmin(userId) {
           const adminCount = _.filter(adminMap, _.identity).length;
           return adminMap[userId] && adminCount < 2;
-        }
-
-        function hasTeamSpaceMemberships() {
-          return users.some(user =>
-            user.membership.relatedMemberships.some(m => m.sys.linkType === 'TeamSpaceMembership')
-          );
         }
 
         function getRoleOptions() {

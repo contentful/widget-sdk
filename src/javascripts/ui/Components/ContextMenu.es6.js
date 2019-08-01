@@ -2,17 +2,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import enhanceWithClickOutside from 'react-click-outside';
+import { css } from 'emotion';
+
+const emotionStyles = {
+  contextMenu: css({
+    right: '-25px',
+    top: '30px'
+  })
+};
 
 class ContextMenu extends React.Component {
   static propTypes = {
-    items: PropTypes.array.isRequired,
-    otherProps: PropTypes.object,
-    style: PropTypes.object
+    items: PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string,
+        disabled: PropTypes.bool,
+        action: PropTypes.func,
+        otherProps: PropTypes.shape()
+      })
+    ),
+    buttonProps: PropTypes.shape(),
+    style: PropTypes.object,
+    isDisabled: PropTypes.bool,
+    testId: PropTypes.string
+  };
+
+  static defaultProps = {
+    buttonProps: {}
   };
 
   state = {
-    isOpen: false,
-    isDisabled: !(this.props.items && this.props.items.length)
+    isOpen: false
   };
 
   handleClickOutside = () => {
@@ -26,8 +46,17 @@ class ContextMenu extends React.Component {
   };
 
   render() {
-    const { isOpen, isDisabled } = this.state;
-    const { items, style: userStyles, ...otherProps } = this.props;
+    const {
+      items,
+      isDisabled: explicitlyDisabled,
+      style: userStyles,
+      buttonProps,
+      testId,
+      ...otherProps
+    } = this.props;
+    const { isOpen } = this.state;
+
+    const isDisabled = explicitlyDisabled || !(items && items.length);
 
     const styles = { ...(userStyles || {}), marginLeft: '10px', position: 'relative' };
 
@@ -37,18 +66,20 @@ class ContextMenu extends React.Component {
         ref={menu => {
           this.menuElement = menu;
         }}
+        data-test-id={testId}
         {...otherProps}>
-        <button disabled={isDisabled} className="btn-inline btn-actions-nav" onClick={this.toggle}>
+        <button
+          disabled={isDisabled}
+          onClick={this.toggle}
+          {...buttonProps}
+          className={`btn-inline btn-actions-nav${
+            buttonProps.className ? ` ${buttonProps.className}` : ''
+          }`}>
           •••
         </button>
 
         {isOpen ? (
-          <div
-            className="context-menu x--arrow-up x--arrow-right"
-            style={{
-              right: '-25px',
-              top: '30px'
-            }}>
+          <div className={`context-menu x--arrow-up x--arrow-right ${emotionStyles.contextMenu}`}>
             <ul className="context-menu__items">
               {items.map(item => {
                 const disabled = Boolean(item.disabled);

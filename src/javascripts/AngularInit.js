@@ -36,7 +36,7 @@ angular
       ngRequire('services/modalDialogService.es6').default();
       ngRequire('ui/command.es6').default();
       ngRequire('access_control/RoleRemover.es6').default();
-      ngRequire('access_control/UserListDirective.es6').default();
+      ngRequire('access_control/Users/UserListDirective.es6').default();
       ngRequire('access_control/RoleListDirective.es6').default();
       ngRequire('access_control/UserInvitationNoteDirectives.es6').default();
       ngRequire('access_control/UserSpaceInvitationController.es6').default();

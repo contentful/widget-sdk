@@ -3,12 +3,12 @@ import * as Store from 'ui/Framework/Store.es6';
 import { assign, update, set, push } from 'utils/Collections.es6';
 import { createSlot, sleep } from 'utils/Concurrent.es6';
 
+import ValueInput from './FilterValueInputs.es6';
 import {
   getMatchingFilters,
   isFieldFilterApplicableToContentType,
   getContentTypeById,
-  buildFilterFieldByQueryKey,
-  ValueInput
+  buildFilterFieldByQueryKey
 } from './Filters.es6';
 
 const CONTENT_TYPE_ALL = '';

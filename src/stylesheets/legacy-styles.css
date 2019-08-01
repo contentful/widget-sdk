@@ -2342,18 +2342,16 @@
     margin: 8px 0;
   }
   .role-list .context-menu.x--arrow-up:before,
-  .user-list .context-menu.x--arrow-up:before,
+  .user-list .workbench-header__actions .context-menu.x--arrow-up:before,
   .role-list .context-menu.x--arrow-up:after,
-  .user-list .context-menu.x--arrow-up:after {
+  .user-list .workbench-header__actions .context-menu.x--arrow-up:after {
     left: 92%;
   }
-  .user-list__actions,
   .role-list__actions {
     min-width: 25px;
     font-size: 0.6em;
     letter-spacing: 0.18em;
   }
-  .user-list__actions--disabled,
   .role-list__actions--disabled {
     color: #a9b9c0;
     cursor: default;
@@ -2443,50 +2441,6 @@
   }
   .rule-list__remove {
     font-size: 1.3rem;
-  }
-  .user-list__group {
-    margin: 40px 0;
-    position: relative;
-    border-top: 1px solid #e5ebed;
-  }
-  .user-list__group h3 {
-    margin: 0;
-    display: inline-block;
-    position: absolute;
-    left: 15px;
-    top: -10px;
-    font-size: 1.4em;
-    background: #fff;
-    padding: 0 10px;
-    min-width: 40px;
-  }
-  .user-list__item {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: center;
-    -webkit-box-align: center;
-            align-items: center;
-    -ms-flex-pack: justify;
-    -webkit-box-pack: justify;
-            justify-content: space-between;
-    margin-top: 15px;
-    padding: 5px 30px;
-    padding-left: 55px;
-    cursor: default;
-  }
-  .user-list__info {
-    margin-left: 15px;
-    margin-right: auto;
-    overflow: hidden;
-  }
-  .user-list__info strong {
-    display: block;
-    margin: 3px 0 2px;
-  }
-  .user-list__info small {
-    font-size: 0.9em;
-    color: #a9b9c0;
   }
   .settings-form__section {
     margin-top: 1.285714285714286em;

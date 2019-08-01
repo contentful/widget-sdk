@@ -372,13 +372,7 @@ class InviteADevStep extends React.Component {
       isDone: this.props.isDone
     };
 
-    let orgId;
-
-    try {
-      orgId = spaceContext.space.getOrganizationId();
-    } catch (e) {
-      // we just won't render the link
-    }
+    const orgId = spaceContext.space.getOrganizationId();
 
     const urlParams = {
       path: ['account', 'organizations', 'users', 'new'],
