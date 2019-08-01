@@ -3,6 +3,7 @@ import { render, fireEvent, cleanup, wait, within } from '@testing-library/react
 import { Notification } from '@contentful/forma-36-react-components';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository.es6';
 import { go } from 'states/Navigator.es6';
+import { track } from 'analytics/Analytics.es6';
 import AddTeamsPage from './AddTeamsPage.es6';
 
 import 'jest-dom/extend-expect';
@@ -17,6 +18,10 @@ jest.mock('access_control/TeamRepository.es6', () => ({
 
 jest.mock('data/EndpointFactory.es6', () => ({
   createSpaceEndpoint: jest.fn()
+}));
+
+jest.mock('analytics/Analytics.es6', () => ({
+  track: jest.fn()
 }));
 
 // scrollIntoView is not available in JSDOM
@@ -97,6 +102,7 @@ describe('AddTeamsPage', () => {
   afterEach(() => {
     createTeamSpaceMembership.mockReset();
     go.mockReset();
+    track.mockReset();
 
     notificationSuccessSpy.mockRestore();
     notificationErrorSpy.mockRestore();
@@ -279,5 +285,66 @@ describe('AddTeamsPage', () => {
     expect(notificationSuccessSpy).not.toHaveBeenCalled();
     expect(go).not.toHaveBeenCalled();
     expect(notificationErrorSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should track when all teams were successfully added', async () => {
+    createTeamSpaceMembership.mockResolvedValue(true);
+
+    const { queryByTestId } = mount({ teams });
+
+    searchAndSelectTeam('Test team', { queryByTestId });
+    searchAndSelectTeam('Awesome other team', { queryByTestId });
+
+    fireEvent.click(queryByTestId('submit-button'));
+
+    await wait();
+
+    expect(track).toHaveBeenNthCalledWith(1, 'teams_in_space:teams_added', {
+      numErr: 0,
+      numSuccess: 2,
+      numRoles: 0,
+      adminSelected: true
+    });
+  });
+
+  it('should track when some teams failed and some were successfully added', async () => {
+    createTeamSpaceMembership.mockResolvedValueOnce();
+    createTeamSpaceMembership.mockRejectedValue();
+
+    const { queryByTestId } = mount({ teams });
+
+    searchAndSelectTeam('Test team', { queryByTestId });
+    searchAndSelectTeam('Awesome other team', { queryByTestId });
+
+    fireEvent.click(queryByTestId('submit-button'));
+
+    await wait();
+
+    expect(track).toHaveBeenNthCalledWith(1, 'teams_in_space:teams_added', {
+      numErr: 1,
+      numSuccess: 1,
+      numRoles: 0,
+      adminSelected: true
+    });
+  });
+
+  it('should track when all teams are not successfully added', async () => {
+    createTeamSpaceMembership.mockRejectedValue();
+
+    const { queryByTestId } = mount({ teams });
+
+    searchAndSelectTeam('Test team', { queryByTestId });
+    searchAndSelectTeam('Awesome other team', { queryByTestId });
+
+    fireEvent.click(queryByTestId('submit-button'));
+
+    await wait();
+
+    expect(track).toHaveBeenNthCalledWith(1, 'teams_in_space:teams_added', {
+      numErr: 2,
+      numSuccess: 0,
+      numRoles: 0,
+      adminSelected: true
+    });
   });
 });

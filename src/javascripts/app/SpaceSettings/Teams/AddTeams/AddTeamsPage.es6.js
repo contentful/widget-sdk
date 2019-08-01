@@ -25,6 +25,7 @@ import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
 import EmptyStateTeams from 'svg/empty-state-teams.es6';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import StateLink from 'app/common/StateLink.es6';
+import { track } from 'analytics/Analytics.es6';
 
 import RoleSelector from './RoleSelector.es6';
 
@@ -193,6 +194,13 @@ const submit = (spaceId, teams, dispatch) => async ({
 
     dispatch({ type: 'SUBMIT', payload: false });
 
+    track('teams_in_space:teams_added', {
+      numErr: erredTeams.length,
+      numSuccess: 0,
+      numRoles: selectedRoleIds.length,
+      adminSelected
+    });
+
     return;
   }
 
@@ -211,6 +219,13 @@ const submit = (spaceId, teams, dispatch) => async ({
     const team = teams.find(team => team.sys.id === teamId);
 
     Notification.error(`Could not add ${team.name} to the space.`);
+  });
+
+  track('teams_in_space:teams_added', {
+    numErr: erredTeams.length,
+    numSuccess: selectedTeamIds.length - erredTeams.length,
+    numRoles: selectedRoleIds.length,
+    adminSelected
   });
 
   go({

@@ -16,7 +16,8 @@ export default function register() {
     '$q',
     '$timeout',
     'spaceContext',
-    function($scope, $q, $timeout, spaceContext) {
+    'analytics/Analytics.es6',
+    function($scope, $q, $timeout, spaceContext, { track }) {
       // A hash with user ids as keys, and role ids as values
       $scope.selectedRoles = {};
 
@@ -37,7 +38,7 @@ export default function register() {
         return invalidUsers.length;
       }
 
-      function inviteUsers() {
+      async function inviteUsers() {
         $scope.hasFailedInvitations = false;
         $scope.invitationsScheduled = $scope.users.length;
         $scope.invitationsDone = 0;
@@ -47,17 +48,26 @@ export default function register() {
           roleId: $scope.selectedRoles[user.sys.id]
         }));
         let currentInvitationId = 0;
+        let failedInvites = 0;
 
-        return $q.all(invitees.map(scheduleInvitation)).then(
-          () => {
-            $scope.dialog.confirm();
-          },
-          () => {
-            $scope.hasFailedInvitations = true;
-            $scope.invitationsScheduled = 0;
-            $scope.invitationsDone = 0;
-          }
+        const promises = invitees.map(invitee =>
+          scheduleInvitation(invitee).catch(() => (failedInvites += 1))
         );
+
+        await Promise.all(promises);
+
+        if (failedInvites === 0) {
+          $scope.dialog.confirm();
+        } else {
+          $scope.hasFailedInvitations = true;
+          $scope.invitationsScheduled = 0;
+          $scope.invitationsDone = 0;
+        }
+
+        track('teams_in_space:users_added', {
+          numErr: failedInvites,
+          numSuccess: invitees.length - failedInvites
+        });
 
         function scheduleInvitation(invitee) {
           const i = currentInvitationId;

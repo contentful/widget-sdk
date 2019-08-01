@@ -2,7 +2,15 @@ import _ from 'lodash';
 
 describe('UserSpaceInvitationController', () => {
   beforeEach(function() {
-    module('contentful/test');
+    this.stubs = {
+      track: sinon.stub()
+    };
+
+    module('contentful/test', $provide => {
+      $provide.constant('analytics/Analytics.es6', {
+        track: this.stubs.track
+      });
+    });
     const $rootScope = this.$inject('$rootScope');
     const $controller = this.$inject('$controller');
 
@@ -97,6 +105,46 @@ describe('UserSpaceInvitationController', () => {
       expect(this.scope.hasFailedInvitations).toEqual(true);
       expect(this.scope.invitationsScheduled).toEqual(0);
       expect(this.scope.invitationsDone).toEqual(0);
+    });
+
+    it('should track when all invitations are successful', async function() {
+      this.selectUserRole('foo', 'admin');
+      this.selectUserRole('bar', 'admin');
+
+      await this.sendInvites();
+
+      sinon.assert.calledWithExactly(this.stubs.track, 'teams_in_space:users_added', {
+        numErr: 0,
+        numSuccess: 2
+      });
+    });
+
+    it('should track when all invitations fail', async function() {
+      this.selectUserRole('foo', 'admin');
+      this.selectUserRole('bar', 'admin');
+      this.spaceContext.memberships.invite.rejects();
+
+      await this.sendInvites();
+
+      sinon.assert.calledWithExactly(this.stubs.track, 'teams_in_space:users_added', {
+        numErr: 2,
+        numSuccess: 0
+      });
+    });
+
+    it('should track when some invitations fail', async function() {
+      this.selectUserRole('foo', 'admin');
+      this.selectUserRole('bar', 'admin');
+
+      this.spaceContext.memberships.invite.onCall(0).resolves(true);
+      this.spaceContext.memberships.invite.onCall(1).rejects();
+
+      await this.sendInvites();
+
+      sinon.assert.calledWithExactly(this.stubs.track, 'teams_in_space:users_added', {
+        numErr: 1,
+        numSuccess: 1
+      });
     });
   });
 });
