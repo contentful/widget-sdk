@@ -134,7 +134,7 @@ const MembershipRow = ({
   );
 
   return (
-    <TableRow key={membershipId} testId="teamSpaceMembership-row" className={styles.row}>
+    <TableRow key={membershipId} testId="membership-row" className={styles.row}>
       <DowngradeLastAdminMembershipConfirmation
         isShown={showUpdateConfirmation}
         close={() => setShowUpdateConfirmation(false)}

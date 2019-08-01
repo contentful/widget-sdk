@@ -14,6 +14,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
   cy.resetAllFakeServers();
 
   const getMembershipsInteraction = 'query_team_space_memberships';
+  const getSpaceMembershipsInteraction = 'query_space_memberships';
   const getRolesInteraction = 'query_space_roles';
   const getTeamsInteraction = 'query_teams_in_org';
 
@@ -33,6 +34,21 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
       body: responseBody
     }
   }).as(getMembershipsInteraction);
+  cy.addInteraction({
+    provider: 'teams',
+    state: 'no-space-memberships',
+    uponReceiving: 'request for memberships in space',
+    withRequest: {
+      method: 'GET',
+      path: `/spaces/${defaultSpaceId}/space_memberships`,
+      query: { limit: '100', skip: '0' },
+      headers: defaultHeader
+    },
+    willRespondWith: {
+      status: 200,
+      body: empty
+    }
+  }).as(getSpaceMembershipsInteraction);
   // TODO: Move this to interactions/teams
   cy.addInteraction({
     provider: 'teams',
@@ -95,8 +111,9 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
     ...defaultRequestsMock(),
     `@${getMembershipsInteraction}`,
     `@${getTeamsInteraction}`,
-    `@${getRolesInteraction}`
-  ]
+    `@${getRolesInteraction}`,
+    `@${getSpaceMembershipsInteraction}`
+  ];
 
   cy.visit(`/spaces/${defaultSpaceId}/settings/teams`);
 
@@ -190,11 +207,11 @@ describe('Teams in space page', () => {
               roles: [
                 {
                   sys:
-                  {
-                    type: 'Link',
-                    linkType: 'Role',
-                    id: 'role1'
-                  }
+                    {
+                      type: 'Link',
+                      linkType: 'Role',
+                      id: 'role1'
+                    }
                 }
               ],
               sys: {
@@ -214,19 +231,19 @@ describe('Teams in space page', () => {
               roles: [
                 {
                   sys:
-                  {
-                    type: 'Link',
-                    linkType: 'Role',
-                    id: 'role2'
-                  }
+                    {
+                      type: 'Link',
+                      linkType: 'Role',
+                      id: 'role2'
+                    }
                 },
                 {
                   sys:
-                  {
-                    type: 'Link',
-                    linkType: 'Role',
-                    id: 'role3'
-                  }
+                    {
+                      type: 'Link',
+                      linkType: 'Role',
+                      id: 'role3'
+                    }
                 }
               ],
               sys: {
@@ -333,7 +350,7 @@ describe('Teams in space page', () => {
         cy.wait(`@${removeTeamInteraction}`);
       });
 
-      it.only('should have removed team from space', () => {
+      it('should have removed team from space', () => {
         cy.getAllByTestId('membership-row').first().as('firstRow');
         cy.get('@firstRow').contains('td', 'Team 1').should('not.exist');
       });
