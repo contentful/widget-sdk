@@ -224,6 +224,7 @@
   "scripts": {
     "clean-logs-pacts": "rm -rf logs/ pacts/",
     "start": "gulp all serve",
+    "dev-staging": "NODE_ENV=dev UI_CONFIG=dev-on-staging gulp all serve",
     "cypress": "npm run clean-logs-pacts && npx cypress open",
     "test": "NODE_OPTIONS=--max-old-space-size=4096 TZ=UTC node run-tests.js",
     "test:once": "TZ=UTC node run-tests.js --once",

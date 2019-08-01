@@ -35,7 +35,7 @@ Now you can install the dependencies and start hosting the web application.
 nvm use
 npm login
 npm install
-NODE_ENV=dev UI_CONFIG=dev-on-staging ./node_modules/.bin/gulp all serve
+npm run dev-staging
 ```
 
 Now visit `localhost:3001/#access_token=<your access token>` in your favorite
