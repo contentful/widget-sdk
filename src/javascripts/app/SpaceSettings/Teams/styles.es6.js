@@ -3,14 +3,13 @@ import tokens from '@contentful/forma-36-tokens';
 import ellipsisStyle from 'ellipsisStyle.es6';
 
 export default {
-  contentAlignment: css({
+  content: css({
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'column',
-    paddingTop: 0
+    paddingTop: tokens.spacingXl
   }),
   table: css({
-    marginTop: tokens.spacingXl,
     tableLayout: 'fixed'
   }),
   row: css({
