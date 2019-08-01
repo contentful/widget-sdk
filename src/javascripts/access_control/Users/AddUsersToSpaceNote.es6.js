@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
+import { TextLink } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
+import { track } from 'analytics/Analytics.es6';
+import { go } from 'states/Navigator.es6';
 
 import StateLink from 'app/common/StateLink.es6';
 
@@ -18,12 +21,20 @@ const styles = {
   })
 };
 
+const goToTeamsPage = () => {
+  track('teams_in_space:users_to_teams_page_navigation');
+
+  go({
+    path: ['spaces', 'detail', 'settings', 'teams', 'list']
+  });
+};
+
 const AddUsersToSpaceNote = ({ orgId, isOwnerOrAdmin, hasTeamsFeature }) => (
   <div className={styles.note}>
     {hasTeamsFeature && (
       <p>
         To add a group of users with the same role, try{' '}
-        <StateLink to="spaces.detail.settings.teams.list">adding a team</StateLink>.
+        <TextLink onClick={() => goToTeamsPage()}>adding a team</TextLink>.
       </p>
     )}
     <p>
