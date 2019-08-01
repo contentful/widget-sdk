@@ -57,22 +57,17 @@ export default function register() {
         await Promise.all(promises);
 
         if (failedInvites === 0) {
-          track('teams_in_space:users_added', {
-            numErr: 0,
-            numSuccess: invitees.length
-          });
-
           $scope.dialog.confirm();
         } else {
           $scope.hasFailedInvitations = true;
           $scope.invitationsScheduled = 0;
           $scope.invitationsDone = 0;
-
-          track('teams_in_space:users_added', {
-            numErr: failedInvites,
-            numSuccess: invitees.length - failedInvites
-          });
         }
+
+        track('teams_in_space:users_added', {
+          numErr: failedInvites,
+          numSuccess: invitees.length - failedInvites
+        });
 
         function scheduleInvitation(invitee) {
           const i = currentInvitationId;
