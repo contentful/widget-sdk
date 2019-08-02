@@ -98,9 +98,7 @@ const spaceDetail = {
     spaceContext: [
       'spaceContext',
       'spaceData',
-      '$stateParams',
-      (spaceContext, spaceData, $stateParams) =>
-        spaceContext.resetWithSpace(spaceData, $stateParams.environmentId)
+      (spaceContext, spaceData) => spaceContext.resetWithSpace(spaceData)
     ]
   },
   onEnter: [

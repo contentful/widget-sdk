@@ -21,10 +21,10 @@ import { get as getBoilerplates } from './BoilerplateCode.es6';
 // Pass $scope and API Key, the editor will get rendered and the
 // following properties are exposed as `$scope.apiKeyEditor`:
 // `canEdit` (bool), `remove` (action), `save` (action)
-export default function attach($scope, apiKey, spaceEnvironments, spaceAliases) {
+export default function attach($scope, apiKey, spaceEnvironments) {
   mountBoilerplates($scope, apiKey);
   mountContactUs($scope);
-  mountKeyEditor($scope, apiKey, spaceEnvironments, spaceAliases);
+  mountKeyEditor($scope, apiKey, spaceEnvironments);
 }
 
 function mountBoilerplates($scope, apiKey) {
@@ -114,7 +114,7 @@ const notify = {
   }
 };
 
-function mountKeyEditor($scope, apiKey, spaceEnvironments, spaceAliases) {
+function mountKeyEditor($scope, apiKey, spaceEnvironments) {
   // `environments` key is present only if there are environments other than master enabled
   if (!Array.isArray(apiKey.environments) || apiKey.environments.length === 0) {
     apiKey.environments = [{ sys: { id: 'master', type: 'Link', linkType: 'Environment' } }];
@@ -133,8 +133,7 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments, spaceAliases) {
         deliveryToken: apiKey.accessToken,
         previewToken: get(apiKey, 'preview_api_key.accessToken'),
         environmentsEnabled,
-        spaceEnvironments,
-        spaceAliases
+        spaceEnvironments
       }),
       initialValue: model,
       connect: (updated, component) => {
