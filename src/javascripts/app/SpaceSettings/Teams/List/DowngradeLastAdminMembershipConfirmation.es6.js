@@ -37,8 +37,7 @@ const DowngradeOwnAdminMembershipConfirmation = ({
         </Paragraph>
         {!isLastAdminMembership && (
           <Paragraph>
-            If you change this role, you will lose your administrator role for this space and the
-            team can only be managed by an organization admin.
+            If you change this role, you will lose your administrator role for this space.
           </Paragraph>
         )}
         {isLastAdminMembership && (

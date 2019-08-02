@@ -45,10 +45,10 @@ export const Space = PropTypes.shape({
 
 export const SpaceMembership = PropTypes.shape({
   admin: PropTypes.bool.isRequired,
-  roles: PropTypes.arrayOf(SpaceRole).isRequired,
+  roles: PropTypes.arrayOf(PropTypes.oneOfType([SpaceRole, Link])).isRequired,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    space: Space.isRequired
+    space: PropTypes.oneOfType([Space, Link]).isRequired
   }).isRequired
 });
 

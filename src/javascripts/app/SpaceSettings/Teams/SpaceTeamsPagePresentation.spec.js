@@ -9,7 +9,8 @@ const build = (props = {}) =>
   render(
     <SpaceTeamsPagePresentation
       {...{
-        memberships: [],
+        teamSpaceMemberships: [],
+        spaceMemberships: [],
         teams: [],
         availableRoles: [],
         onUpdateTeamSpaceMembership: noop,
@@ -24,7 +25,7 @@ const build = (props = {}) =>
   );
 
 let isLoading;
-let memberships;
+let teamSpaceMemberships;
 let teams;
 
 describe('SpaceTeamsPage', () => {
@@ -39,7 +40,7 @@ describe('SpaceTeamsPage', () => {
   describe('is loading', () => {
     beforeEach(() => {
       isLoading = true;
-      memberships = [
+      teamSpaceMemberships = [
         {
           admin: true,
           roles: [],
@@ -75,37 +76,37 @@ describe('SpaceTeamsPage', () => {
     ];
 
     it('should render 0 rows', () => {
-      const { queryAllByTestId } = build({ memberships, teams, isLoading });
+      const { queryAllByTestId } = build({ teamSpaceMemberships, teams, isLoading });
 
       const rows = queryAllByTestId('membership-row');
       expect(rows).toHaveLength(0);
     });
 
     it('should render loading placeholder', () => {
-      const { queryByTestId } = build({ memberships, teams, isLoading });
+      const { queryByTestId } = build({ teamSpaceMemberships, teams, isLoading });
 
       expect(queryByTestId('loading-placeholder')).toBeInTheDocument();
     });
   });
 
-  describe('is not loading and has empty memberships', () => {
+  describe('is not loading and has empty teamSpaceMemberships', () => {
     beforeEach(() => {
       isLoading = false;
-      memberships = [];
+      teamSpaceMemberships = [];
     });
 
     it('should render 0 rows', () => {
-      const { queryAllByTestId } = build({ memberships, teams, isLoading });
+      const { queryAllByTestId } = build({ teamSpaceMemberships, teams, isLoading });
 
       const rows = queryAllByTestId('membership-row');
       expect(rows).toHaveLength(0);
     });
   });
 
-  describe('is not loading and has memberships', () => {
+  describe('is not loading and has teamSpaceMemberships', () => {
     beforeEach(() => {
       isLoading = false;
-      memberships = [
+      teamSpaceMemberships = [
         {
           admin: true,
           roles: [],
@@ -159,7 +160,7 @@ describe('SpaceTeamsPage', () => {
     });
 
     it('should render 2 rows and action buttons', () => {
-      const { getAllByTestId } = build({ memberships, teams, isLoading });
+      const { getAllByTestId } = build({ teamSpaceMemberships, teams, isLoading });
 
       const rows = getAllByTestId('membership-row');
       expect(rows).toHaveLength(2);
@@ -167,7 +168,7 @@ describe('SpaceTeamsPage', () => {
     });
 
     it('should render cells with team details', () => {
-      const { getAllByTestId } = build({ memberships, teams, isLoading });
+      const { getAllByTestId } = build({ teamSpaceMemberships, teams, isLoading });
 
       const teamCells = getAllByTestId('team-cell');
       expect(teamCells[0]).toHaveTextContent('TestTeam1');
@@ -177,7 +178,7 @@ describe('SpaceTeamsPage', () => {
     });
 
     it('should render cells with membership details', () => {
-      const { getAllByTestId } = build({ memberships, teams, isLoading });
+      const { getAllByTestId } = build({ teamSpaceMemberships, teams, isLoading });
 
       const roleCells = getAllByTestId('roles-cell');
       const membershipCells = getAllByTestId('member-count-cell');
@@ -187,11 +188,11 @@ describe('SpaceTeamsPage', () => {
       expect(membershipCells[1]).toHaveTextContent('99 members');
     });
 
-    it('should disable the Add Teams button if number of memberships equals number of teams', () => {
+    it('should disable the Add Teams button if number of teamSpaceMemberships equals number of teams', () => {
       let helpers;
       let addTeamsButton;
 
-      helpers = build({ memberships, teams: [{ sys: { id: 'team1' } }], isLoading });
+      helpers = build({ teamSpaceMemberships, teams: [{ sys: { id: 'team1' } }], isLoading });
 
       addTeamsButton = helpers.getByTestId('add-teams');
 
@@ -199,7 +200,7 @@ describe('SpaceTeamsPage', () => {
 
       cleanup();
 
-      helpers = build({ memberships, teams, isLoading });
+      helpers = build({ teamSpaceMemberships, teams, isLoading });
 
       addTeamsButton = helpers.getByTestId('add-teams');
 

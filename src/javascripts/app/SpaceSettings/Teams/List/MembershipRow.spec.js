@@ -15,7 +15,7 @@ const build = props =>
       <TableBody>
         <MembershipRow
           {...{
-            membership: {
+            teamSpaceMembership: {
               admin: false,
               sys: {
                 team: {
@@ -24,7 +24,8 @@ const build = props =>
                 }
               }
             },
-            memberships: [],
+            teamSpaceMemberships: [],
+            spaceMemberships: [],
             availableRoles: [],
             menuIsOpen: false,
             setMenuOpen: noop,
@@ -56,8 +57,8 @@ describe('MembershipRow', () => {
     });
   });
 
-  describe('membership with team details is given', () => {
-    const membership = {
+  describe('teamSpaceMembership with team details is given', () => {
+    const teamSpaceMembership = {
       admin: false,
       roles: [{ name: 'Role 2', sys: { id: 'role2' } }, { name: 'Role 3', sys: { id: 'role3' } }],
       sys: {
@@ -71,8 +72,8 @@ describe('MembershipRow', () => {
       }
     };
 
-    it('should render membership and team details', async () => {
-      const { findByTestId } = build({ membership });
+    it('should render teamSpaceMembership and team details', async () => {
+      const { findByTestId } = build({ teamSpaceMembership });
 
       expect(await findByTestId('team.name')).toHaveTextContent('Team 1');
       expect(await findByTestId('team.description')).toHaveTextContent('This is Team 1');
@@ -106,7 +107,7 @@ describe('MembershipRow', () => {
 
       it('should show role editor with all available roles in edit mode', async () => {
         const { findAllByTestId, findByTestId } = build({
-          membership,
+          teamSpaceMembership,
           isEditing: true,
           availableRoles
         });
@@ -144,7 +145,7 @@ describe('MembershipRow', () => {
       const { findByTestId } = build({
         menuIsOpen: true,
         currentUserAdminSpaceMemberships: [lastMembership],
-        membership: lastMembership
+        teamSpaceMembership: lastMembership
       });
 
       fireEvent.click(
