@@ -206,7 +206,6 @@ export default function register() {
             .all([
               maybeFetchEnvironments(self.endpoint).then(environments => {
                 self.environments = deepFreeze(environments);
-                space.environment = self.environments.find(env => env.sys.id === environmentId);
               }),
               TheLocaleStore.init(self.localeRepo),
               self.publishedCTs.refresh().then(() => {
@@ -220,7 +219,14 @@ export default function register() {
                   self.publishedCTs,
                   createViewMigrator(ctMap)
                 );
-              })
+              }),
+
+              // if env exists, use new cma client to attach full env to space context (so we have aliases etc)
+              // environmentId &&
+              environmentId &&
+                createEnvironmentsRepo(self.endpoint)
+                  .get({ id: environmentId })
+                  .then(env => (space.environment = env))
             ])
             .then(() => {
               Telemetry.record('space_context_http_time', Date.now() - start);
@@ -255,25 +261,16 @@ export default function register() {
 
         /**
          * @name spaceContext#isMasterEnvironment
-         * @param {envOrAlias} Environment or Alias
          * @description
          * Returns whether the current environment is aliased to 'master'
-         * or is 'master'
-         * Returns true for an environment object with a re-written sys.id of
-         * 'master' (aka the environment as accessed via it's alias)
          * @returns boolean
          */
         isMasterEnvironment: function(
-          envOrAlias = _.get(this, ['space', 'environment'], { sys: { id: 'master' } })
+          env = _.get(this, ['space', 'environment'], { sys: { id: 'master' } })
         ) {
-          if (
-            envOrAlias.sys.id === 'master' ||
-            (Array.isArray(envOrAlias.sys.aliases) &&
-              envOrAlias.sys.aliases.find(alias => alias.sys.id === 'master'))
-          ) {
-            return true;
-          }
-          return false;
+          //TODO add alias logic here
+          //env attached to space context should be full env object including aliases
+          return env.sys.id === 'master';
         },
 
         /**
