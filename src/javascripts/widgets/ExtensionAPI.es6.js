@@ -18,7 +18,7 @@ const REQUIRED_CONFIG_KEYS = [
   'entryData', // API Entry entity. Using internal IDs (ShareJS format).
   'contentTypeData', // API ContentType entity. Using internal IDs (ShareJS format).
   'spaceMember', // API SpaceMember entity.
-  'spaceMembership', // API SpaceMembership entity.
+  'spaceMembership', // API SpaceMemberships entity.
   'parameters', // UI Extension parameters.
   'editorInterface',
 

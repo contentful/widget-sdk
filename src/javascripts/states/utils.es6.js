@@ -123,6 +123,7 @@ export function organizationBase(definition) {
       'services/TokenStore.es6',
       async ($state, $stateParams, accessChecker, TokenStore) => {
         let orgId;
+        let org;
         let space;
         if ($stateParams.orgId) {
           orgId = $stateParams.orgId;
@@ -131,17 +132,19 @@ export function organizationBase(definition) {
           space = find(spaces, { sys: { id: $stateParams.spaceId } });
           orgId = get(space, 'organization.sys.id');
         }
-        const org = await TokenStore.getOrganization(orgId);
+        if (orgId) {
+          org = await TokenStore.getOrganization(orgId);
+        }
 
         const migration = migratedStates.find(state => $state.is(state.v1));
         if (space) {
           accessChecker.setSpace(space);
-        } else {
+        } else if (org) {
           accessChecker.setOrganization(org);
         }
         store.set('lastUsedOrg', orgId);
 
-        const isLegacy = isLegacyOrganization(org);
+        const isLegacy = org && isLegacyOrganization(org);
 
         if (isLegacy) {
           const shouldRedirectToV2 = !isLegacy && Boolean(migration);
