@@ -10,8 +10,8 @@ const AppPageShell = ({ appId }) => (
     <Workbench.Header
       icon={appId ? <AppIcon appId={appId} /> : <Icon name="page-apps" scale="1" />}
     />
-    <Workbench.Content>
-      <SkeletonContainer ariaLabel="Loading app..." svgWidth={600}>
+    <Workbench.Content type="text">
+      <SkeletonContainer ariaLabel="Loading app..." svgWidth="100%" svgHeight="300px">
         <SkeletonBodyText numberOfLines={5} marginBottom={15} offsetTop={60} />
       </SkeletonContainer>
     </Workbench.Content>
