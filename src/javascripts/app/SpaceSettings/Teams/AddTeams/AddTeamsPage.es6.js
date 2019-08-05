@@ -68,7 +68,6 @@ const styles = {
     marginRight: '100px'
   }),
   teamsList: css({
-    minHeight: '400px',
     wordBreak: 'break-word'
   }),
 
@@ -296,52 +295,54 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
         </HelpText>
       </div>
       {shouldShowControls && (
-        <div data-test-id="teams-and-roles-lists" className={styles.teamsAndRolesLists}>
-          <div className={styles.teamsContainer}>
-            <SectionHeading className={cx(styles.sectionHeading, styles.teamTitle)}>
-              {pluralize('team', selectedTeamIds.length, true)} selected
-            </SectionHeading>
-            <div className={styles.teamsList} data-test-id="teams-list">
-              {selectedTeamIds.length !== 0 &&
-                selectedTeamIds.map(id => {
-                  const team = teams.find(t => t.sys.id === id);
+        <>
+          <div data-test-id="teams-and-roles-lists" className={styles.teamsAndRolesLists}>
+            <div className={styles.teamsContainer}>
+              <SectionHeading className={cx(styles.sectionHeading, styles.teamTitle)}>
+                {pluralize('team', selectedTeamIds.length, true)} selected
+              </SectionHeading>
+              <div className={styles.teamsList} data-test-id="teams-list">
+                {selectedTeamIds.length !== 0 &&
+                  selectedTeamIds.map(id => {
+                    const team = teams.find(t => t.sys.id === id);
 
-                  return (
-                    <TeamInfo
-                      key={team.sys.id}
-                      team={team}
-                      onCloseClick={() => dispatch({ type: 'REMOVE_TEAM', payload: id })}
-                    />
-                  );
-                })}
+                    return (
+                      <TeamInfo
+                        key={team.sys.id}
+                        team={team}
+                        onCloseClick={() => dispatch({ type: 'REMOVE_TEAM', payload: id })}
+                      />
+                    );
+                  })}
+              </div>
             </div>
-            <Button
-              className={styles.submitButton}
-              disabled={submitButtonDisabled}
-              loading={isLoading}
-              testId="submit-button"
-              onClick={() => doSubmit(state)}>
-              Confirm selection and add {pluralize('team', selectedTeamIds.length)}
-            </Button>
+            <div className={styles.rolesContainer}>
+              <SectionHeading className={styles.sectionHeading}>
+                Assign role set to {pluralize('team', selectedTeamIds.length)}
+              </SectionHeading>
+              <RoleSelector
+                roles={roles}
+                selectedRoleIds={selectedRoleIds}
+                onRoleSelected={(id, isSelected) =>
+                  dispatch({ type: 'SELECT_ROLE', payload: { id, isSelected } })
+                }
+                adminSelected={adminSelected}
+                onAdminSelected={isSelected =>
+                  dispatch({ type: 'SELECT_ADMIN', payload: isSelected })
+                }
+                disabled={isLoading}
+              />
+            </div>
           </div>
-          <div className={styles.rolesContainer}>
-            <SectionHeading className={styles.sectionHeading}>
-              Assign role set to {pluralize('team', selectedTeamIds.length)}
-            </SectionHeading>
-            <RoleSelector
-              roles={roles}
-              selectedRoleIds={selectedRoleIds}
-              onRoleSelected={(id, isSelected) =>
-                dispatch({ type: 'SELECT_ROLE', payload: { id, isSelected } })
-              }
-              adminSelected={adminSelected}
-              onAdminSelected={isSelected =>
-                dispatch({ type: 'SELECT_ADMIN', payload: isSelected })
-              }
-              disabled={isLoading}
-            />
-          </div>
-        </div>
+          <Button
+            className={styles.submitButton}
+            disabled={submitButtonDisabled}
+            loading={isLoading}
+            testId="submit-button"
+            onClick={() => doSubmit(state)}>
+            Confirm selection and add {pluralize('team', selectedTeamIds.length)}
+          </Button>
+        </>
       )}
     </div>
   );
