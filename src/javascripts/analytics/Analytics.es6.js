@@ -147,7 +147,7 @@ function logEventPayloadSize(event, safePayload) {
           .flatMap(([_, v]) => Object.values(v || {}))
           .some(v => _.isFunction(v));
 
-        if (size > 1000 || hasMethods) {
+        if (size > 5000 || hasMethods) {
           logger.logWarn('Potentially bloated tracking event payload', {
             event,
             size,
