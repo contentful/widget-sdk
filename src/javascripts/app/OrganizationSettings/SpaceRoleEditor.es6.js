@@ -11,11 +11,17 @@ import {
   DropdownListItem
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+import classNames from 'classnames';
 
 import { SpaceRole as SpaceRoleProp } from 'app/OrganizationSettings/PropTypes.es6';
 import { ADMIN_ROLE, ADMIN_ROLE_ID } from 'access_control/constants.es6';
 
 const styles = {
+  roleList: css({
+    maxHeight: '300px',
+    overflowY: 'auto'
+  }),
+  dropDown: css({ maxWidth: '100%' }),
   roleListItem: css({
     display: 'grid',
     gridTemplateColumns: 'min-content auto',
@@ -120,10 +126,9 @@ class SpaceRoleEditor extends React.Component {
 
     return (
       <Dropdown
-        className={className}
+        className={classNames(className, styles.dropDown)}
         isOpen={this.state.isOpen}
         onClose={this.closeDropdown}
-        style={{ maxWidth: '100%' }}
         toggleElement={
           <Button
             testId="space-role-editor.button"
@@ -135,34 +140,36 @@ class SpaceRoleEditor extends React.Component {
             {rolesSummary}
           </Button>
         }>
-        <DropdownList testId="space-role-editor.options">
-          <DropdownListItem
-            testId="space-role-editor.admin-option"
-            onClick={this.toggleRole(ADMIN_ROLE_ID)}>
-            <div className={styles.roleListItem}>
-              <Checkbox labelText={ADMIN_ROLE.name} checked={isAdmin} id={ADMIN_ROLE_ID} />
-              <div>{ADMIN_ROLE.name}</div>
-              <div className={styles.adminSubtitle}>Can manage everything in the space</div>
-            </div>
-          </DropdownListItem>
-        </DropdownList>
-        <DropdownList border="top" maxHeight={305}>
-          <DropdownListItem isTitle={true}>other roles</DropdownListItem>
-          {sortedOptions.map(({ name, sys: { id } }) => (
-            // Allow the whole list item to be clicked
+        <div className={styles.roleList}>
+          <DropdownList testId="space-role-editor.options">
             <DropdownListItem
-              key={id}
-              testId="space-role-editor.role-option"
-              onClick={this.toggleRole(id)}>
+              testId="space-role-editor.admin-option"
+              onClick={this.toggleRole(ADMIN_ROLE_ID)}>
               <div className={styles.roleListItem}>
-                {/* We don't use CheckboxField, as it emits double click events */}
-                {/* https://codesandbox.io/embed/cocky-wiles-r03rq */}
-                <Checkbox labelText={name} checked={value.includes(id)} id={id} />
-                <div>{name}</div>
+                <Checkbox labelText={ADMIN_ROLE.name} checked={isAdmin} id={ADMIN_ROLE_ID} />
+                <div>{ADMIN_ROLE.name}</div>
+                <div className={styles.adminSubtitle}>Can manage everything in the space</div>
               </div>
             </DropdownListItem>
-          ))}
-        </DropdownList>
+          </DropdownList>
+          <DropdownList border="top">
+            <DropdownListItem isTitle={true}>other roles</DropdownListItem>
+            {sortedOptions.map(({ name, sys: { id } }) => (
+              // Allow the whole list item to be clicked
+              <DropdownListItem
+                key={id}
+                testId="space-role-editor.role-option"
+                onClick={this.toggleRole(id)}>
+                <div className={styles.roleListItem}>
+                  {/* We don't use CheckboxField, as it emits double click events */}
+                  {/* https://codesandbox.io/embed/cocky-wiles-r03rq */}
+                  <Checkbox labelText={name} checked={value.includes(id)} id={id} />
+                  <div>{name}</div>
+                </div>
+              </DropdownListItem>
+            ))}
+          </DropdownList>
+        </div>
       </Dropdown>
     );
   }
