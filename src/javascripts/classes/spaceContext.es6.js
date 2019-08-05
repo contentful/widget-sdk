@@ -40,6 +40,8 @@ import * as Auth from 'Authentication.es6';
 import * as Config from 'Config.es6';
 import { ENVIRONMENT_ALIASING } from '../featureFlags.es6';
 
+import { create as createViewMigrator } from 'saved-views-migrator';
+
 const MASTER_ENVIRONMENT_ID = 'master';
 
 export default function register() {
@@ -54,8 +56,7 @@ export default function register() {
   registerFactory('spaceContext', [
     '$rootScope',
     'client',
-    'saved-views-migrator',
-    ($rootScope, client, { create: createViewMigrator }) => {
+    ($rootScope, client) => {
       const publishedCTsBus$ = K.createPropertyBus([]);
 
       // Enforcements deinitialization function, when changing space

@@ -27,8 +27,6 @@ export default function connectToWidgetApi(
   Component,
   { updateValueOnComponentChange = true, updateValueWhileEnabled = true } = {}
 ) {
-  const $rootScope = getModule('$rootScope');
-
   return class extends React.Component {
     displayName = `WithWidgetAPI(${getDisplayName(Component)})`;
 
@@ -43,6 +41,8 @@ export default function connectToWidgetApi(
     };
 
     UNSAFE_componentWillMount() {
+      const $rootScope = getModule('$rootScope');
+
       const field = this.props.widgetApi.field;
       this.offDisabledState = field.onIsDisabledChanged(this.handleDisabledChanges);
       this.offValueChanged = field.onValueChanged(this.handleIncomingChanges);

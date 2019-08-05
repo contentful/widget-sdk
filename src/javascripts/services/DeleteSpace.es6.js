@@ -18,10 +18,6 @@ export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
     return openCommittedSpaceWarningDialog();
   }
 
-  const $rootScope = getModule('$rootScope');
-  const modalDialog = getModule('modalDialog');
-  const Command = getModule('command');
-
   const spaceName = space.name;
   const scope = extend($rootScope.$new(), {
     spaceName,
@@ -80,8 +76,6 @@ function removalConfirmation() {
     h('button.btn-caution', { uiCommand: 'remove' }, ['Remove']),
     h('button.btn-secondary-action', { ngClick: 'dialog.cancel()' }, ['Don’t remove'])
   ];
-
-  const modalDialog = getModule('modalDialog');
 
   return modalDialog.richtextLayout('Remove space', content, controls);
 }

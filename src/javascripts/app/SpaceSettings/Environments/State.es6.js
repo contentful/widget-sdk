@@ -13,7 +13,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import { getModule } from 'NgRegistry.es6';
 
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
-import { openCreateDialog, openEditDialog } from './EditDialog.es6';
+import { openCreateDialog } from './EditDialog.es6';
 import { openDeleteDialog } from './DeleteDialog.es6';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService.es6';
 import View from './View.es6';
@@ -85,15 +85,6 @@ const reduce = makeReducer({
         state.canSelectSource && state.items.length > 1
       );
       if (created) {
-        dispatch(Reload);
-      }
-    });
-    return state;
-  },
-  [OpenEditDialog]: (state, environment, { resourceEndpoint, dispatch }) => {
-    C.runTask(function*() {
-      const updated = yield openEditDialog(resourceEndpoint.update, environment.payload);
-      if (updated) {
         dispatch(Reload);
       }
     });

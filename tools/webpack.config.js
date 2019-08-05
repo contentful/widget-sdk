@@ -14,7 +14,6 @@
  */
 
 const webpack = require('webpack');
-const globSync = require('glob').sync;
 const P = require('path');
 const { createBabelOptions } = require('./app-babel-options');
 const WebpackRequireFrom = require('webpack-require-from');
@@ -34,56 +33,60 @@ module.exports = () => {
 
   return {
     entry: {
-      // we have 3 entries mostly due to historical reasons and to avoid
-      // rewriting how our gulp build process is made
-      'components.js': [
-        './src/javascripts/sharejs-types.js',
-        './src/javascripts/prelude.js'
-      ].concat(
-        // we have to get all JS files, because we use Angular DI system
-        // and don't import other files directly
-        //
-        // with globSync, we inline all javascript file names into an array
-        // it has two consequences:
-        // 1. if we add new file, it is not automatically picked up by webpack
-        // (unless we import it normal way, but we don't do that)
-        // 2. if you remove an existing file, webpack will break – you are not
-        // supposed to remove entry files
-        globSync('./src/javascripts/**/*.js', {
-          ignore: [
-            './src/javascripts/libs/*.js',
-            './src/javascripts/prelude.js',
-            './src/javascripts/sharejs-types.js',
-            './src/javascripts/**/*.spec.js',
-            './src/javascripts/__mocks__/**'
-          ]
-        })
-      ),
-
-      // The main libraries file, used for the production build (see /tools/tasks/build/js.js)
-      'libs.js': ['./src/javascripts/libs/env-prod.js'],
-
-      // The libraries file used for our Karma tests
-      //
-      // See:
-      // - karma.conf.js
-      // - tools/tasks/build/js.js
-      // - run-tests.js
-      'libs-test.js': ['./src/javascripts/libs/env-prod.js', './src/javascripts/libs/env-test.js'],
-      // some of the vendor files provide some sort of shims
-      // the reason – in some files we rely on globals, which is not really
-      // how webpack was designed :)
-      'vendor.js': [
+      'app.js': [
         './vendor/jquery-shim.js',
         // Custom jQuery UI build: see the file for version and contents
         './vendor/jquery-ui/jquery-ui.js',
-        './node_modules/angular/angular.js',
-        './node_modules/angular-animate/angular-animate.js',
-        './node_modules/angular-sanitize/angular-sanitize.js',
-        './node_modules/angular-ui-router/release/angular-ui-router.js',
         './node_modules/bootstrap/js/tooltip.js',
-        './vendor/bcsocket-shim.js'
+        './vendor/bcsocket-shim.js',
+        './src/javascripts/prelude.js'
       ]
+      // we have 3 entries mostly due to historical reasons and to avoid
+      // rewriting how our gulp build process is made
+      //       'components.js': [
+      //         './src/javascripts/sharejs-types.js',
+      //         './src/javascripts/prelude.js'
+      //       ].concat(
+      //         // we have to get all JS files, because we use Angular DI system
+      //         // and don't import other files directly
+      //         //
+      //         // with globSync, we inline all javascript file names into an array
+      //         // it has two consequences:
+      //         // 1. if we add new file, it is not automatically picked up by webpack
+      //         // (unless we import it normal way, but we don't do that)
+      //         // 2. if you remove an existing file, webpack will break – you are not
+      //         // supposed to remove entry files
+      //         globSync('./src/javascripts/**/*.js', {
+      //           ignore: [
+      //             './src/javascripts/libs/*.js',
+      //             './src/javascripts/prelude.js',
+      //             './src/javascripts/sharejs-types.js',
+      //             './src/javascripts/**/*.spec.js',
+      //             './src/javascripts/__mocks__/**'
+      //           ]
+      //         })
+      //       ),
+      //
+      //       // The main libraries file, used for the production build (see /tools/tasks/build/js.js)
+      //       'libs.js': ['./src/javascripts/libs/env-prod.js'],
+      //
+      //       // The libraries file used for our Karma tests
+      //       //
+      //       // See:
+      //       // - karma.conf.js
+      //       // - tools/tasks/build/js.js
+      //       // - run-tests.js
+      //       'libs-test.js': ['./src/javascripts/libs/env-prod.js', './src/javascripts/libs/env-test.js'],
+      //       // some of the vendor files provide some sort of shims
+      //       // the reason – in some files we rely on globals, which is not really
+      //       // how webpack was designed :)
+      //       'vendor.js': [
+      //         './vendor/jquery-shim.js',
+      //         // Custom jQuery UI build: see the file for version and contents
+      //         './vendor/jquery-ui/jquery-ui.js',
+      //         './node_modules/bootstrap/js/tooltip.js',
+      //         './vendor/bcsocket-shim.js'
+      //       ]
     },
     output: {
       filename: '[name]',
@@ -92,17 +95,43 @@ module.exports = () => {
       chunkFilename: 'chunk_[name]-[chunkhash].js'
     },
     mode: isProd ? 'production' : 'development',
+    resolve: {
+      modules: ['node_modules', 'src/javascripts'],
+      alias: {
+        'legacy-client': P.resolve(
+          __dirname,
+          '..',
+          'src',
+          'javascripts',
+          'libs',
+          'legacy_client',
+          'client.js'
+        ),
+        'saved-views-migrator': P.resolve(
+          __dirname,
+          '..',
+          'src',
+          'javascripts',
+          'libs',
+          'saved-views-migrator',
+          'index.js'
+        )
+      }
+    },
     module: {
       rules: [
         // this rule is only for ES6 files, we need to use SystemJS plugin to register them
         // and resolve "imported" files correctly (they are transpiled to use Angular DI, so
         // these are not real `import/export`).
         {
-          test: /\.es6.js$/,
+          test: /\.js$/,
           exclude: /(node_modules|vendor)/,
           use: {
             loader: 'babel-loader',
-            options: createBabelOptions()
+            options: createBabelOptions({
+              angularModules: false,
+              moduleIds: false
+            })
           }
         },
         // The sharejs client is provided as a package of ESnext
@@ -128,29 +157,29 @@ module.exports = () => {
             loader: 'babel-loader',
             options: createBabelOptions({ angularModules: false })
           }
-        },
+        }
         // normal es5 files don't have to be wrapped into SystemJS wrapper
         // it means that imports/exports are not mangled, and if you use them, they will
         // work properly
-        {
-          // we need to process only es5 files, so pure regex would be too complicated
-          test: function(path) {
-            // explicitly avoid es6 files
-            if (/\.es6.js$/.test(path)) {
-              return false;
-            }
-
-            return /\.js$/.test(path);
-          },
-          exclude: /(node_modules|vendor)/,
-          use: {
-            loader: 'babel-loader',
-            options: createBabelOptions({
-              angularModules: false,
-              moduleIds: false
-            })
-          }
-        }
+        //         {
+        //           // we need to process only es5 files, so pure regex would be too complicated
+        //           test: function(path) {
+        //             // explicitly avoid es6 files
+        //             if (/\.es6.js$/.test(path)) {
+        //               return false;
+        //             }
+        //
+        //             return /\.js$/.test(path);
+        //           },
+        //           exclude: /(node_modules|vendor)/,
+        //           use: {
+        //             loader: 'babel-loader',
+        //             options: createBabelOptions({
+        //               angularModules: false,
+        //               moduleIds: false
+        //             })
+        //           }
+        //         }
       ]
     },
     plugins: [

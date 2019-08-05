@@ -1,6 +1,6 @@
 import isHotkey from 'is-hotkey';
 import { BLOCKS } from '@contentful/rich-text-types';
-import { applyChange } from '../shared/BlockToggleDecorator.es6';
+import { toggleChange } from '../shared/BlockToggleDecorator.es6';
 import CommonNode from '../shared/NodeDecorator.es6';
 
 const plugin = (type, tagName, tagProps, hotkey) => {
@@ -13,7 +13,7 @@ const plugin = (type, tagName, tagProps, hotkey) => {
     },
     onKeyDown: (e, editor, next) => {
       if (isHotkey(hotkey, e)) {
-        editor.call(applyChange, type);
+        editor.call(toggleChange, type);
         return;
       }
       return next();

@@ -6,12 +6,49 @@
  * configuration.
  */
 
-// This enforces strict mode for _all_ files in the application code
-// since we just concatenate them.
 'use strict';
+
+import angular from 'angular';
+import AngularInit from 'AngularInit';
+
+// Angular deps
+import 'angular-animate';
+import 'angular-sanitize';
+import 'angular-ui-router';
+
+import '@babel/polyfill';
+
+// Polyfill for Element.closest used to support Slatejs in IE.
+import 'element-closest';
+
+// CodeMirror: JSON field editor component
+import 'codemirror/addon/edit/closebrackets';
+import 'codemirror/mode/javascript/javascript';
+// CodeMirror: Markdown field editor component
+import 'codemirror/mode/markdown/markdown';
+// CodeMirror: HTML highlighting inside Markdown
+import 'codemirror/mode/xml/xml';
+import 'codemirror/addon/edit/continuelist';
+import 'codemirror/addon/mode/overlay';
+// CodeMirror: mixed HTML mode for UI Extension editor
+import 'codemirror/mode/htmlmixed/htmlmixed';
 
 import moment from 'moment';
 import _ from 'lodash';
+
+import * as Config from 'Config.es6';
+import handleGKMessage from 'account/handleGatekeeperMessage.es6';
+
+import { init as initDebug } from 'Debug.es6';
+import { init as initAuthentication } from 'Authentication.es6';
+import { init as initTokenStore } from 'services/TokenStore.es6';
+import { init as initLD } from 'utils/LaunchDarkly/index.es6';
+import { init as initAutoCreateNewSpace } from 'components/shared/auto_create_new_space/index.es6';
+import { init as initExtentionActivationTracking } from 'widgets/ExtensionActivationTracking.es6';
+import initContextMenuHandler from 'ui/ContextMenuHandler.es6';
+import { loadAll as loadAllStates } from 'states/states.es6';
+
+import * as Telemetry from 'i13n/Telemetry.es6';
 
 const injectedConfig = readInjectedConfig();
 const env = injectedConfig.config.environment;
@@ -32,88 +69,8 @@ function readInjectedConfig() {
   }
 }
 
-angular.module('contentful/init', []);
-
-/**
- * @ngdoc module
- * @name contentful
- */
-angular.module('contentful', ['contentful/init', 'ngAnimate', 'ngSanitize', 'ui.router']);
-
-/**
- * @ngdoc module
- * @name contentful/app
- */
 angular
-  .module('contentful/app', ['contentful'])
-  .config([
-    '$compileProvider',
-    $compileProvider => {
-      if (env !== 'development') {
-        $compileProvider.debugInfoEnabled(false);
-      }
-    }
-  ])
-  .run([
-    '$injector',
-    $injector => {
-      const Config = $injector.get('Config.es6');
-      if (Config.env === 'development') {
-        Error.stackTraceLimit = 100;
-      } else {
-        Error.stackTraceLimit = 25;
-      }
-      $injector.get('Debug.es6').init(window);
-      $injector.get('Authentication.es6').init();
-
-      // Start telemetry and expose it as a global.
-      // It can be used by E2E or Puppeteer scripts.
-      const Telemetry = $injector.get('i13n/Telemetry.es6');
-      window.cfTelemetry = Telemetry;
-      Telemetry.init();
-
-      $injector.get('services/TokenStore.es6').init();
-      $injector.get('utils/LaunchDarkly').init();
-      $injector.get('navigation/stateChangeHandlers').setup();
-      $injector.get('ui/ContextMenuHandler.es6').default();
-      $injector.get('states/states.es6').loadAll();
-      $injector.get('dialogsInitController').init();
-      $injector.get('components/shared/auto_create_new_space').init();
-      $injector.get('widgets/ExtensionActivationTracking.es6').init();
-
-      moment.locale('en', {
-        calendar: {
-          lastDay: '[Yesterday], LT',
-          sameDay: '[Today], LT',
-          nextDay: '[Tomorrow], LT',
-          lastWeek: 'ddd, LT',
-          nextWeek: '[Next] ddd, LT',
-          sameElse: 'll'
-        }
-      });
-    }
-  ])
-  // Listen to postMessage events and check if they are coming from
-  // GK iframes. If so, handle messages accordingly
-  .run([
-    '$injector',
-    $injector => {
-      const handleGKMessage = $injector.get('account/handleGatekeeperMessage.es6').default;
-      const Config = $injector.get('Config.es6');
-      const {
-        config: { authUrl }
-      } = Config.readInjectedConfig();
-      const cb = evt => {
-        if (evt.origin.includes(authUrl)) {
-          handleGKMessage(evt.data);
-        }
-      };
-      window.addEventListener('message', cb);
-    }
-  ]);
-
-angular
-  .module('contentful')
+  .module('contentful/app', [AngularInit, 'ngAnimate', 'ngSanitize', 'ui.router'])
   .config([
     '$locationProvider',
     $locationProvider => {
@@ -134,14 +91,12 @@ angular
       $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
     }
   ])
-
   .config([
     '$animateProvider',
     $animateProvider => {
       $animateProvider.classNameFilter(/animate/);
     }
   ])
-
   .config([
     '$urlMatcherFactoryProvider',
     $urlMatcherFactoryProvider => {
@@ -246,7 +201,6 @@ angular
       ]);
     }
   ])
-
   .config([
     '$httpProvider',
     $httpProvider => {
@@ -275,174 +229,65 @@ angular
 
       $httpProvider.defaults.headers.common['X-Contentful-User-Agent'] = headerParts.join('; ');
     }
-  ]);
-
-(() => {
-  const registry = [];
-  window.AngularSystem = {
-    register: register,
-    registry: registry,
-    set: set
-  };
-
-  // Load the modules defined in `libs/`
-  window.libs.forEach(lib => {
-    set(lib[0], lib[1]);
-  });
-
-  /**
-   * Analagous to angular.module().constant.
-   * Registers the given `moduleObj` as a module
-   * named `id` in SystemJS using a custom `run`
-   * function.
-   *
-   * Sets the module on the `contentful/init` Angular module.
-   * @param {String} id        Name of module
-   * @param {Object} moduleObj Module object
-   */
-  function set(id, moduleObj) {
-    registry.push([
-      id,
-      [],
-      export_ => {
-        const exports = moduleObj;
-        export_(Object.assign({ default: exports }, exports));
-        return {
-          setters: [],
-          execute: function() {}
-        };
+  ])
+  .config([
+    '$compileProvider',
+    $compileProvider => {
+      if (env !== 'development') {
+        $compileProvider.debugInfoEnabled(false);
       }
-    ]);
-
-    angular.module('contentful/init').constant(id, moduleObj);
-  }
-
-  /**
-   * Registers a module dynamically. Analagous
-   * to angular.module().factory.
-   *
-   * @param  {String} id Module name
-   * @param  {Array} deps Dependencies
-   * @param  {Function} run  Function that is run to export the module
-   */
-  function register(id, deps, run) {
-    registry.push([id, deps, run]);
-    registerDirectoryAlias(id);
-
-    angular.module('contentful/init').factory(id, [
-      '$injector',
-      $injector => {
-        const mod = makeModule();
-
-        const ctx = run(mod.export);
-
-        deps.forEach((name, i) => {
-          const absName = resolve(name, id);
-          const depExports = coerceExports($injector.get(absName));
-          ctx.setters[i](depExports);
-        });
-        ctx.execute();
-
-        // do not freeze exports while running unit
-        // test so methods can be freely stubbed
-        if (isUnitTest()) {
-          return mod.exports;
-        } else {
-          return Object.freeze(mod.exports);
-        }
-
-        function isUnitTest() {
-          try {
-            // TODO: check actual process env
-            return $injector.get('Config.es6').env === 'unittest';
-          } catch (err) {
-            return false;
-          }
-        }
-      }
-    ]);
-  }
-
-  /**
-   * If 'exports' is an ES6 module return it, otherwise coerce it from
-   * CommonJS exports to an ES6 module
-   */
-  function coerceExports(exports) {
-    if (exports.__esModule) {
-      return exports;
     }
+  ])
 
-    // We don't use `React.PropTypes` since it's deprecated and warns
-    // when accessing. Unfortunatelly the `assign` below will also
-    // cause the warning. Here we detect if we're dealing with React
-    // exports and if so we remove `PropTypes`.
-    if (exports.Component && 'PropTypes' in exports) {
-      delete exports.PropTypes;
-    }
-
-    return Object.assign({ default: exports }, exports);
-  }
-
-  function makeModule() {
-    const exports = {};
-
-    Object.defineProperty(exports, '__esModule', {
-      value: true
-    });
-
-    return {
-      export: export_,
-      exports: exports
-    };
-
-    function export_(name, value) {
-      if (typeof name === 'string') {
-        exports[name] = value;
+  .run([
+    'dialogsInitController',
+    'navigation/stateChangeHandlers',
+    ({ init: initDialogs }, { setup: setupStateChangeHandlers }) => {
+      if (Config.env === 'development') {
+        Error.stackTraceLimit = 100;
       } else {
-        for (const key in name) {
-          exports[key] = name[key];
-        }
+        Error.stackTraceLimit = 25;
       }
+
+      initDebug(window);
+      initAuthentication();
+      initTokenStore();
+      initLD();
+      initAutoCreateNewSpace();
+      initContextMenuHandler();
+      initExtentionActivationTracking();
+      loadAllStates();
+
+      setupStateChangeHandlers();
+      initDialogs();
+
+      // Start telemetry and expose it as a global.
+      // It can be used by E2E or Puppeteer scripts.
+      window.cfTelemetry = Telemetry;
+      Telemetry.init();
+
+      moment.locale('en', {
+        calendar: {
+          lastDay: '[Yesterday], LT',
+          sameDay: '[Today], LT',
+          nextDay: '[Tomorrow], LT',
+          lastWeek: 'ddd, LT',
+          nextWeek: '[Next] ddd, LT',
+          sameElse: 'll'
+        }
+      });
     }
-  }
-
-  /**
-   * If module ID matches 'a/b/index.es6' then register a module 'a/b'
-   * that is an alias for the index module.
-   */
-  function registerDirectoryAlias(moduleId) {
-    const path = moduleId.split('/');
-    const last = path.pop();
-    if (last === 'index.es6') {
-      angular.module('contentful/init').factory(path.join('/'), [moduleId, id]);
-    }
-  }
-
-  function id(x) {
-    return x;
-  }
-
-  function resolve(to, from) {
-    // IE does not support string.startsWith()
-    if (to.substr(0, 2) === './' || to.substr(0, 3) === '../') {
-      const froms = from.split('/');
-      // Last 'from' is the filename but we resolve relative to the
-      // directory.
-      froms.pop();
-      const tos = to.split('/');
-      return tos
-        .reduce((resolved, seg) => {
-          if (seg === '..') {
-            resolved.pop();
-          } else if (seg !== '.') {
-            resolved.push(seg);
-          }
-
-          return resolved;
-        }, froms)
-        .join('/');
-    } else {
-      return to;
-    }
-  }
-})();
+  ])
+  // Listen to postMessage events and check if they are coming from
+  // GK iframes. If so, handle messages accordingly
+  .run(() => {
+    const {
+      config: { authUrl }
+    } = Config.readInjectedConfig();
+    const cb = evt => {
+      if (evt.origin.includes(authUrl)) {
+        handleGKMessage(evt.data);
+      }
+    };
+    window.addEventListener('message', cb);
+  });

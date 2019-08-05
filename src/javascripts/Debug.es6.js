@@ -25,11 +25,6 @@ export function init(global) {
 // The initializer for the tool is the default export of the module.
 // The key is the property name to which we export the module on
 // `global.cfDebug`.
-const modules = {
-  analytics: 'analytics/console',
-  http: 'debug/XHR.es6'
-};
-
 function initDevNotifications() {
   UIVersionSwitcher.init();
   MockApiToggle.init();
@@ -47,8 +42,13 @@ function initDevNotifications() {
 function create() {
   const $injector = getModule('$injector');
 
+  const modules = {
+    analytics: $injector.get('analytics/console'),
+    http: require('debug/XHR.es6')
+  };
+
   const initializers = mapValues(modules, module => {
-    return $injector.get(module).default;
+    return module.default;
   });
   return makeLazyObj(initializers);
 }

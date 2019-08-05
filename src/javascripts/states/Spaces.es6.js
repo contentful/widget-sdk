@@ -4,6 +4,8 @@ import { getFirstAccessibleSref } from 'access_control/SectionAccess.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
+import * as TokenStore from 'services/TokenStore.es6';
+
 import contentTypes from './contentTypes.es6';
 import apps from 'app/settings/apps/routes/index.es6';
 import appsBeta from 'app/settings/AppsBeta/routes/index.es6';
@@ -27,8 +29,7 @@ const newSpace = {
   template: JST.cf_create_space_advice(),
   controller: [
     '$scope',
-    'access_control/AccessChecker',
-    ($scope, accessChecker) => {
+    $scope => {
       $scope.canCreateSpace = accessChecker.canCreateSpace;
     }
   ]
@@ -42,9 +43,8 @@ const hibernation = {
 };
 
 const resolveSpaceData = [
-  'services/TokenStore.es6',
   '$stateParams',
-  (TokenStore, $stateParams) => TokenStore.getSpace($stateParams.spaceId)
+  $stateParams => TokenStore.getSpace($stateParams.spaceId)
 ];
 
 const spaceEnvironment = {

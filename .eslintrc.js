@@ -9,8 +9,8 @@ module.exports = {
       version: '16.8.0'
     },
     'import/resolver': {
-      node: {
-        moduleDirectory: ['src/javascripts', 'node_modules']
+      webpack: {
+        config: 'tools/webpack.config.js'
       }
     },
     'import/core-modules': ['legacy-client', 'localesList', 'marked', 'searchParser']

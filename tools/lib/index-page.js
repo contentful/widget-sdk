@@ -1,7 +1,7 @@
 const { h, doctype } = require('./hyperscript');
 const { create: createResolver } = require('./manifest-resolver');
 
-const DEV_ENTRY_SCRIPTS = ['vendor.js', 'templates.js', 'libs.js', 'components.js'];
+const DEV_ENTRY_SCRIPTS = ['templates.js', 'app.js'];
 
 const DEFAULT_ENTRY_SCRIPTS = ['application.min.js'];
 

@@ -1,4 +1,4 @@
-import localesList from 'localesList';
+import localesList from 'libs/locales_list.json';
 import _ from 'lodash';
 
 /**

@@ -8,6 +8,8 @@ import * as logger from 'services/logger.es6';
 
 import * as Forma36Components from '@contentful/forma-36-react-components';
 
+import store from 'redux/store.es6';
+
 import appContentListSaveViewDialogComponentes6 from 'app/ContentList/SaveViewDialogComponent.es6';
 import appContentModelEditorContentTypesPagees6 from 'app/ContentModel/Editor/ContentTypesPage.es6';
 import apphomecontactUsTemplatees6 from 'app/home/contactUs/Template.es6';
@@ -81,6 +83,7 @@ import navigationmodernStackOnboardingRelaunches6 from 'navigation/modernStackOn
 import navigationSidepanelTriggeres6 from 'navigation/Sidepanel/Trigger.es6';
 import searchEntitySelectorCreateEntityindexes6 from 'search/EntitySelector/CreateEntity/index.es6';
 import uiComponentsContactUsButtones6 from 'ui/Components/ContactUsButton.es6';
+import access_controlUsersUserListes6 from 'access_control/Users/UserList.es6';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -220,55 +223,52 @@ export default function register() {
    * If you use reference, be aware that in order to update values, you need to replace
    * props object completely.
    */
-  registerDirective('reactComponent', [
-    'redux/store.es6',
-    function({ default: store }) {
-      return {
-        restrict: 'E',
-        replace: true,
-        link: ($scope, $element, attrs) => {
-          const container = $element[0];
-          let ReactComponent;
-          if (attrs.name) {
-            ReactComponent = getReactComponent(attrs.name, logger);
-          } else if (attrs.component) {
-            ReactComponent = $scope.$eval(attrs.component);
-          } else if (attrs.jsx) {
-            ReactComponent = class Component extends React.Component {
-              render() {
-                return $scope.$eval(attrs.jsx);
-              }
-            };
-          } else {
-            throw new Error('Expect `component` or `name`');
-          }
-
-          const renderMyComponent = () => {
-            const scopeProps = $scope.$eval(attrs.props);
-            renderComponent(ReactComponent, scopeProps, $scope, container, store);
-          };
-
-          // If there are props, re-render when they change
-          if (attrs.props) {
-            watchProps(attrs.watchDepth, $scope, [attrs.props], renderMyComponent);
-          } else {
-            renderMyComponent();
-          }
-
-          // cleanup when scope is destroyed
-          $scope.$on('$destroy', () => {
-            if (!attrs.onScopeDestroy) {
-              ReactDOM.unmountComponentAtNode(container);
-            } else {
-              $scope.$eval(attrs.onScopeDestroy)({
-                unmountComponent: ReactDOM.unmountComponentAtNode.bind(this, container)
-              });
+  registerDirective('reactComponent', () => {
+    return {
+      restrict: 'E',
+      replace: true,
+      link: ($scope, $element, attrs) => {
+        const container = $element[0];
+        let ReactComponent;
+        if (attrs.name) {
+          ReactComponent = getReactComponent(attrs.name, logger);
+        } else if (attrs.component) {
+          ReactComponent = $scope.$eval(attrs.component);
+        } else if (attrs.jsx) {
+          ReactComponent = class Component extends React.Component {
+            render() {
+              return $scope.$eval(attrs.jsx);
             }
-          });
+          };
+        } else {
+          throw new Error('Expect `component` or `name`');
         }
-      };
-    }
-  ]);
+
+        const renderMyComponent = () => {
+          const scopeProps = $scope.$eval(attrs.props);
+          renderComponent(ReactComponent, scopeProps, $scope, container, store);
+        };
+
+        // If there are props, re-render when they change
+        if (attrs.props) {
+          watchProps(attrs.watchDepth, $scope, [attrs.props], renderMyComponent);
+        } else {
+          renderMyComponent();
+        }
+
+        // cleanup when scope is destroyed
+        $scope.$on('$destroy', () => {
+          if (!attrs.onScopeDestroy) {
+            ReactDOM.unmountComponentAtNode(container);
+          } else {
+            $scope.$eval(attrs.onScopeDestroy)({
+              unmountComponent: ReactDOM.unmountComponentAtNode.bind(this, container)
+            });
+          }
+        });
+      }
+    };
+  });
 }
 
 function getModule(name) {
@@ -345,7 +345,8 @@ function getModule(name) {
     'navigation/modernStackOnboardingRelaunch.es6': navigationmodernStackOnboardingRelaunches6,
     'navigation/Sidepanel/Trigger.es6': navigationSidepanelTriggeres6,
     'search/EntitySelector/CreateEntity/index.es6': searchEntitySelectorCreateEntityindexes6,
-    'ui/Components/ContactUsButton.es6': uiComponentsContactUsButtones6
+    'ui/Components/ContactUsButton.es6': uiComponentsContactUsButtones6,
+    'access_control/Users/UserList.es6': access_controlUsersUserListes6
   };
 
   return get(allowedModules, name, null);

@@ -5,8 +5,6 @@ import { getSingleSpacePlan, isPOCSpacePlan } from 'account/pricing/PricingDataP
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const modalDialog = getModule('modalDialog');
-
 /**
  * Displays the space creation dialog. The dialog type will depend on the
  * organization that the new space should belong to.
@@ -18,6 +16,8 @@ const modalDialog = getModule('modalDialog');
  * @param {function} onSubmit
  */
 export async function showDialog({ organizationId, space, action, scope, onSubmit }) {
+  const modalDialog = getModule('modalDialog');
+
   const validActions = ['change', 'upgrade', 'downgrade'];
 
   if (!organizationId) {

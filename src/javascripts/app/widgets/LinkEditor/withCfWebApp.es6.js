@@ -22,8 +22,6 @@ const SLIDE_IN_ACTIONS = { OPEN: 'open', OPEN_CREATE: 'open_create' };
  * app specific dependencies.
  */
 export default function withCfWebApp(LinkEditor) {
-  const spaceContext = getModule('spaceContext');
-
   class HOC extends React.Component {
     static propTypes = {
       type: BaseLinkEditor.propTypes.type,
@@ -41,6 +39,7 @@ export default function withCfWebApp(LinkEditor) {
     state = { contentTypes: [] };
 
     componentDidMount() {
+      const spaceContext = getModule('spaceContext');
       const fetchContentTypes = allContentTypes => {
         const contentTypes = getAccessibleCts(allContentTypes, this.props.widgetAPI.field);
         this.setState({ contentTypes });
