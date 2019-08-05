@@ -21,14 +21,14 @@ import { getModule } from 'NgRegistry.es6';
  * @returns {Promise<void>}
  */
 export default async function create($scope, editorData, preferences) {
-  $scope.context = {};
-  $scope.editorData = editorData;
-
   const $controller = getModule('$controller');
   const spaceContext = getModule('spaceContext');
   const $rootScope = getModule('$rootScope');
 
   $scope.sidebarToggleProps = initSidebarTogglesProps($rootScope);
+
+  $scope.context = {};
+  $scope.editorData = editorData;
 
   const editorContext = ($scope.editorContext = {});
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);

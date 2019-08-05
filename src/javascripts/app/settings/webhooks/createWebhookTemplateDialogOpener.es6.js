@@ -6,8 +6,6 @@ import * as WebhookEditorActions from './WebhookEditorActions.es6';
 import WebhookTemplateDialog from './WebhookTemplateDialog.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $state = getModule('$state');
-
 const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
 
 export default function createWebhookTemplateDialogOpener(config) {
@@ -21,6 +19,8 @@ export default function createWebhookTemplateDialogOpener(config) {
   );
 
   return function openTemplateDialog(templateId, templateIdReferrer) {
+    const $state = getModule('$state');
+
     templateId = validTemplateIds.includes(templateId) ? templateId : Templates[0].id;
 
     ModalLauncher.open(({ onClose, isShown }) => (

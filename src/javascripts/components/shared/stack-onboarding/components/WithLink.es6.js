@@ -19,7 +19,6 @@ export default class WithLink extends React.Component {
   };
 
   render() {
-    const $state = getModule('$state');
     const spaceContext = getModule('spaceContext');
     const { children, trackingElementId, intercomKey } = this.props;
     const getStateParams = () => {
@@ -41,6 +40,8 @@ export default class WithLink extends React.Component {
     };
 
     const move = async (_event, newTrackingElementId) => {
+      const $state = getModule('$state');
+
       const { path, params } = getStateParams();
       const elementId = newTrackingElementId || trackingElementId;
 

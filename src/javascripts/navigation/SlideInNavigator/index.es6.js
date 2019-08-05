@@ -3,9 +3,6 @@ import { track } from 'analytics/Analytics.es6';
 import slideHelper from './slideHelper.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $location = getModule('$location');
-const $state = getModule('$state');
-
 const SLIDES_BELOW_QS = 'previousEntries';
 
 /**
@@ -24,6 +21,8 @@ export const getSlideAsString = slideHelper.toString;
  * @returns {Slide[]} Entity with "id" and "type" properties.
  */
 export function getSlideInEntities() {
+  const $state = getModule('$state');
+
   const slidesBelow = deserializeQS();
   const topSlide = slideHelper.newFromStateParams($state.params);
   return uniqWith([...slidesBelow, topSlide], isEqual).filter(v => !!v);
@@ -37,6 +36,8 @@ export function getSlideInEntities() {
  * @returns {currentSlideLevel: number, targetSlideLevel: number}
  */
 export function goToSlideInEntity(slide) {
+  const $state = getModule('$state');
+
   const currentSlides = getSlideInEntities();
   const slides = [...currentSlides, slide];
   // If `slide` is open already, go back to that level instead of adding one more.
@@ -59,6 +60,8 @@ export function goToSlideInEntity(slide) {
  * the current state's list if omitted.
  */
 export function goToPreviousSlideOrExit(eventLabel, onExit) {
+  const $state = getModule('$state');
+
   const slideInEntities = getSlideInEntities();
   const numEntities = slideInEntities.length;
   if (numEntities > 1) {
@@ -73,6 +76,8 @@ export function goToPreviousSlideOrExit(eventLabel, onExit) {
 }
 
 function deserializeQS() {
+  const $location = getModule('$location');
+
   const searchObject = $location.search();
   const serializedEntities = get(searchObject, SLIDES_BELOW_QS, '')
     .split(',')

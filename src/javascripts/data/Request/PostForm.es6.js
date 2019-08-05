@@ -2,8 +2,6 @@ import qs from 'qs';
 import { assign } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
-const $http = getModule('$http');
-
 /**
  * @description
  * Post URL encoded form data to the given URL.
@@ -15,6 +13,8 @@ const $http = getModule('$http');
  * @returns {Promise<Response>}
  */
 export default function postForm(url, data, config = {}) {
+  const $http = getModule('$http');
+
   config.method = 'POST';
   config.url = url;
   config.data = qs.stringify(data);

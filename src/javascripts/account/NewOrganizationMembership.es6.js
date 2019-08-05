@@ -38,7 +38,6 @@ import { getStore } from 'TheStore/index.es6';
 import { track, updateUserInSegment } from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $state = getModule('$state');
 const GROUP_ID = 'tea_onboarding_steps';
 const store = getStore('local');
 // End: For Next Steps for a TEA space (a space created using the example space template)
@@ -58,6 +57,8 @@ const Success = makeCtor('success');
 const Failure = makeCtor('failure');
 
 export default function($scope) {
+  const $state = getModule('$state');
+
   let state = {
     spaces: [],
     emails: [],

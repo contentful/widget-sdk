@@ -5,8 +5,6 @@ import * as MockApiToggle from 'debug/MockApiToggle.es6';
 import * as EnforceFlags from 'debug/EnforceFlags.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $injector = getModule('$injector');
-
 const DEBUG_ENVS = ['development', 'preview', 'staging'];
 
 /**
@@ -47,6 +45,8 @@ function initDevNotifications() {
  * ~~~~
  */
 function create() {
+  const $injector = getModule('$injector');
+
   const initializers = mapValues(modules, module => {
     return $injector.get(module).default;
   });

@@ -1,8 +1,6 @@
 import { transform, flatten, chunk, uniq } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
-const $q = getModule('$q');
-
 // The maximum number of IDs to query for in one request.
 //
 // This restricted by the maximum length of the URL. This limit is
@@ -106,6 +104,7 @@ export default function(queryEntities) {
  * @returns {Promise<Entity[]>}
  */
 function getEntitiesById(queryEntities, ids) {
+  const $q = getModule('$q');
   const queries = chunk(uniq(ids), IDS_PER_QUERY).map(ids =>
     queryEntities({
       'sys.id[in]': ids.join(','),

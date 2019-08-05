@@ -34,8 +34,6 @@ import ExtensionsActions from './ExtensionsActions.es6';
 import { openGitHubInstaller } from './ExtensionsActions.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const styles = {
   deleteDropdown: css({
     padding: tokens.spacingXl,
@@ -50,6 +48,8 @@ const styles = {
 };
 
 function deleteExtension(id, refresh) {
+  const spaceContext = getModule('spaceContext');
+
   return spaceContext.cma
     .deleteExtension(id)
     .then(refresh)

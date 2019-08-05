@@ -5,10 +5,6 @@ import * as stringUtils from 'utils/StringUtils.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
 
-const $q = getModule('$q');
-const $timeout = getModule('$timeout');
-const spaceContext = getModule('spaceContext');
-
 /**
  * Opens file selector to select files which will then be uploaded as assets.
  * The resolved assets will still be in processing once `open()` resolves. Any
@@ -34,6 +30,8 @@ export function open(localeCode) {
   });
 
   function createAssetsForFiles(files) {
+    const $q = getModule('$q');
+
     if (files.length === 0) {
       return $q.resolve([]);
     }
@@ -61,6 +59,8 @@ export function open(localeCode) {
   }
 
   function createAssetForFile(file) {
+    const spaceContext = getModule('spaceContext');
+
     const title = stringUtils.fileNameToTitle(file.fileName);
     const data = {
       sys: { type: 'Asset' },
@@ -89,6 +89,9 @@ export function open(localeCode) {
  * @returns {Promise<Object{publishedAssets, unpublishableAssets}>}
  */
 export function tryToPublishProcessingAssets(assets) {
+  const $q = getModule('$q');
+  const $timeout = getModule('$timeout');
+
   const publishedAssets = [];
   const unpublishableAssets = [];
 
@@ -119,6 +122,8 @@ export function tryToPublishProcessingAssets(assets) {
   // Assume last given asset's processing started last and will be done last.
   // Once the last given asset can be published, try to publish all other assets.
   function tryLast(assets) {
+    const $q = getModule('$q');
+
     if (triesLeft > 0) {
       const lastAsset = assets[assets.length - 1];
       const otherAssets = assets.slice(0, -1);
@@ -131,6 +136,8 @@ export function tryToPublishProcessingAssets(assets) {
   }
 
   function tryAll(assets) {
+    const $q = getModule('$q');
+
     const rejectedAssets = [];
     return $q
       .all(

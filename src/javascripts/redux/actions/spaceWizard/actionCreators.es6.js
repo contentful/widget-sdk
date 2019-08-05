@@ -21,9 +21,6 @@ import * as logger from 'services/logger.es6';
 
 import * as actions from './actions.es6';
 
-const client = getModule('client');
-const spaceContext = getModule('spaceContext');
-
 const DEFAULT_LOCALE = 'en-US';
 
 export function reset() {
@@ -137,6 +134,9 @@ export function createSpace({
   onTemplateCreated,
   onConfirm
 }) {
+  const client = getModule('client');
+  const spaceContext = getModule('spaceContext');
+
   return async dispatch => {
     const { name, template } = newSpaceMeta;
     const spaceData = {
@@ -298,6 +298,8 @@ export function selectPlan(currentPlan, selectedPlan) {
 }
 
 async function createTemplate(templateInfo) {
+  const spaceContext = getModule('spaceContext');
+
   const templateCreator = getTemplateCreator(
     spaceContext,
     // TODO add analytics tracking

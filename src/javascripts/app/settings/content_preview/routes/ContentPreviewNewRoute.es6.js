@@ -9,9 +9,11 @@ import ContentPreviewFormPage, {
 } from '../ContentPreviewFormPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
-const spaceContext = getModule('spaceContext');
+const ContentTypesFetcher = createFetcherComponent(() => {
+  const spaceContext = getModule('spaceContext');
 
-const ContentTypesFetcher = createFetcherComponent(() => spaceContext.publishedCTs.refreshBare());
+  return spaceContext.publishedCTs.refreshBare();
+});
 
 export default class ContentPreviewNewRoute extends Component {
   static propTypes = {
@@ -20,6 +22,8 @@ export default class ContentPreviewNewRoute extends Component {
   };
 
   render() {
+    const spaceContext = getModule('spaceContext');
+
     return (
       <AdminOnly>
         <ContentTypesFetcher>

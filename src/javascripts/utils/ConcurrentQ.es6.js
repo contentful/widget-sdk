@@ -20,6 +20,8 @@ import { getModule } from 'NgRegistry.es6';
  *
  */
 export function createQueue() {
+  const $q = getModule('$q');
+
   let running;
   const pending = [];
   return { push };

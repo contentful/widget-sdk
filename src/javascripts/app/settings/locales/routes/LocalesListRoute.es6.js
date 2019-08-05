@@ -18,9 +18,9 @@ import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import * as ResourceService from 'services/ResourceService.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const LocalesFetcher = createFetcherComponent(() => {
+  const spaceContext = getModule('spaceContext');
+
   const createResourceService = ResourceService.default;
 
   return Promise.all([

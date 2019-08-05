@@ -6,8 +6,6 @@ import * as K from 'utils/kefir.es6';
 import * as DocLoader from 'data/sharejs/DocLoader.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $q = getModule('$q');
-
 export const DocLoad = DocLoader.DocLoad;
 
 /**
@@ -26,6 +24,8 @@ export const DocLoad = DocLoader.DocLoad;
  * @returns Connection
  */
 export function create(baseUrl, auth, spaceId, environmentId) {
+  const $q = getModule('$q');
+
   /**
    * `connection.state` may be
    * - 'connecting': The connection is being established
@@ -216,6 +216,8 @@ function createBaseConnection(baseUrl, getToken, spaceId, environmentId) {
  * @returns {DocWrapper}
  */
 function createDocWrapper(connection, key) {
+  const $q = getModule('$q');
+
   let rawDoc = null;
   let closePromise = $q.resolve();
 

@@ -5,8 +5,6 @@ import { getDeliveryToken } from 'components/shared/auto_create_new_space/Create
 import IframeHighlightHOC from 'components/shared/stack-onboarding/explore/IframeHighlightHOC.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $stateParams = getModule('$stateParams');
-
 class CodeSnippets extends React.Component {
   static propTypes = {
     active: PropTypes.string,
@@ -38,6 +36,8 @@ class CodeSnippets extends React.Component {
   };
 
   renderBootstrapSnippet = () => {
+    const $stateParams = getModule('$stateParams');
+
     const { deliveryToken } = this.state;
     return this.renderSnippet({
       title: 'Bootstrap the Contentful JS SDK',

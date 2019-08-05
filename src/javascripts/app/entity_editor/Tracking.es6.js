@@ -4,7 +4,6 @@ import { stateName } from 'data/CMA/EntityState.es6';
 import * as K from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index.es6';
 
 export default function install(entityInfo, document, lifeline$) {
@@ -57,6 +56,8 @@ const getReferenceEntitiesIds = (id, locale, editorData) => {
 };
 
 async function getReferencesContentTypes(editorData, locale) {
+  const spaceContext = getModule('spaceContext');
+
   const batchingApiClient = getBatchingApiClient(spaceContext.cma);
   const referenceFieldsIds = editorData.fieldControls.form
     .filter(isEntryReferenceField)

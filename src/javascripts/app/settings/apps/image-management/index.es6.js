@@ -11,9 +11,6 @@ import { ImageManagementInstaller } from './ImageManagementInstaller.es6';
 import { ImageManagementGettingStarted } from './ImageManagementGettingStarted.es6';
 import { APP_ID, APP_NAME } from './Constants.es6';
 
-const spaceContext = getModule('spaceContext');
-const $state = getModule('$state');
-
 export default class ImageManagementApp extends Component {
   static propTypes = {
     client: PropTypes.shape({
@@ -33,6 +30,8 @@ export default class ImageManagementApp extends Component {
   }
 
   reloadConfig = async () => {
+    const spaceContext = getModule('spaceContext');
+
     this.setState({
       loading: true
     });
@@ -51,6 +50,8 @@ export default class ImageManagementApp extends Component {
   };
 
   render() {
+    const $state = getModule('$state');
+
     if (this.state.loading) {
       return <AppPageShell appId={APP_ID} />;
     }

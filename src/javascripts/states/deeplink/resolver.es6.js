@@ -115,6 +115,8 @@ function resolveParams(link, params) {
 }
 
 function makeSpaceScopedPathResolver({ spaceScopedPath }) {
+  const spaceContext = getModule('spaceContext');
+
   if (!spaceScopedPath || !Array.isArray(spaceScopedPath)) {
     throw new Error('A path for a deeplink to resolve to must be provided');
   }

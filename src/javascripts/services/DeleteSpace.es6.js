@@ -10,6 +10,10 @@ import APIClient from 'data/APIClient.es6';
 import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider.es6';
 
 export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
+  const $rootScope = getModule('$rootScope');
+  const modalDialog = getModule('modalDialog');
+  const Command = getModule('command');
+
   if (plan && isEnterprisePlan(plan) && !isFreeSpacePlan(plan)) {
     return openCommittedSpaceWarningDialog();
   }
@@ -54,6 +58,8 @@ function remove(space) {
 }
 
 function removalConfirmation() {
+  const modalDialog = getModule('modalDialog');
+
   const content = [
     h('p', [
       'You are about to remove space ',

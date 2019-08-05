@@ -12,8 +12,6 @@ import {
 import { openModal as showLoading } from 'components/shared/LoadingModal.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const modalDialog = getModule('modalDialog');
-
 /**
  * Displays the space creation dialog. The dialog type will depend on the
  * organization that the new space should belong to.
@@ -23,6 +21,8 @@ const modalDialog = getModule('modalDialog');
  * @param {string} organizationId
  */
 export async function showDialog(organizationId) {
+  const modalDialog = getModule('modalDialog');
+
   if (!organizationId) {
     throw new Error('organizationId not supplied for space creation');
   }

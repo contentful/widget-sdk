@@ -12,8 +12,6 @@ import Skip from 'components/shared/stack-onboarding/components/Skip.es6';
 import Button from 'components/shared/stack-onboarding/components/Button.es6';
 import Code from 'components/shared/stack-onboarding/components/Code.es6';
 
-const $stateParams = getModule('$stateParams');
-
 export default class CopyScreen extends React.Component {
   state = {
     pending: true
@@ -34,6 +32,8 @@ export default class CopyScreen extends React.Component {
   };
 
   getSetupLine = () => {
+    const $stateParams = getModule('$stateParams');
+
     const { pending, managementToken, deliveryToken } = this.state;
 
     if (pending) {

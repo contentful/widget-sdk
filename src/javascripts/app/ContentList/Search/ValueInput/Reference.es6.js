@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 import keycodes from 'utils/keycodes.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const entitySelector = getModule('entitySelector');
-
 export default function FilterValueReference({
   ctField = {},
   testId,
@@ -14,6 +12,8 @@ export default function FilterValueReference({
   onChange,
   onKeyDown
 }) {
+  const entitySelector = getModule('entitySelector');
+
   // We do not want to support field type arrays of references yet.
   const ctFieldClone = cloneDeep(ctField);
   ctFieldClone.type = 'Link';

@@ -11,12 +11,6 @@ import * as TokenStore from 'services/TokenStore.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
 
-const client = getModule('client');
-const $rootScope = getModule('$rootScope');
-const spaceContext = getModule('spaceContext');
-const modalDialog = getModule('modalDialog');
-const $state = getModule('$state');
-
 const DEFAULT_LOCALE = 'en-US';
 
 /**
@@ -31,6 +25,10 @@ const DEFAULT_LOCALE = 'en-US';
  * @returns Promise<undefined>
  */
 export default function(org, templateName, modalTemplate = autoCreateSpaceTemplate) {
+  const $rootScope = getModule('$rootScope');
+  const spaceContext = getModule('spaceContext');
+  const $state = getModule('$state');
+
   /*
    * throws an error synchronously to differentiate it from
    * a rejected promise as a rejected promise stands for
@@ -113,6 +111,8 @@ export default function(org, templateName, modalTemplate = autoCreateSpaceTempla
  * space home.
  */
 function* createSpace(org, templateName) {
+  const client = getModule('client');
+
   const newSpace = yield client.createSpace(
     {
       name: 'The example project',
@@ -195,6 +195,8 @@ function* loadTemplate(name) {
 }
 
 function openDialog(scope, templateName, modalTemplate) {
+  const modalDialog = getModule('modalDialog');
+
   return modalDialog.open({
     title: 'Space auto creation',
     template: modalTemplate(templateName.toLowerCase()),

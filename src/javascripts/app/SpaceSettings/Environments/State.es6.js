@@ -17,7 +17,6 @@ import { openCreateDialog, openEditDialog } from './EditDialog.es6';
 import { openDeleteDialog } from './DeleteDialog.es6';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService.es6';
 import View from './View.es6';
-const spaceContext = getModule('spaceContext');
 const environmentsFlagName = 'feature-dv-11-2017-environments';
 
 export default {
@@ -192,6 +191,8 @@ export function createComponent(spaceContext, canSelectSource, aliasesEnabled) {
 }
 
 function makeEnvironmentModel(environment) {
+  const spaceContext = getModule('spaceContext');
+
   const status = caseofEq(environment.sys.status.sys.id, [
     ['ready', () => 'ready'],
     ['failed', () => 'failed'],

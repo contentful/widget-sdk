@@ -5,14 +5,14 @@ import { isArray } from 'lodash';
 
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-
 /**
  * Component sets document title. The facade for react-helmet to make
  * usage from jade templates easier.
  *
  */
 export default function DocumentTitle({ title }) {
+  const spaceContext = getModule('spaceContext');
+
   const titleSegments = isArray(title) ? title : [title];
   const spaceName = getSpaceName(spaceContext);
   const environmentId = getEnvironmentId(spaceContext);

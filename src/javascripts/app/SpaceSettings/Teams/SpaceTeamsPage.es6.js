@@ -25,8 +25,6 @@ import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import styles from './styles.es6';
 import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const initialState = {
   isPending: false,
   teamSpaceMemberships: [],
@@ -187,6 +185,8 @@ const useFetching = spaceId => {
 };
 
 const SpaceTeamsPage = ({ spaceId, onReady }) => {
+  const spaceContext = getModule('spaceContext');
+
   onReady();
   const [
     {

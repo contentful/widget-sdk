@@ -8,9 +8,6 @@ import {
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $state = getModule('$state');
-const $stateParams = getModule('$stateParams');
-
 const store = getStore();
 
 export default class StackOnboardingSkip extends React.Component {
@@ -19,6 +16,9 @@ export default class StackOnboardingSkip extends React.Component {
   };
 
   onClick = onboardingStepsComplete => {
+    const $state = getModule('$state');
+    const $stateParams = getModule('$stateParams');
+
     if (onboardingStepsComplete) {
       track(`close_from_${this.props.link}`);
     } else {

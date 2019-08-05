@@ -3,10 +3,10 @@ import * as XhrMock from './XHR/Mocker.es6';
 import { getModule } from 'NgRegistry.es6';
 import window from 'utils/ngCompat/window.es6';
 
-const $rootScope = getModule('$rootScope');
-const $compile = getModule('$compile');
-
 export default function init() {
+  const $rootScope = getModule('$rootScope');
+  const $compile = getModule('$compile');
+
   const xhrMock = XhrMock.create();
 
   const scope = $rootScope.$new(true);

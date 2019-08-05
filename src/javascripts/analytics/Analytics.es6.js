@@ -109,6 +109,7 @@ export function getSessionData(path, defaultValue) {
  */
 export function track(event, data) {
   const analyticsConsole = getModule('analytics/console');
+
   try {
     data = _.isObject(data) ? _.cloneDeep(data) : {};
     data = removeCircularRefs(Object.assign({}, getBasicPayload(), data));

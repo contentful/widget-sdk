@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import StateRedirect from './StateRedirect.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-
 export class AdminOnly extends React.Component {
   static propTypes = {
     children: PropTypes.any,
@@ -19,7 +17,9 @@ export class AdminOnly extends React.Component {
   };
 
   render() {
+    const spaceContext = getModule('spaceContext');
     const isAdmin = !!spaceContext.getData('spaceMember.admin', false);
+
     if (isAdmin) {
       return this.props.children;
     }

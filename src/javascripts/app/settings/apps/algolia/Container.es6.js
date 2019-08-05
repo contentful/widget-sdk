@@ -28,9 +28,6 @@ import * as Webhooks from './Webhooks.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as Intercom from 'services/intercom.es6';
 
-const $state = getModule('$state');
-const spaceContext = getModule('spaceContext');
-
 const DEFAULT_NEW_RECORD = {
   isNewRecord: true,
   index: '',
@@ -210,6 +207,8 @@ export default class AlgoliaAppPage extends Component {
   };
 
   getIntegrationContext = async () => {
+    const spaceContext = getModule('spaceContext');
+
     const allWebhooks = await spaceContext.webhookRepo.getAll();
 
     return {
@@ -252,6 +251,8 @@ export default class AlgoliaAppPage extends Component {
   };
 
   uninstall = async () => {
+    const $state = getModule('$state');
+
     try {
       this.setState({ busyWith: 'uninstall' });
       await Webhooks.remove(await this.getIntegrationContext());
@@ -285,6 +286,8 @@ export default class AlgoliaAppPage extends Component {
   };
 
   render() {
+    const $state = getModule('$state');
+
     const { installed, busyWith, draftRecord, isDraftModalOpen, isAPIKeyRequired } = this.state;
 
     return (

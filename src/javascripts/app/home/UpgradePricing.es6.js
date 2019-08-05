@@ -9,7 +9,6 @@ import { UPGRADE_PRICING_FLAG } from 'featureFlags.es6';
 import { getModule } from 'NgRegistry.es6';
 import { trackClickCTA } from './tracking.es6';
 
-const spaceContext = getModule('spaceContext');
 export default class UpgradePricing extends React.Component {
   state = {};
   async shouldShow(org) {
@@ -32,6 +31,8 @@ export default class UpgradePricing extends React.Component {
     return true;
   }
   async componentDidMount() {
+    const spaceContext = getModule('spaceContext');
+
     const org = spaceContext.getData('organization');
     const showUpgrade = await this.shouldShow(org);
 

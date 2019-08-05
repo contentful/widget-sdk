@@ -3,9 +3,6 @@ import { getModule } from 'NgRegistry.es6';
 import { getEndpoint } from './Utils.es6';
 import * as Telemetry from 'i13n/Telemetry.es6';
 
-const $q = getModule('$q');
-const $timeout = getModule('$timeout');
-
 const CALLS_IN_PERIOD = 7;
 const PERIOD = 1000;
 const DEFAULT_TTL = 5;
@@ -27,6 +24,9 @@ const GATEWAY_TIMEOUT = 504;
  * @returns {function} wrapped request function
  */
 export default function wrapWithRetry(requestFn) {
+  const $q = getModule('$q');
+  const $timeout = getModule('$timeout');
+
   let inFlight = 0;
   const queue = [];
 

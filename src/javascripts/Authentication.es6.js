@@ -7,8 +7,6 @@ import postForm from 'data/Request/PostForm.es6';
 import { getModule } from 'NgRegistry.es6';
 import window from 'utils/ngCompat/window.es6';
 
-const $location = getModule('$location');
-
 /**
  * @name Authentication
  * @description
@@ -112,6 +110,8 @@ export const refreshToken = createExclusiveTask(() => {
  * This function is only called when the app is booted.
  */
 export function init() {
+  const $location = getModule('$location');
+
   // We need to get token from location hash when running the app on localhost.
   // See https://github.com/contentful/user_interface#using-staging-and-production-apis
   if (Config.env === 'development') {
@@ -137,6 +137,8 @@ export function init() {
 }
 
 function refreshAndRedirect() {
+  const $location = getModule('$location');
+
   refreshToken();
 
   const afterLoginPath = afterLoginPathStore.get();
@@ -187,6 +189,8 @@ export function cancelUser() {
  * we return from the login page.
  */
 export function redirectToLogin() {
+  const $location = getModule('$location');
+
   tokenStore.remove();
   afterLoginPathStore.set($location.url());
   setLocation(Config.authUrl('login'));
@@ -258,6 +262,8 @@ function fetchNewToken() {
 }
 
 function loadTokenFromHash() {
+  const $location = getModule('$location');
+
   const match = $location.hash().match(/access_token=([\w-]+)/);
   const token = match && match[1];
   if (token) {

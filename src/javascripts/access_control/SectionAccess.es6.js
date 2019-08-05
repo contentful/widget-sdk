@@ -1,8 +1,6 @@
 import * as accessChecker from './AccessChecker/index.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-
 /**
  * This service makes use of accessChecker's section visibility data to expose
  * utility methods for checking access and redirecting to sections (top menu).
@@ -21,6 +19,8 @@ const SECTION_ACCESS_ORDER = [
  * to `spaces.detail`. Returns `null` if no section can be accessed.
  */
 export function getFirstAccessibleSref() {
+  const spaceContext = getModule('spaceContext');
+
   const visibility = accessChecker.getSectionVisibility();
   const section = SECTION_ACCESS_ORDER.find(section => visibility[section[0]]);
 

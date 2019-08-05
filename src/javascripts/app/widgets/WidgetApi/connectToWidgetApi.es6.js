@@ -6,8 +6,6 @@ import buildWidgetApi from 'app/widgets/WidgetApi/buildWidgetApi.es6';
 import WidgetAPIContext from './WidgetApiContext.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $rootScope = getModule('$rootScope');
-
 /**
  * Takes a component with a `value`, `isDisabled` and `onChange` props
  * and connects them to a `widgetApi` passed to the returned HOC.
@@ -29,6 +27,8 @@ export default function connectToWidgetApi(
   Component,
   { updateValueOnComponentChange = true, updateValueWhileEnabled = true } = {}
 ) {
+  const $rootScope = getModule('$rootScope');
+
   return class extends React.Component {
     displayName = `WithWidgetAPI(${getDisplayName(Component)})`;
 

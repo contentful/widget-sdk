@@ -11,9 +11,6 @@ import WebhookRemovalDialog from './dialogs/WebhookRemovalDialog.es6';
 import WebhookActivityLog from './WebhookActivityLog.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-const $state = getModule('$state');
-
 const TABS = { SETTINGS: 1, LOG: 2 };
 
 class WebhookEditor extends React.Component {
@@ -64,16 +61,22 @@ class WebhookEditor extends React.Component {
   }
 
   navigateToSaved(webhook) {
+    const $state = getModule('$state');
+
     this.props.setDirty(false);
     return $state.go('^.detail', { webhookId: webhook.sys.id });
   }
 
   navigateToList(force = false) {
+    const $state = getModule('$state');
+
     force && this.props.setDirty(false);
     return $state.go('^.list');
   }
 
   save = () => {
+    const spaceContext = getModule('spaceContext');
+
     const { webhook, fresh } = this.state;
 
     this.setState({ busy: true });
@@ -89,6 +92,8 @@ class WebhookEditor extends React.Component {
   };
 
   remove = () => {
+    const spaceContext = getModule('spaceContext');
+
     const { webhook } = this.state;
 
     const notBusy = () => this.setState({ busy: false });
@@ -132,6 +137,9 @@ class WebhookEditor extends React.Component {
   }
 
   render() {
+    const spaceContext = getModule('spaceContext');
+    const $state = getModule('$state');
+
     const { tab, webhook, fresh, dirty, busy } = this.state;
 
     return (

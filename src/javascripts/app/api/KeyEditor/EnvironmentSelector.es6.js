@@ -12,7 +12,6 @@ import InfoIcon from 'svg/info.es6';
 import { CheckboxField, SectionHeading } from '@contentful/forma-36-react-components';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel.es6';
 import { getModule } from 'NgRegistry.es6';
-const spaceContext = getModule('spaceContext');
 
 const styles = {
   aliasSpacer: css({ marginBottom: tokens.spacingL }),
@@ -86,6 +85,7 @@ function Hint() {
 }
 
 function ListEnvironments({ environments, canEdit, isSelected, showDefault, toggleSelection }) {
+  const spaceContext = getModule('spaceContext');
   return environments.map(environment => {
     const isMaster = spaceContext.isMasterEnvironment(environment);
     return (
@@ -113,6 +113,7 @@ function ListEnvironments({ environments, canEdit, isSelected, showDefault, togg
 }
 
 function ListAliases({ aliases, canEdit, isSelected, toggleSelection }) {
+  const spaceContext = getModule('spaceContext');
   return aliases.map(alias => {
     const isMaster = spaceContext.isMasterEnvironment(alias);
     return (

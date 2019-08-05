@@ -10,7 +10,6 @@ import RelativeDateTime from 'components/shared/RelativeDateTime/index.es6';
 import UserNameFormatter from 'components/shared/UserNameFormatter/FetchAndFormatUserName.es6';
 
 import { getModule } from 'NgRegistry.es6';
-const spaceContext = getModule('spaceContext');
 
 import { css } from 'emotion';
 
@@ -44,7 +43,11 @@ const displayType = field => {
   return field.type;
 };
 
-const dataForField = (entry, field) => spaceContext.getFieldValue(entry, field.id);
+const dataForField = (entry, field) => {
+  const spaceContext = getModule('spaceContext');
+
+  return spaceContext.getFieldValue(entry, field.id);
+};
 
 function filterVisibleItems(items, entryCache, assetCache) {
   let counter = 0;
@@ -66,6 +69,8 @@ function filterVisibleItems(items, entryCache, assetCache) {
  * If the link points to a missing entry, return "missing".
  */
 const dataForEntry = (entryLink, entryCache) => {
+  const spaceContext = getModule('spaceContext');
+
   const entry = entryCache.get(entryLink.sys.id);
   if (entry) {
     return spaceContext.entryTitle(entry);
@@ -75,16 +80,22 @@ const dataForEntry = (entryLink, entryCache) => {
 };
 
 const dataForAsset = (assetLink, assetCache) => {
+  const spaceContext = getModule('spaceContext');
+
   const asset = assetCache.get(assetLink.sys.id);
   return spaceContext.getFieldValue(asset, 'file');
 };
 
 const dataForLinkedEntry = (entry, field, entryCache) => {
+  const spaceContext = getModule('spaceContext');
+
   const entryLinkField = spaceContext.getFieldValue(entry, field.id);
   return entryLinkField ? dataForEntry(entryLinkField, entryCache) : '';
 };
 
 const dataForLinkedAsset = (entry, field, assetCache) => {
+  const spaceContext = getModule('spaceContext');
+
   const assetLinkField = spaceContext.getFieldValue(entry, field.id);
   return assetLinkField ? dataForAsset(assetLinkField, assetCache) : '';
 };

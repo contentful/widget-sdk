@@ -5,7 +5,6 @@ import { isObject } from 'lodash';
 import { Modal, Button } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 
-const $location = getModule('$location');
 let open = false;
 
 const ReloadNotificationDialog = ({ isShown, onReload, title, message, children }) => (
@@ -50,6 +49,7 @@ const ApiErrorMessage = () => (
 );
 
 function reloadWithCacheBuster() {
+  const $location = getModule('$location');
   const search = $location.search();
   const reloaded = search.reloaded;
   search.cfv = Math.ceil(Math.random() * 10000000);

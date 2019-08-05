@@ -8,10 +8,9 @@ import * as NetlifyClient from './NetlifyClient.es6';
 import AppPageShell from '../_common/AppPageShell.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-const $state = getModule('$state');
-
 const NetlifyFetcher = createFetcherComponent(({ client }) => {
+  const spaceContext = getModule('spaceContext');
+
   return Promise.all([
     client.get('netlify'),
     NetlifyClient.createTicket(),
@@ -29,6 +28,8 @@ export default class NetlifyApp extends Component {
   };
 
   render() {
+    const $state = getModule('$state');
+
     return (
       <NetlifyFetcher client={this.props.client}>
         {({ isLoading, isError, data }) => {

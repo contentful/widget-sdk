@@ -11,11 +11,10 @@ import * as PricingDataProvider from 'account/pricing/PricingDataProvider.es6';
 import * as DeleteSpace from 'services/DeleteSpace.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 
-const spaceContext = getModule('spaceContext');
-const $state = getModule('$state');
-
 export class SpaceSettingsRoute extends React.Component {
   getSpacePlan = async () => {
+    const spaceContext = getModule('spaceContext');
+
     const orgId = spaceContext.organization.sys.id;
     const orgEndpoint = EndpointFactory.createOrganizationEndpoint(orgId);
     let plan;
@@ -41,6 +40,8 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   save = newName => {
+    const spaceContext = getModule('spaceContext');
+
     const space = spaceContext.space;
     return spaceContext.cma
       .renameSpace(newName, space.data.sys.version)
@@ -58,6 +59,9 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   openRemovalDialog = () => {
+    const $state = getModule('$state');
+    const spaceContext = getModule('spaceContext');
+
     this.getSpacePlan().then(plan => {
       DeleteSpace.openDeleteSpaceDialog({
         space: spaceContext.space.data,
@@ -68,6 +72,8 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   render() {
+    const spaceContext = getModule('spaceContext');
+
     return (
       <React.Fragment>
         <DocumentTitle title="Settings" />
