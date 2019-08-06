@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import {
   Button,
   Modal,
@@ -17,6 +19,12 @@ import { createDialogClose, createDialogOpen } from 'app/jobs/Analytics/JobsAnal
 import DatePicker from './DatePicker/index.es6';
 import TimePicker from './TimePicker/index.es6';
 
+const styles = {
+  timezoneNote: css({
+    marginTop: tokens.spacingS
+  })
+};
+
 function TimezoneNote({ date, time, utcOffset }) {
   const localOffset = moment().utcOffset();
   const localTimezoneName = moment.tz.guess();
@@ -24,7 +32,7 @@ function TimezoneNote({ date, time, utcOffset }) {
   return (
     <Note
       testId="timezone-note"
-      className="f36-margin-top--s"
+      className={styles.timezoneNote}
       noteType="primary"
       title="Timezone changed">
       The scheduled time you have selected will be:{' '}
@@ -52,7 +60,7 @@ function formatScheduledAtDate({ date, time, utcOffset }) {
   return res;
 }
 
-function JobDialog({ onCreate, onCancel }) {
+function JobDialog({ onCreate, onCancel, isSubmitting }) {
   const now = moment(Date.now());
   const suggestedDate = now.add(1, 'hours').startOf('hour');
 
@@ -153,6 +161,8 @@ function JobDialog({ onCreate, onCancel }) {
             <Button
               data-test-id="schedule-publication"
               type="submit"
+              loading={isSubmitting}
+              disabled={isSubmitting}
               onClick={() => {
                 validateForm(() => {
                   onCreate({
@@ -174,7 +184,8 @@ function JobDialog({ onCreate, onCancel }) {
 
 JobDialog.propTypes = {
   onCreate: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired
+  onCancel: PropTypes.func.isRequired,
+  isSubmitting: PropTypes.bool.isRequired
 };
 
 export default JobDialog;

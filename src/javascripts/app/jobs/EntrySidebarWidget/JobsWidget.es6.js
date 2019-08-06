@@ -106,6 +106,7 @@ export default function JobWidget({
 }) {
   const [jobs, setJobs] = useState([]);
   const [isDialogShown, setIsDialogShown] = useState(false);
+  const [isCreatingJob, setIsCreatingJob] = useState(false);
   const publishedAt = getPublishedAt(entity);
   const entryTitle = spaceContext.entryTitle({
     getContentTypeId: () => entity.sys.contentType.sys.id,
@@ -145,10 +146,12 @@ export default function JobWidget({
     } catch (error) {
       Notification.error(`${entryTitle} failed to schedule`);
       logger.logError(error, `Entry failed to schedule`);
+      setIsCreatingJob(false);
     }
   };
 
   const handleCreate = async ({ scheduledAt }) => {
+    setIsCreatingJob(true);
     const job = await createJob(scheduledAt);
     if (job && job.sys) {
       Notification.success(`${entryTitle} was scheduled successfully`);
@@ -237,6 +240,7 @@ export default function JobWidget({
               onCancel={() => {
                 setIsDialogShown(false);
               }}
+              isSubmitting={isCreatingJob}
             />
           )}
         </>

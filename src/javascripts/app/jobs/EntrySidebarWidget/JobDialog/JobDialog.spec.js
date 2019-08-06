@@ -22,7 +22,8 @@ describe('JobDialog', () => {
   const build = () => {
     const props = {
       onCreate: jest.fn(),
-      onCancel: jest.fn()
+      onCancel: jest.fn(),
+      isSubmitting: false
     };
     return [render(<JobDialog {...props} />), props];
   };
