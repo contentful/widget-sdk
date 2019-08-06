@@ -5,11 +5,11 @@ import { fileNameToTitle, truncate } from 'utils/StringUtils.es6';
 import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions.es6';
 import { track } from 'analytics/Analytics.es6';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator.es6';
+import * as AssetUrlService from 'services/AssetUrlService.es6';
 import LinkOrganizer from './linkOrganizer.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const modalDialog = getModule('modalDialog');
-const assetUrl = getModule('assetUrlFilter');
 const entitySelector = getModule('entitySelector');
 const $state = getModule('$state');
 
@@ -184,7 +184,7 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
         // if it was not localized normally, and we did not used a fallback
         // it means we used a default locale - we filter empty values
         isFallback: Boolean(fallbackFile),
-        link: `![${title}](${assetUrl(file.url)})`
+        link: `![${title}](${AssetUrlService.transformHostname(file.url)})`
       };
     } else {
       return null;

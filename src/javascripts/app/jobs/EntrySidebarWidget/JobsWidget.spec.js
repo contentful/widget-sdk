@@ -21,6 +21,9 @@ const commandTemplate = {
 
 jest.mock('../DataManagement/JobsService.es6');
 jest.mock('ng/spaceContext', () => ({ entryTitle: () => 'Test' }));
+jest.mock('app/entity_editor/UnpublishedReferencesWarning/index.es6', () => ({
+  showUnpublishedReferencesWarning: () => Promise.resolve(true)
+}));
 describe('<JobWidget />', () => {
   beforeEach(() => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
@@ -231,9 +234,9 @@ describe('<JobWidget />', () => {
       const notPublishedEntry = { sys: { id: 'entryId' } };
       const [renderResult] = build(notPublishedEntry);
       await wait();
-
       fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
       fireEvent.click(renderResult.getByText('Schedule publication'));
+      await wait();
       fireEvent.click(renderResult.getByTestId('schedule-publication'));
       await wait();
 
@@ -255,6 +258,7 @@ describe('<JobWidget />', () => {
 
       fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
       fireEvent.click(renderResult.getByText('Schedule publication'));
+      await wait();
       fireEvent.click(renderResult.getByTestId('schedule-publication'));
       await wait();
 

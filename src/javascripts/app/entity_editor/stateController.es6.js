@@ -5,7 +5,7 @@ import * as K from 'utils/kefir.es6';
 import { caseofEq as caseof, otherwise } from 'sum-types';
 import { State, Action } from 'data/CMA/EntityState.es6';
 import { Notification } from 'app/entity_editor/Notifications.es6';
-import { registerUnpublishedReferencesWarning } from 'app/entity_editor/PublicationWarnings/UnpublishedReferencesWarning/index.es6';
+
 import * as trackVersioning from 'analytics/events/versioning.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import * as random from 'utils/Random.es6';
@@ -21,7 +21,7 @@ export default function register() {
     'spaceContext',
     'analytics/Analytics.es6',
     'navigation/SlideInNavigator/index.es6',
-    'app/entity_editor/PublicationWarnings/index.es6',
+    'app/entity_editor/UnpublishedReferencesWarning/index.es6',
     'app/entity_editor/Components/StateChangeConfirmationDialog/index.es6',
     function(
       $scope,
@@ -33,14 +33,13 @@ export default function register() {
       spaceContext,
       Analytics,
       { goToPreviousSlideOrExit },
-      { create: createPublicationWarnings },
+      { showUnpublishedReferencesWarning },
       { default: StateChangeConfirmationDialog }
     ) {
       const controller = this;
       const permissions = otDoc.permissions;
       const reverter = otDoc.reverter;
       const docStateManager = otDoc.resourceState;
-      const publicationWarnings = createPublicationWarnings();
 
       // Is set to 'true' when the entity has been deleted by another user.
       let isDeleted = false;
@@ -176,13 +175,12 @@ export default function register() {
         }
       );
 
-      controller.registerUnpublishedReferencesWarning = registerUnpublishedReferencesWarning(
-        publicationWarnings
-      );
-
       function publishEntity() {
-        return publicationWarnings
-          .show()
+        return showUnpublishedReferencesWarning({
+          entity: K.getValue(otDoc.data$),
+          spaceId: spaceContext.getId(),
+          environmentId: spaceContext.getEnvironmentId()
+        })
           .then(() => {
             if (validator.run()) {
               return applyAction(Action.Publish()).then(

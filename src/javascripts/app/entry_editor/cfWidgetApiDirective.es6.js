@@ -115,8 +115,6 @@ export default function register() {
         validations: ctField.validations || [],
         itemValidations: _.get(ctField, ['items', 'validations'], []),
 
-        registerUnpublishedReferencesWarning: $scope.state.registerUnpublishedReferencesWarning,
-
         // Convenience properties not provided by the extensions API but
         // easily emulated.
         value$: fieldLocale.doc.value$,

@@ -11,18 +11,15 @@ export default function register() {
    * object where it is needed.
    */
   registerFactory('EntityHelpers', [
-    '$q',
     'spaceContext',
     'services/localeStore.es6',
-    '$filter',
-    ($q, spaceContext, { default: TheLocaleStore }, $filter) => {
-      const assetUrlFilter = $filter('assetUrl');
+    'services/AssetUrlService.es6',
+    (spaceContext, { default: TheLocaleStore }, AssetUrlService) => {
       const toInternalLocaleCode = localeCode =>
         TheLocaleStore.toInternalCode(localeCode) || localeCode;
 
       return {
-        newForLocale: newForLocale,
-        contentTypeFieldLinkCtIds: contentTypeFieldLinkCtIds
+        newForLocale: newForLocale
       };
 
       function newForLocale(localeCode) {
@@ -91,36 +88,32 @@ export default function register() {
        * In particular it uses private ids.
        */
       function dataToEntity(data) {
-        let prepareFields = $q.resolve(data.fields);
-        const ctId = _.get(data, 'sys.contentType.sys.id');
+        let prepareFields = data.fields;
+        const contentTypeId = _.get(data, 'sys.contentType.sys.id');
 
         if (data.sys.type === 'Entry') {
-          prepareFields = spaceContext.publishedCTs.fetch(ctId).then(ct => {
-            if (ct) {
-              return _.transform(
-                ct.data.fields,
-                (acc, ctField) => {
-                  const field = _.get(data, ['fields', ctField.apiName]);
-                  if (field) {
-                    acc[ctField.id] = field;
-                  }
-                },
-                {}
-              );
-            } else {
-              return data.fields;
-            }
-          });
+          const contentType = spaceContext.publishedCTs.get(contentTypeId);
+
+          if (contentType) {
+            prepareFields = _.transform(
+              contentType.data.fields,
+              (acc, ctField) => {
+                const field = _.get(data, ['fields', ctField.apiName]);
+                if (field) {
+                  acc[ctField.id] = field;
+                }
+              },
+              {}
+            );
+          }
         }
 
-        return prepareFields.then(fields => {
-          const renamedFields = renameFieldLocales(fields);
-          return {
-            data: { fields: renamedFields, sys: data.sys },
-            getType: _.constant(data.sys.type),
-            getContentTypeId: _.constant(ctId)
-          };
-        });
+        const renamedFields = renameFieldLocales(prepareFields);
+        return {
+          data: { fields: renamedFields, sys: data.sys },
+          getType: _.constant(data.sys.type),
+          getContentTypeId: _.constant(contentTypeId)
+        };
       }
 
       /**
@@ -139,46 +132,21 @@ export default function register() {
         } else if (entity.sys.type === 'Asset') {
           return assetFile(entity, localeCode);
         }
-        return $q.resolve(null);
+        return Promise.resolve(null);
       }
 
-      function assetFile(data, localeCode) {
+      async function assetFile(data, localeCode) {
         const internalLocaleCode = toInternalLocaleCode(localeCode);
-        return dataToEntity(data).then(entity =>
-          spaceContext.getFieldValue(entity, 'file', internalLocaleCode)
-        );
+        const entity = await dataToEntity(data);
+        return spaceContext.getFieldValue(entity, 'file', internalLocaleCode);
       }
 
       function assetFileUrl(file) {
         if (_.isObject(file) && file.url) {
-          return $q.resolve(assetUrlFilter(file.url));
+          return Promise.resolve(AssetUrlService.transformHostname(file.url));
         } else {
-          return $q.reject();
+          return Promise.reject();
         }
-      }
-
-      /**
-       * Returns a list of content type IDs if a given content type field has a
-       * validation restricting the allowed references to a set of content types.
-       * Returns an empty array if there is no such restriction for the field.
-       *
-       * TODO: Make this work with `RichText` fields.
-       *
-       * @param {object} field
-       * @returns {Array<string>}
-       */
-      function contentTypeFieldLinkCtIds(field) {
-        if (!_.isObject(field)) {
-          throw new Error('expects a content type field');
-        }
-        const validations = (field.type === 'Array' ? field.items : field).validations;
-
-        const contentTypeValidation = _.find(
-          validations,
-          validation => !!validation.linkContentType
-        );
-
-        return contentTypeValidation ? contentTypeValidation.linkContentType : [];
       }
     }
   ]);

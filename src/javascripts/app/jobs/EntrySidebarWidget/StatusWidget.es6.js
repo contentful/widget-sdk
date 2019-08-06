@@ -8,8 +8,10 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem,
+  TextLink,
   Icon,
-  Tag
+  Tag,
+  Subheading
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
@@ -30,6 +32,9 @@ const styles = {
   }),
   scheduledIcon: css({
     marginRight: tokens.spacing2Xs
+  }),
+  alphaTag: css({
+    marginLeft: tokens.spacing2Xs
   })
 };
 
@@ -80,7 +85,7 @@ export default class StatusWidget extends React.PureComponent {
           }}>
           <div className={styles.scheduleListItem}>
             <Icon icon="Clock" color="muted" className={styles.scheduledIcon} />
-            Schedule publication <Tag className="f36-margin-left--2xs">Alpha</Tag>
+            Schedule publication <Tag className={styles.alphaTag}>Alpha</Tag>
           </div>
         </DropdownListItem>
       )
@@ -94,7 +99,7 @@ export default class StatusWidget extends React.PureComponent {
     return (
       <div data-test-id="status-widget">
         <header className="entity-sidebar__header">
-          <h2 className="entity-sidebar__heading">Status</h2>
+          <Subheading className="entity-sidebar__heading">Status</Subheading>
         </header>
         <StatusBadge status={status} />
         <div className="entity-sidebar__state-select">
@@ -178,12 +183,12 @@ export default class StatusWidget extends React.PureComponent {
             </div>
           )}
           {revert && revert.isAvailable() && (
-            <button
+            <TextLink
               className="entity-sidebar__revert btn-link"
               data-test-id="discard-changed-button"
               onClick={() => revert.execute()}>
               Discard changes
-            </button>
+            </TextLink>
           )}
         </div>
       </div>

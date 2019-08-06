@@ -34,11 +34,7 @@ export function getAssetTitle({
     internalLocaleCode,
     defaultInternalLocaleCode
   });
-  if (!title || title.match(/^\s*$/)) {
-    return defaultTitle;
-  } else {
-    return title;
-  }
+  return titleOrDefault(title, defaultTitle);
 }
 
 export function getEntryTitle({
@@ -79,11 +75,14 @@ export function getEntryTitle({
       });
     }
 
-    // TODO: Display meaningful title in case of non-string displayField.
-    if (!title || title.match(/^\s*$/)) {
-      return defaultTitle;
-    } else {
-      return title;
-    }
+    return titleOrDefault(title, defaultTitle);
+  }
+}
+
+function titleOrDefault(title, defaultTitle) {
+  if (!title || title.match(/^\s*$/)) {
+    return defaultTitle;
+  } else {
+    return title;
   }
 }

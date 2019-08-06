@@ -13,13 +13,7 @@ angular
    */
   .factory('mocks/widgetApi', [
     '$q',
-    'app/entity_editor/PublicationWarnings/UnpublishedReferencesWarning/index.es6',
-    'app/entity_editor/PublicationWarnings/index.es6',
-    (
-      $q,
-      { registerUnpublishedReferencesWarning },
-      { create: createPublicationWarningsManager }
-    ) => {
+    $q => {
       return {
         create,
         createField,
@@ -91,10 +85,6 @@ angular
             name: '',
             locale: 'en-US',
             type: '',
-            registerUnpublishedReferencesWarning: sinon.spy(
-              registerUnpublishedReferencesWarning(createPublicationWarningsManager())
-            ),
-
             value$: K.createMockProperty()
           },
           space: {

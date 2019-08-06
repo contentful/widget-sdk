@@ -2,8 +2,9 @@ import { registerFilter } from 'NgRegistry.es6';
 import _ from 'lodash';
 import fileSize from 'file-size';
 import mimetype from '@contentful/mimetype';
-import hostnameTransformer from '@contentful/hostname-transformer';
+
 import { truncate, truncateMiddle } from 'utils/StringUtils.es6';
+import * as AssetUrlService from 'services/AssetUrlService.es6';
 
 export default function register() {
   registerFilter('dateTime', () => unixTime => {
@@ -38,23 +39,7 @@ export default function register() {
     return '';
   });
 
-  /**
-   * Asset URLs are always hardcoded to the host `TYPE.contentful.com`.
-   * This filter transforms URL hosts by using information from the
-   * `/token` endpoint. The token has a domain map mapping `TYPE` to the
-   * actual domain. This is used to replace the hosts.
-   */
-  registerFilter('assetUrl', [
-    'services/TokenStore.es6',
-    TokenStore => assetOrUrl => {
-      const domains = TokenStore.getDomains();
-      if (domains) {
-        return hostnameTransformer.toExternal(assetOrUrl, domains);
-      } else {
-        return assetOrUrl;
-      }
-    }
-  ]);
+  registerFilter('assetUrl', () => assetOrUrl => AssetUrlService.transformHostname(assetOrUrl));
 
   registerFilter('fileExtension', () => file => {
     if (file) {

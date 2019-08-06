@@ -17,8 +17,9 @@ import {
 } from '@contentful/forma-36-react-components';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag.es6';
 import { getEntryTitle } from 'classes/EntityFieldValueHelpers.es6';
-import StateLink from 'app/common/StateLink.es6';
+
 import SecretiveLink from 'components/shared/SecretiveLink.es6';
+import EntityStateLink from 'app/common/EntityStateLink.es6';
 
 const styles = {
   jobRow: css({
@@ -39,6 +40,9 @@ const styles = {
   statusTransition: css({
     display: 'flex',
     alignItems: 'center'
+  }),
+  description: css({
+    marginBottom: tokens.spacingS
   })
 };
 
@@ -116,7 +120,7 @@ function JobWithExsitingEntryRow({
   });
 
   return (
-    <StateLink to="spaces.detail.entries.detail" params={{ entryId: entry.sys.id }}>
+    <EntityStateLink entity={entry}>
       {({ onClick, getHref }) => (
         <TableRow
           className={styles.jobRow}
@@ -150,7 +154,7 @@ function JobWithExsitingEntryRow({
           </TableCell>
         </TableRow>
       )}
-    </StateLink>
+    </EntityStateLink>
   );
 }
 
@@ -210,7 +214,7 @@ export default class JobsTable extends Component {
     } = this.props;
     return (
       <div>
-        <Paragraph className="f36-margin-bottom--s">{description}</Paragraph>
+        <Paragraph className={styles.description}>{description}</Paragraph>
         <Table className={styles.table} data-test-id="jobs-table">
           <TableHead>
             <TableRow>

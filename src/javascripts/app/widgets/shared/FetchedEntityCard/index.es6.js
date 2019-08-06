@@ -1,3 +1,4 @@
+/* eslint-disable rulesdir/restrict-inline-styles */
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import { once, noop } from 'lodash';
 import React from 'react';
@@ -9,7 +10,7 @@ import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchE
 import WrappedEntityCard from './WrappedEntityCard.es6';
 import WrappedAssetCard from './WrappedAssetCard.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
-import StateLink from 'app/common/StateLink.es6';
+import EntityStateLink from 'app/common/EntityStateLink.es6';
 
 class FetchedEntityCard extends React.Component {
   static propTypes = {
@@ -142,9 +143,13 @@ class FetchedEntityCard extends React.Component {
                   cardDragHandleComponent
                 };
                 return (
-                  <StateLink
-                    to={entityType === 'Asset' ? 'spaces.detail.assets.detail' : '^.detail'}
-                    params={{ [entityType === 'Asset' ? 'assetId' : 'entryId']: entityId }}>
+                  <EntityStateLink
+                    entity={{
+                      sys: {
+                        type: entityType,
+                        id: entityId
+                      }
+                    }}>
                     {({ getHref }) => (
                       <WrapperComponent
                         {...{
@@ -153,7 +158,7 @@ class FetchedEntityCard extends React.Component {
                         }}
                       />
                     )}
-                  </StateLink>
+                  </EntityStateLink>
                 );
               }
             }}

@@ -37,9 +37,14 @@ import {
   cancelJob as trackCancelledJob
 } from './../Analytics/JobsAnalytics.es6';
 
+import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning/index.es6';
+
 const styles = {
   jobsSkeleton: css({
     maxHeight: '40px',
+    marginTop: tokens.spacingM
+  }),
+  warningNote: css({
     marginTop: tokens.spacingM
   })
 };
@@ -181,12 +186,24 @@ export default function JobWidget({
     <ErrorHandler>
       <StatusWidget
         status={status}
+        spaceId={spaceId}
+        environmentId={environmentId}
         primary={primary}
+        entity={entity}
         secondary={secondary}
         revert={revert}
         isSaving={isSaving}
         updatedAt={updatedAt}
-        onScheduledPublishClick={() => setIsDialogShown(true)}
+        onScheduledPublishClick={async () => {
+          const isConfirmed = await showUnpublishedReferencesWarning({
+            entity,
+            spaceId,
+            environmentId
+          });
+          if (isConfirmed) {
+            setIsDialogShown(true);
+          }
+        }}
         isScheduledPublishDisabled={Boolean(error)}
         isDisabled={hasScheduledActions || isLoading}
       />
@@ -196,7 +213,7 @@ export default function JobWidget({
         </SkeletonContainer>
       )}
       {error && (
-        <Note noteType="warning" className="f36-margin-top--m">
+        <Note noteType="warning" className={styles.warningNote}>
           We were unable to load the schedule for this entry.{' '}
           <TextLink onClick={() => fetchJobs()}>Please refresh.</TextLink>
         </Note>

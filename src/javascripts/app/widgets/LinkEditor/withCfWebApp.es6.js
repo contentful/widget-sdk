@@ -10,7 +10,7 @@ import { newConfigFromField } from 'search/EntitySelector/Config.es6';
 import * as slideInNavigator from 'navigation/SlideInNavigator/index.es6';
 import { getModule } from 'NgRegistry.es6';
 import withWidgetApi from 'app/widgets/WidgetApi/index.es6';
-import { withLinksPublicationWarning } from 'app/widgets/shared/WithPublicationWarning/index.es6';
+
 import { track } from 'analytics/Analytics.es6';
 import BaseLinkEditor from './LinkEditor.es6';
 import { canLinkToContentType } from './Util.es6';
@@ -137,7 +137,7 @@ export default function withCfWebApp(LinkEditor) {
       loadEvents.emit({ actionName: 'linkRendered', field });
     };
   }
-  return withWidgetApi(withLinksPublicationWarning(HOC));
+  return withWidgetApi(HOC);
 }
 
 function selectEntities(widgetAPI) {
