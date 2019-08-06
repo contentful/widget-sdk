@@ -8,6 +8,8 @@ import LinkEditor, {
   withCfWebApp as linkEditorWithCfWebApp
 } from 'app/widgets/LinkEditor/index.es6';
 import TagEditorField from 'app/widgets/TagEditor/TagEditorField.es6';
+import { SingleLineEditor } from '@contentful/field-editor-single-line';
+import { MultipleLineEditor } from '@contentful/field-editor-multiple-line';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -36,7 +38,14 @@ export function create() {
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single line',
     icon: 'singleline',
-    template: '<cf-single-line-editor />'
+    renderFieldEditor: ({ widgetApi }) => <SingleLineEditor field={widgetApi.field} />
+  });
+
+  registerWidget('multipleLine', {
+    fieldTypes: ['Text'],
+    name: 'Multiple line',
+    icon: 'multipleline',
+    renderFieldEditor: ({ widgetApi }) => <MultipleLineEditor field={widgetApi.field} />
   });
 
   registerWidget('urlEditor', {
@@ -51,13 +60,6 @@ export function create() {
     name: 'Number editor',
     icon: 'number',
     template: '<cf-number-editor />'
-  });
-
-  registerWidget('multipleLine', {
-    fieldTypes: ['Text'],
-    name: 'Multiple line',
-    icon: 'multipleline',
-    template: '<cf-multi-line-editor />'
   });
 
   registerWidget('markdown', {

@@ -1,11 +1,11 @@
 import { flow, curryRight } from 'lodash';
-import withWidgetApi from 'app/widgets/WidgetApi/index.es6';
+import connectToWidgetApi from 'app/widgets/WidgetApi/connectToWidgetApi.es6';
 import RichTextEditor from 'app/widgets/rich_text/RichTextEditor.es6';
 import withTracking from 'app/widgets/rich_text/withTracking.es6';
 
 export default flow(
   withTracking,
-  curryRight(withWidgetApi)({
+  curryRight(connectToWidgetApi)({
     updateValueOnComponentChange: false,
     // TODO: We should get rid of this behavior and update RT also
     //  while in enabled state if there are any updates by other

@@ -14,7 +14,7 @@ const callArg1 = fn => fn();
  *   We can use it to wrap message handling with `$rootScope.$apply`
  *   if still running in Angular context. Defaults to `fn => fn()`.
  */
-export default class Channel {
+export default class ExtensionIFrameChannel {
   constructor(iframe, win, applyChanges = callArg1) {
     this.iframe = iframe;
     this.win = win;

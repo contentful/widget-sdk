@@ -7,6 +7,7 @@ import createExtensionBridge from 'widgets/bridges/createExtensionBridge.es6';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
+import createNewWidgetApi from 'app/widgets/NewWidgetApi/createNewWidgetApi.es6';
 
 export default function register() {
   /**
@@ -47,7 +48,15 @@ export default function register() {
             locale,
             editorData,
             loadEvents,
-            widget: { problem, widgetNamespace, template, buildTemplate, descriptor, parameters }
+            widget: {
+              problem,
+              widgetNamespace,
+              template,
+              buildTemplate,
+              renderFieldEditor,
+              descriptor,
+              parameters
+            }
           } = scope;
 
           const {
@@ -94,6 +103,15 @@ export default function register() {
                 {jsxTemplate}
               </WidgetAPIContext.Provider>
             );
+          } else if (widgetNamespace === NAMESPACE_BUILTIN && renderFieldEditor) {
+            renderJsxTemplate(
+              renderFieldEditor({
+                widgetApi: createNewWidgetApi({
+                  $scope: scope
+                })
+              })
+            );
+            handleWidgetLinkRenderEvents();
           } else {
             throw new Error('Builtin widget template or a valid UI Extension is required.');
           }

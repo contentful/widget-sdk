@@ -1,4 +1,4 @@
-import Channel from './ExtensionIFrameChannel.es6';
+import ExtensionIFrameChannel from './ExtensionIFrameChannel.es6';
 
 describe('ExtensionIFrameChannel', () => {
   const makeChannel = () => {
@@ -21,7 +21,7 @@ describe('ExtensionIFrameChannel', () => {
       removeEventListener: stubs.removeEventListener
     };
 
-    const channel = new Channel(iframe, win);
+    const channel = new ExtensionIFrameChannel(iframe, win);
 
     const receiveMessage = data => {
       if (!data.source) {

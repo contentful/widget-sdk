@@ -13,7 +13,6 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
       '@contentful/contentful-slatejs-adapter',
       '@contentful/rich-text-plain-text-renderer',
       '@contentful/rich-text-types',
-      '@contentful/field-editors',
       '@contentful/hostname-transformer',
       '@contentful/mimetype',
       '@contentful/sharejs/lib/client',

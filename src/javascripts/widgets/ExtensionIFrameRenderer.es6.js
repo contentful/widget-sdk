@@ -5,7 +5,7 @@ import { get } from 'lodash';
 import * as Config from 'Config.es6';
 
 import ExtensionDevelopmentMode from './ExtensionDevelopmentMode.es6';
-import Channel from './ExtensionIFrameChannel.es6';
+import ExtensionIFrameChannel from './ExtensionIFrameChannel.es6';
 import ExtensionAPI from './ExtensionAPI.es6';
 
 const SANDBOX = 'allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms';
@@ -104,7 +104,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
       parameters.invocation = invocation;
     }
 
-    const channel = new Channel(iframe, window, bridge.apply);
+    const channel = new ExtensionIFrameChannel(iframe, window, bridge.apply);
     this.extensionApi = new ExtensionAPI({
       extensionId: id,
       channel,

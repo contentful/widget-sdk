@@ -8,11 +8,10 @@ const entitySelector = getModule('entitySelector');
 const { getSectionVisibility } = getModule('access_control/AccessChecker');
 
 /**
- * Should create an object with the same interface as provided by the Contentful JS
- * ui-extensions-sdk `extension` object:
- * https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md
+ * @deprecated  Use and extend the new `app/widgets/NewWidgetApi/createNewWidgetApi.es6.js` instead.
  *
- * Important: Some of the ui-extensions-sdk interface is not yet implemented here
+ * Important: The problem with the current implementation that it significantly deviated from an actual `ui-extensions-sdk` API.
+ * Some of the ui-extensions-sdk interface is not yet implemented here
  * and that some of the interface defined here is not part of the ui-extensions-sdk.
  *
  * Note: This deprecates the old `cfWidgetApi` directive.
@@ -28,24 +27,9 @@ export default function buildWidgetApi({ field, entry, currentUrl, settings }) {
   const { entry: canAccessEntries, asset: canAccessAssets } = getSectionVisibility();
 
   const widgetAPI = {
-    /**
-     * @see https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-reference/#field
-     */
     field,
-
-    /**
-     * @see https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-reference/#entry
-     */
     entry,
-
-    /**
-     * @see https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-reference/#space
-     */
     space: getBatchingApiClient(spaceContext.cma),
-
-    /**
-     * @see https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-reference/#dialogs
-     */
     dialogs: {
       /**
        * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
@@ -64,10 +48,6 @@ export default function buildWidgetApi({ field, entry, currentUrl, settings }) {
         return openHyperlinkDialog({ showTextInput, value, widgetAPI });
       }
     },
-
-    /**
-     * @see https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-reference/#navigator
-     */
     navigator: {
       openAsset: (...args) => openEntity('Asset', ...args),
       openEntry: (...args) => openEntity('Entry', ...args),

@@ -9,9 +9,6 @@ export default function register() {
    * @deprecated Use and extend the new `app/widgets/WidgetApi/buildWidgetApi.es6.js` instead.
    *
    * @description
-   * Provides an interface similar to the ui-extensions-sdk `extension` object:
-   * https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md#dialogsselectsingleentryoptions
-   *
    * @scope.requires {object} entity
    * @scope.requires {object} locale
    * @scope.requires {object} otSubDoc
@@ -26,7 +23,6 @@ export default function register() {
   }));
 
   /**
-   * @ngdoc type
    * @name WidgetApiController
    * @description
    * Interface for a widget to communicate with an entry.

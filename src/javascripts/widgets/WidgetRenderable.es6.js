@@ -59,6 +59,7 @@ function buildOneRenderable(control, widgets) {
       parameters, // Consumed by extensions.
       template: descriptor.template,
       buildTemplate: descriptor.buildTemplate,
+      renderFieldEditor: descriptor.renderFieldEditor,
       isFocusable: !descriptor.notFocusable,
       isBackground: descriptor.isBackground,
       sidebar: !!descriptor.sidebar

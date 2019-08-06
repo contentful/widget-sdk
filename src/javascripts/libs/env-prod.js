@@ -29,6 +29,9 @@ require('codemirror/mode/htmlmixed/htmlmixed');
 window.libs = [
   ['angular', window.angular],
 
+  ['@contentful/field-editor-single-line', require('@contentful/field-editor-single-line')],
+  ['@contentful/field-editor-multiple-line', require('@contentful/field-editor-multiple-line')],
+
   ['@contentful/asn1js', require('@contentful/asn1js')],
   ['@contentful/forma-36-react-components', require('@contentful/forma-36-react-components')],
   [
@@ -43,7 +46,6 @@ window.libs = [
   ],
   ['@contentful/rich-text-types', require('@contentful/rich-text-types')],
   ['@contentful/rich-text-links', require('@contentful/rich-text-links')],
-  ['@contentful/field-editors', require('@contentful/field-editors')],
   ['@contentful/hostname-transformer', require('@contentful/hostname-transformer')],
   ['@contentful/mimetype', require('@contentful/mimetype')],
   ['@contentful/sharejs/lib/client', require('@contentful/sharejs/lib/client')],

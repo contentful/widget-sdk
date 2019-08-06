@@ -25,7 +25,7 @@ const $rootScope = getModule('$rootScope');
  *  then re-rendering won't happen while the field is enabled.
  * @returns {React.Component}
  */
-export default function connectToWidgetAPI(
+export default function connectToWidgetApi(
   Component,
   { updateValueOnComponentChange = true, updateValueWhileEnabled = true } = {}
 ) {

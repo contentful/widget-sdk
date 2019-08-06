@@ -77,7 +77,6 @@ angular
       ngRequire('app/widgets/cfCheckboxEditorDirective.es6').default();
       ngRequire('app/widgets/cfFileEditorDirective.es6').default();
       ngRequire('app/widgets/cfListInputEditorDirective.es6').default();
-      ngRequire('app/widgets/cfMultiLineEditorDirective.es6').default();
       ngRequire('app/widgets/cfRatingEditorDirective.es6').default();
       ngRequire('app/widgets/datetime/cfEntryDatetimeEditorDirective.es6').default();
       ngRequire('app/widgets/dropdown/cfDropdownEditorDirective.es6').default();
@@ -89,7 +88,6 @@ angular
       ngRequire('app/widgets/number/cfNumberEditorDirective.es6').default();
       ngRequire('app/widgets/radio/cfRadioEditorDirective.es6').default();
       ngRequire('app/widgets/shared/cfEditorCharacterInfoDirective.es6').default();
-      ngRequire('app/widgets/single_line/cfSingleLineEditorDirective.es6').default();
       ngRequire('app/widgets/slug/cfSlugEditorDirective.es6').default();
       ngRequire('app/widgets/url/cfUrlEditorDirective.es6').default();
       ngRequire('classes/entityListCache.es6').default();
