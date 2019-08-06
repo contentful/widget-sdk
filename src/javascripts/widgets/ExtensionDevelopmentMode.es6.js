@@ -9,7 +9,7 @@ const FLAG_KEY = 'extensions-development-mode';
 
 const styles = {
   note: css({
-    marginTop: tokens.spacingS,
+    marginBottom: tokens.spacingS,
     position: 'relative'
   })
 };
@@ -23,7 +23,6 @@ export default function ExtensionDevelopmentMode(props) {
 
   return (
     <>
-      {props.children}
       <Note noteType="primary" className={styles.note}>
         To view your extension in development mode, you need to disable mixed content protection.{' '}
         <div>
@@ -36,6 +35,7 @@ export default function ExtensionDevelopmentMode(props) {
           </TextLink>
         </div>
       </Note>
+      {props.children}
     </>
   );
 }
