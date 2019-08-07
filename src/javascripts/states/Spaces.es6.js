@@ -6,7 +6,7 @@ import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
 import contentTypes from './contentTypes.es6';
 import apps from 'app/settings/apps/routes/index.es6';
-import appsBeta from 'app/settings/AppsBeta/index.es6';
+import appsBeta from 'app/settings/AppsBeta/routes/index.es6';
 import api from 'app/api/State.es6';
 import entries from './entries.es6';
 import assets from './assets.es6';

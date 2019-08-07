@@ -1,7 +1,7 @@
 import React from 'react';
 
-export default () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="157" height="32">
+export default props => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" {...props}>
     <path
       fill="#FFD85F"
       d="M9.7 22.3C8 20.7 7 18.5 7 16s1-4.7 2.6-6.3c1.4-1.4 1.4-3.6 0-5s-3.6-1.4-5 0C1.8 7.6 0 11.6 0 16s1.8 8.4 4.7 11.3c1.4 1.4 3.6 1.4 5 0 1.3-1.4 1.3-3.6 0-5z"

@@ -1,10 +1,11 @@
-import AppsListPage from './AppsListPage.es6';
-import AppPage from './AppPage.es6';
-import { makeAppHookBus } from './AppHookBus.es6';
+import AppsListPage from '../AppsListPage.es6';
+import AppPage from '../AppPage.es6';
+import AppPermissions from '../AppPermissions.es6';
+import { makeAppHookBus } from '../AppHookBus.es6';
 import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge.es6';
 import * as Navigator from 'states/Navigator.es6';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
-import createAppsRepo from './AppsRepo.es6';
+import createAppsRepo from '../AppsRepo.es6';
 
 export default {
   name: 'appsBeta',
@@ -58,6 +59,29 @@ export default {
             appHookBus,
             cma: spaceContext.cma
           };
+        }
+      ],
+
+      // todo: remove before merging EXT-933
+      children: [
+        {
+          name: 'permissions',
+          url: '/permissions',
+          component: AppPermissions,
+          mapInjectedToProps: [
+            () => {
+              return {
+                appId: 'optimizely',
+                appName: 'Optimizely',
+                intentions: [
+                  'Create a webhook to send info about changes at content type level',
+                  'Add a new content type for variations'
+                ],
+                onCancel: () => {},
+                onAuthorize: () => {}
+              };
+            }
+          ]
         }
       ]
     }

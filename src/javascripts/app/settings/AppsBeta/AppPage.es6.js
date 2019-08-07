@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-
-import { Button, Notification, Spinner, Paragraph } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import {
+  Button,
+  Notification,
+  Spinner,
+  Paragraph,
+  Heading
+} from '@contentful/forma-36-react-components';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { InstalledTag, NotInstalledTag } from './AppStateTags.es6';
 
 import AdminOnly from 'app/common/AdminOnly.es6';
-import Workbench from 'app/common/Workbench.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
@@ -27,9 +33,14 @@ const BUSY_STATE_TO_TEXT = {
 
 const styles = {
   renderer: css({
-    height: '100%',
-    width: '100%',
-    padding: 0
+    padding: 0,
+    '> div': {
+      height: '100%',
+      width: '100%'
+    }
+  }),
+  actionButton: css({
+    marginLeft: tokens.spacingM
   }),
   overlay: css({
     backgroundColor: 'rgba(0,0,0,.3)',
@@ -48,10 +59,6 @@ const styles = {
     borderRadius: '25px',
     fontSize: '24px',
     backgroundColor: 'white'
-  }),
-  title: css({
-    display: 'flex',
-    alignItems: 'center'
   })
 };
 
@@ -211,25 +218,6 @@ export default class AppRoute extends Component {
     this.props.goBackToList();
   };
 
-  render() {
-    const { ready, extensionDefinition } = this.state;
-
-    if (!ready) {
-      return <FetcherLoading message="Loading app..." />;
-    }
-
-    return (
-      <AdminOnly>
-        <DocumentTitle title={extensionDefinition.name} />
-        {this.renderBusyOverlay()}
-        <Workbench>
-          {this.renderHeader()}
-          {this.renderContent()}
-        </Workbench>
-      </AdminOnly>
-    );
-  }
-
   renderBusyOverlay() {
     if (!this.state.busyWith) {
       return null;
@@ -244,54 +232,57 @@ export default class AppRoute extends Component {
     );
   }
 
-  renderHeader() {
-    const { isInstalled, busyWith, extensionDefinition } = this.state;
-
+  renderTitle() {
+    const { isInstalled, extensionDefinition } = this.state;
     return (
-      <Workbench.Header>
-        <Workbench.Header.Back to="^.list" />
-        <Workbench.Title>
-          <div className={styles.title}>
-            <span>{extensionDefinition.name}</span>
-            {isInstalled ? <InstalledTag /> : <NotInstalledTag />}
-          </div>
-        </Workbench.Title>
-        <Workbench.Header.Actions>
-          {!isInstalled && (
-            <Button
-              buttonType="positive"
-              onClick={() => this.update(BUSY_STATE_INSTALLATION)}
-              loading={busyWith === BUSY_STATE_INSTALLATION}
-              disabled={!!busyWith}>
-              Install
-            </Button>
-          )}
-          {isInstalled && (
-            <Button
-              buttonType="muted"
-              onClick={() => this.update(BUSY_STATE_UPDATE)}
-              loading={busyWith === BUSY_STATE_UPDATE}
-              disabled={!!busyWith}>
-              Save configuration
-            </Button>
-          )}
-          {isInstalled && (
-            <Button
-              buttonType="negative"
-              onClick={this.uninstall}
-              loading={busyWith === BUSY_STATE_UNINSTALLATION}
-              disabled={!!busyWith}>
-              Uninstall
-            </Button>
-          )}
-        </Workbench.Header.Actions>
-      </Workbench.Header>
+      <>
+        <Heading>{extensionDefinition.name}</Heading>
+        {isInstalled ? <InstalledTag /> : <NotInstalledTag />}
+      </>
+    );
+  }
+
+  renderActions() {
+    const { isInstalled, busyWith } = this.state;
+    return (
+      <>
+        {!isInstalled && (
+          <Button
+            className={styles.actionButton}
+            buttonType="positive"
+            onClick={() => this.update(BUSY_STATE_INSTALLATION)}
+            loading={busyWith === BUSY_STATE_INSTALLATION}
+            disabled={!!busyWith}>
+            Install
+          </Button>
+        )}
+        {isInstalled && (
+          <Button
+            className={styles.actionButton}
+            buttonType="muted"
+            onClick={() => this.update(BUSY_STATE_UPDATE)}
+            loading={busyWith === BUSY_STATE_UPDATE}
+            disabled={!!busyWith}>
+            Save configuration
+          </Button>
+        )}
+        {isInstalled && (
+          <Button
+            className={styles.actionButton}
+            buttonType="negative"
+            onClick={this.uninstall}
+            loading={busyWith === BUSY_STATE_UNINSTALLATION}
+            disabled={!!busyWith}>
+            Uninstall
+          </Button>
+        )}
+      </>
     );
   }
 
   renderContent() {
     return (
-      <Workbench.Content className={styles.renderer}>
+      <Workbench.Content type="full" className={styles.renderer}>
         <ExtensionIFrameRenderer
           bridge={this.props.bridge}
           descriptor={{ id: null, src: this.state.extensionDefinition.src }}
@@ -299,6 +290,32 @@ export default class AppRoute extends Component {
           isFullSize
         />
       </Workbench.Content>
+    );
+  }
+
+  render() {
+    const { ready, extensionDefinition } = this.state;
+
+    if (!ready) {
+      // todo: EXT-933 replace this with a proper skeleton
+      return <FetcherLoading message="Loading app..." />;
+    }
+
+    return (
+      <AdminOnly>
+        <DocumentTitle title={extensionDefinition.name} />
+        {this.renderBusyOverlay()}
+        <Workbench>
+          <Workbench.Header
+            onBack={() => {
+              this.props.goBackToList();
+            }}
+            title={this.renderTitle()}
+            actions={this.renderActions()}
+          />
+          {this.renderContent()}
+        </Workbench>
+      </AdminOnly>
     );
   }
 }
