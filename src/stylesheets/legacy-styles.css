@@ -19,7 +19,7 @@ pre,
   h6.h-reset {
     color: #2a3039;
     line-height: 1.5;
-    font-weight: bold;
+    font-weight: 600;
     margin: 0;
   }
   .input-reset {
@@ -79,7 +79,7 @@ pre,
   h6 {
     color: #2a3039;
     line-height: 1em;
-    font-weight: bold;
+    font-weight: 600;
     margin: 18px 0 8px;
   }
   h1 {
@@ -3247,7 +3247,7 @@ pre,
     line-height: 30px;
   }
   .workbench-header__title .locale {
-    font-weight: 100;
+    font-weight: 400;
     color: #536171;
   }
   .workbench-header__left {
