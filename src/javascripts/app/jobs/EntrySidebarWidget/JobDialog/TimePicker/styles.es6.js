@@ -48,7 +48,6 @@ const styles = {
     color: tokens.colorTextMid,
     textAlign: 'center',
     fontSize: tokens.fontSizeM,
-    fontFamily: 'Avenir Next',
     margin: 0,
     MozAppearance: 'textfield',
     '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': {

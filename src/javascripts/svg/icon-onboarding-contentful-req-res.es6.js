@@ -51,21 +51,13 @@ export default () => (
           strokeDasharray="1,6"
         />
         <path fill="#FFF" d="M12 168h61v15H12z" />
-        <text
-          fontFamily="AvenirNext-Regular, Avenir Next"
-          fontSize="14"
-          fill="#536171"
-          transform="translate(12 145)">
+        <text fontSize="14" fill="#536171" transform="translate(12 145)">
           <tspan x="6" y="34">
             request
           </tspan>
         </text>
         <path fill="#FFF" d="M79 190h61v15H79z" />
-        <text
-          fontFamily="AvenirNext-Regular, Avenir Next"
-          fontSize="14"
-          fill="#536171"
-          transform="translate(12 145)">
+        <text fontSize="14" fill="#536171" transform="translate(12 145)">
           <tspan x="68" y="55">
             response
           </tspan>

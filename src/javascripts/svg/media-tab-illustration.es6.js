@@ -42,29 +42,17 @@ export default () => (
       <path d="M1.5.5v182h239V.5H1.5z" stroke="#E5EBED" fill="#F7F9FA" fillRule="nonzero" />
       <path d="M240 81.75H0m240 50.75H0" stroke="#E5EBED" strokeLinecap="square" />
       <rect fill="#E5EBED" fillRule="nonzero" x={1} y={1} width={240} height={30} />
-      <text
-        fontFamily="AvenirNext-Medium, Avenir Next"
-        fontSize={11}
-        fontWeight={400}
-        fill="#536171">
+      <text fontSize={11} fontWeight={400} fill="#536171">
         <tspan x={16} y={19}>
           Preview
         </tspan>
       </text>
-      <text
-        fontFamily="AvenirNext-Medium, Avenir Next"
-        fontSize={11}
-        fontWeight={400}
-        fill="#536171">
+      <text fontSize={11} fontWeight={400} fill="#536171">
         <tspan x={94} y={20}>
           Name
         </tspan>
       </text>
-      <text
-        fontFamily="AvenirNext-Medium, Avenir Next"
-        fontSize={11}
-        fontWeight={400}
-        fill="#536171">
+      <text fontSize={11} fontWeight={400} fill="#536171">
         <tspan x={183} y={20}>
           Type
         </tspan>

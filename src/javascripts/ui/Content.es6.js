@@ -82,7 +82,7 @@ export function CodeFragment({ children, style }) {
         background: tokens.colorElementLightest,
         border: `1px solid ${tokens.colorElementMid}`,
         borderRadius: '2px',
-        fontFamily: '"Menlo", "Andale mono", monospace',
+        fontFamily: 'SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace',
         fontSize: '13px',
         lineHeight: '22px',
         padding: '0 5px',

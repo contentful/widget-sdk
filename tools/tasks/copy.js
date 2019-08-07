@@ -3,11 +3,7 @@ const copySvg = require('./svg');
 
 function copyStatics() {
   return gulp
-    .src([
-      'vendor/font-awesome/*.+(eot|svg|ttf|woff)',
-      'vendor/fonts.com/*.+(woff|woff2)',
-      'node_modules/@contentful/forma-36-react-components/dist/*.+(woff|woff2)'
-    ])
+    .src(['vendor/font-awesome/*.+(eot|svg|ttf|woff)', 'vendor/fonts.com/*.+(woff|woff2)'])
     .pipe(gulp.dest('./public/app'));
 }
 

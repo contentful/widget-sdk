@@ -1,34 +1,12 @@
   @charset "utf-8";
-  @font-face {
-    font-family: "Avenir Next W01";
-    src: url("/app/avenir-regular-normal.woff2") format("woff2"), url("/app/avenir-regular-normal.woff") format("woff");
-    font-weight: 500;
-    font-style: normal;
-  }
-  @font-face {
-    font-family: "Avenir Next W01";
-    src: url("/app/avenir-regular-italic.woff2") format("woff2"), url("/app/avenir-regular-italic.woff") format("woff");
-    font-weight: 500;
-    font-style: italic;
-  }
-  @font-face {
-    font-family: "Avenir Next W01";
-    src: url("/app/avenir-medium-normal.woff2") format("woff2"), url("/app/avenir-medium-normal.woff") format("woff");
-    font-weight: 600;
-    font-style: normal;
-  }
-  @font-face {
-    font-family: "Avenir Next W01";
-    src: url("/app/avenir-demibold-normal.woff2") format("woff2"), url("/app/avenir-demibold-normal.woff") format("woff");
-    font-weight: 700;
-    font-style: normal;
-  }
-  @font-face {
-    font-family: "Avenir Next W01";
-    src: url("/app/avenir-demibold-italic.woff2") format("woff2"), url("/app/avenir-demibold-italic.woff") format("woff");
-    font-weight: 700;
-    font-style: italic;
-  }
+
+/* Monospace font styles */
+code,
+pre,
+.CodeMirror {
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
+}
+
   :-moz-ui-invalid {
     -webkit-box-shadow: none;
     box-shadow: none;
@@ -41,7 +19,7 @@
   h6.h-reset {
     color: #2a3039;
     line-height: 1.5;
-    font-weight: bold;
+    font-weight: 600;
     margin: 0;
   }
   .input-reset {
@@ -59,7 +37,7 @@
     box-sizing: border-box;
   }
   body {
-    font-family: "Avenir Next W01", Helvetica, sans-serif;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
     text-rendering: optimizeLegibility;
     font-size: 14px;
     line-height: 18px;
@@ -101,7 +79,7 @@
   h6 {
     color: #2a3039;
     line-height: 1em;
-    font-weight: bold;
+    font-weight: 600;
     margin: 18px 0 8px;
   }
   h1 {
@@ -1353,7 +1331,7 @@
     right: -10px;
     background: #3072be;
     color: #fff;
-    padding: 3px 5px 2px 5px;
+    padding: 3px 5px;
     font-size: 10px;
     line-height: 10px;
     border-radius: 3px;
@@ -2134,7 +2112,7 @@
     background-color: inherit;
   }
   .code-block__line {
-    font-family: monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
     display: block;
     line-height: 0.6rem;
     padding-right: 2em;
@@ -3269,7 +3247,7 @@
     line-height: 30px;
   }
   .workbench-header__title .locale {
-    font-weight: 100;
+    font-weight: 400;
     color: #536171;
   }
   .workbench-header__left {
@@ -3671,7 +3649,7 @@
     right: 0;
     background: #3072be;
     color: #fff;
-    padding: 3px 5px 2px 5px;
+    padding: 3px 5px;
     font-size: 10px;
     line-height: 10px;
     border-radius: 3px;
@@ -5960,7 +5938,7 @@
     margin-top: 1.285714285714286em;
   }
   .validation-controls__re-pattern {
-    font-family: "Menlo", "Andale mono", monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
     width: 28em;
   }
   .validation-controls__re-flags-label {
@@ -5968,7 +5946,7 @@
     margin-right: 0.8em;
   }
   .validation-controls__re-flags {
-    font-family: "Menlo", "Andale mono", monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
     width: 4em;
   }
   .validation-controls__option-list {
@@ -6494,7 +6472,6 @@
     right: -20px;
     top: 35%;
     padding: 6px 10px;
-    font-family: "Avenir Next";
     text-transform: uppercase;
     font-weight: 600;
     font-size: 12px;
@@ -6513,7 +6490,6 @@
     right: -20px;
     top: 35%;
     padding: 6px 10px;
-    font-family: "Avenir Next";
     text-transform: uppercase;
     font-weight: 600;
     font-size: 12px;
@@ -6689,7 +6665,7 @@
     margin-bottom: 0.642857142857143em;
   }
   .cfnext-form__input {
-    font-family: "Avenir Next W01", Helvetica, sans-serif;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
     font-size: inherit;
     border: 1px solid #969fa6;
     border-radius: 3px 3px 3px 3px;
@@ -6730,7 +6706,7 @@
     height: auto;
   }
   .cfnext-form__input--short {
-    font-family: "Avenir Next W01", Helvetica, sans-serif;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
     font-size: inherit;
     border: 1px solid #969fa6;
     border-radius: 3px 3px 3px 3px;
@@ -6773,7 +6749,7 @@
   .cfnext-form__input--full-size,
   .tab-iframe .formtastic .input input.form-control:not([type="checkbox"]):not([type="radio"]),
   .tab-iframe .formtastic .input textarea.form-control {
-    font-family: "Avenir Next W01", Helvetica, sans-serif;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
     font-size: inherit;
     border: 1px solid #969fa6;
     border-radius: 3px 3px 3px 3px;
@@ -8907,7 +8883,7 @@
   .entry-editor__input {
     font-size: 16px;
     color: #2a3039;
-    font-family: "Avenir Next W01", Helvetica, sans-serif;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
     display: block;
     width: 100%;
     line-height: 1.5;
@@ -8943,7 +8919,7 @@
   .entry-editor__textarea {
     font-size: 16px;
     color: #2a3039;
-    font-family: "Avenir Next W01", Helvetica, sans-serif;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
     display: block;
     width: 100%;
     line-height: 1.5;
@@ -8983,7 +8959,7 @@
   .entry-editor__input-group > input {
     font-size: 16px;
     color: #2a3039;
-    font-family: "Avenir Next W01", Helvetica, sans-serif;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
     display: block;
     width: 100%;
     line-height: 1.5;
@@ -9079,7 +9055,7 @@
     appearance: none;
     font-size: 16px;
     color: #2a3039;
-    font-family: "Avenir Next W01", Helvetica, sans-serif;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
     display: block;
     width: 100%;
     line-height: 1.5;
@@ -9663,7 +9639,7 @@
     margin: 0 1.5em;
   }
   .json-editor__disabled-content {
-    font-family: "Menlo", "Andale mono", monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
     color: #8091a5;
     background: #f7f9fa;
     line-height: 1.5;
@@ -9788,7 +9764,7 @@
   .json-editor__editor .CodeMirror {
     height: auto;
     color: #2a3039;
-    font-family: "Menlo", "Andale mono", monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
   }
   .json-editor__editor .CodeMirror-scroll {
     min-height: 7.714285714285715em;
@@ -10903,11 +10879,11 @@
     filter: alpha(opacity=10);
   }
   .api-key-boilerplate-instructions code {
-    font-family: "Menlo", "Andale mono", monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
   }
   .api-key-boilerplate-instructions pre > code {
     font-size: 12px;
-    font-family: "Menlo", "Andale mono", monospace;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
     white-space: pre-wrap;
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -11231,7 +11207,6 @@
   }
   .greeting-widget__header {
     color: #2a3039;
-    font-family: "Avenir Next W01";
     font-size: 35px;
     line-height: 44px;
     text-align: center;
@@ -11240,7 +11215,6 @@
   }
   .greeting-widget__copy {
     color: #2a3039;
-    font-family: "Avenir Next W01";
     font-size: 16px;
     line-height: 24px;
     text-align: center;
@@ -11284,7 +11258,6 @@
   }
   .concept-video-widget__copy p {
     color: #536171;
-    font-family: "Avenir Next W01";
     font-size: 14px;
     line-height: 21px;
   }
@@ -12188,7 +12161,6 @@
   .usage-page__org-chart-tooltip,
   .usage-page__api-chart-tooltip {
     border-radius: 2px;
-    font-family: "Avenir Next W01";
     font-weight: 600;
     padding: 12.5px;
     font-size: 14px;
@@ -13399,7 +13371,7 @@
     margin-right: -5px;
     height: 100%;
     border-radius: 0 3px 3px 0;
-    font-family: "Avenir Next W01", Helvetica, sans-serif;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
     font-weight: 600;
   }
   .search__select-value .search__select:hover,

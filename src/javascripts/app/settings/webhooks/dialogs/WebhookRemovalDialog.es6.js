@@ -4,7 +4,7 @@ import { ModalConfirm } from '@contentful/forma-36-react-components';
 
 const URL_STYLE = {
   margin: '10px 0',
-  fontFamily: 'monospace',
+  fontFamily: 'SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace',
   fontSize: '.9em',
   wordWrap: 'break-word'
 };
