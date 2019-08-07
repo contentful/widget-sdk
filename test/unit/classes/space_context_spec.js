@@ -109,13 +109,35 @@ describe('spaceContext', () => {
       expect(this.spaceContext.publishedCTs.getAllBare().map(ct => ct.sys.id)).toEqual(['A', 'B']);
     });
 
-    it('set `environments` property if environments are enabled', function*() {
-      Object.assign(this.mockSpaceEndpoint.stores.environments, {
-        master: 'master',
-        other: 'other'
+    it('always returns an array for the `environments` property even if there are no environments', function() {
+      const LD = this.$inject('utils/LaunchDarkly');
+      LD._setFlag('feature-dv-11-2017-environments', false);
+      Object.assign(this.mockSpaceEndpoint.stores.environments, null);
+      return this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid')).then(() => {
+        expect(this.spaceContext.environments).toEqual([]);
+        LD._setFlag('feature-dv-11-2017-environments', true);
+        Object.assign(this.mockSpaceEndpoint.stores.environments, []);
+        return this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid'));
       });
+    });
+
+    it('set `environments` property if environments are enabled', function*() {
+      const master = {
+        name: 'master',
+        sys: {
+          id: 'master'
+        }
+      };
+      const staging = {
+        name: 'staging',
+        sys: {
+          id: 'staging'
+        }
+      };
+      const environments = { master, staging };
+      Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
       yield this.result;
-      expect(this.spaceContext.environments).toEqual(['master', 'other']);
+      expect(this.spaceContext.environments).toEqual([master, staging]);
     });
 
     it('refreshes enforcements with new space id', function() {
@@ -137,6 +159,51 @@ describe('spaceContext', () => {
     it('returns undefined if a space is not set', function() {
       this.spaceContext.purge();
       expect(this.spaceContext.getEnvironmentId()).toBeUndefined();
+    });
+  });
+
+  describe('#isMasterEnvironment()', () => {
+    const masterAlias = {
+      name: 'master',
+      sys: {
+        id: 'master',
+        type: 'Link',
+        linkType: 'Alias'
+      }
+    };
+
+    const masterEnv = {
+      name: 'master',
+      sys: {
+        id: 'master',
+        type: 'Link',
+        linkType: 'Environment'
+      }
+    };
+
+    const stagingEnv = {
+      name: 'staging',
+      sys: {
+        id: 'staging',
+        type: 'Link',
+        linkType: 'Environment'
+      }
+    };
+
+    it('Finds current environment to be master', function() {
+      expect(this.spaceContext.isMasterEnvironment()).toBe(true);
+    });
+
+    it('Finds an Alias to be master', function() {
+      expect(this.spaceContext.isMasterEnvironment(masterAlias)).toBe(true);
+    });
+
+    it('Finds an Environment to be master', function() {
+      expect(this.spaceContext.isMasterEnvironment(masterEnv)).toBe(true);
+    });
+
+    it('Does not find an Environment named staging to be master', function() {
+      expect(this.spaceContext.isMasterEnvironment(stagingEnv)).toBe(false);
     });
   });
 
