@@ -55,41 +55,31 @@ export default class StatusWidget extends React.PureComponent {
     isOpenDropdown: false
   };
 
-  canSchedule = () => {
-    return this.props.status === 'draft' || this.props.status === 'changes';
-  };
-
   renderScheduledPublicationCta = () => {
     // disabled by the parent component (e.g. error during jobs fetching)
-    if (this.props.isScheduledPublishDisabled) {
+    if (this.props.isScheduledPublishDisabled || this.props.primary.isDisabled()) {
       return null;
     }
 
-    // do not show cta if entity is published
-    if (this.props.primary.targetStateId === 'published') {
-      // primary action can be either publish or unarchive
-      // TODO: revisit after support for sched. pub archived entries
-      if (this.props.primary.isDisabled()) {
-        return null;
-      }
-    }
-
     return (
-      this.canSchedule() && (
-        <DropdownListItem
-          className={styles.scheduleListItem}
-          testId="schedule-publication"
-          onClick={() => {
-            this.props.onScheduledPublishClick();
-            this.setState({ isOpenDropdown: false });
-          }}>
-          <div className={styles.scheduleListItem}>
-            <Icon icon="Clock" color="muted" className={styles.scheduledIcon} />
-            Schedule publication <Tag className={styles.alphaTag}>Alpha</Tag>
-          </div>
-        </DropdownListItem>
-      )
+      <DropdownListItem
+        className={styles.scheduleListItem}
+        testId="schedule-publication"
+        isDisabled={this.props.primary.targetStateId !== 'published'}
+        onClick={() => {
+          this.props.onScheduledPublishClick();
+          this.setState({ isOpenDropdown: false });
+        }}>
+        <div className={styles.scheduleListItem}>
+          <Icon icon="Clock" color="muted" className={styles.scheduledIcon} />
+          Schedule publication <Tag className={styles.alphaTag}>Alpha</Tag>
+        </div>
+      </DropdownListItem>
     );
+  };
+
+  canSchedule = () => {
+    return this.props.status === 'draft' || this.props.status === 'changes';
   };
 
   render() {

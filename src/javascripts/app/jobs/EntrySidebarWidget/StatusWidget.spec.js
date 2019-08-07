@@ -187,7 +187,9 @@ describe('<StatusWidget />', () => {
     expect(selectors.secondaryUnpublishBtn(renderResult)).toBeInTheDocument();
     expect(selectors.secondaryUnpublishBtn(renderResult)).not.toBeDisabled();
 
-    expect(renderResult.queryByTestId('schedule-publication')).toBeNull();
+    expect(
+      renderResult.queryByTestId('schedule-publication').querySelector('button')
+    ).toBeDisabled();
 
     expect(renderResult.queryByTestId('action-restriction-note')).toBeNull();
 

@@ -450,6 +450,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                         data-test-id="space-role-editor.admin-option"
                       >
                         <button
+                          aria-disabled="false"
                           class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
                           data-test-id="cf-ui-dropdown-list-item-button"
                           type="button"
@@ -500,6 +501,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                         data-test-id="space-role-editor.role-option"
                       >
                         <button
+                          aria-disabled="false"
                           class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
                           data-test-id="cf-ui-dropdown-list-item-button"
                           type="button"
@@ -531,6 +533,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                         data-test-id="space-role-editor.role-option"
                       >
                         <button
+                          aria-disabled="false"
                           class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
                           data-test-id="cf-ui-dropdown-list-item-button"
                           type="button"
@@ -617,8 +620,10 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                           data-test-id="space-role-editor.admin-option"
                         >
                           <button
+                            aria-disabled={false}
                             className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
                             data-test-id="cf-ui-dropdown-list-item-button"
+                            disabled={false}
                             onClick={[Function]}
                             onMouseDown={[Function]}
                             type="button"
@@ -724,8 +729,10 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                           data-test-id="space-role-editor.role-option"
                         >
                           <button
+                            aria-disabled={false}
                             className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
                             data-test-id="cf-ui-dropdown-list-item-button"
+                            disabled={false}
                             onClick={[Function]}
                             onMouseDown={[Function]}
                             type="button"
@@ -795,8 +802,10 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                           data-test-id="space-role-editor.role-option"
                         >
                           <button
+                            aria-disabled={false}
                             className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
                             data-test-id="cf-ui-dropdown-list-item-button"
+                            disabled={false}
                             onClick={[Function]}
                             onMouseDown={[Function]}
                             type="button"
