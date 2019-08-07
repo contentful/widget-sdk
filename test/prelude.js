@@ -9,12 +9,12 @@
   // Will hold a list of all module IDs that define test cases
   const testModules = [];
 
-  // All modules under `test/` will register here.
-  window.SystemTest = { register };
+  const registerInSystemJS = window.SystemJS.register.bind(window.SystemJS);
 
-  // Load ES6 modules defined in src/javascripts. They are registered in
-  // `src/javascripts/prelude.js`.
-  window.AngularSystem.registry.forEach(args => register(...args));
+  window.SystemJS.register = register;
+  window.SystemJS.testRegistry = [];
+
+  window.libs.forEach(([name, dep]) => registerLibrary(name, dep));
 
   /**
    * We hook into karma start to make sure that we load all test modules before
@@ -22,24 +22,53 @@
    */
   const Karma = window.__karma__;
   const start = Karma.start.bind(Karma);
-  Karma.start = (...args) => {
-    SystemJS.import('test/helpers/boot')
-      .then(() => {
-        return Promise.all(testModules.map(name => SystemJS.import(name)));
-      })
-      .then(
-        () => {
-          start(...args);
-        },
-        err => {
-          // We need to call this in a new context so that Karma’s window.onerror
-          // handler picks it up. If we throw it in a Promise the browser will raise
-          // an `uncaughtRejection` event.
-          window.setTimeout(() => {
-            throw err;
-          });
-        }
-      );
+
+  Karma.start = async (...args) => {
+    try {
+      // This needs to be registered early because prelude depends on it (and it not being in `this.system`);
+      SystemJS.register('Config.es6', [], _export => {
+        _export({
+          authUrl: x => `//be.test.com${ensureLeadingSlash(x)}`,
+          apiUrl: x => `//api.test.com${ensureLeadingSlash(x)}`,
+          websiteUrl: x => `//www.test.com${ensureLeadingSlash(x)}`,
+          accountUrl: x => `//be.test.com/account${ensureLeadingSlash(x)}`,
+          domain: 'test.com',
+          env: 'unittest',
+          launchDarkly: { envId: 'launch-darkly-test-id' },
+          snowplow: {},
+          services: {
+            filestack: {},
+            google: {},
+            contentful: {},
+            embedly: {},
+            getstream_io: {}
+          },
+          readInjectedConfig: () => ({ config: {} })
+        });
+
+        return {
+          setters: [],
+          execute: function() {}
+        };
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 10000));
+
+      await SystemJS.import('test/helpers/setup-isolated-system');
+      await SystemJS.import('prelude');
+      await SystemJS.import('test/helpers/boot');
+      await Promise.all(testModules.map(name => SystemJS.import(name)));
+
+      start(...args);
+    } catch (e) {
+      // We need to call this in a new context so that Karma’s window.onerror
+      // handler picks it up. If we throw it in a Promise the browser will raise
+      // an `uncaughtRejection` event.
+
+      window.setTimeout(() => {
+        throw e;
+      });
+    }
   };
 
   /**
@@ -49,13 +78,25 @@
    * we will load eagerly later.
    */
   function register(id, deps, run) {
-    SystemJS.register(id, deps, run);
+    SystemJS.testRegistry.push([id, deps, run]);
+    registerInSystemJS(id, deps, run);
 
     registerDirectoryAlias(id);
 
     if (id.startsWith('test/unit') || id.startsWith('test/integration')) {
       testModules.push(id);
     }
+  }
+
+  function registerLibrary(name, dep) {
+    window.SystemJS.register(name, [], export_ => {
+      const exports = dep;
+      export_(Object.assign({ default: exports }, exports));
+      return {
+        setters: [],
+        execute: function() {}
+      };
+    });
   }
 
   /**
@@ -71,3 +112,11 @@
     }
   }
 })();
+
+function ensureLeadingSlash(x = '') {
+  if (x.charAt(0) === '/') {
+    return x;
+  } else {
+    return '/' + x;
+  }
+}

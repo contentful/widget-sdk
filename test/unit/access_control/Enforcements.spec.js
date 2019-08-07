@@ -1,15 +1,16 @@
 'use strict';
 
-describe('access_control/Enforcements.es6', () => {
+fdescribe('access_control/Enforcements.es6', () => {
   let enforcements;
   let OrganizationRoles;
   let spaceMock;
 
-  beforeEach(function() {
+  beforeEach(async function() {
     module('contentful/test');
 
-    enforcements = this.$inject('access_control/Enforcements.es6');
-    OrganizationRoles = this.$inject('services/OrganizationRoles.es6');
+    enforcements = await this.system.import('access_control/Enforcements.es6');
+    OrganizationRoles = await this.system.import('services/OrganizationRoles.es6');
+
     OrganizationRoles.setUser({ sys: { id: 123 } });
 
     spaceMock = {

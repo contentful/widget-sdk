@@ -19,8 +19,36 @@ function watch(done, callbacks) {
   );
 }
 
+async function buildTestDeps(cb) {
+  const config = createWebpackConfig();
+
+  delete config.entry['app.js'];
+
+  const compiler = webpack(config);
+  const stats = await promisify(compiler.run.bind(compiler))();
+
+  const info = stats.toJson({ chunks: false });
+
+  if (stats.hasErrors()) {
+    info.errors.forEach(error => {
+      console.error(error);
+    });
+    throw new Error('Webpack failed to compile');
+  }
+
+  if (stats.hasWarnings()) {
+    console.warn(info.warnings);
+  }
+
+  console.log(stats.toString(config.stats));
+  cb();
+}
+
 async function build(cb) {
   const config = createWebpackConfig();
+
+  delete config.entry['dependencies.js'];
+
   const compiler = webpack(config);
   const stats = await promisify(compiler.run.bind(compiler))();
 
@@ -64,3 +92,4 @@ function handleCompileResults(err, stats, _config, { onSuccess, onError } = {}) 
 
 module.exports.watch = watch;
 module.exports.build = build;
+module.exports.buildTestDeps = buildTestDeps;

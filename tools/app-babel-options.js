@@ -20,7 +20,7 @@ const basePath = P.resolve('src', 'javascripts');
  * @returns {object}
  */
 module.exports.createBabelOptions = function createBabelOptions(options = {}) {
-  const { angularModules = true, modules = false, ...opts } = options;
+  const { systemJs = false, modules = false, ...opts } = options;
   return Object.assign(
     {
       moduleIds: true,
@@ -37,14 +37,10 @@ module.exports.createBabelOptions = function createBabelOptions(options = {}) {
         require.resolve('@babel/preset-react')
       ],
       plugins: [
-        angularModules && [
-          require.resolve('@babel/plugin-transform-modules-systemjs'),
-          {
-            systemGlobal: 'AngularSystem'
-          }
-        ],
+        systemJs && require.resolve('@babel/plugin-transform-modules-systemjs'),
         require.resolve('@babel/plugin-proposal-object-rest-spread'),
         require.resolve('@babel/plugin-proposal-class-properties'),
+        require.resolve('@babel/plugin-syntax-dynamic-import'),
         [
           'emotion',
           {
@@ -56,7 +52,7 @@ module.exports.createBabelOptions = function createBabelOptions(options = {}) {
           }
         ]
       ].filter(p => !!p),
-      getModuleId: angularModules ? getModuleIdInSrc : undefined
+      getModuleId: systemJs ? getModuleIdInSrc : undefined
     },
     opts
   );

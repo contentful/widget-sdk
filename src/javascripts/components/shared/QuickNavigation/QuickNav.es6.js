@@ -5,8 +5,11 @@ import { Icon } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { trackOpenButtonClick, trackClose } from './analytics.es6';
-
-ReactModal.setAppElement('.client');
+try {
+  ReactModal.setAppElement('.client');
+} catch (e) {
+  // do nothing
+}
 
 const styles = {
   searchButton: css({

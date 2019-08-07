@@ -97,6 +97,9 @@ function createServer(configName, getBuild) {
 
     const app = express();
     const config = createWebpackConfig();
+
+    delete config.entry['dependencies.js'];
+
     const compiler = webpack(config);
     const webpackDevMiddleware = middleware(compiler, {
       publicPath: '/app/',

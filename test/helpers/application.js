@@ -17,37 +17,4 @@
  *
  */
 
-angular
-  .module('contentful/test', ['contentful', 'contentful/mocks'])
-
-  .config([
-    '$provide',
-    $provide => {
-      // We cannot provide the environment as a constant directly because
-      // changes to it would leak between tests.
-      $provide.constant('Config.es6', {
-        authUrl: x => `//be.test.com${ensureLeadingSlash(x)}`,
-        apiUrl: x => `//api.test.com${ensureLeadingSlash(x)}`,
-        websiteUrl: x => `//www.test.com${ensureLeadingSlash(x)}`,
-        accountUrl: x => `//be.test.com/account${ensureLeadingSlash(x)}`,
-        domain: 'test.com',
-        env: 'unittest',
-        launchDarkly: { envId: 'launch-darkly-test-id' },
-        snowplow: {},
-        services: {
-          filestack: {},
-          google: {},
-          contentful: {},
-          embedly: {}
-        }
-      });
-
-      function ensureLeadingSlash(x = '') {
-        if (x.charAt(0) === '/') {
-          return x;
-        } else {
-          return '/' + x;
-        }
-      }
-    }
-  ]);
+angular.module('contentful/test', ['contentful/app', 'contentful/mocks']);

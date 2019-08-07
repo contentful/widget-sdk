@@ -8,6 +8,8 @@
 
 'use strict';
 
+import '@babel/polyfill';
+
 import angular from 'angular';
 import AngularInit from 'AngularInit';
 
@@ -15,8 +17,6 @@ import AngularInit from 'AngularInit';
 import 'angular-animate';
 import 'angular-sanitize';
 import 'angular-ui-router';
-
-import '@babel/polyfill';
 
 // Polyfill for Element.closest used to support Slatejs in IE.
 import 'element-closest';

@@ -1,12 +1,125 @@
-import createLaunchDarklyMock from './mocks/LaunchDarkly';
-import * as enforcementsServiceMock from './mocks/EnforcementsService';
+import $q from './$q';
 import _ from 'lodash';
 
-angular
-  .module('contentful/init')
-  // We do not load the file containing the icons. Therefore we need to
-  // create a dummy service.
-  .constant('icons', {});
+function ensureLeadingSlash(x = '') {
+  if (x.charAt(0) === '/') {
+    return x;
+  } else {
+    return '/' + x;
+  }
+}
+
+function stubConfig(system) {
+  const mocked = {
+    authUrl: x => `//be.test.com${ensureLeadingSlash(x)}`,
+    apiUrl: x => `//api.test.com${ensureLeadingSlash(x)}`,
+    websiteUrl: x => `//www.test.com${ensureLeadingSlash(x)}`,
+    accountUrl: x => `//be.test.com/account${ensureLeadingSlash(x)}`,
+    domain: 'test.com',
+    env: 'unittest',
+    launchDarkly: { envId: 'launch-darkly-test-id' },
+    snowplow: {},
+    services: {
+      filestack: {},
+      google: {},
+      contentful: {},
+      embedly: {},
+      getstream_io: {}
+    },
+    readInjectedConfig: () => ({ config: {} })
+  };
+
+  system.set('Config.es6', mocked);
+}
+
+async function stubClientStorage(system) {
+  let localStore = {};
+
+  const mocked = {
+    _store: localStore,
+    default: function() {
+      return {
+        getItem: function(key) {
+          return localStore[key];
+        },
+        setItem: function(key, value) {
+          localStore[key] = value + '';
+        },
+        removeItem: function(key) {
+          delete localStore[key];
+        },
+        clear: function() {
+          localStore = {};
+        }
+      };
+    }
+  };
+
+  const original = await system.import('TheStore/ClientStorageWrapper.es6');
+  mocked._noMock = original;
+
+  system.set('TheStore/ClientStorageWrapper.es6', mocked);
+}
+
+function stubShareJsLibClient(system) {
+  system.set('@contentful/sharejs/lib/client', {
+    Connection: sinon.stub().returns({
+      socket: {},
+      emit: _.noop,
+      disconnect: _.noop
+    })
+  });
+}
+
+function stubFilestack(system) {
+  system.set('services/Filestack.es6', {
+    makeDropPane: sinon.stub(),
+    pick: sinon.stub(),
+    pickMultiple: sinon.stub(),
+    store: sinon.stub()
+  });
+}
+
+async function stubLaunchDarklyUtil(system) {
+  const flags = {};
+
+  const mockedUtil = {
+    init: sinon.spy(),
+
+    getCurrentVariation(flag) {
+      // We need to use `$q` because otherwise the tests do not execute
+      // correctly.
+      return $q.resolve(flags[flag]);
+    },
+
+    // TODO implement when needed
+    onFeatureFlag: sinon.spy(),
+    onABTest: sinon.spy(),
+
+    // This does not exist on the actual client it is there for the
+    // tests to control the client behavior.
+    _setFlag(flag, value) {
+      flags[flag] = value;
+    }
+  };
+
+  const original = await system.import('utils/LaunchDarkly/index.es6');
+  mockedUtil._noMock = original;
+
+  system.set('utils/LaunchDarkly/index.es6', mockedUtil);
+
+  system.set('LaunchDarkly.es6', {
+    getVariation: sinon.stub().resolves(false)
+  });
+}
+
+beforeEach(async function() {
+  await stubClientStorage(this.system);
+  await stubLaunchDarklyUtil(this.system);
+  stubShareJsLibClient(this.system);
+  stubFilestack(this.system);
+  stubConfig(this.system);
+});
 
 /**
  * @ngdoc module
@@ -19,17 +132,6 @@ angular
  */
 angular
   .module('contentful/mocks', [])
-  .decorator('TheStore/ClientStorageWrapper.es6', [
-    '$delegate',
-    'mocks/TheStore/ClientStorageWrapper',
-    ($delegate, mock) =>
-      _.extend(
-        {
-          _noMock: $delegate
-        },
-        mock
-      )
-  ])
   .config([
     '$provide',
     '$controllerProvider',
@@ -38,52 +140,6 @@ angular
         throw e;
       });
 
-      $provide.constant('@contentful/sharejs/lib/client', {
-        Connection: sinon.stub().returns({
-          socket: {},
-          emit: _.noop,
-          disconnect: _.noop
-        })
-      });
-
-      $provide.value('services/Filestack.es6', {
-        makeDropPane: sinon.stub(),
-        pick: sinon.stub(),
-        pickMultiple: sinon.stub(),
-        store: sinon.stub()
-      });
-
-      $provide.decorator('utils/LaunchDarkly/index.es6', [
-        '$delegate',
-        '$q',
-        ($delegate, $q) => {
-          const mock = createLaunchDarklyMock($q);
-          return {
-            ...mock,
-            _noMock: $delegate
-          };
-        }
-      ]);
-
-      $provide.value('services/EnforcementsService', enforcementsServiceMock);
-
-      $provide.constant('LaunchDarkly.es6', {
-        getVariation: sinon.stub().resolves(false)
-      });
-
-      $provide.stubDirective = (name, definition) => {
-        $provide.factory(name + 'Directive', () => [
-          _.extend(
-            {
-              name: name,
-              restrict: 'A',
-              priority: 0
-            },
-            definition
-          )
-        ]);
-      };
-
       $provide.removeDirectives = function(...args) {
         _.flatten(args).forEach(directive => {
           const fullName = directive + 'Directive';
@@ -91,18 +147,10 @@ angular
         });
       };
 
-      $provide.removeController = (label, fakeController) => {
-        $controllerProvider.register(label, fakeController || angular.noop);
-      };
-
       $provide.removeControllers = function(...args) {
         _.flatten(args).forEach(controller => {
           $controllerProvider.register(controller, angular.noop);
         });
-      };
-
-      $provide.stubFilter = (filterName, returnValue) => {
-        $provide.value(filterName + 'Filter', () => returnValue || '');
       };
 
       $provide.makeStubs = function makeStubs(stubList) {
@@ -114,4 +162,5 @@ angular
         return stubs;
       };
     }
-  ]);
+  ])
+  .constant('icons', {});

@@ -96,7 +96,7 @@ import FieldRichText from 'svg/field-richtext.es6';
 import InvitationNotFound from 'svg/invitation-not-found.es6';
 import ScheduleCalendar from 'svg/schedule-calendar.es6';
 
-const SVGs = {
+export const SVGs = {
   'home-welcome': HomeWelcomeIcon,
   'page-media': PageMediaIcon,
   'question-mark': QuestionMarkIcon,

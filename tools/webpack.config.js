@@ -33,60 +33,20 @@ module.exports = () => {
 
   return {
     entry: {
+      // Main app bundle, with vendor files such as bcsocker and jquery-shim
       'app.js': [
         './vendor/jquery-shim.js',
+
         // Custom jQuery UI build: see the file for version and contents
         './vendor/jquery-ui/jquery-ui.js',
         './node_modules/bootstrap/js/tooltip.js',
         './vendor/bcsocket-shim.js',
         './src/javascripts/prelude.js'
-      ]
-      // we have 3 entries mostly due to historical reasons and to avoid
-      // rewriting how our gulp build process is made
-      //       'components.js': [
-      //         './src/javascripts/sharejs-types.js',
-      //         './src/javascripts/prelude.js'
-      //       ].concat(
-      //         // we have to get all JS files, because we use Angular DI system
-      //         // and don't import other files directly
-      //         //
-      //         // with globSync, we inline all javascript file names into an array
-      //         // it has two consequences:
-      //         // 1. if we add new file, it is not automatically picked up by webpack
-      //         // (unless we import it normal way, but we don't do that)
-      //         // 2. if you remove an existing file, webpack will break – you are not
-      //         // supposed to remove entry files
-      //         globSync('./src/javascripts/**/*.js', {
-      //           ignore: [
-      //             './src/javascripts/libs/*.js',
-      //             './src/javascripts/prelude.js',
-      //             './src/javascripts/sharejs-types.js',
-      //             './src/javascripts/**/*.spec.js',
-      //             './src/javascripts/__mocks__/**'
-      //           ]
-      //         })
-      //       ),
-      //
-      //       // The main libraries file, used for the production build (see /tools/tasks/build/js.js)
-      //       'libs.js': ['./src/javascripts/libs/env-prod.js'],
-      //
-      //       // The libraries file used for our Karma tests
-      //       //
-      //       // See:
-      //       // - karma.conf.js
-      //       // - tools/tasks/build/js.js
-      //       // - run-tests.js
-      //       'libs-test.js': ['./src/javascripts/libs/env-prod.js', './src/javascripts/libs/env-test.js'],
-      //       // some of the vendor files provide some sort of shims
-      //       // the reason – in some files we rely on globals, which is not really
-      //       // how webpack was designed :)
-      //       'vendor.js': [
-      //         './vendor/jquery-shim.js',
-      //         // Custom jQuery UI build: see the file for version and contents
-      //         './vendor/jquery-ui/jquery-ui.js',
-      //         './node_modules/bootstrap/js/tooltip.js',
-      //         './vendor/bcsocket-shim.js'
-      //       ]
+      ],
+
+      // Dependency file, generated for tests (systemJs does not handle require statements
+      // at all, making some dependency handling particularly challenging)
+      'dependencies.js': ['./test/dependencies.js']
     },
     output: {
       filename: '[name]',
@@ -125,61 +85,11 @@ module.exports = () => {
         // these are not real `import/export`).
         {
           test: /\.js$/,
-          exclude: /(node_modules|vendor)/,
           use: {
             loader: 'babel-loader',
-            options: createBabelOptions({
-              angularModules: false,
-              moduleIds: false
-            })
-          }
-        },
-        // The sharejs client is provided as a package of ESnext
-        // modules. We also need to transpile it.
-        // We also need to transpile our (@contentful) dependencies
-        // and their @contentful dependencies.
-        // Many of these are shared between front-end/back-end and are liable
-        // to be exported directly as node packages (complete with es6).
-        {
-          // TODO: consider transpiling all dependencies to avoid non-ES5 code, specially for IE
-          test: /sharejs\/lib\/client|node_modules\/json0-ot-diff|node_modules\/@contentful.+.js$/,
-          exclude: function(path) {
-            const isContentful = /node_modules\/@contentful/.test(path);
-            const isContentfulDependency = path.split('/@contentful/').length - 1 > 1;
-
-            if (isContentful && isContentfulDependency) {
-              return false;
-            }
-
-            return /node_modules\/@contentful\/[^/]+\/node_modules/.test(path);
-          },
-          use: {
-            loader: 'babel-loader',
-            options: createBabelOptions({ angularModules: false })
+            options: createBabelOptions()
           }
         }
-        // normal es5 files don't have to be wrapped into SystemJS wrapper
-        // it means that imports/exports are not mangled, and if you use them, they will
-        // work properly
-        //         {
-        //           // we need to process only es5 files, so pure regex would be too complicated
-        //           test: function(path) {
-        //             // explicitly avoid es6 files
-        //             if (/\.es6.js$/.test(path)) {
-        //               return false;
-        //             }
-        //
-        //             return /\.js$/.test(path);
-        //           },
-        //           exclude: /(node_modules|vendor)/,
-        //           use: {
-        //             loader: 'babel-loader',
-        //             options: createBabelOptions({
-        //               angularModules: false,
-        //               moduleIds: false
-        //             })
-        //           }
-        //         }
       ]
     },
     plugins: [

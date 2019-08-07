@@ -15,8 +15,7 @@
  * Production run is determined by NODE_ENV
  */
 
-const { once } = require('lodash');
-const { watch } = require('./tools/webpack-tasks');
+const { buildTestDeps } = require('./tools/webpack-tasks');
 const {
   Server,
   config: { parseConfig }
@@ -66,15 +65,7 @@ if (singleRun) {
   }
   runTests();
 } else {
-  // we need to do the following:
-  // 1. build our initial bundle using webpack
-  // 2. watch for future changes in JS files (to build them again)
-  // 3. run karma in watching mode
-  watch(null, {
-    // this callback will be triggered after each build,
-    // but we need to run karma only once
-    onSuccess: once(runTests)
-  });
+  buildTestDeps(runTests);
 }
 
 function runTests() {
