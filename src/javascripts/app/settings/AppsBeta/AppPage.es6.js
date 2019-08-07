@@ -20,6 +20,8 @@ import * as Telemetry from 'i13n/Telemetry.es6';
 
 import { installOrUpdate, uninstall } from './AppOperations.es6';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus.es6';
+import UninstallModal from './UninstallModal.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 const BUSY_STATE_INSTALLATION = 'installation';
 const BUSY_STATE_UPDATE = 'update';
@@ -194,7 +196,29 @@ export default class AppRoute extends Component {
     this.props.appHookBus.emit(APP_EVENTS_OUT.STARTED);
   };
 
-  uninstall = async () => {
+  uninstall = () => {
+    return ModalLauncher.open(({ isShown, onClose }) => (
+      <UninstallModal
+        key={Date.now()}
+        isShown={isShown}
+        appName={this.state.extensionDefinition.name}
+        actionList={[]} // todo: EXT-933 add the action list from the app's JSON config
+        onConfirm={
+          async (/* reasons */) => {
+            // todo: EXT-933 This function is passed a `reasons` array argument which we can use
+            // to track reasons for uninstalling apps
+            onClose(true);
+            await this.uninstallApp();
+          }
+        }
+        onClose={() => {
+          onClose(true);
+        }}
+      />
+    ));
+  };
+
+  uninstallApp = async () => {
     this.setState({ busyWith: BUSY_STATE_UNINSTALLATION });
 
     // Unset extension immediately so its parameters are not exposed
@@ -248,32 +272,32 @@ export default class AppRoute extends Component {
       <>
         {!isInstalled && (
           <Button
-            className={styles.actionButton}
-            buttonType="positive"
+            buttonType="primary"
             onClick={() => this.update(BUSY_STATE_INSTALLATION)}
             loading={busyWith === BUSY_STATE_INSTALLATION}
+            className={styles.actionButton}
             disabled={!!busyWith}>
             Install
           </Button>
         )}
         {isInstalled && (
           <Button
-            className={styles.actionButton}
             buttonType="muted"
-            onClick={() => this.update(BUSY_STATE_UPDATE)}
-            loading={busyWith === BUSY_STATE_UPDATE}
+            onClick={this.uninstall}
+            loading={busyWith === BUSY_STATE_UNINSTALLATION}
+            className={styles.actionButton}
             disabled={!!busyWith}>
-            Save configuration
+            Uninstall
           </Button>
         )}
         {isInstalled && (
           <Button
+            buttonType="primary"
+            onClick={() => this.update(BUSY_STATE_UPDATE)}
+            loading={busyWith === BUSY_STATE_UPDATE}
             className={styles.actionButton}
-            buttonType="negative"
-            onClick={this.uninstall}
-            loading={busyWith === BUSY_STATE_UNINSTALLATION}
             disabled={!!busyWith}>
-            Uninstall
+            Save
           </Button>
         )}
       </>
