@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { css } from 'emotion';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
 import { hasReadOnlyPermission } from 'redux/selectors/teams.es6';
 import * as types from 'app/OrganizationSettings/PropTypes.es6';
@@ -26,8 +25,8 @@ class TeamMembershipRow extends React.Component {
     if (membership.admin) {
       return 'Admin';
     }
-    if (membership.roles.length === 0) {
-      return <span className={css({ fontStyle: 'italic' })}>deleted role</span>;
+    if (!membership.roles || membership.roles.length === 0) {
+      return <em>deleted role</em>;
     }
     return joinWithAnd(membership.roles.map(role => role.name));
   }
