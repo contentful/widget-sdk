@@ -6,6 +6,14 @@ import * as logger from 'services/logger.es6';
 import * as Intercom from 'services/intercom.es6';
 import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
 
+import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
+import store from 'redux/store.es6';
+import * as EnforcementsService from 'services/EnforcementsService.es6';
+import * as NavState from 'navigation/NavState.es6';
+import * as CreateSpace from 'services/CreateSpace.es6';
+import * as Analytics from 'analytics/Analytics.es6';
+import * as TokenStore from 'services/TokenStore.es6';
+
 export default function register() {
   registerController('ClientController', [
     '$scope',
@@ -13,27 +21,7 @@ export default function register() {
     'spaceContext',
     'authorization',
     '$rootScope',
-    'services/TokenStore.es6',
-    'analytics/Analytics.es6',
-    'services/CreateSpace.es6',
-    'navigation/NavState.es6',
-    'services/EnforcementsService.es6',
-    'redux/store.es6',
-    'data/CMA/ProductCatalog.es6',
-    function ClientController(
-      $scope,
-      $state,
-      spaceContext,
-      authorization,
-      $rootScope,
-      TokenStore,
-      Analytics,
-      CreateSpace,
-      NavState,
-      EnforcementsService,
-      { default: store },
-      { getSpaceFeature }
-    ) {
+    function ClientController($scope, $state, spaceContext, authorization, $rootScope) {
       const refreshNavState = NavState.makeStateRefresher($state, spaceContext);
 
       $rootScope.$on('$locationChangeSuccess', function() {

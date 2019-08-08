@@ -5,6 +5,8 @@ import * as K from 'utils/kefir.es6';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import { template as breakcrumbsTemplateDef } from 'navigation/Breadcrumbs/Template.es6';
 
+import * as Analytics from 'analytics/Analytics.es6';
+
 export default function register() {
   /**
    * @ngdoc directive
@@ -16,8 +18,7 @@ export default function register() {
   registerDirective('cfBreadcrumbs', [
     '$state',
     '$parse',
-    'analytics/Analytics.es6',
-    ($state, $parse, Analytics) => {
+    ($state, $parse) => {
       const backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
       const ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
       const ancestorMenuContainerSelector = '[aria-label="breadcrumbs-ancestor-menu-container"]';

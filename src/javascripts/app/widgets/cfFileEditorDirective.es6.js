@@ -5,13 +5,14 @@ import * as stringUtils from 'utils/StringUtils.es6';
 import mimetype from '@contentful/mimetype';
 import * as Filestack from 'services/Filestack.es6';
 
+import * as ImageOperations from 'app/widgets/ImageOperations.es6';
+import * as LD from 'utils/LaunchDarkly/index.es6';
+
 const FEATURE_ASSET_SECURE_HIDE_FILE_DELETE = 'dv-2019-07-asset-security-hide-file-delete';
 
 export default function register() {
   registerDirective('cfFileEditor', [
-    'utils/LaunchDarkly/index.es6',
-    'app/widgets/ImageOperations.es6',
-    (LD, ImageOperations) => {
+    () => {
       let dropPaneMountCount = 0;
 
       // TODO use isolated scope for this editor.

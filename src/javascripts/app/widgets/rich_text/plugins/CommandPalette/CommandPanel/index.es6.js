@@ -18,8 +18,6 @@ import { removeCommand } from '../Util.es6';
 import CommandPanelMenu from './CommandPanelMenu.es6';
 import { InViewport } from '@contentful/forma-36-react-components';
 
-const entityCreator = getModule('entityCreator');
-
 const DEFAULT_POSITION = {
   top: 0,
   left: 0
@@ -153,6 +151,8 @@ class CommandPalette extends React.PureComponent {
   });
 
   onCreateAndEmbedEntry = async (contentTypeId, nodeType) => {
+    const entityCreator = getModule('entityCreator');
+
     removeCommand(this.props.editor, this.props.command);
     const createEntity = () =>
       contentTypeId !== null ? entityCreator.newEntry(contentTypeId) : entityCreator.newAsset();

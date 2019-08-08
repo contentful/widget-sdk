@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import * as DOM from 'test/helpers/DOM';
 import { forEach, clone } from 'lodash';
+import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
 
 /**
  * Tests the integration of the 'cfEntityField' directive with
@@ -19,15 +20,12 @@ describe('entity editor field integration', () => {
     module('contentful/test', $provide => {
       $provide.constant('cfWidgetApiDirective', () => {});
       $provide.constant('cfWidgetRendererDirective', () => {});
+      $provide.constant('services/localeStore.es6', {
+        default: createLocaleStoreMock()
+      });
     });
 
     this.createDocument = this.$inject('mocks/entityEditor/Document').create;
-
-    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
-    const { registerConstant } = this.$inject('NgRegistry.es6');
-    registerConstant('services/localeStore.es6', {
-      default: fakeLocaleStore
-    });
 
     this.widget = {
       isVisible: true,

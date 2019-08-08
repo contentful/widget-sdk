@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { TextLink, Heading } from '@contentful/forma-36-react-components';
+import { TextLink, Heading, Tag } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
-import { InstalledTag } from './AppStateTags.es6';
+import AppIcon from '../apps/_common/AppIcon.es6';
 
 const styles = {
   item: css({
@@ -27,6 +27,16 @@ const styles = {
     button: {
       marginLeft: tokens.spacingM
     }
+  }),
+  icon: css({
+    verticalAlign: 'middle',
+    borderRadius: '5px',
+    backgroundColor: '#fff',
+    boxShadow: '0 2px 3px 0 rgba(0,0,0,0.08)',
+    padding: '2px'
+  }),
+  appLink: css({
+    cursor: 'pointer'
   })
 };
 
@@ -35,7 +45,8 @@ export default class AppListItem extends Component {
     app: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
-      installed: PropTypes.bool.isRequired
+      installed: PropTypes.bool.isRequired,
+      isDevApp: PropTypes.bool
     })
   };
 
@@ -46,15 +57,22 @@ export default class AppListItem extends Component {
       <div className={styles.item}>
         <div className={styles.title} data-test-id="app-title">
           <Heading element="h3" className={styles.titleText}>
-            {app.title}
+            <StateLink to="^.detail" params={{ appId: app.id }}>
+              {({ onClick }) => (
+                <div onClick={onClick} className={styles.appLink}>
+                  <AppIcon appId={app.id} className={styles.icon} size="small" /> {app.title}{' '}
+                  {!!app.isDevApp && <Tag>Private</Tag>}
+                </div>
+              )}
+            </StateLink>
           </Heading>
         </div>
-        {app.installed && <InstalledTag />}
         <div className={styles.actions}>
           <StateLink to="^.detail" params={{ appId: app.id }}>
             {({ onClick }) => (
+              // todo: EXT-933 replace this `onClick` with the details modal
               <TextLink onClick={onClick} linkType="primary">
-                Open
+                About
               </TextLink>
             )}
           </StateLink>

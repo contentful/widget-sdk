@@ -1,5 +1,7 @@
 import { registerDirective } from 'NgRegistry.es6';
 
+import sidepanelTrigger from 'navigation/Sidepanel/Trigger.es6';
+
 export default function register() {
   /**
    * @ngdoc directive
@@ -8,11 +10,11 @@ export default function register() {
    * This directive display the new navigation side panel.
    */
   registerDirective('cfNavSidepanelTrigger', [
-    'navigation/Sidepanel/Trigger.es6',
-    ({ default: sidepanelTrigger }) => ({
+    () => ({
       restrict: 'E',
       template: '<cf-component-bridge component=sidepanelComponent>',
       scope: {},
+
       controller: [
         '$scope',
         $scope => {

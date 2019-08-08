@@ -3,12 +3,6 @@ import { EntityType } from '../constants.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-const EntityHelpers = getModule('EntityHelpers');
-
-const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
-const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);
-
 const assertEntityTypeIsValid = entityType => {
   if (entityType !== EntityType.ENTRY && entityType !== EntityType.ASSET) {
     throw new Error(`Unsupported entityType ${entityType}`);
@@ -16,6 +10,12 @@ const assertEntityTypeIsValid = entityType => {
 };
 
 export default (id, type) => {
+  const spaceContext = getModule('spaceContext');
+  const EntityHelpers = getModule('EntityHelpers');
+
+  const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
+  const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);
+
   assertEntityTypeIsValid(type);
   const payloadKey = type === EntityType.ENTRY ? 'links_to_entry' : 'links_to_asset';
   const payload = {

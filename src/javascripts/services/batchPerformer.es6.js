@@ -2,12 +2,13 @@ import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 
+import * as Analytics from 'analytics/Analytics.es6';
+
 export default function register() {
   registerFactory('batchPerformer', [
     '$q',
     'spaceContext',
-    'analytics/Analytics.es6',
-    ($q, spaceContext, Analytics) => {
+    ($q, spaceContext) => {
       const ACTION_NAMES = {
         publish: 'published',
         unpublish: 'unpublished',

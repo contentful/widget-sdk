@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
+import { css, keyframes } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
   Button,
   Notification,
   Spinner,
   Paragraph,
-  Heading
+  Heading,
+  SkeletonContainer,
+  SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { InstalledTag, NotInstalledTag } from './AppStateTags.es6';
@@ -15,27 +17,40 @@ import { InstalledTag, NotInstalledTag } from './AppStateTags.es6';
 import AdminOnly from 'app/common/AdminOnly.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
-import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import * as Telemetry from 'i13n/Telemetry.es6';
 
 import { installOrUpdate, uninstall } from './AppOperations.es6';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus.es6';
 import UninstallModal from './UninstallModal.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import AppIcon from '../apps/_common/AppIcon.es6';
 
 const BUSY_STATE_INSTALLATION = 'installation';
 const BUSY_STATE_UPDATE = 'update';
 const BUSY_STATE_UNINSTALLATION = 'uninstallation';
 
 const BUSY_STATE_TO_TEXT = {
-  [BUSY_STATE_INSTALLATION]: 'Installing the app',
-  [BUSY_STATE_UPDATE]: 'Updating configuration',
-  [BUSY_STATE_UNINSTALLATION]: 'Uninstalling the app'
+  [BUSY_STATE_INSTALLATION]: 'Installing the app...',
+  [BUSY_STATE_UPDATE]: 'Updating configuration...',
+  [BUSY_STATE_UNINSTALLATION]: 'Uninstalling the app...'
 };
+
+// eslint-disable-next-line no-restricted-syntax
+const fadeIn = keyframes`
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }`;
 
 const styles = {
   renderer: css({
     padding: 0,
+    animation: `${fadeIn} 0.8s ease`,
     '> div': {
       height: '100%',
       width: '100%'
@@ -45,22 +60,38 @@ const styles = {
     marginLeft: tokens.spacingM
   }),
   overlay: css({
-    backgroundColor: 'rgba(0,0,0,.3)',
+    backgroundColor: 'rgba(255, 255, 255, 0.75)',
     position: 'fixed',
     zIndex: 9999,
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    paddingTop: '200px',
     textAlign: 'center'
   }),
   busyText: css({
-    display: 'inline-block',
-    padding: '20px 30px',
-    borderRadius: '25px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '12px',
+    borderRadius: '50px',
     fontSize: '24px',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    letterSpacing: '1px'
+  }),
+  overlayPill: css({
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }),
+  spinner: css({
+    marginRight: tokens.spacingS
+  }),
+  appIcon: css({
+    marginRight: tokens.spacingXs,
+    verticalAlign: 'middle'
   })
 };
 
@@ -249,9 +280,12 @@ export default class AppRoute extends Component {
 
     return (
       <div className={styles.overlay}>
-        <Paragraph className={styles.busyText}>
-          {BUSY_STATE_TO_TEXT[this.state.busyWith]} <Spinner />
-        </Paragraph>
+        <div className={styles.overlayPill}>
+          <Paragraph className={styles.busyText}>
+            <Spinner size="large" className={styles.spinner} />{' '}
+            {BUSY_STATE_TO_TEXT[this.state.busyWith]}
+          </Paragraph>
+        </div>
       </div>
     );
   }
@@ -260,7 +294,9 @@ export default class AppRoute extends Component {
     const { isInstalled, extensionDefinition } = this.state;
     return (
       <>
-        <Heading>{extensionDefinition.name}</Heading>
+        <Heading>
+          <AppIcon appId={this.props.appId} className={styles.appIcon} /> {extensionDefinition.name}
+        </Heading>
         {isInstalled ? <InstalledTag /> : <NotInstalledTag />}
       </>
     );
@@ -317,12 +353,24 @@ export default class AppRoute extends Component {
     );
   }
 
+  renderLoading() {
+    return (
+      <Workbench>
+        <Workbench.Header title="" onBack={this.props.goBackToList} />
+        <Workbench.Content type="text">
+          <SkeletonContainer ariaLabel="Loading app..." svgWidth="100%" svgHeight="300px">
+            <SkeletonBodyText numberOfLines={5} marginBottom={15} offsetTop={60} />
+          </SkeletonContainer>
+        </Workbench.Content>
+      </Workbench>
+    );
+  }
+
   render() {
     const { ready, extensionDefinition } = this.state;
 
     if (!ready) {
-      // todo: EXT-933 replace this with a proper skeleton
-      return <FetcherLoading message="Loading app..." />;
+      return this.renderLoading();
     }
 
     return (

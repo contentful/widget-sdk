@@ -3,8 +3,6 @@ import { getModule } from 'NgRegistry.es6';
 import * as Config from 'Config.es6';
 import * as logger from 'services/logger.es6';
 
-const contentfulClient = getModule('contentfulClient');
-
 const contentfulConfig = Config.services.contentful;
 
 let client = null;
@@ -19,6 +17,8 @@ export function _resetGlobals() {
 }
 
 export async function getTemplatesList() {
+  const contentfulClient = getModule('contentfulClient');
+
   if (!client) {
     client = contentfulClient.newClient(getClientParams({ env: Config.env, ...contentfulConfig }));
   }
@@ -45,6 +45,8 @@ export function getTemplate(templateInfo) {
 }
 
 function getSpaceClient(templateInfo) {
+  const contentfulClient = getModule('contentfulClient');
+
   const spaceId = templateInfo.spaceId;
   if (spaceId in spaceClients) {
     return spaceClients[spaceId];

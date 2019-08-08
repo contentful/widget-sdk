@@ -1,4 +1,5 @@
 import * as K from 'test/helpers/mocks/kefir';
+import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
 import _ from 'lodash';
 import $ from 'jquery';
 import APIClient from 'data/APIClient.es6';
@@ -11,16 +12,8 @@ import APIClient from 'data/APIClient.es6';
 describe('Extension SDK', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
-      const locales = [
-        { code: 'en', internal_code: 'en-internal', default: true },
-        { code: 'de', internal_code: 'de-internal' }
-      ];
-
-      $provide.value('services/localeStore.es6', {
-        default: {
-          getPrivateLocales: () => locales,
-          getDefaultLocale: () => locales[0]
-        }
+      $provide.constant('services/localeStore.es6', {
+        default: createLocaleStoreMock()
       });
     });
 

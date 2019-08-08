@@ -3,6 +3,10 @@ import spaceNavTemplateDef from 'navigation/SpaceNavTemplate.es6';
 import { ENVIRONMENTS_FLAG, TEAMS_IN_SPACES, APPS_BETA } from 'featureFlags.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
+import * as LD from 'utils/LaunchDarkly/index.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as TokenStore from 'services/TokenStore.es6';
+
 // We don't want to display the following sections within the context of
 // a sandbox space environment.
 const SPACE_SETTINGS_SECTIONS = [
@@ -25,9 +29,7 @@ export default function register() {
    */
   registerFactory('makeNavBar', [
     'spaceContext',
-    'services/TokenStore.es6',
-    'access_control/AccessChecker/index.es6',
-    (spaceContext, TokenStore, accessChecker) => {
+    spaceContext => {
       return (useSpaceEnv, isMaster) => ({
         template: spaceNavTemplateDef(useSpaceEnv, isMaster),
         restrict: 'E',
@@ -85,11 +87,10 @@ export default function register() {
 
   registerDirective('cfSpaceNavBarWrapped', [
     'spaceContext',
-    'utils/LaunchDarkly/index.es6',
-    'access_control/AccessChecker/index.es6',
-    (spaceContext, LD, accessChecker) => ({
+    spaceContext => ({
       scope: {},
       restrict: 'E',
+
       controller: [
         '$scope',
         $scope => {
@@ -112,6 +113,7 @@ export default function register() {
           );
         }
       ],
+
       template: [
         '<cf-space-master-nav-bar ng-if=" canManageEnvironments &&  environmentsEnabled &&  isMaster" />',
         '<cf-space-env-nav-bar    ng-if=" canManageEnvironments &&  environmentsEnabled && !isMaster" />',

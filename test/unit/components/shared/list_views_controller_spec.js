@@ -7,11 +7,13 @@ describe('ListViewsController', () => {
   });
 
   beforeEach(function() {
-    module('contentful/test');
-
-    this.$inject('data/ListViewPersistor.es6').default = () => ({
-      read: () => ({ from_qs: 'test' }),
-      save: () => {}
+    module('contentful/test', $provide => {
+      $provide.constant('data/ListViewPersistor.es6', {
+        default: () => ({
+          read: () => ({ from_qs: 'test' }),
+          save: () => {}
+        })
+      });
     });
 
     $scope = Object.assign(this.$inject('$rootScope').$new(), { context: {} });

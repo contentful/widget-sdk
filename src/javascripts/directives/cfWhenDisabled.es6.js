@@ -1,10 +1,11 @@
 import { registerDirective } from 'NgRegistry.es6';
 import $ from 'jquery';
 
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+
 export default function register() {
   registerDirective('cfWhenDisabled', [
-    'access_control/AccessChecker/index.es6',
-    accessChecker => {
+    () => {
       function makePropGetter(elem) {
         return function getCssProperty(name) {
           return parseInt(elem.css(name), 10);

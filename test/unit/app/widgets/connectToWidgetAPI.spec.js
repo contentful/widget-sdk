@@ -12,6 +12,9 @@ describe('connectToWidgetAPI', () => {
     this.system.set('navigation/SlideInNavigator/index.es6', {
       goToSlideInEntity: () => {}
     });
+    this.system.set('utils/LazyLoader.es6', {
+      get: sinon.stub().resolves({})
+    });
     this.system.set('app/widgets/WidgetApi/BatchingApiClient/index.es6', {
       getBatchingApiClient: v => v
     });

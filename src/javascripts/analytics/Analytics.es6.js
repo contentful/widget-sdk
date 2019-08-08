@@ -7,8 +7,6 @@ import { getModule } from 'NgRegistry.es6';
 import segment from 'analytics/segment.es6';
 import * as logger from 'services/logger.es6';
 
-const analyticsConsole = getModule('analytics/console');
-
 function removeCircularRefs(obj) {
   return JSON.parse(stringifySafe(obj));
 }
@@ -110,6 +108,7 @@ export function getSessionData(path, defaultValue) {
  * if it is on the valid events list.
  */
 export function track(event, data) {
+  const analyticsConsole = getModule('analytics/console');
   try {
     data = _.isObject(data) ? _.cloneDeep(data) : {};
     data = removeCircularRefs(Object.assign({}, getBasicPayload(), data));
@@ -274,5 +273,7 @@ function getBasicPayload() {
 }
 
 function sendSessionDataToConsole() {
+  const analyticsConsole = getModule('analytics/console');
+
   analyticsConsole.setSessionData(session);
 }

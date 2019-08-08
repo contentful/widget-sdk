@@ -7,6 +7,8 @@ import * as trackVersioning from 'analytics/events/versioning.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import * as Entries from 'data/entries.es6';
 
+import * as Permissions from 'access_control/EntityPermissions.es6';
+
 export default function register() {
   /**
    * @ngdoc directive
@@ -137,8 +139,7 @@ export default function register() {
 
   registerController('SnapshotComparisonController', [
     '$scope',
-    'access_control/EntityPermissions.es6',
-    ($scope, Permissions) => {
+    $scope => {
       const field = $scope.widget.field;
       const locale = $scope.locale;
       const fieldPath = ['fields', field.id, locale.internal_code];

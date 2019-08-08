@@ -15,9 +15,10 @@ import { getSubscriptionState } from 'account/AccountUtils.es6';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
 
+import * as OrganizationRoles from 'services/OrganizationRoles.es6';
+import * as ResourceService from 'services/ResourceService.es6';
+
 const spaceContext = getModule('spaceContext');
-const ResourceService = getModule('services/ResourceService.es6');
-const OrganizationRoles = getModule('services/OrganizationRoles.es6');
 
 const LocalesFetcher = createFetcherComponent(() => {
   const createResourceService = ResourceService.default;

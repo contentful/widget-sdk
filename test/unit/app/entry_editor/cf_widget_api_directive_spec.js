@@ -1,5 +1,6 @@
 import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
+import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
 
 describe('cfWidgetApi directive', () => {
   beforeEach(function() {
@@ -11,15 +12,12 @@ describe('cfWidgetApi directive', () => {
           getAsset: _.noop
         }
       });
+      $provide.constant('services/localeStore.es6', {
+        default: createLocaleStoreMock()
+      });
     });
 
     const $controller = this.$inject('$controller');
-
-    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
-    const { registerConstant } = this.$inject('NgRegistry.es6');
-    registerConstant('services/localeStore.es6', {
-      default: fakeLocaleStore
-    });
 
     this.scope = this.$inject('$rootScope').$new();
     this.widget = {

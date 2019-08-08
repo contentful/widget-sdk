@@ -291,16 +291,6 @@ describe('Rich Text toolbar', () => {
       );
     });
 
-    it('inserts an embedded asset when "Embed" > "Asset" option is selected', async function({
-      editor
-    }) {
-      await editor.embedAssetBlock(ASSET);
-
-      expect(this.field.getValue()).toEqual(
-        document(newEmbeddedEntityBlock(ASSET), EMPTY_PARAGRAPH)
-      );
-    });
-
     it('inserts an inline entry when "Embed" > "Inline entry" option is selected', async function({
       editor
     }) {

@@ -3,10 +3,12 @@ import _ from 'lodash';
 
 describe('Client', () => {
   beforeEach(function() {
-    module('contentful/test');
     this.baseRequest = sinon.stub().resolves({ data: 'RESPONSE DATA' });
-    this.mockService('data/Request.es6', {
-      default: sinon.stub().returns(this.baseRequest)
+
+    module('contentful/test', $provide => {
+      $provide.constant('data/Request.es6', {
+        default: sinon.stub().returns(this.baseRequest)
+      });
     });
 
     this.client = this.$inject('client');

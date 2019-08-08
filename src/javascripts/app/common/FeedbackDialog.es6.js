@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import {css} from 'emotion';
 import { set } from 'lodash/fp';
 import {
   ModalConfirm,
@@ -8,6 +9,13 @@ import {
   RadioButtonField,
   Paragraph
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+
+const styles = {
+  paragraph: css({
+    marginBottom: tokens.spacingL,
+  }),
+};
 
 export default class FeedbackDialog extends Component {
   static propTypes = {
@@ -37,7 +45,7 @@ export default class FeedbackDialog extends Component {
         onConfirm={() => onConfirm({ canBeContacted: accepted, feedback })}
         isConfirmDisabled={feedback.length < 1}
         onCancel={onCancel}>
-        <Paragraph className="f36-margin-bottom--l">
+        <Paragraph className={styles.paragraph}>
           We’re still working on {about} so please let us know if you have any questions or
           comments. It’s an opportunity for you to contribute to the development of the feature.
         </Paragraph>
@@ -46,7 +54,7 @@ export default class FeedbackDialog extends Component {
           labelText="Your feedback"
           name="feedback"
           id="feedback-input"
-          className="f36-margin-bottom--l"
+          className={styles.paragraph}
           onChange={e => this.setState({ feedback: e.target.value })}
           value={feedback}
           textInputProps={{

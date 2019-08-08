@@ -8,6 +8,10 @@ import * as entityStatus from 'app/entity_editor/EntityStatus.es6';
 import { getBlankEntryView as getBlankView } from 'data/UiConfig/Blanks.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
 
+import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar.es6';
+import * as Analytics from 'analytics/Analytics.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+
 export default function register() {
   /**
    * @ngdoc type
@@ -20,19 +24,13 @@ export default function register() {
     'spaceContext',
     'EntityListCache',
     'entityCreator',
-    'access_control/AccessChecker/index.es6',
-    'analytics/Analytics.es6',
-    'app/ContentList/SavedViewsSidebar.es6',
     function EntryListController(
       $scope,
       $state,
       $controller,
       spaceContext,
       EntityListCache,
-      entityCreator,
-      accessChecker,
-      Analytics,
-      { default: createSavedViewsSidebar }
+      entityCreator
     ) {
       const searchController = $controller('EntryListSearchController', { $scope: $scope });
       $controller('DisplayedFieldsController', { $scope: $scope });

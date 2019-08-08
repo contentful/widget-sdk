@@ -3,10 +3,6 @@ import * as RichTextFieldSetter from 'app/widgets/rich_text/RichTextFieldSetter.
 
 import { getModule } from 'NgRegistry.es6';
 
-const $q = getModule('$q');
-const StringField = getModule('entityEditor/Document/StringField');
-const ShareJS = getModule('data/ShareJS/Utils');
-
 /**
  * Create an object that exposes all methods for changing values in a
  * ShareJS document.
@@ -25,6 +21,10 @@ export function create({
   // update.
   contentType
 }) {
+  const $q = getModule('$q');
+  const StringField = getModule('entityEditor/Document/StringField');
+  const ShareJS = getModule('data/ShareJS/Utils');
+
   const localFieldChangesBus = K.createBus();
   const errorBus = K.createBus();
 

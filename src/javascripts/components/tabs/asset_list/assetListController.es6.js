@@ -8,6 +8,12 @@ import * as entityStatus from 'app/entity_editor/EntityStatus.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import { getBlankAssetView as getBlankView } from 'data/UiConfig/Blanks.es6';
 
+import TheLocaleStore from 'services/localeStore.es6';
+import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as BulkAssetsCreator from 'services/BulkAssetsCreator.es6';
+import * as Analytics from 'analytics/Analytics.es6';
+
 export default function register() {
   registerController('AssetListController', [
     '$scope',
@@ -15,23 +21,7 @@ export default function register() {
     '$state',
     'spaceContext',
     'entityCreator',
-    'analytics/Analytics.es6',
-    'services/BulkAssetsCreator.es6',
-    'access_control/AccessChecker/index.es6',
-    'app/ContentList/SavedViewsSidebar.es6',
-    'services/localeStore.es6',
-    function AssetListController(
-      $scope,
-      $controller,
-      $state,
-      spaceContext,
-      entityCreator,
-      Analytics,
-      BulkAssetsCreator,
-      accessChecker,
-      { default: createSavedViewsSidebar },
-      { default: TheLocaleStore }
-    ) {
+    function AssetListController($scope, $controller, $state, spaceContext, entityCreator) {
       const searchController = $controller('AssetSearchController', { $scope: $scope });
 
       $controller('ListViewsController', {

@@ -4,12 +4,13 @@ import { WALK_FOR_ME } from 'featureFlags.es6';
 import * as LazyLoader from 'utils/LazyLoader.es6';
 import window from 'utils/ngCompat/window.es6';
 
+import * as LD from 'utils/LaunchDarkly/index.es6';
+
 export default function register() {
   registerDirective('cfRolesForWalkMe', [
     '$rootScope',
     'spaceContext',
-    'utils/LaunchDarkly/index.es6',
-    ($rootScope, spaceContext, LD) => {
+    ($rootScope, spaceContext) => {
       const isAdminAttr = 'data-space-role-is-admin';
       const roleNamesAttr = 'data-space-role-names';
       let lastVariation = null;

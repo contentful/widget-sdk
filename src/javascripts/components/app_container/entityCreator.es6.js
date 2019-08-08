@@ -3,12 +3,13 @@ import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as logger from 'services/logger.es6';
 
+import * as enforcements from 'access_control/Enforcements.es6';
+
 export default function register() {
   registerFactory('entityCreator', [
     '$q',
     'spaceContext',
-    'access_control/Enforcements.es6',
-    ($q, spaceContext, enforcements) => {
+    ($q, spaceContext) => {
       return {
         newEntry: newEntry,
         newAsset: newAsset

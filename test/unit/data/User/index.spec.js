@@ -45,7 +45,7 @@ describe('data/User', () => {
   describe('#userDataBus$', () => {
     beforeEach(function() {
       this.spy = sinon.spy();
-      this.utils.userDataBus$.onValue(this.spy);
+      this.utils.getUserDataBus().onValue(this.spy);
 
       this.set = function(params) {
         const {

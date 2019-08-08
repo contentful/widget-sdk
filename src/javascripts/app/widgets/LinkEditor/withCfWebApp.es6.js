@@ -15,14 +15,6 @@ import { track } from 'analytics/Analytics.es6';
 import BaseLinkEditor from './LinkEditor.es6';
 import { canLinkToContentType } from './Util.es6';
 
-const spaceContext = getModule('spaceContext');
-const entityCreator = getModule('entityCreator');
-
-const entityCreatorsByType = {
-  Entry: entityCreator.newEntry,
-  Asset: entityCreator.newAsset
-};
-
 const SLIDE_IN_ACTIONS = { OPEN: 'open', OPEN_CREATE: 'open_create' };
 
 /**
@@ -30,6 +22,8 @@ const SLIDE_IN_ACTIONS = { OPEN: 'open', OPEN_CREATE: 'open_create' };
  * app specific dependencies.
  */
 export default function withCfWebApp(LinkEditor) {
+  const spaceContext = getModule('spaceContext');
+
   class HOC extends React.Component {
     static propTypes = {
       type: BaseLinkEditor.propTypes.type,
@@ -147,6 +141,13 @@ function selectEntities(widgetAPI) {
 }
 
 async function createEntityOfType(type, contentType = null) {
+  const entityCreatorModule = getModule('entityCreator');
+
+  const entityCreatorsByType = {
+    Entry: entityCreatorModule.newEntry,
+    Asset: entityCreatorModule.newAsset
+  };
+
   const ctId = contentType && contentType.sys.id;
   const entityCreator = entityCreatorsByType[type];
   let legacyClientEntity;

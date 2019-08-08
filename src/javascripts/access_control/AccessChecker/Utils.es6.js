@@ -5,9 +5,6 @@ import { getModule } from 'NgRegistry.es6';
 
 import _ from 'lodash';
 
-const $q = getModule('$q');
-const $rootScope = getModule('$rootScope');
-
 /**
  * TODO move from access checker or get rid of it entirely
  *
@@ -19,6 +16,8 @@ const $rootScope = getModule('$rootScope');
  * @returns {function}
  */
 export function wasForbidden(context) {
+  const $q = getModule('$q');
+
   return res => {
     if ([403, 404].includes(parseInt(get(res, 'statusCode'), 10))) {
       context.forbidden = true;
@@ -29,28 +28,6 @@ export function wasForbidden(context) {
       return $q.reject(res);
     }
   };
-}
-
-/**
- * TODO move from access checker or get rid of it entirely
- */
-export function broadcastEnforcement(enforcement) {
-  if (enforcement) {
-    $rootScope.$broadcast('persistentNotification', {
-      message: enforcement.message,
-      actionMessage: enforcement.actionMessage,
-      action: enforcement.action,
-      icon: enforcement.icon,
-      link: enforcement.link
-    });
-  }
-}
-
-/**
- * Remove all persistent notifications
- */
-export function resetEnforcements() {
-  $rootScope.$broadcast('resetPersistentNotification');
 }
 
 export function toType(entity) {

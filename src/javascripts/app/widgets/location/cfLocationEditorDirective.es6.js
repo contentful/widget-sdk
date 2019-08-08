@@ -3,6 +3,8 @@ import _ from 'lodash';
 import $ from 'jquery';
 import window from 'utils/ngCompat/window.es6';
 
+import * as LocationMap from 'app/widgets/location/Map.es6';
+
 export default function register() {
   // this directive is used only in cf_location_editor.jade
   registerDirective('uiHideOnClick', [
@@ -24,12 +26,12 @@ export default function register() {
 
   registerDirective('cfLocationEditor', [
     '$controller',
-    'app/widgets/location/Map.es6',
-    ($controller, LocationMap) => ({
+    $controller => ({
       restrict: 'E',
       require: '^cfWidgetApi',
       scope: {},
       template: JST.cf_location_editor(),
+
       link: function($scope, $el, _attrs, widgetApi) {
         const field = widgetApi.field;
         const searchResultsMenu = $el.find('[data-search-results]');

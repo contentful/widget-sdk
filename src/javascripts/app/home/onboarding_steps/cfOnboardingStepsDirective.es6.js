@@ -4,30 +4,20 @@ import { caseofEq } from 'sum-types';
 import * as K from 'utils/kefir.es6';
 import onboardingStepsTemplateDef from 'app/home/onboarding_steps/OnboardingStepsTemplate.es6';
 
+import { getKey as getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/index.es6';
+import { getStore } from 'TheStore/index.es6';
+import { getOrganizations } from 'services/TokenStore.es6';
+import * as modernOnboarding from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
+import * as CreateSpace from 'services/CreateSpace.es6';
+import * as Analytics from 'analytics/Analytics.es6';
+import * as LD from 'utils/LaunchDarkly/index.es6';
+
 export default function register() {
   registerDirective('cfOnboardingSteps', [
     '$state',
     'spaceContext',
     'entityCreator',
-    'utils/LaunchDarkly/index.es6',
-    'analytics/Analytics.es6',
-    'services/CreateSpace.es6',
-    'components/shared/auto_create_new_space/CreateModernOnboarding.es6',
-    'services/TokenStore.es6',
-    'TheStore/index.es6',
-    'components/shared/auto_create_new_space/index.es6',
-    function(
-      $state,
-      spaceContext,
-      entityCreator,
-      LD,
-      Analytics,
-      CreateSpace,
-      modernOnboarding,
-      { getOrganizations },
-      { getStore },
-      { getKey: getSpaceAutoCreatedKey }
-    ) {
+    function($state, spaceContext, entityCreator) {
       const {
         getStoragePrefix: getModernStackStoragePrefix,
         getCredentials,

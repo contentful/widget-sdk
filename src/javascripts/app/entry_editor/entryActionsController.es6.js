@@ -2,6 +2,9 @@ import { registerController } from 'NgRegistry.es6';
 import * as K from 'utils/kefir.es6';
 import { Notification } from 'app/entity_editor/Notifications.es6';
 
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as Analytics from 'analytics/Analytics.es6';
+
 export default function register() {
   registerController('EntryActionsController', [
     '$scope',
@@ -9,22 +12,10 @@ export default function register() {
     'notify',
     'fields$',
     'entityInfo',
-
     'spaceContext',
-    'command', // Command
-    'analytics/Analytics.es6', // Analytics
-    'access_control/AccessChecker/index.es6', // accessChecker
-    function(
-      $scope,
-      $state,
-      notify,
-      fields$,
-      entityInfo,
-      spaceContext,
-      Command,
-      Analytics,
-      accessChecker
-    ) {
+    // Command
+    'command',
+    function($scope, $state, notify, fields$, entityInfo, spaceContext, Command) {
       const controller = this;
       let currentFields;
       K.onValueScope($scope, fields$, fields => {

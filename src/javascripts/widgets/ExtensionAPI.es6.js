@@ -69,7 +69,7 @@ export default class ExtensionAPI {
       environment: environmentId,
       contentType: get(contentTypeData, ['sys', 'id']),
       entry: get(entryData, ['sys', 'id']),
-      field: get(current, ['field', 'id']),
+      field: get(current, ['field', 'apiName']) || get(current, ['field', 'id']),
       user: get(spaceMember, ['sys', 'user', 'sys', 'id'])
     };
   }

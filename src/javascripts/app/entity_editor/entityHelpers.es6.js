@@ -1,6 +1,9 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 
+import TheLocaleStore from 'services/localeStore.es6';
+import { transformHostname } from 'services/AssetUrlService.es6';
+
 export default function register() {
   /**
    * TODO This module is basically an adapter for the entity helper methods on
@@ -12,9 +15,7 @@ export default function register() {
    */
   registerFactory('EntityHelpers', [
     'spaceContext',
-    'services/localeStore.es6',
-    'services/AssetUrlService.es6',
-    (spaceContext, { default: TheLocaleStore }, AssetUrlService) => {
+    spaceContext => {
       const toInternalLocaleCode = localeCode =>
         TheLocaleStore.toInternalCode(localeCode) || localeCode;
 
@@ -143,7 +144,7 @@ export default function register() {
 
       function assetFileUrl(file) {
         if (_.isObject(file) && file.url) {
-          return Promise.resolve(AssetUrlService.transformHostname(file.url));
+          return Promise.resolve(transformHostname(file.url));
         } else {
           return Promise.reject();
         }

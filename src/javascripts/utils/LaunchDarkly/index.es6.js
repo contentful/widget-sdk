@@ -12,7 +12,7 @@ import isLegacyEnterprise from 'data/isLegacyEnterprise.es6';
 import {
   getOrgRole,
   isUserOrgCreator,
-  userDataBus$,
+  getUserDataBus,
   getUserAgeInDays,
   ownsAtleastOneOrg,
   hasAnOrgWithSpaces,
@@ -41,7 +41,7 @@ export function init() {
     return;
   }
 
-  userDataBus$.onValue(changeUserContext);
+  getUserDataBus().onValue(changeUserContext);
 }
 
 /**

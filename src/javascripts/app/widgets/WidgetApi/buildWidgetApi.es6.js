@@ -3,9 +3,10 @@ import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/in
 import { getModule } from 'NgRegistry.es6';
 import { goToSlideInEntity } from 'navigation/SlideInNavigator/index.es6';
 
+import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+
 const spaceContext = getModule('spaceContext');
 const entitySelector = getModule('entitySelector');
-const { getSectionVisibility } = getModule('access_control/AccessChecker');
 
 /**
  * @deprecated  Use and extend the new `app/widgets/NewWidgetApi/createNewWidgetApi.es6.js` instead.

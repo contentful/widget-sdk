@@ -3,6 +3,9 @@ import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
 
+import * as localesUtils from 'utils/locales.es6';
+import * as LD from 'utils/LaunchDarkly/index.es6';
+
 export default function register() {
   /**
    * @ngdoc directive
@@ -26,9 +29,7 @@ export default function register() {
    * @scope.requires {entityEditor/Context} editorContext
    */
   registerDirective('cfEntityField', [
-    'utils/LaunchDarkly/index.es6',
-    'utils/locales.es6',
-    (LD, localesUtils) => {
+    () => {
       const { isRtlLocale } = localesUtils;
 
       return {

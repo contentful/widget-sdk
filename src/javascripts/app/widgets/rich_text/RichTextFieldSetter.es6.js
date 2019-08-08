@@ -5,8 +5,6 @@ import deepEqual from 'fast-deep-equal';
 import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
 
-const ShareJS = getModule('data/ShareJS/Utils');
-
 /**
  * @description
  *  Verifies if the field matching `fieldId` is
@@ -39,6 +37,8 @@ export const is = (fieldId, contentType) => {
  * @param {object} nextFieldValue
  */
 export const setAt = (doc, fieldPath, nextFieldValue) => {
+  const ShareJS = getModule('data/ShareJS/Utils');
+
   const fieldValue = ShareJS.peek(doc, fieldPath);
   if (deepEqual(nextFieldValue, emptyDoc)) {
     /**
@@ -78,6 +78,8 @@ export const setAt = (doc, fieldPath, nextFieldValue) => {
 };
 
 function setValue(doc, fieldPath, fieldValue, nextFieldValue) {
+  const ShareJS = getModule('data/ShareJS/Utils');
+
   const ops = jsondiff(fieldValue, nextFieldValue).map(op => ({
     ...op,
     p: [...fieldPath, ...op.p]

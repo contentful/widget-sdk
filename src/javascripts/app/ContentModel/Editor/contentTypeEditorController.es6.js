@@ -14,6 +14,9 @@ import getContentTypePreview from './PreviewTab/getContentTypePreview.es6';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
+import createActions from 'app/ContentModel/Editor/Actions.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+
 export default function register() {
   registerDirective('cfContentTypeEditor', [
     () => ({
@@ -36,17 +39,7 @@ export default function register() {
     'modalDialog',
     'command',
     'openFieldDialog',
-    'access_control/AccessChecker',
-    'app/ContentModel/Editor/Actions.es6',
-    function ContentTypeEditorController(
-      $scope,
-      $state,
-      modalDialog,
-      Command,
-      openFieldDialog,
-      accessChecker,
-      { default: createActions }
-    ) {
+    function ContentTypeEditorController($scope, $state, modalDialog, Command, openFieldDialog) {
       const controller = this;
 
       $scope.context.dirty = false;

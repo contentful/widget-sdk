@@ -1,6 +1,8 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 
+import * as entitySelectorConfig from 'search/EntitySelector/Config.es6';
+
 export default function register() {
   /**
    * @ngdoc service
@@ -11,8 +13,7 @@ export default function register() {
   registerFactory('entitySelector', [
     '$q',
     'modalDialog',
-    'search/EntitySelector/Config.es6',
-    ($q, modalDialog, entitySelectorConfig) => {
+    ($q, modalDialog) => {
       const {
         getLabels,
         newConfigFromField,

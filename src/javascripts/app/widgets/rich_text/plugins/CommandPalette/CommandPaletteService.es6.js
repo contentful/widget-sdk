@@ -5,8 +5,6 @@ import { can, canCreateAsset } from 'access_control/AccessChecker/index.es6';
 import { INLINES, BLOCKS } from '@contentful/rich-text-types';
 import { getModule } from 'NgRegistry.es6';
 
-const EntityHelpers = getModule('EntityHelpers');
-
 export async function fetchContentTypes(widgetAPI) {
   const contentTypes = await widgetAPI.space.getContentTypes();
   return _.uniqBy(contentTypes.items, contentType => contentType.name);
@@ -27,6 +25,7 @@ export async function fetchAssets(widgetAPI, query = '') {
 }
 
 export async function fetchEntries(widgetAPI, contentType, query = '') {
+  const EntityHelpers = getModule('EntityHelpers');
   const entityHelpers = EntityHelpers.newForLocale(widgetAPI.field.locale);
   const entries = await widgetAPI.space.getEntries({
     content_type: contentType.sys.id,

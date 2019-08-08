@@ -8,6 +8,8 @@ import userLinkTemplateDef from 'app/widgets/link/UserLinkTemplate.es6';
 import { makeEntityRef } from 'states/Navigator.es6';
 import * as EntityState from 'data/CMA/EntityState.es6';
 
+import * as Analytics from 'analytics/Analytics.es6';
+
 export default function register() {
   /**
    * Creates a definition object for an entity link directive.
@@ -65,8 +67,7 @@ export default function register() {
 
   registerController('EntityLinkController', [
     '$scope',
-    'analytics/Analytics.es6',
-    ($scope, Analytics) => {
+    $scope => {
       /**
        * Given an entity state we return
        */

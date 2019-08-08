@@ -2,13 +2,14 @@ import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import Client from 'legacy-client';
 
+import makeRequest from 'data/Request.es6';
+import * as auth from 'Authentication.es6';
+import * as Config from 'Config.es6';
+
 export default function register() {
   registerFactory('client', [
     '$q',
-    'Config.es6',
-    'Authentication.es6',
-    'data/Request.es6',
-    ($q, Config, auth, { default: makeRequest }) => {
+    $q => {
       const baseRequest = makeRequest(auth);
       const baseUrl = Config.apiUrl().slice(0, -1); // Remove trailing slash
       const defaultHeaders = {

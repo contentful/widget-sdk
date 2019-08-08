@@ -1,13 +1,14 @@
 import { registerDirective } from 'NgRegistry.es6';
 
+import * as actionCreators from 'redux/actions/spaceWizard/actionCreators.es6';
+import * as Analytics from 'analytics/Analytics.es6';
+import ReduxStore from 'redux/store.es6';
+
 export default function register() {
   registerDirective('cfSpaceWizard', [
     '$state',
     '$rootScope',
-    'redux/store.es6',
-    'analytics/Analytics.es6',
-    'redux/actions/spaceWizard/actionCreators.es6',
-    ($state, $rootScope, { default: ReduxStore }, Analytics, actionCreators) => {
+    ($state, $rootScope) => {
       const { reset: resetActionCreator } = actionCreators;
       return {
         link: function($scope) {
@@ -56,11 +57,11 @@ export default function register() {
           };
         },
         template: `<react-component
-        name="components/shared/space-wizard/Wizard.es6"
-        props="props"
-        on-scope-destroy="onScopeDestroy"
-        watch-depth="reference"
-      ></react-component>`
+      name="components/shared/space-wizard/Wizard.es6"
+      props="props"
+      on-scope-destroy="onScopeDestroy"
+      watch-depth="reference"
+    ></react-component>`
       };
     }
   ]);

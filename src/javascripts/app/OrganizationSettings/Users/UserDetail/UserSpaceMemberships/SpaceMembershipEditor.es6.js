@@ -1,7 +1,6 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry.es6';
 import {
   User as UserPropType,
   SpaceMembership as SpaceMembershipPropType
@@ -19,8 +18,8 @@ import {
 } from '@contentful/forma-36-react-components';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor.es6';
 
-const EndpointFactory = getModule('data/EndpointFactory.es6');
-const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository.es6');
+import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository.es6';
+import * as EndpointFactory from 'data/EndpointFactory.es6';
 
 class SpaceMembershipEditor extends React.Component {
   static propTypes = {

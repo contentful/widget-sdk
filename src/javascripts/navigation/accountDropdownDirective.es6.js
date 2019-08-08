@@ -2,6 +2,10 @@ import { registerDirective, registerController } from 'NgRegistry.es6';
 import accountDropdownTemplateDef from 'navigation/templates/AccountDropdown.template.es6';
 import * as Intercom from 'services/intercom.es6';
 
+import * as Analytics from 'analytics/Analytics.es6';
+import * as Config from 'Config.es6';
+import * as Authentication from 'Authentication.es6';
+
 export default function register() {
   registerDirective('cfAccountDropdown', () => ({
     template: accountDropdownTemplateDef(),
@@ -13,10 +17,7 @@ export default function register() {
   registerController('cfAccountDropdownController', [
     '$scope',
     '$state',
-    'Authentication.es6',
-    'Config.es6',
-    'analytics/Analytics.es6',
-    ($scope, $state, Authentication, Config, Analytics) => {
+    ($scope, $state) => {
       $scope.userProfileRef = {
         path: ['account', 'profile', 'user'],
         options: { reload: true }
