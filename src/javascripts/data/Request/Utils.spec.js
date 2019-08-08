@@ -1,4 +1,4 @@
-import { flatMap } from 'lodash';
+import { forEach } from 'lodash';
 import { getEndpoint } from './Utils.es6';
 
 describe('data/Request/Utils.es6', () => {
@@ -46,13 +46,14 @@ describe('data/Request/Utils.es6', () => {
         'https://api.flinkly.com/spaces/space-id/assets/some-asset_ID/experiment.php'
       ]
     };
-    const urlsAndExpectedEndpoints = flatMap(urlsByExpectedEndpoint, (urls, endpoint) =>
-      urls.map(url => [url, endpoint])
-    );
 
-    urlsAndExpectedEndpoints.forEach(([url, expectedEndpoint]) => {
-      it(`returns endpoint ${expectedEndpoint} for url ${url}`, () => {
-        expect(getEndpoint(url)).toEqual(expectedEndpoint);
+    forEach(urlsByExpectedEndpoint, (urls, expectedEndpoint) => {
+      describe(expectedEndpoint, () => {
+        urls.forEach(url => {
+          it(`is returned for url ${url}`, () => {
+            expect(getEndpoint(url)).toEqual(expectedEndpoint);
+          });
+        });
       });
     });
   });
