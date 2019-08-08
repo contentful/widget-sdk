@@ -8,6 +8,8 @@ describe('data/Request/Utils.es6', () => {
       '/spaces/:id': ['https://api.contentful.com/spaces/id'],
       '/environments': ['https://api.contentful.com/spaces/space-id/environments'],
       '/environments/:id': ['https://api.contentful.com/spaces/space-id/environments/some-env-id'],
+      '/organizations': ['https://api.contentful.com/organizations'],
+      '/organizations/:id': ['https://api.contentful.com/organizations/some-id'],
       '/organization_memberships': ['https://api.contentful.com/organization_memberships'],
       '/organization_memberships/:id': [
         'https://api.contentful.com/organization_memberships/some-id',
@@ -28,10 +30,7 @@ describe('data/Request/Utils.es6', () => {
         'http://foo.com/spaces/i-_.d/entries/i-_.d',
         'https://api.contentful.com/spaces/id/entries/id-not-an-experiment.php',
         'https://api.flinkly.com/spaces/id/environments/id/entries/id',
-        'https://api.flinkly.com/spaces/id/environments/id/entries/id/THIS-WILL-BE-IGNORED',
-        // TODO: We probably want these as separate path just like comments:
-        'https://api.flinkly.com/spaces/id/environments/id/entries/id/snapshots',
-        'https://api.flinkly.com/spaces/id/environments/id/entries/id/snapshots/id'
+        'https://api.flinkly.com/spaces/id/environments/id/entries/id/THIS-WILL-BE-IGNORED'
       ],
       '/entries/:id/edit.php': [
         'https://api.flinkly.com/spaces/space-id/entries/some-entry_ID/edit.php?throttle=1000',
@@ -48,6 +47,11 @@ describe('data/Request/Utils.es6', () => {
       '/:entity/:id/comments/:id': [
         'https://api.flinkly.com/spaces/id/entries/some-id/comments/some-id',
         'https://api.flinkly.com/spaces/id/assets/some-id/comments/id/THIS-WILL-BE-IGNORED'
+      ],
+      '/:entity/:id/snapshots': ['http://foo.com/spaces/id/entries/id/snapshots'],
+      '/:entity/:id/snapshots/:id': [
+        'https://api.flinkly.com/spaces/some-id/entries/some-id/snapshots/some-id',
+        'https://api.flinkly.com/spaces/i-_.d/assets/some-id/snapshots/i-_.d/THIS-WILL-BE-IGNORED'
       ]
     };
 

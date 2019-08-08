@@ -30,6 +30,8 @@ export function getEndpoint(url) {
   return makeStableName(relevantSegments);
 }
 
+const RELEVANT_ENTITY_PATHS = ['/comments', '/snapshots'];
+
 function makeStableName(relevantSegments) {
   const chunks = chunk(relevantSegments, 2);
 
@@ -39,8 +41,8 @@ function makeStableName(relevantSegments) {
   const getExperiment = idx =>
     idx + 1 === chunks.length && getPath(idx).match(/\.php$/) ? getPath(idx) : '';
 
-  if (chunks[1] && getPath(1) === '/comments') {
-    return `/:entity/:id/comments${getId(1)}`;
+  if (chunks[1] && RELEVANT_ENTITY_PATHS.includes(getPath(1))) {
+    return `/:entity/:id${getPath(1)}${getId(1)}`;
   } else {
     return `${getPath(0)}${getId(0)}${getExperiment(1)}`;
   }
