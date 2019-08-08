@@ -1,5 +1,6 @@
 import base from 'states/Base.es6';
 import { iframeStateWrapper } from './utils.es6';
+import { noop } from 'lodash';
 
 const user = userBase({
   name: 'user',
@@ -41,7 +42,8 @@ function userBase(definition) {
   return iframeStateWrapper(
     Object.assign(
       {
-        loadingText: 'Loading your account…'
+        loadingText: 'Loading your account…',
+        onEnter: [noop]
       },
       definition
     )
