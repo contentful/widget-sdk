@@ -54,13 +54,17 @@ describe('Access Checker', () => {
   }
 
   afterEach(() => {
-    enforcements = OrganizationRoles = policyChecker = ac = getResStub = reasonsDeniedStub = isPermissionDeniedStub = broadcastStub = mockSpaceEndpoint = feature = null;
+    enforcements = OrganizationRoles = policyChecker = ac = getResStub = reasonsDeniedStub = isPermissionDeniedStub = broadcastStub = mockSpaceEndpoint = feature = resetEnforcements = null;
   });
 
   beforeEach(function() {
     this.stubs = {
       logError: sinon.stub()
     };
+
+    broadcastStub = sinon.stub();
+    resetEnforcements = sinon.stub();
+    getResStub = sinon.stub().returns(false);
 
     module('contentful/test', $provide => {
       $provide.value('data/EndpointFactory.es6', {
@@ -82,6 +86,19 @@ describe('Access Checker', () => {
       $provide.constant('services/logger.es6', {
         logError: this.stubs.logError
       });
+      $provide.constant('access_control/AccessChecker/utils/resetEnforcements.es6', {
+        default: resetEnforcements
+      });
+      $provide.constant('access_control/AccessChecker/utils/broadcastEnforcement.es6', {
+        default: broadcastStub
+      });
+      $provide.constant('access_control/Enforcements.es6', {
+        determineEnforcement: sinon.stub().returns(undefined)
+      });
+      $provide.constant('access_control/AccessChecker/ResponseCache.es6', {
+        getResponse: getResStub,
+        reset: () => {}
+      });
     });
 
     enforcements = this.$inject('access_control/Enforcements.es6');
@@ -89,16 +106,8 @@ describe('Access Checker', () => {
     TokenStore = this.$inject('services/TokenStore.es6');
     policyChecker = this.$inject('access_control/AccessChecker/PolicyChecker.es6');
 
-    const acUtils = this.$inject('access_control/AccessChecker/Utils.es6');
-    acUtils.broadcastEnforcement = broadcastStub = sinon.stub();
-    acUtils.resetEnforcements = resetEnforcements = sinon.stub();
-
-    const responseCache = this.$inject('access_control/AccessChecker/ResponseCache.es6');
-    responseCache.getResponse = getResStub = sinon.stub().returns(false);
-
     reasonsDeniedStub = sinon.stub().returns([]);
     isPermissionDeniedStub = sinon.stub().returns(false);
-    enforcements.determineEnforcement = sinon.stub().returns(undefined);
 
     mockSpace = { sys: { id: '1234' }, organization: { sys: {} } };
     mockSpaceAuthContext = {

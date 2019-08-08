@@ -10,6 +10,11 @@ import * as trackVersioning from 'analytics/events/versioning.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import * as random from 'utils/Random.es6';
 
+import StateChangeConfirmationDialog from 'app/entity_editor/Components/StateChangeConfirmationDialog/index.es6';
+import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning/index.es6';
+import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator/index.es6';
+import * as Analytics from 'analytics/Analytics.es6';
+
 export default function register() {
   registerController('entityEditor/StateController', [
     '$scope',
@@ -19,23 +24,7 @@ export default function register() {
     'otDoc',
     'command',
     'spaceContext',
-    'analytics/Analytics.es6',
-    'navigation/SlideInNavigator/index.es6',
-    'app/entity_editor/UnpublishedReferencesWarning/index.es6',
-    'app/entity_editor/Components/StateChangeConfirmationDialog/index.es6',
-    function(
-      $scope,
-      $q,
-      notify,
-      validator,
-      otDoc,
-      Command,
-      spaceContext,
-      Analytics,
-      { goToPreviousSlideOrExit },
-      { showUnpublishedReferencesWarning },
-      { default: StateChangeConfirmationDialog }
-    ) {
+    function($scope, $q, notify, validator, otDoc, Command, spaceContext) {
       const controller = this;
       const permissions = otDoc.permissions;
       const reverter = otDoc.reverter;

@@ -1,6 +1,7 @@
 'use strict';
 
 import _ from 'lodash';
+import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
 
 describe('Asset List Controller', () => {
   let scope, spaceContext, stubs, $q, getAssets, ComponentLibrary;
@@ -52,12 +53,10 @@ describe('Asset List Controller', () => {
       $provide.value('utils/ResourceUtils.es6', {
         isLegacyOrganization: () => false
       });
-    });
 
-    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
-    const { registerConstant } = this.$inject('NgRegistry.es6');
-    registerConstant('services/localeStore.es6', {
-      default: fakeLocaleStore
+      $provide.constant('services/localeStore.es6', {
+        default: createLocaleStoreMock()
+      });
     });
 
     ComponentLibrary = this.$inject('@contentful/forma-36-react-components');

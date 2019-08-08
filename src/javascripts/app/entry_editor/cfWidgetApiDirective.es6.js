@@ -4,6 +4,8 @@ import * as K from 'utils/kefir.es6';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index.es6';
 import * as PublicContentType from 'widgets/PublicContentType.es6';
 
+import TheLocaleStore from 'services/localeStore.es6';
+
 export default function register() {
   /**
    * @deprecated Use and extend the new `app/widgets/WidgetApi/buildWidgetApi.es6.js` instead.
@@ -33,8 +35,7 @@ export default function register() {
     '$scope',
     'spaceContext',
     'EntityHelpers',
-    'services/localeStore.es6',
-    function($scope, spaceContext, EntityHelpers, { default: TheLocaleStore }) {
+    function($scope, spaceContext, EntityHelpers) {
       const {
         locale,
         fieldLocale,

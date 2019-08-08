@@ -5,6 +5,9 @@ import * as K from 'utils/kefir.es6';
 import { Operator } from 'app/ContentList/Search/Operators.es6';
 import Paginator from 'classes/Paginator.es6';
 
+import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs.es6';
+import createSearchInput from 'app/ContentList/Search/index.es6';
+
 export default function register() {
   /**
    * @ngdoc type
@@ -40,17 +43,7 @@ export default function register() {
     'spaceContext',
     'overridingRequestQueue',
     'EntityHelpers',
-    'app/ContentList/Search',
-    'data/ContentTypeRepo/accessibleCTs.es6',
-    function EntitySelectorController(
-      $scope,
-      $timeout,
-      spaceContext,
-      createQueue,
-      EntityHelpers,
-      { default: createSearchInput },
-      { default: getAccessibleCTs }
-    ) {
+    function EntitySelectorController($scope, $timeout, spaceContext, createQueue, EntityHelpers) {
       const MIN_SEARCH_TRIGGERING_LEN = 1;
       const MODES = { AVAILABLE: 1, SELECTED: 2 };
 

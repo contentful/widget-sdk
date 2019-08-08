@@ -1,14 +1,14 @@
+import { createMVar } from 'utils/Concurrent.es6';
+
 describe('utils/Concurrent/MVar.es6', function() {
   beforeEach(function() {
     module('contentful/test');
-
-    this.createMVar = this.$inject('utils/Concurrent.es6').createMVar;
   });
 
   describe('createMVar', function() {
     describe('#take()', () => {
       it('resolves immediately and empties state when MVar has value', function*() {
-        const mVar = this.createMVar('foo');
+        const mVar = createMVar('foo');
         expect(mVar.isEmpty()).toEqual(false);
         const value = yield mVar.take();
         expect(value).toEqual('foo');
@@ -16,7 +16,7 @@ describe('utils/Concurrent/MVar.es6', function() {
       });
 
       it('resolves and empties state after value is set on empty MVar', function*() {
-        const mVar = this.createMVar();
+        const mVar = createMVar();
         expect(mVar.isEmpty()).toEqual(true);
         const takePromise = mVar.take();
         mVar.put('foo');
@@ -27,7 +27,7 @@ describe('utils/Concurrent/MVar.es6', function() {
 
     describe('#read()', () => {
       it('resolves immediately and keeps value when MVar has value', function*() {
-        const mVar = this.createMVar('foo');
+        const mVar = createMVar('foo');
         expect(mVar.isEmpty()).toEqual(false);
         let value = yield mVar.read();
         expect(value).toEqual('foo');
@@ -37,7 +37,7 @@ describe('utils/Concurrent/MVar.es6', function() {
       });
 
       it('resolves and keeps value after value is set on empty MVar', function*() {
-        const mVar = this.createMVar();
+        const mVar = createMVar();
         expect(mVar.isEmpty()).toEqual(true);
         const readPromise = mVar.read();
         mVar.put('foo');
@@ -48,7 +48,7 @@ describe('utils/Concurrent/MVar.es6', function() {
     });
 
     it('puts value into full MVar', function*() {
-      const mVar = this.createMVar();
+      const mVar = createMVar();
       mVar.put('foo');
       expect(yield mVar.read()).toEqual('foo');
       mVar.put('bar');
@@ -56,14 +56,14 @@ describe('utils/Concurrent/MVar.es6', function() {
     });
 
     it('can have null and undefined as a value', function() {
-      let mVar = this.createMVar(null);
+      let mVar = createMVar(null);
       expect(mVar.isEmpty()).toEqual(false);
-      mVar = this.createMVar(undefined);
+      mVar = createMVar(undefined);
       expect(mVar.isEmpty()).toEqual(false);
     });
 
     it('sets to empty synchronously with empty()', function() {
-      const mVar = this.createMVar('foo');
+      const mVar = createMVar('foo');
       mVar.empty();
       expect(mVar.isEmpty()).toEqual(true);
     });
@@ -71,7 +71,7 @@ describe('utils/Concurrent/MVar.es6', function() {
     it('empty() is a no-op if empty', function*() {
       // This checks that we don’t throw the promise returned by
       // `read()` away when we call `empty()`.
-      const mVar = this.createMVar();
+      const mVar = createMVar();
       const readPromise = mVar.read();
       mVar.empty();
       mVar.empty();

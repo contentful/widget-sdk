@@ -9,14 +9,14 @@ import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
 import * as Navigator from 'states/Navigator.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 
-const $controller = getModule('$controller');
-const $rootScope = getModule('$rootScope');
-const spaceContext = getModule('spaceContext');
-const $state = getModule('$state');
-const entitySelector = getModule('entitySelector');
-const entityCreator = getModule('entityCreator');
-
 export default ({ $scope, emitter }) => {
+  const $controller = getModule('$controller');
+  const $rootScope = getModule('$rootScope');
+  const spaceContext = getModule('spaceContext');
+  const $state = getModule('$state');
+  const entitySelector = getModule('entitySelector');
+  const entityCreator = getModule('entityCreator');
+
   const isEntry = $scope.entityInfo.type === 'Entry';
   const isMasterEnvironment = spaceContext.isMasterEnvironment();
 

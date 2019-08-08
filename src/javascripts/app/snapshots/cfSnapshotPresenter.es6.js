@@ -7,6 +7,11 @@ import createSnapshotExtensionBridge from 'widgets/bridges/createSnapshotExtensi
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import { userInputFromDatetime } from 'app/widgets/datetime/data.es6';
 
+import * as EntityResolver from 'data/CMA/EntityResolver.es6';
+import generatePreview from 'markdown_editor/PreviewGenerator.es6';
+import { isRtlLocale } from 'utils/locales.es6';
+import * as LD from 'utils/LaunchDarkly/index.es6';
+
 export default function register() {
   /**
    * @ngdoc directive
@@ -19,10 +24,8 @@ export default function register() {
    * types (if the type is complex enough).
    */
   registerDirective('cfSnapshotPresenter', [
-    'utils/LaunchDarkly/index.es6',
-    'utils/locales.es6',
     'spaceContext',
-    (LD, { isRtlLocale }, spaceContext) => {
+    spaceContext => {
       return {
         restrict: 'E',
         template: JST.cf_snapshot_presenter(),
@@ -86,10 +89,10 @@ export default function register() {
   ]);
 
   registerDirective('cfSnapshotPresenterMarkdown', [
-    'markdown_editor/PreviewGenerator.es6',
-    ({ default: generatePreview }) => ({
+    () => ({
       restrict: 'E',
       template: '<cf-markdown-preview class="markdown-preview" preview="preview" />',
+
       controller: [
         '$scope',
         $scope => {
@@ -106,9 +109,9 @@ export default function register() {
   registerDirective('cfSnapshotPresenterLink', [
     'spaceContext',
     'EntityHelpers',
-    'data/CMA/EntityResolver.es6',
-    (spaceContext, EntityHelpers, EntityResolver) => ({
+    (spaceContext, EntityHelpers) => ({
       restrict: 'E',
+
       template:
         '<cf-entity-link ' +
         [
@@ -118,6 +121,7 @@ export default function register() {
           'config="config"'
         ].join(' ') +
         ' />',
+
       controller: [
         '$scope',
         $scope => {

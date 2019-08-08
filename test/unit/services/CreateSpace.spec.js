@@ -41,15 +41,19 @@ describe('CreateSpace', () => {
           })
         )
       }));
+      $provide.constant('modalDialog', {
+        open: sinon
+          .stub()
+          .returns({ promise: Promise.resolve(), destroy: sinon.stub().returns(Promise.resolve()) })
+      });
+      $provide.constant('account/pricing/PricingDataProvider.es6', {
+        getSpaceRatePlans: this.getSpaceRatePlans,
+        isEnterprisePlan: sinon.stub().returns(false),
+        getBasePlan: sinon.stub().returns({ customerType: 'Self-service' })
+      });
     });
     this.PricingDataProvider = this.$inject('account/pricing/PricingDataProvider.es6');
-    this.PricingDataProvider.getSpaceRatePlans = this.getSpaceRatePlans;
-    this.PricingDataProvider.getBasePlan = sinon.stub().returns({ customerType: 'Self-service' });
     this.modalDialog = this.$inject('modalDialog');
-    this.CreateSpace = this.$inject('services/CreateSpace.es6');
-    this.modalDialog.open = sinon
-      .stub()
-      .returns({ promise: this.resolve(), destroy: sinon.stub().returns(Promise.resolve()) });
     this.CreateSpace = this.$inject('services/CreateSpace.es6');
   });
 
@@ -88,6 +92,7 @@ describe('CreateSpace', () => {
     it('opens the enterprise dialog for enterprise orgs', async function() {
       this.getSpaceRatePlans.returns([this.ratePlans.enterprise]);
       this.PricingDataProvider.getBasePlan.returns({ customerType: 'Enterprise' });
+      this.PricingDataProvider.isEnterprisePlan.returns(true);
       await this.CreateSpace.showDialog('v2');
       const modalArgs = this.modalDialog.open.secondCall.args[0];
       expect(modalArgs.scopeData.modalProps.organization.sys.id).toBe(this.v2Org.sys.id);

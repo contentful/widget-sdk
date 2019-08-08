@@ -1,21 +1,18 @@
 import * as K from 'test/helpers/mocks/kefir';
+import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
 import _ from 'lodash';
 
 describe('bulk editor', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
-    });
-
-    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
-    const { registerConstant } = this.$inject('NgRegistry.es6');
-    registerConstant('services/localeStore.es6', {
-      default: fakeLocaleStore
+      $provide.constant('services/localeStore.es6', {
+        default: createLocaleStoreMock()
+      });
     });
 
     const TheLocaleStore = this.$inject('services/localeStore.es6').default;
-    this.setLocales = TheLocaleStore.setLocales;
-    this.setLocales([{ code: 'DEF', name: 'Default' }, { code: 'EN', name: 'English' }]);
+    TheLocaleStore.setLocales([{ code: 'DEF', name: 'Default' }, { code: 'EN', name: 'English' }]);
 
     const $q = this.$inject('$q');
 

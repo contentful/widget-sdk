@@ -1,13 +1,14 @@
 import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+
 export default function register() {
   registerController('ListActionsController', [
     '$scope',
     'entityType',
     'batchPerformer',
-    'access_control/AccessChecker/index.es6',
-    function ListActionsController($scope, entityType, batchPerformer, accessChecker) {
+    function ListActionsController($scope, entityType, batchPerformer) {
       const collection = entityType === 'Entry' ? 'entries' : 'assets';
 
       const performer = batchPerformer.create({

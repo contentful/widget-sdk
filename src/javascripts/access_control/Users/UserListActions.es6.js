@@ -8,11 +8,6 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getAllUsers } from 'access_control/OrganizationMembershipRepository.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const modalDialog = getModule('modalDialog');
-const Command = getModule('command');
-const ListQuery = getModule('ListQuery');
-const entitySelector = getModule('entitySelector');
-
 const MODAL_OPTS_BASE = {
   noNewScope: true,
   ignoreEsc: true,
@@ -27,6 +22,11 @@ const MODAL_OPTS_BASE = {
  * - `.openSpaceInvitationDialog()` invite users to the space from a list of organization's users
  */
 export function create(spaceContext, userListHandler, TokenStore) {
+  const modalDialog = getModule('modalDialog');
+  const Command = getModule('command');
+  const ListQuery = getModule('ListQuery');
+  const entitySelector = getModule('entitySelector');
+
   return {
     openRemovalConfirmationDialog,
     openRoleChangeDialog,

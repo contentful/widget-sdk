@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import * as slideInNavigator from 'navigation/SlideInNavigator/index.es6';
 
 import CreateEntity, { entityTypes } from '../index.es6';
-import accessChecker from 'ng/access_control/AccessChecker';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import entityCreator from 'ng/entityCreator';
 
 import flushPromises from 'testHelpers/flushPromises';
@@ -26,7 +26,7 @@ jest.mock(
 );
 
 jest.mock(
-  'ng/access_control/AccessChecker',
+  'access_control/AccessChecker/index.es6',
   () => ({
     canCreateAsset: jest.fn(),
     canPerformActionOnEntryOfType: jest.fn(),

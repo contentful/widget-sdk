@@ -6,6 +6,8 @@ import { registerDirective } from 'NgRegistry.es6';
 import angular from 'angular';
 import * as logger from 'services/logger.es6';
 
+import store from 'redux/store.es6';
+
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
   scope.$evalAsync(() => {
@@ -142,8 +144,7 @@ export default function register() {
    */
   registerDirective('reactComponent', [
     '$injector',
-    'redux/store.es6',
-    function($injector, { default: store }) {
+    function($injector) {
       return {
         restrict: 'E',
         replace: true,

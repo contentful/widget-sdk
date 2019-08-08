@@ -2,15 +2,16 @@ import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import moment from 'moment';
 
+import { getStore } from 'TheStore/index.es6';
+import * as TokenStore from 'services/TokenStore.es6';
+
 export default function register() {
   registerFactory('activationEmailResendController', [
     '$q',
     '$timeout',
-    'modalDialog',
-    'services/TokenStore.es6', // TokenStore
-    'activationEmailResender', // { resend: resendActivationEmail }
-    'TheStore/index.es6', // { getStore }
-    ($q, $timeout, modalDialog, TokenStore, { resend: resendActivationEmail }, { getStore }) => {
+    'modalDialog', // { resend: resendActivationEmail }
+    'activationEmailResender',
+    ($q, $timeout, modalDialog, { resend: resendActivationEmail }) => {
       const HOUR_IN_MS = 1000 * 60 * 60;
       const HOURS_BEFORE_REOPEN_DIALOG = 24;
       const store = getStore().forKey('lastActivationEmailResendReminderTimestamp');

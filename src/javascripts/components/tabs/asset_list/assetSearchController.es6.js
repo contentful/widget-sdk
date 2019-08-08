@@ -10,6 +10,9 @@ import { assetContentType } from 'legacy-client';
 import * as SystemFields from 'data/SystemFields.es6';
 import * as logger from 'services/logger.es6';
 
+import createSearchInput from 'app/ContentList/Search/index.es6';
+import * as Tracking from 'analytics/events/SearchAndViews.es6';
+
 export default function register() {
   registerController('AssetSearchController', [
     '$scope',
@@ -17,17 +20,7 @@ export default function register() {
     'spaceContext',
     'ListQuery',
     'PromisedLoader',
-    'analytics/events/SearchAndViews.es6',
-    'app/ContentList/Search/index.es6',
-    function(
-      $scope,
-      $q,
-      spaceContext,
-      ListQuery,
-      PromisedLoader,
-      Tracking,
-      { default: createSearchInput }
-    ) {
+    function($scope, $q, spaceContext, ListQuery, PromisedLoader) {
       const controller = this;
       const assetLoader = new PromisedLoader();
 

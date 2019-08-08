@@ -14,12 +14,6 @@ import ContentTypeForbiddenRemoval from './Dialogs/ContenTypeForbiddenRemoval.es
 import DeleteContentTypeDialog from './Dialogs/DeleteContentTypeDialog.es6';
 import { openDuplicateContentTypeDialog } from './Dialogs/index.es6';
 
-const spaceContext = getModule('spaceContext');
-const $q = getModule('$q');
-const $state = getModule('$state');
-const Command = getModule('command');
-const closeState = getModule('navigation/closeState');
-
 /**
  * @description
  * Uses the following scope properties
@@ -36,6 +30,12 @@ const closeState = getModule('navigation/closeState');
  *   the duplication dialog to verify new IDs.
  */
 export default function create($scope, contentTypeIds) {
+  const spaceContext = getModule('spaceContext');
+  const $q = getModule('$q');
+  const $state = getModule('$state');
+  const Command = getModule('command');
+  const closeState = getModule('navigation/closeState');
+
   const controller = {};
 
   /**

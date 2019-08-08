@@ -21,13 +21,15 @@ describe('cfZenmode', () => {
   };
 
   beforeEach(function() {
-    module('contentful/test');
-
-    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
-    const { registerConstant } = this.$inject('NgRegistry.es6');
-    registerConstant('services/localeStore.es6', {
-      default: fakeLocaleStore
+    module('contentful/test', $provide => {
+      $provide.constant('services/localeStore.es6', {
+        default: {
+          getLocales: () => [{ code: 'en', name: 'English' }, { code: 'de', name: 'German' }],
+          getDefaultLocale: () => 'en'
+        }
+      });
     });
+
     const scopeProps = { zenApi: apiMock, preview: {} };
     const elem = this.$compile('<cf-zenmode zen-api="zenApi" />', scopeProps);
     this.scope = elem.isolateScope();

@@ -4,9 +4,12 @@ import { deepFreeze } from 'utils/Freeze.es6';
 
 describe('analytics/events/SpaceCreation#entityActionSuccess()', () => {
   beforeEach(function() {
-    module('contentful/test');
+    module('contentful/test', $provide => {
+      $provide.value('analytics/Analytics.es6', {
+        track: sinon.stub()
+      });
+    });
     this.analytics = this.$inject('analytics/Analytics.es6');
-    this.analytics.track = sinon.stub();
     this.SpaceCreation = this.$inject('analytics/events/SpaceCreation.es6');
   });
 

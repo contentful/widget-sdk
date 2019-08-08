@@ -57,6 +57,8 @@ describe('LaunchDarkly', () => {
       sys: { id: 2 }
     };
 
+    this.userDataBus$ = null;
+
     this.altUser = {
       email: 'b',
       organizationMemberships: [this.org],
@@ -69,7 +71,10 @@ describe('LaunchDarkly', () => {
     };
 
     const userModule = {
-      userDataBus$: K.createMockProperty([this.user, this.org, {}]),
+      getUserDataBus: () => {
+        this.userDataBus$ = K.createMockProperty([this.user, this.org, {}]);
+        return this.userDataBus$;
+      },
       getOrgRole: sinon.stub().returns('org role'),
       getUserAgeInDays: sinon.stub().returns(7),
       hasAnOrgWithSpaces: sinon.stub().returns(false),
@@ -109,8 +114,8 @@ describe('LaunchDarkly', () => {
       return this.ld.getCurrentVariation('dummy');
     };
 
-    this.setUserDataStream = function(user, org, spacesByOrg) {
-      userModule.userDataBus$.set([user, org, spacesByOrg]);
+    this.setUserDataStream = (user, org, spacesByOrg) => {
+      this.userDataBus$.set([user, org, spacesByOrg]);
       this.$apply();
     };
   });

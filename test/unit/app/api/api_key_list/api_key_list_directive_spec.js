@@ -1,19 +1,5 @@
 describe('The ApiKey list directive', () => {
   beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.removeDirectives('relative', 'cfKnowledgeBase');
-      $provide.value('$state', {
-        href: sinon.stub(),
-        current: { name: 'test.api.foo' }
-      });
-    });
-
-    this.accessChecker = this.$inject('access_control/AccessChecker');
-    this.accessChecker.shouldDisable = sinon.stub().returns(false);
-
-    this.LD = this.$inject('utils/LaunchDarkly');
-    this.LD.getCurrentVariation = sinon.stub().resolves(false);
-
     const resource = {
       usage: 0,
       limits: {
@@ -22,9 +8,25 @@ describe('The ApiKey list directive', () => {
       }
     };
 
-    this.ResourceService = this.$inject('services/ResourceService.es6');
-    this.ResourceService.default = sinon.stub().returns({
-      get: sinon.stub().resolves(resource)
+    this.stubs = {
+      shouldDisable: sinon.stub().returns(false)
+    }
+
+    module('contentful/test', $provide => {
+      $provide.removeDirectives('relative', 'cfKnowledgeBase');
+      $provide.value('$state', {
+        href: sinon.stub(),
+        current: { name: 'test.api.foo' }
+      });
+      $provide.constant('access_control/AccessChecker/index.es6', {
+        shouldDisable: this.stubs.shouldDisable,
+        shouldHide: sinon.stub().returns(false)
+      })
+      $provide.constant('services/ResourceService.es6', {
+        default: () => ({
+          get: sinon.stub().resolves(resource)
+        })
+      })
     });
 
     this.setUsageLimit = (usage, limit) => {
@@ -100,7 +102,7 @@ describe('The ApiKey list directive', () => {
   });
 
   it('save button is disabled', function() {
-    this.accessChecker.shouldDisable.returns(true);
+    this.stubs.shouldDisable.returns(true);
     this.setup();
     expect(this.sidebar.find('.btn-action').attr('aria-disabled')).toBe('true');
   });

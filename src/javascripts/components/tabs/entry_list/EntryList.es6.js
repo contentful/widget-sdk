@@ -35,11 +35,9 @@ import { EntityStatusTag } from 'components/shared/EntityStatusTag.es6';
 import { isEdge } from 'utils/browser.es6';
 const isEdgeBrowser = isEdge();
 
-import { getModule } from 'NgRegistry.es6';
-
 import { css } from 'emotion';
 
-const EntityState = getModule('data/CMA/EntityState.es6');
+import * as EntityState from 'data/CMA/EntityState.es6';
 
 const styles = {
   flexCenter: css({

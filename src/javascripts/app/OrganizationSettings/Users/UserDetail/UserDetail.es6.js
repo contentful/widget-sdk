@@ -10,7 +10,6 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import UserCard from '../UserCard.es6';
 import { getRoleDescription } from 'utils/MembershipUtils.es6';
 import { getUserName } from '../UserUtils.es6';
-import { getModule } from 'NgRegistry.es6';
 
 import {
   SpaceMembership as SpaceMembershipPropType,
@@ -31,8 +30,8 @@ import UserSsoInfo from './SSO/UserSsoInfo.es6';
 import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
 import ChangeOwnRoleConfirmation from './ChangeOwnRoleConfirmation.es6';
 
-const TokenStore = getModule('services/TokenStore.es6');
-const OrganizationRoles = getModule('services/OrganizationRoles.es6');
+import * as OrganizationRoles from 'services/OrganizationRoles.es6';
+import * as TokenStore from 'services/TokenStore.es6';
 
 class UserDetail extends React.Component {
   static propTypes = {

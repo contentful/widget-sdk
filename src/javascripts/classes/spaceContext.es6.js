@@ -14,6 +14,29 @@ import createContentPreview from 'services/contentPreview.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import createExtensionDefinitionLoader from 'app/settings/AppsBeta/ExtensionDefinitionLoader.es6';
 
+import { createExtensionLoader } from 'widgets/ExtensionLoader.es6';
+import createCachedAppConfig from 'app/settings/apps/CachedAppConfig.es6';
+import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo.es6';
+import createWebhookRepo from 'data/CMA/WebhookRepo.es6';
+import { create as createEnvironmentsRepo } from 'data/CMA/SpaceEnvironmentsRepo.es6';
+import createLocaleRepo from 'data/CMA/LocaleRepo.es6';
+import createUiConfigStore from 'data/UiConfig/Store.es6';
+
+import {
+  createSpaceEndpoint,
+  createOrganizationEndpoint,
+  createExtensionDefinitionsEndpoint
+} from 'data/Endpoint.es6';
+
+import * as PublishedCTRepo from 'data/ContentTypeRepo/Published.es6';
+import * as MembershipRepo from 'access_control/SpaceMembershipRepository.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as DocumentPool from 'data/sharejs/DocumentPool.es6';
+import * as EnforcementsService from 'services/EnforcementsService.es6';
+import * as TokenStore from 'services/TokenStore.es6';
+import * as Auth from 'Authentication.es6';
+import * as Config from 'Config.es6';
+
 export default function register() {
   /**
    * @ngdoc service
@@ -28,46 +51,8 @@ export default function register() {
     '$rootScope',
     '$injector',
     'client',
-    'Config.es6',
-    'Authentication.es6',
-    'services/TokenStore.es6',
-    'services/EnforcementsService.es6',
-    'data/sharejs/DocumentPool.es6',
-    'access_control/AccessChecker/index.es6',
-    'access_control/SpaceMembershipRepository.es6',
-    'data/ContentTypeRepo/Published.es6',
-    'data/Endpoint.es6',
-    'data/UiConfig/Store.es6',
-    'data/CMA/LocaleRepo.es6',
-    'data/CMA/SpaceEnvironmentsRepo.es6',
-    'data/CMA/WebhookRepo.es6',
-    'data/CMA/SpaceMembersRepo.es6',
-    'app/settings/apps/CachedAppConfig.es6',
     'saved-views-migrator',
-    'widgets/ExtensionLoader.es6',
-    (
-      $q,
-      $rootScope,
-      $injector,
-      client,
-      Config,
-      Auth,
-      TokenStore,
-      EnforcementsService,
-      DocumentPool,
-      accessChecker,
-      MembershipRepo,
-      PublishedCTRepo,
-      { createSpaceEndpoint, createOrganizationEndpoint, createExtensionDefinitionsEndpoint },
-      { default: createUiConfigStore },
-      { default: createLocaleRepo },
-      { create: createEnvironmentsRepo },
-      { default: createWebhookRepo },
-      { default: createSpaceMembersRepo },
-      { default: createCachedAppConfig },
-      { create: createViewMigrator },
-      { createExtensionLoader }
-    ) => {
+    ($q, $rootScope, $injector, client, { create: createViewMigrator }) => {
       const publishedCTsBus$ = K.createPropertyBus([]);
 
       // Enforcements deinitialization function, when changing space

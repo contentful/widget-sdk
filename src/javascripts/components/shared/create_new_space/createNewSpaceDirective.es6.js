@@ -4,6 +4,14 @@ import React from 'react';
 import createNewSpaceTemplateDef from 'components/shared/create_new_space/Template.es6';
 import * as logger from 'services/logger.es6';
 
+import createResourceService from 'services/ResourceService.es6';
+import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader.es6';
+import * as spaceTemplateEvents from 'analytics/events/SpaceCreation.es6';
+import * as spaceTemplateCreator from 'services/SpaceTemplateCreator/index.es6';
+import * as Analytics from 'analytics/Analytics.es6';
+import * as enforcements from 'access_control/Enforcements.es6';
+import * as TokenStore from 'services/TokenStore.es6';
+
 export default function register() {
   registerDirective('cfCreateNewSpace', () => ({
     restrict: 'E',
@@ -20,29 +28,7 @@ export default function register() {
     'spaceContext',
     'client',
     'localesList',
-    'services/TokenStore.es6',
-    'access_control/Enforcements.es6',
-    'analytics/Analytics.es6',
-    'services/SpaceTemplateCreator/index.es6',
-    'analytics/events/SpaceCreation.es6',
-    'services/SpaceTemplateLoader.es6',
-    'services/ResourceService.es6',
-    function(
-      $scope,
-      $rootScope,
-      $state,
-      $element,
-      spaceContext,
-      client,
-      localesList,
-      TokenStore,
-      enforcements,
-      Analytics,
-      spaceTemplateCreator,
-      spaceTemplateEvents,
-      { getTemplatesList, getTemplate },
-      { default: createResourceService }
-    ) {
+    function($scope, $rootScope, $state, $element, spaceContext, client, localesList) {
       const controller = this;
       const DEFAULT_LOCALE = 'en-US';
       const DEFAULT_ERROR_MESSAGE =

@@ -5,26 +5,18 @@ import throttle from 'lodash/throttle';
 import * as K from 'utils/kefir.es6';
 import * as LazyLoader from 'utils/LazyLoader.es6';
 
+import TheLocaleStore from 'services/localeStore.es6';
+import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions.es6';
+import { isRtlLocale } from 'utils/locales.es6';
+import makePreview from 'markdown_editor/PreviewGenerator.es6';
+import * as actions from 'markdown_editor/markdown_actions.es6';
+import * as MarkdownEditor from 'markdown_editor/markdown_editor.es6';
+import * as LD from 'utils/LaunchDarkly/index.es6';
+
 export default function register() {
   registerDirective('cfMarkdownEditor', [
     '$timeout',
-    'utils/LaunchDarkly/index.es6',
-    'markdown_editor/markdown_editor.es6',
-    'markdown_editor/markdown_actions.es6',
-    'markdown_editor/PreviewGenerator.es6',
-    'utils/locales.es6',
-    'analytics/MarkdownEditorActions.es6',
-    'services/localeStore.es6',
-    (
-      $timeout,
-      LD,
-      MarkdownEditor,
-      actions,
-      { default: makePreview },
-      { isRtlLocale },
-      { trackMarkdownEditorAction },
-      { default: TheLocaleStore }
-    ) => {
+    $timeout => {
       const EDITOR_DIRECTIONS = {
         LTR: 'ltr',
         RTL: 'rtl'

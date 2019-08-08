@@ -1,5 +1,5 @@
 import { snakeCase, omitBy, isUndefined, includes } from 'lodash';
-import { track } from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics.es6';
 
 const EVENTS_TO_SEND = ['content_type:create', 'entry:create', 'asset:create', 'api_key:create'];
 const EVENTS_WITH_ORIGIN_FIELD = ['entry:create'];
@@ -16,7 +16,7 @@ export function entityActionSuccess(_entityId, entityData, templateName) {
         ? TEMPLATED_CREATION_EVENT_ORIGIN
         : EMPTY_CREATION_EVENT_ORIGIN;
     }
-    track(eventName, omitBy({ ...data, ...entityData }, isUndefined));
+    Analytics.track(eventName, omitBy({ ...data, ...entityData }, isUndefined));
   }
 }
 

@@ -7,8 +7,9 @@ import CreateEntryButton, { Style } from 'components/CreateEntryButton/index.es6
 import Visible from 'components/shared/Visible/index.es6';
 import * as logger from 'services/logger.es6';
 
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+
 const entityCreator = getModule('entityCreator');
-const accessChecker = getModule('access_control/AccessChecker');
 
 export const entityTypes = {
   Entry: 'Entry',

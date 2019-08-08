@@ -1,5 +1,6 @@
 import * as K from 'utils/kefir.es6';
 import _ from 'lodash';
+import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
 
 describe('Entry Editor Controller', function() {
   this.user = { firstName: 'John', lastName: 'Doe', sys: { id: '123' } };
@@ -25,14 +26,16 @@ describe('Entry Editor Controller', function() {
         'entityEditor/StatusNotificationsController',
         'EntryActionsController'
       );
+      $provide.constant('services/localeStore.es6', {
+        default: createLocaleStoreMock()
+      });
+      $provide.constant('services/TokenStore.es6', {
+        user$: userBus.property
+      });
     });
 
-    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
-    const { registerConstant, registerController } = this.$inject('NgRegistry.es6');
+    const { registerController } = this.$inject('NgRegistry.es6');
     registerController('FormWidgetsController', function() {});
-    registerConstant('services/localeStore.es6', {
-      default: fakeLocaleStore
-    });
 
     const createDocument = this.$inject('mocks/entityEditor/Document').create;
 
@@ -56,10 +59,6 @@ describe('Entry Editor Controller', function() {
       openDoc: () => createDocument()
     };
     const mockPreferences = {};
-
-    this.mockService('services/TokenStore.es6', {
-      user$: userBus.property
-    });
 
     const createEntryController = this.$inject('app/entity_editor/EntryController.es6').default;
 

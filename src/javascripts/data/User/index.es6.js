@@ -13,7 +13,7 @@ const spaceContext = getModule('spaceContext');
  * @description
  * A stream combining user, current org, current space and spaces grouped by org id
  */
-export const userDataBus$ = combine(
+export const getUserDataBus = () => combine(
   [user$, getCurrentOrgSpaceBus(), spacesByOrganization$],
   (user, [org, space], spacesByOrg) => [user, org, spacesByOrg, space]
 )

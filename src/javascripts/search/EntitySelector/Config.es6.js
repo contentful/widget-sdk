@@ -4,9 +4,6 @@ import getLinkedContentTypeIdsForNodeType from 'app/widgets/rich_text/plugins/sh
 import { getModule } from 'NgRegistry.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 
-const ListQuery = getModule('ListQuery');
-const spaceContext = getModule('spaceContext');
-
 const getDefaultLocaleCode = () => TheLocaleStore.getDefaultLocale().code;
 
 const LABELS = {
@@ -149,6 +146,9 @@ export function newConfigFromExtension(options = {}) {
  * Creates fetch function for Entity and Asset entity types
  */
 function makeFetch(config) {
+  const ListQuery = getModule('ListQuery');
+  const spaceContext = getModule('spaceContext');
+
   if (['Entry', 'Asset'].indexOf(config.entityType) < 0) {
     throw new Error("Unsupported entity type: '" + config.entityType + "'.");
   }

@@ -3,9 +3,16 @@ import _ from 'lodash';
 
 describe('DocumentPool', () => {
   beforeEach(function() {
-    module('contentful/test');
+    module('contentful/test', $provide => {
+      $provide.constant('app/entity_editor/Document.es6', {
+        create: sinon.spy((_conn, entity) => {
+          const s = entity.data.sys;
+          return s.id === 'id' && s.type === 'Entry' ? this.doc : this.doc2;
+        })
+      });
+    });
 
-    const Document = this.$inject('app/entity_editor/Document.es6');
+    this.createDoc = this.$inject('app/entity_editor/Document.es6').create;
     this.doc = {
       destroy: sinon.stub(),
       state: {
@@ -13,10 +20,6 @@ describe('DocumentPool', () => {
       }
     };
     this.doc2 = { destroy: sinon.stub() };
-    this.createDoc = Document.create = sinon.spy((_conn, entity) => {
-      const s = entity.data.sys;
-      return s.id === 'id' && s.type === 'Entry' ? this.doc : this.doc2;
-    });
 
     const createPool = this.$inject('data/sharejs/DocumentPool.es6').create;
     this.conn = {};

@@ -5,6 +5,9 @@ import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import { getSubscriptionState } from 'account/AccountUtils.es6';
 
+import createResourceService from 'services/ResourceService.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+
 export default function register() {
   registerDirective('cfApiKeyList', () => ({
     template: JST['api_key_list'](),
@@ -19,17 +22,7 @@ export default function register() {
     '$q',
     'spaceContext',
     'command',
-    'access_control/AccessChecker/index.es6',
-    'services/ResourceService.es6',
-    (
-      $scope,
-      $state,
-      $q,
-      spaceContext,
-      Command,
-      accessChecker,
-      { default: createResourceService }
-    ) => {
+    ($scope, $state, $q, spaceContext, Command) => {
       const resources = createResourceService(spaceContext.getId());
 
       const disableCreateApiKey = accessChecker.shouldDisable('create', 'apiKey');

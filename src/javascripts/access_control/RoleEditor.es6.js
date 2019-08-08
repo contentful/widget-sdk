@@ -31,12 +31,13 @@ import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 import { getSubscriptionState } from 'account/AccountUtils.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 
+import * as createResourceService from 'services/ResourceService.es6';
+import * as RoleRepository from 'access_control/RoleRepository.es6';
+
 const $state = getModule('$state');
 const spaceContext = getModule('spaceContext');
 const createRoleRemover = getModule('createRoleRemover');
 const UserListHandler = getModule('UserListHandler');
-const RoleRepository = getModule('access_control/RoleRepository.es6');
-const createResourceService = getModule('services/ResourceService.es6');
 
 const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,

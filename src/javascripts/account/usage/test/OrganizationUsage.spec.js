@@ -8,129 +8,95 @@ import NoSpacesPlaceholder from '../NoSpacesPlaceholder.es6';
 import OrganizationUsagePage from '../committed/OrganizationUsagePage.es6';
 import OrganizationResourceUsageList from 'account/usage/non_committed/OrganizationResourceUsageList.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
-import OrganizationRolesMocked from 'ng/services/OrganizationRoles.es6';
-import TokenStoreMocked from 'ng/services/TokenStore.es6';
-import OrganizationMembershipRepositoryMocked from 'ng/access_control/OrganizationMembershipRepository.es6';
+import * as OrganizationRolesMocked from 'services/OrganizationRoles.es6';
+import * as TokenStoreMocked from 'services/TokenStore.es6';
+import * as OrganizationMembershipRepositoryMocked from 'access_control/OrganizationMembershipRepository.es6';
 
-jest.mock('ng/Config.es6', () => ({}), { virtual: true });
-jest.mock('ng/intercom', () => ({}), { virtual: true });
-jest.mock('ng/utils/ResourceUtils.es6', () => ({}), { virtual: true });
-jest.mock(
-  'ng/services/OrganizationRoles.es6',
-  () => ({
-    isOwnerOrAdmin: jest.fn().mockReturnValue(true)
-  }),
-  { virtual: true }
-);
-jest.mock(
-  'ng/services/ResourceService.es6',
-  () => {
-    const resourceService = {
-      get: jest.fn(resource => {
-        switch (resource) {
-          case 'api_request':
-            return { limits: { included: 1000000 } };
-          case 'asset_bandwidth':
-            return {
-              usage: 200,
-              unitOfMeasure: 'MB',
-              limits: { included: 2000 }
-            };
-        }
-      }),
-      getAll: jest.fn()
-    };
-    return {
-      default: () => resourceService
-    };
-  },
-  { virtual: true }
-);
-
-jest.mock(
-  'ng/account/pricing/PricingDataProvider.es6',
-  () => {
-    const isEnterprisePlan = jest.fn(() => true);
-
-    const getPlansWithSpaces = jest.fn(() => ({
-      items: [
-        { name: 'Test plan', space: { sys: { id: 'space1' } } },
-        { name: 'Proof of concept', space: { sys: { id: 'space2' } } }
-      ]
-    }));
-    return {
-      isEnterprisePlan,
-      getBasePlan: jest.fn(),
-      getPlansWithSpaces
-    };
-  },
-  { virtual: true }
-);
-
-jest.mock(
-  'ng/access_control/OrganizationMembershipRepository.es6',
-  () => ({
-    getAllSpaces: jest.fn(() => [
-      { name: 'Test1', sys: { id: 'test1' } },
-      { name: 'Test2', sys: { id: 'test2' } }
-    ])
-  }),
-  { virtual: true }
-);
-
-jest.mock(
-  'ng/services/TokenStore.es6',
-  () => ({
-    getOrganization: jest.fn(() => ({}))
-  }),
-  { virtual: true }
-);
-
-jest.mock(
-  'ng/data/EndpointFactory.es6',
-  () => {
-    const moment = require('moment');
-    const _ = require('lodash');
-    const DATE_FORMAT = 'YYYY-MM-DD';
-    const startDate = moment('2019-01-04').subtract(12, 'days');
-    const endpoint = jest.fn().mockImplementation(({ method, path }) => {
-      if (method === 'GET' && _.isEqual(path, ['usage_periods'])) {
+jest.mock('services/intercom.es6', () => ({}));
+jest.mock('utils/ResourceUtils.es6', () => ({}));
+jest.mock('services/OrganizationRoles.es6', () => ({
+  isOwnerOrAdmin: jest.fn().mockReturnValue(true)
+}));
+jest.mock('services/ResourceService.es6', () => () => ({
+  get: jest.fn(resource => {
+    switch (resource) {
+      case 'api_request':
+        return { limits: { included: 1000000 } };
+      case 'asset_bandwidth':
         return {
-          items: [
-            {
-              startDate: startDate.format(DATE_FORMAT),
-              endDate: null,
-              sys: { type: 'UsagePeriod', id: '0' }
-            },
-            {
-              startDate: moment(startDate)
-                .subtract(1, 'day')
-                .subtract(1, 'month')
-                .format(DATE_FORMAT),
-              endDate: moment(startDate)
-                .subtract(1, 'day')
-                .format(DATE_FORMAT),
-              sys: { type: 'UsagePeriod', id: '1' }
-            }
-          ]
+          usage: 200,
+          unitOfMeasure: 'MB',
+          limits: { included: 2000 }
         };
-      }
-    });
-
-    return {
-      createOrganizationEndpoint: () => endpoint
-    };
-  },
-  { virtual: true }
-);
-
-jest.mock(
-  'app/common/ReloadNotification.es6',
-  () => ({
-    trigger: jest.fn()
+    }
   }),
-  { virtual: true }
-);
+  getAll: jest.fn()
+}));
+
+jest.mock('account/pricing/PricingDataProvider.es6', () => {
+  const isEnterprisePlan = jest.fn(() => true);
+
+  const getPlansWithSpaces = jest.fn(() => ({
+    items: [
+      { name: 'Test plan', space: { sys: { id: 'space1' } } },
+      { name: 'Proof of concept', space: { sys: { id: 'space2' } } }
+    ]
+  }));
+  return {
+    isEnterprisePlan,
+    getBasePlan: jest.fn(),
+    getPlansWithSpaces
+  };
+});
+
+jest.mock('access_control/OrganizationMembershipRepository.es6', () => ({
+  getAllSpaces: jest.fn(() => [
+    { name: 'Test1', sys: { id: 'test1' } },
+    { name: 'Test2', sys: { id: 'test2' } }
+  ])
+}));
+
+jest.mock('services/TokenStore.es6', () => ({
+  getOrganization: jest.fn(() => ({}))
+}));
+
+jest.mock('data/EndpointFactory.es6', () => {
+  const moment = require('moment');
+  const _ = require('lodash');
+  const DATE_FORMAT = 'YYYY-MM-DD';
+  const startDate = moment('2019-01-04').subtract(12, 'days');
+  const endpoint = jest.fn().mockImplementation(({ method, path }) => {
+    if (method === 'GET' && _.isEqual(path, ['usage_periods'])) {
+      return {
+        items: [
+          {
+            startDate: startDate.format(DATE_FORMAT),
+            endDate: null,
+            sys: { type: 'UsagePeriod', id: '0' }
+          },
+          {
+            startDate: moment(startDate)
+              .subtract(1, 'day')
+              .subtract(1, 'month')
+              .format(DATE_FORMAT),
+            endDate: moment(startDate)
+              .subtract(1, 'day')
+              .format(DATE_FORMAT),
+            sys: { type: 'UsagePeriod', id: '1' }
+          }
+        ]
+      };
+    }
+  });
+
+  return {
+    createOrganizationEndpoint: () => endpoint
+  };
+});
+
+jest.mock('app/common/ReloadNotification.es6', () => ({
+  trigger: jest.fn()
+}));
 
 const shallowRenderComponent = async props => {
   const wrapper = shallow(<OrganizationUsage {...props} />);
@@ -189,9 +155,8 @@ describe('OrganizationUsage', () => {
     it('should call `onForbidden`', async () => {
       const error404 = new Error('Test error');
       error404.status = 404;
-      OrganizationMembershipRepositoryMocked.getAllSpaces.mockReturnValueOnce(
-        Promise.reject(error404)
-      );
+
+      OrganizationMembershipRepositoryMocked.getAllSpaces.mockRejectedValueOnce(error404);
       const onForbiddenMock = jest.fn();
 
       await shallowRenderComponent({
@@ -207,9 +172,7 @@ describe('OrganizationUsage', () => {
     it('should call `onForbidden`', async () => {
       const error403 = new Error('Test error');
       error403.status = 403;
-      OrganizationMembershipRepositoryMocked.getAllSpaces.mockReturnValueOnce(
-        Promise.reject(error403)
-      );
+      OrganizationMembershipRepositoryMocked.getAllSpaces.mockRejectedValueOnce(error403);
       const onForbiddenMock = jest.fn();
 
       await shallowRenderComponent({
@@ -226,9 +189,7 @@ describe('OrganizationUsage', () => {
       const error400 = new Error('Test error');
       error400.status = 400;
 
-      OrganizationMembershipRepositoryMocked.getAllSpaces.mockReturnValueOnce(
-        Promise.reject(error400)
-      );
+      OrganizationMembershipRepositoryMocked.getAllSpaces.mockRejectedValueOnce(error400);
 
       const onForbiddenMock = jest.fn();
 

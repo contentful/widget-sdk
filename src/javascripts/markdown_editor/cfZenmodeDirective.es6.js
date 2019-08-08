@@ -3,13 +3,14 @@ import $ from 'jquery';
 import keycodes from 'utils/keycodes.es6';
 import window from 'utils/ngCompat/window.es6';
 
+import TheLocaleStore from 'services/localeStore.es6';
+import * as actions from 'markdown_editor/markdown_actions.es6';
+import * as MarkdownEditor from 'markdown_editor/markdown_editor.es6';
+
 export default function register() {
   registerDirective('cfZenmode', [
     'modalDialog',
-    'markdown_editor/markdown_editor.es6',
-    'markdown_editor/markdown_actions.es6',
-    'services/localeStore.es6',
-    (modalDialog, MarkdownEditor, actions, { default: TheLocaleStore }) => {
+    modalDialog => {
       const win = $(window);
 
       // This is persisted accross Zen Mode instances

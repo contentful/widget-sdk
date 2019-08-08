@@ -6,12 +6,13 @@ import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
+import * as EndpointFactory from 'data/EndpointFactory.es6';
+import * as PricingDataProvider from 'account/pricing/PricingDataProvider.es6';
+import * as DeleteSpace from 'services/DeleteSpace.es6';
+import * as TokenStore from 'services/TokenStore.es6';
+
 const spaceContext = getModule('spaceContext');
 const $state = getModule('$state');
-const TokenStore = getModule('services/TokenStore.es6');
-const DeleteSpace = getModule('services/DeleteSpace.es6');
-const PricingDataProvider = getModule('account/pricing/PricingDataProvider.es6');
-const EndpointFactory = getModule('data/EndpointFactory.es6');
 
 export class SpaceSettingsRoute extends React.Component {
   getSpacePlan = async () => {

@@ -4,6 +4,9 @@ import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import * as logger from 'services/logger.es6';
 import * as AppPerformanceMetrics from 'i13n/AppPerformance/index.es6';
 
+import * as NavState from 'navigation/NavState.es6';
+import * as Analytics from 'analytics/Analytics.es6';
+
 export default function register() {
   /**
    * @ngdoc service
@@ -22,9 +25,7 @@ export default function register() {
     '$location',
     'spaceContext',
     'modalDialog',
-    'analytics/Analytics.es6',
-    'navigation/NavState.es6',
-    ($rootScope, $state, $location, spaceContext, modalDialog, Analytics, NavState) => {
+    ($rootScope, $state, $location, spaceContext, modalDialog) => {
       const { updateNavState } = NavState;
 
       // Result of confirmation dialog

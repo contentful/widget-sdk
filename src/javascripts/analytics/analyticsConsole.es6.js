@@ -5,6 +5,9 @@ import moment from 'moment';
 import { validateEvent } from 'analytics/Validator.es6';
 import * as logger from 'services/logger.es6';
 
+import * as SnowplowEvents from 'analytics/snowplow/Events.es6';
+import * as Snowplow from 'analytics/snowplow/Snowplow.es6';
+
 export default function register() {
   /**
    * @ngdoc service
@@ -23,9 +26,7 @@ export default function register() {
   registerFactory('analytics/console', [
     '$rootScope',
     '$compile',
-    'analytics/snowplow/Snowplow.es6',
-    'analytics/snowplow/Events.es6',
-    ($rootScope, $compile, Snowplow, SnowplowEvents) => {
+    ($rootScope, $compile) => {
       const { buildUnstructEventData: buildSnowplowEvent } = Snowplow;
       const { getSchema: getSnowplowSchema } = SnowplowEvents;
 

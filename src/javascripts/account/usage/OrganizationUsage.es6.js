@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry.es6';
 import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 
 import { Spinner } from '@contentful/forma-36-react-components';
@@ -14,14 +13,12 @@ import PeriodSelector from './committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 
-const OrganizationRoles = getModule('services/OrganizationRoles.es6');
-const ResourceService = getModule('services/ResourceService.es6');
-const PricingDataProvider = getModule('account/pricing/PricingDataProvider.es6');
-const OrganizationMembershipRepository = getModule(
-  'access_control/OrganizationMembershipRepository.es6'
-);
-const EndpointFactory = getModule('data/EndpointFactory.es6');
-const TokenStore = getModule('services/TokenStore.es6');
+import * as TokenStore from 'services/TokenStore.es6';
+import * as EndpointFactory from 'data/EndpointFactory.es6';
+import * as OrganizationMembershipRepository from 'access_control/OrganizationMembershipRepository.es6';
+import * as PricingDataProvider from 'account/pricing/PricingDataProvider.es6';
+import createResourceService from 'services/ResourceService.es6';
+import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 
 export class WorkbenchContent extends React.Component {
   static propTypes = {
@@ -159,7 +156,7 @@ export class OrganizationUsage extends React.Component {
     const { orgId, onReady } = this.props;
 
     try {
-      const service = ResourceService.default(orgId, 'organization');
+      const service = createResourceService(orgId, 'organization');
       const basePlan = await PricingDataProvider.getBasePlan(this.endpoint);
       const committed = PricingDataProvider.isEnterprisePlan(basePlan);
 
@@ -202,6 +199,7 @@ export class OrganizationUsage extends React.Component {
 
         await this.loadPeriodData(0);
       } else {
+        // console.log()
         this.setState({ resources: await service.getAll(), isLoading: false }, onReady);
       }
 
@@ -220,7 +218,7 @@ export class OrganizationUsage extends React.Component {
     const { orgId } = this.props;
     const { periods } = this.state;
 
-    const service = ResourceService.default(orgId, 'organization');
+    const service = createResourceService(orgId, 'organization');
     const newPeriod = periods[newIndex];
 
     if (isNumber(this.state.selectedPeriodIndex)) {

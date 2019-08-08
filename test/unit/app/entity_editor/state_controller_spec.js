@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import flushPromises from '../../../helpers/flushPromises';
+import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
 
 describe('entityEditor/StateController', () => {
   beforeEach(function() {
@@ -7,6 +8,10 @@ describe('entityEditor/StateController', () => {
       goToPreviousSlideOrExit: sinon.stub(),
       showUnpublishedReferencesWarning: sinon.stub().returns(Promise.resolve(true))
     };
+
+    this.registerWarningSpy = sinon.stub();
+
+    this.showWarningsStub = sinon.stub().resolves();
 
     module('contentful/test', $provide => {
       $provide.constant('navigation/SlideInNavigator/index.es6', {
@@ -22,12 +27,25 @@ describe('entityEditor/StateController', () => {
       $provide.constant('app/entity_editor/UnpublishedReferencesWarning/index.es6', {
         showUnpublishedReferencesWarning: this.stubs.showUnpublishedReferencesWarning
       });
-    });
 
-    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
-    const { registerConstant } = this.$inject('NgRegistry.es6');
-    registerConstant('services/localeStore.es6', {
-      default: fakeLocaleStore
+      $provide.constant('services/localeStore.es6', {
+        default: createLocaleStoreMock()
+      });
+
+      $provide.value('analytics/Analytics.es6', {
+        track: sinon.stub()
+      });
+
+      $provide.value('access_control/AccessChecker', {
+        canPerformActionOnEntity: sinon.stub.returns(true)
+      });
+
+      $provide.value('app/entity_editor/PublicationWarnings/index.es6', {
+        create: () => ({
+          register: this.registerWarningSpy,
+          show: this.showWarningsStub
+        })
+      });
     });
 
     const createDocument = this.$inject('mocks/entityEditor/Document').create;
@@ -42,21 +60,15 @@ describe('entityEditor/StateController', () => {
     this.spaceContext.getId = () => 'spaceid';
     this.spaceContext.getEnvironmentId = () => 'envid';
 
-    this.$inject('access_control/AccessChecker').canPerformActionOnEntity = sinon
-      .stub()
-      .returns(true);
-
     this.analytics = this.$inject('analytics/Analytics.es6');
-    this.analytics.track = sinon.stub();
 
-    const N = this.$inject('app/entity_editor/Notifications.es6');
-    this.Notification = N.Notification;
+    this.Notification = this.$inject('app/entity_editor/Notifications.es6').Notification;
     this.notify = sinon.stub();
 
     this.assertErrorNotification = function(action, error) {
       sinon.assert.calledOnce(this.notify);
       const arg = this.notify.args[0][0];
-      expect(arg).toBeInstanceOf(N.Notification.Error);
+      expect(arg).toBeInstanceOf(this.Notification.Error);
       expect(arg.action).toBe(action);
       expect(arg.response).toBe(error);
     };
@@ -64,7 +76,7 @@ describe('entityEditor/StateController', () => {
     this.assertSuccessNotification = function(action) {
       sinon.assert.calledOnce(this.notify);
       const arg = this.notify.args[0][0];
-      expect(arg).toBeInstanceOf(N.Notification.Success);
+      expect(arg).toBeInstanceOf(this.Notification.Success);
       expect(arg.action).toBe(action);
     };
 

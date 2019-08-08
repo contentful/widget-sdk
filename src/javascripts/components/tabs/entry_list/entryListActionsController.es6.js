@@ -1,21 +1,15 @@
 import { registerController } from 'NgRegistry.es6';
 
+import * as Analytics from 'analytics/Analytics.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as logger from 'services/logger.es6';
+
 export default function register() {
   registerController('EntryListActionsController', [
     '$scope',
     '$controller',
     'spaceContext',
-    'access_control/AccessChecker/index.es6',
-    'analytics/Analytics.es6',
-    'services/logger.es6',
-    function EntryListActionsController(
-      $scope,
-      $controller,
-      spaceContext,
-      accessChecker,
-      Analytics,
-      logger
-    ) {
+    function EntryListActionsController($scope, $controller, spaceContext) {
       const listActionsController = $controller('ListActionsController', {
         $scope: $scope,
         entityType: 'Entry'

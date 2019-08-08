@@ -24,12 +24,7 @@ import TheLocaleStore from 'services/localeStore.es6';
 import { buildFieldsApi } from 'app/entity_editor/dataFields.es6';
 import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsExperiment.es6';
 
-const $controller = getModule('$controller');
-const spaceContext = getModule('spaceContext');
-const $rootScope = getModule('$rootScope');
-const entitySelector = getModule('entitySelector');
-const entityCreator = getModule('entityCreator');
-const Navigator = getModule('states/Navigator.es6');
+import * as Navigator from 'states/Navigator.es6';
 
 /**
  * @ngdoc type
@@ -60,6 +55,12 @@ const Navigator = getModule('states/Navigator.es6');
  *   Passed to FormWidgetsController to render field controls
  */
 export default async function create($scope, editorData, preferences, trackLoadEvent) {
+  const $controller = getModule('$controller');
+  const spaceContext = getModule('spaceContext');
+  const $rootScope = getModule('$rootScope');
+  const entitySelector = getModule('entitySelector');
+  const entityCreator = getModule('entityCreator');
+
   $scope.context = {};
   $scope.context.ready = true;
   $scope.editorData = editorData;

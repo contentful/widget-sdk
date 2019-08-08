@@ -3,13 +3,14 @@ import _ from 'lodash';
 import RoleRepository from './RoleRepository.es6';
 import { ADMIN_ROLE_ID } from './constants.es6';
 
+import createResourceService from 'services/ResourceService.es6';
+import * as FetchAll from 'data/CMA/FetchAll.es6';
+
 export default function register() {
   registerFactory('UserListHandler', [
     '$q',
     'spaceContext',
-    'data/CMA/FetchAll.es6',
-    'services/ResourceService.es6',
-    ($q, spaceContext, FetchAll, { default: createResourceService }) => {
+    ($q, spaceContext) => {
       const { fetchAll } = FetchAll;
 
       const ADMIN_ROLE_NAME = 'Administrator';

@@ -3,6 +3,8 @@ import _ from 'lodash';
 import { assetContentType } from 'legacy-client';
 import * as SystemFields from 'data/SystemFields.es6';
 
+import { buildQuery as buildQueryFromUISearch } from 'app/ContentList/Search/QueryBuilder.es6';
+
 export default function register() {
   /**
    * @ngdoc service
@@ -14,8 +16,7 @@ export default function register() {
   registerFactory('ListQuery', [
     '$q',
     'spaceContext',
-    'app/ContentList/Search/QueryBuilder.es6',
-    ($q, spaceContext, { buildQuery: buildQueryFromUISearch }) => {
+    ($q, spaceContext) => {
       const DEFAULT_ORDER = SystemFields.getDefaultOrder();
 
       return {

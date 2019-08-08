@@ -2,15 +2,17 @@ import { registerDirective } from 'NgRegistry.es6';
 import { CONTACT_US_SPACE_HOME } from 'featureFlags.es6';
 import * as Intercom from 'services/intercom.es6';
 
+import * as Analytics from 'analytics/Analytics.es6';
+import * as LD from 'utils/LaunchDarkly/index.es6';
+
 export default function register() {
   registerDirective('cfContactUsSpaceHome', [
     '$state',
-    'utils/LaunchDarkly/index.es6',
-    'analytics/Analytics.es6',
-    ($state, LD, Analytics) => ({
+    $state => ({
       restrict: 'E',
       template: '<react-component name="app/home/contactUs/Template.es6" props="contact.props"/>',
       controllerAs: 'contact',
+
       controller: [
         '$scope',
         function($scope) {

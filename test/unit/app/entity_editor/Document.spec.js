@@ -1,10 +1,15 @@
 import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
 import { deepFreeze } from 'utils/Freeze.es6';
+import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
 
 describe('entityEditor/Document', () => {
   beforeEach(function() {
-    module('contentful/test');
+    module('contentful/test', $provide => {
+      $provide.constant('services/localeStore.es6', {
+        default: createLocaleStoreMock()
+      });
+    });
 
     this.DocLoad = this.$inject('data/sharejs/Connection.es6').DocLoad;
     this.OtDoc = this.$inject('mocks/OtDoc');
@@ -33,13 +38,6 @@ describe('entityEditor/Document', () => {
       this.$apply();
       return doc;
     };
-
-    // TheLocaleStore has to be re-registered with the mock
-    const fakeLocaleStore = this.$inject('mocks/TheLocaleStore');
-    const { registerConstant } = this.$inject('NgRegistry.es6');
-    registerConstant('services/localeStore.es6', {
-      default: fakeLocaleStore
-    });
 
     this.localeStore = this.$inject('services/localeStore.es6').default;
 
