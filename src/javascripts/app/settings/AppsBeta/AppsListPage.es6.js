@@ -9,9 +9,9 @@ import {
   SkeletonText,
   SkeletonImage,
   Notification,
-  Typography,
   Heading,
-  Paragraph
+  Note,
+  TextLink
 } from '@contentful/forma-36-react-components';
 
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
@@ -19,6 +19,9 @@ import Icon from 'ui/Components/Icon.es6';
 import AdminOnly from 'app/common/AdminOnly.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import * as Telemetry from 'i13n/Telemetry.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
+import FeedbackDialog from 'app/common/FeedbackDialog.es6';
+import createMicroBackendsClient from 'MicroBackendsClient.es6';
 
 import AppListItem from './AppListItem.es6';
 
@@ -28,15 +31,72 @@ const styles = {
   }),
   list: css({
     marginBottom: tokens.spacing3Xl
+  }),
+  betaLabel: css({
+    marginRight: tokens.spacingS,
+    background: tokens.colorBlueDark,
+    color: tokens.colorWhite,
+    padding: tokens.spacing2Xs,
+    letterSpacing: tokens.letterSpacingWide,
+    lineHeight: '0.65rem',
+    fontSize: '0.65rem',
+    borderRadius: '3px',
+    textTransform: 'uppercase'
   })
 };
 
+const openFeedback = async ({ organizationId, userId }) => {
+  const { feedback, canBeContacted } = await ModalLauncher.open(({ isShown, onClose }) => (
+    <FeedbackDialog
+      key={Date.now()}
+      about="Apps"
+      isShown={isShown}
+      onCancel={() => onClose(false)}
+      onConfirm={onClose}
+    />
+  ));
+
+  if (feedback) {
+    const client = createMicroBackendsClient({ backendName: 'feedback' });
+
+    const res = await client.call('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        feedback: `Beta apps feedback:\n${feedback}`,
+        about: 'Apps',
+        target: 'extensibility',
+        canBeContacted,
+        // add contact details only if user agreed to be contacted
+        ...(canBeContacted ? { organizationId, userId } : {})
+      })
+    });
+
+    if (res.ok) {
+      Notification.success('Thank you for your feedback!');
+    } else {
+      Notification.error("We couldn't send your feedback. Please try again.");
+    }
+  }
+};
+
+const Header = () => (
+  <Heading>
+    Apps <span className={styles.betaLabel}>Beta</span>
+  </Heading>
+);
+
 const AppsListShell = props => (
   <Workbench>
-    <Workbench.Header title="Apps" icon={<Icon name="page-apps" scale="1" />} />
+    <Workbench.Header title={<Header />} icon={<Icon name="page-apps" scale="1" />} />
     <Workbench.Content type="text">
+      <Note className={styles.intro}>
+        Share your feedback about apps.{' '}
+        <TextLink onClick={() => openFeedback(props)}>Give feedback</TextLink>
+      </Note>
       <p className={styles.intro}>
-        Extend the platform and integrate with services you’re using by adding Apps.
+        Apps help you extend the functionality, easily connect with other services you are using,
+        including internal ones you’ve built.
       </p>
       <div>{props.children}</div>
     </Workbench.Content>
@@ -67,11 +127,12 @@ const AppsListPageLoading = () => {
   );
 };
 
-const prepareApp = app => {
+const prepareApp = (isDevApp = false) => app => {
   return {
     id: app.sys.id,
     title: app.extensionDefinition.name,
-    installed: !!app.extension
+    installed: !!app.extension,
+    isDevApp
   };
 };
 
@@ -81,7 +142,10 @@ export default class AppsListPage extends React.Component {
     repo: PropTypes.shape({
       getApps: PropTypes.func.isRequired,
       getDevApps: PropTypes.func.isRequired
-    }).isRequired
+    }).isRequired,
+    organizationId: PropTypes.string.isRequired,
+    spaceId: PropTypes.string.isRequired,
+    userId: PropTypes.string.isRequired
   };
 
   state = {};
@@ -93,10 +157,15 @@ export default class AppsListPage extends React.Component {
         this.props.repo.getDevApps()
       ]);
 
+      const preparedApps = apps.map(prepareApp());
+      const preparedDevApps = devApps.map(prepareApp(true));
+
+      const formattedApps = [...preparedApps, ...preparedDevApps];
+
       this.setState({
         ready: true,
-        apps: apps.map(prepareApp),
-        devApps: devApps.map(prepareApp)
+        availableApps: formattedApps.filter(app => !app.installed),
+        installedApps: formattedApps.filter(app => app.installed)
       });
     } catch (err) {
       Telemetry.count('apps.list-loading-failed');
@@ -115,33 +184,28 @@ export default class AppsListPage extends React.Component {
   }
 
   renderList() {
-    const { apps, devApps } = this.state;
+    const { organizationId, spaceId, userId } = this.props;
+    const { availableApps, installedApps } = this.state;
 
     return (
-      <AppsListShell>
-        {apps.length > 0 && (
-          <div className={styles.list}>
-            {apps.map(app => (
-              <AppListItem key={app.id} app={app} />
-            ))}
-          </div>
-        )}
-        {devApps.length > 0 && (
+      <AppsListShell organizationId={organizationId} spaceId={spaceId} userId={userId}>
+        {installedApps.length > 0 && (
           <>
-            <Typography>
-              <Heading element="h2">Apps in development mode</Heading>
-              <Paragraph>
-                Apps that are currently in development in your organization. Please note that this
-                list is just a list of <code>ExtensionDefinition</code> entities in your
-                organization. Not all of them have to be Apps.
-              </Paragraph>
-            </Typography>
+            <Heading element="h2">Installed</Heading>
             <div className={styles.list}>
-              {devApps.map(app => (
+              {installedApps.map(app => (
                 <AppListItem key={app.id} app={app} />
               ))}
             </div>
           </>
+        )}
+        <Heading element="h2">Available</Heading>
+        {availableApps.length > 0 && (
+          <div className={styles.list}>
+            {availableApps.map(app => (
+              <AppListItem key={app.id} app={app} />
+            ))}
+          </div>
         )}
       </AppsListShell>
     );

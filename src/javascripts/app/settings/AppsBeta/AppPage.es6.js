@@ -22,6 +22,7 @@ import { installOrUpdate, uninstall } from './AppOperations.es6';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus.es6';
 import UninstallModal from './UninstallModal.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import AppIcon from '../apps/_common/AppIcon.es6';
 
 const BUSY_STATE_INSTALLATION = 'installation';
 const BUSY_STATE_UPDATE = 'update';
@@ -61,6 +62,10 @@ const styles = {
     borderRadius: '25px',
     fontSize: '24px',
     backgroundColor: 'white'
+  }),
+  appIcon: css({
+    marginRight: tokens.spacingXs,
+    verticalAlign: 'middle'
   })
 };
 
@@ -260,7 +265,9 @@ export default class AppRoute extends Component {
     const { isInstalled, extensionDefinition } = this.state;
     return (
       <>
-        <Heading>{extensionDefinition.name}</Heading>
+        <Heading>
+          <AppIcon appId={this.props.appId} className={styles.appIcon} /> {extensionDefinition.name}
+        </Heading>
         {isInstalled ? <InstalledTag /> : <NotInstalledTag />}
       </>
     );

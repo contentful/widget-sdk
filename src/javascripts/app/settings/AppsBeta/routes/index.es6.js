@@ -22,7 +22,10 @@ export default {
         (spaceContext, $state) => {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
-            repo: createAppsRepo(spaceContext.extensionDefinitionLoader, spaceContext.endpoint)
+            repo: createAppsRepo(spaceContext.extensionDefinitionLoader, spaceContext.endpoint),
+            organizationId: spaceContext.organization.sys.id,
+            spaceId: spaceContext.space.data.sys.id,
+            userId: spaceContext.user.sys.id
           };
         }
       ]
