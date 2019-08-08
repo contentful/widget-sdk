@@ -1,25 +1,16 @@
 import _ from 'lodash';
 
 import { stateName, getState } from 'data/CMA/EntityState.es6';
+import * as EntityResolver from 'data/CMA/EntityResolver.es6';
 
 import { getModule } from 'NgRegistry.es6';
 
 export function fetchEntities({ entryIds, assetIds }) {
-  return Promise.all([
-    fetchEntitiesWithIds('Entry', entryIds),
-    fetchEntitiesWithIds('Asset', assetIds)
-  ]);
-}
-
-async function fetchEntitiesWithIds(type, ids) {
   const spaceContext = getModule('spaceContext');
-  const EntityResolver = getModule('data/CMA/EntityResolver.es6');
-
-  const entityResolver = EntityResolver.forType(type, spaceContext.cma);
-
-  const results = await entityResolver.load(ids);
-
-  return results.map(([, entity]) => entity);
+  return Promise.all([
+    EntityResolver.fetchForType(spaceContext, 'Entry', entryIds),
+    EntityResolver.fetchForType(spaceContext, 'Asset', assetIds)
+  ]);
 }
 
 export async function getEntityData(entity, localeCode) {

@@ -6,6 +6,7 @@ import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
 import createSnapshotExtensionBridge from 'widgets/bridges/createSnapshotExtensionBridge.es6';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import { userInputFromDatetime } from 'app/widgets/datetime/data.es6';
+import * as EntityResolver from 'data/CMA/EntityResolver.es6';
 
 export default function register() {
   /**
@@ -106,8 +107,8 @@ export default function register() {
   registerDirective('cfSnapshotPresenterLink', [
     'spaceContext',
     'EntityHelpers',
-    'data/CMA/EntityResolver.es6',
-    (spaceContext, EntityHelpers, EntityResolver) => ({
+
+    (spaceContext, EntityHelpers) => ({
       restrict: 'E',
       template:
         '<cf-entity-link ' +
@@ -124,11 +125,9 @@ export default function register() {
           const links = Array.isArray($scope.value) ? $scope.value : [$scope.value];
           const ids = links.map(link => link.sys.id);
 
-          const store = EntityResolver.forType($scope.linkType, spaceContext.cma);
-
-          store.load(ids).then(results => {
-            $scope.models = results.map(result => ({
-              entity: result[1]
+          EntityResolver.fetchForType(spaceContext, $scope.linkType, ids).then(results => {
+            $scope.models = results.map(entity => ({
+              entity
             }));
           });
 

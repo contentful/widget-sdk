@@ -16,7 +16,9 @@ export const cma = {
   createExtension: jest.fn().mockResolvedValue({}),
   deleteExtension: jest.fn().mockResolvedValue({}),
   getExtensions: jest.fn().mockResolvedValue({ items: [] }),
-  getExtension: jest.fn().mockResolvedValue({})
+  getExtension: jest.fn().mockResolvedValue({}),
+  getEntries: jest.fn().mockResolvedValue({ items: [] }),
+  getAssets: jest.fn().mockResolvedValue({ items: [] })
 };
 
 export const webhookRepo = {
