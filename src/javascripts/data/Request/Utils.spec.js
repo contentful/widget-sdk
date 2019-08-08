@@ -5,21 +5,20 @@ describe('data/Request/Utils.es6', () => {
   describe('getEndpoint(url)', () => {
     const urlsByExpectedEndpoint = {
       '/spaces': ['https://api.contentful.com/spaces'],
-      // TODO: Fix this to be `/spaces/:id`
-      '/spaces/some-id': ['https://api.contentful.com/spaces/some-id'],
+      '/spaces/:id': ['https://api.contentful.com/spaces/id'],
       '/environments': ['https://api.contentful.com/spaces/space-id/environments'],
-      // TODO: Fix this to be `/environments/:id`
-      '/undefined': ['https://api.contentful.com/spaces/space-id/environments/some-env-id'],
+      '/environments/:id': ['https://api.contentful.com/spaces/space-id/environments/some-env-id'],
       '/organization_memberships': ['https://api.contentful.com/organization_memberships'],
-      // TODO: Fix this to be `/organization_memberships/:id`
-      '/organization_memberships/some-id': [
-        'https://api.contentful.com/organization_memberships/some-id'
+      '/organization_memberships/:id': [
+        'https://api.contentful.com/organization_memberships/some-id',
+        'https://api.contentful.com/organization_memberships/some-id/THIS-WILL-BE-IGNORED'
       ],
       '/enforcements': ['//foo.bar/spaces/id/enforcements'],
       '/content_types': [
         'http://foo/spaces/space-id/content_types',
         'http://api.flinkly.com/spaces/space-id/environments/id/content_types'
       ],
+      '/content_types/:id': ['http://foo/spaces/space-id/content_types/some-id'],
       '/entries': [
         'https://api.contentful.com/spaces/space-id/entries',
         'https://api.flinkly.com/spaces/space-id/environments/id/entries'
@@ -30,9 +29,9 @@ describe('data/Request/Utils.es6', () => {
         'https://api.contentful.com/spaces/id/entries/id-not-an-experiment.php',
         'https://api.flinkly.com/spaces/id/environments/id/entries/id',
         'https://api.flinkly.com/spaces/id/environments/id/entries/id/THIS-WILL-BE-IGNORED',
-        // TODO: Fix /comments cases as they currently count towards wrong endpoint!
-        'https://api.flinkly.com/spaces/id/entries/id/comments',
-        'https://api.flinkly.com/spaces/id/entries/id/comments/id'
+        // TODO: We probably want these as separate path just like comments:
+        'https://api.flinkly.com/spaces/id/environments/id/entries/id/snapshots',
+        'https://api.flinkly.com/spaces/id/environments/id/entries/id/snapshots/id'
       ],
       '/entries/:id/edit.php': [
         'https://api.flinkly.com/spaces/space-id/entries/some-entry_ID/edit.php?throttle=1000',
@@ -44,6 +43,11 @@ describe('data/Request/Utils.es6', () => {
       ],
       '/assets/:id/experiment.php': [
         'https://api.flinkly.com/spaces/space-id/assets/some-asset_ID/experiment.php'
+      ],
+      '/:entity/:id/comments': ['https://api.flinkly.com/spaces/id/entries/id/comments'],
+      '/:entity/:id/comments/:id': [
+        'https://api.flinkly.com/spaces/id/entries/some-id/comments/some-id',
+        'https://api.flinkly.com/spaces/id/assets/some-id/comments/id/THIS-WILL-BE-IGNORED'
       ]
     };
 
