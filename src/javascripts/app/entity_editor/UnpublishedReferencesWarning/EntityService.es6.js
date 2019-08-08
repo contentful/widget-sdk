@@ -1,41 +1,29 @@
 import _ from 'lodash';
-import * as EndpointFactory from 'data/EndpointFactory.es6';
+
 import { stateName, getState } from 'data/CMA/EntityState.es6';
 
 import { getModule } from 'NgRegistry.es6';
-const EntityHelpers = getModule('EntityHelpers');
 
-export function fetchEntities({ spaceId, environmentId, entryIds, assetIds }) {
-  const spaceEndpoint = EndpointFactory.createSpaceEndpoint(spaceId, environmentId);
+export function fetchEntities({ entryIds, assetIds }) {
   return Promise.all([
-    fetchEntitiesWithIds(spaceEndpoint, 'Entry', entryIds),
-    fetchEntitiesWithIds(spaceEndpoint, 'Asset', assetIds)
+    fetchEntitiesWithIds('Entry', entryIds),
+    fetchEntitiesWithIds('Asset', assetIds)
   ]);
 }
 
-async function fetchEntitiesWithIds(endpoint, type, ids) {
-  if (ids.length === 0) {
-    return [];
-  }
-  let path;
-  if (type === 'Entry') {
-    path = ['entries'];
-  } else {
-    path = ['assets'];
-  }
+async function fetchEntitiesWithIds(type, ids) {
+  const spaceContext = getModule('spaceContext');
+  const EntityResolver = getModule('data/CMA/EntityResolver.es6');
 
-  const result = await endpoint({
-    method: 'GET',
-    path,
-    query: {
-      'sys.id[in]': _.uniq(ids).join(',')
-    }
-  });
+  const entityResolver = EntityResolver.forType(type, spaceContext.cma);
 
-  return result.items;
+  const results = await entityResolver.load(ids);
+
+  return results.map(([, entity]) => entity);
 }
 
 export async function getEntityData(entity, localeCode) {
+  const EntityHelpers = getModule('EntityHelpers');
   const entityHelpers = EntityHelpers.newForLocale(localeCode);
 
   const [title, description, file, status] = await Promise.all([
