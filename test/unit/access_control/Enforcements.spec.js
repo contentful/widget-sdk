@@ -1,6 +1,6 @@
 'use strict';
 
-fdescribe('access_control/Enforcements.es6', () => {
+describe('access_control/Enforcements.es6', () => {
   let enforcements;
   let OrganizationRoles;
   let spaceMock;

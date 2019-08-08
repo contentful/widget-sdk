@@ -3,10 +3,10 @@
 import _ from 'lodash';
 
 describe('Section Access', () => {
-  let sectionAccess, accessChecker, spaceContext, visibilityStub;
+  let sectionAccess, spaceContext, visibilityStub;
 
   afterEach(() => {
-    sectionAccess = accessChecker = spaceContext = visibilityStub = null;
+    sectionAccess = spaceContext = visibilityStub = null;
   });
 
   const allTrue = {
@@ -17,14 +17,17 @@ describe('Section Access', () => {
     settings: true
   };
 
-  beforeEach(function() {
+  beforeEach(async function() {
     module('contentful/test');
 
-    sectionAccess = this.$inject('access_control/SectionAccess.es6');
-    accessChecker = this.$inject('access_control/AccessChecker/index.es6');
-    spaceContext = this.$inject('spaceContext');
+    sectionAccess = await this.system.import('access_control/SectionAccess.es6');
 
-    accessChecker.getSectionVisibility = visibilityStub = sinon.stub().returns(allTrue);
+    visibilityStub = sinon.stub().returns(allTrue);
+
+    await this.system.override('access_control/AccessChecker/index.es6', {
+      getSectionVisibility: visibilityStub
+    });
+    spaceContext = this.$inject('spaceContext');
   });
 
   describe('#getFirstAccessibleSref', () => {

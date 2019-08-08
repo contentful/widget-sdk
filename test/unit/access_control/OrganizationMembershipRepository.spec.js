@@ -1,9 +1,10 @@
 import { times } from 'lodash';
 
 describe('access_control/OrganizationMembershipRepository.es6', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     module('contentful/test');
-    this.OrganizationMembershipRepository = this.$inject(
+
+    this.OrganizationMembershipRepository = await this.system.import(
       'access_control/OrganizationMembershipRepository.es6'
     );
     this.endpoint = sinon.stub();
