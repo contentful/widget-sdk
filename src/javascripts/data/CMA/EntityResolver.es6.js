@@ -1,99 +1,27 @@
-/**
- * @ngdoc service
- * @name data/CMA/EntityResolver
- * @description
- * Load and cache the payload of entities for given IDs
- *
- * Used by the cfReferenceEditor and cfSnapshotPresentLink directives.
- */
-import { caseof } from 'sum-types/caseof-eq';
 import { chunk, uniq, flatten } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
-
-const $q = getModule('$q');
 
 const MAX_IN_IDS = 50;
 
 /**
- * @ngdoc method
- * @name data/CMA/EntityResolver#forType
  *
- * @param {string} type
- *   Either 'Entry' or 'Asset'
- * @param {API.Client} space
- *   Same interface as defined by `data/ApiClient`
- * @returns {EntityResolver}
+ *
+ * @export
+ * @param {*} spaceContext
+ * @param {'Entry' | 'Asset'} type
+ * @param {Array<string>} ids
+ * @returns
  */
-export function forType(type, space) {
-  return caseof(type, [
-    ['Entry', () => create(query => space.getEntries(query))],
-    ['Asset', () => create(query => space.getAssets(query))]
-  ]);
-}
-
-function create(fetch) {
-  let entitiesById = {};
-
-  /**
-   * @ngdoc type
-   * @name EntityResolver
-   * @description
-   * Resolve entity payloads for IDs with builtin caching
-   */
-  return {
-    load,
-    addEntity,
-    reset
-  };
-
-  /**
-   * @ngdoc type
-   * @name EntityResolver#load
-   * @description
-   * Given a list of entity IDs this method fetches the entity payload from
-   * the API.
-   *
-   * The method resolves to alist of `[id, entity]` pairs where `entity` is the
-   * payload corresponding to the ID. If the entity does not exist on the
-   * server the `entity` is `null`. If an ID has been requested before the
-   * method will not refetch it but load it from its cache. The same holds if
-   * an entity has been added through the `add()` method.
-   *
-   * The order of the IDs in the output list is the same as the order of `ids`
-   * argument.
-   *
-   * @param {string[]} ids
-   * @returns {Promise<[[string, API.Entity?]]>}
-   */
-  function load(ids) {
-    const newIDs = ids.filter(
-      (
-        id // Entities that do not exist on the server have value
-      ) =>
-        // 'undefined'. We do not want to refetch them.
-        !(id in entitiesById)
-    );
-
-    return getEntities(fetch, newIDs).then(entities => {
-      entities.forEach(addEntity);
-      return ids.map(id => [id, entitiesById[id]]);
-    });
+export function fetchForType(spaceContext, type, ids) {
+  let fetch;
+  if (type === 'Entry') {
+    fetch = query => spaceContext.cma.getEntries(query);
+  } else if (type === 'Asset') {
+    fetch = query => spaceContext.cma.getAssets(query);
+  } else {
+    throw new Error(`Unknown entity type ${type}.`);
   }
 
-  /**
-   * @ngdoc type
-   * @name EntityResolver#addEntity
-   * @description
-   * Add an entity to the resolver cache. Subsequent `load()` calls will use
-   * the added entity.
-   */
-  function addEntity(entity) {
-    entitiesById[entity.sys.id] = entity;
-  }
-
-  function reset() {
-    entitiesById = {};
-  }
+  return getEntities(fetch, ids);
 }
 
 /**
@@ -115,21 +43,19 @@ function create(fetch) {
 function getEntities(fetch, ids) {
   const queries = chunk(uniq(ids), MAX_IN_IDS).map(ids =>
     fetch({
-      'sys.id[in]': ids.join(','),
-      limit: MAX_IN_IDS
-    }).then(
-      response => {
+      'sys.id[in]': ids.join(',')
+    })
+      .then(response => {
         return response.items;
-      },
-      errorResponse => {
-        if (errorResponse.status === 404) {
+      })
+      .catch(error => {
+        if (error.status === 404) {
           return [];
         } else {
-          return $q.reject(errorResponse);
+          return Promise.reject(error);
         }
-      }
-    )
+      })
   );
 
-  return $q.all(queries).then(flatten);
+  return Promise.all(queries).then(flatten);
 }
