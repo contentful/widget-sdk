@@ -27,7 +27,6 @@ export default function makeBase(stateDefinition) {
 function wrapTemplate(stateDefinition) {
   const loadingText = stateDefinition.loadingText || 'Please hold on…';
   let template = stateDefinition.template;
-
   if (typeof template === 'undefined') {
     template = [];
   }
