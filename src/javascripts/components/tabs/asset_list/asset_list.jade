@@ -1,4 +1,3 @@
-include ../pluralize_entity.mixin.jade
 include ../../shared/table_pattern.mixin.jade
 
 react-component(
@@ -45,7 +44,9 @@ header.workbench-header
 
   .workbench-main__right-content
     .search-results__count(ng-show="paginator.getTotal() > 0")
-      +pluralize-entity("asset", "paginator.getTotal()", "found")
+      react-component(
+        name="components/tabs/PluralizeEntityMessage.es6"
+        props="{entityType: 'asset', count: paginator.getTotal(), restOfTheMsg: 'found'}")
 
     react-component(
       ng-if="!isLegacyOrganization && paginator.getTotal() > 0"
@@ -75,7 +76,9 @@ header.workbench-header
       .table__bulk-actions(ng-hide="selection.isEmpty()")
         .workbench-actions(ng-controller="AssetListActionsController")
           .workbench-actions__label
-            +pluralize-entity("asset", "selection.size()", "selected: ")
+            react-component(
+              name="components/tabs/PluralizeEntityMessage.es6"
+              props="{entityType: 'asset', count: selection.size(), restOfTheMsg: 'selected:'}")
 
           span(ng-show="!showArchive() && !showUnarchive() && !showDelete() && !showPublish() && !showUnpublish()")
             | No actions possible
@@ -97,7 +100,11 @@ header.workbench-header
             aria-label="delete")
             | Delete
           .delete-confirm(cf-context-menu="bottom")
-            p You are about to delete #[+pluralize-entity("asset", "selection.size()")]
+            p 
+              | You are about to delete 
+              react-component(
+                name="components/tabs/PluralizeEntityMessage.es6"
+                props="{entityType: 'asset', count: selection.size()}")
             button.btn-caution(type="button" ng-click="deleteSelected()") Delete
             button.btn-secondary-action(type="button") Don't Delete
           span.text-link--constructive(type="submit"
