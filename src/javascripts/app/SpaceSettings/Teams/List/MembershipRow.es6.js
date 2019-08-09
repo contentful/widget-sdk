@@ -30,6 +30,16 @@ import RemoveLastAdminMembershipConfirmation from './RemoveLastAdminMembershipCo
 
 const navigateToDefaultLocation = () => window.location.replace(href({ path: ['^', '^'] }));
 
+const getRoleNames = ({ roles, admin }) => {
+  if (admin) {
+    return 'Admin';
+  }
+  if (!roles || roles.length === 0) {
+    return <em>deleted role</em>;
+  }
+  return joinWithAnd(map(roles, 'name'));
+};
+
 const MembershipRow = ({
   teamSpaceMembership,
   teamSpaceMemberships,
@@ -54,7 +64,7 @@ const MembershipRow = ({
     admin
   } = teamSpaceMembership;
 
-  const roleIds = map(isEmpty(roles) ? [ADMIN_ROLE] : roles, 'sys.id');
+  const roleIds = map(admin ? [ADMIN_ROLE] : roles, 'sys.id');
   const [selectedRoleIds, setSelectedRoles] = useState(roleIds);
   const [showUpdateConfirmation, setShowUpdateConfirmation] = useState(false);
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
@@ -212,7 +222,7 @@ const MembershipRow = ({
       ) : (
         <>
           <TableCell className={cx(styles.rolesCell, styles.cell)} testId="roles-cell">
-            {isEmpty(roles) ? 'Admin' : joinWithAnd(map(roles, 'name'))}
+            {getRoleNames({ roles, admin })}
           </TableCell>
           <TableCell>
             {!readOnly && (
