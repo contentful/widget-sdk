@@ -43,6 +43,14 @@ const userCancellation = userBase({
   url: '/user_cancellation{pathSuffix:PathSuffix}'
 });
 
+function reactUserBase(definition) {
+  return reactStateWrapper({
+    loadingText: 'Loading your account…',
+    onEnter: [noop],
+    ...definition
+  });
+}
+
 function userBase(definition) {
   return iframeStateWrapper({
     loadingText: 'Loading your account…',
