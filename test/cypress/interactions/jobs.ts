@@ -1,15 +1,10 @@
-import {
-  defaultSpaceId,
-  defaultEntryId,
-  defaultJobId,
-  defaultHeader
-} from '../util/requests';
+import { defaultSpaceId, defaultEntryId, defaultJobId, defaultHeader } from '../util/requests';
 import { Query, RequestOptions } from '@pact-foundation/pact-web';
 
 const empty = require('../fixtures/responses/empty.json');
 export const severalJobsResponseBody = require('../fixtures/responses/jobs-several.json');
 const allJobsQuery = {
-  order: '-sys.scheduledAt',
+  order: 'sys.scheduledAt',
   'sys.status': 'pending'
 };
 const entryIdQuery = {
@@ -32,7 +27,7 @@ function queryJobsForDefaultSpaceRequest(query: Query): RequestOptions {
     method: 'GET',
     path: `/spaces/${defaultSpaceId}/environments/master/jobs`,
     headers: {
-      ...defaultHeader, 
+      ...defaultHeader,
       'x-contentful-enable-alpha-feature': 'scheduled-jobs'
     },
     query
@@ -82,7 +77,7 @@ export const queryAllJobsForDefaultSpace = {
 
     return '@queryAllJobsForDefaultSpace';
   }
-}
+};
 
 export const queryAllScheduledJobsForDefaultEntry = {
   willFindNone() {
@@ -175,7 +170,7 @@ export const queryAllScheduledJobsForDefaultEntry = {
 
     return '@queryAllScheduledJobsForDefaultEntry';
   }
-}
+};
 
 export const cancelDefaultJobInDefaultSpace = {
   willSucceed() {
@@ -186,7 +181,7 @@ export const cancelDefaultJobInDefaultSpace = {
       withRequest: {
         method: 'DELETE',
         path: `/spaces/${defaultSpaceId}/environments/master/jobs/${defaultJobId}`,
-        headers: { 
+        headers: {
           ...defaultHeader,
           'x-contentful-enable-alpha-feature': 'scheduled-jobs'
         }
@@ -197,9 +192,9 @@ export const cancelDefaultJobInDefaultSpace = {
       }
     }).as('cancelDefaultJobInDefaultSpace');
 
-    return '@cancelDefaultJobInDefaultSpace';;
+    return '@cancelDefaultJobInDefaultSpace';
   }
-}
+};
 
 export const createScheduledPublicationForDefaultSpace = {
   willSucceed() {
@@ -229,6 +224,6 @@ export const createScheduledPublicationForDefaultSpace = {
       }
     }).as('createScheduledPublicationForDefaultSpace');
 
-    return '@createScheduledPublicationForDefaultSpace';;
+    return '@createScheduledPublicationForDefaultSpace';
   }
-}
+};

@@ -11,6 +11,7 @@ import {
   TabPanel,
   Tag
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import JobsTable from './JobsTable.es6';
 
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
@@ -35,6 +36,12 @@ const styles = {
   }),
   workbenchTitle: css({
     marginRight: '0.5rem'
+  }),
+  workbenchContent: css({
+    padding: tokens.spacingXl
+  }),
+  tabPanel: css({
+    paddingTop: tokens.spacingL
   })
 };
 
@@ -60,7 +67,7 @@ const JobsListShell = props => (
       <Workbench.Title className={styles.workbenchTitle}>Scheduled Content</Workbench.Title>
       <Tag className={styles.alphaTag}>ALPHA</Tag>
     </Workbench.Header>
-    <Workbench.Content className="f36-padding--xl">
+    <Workbench.Content className={styles.workbenchContent}>
       <div>{props.children}</div>
     </Workbench.Content>
   </Workbench>
@@ -108,7 +115,7 @@ export default class JobsListPage extends Component {
       },
       query: {
         'sys.status': 'pending',
-        order: '-sys.scheduledAt'
+        order: 'sys.scheduledAt'
       }
     },
     completedJobs: {
@@ -119,18 +126,20 @@ export default class JobsListPage extends Component {
         text: 'Successfully published entries will show up here'
       },
       query: {
-        'sys.status': 'done'
+        'sys.status': 'done',
+        order: '-sys.scheduledAt'
       }
     },
     erroredJobs: {
       title: 'Failed',
       description: 'Entries that failed to publish',
       emptyStateMessage: {
-        title: 'Nothing here :)',
+        title: 'Nothing here',
         text: 'Scheduled entries that have failed to publish will show up here.'
       },
       query: {
-        'sys.status': 'failed'
+        'sys.status': 'failed',
+        order: '-sys.scheduledAt'
       }
     }
   };
@@ -168,7 +177,7 @@ export default class JobsListPage extends Component {
     return (
       <div>
         {this.renderTabNavigation()}
-        <TabPanel className="f36-padding-top--l" id={activeTab}>
+        <TabPanel className={styles.tabPanel} id={activeTab}>
           <JobsFetcher
             key={activeTab}
             spaceId={this.props.spaceId}
