@@ -22,8 +22,12 @@ import * as Telemetry from 'i13n/Telemetry.es6';
 import { installOrUpdate, uninstall } from './AppOperations.es6';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus.es6';
 import UninstallModal from './UninstallModal.es6';
+import AppPermissions from './AppPermissions.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import AppIcon from '../apps/_common/AppIcon.es6';
+import ClientStorage from 'TheStore/ClientStorage.es6';
+
+const sessionStorage = ClientStorage('session');
 
 const BUSY_STATE_INSTALLATION = 'installation';
 const BUSY_STATE_UPDATE = 'update';
@@ -35,17 +39,16 @@ const BUSY_STATE_TO_TEXT = {
   [BUSY_STATE_UNINSTALLATION]: 'Uninstalling the app...'
 };
 
-// eslint-disable-next-line no-restricted-syntax
-const fadeIn = keyframes`
-  from {
-    transform: translateY(50px);
-    opacity: 0;
+const fadeIn = keyframes({
+  from: {
+    transform: 'translateY(50px)',
+    opacity: '0'
+  },
+  to: {
+    transform: 'translateY(0)',
+    opacity: '1'
   }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }`;
+});
 
 const styles = {
   renderer: css({
@@ -92,8 +95,25 @@ const styles = {
   appIcon: css({
     marginRight: tokens.spacingXs,
     verticalAlign: 'middle'
+  }),
+  appPermissions: css({
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+    paddingTop: '100px'
   })
 };
+
+function isAppAlreadyAuthorize(appId) {
+  try {
+    const perms = JSON.parse(sessionStorage.get('appPermissions'));
+
+    return perms[appId] || false;
+  } catch (e) {
+    return false;
+  }
+}
 
 export default class AppRoute extends Component {
   static propTypes = {
@@ -117,7 +137,7 @@ export default class AppRoute extends Component {
     }).isRequired
   };
 
-  state = { ready: false };
+  state = { ready: false, acceptedPermissions: isAppAlreadyAuthorize(this.props.appId) };
 
   // There are no parameters in the app location
   parameters = {
@@ -366,11 +386,31 @@ export default class AppRoute extends Component {
     );
   }
 
+  onAuthorize = () => {
+    this.setState({ acceptedPermissions: true });
+  };
+
   render() {
-    const { ready, extensionDefinition } = this.state;
+    const { ready, extensionDefinition, isInstalled, acceptedPermissions } = this.state;
 
     if (!ready) {
       return this.renderLoading();
+    }
+
+    if (!isInstalled && !acceptedPermissions) {
+      return (
+        <Workbench>
+          <Workbench.Header title={this.renderTitle()} onBack={this.props.goBackToList} />
+          <Workbench.Content type="text">
+            <AppPermissions
+              onAuthorize={this.onAuthorize}
+              onCancel={this.props.goBackToList}
+              appId={this.props.appId}
+              appName={extensionDefinition.name}
+            />
+          </Workbench.Content>
+        </Workbench>
+      );
     }
 
     return (

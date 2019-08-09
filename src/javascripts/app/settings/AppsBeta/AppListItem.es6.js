@@ -47,11 +47,14 @@ export default class AppListItem extends Component {
       title: PropTypes.string.isRequired,
       installed: PropTypes.bool.isRequired,
       isDevApp: PropTypes.bool
-    })
+    }),
+    openDetailModal: PropTypes.func.isRequired
   };
 
   render() {
-    const { app } = this.props;
+    const { app, openDetailModal } = this.props;
+
+    const openDetailsFunc = () => openDetailModal(app);
 
     return (
       <div className={styles.item}>
@@ -59,7 +62,7 @@ export default class AppListItem extends Component {
           <Heading element="h3" className={styles.titleText}>
             <StateLink to="^.detail" params={{ appId: app.id }}>
               {({ onClick }) => (
-                <div onClick={onClick} className={styles.appLink}>
+                <div onClick={app.installed ? onClick : openDetailsFunc} className={styles.appLink}>
                   <AppIcon appId={app.id} className={styles.icon} size="small" /> {app.title}{' '}
                   {!!app.isDevApp && <Tag>Private</Tag>}
                 </div>
@@ -68,14 +71,9 @@ export default class AppListItem extends Component {
           </Heading>
         </div>
         <div className={styles.actions}>
-          <StateLink to="^.detail" params={{ appId: app.id }}>
-            {({ onClick }) => (
-              // todo: EXT-933 replace this `onClick` with the details modal
-              <TextLink onClick={onClick} linkType="primary">
-                About
-              </TextLink>
-            )}
-          </StateLink>
+          <TextLink onClick={openDetailsFunc} linkType="primary">
+            About
+          </TextLink>
         </div>
       </div>
     );

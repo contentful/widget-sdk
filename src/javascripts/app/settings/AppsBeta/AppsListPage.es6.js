@@ -24,6 +24,8 @@ import FeedbackDialog from 'app/common/FeedbackDialog.es6';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
 
 import AppListItem from './AppListItem.es6';
+import AppDetailsModal from './AppDetailsModal.es6';
+import AppIcon from '../apps/_common/AppIcon.es6';
 
 const styles = {
   intro: css({
@@ -43,6 +45,36 @@ const styles = {
     borderRadius: '3px',
     textTransform: 'uppercase'
   })
+};
+
+const openDetailModal = app => {
+  ModalLauncher.open(({ isShown, onClose }) => (
+    <AppDetailsModal
+      isShown={isShown}
+      onClose={onClose}
+      app={{
+        installed: app.installed,
+        appId: app.id,
+        appName: app.title,
+        author: {
+          name: 'Contentful',
+          url: 'https://contentful.com',
+          image: <AppIcon appId="contentful" size="default" />
+        },
+        links: [
+          { title: 'Help documentation', url: 'https://contentful.com' },
+          { title: 'View on Github', url: 'https://contentful.com' }
+        ],
+        categories: ['Featured'],
+        description: `
+          <p>The Optimizely app makes it easier to power experiments with structured content. It is connecting your content in Contentful with experiments in Optimizely. This enables practitioners to easily experiment with their content and run more experiments and create better insights faster.</p>
+          <h2>Overview</h2>
+          <p>Powering experiments with content from Contentful is a matter of connecting both APIs together. During rendering we can ask Optimizely to choose a variation based on targeting criteria which then allows to pick matching content from Contentful for that user.</p>
+          <p>However, this setup is fairly manual and tricky to manage as it usually requires manual copying of configuration between interfaces.</p>
+        `
+      }}
+    />
+  ));
 };
 
 const openFeedback = async ({ organizationId, userId }) => {
@@ -194,7 +226,7 @@ export default class AppsListPage extends React.Component {
             <Heading element="h2">Installed</Heading>
             <div className={styles.list}>
               {installedApps.map(app => (
-                <AppListItem key={app.id} app={app} />
+                <AppListItem key={app.id} app={app} openDetailModal={openDetailModal} />
               ))}
             </div>
           </>
@@ -203,7 +235,7 @@ export default class AppsListPage extends React.Component {
         {availableApps.length > 0 && (
           <div className={styles.list}>
             {availableApps.map(app => (
-              <AppListItem key={app.id} app={app} />
+              <AppListItem key={app.id} app={app} openDetailModal={openDetailModal} />
             ))}
           </div>
         )}

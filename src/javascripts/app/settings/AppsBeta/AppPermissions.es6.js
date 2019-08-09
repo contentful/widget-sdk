@@ -1,5 +1,4 @@
 import React from 'react';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import {
   Card,
@@ -15,7 +14,9 @@ import AppIcon from '../apps/_common/AppIcon.es6';
 
 const styles = {
   card: css({
-    padding: tokens.spacingL
+    padding: tokens.spacingL,
+    border: 'none',
+    boxShadow: 'none'
   }),
   subheading: css({
     marginBottom: tokens.spacingS
@@ -80,61 +81,59 @@ export default function AppPermissions(props) {
   const { appName, appId, intentions } = props;
 
   return (
-    <Workbench>
-      <Workbench.Content type="text">
-        <Card className={styles.card}>
-          <Heading element="h1" className={styles.heading}>
-            Install {appName}
-          </Heading>
+    <div>
+      <Card className={styles.card}>
+        <Heading element="h1" className={styles.heading}>
+          Install {appName}
+        </Heading>
 
-          <div className={styles.logos}>
-            <AppIcon appId="contentful" className={styles.appIcon} />
-            <Icon icon="ChevronLeft" color="muted" className={styles.arrowIcon} />
-            <Icon icon="ChevronRight" color="muted" className={styles.arrowIcon} />
-            <AppIcon appId={appId} className={styles.appIcon} />
-          </div>
-          <Subheading element="h3" className={styles.subheading}>
-            Permissions:
-          </Subheading>
-          <Paragraph>
-            The app has full permissions. It can access all data from the selected space and
-            environment.
-          </Paragraph>
-
-          {intentions.length > 0 && (
-            <>
-              <div className={styles.sectionSplitter} />
-              <Subheading element="h3" className={styles.subheading}>
-                {appName} app will:
-              </Subheading>
-              <IntentionSplitter />
-              {intentions.map(item => (
-                <React.Fragment key={item}>
-                  <AppIntentionItem>{item}</AppIntentionItem>
-                  <IntentionSplitter />
-                </React.Fragment>
-              ))}
-            </>
-          )}
-        </Card>
-        <div className={styles.actions}>
-          <Button
-            onClick={() => {
-              props.onCancel();
-            }}
-            buttonType="muted">
-            Cancel
-          </Button>
-          <Button
-            buttonType="primary"
-            onClick={() => {
-              props.onAuthorize();
-            }}>
-            Authorize access
-          </Button>
+        <div className={styles.logos}>
+          <AppIcon appId="contentful" className={styles.appIcon} />
+          <Icon icon="ChevronLeft" color="muted" className={styles.arrowIcon} />
+          <Icon icon="ChevronRight" color="muted" className={styles.arrowIcon} />
+          <AppIcon appId={appId} className={styles.appIcon} />
         </div>
-      </Workbench.Content>
-    </Workbench>
+        <Subheading element="h3" className={styles.subheading}>
+          Permissions:
+        </Subheading>
+        <Paragraph>
+          The app has full permissions. It can access all data from the selected space and
+          environment.
+        </Paragraph>
+
+        {intentions.length > 0 && (
+          <>
+            <div className={styles.sectionSplitter} />
+            <Subheading element="h3" className={styles.subheading}>
+              {appName} app will:
+            </Subheading>
+            <IntentionSplitter />
+            {intentions.map(item => (
+              <React.Fragment key={item}>
+                <AppIntentionItem>{item}</AppIntentionItem>
+                <IntentionSplitter />
+              </React.Fragment>
+            ))}
+          </>
+        )}
+      </Card>
+      <div className={styles.actions}>
+        <Button
+          onClick={() => {
+            props.onCancel();
+          }}
+          buttonType="muted">
+          Cancel
+        </Button>
+        <Button
+          buttonType="primary"
+          onClick={() => {
+            props.onAuthorize();
+          }}>
+          Authorize access
+        </Button>
+      </div>
+    </div>
   );
 }
 
