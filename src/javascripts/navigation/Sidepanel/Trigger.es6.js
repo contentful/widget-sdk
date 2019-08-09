@@ -1,4 +1,3 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 /* eslint-disable camelcase */
 
 import React from 'react';
@@ -7,13 +6,14 @@ import { caseof } from 'sum-types';
 import tokens from '@contentful/forma-36-tokens';
 
 import Logo from 'svg/logo-label.es6';
-import EnvironmentIcon from 'svg/environment.es6';
 import Hamburger from 'svg/hamburger.es6';
 
 import { navState$, NavStates } from 'navigation/NavState.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import { getModule } from 'NgRegistry.es6';
+import EnvOrAlias from 'app/common/EnvOrAlias.es6';
+import { css } from 'emotion';
 const spaceContext = getModule('spaceContext');
 
 const oneLineTruncate = {
@@ -51,7 +51,7 @@ export default class Trigger extends React.Component {
         <Logo />
         <div className="f36-margin-left--m" />
         <div
-          style={{
+          className={css({
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
@@ -59,7 +59,7 @@ export default class Trigger extends React.Component {
             flexGrow: '1',
             flexShrink: '1',
             overflow: 'hidden'
-          }}>
+          })}>
           {renderContent(this.state)}
         </div>
         <div className="f36-margin-left--m" />
@@ -76,7 +76,8 @@ function renderContent({ navState, showOrganization }) {
       ({ space, env, org, availableEnvironments }) => {
         const canManageEnvs = accessChecker.can('manage', 'Environments');
         const hasManyEnvs = (availableEnvironments || []).length > 1;
-        const showEnvironments = canManageEnvs && hasManyEnvs;
+        const hasAliases = env && env.sys.aliases && env.sys.aliases.length > 0;
+        const showEnvironments = canManageEnvs && (hasManyEnvs || hasAliases);
 
         return [
           showOrganization && organizationName(org.name),
@@ -108,12 +109,12 @@ function stateTitle(title) {
     <div
       key={title}
       data-test-id="sidepanel-trigger-text-title"
-      style={{
+      className={css({
         ...oneLineTruncate,
         color: '#fff',
         fontSize: '14px',
         lineHeight: '1.3'
-      }}>
+      })}>
       {title}
     </div>
   );
@@ -124,45 +125,30 @@ function organizationName(orgName) {
     <div
       key={orgName}
       data-test-id="sidepanel-trigger-text-subtitle"
-      style={{
+      className={css({
         ...oneLineTruncate,
         color: tokens.colorTextLight,
         fontSize: '12px',
         lineHeight: '1.5'
-      }}>
+      })}>
       {orgName}
     </div>
   );
 }
 
-function environmentLabel(env) {
+function environmentLabel(env = { sys: { id: 'master' } }) {
   // TODO The 'Space' nav state should always have an environment
-  const envId = env ? env.sys.id : 'master';
-  const isMaster = env ? spaceContext.isMasterEnvironment(env) : true;
+  const { id, aliases: [alias] = [] } = env.sys;
+  const isMaster = spaceContext.isMasterEnvironment(env);
   return (
-    <div
-      key={envId}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        fontSize: '12px',
-        lineHeight: '1.5',
-        color: isMaster ? tokens.colorGreenLight : tokens.colorOrangeLight
-      }}>
-      <EnvironmentIcon
-        style={{
-          display: 'block',
-          flexShrink: 0,
-          fill: 'currentColor'
-        }}
-      />
-      <div className="f36-margin-left--s" />
-      <div
-        style={{
-          ...oneLineTruncate
-        }}>
-        {envId}
-      </div>
-    </div>
+    <EnvOrAlias
+      key={id}
+      className={css({ fontSize: tokens.fontSizeS })}
+      alias={alias && alias.sys.id}
+      environmentId={id}
+      isMaster={isMaster}
+      isSelected
+      colorizeFont
+    />
   );
 }

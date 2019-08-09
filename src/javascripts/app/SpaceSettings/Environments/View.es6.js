@@ -1,23 +1,23 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
+import moment from 'moment';
 import { css } from 'emotion';
 import { get } from 'lodash';
 import * as Config from 'Config.es6';
 import { assign } from 'utils/Collections.es6';
 import { caseofEq } from 'sum-types';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import { LinkOpen, CodeFragment } from 'ui/Content.es6';
+import { LinkOpen } from 'ui/Content.es6';
 import {
-  CopyButton,
   Table,
   TableHead,
   TableRow,
   TableCell,
   TableBody,
+  TextLink,
   Tag,
-  TextLink
+  DisplayText
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -25,21 +25,46 @@ import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
 import Icon from 'ui/Components/Icon.es6';
 import { Tooltip } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import EnvironmentAliases from '../EnvironmentAliases/EnvironmentAliases.es6';
+import EnvironmentDetails from 'app/common/EnvironmentDetails.es6';
 
 export default function View({ state, actions }) {
+  const { items, aliasesEnabled } = state;
+  const optedIn = items.find(({ aliases }) => aliases.length > 0);
   return (
-    <React.Fragment>
+    <Fragment>
       <DocumentTitle title="Environments" />
       <Workbench>
         <Workbench.Header icon={<Icon name="page-settings" scale="0.8" />} title="Environments" />
         <Workbench.Content type="full">
+          {aliasesEnabled && (
+            <EnvironmentAliases
+              {...state}
+              {...actions}
+              optedIn={optedIn}
+              testId="environmentaliases.card"
+            />
+          )}
+          {aliasesEnabled && optedIn && (
+            <DisplayText
+              testId="environments.header"
+              className={css({
+                fontSize: tokens.fontSizeS,
+                textTransform: 'uppercase',
+                marginBottom: tokens.spacingM,
+                color: tokens.colorTextMid
+              })}
+              element="h2">
+              Environments
+            </DisplayText>
+          )}
           <EnvironmentList {...state} {...actions} />
         </Workbench.Content>
         <Workbench.Sidebar position="right">
           <Sidebar {...state} {...actions} />
         </Workbench.Sidebar>
       </Workbench>
-    </React.Fragment>
+    </Fragment>
   );
 }
 View.propTypes = {
@@ -47,6 +72,15 @@ View.propTypes = {
   actions: PropTypes.any.isRequired
 };
 
+const environmentListStyles = {
+  wrapper: css({
+    position: 'relative',
+    minHeight: '6em',
+    '& > div': {
+      zIndex: 1
+    }
+  })
+};
 /**
  * Renders
  * - A loading indicator
@@ -74,11 +108,7 @@ function EnvironmentList({ isLoading, loadingError, items, OpenDeleteDialog, Ope
   }
   return (
     <div data-test-id="environmentList" aria-busy={isLoading ? 'true' : 'false'}>
-      <div
-        style={{
-          position: 'relative',
-          minHeight: '6em'
-        }}>
+      <div className={environmentListStyles.wrapper}>
         {isLoading ? (
           <div className="loading-box--stretched">
             <div className="loading-box__spinner" />
@@ -110,17 +140,19 @@ const FAILED_TOOLTIP = [
   'delete it and create it again, if that doesn’t work contact support.'
 ].join('');
 
-const copyButtonStyleOverride = css({
-  button: {
-    backgroundColor: 'transparent',
-    border: 'none',
-    height: '1.7em',
-    width: '2em',
-    '&:hover': {
-      backgroundColor: 'transparent'
+const environmentTableStyles = {
+  tableRow: css({
+    '& > td': {
+      verticalAlign: 'middle'
     }
-  }
-});
+  }),
+  actionCell: css({
+    textAlign: 'right',
+    '& button': {
+      whiteSpace: 'nowrap'
+    }
+  })
+};
 
 function EnvironmentTable({ environments }) {
   if (environments.length === 0) {
@@ -131,55 +163,63 @@ function EnvironmentTable({ environments }) {
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell style={{ width: '50%' }}>ID</TableCell>
-          <TableCell style={{ width: '30%' }}>Status</TableCell>
-          <TableCell style={{ width: '9em' }}>Actions</TableCell>
+          <TableCell className={css({ width: '40%' })}>Environment ID</TableCell>
+          <TableCell className={css({ width: '25%' })}>Created</TableCell>
+          <TableCell className={css({ width: '20%' })}>Status</TableCell>
+          <TableCell className={css({ width: '5%' })}></TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {environments.map(environment => {
-          return (
-            <TableRow key={environment.id} testId={`environment.${environment.id}`}>
-              <TableCell>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <CodeFragment key="environment-code-fragment">{environment.id}</CodeFragment>
-                  <div style={{ display: 'inline-block', marginLeft: '6px' }} />
-                  <CopyButton className={copyButtonStyleOverride} copyValue={environment.id} />
-                  <div style={{ display: 'inline-block', marginLeft: '1.2em' }} />
-                  {environment.isMaster && <Tag tagType="muted">Default environment</Tag>}
-                </div>
-              </TableCell>
-              <TableCell>
-                {caseofEq(environment.status, [
-                  ['ready', () => <Tag tagType="positive">Ready</Tag>],
-                  [
-                    'inProgress',
-                    () => {
-                      return (
-                        <Tag tagType="warning">
-                          In progress {QuestionMarkWithTooltip({ tooltip: IN_PROGRESS_TOOLTIP })}
-                        </Tag>
-                      );
-                    }
-                  ],
-                  [
-                    'failed',
-                    () => {
-                      return (
-                        <Tag tagType="negative">
-                          Failed to create {QuestionMarkWithTooltip({ tooltip: FAILED_TOOLTIP })}
-                        </Tag>
-                      );
-                    }
-                  ]
-                ])}
-              </TableCell>
-              <TableCell>
-                <DeleteButton environment={environment} />
-              </TableCell>
-            </TableRow>
-          );
-        })}
+        {environments
+          .sort((envA, envB) => envB.isMaster - envA.isMaster)
+          .map(environment => {
+            return (
+              <TableRow
+                key={environment.id}
+                className={environmentTableStyles.tableRow}
+                testId={`environment.${environment.id}`}>
+                <TableCell>
+                  <EnvironmentDetails
+                    alias={environment.aliases ? environment.aliases[0] : undefined}
+                    showAliasedTo
+                    environmentId={environment.id}
+                    isMaster={environment.isMaster}
+                    isDefault={environment.isMaster}></EnvironmentDetails>
+                </TableCell>
+                <TableCell>
+                  <Tag tagType="muted">{moment(environment.payload.sys.createdAt).fromNow()}</Tag>
+                </TableCell>
+                <TableCell testId="view.status">
+                  {caseofEq(environment.status, [
+                    ['ready', () => <Tag tagType="positive">Ready</Tag>],
+                    [
+                      'inProgress',
+                      () => {
+                        return (
+                          <Tag tagType="warning">
+                            In progress {QuestionMarkWithTooltip({ tooltip: IN_PROGRESS_TOOLTIP })}
+                          </Tag>
+                        );
+                      }
+                    ],
+                    [
+                      'failed',
+                      () => {
+                        return (
+                          <Tag tagType="negative">
+                            Failed to create {QuestionMarkWithTooltip({ tooltip: FAILED_TOOLTIP })}
+                          </Tag>
+                        );
+                      }
+                    ]
+                  ])}
+                </TableCell>
+                <TableCell className={environmentTableStyles.actionCell}>
+                  <DeleteButton environment={environment} />
+                </TableCell>
+              </TableRow>
+            );
+          })}
       </TableBody>
     </Table>
   );
@@ -191,7 +231,7 @@ EnvironmentTable.propTypes = {
 
 function QuestionMarkWithTooltip({ tooltip }) {
   return (
-    <span title={tooltip} style={{ cursor: 'pointer', paddingLeft: '10px' }}>
+    <span title={tooltip} className={css({ cursor: 'pointer', paddingLeft: '10px' })}>
       <QuestionMarkIcon />
     </span>
   );
@@ -202,33 +242,41 @@ QuestionMarkWithTooltip.propTypes = {
 
 function DeleteButton({ environment }) {
   const hasAliases = environment.aliases.length > 0;
+  const isDisabled = environment.isMaster || hasAliases;
+
+  const reason = hasAliases
+    ? `aliased to "${environment.aliases.join('", "')}".`
+    : 'your default environment.';
 
   const content = (
     <TextLink
+      onClick={environment.Delete}
       linkType="negative"
       testId="openDeleteDialog"
-      disabled={environment.isMaster || hasAliases}
-      onClick={environment.Delete}>
+      disabled={isDisabled}>
       Delete
     </TextLink>
   );
 
-  if (!hasAliases) return content;
+  if (!isDisabled) {
+    return content;
+  }
 
   const tooltipContent = (
     <div>
       You cannot delete {`"${environment.id}"`}
       <br />
-      as it is aliased to {`"${environment.aliases.join('", "')}"`}.
+      {`as it is ${reason}`}
     </div>
   );
 
   return (
-    <Tooltip content={tooltipContent} place="top" style={{ color: tokens.colorElementDarkest }}>
+    <Tooltip content={tooltipContent} place="top">
       {content}
     </Tooltip>
   );
 }
+
 DeleteButton.propTypes = {
   environment: PropTypes.object.isRequired
 };
@@ -247,9 +295,7 @@ function Sidebar({
 
   return (
     <>
-      <h2 className="entity-sidebar__heading" style={{ marginTop: 0 }}>
-        Usage
-      </h2>
+      <h2 className={`${css({ marginTop: 0 })} entity-sidebar__heading`}>Usage</h2>
       <div className="entity-sidebar__text-profile">
         <p data-test-id="environmentsUsage">
           You are using {usage}{' '}
@@ -332,10 +378,10 @@ function UsageTooltip({ resource }) {
     <Tooltip
       content={tooltipContent}
       place="bottom"
-      style={{
+      className={css({
         color: tokens.colorElementDarkest,
         marginLeft: '0.2em'
-      }}>
+      })}>
       <span data-test-id="environments-usage-tooltip">
         <Icon name="question-mark" />
       </span>

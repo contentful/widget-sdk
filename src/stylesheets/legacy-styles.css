@@ -11601,42 +11601,6 @@ pre,
     border-right: 2px solid rgba(85,85,85,0.6);
     display: block;
   }
-  .nav-sidepanel__environments-list-item {
-    margin: 0;
-    padding: 4px 0 4px 40px;
-    -webkit-transition: background-color 0.1s ease-in-out;
-    transition: background-color 0.1s ease-in-out;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: center;
-    -webkit-box-align: center;
-            align-items: center;
-  }
-  .nav-sidepanel__environments-list-item svg {
-    fill: #a9b9c0;
-    margin-right: 8px;
-  }
-  .nav-sidepanel__environments-list-item a {
-    display: block;
-    width: 100%;
-    color: #536171;
-  }
-  .nav-sidepanel__environments-list-item:hover {
-    background-color: #d3dce0;
-  }
-  .nav-sidepanel__environments-list-item--is-active {
-    background-color: #d3dce0;
-  }
-  .nav-sidepanel__environments-list-item--is-active svg {
-    fill: #ea9005;
-  }
-  .nav-sidepanel__environments-list-item--is-active:first-child svg {
-    fill: #0baa75;
-  }
-  .nav-sidepanel__environments-list-item:first-child {
-    margin-top: 8px;
-  }
   .nav-sidepanel__no-orgs {
     padding: 40px 20px 28px;
     margin: 0;

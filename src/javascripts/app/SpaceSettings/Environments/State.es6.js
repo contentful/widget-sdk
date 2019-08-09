@@ -4,7 +4,7 @@ import { caseofEq, otherwise } from 'sum-types';
 import * as C from 'utils/Concurrent.es6';
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
 import * as LD from 'utils/LaunchDarkly/index.es6';
-import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
+import { getOrgFeature, getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import createResourceService from 'services/ResourceService.es6';
@@ -38,10 +38,15 @@ export default {
 
       Promise.all([
         LD.getCurrentVariation(environmentsFlagName),
-        getOrgFeature(spaceContext.organization.sys.id, 'environment_branching')
-      ]).then(([environmentsEnabled, canSelectSource]) => {
+        getOrgFeature(spaceContext.organization.sys.id, 'environment_branching'),
+        getSpaceFeature(spaceContext.space.data.sys.id, 'environment_aliasing')
+      ]).then(([environmentsEnabled, canSelectSource, aliasesEnabled]) => {
         if (environmentsEnabled) {
-          $scope.environmentComponent = createComponent(spaceContext, canSelectSource);
+          $scope.environmentComponent = createComponent(
+            spaceContext,
+            canSelectSource,
+            aliasesEnabled
+          );
           $scope.$applyAsync();
         } else {
           $state.go('spaces.detail');
@@ -128,6 +133,7 @@ const reduce = makeReducer({
         // Note: there is a hardcoded limit of 100 environments for v1 orgs on the
         // backend, but we don't enforce it on frontend as it should not be hit
         // under normal circumstances.
+
         if (state.isLegacyOrganization) {
           resource = { usage: items.length && items.length - 1 }; // exclude master for consistency with v2 api
         }
@@ -145,7 +151,7 @@ const reduce = makeReducer({
 });
 
 // This is exported for testing purposes.
-export function createComponent(spaceContext, canSelectSource) {
+export function createComponent(spaceContext, canSelectSource, aliasesEnabled) {
   const resourceEndpoint = SpaceEnvironmentRepo.create(spaceContext.endpoint, spaceContext.getId());
   const resourceService = createResourceService(spaceContext.getId(), 'space');
   const context = {
@@ -162,6 +168,7 @@ export function createComponent(spaceContext, canSelectSource) {
     isLegacyOrganization: isLegacyOrganization(organization),
     organizationId: organization.sys.id,
     spaceData: spaceContext.space.data,
+    aliasesEnabled,
     canSelectSource
   };
 

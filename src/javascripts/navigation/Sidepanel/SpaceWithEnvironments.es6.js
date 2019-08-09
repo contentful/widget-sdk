@@ -1,54 +1,76 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
 import FolderIcon from 'svg/folder.es6';
-import EnvironmentIcon from 'svg/environment.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 import { getModule } from 'NgRegistry.es6';
+import EnvOrAlias from 'app/common/EnvOrAlias.es6';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 const spaceContext = getModule('spaceContext');
 
 function EnvironmentList({ environments, isCurrSpace, currentEnvId, goToSpace, space }) {
   return (
     <ul>
-      {(environments || []).map(env => {
-        const envId = env.sys.id;
-        const isMasterEnvironment = spaceContext.isMasterEnvironment(env);
-        const environmentClassNames = `
-        nav-sidepanel__environments-list-item
-        ${
-          isCurrSpace && envId === currentEnvId
-            ? 'nav-sidepanel__environments-list-item--is-active'
-            : ''
-        }
-      `;
+      {(environments || [])
+        .sort(
+          (envA, envB) =>
+            spaceContext.isMasterEnvironment(envB) - spaceContext.isMasterEnvironment(envA)
+        )
+        .map(env => {
+          const envId = env.sys.id;
+          const [alias] = env.sys.aliases || [];
+          const isMasterEnvironment = spaceContext.isMasterEnvironment(env);
+          const isSelected = isCurrSpace && envId === currentEnvId;
 
-        return (
-          <li
-            key={envId}
-            className={environmentClassNames}
-            onClick={e => {
-              e.stopPropagation();
-              goToSpace(space.sys.id, envId, isMasterEnvironment);
-            }}>
-            <a
-              href={`/spaces/${space.sys.id}${isMasterEnvironment ? '' : `/environments/${envId}`}`}
+          const environmentClassNames = css({
+            margin: 0,
+            padding: `${tokens.spacingXs} 0 ${tokens.spacingXs} ${tokens.spacing2Xl}`,
+            transition: 'background-color 0.1s ease-in-out',
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: isSelected ? tokens.colorElementMid : undefined,
+            '&:hover': {
+              backgroundColor: tokens.colorElementMid
+            },
+            '& > a': {
+              color: tokens.colorTextMid,
+              maxWidth: '90%'
+            }
+          });
+
+          return (
+            <li
+              key={envId}
+              className={environmentClassNames}
               onClick={e => {
-                if (e.shiftKey || e.ctrlKey || e.metaKey) {
-                  // allow to open in a new tab/window normally
-                  e.stopPropagation();
-                } else {
-                  // parent `li` click handler will navigate
-                  e.preventDefault();
-                }
+                e.stopPropagation();
+                goToSpace(space.sys.id, envId, isMasterEnvironment, !!alias);
               }}>
-              <EnvironmentIcon style={{ display: 'inline' }} />
-              {envId}
-            </a>
-          </li>
-        );
-      })}
+              <a
+                href={`/spaces/${space.sys.id}${
+                  isMasterEnvironment && !alias ? '' : `/environments/${envId}`
+                }`}
+                onClick={e => {
+                  if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                    // allow to open in a new tab/window normally
+                    e.stopPropagation();
+                  } else {
+                    // parent `li` click handler will navigate
+                    e.preventDefault();
+                  }
+                }}>
+                <EnvOrAlias
+                  alias={alias && alias.sys.id}
+                  environmentId={envId}
+                  isMaster={isMasterEnvironment}
+                  isSelected={isSelected}
+                />
+              </a>
+            </li>
+          );
+        })}
     </ul>
   );
 }
@@ -102,16 +124,20 @@ export default class SpaceWithEnvironments extends React.Component {
 
     const envs = allEnvs.filter(env => env.sys.status.sys.id === 'ready');
 
-    const goToSpace = (envId, isMasterEnv) => {
+    const goToSpace = (envId, isMasterEnv, isAliased) => {
       this.props.setOpenedSpaceId(null);
-      this.props.goToSpace(this.props.space.sys.id, envId, isMasterEnv);
+      this.props.goToSpace(this.props.space.sys.id, envId, isMasterEnv, isAliased);
     };
 
     this.setState({ loading: false });
     if (envs.length === 0 || (envs.length === 1 && spaceContext.isMasterEnvironment(envs[0]))) {
       goToSpace();
     } else if (envs.length === 1) {
-      goToSpace(envs[0].sys.id, spaceContext.isMasterEnvironment(envs[0]));
+      goToSpace(
+        envs[0].sys.id,
+        spaceContext.isMasterEnvironment(envs[0]),
+        spaceContext.getAliasesIds(envs[0]).length > 0
+      );
     } else {
       this.setState({ environments: envs }, () => {
         this.props.setOpenedSpaceId(this.props.space.sys.id);

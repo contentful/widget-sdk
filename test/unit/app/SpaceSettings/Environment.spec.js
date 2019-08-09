@@ -19,10 +19,12 @@ describe('app/SpaceSettings/Environments', () => {
 
     const isOwnerOrAdmin = sinon.stub().returns(false);
     const canSelectSource = sinon.stub().returns(true);
+    const aliasesEnabled = sinon.stub().returns(false);
 
     module('contentful/test', $provide => {
       $provide.value('services/ResourceService.es6', () => resourceService);
       $provide.value('services/OrganizationRoles.es6', { isOwnerOrAdmin });
+      $provide.value('app/SpaceSettings/EnvironmentAliases/Feedback.es6', () => () => 'feedback');
     });
 
     this.ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
@@ -41,18 +43,19 @@ describe('app/SpaceSettings/Environments', () => {
 
     this.init = () => {
       this.$compileWith('<cf-component-store-bridge component=component>', $scope => {
-        $scope.component = createComponent(spaceContext, canSelectSource());
+        $scope.component = createComponent(spaceContext, canSelectSource(), aliasesEnabled());
       }).appendTo(this.container.element);
     };
 
     // Adds an environment to the store that backs the space endpoint
     // mock.
-    this.putEnvironment = ({ id, status }) => {
+    this.putEnvironment = ({ id, status, aliases }) => {
       const envStore = spaceContext._mockEndpoint.stores.environments;
       envStore[id] = {
         sys: {
           id,
-          status: { sys: { id: status } }
+          status: { sys: { id: status } },
+          aliases
         }
       };
     };
@@ -74,6 +77,10 @@ describe('app/SpaceSettings/Environments', () => {
 
     this.setEnvironmentBranchingFeatureEnabled = enabled => {
       canSelectSource.returns(enabled);
+    };
+
+    this.setEnvironmentAliasesFeatureEnabled = enabled => {
+      aliasesEnabled.returns(enabled);
     };
 
     this.envRequests = spaceContext._mockEndpoint.requests.environments;
@@ -121,10 +128,51 @@ describe('app/SpaceSettings/Environments', () => {
     });
   });
 
-  describe('when environment has aliases', function() {
-    it('cannot be deleted when environment has aliases', function() {
+  describe('when aliases feature is disabled', function() {
+    it('does not show the aliases opt-in', function() {
+      this.setEnvironmentAliasesFeatureEnabled(false);
+
       this.putEnvironment({ id: 'e1', status: 'ready' });
+      this.putEnvironment({ id: 'e2', status: 'ready' });
+
+      this.init();
+
+      this.container.find('environments.header').assertNonExistent();
+      this.container.find('environmentaliases.card').assertNonExistent();
+    });
+  });
+
+  describe('when aliases feature is enabled', function() {
+    it('shows the aliases opt-in', function() {
+      this.setEnvironmentAliasesFeatureEnabled(true);
+
+      this.putEnvironment({ id: 'e1', status: 'ready' });
+      this.putEnvironment({ id: 'e2', status: 'ready' });
+
+      this.init();
+
+      this.container.find('environments.header').assertNonExistent();
+      this.container.find('environmentaliases.card').assertIsVisible();
+    });
+
+    it('shows the aliases', function() {
+      this.setEnvironmentAliasesFeatureEnabled(true);
       spaceContext.getAliasesIds.returns(['master']);
+
+      this.putEnvironment({ id: 'e1', status: 'ready', aliases: ['master'] });
+      this.putEnvironment({ id: 'e2', status: 'ready' });
+
+      this.init();
+
+      this.container.find('environments.header').assertIsVisible();
+      this.container.find('environmentaliases.card').assertIsVisible();
+    });
+
+    it('cannot be deleted when environment has aliases', function() {
+      this.setEnvironmentAliasesFeatureEnabled(true);
+      spaceContext.getAliasesIds.returns(['master']);
+
+      this.putEnvironment({ id: 'e1', status: 'ready', aliases: ['master'] });
 
       this.init();
 
