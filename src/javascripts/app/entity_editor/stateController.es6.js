@@ -233,14 +233,22 @@ export default function register() {
 
       controller.revertToPrevious = Command.create(
         () => {
-          reverter.revert().then(
-            () => {
-              notify(Notification.Success('revert'));
-            },
-            err => {
-              notify(Notification.Error('revert', err));
-            }
-          );
+          reverter
+            .revert()
+            .then(
+              () => {
+                notify(Notification.Success('revert'));
+              },
+              err => {
+                notify(Notification.Error('revert', err));
+              }
+            )
+            .then(() => {
+              Analytics.track('entity_state:revert', {
+                id: $scope.entityInfo.id,
+                type: $scope.entityInfo.type
+              });
+            });
         },
         {
           available: function() {
