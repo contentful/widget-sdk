@@ -1,9 +1,18 @@
+import { chunk } from 'lodash';
+
 /**
  * Given an URL, this function returns an abstract endpoint path.
  * E.g. passing 'https://api.contentful.com/spaces/spaceId/entries/entryId'
  * would result in '/entries/:id'.
  *
- * @param url
+ * Rules:
+ *  - Returns path part of a CMA url, replaces IDs (each 2nd path piece) with `:id`
+ *  - May return `/space/:id`, or `/environments/:id` but returned string never includes
+ *    these as prefixes.
+ *  - May return `/:entity/:id` as a prefix in specific cases (comments) and in other
+ *    case ignore anything after the 2nd part of the path.
+ *
+ * @param {string} url
  * @returns {string}
  */
 export function getEndpoint(url) {
@@ -11,22 +20,30 @@ export function getEndpoint(url) {
     .split('?')[0]
     .split('/')
     .slice(3);
-  const getId = idx => (segments[idx] ? '/:id' : '');
+
+  const relevantSegments =
+    segments.length > 4 && segments[2] === 'environments'
+      ? segments.slice(4)
+      : segments.length > 2 && segments[0] === 'spaces'
+      ? segments.slice(2)
+      : segments;
+  return makeStableName(relevantSegments);
+}
+
+const RELEVANT_ENTITY_PATHS = ['/comments', '/snapshots'];
+
+function makeStableName(relevantSegments) {
+  const chunks = chunk(relevantSegments, 2);
+
+  const getPath = idx => `/${chunks[idx][0]}`;
+  const getId = idx => (chunks[idx][1] ? '/:id' : '');
   // See app/entity_editor/NoShareJsCmaFakeRequestsExperiment.es6.js for experiment info:
-  const getExperiment = idx => {
-    if (idx + 1 < segments.length) return '';
-    if ((segments[idx] || '').match(/.php$/)) return '/' + segments[idx];
-    return '';
-  };
-  const makeStableName = idx => `/${segments[idx]}${getId(idx + 1)}${getExperiment(idx + 2)}`;
+  const getExperiment = idx =>
+    idx + 1 === chunks.length && getPath(idx).match(/\.php$/) ? getPath(idx) : '';
 
-  if (segments.length <= 2) {
-    return `/${segments.join('/')}`;
-  }
-
-  if (segments[2] === 'environments' && segments.length > 3) {
-    return makeStableName(4);
+  if (chunks[1] && RELEVANT_ENTITY_PATHS.includes(getPath(1))) {
+    return `/:entity/:id${getPath(1)}${getId(1)}`;
   } else {
-    return makeStableName(2);
+    return `${getPath(0)}${getId(0)}${getExperiment(1)}`;
   }
 }
