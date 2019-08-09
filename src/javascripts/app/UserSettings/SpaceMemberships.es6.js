@@ -1,24 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Button,
-  Notification,
-  ModalConfirm
-} from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import moment from 'moment';
+import { Notification, ModalConfirm } from '@contentful/forma-36-react-components';
 import { without } from 'lodash';
 
 import * as TokenStore from 'services/TokenStore.es6';
-import Icon from 'ui/Components/Icon.es6';
 import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+
+import SpaceMembershipsPresentation from './SpaceMembershipsPresentation.es6';
 
 const SpaceMemberships = ({ onReady }) => {
   const [spaces, setSpaces] = useState(null);
@@ -65,47 +55,7 @@ const SpaceMemberships = ({ onReady }) => {
     onReady();
   }
 
-  return (
-    <Workbench>
-      <Workbench.Header
-        icon={<Icon name="space" scale={0.75} />}
-        title={`Space memberships (${(spaces || []).length})`}
-      />
-      <Workbench.Content type="default">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Organization</TableCell>
-              <TableCell>Invited at</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {(spaces || []).map(space => {
-              return (
-                <TableRow key={space.sys.id}>
-                  <TableCell>{space.name}</TableCell>
-                  <TableCell>{space.organization.name}</TableCell>
-                  <TableCell title={moment(space.sys.createdAt).format('MMMM DD, YYYY')}>
-                    {moment(space.sys.createdAt, moment.ISO_8601).fromNow()}
-                  </TableCell>
-                  <TableCell>
-                    {space.spaceMembership && (
-                      <Button onClick={() => onLeave(space)} buttonType="muted" size="small">
-                        Leave
-                      </Button>
-                    )}
-                    {!space.spaceMembership && <em>Member via team</em>}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </Workbench.Content>
-    </Workbench>
-  );
+  return <SpaceMembershipsPresentation onLeave={onLeave} spaces={spaces} />;
 };
 
 SpaceMemberships.propTypes = {
