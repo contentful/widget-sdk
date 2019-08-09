@@ -2,6 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { startCase, debounce, flow } from 'lodash';
+import { css } from 'emotion';
 import { isEqual } from 'lodash/fp';
 import pluralize from 'pluralize';
 import classnames from 'classnames';
@@ -44,13 +45,22 @@ import { getLastActivityDate } from '../UserUtils.es6';
 import { generateFilterDefinitions } from './FilterDefinitions.es6';
 import {
   Filter as FilterPropType,
-  Space as SpacePropType
+  Space as SpacePropType,
+  Team as TeamPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
+
+const styles = {
+  filters: css({
+    padding: '1em 2em 2em'
+  }),
+  list: css({ position: 'relative' })
+};
 
 class UsersList extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
     spaceRoles: PropTypes.array,
+    teams: PropTypes.arrayOf(TeamPropType),
     spaces: PropTypes.arrayOf(SpacePropType),
     filters: PropTypes.arrayOf(FilterPropType),
     searchTerm: PropTypes.string.isRequired,
@@ -252,7 +262,7 @@ class UsersList extends React.Component {
           </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content>
-          <section style={{ padding: '1em 2em 2em' }}>
+          <section style={styles.filters}>
             <UserListFilters
               queryTotal={queryTotal}
               spaces={spaces}
@@ -260,7 +270,7 @@ class UsersList extends React.Component {
               filters={filters}
             />
             {initialLoad || queryTotal > 0 ? (
-              <div style={{ position: 'relative' }}>
+              <div style={styles.list}>
                 {loading ? (
                   <Spinner size="large" className="organization-users-page__spinner" />
                 ) : null}
@@ -334,11 +344,12 @@ class UsersList extends React.Component {
 
 export default flow(
   connect(
-    (state, { spaceRoles, spaces, hasSsoEnabled }) => {
+    (state, { spaceRoles, spaces, teams, hasSsoEnabled }) => {
       const filterValues = getFilters(state);
       const filterDefinitions = generateFilterDefinitions({
         spaceRoles,
         spaces,
+        teams,
         hasSsoEnabled,
         filterValues
       });
