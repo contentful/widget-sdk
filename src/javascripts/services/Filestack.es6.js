@@ -14,8 +14,6 @@ const SOURCES = [
   'webcam',
   'video',
   'audio',
-  'evernote',
-  'flickr',
   'box',
   'github',
   'gmail',

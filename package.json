@@ -49,7 +49,7 @@
     "fast-deep-equal": "^2.0.1",
     "fclone": "1.0.11",
     "file-size": "^1.0.0",
-    "filestack-js": "^1.14.6",
+    "filestack-js": "^3.6.0",
     "flat": "^4.1.0",
     "getstream": "^4.2.4",
     "immer": "2.0.0",
