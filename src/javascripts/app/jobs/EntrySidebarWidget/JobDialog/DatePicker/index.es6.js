@@ -53,8 +53,8 @@ export class DatePicker extends Component {
     }
   };
 
-  handleBlur = () => {
-    if (this.pikaday) {
+  handleBlur = e => {
+    if (!this.pikaday.el.contains(e.relatedTarget)) {
       this.pikaday.hide();
     }
   };

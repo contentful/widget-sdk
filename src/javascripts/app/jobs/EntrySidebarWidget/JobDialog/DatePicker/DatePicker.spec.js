@@ -27,6 +27,11 @@ describe('DatePicker', () => {
 
     expect(getDatepicker(renderResult).classList.contains('is-hidden')).toBeFalsy();
 
+    const yearSelect = getDatepicker(renderResult).querySelector('.pika-select-year');
+    fireEvent.focus(yearSelect);
+
+    expect(getDatepicker(renderResult).classList.contains('is-hidden')).toBeFalsy();
+
     fireEvent.blur(dateInput);
 
     expect(getDatepicker(renderResult).classList.contains('is-hidden')).toBeTruthy();
