@@ -192,7 +192,7 @@ describe('app/entity_editor/DataLoader.es6', () => {
           sinon.match({
             fieldId: 'description',
             widgetNamespace: 'builtin',
-            widgetId: 'singleLine',
+            widgetId: 'multipleLine',
             field: sinon.match.has('id')
           }),
           sinon.match({

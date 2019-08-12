@@ -204,11 +204,7 @@ function makeAssetLoader(spaceContext) {
         assetContentType.data,
         {
           sys: { type: 'EditorInterface' },
-          controls: [
-            // Asset Content Type defines `description` as `Text` but
-            // historically we render it as a single line input.
-            { fieldId: 'description', widgetId: 'singleLine' }
-          ]
+          controls: [{ fieldId: 'description', widgetId: 'multipleLine' }]
         },
         widgets
       );
