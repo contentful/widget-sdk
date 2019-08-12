@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
 import { css } from 'emotion';
@@ -60,6 +60,14 @@ function formatScheduledAtDate({ date, time, utcOffset }) {
   return res;
 }
 
+function usePreviousDate(dateTimeOffset) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = dateTimeOffset;
+  });
+  return ref.current;
+}
+
 function JobDialog({ onCreate, onCancel, isSubmitting }) {
   const now = moment(Date.now());
   const suggestedDate = now.add(1, 'hours').startOf('hour');
@@ -68,22 +76,40 @@ function JobDialog({ onCreate, onCancel, isSubmitting }) {
   const [time, setTime] = useState(suggestedDate.format('HH:mm'));
   const [formError, setFormError] = useState('');
   const [utcOffset, setUtcOffset] = useState(suggestedDate.utcOffset());
+  const prevTimeAndDate = usePreviousDate({ time, date, utcOffset });
 
   useEffect(() => {
     createDialogOpen();
     return createDialogClose;
   }, []);
 
-  const validateForm = onFormValid => {
-    if (moment(formatScheduledAtDate({ date, time, utcOffset })).isAfter(moment.now())) {
-      setFormError(null);
-      if (onFormValid) {
-        onFormValid();
+  const validateForm = useCallback(
+    onFormValid => {
+      if (moment(formatScheduledAtDate({ date, time, utcOffset })).isAfter(moment.now())) {
+        setFormError(null);
+        if (onFormValid) {
+          onFormValid();
+        }
+      } else {
+        setFormError("The selected time can't be in the past");
       }
-    } else {
-      setFormError("The selected time can't be in the past");
+    },
+    [time, utcOffset, date]
+  );
+
+  useEffect(() => {
+    if (!prevTimeAndDate) {
+      return;
     }
-  };
+
+    if (
+      prevTimeAndDate.time !== time ||
+      prevTimeAndDate.date !== date ||
+      prevTimeAndDate.utcOffset !== utcOffset
+    ) {
+      validateForm();
+    }
+  }, [time, date, utcOffset, prevTimeAndDate, validateForm]);
 
   return (
     <Modal
@@ -106,7 +132,6 @@ function JobDialog({ onCreate, onCancel, isSubmitting }) {
                   }}
                   labelText="Publish on"
                   required
-                  onBlur={() => validateForm()}
                   value={moment(date).toDate()}
                   minDate={now.toDate()}
                   data-test-id="date"
@@ -118,7 +143,6 @@ function JobDialog({ onCreate, onCancel, isSubmitting }) {
                   onChange={time => {
                     setTime(time);
                   }}
-                  onBlur={() => validateForm()}
                   required
                   id="time"
                   labelText="Time"
@@ -133,7 +157,6 @@ function JobDialog({ onCreate, onCancel, isSubmitting }) {
                   onChange={e => {
                     setUtcOffset(Number(e.target.value));
                   }}
-                  onBlur={() => validateForm()}
                   labelText="Timezone"
                   value={utcOffset.toString()}>
                   {getTimezoneOptions().map(({ timezone, offset, label }) => (

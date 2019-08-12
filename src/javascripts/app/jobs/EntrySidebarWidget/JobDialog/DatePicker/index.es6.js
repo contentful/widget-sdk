@@ -13,6 +13,7 @@ export class DatePicker extends Component {
     minDate: PropTypes.instanceOf(Date),
     maxDate: PropTypes.instanceOf(Date),
     onChange: PropTypes.func,
+    onBlur: PropTypes.func,
     helpText: PropTypes.string,
     labelText: PropTypes.string.isRequired,
     id: PropTypes.string,
@@ -21,6 +22,7 @@ export class DatePicker extends Component {
 
   static defaultProps = {
     onChange: () => {},
+    onBlur: () => {},
     name: 'cf-ui-datepicker',
     id: 'cf-ui-datepicker'
   };
@@ -54,6 +56,7 @@ export class DatePicker extends Component {
   };
 
   handleBlur = e => {
+    this.props.onBlur();
     if (!this.pikaday.el.contains(e.relatedTarget)) {
       this.pikaday.hide();
     }

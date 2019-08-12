@@ -25,7 +25,6 @@ import usePrevious from 'app/common/hooks/usePrevious.es6';
 import * as logger from 'services/logger.es6';
 
 import { getModule } from 'NgRegistry.es6';
-const spaceContext = getModule('spaceContext');
 
 import JobsTimeline from './JobsTimeline/index.es6';
 
@@ -104,6 +103,7 @@ export default function JobWidget({
   isSaving,
   updatedAt
 }) {
+  const spaceContext = getModule('spaceContext');
   const [jobs, setJobs] = useState([]);
   const [isDialogShown, setIsDialogShown] = useState(false);
   const [isCreatingJob, setIsCreatingJob] = useState(false);
@@ -155,6 +155,7 @@ export default function JobWidget({
     const job = await createJob(scheduledAt);
     if (job && job.sys) {
       Notification.success(`${entryTitle} was scheduled successfully`);
+      setIsCreatingJob(false);
       setIsDialogShown(false);
       trackCreatedJob({
         jobId: job.sys.id,
