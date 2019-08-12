@@ -1,4 +1,0 @@
-mixin pluralize-entity(entityType, count, restOfTheMsg)
-  - var endsWithY = !!entityType.match(/(y|Y)$/)
-  - var plural = endsWithY ? entityType.replace(/(.*)(y|Y)$/, '$1ies') : entityType + 's'
-  span {{ #{count} }} {{ #{count} === 1 ? '#{entityType}' : '#{plural}' }} #{restOfTheMsg}
