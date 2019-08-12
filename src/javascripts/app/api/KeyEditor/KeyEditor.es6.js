@@ -2,6 +2,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 import { inRange } from 'lodash';
 import { assign } from 'utils/Collections.es6';
 import { DocsLink } from 'ui/Content.es6';
@@ -20,6 +21,18 @@ export default function({ data, initialValue, connect, trackCopy }) {
   }
 }
 
+const styles = {
+  marginTop: css({
+    marginTop: tokens.spacingL
+  }),
+  separatorStyle: css({
+    height: '1px',
+    width: tokens.contentWidthFull,
+    backgroundColor: tokens.colorElementMid,
+    margin: `${tokens.spacingXl} 0`
+  })
+};
+
 function renderForm({ data, model, update, trackCopy }) {
   return (
     <div>
@@ -28,7 +41,7 @@ function renderForm({ data, model, update, trackCopy }) {
         To query and get content using the APIs, client applications need to authenticate with both
         the Space ID and an access token.
       </div>
-      <div className="f36-margin-top--l" />
+      <div className={styles.marginTop} />
       <Input
         canEdit={data.canEdit}
         model={model}
@@ -38,7 +51,7 @@ function renderForm({ data, model, update, trackCopy }) {
         label="Name"
         description="Can be platform or device specific names (i.e. marketing website, tablet, VR app)"
       />
-      <div className="f36-margin-top--l" />
+      <div className={styles.marginTop} />
       <Input
         canEdit={data.canEdit}
         model={model}
@@ -47,14 +60,14 @@ function renderForm({ data, model, update, trackCopy }) {
         label="Description"
         description="You can provide an optional description for reference in the future"
       />
-      <div className="f36-margin-top--l" />
+      <div className={styles.marginTop} />
       <InputWithCopy
         value={data.spaceId}
         name="space-id"
         label="Space ID"
         track={() => trackCopy('space')}
       />
-      <div className="f36-margin-top--l" />
+      <div className={styles.marginTop} />
       <InputWithCopy
         key="content-delivery-api"
         value={data.deliveryToken}
@@ -83,20 +96,25 @@ function renderForm({ data, model, update, trackCopy }) {
       {data.environmentsEnabled && <Separator />}
       {data.environmentsEnabled && (
         <Section
-          title="Environments"
-          description="Select the environments this API key should have access to. At least one environment has to be selected.">
+          title={data.spaceAliases.length ? 'Environments & Environment Aliases' : 'Environments'}
+          description={
+            data.spaceAliases.length
+              ? 'Select the environments and aliases this API key should have access to. At least one environment or alias has to be selected.'
+              : 'Select the environments this API key should have access to. At least one environment has to be selected.'
+          }>
           <EnvironmentSelector
             {...{
               canEdit: data.canEdit,
               isAdmin: data.isAdmin,
               spaceEnvironments: data.spaceEnvironments,
-              envs: model.environments,
-              updateEnvs: environments => update(assign(model, { environments }))
+              spaceAliases: data.spaceAliases,
+              selectedEnvOrAlias: model.environments,
+              updateEnvOrAlias: environments => update(assign(model, { environments }))
             }}
           />
         </Section>
       )}
-      <div className="f36-margin-top--l" />
+      <div className={styles.marginTop} />
     </div>
   );
 }
@@ -158,23 +176,14 @@ function InputWithCopy({ value, name, track, label, description = '' }) {
 function Section({ title, description, children }) {
   return (
     <div>
-      <h4 className="h-reset">{title}</h4>
+      <h3 className="h-reset">{title}</h3>
       {description && <div>{description}</div>}
-      <div className="f36-margin-top--l" />
+      <div className={styles.marginTop} />
       {children}
     </div>
   );
 }
 
 function Separator() {
-  return (
-    <div
-      style={{
-        height: '1px',
-        width: '100%',
-        backgroundColor: tokens.colorElementMid,
-        margin: '2.5em 0'
-      }}
-    />
-  );
+  return <div className={styles.separatorStyle} />;
 }
