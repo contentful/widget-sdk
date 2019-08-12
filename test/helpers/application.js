@@ -17,4 +17,4 @@
  *
  */
 
-angular.module('contentful/test', ['contentful/app', 'contentful/mocks']);
+angular.module('contentful/test', ['contentful/app-config', 'contentful/mocks']);

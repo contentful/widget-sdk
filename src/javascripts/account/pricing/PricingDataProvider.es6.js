@@ -1,4 +1,4 @@
-import { get, uniqueId } from 'lodash';
+import { get, uniqueId, uniq, reject } from 'lodash';
 import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository.es6';
 
 const alphaHeader = {
@@ -78,6 +78,7 @@ export async function getPlansWithSpaces(endpoint) {
     getSubscriptionPlans(endpoint),
     getAllSpaces(endpoint)
   ]);
+
   const findSpaceByPlan = plan =>
     plan.gatekeeperKey && spaces.find(({ sys }) => sys.id === plan.gatekeeperKey);
   // Map spaces to space plans, create 'free plan' objects for spaces w/o plans
@@ -105,8 +106,11 @@ export async function getPlansWithSpaces(endpoint) {
     ]
   };
 
-  // Load `createdBy` users for all spaces
-  const userIds = plansWithSpaces.items.map(({ space }) => get(space, 'sys.createdBy.sys.id'));
+  // Get unique `createdBy` users for all spaces
+  const userIds = reject(
+    uniq(plansWithSpaces.items.map(({ space }) => get(space, 'sys.createdBy.sys.id'))),
+    i => !i
+  );
   const users = await getUsersByIds(endpoint, userIds);
   // Map users to spaces
   return {

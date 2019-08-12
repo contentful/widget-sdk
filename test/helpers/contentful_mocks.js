@@ -9,7 +9,7 @@ function ensureLeadingSlash(x = '') {
   }
 }
 
-function stubConfig(system) {
+async function stubConfig(system) {
   const mocked = {
     authUrl: x => `//be.test.com${ensureLeadingSlash(x)}`,
     apiUrl: x => `//api.test.com${ensureLeadingSlash(x)}`,
@@ -29,7 +29,7 @@ function stubConfig(system) {
     readInjectedConfig: () => ({ config: {} })
   };
 
-  system.set('Config.es6', mocked);
+  await system.set('Config.es6', mocked);
 }
 
 async function stubClientStorage(system) {
@@ -58,11 +58,11 @@ async function stubClientStorage(system) {
   const original = await system.import('TheStore/ClientStorageWrapper.es6');
   mocked._noMock = original;
 
-  system.set('TheStore/ClientStorageWrapper.es6', mocked);
+  await system.set('TheStore/ClientStorageWrapper.es6', mocked);
 }
 
-function stubShareJsLibClient(system) {
-  system.set('@contentful/sharejs/lib/client', {
+async function stubShareJsLibClient(system) {
+  await system.set('@contentful/sharejs/lib/client', {
     Connection: sinon.stub().returns({
       socket: {},
       emit: _.noop,
@@ -71,8 +71,8 @@ function stubShareJsLibClient(system) {
   });
 }
 
-function stubFilestack(system) {
-  system.set('services/Filestack.es6', {
+async function stubFilestack(system) {
+  await system.set('services/Filestack.es6', {
     makeDropPane: sinon.stub(),
     pick: sinon.stub(),
     pickMultiple: sinon.stub(),
@@ -106,9 +106,9 @@ async function stubLaunchDarklyUtil(system) {
   const original = await system.import('utils/LaunchDarkly/index.es6');
   mockedUtil._noMock = original;
 
-  system.set('utils/LaunchDarkly/index.es6', mockedUtil);
+  await system.set('utils/LaunchDarkly/index.es6', mockedUtil);
 
-  system.set('LaunchDarkly.es6', {
+  await system.set('LaunchDarkly.es6', {
     getVariation: sinon.stub().resolves(false)
   });
 }
@@ -116,9 +116,9 @@ async function stubLaunchDarklyUtil(system) {
 beforeEach(async function() {
   await stubClientStorage(this.system);
   await stubLaunchDarklyUtil(this.system);
-  stubShareJsLibClient(this.system);
-  stubFilestack(this.system);
-  stubConfig(this.system);
+  await stubShareJsLibClient(this.system);
+  await stubFilestack(this.system);
+  await stubConfig(this.system);
 });
 
 /**

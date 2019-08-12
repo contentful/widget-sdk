@@ -70,7 +70,7 @@ function readInjectedConfig() {
 }
 
 angular
-  .module('contentful/app', [AngularInit, 'ngAnimate', 'ngSanitize', 'ui.router'])
+  .module('contentful/app-config', [AngularInit, 'ngAnimate', 'ngSanitize', 'ui.router'])
   .config([
     '$locationProvider',
     $locationProvider => {
@@ -229,7 +229,10 @@ angular
 
       $httpProvider.defaults.headers.common['X-Contentful-User-Agent'] = headerParts.join('; ');
     }
-  ])
+  ]);
+
+angular
+  .module('contentful/app', ['contentful/app-config'])
   .config([
     '$compileProvider',
     $compileProvider => {

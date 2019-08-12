@@ -52,7 +52,9 @@
         };
       });
 
-      await new Promise(resolve => setTimeout(resolve, 10000));
+      // TODO: figure out how to get Chrome to not fail when loading so many files...
+      // below does NOT work
+      // await new Promise(resolve => setTimeout(resolve, 10000));
 
       await SystemJS.import('test/helpers/setup-isolated-system');
       await SystemJS.import('prelude');
