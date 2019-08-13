@@ -3,9 +3,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { TextField, RadioButtonField } from '@contentful/forma-36-react-components';
 import keycodes from 'utils/keycodes.es6';
+import { css } from 'emotion';
 
 const MIN_LENGTH = 1;
 const MAX_LENGTH = 32;
+
+const styles = {
+  input: css({ marginTop: '5px' }),
+  list: css({ marginTop: '20px' }),
+  paragraph: css({ marginBottom: '25px' })
+};
 
 export default class SaveViewDialog extends React.Component {
   static propTypes = {
@@ -34,7 +41,7 @@ export default class SaveViewDialog extends React.Component {
           <button className="modal-dialog__close" onClick={cancel} />
         </header>
         <div className="modal-dialog__content">
-          <p className="modal-dialog__richtext" style={{ marginBottom: '25px' }}>
+          <p className={`${styles.paragraph} modal-dialog__richtext`}>
             A view displays a list of entries you searched for. By saving the current view, you will
             be able to re-use it later.
           </p>
@@ -43,14 +50,17 @@ export default class SaveViewDialog extends React.Component {
             name="name"
             labelText="Name of the view"
             required
+            countCharacters
             value={value}
             onChange={e => this.setState({ value: e.target.value })}
             onKeyDown={onKeyDown}
-            maxLength={String(MAX_LENGTH)}
-            style={{ marginTop: '5px' }}
+            textInputProps={{
+              maxLength: MAX_LENGTH
+            }}
+            className={styles.input}
           />
           {allowViewTypeSelection && (
-            <ul style={{ marginTop: '20px' }}>
+            <ul className={styles.list}>
               <li>
                 <RadioButtonField
                   id="option-private"
