@@ -1,6 +1,4 @@
-// TODO: Get rid of `RTL_SUPPORT_FEATURE_FLAG` as it serves `true` for all.
 // Launch Darkly Feature Flags
-export const RTL_SUPPORT_FEATURE_FLAG = 'feature-at-03-2018-rtl-support';
 export const WALK_FOR_ME = 'feature-fe-10-2017-walkme-integration-eli-lilly';
 export const CONTACT_US_SPACE_HOME = 'feature-ps-10-2017-contact-us-space-home';
 export const CONTACT_US_BOILERPLATE_FLAG = 'feature-ps-10-2017-contact-us-boilerplate';
