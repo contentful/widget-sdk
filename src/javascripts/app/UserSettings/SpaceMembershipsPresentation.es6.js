@@ -6,7 +6,8 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Button
+  Button,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import moment from 'moment';
@@ -34,7 +35,9 @@ const SpaceMembershipsPresentation = ({ spaces, onLeave }) => (
           {(spaces || []).map(space => {
             return (
               <TableRow key={space.sys.id}>
-                <TableCell>{space.name}</TableCell>
+                <TableCell>
+                  <TextLink href={`/spaces/${space.sys.id}`}>{space.name}</TextLink>
+                </TableCell>
                 <TableCell>{space.organization.name}</TableCell>
                 <TableCell title={moment(space.sys.createdAt).format('MMMM DD, YYYY')}>
                   {moment(space.sys.createdAt, moment.ISO_8601).fromNow()}
