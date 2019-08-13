@@ -9,11 +9,11 @@ const empty = require('../fixtures/responses/empty.json');
 const severalTasks = require('../fixtures/responses/tasks-several.json');
 
 export enum States {
-  NONE = 'comments/none',
-  SEVERAL = 'comments/several',
-  SEVERAL_ONE_OPEN = 'comments/several-one-open',
-  SEVERAL_ONE_RESOLVED = 'comments/several-one-resolved',
-  INTERNAL_SERVER_ERROR = 'comments/internal-server-error'
+  NONE = 'tasks/none',
+  SEVERAL = 'tasks/several',
+  SEVERAL_ONE_OPEN = 'tasks/several-one-open',
+  SEVERAL_ONE_RESOLVED = 'tasks/several-one-resolved',
+  INTERNAL_SERVER_ERROR = 'tasks/internal-server-error'
 }
 
 enum Status {
@@ -23,7 +23,7 @@ enum Status {
 
 export const PROVIDER = 'tasks';
 
-const GET_TASK_LIST = `a request to get all entry comments for entry "${defaultEntryId}"`
+const GET_TASK_LIST = `a request to get all entry tasks for entry "${defaultEntryId}"`
 
 const getEntryCommentsAndTasksRequest: RequestOptions = {
   method: 'GET',
