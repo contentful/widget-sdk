@@ -1,5 +1,5 @@
 import base from 'states/Base.es6';
-import { iframeStateWrapper } from './utils.es6';
+import { iframeStateWrapper, reactStateWrapper } from './utils.es6';
 import { noop } from 'lodash';
 
 const user = userBase({
@@ -8,10 +8,12 @@ const user = userBase({
   url: '/user{pathSuffix:PathSuffix}'
 });
 
-const spaceMemberships = userBase({
+const spaceMemberships = reactStateWrapper({
   name: 'space_memberships',
   title: 'Space memberships',
-  url: '/space_memberships{pathSuffix:PathSuffix}'
+  loadingText: 'Loading spaces…',
+  url: '/space_memberships',
+  componentPath: 'app/UserSettings/SpaceMemberships.es6'
 });
 
 const organizationMemberships = userBase({
