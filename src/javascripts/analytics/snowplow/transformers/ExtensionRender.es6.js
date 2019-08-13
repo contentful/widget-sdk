@@ -1,4 +1,6 @@
 import { pick } from 'lodash';
+import { getSchema } from 'analytics/snowplow/Schemas.es6';
+import { addUserOrgSpace } from './Decorators.es6';
 
 export const EXPECTED_EVENT_PROPS = [
   'location',
@@ -9,9 +11,18 @@ export const EXPECTED_EVENT_PROPS = [
   'instance_params'
 ];
 
-export default function(_, segmentData) {
+export default addUserOrgSpace((_, segmentData) => {
   return {
-    // Remove properties automatically added by Segment client.
-    data: pick(segmentData, EXPECTED_EVENT_PROPS)
+    data: {
+      scope: 'ui_extension',
+      action: 'render'
+    },
+    contexts: [
+      {
+        schema: getSchema('extension_render').path,
+        // Remove properties automatically added by Segment client.
+        data: pick(segmentData, EXPECTED_EVENT_PROPS)
+      }
+    ]
   };
-}
+});
