@@ -1,3 +1,5 @@
+window.jQuery = window.$ = require('jquery');
+
 window.libs = [
   ['lodash', require('lodash')],
   ['angular', require('angular')],

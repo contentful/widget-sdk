@@ -3,7 +3,8 @@ import $q from 'test/helpers/$q';
 
 // TODO Global 'sinon' is deprecated but still used by a lot of test
 // files.
-window.sinon = sinon;
+
+// window.sinon = sinon;
 
 export const stub = sinon.stub;
 export const spy = sinon.spy;

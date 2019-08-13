@@ -16,6 +16,26 @@ export const registerConstant = register('constant');
 export const registerProvider = register('provider');
 export const registerValue = register('value');
 
+export const initReady = () => {
+  try {
+    return angular.module('contentful/init').loaded === true;
+  } catch (e) {
+    return false;
+  }
+};
+
+export const awaitInitReady = async () => {
+  const ready = initReady();
+
+  if (!ready) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    return awaitInitReady();
+  }
+
+  return true;
+};
+
 export const getModule = name => {
   try {
     return angular.module('contentful/init').getModule(name);

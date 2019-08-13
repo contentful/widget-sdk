@@ -1,4 +1,7 @@
-xdescribe('Role List Directive', () => {
+import sinon from 'sinon';
+import { $inject, $compile, $apply } from 'test/helpers/helpers';
+
+describe('Role List Directive', () => {
   beforeEach(async function() {
     this.getCurrentVariation = sinon.stub().resolves(false);
     this.stubs = {
@@ -19,8 +22,6 @@ xdescribe('Role List Directive', () => {
     await this.system.override('access_control/AccessChecker/index.es6', {
       canModifyRoles: this.canModifyRoles
     });
-    // this.$inject('access_control/AccessChecker').canModifyRoles = this.canModifyRoles;
-    // this.$inject('utils/LaunchDarkly').onFeatureFlag = sinon.stub();
 
     this.roles = [
       {
@@ -92,12 +93,7 @@ xdescribe('Role List Directive', () => {
       rolesResource: this.rolesResource
     });
 
-    // let registerController;
-    // let registerDirective;
-
-    const { default: register } = await this.system.import('access_control/RoleListDirective.es6');
-
-    // debugger;
+    const { default: register } = await this.system.import('access_control/RoleListController');
 
     module('contentful/test', $provide => {
       $provide.constant('$state', { href: sinon.stub(), current: {} });
@@ -109,7 +105,7 @@ xdescribe('Role List Directive', () => {
       });
     });
 
-    const spaceContext = this.$inject('spaceContext');
+    const spaceContext = $inject('spaceContext');
 
     register();
 
@@ -122,8 +118,8 @@ xdescribe('Role List Directive', () => {
     };
 
     this.compileElement = function() {
-      this.container = this.$compile('<cf-role-list />', { context: {} });
-      this.$apply();
+      this.container = $compile('<cf-role-list />', { context: {} });
+      $apply();
     };
 
     this.getButton = () => this.container.find('button:contains("Create new role")');
@@ -159,6 +155,9 @@ xdescribe('Role List Directive', () => {
         expect(this.getButton().length).toBe(0);
 
         this.toggleLegacy(false);
+
+        this.container.remove();
+
         this.compileElement();
 
         expect(this.getButton().length).toBe(0);
@@ -175,6 +174,7 @@ xdescribe('Role List Directive', () => {
         expect(this.getButton().length).toBe(1);
 
         this.toggleLegacy(false);
+        this.container.remove();
         this.compileElement();
 
         expect(this.getButton().length).toBe(1);
@@ -196,6 +196,7 @@ xdescribe('Role List Directive', () => {
         expect(text).toBe('Your organization is using 1 out of 3 available roles.');
 
         this.toggleLegacy(false);
+        this.container.remove();
         this.compileElement();
 
         text = this.container
@@ -227,6 +228,7 @@ xdescribe('Role List Directive', () => {
           expect(text).toBe('Upgrade to add more roles, or delete an existing role.');
 
           this.toggleLegacy(false);
+          this.container.remove();
           this.compileElement();
 
           text = this.container
@@ -255,6 +257,7 @@ xdescribe('Role List Directive', () => {
           );
 
           this.toggleLegacy(false);
+          this.container.remove();
           this.compileElement();
 
           text = this.container
@@ -283,6 +286,7 @@ xdescribe('Role List Directive', () => {
           expect(text).toBe('Contact the admin of this organization to upgrade the organization.');
 
           this.toggleLegacy(false);
+          this.container.remove();
           this.compileElement();
 
           text = this.container

@@ -1,20 +1,36 @@
 'use strict';
 
 import { runTask } from 'utils/Concurrent.es6';
+import { $apply } from 'test/helpers/helpers';
 import _ from 'lodash';
 
-_.extend(window, createDsl(window.jasmine.getEnv()));
+const jasmineDsl = window.jasmine.getEnv();
 
-function createDsl(jasmineDsl) {
-  return {
-    it: createCoroutineTestFactory(jasmineDsl.it),
-    fit: createCoroutineTestFactory(jasmineDsl.fit),
-    xit: createCoroutineTestFactory(jasmineDsl.xit),
+export const it = createCoroutineTestFactory(jasmineDsl.it);
+export const fit = createCoroutineTestFactory(jasmineDsl.fit);
+export const xit = createCoroutineTestFactory(jasmineDsl.xit);
+export const beforeEach = createHookFactory(jasmineDsl.beforeEach);
+export const afterEach = createHookFactory(jasmineDsl.afterEach);
 
-    beforeEach: createHookFactory(jasmineDsl.beforeEach),
-    afterEach: createHookFactory(jasmineDsl.afterEach)
-  };
-}
+// _.extend(window, createDsl(window.jasmine.getEnv()));
+//
+// function createDsl(jasmineDsl) {
+//   return {
+//     it: createCoroutineTestFactory(jasmineDsl.it),
+//     fit: createCoroutineTestFactory(jasmineDsl.fit),
+//     xit: createCoroutineTestFactory(jasmineDsl.xit),
+//
+//     beforeEach: createHookFactory(jasmineDsl.beforeEach),
+//     afterEach: createHookFactory(jasmineDsl.afterEach)
+//   };
+// }
+
+// _.extend(window, createDsl(window.jasmine.getEnv()));
+//
+// function createDsl(jasmineDsl) {
+//   return {
+//   };
+// }
 
 function createHookFactory(defineHook) {
   return runner => {
@@ -22,7 +38,7 @@ function createHookFactory(defineHook) {
       Promise.resolve()
         .then(() => {
           const result = runner.call(this);
-          const $apply = this.$apply.bind(this);
+          // const $_apply = $apply.bind(this);
           if (isGenerator(result)) {
             return runGenerator(result, $apply);
           }
@@ -47,7 +63,7 @@ function createCoroutineTestFactory(testFactory) {
     }
 
     return testFactory(desc, function(done) {
-      const $apply = this.$apply.bind(this);
+      // const $apply = $_apply.bind(this);
       before = before || _.noop;
       const setup = this.setup || (() => Promise.resolve());
       return Promise.resolve(before.call(this))

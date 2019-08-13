@@ -1,6 +1,5 @@
-'use strict';
-
 import _ from 'lodash';
+import sinon from 'sinon';
 
 describe('Response Cache', () => {
   let cache, canStub;

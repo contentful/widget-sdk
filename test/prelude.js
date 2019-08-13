@@ -23,6 +23,20 @@
   const Karma = window.__karma__;
   const start = Karma.start.bind(Karma);
 
+  Error.stackTraceLimit = 1000;
+
+  /**
+   * Subscribe to promise rejection and expose error details to karma runner.
+   * Note that it will fail with generic error rather than a failed test case
+   * due to asynchronous event handling.
+   */
+  window.addEventListener('unhandledrejection', ev => {
+    // Without this check there will be an error in async tests using `Promise.reject()`
+    if (ev.reason) {
+      window.__karma__.error(`Unhandled rejection: ${ev.reason.stack}`);
+    }
+  });
+
   Karma.start = async (...args) => {
     try {
       // This needs to be registered early because prelude depends on it (and it not being in `this.system`);
@@ -55,11 +69,35 @@
       // TODO: figure out how to get Chrome to not fail when loading so many files...
       // below does NOT work
       // await new Promise(resolve => setTimeout(resolve, 10000));
+      await SystemJS.import('angular-mocks');
+      const { configure } = await SystemJS.import('enzyme');
+      const { default: Adapter } = await SystemJS.import('enzyme-adapter-react-16');
+
+      configure({ adapter: new Adapter() });
 
       await SystemJS.import('test/helpers/setup-isolated-system');
+      await SystemJS.import('test/helpers/dsl');
+      await SystemJS.import('test/helpers/hooks');
+      await SystemJS.import('test/helpers/sinon');
+      await SystemJS.import('test/helpers/contentful_mocks');
+      await SystemJS.import('test/helpers/mocks/entity_editor_document');
+      await SystemJS.import('test/helpers/mocks/cf_stub');
+      await SystemJS.import('test/helpers/mocks/space_context');
       await SystemJS.import('prelude');
-      await SystemJS.import('test/helpers/boot');
-      await Promise.all(testModules.map(name => SystemJS.import(name)));
+      await SystemJS.import('test/helpers/application');
+      // await SystemJS.import('test/unit/access_control/');
+      // await SystemJS.import('test/unit/access_control/role_list.controller.spec');
+      // await SystemJS.import('test/unit/access_control/role_list.directive.spec');
+      await Promise.all(
+        testModules.reduce((memo, name) => {
+          if (name.startsWith('test/unit/access_control')) {
+            memo.push(SystemJS.import(name));
+          }
+
+          return memo;
+        }, [])
+      );
+      // await Promise.all(testModules.map(name => SystemJS.import(name)));
 
       start(...args);
     } catch (e) {

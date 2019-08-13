@@ -1,24 +1,25 @@
-Error.stackTraceLimit = 1000;
+// Error.stackTraceLimit = 1000;
+//
+// /**
+//  * Subscribe to promise rejection and expose error details to karma runner.
+//  * Note that it will fail with generic error rather than a failed test case
+//  * due to asynchronous event handling.
+//  */
+// window.addEventListener('unhandledrejection', ev => {
+//   // Without this check there will be an error in async tests using `Promise.reject()`
+//   if (ev.reason) {
+//     window.__karma__.error(`Unhandled rejection: ${ev.reason.stack}`);
+//   }
+// });
+//
+// // We import all these modules which have side effects.
+// // They may register Angular services, register test suite hooks or define
+// // global variables
+// /* eslint-disable import/first */
+// import 'angular-mocks';
+// import { configure } from 'enzyme';
+// import Adapter from 'enzyme-adapter-react-16';
 
-/**
- * Subscribe to promise rejection and expose error details to karma runner.
- * Note that it will fail with generic error rather than a failed test case
- * due to asynchronous event handling.
- */
-window.addEventListener('unhandledrejection', ev => {
-  // Without this check there will be an error in async tests using `Promise.reject()`
-  if (ev.reason) {
-    window.__karma__.error(`Unhandled rejection: ${ev.reason.stack}`);
-  }
-});
-
-// We import all these modules which have side effects.
-// They may register Angular services, register test suite hooks or define
-// global variables
-/* eslint-disable import/first */
-import 'angular-mocks';
-import { configure } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
 import './application';
 import './boot';
 import './contentful_mocks';
@@ -43,4 +44,4 @@ import './mocks/EnforcementsService';
 import installTestCaseContext from './TestCaseContext';
 installTestCaseContext();
 
-configure({ adapter: new Adapter() });
+// configure({ adapter: new Adapter() });

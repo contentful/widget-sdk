@@ -15,6 +15,7 @@ import servicesModalDialogServiceEs6 from 'services/modalDialogService.es6';
 import uiCommandEs6 from 'ui/command.es6';
 import accessControlRoleRemoverEs6 from 'access_control/RoleRemover.es6';
 import accessControlUsersUserListDirectiveEs6 from 'access_control/Users/UserListDirective.es6';
+import accessControlRoleListController from 'access_control/RoleListController';
 import accessControlRoleListDirectiveEs6 from 'access_control/RoleListDirective.es6';
 import accessControlUserSpaceInvitationControllerEs6 from 'access_control/UserSpaceInvitationController.es6';
 import accountCfNewOrganizationMembershipEs6 from 'account/cfNewOrganizationMembership.es6';
@@ -170,6 +171,7 @@ export default angular
     '$injector',
     $injector => {
       angular.module('contentful/init').getModule = $injector.get;
+      angular.module('contentful/init').loaded = false;
 
       analyticsAnalyticsConsoleEs6();
       dataSharejsUtilsEs6();
@@ -182,6 +184,7 @@ export default angular
       uiCommandEs6();
       accessControlRoleRemoverEs6();
       accessControlUsersUserListDirectiveEs6();
+      accessControlRoleListController();
       accessControlRoleListDirectiveEs6();
       accessControlUserSpaceInvitationControllerEs6();
       accountCfNewOrganizationMembershipEs6();
@@ -312,5 +315,7 @@ export default angular
       uiCfUiTabEs6();
       uiHighlightMatchDirectiveEs6();
       uiLoaderEs6();
+
+      angular.module('contentful/init').loaded = true;
     }
   ]).name;

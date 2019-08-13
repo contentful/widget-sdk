@@ -1,13 +1,9 @@
-'use strict';
-
 describe('access_control/Enforcements.es6', () => {
   let enforcements;
   let OrganizationRoles;
   let spaceMock;
 
   beforeEach(async function() {
-    module('contentful/test');
-
     enforcements = await this.system.import('access_control/Enforcements.es6');
     OrganizationRoles = await this.system.import('services/OrganizationRoles.es6');
 
