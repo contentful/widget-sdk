@@ -2,12 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import FeedbackButton from 'app/common/FeedbackButton.es6';
 import AppsList from './AppsList.es6';
 import AppListItem from './AppListItem.es6';
 import {
   Note,
-  Button,
   SkeletonContainer,
   SkeletonDisplayText,
   SkeletonText,
@@ -15,10 +13,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon.es6';
-import * as Analytics from 'analytics/Analytics.es6';
-import * as Intercom from 'services/intercom.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
-import { websiteUrl } from 'Config.es6';
 
 const styles = {
   intro: css({
@@ -26,9 +21,6 @@ const styles = {
   }),
   note: css({
     marginBottom: tokens.spacingL
-  }),
-  enableBtn: css({
-    marginRight: tokens.spacingL
   })
 };
 
@@ -82,11 +74,6 @@ export default class AppsListPage extends Component {
     }).isRequired
   };
 
-  constructor(props) {
-    super(props);
-    this.state = { optedIn: props.apps.installed.length > 0 };
-  }
-
   render() {
     return (
       <AppsListShell>
@@ -96,101 +83,29 @@ export default class AppsListPage extends Component {
     );
   }
 
-  optIn = () => {
-    this.setState({ optedIn: true });
-
-    Analytics.track('apps:opted_in');
-
-    // Track event so the user is identified in Intercom.
-    Intercom.trackEvent('apps-alpha-opted-in');
-  };
-
-  renderDisclaimer() {
-    const { optedIn } = this.state;
-
-    return (
-      <Note className={styles.note} noteType="primary" title="Alpha feature">
-        <p>
-          This is an experimental alpha feature. We are heavily iterating on it based on your
-          feedback. Apps might stop working or get removed without notice so it’s recommended to not
-          use apps in production. For more information{' '}
-          <a
-            href="https://www.contentful.com/developers/docs/extensibility/apps/"
-            target="_blank"
-            rel="noopener noreferrer">
-            visit our documentation
-          </a>
-          .
-        </p>
-        <Button
-          className={styles.enableBtn}
-          disabled={optedIn}
-          onClick={this.optIn}
-          testId="enable-apps"
-          icon={optedIn ? 'CheckCircle' : undefined}>
-          {optedIn ? 'Apps enabled' : 'Enable alpha feature'}
-        </Button>
-        <FeedbackButton target="extensibility" about="Apps" type="Button" />
-      </Note>
-    );
-  }
-
-  renderPricingInfo() {
-    return (
-      <Note
-        className={styles.note}
-        noteType="warning"
-        title="Upgrade your space to access our latest features">
-        <p>
-          To access this feature, submit a request to begin the process of upgrading your space. To
-          learn more, read about our{' '}
-          <a
-            href={websiteUrl(
-              '/pricing/?faq_category=payments&faq=what-type-of-spaces-can-i-have#payments'
-            )}
-            rel="noopener noreferrer"
-            target="_blank">
-            Space types and pricing
-          </a>
-          .
-        </p>
-        <p>
-          <a
-            href={websiteUrl('/support/?upgrade-pricing=true')}
-            target="_blank"
-            rel="noopener noreferrer">
-            Submit a support request{' '}
-          </a>
-        </p>
-      </Note>
-    );
-  }
-
   renderApps() {
     const { apps } = this.props;
-    const hasAtLeastOneAppInstalled = apps.installed.length > 0;
-    const isAtLeastOneAppEnabled = apps.rest.filter(app => app.enabled).length > 0;
-    const hasApps = hasAtLeastOneAppInstalled || isAtLeastOneAppEnabled;
-    const canUse = hasApps && this.state.optedIn;
 
-    return (
-      <React.Fragment>
-        {hasApps ? this.renderDisclaimer() : this.renderPricingInfo()}
-        {apps.installed.length > 0 && (
-          <AppsList title="Installed" overlayed={!canUse}>
+    if (apps.installed.length > 0) {
+      return (
+        <>
+          <Note className={styles.note} noteType="warning" title="Apps Alpha is closed">
+            Stay tuned for Apps Beta release soon. You can still use the apps installed in the alpha
+            period.
+          </Note>
+          <AppsList title="Installed" overlayed={false}>
             {apps.installed.map(app => (
               <AppListItem key={app.id} app={app} />
             ))}
           </AppsList>
-        )}
-        {apps.rest.length > 0 && (
-          <AppsList title="Available" overlayed={!canUse}>
-            {apps.rest.map(app => (
-              <AppListItem key={app.id} app={app} />
-            ))}
-          </AppsList>
-        )}
-      </React.Fragment>
+        </>
+      );
+    }
+
+    return (
+      <Note className={styles.note} noteType="warning" title="Apps Alpha is closed">
+        You cannot install Apps Alpha anymore. Stay tuned for Apps Beta release soon.
+      </Note>
     );
   }
 }
