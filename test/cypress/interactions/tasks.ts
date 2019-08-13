@@ -21,7 +21,7 @@ enum Status {
   RESOLVED = 'resolved',
 }
 
-const provider = 'tasks';
+export const PROVIDER = 'tasks';
 
 const GET_TASK_LIST = `a request to get all entry comments for entry "${defaultEntryId}"`
 
@@ -34,7 +34,7 @@ const getEntryCommentsAndTasksRequest: RequestOptions = {
 export const getAllCommentsForDefaultEntry = {
   willReturnNone() {
     cy.addInteraction({
-      provider,
+      provider: PROVIDER,
       state: States.NONE,
       uponReceiving: GET_TASK_LIST,
       withRequest: getEntryCommentsAndTasksRequest,
@@ -48,7 +48,7 @@ export const getAllCommentsForDefaultEntry = {
   },
   willReturnSeveral() {
     cy.addInteraction({
-      provider,
+      provider: PROVIDER,
       state: States.SEVERAL,
       uponReceiving: GET_TASK_LIST,
       withRequest: getEntryCommentsAndTasksRequest,
@@ -62,7 +62,7 @@ export const getAllCommentsForDefaultEntry = {
   },
   willFailWithAnInternalServerError() {
     cy.addInteraction({
-      provider,
+      provider: PROVIDER,
       state: States.INTERNAL_SERVER_ERROR,
       uponReceiving: GET_TASK_LIST,
       withRequest: getEntryCommentsAndTasksRequest,
@@ -92,7 +92,7 @@ export function createTask({ title, assigneeId }) {
     }
   };
   const interactionRequestInfo = {
-    provider,
+    provider: PROVIDER,
     uponReceiving: `a request to assign a new task to user "${assigneeId}" for entry "${defaultEntryId}"`,
     withRequest: {
       method: 'POST',
@@ -153,7 +153,7 @@ function changeTaskStatus(status: Status, stateName: States) {
     };
 
     const interactionRequestInfo = {
-      provider,
+      provider: PROVIDER,
       uponReceiving: `a request to change status of task "${taskId}" to "${status}"`,
       withRequest: {
         method: 'PUT',

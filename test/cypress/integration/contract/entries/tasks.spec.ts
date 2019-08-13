@@ -1,6 +1,7 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import {
+  PROVIDER as TASKS_PROVIDER,
   getAllCommentsForDefaultEntry,
   createTask,
   openTask,
@@ -24,7 +25,7 @@ describe('Tasks entry editor sidebar', () => {
   before(() =>
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: ['tasks', 'entries', 'users', 'microbackend'],
+      providers: [TASKS_PROVIDER, 'entries', 'users', 'microbackend'],
       cors: true,
       pactfileWriteMode: 'merge',
       spec: 2
