@@ -14,6 +14,7 @@ import {
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import { websiteUrl } from 'Config.es6';
 
 const styles = {
   intro: css({
@@ -86,12 +87,23 @@ export default class AppsListPage extends Component {
   renderApps() {
     const { apps } = this.props;
 
+    const info = (
+      <p>
+        Dear user, we are phasing out the alpha of apps as we are moving into beta. If you have any
+        comments or questions, please{' '}
+        <a href={websiteUrl('/support/')} target="_blank" rel="noopener noreferrer">
+          reach out
+        </a>{' '}
+        to us. Thank you for you participation and we hope to see you in the beta.
+      </p>
+    );
+
     if (apps.installed.length > 0) {
       return (
         <>
-          <Note className={styles.note} noteType="warning" title="Apps Alpha is closed">
-            Stay tuned for Apps Beta release soon. You can still use the apps installed in the alpha
-            period.
+          <Note className={styles.note} noteType="warning" title="Apps alpha is phasing out">
+            {info}
+            <p>You can still use the apps installed in the alpha period.</p>
           </Note>
           <AppsList title="Installed" overlayed={false}>
             {apps.installed.map(app => (
@@ -103,8 +115,8 @@ export default class AppsListPage extends Component {
     }
 
     return (
-      <Note className={styles.note} noteType="warning" title="Apps Alpha is closed">
-        You cannot install Apps Alpha anymore. Stay tuned for Apps Beta release soon.
+      <Note className={styles.note} noteType="warning" title="Apps alpha is phasing out">
+        {info}
       </Note>
     );
   }
