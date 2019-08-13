@@ -13,6 +13,24 @@ const store = getStore();
  * defined in local storage) or the first space returned in the spaces listing.
  * The `home` view is loaded only if there are no spaces.
  */
+
+function getCurrentOrg(user) {
+  const lastUsedOrg = store.get('lastUsedOrg');
+  if (user.organizationMemberships) {
+    if (user.organizationMemberships.length === 1) {
+      return user.organizationMemberships[0];
+    } else {
+      return (
+        user.organizationMemberships &&
+        find(
+          user.organizationMemberships,
+          membership => membership.organization.sys.id === lastUsedOrg
+        )
+      );
+    }
+  }
+}
+
 export default makeState({
   name: 'home',
   url: '/',
@@ -47,16 +65,16 @@ export default makeState({
           path: ['spaces', 'detail'],
           params: { spaceId: space.sys.id }
         });
+        $scope.hasSpace = true;
       } else {
         const user = getValue(user$) || {};
-        $scope.welcomeProps = {
-          user: {
-            firstName: user.firstName,
-            signInCount: user.signInCount
-          }
-        };
+        const currentOrgMembership = getCurrentOrg(user);
 
-        // Show the blank homepage otherwise
+        $scope.orgOwnerOrAdmin =
+          currentOrgMembership &&
+          (currentOrgMembership.role === 'owner' || currentOrgMembership.role === 'admin');
+        $scope.lastUsedOrg = currentOrgMembership.organization.sys.id;
+        $scope.hasSpace = false;
         $scope.context.ready = true;
       }
     }

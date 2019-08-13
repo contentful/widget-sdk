@@ -1,7 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-export default () => (
-  <svg data-name="Layer 1" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 280 224.52">
+const Illustration = ({ className }) => (
+  <svg
+    className={className}
+    data-name="Layer 1"
+    xmlnsXlink="http://www.w3.org/1999/xlink"
+    viewBox="0 0 280 224.52">
     <defs>
       <linearGradient id="a" y1="112.26" x2={280} y2="112.26" gradientUnits="userSpaceOnUse">
         <stop offset={0} stopColor="#cfedf9" />
@@ -39,3 +44,7 @@ export default () => (
     />
   </svg>
 );
+
+Illustration.propTypes = { className: PropTypes.string };
+
+export default Illustration;

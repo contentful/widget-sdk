@@ -7,6 +7,7 @@ export const spaceHomeController = ($scope, space, accessChecker, Config) => {
   $scope.context.ready = true;
   $scope.context.forbidden = !accessChecker.getSectionVisibility().spaceHome;
   $scope.readOnlySpace = Boolean(space.readOnlyAt);
+  $scope.hasSpace = true;
 
   const spaceId = space.sys.id;
   const spaceName = space.name;

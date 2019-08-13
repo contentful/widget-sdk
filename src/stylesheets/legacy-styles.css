@@ -10967,6 +10967,9 @@ pre,
     background-size: 1280px auto;
     background-repeat: repeat-x;
   }
+  .home__empty-state {
+    height: 100%;
+  }
   .home__container-read-only {
     background: #fff;
     height: 100%;

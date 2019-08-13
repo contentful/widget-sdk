@@ -20,6 +20,7 @@ describe('HomeTemplate', () => {
     scope.readOnlySpace = false;
     scope.isAuthorOrEditor = true;
     scope.isSpaceAdmin = false;
+    scope.hasSpace = true;
     this.element = this.$compile(this.template)(scope);
     this.$apply();
     expect(this.element.has('.home__container').length).toBe(0);
@@ -31,6 +32,7 @@ describe('HomeTemplate', () => {
     scope.readOnlySpace = false;
     scope.isAuthorOrEditor = false;
     scope.isSpaceAdmin = true;
+    scope.hasSpace = true;
     this.element = this.$compile(this.template)(scope);
     this.$apply();
     expect(this.element.has('.home__container').length).toBe(1);
