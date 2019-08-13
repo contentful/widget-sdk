@@ -34,21 +34,27 @@ const SpaceMembershipsPresentation = ({ spaces, onLeave }) => (
         <TableBody>
           {(spaces || []).map(space => {
             return (
-              <TableRow key={space.sys.id}>
-                <TableCell>
+              <TableRow key={space.sys.id} testId="membership-row">
+                <TableCell testId="space-cell">
                   <TextLink href={`/spaces/${space.sys.id}`}>{space.name}</TextLink>
                 </TableCell>
-                <TableCell>{space.organization.name}</TableCell>
+                <TableCell testId="organization-cell">{space.organization.name}</TableCell>
                 <TableCell title={moment(space.sys.createdAt).format('MMMM DD, YYYY')}>
                   {moment(space.sys.createdAt, moment.ISO_8601).fromNow()}
                 </TableCell>
-                <TableCell>
+                <TableCell testId="actions-cell">
                   {space.spaceMembership && (
-                    <Button onClick={() => onLeave(space)} buttonType="muted" size="small">
+                    <Button
+                      testId="action--leave-space"
+                      onClick={() => onLeave(space)}
+                      buttonType="muted"
+                      size="small">
                       Leave
                     </Button>
                   )}
-                  {!space.spaceMembership && <em>Member via team</em>}
+                  {!space.spaceMembership && (
+                    <em data-test-id="no-actions-placeholder--via-team">Member via team</em>
+                  )}
                 </TableCell>
               </TableRow>
             );

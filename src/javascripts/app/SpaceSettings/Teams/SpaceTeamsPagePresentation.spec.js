@@ -33,7 +33,7 @@ describe('SpaceTeamsPage', () => {
 
   describe('being rendered', () => {
     it('should not break', () => {
-      expect(() => build()).not.toThrow();
+      expect(build).not.toThrow();
     });
   });
 
