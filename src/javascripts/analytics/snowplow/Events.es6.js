@@ -48,7 +48,7 @@ registerEvent('global:state_changed', 'page_view', PageViewTransform);
 
 registerEvent('extension:save', 'ui_extension_save', ExtensionSaveTransform);
 registerEvent('extension:install', 'ui_extension_install', ExtensionInstallTransform);
-registerEvent('extension:render', 'extension_render', ExtensionRenderTransformer);
+registerEvent('extension:render', 'generic', ExtensionRenderTransformer);
 
 registerGenericEvent('learn:language_selected');
 registerGenericEvent('learn:resource_selected');
