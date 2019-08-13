@@ -6,9 +6,6 @@ import mimetype from '@contentful/mimetype';
 import * as Filestack from 'services/Filestack.es6';
 
 import * as ImageOperations from 'app/widgets/ImageOperations.es6';
-import * as LD from 'utils/LaunchDarkly/index.es6';
-
-const FEATURE_ASSET_SECURE_HIDE_FILE_DELETE = 'dv-2019-07-asset-security-hide-file-delete';
 
 export default function register() {
   registerDirective('cfFileEditor', [
@@ -36,13 +33,6 @@ export default function register() {
               onSuccess: setFile
             });
           }
-
-          scope.isFileDeletionAvailable = true;
-          LD.onFeatureFlag(scope, FEATURE_ASSET_SECURE_HIDE_FILE_DELETE, flag => {
-            if (flag) {
-              scope.isFileDeletionAvailable = false;
-            }
-          });
 
           const removeUpdateListener = field.onValueChanged(file => {
             scope.file = file;
