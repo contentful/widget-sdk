@@ -7,6 +7,7 @@ import UserSpaceInvitationDialog from 'access_control/templates/UserSpaceInvitat
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getAllUsers } from 'access_control/OrganizationMembershipRepository.es6';
 import { getModule } from 'NgRegistry.es6';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 
 const MODAL_OPTS_BASE = {
   noNewScope: true,
@@ -113,12 +114,12 @@ export function create(spaceContext, userListHandler, TokenStore) {
    * Invite an existing user to space
    */
   function openSpaceInvitationDialog() {
+    const canAddUsers = isOwnerOrAdmin(spaceContext.organization);
     const labels = {
       title: 'Add users to space',
       insert: 'Assign roles to selected users',
-      infoHtml: '<cf-add-users-to-space-note></cf-add-users-to-space-note>',
-      noEntitiesCustomHtml:
-        '<cf-no-users-to-add-to-space-dialog></cf-no-users-to-add-to-space-dialog>'
+      infoHtml: `<react-component name="access_control/AddUsersToSpaceNote.es6"  props="{isOwnerOrAdmin: ${canAddUsers}}" />`,
+      noEntitiesCustomHtml: `<react-component name="access_control/NoUsersToAddNote.es6"  props="{isOwnerOrAdmin: ${canAddUsers}}" />`
     };
 
     return entitySelector

@@ -7564,8 +7564,7 @@ pre,
     background: #e5ebed;
   }
   .entity-selector__note {
-    margin-left: 0;
-    margin-right: 0;
+    margin-top: 20px;
   }
   .entity-selector-dialog {
     width: 66vw;

@@ -15,9 +15,12 @@
         on-no-entities="entitySelector.onNoEntities")
 
     .modal-dialog__content(
-      ng-if="showCustomEmptyMessage"
-      bind-html-compile="entitySelector.labels.noEntitiesCustomHtml"
-      data-test-id="custom-empty-message")
+      ng-if="showCustomEmptyMessage")
+      div(
+        bind-html-compile="entitySelector.labels.noEntitiesCustomHtml"
+        data-test-id="custom-empty-message")
+      button.btn-primary-action(type="button" ng-click="dialog.cancel()" style="margin: 0 20px 0 10px;")
+        | Okay, got it
 
     .modal-dialog__controls(ng-if="entitySelector.config.multiple && !showCustomEmptyMessage")
       button.btn-primary-action.modal-dialog__controls-confirm(
