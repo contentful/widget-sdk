@@ -17,7 +17,7 @@ import TeamDialog from './TeamDialog.es6';
 
 const styles = {
   name: css({
-    width: '40rem',
+    width: '18rem',
     ...ellipsisStyle
   }),
   description: css({

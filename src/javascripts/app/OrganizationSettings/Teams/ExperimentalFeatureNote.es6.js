@@ -1,11 +1,11 @@
 import React from 'react';
 import { css } from 'emotion';
-import { spacingL, spacingXl } from '@contentful/forma-36-tokens';
+import { spacingL } from '@contentful/forma-36-tokens';
 import { Note } from '@contentful/forma-36-react-components';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 
 const styles = {
-  note: css({ display: 'inline-flex', marginBottom: spacingL, marginLeft: spacingXl }),
+  note: css({ display: 'inline-flex', marginBottom: spacingL }),
   message: css({ marginRight: '1rem' })
 };
 
