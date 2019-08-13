@@ -1,10 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import { Button, TextField, Form } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import Icon from 'ui/Components/Icon.es6';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import getOrgRole from 'redux/selectors/getOrgRole.es6';
+
+const styles = {
+  deleteButton: css({
+    marginRight: tokens.spacingM
+  })
+};
 
 class SpaceSettings extends React.Component {
   static propTypes = {
@@ -57,7 +65,7 @@ class SpaceSettings extends React.Component {
                   buttonType="negative"
                   onClick={onRemoveClick}
                   data-test-id="delete-space"
-                  className="f36-margin-right--m">
+                  className={styles.deleteButton}>
                   Remove space and all its contents
                 </Button>
               )}
@@ -71,7 +79,7 @@ class SpaceSettings extends React.Component {
               </Button>
             </>
           }></Workbench.Header>
-        <Workbench.Content>
+        <Workbench.Content type="text">
           <Form>
             <TextField
               name="space-id"
