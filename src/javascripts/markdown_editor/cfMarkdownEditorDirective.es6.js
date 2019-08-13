@@ -1,5 +1,4 @@
 import { registerDirective } from 'NgRegistry.es6';
-import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
 import _ from 'lodash';
 import throttle from 'lodash/throttle';
 import * as K from 'utils/kefir.es6';
@@ -11,7 +10,6 @@ import { isRtlLocale } from 'utils/locales.es6';
 import makePreview from 'markdown_editor/PreviewGenerator.es6';
 import * as actions from 'markdown_editor/markdown_actions.es6';
 import * as MarkdownEditor from 'markdown_editor/markdown_editor.es6';
-import * as LD from 'utils/LaunchDarkly/index.es6';
 
 export default function register() {
   registerDirective('cfMarkdownEditor', [
@@ -78,13 +76,11 @@ export default function register() {
           // 2. loading it even after elements are added to DOM works just fine
           LazyLoader.get('embedly');
 
-          LD.onFeatureFlag(scope, RTL_SUPPORT_FEATURE_FLAG, isEnabled => {
-            if (isEnabled && isRtlLocale(field.locale)) {
-              scope.isReady = false;
-              scope.direction = EDITOR_DIRECTIONS.RTL;
-              initEditorOrRenderError();
-            }
-          });
+          if (isRtlLocale(field.locale)) {
+            scope.isReady = false;
+            scope.direction = EDITOR_DIRECTIONS.RTL;
+            initEditorOrRenderError();
+          }
 
           function toggleMinorActions() {
             const { minorActionsShown, zen } = scope;

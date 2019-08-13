@@ -2,14 +2,13 @@ import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import moment from 'moment';
 import * as K from 'utils/kefir.es6';
-import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
+
 import createSnapshotExtensionBridge from 'widgets/bridges/createSnapshotExtensionBridge.es6';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import { userInputFromDatetime } from 'app/widgets/datetime/data.es6';
 import * as EntityResolver from 'data/CMA/EntityResolver.es6';
 import generatePreview from 'markdown_editor/PreviewGenerator.es6';
 import { isRtlLocale } from 'utils/locales.es6';
-import * as LD from 'utils/LaunchDarkly/index.es6';
 
 export default function register() {
   /**
@@ -42,7 +41,7 @@ export default function register() {
             $scope.hasValue = !isEmpty($scope.value);
 
             $scope.methods = {
-              shouldDisplayRtl: _.constant(false)
+              shouldDisplayRtl: isRtlLocale
             };
 
             $scope.features = {
@@ -56,14 +55,6 @@ export default function register() {
                 parameters
               };
             }
-
-            LD.onFeatureFlag($scope, RTL_SUPPORT_FEATURE_FLAG, isEnabled => {
-              // By default, all entity fields should be displayed as LTR unless the
-              // RTL support feature flag is enabled.
-              if (isEnabled) {
-                $scope.methods.shouldDisplayRtl = isRtlLocale;
-              }
-            });
           }
         ]
       };

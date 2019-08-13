@@ -1,10 +1,8 @@
 import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
-import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
 
 import * as localesUtils from 'utils/locales.es6';
-import * as LD from 'utils/LaunchDarkly/index.es6';
 
 export default function register() {
   /**
@@ -99,16 +97,8 @@ export default function register() {
             });
 
             $scope.methods = {
-              shouldDisplayRtl: _.constant(false)
+              shouldDisplayRtl: isRtlLocale
             };
-
-            LD.onFeatureFlag($scope, RTL_SUPPORT_FEATURE_FLAG, isEnabled => {
-              // By default, all entity fields should be displayed as LTR unless the
-              // RTL support feature flag is enabled.
-              if (isEnabled) {
-                $scope.methods.shouldDisplayRtl = isRtlLocale;
-              }
-            });
 
             function updateErrorStatus() {
               const { validator } = $scope.editorContext;
