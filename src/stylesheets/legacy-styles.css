@@ -1480,7 +1480,8 @@ pre,
     background: #5b9fef;
     color: #fff;
   }
-  .context-menu__items > *:hover:not([disabled]),
+  .context-menu__items > a:hover:not([disabled]),
+  .context-menu__items > button:hover:not([disabled]),
   .context-menu__item:hover:not([disabled]),
   .context-menu [role="menuitem"]:hover:not([disabled]) {
     background: #4a90e2;
