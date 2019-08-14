@@ -86,7 +86,7 @@ orbs:
                 pwd
                 npx sniffer-build-tracker version
                 npx sniffer-build-tracker -vv stat-artifacts -c tools/sniffer-build-tracker.config.js
-                npx sniffer-build-tracker --skip-dirty-check upload-build -c tools/sniffer-build-tracker.config.js
+                npx sniffer-build-tracker upload-build -c tools/sniffer-build-tracker.config.js
 
   estivador:
     commands:
