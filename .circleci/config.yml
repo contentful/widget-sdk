@@ -82,9 +82,10 @@ orbs:
                 export PATH_TO_BUILT_ASSETS=<<parameters.path>>
                 export SNIFFER_UPLOAD_URL=https://user-interface-sniffer.herokuapp.com
 
+                pwd
                 npx sniffer-build-tracker version
-                npx sniffer-build-tracker -vv -c tools/sniffer-build-tracker.config.js stat-artifacts
-                npx sniffer-build-tracker --skip-dirty-check -c tools/sniffer-build-tracker.config.js upload-build
+                npx sniffer-build-tracker -vv stat-artifacts -c tools/sniffer-build-tracker.config.js
+                npx sniffer-build-tracker --skip-dirty-check upload-build -c tools/sniffer-build-tracker.config.js
 
   estivador:
     commands:
