@@ -63,7 +63,9 @@ export default class PublicationWidgetContainer extends Component {
     return (
       <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
         {({ currentVariation }) => {
-          return currentVariation ? (
+          const isJobsFeatureEnabled = currentVariation;
+          const isEntry = entity && entity.sys.type === 'Entry';
+          return isJobsFeatureEnabled && isEntry ? (
             <JobsWidget
               spaceId={spaceId}
               environmentId={environmentId}
