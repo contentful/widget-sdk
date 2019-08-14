@@ -144,9 +144,15 @@ export default function JobWidget({
       );
       return job;
     } catch (error) {
-      Notification.error(`${entryTitle} failed to schedule`);
-      logger.logError(error, `Entry failed to schedule`);
+      if (400 === error.status) {
+        Notification.error(
+          `Unable to schedule ${entryTitle}. There is a limit of 10 scheduled entries pending at any one time.`
+        );
+      } else {
+        Notification.error(`${entryTitle} failed to schedule`);
+      }
       setIsCreatingJob(false);
+      logger.logError(error, `Entry failed to schedule`);
     }
   };
 
