@@ -141,6 +141,7 @@ class UnpublishedReferencesConfirm extends Component {
         isShown={isShown}
         intent="negative"
         confirmLabel="Publish anyway"
+        allowHeightOverflow
         onConfirm={onConfirm}
         onCancel={onCancel}>
         <Paragraph className={styles.description}>{description}</Paragraph>
