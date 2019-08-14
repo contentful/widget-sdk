@@ -12290,6 +12290,7 @@ pre,
   .btn-actions-nav[disabled] {
     color: #d6dce4;
     cursor: default;
+    pointer-events: none;
   }
   .progress-bar {
     width: 100%;
