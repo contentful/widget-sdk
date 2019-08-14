@@ -1,5 +1,6 @@
 const path = require('path');
 const { createApolloFetch } = require('apollo-fetch');
+const https = require('https');
 
 const uri = process.env.SNIFFER_UPLOAD_URL;
 const apolloFetch = createApolloFetch({ uri });
@@ -51,6 +52,49 @@ const uploadBuildSize = async (meta, artifacts) => {
   }
 };
 
+const postCommentToPR = jsonPayload => {
+  return new Promise((resolve, reject) => {
+    const payload = JSON.stringify(jsonPayload);
+    const url = process.env.BUNDLESIZE_COMMENT_LAMBDA_URL;
+    const req = https.request(
+      {
+        ...new URL(url),
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload),
+          Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`
+        }
+      },
+      res => {
+        let result = '';
+        res.setEncoding('utf8');
+
+        console.log(`POST ${url}`);
+        console.log(`\t Status code: ${res.statusCode}`);
+        console.log(`\t Headers: ${res.headers}`);
+
+        res.on('data', chunk => (result += chunk));
+
+        res.on('end', () => {
+          if (res.statusCode >= 400) {
+            resolve(JSON.parse(result));
+          }
+          return resolve({
+            result
+          });
+        });
+      }
+    );
+
+    req.on('error', reject);
+    req.on('abort', reject);
+
+    req.write(payload);
+    req.end();
+  });
+};
+
 const compareBuilds = async commits => {
   const response = await apolloFetch({
     query: `query Compare(
@@ -84,10 +128,23 @@ module.exports = {
   artifacts: [`${pathToBuiltAssets}/**/*.{js,css}`],
   getFilenameHash,
   nameMapper,
+  // actually stands for on ready to upload
   onUpload: async build => {
     const { meta, artifacts } = build;
     await uploadBuildSize(meta, artifacts);
     const result = await compareBuilds([meta.parentRevision, meta.revision]);
-    console.log(result);
+    const pr = process.env.PR_NUMBER || '';
+
+    console.log('Build compare result ->', result);
+
+    try {
+      await postCommentToPR({
+        issue: pr,
+        message: result.markdownAll
+      });
+    } catch (err) {
+      console.error('Build tracker upload failed ->', err);
+      console.log(`Comment won't be posted to ${pr}. Continuing anyway.`);
+    }
   }
 };
