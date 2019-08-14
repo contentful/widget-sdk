@@ -36,6 +36,14 @@ export const awaitInitReady = async () => {
   return true;
 };
 
+export const appReady = () => {
+  try {
+    return angular.module('contentful/app').loaded === true;
+  } catch (_) {
+    return false;
+  }
+};
+
 export const getModule = name => {
   try {
     return angular.module('contentful/init').getModule(name);

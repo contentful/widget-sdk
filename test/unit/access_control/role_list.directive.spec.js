@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { $inject, $compile, $apply } from 'test/helpers/helpers';
+import { $inject, $compile, $apply, $initialize } from 'test/helpers/helpers';
 
 describe('Role List Directive', () => {
   beforeEach(async function() {
@@ -88,6 +88,10 @@ describe('Role List Directive', () => {
       getOrganization: sinon.stub().resolves(this.organization)
     });
 
+    // const { default: register } = await this.system.import('access_control/RoleListDirective.es6');
+
+    // await this.system.set('access_control/RoleListDirective.es6', { default: () => {}})
+
     this.reset = sinon.stub().resolves({
       roles: this.roles,
       rolesResource: this.rolesResource
@@ -105,6 +109,8 @@ describe('Role List Directive', () => {
       });
     });
 
+    await $initialize();
+
     const spaceContext = $inject('spaceContext');
 
     register();
@@ -116,6 +122,8 @@ describe('Role List Directive', () => {
       getId: sinon.stub().returns(this.space.sys.id),
       getOrganizationId: sinon.stub().returns(this.organization.sys.id)
     };
+
+    // window.jQuery = window.$ = $;
 
     this.compileElement = function() {
       this.container = $compile('<cf-role-list />', { context: {} });
@@ -166,16 +174,22 @@ describe('Role List Directive', () => {
 
     describe('for a user that can modify roles', () => {
       it('should show the Add Role button', function() {
+        // let container;
+
         this.canModifyRoles.resolves(true);
 
         this.toggleLegacy(true);
         this.compileElement();
+
+        // debugger;
 
         expect(this.getButton().length).toBe(1);
 
         this.toggleLegacy(false);
         this.container.remove();
         this.compileElement();
+
+        // debugger;
 
         expect(this.getButton().length).toBe(1);
       });

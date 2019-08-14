@@ -22,12 +22,12 @@
 
 import './application';
 import './boot';
-import './contentful_mocks';
+// import './contentful_mocks';
 import './deep_diff';
 import './dsl';
-import './helpers';
-import './hooks';
-import './matchers';
+// import './helpers';
+// import './hooks';
+// import './matchers';
 import './sinon';
 import './timing-reporter';
 import './mocks/cf_stub';
@@ -41,7 +41,7 @@ import './mocks/timing';
 import './mocks/widget_api';
 import './mocks/EnforcementsService';
 
-import installTestCaseContext from './TestCaseContext';
-installTestCaseContext();
+// import installTestCaseContext from './TestCaseContext';
+// installTestCaseContext();
 
 // configure({ adapter: new Adapter() });

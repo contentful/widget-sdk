@@ -1,4 +1,6 @@
 import _ from 'lodash';
+// import $ from 'jquery';
+import { awaitInitReady } from 'NgRegistry.es6';
 
 export const $inject = function(serviceName) {
   try {
@@ -51,6 +53,12 @@ export const $applyAsync = async function() {
   $apply();
 
   return new Promise(resolve => setTimeout(resolve, 10));
+};
+
+export const $initialize = async function() {
+  $inject('$location');
+
+  return awaitInitReady();
 };
 
 // TODO This module is deprecated. We should move stuff to

@@ -62,7 +62,8 @@ module.exports = function(config) {
       'test/integration/**/*.js': ['babelTest', 'sourcemap'],
       'test/unit/**/*.js': ['babelTest', 'sourcemap'],
       'src/javascripts/**/*.js': ['babelTest', 'sourcemap'],
-      'public/app/dependencies.js': ['sourcemap']
+      'public/app/dependencies.js': ['sourcemap'],
+      'vendor/jquery-shim.js': ['babelTest', 'sourcemap']
     },
 
     customPreprocessors: {

@@ -11,13 +11,13 @@ import _ from 'lodash';
 export function createIsolatedSystem() {
   const isolatedSystem = new SystemJS.constructor();
   const config = _.cloneDeep(SystemJS.getConfig());
-
   const sysSymbol = Symbol('isolatedSystem');
 
   isolatedSystem.config(config);
 
   // Register each existing module onto our blank system canvas
-  window.AngularSystem.registry.forEach(args => registerInIsolatedSystem(isolatedSystem, args));
+  window.testRegistry.forEach(args => registerInIsolatedSystem(isolatedSystem, args));
+  window.libs.forEach(args => registerLibrary(isolatedSystem, args));
 
   // Also register special helper $q
   registerInIsolatedSystem(isolatedSystem, ['test/helpers/$q', [], createRegistrationWrapper($q)]);
@@ -27,14 +27,36 @@ export function createIsolatedSystem() {
     set: function(path, module) {
       const newModule = isolatedSystem.newModule(module);
 
-      isolatedSystem.delete(path);
+      isolatedSystem.registry.delete(isolatedSystem.resolveSync(path));
 
-      return isolatedSystem.set(path, newModule);
+      isolatedSystem.registry.set(isolatedSystem.resolveSync(path), newModule);
+
+      return null;
     },
     import: function(path) {
       return isolatedSystem.import(path);
+    },
+    override: async function(path, update) {
+      const currentModule = await isolatedSystem.import(path);
+
+      const newModule = Object.assign({}, currentModule, update);
+
+      this.set(path, newModule);
+
+      return null;
     }
   };
+}
+
+function registerLibrary(system, [name, dep]) {
+  system.register(name, [], export_ => {
+    const exports = dep;
+    export_(Object.assign({ default: exports }, exports));
+    return {
+      setters: [],
+      execute: function() {}
+    };
+  });
 }
 
 function registerInIsolatedSystem(isolatedSystem, item) {

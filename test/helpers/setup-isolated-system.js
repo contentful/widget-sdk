@@ -14,7 +14,7 @@ beforeEach(function() {
   isolatedSystem.config(config);
 
   // Register each existing module onto our blank system canvas
-  window.SystemJS.testRegistry.forEach(args => registerInIsolatedSystem(isolatedSystem, args));
+  window.testRegistry.forEach(args => registerInIsolatedSystem(isolatedSystem, args));
   window.libs.forEach(args => registerLibrary(isolatedSystem, args));
 
   // Also register special helper $q
@@ -38,6 +38,11 @@ beforeEach(function() {
       SystemJS.registry.set(await SystemJS.normalize(path), newModule);
 
       return null;
+    },
+    reimport: function(path) {
+      SystemJS.registry.delete(SystemJS.resolveSync(path));
+
+      return SystemJS.import(SystemJS.resolveSync(path));
     },
     import: function(path) {
       return SystemJS.import(path);

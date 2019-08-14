@@ -1,4 +1,4 @@
-import { registerController } from 'NgRegistry.es6';
+import { registerController, appReady } from 'NgRegistry.es6';
 import { onValueScope } from 'utils/kefir.es6';
 import { pick, isObject } from 'lodash';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed.es6';
@@ -58,6 +58,14 @@ export default function register() {
       );
 
       onValueScope($scope, TokenStore.user$, handleUser);
+
+      // Wait for the app to be ready, via `appReady` from NgRegistry.
+      //
+      // See prelude.js and AngularInit.js.
+      $scope.appReady = false;
+      $scope.$watch(appReady, ready => {
+        $scope.appReady = ready;
+      });
 
       $scope.showCreateSpaceDialog = CreateSpace.showDialog;
 

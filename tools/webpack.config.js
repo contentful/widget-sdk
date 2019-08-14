@@ -87,7 +87,9 @@ module.exports = () => {
           test: /\.js$/,
           use: {
             loader: 'babel-loader',
-            options: createBabelOptions()
+            options: createBabelOptions({
+              compact: isProd
+            })
           }
         }
       ]

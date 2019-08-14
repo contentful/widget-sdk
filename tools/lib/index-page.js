@@ -88,8 +88,11 @@ function indexPage(uiVersion, config, resolve, entryScripts) {
       },
       [
         h('.client', [
-          h('cf-app-container.app-container.ng-hide', { ngShow: 'user', cfRolesForWalkMe: '' }),
-          h('div', { ngIf: '!user' }, [appLoader()])
+          h('cf-app-container.app-container.ng-hide', {
+            ngShow: 'user && appReady',
+            cfRolesForWalkMe: ''
+          }),
+          h('div', { ngIf: '!user || !appReady' }, [appLoader()])
         ])
       ].concat(entryScripts.map(src => scriptTag(resolve(src))))
     )

@@ -35,20 +35,9 @@ import 'codemirror/mode/htmlmixed/htmlmixed';
 
 import moment from 'moment';
 import _ from 'lodash';
+import qs from 'qs';
 
-import * as Config from 'Config.es6';
-import handleGKMessage from 'account/handleGatekeeperMessage.es6';
-
-import { init as initDebug } from 'Debug.es6';
-import { init as initAuthentication } from 'Authentication.es6';
-import { init as initTokenStore } from 'services/TokenStore.es6';
-import { init as initLD } from 'utils/LaunchDarkly/index.es6';
-import { init as initAutoCreateNewSpace } from 'components/shared/auto_create_new_space/index.es6';
-import { init as initExtentionActivationTracking } from 'widgets/ExtensionActivationTracking.es6';
-import initContextMenuHandler from 'ui/ContextMenuHandler.es6';
-import { loadAll as loadAllStates } from 'states/states.es6';
-
-import * as Telemetry from 'i13n/Telemetry.es6';
+import { awaitInitReady } from 'NgRegistry.es6';
 
 const injectedConfig = readInjectedConfig();
 const env = injectedConfig.config.environment;
@@ -229,6 +218,22 @@ angular
 
       $httpProvider.defaults.headers.common['X-Contentful-User-Agent'] = headerParts.join('; ');
     }
+  ])
+  .config([
+    '$stateProvider',
+    $stateProvider => {
+      $stateProvider.decorator('parent', function(internalStateObj, parentFn) {
+        // This fn is called by StateBuilder each time a state is registered
+
+        // The first arg is the internal state. Capture it and add an accessor to public state object.
+        internalStateObj.self.$$state = function() {
+          return internalStateObj;
+        };
+
+        // pass through to default .parent() function
+        return parentFn(internalStateObj);
+      });
+    }
   ]);
 
 angular
@@ -243,15 +248,36 @@ angular
   ])
 
   .run([
-    'dialogsInitController',
-    'navigation/stateChangeHandlers',
-    ({ init: initDialogs }, { setup: setupStateChangeHandlers }) => {
+    '$injector',
+    '$state',
+    async ($injector, $state) => {
+      await awaitInitReady();
+
+      const Config = await import('Config.es6');
+      const { default: handleGKMessage } = await import('account/handleGatekeeperMessage.es6');
+      const { init: initDebug } = await import('Debug.es6');
+      const { init: initAuthentication } = await import('Authentication.es6');
+      const { init: initTokenStore } = await import('services/TokenStore.es6');
+      const { init: initLD } = await import('utils/LaunchDarkly/index.es6');
+      const { init: initAutoCreateNewSpace } = await import(
+        'components/shared/auto_create_new_space/index.es6'
+      );
+      const { default: initContextMenuHandler } = await import('ui/ContextMenuHandler.es6');
+      const Telemetry = await import('i13n/Telemetry.es6');
+      const { loadAll: loadAllStates } = await import('states/states.es6');
+      const { go } = await import('states/Navigator.es6');
+      const { init: initExtentionActivationTracking } = await import('widgets/ExtensionActivationTracking.es6');
+
+      const { init: initDialogs } = $injector.get('dialogsInitController');
+      const { setup: setupStateChangeHandlers } = $injector.get('navigation/stateChangeHandlers');
+
       if (Config.env === 'development') {
         Error.stackTraceLimit = 100;
       } else {
         Error.stackTraceLimit = 25;
       }
 
+      loadAllStates();
       initDebug(window);
       initAuthentication();
       initTokenStore();
@@ -261,8 +287,8 @@ angular
       initExtentionActivationTracking();
       loadAllStates();
 
-      setupStateChangeHandlers();
       initDialogs();
+      setupStateChangeHandlers();
 
       // Start telemetry and expose it as a global.
       // It can be used by E2E or Puppeteer scripts.
@@ -279,18 +305,46 @@ angular
           sameElse: 'll'
         }
       });
+
+      // Listen to postMessage events and check if they are coming from
+      // GK iframes. If so, handle messages accordingly
+      const {
+        config: { authUrl }
+      } = Config.readInjectedConfig();
+      const cb = evt => {
+        if (evt.origin.includes(authUrl)) {
+          handleGKMessage(evt.data);
+        }
+      };
+      window.addEventListener('message', cb);
+
+      // Due to the async loading, we need to take the route above and attempt
+      // to route to it
+      let matchFound = false;
+
+      $state.get().forEach(state => {
+        if (!state.$$state || state.abstract) {
+          return;
+        }
+
+        const { url } = state.$$state();
+
+        const match = url.exec(
+          window.location.pathname,
+          qs.parse(window.location.search.substr(1))
+        );
+
+        if (match && !matchFound) {
+          matchFound = true;
+
+          go({
+            path: state.name.split('.'),
+            params: match
+          });
+        }
+      });
+
+      // Finally, mark the app as loaded
+      angular.module('contentful/app').loaded = true;
     }
-  ])
-  // Listen to postMessage events and check if they are coming from
-  // GK iframes. If so, handle messages accordingly
-  .run(() => {
-    const {
-      config: { authUrl }
-    } = Config.readInjectedConfig();
-    const cb = evt => {
-      if (evt.origin.includes(authUrl)) {
-        handleGKMessage(evt.data);
-      }
-    };
-    window.addEventListener('message', cb);
-  });
+  ]);

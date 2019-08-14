@@ -5,6 +5,11 @@
  *
  * It also patches the Karma.start() function to load all test modules.
  */
+
+//   const jq = window.libs.find(([name]) => name === 'jquery')[1];
+//
+//   window.jQuery = window.$ = jq;
+
 (() => {
   // Will hold a list of all module IDs that define test cases
   const testModules = [];
@@ -12,9 +17,11 @@
   const registerInSystemJS = window.SystemJS.register.bind(window.SystemJS);
 
   window.SystemJS.register = register;
-  window.SystemJS.testRegistry = [];
+  window.testRegistry = [];
 
   window.libs.forEach(([name, dep]) => registerLibrary(name, dep));
+
+  // window.jQuery = window.$ = window.custom$ = window.libs.find(([name]) => name === 'jquery')[1];
 
   /**
    * We hook into karma start to make sure that we load all test modules before
@@ -99,6 +106,8 @@
       );
       // await Promise.all(testModules.map(name => SystemJS.import(name)));
 
+      // debugger;
+
       start(...args);
     } catch (e) {
       // We need to call this in a new context so that Karma’s window.onerror
@@ -118,7 +127,7 @@
    * we will load eagerly later.
    */
   function register(id, deps, run) {
-    SystemJS.testRegistry.push([id, deps, run]);
+    window.testRegistry.push([id, deps, run]);
     registerInSystemJS(id, deps, run);
 
     registerDirectoryAlias(id);

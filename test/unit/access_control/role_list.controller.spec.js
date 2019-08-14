@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { $inject, $apply } from 'test/helpers/helpers';
+import { $inject, $apply, $initialize } from 'test/helpers/helpers';
 
 describe('Role List Controller', () => {
   beforeEach(async function() {
@@ -88,7 +88,7 @@ describe('Role List Controller', () => {
       organization: this.organization
     };
 
-    this.system.set('services/TokenStore.es6', {
+    await this.system.set('services/TokenStore.es6', {
       getSpace: sinon.stub().resolves(this.space),
       getOrganization: sinon.stub().resolves(this.organization)
     });
@@ -97,6 +97,8 @@ describe('Role List Controller', () => {
     const { default: register } = await this.system.import('access_control/RoleListController');
 
     module('contentful/test');
+
+    await $initialize();
 
     this.scope = {
       context: {}
