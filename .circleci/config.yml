@@ -410,11 +410,11 @@ jobs:
             --html=test-results/pytest/e2e-test-report.html \
             -m 'not dependent' --pricing=v2 --pricing=v1 ${TESTFILES}
       - run:
-          name: Trigger sniffer build
+          name: Trigger sniffer CI stats build
           when: always
           command: |
             if [[ "$CIRCLE_NODE_INDEX" == "0" ]]; then
-              $COMPONENTS_ROOT/user_interface/bin/trigger-sniffer
+              $COMPONENTS_ROOT/user_interface/bin/trigger-sniffer-ci-stats-build
             fi
       - store_artifacts:
           path: ~/components/lab/artifacts
