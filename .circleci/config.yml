@@ -83,8 +83,8 @@ orbs:
                 export SNIFFER_UPLOAD_URL=https://user-interface-sniffer.herokuapp.com
 
                 npx sniffer-build-tracker version
-                npx sniffer-build-tracker -vv -c tools/build-tracker.config.js stat-artifacts
-                npx sniffer-build-tracker --skip-dirty-check -c tools/build-tracker.config.js upload-build
+                npx sniffer-build-tracker -vv -c tools/sniffer-build-tracker.config.js stat-artifacts
+                npx sniffer-build-tracker --skip-dirty-check -c tools/sniffer-build-tracker.config.js upload-build
 
   estivador:
     commands:
