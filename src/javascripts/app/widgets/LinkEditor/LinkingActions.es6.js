@@ -1,9 +1,11 @@
 import { noop } from 'lodash';
 import pluralize from 'pluralize';
+import { css } from 'emotion';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Visible from 'components/shared/Visible/index.es6';
 import { TextLink } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import {
   default as CreateEntryButton,
   Style as CreateEntryStyle
@@ -23,6 +25,17 @@ export const labels = {
 export const testIds = {
   createAndLink: 'linkEditor.createAndLink',
   linkExisting: 'linkEditor.linkExisting'
+};
+
+const styles = {
+  linkEditor: css({
+    display: 'flex',
+    alignItems: 'baseline',
+    marginTop: tokens.spacingS,
+    '> *:not(:first-child)': {
+      marginLeft: '20px'
+    }
+  })
 };
 
 export default class LinkingActions extends React.Component {
@@ -54,7 +67,7 @@ export default class LinkingActions extends React.Component {
     const typeName = TYPE_NAMES[type];
     const singleCtOrTypeName = contentTypes.length === 1 ? contentTypes[0].name : typeName;
     return (
-      <div className="link-editor__feature-at-11-2017-lots-of-cts-add-entry-and-link-reference">
+      <div className={styles.linkEditor}>
         <Visible if={type === TYPES.ENTRY && canCreateEntity}>
           <CreateEntryButton
             testId={testIds.createAndLink}

@@ -10178,18 +10178,7 @@ pre,
   .link-editor {
     position: relative;
   }
-  .link-editor__feature-at-11-2017-lots-of-cts-add-entry-and-link-reference {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: baseline;
-    -webkit-box-align: baseline;
-            align-items: baseline;
-    margin-top: 12px;
-  }
-  .link-editor__feature-at-11-2017-lots-of-cts-add-entry-and-link-reference > *:not(:first-child) {
-    margin-left: 20px;
-  }
+
   .link-editor__actions {
     -webkit-box-shadow: 0 1.5px 1.5px #e5ebed;
     box-shadow: 0 1.5px 1.5px #e5ebed;
