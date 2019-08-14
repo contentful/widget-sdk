@@ -3,13 +3,16 @@ import { Notification } from '@contentful/forma-36-react-components';
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
 import createTeamSpaceMembershipService from 'app/OrganizationSettings/Teams/TeamSpaceMemberships/TeamSpaceMembershipsService.es6';
 import createTeamMembershipService from 'app/OrganizationSettings/Teams/TeamMemberships/TeamMembershipService.es6';
-import { getCurrentTeam, getTeams } from '../selectors/teams.es6';
-import getCurrentOrgSpaces from '../selectors/getCurrentOrgSpaces.es6';
-import { TEAM_MEMBERSHIPS, TEAM_SPACE_MEMBERSHIPS, TEAMS } from '../datasets.es6';
-import removeFromDataset from './utils/removeFromDataset.es6';
 import { isTaken } from 'utils/ServerErrorUtils.es6';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
 import { createSpaceRoleLinks } from 'access_control/utils.es6';
+
+import { getDatasets } from '../selectors/datasets.es6';
+import { getCurrentTeam, getTeams } from '../selectors/teams.es6';
+import getCurrentOrgSpaces from '../selectors/getCurrentOrgSpaces.es6';
+import { ORG_SPACE_ROLES, TEAM_MEMBERSHIPS, TEAM_SPACE_MEMBERSHIPS, TEAMS } from '../datasets.es6';
+
+import removeFromDataset from './utils/removeFromDataset.es6';
 
 const userToString = ({ firstName, lastName, email }) =>
   firstName ? `${firstName} ${lastName}` : email;
@@ -176,11 +179,13 @@ export default ({ dispatch, getState }) => next => async action => {
         roles: updatedData.roles,
         sys
       };
+      const allRoles = get(getDatasets(state), ORG_SPACE_ROLES, {});
+      const resolvedRoles = updatedData.roles.map(({ sys: { id } }) => allRoles[id]);
       dispatch({
         type: 'ADD_TO_DATASET',
         payload: {
           dataset: TEAM_SPACE_MEMBERSHIPS,
-          item: updatedMembership,
+          item: { ...updatedMembership, roles: resolvedRoles },
           meta: { pending: true }
         }
       });
@@ -188,9 +193,10 @@ export default ({ dispatch, getState }) => next => async action => {
       try {
         // no pending action needed, as the `EDIT_TEAM_CONFIRMED` can be used for pending
         const persisted = await service.update(updatedMembership);
+        const persistedAndResolved = { ...persisted, roles: resolvedRoles };
         dispatch({
           type: 'ADD_TO_DATASET',
-          payload: { dataset: TEAM_SPACE_MEMBERSHIPS, item: persisted }
+          payload: { dataset: TEAM_SPACE_MEMBERSHIPS, item: persistedAndResolved }
         });
         Notification.success(
           `Successfully changed the team's access to the space ${sys.space.name}`
