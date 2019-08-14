@@ -71,6 +71,7 @@ orbs:
           - run:
               name: Provide npm token to install private packages
               command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          - run: npm ci
           - run:
               name: Install build-tracker CLI
               command: npm install --no-save --no-shrinkwrap @contentful/sniffer-build-tracker
