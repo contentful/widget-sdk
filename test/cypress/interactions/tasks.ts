@@ -6,7 +6,10 @@ import {
 } from '../util/requests';
 import { RequestOptions } from '@pact-foundation/pact-web';
 const empty = require('../fixtures/responses/empty.json');
-const severalTasks = require('../fixtures/responses/tasks-several.json');
+import {
+  default as severalTasks,
+  definition as severalTasksRequestDefinition,
+} from '../fixtures/responses/tasks-several.js';
 
 export enum States {
   NONE = 'tasks/none',
@@ -52,7 +55,7 @@ export const getAllCommentsForDefaultEntry = {
       withRequest: getEntryCommentsAndTasksRequest,
       willRespondWith: {
         status: 200,
-        body: severalTasks
+        body: severalTasksRequestDefinition
       }
     }).as('getAllCommentsForDefaultEntry');
 
