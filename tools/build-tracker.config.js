@@ -1,4 +1,8 @@
 const path = require('path');
+const { createApolloFetch } = require('apollo-fetch');
+
+const uri = process.env.SNIFFER_UPLOAD_URL;
+const apolloFetch = createApolloFetch({ uri });
 
 const getFileExtension = fileName => {
   return fileName
@@ -28,13 +32,62 @@ const pathToBuiltAssets = path.resolve(
   process.env.PATH_TO_BUILT_ASSETS || '../build/app'
 );
 
+const uploadBuildSize = async (meta, artifacts) => {
+  const response = await apolloFetch({
+    query: `mutation SubmitData($meta: CommitMetaInput!, $artifacts: String!, $project: String!) {
+      uploadBuildSize(meta: $meta, artifacts: $artifacts, project: $project)
+    }`,
+    variables: {
+      meta: meta,
+      project: 'user_interface',
+      artifacts: JSON.stringify(artifacts)
+    }
+  });
+
+  if (response.data && response.data.uploadBuildSize === true) {
+    console.log('Successfully uploaded');
+  } else {
+    throw new Error(JSON.stringify(response.errors, null, 2));
+  }
+};
+
+const compareBuilds = async commits => {
+  const response = await apolloFetch({
+    query: `query Compare(
+      $project: String!,
+      $commits: [String!]!
+    ) {
+      compareBuilds(
+        project: $project,
+        commits: $commits
+      ) {
+        markdown
+        markdownAll
+      }
+    }`,
+    variables: {
+      project: 'user_interface',
+      commits: commits
+    }
+  });
+  if (response.data && response.data.compareBuilds) {
+    return response.data.compareBuilds;
+  } else {
+    throw new Error(JSON.stringify(response.errors, null, 2));
+  }
+};
+
 module.exports = {
-  applicationUrl: 'https://user-interface-build-tracker.herokuapp.com',
-  buildUrlFormat: 'https://github.com/contentful/user_interface/commit/:revision',
   // this is on the output of configure-file-dist.js which moves files
   // into a different dir structure (as documented in that file)
   baseDir: pathToBuiltAssets,
   artifacts: [`${pathToBuiltAssets}/**/*.{js,css}`],
   getFilenameHash,
-  nameMapper
+  nameMapper,
+  onUpload: async build => {
+    const { meta, artifacts } = build;
+    await uploadBuildSize(meta, artifacts);
+    const result = await compareBuilds([meta.parentRevision, meta.revision]);
+    console.log(result);
+  }
 };
