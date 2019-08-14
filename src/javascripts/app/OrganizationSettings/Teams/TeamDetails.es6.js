@@ -78,6 +78,9 @@ const DeleteButton = ({ onClick }) => (
 DeleteButton.propTypes = { onClick: PropTypes.func };
 
 const styles = {
+  note: css({
+    marginLeft: tokens.spacingXl
+  }),
   tabs: css({
     display: 'flex',
     justifyContent: 'space-between',
@@ -107,7 +110,13 @@ const styles = {
   }),
   name: css(ellipsisStyle),
   description: css(ellipsisStyle),
-  svgContainer: css({ width: '15vw', minWidth: '280px', marginLeft: '-1vw' })
+  svgContainer: css({ width: '15vw', minWidth: '280px', marginLeft: '-1vw' }),
+  emptyMessageTeamName: css({
+    fontWeight: tokens.fontWeightDemiBold
+  }),
+  addButton: css({
+    marginTop: tokens.spacingL
+  })
 };
 
 class TeamDetails extends React.Component {
@@ -132,14 +141,14 @@ class TeamDetails extends React.Component {
         text: (
           <>
             Add the first team member to{' '}
-            <span className="f36-font-weight--demi-bold">{this.props.team.name}</span>
+            <span className={styles.emptyMessageTeamName}>{this.props.team.name}</span>
           </>
         ),
         readOnly: (
           <>
             To add a team member to{' '}
-            <span className="f36-font-weight--demi-bold">{this.props.team.name}</span>, contact your
-            admin
+            <span className={styles.emptyMessageTeamName}>{this.props.team.name}</span>, contact
+            your admin
           </>
         )
       })
@@ -153,7 +162,7 @@ class TeamDetails extends React.Component {
         text: 'Give every team member access to one or more spaces',
         readOnly: (
           <>
-            To grant <span className="f36-font-weight--demi-bold">{this.props.team.name}</span>{' '}
+            To grant <span className={styles.emptyMessageTeamName}>{this.props.team.name}</span>{' '}
             access to more or one spaces, contact your admin
           </>
         )
@@ -206,7 +215,9 @@ class TeamDetails extends React.Component {
           <Workbench.Title>Teams</Workbench.Title>
         </Workbench.Header>
         <Workbench.Content>
-          <ExperimentalFeatureNote />
+          <div className={styles.note}>
+            <ExperimentalFeatureNote />
+          </div>
           {team && (
             <div className={styles.details} data-test-id="team-details">
               <div className={styles.sidebar}>
@@ -322,7 +333,7 @@ class TeamDetails extends React.Component {
                             <>
                               <Paragraph>{emptyStateMessage().text}</Paragraph>
                               <AddButton
-                                className="f36-margin-top--l"
+                                className={styles.addButton}
                                 onClick={() => this.setState({ showingForm: true })}
                                 label={actionLabel}
                               />
