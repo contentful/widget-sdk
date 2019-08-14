@@ -210,6 +210,23 @@ executors:
       UI_CONFIG: localhost
 
 jobs:
+  upload-repo-stats-to-sniffer:
+    docker:
+      - image: circleci/node:10.15.3
+    environment:
+      SNIFFER_UPLOAD_URL: 'https://user-interface-sniffer.herokuapp.com/'
+    steps:
+      - checkout
+      - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
+      - run: npm ci
+      - run:
+          name: Install project-sniffer CLI
+          command: npm install --no-save --no-shrinkwrap @contentful/project-sniffer-cli
+      - run:
+          name: Run project sniffer and upload stats
+          command: npx project-sniffer . --config tools/sniffer
+
   build-and-push-image:
     machine:
       docker_layer_caching: true
@@ -433,6 +450,8 @@ jobs:
 workflows:
   build:
     jobs:
+      - upload-repo-stats-to-sniffer #:
+      #<<: *run_only_on_master_branch
       - build-and-push-image
       - lint
       - oss-license-check
