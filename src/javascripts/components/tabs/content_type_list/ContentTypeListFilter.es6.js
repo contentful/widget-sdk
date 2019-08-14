@@ -1,12 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import cn from 'classnames';
+import { css, cx } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
+
+const styles = {
+  filterList: css({
+    margin: `0 -${tokens.spacingL} 10px -${tokens.spacingL}`
+  })
+};
 
 function ListItem({ isActive, status, label, onClick }) {
   return (
     <li
       data-test-id={`status-${status}`}
-      className={cn('view-folder__item', { '-active': isActive })}
+      className={cx('view-folder__item', { '-active': isActive })}
       onClick={() => onClick(status)}>
       <div className="view-folder__item-title">{label}</div>
     </li>
@@ -24,7 +31,7 @@ export default function ContentTypeListFilter({ status, onChange }) {
   return (
     <div className="view-folder" data-test-id="status-filter">
       <div className="view-folder__title view-folder__header">Filter by status</div>
-      <ul className="view-folder__list">
+      <ul className={cx('view-folder__list', styles.filterList)}>
         <ListItem
           isActive={status === undefined}
           status={undefined}
