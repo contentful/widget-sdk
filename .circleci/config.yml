@@ -216,6 +216,7 @@ jobs:
       - image: circleci/node:10.15.3
     environment:
       SNIFFER_UPLOAD_URL: 'https://user-interface-sniffer.herokuapp.com/'
+      CYPRESS_INSTALL_BINARY: 0
     steps:
       - checkout
       - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
