@@ -96,7 +96,7 @@ module.exports = {
 
     try {
       await got.post(process.env.BUNDLESIZE_COMMENT_LAMBDA_URL, {
-        body: {
+        json: {
           issue: pr,
           message: result.markdownAll,
           type: 'bundlesize'
