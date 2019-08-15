@@ -1,6 +1,6 @@
 const path = require('path');
 const { createApolloFetch } = require('apollo-fetch');
-const got = require('got');
+const fetch = require('node-fetch');
 
 const uri = process.env.SNIFFER_UPLOAD_URL;
 const apolloFetch = createApolloFetch({ uri });
@@ -95,17 +95,31 @@ module.exports = {
     console.log('Build compare result ->', result);
 
     try {
-      await got.post(process.env.BUNDLESIZE_COMMENT_LAMBDA_URL, {
-        json: {
-          issue: pr,
-          message: result.markdownAll,
-          type: 'bundlesize'
-        },
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`
+      const { requestId, statusCode, message } = await fetch(
+        process.env.BUNDLESIZE_COMMENT_LAMBDA_URL,
+        {
+          method: 'post',
+          body: JSON.stringify({
+            issue: pr,
+            message: result.markdownAll,
+            type: 'bundlesize'
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`
+          }
         }
-      });
+      ).then(res => res.json());
+
+      if (statusCode >= 400) {
+        const error = new Error(message);
+        error.statusCode = statusCode;
+        error.requestId = requestId;
+
+        throw error;
+      }
+
+      console.log(`Bundle size comment posted to PR#{pr} ->`, { requestId, statusCode, message });
     } catch (err) {
       console.error('Build tracker upload failed ->', err);
       console.log(`Comment won't be posted to PR#${pr}. Continuing anyway.`);
