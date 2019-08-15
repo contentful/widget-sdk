@@ -100,7 +100,7 @@ module.exports = {
         {
           method: 'post',
           body: JSON.stringify({
-            issue: pr,
+            issue: pr ? Number.parseInt(pr, 10) : '',
             message: result.markdownAll,
             type: 'bundlesize'
           }),
