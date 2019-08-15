@@ -96,18 +96,19 @@ module.exports = {
 
     try {
       await got.post(process.env.BUNDLESIZE_COMMENT_LAMBDA_URL, {
-        json: {
+        body: {
           issue: pr,
-          message: result.markdownAll
+          message: result.markdownAll,
+          type: 'bundlesize'
         },
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`
         }
       });
-      // await postCommentToPR();
     } catch (err) {
       console.error('Build tracker upload failed ->', err);
-      console.log(`Comment won't be posted to ${pr}. Continuing anyway.`);
+      console.log(`Comment won't be posted to PR#${pr}. Continuing anyway.`);
     }
   }
 };
