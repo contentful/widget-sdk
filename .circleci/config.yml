@@ -452,8 +452,9 @@ jobs:
 workflows:
   build:
     jobs:
-      - upload-repo-stats-to-sniffer #:
-      #<<: *run_only_on_master_branch
+      - upload-repo-stats-to-sniffer:
+          name: Upload user_interface stats to sniffer 2.0
+          <<: *run_only_on_master_branch
       - build-and-push-image
       - lint
       - oss-license-check
