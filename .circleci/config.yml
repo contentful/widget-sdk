@@ -69,36 +69,23 @@ orbs:
               at: ~/workspace
           - checkout
           - run:
+              name: Provide npm token to install private packages
+              command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          - run: npm ci
+          - run:
               name: Install build-tracker CLI
-              command: npm install --no-save --no-shrinkwrap @build-tracker/cli@1.0.0-alpha.3
+              command: npm install --no-save --no-shrinkwrap @contentful/sniffer-build-tracker
           - run:
               name: Upload build to user_interface build tracker server and post comment
               command: |
-                export PATH_TO_BUILT_ASSETS=<<parameters.path>>
-                npx bt-cli version
-                npx bt-cli -vv -c tools/build-tracker.config.js stat-artifacts
-                npx bt-cli --skip-dirty-check -c tools/build-tracker.config.js upload-build > buildUploadResult
-                # don't fail if upload fails as might happen when a job is re-run on the same commit
-                cat buildUploadResult | jq . || :
-                # Start comment posting routine. Note that this was
-                # originally in another step but the upload result
-                # file was always empty when accessed in another step
-                # ¯\_(ツ)_/¯
                 export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
-                export LAMBDA_URL="https://tooling-lambdas.ctfl.now.sh/user_interface/bundlesizes"
-                export BUILD_TRACKER_MARKDOWN=$(cat buildUploadResult | jq .markdown | cut -d '"' -f 2 || echo "")
-                export BUILD_TRACKER_URL="https://user-interface-build-tracker.herokuapp.com/"
-                # don't set COMMENT_MSG if there was no markdown as it probably means the build upload to our build tracker server failed
-                # not having this set will fail validation in the lambda that posts the comment which is what we want
-                export COMMENT_MSG=$([[ -n $BUILD_TRACKER_MARKDOWN ]] && echo "\"# Bundle size report\\n\\n$BUILD_TRACKER_MARKDOWN\\n\\n[Build tracker UI]($BUILD_TRACKER_URL)\"")
-                echo $PR_NUMBER
-                echo $LAMBDA_URL
-                echo $BUILD_TRACKER_MARKDOWN
-                echo $COMMENT_MSG
-                curl -i -X POST \
-                --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"message\": ${COMMENT_MSG:-''}}" \
-                -H 'content-type: application/json' \
-                $LAMBDA_URL?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY || echo "Comment won't be posted to ${PR_NUMBER:-$CIRCLE_BRANCH}. Continuing anyway."
+                export BUNDLESIZE_COMMENT_LAMBDA_URL='https://tooling-lambdas.ctfl.now.sh/user_interface/githubComments'
+                export PATH_TO_BUILT_ASSETS=<<parameters.path>>
+                export SNIFFER_UPLOAD_URL='https://user-interface-sniffer.herokuapp.com'
+
+                npx sniffer-build-tracker version
+                npx sniffer-build-tracker -vv stat-artifacts -c tools/sniffer-build-tracker.config.js
+                npx sniffer-build-tracker upload-build -c tools/sniffer-build-tracker.config.js
 
   estivador:
     commands:
@@ -224,6 +211,24 @@ executors:
       UI_CONFIG: localhost
 
 jobs:
+  upload-repo-stats-to-sniffer:
+    docker:
+      - image: circleci/node:10.15.3
+    environment:
+      SNIFFER_UPLOAD_URL: 'https://user-interface-sniffer.herokuapp.com/'
+      CYPRESS_INSTALL_BINARY: 0
+    steps:
+      - checkout
+      - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
+      - run: npm ci
+      - run:
+          name: Install project-sniffer CLI
+          command: npm install --no-save --no-shrinkwrap @contentful/project-sniffer-cli
+      - run:
+          name: Run project sniffer and upload stats
+          command: npx project-sniffer . --config tools/sniffer
+
   build-and-push-image:
     machine:
       docker_layer_caching: true
@@ -424,11 +429,11 @@ jobs:
             --html=test-results/pytest/e2e-test-report.html \
             -m 'not dependent' --pricing=v2 --pricing=v1 ${TESTFILES}
       - run:
-          name: Trigger sniffer build
+          name: Trigger sniffer CI stats build
           when: always
           command: |
             if [[ "$CIRCLE_NODE_INDEX" == "0" ]]; then
-              $COMPONENTS_ROOT/user_interface/bin/trigger-sniffer
+              $COMPONENTS_ROOT/user_interface/bin/trigger-sniffer-ci-stats-build
             fi
       - store_artifacts:
           path: ~/components/lab/artifacts
@@ -447,6 +452,9 @@ jobs:
 workflows:
   build:
     jobs:
+      - upload-repo-stats-to-sniffer:
+          name: Upload user_interface stats to sniffer 2.0
+          <<: *run_only_on_master_branch
       - build-and-push-image
       - lint
       - oss-license-check
