@@ -46,5 +46,5 @@ div(ng-if="data.hasEditor")
           | {{ command.label }}
 
 
-  .bulk-editor-entry__fields(ng-if="data.expanded")
+  .bulk-editor-entry__fields.cf-workbench-content.cf-workbench-content-type__text(ng-if="data.expanded")
     cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")

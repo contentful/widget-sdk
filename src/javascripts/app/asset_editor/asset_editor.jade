@@ -25,7 +25,7 @@ div.asset-editor.workbench
     .workbench-main__content
       react-component(name="app/entity_editor/StatusNotification.es6" props="statusNotificationProps")
 
-      .entity-editor-form
+      .entity-editor-form.cf-workbench-content.cf-workbench-content-type__text
         cf-error-list.form-box-error(cf-error-path="['fields']")
         cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
 

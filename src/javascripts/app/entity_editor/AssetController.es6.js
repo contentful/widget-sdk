@@ -15,9 +15,6 @@ import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsE
 
 import { getModule } from 'NgRegistry.es6';
 
-const $controller = getModule('$controller');
-const spaceContext = getModule('spaceContext');
-
 /**
  * @param {Object} $scope
  * @param {Object} editorData
@@ -26,6 +23,9 @@ const spaceContext = getModule('spaceContext');
 export default async function create($scope, editorData, preferences) {
   $scope.context = {};
   $scope.editorData = editorData;
+
+  const $controller = getModule('$controller');
+  const spaceContext = getModule('spaceContext');
 
   const editorContext = ($scope.editorContext = {});
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);

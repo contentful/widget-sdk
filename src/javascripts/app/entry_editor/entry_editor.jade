@@ -47,7 +47,7 @@ react-component(
           name="app/entry_editor/CustomEditorExtensionRenderer.es6"
           props="customExtensionProps"
         )
-        .entity-editor-form(ng-if="!editorData.editorExtension")
+        .entity-editor-form.cf-workbench-content.cf-workbench-content-type__text(ng-if="!editorData.editorExtension")
           cf-error-list.form-box-error(cf-error-path="['fields']")
           cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
           react-component(

@@ -1,12 +1,33 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import cn from 'classnames';
-
+import { cx, css } from 'emotion';
 import { Tooltip } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import UserFetcher from 'components/shared/UserFetcher/index.es6';
 import UserNameFormatter from 'components/shared/UserNameFormatter/index.es6';
+
+const styles = {
+  collaborators: css({
+    display: ['-webkit-box', '-ms-flexbox', 'flex'],
+    msFlexWrap: 'nowrap',
+    flexWrap: 'nowrap'
+  }),
+  collaboratorsItem: css({ overflow: 'hidden', marginLeft: tokens.spacingXs }),
+  collaboratorsAvatar: css({ display: 'block', width: '30px', height: '30px' }),
+  collaboratorsAvatarCircle: css({ borderRadius: '50%' }),
+  collaboratorsAvatarRect: css({ borderRadius: '3px' }),
+  collaboratorsItemFlex: css({
+    display: ['-webkit-box', '-ms-flexbox', 'flex'],
+    msFlexPack: 'justify',
+    WebkitBoxPack: 'justify',
+    justifyContent: 'space-between',
+    msFlexAlign: 'center',
+    WebkitBoxAlign: 'center',
+    alignItems: 'center'
+  })
+};
 
 class Collaborators extends Component {
   static propTypes = {
@@ -27,10 +48,10 @@ class Collaborators extends Component {
   };
   render() {
     return (
-      <ul className={cn('collaborators', this.props.className)}>
+      <ul className={cx(styles.collaborators, this.props.className)}>
         {this.props.users.map(({ sys: { id } }) => {
           return (
-            <li key={id} className={cn('collaborators__item')}>
+            <li key={id} className={styles.collaboratorsItem}>
               <UserFetcher userId={id}>
                 {({ isLoading, isError, data: user }) => {
                   if (isLoading) {
@@ -42,10 +63,12 @@ class Collaborators extends Component {
                   return (
                     <Tooltip content={<UserNameFormatter user={user} />}>
                       <img
-                        className={cn('collaborators__avatar', {
-                          'collaborators__avatar-circle': this.props.shape === 'circle',
-                          'collaborators__avatar-rect': this.props.shape === 'rect'
-                        })}
+                        className={cx(
+                          styles.collaboratorsAvatar,
+                          this.props.shape === 'circle'
+                            ? styles.collaboratorsAvatarCircle
+                            : styles.collaboratorsAvatarRect
+                        )}
                         src={user.avatarUrl}
                       />
                     </Tooltip>
