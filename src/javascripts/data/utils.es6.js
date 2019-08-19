@@ -1,10 +1,14 @@
 /**
- * Pattern for matching a CF resource ID in a regular expression.
- * @type {RegExp}
+ * Pattern for matching a CF resource ID within a string.
+ * @type {string}
  */
 export const RESOURCE_ID_PATTERN = '[a-zA-Z0-9._-]{1,64}';
 
-const RESOURCE_ID_REGEXP = new RegExp(`^${RESOURCE_ID_PATTERN}$`);
+/**
+ *
+ * @type {RegExp}
+ */
+export const RESOURCE_ID_REGEXP = new RegExp(`^${RESOURCE_ID_PATTERN}$`);
 
 /**
  * Returns whether the given string conforms to be a CF resource ID as specified in

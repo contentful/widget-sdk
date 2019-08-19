@@ -19,7 +19,7 @@ import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import { FeatureFlag } from '../../../util/featureFlag';
 
 const users = require('../../../fixtures/responses/users.json');
-const severalTasks = require('../../../fixtures/responses/tasks-several.json');
+import severalTasks from '../../../fixtures/responses/tasks-several.js';
 
 describe('Tasks entry editor sidebar', () => {
   before(() =>

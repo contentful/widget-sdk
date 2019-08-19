@@ -6,13 +6,14 @@ import {
 } from '../util/requests';
 import { RequestOptions } from '@pact-foundation/pact-web';
 const empty = require('../fixtures/responses/empty.json');
-const severalTasks = require('../fixtures/responses/tasks-several.json');
+import {
+  default as severalTasks,
+  definition as severalTasksRequestDefinition,
+} from '../fixtures/responses/tasks-several.js';
 
 export enum States {
   NONE = 'tasks/none',
   SEVERAL = 'tasks/several',
-  SEVERAL_ONE_OPEN = 'tasks/several-one-open',
-  SEVERAL_ONE_RESOLVED = 'tasks/several-one-resolved',
   INTERNAL_SERVER_ERROR = 'tasks/internal-server-error'
 }
 
@@ -54,7 +55,7 @@ export const getAllCommentsForDefaultEntry = {
       withRequest: getEntryCommentsAndTasksRequest,
       willRespondWith: {
         status: 200,
-        body: severalTasks
+        body: severalTasksRequestDefinition
       }
     }).as('getAllCommentsForDefaultEntry');
 
@@ -202,6 +203,6 @@ function changeTaskStatus(status: Status, stateName: States) {
   }
 }
 
-export const openTask = changeTaskStatus(Status.OPEN, States.SEVERAL_ONE_OPEN);
-export const reopenTask = changeTaskStatus(Status.OPEN, States.SEVERAL_ONE_RESOLVED);
-export const resolveTask = changeTaskStatus(Status.RESOLVED, States.SEVERAL_ONE_OPEN);
+export const openTask = changeTaskStatus(Status.OPEN, States.SEVERAL);
+export const reopenTask = changeTaskStatus(Status.OPEN, States.SEVERAL);
+export const resolveTask = changeTaskStatus(Status.RESOLVED, States.SEVERAL);
