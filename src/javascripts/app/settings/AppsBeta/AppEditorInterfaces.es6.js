@@ -72,11 +72,9 @@ export async function transformEditorInterfacesToTargetState(cma, targetState, e
 }
 
 function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetState, extensionId) {
-  const result = cloneDeep(ei);
-
-  // If there is no target state for a property, we use a version
-  // without references instead.
-  const removeRefsResult = removeSingleEditorInterfaceReferences(ei, extensionId);
+  // Start by removing all references, only those declared in the target
+  // state will be recreated.
+  const result = removeSingleEditorInterfaceReferences(ei, extensionId);
 
   // Target state object for controls: `{ fieldId, settings? }`
   if (Array.isArray(targetState.controls)) {
@@ -89,19 +87,15 @@ function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetS
         settings: control.settings
       };
     });
-  } else if (ei.controls) {
-    result.controls = removeRefsResult.controls;
   }
 
   // Target state object for sidebar: `{ position?, settings? }`.
   // It can also be `true` (it'll be put at the bottom of the sidebar with no settings).
   if (targetState.sidebar === true || isObject(targetState.sidebar)) {
-    // If there is no sidebar stored use the default one.
-    const sidebar = Array.isArray(result.sidebar) ? result.sidebar : defaultSidebar;
-    // Remove existing use of the current extension.
-    result.sidebar = sidebar.filter(widget => !isCurrentExtension(widget, extensionId));
-
     const targetSidebar = isObject(targetState.sidebar) ? targetState.sidebar : {};
+
+    // If there is no sidebar stored use the default one.
+    result.sidebar = Array.isArray(result.sidebar) ? result.sidebar : defaultSidebar;
 
     const widget = {
       widgetNamespace: NAMESPACE_EXTENSION,
@@ -119,8 +113,6 @@ function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetS
       // Put it at the bottom if the position is not defined.
       result.sidebar.push(widget);
     }
-  } else if (ei.sidebar) {
-    result.sidebar = removeRefsResult.sidebar;
   }
 
   // If editor target state is set to `true` we just use the Extension.
@@ -136,8 +128,6 @@ function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetS
       widgetId: extensionId,
       settings: targetState.editor.settings
     };
-  } else if (ei.editor) {
-    result.editor = removeRefsResult.editor;
   }
 
   return result;
