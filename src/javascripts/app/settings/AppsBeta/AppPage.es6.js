@@ -12,7 +12,6 @@ import {
   SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import { InstalledTag, NotInstalledTag } from './AppStateTags.es6';
 
 import AdminOnly from 'app/common/AdminOnly.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
@@ -311,13 +310,12 @@ export default class AppRoute extends Component {
   }
 
   renderTitle() {
-    const { isInstalled, extensionDefinition } = this.state;
+    const { extensionDefinition } = this.state;
     return (
       <>
         <Heading>
           <AppIcon appId={this.props.appId} className={styles.appIcon} /> {extensionDefinition.name}
         </Heading>
-        {isInstalled ? <InstalledTag /> : <NotInstalledTag />}
       </>
     );
   }

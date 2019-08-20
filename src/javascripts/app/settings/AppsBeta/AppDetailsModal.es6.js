@@ -60,7 +60,6 @@ const styles = {
   permissions: css({
     display: 'flex',
     justifyContent: 'center',
-    paddingTop: '50px',
     minHeight: '700px',
     animation: `${fadeIn} 0.4s cubic-bezier(0.680, -0.550, 0.265, 1.550)`
   })

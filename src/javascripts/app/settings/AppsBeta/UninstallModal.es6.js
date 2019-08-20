@@ -6,12 +6,13 @@ import {
   Modal,
   Subheading,
   Typography,
-  TextInput,
   List,
   ListItem,
   Button,
   Icon,
-  CheckboxField
+  Paragraph,
+  CheckboxField,
+  TextInput
 } from '@contentful/forma-36-react-components';
 
 const styles = {
@@ -20,6 +21,18 @@ const styles = {
   }),
   icon: css({
     verticalAlign: 'middle'
+  }),
+  separator: css({
+    marginTop: tokens.spacingL,
+    marginBottom: tokens.spacingL
+  }),
+  otherInput: css({
+    marginTop: tokens.spacingM
+  }),
+  checkbox: css({
+    label: {
+      fontWeight: tokens.fontWeightNormal
+    }
   })
 };
 
@@ -57,22 +70,26 @@ function parseReasons(checked, otherReason) {
 
 export default function UninstallModal({ onConfirm, onClose, actionList, isShown }) {
   const [checked, onCheck] = useState({});
+  const [otherChecked, toggleOther] = useState(false);
   const [otherReason, setOtherReason] = useState('');
 
   return (
     <Modal title="Uninstall app?" onClose={onClose} isShown={isShown}>
       <Typography>
-        <Subheading>This will remove the app and it’s features</Subheading>
+        <Paragraph>This will remove the app and its features.</Paragraph>
       </Typography>
       <List testId="action-list">{actionList.map(createListItem)}</List>
-      <hr />
-      <List testId="reasons-list">
-        <Typography>
-          <Subheading>Reasons for removing (optional)</Subheading>
-        </Typography>
+      <hr className={styles.separator} />
+
+      <Typography>
+        <Subheading>Reasons for removing (optional)</Subheading>
+      </Typography>
+
+      <div data-test-id="reasons-list">
         {reasons.map((reason, i) => (
           <ListItem key={reason}>
             <CheckboxField
+              className={styles.checkbox}
               key={reason}
               labelText={reason}
               name="someOption"
@@ -84,17 +101,29 @@ export default function UninstallModal({ onConfirm, onClose, actionList, isShown
           </ListItem>
         ))}
         <ListItem>
-          Other:
+          <CheckboxField
+            className={styles.checkbox}
+            key="Other"
+            labelText="Other"
+            name="someOption"
+            checked={otherChecked}
+            onChange={() => toggleOther(!otherChecked)}
+            id="Other"
+            testId={`reason-${reasons.length}`}
+          />
+        </ListItem>
+        {otherChecked && (
           <TextInput
+            className={styles.otherInput}
             value={otherReason}
             onChange={e => setOtherReason(e.target.value)}
             name="otherReason"
             id="otherReason"
             testId="reason-custom"
           />
-        </ListItem>
-        <hr />
-      </List>
+        )}
+      </div>
+      <hr className={styles.separator} />
       <Button
         testId="uninstall-button"
         onClick={() => onConfirm(parseReasons(checked, otherReason))}

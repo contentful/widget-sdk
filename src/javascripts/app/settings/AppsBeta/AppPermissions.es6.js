@@ -71,7 +71,7 @@ function AppIntentionItem(props) {
         paddingTop: tokens.spacingM,
         paddingBottom: tokens.spacingM
       })}>
-      <Icon icon="InfoCircle" color="muted" />
+      <Icon icon="InfoCircle" color="muted" className={css({ marginTop: '2px' })} />
       <span className={css({ marginLeft: tokens.spacingS })}>{props.children}</span>
     </div>
   );
@@ -94,13 +94,15 @@ export default function AppPermissions(props) {
           <AppIcon appId={appId} className={styles.appIcon} />
         </div>
         <Subheading element="h3" className={styles.subheading}>
-          Permissions:
+          Permissions
         </Subheading>
         <Paragraph>
-          The app has full permissions. It can access all data from the selected space and
-          environment.
+          This app will have full permissions in the current space and environment.
         </Paragraph>
-
+        <br />
+        <Paragraph>
+          It will be able to access all resources available to the user using it.
+        </Paragraph>
         {intentions.length > 0 && (
           <>
             <div className={styles.sectionSplitter} />

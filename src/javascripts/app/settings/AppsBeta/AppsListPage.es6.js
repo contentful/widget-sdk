@@ -11,7 +11,8 @@ import {
   Notification,
   Heading,
   Note,
-  TextLink
+  TextLink,
+  Card
 } from '@contentful/forma-36-react-components';
 
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
@@ -30,9 +31,6 @@ import AppIcon from '../apps/_common/AppIcon.es6';
 const styles = {
   intro: css({
     marginBottom: tokens.spacingL
-  }),
-  list: css({
-    marginBottom: tokens.spacing3Xl
   }),
   betaLabel: css({
     marginRight: tokens.spacingS,
@@ -126,11 +124,12 @@ const AppsListShell = props => (
         Share your feedback about apps.{' '}
         <TextLink onClick={() => openFeedback(props)}>Give feedback</TextLink>
       </Note>
-      <p className={styles.intro}>
-        Apps help you extend the functionality, easily connect with other services you are using,
-        including internal ones you’ve built.
-      </p>
-      <div>{props.children}</div>
+      <Card padding="large">
+        <p className={styles.intro}>
+          Apps help you extend functionality and easily connect with other services you are using.
+        </p>
+        <div>{props.children}</div>
+      </Card>
     </Workbench.Content>
   </Workbench>
 );
@@ -224,16 +223,17 @@ export default class AppsListPage extends React.Component {
         {installedApps.length > 0 && (
           <>
             <Heading element="h2">Installed</Heading>
-            <div className={styles.list}>
+            <div>
               {installedApps.map(app => (
                 <AppListItem key={app.id} app={app} openDetailModal={openDetailModal} />
               ))}
             </div>
           </>
         )}
+        <hr />
         <Heading element="h2">Available</Heading>
         {availableApps.length > 0 && (
-          <div className={styles.list}>
+          <div>
             {availableApps.map(app => (
               <AppListItem key={app.id} app={app} openDetailModal={openDetailModal} />
             ))}
