@@ -18,12 +18,7 @@ function bundleAppJs() {
   const prodBundleSteeam = generateBundleFromFiles({
     bundlePath: 'app/application.min.js',
     manifestPath: 'build/app-manifest.json',
-    files: [
-      'public/app/templates.js',
-      'public/app/vendor.js',
-      'public/app/libs.js',
-      'public/app/components.js'
-    ]
+    files: ['public/app/templates.js', 'public/app/app.js']
   });
 
   return prodBundleSteeam;
