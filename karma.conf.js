@@ -127,7 +127,7 @@ module.exports = function(config) {
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
 
-    browsers: ['Chrome'],
+    browsers: ['ChromeHeadless'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -136,8 +136,7 @@ module.exports = function(config) {
 };
 
 // Test file patterns common to the karma config and the development config
-// TODO
-//
+
 // const filesNeededToRunTests = (module.exports.filesNeededToRunTests = [
 //   'node_modules/systemjs/dist/system.src.js',
 //   'test/prelude.js',

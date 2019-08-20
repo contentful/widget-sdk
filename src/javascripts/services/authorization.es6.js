@@ -1,17 +1,23 @@
 import { registerFactory } from 'NgRegistry.es6';
 import worf from '@contentful/worf';
-import * as logger from 'services/logger.es6';
-
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
 export default function register() {
   registerFactory('authorization', [
     () => {
+      let accessChecker;
+      let logger;
+
       function Authorization() {}
 
       Authorization.prototype = {
         authContext: null,
         spaceContext: null,
+        init: async function() {
+          [logger, accessChecker] = await Promise.all([
+            import('services/logger.es6'),
+            import('access_control/AccessChecker/index.es6')
+          ]);
+        },
         update: function(
           tokenLookup,
           space,

@@ -101,6 +101,10 @@
             memo.push(SystemJS.import(name));
           }
 
+          if (name.endsWith('handle_gatekeeper_message_spec')) {
+            memo.push(SystemJS.import(name));
+          }
+
           return memo;
         }, [])
       );

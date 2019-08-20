@@ -1,10 +1,5 @@
 import { registerDirective, registerController } from 'NgRegistry.es6';
 import accountDropdownTemplateDef from 'navigation/templates/AccountDropdown.template.es6';
-import * as Intercom from 'services/intercom.es6';
-
-import * as Analytics from 'analytics/Analytics.es6';
-import * as Config from 'Config.es6';
-import * as Authentication from 'Authentication.es6';
 
 export default function register() {
   registerDirective('cfAccountDropdown', () => ({
@@ -18,13 +13,21 @@ export default function register() {
     '$scope',
     '$state',
     ($scope, $state) => {
+      let Intercom;
+      let Analytics;
+      let Config;
+      let Authentication;
+
+      initialize().then(() => {
+        $scope.supportUrl = Config.supportUrl;
+        $scope.isIntercomEnabled = Intercom.isEnabled;
+      });
+
       $scope.userProfileRef = {
         path: ['account', 'profile', 'user'],
         options: { reload: true }
       };
 
-      $scope.supportUrl = Config.supportUrl;
-      $scope.isIntercomEnabled = Intercom.isEnabled;
       $scope.logout = logout;
       $scope.talkToUsClicked = () => {
         Analytics.track('element:click', {
@@ -34,6 +37,15 @@ export default function register() {
         });
         Intercom.open();
       };
+
+      async function initialize() {
+        [Intercom, Analytics, Config, Authentication] = await Promise.all([
+          import('services/intercom.es6'),
+          import('analytics/Analytics.es6'),
+          import('Config.es6'),
+          import('Authentication.es6')
+        ]);
+      }
 
       function logout() {
         Analytics.track('global:logout_clicked');

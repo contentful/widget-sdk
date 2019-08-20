@@ -1,6 +1,5 @@
 import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
-import * as logger from 'services/logger.es6';
 
 export default function register() {
   registerDirective('cfPersistentNotification', [
@@ -10,7 +9,7 @@ export default function register() {
       return {
         restrict: 'E',
         template: JST.cf_persistent_notification(),
-        link: link
+        link
       };
 
       function link(scope) {
@@ -75,13 +74,13 @@ export default function register() {
           scope.actionMessage = null;
           scope.persistentNotification = null;
         }
-      }
 
-      function logConcurrentNotifications(notifications) {
-        notifications = notifications.map(params => params || '*RESET NOTIFICATION*');
-        logger.logWarn('Concurrent persistent notifications', {
-          notifications: notifications
-        });
+        async function logConcurrentNotifications(notifications) {
+          notifications = notifications.map(params => params || '*RESET NOTIFICATION*');
+          (await import('services/logger.es6')).logWarn('Concurrent persistent notifications', {
+            notifications: notifications
+          });
+        }
       }
     }
   ]);

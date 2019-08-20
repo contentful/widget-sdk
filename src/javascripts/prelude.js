@@ -253,6 +253,12 @@ angular
     async ($injector, $state) => {
       await awaitInitReady();
 
+      // Import and initialize core services
+      const { init: initSpaceContext } = $injector.get('spaceContext');
+      const { init: initAuthorization } = $injector.get('authorization');
+
+      await Promise.all([initAuthorization(), initSpaceContext()]);
+
       const Config = await import('Config.es6');
       const { default: handleGKMessage } = await import('account/handleGatekeeperMessage.es6');
       const { init: initDebug } = await import('Debug.es6');

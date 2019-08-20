@@ -20,9 +20,11 @@ export default function register() {
 
       controller: [
         '$scope',
-        $scope => {
+        'spaceContext',
+        ($scope, spaceContext) => {
           $scope.sidepanelComponent = React.createElement(SidepanelTrigger, {
-            onClick: $scope.onClick
+            onClick: $scope.onClick,
+            spaceContext
           });
         }
       ]

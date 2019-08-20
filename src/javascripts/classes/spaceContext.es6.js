@@ -1,47 +1,9 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
+import { create as createViewMigrator } from 'saved-views-migrator';
 import * as K from 'utils/kefir.es6';
 import { deepFreeze, deepFreezeClone } from 'utils/Freeze.es6';
-import * as ShareJSConnection from 'data/sharejs/Connection.es6';
-import createApiKeyRepo from 'data/CMA/ApiKeyRepo.es6';
-import shouldUseEnvEndpoint from 'data/shouldUseEnvEndpoint.es6';
-import APIClient from 'data/APIClient.es6';
-import * as logger from 'services/logger.es6';
-import * as Telemetry from 'i13n/Telemetry.es6';
-import createUserCache from 'data/userCache.es6';
-import * as EntityFieldValueHelpers from './EntityFieldValueHelpers.es6';
-import createContentPreview from 'services/contentPreview.es6';
-import TheLocaleStore from 'services/localeStore.es6';
-import createExtensionDefinitionLoader from 'app/settings/AppsBeta/ExtensionDefinitionLoader.es6';
-import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
-
-import { createExtensionLoader } from 'widgets/ExtensionLoader.es6';
-import createCachedAppConfig from 'app/settings/apps/CachedAppConfig.es6';
-import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo.es6';
-import createWebhookRepo from 'data/CMA/WebhookRepo.es6';
-import { create as createEnvironmentsRepo } from 'data/CMA/SpaceEnvironmentsRepo.es6';
-import { create as createAliasesRepo } from 'data/CMA/SpaceAliasesRepo.es6';
-import createLocaleRepo from 'data/CMA/LocaleRepo.es6';
-import createUiConfigStore from 'data/UiConfig/Store.es6';
-
-import {
-  createSpaceEndpoint,
-  createOrganizationEndpoint,
-  createExtensionDefinitionsEndpoint
-} from 'data/Endpoint.es6';
-
-import * as PublishedCTRepo from 'data/ContentTypeRepo/Published.es6';
-import * as MembershipRepo from 'access_control/SpaceMembershipRepository.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
-import * as DocumentPool from 'data/sharejs/DocumentPool.es6';
-import * as EnforcementsService from 'services/EnforcementsService.es6';
-import * as TokenStore from 'services/TokenStore.es6';
-import * as Auth from 'Authentication.es6';
-import * as Config from 'Config.es6';
 import { ENVIRONMENT_ALIASING } from '../featureFlags.es6';
-
-import { create as createViewMigrator } from 'saved-views-migrator';
-
 const MASTER_ENVIRONMENT_ID = 'master';
 
 export default function register() {
@@ -62,7 +24,104 @@ export default function register() {
       // Enforcements deinitialization function, when changing space
       let enforcementsDeInit;
 
+      let ShareJSConnection;
+      let createApiKeyRepo;
+      let shouldUseEnvEndpoint;
+      let APIClient;
+      let logger;
+      let Telemetry;
+      let createUserCache;
+      let EntityFieldValueHelpers;
+      let createContentPreview;
+      let TheLocaleStore;
+      let createExtensionDefinitionLoader;
+      let createExtensionLoader;
+      let createCachedAppConfig;
+      let createSpaceMembersRepo;
+      let createWebhookRepo;
+      let createEnvironmentsRepo;
+      let createAliasesRepo;
+      let createLocaleRepo;
+      let createUiConfigStore;
+      let createSpaceEndpoint;
+      let createOrganizationEndpoint;
+      let createExtensionDefinitionsEndpoint;
+      let PublishedCTRepo;
+      let MembershipRepo;
+      let accessChecker;
+      let DocumentPool;
+      let EnforcementsService;
+      let TokenStore;
+      let Auth;
+      let Config;
+      let getSpaceFeature;
+
       const spaceContext = {
+        async init() {
+          [
+            ShareJSConnection,
+            { default: createApiKeyRepo },
+            { default: shouldUseEnvEndpoint },
+            { default: APIClient },
+            logger,
+            Telemetry,
+            { default: createUserCache },
+            EntityFieldValueHelpers,
+            { default: createContentPreview },
+            { default: TheLocaleStore },
+            { default: createExtensionDefinitionLoader },
+
+            { createExtensionLoader },
+            { default: createCachedAppConfig },
+            { default: createSpaceMembersRepo },
+            { default: createWebhookRepo },
+            { create: createEnvironmentsRepo },
+            { create: createAliasesRepo },
+            { default: createLocaleRepo },
+            { default: createUiConfigStore },
+            { createSpaceEndpoint, createOrganizationEndpoint, createExtensionDefinitionsEndpoint },
+            PublishedCTRepo,
+            MembershipRepo,
+            accessChecker,
+            DocumentPool,
+            EnforcementsService,
+            TokenStore,
+            Auth,
+            Config,
+            { getSpaceFeature }
+          ] = await Promise.all([
+            import('data/sharejs/Connection.es6'),
+            import('data/CMA/ApiKeyRepo.es6'),
+            import('data/shouldUseEnvEndpoint.es6'),
+            import('data/APIClient.es6'),
+            import('services/logger.es6'),
+            import('i13n/Telemetry.es6'),
+            import('data/userCache.es6'),
+            import('./EntityFieldValueHelpers.es6'),
+            import('services/contentPreview.es6'),
+            import('services/localeStore.es6'),
+            import('app/settings/AppsBeta/ExtensionDefinitionLoader.es6'),
+            import('widgets/ExtensionLoader.es6'),
+            import('app/settings/apps/CachedAppConfig.es6'),
+            import('data/CMA/SpaceMembersRepo.es6'),
+            import('data/CMA/WebhookRepo.es6'),
+            import('data/CMA/SpaceEnvironmentsRepo.es6'),
+            import('data/CMA/SpaceAliasesRepo.es6'),
+            import('data/CMA/LocaleRepo.es6'),
+            import('data/UiConfig/Store.es6'),
+            import('data/Endpoint.es6'),
+            import('data/ContentTypeRepo/Published.es6'),
+            import('access_control/SpaceMembershipRepository.es6'),
+            import('access_control/AccessChecker/index.es6'),
+            import('data/sharejs/DocumentPool.es6'),
+            import('services/EnforcementsService.es6'),
+            import('services/TokenStore.es6'),
+            import('Authentication.es6'),
+            import('Config.es6'),
+            import('data/CMA/ProductCatalog.es6')
+          ]);
+        },
+
         /**
          * @description
          * A property containing data on the published CTs in the current space.
