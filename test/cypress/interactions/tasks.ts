@@ -2,7 +2,7 @@ import {
   defaultSpaceId,
   defaultEntryId,
   defaultTaskId,
-  defaultHeader
+  defaultHeader as commonDefaultHeader
 } from '../util/requests';
 import { RequestOptions } from '@pact-foundation/pact-web';
 const empty = require('../fixtures/responses/empty.json');
@@ -25,6 +25,11 @@ enum Status {
 export const PROVIDER = 'tasks';
 
 const GET_TASK_LIST = `a request to get all entry tasks for entry "${defaultEntryId}"`
+
+const defaultHeader = {
+  ...commonDefaultHeader,
+  'x-contentful-enable-alpha-feature': 'comments-api'
+}
 
 const getEntryCommentsAndTasksRequest: RequestOptions = {
   method: 'GET',
