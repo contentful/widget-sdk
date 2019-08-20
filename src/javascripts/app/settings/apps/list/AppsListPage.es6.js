@@ -14,7 +14,6 @@ import {
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
-import { websiteUrl } from 'Config.es6';
 
 const styles = {
   intro: css({
@@ -29,9 +28,6 @@ const AppsListShell = props => (
   <Workbench>
     <Workbench.Header icon={<Icon name="page-apps" scale="1" />} title="Apps" />
     <Workbench.Content type="text">
-      <p className={styles.intro}>
-        Extend the platform and integrate with services you’re using by adding apps.
-      </p>
       <div>{props.children}</div>
     </Workbench.Content>
   </Workbench>
@@ -89,19 +85,15 @@ export default class AppsListPage extends Component {
 
     const info = (
       <p>
-        Dear user, we are phasing out the alpha of apps as we are moving into beta. If you have any
-        comments or questions, please{' '}
-        <a href={websiteUrl('/support/')} target="_blank" rel="noopener noreferrer">
-          reach out
-        </a>{' '}
-        to us. Thank you for you participation and we hope to see you in the beta.
+        We are phasing out alpha apps as we move into beta. This means no new alpha apps can be
+        installed. Thank you for your participation and we hope to see you in the beta.
       </p>
     );
 
     if (apps.installed.length > 0) {
       return (
         <>
-          <Note className={styles.note} noteType="warning" title="Apps alpha is phasing out">
+          <Note className={styles.note} noteType="warning" title="Apps alpha is being phased out">
             {info}
             <p>You can still use the apps installed in the alpha period.</p>
           </Note>
@@ -115,7 +107,7 @@ export default class AppsListPage extends Component {
     }
 
     return (
-      <Note className={styles.note} noteType="warning" title="Apps alpha is phasing out">
+      <Note className={styles.note} noteType="warning" title="Apps alpha is being phased out">
         {info}
       </Note>
     );
