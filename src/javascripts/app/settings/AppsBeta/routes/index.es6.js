@@ -5,6 +5,7 @@ import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge.e
 import * as Navigator from 'states/Navigator.es6';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
 import createAppsRepo from '../AppsRepo.es6';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 
 export default {
   name: 'appsBeta',
@@ -20,6 +21,7 @@ export default {
         '$state',
         (spaceContext, $state) => {
           return {
+            getSpaceFeature,
             goToContent: () => $state.go('^.^.entries.list'),
             repo: createAppsRepo(spaceContext.extensionDefinitionLoader, spaceContext.endpoint),
             organizationId: spaceContext.organization.sys.id,

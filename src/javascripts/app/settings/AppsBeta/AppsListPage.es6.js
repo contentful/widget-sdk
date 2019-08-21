@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { partition } from 'lodash';
+import { partition, get, identity, uniq } from 'lodash';
 
 import tokens from '@contentful/forma-36-tokens';
 import {
@@ -13,7 +13,8 @@ import {
   Heading,
   Note,
   TextLink,
-  Card
+  Card,
+  Paragraph
 } from '@contentful/forma-36-react-components';
 
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
@@ -23,10 +24,10 @@ import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import * as Telemetry from 'i13n/Telemetry.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import FeedbackDialog from 'app/common/FeedbackDialog.es6';
-import createMicroBackendsClient from 'MicroBackendsClient.es6';
 
 import AppListItem from './AppListItem.es6';
 import AppDetailsModal from './AppDetailsModal.es6';
+import createMicroBackendsClient from 'MicroBackendsClient.es6';
 
 const styles = {
   intro: css({
@@ -55,6 +56,7 @@ const openDetailModal = app => {
       onClose={onClose}
       app={{
         installed: app.installed,
+        enabled: app.enabled,
         appId: app.id,
         appName: app.title,
         author: app.author,
@@ -103,6 +105,26 @@ const openFeedback = async ({ organizationId, userId }) => {
   }
 };
 
+export const loadProductCatalogFlagsForApps = async (_getSpaceFeature, spaceId, apps) => {
+  const flagsToLoad = uniq(
+    Object.keys(apps)
+      .map(key => get(apps[key], 'fields.productCatalogFlag.fields.flagId'))
+      .filter(identity)
+  );
+
+  const productCatalogFlags = await Promise.all(
+    flagsToLoad.map(async feature => ({
+      feature,
+      value: await _getSpaceFeature(spaceId, apps, true)
+    }))
+  );
+
+  return productCatalogFlags.reduce(
+    (acc, { feature, value }) => ({ ...acc, [feature]: value }),
+    {}
+  );
+};
+
 const Header = () => (
   <Heading>
     Apps <span className={styles.betaLabel}>Beta</span>
@@ -118,9 +140,9 @@ const AppsListShell = props => (
         <TextLink onClick={() => openFeedback(props)}>Give feedback</TextLink>
       </Note>
       <Card padding="large">
-        <p className={styles.intro}>
+        <Paragraph className={styles.intro}>
           Apps help you extend functionality and easily connect with other services you are using.
-        </p>
+        </Paragraph>
         <div>{props.children}</div>
       </Card>
     </Workbench.Content>
@@ -151,7 +173,12 @@ const AppsListPageLoading = () => {
   );
 };
 
-const prepareApp = repoApps => app => ({
+export const getProductCatalogFlagForApp = (app, productCatalogFlags) => {
+  const flagId = get(app, 'fields.productCatalogFlag.fields.flagId');
+  return typeof flagId === 'undefined' ? true : productCatalogFlags[flagId];
+};
+
+const prepareApp = (repoApps, featureFlags) => app => ({
   id: app.fields.slug,
   title: app.fields.title,
   tagLine: app.fields.tagLine,
@@ -165,7 +192,8 @@ const prepareApp = repoApps => app => ({
   links: app.fields.links.map(link => link.fields),
   categories: app.fields.categories.map(c => c.fields.name),
   permissions: app.fields.permissionsExplanation,
-  installed: !!(repoApps.find(a => a.sys.id === app.fields.slug) || {}).extension
+  installed: !!(repoApps.find(a => a.sys.id === app.fields.slug) || {}).extension,
+  enabled: getProductCatalogFlagForApp(app, featureFlags)
 });
 
 const prepareDevApp = app => ({
@@ -185,7 +213,8 @@ export default class AppsListPage extends React.Component {
     }).isRequired,
     organizationId: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired,
-    userId: PropTypes.string.isRequired
+    userId: PropTypes.string.isRequired,
+    getSpaceFeature: PropTypes.func.isRequired
   };
 
   state = {};
@@ -198,8 +227,15 @@ export default class AppsListPage extends React.Component {
         this.props.repo.getDevApps()
       ]);
 
-      const preparedApps = Object.values(appsListing).map(prepareApp(repoApps, appsListing));
+      const featureFlags = await loadProductCatalogFlagsForApps(
+        this.props.getSpaceFeature,
+        this.props.spaceId,
+        appsListing
+      );
+
+      const preparedApps = Object.values(appsListing).map(prepareApp(repoApps, featureFlags));
       const preparedDevApps = devApps.map(prepareDevApp);
+
       const [installedApps, availableApps] = partition(
         [...preparedApps, ...preparedDevApps],
         app => app.installed

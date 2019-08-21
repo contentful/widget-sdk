@@ -81,6 +81,7 @@ const styles = {
 
 const AppPropType = PropTypes.shape({
   appId: PropTypes.string.isRequired,
+  isEnabled: PropTypes.bool.isRequired,
   links: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
@@ -208,6 +209,7 @@ export function AppDetails(props) {
             <Button
               onClick={determineOnClick(app.installed, onClick, onClose, setShowPermissions)}
               isFullWidth
+              disabled={!app.enabled}
               buttonType="primary">
               {app.installed ? 'Configure' : 'Install'}
             </Button>
