@@ -1,16 +1,34 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import escape from 'utils/escape.es6';
 import { assign } from 'utils/Collections.es6';
 import { makeCtor } from 'utils/TaggedValues.es6';
 import { Notification } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const ModalDialog = getModule('modalDialog');
-const $state = getModule('$state');
+const styles = {
+  modalDialogContent: css({
+    paddingBottom: tokens.spacingXl
+  }),
+  formField: css({
+    marginTop: tokens.spacingXl,
+    marginBottom: tokens.spacingXl
+  }),
+  label: css({
+    fontWeight: tokens.fontWeightMedium
+  }),
+  buttons: css({
+    display: 'flex',
+    marginTop: tokens.spacing2Xs
+  }),
+  cancelButton: css({
+    marginLeft: tokens.spacingXs
+  })
+};
 
 /**
  * This module exports a function to open the confirmation dialog to
@@ -31,6 +49,7 @@ const reduce = makeReducer({
   [TriggerDelete](state, _, { runDelete, environment, closeDialog, dispatch }) {
     runDelete(environment.id).then(
       () => {
+        const $state = getModule('$state');
         closeDialog(true);
         const activeEnvId = $state.params.environmentId;
         if (environment.id === activeEnvId) {
@@ -66,6 +85,7 @@ const reduce = makeReducer({
  * @param environment
  */
 export function openDeleteDialog(runDelete, environment) {
+  const ModalDialog = getModule('modalDialog');
   return ModalDialog.open({
     template: `
       <div class="modal-background">
@@ -120,15 +140,15 @@ function SpaceEnvironmentsDeleteDialog({
         <h1>Delete environment</h1>
         <button onClick={() => CancelDialog()} className="modal-dialog__close" />
       </header>
-      <div style={{ paddingBottom: '30px' }} className="modal-dialog__content">
+      <div className={styles.modalDialogContent}>
         <p>
           {`You are about to delete the environment `}
           <strong>{confirmationId}</strong>
           {`. All of the environment data, including the environment
       itself, will be deleted. This operation cannot be undone.`}
         </p>
-        <div className="cfnext-form__field" style={{ marginTop: 28 }}>
-          <label style={{ fontWeight: '600' }}>Type the ID of the environment to confirm</label>
+        <div className={styles.formField}>
+          <label className={styles.label}>Type the ID of the environment to confirm</label>
           <input
             data-test-id="confirmId"
             value={inputValue}
@@ -136,7 +156,7 @@ function SpaceEnvironmentsDeleteDialog({
             className="cfnext-form__input--full-size"
           />
         </div>
-        <div style={{ display: 'flex', marginTop: 5 }}>
+        <div className={styles.buttons}>
           <button
             disabled={inProgress || !confirmable}
             onClick={() => TriggerDelete()}
@@ -145,11 +165,10 @@ function SpaceEnvironmentsDeleteDialog({
             Delete environment
           </button>
           <button
-            style={{ marginLeft: '10px' }}
             type="button"
             onClick={() => CancelDialog()}
             data-test-id="cancel"
-            className="btn-secondary-action">
+            className={`btn-secondary-action ${styles.cancelButton}`}>
             Cancel
           </button>
         </div>

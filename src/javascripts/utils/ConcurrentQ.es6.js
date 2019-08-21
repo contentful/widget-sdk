@@ -1,7 +1,5 @@
 import { getModule } from 'NgRegistry.es6';
 
-const $q = getModule('$q');
-
 /**
  * Create a queue of asynchronous tasks that are run sequentially.
  *
@@ -30,6 +28,7 @@ export function createQueue() {
     if (typeof run !== 'function') {
       throw new Error('Can only push functions into queue');
     }
+    const $q = getModule('$q');
     const deferred = $q.defer();
     pending.push({ run, deferred });
     if (!running) {

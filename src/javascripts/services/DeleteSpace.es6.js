@@ -9,14 +9,14 @@ import { getModule } from 'NgRegistry.es6';
 import APIClient from 'data/APIClient.es6';
 import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider.es6';
 
-const $rootScope = getModule('$rootScope');
-const modalDialog = getModule('modalDialog');
-const Command = getModule('command');
-
 export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
   if (plan && isEnterprisePlan(plan) && !isFreeSpacePlan(plan)) {
     return openCommittedSpaceWarningDialog();
   }
+
+  const $rootScope = getModule('$rootScope');
+  const modalDialog = getModule('modalDialog');
+  const Command = getModule('command');
 
   const spaceName = space.name;
   const scope = extend($rootScope.$new(), {
@@ -74,6 +74,8 @@ function removalConfirmation() {
     h('button.btn-caution', { uiCommand: 'remove' }, ['Remove']),
     h('button.btn-secondary-action', { ngClick: 'dialog.cancel()' }, ['Don’t remove'])
   ];
+
+  const modalDialog = getModule('modalDialog');
 
   return modalDialog.richtextLayout('Remove space', content, controls);
 }

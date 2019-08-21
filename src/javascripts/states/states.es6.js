@@ -7,8 +7,6 @@ import userInvitationState from 'states/UserInvitationState.es6';
 
 import { getModule } from 'NgRegistry.es6';
 
-const config = getModule('states/config');
-
 /**
  * Imports all the root states and and adds them to the router.
  * Needs to be called in a 'run' hook to make the application work
@@ -45,6 +43,7 @@ export function loadAll() {
  * Load only the given states. Used for testing
  */
 export function load(states) {
+  const config = getModule('states/config');
   (states || []).forEach(state => config.add(state));
   config.init();
 }

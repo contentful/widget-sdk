@@ -1,8 +1,35 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import * as Config from 'Config.es6';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { LinkOpen } from 'ui/Content.es6';
+import { css } from 'emotion';
+
+const styles = {
+  label: css({
+    fontWeight: 'bold'
+  }),
+  environmentSelect: css({
+    display: 'block',
+    width: '100%'
+  }),
+  modalDialog: {
+    content: css({
+      paddingBottom: '30px'
+    })
+  },
+  fieldInput: css({
+    width: '100%'
+  }),
+  separator: css({
+    marginTop: '14px'
+  }),
+  dialogActions: css({
+    display: 'flex'
+  }),
+  cancelButton: css({
+    marginLeft: '10px'
+  })
+};
 
 const SpaceEnvironmentsEditDialogPropTypes = {
   serverFailure: PropTypes.any,
@@ -26,7 +53,7 @@ export default function SpaceEnvironmentsEditDialog(props) {
         <h1>Add environment</h1>
         <button className="modal-dialog__close" onClick={() => CancelDialog()} />
       </header>
-      <div className="modal-dialog__content" style={{ paddingBottom: '30px' }}>
+      <div className={`modal-dialog__content ${styles.modalDialog.content}`}>
         {serverFailure ? <DisplayServerError {...props} /> : <Form {...props} />}
       </div>
     </div>
@@ -82,6 +109,7 @@ function Form({
     </form>
   );
 }
+
 Form.propTypes = SpaceEnvironmentsEditDialogPropTypes;
 
 function SourceEnvironmentSelector({
@@ -93,12 +121,11 @@ function SourceEnvironmentSelector({
   return (
     <div className="cfnext-form__field">
       <label>
-        <span style={{ fontWeight: 'bold' }}>Clone new environment from</span>
+        <span className={styles.label}>Clone new environment from</span>
       </label>
 
       <select
-        className="cfnext-select-box"
-        style={{ display: 'block', width: '100%' }}
+        className={`cfnext-select-box ${styles.environmentSelect}`}
         onChange={ev => SetSourceEnvironment({ value: ev.target.value })}
         data-test-id="source.id"
         value={selectedEnvironment}>
@@ -125,17 +152,16 @@ function FormField({ label, labelHint, field, input, hint, SetFieldValue }) {
   return (
     <div className="cfnext-form__field">
       <label>
-        <span style={{ fontWeight: 'bold' }}>{label}</span>
+        <span className={styles.label}>{label}</span>
         <span className="cfnext-form__label-hint">{labelHint}</span>
       </label>
       <input
-        className="cfnext-form__input"
+        className={`cfnext-form__input ${styles.fieldInput}`}
         name={`field.${field.name}`}
         value={field.value || ''}
         onChange={ev => SetFieldValue({ name: field.name, value: ev.target.value })}
         aria-invalid={field.errors.length ? 'true' : undefined}
         auto-complete="off"
-        style={{ width: '100%' }}
         {...input}
       />
       {field.errors.map(error => {
@@ -173,7 +199,7 @@ function DisplayServerError({ inProgress, CancelDialog, Submit }) {
           if the problem persists.
         </p>
       </div>
-      <div style={{ marginTop: '14px' }} />
+      <div className={styles.separator} />
       <DialogActions
         submitLabel="Retry"
         inProgress={inProgress}
@@ -183,11 +209,12 @@ function DisplayServerError({ inProgress, CancelDialog, Submit }) {
     </div>
   );
 }
+
 DisplayServerError.propTypes = SpaceEnvironmentsEditDialogPropTypes;
 
 function DialogActions({ submitLabel, inProgress, CancelDialog, Submit }) {
   return (
-    <div style={{ display: 'flex' }}>
+    <div className={styles.dialogActions}>
       <button
         disabled={inProgress}
         onClick={Submit && (() => Submit())}
@@ -196,11 +223,10 @@ function DialogActions({ submitLabel, inProgress, CancelDialog, Submit }) {
         {submitLabel}
       </button>
       <button
-        style={{ marginLeft: '10px' }}
         type="button"
         onClick={() => CancelDialog()}
         data-test-id="cancel"
-        className="btn-secondary-action">
+        className={`btn-secondary-action ${styles.cancelButton}`}>
         Cancel
       </button>
     </div>

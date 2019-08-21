@@ -12,8 +12,6 @@ import * as Config from 'Config.es6';
 import { getModule } from 'NgRegistry.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 
-const $rootScope = getModule('$rootScope');
-
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
 // we specify this space name to indicate from which space
@@ -354,6 +352,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     });
 
     function remoteOpHandler(ops, { resolve, processingTimeout }) {
+      const $rootScope = getModule('$rootScope');
       $rootScope.$apply(() => {
         clearTimeout(processingTimeout);
         const op = ops && ops.length > 0 ? ops[0] : null;
