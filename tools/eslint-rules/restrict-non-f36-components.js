@@ -35,7 +35,7 @@ module.exports = {
         const typeAttributes = node.attributes
           .filter(att => att && att.name && att.name.name === 'type')
           .reduce((_, prev) => prev, undefined);
-        const typeValue = typeAttributes && `_${typeAttributes.value.value}`;
+        const typeValue = typeAttributes ? `_${typeAttributes.value.value}` : '';
         const blackListKey = `${nodeName}${typeValue}`;
 
         if (blacklist[blackListKey]) {
