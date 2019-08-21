@@ -1,7 +1,7 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import { css } from 'emotion';
 import { Steps, getFieldErrors } from './WizardUtils.es6';
 import SpacePlanSelector from './SpacePlanSelector.es6';
 import SpaceDetails from './SpaceDetails.es6';
@@ -15,6 +15,21 @@ import * as propTypes from './PropTypes.es6';
 import * as actionCreators from 'redux/actions/spaceWizard/actionCreators.es6';
 import * as resourceActionCreators from 'redux/actions/resources/actionCreators.es6';
 import * as logger from 'services/logger.es6';
+
+const styles = {
+  modalDialog: css({
+    width: '750px'
+  }),
+  closeButton: css({
+    padding: '18px 20px'
+  }),
+  createSpaceWizard: css({
+    width: '780px'
+  }),
+  modalHeader: css({
+    padding: 0
+  })
+};
 
 const SpaceCreateSteps = [
   {
@@ -168,7 +183,7 @@ class Wizard extends React.Component {
 
     if (spaceCreation.success && template) {
       return (
-        <div className="modal-dialog" style={{ width: '750px' }}>
+        <div className={`modal-dialog ${styles.modalDialog}`}>
           <div className="modal-dialog__content">
             <ProgressScreen done={!spaceCreation.isPending} onConfirm={this.confirm} />
           </div>
@@ -197,7 +212,7 @@ class Wizard extends React.Component {
           onClick={this.cancel}
           buttonType="muted"
           testId="modal-dialog-close"
-          style={{ padding: '18px 20px' }}
+          className={styles.closeButton}
         />
       );
 
@@ -233,8 +248,8 @@ class Wizard extends React.Component {
       };
 
       return (
-        <div className="modal-dialog create-space-wizard" style={{ width: '780px' }}>
-          <div className="modal-dialog__header" style={{ padding: 0 }}>
+        <div className={`modal-dialog create-space-wizard ${styles.createSpaceWizard}`}>
+          <div className={`modal-dialog__header ${styles.modalHeader}`}>
             {navigation}
             {closeButton}
           </div>
