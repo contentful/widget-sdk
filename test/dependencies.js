@@ -106,6 +106,9 @@ window.libs = [
   ['node-html-encoder', require('node-html-encoder')],
   ['rtl-detect', require('rtl-detect')],
   ['tti-polyfill', require('tti-polyfill')],
+  ['@contentful/field-editor-single-line', require('@contentful/field-editor-single-line')],
+  ['@contentful/field-editor-multiple-line', require('@contentful/field-editor-multiple-line')],
+
   ['legacy-client', require('libs/legacy_client/client.js')],
   ['saved-views-migrator', require('libs/saved-views-migrator/index.js')],
   ['angular-mocks', require('angular-mocks')],

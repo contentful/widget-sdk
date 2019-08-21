@@ -1,11 +1,9 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
+
+import { $apply, $initialize } from 'test/helpers/helpers';
 
 describe('bugsnag', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.bugsnag = this.$inject('analytics/Bugsnag.es6');
-    this.LazyLoader = this.$inject('utils/LazyLoader.es6');
-
+  beforeEach(async function() {
     this.BugsnagStub = {
       disableAutoBreadcrumbsConsole: sinon.stub(),
       enableNotifyUnhandledRejections: sinon.stub(),
@@ -13,13 +11,22 @@ describe('bugsnag', () => {
       notifyException: sinon.stub(),
       refresh: sinon.stub()
     };
+    this.get = sinon.stub().resolves(this.BugsnagStub);
 
-    this.LazyLoader.get = sinon.stub().resolves(this.BugsnagStub);
+    this.system.set('utils/LazyLoader.es6', {
+      get: this.get
+    });
+
+    this.bugsnag = await this.system.import('analytics/Bugsnag.es6');
+
+    module('contentful/test');
+
+    await $initialize();
   });
 
   it('delegates #notify', function() {
     this.bugsnag.enable();
-    this.$apply();
+    $apply();
     this.bugsnag.notify('ERROR');
     sinon.assert.calledWithExactly(this.BugsnagStub.notify, 'ERROR');
   });
@@ -28,17 +35,17 @@ describe('bugsnag', () => {
     this.bugsnag.notify('ERROR');
     sinon.assert.notCalled(this.BugsnagStub.notify);
     this.bugsnag.enable();
-    this.$apply();
+    $apply();
     sinon.assert.calledWithExactly(this.BugsnagStub.notify, 'ERROR');
   });
 
   it('loads script only once', function() {
     this.bugsnag.enable();
-    this.$apply();
-    sinon.assert.calledOnce(this.LazyLoader.get);
+    $apply();
+    sinon.assert.calledOnce(this.get);
     this.bugsnag.enable();
-    this.$apply();
-    sinon.assert.calledOnce(this.LazyLoader.get);
+    $apply();
+    sinon.assert.calledOnce(this.get);
   });
 
   describe('user information', () => {
@@ -46,7 +53,7 @@ describe('bugsnag', () => {
       this.bugsnag.enable({
         sys: { id: 'USER_ID' }
       });
-      this.$apply();
+      $apply();
       expect(this.BugsnagStub.user.id).toEqual('USER_ID');
       expect(this.BugsnagStub.user.organizations).toEqual('');
     });
@@ -59,7 +66,7 @@ describe('bugsnag', () => {
           { organization: { sys: { id: 'bar' } } }
         ]
       });
-      this.$apply();
+      $apply();
       expect(this.BugsnagStub.user.id).toEqual('UID');
       expect(this.BugsnagStub.user.organizations).toEqual('foo, bar');
     });
@@ -68,20 +75,20 @@ describe('bugsnag', () => {
   it('enabling after disabling does not send notifications', function() {
     this.bugsnag.enable();
     this.bugsnag.disable();
-    this.$apply();
+    $apply();
     this.bugsnag.notify('ERROR');
-    this.$apply();
+    $apply();
     sinon.assert.notCalled(this.BugsnagStub.notify);
   });
 
   describe('when script loading fails', () => {
     beforeEach(function() {
-      this.LazyLoader.get = sinon.stub().rejects();
+      this.get = sinon.stub().rejects();
     });
 
     it('#notify() does not throw', function() {
       this.bugsnag.enable();
-      this.$apply();
+      $apply();
       this.bugsnag.notify();
     });
   });

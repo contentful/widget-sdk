@@ -1,5 +1,6 @@
 import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
+import { track } from 'analytics/Analytics.es6';
 
 export default function register() {
   /**
@@ -16,8 +17,7 @@ export default function register() {
     '$q',
     '$timeout',
     'spaceContext',
-    'analytics/Analytics.es6',
-    function($scope, $q, $timeout, spaceContext, { track }) {
+    function($scope, $q, $timeout, spaceContext) {
       // A hash with user ids as keys, and role ids as values
       $scope.selectedRoles = {};
 

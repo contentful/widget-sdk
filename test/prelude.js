@@ -73,41 +73,49 @@
         };
       });
 
-      // TODO: figure out how to get Chrome to not fail when loading so many files...
-      // below does NOT work
-      // await new Promise(resolve => setTimeout(resolve, 10000));
-      await SystemJS.import('angular-mocks');
-      const { configure } = await SystemJS.import('enzyme');
-      const { default: Adapter } = await SystemJS.import('enzyme-adapter-react-16');
+      try {
+        await SystemJS.import('angular-mocks');
+        const { configure } = await SystemJS.import('enzyme');
+        const { default: Adapter } = await SystemJS.import('enzyme-adapter-react-16');
 
-      configure({ adapter: new Adapter() });
+        configure({ adapter: new Adapter() });
 
-      await SystemJS.import('test/helpers/setup-isolated-system');
-      await SystemJS.import('test/helpers/dsl');
-      await SystemJS.import('test/helpers/hooks');
-      await SystemJS.import('test/helpers/sinon');
-      await SystemJS.import('test/helpers/contentful_mocks');
-      await SystemJS.import('test/helpers/mocks/entity_editor_document');
-      await SystemJS.import('test/helpers/mocks/cf_stub');
-      await SystemJS.import('test/helpers/mocks/space_context');
-      await SystemJS.import('prelude');
-      await SystemJS.import('test/helpers/application');
-      // await SystemJS.import('test/unit/access_control/');
-      // await SystemJS.import('test/unit/access_control/role_list.controller.spec');
-      // await SystemJS.import('test/unit/access_control/role_list.directive.spec');
-      await Promise.all(
-        testModules.reduce((memo, name) => {
-          if (name.startsWith('test/unit/access_control')) {
-            memo.push(SystemJS.import(name));
-          }
+        await SystemJS.import('test/helpers/setup-isolated-system');
+        await SystemJS.import('test/helpers/dsl');
+        await SystemJS.import('test/helpers/hooks');
+        await SystemJS.import('test/helpers/sinon');
+        await SystemJS.import('test/helpers/contentful_mocks');
+        await SystemJS.import('test/helpers/mocks/entity_editor_document');
+        await SystemJS.import('test/helpers/mocks/cf_stub');
+        await SystemJS.import('test/helpers/mocks/space_context');
+        await SystemJS.import('prelude');
+        await SystemJS.import('test/helpers/application');
+        await Promise.all(
+          testModules.reduce((memo, name) => {
+            const prefixes = [
+              'test/unit/access_control',
+              'test/unit/account',
+              'test/unit/analytics'
+            ];
 
-          if (name.endsWith('handle_gatekeeper_message_spec')) {
-            memo.push(SystemJS.import(name));
-          }
+            if (prefixes.find(prefix => name.startsWith(prefix))) {
+              memo.push(SystemJS.import(name));
+            }
 
-          return memo;
-        }, [])
-      );
+            return memo;
+          }, [])
+        );
+      } catch (err) {
+        if (err.message.match('404 Not Found')) {
+          // Chrome has some issues with so many network requests
+          // redo Karma.start
+          window.location.reload();
+
+          return;
+        }
+
+        throw err;
+      }
       // await Promise.all(testModules.map(name => SystemJS.import(name)));
 
       // debugger;

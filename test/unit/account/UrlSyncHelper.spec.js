@@ -1,10 +1,25 @@
+import sinon from 'sinon';
+import { $initialize } from 'test/helpers/helpers';
+
 describe('account/UrlSyncHelper.es6', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.$state = this.mockService('$state');
-    this.$state.go = sinon.spy();
-    this.$location = this.mockService('$location');
-    this.UrlSyncHelper = this.$inject('account/UrlSyncHelper.es6');
+  beforeEach(async function() {
+    this.$state = {
+      href: sinon.stub(),
+      go: sinon.spy(),
+      current: {}
+    };
+    this.$location = {
+      url: sinon.stub()
+    };
+
+    module('contentful/test', $provide => {
+      $provide.constant('$state', this.$state);
+      $provide.constant('$location', this.$location);
+    });
+
+    await $initialize();
+
+    this.UrlSyncHelper = await this.system.import('account/UrlSyncHelper.es6');
   });
 
   describe('.getGatekeeperUrl()', () => {

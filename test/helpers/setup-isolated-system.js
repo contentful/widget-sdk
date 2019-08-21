@@ -23,10 +23,10 @@ beforeEach(function() {
   this.__originalSystem = window.SystemJS;
 
   this.system = {
-    set: async function(path, module) {
+    set: function(path, module) {
       const newModule = SystemJS.newModule(module);
 
-      const normalizedPath = await SystemJS.normalize(path);
+      const normalizedPath = SystemJS.normalizeSync(path);
 
       // Delete any previously set modules in registry
       SystemJS.registry.delete(normalizedPath);
@@ -35,7 +35,7 @@ beforeEach(function() {
       // registration below
       delete SystemJS[Object.getOwnPropertySymbols(SystemJS)[0]].records[normalizedPath];
 
-      SystemJS.registry.set(await SystemJS.normalize(path), newModule);
+      SystemJS.registry.set(normalizedPath, newModule);
 
       return null;
     },

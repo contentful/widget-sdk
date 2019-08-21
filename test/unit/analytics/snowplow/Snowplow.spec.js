@@ -1,20 +1,21 @@
 import _ from 'lodash';
+import sinon from 'sinon';
 
 describe('Snowplow service', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.LazyLoader = { get: sinon.stub() };
     this.Events = { getSchema: sinon.stub(), transform: sinon.stub() };
     this.window = {};
 
-    module('contentful/test', $provide => {
-      $provide.constant('utils/LazyLoader.es6', this.LazyLoader);
-      $provide.constant('analytics/snowplow/Events.es6', this.Events);
-      $provide.constant('utils/ngCompat/window.es6', {
-        default: this.window
-      });
+    this.system.set('utils/LazyLoader.es6', this.LazyLoader);
+    this.system.set('analytics/snowplow/Events.es6', this.Events);
+
+    this.system.set('utils/ngCompat/window.es6', {
+      default: this.window
     });
 
-    this.Snowplow = this.$inject('analytics/snowplow/Snowplow.es6');
+    this.Snowplow = await this.system.import('analytics/snowplow/Snowplow.es6');
+
     this.getLastEvent = function() {
       return _.last(this.window.snowplow.q);
     };

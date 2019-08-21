@@ -1,11 +1,12 @@
 import _ from 'lodash';
 
 describe('Snowplow events service', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.value('analytics/snowplow/transformers/Generic.es6', _.constant({ foo: 'bar' }));
+  beforeEach(async function() {
+    this.system.set('analytics/snowplow/transformers/Generic.es6', {
+      default: _.constant({ foo: 'bar' })
     });
-    this.Events = this.$inject('analytics/snowplow/Events.es6');
+
+    this.Events = await this.system.import('analytics/snowplow/Events.es6');
   });
 
   it('#transform()', function() {

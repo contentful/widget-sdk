@@ -1,10 +1,7 @@
 import sinon from 'sinon';
-import { createIsolatedSystem } from 'test/helpers/system-js';
 
 describe('ReferenceEditor', () => {
-  beforeEach(function*() {
-    const system = createIsolatedSystem();
-
+  beforeEach(async function() {
     this.analytics = {
       track: sinon.stub()
     };
@@ -13,12 +10,13 @@ describe('ReferenceEditor', () => {
       getActiveLocales: sinon.stub()
     };
 
-    system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore.es6', {
       default: this.TheLocaleStore
     });
-    system.set('analytics/Analytics.es6', this.analytics);
 
-    const referenceEditorEvents = yield system.import('analytics/events/ReferenceEditor.es6');
+    this.system.set('analytics/Analytics.es6', this.analytics);
+
+    const referenceEditorEvents = await this.system.import('analytics/events/ReferenceEditor.es6');
 
     this.referenceEditorEvents = referenceEditorEvents;
 

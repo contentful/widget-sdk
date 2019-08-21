@@ -1,16 +1,15 @@
-'use strict';
-
 import { deepFreeze } from 'utils/Freeze.es6';
+import sinon from 'sinon';
 
 describe('analytics/events/SpaceCreation#entityActionSuccess()', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.value('analytics/Analytics.es6', {
-        track: sinon.stub()
-      });
+  beforeEach(async function() {
+    this.track = sinon.stub();
+
+    this.system.set('analytics/Analytics.es6', {
+      track: this.track
     });
-    this.analytics = this.$inject('analytics/Analytics.es6');
-    this.SpaceCreation = this.$inject('analytics/events/SpaceCreation.es6');
+
+    this.SpaceCreation = await this.system.import('analytics/events/SpaceCreation.es6');
   });
 
   describeTrackingOf({
@@ -46,7 +45,7 @@ function describeTrackingOf({ event, entityData, tracksOrigin = false }) {
         ? { ...entityData, eventOrigin: 'space-creation' }
         : entityData;
 
-      sinon.assert.calledWith(this.analytics.track, event, actualEntityData);
+      sinon.assert.calledWith(this.track, event, actualEntityData);
     });
 
     it('tracks template if provided', function() {
@@ -59,7 +58,7 @@ function describeTrackingOf({ event, entityData, tracksOrigin = false }) {
         actualEntityData.eventOrigin = 'example-space-creation';
       }
 
-      sinon.assert.calledWith(this.analytics.track, event, actualEntityData);
+      sinon.assert.calledWith(this.track, event, actualEntityData);
     });
   });
 }

@@ -1,9 +1,8 @@
-const PATH = 'analytics/snowplow/transformers/EntityAction.es6';
-
-describe(PATH, () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.transform = this.$inject(PATH).default;
+describe('analytics/snowplow/transformers/EntityAction.es6', () => {
+  beforeEach(async function() {
+    this.transform = (await this.system.import(
+      'analytics/snowplow/transformers/EntityAction.es6'
+    )).default;
   });
 
   it('transforms `content_type_create`', function() {
