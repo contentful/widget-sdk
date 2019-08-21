@@ -128,6 +128,9 @@ export default class AppRoute extends Component {
   static propTypes = {
     goBackToList: PropTypes.func.isRequired,
     appId: PropTypes.string.isRequired,
+    productCatalog: PropTypes.shape({
+      isAppEnabled: PropTypes.func.isRequired
+    }),
     repo: PropTypes.shape({
       getExtensionDefinitionForApp: PropTypes.func.isRequired,
       getExtensionForExtensionDefinition: PropTypes.func.isRequired,
@@ -200,7 +203,7 @@ export default class AppRoute extends Component {
   };
 
   initialize = async () => {
-    const { appHookBus, appId, repo } = this.props;
+    const { appHookBus, appId, repo, productCatalog } = this.props;
 
     const [extensionDefinition, appsListing] = await Promise.all([
       repo.getExtensionDefinitionForApp(appId),
@@ -211,12 +214,15 @@ export default class AppRoute extends Component {
 
     const { extension } = await this.checkAppStatus(extensionDefinition);
 
+    const appEnabled = await productCatalog.isAppEnabled(appInfo);
+
     appHookBus.setExtension(extension);
     appHookBus.on(APP_EVENTS_IN.CONFIGURED, this.onAppConfigured);
     appHookBus.on(APP_EVENTS_IN.MISCONFIGURED, this.onAppMisconfigured);
 
     this.setState({
       ready: true,
+      appEnabled,
       isInstalled: !!extension,
       extensionDefinition,
       title: get(appInfo, ['fields', 'title'], extensionDefinition.name),
@@ -417,10 +423,22 @@ export default class AppRoute extends Component {
   };
 
   render() {
-    const { ready, isInstalled, acceptedPermissions, appIcon, title } = this.state;
+    const { ready, isInstalled, acceptedPermissions, appIcon, title, appEnabled } = this.state;
 
     if (!ready) {
       return this.renderLoading();
+    }
+
+    if (!appEnabled) {
+      return (
+        <Workbench>
+          <Workbench.Header title={this.renderTitle()} onBack={this.props.goBackToList} />
+          <Workbench.Content type="text">
+            To get access to this app for this space, please contact customer support to upgrade
+            your plan.
+          </Workbench.Content>
+        </Workbench>
+      );
     }
 
     if (!isInstalled && !acceptedPermissions) {

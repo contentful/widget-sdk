@@ -56,9 +56,14 @@ export default {
             SlideInNavigator
           });
 
+          const productCatalog = new AppProductCatalog(
+            spaceContext.space.data.sys.id,
+            getSpaceFeature
+          );
+
           return {
             goBackToList: () => $state.go('^.list'),
-            productCatalog: new AppProductCatalog(spaceContext.space.data.sys.id, getSpaceFeature),
+            productCatalog,
             appId,
             repo,
             bridge,
