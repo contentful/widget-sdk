@@ -51,6 +51,7 @@ window.libs = [
   ['@contentful/sharejs/lib/client', require('@contentful/sharejs/lib/client')],
   ['@contentful/validation', require('@contentful/validation')],
   ['@contentful/worf', require('@contentful/worf')],
+  ['contentful-resolve-response', require('contentful-resolve-response')],
 
   ['classnames', require('classnames')],
   ['codemirror', require('codemirror')],

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import { partition } from 'lodash';
 
 import tokens from '@contentful/forma-36-tokens';
 import {
@@ -26,7 +27,6 @@ import createMicroBackendsClient from 'MicroBackendsClient.es6';
 
 import AppListItem from './AppListItem.es6';
 import AppDetailsModal from './AppDetailsModal.es6';
-import AppIcon from '../apps/_common/AppIcon.es6';
 
 const styles = {
   intro: css({
@@ -42,6 +42,9 @@ const styles = {
     fontSize: '0.65rem',
     borderRadius: '3px',
     textTransform: 'uppercase'
+  }),
+  workbench: css({
+    backgroundColor: tokens.colorElementLightest
   })
 };
 
@@ -54,22 +57,12 @@ const openDetailModal = app => {
         installed: app.installed,
         appId: app.id,
         appName: app.title,
-        author: {
-          name: 'Contentful',
-          url: 'https://contentful.com',
-          image: <AppIcon appId="contentful" size="default" />
-        },
-        links: [
-          { title: 'Help documentation', url: 'https://contentful.com' },
-          { title: 'View on Github', url: 'https://contentful.com' }
-        ],
-        categories: ['Featured'],
-        description: `
-          <p>The Optimizely app makes it easier to power experiments with structured content. It is connecting your content in Contentful with experiments in Optimizely. This enables practitioners to easily experiment with their content and run more experiments and create better insights faster.</p>
-          <h2>Overview</h2>
-          <p>Powering experiments with content from Contentful is a matter of connecting both APIs together. During rendering we can ask Optimizely to choose a variation based on targeting criteria which then allows to pick matching content from Contentful for that user.</p>
-          <p>However, this setup is fairly manual and tricky to manage as it usually requires manual copying of configuration between interfaces.</p>
-        `
+        author: app.author,
+        links: app.links,
+        icon: app.icon,
+        categories: app.categories,
+        description: app.description,
+        permissions: app.permissions
       }}
     />
   ));
@@ -117,7 +110,7 @@ const Header = () => (
 );
 
 const AppsListShell = props => (
-  <Workbench>
+  <Workbench className={styles.workbench}>
     <Workbench.Header title={<Header />} icon={<Icon name="page-apps" scale="1" />} />
     <Workbench.Content type="text">
       <Note className={styles.intro}>
@@ -158,21 +151,37 @@ const AppsListPageLoading = () => {
   );
 };
 
-const prepareApp = (isDevApp = false) => app => {
-  return {
-    id: app.sys.id,
-    title: app.extensionDefinition.name,
-    installed: !!app.extension,
-    isDevApp
-  };
-};
+const prepareApp = repoApps => app => ({
+  id: app.fields.slug,
+  title: app.fields.title,
+  tagLine: app.fields.tagLine,
+  description: app.fields.description,
+  icon: app.fields.icon.fields.file.url,
+  author: {
+    name: app.fields.developer.fields.name,
+    url: app.fields.developer.fields.websiteUrl,
+    icon: app.fields.developer.fields.icon.fields.file.url
+  },
+  links: app.fields.links.map(link => link.fields),
+  categories: app.fields.categories.map(c => c.fields.name),
+  permissions: app.fields.permissionsExplanation,
+  installed: !!(repoApps.find(a => a.sys.id === app.fields.slug) || {}).extension
+});
+
+const prepareDevApp = app => ({
+  id: app.sys.id,
+  title: app.extensionDefinition.name,
+  installed: !!app.extension,
+  isDevApp: true
+});
 
 export default class AppsListPage extends React.Component {
   static propTypes = {
     goToContent: PropTypes.func.isRequired,
     repo: PropTypes.shape({
       getApps: PropTypes.func.isRequired,
-      getDevApps: PropTypes.func.isRequired
+      getDevApps: PropTypes.func.isRequired,
+      getAppsListing: PropTypes.func.isRequired
     }).isRequired,
     organizationId: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired,
@@ -183,20 +192,24 @@ export default class AppsListPage extends React.Component {
 
   async componentDidMount() {
     try {
-      const [apps, devApps] = await Promise.all([
+      const [repoApps, appsListing, devApps] = await Promise.all([
         this.props.repo.getApps(),
+        this.props.repo.getAppsListing(),
         this.props.repo.getDevApps()
       ]);
 
-      const preparedApps = apps.map(prepareApp());
-      const preparedDevApps = devApps.map(prepareApp(true));
-
-      const formattedApps = [...preparedApps, ...preparedDevApps];
+      const preparedApps = Object.values(appsListing).map(prepareApp(repoApps, appsListing));
+      const preparedDevApps = devApps.map(prepareDevApp);
+      const [installedApps, availableApps] = partition(
+        [...preparedApps, ...preparedDevApps],
+        app => app.installed
+      );
 
       this.setState({
         ready: true,
-        availableApps: formattedApps.filter(app => !app.installed),
-        installedApps: formattedApps.filter(app => app.installed)
+        availableApps,
+        installedApps,
+        appsListing
       });
     } catch (err) {
       Telemetry.count('apps.list-loading-failed');
@@ -216,7 +229,7 @@ export default class AppsListPage extends React.Component {
 
   renderList() {
     const { organizationId, spaceId, userId } = this.props;
-    const { availableApps, installedApps } = this.state;
+    const { installedApps, availableApps } = this.state;
 
     return (
       <AppsListShell organizationId={organizationId} spaceId={spaceId} userId={userId}>

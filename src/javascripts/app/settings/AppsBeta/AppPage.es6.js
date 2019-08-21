@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css, keyframes } from 'emotion';
+import { get } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import {
   Button,
@@ -23,7 +24,6 @@ import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus.es6';
 import UninstallModal from './UninstallModal.es6';
 import AppPermissions from './AppPermissions.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
-import AppIcon from '../apps/_common/AppIcon.es6';
 import ClientStorage from 'TheStore/ClientStorage.es6';
 
 const sessionStorage = ClientStorage('session');
@@ -101,10 +101,20 @@ const styles = {
     width: '100%',
     height: '100%',
     paddingTop: '100px'
+  }),
+  icon: css({
+    width: '45px',
+    height: '45px',
+    verticalAlign: 'middle',
+    marginRight: tokens.spacingS
   })
 };
 
-function isAppAlreadyAuthorize(appId) {
+function isAppAlreadyAuthorized(repo, appId) {
+  if (repo.isDevApp(appId)) {
+    return true;
+  }
+
   try {
     const perms = JSON.parse(sessionStorage.get('appPermissions'));
 
@@ -120,7 +130,8 @@ export default class AppRoute extends Component {
     appId: PropTypes.string.isRequired,
     repo: PropTypes.shape({
       getExtensionDefinitionForApp: PropTypes.func.isRequired,
-      getExtensionForExtensionDefinition: PropTypes.func.isRequired
+      getExtensionForExtensionDefinition: PropTypes.func.isRequired,
+      getAppsListing: PropTypes.func.isRequired
     }).isRequired,
     bridge: PropTypes.object.isRequired,
     appHookBus: PropTypes.shape({
@@ -136,7 +147,10 @@ export default class AppRoute extends Component {
     }).isRequired
   };
 
-  state = { ready: false, acceptedPermissions: isAppAlreadyAuthorize(this.props.appId) };
+  state = {
+    ready: false,
+    acceptedPermissions: isAppAlreadyAuthorized(this.props.repo, this.props.appId)
+  };
 
   // There are no parameters in the app location
   parameters = {
@@ -184,7 +198,13 @@ export default class AppRoute extends Component {
   initialize = async () => {
     const { appHookBus, appId, repo } = this.props;
 
-    const extensionDefinition = await repo.getExtensionDefinitionForApp(appId);
+    const [extensionDefinition, appsListing] = await Promise.all([
+      repo.getExtensionDefinitionForApp(appId),
+      repo.getAppsListing()
+    ]);
+
+    const appInfo = Object.values(appsListing).find(app => app.fields.slug === appId);
+
     const { extension } = await this.checkAppStatus(extensionDefinition);
 
     appHookBus.setExtension(extension);
@@ -194,7 +214,9 @@ export default class AppRoute extends Component {
     this.setState({
       ready: true,
       isInstalled: !!extension,
-      extensionDefinition
+      extensionDefinition,
+      title: get(appInfo, ['fields', 'title'], extensionDefinition.name),
+      appIcon: get(appInfo, ['fields', 'icon', 'fields', 'file', 'url'], '')
     });
   };
 
@@ -251,7 +273,7 @@ export default class AppRoute extends Component {
       <UninstallModal
         key={Date.now()}
         isShown={isShown}
-        appName={this.state.extensionDefinition.name}
+        appName={this.state.title}
         actionList={[]} // todo: EXT-933 add the action list from the app's JSON config
         onConfirm={
           async (/* reasons */) => {
@@ -310,13 +332,15 @@ export default class AppRoute extends Component {
   }
 
   renderTitle() {
-    const { extensionDefinition } = this.state;
+    if (!this.state.appIcon) {
+      return <Heading>{this.state.title}</Heading>;
+    }
+
     return (
-      <>
-        <Heading>
-          <AppIcon appId={this.props.appId} className={styles.appIcon} /> {extensionDefinition.name}
-        </Heading>
-      </>
+      <Heading>
+        <img src={this.state.appIcon} className={styles.icon} />
+        {this.state.title}
+      </Heading>
     );
   }
 
@@ -389,7 +413,7 @@ export default class AppRoute extends Component {
   };
 
   render() {
-    const { ready, extensionDefinition, isInstalled, acceptedPermissions } = this.state;
+    const { ready, isInstalled, acceptedPermissions, appIcon, title } = this.state;
 
     if (!ready) {
       return this.renderLoading();
@@ -403,8 +427,9 @@ export default class AppRoute extends Component {
             <AppPermissions
               onAuthorize={this.onAuthorize}
               onCancel={this.props.goBackToList}
-              appId={this.props.appId}
-              appName={extensionDefinition.name}
+              icon={appIcon}
+              appName={title}
+              centered
             />
           </Workbench.Content>
         </Workbench>
@@ -413,7 +438,7 @@ export default class AppRoute extends Component {
 
     return (
       <AdminOnly>
-        <DocumentTitle title={extensionDefinition.name} />
+        <DocumentTitle title={this.state.title} />
         {this.renderBusyOverlay()}
         <Workbench>
           <Workbench.Header

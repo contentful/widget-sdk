@@ -11,7 +11,6 @@ import {
   Paragraph,
   Heading
 } from '@contentful/forma-36-react-components';
-import AppIcon from '../apps/_common/AppIcon.es6';
 import StateLink from 'app/common/StateLink.es6';
 import AppPermissions from './AppPermissions.es6';
 import ClientStorage from 'TheStore/ClientStorage.es6';
@@ -41,6 +40,9 @@ const styles = {
   mainColumn: css({
     flexGrow: 1
   }),
+  description: css({
+    whiteSpace: 'pre-line'
+  }),
   sidebarColumn: css({
     minWidth: '280px',
     width: '280px',
@@ -57,11 +59,23 @@ const styles = {
   sidebarLink: css({
     marginBottom: tokens.spacingXs
   }),
+  icon: css({
+    width: '60px',
+    height: '60px',
+    marginRight: tokens.spacingM
+  }),
+  iconSmall: css({
+    width: '40px',
+    height: '40px'
+  }),
   permissions: css({
     display: 'flex',
     justifyContent: 'center',
     minHeight: '700px',
     animation: `${fadeIn} 0.4s cubic-bezier(0.680, -0.550, 0.265, 1.550)`
+  }),
+  modalPermissions: css({
+    whiteSpace: 'pre-line'
   })
 };
 
@@ -78,6 +92,7 @@ const AppPropType = PropTypes.shape({
     url: PropTypes.string.isRequired,
     image: PropTypes.node.isRequired
   }).isRequired,
+  icon: PropTypes.string.isRequired,
   categories: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
 });
 
@@ -90,7 +105,7 @@ function AppHeader(props) {
   const { app } = props;
   return (
     <div className={css({ display: 'flex', marginBottom: tokens.spacingL })}>
-      <AppIcon appId={app.appId} size="large" className={css({ marginRight: tokens.spacingM })} />
+      <img src={app.icon} className={styles.icon} />
       <div>
         <Heading
           element="h1"
@@ -138,8 +153,9 @@ function AppPermissionScreen({ app, onInstall, onCancel, onClose }) {
       <AppPermissions
         onAuthorize={onAuthorize}
         onCancel={() => onCancel()}
-        appId={app.appId}
+        icon={app.icon}
         appName={app.appName}
+        permissions={app.permissions}
       />
     </div>
   );
@@ -151,6 +167,15 @@ AppPermissionScreen.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired
 };
+
+function determineOnClick(installed = false, onClick, onClose, setShowPermissions) {
+  return installed
+    ? () => {
+        onClose();
+        onClick();
+      }
+    : () => setShowPermissions(true);
+}
 
 export function AppDetails(props) {
   const { app, onClose } = props;
@@ -175,25 +200,28 @@ export function AppDetails(props) {
     <div className={cx(styles.root, { [styles.fade]: showPermissions === false })}>
       <div className={styles.mainColumn}>
         <AppHeader app={app} showPermissions={showPermissions} />
-        <div dangerouslySetInnerHTML={{ __html: app.description }} />
+        <div className={styles.description}>{app.description}</div>
       </div>
       <div className={styles.sidebarColumn}>
-        <Button
-          onClick={() => setShowPermissions(true)}
-          disabled={app.installed}
-          isFullWidth
-          buttonType="primary">
-          {app.installed ? 'Installed' : 'Install'}
-        </Button>
+        <StateLink to="^.detail" params={{ appId: app.appId }}>
+          {({ onClick }) => (
+            <Button
+              onClick={determineOnClick(app.installed, onClick, onClose, setShowPermissions)}
+              isFullWidth
+              buttonType="primary">
+              {app.installed ? 'Configure' : 'Install'}
+            </Button>
+          )}
+        </StateLink>
         <div className={styles.sidebarSpacing} />
         {app.links.length > 0 && (
           <>
             <Subheading element="h3" className={styles.sidebarSubheading}>
               Links
             </Subheading>
-            {app.links.map((link, index) => (
+            {app.links.map(link => (
               <div key={link.url} className={styles.sidebarLink}>
-                <TextLink href={`${link.url}-${index}`} {...externalLinkProps}>
+                <TextLink href={`${link.url}`} {...externalLinkProps}>
                   {link.title}
                 </TextLink>
               </div>
@@ -205,7 +233,7 @@ export function AppDetails(props) {
           Author
         </Subheading>
         <a href={app.author.url} {...externalLinkProps}>
-          {app.author.image}
+          <img src={app.author.icon} className={styles.iconSmall} />
         </a>
         <div className={styles.sidebarSpacing} />
 
@@ -218,14 +246,6 @@ export function AppDetails(props) {
             <div className={styles.sidebarSpacing} />
           </>
         )}
-
-        <Subheading element="h3" className={styles.sidebarSubheading}>
-          Permissions
-        </Subheading>
-        <Paragraph>
-          This app will have full permissions. It will be able to access all data from the selected
-          space and environment.
-        </Paragraph>
       </div>
     </div>
   );

@@ -21,8 +21,13 @@ const styles = {
     flexGrow: 1,
     display: 'block'
   }),
+  tagLine: css({
+    fontSize: tokens.fontSizeS,
+    color: tokens.colorElementDarkest
+  }),
   titleText: css({
-    fontSize: tokens.fontSizeL
+    fontSize: tokens.fontSizeL,
+    fontWeight: '500'
   }),
   actions: css({
     display: 'block',
@@ -31,15 +36,22 @@ const styles = {
     }
   }),
   icon: css({
-    verticalAlign: 'middle',
     borderRadius: '5px',
     backgroundColor: '#fff',
     boxShadow: '0 2px 3px 0 rgba(0,0,0,0.08)',
     padding: '2px',
-    marginRight: tokens.spacingXs
+    marginRight: tokens.spacingS,
+    width: '35px',
+    height: '35px'
   }),
   appLink: css({
+    display: 'flex',
+    alignItems: 'center',
     cursor: 'pointer'
+  }),
+  tag: css({
+    marginTop: '3px',
+    marginLeft: tokens.spacingXs
   })
 };
 
@@ -48,10 +60,20 @@ export default class AppListItem extends Component {
     app: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
+      tagLine: PropTypes.string.isRequired,
+      icon: PropTypes.string.isRequired,
       installed: PropTypes.bool.isRequired,
       isDevApp: PropTypes.bool
     }),
     openDetailModal: PropTypes.func.isRequired
+  };
+
+  determineOnClick = (onClick, openDetailsFunc) => {
+    const { app } = this.props;
+
+    const continueDirectlyToAppPage = app.installed || app.isDevApp;
+
+    return continueDirectlyToAppPage ? onClick : openDetailsFunc;
   };
 
   render() {
@@ -65,9 +87,19 @@ export default class AppListItem extends Component {
           <Heading element="h3" className={styles.titleText}>
             <StateLink to="^.detail" params={{ appId: app.id }}>
               {({ onClick }) => (
-                <div onClick={app.installed ? onClick : openDetailsFunc} className={styles.appLink}>
-                  <AppIcon appId={app.id} className={styles.icon} size="small" /> {app.title}{' '}
-                  {!!app.isDevApp && <Tag>Private</Tag>}
+                <div
+                  onClick={this.determineOnClick(onClick, openDetailsFunc)}
+                  className={styles.appLink}>
+                  {app.icon ? (
+                    <img src={app.icon} className={styles.icon} />
+                  ) : (
+                    <AppIcon size="small" className={styles.icon} />
+                  )}
+                  <div>
+                    {app.title}
+                    <div className={styles.tagLine}>{app.tagLine}</div>
+                  </div>
+                  {app.isDevApp && <Tag className={styles.tag}>Private</Tag>}
                 </div>
               )}
             </StateLink>
@@ -83,9 +115,11 @@ export default class AppListItem extends Component {
               )}
             </StateLink>
           )}
-          <TextLink onClick={openDetailsFunc} linkType="primary">
-            About
-          </TextLink>
+          {!app.isDevApp && (
+            <TextLink onClick={openDetailsFunc} linkType="primary">
+              About
+            </TextLink>
+          )}
         </div>
       </div>
     );

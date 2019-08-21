@@ -1,4 +1,5 @@
 import { countBy } from 'lodash';
+import resolveResponse from 'contentful-resolve-response';
 
 // App ID to ExtensionDefinition ID
 // https://contentful.atlassian.net/wiki/spaces/PROD/pages/1512800260/Contentful+Apps+organization
@@ -15,14 +16,48 @@ const APP_ORDER = ['netlify', 'gatsby', 'optimizely', 'cloudinary', 'bynder'];
 
 const DEV_APP_PREFIX = 'dev-app';
 const DEV_APP_SEPARATOR = '_';
+const APP_MARKETPLACE_SPACE_ID = 'lpjm8d10rkpy';
+const APP_MARKETPLACE_TOKEN = 'XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk';
 
 export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint) {
   return {
+    getAppsListing,
     getApps,
     getDevApps,
     getExtensionDefinitionForApp,
-    getExtensionForExtensionDefinition
+    getExtensionForExtensionDefinition,
+    isDevApp
   };
+
+  function isDevApp(appId) {
+    if (typeof appId !== 'string') {
+      return false;
+    }
+
+    return appId.startsWith(DEV_APP_PREFIX);
+  }
+
+  async function getAppsListing() {
+    const res = await window.fetch(
+      `https://cdn.contentful.com/spaces/${APP_MARKETPLACE_SPACE_ID}/entries?include=10&content_type=app`,
+      {
+        headers: {
+          Authorization: `Bearer ${APP_MARKETPLACE_TOKEN}`
+        }
+      }
+    );
+
+    const data = res.ok ? await res.json() : {};
+    const entries = resolveResponse(data);
+
+    if (!Array.isArray(entries)) {
+      return {};
+    }
+
+    return entries.reduce((acc, entry) => {
+      return { ...acc, [entry.sys.id]: entry };
+    }, {});
+  }
 
   async function getApps() {
     const ids = APP_ORDER.map(appId => APP_TO_EXTENSION_DEFINITION[appId]);
