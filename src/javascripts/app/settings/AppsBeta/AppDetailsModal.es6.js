@@ -81,7 +81,7 @@ const styles = {
 
 const AppPropType = PropTypes.shape({
   appId: PropTypes.string.isRequired,
-  isEnabled: PropTypes.bool.isRequired,
+  enabled: PropTypes.bool.isRequired,
   links: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,

@@ -1,5 +1,6 @@
 import AppsListPage from '../AppsListPage.es6';
 import AppPage from '../AppPage.es6';
+import { AppProductCatalog } from '../AppProductCatalog.es6';
 import { makeAppHookBus } from '../AppHookBus.es6';
 import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge.es6';
 import * as Navigator from 'states/Navigator.es6';
@@ -21,9 +22,9 @@ export default {
         '$state',
         (spaceContext, $state) => {
           return {
-            getSpaceFeature,
             goToContent: () => $state.go('^.^.entries.list'),
             repo: createAppsRepo(spaceContext.extensionDefinitionLoader, spaceContext.endpoint),
+            productCatalog: new AppProductCatalog(spaceContext.space.data.sys.id, getSpaceFeature),
             organizationId: spaceContext.organization.sys.id,
             spaceId: spaceContext.space.data.sys.id,
             userId: spaceContext.user.sys.id
@@ -57,6 +58,7 @@ export default {
 
           return {
             goBackToList: () => $state.go('^.list'),
+            productCatalog: new AppProductCatalog(spaceContext.space.data.sys.id, getSpaceFeature),
             appId,
             repo,
             bridge,

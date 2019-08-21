@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { partition, get, identity, uniq } from 'lodash';
+import { partition } from 'lodash';
 
 import tokens from '@contentful/forma-36-tokens';
 import {
@@ -28,6 +28,7 @@ import FeedbackDialog from 'app/common/FeedbackDialog.es6';
 import AppListItem from './AppListItem.es6';
 import AppDetailsModal from './AppDetailsModal.es6';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
+import { getProductCatalogFlagForApp } from './AppProductCatalog.es6';
 
 const styles = {
   intro: css({
@@ -105,26 +106,6 @@ const openFeedback = async ({ organizationId, userId }) => {
   }
 };
 
-export const loadProductCatalogFlagsForApps = async (_getSpaceFeature, spaceId, apps) => {
-  const flagsToLoad = uniq(
-    Object.keys(apps)
-      .map(key => get(apps[key], 'fields.productCatalogFlag.fields.flagId'))
-      .filter(identity)
-  );
-
-  const productCatalogFlags = await Promise.all(
-    flagsToLoad.map(async feature => ({
-      feature,
-      value: await _getSpaceFeature(spaceId, apps, true)
-    }))
-  );
-
-  return productCatalogFlags.reduce(
-    (acc, { feature, value }) => ({ ...acc, [feature]: value }),
-    {}
-  );
-};
-
 const Header = () => (
   <Heading>
     Apps <span className={styles.betaLabel}>Beta</span>
@@ -173,11 +154,6 @@ const AppsListPageLoading = () => {
   );
 };
 
-export const getProductCatalogFlagForApp = (app, productCatalogFlags) => {
-  const flagId = get(app, 'fields.productCatalogFlag.fields.flagId');
-  return typeof flagId === 'undefined' ? true : productCatalogFlags[flagId];
-};
-
 const prepareApp = (repoApps, featureFlags) => app => ({
   id: app.fields.slug,
   title: app.fields.title,
@@ -214,7 +190,9 @@ export default class AppsListPage extends React.Component {
     organizationId: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired,
     userId: PropTypes.string.isRequired,
-    getSpaceFeature: PropTypes.func.isRequired
+    productCatalog: PropTypes.shape({
+      loadProductCatalogFlags: PropTypes.func.isRequired
+    }).isRequired
   };
 
   state = {};
@@ -227,13 +205,13 @@ export default class AppsListPage extends React.Component {
         this.props.repo.getDevApps()
       ]);
 
-      const featureFlags = await loadProductCatalogFlagsForApps(
-        this.props.getSpaceFeature,
-        this.props.spaceId,
+      const productCatalogFlags = await this.props.productCatalog.loadProductCatalogFlags(
         appsListing
       );
 
-      const preparedApps = Object.values(appsListing).map(prepareApp(repoApps, featureFlags));
+      const preparedApps = Object.values(appsListing).map(
+        prepareApp(repoApps, productCatalogFlags)
+      );
       const preparedDevApps = devApps.map(prepareDevApp);
 
       const [installedApps, availableApps] = partition(
