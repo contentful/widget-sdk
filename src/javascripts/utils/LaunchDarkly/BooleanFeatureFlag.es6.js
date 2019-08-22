@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { getModule } from 'NgRegistry.es6';
 
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
+import { getVariation } from 'LaunchDarkly.es6';
 
 /**
  * React wrapper around Launch Darkly feature flags with boolean variation.
@@ -21,7 +22,10 @@ export default class BooleanFeatureFlag extends React.Component {
     currentVariation: undefined
   };
   async componentDidMount() {
-    const currentVariation = await getCurrentVariation(this.props.featureFlagKey);
+    const spaceContext = getModule('spaceContext');
+    const currentVariation = await getVariation(this.props.featureFlagKey, {
+      organizationId: spaceContext.getData('organization.sys.id')
+    });
 
     if (this.isUnmounted) {
       return;
