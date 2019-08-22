@@ -1,5 +1,5 @@
 import { orgRoles } from 'utils/MembershipUtils.es6';
-import { without, set, cloneDeep } from 'lodash';
+import { set, cloneDeep } from 'lodash';
 import {
   getRoleOptions,
   getSpaceRoleOptions,
@@ -17,7 +17,8 @@ const idMap = {
   orgRole: ['role'],
   space: ['sys.spaceMemberships.sys.space.sys.id'],
   ssoLogin: ['sys.sso.lastSignInAt'],
-  spaceRole: SPACE_ROLE_FILTER_KEYS
+  spaceRole: SPACE_ROLE_FILTER_KEYS,
+  team: ['sys.teamMemberships.sys.team.sys.id']
 };
 
 const defaultFiltersById = {
@@ -40,6 +41,10 @@ const defaultFiltersById = {
   },
   spaceRole: {
     key: 'sys.spaceMemberships.roles.name',
+    value: ''
+  },
+  team: {
+    key: 'sys.teamMemberships.sys.team.sys.id',
     value: ''
   }
 };
@@ -79,7 +84,9 @@ const normalizeFilterValues = filterValues => {
 export function generateFilterDefinitions({
   spaceRoles = [],
   spaces = [],
+  teams = [],
   hasSsoEnabled,
+  hasTeamsFeature,
   filterValues = {}
 }) {
   const normalized = normalizeFilterValues(Object.entries(filterValues));
@@ -143,6 +150,21 @@ export function generateFilterDefinitions({
       : getRoleOptions(spaceRoles)
   };
 
-  // removes the SSO filter if SSO is not available for the org
-  return without([order, orgRole, sso, space, spaceRole], hasSsoEnabled ? null : sso);
+  const team = {
+    id: 'team',
+    label: 'Team',
+    filter: normalized.team,
+    options: [
+      { label: 'Any', value: '' },
+      ...teams
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map(team => ({ label: team.name, value: team.sys.id }))
+    ]
+  };
+
+  const definitions = [order, orgRole, space, spaceRole];
+  if (hasSsoEnabled) definitions.push(sso);
+  if (hasTeamsFeature) definitions.push(team);
+
+  return definitions;
 }
