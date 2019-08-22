@@ -28,19 +28,18 @@ const Sidebar = () => {
           automate tasks or easily connect with other services.
         </p>
         <ul>
-           <li>
+          <li>
             <DocsLink
               href="https://www.contentful.com/developers/marketplace/#type=ui-extension"
               title="Browse the marketplace"
             />
-          </li>      
+          </li>
           <li>
             <DocsLink
               href="https://www.contentful.com/developers/docs/extensibility/ui-extensions/"
               title="Get started with extensions"
             />
           </li>
-          
           <li>
             <DocsLink
               href="https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-reference/"
