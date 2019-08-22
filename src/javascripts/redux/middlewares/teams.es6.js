@@ -20,6 +20,12 @@ const userToString = ({ firstName, lastName, email }) =>
 // all middlewares have this signature (except the optional async)
 // `next(action)` must always be called, as it activates other middlewares and the reducer
 
+const resolveRolesInTSM = (state, TSM) => {
+  const allRoles = get(getDatasets(state), ORG_SPACE_ROLES, {});
+  const resolvedRoles = TSM.roles.map(({ sys: { id } }) => allRoles[id]);
+  return { ...TSM, roles: resolvedRoles };
+};
+
 // that means the return value of `getState` might change after `next(action)` was called...
 // ...because the state might have been updated by the reducer
 export default ({ dispatch, getState }) => next => async action => {
@@ -149,10 +155,16 @@ export default ({ dispatch, getState }) => next => async action => {
       const membershipData = createSpaceRoleLinks(roles);
 
       try {
-        const newTeamSpaceMembership = await service.create(teamId, spaceId, membershipData);
+        const newTeamSpaceMembership = resolveRolesInTSM(
+          state,
+          await service.create(teamId, spaceId, membershipData)
+        );
         dispatch({
           type: 'ADD_TO_DATASET',
-          payload: { item: newTeamSpaceMembership, dataset: TEAM_SPACE_MEMBERSHIPS }
+          payload: {
+            dataset: TEAM_SPACE_MEMBERSHIPS,
+            item: newTeamSpaceMembership
+          }
         });
         Notification.success(`Successfully added ${team.name} to the space ${space.name}`);
       } catch (e) {
@@ -179,8 +191,7 @@ export default ({ dispatch, getState }) => next => async action => {
         roles: updatedData.roles,
         sys
       };
-      const allRoles = get(getDatasets(state), ORG_SPACE_ROLES, {});
-      const resolvedRoles = updatedData.roles.map(({ sys: { id } }) => allRoles[id]);
+      const { roles: resolvedRoles } = resolveRolesInTSM(updatedMembership);
       dispatch({
         type: 'ADD_TO_DATASET',
         payload: {
@@ -192,6 +203,7 @@ export default ({ dispatch, getState }) => next => async action => {
 
       try {
         // no pending action needed, as the `EDIT_TEAM_CONFIRMED` can be used for pending
+        // updated needs the role links instead of resolved roles
         const persisted = await service.update(updatedMembership);
         const persistedAndResolved = { ...persisted, roles: resolvedRoles };
         dispatch({
