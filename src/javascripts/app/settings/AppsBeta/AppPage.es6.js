@@ -18,7 +18,10 @@ import AdminOnly from 'app/common/AdminOnly.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import * as Telemetry from 'i13n/Telemetry.es6';
-
+import EmptyStateContainer, {
+  defaultSVGStyle
+} from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+import EmptyStateIllustration from 'svg/connected-forms-illustration.es6';
 import { installOrUpdate, uninstall } from './AppOperations.es6';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus.es6';
 import UninstallModal from './UninstallModal.es6';
@@ -324,6 +327,29 @@ export default class AppRoute extends Component {
     this.props.goBackToList();
   };
 
+  renderAccessDenied() {
+    return (
+      <Workbench>
+        <Workbench.Header title={this.renderTitle()} onBack={this.props.goBackToList} />
+        <Workbench.Content type="text">
+          <EmptyStateContainer data-test-id="extensions.empty">
+            <div className={defaultSVGStyle}>
+              <EmptyStateIllustration />
+            </div>
+            <Heading>Not included in your pricing plan</Heading>
+            <Paragraph>This app is available to customers on a committed, annual plan.</Paragraph>
+            <Paragraph>
+              If your interested in learning more about our expanded, enterprise-grade platform,
+              contact your account manager.
+            </Paragraph>
+
+            <Button href="https://www.contentful.com/contact/sales/">Contact us</Button>
+          </EmptyStateContainer>
+        </Workbench.Content>
+      </Workbench>
+    );
+  }
+
   renderBusyOverlay() {
     if (!this.state.busyWith) {
       return null;
@@ -429,16 +455,8 @@ export default class AppRoute extends Component {
       return this.renderLoading();
     }
 
-    if (!appEnabled) {
-      return (
-        <Workbench>
-          <Workbench.Header title={this.renderTitle()} onBack={this.props.goBackToList} />
-          <Workbench.Content type="text">
-            To get access to this app for this space, please contact customer support to upgrade
-            your plan.
-          </Workbench.Content>
-        </Workbench>
-      );
+    if (!appEnabled && !isInstalled) {
+      return this.renderAccessDenied();
     }
 
     if (!isInstalled && !acceptedPermissions) {

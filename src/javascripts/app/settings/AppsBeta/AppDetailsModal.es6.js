@@ -76,6 +76,9 @@ const styles = {
   }),
   modalPermissions: css({
     whiteSpace: 'pre-line'
+  }),
+  contactUs: css({
+    textDecoration: 'none'
   })
 };
 
@@ -94,12 +97,7 @@ const AppPropType = PropTypes.shape({
   }).isRequired,
   icon: PropTypes.string.isRequired,
   categories: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-  productCatalog: PropTypes.shape({
-    enabled: PropTypes.bool.isRequired,
-    explanationTitle: PropTypes.string,
-    explanationLinkTitle: PropTypes.string,
-    explanationLink: PropTypes.string
-  }).isRequired
+  enabled: PropTypes.bool.isRequired
 });
 
 const externalLinkProps = {
@@ -209,26 +207,33 @@ export function AppDetails(props) {
         <div className={styles.description}>{app.description}</div>
       </div>
       <div className={styles.sidebarColumn}>
-        <StateLink to="^.detail" params={{ appId: app.appId }}>
-          {({ onClick }) => (
-            <Button
-              onClick={determineOnClick(app.installed, onClick, onClose, setShowPermissions)}
-              isFullWidth
-              disabled={!app.productCatalog.enabled}
-              buttonType="primary">
-              {app.installed ? 'Configure' : 'Install'}
-            </Button>
-          )}
-        </StateLink>
+        {app.enabled || app.installed ? (
+          <StateLink to="^.detail" params={{ appId: app.appId }}>
+            {({ onClick }) => (
+              <Button
+                onClick={determineOnClick(app.installed, onClick, onClose, setShowPermissions)}
+                isFullWidth
+                buttonType="primary">
+                {app.installed ? 'Configure' : 'Install'}
+              </Button>
+            )}
+          </StateLink>
+        ) : (
+          <Button isFullWidth href="https://www.contentful.com/contact/sales" buttonType="primary">
+            Contact us
+          </Button>
+        )}
         <div className={styles.sidebarSpacing} />
-        {!app.productCatalog.enabled && app.productCatalog.explanationTitle && (
+        {!app.enabled && !app.installed && (
           <>
-            <Subheading element="h3" className={styles.sidebarSubheading}>
-              {app.productCatalog.explanationTitle}
-            </Subheading>
-            <TextLink href={app.productCatalog.explanationLink} {...externalLinkProps}>
-              {app.productCatalog.explanationLinkTitle}
-            </TextLink>
+            <Paragraph>This app is available to customers on a committed, annual plan.</Paragraph>
+            <Paragraph
+              className={css({
+                marginTop: tokens.spacingM
+              })}>
+              If your interested in learning more about our expanded, enterprise-grade platform,
+              contact your account manager.
+            </Paragraph>
             <div className={styles.sidebarSpacing} />
           </>
         )}
