@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { partition } from 'lodash';
+import { partition, get } from 'lodash';
 
 import tokens from '@contentful/forma-36-tokens';
 import {
@@ -57,7 +57,6 @@ const openDetailModal = app => {
       onClose={onClose}
       app={{
         installed: app.installed,
-        enabled: app.enabled,
         appId: app.id,
         appName: app.title,
         author: app.author,
@@ -65,7 +64,8 @@ const openDetailModal = app => {
         icon: app.icon,
         categories: app.categories,
         description: app.description,
-        permissions: app.permissions
+        permissions: app.permissions,
+        productCatalog: app.productCatalog
       }}
     />
   ));
@@ -169,7 +169,12 @@ const prepareApp = (repoApps, featureFlags) => app => ({
   categories: app.fields.categories.map(c => c.fields.name),
   permissions: app.fields.permissionsExplanation,
   installed: !!(repoApps.find(a => a.sys.id === app.fields.slug) || {}).extension,
-  enabled: getProductCatalogFlagForApp(app, featureFlags)
+  productCatalog: {
+    enabled: getProductCatalogFlagForApp(app, featureFlags),
+    explanationLink: get(app, 'fields.productCatalogFlag.fields.explanationLink'),
+    explanationLinkTitle: get(app, 'fields.productCatalogFlag.fields.explanationLinkTitle'),
+    explanationTitle: get(app, 'fields.productCatalogFlag.fields.explanationTitle')
+  }
 });
 
 const prepareDevApp = app => ({

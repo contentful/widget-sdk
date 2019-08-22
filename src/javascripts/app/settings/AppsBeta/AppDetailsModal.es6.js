@@ -81,7 +81,6 @@ const styles = {
 
 const AppPropType = PropTypes.shape({
   appId: PropTypes.string.isRequired,
-  enabled: PropTypes.bool.isRequired,
   links: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
@@ -94,7 +93,13 @@ const AppPropType = PropTypes.shape({
     icon: PropTypes.node.isRequired
   }).isRequired,
   icon: PropTypes.string.isRequired,
-  categories: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
+  categories: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  productCatalog: PropTypes.shape({
+    enabled: PropTypes.bool.isRequired,
+    explanationTitle: PropTypes.string,
+    explanationLinkTitle: PropTypes.string,
+    explanationLink: PropTypes.string
+  }).isRequired
 });
 
 const externalLinkProps = {
@@ -209,13 +214,24 @@ export function AppDetails(props) {
             <Button
               onClick={determineOnClick(app.installed, onClick, onClose, setShowPermissions)}
               isFullWidth
-              disabled={!app.enabled}
+              disabled={!app.productCatalog.enabled}
               buttonType="primary">
               {app.installed ? 'Configure' : 'Install'}
             </Button>
           )}
         </StateLink>
         <div className={styles.sidebarSpacing} />
+        {!app.productCatalog.enabled && app.productCatalog.explanationTitle && (
+          <>
+            <Subheading element="h3" className={styles.sidebarSubheading}>
+              {app.productCatalog.explanationTitle}
+            </Subheading>
+            <TextLink href={app.productCatalog.explanationLink} {...externalLinkProps}>
+              {app.productCatalog.explanationLinkTitle}
+            </TextLink>
+            <div className={styles.sidebarSpacing} />
+          </>
+        )}
         {app.links.length > 0 && (
           <>
             <Subheading element="h3" className={styles.sidebarSubheading}>
