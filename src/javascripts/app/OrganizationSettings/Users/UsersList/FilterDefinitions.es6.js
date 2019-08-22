@@ -1,5 +1,5 @@
 import { orgRoles } from 'utils/MembershipUtils.es6';
-import { without, set, cloneDeep } from 'lodash';
+import { set, cloneDeep } from 'lodash';
 import {
   getRoleOptions,
   getSpaceRoleOptions,
@@ -86,6 +86,7 @@ export function generateFilterDefinitions({
   spaces = [],
   teams = [],
   hasSsoEnabled,
+  hasTeamsFeature,
   filterValues = {}
 }) {
   const normalized = normalizeFilterValues(Object.entries(filterValues));
@@ -161,6 +162,9 @@ export function generateFilterDefinitions({
     ]
   };
 
-  // removes the SSO filter if SSO is not available for the org
-  return without([order, orgRole, sso, space, spaceRole, team], hasSsoEnabled ? null : sso);
+  const definitions = [order, orgRole, space, spaceRole];
+  if (hasSsoEnabled) definitions.push(sso);
+  if (hasTeamsFeature) definitions.push(team);
+
+  return definitions;
 }

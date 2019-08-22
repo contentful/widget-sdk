@@ -8,16 +8,24 @@ import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcher
 import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
 import { getAllTeams } from 'access_control/TeamRepository.es6';
 import { getOrganization } from 'services/TokenStore.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 const UserListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
-
+  const safeGetTeams = async () => {
+    try {
+      return await getAllTeams(endpoint);
+    } catch {
+      return [];
+    }
+  };
   const promises = [
     getAllSpaces(endpoint),
     getAllRoles(endpoint),
-    getAllTeams(endpoint),
-    getOrganization(orgId)
+    safeGetTeams(),
+    getOrganization(orgId),
+    getOrgFeature(orgId, 'teams', false)
   ];
 
   return Promise.all(promises);
@@ -47,7 +55,7 @@ export default class UserListRoute extends React.Component {
               return <StateRedirect to="spaces.detail.entries.list" />;
             }
 
-            const [spaces, roles, teams, org] = data;
+            const [spaces, roles, teams, org, hasTeamsFeature] = data;
 
             return (
               <React.Fragment>
@@ -58,6 +66,7 @@ export default class UserListRoute extends React.Component {
                   orgId={orgId}
                   teams={teams}
                   hasSsoEnabled={org.hasSsoEnabled}
+                  hasTeamsFeature={hasTeamsFeature}
                 />
               </React.Fragment>
             );

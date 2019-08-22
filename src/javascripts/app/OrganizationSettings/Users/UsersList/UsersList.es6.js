@@ -1,4 +1,3 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { startCase, debounce, flow } from 'lodash';
@@ -65,7 +64,8 @@ class UsersList extends React.Component {
     filters: PropTypes.arrayOf(FilterPropType),
     searchTerm: PropTypes.string.isRequired,
     updateSearchTerm: PropTypes.func.isRequired,
-    hasSsoEnabled: PropTypes.bool
+    hasSsoEnabled: PropTypes.bool,
+    hasTeamsFeature: PropTypes.bool
   };
 
   state = {
@@ -262,7 +262,7 @@ class UsersList extends React.Component {
           </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content>
-          <section style={styles.filters}>
+          <section className={styles.filters}>
             <UserListFilters
               queryTotal={queryTotal}
               spaces={spaces}
@@ -270,7 +270,7 @@ class UsersList extends React.Component {
               filters={filters}
             />
             {initialLoad || queryTotal > 0 ? (
-              <div style={styles.list}>
+              <div className={styles.list}>
                 {loading ? (
                   <Spinner size="large" className="organization-users-page__spinner" />
                 ) : null}
@@ -344,13 +344,14 @@ class UsersList extends React.Component {
 
 export default flow(
   connect(
-    (state, { spaceRoles, spaces, teams, hasSsoEnabled }) => {
+    (state, { spaceRoles, spaces, teams, hasSsoEnabled, hasTeamsFeature }) => {
       const filterValues = getFilters(state);
       const filterDefinitions = generateFilterDefinitions({
         spaceRoles,
         spaces,
         teams,
         hasSsoEnabled,
+        hasTeamsFeature,
         filterValues
       });
 
