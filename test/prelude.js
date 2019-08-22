@@ -45,6 +45,47 @@
   });
 
   Karma.start = async (...args) => {
+    // Check to see that every file in __karma__ is in System
+    const fetchPromises = [];
+
+    for (const filename of Object.keys(Karma.files)) {
+      const prefixes = ['/base/src', '/base/test'];
+
+      if (!prefixes.find(prefix => filename.startsWith(prefix))) {
+        continue;
+      }
+
+      // Remove base and .js from the filename, and see if it's in the records
+      let recordName;
+      if (filename.startsWith('/base/src')) {
+        recordName = filename.split('/base/src/javascripts/')[1];
+      } else {
+        recordName = filename.split('/base/')[1];
+      }
+
+      const ignoredFiles = ['test/system-config', 'test/prelude', 'libs/locales_list'];
+      recordName = recordName.split('.js')[0];
+
+      if (ignoredFiles.find(name => recordName === name)) {
+        continue;
+      }
+
+      const normalizedRecordName = SystemJS.normalizeSync(recordName);
+
+      if (!SystemJS[Object.getOwnPropertySymbols(SystemJS)[0]].records[normalizedRecordName]) {
+        fetchPromises.push(
+          window
+            .fetch(filename)
+            .then(resp => resp.text())
+            .then(text => {
+              eval(text);
+            })
+        );
+      }
+    }
+
+    await Promise.all(fetchPromises);
+
     try {
       // This needs to be registered early because prelude depends on it (and it not being in `this.system`);
       SystemJS.register('Config.es6', [], _export => {
@@ -73,59 +114,39 @@
         };
       });
 
-      try {
-        await SystemJS.import('angular-mocks');
-        const { configure } = await SystemJS.import('enzyme');
-        const { default: Adapter } = await SystemJS.import('enzyme-adapter-react-16');
+      await SystemJS.import('angular-mocks');
+      const { configure } = await SystemJS.import('enzyme');
+      const { default: Adapter } = await SystemJS.import('enzyme-adapter-react-16');
 
-        configure({ adapter: new Adapter() });
+      configure({ adapter: new Adapter() });
 
-        await SystemJS.import('test/helpers/setup-isolated-system');
-        await SystemJS.import('test/helpers/dsl');
-        await SystemJS.import('test/helpers/hooks');
-        await SystemJS.import('test/helpers/sinon');
-        await SystemJS.import('test/helpers/contentful_mocks');
-        await SystemJS.import('test/helpers/mocks/entity_editor_document');
-        await SystemJS.import('test/helpers/mocks/cf_stub');
-        await SystemJS.import('test/helpers/mocks/space_context');
-        await SystemJS.import('prelude');
-        await SystemJS.import('test/helpers/application');
-        await Promise.all(
-          testModules.reduce((memo, name) => {
-            const prefixes = [
-              'test/unit/access_control',
-              'test/unit/account',
-              'test/unit/analytics'
-            ];
+      await SystemJS.import('test/helpers/setup-isolated-system');
+      await SystemJS.import('test/helpers/dsl');
+      await SystemJS.import('test/helpers/hooks');
+      await SystemJS.import('test/helpers/sinon');
+      await SystemJS.import('test/helpers/contentful_mocks');
+      await SystemJS.import('test/helpers/mocks/entity_editor_document');
+      await SystemJS.import('test/helpers/mocks/cf_stub');
+      await SystemJS.import('test/helpers/mocks/space_context');
+      await SystemJS.import('prelude');
+      await SystemJS.import('test/helpers/application');
+      await Promise.all(
+        testModules.reduce((memo, name) => {
+          const prefixes = ['test/unit/access_control', 'test/unit/account', 'test/unit/analytics'];
 
-            if (prefixes.find(prefix => name.startsWith(prefix))) {
-              memo.push(SystemJS.import(name));
-            }
+          if (prefixes.find(prefix => name.startsWith(prefix))) {
+            memo.push(SystemJS.import(name));
+          }
 
-            return memo;
-          }, [])
-        );
-      } catch (err) {
-        if (err.message.match('404 Not Found')) {
-          // Chrome has some issues with so many network requests
-          // redo Karma.start
-          window.location.reload();
-
-          return;
-        }
-
-        throw err;
-      }
-      // await Promise.all(testModules.map(name => SystemJS.import(name)));
-
-      // debugger;
+          return memo;
+        }, [])
+      );
 
       start(...args);
     } catch (e) {
       // We need to call this in a new context so that Karma’s window.onerror
       // handler picks it up. If we throw it in a Promise the browser will raise
       // an `uncaughtRejection` event.
-
       window.setTimeout(() => {
         throw e;
       });

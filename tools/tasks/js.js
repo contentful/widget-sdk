@@ -1,3 +1,6 @@
-const { build } = require('../webpack-tasks');
+const { build, buildTestDeps } = require('../webpack-tasks');
 
-module.exports = build;
+module.exports = {
+  build,
+  buildTestDeps
+};

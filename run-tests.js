@@ -44,11 +44,10 @@ if (singleRun) {
         outputFile: process.env.JUNIT_REPORT_NAME,
         useBrowserName: false
       },
-      files: [
-        'build/app/**/test-bundle*.js',
-        'build/app/**/chunk_*.js',
-        'build/app/**/*.css'
-      ].concat(filesNeededToRunTests, specs), // we get specs to run from circleci as we parallelize karma runs
+      files: ['build/app/**/*.css', 'build/templates.js', 'build/dependencies.js'].concat(
+        filesNeededToRunTests,
+        specs
+      ), // we get specs to run from circleci as we parallelize karma runs
       browsers: ['ChromeHeadlessNoSandbox'],
       customLaunchers: {
         ChromeHeadlessNoSandbox: {
@@ -63,6 +62,7 @@ if (singleRun) {
       files: config.files.concat(['test/unit/**/*.js', 'test/integration/**/*.js'])
     });
   }
+
   runTests();
 } else {
   buildTestDeps(runTests);

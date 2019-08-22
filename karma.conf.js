@@ -3,6 +3,22 @@
 const P = require('path');
 const express = require('express');
 
+// Test file patterns common to the karma config and the development config
+
+const filesNeededToRunTests = [
+  'node_modules/systemjs/dist/system.src.js',
+  'test/system-config.js',
+  'test/prelude.js',
+  'src/javascripts/**/*.js',
+  {
+    pattern: 'src/javascripts/libs/locales_list.json',
+    watched: false,
+    served: true,
+    included: false
+  },
+  'test/helpers/**/*.js'
+];
+
 module.exports = function(config) {
   config.plugins.push(
     // Serve static files from root directory under /base
@@ -36,22 +52,8 @@ module.exports = function(config) {
       'public/app/main.css',
 
       'public/app/templates.js',
-
-      'node_modules/systemjs/dist/system.src.js',
-      'test/system-config.js',
-      'public/app/dependencies.js', // Automatically generated test deps
-      'test/prelude.js',
-      'src/javascripts/**/*.js',
-      'test/helpers/**/*.js',
-      'test/unit/**/*.js',
-      'test/integration/**/*.js',
-      {
-        pattern: 'src/javascripts/libs/locales_list.json',
-        watched: false,
-        served: true,
-        included: false
-      }
-    ],
+      'public/app/dependencies.js'
+    ].concat(filesNeededToRunTests, ['test/unit/**/*.js', 'test/integration/**/*.js']),
 
     middleware: ['static'],
 
@@ -135,14 +137,7 @@ module.exports = function(config) {
   });
 };
 
-// Test file patterns common to the karma config and the development config
-
-// const filesNeededToRunTests = (module.exports.filesNeededToRunTests = [
-//   'node_modules/systemjs/dist/system.src.js',
-//   'test/prelude.js',
-//
-//   'test/helpers/**/*.js'
-// ]);
+module.exports.filesNeededToRunTests = filesNeededToRunTests;
 
 function stripRoot(path) {
   const rootDir = `${__dirname}/`;

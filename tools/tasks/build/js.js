@@ -31,14 +31,7 @@ function bundleAppJs() {
 function bundleTestJs() {
   // The "test" application, bundled with test dependencies
   const testBundleStream = generateBundleFromFiles({
-    bundlePath: 'app/test-bundle.min.js',
-    manifestPath: 'build/test-manifest.json',
-    files: [
-      'public/app/templates.js',
-      'public/app/vendor.js',
-      'public/app/libs-test.js',
-      'public/app/components.js'
-    ],
+    files: ['public/app/templates.js', 'public/app/dependencies.js'],
     isTestBuild: true
   });
 
@@ -50,7 +43,6 @@ function generateBundleFromFiles({ bundlePath, manifestPath, files, isTestBuild 
     return gulp
       .src(files)
       .pipe(sourceMaps.init({ loadMaps: true }))
-      .pipe(concat(bundlePath))
       .pipe(changeBase('build'))
       .pipe(sourceMaps.write('.', { sourceRoot: '/' }))
       .pipe(writeFile());
