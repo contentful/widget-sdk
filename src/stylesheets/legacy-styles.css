@@ -9122,10 +9122,7 @@ pre,
   .entity-editor__field-group[aria-invalid="true"] {
     border-left-color: #e34e48;
   }
-  .entity-editor__field-group .x--dir-rtl input[aria-label="rtl"] {
-    direction: rtl;
-  }
-  .entity-editor__field-group .x--dir-rtl textarea[aria-label="longRtl"] {
+  .entity-editor__field-group .x--dir-rtl .x--directed {
     direction: rtl;
   }
   .entity-editor__field-group .x--dir-rtl select.x--directed {
