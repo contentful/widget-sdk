@@ -24,7 +24,7 @@ const Sidebar = () => {
       </h2>
       <div className="entity-sidebar__text-profile">
         <p>
-          UI Extensions allow you to extend the functionality of the Contentful Web App, 
+          UI Extensions allow you to extend the functionality of the Contentful Web App,
           automate tasks or easily connect with other services.
         </p>
         <ul>
