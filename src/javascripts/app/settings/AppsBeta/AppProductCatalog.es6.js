@@ -27,6 +27,9 @@ export const getProductCatalogFlagForApp = (app, productCatalogFlags) => {
     : productCatalogFlags[flagId];
 };
 
+export const hasAllowedAppFeatureFlag = app =>
+  ALLOWED_FLAG_IDS.includes(get(app, APP_PRODUCT_CATALOG_FLAG_PATH, DEFAULT_FLAG_ID));
+
 export class AppProductCatalog {
   constructor(spaceId, getSpaceFeature) {
     this.getSpaceFeature = getSpaceFeature;

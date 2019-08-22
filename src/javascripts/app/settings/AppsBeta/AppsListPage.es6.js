@@ -30,7 +30,7 @@ import { websiteUrl } from 'Config.es6';
 import AppListItem from './AppListItem.es6';
 import AppDetailsModal from './AppDetailsModal.es6';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
-import { getProductCatalogFlagForApp } from './AppProductCatalog.es6';
+import { getProductCatalogFlagForApp, hasAllowedAppFeatureFlag } from './AppProductCatalog.es6';
 
 const styles = {
   intro: css({
@@ -230,7 +230,8 @@ const prepareApp = (repoApps, featureFlags) => app => ({
   categories: app.fields.categories.map(c => c.fields.name),
   permissions: app.fields.permissionsExplanation,
   installed: !!(repoApps.find(a => a.sys.id === app.fields.slug) || {}).extension,
-  enabled: getProductCatalogFlagForApp(app, featureFlags)
+  enabled: getProductCatalogFlagForApp(app, featureFlags),
+  visible: hasAllowedAppFeatureFlag(app)
 });
 
 const prepareDevApp = app => ({
@@ -273,9 +274,9 @@ export default class AppsListPage extends React.Component {
 
       const appsFeatureDisabled = await this.props.productCatalog.isAppsFeatureDisabled();
 
-      const preparedApps = Object.values(appsListing).map(
-        prepareApp(repoApps, productCatalogFlags)
-      );
+      const preparedApps = Object.values(appsListing)
+        .map(prepareApp(repoApps, productCatalogFlags))
+        .filter(app => app.visible);
       const preparedDevApps = devApps.map(prepareDevApp);
 
       const [installedApps, availableApps] = partition(
