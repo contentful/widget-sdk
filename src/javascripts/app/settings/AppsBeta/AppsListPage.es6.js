@@ -25,6 +25,8 @@ import * as Telemetry from 'i13n/Telemetry.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import FeedbackDialog from 'app/common/FeedbackDialog.es6';
 
+import { websiteUrl } from 'Config.es6';
+
 import AppListItem from './AppListItem.es6';
 import AppDetailsModal from './AppDetailsModal.es6';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
@@ -33,6 +35,10 @@ import { getProductCatalogFlagForApp } from './AppProductCatalog.es6';
 const styles = {
   intro: css({
     marginBottom: tokens.spacingL
+  }),
+  pricingInfo: css({
+    marginBottom: tokens.spacingL,
+    zIndex: 3
   }),
   betaLabel: css({
     marginRight: tokens.spacingS,
@@ -47,7 +53,25 @@ const styles = {
   }),
   workbench: css({
     backgroundColor: tokens.colorElementLightest
+  }),
+  appListCard: css({
+    position: 'relative'
+  }),
+  overlay: css({
+    position: 'absolute',
+    zIndex: 2,
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: tokens.colorWhite,
+    opacity: 0.8
   })
+};
+
+const externalLinkProps = {
+  target: '_blank',
+  rel: 'noopener noreferrer'
 };
 
 const openDetailModal = app => {
@@ -112,15 +136,48 @@ const Header = () => (
   </Heading>
 );
 
+const PricingInfo = () => (
+  <Note
+    className={styles.pricingInfo}
+    noteType="warning"
+    title="Upgrade your space to access our latest features"
+    testId="apps-pricing-info">
+    <Paragraph>
+      To access this feature, submit a request to begin the process of upgrading your space. To
+      learn more, read about our{' '}
+      <TextLink
+        href={websiteUrl(
+          '/pricing/?faq_category=payments&faq=what-type-of-spaces-can-i-have#payments'
+        )}
+        {...externalLinkProps}>
+        Space types and pricing
+      </TextLink>
+      .
+    </Paragraph>
+    <Paragraph>
+      <TextLink href={websiteUrl('/support/?upgrade-pricing=true')} {...externalLinkProps}>
+        Submit a support request{' '}
+      </TextLink>
+    </Paragraph>
+  </Note>
+);
+
 const AppsListShell = props => (
   <Workbench className={styles.workbench}>
     <Workbench.Header title={<Header />} icon={<Icon name="page-apps" scale="1" />} />
     <Workbench.Content type="text">
-      <Note className={styles.intro}>
-        Share your feedback about apps.{' '}
-        <TextLink onClick={() => openFeedback(props)}>Give feedback</TextLink>
-      </Note>
-      <Card padding="large">
+      {props.appsFeatureDisabled ? (
+        <PricingInfo />
+      ) : (
+        <Note className={styles.intro}>
+          Share your feedback about apps.{' '}
+          <TextLink onClick={() => openFeedback(props)}>Give feedback</TextLink>
+        </Note>
+      )}
+      <Card padding="large" className={styles.appListCard}>
+        {props.appsFeatureDisabled && (
+          <div className={styles.overlay} data-test-id="disabled-beta-apps" />
+        )}
         <Paragraph className={styles.intro}>
           Apps help you extend functionality and easily connect with other services you are using.
         </Paragraph>
@@ -129,6 +186,10 @@ const AppsListShell = props => (
     </Workbench.Content>
   </Workbench>
 );
+
+AppsListShell.propTypes = {
+  appsFeatureDisabled: PropTypes.bool
+};
 
 const ItemSkeleton = props => (
   <React.Fragment>
@@ -191,7 +252,8 @@ export default class AppsListPage extends React.Component {
     spaceId: PropTypes.string.isRequired,
     userId: PropTypes.string.isRequired,
     productCatalog: PropTypes.shape({
-      loadProductCatalogFlags: PropTypes.func.isRequired
+      loadProductCatalogFlags: PropTypes.func.isRequired,
+      isAppsFeatureDisabled: PropTypes.func.isRequired
     }).isRequired
   };
 
@@ -209,6 +271,8 @@ export default class AppsListPage extends React.Component {
         appsListing
       );
 
+      const appsFeatureDisabled = await this.props.productCatalog.isAppsFeatureDisabled();
+
       const preparedApps = Object.values(appsListing).map(
         prepareApp(repoApps, productCatalogFlags)
       );
@@ -223,7 +287,8 @@ export default class AppsListPage extends React.Component {
         ready: true,
         availableApps,
         installedApps,
-        appsListing
+        appsListing,
+        appsFeatureDisabled
       });
     } catch (err) {
       Telemetry.count('apps.list-loading-failed');
@@ -243,10 +308,14 @@ export default class AppsListPage extends React.Component {
 
   renderList() {
     const { organizationId, spaceId, userId } = this.props;
-    const { installedApps, availableApps } = this.state;
+    const { installedApps, availableApps, appsFeatureDisabled } = this.state;
 
     return (
-      <AppsListShell organizationId={organizationId} spaceId={spaceId} userId={userId}>
+      <AppsListShell
+        organizationId={organizationId}
+        spaceId={spaceId}
+        userId={userId}
+        appsFeatureDisabled={appsFeatureDisabled}>
         {installedApps.length > 0 && (
           <>
             <Heading element="h2">Installed</Heading>

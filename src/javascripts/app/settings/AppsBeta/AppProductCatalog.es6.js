@@ -33,10 +33,23 @@ export class AppProductCatalog {
     this.spaceId = spaceId;
   }
 
+  async isAppsFeatureDisabled() {
+    try {
+      const flagValue = await this.getSpaceFeature(this.spaceId, DEFAULT_FLAG_ID, DEFAULT_STATUS);
+      return !flagValue;
+    } catch (err) {
+      return DEFAULT_STATUS;
+    }
+  }
+
   isAppEnabled(app) {
     const flagId = getFlagId(app);
 
-    return this.getSpaceFeature(this.spaceId, flagId, DEFAULT_STATUS).catch(() => DEFAULT_STATUS);
+    try {
+      return this.getSpaceFeature(this.spaceId, flagId, DEFAULT_STATUS);
+    } catch (err) {
+      return DEFAULT_STATUS;
+    }
   }
 
   async loadProductCatalogFlags(apps) {

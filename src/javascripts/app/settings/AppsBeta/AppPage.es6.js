@@ -29,6 +29,8 @@ import AppPermissions from './AppPermissions.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import ClientStorage from 'TheStore/ClientStorage.es6';
 
+import { websiteUrl } from 'Config.es6';
+
 const sessionStorage = ClientStorage('session');
 
 const BUSY_STATE_INSTALLATION = 'installation';
@@ -343,7 +345,7 @@ export default class AppRoute extends Component {
               contact your account manager.
             </Paragraph>
 
-            <Button href="https://www.contentful.com/contact/sales/">Contact us</Button>
+            <Button href={websiteUrl('/support/?upgrade-pricing=true')}>Contact us</Button>
           </EmptyStateContainer>
         </Workbench.Content>
       </Workbench>

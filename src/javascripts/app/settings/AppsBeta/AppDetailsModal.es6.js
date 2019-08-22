@@ -14,6 +14,7 @@ import {
 import StateLink from 'app/common/StateLink.es6';
 import AppPermissions from './AppPermissions.es6';
 import ClientStorage from 'TheStore/ClientStorage.es6';
+import { websiteUrl } from 'Config.es6';
 
 const sessionStorage = ClientStorage('session');
 sessionStorage.set('appPermissions', JSON.stringify({}));
@@ -219,7 +220,10 @@ export function AppDetails(props) {
             )}
           </StateLink>
         ) : (
-          <Button isFullWidth href="https://www.contentful.com/contact/sales" buttonType="primary">
+          <Button
+            isFullWidth
+            href={websiteUrl('/support/?upgrade-pricing=true')}
+            buttonType="primary">
             Contact us
           </Button>
         )}
