@@ -144,6 +144,7 @@ describe('LaunchDarkly', () => {
           currentOrgSubscriptionStatus: this.org.subscription.status,
           currentOrgPlanIsEnterprise: false,
           currentOrgHasSpace: false,
+          currentOrgHasPaymentMethod: false,
           currentOrgPricingVersion: `pricing_version_1`,
           currentUserOrgRole: 'org role',
           currentUserCreationDate: 1234567890,

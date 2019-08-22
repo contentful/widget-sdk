@@ -234,6 +234,7 @@ function buildLDUser(user, currOrg, spacesByOrg, currSpace) {
     currentUserCreationDate: getUserCreationDateUnixTimestamp(user), // unix timestamp
     currentUserIsCurrentOrgCreator: isUserOrgCreator(user, currOrg),
     currentUserSignInCount: user.signInCount,
+    currentOrgHasPaymentMethod: Boolean(get(currOrg, 'isBillable')),
     isNonPayingUser: !['paid', 'free_paid'].includes(get(currOrg, ['subscription', 'status'])),
     // by default, if there is no current space, we pass empty array
     currentUserSpaceRole: [],
