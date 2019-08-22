@@ -69,11 +69,12 @@ export default class ExtensionIFrameRenderer extends React.Component {
       style.height = '100%';
     }
 
-    const iframe = <iframe style={style} ref={this.initialize} onLoad={this.onLoad} />;
-    if (isDevMode) {
-      return <ExtensionDevelopmentMode>{iframe}</ExtensionDevelopmentMode>;
-    }
-    return iframe;
+    return (
+      <>
+        {isDevMode && <ExtensionDevelopmentMode />}
+        <iframe style={style} ref={this.initialize} onLoad={this.onLoad} />
+      </>
+    );
   }
 
   // This will be called when the iframe navigates or is refreshed.
