@@ -4,32 +4,49 @@ describe('AppProductCatalog', () => {
   const spaceId = '1234567';
 
   describe('getProductCatalogFlagForApp', () => {
-    it('returns the flag value from the map if flagId is present', async () => {
+    it('returns the flag value from the map if flagId is present and allowed', async () => {
       const result = getProductCatalogFlagForApp(
         {
           fields: {
             productCatalogFlag: {
               fields: {
-                flagId: 'flagId'
+                flagId: 'optimizely_app'
               }
             }
           }
         },
-        { flagId: false }
+        { optimizely_app: false }
       );
 
       expect(result).toEqual(false);
     });
 
-    it('returns the default value from the map if flagId is not present', async () => {
+    it('uses the default flagId and value from the map if flagId is not present on app', async () => {
       const result = getProductCatalogFlagForApp(
         {
           fields: {}
         },
-        { flagId: false }
+        { basic_apps: false }
       );
 
-      expect(result).toEqual(true);
+      expect(result).toEqual(false);
+    });
+
+    it('uses the default flagId and value from the map if flagId not allowed', async () => {
+      const result = getProductCatalogFlagForApp(
+        {
+          fields: {
+            productCatalogFlag: {
+              fields: {
+                flagId: 'unknown'
+              }
+            }
+          }
+        },
+        { basic_apps: false }
+      );
+
+      expect(result).toEqual(false);
     });
   });
 
@@ -42,26 +59,26 @@ describe('AppProductCatalog', () => {
         fields: {
           productCatalogFlag: {
             fields: {
-              flagId: 'flagId'
+              flagId: 'optimizely_app'
             }
           }
         }
       });
 
       expect(result).toEqual(false);
-      expect(getSpaceFeature).toBeCalledWith(spaceId, 'flagId', true);
+      expect(getSpaceFeature).toBeCalledWith(spaceId, 'optimizely_app', true);
     });
 
-    it('returns the default value if flagId is not present', async () => {
-      const getSpaceFeature = jest.fn();
+    it('returns the value for the default flag if no flagId is present on app', async () => {
+      const getSpaceFeature = jest.fn().mockReturnValue(Promise.resolve(false));
 
       const catalog = new AppProductCatalog(spaceId, getSpaceFeature);
       const result = await catalog.isAppEnabled({
         fields: {}
       });
 
-      expect(result).toEqual(true);
-      expect(getSpaceFeature).not.toBeCalled();
+      expect(result).toEqual(false);
+      expect(getSpaceFeature).toBeCalledWith(spaceId, 'basic_apps', true);
     });
   });
 
@@ -75,7 +92,7 @@ describe('AppProductCatalog', () => {
           fields: {
             productCatalogFlag: {
               fields: {
-                flagId: 'flagId1'
+                flagId: 'optimizely_app'
               }
             }
           }
@@ -84,7 +101,7 @@ describe('AppProductCatalog', () => {
           fields: {
             productCatalogFlag: {
               fields: {
-                flagId: 'flagId2'
+                flagId: 'unknownFlagId'
               }
             }
           }
@@ -93,7 +110,7 @@ describe('AppProductCatalog', () => {
           fields: {
             productCatalogFlag: {
               fields: {
-                flagId: 'flagId1'
+                flagId: 'optimizely_app'
               }
             }
           }
@@ -104,12 +121,12 @@ describe('AppProductCatalog', () => {
       });
 
       expect(result).toEqual({
-        flagId1: true,
-        flagId2: true
+        optimizely_app: true,
+        basic_apps: true
       });
 
-      expect(getSpaceFeature).toBeCalledWith(spaceId, 'flagId1', true);
-      expect(getSpaceFeature).toBeCalledWith(spaceId, 'flagId2', true);
+      expect(getSpaceFeature).toBeCalledWith(spaceId, 'optimizely_app', true);
+      expect(getSpaceFeature).toBeCalledWith(spaceId, 'basic_apps', true);
     });
   });
 });
