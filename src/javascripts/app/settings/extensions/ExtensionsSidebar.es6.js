@@ -24,25 +24,26 @@ const Sidebar = () => {
       </h2>
       <div className="entity-sidebar__text-profile">
         <p>
-          Contentful UI Extensions are small applications that run inside the Web App and provide
-          additional functionality for creating content and integration with third party services.
+          UI Extensions allow you to extend the functionality of the Contentful Web App, 
+          automate tasks or easily connect with other services.
         </p>
         <ul>
+           <li>
+            <DocsLink
+              href="https://www.contentful.com/developers/marketplace/#type=ui-extension"
+              title="Browse the marketplace"
+            />
+          </li>      
           <li>
             <DocsLink
-              href="https://www.contentful.com/developers/docs/concepts/uiextensions/"
+              href="https://www.contentful.com/developers/docs/extensibility/ui-extensions/"
               title="Get started with extensions"
             />
           </li>
+          
           <li>
             <DocsLink
-              href="https://github.com/contentful/extensions/tree/master/samples"
-              title="View examples on GitHub"
-            />
-          </li>
-          <li>
-            <DocsLink
-              href="https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md"
+              href="https://www.contentful.com/developers/docs/extensibility/ui-extensions/sdk-reference/"
               title="UI Extensions SDK: API Reference"
             />
           </li>
