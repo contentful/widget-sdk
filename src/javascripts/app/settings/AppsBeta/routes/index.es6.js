@@ -59,7 +59,8 @@ export default {
             repo,
             bridge,
             appHookBus,
-            cma: spaceContext.cma
+            cma: spaceContext.cma,
+            extensionLoader: spaceContext.extensionLoader
           };
         }
       ]

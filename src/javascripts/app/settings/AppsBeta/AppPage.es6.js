@@ -144,7 +144,11 @@ export default class AppRoute extends Component {
       createExtension: PropTypes.func.isRequired,
       updateExtension: PropTypes.func.isRequired,
       deleteExtension: PropTypes.func.isRequired
-    }).isRequired
+    }).isRequired,
+    extensionLoader: PropTypes.shape({
+      cacheExtension: PropTypes.func.isRequired,
+      evictExtension: PropTypes.func.isRequired
+    })
   };
 
   state = {
@@ -221,10 +225,10 @@ export default class AppRoute extends Component {
   };
 
   onAppConfigured = async ({ installationRequestId, config }) => {
-    const { cma, appHookBus } = this.props;
+    const { cma, extensionLoader, appHookBus } = this.props;
 
     try {
-      await installOrUpdate(cma, this.checkAppStatus, config);
+      await installOrUpdate(cma, extensionLoader, this.checkAppStatus, config);
 
       // Verify if installation was completed.
       const { extension } = await this.checkAppStatus();
@@ -275,14 +279,10 @@ export default class AppRoute extends Component {
         isShown={isShown}
         appName={this.state.title}
         actionList={[]} // todo: EXT-933 add the action list from the app's JSON config
-        onConfirm={
-          async (/* reasons */) => {
-            // todo: EXT-933 This function is passed a `reasons` array argument which we can use
-            // to track reasons for uninstalling apps
-            onClose(true);
-            await this.uninstallApp();
-          }
-        }
+        onConfirm={reasons => {
+          onClose(true);
+          this.uninstallApp(reasons);
+        }}
         onClose={() => {
           onClose(true);
         }}
@@ -290,7 +290,11 @@ export default class AppRoute extends Component {
     ));
   };
 
-  uninstallApp = async () => {
+  // todo: EXT-933 This function is passed a `reasons` array argument which we can use
+  // to track reasons for uninstalling apps
+  uninstallApp = async (/* reasons */) => {
+    const { cma, extensionLoader } = this.props;
+
     this.setState({ busyWith: BUSY_STATE_UNINSTALLATION });
 
     // Unset extension immediately so its parameters are not exposed
@@ -298,7 +302,7 @@ export default class AppRoute extends Component {
     this.props.appHookBus.setExtension(null);
 
     try {
-      await uninstall(this.props.cma, this.checkAppStatus);
+      await uninstall(cma, extensionLoader, this.checkAppStatus);
 
       // Verify if uninstallation was completed.
       const { extension } = await this.checkAppStatus();

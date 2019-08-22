@@ -12,6 +12,7 @@ describe('AppOperations', () => {
   describe('installOrUpdate', () => {
     it('validates target state', async () => {
       const cma = {};
+      const loader = {};
       const checkAppStatus = jest.fn();
       const invalidTargetState = {
         EditorInterface: {
@@ -24,7 +25,7 @@ describe('AppOperations', () => {
       expect.assertions(1);
 
       try {
-        await AppOperations.installOrUpdate(cma, checkAppStatus, {
+        await AppOperations.installOrUpdate(cma, loader, checkAppStatus, {
           targetState: invalidTargetState
         });
       } catch (err) {
@@ -37,6 +38,9 @@ describe('AppOperations', () => {
         createExtension: jest.fn(ext => Promise.resolve(ext)),
         updateExtension: jest.fn()
       };
+      const loader = {
+        cacheExtension: jest.fn()
+      };
       const checkAppStatus = jest.fn(() => {
         return Promise.resolve({
           appId: 'test',
@@ -44,32 +48,40 @@ describe('AppOperations', () => {
         });
       });
 
-      await AppOperations.installOrUpdate(cma, checkAppStatus, { parameters: { test: true } });
+      await AppOperations.installOrUpdate(cma, loader, checkAppStatus, {
+        parameters: { test: true }
+      });
 
       expect(cma.createExtension).toBeCalledTimes(1);
       expect(cma.updateExtension).not.toBeCalled();
 
-      expect(cma.createExtension).toBeCalledWith(
-        expect.objectContaining({
+      const expectedEntity = expect.objectContaining({
+        sys: {
+          id: expect.stringContaining('test-app-')
+        },
+        extensionDefinition: {
           sys: {
-            id: expect.stringContaining('test-app-')
-          },
-          extensionDefinition: {
-            sys: {
-              type: 'Link',
-              linkType: 'ExtensionDefinition',
-              id: 'def-id'
-            }
-          },
-          parameters: { test: true }
-        })
-      );
+            type: 'Link',
+            linkType: 'ExtensionDefinition',
+            id: 'def-id'
+          }
+        },
+        parameters: { test: true }
+      });
+
+      expect(cma.createExtension).toBeCalledWith(expectedEntity);
+
+      expect(loader.cacheExtension).toBeCalledTimes(1);
+      expect(loader.cacheExtension).toBeCalledWith(expectedEntity);
     });
 
     it('updates an extension if already installed', async () => {
       const cma = {
         createExtension: jest.fn(),
         updateExtension: jest.fn(ext => Promise.resolve(ext))
+      };
+      const loader = {
+        cacheExtension: jest.fn()
       };
       const checkAppStatus = jest.fn(() => {
         return Promise.resolve({
@@ -86,12 +98,14 @@ describe('AppOperations', () => {
         });
       });
 
-      await AppOperations.installOrUpdate(cma, checkAppStatus, { parameters: { hello: 'world' } });
+      await AppOperations.installOrUpdate(cma, loader, checkAppStatus, {
+        parameters: { hello: 'world' }
+      });
 
       expect(cma.createExtension).not.toBeCalled();
       expect(cma.updateExtension).toBeCalledTimes(1);
 
-      expect(cma.updateExtension).toBeCalledWith({
+      const expectedEntity = {
         sys: { id: 'some-extension-id', version: 2 },
         extensionDefinition: {
           sys: {
@@ -101,12 +115,20 @@ describe('AppOperations', () => {
           }
         },
         parameters: { hello: 'world' }
-      });
+      };
+
+      expect(cma.updateExtension).toBeCalledWith(expectedEntity);
+
+      expect(loader.cacheExtension).toBeCalledTimes(1);
+      expect(loader.cacheExtension).toBeCalledWith(expectedEntity);
     });
 
     it('fails if an extension cannot be created', async () => {
       const cma = {
         createExtension: jest.fn(() => Promise.reject('unprocessable'))
+      };
+      const loader = {
+        cacheExtension: jest.fn()
       };
       const checkAppStatus = jest.fn(() => {
         return Promise.resolve({
@@ -115,12 +137,14 @@ describe('AppOperations', () => {
         });
       });
 
-      expect.assertions(1);
+      expect.assertions(3);
 
       try {
-        await AppOperations.installOrUpdate(cma, checkAppStatus);
+        await AppOperations.installOrUpdate(cma, loader, checkAppStatus);
       } catch (err) {
         expect(err).toMatch('unprocessable');
+        expect(cma.createExtension).toBeCalledTimes(1);
+        expect(loader.cacheExtension).not.toBeCalled();
       }
     });
 
@@ -135,6 +159,9 @@ describe('AppOperations', () => {
         }),
         updateEditorInterface: jest.fn(ext => Promise.resolve(ext))
       };
+      const loader = {
+        cacheExtension: jest.fn()
+      };
       const checkAppStatus = jest.fn(() => {
         return Promise.resolve({
           appId: 'test',
@@ -142,7 +169,7 @@ describe('AppOperations', () => {
         });
       });
 
-      await AppOperations.installOrUpdate(cma, checkAppStatus, {
+      await AppOperations.installOrUpdate(cma, loader, checkAppStatus, {
         targetState: {
           EditorInterface: {
             CT1: {
@@ -192,12 +219,14 @@ describe('AppOperations', () => {
         updateEditorInterface: jest.fn(ei => Promise.resolve(ei)),
         deleteExtension: jest.fn(() => Promise.resolve())
       };
-
+      const loader = {
+        evictExtension: jest.fn()
+      };
       const checkAppStatus = jest.fn(() =>
         Promise.resolve({ extension: { sys: { id: extensionId } } })
       );
 
-      await AppOperations.uninstall(cma, checkAppStatus);
+      await AppOperations.uninstall(cma, loader, checkAppStatus);
 
       expect(cma.getContentTypes).toBeCalledTimes(1);
       expect(cma.getEditorInterface).toBeCalledTimes(1);
@@ -216,16 +245,25 @@ describe('AppOperations', () => {
     });
 
     it('deletes the extension', async () => {
+      const extensionId = 'test-extension';
       const cma = {
         getContentTypes: jest.fn(() => Promise.resolve({ items: [] })),
         deleteExtension: jest.fn(() => Promise.resolve())
       };
-      const checkAppStatus = jest.fn(() => Promise.resolve({ extension: { sys: { id: 'test' } } }));
+      const loader = {
+        evictExtension: jest.fn()
+      };
+      const checkAppStatus = jest.fn(() =>
+        Promise.resolve({ extension: { sys: { id: extensionId } } })
+      );
 
-      await AppOperations.uninstall(cma, checkAppStatus);
+      await AppOperations.uninstall(cma, loader, checkAppStatus);
 
       expect(cma.deleteExtension).toBeCalledTimes(1);
-      expect(cma.deleteExtension).toBeCalledWith('test');
+      expect(cma.deleteExtension).toBeCalledWith(extensionId);
+
+      expect(loader.evictExtension).toBeCalledTimes(1);
+      expect(loader.evictExtension).toBeCalledWith(extensionId);
     });
 
     it('fails if an extension cannot be deleted', async () => {
@@ -233,14 +271,18 @@ describe('AppOperations', () => {
         getContentTypes: jest.fn(() => Promise.resolve({ items: [] })),
         deleteExtension: jest.fn(() => Promise.reject('unauthorized'))
       };
+      const loader = {
+        evictExtension: jest.fn()
+      };
       const checkAppStatus = jest.fn(() => Promise.resolve({ extension: { sys: { id: 'test' } } }));
 
-      expect.assertions(1);
+      expect.assertions(2);
 
       try {
-        await AppOperations.uninstall(cma, checkAppStatus);
+        await AppOperations.uninstall(cma, loader, checkAppStatus);
       } catch (err) {
         expect(err).toMatch('unauthorized');
+        expect(loader.evictExtension).not.toBeCalled();
       }
     });
   });
