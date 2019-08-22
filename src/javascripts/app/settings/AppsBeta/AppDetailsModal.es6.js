@@ -90,7 +90,7 @@ const AppPropType = PropTypes.shape({
   author: PropTypes.shape({
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
-    image: PropTypes.node.isRequired
+    icon: PropTypes.node.isRequired
   }).isRequired,
   icon: PropTypes.string.isRequired,
   categories: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
@@ -232,9 +232,9 @@ export function AppDetails(props) {
         <Subheading element="h3" className={styles.sidebarSubheading}>
           Author
         </Subheading>
-        <a href={app.author.url} {...externalLinkProps}>
+        <TextLink href={app.author.url} {...externalLinkProps}>
           <img src={app.author.icon} className={styles.iconSmall} />
-        </a>
+        </TextLink>
         <div className={styles.sidebarSpacing} />
 
         {app.categories.length > 0 && (

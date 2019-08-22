@@ -8,10 +8,35 @@ import {
   removeAllEditorInterfaceReferences
 } from './AppEditorInterfaces.es6';
 
-export async function installOrUpdate(cma, checkAppStatus, { parameters, targetState } = {}) {
+function updateExtensionParameters(extension, parameters) {
+  return { ...extension, parameters };
+}
+
+function makeNewAppExtension(appId, extensionDefinition, parameters) {
+  return {
+    sys: { id: `${appId}-app-${Random.id()}` },
+    extensionDefinition: {
+      sys: {
+        type: 'Link',
+        linkType: 'ExtensionDefinition',
+        id: extensionDefinition.sys.id
+      }
+    },
+    parameters
+  };
+}
+
+export async function installOrUpdate(
+  cma,
+  extensionLoader,
+  checkAppStatus,
+  { parameters, targetState } = {}
+) {
   validateTargetState(targetState);
 
   const extension = await createOrUpdateExtension(cma, checkAppStatus, parameters);
+
+  extensionLoader.cacheExtension(extension);
 
   await transformEditorInterfacesToTargetState(
     cma,
@@ -23,25 +48,13 @@ export async function installOrUpdate(cma, checkAppStatus, { parameters, targetS
 async function createOrUpdateExtension(cma, checkAppStatus, parameters) {
   const { appId, extension, extensionDefinition } = await checkAppStatus();
 
-  if (extension) {
-    return cma.updateExtension({ ...extension, parameters });
-  } else {
-    return cma.createExtension({
-      sys: { id: `${appId}-app-${Random.id()}` },
-      extensionDefinition: {
-        sys: {
-          type: 'Link',
-          linkType: 'ExtensionDefinition',
-          id: extensionDefinition.sys.id
-        }
-      },
-      parameters
-    });
-  }
+  return extension
+    ? await cma.updateExtension(updateExtensionParameters(extension, parameters))
+    : await cma.createExtension(makeNewAppExtension(appId, extensionDefinition, parameters));
 }
 
 // Best effort uninstallation.
-export async function uninstall(cma, checkAppStatus) {
+export async function uninstall(cma, extensionLoader, checkAppStatus) {
   const { extension } = await checkAppStatus();
 
   if (extension) {
@@ -52,5 +65,6 @@ export async function uninstall(cma, checkAppStatus) {
 
     // Remove the Extension itself.
     await cma.deleteExtension(extensionId);
+    extensionLoader.evictExtension(extensionId);
   }
 }

@@ -128,7 +128,6 @@ AppPermissions.defaultProps = {
 AppPermissions.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onAuthorize: PropTypes.func.isRequired,
-  appId: PropTypes.string.isRequired,
   appName: PropTypes.string.isRequired,
   permissions: PropTypes.string,
   centered: PropTypes.bool,

@@ -4,7 +4,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { TextLink, Heading, Tag } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
-import AppIcon from '../apps/_common/AppIcon.es6';
+import DefaultIcon from 'ui/Components/Icon.es6';
 
 const styles = {
   item: css({
@@ -60,8 +60,8 @@ export default class AppListItem extends Component {
     app: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
-      tagLine: PropTypes.string.isRequired,
-      icon: PropTypes.string.isRequired,
+      tagLine: PropTypes.string,
+      icon: PropTypes.string,
       installed: PropTypes.bool.isRequired,
       isDevApp: PropTypes.bool
     }),
@@ -93,11 +93,11 @@ export default class AppListItem extends Component {
                   {app.icon ? (
                     <img src={app.icon} className={styles.icon} />
                   ) : (
-                    <AppIcon size="small" className={styles.icon} />
+                    <DefaultIcon name="page-apps" className={styles.icon} />
                   )}
                   <div>
                     {app.title}
-                    <div className={styles.tagLine}>{app.tagLine}</div>
+                    {app.tagLine && <div className={styles.tagLine}>{app.tagLine}</div>}
                   </div>
                   {app.isDevApp && <Tag className={styles.tag}>Private</Tag>}
                 </div>
