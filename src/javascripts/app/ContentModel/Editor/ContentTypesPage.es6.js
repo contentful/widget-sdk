@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { get } from 'lodash';
-import { css, cx } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
-import EditorFieldsHeader from './EditorFieldsHeader.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import ContentTypePageActions from './ContentTypePageActions.es6';
 import {
   FieldsSection,
   ContentTypeIdSection,
@@ -15,15 +14,7 @@ import FieldsList from './FieldsTab/FieldsList.es6';
 import ContentTypePreview from './PreviewTab/ContentTypePreview.es6';
 import SidebarConfiguration from 'app/EntrySidebar/Configuration/SidebarConfiguration.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
-
-const styles = {
-  form: css({
-    padding: `${tokens.spacingXl} ${tokens.spacing2Xl}`
-  }),
-  content: css({
-    paddingTop: 0
-  })
-};
+import ContentFieldsIcon from './ContentFieldsIcon.es6';
 
 export default function ContentTypesPage(props) {
   const showSidebar = props.currentTab === 'fields' || props.currentTab === 'preview';
@@ -31,88 +22,91 @@ export default function ContentTypesPage(props) {
   const [sidebarConfiguration, updateSidebarConfiguration] = useState(props.sidebarConfiguration);
 
   return (
-    <div className="workbench">
-      <EditorFieldsHeader
-        isNew={props.isNew}
-        canEdit={props.canEdit}
-        contentTypeDescription={props.contentTypeData.description}
-        contentTypeName={props.contentTypeName}
-        save={props.actions.save}
-        delete={props.actions.delete}
-        cancel={props.actions.cancel}
-        duplicate={props.actions.duplicate}
-        showMetadataDialog={props.actions.showMetadataDialog}
-      />
-      <div className="workbench-main">
-        <div className={cx('workbench-main__content', styles.content)}>
-          <EditorFieldTabs
-            fieldsCount={props.contentTypeData.fields.length}
-            currentTab={props.currentTab}
-            hasAdvancedExtensibility={props.hasAdvancedExtensibility}
+    <Workbench>
+      <Workbench.Header
+        title={props.contentTypeName}
+        icon={<ContentFieldsIcon />}
+        description={props.contentTypeData.description}
+        actions={
+          <ContentTypePageActions
+            isNew={props.isNew}
+            canEdit={props.canEdit}
+            save={props.actions.save}
+            delete={props.actions.delete}
+            cancel={props.actions.cancel}
+            duplicate={props.actions.duplicate}
+            showMetadataDialog={props.actions.showMetadataDialog}
           />
-          <form name="contentTypeForm" className={styles.form}>
-            {props.currentTab === 'fields' && (
-              <React.Fragment>
-                <DocumentTitle title={[props.contentTypeData.name, 'Content Model']} />
-                <FieldsList
-                  displayField={props.contentTypeData.displayField}
-                  canEdit={props.canEdit}
-                  fields={props.contentTypeData.fields}
-                  actions={props.actions}
-                />
-              </React.Fragment>
-            )}
-            {props.currentTab === 'preview' && (
-              <React.Fragment>
-                <DocumentTitle title={['Preview', props.contentTypeData.name, 'Content Model']} />
-                <ContentTypePreview
-                  isDirty={props.isDirty}
-                  publishedVersion={get(props.contentTypeData, 'sys.publishedVersion')}
-                  loadPreview={props.actions.loadPreview}
-                />
-              </React.Fragment>
-            )}
-            {props.hasAdvancedExtensibility && props.currentTab === 'sidebar_configuration' && (
-              <>
-                <DocumentTitle
-                  title={['Sidebar Configuration', props.contentTypeData.name, 'Content Model']}
-                />
-                <div>
-                  <SidebarConfiguration
-                    configuration={sidebarConfiguration}
-                    extensions={props.extensions}
-                    onUpdateConfiguration={configuration => {
-                      updateSidebarConfiguration(configuration);
-                      props.actions.updateSidebarConfiguration(configuration);
-                    }}
-                  />
-                </div>
-              </>
-            )}
-          </form>
-        </div>
-        {showSidebar && (
-          <div className="workbench-main__sidebar">
-            <div className="entity-sidebar entity-sidebar__text-profile">
-              <FieldsSection
+        }
+      />
+      <Workbench.Content type="text">
+        <EditorFieldTabs
+          fieldsCount={props.contentTypeData.fields.length}
+          currentTab={props.currentTab}
+          hasAdvancedExtensibility={props.hasAdvancedExtensibility}
+        />
+        <form name="contentTypeForm">
+          {props.currentTab === 'fields' && (
+            <React.Fragment>
+              <DocumentTitle title={[props.contentTypeData.name, 'Content Model']} />
+              <FieldsList
+                displayField={props.contentTypeData.displayField}
                 canEdit={props.canEdit}
-                showNewFieldDialog={props.actions.showNewFieldDialog}
-                fieldsUsed={props.contentTypeData.fields.length}
+                fields={props.contentTypeData.fields}
+                actions={props.actions}
               />
-              {props.hasAdvancedExtensibility && (
-                <EntryEditorAppearanceSection
+            </React.Fragment>
+          )}
+          {props.currentTab === 'preview' && (
+            <React.Fragment>
+              <DocumentTitle title={['Preview', props.contentTypeData.name, 'Content Model']} />
+              <ContentTypePreview
+                isDirty={props.isDirty}
+                publishedVersion={get(props.contentTypeData, 'sys.publishedVersion')}
+                loadPreview={props.actions.loadPreview}
+              />
+            </React.Fragment>
+          )}
+          {props.hasAdvancedExtensibility && props.currentTab === 'sidebar_configuration' && (
+            <>
+              <DocumentTitle
+                title={['Sidebar Configuration', props.contentTypeData.name, 'Content Model']}
+              />
+              <div>
+                <SidebarConfiguration
+                  configuration={sidebarConfiguration}
                   extensions={props.extensions}
-                  editorConfiguration={props.editorConfiguration}
-                  updateEditorConfiguration={props.actions.updateEditorConfiguration}
+                  onUpdateConfiguration={configuration => {
+                    updateSidebarConfiguration(configuration);
+                    props.actions.updateSidebarConfiguration(configuration);
+                  }}
                 />
-              )}
-              <ContentTypeIdSection contentTypeId={props.contentTypeData.sys.id} />
-              <DocumentationSection />
-            </div>
+              </div>
+            </>
+          )}
+        </form>
+      </Workbench.Content>
+      {showSidebar && (
+        <Workbench.Sidebar position="right">
+          <div>
+            <FieldsSection
+              canEdit={props.canEdit}
+              showNewFieldDialog={props.actions.showNewFieldDialog}
+              fieldsUsed={props.contentTypeData.fields.length}
+            />
+            {props.hasAdvancedExtensibility && (
+              <EntryEditorAppearanceSection
+                extensions={props.extensions}
+                editorConfiguration={props.editorConfiguration}
+                updateEditorConfiguration={props.actions.updateEditorConfiguration}
+              />
+            )}
+            <ContentTypeIdSection contentTypeId={props.contentTypeData.sys.id} />
+            <DocumentationSection />
           </div>
-        )}
-      </div>
-    </div>
+        </Workbench.Sidebar>
+      )}
+    </Workbench>
   );
 }
 

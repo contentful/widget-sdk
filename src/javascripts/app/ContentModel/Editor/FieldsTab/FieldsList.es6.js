@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
+import { css } from 'emotion';
 import cn from 'classnames';
 import PropTypes from 'prop-types';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
@@ -13,6 +14,22 @@ import {
 import Icon from 'ui/Components/Icon.es6';
 import * as fieldFactory from 'services/fieldFactory.es6';
 import NoFieldsAdvice from './NoFieldsAdvice.es6';
+import tokens from '@contentful/forma-36-tokens';
+
+const styles = {
+  dropContainer: css({
+    margin: `${tokens.spacingM} 0 ${tokens.spacingM} 0`
+  }),
+  fieldDraggable: css({
+    cursor: 'grab',
+    userSelect: 'none',
+    margin: `0 0 ${tokens.spacingM} 0`,
+    outline: 'none',
+    '&:focus': {
+      boxShadow: tokens.glowPrimary
+    }
+  })
+};
 
 function isTitleType(fieldType) {
   return fieldType === 'Symbol' || fieldType === 'Text';
@@ -181,12 +198,12 @@ class FieldItem extends Component {
 }
 
 const SortableContainer = sortableContainer(({ children }) => {
-  return <div className="ct-fields-drop-container">{children}</div>;
+  return <div className={styles.dropContainer}>{children}</div>;
 });
 
 const SortableItem = sortableElement(({ field, isTitle, canEdit, actions }) => {
   return (
-    <div className="ct-field-draggable" tabIndex={0}>
+    <div className={styles.fieldDraggable} tabIndex={0}>
       <FieldItem
         key={`field-${field.id}`}
         canEdit={canEdit}

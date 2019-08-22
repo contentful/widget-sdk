@@ -14,7 +14,6 @@ import WidgetParametersConfiguration from './WidgetParametersConfiguration.es6';
 const styles = {
   container: css({
     margin: '0 auto',
-    width: '800px',
     marginBottom: '60px'
   })
 };

@@ -1,24 +1,20 @@
 import React from 'react';
-import { css, cx } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 import StateLink from 'app/common/StateLink.es6';
 import PropTypes from 'prop-types';
+import tokens from '@contentful/forma-36-tokens';
 import { Tabs, Tab } from '@contentful/forma-36-react-components';
 
 const styles = {
-  container: css({
-    position: 'sticky',
-    top: '0',
-    paddingLeft: tokens.spacing2Xl,
-    zIndex: 1,
-    background: 'white'
+  editorFieldTabs: css({
+    marginBottom: tokens.spacingL
   })
 };
 
 export default function EditorFieldTabs(props) {
   return (
-    <div className={cx('workbench-nav', styles.container)}>
-      <Tabs role="navigation">
+    <div className={styles.editorFieldTabs}>
+      <Tabs role="navigation" withDivider>
         <StateLink to="^.fields">
           {({ getHref }) => (
             <Tab id="fields" href={getHref()} selected={props.currentTab === 'fields'}>

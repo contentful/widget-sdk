@@ -7059,24 +7059,6 @@ pre,
   .add-field-dialog__note {
     margin: 1.928571428571429em 0;
   }
-  .ct-fields-drop-container {
-    max-width: 50em;
-    margin: 1em 0 1em 0;
-  }
-  .ct-field-draggable {
-    cursor: -webkit-grab;
-    cursor: grab;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    margin: 0 0 1em 0;
-    outline: none;
-  }
-  .ct-field-draggable:focus {
-    -webkit-box-shadow: 0px 0px 7px #3c80cf;
-    box-shadow: 0px 0px 7px #3c80cf;
-  }
   .ct-field {
     padding-right: 1em;
     height: 3.214285714285714em;

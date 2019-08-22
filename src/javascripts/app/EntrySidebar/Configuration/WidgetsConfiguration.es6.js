@@ -32,8 +32,8 @@ const styles = {
     marginBottom: tokens.spacingM
   }),
   mainColumn: css({
-    minWidth: '400px',
-    width: '400px',
+    minWidth: '384px',
+    width: '384px',
     border: `1px solid ${tokens.colorElementMid}`,
     backgroundColor: tokens.colorWhite,
     minHeight: '500px',
@@ -41,21 +41,33 @@ const styles = {
     boxShadow: tokens.boxShadowDefault
   }),
   additionalColumn: css({
-    minWidth: '400px',
-    width: '400px',
+    minWidth: '384px',
+    width: '384px',
     border: `1px solid ${tokens.colorElementMid}`,
     borderLeft: 'none',
     minHeight: '500px',
     padding: `${tokens.spacingM} ${tokens.spacingL}`,
     boxShadow: tokens.boxShadowDefault
+  }),
+  heading: css({
+    marginBottom: tokens.spacingS
+  }),
+  description: css({
+    marginBottom: tokens.spacingL
+  }),
+  radioButtonField: css({
+    marginLeft: tokens.spacing3Xl
+  }),
+  note: css({
+    marginBottom: tokens.spacingXl
   })
 };
 
 export default function WidgetsConfiguration({ state, dispatch, defaultAvailableItems }) {
   return (
     <React.Fragment>
-      <Heading className="f36-margin-bottom--s">Sidebar configuration</Heading>
-      <Paragraph className="f36-margin-bottom--l">
+      <Heading className={styles.heading}>Sidebar configuration</Heading>
+      <Paragraph className={styles.description}>
         Configure the sidebar for this content type.
       </Paragraph>
       <FieldGroup>
@@ -72,10 +84,9 @@ export default function WidgetsConfiguration({ state, dispatch, defaultAvailable
             }}
             value={SidebarType.default}
           />
-          <div className="f36-margin-top--m" />
           <RadioButtonField
             testId="custom-sidebar-option"
-            className="f36-margin-left--3xl"
+            className={styles.radioButtonField}
             labelText="Use custom sidebar"
             helpText="Used only for this content type"
             name="sidebarType"
@@ -121,7 +132,7 @@ export default function WidgetsConfiguration({ state, dispatch, defaultAvailable
           </React.Fragment>
         )}
       </div>
-      <Note className="f36-margin-bottom--xl">
+      <Note className={styles.note}>
         <FeedbackButton
           target="extensibility"
           about="Sidebar configuration"
