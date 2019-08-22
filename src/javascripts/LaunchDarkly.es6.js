@@ -51,6 +51,7 @@ export function clearCache() {
  * - currentOrgPlanIsEnterprise : true if the current org is on an enterprise plan (works for V1 only)
  * - currentOrgHasSpace : true if the current org has a space
  * - currentOrgPricingVersion : the current organization pricing version, currently either `pricing_version_1` or `pricing_version_2`
+ * - currentOrgHasPaymentMethod : the organizations that have no payment method added, regardless of their pricing version
 
  * - currentUserOrgRole : user's role in current org
  * - currentUserHasAtleastOneSpace : true if the user has atleast one space in all the orgs he/she is a member of
@@ -96,6 +97,7 @@ async function ldUser(user, org, space) {
       currentOrgPricingVersion: org.pricingVersion,
       currentOrgPlanIsEnterprise: isLegacyEnterprise(org),
       currentOrgHasSpace: Boolean(_.get(spacesByOrg, [organizationId, 'length'], 0)),
+      currentOrgHasPaymentMethod: Boolean(org.isBillable),
 
       currentUserOrgRole: getOrgRole(user, organizationId),
       currentUserHasAtleastOneSpace: hasAnOrgWithSpaces(spacesByOrg),
