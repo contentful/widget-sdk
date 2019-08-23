@@ -55,7 +55,7 @@ export async function getForEditor(extensionLoader, editorInterface = {}) {
   };
 }
 
-function buildExtensionWidget({ sys, extension, parameters }) {
+function buildExtensionWidget({ sys, extension, extensionDefinition, parameters }) {
   const { src, srcdoc } = extension;
 
   // We identify srcdoc-backed extensions by taking a look
@@ -68,6 +68,7 @@ function buildExtensionWidget({ sys, extension, parameters }) {
   return {
     ...base,
     id: sys.id,
+    extensionDefinitionId: get(extensionDefinition, ['sys', 'id']),
     name: extension.name,
     fieldTypes: (extension.fieldTypes || []).map(toInternalFieldType),
     sidebar: extension.sidebar,

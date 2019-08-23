@@ -5,6 +5,7 @@ import { addUserOrgSpace } from './Decorators.es6';
 export const EXPECTED_EVENT_PROPS = [
   'location',
   'extension_id',
+  'extension_definition_id',
   'extension_name',
   'src',
   'installation_params',
