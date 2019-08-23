@@ -7,11 +7,13 @@ import * as spaceContextMocked from 'ng/spaceContext';
 import { getVariation } from 'LaunchDarkly.es6';
 
 const organizationId = 'aaaa-dddd';
+const spaceId = 'space-id';
 
 describe('BooleanFeatureFlag Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     spaceContextMocked.getData.mockReturnValue(organizationId);
+    spaceContextMocked.getId.mockReturnValue(spaceId);
   });
   it('renders children if feature is enabled', async () => {
     getVariation.mockResolvedValue(true);
@@ -20,7 +22,7 @@ describe('BooleanFeatureFlag Component', () => {
     await flushPromises();
     wrapper.update();
 
-    expect(getVariation).toHaveBeenCalledWith('ff', { organizationId });
+    expect(getVariation).toHaveBeenCalledWith('ff', { organizationId, spaceId });
     expect(wrapper).toMatchSnapshot();
   });
 
@@ -31,7 +33,7 @@ describe('BooleanFeatureFlag Component', () => {
     await flushPromises();
     wrapper.update();
 
-    expect(getVariation).toHaveBeenCalledWith('ff', { organizationId });
+    expect(getVariation).toHaveBeenCalledWith('ff', { organizationId, spaceId });
     expect(wrapper).toMatchSnapshot();
   });
 
