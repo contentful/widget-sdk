@@ -63,7 +63,8 @@ export default class AppListItem extends Component {
       tagLine: PropTypes.string,
       icon: PropTypes.string,
       installed: PropTypes.bool.isRequired,
-      isDevApp: PropTypes.bool
+      isDevApp: PropTypes.bool,
+      enabled: PropTypes.bool.isRequired
     }),
     openDetailModal: PropTypes.func.isRequired
   };
@@ -117,7 +118,7 @@ export default class AppListItem extends Component {
           )}
           {!app.isDevApp && (
             <TextLink onClick={openDetailsFunc} linkType="primary">
-              About
+              {app.enabled ? 'About' : 'Enterprise feature'}
             </TextLink>
           )}
         </div>

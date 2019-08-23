@@ -18,13 +18,18 @@ import AdminOnly from 'app/common/AdminOnly.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import * as Telemetry from 'i13n/Telemetry.es6';
-
+import EmptyStateContainer, {
+  defaultSVGStyle
+} from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+import EmptyStateIllustration from 'svg/connected-forms-illustration.es6';
 import { installOrUpdate, uninstall } from './AppOperations.es6';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus.es6';
 import UninstallModal from './UninstallModal.es6';
 import AppPermissions from './AppPermissions.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import ClientStorage from 'TheStore/ClientStorage.es6';
+
+import { websiteUrl } from 'Config.es6';
 
 const sessionStorage = ClientStorage('session');
 
@@ -128,6 +133,9 @@ export default class AppRoute extends Component {
   static propTypes = {
     goBackToList: PropTypes.func.isRequired,
     appId: PropTypes.string.isRequired,
+    productCatalog: PropTypes.shape({
+      isAppEnabled: PropTypes.func.isRequired
+    }),
     repo: PropTypes.shape({
       getExtensionDefinitionForApp: PropTypes.func.isRequired,
       getExtensionForExtensionDefinition: PropTypes.func.isRequired,
@@ -200,7 +208,7 @@ export default class AppRoute extends Component {
   };
 
   initialize = async () => {
-    const { appHookBus, appId, repo } = this.props;
+    const { appHookBus, appId, repo, productCatalog } = this.props;
 
     const [extensionDefinition, appsListing] = await Promise.all([
       repo.getExtensionDefinitionForApp(appId),
@@ -209,7 +217,10 @@ export default class AppRoute extends Component {
 
     const appInfo = Object.values(appsListing).find(app => app.fields.slug === appId);
 
-    const { extension } = await this.checkAppStatus(extensionDefinition);
+    const [{ extension }, appEnabled] = await Promise.all([
+      this.checkAppStatus(extensionDefinition),
+      productCatalog.isAppEnabled(appInfo)
+    ]);
 
     appHookBus.setExtension(extension);
     appHookBus.on(APP_EVENTS_IN.CONFIGURED, this.onAppConfigured);
@@ -217,6 +228,7 @@ export default class AppRoute extends Component {
 
     this.setState({
       ready: true,
+      appEnabled,
       isInstalled: !!extension,
       extensionDefinition,
       title: get(appInfo, ['fields', 'title'], extensionDefinition.name),
@@ -318,6 +330,29 @@ export default class AppRoute extends Component {
     this.props.goBackToList();
   };
 
+  renderAccessDenied() {
+    return (
+      <Workbench>
+        <Workbench.Header title={this.renderTitle()} onBack={this.props.goBackToList} />
+        <Workbench.Content type="text">
+          <EmptyStateContainer data-test-id="extensions.empty">
+            <div className={defaultSVGStyle}>
+              <EmptyStateIllustration />
+            </div>
+            <Heading>Not included in your pricing plan</Heading>
+            <Paragraph>This app is available to customers on a committed, annual plan.</Paragraph>
+            <Paragraph>
+              If your interested in learning more about our expanded, enterprise-grade platform,
+              contact your account manager.
+            </Paragraph>
+
+            <Button href={websiteUrl('/support/?upgrade-pricing=true')}>Contact us</Button>
+          </EmptyStateContainer>
+        </Workbench.Content>
+      </Workbench>
+    );
+  }
+
   renderBusyOverlay() {
     if (!this.state.busyWith) {
       return null;
@@ -417,10 +452,14 @@ export default class AppRoute extends Component {
   };
 
   render() {
-    const { ready, isInstalled, acceptedPermissions, appIcon, title } = this.state;
+    const { ready, isInstalled, acceptedPermissions, appIcon, title, appEnabled } = this.state;
 
     if (!ready) {
       return this.renderLoading();
+    }
+
+    if (!appEnabled && !isInstalled) {
+      return this.renderAccessDenied();
     }
 
     if (!isInstalled && !acceptedPermissions) {

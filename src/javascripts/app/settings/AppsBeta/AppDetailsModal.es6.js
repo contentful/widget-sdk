@@ -14,6 +14,7 @@ import {
 import StateLink from 'app/common/StateLink.es6';
 import AppPermissions from './AppPermissions.es6';
 import ClientStorage from 'TheStore/ClientStorage.es6';
+import { websiteUrl } from 'Config.es6';
 
 const sessionStorage = ClientStorage('session');
 sessionStorage.set('appPermissions', JSON.stringify({}));
@@ -76,6 +77,9 @@ const styles = {
   }),
   modalPermissions: css({
     whiteSpace: 'pre-line'
+  }),
+  contactUs: css({
+    textDecoration: 'none'
   })
 };
 
@@ -93,7 +97,8 @@ const AppPropType = PropTypes.shape({
     icon: PropTypes.node.isRequired
   }).isRequired,
   icon: PropTypes.string.isRequired,
-  categories: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
+  categories: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  enabled: PropTypes.bool.isRequired
 });
 
 const externalLinkProps = {
@@ -203,17 +208,39 @@ export function AppDetails(props) {
         <div className={styles.description}>{app.description}</div>
       </div>
       <div className={styles.sidebarColumn}>
-        <StateLink to="^.detail" params={{ appId: app.appId }}>
-          {({ onClick }) => (
-            <Button
-              onClick={determineOnClick(app.installed, onClick, onClose, setShowPermissions)}
-              isFullWidth
-              buttonType="primary">
-              {app.installed ? 'Configure' : 'Install'}
-            </Button>
-          )}
-        </StateLink>
+        {app.enabled || app.installed ? (
+          <StateLink to="^.detail" params={{ appId: app.appId }}>
+            {({ onClick }) => (
+              <Button
+                onClick={determineOnClick(app.installed, onClick, onClose, setShowPermissions)}
+                isFullWidth
+                buttonType="primary">
+                {app.installed ? 'Configure' : 'Install'}
+              </Button>
+            )}
+          </StateLink>
+        ) : (
+          <Button
+            isFullWidth
+            href={websiteUrl('/support/?upgrade-pricing=true')}
+            buttonType="primary">
+            Contact us
+          </Button>
+        )}
         <div className={styles.sidebarSpacing} />
+        {!app.enabled && !app.installed && (
+          <>
+            <Paragraph>This app is available to customers on a committed, annual plan.</Paragraph>
+            <Paragraph
+              className={css({
+                marginTop: tokens.spacingM
+              })}>
+              If your interested in learning more about our expanded, enterprise-grade platform,
+              contact your account manager.
+            </Paragraph>
+            <div className={styles.sidebarSpacing} />
+          </>
+        )}
         {app.links.length > 0 && (
           <>
             <Subheading element="h3" className={styles.sidebarSubheading}>

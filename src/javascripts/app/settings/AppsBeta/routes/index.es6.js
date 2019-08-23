@@ -1,10 +1,12 @@
 import AppsListPage from '../AppsListPage.es6';
 import AppPage from '../AppPage.es6';
+import { AppProductCatalog } from '../AppProductCatalog.es6';
 import { makeAppHookBus } from '../AppHookBus.es6';
 import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge.es6';
 import * as Navigator from 'states/Navigator.es6';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
 import createAppsRepo from '../AppsRepo.es6';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 
 export default {
   name: 'appsBeta',
@@ -22,6 +24,7 @@ export default {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
             repo: createAppsRepo(spaceContext.extensionDefinitionLoader, spaceContext.endpoint),
+            productCatalog: new AppProductCatalog(spaceContext.space.data.sys.id, getSpaceFeature),
             organizationId: spaceContext.organization.sys.id,
             spaceId: spaceContext.space.data.sys.id,
             userId: spaceContext.user.sys.id
@@ -53,8 +56,14 @@ export default {
             SlideInNavigator
           });
 
+          const productCatalog = new AppProductCatalog(
+            spaceContext.space.data.sys.id,
+            getSpaceFeature
+          );
+
           return {
             goBackToList: () => $state.go('^.list'),
+            productCatalog,
             appId,
             repo,
             bridge,
