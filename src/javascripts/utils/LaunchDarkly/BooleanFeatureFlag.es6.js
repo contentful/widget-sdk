@@ -24,7 +24,8 @@ export default class BooleanFeatureFlag extends React.Component {
   async componentDidMount() {
     const spaceContext = getModule('spaceContext');
     const currentVariation = await getVariation(this.props.featureFlagKey, {
-      organizationId: spaceContext.getData('organization.sys.id')
+      organizationId: spaceContext.getData('organization.sys.id'),
+      spaceId: spaceContext.getId()
     });
 
     if (this.isUnmounted) {
