@@ -1,10 +1,16 @@
 import * as K from 'test/helpers/mocks/kefir';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/helpers/helpers';
 
 describe('app/entity_editor/Validator.es6', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
+    const Validator = await this.system.import('app/entity_editor/Validator.es6');
+
     module('contentful/test');
-    const createDocument = this.$inject('mocks/entityEditor/Document').create;
-    const Validator = this.$inject('app/entity_editor/Validator.es6');
+
+    await $initialize();
+
+    const createDocument = $inject('mocks/entityEditor/Document').create;
     this.schemaErrors = sinon.stub();
     this.validator = Validator.createBase(
       _error => '',

@@ -1,14 +1,16 @@
-'use strict';
 import _ from 'lodash';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 describe('FormWidgetsController#widgets', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     module('contentful/test');
 
-    this.$inject('mocks/spaceContext').init();
-    this.scope = this.$inject('$rootScope').$new();
+    await $initialize();
 
-    this.scope.editorContext = this.$inject('mocks/entityEditor/Context').create();
+    $inject('mocks/spaceContext').init();
+    this.scope = $inject('$rootScope').$new();
+
+    this.scope.editorContext = $inject('mocks/entityEditor/Context').create();
     this.scope.contentType = { getId: _.constant('ctid') };
     this.scope.preferences = {};
     this.scope.localeData = {};
@@ -26,9 +28,9 @@ describe('FormWidgetsController#widgets', () => {
     ];
 
     this.createController = function() {
-      const $controller = this.$inject('$controller');
+      const $controller = $inject('$controller');
       $controller('FormWidgetsController', { $scope: this.scope, controls });
-      this.$apply();
+      $apply();
     };
   });
 
@@ -65,7 +67,7 @@ describe('FormWidgetsController#widgets', () => {
           });
 
           it('shows the fields if the preference flag is set', function() {
-            this.$apply();
+            $apply();
             expect(this.scope.widgets.length).toBe(1);
           });
         });
@@ -102,7 +104,7 @@ describe('FormWidgetsController#widgets', () => {
         });
 
         it('does not show the field', function() {
-          this.$apply();
+          $apply();
           expect(this.scope.widgets.length).toBe(0);
         });
 
@@ -136,7 +138,7 @@ describe('FormWidgetsController#widgets', () => {
           });
 
           it('does not show the field', function() {
-            this.$apply();
+            $apply();
             expect(this.scope.widgets.length).toBe(0);
           });
 
@@ -146,7 +148,7 @@ describe('FormWidgetsController#widgets', () => {
             });
 
             it('shows the field', function() {
-              this.$apply();
+              $apply();
               expect(this.scope.widgets.length).toBe(1);
             });
           });
@@ -193,13 +195,13 @@ describe('FormWidgetsController#widgets', () => {
       });
 
       it('does not show the field', function() {
-        this.$apply();
+        $apply();
         expect(this.scope.widgets.length).toBe(0);
       });
 
       it('shows the fields if the preference flag is set', function() {
         this.scope.preferences.showDisabledFields = true;
-        this.$apply();
+        $apply();
         expect(this.scope.widgets.length).toBe(1);
       });
 

@@ -1,13 +1,17 @@
 import * as K from 'test/helpers/mocks/kefir';
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
+import { $inject, $initialize, $apply } from 'test/helpers/helpers';
 
 describe('FieldLocaleController', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     module('contentful/test');
-    const $rootScope = this.$inject('$rootScope');
-    const $controller = this.$inject('$controller');
 
-    this.createDocument = this.$inject('mocks/entityEditor/Document').create;
+    await $initialize();
+
+    const $rootScope = $inject('$rootScope');
+    const $controller = $inject('$controller');
+
+    this.createDocument = $inject('mocks/entityEditor/Document').create;
     this.sandbox = sinon.sandbox.create();
     this.init = function(patchScope) {
       this.otDoc = this.otDoc || this.createDocument();
@@ -17,7 +21,7 @@ describe('FieldLocaleController', () => {
         },
         locale: { internal_code: 'LID' },
         otDoc: this.otDoc,
-        editorContext: this.$inject('mocks/entityEditor/Context').create(),
+        editorContext: $inject('mocks/entityEditor/Context').create(),
         entrySidebarProps: {
           emitter: {
             on: this.sandbox.stub()
@@ -28,7 +32,7 @@ describe('FieldLocaleController', () => {
         patchScope(scope);
       }
       scope.fieldLocale = $controller('FieldLocaleController', { $scope: scope, $attrs: {} });
-      this.$apply();
+      $apply();
       return scope;
     };
   });
@@ -56,7 +60,7 @@ describe('FieldLocaleController', () => {
 
       const errorsStream = K.extractValues(scope.fieldLocale.errors$);
       scope.editorContext.validator.errors$.set(fieldLocaleErrors.concat(otherErrors));
-      this.$apply();
+      $apply();
       expect(scope.fieldLocale.errors).toEqual(fieldLocaleErrors);
       expect(errorsStream[0]).toEqual(fieldLocaleErrors);
     });
@@ -64,7 +68,7 @@ describe('FieldLocaleController', () => {
     it('is set to "null" if no errors match', function() {
       const scope = this.init();
       scope.editorContext.validator.errors$.set([{ path: 'does not match' }]);
-      this.$apply();
+      $apply();
       const errorsStream = K.extractValues(scope.fieldLocale.errors$);
       expect(scope.fieldLocale.errors).toEqual(null);
       expect(errorsStream[0]).toEqual(null);
@@ -79,7 +83,7 @@ describe('FieldLocaleController', () => {
       scope.locale.optional = true;
       const errorsStream = K.extractValues(scope.fieldLocale.errors$);
       scope.editorContext.validator.errors$.set(errors);
-      this.$apply();
+      $apply();
       expect(scope.fieldLocale.errors).toEqual([errors[1]]);
       expect(errorsStream[0]).toEqual([errors[1]]);
     });
@@ -138,7 +142,7 @@ describe('FieldLocaleController', () => {
     it('watches "docPresence" with path', function() {
       const scope = this.init();
       this.otDoc.collaboratorsFor().set(['USER']);
-      this.$apply();
+      $apply();
       expect(scope.fieldLocale.collaborators).toEqual(['USER']);
     });
   });
@@ -163,7 +167,7 @@ describe('FieldLocaleController', () => {
     it('does not set focus on a disabled field', function() {
       this.otDoc.permissions.canEditFieldLocale.returns(false);
       const scope = this.init();
-      this.$apply();
+      $apply();
       scope.fieldLocale.setActive(true);
       K.assertCurrentValue(scope.editorContext.focus.field$, null);
     });
@@ -186,7 +190,7 @@ describe('FieldLocaleController', () => {
       this.hasEditingPermission.returns(true);
       const scope = this.init();
       this.otDoc.state.isConnected$.set(false);
-      this.$apply();
+      $apply();
       expect(scope.fieldLocale.access).toEqual({
         disconnected: true,
         disabled: true
@@ -197,7 +201,7 @@ describe('FieldLocaleController', () => {
       this.otDoc.status$ = K.createMockProperty('internal-server-error');
       this.otDoc.state.isConnected$.set(true);
       const scope = this.init();
-      this.$apply();
+      $apply();
       expect(scope.fieldLocale.access).toEqual({ disconnected: true, disabled: true });
     });
 
@@ -206,7 +210,7 @@ describe('FieldLocaleController', () => {
       const scope = this.init(scope => {
         scope.widget.field.disabled = true;
       });
-      this.$apply();
+      $apply();
       expect(scope.fieldLocale.access).toEqual({
         editing_disabled: true,
         disabled: true
@@ -218,7 +222,7 @@ describe('FieldLocaleController', () => {
       const scope = this.init(scope => {
         scope.widget.field.type = 'RichText';
       });
-      this.$apply();
+      $apply();
       expect(scope.fieldLocale.access).toEqual({
         occupied: true,
         disabled: true
@@ -228,7 +232,7 @@ describe('FieldLocaleController', () => {
     it('is "disabled" and "denied" without permissions and with connection', function() {
       this.hasEditingPermission.returns(false);
       const scope = this.init();
-      this.$apply();
+      $apply();
       expect(scope.fieldLocale.access).toEqual({
         denied: true,
         disabled: true
@@ -239,7 +243,7 @@ describe('FieldLocaleController', () => {
       this.hasEditingPermission.returns(false);
       const scope = this.init();
       this.otDoc.state.isConnected$.set(false);
-      this.$apply();
+      $apply();
       expect(scope.fieldLocale.access).toEqual({
         denied: true,
         disabled: true
@@ -249,7 +253,7 @@ describe('FieldLocaleController', () => {
     it('is "editable" with permissions and connection', function() {
       this.hasEditingPermission.returns(true);
       const scope = this.init();
-      this.$apply();
+      $apply();
       expect(scope.fieldLocale.access).toEqual({
         editable: true
       });

@@ -1,27 +1,35 @@
 import sinon from 'sinon';
+import { $initializeAndReregister, $inject, $compile, $apply } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
 
 describe('cfFileEditor Directive', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.removeDirectives('cfFileDrop');
-      $provide.value('services/Filestack.es6', {
-        makeDropPane: sinon.stub(),
-        pick: sinon.stub().resolves({ fileName: 'x.jpg' })
-      });
+  beforeEach(async function() {
+    this.stubs = {
+      pick: sinon.stub().resolves({ fileName: 'x.jpg' }),
+      Notification_error: sinon.stub()
+    };
+    this.system.set('services/Filestack.es6', {
+      makeDropPane: sinon.stub(),
+      pick: this.stubs.pick
     });
 
-    // This is needed to transform the image domain
-    const tokenStore = this.$inject('services/TokenStore.es6');
-    tokenStore.getDomains = sinon.stub().returns({});
+    this.system.set('services/TokenStore.es6', {
+      getDomains: sinon.stub().returns({})
+    });
 
-    const cfWidgetApi = this.$inject('mocks/widgetApi').create();
+    const ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
+    ComponentLibrary.Notification.error = this.stubs.Notification_error;
+
+    await $initializeAndReregister(this.system, ['app/widgets/FileEditorController']);
+
+    const cfWidgetApi = $inject('mocks/widgetApi').create();
     this.fieldApi = cfWidgetApi.field;
     this.fieldApi.setValue = sinon.stub().resolves();
     this.fieldApi.removeValue = sinon.stub().resolves();
 
-    const editorContext = this.$inject('mocks/entityEditor/Context').create();
+    const editorContext = $inject('mocks/entityEditor/Context').create();
 
-    this.el = this.$compile(
+    this.el = $compile(
       '<cf-file-editor />',
       {
         editorData: { entity: { process: sinon.stub().resolves() } },
@@ -48,20 +56,14 @@ describe('cfFileEditor Directive', () => {
     };
   });
 
-  afterEach(function() {
-    this.el.remove();
-    this.scope.$destroy();
-  });
-
   describe('scope.selectFile()', () => {
     beforeEach(function() {
-      this.Filestack = this.$inject('services/Filestack.es6');
       this.scope.selectFile();
-      this.$apply();
+      $apply();
     });
 
     it('calls Filestack.pick', function() {
-      sinon.assert.called(this.Filestack.pick);
+      sinon.assert.called(this.stubs.pick);
     });
 
     it('sets the file on the field API', function() {
@@ -86,28 +88,26 @@ describe('cfFileEditor Directive', () => {
       this.scope.otDoc.getValueAt = sinon.stub();
       this.scope.otDoc.getValueAt.withArgs(['fields', 'title', 'en-US']).returns('title');
       this.scope.selectFile();
-      this.$apply();
+      $apply();
       // called once in the intial run
       sinon.assert.calledOnce(this.scope.otDoc.setValueAt);
     });
 
     it('runs validations on file upload errors', function() {
-      this.Filestack.pick.rejects(new Error());
+      this.stubs.pick.rejects(new Error());
       this.scope.selectFile();
-      this.$apply();
+      $apply();
       // 1. set value, 2. catch error
       sinon.assert.calledTwice(this.scope.editorContext.validator.run);
     });
 
     it('removes value and shows error when asset processing fails', function() {
-      const ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
-      ComponentLibrary.Notification.error = sinon.stub();
       this.scope.editorData.entity.process = sinon.stub().rejects();
       this.scope.selectFile();
-      this.$apply();
+      $apply();
       // both called once in the second run
       sinon.assert.calledOnce(this.fieldApi.removeValue);
-      sinon.assert.calledOnce(ComponentLibrary.Notification.error);
+      sinon.assert.calledOnce(this.stubs.Notification_error);
     });
   });
 
@@ -115,7 +115,7 @@ describe('cfFileEditor Directive', () => {
     beforeEach(function() {
       this.fieldApi.removeValue = sinon.stub().resolves();
       this.scope.deleteFile();
-      this.$apply();
+      $apply();
     });
 
     it('removes the value from the field API', function() {
@@ -137,12 +137,12 @@ describe('cfFileEditor Directive', () => {
       contentType: 'image/png'
     });
 
-    this.$apply();
+    $apply();
     const loader = this.el.find('.file-progress:first');
     expect(loader.is(':visible')).toBe(true);
 
     this.el.find('img').trigger('load');
-    this.$apply();
+    $apply();
     expect(loader.is(':visible')).toBe(false);
   });
 

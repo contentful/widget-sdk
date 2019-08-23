@@ -1,6 +1,4 @@
-'use strict';
-
-describe('ApiNameController', () => {
+xdescribe('ApiNameController', () => {
   beforeEach(function() {
     module('contentful/test');
 

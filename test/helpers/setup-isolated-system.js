@@ -35,6 +35,9 @@ beforeEach(function() {
       // registration below
       delete SystemJS[Object.getOwnPropertySymbols(SystemJS)[0]].records[normalizedPath];
 
+      SystemJS[Object.getOwnPropertySymbols(SystemJS)[0]].records[normalizedPath] = newModule;
+
+      SystemJS.registry.set(path, newModule);
       SystemJS.registry.set(normalizedPath, newModule);
 
       return null;

@@ -93,7 +93,6 @@ describe('Role List Controller', () => {
       getOrganization: sinon.stub().resolves(this.organization)
     });
 
-    // const { default: registerRoleListFile } = await this.system.import('access_control/RoleListDirective.es6');
     const { default: register } = await this.system.import('access_control/RoleListController');
 
     module('contentful/test');

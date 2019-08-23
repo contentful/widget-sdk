@@ -1,12 +1,15 @@
 import _ from 'lodash';
+import { $initialize, $compile } from 'test/helpers/helpers';
 
 describe('cfSnapshotPresenter', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     module('contentful/test', $provide => {
       $provide.constant('cfIframeWidgetDirective', () => {});
       $provide.constant('cfWidgetRendererDirective', () => {});
       $provide.constant('cfWidgetApiDirective', () => {});
     });
+
+    await $initialize();
 
     this.prepare = (value, field = {}, version = 'current') => {
       const data = {
@@ -17,10 +20,14 @@ describe('cfSnapshotPresenter', () => {
         version
       };
 
-      const el = this.$compile('<cf-snapshot-presenter />', data);
+      this.el = $compile('<cf-snapshot-presenter />', data);
 
-      return el.scope();
+      return this.el.scope();
     };
+  });
+
+  afterEach(function() {
+    this.el && this.el.remove();
   });
 
   describe('$scope.value', () => {

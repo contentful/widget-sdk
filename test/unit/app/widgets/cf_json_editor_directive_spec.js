@@ -1,9 +1,11 @@
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initializeAndReregister, $inject, $apply, $compile } from 'test/helpers/helpers';
 
 describe('cfJsonEditor directive', () => {
   let cmEditor, fieldApi, element;
 
-  beforeEach(function() {
+  beforeEach(async function() {
     cmEditor = {
       on: sinon.stub(),
       doc: {
@@ -14,32 +16,37 @@ describe('cfJsonEditor directive', () => {
       historySize: sinon.stub().returns({})
     };
 
-    module('contentful/test', $provide => {
-      function debounce(fn) {
-        return function(...args) {
-          debounce.queue.push({ fn: fn, args: args });
-        };
-      }
-
-      debounce.queue = [];
-      debounce.flush = () => {
-        debounce.queue.forEach(call => {
-          call.fn.apply(null, call.args);
-        });
+    function debounce(fn) {
+      return function(...args) {
+        debounce.queue.push({ fn: fn, args: args });
       };
+    }
 
-      $provide.constant('lodash/debounce', {
-        default: debounce
+    debounce.queue = [];
+    debounce.flush = () => {
+      debounce.queue.forEach(call => {
+        call.fn.apply(null, call.args);
       });
-      $provide.constant('codemirror', {
-        default: sinon.stub().returns(cmEditor)
-      });
+    };
+
+    this.stubs = {
+      debounce
+    };
+
+    this.system.set('lodash/debounce', {
+      default: this.stubs.debounce
     });
 
-    this.widgetApi = this.$inject('mocks/widgetApi').create();
+    this.system.set('codemirror', {
+      default: sinon.stub().returns(cmEditor)
+    });
+
+    await $initializeAndReregister(this.system, ['app/widgets/json/JsonEditorController']);
+
+    this.widgetApi = $inject('mocks/widgetApi').create();
     fieldApi = this.widgetApi.field;
 
-    element = this.$compile(
+    element = $compile(
       '<cf-json-editor />',
       {},
       {
@@ -59,10 +66,10 @@ describe('cfJsonEditor directive', () => {
 
   it('sets disabled view content when value changes', function() {
     fieldApi.onValueChanged.yield({ json: true });
-    this.$apply();
+    $apply();
     expect(element.find('pre:visible').length).toBe(0);
     this.widgetApi.fieldProperties.isDisabled$.set(true);
-    this.$apply();
+    $apply();
     expect(JSON.parse(element.find('pre').text())).toEqual({ json: true });
   });
 
@@ -70,10 +77,9 @@ describe('cfJsonEditor directive', () => {
     beforeEach(function() {
       fieldApi.setValue = sinon.stub();
 
-      const debounce = this.$inject('lodash/debounce').default;
       this.flush = function() {
-        debounce.flush();
-        this.$apply();
+        this.stubs.debounce.flush();
+        $apply();
       };
 
       this.emitContentChange = content => {

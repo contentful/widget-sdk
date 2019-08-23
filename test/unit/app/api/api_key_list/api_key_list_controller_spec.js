@@ -1,29 +1,16 @@
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
+import { beforeEach, it } from 'test/helpers/dsl';
 
 // TODO merge this with directive tests
 describe('API Key List Controller', () => {
   let stubs = {};
 
-  beforeEach(function() {
+  beforeEach(async function() {
     stubs = {
       apiErrorHandlerStub: sinon.stub()
     };
-
-    module('contentful/test', $provide => {
-      // TODO: truly mock this somewhere
-      $provide.value('services/ResourceService.es6', {
-        default: () => {
-          return {
-            get: sinon.stub().resolves(this.resource)
-          };
-        }
-      });
-      $provide.value('app/common/ReloadNotification.es6', {
-        default: {
-          apiErrorHandler: stubs.apiErrorHandlerStub
-        }
-      });
-    });
 
     this.resource = {
       usage: 0,
@@ -37,11 +24,35 @@ describe('API Key List Controller', () => {
       }
     };
 
-    this.scope = this.$inject('$rootScope').$new();
-    this.scope.context = {};
+    this.system.set('services/ResourceService.es6', {
+      default: () => {
+        return {
+          get: sinon.stub().resolves(this.resource)
+        };
+      }
+    });
+    this.system.set('app/common/ReloadNotification.es6', {
+      default: {
+        apiErrorHandler: stubs.apiErrorHandlerStub
+      }
+    });
+
+    const { default: register } = await this.system.import(
+      'app/api/api_key_list/apiKeyListDirective.es6'
+    );
+
+    module('contentful/test');
+
+    await $initialize();
+
+    register();
+
+    this.scope = {
+      context: {}
+    };
 
     this.getApiKeys = sinon.stub().resolves();
-    this.spaceContext = _.extend(this.$inject('spaceContext'), {
+    this.spaceContext = _.extend($inject('spaceContext'), {
       getData: _.constant(2),
       space: { getOrganizationId: _.constant(1), getId: _.constant('1234') },
       apiKeyRepo: { getAll: this.getApiKeys },
@@ -58,10 +69,11 @@ describe('API Key List Controller', () => {
     });
 
     this.create = () => {
-      this.$inject('$controller')('ApiKeyListController', {
-        $scope: this.scope
+      $inject('$controller')('ApiKeyListController', {
+        $scope: this.scope,
+        spaceContext: this.spaceContext
       });
-      this.scope.$digest();
+      $apply();
     };
   });
 

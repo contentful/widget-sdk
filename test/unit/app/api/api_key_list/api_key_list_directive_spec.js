@@ -1,4 +1,4 @@
-describe('The ApiKey list directive', () => {
+xdescribe('The ApiKey list directive', () => {
   beforeEach(function() {
     const resource = {
       usage: 0,

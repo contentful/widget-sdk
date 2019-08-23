@@ -8,6 +8,8 @@ import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
 import createNewWidgetApi from 'app/widgets/NewWidgetApi/createNewWidgetApi.es6';
+import * as Navigator from 'states/Navigator.es6';
+import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker.es6';
 
 export default function register() {
   /**
@@ -27,17 +29,7 @@ export default function register() {
     'spaceContext',
     'entitySelector',
     'entityCreator',
-    'states/Navigator.es6',
-    'app/entity_editor/LoadEventTracker.es6',
-    (
-      $compile,
-      $rootScope,
-      spaceContext,
-      entitySelector,
-      entityCreator,
-      Navigator,
-      LoadEventTracker
-    ) => {
+    ($compile, $rootScope, spaceContext, entitySelector, entityCreator) => {
       return {
         scope: true,
         require: '?^cfWidgetApi',

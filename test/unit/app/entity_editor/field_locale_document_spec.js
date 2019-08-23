@@ -1,14 +1,20 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/helpers/helpers';
 
 describe('entityEditor/FieldLocaleDocument', () => {
   const fieldsPath = ['FID', 'LC'];
   const path = ['fields', ...fieldsPath];
 
-  beforeEach(function() {
+  beforeEach(async function() {
+    const createFieldLocaleDoc = (await this.system.import(
+      'app/entity_editor/FieldLocaleDocument.es6'
+    )).default;
+
     module('contentful/test');
 
-    const createDocument = this.$inject('mocks/entityEditor/Document').create;
-    const createFieldLocaleDoc = this.$inject('app/entity_editor/FieldLocaleDocument.es6').default;
+    await $initialize();
+
+    const createDocument = $inject('mocks/entityEditor/Document').create;
 
     this.rootDoc = createDocument();
     this.doc = createFieldLocaleDoc(this.rootDoc, ...fieldsPath);

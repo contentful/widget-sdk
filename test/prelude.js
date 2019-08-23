@@ -124,15 +124,24 @@
       await SystemJS.import('test/helpers/dsl');
       await SystemJS.import('test/helpers/hooks');
       await SystemJS.import('test/helpers/sinon');
+      await SystemJS.import('test/helpers/matchers');
       await SystemJS.import('test/helpers/contentful_mocks');
       await SystemJS.import('test/helpers/mocks/entity_editor_document');
+      await SystemJS.import('test/helpers/mocks/editor_context');
       await SystemJS.import('test/helpers/mocks/cf_stub');
       await SystemJS.import('test/helpers/mocks/space_context');
+      await SystemJS.import('test/helpers/mocks/ot_doc');
+      await SystemJS.import('test/helpers/mocks/widget_api');
       await SystemJS.import('prelude');
       await SystemJS.import('test/helpers/application');
       await Promise.all(
         testModules.reduce((memo, name) => {
-          const prefixes = ['test/unit/access_control', 'test/unit/account', 'test/unit/analytics'];
+          const prefixes = [
+            'test/unit/access_control',
+            'test/unit/account',
+            'test/unit/analytics',
+            'test/unit/app'
+          ];
 
           if (prefixes.find(prefix => name.startsWith(prefix))) {
             memo.push(SystemJS.import(name));

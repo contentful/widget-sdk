@@ -1,25 +1,32 @@
 import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
+import sinon from 'sinon';
 import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
+import { $initializeAndReregister, $inject, $apply } from 'test/helpers/helpers';
 
 describe('cfWidgetApi directive', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.constant('spaceContext', {
-        cma: {
-          getEntry: _.noop,
-          getContentType: _.noop,
-          getAsset: _.noop
-        }
-      });
-      $provide.constant('services/localeStore.es6', {
-        default: createLocaleStoreMock()
-      });
+  beforeEach(async function() {
+    this.system.set('services/localeStore.es6', {
+      default: createLocaleStoreMock()
     });
 
-    const $controller = this.$inject('$controller');
+    await $initializeAndReregister(
+      this.system,
+      ['app/entry_editor/cfWidgetApiDirective.es6'],
+      $provide => {
+        $provide.constant('spaceContext', {
+          cma: {
+            getEntry: _.noop,
+            getContentType: _.noop,
+            getAsset: _.noop
+          }
+        });
+      }
+    );
 
-    this.scope = this.$inject('$rootScope').$new();
+    const $controller = $inject('$controller');
+
+    this.scope = $inject('$rootScope').$new();
     this.widget = {
       field: {},
       settings: {
@@ -98,7 +105,7 @@ describe('cfWidgetApi directive', () => {
 
   describe('#space', () => {
     it('exposes same methods as spaceContext.cma', function() {
-      const spaceContext = this.$inject('spaceContext');
+      const spaceContext = $inject('spaceContext');
       const getAllKeys = obj => Object.keys(_.toPlainObject(obj));
       expect(getAllKeys(this.widgetApi.space)).toEqual(getAllKeys(spaceContext.cma));
     });
@@ -129,11 +136,11 @@ describe('cfWidgetApi directive', () => {
     it('emits errors when "fieldLocale.errors" changes', function() {
       const cb = sinon.spy();
       this.widgetApi.field.onSchemaErrorsChanged(cb);
-      this.$apply();
+      $apply();
       cb.reset();
 
       this.scope.fieldLocale.errors$.set(['ERRORS']);
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(cb);
       sinon.assert.calledWithExactly(cb, ['ERRORS']);
     });

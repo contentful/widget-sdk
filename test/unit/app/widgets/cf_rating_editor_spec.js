@@ -1,14 +1,16 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
 
 describe('cfRatingEditor directive', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     module('contentful/test', $provide => {
       // Disable cfIcon directive
       $provide.value('cfIconDirective', {});
     });
-    module('contentful/test');
 
-    this.widgetApi = this.$inject('mocks/widgetApi').create({
+    await $initialize();
+
+    this.widgetApi = $inject('mocks/widgetApi').create({
       settings: {
         stars: 5
       }
@@ -16,7 +18,7 @@ describe('cfRatingEditor directive', () => {
     this.fieldApi = this.widgetApi.field;
 
     this.compile = function() {
-      return this.$compile(
+      return $compile(
         '<cf-rating-editor />',
         {},
         {
@@ -41,7 +43,7 @@ describe('cfRatingEditor directive', () => {
   it('activates no stars when value is not set', function() {
     const el = this.compile();
     this.fieldApi.onValueChanged.yield(null);
-    this.$apply();
+    $apply();
     const active = el.find('[data-active="true"]');
     expect(active.length).toEqual(0);
   });
@@ -49,7 +51,7 @@ describe('cfRatingEditor directive', () => {
   it('activates the number of stars that are set', function() {
     const el = this.compile();
     this.fieldApi.onValueChanged.yield(3);
-    this.$apply();
+    $apply();
     const active = el.find('[data-active="true"]');
     expect(active.length).toEqual(3);
   });
@@ -59,7 +61,7 @@ describe('cfRatingEditor directive', () => {
     const el = this.compile();
 
     el.find('[role="button"][aria-label="3"]').click();
-    this.$apply();
+    $apply();
     sinon.assert.calledOnce(this.fieldApi.setValue);
     sinon.assert.calledWithExactly(this.fieldApi.setValue, 3);
   });
@@ -67,11 +69,11 @@ describe('cfRatingEditor directive', () => {
   it('does not set rating when field is disabled', function() {
     this.fieldApi.setValue = sinon.stub();
     const el = this.compile();
-    this.$apply();
+    $apply();
     this.widgetApi.fieldProperties.isDisabled$.set(true);
 
     el.find('[role="button"][aria-label="3"]').click();
-    this.$apply();
+    $apply();
     sinon.assert.notCalled(this.fieldApi.setValue);
   });
 
@@ -81,7 +83,7 @@ describe('cfRatingEditor directive', () => {
 
     // Show the button
     this.fieldApi.onValueChanged.yield(3);
-    this.$apply();
+    $apply();
 
     el.find('button:contains(Clear)').click();
     sinon.assert.calledOnce(this.fieldApi.removeValue);

@@ -1,7 +1,9 @@
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initializeAndReregister, $inject, $compile, $apply } from 'test/helpers/helpers';
 
 describe('SlugEditor directive', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.locales = [
       { code: 'default-LOCALE', optional: false, fallbackCode: null },
       { code: 'some-LOCALE', optional: false, fallbackCode: null },
@@ -9,16 +11,18 @@ describe('SlugEditor directive', () => {
       { code: 'optional-with-fallback-LOCALE', optional: true, fallbackCode: 'some-LOCALE' }
     ];
 
-    module('contentful/test', $provide => {
-      $provide.constant('services/localeStore.es6', {
-        default: {
-          getPrivateLocales: () => this.locales
-        }
-      });
-      $provide.constant('lodash/debounce', _.identity);
+    this.system.set('services/localeStore.es6', {
+      default: {
+        getPrivateLocales: () => this.locales
+      }
+    });
+    this.system.set('lodash/debounce', {
+      default: _.identity
     });
 
-    const MockApi = this.$inject('mocks/widgetApi');
+    await $initializeAndReregister(this.system, ['app/widgets/slug/SlugEditorController']);
+
+    const MockApi = $inject('mocks/widgetApi');
 
     this.cfWidgetApi = MockApi.create({
       locales: {
@@ -54,7 +58,7 @@ describe('SlugEditor directive', () => {
     };
 
     this.compileElement = function() {
-      return this.$compile(
+      return $compile(
         '<cf-slug-editor>',
         {},
         {
@@ -196,14 +200,14 @@ describe('SlugEditor directive', () => {
     expect($inputEl.val()).toMatch(/^untitled-entry-/);
     $inputEl.val('slugified-title');
     this.title.onValueChanged.yield('Slugified Title');
-    this.$apply();
+    $apply();
     expect($inputEl.val()).toEqual('slugified-title');
     this.title.onValueChanged.yield('Slugified Title With More Text');
-    this.$apply();
+    $apply();
     expect($inputEl.val()).toEqual('slugified-title-with-more-text');
     $inputEl.val('custom-slug');
     this.title.onValueChanged.yield('Slugified Title With Different Text');
-    this.$apply();
+    $apply();
     expect($inputEl.val()).toEqual('custom-slug');
   });
 
@@ -228,7 +232,7 @@ describe('SlugEditor directive', () => {
       getEntries.resetHistory();
 
       $inputEl.val('SLUG');
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(getEntries);
     });
 
@@ -238,7 +242,7 @@ describe('SlugEditor directive', () => {
       getEntries.resetHistory();
 
       this.cfWidgetApi.field.onValueChanged.yield('SLUG');
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(getEntries);
     });
 
@@ -249,7 +253,7 @@ describe('SlugEditor directive', () => {
       getEntries.resetHistory();
 
       this.cfWidgetApi.field.onValueChanged.yield('SLUG');
-      this.$apply();
+      $apply();
       sinon.assert.calledWith(getEntries, {
         content_type: 'CTID',
         'fields.slug.some-LOCALE': 'SLUG',
@@ -264,7 +268,7 @@ describe('SlugEditor directive', () => {
       const scope = $inputEl.scope();
 
       $inputEl.val('SLUG');
-      this.$apply();
+      $apply();
 
       // The server responds with zero entries by default
       expect(scope.state).toEqual('unique');
@@ -279,7 +283,7 @@ describe('SlugEditor directive', () => {
 
       // Trigger status update
       this.title.onValueChanged.yield('New Title');
-      this.$apply();
+      $apply();
       expect(scope.state).toEqual('duplicate');
       expect($inputEl.attr('aria-invalid')).toEqual('true');
       expect(this.cfWidgetApi._state.isInvalid).toBe(true);
@@ -294,13 +298,13 @@ describe('SlugEditor directive', () => {
 
       // Trigger status update
       this.title.onValueChanged.yield('New Title');
-      this.$apply();
+      $apply();
 
       expect(scope.state).toEqual('checking');
 
       // Now 'receive' the server response by resolving the promise.
       getEntries.resolve({ total: 0 });
-      this.$apply();
+      $apply();
       expect(scope.state).toEqual('unique');
     });
 
@@ -314,7 +318,7 @@ describe('SlugEditor directive', () => {
 
       // Trigger status update
       this.title.onValueChanged.yield('New Title');
-      this.$apply();
+      $apply();
       expect(scope.hasUniqueValidationError).toEqual(true);
       expect(scope.state).toEqual('duplicate');
       expect($duplicateEl.hasClass('ng-hide')).toBe(true);
@@ -328,7 +332,7 @@ describe('SlugEditor directive', () => {
 
       // Trigger status update
       this.title.onValueChanged.yield('New Title');
-      this.$apply();
+      $apply();
       expect(scope.hasUniqueValidationError).toEqual(false);
       expect(scope.state).toEqual('duplicate');
       expect($duplicateEl.hasClass('ng-hide')).toBe(false);
@@ -341,7 +345,7 @@ describe('SlugEditor directive', () => {
       this.cfWidgetApi.contentType.displayField = 'slug';
       const $inputEl = this.compileElement().find('input');
       this.cfWidgetApi.field.onValueChanged.yield('new-slug');
-      this.$apply();
+      $apply();
       expect($inputEl.val()).toEqual('new-slug');
     });
   });

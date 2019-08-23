@@ -100,6 +100,7 @@ export default angular
         { default: appSnapshotsCfSnapshotPresenterEs6 },
         { default: appSnapshotsCfSnapshotSelectorEs6 },
         { default: appSnapshotsSnapshotComparatorEs6 },
+        { default: appWidgetsFileEditorController },
         { default: appWidgetsCfBooleanEditorDirectiveEs6 },
         { default: appWidgetsCfCheckboxEditorDirectiveEs6 },
         { default: appWidgetsCfFileEditorDirectiveEs6 },
@@ -114,7 +115,9 @@ export default angular
         { default: appWidgetsNumberCfNumberEditorDirectiveEs6 },
         { default: appWidgetsRadioCfRadioEditorDirectiveEs6 },
         { default: appWidgetsSharedCfEditorCharacterInfoDirectiveEs6 },
+        { default: appWidgetsSlugSlugEditorController },
         { default: appWidgetsSlugCfSlugEditorDirectiveEs6 },
+        { default: appWidgetsUrlUrlEditorController },
         { default: appWidgetsUrlCfUrlEditorDirectiveEs6 },
         { default: classesEntityListCacheEs6 },
         { default: componentsCreateEntryButtonButtonDirectiveEs6 },
@@ -232,6 +235,7 @@ export default angular
         import('app/snapshots/cfSnapshotPresenter.es6'),
         import('app/snapshots/cfSnapshotSelector.es6'),
         import('app/snapshots/snapshotComparator.es6'),
+        import('app/widgets/FileEditorController'),
         import('app/widgets/cfBooleanEditorDirective.es6'),
         import('app/widgets/cfCheckboxEditorDirective.es6'),
         import('app/widgets/cfFileEditorDirective.es6'),
@@ -246,7 +250,9 @@ export default angular
         import('app/widgets/number/cfNumberEditorDirective.es6'),
         import('app/widgets/radio/cfRadioEditorDirective.es6'),
         import('app/widgets/shared/cfEditorCharacterInfoDirective.es6'),
+        import('app/widgets/slug/SlugEditorController'),
         import('app/widgets/slug/cfSlugEditorDirective.es6'),
+        import('app/widgets/url/UrlEditorController'),
         import('app/widgets/url/cfUrlEditorDirective.es6'),
         import('classes/entityListCache.es6'),
         import('components/CreateEntryButton/buttonDirective.es6'),
@@ -321,7 +327,7 @@ export default angular
         import('ui/cfUiTab.es6'),
         import('ui/highlightMatchDirective.es6'),
         import('ui/loader.es6')
-      ])
+      ]);
 
       analyticsAnalyticsConsoleEs6();
       accessControlUserListHandlerEs6();
@@ -365,6 +371,7 @@ export default angular
       appSnapshotsCfSnapshotPresenterEs6();
       appSnapshotsCfSnapshotSelectorEs6();
       appSnapshotsSnapshotComparatorEs6();
+      appWidgetsFileEditorController();
       appWidgetsCfBooleanEditorDirectiveEs6();
       appWidgetsCfCheckboxEditorDirectiveEs6();
       appWidgetsCfFileEditorDirectiveEs6();
@@ -379,7 +386,9 @@ export default angular
       appWidgetsNumberCfNumberEditorDirectiveEs6();
       appWidgetsRadioCfRadioEditorDirectiveEs6();
       appWidgetsSharedCfEditorCharacterInfoDirectiveEs6();
+      appWidgetsSlugSlugEditorController();
       appWidgetsSlugCfSlugEditorDirectiveEs6();
+      appWidgetsUrlUrlEditorController();
       appWidgetsUrlCfUrlEditorDirectiveEs6();
       classesEntityListCacheEs6();
       componentsCreateEntryButtonButtonDirectiveEs6();

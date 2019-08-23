@@ -1,22 +1,24 @@
-'use strict';
-
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initializeAndReregister, $compile, $inject, $apply } from 'test/helpers/helpers';
+import { beforeEach, it } from 'test/helpers/dsl';
 
-describe('cfUrlEditor directive', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.removeDirectives(['cfEmbedlyPreview']);
-      $provide.constant('lodash/debounce', _.identity);
+xdescribe('cfUrlEditor directive', () => {
+  beforeEach(async function() {
+    this.system.set('lodash/debounce', {
+      default: _.identity
     });
 
-    this.widgetApi = this.$inject('mocks/widgetApi').create();
+    await $initializeAndReregister(this.system, ['app/widgets/url/UrlEditorController']);
+
+    this.widgetApi = $inject('mocks/widgetApi').create();
 
     this.setHelpText = function(helpText) {
       this.widgetApi.settings.helpText = helpText;
     };
 
     this.compileElement = function() {
-      return this.$compile(
+      return $compile(
         '<cf-url-editor>',
         {},
         {
@@ -25,9 +27,12 @@ describe('cfUrlEditor directive', () => {
       );
     };
 
+    this.$el = this.compileElement();
+    this.scope = this.$el.isolateScope();
+
     this.setStatus = function(status) {
       this.scope.urlStatus = status;
-      this.$apply();
+      $apply();
     };
 
     this.assertStatus = function(assertions) {
@@ -41,9 +46,11 @@ describe('cfUrlEditor directive', () => {
         expect(statusEls[assertion[0]].css('display')).toBe(assertion[1]);
       });
     };
+  });
 
-    this.$el = this.compileElement();
-    this.scope = this.$el.isolateScope();
+  afterEach(function() {
+    this.$el.remove();
+    this.scope.$destroy();
   });
 
   it('updates when new value is received over the wire', function() {
@@ -73,7 +80,7 @@ describe('cfUrlEditor directive', () => {
   it('should be disabled when disabled flag is set', function() {
     expect(this.$el.find('input').prop('disabled')).toEqual(false);
     this.widgetApi.fieldProperties.isDisabled$.set(true);
-    this.$apply();
+    $apply();
     expect(this.$el.find('input').prop('disabled')).toEqual(true);
   });
 
@@ -85,6 +92,7 @@ describe('cfUrlEditor directive', () => {
   it('should show error on invalid url', function() {
     expect(this.$el.find('input').attr('aria-invalid')).toEqual('false');
     this.setStatus('invalid');
+
     expect(this.$el.find('input').attr('aria-invalid')).toEqual('true');
     this.assertStatus([['invalid', 'block'], ['broken', 'none']]);
   });

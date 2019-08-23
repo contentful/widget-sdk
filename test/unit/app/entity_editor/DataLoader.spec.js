@@ -1,25 +1,40 @@
 import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
 
 describe('app/entity_editor/DataLoader.es6', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.constant('widgets/WidgetRenderable.es6', {
-        buildRenderables: sinon.stub().returns({}),
-        buildSidebarRenderables: sinon.stub().returns([]),
-        buildEditorRenderable: sinon.stub().returns(undefined)
-      });
-      $provide.constant('services/localeStore.es6', {
-        default: {
-          getPrivateLocales: sinon.stub().returns([])
-        }
-      });
-      $provide.constant('data/CMA/ProductCatalog.es6', {
-        getOrgFeature: () => Promise.resolve(true)
-      });
+  beforeEach(async function() {
+    this.stubs = {
+      buildRenderables: sinon.stub().returns({})
+    };
+
+    this.system.set('widgets/WidgetRenderable.es6', {
+      buildRenderables: this.stubs.buildRenderables,
+      buildSidebarRenderables: sinon.stub().returns([]),
+      buildEditorRenderable: sinon.stub().returns(undefined)
     });
 
-    const $q = this.$inject('$q');
+    this.system.set('services/localeStore.es6', {
+      default: {
+        getPrivateLocales: sinon.stub().returns([])
+      }
+    });
+
+    this.system.set('data/CMA/ProductCatalog.es6', {
+      getOrgFeature: () => Promise.resolve(true)
+    });
+
+    this.localeStore = (await this.system.import('services/localeStore.es6')).default;
+
+    const DataLoader = await this.system.import('app/entity_editor/DataLoader.es6');
+
+    module('contentful/test');
+
+    await $initialize();
+
+    const $q = $inject('$q');
 
     // TODO use space context mock
     this.spaceContext = {
@@ -56,58 +71,55 @@ describe('app/entity_editor/DataLoader.es6', () => {
       }
     };
 
-    this.localeStore = this.$inject('services/localeStore.es6').default;
-
-    const DataLoader = this.$inject('app/entity_editor/DataLoader.es6');
     this.loadEntry = _.partial(DataLoader.loadEntry, this.spaceContext);
     this.loadAsset = _.partial(DataLoader.loadAsset, this.spaceContext);
     this.makePrefetchEntryLoader = _.partial(DataLoader.makePrefetchEntryLoader, this.spaceContext);
   });
 
-  describe('#loadEntry()', () => {
-    it('adds entry to context', function*() {
-      const editorData = yield this.loadEntry('EID');
+  describe('#loadEntry()', function() {
+    it('adds entry to context', async function() {
+      const editorData = await this.loadEntry('EID');
       sinon.assert.calledWith(this.spaceContext.space.getEntry, 'EID');
       expect(editorData.entity.data.sys.id).toEqual('EID');
     });
 
-    it('adds the entry’s content type to the context', function*() {
-      const editorData = yield this.loadEntry('EID');
+    it('adds the entry’s content type to the context', async function() {
+      const editorData = await this.loadEntry('EID');
       expect(editorData.contentType.data.sys.id).toEqual('CTID');
     });
 
-    it('requests the editor interface', function*() {
-      yield this.loadEntry('EID');
+    it('requests the editor interface', async function() {
+      await this.loadEntry('EID');
       sinon.assert.calledWith(this.spaceContext.cma.getEditorInterface, 'CTID');
     });
 
-    it('builds field controls from editor interface', function*() {
+    it('builds field controls from editor interface', async function() {
       const ei = { controls: [] };
       this.spaceContext.cma.getEditorInterface.resolves(ei);
-      yield this.loadEntry('EID');
-      sinon.assert.calledWith(this.$inject('widgets/WidgetRenderable.es6').buildRenderables, [], {
+      await this.loadEntry('EID');
+      sinon.assert.calledWith(this.stubs.buildRenderables, [], {
         builtin: sinon.match.array,
         extension: []
       });
     });
 
-    it('adds the entry’s field controls to the context', function*() {
+    it('adds the entry’s field controls to the context', async function() {
       const controls = {};
-      this.$inject('widgets/WidgetRenderable.es6').buildRenderables.returns(controls);
-      const editorData = yield this.loadEntry('EID');
+      this.stubs.buildRenderables.returns(controls);
+      const editorData = await this.loadEntry('EID');
       expect(editorData.fieldControls).toBe(controls);
     });
 
-    it('adds entityInfo to the context', function*() {
-      const { entityInfo } = yield this.loadEntry('EID');
+    it('adds entityInfo to the context', async function() {
+      const { entityInfo } = await this.loadEntry('EID');
       expect(entityInfo.id).toBe('EID');
       expect(entityInfo.type).toBe('Entry');
       expect(entityInfo.contentTypeId).toBe('CTID');
       expect(entityInfo.contentType.sys.id).toBe('CTID');
     });
 
-    it('only adds specified properties', function*() {
-      const data = yield this.loadEntry('EID');
+    it('only adds specified properties', async function() {
+      const data = await this.loadEntry('EID');
       expect(Object.keys(data)).toEqual([
         'entity',
         'contentType',
@@ -128,20 +140,20 @@ describe('app/entity_editor/DataLoader.es6', () => {
         this.spaceContext.space.getEntry = sinon.stub().resolves({ data: this.entry });
       });
 
-      it('enforces field object', function*() {
+      it('enforces field object', async function() {
         this.entry.fields = null;
-        const editorData = yield this.loadEntry('EID');
+        const editorData = await this.loadEntry('EID');
         expect(_.isPlainObject(editorData.entity.data.fields)).toBe(true);
       });
 
-      it('removes non object fields', function*() {
+      it('removes non object fields', async function() {
         this.entry.fields = null;
         this.entry.fields = { a: null, b: {} };
-        const editorData = yield this.loadEntry('EID');
+        const editorData = await this.loadEntry('EID');
         expect(Object.keys(editorData.entity.data.fields)).toEqual(['b']);
       });
 
-      it('removes unknown locale codes', function*() {
+      it('removes unknown locale codes', async function() {
         this.localeStore.getPrivateLocales.returns([
           { internal_code: 'l1' },
           { internal_code: 'l2' }
@@ -153,14 +165,14 @@ describe('app/entity_editor/DataLoader.es6', () => {
             l3: true
           }
         };
-        const editorData = yield this.loadEntry('EID');
+        const editorData = await this.loadEntry('EID');
         expect(editorData.entity.data.fields.a).toEqual({ l1: true, l2: true });
       });
     });
 
-    it('provides #openDoc() delegate', function*() {
+    it('provides #openDoc() delegate', async function() {
       this.spaceContext.docPool.get.returns('DOC');
-      const editorData = yield this.loadEntry('EID');
+      const editorData = await this.loadEntry('EID');
       const doc = editorData.openDoc();
       expect(doc).toBe('DOC');
       sinon.assert.calledWith(
@@ -172,16 +184,16 @@ describe('app/entity_editor/DataLoader.es6', () => {
   });
 
   describe('#loadAsset()', () => {
-    it('adds asset to context', function*() {
-      const editorData = yield this.loadAsset('EID');
+    it('adds asset to context', async function() {
+      const editorData = await this.loadAsset('EID');
       sinon.assert.calledWith(this.spaceContext.space.getAsset, 'EID');
       expect(editorData.entity.data.sys.id).toEqual('EID');
     });
 
-    it('builds field controls from asset editor interface', function*() {
-      yield this.loadAsset('EID');
+    it('builds field controls from asset editor interface', async function() {
+      await this.loadAsset('EID');
       sinon.assert.calledWith(
-        this.$inject('widgets/WidgetRenderable.es6').buildRenderables,
+        this.stubs.buildRenderables,
         [
           sinon.match({
             fieldId: 'title',
@@ -206,8 +218,8 @@ describe('app/entity_editor/DataLoader.es6', () => {
       );
     });
 
-    it('only adds specified properties', function*() {
-      const data = yield this.loadAsset('EID');
+    it('only adds specified properties', async function() {
+      const data = await this.loadAsset('EID');
       expect(Object.keys(data)).toEqual([
         'entity',
         'contentType',
@@ -224,12 +236,12 @@ describe('app/entity_editor/DataLoader.es6', () => {
   });
 
   describe('#makePrefetchEntryLoader()', () => {
-    it('returns editor data', function*() {
+    it('returns editor data', async function() {
       const controls = {};
-      this.$inject('widgets/WidgetRenderable.es6').buildRenderables.returns(controls);
+      this.stubs.buildRenderables.returns(controls);
 
       const load = this.makePrefetchEntryLoader(K.constant([]));
-      const editorData = yield load('EID');
+      const editorData = await load('EID');
 
       expect(editorData.entity.data.sys.id).toEqual('EID');
       expect(editorData.contentType.data.sys.id).toEqual('CTID');

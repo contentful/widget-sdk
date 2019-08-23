@@ -2,7 +2,6 @@ import _ from 'lodash';
 import React from 'react';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
-import { createIsolatedSystem } from 'test/helpers/system-js';
 import {
   assertElementExists,
   assertMessageEquals,
@@ -29,9 +28,7 @@ describe('StateChangeConfirmationDialog', () => {
   };
 
   beforeEach(function() {
-    const system = createIsolatedSystem();
-    this.system = system;
-    system.set('analytics/events/IncomingLinks.es6', {
+    this.system.set('analytics/events/IncomingLinks.es6', {
       onFetchLinks: sinon.stub(),
       onDialogOpen: sinon.stub(),
       onDialogConfirm: sinon.stub(),
@@ -41,14 +38,17 @@ describe('StateChangeConfirmationDialog', () => {
         SIDEBAR: 'sidebar'
       }
     });
-    this.importModule = function* importModule(
+
+    const system = this.system;
+
+    this.importModule = async function importModule(
       fetchLinksStub = sinon.stub().returns(Promise.resolve([]))
     ) {
       system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks.es6', {
         default: fetchLinksStub
       });
 
-      const { default: StateChangeConfirmationDialog } = yield system.import(
+      const { default: StateChangeConfirmationDialog } = await system.import(
         'app/entity_editor/Components/StateChangeConfirmationDialog'
       );
 
@@ -56,18 +56,14 @@ describe('StateChangeConfirmationDialog', () => {
     };
   });
 
-  afterEach(function() {
-    delete this.system;
-  });
-
   function render(Component, props) {
     return mount(<Component {...defaultProps} {...props} />);
   }
 
-  it('renders the dialog with 0 links', function*() {
-    const Component = yield* this.importModule();
+  it('renders the dialog with 0 links', async function() {
+    const Component = await this.importModule();
     const wrapper = render(Component);
-    yield flushPromises();
+    await flushPromises();
     wrapper.update();
 
     const actionMessages = messages[Action.Unpublish()][EntityType.ENTRY][NumberOfLinks.ZERO];
@@ -81,7 +77,7 @@ describe('StateChangeConfirmationDialog', () => {
     expect(getElement(wrapper, 'link').exists()).toBeFalsy();
   });
 
-  it('renders the dialog with 1 link', function*() {
+  it('renders the dialog with 1 link', async function() {
     const links = [
       {
         id: 'link-id',
@@ -89,9 +85,9 @@ describe('StateChangeConfirmationDialog', () => {
         url: 'http://www.google1.com'
       }
     ];
-    const Component = yield* this.importModule(sinon.stub().returns(Promise.resolve(links)));
+    const Component = await this.importModule(sinon.stub().returns(Promise.resolve(links)));
     const wrapper = render(Component);
-    yield flushPromises();
+    await flushPromises();
     wrapper.update();
 
     const actionMessages = messages[Action.Unpublish()][EntityType.ENTRY][NumberOfLinks.ONE];
@@ -104,7 +100,7 @@ describe('StateChangeConfirmationDialog', () => {
     assertLinksExist(wrapper, links);
   });
 
-  it('renders the dialog with 1+ link', function*() {
+  it('renders the dialog with 1+ link', async function() {
     const links = [
       {
         id: 'link-id',
@@ -118,9 +114,9 @@ describe('StateChangeConfirmationDialog', () => {
       }
     ];
 
-    const Component = yield* this.importModule(sinon.stub().returns(Promise.resolve(links)));
+    const Component = await this.importModule(sinon.stub().returns(Promise.resolve(links)));
     const wrapper = render(Component);
-    yield flushPromises();
+    await flushPromises();
     wrapper.update();
 
     const actionMessages = messages[Action.Unpublish()][EntityType.ENTRY][NumberOfLinks.MANY];
@@ -137,42 +133,42 @@ describe('StateChangeConfirmationDialog', () => {
     assertLinksExist(wrapper, links);
   });
 
-  it('triggers `onCancel`', function*() {
-    const Component = yield* this.importModule();
+  it('triggers `onCancel`', async function() {
+    const Component = await this.importModule();
     const onCancel = sinon.spy();
     const wrapper = render(Component, {
       onCancel
     });
-    yield flushPromises();
+    await flushPromises();
     wrapper.update();
 
     getElement(wrapper, 'cancel').simulate('click');
     sinon.assert.calledOnce(onCancel);
   });
 
-  it('triggers `onConfirm`', function*() {
-    const Component = yield* this.importModule();
+  it('triggers `onConfirm`', async function() {
+    const Component = await this.importModule();
     const onConfirm = sinon.spy();
     const wrapper = render(Component, {
       onConfirm
     });
-    yield flushPromises();
+    await flushPromises();
     wrapper.update();
 
     getElement(wrapper, 'confirm').simulate('click');
     sinon.assert.calledOnce(onConfirm);
   });
 
-  it('renders loading content if linked entries are not yet loaded', function*() {
-    const Component = yield* this.importModule();
+  it('renders loading content if linked entries are not yet loaded', async function() {
+    const Component = await this.importModule();
     const wrapper = render(Component);
     assertElementExists(wrapper, 'loader');
   });
 
-  it('renders error content if request failed', function*() {
-    const Component = yield* this.importModule(sinon.stub().returns(Promise.reject(new Error())));
+  it('renders error content if request failed', async function() {
+    const Component = await this.importModule(sinon.stub().returns(Promise.reject(new Error())));
     const wrapper = render(Component);
-    yield flushPromises();
+    await flushPromises();
     wrapper.update();
 
     assertElementExists(wrapper, 'error');

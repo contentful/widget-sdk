@@ -1,12 +1,15 @@
 import * as DOM from 'test/helpers/DOM';
 import $ from 'jquery';
+import sinon from 'sinon';
+import { $inject, $initialize, $compileWith, $wait } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
 
 let spaceContext;
 
 describe('app/SpaceSettings/Environments', () => {
   const ENVIRONMENTS_LIMIT = 3;
 
-  beforeEach(function() {
+  beforeEach(async function() {
     const resourceService = {
       get: sinon
         .stub()
@@ -21,29 +24,38 @@ describe('app/SpaceSettings/Environments', () => {
     const canSelectSource = sinon.stub().returns(true);
     const aliasesEnabled = sinon.stub().returns(false);
 
-    module('contentful/test', $provide => {
-      $provide.value('services/ResourceService.es6', () => resourceService);
-      $provide.value('services/OrganizationRoles.es6', { isOwnerOrAdmin });
-      $provide.value('app/SpaceSettings/EnvironmentAliases/Feedback.es6', () => () => 'feedback');
+    this.system.set('services/ResourceService.es6', {
+      default: () => resourceService
+    });
+    this.system.set('services/OrganizationRoles.es6', { isOwnerOrAdmin });
+    this.system.set('app/SpaceSettings/EnvironmentAliases/Feedback.es6', {
+      default: () => () => 'feedback'
     });
 
-    this.ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
+    this.ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
     this.ComponentLibrary.Notification.success = sinon.stub();
     this.ComponentLibrary.Notification.error = sinon.stub();
 
-    const { createComponent } = this.$inject('app/SpaceSettings/Environments/State.es6');
-    spaceContext = this.$inject('mocks/spaceContext').init();
+    const { createComponent } = await this.system.import(
+      'app/SpaceSettings/Environments/State.es6'
+    );
+
+    module('contentful/test');
+
+    await $initialize();
+
+    spaceContext = $inject('mocks/spaceContext').init();
 
     spaceContext.getAliasesIds.returns([]);
     spaceContext.getAliases.returns([]);
 
-    this.$inject('$state').href = () => 'href';
+    $inject('$state').href = () => 'href';
 
     this.container = DOM.createView($('<div class=client>').get(0));
     $(this.container.element).appendTo('body');
 
     this.init = () => {
-      this.$compileWith('<cf-component-store-bridge component=component>', $scope => {
+      $compileWith('<cf-component-store-bridge component=component>', $scope => {
         $scope.component = createComponent(spaceContext, canSelectSource(), aliasesEnabled());
       }).appendTo(this.container.element);
     };
@@ -106,7 +118,7 @@ describe('app/SpaceSettings/Environments', () => {
   });
 
   describe('when environment branching is disabled', function() {
-    it('does not show the env selector and uses master', function() {
+    it('does not show the env selector and uses master', async function() {
       this.setEnvironmentBranchingFeatureEnabled(false);
 
       this.putEnvironment({ id: 'e1', status: 'ready' });
@@ -115,7 +127,7 @@ describe('app/SpaceSettings/Environments', () => {
       this.init();
 
       this.container.find('openCreateDialog').click();
-      this.$flush();
+      await $wait();
       this.container.find('spaceEnvironmentsEditDialog', 'source.id').assertNonExistent();
 
       this.container.find('spaceEnvironmentsEditDialog', 'field.id').setValue('env_id');
@@ -124,7 +136,7 @@ describe('app/SpaceSettings/Environments', () => {
       const updateRequest = this.envRequests.find(r => r.method === 'PUT');
       expect(updateRequest.headers['X-Contentful-Source-Environment']).toEqual('master');
 
-      this.$flush();
+      await $wait();
       this.container.find('environmentList', 'environment.env_id').assertHasText('env_id');
     });
   });
@@ -169,7 +181,7 @@ describe('app/SpaceSettings/Environments', () => {
       this.container.find('environmentaliases.card').assertIsVisible();
     });
 
-    it('cannot be deleted when environment has aliases', function() {
+    it('cannot be deleted when environment has aliases', async function() {
       this.setEnvironmentAliasesFeatureEnabled(true);
       spaceContext.getAliasesIds.returns(['master']);
 
@@ -180,13 +192,13 @@ describe('app/SpaceSettings/Environments', () => {
       const deleteBtn = this.container.find('environment.e1', 'openDeleteDialog');
       deleteBtn.assertIsDisabled();
       deleteBtn.click();
-      this.$flush();
+      await $wait();
       this.container.find('spaceEnvironmentsDeleteDialog').assertNonExistent();
     });
   });
 
   describe('when environment branching is enabled', function() {
-    it('does not show the env selector if there is just one env', function() {
+    it('does not show the env selector if there is just one env', async function() {
       this.setEnvironmentBranchingFeatureEnabled(true);
 
       this.putEnvironment({ id: 'e1', status: 'ready' });
@@ -194,11 +206,11 @@ describe('app/SpaceSettings/Environments', () => {
       this.init();
 
       this.container.find('openCreateDialog').click();
-      this.$flush();
+      await $wait();
       this.container.find('spaceEnvironmentsEditDialog', 'source.id').assertNonExistent();
     });
 
-    it('shows the selector if there are multiple envs', function() {
+    it('shows the selector if there are multiple envs', async function() {
       this.setEnvironmentBranchingFeatureEnabled(true);
 
       this.putEnvironment({ id: 'e1', status: 'ready' });
@@ -207,7 +219,7 @@ describe('app/SpaceSettings/Environments', () => {
       this.init();
 
       this.container.find('openCreateDialog').click();
-      this.$flush();
+      await $wait();
 
       this.container.find('spaceEnvironmentsEditDialog', 'source.id').assertIsVisible();
       this.container.find('spaceEnvironmentsEditDialog', 'source.id').assertValue('e1');
@@ -224,20 +236,20 @@ describe('app/SpaceSettings/Environments', () => {
       const updateRequest = this.envRequests.find(r => r.method === 'PUT');
       expect(updateRequest.headers['X-Contentful-Source-Environment']).toEqual('e2');
 
-      this.$flush();
+      await $wait();
       this.container.find('environmentList', 'environment.env_id').assertHasText('env_id');
     });
   });
 
-  it('deletes an environment', function() {
+  it('deletes an environment', async function() {
     this.putEnvironment({ id: 'e1', status: 'ready' });
     this.init();
 
     this.container.find('environment.e1', 'openDeleteDialog').click();
-    this.$flush();
+    await $wait();
     this.container.find('spaceEnvironmentsDeleteDialog', 'confirmId').setValue('e1');
     this.container.find('spaceEnvironmentsDeleteDialog', 'delete').click();
-    this.$flush();
+    await $wait();
 
     this.container.find('environment.e1').assertNonExistent();
   });
