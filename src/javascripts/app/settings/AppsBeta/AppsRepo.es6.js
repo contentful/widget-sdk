@@ -41,9 +41,9 @@ export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint)
   async function getDefinitionIdsOfApps() {
     const appsListing = await this.getAppsListing();
 
-    return Object.keys(appsListing).map(key =>
-      get(appsListing[key], ['fields', 'extensionDefinitionId'])
-    );
+    return Object.keys(appsListing)
+      .map(key => get(appsListing[key], ['fields', 'extensionDefinitionId']))
+      .filter(id => typeof id === 'string' && id.length > 0);
   }
 
   async function getAppsListing() {
