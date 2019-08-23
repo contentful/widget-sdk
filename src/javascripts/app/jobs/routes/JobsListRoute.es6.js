@@ -4,8 +4,7 @@ import JobsListPage from '../list/JobsListPage.es6';
 
 import StateRedirect from 'app/common/StateRedirect.es6';
 
-import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
-import * as FeatureFlagKey from 'featureFlags.es6';
+import JobsFeatureFlag from '../JobsFeatureFlag.es6';
 
 export default class JobsListRoute extends Component {
   static propTypes = {
@@ -17,7 +16,7 @@ export default class JobsListRoute extends Component {
 
   render() {
     return (
-      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
+      <JobsFeatureFlag>
         {({ currentVariation }) => {
           if (currentVariation === true) {
             return (
@@ -34,7 +33,7 @@ export default class JobsListRoute extends Component {
             return null;
           }
         }}
-      </BooleanFeatureFlag>
+      </JobsFeatureFlag>
     );
   }
 }

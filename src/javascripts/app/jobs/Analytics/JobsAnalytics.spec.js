@@ -1,10 +1,12 @@
 import * as Analytics from 'analytics/Analytics.es6';
+import * as Intercom from 'services/intercom.es6';
 import * as JobsAnalytics from './JobsAnalytics.es6';
 
 jest.mock('analytics/Analytics.es6');
 describe('JobsAnalytics', () => {
   beforeEach(() => {
     jest.spyOn(Analytics, 'track').mockImplementation(() => {});
+    jest.spyOn(Intercom, 'trackEvent').mockImplementation(() => {});
     jest.spyOn(global, 'Date').mockImplementationOnce(() => ({
       getTimezoneOffset: () => -120
     }));
@@ -63,4 +65,11 @@ describe('JobsAnalytics', () => {
     expect(Analytics.track).toHaveBeenCalledTimes(1);
     expect(Analytics.track).toHaveBeenCalledWith(eventName, payload);
   }
+
+  it('trackAlphaEligibilityToIntercom', () => {
+    JobsAnalytics.trackAlphaEligibilityToIntercom();
+
+    expect(Intercom.trackEvent).toHaveBeenCalledTimes(1);
+    expect(Intercom.trackEvent).toHaveBeenCalledWith('scheduled-publishing-aplha-eligible');
+  });
 });

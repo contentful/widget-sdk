@@ -1,4 +1,5 @@
 import * as Analytics from 'analytics/Analytics.es6';
+import * as Intercom from 'services/intercom.es6';
 
 /**
  * Exported for testing purposes. Do not use in production !!!
@@ -54,4 +55,9 @@ export function cancelJob({ jobId }) {
     job_id: jobId
   };
   return Analytics.track(EventName.CancelJob, payload);
+}
+
+export function trackAlphaEligibilityToIntercom() {
+  const INTERCOM_EVENT_NAME = 'scheduled-publishing-aplha-eligible';
+  Intercom.trackEvent(INTERCOM_EVENT_NAME);
 }

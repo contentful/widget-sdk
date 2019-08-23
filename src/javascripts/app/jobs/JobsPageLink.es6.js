@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { TextLink, Tag } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import StateLink from 'app/common/StateLink.es6';
-import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
+
 import tokens from '@contentful/forma-36-tokens';
-import * as FeatureFlagKey from 'featureFlags.es6';
+import JobsFeatureFlag from './JobsFeatureFlag.es6';
 
 const styles = {
   linkContainer: css({
@@ -32,20 +32,24 @@ JobsStateLink.propTypes = {
 
 export default function JobsPageLink({ isMasterEnvironment }) {
   return (
-    <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
-      <div className={styles.linkContainer}>
-        <JobsStateLink isMasterEnvironment={isMasterEnvironment}>
-          {({ getHref }) => (
-            <React.Fragment>
-              <TextLink href={getHref()} icon="Clock">
-                Scheduled Content
-              </TextLink>
-              <Tag className={styles.jobsAlphaTag}>ALPHA</Tag>
-            </React.Fragment>
-          )}
-        </JobsStateLink>
-      </div>
-    </BooleanFeatureFlag>
+    <JobsFeatureFlag>
+      {({ currentVariation }) => {
+        return currentVariation ? (
+          <div className={styles.linkContainer}>
+            <JobsStateLink isMasterEnvironment={isMasterEnvironment}>
+              {({ getHref }) => (
+                <React.Fragment>
+                  <TextLink href={getHref()} icon="Clock">
+                    Scheduled Content
+                  </TextLink>
+                  <Tag className={styles.jobsAlphaTag}>ALPHA</Tag>
+                </React.Fragment>
+              )}
+            </JobsStateLink>
+          </div>
+        ) : null;
+      }}
+    </JobsFeatureFlag>
   );
 }
 

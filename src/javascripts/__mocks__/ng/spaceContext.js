@@ -53,6 +53,7 @@ export const contentPreview = {
 };
 
 export const getData = jest.fn();
+export const getId = jest.fn();
 
 export const netlifyAppConfig = {
   get: jest.fn().mockResolvedValue({})

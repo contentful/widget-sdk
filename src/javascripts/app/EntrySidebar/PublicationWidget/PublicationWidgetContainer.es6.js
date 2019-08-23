@@ -5,8 +5,7 @@ import SidebarEventTypes from '../SidebarEventTypes.es6';
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
 import PublicationWidget from './PublicationWidget.es6';
 import { JobsWidget } from 'app/jobs/index.es6';
-import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
-import * as FeatureFlagKey from 'featureFlags.es6';
+import JobsFeatureFlag from 'app/jobs/JobsFeatureFlag.es6';
 
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
@@ -61,7 +60,7 @@ export default class PublicationWidgetContainer extends Component {
     const secondary = get(commands, 'secondary', []);
 
     return (
-      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
+      <JobsFeatureFlag>
         {({ currentVariation }) => {
           const isJobsFeatureEnabled = currentVariation;
           const isEntry = entity && entity.sys.type === 'Entry';
@@ -90,7 +89,7 @@ export default class PublicationWidgetContainer extends Component {
             />
           );
         }}
-      </BooleanFeatureFlag>
+      </JobsFeatureFlag>
     );
   }
 }
