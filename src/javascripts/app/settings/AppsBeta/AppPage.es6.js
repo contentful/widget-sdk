@@ -217,9 +217,10 @@ export default class AppRoute extends Component {
 
     const appInfo = Object.values(appsListing).find(app => app.fields.slug === appId);
 
-    const { extension } = await this.checkAppStatus(extensionDefinition);
-
-    const appEnabled = await productCatalog.isAppEnabled(appInfo);
+    const [{ extension }, appEnabled] = await Promise.all([
+      this.checkAppStatus(extensionDefinition),
+      productCatalog.isAppEnabled(appInfo)
+    ]);
 
     appHookBus.setExtension(extension);
     appHookBus.on(APP_EVENTS_IN.CONFIGURED, this.onAppConfigured);
