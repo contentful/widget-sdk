@@ -58,6 +58,6 @@ export function cancelJob({ jobId }) {
 }
 
 export function trackAlphaEligibilityToIntercom() {
-  const INTERCOM_EVENT_NAME = 'scheduled-publishing-aplha-eligible';
+  const INTERCOM_EVENT_NAME = 'scheduled-publishing-alpha-eligible';
   Intercom.trackEvent(INTERCOM_EVENT_NAME);
 }
