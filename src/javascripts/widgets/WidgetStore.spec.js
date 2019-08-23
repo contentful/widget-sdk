@@ -17,7 +17,6 @@ describe('WidgetStore', () => {
 
   beforeEach(() => {
     loaderMock = {
-      cacheExtension: jest.fn(),
       evictExtension: jest.fn(),
       getExtensionsById: jest.fn(),
       getAllExtensionsForListing: jest.fn()

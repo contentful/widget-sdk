@@ -36,7 +36,7 @@ export async function installOrUpdate(
 
   const extension = await createOrUpdateExtension(cma, checkAppStatus, parameters);
 
-  extensionLoader.cacheExtension(extension);
+  extensionLoader.evictExtension(extension.sys.id);
 
   await transformEditorInterfacesToTargetState(
     cma,

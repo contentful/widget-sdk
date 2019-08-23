@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import { get, cloneDeep, isEqual, omit } from 'lodash';
 import {
   Notification,
@@ -9,6 +10,7 @@ import {
   Heading,
   Button
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import Icon from 'ui/Components/Icon.es6';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
@@ -17,9 +19,12 @@ import StateLink from 'app/common/StateLink.es6';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes.es6';
 import ExtensionForm from './ExtensionForm.es6';
 import * as Analytics from 'analytics/Analytics.es6';
-import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
+const styles = {
+  actionButton: css({
+    marginRight: tokens.spacingM
+  })
+};
 
 export const ExtensionEditorShell = props => (
   <Workbench>
@@ -61,7 +66,13 @@ class ExtensionEditor extends React.Component {
     entity: PropTypes.object.isRequired,
     setDirty: PropTypes.func.isRequired,
     registerSaveAction: PropTypes.func.isRequired,
-    goToList: PropTypes.func.isRequired
+    goToList: PropTypes.func.isRequired,
+    cma: PropTypes.shape({
+      updateExtension: PropTypes.func.isRequired
+    }).isRequired,
+    extensionLoader: PropTypes.shape({
+      evictExtension: PropTypes.func.isRequired
+    }).isRequired
   };
 
   // TODO: use `getDerivedStateFromProps`
@@ -115,26 +126,27 @@ class ExtensionEditor extends React.Component {
   save = () => {
     this.setState({ saving: true });
     const entity = this.prepareForSave(this.state.entity);
-    return spaceContext.cma
+    return this.props.cma
       .updateExtension(entity)
       .then(newEntity => {
         this.setState(
           () => this.entityToFreshState(newEntity),
           () => {
-            const { extension } = this.state.entity;
+            const { sys, extension } = this.state.entity;
+
             Analytics.track('extension:save', {
-              ui_extension_id: this.state.entity.sys.id,
+              ui_extension_id: sys.id,
               name: extension.name,
-              version: this.state.entity.sys.version,
+              version: sys.version,
               fieldTypes: extension.fieldTypes,
               ...getExtensionParameterIds(extension)
             });
+
+            Notification.success('Your extension was updated successfully.');
+
+            this.props.extensionLoader.evictExtension(sys.id);
           }
         );
-
-        Notification.success('Your extension was updated successfully.');
-
-        spaceContext.extensionLoader.cacheExtension(newEntity);
       })
       .catch(() => {
         Notification.error(
@@ -165,7 +177,7 @@ class ExtensionEditor extends React.Component {
       <React.Fragment>
         <StateLink to="^.list">
           {({ onClick }) => (
-            <Button buttonType="muted" onClick={onClick} className="f36-margin-right--m">
+            <Button className={styles.actionButton} buttonType="muted" onClick={onClick}>
               Close
             </Button>
           )}

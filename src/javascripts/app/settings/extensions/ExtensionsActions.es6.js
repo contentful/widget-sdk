@@ -14,18 +14,19 @@ import getExtensionParameterIds from './getExtensionParameterIds.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-const $state = getModule('$state');
-
 const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
 
 function install({ extension, type, url }) {
+  const spaceContext = getModule('spaceContext');
+  const $state = getModule('$state');
+
   return spaceContext.cma
     .createExtension({ extension })
     .then(res => {
-      spaceContext.extensionLoader.cacheExtension(res);
+      const extensionId = res.sys.id;
+      spaceContext.extensionLoader.evictExtension(extensionId);
 
-      return $state.go('^.detail', { extensionId: res.sys.id });
+      return $state.go('^.detail', { extensionId });
     })
     .then(() => {
       Notification.success('Your new extension was successfully created.');
@@ -115,7 +116,7 @@ export function createExtension() {
   });
 }
 
-class ExtensionsActions extends React.Component {
+export default class ExtensionsActions extends React.Component {
   state = {
     isOpen: false
   };
@@ -173,5 +174,3 @@ class ExtensionsActions extends React.Component {
     );
   }
 }
-
-export default ExtensionsActions;
