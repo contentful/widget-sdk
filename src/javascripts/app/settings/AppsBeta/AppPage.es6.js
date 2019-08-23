@@ -146,7 +146,6 @@ export default class AppRoute extends Component {
       deleteExtension: PropTypes.func.isRequired
     }).isRequired,
     extensionLoader: PropTypes.shape({
-      cacheExtension: PropTypes.func.isRequired,
       evictExtension: PropTypes.func.isRequired
     })
   };

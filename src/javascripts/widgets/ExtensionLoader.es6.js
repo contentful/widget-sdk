@@ -73,8 +73,7 @@ export function createExtensionLoader(extensionDefinitionLoader, spaceEndpoint) 
   //
   // While the method us used, the cache is build up. Once cached
   // extension will be used until the current space/environment
-  // changes or either `evictExtension` or `cacheExtension` is
-  // called.
+  // changes or `evictExtension` is called.
   //
   // Please note this method is intended to be used to load
   // extensions for entity editors where for performance reasons
@@ -86,18 +85,8 @@ export function createExtensionLoader(extensionDefinitionLoader, spaceEndpoint) 
   };
 
   // Removes extension from the cache.
-  // Use when an extension is removed from an environment.
+  // Use when an extension is modified or removed.
   const evictExtension = id => extensionLoader.clear(id);
-
-  // Updates the cached version of an extension.
-  // Use when an extension is updated.
-  const cacheExtension = extension => {
-    const key = extension.sys.id;
-
-    // We cannot prime over existing cache entries.
-    // Evict the cached item first and only then prime.
-    extensionLoader.clear(key).prime(key, extension);
-  };
 
   // Fetches all Extension entities in an environment to be
   // used in listing views.
@@ -119,7 +108,6 @@ export function createExtensionLoader(extensionDefinitionLoader, spaceEndpoint) 
   };
 
   return {
-    cacheExtension,
     evictExtension,
     getExtensionsById,
     getAllExtensionsForListing

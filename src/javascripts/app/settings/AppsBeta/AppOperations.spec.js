@@ -39,7 +39,7 @@ describe('AppOperations', () => {
         updateExtension: jest.fn()
       };
       const loader = {
-        cacheExtension: jest.fn()
+        evictExtension: jest.fn()
       };
       const checkAppStatus = jest.fn(() => {
         return Promise.resolve({
@@ -55,24 +55,24 @@ describe('AppOperations', () => {
       expect(cma.createExtension).toBeCalledTimes(1);
       expect(cma.updateExtension).not.toBeCalled();
 
-      const expectedEntity = expect.objectContaining({
-        sys: {
-          id: expect.stringContaining('test-app-')
-        },
-        extensionDefinition: {
+      expect(cma.createExtension).toBeCalledWith(
+        expect.objectContaining({
           sys: {
-            type: 'Link',
-            linkType: 'ExtensionDefinition',
-            id: 'def-id'
-          }
-        },
-        parameters: { test: true }
-      });
+            id: expect.stringContaining('test-app-')
+          },
+          extensionDefinition: {
+            sys: {
+              type: 'Link',
+              linkType: 'ExtensionDefinition',
+              id: 'def-id'
+            }
+          },
+          parameters: { test: true }
+        })
+      );
 
-      expect(cma.createExtension).toBeCalledWith(expectedEntity);
-
-      expect(loader.cacheExtension).toBeCalledTimes(1);
-      expect(loader.cacheExtension).toBeCalledWith(expectedEntity);
+      expect(loader.evictExtension).toBeCalledTimes(1);
+      expect(loader.evictExtension).toBeCalledWith(expect.stringContaining('test-app-'));
     });
 
     it('updates an extension if already installed', async () => {
@@ -81,7 +81,7 @@ describe('AppOperations', () => {
         updateExtension: jest.fn(ext => Promise.resolve(ext))
       };
       const loader = {
-        cacheExtension: jest.fn()
+        evictExtension: jest.fn()
       };
       const checkAppStatus = jest.fn(() => {
         return Promise.resolve({
@@ -119,8 +119,8 @@ describe('AppOperations', () => {
 
       expect(cma.updateExtension).toBeCalledWith(expectedEntity);
 
-      expect(loader.cacheExtension).toBeCalledTimes(1);
-      expect(loader.cacheExtension).toBeCalledWith(expectedEntity);
+      expect(loader.evictExtension).toBeCalledTimes(1);
+      expect(loader.evictExtension).toBeCalledWith(expectedEntity.sys.id);
     });
 
     it('fails if an extension cannot be created', async () => {
@@ -128,7 +128,7 @@ describe('AppOperations', () => {
         createExtension: jest.fn(() => Promise.reject('unprocessable'))
       };
       const loader = {
-        cacheExtension: jest.fn()
+        evictExtension: jest.fn()
       };
       const checkAppStatus = jest.fn(() => {
         return Promise.resolve({
@@ -144,7 +144,7 @@ describe('AppOperations', () => {
       } catch (err) {
         expect(err).toMatch('unprocessable');
         expect(cma.createExtension).toBeCalledTimes(1);
-        expect(loader.cacheExtension).not.toBeCalled();
+        expect(loader.evictExtension).not.toBeCalled();
       }
     });
 
@@ -160,7 +160,7 @@ describe('AppOperations', () => {
         updateEditorInterface: jest.fn(ext => Promise.resolve(ext))
       };
       const loader = {
-        cacheExtension: jest.fn()
+        evictExtension: jest.fn()
       };
       const checkAppStatus = jest.fn(() => {
         return Promise.resolve({

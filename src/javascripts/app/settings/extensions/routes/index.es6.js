@@ -51,7 +51,8 @@ export default {
             cma: spaceContext.cma,
             goToList: () => {
               $state.go('^.list');
-            }
+            },
+            extensionLoader: spaceContext.extensionLoader
           };
         }
       ]
