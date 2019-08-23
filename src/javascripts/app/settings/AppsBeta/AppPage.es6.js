@@ -61,7 +61,8 @@ const styles = {
     '> div': {
       height: '100%',
       width: '100%'
-    }
+    },
+    overflow: 'hidden'
   }),
   actionButton: css({
     marginLeft: tokens.spacingM
@@ -231,7 +232,8 @@ export default class AppRoute extends Component {
       isInstalled: !!extension,
       extensionDefinition,
       title: get(appInfo, ['fields', 'title'], extensionDefinition.name),
-      appIcon: get(appInfo, ['fields', 'icon', 'fields', 'file', 'url'], '')
+      appIcon: get(appInfo, ['fields', 'icon', 'fields', 'file', 'url'], ''),
+      permissions: get(appInfo, ['fields', 'permissionsExplanation'], '')
     });
   };
 
@@ -451,7 +453,7 @@ export default class AppRoute extends Component {
   };
 
   render() {
-    const { ready, isInstalled, acceptedPermissions, appIcon, title, appEnabled } = this.state;
+    const { ready, isInstalled, acceptedPermissions, appIcon, title, permissions, appEnabled } = this.state;
 
     if (!ready) {
       return this.renderLoading();
@@ -471,7 +473,7 @@ export default class AppRoute extends Component {
               onCancel={this.props.goBackToList}
               icon={appIcon}
               appName={title}
-              centered
+              permissions={permissions}
             />
           </Workbench.Content>
         </Workbench>

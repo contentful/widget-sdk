@@ -294,7 +294,6 @@ export default class AppsListPage extends React.Component {
     } catch (err) {
       Telemetry.count('apps.list-loading-failed');
       Notification.error('Failed to load apps.');
-      this.props.goToContent();
     }
   }
 

@@ -8,17 +8,14 @@ import {
   Icon,
   Button
 } from '@contentful/forma-36-react-components';
-import cx from 'classnames';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import AppIcon from '../apps/_common/AppIcon.es6';
 
 const styles = {
-  card: css({
-    padding: tokens.spacingL,
-    border: 'none',
-    boxShadow: 'none',
-    maxWidth: '500px'
+  container: css({
+    maxWidth: '500px',
+    margin: '0 auto'
   }),
   subheading: css({
     marginBottom: tokens.spacingS
@@ -44,12 +41,6 @@ const styles = {
     marginTop: tokens.spacingL,
     marginBottom: tokens.spacingL
   }),
-  centered: css({
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'column',
-    textAlign: 'center'
-  }),
   appIcon: css({
     marginLeft: tokens.spacingXs,
     marginRight: tokens.spacingXs
@@ -68,11 +59,11 @@ const styles = {
 };
 
 export default function AppPermissions(props) {
-  const { appName, permissions, centered, icon } = props;
+  const { appName, permissions, icon } = props;
 
   return (
-    <div className={cx({ [styles.centered]: centered })}>
-      <Card className={styles.card}>
+    <div className={styles.container}>
+      <Card padding="large">
         <Heading element="h1" className={styles.heading}>
           Install {appName}
         </Heading>
@@ -130,6 +121,5 @@ AppPermissions.propTypes = {
   onAuthorize: PropTypes.func.isRequired,
   appName: PropTypes.string.isRequired,
   permissions: PropTypes.string,
-  centered: PropTypes.bool,
   icon: PropTypes.string.isRequired
 };
