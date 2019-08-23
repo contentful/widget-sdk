@@ -12,14 +12,22 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 // Takes API Extension entity and prepares it for the view.
-const prepareExtension = ({ sys, extension, extensionDefinition, parameters }) => {
+const prepareExtension = definitionsThatAreApps => ({
+  sys,
+  extension,
+  extensionDefinition,
+  parameters
+}) => {
   const fieldTypes = (extension.fieldTypes || []).map(toInternalFieldType);
+  const extensionDefinitionId = get(extensionDefinition, ['sys', 'id']);
+
   return {
     id: sys.id,
     name: extension.name,
     fieldTypes: fieldTypes.length > 0 ? fieldTypes.join(', ') : 'none',
     hosting: typeof sys.srcdocSha256 === 'string' ? 'Contentful' : 'self-hosted',
-    isBasedOnDefinition: !!get(extensionDefinition, ['sys', 'id']),
+    isBasedOnDefinition: !!extensionDefinitionId,
+    isApp: extensionDefinitionId && definitionsThatAreApps.includes(extensionDefinitionId),
     parameterCounts: {
       instanceDefinitions: get(extension, ['parameters', 'instance', 'length']),
       installationDefinitions: get(extension, ['parameters', 'installation', 'length']),
@@ -28,10 +36,15 @@ const prepareExtension = ({ sys, extension, extensionDefinition, parameters }) =
   };
 };
 
-const ExtensionsFetcher = createFetcherComponent(async ({ extensionLoader }) => {
-  const items = await extensionLoader.getAllExtensionsForListing();
+const ExtensionsFetcher = createFetcherComponent(async ({ extensionLoader, appsRepo }) => {
+  const [extensions, definitionsThatAreApps] = await Promise.all([
+    extensionLoader.getAllExtensionsForListing(),
+    appsRepo.getDefinitionIdsOfApps()
+  ]);
 
-  return (items || []).map(prepareExtension);
+  return (extensions || [])
+    .map(prepareExtension(definitionsThatAreApps))
+    .filter(extension => !extension.isApp);
 });
 
 class ExtensionsListRoute extends React.Component {
@@ -40,7 +53,10 @@ class ExtensionsListRoute extends React.Component {
     extensionUrlReferrer: PropTypes.string,
     extensionLoader: PropTypes.shape({
       getAllExtensionsForListing: PropTypes.func.isRequired
-    }).isRequired
+    }).isRequired,
+    appsRepo: PropTypes.shape({
+      getDefinitionIdsOfApps: PropTypes.func.isRequired
+    })
   };
 
   render() {
@@ -52,7 +68,9 @@ class ExtensionsListRoute extends React.Component {
     }
 
     return (
-      <ExtensionsFetcher extensionLoader={this.props.extensionLoader}>
+      <ExtensionsFetcher
+        extensionLoader={this.props.extensionLoader}
+        appsRepo={this.props.appsRepo}>
         {({ isLoading, isError, data, fetch }) => {
           if (isLoading) {
             return <ExtensionListShell />;

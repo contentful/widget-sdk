@@ -27,11 +27,12 @@ describe('ExtensionsListRoute', () => {
 
   it('should render Forbidden page when no access', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: false }));
+    const getAllExtensionsForListing = jest.fn();
+    const getDefinitionIdsOfApps = jest.fn();
     const wrapper = Enzyme.mount(
       <ExtensionsListRoute
-        extensionLoader={{
-          getAllExtensionsForListing: () => {}
-        }}
+        extensionLoader={{ getAllExtensionsForListing }}
+        appsRepo={{ getDefinitionIdsOfApps }}
       />
     );
     expect(wrapper.find(ForbiddenPage)).toExist();
@@ -39,16 +40,19 @@ describe('ExtensionsListRoute', () => {
 
   it('should show ExtensionsForbiddenPage if no access and reaches page via deeplink extensionUrl', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: false }));
-    expect.assertions(4);
+    expect.assertions(5);
     const getAllExtensionsForListing = jest.fn();
+    const getDefinitionIdsOfApps = jest.fn();
     const wrapper = Enzyme.mount(
       <ExtensionsListRoute
         extensionLoader={{ getAllExtensionsForListing }}
+        appsRepo={{ getDefinitionIdsOfApps }}
         extensionUrl="https://github.com/contentful/extensions/blob/master/samples/build-netlify/extension.json"
       />
     );
     expect($stateMocked.go).not.toHaveBeenCalled();
     expect(getAllExtensionsForListing).not.toHaveBeenCalled();
+    expect(getDefinitionIdsOfApps).not.toHaveBeenCalled();
     expect(wrapper.find(selectors.forbiddenPage)).toExist();
 
     expect(
@@ -63,13 +67,18 @@ describe('ExtensionsListRoute', () => {
 
   it('should fetch extensions if access and  reaches page', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: true }));
-    expect.assertions(3);
+    expect.assertions(4);
     const getAllExtensionsForListing = jest.fn();
+    const getDefinitionIdsOfApps = jest.fn();
     const wrapper = Enzyme.mount(
-      <ExtensionsListRoute extensionLoader={{ getAllExtensionsForListing }} />
+      <ExtensionsListRoute
+        extensionLoader={{ getAllExtensionsForListing }}
+        appsRepo={{ getDefinitionIdsOfApps }}
+      />
     );
     expect($stateMocked.go).not.toHaveBeenCalled();
     expect(getAllExtensionsForListing).toHaveBeenCalledTimes(1);
+    expect(getDefinitionIdsOfApps).toHaveBeenCalledTimes(1);
     expect(wrapper.find(selectors.forbiddenPage)).not.toExist();
   });
 });
