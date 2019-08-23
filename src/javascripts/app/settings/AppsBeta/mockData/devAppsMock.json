@@ -1,0 +1,41 @@
+[
+  {
+    "sys": {
+      "type": "DevApp",
+      "id": "dev-app_2NAHYQkIGItuEzwePZlWXV"
+    },
+    "extensionDefinition": {
+      "sys": {
+        "id": "2NAHYQkIGItuEzwePZlWXV",
+        "type": "ExtensionDefinition",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "2b5UqceLpT58d9tat2os42"
+          }
+        },
+        "createdAt": "2019-07-23T10:00:42.152Z",
+        "updatedAt": "2019-07-23T10:00:42.152Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2jvc3kU4n7OIABiFMTaGyB"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2jvc3kU4n7OIABiFMTaGyB"
+          }
+        }
+      },
+      "name": "Optimizely",
+      "src": "http://localhost:1234",
+      "public": false,
+      "locations": ["page"]
+    }
+  }
+]

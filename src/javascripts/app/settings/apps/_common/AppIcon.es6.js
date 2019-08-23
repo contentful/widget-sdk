@@ -29,13 +29,14 @@ const Icons = {
 
 export default class AppIcon extends Component {
   static propTypes = {
-    appId: PropTypes.string.isRequired,
-    size: PropTypes.oneOf(['default', 'large']),
+    appId: PropTypes.string,
+    size: PropTypes.oneOf(['default', 'large', 'small']),
     className: PropTypes.string
   };
 
   static defaultProps = {
-    size: 'default'
+    size: 'default',
+    appId: ''
   };
 
   render() {

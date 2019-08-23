@@ -1,4 +1,5 @@
 import createAppsRepo from './AppsRepo.es6';
+import entriesMock from './mockData/entriesMock.json';
 
 const NETLIFY_APP_ID = 'netlify';
 const NETLIFY_EXTENSION_DEFINITION_ID = '1VchawWvbIClHuMIyxwR5m';
@@ -318,6 +319,87 @@ describe('AppsRepo', () => {
         expect(err.message).toMatch(/exactly one Extension/);
         expect(err.extensionCount).toBe(2);
       }
+    });
+  });
+  describe('getAppsListing', () => {
+    const originalFetch = global.window.fetch;
+    const repo = createAppsRepo(jest.fn(), jest.fn());
+
+    afterAll(() => {
+      global.window.fetch = originalFetch;
+    });
+
+    it('should return an empty object if the endpoint returns no data', async () => {
+      const mockFetch = jest.fn(() => {
+        return Promise.resolve({ ok: false, json: () => Promise.resolve({}) });
+      });
+
+      global.window.fetch = mockFetch;
+
+      const result = await repo.getAppsListing();
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&content_type=app',
+        { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
+      );
+
+      expect(result).toEqual({});
+    });
+    it('should return an empty object if the endpoint returns bad data', async () => {
+      const mockFetch = jest.fn(() => {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ items: [], includes: { Assets: [] }, sys: {} })
+        });
+      });
+
+      global.window.fetch = mockFetch;
+
+      const result = await repo.getAppsListing();
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&content_type=app',
+        { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
+      );
+
+      expect(result).toEqual({});
+    });
+    it('should return an object of apps when the endpoint returns good data', async () => {
+      const mockFetch = jest.fn(() => {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve(entriesMock) });
+      });
+
+      global.window.fetch = mockFetch;
+
+      const result = await repo.getAppsListing();
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&content_type=app',
+        { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
+      );
+
+      expect(result).toMatchSnapshot();
+    });
+  });
+  describe('isDevApp', () => {
+    const repo = createAppsRepo(jest.fn(), jest.fn());
+
+    it('should return false when not passed a string', () => {
+      [false, [], {}, 0, null, undefined].forEach(type => {
+        expect(repo.isDevApp(type)).toBe(false);
+      });
+    });
+
+    it('should return false for non dev ids', () => {
+      ['myApp', 'optimizely', 'not-a-dev-app'].forEach(type => {
+        expect(repo.isDevApp(type)).toBe(false);
+      });
+    });
+
+    it('should return true for dev app ids', () => {
+      ['dev-app_something', 'dev-app'].forEach(type => {
+        expect(repo.isDevApp(type)).toBe(true);
+      });
     });
   });
 });

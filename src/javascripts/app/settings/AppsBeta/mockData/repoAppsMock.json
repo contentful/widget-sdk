@@ -1,0 +1,308 @@
+[
+  {
+    "sys": {
+      "type": "App",
+      "id": "netlify"
+    },
+    "extensionDefinition": {
+      "sys": {
+        "id": "1VchawWvbIClHuMIyxwR5m",
+        "type": "ExtensionDefinition",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "5EJGHo8tYJcjnEhYWDxivp"
+          }
+        },
+        "createdAt": "2019-07-24T09:09:45.574Z",
+        "updatedAt": "2019-08-01T14:41:20.716Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        }
+      },
+      "name": "Netlify build and preview",
+      "src": "https://netlify-build-1.contentfulexts.com/extension.html",
+      "public": true,
+      "locations": ["app", "entry-sidebar"]
+    },
+    "extension": {
+      "sys": {
+        "id": "netlify-app-owpoHwFZXAPWpyOy",
+        "type": "Extension",
+        "space": {
+          "sys": {
+            "id": "bxgvwg0h5uxs",
+            "type": "Link",
+            "linkType": "Space"
+          }
+        },
+        "version": 1,
+        "createdAt": "2019-08-21T11:21:39.416Z",
+        "createdBy": {
+          "sys": {
+            "id": "2jvc3kU4n7OIABiFMTaGyB",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedAt": "2019-08-21T11:21:39.416Z",
+        "updatedBy": {
+          "sys": {
+            "id": "2jvc3kU4n7OIABiFMTaGyB",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        }
+      },
+      "parameters": {
+        "names": "thirsty",
+        "siteIds": "06fe192d-3ddb-4169-9db7-7c1093017a8c",
+        "siteUrls": "https://thirsty-einstein-8908d6.netlify.com",
+        "siteNames": "thirsty-einstein-8908d6",
+        "buildHookIds": "5d5d2942f6b077dd3cb66e44",
+        "notificationHookIds": "5d5d2942d271c00be9a27f6d,5d5d29422ea5fc0f3136bd2a,5d5d2942379672e846227b98"
+      },
+      "extensionDefinition": {
+        "sys": {
+          "id": "1VchawWvbIClHuMIyxwR5m",
+          "type": "Link",
+          "linkType": "ExtensionDefinition"
+        }
+      }
+    }
+  },
+  {
+    "sys": {
+      "type": "App",
+      "id": "gatsby"
+    },
+    "extensionDefinition": {
+      "sys": {
+        "id": "35f8xJFaJpOUFAKepAWiUj",
+        "type": "ExtensionDefinition",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "5EJGHo8tYJcjnEhYWDxivp"
+          }
+        },
+        "createdAt": "2019-07-24T12:36:16.933Z",
+        "updatedAt": "2019-08-02T12:26:52.709Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        }
+      },
+      "name": "Gatsby preview",
+      "src": "https://gatsby-preview-1.contentfulexts.com/extension.html",
+      "public": true,
+      "locations": ["app", "entry-sidebar"]
+    }
+  },
+  {
+    "sys": {
+      "type": "App",
+      "id": "optimizely"
+    },
+    "extensionDefinition": {
+      "sys": {
+        "id": "i43PggcHag2PCrGjYTiIX",
+        "type": "ExtensionDefinition",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "5EJGHo8tYJcjnEhYWDxivp"
+          }
+        },
+        "createdAt": "2019-07-24T12:38:34.885Z",
+        "updatedAt": "2019-08-02T13:55:42.195Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        }
+      },
+      "name": "Optimizely experimentation",
+      "src": "https://optimizely-1.contentfulexts.com/extension.html",
+      "public": true,
+      "locations": ["app", "entry-editor", "entry-sidebar"]
+    }
+  },
+  {
+    "sys": {
+      "type": "App",
+      "id": "cloudinary"
+    },
+    "extensionDefinition": {
+      "sys": {
+        "id": "zjcnWgBknf9zB7IM9HZjE",
+        "type": "ExtensionDefinition",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "5EJGHo8tYJcjnEhYWDxivp"
+          }
+        },
+        "createdAt": "2019-07-24T12:40:36.439Z",
+        "updatedAt": "2019-07-30T17:13:39.053Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        }
+      },
+      "name": "Cloudinary assets",
+      "src": "https://cloudinary-assets-1.contentfulexts.com/extension.html",
+      "public": true,
+      "locations": ["app", "entry-field"],
+      "fieldTypes": [
+        {
+          "type": "Object"
+        }
+      ]
+    },
+    "extension": {
+      "sys": {
+        "id": "cloudinary-app-eDCiHa2DMfpjoNFH",
+        "type": "Extension",
+        "space": {
+          "sys": {
+            "id": "bxgvwg0h5uxs",
+            "type": "Link",
+            "linkType": "Space"
+          }
+        },
+        "version": 1,
+        "createdAt": "2019-08-23T07:00:54.416Z",
+        "createdBy": {
+          "sys": {
+            "id": "29B6zorz8plUCN1auThiVH",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedAt": "2019-08-23T07:00:54.416Z",
+        "updatedBy": {
+          "sys": {
+            "id": "29B6zorz8plUCN1auThiVH",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        }
+      },
+      "parameters": {
+        "apiKey": "sadfdsaf",
+        "maxFiles": 10,
+        "cloudName": "sadfsadfdsaf"
+      },
+      "extensionDefinition": {
+        "sys": {
+          "id": "zjcnWgBknf9zB7IM9HZjE",
+          "type": "Link",
+          "linkType": "ExtensionDefinition"
+        }
+      }
+    }
+  },
+  {
+    "sys": {
+      "type": "App",
+      "id": "bynder"
+    },
+    "extensionDefinition": {
+      "sys": {
+        "id": "5KySdUzG7OWuCE2V3fgtIa",
+        "type": "ExtensionDefinition",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "5EJGHo8tYJcjnEhYWDxivp"
+          }
+        },
+        "createdAt": "2019-07-24T12:42:27.828Z",
+        "updatedAt": "2019-08-01T14:38:17.868Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        }
+      },
+      "name": "Bynder assets",
+      "src": "https://bynder-assets-1.contentfulexts.com/extension.html",
+      "public": true,
+      "locations": ["app", "entry-field"],
+      "fieldTypes": [
+        {
+          "type": "Object"
+        }
+      ]
+    }
+  }
+]

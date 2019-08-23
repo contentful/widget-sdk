@@ -90,7 +90,8 @@ export default class AppListItem extends Component {
               {({ onClick }) => (
                 <div
                   onClick={this.determineOnClick(onClick, openDetailsFunc)}
-                  className={styles.appLink}>
+                  className={styles.appLink}
+                  data-test-id="app-details">
                   {app.icon ? (
                     <img src={app.icon} className={styles.icon} />
                   ) : (

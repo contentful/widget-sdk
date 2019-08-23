@@ -1,0 +1,1048 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "total": 5,
+  "skip": 0,
+  "limit": 100,
+  "items": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "lpjm8d10rkpy"
+          }
+        },
+        "id": "2t7RmuPtaiBrZBMF03OG6F",
+        "type": "Entry",
+        "createdAt": "2019-08-09T11:12:43.847Z",
+        "updatedAt": "2019-08-21T12:20:36.306Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 11,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "app"
+          }
+        },
+        "locale": "en-US"
+      },
+      "fields": {
+        "title": "Optimizely",
+        "slug": "optimizely",
+        "extensionDefinitionId": "i43PggcHag2PCrGjYTiIX",
+        "productCatalogFlag": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "7HOYzLzHcE0qEpjNv1QtKG"
+          }
+        },
+        "icon": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Asset",
+            "id": "4X7O4Q0pIgQZNcONoQrQlp"
+          }
+        },
+        "developer": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "jN06evDcSVRSRoiXmXDf6"
+          }
+        },
+        "categories": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6WAyrpcoXyjr6n417JDsB"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6sEFitPSgteJDAg37d3EA6"
+            }
+          }
+        ],
+        "links": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "3uhz1fIdvjEaXl5x7X3Nqe"
+            }
+          }
+        ],
+        "description": "The Optimizely app makes it easier to power experiments with structured content. It is connecting your content in Contentful with experiments in Optimizely. This enables you to easily experiment with content and run more experiments and create better insights faster.\n\nContent creators can focus on the creation of great content and effective experiments instead of configuration.\n\nThe Optimizely app provides the following functionality:\n\n- add content variations to reference fields\n- assign content variations to experiments\n- monitor experimentation status\n\nTo use this app, you will need:\n\n-  a website:\n  - rendered on a server\n  - pulling content from Contentful\n  - pulling experiments from Optimizely Fullstack\n- a Contentful setup:\n  - at least one content type with a reference field to link variations\n  - the Optimizely app installed and configured\n  - an Optimizely setup:\n- an Optimizely plan with access to the REST API\n  - at least one project with one experiment in fullstack\n  - experiment configured with variations and matching targeting / audiences assigned",
+        "permissionsExplanation": "The app has full permission to the space it is installed in. It can\n\n- read and write content types\n- read and write content entries\n- read and write assets\n\nThe app cannot:\n\n- read your password\n",
+        "tagLine": "Run experiments on your content with ease"
+      }
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "lpjm8d10rkpy"
+          }
+        },
+        "id": "6o5EowZUpn0OZz8uov6lAW",
+        "type": "Entry",
+        "createdAt": "2019-08-09T13:17:46.622Z",
+        "updatedAt": "2019-08-20T09:50:15.154Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 5,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "app"
+          }
+        },
+        "locale": "en-US"
+      },
+      "fields": {
+        "title": "Gatsby Cloud",
+        "slug": "gatsby",
+        "extensionDefinitionId": "35f8xJFaJpOUFAKepAWiUj",
+        "icon": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Asset",
+            "id": "1o6HKvOxxumeW64hv6ANMw"
+          }
+        },
+        "developer": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "jN06evDcSVRSRoiXmXDf6"
+          }
+        },
+        "categories": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6dW0gbwnMQc72Ids7LWdY5"
+            }
+          }
+        ],
+        "links": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "1ocmIuES8A6d9CMF0dyWcg"
+            }
+          }
+        ],
+        "description": "The Gatsby App is like a private playground for developers, designers, and content creators. It provides a (shareable!) temporary URL for viewing changes immediately and in context — so you can make sure that new header plays nicely with the rest of the page before hitting “publish.”",
+        "permissionsExplanation": "The app has full permission to the space it is installed in. It can\n\n- read and write content types\n- read and write content entries\n\nThe app cannot:\n\n- read your password\n",
+        "tagLine": "Gatsby previews your content while you edit it"
+      }
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "lpjm8d10rkpy"
+          }
+        },
+        "id": "4G5XR4RY5wufPETJcBloQW",
+        "type": "Entry",
+        "createdAt": "2019-08-09T11:28:16.630Z",
+        "updatedAt": "2019-08-19T14:44:59.119Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 5,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "app"
+          }
+        },
+        "locale": "en-US"
+      },
+      "fields": {
+        "title": "Cloudinary",
+        "slug": "cloudinary",
+        "extensionDefinitionId": "zjcnWgBknf9zB7IM9HZjE",
+        "icon": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Asset",
+            "id": "3ZH89y9VHHd53v4OQ3BG0V"
+          }
+        },
+        "developer": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "jN06evDcSVRSRoiXmXDf6"
+          }
+        },
+        "categories": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "qYTN9WyCKNTJrX7kpL2eO"
+            }
+          }
+        ],
+        "links": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "22CYJCwE4XIDmZalrPeasJ"
+            }
+          }
+        ],
+        "description": "Use Cloudinary Asset management right from within contentful.\n\nAfter installing this app you can use the familiar Cloudinary asset management interface from within contentfuls entry editor.\n\nThis extension allows you to browse media stored in Cloudinary and reference it from Entries. The IDs of selected media is then stored in Contentful. Clients can then easily fetch content from Contentful and resolve all needed details on media by using the IDs to fetch binaries or meta data from Cloudinary's API.\n\nTo use the app you need a cloudinary account.\n",
+        "permissionsExplanation": "The app has full permission to the space it is installed in. It can\n\n- read and write assets\n- read and write content entries\n\nThe app cannot\n\n- read your password",
+        "tagLine": "Reference assets from Cloudinary - digital asset management"
+      }
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "lpjm8d10rkpy"
+          }
+        },
+        "id": "5ZSCLEfnoPdTF3agzaGGRb",
+        "type": "Entry",
+        "createdAt": "2019-08-09T11:39:29.930Z",
+        "updatedAt": "2019-08-20T14:38:38.722Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 11,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "app"
+          }
+        },
+        "locale": "en-US"
+      },
+      "fields": {
+        "title": "Netlify",
+        "slug": "netlify",
+        "extensionDefinitionId": "1VchawWvbIClHuMIyxwR5m",
+        "productCatalogFlag": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "1lnvRQrzm89xuLTA0FNAKe"
+          }
+        },
+        "icon": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Asset",
+            "id": "2dYQ3x6VMNZJgDXYmMzLBx"
+          }
+        },
+        "developer": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "jN06evDcSVRSRoiXmXDf6"
+          }
+        },
+        "categories": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6WAyrpcoXyjr6n417JDsB"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6dW0gbwnMQc72Ids7LWdY5"
+            }
+          }
+        ],
+        "links": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "3fmZlrqpt2fTnMgP6vMLYi"
+            }
+          }
+        ],
+        "description": "The Netlify App is connecting your Contentful space to a Netlify site. The app enables continuous deployment of content changes into a static site.\n\nThe Netlify app provides the following functionality:\n\n- all users of a space can trigger a build of a Netlify site\n- transparent status of the build so editors don't preview outdated sites anymore\n\nTo use this app, you will need:\n\n- a website, which is\n  - generated using a static site generator (e.g. Middleman, Gatsby, Hugo etc..)\n  - pulling content from Contentful\n  - pushed to a remote repository so Netlify can fetch the site's code when building\n- a Netlify setup, which means:\n  - an account on Netlify\n  - a site on Netlify which is connected to the repo we mentioned above (the site needs to be enabled for continuous deployment)\n",
+        "permissionsExplanation": "The app has full permission to the space it is installed in. It can\n\n- read and write webhooks\n- read and write content types\n- read and write content entries\n- read and write assets\n\nThe app cannot:\n\n- read your password\n",
+        "tagLine": "Build and preview Netlify sites from the Contentful Editor Sidebar"
+      }
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "lpjm8d10rkpy"
+          }
+        },
+        "id": "1IOh4r7oQ9IsWomUj2df76",
+        "type": "Entry",
+        "createdAt": "2019-08-09T11:32:44.920Z",
+        "updatedAt": "2019-08-19T14:44:58.884Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 5,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "app"
+          }
+        },
+        "locale": "en-US"
+      },
+      "fields": {
+        "title": "Bynder",
+        "slug": "bynder",
+        "extensionDefinitionId": "5KySdUzG7OWuCE2V3fgtIa",
+        "icon": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Asset",
+            "id": "3vNJZRjthatucy2mBJMy1u"
+          }
+        },
+        "developer": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "jN06evDcSVRSRoiXmXDf6"
+          }
+        },
+        "categories": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "qYTN9WyCKNTJrX7kpL2eO"
+            }
+          }
+        ],
+        "links": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "7KhLuYMTCGwLv8m7CLBLEW"
+            }
+          }
+        ],
+        "description": "Use Bynder Asset management right from within contentful.\n\nAfter installing this app you can use the familiar Bynder asset management interface from within contentfuls entry editor.\n\nThis extension allows you to browse media stored in Bynder and reference it from Entries. The IDs of selected media is then stored in Contentful. Clients can then easily fetch content from Contentful and resolve all needed details on media by using the IDs to fetch binaries or meta data from Bynder's API.\n\nTo set up the extension you need an account with Bynder with access to a brand portal (yourIdentifier.getbynder.com). This value has to be provided to the extension using the bynderURL parameter.",
+        "permissionsExplanation": "The app has full permission to the space it is installed in. It can\n\n- read and write assets\n- read and write content entries\n\nThe app cannot\n\n- read your password",
+        "tagLine": "Reference assets from Bynder - digital asset management"
+      }
+    }
+  ],
+  "errors": [
+    {
+      "sys": {
+        "id": "notResolvable",
+        "type": "error"
+      },
+      "details": {
+        "type": "Link",
+        "linkType": "Entry",
+        "id": "1lnvRQrzm89xuLTA0FNAKe"
+      }
+    }
+  ],
+  "includes": {
+    "Entry": [
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "1ocmIuES8A6d9CMF0dyWcg",
+          "type": "Entry",
+          "createdAt": "2019-08-09T13:06:30.819Z",
+          "updatedAt": "2019-08-09T13:06:30.819Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Gatsby Website",
+          "url": "https://www.gatsbyjs.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "22CYJCwE4XIDmZalrPeasJ",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:24:39.284Z",
+          "updatedAt": "2019-08-09T11:26:43.862Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Cloudinary Website",
+          "url": "https://cloudinary.com/"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "3fmZlrqpt2fTnMgP6vMLYi",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:36:58.832Z",
+          "updatedAt": "2019-08-09T11:36:58.832Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Netlify Website",
+          "url": "https://www.netlify.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "3uhz1fIdvjEaXl5x7X3Nqe",
+          "type": "Entry",
+          "createdAt": "2019-08-09T10:56:21.176Z",
+          "updatedAt": "2019-08-09T11:02:00.628Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Documentation",
+          "url": "https://www.contentful.com/developers/docs/extensibility/apps/optimizely/"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "6WAyrpcoXyjr6n417JDsB",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:04:37.884Z",
+          "updatedAt": "2019-08-09T11:04:37.884Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "category"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Featured",
+          "slug": "featured",
+          "description": "This category contains apps that are either popular or outstanding implementations of their respective use cases."
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "6dW0gbwnMQc72Ids7LWdY5",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:36:19.327Z",
+          "updatedAt": "2019-08-09T11:36:19.327Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "category"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Website Hosting",
+          "slug": "website-hosting",
+          "description": "Website Hosting apps enable tighter integration with the presentation layer of your content."
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "6sEFitPSgteJDAg37d3EA6",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:07:00.821Z",
+          "updatedAt": "2019-08-09T12:17:14.283Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "category"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Personalization",
+          "slug": "personalization",
+          "description": "Personalization apps allow the editor to customise content based on the audience viewing it."
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "7HOYzLzHcE0qEpjNv1QtKG",
+          "type": "Entry",
+          "createdAt": "2019-08-20T14:38:05.580Z",
+          "updatedAt": "2019-08-20T14:38:05.580Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appProductCatalogFlag"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "flagId": "optimizely_app"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "7KhLuYMTCGwLv8m7CLBLEW",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:31:45.933Z",
+          "updatedAt": "2019-08-21T10:07:52.056Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Bynder",
+          "url": "https://www.bynder.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "jN06evDcSVRSRoiXmXDf6",
+          "type": "Entry",
+          "createdAt": "2019-08-09T10:32:29.626Z",
+          "updatedAt": "2019-08-09T11:49:08.398Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "developer"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Contentful",
+          "slug": "contentful",
+          "icon": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "4DxiiBjixHZVjc69WpJX95"
+            }
+          },
+          "organizationId": "5EJGHo8tYJcjnEhYWDxivp",
+          "websiteUrl": "https://www.contentful.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "qYTN9WyCKNTJrX7kpL2eO",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:22:27.963Z",
+          "updatedAt": "2019-08-09T11:22:27.963Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "category"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Digital Asset Management",
+          "slug": "digital-asset-management",
+          "description": "DAM Apps allow efficient management of digital assets and their usage licences.\n"
+        }
+      }
+    ],
+    "Asset": [
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "1o6HKvOxxumeW64hv6ANMw",
+          "type": "Asset",
+          "createdAt": "2019-08-09T13:04:45.914Z",
+          "updatedAt": "2019-08-09T13:04:45.914Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Gatsby Logo",
+          "description": "Gatsby Monogram",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/1o6HKvOxxumeW64hv6ANMw/b1c5308bcd4e48cfaafc185c0b12aa36/Gatsby_Monogram.svg",
+            "details": {
+              "size": 810,
+              "image": {
+                "width": 28,
+                "height": 28
+              }
+            },
+            "fileName": "Gatsby_Monogram.svg",
+            "contentType": "image/svg+xml"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "2dYQ3x6VMNZJgDXYmMzLBx",
+          "type": "Asset",
+          "createdAt": "2019-08-09T11:34:11.059Z",
+          "updatedAt": "2019-08-09T11:34:11.059Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Netlify Logo",
+          "description": "Netlify logomark",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg",
+            "details": {
+              "size": 4081,
+              "image": {
+                "width": 40,
+                "height": 40
+              }
+            },
+            "fileName": "logomark.svg",
+            "contentType": "image/svg+xml"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "3ZH89y9VHHd53v4OQ3BG0V",
+          "type": "Asset",
+          "createdAt": "2019-08-09T11:28:05.008Z",
+          "updatedAt": "2019-08-09T11:28:05.008Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Cloudinary Logo",
+          "description": "cloudinary icon for white bg",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/3ZH89y9VHHd53v4OQ3BG0V/cc62043a88cd5fb80719687f299e7351/cloudinary_icon_for_white_bg.svg",
+            "details": {
+              "size": 7491,
+              "image": {
+                "width": 142,
+                "height": 142
+              }
+            },
+            "fileName": "cloudinary_icon_for_white_bg.svg",
+            "contentType": "image/svg+xml"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "3vNJZRjthatucy2mBJMy1u",
+          "type": "Asset",
+          "createdAt": "2019-08-09T11:31:00.887Z",
+          "updatedAt": "2019-08-09T12:03:28.026Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Bynder Logo",
+          "description": "Large-Bynder Blue Logo Vertical",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/3vNJZRjthatucy2mBJMy1u/0e5d501207427780021e7580cc384761/bynder.5e9e457b9d.svg",
+            "details": {
+              "size": 991,
+              "image": {
+                "width": 40,
+                "height": 30
+              }
+            },
+            "fileName": "bynder.5e9e457b9d.svg",
+            "contentType": "image/svg+xml"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "4DxiiBjixHZVjc69WpJX95",
+          "type": "Asset",
+          "createdAt": "2019-08-09T10:31:47.328Z",
+          "updatedAt": "2019-08-09T10:31:47.328Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Contentful Logo Square",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182",
+            "details": {
+              "size": 11294,
+              "image": {
+                "width": 283,
+                "height": 283
+              }
+            },
+            "fileName": "472182",
+            "contentType": "image/png"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "4X7O4Q0pIgQZNcONoQrQlp",
+          "type": "Asset",
+          "createdAt": "2019-08-09T11:18:08.768Z",
+          "updatedAt": "2019-08-21T13:04:30.913Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 4,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Optimizely Logo",
+          "description": "Optimizely Logo Secondary Full Color Light",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg",
+            "details": {
+              "size": 1444,
+              "image": {
+                "width": 60,
+                "height": 60
+              }
+            },
+            "fileName": "optimizely-logo.svg",
+            "contentType": "image/svg+xml"
+          }
+        }
+      }
+    ]
+  }
+}

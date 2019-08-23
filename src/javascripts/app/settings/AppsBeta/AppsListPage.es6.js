@@ -238,7 +238,9 @@ const prepareDevApp = app => ({
   id: app.sys.id,
   title: app.extensionDefinition.name,
   installed: !!app.extension,
-  isDevApp: true
+  isDevApp: true,
+  visiable: true,
+  enabled: true
 });
 
 export default class AppsListPage extends React.Component {
@@ -247,7 +249,8 @@ export default class AppsListPage extends React.Component {
     repo: PropTypes.shape({
       getApps: PropTypes.func.isRequired,
       getDevApps: PropTypes.func.isRequired,
-      getAppsListing: PropTypes.func.isRequired
+      getAppsListing: PropTypes.func.isRequired,
+      isDevApp: PropTypes.func.isRequired
     }).isRequired,
     organizationId: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired,
@@ -258,7 +261,7 @@ export default class AppsListPage extends React.Component {
     }).isRequired
   };
 
-  state = {};
+  state = { ready: false };
 
   async componentDidMount() {
     try {
@@ -319,7 +322,7 @@ export default class AppsListPage extends React.Component {
         {installedApps.length > 0 && (
           <>
             <Heading element="h2">Installed</Heading>
-            <div>
+            <div data-test-id="installed-list">
               {installedApps.map(app => (
                 <AppListItem key={app.id} app={app} openDetailModal={openDetailModal} />
               ))}

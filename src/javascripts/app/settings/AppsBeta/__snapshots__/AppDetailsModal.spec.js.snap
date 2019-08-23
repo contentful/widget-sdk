@@ -1,0 +1,208 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppDetailsModal should match the snapshot 1`] = `
+.emotion-15 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  overflow: hidden;
+}
+
+.emotion-4 {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+}
+
+.emotion-3 {
+  white-space: pre-line;
+}
+
+.emotion-14 {
+  min-width: 280px;
+  width: 280px;
+  min-height: 700px;
+  padding-left: 1.5rem;
+  border-left: 1px solid #d3dce0;
+}
+
+.emotion-5 {
+  margin-bottom: 1.5rem;
+}
+
+.emotion-6 {
+  margin-bottom: 0.5rem;
+}
+
+.emotion-7 {
+  margin-bottom: 0.5rem;
+}
+
+.emotion-0 {
+  width: 60px;
+  height: 60px;
+  margin-right: 1rem;
+}
+
+.emotion-10 {
+  width: 40px;
+  height: 40px;
+}
+
+.emotion-2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 1.5rem;
+}
+
+.emotion-1 {
+  line-height: 1.25;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+<div>
+  <div
+    class="emotion-15"
+  >
+    <div
+      class="emotion-4"
+    >
+      <div
+        class="emotion-2"
+      >
+        <img
+          class="emotion-0"
+          src="//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg"
+        />
+        <div>
+          <h1
+            class="Heading__Heading___83D3K emotion-1"
+            data-test-id="cf-ui-heading"
+          >
+            Optimizely
+          </h1>
+          <div>
+            App • Developed by
+             
+            <a
+              class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+              data-test-id="cf-ui-text-link"
+              href="https://www.contentful.com"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <span
+                class="TabFocusTrap__TabFocusTrap___39Vty"
+                tabindex="-1"
+              >
+                Contentful
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div
+        class="emotion-3"
+      >
+        The Optimizely app makes it easier to power experiments with structured content.
+      </div>
+    </div>
+    <div
+      class="emotion-14"
+    >
+      <button
+        class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO Button__Button--full-width___3Fmpo"
+        data-test-id="cf-ui-button"
+        type="button"
+      >
+        <span
+          class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+          tabindex="-1"
+        >
+          <span
+            class="Button__Button__label___3tcOj"
+          >
+            Install
+          </span>
+        </span>
+      </button>
+      <div
+        class="emotion-5"
+      />
+      <h3
+        class="Subheading__Subheading___2mA9j emotion-6"
+        data-test-id="cf-ui-subheading"
+      >
+        Links
+      </h3>
+      <div
+        class="emotion-7"
+      >
+        <a
+          class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+          data-test-id="cf-ui-text-link"
+          href="https://www.contentful.com/developers/docs/extensibility/apps/optimizely/"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <span
+            class="TabFocusTrap__TabFocusTrap___39Vty"
+            tabindex="-1"
+          >
+            Documentation
+          </span>
+        </a>
+      </div>
+      <div
+        class="emotion-5"
+      />
+      <h3
+        class="Subheading__Subheading___2mA9j emotion-6"
+        data-test-id="cf-ui-subheading"
+      >
+        Author
+      </h3>
+      <a
+        class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+        data-test-id="cf-ui-text-link"
+        href="https://www.contentful.com"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <span
+          class="TabFocusTrap__TabFocusTrap___39Vty"
+          tabindex="-1"
+        >
+          <img
+            class="emotion-10"
+            src="//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182"
+          />
+        </span>
+      </a>
+      <div
+        class="emotion-5"
+      />
+      <h3
+        class="Subheading__Subheading___2mA9j emotion-6"
+        data-test-id="cf-ui-subheading"
+      >
+        Categories
+      </h3>
+      <p
+        class="Paragraph__Paragraph___2aO-9"
+        data-test-id="cf-ui-paragraph"
+      >
+        Featured, Personalization
+      </p>
+      <div
+        class="emotion-5"
+      />
+    </div>
+  </div>
+</div>
+`;
