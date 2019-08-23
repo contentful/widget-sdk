@@ -1,3 +1,4 @@
+import { omit } from 'lodash'
 import {
   defaultSpaceId,
   defaultEntryId,
@@ -5,11 +6,14 @@ import {
   defaultHeader as commonDefaultHeader
 } from '../util/requests';
 import { RequestOptions } from '@pact-foundation/pact-web';
-const empty = require('../fixtures/responses/empty.json');
+const emptyWithTotal = require('../fixtures/responses/empty.json');
+const serverError = require('../fixtures/responses/server-error.json');
 import {
-  default as severalTasks,
-  definition as severalTasksRequestDefinition,
+  definition as severalTasksDefinition,
 } from '../fixtures/responses/tasks-several.js';
+
+// Tasks doesn't currently support "total" like most other collection endpoints.
+const empty = omit(emptyWithTotal, 'total')
 
 export enum States {
   NONE = 'tasks/none',
@@ -60,7 +64,7 @@ export const getAllCommentsForDefaultEntry = {
       withRequest: getEntryCommentsAndTasksRequest,
       willRespondWith: {
         status: 200,
-        body: severalTasksRequestDefinition
+        body: severalTasksDefinition
       }
     }).as('getAllCommentsForDefaultEntry');
 
@@ -74,7 +78,7 @@ export const getAllCommentsForDefaultEntry = {
       withRequest: getEntryCommentsAndTasksRequest,
       willRespondWith: {
         status: 500,
-        body: empty
+        body: serverError
       }
     }).as('getAllCommentsForDefaultEntry');
 
@@ -99,22 +103,25 @@ export function createTask({ title, assigneeId }) {
   };
   const interactionRequestInfo = {
     provider: PROVIDER,
-    uponReceiving: `a request to assign a new task to user "${assigneeId}" for entry "${defaultEntryId}"`,
+    uponReceiving: `a request to create a new task for user "${assigneeId}" on entry "${defaultEntryId}"`,
     withRequest: {
       method: 'POST',
       path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/comments`,
-      headers: defaultHeader,
+      headers: {
+        ...defaultHeader,
+        'Content-Type': 'application/vnd.contentful.management.v1+json'
+      },
       body: newTask
     } as RequestOptions
   };
   return {
     willSucceed() {
-      const newTaskSys = severalTasks.items[0].sys;
+      const newTaskSys = severalTasksDefinition.items[0].sys;
       cy.addInteraction({
         ...interactionRequestInfo,
         state: States.NONE,
         willRespondWith: {
-          status: 200,
+          status: 201,
           body: {
             sys: newTaskSys,
             ...newTask,
@@ -130,7 +137,7 @@ export function createTask({ title, assigneeId }) {
         state: States.INTERNAL_SERVER_ERROR,
         willRespondWith: {
           status: 500,
-          body: empty
+          body: serverError
         }
       }).as(alias);
 
@@ -164,7 +171,11 @@ function changeTaskStatus(status: Status, stateName: States) {
       withRequest: {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/comments/${taskId}`,
-        headers: defaultHeader,
+        headers: {
+          ...defaultHeader,
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+          'X-Contentful-Version': '1'
+        },
         body: {
           ...updatedTask,
           assignment: { ...updatedTask.assignment, status }
@@ -174,16 +185,18 @@ function changeTaskStatus(status: Status, stateName: States) {
 
     return {
       willSucceed() {
-        const { sys: newTaskSys } = severalTasks.items.find((task: any) => {
-          return task.sys.id === taskId;
-        });
+        const { sys: newTaskSysDefinition } = severalTasksDefinition.items.find((task: any) =>
+          task.sys.id.getValue() === taskId)
         cy.addInteraction({
           ...interactionRequestInfo,
           state: stateName,
           willRespondWith: {
             status: 200,
             body: {
-              sys: newTaskSys,
+              sys: {
+                ...newTaskSysDefinition,
+                version: newTaskSysDefinition.version + 1
+              },
               ...updatedTask,
               assignment: { ...updatedTask.assignment, status },
             }
@@ -198,7 +211,7 @@ function changeTaskStatus(status: Status, stateName: States) {
           state: States.INTERNAL_SERVER_ERROR,
           willRespondWith: {
             status: 500,
-            body: empty
+            body: serverError
           }
         }).as(alias);
 

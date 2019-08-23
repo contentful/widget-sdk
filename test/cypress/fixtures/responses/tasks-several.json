@@ -1,7 +1,6 @@
 {
   "skip": 0,
-  "limit": 1000,
-  "total": 3,
+  "limit": 100,
   "items": [
     {
       "body": "Translate all the things",
@@ -100,7 +99,7 @@
         },
         "updatedAt": "2019-05-20T20:07:39.877Z",
         "parent": null,
-        "version": 42
+        "version": 1
       }
     },
     {
@@ -150,7 +149,7 @@
         },
         "updatedAt": "2019-05-20T20:07:46.191Z",
         "parent": null,
-        "version": 2
+        "version": 1
       }
     }
   ],

@@ -13,7 +13,9 @@ export const definition = {
       id: Matchers.term({
         generate: task.sys.id,
         matcher: RESOURCE_ID_REGEXP.source
-      })
+      }),
+      createdAt: Matchers.iso8601DateTimeWithMillis(task.sys.createdAt),
+      updatedAt: Matchers.iso8601DateTimeWithMillis(task.sys.updatedAt)
     }
   }))
 };
