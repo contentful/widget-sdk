@@ -1,3 +1,5 @@
+// Disabling since this is a custom component
+/* eslint-disable rulesdir/restrict-non-f36-components */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -10,6 +12,8 @@ export default class FieldDialogWidgetItem extends Component {
     isSelected: PropTypes.bool.isRequired,
     isDefault: PropTypes.bool.isRequired,
     isAdmin: PropTypes.bool.isRequired,
+    isApp: PropTypes.bool.isRequired,
+    appId: PropTypes.string,
     name: PropTypes.string.isRequired,
     icon: PropTypes.string,
     id: PropTypes.string.isRequired,
@@ -18,7 +22,19 @@ export default class FieldDialogWidgetItem extends Component {
   };
 
   render() {
-    const { icon, name, isDefault, isCustom, id, isSelected, onClick, index, isAdmin } = this.props;
+    const {
+      icon,
+      name,
+      isDefault,
+      isCustom,
+      id,
+      isSelected,
+      onClick,
+      index,
+      isAdmin,
+      isApp,
+      appId
+    } = this.props;
     return (
       <li
         className={classNames('field-dialog__widget-item', {
@@ -27,14 +43,24 @@ export default class FieldDialogWidgetItem extends Component {
         })}
         data-current-widget-index={index}
         onClick={onClick}>
-        {isCustom && (
+        {isCustom && !isApp && (
           <div className="field-dialog__widget-item-header">
-            <span>Custom</span>
+            <span>Extension</span>
             {isAdmin && (
               <StateLink
                 to="^.^.^.settings.extensions.detail"
                 params={{ extensionId: id }}
                 target="_blank">
+                <Icon name="edit" scale="0.9" />
+              </StateLink>
+            )}
+          </div>
+        )}
+        {isApp && (
+          <div className="field-dialog__widget-item-header">
+            <span>App</span>
+            {isAdmin && (
+              <StateLink to="^.^.^.appsBeta.detail" params={{ appId }} target="_blank">
                 <Icon name="edit" scale="0.9" />
               </StateLink>
             )}

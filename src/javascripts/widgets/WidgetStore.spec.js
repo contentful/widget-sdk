@@ -14,12 +14,17 @@ jest.mock('./BuiltinWidgets.es6', () => ({
 
 describe('WidgetStore', () => {
   let loaderMock;
+  let appsRepoMock;
 
   beforeEach(() => {
     loaderMock = {
       evictExtension: jest.fn(),
       getExtensionsById: jest.fn(),
       getAllExtensionsForListing: jest.fn()
+    };
+
+    appsRepoMock = {
+      getAppsListing: jest.fn()
     };
   });
 
@@ -36,8 +41,9 @@ describe('WidgetStore', () => {
   describe('#getForContentTypeManagement()', () => {
     it('returns an object of all widget namespaces', async () => {
       loaderMock.getAllExtensionsForListing.mockImplementationOnce(() => []);
+      appsRepoMock.getAppsListing.mockImplementationOnce(() => ({}));
 
-      const widgets = await WidgetStore.getForContentTypeManagement(loaderMock);
+      const widgets = await WidgetStore.getForContentTypeManagement(loaderMock, appsRepoMock);
 
       expect(loaderMock.getAllExtensionsForListing).toHaveBeenCalledWith();
       expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
@@ -80,13 +86,37 @@ describe('WidgetStore', () => {
               id: 'definition-id'
             }
           }
+        },
+        {
+          ...entity,
+          sys: { id: 'app-extension' },
+          extension: { ...entity.extension },
+          extensionDefinition: {
+            sys: {
+              type: 'Link',
+              linkType: 'ExtensionDefinition',
+              id: 'app-definition-id'
+            }
+          }
         }
       ]);
 
-      const widgets = await WidgetStore.getForContentTypeManagement(loaderMock);
-      const [extension, srcdocExtension, definitionExtension] = widgets[NAMESPACE_EXTENSION];
+      appsRepoMock.getAppsListing.mockImplementationOnce(() => ({
+        appId: {
+          fields: {
+            extensionDefinitionId: 'app-definition-id',
+            slug: 'app-id'
+          }
+        }
+      }));
+
+      const widgets = await WidgetStore.getForContentTypeManagement(loaderMock, appsRepoMock);
+      const [extension, srcdocExtension, definitionExtension, appExtension] = widgets[
+        NAMESPACE_EXTENSION
+      ];
 
       expect(loaderMock.getAllExtensionsForListing).toHaveBeenCalledTimes(1);
+      expect(appsRepoMock.getAppsListing).toHaveBeenCalledTimes(1);
 
       expect(extension.id).toEqual('my-extension');
       expect(extension.extensionDefinitionId).toBeUndefined();
@@ -107,6 +137,11 @@ describe('WidgetStore', () => {
 
       expect(definitionExtension.id).toEqual('definition-extension');
       expect(definitionExtension.extensionDefinitionId).toEqual('definition-id');
+      expect(definitionExtension.isApp).toEqual(false);
+
+      expect(appExtension.id).toEqual('app-extension');
+      expect(appExtension.isApp).toEqual(true);
+      expect(appExtension.appId).toEqual('app-id');
     });
   });
 

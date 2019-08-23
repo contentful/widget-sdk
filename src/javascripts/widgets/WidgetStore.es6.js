@@ -9,12 +9,22 @@ export function getBuiltinsOnly() {
   };
 }
 
-export async function getForContentTypeManagement(extensionLoader) {
-  const extensions = await extensionLoader.getAllExtensionsForListing();
+export async function getForContentTypeManagement(extensionLoader, appsRepo) {
+  const [extensions, appsListing] = await Promise.all([
+    extensionLoader.getAllExtensionsForListing(),
+    appsRepo.getAppsListing()
+  ]);
+
+  const apps = Object.keys(appsListing)
+    .map(key => ({
+      definitionId: get(appsListing[key], ['fields', 'extensionDefinitionId']),
+      appId: get(appsListing[key], ['fields', 'slug'])
+    }))
+    .filter(({ definitionId }) => typeof definitionId === 'string' && definitionId.length > 0);
 
   return {
     [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),
-    [NAMESPACE_EXTENSION]: extensions.map(buildExtensionWidget)
+    [NAMESPACE_EXTENSION]: extensions.map(extension => buildExtensionWidget(extension, apps))
   };
 }
 
@@ -55,7 +65,7 @@ export async function getForEditor(extensionLoader, editorInterface = {}) {
   };
 }
 
-function buildExtensionWidget({ sys, extension, extensionDefinition, parameters }) {
+function buildExtensionWidget({ sys, extension, extensionDefinition, parameters }, apps) {
   const { src, srcdoc } = extension;
 
   // We identify srcdoc-backed extensions by taking a look
@@ -64,13 +74,17 @@ function buildExtensionWidget({ sys, extension, extensionDefinition, parameters 
   // If we know that srcdoc is used but we don't have its value
   // (due to `stripSrcdoc`) we indicate it by `true`
   const base = typeof sys.srcdocSha256 === 'string' ? { srcdoc: srcdoc || true } : { src };
+  const extensionDefinitionId = get(extensionDefinition, ['sys', 'id']);
+  const app = apps.find(app => app.definitionId === extensionDefinitionId);
 
   return {
     ...base,
     id: sys.id,
-    extensionDefinitionId: get(extensionDefinition, ['sys', 'id']),
+    extensionDefinitionId,
     name: extension.name,
     fieldTypes: (extension.fieldTypes || []).map(toInternalFieldType),
+    isApp: !!app,
+    appId: get(app, 'appId'),
     sidebar: extension.sidebar,
     parameters: get(extension, ['parameters', 'instance'], []),
     installationParameters: {

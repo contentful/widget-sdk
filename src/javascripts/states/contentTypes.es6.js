@@ -4,6 +4,7 @@ import base from 'states/Base.es6';
 import * as WidgetStore from 'widgets/WidgetStore.es6';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
 import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature.es6';
+import createAppsRepo from 'app/settings/AppsBeta/AppsRepo.es6';
 
 const list = base({
   name: 'list',
@@ -45,7 +46,10 @@ const widgetResolvers = {
   widgets: [
     'spaceContext',
     spaceContext => {
-      return WidgetStore.getForContentTypeManagement(spaceContext.extensionLoader);
+      return WidgetStore.getForContentTypeManagement(
+        spaceContext.extensionLoader,
+        createAppsRepo(spaceContext.extensionDefinitionLoader, spaceContext.endpoint)
+      );
     }
   ],
   editorInterface: [

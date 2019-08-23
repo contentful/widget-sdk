@@ -1,3 +1,5 @@
+// Disabling since this is a custom component
+/* eslint-disable rulesdir/restrict-non-f36-components */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import FieldDialogWidgetItem from './FieldDialogWidgetItem.es6';
@@ -37,6 +39,8 @@ export default class FieldDialogWidgetsList extends Component {
                 index={index}
                 name={widget.name}
                 icon={widget.icon}
+                isApp={widget.isApp}
+                appId={widget.appId}
               />
             );
           })}
