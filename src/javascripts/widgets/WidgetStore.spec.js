@@ -67,16 +67,30 @@ describe('WidgetStore', () => {
         entity,
         {
           ...entity,
-          sys: { ...entity.sys, srcdocSha256: 'somecodesha' },
-          extension: omit(entity, ['src'])
+          sys: { id: 'srcdoc-extension', srcdocSha256: 'somecodesha' },
+          extension: omit(entity.extension, ['src'])
+        },
+        {
+          ...entity,
+          sys: { id: 'definition-extension' },
+          extension: { ...entity.extension },
+          extensionDefinition: {
+            sys: {
+              type: 'Link',
+              linkType: 'ExtensionDefinition',
+              id: 'definition-id'
+            }
+          }
         }
       ]);
 
       const widgets = await WidgetStore.getForContentTypeManagement(loaderMock);
-      const [extension, srcdocExtension] = widgets[NAMESPACE_EXTENSION];
+      const [extension, srcdocExtension, definitionExtension] = widgets[NAMESPACE_EXTENSION];
 
-      expect(loaderMock.getAllExtensionsForListing).toHaveBeenCalledWith();
+      expect(loaderMock.getAllExtensionsForListing).toHaveBeenCalledTimes(1);
 
+      expect(extension.id).toEqual('my-extension');
+      expect(extension.extensionDefinitionId).toBeUndefined();
       expect(extension.name).toEqual('NAME');
       expect(extension.src).toEqual('SRC');
       expect(extension.sidebar).toEqual(true);
@@ -87,8 +101,13 @@ describe('WidgetStore', () => {
         values: { test: true }
       });
 
+      expect(srcdocExtension.id).toEqual('srcdoc-extension');
+      expect(srcdocExtension.extensionDefinitionId).toBeUndefined();
       expect(srcdocExtension.src).toBeUndefined();
       expect(srcdocExtension.srcdoc).toEqual(true);
+
+      expect(definitionExtension.id).toEqual('definition-extension');
+      expect(definitionExtension.extensionDefinitionId).toEqual('definition-id');
     });
   });
 
