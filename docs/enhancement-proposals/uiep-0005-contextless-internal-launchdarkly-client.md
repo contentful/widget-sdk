@@ -27,11 +27,13 @@ A potential non-UI code solution would be to use an internal service like the Pr
 Migration is straightforward -- most consumers of the service need additional space or org data within their code, meaning they have access to the org or space ID and can pass this to the new service as well. The way the service is used has no changes except for that:
 
 ```js
+import { ENVIRONMENTS_FLAG } from 'featureFlags.es6'
+
 // Current way
-const variation = await getCurrentVariation('feature-dv-11-2017-environments');
+const variation = await getCurrentVariation(ENVIRONMENTS_FLAG);
 
 // New way
-const variation = await getVariation('feature-dv-11-2017-environments', {
+const variation = await getVariation(ENVIRONMENTS_FLAG, {
   orgId
 });
 ```
