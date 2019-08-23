@@ -1,8 +1,11 @@
 import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
+import sinon from 'sinon';
+import { it } from 'test/helpers/dsl';
+import { $initialize } from 'test/helpers/helpers';
 
-xdescribe('Access Checker', () => {
-  let enforcements, OrganizationRoles, TokenStore, policyChecker, ac, changeSpace;
+describe('Access Checker', () => {
+  let enforcements, OrganizationRoles, TokenStore, ac, changeSpace;
   let getResStub,
     reasonsDeniedStub,
     broadcastStub,
@@ -54,57 +57,74 @@ xdescribe('Access Checker', () => {
   }
 
   afterEach(() => {
-    enforcements = OrganizationRoles = policyChecker = ac = getResStub = reasonsDeniedStub = isPermissionDeniedStub = broadcastStub = mockSpaceEndpoint = feature = resetEnforcements = null;
+    enforcements = OrganizationRoles = ac = getResStub = reasonsDeniedStub = isPermissionDeniedStub = broadcastStub = mockSpaceEndpoint = feature = resetEnforcements = null;
   });
 
-  beforeEach(function() {
+  beforeEach(async function() {
     this.stubs = {
-      logError: sinon.stub()
+      logError: sinon.stub(),
+      canAccessEntries: sinon.stub().returns(false),
+      canAccessAssets: sinon.stub().returns(false),
+      canUpdateEntriesOfType: sinon.stub().returns(false),
+      canUpdateAssets: sinon.stub(),
+      canUpdateOwnAssets: sinon.stub(),
+      organizations$: K.createMockProperty(),
+      user$: K.createMockProperty()
     };
 
     broadcastStub = sinon.stub();
     resetEnforcements = sinon.stub();
     getResStub = sinon.stub().returns(false);
 
-    module('contentful/test', $provide => {
-      $provide.value('data/EndpointFactory.es6', {
-        createOrganizationEndpoint: () => mockOrgEndpoint,
-        createSpaceEndpoint: () => mockSpaceEndpoint
-      });
-      $provide.value('utils/LaunchDarkly', {
-        getCurrentVariation: sinon.stub().resolves(false)
-      });
-      $provide.value('services/LegacyFeatureService.es6', {
-        default: () => {
-          return {
-            get: () => {
-              return Promise.resolve(_.get(feature, 'enabled', false));
-            }
-          };
-        }
-      });
-      $provide.constant('services/logger.es6', {
-        logError: this.stubs.logError
-      });
-      $provide.constant('access_control/AccessChecker/utils/resetEnforcements.es6', {
-        default: resetEnforcements
-      });
-      $provide.constant('access_control/AccessChecker/utils/broadcastEnforcement.es6', {
-        default: broadcastStub
-      });
-      $provide.constant('access_control/Enforcements.es6', {
-        determineEnforcement: sinon.stub().returns(undefined)
-      });
-      $provide.constant('access_control/AccessChecker/ResponseCache.es6', {
-        getResponse: getResStub,
-        reset: () => {}
-      });
+    this.system.set('data/EndpointFactory.es6', {
+      createOrganizationEndpoint: () => mockOrgEndpoint,
+      createSpaceEndpoint: () => mockSpaceEndpoint
+    });
+    this.system.set('utils/LaunchDarkly', {
+      getCurrentVariation: sinon.stub().resolves(false)
+    });
+    this.system.set('services/LegacyFeatureService.es6', {
+      default: () => {
+        return {
+          get: () => {
+            return Promise.resolve(_.get(feature, 'enabled', false));
+          }
+        };
+      }
+    });
+    this.system.set('services/logger.es6', {
+      logError: this.stubs.logError
+    });
+    this.system.set('access_control/AccessChecker/utils/resetEnforcements.es6', {
+      default: resetEnforcements
+    });
+    this.system.set('access_control/AccessChecker/utils/broadcastEnforcement.es6', {
+      default: broadcastStub
+    });
+    this.system.set('access_control/Enforcements.es6', {
+      determineEnforcement: sinon.stub().returns(undefined)
+    });
+    this.system.set('access_control/AccessChecker/ResponseCache.es6', {
+      getResponse: getResStub,
+      reset: () => {}
+    });
+    this.system.set('access_control/AccessChecker/PolicyChecker.es6', {
+      canAccessEntries: this.stubs.canAccessEntries,
+      canAccessAssets: this.stubs.canAccessAssets,
+      setMembership: sinon.stub(),
+      canUpdateEntriesOfType: this.stubs.canUpdateEntriesOfType,
+      canUpdateOwnEntries: sinon.stub(),
+      canUpdateAssets: this.stubs.canUpdateAssets,
+      canUpdateOwnAssets: this.stubs.canUpdateOwnAssets
+    });
+    this.system.set('services/TokenStore.es6', {
+      organizations$: this.stubs.organizations$,
+      user$: this.stubs.user$
     });
 
-    enforcements = this.$inject('access_control/Enforcements.es6');
-    OrganizationRoles = this.$inject('services/OrganizationRoles.es6');
-    TokenStore = this.$inject('services/TokenStore.es6');
-    policyChecker = this.$inject('access_control/AccessChecker/PolicyChecker.es6');
+    enforcements = await this.system.import('access_control/Enforcements.es6');
+    OrganizationRoles = await this.system.import('services/OrganizationRoles.es6');
+    TokenStore = await this.system.import('services/TokenStore.es6');
 
     reasonsDeniedStub = sinon.stub().returns([]);
     isPermissionDeniedStub = sinon.stub().returns(false);
@@ -126,7 +146,11 @@ xdescribe('Access Checker', () => {
       }
     };
 
-    ac = this.$inject('access_control/AccessChecker');
+    ac = await this.system.import('access_control/AccessChecker');
+
+    module('contentful/test');
+
+    await $initialize();
 
     changeSpace = function changeSpace({ hasFeature, isSpaceAdmin, userRoleName }) {
       ac.setSpace({
@@ -302,20 +326,21 @@ xdescribe('Access Checker', () => {
         expect(ac.getSectionVisibility().environments).toBe(true);
       });
 
-      it('shows entries/assets section when it has "hide" flag, but policy checker grants access', () => {
+      it('shows entries/assets section when it has "hide" flag, but policy checker grants access', function() {
         function test(key, val) {
           expect(ac.getSectionVisibility()[key]).toBe(val);
         }
+
         test('entry', false);
         test('asset', false);
-        policyChecker.canAccessEntries = sinon.stub().returns(true);
-        policyChecker.canAccessAssets = sinon.stub().returns(true);
+        this.stubs.canAccessEntries.returns(true);
+        this.stubs.canAccessAssets.returns(true);
+
         triggerChange();
         test('entry', true);
         test('asset', true);
-        sinon.assert.calledOnce(policyChecker.canAccessEntries);
-        sinon.assert.calledOnce(policyChecker.canAccessAssets);
       });
+
       it('should return "true" for spaceHome if user is admin', () => {
         changeSpace({ hasFeature: true, isSpaceAdmin: true });
         expect(ac.getSectionVisibility().spaceHome).toBe(true);
@@ -417,35 +442,35 @@ xdescribe('Access Checker', () => {
     describe('#canUpdateEntry', () => {
       const entry = { data: { sys: { contentType: { sys: { id: 'ctid' } } } } };
 
-      it('returns true if "can" returns true', () => {
+      it('returns true if "can" returns true', function() {
         getResStub.withArgs('update', entry.data).returns(true);
         expect(ac.canUpdateEntry(entry)).toBe(true);
       });
 
-      it('returns false if "can" returns false and there are no allow policies', () => {
+      it('returns false if "can" returns false and there are no allow policies', function() {
         getResStub.withArgs('update', entry.data).returns(false);
-        policyChecker.canUpdateEntriesOfType = sinon.stub().returns(false);
+        this.stubs.canUpdateEntriesOfType.returns(false);
         expect(ac.canUpdateEntry(entry)).toBe(false);
-        sinon.assert.calledOnce(policyChecker.canUpdateEntriesOfType.withArgs('ctid'));
+        sinon.assert.calledOnce(this.stubs.canUpdateEntriesOfType.withArgs('ctid'));
       });
 
-      it('returns true if "can" returns false but there are allow policies', () => {
+      it('returns true if "can" returns false but there are allow policies', function() {
         getResStub.withArgs('update', entry.data).returns(false);
-        policyChecker.canUpdateEntriesOfType = sinon.stub().returns(true);
+        this.stubs.canUpdateEntriesOfType.returns(true);
         expect(ac.canUpdateEntry(entry)).toBe(true);
-        sinon.assert.calledOnce(policyChecker.canUpdateEntriesOfType.withArgs('ctid'));
+        sinon.assert.calledOnce(this.stubs.canUpdateEntriesOfType.withArgs('ctid'));
       });
 
-      it('returns false if permission is explicitly denied', () => {
+      it('returns false if permission is explicitly denied', function() {
         isPermissionDeniedStub.returns(true);
         getResStub.withArgs('update', entry.data).returns(true);
-        policyChecker.canUpdateEntriesOfType = sinon.stub().returns(true);
+        this.stubs.canUpdateEntriesOfType.returns(true);
 
         expect(ac.canUpdateEntry(entry)).toBe(false);
       });
     });
 
-    describe('#canUpdateAsset', () => {
+    describe('#canUpdateAsset', function() {
       const asset = { data: {} };
 
       it('returns true if "can" returns true', () => {
@@ -453,64 +478,72 @@ xdescribe('Access Checker', () => {
         expect(ac.canUpdateAsset(asset)).toBe(true);
       });
 
-      it('returns false if "can" returns false and there are no allow policies', () => {
+      it('returns false if "can" returns false and there are no allow policies', function() {
         getResStub.withArgs('update', asset.data).returns(false);
-        policyChecker.canUpdateAssets = sinon.stub().returns(false);
+        this.stubs.canUpdateAssets.returns(false);
         expect(ac.canUpdateAsset(asset)).toBe(false);
-        sinon.assert.calledOnce(policyChecker.canUpdateAssets);
+        sinon.assert.calledOnce(this.stubs.canUpdateAssets);
       });
 
-      it('returns true if "can" returns false but there are allow policies', () => {
+      it('returns true if "can" returns false but there are allow policies', function() {
         getResStub.withArgs('update', asset.data).returns(false);
-        policyChecker.canUpdateAssets = sinon.stub().returns(true);
+        this.stubs.canUpdateAssets.returns(true);
         expect(ac.canUpdateAsset(asset)).toBe(true);
-        sinon.assert.calledOnce(policyChecker.canUpdateAssets);
+        sinon.assert.calledOnce(this.stubs.canUpdateAssets);
       });
 
-      it('returns false if permission is explicitly denied', () => {
+      it('returns false if permission is explicitly denied', function() {
         isPermissionDeniedStub.returns(true);
         getResStub.withArgs('update', asset.data).returns(true);
-        policyChecker.canUpdateEntriesOfType = sinon.stub().returns(true);
+        this.stubs.canUpdateEntriesOfType.returns(true);
 
         expect(ac.canUpdateEntry(asset)).toBe(false);
       });
     });
 
-    describe('#canUploadMultipleAssets', () => {
-      function setup(canCreate, canUpdate, canUpdateWithPolicy, canUpdateOwn) {
-        getResStub.withArgs('create', 'Asset').returns(canCreate);
-        getResStub.withArgs('update', 'Asset').returns(canUpdate);
-        policyChecker.canUpdateAssets = sinon.stub().returns(canUpdateWithPolicy);
-        policyChecker.canUpdateOwnAssets = sinon.stub().returns(canUpdateOwn);
-      }
+    describe('#canUploadMultipleAssets', function() {
+      it('returns false if assets cannot be created', function() {
+        getResStub.withArgs('create', 'Asset').returns(false);
+        getResStub.withArgs('update', 'Asset').returns(false);
+        this.stubs.canUpdateAssets.returns(false);
+        this.stubs.canUpdateOwnAssets.returns(false);
 
-      it('returns false if assets cannot be created', () => {
-        setup(false, false, false, false);
         expect(ac.canUploadMultipleAssets()).toBe(false);
       });
 
-      it('returns false if assets cannot be updated', () => {
-        setup(true, false, false, false);
+      it('returns false if assets cannot be updated', function() {
+        getResStub.withArgs('create', 'Asset').returns(true);
+        getResStub.withArgs('update', 'Asset').returns(false);
+        this.stubs.canUpdateAssets.returns(false);
+        this.stubs.canUpdateOwnAssets.returns(false);
+
         expect(ac.canUploadMultipleAssets()).toBe(false);
       });
 
-      it('returns false if assets and own assets cannot be updated', () => {
-        setup(true, false, false, false);
-        expect(ac.canUploadMultipleAssets()).toBe(false);
-      });
+      it('returns true if assets can be created and updated', function() {
+        getResStub.withArgs('create', 'Asset').returns(true);
+        getResStub.withArgs('update', 'Asset').returns(true);
+        this.stubs.canUpdateAssets.returns(false);
+        this.stubs.canUpdateOwnAssets.returns(false);
 
-      it('returns true if assets can be created and updated', () => {
-        setup(true, true, false, false);
         expect(ac.canUploadMultipleAssets()).toBe(true);
       });
 
-      it('returns true if assets can be created and updated with policy', () => {
-        setup(true, false, true, false);
+      it('returns true if assets can be created and updated with policy', function() {
+        getResStub.withArgs('create', 'Asset').returns(true);
+        getResStub.withArgs('update', 'Asset').returns(false);
+        this.stubs.canUpdateAssets.returns(true);
+        this.stubs.canUpdateOwnAssets.returns(false);
+
         expect(ac.canUploadMultipleAssets()).toBe(true);
       });
 
-      it('returns true if assets can be created and own assets can be updated', () => {
-        setup(true, false, false, true);
+      it('returns true if assets can be created and own assets can be updated', function() {
+        getResStub.withArgs('create', 'Asset').returns(true);
+        getResStub.withArgs('update', 'Asset').returns(false);
+        this.stubs.canUpdateAssets.returns(false);
+        this.stubs.canUpdateOwnAssets.returns(true);
+
         expect(ac.canUploadMultipleAssets()).toBe(true);
       });
     });
@@ -605,11 +638,8 @@ xdescribe('Access Checker', () => {
     });
 
     describe('#canCreateSpaceInAnyOrganization', () => {
-      beforeEach(() => {
-        TokenStore.organizations$ = K.createMockProperty([
-          { sys: { id: 'org1' } },
-          { sys: { id: 'org2' } }
-        ]);
+      beforeEach(function() {
+        this.stubs.organizations$.set([{ sys: { id: 'org1' } }, { sys: { id: 'org2' } }]);
       });
 
       it('returns true if space can be created in at least on organization', () => {
@@ -638,10 +668,10 @@ xdescribe('Access Checker', () => {
     describe('#canCreateSpace', () => {
       let organizationCanStub, canStub;
 
-      beforeEach(() => {
+      beforeEach(function() {
         organizationCanStub = sinon.stub().returns(false);
         canStub = sinon.stub().returns(false);
-        TokenStore.organizations$ = K.createMockProperty([{ sys: { id: 'org1' } }]);
+        this.stubs.organizations$.set([{ sys: { id: 'org1' } }]);
         changeAuthContext(
           makeAuthContext(
             {
@@ -698,10 +728,6 @@ xdescribe('Access Checker', () => {
     });
 
     describe('#canCreateOrganization', () => {
-      beforeEach(() => {
-        TokenStore.user$ = K.createMockProperty();
-      });
-
       it('maps to TokenStore.user$.canCreateOrganization', () => {
         TokenStore.user$.set({ canCreateOrganization: true });
         expect(ac.canCreateOrganization()).toEqual(true);

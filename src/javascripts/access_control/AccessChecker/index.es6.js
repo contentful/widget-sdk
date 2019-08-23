@@ -296,7 +296,11 @@ export function canUpdateEntry(entry) {
   const canUpdateThisType = policyChecker.canUpdateEntriesOfType(ctId);
   const canUpdateOwn = policyChecker.canUpdateOwnEntries();
 
-  return canUpdate || canUpdateThisType || (canUpdateOwn && isAuthor(entry));
+  if (canUpdate || canUpdateThisType || (canUpdateOwn && isAuthor(entry))) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
@@ -316,7 +320,11 @@ export function canUpdateAsset(asset) {
   const canUpdateWithPolicy = policyChecker.canUpdateAssets();
   const canUpdateOwn = policyChecker.canUpdateOwnAssets();
 
-  return canUpdate || canUpdateWithPolicy || (canUpdateOwn && isAuthor(asset));
+  if (canUpdate || canUpdateWithPolicy || (canUpdateOwn && isAuthor(asset))) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
