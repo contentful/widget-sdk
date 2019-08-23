@@ -70,6 +70,6 @@ describe('JobsAnalytics', () => {
     JobsAnalytics.trackAlphaEligibilityToIntercom();
 
     expect(Intercom.trackEvent).toHaveBeenCalledTimes(1);
-    expect(Intercom.trackEvent).toHaveBeenCalledWith('scheduled-publishing-aplha-eligible');
+    expect(Intercom.trackEvent).toHaveBeenCalledWith('scheduled-publishing-alpha-eligible');
   });
 });
