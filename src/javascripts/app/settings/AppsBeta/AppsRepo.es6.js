@@ -1,4 +1,4 @@
-import { countBy } from 'lodash';
+import { countBy, get } from 'lodash';
 import resolveResponse from 'contentful-resolve-response';
 
 // App ID to ExtensionDefinition ID
@@ -22,6 +22,7 @@ const APP_MARKETPLACE_TOKEN = 'XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk';
 export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint) {
   return {
     getAppsListing,
+    getDefinitionIdsOfApps,
     getApps,
     getDevApps,
     getExtensionDefinitionForApp,
@@ -35,6 +36,14 @@ export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint)
     }
 
     return appId.startsWith(DEV_APP_PREFIX);
+  }
+
+  async function getDefinitionIdsOfApps() {
+    const appsListing = await this.getAppsListing();
+
+    return Object.keys(appsListing)
+      .map(key => get(appsListing[key], ['fields', 'extensionDefinitionId']))
+      .filter(id => typeof id === 'string' && id.length > 0);
   }
 
   async function getAppsListing() {

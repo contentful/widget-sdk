@@ -1,6 +1,7 @@
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 import ExtensionsListRoute from './ExtensionsListRoute.es6';
 import ExtensionEditorRoute from './ExtensionEditorRoute.es6';
+import createAppsRepo from 'app/settings/AppsBeta/AppsRepo.es6';
 
 export default {
   name: 'extensions',
@@ -23,7 +24,8 @@ export default {
           return {
             extensionUrl: decodeURI($stateParams.extensionUrl || ''),
             extensionUrlReferrer: $stateParams.referrer || null,
-            extensionLoader: spaceContext.extensionLoader
+            extensionLoader: spaceContext.extensionLoader,
+            appsRepo: createAppsRepo(spaceContext.extensionDefinitionLoader, spaceContext.endpoint)
           };
         }
       ]
