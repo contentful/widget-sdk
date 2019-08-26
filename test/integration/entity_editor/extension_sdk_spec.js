@@ -89,6 +89,7 @@ describe('Extension SDK', () => {
       localeData: {},
       entityInfo: {
         contentType: {
+          sys: { id: 'ct' },
           fields: [field]
         }
       },
