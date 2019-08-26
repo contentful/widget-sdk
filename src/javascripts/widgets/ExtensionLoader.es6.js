@@ -28,7 +28,7 @@ const mergeExtensionsAndDefinitions = (extensions, definitions) => {
       // Enrich the extension with definition data.
       return {
         ...extension,
-        extension: pick(definition, ['name', 'src', 'fieldTypes', 'parameters'])
+        extension: pick(definition, ['name', 'src', 'fieldTypes', 'parameters', 'locations'])
       };
     })
     .filter(identity);

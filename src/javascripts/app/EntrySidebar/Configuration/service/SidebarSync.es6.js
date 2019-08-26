@@ -2,6 +2,7 @@ import { defaultWidgetsMap } from '../defaults.es6';
 import { difference, isArray } from 'lodash';
 import { SidebarType } from '../constants.es6';
 import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
+import { LOCATION_ENTRY_SIDEBAR } from 'widgets/WidgetLocations.es6';
 
 /**
  * Converts internal state for configuration reducer
@@ -43,8 +44,17 @@ function convertExtensionToWidgetConfiguration(extension) {
     widgetNamespace: NAMESPACE_EXTENSION,
     name: extension.name,
     parameters: extension.parameters || [],
-    isApp: extension.isApp
+    isApp: extension.isApp,
+    locations: extension.locations
   };
+}
+
+function isSidebarExtension(extension) {
+  if (!Array.isArray(extension.locations)) {
+    return true;
+  }
+
+  return extension.locations.includes(LOCATION_ENTRY_SIDEBAR);
 }
 
 /**
@@ -54,10 +64,12 @@ function convertExtensionToWidgetConfiguration(extension) {
  */
 export function convertConfigirationToInternalState(configuration, extensions, initialItems) {
   if (!isArray(configuration)) {
+    const availableExtensions = extensions.filter(isSidebarExtension);
+
     return {
       sidebarType: SidebarType.default,
       items: initialItems,
-      availableItems: extensions.map(convertExtensionToWidgetConfiguration),
+      availableItems: availableExtensions.map(convertExtensionToWidgetConfiguration),
       configurableWidget: null
     };
   }
@@ -127,7 +139,7 @@ export function convertConfigirationToInternalState(configuration, extensions, i
       );
     });
 
-    if (!foundWidget) {
+    if (!foundWidget && isSidebarExtension(extensionWidget)) {
       availableItems.push(extensionWidget);
     }
   });
