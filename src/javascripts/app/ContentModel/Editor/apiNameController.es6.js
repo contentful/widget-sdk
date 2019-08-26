@@ -53,7 +53,7 @@ export default function register() {
               'of your content to applications that currently display it. ' +
               'Change the field ID only if you plan to update your client applications ' +
               'as well.</p>' +
-              '<p>Consult our <cf-knowledge-base text="knowledge base" target="id_change" inline-text="true" />' +
+              `<p>Consult our <react-component name="components/shared/knowledge_base_icon/KnowledgeBase.es6" props="{target: 'id_change', text: 'knowledge base', inlineText: true}" />` +
               ' for more information on updating published content types.</p>',
             html: true,
             scope: $scope,

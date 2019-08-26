@@ -56,11 +56,14 @@ function dialogContent() {
     ]),
     userRoleSelector(),
     h('p', [
-      h('cf-knowledge-base', {
-        target: 'roles',
-        text: "What's the difference between Administrator, Developer and Editor?",
-        className: 'text-link--neutral-emphasis-low',
-        inlineText: 'true'
+      h('react-component', {
+        name: 'components/shared/knowledge_base_icon/KnowledgeBase.es6',
+        props: `{
+          target: 'roles',
+          text: "What's the difference between Administrator, Developer and Editor?",
+          className: 'text-link--neutral-emphasis-low',
+          inlineText: 'true'
+        }`
       })
     ]),
     h(
