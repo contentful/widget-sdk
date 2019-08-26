@@ -33,6 +33,14 @@ const styles = {
     label: {
       fontWeight: tokens.fontWeightNormal
     }
+  }),
+  actionItem: css({
+    display: 'flex',
+    flexDirection: 'row',
+    marginBottom: tokens.spacingS,
+    '& div:first-child': {
+      marginRight: tokens.spacingXs
+    }
   })
 };
 
@@ -46,8 +54,11 @@ function createListItem(item) {
   }
 
   return (
-    <ListItem key={item.info} testId="action-list-item">
-      <Icon icon={icon} color={iconColor} className={styles.icon} /> {item.info}
+    <ListItem key={item.info} testId="action-list-item" className={styles.actionItem}>
+      <div>
+        <Icon icon={icon} color={iconColor} className={styles.icon} />
+      </div>
+      <div>{item.info}</div>
     </ListItem>
   );
 }

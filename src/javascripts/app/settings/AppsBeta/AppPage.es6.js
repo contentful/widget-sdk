@@ -233,7 +233,8 @@ export default class AppRoute extends Component {
       extensionDefinition,
       title: get(appInfo, ['fields', 'title'], extensionDefinition.name),
       appIcon: get(appInfo, ['fields', 'icon', 'fields', 'file', 'url'], ''),
-      permissions: get(appInfo, ['fields', 'permissionsExplanation'], '')
+      permissions: get(appInfo, ['fields', 'permissionsExplanation'], ''),
+      actionList: get(appInfo, ['fields', 'uninstallMessages'], []).map(mes => get(mes, ['fields']))
     });
   };
 
@@ -291,7 +292,7 @@ export default class AppRoute extends Component {
         key={Date.now()}
         isShown={isShown}
         appName={this.state.title}
-        actionList={[]} // todo: EXT-933 add the action list from the app's JSON config
+        actionList={this.state.actionList}
         onConfirm={reasons => {
           onClose(true);
           this.uninstallApp(reasons);
@@ -453,7 +454,15 @@ export default class AppRoute extends Component {
   };
 
   render() {
-    const { ready, isInstalled, acceptedPermissions, appIcon, title, permissions, appEnabled } = this.state;
+    const {
+      ready,
+      isInstalled,
+      acceptedPermissions,
+      appIcon,
+      title,
+      permissions,
+      appEnabled
+    } = this.state;
 
     if (!ready) {
       return this.renderLoading();
