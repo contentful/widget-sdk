@@ -19,20 +19,16 @@ const styles = {
 };
 
 function SidebarConfiguration(props) {
+  const { onUpdateConfiguration, defaultAvailableItems, extensions, configuration } = props;
+
   const [state, dispatch] = useReducer(
     reducer,
-    convertConfigirationToInternalState(
-      props.configuration,
-      props.extensions,
-      props.defaultAvailableItems
-    )
+    convertConfigirationToInternalState(configuration, extensions, defaultAvailableItems)
   );
 
   useEffect(() => {
-    props.onUpdateConfiguration(
-      convertInternalStateToConfiguration(state, props.defaultAvailableItems)
-    );
-  }, [state, props]);
+    onUpdateConfiguration(convertInternalStateToConfiguration(state, defaultAvailableItems));
+  }, [state, onUpdateConfiguration, defaultAvailableItems]);
 
   return (
     <div className={styles.container}>
@@ -40,7 +36,7 @@ function SidebarConfiguration(props) {
         <WidgetsConfiguration
           state={state}
           dispatch={dispatch}
-          defaultAvailableItems={props.defaultAvailableItems}
+          defaultAvailableItems={defaultAvailableItems}
         />
       )}
       {state.configurableWidget !== null && (

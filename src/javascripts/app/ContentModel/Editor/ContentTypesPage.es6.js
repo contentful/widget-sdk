@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { get } from 'lodash';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import ContentTypePageActions from './ContentTypePageActions.es6';
@@ -20,6 +20,14 @@ export default function ContentTypesPage(props) {
   const showSidebar = props.currentTab === 'fields' || props.currentTab === 'preview';
 
   const [sidebarConfiguration, updateSidebarConfiguration] = useState(props.sidebarConfiguration);
+
+  const onUpdateConfiguration = useCallback(
+    configuration => {
+      updateSidebarConfiguration(configuration);
+      props.actions.updateSidebarConfiguration(configuration);
+    },
+    [updateSidebarConfiguration, props.actions]
+  );
 
   return (
     <Workbench>
@@ -76,10 +84,7 @@ export default function ContentTypesPage(props) {
                 <SidebarConfiguration
                   configuration={sidebarConfiguration}
                   extensions={props.extensions}
-                  onUpdateConfiguration={configuration => {
-                    updateSidebarConfiguration(configuration);
-                    props.actions.updateSidebarConfiguration(configuration);
-                  }}
+                  onUpdateConfiguration={onUpdateConfiguration}
                 />
               </div>
             </>
