@@ -45,7 +45,8 @@ export default function AvailableWidget({
   onClick,
   widgetNamespace,
   index,
-  availabilityStatus
+  availabilityStatus,
+  isApp
 }) {
   const renderAvailabilityStatus = () => <Tag>{availabilityStatus}</Tag>;
 
@@ -62,7 +63,7 @@ export default function AvailableWidget({
         </Paragraph>
         <Paragraph>
           {widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN && 'Built-in item'}
-          {widgetNamespace === NAMESPACE_EXTENSION && 'UI Extension'}
+          {widgetNamespace === NAMESPACE_EXTENSION && (isApp ? 'App' : 'UI Extension')}
         </Paragraph>
       </div>
       <div className={styles.actions}>
@@ -83,5 +84,6 @@ AvailableWidget.propTypes = {
   widgetNamespace: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
-  availabilityStatus: PropTypes.oneOf(['alpha', 'beta'])
+  availabilityStatus: PropTypes.oneOf(['alpha', 'beta']),
+  isApp: PropTypes.bool
 };
