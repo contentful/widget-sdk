@@ -44,7 +44,7 @@ export default function AvailableItems(props) {
       {items.length === 0 && (
         <div className={styles.uiExtensionInfo}>
           <Paragraph className={styles.uiExtensionInfoTitle}>
-            UI Extensions can enrich how content is created, editor or shared with other services.
+            UI Extensions can enrich how content is created, edited, or shared with other services.
           </Paragraph>
           <TextLink
             icon="ExternalLink"
