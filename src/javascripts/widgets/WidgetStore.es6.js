@@ -61,7 +61,7 @@ export async function getForEditor(extensionLoader, editorInterface = {}) {
 
   return {
     [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),
-    [NAMESPACE_EXTENSION]: extensions.map(buildExtensionWidget)
+    [NAMESPACE_EXTENSION]: extensions.map(extension => buildExtensionWidget(extension, []))
   };
 }
 

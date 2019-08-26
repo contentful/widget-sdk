@@ -168,7 +168,22 @@ describe('WidgetStore', () => {
     });
 
     it('loads extensions if needed', async () => {
-      loaderMock.getExtensionsById.mockImplementationOnce(() => []);
+      loaderMock.getExtensionsById.mockImplementationOnce(() => [
+        {
+          sys: { id: 'my-extension' },
+          extension: {
+            name: 'NAME',
+            src: 'SRC',
+            sidebar: true,
+            fieldTypes: [{ type: 'Array', items: { type: 'Link', linkType: 'Asset' } }],
+            parameters: {
+              instance: [{ id: 'x' }],
+              installation: [{ id: 'test' }]
+            }
+          },
+          parameters: { test: true }
+        }
+      ]);
 
       await WidgetStore.getForEditor(loaderMock, {
         controls: [
