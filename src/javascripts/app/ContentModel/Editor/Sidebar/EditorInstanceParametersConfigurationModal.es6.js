@@ -1,9 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import WidgetParametersForm from 'widgets/WidgetParametersForm.es6';
 import { Modal, Button } from '@contentful/forma-36-react-components';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 import useFormState from 'app/common/hooks/useFormState.es6';
+
+const styles = {
+  saveButton: css({
+    marginRight: tokens.spacingM
+  })
+};
 
 export default function EditorInstanceParametersConfigurationModal(props) {
   const { extension } = props;
@@ -29,7 +37,7 @@ export default function EditorInstanceParametersConfigurationModal(props) {
       <div>
         <Button
           disabled={anyIsMissing}
-          className="f36-margin-right--m"
+          className={styles.marginRight}
           onClick={() => {
             props.onSave(formState);
           }}>

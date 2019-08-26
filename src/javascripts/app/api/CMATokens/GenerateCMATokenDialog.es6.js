@@ -1,8 +1,18 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { track } from 'analytics/Analytics.es6';
 import { Modal, TextField, Button, Note, TextInput } from '@contentful/forma-36-react-components';
+
+const styles = {
+  generateWrapper: css({ marginTop: tokens.spacingL }),
+  closeWrapper: css({ marginTop: tokens.spacingXl }),
+  closeButton: css({ marginLeft: tokens.spacingM }),
+  note: css({ marginBottom: tokens.spacingL }),
+  testInput: css({ marginBottom: tokens.spacingL })
+};
 
 export function openGenerateTokenDialog(createToken, successHandler) {
   return ModalLauncher.open(({ isShown, onClose }) => (
@@ -44,7 +54,7 @@ export function InputState(props) {
           props.setTokenName((e.target.value || '').trim());
         }}
       />
-      <div className="f36-margin-top--l">
+      <div className={styles.generateWrapper}>
         <Button
           buttonType="primary"
           testId="pat.create.generate"
@@ -70,11 +80,11 @@ export function FailureState(props) {
         The token generation failed. We&quot;ve been informed about this problem. Please retry
         shortly, or reach out to our support team if the problem persists.
       </Note>
-      <div className="f36-margin-top--xl">
+      <div className={styles.closeWrapper}>
         <Button testId="pat.create.retry" buttonType="primary" onClick={props.onRetryClick}>
           Retry
         </Button>
-        <Button className="f36-margin-left--m" buttonType="muted" onClick={props.onCloseClick}>
+        <Button className={styles.closeButton} buttonType="muted" onClick={props.onCloseClick}>
           Close
         </Button>
       </div>
@@ -92,18 +102,13 @@ export function SuccessStatus(props) {
     <div data-test-id="pat.create.successStatus">
       <Note
         testId="pat.create.tokenGenerationSuccess"
-        className="f36-margin-bottom--l"
+        className={styles.note}
         noteType="positive"
         title={`"${props.tokenName}" is ready!`}>
         Make sure to <em>immediately</em> copy your new Personal Access Token. You won&quot;t be
         able to see it again!
       </Note>
-      <TextInput
-        className="f36-margin-bottom--l"
-        value={props.tokenValue}
-        disabled
-        withCopyButton
-      />
+      <TextInput className={styles.textInput} value={props.tokenValue} disabled withCopyButton />
       <div>
         <Button testId="pat.create.done-button" buttonType="primary" onClick={props.onDoneClick}>
           Done

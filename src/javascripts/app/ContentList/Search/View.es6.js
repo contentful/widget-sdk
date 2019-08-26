@@ -4,10 +4,12 @@
 
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
+import { css } from 'emotion';
 import { Spinner } from '@contentful/forma-36-react-components';
 
 import Keys from './Keys.es6';
 import FilterIcon from 'svg/filter.es6';
+import tokens from '@contentful/forma-36-tokens';
 
 import FilterPill from './FilterPill.es6';
 import SuggestionsBox from './SuggestionsBox.es6';
@@ -41,6 +43,16 @@ function PillsList({
     );
   });
 }
+
+const styles = {
+  searchWrapper: css({
+    marginLeft: tokens.spacingS
+  }),
+  searchIconWrapper: css({
+    marginTop: '-3px',
+    marginRight: tokens.spacingS
+  })
+};
 
 function PillsWrapper({ searchBoxHasFocus, actions, children }) {
   const [isOverflownY, setOverflownY] = useState(false);
@@ -201,9 +213,8 @@ export default function View(props) {
           }}>
           <Spinner style={{ display: 'inline-block' }} />
         </div>
-        <div className="f36-margin-left--s" />
         <div
-          className={classNames('search-next__filter-toggle', {
+          className={classNames(styles.searchWrapper, 'search-next__filter-toggle', {
             '-active': isSuggestionOpen,
             '-focus': searchBoxHasFocus
           })}
@@ -215,10 +226,9 @@ export default function View(props) {
               display: 'flex',
               alignItems: 'center'
             }}>
-            <div style={{ marginTop: '-3px' }}>
+            <div className={styles.searchIconWrapper}>
               <FilterIcon />
             </div>
-            <div className="f36-margin-left--s" />
             Filter
           </div>
         </div>

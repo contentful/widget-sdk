@@ -9,11 +9,14 @@ import {
   Select,
   ValidationMessage,
   Option,
-  TextLink
+  TextLink,
+  Subheading
 } from '@contentful/forma-36-react-components';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import EditorInstanceParametersConfigurationModal from './EditorInstanceParametersConfigurationModal.es6';
 import { reducer, actions } from './EntryEditorAppearanceReducer.es6';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
 const Options = {
   default: 'default',
@@ -21,6 +24,15 @@ const Options = {
 };
 
 const NOT_SELECTED = '__NOT_SELECTED__';
+
+const styles = {
+  validationMessage: css({
+    marginTop: tokens.spacingS
+  }),
+  changeInstance: css({
+    marginTop: tokens.spacingS
+  })
+};
 
 function getInitialValues(editorConfiguration, extensions) {
   const extensionIds = extensions.map(extension => extension.id);
@@ -70,7 +82,7 @@ export default function EntryEditorAppearanceSection(props) {
 
   return (
     <React.Fragment>
-      <h2 className="entity-sidebar__heading">Entry Editor Appearance</h2>
+      <Subheading className="entity-sidebar__heading">Entry Editor Appearance</Subheading>
       <Typography>
         <Paragraph>Change the entry editor’s appearance for this content type. </Paragraph>
       </Typography>
@@ -115,13 +127,13 @@ export default function EntryEditorAppearanceSection(props) {
               ))}
             </Select>
             {hasError && (
-              <ValidationMessage className="f36-margin-top--s">
+              <ValidationMessage className={styles.validationMessage}>
                 Custom entry editor is required
               </ValidationMessage>
             )}
             {hasParams && (
               <TextLink
-                className="f36-margin-top--s"
+                className={styles.changeInstance}
                 onClick={() => {
                   setConfigurationOpen(true);
                 }}>

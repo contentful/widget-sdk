@@ -3,16 +3,22 @@ import { includes } from 'lodash';
 import { unshift, assign, update, set } from 'utils/Collections.es6';
 import * as K from 'utils/kefir.es6';
 import { caseof } from 'sum-types';
+import { css, cx } from 'emotion';
 import { makeCtor } from 'utils/TaggedValues.es6';
 
 import React from 'react';
 import { createStore, makeReducer } from 'ui/Framework/Store.es6';
 import tokens from '@contentful/forma-36-tokens';
-import { Notification } from '@contentful/forma-36-react-components';
+import {
+  Notification,
+  Heading,
+  Button,
+  Paragraph,
+  TextLink,
+  Note
+} from '@contentful/forma-36-react-components';
 import { fetchAll } from 'data/CMA/FetchAll.es6';
 import { getModule } from 'NgRegistry.es6';
-
-const { open: openDialog } = getModule('modalDialog');
 
 /**
  * @ngdoc service
@@ -36,6 +42,7 @@ const { open: openDialog } = getModule('modalDialog');
  */
 
 export default function open(spaceEndpoint, assignedRoles) {
+  const { open: openDialog } = getModule('modalDialog');
   return openDialog({
     template: '<cf-component-store-bridge class="modal-background" component="component">',
     controller: function($scope) {
@@ -58,6 +65,60 @@ const UnselectAll = makeCtor('UnselectAll');
 
 // Emitted with the PromiseStatus response of the role fetch
 const RespondFetch = makeCtor('RespondFetch');
+
+const styles = {
+  modalDialog: css({
+    maxWidth: '42em'
+  }),
+  selectAllWrapper: css({
+    display: 'flex',
+    marginTop: tokens.spacingM,
+    marginBottom: tokens.spacingM
+  }),
+  shareButton: css({
+    marginRight: tokens.spacingM
+  }),
+  note: css({
+    marginTop: tokens.spacingM,
+    marginBottom: tokens.spacingM
+  }),
+  rolesWrapper: css({
+    marginTop: tokens.spacingM,
+    marginBottom: tokens.spacingM
+  }),
+  errorNote: css({
+    padding: '80px 25px',
+    textAlign: 'center'
+  }),
+  rolesContainer: css({
+    border: `1px solid ${tokens.colorIceDark}`,
+    backgroundColor: tokens.colorElementLightest,
+    // We want to show half of a role if the container scrolls
+    maxHeight: '157px',
+    position: 'relative',
+    overflowX: 'hidden',
+    overflowY: 'auto'
+  }),
+  viewWrapper: css({
+    maxWidth: '42em'
+  }),
+  selectedWrapper: css({
+    marginLeft: 'auto',
+    marginRight: '20px'
+  }),
+  selectLink: css({
+    marginLeft: tokens.spacingS
+  }),
+  selection: css({
+    fontFamily: 'FontAwesome',
+    fontSize: '18px',
+    marginLeft: tokens.spacingXs,
+    color: tokens.colorTextLightest
+  }),
+  selected: css({
+    color: tokens.colorGreenDark
+  })
+};
 
 function createRoleSelector(dialog, spaceEndpoint, initialAssignedRoles) {
   const reduce = makeReducer({
@@ -171,66 +232,63 @@ function selectAllButton(state, actions) {
   const allSelected = (state.roles || []).every(role => role.selected);
   if (allSelected) {
     return (
-      <button
+      <TextLink
         data-test-id={testId('unselect-all')}
         onClick={actions.UnselectAll}
         disabled={disabled}
-        className="text-link f36-margin-left--m">
+        className={cx(styles.selectLink)}>
         Unselect all
-      </button>
+      </TextLink>
     );
   } else {
     return (
-      <button
+      <TextLink
         data-test-id={testId('select-all')}
         onClick={actions.SelectAll}
         disabled={disabled}
-        className="text-link f36-margin-left--m">
+        className={cx(styles.selectLink)}>
         Select all
-      </button>
+      </TextLink>
     );
   }
 }
 
 function render(state, actions) {
   return (
-    <div data-test-id={testId()} style={{ maxWidth: '42em' }} className="modal-dialog">
+    <div
+      data-test-id={testId()}
+      className={cx(styles.modalDialog, styles.viewWrapper, 'modal-dialog')}>
       <header className="modal-dialog__header">
-        <h1>Share this view</h1>
-        <button onClick={actions.CancelSelection} className="modal-dialog__close" />
+        <Heading>Share this view</Heading>
+        <Button onClick={actions.CancelSelection} className="modal-dialog__close" />
       </header>
       <div className="modal-dialog__only-content">
-        <p style={{ lineHeight: '1.7' }}>{`A view displays a list of entries you searched for.
-        By sharing this view with people with other roles,
-        you are granting them access to view it.`}</p>
-        <div className="f36-margin-top--l" />
-        <div style={{ display: 'flex' }}>
+        <Paragraph>
+          A view displays a list of entries you searched for. By sharing this view with people with
+          other roles, you are granting them access to view it.
+        </Paragraph>
+        <div className={styles.selectAllWrapper}>
           <strong key="select-roles">Select role(s)</strong>
           {selectAllButton(state, actions)}
         </div>
-        <div className="f36-margin-top--l" />
         {renderRolesContainer(state, actions)}
-        <div className="f36-margin-top--l" />
-        <div className="note-box--info">
-          <p>{`This view might display different content depending on the role,
-          because different roles might have access to different content types.
-          Administrators have access to all shared views.`}</p>
-        </div>
-        <div className="f36-margin-top--l" />
-        <div style={{ display: 'flex' }}>
-          <button
+        <Note noteType="primary" className={styles.note}>
+          This view might display different content depending on the role, because different roles
+          might have access to different content types. Administrators have access to all shared
+          views.
+        </Note>
+        <div className={styles.selectAllWrapper}>
+          <Button
+            className={styles.shareButton}
             key="share-this-view"
-            data-test-id={testId('apply-selection')}
+            testId={testId('apply-selection')}
             onClick={actions.ConfirmSelection}
-            className="btn-primary-action">
+            buttonType="positive">
             Share this view
-          </button>
-          <button
-            key="cancel"
-            onClick={actions.CancelSelection}
-            className="btn-secondary-action f36-margin-left--m">
+          </Button>
+          <Button key="cancel" buttonType="muted" onClick={actions.CancelSelection}>
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -239,16 +297,7 @@ function render(state, actions) {
 
 function renderRolesContainer(state, actions) {
   return (
-    <div
-      style={{
-        border: `1px solid ${tokens.colorIceDark}`,
-        backgroundColor: tokens.colorElementLightest,
-        // We want to show half of a role if the container scrolls
-        maxHeight: '157px',
-        position: 'relative',
-        overflowX: 'hidden',
-        overflowY: 'auto'
-      }}>
+    <div className={styles.rolesContainer}>
       {caseof(state.rolesFetchStatus, [
         [K.PromiseStatus.Pending, () => [loader()]],
         [K.PromiseStatus.Resolved, () => renderRoles(state.roles, actions.ToggleRoleSelection)],
@@ -260,13 +309,7 @@ function renderRolesContainer(state, actions) {
 
 function fetchError() {
   return (
-    <p
-      style={{
-        padding: '80px 25px',
-        textAlign: 'center'
-      }}>
-      There was an error while fetching the roles.
-    </p>
+    <Paragraph className={styles.errorNote}>There was an error while fetching the roles.</Paragraph>
   );
 }
 
@@ -281,8 +324,7 @@ function loader() {
 function renderRoles(roles, toggleSelection) {
   return (
     <React.Fragment>
-      <div className="f36-margin-top--m" />
-      <div>
+      <div className={styles.rolesWrapper}>
         {roles.map(({ id, name, selected, disabled }, i) => {
           return (
             <div
@@ -298,24 +340,13 @@ function renderRoles(roles, toggleSelection) {
               aria-checked={String(!!selected)}
               onClick={() => !disabled && toggleSelection(i)}>
               {name}
-              <div
-                style={{
-                  marginLeft: 'auto',
-                  marginRight: '20px'
-                }}
-              />
-              <div
-                style={{
-                  fontFamily: 'FontAwesome',
-                  fontSize: '18px',
-                  color: selected ? tokens.colorGreenDark : tokens.colorTextLightest
-                }}>
+              <div className={styles.selectWrapper} />
+              <div className={cx(styles.selection, selected && styles.selected)}>
                 {selected ? '\uf058' : '\uf055'}
               </div>
             </div>
           );
         })}
-        <div className="f36-margin-top--m" />
       </div>
     </React.Fragment>
   );

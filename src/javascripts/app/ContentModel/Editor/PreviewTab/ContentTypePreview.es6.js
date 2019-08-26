@@ -2,6 +2,32 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Spinner, Note } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
+
+const styles = {
+  newPreviewNote: css({
+    marginBottom: tokens.spacingL
+  }),
+  loadingText: css({
+    marginLeft: tokens.spacingM
+  }),
+  unsavedChanges: css({
+    marginBottom: tokens.spacingL
+  }),
+  loaderContainer: css({
+    height: 200,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'rgba(255,255,255,0.7)',
+    padding: '10px',
+    borderRadius: '5em'
+  }),
+  spinner: css({
+    display: 'block'
+  })
+};
 
 function ContentTypePreview(props) {
   const { loadPreview, publishedVersion } = props;
@@ -21,7 +47,7 @@ function ContentTypePreview(props) {
     <div className="ct-editor-json">
       {isNew && (
         <div>
-          <Note className="f36-margin-bottom--l">
+          <Note className={styles.newPreviewNote}>
             We will show you a preview once the content type has been saved. Save content type to
             get a preview.
           </Note>
@@ -33,16 +59,16 @@ function ContentTypePreview(props) {
       {!isNew && (
         <div>
           {isLoading && (
-            <div style={{ height: 200 }} className="loader__container">
-              <Spinner size="large" style={{ display: 'block' }} />
-              <div className="f36-margin-left--m">Loading JSON preview</div>
+            <div className={styles.loaderContainer}>
+              <Spinner size="large" className={styles.spinner} />
+              <div className={styles.loadingText}>Loading JSON preview</div>
             </div>
           )}
 
           {!isLoading && (
             <div>
               {props.isDirty && (
-                <Note className="f36-margin-bottom--l">
+                <Note className={styles.unsavedChanges}>
                   You have unsaved changes. Save content type to get a preview.
                 </Note>
               )}

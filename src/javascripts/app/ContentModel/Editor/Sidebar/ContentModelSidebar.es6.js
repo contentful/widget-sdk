@@ -1,18 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import {
   TextInput,
   Button,
   Paragraph,
   List,
-  ListItem
+  ListItem,
+  Subheading
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
+
+const styles = {
+  addFieldButton: css({
+    marginBottom: tokens.spacingM
+  })
+};
 
 export function FieldsSection(props) {
   return (
     <React.Fragment>
-      <h2 className="entity-sidebar__heading">Fields</h2>
+      <Subheading className="entity-sidebar__heading">Fields</Subheading>
       <Paragraph>The content type has used {props.fieldsUsed} out of 50 fields.</Paragraph>
       {props.canEdit && (
         <Button
@@ -20,7 +29,7 @@ export function FieldsSection(props) {
           icon="PlusCircle"
           isFullWidth
           disabled={props.showNewFieldDialog.isDisabled()}
-          className="f36-margin-top--m"
+          className={styles.addFieldButton}
           onClick={() => {
             props.showNewFieldDialog.execute();
           }}>
@@ -43,7 +52,7 @@ FieldsSection.propTypes = {
 export function ContentTypeIdSection(props) {
   return (
     <React.Fragment>
-      <h2 className="entity-sidebar__heading">Content type ID</h2>
+      <Subheading className="entity-sidebar__heading">Content type ID</Subheading>
       <Paragraph>
         Use this ID to retrieve everything related to this content type via the API.
       </Paragraph>
@@ -66,7 +75,7 @@ ContentTypeIdSection.propTypes = {
 export function DocumentationSection() {
   return (
     <React.Fragment>
-      <h2 className="entity-sidebar__heading">Documentation</h2>
+      <Subheading className="entity-sidebar__heading">Documentation</Subheading>
       <List>
         <ListItem>
           Read more about content types in our{' '}

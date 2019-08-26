@@ -1,13 +1,13 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 /* eslint-disable react/prop-types */
 import React from 'react';
-import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
+import { TextField, Heading, Form, Subheading } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import { inRange } from 'lodash';
 import { assign } from 'utils/Collections.es6';
 import { DocsLink } from 'ui/Content.es6';
 import EnvironmentSelector from './EnvironmentSelector.es6';
-import { TextField } from '@contentful/forma-36-react-components';
 
 export default function({ data, initialValue, connect, trackCopy }) {
   update(initialValue);
@@ -30,18 +30,35 @@ const styles = {
     width: tokens.contentWidthFull,
     backgroundColor: tokens.colorElementMid,
     margin: `${tokens.spacingXl} 0`
+  }),
+  sectionTitle: css({
+    margin: '0 0 18px 0',
+    fontWeight: 'bold',
+    lineHeight: 1,
+    display: 'flex',
+    fontSize: '18px',
+    '&:after': {
+      marginLeft: '10px',
+      content: '',
+      height: '1px',
+      marginTop: '10px',
+      backgroundColor: '#e5ebed',
+      flexGrow: 1
+    }
+  }),
+  section: css({
+    marginTop: tokens.spacingL
   })
 };
 
 function renderForm({ data, model, update, trackCopy }) {
   return (
-    <div>
-      <h3 className="section-title">Access tokens</h3>
+    <Form>
+      <Heading className={styles.sectionTitle}>Access tokens</Heading>
       <div>
         To query and get content using the APIs, client applications need to authenticate with both
         the Space ID and an access token.
       </div>
-      <div className={styles.marginTop} />
       <Input
         canEdit={data.canEdit}
         model={model}
@@ -51,7 +68,6 @@ function renderForm({ data, model, update, trackCopy }) {
         label="Name"
         description="Can be platform or device specific names (i.e. marketing website, tablet, VR app)"
       />
-      <div className={styles.marginTop} />
       <Input
         canEdit={data.canEdit}
         model={model}
@@ -60,14 +76,12 @@ function renderForm({ data, model, update, trackCopy }) {
         label="Description"
         description="You can provide an optional description for reference in the future"
       />
-      <div className={styles.marginTop} />
       <InputWithCopy
         value={data.spaceId}
         name="space-id"
         label="Space ID"
         track={() => trackCopy('space')}
       />
-      <div className={styles.marginTop} />
       <InputWithCopy
         key="content-delivery-api"
         value={data.deliveryToken}
@@ -114,8 +128,7 @@ function renderForm({ data, model, update, trackCopy }) {
           />
         </Section>
       )}
-      <div className={styles.marginTop} />
-    </div>
+    </Form>
   );
 }
 
@@ -162,7 +175,6 @@ function InputWithCopy({ value, name, track, label, description = '' }) {
 
   return (
     <TextField
-      type="text"
       id={name}
       name={name}
       labelText={label}
@@ -176,10 +188,9 @@ function InputWithCopy({ value, name, track, label, description = '' }) {
 function Section({ title, description, children }) {
   return (
     <div>
-      <h3 className="h-reset">{title}</h3>
+      <Subheading className="h-reset">{title}</Subheading>
       {description && <div>{description}</div>}
-      <div className={styles.marginTop} />
-      {children}
+      <div className={styles.section}>{children}</div>
     </div>
   );
 }
