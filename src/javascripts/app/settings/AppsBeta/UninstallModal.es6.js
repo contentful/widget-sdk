@@ -20,7 +20,8 @@ const styles = {
     marginLeft: tokens.spacingM
   }),
   icon: css({
-    verticalAlign: 'middle'
+    verticalAlign: 'middle',
+    fill: tokens.colorTextLightest
   }),
   separator: css({
     marginTop: tokens.spacingL,
@@ -45,18 +46,21 @@ const styles = {
 };
 
 function createListItem(item) {
-  let icon = 'CheckCircle';
-  let iconColor = 'positive';
+  // it is possible to have an undefined item from the API
+  if (!item) {
+    return null;
+  }
+
+  let icon = 'Warning';
 
   if (item.negative) {
-    icon = 'ErrorCircle';
-    iconColor = 'negative';
+    icon = 'InfoCircle';
   }
 
   return (
     <ListItem key={item.info} testId="action-list-item" className={styles.actionItem}>
       <div>
-        <Icon icon={icon} color={iconColor} className={styles.icon} />
+        <Icon icon={icon} color="muted" className={styles.icon} />
       </div>
       <div>{item.info}</div>
     </ListItem>
@@ -85,7 +89,7 @@ export default function UninstallModal({ onConfirm, onClose, actionList, isShown
   const [otherReason, setOtherReason] = useState('');
 
   return (
-    <Modal title="Uninstall app?" onClose={onClose} isShown={isShown}>
+    <Modal title="Uninstall app?" onClose={onClose} isShown={isShown} allowHeightOverflow>
       <Typography>
         <Paragraph>This will remove the app and its features.</Paragraph>
       </Typography>

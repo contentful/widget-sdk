@@ -8,7 +8,8 @@ describe('UninstallModal', () => {
 
   const actionList = [
     { info: 'first thing is does' },
-    { info: 'second thing is does negative', negative: true }
+    { info: 'second thing is does negative', negative: true },
+    undefined // should be able to pass undefined and have it filtered out in the component
   ];
 
   it('should render a list of things it will uninstall in the correct order', () => {
@@ -17,9 +18,12 @@ describe('UninstallModal', () => {
     );
 
     const items = getAllByTestId('action-list-item');
-    actionList.forEach((action, i) => {
-      expect(items[i].textContent.trim()).toEqual(action.info);
-    });
+    actionList
+      // filtering out undefined values here; the test will rightfully fail if the component doesn't handle this case
+      .filter(x => x)
+      .forEach((action, i) => {
+        expect(items[i].textContent.trim()).toEqual(action.info);
+      });
 
     expect(getByTestId('action-list').children).toHaveLength(2);
   });
