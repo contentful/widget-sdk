@@ -94,6 +94,11 @@ module.exports = {
 
     console.log('Build compare result ->', result);
 
+    const postMessage = [
+      result.markdown,
+      '[Build Tracker UI](https://contentful-sniffer.netlify.com/build-tracker)'
+    ].join('\n\n');
+
     try {
       const { requestId, statusCode, message } = await fetch(
         process.env.BUNDLESIZE_COMMENT_LAMBDA_URL,
@@ -101,7 +106,7 @@ module.exports = {
           method: 'post',
           body: JSON.stringify({
             issue: pr ? Number.parseInt(pr, 10) : '',
-            message: result.markdownAll,
+            message: postMessage,
             type: 'bundlesize'
           }),
           headers: {
