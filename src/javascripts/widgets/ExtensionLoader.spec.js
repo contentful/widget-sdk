@@ -110,7 +110,8 @@ describe('ExtensionLoader', () => {
                 param: 'foo'
               }
             },
-            fieldTypes: [{ type: 'Object' }]
+            fieldTypes: [{ type: 'Object' }],
+            locations: ['entry-sidebar']
           }
         }
       ]);
@@ -170,7 +171,8 @@ describe('ExtensionLoader', () => {
           ...makeExtensionWithDefinition('id2', 'definitionId2'),
           extension: {
             src: 'http://localhost:2222',
-            name: 'Test'
+            name: 'Test',
+            locations: ['entry-sidebar']
           }
         }
       ]);

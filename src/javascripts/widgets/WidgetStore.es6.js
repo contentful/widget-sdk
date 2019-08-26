@@ -88,6 +88,7 @@ function buildExtensionWidget({ sys, extension, extensionDefinition, parameters 
     appId: get(app, 'appId'),
     appIconUrl: get(app, 'icon'),
     sidebar: extension.sidebar,
+    locations: extension.locations,
     parameters: get(extension, ['parameters', 'instance'], []),
     installationParameters: {
       definitions: get(extension, ['parameters', 'installation'], []),
