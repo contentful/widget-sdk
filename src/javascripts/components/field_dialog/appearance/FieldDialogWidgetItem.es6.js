@@ -66,7 +66,7 @@ export default class FieldDialogWidgetItem extends Component {
         onClick={onClick}>
         {isCustom && !isApp && (
           <div className="field-dialog__widget-item-header">
-            <span>Extension</span>
+            <span>UI Extension</span>
             {isAdmin && (
               <StateLink
                 to="^.^.^.settings.extensions.detail"
