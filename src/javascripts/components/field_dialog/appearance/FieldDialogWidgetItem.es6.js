@@ -5,6 +5,14 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Icon from 'ui/Components/Icon.es6';
 import StateLink from 'app/common/StateLink.es6';
+import { css } from 'emotion';
+
+const styles = {
+  appIcon: css({
+    margin: 'auto',
+    height: '42px'
+  })
+};
 
 export default class FieldDialogWidgetItem extends Component {
   static propTypes = {
@@ -12,18 +20,30 @@ export default class FieldDialogWidgetItem extends Component {
     isSelected: PropTypes.bool.isRequired,
     isDefault: PropTypes.bool.isRequired,
     isAdmin: PropTypes.bool.isRequired,
-    isApp: PropTypes.bool.isRequired,
+    isApp: PropTypes.bool,
     appId: PropTypes.string,
     name: PropTypes.string.isRequired,
+    appIconUrl: PropTypes.string,
     icon: PropTypes.string,
     id: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired,
     index: PropTypes.number
   };
 
+  renderIcon() {
+    const { isApp, icon, appIconUrl } = this.props;
+
+    if (isApp && appIconUrl) {
+      return <img className={styles.appIcon} src={appIconUrl} />;
+    } else if (icon) {
+      return <Icon className="field-dialog__widget-icon" name={`${icon}-widget`} />;
+    }
+
+    return null;
+  }
+
   render() {
     const {
-      icon,
       name,
       isDefault,
       isCustom,
@@ -35,6 +55,7 @@ export default class FieldDialogWidgetItem extends Component {
       isApp,
       appId
     } = this.props;
+
     return (
       <li
         className={classNames('field-dialog__widget-item', {
@@ -67,7 +88,7 @@ export default class FieldDialogWidgetItem extends Component {
           </div>
         )}
         <div className="field-dialog__widget-item-content">
-          {icon && <Icon className="field-dialog__widget-icon" name={`${icon}-widget`} />}
+          {this.renderIcon()}
           <p>{name}</p>
           {isDefault && <div className="field-dialog__widget-default">(default)</div>}
           {isSelected && (

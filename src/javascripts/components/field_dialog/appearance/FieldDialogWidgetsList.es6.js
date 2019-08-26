@@ -40,6 +40,7 @@ export default class FieldDialogWidgetsList extends Component {
                 name={widget.name}
                 icon={widget.icon}
                 isApp={widget.isApp}
+                appIconUrl={widget.appIconUrl}
                 appId={widget.appId}
               />
             );

@@ -18,7 +18,8 @@ export async function getForContentTypeManagement(extensionLoader, appsRepo) {
   const apps = Object.keys(appsListing)
     .map(key => ({
       definitionId: get(appsListing[key], ['fields', 'extensionDefinitionId']),
-      appId: get(appsListing[key], ['fields', 'slug'])
+      appId: get(appsListing[key], ['fields', 'slug']),
+      icon: get(appsListing[key], ['fields', 'icon', 'fields', 'file', 'url'])
     }))
     .filter(({ definitionId }) => typeof definitionId === 'string' && definitionId.length > 0);
 
@@ -85,6 +86,7 @@ function buildExtensionWidget({ sys, extension, extensionDefinition, parameters 
     fieldTypes: (extension.fieldTypes || []).map(toInternalFieldType),
     isApp: !!app,
     appId: get(app, 'appId'),
+    appIconUrl: get(app, 'icon'),
     sidebar: extension.sidebar,
     parameters: get(extension, ['parameters', 'instance'], []),
     installationParameters: {
