@@ -42,7 +42,8 @@ function convertExtensionToWidgetConfiguration(extension) {
     widgetId: extension.id,
     widgetNamespace: NAMESPACE_EXTENSION,
     name: extension.name,
-    parameters: extension.parameters || []
+    parameters: extension.parameters || [],
+    isApp: extension.isApp
   };
 }
 

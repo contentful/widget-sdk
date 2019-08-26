@@ -4,6 +4,20 @@ import { sortableContainer } from 'react-sortable-hoc';
 import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import SidebarWidgetItem from './SidebarWidgetItem.es6';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
+
+const styles = {
+  customSidebarTitle: css({
+    marginBottom: tokens.spacingM
+  }),
+  widgetType: css({
+    marginBottom: tokens.spacingS
+  }),
+  parameterConfigLink: css({
+    marginBottom: tokens.spacingS
+  })
+};
 
 function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
   const hasParams = widget.parameters && widget.parameters.length > 0;
@@ -22,9 +36,11 @@ function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
       )}
       {widget.widgetNamespace === NAMESPACE_EXTENSION && (
         <React.Fragment>
-          <Paragraph className="f36-margin-bottom--s">UI Extension</Paragraph>
+          <Paragraph className={styles.widgetType}>
+            {widget.isApp ? 'App' : 'UI Extension'}
+          </Paragraph>
           {hasParams && (
-            <TextLink onClick={onConfigureClick} className="f36-margin-bottom--s">
+            <TextLink onClick={onConfigureClick} className={styles.parameterConfigLink}>
               Change instance parameters
             </TextLink>
           )}
@@ -46,7 +62,7 @@ const SortableContainer = sortableContainer(({ children }) => <div>{children}</d
 export default function CustomSidebar({ items, onChangePosition, onRemoveItem, onConfigureItem }) {
   return (
     <>
-      <Subheading className="f36-margin-bottom--m">Custom sidebar</Subheading>
+      <Subheading className={styles.customSidebarTitle}>Custom sidebar</Subheading>
       {items.length !== 0 && (
         <SortableContainer
           distance={10}
