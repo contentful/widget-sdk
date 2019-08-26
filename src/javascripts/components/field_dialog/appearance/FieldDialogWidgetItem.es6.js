@@ -10,7 +10,8 @@ import { css } from 'emotion';
 const styles = {
   appIcon: css({
     margin: 'auto',
-    height: '42px'
+    height: '42px',
+    width: '42px'
   })
 };
 
