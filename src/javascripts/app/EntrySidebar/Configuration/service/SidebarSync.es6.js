@@ -102,7 +102,8 @@ export function convertConfigirationToInternalState(configuration, extensions, i
           ? {
               ...widget,
               name: installedExtensionsMap[widget.widgetId].name,
-              parameters: installedExtensionsMap[widget.widgetId].parameters || []
+              parameters: installedExtensionsMap[widget.widgetId].parameters || [],
+              isApp: installedExtensionsMap[widget.widgetId].isApp
             }
           : {
               ...widget,
