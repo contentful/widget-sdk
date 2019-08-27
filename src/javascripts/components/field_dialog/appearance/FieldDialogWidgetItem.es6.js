@@ -12,6 +12,11 @@ const styles = {
     margin: 'auto',
     height: '42px',
     width: '42px'
+  }),
+  widgetTitle: css({
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden'
   })
 };
 
@@ -64,7 +69,8 @@ export default class FieldDialogWidgetItem extends Component {
           'is-custom': isCustom
         })}
         data-current-widget-index={index}
-        onClick={onClick}>
+        onClick={onClick}
+        title={name}>
         {isCustom && !isApp && (
           <div className="field-dialog__widget-item-header">
             <span>UI Extension</span>
@@ -90,7 +96,7 @@ export default class FieldDialogWidgetItem extends Component {
         )}
         <div className="field-dialog__widget-item-content">
           {this.renderIcon()}
-          <p>{name}</p>
+          <p className={styles.widgetTitle}>{name}</p>
           {isDefault && <div className="field-dialog__widget-default">(default)</div>}
           {isSelected && (
             <div className="field-dialog__checkmark">
