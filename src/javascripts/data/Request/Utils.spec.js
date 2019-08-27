@@ -48,6 +48,10 @@ describe('data/Request/Utils.es6', () => {
         'https://api.flinkly.com/spaces/id/entries/some-id/comments/some-id',
         'https://api.flinkly.com/spaces/id/assets/some-id/comments/id/THIS-WILL-BE-IGNORED'
       ],
+      '/:entity/:id/tasks': ['https://api.foo.com/spaces/id/entries/id/tasks'],
+      '/:entity/:id/tasks/:id': [
+        'https://api.contentful.com/spaces/id/entries/some-id/tasks/some-id'
+      ],
       '/:entity/:id/snapshots': ['http://foo.com/spaces/id/entries/id/snapshots'],
       '/:entity/:id/snapshots/:id': [
         'https://api.flinkly.com/spaces/some-id/entries/some-id/snapshots/some-id',
