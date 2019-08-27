@@ -5049,6 +5049,7 @@ pre,
             align-items: center;
     border-bottom: 1px solid #d6dce4;
     height: 30px;
+    min-height: 30px;
     color: #a2a9b1;
     text-transform: uppercase;
     font-size: 0.9em;
