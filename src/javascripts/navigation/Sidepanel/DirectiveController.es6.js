@@ -11,10 +11,9 @@ import * as CreateSpace from 'services/CreateSpace.es6';
 import * as AccessChecker from 'access_control/AccessChecker/index.es6';
 import * as LD from 'utils/LaunchDarkly/index.es6';
 import * as logger from 'services/logger.es6';
+import { ENVIRONMENTS_FLAG } from 'featureFlags.es6';
 
 import renderSidepanel from './SidepanelView.es6';
-
-const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
 
 export default function createController($scope, winJqueryObject) {
   winJqueryObject.on('keyup', handleEsc);
@@ -83,7 +82,7 @@ export default function createController($scope, winJqueryObject) {
     }
   });
 
-  LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG_NAME, isEnabled => {
+  LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG, isEnabled => {
     state = assign(state, { environmentsEnabled: isEnabled });
     render();
   });

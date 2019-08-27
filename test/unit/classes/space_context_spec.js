@@ -54,9 +54,6 @@ describe('spaceContext', () => {
       this.$apply();
       return this.spaceContext.space;
     };
-
-    const LD = this.$inject('utils/LaunchDarkly');
-    LD._setFlag('feature-dv-11-2017-environments', true);
   });
 
   describe('#purge', () => {
@@ -72,8 +69,12 @@ describe('spaceContext', () => {
 
   describe('#resetWithSpace()', () => {
     beforeEach(function() {
-      this.result = this.spaceContext.resetWithSpace(this.makeSpaceData());
-      this.space = this.spaceContext.space;
+      this.reset = async () => {
+        this.result = this.spaceContext.resetWithSpace(this.makeSpaceData());
+        this.space = this.spaceContext.space;
+        return this.result;
+      };
+      this.reset(this);
     });
 
     it('sets client space on context', function() {
@@ -109,19 +110,13 @@ describe('spaceContext', () => {
       expect(this.spaceContext.publishedCTs.getAllBare().map(ct => ct.sys.id)).toEqual(['A', 'B']);
     });
 
-    it('always returns an array for the `environments` property even if there are no environments', function() {
-      const LD = this.$inject('utils/LaunchDarkly');
-      LD._setFlag('feature-dv-11-2017-environments', false);
+    it('always returns an array for the `environments` property even if there are no environments', async function() {
       Object.assign(this.mockSpaceEndpoint.stores.environments, null);
-      return this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid')).then(() => {
-        expect(this.spaceContext.environments).toEqual([]);
-        LD._setFlag('feature-dv-11-2017-environments', true);
-        Object.assign(this.mockSpaceEndpoint.stores.environments, []);
-        return this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid'));
-      });
+      await this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid'));
+      expect(this.spaceContext.environments).toEqual([]);
     });
 
-    it('set `environments` property if environments are enabled', function*() {
+    it('sets `environments` property if environments are enabled', async function() {
       const master = {
         name: 'master',
         sys: {
@@ -136,7 +131,9 @@ describe('spaceContext', () => {
       };
       const environments = { master, staging };
       Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
-      yield this.result;
+
+      await this.reset();
+
       expect(this.spaceContext.environments).toEqual([master, staging]);
     });
 

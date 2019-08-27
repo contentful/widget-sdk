@@ -49,10 +49,9 @@ export default function register() {
   registerFactory('spaceContext', [
     '$q',
     '$rootScope',
-    '$injector',
     'client',
     'saved-views-migrator',
-    ($q, $rootScope, $injector, client, { create: createViewMigrator }) => {
+    ($q, $rootScope, client, { create: createViewMigrator }) => {
       const publishedCTsBus$ = K.createPropertyBus([]);
 
       // Enforcements deinitialization function, when changing space
@@ -189,7 +188,7 @@ export default function register() {
           const start = Date.now();
           return $q
             .all([
-              maybeFetchEnvironments(self.endpoint).then(environments => {
+              fetchEnvironments(self.endpoint).then(environments => {
                 self.environments = deepFreeze(environments);
                 space.environment = self.environments.find(env => env.sys.id === environmentId);
               }),
@@ -546,17 +545,8 @@ export default function register() {
         }
       }
 
-      function maybeFetchEnvironments(spaceEndpoint) {
-        // FIXME This prevents a circular dependency
-        const LD = $injector.get('utils/LaunchDarkly');
-        return LD.getCurrentVariation('feature-dv-11-2017-environments').then(
-          environmentsEnabled => {
-            if (environmentsEnabled) {
-              return createEnvironmentsRepo(spaceEndpoint).getAll();
-            }
-            return [];
-          }
-        );
+      function fetchEnvironments(spaceEndpoint) {
+        return createEnvironmentsRepo(spaceEndpoint).getAll();
       }
 
       /**
