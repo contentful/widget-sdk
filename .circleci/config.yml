@@ -191,8 +191,7 @@ orbs:
               command: npx wait-on http-get://localhost:3001
           - run:
               name: Run integration tests
-              # TODO Fix in contentful/ui-extensions-sdk and reenable
-              command: 'true' # npm run integration
+              command: npm run integration
           - store_test_results:
               path: test/cypress/reports
           - store_artifacts:
