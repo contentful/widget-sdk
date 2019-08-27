@@ -58,9 +58,10 @@ async function fetchUsers(spaceId, userIds) {
  * Get all comments as well as all the users associated with the comments
  * and return the resolved items
  */
-export async function fetchComments(spaceId, entryId) {
+async function fetchComments(spaceId, entryId) {
   const endpoint = createSpaceEndpoint(spaceId);
   const { items } = await getAllForEntry(endpoint, entryId);
+  // TODO: Remove filter once we removed tasks from `/comments` endpoint.
   const comments = items.filter(item => !item.assignment);
   const commentCreatorIds = uniq(map(comments, 'sys.createdBy.sys.id'));
   const users = commentCreatorIds.length ? await fetchUsers(spaceId, commentCreatorIds) : [];

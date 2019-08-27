@@ -37,7 +37,7 @@ const defaultHeader = {
 
 const getEntryCommentsAndTasksRequest: RequestOptions = {
   method: 'GET',
-  path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/comments`,
+  path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/tasks`,
   headers: defaultHeader
 };
 
@@ -106,7 +106,7 @@ export function createTask({ title, assigneeId }) {
     uponReceiving: `a request to create a new task for user "${assigneeId}" on entry "${defaultEntryId}"`,
     withRequest: {
       method: 'POST',
-      path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/comments`,
+      path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/tasks`,
       headers: {
         ...defaultHeader,
         'Content-Type': 'application/vnd.contentful.management.v1+json'
@@ -170,7 +170,7 @@ function changeTaskStatus(status: Status, stateName: States) {
       uponReceiving: `a request to change status of task "${taskId}" to "${status}"`,
       withRequest: {
         method: 'PUT',
-        path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/comments/${taskId}`,
+        path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/tasks/${taskId}`,
         headers: {
           ...defaultHeader,
           'Content-Type': 'application/vnd.contentful.management.v1+json',

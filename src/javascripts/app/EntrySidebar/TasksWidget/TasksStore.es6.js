@@ -1,10 +1,5 @@
 import * as K from 'utils/kefir.es6';
-import {
-  getAllForEntry,
-  createAssigned as create,
-  remove,
-  updateAssigned as update
-} from 'data/CMA/CommentsRepo.es6';
+import { getAllForEntry, create, remove, update } from 'data/CMA/TasksRepo.es6';
 
 // TODO: Introduce Store specific errors rather than passing client errors.
 

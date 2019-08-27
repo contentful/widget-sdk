@@ -43,7 +43,7 @@ export function createTasksStoreInteractor(tasksStore, setState, getState) {
       resetTaskError(key);
       const assignedTo = createUserLink(assigneeKey);
       const status = isDone ? 'resolved' : 'open';
-      const task = { body, assignedTo, status };
+      const task = { body, assignment: { assignedTo, status } };
       const store =
         version > 0
           ? () => tasksStore.update({ sys: { id: key, version }, ...task })
