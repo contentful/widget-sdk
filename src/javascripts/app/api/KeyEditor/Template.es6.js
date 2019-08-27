@@ -4,7 +4,10 @@ import tokens from '@contentful/forma-36-tokens';
 export default function() {
   const title = [
     '{{ context.title | truncate:50 }}{{ context.dirty ? "*" : "" }}',
-    h('cf-knowledge-base.workbench-header__kb-link', { target: 'api_key' })
+    h('react-component', {
+      name: 'components/shared/knowledge_base_icon/KnowledgeBase.es6',
+      props: `{ target: 'api_key', className: 'workbench-header__kb-link' }`
+    })
   ];
 
   const actions = [

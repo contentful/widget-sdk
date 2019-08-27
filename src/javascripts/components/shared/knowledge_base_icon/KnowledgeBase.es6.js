@@ -42,20 +42,22 @@ function KnowledgeBase({ target, text = '', inlineText, className = '', icon = t
   const isInline = inlineText ? 'x--inline' : '';
 
   return (
+    // eslint-disable-next-line rulesdir/restrict-non-f36-components
     <a
+      data-test-id="knowledge-base-link"
       className={`knowledge-base-link ${hasText} ${isInline} ${className}`}
       href={getKnowledgeBaseUrl(target)}
       target="_blank"
       rel="noopener noreferrer">
       {text}
-      {icon && <i className="fa fa-question-circle" />}
+      {icon && <i className="fa fa-question-circle" data-test-id="icon" />}
     </a>
   );
 }
 
 KnowledgeBase.propTypes = {
   className: PropTypes.string,
-  target: PropTypes.string,
+  target: PropTypes.oneOf(Object.keys(items)).isRequired,
   text: PropTypes.string,
   inlineText: PropTypes.any,
   icon: PropTypes.bool

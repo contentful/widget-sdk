@@ -9,7 +9,11 @@ header.workbench-header
     cf-icon.workbench-header__icon(name="page-content", scale="0.75")
     h1.workbench-header__title
       | Content
-      cf-knowledge-base.workbench-header__kb-link(target="entry")
+      react-component(
+        name="components/shared/knowledge_base_icon/KnowledgeBase.es6"
+        props="{target: 'entry', className: 'workbench-header__kb-link'}"
+      )
+
 
   .workbench-header__search
     cf-component-bridge(style="flex:1; z-index: 1" component="search")

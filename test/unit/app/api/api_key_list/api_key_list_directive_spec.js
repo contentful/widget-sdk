@@ -10,10 +10,9 @@ describe('The ApiKey list directive', () => {
 
     this.stubs = {
       shouldDisable: sinon.stub().returns(false)
-    }
+    };
 
     module('contentful/test', $provide => {
-      $provide.removeDirectives('relative', 'cfKnowledgeBase');
       $provide.value('$state', {
         href: sinon.stub(),
         current: { name: 'test.api.foo' }
@@ -21,12 +20,12 @@ describe('The ApiKey list directive', () => {
       $provide.constant('access_control/AccessChecker/index.es6', {
         shouldDisable: this.stubs.shouldDisable,
         shouldHide: sinon.stub().returns(false)
-      })
+      });
       $provide.constant('services/ResourceService.es6', {
         default: () => ({
           get: sinon.stub().resolves(resource)
         })
-      })
+      });
     });
 
     this.setUsageLimit = (usage, limit) => {

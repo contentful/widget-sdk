@@ -111,7 +111,6 @@ angular
       ngRequire('components/shared/create_new_space/createNewSpaceDirective.es6').default();
       ngRequire('components/shared/dataSizeScaleController.es6').default();
       ngRequire('components/shared/endlessContainerDirective.es6').default();
-      ngRequire('components/shared/knowledge_base_icon/cfKnowledgeBaseDirective.es6').default();
       ngRequire('components/shared/listViewsController.es6').default();
       ngRequire(
         'components/shared/persistent_notification/cfPersistentNotificationDirective.es6'
