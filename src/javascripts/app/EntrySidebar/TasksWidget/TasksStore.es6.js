@@ -56,19 +56,14 @@ export function createTasksStoreForEntry(endpoint, entryId) {
   };
 
   async function initialFetch() {
-    let tasksAndComments;
+    let tasks;
     try {
       const { items } = await getAllForEntry(endpoint, entryId);
-      tasksAndComments = items;
+      tasks = items;
     } catch (error) {
       tasksBus.error(error);
       return;
     }
-    const tasks = tasksAndComments.filter(isTaskComment);
     tasksBus.set(tasks);
   }
-}
-
-function isTaskComment(comment) {
-  return !!(comment && comment.assignment);
 }
