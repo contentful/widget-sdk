@@ -3,3 +3,7 @@ coverage:
     project: no
     patch: no
     changes: no
+comment:
+  layout: 'reach, diff, files'
+  behavior: default
+  require_changes: yes
