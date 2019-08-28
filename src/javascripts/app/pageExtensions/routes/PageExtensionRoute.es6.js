@@ -12,24 +12,23 @@ import {
 } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder.es6';
 import BinocularsIllustration from 'svg/binoculars-illustration.es6';
+import * as WidgetStore from 'widgets/WidgetStore.es6';
 
 const PageExtensionFetcher = createFetcherComponent(
   async ({ extensionId, orgId, extensionLoader }) => {
-    const [isEnabled, extensions] = await Promise.all([
+    const [isEnabled, descriptor] = await Promise.all([
       advancedExtensibilityFeature.isEnabled(orgId),
-      extensionLoader.getExtensionsById([extensionId])
+      WidgetStore.getForSingleExtension(extensionLoader, extensionId)
     ]);
 
     if (!isEnabled) {
       throw new Error('advanced extensibility not enabled');
     }
-
-    const [extension] = extensions;
-    if (!extension) {
+    if (!descriptor) {
       throw new Error('no extension found ');
     }
 
-    return extension;
+    return descriptor;
   }
 );
 
@@ -75,7 +74,7 @@ export default function PageExtensionRoute(props) {
           return <ErrorMessage />;
         }
 
-        return <PageExtension bridge={props.bridge} extension={data} path={props.path} />;
+        return <PageExtension bridge={props.bridge} descriptor={data} path={props.path} />;
       }}
     </PageExtensionFetcher>
   );

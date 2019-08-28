@@ -62,11 +62,17 @@ export async function getForEditor(extensionLoader, editorInterface = {}) {
 
   return {
     [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),
-    [NAMESPACE_EXTENSION]: extensions.map(extension => buildExtensionWidget(extension, []))
+    [NAMESPACE_EXTENSION]: extensions.map(extension => buildExtensionWidget(extension))
   };
 }
 
-function buildExtensionWidget({ sys, extension, extensionDefinition, parameters }, apps) {
+export async function getForSingleExtension(extensionLoader, extensionId) {
+  const [extension] = await extensionLoader.getExtensionsById([extensionId]);
+
+  return extension ? buildExtensionWidget(extension) : null;
+}
+
+function buildExtensionWidget({ sys, extension, extensionDefinition, parameters }, apps = []) {
   const { src, srcdoc } = extension;
 
   // We identify srcdoc-backed extensions by taking a look

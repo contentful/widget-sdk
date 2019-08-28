@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
 import { css } from 'emotion';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
@@ -18,44 +17,36 @@ const styles = {
 export default class PageExtension extends React.Component {
   static propTypes = {
     path: PropTypes.string.isRequired,
-    extension: PropTypes.shape({
-      sys: PropTypes.shape({
-        id: PropTypes.string.isRequired
-      }).isRequired,
-      extension: PropTypes.shape({
-        name: PropTypes.string.isRequired
-      }).isRequired,
-      parameters: PropTypes.object
-    }).isRequired,
+    descriptor: PropTypes.object.isRequired,
     bridge: PropTypes.object.isRequired
   };
 
   componentDidMount() {
-    trackExtensionRender(LOCATION_PAGE, this.props.extension, this.prepareParameters());
-  }
-
-  prepareParameters() {
-    const { extension, path } = this.props;
-    const definitions = get(extension, ['extension', 'parameters', 'installation'], []);
-    const values = extension.parameters || {};
-
-    return {
-      instance: {},
-      installation: applyDefaultValues(definitions, values),
-      invocation: { path }
-    };
+    trackExtensionRender(LOCATION_PAGE, this.props.descriptor);
   }
 
   render() {
-    const { extension, bridge } = this.props;
+    const { path, descriptor, bridge } = this.props;
+
+    const parameters = {
+      // No instance parameters for Page Extensions.
+      instance: {},
+      // Regular installation parameters.
+      installation: applyDefaultValues(
+        descriptor.installationParameters.definitions,
+        descriptor.installationParameters.values
+      ),
+      // Current `path` is the only invocation parameter.
+      invocation: { path }
+    };
 
     return (
       <div data-test-id="page-extension" className={styles.root}>
-        <DocumentTitle title={extension.extension.name} />
+        <DocumentTitle title={descriptor.name} />
         <ExtensionIFrameRenderer
           bridge={bridge}
-          descriptor={{ ...extension.extension, id: extension.sys.id }}
-          parameters={this.prepareParameters()}
+          descriptor={descriptor}
+          parameters={parameters}
           isFullSize
         />
       </div>

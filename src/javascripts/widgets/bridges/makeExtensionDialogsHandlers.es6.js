@@ -1,5 +1,4 @@
 import React from 'react';
-import { get } from 'lodash';
 
 import { Modal } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
@@ -9,6 +8,7 @@ import * as Dialogs from '../ExtensionDialogs.es6';
 import { applyDefaultValues } from '../WidgetParametersUtils.es6';
 import trackExtensionRender from '../TrackExtensionRender.es6';
 import { LOCATION_DIALOG } from '../WidgetLocations.es6';
+import * as WidgetStore from '../WidgetStore.es6';
 
 import createDialogExtensionBridge from './createDialogExtensionBridge.es6';
 import checkDependencies from './checkDependencies.es6';
@@ -50,29 +50,28 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       throw new Error('No Extension ID provided.');
     }
 
-    const [extension] = await spaceContext.extensionLoader.getExtensionsById([options.id]);
+    const descriptor = await WidgetStore.getForSingleExtension(
+      spaceContext.extensionLoader,
+      options.id
+    );
 
-    if (!extension) {
-      throw new Error('no extension found');
+    if (!descriptor) {
+      throw new Error(`No Extension with ID "${options.id}" found.`);
     }
 
-    const descriptor = {
-      id: options.id,
-      ...extension.extension
-    };
-
-    const defainitions = get(extension, ['extension', 'parameters', 'installation'], []);
-    const values = extension.parameters || {};
     const parameters = {
       // No instance parameters for dialogs.
       instance: {},
       // Regular installation parameters.
-      installation: applyDefaultValues(defainitions, values),
+      installation: applyDefaultValues(
+        descriptor.installationParameters.definitions,
+        descriptor.installationParameters.values
+      ),
       // Parameters passed directly to the dialog.
       invocation: options.parameters || {}
     };
 
-    trackExtensionRender(LOCATION_DIALOG, extension, parameters);
+    trackExtensionRender(LOCATION_DIALOG, descriptor);
 
     return ModalLauncher.open(({ isShown, onClose }) => {
       // We're passing `openDialog` (function above) down
@@ -91,14 +90,14 @@ export default function makeExtensionDialogsHandlers(dependencies) {
           onClose={onClose}
           size={`${options.width || 700}px`}>
           {() => (
-            <React.Fragment>
+            <>
               {options.title && <Modal.Header title={options.title} onClose={() => onClose()} />}
               <ExtensionIFrameRenderer
                 bridge={bridge}
                 descriptor={descriptor}
                 parameters={parameters}
               />
-            </React.Fragment>
+            </>
           )}
         </Modal>
       );
