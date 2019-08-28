@@ -26,7 +26,7 @@ function onBlur() {
     Analytics.track('extension:activate', {
       extensionId,
       location,
-      extensionDefinitionId: extensionDefinitionId || null
+      extensionDefinitionId
     });
   }
 }
