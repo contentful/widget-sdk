@@ -64,6 +64,7 @@ const compareBuilds = async commits => {
       ) {
         markdown
         markdownAll
+        hasImpact
       }
     }`,
     variables: {
@@ -98,6 +99,13 @@ module.exports = {
     }
 
     const result = await compareBuilds([meta.parentRevision, meta.revision]);
+
+    if (!result.hasImpact) {
+      console.log(
+        `This PR has no impact on bundle size. Not posting a comment to PR#${pr} and moving on.`
+      );
+      return true;
+    }
 
     console.log('Build compare result ->', result);
 

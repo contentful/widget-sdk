@@ -33,6 +33,7 @@ const migrationDiff = async (revisionOne, revisionTwo) => {
       migrationDiff(project: $project, revisionOne: $revisionOne, revisionTwo: $revisionTwo) {
         diff
         markdown
+        hasImpact
       }
     }`,
     variables: {
@@ -62,9 +63,12 @@ module.exports = {
       return true;
     }
 
-    const { diff, markdown } = await migrationDiff(meta.parentRevision, meta.revision);
+    const { diff, markdown, hasImpact } = await migrationDiff(meta.parentRevision, meta.revision);
 
-    if (!diff) {
+    if (!diff || !hasImpact) {
+      console.log(
+        `This PR does not impact migration to react. Not posting comment to PR#${pr} and moving on.`
+      );
       return true;
     }
 
