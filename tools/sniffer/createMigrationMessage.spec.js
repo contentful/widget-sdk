@@ -56,8 +56,8 @@ describe('sniffer/createMigrationMessage', () => {
       \`src/path/to-updated-file.js\`
 
       🎖 for removing some 🤕 dependencies:
-      * \`$timeout\`
-      * \`hyperscript\`
+      * \`spaceContext\`
+      * \`ui/Framework\`
 
       ### Could be better
 

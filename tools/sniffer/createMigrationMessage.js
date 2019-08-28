@@ -62,7 +62,7 @@ module.exports = diff => {
         praise.push(
           pathMessage(
             item.path,
-            `🎖 for removing some 🤕 dependencies:\n${addedResult.value
+            `🎖 for removing some 🤕 dependencies:\n${removedResult.value
               .map(item => `* \`${item}\``)
               .join('\n')}`
           )
