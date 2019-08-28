@@ -5,9 +5,15 @@ import Dialog from './Dialog.es6';
 import fetchUnpublishedReferences from './FetchUnpublishedReferences.es6';
 
 import { getModule } from 'NgRegistry.es6';
-const spaceContext = getModule('spaceContext');
 
-export const showUnpublishedReferencesWarning = async ({ entity, spaceId, environmentId }) => {
+export const showUnpublishedReferencesWarning = async ({
+  entity,
+  spaceId,
+  environmentId,
+  confirmLabel,
+  modalTitle
+}) => {
+  const spaceContext = getModule('spaceContext');
   if (entity.sys.type !== 'Entry') {
     return true;
   }
@@ -30,6 +36,8 @@ export const showUnpublishedReferencesWarning = async ({ entity, spaceId, enviro
       // HACK: has to be unique because modal is never unmounted
       key={Date.now().toString(36)}
       isShown={isShown}
+      confirmLabel={confirmLabel}
+      modalTitle={modalTitle}
       onConfirm={() => onClose(true)}
       onCancel={() => onClose(false)}
       contentTypes={contentTypes}

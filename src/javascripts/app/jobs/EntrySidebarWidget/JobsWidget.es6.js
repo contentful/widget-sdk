@@ -208,7 +208,9 @@ export default function JobWidget({
           const isConfirmed = await showUnpublishedReferencesWarning({
             entity,
             spaceId,
-            environmentId
+            environmentId,
+            confirmLabel: 'Schedule anyway',
+            modalTitle: 'Are you sure you want to schedule this entry to publish?'
           });
           if (isConfirmed) {
             setIsDialogShown(true);

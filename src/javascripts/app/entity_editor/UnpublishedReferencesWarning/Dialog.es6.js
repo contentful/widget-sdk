@@ -79,7 +79,14 @@ class UnpublishedReferencesConfirm extends Component {
     onConfirm: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
     contentTypes: PropTypes.array.isRequired,
-    unpublishedReferencesInfo: PropTypes.array.isRequired
+    unpublishedReferencesInfo: PropTypes.array.isRequired,
+    modalTitle: PropTypes.string,
+    confirmLabel: PropTypes.string
+  };
+
+  static defaultProps = {
+    modalTitle: 'Are you sure you want to publish this entry?',
+    confirmLabel: 'Publish anyway'
   };
 
   onEntityListClick = (e, reference) => {
@@ -120,7 +127,7 @@ class UnpublishedReferencesConfirm extends Component {
   }
 
   render() {
-    const { onConfirm, onCancel, isShown } = this.props;
+    const { onConfirm, onCancel, isShown, modalTitle, confirmLabel } = this.props;
 
     const unpublishedReferencesInfo = _.filter(
       this.props.unpublishedReferencesInfo,
@@ -137,10 +144,10 @@ class UnpublishedReferencesConfirm extends Component {
     return (
       <ModalConfirm
         testId="unpublished-refs-confirm"
-        title="Are you sure you want to publish this entry?"
+        title={modalTitle}
         isShown={isShown}
         intent="negative"
-        confirmLabel="Publish anyway"
+        confirmLabel={confirmLabel}
         allowHeightOverflow
         onConfirm={onConfirm}
         onCancel={onCancel}>
