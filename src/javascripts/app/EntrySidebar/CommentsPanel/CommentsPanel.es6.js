@@ -57,7 +57,7 @@ export const styles = {
   })
 };
 
-export default function CommentsPanel({ spaceId, entryId, isVisible }) {
+function CommentsPanelContent({ spaceId, entryId }) {
   const { isLoading, data, error } = useCommentsFetcher(spaceId, entryId);
   const [comments, setComments] = useState();
   const [shouldScroll, setShouldScroll] = useState(false);
@@ -100,9 +100,7 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
   const threads = useMemo(() => fromFlatToThreads(comments), [comments]);
 
   return (
-    <div
-      className={`${styles.root} ${isVisible ? styles.visible : styles.hidden}`}
-      data-test-id="comments">
+    <React.Fragment>
       <div
         className={`${styles.commentList} ${isLoading ? styles.commentListLoading : ''}`}
         data-test-id="comments.list"
@@ -127,18 +125,30 @@ export default function CommentsPanel({ spaceId, entryId, isVisible }) {
           </div>
         )}
       </div>
-
       <div className={styles.commentForm} data-test-id="comments.form">
         <CreateComment spaceId={spaceId} entryId={entryId} onNewComment={handleNewComment} />
       </div>
+    </React.Fragment>
+  );
+}
+
+CommentsPanelContent.propTypes = {
+  spaceId: PropTypes.string.isRequired,
+  entryId: PropTypes.string.isRequired
+};
+
+export default function CommentsPanel({ isVisible, ...props }) {
+  return (
+    <div
+      className={`${styles.root} ${isVisible ? styles.visible : styles.hidden}`}
+      data-test-id="comments">
+      {isVisible && <CommentsPanelContent {...props} />}
     </div>
   );
 }
 
 CommentsPanel.propTypes = {
-  spaceId: PropTypes.string.isRequired,
-  entryId: PropTypes.string.isRequired,
-  environmentId: PropTypes.string,
+  ...CommentsPanelContent.propTypes,
   isVisible: PropTypes.bool
 };
 

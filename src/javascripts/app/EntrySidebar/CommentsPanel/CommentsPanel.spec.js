@@ -47,14 +47,14 @@ const setLoading = () => {
 const setEmpty = () => {
   useCommentsFetcher.mockReturnValue({ isLoading: false, error: null, data: [] });
 };
-const initialProps = {
+const defaultProps = {
   spaceId: 'a',
   entryId: 'b',
   environmentId: 'c',
-  isVisible: false
+  isVisible: true
 };
 
-const build = (props = initialProps) => {
+const build = (props = defaultProps) => {
   return render(<CommentsPanel {...props} />);
 };
 
@@ -62,26 +62,35 @@ describe('CommentsPanel', () => {
   afterEach(cleanup);
   afterEach(useCommentsFetcher.mockClear);
 
-  describe('initializing', () => {
-    beforeEach(setLoading);
+  describe('with `isVisible: false`', () => {
+    const props = {
+      ...defaultProps,
+      isVisible: false
+    };
 
     it('should not be visible', () => {
-      const { getByTestId } = build();
+      const { getByTestId } = build(props);
       expect(getByTestId('comments')).toHaveStyle('transform: translateX(100%)');
     });
 
-    it('fetches all comments in the entry', () => {
-      build();
-      expect(useCommentsFetcher).toHaveBeenCalledWith(initialProps.spaceId, initialProps.entryId);
+    it('does not fetch any comments', () => {
+      build(props);
+      expect(useCommentsFetcher).not.toHaveBeenCalled();
     });
+  });
+
+  describe('with `isVisible: true`', () => {
+    beforeEach(setLoading);
 
     it('should be made visible', () => {
-      const newProps = {
-        ...initialProps,
-        isVisible: true
-      };
-      const { getByTestId } = build(newProps);
+      const { getByTestId } = build();
       expect(getByTestId('comments')).toHaveStyle('transform: translateX(-1px)');
+    });
+
+    it('fetches all comments of entry `props.entryId` in space `props.spaceId`', () => {
+      build();
+      const { spaceId, entryId } = defaultProps;
+      expect(useCommentsFetcher).toHaveBeenCalledWith(spaceId, entryId);
     });
   });
 
