@@ -106,17 +106,23 @@ export default class ExtensionIFrameRenderer extends React.Component {
     }
 
     const channel = new ExtensionIFrameChannel(iframe, window, bridge.apply);
+    const bridgeData = bridge.getData();
+
     this.extensionApi = new ExtensionAPI({
       extensionId: id,
       channel,
       parameters,
-      ...bridge.getData()
+      ...bridgeData
     });
+
     bridge.install(this.extensionApi);
 
     iframe.allowfullscreen = true;
     iframe.msallowfullscreen = true;
     iframe.allow = 'fullscreen';
+
+    iframe.dataset.extensionId = id;
+    iframe.dataset.location = bridgeData.location;
 
     if (src && !isAppDomain(src)) {
       iframe.sandbox = `${SANDBOX} allow-same-origin`;

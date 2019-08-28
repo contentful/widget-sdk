@@ -79,6 +79,7 @@ angular
       $injector.get('states/states.es6').loadAll();
       $injector.get('dialogsInitController').init();
       $injector.get('components/shared/auto_create_new_space').init();
+      $injector.get('widgets/ExtensionActivationTracking.es6').init();
 
       moment.locale('en', {
         calendar: {
