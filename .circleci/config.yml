@@ -79,7 +79,7 @@ orbs:
               name: Upload build to user_interface build tracker server and post comment
               command: |
                 export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
-                export BUNDLESIZE_COMMENT_LAMBDA_URL='https://tooling-lambdas.ctfl.now.sh/user_interface/githubComments'
+                export COMMENT_LAMBDA_URL='https://tooling-lambdas.ctfl.now.sh/user_interface/githubComments'
                 export PATH_TO_BUILT_ASSETS=<<parameters.path>>
                 export SNIFFER_UPLOAD_URL='https://user-interface-sniffer.herokuapp.com'
 
@@ -216,6 +216,7 @@ jobs:
       - image: circleci/node:10.15.3
     environment:
       SNIFFER_UPLOAD_URL: 'https://user-interface-sniffer.herokuapp.com/'
+      COMMENT_LAMBDA_URL: 'https://tooling-lambdas.ctfl.now.sh/user_interface/githubComments'
       CYPRESS_INSTALL_BINARY: 0
     steps:
       - checkout
@@ -227,7 +228,9 @@ jobs:
           command: npm install --no-save --no-shrinkwrap @contentful/project-sniffer-cli
       - run:
           name: Run project sniffer and upload stats
-          command: npx project-sniffer . --config tools/sniffer
+          command: |
+            export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
+            npx project-sniffer . --config tools/sniffer
 
   build-and-push-image:
     machine:
@@ -454,7 +457,6 @@ workflows:
     jobs:
       - upload-repo-stats-to-sniffer:
           name: Upload user_interface stats to sniffer 2.0
-          <<: *run_only_on_master_branch
       - build-and-push-image
       - lint
       - oss-license-check

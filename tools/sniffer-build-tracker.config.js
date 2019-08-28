@@ -88,33 +88,38 @@ module.exports = {
   // actually stands for on ready to upload
   onUpload: async build => {
     const { meta, artifacts } = build;
+
     await uploadBuildSize(meta, artifacts);
-    const result = await compareBuilds([meta.parentRevision, meta.revision]);
+
     const pr = process.env.PR_NUMBER || '';
+
+    if (!pr) {
+      return true;
+    }
+
+    const result = await compareBuilds([meta.parentRevision, meta.revision]);
 
     console.log('Build compare result ->', result);
 
     const postMessage = [
+      '## Build Tracker',
       result.markdown,
       '[Build Tracker UI](https://contentful-sniffer.netlify.com/build-tracker)'
     ].join('\n\n');
 
     try {
-      const { requestId, statusCode, message } = await fetch(
-        process.env.BUNDLESIZE_COMMENT_LAMBDA_URL,
-        {
-          method: 'post',
-          body: JSON.stringify({
-            issue: pr ? Number.parseInt(pr, 10) : '',
-            message: postMessage,
-            type: 'bundlesize'
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`
-          }
+      const { requestId, statusCode, message } = await fetch(process.env.COMMENT_LAMBDA_URL, {
+        method: 'post',
+        body: JSON.stringify({
+          issue: Number.parseInt(pr, 10),
+          message: postMessage,
+          type: 'bundlesize'
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`
         }
-      ).then(res => res.json());
+      }).then(res => res.json());
 
       if (statusCode >= 400) {
         const error = new Error(message);
@@ -124,7 +129,7 @@ module.exports = {
         throw error;
       }
 
-      console.log(`Bundle size comment posted to PR#{pr} ->`, { requestId, statusCode, message });
+      console.log(`Bundle size comment posted to PR#${pr} ->`, { requestId, statusCode, message });
     } catch (err) {
       console.error('Build tracker upload failed ->', err);
       console.log(`Comment won't be posted to PR#${pr}. Continuing anyway.`);
