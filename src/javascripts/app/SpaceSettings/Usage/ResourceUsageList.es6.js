@@ -5,6 +5,8 @@ import { CodeFragment } from 'ui/Content.es6';
 import { Typography, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { ResourceUsageHighlight, ResourceUsage } from './ResourceUsage.es6';
+import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel.es6';
+
 const styles = {
   environmentUsageParent: css({
     marginTop: tokens.spacing2Xl
@@ -16,8 +18,13 @@ const styles = {
     marginLeft: tokens.spacingS
   })
 };
-const ResourceUsageList = ({ spaceResources, environmentResources, environmentId }) =>
-  spaceResources ? (
+
+const ResourceUsageList = ({ spaceResources, environmentResources, environmentMeta }) => {
+  if (!spaceResources) return null;
+
+  const { environmentId, aliasId, isMasterEnvironment } = environmentMeta;
+
+  return (
     <div className="resource-list">
       <section className="resource-list__highlights">
         <ResourceUsageHighlight resource={spaceResources['space_membership']} />
@@ -40,7 +47,14 @@ const ResourceUsageList = ({ spaceResources, environmentResources, environmentId
               <span className={styles.environmentLabelParent}>
                 <span className={'f36-font-weight--medium'}>{'Current environment: '}</span>
                 <span className={styles.environmentLabel}>
-                  <CodeFragment>{environmentId}</CodeFragment>
+                  <CodeFragment>
+                    <EnvOrAliasLabel
+                      aliasId={aliasId}
+                      environmentId={environmentId}
+                      isMaster={isMasterEnvironment}
+                      isSelected
+                    />
+                  </CodeFragment>
                 </span>
               </span>
             </Paragraph>
@@ -53,12 +67,17 @@ const ResourceUsageList = ({ spaceResources, environmentResources, environmentId
         </section>
       )}
     </div>
-  ) : null;
+  );
+};
 
 ResourceUsageList.propTypes = {
   spaceResources: PropTypes.object,
   environmentResources: PropTypes.object,
-  environmentId: PropTypes.string
+  environmentMeta: PropTypes.shape({
+    aliasId: PropTypes.string,
+    environmentId: PropTypes.string.isRequired,
+    isMasterEnvironment: PropTypes.bool.isRequired
+  }).isRequired
 };
 
 export default ResourceUsageList;

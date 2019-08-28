@@ -10,7 +10,7 @@ import { find } from 'lodash';
 import { filter, concat } from 'utils/Collections.es6';
 import InfoIcon from 'svg/info.es6';
 import { CheckboxField, SectionHeading } from '@contentful/forma-36-react-components';
-import EnvOrAlias from 'app/common/EnvOrAlias.es6';
+import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel.es6';
 import { getModule } from 'NgRegistry.es6';
 const spaceContext = getModule('spaceContext');
 
@@ -67,7 +67,7 @@ EnvironmentSelector.propTypes = {
   canEdit: PropTypes.bool,
   spaceEnvironments: PropTypes.array.isRequired,
   spaceAliases: PropTypes.array.isRequired,
-  updateEnvOrAlias: PropTypes.func.isRequired
+  updateEnvOrAliasLabel: PropTypes.func.isRequired
 };
 
 function Hint() {
@@ -99,7 +99,7 @@ function ListEnvironments({ environments, canEdit, isSelected, showDefault, togg
             onChange={() => toggleSelection(environment)}
           />
           <CodeFragment>
-            <EnvOrAlias
+            <EnvOrAliasLabel
               isSelected={showDefault ? isMaster : false}
               showAliasedTo={false}
               isMaster={isMaster}
@@ -126,11 +126,11 @@ function ListAliases({ aliases, canEdit, isSelected, toggleSelection }) {
             onChange={() => toggleSelection(alias)}
           />
           <CodeFragment>
-            <EnvOrAlias
+            <EnvOrAliasLabel
               isSelected={isMaster}
               showAliasedTo={false}
               isMaster={isMaster}
-              alias={alias.sys.id}
+              aliasId={alias.sys.id}
               environmentId={alias.sys.id}
             />
           </CodeFragment>
@@ -140,15 +140,24 @@ function ListAliases({ aliases, canEdit, isSelected, toggleSelection }) {
   });
 }
 
-function List({ canEdit, spaceEnvironments, spaceAliases, selectedEnvOrAlias, updateEnvOrAlias }) {
+function List({
+  canEdit,
+  spaceEnvironments,
+  spaceAliases,
+  selectedEnvOrAliasLabel,
+  updateEnvOrAliasLabel
+}) {
   const envAndAliasCount = spaceAliases.length + spaceEnvironments.length;
   // Note that envs[] come from the api_keys endpoint which currently treats Environments and Aliases as Environments
-  const isSelected = envOrAlias => !!find(selectedEnvOrAlias, { sys: { id: envOrAlias.sys.id } });
+  const isSelected = envOrAlias =>
+    !!find(selectedEnvOrAliasLabel, { sys: { id: envOrAlias.sys.id } });
   const toggleSelection = envOrAlias => {
     if (isSelected(envOrAlias)) {
-      updateEnvOrAlias(filter(selectedEnvOrAlias, cur => cur.sys.id !== envOrAlias.sys.id));
+      updateEnvOrAliasLabel(
+        filter(selectedEnvOrAliasLabel, cur => cur.sys.id !== envOrAlias.sys.id)
+      );
     } else {
-      updateEnvOrAlias(concat(selectedEnvOrAlias, [makeLink(envOrAlias)]));
+      updateEnvOrAliasLabel(concat(selectedEnvOrAliasLabel, [makeLink(envOrAlias)]));
     }
   };
 
@@ -197,6 +206,6 @@ List.propTypes = {
   canEdit: PropTypes.bool,
   spaceEnvironments: PropTypes.array.isRequired,
   spaceAliases: PropTypes.array.isRequired,
-  selectedEnvOrAlias: PropTypes.array.isRequired,
-  updateEnvOrAlias: PropTypes.func.isRequired
+  selectedEnvOrAliasLabel: PropTypes.array.isRequired,
+  updateEnvOrAliasLabel: PropTypes.func.isRequired
 };

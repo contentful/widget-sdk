@@ -100,7 +100,8 @@ angular
               },
               spaceMember: {
                 isAdmin: true
-              }
+              },
+              environmentMeta: {}
             },
             extraData || {}
           )
@@ -111,6 +112,7 @@ angular
         const spaceData = cfStub.space('test').data;
         const contentTypeData = cfStub.contentTypeData('testType');
         spaceContext.resetWithSpace(spaceData);
+        spaceContext.space.environmentMeta = {};
         spaceContext.space.getContentTypes = sinon.stub().resolves([contentTypeData]);
         return spaceContext;
       };

@@ -23,7 +23,11 @@ class SpaceUsage extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired,
-    environmentId: PropTypes.string.isRequired
+    environmentMeta: PropTypes.shape({
+      aliasId: PropTypes.string,
+      environmentId: PropTypes.string.isRequired,
+      isMasterEnvironment: PropTypes.bool.isRequired
+    }).isRequired
   };
 
   state = {
@@ -36,9 +40,9 @@ class SpaceUsage extends React.Component {
   }
 
   fetchPlan = async () => {
-    const { spaceId, environmentId } = this.props;
+    const { spaceId, environmentMeta } = this.props;
     const spaceScopedService = createResourceService(spaceId);
-    const envScopedService = createResourceService(spaceId, 'space', environmentId);
+    const envScopedService = createResourceService(spaceId, 'space', environmentMeta.environmentId);
     const isPermanent = resource => resource.kind === 'permanent';
 
     try {
@@ -57,6 +61,7 @@ class SpaceUsage extends React.Component {
 
   render() {
     const { spaceResources, environmentResources } = this.state;
+    const { environmentMeta } = this.props;
     return (
       <React.Fragment>
         <DocumentTitle title="Usage" />
@@ -69,14 +74,14 @@ class SpaceUsage extends React.Component {
             <ResourceUsageList
               spaceResources={spaceResources}
               environmentResources={environmentResources}
-              environmentId={this.props.environmentId}
+              environmentMeta={environmentMeta}
             />
           </Workbench.Content>
           <Workbench.Sidebar>
             <SpaceUsageSidebar
               spaceResources={spaceResources}
               environmentResources={environmentResources}
-              environmentId={this.props.environmentId}
+              environmentId={environmentMeta.environmentId}
             />
           </Workbench.Sidebar>
         </Workbench>

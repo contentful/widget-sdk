@@ -7,7 +7,7 @@ import { getOrganization } from 'services/TokenStore.es6';
  * Possible app states for navigation (as shown in sidepanel)
  */
 export const NavStates = makeSum({
-  Space: ['space', 'env', 'org', 'availableEnvironments'],
+  Space: ['space', 'env', 'org', 'availableEnvironments', 'environmentMeta'],
   OrgSettings: ['org'],
   UserProfile: [],
   NewOrg: [],
@@ -26,7 +26,7 @@ export const navState$ = navStateBus.property;
  * @param {object} params - ui state params
  * @param {spaceContext} spaceContext
  */
-export async function updateNavState(state, params, spaceContext) {
+export async function updateNavState(state, params, { space, organization, environments }) {
   if (state.name === 'account.organizations.new') {
     navStateBus.set(NavStates.NewOrg());
   } else if (startsWith(state.name, 'account.profile')) {
@@ -35,12 +35,11 @@ export async function updateNavState(state, params, spaceContext) {
     getOrganization(params.orgId).then(org => {
       navStateBus.set(NavStates.OrgSettings(org));
     });
-  } else if (spaceContext.space) {
-    const space = spaceContext.space.data;
-    const env = spaceContext.space.environment;
-    const org = spaceContext.organization;
-    const availableEnvironments = spaceContext.environments;
-    navStateBus.set(NavStates.Space(space, env, org, availableEnvironments));
+  } else if (space) {
+    const { data, environment, environmentMeta } = space;
+    navStateBus.set(
+      NavStates.Space(data, environment, organization, environments, environmentMeta)
+    );
   } else if (startsWith(state.name, 'projects') && params.orgId) {
     getOrganization(params.orgId).then(org => {
       navStateBus.set(NavStates.Projects(org));

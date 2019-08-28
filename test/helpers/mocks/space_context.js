@@ -40,6 +40,7 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
       spaceContextMock.publishedCTs = sinon.stubAll(CTRepo.create());
 
       const space = cfStub.space('test');
+      space.environmentMeta = {};
       spaceContextMock.space = sinon.stubAll(space);
 
       spaceContextMock.docPool = {

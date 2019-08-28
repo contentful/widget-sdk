@@ -121,7 +121,7 @@ export default function ChangeEnvironmentModal({
                   environmentId={aliases[0]}
                   isMaster
                   isSelected
-                  alias={id}
+                  aliasId={id}
                   showAliasedTo={false}
                   hasCopy={false}></EnvironmentDetails>
               </div>

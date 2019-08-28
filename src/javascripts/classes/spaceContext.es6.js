@@ -37,6 +37,8 @@ import * as TokenStore from 'services/TokenStore.es6';
 import * as Auth from 'Authentication.es6';
 import * as Config from 'Config.es6';
 
+const MASTER_ENVIRONMENT_ID = 'master';
+
 export default function register() {
   /**
    * @ngdoc service
@@ -47,11 +49,10 @@ export default function register() {
    * contentTypes, users, and helper methods.
    */
   registerFactory('spaceContext', [
-    '$q',
     '$rootScope',
     'client',
     'saved-views-migrator',
-    ($q, $rootScope, client, { create: createViewMigrator }) => {
+    ($rootScope, client, { create: createViewMigrator }) => {
       const publishedCTsBus$ = K.createPropertyBus([]);
 
       // Enforcements deinitialization function, when changing space
@@ -92,22 +93,24 @@ export default function register() {
          * - Locales
          *
          * @param {API.Space} spaceData
-         * @param {string?} environmentId if provided will create environment-aware spaceContext
+         * @param {string?} uriEnvOrAliasId environment id based on the uri
          * @returns {Promise<self>}
          */
-        resetWithSpace: function(spaceData, environmentId) {
+        resetWithSpace: function(spaceData, uriEnvOrAliasId) {
           const self = this;
           accessChecker.setSpace(spaceData);
 
           // `space` is @contentful/client.Space instance!
           let space = client.newSpace(spaceData);
 
-          if (environmentId) {
+          if (uriEnvOrAliasId) {
             // creates env aware routes on space
-            space = space.makeEnvironment(environmentId, shouldUseEnvEndpoint);
+            space = space.makeEnvironment(uriEnvOrAliasId, shouldUseEnvEndpoint);
           }
 
-          self.endpoint = createSpaceEndpoint(Config.apiUrl(), space.getId(), Auth, environmentId);
+          const spaceId = space.getId();
+
+          self.endpoint = createSpaceEndpoint(Config.apiUrl(), spaceId, Auth, uriEnvOrAliasId);
 
           resetMembers(self);
           self.space = space;
@@ -147,8 +150,8 @@ export default function register() {
           self.docConnection = ShareJSConnection.create(
             Config.otUrl,
             Auth,
-            space.getId(),
-            environmentId || 'master'
+            spaceId,
+            uriEnvOrAliasId || MASTER_ENVIRONMENT_ID
           );
 
           self.memberships = MembershipRepo.create(self.endpoint);
@@ -172,45 +175,38 @@ export default function register() {
           self.contentPreview = createContentPreview({ space, cma: self.cma });
 
           self.netlifyAppConfig = createCachedAppConfig({
-            spaceId: space.getId(),
+            spaceId,
             appId: 'netlify',
             makeDefaultConfig: () => ({ sites: [] })
           });
 
           // This happens here, rather than in `prelude.js`, since it's scoped to a space
           // and not the user, so the spaceId is required.
-          enforcementsDeInit = EnforcementsService.init(space.getId());
-
-          // TODO: remove this after we have store with combined reducers on top level
-          // string is hardcoded because this code _is_ temporary
-          $rootScope.$broadcast('spaceContextUpdated');
+          enforcementsDeInit = EnforcementsService.init(spaceId);
 
           const start = Date.now();
-          return $q
-            .all([
-              fetchEnvironments(self.endpoint).then(environments => {
-                self.environments = deepFreeze(environments);
-                space.environment = self.environments.find(env => env.sys.id === environmentId);
-              }),
-              TheLocaleStore.init(self.localeRepo),
-              self.publishedCTs.refresh().then(() => {
-                const ctMap = self.publishedCTs.getAllBare().reduce((acc, ct) => {
-                  return { ...acc, [ct.sys.id]: ct };
-                }, {});
+          return Promise.all([
+            setupEnvironments(self, uriEnvOrAliasId),
+            TheLocaleStore.init(self.localeRepo),
+            self.publishedCTs.refresh().then(() => {
+              const ctMap = self.publishedCTs.getAllBare().reduce((acc, ct) => {
+                return { ...acc, [ct.sys.id]: ct };
+              }, {});
 
-                self.uiConfig = createUiConfigStore(
-                  space,
-                  self.endpoint,
-                  self.publishedCTs,
-                  createViewMigrator(ctMap)
-                );
-              })
-            ])
-            .then(() => {
-              Telemetry.record('space_context_http_time', Date.now() - start);
-
-              return self;
-            });
+              self.uiConfig = createUiConfigStore(
+                space,
+                self.endpoint,
+                self.publishedCTs,
+                createViewMigrator(ctMap)
+              );
+            })
+          ]).then(() => {
+            Telemetry.record('space_context_http_time', Date.now() - start);
+            // TODO: remove this after we have store with combined reducers on top level
+            // string is hardcoded because this code _is_ temporary
+            $rootScope.$broadcast('spaceContextUpdated');
+            return self;
+          });
         },
 
         /**
@@ -233,7 +229,7 @@ export default function register() {
          */
         getEnvironmentId: function() {
           if (this.space) {
-            return _.get(this, ['space', 'environment', 'sys', 'id'], 'master');
+            return _.get(this, ['space', 'environment', 'sys', 'id'], MASTER_ENVIRONMENT_ID);
           }
         },
 
@@ -248,11 +244,11 @@ export default function register() {
          * @returns boolean
          */
         isMasterEnvironment: function(
-          envOrAlias = _.get(this, ['space', 'environment'], { sys: { id: 'master' } })
+          envOrAlias = _.get(this, ['space', 'environment'], { sys: { id: MASTER_ENVIRONMENT_ID } })
         ) {
           if (
-            envOrAlias.sys.id === 'master' ||
-            _.find(envOrAlias.sys.aliases, alias => alias.sys.id === 'master')
+            envOrAlias.sys.id === MASTER_ENVIRONMENT_ID ||
+            _.find(envOrAlias.sys.aliases, alias => alias.sys.id === MASTER_ENVIRONMENT_ID)
           ) {
             return true;
           }
@@ -266,7 +262,7 @@ export default function register() {
          * @returns array<string>
          */
         getAliasesIds: function(
-          env = _.get(this, ['space', 'environment'], { sys: { id: 'master' } })
+          env = _.get(this, ['space', 'environment'], { sys: { id: MASTER_ENVIRONMENT_ID } })
         ) {
           if (!env.sys.aliases) return [];
           return env.sys.aliases.map(({ sys }) => sys.id);
@@ -428,7 +424,7 @@ export default function register() {
               () => null
             );
           } else {
-            return $q.resolve(null);
+            return Promise.resolve(null);
           }
         },
 
@@ -545,8 +541,48 @@ export default function register() {
         }
       }
 
-      function fetchEnvironments(spaceEndpoint) {
-        return createEnvironmentsRepo(spaceEndpoint).getAll();
+      /**
+       * Setup the environments and environmentMeta and add it to the spaceContext
+       *
+       * @param {SpaceContext} spaceContext
+       * @param {string} uriEnvOrAliasId
+       * @returns {Promise}
+       */
+      function setupEnvironments(spaceContext, uriEnvOrAliasId = MASTER_ENVIRONMENT_ID) {
+        return createEnvironmentsRepo(spaceContext.endpoint)
+          .getAll()
+          .then(environments => {
+            spaceContext.environments = deepFreeze(
+              environments.sort(
+                (envA, envB) =>
+                  spaceContext.isMasterEnvironment(envB) - spaceContext.isMasterEnvironment(envA)
+              )
+            );
+          })
+          .then(() => {
+            let environment = spaceContext.environments.find(
+              ({ sys }) => sys.id === uriEnvOrAliasId
+            );
+
+            if (!environment) {
+              // the current environment is aliased
+              environment = spaceContext.environments.find(({ sys: { aliases = [] } }) =>
+                aliases.some(({ sys }) => sys.id === MASTER_ENVIRONMENT_ID)
+              );
+            }
+            spaceContext.space.environment = environment;
+          })
+          .then(() => {
+            const aliases = spaceContext.getAliasesIds(spaceContext.space.environment);
+            spaceContext.space.environmentMeta = {
+              environmentId: spaceContext.getEnvironmentId(),
+              isMasterEnvironment: spaceContext.isMasterEnvironment(spaceContext.space.environment),
+              aliasId: aliases[0], // for now we assume that there is only alias ('master')
+              optedIn: spaceContext.environments.some(
+                ({ sys: { aliases = [] } }) => aliases.length > 0
+              )
+            };
+          });
       }
 
       /**

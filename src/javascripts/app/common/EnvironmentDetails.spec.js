@@ -31,7 +31,7 @@ describe('EnvironmentDetails', () => {
   });
 
   it('displays with copy button and createdAt', () => {
-    const component = getComponent({ alias: 'master' });
+    const component = getComponent({ aliasId: 'master' });
     const { getByTestId } = render(component);
     expect(getByTestId('envoralias.wrapper-active')).toBeInTheDocument();
     expect(getByTestId('environmentdetails.copy')).toBeInTheDocument();

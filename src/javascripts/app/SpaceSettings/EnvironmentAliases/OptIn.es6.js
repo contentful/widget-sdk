@@ -92,7 +92,7 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
             <EnvironmentDetails
               environmentId="master"
               showAliasedTo={false}
-              alias="exists"
+              aliasId="exists"
               isSelected
               isMaster
               hasCopy={false}></EnvironmentDetails>

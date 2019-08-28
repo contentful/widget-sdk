@@ -11,10 +11,8 @@ import Hamburger from 'svg/hamburger.es6';
 import { navState$, NavStates } from 'navigation/NavState.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
-import { getModule } from 'NgRegistry.es6';
-import EnvOrAlias from 'app/common/EnvOrAlias.es6';
+import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel.es6';
 import { css } from 'emotion';
-const spaceContext = getModule('spaceContext');
 
 const oneLineTruncate = {
   overflow: 'hidden',
@@ -49,7 +47,11 @@ export default class Trigger extends React.Component {
         data-ui-tour-step="sidepanel-trigger"
         data-test-id="sidepanel-trigger">
         <Logo />
-        <div className="f36-margin-left--m" />
+        <div
+          className={css({
+            marginLeft: tokens.spacingM
+          })}
+        />
         <div
           className={css({
             display: 'flex',
@@ -62,7 +64,11 @@ export default class Trigger extends React.Component {
           })}>
           {renderContent(this.state)}
         </div>
-        <div className="f36-margin-left--m" />
+        <div
+          className={css({
+            marginLeft: tokens.spacingM
+          })}
+        />
         <Hamburger fill={'white'} />
       </div>
     );
@@ -73,16 +79,14 @@ function renderContent({ navState, showOrganization }) {
   return caseof(navState, [
     [
       NavStates.Space,
-      ({ space, env, org, availableEnvironments }) => {
+      ({ space, org, availableEnvironments = [], environmentMeta = {} }) => {
         const canManageEnvs = accessChecker.can('manage', 'Environments');
-        const hasManyEnvs = (availableEnvironments || []).length > 1;
-        const hasAliases = env && env.sys.aliases && env.sys.aliases.length > 0;
-        const showEnvironments = canManageEnvs && (hasManyEnvs || hasAliases);
-
+        const hasManyEnvs = availableEnvironments.length > 1;
+        const showEnvironments = canManageEnvs && (hasManyEnvs || environmentMeta.aliasId);
         return [
           showOrganization && organizationName(org.name),
           stateTitle(space.name),
-          showEnvironments && environmentLabel(env)
+          showEnvironments && environmentLabel(environmentMeta)
         ];
       }
     ],
@@ -136,17 +140,19 @@ function organizationName(orgName) {
   );
 }
 
-function environmentLabel(env = { sys: { id: 'master' } }) {
-  // TODO The 'Space' nav state should always have an environment
-  const { id, aliases: [alias] = [] } = env.sys;
-  const isMaster = spaceContext.isMasterEnvironment(env);
+function environmentLabel(environmentMeta) {
+  if (!environmentMeta || !environmentMeta.environmentId) return null;
+
+  const { environmentId, aliasId, isMasterEnvironment } = environmentMeta;
+
   return (
-    <EnvOrAlias
-      key={id}
+    <EnvOrAliasLabel
+      key={environmentId}
       className={css({ fontSize: tokens.fontSizeS })}
-      alias={alias && alias.sys.id}
-      environmentId={id}
-      isMaster={isMaster}
+      aliasId={aliasId}
+      environmentId={aliasId || environmentId}
+      isMaster={isMasterEnvironment}
+      showAliasedTo={false}
       isSelected
       colorizeFont
     />

@@ -6,6 +6,7 @@ describe('spaceContext', () => {
   beforeEach(function() {
     this.organization = { sys: { id: 'ORG_ID' } };
     this.AccessChecker = { setSpace: sinon.stub() };
+    this.ProductCatalog = { getSpaceFeature: sinon.stub().resolves(false) };
     this.mockSpaceEndpoint = createMockSpaceEndpoint();
     this.initEnforcements = sinon.stub().returns(function() {});
 
@@ -16,6 +17,7 @@ describe('spaceContext', () => {
       $provide.value('data/userCache.es6', sinon.stub());
       $provide.value('widgets/ExtensionLoader.es6', { createExtensionLoader: sinon.stub() });
       $provide.value('access_control/AccessChecker/index.es6', this.AccessChecker);
+      $provide.value('data/CMA/ProductCatalog.es6', this.ProductCatalog);
       $provide.value('data/Endpoint.es6', {
         createSpaceEndpoint: () => this.mockSpaceEndpoint.request,
         createOrganizationEndpoint: sinon.stub(),
@@ -135,6 +137,55 @@ describe('spaceContext', () => {
       await this.reset();
 
       expect(this.spaceContext.environments).toEqual([master, staging]);
+    });
+
+    it('sets `environmentMeta` property if environments are enabled', function*() {
+      const master = {
+        name: 'master',
+        sys: {
+          id: 'master'
+        }
+      };
+      const staging = {
+        name: 'staging',
+        sys: {
+          id: 'staging'
+        }
+      };
+      const environments = { master, staging };
+      Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
+      yield this.result;
+      expect(this.space.environmentMeta).toEqual({
+        environmentId: 'master',
+        optedIn: false,
+        isMasterEnvironment: true,
+        aliasId: undefined
+      });
+    });
+
+    it('sets alias details in `environmentMeta` property if aliases are enabled', function*() {
+      this.ProductCatalog.getSpaceFeature.resolves(true);
+      const master = {
+        name: 'master',
+        sys: {
+          id: 'master'
+        }
+      };
+      const staging = {
+        name: 'staging',
+        sys: {
+          id: 'staging'
+        }
+      };
+      const environments = { master, staging };
+      Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
+      yield this.result;
+      expect(this.space.environmentMeta).toEqual({
+        environmentId: 'master',
+        optedIn: false,
+        isMasterEnvironment: true,
+        aliasId: undefined
+      });
     });
 
     it('refreshes enforcements with new space id', function() {

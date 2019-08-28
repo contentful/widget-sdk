@@ -22,7 +22,11 @@ describe('Space nav bar directive', () => {
 
     const $compile = this.$inject('$compile');
     spaceContext = this.mockService('spaceContext', {
-      space: {},
+      space: {
+        environmentMeta: {
+          isMasterEnvironment: true
+        }
+      },
       getEnvironmentId: sinon.stub().returns('master')
     });
     scope = this.$inject('$rootScope').$new();

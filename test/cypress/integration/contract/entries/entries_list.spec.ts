@@ -4,8 +4,6 @@ import {
   getEditorInterfaceForDefaultContentType
 } from '../../../interactions/content_types';
 import { defaultRequestsMock } from '../../../util/factories';
-import { getResourcesWithLimitsReached } from '../../../interactions/resources';
-import { queryForTwoSpecificFeaturesInDefaultSpace } from '../../../interactions/product_catalog_features';
 import { defaultSpaceId, getEntries } from '../../../util/requests';
 import {
   getDefaultEntry,
@@ -204,9 +202,7 @@ describe('Entries list page', () => {
       const interactions = [
         ...defaultRequestsMock({}),
         '@queryNonArchivedEntries',
-        queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryForTwoSpecificFeaturesInDefaultSpace.willFindBothOfThem(),
-        getResourcesWithLimitsReached.willReturnSeveral()
+        queryFirst100UsersInDefaultSpace.willFindSeveral()
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);

@@ -72,7 +72,7 @@ function EnvironmentAlias({ aliases, id, payload, setModalOpen, canChangeEnviron
         <EnvironmentDetails
           environmentId={aliases[0]}
           showAliasedTo={false}
-          alias={id}
+          aliasId={id}
           isMaster
           isSelected
           hasCopy={false}></EnvironmentDetails>

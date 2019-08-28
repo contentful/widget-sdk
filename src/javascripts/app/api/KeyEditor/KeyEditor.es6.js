@@ -122,8 +122,8 @@ function renderForm({ data, model, update, trackCopy }) {
               isAdmin: data.isAdmin,
               spaceEnvironments: data.spaceEnvironments,
               spaceAliases: data.spaceAliases,
-              selectedEnvOrAlias: model.environments,
-              updateEnvOrAlias: environments => update(assign(model, { environments }))
+              selectedEnvOrAliasLabel: model.environments,
+              updateEnvOrAliasLabel: environments => update(assign(model, { environments }))
             }}
           />
         </Section>

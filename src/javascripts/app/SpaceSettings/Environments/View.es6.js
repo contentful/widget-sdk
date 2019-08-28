@@ -180,7 +180,7 @@ function EnvironmentTable({ environments }) {
                 testId={`environment.${environment.id}`}>
                 <TableCell>
                   <EnvironmentDetails
-                    alias={environment.aliases ? environment.aliases[0] : undefined}
+                    aliasId={environment.aliases ? environment.aliases[0] : undefined}
                     showAliasedTo
                     environmentId={environment.id}
                     isMaster={environment.isMaster}

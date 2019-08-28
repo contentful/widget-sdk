@@ -5,7 +5,7 @@ import moment from 'moment';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Tag, CopyButton } from '@contentful/forma-36-react-components';
-import EnvOrAlias from 'app/common/EnvOrAlias.es6';
+import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel.es6';
 
 const environmentDetailsStyles = {
   copy: css({
@@ -39,7 +39,7 @@ export default function EnvironmentDetails({
   environmentId,
   isMaster,
   isDefault,
-  alias,
+  aliasId,
   showAliasedTo,
   hasCopy,
   createdAt,
@@ -48,9 +48,9 @@ export default function EnvironmentDetails({
 }) {
   return (
     <div className={environmentDetailsStyles.wrapper} data-test-id={testId}>
-      <EnvOrAlias
+      <EnvOrAliasLabel
         className={environmentDetailsStyles.envOrAlias}
-        alias={alias}
+        aliasId={aliasId}
         showAliasedTo={showAliasedTo}
         environmentId={environmentId}
         isMaster={isMaster}
@@ -63,7 +63,7 @@ export default function EnvironmentDetails({
           testId="environmentdetails.copy"
         />
       )}
-      {isDefault && !alias && (
+      {isDefault && !aliasId && (
         <Tag tagType="muted" testId="environmentdetails.default">
           Default environment
         </Tag>
@@ -86,7 +86,7 @@ EnvironmentDetails.propTypes = {
   isMaster: PropTypes.bool,
   isSelected: PropTypes.bool,
   showAliasedTo: PropTypes.bool,
-  alias: PropTypes.string,
+  aliasId: PropTypes.string,
   isDefault: PropTypes.bool,
   hasCopy: PropTypes.bool,
   testId: PropTypes.string

@@ -16,7 +16,7 @@ export default {
         $scope.props = {
           spaceId: spaceContext.getId(),
           orgId: spaceContext.organization.sys.id,
-          environmentId: spaceContext.getEnvironmentId()
+          environmentMeta: spaceContext.space.environmentMeta
         };
       }
     }

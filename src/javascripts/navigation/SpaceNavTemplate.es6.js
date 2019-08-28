@@ -1,95 +1,87 @@
 import navBar from 'navigation/templates/NavBar.es6';
 
 export default function spaceNavTemplate(useSpaceEnv, isMaster) {
-  const makeRef = spaceRef => {
-    if (useSpaceEnv && !isMaster) {
-      return `spaces.detail.environment.${spaceRef}`;
-    } else {
-      return `spaces.detail.${spaceRef}`;
-    }
-  };
-
   const dropdownItems = {
     locales: {
       if: 'nav.canNavigateTo("locales")',
-      sref: makeRef('settings.locales.list'),
-      rootSref: makeRef('settings.locales'),
+      sref: '{{nav.makeRef("settings.locales.list")}}',
+      rootSref: '{{nav.makeRef("settings.locales")}}',
       dataViewType: 'spaces-settings-locales',
       title: 'Locales'
     },
     extensions: {
       if: 'nav.canNavigateTo("extensions")',
-      sref: makeRef('settings.extensions.list'),
-      rootSref: makeRef('settings.extensions'),
+      sref: '{{nav.makeRef("settings.extensions.list")}}',
+      rootSref: '{{nav.makeRef("settings.extensions")}}',
       dataViewType: 'spaces-settings-extensions',
       title: 'Extensions'
     },
     appsBeta: {
       if: 'nav.appsBetaEnabled && nav.canNavigateTo("appsBeta")',
-      sref: makeRef('appsBeta.list'),
-      rootSref: makeRef('appsBeta'),
+      sref: '{{nav.makeRef("appsBeta.list")}}',
+      rootSref: '{{nav.makeRef("appsBeta")}}',
       dataViewType: 'apps-beta',
       title: 'Apps Beta'
     },
     settings: {
       if: 'nav.canNavigateTo("settings")',
-      sref: makeRef('settings.space'),
+      sref: '{{nav.makeRef("settings.space")}}',
       dataViewType: 'spaces-settings-space',
       title: 'General settings'
     },
     users: {
       if: 'nav.canNavigateTo("users")',
-      sref: makeRef('settings.users.list'),
-      rootSref: makeRef('settings.users'),
+      sref: '{{nav.makeRef("settings.users.list")}}',
+      rootSref: '{{nav.makeRef("settings.users")}}',
       dataViewType: 'spaces-settings-users',
       title: 'Users'
     },
     teams: {
       if: 'nav.teamsInSpacesFF && nav.hasOrgTeamFeature && nav.canNavigateTo("teams")',
-      sref: makeRef('settings.teams.list'),
-      rootSref: makeRef('settings.teams'),
+      sref: '{{nav.makeRef("settings.teams.list")}}',
+      rootSref: '{{nav.makeRef("settings.teams")}}',
       dataViewType: 'spaces-settings-teams',
       label: 'new',
       title: 'Teams'
     },
     roles: {
       if: 'nav.canNavigateTo("roles")',
-      sref: makeRef('settings.roles.list'),
-      rootSref: makeRef('settings.roles'),
+      sref: '{{nav.makeRef("settings.roles.list")}}',
+      rootSref: '{{nav.makeRef("settings.roles")}}',
       dataViewType: 'spaces-settings-roles',
       title: 'Roles & permissions'
     },
     environments: {
       if: 'nav.canNavigateTo("environments")',
-      sref: makeRef('settings.environments'),
+      sref: '{{nav.makeRef("settings.environments")}}',
       dataViewType: 'spaces-settings-environments',
       title: 'Environments'
     },
     keys: {
       if: 'nav.canNavigateTo("apiKey")',
-      sref: makeRef('api.keys.list'),
-      rootSref: makeRef('api'),
+      sref: '{{nav.makeRef("api.keys.list")}}',
+      rootSref: '{{nav.makeRef("api")}}',
       dataViewType: 'spaces-settings-api',
       title: 'API keys'
     },
     webhooks: {
       if: 'nav.canNavigateTo("webhooks")',
-      sref: makeRef('settings.webhooks.list'),
-      rootSref: makeRef('settings.webhooks'),
+      sref: '{{nav.makeRef("settings.webhooks.list")}}',
+      rootSref: '{{nav.makeRef("settings.webhooks")}}',
       dataViewType: 'spaces-settings-webhooks',
       title: 'Webhooks'
     },
     previews: {
       if: 'nav.canNavigateTo("previews")',
-      sref: makeRef('settings.content_preview.list'),
-      rootSref: makeRef('settings.content_preview'),
+      sref: '{{nav.makeRef("settings.content_preview.list")}}',
+      rootSref: '{{nav.makeRef("settings.content_preview")}}',
       dataViewType: 'spaces-settings-content-preview',
       title: 'Content preview',
       reload: useSpaceEnv
     },
     usage: {
       if: 'nav.usageEnabled && nav.canNavigateTo("usage")',
-      sref: makeRef('settings.usage'),
+      sref: '{{nav.makeRef("settings.usage")}}',
       dataViewType: 'spaces-settings-usage',
       title: 'Usage',
       reload: useSpaceEnv
@@ -159,24 +151,24 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
           },
       {
         if: 'nav.canNavigateTo("contentType")',
-        sref: makeRef('content_types.list'),
-        rootSref: makeRef('content_types'),
+        sref: '{{nav.makeRef("content_types.list")}}',
+        rootSref: '{{nav.makeRef("content_types")}}',
         dataViewType: 'content-type-list',
         icon: 'nav-ct',
         title: 'Content model'
       },
       {
         if: 'nav.canNavigateTo("entry")',
-        sref: makeRef('entries.list'),
-        rootSref: makeRef('entries'),
+        sref: '{{nav.makeRef("entries.list")}}',
+        rootSref: '{{nav.makeRef("entries")}}',
         dataViewType: 'entry-list',
         icon: 'nav-entries',
         title: 'Content'
       },
       {
         if: 'nav.canNavigateTo("asset")',
-        sref: makeRef('assets.list'),
-        rootSref: makeRef('assets'),
+        sref: '{{nav.makeRef("assets.list")}}',
+        rootSref: '{{nav.makeRef("assets")}}',
         dataViewType: 'asset-list',
         icon: 'nav-media',
         title: 'Media'
@@ -186,15 +178,15 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
         dataViewType: 'apps',
         icon: 'nav-apps',
         label: 'alpha',
-        sref: makeRef('apps.list'),
-        rootSref: makeRef('apps'),
+        sref: '{{nav.makeRef("apps.list")}}',
+        rootSref: '{{nav.makeRef("apps")}}',
         title: 'Apps'
       },
       {
         if:
           'nav.canNavigateTo("settings") || nav.canNavigateTo("apiKey") || nav.canNavigateTo("environments")',
         dataViewType: 'space-settings',
-        rootSref: makeRef('settings'),
+        rootSref: '{{nav.makeRef("settings")}}',
         icon: 'nav-settings',
         title: useSpaceEnv ? 'Settings' : 'Space settings',
         children: useSpaceEnv ? envSettingsDropdown : spaceSettingsDropdown

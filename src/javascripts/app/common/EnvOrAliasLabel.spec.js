@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
-import EnvOrAlias from './EnvOrAlias.es6';
+import EnvOrAliasLabel from './EnvOrAliasLabel.es6';
 import 'jest-dom/extend-expect';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -8,8 +8,8 @@ const getAttribute = (el, property) => window.getComputedStyle(el, null).getProp
 
 const getComponent = (props = {}) => {
   return (
-    <EnvOrAlias
-      alias="master"
+    <EnvOrAliasLabel
+      aliasId="master"
       environmentId="release-1"
       showAliasedTo
       isMaster
@@ -19,7 +19,7 @@ const getComponent = (props = {}) => {
   );
 };
 
-describe('EnvOrAlias', () => {
+describe('EnvOrAliasLabel', () => {
   afterEach(cleanup);
 
   const build = props => render(getComponent(props));
@@ -78,13 +78,13 @@ describe('EnvOrAlias', () => {
     it('displays aliasedTo', () => {
       const { getByTestId } = build();
       const { innerHTML } = getByTestId('envoralias.wrapper-active');
-      expect(innerHTML).toContain('master &gt; release-1');
+      expect(innerHTML).toContain('master');
+      expect(innerHTML).toContain('release-1');
     });
 
     it('displays no aliasedTo', () => {
       const { getByTestId } = build({ showAliasedTo: false });
       const { innerHTML } = getByTestId('envoralias.wrapper-active');
-      expect(innerHTML).not.toContain('master &gt; release-1');
       expect(innerHTML).not.toContain('master');
       expect(innerHTML).toContain('release-1');
     });
@@ -92,15 +92,14 @@ describe('EnvOrAlias', () => {
 
   describe('environment', () => {
     it('displays the environment icon', () => {
-      const { getByTestId } = build({ alias: undefined });
+      const { getByTestId } = build({ aliasId: undefined });
       const aliasIcon = getByTestId('envoralias.environmenticon');
       expect(aliasIcon).toBeInTheDocument();
     });
 
     it('displays no aliasedTo', () => {
-      const { getByTestId } = build({ alias: undefined });
+      const { getByTestId } = build({ aliasId: undefined });
       const { innerHTML } = getByTestId('envoralias.wrapper-active');
-      expect(innerHTML).not.toContain('master &gt; release-1');
       expect(innerHTML).not.toContain('master');
       expect(innerHTML).toContain('release-1');
     });

@@ -5,15 +5,15 @@ import FolderIcon from 'svg/folder.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 import { getModule } from 'NgRegistry.es6';
-import EnvOrAlias from 'app/common/EnvOrAlias.es6';
+import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel.es6';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 const spaceContext = getModule('spaceContext');
 
-function EnvironmentList({ environments, isCurrSpace, currentEnvId, goToSpace, space }) {
+function EnvironmentList({ environments = [], isCurrSpace, currentEnvId, goToSpace, space }) {
   return (
     <ul>
-      {(environments || [])
+      {environments
         .sort(
           (envA, envB) =>
             spaceContext.isMasterEnvironment(envB) - spaceContext.isMasterEnvironment(envA)
@@ -46,11 +46,11 @@ function EnvironmentList({ environments, isCurrSpace, currentEnvId, goToSpace, s
               className={environmentClassNames}
               onClick={e => {
                 e.stopPropagation();
-                goToSpace(space.sys.id, envId, isMasterEnvironment, !!alias);
+                goToSpace(space.sys.id, envId, isMasterEnvironment);
               }}>
               <a
                 href={`/spaces/${space.sys.id}${
-                  isMasterEnvironment && !alias ? '' : `/environments/${envId}`
+                  isMasterEnvironment ? '' : `/environments/${envId}`
                 }`}
                 onClick={e => {
                   if (e.shiftKey || e.ctrlKey || e.metaKey) {
@@ -61,8 +61,8 @@ function EnvironmentList({ environments, isCurrSpace, currentEnvId, goToSpace, s
                     e.preventDefault();
                   }
                 }}>
-                <EnvOrAlias
-                  alias={alias && alias.sys.id}
+                <EnvOrAliasLabel
+                  aliasId={alias && alias.sys.id}
                   environmentId={envId}
                   isMaster={isMasterEnvironment}
                   isSelected={isSelected}
@@ -96,7 +96,7 @@ export default class SpaceWithEnvironments extends React.Component {
     isCurrSpace: PropTypes.bool
   };
 
-  state = { loading: false, environments: null };
+  state = { loading: false, environments: undefined };
 
   isOpened = () => {
     const { openedSpaceId, space } = this.props;
