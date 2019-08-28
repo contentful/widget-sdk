@@ -1,10 +1,5 @@
 import * as K from 'utils/kefir.es6';
-import {
-  getAllForEntry,
-  createAssigned as create,
-  remove,
-  updateAssigned as update
-} from 'data/CMA/CommentsRepo.es6';
+import { getAllForEntry, create, remove, update } from 'data/CMA/TasksRepo.es6';
 
 // TODO: Introduce Store specific errors rather than passing client errors.
 
@@ -61,19 +56,14 @@ export function createTasksStoreForEntry(endpoint, entryId) {
   };
 
   async function initialFetch() {
-    let tasksAndComments;
+    let tasks;
     try {
       const { items } = await getAllForEntry(endpoint, entryId);
-      tasksAndComments = items;
+      tasks = items;
     } catch (error) {
       tasksBus.error(error);
       return;
     }
-    const tasks = tasksAndComments.filter(isTaskComment);
     tasksBus.set(tasks);
   }
-}
-
-function isTaskComment(comment) {
-  return !!(comment && comment.assignment);
 }

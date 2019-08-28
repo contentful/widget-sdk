@@ -114,7 +114,7 @@ export function createLoadingStateTasksViewData() {
 }
 
 /**
- * @param {API.Comment} task
+ * @param {API.Task} task
  * @param {Object} usersFetchingStatus
  * @returns {TaskViewData}
  */

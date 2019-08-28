@@ -30,7 +30,7 @@ export function getEndpoint(url) {
   return makeStableName(relevantSegments);
 }
 
-const RELEVANT_ENTITY_PATHS = ['/comments', '/snapshots'];
+const RELEVANT_ENTITY_PATHS = ['/tasks', '/comments', '/snapshots'];
 
 function makeStableName(relevantSegments) {
   const chunks = chunk(relevantSegments, 2);

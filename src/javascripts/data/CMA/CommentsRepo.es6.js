@@ -2,12 +2,20 @@ const alphaHeader = {
   'x-contentful-enable-alpha-feature': 'comments-api'
 };
 
+const path = (entryId, commentId) => [
+  'entries',
+  entryId,
+  'comments',
+  ...(commentId ? [commentId] : [])
+];
+
 /**
  * Creates a new comment on a specific entry.
  * For a reply to an existing comment provide `parentCommentId`.
  *
  * @param {SpaceEndpoint} endpoint
- * @param {string} entryId
+ * @param {String} entryId
+ * @param {string} data.body
  * @param {string?} data.parentCommentId
  * @returns {Promise<API.Comment>}
  */
@@ -18,7 +26,7 @@ export async function create(endpoint, entryId, { body, parentCommentId = null }
   return endpoint(
     {
       method: 'POST',
-      path: ['entries', entryId, 'comments'],
+      path: path(entryId),
       data: {
         body
       }
@@ -28,52 +36,47 @@ export async function create(endpoint, entryId, { body, parentCommentId = null }
 }
 
 /**
- * Creates an assigned comment on a specific entry.
+ * Returns all of an entry's comments.
  *
- * @param endpoint
- * @param entryId
- * @param {string} data.body
- * @param {Link<User>} data.assignedTo
- * @param {string?} data.status Defaults to "open".
+ * @param {SpaceEndpoint} endpoint
+ * @param {String} entryId
  * @returns {Promise<API.Comment>}
  */
-export async function createAssigned(endpoint, entryId, { body, assignedTo, status }) {
-  return endpoint(
-    {
-      method: 'POST',
-      path: ['entries', entryId, 'comments'],
-      data: {
-        body,
-        assignment: {
-          assignedTo,
-          status
-        }
-      }
-    },
-    alphaHeader
-  );
-}
-
 export async function getAllForEntry(endpoint, entryId) {
   return endpoint(
     {
       method: 'GET',
-      path: ['entries', entryId, 'comments']
+      path: path(entryId)
     },
     alphaHeader
   );
 }
 
+/**
+ * Deletes a Comment.
+ *
+ * @param {SpaceEndpoint} endpoint
+ * @param {String} entryId
+ * @param {Stirng} commentId
+ */
 export async function remove(endpoint, entryId, commentId) {
   return endpoint(
     {
       method: 'DELETE',
-      path: ['entries', entryId, 'comments', commentId]
+      path: path(entryId, commentId)
     },
     alphaHeader
   );
 }
 
+/**
+ * Updates a comment.
+ *
+ * @param {SpaceEndpoint} endpoint
+ * @param {String} entryId
+ * @param {API.Comment} comment
+ * @returns {Promise<Comment>}
+ */
 export async function update(endpoint, entryId, comment) {
   const headers = {
     'X-Contentful-Version': comment.sys.version,
@@ -82,30 +85,9 @@ export async function update(endpoint, entryId, comment) {
   return endpoint(
     {
       method: 'PUT',
-      path: ['entries', entryId, 'comments', comment.sys.id],
+      path: path(entryId, comment.sys.id),
       data: {
         body: comment.body
-      }
-    },
-    headers
-  );
-}
-
-export async function updateAssigned(endpoint, entryId, { sys, body, assignedTo, status }) {
-  const headers = {
-    'X-Contentful-Version': sys.version,
-    ...alphaHeader
-  };
-  return endpoint(
-    {
-      method: 'PUT',
-      path: ['entries', entryId, 'comments', sys.id],
-      data: {
-        body,
-        assignment: {
-          assignedTo,
-          status
-        }
       }
     },
     headers
