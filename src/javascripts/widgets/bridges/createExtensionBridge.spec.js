@@ -31,6 +31,10 @@ jest.mock('TheStore/index.es6', () => ({
   getStore: jest.fn()
 }));
 
+jest.mock('widgets/WidgetStore.es6', () => ({
+  getForSingleExtension: jest.fn()
+}));
+
 describe('createExtensionBridge', () => {
   const makeBridge = () => {
     const stubs = {
