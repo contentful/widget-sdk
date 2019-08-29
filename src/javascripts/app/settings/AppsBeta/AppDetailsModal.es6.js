@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import tokens from '@contentful/forma-36-tokens';
 import cx from 'classnames';
 import { css, keyframes } from 'emotion';
@@ -15,6 +15,7 @@ import StateLink from 'app/common/StateLink.es6';
 import AppPermissions from './AppPermissions.es6';
 import ClientStorage from 'TheStore/ClientStorage.es6';
 import { websiteUrl } from 'Config.es6';
+import * as AppLifecycleTracking from './AppLifecycleTracking.es6';
 
 const sessionStorage = ClientStorage('session');
 sessionStorage.set('appPermissions', JSON.stringify({}));
@@ -147,17 +148,27 @@ function saveAcceptAuthorize(appId) {
 }
 
 function AppPermissionScreen({ app, onInstall, onCancel, onClose }) {
+  useEffect(() => {
+    AppLifecycleTracking.permissionsOpened(app.appId);
+  }, [app.appId]);
+
   const onAuthorize = () => {
+    AppLifecycleTracking.permissionsAccepted(app.appId);
     saveAcceptAuthorize(app.appId);
     onClose(true);
     onInstall();
+  };
+
+  const onCancelTracked = () => {
+    AppLifecycleTracking.permissionsDismissed(app.appId);
+    onCancel();
   };
 
   return (
     <div className={styles.permissions}>
       <AppPermissions
         onAuthorize={onAuthorize}
-        onCancel={() => onCancel()}
+        onCancel={() => onCancelTracked()}
         icon={app.icon}
         appName={app.appName}
         permissions={app.permissions}

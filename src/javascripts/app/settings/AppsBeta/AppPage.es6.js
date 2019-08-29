@@ -28,6 +28,7 @@ import UninstallModal from './UninstallModal.es6';
 import AppPermissions from './AppPermissions.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import ClientStorage from 'TheStore/ClientStorage.es6';
+import * as AppLifecycleTracking from './AppLifecycleTracking.es6';
 
 import { websiteUrl } from 'Config.es6';
 
@@ -226,6 +227,8 @@ export default class AppRoute extends Component {
     appHookBus.on(APP_EVENTS_IN.CONFIGURED, this.onAppConfigured);
     appHookBus.on(APP_EVENTS_IN.MISCONFIGURED, this.onAppMisconfigured);
 
+    AppLifecycleTracking.configurationOpened(appId);
+
     this.setState({
       ready: true,
       appEnabled,
@@ -239,7 +242,7 @@ export default class AppRoute extends Component {
   };
 
   onAppConfigured = async ({ installationRequestId, config }) => {
-    const { cma, extensionLoader, appHookBus } = this.props;
+    const { cma, extensionLoader, appHookBus, appId } = this.props;
 
     try {
       await installOrUpdate(cma, extensionLoader, this.checkAppStatus, config);
@@ -253,8 +256,10 @@ export default class AppRoute extends Component {
 
       if (this.state.busyWith === BUSY_STATE_UPDATE) {
         Notification.success('App configuration was updated successfully.');
+        AppLifecycleTracking.configurationUpdated(appId);
       } else {
         Notification.success('The app was installed successfully.');
+        AppLifecycleTracking.installed(appId);
       }
 
       this.setState({ isInstalled: true, busyWith: false });
@@ -264,8 +269,10 @@ export default class AppRoute extends Component {
     } catch (err) {
       if (this.state.busyWith === BUSY_STATE_UPDATE) {
         Notification.error('Failed to update app configuration.');
+        AppLifecycleTracking.configurationUpdateFailed(appId);
       } else {
         Notification.error('Failed to install the app.');
+        AppLifecycleTracking.installationFailed(appId);
       }
 
       const { extension } = await this.checkAppStatus();
@@ -287,6 +294,10 @@ export default class AppRoute extends Component {
   };
 
   uninstall = () => {
+    const { appId } = this.props;
+
+    AppLifecycleTracking.uninstallationInitiated(appId);
+
     return ModalLauncher.open(({ isShown, onClose }) => (
       <UninstallModal
         key={Date.now()}
@@ -298,16 +309,15 @@ export default class AppRoute extends Component {
           this.uninstallApp(reasons);
         }}
         onClose={() => {
+          AppLifecycleTracking.uninstallationCancelled(appId);
           onClose(true);
         }}
       />
     ));
   };
 
-  // todo: EXT-933 This function is passed a `reasons` array argument which we can use
-  // to track reasons for uninstalling apps
-  uninstallApp = async (/* reasons */) => {
-    const { cma, extensionLoader } = this.props;
+  uninstallApp = async reasons => {
+    const { cma, extensionLoader, appId } = this.props;
 
     this.setState({ busyWith: BUSY_STATE_UNINSTALLATION });
 
@@ -325,8 +335,10 @@ export default class AppRoute extends Component {
       }
 
       Notification.success('The app was uninstalled successfully.');
+      AppLifecycleTracking.uninstalled(appId, reasons);
     } catch (err) {
       Notification.error('Failed to fully uninstall the app.');
+      AppLifecycleTracking.uninstallationFailed(appId);
     }
 
     this.props.goBackToList();
