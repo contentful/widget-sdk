@@ -1,5 +1,7 @@
 import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/helpers/helpers';
 
 describe('activationEmailResendController', () => {
   let moment;
@@ -8,10 +10,22 @@ describe('activationEmailResendController', () => {
   const A_SECOND = 1000;
   const A_DAY = 24 * 60 * 60 * A_SECOND;
 
-  beforeEach(function() {
+  beforeEach(async function() {
     openDialogStub = sinon.stub();
     dialogConfirmSpy = sinon.spy();
-    module('contentful/test', $provide => {
+
+    this.stubs = {
+      user$: K.createMockProperty()
+    };
+
+    this.system.set('services/TokenStore.es6', {
+      user$: this.stubs.user$
+    });
+
+    const { getStore } = await this.system.import('TheStore/index.es6');
+    moment = (await this.system.import('moment')).default;
+
+    await $initialize(this.system, $provide => {
       $provide.constant('modalDialog', {
         open: openDialogStub
       });
@@ -20,11 +34,8 @@ describe('activationEmailResendController', () => {
       });
     });
 
-    const tokenStore = this.mockService('services/TokenStore.es6', {
-      user$: K.createMockProperty()
-    });
     this.setUser = props => {
-      tokenStore.user$.set(
+      this.stubs.user$.set(
         _.assign(
           {
             name: 'Some User',
@@ -36,7 +47,7 @@ describe('activationEmailResendController', () => {
       );
     };
 
-    const $q = this.$inject('$q');
+    const $q = $inject('$q');
 
     openDialogStub.returns({
       promise: $q(_.noop),
@@ -44,11 +55,7 @@ describe('activationEmailResendController', () => {
       confirm: dialogConfirmSpy
     });
 
-    moment = this.$inject('moment');
-
-    const controller = this.$inject('activationEmailResendController');
-
-    const getStore = this.$inject('TheStore').getStore;
+    const controller = $inject('activationEmailResendController');
     this.store = getStore().forKey('lastActivationEmailResendReminderTimestamp');
     controller.init();
   });
@@ -170,9 +177,9 @@ describe('activationEmailResendController', () => {
     describe('resend activation email`s “Resend” button', () => {
       let $timeout, openDialogOptions, openEmailSentDialogStub;
       beforeEach(function() {
-        this.resendConfirmation = this.$inject('activationEmailResender').resend;
+        this.resendConfirmation = $inject('activationEmailResender').resend;
 
-        $timeout = this.$inject('$timeout');
+        $timeout = $inject('$timeout');
         this.setUser({ confirmed: false, email: 'EMAIL' });
         openDialogOptions = openDialogStub.args[0][0];
         // Following tests only care about the 2nd Dialog, the email confirmation.

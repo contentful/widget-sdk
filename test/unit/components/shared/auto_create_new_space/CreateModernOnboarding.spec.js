@@ -1,30 +1,34 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
 import * as K from 'test/helpers/mocks/kefir';
+import { $initialize } from 'test/helpers/helpers';
 
 describe('CreateModernOnboarding service', function() {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
+  beforeEach(async function() {
+    this.createCMAKey = sinon.stub().returns({ token: 'token' });
+    this.user$ = K.createMockProperty({ sys: { id: 'someUser' } });
+
+    this.system.set('services/TokenStore.es6', {
+      user$: this.user$
+    });
+    this.system.set('app/api/CMATokens/Resource.es6', {
+      create: () => ({ create: this.createCMAKey })
+    });
+
+    this.CreateModernOnboarding = await this.system.import(
+      'components/shared/auto_create_new_space/CreateModernOnboarding.es6'
+    );
+
+    await $initialize(this.system, $provide => {
       this.getAllKeys = sinon.stub();
       this.createKey = sinon.stub();
-      this.createCMAKey = sinon.stub().returns({ token: 'token' });
-      this.user$ = K.createMockProperty({ sys: { id: 'someUser' } });
+
       $provide.constant('spaceContext', {
         apiKeyRepo: {
           getAll: this.getAllKeys,
           create: this.createKey
         }
       });
-      $provide.value('services/TokenStore.es6', {
-        user$: this.user$
-      });
-      $provide.value('app/api/CMATokens/Resource.es6', {
-        create: () => ({ create: this.createCMAKey })
-      });
     });
-
-    this.CreateModernOnboarding = this.$inject(
-      'components/shared/auto_create_new_space/CreateModernOnboarding.es6'
-    );
   });
 
   describe('getUser', function() {

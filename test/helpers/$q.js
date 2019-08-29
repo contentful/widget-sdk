@@ -27,6 +27,9 @@
  *
  * This module is aliased to the module ID `$q` in `test/system-config.js`.
  */
+
+import { $inject } from 'test/helpers/helpers';
+
 export default function $q(...args) {
   return get$q()(...args);
 }
@@ -41,9 +44,11 @@ function wrap(method) {
 }
 
 function get$q() {
-  let $q;
-  inject(_$q_ => {
-    $q = _$q_;
-  });
+  const $q = $inject('$q');
+
+  if (!$q) {
+    throw new Error('$q called in non-Angular context');
+  }
+
   return $q;
 }

@@ -32,6 +32,7 @@ export default function register() {
       };
 
       $scope.appReady = false;
+      $scope.controllerReady = false;
 
       initialize().then(() => {
         // We do this once
@@ -74,6 +75,8 @@ export default function register() {
             });
           }
         });
+
+        $scope.controllerReady = true;
       });
 
       function pickSerializable(location) {

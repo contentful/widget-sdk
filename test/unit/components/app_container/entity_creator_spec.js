@@ -1,34 +1,34 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 describe('entityCreator', () => {
-  let stubs;
+  beforeEach(async function() {
+    this.stubs = {
+      computeUsage: sinon.stub(),
+      enforcement: sinon.stub(),
+      success: sinon.stub(),
+      error: sinon.stub()
+    };
 
-  afterEach(() => {
-    stubs = null;
-  });
+    this.ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
+    this.ComponentLibrary.Notification.success = this.stubs.success;
+    this.ComponentLibrary.Notification.error = this.stubs.error;
 
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      stubs = $provide.makeStubs(['computeUsage', 'enforcement', 'track', 'succes', 'error']);
-
-      $provide.value('access_control/Enforcements.es6', {
-        computeUsageForOrganization: stubs.computeUsage,
-        determineEnforcement: stubs.enforcement
-      });
+    this.system.set('access_control/Enforcements.es6', {
+      computeUsageForOrganization: this.stubs.computeUsage,
+      determineEnforcement: this.stubs.enforcement
     });
 
-    const cfStub = this.$inject('cfStub');
+    await $initialize(this.system);
 
-    this.ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
-    this.ComponentLibrary.Notification.success = stubs.success;
-    this.ComponentLibrary.Notification.error = stubs.error;
+    const cfStub = $inject('cfStub');
 
-    this.$q = this.$inject('$q');
+    this.$q = $inject('$q');
 
-    this.spaceContext = this.$inject('spaceContext');
+    this.spaceContext = $inject('spaceContext');
     this.spaceContext.space = cfStub.space('test');
 
-    this.entityCreator = this.$inject('entityCreator');
+    this.entityCreator = $inject('entityCreator');
   });
 
   describe('creates an entry', () => {
@@ -63,15 +63,15 @@ describe('entityCreator', () => {
           })
         );
         this.entityCreator.newEntry(contentType);
-        this.$apply();
+        $apply();
       });
 
       it('determines enforcements', function() {
-        sinon.assert.calledWith(stubs.enforcement, this.spaceContext.space, [], 'entry');
+        sinon.assert.calledWith(this.stubs.enforcement, this.spaceContext.space, [], 'entry');
       });
 
       it('notifies of the error', function() {
-        sinon.assert.called(stubs.error);
+        sinon.assert.called(this.stubs.error);
       });
     });
   });
@@ -105,15 +105,15 @@ describe('entityCreator', () => {
           })
         );
         this.entityCreator.newAsset();
-        this.$apply();
+        $apply();
       });
 
       it('determines enforcements', function() {
-        sinon.assert.calledWith(stubs.enforcement, this.spaceContext.space, [], 'asset');
+        sinon.assert.calledWith(this.stubs.enforcement, this.spaceContext.space, [], 'asset');
       });
 
       it('notifies of the error', function() {
-        sinon.assert.called(stubs.error);
+        sinon.assert.called(this.stubs.error);
       });
     });
   });

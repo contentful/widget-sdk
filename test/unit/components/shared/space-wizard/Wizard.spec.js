@@ -1,18 +1,17 @@
 import React from 'react';
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
 
 import { mount } from 'enzyme';
+import { $initialize } from 'test/helpers/helpers';
 
 describe('Space Wizard', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.stubs = {
       track: sinon.stub()
     };
 
-    module('contentful/test', $provide => {
-      $provide.value('analytics/Analytics.es6', {
-        track: this.stubs.track
-      });
+    this.system.set('analytics/Analytics.es6', {
+      track: this.stubs.track
     });
 
     this.organization = {
@@ -29,9 +28,12 @@ describe('Space Wizard', () => {
       }
     };
 
-    this.store = this.$inject('redux/store.es6').default;
+    this.store = (await this.system.import('redux/store.es6')).default;
 
-    this.Wizard = this.$inject('components/shared/space-wizard/Wizard.es6').default;
+    this.Wizard = (await this.system.import('components/shared/space-wizard/Wizard.es6')).default;
+
+    await $initialize(this.system);
+
     this.create = action => {
       const props = {
         organization: this.organization,
@@ -50,8 +52,6 @@ describe('Space Wizard', () => {
 
       return React.createElement(this.Wizard, props);
     };
-
-    this.React = React;
 
     this.mount = action => {
       return mount(this.create(action));

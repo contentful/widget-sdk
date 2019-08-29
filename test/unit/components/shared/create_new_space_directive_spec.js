@@ -1,12 +1,17 @@
 import { createMockProperty } from 'test/helpers/mocks/kefir';
+import sinon from 'sinon';
+import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
 
 describe('cfCreateNewSpace directive', () => {
   let element, $scope, $rootScope, controller, stubs, $q;
+
   afterEach(() => {
+    element.remove();
+
     element = $scope = $rootScope = controller = stubs = null;
   });
 
-  beforeEach(function() {
+  beforeEach(async function() {
     this.org = { sys: { id: 'org_id' } };
 
     stubs = {
@@ -52,29 +57,29 @@ describe('cfCreateNewSpace directive', () => {
       }
     };
 
-    module('contentful/test', $provide => {
-      $provide.value('services/SpaceTemplateLoader.es6', stubs.spaceTemplateLoader);
-      $provide.value('services/SpaceTemplateCreator/index.es6', stubs.spaceTemplateCreator);
-      $provide.value('analytics/Analytics.es6', stubs.analytics);
-      $provide.constant('services/logger.es6', stubs.logger);
+    this.system.set('services/SpaceTemplateLoader.es6', stubs.spaceTemplateLoader);
+    this.system.set('services/SpaceTemplateCreator/index.es6', stubs.spaceTemplateCreator);
+    this.system.set('analytics/Analytics.es6', stubs.analytics);
+    this.system.set('services/logger.es6', stubs.logger);
+    this.system.set('services/TokenStore.es6', stubs.tokenStore);
+    this.system.set('services/ResourceService.es6', stubs.resourceService);
+
+    await $initialize(this.system, $provide => {
       $provide.constant('client', stubs.client);
-      $provide.value('services/TokenStore.es6', stubs.tokenStore);
-      $provide.value('services/ResourceService.es6', stubs.resourceService);
       $provide.value('$state', stubs.state);
-      $provide.removeDirectives('cfIcon');
     });
 
-    this.spaceContext = this.$inject('mocks/spaceContext').init();
+    this.spaceContext = $inject('mocks/spaceContext').init();
     this.spaceContext.getData = sinon.stub();
     this.spaceContext.apiKeyRepo = { create: sinon.stub() };
 
     stubs.spaceTemplateLoader.getTemplatesList.resolves(true);
 
-    $rootScope = this.$inject('$rootScope');
-    $q = this.$inject('$q');
+    $rootScope = $inject('$rootScope');
+    $q = $inject('$q');
 
     this.setupDirective = function(organization) {
-      element = this.$compile('<cf-create-new-space>', {
+      element = $compile('<cf-create-new-space>', {
         dialog: stubs.dialog,
         organization: organization || this.org
       });
@@ -229,7 +234,7 @@ describe('cfCreateNewSpace directive', () => {
           controller.newSpace.selectedTemplate = { name: 'Blog' };
           controller.requestSpaceCreation();
           sinon.spy($rootScope, '$broadcast');
-          this.$apply();
+          $apply();
         });
 
         it('refreshes token', () => {

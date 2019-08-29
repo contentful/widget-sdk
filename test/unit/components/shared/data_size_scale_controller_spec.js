@@ -1,11 +1,11 @@
-'use strict';
+import { $initialize, $inject } from 'test/helpers/helpers';
 
 describe('DataSizeScaleController', () => {
-  beforeEach(module('contentful/test'));
+  beforeEach(async function() {
+    await $initialize(this.system);
 
-  beforeEach(function() {
-    const $controller = this.$inject('$controller');
-    this.parentScope = this.$inject('$rootScope');
+    const $controller = $inject('$controller');
+    this.parentScope = $inject('$rootScope');
     this.parentScope.size = 1;
     this.scope = this.parentScope.$new();
     this.controller = $controller('DataSizeScaleController', {

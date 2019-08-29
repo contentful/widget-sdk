@@ -1,18 +1,16 @@
 import React from 'react';
-import * as sinon from 'test/helpers/sinon';
-
+import sinon from 'sinon';
 import { mount } from 'enzyme';
+import { $initialize } from 'test/helpers/helpers';
 
 describe('Enterprise Space Wizard', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.stubs = {
       track: sinon.stub()
     };
 
-    module('contentful/test', $provide => {
-      $provide.value('analytics/Analytics.es6', {
-        track: this.stubs.track
-      });
+    this.system.set('analytics/Analytics.es6', {
+      track: this.stubs.track
     });
 
     this.organization = {
@@ -68,13 +66,16 @@ describe('Enterprise Space Wizard', () => {
       }
     };
 
-    this.store = this.$inject('redux/store.es6').default;
-    this.PlanFeatures = this.$inject('components/shared/space-wizard/PlanFeatures.es6').default;
-    this.TextField = this.$inject('@contentful/forma-36-react-components').TextField;
+    this.store = (await this.system.import('redux/store.es6')).default;
+    this.PlanFeatures = (await this.system.import(
+      'components/shared/space-wizard/PlanFeatures.es6'
+    )).default;
 
-    const EnterpriseSpaceWizard = this.$inject(
+    const EnterpriseSpaceWizard = (await this.system.import(
       'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6'
-    ).default;
+    )).default;
+
+    await $initialize(this.system);
 
     this.createSpace = sinon.stub();
 

@@ -1,5 +1,6 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
 import _ from 'lodash';
+import { $initialize, $inject, $apply, $removeControllers } from 'test/helpers/helpers';
 
 describe('Entry List Controller', () => {
   let scope, spaceContext, ListQuery;
@@ -27,37 +28,49 @@ describe('Entry List Controller', () => {
     return entries;
   }
 
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.value('analytics/Analytics.es6', {
-        track: sinon.stub()
-      });
+  beforeEach(async function() {
+    this.stubs = {
+      apiErrorHandler: sinon.stub()
+    };
 
-      $provide.value('app/common/ReloadNotification.es6', {
-        default: {
-          apiErrorHandler: sinon.stub()
-        }
-      });
-
-      $provide.constant('services/localeStore.es6', {
-        default: {
-          resetWithSpace: sinon.stub(),
-          getDefaultLocale: sinon.stub().returns({ internal_code: 'en-US' })
-        }
-      });
-
-      $provide.value('app/ContentList/Search', {
-        default: _.noop // TODO: Test search ui integration.
-      });
+    this.system.set('analytics/Analytics.es6', {
+      track: sinon.stub()
     });
 
-    const { registerController } = this.$inject('NgRegistry.es6');
-    registerController('DisplayedFieldsController', function() {});
+    this.system.set('app/common/ReloadNotification.es6', {
+      default: {
+        apiErrorHandler: sinon.stub()
+      }
+    });
 
-    scope = this.$inject('$rootScope').$new();
+    this.system.set('services/localeStore.es6', {
+      default: {
+        resetWithSpace: sinon.stub(),
+        getDefaultLocale: sinon.stub().returns({ internal_code: 'en-US' })
+      }
+    });
+
+    this.system.set('app/ContentList/Search/index.es6', {
+      default: _.noop // TODO: Test search ui integration.
+    });
+
+    this.system.set('app/common/ReloadNotification.es6', {
+      default: {
+        apiErrorHandler: this.stubs.apiErrorHandler
+      }
+    });
+
+    this.ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
+    this.ComponentLibrary.Notification.error = sinon.stub();
+    this.ComponentLibrary.Notification.success = sinon.stub();
+
+    await $initialize(this.system);
+    await $removeControllers(this.system, ['DisplayFieldsController']);
+
+    scope = $inject('$rootScope').$new();
     scope.context = {};
 
-    spaceContext = this.$inject('mocks/spaceContext').init();
+    spaceContext = $inject('mocks/spaceContext').init();
     scope.spaceContext = spaceContext;
 
     const ct = {
@@ -69,12 +82,12 @@ describe('Entry List Controller', () => {
 
     spaceContext.space.getEntries.defers();
 
-    const $controller = this.$inject('$controller');
+    const $controller = $inject('$controller');
 
     $controller('EntryListController', { $scope: scope });
     scope.selection.updateList = sinon.stub();
 
-    ListQuery = this.$inject('ListQuery');
+    ListQuery = $inject('ListQuery');
   });
 
   describe('#loadView()', () => {
@@ -297,20 +310,12 @@ describe('Entry List Controller', () => {
   });
 
   describe('Api Errors', () => {
-    beforeEach(function() {
-      this.ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
-      this.ComponentLibrary.Notification.error = sinon.stub();
-      this.ComponentLibrary.Notification.success = sinon.stub();
-    });
-
     it('shows reload notification on 500 err', function() {
       spaceContext.space.getEntries.rejects({ statusCode: 500 });
       scope.context.view = {};
       scope.updateEntries();
       scope.$apply();
-      sinon.assert.called(
-        this.$inject('app/common/ReloadNotification.es6').default.apiErrorHandler
-      );
+      sinon.assert.called(this.stubs.apiErrorHandler);
     });
 
     it('shows error notification on 400 err', function() {
@@ -383,18 +388,18 @@ describe('Entry List Controller', () => {
 
     beforeEach(function() {
       scope.showNoEntriesAdvice = _.constant(true);
-      entriesResponse = this.$inject('$q').defer();
+      entriesResponse = $inject('$q').defer();
       spaceContext.space.getEntries.returns(entriesResponse.promise);
     });
 
     it('is set to false when showNoEntriesAdvice() changes to true', function() {
       expect(scope.hasArchivedEntries).toBeUndefined();
-      this.$apply();
+      $apply();
       expect(scope.hasArchivedEntries).toBe(false);
     });
 
     it('gets archived entries when showNoEntries() changes to true', function() {
-      this.$apply();
+      $apply();
       const query = {
         limit: 0,
         'sys.archivedAt[exists]': true
@@ -403,38 +408,38 @@ describe('Entry List Controller', () => {
     });
 
     it('is set to true when there are archived entries', function() {
-      this.$apply();
+      $apply();
       expect(scope.hasArchivedEntries).toBe(false);
       entriesResponse.resolve({ total: 1 });
-      this.$apply();
+      $apply();
       expect(scope.hasArchivedEntries).toBe(true);
     });
 
     it('is set to false when there no are archived entries', function() {
-      this.$apply();
+      $apply();
       expect(scope.hasArchivedEntries).toBe(false);
       entriesResponse.resolve({ total: 0 });
-      this.$apply();
+      $apply();
       expect(scope.hasArchivedEntries).toBe(false);
     });
   });
 
   describe('Truncating title', function() {
     it('should not change string shorter then 130 simbols', function() {
-      this.$apply();
+      $apply();
       const title = 'Title';
       scope.spaceContext.entryTitle.returns(title);
       expect(scope.entryTitle(title)).toBe(title);
     });
     it('should not change string with 130 simbols', function() {
-      this.$apply();
+      $apply();
       const title =
         'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penat';
       scope.spaceContext.entryTitle.returns(title);
       expect(scope.entryTitle(title)).toBe(title);
     });
     it('should cut string longer then 130 simbols', function() {
-      this.$apply();
+      $apply();
       const title =
         'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta.';
       const truncatedTitle =

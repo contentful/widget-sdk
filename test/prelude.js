@@ -142,7 +142,8 @@
             'test/unit/account',
             'test/unit/analytics',
             'test/unit/app',
-            'test/unit/classes'
+            'test/unit/classes',
+            'test/unit/components'
           ];
 
           if (prefixes.find(prefix => name.startsWith(prefix))) {

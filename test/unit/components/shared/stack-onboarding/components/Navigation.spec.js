@@ -2,30 +2,35 @@ import React from 'react';
 import _ from 'lodash';
 import sinon from 'sinon';
 import * as K from 'test/helpers/mocks/kefir';
+import { $initialize } from 'test/helpers/helpers';
 
 import { mount } from 'enzyme';
 
 describe('Navigation', () => {
   let Navigation, goStub;
 
-  beforeEach(function() {
+  beforeEach(async function() {
     goStub = sinon.spy();
-    module('contentful/test', $provide => {
+
+    this.system.set('components/shared/auto_create_new_space/CreateModernOnboarding.es6', {
+      track: () => {},
+      getStoragePrefix: sinon.stub().returns('prefix'),
+      isOnboardingComplete: sinon.stub().returns(false)
+    });
+
+    this.system.set('services/TokenStore.es6', {
+      user$: K.createMockProperty({ sys: { id: 1 } })
+    });
+
+    Navigation = (await this.system.import(
+      'components/shared/stack-onboarding/components/Navigation.es6'
+    )).default;
+
+    await $initialize(this.system, $provide => {
       $provide.value('$state', {
         go: goStub
       });
-      $provide.value('components/shared/auto_create_new_space/CreateModernOnboarding.es6', {
-        track: () => {},
-        getStoragePrefix: sinon.stub().returns('prefix'),
-        isOnboardingComplete: sinon.stub().returns(false)
-      });
-      $provide.value('services/TokenStore.es6', {
-        user$: K.createMockProperty({ sys: { id: 1 } })
-      });
     });
-
-    Navigation = this.$inject('components/shared/stack-onboarding/components/Navigation.es6')
-      .default;
   });
 
   afterEach(function() {

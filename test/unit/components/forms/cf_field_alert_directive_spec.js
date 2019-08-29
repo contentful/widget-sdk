@@ -1,9 +1,10 @@
-'use strict';
+import { $initialize, $compile } from 'test/helpers/helpers';
 
 describe('cfFieldAlert Directive', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.element = this.$compile('<div cf-field-alert="message" class="cf-field-alert"></div>');
+  beforeEach(async function() {
+    await $initialize(this.system);
+
+    this.element = $compile('<div cf-field-alert="message" class="cf-field-alert"></div>');
   });
 
   it('element exists', function() {
