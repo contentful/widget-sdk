@@ -73,7 +73,6 @@ registerGenericEvent('incoming_links:query');
 
 registerGenericEvent('usage:period_selected');
 
-registerGenericEvent('apps:opted_in');
 registerGenericEvent('netlify:connected');
 registerGenericEvent('netlify:installed');
 registerGenericEvent('netlify:updated');
