@@ -240,6 +240,16 @@ registerSchema({
 });
 
 registerSchema({
+  name: 'app_lifecycle_event',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'app_uninstallation_reason',
+  version: '1-0-0'
+});
+
+registerSchema({
   name: 'sidebar_render',
   version: '1-0-0'
 });
