@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import NetlifyIcon from 'svg/logo-netlify.es6';
 import AlgoliaIcon from 'svg/logo-algolia.es6';
 import ImageManagementIcon from 'svg/logo-image-management.es6';
-import OptimizelyLogo from 'svg/logo-optimizely.es6';
 import ContentfulLogoLight from 'svg/ContentfulLogoLight.es6';
 import GatsbyIcon from 'svg/GatsbyIcon.es6';
 import BynderIcon from 'svg/BynderIcon.es6';
@@ -21,7 +20,6 @@ const Icons = {
   netlify: NetlifyIcon,
   algolia: AlgoliaIcon,
   aiImageManagement: ImageManagementIcon,
-  optimizely: OptimizelyLogo,
   gatsby: GatsbyIcon,
   bynder: BynderIcon,
   cloudinary: CloudinaryIcon

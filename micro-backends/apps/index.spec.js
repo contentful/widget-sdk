@@ -36,9 +36,7 @@ const MOCK_REQUESTS = [
     }
   },
   {
-    match: `POST https://${
-      testUser.algoliaAppId
-    }-dsn.algolia.net/1/indexes/testing/query X-Algolia-API-Key:${testUser.algoliaAPIKey}`,
+    match: `POST https://${testUser.algoliaAppId}-dsn.algolia.net/1/indexes/testing/query X-Algolia-API-Key:${testUser.algoliaAPIKey}`,
     response: {
       hits: [{ hello: 'world' }]
     }
@@ -134,64 +132,6 @@ describe('handler', () => {
     expect(responseBody.algolia['content-types'].length).toEqual(2);
     expect(responseBody.algolia['content-types'][0]).toEqual('foo');
     expect(responseBody.algolia['content-types'][1]).toEqual('bar');
-  });
-
-  it('create a proxy request with saved Algolia secrets', async () => {
-    // Define the secrets that will be used for sending request to Algolia
-    const algoliaConfig = {
-      secrets: {
-        'api-key': testUser.algoliaAPIKey,
-        'app-id': testUser.algoliaAppId
-      }
-    };
-
-    const kvStore = mockKv();
-
-    // Now write the secrets to the space
-    await handle({
-      req: mockRequest({
-        method: 'PUT',
-        path: `/spaces/${testUser.spaceId}/algolia`,
-        body: algoliaConfig
-      }),
-      kv: kvStore,
-      dependencies: mockDependencies()
-    });
-
-    const requestOptions = {
-      url: `https://${testUser.algoliaAppId}-dsn.algolia.net/1/indexes/testing/query`,
-      method: 'POST',
-      body: {
-        params: 'query=world'
-      },
-      headers: {
-        'X-Algolia-API-Key': '{api-key}'
-      }
-    };
-
-    // Create a proxy request to Algolia using the secrets defined above
-    const result = await handle({
-      req: mockRequest({
-        method: 'POST',
-        path: `/spaces/${testUser.spaceId}/algolia/request`,
-        body: requestOptions
-      }),
-      kv: kvStore,
-      dependencies: mockDependencies()
-    });
-
-    // We expect a response with 200 status code
-    expect(result.statusCode).toEqual(200);
-    expect(result.headers['Content-Type']).toEqual('application/json');
-
-    // Response body contains the response we got from proxy request
-    const responseBody = JSON.parse(result.body);
-    expect(responseBody.status).toEqual(200);
-
-    // The body field of the response is what proxy request received.
-    const proxyResponseBody = JSON.parse(responseBody.body);
-    expect(proxyResponseBody.hits.length).toEqual(1);
-    expect(proxyResponseBody.hits[0].hello).toEqual('world');
   });
 });
 

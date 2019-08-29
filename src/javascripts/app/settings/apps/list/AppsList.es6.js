@@ -9,30 +9,18 @@ const styles = {
     marginBottom: tokens.spacing3Xl,
     position: 'relative',
     zIndex: 1
-  }),
-  overlay: css({
-    position: 'absolute',
-    zIndex: 2,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: tokens.colorWhite,
-    opacity: 0.8
   })
 };
 
 export default class AppsList extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    children: PropTypes.node,
-    overlayed: PropTypes.bool
+    children: PropTypes.node
   };
 
   render() {
     return (
       <div className={styles.list}>
-        {this.props.overlayed && <div className={styles.overlay} data-test-id="disabled-apps" />}
         <Heading>{this.props.title}</Heading>
         {this.props.children}
       </div>

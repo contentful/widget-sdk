@@ -10,8 +10,6 @@ import makePageExtensionHandlers from './makePageExtensionHandlers.es6';
 import checkDependencies from './checkDependencies.es6';
 import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_FIELD_SIDEBAR } from '../WidgetLocations.es6';
 
-import createAppsClient from 'app/settings/apps/AppsClient.es6';
-
 const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
 
 const ERROR_MESSAGES = {
@@ -163,18 +161,6 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
         $scope.fieldLocale.setActive(isActive);
       });
     }
-
-    // TODO: alpha handlers - to be removed.
-    api.registerHandler('alpha', async ({ command, args }) => {
-      if (command === 'proxyGetRequest' && args) {
-        const client = createAppsClient(spaceContext.getId());
-        const res = await client.proxyGetRequest(args.appId, args.url, args.headers);
-        return res.json();
-      }
-
-      throw new Error('Unknown alpha command.');
-    });
-    // TODO: to be removed - end.
 
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
   }
