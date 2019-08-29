@@ -7,6 +7,15 @@ const { createApolloFetch } = require('apollo-fetch');
 const uri = process.env.SNIFFER_UPLOAD_URL;
 const apolloFetch = createApolloFetch({ uri });
 
+apolloFetch.use(({ _, options }, next) => {
+  if (!options.headers) {
+    options.headers = {};
+  }
+  options.headers['authorization'] = `Bearer ${process.env.SNIFFER_API_AUTH_TOKEN}`;
+
+  next();
+});
+
 const uploadResults = async ({ meta, tree, stats }) => {
   const response = await apolloFetch({
     query: `mutation SubmitData($meta: CommitMetaInput!, $tree: String!, $stats: String!, $project: String!) {
