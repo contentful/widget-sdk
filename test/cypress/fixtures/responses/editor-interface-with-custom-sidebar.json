@@ -75,11 +75,6 @@
       "settings": {}
     },
     {
-      "widgetId": "entry-activity-widget",
-      "widgetNamespace": "sidebar-builtin",
-      "settings": {}
-    },
-    {
       "widgetId": "publication-widget",
       "widgetNamespace": "sidebar-builtin",
       "disabled": true

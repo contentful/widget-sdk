@@ -26,7 +26,6 @@
     { "widgetId": "translation-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
     { "widgetId": "versions-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
     { "widgetId": "users-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
-    { "widgetId": "entry-activity-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
     { "widgetId": "publication-widget", "widgetNamespace": "sidebar-builtin", "disabled": true }
   ]
 }

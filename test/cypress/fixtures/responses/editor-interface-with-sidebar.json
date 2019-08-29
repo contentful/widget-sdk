@@ -71,11 +71,6 @@
       "disabled": true,
       "widgetId": "users-widget",
       "widgetNamespace": "sidebar-builtin"
-    },
-    {
-      "disabled": true,
-      "widgetId": "entry-activity-widget",
-      "widgetNamespace": "sidebar-builtin"
     }
   ],
   "controls": [

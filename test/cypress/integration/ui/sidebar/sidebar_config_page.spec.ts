@@ -80,8 +80,7 @@ describe('Sidebar configuration', () => {
         'Links',
         'Versions',
         'Translation',
-        'Users',
-        'Entry activity'
+        'Users'
       ];
 
       cy.getAllByTestId('sidebar-widget-item-draggable')

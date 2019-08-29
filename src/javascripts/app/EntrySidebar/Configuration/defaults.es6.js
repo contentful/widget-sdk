@@ -54,13 +54,6 @@ export const Users = {
   description: 'Built-in - Displays users on the same entry.'
 };
 
-export const EntryActivity = {
-  widgetId: 'entry-activity-widget',
-  widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
-  name: 'Entry activity',
-  description: 'Built-in - See the list of all changes to an entry'
-};
-
 export const defaultWidgetsMap = {
   [Publication.widgetId]: Publication,
   [Tasks.widgetId]: Tasks,
@@ -68,8 +61,7 @@ export const defaultWidgetsMap = {
   [Links.widgetId]: Links,
   [Translation.widgetId]: Translation,
   [Versions.widgetId]: Versions,
-  [Users.widgetId]: Users,
-  [EntryActivity.widgetId]: EntryActivity
+  [Users.widgetId]: Users
 };
 
 export const EntryConfiguration = [
@@ -79,8 +71,7 @@ export const EntryConfiguration = [
   Links,
   Translation,
   Versions,
-  Users,
-  EntryActivity
+  Users
 ];
 
 export const AssetConfiguration = [Publication, Links, Translation, Users];
@@ -93,9 +84,7 @@ const availabilityMap = {
   [Links.widgetId]: true,
   [Translation.widgetId]: true,
   [Versions.widgetId]: true,
-  [Users.widgetId]: true,
-  [EntryActivity.widgetId]: () =>
-    getCurrentVariation(FeatureFlagKey.ENTRY_ACTIVITY).then(variation => Boolean(variation))
+  [Users.widgetId]: true
 };
 
 export const getEntryConfiguration = async () => {

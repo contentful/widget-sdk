@@ -1,4 +1,4 @@
-import { once, get } from 'lodash';
+import { once } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
@@ -186,28 +186,6 @@ export default ({ $scope, emitter }) => {
     }
   });
 
-  let prevEvent;
-  const initializeEntryActivity = once(() => {
-    prevEvent = null;
-    K.onValueScope($scope, $scope.otDoc.docLocalChanges$, event => {
-      if (event) {
-        // Only emit "changed" events if they are followed by a "blur".
-        // This means that the user made a change and then left the field and we avoid
-        // logging activities on every keystroke.
-        if (event.name === 'blur' && get(prevEvent, 'name') === 'changed') {
-          emitter.emit(SidebarEventTypes.UPDATED_DOCUMENT_STATE, {
-            name: 'changed',
-            path: event.path
-          });
-        } else if (event.name !== 'changed' && event.name !== 'blur') {
-          emitter.emit(SidebarEventTypes.UPDATED_DOCUMENT_STATE, event);
-        }
-      }
-
-      prevEvent = event;
-    });
-  });
-
   emitter.on(SidebarEventTypes.WIDGET_REGISTERED, name => {
     switch (name) {
       case SidebarWidgetTypes.INCOMING_LINKS:
@@ -230,9 +208,6 @@ export default ({ $scope, emitter }) => {
         break;
       case SidebarWidgetTypes.INFO_PANEL:
         initializeInfoPanel();
-        break;
-      case SidebarWidgetTypes.ACTIVITY:
-        initializeEntryActivity();
         break;
       case SidebarWidgetTypes.COMMENTS_PANEL:
         initializeCommentsPanel();

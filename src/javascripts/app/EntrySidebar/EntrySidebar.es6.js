@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import EntrySidebarWidget from './EntrySidebarWidget.es6';
 import { isArray } from 'lodash';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import { Note } from '@contentful/forma-36-react-components';
 import {
   AssetConfiguration,
@@ -17,11 +19,15 @@ import IncomingLinksWidgetContainer from './IncomingLinksWidget/IncomingLinksWid
 import TranslationWidget from './TranslationWidget/TranslationWidget.es6';
 import UsersWidgetContainer from './UsersWidget/UsersWidgetContainer.es6';
 import VersionsWidgetContainer from './VersionsWidget/VersionsWidgetContainer.es6';
-import EntryActivityWidgetContainer from './EntryActivity/EntryActivityContainer.es6';
 import SidebarWidgetTypes from './SidebarWidgetTypes.es6';
 import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
 import CommentsPanelContainer from './CommentsPanel/CommentsPanelContainer.es6';
+
+const noteClassName = css({
+  marginBottom: tokens.spacingL,
+  marginTop: tokens.spacingL
+});
 
 const ComponentsMap = {
   [SidebarWidgetTypes.PUBLICATION]: PublicationWidgetContainer,
@@ -30,8 +36,7 @@ const ComponentsMap = {
   [SidebarWidgetTypes.INCOMING_LINKS]: IncomingLinksWidgetContainer,
   [SidebarWidgetTypes.TRANSLATION]: TranslationWidget,
   [SidebarWidgetTypes.USERS]: UsersWidgetContainer,
-  [SidebarWidgetTypes.VERSIONS]: VersionsWidgetContainer,
-  [SidebarWidgetTypes.ACTIVITY]: EntryActivityWidgetContainer
+  [SidebarWidgetTypes.VERSIONS]: VersionsWidgetContainer
 };
 
 export default class EntrySidebar extends Component {
@@ -92,7 +97,7 @@ export default class EntrySidebar extends Component {
     if (item.problem) {
       return (
         <EntrySidebarWidget title="Missing extension">
-          <Note noteType="warning" className="f36-margin-top--l f36-margin-bottom--l">
+          <Note noteType="warning" className={noteClassName}>
             <code>{item.name || item.widgetId}</code> is saved in configuration, but not installed
             in this environment.
           </Note>

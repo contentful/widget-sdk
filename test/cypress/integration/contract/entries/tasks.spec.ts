@@ -14,7 +14,6 @@ import {
   getAllPublicContentTypesInDefaultSpace
 } from '../../../interactions/content_types';
 import { getDefaultEntry, getFirst7SnapshotsOfDefaultEntry } from '../../../interactions/entries';
-import { generateMicrobackendStreamToken } from '../../../interactions/microbackend';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import { FeatureFlag } from '../../../util/featureFlag';
 
@@ -35,7 +34,7 @@ describe('Tasks entry editor sidebar', () => {
 
   beforeEach(() => {
     cy.resetAllFakeServers();
-    cy.enableFeatureFlags([FeatureFlag.CONTENT_WORKFLOW_TASKS, FeatureFlag.ENTRY_ACTIVITY]);
+    cy.enableFeatureFlags([FeatureFlag.CONTENT_WORKFLOW_TASKS]);
   });
 
   function visitEntry() {
@@ -58,7 +57,6 @@ describe('Tasks entry editor sidebar', () => {
       getDefaultEntry.willReturnIt(),
       getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-      generateMicrobackendStreamToken.willSucceed()
     ];
   }
 
