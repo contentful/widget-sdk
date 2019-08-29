@@ -366,7 +366,7 @@ describe('createExtensionBridge', () => {
     const api = makeStubbedApi();
     bridge.install(api);
 
-    const registerCall = api.registerHandler.mock.calls[7];
+    const registerCall = api.registerHandler.mock.calls[6];
     expect(registerCall[0]).toBe('navigateToPageExtension');
     const navigateToPageExtension = registerCall[1];
     expect(typeof navigateToPageExtension).toBe('function');

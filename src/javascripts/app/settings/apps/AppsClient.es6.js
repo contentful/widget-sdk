@@ -1,39 +1,22 @@
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
-import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 
 import {
   APP_ID as IMAGE_MANAGEMENT_APP_ID,
   APP_NAME as IMAGE_MANAGEMENT_APP_NAME
 } from './image-management/Constants.es6';
 
-const BASIC_APPS_FEATURE = 'basic_apps';
-const OPTIMIZELY_APP_FEATURE = 'optimizely_app';
-
 const KNOWN_APPS = {
   netlify: {
-    title: 'Netlify',
-    featureId: BASIC_APPS_FEATURE
+    title: 'Netlify'
   },
   algolia: {
-    title: 'Algolia',
-    featureId: BASIC_APPS_FEATURE
+    title: 'Algolia'
   },
   [IMAGE_MANAGEMENT_APP_ID]: {
-    title: IMAGE_MANAGEMENT_APP_NAME,
-    featureId: BASIC_APPS_FEATURE
+    title: IMAGE_MANAGEMENT_APP_NAME
   },
   basicApprovalWorkflow: {
-    title: 'Basic approval workflow',
-    featureId: BASIC_APPS_FEATURE
-  },
-  optimizely: {
-    title: 'Optimizely',
-    featureId: OPTIMIZELY_APP_FEATURE,
-    priceLine: {
-      list: 'Enterprise plan only',
-      modal:
-        'Optimizely App is available on our enterprise-grade Professional and Scale platforms (via Committed, annual plans).'
-    }
+    title: 'Basic approval workflow'
   }
 };
 
@@ -48,22 +31,11 @@ export default function createAppsClient(spaceId) {
     getAll,
     get,
     save,
-    proxyGetRequest,
     remove
   };
 
   async function getAll() {
-    const featureIds = [BASIC_APPS_FEATURE, OPTIMIZELY_APP_FEATURE];
-
-    const [res, enabled] = await Promise.all([
-      backend.call(),
-      Promise.all(featureIds.map(id => getSpaceFeature(spaceId, id, true)))
-    ]);
-
-    const enabledByFeatureId = featureIds.reduce((acc, id, i) => {
-      return { ...acc, [id]: enabled[i] };
-    }, {});
-
+    const res = await backend.call();
     if (res.status > 299) {
       throw new Error('Could not fetch apps.');
     }
@@ -72,13 +44,11 @@ export default function createAppsClient(spaceId) {
 
     return Object.keys(KNOWN_APPS).reduce((acc, id) => {
       const config = appConfigs[id];
-      const appDescriptor = KNOWN_APPS[id];
+      const { title } = KNOWN_APPS[id];
 
       const app = {
         id,
-        title: appDescriptor.title,
-        enabled: enabledByFeatureId[appDescriptor.featureId],
-        priceLine: appDescriptor.priceLine,
+        title,
         installed: !!config,
         config: config || {}
       };
@@ -89,7 +59,7 @@ export default function createAppsClient(spaceId) {
 
   async function get(appId) {
     const apps = await getAll();
-    const app = apps.find(app => app.id === appId && app.enabled);
+    const app = apps.find(app => app.id === appId);
 
     if (app) {
       return app;
@@ -102,14 +72,6 @@ export default function createAppsClient(spaceId) {
     return backend.call(appId, {
       method: 'PUT',
       body: JSON.stringify(config),
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-
-  function proxyGetRequest(appId, url, headers) {
-    return backend.call(appId + '/request', {
-      method: 'POST',
-      body: JSON.stringify({ method: 'GET', url, headers }),
       headers: { 'Content-Type': 'application/json' }
     });
   }

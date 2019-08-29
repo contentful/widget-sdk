@@ -3,7 +3,6 @@
 const { respond, respond404, respond422 } = require('./responses.js');
 const getSpaceMembership = require('./space-membership.js');
 const makeSanitizer = require('./sanitize');
-const sendRequest = require('./send-request');
 
 module.exports = {
   apiVersion: 1,
@@ -16,7 +15,7 @@ module.exports = {
 
     // URLs are: `/apps/spaces/:spaceId/:appId`.
     // `/apps/` is the backend name and is not included in `path`.
-    const [spacesSegment, spaceId, appId, appAction] = path
+    const [spacesSegment, spaceId, appId] = path
       .split('/')
       .filter(s => typeof s === 'string' && s.length > 0);
 
@@ -47,31 +46,6 @@ module.exports = {
     // GET /apps/spaces/:spaceId
     if (method === 'GET' && !appId) {
       return respond(sanitizeListOfApps(apps), 200, [tokenTime]);
-    }
-
-    // POST /apps/spaces/:spaceId/:appId/request
-    if (method === 'POST' && appAction === 'request') {
-      // Context keeps the values that are available for the custom request options.
-      const app = apps[appId] || {};
-      const context = { ...app.secrets };
-
-      // For the time being we only need GET requests for Optimizely.
-      // Let's limit HTTP methods available to this app for extra
-      // security until we've got proper Secrets API.
-      const forceGet = appId === 'optimizely';
-
-      let resp, body;
-
-      try {
-        resp = await sendRequest(context, req.body, dependencies.fetch, forceGet);
-        body = await resp.text();
-      } catch (err) {
-        return respond("Bad request. Make sure you've passed valid request options.", 400, [
-          tokenTime
-        ]);
-      }
-
-      return respond({ ok: resp.ok, status: resp.status, body }, 200, [tokenTime]);
     }
 
     // Only admins can see "write" endpoints.

@@ -9,7 +9,8 @@ import {
   SkeletonContainer,
   SkeletonDisplayText,
   SkeletonText,
-  SkeletonImage
+  SkeletonImage,
+  Paragraph
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon.es6';
@@ -84,10 +85,10 @@ export default class AppsListPage extends Component {
     const { apps } = this.props;
 
     const info = (
-      <p>
+      <Paragraph>
         We are phasing out alpha apps as we move into beta. This means no new alpha apps can be
         installed. Thank you for your participation and we hope to see you in the beta.
-      </p>
+      </Paragraph>
     );
 
     if (apps.installed.length > 0) {
@@ -95,9 +96,9 @@ export default class AppsListPage extends Component {
         <>
           <Note className={styles.note} noteType="warning" title="Apps alpha is being phased out">
             {info}
-            <p>You can still use the apps installed in the alpha period.</p>
+            <Paragraph>You can still use the apps installed in the alpha period.</Paragraph>
           </Note>
-          <AppsList title="Installed" overlayed={false}>
+          <AppsList title="Installed">
             {apps.installed.map(app => (
               <AppListItem key={app.id} app={app} />
             ))}
