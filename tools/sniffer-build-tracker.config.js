@@ -9,7 +9,7 @@ apolloFetch.use(({ _, options }, next) => {
   if (!options.headers) {
     options.headers = {};
   }
-  options.headers['authorization'] = process.env.SNIFFER_API_AUTH_TOKEN;
+  options.headers['authorization'] = `Bearer ${process.env.SNIFFER_API_AUTH_TOKEN}`;
 
   next();
 });
