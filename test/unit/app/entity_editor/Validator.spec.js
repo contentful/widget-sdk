@@ -6,9 +6,7 @@ describe('app/entity_editor/Validator.es6', () => {
   beforeEach(async function() {
     const Validator = await this.system.import('app/entity_editor/Validator.es6');
 
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     const createDocument = $inject('mocks/entityEditor/Document').create;
     this.schemaErrors = sinon.stub();

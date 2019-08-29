@@ -59,7 +59,7 @@ function readInjectedConfig() {
 }
 
 angular
-  .module('contentful/app-config', [AngularInit, 'ngAnimate', 'ngSanitize', 'ui.router'])
+  .module(`contentful/app-config`, [AngularInit, 'ngAnimate', 'ngSanitize', 'ui.router'])
   .config([
     '$locationProvider',
     $locationProvider => {
@@ -237,7 +237,7 @@ angular
   ]);
 
 angular
-  .module('contentful/app', ['contentful/app-config'])
+  .module(`contentful/app`, [`contentful/app-config`])
   .config([
     '$compileProvider',
     $compileProvider => {

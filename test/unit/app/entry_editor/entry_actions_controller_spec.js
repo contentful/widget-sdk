@@ -1,7 +1,7 @@
 import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initializeAndReregister, $inject, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 describe('Entry Actions Controller', () => {
   beforeEach(async function() {
@@ -13,7 +13,7 @@ describe('Entry Actions Controller', () => {
       track: this.stubs.track
     });
 
-    await $initializeAndReregister(this.system, ['app/entry_editor/entryActionsController.es6']);
+    await $initialize(this.system);
 
     const $rootScope = $inject('$rootScope');
     this.scope = $rootScope.$new();

@@ -37,15 +37,7 @@ describe('API Key List Controller', () => {
       }
     });
 
-    const { default: register } = await this.system.import(
-      'app/api/api_key_list/apiKeyListDirective.es6'
-    );
-
-    module('contentful/test');
-
-    await $initialize();
-
-    register();
+    await $initialize(this.system);
 
     this.scope = {
       context: {}

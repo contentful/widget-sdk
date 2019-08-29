@@ -17,17 +17,16 @@ describe('app/api/KeyEditor/Controller.es6', () => {
 
     this.system.set('access_control/AccessChecker/index.es6', {
       canModifyApiKeys: sinon.stub().returns(true),
-      shouldDisable: sinon.stub()
+      shouldDisable: sinon.stub(),
+      getResponseByActionAndEntity: sinon.stub()
     });
 
     const attachController = (await this.system.import('app/api/KeyEditor/Controller.es6')).default;
     const template = (await this.system.import('app/api/KeyEditor/Template.es6')).default();
 
-    module('contentful/test', $provide => {
+    await $initialize(this.system, $provide => {
       $provide.value('navigation/closeState', sinon.spy());
     });
-
-    await $initialize();
 
     const $compile = $inject('$compile');
     const $rootScope = $inject('$rootScope');

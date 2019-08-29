@@ -2,7 +2,7 @@ import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
 import sinon from 'sinon';
 import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
-import { $initializeAndReregister, $inject, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 describe('cfWidgetApi directive', () => {
   beforeEach(async function() {
@@ -10,19 +10,15 @@ describe('cfWidgetApi directive', () => {
       default: createLocaleStoreMock()
     });
 
-    await $initializeAndReregister(
-      this.system,
-      ['app/entry_editor/cfWidgetApiDirective.es6'],
-      $provide => {
-        $provide.constant('spaceContext', {
-          cma: {
-            getEntry: _.noop,
-            getContentType: _.noop,
-            getAsset: _.noop
-          }
-        });
-      }
-    );
+    await $initialize(this.system, $provide => {
+      $provide.constant('spaceContext', {
+        cma: {
+          getEntry: _.noop,
+          getContentType: _.noop,
+          getAsset: _.noop
+        }
+      });
+    });
 
     const $controller = $inject('$controller');
 

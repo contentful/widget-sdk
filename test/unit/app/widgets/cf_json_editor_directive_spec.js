@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initializeAndReregister, $inject, $apply, $compile } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply, $compile } from 'test/helpers/helpers';
 
 describe('cfJsonEditor directive', () => {
   let cmEditor, fieldApi, element;
@@ -41,7 +41,7 @@ describe('cfJsonEditor directive', () => {
       default: sinon.stub().returns(cmEditor)
     });
 
-    await $initializeAndReregister(this.system, ['app/widgets/json/JsonEditorController']);
+    await $initialize(this.system);
 
     this.widgetApi = $inject('mocks/widgetApi').create();
     fieldApi = this.widgetApi.field;

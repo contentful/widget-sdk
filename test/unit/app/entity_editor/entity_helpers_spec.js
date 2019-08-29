@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initializeAndReregister, $inject } from 'test/helpers/helpers';
+import { $initialize, $inject } from 'test/helpers/helpers';
 import { beforeEach, it } from 'test/helpers/dsl';
 
 describe('EntityHelpers', () => {
@@ -23,7 +23,7 @@ describe('EntityHelpers', () => {
       }
     });
 
-    await $initializeAndReregister(this.system, ['app/entity_editor/entityHelpers.es6']);
+    await $initialize(this.system);
 
     this.spaceContext = $inject('mocks/spaceContext').init();
     this.EntityHelpers = $inject('EntityHelpers');

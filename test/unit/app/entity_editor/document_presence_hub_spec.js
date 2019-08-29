@@ -12,9 +12,7 @@ describe('entityEditor/Document/PresenceHub', () => {
   }
 
   beforeEach(async function() {
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     this.shout = sinon.stub();
 

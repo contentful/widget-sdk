@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $inject } from 'test/helpers/helpers';
+import { $initialize, $inject } from 'test/helpers/helpers';
 import { beforeEach, it } from 'test/helpers/dsl';
 
 describe('UserSpaceInvitationController', () => {
@@ -13,16 +13,10 @@ describe('UserSpaceInvitationController', () => {
       track: this.stubs.track
     });
 
-    const { default: register } = await this.system.import(
-      'access_control/UserSpaceInvitationController.es6'
-    );
-
-    module('contentful/test');
+    await $initialize(this.system);
 
     const $rootScope = $inject('$rootScope');
     const $controller = $inject('$controller');
-
-    register();
 
     const $timeout = $inject('$timeout');
     this.spaceContext = $inject('mocks/spaceContext').init();

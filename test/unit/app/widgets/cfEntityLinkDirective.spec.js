@@ -4,9 +4,7 @@ import { $initialize, $apply, $inject, $compile } from 'test/helpers/helpers';
 
 describe('cfEntityLink directive', () => {
   beforeEach(async function() {
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     const $q = $inject('$q');
     this.compile = function(entity, actions, config) {

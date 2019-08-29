@@ -9,9 +9,7 @@ describe('cfSnapshotSelector', () => {
   beforeEach(async function() {
     const moment = (await this.system.import('moment')).default;
 
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     const mockEntry = {
       sys: {

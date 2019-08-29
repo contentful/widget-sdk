@@ -3,12 +3,10 @@ import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
 
 describe('cfRatingEditor directive', () => {
   beforeEach(async function() {
-    module('contentful/test', $provide => {
+    await $initialize(this.system, $provide => {
       // Disable cfIcon directive
       $provide.value('cfIconDirective', {});
     });
-
-    await $initialize();
 
     this.widgetApi = $inject('mocks/widgetApi').create({
       settings: {

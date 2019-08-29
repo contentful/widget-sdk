@@ -23,9 +23,7 @@ describe('connectToWidgetAPI', () => {
       'app/widgets/WidgetApi/connectToWidgetApi.es6'
     );
 
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     this.widgetApi = $inject('mocks/widgetApi').create();
     this.widgetApi.fieldProperties.isDisabled$.set(true);

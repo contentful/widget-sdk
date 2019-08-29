@@ -4,9 +4,7 @@ import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
 
 describe('Number widgets', () => {
   beforeEach(async function() {
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     this.widgetApi = $inject('mocks/widgetApi').create();
 
@@ -80,9 +78,7 @@ describe('cfNumberEditor/parseNumber', () => {
   let parseNumber;
 
   beforeEach(async function() {
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     parseNumber = $inject('cfNumberEditor/parseNumber');
   });

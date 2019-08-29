@@ -1,12 +1,15 @@
-xdescribe('ApiNameController', () => {
-  beforeEach(function() {
-    module('contentful/test');
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
-    const $controller = this.$inject('$controller');
+describe('ApiNameController', () => {
+  beforeEach(async function() {
+    await $initialize(this.system);
 
-    this.modalDialog = this.$inject('modalDialog');
+    const $controller = $inject('$controller');
 
-    this.scope = this.$inject('$rootScope').$new();
+    this.modalDialog = $inject('modalDialog');
+
+    this.scope = $inject('$rootScope').$new();
     this.scope.field = { id: 'field-id' };
 
     this.getPublishedField = sinon.stub().returns({ id: 'field-id' });
@@ -15,13 +18,13 @@ xdescribe('ApiNameController', () => {
     };
 
     this.apiNameController = $controller('ApiNameController', { $scope: this.scope });
-    this.$apply();
+    $apply();
   });
 
   describe('isEditable()', () => {
     it('is true if field not published', function() {
       this.getPublishedField.returns(undefined);
-      this.$apply();
+      $apply();
       expect(this.apiNameController.isEditable()).toBe(true);
     });
 
@@ -29,21 +32,30 @@ xdescribe('ApiNameController', () => {
       expect(this.apiNameController.isEditable()).toBe(false);
     });
 
-    it('is true after confirmation', function*() {
+    it('is true after confirmation', async function() {
       const apiNameController = this.apiNameController;
 
-      this.modalDialog.open = sinon.stub().returns({ promise: this.resolve() });
+      this.modalDialog.open = sinon.stub().returns({ promise: Promise.resolve() });
 
-      yield apiNameController.unlockEditing();
+      await apiNameController.unlockEditing();
       expect(apiNameController.isEditable()).toBe(true);
     });
 
-    it('is false after unlock cancel', function*() {
+    it('is false after unlock cancel', async function() {
       const apiNameController = this.apiNameController;
+      const rejection = new Error('oops');
 
-      this.modalDialog.open = sinon.stub().returns({ promise: this.reject() });
+      this.modalDialog.open = sinon.stub().returns({ promise: Promise.reject(rejection) });
 
-      yield this.catchPromise(apiNameController.unlockEditing());
+      let err;
+
+      try {
+        await apiNameController.unlockEditing();
+      } catch (e) {
+        err = e;
+      }
+
+      expect(err).toEqual(rejection);
       expect(apiNameController.isEditable()).toBe(false);
     });
   });

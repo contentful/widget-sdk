@@ -51,7 +51,7 @@ describe('Gatekeeper Message Handler', () => {
 
     this.handle = (await this.system.import('account/handleGatekeeperMessage.es6')).default;
 
-    module('contentful/test', $provide => {
+    await $initialize(this.system, $provide => {
       $provide.constant('$state', this.stubs.$state);
       $provide.constant('$location', {
         url: this.stubs.$location_url
@@ -60,8 +60,6 @@ describe('Gatekeeper Message Handler', () => {
         open: this.stubs.modalDialog_open
       });
     });
-
-    await $initialize();
   });
 
   describe('actions on message', () => {

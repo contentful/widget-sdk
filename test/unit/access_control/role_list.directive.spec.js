@@ -88,18 +88,12 @@ describe('Role List Directive', () => {
       getOrganization: sinon.stub().resolves(this.organization)
     });
 
-    // const { default: register } = await this.system.import('access_control/RoleListDirective.es6');
-
-    // await this.system.set('access_control/RoleListDirective.es6', { default: () => {}})
-
     this.reset = sinon.stub().resolves({
       roles: this.roles,
       rolesResource: this.rolesResource
     });
 
-    const { default: register } = await this.system.import('access_control/RoleListController');
-
-    module('contentful/test', $provide => {
+    await $initialize(this.system, $provide => {
       $provide.constant('$state', { href: sinon.stub(), current: {} });
       $provide.constant('UserListHandler', {
         create: sinon.stub().returns({
@@ -109,11 +103,7 @@ describe('Role List Directive', () => {
       });
     });
 
-    await $initialize();
-
     const spaceContext = $inject('spaceContext');
-
-    register();
 
     spaceContext.organization = this.organization;
 

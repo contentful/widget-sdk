@@ -15,6 +15,440 @@ import uiFrameworkCfComponentBridgeDirectiveEs6 from 'ui/Framework/CfComponentBr
 import navigationSidepanelTriggerDirectiveEs6 from 'navigation/Sidepanel/TriggerDirective.es6';
 import navigationAccountDropdownDirectiveEs6 from 'navigation/accountDropdownDirective.es6';
 import componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6 from 'components/shared/persistent_notification/cfPersistentNotificationDirective.es6';
+
+export const angularInitRun = [
+  '$injector',
+  async $injector => {
+    angular.module('contentful/init').getModule = $injector.get;
+    angular.module('contentful/init').loaded = false;
+
+    // ClientController and cf-app-container must be available immediately for the app to
+    // load correctly. Its dependencies and the directives in the app container template
+    // are also required. The other modules below can be imported lazily.
+    servicesAuthorizationEs6();
+    servicesClientEs6();
+    classesSpaceContextEs6();
+    componentsClientClientControllerEs6();
+    statesConfigEs6();
+    componentsAppContainerCfAppContainerDirectiveEs6();
+    navigationSidepanelDirectiveEs6();
+    uiFrameworkCfComponentBridgeDirectiveEs6();
+    navigationSidepanelTriggerDirectiveEs6();
+    navigationAccountDropdownDirectiveEs6();
+    componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6();
+
+
+    const [
+      { default: analyticsAnalyticsConsoleEs6 },
+      { default: accessControlUserListHandlerEs6 },
+      { default: servicesModalDialogServiceEs6 },
+      { default: uiCommandEs6 },
+      { default: accessControlRoleRemoverEs6 },
+      { default: accessControlUsersUserListDirectiveEs6 },
+      { default: accessControlRoleListController },
+      { default: accessControlRoleListDirectiveEs6 },
+      { default: accessControlUserSpaceInvitationControllerEs6 },
+      { default: accountCfNewOrganizationMembershipEs6 },
+      { default: appContentModelEditorAddFieldDialogControllerEs6 },
+      { default: appContentModelEditorApiNameControllerEs6 },
+      { default: appContentModelEditorCfApiNameShadowDirectiveEs6 },
+      { default: navigationStateChangeHandlersEs6 },
+      { default: navigationCloseStateEs6 },
+      { default: componentsFieldDialogFieldDialogEs6 },
+      { default: appContentModelEditorContentTypeEditorControllerEs6 },
+      { default: appApiApiKeyListApiKeyListDirectiveEs6 },
+      { default: appEntityEditorEntityHelpersEs6 },
+      { default: searchListQueryEs6 },
+      { default: searchEntitySelectorEntitySelectorEs6 },
+      { default: componentsAppContainerEntityCreatorEs6 },
+      { default: appAssetEditorCfAssetEditorDirectiveEs6 },
+      { default: appEntityEditorBulkEditorCfBulkEditorDirectiveEs6 },
+      { default: appEntityEditorBulkEditorCfBulkEntityEditorDirectiveEs6 },
+      { default: appEntityEditorCfEntityFieldDirectiveEs6 },
+      { default: appEntityEditorCfTestEntryEditorDirectiveEs6 },
+      { default: appEntityEditorCfWidgetRendererDirectiveEs6 },
+      { default: appEntityEditorFieldLocaleControllerEs6 },
+      { default: appEntityEditorPresenceHubEs6 },
+      { default: appEntityEditorStateControllerEs6 },
+      { default: dataSharejsUtilsEs6 },
+      { default: appEntityEditorStringFieldEs6 },
+      { default: appEntryEditorCfEntryEditorDirectiveEs6 },
+      { default: appEntryEditorCfWidgetApiDirectiveEs6 },
+      { default: appEntryEditorEntryActionsControllerEs6 },
+      { default: appEntryEditorFormWidgetsControllerEs6 },
+      { default: appHomeCfTrackCopyEventEs6 },
+      { default: appHomeContactUsContactUsSpaceHomeDirectiveEs6 },
+      { default: appSnapshotsCfSnapshotPresenterEs6 },
+      { default: appSnapshotsCfSnapshotSelectorEs6 },
+      { default: appSnapshotsSnapshotComparatorEs6 },
+      { default: appWidgetsFileEditorController },
+      { default: appWidgetsCfBooleanEditorDirectiveEs6 },
+      { default: appWidgetsCfCheckboxEditorDirectiveEs6 },
+      { default: appWidgetsCfFileEditorDirectiveEs6 },
+      { default: appWidgetsCfListInputEditorDirectiveEs6 },
+      { default: appWidgetsCfRatingEditorDirectiveEs6 },
+      { default: appWidgetsDatetimeCfEntryDatetimeEditorDirectiveEs6 },
+      { default: appWidgetsJsonCfJsonEditorCodeEditorDirectiveEs6 },
+      { default: appWidgetsJsonCfJsonEditorDirectiveEs6 },
+      { default: appWidgetsLinkEntityLinkDirectivesEs6 },
+      { default: appWidgetsLocationCfLocationEditorDirectiveEs6 },
+      { default: appWidgetsLocationSearchControllerEs6 },
+      { default: appWidgetsNumberCfNumberEditorDirectiveEs6 },
+      { default: appWidgetsRadioCfRadioEditorDirectiveEs6 },
+      { default: appWidgetsSharedCfEditorCharacterInfoDirectiveEs6 },
+      { default: appWidgetsSlugSlugEditorController },
+      { default: appWidgetsSlugCfSlugEditorDirectiveEs6 },
+      { default: appWidgetsUrlUrlEditorController },
+      { default: appWidgetsUrlCfUrlEditorDirectiveEs6 },
+      { default: classesEntityListCacheEs6 },
+      { default: componentsCreateEntryButtonButtonDirectiveEs6 },
+      { default: servicesActivationEmailResenderEs6 },
+      { default: componentsClientActivationEmailResendControllerEs6 },
+      { default: componentsClientDialogsInitControllerEs6 },
+      { default: componentsFieldDialogCfValidationDateSelectDirectiveEs6 },
+      { default: componentsFieldDialogCfValidationSettingsDirectiveEs6 },
+      { default: componentsFieldDialogImageDimensionsValidationControllerEs6 },
+      { default: componentsFieldDialogValidationAssetTypesControllerEs6 },
+      { default: componentsFieldDialogValidationLinkTypeControllerEs6 },
+      { default: componentsFormsDatetimeEditorCfDatetimeEditorDirectiveEs6 },
+      { default: componentsFormsEmbedlyPreviewCfEmbedlyPreviewDirectiveEs6 },
+      { default: componentsFormsFieldAlertCfFieldAlertDirectiveEs6 },
+      { default: componentsRolesCfRolesForWalkMeEs6 },
+      { default: componentsSharedCfImgLoadEventEs6 },
+      { default: componentsSharedCfSelectionDirectiveEs6 },
+      { default: servicesContentfulClientEs6 },
+      { default: componentsSharedCreateNewSpaceCreateNewSpaceDirectiveEs6 },
+      { default: componentsSharedDataSizeScaleControllerEs6 },
+      { default: componentsSharedEndlessContainerDirectiveEs6 },
+      { default: componentsSharedListViewsControllerEs6 },
+      { default: componentsSharedSpaceWizardSpaceWizardDirectiveEs6 },
+      { default: componentsSharedValidationErrorDisplayCfErrorListDirectiveEs6 },
+      { default: componentsSharedValidationErrorDisplayCfErrorMessagesDirectiveEs6 },
+      { default: componentsSharedValidationErrorDisplayCfErrorPathDirectiveEs6 },
+      { default: componentsSharedValidationErrorDisplayErrorPathControllerEs6 },
+      { default: componentsSharedViewStateControllerEs6 },
+      { default: componentsTabsAssetListAssetListActionsControllerEs6 },
+      { default: componentsTabsAssetListAssetListControllerEs6 },
+      { default: componentsTabsAssetListAssetListDirectiveEs6 },
+      { default: servicesPromisedLoaderEs6 },
+      { default: componentsTabsAssetListAssetSearchControllerEs6 },
+      { default: componentsTabsEntryListDisplayFieldsControllerEs6 },
+      { default: componentsTabsEntryListEntryListActionsControllerEs6 },
+      { default: componentsTabsEntryListEntryListColumnsControllerEs6 },
+      { default: componentsTabsEntryListEntryListControllerEs6 },
+      { default: componentsTabsEntryListEntryListDirectiveEs6 },
+      { default: utilsOverridingRequestQueueEs6 },
+      { default: componentsTabsEntryListEntryListSearchControllerEs6 },
+      { default: servicesBatchPerformerEs6 },
+      { default: componentsTabsListActionsControllerEs6 },
+      { default: debugXhrCfMockXhrConsoleDirectiveEs6 },
+      { default: directivesBindHtmlCompileDirectiveEs6 },
+      { default: directivesCfFocusOnRenderDirectiveEs6 },
+      { default: directivesCfFocusOtInputDirectiveEs6 },
+      { default: directivesCfSchemaDirectivesEs6 },
+      { default: directivesCfThumbnailDirectiveEs6 },
+      { default: directivesCfValidateDirectiveEs6 },
+      { default: directivesCfWhenDisabledEs6 },
+      { default: directivesTooltipDirectiveEs6 },
+      { default: directivesWatchersTogglerDirectiveEs6 },
+      { default: filtersEs6 },
+      { default: formsErrorsEs6 },
+      { default: formsValidationEs6 },
+      { default: formsEs6 },
+      { default: markdownEditorCfMarkdownActionDirectiveEs6 },
+      { default: markdownEditorCfMarkdownEditorDirectiveEs6 },
+      { default: markdownEditorCfZenmodeDirectiveEs6 },
+      { default: markdownEditorMarkdownPreviewDirectiveEs6 },
+      { default: navigationBreadcrumbsBreadcrumbDirectiveEs6 },
+      { default: navigationOrganizationNavDirectiveEs6 },
+      { default: navigationProfileNavDirectiveEs6 },
+      { default: navigationSpaceNavBarDirectiveEs6 },
+      { default: searchEntitySelectorEntitySelectorControllerEs6 },
+      { default: searchEntitySelectorEntitySelectorDirectiveEs6 },
+      { default: servicesExceptionHandlerEs6 },
+      { default: statesCfSrefDirectiveEs6 },
+      { default: uiFrameworkReactDirectiveEs6 },
+      { default: uiCfIconDirectiveEs6 },
+      { default: uiCfUiStickyEs6 },
+      { default: uiCfUiTabEs6 },
+      { default: uiHighlightMatchDirectiveEs6 },
+      { default: uiLoaderEs6 }
+    ] = await Promise.all([
+      import('analytics/analyticsConsole.es6'),
+      import('access_control/UserListHandler.es6'),
+      import('services/modalDialogService.es6'),
+      import('ui/command.es6'),
+      import('access_control/RoleRemover.es6'),
+      import('access_control/Users/UserListDirective.es6'),
+      import('access_control/RoleListController'),
+      import('access_control/RoleListDirective.es6'),
+      import('access_control/UserSpaceInvitationController.es6'),
+      import('account/cfNewOrganizationMembership.es6'),
+      import('app/ContentModel/Editor/addFieldDialogController.es6'),
+      import('app/ContentModel/Editor/apiNameController.es6'),
+      import('app/ContentModel/Editor/cfApiNameShadowDirective.es6'),
+      import('navigation/stateChangeHandlers.es6'),
+      import('navigation/closeState.es6'),
+      import('components/field_dialog/fieldDialog.es6'),
+      import('app/ContentModel/Editor/contentTypeEditorController.es6'),
+      import('app/api/api_key_list/apiKeyListDirective.es6'),
+      import('app/entity_editor/entityHelpers.es6'),
+      import('search/listQuery.es6'),
+      import('search/EntitySelector/entitySelector.es6'),
+      import('components/app_container/entityCreator.es6'),
+      import('app/asset_editor/cfAssetEditorDirective.es6'),
+      import('app/entity_editor/bulk_editor/cfBulkEditorDirective.es6'),
+      import('app/entity_editor/bulk_editor/cfBulkEntityEditorDirective.es6'),
+      import('app/entity_editor/cfEntityFieldDirective.es6'),
+      import('app/entity_editor/cfTestEntryEditorDirective.es6'),
+      import('app/entity_editor/cfWidgetRendererDirective.es6'),
+      import('app/entity_editor/fieldLocaleController.es6'),
+      import('app/entity_editor/presenceHub.es6'),
+      import('app/entity_editor/stateController.es6'),
+      import('data/sharejs/utils.es6'),
+      import('app/entity_editor/stringField.es6'),
+      import('app/entry_editor/cfEntryEditorDirective.es6'),
+      import('app/entry_editor/cfWidgetApiDirective.es6'),
+      import('app/entry_editor/entryActionsController.es6'),
+      import('app/entry_editor/formWidgetsController.es6'),
+      import('app/home/cfTrackCopyEvent.es6'),
+      import('app/home/contactUs/contactUsSpaceHomeDirective.es6'),
+      import('app/snapshots/cfSnapshotPresenter.es6'),
+      import('app/snapshots/cfSnapshotSelector.es6'),
+      import('app/snapshots/snapshotComparator.es6'),
+      import('app/widgets/FileEditorController'),
+      import('app/widgets/cfBooleanEditorDirective.es6'),
+      import('app/widgets/cfCheckboxEditorDirective.es6'),
+      import('app/widgets/cfFileEditorDirective.es6'),
+      import('app/widgets/cfListInputEditorDirective.es6'),
+      import('app/widgets/cfRatingEditorDirective.es6'),
+      import('app/widgets/datetime/cfEntryDatetimeEditorDirective.es6'),
+      import('app/widgets/json/cfJsonEditorCodeEditorDirective.es6'),
+      import('app/widgets/json/cfJsonEditorDirective.es6'),
+      import('app/widgets/link/entityLinkDirectives.es6'),
+      import('app/widgets/location/cfLocationEditorDirective.es6'),
+      import('app/widgets/location/searchController.es6'),
+      import('app/widgets/number/cfNumberEditorDirective.es6'),
+      import('app/widgets/radio/cfRadioEditorDirective.es6'),
+      import('app/widgets/shared/cfEditorCharacterInfoDirective.es6'),
+      import('app/widgets/slug/SlugEditorController'),
+      import('app/widgets/slug/cfSlugEditorDirective.es6'),
+      import('app/widgets/url/UrlEditorController'),
+      import('app/widgets/url/cfUrlEditorDirective.es6'),
+      import('classes/entityListCache.es6'),
+      import('components/CreateEntryButton/buttonDirective.es6'),
+      import('services/activationEmailResender.es6'),
+      import('components/client/activationEmailResendController.es6'),
+      import('components/client/dialogsInitController.es6'),
+      import('components/field_dialog/cfValidationDateSelectDirective.es6'),
+      import('components/field_dialog/cfValidationSettingsDirective.es6'),
+      import('components/field_dialog/imageDimensionsValidationController.es6'),
+      import('components/field_dialog/validationAssetTypesController.es6'),
+      import('components/field_dialog/validationLinkTypeController.es6'),
+      import('components/forms/datetime_editor/cfDatetimeEditorDirective.es6'),
+      import('components/forms/embedly_preview/cfEmbedlyPreviewDirective.es6'),
+      import('components/forms/field_alert/cfFieldAlertDirective.es6'),
+      import('components/roles/cfRolesForWalkMe.es6'),
+      import('components/shared/cfImgLoadEvent.es6'),
+      import('components/shared/cfSelectionDirective.es6'),
+      import('services/contentfulClient.es6'),
+      import('components/shared/create_new_space/createNewSpaceDirective.es6'),
+      import('components/shared/dataSizeScaleController.es6'),
+      import('components/shared/endlessContainerDirective.es6'),
+      import('components/shared/listViewsController.es6'),
+      import('components/shared/space-wizard/SpaceWizardDirective.es6'),
+      import('components/shared/validation_error_display/cfErrorListDirective.es6'),
+      import('components/shared/validation_error_display/cfErrorMessagesDirective.es6'),
+      import('components/shared/validation_error_display/cfErrorPathDirective.es6'),
+      import('components/shared/validation_error_display/errorPathController.es6'),
+      import('components/shared/viewStateController.es6'),
+      import('components/tabs/asset_list/assetListActionsController.es6'),
+      import('components/tabs/asset_list/assetListController.es6'),
+      import('components/tabs/asset_list/assetListDirective.es6'),
+      import('services/promisedLoader.es6'),
+      import('components/tabs/asset_list/assetSearchController.es6'),
+      import('components/tabs/entry_list/displayFieldsController.es6'),
+      import('components/tabs/entry_list/entryListActionsController.es6'),
+      import('components/tabs/entry_list/entryListColumnsController.es6'),
+      import('components/tabs/entry_list/entryListController.es6'),
+      import('components/tabs/entry_list/entryListDirective.es6'),
+      import('utils/overridingRequestQueue.es6'),
+      import('components/tabs/entry_list/entryListSearchController.es6'),
+      import('services/batchPerformer.es6'),
+      import('components/tabs/listActionsController.es6'),
+      import('debug/XHR/cfMockXhrConsoleDirective.es6'),
+      import('directives/bindHtmlCompileDirective.es6'),
+      import('directives/cfFocusOnRenderDirective.es6'),
+      import('directives/cfFocusOtInputDirective.es6'),
+      import('directives/cfSchemaDirectives.es6'),
+      import('directives/cfThumbnailDirective.es6'),
+      import('directives/cfValidateDirective.es6'),
+      import('directives/cfWhenDisabled.es6'),
+      import('directives/tooltipDirective.es6'),
+      import('directives/watchersTogglerDirective.es6'),
+      import('filters.es6'),
+      import('forms/errors.es6'),
+      import('forms/validation.es6'),
+      import('forms.es6'),
+      import('markdown_editor/cfMarkdownActionDirective.es6'),
+      import('markdown_editor/cfMarkdownEditorDirective.es6'),
+      import('markdown_editor/cfZenmodeDirective.es6'),
+      import('markdown_editor/markdownPreviewDirective.es6'),
+      import('navigation/Breadcrumbs/BreadcrumbDirective.es6'),
+      import('navigation/organizationNavDirective.es6'),
+      import('navigation/profileNavDirective.es6'),
+      import('navigation/spaceNavBarDirective.es6'),
+      import('search/EntitySelector/entitySelectorController.es6'),
+      import('search/EntitySelector/entitySelectorDirective.es6'),
+      import('services/exceptionHandler.es6'),
+      import('states/cfSrefDirective.es6'),
+      import('ui/Framework/ReactDirective.es6'),
+      import('ui/cfIconDirective.es6'),
+      import('ui/cfUiSticky.es6'),
+      import('ui/cfUiTab.es6'),
+      import('ui/highlightMatchDirective.es6'),
+      import('ui/loader.es6')
+    ]);
+
+    analyticsAnalyticsConsoleEs6();
+    accessControlUserListHandlerEs6();
+    servicesModalDialogServiceEs6();
+    uiCommandEs6();
+    accessControlRoleRemoverEs6();
+    accessControlUsersUserListDirectiveEs6();
+    accessControlRoleListController();
+    accessControlRoleListDirectiveEs6();
+    accessControlUserSpaceInvitationControllerEs6();
+    accountCfNewOrganizationMembershipEs6();
+    appContentModelEditorAddFieldDialogControllerEs6();
+    appContentModelEditorApiNameControllerEs6();
+    appContentModelEditorCfApiNameShadowDirectiveEs6();
+    navigationStateChangeHandlersEs6();
+    navigationCloseStateEs6();
+    componentsFieldDialogFieldDialogEs6();
+    appContentModelEditorContentTypeEditorControllerEs6();
+    appApiApiKeyListApiKeyListDirectiveEs6();
+    appEntityEditorEntityHelpersEs6();
+    searchListQueryEs6();
+    searchEntitySelectorEntitySelectorEs6();
+    componentsAppContainerEntityCreatorEs6();
+    appAssetEditorCfAssetEditorDirectiveEs6();
+    appEntityEditorBulkEditorCfBulkEditorDirectiveEs6();
+    appEntityEditorBulkEditorCfBulkEntityEditorDirectiveEs6();
+    appEntityEditorCfEntityFieldDirectiveEs6();
+    appEntityEditorCfTestEntryEditorDirectiveEs6();
+    appEntityEditorCfWidgetRendererDirectiveEs6();
+    appEntityEditorFieldLocaleControllerEs6();
+    appEntityEditorPresenceHubEs6();
+    appEntityEditorStateControllerEs6();
+    dataSharejsUtilsEs6();
+    appEntityEditorStringFieldEs6();
+    appEntryEditorCfEntryEditorDirectiveEs6();
+    appEntryEditorCfWidgetApiDirectiveEs6();
+    appEntryEditorEntryActionsControllerEs6();
+    appEntryEditorFormWidgetsControllerEs6();
+    appHomeCfTrackCopyEventEs6();
+    appHomeContactUsContactUsSpaceHomeDirectiveEs6();
+    appSnapshotsCfSnapshotPresenterEs6();
+    appSnapshotsCfSnapshotSelectorEs6();
+    appSnapshotsSnapshotComparatorEs6();
+    appWidgetsFileEditorController();
+    appWidgetsCfBooleanEditorDirectiveEs6();
+    appWidgetsCfCheckboxEditorDirectiveEs6();
+    appWidgetsCfFileEditorDirectiveEs6();
+    appWidgetsCfListInputEditorDirectiveEs6();
+    appWidgetsCfRatingEditorDirectiveEs6();
+    appWidgetsDatetimeCfEntryDatetimeEditorDirectiveEs6();
+    appWidgetsJsonCfJsonEditorCodeEditorDirectiveEs6();
+    appWidgetsJsonCfJsonEditorDirectiveEs6();
+    appWidgetsLinkEntityLinkDirectivesEs6();
+    appWidgetsLocationCfLocationEditorDirectiveEs6();
+    appWidgetsLocationSearchControllerEs6();
+    appWidgetsNumberCfNumberEditorDirectiveEs6();
+    appWidgetsRadioCfRadioEditorDirectiveEs6();
+    appWidgetsSharedCfEditorCharacterInfoDirectiveEs6();
+    appWidgetsSlugSlugEditorController();
+    appWidgetsSlugCfSlugEditorDirectiveEs6();
+    appWidgetsUrlUrlEditorController();
+    appWidgetsUrlCfUrlEditorDirectiveEs6();
+    classesEntityListCacheEs6();
+    componentsCreateEntryButtonButtonDirectiveEs6();
+    servicesActivationEmailResenderEs6();
+    componentsClientActivationEmailResendControllerEs6();
+    componentsClientDialogsInitControllerEs6();
+    componentsFieldDialogCfValidationDateSelectDirectiveEs6();
+    componentsFieldDialogCfValidationSettingsDirectiveEs6();
+    componentsFieldDialogImageDimensionsValidationControllerEs6();
+    componentsFieldDialogValidationAssetTypesControllerEs6();
+    componentsFieldDialogValidationLinkTypeControllerEs6();
+    componentsFormsDatetimeEditorCfDatetimeEditorDirectiveEs6();
+    componentsFormsEmbedlyPreviewCfEmbedlyPreviewDirectiveEs6();
+    componentsFormsFieldAlertCfFieldAlertDirectiveEs6();
+    componentsRolesCfRolesForWalkMeEs6();
+    componentsSharedCfImgLoadEventEs6();
+    componentsSharedCfSelectionDirectiveEs6();
+    servicesContentfulClientEs6();
+    componentsSharedCreateNewSpaceCreateNewSpaceDirectiveEs6();
+    componentsSharedDataSizeScaleControllerEs6();
+    componentsSharedEndlessContainerDirectiveEs6();
+    componentsSharedListViewsControllerEs6();
+    componentsSharedSpaceWizardSpaceWizardDirectiveEs6();
+    componentsSharedValidationErrorDisplayCfErrorListDirectiveEs6();
+    componentsSharedValidationErrorDisplayCfErrorMessagesDirectiveEs6();
+    componentsSharedValidationErrorDisplayCfErrorPathDirectiveEs6();
+    componentsSharedValidationErrorDisplayErrorPathControllerEs6();
+    componentsSharedViewStateControllerEs6();
+    componentsTabsAssetListAssetListActionsControllerEs6();
+    componentsTabsAssetListAssetListControllerEs6();
+    componentsTabsAssetListAssetListDirectiveEs6();
+    servicesPromisedLoaderEs6();
+    componentsTabsAssetListAssetSearchControllerEs6();
+    componentsTabsEntryListDisplayFieldsControllerEs6();
+    componentsTabsEntryListEntryListActionsControllerEs6();
+    componentsTabsEntryListEntryListColumnsControllerEs6();
+    componentsTabsEntryListEntryListControllerEs6();
+    componentsTabsEntryListEntryListDirectiveEs6();
+    utilsOverridingRequestQueueEs6();
+    componentsTabsEntryListEntryListSearchControllerEs6();
+    servicesBatchPerformerEs6();
+    componentsTabsListActionsControllerEs6();
+    debugXhrCfMockXhrConsoleDirectiveEs6();
+    directivesBindHtmlCompileDirectiveEs6();
+    directivesCfFocusOnRenderDirectiveEs6();
+    directivesCfFocusOtInputDirectiveEs6();
+    directivesCfSchemaDirectivesEs6();
+    directivesCfThumbnailDirectiveEs6();
+    directivesCfValidateDirectiveEs6();
+    directivesCfWhenDisabledEs6();
+    directivesTooltipDirectiveEs6();
+    directivesWatchersTogglerDirectiveEs6();
+    filtersEs6();
+    formsErrorsEs6();
+    formsValidationEs6();
+    formsEs6();
+    markdownEditorCfMarkdownActionDirectiveEs6();
+    markdownEditorCfMarkdownEditorDirectiveEs6();
+    markdownEditorCfZenmodeDirectiveEs6();
+    markdownEditorMarkdownPreviewDirectiveEs6();
+    navigationBreadcrumbsBreadcrumbDirectiveEs6();
+    navigationOrganizationNavDirectiveEs6();
+    navigationProfileNavDirectiveEs6();
+    navigationSpaceNavBarDirectiveEs6();
+    searchEntitySelectorEntitySelectorControllerEs6();
+    searchEntitySelectorEntitySelectorDirectiveEs6();
+    servicesExceptionHandlerEs6();
+    statesCfSrefDirectiveEs6();
+    uiFrameworkReactDirectiveEs6();
+    uiCfIconDirectiveEs6();
+    uiCfUiStickyEs6();
+    uiCfUiTabEs6();
+    uiHighlightMatchDirectiveEs6();
+    uiLoaderEs6();
+
+    angular.module('contentful/init').loaded = true;
+  }
+];
+
 export default angular
   .module('contentful/init', [])
   .config([
@@ -35,435 +469,4 @@ export default angular
       };
     }
   ])
-  .run([
-    '$injector',
-    async $injector => {
-      angular.module('contentful/init').getModule = $injector.get;
-      angular.module('contentful/init').loaded = false;
-
-      // ClientController and cf-app-container must be available immediately for the app to
-      // load correctly. Its dependencies and the directives in the app container template
-      // are also required. The other modules below can be imported lazily.
-      servicesAuthorizationEs6();
-      servicesClientEs6();
-      classesSpaceContextEs6();
-      componentsClientClientControllerEs6();
-      statesConfigEs6();
-      componentsAppContainerCfAppContainerDirectiveEs6();
-      navigationSidepanelDirectiveEs6();
-      uiFrameworkCfComponentBridgeDirectiveEs6();
-      navigationSidepanelTriggerDirectiveEs6();
-      navigationAccountDropdownDirectiveEs6();
-      componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6();
-
-
-      const [
-        { default: analyticsAnalyticsConsoleEs6 },
-        { default: accessControlUserListHandlerEs6 },
-        { default: servicesModalDialogServiceEs6 },
-        { default: uiCommandEs6 },
-        { default: accessControlRoleRemoverEs6 },
-        { default: accessControlUsersUserListDirectiveEs6 },
-        { default: accessControlRoleListController },
-        { default: accessControlRoleListDirectiveEs6 },
-        { default: accessControlUserSpaceInvitationControllerEs6 },
-        { default: accountCfNewOrganizationMembershipEs6 },
-        { default: appContentModelEditorAddFieldDialogControllerEs6 },
-        { default: appContentModelEditorApiNameControllerEs6 },
-        { default: appContentModelEditorCfApiNameShadowDirectiveEs6 },
-        { default: navigationStateChangeHandlersEs6 },
-        { default: navigationCloseStateEs6 },
-        { default: componentsFieldDialogFieldDialogEs6 },
-        { default: appContentModelEditorContentTypeEditorControllerEs6 },
-        { default: appApiApiKeyListApiKeyListDirectiveEs6 },
-        { default: appEntityEditorEntityHelpersEs6 },
-        { default: searchListQueryEs6 },
-        { default: searchEntitySelectorEntitySelectorEs6 },
-        { default: componentsAppContainerEntityCreatorEs6 },
-        { default: appAssetEditorCfAssetEditorDirectiveEs6 },
-        { default: appEntityEditorBulkEditorCfBulkEditorDirectiveEs6 },
-        { default: appEntityEditorBulkEditorCfBulkEntityEditorDirectiveEs6 },
-        { default: appEntityEditorCfEntityFieldDirectiveEs6 },
-        { default: appEntityEditorCfTestEntryEditorDirectiveEs6 },
-        { default: appEntityEditorCfWidgetRendererDirectiveEs6 },
-        { default: appEntityEditorFieldLocaleControllerEs6 },
-        { default: appEntityEditorPresenceHubEs6 },
-        { default: appEntityEditorStateControllerEs6 },
-        { default: dataSharejsUtilsEs6 },
-        { default: appEntityEditorStringFieldEs6 },
-        { default: appEntryEditorCfEntryEditorDirectiveEs6 },
-        { default: appEntryEditorCfWidgetApiDirectiveEs6 },
-        { default: appEntryEditorEntryActionsControllerEs6 },
-        { default: appEntryEditorFormWidgetsControllerEs6 },
-        { default: appHomeCfTrackCopyEventEs6 },
-        { default: appHomeContactUsContactUsSpaceHomeDirectiveEs6 },
-        { default: appSnapshotsCfSnapshotPresenterEs6 },
-        { default: appSnapshotsCfSnapshotSelectorEs6 },
-        { default: appSnapshotsSnapshotComparatorEs6 },
-        { default: appWidgetsFileEditorController },
-        { default: appWidgetsCfBooleanEditorDirectiveEs6 },
-        { default: appWidgetsCfCheckboxEditorDirectiveEs6 },
-        { default: appWidgetsCfFileEditorDirectiveEs6 },
-        { default: appWidgetsCfListInputEditorDirectiveEs6 },
-        { default: appWidgetsCfRatingEditorDirectiveEs6 },
-        { default: appWidgetsDatetimeCfEntryDatetimeEditorDirectiveEs6 },
-        { default: appWidgetsJsonCfJsonEditorCodeEditorDirectiveEs6 },
-        { default: appWidgetsJsonCfJsonEditorDirectiveEs6 },
-        { default: appWidgetsLinkEntityLinkDirectivesEs6 },
-        { default: appWidgetsLocationCfLocationEditorDirectiveEs6 },
-        { default: appWidgetsLocationSearchControllerEs6 },
-        { default: appWidgetsNumberCfNumberEditorDirectiveEs6 },
-        { default: appWidgetsRadioCfRadioEditorDirectiveEs6 },
-        { default: appWidgetsSharedCfEditorCharacterInfoDirectiveEs6 },
-        { default: appWidgetsSlugSlugEditorController },
-        { default: appWidgetsSlugCfSlugEditorDirectiveEs6 },
-        { default: appWidgetsUrlUrlEditorController },
-        { default: appWidgetsUrlCfUrlEditorDirectiveEs6 },
-        { default: classesEntityListCacheEs6 },
-        { default: componentsCreateEntryButtonButtonDirectiveEs6 },
-        { default: servicesActivationEmailResenderEs6 },
-        { default: componentsClientActivationEmailResendControllerEs6 },
-        { default: componentsClientDialogsInitControllerEs6 },
-        { default: componentsFieldDialogCfValidationDateSelectDirectiveEs6 },
-        { default: componentsFieldDialogCfValidationSettingsDirectiveEs6 },
-        { default: componentsFieldDialogImageDimensionsValidationControllerEs6 },
-        { default: componentsFieldDialogValidationAssetTypesControllerEs6 },
-        { default: componentsFieldDialogValidationLinkTypeControllerEs6 },
-        { default: componentsFormsDatetimeEditorCfDatetimeEditorDirectiveEs6 },
-        { default: componentsFormsEmbedlyPreviewCfEmbedlyPreviewDirectiveEs6 },
-        { default: componentsFormsFieldAlertCfFieldAlertDirectiveEs6 },
-        { default: componentsRolesCfRolesForWalkMeEs6 },
-        { default: componentsSharedCfImgLoadEventEs6 },
-        { default: componentsSharedCfSelectionDirectiveEs6 },
-        { default: servicesContentfulClientEs6 },
-        { default: componentsSharedCreateNewSpaceCreateNewSpaceDirectiveEs6 },
-        { default: componentsSharedDataSizeScaleControllerEs6 },
-        { default: componentsSharedEndlessContainerDirectiveEs6 },
-        { default: componentsSharedListViewsControllerEs6 },
-        { default: componentsSharedSpaceWizardSpaceWizardDirectiveEs6 },
-        { default: componentsSharedValidationErrorDisplayCfErrorListDirectiveEs6 },
-        { default: componentsSharedValidationErrorDisplayCfErrorMessagesDirectiveEs6 },
-        { default: componentsSharedValidationErrorDisplayCfErrorPathDirectiveEs6 },
-        { default: componentsSharedValidationErrorDisplayErrorPathControllerEs6 },
-        { default: componentsSharedViewStateControllerEs6 },
-        { default: componentsTabsAssetListAssetListActionsControllerEs6 },
-        { default: componentsTabsAssetListAssetListControllerEs6 },
-        { default: componentsTabsAssetListAssetListDirectiveEs6 },
-        { default: servicesPromisedLoaderEs6 },
-        { default: componentsTabsAssetListAssetSearchControllerEs6 },
-        { default: componentsTabsEntryListDisplayFieldsControllerEs6 },
-        { default: componentsTabsEntryListEntryListActionsControllerEs6 },
-        { default: componentsTabsEntryListEntryListColumnsControllerEs6 },
-        { default: componentsTabsEntryListEntryListControllerEs6 },
-        { default: componentsTabsEntryListEntryListDirectiveEs6 },
-        { default: utilsOverridingRequestQueueEs6 },
-        { default: componentsTabsEntryListEntryListSearchControllerEs6 },
-        { default: servicesBatchPerformerEs6 },
-        { default: componentsTabsListActionsControllerEs6 },
-        { default: debugXhrCfMockXhrConsoleDirectiveEs6 },
-        { default: directivesBindHtmlCompileDirectiveEs6 },
-        { default: directivesCfFocusOnRenderDirectiveEs6 },
-        { default: directivesCfFocusOtInputDirectiveEs6 },
-        { default: directivesCfSchemaDirectivesEs6 },
-        { default: directivesCfThumbnailDirectiveEs6 },
-        { default: directivesCfValidateDirectiveEs6 },
-        { default: directivesCfWhenDisabledEs6 },
-        { default: directivesTooltipDirectiveEs6 },
-        { default: directivesWatchersTogglerDirectiveEs6 },
-        { default: filtersEs6 },
-        { default: formsErrorsEs6 },
-        { default: formsValidationEs6 },
-        { default: formsEs6 },
-        { default: markdownEditorCfMarkdownActionDirectiveEs6 },
-        { default: markdownEditorCfMarkdownEditorDirectiveEs6 },
-        { default: markdownEditorCfZenmodeDirectiveEs6 },
-        { default: markdownEditorMarkdownPreviewDirectiveEs6 },
-        { default: navigationBreadcrumbsBreadcrumbDirectiveEs6 },
-        { default: navigationOrganizationNavDirectiveEs6 },
-        { default: navigationProfileNavDirectiveEs6 },
-        { default: navigationSpaceNavBarDirectiveEs6 },
-        { default: searchEntitySelectorEntitySelectorControllerEs6 },
-        { default: searchEntitySelectorEntitySelectorDirectiveEs6 },
-        { default: servicesExceptionHandlerEs6 },
-        { default: statesCfSrefDirectiveEs6 },
-        { default: uiFrameworkReactDirectiveEs6 },
-        { default: uiCfIconDirectiveEs6 },
-        { default: uiCfUiStickyEs6 },
-        { default: uiCfUiTabEs6 },
-        { default: uiHighlightMatchDirectiveEs6 },
-        { default: uiLoaderEs6 }
-      ] = await Promise.all([
-        import('analytics/analyticsConsole.es6'),
-        import('access_control/UserListHandler.es6'),
-        import('services/modalDialogService.es6'),
-        import('ui/command.es6'),
-        import('access_control/RoleRemover.es6'),
-        import('access_control/Users/UserListDirective.es6'),
-        import('access_control/RoleListController'),
-        import('access_control/RoleListDirective.es6'),
-        import('access_control/UserSpaceInvitationController.es6'),
-        import('account/cfNewOrganizationMembership.es6'),
-        import('app/ContentModel/Editor/addFieldDialogController.es6'),
-        import('app/ContentModel/Editor/apiNameController.es6'),
-        import('app/ContentModel/Editor/cfApiNameShadowDirective.es6'),
-        import('navigation/stateChangeHandlers.es6'),
-        import('navigation/closeState.es6'),
-        import('components/field_dialog/fieldDialog.es6'),
-        import('app/ContentModel/Editor/contentTypeEditorController.es6'),
-        import('app/api/api_key_list/apiKeyListDirective.es6'),
-        import('app/entity_editor/entityHelpers.es6'),
-        import('search/listQuery.es6'),
-        import('search/EntitySelector/entitySelector.es6'),
-        import('components/app_container/entityCreator.es6'),
-        import('app/asset_editor/cfAssetEditorDirective.es6'),
-        import('app/entity_editor/bulk_editor/cfBulkEditorDirective.es6'),
-        import('app/entity_editor/bulk_editor/cfBulkEntityEditorDirective.es6'),
-        import('app/entity_editor/cfEntityFieldDirective.es6'),
-        import('app/entity_editor/cfTestEntryEditorDirective.es6'),
-        import('app/entity_editor/cfWidgetRendererDirective.es6'),
-        import('app/entity_editor/fieldLocaleController.es6'),
-        import('app/entity_editor/presenceHub.es6'),
-        import('app/entity_editor/stateController.es6'),
-        import('data/sharejs/utils.es6'),
-        import('app/entity_editor/stringField.es6'),
-        import('app/entry_editor/cfEntryEditorDirective.es6'),
-        import('app/entry_editor/cfWidgetApiDirective.es6'),
-        import('app/entry_editor/entryActionsController.es6'),
-        import('app/entry_editor/formWidgetsController.es6'),
-        import('app/home/cfTrackCopyEvent.es6'),
-        import('app/home/contactUs/contactUsSpaceHomeDirective.es6'),
-        import('app/snapshots/cfSnapshotPresenter.es6'),
-        import('app/snapshots/cfSnapshotSelector.es6'),
-        import('app/snapshots/snapshotComparator.es6'),
-        import('app/widgets/FileEditorController'),
-        import('app/widgets/cfBooleanEditorDirective.es6'),
-        import('app/widgets/cfCheckboxEditorDirective.es6'),
-        import('app/widgets/cfFileEditorDirective.es6'),
-        import('app/widgets/cfListInputEditorDirective.es6'),
-        import('app/widgets/cfRatingEditorDirective.es6'),
-        import('app/widgets/datetime/cfEntryDatetimeEditorDirective.es6'),
-        import('app/widgets/json/cfJsonEditorCodeEditorDirective.es6'),
-        import('app/widgets/json/cfJsonEditorDirective.es6'),
-        import('app/widgets/link/entityLinkDirectives.es6'),
-        import('app/widgets/location/cfLocationEditorDirective.es6'),
-        import('app/widgets/location/searchController.es6'),
-        import('app/widgets/number/cfNumberEditorDirective.es6'),
-        import('app/widgets/radio/cfRadioEditorDirective.es6'),
-        import('app/widgets/shared/cfEditorCharacterInfoDirective.es6'),
-        import('app/widgets/slug/SlugEditorController'),
-        import('app/widgets/slug/cfSlugEditorDirective.es6'),
-        import('app/widgets/url/UrlEditorController'),
-        import('app/widgets/url/cfUrlEditorDirective.es6'),
-        import('classes/entityListCache.es6'),
-        import('components/CreateEntryButton/buttonDirective.es6'),
-        import('services/activationEmailResender.es6'),
-        import('components/client/activationEmailResendController.es6'),
-        import('components/client/dialogsInitController.es6'),
-        import('components/field_dialog/cfValidationDateSelectDirective.es6'),
-        import('components/field_dialog/cfValidationSettingsDirective.es6'),
-        import('components/field_dialog/imageDimensionsValidationController.es6'),
-        import('components/field_dialog/validationAssetTypesController.es6'),
-        import('components/field_dialog/validationLinkTypeController.es6'),
-        import('components/forms/datetime_editor/cfDatetimeEditorDirective.es6'),
-        import('components/forms/embedly_preview/cfEmbedlyPreviewDirective.es6'),
-        import('components/forms/field_alert/cfFieldAlertDirective.es6'),
-        import('components/roles/cfRolesForWalkMe.es6'),
-        import('components/shared/cfImgLoadEvent.es6'),
-        import('components/shared/cfSelectionDirective.es6'),
-        import('services/contentfulClient.es6'),
-        import('components/shared/create_new_space/createNewSpaceDirective.es6'),
-        import('components/shared/dataSizeScaleController.es6'),
-        import('components/shared/endlessContainerDirective.es6'),
-        import('components/shared/listViewsController.es6'),
-        import('components/shared/space-wizard/SpaceWizardDirective.es6'),
-        import('components/shared/validation_error_display/cfErrorListDirective.es6'),
-        import('components/shared/validation_error_display/cfErrorMessagesDirective.es6'),
-        import('components/shared/validation_error_display/cfErrorPathDirective.es6'),
-        import('components/shared/validation_error_display/errorPathController.es6'),
-        import('components/shared/viewStateController.es6'),
-        import('components/tabs/asset_list/assetListActionsController.es6'),
-        import('components/tabs/asset_list/assetListController.es6'),
-        import('components/tabs/asset_list/assetListDirective.es6'),
-        import('services/promisedLoader.es6'),
-        import('components/tabs/asset_list/assetSearchController.es6'),
-        import('components/tabs/entry_list/displayFieldsController.es6'),
-        import('components/tabs/entry_list/entryListActionsController.es6'),
-        import('components/tabs/entry_list/entryListColumnsController.es6'),
-        import('components/tabs/entry_list/entryListController.es6'),
-        import('components/tabs/entry_list/entryListDirective.es6'),
-        import('utils/overridingRequestQueue.es6'),
-        import('components/tabs/entry_list/entryListSearchController.es6'),
-        import('services/batchPerformer.es6'),
-        import('components/tabs/listActionsController.es6'),
-        import('debug/XHR/cfMockXhrConsoleDirective.es6'),
-        import('directives/bindHtmlCompileDirective.es6'),
-        import('directives/cfFocusOnRenderDirective.es6'),
-        import('directives/cfFocusOtInputDirective.es6'),
-        import('directives/cfSchemaDirectives.es6'),
-        import('directives/cfThumbnailDirective.es6'),
-        import('directives/cfValidateDirective.es6'),
-        import('directives/cfWhenDisabled.es6'),
-        import('directives/tooltipDirective.es6'),
-        import('directives/watchersTogglerDirective.es6'),
-        import('filters.es6'),
-        import('forms/errors.es6'),
-        import('forms/validation.es6'),
-        import('forms.es6'),
-        import('markdown_editor/cfMarkdownActionDirective.es6'),
-        import('markdown_editor/cfMarkdownEditorDirective.es6'),
-        import('markdown_editor/cfZenmodeDirective.es6'),
-        import('markdown_editor/markdownPreviewDirective.es6'),
-        import('navigation/Breadcrumbs/BreadcrumbDirective.es6'),
-        import('navigation/organizationNavDirective.es6'),
-        import('navigation/profileNavDirective.es6'),
-        import('navigation/spaceNavBarDirective.es6'),
-        import('search/EntitySelector/entitySelectorController.es6'),
-        import('search/EntitySelector/entitySelectorDirective.es6'),
-        import('services/exceptionHandler.es6'),
-        import('states/cfSrefDirective.es6'),
-        import('ui/Framework/ReactDirective.es6'),
-        import('ui/cfIconDirective.es6'),
-        import('ui/cfUiSticky.es6'),
-        import('ui/cfUiTab.es6'),
-        import('ui/highlightMatchDirective.es6'),
-        import('ui/loader.es6')
-      ]);
-
-      analyticsAnalyticsConsoleEs6();
-      accessControlUserListHandlerEs6();
-      servicesModalDialogServiceEs6();
-      uiCommandEs6();
-      accessControlRoleRemoverEs6();
-      accessControlUsersUserListDirectiveEs6();
-      accessControlRoleListController();
-      accessControlRoleListDirectiveEs6();
-      accessControlUserSpaceInvitationControllerEs6();
-      accountCfNewOrganizationMembershipEs6();
-      appContentModelEditorAddFieldDialogControllerEs6();
-      appContentModelEditorApiNameControllerEs6();
-      appContentModelEditorCfApiNameShadowDirectiveEs6();
-      navigationStateChangeHandlersEs6();
-      navigationCloseStateEs6();
-      componentsFieldDialogFieldDialogEs6();
-      appContentModelEditorContentTypeEditorControllerEs6();
-      appApiApiKeyListApiKeyListDirectiveEs6();
-      appEntityEditorEntityHelpersEs6();
-      searchListQueryEs6();
-      searchEntitySelectorEntitySelectorEs6();
-      componentsAppContainerEntityCreatorEs6();
-      appAssetEditorCfAssetEditorDirectiveEs6();
-      appEntityEditorBulkEditorCfBulkEditorDirectiveEs6();
-      appEntityEditorBulkEditorCfBulkEntityEditorDirectiveEs6();
-      appEntityEditorCfEntityFieldDirectiveEs6();
-      appEntityEditorCfTestEntryEditorDirectiveEs6();
-      appEntityEditorCfWidgetRendererDirectiveEs6();
-      appEntityEditorFieldLocaleControllerEs6();
-      appEntityEditorPresenceHubEs6();
-      appEntityEditorStateControllerEs6();
-      dataSharejsUtilsEs6();
-      appEntityEditorStringFieldEs6();
-      appEntryEditorCfEntryEditorDirectiveEs6();
-      appEntryEditorCfWidgetApiDirectiveEs6();
-      appEntryEditorEntryActionsControllerEs6();
-      appEntryEditorFormWidgetsControllerEs6();
-      appHomeCfTrackCopyEventEs6();
-      appHomeContactUsContactUsSpaceHomeDirectiveEs6();
-      appSnapshotsCfSnapshotPresenterEs6();
-      appSnapshotsCfSnapshotSelectorEs6();
-      appSnapshotsSnapshotComparatorEs6();
-      appWidgetsFileEditorController();
-      appWidgetsCfBooleanEditorDirectiveEs6();
-      appWidgetsCfCheckboxEditorDirectiveEs6();
-      appWidgetsCfFileEditorDirectiveEs6();
-      appWidgetsCfListInputEditorDirectiveEs6();
-      appWidgetsCfRatingEditorDirectiveEs6();
-      appWidgetsDatetimeCfEntryDatetimeEditorDirectiveEs6();
-      appWidgetsJsonCfJsonEditorCodeEditorDirectiveEs6();
-      appWidgetsJsonCfJsonEditorDirectiveEs6();
-      appWidgetsLinkEntityLinkDirectivesEs6();
-      appWidgetsLocationCfLocationEditorDirectiveEs6();
-      appWidgetsLocationSearchControllerEs6();
-      appWidgetsNumberCfNumberEditorDirectiveEs6();
-      appWidgetsRadioCfRadioEditorDirectiveEs6();
-      appWidgetsSharedCfEditorCharacterInfoDirectiveEs6();
-      appWidgetsSlugSlugEditorController();
-      appWidgetsSlugCfSlugEditorDirectiveEs6();
-      appWidgetsUrlUrlEditorController();
-      appWidgetsUrlCfUrlEditorDirectiveEs6();
-      classesEntityListCacheEs6();
-      componentsCreateEntryButtonButtonDirectiveEs6();
-      servicesActivationEmailResenderEs6();
-      componentsClientActivationEmailResendControllerEs6();
-      componentsClientDialogsInitControllerEs6();
-      componentsFieldDialogCfValidationDateSelectDirectiveEs6();
-      componentsFieldDialogCfValidationSettingsDirectiveEs6();
-      componentsFieldDialogImageDimensionsValidationControllerEs6();
-      componentsFieldDialogValidationAssetTypesControllerEs6();
-      componentsFieldDialogValidationLinkTypeControllerEs6();
-      componentsFormsDatetimeEditorCfDatetimeEditorDirectiveEs6();
-      componentsFormsEmbedlyPreviewCfEmbedlyPreviewDirectiveEs6();
-      componentsFormsFieldAlertCfFieldAlertDirectiveEs6();
-      componentsRolesCfRolesForWalkMeEs6();
-      componentsSharedCfImgLoadEventEs6();
-      componentsSharedCfSelectionDirectiveEs6();
-      servicesContentfulClientEs6();
-      componentsSharedCreateNewSpaceCreateNewSpaceDirectiveEs6();
-      componentsSharedDataSizeScaleControllerEs6();
-      componentsSharedEndlessContainerDirectiveEs6();
-      componentsSharedListViewsControllerEs6();
-      componentsSharedSpaceWizardSpaceWizardDirectiveEs6();
-      componentsSharedValidationErrorDisplayCfErrorListDirectiveEs6();
-      componentsSharedValidationErrorDisplayCfErrorMessagesDirectiveEs6();
-      componentsSharedValidationErrorDisplayCfErrorPathDirectiveEs6();
-      componentsSharedValidationErrorDisplayErrorPathControllerEs6();
-      componentsSharedViewStateControllerEs6();
-      componentsTabsAssetListAssetListActionsControllerEs6();
-      componentsTabsAssetListAssetListControllerEs6();
-      componentsTabsAssetListAssetListDirectiveEs6();
-      servicesPromisedLoaderEs6();
-      componentsTabsAssetListAssetSearchControllerEs6();
-      componentsTabsEntryListDisplayFieldsControllerEs6();
-      componentsTabsEntryListEntryListActionsControllerEs6();
-      componentsTabsEntryListEntryListColumnsControllerEs6();
-      componentsTabsEntryListEntryListControllerEs6();
-      componentsTabsEntryListEntryListDirectiveEs6();
-      utilsOverridingRequestQueueEs6();
-      componentsTabsEntryListEntryListSearchControllerEs6();
-      servicesBatchPerformerEs6();
-      componentsTabsListActionsControllerEs6();
-      debugXhrCfMockXhrConsoleDirectiveEs6();
-      directivesBindHtmlCompileDirectiveEs6();
-      directivesCfFocusOnRenderDirectiveEs6();
-      directivesCfFocusOtInputDirectiveEs6();
-      directivesCfSchemaDirectivesEs6();
-      directivesCfThumbnailDirectiveEs6();
-      directivesCfValidateDirectiveEs6();
-      directivesCfWhenDisabledEs6();
-      directivesTooltipDirectiveEs6();
-      directivesWatchersTogglerDirectiveEs6();
-      filtersEs6();
-      formsErrorsEs6();
-      formsValidationEs6();
-      formsEs6();
-      markdownEditorCfMarkdownActionDirectiveEs6();
-      markdownEditorCfMarkdownEditorDirectiveEs6();
-      markdownEditorCfZenmodeDirectiveEs6();
-      markdownEditorMarkdownPreviewDirectiveEs6();
-      navigationBreadcrumbsBreadcrumbDirectiveEs6();
-      navigationOrganizationNavDirectiveEs6();
-      navigationProfileNavDirectiveEs6();
-      navigationSpaceNavBarDirectiveEs6();
-      searchEntitySelectorEntitySelectorControllerEs6();
-      searchEntitySelectorEntitySelectorDirectiveEs6();
-      servicesExceptionHandlerEs6();
-      statesCfSrefDirectiveEs6();
-      uiFrameworkReactDirectiveEs6();
-      uiCfIconDirectiveEs6();
-      uiCfUiStickyEs6();
-      uiCfUiTabEs6();
-      uiHighlightMatchDirectiveEs6();
-      uiLoaderEs6();
-
-      angular.module('contentful/init').loaded = true;
-    }
-  ]).name;
+  .run(angularInitRun).name;

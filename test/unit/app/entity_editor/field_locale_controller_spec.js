@@ -4,9 +4,7 @@ import { $inject, $initialize, $apply } from 'test/helpers/helpers';
 
 describe('FieldLocaleController', () => {
   beforeEach(async function() {
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     const $rootScope = $inject('$rootScope');
     const $controller = $inject('$controller');

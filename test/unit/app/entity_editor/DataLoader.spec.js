@@ -30,9 +30,7 @@ describe('app/entity_editor/DataLoader.es6', () => {
 
     const DataLoader = await this.system.import('app/entity_editor/DataLoader.es6');
 
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     const $q = $inject('$q');
 

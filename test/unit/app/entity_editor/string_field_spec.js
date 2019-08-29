@@ -7,11 +7,9 @@ describe('entityEditor/Document/StringField', () => {
   beforeEach(async function() {
     this.ShareJS = {};
 
-    module('contentful/test', $provide => {
+    await $initialize(this.system, $provide => {
       $provide.constant('data/ShareJS/Utils', this.ShareJS);
     });
-
-    await $initialize();
 
     this.StringField = $inject('entityEditor/Document/StringField');
   });

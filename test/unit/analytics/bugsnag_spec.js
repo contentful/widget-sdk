@@ -19,9 +19,7 @@ describe('bugsnag', () => {
 
     this.bugsnag = await this.system.import('analytics/Bugsnag.es6');
 
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
   });
 
   it('delegates #notify', function() {

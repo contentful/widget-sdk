@@ -40,9 +40,7 @@ describe('app/SpaceSettings/Environments', () => {
       'app/SpaceSettings/Environments/State.es6'
     );
 
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     spaceContext = $inject('mocks/spaceContext').init();
 

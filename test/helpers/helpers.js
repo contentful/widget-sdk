@@ -98,7 +98,13 @@ export const $flush = function() {
   });
 };
 
-export const $initialize = async function() {
+export const $initialize = async function(system, mock = () => {}) {
+  const { angularInitRun } = await system.import('AngularInit');
+  delete angular.module('contentful/init')._runBlocks[0];
+  angular.module('contentful/init').run(angularInitRun);
+
+  module('contentful/test', mock);
+
   $inject('$location');
 
   return awaitInitReady();
@@ -118,27 +124,6 @@ export const $removeDirectives = async function(system, names) {
   for (const name of names) {
     registerFactory(`${name}Directive`, () => []);
   }
-};
-
-// Initializes and reregisters Angular files with updated SystemJS dependencies
-export const $initializeAndReregister = async function(system, reregistrations, mock = () => {}) {
-  const registrationMethods = [];
-
-  for (const name of reregistrations) {
-    const { default: register } = await system.import(name);
-
-    registrationMethods.push(register);
-  }
-
-  module('contentful/test', mock);
-
-  await $initialize();
-
-  for (const register of registrationMethods) {
-    register();
-  }
-
-  return true;
 };
 
 // TODO This module is deprecated. We should move stuff to

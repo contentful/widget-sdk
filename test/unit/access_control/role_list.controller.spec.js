@@ -93,19 +93,13 @@ describe('Role List Controller', () => {
       getOrganization: sinon.stub().resolves(this.organization)
     });
 
-    const { default: register } = await this.system.import('access_control/RoleListController');
-
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     this.scope = {
       context: {}
     };
 
     const spaceContext = $inject('spaceContext');
-
-    register();
 
     spaceContext.organization = this.organization;
 

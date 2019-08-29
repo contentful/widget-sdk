@@ -5,9 +5,7 @@ import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
 
 describe('cfCheckboxEditor directive', () => {
   beforeEach(async function() {
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     const widgetApi = $inject('mocks/widgetApi').create({
       field: {

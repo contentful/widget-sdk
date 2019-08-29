@@ -38,8 +38,6 @@ describe('account/pricing/PricingDataProvider.es6', () => {
     });
 
     this.PricingDataProvider = await this.system.import('account/pricing/PricingDataProvider.es6');
-
-    module('contentful/test');
   });
 
   describe('#getPlansWithSpaces()', () => {

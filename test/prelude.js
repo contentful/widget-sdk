@@ -121,6 +121,7 @@
       configure({ adapter: new Adapter() });
 
       await SystemJS.import('test/helpers/setup-isolated-system');
+      await SystemJS.import('test/helpers/init_setup');
       await SystemJS.import('test/helpers/dsl');
       await SystemJS.import('test/helpers/hooks');
       await SystemJS.import('test/helpers/sinon');
@@ -132,15 +133,16 @@
       await SystemJS.import('test/helpers/mocks/space_context');
       await SystemJS.import('test/helpers/mocks/ot_doc');
       await SystemJS.import('test/helpers/mocks/widget_api');
-      await SystemJS.import('prelude');
       await SystemJS.import('test/helpers/application');
+      await SystemJS.import('prelude');
       await Promise.all(
         testModules.reduce((memo, name) => {
           const prefixes = [
             'test/unit/access_control',
             'test/unit/account',
             'test/unit/analytics',
-            'test/unit/app'
+            'test/unit/app',
+            'test/unit/classes'
           ];
 
           if (prefixes.find(prefix => name.startsWith(prefix))) {

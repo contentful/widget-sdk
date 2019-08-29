@@ -1,15 +1,15 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initializeAndReregister, $compile, $inject, $apply } from 'test/helpers/helpers';
+import { $initialize, $compile, $inject, $apply } from 'test/helpers/helpers';
 import { beforeEach, it } from 'test/helpers/dsl';
 
-xdescribe('cfUrlEditor directive', () => {
+describe('cfUrlEditor directive', () => {
   beforeEach(async function() {
     this.system.set('lodash/debounce', {
       default: _.identity
     });
 
-    await $initializeAndReregister(this.system, ['app/widgets/url/UrlEditorController']);
+    await $initialize(this.system);
 
     this.widgetApi = $inject('mocks/widgetApi').create();
 

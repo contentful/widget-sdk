@@ -8,9 +8,7 @@ describe('app/entityEditor/Notifications', () => {
     this.ComponentLibrary.Notification.error = sinon.stub();
     const N = await this.system.import('app/entity_editor/Notifications.es6');
 
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     this.Notification = N.Notification;
     this.notify = N.makeNotify('Entry', () => 'TITLE');

@@ -3,9 +3,7 @@ import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 describe('FormWidgetsController#widgets', () => {
   beforeEach(async function() {
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     $inject('mocks/spaceContext').init();
     this.scope = $inject('$rootScope').$new();

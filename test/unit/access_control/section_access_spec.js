@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $inject } from 'test/helpers/helpers';
+import { $initialize, $inject } from 'test/helpers/helpers';
 
 describe('Section Access', () => {
   let sectionAccess, spaceContext, visibilityStub;
@@ -18,8 +18,6 @@ describe('Section Access', () => {
   };
 
   beforeEach(async function() {
-    module('contentful/test');
-
     visibilityStub = sinon.stub().returns(allTrue);
 
     await this.system.override('access_control/AccessChecker/index.es6', {
@@ -27,6 +25,8 @@ describe('Section Access', () => {
     });
 
     sectionAccess = await this.system.import('access_control/SectionAccess.es6');
+
+    await $initialize(this.system);
 
     spaceContext = $inject('spaceContext');
   });

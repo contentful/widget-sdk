@@ -6,7 +6,6 @@ describe('Policy Access Checker', () => {
   let pac;
 
   beforeEach(async function() {
-    module('contentful/test');
     pac = await this.system.import('access_control/AccessChecker/PolicyChecker.es6');
   });
 

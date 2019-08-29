@@ -1,9 +1,11 @@
 import * as sinon from 'test/helpers/sinon';
 import _ from 'lodash';
 import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
 
 describe('spaceContext', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.organization = { sys: { id: 'ORG_ID' } };
     this.AccessChecker = { setSpace: sinon.stub() };
     this.ProductCatalog = { getSpaceFeature: sinon.stub().resolves(false) };
@@ -12,30 +14,66 @@ describe('spaceContext', () => {
 
     this.userCache = {};
     this.createUserCache = sinon.stub().returns(this.userCache);
+    this.ProductCatalog = { getSpaceFeature: sinon.stub().resolves(false) };
 
-    module('contentful/test', $provide => {
-      $provide.value('data/userCache.es6', sinon.stub());
-      $provide.value('widgets/ExtensionLoader.es6', { createExtensionLoader: sinon.stub() });
-      $provide.value('access_control/AccessChecker/index.es6', this.AccessChecker);
-      $provide.value('data/CMA/ProductCatalog.es6', this.ProductCatalog);
-      $provide.value('data/Endpoint.es6', {
-        createSpaceEndpoint: () => this.mockSpaceEndpoint.request,
-        createOrganizationEndpoint: sinon.stub(),
-        createExtensionDefinitionsEndpoint: sinon.stub()
-      });
-      $provide.value('data/UiConfig/Store.es6', {
-        default: sinon.stub().resolves({ store: true })
-      });
-      $provide.constant('client', { newSpace: makeClientSpaceMock });
-      $provide.value('services/EnforcementsService.es6', {
-        init: this.initEnforcements
-      });
-      $provide.constant('data/userCache.es6', this.createUserCache);
+    this.default_locale = { internal_code: 'xx' };
+    this.localeStore = {
+      init: sinon.stub(),
+      getDefaultLocale: sinon.stub().returns(this.default_locale)
+    };
+
+    this.stubs = {
+      sharejs_Connection_create: sinon.stub().returns({
+        close: sinon.stub()
+      }),
+      DocumentPool_create: sinon.stub().returns({
+        // close: sinon.stub(),
+        destroy: sinon.stub()
+      })
+    };
+
+    this.system.set('widgets/ExtensionLoader.es6', { createExtensionLoader: sinon.stub() });
+    this.system.set('access_control/AccessChecker/index.es6', this.AccessChecker);
+    this.system.set('data/Endpoint.es6', {
+      createSpaceEndpoint: () => this.mockSpaceEndpoint.request,
+      createOrganizationEndpoint: sinon.stub(),
+      createExtensionDefinitionsEndpoint: sinon.stub()
+    });
+    this.system.set('data/UiConfig/Store.es6', {
+      default: sinon.stub().resolves({ store: true })
+    });
+    this.system.set('services/EnforcementsService.es6', {
+      init: this.initEnforcements
+    });
+    this.system.set('data/userCache.es6', {
+      default: this.createUserCache
+    });
+    this.system.set('data/sharejs/Connection.es6', {
+      create: sinon.stub()
+    });
+    this.system.set('services/localeStore.es6', {
+      default: this.localeStore
     });
 
-    this.spaceContext = this.$inject('spaceContext');
-    this.localeStore = this.$inject('services/localeStore.es6').default;
-    this.localeStore.init = sinon.stub();
+    this.system.set('data/sharejs/Connection.es6', {
+      create: this.stubs.sharejs_Connection_create
+    });
+
+    this.system.set('data/sharejs/DocumentPool.es6', {
+      create: this.stubs.DocumentPool_create
+    });
+
+    this.system.set('data/CMA/ProductCatalog.es6', this.ProductCatalog);
+
+    this.LD = await this.system.import('utils/LaunchDarkly/index.es6');
+    this.LD._setFlag('feature-dv-11-2017-environments', true);
+
+    await $initialize(this.system, $provide => {
+      $provide.constant('client', { newSpace: makeClientSpaceMock });
+    });
+
+    this.spaceContext = $inject('spaceContext');
+    await this.spaceContext.init();
 
     this.makeSpaceData = (spaceId = 'hello', organizationId = 'orgid') => ({
       sys: {
@@ -53,7 +91,7 @@ describe('spaceContext', () => {
 
     this.resetWithSpace = function(extraSpaceData = this.makeSpaceData()) {
       this.spaceContext.resetWithSpace(extraSpaceData);
-      this.$apply();
+      $apply();
       return this.spaceContext.space;
     };
   });
@@ -185,6 +223,17 @@ describe('spaceContext', () => {
         optedIn: false,
         isMasterEnvironment: true,
         aliasId: undefined
+      });
+    })
+
+    it('always returns an array for the `environments` property even if there are no environments', function() {
+      this.LD._setFlag('feature-dv-11-2017-environments', false);
+      Object.assign(this.mockSpaceEndpoint.stores.environments, null);
+      return this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid')).then(() => {
+        expect(this.spaceContext.environments).toEqual([]);
+        this.LD._setFlag('feature-dv-11-2017-environments', true);
+        Object.assign(this.mockSpaceEndpoint.stores.environments, []);
+        return this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid'));
       });
     });
 
@@ -444,8 +493,8 @@ describe('spaceContext', () => {
   });
 
   describe('#displayedFieldForType()', () => {
-    beforeEach(function() {
-      const CTRepo = this.$inject('data/ContentTypeRepo/Published.es6');
+    beforeEach(async function() {
+      const CTRepo = await this.system.import('data/ContentTypeRepo/Published.es6');
       this.spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
     });
 
@@ -480,12 +529,7 @@ describe('spaceContext', () => {
       sys: { id: 'ASSET_2' }
     };
 
-    beforeEach(function() {
-      this.default_locale = { internal_code: 'xx' };
-      this.spaceContext.space = {
-        getDefaultLocale: sinon.stub().returns(this.default_locale)
-      };
-
+    beforeEach(async function() {
       this.fields = [
         { type: 'Number', id: 'NUMBER' },
         { type: 'Symbol', id: 'SYMBOL' },
@@ -511,7 +555,7 @@ describe('spaceContext', () => {
         }
       };
 
-      const CTRepo = this.$inject('data/ContentTypeRepo/Published.es6');
+      const CTRepo = await this.system.import('data/ContentTypeRepo/Published.es6');
       this.spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
       this.spaceContext.publishedCTs.get.withArgs('CTID').returns(this.ct);
     });
@@ -594,7 +638,10 @@ describe('spaceContext', () => {
         const asset = {};
         _.set(asset, 'data.fields.file.xx', this.file);
 
-        this.spaceContext.space.getAsset = sinon.stub();
+        this.spaceContext.space = {
+          getAsset: sinon.stub()
+        };
+
         this.spaceContext.space.getAsset
           .withArgs(ASSET_LINK_XX.sys.id)
           .resolves(asset)
@@ -638,17 +685,12 @@ describe('spaceContext', () => {
   });
 
   describe('#docConnection and #docPool', () => {
-    beforeEach(function() {
-      const ShareJSConnection = this.$inject('data/sharejs/Connection.es6');
-      const DocumentPool = this.$inject('data/sharejs/DocumentPool.es6');
-      this.createConnection = ShareJSConnection.create = sinon.stub().returns({});
-      this.createPool = DocumentPool.create = sinon.stub();
-    });
-
     it('creates on resetSpace', function() {
       this.resetWithSpace();
-      sinon.assert.calledOnce(this.createConnection);
-      sinon.assert.calledOnce(this.createPool.withArgs(this.spaceContext.docConnection));
+      sinon.assert.calledOnce(this.stubs.sharejs_Connection_create);
+      sinon.assert.calledOnce(
+        this.stubs.DocumentPool_create.withArgs(this.spaceContext.docConnection)
+      );
     });
 
     it('cleans up on resetSpace', function() {

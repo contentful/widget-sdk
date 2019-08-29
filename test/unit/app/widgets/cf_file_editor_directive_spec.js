@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { $initializeAndReregister, $inject, $compile, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
 import { it } from 'test/helpers/dsl';
 
 describe('cfFileEditor Directive', () => {
@@ -20,7 +20,7 @@ describe('cfFileEditor Directive', () => {
     const ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
     ComponentLibrary.Notification.error = this.stubs.Notification_error;
 
-    await $initializeAndReregister(this.system, ['app/widgets/FileEditorController']);
+    await $initialize(this.system);
 
     const cfWidgetApi = $inject('mocks/widgetApi').create();
     this.fieldApi = cfWidgetApi.field;

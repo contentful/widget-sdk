@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initializeAndReregister, $inject, $compile, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
 
 describe('SlugEditor directive', () => {
   beforeEach(async function() {
@@ -20,7 +20,7 @@ describe('SlugEditor directive', () => {
       default: _.identity
     });
 
-    await $initializeAndReregister(this.system, ['app/widgets/slug/SlugEditorController']);
+    await $initialize(this.system);
 
     const MockApi = $inject('mocks/widgetApi');
 

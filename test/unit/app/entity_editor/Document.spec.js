@@ -54,9 +54,7 @@ describe('entityEditor/Document', () => {
     this.localeStore = (await this.system.import('services/localeStore.es6')).default;
     this.localeStore.setLocales([{ internal_code: 'en' }]);
 
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     this.OtDoc = $inject('mocks/OtDoc');
 
@@ -621,13 +619,12 @@ describe('entityEditor/Document', () => {
       K.assertCurrentValue(this.doc.state.isDirty$, false);
     });
 
-    xit('changes to true if a published document is changed', function() {
+    it('changes to true if a published document is changed', function() {
       this.otDoc.version = 12;
       this.docUpdate(['sys', 'publishedVersion'], 12);
       K.assertCurrentValue(this.doc.state.isDirty$, false);
 
       this.docUpdate(['fields'], {});
-      expect(this.isDirtyValues[0]).toBe(true);
       K.assertCurrentValue(this.doc.state.isDirty$, true);
     });
 

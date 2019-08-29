@@ -16,11 +16,9 @@ describe('Analytics', () => {
 
     this.analytics = await this.system.import('analytics/Analytics.es6');
 
-    module('contentful/test', $provide => {
+    await $initialize(this.system, $provide => {
       $provide.constant('analytics/console', analyticsConsole);
     });
-
-    await $initialize();
 
     // we want to simulate production environment
     // this way data hits the Segment and Snowplow services

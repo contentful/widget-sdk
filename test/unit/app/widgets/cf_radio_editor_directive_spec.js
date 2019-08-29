@@ -6,9 +6,7 @@ describe('cfRadioEditor Directive', () => {
   let fieldApi;
 
   beforeEach(async function() {
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     this.widgetApi = $inject('mocks/widgetApi').create();
     fieldApi = this.widgetApi.field;

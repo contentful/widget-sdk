@@ -4,8 +4,6 @@ import { it } from 'test/helpers/dsl';
 
 describe('access_control/OrganizationMembershipRepository.es6', () => {
   beforeEach(async function() {
-    module('contentful/test');
-
     this.OrganizationMembershipRepository = await this.system.import(
       'access_control/OrganizationMembershipRepository.es6'
     );

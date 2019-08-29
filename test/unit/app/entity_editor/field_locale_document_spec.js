@@ -10,9 +10,7 @@ describe('entityEditor/FieldLocaleDocument', () => {
       'app/entity_editor/FieldLocaleDocument.es6'
     )).default;
 
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     const createDocument = $inject('mocks/entityEditor/Document').create;
 

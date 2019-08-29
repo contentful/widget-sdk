@@ -12,12 +12,10 @@ describe('account/UrlSyncHelper.es6', () => {
       url: sinon.stub()
     };
 
-    module('contentful/test', $provide => {
+    await $initialize(this.system, $provide => {
       $provide.constant('$state', this.$state);
       $provide.constant('$location', this.$location);
     });
-
-    await $initialize();
 
     this.UrlSyncHelper = await this.system.import('account/UrlSyncHelper.es6');
   });

@@ -13,7 +13,6 @@ describe('Response Cache', () => {
   const noNewEnforcements = {};
 
   beforeEach(async function() {
-    module('contentful/test');
     cache = await this.system.import('access_control/AccessChecker/ResponseCache.es6');
     canStub = sinon.stub().returns(true);
     cache.reset({ can: canStub });

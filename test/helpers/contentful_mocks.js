@@ -1,4 +1,3 @@
-import $q from './$q';
 import _ from 'lodash';
 import sinon from 'sinon';
 
@@ -87,7 +86,7 @@ async function stubLaunchDarklyUtil(system) {
     getCurrentVariation(flag) {
       // We need to use `$q` because otherwise the tests do not execute
       // correctly.
-      return $q.resolve(flags[flag]);
+      return Promise.resolve(flags[flag]);
     },
 
     // TODO implement when needed

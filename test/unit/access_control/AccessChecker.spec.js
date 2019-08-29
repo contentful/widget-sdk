@@ -146,11 +146,9 @@ describe('Access Checker', () => {
       }
     };
 
-    ac = await this.system.import('access_control/AccessChecker');
+    ac = await this.system.import('access_control/AccessChecker/index.es6');
 
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     changeSpace = function changeSpace({ hasFeature, isSpaceAdmin, userRoleName }) {
       ac.setSpace({

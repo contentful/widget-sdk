@@ -2,7 +2,7 @@ import flushPromises from '../../../helpers/flushPromises';
 
 import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
 import sinon from 'sinon';
-import { $initializeAndReregister, $inject, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 fdescribe('entityEditor/StateController', () => {
   beforeEach(async function() {
@@ -52,9 +52,7 @@ fdescribe('entityEditor/StateController', () => {
       'app/entity_editor/Notifications.es6'
     )).Notification;
 
-    module('contentful/test');
-
-    await $initializeAndReregister(this.system, ['app/entity_editor/stateController.es6']);
+    await $initialize(this.system);
 
     const createDocument = $inject('mocks/entityEditor/Document').create;
 

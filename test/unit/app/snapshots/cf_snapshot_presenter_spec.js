@@ -3,13 +3,11 @@ import { $initialize, $compile } from 'test/helpers/helpers';
 
 describe('cfSnapshotPresenter', () => {
   beforeEach(async function() {
-    module('contentful/test', $provide => {
+    await $initialize(this.system, $provide => {
       $provide.constant('cfIframeWidgetDirective', () => {});
       $provide.constant('cfWidgetRendererDirective', () => {});
       $provide.constant('cfWidgetApiDirective', () => {});
     });
-
-    await $initialize();
 
     this.prepare = (value, field = {}, version = 'current') => {
       const data = {

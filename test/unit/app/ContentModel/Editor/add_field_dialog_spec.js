@@ -8,9 +8,7 @@ describe('AddFieldDialogController', () => {
   beforeEach(async function() {
     const contentType = { data: {} };
 
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     this.dialog = {
       promise: $q.resolve()

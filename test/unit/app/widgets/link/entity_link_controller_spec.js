@@ -4,9 +4,7 @@ import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 describe('EntityLinkController', () => {
   beforeEach(async function() {
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     const $rootScope = $inject('$rootScope');
     const $controller = $inject('$controller');

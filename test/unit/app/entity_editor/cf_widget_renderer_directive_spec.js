@@ -12,15 +12,13 @@ describe('cfWidgetRenderer Directive', () => {
       default: identity
     });
 
-    module('contentful/test', $provide => {
+    await $initialize(this.system, $provide => {
       $provide.value('$state', {
         href: function(_state, params) {
           return '/spaceHref/' + params.contentTypeId;
         }
       });
     });
-
-    await $initialize();
 
     this.widget = {
       widgetNamespace: 'builtin'

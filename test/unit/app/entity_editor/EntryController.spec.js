@@ -45,9 +45,7 @@ describe('Entry Editor Controller', function() {
       'app/entity_editor/EntryController.es6'
     )).default;
 
-    module('contentful/test');
-
-    await $initialize();
+    await $initialize(this.system);
 
     await $removeControllers(this.system, [
       'entityEditor/StateController',
