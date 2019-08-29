@@ -147,6 +147,7 @@ describe('Teams in space page', () => {
       providers: ['teams', 'roles', 'product_catalog_features'],
       cors: true,
       pactfileWriteMode: 'merge',
+      dir: Cypress.env('pactDir'),
       spec: 2
     });
   });

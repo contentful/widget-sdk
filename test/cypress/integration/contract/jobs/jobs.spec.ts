@@ -16,6 +16,7 @@ describe('Jobs page', () => {
       provider: 'jobs',
       cors: true,
       pactfileWriteMode: 'merge',
+      dir: Cypress.env('pactDir'),
       spec: 2
     })
   );
@@ -54,6 +55,7 @@ describe('Jobs page', () => {
         providers: ['entries', 'users'],
         cors: true,
         pactfileWriteMode: 'merge',
+        dir: Cypress.env('pactDir'),
         spec: 2
       });
       const interactions = defaultRequestsMock({

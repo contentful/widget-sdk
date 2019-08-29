@@ -33,6 +33,7 @@ describe('Entries list page', () => {
       providers: ['entries', 'users'],
       cors: true,
       pactfileWriteMode: 'merge',
+      dir: Cypress.env('pactDir'),
       spec: 2
     });
   });
@@ -184,6 +185,7 @@ describe('Entries list page', () => {
         providers: ['resources', 'product_catalog_features'],
         cors: true,
         pactfileWriteMode: 'merge',
+        dir: Cypress.env('pactDir'),
         spec: 2
       });
 

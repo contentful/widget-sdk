@@ -60,6 +60,7 @@ describe('Content Preview Page', () => {
         provider: 'preview_environments',
         cors: true,
         pactfileWriteMode: 'merge',
+        dir: Cypress.env('pactDir'),
         spec: 2
       });
 

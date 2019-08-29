@@ -30,6 +30,8 @@ import '@contentful/cypress-pact/add-commands';
 
 import { FeatureFlag } from '../util/featureFlag';
 
+Cypress.env('pactDir', Cypress.env('PACT_DIR') ? String(Cypress.env('PACT_DIR')) : 'pacts');
+
 before(() => cy.startGateway(5000));
 before(() => {
   cy.startFakeServers({
@@ -37,6 +39,7 @@ before(() => {
     providers: ['enforcements', 'environments', 'content_types', 'locales', 'token'],
     cors: true,
     pactfileWriteMode: 'merge',
+    dir: Cypress.env('pactDir'),
     spec: 2
   });
 });

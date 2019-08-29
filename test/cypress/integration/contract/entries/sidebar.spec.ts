@@ -79,6 +79,7 @@ function basicServerSetUp(): string[] {
     providers: ['entries', 'users'],
     cors: true,
     pactfileWriteMode: 'merge',
+    dir: Cypress.env('pactDir'),
     spec: 2
   });
 

@@ -450,7 +450,11 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/user_interface
-      - run: /pact/entrypoint.sh publish ~/user_interface/pacts --consumer-app-version=$CIRCLE_SHA1 --tag=$CIRCLE_BRANCH
+      - run:
+          name: Merge and publish contracts to pact-broker
+          command: |
+            PACT_FILES=$(circleci tests glob "/pact/user_interface/pacts/**/*.json")
+            /pact/entrypoint.sh publish $PACT_FILES --consumer-app-version=$CIRCLE_SHA1 --tag=$CIRCLE_BRANCH
 
 workflows:
   build:
@@ -469,7 +473,7 @@ workflows:
       - cypress/run:
           name: run-contract-tests
           executor: cypress-base-10
-          no-workspace: true
+          parallelism: 4
           pre-steps:
             - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
             - run: npm install -g wait-on
@@ -482,7 +486,9 @@ workflows:
                   - pacts/*
           start: npm start
           wait-on: 'http-get://localhost:3001'
-          command: npx cypress run --spec "test/cypress/integration/contract/**/*"
+          command: |
+            TESTFILES=$(circleci tests glob "test/cypress/integration/contract/**/*.ts" | circleci tests split --split-by=timings --timings-type=filename | tr '\n' ',')
+            npx cypress run --spec "${TESTFILES}" --env PACT_DIR="./pacts/${CIRCLE_NODE_INDEX}"
           store_artifacts: true
       - publish-pact-contracts:
           requires:

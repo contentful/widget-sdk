@@ -18,6 +18,7 @@ describe('Content type page', () => {
       provider: 'extensions',
       cors: true,
       pactfileWriteMode: 'merge',
+      dir: Cypress.env('pactDir'),
       spec: 2
     });
   });

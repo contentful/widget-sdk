@@ -28,6 +28,7 @@ describe('Tasks entry editor sidebar', () => {
       providers: [TASKS_PROVIDER, 'entries', 'users', 'microbackend'],
       cors: true,
       pactfileWriteMode: 'merge',
+      dir: Cypress.env('pactDir'),
       spec: 2
     })
   );

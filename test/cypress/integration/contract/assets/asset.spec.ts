@@ -5,15 +5,16 @@ import { getDefaultAssetInDefaultSpace } from '../../../interactions/assets';
 import { queryLinksToDefaultAsset } from '../../../interactions/entries';
 
 describe('Asset Page', () => {
-  before(() =>
+  before(() => {
     cy.startFakeServers({
       consumer: 'user_interface',
       providers: ['assets', 'entries', 'users'],
       cors: true,
       pactfileWriteMode: 'merge',
+      dir: Cypress.env('pactDir'),
       spec: 2
     })
-  );
+  });
 
   context('asset with empty fields', () => {
     beforeEach(() => {

@@ -35,6 +35,7 @@ describe('Webhook', () => {
       provider: 'webhooks',
       cors: true,
       pactfileWriteMode: 'merge',
+      dir: Cypress.env('pactDir'),
       spec: 2
     })
   );

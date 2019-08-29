@@ -8,15 +8,16 @@ import {
 } from '../../../interactions/assets';
 
 describe('Assets List Page', () => {
-  before(() =>
+  before(() => {
     cy.startFakeServers({
       consumer: 'user_interface',
       providers: ['assets', 'users'],
       cors: true,
       pactfileWriteMode: 'merge',
+      dir: Cypress.env('pactDir'),
       spec: 2
     })
-  );
+  });
 
   let interactions: string[]
   beforeEach(() => {

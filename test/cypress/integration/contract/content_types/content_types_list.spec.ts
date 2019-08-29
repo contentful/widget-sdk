@@ -43,6 +43,7 @@ describe('Content types list page', () => {
         provider: 'extensions',
         cors: true,
         pactfileWriteMode: 'merge',
+        dir: Cypress.env('pactDir'),
         spec: 2
       });
       const interactions = [
