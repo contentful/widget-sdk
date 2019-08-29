@@ -14,7 +14,8 @@ export const Tasks = {
   widgetId: SidebarWidgetTypes.TASKS,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
   name: 'Tasks',
-  description: 'Built-in - Assign tasks to be completed before publishing.',
+  description:
+    'Built-in - Assign tasks to be completed before publishing. Currently only supported for master environment.',
   availabilityStatus: 'alpha'
 };
 
@@ -44,7 +45,7 @@ export const Versions = {
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
   name: 'Versions',
   description:
-    'Built-in - View previously published versions. Available only for master environment.'
+    'Built-in - View previously published versions. Supported only for master environment.'
 };
 
 export const Users = {

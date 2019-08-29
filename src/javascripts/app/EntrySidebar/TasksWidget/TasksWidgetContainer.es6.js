@@ -15,7 +15,7 @@ import createTaskPermissionChecker, {
 } from './TaskPermissionChecker.es6';
 import { onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util.es6';
 import TaskList from './View/TaskList.es6';
-import { Tag } from '@contentful/forma-36-react-components';
+import { Tag, Paragraph } from '@contentful/forma-36-react-components';
 
 export default function TasksWidgetContainerWithFeatureFlag(props) {
   return (
@@ -33,6 +33,7 @@ export class TasksWidgetContainer extends Component {
   };
 
   state = {
+    showUnsupportedEnvironmentWarning: false,
     loadingError: null,
     tasks: null,
     tasksInEditMode: {},
@@ -53,11 +54,20 @@ export class TasksWidgetContainer extends Component {
   }
 
   onUpdateTasksWidget = async update => {
-    const { spaceId, entityInfo, users, currentUser, isSpaceAdmin } = update;
+    const { spaceId, envId, entityInfo, users, currentUser, isSpaceAdmin } = update;
+
+    if (envId !== 'master') {
+      this.setState({
+        showUnsupportedEnvironmentWarning: true
+      });
+      return;
+    }
 
     // TODO: Pass tasksStore instead. Wrap in a factory function though to not trigger
     //  any fetching in case the feature flag is turned off!
-    const endpoint = createSpaceEndpoint(spaceId);
+    // Never pass 'master' as this route is currently not working.
+    // For other environments we will get an error, which is expected.
+    const endpoint = createSpaceEndpoint(spaceId, envId === 'master' ? null : envId);
     const tasksStore = createTasksStoreForEntry(endpoint, entityInfo.id);
 
     // TODO: Replace this whole component with a react independent controller.
@@ -89,7 +99,7 @@ export class TasksWidgetContainer extends Component {
     });
   }
 
-  render() {
+  renderTasks() {
     const {
       tasksInteractor,
       tasksFetchingStatus,
@@ -104,9 +114,22 @@ export class TasksWidgetContainer extends Component {
       localState,
       taskPermissionChecker
     );
+    return <TaskList viewData={tasksViewData} tasksInteractor={tasksInteractor} />;
+  }
+
+  renderEnvironmentWarning() {
+    return (
+      <Paragraph className="entity-sidebar__help-text">
+        Tasks are currently only available in your master environment.
+      </Paragraph>
+    );
+  }
+
+  render() {
+    const { showUnsupportedEnvironmentWarning } = this.state;
     return (
       <EntrySidebarWidget testId="sidebar-tasks-widget" title="Tasks" headerNode={<Tag>Alpha</Tag>}>
-        <TaskList viewData={tasksViewData} tasksInteractor={tasksInteractor} />
+        {showUnsupportedEnvironmentWarning ? this.renderEnvironmentWarning() : this.renderTasks()}
       </EntrySidebarWidget>
     );
   }
