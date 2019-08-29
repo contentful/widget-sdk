@@ -45,7 +45,7 @@ export const Versions = {
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
   name: 'Versions',
   description:
-    'Built-in - View previously published versions. Supported only for master environment.'
+    'Built-in - View previously published versions. Available only for master environment.'
 };
 
 export const Users = {
