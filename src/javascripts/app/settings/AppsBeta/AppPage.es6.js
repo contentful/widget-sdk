@@ -436,11 +436,22 @@ export default class AppRoute extends Component {
   }
 
   renderContent() {
+    const { extensionDefinition } = this.state;
+
+    // Artifical widget descriptor for rendering `src`
+    // of `ExtensionDefinition` entity without corresponding
+    // `Extension` being present in a space-env.
+    const descriptor = {
+      id: '__undefined-in-app-location__',
+      extensionDefinitionId: extensionDefinition.sys.id,
+      src: extensionDefinition.src
+    };
+
     return (
       <Workbench.Content type="full" className={styles.renderer}>
         <ExtensionIFrameRenderer
           bridge={this.props.bridge}
-          descriptor={{ id: null, src: this.state.extensionDefinition.src }}
+          descriptor={descriptor}
           parameters={this.parameters}
           isFullSize
         />
