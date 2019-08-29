@@ -5,6 +5,15 @@ const fetch = require('node-fetch');
 const uri = process.env.SNIFFER_UPLOAD_URL;
 const apolloFetch = createApolloFetch({ uri });
 
+apolloFetch.use(({ _, options }, next) => {
+  if (!options.headers) {
+    options.headers = {};
+  }
+  options.headers['authorization'] = process.env.SNIFFER_API_AUTH_TOKEN;
+
+  next();
+});
+
 const getFileExtension = fileName => {
   return fileName
     .split('.')
