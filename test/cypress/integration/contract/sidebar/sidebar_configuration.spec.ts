@@ -10,7 +10,6 @@ import {
 } from '../../../interactions/content_types';
 import { getAllExtensionsInDefaultSpace } from '../../../interactions/extensions';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
-import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('Sidebar configuration', () => {
   before(() =>
