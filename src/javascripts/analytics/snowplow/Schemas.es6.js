@@ -230,6 +230,11 @@ registerSchema({
 });
 
 registerSchema({
+  name: 'extension_set_value',
+  version: '1-0-0'
+});
+
+registerSchema({
   name: 'extension_activate',
   version: '1-0-0'
 });

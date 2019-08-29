@@ -27,6 +27,7 @@ import FeatureTextEditorTransform from './transformers/FeatureTextEditor.es6';
 import SSOSelfConfigurationTransformer from './transformers/SSOSelfConfiguration.es6';
 import ExtensionRenderTransformer from './transformers/ExtensionRender.es6';
 import ExtensionActivationTransformer from './transformers/ExtensionActivation.es6';
+import ExtensionSetValueTransformer from './transformers/ExtensionSetValue.es6';
 import DialogTransformer from './transformers/Dialog.es6';
 import JobsCreateTransformer from './transformers/JobsCreate.es6';
 import JobsCancelTransformer from './transformers/JobsCancel.es6';
@@ -51,6 +52,7 @@ registerEvent('extension:save', 'ui_extension_save', ExtensionSaveTransform);
 registerEvent('extension:install', 'ui_extension_install', ExtensionInstallTransform);
 registerEvent('extension:render', 'generic', ExtensionRenderTransformer);
 registerEvent('extension:activate', 'extension_activate', ExtensionActivationTransformer);
+registerEvent('extension:set_value', 'extension_set_value', ExtensionSetValueTransformer);
 
 registerGenericEvent('learn:language_selected');
 registerGenericEvent('learn:resource_selected');

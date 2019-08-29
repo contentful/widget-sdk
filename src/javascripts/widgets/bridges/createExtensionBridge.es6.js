@@ -1,6 +1,7 @@
 import * as K from 'utils/kefir.es6';
 import * as PathUtils from 'utils/Path.es6';
 import TheLocaleStore from 'services/localeStore.es6';
+import * as Analytics from 'analytics/Analytics.es6';
 
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers.es6';
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers.es6';
@@ -68,10 +69,37 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
   async function setValue(path, value) {
     try {
       await $scope.otDoc.setValueAt(path, value);
+      trackSetValue(path);
       return value;
     } catch (err) {
       throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
     }
+  }
+
+  function trackSetValue(path) {
+    const [, internalFieldId, internalLocaleCode] = path;
+    const { contentType } = $scope.entityInfo;
+    const { descriptor } = $scope.widget;
+
+    // Given internal IDs find field and locale data so we can
+    // extract public IDs for tracking purposes.
+    const field = (contentType.fields || []).find(f => f.id === internalFieldId);
+    const locale = TheLocaleStore.getPrivateLocales().find(
+      l => l.internal_code === internalLocaleCode
+    );
+
+    if (!field || !locale) {
+      return;
+    }
+
+    Analytics.track('extension:set_value', {
+      contentTypeId: contentType.sys.id,
+      entryId: $scope.otDoc.getValueAt(['sys', 'id']),
+      fieldId: field.apiName || field.id,
+      localeCode: locale.code,
+      extensionId: descriptor.id,
+      extensionDefinitionId: descriptor.extensionDefinitionId || null
+    });
   }
 
   async function removeValue(path) {
