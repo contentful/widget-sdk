@@ -230,6 +230,11 @@ registerSchema({
 });
 
 registerSchema({
+  name: 'extension_activate',
+  version: '1-0-0'
+});
+
+registerSchema({
   name: 'sidebar_render',
   version: '1-0-0'
 });

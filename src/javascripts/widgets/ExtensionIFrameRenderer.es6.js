@@ -31,6 +31,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
     }).isRequired,
     descriptor: PropTypes.shape({
       id: PropTypes.string,
+      extensionDefinitionId: PropTypes.string,
       src: PropTypes.string,
       srcdoc: PropTypes.string
     }).isRequired,
@@ -89,7 +90,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
     }
 
     const { bridge, descriptor } = this.props;
-    const { src, srcdoc, id } = descriptor;
+    const { src, srcdoc, id, extensionDefinitionId } = descriptor;
 
     // Cherry-pick only valid parameter types.
     const parameters = {
@@ -106,17 +107,27 @@ export default class ExtensionIFrameRenderer extends React.Component {
     }
 
     const channel = new ExtensionIFrameChannel(iframe, window, bridge.apply);
+    const bridgeData = bridge.getData();
+
     this.extensionApi = new ExtensionAPI({
       extensionId: id,
       channel,
       parameters,
-      ...bridge.getData()
+      ...bridgeData
     });
+
     bridge.install(this.extensionApi);
 
     iframe.allowfullscreen = true;
     iframe.msallowfullscreen = true;
     iframe.allow = 'fullscreen';
+
+    iframe.dataset.extensionId = id;
+    iframe.dataset.location = bridgeData.location;
+
+    if (extensionDefinitionId) {
+      iframe.dataset.extensionDefinitionId = extensionDefinitionId;
+    }
 
     if (src && !isAppDomain(src)) {
       iframe.sandbox = `${SANDBOX} allow-same-origin`;
