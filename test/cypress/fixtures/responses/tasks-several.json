@@ -16,7 +16,7 @@
       },
       "sys": {
         "id": "taskId1",
-        "type": "Comment",
+        "type": "Task",
         "commentType": "Entry",
         "space": {
           "sys": {
@@ -48,7 +48,6 @@
           }
         },
         "updatedAt": "2019-05-20T20:07:35.089Z",
-        "parent": null,
         "version": 1
       }
     },
@@ -66,7 +65,7 @@
       },
       "sys": {
         "id": "taskId2",
-        "type": "Comment",
+        "type": "Task",
         "commentType": "Entry",
         "space": {
           "sys": {
@@ -98,7 +97,6 @@
           }
         },
         "updatedAt": "2019-05-20T20:07:39.877Z",
-        "parent": null,
         "version": 1
       }
     },
@@ -116,7 +114,7 @@
       },
       "sys": {
         "id": "taskId3",
-        "type": "Comment",
+        "type": "Task",
         "commentType": "Entry",
         "space": {
           "sys": {
@@ -148,7 +146,6 @@
           }
         },
         "updatedAt": "2019-05-20T20:07:46.191Z",
-        "parent": null,
         "version": 1
       }
     }
