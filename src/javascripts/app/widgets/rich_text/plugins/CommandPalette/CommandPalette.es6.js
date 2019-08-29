@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import * as logger from 'services/logger.es6';
-import { richTextCommandsFeatureFlag, isEmbeddingEnabled } from './CommandPaletteService.es6';
+import { isEmbeddingEnabled } from './CommandPaletteService.es6';
 import { hasCommandPaletteDecoration, getCommandText } from './Util.es6';
 import CommandPanel from './CommandPanel/index.es6';
 class CommandPalette extends React.PureComponent {
@@ -13,7 +13,6 @@ class CommandPalette extends React.PureComponent {
   };
 
   state = {
-    isFeatureEnabled: false,
     embedsEnabled: false
   };
 
@@ -22,27 +21,15 @@ class CommandPalette extends React.PureComponent {
   }
 
   componentDidMount = async () => {
-    const isFeatureEnabled = await richTextCommandsFeatureFlag.isEnabled();
     const embedsEnabled = isEmbeddingEnabled(this.props.richTextAPI.widgetAPI.field);
 
     this.setState({
-      isFeatureEnabled,
       embedsEnabled
     });
   };
 
-  componentDidUpdate() {
-    if (!this.state.isFeatureEnabled) {
-      return;
-    }
-  }
-
   render() {
-    if (
-      !this.state.isFeatureEnabled ||
-      !hasCommandPaletteDecoration(this.props.editor) ||
-      !this.state.embedsEnabled
-    ) {
+    if (!hasCommandPaletteDecoration(this.props.editor) || !this.state.embedsEnabled) {
       return null;
     }
 

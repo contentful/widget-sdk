@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { isNodeTypeEnabled } from 'app/widgets/rich_text/validations/index.es6';
 import { can, canCreateAsset } from 'access_control/AccessChecker/index.es6';
 import { INLINES, BLOCKS } from '@contentful/rich-text-types';
@@ -46,10 +45,6 @@ export async function fetchEntries(widgetAPI, contentType, query = '') {
     })
   );
 }
-
-export const richTextCommandsFeatureFlag = {
-  isEnabled: () => getCurrentVariation('feature-03-2019-richt-text-commands')
-};
 
 /**
  * @description

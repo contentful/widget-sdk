@@ -7,7 +7,6 @@ export enum FeatureFlag {
   ENTRY_ACTIVITY = 'feature-pul-03-2019-entry-activity',
   ENTRY_COMMENTS = 'feature-04-2019-entry-comments',
   MODERN_STACK_ONBOARDING = 'feature-dl-05-2018-modern-stack-onboarding',
-  RICH_TEXT_COMMANDS = 'feature-03-2019-richt-text-commands',
   SCHEDULED_PUBLICATION = 'feature-pul-04-2019-scheduled-publication-enabled',
   TEAMS = 'feature-bv-11-2018-teams',
   TEAMS_FOR_MEMBERS = 'feature-bv-01-2019-teams-for-members',
