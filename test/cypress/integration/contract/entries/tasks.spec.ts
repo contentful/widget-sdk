@@ -35,7 +35,7 @@ describe('Tasks entry editor sidebar', () => {
 
   beforeEach(() => {
     cy.resetAllFakeServers();
-    cy.enableFeatureFlags([FeatureFlag.CONTENT_WORKFLOW_TASKS, FeatureFlag.ENTRY_ACTIVITY]);
+    cy.enableFeatureFlags([FeatureFlag.CONTENT_WORKFLOW_TASKS]);
   });
 
   function visitEntry() {

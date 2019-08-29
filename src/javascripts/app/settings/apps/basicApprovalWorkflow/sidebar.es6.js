@@ -35,11 +35,6 @@ export default function makeSidebar(extensionId, webhookUrl) {
     },
     {
       disabled: true,
-      widgetId: 'entry-activity-widget',
-      widgetNamespace: 'sidebar-builtin'
-    },
-    {
-      disabled: true,
       widgetId: 'versions-widget',
       widgetNamespace: 'sidebar-builtin'
     },

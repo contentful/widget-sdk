@@ -5,7 +5,6 @@ export default {
   INCOMING_LINKS: 'incoming-links-widget',
   PUBLICATION: 'publication-widget',
   VERSIONS: 'versions-widget',
-  ACTIVITY: 'entry-activity-widget',
   INFO_PANEL: 'info-panel',
   JOBS: 'jobs-widget',
   TASKS: 'content-workflows-tasks-widget',

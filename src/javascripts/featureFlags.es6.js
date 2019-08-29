@@ -5,7 +5,6 @@ export const CONTACT_US_BOILERPLATE_FLAG = 'feature-ps-10-2017-contact-us-boiler
 export const ENVIRONMENTS_FLAG = 'feature-dv-11-2017-environments';
 export const UPGRADE_PRICING_FLAG = 'feature-dl-09-2018-upgrade-pricing-space-home';
 export const SSO_SELF_CONFIG_FLAG = 'feature-bv-2019-01-sso-self-config';
-export const ENTRY_ACTIVITY = 'feature-pul-03-2019-entry-activity';
 export const JOBS = 'feature-pul-04-2019-scheduled-publication-enabled';
 export const TASKS = 'feature-05-2019-content-workflows-tasks';
 export const QUICK_NAVIGATION = 'feature-ht-04-2019-quick-navigation';

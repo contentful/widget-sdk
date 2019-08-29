@@ -27,8 +27,6 @@ describe('Sidebar configuration', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
 
-    cy.enableFeatureFlags([FeatureFlag.ENTRY_ACTIVITY]);
-
     const interactions = [
       ...defaultRequestsMock(),
       getAllExtensionsInDefaultSpace.willReturnNone(),
