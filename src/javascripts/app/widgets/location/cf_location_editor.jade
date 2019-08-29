@@ -8,14 +8,10 @@ div.location-editor__map
     .loading-box__message
       | Your content is being loaded
 
-  .editor-control-warning(
+  react-component(
+    name="app/widgets/location/LocationEditorWarning.es6"
     ng-if="loadError"
-    role="alert"
-    data-error-code="field-editor-initialization")
-    cf-icon(name="plug")
-    p
-      | Google Maps failed to load.<br>
-      | You can still edit the coordinates manually.
+  )
 
   div(ng-show="!isLoading && !loadError")
     div.location-editor__google-map(data-map-slot)

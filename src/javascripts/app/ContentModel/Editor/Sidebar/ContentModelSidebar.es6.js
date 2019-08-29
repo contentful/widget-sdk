@@ -5,9 +5,8 @@ import {
   TextInput,
   Button,
   Paragraph,
-  List,
-  ListItem,
-  Subheading
+  Subheading,
+  Typography
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
@@ -22,7 +21,9 @@ export function FieldsSection(props) {
   return (
     <React.Fragment>
       <Subheading className="entity-sidebar__heading">Fields</Subheading>
-      <Paragraph>The content type has used {props.fieldsUsed} out of 50 fields.</Paragraph>
+      <Typography>
+        <Paragraph>The content type has used {props.fieldsUsed} out of 50 fields.</Paragraph>
+      </Typography>
       {props.canEdit && (
         <Button
           testId="add-field-button"
@@ -53,9 +54,11 @@ export function ContentTypeIdSection(props) {
   return (
     <React.Fragment>
       <Subheading className="entity-sidebar__heading">Content type ID</Subheading>
-      <Paragraph>
-        Use this ID to retrieve everything related to this content type via the API.
-      </Paragraph>
+      <Typography>
+        <Paragraph>
+          Use this ID to retrieve everything related to this content type via the API.
+        </Paragraph>
+      </Typography>
       <TextInput
         value={props.contentTypeId}
         name="contentTypeIdInput"
@@ -76,8 +79,8 @@ export function DocumentationSection() {
   return (
     <React.Fragment>
       <Subheading className="entity-sidebar__heading">Documentation</Subheading>
-      <List>
-        <ListItem>
+      <Typography>
+        <Paragraph>
           Read more about content types in our{' '}
           <KnowledgeBase
             target="contentModellingBasics"
@@ -85,12 +88,12 @@ export function DocumentationSection() {
             inlineText
           />
           .
-        </ListItem>
-        <ListItem>
+        </Paragraph>
+        <Paragraph>
           To learn more about the various ways of disabling and deleting fields have a look at the{' '}
           <KnowledgeBase target="field_lifecycle" text="field lifecycle" inlineText />.
-        </ListItem>
-      </List>
+        </Paragraph>
+      </Typography>
     </React.Fragment>
   );
 }

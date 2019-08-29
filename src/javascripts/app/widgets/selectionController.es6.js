@@ -62,7 +62,7 @@ function parseValue(value, type) {
   }
 }
 
-function getOptions(field) {
+export function getOptions(field) {
   // Get first object that has a 'in' property
   const predefinedValues = filter(map(field.validations, 'in'))[0];
   return map(predefinedValues, value => ({

@@ -1,12 +1,13 @@
-include ../field_editor.mixins.jade
-
 mixin clear-button
   button.cfnext-btn-link.radio-editor__clear(
     ng-click="clear($event)"
     ng-disabled="isDisabled")
     | Clear
 
-+predefined-values-warning(ng-if="misconfigured")
+react-component(
+  ng-if="misconfigured"
+  name="app/widgets/EditorWarningPredefinedValues.es6"
+)
 
 div.radio-editor__options(
   ng-if="!misconfigured"

@@ -78,7 +78,6 @@ angular
       ngRequire('app/widgets/cfListInputEditorDirective.es6').default();
       ngRequire('app/widgets/cfRatingEditorDirective.es6').default();
       ngRequire('app/widgets/datetime/cfEntryDatetimeEditorDirective.es6').default();
-      ngRequire('app/widgets/dropdown/cfDropdownEditorDirective.es6').default();
       ngRequire('app/widgets/json/cfJsonEditorCodeEditorDirective.es6').default();
       ngRequire('app/widgets/json/cfJsonEditorDirective.es6').default();
       ngRequire('app/widgets/link/entityLinkDirectives.es6').default();

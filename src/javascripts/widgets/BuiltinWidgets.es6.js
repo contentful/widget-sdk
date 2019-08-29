@@ -10,6 +10,7 @@ import LinkEditor, {
 import TagEditorField from 'app/widgets/TagEditor/TagEditorField.es6';
 import { SingleLineEditor } from '@contentful/field-editor-single-line';
 import { MultipleLineEditor } from '@contentful/field-editor-multiple-line';
+import DropdownEditor from 'app/widgets/dropdown/DropdownEditor.es6';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -74,7 +75,7 @@ export function create() {
     name: 'Dropdown',
     icon: 'dropdown',
     notFocusable: true,
-    template: '<cf-dropdown-editor />'
+    renderFieldEditor: ({ widgetApi }) => <DropdownEditor field={widgetApi.field} />
   });
 
   registerWidget('radio', {

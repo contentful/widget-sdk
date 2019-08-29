@@ -29,6 +29,7 @@ require('codemirror/mode/htmlmixed/htmlmixed');
 window.libs = [
   ['angular', window.angular],
 
+  ['@contentful/field-editor-shared', require('@contentful/field-editor-shared')],
   ['@contentful/field-editor-single-line', require('@contentful/field-editor-single-line')],
   ['@contentful/field-editor-multiple-line', require('@contentful/field-editor-multiple-line')],
 

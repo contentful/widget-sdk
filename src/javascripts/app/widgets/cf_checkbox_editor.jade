@@ -1,6 +1,7 @@
-include ./field_editor.mixins.jade
-
-+predefined-values-warning(ng-if="misconfigured")
+react-component(
+  ng-if="misconfigured"
+  name="app/widgets/EditorWarningPredefinedValues.es6"
+)
 
 div.checkbox-editor__options.x--directed(
   ng-if="!misconfigured"
