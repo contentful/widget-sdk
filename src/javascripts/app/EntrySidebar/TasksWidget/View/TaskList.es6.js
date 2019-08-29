@@ -5,6 +5,7 @@ import TasksInteractor from '../TasksInteractor.es6';
 import Task from './Task.es6';
 import Visible from 'components/shared/Visible/index.es6';
 import {
+  Paragraph,
   TextLink,
   ValidationMessage,
   SkeletonContainer,
@@ -67,9 +68,7 @@ export default class TasksWidget extends React.PureComponent {
         ) : (
           <React.Fragment>
             <Visible if={statusText}>
-              <p className="entity-sidebar__help-text" role="note">
-                {statusText}
-              </p>
+              <Paragraph className="entity-sidebar__help-text">{statusText}</Paragraph>
             </Visible>
             <Visible if={tasks.length}>
               <ol className={styles.list}>
