@@ -1,10 +1,6 @@
 import * as Random from 'utils/Random.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 
-// Id for correlating actions pereformed
-// in the same user session.
-const userSessionId = Random.id();
-
 export function detailsOpened(appId) {
   track('details-opened', appId);
 }
@@ -63,7 +59,6 @@ function track(eventName, appId) {
 
   Analytics.track('apps:lifecycle_event', {
     uniqueEventId,
-    userSessionId,
     appId,
     eventName
   });
@@ -75,7 +70,6 @@ function trackUninstallationReasons(eventId, appId, reasons) {
   (reasons || []).forEach(reason => {
     Analytics.track('apps:uninstallation_reason', {
       eventId,
-      userSessionId,
       appId,
       reason
     });
