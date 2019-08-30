@@ -76,11 +76,10 @@ const reasons = [
 ];
 
 function parseReasons(checked, otherReason) {
-  const formattedOther = otherReason ? `Other: ${otherReason}` : '';
   return Object.keys(checked)
     .filter(x => checked[x])
     .map(reason => reasons[reason])
-    .concat(formattedOther || []);
+    .concat(otherReason ? [{ custom: otherReason }] : []);
 }
 
 export default function UninstallModal({ onConfirm, onClose, actionList, isShown }) {

@@ -117,7 +117,7 @@ export const validEvents = {
   ui_webhook_editor: ['save'],
   usage: ['period_selected'],
   text_editor: ['action'],
-  apps: ['opted_in'],
+  apps: ['lifecycle_event', 'uninstallation_reason'],
   netlify: [
     'connected',
     'installed',

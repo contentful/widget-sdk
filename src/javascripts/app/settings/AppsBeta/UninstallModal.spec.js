@@ -77,7 +77,7 @@ describe('UninstallModal', () => {
 
     expect(onConfirm).toHaveBeenCalledWith([
       'Does not do what I expected',
-      `Other: ${customReasonText}`
+      { custom: customReasonText }
     ]);
   });
 

@@ -31,6 +31,7 @@ import AppListItem from './AppListItem.es6';
 import AppDetailsModal from './AppDetailsModal.es6';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
 import { getProductCatalogFlagForApp, hasAllowedAppFeatureFlag } from './AppProductCatalog.es6';
+import * as AppLifecycleTracking from './AppLifecycleTracking.es6';
 
 const styles = {
   intro: css({
@@ -75,6 +76,8 @@ const externalLinkProps = {
 };
 
 const openDetailModal = app => {
+  AppLifecycleTracking.detailsOpened(app.id);
+
   ModalLauncher.open(({ isShown, onClose }) => (
     <AppDetailsModal
       isShown={isShown}
