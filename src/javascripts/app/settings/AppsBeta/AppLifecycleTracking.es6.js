@@ -55,15 +55,18 @@ export function uninstallationFailed(appId) {
 }
 
 function track(eventName, appId) {
-  const uniqueEventId = Random.id();
+  // FE-generated unique ID of the event.
+  // We return it from this function so it can be used
+  // in consecutive `track()` calls.
+  const eventId = Random.id();
 
   Analytics.track('apps:lifecycle_event', {
-    uniqueEventId,
+    eventId,
     appId,
     eventName
   });
 
-  return uniqueEventId;
+  return eventId;
 }
 
 function trackUninstallationReasons(eventId, appId, reasons) {
