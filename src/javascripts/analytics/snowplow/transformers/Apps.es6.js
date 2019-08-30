@@ -19,6 +19,7 @@ export const AppUninstallationReasonTransformer = addUserOrgSpace((_, data) => {
       // As above.
       contentful_event_id: data.eventId,
       contentful_app_id: data.appId,
+      custom: data.custom,
       reason: data.reason
     }
   };

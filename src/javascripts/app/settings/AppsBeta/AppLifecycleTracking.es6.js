@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import * as Random from 'utils/Random.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 
@@ -71,10 +72,13 @@ function track(eventName, appId) {
 
 function trackUninstallationReasons(eventId, appId, reasons) {
   (reasons || []).forEach(reason => {
+    const custom = typeof reason !== 'string';
+
     Analytics.track('apps:uninstallation_reason', {
       eventId,
       appId,
-      reason
+      custom,
+      reason: custom ? get(reason, ['custom'], 'unknown') : reason
     });
   });
 }
