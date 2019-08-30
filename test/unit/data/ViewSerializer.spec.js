@@ -1,10 +1,8 @@
 import _ from 'lodash';
 
 describe('ViewSerializer', () => {
-  beforeEach(function() {
-    module('contentful/test');
-
-    const ViewSerializer = this.$inject('data/ViewSerializer.es6');
+  beforeEach(async function() {
+    const ViewSerializer = await this.system.import('data/ViewSerializer.es6');
     this.serialize = ViewSerializer.serialize;
     this.unserialize = ViewSerializer.unserialize;
   });

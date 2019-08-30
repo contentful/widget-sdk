@@ -1,3 +1,6 @@
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/helpers/helpers';
+
 describe('ListViewPersistor', () => {
   let store, $location, qs;
   afterEach(() => {
@@ -6,15 +9,16 @@ describe('ListViewPersistor', () => {
 
   const STORE_KEY = 'lastFilterQueryString.entries.SPACE_ID';
 
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    const ListViewPersistor = (await this.system.import('data/ListViewPersistor.es6')).default;
+    store = (await this.system.import('TheStore/index.es6')).getStore();
 
-    store = this.$inject('TheStore').getStore();
+    await $initialize(this.system);
 
-    $location = this.$inject('$location');
+    $location = $inject('$location');
     sinon.stub($location, 'search');
 
-    qs = this.$inject('data/ListViewPersistor.es6').default({
+    qs = ListViewPersistor({
       spaceId: 'SPACE_ID',
       entityType: 'Entry',
       $location

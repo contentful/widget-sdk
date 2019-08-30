@@ -1,7 +1,10 @@
+import sinon from 'sinon';
 import createWebhookRepo from 'data/CMA/WebhookRepo.es6';
+import { $initialize } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
 
 describe('Webhook Repo', function() {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.endpoint = {};
     this.space = { endpoint: sinon.stub().returns(this.endpoint) };
 
@@ -16,6 +19,8 @@ describe('Webhook Repo', function() {
     });
 
     this.repo = createWebhookRepo(this.space);
+
+    await $initialize(this.system);
   });
 
   describe('#getAll()', function() {

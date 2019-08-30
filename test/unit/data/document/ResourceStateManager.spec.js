@@ -1,20 +1,23 @@
+import sinon from 'sinon';
 import * as K from 'test/helpers/mocks/kefir';
 import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
+import { $initialize, $inject } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
 
 describe('data/document/ResourceStateManager.es6', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.value('access_control/AccessChecker', {
-        canUpdateEntity: sinon.stub().returns(true)
-      });
+  beforeEach(async function() {
+    this.system.set('access_control/AccessChecker/index.es6', {
+      canUpdateEntity: sinon.stub().returns(true)
     });
 
-    const { Action, State } = this.$inject('data/document/ResourceStateManager.es6');
+    const { Action, State } = await this.system.import('data/document/ResourceStateManager.es6');
     this.Action = Action;
     this.State = State;
 
-    const DocLoad = this.$inject('data/sharejs/Connection.es6').DocLoad;
-    const Doc = this.$inject('app/entity_editor/Document.es6');
+    const { DocLoad } = await this.system.import('data/sharejs/Connection.es6');
+    const Doc = await this.system.import('app/entity_editor/Document.es6');
+
+    await $initialize(this.system);
 
     const endpoint = createMockSpaceEndpoint();
     this.spaceEndpoint = sinon.spy(endpoint.request);
@@ -41,7 +44,7 @@ describe('data/document/ResourceStateManager.es6', () => {
       setDeleted: sinon.stub()
     };
 
-    const OtDoc = this.$inject('mocks/OtDoc');
+    const OtDoc = $inject('mocks/OtDoc');
     this.sjsDoc = new OtDoc(entityData);
 
     const docLoader = {
@@ -61,8 +64,8 @@ describe('data/document/ResourceStateManager.es6', () => {
     docLoader.doc.set(DocLoad.Doc(this.sjsDoc));
   });
 
-  it('applies actions and makes HTTP requests', function*() {
-    yield this.doc.resourceState.apply(this.Action.Publish());
+  it('applies actions and makes HTTP requests', async function() {
+    await this.doc.resourceState.apply(this.Action.Publish());
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'PUT',
       path: ['entries', 'ENTITY_ID', 'published'],
@@ -78,7 +81,7 @@ describe('data/document/ResourceStateManager.es6', () => {
     );
     K.assertCurrentValue(this.doc.resourceState.state$, this.State.Published());
 
-    yield this.doc.resourceState.apply(this.Action.Archive());
+    await this.doc.resourceState.apply(this.Action.Archive());
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'DELETE',
       path: ['entries', 'ENTITY_ID', 'published'],
@@ -99,7 +102,7 @@ describe('data/document/ResourceStateManager.es6', () => {
     );
     K.assertCurrentValue(this.doc.resourceState.state$, this.State.Archived());
 
-    yield this.doc.resourceState.apply(this.Action.Unarchive());
+    await this.doc.resourceState.apply(this.Action.Unarchive());
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'DELETE',
       path: ['entries', 'ENTITY_ID', 'archived'],
@@ -115,7 +118,7 @@ describe('data/document/ResourceStateManager.es6', () => {
     );
     K.assertCurrentValue(this.doc.resourceState.state$, this.State.Draft());
 
-    yield this.doc.resourceState.apply(this.Action.Delete());
+    await this.doc.resourceState.apply(this.Action.Delete());
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'DELETE',
       path: ['entries', 'ENTITY_ID'],

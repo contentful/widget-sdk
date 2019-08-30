@@ -1,13 +1,24 @@
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $apply } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
 
 describe('FetchAll', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.constant('lodash/debounce', _.identity);
-      $provide.constant('lodash/throttle', _.identity);
+  beforeEach(async function() {
+    this.system.set('lodash/debounce', {
+      default: _.identity
     });
-    this.fetchAll = this.$inject('data/CMA/FetchAll.es6').fetchAll;
-    this.fetchAllWithIncludes = this.$inject('data/CMA/FetchAll.es6').fetchAllWithIncludes;
+    this.system.set('lodash/throttle', {
+      default: _.identity
+    });
+
+    this.fetchAll = (await this.system.import('data/CMA/FetchAll.es6')).fetchAll;
+    this.fetchAllWithIncludes = (await this.system.import(
+      'data/CMA/FetchAll.es6'
+    )).fetchAllWithIncludes;
+
+    await $initialize(this.system);
+
     this.query = { skip: 0, limit: 10 };
   });
 
@@ -133,7 +144,7 @@ describe('FetchAll', () => {
       const endpointStub = sinon.stub().resolves({ total: 15, items: [{ sys: { id: 'a' } }] });
 
       this.fetchAllWithIncludes(endpointStub, '/path', this.query.limit);
-      this.$apply();
+      $apply();
 
       sinon.assert.called(
         endpointStub.withArgs({ method: 'GET', path: '/path', query: this.query })

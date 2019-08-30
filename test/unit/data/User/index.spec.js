@@ -1,8 +1,9 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
 import * as K from 'test/helpers/mocks/kefir';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 describe('data/User', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.tokenStore = {
       organizations$: K.createMockProperty(null),
       user$: K.createMockProperty(null),
@@ -31,15 +32,16 @@ describe('data/User', () => {
       }
     ];
 
-    module('contentful/test', $provide => {
-      $provide.value('services/TokenStore.es6', this.tokenStore);
+    this.system.set('services/TokenStore.es6', this.tokenStore);
+    this.moment = (await this.system.import('moment')).default;
+    this.utils = await this.system.import('data/User');
+
+    await $initialize(this.system, $provide => {
       $provide.constant('spaceContext', this.spaceContext);
       $provide.value('$stateParams', this.$stateParams);
     });
 
-    this.moment = this.$inject('moment');
-    this.$rootScope = this.$inject('$rootScope');
-    this.utils = this.$inject('data/User');
+    this.$rootScope = $inject('$rootScope');
   });
 
   describe('#userDataBus$', () => {
@@ -64,7 +66,7 @@ describe('data/User', () => {
         this.$stateParams.orgId = orgId;
         this.$rootScope.$broadcast('$stateChangeSuccess', null, { orgId });
         this.tokenStore.user$.set(user);
-        this.$apply();
+        $apply();
       };
     });
     it('emits [user, org, spacesByOrg, space] where space is optional', function() {

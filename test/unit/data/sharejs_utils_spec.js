@@ -1,10 +1,12 @@
-'use strict';
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 describe('data/ShareJS/Utils', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.ShareJS = this.$inject('data/ShareJS/Utils');
+  beforeEach(async function() {
+    await $initialize(this.system);
+
+    this.ShareJS = $inject('data/ShareJS/Utils');
   });
 
   describe('#peek', () => {
@@ -31,7 +33,7 @@ describe('data/ShareJS/Utils', () => {
         const doc = { removeAt: stub };
         this.ShareJS.remove(doc, ['a']).then(success);
         sinon.assert.calledOnce(doc.removeAt.withArgs(['a']));
-        this.$apply();
+        $apply();
         sinon.assert.calledOnce(success);
       });
     }
@@ -39,7 +41,7 @@ describe('data/ShareJS/Utils', () => {
 
   describe('#setDeep()', () => {
     beforeEach(function() {
-      const OtDocMock = this.$inject('mocks/OtDoc');
+      const OtDocMock = $inject('mocks/OtDoc');
       this.doc = new OtDocMock();
       this.setDeep = this.ShareJS.setDeep;
     });
@@ -95,17 +97,17 @@ describe('data/ShareJS/Utils', () => {
     it('resolves the promise', function() {
       const success = sinon.stub();
       this.setDeep(this.doc, ['a', 'b'], 'VAL').then(success);
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(success);
 
       success.reset();
       this.setDeep(this.doc, ['a', 'b'], 'NEW').then(success);
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(success);
 
       success.reset();
       this.setDeep(this.doc, ['a', 'b'], 'NEW').then(success);
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(success);
     });
   });

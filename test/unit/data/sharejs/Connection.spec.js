@@ -1,8 +1,11 @@
+import sinon from 'sinon';
 import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
+import { $initialize, $apply, $inject } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
 
 describe('data/sharejs/Connection.es6', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.baseConnection = {
       socket: {},
       emit: _.noop,
@@ -17,37 +20,41 @@ describe('data/sharejs/Connection.es6', () => {
     this.setState = state => {
       this.baseConnection.state = state;
       this.baseConnection.emit();
-      this.$apply();
+      $apply();
     };
 
     this.yieldOpen = (err, doc) => {
       this.baseConnection.open.yield(err, doc);
       this.baseConnection.open.reset();
-      this.$apply();
+      $apply();
     };
 
     this.sharejs = {
       Connection: sinon.stub().returns(this.baseConnection)
     };
 
-    module('contentful/test', $provide => {
-      $provide.constant('@contentful/sharejs/lib/client', this.sharejs);
+    this.system.set('@contentful/sharejs/lib/client', {
+      default: this.sharejs
     });
 
-    const OtDoc = this.$inject('mocks/OtDoc');
+    this.ShareJSConnection = await this.system.import('data/sharejs/Connection.es6');
+
+    await $initialize(this.system);
+
+    const OtDoc = $inject('mocks/OtDoc');
     this.resolveOpen = function() {
       const doc = new OtDoc();
       doc.close.yields();
       this.baseConnection.open.yield(null, doc);
       this.baseConnection.open.reset();
-      this.$apply();
+      $apply();
       return doc;
     };
 
     this.rejectOpen = function(err) {
       this.baseConnection.open.yield(err);
       this.baseConnection.open.reset();
-      this.$apply();
+      $apply();
     };
 
     const token$ = K.createMockProperty('TOKEN');
@@ -64,7 +71,7 @@ describe('data/sharejs/Connection.es6', () => {
         })
     };
 
-    this.create = this.$inject('data/sharejs/Connection.es6').create;
+    this.create = this.ShareJSConnection.create;
     this.connection = this.create('//HOST', this.auth, 'SPACE', 'ENV');
   });
 
@@ -94,7 +101,7 @@ describe('data/sharejs/Connection.es6', () => {
     let DocLoad;
 
     beforeEach(function() {
-      DocLoad = this.$inject('data/sharejs/Connection.es6').DocLoad;
+      DocLoad = this.ShareJSConnection.DocLoad;
 
       this.entity = {
         data: {
@@ -113,7 +120,7 @@ describe('data/sharejs/Connection.es6', () => {
         // We only request to open a document if we subscribe to the
         // `doc` property.
         K.onValue(docLoader.doc, () => {});
-        this.$apply();
+        $apply();
         return docLoader;
       };
 
@@ -231,14 +238,14 @@ describe('data/sharejs/Connection.es6', () => {
       const ended = sinon.spy();
       docLoader.doc.onEnd(ended);
       docLoader.destroy();
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(ended);
     });
 
     it('closes document when loader is destroyed', function() {
       const { docLoader, doc } = this.openDoc();
       docLoader.destroy();
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(doc.close);
     });
 
@@ -257,7 +264,7 @@ describe('data/sharejs/Connection.es6', () => {
 
       // open again when it's done:
       doc.close.yield();
-      this.$apply();
+      $apply();
       expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.Pending);
       sinon.assert.calledOnce(this.baseConnection.open);
     });
@@ -276,7 +283,7 @@ describe('data/sharejs/Connection.es6', () => {
 
       // Close has finished. Ready to open same doc again.
       doc.close.yield();
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(this.baseConnection.open);
 
       this.resolveOpen();
@@ -357,14 +364,14 @@ describe('data/sharejs/Connection.es6', () => {
       this.setState('ok');
     });
 
-    it('calls connection.refreshAuth() with the new token', function*() {
-      yield this.connection.refreshAuth();
+    it('calls connection.refreshAuth() with the new token', async function() {
+      await this.connection.refreshAuth();
       sinon.assert.calledOnce(this.baseConnection.refreshAuth.withArgs('NEW_TOKEN'));
     });
 
-    it('does not call connection.refreshAuth() if connection is closed', function*() {
+    it('does not call connection.refreshAuth() if connection is closed', async function() {
       this.setState('disconnected');
-      yield this.connection.refreshAuth();
+      await this.connection.refreshAuth();
       sinon.assert.notCalled(this.baseConnection.refreshAuth);
     });
 
@@ -374,17 +381,17 @@ describe('data/sharejs/Connection.es6', () => {
       expect(firstCallPromise).toEqual(secondCallPromise);
     });
 
-    it('makes a consequent call after previous one finishes', function*() {
-      yield this.connection.refreshAuth();
-      yield this.connection.refreshAuth();
+    it('makes a consequent call after previous one finishes', async function() {
+      await this.connection.refreshAuth();
+      await this.connection.refreshAuth();
       sinon.assert.calledTwice(this.baseConnection.refreshAuth);
     });
 
-    it('closes connection if auth refresh failed', function*() {
+    it('closes connection if auth refresh failed', async function() {
       const error = new Error();
       this.baseConnection.refreshAuth.throws(error);
 
-      yield this.connection.refreshAuth();
+      await this.connection.refreshAuth();
       sinon.assert.calledOnce(this.baseConnection.disconnect);
     });
   });

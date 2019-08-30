@@ -138,12 +138,14 @@
       await Promise.all(
         testModules.reduce((memo, name) => {
           const prefixes = [
+            'test/unit/Authentication',
             'test/unit/access_control',
             'test/unit/account',
             'test/unit/analytics',
             'test/unit/app',
             'test/unit/classes',
-            'test/unit/components'
+            'test/unit/components',
+            'test/unit/data'
           ];
 
           if (prefixes.find(prefix => name.startsWith(prefix))) {

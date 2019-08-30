@@ -1,24 +1,30 @@
+import sinon from 'sinon';
+import { $initialize } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
+
 describe('Locale Repo', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.value('data/CMA/FetchAll.es6', {
-        fetchAll: sinon.stub().resolves([{}, {}, {}])
-      });
+  beforeEach(async function() {
+    this.system.set('data/CMA/FetchAll.es6', {
+      fetchAll: sinon.stub().resolves([{}, {}, {}])
     });
 
+    const { default: LocaleRepo } = await this.system.import('data/CMA/LocaleRepo.es6');
+
+    await $initialize(this.system);
+
     this.endpoint = sinon.stub();
-    this.repo = this.$inject('data/CMA/LocaleRepo.es6').default(this.endpoint);
+    this.repo = LocaleRepo(this.endpoint);
   });
 
-  it('gets all', function*() {
-    const all = yield this.repo.getAll();
+  it('gets all', async function() {
+    const all = await this.repo.getAll();
     expect(all.length).toBe(3);
   });
 
-  it('saves new', function*() {
+  it('saves new', async function() {
     const response = {};
     this.endpoint.resolves(response);
-    const result = yield this.repo.save({ code: 'de-DE' });
+    const result = await this.repo.save({ code: 'de-DE' });
     sinon.assert.calledOnce(
       this.endpoint.withArgs({
         method: 'POST',
@@ -30,8 +36,8 @@ describe('Locale Repo', () => {
     expect(result).toBe(response);
   });
 
-  it('updates existing', function*() {
-    yield this.repo.save({ sys: { id: 'localeid', version: 2 }, name: 'English' });
+  it('updates existing', async function() {
+    await this.repo.save({ sys: { id: 'localeid', version: 2 }, name: 'English' });
     sinon.assert.calledOnce(
       this.endpoint.withArgs({
         method: 'PUT',
@@ -42,8 +48,8 @@ describe('Locale Repo', () => {
     );
   });
 
-  it('skips properties not accepted by the API', function*() {
-    yield this.repo.save({
+  it('skips properties not accepted by the API', async function() {
+    await this.repo.save({
       sys: {},
       default: true,
       fallback_code: 'wat',
@@ -61,9 +67,9 @@ describe('Locale Repo', () => {
     );
   });
 
-  it('removes', function*() {
+  it('removes', async function() {
     this.endpoint.resolves({ rubbish: true });
-    const result = yield this.repo.remove('localeid', 123);
+    const result = await this.repo.remove('localeid', 123);
     sinon.assert.calledOnce(
       this.endpoint.withArgs({
         method: 'DELETE',
