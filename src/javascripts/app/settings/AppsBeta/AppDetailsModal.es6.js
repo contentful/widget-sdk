@@ -16,6 +16,7 @@ import AppPermissions from './AppPermissions.es6';
 import ClientStorage from 'TheStore/ClientStorage.es6';
 import { websiteUrl } from 'Config.es6';
 import * as AppLifecycleTracking from './AppLifecycleTracking.es6';
+import AppDescription from './AppDescription.es6';
 
 const sessionStorage = ClientStorage('session');
 sessionStorage.set('appPermissions', JSON.stringify({}));
@@ -42,14 +43,12 @@ const styles = {
   mainColumn: css({
     flexGrow: 1
   }),
-  description: css({
-    whiteSpace: 'pre-line'
-  }),
   sidebarColumn: css({
     minWidth: '280px',
     width: '280px',
     minHeight: '700px',
     paddingLeft: tokens.spacingL,
+    marginLeft: tokens.spacingL,
     borderLeft: `1px solid ${tokens.colorElementMid}`
   }),
   sidebarSpacing: css({
@@ -216,7 +215,7 @@ export function AppDetails(props) {
     <div className={cx(styles.root, { [styles.fade]: showPermissions === false })}>
       <div className={styles.mainColumn}>
         <AppHeader app={app} showPermissions={showPermissions} />
-        <div className={styles.description}>{app.description}</div>
+        <AppDescription description={app.description} />
       </div>
       <div className={styles.sidebarColumn}>
         {app.enabled || app.installed ? (
