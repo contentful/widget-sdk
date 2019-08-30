@@ -69,13 +69,15 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
   async function setValue(path, value) {
     try {
       await $scope.otDoc.setValueAt(path, value);
-      trackSetValue(path);
+      // trackSetValue(path);
       return value;
     } catch (err) {
       throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
     }
   }
 
+  // todo: bring it back after investigation
+  // eslint-disable-next-line
   function trackSetValue(path) {
     const [, internalFieldId, internalLocaleCode] = path;
     const { contentType } = $scope.entityInfo;
