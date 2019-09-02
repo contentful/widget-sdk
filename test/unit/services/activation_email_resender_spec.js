@@ -1,22 +1,23 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/helpers/helpers';
 
 describe('activationEmailResender', () => {
   let $httpBackend;
   let resend;
 
-  beforeEach(function() {
+  beforeEach(async function() {
     this.stubs = {
       logError: sinon.stub()
     };
 
-    module('contentful/test', $provide => {
-      $provide.constant('services/logger.es6', {
-        logError: this.stubs.logError
-      });
+    this.system.set('services/logger.es6', {
+      logError: this.stubs.logError
     });
 
-    resend = this.$inject('activationEmailResender').resend;
-    $httpBackend = this.$inject('$httpBackend');
+    await $initialize(this.system);
+
+    resend = $inject('activationEmailResender').resend;
+    $httpBackend = $inject('$httpBackend');
   });
 
   afterEach(() => {

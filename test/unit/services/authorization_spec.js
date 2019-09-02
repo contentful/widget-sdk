@@ -1,18 +1,23 @@
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/helpers/helpers';
+
 describe('Authorization service', () => {
   let authorization;
   let worfStub;
   let accessChecker;
 
-  beforeEach(function() {
+  beforeEach(async function() {
     worfStub = sinon.stub();
     accessChecker = { setAuthContext: sinon.stub() };
 
-    module('contentful/test', $provide => {
-      $provide.constant('@contentful/worf', worfStub);
-      $provide.value('access_control/AccessChecker/index.es6', accessChecker);
-    });
+    this.system.set('@contentful/worf', { default: worfStub });
+    this.system.set('access_control/AccessChecker/index.es6', accessChecker);
 
-    authorization = this.$inject('authorization');
+    await $initialize(this.system);
+
+    authorization = $inject('authorization');
+
+    await authorization.init();
   });
 
   it('creates an instance', () => {

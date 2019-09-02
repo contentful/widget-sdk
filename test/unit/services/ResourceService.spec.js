@@ -1,8 +1,10 @@
+import sinon from 'sinon';
 import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 import { get, set, values } from 'lodash';
+import { it } from 'test/helpers/dsl';
 
 describe('ResourceService', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.createResource = (type, limits, usage) => {
       const { maximum, included } = limits;
 
@@ -140,33 +142,27 @@ describe('ResourceService', () => {
     this.spies.createSpaceEndpoint = sinon.spy(createSpaceEndpoint);
     this.stubs.createOrganizationEndpoint = sinon.stub();
 
-    module('contentful/test', $provide => {
-      $provide.value('data/EndpointFactory.es6', {
-        createSpaceEndpoint: this.spies.createSpaceEndpoint,
-        createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
-      });
-
-      $provide.value('Authentication.es6', {});
-
-      $provide.value('services/TokenStore.es6', {
-        getSpace: sinon.stub().resolves(this.mocks.space),
-        getOrganization: sinon.stub().resolves(this.mocks.organization)
-      });
-
-      $provide.value('data/EndpointFactory.es6', {
-        createSpaceEndpoint: this.spies.createSpaceEndpoint,
-        createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
-      });
-
-      $provide.value('Authentication.es6', {});
-
-      $provide.value('services/TokenStore.es6', {
-        getSpace: sinon.stub().resolves(this.mocks.space),
-        getOrganization: sinon.stub().resolves(this.mocks.organization)
-      });
+    this.system.set('data/EndpointFactory.es6', {
+      createSpaceEndpoint: this.spies.createSpaceEndpoint,
+      createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
     });
 
-    this.createResourceService = this.$inject('services/ResourceService.es6').default;
+    this.system.set('Authentication.es6', {});
+    this.system.set('services/TokenStore.es6', {
+      getSpace: sinon.stub().resolves(this.mocks.space),
+      getOrganization: sinon.stub().resolves(this.mocks.organization)
+    });
+    this.system.set('data/EndpointFactory.es6', {
+      createSpaceEndpoint: this.spies.createSpaceEndpoint,
+      createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
+    });
+    this.system.set('Authentication.es6', {});
+    this.system.set('services/TokenStore.es6', {
+      getSpace: sinon.stub().resolves(this.mocks.space),
+      getOrganization: sinon.stub().resolves(this.mocks.organization)
+    });
+
+    this.createResourceService = (await this.system.import('services/ResourceService.es6')).default;
     this.ResourceService = this.createResourceService('1234');
   });
 

@@ -1,8 +1,9 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
 import { cloneDeep } from 'lodash';
+import { it } from 'test/helpers/dsl';
 
 describe('Enforcements Service', function() {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.tokenSpace = {
       enforcements: []
     };
@@ -11,16 +12,15 @@ describe('Enforcements Service', function() {
     this.getSpace = sinon.stub().resolves(this.tokenSpace);
     this.getCurrentVariation = sinon.stub().resolves(true);
 
-    module('contentful/test', $provide => {
-      $provide.value('data/EndpointFactory.es6', {
-        createSpaceEndpoint: () => this.fetchEnforcements
-      });
-
-      $provide.value('services/TokenStore.es6', {
-        getSpace: this.getSpace
-      });
+    this.system.set('data/EndpointFactory.es6', {
+      createSpaceEndpoint: () => this.fetchEnforcements
     });
-    this.EnforcementsService = this.$inject('services/EnforcementsService.es6');
+
+    this.system.set('services/TokenStore.es6', {
+      getSpace: this.getSpace
+    });
+
+    this.EnforcementsService = await this.system.import('services/EnforcementsService.es6');
 
     this.setEnforcementsResp = enforcements => {
       this.fetchEnforcements.resolves({ items: enforcements });

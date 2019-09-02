@@ -1,25 +1,24 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/helpers/helpers';
 
 describe('Contentful Client', () => {
   let $httpBackend;
 
   let client, successStub, failStub;
 
-  beforeEach(() => {
-    module('contentful/test');
-    inject($injector => {
-      $httpBackend = $injector.get('$httpBackend');
+  beforeEach(async function() {
+    await $initialize(this.system);
+    $httpBackend = $inject('$httpBackend');
 
-      const contentfulClient = $injector.get('contentfulClient');
-      client = contentfulClient.newClient({
-        host: 'api.contentful.com',
-        space: 'spaceid',
-        accessToken: 'access_token'
-      });
-
-      successStub = sinon.stub();
-      failStub = sinon.stub();
+    const contentfulClient = $inject('contentfulClient');
+    client = contentfulClient.newClient({
+      host: 'api.contentful.com',
+      space: 'spaceid',
+      accessToken: 'access_token'
     });
+
+    successStub = sinon.stub();
+    failStub = sinon.stub();
   });
 
   afterEach(inject($log => {

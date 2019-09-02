@@ -1,20 +1,20 @@
-'use strict';
-
+import sinon from 'sinon';
 import _ from 'lodash';
 
 describe('logger service', () => {
   let step = 0;
 
-  beforeEach(function() {
-    module('contentful/test');
-    this.bugsnag = this.$inject('analytics/Bugsnag.es6');
+  beforeEach(async function() {
+    this.bugsnag = {
+      enable: sinon.stub(),
+      disable: sinon.stub(),
+      notify: sinon.stub(),
+      notifyException: sinon.stub()
+    };
 
-    sinon.stub(this.bugsnag, 'enable');
-    sinon.stub(this.bugsnag, 'disable');
-    sinon.stub(this.bugsnag, 'notify');
-    sinon.stub(this.bugsnag, 'notifyException');
+    this.system.set('analytics/Bugsnag.es6', this.bugsnag);
 
-    this.logger = this.$inject('services/logger.es6');
+    this.logger = await this.system.import('services/logger.es6');
   });
 
   it('enables', function() {

@@ -1,43 +1,44 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
 import _ from 'lodash';
+import { $initialize } from 'test/helpers/helpers';
 
 describe('Space Template creation service', () => {
   let spaceTemplateCreator, creator, stubs, spaceContext, enrichTemplate;
 
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      stubs = $provide.makeStubs([
-        'ctPublish',
-        'assetPublish',
-        'assetProcess',
-        'entryPublish',
-        'progressSuccess',
-        'progressError',
-        'success',
-        'error',
-        'retrySuccess',
-        'getContentPreview',
-        'createContentPreview',
-        'refreshLocaleStore',
-        'setActiveLocales'
-      ]);
+  beforeEach(async function() {
+    stubs = {
+      ctPublish: sinon.stub(),
+      assetPublish: sinon.stub(),
+      assetProcess: sinon.stub(),
+      entryPublish: sinon.stub(),
+      progressSuccess: sinon.stub(),
+      progressError: sinon.stub(),
+      success: sinon.stub(),
+      error: sinon.stub(),
+      retrySuccess: sinon.stub(),
+      getContentPreview: sinon.stub(),
+      createContentPreview: sinon.stub(),
+      refreshLocaleStore: sinon.stub(),
+      setActiveLocales: sinon.stub()
+    };
 
-      $provide.value('analytics/Analytics.es6', { track: _.noop });
-      $provide.value('services/SpaceTemplateCreator/enrichTemplate.es6', {
-        // we don't care about template info, because we describe enrichTemplate
-        // function by ourselves
-        enrichTemplate: (_templateInfo, template) => enrichTemplate(template)
-      });
-
-      $provide.constant('services/localeStore.es6', {
-        default: {
-          refresh: stubs.refreshLocaleStore,
-          setActiveLocales: stubs.setActiveLocales
-        }
-      });
+    this.system.set('analytics/Analytics.es6', { track: _.noop });
+    this.system.set('services/SpaceTemplateCreator/enrichTemplate.es6', {
+      // we don't care about template info, because we describe enrichTemplate
+      // function by ourselves
+      enrichTemplate: (_templateInfo, template) => enrichTemplate(template)
     });
 
-    spaceTemplateCreator = this.$inject('services/SpaceTemplateCreator');
+    this.system.set('services/localeStore.es6', {
+      default: {
+        refresh: stubs.refreshLocaleStore,
+        setActiveLocales: stubs.setActiveLocales
+      }
+    });
+
+    spaceTemplateCreator = await this.system.import('services/SpaceTemplateCreator/index.es6');
+
+    await $initialize(this.system);
   });
 
   afterEach(() => {
@@ -46,7 +47,7 @@ describe('Space Template creation service', () => {
 
   describe('creates content based on a template', () => {
     let template;
-    beforeEach(function*() {
+    beforeEach(async function() {
       // we enrich template with 2 editor interfaces
       // but only 1 matches the content type we publish
       enrichTemplate = template => ({
@@ -194,7 +195,7 @@ describe('Space Template creation service', () => {
         'de-DE'
       );
 
-      yield creator
+      await creator
         .create(template)
         .spaceSetup.then(data => {
           stubs.success(data);
@@ -286,7 +287,7 @@ describe('Space Template creation service', () => {
     });
 
     describe('retries creating the failed entities', () => {
-      beforeEach(function*() {
+      beforeEach(async function() {
         const template = {
           contentTypes: [
             { sys: { id: 'ct1' }, publish: stubs.ctPublish },
@@ -359,7 +360,7 @@ describe('Space Template creation service', () => {
         );
         stubs.entryPublish.returns(Promise.resolve());
 
-        yield creator.create(template).spaceSetup.catch(stubs.retrySuccess);
+        await creator.create(template).spaceSetup.catch(stubs.retrySuccess);
       });
 
       it('creates 1 content type', () => {

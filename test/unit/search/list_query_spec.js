@@ -1,3 +1,6 @@
+import { $initialize, $inject } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
+
 describe('ListQuery service', () => {
   let ListQuery, paginator;
   afterEach(() => {
@@ -12,13 +15,14 @@ describe('ListQuery service', () => {
     expect(q['sys.archivedAt[exists]']).toBe('false');
   }
 
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    paginator = (await this.system.import('classes/Paginator.es6')).default.create();
 
-    ListQuery = this.$inject('ListQuery');
-    paginator = this.$inject('classes/Paginator.es6').default.create();
+    await $initialize(this.system);
 
-    const spaceContext = this.$inject('mocks/spaceContext').init();
+    ListQuery = $inject('ListQuery');
+
+    const spaceContext = $inject('mocks/spaceContext').init();
     spaceContext.publishedCTs.fetch.resolves({
       data: { fields: [] },
       getId: () => 'test'
@@ -40,14 +44,14 @@ describe('ListQuery service', () => {
   }
 
   describe('Returns promise of a query', () => {
-    it('for assets', function*() {
-      const q = yield ListQuery.getForAssets(assetOpts());
+    it('for assets', async function() {
+      const q = await ListQuery.getForAssets(assetOpts());
       testQuery(q);
       expect(q.content_type).toBeUndefined();
     });
 
-    it('for entries', function*() {
-      const q = yield ListQuery.getForEntries(entryOpts());
+    it('for entries', async function() {
+      const q = await ListQuery.getForEntries(entryOpts());
       testQuery(q);
       expect(q.content_type).toBe('TEST_CT_ID');
     });
@@ -61,26 +65,26 @@ describe('ListQuery service', () => {
       return { searchFilters: [['__status', '', status]] };
     }
 
-    it('for published list', function*() {
-      const q = yield queryFor(searchForStatus('published'));
+    it('for published list', async function() {
+      const q = await queryFor(searchForStatus('published'));
       expect(q['sys.publishedAt[exists]']).toBe('true');
     });
 
-    it('for changed list', function*() {
-      const q = yield queryFor(searchForStatus('changed'));
+    it('for changed list', async function() {
+      const q = await queryFor(searchForStatus('changed'));
       expect(q['sys.archivedAt[exists]']).toBe('false');
       expect(q.changed).toBe('true');
     });
 
-    it('for draft list', function*() {
-      const q = yield queryFor(searchForStatus('draft'));
+    it('for draft list', async function() {
+      const q = await queryFor(searchForStatus('draft'));
       expect(q['sys.archivedAt[exists]']).toBe('false');
       expect(q['sys.publishedAt[exists]']).toBe('false');
       expect(q.changed).toBe('true');
     });
 
-    it('for archived list', function*() {
-      const q = yield queryFor(searchForStatus('archived'));
+    it('for archived list', async function() {
+      const q = await queryFor(searchForStatus('archived'));
       expect(q['sys.archivedAt[exists]']).toBe('true');
     });
   });

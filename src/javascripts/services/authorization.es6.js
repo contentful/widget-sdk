@@ -1,11 +1,11 @@
 import { registerFactory } from 'NgRegistry.es6';
-import worf from '@contentful/worf';
 
 export default function register() {
   registerFactory('authorization', [
     () => {
       let accessChecker;
       let logger;
+      let worf;
 
       function Authorization() {}
 
@@ -13,9 +13,10 @@ export default function register() {
         authContext: null,
         spaceContext: null,
         init: async function() {
-          [logger, accessChecker] = await Promise.all([
+          [logger, accessChecker, { default: worf }] = await Promise.all([
             import('services/logger.es6'),
-            import('access_control/AccessChecker/index.es6')
+            import('access_control/AccessChecker/index.es6'),
+            import('@contentful/worf')
           ]);
         },
         update: function(

@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import _ from 'lodash';
 
-xdescribe('markdown_editor/commands.es6', () => {
+describe('markdown_editor/commands.es6', () => {
   let textarea, editor, commands, cm;
 
   beforeEach(async function() {
@@ -12,11 +12,11 @@ xdescribe('markdown_editor/commands.es6', () => {
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
 
-    // TODO: This can't be done anymore
-    const cmFactory = sinon.spy(CodeMirror, 'fromTextArea');
-    editor = Wrapper.create(textarea, {}, CodeMirror);
-    cm = cmFactory.returnValues[0];
-    cmFactory.restore();
+    const { fromTextArea } = CodeMirror;
+    const spy = sinon.spy(fromTextArea);
+
+    editor = Wrapper.create(textarea, {}, Object.assign({}, CodeMirror, { fromTextArea: spy }));
+    cm = spy.returnValues[0];
 
     commands = Commands.create(editor);
   });

@@ -1,7 +1,9 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
 
 describe('CreateSpace', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.v1Org = { sys: { id: 'v1' }, pricingVersion: 'pricing_version_1' };
     this.v2Org = { sys: { id: 'v2' }, pricingVersion: 'pricing_version_2' };
 
@@ -26,12 +28,12 @@ describe('CreateSpace', () => {
     };
     this.getSpaceRatePlans = sinon.stub().returns([this.ratePlans.onDemand]);
 
-    module('contentful/test', $provide => {
-      $provide.value('services/TokenStore.es6', {
-        getOrganization: this.getOrganization
-      });
-      $provide.value('access_control/AccessChecker/index.es6', this.accessChecker);
-      $provide.value('services/ResourceService.es6', () => ({
+    this.system.set('services/TokenStore.es6', {
+      getOrganization: this.getOrganization
+    });
+    this.system.set('access_control/AccessChecker/index.es6', this.accessChecker);
+    this.system.set('services/ResourceService.es6', {
+      default: () => ({
         get: sinon.stub().returns(
           Promise.resolve({
             usage: 1,
@@ -40,52 +42,57 @@ describe('CreateSpace', () => {
             }
           })
         )
-      }));
+      })
+    });
+    this.system.set('account/pricing/PricingDataProvider.es6', {
+      getSpaceRatePlans: this.getSpaceRatePlans,
+      isEnterprisePlan: sinon.stub().returns(false),
+      getBasePlan: sinon.stub().returns({ customerType: 'Self-service' })
+    });
+
+    this.PricingDataProvider = await this.system.import('account/pricing/PricingDataProvider.es6');
+    this.CreateSpace = await this.system.import('services/CreateSpace.es6');
+
+    await $initialize(this.system, $provide => {
       $provide.constant('modalDialog', {
         open: sinon
           .stub()
           .returns({ promise: Promise.resolve(), destroy: sinon.stub().returns(Promise.resolve()) })
       });
-      $provide.constant('account/pricing/PricingDataProvider.es6', {
-        getSpaceRatePlans: this.getSpaceRatePlans,
-        isEnterprisePlan: sinon.stub().returns(false),
-        getBasePlan: sinon.stub().returns({ customerType: 'Self-service' })
-      });
     });
-    this.PricingDataProvider = this.$inject('account/pricing/PricingDataProvider.es6');
-    this.modalDialog = this.$inject('modalDialog');
-    this.CreateSpace = this.$inject('services/CreateSpace.es6');
+
+    this.modalDialog = $inject('modalDialog');
   });
 
   describe('#showDialog', () => {
-    it('opens old dialog with v1 org id', function*() {
-      yield this.CreateSpace.showDialog('v1');
+    it('opens old dialog with v1 org id', async function() {
+      await this.CreateSpace.showDialog('v1');
       const modalArgs = this.modalDialog.open.firstCall.args[0];
       expect(modalArgs.scopeData.organization).toBe(this.v1Org);
       expect(modalArgs.template).toContain('cf-create-new-space');
       sinon.assert.calledOnce(this.modalDialog.open);
     });
 
-    it('opens wizard with v2 org id', function*() {
-      yield this.CreateSpace.showDialog('v2');
+    it('opens wizard with v2 org id', async function() {
+      await this.CreateSpace.showDialog('v2');
       const modalArgs = this.modalDialog.open.secondCall.args[0];
       expect(modalArgs.scopeData.organization.sys.id).toBe(this.v2Org.sys.id);
       expect(modalArgs.template).toContain('cf-space-wizard');
       sinon.assert.calledTwice(this.modalDialog.open);
     });
 
-    it('throws if no org id is passed', function*() {
+    it('throws if no org id is passed', async function() {
       try {
-        yield this.CreateSpace.showDialog();
+        await this.CreateSpace.showDialog();
       } catch (e) {
         expect(e).toBeDefined();
         expect(e instanceof Error).toBe(true);
       }
     });
 
-    it('checks for creation permission', function*() {
+    it('checks for creation permission', async function() {
       this.accessChecker.canCreateSpaceInOrganization.returns(false);
-      yield this.CreateSpace.showDialog('v1');
+      await this.CreateSpace.showDialog('v1');
       sinon.assert.calledWith(this.accessChecker.canCreateSpaceInOrganization, 'v1');
     });
 
