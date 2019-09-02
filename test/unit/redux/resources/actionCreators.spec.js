@@ -1,19 +1,13 @@
+import sinon from 'sinon';
+import { $initialize } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
+
 describe('App Resources action creators', function() {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.stubs = {
       ResourceService_getAll: sinon.stub().resolves([]),
       dispatch: sinon.stub()
     };
-
-    module('contentful/test', $provide => {
-      $provide.value('services/ResourceService.es6', {
-        default: () => {
-          return {
-            getAll: this.stubs.ResourceService_getAll
-          };
-        }
-      });
-    });
 
     this.dispatch = (action, ...args) => {
       return action(...args)(this.stubs.dispatch);
@@ -23,9 +17,19 @@ describe('App Resources action creators', function() {
       return expect(this.stubs.dispatch.args[order]).toEqual([object]);
     };
 
+    this.system.set('services/ResourceService.es6', {
+      default: () => {
+        return {
+          getAll: this.stubs.ResourceService_getAll
+        };
+      }
+    });
+
     this.spaceId = 'space_1234';
-    this.actionCreators = this.$inject('redux/actions/resources/actionCreators.es6');
-    this.actions = this.$inject('redux/actions/resources/actions.es6');
+    this.actionCreators = await this.system.import('redux/actions/resources/actionCreators.es6');
+    this.actions = await this.system.import('redux/actions/resources/actions.es6');
+
+    await $initialize(this.system);
   });
 
   describe('getResourcesForSpace', function() {

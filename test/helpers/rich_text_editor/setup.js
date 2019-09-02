@@ -1,5 +1,4 @@
-import * as sinon from '../sinon';
-import { noop } from 'lodash';
+import sinon from 'sinon';
 
 export const ENTRY = {
   sys: {
@@ -19,7 +18,7 @@ export const CONTENT_TYPE_DATA_OBJECT = {
   }
 };
 
-export const stubAll = async ({ isolatedSystem, angularStubs = {} }) => {
+export const stubAll = async ({ isolatedSystem }) => {
   // TODO: Instead of stubbing all kind of services, stub `buildWidgetApi.es6`!
   isolatedSystem.set('directives/thumbnailHelpers.es6', {});
   isolatedSystem.set('search/EntitySelector/Config.es6', {
@@ -36,43 +35,15 @@ export const stubAll = async ({ isolatedSystem, angularStubs = {} }) => {
     detect: () => ({ name: 'chrome' })
   });
 
-  const getModuleStub = sinon.stub();
-  getModuleStub
-    .withArgs('spaceContext')
-    .returns({
-      cma: {
-        getEntries: sinon.stub().returns(Promise.resolve({})),
-        getAssets: sinon.stub().returns(Promise.resolve({}))
-      }
+  isolatedSystem.set('access_control/AccessChecker/index.es6', {
+    getSectionVisibility: sinon.stub().returns({
+      asset: true,
+      entry: true
     })
-    .withArgs('access_control/AccessChecker')
-    .returns({
-      getSectionVisibility: sinon.stub().returns({
-        asset: true,
-        entry: true
-      })
-    })
-    .withArgs('modalDialog')
-    .returns({ open: sinon.stub() })
-    .withArgs('$rootScope')
-    .returns({ $on: sinon.spy(() => noop) })
-    .withArgs('$location')
-    .returns({ absUrl: () => 'abs-url' })
-    .withArgs('analytics/Analytics.es6')
-    .returns({
-      track: sinon.stub()
-    })
-    .withArgs('$state')
-    .returns({
-      href: sinon.stub()
-    });
-
-  Object.entries(angularStubs).forEach(([name, stub]) => {
-    getModuleStub.withArgs(name).returns(stub);
   });
 
-  isolatedSystem.set('NgRegistry.es6', {
-    getModule: getModuleStub
+  isolatedSystem.set('analytics/Analytics.es6', {
+    track: sinon.stub()
   });
 };
 

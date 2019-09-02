@@ -1,27 +1,28 @@
-'use strict';
-
 import $ from 'jquery';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/helpers/helpers';
 
 describe('Space nav bar directive', () => {
-  let container, scope, accessChecker, spaceContext;
+  let container, scope, spaceContext;
   let compileElement;
 
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.removeDirectives(
-        'otDocPresence',
-        'entryEditor',
-        'apiKeyEditor',
-        'entryList',
-        'cfIcon'
-      );
-      $provide.value('components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6', {
-        default: () => null
-      });
+  beforeEach(async function() {
+    this.stubs = {
+      getSectionVisibility: sinon.stub().returns({})
+    };
+
+    this.system.set('components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6', {
+      default: () => null
     });
 
-    const $compile = this.$inject('$compile');
-    spaceContext = this.mockService('spaceContext', {
+    this.system.set('access_control/AccessChecker/index.es6', {
+      getSectionVisibility: this.stubs.getSectionVisibility
+    });
+
+    await $initialize(this.system);
+
+    const $compile = $inject('$compile');
+    spaceContext = Object.assign($inject('spaceContext'), {
       space: {
         environmentMeta: {
           isMasterEnvironment: true
@@ -29,9 +30,7 @@ describe('Space nav bar directive', () => {
       },
       getEnvironmentId: sinon.stub().returns('master')
     });
-    scope = this.$inject('$rootScope').$new();
-    accessChecker = this.$inject('access_control/AccessChecker');
-    accessChecker.getSectionVisibility = sinon.stub().returns({});
+    scope = $inject('$rootScope').$new();
 
     spaceContext.organization = { sys: { id: '123' } };
 
@@ -44,21 +43,21 @@ describe('Space nav bar directive', () => {
 
   afterEach(() => {
     container.remove();
-    container = scope = accessChecker = compileElement = null;
+    container = scope = compileElement = null;
   });
 
   function makeNavbarItemTest(key, viewType) {
     describe('navbar item for ' + key, () => {
       const selector = 'a[data-view-type="' + viewType + '"]';
 
-      it('is hidden', () => {
-        accessChecker.getSectionVisibility.returns(getVisibility(key, false));
+      it('is hidden', function() {
+        this.stubs.getSectionVisibility.returns(getVisibility(key, false));
         compileElement();
         expect(container.find(selector).length).toEqual(0);
       });
 
-      it('is shown', () => {
-        accessChecker.getSectionVisibility.returns(getVisibility(key, true));
+      it('is shown', function() {
+        this.stubs.getSectionVisibility.returns(getVisibility(key, true));
         compileElement();
         expect(container.find(selector).length).toEqual(1);
       });

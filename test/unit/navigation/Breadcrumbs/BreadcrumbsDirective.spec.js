@@ -1,15 +1,26 @@
 import { constant, range } from 'lodash';
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
+import { $initialize, $flush, $compile } from 'test/helpers/helpers';
 import * as DOM from 'test/helpers/DOM';
 
 describe('cfBreadcrumbsDirective spec', () => {
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    this.stubs = {
+      go: sinon.stub()
+    };
 
-    const contextHistory = this.$inject('navigation/Breadcrumbs/History.es6').default;
-    this.$state = this.mockService('$state');
+    const { default: contextHistory } = await this.system.import(
+      'navigation/Breadcrumbs/History.es6'
+    );
 
-    const el = this.$compile('<cf-breadcrumbs />');
+    await $initialize(this.system, $provide => {
+      $provide.constant('$state', {
+        go: this.stubs.go,
+        includes: sinon.stub()
+      });
+    });
+
+    const el = $compile('<cf-breadcrumbs />');
     this.view = DOM.createView(el.get(0));
 
     // Set the current breadcrumbs to a list of breadcrumbs of the
@@ -29,7 +40,7 @@ describe('cfBreadcrumbsDirective spec', () => {
       });
 
       contextHistory.set(crumbs);
-      this.$flush();
+      $flush();
     };
   });
 
@@ -37,7 +48,7 @@ describe('cfBreadcrumbsDirective spec', () => {
     it('goes back to second to last crumb', function() {
       this.setCrumbs(4);
       this.view.find('breadcrumbs-back-btn').click();
-      sinon.assert.calledOnceWith(this.$state.go, 'state2', { id: 'param2' });
+      sinon.assert.calledOnceWith(this.stubs.go, 'state2', { id: 'param2' });
     });
 
     it('is only shown for more than one crumbs', function() {

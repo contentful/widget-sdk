@@ -38,7 +38,8 @@ export default function createController($scope) {
     environmentsEnabled: false
   };
 
-  let loading = true;
+  $scope.loaded = false;
+
   let Navigator;
   let navState$;
   let NavStates;
@@ -105,13 +106,13 @@ export default function createController($scope) {
       render();
     });
 
-    loading = false;
+    $scope.loaded = true;
 
     render();
   }
 
   function render() {
-    if (loading) {
+    if (!$scope.loaded) {
       return;
     }
 

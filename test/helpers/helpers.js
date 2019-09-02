@@ -126,6 +126,18 @@ export const $removeDirectives = async function(system, names) {
   }
 };
 
+export const $waitForControllerLoaded = async function($scope) {
+  if ($scope.loaded) {
+    return true;
+  }
+
+  await $wait();
+
+  $apply();
+
+  return $waitForControllerLoaded($scope);
+};
+
 // TODO This module is deprecated. We should move stuff to
 // 'test/helpers/TestCaseContext'
 

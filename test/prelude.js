@@ -149,7 +149,10 @@
             'test/unit/directives',
             'test/unit/forms',
             'test/unit/libs',
-            'test/unit/markdown_editor'
+            'test/unit/markdown_editor',
+            'test/unit/navigation',
+            'test/unit/redux',
+            'test/unit/rich_text_editor'
           ];
 
           if (prefixes.find(prefix => name.startsWith(prefix))) {

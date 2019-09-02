@@ -18,9 +18,13 @@ export default function register() {
       let Config;
       let Authentication;
 
+      $scope.loaded = false;
+
       initialize().then(() => {
         $scope.supportUrl = Config.supportUrl;
         $scope.isIntercomEnabled = Intercom.isEnabled;
+
+        $scope.loaded = true;
       });
 
       $scope.userProfileRef = {
