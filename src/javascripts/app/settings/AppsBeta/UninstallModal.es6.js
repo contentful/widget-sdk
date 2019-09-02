@@ -12,7 +12,7 @@ import {
   Icon,
   Paragraph,
   CheckboxField,
-  TextInput
+  Textarea
 } from '@contentful/forma-36-react-components';
 
 const styles = {
@@ -127,10 +127,13 @@ export default function UninstallModal({ onConfirm, onClose, actionList, isShown
           />
         </ListItem>
         {otherChecked && (
-          <TextInput
+          <Textarea
             className={styles.otherInput}
             value={otherReason}
             onChange={e => setOtherReason(e.target.value)}
+            rows={3}
+            maxLength={2000}
+            placeholder="Write why you decided to uninstall the app"
             name="otherReason"
             id="otherReason"
             testId="reason-custom"

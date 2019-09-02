@@ -16,7 +16,7 @@ import AppPermissions from './AppPermissions.es6';
 import ClientStorage from 'TheStore/ClientStorage.es6';
 import { websiteUrl } from 'Config.es6';
 import * as AppLifecycleTracking from './AppLifecycleTracking.es6';
-import AppDescription from './AppDescription.es6';
+import AppMarkdown from './AppMarkdown.es6';
 
 const sessionStorage = ClientStorage('session');
 sessionStorage.set('appPermissions', JSON.stringify({}));
@@ -215,7 +215,7 @@ export function AppDetails(props) {
     <div className={cx(styles.root, { [styles.fade]: showPermissions === false })}>
       <div className={styles.mainColumn}>
         <AppHeader app={app} showPermissions={showPermissions} />
-        <AppDescription description={app.description} />
+        <AppMarkdown source={app.description} />
       </div>
       <div className={styles.sidebarColumn}>
         {app.enabled || app.installed ? (
@@ -232,7 +232,7 @@ export function AppDetails(props) {
         ) : (
           <Button
             isFullWidth
-            href={websiteUrl('/support/?upgrade-pricing=true')}
+            href={websiteUrl('/request-a-demo/see-contentful/')}
             buttonType="primary">
             Contact us
           </Button>

@@ -360,7 +360,7 @@ export default class AppRoute extends Component {
               contact your account manager.
             </Paragraph>
 
-            <Button href={websiteUrl('/support/?upgrade-pricing=true')}>Contact us</Button>
+            <Button href={websiteUrl('/request-a-demo/see-contentful/')}>Contact us</Button>
           </EmptyStateContainer>
         </Workbench.Content>
       </Workbench>

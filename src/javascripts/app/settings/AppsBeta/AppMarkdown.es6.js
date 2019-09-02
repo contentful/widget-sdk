@@ -4,7 +4,9 @@ import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import makePreviewRender from 'markdown_editor/PreviewRender.es6';
 
-const previewRender = makePreviewRender();
+const previewRender = makePreviewRender({
+  forceMaxWidth: 800
+});
 
 // eslint-disable-next-line
 const rootStyle = css`
@@ -54,11 +56,11 @@ const rootStyle = css`
   }
 `;
 
-export default function AppDescription(props) {
-  let description = props.description;
+export default function AppMarkdown({ source }) {
+  let description = source;
 
   try {
-    const tree = previewRender(description);
+    const tree = previewRender(source);
     description = tree.root;
   } catch (e) {
     // do nothing
@@ -67,6 +69,6 @@ export default function AppDescription(props) {
   return <div className={rootStyle}>{description}</div>;
 }
 
-AppDescription.propTypes = {
-  description: PropTypes.string.isRequired
+AppMarkdown.propTypes = {
+  source: PropTypes.string.isRequired
 };

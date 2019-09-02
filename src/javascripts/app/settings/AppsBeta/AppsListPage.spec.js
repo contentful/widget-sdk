@@ -8,7 +8,7 @@ import * as spaceContextMocked from 'ng/spaceContext';
 
 spaceContextMocked.getData.mockReturnValue(true);
 
-jest.mock('./AppDescription.es6', () => () => null, { virtual: true });
+jest.mock('./AppMarkdown.es6', () => () => null, { virtual: true });
 
 jest.mock('MicroBackendsClient.es6', () => {
   return () => {};

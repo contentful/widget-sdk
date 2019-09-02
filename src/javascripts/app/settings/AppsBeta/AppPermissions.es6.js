@@ -1,31 +1,19 @@
 import React from 'react';
 import tokens from '@contentful/forma-36-tokens';
-import {
-  Card,
-  Heading,
-  Subheading,
-  Paragraph,
-  Icon,
-  Button
-} from '@contentful/forma-36-react-components';
+import { Card, Heading, Icon, Button } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import AppIcon from '../apps/_common/AppIcon.es6';
+import AppMarkdown from './AppMarkdown.es6';
 
 const styles = {
   container: css({
     maxWidth: '500px',
     margin: '0 auto'
   }),
-  subheading: css({
-    marginBottom: tokens.spacingS
-  }),
   heading: css({
     textAlign: 'center',
     marginBottom: tokens.spacingS
-  }),
-  sectionSplitter: css({
-    marginTop: tokens.spacingXl
   }),
   actions: css({
     marginTop: tokens.spacingL,
@@ -74,22 +62,8 @@ export default function AppPermissions(props) {
           <Icon icon="ChevronRight" color="muted" className={styles.arrowIcon} />
           <img src={icon} className={styles.icon} />
         </div>
-        <Subheading element="h3" className={styles.subheading}>
-          Permissions
-        </Subheading>
-        <Paragraph>
-          This app acts on the behalf of the user and inherits the same permissions as the user
-          using it.
-        </Paragraph>
-        {permissions.length > 0 && (
-          <>
-            <div className={styles.sectionSplitter} />
-            <Subheading element="h3" className={styles.subheading}>
-              {appName} app will:
-            </Subheading>
-            <Paragraph className={styles.permissions}>{permissions}</Paragraph>
-          </>
-        )}
+
+        <AppMarkdown source={permissions} />
       </Card>
       <div className={styles.actions}>
         <Button
@@ -120,6 +94,6 @@ AppPermissions.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onAuthorize: PropTypes.func.isRequired,
   appName: PropTypes.string.isRequired,
-  permissions: PropTypes.string,
+  permissions: PropTypes.string.isRequired,
   icon: PropTypes.string.isRequired
 };
