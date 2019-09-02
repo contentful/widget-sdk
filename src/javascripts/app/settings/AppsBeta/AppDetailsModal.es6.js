@@ -232,7 +232,7 @@ export function AppDetails(props) {
         ) : (
           <Button
             isFullWidth
-            href={websiteUrl('/support/?upgrade-pricing=true')}
+            href={websiteUrl('/request-a-demo/see-contentful/')}
             buttonType="primary">
             Contact us
           </Button>
