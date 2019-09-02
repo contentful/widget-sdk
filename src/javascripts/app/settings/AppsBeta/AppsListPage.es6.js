@@ -143,24 +143,22 @@ const PricingInfo = () => (
   <Note
     className={styles.pricingInfo}
     noteType="warning"
-    title="Upgrade your space to access our latest features"
+    title="Upgrade to our new pricing model to access this feature"
     testId="apps-pricing-info">
     <Paragraph>
-      To access this feature, submit a request to begin the process of upgrading your space. To
-      learn more, read about our{' '}
+      To access this feature, you need to move to the latest version of Spaces. Submit a{' '}
+      <TextLink href={websiteUrl('/support/?upgrade-pricing=true')} {...externalLinkProps}>
+        support request
+      </TextLink>{' '}
+      to get started, or learn more about our{' '}
       <TextLink
         href={websiteUrl(
-          '/pricing/?faq_category=payments&faq=what-type-of-spaces-can-i-have#payments'
+          '/pricing/?faq_category=payments-subscriptions&faq=what-type-of-spaces-can-i-have'
         )}
         {...externalLinkProps}>
         Space types and pricing
       </TextLink>
       .
-    </Paragraph>
-    <Paragraph>
-      <TextLink href={websiteUrl('/support/?upgrade-pricing=true')} {...externalLinkProps}>
-        Submit a support request{' '}
-      </TextLink>
     </Paragraph>
   </Note>
 );
