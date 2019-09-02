@@ -4,7 +4,9 @@ import { LOCATION_ENTRY_FIELD } from './WidgetLocations.es6';
 describe('ExtensionAPI', () => {
   const createAPI = extraConfig => {
     const config = {
-      extensionId: 'my-extension-id',
+      descriptor: {
+        id: 'my-extension-id'
+      },
       spaceId: 'my-space-id',
       environmentId: 'master',
       location: LOCATION_ENTRY_FIELD,
@@ -182,13 +184,13 @@ describe('ExtensionAPI', () => {
   });
 
   describe('#registerHandler()', () => {
-    it('registers a channel handler', () => {
+    it('registers a channel handler', async () => {
       const api = createAPI();
 
       const handlerStub = jest.fn(() => 'RESULT');
       api.registerHandler('test', handlerStub);
 
-      const result = api.channel.handlers.test('x', 'y', 'z');
+      const result = await api.channel.handlers.test('x', 'y', 'z');
       expect(result).toBe('RESULT');
       expect(handlerStub).toBeCalledTimes(1);
       expect(handlerStub).toBeCalledWith('x', 'y', 'z');
@@ -196,7 +198,7 @@ describe('ExtensionAPI', () => {
   });
 
   describe('#registerPathHandler()', () => {
-    it('registers a channel handler translating paths to internal IDs', () => {
+    it('registers a channel handler translating paths to internal IDs', async () => {
       const api = createAPI({
         locales: {
           available: [{ code: 'LC-public', internal_code: 'LC-internal', default: true }],
@@ -210,7 +212,7 @@ describe('ExtensionAPI', () => {
       const handlerStub = jest.fn(() => 'RESULT');
       api.registerPathHandler('test', handlerStub);
 
-      const result = api.channel.handlers.test('FID-public', 'LC-public', 'test');
+      const result = await api.channel.handlers.test('FID-public', 'LC-public', 'test');
       expect(result).toBe('RESULT');
       expect(handlerStub).toBeCalledTimes(1);
       expect(handlerStub).toBeCalledWith(['fields', 'FID-internal', 'LC-internal'], 'test');

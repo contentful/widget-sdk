@@ -110,7 +110,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
     const bridgeData = bridge.getData();
 
     this.extensionApi = new ExtensionAPI({
-      extensionId: id,
+      descriptor,
       channel,
       parameters,
       ...bridgeData
