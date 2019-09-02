@@ -88,7 +88,7 @@ export default class FieldDialogWidgetItem extends Component {
           <div className="field-dialog__widget-item-header">
             <span>App</span>
             {isAdmin && (
-              <StateLink to="^.^.^.appsBeta.detail" params={{ appId }} target="_blank">
+              <StateLink to="^.^.^.apps.detail" params={{ appId }} target="_blank">
                 <Icon name="edit" scale="0.9" />
               </StateLink>
             )}

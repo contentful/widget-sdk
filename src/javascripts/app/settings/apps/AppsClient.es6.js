@@ -28,11 +28,21 @@ export default function createAppsClient(spaceId) {
   });
 
   return {
+    hasAlphaApps,
     getAll,
     get,
     save,
     remove
   };
+
+  async function hasAlphaApps() {
+    const alphaApps = await this.getAll();
+    if (!Array.isArray(alphaApps)) {
+      return false;
+    }
+
+    return alphaApps.filter(app => app.installed).length > 0;
+  }
 
   async function getAll() {
     const res = await backend.call();
@@ -41,7 +51,6 @@ export default function createAppsClient(spaceId) {
     }
 
     const appConfigs = await res.json();
-
     return Object.keys(KNOWN_APPS).reduce((acc, id) => {
       const config = appConfigs[id];
       const { title } = KNOWN_APPS[id];

@@ -16,13 +16,6 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
       dataViewType: 'spaces-settings-extensions',
       title: 'Extensions'
     },
-    appsBeta: {
-      if: 'nav.appsBetaEnabled && nav.canNavigateTo("appsBeta")',
-      sref: '{{nav.makeRef("appsBeta.list")}}',
-      rootSref: '{{nav.makeRef("appsBeta")}}',
-      dataViewType: 'apps-beta',
-      title: 'Apps Beta'
-    },
     settings: {
       if: 'nav.canNavigateTo("settings")',
       sref: '{{nav.makeRef("settings.space")}}',
@@ -99,7 +92,7 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     },
     dropdownItems.locales,
     dropdownItems.extensions,
-    dropdownItems.appsBeta,
+    dropdownItems.appsAlpha,
     {
       separator: true,
       label: 'Space settings',
@@ -173,13 +166,36 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
         icon: 'nav-media',
         title: 'Media'
       },
+      /**
+       * Display apps alpha navigation item without label if the LD flag for apps beta has
+       * not been loaded to avoid too much jitter. Add label (alpha/beta) after load
+       * has finished.
+       */
       {
-        if: 'nav.canNavigateTo("apps")',
+        if:
+          '!nav.appsBetaLDFlagLoaded && (nav.canNavigateTo("apps") || nav.canNavigateTo("appsAlpha"))',
+        dataViewType: 'apps',
+        icon: 'nav-apps',
+        sref: '{{nav.makeRef("apps.list")}}',
+        rootSref: '{{nav.makeRef("appsAlpha")}}',
+        title: 'Apps'
+      },
+      {
+        if: 'nav.appsBetaLDFlagLoaded && nav.appsBetaEnabled && nav.canNavigateTo("apps")',
+        dataViewType: 'apps',
+        icon: 'nav-apps',
+        label: 'beta',
+        sref: '{{nav.makeRef("apps.list")}}',
+        rootSref: '{{nav.makeRef("apps")}}',
+        title: 'Apps'
+      },
+      {
+        if: 'nav.appsBetaLDFlagLoaded && !nav.appsBetaEnabled && nav.canNavigateTo("appsAlpha")',
         dataViewType: 'apps',
         icon: 'nav-apps',
         label: 'alpha',
-        sref: '{{nav.makeRef("apps.list")}}',
-        rootSref: '{{nav.makeRef("apps")}}',
+        sref: '{{nav.makeRef("appsAlpha.list")}}',
+        rootSref: '{{nav.makeRef("appsAlpha")}}',
         title: 'Apps'
       },
       {

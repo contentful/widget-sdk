@@ -307,79 +307,6 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
 `;
 
 exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
-.emotion-9 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: row;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  padding: 1rem 0;
-  border-bottom: 1px solid #e5ebed;
-}
-
-.emotion-9:last-child {
-  border-bottom: none;
-}
-
-.emotion-7 {
-  -webkit-box-flex: 1;
-  -webkit-flex-grow: 1;
-  -ms-flex-positive: 1;
-  flex-grow: 1;
-  display: block;
-}
-
-.emotion-4 {
-  font-size: 0.75rem;
-  color: #b4c3ca;
-}
-
-.emotion-6 {
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.emotion-8 {
-  display: block;
-}
-
-.emotion-8 button {
-  margin-left: 1rem;
-}
-
-.emotion-3 {
-  border-radius: 5px;
-  background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0,0,0,0.08);
-  padding: 2px;
-  margin-right: 0.75rem;
-  width: 35px;
-  height: 35px;
-}
-
-.emotion-5 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  cursor: pointer;
-}
-
-.emotion-39 {
-  margin-top: 3px;
-  margin-left: 0.5rem;
-}
-
 .emotion-1 {
   margin-bottom: 1.5rem;
 }
@@ -399,17 +326,17 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
   text-transform: uppercase;
 }
 
-.emotion-46 {
+.emotion-4 {
   background-color: #f7f9fa;
 }
 
-.emotion-45 {
+.emotion-3 {
   position: relative;
 }
 
 <div>
   <div
-    class="Workbench__Workbench___THi9K emotion-46"
+    class="Workbench__Workbench___THi9K emotion-4"
     data-test-id="cf-ui-workbench"
   >
     <div
@@ -519,7 +446,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
             </div>
           </div>
           <div
-            class="Card__Card___xXJsT emotion-45 Card__Card--padding-large___3Fgal"
+            class="Card__Card___xXJsT emotion-3 Card__Card--padding-large___3Fgal"
             data-test-id="cf-ui-card"
           >
             <p
@@ -529,343 +456,153 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
               Apps help you extend functionality and easily connect with other services you are using.
             </p>
             <div>
-              <h2
-                class="Heading__Heading___83D3K"
-                data-test-id="cf-ui-heading"
+              <svg
+                aria-label="Loading apps list..."
+                class="SkeletonContainer__SkeletonContainer___23jiu"
+                data-test-id="cf-ui-skeleton-form"
+                height="200"
+                preserveAspectRatio="xMidYMid meet"
+                role="img"
+                width="600"
               >
-                Installed
-              </h2>
-              <div
-                data-test-id="installed-list"
-              >
-                <div
-                  class="emotion-9"
-                >
-                  <div
-                    class="emotion-7"
-                    data-test-id="app-title"
+                <title>
+                  Loading apps list...
+                </title>
+                <rect
+                  clip-path="url(#cf-ui-skeleton-clip-id)"
+                  height="100%"
+                  style="fill: url(#cf-ui-skeleton-clip-gradient);"
+                  width="100%"
+                  x="0"
+                  y="0"
+                />
+                <defs>
+                  <clippath
+                    id="cf-ui-skeleton-clip-id"
                   >
-                    <h3
-                      class="Heading__Heading___83D3K emotion-6"
-                      data-test-id="cf-ui-heading"
-                    >
-                      <div
-                        class="emotion-5"
-                        data-test-id="app-details"
-                      >
-                        <img
-                          class="emotion-3"
-                          src="//images.ctfassets.net/lpjm8d10rkpy/3ZH89y9VHHd53v4OQ3BG0V/cc62043a88cd5fb80719687f299e7351/cloudinary_icon_for_white_bg.svg"
-                        />
-                        <div>
-                          Cloudinary
-                          <div
-                            class="emotion-4"
-                          >
-                            Reference assets from Cloudinary - digital asset management
-                          </div>
-                        </div>
-                      </div>
-                    </h3>
-                  </div>
-                  <div
-                    class="emotion-8"
+                    <rect
+                      height="21"
+                      rx="0"
+                      ry="0"
+                      width="100"
+                      x="0"
+                      y="0"
+                    />
+                    <rect
+                      height="36"
+                      rx="36"
+                      ry="36"
+                      width="36"
+                      y="60"
+                    />
+                    <rect
+                      height="8"
+                      rx="0"
+                      ry="0"
+                      width="240"
+                      x="50"
+                      y="75"
+                    />
+                    <rect
+                      height="8"
+                      rx="0"
+                      ry="0"
+                      width="90"
+                      x="510"
+                      y="75"
+                    />
+                    <rect
+                      height="36"
+                      rx="36"
+                      ry="36"
+                      width="36"
+                      y="110"
+                    />
+                    <rect
+                      height="8"
+                      rx="0"
+                      ry="0"
+                      width="240"
+                      x="50"
+                      y="125"
+                    />
+                    <rect
+                      height="8"
+                      rx="0"
+                      ry="0"
+                      width="90"
+                      x="510"
+                      y="125"
+                    />
+                    <rect
+                      height="36"
+                      rx="36"
+                      ry="36"
+                      width="36"
+                      y="160"
+                    />
+                    <rect
+                      height="8"
+                      rx="0"
+                      ry="0"
+                      width="240"
+                      x="50"
+                      y="175"
+                    />
+                    <rect
+                      height="8"
+                      rx="0"
+                      ry="0"
+                      width="90"
+                      x="510"
+                      y="175"
+                    />
+                  </clippath>
+                  <lineargradient
+                    id="cf-ui-skeleton-clip-gradient"
                   >
-                    <button
-                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                      data-test-id="cf-ui-text-link"
-                      type="button"
+                    <stop
+                      offset="0%"
+                      stop-color="#e5ebed"
+                      stop-opacity="1"
                     >
-                      <span
-                        class="TabFocusTrap__TabFocusTrap___39Vty"
-                        tabindex="-1"
-                      >
-                        Configure
-                      </span>
-                    </button>
-                    <button
-                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                      data-test-id="cf-ui-text-link"
-                      type="button"
+                      <animate
+                        attributeName="stop-color"
+                        dur="2s"
+                        id="animation1"
+                        repeatCount="indefinite"
+                        values="#e5ebed; #f7f9fa; #e5ebed"
+                      />
+                    </stop>
+                    <stop
+                      offset="50%"
+                      stop-color="#f7f9fa"
+                      stop-opacity="1"
                     >
-                      <span
-                        class="TabFocusTrap__TabFocusTrap___39Vty"
-                        tabindex="-1"
-                      >
-                        About
-                      </span>
-                    </button>
-                  </div>
-                </div>
-                <div
-                  class="emotion-9"
-                >
-                  <div
-                    class="emotion-7"
-                    data-test-id="app-title"
-                  >
-                    <h3
-                      class="Heading__Heading___83D3K emotion-6"
-                      data-test-id="cf-ui-heading"
+                      <animate
+                        attributeName="stop-color"
+                        begin="animation1.begin+0.25s"
+                        dur="2s"
+                        repeatCount="indefinite"
+                        values="#e5ebed; #f7f9fa; #e5ebed"
+                      />
+                    </stop>
+                    <stop
+                      offset="100%"
+                      stop-color="#e5ebed"
+                      stop-opacity="1"
                     >
-                      <div
-                        class="emotion-5"
-                        data-test-id="app-details"
-                      >
-                        <img
-                          class="emotion-3"
-                          src="//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg"
-                        />
-                        <div>
-                          Netlify
-                          <div
-                            class="emotion-4"
-                          >
-                            Build and preview Netlify sites from the Contentful Editor Sidebar
-                          </div>
-                        </div>
-                      </div>
-                    </h3>
-                  </div>
-                  <div
-                    class="emotion-8"
-                  >
-                    <button
-                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                      data-test-id="cf-ui-text-link"
-                      type="button"
-                    >
-                      <span
-                        class="TabFocusTrap__TabFocusTrap___39Vty"
-                        tabindex="-1"
-                      >
-                        Configure
-                      </span>
-                    </button>
-                    <button
-                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                      data-test-id="cf-ui-text-link"
-                      type="button"
-                    >
-                      <span
-                        class="TabFocusTrap__TabFocusTrap___39Vty"
-                        tabindex="-1"
-                      >
-                        About
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <hr />
-              <h2
-                class="Heading__Heading___83D3K"
-                data-test-id="cf-ui-heading"
-              >
-                Available
-              </h2>
-              <div>
-                <div
-                  class="emotion-9"
-                >
-                  <div
-                    class="emotion-7"
-                    data-test-id="app-title"
-                  >
-                    <h3
-                      class="Heading__Heading___83D3K emotion-6"
-                      data-test-id="cf-ui-heading"
-                    >
-                      <div
-                        class="emotion-5"
-                        data-test-id="app-details"
-                      >
-                        <img
-                          class="emotion-3"
-                          src="//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg"
-                        />
-                        <div>
-                          Optimizely
-                          <div
-                            class="emotion-4"
-                          >
-                            Run experiments on your content with ease
-                          </div>
-                        </div>
-                      </div>
-                    </h3>
-                  </div>
-                  <div
-                    class="emotion-8"
-                  >
-                    <button
-                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                      data-test-id="cf-ui-text-link"
-                      type="button"
-                    >
-                      <span
-                        class="TabFocusTrap__TabFocusTrap___39Vty"
-                        tabindex="-1"
-                      >
-                        About
-                      </span>
-                    </button>
-                  </div>
-                </div>
-                <div
-                  class="emotion-9"
-                >
-                  <div
-                    class="emotion-7"
-                    data-test-id="app-title"
-                  >
-                    <h3
-                      class="Heading__Heading___83D3K emotion-6"
-                      data-test-id="cf-ui-heading"
-                    >
-                      <div
-                        class="emotion-5"
-                        data-test-id="app-details"
-                      >
-                        <img
-                          class="emotion-3"
-                          src="//images.ctfassets.net/lpjm8d10rkpy/1o6HKvOxxumeW64hv6ANMw/b1c5308bcd4e48cfaafc185c0b12aa36/Gatsby_Monogram.svg"
-                        />
-                        <div>
-                          Gatsby Cloud
-                          <div
-                            class="emotion-4"
-                          >
-                            Gatsby previews your content while you edit it
-                          </div>
-                        </div>
-                      </div>
-                    </h3>
-                  </div>
-                  <div
-                    class="emotion-8"
-                  >
-                    <button
-                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                      data-test-id="cf-ui-text-link"
-                      type="button"
-                    >
-                      <span
-                        class="TabFocusTrap__TabFocusTrap___39Vty"
-                        tabindex="-1"
-                      >
-                        About
-                      </span>
-                    </button>
-                  </div>
-                </div>
-                <div
-                  class="emotion-9"
-                >
-                  <div
-                    class="emotion-7"
-                    data-test-id="app-title"
-                  >
-                    <h3
-                      class="Heading__Heading___83D3K emotion-6"
-                      data-test-id="cf-ui-heading"
-                    >
-                      <div
-                        class="emotion-5"
-                        data-test-id="app-details"
-                      >
-                        <img
-                          class="emotion-3"
-                          src="//images.ctfassets.net/lpjm8d10rkpy/3vNJZRjthatucy2mBJMy1u/0e5d501207427780021e7580cc384761/bynder.5e9e457b9d.svg"
-                        />
-                        <div>
-                          Bynder
-                          <div
-                            class="emotion-4"
-                          >
-                            Reference assets from Bynder - digital asset management
-                          </div>
-                        </div>
-                      </div>
-                    </h3>
-                  </div>
-                  <div
-                    class="emotion-8"
-                  >
-                    <button
-                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                      data-test-id="cf-ui-text-link"
-                      type="button"
-                    >
-                      <span
-                        class="TabFocusTrap__TabFocusTrap___39Vty"
-                        tabindex="-1"
-                      >
-                        About
-                      </span>
-                    </button>
-                  </div>
-                </div>
-                <div
-                  class="emotion-9"
-                >
-                  <div
-                    class="emotion-7"
-                    data-test-id="app-title"
-                  >
-                    <h3
-                      class="Heading__Heading___83D3K emotion-6"
-                      data-test-id="cf-ui-heading"
-                    >
-                      <div
-                        class="emotion-5"
-                        data-test-id="app-details"
-                      >
-                        <span
-                          class="icon-component emotion-3"
-                          data-icon-name="page-apps"
-                        >
-                          <svg
-                            height="34"
-                            viewBox="0 0 34 34"
-                            width="34"
-                          >
-                            <title>
-                              E2494E4E-7883-4280-90B9-D9D401C412D2
-                            </title>
-                            <g
-                              fill="none"
-                              fill-rule="evenodd"
-                            >
-                              <path
-                                d="M-2 0h36v36H-2z"
-                              />
-                              <path
-                                d="M28.75 16.5H26.5v-6c0-1.65-1.35-3-3-3h-6V5.25c0-2.07-1.68-3.75-3.75-3.75C11.68 1.5 10 3.18 10 5.25V7.5H4a2.996 2.996 0 0 0-2.985 3v5.7H3.25a4.052 4.052 0 0 1 4.05 4.05 4.052 4.052 0 0 1-4.05 4.05H1V30c0 1.65 1.35 3 3 3h5.7v-2.25a4.052 4.052 0 0 1 4.05-4.05 4.052 4.052 0 0 1 4.05 4.05V33h5.7c1.65 0 3-1.35 3-3v-6h2.25c2.07 0 3.75-1.68 3.75-3.75 0-2.07-1.68-3.75-3.75-3.75z"
-                                fill="#C0F2D6"
-                                stroke="#19CD91"
-                                stroke-width="1.5"
-                              />
-                            </g>
-                          </svg>
-                        </span>
-                        <div>
-                          Optimizely
-                        </div>
-                        <div
-                          class="Tag__Tag___Y-myd emotion-39 Tag__Tag--primary___2Hk3I"
-                          data-test-id="cf-ui-tag"
-                        >
-                          Private
-                        </div>
-                      </div>
-                    </h3>
-                  </div>
-                  <div
-                    class="emotion-8"
-                  />
-                </div>
-              </div>
+                      <animate
+                        attributeName="stop-color"
+                        begin="animation1.begin+0.5s"
+                        dur="2s"
+                        repeatCount="indefinite"
+                        values="#e5ebed; #f7f9fa; #e5ebed"
+                      />
+                    </stop>
+                  </lineargradient>
+                </defs>
+              </svg>
             </div>
           </div>
         </div>

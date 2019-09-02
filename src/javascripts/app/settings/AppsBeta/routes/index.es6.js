@@ -9,8 +9,8 @@ import createAppsRepo from '../AppsRepo.es6';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 
 export default {
-  name: 'appsBeta',
-  url: '/apps_beta',
+  name: 'apps',
+  url: '/apps',
   abstract: true,
   children: [
     {
