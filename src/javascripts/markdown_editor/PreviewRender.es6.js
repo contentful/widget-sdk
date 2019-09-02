@@ -1,4 +1,5 @@
 import {
+  get,
   cloneDeep,
   extend,
   isString,
@@ -67,7 +68,7 @@ SANITIZE_CONFIG.textFilter = text => text.replace(NEWLINE_ENTITY_RE, '\n');
  * - `root`: React element containing the root node of the preview
  * - `words`: an integer representing the number of words in the MD source
  */
-export default function create() {
+export default function create(options = {}) {
   const rootKey = 'root/' + currentId;
   let conflicts = {};
   let words = 0;
@@ -209,8 +210,14 @@ export default function create() {
   function prepareImagesAPISrc(src) {
     const qs = src.split('?')[1];
 
+    const forceMaxWidth = get(options, ['forceMaxWidth'], false);
+    if (forceMaxWidth) {
+      return `${src}?w=${forceMaxWidth}`;
+    }
+
     if (isString(qs) && qs.length > 0) {
-      return qs.indexOf('h=') > -1 ? src : `${src}&h=${IMAGES_API_DEFAULT_H}`;
+      // Do not override `h` query string parameter if provided already
+      return qs.includes('h=') ? src : `${src}?h=${IMAGES_API_DEFAULT_H}`;
     } else {
       return `${src}?h=${IMAGES_API_DEFAULT_H}`;
     }

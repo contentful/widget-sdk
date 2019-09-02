@@ -4,7 +4,9 @@ import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import makePreviewRender from 'markdown_editor/PreviewRender.es6';
 
-const previewRender = makePreviewRender();
+const previewRender = makePreviewRender({
+  forceMaxWidth: 800
+});
 
 // eslint-disable-next-line
 const rootStyle = css`
