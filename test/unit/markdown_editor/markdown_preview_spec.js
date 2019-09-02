@@ -1,17 +1,20 @@
 import * as K from 'test/helpers/mocks/kefir';
+import { $initialize, $apply } from 'test/helpers/helpers';
 
 describe('Markdown preview', () => {
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
     this.markdown = K.createMockProperty('__test__');
 
-    const PreviewGenerator = this.$inject('markdown_editor/PreviewGenerator.es6');
+    const PreviewGenerator = await this.system.import('markdown_editor/PreviewGenerator.es6');
+
+    await $initialize(this.system);
+
     this.makePreview = () => PreviewGenerator.default(this.markdown);
   });
 
   it('emits preview when markdown changes', function() {
     const preview$ = this.makePreview();
-    this.$apply();
+    $apply();
     let preview;
 
     preview = K.getValue(preview$);

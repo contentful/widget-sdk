@@ -1,3 +1,4 @@
+import sinon from 'sinon';
 import describeEntity from './entity';
 import {
   describeCreateResource,
@@ -18,9 +19,9 @@ export default function describeContentType() {
   describeVersionedResource(contentType);
 
   describeEntity(contentType, function setupAsset() {
-    beforeEach(function*() {
+    beforeEach(async function() {
       this.request.respond({ sys: { type: 'ContentType' } });
-      this.entity = yield this.space.createContentType();
+      this.entity = await this.space.createContentType();
     });
   });
 
@@ -80,10 +81,10 @@ export default function describeContentType() {
     });
 
     describe('#publish()', function() {
-      it('sends PUT request', function*() {
+      it('sends PUT request', async function() {
         this.contentType.setVersion(4);
         this.request.respond(this.contentType.data);
-        yield this.contentType.publish();
+        await this.contentType.publish();
         sinon.assert.calledWith(this.request, {
           method: 'PUT',
           url: '/spaces/42/content_types/ctid/published',
@@ -93,37 +94,37 @@ export default function describeContentType() {
         });
       });
 
-      it('returns #_registerPublished()', function*() {
+      it('returns #_registerPublished()', async function() {
         this.request.respond(this.contentType.data);
-        const published1 = yield this.contentType.publish();
+        const published1 = await this.contentType.publish();
         const published2 = this.contentType._registerPublished();
         expect(published1).toEqual(published2);
       });
 
-      it('unsets deleted flag', function*() {
+      it('unsets deleted flag', async function() {
         const published = this.contentType._registerPublished();
         published.setDeleted();
         expect(published.isDeleted()).toEqual(true);
 
         this.request.respond(this.contentType.data);
-        yield this.contentType.publish();
+        await this.contentType.publish();
         expect(published.isDeleted()).toEqual(false);
       });
     });
 
     describe('#unpublish()', function() {
-      it('sends DELETE request', function*() {
+      it('sends DELETE request', async function() {
         this.request.respond(this.contentType.data);
-        yield this.contentType.unpublish();
+        await this.contentType.unpublish();
         sinon.assert.calledWith(this.request, {
           method: 'DELETE',
           url: '/spaces/42/content_types/ctid/published'
         });
       });
 
-      it('returns #deletePublished()', function*() {
+      it('returns #deletePublished()', async function() {
         this.request.respond(this.contentType.data);
-        const deleted1 = yield this.contentType.unpublish();
+        const deleted1 = await this.contentType.unpublish();
         const deleted2 = this.contentType.deletePublished();
         expect(deleted1).toEqual(deleted2);
       });
@@ -138,27 +139,27 @@ export default function describeContentType() {
         })
       });
 
-      it('sends GET request', function*() {
+      it('sends GET request', async function() {
         this.request.respond(publishedContentTypeData);
-        yield this.contentType.getPublishedStatus();
+        await this.contentType.getPublishedStatus();
         sinon.assert.calledWith(this.request, {
           method: 'GET',
           url: '/spaces/42/content_types/ctid/published'
         });
       });
 
-      it('returns published content type', function*() {
+      it('returns published content type', async function() {
         this.request.respond(publishedContentTypeData);
-        const contentType = yield this.contentType.getPublishedStatus();
+        const contentType = await this.contentType.getPublishedStatus();
         expect(contentType._publishedVersion).toBe(true);
       });
 
-      it('adds published content type to identity map', function*() {
+      it('adds published content type to identity map', async function() {
         this.request.respond(publishedContentTypeData);
-        const contentType1 = yield this.contentType.getPublishedStatus();
+        const contentType1 = await this.contentType.getPublishedStatus();
 
         this.request.respond(publishedContentTypeData);
-        const contentType2 = yield this.contentType.getPublishedStatus();
+        const contentType2 = await this.contentType.getPublishedStatus();
         expect(contentType1).toEqual(contentType2);
       });
     });
@@ -244,21 +245,21 @@ export default function describeContentType() {
       items: [contentTypeData]
     });
 
-    it('sends GET request', function*() {
+    it('sends GET request', async function() {
       this.request.respond(contentTypeList);
-      yield this.space.getPublishedContentTypes();
+      await this.space.getPublishedContentTypes();
       sinon.assert.calledWith(this.request, {
         method: 'GET',
         url: '/spaces/42/public/content_types'
       });
     });
 
-    it('retrieves object from identity map', function*() {
+    it('retrieves object from identity map', async function() {
       this.request.respond(contentTypeData);
-      const contentType1 = yield this.space.getContentType('cid');
+      const contentType1 = await this.space.getContentType('cid');
 
       this.request.respond(contentTypeList);
-      const [contentType2] = yield this.space.getPublishedContentTypes();
+      const [contentType2] = await this.space.getPublishedContentTypes();
       expect(contentType1).toEqual(contentType2);
     });
   });

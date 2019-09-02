@@ -1,23 +1,27 @@
+import sinon from 'sinon';
 import _ from 'lodash';
+import { $initialize, $inject, $compile } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
 
 describe('cfMarkdownEditor', () => {
   beforeEach(async function() {
     this.markdownEditorActions = { trackMarkdownEditorAction: sinon.stub() };
-    module('contentful/test', $provide => {
-      $provide.constant('services/localeStore.es6', {
-        default: {
-          getDefaultLocale: () => ({ code: 'some random locale' }),
-          getLocales: () => [{ code: 'en-US' }]
-        }
-      });
-      $provide.value('analytics/MarkdownEditorActions.es6', this.markdownEditorActions);
-    });
 
-    this.widgetApi = this.$inject('mocks/widgetApi').create();
+    this.system.set('services/localeStore.es6', {
+      default: {
+        getDefaultLocale: () => ({ code: 'some random locale' }),
+        getLocales: () => [{ code: 'en-US' }]
+      }
+    });
+    this.system.set('analytics/MarkdownEditorActions.es6', this.markdownEditorActions);
+
+    await $initialize(this.system);
+
+    this.widgetApi = $inject('mocks/widgetApi').create();
     this.widgetApi.fieldProperties.value$.set('test');
     this.fieldStubs = this.widgetApi.field;
 
-    const elem = this.$compile(
+    const elem = $compile(
       '<cf-markdown-editor />',
       {},
       {
@@ -100,7 +104,7 @@ describe('cfMarkdownEditor', () => {
   });
 
   it('Subscribes to preview notifications', function() {
-    this.$inject('$timeout').flush();
+    $inject('$timeout').flush();
     const previewKeys = _.intersection(Object.keys(this.scope.preview), [
       'info',
       'tree',

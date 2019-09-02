@@ -145,7 +145,11 @@
             'test/unit/app',
             'test/unit/classes',
             'test/unit/components',
-            'test/unit/data'
+            'test/unit/data',
+            'test/unit/directives',
+            'test/unit/forms',
+            'test/unit/libs',
+            'test/unit/markdown_editor'
           ];
 
           if (prefixes.find(prefix => name.startsWith(prefix))) {

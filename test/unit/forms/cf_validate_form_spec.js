@@ -1,17 +1,18 @@
-'use strict';
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 describe('cfValidateForm directive', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
+  beforeEach(async function() {
+    await $initialize(this.system, $provide => {
       $provide.constant('$timeout', fn => {
         fn();
       });
     });
 
-    const $compile = this.$inject('$compile');
+    const $compile = $inject('$compile');
 
-    const $rootScope = this.$inject('$rootScope');
+    const $rootScope = $inject('$rootScope');
 
     const template = '<form cf-validate="data" cf-validate-form="a.b">';
 
@@ -28,7 +29,7 @@ describe('cfValidateForm directive', () => {
 
   it('validates on input ngModel:update', function() {
     this.scope.$emit('ngModel:update');
-    this.$apply();
+    $apply();
     sinon.assert.calledOnce(this.validator.run);
     sinon.assert.calledWith(this.validator.run, 'a.b', true);
   });
@@ -41,7 +42,7 @@ describe('cfValidateForm directive', () => {
       { name: '4', path: ['a', 'b', 'c'] }
     ]);
     this.validator.run();
-    this.$apply();
+    $apply();
     const errorNames = _.map(this.form.errors, 'name');
     expect(errorNames).toEqual(['2', '3', '4']);
   });
@@ -51,13 +52,13 @@ describe('cfValidateForm directive', () => {
 
     this.scope.schema.errors.returns([{ name: '1', path: ['a', 'b'] }]);
     this.validator.run();
-    this.$apply();
+    $apply();
 
     expect(this.form.$valid).toBe(false);
 
     this.scope.schema.errors.returns([{ name: '1', path: ['a', 'c'] }]);
     this.validator.run();
-    this.$apply();
+    $apply();
     expect(this.form.$valid).toBe(true);
   });
 });

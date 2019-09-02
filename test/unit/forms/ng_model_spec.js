@@ -1,18 +1,21 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 describe('ngModel directive', () => {
-  beforeEach(module('contentful/test'));
+  beforeEach(async function() {
+    await $initialize(this.system);
+  });
 
   describe('aria-invalid attribute', () => {
     it('is link to model errors', function() {
-      const $compile = this.$inject('$compile');
-      const scope = this.$inject('$rootScope').$new();
+      const $compile = $inject('$compile');
+      const scope = $inject('$rootScope').$new();
 
       const template = '<input required ng-model=myvalue>';
       const element = $compile(template)(scope);
       expect(element.attr('aria-invalid')).toBeUndefined();
 
-      this.$apply();
+      $apply();
       expect(element.attr('aria-invalid')).toBe('false');
 
       element.val('').trigger('change');
@@ -25,8 +28,8 @@ describe('ngModel directive', () => {
 
   describe('hideErrors property', () => {
     beforeEach(function() {
-      const $compile = this.$inject('$compile');
-      const scope = this.$inject('$rootScope').$new();
+      const $compile = $inject('$compile');
+      const scope = $inject('$rootScope').$new();
 
       const template = '<form><input required ng-model=myvalue></form>';
       this.form = $compile(template)(scope);
@@ -48,15 +51,15 @@ describe('ngModel directive', () => {
 
     it('is set to false if the form forces errors', function() {
       this.formController.showErrors = true;
-      this.$apply();
+      $apply();
       expect(this.modelController.hideErrors).toBe(false);
     });
   });
 
   describe('ngModel:update event', () => {
     it('is emitted when view value changes', function() {
-      const $compile = this.$inject('$compile');
-      const scope = this.$inject('$rootScope').$new();
+      const $compile = $inject('$compile');
+      const scope = $inject('$rootScope').$new();
 
       const eventListener = sinon.stub();
       scope.$on('ngModel:update', eventListener);
@@ -72,8 +75,8 @@ describe('ngModel directive', () => {
 
   describe('ngModel:commit event', () => {
     it('is emitted when input is blured', function() {
-      const $compile = this.$inject('$compile');
-      const scope = this.$inject('$rootScope').$new();
+      const $compile = $inject('$compile');
+      const scope = $inject('$rootScope').$new();
 
       const eventListener = sinon.stub();
       scope.$on('ngModel:commit', eventListener);

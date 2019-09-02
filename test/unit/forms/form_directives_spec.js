@@ -1,11 +1,12 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 describe('cfOnSubmit', () => {
-  beforeEach(module('contentful/test'));
+  beforeEach(async function() {
+    await $initialize(this.system);
 
-  beforeEach(function() {
-    const $compile = this.$inject('$compile');
-    this.scope = this.$inject('$rootScope').$new();
+    const $compile = $inject('$compile');
+    this.scope = $inject('$rootScope').$new();
 
     const template = '<form cf-on-submit="submit()">';
     this.formElement = $compile(template)(this.scope);
@@ -22,18 +23,17 @@ describe('cfOnSubmit', () => {
     it('evaluates the attribute expression', function() {
       this.scope.submit = sinon.stub();
       this.formController.submit();
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(this.scope.submit);
     });
   });
 });
 
 describe('cfFormSubmit', () => {
-  beforeEach(module('contentful/test'));
-
-  beforeEach(function() {
-    const $compile = this.$inject('$compile');
-    this.scope = this.$inject('$rootScope').$new();
+  beforeEach(async function() {
+    await $initialize(this.system);
+    const $compile = $inject('$compile');
+    this.scope = $inject('$rootScope').$new();
 
     const template = '<form cf-on-submit="submit()">' + '<button cf-form-submit>' + '</form>';
     this.element = $compile(template)(this.scope);
@@ -44,7 +44,7 @@ describe('cfFormSubmit', () => {
   it('calls form.submit() when clicked', function() {
     this.scope.submit = sinon.stub();
     this.button.click();
-    this.$apply();
+    $apply();
     sinon.assert.calledOnce(this.scope.submit);
   });
 });
