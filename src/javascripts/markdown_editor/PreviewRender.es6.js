@@ -208,16 +208,15 @@ export default function create(options = {}) {
   }
 
   function prepareImagesAPISrc(src) {
-    const qs = src.split('?')[1];
+    const [base, qs] = src.split('?');
 
     const forceMaxWidth = get(options, ['forceMaxWidth'], false);
     if (forceMaxWidth) {
-      return `${src}?w=${forceMaxWidth}`;
+      return `${base}?w=${forceMaxWidth}`;
     }
 
     if (isString(qs) && qs.length > 0) {
-      // Do not override `h` query string parameter if provided already
-      return qs.includes('h=') ? src : `${src}?h=${IMAGES_API_DEFAULT_H}`;
+      return qs.indexOf('h=') > -1 ? src : `${src}&h=${IMAGES_API_DEFAULT_H}`;
     } else {
       return `${src}?h=${IMAGES_API_DEFAULT_H}`;
     }
