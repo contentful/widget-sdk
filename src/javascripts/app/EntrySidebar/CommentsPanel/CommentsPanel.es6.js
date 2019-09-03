@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
@@ -57,14 +57,23 @@ export const styles = {
   })
 };
 
-function CommentsPanelContent({ spaceId, entryId }) {
+function CommentsPanelContent({ spaceId, entryId, onCommentsCountUpdate }) {
   const { isLoading, data, error } = useCommentsFetcher(spaceId, entryId);
   const [comments, setComments] = useState();
   const [shouldScroll, setShouldScroll] = useState(false);
   const listRef = useRef(null);
 
+  const setUpdatedComments = useCallback(
+    comments => {
+      setComments(comments);
+      onCommentsCountUpdate(comments.length);
+    },
+    [onCommentsCountUpdate]
+  );
+
   const handleNewComment = comment => {
-    setComments([...comments, comment]);
+    const updatedComments = [...comments, comment];
+    setUpdatedComments(updatedComments);
     !isReply(comment) && setShouldScroll(true);
   };
 
@@ -74,7 +83,7 @@ function CommentsPanelContent({ spaceId, entryId }) {
     const newList = comments.filter(item => {
       return !(item == comment || isReply(item));
     });
-    setComments(newList);
+    setUpdatedComments(newList);
   };
 
   // check for the first load of comments.
@@ -82,10 +91,10 @@ function CommentsPanelContent({ spaceId, entryId }) {
   // or display empty state
   useEffect(() => {
     if (data) {
-      setComments(data);
+      setUpdatedComments(data);
       setShouldScroll(true);
     }
-  }, [data]);
+  }, [data, setUpdatedComments]);
 
   useEffect(() => {
     // scroll to the bottom to show latest comments
@@ -134,7 +143,8 @@ function CommentsPanelContent({ spaceId, entryId }) {
 
 CommentsPanelContent.propTypes = {
   spaceId: PropTypes.string.isRequired,
-  entryId: PropTypes.string.isRequired
+  entryId: PropTypes.string.isRequired,
+  onCommentsCountUpdate: PropTypes.func.isRequired
 };
 
 export default function CommentsPanel({ isVisible, ...props }) {

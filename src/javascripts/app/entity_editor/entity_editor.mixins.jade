@@ -9,6 +9,6 @@ mixin entry-comments-toggle
     ng-if="shouldDisplayCommentsToggle"
     ng-click="preferences.toggleCommentsPanel()"
     ng-class="{active: preferences.showCommentsPanel}")
-    | Comments
+    | {{ (!commentsCount && "Comments") || (commentsCount === 1 && "1 comment") || commentsCount + " comments" }}
     .btn__alpha-button-label
       | Alpha

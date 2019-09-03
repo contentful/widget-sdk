@@ -82,7 +82,7 @@ describe('Client Controller', () => {
   });
 
   describe('comments panel', () => {
-    it('comments pannel is off by default', () => {
+    it('comments panel is off by default', () => {
       expect(scope.preferences.showCommentsPanel).toBeFalsy();
     });
 

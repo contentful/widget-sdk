@@ -19,8 +19,6 @@ const entityLoaders = {
   Asset: loadAsset
 };
 
-const spaceContext = getModule('spaceContext');
-
 const { setTimeout, clearTimeout } = window;
 
 const PEEK_IN_DELAY = 500;
@@ -140,6 +138,7 @@ export default ($scope, $state) => {
   }
 
   function setEntities() {
+    const spaceContext = getModule('spaceContext');
     const previousSlidesCount = $scope.slideStates.length;
 
     const slides = getSlideInEntities();
