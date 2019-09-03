@@ -47,8 +47,8 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
 }
 
 .emotion-3 .markdown-image-placeholder img {
-  max-width: 80%;
-  margin: 1.5rem 0;
+  max-width: 100%;
+  margin: 1.5rem auto;
 }
 
 .emotion-15 {

@@ -230,10 +230,7 @@ export function AppDetails(props) {
             )}
           </StateLink>
         ) : (
-          <Button
-            isFullWidth
-            href={websiteUrl('/request-a-demo/see-contentful/')}
-            buttonType="primary">
+          <Button isFullWidth href={websiteUrl('/contact/sales/')} buttonType="primary">
             Contact us
           </Button>
         )}
