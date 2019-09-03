@@ -32,6 +32,8 @@ import AppDetailsModal from './AppDetailsModal.es6';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
 import { getProductCatalogFlagForApp, hasAllowedAppFeatureFlag } from './AppProductCatalog.es6';
 import * as AppLifecycleTracking from './AppLifecycleTracking.es6';
+import StateLink from 'app/common/StateLink.es6';
+import createAppsClient from '../apps/AppsClient.es6';
 
 const styles = {
   intro: css({
@@ -175,6 +177,12 @@ const AppsListShell = props => (
           <TextLink onClick={() => openFeedback(props)}>Give feedback</TextLink>
         </Note>
       )}
+      {props.hasAlphaApps ? (
+        <Note noteType="warning" className={styles.intro}>
+          Apps alpha is being phased out.{' '}
+          <StateLink to="^.^.appsAlpha.list">View apps alpha</StateLink>
+        </Note>
+      ) : null}
       <Card padding="large" className={styles.appListCard}>
         {props.appsFeatureDisabled && (
           <div className={styles.overlay} data-test-id="disabled-beta-apps" />
@@ -189,7 +197,8 @@ const AppsListShell = props => (
 );
 
 AppsListShell.propTypes = {
-  appsFeatureDisabled: PropTypes.bool
+  appsFeatureDisabled: PropTypes.bool,
+  hasAlphaApps: PropTypes.bool
 };
 
 const ItemSkeleton = props => (
@@ -266,10 +275,15 @@ export default class AppsListPage extends React.Component {
 
   async componentDidMount() {
     try {
-      const [repoApps, appsListing, devApps] = await Promise.all([
+      const [repoApps, appsListing, devApps, hasAlphaApps] = await Promise.all([
         this.props.repo.getApps(),
         this.props.repo.getAppsListing(),
-        this.props.repo.getDevApps()
+        this.props.repo.getDevApps(),
+        // Recover with not showing link to apps alpha
+        // This enables us to delete the micro backend without effect after beta release.
+        createAppsClient(this.props.spaceId)
+          .hasAlphaApps()
+          .catch(() => false)
       ]);
 
       const productCatalogFlags = await this.props.productCatalog.loadProductCatalogFlags(
@@ -291,6 +305,7 @@ export default class AppsListPage extends React.Component {
       this.setState({
         ready: true,
         availableApps,
+        hasAlphaApps,
         installedApps,
         appsListing,
         appsFeatureDisabled
@@ -312,13 +327,14 @@ export default class AppsListPage extends React.Component {
 
   renderList() {
     const { organizationId, spaceId, userId } = this.props;
-    const { installedApps, availableApps, appsFeatureDisabled } = this.state;
+    const { installedApps, availableApps, appsFeatureDisabled, hasAlphaApps } = this.state;
 
     return (
       <AppsListShell
         organizationId={organizationId}
         spaceId={spaceId}
         userId={userId}
+        hasAlphaApps={hasAlphaApps}
         appsFeatureDisabled={appsFeatureDisabled}>
         {installedApps.length > 0 && (
           <>

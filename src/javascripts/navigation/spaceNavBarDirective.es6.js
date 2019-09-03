@@ -51,6 +51,7 @@ export default function register() {
             controller.spaceId = $stateParams.spaceId;
             controller.canNavigateTo = canNavigateTo;
             controller.makeRef = makeRef;
+            controller.appsBetaLDFlagLoaded = false;
 
             TokenStore.getOrganization(orgId).then(org => {
               controller.usageEnabled = org.pricingVersion === 'pricing_version_2';
@@ -61,6 +62,7 @@ export default function register() {
             });
             LD.onFeatureFlag($scope, APPS_BETA, appsBetaEnabled => {
               controller.appsBetaEnabled = appsBetaEnabled;
+              controller.appsBetaLDFlagLoaded = true;
             });
             getOrgFeature(orgId, 'teams').then(value => {
               controller.hasOrgTeamFeature = value;
