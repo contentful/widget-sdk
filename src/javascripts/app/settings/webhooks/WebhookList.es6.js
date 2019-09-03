@@ -1,4 +1,3 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
@@ -13,9 +12,28 @@ import {
   TableBody,
   Button
 } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
 
 import WebhookHealth from './WebhookHealth.es6';
 import WebhookListSidebar from './WebhookListSidebar.es6';
+
+const styles = {
+  nameCell: css({
+    width: '25%'
+  }),
+  urlCell: css({
+    width: '40%'
+  }),
+  callsCell: css({
+    width: '20%'
+  }),
+  actionsCell: css({
+    width: '20%'
+  }),
+  row: css({
+    cursor: 'pointer'
+  })
+};
 
 export class WebhookList extends React.Component {
   static propTypes = {
@@ -53,10 +71,10 @@ export class WebhookList extends React.Component {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell style={{ width: '25%' }}>Webhook name</TableCell>
-                <TableCell style={{ width: '40%' }}>URL</TableCell>
-                <TableCell style={{ width: '20%' }}>% of successful calls</TableCell>
-                <TableCell style={{ width: '20%' }}>Actions</TableCell>
+                <TableCell className={styles.nameCell}>Webhook name</TableCell>
+                <TableCell className={styles.urlCell}>URL</TableCell>
+                <TableCell className={styles.callsCell}>% of successful calls</TableCell>
+                <TableCell className={styles.actionsCell}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -70,10 +88,7 @@ export class WebhookList extends React.Component {
                       }}
                       key={wh.sys.id}>
                       {({ onClick }) => (
-                        <TableRow
-                          testId="webhook-row"
-                          onClick={onClick}
-                          style={{ cursor: 'pointer' }}>
+                        <TableRow testId="webhook-row" onClick={onClick} className={styles.row}>
                           <TableCell>
                             <strong data-test-id="webhook-name" className="x--ellipsis">
                               {wh.name}

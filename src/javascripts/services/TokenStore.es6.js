@@ -16,8 +16,6 @@ import { isEqual, groupBy, map, get, find, cloneDeep } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 import window from 'utils/ngCompat/window.es6';
 
-const $q = getModule('$q');
-
 // Refresh token info every 5 minutes
 const TOKEN_INFO_REFRESH_INTERVAL = 5 * 60 * 1000;
 
@@ -175,6 +173,7 @@ export function getDomains() {
 export function getOrganization(id) {
   return getOrganizations().then(orgs => {
     const org = find(orgs, { sys: { id } });
+    const $q = getModule('$q');
     return org || $q.reject(new Error('No organization with given ID could be found.'));
   });
 }

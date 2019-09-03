@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { getModule } from 'NgRegistry.es6';
-const $rootScope = getModule('$rootScope');
-const $compile = getModule('$compile');
 
 /**
  * Allows to use an Angular directive from within React.
@@ -25,6 +23,8 @@ export default class AngularComponent extends React.Component {
     scope: PropTypes.object
   };
   componentDidMount() {
+    const $rootScope = getModule('$rootScope');
+    const $compile = getModule('$compile');
     // we create isolated scope
     this.scope = $rootScope.$new(true);
     this.enrichScope(this.props.scope);

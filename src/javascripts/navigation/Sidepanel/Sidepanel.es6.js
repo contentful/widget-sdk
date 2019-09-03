@@ -1,14 +1,20 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import CloseIcon from 'svg/close.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import { css } from 'emotion';
 import SidepanelOrgs from './SidepanelOrgs.es6';
 import SidepanelSpaces from './SidepanelSpaces.es6';
 import SidepanelNoOrgs from './SidepanelNoOrgs.es6';
 import { Spinner } from '@contentful/forma-36-react-components';
 import OrgActions from './OrgActions.es6';
 import * as TeamsFeature from 'app/OrganizationSettings/Teams/TeamsFeature.es6';
+
+const styles = {
+  spinner: css({
+    margin: '10px 20px'
+  })
+};
 
 export default class Sidepanel extends React.Component {
   static propTypes = {
@@ -87,7 +93,7 @@ class OrgSettingsForMembers extends React.Component {
 
   render() {
     if (this.state.isLoading) {
-      return <Spinner size="small" style={{ margin: '10px 20px' }} />;
+      return <Spinner size="small" className={styles.spinner} />;
     }
 
     if (this.state.shouldSeeTeams) {

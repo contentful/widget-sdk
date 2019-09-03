@@ -1,4 +1,3 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
@@ -25,6 +24,18 @@ import SpacePlanRow from './SpacePlanRow.es6';
 const styles = {
   total: css({
     marginBottom: '1.5em'
+  }),
+  nameCell: css({
+    width: '33%'
+  }),
+  typeCell: css({
+    width: '20%'
+  }),
+  createdByCell: css({
+    width: '25%'
+  }),
+  createdOnCell: css({
+    width: '15%'
   })
 };
 
@@ -71,12 +82,12 @@ function SpacePlans({
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={{ width: '33%' }}>Name</TableCell>
-              <TableCell style={{ width: '20%' }}>
+              <TableCell className={styles.nameCell}>Name</TableCell>
+              <TableCell className={styles.typeCell}>
                 {isEnterprisePlan(basePlan) ? 'Space type' : 'Space type / price'}
               </TableCell>
-              <TableCell style={{ width: '25%' }}>Created by</TableCell>
-              <TableCell style={{ width: '15%' }}>Created on</TableCell>
+              <TableCell className={styles.createdByCell}>Created by</TableCell>
+              <TableCell className={styles.createdOnCell}>Created on</TableCell>
               <TableCell> </TableCell>
             </TableRow>
           </TableHead>

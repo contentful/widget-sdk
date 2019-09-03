@@ -12,8 +12,6 @@ import { getStore } from 'TheStore/index.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const store = getStore();
 
 const ONBOARDING_ERROR = 'modern onboarding space id does not exist';
@@ -129,6 +127,7 @@ function makeSpaceScopedPathResolver({ spaceScopedPath }) {
   return () =>
     runTask(function*() {
       const { space, spaceId } = yield* getSpaceInfo();
+      const spaceContext = getModule('spaceContext');
       yield spaceContext.resetWithSpace(space);
       return {
         path: spaceScopedPath,
@@ -166,6 +165,7 @@ function createOnboardingScreenResolver(screen) {
 function resolveApi() {
   return runTask(function*() {
     const { space, spaceId } = yield* getSpaceInfo();
+    const spaceContext = getModule('spaceContext');
     yield spaceContext.resetWithSpace(space);
 
     // we need to set up space first, so accesses will be
@@ -201,6 +201,7 @@ function resolveInstallExtension({ url, referrer }) {
       throw new Error(`Extension URL was not specified in the link you've used.`);
     }
     const { space, spaceId } = yield* getSpaceInfo();
+    const spaceContext = getModule('spaceContext');
     yield spaceContext.resetWithSpace(space);
     return {
       path: ['spaces', 'detail', 'settings', 'extensions', 'list'],

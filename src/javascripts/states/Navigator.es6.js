@@ -23,8 +23,6 @@
 import { get } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
-const $state = getModule('$state');
-
 const ENTITY_PLURALS = {
   Entry: 'entries',
   Asset: 'assets'
@@ -39,6 +37,7 @@ const ENTITY_PLURALS = {
  * @returns {Promise<void>}
  */
 export function go(state) {
+  const $state = getModule('$state');
   return $state.go(state.path.join('.'), state.params, state.options);
 }
 
@@ -56,6 +55,7 @@ export function href(state) {
       path: []
     };
   }
+  const $state = getModule('$state');
   return $state.href(state.path.join('.'), state.params, state.options);
 }
 
@@ -84,6 +84,7 @@ export function makeEntityRef(entity) {
  * @returns {String}
  */
 export function getCurrentStateName() {
+  const $state = getModule('$state');
   return get($state, ['current', 'name']);
 }
 

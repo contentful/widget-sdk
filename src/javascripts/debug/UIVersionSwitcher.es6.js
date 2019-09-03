@@ -11,8 +11,7 @@ import { addNotification } from 'debug/DevNotifications.es6';
 import qs from 'qs';
 import { getModule } from 'NgRegistry.es6';
 import window from 'utils/ngCompat/window.es6';
-
-const location = getModule('$location');
+import { css } from 'emotion';
 
 /**
  * If url param is given, sets `ui_version` cookie and reloads the app with
@@ -20,6 +19,7 @@ const location = getModule('$location');
  * with cookie.
  */
 export function init() {
+  const location = getModule('$location');
   const urlParams = location.search();
   const uiVersion = urlParams['ui_version'];
 
@@ -50,6 +50,12 @@ function addVersionNotification() {
   addNotification('Contentful UI Version:', renderVersionNotification(uiVersion));
 }
 
+const styles = {
+  buttonLink: css({
+    marginLeft: '3px'
+  })
+};
+
 function renderVersionNotification(gitRevision) {
   return (
     <div>
@@ -58,7 +64,7 @@ function renderVersionNotification(gitRevision) {
         className="btn-link"
         onClick={removeUiVersion}
         data-cf-ui-version-reload
-        style={{ marginLeft: '3px' }}>
+        style={styles.buttonLink}>
         Clear
       </button>
     </div>
