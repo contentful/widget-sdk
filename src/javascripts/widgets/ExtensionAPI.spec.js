@@ -184,13 +184,13 @@ describe('ExtensionAPI', () => {
   });
 
   describe('#registerHandler()', () => {
-    it('registers a channel handler', async () => {
+    it('registers a channel handler', () => {
       const api = createAPI();
 
       const handlerStub = jest.fn(() => 'RESULT');
       api.registerHandler('test', handlerStub);
 
-      const result = await api.channel.handlers.test('x', 'y', 'z');
+      const result = api.channel.handlers.test('x', 'y', 'z');
       expect(result).toBe('RESULT');
       expect(handlerStub).toBeCalledTimes(1);
       expect(handlerStub).toBeCalledWith('x', 'y', 'z');
@@ -198,7 +198,7 @@ describe('ExtensionAPI', () => {
   });
 
   describe('#registerPathHandler()', () => {
-    it('registers a channel handler translating paths to internal IDs', async () => {
+    it('registers a channel handler translating paths to internal IDs', () => {
       const api = createAPI({
         locales: {
           available: [{ code: 'LC-public', internal_code: 'LC-internal', default: true }],
@@ -212,7 +212,7 @@ describe('ExtensionAPI', () => {
       const handlerStub = jest.fn(() => 'RESULT');
       api.registerPathHandler('test', handlerStub);
 
-      const result = await api.channel.handlers.test('FID-public', 'LC-public', 'test');
+      const result = api.channel.handlers.test('FID-public', 'LC-public', 'test');
       expect(result).toBe('RESULT');
       expect(handlerStub).toBeCalledTimes(1);
       expect(handlerStub).toBeCalledWith(['fields', 'FID-internal', 'LC-internal'], 'test');

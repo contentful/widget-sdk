@@ -169,25 +169,30 @@ export default class ExtensionAPI {
     }
   };
 
+  maybeTrackHandler(handlerName, args) {
+    try {
+      const trackingFn = this.handlerTrackingFns[handlerName];
+      if (typeof trackingFn === 'function') {
+        trackingFn(...args);
+      }
+    } catch (err) {
+      // Do no fail the handler if tracking fails.
+    }
+  }
+
   // Registers a regular handler intended to be called directly.
   registerHandler(name, fn) {
     if (this.channel.handlers[name]) {
       throw new Error('Cannot register handler for the same event twice.');
     }
 
-    // Register the provided handler, but wrap it with tracking
-    // logic. We only attempt to track once the handler is executed.
-    this.channel.handlers[name] = async (...args) => {
-      const result = await fn(...args);
+    // Register the provided handler, but wrap it with tracking logic.
+    this.channel.handlers[name] = (...args) => {
+      const result = fn(...args);
 
-      try {
-        const trackingFn = this.handlerTrackingFns[name];
-        if (typeof trackingFn === 'function') {
-          trackingFn(...args);
-        }
-      } catch (err) {
-        // Do no fail the handler if tracking fails.
-      }
+      window.requestAnimationFrame(() => {
+        this.maybeTrackHandler(name, args);
+      });
 
       return result;
     };
