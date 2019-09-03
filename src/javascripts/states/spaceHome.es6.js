@@ -1,6 +1,5 @@
 import base from 'states/Base.es6';
 import homeTemplateDef from 'app/home/HomeTemplate.es6';
-import { spaceHomeController } from 'states/SpaceHomeController.es6';
 import { spaceResolver } from 'states/Resolvers.es6';
 
 export default base({
@@ -13,9 +12,14 @@ export default base({
   loadingText: 'Loading…',
   controller: [
     '$scope',
-    'space',
-    'access_control/AccessChecker/index.es6',
-    'Config.es6',
-    spaceHomeController
+    $scope => {
+      $scope.context.ready = true;
+      // This listener is triggered on completion of The Example Space creation
+      $scope.$on('spaceTemplateCreated', () => {
+        // the 'spaceTemplateCreated' is passed as prop to SpaceHomePage
+        // this triggers re-fetch of data and updates space home view
+        $scope.spaceTemplateCreated = true;
+      });
+    }
   ]
 });

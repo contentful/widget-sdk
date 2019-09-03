@@ -4,8 +4,10 @@ import Tooltip from './Tooltip.es6';
 import TooltipContent from './TooltipContent.es6';
 import OrgSliderIllustration from 'svg/org-slider-illustration.es6';
 import ContentTabIllustration from 'svg/content-tab-illustration.es6';
-import MediaTabIllustration from 'svg/media-tab-illustration.es6';
-import SupportChatIllustration from 'svg/support-chat-illustration.es6';
+
+// this is a workaround for the fact that we can't use `img` tag in js with our current build setup
+const MediaTabIllustration = () => <div className="media-tab-illustration"></div>;
+const SupportChatIllustration = () => <div className="support-chat-illustration"></div>;
 
 export default class WalkthroughComponent extends React.Component {
   static propTypes = {

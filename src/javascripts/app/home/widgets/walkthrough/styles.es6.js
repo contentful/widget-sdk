@@ -21,12 +21,16 @@ export default {
     margin: 0
   }),
   tooltipIllustration: css({
-    margin: '22px 32px 0px 32px',
-    backgroundSize: 'cover'
+    margin: '22px 32px 0px 32px'
   }),
   tooltipCopy: css({ margin: '22px 32px' }),
   tooltipButtonContainer: css({ padding: '0 32px 32px' }),
-  startWalkthroughButton: css({ justifyContent: 'center', display: 'flex', marginTop: '17px' }),
+  startWalkthroughButton: css({
+    justifyContent: 'center',
+    display: 'flex',
+    marginTop: '17px',
+    width: '100%'
+  }),
   relaunchWalkthroughSection: css({
     display: 'flex',
     flexWrap: 'nowrap',

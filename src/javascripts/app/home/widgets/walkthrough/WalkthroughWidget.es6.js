@@ -45,7 +45,7 @@ export default class WalkthroughWidget extends React.Component {
         version
       });
 
-      this.props.setWalkthroughState({ started });
+      this.props.setWalkthroughState(started);
     } catch (error) {
       logger.logError('Author and Editor Space Home ui walkthrough', {
         message: 'An error happened while fetching user state data',
@@ -72,7 +72,7 @@ export default class WalkthroughWidget extends React.Component {
         dismissed,
         version
       });
-      this.props.setWalkthroughState({ started });
+      this.props.setWalkthroughState(started);
     } catch (error) {
       logger.logError('Author and Editor Space Home ui walkthrough', {
         message: 'An error happened while fetching user state data',

@@ -9,12 +9,6 @@ import { getValue } from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as Entries from 'data/entries.es6';
 
-const modalDialog = getModule('modalDialog');
-const $rootScope = getModule('$rootScope');
-const client = getModule('client');
-const spaceContext = getModule('spaceContext');
-const $state = getModule('$state');
-
 const DEFAULT_LOCALE = 'en-US';
 
 const store = getStore();
@@ -30,6 +24,10 @@ export const isDevOnboardingSpace = currentSpace => {
   const currentSpaceId = currentSpace && currentSpace.getSys().id;
   const currentSpaceName = currentSpace && currentSpace.data.name;
   const msDevChoiceSpace = store.get(`${getStoragePrefix()}:developerChoiceSpace`);
+
+  if (!msDevChoiceSpace && currentSpaceName === MODERN_STACK_ONBOARDING_SPACE_NAME) {
+    store.set(`${getStoragePrefix()}:developerChoiceSpace`, currentSpaceId);
+  }
 
   return (
     !!currentSpace &&
@@ -49,6 +47,7 @@ export const isContentOnboardingSpace = currentSpace => {
  * @return {Promise<Entry>}
  */
 export const getPerson = async () => {
+  const spaceContext = getModule('spaceContext');
   const person = 'person';
   const personEntryPromise = spaceContext.space.getEntries({ content_type: person });
   const personCTPromise = spaceContext.space.getContentType(person);
@@ -73,6 +72,7 @@ export const checkSpace = spaceId => store.get(getMSOnboardingSpaceKey()) === sp
 // used for grouping all related analytics events
 export const getGroupId = () => 'modernStackOnboarding';
 export const createDeliveryToken = () => {
+  const spaceContext = getModule('spaceContext');
   return spaceContext.apiKeyRepo.create(
     'Example Key',
     'We’ve created an example API key for you to help you get started.'
@@ -96,6 +96,7 @@ export const getManagementToken = () => {
   return createManagementToken();
 };
 export const track = (elementId, toState) => {
+  const $state = getModule('$state');
   const payload = {
     elementId,
     groupId: getGroupId(),
@@ -109,6 +110,7 @@ export const track = (elementId, toState) => {
   Analytics.track('element:click', payload);
 };
 export const getDeliveryToken = async () => {
+  const spaceContext = getModule('spaceContext');
   const keys = await spaceContext.apiKeyRepo.getAll();
   const key = keys[0];
 
@@ -121,6 +123,8 @@ export const getDeliveryToken = async () => {
   }
 };
 export const create = ({ onDefaultChoice, org, user, markOnboarding }) => {
+  const $rootScope = getModule('$rootScope');
+  const modalDialog = getModule('modalDialog');
   const scope = $rootScope.$new();
 
   const dialog = modalDialog.open({
@@ -176,6 +180,8 @@ function getMSOnboardingSpaceKey() {
 }
 
 async function createSpace({ closeModal, org, markOnboarding, markSpace, userId }) {
+  const $state = getModule('$state');
+  const client = getModule('client');
   const newSpace = await client.createSpace(
     {
       name: MODERN_STACK_ONBOARDING_SPACE_NAME,

@@ -67,8 +67,6 @@ angular
       ngRequire('app/entry_editor/entryActionsController.es6').default();
       ngRequire('app/entry_editor/formWidgetsController.es6').default();
       ngRequire('app/home/cfTrackCopyEvent.es6').default();
-      ngRequire('app/home/contactUs/contactUsSpaceHomeDirective.es6').default();
-      ngRequire('app/home/onboarding_steps/cfOnboardingStepsDirective.es6').default();
       ngRequire('app/snapshots/cfSnapshotPresenter.es6').default();
       ngRequire('app/snapshots/cfSnapshotSelector.es6').default();
       ngRequire('app/snapshots/snapshotComparator.es6').default();

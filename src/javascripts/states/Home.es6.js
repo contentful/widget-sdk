@@ -65,7 +65,6 @@ export default makeState({
           path: ['spaces', 'detail'],
           params: { spaceId: space.sys.id }
         });
-        $scope.hasSpace = true;
       } else {
         const user = getValue(user$) || {};
         const currentOrgMembership = getCurrentOrg(user);
@@ -74,8 +73,14 @@ export default makeState({
           currentOrgMembership &&
           (currentOrgMembership.role === 'owner' || currentOrgMembership.role === 'admin');
         $scope.lastUsedOrg = currentOrgMembership.organization.sys.id;
-        $scope.hasSpace = false;
+        $scope.spaceTemplateCreated = false;
         $scope.context.ready = true;
+        // This listener is triggered on completion of The Example Space creation
+        $scope.$on('spaceTemplateCreated', () => {
+          // the 'spaceTemplateCreated' is passed as prop to SpaceHomePage
+          // this triggers re-fetch of data and updates space home view
+          $scope.spaceTemplateCreated = true;
+        });
       }
     }
   ]

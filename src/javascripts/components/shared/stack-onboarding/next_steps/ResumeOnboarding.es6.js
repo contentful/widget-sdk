@@ -1,59 +1,89 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { css, cx } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import * as CreateSpace from 'services/CreateSpace.es6';
+import {
+  Subheading,
+  Button,
+  Paragraph,
+  Card,
+  Typography
+} from '@contentful/forma-36-react-components';
 import { getStore } from 'TheStore/index.es6';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import { getModule } from 'NgRegistry.es6';
-
-const spaceContext = getModule('spaceContext');
-const $state = getModule('$state');
+import { trackClickCTA } from 'app/home/tracking.es6';
 
 const store = getStore();
 
-const ResumeOnboarding = ({ track }) => {
+const styles = {
+  section: css({ padding: tokens.spacingXl, display: 'flex' }),
+  heading: css({ fontSize: tokens.fontSize2Xl }),
+  buttonSection: css({ marginTop: tokens.spacingXl }),
+  buttonMargin: css({ marginLeft: tokens.spacingM }),
+  firstColumn: css({ width: '540px' }),
+  image: css({
+    width: '239px',
+    height: '181px',
+    backgroundSize: '239px 181px',
+    marginLeft: tokens.spacingXl
+  })
+};
+
+const ResumeOnboarding = () => {
+  const $state = getModule('$state');
+  const spaceContext = getModule('spaceContext');
   const currOrgId = spaceContext.organization.sys.id;
   // this is in render as we want this component to resume using what the latest value
   // in the localStorage is and not what the value was when it was mounted
-  const handleResume = () => {
-    const { path, params } = store.get(`${getStoragePrefix()}:currentStep`);
+  const handleResume = async () => {
+    let currentStep = store.get(`${getStoragePrefix()}:currentStep`);
 
-    track('space_home:resume_onboarding', path);
-    $state.go(path, params);
+    trackClickCTA('resume_onboarding:resume_deploy_button');
+
+    if (!currentStep) {
+      currentStep = {
+        params: { spaceId: spaceContext.space && spaceContext.space.getId() },
+        path: 'spaces.detail.onboarding.copy'
+      };
+    }
+
+    $state.go(currentStep.path, currentStep.params);
   };
 
   const handleCreateNewSpace = () => {
-    track('space_home:create_new_space');
+    trackClickCTA('resume_onboarding:create_new_space_button');
     return CreateSpace.showDialog(currOrgId);
   };
 
   return (
-    <section className="home-section">
-      <h2 className="home-section__heading">
-        Would you like to continue to deploy a modern stack website?
-      </h2>
-      <p>You’ll copy the repository for a blog, explore the blog content structure and deploy.</p>
-      <div className="home-section__body u-separator--small">
-        <button
-          className="btn-action"
-          onClick={handleResume}
-          type="button"
-          data-test-id="ms-resume-onboarding">
-          Yes, deploy a blog in 3 steps
-        </button>
-        <button
-          className="btn-action"
-          onClick={handleCreateNewSpace}
-          type="button"
-          data-test-id="ms-create-new-space">
-          No, create a new space
-        </button>
-      </div>
-    </section>
+    <Card className={styles.section}>
+      <Typography className={styles.firstColumn}>
+        <Subheading className={styles.heading}>
+          Would you like to continue to deploy a modern stack website?
+        </Subheading>
+        <Paragraph>
+          You’ll copy the repository for a blog, explore the blog content structure and deploy.
+        </Paragraph>
+        <div className={styles.buttonSection}>
+          <Button onClick={handleResume} data-test-id="ms-resume-onboarding">
+            Yes, deploy a blog in 3 steps
+          </Button>
+          <Button
+            className={styles.buttonMargin}
+            onClick={handleCreateNewSpace}
+            data-test-id="ms-create-new-space">
+            No, create a new space
+          </Button>
+        </div>
+      </Typography>
+      <div
+        role="img"
+        aria-label="View of the Gatsby App"
+        className={cx(styles.image, 'background-image_gatsby-starter')}
+      />
+    </Card>
   );
-};
-
-ResumeOnboarding.propTypes = {
-  track: PropTypes.func.isRequired
 };
 
 export default ResumeOnboarding;

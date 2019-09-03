@@ -1,16 +1,15 @@
 import React from 'react';
+import { Card } from '@contentful/forma-36-react-components';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import Icon from 'ui/Components/Icon.es6';
 import { websiteUrl } from 'Config.es6';
-import { track } from 'analytics/Analytics.es6';
 import isLegacyEnterprise from 'data/isLegacyEnterprise.es6';
 import { UPGRADE_PRICING_FLAG } from 'featureFlags.es6';
 import { getModule } from 'NgRegistry.es6';
+import { trackClickCTA } from './tracking.es6';
 
-const $state = getModule('$state');
 const spaceContext = getModule('spaceContext');
-
 export default class UpgradePricing extends React.Component {
   state = {};
   async shouldShow(org) {
@@ -46,11 +45,7 @@ export default class UpgradePricing extends React.Component {
   // this is unbound method, since we don't use `this` inside
   // make it an arrow function if you want to use it.
   onUpgradeClick() {
-    track('element:click', {
-      elementId: 'upgrade_pricing_space_home',
-      groupId: 'upgrade_pricing',
-      fromState: $state.current.name
-    });
+    trackClickCTA('upgrade_pricing_space_home');
   }
 
   render() {
@@ -61,7 +56,7 @@ export default class UpgradePricing extends React.Component {
     }
 
     return (
-      <section className="home-section upgrade-space--container">
+      <Card padding="large" className="upgrade-space--container">
         <div className="upgrade-space--content">
           <h2 className="home-section__heading" data-test-id="greeting">
             Upgrade your Space to access our latest feature
@@ -100,7 +95,7 @@ export default class UpgradePricing extends React.Component {
         <div className="upgrade-space--graphics">
           <Icon height={145} name={'space-diagram'} />
         </div>
-      </section>
+      </Card>
     );
   }
 }
