@@ -14847,19 +14847,26 @@ pre,
   }
 
   .cf-workbench-content {
-    margin: 0 auto;
+    transform: translate3d(0,0,0);
     padding: 24px;
-  }
-
-  .cf-workbench-content-type__text {
     max-width: 768px;
+    margin-left: 10px;
   }
 
-  .cf-workbench-content-type__full {
+  .workbench-layer--is-current .cf-workbench-content-type__text {
+    transition: all 0.3s ease-in-out;
+    transition-property: margin-left transform;
+    transform: translate3d(-50%, 0, 0);
+    max-width: 768px;
+    margin-left: 50%;
+    margin-right: -50%;
+  }
+
+  .workbench-layer--is-current .cf-workbench-content-type__full {
     max-width: 100%;
   }
 
-  .cf-workbench-content-type__default {
+  .workbench-layer--is-current .cf-workbench-content-type__default {
     max-width: 1280px;
   }
 
