@@ -13,22 +13,16 @@ export function disable() {
   enabled = false;
 }
 
-export function open(initialContent) {
-  if (!enabled) {
-    return Promise.resolve();
+export async function open(initialContent) {
+  if (enabled) {
+    const Intercom = await LazyLoader.getFromGlobal('Intercom');
+    return Intercom('showNewMessage', initialContent);
   }
-
-  return LazyLoader.getFromGlobal('Intercom').then(Intercom =>
-    Intercom('showNewMessage', initialContent)
-  );
 }
 
-export function trackEvent(eventName, metadata) {
-  if (!enabled) {
-    return Promise.resolve();
+export async function trackEvent(eventName, metadata) {
+  if (enabled) {
+    const Intercom = await LazyLoader.getFromGlobal('Intercom');
+    return Intercom('trackEvent', eventName, metadata);
   }
-
-  return LazyLoader.getFromGlobal('Intercom').then(Intercom =>
-    Intercom('trackEvent', eventName, metadata)
-  );
 }
