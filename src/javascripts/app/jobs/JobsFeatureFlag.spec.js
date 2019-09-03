@@ -4,7 +4,6 @@ import { trackAlphaEligibilityToIntercom } from './Analytics/JobsAnalytics.es6';
 
 import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
 
-import * as FeatureFlagKey from 'featureFlags.es6';
 import JobsFeatureFlag from './JobsFeatureFlag.es6';
 
 jest.mock('utils/LaunchDarkly/BooleanFeatureFlag.es6', () => jest.fn().mockReturnValue(null));
@@ -17,7 +16,6 @@ describe('<JobsFeatureFlag />', () => {
 
   const build = () => {
     const props = {
-      featureFlagKey: FeatureFlagKey.JOBS,
       children: jest.fn().mockReturnValue(null)
     };
     return [render(<JobsFeatureFlag {...props} />), props];
@@ -32,7 +30,7 @@ describe('<JobsFeatureFlag />', () => {
     expect(trackAlphaEligibilityToIntercom).toHaveBeenCalled();
   });
 
-  it('tracks to intercom if ff is off', () => {
+  it('does not track to intercom if ff is off', () => {
     mockBooleanFeatureFlag(false);
 
     const [, props] = build();
