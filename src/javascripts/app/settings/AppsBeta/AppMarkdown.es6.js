@@ -5,7 +5,7 @@ import tokens from '@contentful/forma-36-tokens';
 import makePreviewRender from 'markdown_editor/PreviewRender.es6';
 
 const previewRender = makePreviewRender({
-  forceMaxWidth: 800
+  forceMaxWidth: 1000
 });
 
 // eslint-disable-next-line
@@ -51,8 +51,8 @@ const rootStyle = css`
   }
 
   .markdown-image-placeholder img {
-    max-width: 80%;
-    margin: ${tokens.spacingL} 0;
+    max-width: 100%;
+    margin: ${tokens.spacingL} auto;
   }
 `;
 
