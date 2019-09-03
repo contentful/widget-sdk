@@ -11,7 +11,9 @@ import {
   Card,
   Button,
   DisplayText,
-  Tooltip
+  Tooltip,
+  Heading,
+  Paragraph
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import AliasesIllustration from 'svg/aliases-illustration.es6';
@@ -21,6 +23,7 @@ import OptIn from './OptIn.es6';
 import { aliasStyles } from './SharedStyles.es6';
 import { STEPS } from './Utils.es6';
 import Feedback from './Feedback.es6';
+import ExternalTextLink from 'app/common/ExternalTextLink.es6';
 
 const aliasHeaderStyles = {
   alphaTag: css({
@@ -53,16 +56,15 @@ function EnvironmentAliasHeader() {
   );
 }
 
-function EnvironmentAlias({ aliases, id, payload, setModalOpen, canChangeEnvironment }) {
+function EnvironmentAlias({ aliases, id, setModalOpen, canChangeEnvironment }) {
   const changeEnvironment = () => setModalOpen(true);
 
   const content = (
     <TextLink
       testId="openChangeDialog"
-      linkType="positive"
       onClick={changeEnvironment}
       disabled={!canChangeEnvironment}>
-      Change Environment
+      Change alias target
     </TextLink>
   );
 
@@ -94,11 +96,10 @@ function EnvironmentAlias({ aliases, id, payload, setModalOpen, canChangeEnviron
       </div>
       <Table className={aliasStyles.body}>
         <TableBody>
-          <TableRow>
+          <TableRow className={aliasStyles.row}>
             <TableCell>
               <EnvironmentDetails
                 environmentId={id}
-                createdAt={payload.sys.createdAt}
                 isSelected
                 isMaster={aliases.includes('master')}></EnvironmentDetails>
             </TableCell>
@@ -113,7 +114,6 @@ EnvironmentAlias.propTypes = {
   aliases: PropTypes.arrayOf(PropTypes.string).isRequired,
   id: PropTypes.string.isRequired,
   setModalOpen: PropTypes.func.isRequired,
-  payload: PropTypes.object.isRequired,
   canChangeEnvironment: PropTypes.bool.isRequired
 };
 
@@ -137,10 +137,11 @@ const aliasesStyles = {
     marginRight: tokens.spacingM
   }),
   tag: css({
-    padding: '0px 3px 0px 4px',
+    padding: '0px 4px 0px 5px',
+    marginBottom: tokens.spacingM,
     borderRadius: '3px',
     color: tokens.colorWhite,
-    backgroundColor: tokens.colorOrangeMid
+    backgroundColor: tokens.colorPrimary
   })
 };
 
@@ -182,13 +183,13 @@ export default function EnvironmentAliases(props) {
       <Card className={aliasesStyles.card} testId={testId}>
         <div className={aliasesStyles.leftColumn}>
           <div>
-            <Tag className={aliasesStyles.tag}>new</Tag>
+            <Tag className={aliasesStyles.tag}>ALPHA</Tag>
           </div>
-          <h2>Supercharge your Environments with Aliases</h2>
-          <p>
+          <Heading element="h2">Supercharge your Environments with Aliases</Heading>
+          <Paragraph>
             We&apos;ve just launched Aliases, which allow you to make any Environment your
             production Environment. Easily roll-out updates, and just as easily roll them back.
-          </p>
+          </Paragraph>
           <span className={aliasesStyles.buttonBar}>
             <Button
               testId="environmentaliases.start-opt-in"
@@ -196,6 +197,9 @@ export default function EnvironmentAliases(props) {
               onClick={startOptIn}>
               Create first Alias
             </Button>
+            <ExternalTextLink href="https://www.contentful.com/developers/docs/concepts/environment-aliases/">
+              Learn more
+            </ExternalTextLink>
           </span>
         </div>
         <AliasesIllustration className={aliasesStyles.illustration}></AliasesIllustration>

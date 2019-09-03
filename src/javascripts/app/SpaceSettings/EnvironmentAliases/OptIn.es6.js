@@ -1,6 +1,5 @@
 import React, { useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { css } from 'emotion';
 import {
   Table,
@@ -127,7 +126,6 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
                   {step === STEPS.THIRD_CHANGE_ENV ? (
                     <EnvironmentDetails
                       environmentId={newEnvironmentId}
-                      createdAt={moment()}
                       isMaster></EnvironmentDetails>
                   ) : (
                     <Fragment>
@@ -155,6 +153,7 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
                           </Fragment>
                         }>
                         <TextInput
+                          maxLength={40}
                           testId="input"
                           placeholder="release-1"
                           value={newEnvironmentId}

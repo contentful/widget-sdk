@@ -59,7 +59,7 @@ function Form({
         input={{
           'data-test-id': 'field.id',
           type: 'text',
-          maxLength: '64'
+          maxLength: '40'
         }}
         hint="The environment ID represents how it is referred to in the API"
         SetFieldValue={SetFieldValue}

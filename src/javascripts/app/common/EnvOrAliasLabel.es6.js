@@ -44,7 +44,6 @@ const EnvOrAliasLabel = ({
     display: 'flex',
     alignItems: 'center',
     color: colorizeFont ? fill : undefined,
-    fontSize: tokens.fontSizeS,
     fontFamily: tokens.fontStackMonospace,
     fontStyle: isMaster && aliasId ? 'italic' : 'normal'
   });
@@ -63,7 +62,7 @@ const EnvOrAliasLabel = ({
     <span
       className={`${wrapperStyle} ${className}`}
       data-test-id={testId}
-      title={showAliasedTo ? `${aliasId} > ${environmentId}` : environmentId}>
+      title={showAliasedTo && aliasId ? `${aliasId} > ${environmentId}` : environmentId}>
       {aliasId ? (
         <Fragment>
           <AliasIcon className={iconStyle} data-test-id="envoralias.aliasicon"></AliasIcon>

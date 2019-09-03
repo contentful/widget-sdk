@@ -8,6 +8,7 @@ import * as Config from 'Config.es6';
 import { assign } from 'utils/Collections.es6';
 import { caseofEq } from 'sum-types';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import AliasIcon from 'svg/alias.es6';
 import { LinkOpen } from 'ui/Content.es6';
 import {
   Table,
@@ -17,7 +18,10 @@ import {
   TableBody,
   TextLink,
   Tag,
-  DisplayText
+  DisplayText,
+  Heading,
+  Paragraph,
+  Button
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -27,6 +31,7 @@ import { Tooltip } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import EnvironmentAliases from '../EnvironmentAliases/EnvironmentAliases.es6';
 import EnvironmentDetails from 'app/common/EnvironmentDetails.es6';
+import ExternalTextLink from 'app/common/ExternalTextLink.es6';
 
 export default function View({ state, actions }) {
   const { items, aliasesEnabled } = state;
@@ -36,7 +41,7 @@ export default function View({ state, actions }) {
       <DocumentTitle title="Environments" />
       <Workbench>
         <Workbench.Header icon={<Icon name="page-settings" scale="0.8" />} title="Environments" />
-        <Workbench.Content type="full">
+        <Workbench.Content>
           {aliasesEnabled && (
             <EnvironmentAliases
               {...state}
@@ -146,6 +151,25 @@ const environmentTableStyles = {
       verticalAlign: 'middle'
     }
   }),
+  firstCell: css({
+    display: 'flex',
+    alignItems: 'center'
+  }),
+  aliasedTo: css({
+    fontStyle: 'italic',
+    whiteSpace: 'nowrap',
+    paddingLeft: tokens.spacingL,
+    display: 'flex',
+    alignItems: 'center',
+    '& > svg': {
+      margin: `0 ${tokens.spacingXs}`,
+      fill: tokens.colorGreenLight
+    }
+  }),
+  createdAtCell: css({
+    whiteSpace: 'nowrap',
+    '&:first-letter': { textTransform: 'capitalize' }
+  }),
   actionCell: css({
     textAlign: 'right',
     '& button': {
@@ -178,16 +202,19 @@ function EnvironmentTable({ environments }) {
                 key={environment.id}
                 className={environmentTableStyles.tableRow}
                 testId={`environment.${environment.id}`}>
-                <TableCell>
+                <TableCell className={environmentTableStyles.firstCell}>
                   <EnvironmentDetails
-                    aliasId={environment.aliases ? environment.aliases[0] : undefined}
-                    showAliasedTo
                     environmentId={environment.id}
-                    isMaster={environment.isMaster}
-                    isDefault={environment.isMaster}></EnvironmentDetails>
+                    isMaster={environment.isMaster}></EnvironmentDetails>
+                  {environment.isMaster && environment.aliases && environment.aliases[0] && (
+                    <span className={environmentTableStyles.aliasedTo}>
+                      <span>Aliased to</span>
+                      <AliasIcon></AliasIcon> {environment.aliases[0]}
+                    </span>
+                  )}
                 </TableCell>
-                <TableCell>
-                  <Tag tagType="muted">{moment(environment.payload.sys.createdAt).fromNow()}</Tag>
+                <TableCell className={environmentTableStyles.createdAtCell}>
+                  {moment(environment.payload.sys.createdAt).fromNow()}
                 </TableCell>
                 <TableCell testId="view.status">
                   {caseofEq(environment.status, [
@@ -281,13 +308,22 @@ DeleteButton.propTypes = {
   environment: PropTypes.object.isRequired
 };
 
+const sidebarStyles = {
+  subHeader: css({
+    fontSize: tokens.fontSizeM,
+    paddingBottom: tokens.spacingXs,
+    color: tokens.colorTextDark
+  })
+};
+
 function Sidebar({
   canCreateEnv,
   resource,
   isLegacyOrganization,
   canUpgradeSpace,
   OpenCreateDialog,
-  OpenUpgradeSpaceDialog
+  OpenUpgradeSpaceDialog,
+  aliasesEnabled
 }) {
   // Master is not included in the api, display +1 usage and limit
   const usage = resource.usage + 1;
@@ -295,16 +331,18 @@ function Sidebar({
 
   return (
     <>
-      <h2 className={`${css({ marginTop: 0 })} entity-sidebar__heading`}>Usage</h2>
+      <Heading element="h2" className={`${css({ marginTop: 0 })} entity-sidebar__heading`}>
+        Usage
+      </Heading>
       <div className="entity-sidebar__text-profile">
-        <p data-test-id="environmentsUsage">
+        <Paragraph testId="environmentsUsage">
           You are using {usage}{' '}
           {limit ? `out of ${limit} environments available ` : pluralize('environment', usage)} in
           this space.
           {!isLegacyOrganization && <UsageTooltip resource={resource} />}
-        </p>
+        </Paragraph>
         {!canCreateEnv && !isLegacyOrganization && (
-          <p>
+          <Paragraph>
             {limit > 1 && 'Delete existing environments or '}
             {canUpgradeSpace &&
               (limit > 1 ? 'change the space to add more' : 'Change change the space to add more')}
@@ -312,46 +350,60 @@ function Sidebar({
               `${
                 limit > 1 ? 'ask' : 'Ask'
               } the administrator of your organization to change the space to add more. `}
-          </p>
+          </Paragraph>
         )}
       </div>
       <div className="entity-sidebar__widget">
         {canCreateEnv && (
-          <button
-            data-test-id="openCreateDialog"
-            onClick={OpenCreateDialog}
-            className="btn-action x--block">
+          <Button isFullWidth testId="openCreateDialog" onClick={OpenCreateDialog}>
             Add environment
-          </button>
+          </Button>
         )}
         {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && (
           <UpgradeButton OpenUpgradeSpaceDialog={OpenUpgradeSpaceDialog} />
         )}
       </div>
-      <h2 className="entity-sidebar__heading">Documentation</h2>
+      <Heading element="h2" className="entity-sidebar__heading">
+        Documentation
+      </Heading>
+      {aliasesEnabled && <Paragraph className={sidebarStyles.subHeader}>Environment</Paragraph>}
       <div className="entity-sidebar__text-profile">
-        <p>
+        <Paragraph>
           Environments allow you to modify the data in your space without affecting the data in your
           master environment.
-        </p>
-        <ul>
-          <li>
-            Read more in the{' '}
-            <a
-              href="https://www.contentful.com/developers/docs/concepts/domain-model/"
-              target="_blank"
-              rel="noopener noreferrer">
-              Contentful domain model
-            </a>{' '}
-            document
-          </li>
-        </ul>
+        </Paragraph>
+        <Paragraph>
+          <span>Read more in the </span>
+          <ExternalTextLink href="https://www.contentful.com/developers/docs/concepts/domain-model/">
+            Contentful domain model
+          </ExternalTextLink>
+          <span> document.</span>
+        </Paragraph>
       </div>
+      {aliasesEnabled && (
+        <Fragment>
+          <Paragraph className={sidebarStyles.subHeader}>Environment Aliases</Paragraph>
+          <div className="entity-sidebar__text-profile">
+            <Paragraph>
+              Anim ea labore duis voluptate. Enim excepteur est anim Lorem excepteur. Pariatur
+              occaecat ad mollit sunt consequat aliquip ad consequat sit aute.
+            </Paragraph>
+            <Paragraph>
+              <span>Read more in the </span>
+              <ExternalTextLink href="https://www.contentful.com/developers/docs/concepts/environment-aliases/">
+                Contentful alias
+              </ExternalTextLink>
+              <span> documentation.</span>
+            </Paragraph>
+          </div>
+        </Fragment>
+      )}
     </>
   );
 }
 Sidebar.propTypes = {
   canCreateEnv: PropTypes.bool,
+  aliasesEnabled: PropTypes.bool,
   resource: PropTypes.object,
   organizationId: PropTypes.string,
   isLegacyOrganization: PropTypes.bool,
@@ -378,9 +430,11 @@ function UsageTooltip({ resource }) {
     <Tooltip
       content={tooltipContent}
       place="bottom"
+      targetWrapperClassName={css({
+        marginLeft: tokens.spacingXs
+      })}
       className={css({
-        color: tokens.colorElementDarkest,
-        marginLeft: '0.2em'
+        color: tokens.colorElementDarkest
       })}>
       <span data-test-id="environments-usage-tooltip">
         <Icon name="question-mark" />
@@ -395,12 +449,9 @@ UsageTooltip.propTypes = {
 
 function UpgradeButton({ OpenUpgradeSpaceDialog }) {
   return (
-    <button
-      data-test-id="openUpgradeDialog"
-      onClick={() => OpenUpgradeSpaceDialog()}
-      className="btn-action x--block">
+    <Button isFullWidth testId="openUpgradeDialog" onClick={() => OpenUpgradeSpaceDialog()}>
       Upgrade space
-    </button>
+    </Button>
   );
 }
 

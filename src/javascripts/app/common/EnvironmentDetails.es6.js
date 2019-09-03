@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { Tag, CopyButton } from '@contentful/forma-36-react-components';
+import { Tag, CopyButton, Paragraph } from '@contentful/forma-36-react-components';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel.es6';
 
 const environmentDetailsStyles = {
@@ -18,9 +18,6 @@ const environmentDetailsStyles = {
         backgroundColor: 'transparent'
       }
     }
-  }),
-  envOrAlias: css({
-    fontSize: tokens.fontSizeM
   }),
   tag: css({
     marginLeft: 'auto',
@@ -49,7 +46,6 @@ export default function EnvironmentDetails({
   return (
     <div className={environmentDetailsStyles.wrapper} data-test-id={testId}>
       <EnvOrAliasLabel
-        className={environmentDetailsStyles.envOrAlias}
         aliasId={aliasId}
         showAliasedTo={showAliasedTo}
         environmentId={environmentId}
@@ -69,12 +65,9 @@ export default function EnvironmentDetails({
         </Tag>
       )}
       {createdAt && (
-        <Tag
-          className={environmentDetailsStyles.tag}
-          tagType="muted"
-          testId="environmentdetails.createdAt">
+        <Paragraph className={environmentDetailsStyles.tag} testId="environmentdetails.createdAt">
           Created {moment(createdAt).fromNow()}
-        </Tag>
+        </Paragraph>
       )}
     </div>
   );

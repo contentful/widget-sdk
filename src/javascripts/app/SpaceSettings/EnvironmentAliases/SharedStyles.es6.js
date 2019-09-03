@@ -15,13 +15,18 @@ export const aliasStyles = {
     padding: `0 ${spacingXs} 0.875rem ${spacingXs}`
   }),
   card: css({
-    marginBottom: spacingM,
+    margin: `${spacingM} 0`,
     backgroundColor: colorElementLightest,
     zIndex: 10,
     position: 'relative'
   }),
   body: css({
     backgroundColor: colorWhite
+  }),
+  row: css({
+    '&:hover': {
+      backgroundColor: 'unset'
+    }
   }),
   createdAt: css({
     marginLeft: 'auto'

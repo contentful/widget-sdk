@@ -12,7 +12,8 @@ import {
   DropdownListItem,
   Modal,
   Dropdown,
-  Notification
+  Notification,
+  Paragraph
 } from '@contentful/forma-36-react-components';
 import * as logger from 'services/logger.es6';
 import EnvironmentDetails from 'app/common/EnvironmentDetails.es6';
@@ -41,7 +42,6 @@ const changeEnvironmentModalStyles = {
     zIndex: 1001
   }),
   header: css({
-    textTransform: 'uppercase',
     marginBottom: spacingM
   }),
   subHeader: css({
@@ -103,7 +103,10 @@ export default function ChangeEnvironmentModal({
   return (
     <Modal
       title="Point Master Alias to another Environment"
-      onClose={() => setModalOpen(false)}
+      onClose={() => {
+        setAliasedEnvironment(initialAliasedEnvironment);
+        setModalOpen(false);
+      }}
       shouldCloseOnOverlayClick={false}
       shouldCloseOnEscapePress={false}
       size="large"
@@ -113,7 +116,7 @@ export default function ChangeEnvironmentModal({
         <React.Fragment>
           <Modal.Header title={title} onClose={onClose} />
           <Modal.Content testId="changeenvironmentmodal.content">
-            <p>{`Select the new environment you would like your "${alias}" Alias to point to:`}</p>
+            <Paragraph>{`Select the new environment you would like your "${alias}" Alias to point to:`}</Paragraph>
             <Card className={aliasStyles.card}>
               <div className={changeEnvironmentModalStyles.header}>
                 <EnvironmentDetails
@@ -125,10 +128,10 @@ export default function ChangeEnvironmentModal({
                   showAliasedTo={false}
                   hasCopy={false}></EnvironmentDetails>
               </div>
-              <p>Current Environment:</p>
+              <Paragraph>Current Environment:</Paragraph>
               <Table className={aliasStyles.body}>
                 <TableBody>
-                  <TableRow>
+                  <TableRow className={aliasStyles.row}>
                     <TableCell>
                       <EnvironmentDetails
                         testId="changeenvironmentmodal.current-environment"
@@ -140,7 +143,7 @@ export default function ChangeEnvironmentModal({
                   </TableRow>
                 </TableBody>
               </Table>
-              <p className={changeEnvironmentModalStyles.subHeader}>Switch to:</p>
+              <Paragraph className={changeEnvironmentModalStyles.subHeader}>Switch to:</Paragraph>
               <Dropdown
                 isOpen={dropDownOpen}
                 className={changeEnvironmentModalStyles.dropdown}
@@ -158,6 +161,7 @@ export default function ChangeEnvironmentModal({
                 }>
                 <DropdownList
                   testId="changeenvironmentmodal.dropdown"
+                  maxHeight={150}
                   className={changeEnvironmentModalStyles.list}>
                   {items
                     .filter(({ aliases }) => aliases.length <= 0)
@@ -176,12 +180,17 @@ export default function ChangeEnvironmentModal({
                 </DropdownList>
               </Dropdown>
             </Card>
+            {aliasedEnvironment !== initialAliasedEnvironment && (
+              <Paragraph>
+                {`The environment serving production content will be changed to "${aliasedEnvironment}"!`}
+              </Paragraph>
+            )}
           </Modal.Content>
           <Modal.Controls>
             <Button
               testId="changeenvironmentmodal.accept-btn"
               onClick={changeEnvironment}
-              buttonType="positive"
+              buttonType="negative"
               loading={loading}
               disabled={aliasedEnvironment === initialAliasedEnvironment}>
               Confirm changes
