@@ -77,9 +77,7 @@
           window
             .fetch(filename)
             .then(resp => resp.text())
-            .then(text => {
-              eval(text);
-            })
+            .then(eval)
         );
       }
     }
@@ -135,17 +133,7 @@
       await SystemJS.import('test/helpers/mocks/widget_api');
       await SystemJS.import('test/helpers/application');
       await SystemJS.import('prelude');
-      await Promise.all(
-        testModules.reduce((memo, name) => {
-          const prefixes = ['test/unit'];
-
-          if (prefixes.find(prefix => name.startsWith(prefix))) {
-            memo.push(SystemJS.import(name));
-          }
-
-          return memo;
-        }, [])
-      );
+      await Promise.all(testModules.map(name => SystemJS.import(name)));
 
       start(...args);
     } catch (e) {

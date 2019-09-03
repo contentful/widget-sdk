@@ -84,6 +84,7 @@ import * as navigationSidepanelTriggeres6 from 'navigation/Sidepanel/Trigger.es6
 import * as searchEntitySelectorCreateEntityindexes6 from 'search/EntitySelector/CreateEntity/index.es6';
 import * as uiComponentsContactUsButtones6 from 'ui/Components/ContactUsButton.es6';
 import * as access_controlUsersUserListes6 from 'access_control/Users/UserList.es6';
+import * as appwidgetsEditorWarningPredefinedValueses6 from 'app/widgets/EditorWarningPredefinedValues.es6';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -354,7 +355,8 @@ function getModule(name) {
     'navigation/Sidepanel/Trigger.es6': navigationSidepanelTriggeres6,
     'search/EntitySelector/CreateEntity/index.es6': searchEntitySelectorCreateEntityindexes6,
     'ui/Components/ContactUsButton.es6': uiComponentsContactUsButtones6,
-    'access_control/Users/UserList.es6': access_controlUsersUserListes6
+    'access_control/Users/UserList.es6': access_controlUsersUserListes6,
+    'app/widgets/EditorWarningPredefinedValues.es6': appwidgetsEditorWarningPredefinedValueses6
   };
 
   return get(allowedModules, name, null);

@@ -11,7 +11,7 @@ import {
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey.es6';
 
-function getUser() {
+export function getUser() {
   // user$ is a property which starts with `null`
   // so it will never throw an error
   const user = getValue(user$);

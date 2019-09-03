@@ -1,20 +1,21 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
+import { $initialize } from 'test/helpers/helpers';
 
 describe('states/deeplink/resolver.es6', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.logException = sinon.stub();
-    module('contentful/test', $provide => {
-      $provide.constant('services/logger.es6', {
-        logException: this.logException
-      });
+    this.system.set('services/logger.es6', {
+      logException: this.logException
     });
 
-    this.resolver = this.$inject('states/deeplink/resolver.es6');
+    this.resolver = await this.system.import('states/deeplink/resolver.es6');
+
+    await $initialize(this.system);
   });
 
   describe('#resolveLink', () => {
-    it('should log an error in case of error', function*() {
-      yield this.resolver.resolveLink('some random link');
+    it('should log an error in case of error', async function() {
+      await this.resolver.resolveLink('some random link');
 
       expect(this.logException.calledOnce).toBe(true);
     });

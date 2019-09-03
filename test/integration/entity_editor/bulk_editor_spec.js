@@ -1,22 +1,31 @@
+import sinon from 'sinon';
 import * as K from 'test/helpers/mocks/kefir';
 import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
 import _ from 'lodash';
+import { $initialize, $inject, $apply, $compile } from 'test/helpers/helpers';
 
 describe('bulk editor', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
-      $provide.constant('services/localeStore.es6', {
-        default: createLocaleStoreMock()
-      });
-    });
+  beforeEach(async function() {
+    // module('contentful/test', $provide => {
+    //   $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
+    // });
 
-    const TheLocaleStore = this.$inject('services/localeStore.es6').default;
-    TheLocaleStore.setLocales([{ code: 'DEF', name: 'Default' }, { code: 'EN', name: 'English' }]);
+    const localeStore = {
+      default: createLocaleStoreMock()
+    };
 
-    const $q = this.$inject('$q');
+    this.system.set('services/localeStore.es6', localeStore);
 
-    this.spaceContext = this.$inject('mocks/spaceContext').init();
+    localeStore.default.setLocales([
+      { code: 'DEF', name: 'Default' },
+      { code: 'EN', name: 'English' }
+    ]);
+
+    await $initialize(this.system);
+
+    const $q = $inject('$q');
+
+    this.spaceContext = $inject('mocks/spaceContext').init();
 
     this.spaceContext.space.getEntries = query => {
       const ids = query['sys.id[in]'].split(',');
@@ -32,11 +41,11 @@ describe('bulk editor', () => {
         links$: K.createMockProperty(ids.map(makeLink)),
         close: sinon.spy()
       };
-      const el = this.$compile('<cf-bulk-editor reference-context="referenceContext">', {
+      const el = $compile('<cf-bulk-editor reference-context="referenceContext">', {
         referenceContext
       });
       el.referenceContext = referenceContext;
-      this.$apply();
+      $apply();
       return el;
     };
   });

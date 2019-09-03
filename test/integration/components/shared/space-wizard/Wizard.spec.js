@@ -1,8 +1,11 @@
+import sinon from 'sinon';
 import React from 'react';
 import { mount } from 'enzyme';
+import { $initialize } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
 
 describe('Space Wizard', function() {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.organization = {
       name: 'My Org',
       isBillable: true,
@@ -164,64 +167,66 @@ describe('Space Wizard', function() {
       changeSpace: sinon.stub().resolves(true)
     };
 
-    module('contentful/test', $provide => {
-      $provide.value('analytics/Analytics.es6', {
-        track: this.stubs.track
-      });
-
-      $provide.value('services/ResourceService.es6', {
-        default: () => {
-          return {
-            get: this.stubs.resourceService_get,
-            getAll: this.stubs.resourceService_getAll
-          };
-        }
-      });
-
-      $provide.value('account/pricing/PricingDataProvider.es6', {
-        getSpaceRatePlans: this.stubs.getSpaceRatePlans,
-        getSubscriptionRatePlans: this.stubs.getSubscriptionRatePlans,
-        calculateTotalPrice: this.stubs.getTotalPrice,
-        changeSpace: this.stubs.changeSpace
-      });
-
-      $provide.constant('client', {
-        createSpace: this.stubs.createSpace
-      });
-
-      $provide.value('data/CMA/ApiKeyRepo.es6', {
-        default: () => {
-          return {
-            create: this.stubs.ApiKeyRepo_create
-          };
-        }
-      });
-
-      $provide.value('data/EndpointFactory.es6', {
-        createSpaceEndpoint: this.stubs.createSpaceEndpoint,
-        createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
-      });
-
-      $provide.value('services/SpaceTemplateLoader.es6', {
-        getTemplatesList: this.stubs.getTemplatesList,
-        getTemplate: this.stubs.getTemplate
-      });
-
-      $provide.value('services/SpaceTemplateCreator', {
-        getCreator: () => {
-          return {
-            create: this.stubs.getCreator_create
-          };
-        }
-      });
+    this.system.set('analytics/Analytics.es6', {
+      track: this.stubs.track
     });
 
-    this.mockService('services/TokenStore.es6', {
+    this.system.set('services/ResourceService.es6', {
+      default: () => {
+        return {
+          get: this.stubs.resourceService_get,
+          getAll: this.stubs.resourceService_getAll
+        };
+      }
+    });
+
+    this.system.set('account/pricing/PricingDataProvider.es6', {
+      getSpaceRatePlans: this.stubs.getSpaceRatePlans,
+      getSubscriptionRatePlans: this.stubs.getSubscriptionRatePlans,
+      calculateTotalPrice: this.stubs.getTotalPrice,
+      changeSpace: this.stubs.changeSpace
+    });
+
+    this.system.set('data/CMA/ApiKeyRepo.es6', {
+      default: () => {
+        return {
+          create: this.stubs.ApiKeyRepo_create
+        };
+      }
+    });
+
+    this.system.set('data/EndpointFactory.es6', {
+      createSpaceEndpoint: this.stubs.createSpaceEndpoint,
+      createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
+    });
+
+    this.system.set('services/SpaceTemplateLoader.es6', {
+      getTemplatesList: this.stubs.getTemplatesList,
+      getTemplate: this.stubs.getTemplate
+    });
+
+    this.system.set('services/SpaceTemplateCreator', {
+      getCreator: () => {
+        return {
+          create: this.stubs.getCreator_create
+        };
+      }
+    });
+
+    this.system.set('services/TokenStore.es6', {
       refresh: this.stubs.TokenStore_refresh
     });
 
-    const Wizard = this.$inject('components/shared/space-wizard/Wizard.es6').default;
-    this.store = this.$inject('redux/store.es6').default;
+    const { default: Wizard } = await this.system.import(
+      'components/shared/space-wizard/Wizard.es6'
+    );
+    this.store = (await this.system.import('redux/store.es6')).default;
+
+    await $initialize(this.system, $provide => {
+      $provide.constant('client', {
+        createSpace: this.stubs.createSpace
+      });
+    });
 
     this.mountWithAction = function(action) {
       return mount(

@@ -7,6 +7,8 @@ import { makeNotify } from 'app/entity_editor/Notifications.es6';
 import { truncate } from 'utils/StringUtils.es6';
 import * as Focus from 'app/entity_editor/Focus.es6';
 import * as logger from 'services/logger.es6';
+import localeStore from 'services/localeStore.es6';
+import { trackEntryView } from 'app/entity_editor/Tracking.es6';
 
 export default function register() {
   /**
@@ -43,9 +45,7 @@ export default function register() {
     '$controller',
     '$timeout',
     'spaceContext',
-    'services/localeStore.es6',
-    'app/entity_editor/Tracking.es6', // { trackEntryView }
-    ($q, $controller, $timeout, spaceContext, { default: localeStore }, { trackEntryView }) => {
+    ($q, $controller, $timeout, spaceContext) => {
       return {
         restrict: 'E',
         scope: {
