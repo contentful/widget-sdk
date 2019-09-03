@@ -245,8 +245,8 @@ export function AppDetails(props) {
               className={css({
                 marginTop: tokens.spacingM
               })}>
-              If your interested in learning more about our expanded, enterprise-grade platform,
-              contact your account manager.
+              If you&rsquo;re interested in learning more about our expanded, enterprise-grade
+              platform, contact your account manager.
             </Paragraph>
             <div className={styles.sidebarSpacing} />
           </>
