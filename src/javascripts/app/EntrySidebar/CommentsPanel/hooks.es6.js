@@ -6,6 +6,7 @@ import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFa
 import { getUsers } from 'access_control/OrganizationMembershipRepository.es6';
 import { getAllForEntry, create } from 'data/CMA/CommentsRepo.es6';
 import useAsync, { useAsyncFn } from 'app/common/hooks/useAsync.es6';
+import { trackCommentCreated } from './analytics.es6';
 
 /**
  * Fetches all comments for the given entry.
@@ -35,6 +36,7 @@ export const useCommentCreator = (spaceId, entryId, parentCommentId) => {
   return useAsyncFn(async body => {
     const comment = await create(endpoint, entryId, { body, parentCommentId });
     comment.sys.createdBy = user;
+    trackCommentCreated();
     return comment;
   });
 };
