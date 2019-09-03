@@ -1,12 +1,13 @@
-'use strict';
-
+import sinon from 'sinon';
 import _ from 'lodash';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
+import { it } from 'test/helpers/dsl';
 
 describe('overridingRequestQueue', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.createQueue = this.$inject('overridingRequestQueue');
-    this.$q = this.$inject('$q');
+  beforeEach(async function() {
+    await $initialize(this.system);
+    this.createQueue = $inject('overridingRequestQueue');
+    this.$q = $inject('$q');
   });
 
   it('handles single request', function() {
@@ -23,7 +24,7 @@ describe('overridingRequestQueue', () => {
     expect(request.isIdle()).toBe(true);
     request();
     expect(request.isIdle()).toBe(false);
-    this.$apply();
+    $apply();
     expect(request.isIdle()).toBe(true);
   });
 
@@ -34,7 +35,7 @@ describe('overridingRequestQueue', () => {
 
     expect(request()).toBe(promise);
     d.resolve();
-    this.$apply();
+    $apply();
     sinon.assert.calledTwice(d);
     expect(request()).not.toBe(promise);
   });
@@ -77,7 +78,7 @@ describe('overridingRequestQueue', () => {
   });
 
   it('allows to define request as required', function() {
-    const $timeout = this.$inject('$timeout');
+    const $timeout = $inject('$timeout');
     const spy = sinon.stub().resolves();
     let wasCalled = false;
 

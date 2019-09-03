@@ -1,14 +1,10 @@
-'use strict';
-
 import $ from 'jquery';
 
 describe('ui/inputControl', () => {
   let inputEl;
 
-  beforeEach(function() {
-    module('contentful/test');
-
-    const createInputUpdater = this.$inject('ui/inputUpdater.es6').default;
+  beforeEach(async function() {
+    const { default: createInputUpdater } = await this.system.import('ui/inputUpdater.es6');
 
     this.$inputEl = $('<input type="text" />')
       .appendTo('body')

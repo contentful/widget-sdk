@@ -137,25 +137,7 @@
       await SystemJS.import('prelude');
       await Promise.all(
         testModules.reduce((memo, name) => {
-          const prefixes = [
-            'test/unit/Authentication',
-            'test/unit/access_control',
-            'test/unit/account',
-            'test/unit/analytics',
-            'test/unit/app',
-            'test/unit/classes',
-            'test/unit/components',
-            'test/unit/data',
-            'test/unit/directives',
-            'test/unit/forms',
-            'test/unit/libs',
-            'test/unit/markdown_editor',
-            'test/unit/navigation',
-            'test/unit/redux',
-            'test/unit/rich_text_editor',
-            'test/unit/search',
-            'test/unit/services'
-          ];
+          const prefixes = ['test/unit'];
 
           if (prefixes.find(prefix => name.startsWith(prefix))) {
             memo.push(SystemJS.import(name));

@@ -1,11 +1,12 @@
+import sinon from 'sinon';
 import * as K from 'utils/kefir.es6';
 import * as KMock from 'test/helpers/mocks/kefir';
-import * as sinon from 'test/helpers/sinon';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 describe('utils/kefir.es6', () => {
-  beforeEach(function() {
-    module('ng');
-    this.scope = this.$inject('$rootScope').$new();
+  beforeEach(async function() {
+    await $initialize(this.system);
+    this.scope = $inject('$rootScope').$new();
   });
 
   describe('#fromScopeEvent()', () => {
@@ -41,7 +42,7 @@ describe('utils/kefir.es6', () => {
 
   describe('#fromScopeValue()', () => {
     beforeEach(function() {
-      this.$scope = this.$inject('$rootScope').$new();
+      this.$scope = $inject('$rootScope').$new();
     });
 
     it('obtains initial value', function() {
@@ -105,11 +106,11 @@ describe('utils/kefir.es6', () => {
       const cb = sinon.spy();
       K.onValueScope(this.scope, bus.stream, cb);
       bus.emit('VAL');
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(cb);
       this.scope.$destroy();
       bus.emit('VAL');
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(cb);
     });
   });
@@ -190,7 +191,7 @@ describe('utils/kefir.es6', () => {
   });
 
   describe('#promiseProperty', () => {
-    it('is set to "Pending" initially', function*() {
+    it('is set to "Pending" initially', function() {
       const deferred = makeDeferred();
       const prop = K.promiseProperty(deferred.promise, 'PENDING');
       const values = KMock.extractValues(prop);
@@ -198,24 +199,24 @@ describe('utils/kefir.es6', () => {
       expect(values[0].value).toBe('PENDING');
     });
 
-    it('is set to "Resolved" when promise resolves', function*() {
+    it('is set to "Resolved" when promise resolves', async function() {
       const deferred = makeDeferred();
       const prop = K.promiseProperty(deferred.promise, 'PENDING');
       const values = KMock.extractValues(prop);
 
       deferred.resolve('SUCCESS');
-      yield deferred.promise;
+      await deferred.promise;
       expect(values[0]).toBeInstanceOf(K.PromiseStatus.Resolved);
       expect(values[0].value).toBe('SUCCESS');
     });
 
-    it('is set to "Resolved" when promise resolves', function*() {
+    it('is set to "Resolved" when promise resolves', async function() {
       const deferred = makeDeferred();
       const prop = K.promiseProperty(deferred.promise, 'PENDING');
       const values = KMock.extractValues(prop);
 
       deferred.reject('ERROR');
-      yield deferred.promise.catch(() => null);
+      await deferred.promise.catch(() => null);
       expect(values[0]).toBeInstanceOf(K.PromiseStatus.Rejected);
       expect(values[0].error).toBe('ERROR');
     });
@@ -300,7 +301,7 @@ describe('utils/kefir.es6', () => {
 
   describe('#scopeLifeline', () => {
     beforeEach(function() {
-      this.scope = this.$inject('$rootScope').$new();
+      this.scope = $inject('$rootScope').$new();
     });
 
     it('ends when subscribing before being destroyed', function() {

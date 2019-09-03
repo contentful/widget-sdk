@@ -1,9 +1,10 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 
 describe('command service', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.create = this.$inject('command').create;
+  beforeEach(async function() {
+    await $initialize(this.system);
+    this.create = $inject('command').create;
   });
 
   describe('#execute', () => {
@@ -16,7 +17,7 @@ describe('command service', () => {
     });
 
     it('resolves only when action resolve', function() {
-      const deferred = this.$inject('$q').defer();
+      const deferred = $inject('$q').defer();
       const action = sinon.stub().returns(deferred.promise);
       const command = this.create(action);
 
@@ -25,11 +26,11 @@ describe('command service', () => {
         executed = true;
       });
 
-      this.$apply();
+      $apply();
       expect(executed).toBe(false);
       deferred.resolve();
 
-      this.$apply();
+      $apply();
       expect(executed).toBe(true);
     });
   });
@@ -42,7 +43,7 @@ describe('command service', () => {
       expect(command.isDisabled()).toBe(false);
       command.execute();
       expect(command.isDisabled()).toBe(true);
-      this.$apply();
+      $apply();
       expect(command.isDisabled()).toBe(false);
     });
   });
@@ -55,7 +56,7 @@ describe('command service', () => {
       expect(command.inProgress()).toBe(false);
       command.execute();
       expect(command.inProgress()).toBe(true);
-      this.$apply();
+      $apply();
       expect(command.inProgress()).toBe(false);
     });
   });

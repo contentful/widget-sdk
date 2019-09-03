@@ -109,6 +109,7 @@ window.libs = [
   ['@contentful/field-editor-single-line', require('@contentful/field-editor-single-line')],
   ['@contentful/field-editor-multiple-line', require('@contentful/field-editor-multiple-line')],
   ['@contentful/field-editor-shared', require('@contentful/field-editor-shared')],
+  ['contentful-resolve-response', require('contentful-resolve-response')],
 
   ['legacy-client', require('libs/legacy_client/client.js')],
   ['saved-views-migrator', require('libs/saved-views-migrator/index.js')],

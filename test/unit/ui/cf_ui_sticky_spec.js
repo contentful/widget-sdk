@@ -1,14 +1,15 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $compile } from 'test/helpers/helpers';
 
 describe('cfUiSticky directive', () => {
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    await $initialize(this.system);
     const markup = `<div class="workbench-main" cf-ui-sticky-container>
                     <div>Block of content</div>
                     <nav cf-ui-sticky>Nav</nav>
                     <p>Some long content</p>
                     </div></div>`;
-    this.$container = this.$compile(markup);
+    this.$container = $compile(markup);
     this.$nav = this.$container.find('[cf-ui-sticky]');
     this.$container.offset = sinon.stub().returns({ top: 0 });
     this.$container.triggerHandler('scroll');
@@ -18,6 +19,7 @@ describe('cfUiSticky directive', () => {
 
   afterEach(function() {
     this.clock.restore();
+    this.$container.remove();
   });
 
   it('applies .fixed class when page is scrolled to the bottom', function() {

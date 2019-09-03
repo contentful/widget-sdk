@@ -1,11 +1,18 @@
+import sinon from 'sinon';
 import $ from 'jquery';
+import { $initialize, $inject } from 'test/helpers/helpers';
 
 describe('cfThumbnailDirective', () => {
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    // This is needed to transform the image domain
+    this.system.set('services/TokenStore.es6', {
+      getDomains: sinon.stub().returns({})
+    });
 
-    const $compile = this.$inject('$compile');
-    const $rootScope = this.$inject('$rootScope');
+    await $initialize(this.system);
+
+    const $compile = $inject('$compile');
+    const $rootScope = $inject('$rootScope');
     this.compile = (file, attrs = {}) => {
       const element = $('<cf-thumbnail>');
       const scope = $rootScope.$new();
@@ -16,10 +23,6 @@ describe('cfThumbnailDirective', () => {
       scope.$apply();
       return element;
     };
-
-    // This is needed to transform the image domain
-    const tokenStore = this.$inject('services/TokenStore.es6');
-    tokenStore.getDomains = sinon.stub().returns({});
   });
 
   describe('file without preview', () => {

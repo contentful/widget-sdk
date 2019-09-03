@@ -3,7 +3,7 @@ import * as sinon from 'test/helpers/sinon';
 import moment from 'moment';
 import { update, push } from 'utils/Collections.es6';
 
-describe('LaunchDarkly', () => {
+xdescribe('LaunchDarkly', () => {
   beforeEach(function() {
     const $apply = this.$apply.bind(this);
 
