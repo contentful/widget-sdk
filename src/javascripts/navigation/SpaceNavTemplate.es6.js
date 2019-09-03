@@ -92,7 +92,6 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     },
     dropdownItems.locales,
     dropdownItems.extensions,
-    dropdownItems.appsAlpha,
     {
       separator: true,
       label: 'Space settings',
@@ -118,7 +117,6 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     dropdownItems.keys,
     dropdownItems.webhooks,
     dropdownItems.extensions,
-    dropdownItems.appsBeta,
     dropdownItems.previews,
     dropdownItems.usage
   ];
@@ -167,16 +165,19 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
         title: 'Media'
       },
       /**
-       * Display apps alpha navigation item without label if the LD flag for apps beta has
-       * not been loaded to avoid too much jitter. Add label (alpha/beta) after load
-       * has finished.
+       * Define three independent tiles for navigation to apps so we can
+       * display apps alpha navigation item without label if the LD flag for apps beta has
+       * not been loaded to avoid too much jitter. Add alpha label after load
+       * of ld flag has finished and evaluated to off.
+       *
+       * Beta has no flag.
        */
       {
         if:
           '!nav.appsBetaLDFlagLoaded && (nav.canNavigateTo("apps") || nav.canNavigateTo("appsAlpha"))',
         dataViewType: 'apps',
         icon: 'nav-apps',
-        sref: '{{nav.makeRef("apps.list")}}',
+        sref: '{{nav.makeRef("appsAlpha.list")}}',
         rootSref: '{{nav.makeRef("appsAlpha")}}',
         title: 'Apps'
       },
@@ -184,7 +185,6 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
         if: 'nav.appsBetaLDFlagLoaded && nav.appsBetaEnabled && nav.canNavigateTo("apps")',
         dataViewType: 'apps',
         icon: 'nav-apps',
-        label: 'beta',
         sref: '{{nav.makeRef("apps.list")}}',
         rootSref: '{{nav.makeRef("apps")}}',
         title: 'Apps'
