@@ -12,6 +12,7 @@ env:
   # Do not use Jasmine. We want to fail if 'fdescribe', etc. is used.
   jasmine: false
 globals:
+  angular: false
   JST: false
 
   jasmine: false
@@ -24,5 +25,6 @@ globals:
   afterEach: false
   it: false
   expect: false
+  spyOn: false
   fail: false
   global: false

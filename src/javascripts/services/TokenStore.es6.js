@@ -171,8 +171,6 @@ export function getDomains() {
  * Promise is rejected if organization with a provided ID couldn't be found.
  */
 export function getOrganization(id) {
-  const $q = getModule('$q');
-
   return getOrganizations().then(orgs => {
     const org = find(orgs, { sys: { id } });
     const $q = getModule('$q');

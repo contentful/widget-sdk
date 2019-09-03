@@ -1,3 +1,5 @@
+import sinon from 'sinon';
+
 export default function createLaunchDarklyMock($q) {
   const flags = {};
 

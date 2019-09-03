@@ -21,8 +21,6 @@
 
   window.libs.forEach(([name, dep]) => registerLibrary(name, dep));
 
-  // window.jQuery = window.$ = window.custom$ = window.libs.find(([name]) => name === 'jquery')[1];
-
   /**
    * We hook into karma start to make sure that we load all test modules before
    * we run the suites.

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// TODO
+
 const fs = require('fs');
 const path = require('path');
 const babel = require('@babel/core');
@@ -8,10 +10,10 @@ const _ = require('lodash');
 const { createBabelOptions } = require('../app-babel-options');
 const rootPath = path.resolve(__dirname, '..', '..');
 const srcPath = path.resolve(rootPath, 'src', 'javascripts');
-const pkgJsonPath = path.resolve(rootPath, 'package.json');
-const pkgJsonRaw = fs.readFileSync(pkgJsonPath).toString();
-const { dependencies: appDeps } = JSON.parse(pkgJsonRaw);
-const appDepsList = Object.keys(appDeps);
+// const pkgJsonPath = path.resolve(rootPath, 'package.json');
+// const pkgJsonRaw = fs.readFileSync(pkgJsonPath).toString();
+// const { dependencies: appDeps } = JSON.parse(pkgJsonRaw);
+// const appDepsList = Object.keys(appDeps);
 
 const depNames = recursiveRead(srcPath);
 
@@ -90,7 +92,7 @@ function determineDependencies(p) {
     enter: ({ node }) => {
       if (node.type === 'ImportDeclaration') {
         const value = node.source.value;
-        const realImport = value.split('/')[0];
+        // const realImport = value.split('/')[0];
 
         try {
           require.resolve(value);
@@ -106,12 +108,12 @@ function determineDependencies(p) {
   return imports;
 }
 
-function isRealFile(filename) {
-  const resolved = path.resolve(srcPath, `${filename}.js`);
-
-  if (fs.existsSync(resolved)) {
-    return true;
-  }
-
-  return false;
-}
+// function isRealFile(filename) {
+//   const resolved = path.resolve(srcPath, `${filename}.js`);
+//
+//   if (fs.existsSync(resolved)) {
+//     return true;
+//   }
+//
+//   return false;
+// }

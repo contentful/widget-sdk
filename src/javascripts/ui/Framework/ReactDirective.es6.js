@@ -12,8 +12,6 @@ import store from 'redux/store.es6';
 
 import * as appContentListSaveViewDialogComponentes6 from 'app/ContentList/SaveViewDialogComponent.es6';
 import * as appContentModelEditorContentTypesPagees6 from 'app/ContentModel/Editor/ContentTypesPage.es6';
-import * as apphomecontactUsTemplatees6 from 'app/home/contactUs/Template.es6';
-import * as apphomewelcomeWelcomees6 from 'app/home/welcome/Welcome.es6';
 import * as appInputDialogComponentes6 from 'app/InputDialogComponent.es6';
 import * as appsettingslocalesroutesLocalesListRoutees6 from 'app/settings/locales/routes/LocalesListRoute.es6';
 import * as appsettingslocalesroutesLocalesNewRoutees6 from 'app/settings/locales/routes/LocalesNewRoute.es6';
@@ -34,7 +32,6 @@ import * as appapiKeyEditorBoilerplatees6 from 'app/api/KeyEditor/Boilerplate.es
 import * as appapiKeyEditorContactUses6 from 'app/api/KeyEditor/ContactUs.es6';
 import * as apphomeAuthorEditorSpaceHomees6 from 'app/home/AuthorEditorSpaceHome.es6';
 import * as apphomeUpgradePricinges6 from 'app/home/UpgradePricing.es6';
-import * as apphomedeveloperresourcesDeveloperResourcesComponentes6 from 'app/home/developer_resources/DeveloperResourcesComponent.es6';
 import * as appSpaceSettingsTeamsSpaceTeamsPagees6 from 'app/SpaceSettings/Teams/SpaceTeamsPage.es6';
 import * as appSpaceSettingsTeamsAddTeamsAddTeamsRouteres6 from 'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter.es6';
 import * as appOrganizationSettingsSSOSSOSetupes6 from 'app/OrganizationSettings/SSO/SSOSetup.es6';
@@ -44,7 +41,6 @@ import * as appOrganizationSettingsUsersNewUserNewUserBridgees6 from 'app/Organi
 import * as appOrganizationSettingsUsersUserDetailUserDetailRoutees6 from 'app/OrganizationSettings/Users/UserDetail/UserDetailRoute.es6';
 import * as appOrganizationSettingsUsersUsersListUserListRoutees6 from 'app/OrganizationSettings/Users/UsersList/UserListRoute.es6';
 import * as appOrganizationSettingsTeamsTeamPagees6 from 'app/OrganizationSettings/Teams/TeamPage.es6';
-import * as apphomewelcomeOnboardingWithTeaes6 from 'app/home/welcome/OnboardingWithTea.es6';
 import * as accountusageOrganizationUsagees6 from 'account/usage/OrganizationUsage.es6';
 import * as accountAccountViewes6 from 'account/AccountView.es6';
 import * as accesscontrolRoleEditores6 from 'access_control/RoleEditor.es6';
@@ -72,7 +68,6 @@ import * as componentstabsentrylistEntryListes6 from 'components/tabs/entry_list
 import * as componentstabsentrylistEmptyStatesindexes6 from 'components/tabs/entry_list/EmptyStates/index.es6';
 import * as componentsRecordsResourceUsageindexes6 from 'components/RecordsResourceUsage/index.es6';
 import * as componentssharedknowledgebaseiconKnowledgeBasees6 from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
-import * as componentssharedstackonboardingnextstepsDevNextStepsContaineres6 from 'components/shared/stack-onboarding/next_steps/DevNextStepsContainer.es6';
 import * as componentssharedQuickNavigationQuickNavWithFeatureFlages6 from 'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6';
 import * as widgetsWidgetRenderWarninges6 from 'widgets/WidgetRenderWarning.es6';
 import * as widgetsExtensionIFrameRendereres6 from 'widgets/ExtensionIFrameRenderer.es6';
@@ -284,8 +279,6 @@ function getModule(name) {
   const allowedModules = {
     'app/ContentList/SaveViewDialogComponent.es6': appContentListSaveViewDialogComponentes6,
     'app/ContentModel/Editor/ContentTypesPage.es6': appContentModelEditorContentTypesPagees6,
-    'app/home/contactUs/Template.es6': apphomecontactUsTemplatees6,
-    'app/home/welcome/Welcome.es6': apphomewelcomeWelcomees6,
     'app/InputDialogComponent.es6': appInputDialogComponentes6,
     'app/settings/locales/routes/LocalesListRoute.es6': appsettingslocalesroutesLocalesListRoutees6,
     'app/settings/locales/routes/LocalesNewRoute.es6': appsettingslocalesroutesLocalesNewRoutees6,
@@ -306,7 +299,6 @@ function getModule(name) {
     'app/api/KeyEditor/ContactUs.es6': appapiKeyEditorContactUses6,
     'app/home/AuthorEditorSpaceHome.es6': apphomeAuthorEditorSpaceHomees6,
     'app/home/UpgradePricing.es6': apphomeUpgradePricinges6,
-    'app/home/developer_resources/DeveloperResourcesComponent.es6': apphomedeveloperresourcesDeveloperResourcesComponentes6,
     'app/SpaceSettings/Teams/SpaceTeamsPage.es6': appSpaceSettingsTeamsSpaceTeamsPagees6,
     'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter.es6': appSpaceSettingsTeamsAddTeamsAddTeamsRouteres6,
     'app/OrganizationSettings/SSO/SSOSetup.es6': appOrganizationSettingsSSOSSOSetupes6,
@@ -316,7 +308,6 @@ function getModule(name) {
     'app/OrganizationSettings/Users/UserDetail/UserDetailRoute.es6': appOrganizationSettingsUsersUserDetailUserDetailRoutees6,
     'app/OrganizationSettings/Users/UsersList/UserListRoute.es6': appOrganizationSettingsUsersUsersListUserListRoutees6,
     'app/OrganizationSettings/Teams/TeamPage.es6': appOrganizationSettingsTeamsTeamPagees6,
-    'app/home/welcome/OnboardingWithTea.es6': apphomewelcomeOnboardingWithTeaes6,
     'account/usage/OrganizationUsage.es6': accountusageOrganizationUsagees6,
     'account/AccountView.es6': accountAccountViewes6,
     'access_control/RoleEditor.es6': accesscontrolRoleEditores6,
@@ -344,7 +335,6 @@ function getModule(name) {
     'components/tabs/entry_list/EmptyStates/index.es6': componentstabsentrylistEmptyStatesindexes6,
     'components/RecordsResourceUsage/index.es6': componentsRecordsResourceUsageindexes6,
     'components/shared/knowledge_base_icon/KnowledgeBase.es6': componentssharedknowledgebaseiconKnowledgeBasees6,
-    'components/shared/stack-onboarding/next_steps/DevNextStepsContainer.es6': componentssharedstackonboardingnextstepsDevNextStepsContaineres6,
     'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6': componentssharedQuickNavigationQuickNavWithFeatureFlages6,
     'widgets/WidgetRenderWarning.es6': widgetsWidgetRenderWarninges6,
     'widgets/ExtensionIFrameRenderer.es6': widgetsExtensionIFrameRendereres6,

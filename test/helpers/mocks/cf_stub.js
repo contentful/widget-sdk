@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 import Client from 'legacy-client';
+import sinon from 'sinon';
 
 angular
   .module('contentful/mocks')

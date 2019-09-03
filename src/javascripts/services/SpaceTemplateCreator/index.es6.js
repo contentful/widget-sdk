@@ -35,8 +35,6 @@ const TEA_SPACE_ID = Config.services.contentful.TEASpaceId;
  * @return {function}
  */
 export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLocaleCode) {
-  const $rootScope = getModule('$rootScope');
-
   const templateName = templateInfo.name;
   const creationErrors = [];
   const handledItems = {};
