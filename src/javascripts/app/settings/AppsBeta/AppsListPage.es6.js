@@ -281,7 +281,11 @@ export default class AppsListPage extends React.Component {
         this.props.repo.getApps(),
         this.props.repo.getAppsListing(),
         this.props.repo.getDevApps(),
-        createAppsClient(this.props.spaceId).hasAlphaApps()
+        // Recover with not showing link to apps alpha
+        // This enables us to delete the micro backend without effect after beta release.
+        createAppsClient(this.props.spaceId)
+          .hasAlphaApps()
+          .catch(() => false)
       ]);
 
       const productCatalogFlags = await this.props.productCatalog.loadProductCatalogFlags(
