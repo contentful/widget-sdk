@@ -1,6 +1,7 @@
 import { pick, get, difference } from 'lodash';
 import createIDMap from './IDMap.es6';
 import * as PublicContentType from './PublicContentType.es6';
+import * as Analytics from 'analytics/Analytics.es6';
 
 const sharedFieldProps = field => ({
   id: field.apiName || field.id,
@@ -9,7 +10,7 @@ const sharedFieldProps = field => ({
 });
 
 const REQUIRED_CONFIG_KEYS = [
-  'extensionId',
+  'descriptor',
   'spaceId',
   'environmentId',
   'location', // Where the extension is rendered. See `WidgetLocations`.
@@ -55,7 +56,7 @@ export default class ExtensionAPI {
   getIds() {
     const {
       current,
-      extensionId,
+      descriptor,
       spaceId,
       environmentId,
       contentTypeData,
@@ -64,7 +65,8 @@ export default class ExtensionAPI {
     } = this;
 
     return {
-      extension: extensionId,
+      extension: descriptor.id,
+      extensionDefinition: descriptor.extensionDefinitionId,
       space: spaceId,
       environment: environmentId,
       contentType: get(contentTypeData, ['sys', 'id']),
@@ -152,13 +154,48 @@ export default class ExtensionAPI {
     });
   }
 
+  handlerTrackingFns = {
+    setValue: (fieldId, localeCode) => {
+      if (fieldId && localeCode) {
+        Analytics.track('extension:set_value', {
+          contentTypeId: this.contentTypeData.sys.id,
+          entryId: this.entryData.sys.id,
+          fieldId,
+          localeCode,
+          extensionId: this.descriptor.id,
+          extensionDefinitionId: this.descriptor.extensionDefinitionId || null
+        });
+      }
+    }
+  };
+
+  maybeTrackHandler(handlerName, args) {
+    try {
+      const trackingFn = this.handlerTrackingFns[handlerName];
+      if (typeof trackingFn === 'function') {
+        trackingFn(...args);
+      }
+    } catch (err) {
+      // Do no fail the handler if tracking fails.
+    }
+  }
+
   // Registers a regular handler intended to be called directly.
   registerHandler(name, fn) {
     if (this.channel.handlers[name]) {
       throw new Error('Cannot register handler for the same event twice.');
-    } else {
-      this.channel.handlers[name] = fn;
     }
+
+    // Register the provided handler, but wrap it with tracking logic.
+    this.channel.handlers[name] = (...args) => {
+      const result = fn(...args);
+
+      window.requestAnimationFrame(() => {
+        this.maybeTrackHandler(name, args);
+      });
+
+      return result;
+    };
   }
 
   // Registers a handler that expects to receive a path.
@@ -226,10 +263,10 @@ export default class ExtensionAPI {
     });
   }
 
-  _updateFieldLocaleValue(fieldId, internalLocaleCode, docSnapshot) {
-    const value = get(docSnapshot, ['fields', fieldId, internalLocaleCode]);
+  _updateFieldLocaleValue(internalFieldId, internalLocaleCode, docSnapshot) {
+    const value = get(docSnapshot, ['fields', internalFieldId, internalLocaleCode]);
 
-    const apiName = this.idMap.field.toPublic[fieldId];
+    const apiName = this.idMap.field.toPublic[internalFieldId];
     const locale = this.idMap.locale.toPublic[internalLocaleCode];
 
     this.channel.send('valueChanged', [apiName, locale, value]);
