@@ -7,6 +7,7 @@ import { ADMIN_ROLE_ID } from './constants.es6';
 import { getSubscriptionState } from 'account/AccountUtils.es6';
 
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as UserListHandler from './UserListHandler.es6';
 
 export default function register() {
   registerDirective('cfRoleList', () => ({
@@ -18,11 +19,10 @@ export default function register() {
   registerController('RoleListController', [
     '$scope',
     '$state',
-    'UserListHandler',
     'createRoleRemover',
     'UserListController/jumpToRole',
     'spaceContext',
-    ($scope, $state, UserListHandler, createRoleRemover, jumpToRoleMembers, spaceContext) => {
+    ($scope, $state, createRoleRemover, jumpToRoleMembers, spaceContext) => {
       const listHandler = UserListHandler.create();
       const organization = spaceContext.organization;
 

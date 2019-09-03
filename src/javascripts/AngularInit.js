@@ -35,7 +35,6 @@ export const angularInitRun = [
 
     const modules = await Promise.all([
       import('analytics/analyticsConsoleDirective'),
-      import('access_control/UserListHandler.es6'),
       import('services/modalDialogService.es6'),
       import('ui/command.es6'),
       import('access_control/RoleRemover.es6'),
