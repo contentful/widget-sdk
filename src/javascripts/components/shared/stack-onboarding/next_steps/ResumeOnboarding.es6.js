@@ -9,12 +9,8 @@ import {
   Card,
   Typography
 } from '@contentful/forma-36-react-components';
-import { getStore } from 'TheStore/index.es6';
-import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import { getModule } from 'NgRegistry.es6';
 import { trackClickCTA } from 'app/home/tracking.es6';
-
-const store = getStore();
 
 const styles = {
   section: css({ padding: tokens.spacingXl, display: 'flex' }),
@@ -37,17 +33,10 @@ const ResumeOnboarding = () => {
   // this is in render as we want this component to resume using what the latest value
   // in the localStorage is and not what the value was when it was mounted
   const handleResume = async () => {
-    let currentStep = store.get(`${getStoragePrefix()}:currentStep`);
-
-    trackClickCTA('resume_onboarding:resume_deploy_button');
-
-    if (!currentStep) {
-      currentStep = {
-        params: { spaceId: spaceContext.space && spaceContext.space.getId() },
-        path: 'spaces.detail.onboarding.copy'
-      };
-    }
-
+    const currentStep = {
+      params: { spaceId: spaceContext.space && spaceContext.space.getId() },
+      path: 'spaces.detail.onboarding.copy'
+    };
     $state.go(currentStep.path, currentStep.params);
   };
 

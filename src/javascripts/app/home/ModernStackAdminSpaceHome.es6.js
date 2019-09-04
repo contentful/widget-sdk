@@ -29,16 +29,23 @@ const ModernStackAdminSpaceHome = ({
     <WidgetContainer>
       <WidgetContainer.Row>
         <WidgetContainer.Col>
-          <Heading className={styles.header}>
-            Congratulations on deploying the{' '}
-            <span className={styles.demiBold}>Gatsby Starter for Contentful</span> blog
-          </Heading>
-          {managementToken && entry && deploymentProvider && (
-            <Subheading className={styles.description}>
-              {
-                'Use this space to continue to explore the blog— make updates through an API call and automate rebuilds by setting up a webhook.'
-              }
-            </Subheading>
+          {managementToken && entry && deploymentProvider ? (
+            <>
+              <Heading className={styles.header}>
+                Congratulations on deploying the{' '}
+                <span className={styles.demiBold}>Gatsby Starter for Contentful</span> blog
+              </Heading>
+              <Subheading className={styles.description}>
+                {
+                  'Use this space to continue to explore the blog— make updates through an API call and automate rebuilds by setting up a webhook.'
+                }
+              </Subheading>
+            </>
+          ) : (
+            <Heading className={styles.header}>
+              Welcome to your <span className={styles.demiBold}>Gatsby Starter for Contentful</span>{' '}
+              blog space
+            </Heading>
           )}
         </WidgetContainer.Col>
       </WidgetContainer.Row>
