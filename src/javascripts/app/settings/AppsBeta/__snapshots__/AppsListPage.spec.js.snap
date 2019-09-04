@@ -85,6 +85,24 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
           </span>
         </h1>
       </div>
+      <div
+        class="Workbench__Workbench__header-actions___mJoSR"
+      >
+        <a
+          class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+          data-test-id="cf-ui-text-link"
+          href="https://www.contentful.com/developers/docs/extensibility/apps/"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <span
+            class="TabFocusTrap__TabFocusTrap___39Vty"
+            tabindex="-1"
+          >
+            View documentation
+          </span>
+        </a>
+      </div>
     </div>
     <div
       class="Workbench__Workbench__content-wrapper___3yWKi"
@@ -375,7 +393,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
   cursor: pointer;
 }
 
-.emotion-39 {
+.emotion-32 {
   margin-top: 3px;
   margin-left: 0.5rem;
 }
@@ -399,17 +417,17 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
   text-transform: uppercase;
 }
 
-.emotion-46 {
+.emotion-39 {
   background-color: #f7f9fa;
 }
 
-.emotion-45 {
+.emotion-38 {
   position: relative;
 }
 
 <div>
   <div
-    class="Workbench__Workbench___THi9K emotion-46"
+    class="Workbench__Workbench___THi9K emotion-39"
     data-test-id="cf-ui-workbench"
   >
     <div
@@ -463,6 +481,24 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
             Beta
           </span>
         </h1>
+      </div>
+      <div
+        class="Workbench__Workbench__header-actions___mJoSR"
+      >
+        <a
+          class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+          data-test-id="cf-ui-text-link"
+          href="https://www.contentful.com/developers/docs/extensibility/apps/"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <span
+            class="TabFocusTrap__TabFocusTrap___39Vty"
+            tabindex="-1"
+          >
+            View documentation
+          </span>
+        </a>
       </div>
     </div>
     <div
@@ -519,7 +555,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
             </div>
           </div>
           <div
-            class="Card__Card___xXJsT emotion-45 Card__Card--padding-large___3Fgal"
+            class="Card__Card___xXJsT emotion-38 Card__Card--padding-large___3Fgal"
             data-test-id="cf-ui-card"
           >
             <p
@@ -555,14 +591,14 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                       >
                         <img
                           class="emotion-3"
-                          src="//images.ctfassets.net/lpjm8d10rkpy/3ZH89y9VHHd53v4OQ3BG0V/cc62043a88cd5fb80719687f299e7351/cloudinary_icon_for_white_bg.svg"
+                          src="//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg"
                         />
                         <div>
-                          Cloudinary
+                          Netlify
                           <div
                             class="emotion-4"
                           >
-                            Reference assets from Cloudinary - digital asset management
+                            Easily build and preview Netlify sites directly from Contentful 
                           </div>
                         </div>
                       </div>
@@ -614,14 +650,14 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                       >
                         <img
                           class="emotion-3"
-                          src="//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg"
+                          src="//images.ctfassets.net/lpjm8d10rkpy/3ZH89y9VHHd53v4OQ3BG0V/cc62043a88cd5fb80719687f299e7351/cloudinary_icon_for_white_bg.svg"
                         />
                         <div>
-                          Netlify
+                          Cloudinary
                           <div
                             class="emotion-4"
                           >
-                            Build and preview Netlify sites from the Contentful Editor Sidebar
+                            Reference assets from Cloudinary - digital asset management
                           </div>
                         </div>
                       </div>
@@ -682,100 +718,6 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                       >
                         <img
                           class="emotion-3"
-                          src="//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg"
-                        />
-                        <div>
-                          Optimizely
-                          <div
-                            class="emotion-4"
-                          >
-                            Run experiments on your content with ease
-                          </div>
-                        </div>
-                      </div>
-                    </h3>
-                  </div>
-                  <div
-                    class="emotion-8"
-                  >
-                    <button
-                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                      data-test-id="cf-ui-text-link"
-                      type="button"
-                    >
-                      <span
-                        class="TabFocusTrap__TabFocusTrap___39Vty"
-                        tabindex="-1"
-                      >
-                        About
-                      </span>
-                    </button>
-                  </div>
-                </div>
-                <div
-                  class="emotion-9"
-                >
-                  <div
-                    class="emotion-7"
-                    data-test-id="app-title"
-                  >
-                    <h3
-                      class="Heading__Heading___83D3K emotion-6"
-                      data-test-id="cf-ui-heading"
-                    >
-                      <div
-                        class="emotion-5"
-                        data-test-id="app-details"
-                      >
-                        <img
-                          class="emotion-3"
-                          src="//images.ctfassets.net/lpjm8d10rkpy/1o6HKvOxxumeW64hv6ANMw/b1c5308bcd4e48cfaafc185c0b12aa36/Gatsby_Monogram.svg"
-                        />
-                        <div>
-                          Gatsby Cloud
-                          <div
-                            class="emotion-4"
-                          >
-                            Gatsby previews your content while you edit it
-                          </div>
-                        </div>
-                      </div>
-                    </h3>
-                  </div>
-                  <div
-                    class="emotion-8"
-                  >
-                    <button
-                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                      data-test-id="cf-ui-text-link"
-                      type="button"
-                    >
-                      <span
-                        class="TabFocusTrap__TabFocusTrap___39Vty"
-                        tabindex="-1"
-                      >
-                        About
-                      </span>
-                    </button>
-                  </div>
-                </div>
-                <div
-                  class="emotion-9"
-                >
-                  <div
-                    class="emotion-7"
-                    data-test-id="app-title"
-                  >
-                    <h3
-                      class="Heading__Heading___83D3K emotion-6"
-                      data-test-id="cf-ui-heading"
-                    >
-                      <div
-                        class="emotion-5"
-                        data-test-id="app-details"
-                      >
-                        <img
-                          class="emotion-3"
                           src="//images.ctfassets.net/lpjm8d10rkpy/3vNJZRjthatucy2mBJMy1u/0e5d501207427780021e7580cc384761/bynder.5e9e457b9d.svg"
                         />
                         <div>
@@ -784,6 +726,53 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                             class="emotion-4"
                           >
                             Reference assets from Bynder - digital asset management
+                          </div>
+                        </div>
+                      </div>
+                    </h3>
+                  </div>
+                  <div
+                    class="emotion-8"
+                  >
+                    <button
+                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                      data-test-id="cf-ui-text-link"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty"
+                        tabindex="-1"
+                      >
+                        About
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="emotion-9"
+                >
+                  <div
+                    class="emotion-7"
+                    data-test-id="app-title"
+                  >
+                    <h3
+                      class="Heading__Heading___83D3K emotion-6"
+                      data-test-id="cf-ui-heading"
+                    >
+                      <div
+                        class="emotion-5"
+                        data-test-id="app-details"
+                      >
+                        <img
+                          class="emotion-3"
+                          src="//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg"
+                        />
+                        <div>
+                          Optimizely
+                          <div
+                            class="emotion-4"
+                          >
+                            Experimentation made easy
                           </div>
                         </div>
                       </div>
@@ -853,7 +842,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                           Optimizely
                         </div>
                         <div
-                          class="Tag__Tag___Y-myd emotion-39 Tag__Tag--primary___2Hk3I"
+                          class="Tag__Tag___Y-myd emotion-32 Tag__Tag--primary___2Hk3I"
                           data-test-id="cf-ui-tag"
                         >
                           Private

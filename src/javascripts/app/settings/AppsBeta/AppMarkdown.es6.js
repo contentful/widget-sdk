@@ -16,16 +16,7 @@ const rootStyle = css`
   h4,
   h5,
   h6 {
-    margin-top: 0;
-  }
-  h1,
-  h2,
-  h3 {
-    margin-bottom: ${tokens.spacingL};
-  }
-  h4,
-  h5,
-  h6 {
+    margin-top: ${tokens.spacingL};
     margin-bottom: ${tokens.spacingM};
   }
   p {

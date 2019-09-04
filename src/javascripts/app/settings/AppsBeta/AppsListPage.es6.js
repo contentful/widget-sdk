@@ -167,7 +167,18 @@ const PricingInfo = () => (
 
 const AppsListShell = props => (
   <Workbench className={styles.workbench}>
-    <Workbench.Header title={<Header />} icon={<Icon name="page-apps" scale="1" />} />
+    <Workbench.Header
+      title={<Header />}
+      icon={<Icon name="page-apps" scale="1" />}
+      actions={
+        <TextLink
+          href={websiteUrl('/developers/docs/extensibility/apps/')}
+          target="_blank"
+          rel="noopener noreferrer">
+          View documentation
+        </TextLink>
+      }
+    />
     <Workbench.Content type="text">
       {props.appsFeatureDisabled ? (
         <PricingInfo />
@@ -238,7 +249,7 @@ const prepareApp = (repoApps, featureFlags) => app => ({
   },
   links: app.fields.links.map(link => link.fields),
   categories: app.fields.categories.map(c => c.fields.name),
-  permissions: app.fields.permissionsExplanation,
+  permissions: `__${app.fields.title} app__ ${app.fields.permissions.fields.text}`,
   installed: !!(repoApps.find(a => a.sys.id === app.fields.slug) || {}).extension,
   enabled: getProductCatalogFlagForApp(app, featureFlags),
   visible: hasAllowedAppFeatureFlag(app)

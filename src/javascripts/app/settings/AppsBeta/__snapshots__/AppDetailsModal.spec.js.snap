@@ -7,18 +7,7 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
 .emotion-3 h4,
 .emotion-3 h5,
 .emotion-3 h6 {
-  margin-top: 0;
-}
-
-.emotion-3 h1,
-.emotion-3 h2,
-.emotion-3 h3 {
-  margin-bottom: 1.5rem;
-}
-
-.emotion-3 h4,
-.emotion-3 h5,
-.emotion-3 h6 {
+  margin-top: 1.5rem;
   margin-bottom: 1rem;
 }
 
