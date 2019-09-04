@@ -249,7 +249,7 @@ const prepareApp = (repoApps, featureFlags) => app => ({
   },
   links: app.fields.links.map(link => link.fields),
   categories: app.fields.categories.map(c => c.fields.name),
-  permissions: app.fields.permissionsExplanation,
+  permissions: `__${app.fields.title} app__ ${app.fields.permissions.fields.text}`,
   installed: !!(repoApps.find(a => a.sys.id === app.fields.slug) || {}).extension,
   enabled: getProductCatalogFlagForApp(app, featureFlags),
   visible: hasAllowedAppFeatureFlag(app)
