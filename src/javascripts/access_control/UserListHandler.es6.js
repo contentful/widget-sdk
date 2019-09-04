@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 import { create as createMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
 import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo.es6';
-import createResourceService from 'services/ResourceService.es6';
 
 import { getModule } from '../NgRegistry.es6';
 import RoleRepository from './RoleRepository.es6';
@@ -124,7 +123,6 @@ export function create() {
           spaceMembership: spaceMembershipMap[id],
           isAdmin: adminMap[id],
           roles: userRolesMap[id] || [],
-          rolesResource: createResourceService(spaceContext.getId()).get('role'),
           roleNames: getRoleNamesForUser(id),
           avatarUrl: user.avatarUrl,
           numberOfTeamMemberships,

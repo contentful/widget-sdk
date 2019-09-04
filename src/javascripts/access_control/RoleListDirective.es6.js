@@ -1,12 +1,14 @@
-import { registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
+
+import { registerDirective, registerController } from 'NgRegistry.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
-import { ADMIN_ROLE_ID } from './constants.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import createResourceService from 'services/ResourceService.es6';
 import { getSubscriptionState } from 'account/AccountUtils.es6';
 
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import { ADMIN_ROLE_ID } from './constants.es6';
 import * as UserListHandler from './UserListHandler.es6';
 
 export default function register() {
@@ -68,6 +70,8 @@ export default function register() {
       }
 
       function onResetResponse(data) {
+        const rolesResource = createResourceService(spaceContext.getId()).get('role');
+
         $scope.memberships = listHandler.getMembershipCounts();
         $scope.countAdmin = $scope.memberships.admin || 0;
 
@@ -79,9 +83,9 @@ export default function register() {
         $scope.hasAnyTranslatorRole = hasAnyTranslatorRole($scope.roles);
         $scope.removeRole = createRoleRemover(listHandler, reload);
         $scope.context.ready = true;
-        $scope.usage = data.rolesResource.usage;
-        $scope.limit = ResourceUtils.getResourceLimits(data.rolesResource).maximum;
-        $scope.reachedLimit = !ResourceUtils.canCreate(data.rolesResource);
+        $scope.usage = rolesResource.usage;
+        $scope.limit = ResourceUtils.getResourceLimits(rolesResource).maximum;
+        $scope.reachedLimit = !ResourceUtils.canCreate(rolesResource);
       }
     }
   ]);
