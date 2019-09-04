@@ -1,3 +1,4 @@
+import { once } from 'lodash';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as Intercom from 'services/intercom.es6';
 
@@ -8,6 +9,11 @@ export const EventName = {
   Dialog: 'global:dialog',
   CancelJob: 'jobs:cancel',
   CreateJob: 'jobs:create'
+};
+
+const IntercomEventName = {
+  AlphaEligible: 'scheduled-publishing-alpha-eligible',
+  CreateJob: 'scheduled-publishing-create-job'
 };
 
 /**
@@ -46,6 +52,7 @@ export function createJob({ jobId, scheduledAt }) {
     timezone_offset: new Date().getTimezoneOffset()
   };
 
+  Intercom.trackEvent(IntercomEventName.CreateJob);
   return Analytics.track(EventName.CreateJob, payload);
 }
 
@@ -57,7 +64,6 @@ export function cancelJob({ jobId }) {
   return Analytics.track(EventName.CancelJob, payload);
 }
 
-export function trackAlphaEligibilityToIntercom() {
-  const INTERCOM_EVENT_NAME = 'scheduled-publishing-alpha-eligible';
-  Intercom.trackEvent(INTERCOM_EVENT_NAME);
-}
+export const trackAlphaEligibilityToIntercom = once(() => {
+  Intercom.trackEvent(IntercomEventName.AlphaEligible);
+});

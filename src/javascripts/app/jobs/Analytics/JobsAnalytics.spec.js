@@ -48,6 +48,8 @@ describe('JobsAnalytics', () => {
       scheduled_for: scheduledAt,
       timezone_offset: -120
     });
+
+    expectTrackToIntercomCalledOnceWith('scheduled-publishing-create-job');
   });
 
   it('cancelJob', () => {
@@ -61,15 +63,21 @@ describe('JobsAnalytics', () => {
     });
   });
 
-  function expectTrackCalledOnceWith(eventName, payload) {
-    expect(Analytics.track).toHaveBeenCalledTimes(1);
-    expect(Analytics.track).toHaveBeenCalledWith(eventName, payload);
-  }
-
-  it('trackAlphaEligibilityToIntercom', () => {
+  it('trackAlphaEligibilityToIntercom calls Intercom once', () => {
+    JobsAnalytics.trackAlphaEligibilityToIntercom();
+    JobsAnalytics.trackAlphaEligibilityToIntercom();
     JobsAnalytics.trackAlphaEligibilityToIntercom();
 
-    expect(Intercom.trackEvent).toHaveBeenCalledTimes(1);
-    expect(Intercom.trackEvent).toHaveBeenCalledWith('scheduled-publishing-alpha-eligible');
+    expectTrackToIntercomCalledOnceWith('scheduled-publishing-alpha-eligible');
   });
 });
+
+function expectTrackCalledOnceWith(eventName, payload) {
+  expect(Analytics.track).toHaveBeenCalledTimes(1);
+  expect(Analytics.track).toHaveBeenCalledWith(eventName, payload);
+}
+
+function expectTrackToIntercomCalledOnceWith(eventName) {
+  expect(Intercom.trackEvent).toHaveBeenCalledTimes(1);
+  expect(Intercom.trackEvent).toHaveBeenCalledWith(eventName);
+}
