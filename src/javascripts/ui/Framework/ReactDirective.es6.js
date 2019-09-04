@@ -10,76 +10,76 @@ import * as Forma36Components from '@contentful/forma-36-react-components';
 
 import store from 'redux/store.es6';
 
-import * as appContentListSaveViewDialogComponentes6 from 'app/ContentList/SaveViewDialogComponent.es6';
-import * as appContentModelEditorContentTypesPagees6 from 'app/ContentModel/Editor/ContentTypesPage.es6';
-import * as appInputDialogComponentes6 from 'app/InputDialogComponent.es6';
-import * as appsettingslocalesroutesLocalesListRoutees6 from 'app/settings/locales/routes/LocalesListRoute.es6';
-import * as appsettingslocalesroutesLocalesNewRoutees6 from 'app/settings/locales/routes/LocalesNewRoute.es6';
-import * as appsettingslocalesroutesLocalesEditRoutees6 from 'app/settings/locales/routes/LocalesEditRoute.es6';
-import * as appsettingsspaceSpaceSettingsRoutees6 from 'app/settings/space/SpaceSettingsRoute.es6';
-import * as appwidgetsrichtextReadOnlyRichTextEditores6 from 'app/widgets/rich_text/ReadOnlyRichTextEditor.es6';
-import * as appSpaceSettingsUsageSpaceUsagees6 from 'app/SpaceSettings/Usage/SpaceUsage.es6';
-import * as appapiApiKeysHeaderes6 from 'app/api/ApiKeysHeader.es6';
-import * as appapiApiKeysNavigationes6 from 'app/api/ApiKeysNavigation.es6';
-import * as appapiapikeylistApiKeyListes6 from 'app/api/api_key_list/ApiKeyList.es6';
-import * as appentityeditorStatusNotificationes6 from 'app/entity_editor/StatusNotification.es6';
-import * as appentityeditorComponentsBackNavindexes6 from 'app/entity_editor/Components/BackNav/index.es6';
-import * as appentityeditorCollaboratorsindexes6 from 'app/entity_editor/Collaborators/index.es6';
-import * as appEntrySidebarEntrySidebares6 from 'app/EntrySidebar/EntrySidebar.es6';
-import * as appentryeditorCustomEditorExtensionRendereres6 from 'app/entry_editor/CustomEditorExtensionRenderer.es6';
-import * as appjobsJobsPageLinkes6 from 'app/jobs/JobsPageLink.es6';
-import * as appapiKeyEditorBoilerplatees6 from 'app/api/KeyEditor/Boilerplate.es6';
-import * as appapiKeyEditorContactUses6 from 'app/api/KeyEditor/ContactUs.es6';
-import * as apphomeAuthorEditorSpaceHomees6 from 'app/home/AuthorEditorSpaceHome.es6';
-import * as apphomeUpgradePricinges6 from 'app/home/UpgradePricing.es6';
-import * as appSpaceSettingsTeamsSpaceTeamsPagees6 from 'app/SpaceSettings/Teams/SpaceTeamsPage.es6';
-import * as appSpaceSettingsTeamsAddTeamsAddTeamsRouteres6 from 'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter.es6';
-import * as appOrganizationSettingsSSOSSOSetupes6 from 'app/OrganizationSettings/SSO/SSOSetup.es6';
-import * as appOrganizationSettingsUserInvitationsUserInvitationDetailUserInvitationDetailRouteres6 from 'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter.es6';
-import * as appOrganizationSettingsUserInvitationsUserInvitationsListUserInvitationsListRouteres6 from 'app/OrganizationSettings/UserInvitations/UserInvitationsList/UserInvitationsListRouter.es6';
-import * as appOrganizationSettingsUsersNewUserNewUserBridgees6 from 'app/OrganizationSettings/Users/NewUser/NewUserBridge.es6';
-import * as appOrganizationSettingsUsersUserDetailUserDetailRoutees6 from 'app/OrganizationSettings/Users/UserDetail/UserDetailRoute.es6';
-import * as appOrganizationSettingsUsersUsersListUserListRoutees6 from 'app/OrganizationSettings/Users/UsersList/UserListRoute.es6';
-import * as appOrganizationSettingsTeamsTeamPagees6 from 'app/OrganizationSettings/Teams/TeamPage.es6';
-import * as accountusageOrganizationUsagees6 from 'account/usage/OrganizationUsage.es6';
-import * as accountAccountViewes6 from 'account/AccountView.es6';
-import * as accesscontrolRoleEditores6 from 'access_control/RoleEditor.es6';
-import * as componentssharedIE11DeprecationBanneres6 from 'components/shared/IE11DeprecationBanner.es6';
-import * as componentssharedstackonboardingscreensChoiceScreenes6 from 'components/shared/stack-onboarding/screens/ChoiceScreen.es6';
-import * as componentssharedLoadingModales6 from 'components/shared/LoadingModal.es6';
-import * as componentssharedspacewizardWizardes6 from 'components/shared/space-wizard/Wizard.es6';
-import * as componentssharedenterprisespacewizardEnterpriseSpaceWizardes6 from 'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6';
-import * as componentssharedstackonboardingscreensCopyScreenes6 from 'components/shared/stack-onboarding/screens/CopyScreen.es6';
-import * as componentssharedstackonboardingscreensExploreScreenes6 from 'components/shared/stack-onboarding/screens/ExploreScreen.es6';
-import * as componentssharedstackonboardingscreensDeployScreenes6 from 'components/shared/stack-onboarding/screens/DeployScreen.es6';
-import * as componentssharedUserInvitationes6 from 'components/shared/UserInvitation.es6';
-import * as componentssharedDocumentTitlees6 from 'components/shared/DocumentTitle.es6';
-import * as componentssharedRelativeDateTimeindexes6 from 'components/shared/RelativeDateTime/index.es6';
-import * as componentssharedUserNameFormatterFetchAndFormatUserNamees6 from 'components/shared/UserNameFormatter/FetchAndFormatUserName.es6';
-import * as componentsfielddialogRichTextOptionses6 from 'components/field_dialog/RichTextOptions.es6';
-import * as componentsfielddialogValidationValueses6 from 'components/field_dialog/ValidationValues.es6';
-import * as componentsfielddialogappearanceFieldDialogAppearanceTabes6 from 'components/field_dialog/appearance/FieldDialogAppearanceTab.es6';
-import * as componentstabscontenttypelistContentTypeListPagees6 from 'components/tabs/content_type_list/ContentTypeListPage.es6';
-import * as componentstabsNoLocalizedFieldsAdviceindexes6 from 'components/tabs/NoLocalizedFieldsAdvice/index.es6';
-import * as componentstabsassetlistAddAssetButtones6 from 'components/tabs/asset_list/AddAssetButton.es6';
-import * as componentstabsNoSearchResultsAdvicees6 from 'components/tabs/NoSearchResultsAdvice.es6';
-import * as componentstabsassetlistAssetsEmptyStatees6 from 'components/tabs/asset_list/AssetsEmptyState.es6';
-import * as componentstabsentrylistEntryListes6 from 'components/tabs/entry_list/EntryList.es6';
-import * as componentstabsentrylistEmptyStatesindexes6 from 'components/tabs/entry_list/EmptyStates/index.es6';
-import * as componentsRecordsResourceUsageindexes6 from 'components/RecordsResourceUsage/index.es6';
-import * as componentssharedknowledgebaseiconKnowledgeBasees6 from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
-import * as componentssharedQuickNavigationQuickNavWithFeatureFlages6 from 'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6';
-import * as widgetsWidgetRenderWarninges6 from 'widgets/WidgetRenderWarning.es6';
-import * as widgetsExtensionIFrameRendereres6 from 'widgets/ExtensionIFrameRenderer.es6';
-import * as uiComponentsIcones6 from 'ui/Components/Icon.es6';
-import * as uiComponentsPaginatores6 from 'ui/Components/Paginator.es6';
-import * as uiPagesSubscriptionOverviewindexes6 from 'ui/Pages/SubscriptionOverview/index.es6';
-import * as navigationmodernStackOnboardingRelaunches6 from 'navigation/modernStackOnboardingRelaunch.es6';
-import * as navigationSidepanelTriggeres6 from 'navigation/Sidepanel/Trigger.es6';
-import * as searchEntitySelectorCreateEntityindexes6 from 'search/EntitySelector/CreateEntity/index.es6';
-import * as uiComponentsContactUsButtones6 from 'ui/Components/ContactUsButton.es6';
-import * as access_controlUsersUserListes6 from 'access_control/Users/UserList.es6';
-import * as appwidgetsEditorWarningPredefinedValueses6 from 'app/widgets/EditorWarningPredefinedValues.es6';
+import * as accessControlAddUsersToSpaceNoteEs6 from 'access_control/AddUsersToSpaceNote.es6';
+import * as accessControlNoUsersToAddNoteEs6 from 'access_control/NoUsersToAddNote.es6';
+import * as accessControlUsersUserListEs6 from 'access_control/Users/UserList.es6';
+import * as componentsSharedKnowledgeBaseIconKnowledgeBaseEs6 from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
+import * as uiComponentsContactUsButtonEs6 from 'ui/Components/ContactUsButton.es6';
+import * as appContentListSaveViewDialogComponentEs6 from 'app/ContentList/SaveViewDialogComponent.es6';
+import * as uiComponentsIconEs6 from 'ui/Components/Icon.es6';
+import * as appContentModelEditorContentTypesPageEs6 from 'app/ContentModel/Editor/ContentTypesPage.es6';
+import * as appInputDialogComponentEs6 from 'app/InputDialogComponent.es6';
+import * as appOrganizationSettingsSsoSsoSetupEs6 from 'app/OrganizationSettings/SSO/SSOSetup.es6';
+import * as uiPagesSubscriptionOverviewIndexEs6 from 'ui/Pages/SubscriptionOverview/index.es6';
+import * as appOrganizationSettingsTeamsTeamPageEs6 from 'app/OrganizationSettings/Teams/TeamPage.es6';
+import * as accountUsageOrganizationUsageEs6 from 'account/usage/OrganizationUsage.es6';
+import * as appOrganizationSettingsUserInvitationsUserInvitationDetailUserInvitationDetailRouterEs6 from 'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter.es6';
+import * as appOrganizationSettingsUserInvitationsUserInvitationsListUserInvitationsListRouterEs6 from 'app/OrganizationSettings/UserInvitations/UserInvitationsList/UserInvitationsListRouter.es6';
+import * as appOrganizationSettingsUsersNewUserNewUserBridgeEs6 from 'app/OrganizationSettings/Users/NewUser/NewUserBridge.es6';
+import * as appOrganizationSettingsUsersUserDetailUserDetailRouteEs6 from 'app/OrganizationSettings/Users/UserDetail/UserDetailRoute.es6';
+import * as appOrganizationSettingsUsersUsersListUserListRouteEs6 from 'app/OrganizationSettings/Users/UsersList/UserListRoute.es6';
+import * as appSpaceSettingsUsageSpaceUsageEs6 from 'app/SpaceSettings/Usage/SpaceUsage.es6';
+import * as appApiApiKeysHeaderEs6 from 'app/api/ApiKeysHeader.es6';
+import * as appApiApiKeysNavigationEs6 from 'app/api/ApiKeysNavigation.es6';
+import * as appApiKeyEditorBoilerplateEs6 from 'app/api/KeyEditor/Boilerplate.es6';
+import * as appApiKeyEditorContactUsEs6 from 'app/api/KeyEditor/ContactUs.es6';
+import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle.es6';
+import * as appApiApiKeyListApiKeyListEs6 from 'app/api/api_key_list/ApiKeyList.es6';
+import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Components/BackNav/index.es6';
+import * as appEntityEditorStatusNotificationEs6 from 'app/entity_editor/StatusNotification.es6';
+import * as appEntrySidebarEntrySidebarEs6 from 'app/EntrySidebar/EntrySidebar.es6';
+import * as widgetsWidgetRenderWarningEs6 from 'widgets/WidgetRenderWarning.es6';
+import * as widgetsExtensionIFrameRendererEs6 from 'widgets/ExtensionIFrameRenderer.es6';
+import * as appEntityEditorCollaboratorsIndexEs6 from 'app/entity_editor/Collaborators/index.es6';
+import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_editor/CustomEditorExtensionRenderer.es6';
+import * as componentsTabsNoLocalizedFieldsAdviceIndexEs6 from 'components/tabs/NoLocalizedFieldsAdvice/index.es6';
+import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage.es6';
+import * as appSettingsLocalesRoutesLocalesListRouteEs6 from 'app/settings/locales/routes/LocalesListRoute.es6';
+import * as appSettingsLocalesRoutesLocalesNewRouteEs6 from 'app/settings/locales/routes/LocalesNewRoute.es6';
+import * as appSettingsLocalesRoutesLocalesEditRouteEs6 from 'app/settings/locales/routes/LocalesEditRoute.es6';
+import * as componentsSharedRelativeDateTimeIndexEs6 from 'components/shared/RelativeDateTime/index.es6';
+import * as appWidgetsEditorWarningPredefinedValuesEs6 from 'app/widgets/EditorWarningPredefinedValues.es6';
+import * as appWidgetsJsonJsonEditorWarningEs6 from 'app/widgets/json/JsonEditorWarning.es6';
+import * as appWidgetsLocationLocationEditorWarningEs6 from 'app/widgets/location/LocationEditorWarning.es6';
+import * as componentsFieldDialogValidationValuesEs6 from 'components/field_dialog/ValidationValues.es6';
+import * as componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6 from 'components/field_dialog/appearance/FieldDialogAppearanceTab.es6';
+import * as componentsSharedLoadingModalEs6 from 'components/shared/LoadingModal.es6';
+import * as componentsSharedStackOnboardingScreensChoiceScreenEs6 from 'components/shared/stack-onboarding/screens/ChoiceScreen.es6';
+import * as componentsSharedSpaceWizardWizardEs6 from 'components/shared/space-wizard/Wizard.es6';
+import * as componentsTabsAssetListAddAssetButtonEs6 from 'components/tabs/asset_list/AddAssetButton.es6';
+import * as componentsTabsPluralizeEntityMessageEs6 from 'components/tabs/PluralizeEntityMessage.es6';
+import * as componentsRecordsResourceUsageIndexEs6 from 'components/RecordsResourceUsage/index.es6';
+import * as componentsSharedUserNameFormatterFetchAndFormatUserNameEs6 from 'components/shared/UserNameFormatter/FetchAndFormatUserName.es6';
+import * as uiComponentsPaginatorEs6 from 'ui/Components/Paginator.es6';
+import * as componentsTabsNoSearchResultsAdviceEs6 from 'components/tabs/NoSearchResultsAdvice.es6';
+import * as componentsTabsAssetListAssetsEmptyStateEs6 from 'components/tabs/asset_list/AssetsEmptyState.es6';
+import * as appJobsJobsPageLinkEs6 from 'app/jobs/JobsPageLink.es6';
+import * as componentsTabsEntryListEntryListEs6 from 'components/tabs/entry_list/EntryList.es6';
+import * as componentsTabsEntryListEmptyStatesIndexEs6 from 'components/tabs/entry_list/EmptyStates/index.es6';
+import * as componentsSharedQuickNavigationQuickNavWithFeatureFlagEs6 from 'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6';
+import * as componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6 from 'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6';
+import * as navigationModernStackOnboardingRelaunchEs6 from 'navigation/modernStackOnboardingRelaunch.es6';
+import * as componentsSharedUserInvitationEs6 from 'components/shared/UserInvitation.es6';
+import * as appUserSettingsSpaceMembershipsEs6 from 'app/UserSettings/SpaceMemberships.es6';
+import * as componentsTabsContentTypeListContentTypeListPageEs6 from 'components/tabs/content_type_list/ContentTypeListPage.es6';
+import * as appSettingsSpaceSpaceSettingsRouteEs6 from 'app/settings/space/SpaceSettingsRoute.es6';
+import * as accessControlRoleEditorEs6 from 'access_control/RoleEditor.es6';
+import * as appSpaceSettingsTeamsSpaceTeamsPageEs6 from 'app/SpaceSettings/Teams/SpaceTeamsPage.es6';
+import * as appSpaceSettingsTeamsAddTeamsAddTeamsRouterEs6 from 'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter.es6';
+import * as componentsSharedStackOnboardingScreensGetStartedScreenEs6 from 'components/shared/stack-onboarding/screens/GetStartedScreen.es6';
+import * as componentsSharedStackOnboardingScreensCopyScreenEs6 from 'components/shared/stack-onboarding/screens/CopyScreen.es6';
+import * as componentsSharedStackOnboardingScreensExploreScreenEs6 from 'components/shared/stack-onboarding/screens/ExploreScreen.es6';
+import * as componentsSharedStackOnboardingScreensDeployScreenEs6 from 'components/shared/stack-onboarding/screens/DeployScreen.es6';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -277,76 +277,76 @@ export default function register() {
 
 function getModule(name) {
   const allowedModules = {
-    'app/ContentList/SaveViewDialogComponent.es6': appContentListSaveViewDialogComponentes6,
-    'app/ContentModel/Editor/ContentTypesPage.es6': appContentModelEditorContentTypesPagees6,
-    'app/InputDialogComponent.es6': appInputDialogComponentes6,
-    'app/settings/locales/routes/LocalesListRoute.es6': appsettingslocalesroutesLocalesListRoutees6,
-    'app/settings/locales/routes/LocalesNewRoute.es6': appsettingslocalesroutesLocalesNewRoutees6,
-    'app/settings/locales/routes/LocalesEditRoute.es6': appsettingslocalesroutesLocalesEditRoutees6,
-    'app/settings/space/SpaceSettingsRoute.es6': appsettingsspaceSpaceSettingsRoutees6,
-    'app/widgets/rich_text/ReadOnlyRichTextEditor.es6': appwidgetsrichtextReadOnlyRichTextEditores6,
-    'app/SpaceSettings/Usage/SpaceUsage.es6': appSpaceSettingsUsageSpaceUsagees6,
-    'app/api/ApiKeysHeader.es6': appapiApiKeysHeaderes6,
-    'app/api/ApiKeysNavigation.es6': appapiApiKeysNavigationes6,
-    'app/api/api_key_list/ApiKeyList.es6': appapiapikeylistApiKeyListes6,
-    'app/entity_editor/StatusNotification.es6': appentityeditorStatusNotificationes6,
-    'app/entity_editor/Components/BackNav/index.es6': appentityeditorComponentsBackNavindexes6,
-    'app/entity_editor/Collaborators/index.es6': appentityeditorCollaboratorsindexes6,
-    'app/EntrySidebar/EntrySidebar.es6': appEntrySidebarEntrySidebares6,
-    'app/entry_editor/CustomEditorExtensionRenderer.es6': appentryeditorCustomEditorExtensionRendereres6,
-    'app/jobs/JobsPageLink.es6': appjobsJobsPageLinkes6,
-    'app/api/KeyEditor/Boilerplate.es6': appapiKeyEditorBoilerplatees6,
-    'app/api/KeyEditor/ContactUs.es6': appapiKeyEditorContactUses6,
-    'app/home/AuthorEditorSpaceHome.es6': apphomeAuthorEditorSpaceHomees6,
-    'app/home/UpgradePricing.es6': apphomeUpgradePricinges6,
-    'app/SpaceSettings/Teams/SpaceTeamsPage.es6': appSpaceSettingsTeamsSpaceTeamsPagees6,
-    'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter.es6': appSpaceSettingsTeamsAddTeamsAddTeamsRouteres6,
-    'app/OrganizationSettings/SSO/SSOSetup.es6': appOrganizationSettingsSSOSSOSetupes6,
-    'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter.es6': appOrganizationSettingsUserInvitationsUserInvitationDetailUserInvitationDetailRouteres6,
-    'app/OrganizationSettings/UserInvitations/UserInvitationsList/UserInvitationsListRouter.es6': appOrganizationSettingsUserInvitationsUserInvitationsListUserInvitationsListRouteres6,
-    'app/OrganizationSettings/Users/NewUser/NewUserBridge.es6': appOrganizationSettingsUsersNewUserNewUserBridgees6,
-    'app/OrganizationSettings/Users/UserDetail/UserDetailRoute.es6': appOrganizationSettingsUsersUserDetailUserDetailRoutees6,
-    'app/OrganizationSettings/Users/UsersList/UserListRoute.es6': appOrganizationSettingsUsersUsersListUserListRoutees6,
-    'app/OrganizationSettings/Teams/TeamPage.es6': appOrganizationSettingsTeamsTeamPagees6,
-    'account/usage/OrganizationUsage.es6': accountusageOrganizationUsagees6,
-    'account/AccountView.es6': accountAccountViewes6,
-    'access_control/RoleEditor.es6': accesscontrolRoleEditores6,
-    'components/shared/IE11DeprecationBanner.es6': componentssharedIE11DeprecationBanneres6,
-    'components/shared/stack-onboarding/screens/ChoiceScreen.es6': componentssharedstackonboardingscreensChoiceScreenes6,
-    'components/shared/LoadingModal.es6': componentssharedLoadingModales6,
-    'components/shared/space-wizard/Wizard.es6': componentssharedspacewizardWizardes6,
-    'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6': componentssharedenterprisespacewizardEnterpriseSpaceWizardes6,
-    'components/shared/stack-onboarding/screens/CopyScreen.es6': componentssharedstackonboardingscreensCopyScreenes6,
-    'components/shared/stack-onboarding/screens/ExploreScreen.es6': componentssharedstackonboardingscreensExploreScreenes6,
-    'components/shared/stack-onboarding/screens/DeployScreen.es6': componentssharedstackonboardingscreensDeployScreenes6,
-    'components/shared/UserInvitation.es6': componentssharedUserInvitationes6,
-    'components/shared/DocumentTitle.es6': componentssharedDocumentTitlees6,
-    'components/shared/RelativeDateTime/index.es6': componentssharedRelativeDateTimeindexes6,
-    'components/shared/UserNameFormatter/FetchAndFormatUserName.es6': componentssharedUserNameFormatterFetchAndFormatUserNamees6,
-    'components/field_dialog/RichTextOptions.es6': componentsfielddialogRichTextOptionses6,
-    'components/field_dialog/ValidationValues.es6': componentsfielddialogValidationValueses6,
-    'components/field_dialog/appearance/FieldDialogAppearanceTab.es6': componentsfielddialogappearanceFieldDialogAppearanceTabes6,
-    'components/tabs/content_type_list/ContentTypeListPage.es6': componentstabscontenttypelistContentTypeListPagees6,
-    'components/tabs/NoLocalizedFieldsAdvice/index.es6': componentstabsNoLocalizedFieldsAdviceindexes6,
-    'components/tabs/asset_list/AddAssetButton.es6': componentstabsassetlistAddAssetButtones6,
-    'components/tabs/NoSearchResultsAdvice.es6': componentstabsNoSearchResultsAdvicees6,
-    'components/tabs/asset_list/AssetsEmptyState.es6': componentstabsassetlistAssetsEmptyStatees6,
-    'components/tabs/entry_list/EntryList.es6': componentstabsentrylistEntryListes6,
-    'components/tabs/entry_list/EmptyStates/index.es6': componentstabsentrylistEmptyStatesindexes6,
-    'components/RecordsResourceUsage/index.es6': componentsRecordsResourceUsageindexes6,
-    'components/shared/knowledge_base_icon/KnowledgeBase.es6': componentssharedknowledgebaseiconKnowledgeBasees6,
-    'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6': componentssharedQuickNavigationQuickNavWithFeatureFlages6,
-    'widgets/WidgetRenderWarning.es6': widgetsWidgetRenderWarninges6,
-    'widgets/ExtensionIFrameRenderer.es6': widgetsExtensionIFrameRendereres6,
-    'ui/Components/Icon.es6': uiComponentsIcones6,
-    'ui/Components/Paginator.es6': uiComponentsPaginatores6,
-    'ui/Pages/SubscriptionOverview/index.es6': uiPagesSubscriptionOverviewindexes6,
-    'navigation/modernStackOnboardingRelaunch.es6': navigationmodernStackOnboardingRelaunches6,
-    'navigation/Sidepanel/Trigger.es6': navigationSidepanelTriggeres6,
-    'search/EntitySelector/CreateEntity/index.es6': searchEntitySelectorCreateEntityindexes6,
-    'ui/Components/ContactUsButton.es6': uiComponentsContactUsButtones6,
-    'access_control/Users/UserList.es6': access_controlUsersUserListes6,
-    'app/widgets/EditorWarningPredefinedValues.es6': appwidgetsEditorWarningPredefinedValueses6
+    'access_control/AddUsersToSpaceNote.es6': accessControlAddUsersToSpaceNoteEs6,
+    'access_control/NoUsersToAddNote.es6': accessControlNoUsersToAddNoteEs6,
+    'access_control/Users/UserList.es6': accessControlUsersUserListEs6,
+    'components/shared/knowledge_base_icon/KnowledgeBase.es6': componentsSharedKnowledgeBaseIconKnowledgeBaseEs6,
+    'ui/Components/ContactUsButton.es6': uiComponentsContactUsButtonEs6,
+    'app/ContentList/SaveViewDialogComponent.es6': appContentListSaveViewDialogComponentEs6,
+    'ui/Components/Icon.es6': uiComponentsIconEs6,
+    'app/ContentModel/Editor/ContentTypesPage.es6': appContentModelEditorContentTypesPageEs6,
+    'app/InputDialogComponent.es6': appInputDialogComponentEs6,
+    'app/OrganizationSettings/SSO/SSOSetup.es6': appOrganizationSettingsSsoSsoSetupEs6,
+    'ui/Pages/SubscriptionOverview/index.es6': uiPagesSubscriptionOverviewIndexEs6,
+    'app/OrganizationSettings/Teams/TeamPage.es6': appOrganizationSettingsTeamsTeamPageEs6,
+    'account/usage/OrganizationUsage.es6': accountUsageOrganizationUsageEs6,
+    'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter.es6': appOrganizationSettingsUserInvitationsUserInvitationDetailUserInvitationDetailRouterEs6,
+    'app/OrganizationSettings/UserInvitations/UserInvitationsList/UserInvitationsListRouter.es6': appOrganizationSettingsUserInvitationsUserInvitationsListUserInvitationsListRouterEs6,
+    'app/OrganizationSettings/Users/NewUser/NewUserBridge.es6': appOrganizationSettingsUsersNewUserNewUserBridgeEs6,
+    'app/OrganizationSettings/Users/UserDetail/UserDetailRoute.es6': appOrganizationSettingsUsersUserDetailUserDetailRouteEs6,
+    'app/OrganizationSettings/Users/UsersList/UserListRoute.es6': appOrganizationSettingsUsersUsersListUserListRouteEs6,
+    'app/SpaceSettings/Usage/SpaceUsage.es6': appSpaceSettingsUsageSpaceUsageEs6,
+    'app/api/ApiKeysHeader.es6': appApiApiKeysHeaderEs6,
+    'app/api/ApiKeysNavigation.es6': appApiApiKeysNavigationEs6,
+    'app/api/KeyEditor/Boilerplate.es6': appApiKeyEditorBoilerplateEs6,
+    'app/api/KeyEditor/ContactUs.es6': appApiKeyEditorContactUsEs6,
+    'components/shared/DocumentTitle.es6': componentsSharedDocumentTitleEs6,
+    'app/api/api_key_list/ApiKeyList.es6': appApiApiKeyListApiKeyListEs6,
+    'app/entity_editor/Components/BackNav/index.es6': appEntityEditorComponentsBackNavIndexEs6,
+    'app/entity_editor/StatusNotification.es6': appEntityEditorStatusNotificationEs6,
+    'app/EntrySidebar/EntrySidebar.es6': appEntrySidebarEntrySidebarEs6,
+    'widgets/WidgetRenderWarning.es6': widgetsWidgetRenderWarningEs6,
+    'widgets/ExtensionIFrameRenderer.es6': widgetsExtensionIFrameRendererEs6,
+    'app/entity_editor/Collaborators/index.es6': appEntityEditorCollaboratorsIndexEs6,
+    'app/entry_editor/CustomEditorExtensionRenderer.es6': appEntryEditorCustomEditorExtensionRendererEs6,
+    'components/tabs/NoLocalizedFieldsAdvice/index.es6': componentsTabsNoLocalizedFieldsAdviceIndexEs6,
+    'app/home/SpaceHomePage.es6': appHomeSpaceHomePageEs6,
+    'app/settings/locales/routes/LocalesListRoute.es6': appSettingsLocalesRoutesLocalesListRouteEs6,
+    'app/settings/locales/routes/LocalesNewRoute.es6': appSettingsLocalesRoutesLocalesNewRouteEs6,
+    'app/settings/locales/routes/LocalesEditRoute.es6': appSettingsLocalesRoutesLocalesEditRouteEs6,
+    'components/shared/RelativeDateTime/index.es6': componentsSharedRelativeDateTimeIndexEs6,
+    'app/widgets/EditorWarningPredefinedValues.es6': appWidgetsEditorWarningPredefinedValuesEs6,
+    'app/widgets/json/JsonEditorWarning.es6': appWidgetsJsonJsonEditorWarningEs6,
+    'app/widgets/location/LocationEditorWarning.es6': appWidgetsLocationLocationEditorWarningEs6,
+    'components/field_dialog/ValidationValues.es6': componentsFieldDialogValidationValuesEs6,
+    'components/field_dialog/appearance/FieldDialogAppearanceTab.es6': componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6,
+    'components/shared/LoadingModal.es6': componentsSharedLoadingModalEs6,
+    'components/shared/stack-onboarding/screens/ChoiceScreen.es6': componentsSharedStackOnboardingScreensChoiceScreenEs6,
+    'components/shared/space-wizard/Wizard.es6': componentsSharedSpaceWizardWizardEs6,
+    'components/tabs/asset_list/AddAssetButton.es6': componentsTabsAssetListAddAssetButtonEs6,
+    'components/tabs/PluralizeEntityMessage.es6': componentsTabsPluralizeEntityMessageEs6,
+    'components/RecordsResourceUsage/index.es6': componentsRecordsResourceUsageIndexEs6,
+    'components/shared/UserNameFormatter/FetchAndFormatUserName.es6': componentsSharedUserNameFormatterFetchAndFormatUserNameEs6,
+    'ui/Components/Paginator.es6': uiComponentsPaginatorEs6,
+    'components/tabs/NoSearchResultsAdvice.es6': componentsTabsNoSearchResultsAdviceEs6,
+    'components/tabs/asset_list/AssetsEmptyState.es6': componentsTabsAssetListAssetsEmptyStateEs6,
+    'app/jobs/JobsPageLink.es6': appJobsJobsPageLinkEs6,
+    'components/tabs/entry_list/EntryList.es6': componentsTabsEntryListEntryListEs6,
+    'components/tabs/entry_list/EmptyStates/index.es6': componentsTabsEntryListEmptyStatesIndexEs6,
+    'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6': componentsSharedQuickNavigationQuickNavWithFeatureFlagEs6,
+    'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6': componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6,
+    'navigation/modernStackOnboardingRelaunch.es6': navigationModernStackOnboardingRelaunchEs6,
+    'components/shared/UserInvitation.es6': componentsSharedUserInvitationEs6,
+    'app/UserSettings/SpaceMemberships.es6': appUserSettingsSpaceMembershipsEs6,
+    'components/tabs/content_type_list/ContentTypeListPage.es6': componentsTabsContentTypeListContentTypeListPageEs6,
+    'app/settings/space/SpaceSettingsRoute.es6': appSettingsSpaceSpaceSettingsRouteEs6,
+    'access_control/RoleEditor.es6': accessControlRoleEditorEs6,
+    'app/SpaceSettings/Teams/SpaceTeamsPage.es6': appSpaceSettingsTeamsSpaceTeamsPageEs6,
+    'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter.es6': appSpaceSettingsTeamsAddTeamsAddTeamsRouterEs6,
+    'components/shared/stack-onboarding/screens/GetStartedScreen.es6': componentsSharedStackOnboardingScreensGetStartedScreenEs6,
+    'components/shared/stack-onboarding/screens/CopyScreen.es6': componentsSharedStackOnboardingScreensCopyScreenEs6,
+    'components/shared/stack-onboarding/screens/ExploreScreen.es6': componentsSharedStackOnboardingScreensExploreScreenEs6,
+    'components/shared/stack-onboarding/screens/DeployScreen.es6': componentsSharedStackOnboardingScreensDeployScreenEs6
   };
 
   return get(allowedModules, name, null);

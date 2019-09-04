@@ -75,12 +75,7 @@ console.log(`const [
   ] = await Promise.all([
   ${list.map(item => asyncImportString(item)).join(',\n')}
 ])`);
-console.log(`\n\n\n\n----------------\n\n\n\n`);
 console.log(list.map(item => callString(item)).join('\n'));
-
-// console.log(list.map(item => importString(item)).join('\n'));
-// console.log(`\n\n`);
-// console.log(list.map(item => callString(item)).join('\n'));
 
 /*
   Recursively read through directory `p`, and determine
