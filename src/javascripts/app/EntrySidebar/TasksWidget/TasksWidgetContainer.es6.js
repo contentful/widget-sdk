@@ -16,12 +16,19 @@ import createTaskPermissionChecker, {
 import { onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util.es6';
 import TaskList from './View/TaskList.es6';
 import { Tag, Paragraph } from '@contentful/forma-36-react-components';
+import { trackIsTasksAlphaEligible } from './analytics.es6';
 
 export default function TasksWidgetContainerWithFeatureFlag(props) {
   return (
     <ErrorHandler>
       <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.TASKS}>
-        <TasksWidgetContainer {...props} />
+        {({ currentVariation: isEnabled }) => {
+          if (isEnabled) {
+            trackIsTasksAlphaEligible();
+            return <TasksWidgetContainer {...props} />;
+          }
+          return null;
+        }}
       </BooleanFeatureFlag>
     </ErrorHandler>
   );

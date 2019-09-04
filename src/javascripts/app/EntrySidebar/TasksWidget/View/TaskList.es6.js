@@ -12,6 +12,7 @@ import {
   SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import { taskListStyles as styles } from './styles.es6';
+import { trackTaskCreated, trackTaskResolved } from '../analytics.es6';
 
 export default class TasksWidget extends React.PureComponent {
   static propTypes = {
@@ -44,12 +45,18 @@ export default class TasksWidget extends React.PureComponent {
           viewData={taskViewData}
           onEdit={() => tasksInteractor.startEditingTask(key)}
           onCancel={() => tasksInteractor.cancelTaskChanges(key)}
-          onSave={({ body, assigneeKey, isDone }) =>
-            tasksInteractor.saveTaskChanges(key, { body, assigneeKey, isDone, version })
-          }
+          onSave={async ({ body, assigneeKey, isDone }) => {
+            await tasksInteractor.saveTaskChanges(key, { body, assigneeKey, isDone, version });
+            if (version === 0) {
+              trackTaskCreated();
+            }
+          }}
           onDeleteTask={() => tasksInteractor.deleteTask(key)}
           onStatusChange={async ({ body, assigneeKey, isDone }, callback) => {
             await tasksInteractor.saveTaskChanges(key, { body, assigneeKey, isDone, version });
+            if (isDone) {
+              trackTaskResolved();
+            }
             callback();
           }}
         />

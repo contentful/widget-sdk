@@ -25,6 +25,7 @@ import { buildFieldsApi } from 'app/entity_editor/dataFields.es6';
 import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsExperiment.es6';
 
 import * as Navigator from 'states/Navigator.es6';
+import { trackIsCommentsAlphaEligible } from '../EntrySidebar/CommentsPanel/analytics.es6';
 
 /**
  * @ngdoc type
@@ -178,9 +179,12 @@ export default async function create($scope, editorData, preferences, trackLoadE
   getVariation(ENTRY_COMMENTS, {
     organizationId: spaceContext.getData('organization.sys.id'),
     spaceId: spaceContext.space.getId()
-  }).then(variation => {
+  }).then(isEnabled => {
     const isMasterEnvironment = spaceContext.isMasterEnvironment();
-    $scope.shouldDisplayCommentsToggle = isMasterEnvironment && variation;
+    $scope.shouldDisplayCommentsToggle = isMasterEnvironment && isEnabled;
+    if (isEnabled) {
+      trackIsCommentsAlphaEligible();
+    }
   });
 
   setupNoShareJsCmaFakeRequestsExperiment({ $scope, spaceContext, entityInfo });
