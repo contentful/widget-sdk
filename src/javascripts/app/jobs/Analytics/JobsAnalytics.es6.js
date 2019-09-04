@@ -1,3 +1,4 @@
+import { once } from 'lodash';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as Intercom from 'services/intercom.es6';
 
@@ -63,7 +64,6 @@ export function cancelJob({ jobId }) {
   return Analytics.track(EventName.CancelJob, payload);
 }
 
-export function trackAlphaEligibilityToIntercom() {
-  const INTERCOM_EVENT_NAME = 'scheduled-publishing-alpha-eligible';
-  Intercom.trackEvent(INTERCOM_EVENT_NAME);
-}
+export const trackAlphaEligibilityToIntercom = once(() => {
+  Intercom.trackEvent(IntercomEventName.AlphaEligible);
+});
