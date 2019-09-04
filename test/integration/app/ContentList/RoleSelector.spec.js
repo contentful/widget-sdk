@@ -2,10 +2,10 @@ import * as DOM from 'test/helpers/DOM';
 import createSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 import sinon from 'sinon';
 import $ from 'jquery';
-import { $initialize } from 'test/helpers/helpers';
+import { $initialize, $wait } from 'test/helpers/helpers';
 import { beforeEach, it } from 'test/helpers/dsl';
 
-xdescribe('app/RoleSelector', () => {
+describe('app/RoleSelector', () => {
   beforeEach(async function() {
     this.$client = $('<div class="client"/>');
     this.view = DOM.createView(this.$client.get(0));
@@ -40,39 +40,43 @@ xdescribe('app/RoleSelector', () => {
     this.$client.remove();
   });
 
-  it('remove one role if it was visible to everybody', function*() {
+  it('remove one role if it was visible to everybody', async function() {
     const resultPromise = this.open(undefined);
+
+    await $wait();
 
     this.view.find('.roles.role-a').assertIsChecked(true);
     this.view.find('.roles.role-b').assertIsChecked(true);
     this.view.find('.roles.role-b').click();
     this.view.find('.apply-selection').click();
 
-    const result = yield resultPromise;
+    const result = await resultPromise;
     expect(result).toEqual(['role-a']);
     sinon.assert.calledOnce(this.Notification.success);
   });
 
-  it('selects all roles', function*() {
+  it('selects all roles', async function() {
     const resultPromise = this.open(['role-a']);
+    await $wait();
 
     this.view.find('.roles.role-a').assertIsChecked(true);
     this.view.find('.roles.role-b').assertIsChecked(false);
     this.view.find('.select-all').click();
     this.view.find('.apply-selection').click();
 
-    const result = yield resultPromise;
+    const result = await resultPromise;
     expect(result).toEqual(undefined);
     sinon.assert.calledOnce(this.Notification.success);
   });
 
-  it('selects no roles', function*() {
+  it('selects no roles', async function() {
     const resultPromise = this.open(undefined);
+    await $wait();
 
     this.view.find('.unselect-all').click();
     this.view.find('.apply-selection').click();
 
-    const result = yield resultPromise;
+    const result = await resultPromise;
     expect(result).toEqual([]);
     sinon.assert.calledOnce(this.Notification.success);
   });
