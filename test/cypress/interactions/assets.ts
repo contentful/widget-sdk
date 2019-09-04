@@ -1,11 +1,6 @@
 import { RequestOptions, Query } from '@pact-foundation/pact-web';
 
-import {
-  defaultSpaceId,
-  defaultAssetId,
-  defaultAsset,
-  defaultHeader
-} from '../util/requests';
+import { defaultSpaceId, defaultAssetId, defaultAsset, defaultHeader } from '../util/requests';
 
 const empty = require('../fixtures/responses/empty.json');
 export const severalAssetsBody = require('../fixtures/responses/assets-several.json');

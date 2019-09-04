@@ -1,10 +1,8 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { defaultSpaceId } from '../../../util/requests';
 import { getAllPublicContentTypesInDefaultSpace } from '../../../interactions/content_types';
-import {
-  queryAllJobsForDefaultSpace,
-  severalJobsResponseBody
-} from '../../../interactions/jobs';
+import { queryAllJobsForDefaultSpace } from '../../../interactions/jobs';
+import { severalJobsResponse } from '../../../fixtures/responses/jobs-several';
 import { queryForDefaultEntryInsideEnvironment } from '../../../interactions/entries';
 import { queryForDefaultUserDetails } from '../../../interactions/users';
 import { FeatureFlag } from '../../../util/featureFlag';
@@ -77,7 +75,7 @@ describe('Jobs page', () => {
       cy.getByTestId('jobs-table')
         .should('be.visible')
         .getAllByTestId('scheduled-job')
-        .should('have.length', severalJobsResponseBody.total);
+        .should('have.length', severalJobsResponse.items.length);
     });
   });
 

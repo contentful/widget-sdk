@@ -2,7 +2,14 @@ import { defaultSpaceId, defaultEntryId, defaultJobId, defaultHeader } from '../
 import { Query, RequestOptions } from '@pact-foundation/pact-web';
 
 const empty = require('../fixtures/responses/empty.json');
-export const severalJobsResponseBody = require('../fixtures/responses/jobs-several.json');
+const serverErrorResponse = require('../fixtures/responses/server-error.json');
+import {
+  severalJobsResponse,
+  oneFailedJobResponse,
+  onePendingJobResponse,
+  createJobResponse
+} from '../fixtures/responses/jobs-several';
+import { createJobRequest } from '../fixtures/requests/jobs';
 const allJobsQuery = {
   order: 'sys.scheduledAt',
   'sys.status': 'pending'
@@ -57,7 +64,7 @@ export const queryAllJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(allJobsQuery),
       willRespondWith: {
         status: 200,
-        body: severalJobsResponseBody
+        body: severalJobsResponse
       }
     }).as('queryAllJobsForDefaultSpace');
 
@@ -71,7 +78,7 @@ export const queryAllJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(allJobsQuery),
       willRespondWith: {
         status: 500,
-        body: empty
+        body: serverErrorResponse
       }
     }).as('queryAllJobsForDefaultSpace');
 
@@ -102,24 +109,7 @@ export const queryAllScheduledJobsForDefaultEntry = {
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
         status: 200,
-        body: {
-          sys: {
-            type: 'Array'
-          },
-          total: 1,
-          skip: 0,
-          limit: 1000,
-          items: [
-            {
-              sys: {
-                id: defaultJobId,
-                status: 'pending'
-              },
-              action: 'publish',
-              scheduledAt: '2050-08-08T06:10:52.066Z'
-            }
-          ]
-        }
+        body: onePendingJobResponse
       }
     }).as('queryAllScheduledJobsForDefaultEntry');
 
@@ -133,24 +123,7 @@ export const queryAllScheduledJobsForDefaultEntry = {
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
         status: 200,
-        body: {
-          sys: {
-            type: 'Array'
-          },
-          total: 1,
-          skip: 0,
-          limit: 1000,
-          items: [
-            {
-              sys: {
-                id: defaultJobId,
-                status: 'failed'
-              },
-              action: 'publish',
-              scheduledAt: '2050-08-08T06:10:52.066Z'
-            }
-          ]
-        }
+        body: oneFailedJobResponse
       }
     }).as('queryAllScheduledJobsForDefaultEntry');
 
@@ -164,7 +137,7 @@ export const queryAllScheduledJobsForDefaultEntry = {
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
         status: 500,
-        body: {}
+        body: serverErrorResponse
       }
     }).as('queryAllScheduledJobsForDefaultEntry');
 
@@ -187,8 +160,7 @@ export const cancelDefaultJobInDefaultSpace = {
         }
       },
       willRespondWith: {
-        status: 200,
-        body: empty
+        status: 200
       }
     }).as('cancelDefaultJobInDefaultSpace');
 
@@ -206,21 +178,15 @@ export const createScheduledPublicationForDefaultSpace = {
         method: 'POST',
         path: `/spaces/${defaultSpaceId}/environments/master/jobs`,
         headers: {
-          Accept: 'application/json, text/plain, */*',
+          ...defaultHeader,
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
           'x-contentful-enable-alpha-feature': 'scheduled-jobs'
-        }
-        // TODO: test body and figure out how to be with datetime.
+        },
+        body: createJobRequest
       },
       willRespondWith: {
-        status: 200,
-        body: {
-          sys: {
-            id: defaultJobId,
-            status: 'pending'
-          },
-          action: 'publish',
-          scheduledAt: '2050-08-08T06:10:52.066Z'
-        }
+        status: 201,
+        body: createJobResponse
       }
     }).as('createScheduledPublicationForDefaultSpace');
 
