@@ -71,6 +71,7 @@ export default function register() {
       };
 
       $scope.newAsset = () => {
+        Analytics.track('asset_list:add_asset_single');
         entityCreator
           .newAsset()
           .then(asset => {
@@ -177,6 +178,7 @@ export default function register() {
       }
 
       $scope.createMultipleAssets = () => {
+        Analytics.track('asset_list:add_asset_multiple');
         const defaultLocaleCode = TheLocaleStore.getDefaultLocale().internal_code;
         BulkAssetsCreator.open(defaultLocaleCode).finally(() => {
           // We reload all assets to get the new ones. Unfortunately the
