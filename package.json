@@ -12,9 +12,9 @@
   "dependencies": {
     "@contentful/asn1js": "^2.1.0",
     "@contentful/contentful-slatejs-adapter": "^5.0.0",
-    "@contentful/field-editor-shared": "0.0.2-alpha.29",
-    "@contentful/field-editor-multiple-line": "0.0.2-alpha.5",
-    "@contentful/field-editor-single-line": "0.0.2-alpha.5",
+    "@contentful/field-editor-shared": "0.0.2-alpha.6",
+    "@contentful/field-editor-multiple-line": "0.0.2-alpha.6",
+    "@contentful/field-editor-single-line": "0.0.2-alpha.6",
     "@contentful/field-editors": "^1.0.0",
     "@contentful/forma-36-fcss": "0.0.26",
     "@contentful/forma-36-react-components": "3.15.17",

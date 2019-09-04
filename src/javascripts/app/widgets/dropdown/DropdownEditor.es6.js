@@ -36,7 +36,7 @@ export default function DropdownEditor(props) {
             disabled={disabled}
             className={isDirected ? 'x--directed' : ''}
             required={field.required}
-            value={(value || '').toString()}
+            value={value === undefined ? '' : String(value)}
             onChange={e => {
               const value = e.target.value;
               if (value === '') {
