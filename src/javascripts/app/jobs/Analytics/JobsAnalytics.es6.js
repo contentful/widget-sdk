@@ -10,6 +10,11 @@ export const EventName = {
   CreateJob: 'jobs:create'
 };
 
+const IntercomEventName = {
+  AlphaEligible: 'scheduled-publishing-alpha-eligible',
+  CreateJob: 'scheduled-publishing-create-job'
+};
+
 /**
  * Atm, supported only 'Entry.publish'
  * Exported for testing purposes. Do not use in production !!!
@@ -46,6 +51,7 @@ export function createJob({ jobId, scheduledAt }) {
     timezone_offset: new Date().getTimezoneOffset()
   };
 
+  Intercom.trackEvent(IntercomEventName.CreateJob);
   return Analytics.track(EventName.CreateJob, payload);
 }
 
