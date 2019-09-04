@@ -121,7 +121,6 @@ export function create() {
           id,
           membership: membershipMap[id],
           spaceMembership: spaceMembershipMap[id],
-          isAdmin: adminMap[id],
           roles: userRolesMap[id] || [],
           roleNames: getRoleNamesForUser(id),
           avatarUrl: user.avatarUrl,
@@ -183,7 +182,7 @@ export function create() {
   function getUsersByRole(id) {
     return _.filter(users, user => {
       if (isAdminRole(id)) {
-        return user.isAdmin;
+        return user.membership.admin;
       }
       return user.roles.indexOf(id) > -1;
     });
