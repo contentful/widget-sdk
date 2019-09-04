@@ -167,7 +167,18 @@ const PricingInfo = () => (
 
 const AppsListShell = props => (
   <Workbench className={styles.workbench}>
-    <Workbench.Header title={<Header />} icon={<Icon name="page-apps" scale="1" />} />
+    <Workbench.Header
+      title={<Header />}
+      icon={<Icon name="page-apps" scale="1" />}
+      actions={
+        <TextLink
+          href={websiteUrl('/developers/docs/extensibility/apps/')}
+          target="_blank"
+          rel="noopener noreferrer">
+          View documentation
+        </TextLink>
+      }
+    />
     <Workbench.Content type="text">
       {props.appsFeatureDisabled ? (
         <PricingInfo />
