@@ -63,7 +63,9 @@ describe('JobsAnalytics', () => {
     });
   });
 
-  it('trackAlphaEligibilityToIntercom', () => {
+  it('trackAlphaEligibilityToIntercom calls Intercom once', () => {
+    JobsAnalytics.trackAlphaEligibilityToIntercom();
+    JobsAnalytics.trackAlphaEligibilityToIntercom();
     JobsAnalytics.trackAlphaEligibilityToIntercom();
 
     expectTrackToIntercomCalledOnceWith('scheduled-publishing-alpha-eligible');
