@@ -1,10 +1,10 @@
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 
 export const STEPS = {
-  IDLE: 'IDLE',
-  FIRST_ALIAS: 'FIRST_ALIAS',
-  SECOND_RENAMING: 'SECOND_RENAMING',
-  THIRD_CHANGE_ENV: 'THIRD_CHANGE_ENV'
+  IDLE: 0,
+  FIRST_ALIAS: 1,
+  SECOND_RENAMING: 2,
+  THIRD_CHANGE_ENV: 3
 };
 
 const alphaHeader = { 'X-Contentful-Enable-Alpha-Feature': 'environment-aliasing' };

@@ -192,3 +192,12 @@ yet).
 | incoming_links      | dialog_link_click                     | <code>entry_id: string<br />incoming_links_count: number<br />link_entity_id: string<br />dialog_session_id: string</code>
 | incoming_links      | sidebar_link_click                    | <code>entry_id: string<br />incoming_links_count: number<br />link_entity_id: string</code>
 | incoming_links      | query                                 | <code>entry_id: string<br />incoming_links_count: number</code>
+| environment_aliases | opt_in_start                          | -
+| environment_aliases | opt_in_complete                       | -
+| environment_aliases | opt_in_step_1                         | -
+| environment_aliases | opt_in_step_2                         | -
+| environment_aliases | opt_in_step_3                         | -
+| environment_aliases | opt_in_abort_step_1                   | -
+| environment_aliases | opt_in_abort_step_2                   | -
+| environment_aliases | change_environment_open               | -
+| environment_aliases | change_environment_abort              | -

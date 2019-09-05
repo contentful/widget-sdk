@@ -114,6 +114,17 @@ export const validEvents = {
   ],
   extension: ['save', 'install', 'render', 'activate', 'set_value'],
   entity_button: ['click'],
+  environment_aliases: [
+    'opt_in_start',
+    'opt_in_complete',
+    'opt_in_step_1',
+    'opt_in_step_2',
+    'opt_in_step_3',
+    'opt_in_abort_step_1',
+    'opt_in_abort_step_2',
+    'change_environment_open',
+    'change_environment_abort'
+  ],
   ui_webhook_editor: ['save'],
   usage: ['period_selected'],
   text_editor: ['action'],

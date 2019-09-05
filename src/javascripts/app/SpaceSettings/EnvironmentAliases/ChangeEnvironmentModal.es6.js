@@ -20,6 +20,10 @@ import EnvironmentDetails from 'app/common/EnvironmentDetails.es6';
 import { handleChangeEnvironment } from './Utils.es6';
 import { aliasStyles } from './SharedStyles.es6';
 import { spacingM } from '@contentful/forma-36-tokens';
+import {
+  changeEnvironmentAbort,
+  changeEnvironmentConfirm
+} from 'analytics/events/EnvironmentAliases.es6';
 
 const changeEnvironmentModalStyles = {
   dropdown: css({
@@ -85,6 +89,7 @@ export default function ChangeEnvironmentModal({
     setLoading(true);
     try {
       await handleChangeEnvironment(spaceId, alias, aliasedEnvironment);
+      changeEnvironmentConfirm();
       setModalOpen(false);
       setTimeout(() => window.location.reload(), 1000);
       Notification.success(
@@ -104,6 +109,7 @@ export default function ChangeEnvironmentModal({
     <Modal
       title="Point Master Alias to another Environment"
       onClose={() => {
+        changeEnvironmentAbort();
         setAliasedEnvironment(initialAliasedEnvironment);
         setModalOpen(false);
       }}

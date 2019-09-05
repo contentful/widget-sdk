@@ -24,6 +24,11 @@ import { aliasStyles } from './SharedStyles.es6';
 import { STEPS } from './Utils.es6';
 import Feedback from './Feedback.es6';
 import ExternalTextLink from 'app/common/ExternalTextLink.es6';
+import {
+  optInStep,
+  optInStart,
+  changeEnvironmentOpen
+} from 'analytics/events/EnvironmentAliases.es6';
 
 const aliasHeaderStyles = {
   alphaTag: css({
@@ -57,7 +62,10 @@ function EnvironmentAliasHeader() {
 }
 
 function EnvironmentAlias({ aliases, id, setModalOpen, canChangeEnvironment }) {
-  const changeEnvironment = () => setModalOpen(true);
+  const changeEnvironment = () => {
+    changeEnvironmentOpen();
+    setModalOpen(true);
+  };
 
   const content = (
     <TextLink
@@ -176,7 +184,15 @@ export default function EnvironmentAliases(props) {
     );
   }
 
-  const startOptIn = () => setStep(STEPS.FIRST_ALIAS);
+  const trackedSetStep = (step, track = true) => {
+    if (track) optInStep(step);
+    setStep(step);
+  };
+
+  const startOptIn = () => {
+    optInStart();
+    trackedSetStep(STEPS.FIRST_ALIAS);
+  };
 
   if (step === STEPS.IDLE) {
     return (
@@ -213,7 +229,7 @@ export default function EnvironmentAliases(props) {
       <OptIn
         testId="environmentaliases.opt-in"
         step={step}
-        setStep={setStep}
+        setStep={trackedSetStep}
         spaceId={spaceData.sys.id}></OptIn>
     </span>
   );

@@ -19,6 +19,7 @@ import EnvironmentDetails from 'app/common/EnvironmentDetails.es6';
 import StaticDropdown from './StaticDropdown.es6';
 import { handleOptIn, STEPS } from './Utils.es6';
 import { aliasStyles } from './SharedStyles.es6';
+import { optInAbortStep, optInComplete } from 'analytics/events/EnvironmentAliases.es6';
 
 const aliasOptInStyles = {
   buttons: css({
@@ -62,7 +63,16 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
     }
   };
 
-  const onReset = () => setStep(STEPS.IDLE);
+  const onOptInComplete = async () => {
+    optInComplete();
+    setTimeout(() => window.location.reload());
+  };
+
+  const onReset = () => {
+    optInAbortStep(step);
+    setStep(STEPS.IDLE, false);
+  };
+
   const reset = <TextLink onClick={onReset}>Exit Alias Opt-in</TextLink>;
 
   return (
@@ -104,10 +114,7 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
               <Fragment>
                 You can change the environment your Master Alias points to here.
                 <div className={aliasOptInStyles.buttons}>
-                  <Button
-                    testId="button.finish"
-                    buttonType="positive"
-                    onClick={() => setTimeout(() => window.location.reload())}>
+                  <Button testId="button.finish" buttonType="positive" onClick={onOptInComplete}>
                     Got it
                   </Button>
                 </div>
@@ -174,7 +181,7 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
 
 OptIn.propTypes = {
   testId: PropTypes.string,
-  step: PropTypes.string.isRequired,
+  step: PropTypes.number.isRequired,
   spaceId: PropTypes.string.isRequired,
   setStep: PropTypes.func.isRequired
 };
