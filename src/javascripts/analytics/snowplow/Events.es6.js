@@ -174,6 +174,8 @@ registerGenericEvent('perf:first_contentful_paint');
 registerGenericEvent('perf:time_to_interactive');
 
 registerGenericEvent('entity_state:revert');
+registerGenericEvent('asset_list:add_asset_single');
+registerGenericEvent('asset_list:add_asset_multiple');
 
 registerGenericEvent('teams_in_space:teams_added');
 registerGenericEvent('teams_in_space:users_added');
