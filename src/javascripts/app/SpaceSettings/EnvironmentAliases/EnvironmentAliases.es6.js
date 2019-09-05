@@ -126,12 +126,12 @@ EnvironmentAlias.propTypes = {
   environment: PropTypes.shape({
     aliases: PropTypes.arrayOf(PropTypes.string).isRequired,
     id: PropTypes.string.isRequired
-  }),
+  }).isRequired,
   alias: PropTypes.shape({
     sys: PropTypes.shape({
       id: PropTypes.string
     })
-  }),
+  }).isRequired,
   setModalOpen: PropTypes.func.isRequired,
   canChangeEnvironment: PropTypes.bool.isRequired
 };
@@ -174,31 +174,33 @@ export default function EnvironmentAliases(props) {
     return null;
   }
 
-  const aliasComponents = allSpaceAliases.map(alias => {
-    const targetEnv = environments.find(({ aliases }) => aliases.includes(alias.sys.id));
-    if (targetEnv) {
-      return (
-        <span data-test-id={testId} key={alias.sys.id}>
-          <EnvironmentAliasHeader></EnvironmentAliasHeader>
-          <EnvironmentAlias
-            alias={alias}
-            environment={targetEnv}
-            setModalOpen={setModalOpen}
-            canChangeEnvironment={environments.some(
-              ({ aliases }) => aliases.length <= 0
-            )}></EnvironmentAlias>
-          <Feedback></Feedback>
-          <ChangeEnvironmentModal
-            alias={alias}
-            environments={environments}
-            setModalOpen={setModalOpen}
-            modalOpen={modalOpen}
-            spaceId={spaceData.sys.id}
-            targetEnv={targetEnv}></ChangeEnvironmentModal>
-        </span>
-      );
-    }
-  });
+  const aliasComponents = allSpaceAliases
+    .map(alias => {
+      const targetEnv = environments.find(({ aliases }) => aliases.includes(alias.sys.id));
+      if (targetEnv) {
+        return (
+          <span data-test-id={testId} key={alias.sys.id}>
+            <EnvironmentAliasHeader></EnvironmentAliasHeader>
+            <EnvironmentAlias
+              alias={alias}
+              environment={targetEnv}
+              setModalOpen={setModalOpen}
+              canChangeEnvironment={environments.some(
+                ({ aliases }) => aliases.length <= 0
+              )}></EnvironmentAlias>
+            <Feedback></Feedback>
+            <ChangeEnvironmentModal
+              alias={alias}
+              environments={environments}
+              setModalOpen={setModalOpen}
+              modalOpen={modalOpen}
+              spaceId={spaceData.sys.id}
+              targetEnv={targetEnv}></ChangeEnvironmentModal>
+          </span>
+        );
+      }
+    })
+    .filter(Boolean);
   if (aliasComponents.length > 0) {
     return aliasComponents;
   }
