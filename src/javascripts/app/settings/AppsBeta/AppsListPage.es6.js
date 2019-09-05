@@ -184,8 +184,7 @@ const AppsListShell = props => (
         <PricingInfo />
       ) : (
         <Note className={styles.intro}>
-          Share your feedback about apps.{' '}
-          <TextLink onClick={() => openFeedback(props)}>Give feedback</TextLink>
+          <TextLink onClick={() => openFeedback(props)}>Share your feedback</TextLink> about apps.
         </Note>
       )}
       {props.hasAlphaApps ? (
@@ -199,7 +198,9 @@ const AppsListShell = props => (
           <div className={styles.overlay} data-test-id="disabled-beta-apps" />
         )}
         <Paragraph className={styles.intro}>
-          Apps help you extend functionality and easily connect with other services you are using.
+          Contentful apps extend and expand the capabilities of the Contentful web app. You can
+          integrate your favorite third-party services, build better workflows and customize what
+          you can do with Contentful.
         </Paragraph>
         <div>{props.children}</div>
       </Card>
