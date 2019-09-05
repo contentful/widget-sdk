@@ -123,7 +123,7 @@ module.exports = () => {
     optimization: {
       // we minify all JS files after concatenation in `build/js` gulp task
       // so we don't need to uglify it here
-      minimize: false
+      minimize: !isDev
     },
     stats: {
       // Set the maximum number of modules to be shown

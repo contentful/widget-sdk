@@ -37,7 +37,6 @@ export const angularInitRun = [
     navigationAccountDropdownDirectiveEs6();
     componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6();
 
-
     const [
       { default: analyticsAnalyticsConsoleEs6 },
       { default: accessControlUserListHandlerEs6 },
@@ -77,7 +76,6 @@ export const angularInitRun = [
       { default: appEntryEditorEntryActionsControllerEs6 },
       { default: appEntryEditorFormWidgetsControllerEs6 },
       { default: appHomeCfTrackCopyEventEs6 },
-      { default: appHomeContactUsContactUsSpaceHomeDirectiveEs6 },
       { default: appSnapshotsCfSnapshotPresenterEs6 },
       { default: appSnapshotsCfSnapshotSelectorEs6 },
       { default: appSnapshotsSnapshotComparatorEs6 },
@@ -88,6 +86,7 @@ export const angularInitRun = [
       { default: appWidgetsCfListInputEditorDirectiveEs6 },
       { default: appWidgetsCfRatingEditorDirectiveEs6 },
       { default: appWidgetsDatetimeCfEntryDatetimeEditorDirectiveEs6 },
+      { default: appWidgetsJsonJsonEditorController },
       { default: appWidgetsJsonCfJsonEditorCodeEditorDirectiveEs6 },
       { default: appWidgetsJsonCfJsonEditorDirectiveEs6 },
       { default: appWidgetsLinkEntityLinkDirectivesEs6 },
@@ -212,7 +211,6 @@ export const angularInitRun = [
       import('app/entry_editor/entryActionsController.es6'),
       import('app/entry_editor/formWidgetsController.es6'),
       import('app/home/cfTrackCopyEvent.es6'),
-      import('app/home/contactUs/contactUsSpaceHomeDirective.es6'),
       import('app/snapshots/cfSnapshotPresenter.es6'),
       import('app/snapshots/cfSnapshotSelector.es6'),
       import('app/snapshots/snapshotComparator.es6'),
@@ -223,6 +221,7 @@ export const angularInitRun = [
       import('app/widgets/cfListInputEditorDirective.es6'),
       import('app/widgets/cfRatingEditorDirective.es6'),
       import('app/widgets/datetime/cfEntryDatetimeEditorDirective.es6'),
+      import('app/widgets/json/JsonEditorController'),
       import('app/widgets/json/cfJsonEditorCodeEditorDirective.es6'),
       import('app/widgets/json/cfJsonEditorDirective.es6'),
       import('app/widgets/link/entityLinkDirectives.es6'),
@@ -348,7 +347,6 @@ export const angularInitRun = [
     appEntryEditorEntryActionsControllerEs6();
     appEntryEditorFormWidgetsControllerEs6();
     appHomeCfTrackCopyEventEs6();
-    appHomeContactUsContactUsSpaceHomeDirectiveEs6();
     appSnapshotsCfSnapshotPresenterEs6();
     appSnapshotsCfSnapshotSelectorEs6();
     appSnapshotsSnapshotComparatorEs6();
@@ -359,6 +357,7 @@ export const angularInitRun = [
     appWidgetsCfListInputEditorDirectiveEs6();
     appWidgetsCfRatingEditorDirectiveEs6();
     appWidgetsDatetimeCfEntryDatetimeEditorDirectiveEs6();
+    appWidgetsJsonJsonEditorController();
     appWidgetsJsonCfJsonEditorCodeEditorDirectiveEs6();
     appWidgetsJsonCfJsonEditorDirectiveEs6();
     appWidgetsLinkEntityLinkDirectivesEs6();
