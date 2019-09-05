@@ -11,7 +11,6 @@ export const NavStates = makeSum({
   OrgSettings: ['org'],
   UserProfile: [],
   NewOrg: [],
-  Projects: ['org'],
   Default: []
 });
 
@@ -40,10 +39,6 @@ export async function updateNavState(state, params, { space, organization, envir
     navStateBus.set(
       NavStates.Space(data, environment, organization, environments, environmentMeta)
     );
-  } else if (startsWith(state.name, 'projects') && params.orgId) {
-    getOrganization(params.orgId).then(org => {
-      navStateBus.set(NavStates.Projects(org));
-    });
   } else {
     navStateBus.set(NavStates.Default());
   }
