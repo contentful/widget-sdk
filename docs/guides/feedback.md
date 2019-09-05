@@ -6,6 +6,7 @@ The feedback component and microservice can be used to collect user feedback via
 
 Check if `micro-backends/feedback/index.js` has the mail you want to send to in the`TARGET_MAILS` map.
 Otherwise add it and note the key you used.
+You have to *contact team Extensibility* to get new email whitelisted or your feedback requests will fail.
 
 ## Using the Component
 
