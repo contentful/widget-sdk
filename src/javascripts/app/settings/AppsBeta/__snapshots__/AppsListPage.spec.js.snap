@@ -140,8 +140,6 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
             </div>
             <div>
               <div>
-                Share your feedback about apps.
-                 
                 <button
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
@@ -151,9 +149,10 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
                     class="TabFocusTrap__TabFocusTrap___39Vty"
                     tabindex="-1"
                   >
-                    Give feedback
+                    Share your feedback
                   </span>
                 </button>
+                 about apps.
               </div>
             </div>
           </div>
@@ -165,7 +164,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
               class="Paragraph__Paragraph___2aO-9 emotion-1"
               data-test-id="cf-ui-paragraph"
             >
-              Apps help you extend functionality and easily connect with other services you are using.
+              Contentful apps extend and expand the capabilities of the Contentful web app. You can integrate your favorite third-party services, build better workflows and customize what you can do with Contentful.
             </p>
             <div>
               <svg
@@ -537,8 +536,6 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
             </div>
             <div>
               <div>
-                Share your feedback about apps.
-                 
                 <button
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
@@ -548,9 +545,10 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                     class="TabFocusTrap__TabFocusTrap___39Vty"
                     tabindex="-1"
                   >
-                    Give feedback
+                    Share your feedback
                   </span>
                 </button>
+                 about apps.
               </div>
             </div>
           </div>
@@ -562,7 +560,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
               class="Paragraph__Paragraph___2aO-9 emotion-1"
               data-test-id="cf-ui-paragraph"
             >
-              Apps help you extend functionality and easily connect with other services you are using.
+              Contentful apps extend and expand the capabilities of the Contentful web app. You can integrate your favorite third-party services, build better workflows and customize what you can do with Contentful.
             </p>
             <div>
               <h2
