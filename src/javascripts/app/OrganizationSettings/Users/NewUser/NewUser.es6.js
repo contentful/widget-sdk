@@ -193,7 +193,7 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
 
             <fieldset>
               <Subheading element="h3" className={styles.subheading}>
-                Role
+                Organization role
               </Subheading>
               <FieldGroup>
                 {availableOrgRoles.map(role => (
