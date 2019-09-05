@@ -71,7 +71,7 @@ const reasons = [
   'Does not do what I expected',
   'Not needed anymore',
   'App is not performing well',
-  'I have created my own',
+  'I have created my own instead',
   'I was just testing it out'
 ];
 
@@ -90,13 +90,13 @@ export default function UninstallModal({ onConfirm, onClose, actionList, isShown
   return (
     <Modal title="Uninstall app?" onClose={onClose} isShown={isShown} allowHeightOverflow>
       <Typography>
-        <Paragraph>This will remove the app and its features.</Paragraph>
+        <Paragraph>This will remove the app and its features</Paragraph>
       </Typography>
       <List testId="action-list">{actionList.map(createListItem)}</List>
       <hr className={styles.separator} />
 
       <Typography>
-        <Subheading>Reasons for removing (optional)</Subheading>
+        <Subheading>Reasons for removing (optional):</Subheading>
       </Typography>
 
       <div data-test-id="reasons-list">
@@ -133,7 +133,7 @@ export default function UninstallModal({ onConfirm, onClose, actionList, isShown
             onChange={e => setOtherReason(e.target.value)}
             rows={3}
             maxLength={2000}
-            placeholder="Write why you decided to uninstall the app"
+            placeholder="Why did you decide to uninstall the app?"
             name="otherReason"
             id="otherReason"
             testId="reason-custom"
