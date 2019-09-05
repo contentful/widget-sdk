@@ -14847,19 +14847,20 @@ pre,
   }
 
   .cf-workbench-content {
-    margin: 0 auto;
     padding: 24px;
+    margin-left: 10px;
   }
 
-  .cf-workbench-content-type__text {
+  .workbench-layer--is-current .cf-workbench-content-type__text {
     max-width: 768px;
+    margin: 0 auto;
   }
 
-  .cf-workbench-content-type__full {
+  .workbench-layer--is-current .cf-workbench-content-type__full {
     max-width: 100%;
   }
 
-  .cf-workbench-content-type__default {
+  .workbench-layer--is-current .cf-workbench-content-type__default {
     max-width: 1280px;
   }
 

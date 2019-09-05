@@ -1,4 +1,3 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 /**
  * Switches the UI version if a `ui_version` query string parameter is specified.
  * It also displays the version in the UI and provides an easy way to clear it.
@@ -7,6 +6,7 @@ import Cookies from 'js-cookie';
 import { omit } from 'lodash';
 import moment from 'moment';
 import React from 'react';
+import { TextLink, Button } from '@contentful/forma-36-react-components';
 import { addNotification } from 'debug/DevNotifications.es6';
 import qs from 'qs';
 import { getModule } from 'NgRegistry.es6';
@@ -52,21 +52,23 @@ function addVersionNotification() {
 
 const styles = {
   buttonLink: css({
-    marginLeft: '3px'
+    marginLeft: '3px',
+    marginTop: '5px'
   })
 };
 
 function renderVersionNotification(gitRevision) {
   return (
     <div>
-      <a href={`?ui_version=${gitRevision}`}>{gitRevision}</a>
-      <button
-        className="btn-link"
+      <TextLink href={`?ui_version=${gitRevision}`}>{gitRevision}</TextLink>
+      <Button
+        isFullWidth
+        size="small"
         onClick={removeUiVersion}
         data-cf-ui-version-reload
-        style={styles.buttonLink}>
+        className={styles.buttonLink}>
         Clear
-      </button>
+      </Button>
     </div>
   );
 }
