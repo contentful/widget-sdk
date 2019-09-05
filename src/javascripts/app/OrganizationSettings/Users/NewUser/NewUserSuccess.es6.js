@@ -17,6 +17,13 @@ const noteStyle = css({
   marginBottom: tokens.spacingM
 });
 
+const failedEmailsStyle = css({
+  marginBottom: tokens.spacingM,
+  textarea: {
+    resize: 'none'
+  }
+});
+
 export default function NewUserSuccess({ failures = [], successes = [], onRestart, orgId }) {
   const invitationsUrl = useMemo(
     () =>
@@ -59,10 +66,12 @@ export default function NewUserSuccess({ failures = [], successes = [], onRestar
             className={noteStyle}
             noteType="negative"
             title={`${pluralize('users', failures.length, true)} couldn't be invited.`}>
-            They were either existing users or have already been invited.
+            {failures.length > 1
+              ? `They were either existing users or have already been invited.`
+              : `They were either an existing user of have already been invited.`}
           </Note>
           <Textarea
-            className={noteStyle}
+            className={failedEmailsStyle}
             disabled
             value={failures.map(item => item.email).join('\n')}></Textarea>
         </>
