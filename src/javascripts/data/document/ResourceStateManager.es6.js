@@ -35,7 +35,7 @@ export { Action, State };
 export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) {
   const applyAction = makeApply(spaceEndpoint);
 
-  const state$ = sys$.map(getState);
+  const state$ = sys$.map(getState).skipDuplicates();
   let currentState;
   state$.onValue(state => {
     currentState = state;
@@ -46,7 +46,7 @@ export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) 
   sys$.onEnd(stateChangeBus.end);
 
   const inProgressBus = K.createPropertyBus(false);
-  const inProgress$ = inProgressBus.property;
+  const inProgress$ = inProgressBus.property.skipDuplicates();
 
   return { apply, stateChange$, state$, inProgress$ };
 
@@ -58,10 +58,6 @@ export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) 
         // Deleting does not return any data.
         if (data && data.sys) {
           setSys(data.sys);
-          stateChangeBus.emit({
-            from: previousState,
-            to: getState(data.sys)
-          });
 
           const nextState = getState(data.sys);
           const statesMap = {
@@ -69,6 +65,12 @@ export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) 
             [State.Published()]: 'published'
           };
 
+          if (previousState !== nextState) {
+            stateChangeBus.emit({
+              from: previousState,
+              to: nextState
+            });
+          }
           // Document#docEventsBus doesn't emit changes of the document
           // status so we have to listen to those here.
           if (statesMap[nextState]) {
