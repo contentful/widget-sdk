@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import tokens from '@contentful/forma-36-tokens';
 import cx from 'classnames';
-import { css, keyframes } from 'emotion';
+import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import {
   Modal,
@@ -21,24 +21,10 @@ import AppMarkdown from './AppMarkdown.es6';
 const sessionStorage = ClientStorage('session');
 sessionStorage.set('appPermissions', JSON.stringify({}));
 
-const fadeIn = keyframes({
-  from: {
-    transform: 'scale(0.92)',
-    opacity: '0'
-  },
-  to: {
-    transform: 'scale(1)',
-    opacity: '1'
-  }
-});
-
 const styles = {
   root: css({
     display: 'flex',
     overflow: 'hidden'
-  }),
-  fade: css({
-    animation: `${fadeIn} 0.4s cubic-bezier(0.680, -0.550, 0.265, 1.550)`
   }),
   mainColumn: css({
     flexGrow: 1
@@ -46,7 +32,6 @@ const styles = {
   sidebarColumn: css({
     minWidth: '280px',
     width: '280px',
-    minHeight: '700px',
     paddingLeft: tokens.spacingL,
     marginLeft: tokens.spacingL,
     borderLeft: `1px solid ${tokens.colorElementMid}`
@@ -71,9 +56,7 @@ const styles = {
   }),
   permissions: css({
     display: 'flex',
-    justifyContent: 'center',
-    minHeight: '700px',
-    animation: `${fadeIn} 0.4s cubic-bezier(0.680, -0.550, 0.265, 1.550)`
+    justifyContent: 'center'
   }),
   modalPermissions: css({
     whiteSpace: 'pre-line'
@@ -193,8 +176,7 @@ function determineOnClick(installed = false, onClick, onClose, setShowPermission
 }
 
 export function AppDetails(props) {
-  const { app, onClose } = props;
-  const [showPermissions, setShowPermissions] = useState(null);
+  const { app, onClose, showPermissions, setShowPermissions } = props;
 
   if (showPermissions) {
     return (
@@ -212,7 +194,7 @@ export function AppDetails(props) {
   }
 
   return (
-    <div className={cx(styles.root, { [styles.fade]: showPermissions === false })}>
+    <div className={cx(styles.root)}>
       <div className={styles.mainColumn}>
         <AppHeader app={app} showPermissions={showPermissions} />
         <AppMarkdown source={app.description} />
@@ -287,18 +269,29 @@ export function AppDetails(props) {
 
 AppDetails.propTypes = {
   app: AppPropType.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
+  showPermissions: PropTypes.bool,
+  setShowPermissions: PropTypes.func
 };
 
 export default function AppDetailsModal(props) {
+  const [showPermissions, setShowPermissions] = useState(null);
+  const modalTitle = showPermissions ? 'Authorize' : 'App details';
+  const modalSize = showPermissions ? null : '1000px';
   return (
     <Modal
       allowHeightOverflow
-      size="1000px"
-      title="App details"
+      size={modalSize}
+      title={modalTitle}
       isShown={props.isShown}
+      onAfterOpen={() => setShowPermissions(false)}
       onClose={props.onClose}>
-      <AppDetails app={props.app} onClose={props.onClose} />
+      <AppDetails
+        app={props.app}
+        onClose={props.onClose}
+        showPermissions={showPermissions}
+        setShowPermissions={setShowPermissions}
+      />
     </Modal>
   );
 }
