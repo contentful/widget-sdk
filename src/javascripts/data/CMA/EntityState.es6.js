@@ -1,7 +1,6 @@
 import { caseof } from 'sum-types/caseof-eq';
 import { constant } from 'lodash';
 import { Action, makePerform } from './EntityActions.es6';
-import { getModule } from 'NgRegistry.es6';
 
 /**
  * @ngdoc service
@@ -122,12 +121,11 @@ export function makeApply(spaceEndpoint) {
 }
 
 /**
- * A curried function that takes a space endpiont, a target entity
+ * A curried function that takes a space endpoint, a target entity
  * state and the entity data. It performs an API request to change the
  * entity to the target state and returns the updated entity data.
  */
 function makeChangeTo(spaceEndpoint) {
-  const $q = getModule('$q');
   const performAction = makePerform(spaceEndpoint);
 
   return function changeTo(state, data) {
@@ -163,7 +161,7 @@ function makeChangeTo(spaceEndpoint) {
       [State.Published(), () => performAction(Action.Unpublish(), data)],
       [State.Changed(), () => performAction(Action.Unpublish(), data)],
       [State.Archived(), () => performAction(Action.Unarchive(), data)],
-      [State.Draft(), () => $q.resolve(data)]
+      [State.Draft(), () => Promise.resolve(data)]
     ]);
   }
 

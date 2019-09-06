@@ -18,13 +18,12 @@ import * as Analytics from 'analytics/Analytics.es6';
 export default function register() {
   registerController('entityEditor/StateController', [
     '$scope',
-    '$q',
     'notify',
     'validator',
     'otDoc',
     'command',
     'spaceContext',
-    function($scope, $q, notify, validator, otDoc, Command, spaceContext) {
+    function($scope, notify, validator, otDoc, Command, spaceContext) {
       const controller = this;
       const permissions = otDoc.permissions;
       const reverter = otDoc.reverter;
@@ -206,7 +205,7 @@ export default function register() {
               );
             } else {
               notify(Notification.ValidationError());
-              return $q.reject();
+              return Promise.reject();
             }
           })
           .catch(() => {});
@@ -276,7 +275,7 @@ export default function register() {
           },
           err => {
             notify(Notification.Error(action, err));
-            return $q.reject(err);
+            return Promise.reject(err);
           }
         );
       }
