@@ -37,7 +37,8 @@ export default class FeedbackDialog extends Component {
         isShown={isShown}
         onConfirm={() => onConfirm({ canBeContacted: accepted, feedback })}
         isConfirmDisabled={feedback.length < 1}
-        onCancel={onCancel}>
+        onCancel={onCancel}
+        allowHeightOverflow>
         <Form>
           <Paragraph>
             We’re still working on {about} so please let us know if you have any questions or
