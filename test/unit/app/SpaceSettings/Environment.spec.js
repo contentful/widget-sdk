@@ -35,6 +35,7 @@ describe('app/SpaceSettings/Environments', () => {
     spaceContext = this.$inject('mocks/spaceContext').init();
 
     spaceContext.getAliasesIds.returns([]);
+    spaceContext.getAliases.returns([]);
 
     this.$inject('$state').href = () => 'href';
 

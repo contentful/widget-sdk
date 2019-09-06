@@ -19,6 +19,7 @@ import createCachedAppConfig from 'app/settings/apps/CachedAppConfig.es6';
 import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo.es6';
 import createWebhookRepo from 'data/CMA/WebhookRepo.es6';
 import { create as createEnvironmentsRepo } from 'data/CMA/SpaceEnvironmentsRepo.es6';
+import { create as createAliasesRepo } from 'data/CMA/SpaceAliasesRepo.es6';
 import createLocaleRepo from 'data/CMA/LocaleRepo.es6';
 import createUiConfigStore from 'data/UiConfig/Store.es6';
 
@@ -187,6 +188,7 @@ export default function register() {
           const start = Date.now();
           return Promise.all([
             setupEnvironments(self, uriEnvOrAliasId),
+            setupAliases(self),
             TheLocaleStore.init(self.localeRepo),
             self.publishedCTs.refresh().then(() => {
               const ctMap = self.publishedCTs.getAllBare().reduce((acc, ct) => {
@@ -258,7 +260,7 @@ export default function register() {
         /**
          * @name spaceContext#getAliasesIds
          * @description
-         * Returns the ids of the environments aliases
+         * Returns the ids of the environments aliases referencing the current environment
          * @returns array<string>
          */
         getAliasesIds: function(
@@ -266,6 +268,16 @@ export default function register() {
         ) {
           if (!env.sys.aliases) return [];
           return env.sys.aliases.map(({ sys }) => sys.id);
+        },
+
+        /**
+         * @name spaceContext#getAliases
+         * @description
+         * Returns full alias objects of all environment aliases in this space
+         * @returns array<string>
+         */
+        getAliases: function() {
+          return _.get(this, ['aliases'], []);
         },
 
         /**
@@ -582,6 +594,21 @@ export default function register() {
                 ({ sys: { aliases = [] } }) => aliases.length > 0
               )
             };
+          });
+      }
+
+      /**
+       * Set-up aliases and add them to the spaceContext
+       *
+       * @param {SpaceContext} spaceContext
+       * @param {string} uriEnvOrAliasId
+       * @returns {Promise}
+       */
+      function setupAliases(spaceContext) {
+        return createAliasesRepo(spaceContext.endpoint)
+          .getAll()
+          .then(aliases => {
+            spaceContext.aliases = deepFreeze(aliases);
           });
       }
 

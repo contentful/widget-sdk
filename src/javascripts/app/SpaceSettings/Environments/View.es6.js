@@ -35,7 +35,7 @@ import ExternalTextLink from 'app/common/ExternalTextLink.es6';
 
 export default function View({ state, actions }) {
   const { items, aliasesEnabled } = state;
-  const optedIn = items.find(({ aliases }) => aliases.length > 0);
+  const optedInEnv = items.find(({ aliases }) => aliases.length > 0);
   return (
     <Fragment>
       <DocumentTitle title="Environments" />
@@ -43,14 +43,9 @@ export default function View({ state, actions }) {
         <Workbench.Header icon={<Icon name="page-settings" scale="0.8" />} title="Environments" />
         <Workbench.Content>
           {aliasesEnabled && (
-            <EnvironmentAliases
-              {...state}
-              {...actions}
-              optedIn={optedIn}
-              testId="environmentaliases.card"
-            />
+            <EnvironmentAliases {...state} {...actions} testId="environmentaliases.card" />
           )}
-          {aliasesEnabled && optedIn && (
+          {aliasesEnabled && optedInEnv && (
             <DisplayText
               testId="environments.header"
               className={css({

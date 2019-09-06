@@ -137,12 +137,12 @@ const reduce = makeReducer({
         if (state.isLegacyOrganization) {
           resource = { usage: items.length && items.length - 1 }; // exclude master for consistency with v2 api
         }
-
         return assign(state, {
           items: items.map(makeEnvironmentModel),
           resource,
           canCreateEnv: state.isLegacyOrganization || canCreate(resource),
-          isLoading: false
+          isLoading: false,
+          allSpaceAliases: spaceContext.getAliases()
         });
       },
       [C.Failure]: () => assign(state, { loadingError: true })

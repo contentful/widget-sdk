@@ -57,23 +57,28 @@ ChangeEnvironmentModal.propTypes = {
   modalOpen: PropTypes.bool.isRequired,
   spaceId: PropTypes.string.isRequired,
   setModalOpen: PropTypes.func.isRequired,
-  aliases: PropTypes.arrayOf(PropTypes.string).isRequired,
-  id: PropTypes.string.isRequired,
-  payload: PropTypes.object.isRequired,
-  items: PropTypes.array.isRequired
+  alias: PropTypes.shape({
+    sys: PropTypes.shape({
+      id: PropTypes.id
+    })
+  }),
+  targetEnv: PropTypes.shape({
+    aliases: PropTypes.arrayOf(PropTypes.string).isRequired,
+    id: PropTypes.string.isRequired,
+    payload: PropTypes.object.isRequired
+  }),
+  environments: PropTypes.array.isRequired
 };
 
 export default function ChangeEnvironmentModal({
   modalOpen,
   spaceId,
   setModalOpen,
-  aliases,
-  id,
-  payload,
-  items
+  alias,
+  targetEnv: { aliases, id, payload },
+  environments
 }) {
   const initialAliasedEnvironment = 'Select environment';
-  const [alias] = aliases;
   const [dropDownOpen, setDropDownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [aliasedEnvironment, setAliasedEnvironment] = useState(initialAliasedEnvironment);
@@ -93,12 +98,12 @@ export default function ChangeEnvironmentModal({
       setModalOpen(false);
       setTimeout(() => window.location.reload(), 1000);
       Notification.success(
-        `Your "${alias}" Alias is now pointing towards the environment "${aliasedEnvironment}"`
+        `Your "${alias.sys.id}" Alias is now pointing towards the environment "${aliasedEnvironment}"`
       );
     } catch (err) {
       logger.logError('Aliases - changeEnvironment exception', err);
       Notification.error(
-        `There was an error pointing your "${alias}" Alias towards the environment "${aliasedEnvironment}"`
+        `There was an error pointing your "${alias.sys.id}" Alias towards the environment "${aliasedEnvironment}"`
       );
     } finally {
       setLoading(false);
@@ -122,12 +127,12 @@ export default function ChangeEnvironmentModal({
         <React.Fragment>
           <Modal.Header title={title} onClose={onClose} />
           <Modal.Content testId="changeenvironmentmodal.content">
-            <Paragraph>{`Select the new environment you would like your "${alias}" Alias to point to:`}</Paragraph>
+            <Paragraph>{`Select the new environment you would like your "${alias.sys.id}" Alias to point to:`}</Paragraph>
             <Card className={aliasStyles.card}>
               <div className={changeEnvironmentModalStyles.header}>
                 <EnvironmentDetails
                   testId="changeenvironmentmodal.current-alias"
-                  environmentId={aliases[0]}
+                  environmentId={alias.sys.id}
                   isMaster
                   isSelected
                   aliasId={id}
@@ -169,7 +174,7 @@ export default function ChangeEnvironmentModal({
                   testId="changeenvironmentmodal.dropdown"
                   maxHeight={150}
                   className={changeEnvironmentModalStyles.list}>
-                  {items
+                  {environments
                     .filter(({ aliases }) => aliases.length <= 0)
                     .map(({ id, payload }) => (
                       <DropdownListItem

@@ -6,12 +6,17 @@ import 'jest-dom/extend-expect';
 jest.mock('./Feedback.es6', () => () => <div>Feedback</div>);
 
 const optedIn = {
-  optedIn: { id: 'staging', aliases: ['master'], payload: { sys: { createdAt: Date.now() } } }
+  targetEnv: {
+    id: 'staging',
+    aliases: ['master'],
+    payload: { sys: { createdAt: Date.now() } }
+  }
 };
 
 const getComponent = (props = {}) => {
   return (
     <EnvironmentAliases
+      allSpaceAliases={[{ sys: { id: 'master' } }]}
       items={[
         {
           aliases: ['master'],
@@ -72,7 +77,7 @@ describe('EnvironmentAliases', () => {
   });
 
   it('starts the opt-in flow', () => {
-    const component = getComponent();
+    const component = getComponent({ allSpaceAliases: [] });
     const { getByTestId } = render(component);
 
     const environmentaliases = getByTestId('environmentaliases.wrapper');

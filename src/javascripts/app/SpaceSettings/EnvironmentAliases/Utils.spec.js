@@ -18,7 +18,7 @@ describe('Utils', () => {
   });
 
   it('should change-endpoint', () => {
-    const res = handleChangeEnvironment('spaceId', 'alias', 'aliasedEnvironment');
+    const res = handleChangeEnvironment('spaceId', { sys: { id: 'alias' } }, 'aliasedEnvironment');
     expect(res).toEqual([
       {
         data: {

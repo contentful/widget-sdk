@@ -51,6 +51,7 @@ export default function create() {
         );
       }
     }),
+    environment_aliases: makeGenericEndpoint(),
     resources: makeGenericEndpoint(),
     features: makeGenericEndpoint()
   };

@@ -61,12 +61,16 @@ function EnvironmentAliasHeader() {
   );
 }
 
-function EnvironmentAlias({ aliases, id, setModalOpen, canChangeEnvironment }) {
+function EnvironmentAlias({
+  environment: { aliases, id },
+  setModalOpen,
+  canChangeEnvironment,
+  alias
+}) {
   const changeEnvironment = () => {
-    changeEnvironmentOpen();
+    changeEnvironmentOpen()
     setModalOpen(true);
   };
-
   const content = (
     <TextLink
       testId="openChangeDialog"
@@ -80,7 +84,7 @@ function EnvironmentAlias({ aliases, id, setModalOpen, canChangeEnvironment }) {
     <Card className={aliasStyles.card} testId="environmentalias.wrapper">
       <div className={aliasStyles.header}>
         <EnvironmentDetails
-          environmentId={aliases[0]}
+          environmentId={alias.sys.id}
           showAliasedTo={false}
           aliasId={id}
           isMaster
@@ -119,8 +123,15 @@ function EnvironmentAlias({ aliases, id, setModalOpen, canChangeEnvironment }) {
 }
 
 EnvironmentAlias.propTypes = {
-  aliases: PropTypes.arrayOf(PropTypes.string).isRequired,
-  id: PropTypes.string.isRequired,
+  environment: PropTypes.shape({
+    aliases: PropTypes.arrayOf(PropTypes.string).isRequired,
+    id: PropTypes.string.isRequired
+  }).isRequired,
+  alias: PropTypes.shape({
+    sys: PropTypes.shape({
+      id: PropTypes.string
+    })
+  }).isRequired,
   setModalOpen: PropTypes.func.isRequired,
   canChangeEnvironment: PropTypes.bool.isRequired
 };
@@ -154,34 +165,44 @@ const aliasesStyles = {
 };
 
 export default function EnvironmentAliases(props) {
-  const { items, spaceData, optedIn, testId } = props;
+  const { items: environments, spaceData, testId, allSpaceAliases } = props;
 
   const [step, setStep] = useState(STEPS.IDLE);
   const [modalOpen, setModalOpen] = useState(false);
 
-  if (items.length === 0) {
+  if (environments.length === 0) {
     return null;
   }
 
-  if (optedIn) {
-    return (
-      <span data-test-id={testId}>
-        <EnvironmentAliasHeader></EnvironmentAliasHeader>
-        <EnvironmentAlias
-          {...optedIn}
-          setModalOpen={setModalOpen}
-          canChangeEnvironment={items.some(
-            ({ aliases }) => aliases.length <= 0
-          )}></EnvironmentAlias>
-        <Feedback></Feedback>
-        <ChangeEnvironmentModal
-          items={items}
-          setModalOpen={setModalOpen}
-          modalOpen={modalOpen}
-          spaceId={spaceData.sys.id}
-          {...optedIn}></ChangeEnvironmentModal>
-      </span>
-    );
+  const aliasComponents = allSpaceAliases
+    .map(alias => {
+      const targetEnv = environments.find(({ aliases }) => aliases.includes(alias.sys.id));
+      if (targetEnv) {
+        return (
+          <span data-test-id={testId} key={alias.sys.id}>
+            <EnvironmentAliasHeader></EnvironmentAliasHeader>
+            <EnvironmentAlias
+              alias={alias}
+              environment={targetEnv}
+              setModalOpen={setModalOpen}
+              canChangeEnvironment={environments.some(
+                ({ aliases }) => aliases.length <= 0
+              )}></EnvironmentAlias>
+            <Feedback></Feedback>
+            <ChangeEnvironmentModal
+              alias={alias}
+              environments={environments}
+              setModalOpen={setModalOpen}
+              modalOpen={modalOpen}
+              spaceId={spaceData.sys.id}
+              targetEnv={targetEnv}></ChangeEnvironmentModal>
+          </span>
+        );
+      }
+    })
+    .filter(Boolean);
+  if (aliasComponents.length > 0) {
+    return aliasComponents;
   }
 
   const trackedSetStep = (step, track = true) => {
@@ -239,7 +260,7 @@ EnvironmentAliases.propTypes = {
   testId: PropTypes.string,
   items: PropTypes.array.isRequired,
   spaceData: PropTypes.object.isRequired,
-  optedIn: PropTypes.object
+  allSpaceAliases: PropTypes.arrayOf(PropTypes.object)
 };
 
 EnvironmentAliases.defaultProps = {

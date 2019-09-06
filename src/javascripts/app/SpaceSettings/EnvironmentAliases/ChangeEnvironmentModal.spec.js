@@ -10,13 +10,13 @@ jest.mock('./Utils.es6', () => ({
 let setModalOpen;
 describe('ChangeEnvironmentModal', () => {
   afterEach(cleanup);
-
   setModalOpen = jest.fn();
 
   const build = (props = {}) => {
     return render(
       <ChangeEnvironmentModal
-        items={[
+        alias={{ sys: { id: 'master' } }}
+        environments={[
           {
             aliases: ['master'],
             id: 'staging',
@@ -34,10 +34,12 @@ describe('ChangeEnvironmentModal', () => {
           }
         ]}
         spaceId="123456"
-        aliases={['master']}
-        id="staging"
+        targetEnv={{
+          aliases: ['master'],
+          id: 'staging',
+          payload: { sys: { createdAt: Date.now() } }
+        }}
         modalOpen
-        payload={{ sys: { createdAt: Date.now() } }}
         setModalOpen={setModalOpen}
         {...props}></ChangeEnvironmentModal>
     );

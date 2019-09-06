@@ -28,7 +28,7 @@ export function handleChangeEnvironment(spaceId, alias, aliasedEnvironment) {
   return endpoint(
     {
       method: 'PUT',
-      path: ['environment_aliases', alias],
+      path: ['environment_aliases', alias.sys.id],
       data: {
         environment: {
           sys: {
@@ -39,6 +39,9 @@ export function handleChangeEnvironment(spaceId, alias, aliasedEnvironment) {
         }
       }
     },
-    alphaHeader
+    {
+      ...alphaHeader,
+      'X-Contentful-Version': alias.sys.version
+    }
   );
 }
