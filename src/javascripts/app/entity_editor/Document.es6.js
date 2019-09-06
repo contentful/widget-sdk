@@ -84,7 +84,7 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
    */
   const isSaving$ = K.sampleBy(docEventsBus.stream, () => {
     return !!(currentDoc && (currentDoc.inflightOp || currentDoc.pendingOp));
-  });
+  }).skipDuplicates();
 
   /**
    * @ngdoc property

@@ -90,14 +90,16 @@ export default ({ $scope, emitter }) => {
     });
 
     K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
-      notifyUpdate({
-        status: $scope.state.current,
-        updatedAt: sys.updatedAt
-      });
+      if (!sys.deletedAt) {
+        notifyUpdate({
+          status: $scope.state.current,
+          updatedAt: sys.updatedAt
+        });
+      }
     });
 
     let setNotSavingTimeout;
-    K.onValueScope($scope, $scope.otDoc.state.isSaving$.skipDuplicates(), isSaving => {
+    K.onValueScope($scope, $scope.otDoc.state.isSaving$, isSaving => {
       clearTimeout(setNotSavingTimeout);
       if (isSaving) {
         notifyUpdate({
