@@ -249,21 +249,18 @@ function resolveWebhookTemplate({ id, referrer }) {
   });
 }
 
-function resolveApps({ id }) {
+function resolveApps({ id, referrer }) {
   return runTask(function*() {
     const { spaceId } = yield* getSpaceInfo();
 
-    if (id) {
-      return {
-        path: ['spaces', 'detail', 'apps', 'detail'],
-        params: { spaceId, appId: id }
-      };
-    } else {
-      return {
-        path: ['spaces', 'detail', 'apps', 'list'],
-        params: { spaceId }
-      };
-    }
+    return {
+      path: ['spaces', 'detail', 'apps', 'list'],
+      params: {
+        spaceId,
+        appId: id,
+        referrer: referrer ? `deeplink-${referrer}` : 'deeplink'
+      }
+    };
   });
 }
 
