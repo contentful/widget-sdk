@@ -337,9 +337,9 @@ export default class AppsListPage extends React.Component {
 
   openDeeplinkedAppDetails() {
     if (this.props.deeplinkAppId) {
-      const deeplinkedApp = this.state.availableApps.find(
-        app => app.id === this.props.deeplinkAppId
-      );
+      const apps = this.state.installedApps.concat(this.state.availableApps);
+      const deeplinkedApp = apps.find(app => app.id === this.props.deeplinkAppId);
+
       if (deeplinkedApp) {
         // TODO: we could potentially track the deeplink.
         // Use `this.props.deeplinkReferrer`.
