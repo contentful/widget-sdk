@@ -1,9 +1,13 @@
 import { get } from 'lodash';
 import * as Random from 'utils/Random.es6';
 import * as Analytics from 'analytics/Analytics.es6';
+import * as Intercom from 'services/intercom.es6';
+
+const INTERCOM_PREFIX = 'feature-apps-beta';
 
 export function detailsOpened(appId) {
   track('details-opened', appId);
+  trackInIntercom('app-details-opened', { appId });
 }
 
 export function permissionsOpened(appId) {
@@ -28,6 +32,7 @@ export function configurationUpdated(appId) {
 
 export function installed(appId) {
   track('installed', appId);
+  trackInIntercom('app-installed', { appId });
 }
 
 export function configurationUpdateFailed(appId) {
@@ -53,6 +58,10 @@ export function uninstalled(appId, reasons) {
 
 export function uninstallationFailed(appId) {
   track('uninstallation-failed', appId);
+}
+
+function trackInIntercom(eventName, details) {
+  Intercom.trackEvent(`${INTERCOM_PREFIX}-${eventName}`, details);
 }
 
 function track(eventName, appId) {
