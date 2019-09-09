@@ -16,18 +16,25 @@ export default {
     {
       name: 'list',
       url: '',
+      params: {
+        appId: null,
+        referrer: null
+      },
       component: AppsListPage,
       mapInjectedToProps: [
         'spaceContext',
         '$state',
-        (spaceContext, $state) => {
+        '$stateParams',
+        (spaceContext, $state, $stateParams) => {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
             repo: createAppsRepo(spaceContext.extensionDefinitionLoader, spaceContext.endpoint),
             productCatalog: new AppProductCatalog(spaceContext.space.data.sys.id, getSpaceFeature),
             organizationId: spaceContext.organization.sys.id,
             spaceId: spaceContext.space.data.sys.id,
-            userId: spaceContext.user.sys.id
+            userId: spaceContext.user.sys.id,
+            deeplinkAppId: $stateParams.appId || null,
+            deeplinkReferrer: $stateParams.referrer || null
           };
         }
       ]

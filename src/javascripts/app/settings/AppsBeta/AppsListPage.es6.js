@@ -280,7 +280,9 @@ export default class AppsListPage extends React.Component {
     productCatalog: PropTypes.shape({
       loadProductCatalogFlags: PropTypes.func.isRequired,
       isAppsFeatureDisabled: PropTypes.func.isRequired
-    }).isRequired
+    }).isRequired,
+    deeplinkAppId: PropTypes.string,
+    deeplinkReferrer: PropTypes.string
   };
 
   state = { ready: false };
@@ -314,17 +316,35 @@ export default class AppsListPage extends React.Component {
         app => app.installed
       );
 
-      this.setState({
-        ready: true,
-        availableApps,
-        hasAlphaApps,
-        installedApps,
-        appsListing,
-        appsFeatureDisabled
-      });
+      this.setState(
+        {
+          ready: true,
+          availableApps,
+          hasAlphaApps,
+          installedApps,
+          appsListing,
+          appsFeatureDisabled
+        },
+        () => {
+          this.openDeeplinkedAppDetails();
+        }
+      );
     } catch (err) {
       Telemetry.count('apps.list-loading-failed');
       Notification.error('Failed to load apps.');
+    }
+  }
+
+  openDeeplinkedAppDetails() {
+    if (this.props.deeplinkAppId) {
+      const deeplinkedApp = this.state.availableApps.find(
+        app => app.id === this.props.deeplinkAppId
+      );
+      if (deeplinkedApp) {
+        // TODO: we could potentially track the deeplink.
+        // Use `this.props.deeplinkReferrer`.
+        openDetailModal(deeplinkedApp);
+      }
     }
   }
 
