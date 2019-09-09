@@ -190,7 +190,14 @@ const AppsListShell = props => (
       {props.hasAlphaApps ? (
         <Note noteType="warning" className={styles.intro}>
           Apps alpha is being phased out.{' '}
-          <StateLink to="^.^.appsAlpha.list">View apps alpha</StateLink>
+          <StateLink to="^.^.appsAlpha.list">View apps alpha</StateLink>.<br /> Read the{' '}
+          <TextLink
+            href={websiteUrl('/developers/docs/extensibility/apps/migrating-from-alpha-to-beta')}
+            target="_blank"
+            rel="noopener noreferrer">
+            migration guide
+          </TextLink>{' '}
+          to learn how to migrate your currently installed alpha apps.
         </Note>
       ) : null}
       <Card padding="large" className={styles.appListCard}>
