@@ -43,13 +43,16 @@ export async function create(endpoint, entryId, { body, parentCommentId = null }
  * @returns {Promise<API.Comment>}
  */
 export async function getAllForEntry(endpoint, entryId) {
-  return endpoint(
+  const result = await endpoint(
     {
       method: 'GET',
       path: path(entryId)
     },
     alphaHeader
   );
+  // TODO: Remove filter once we removed tasks from `/comments` endpoint.
+  result.items = result.items.filter(item => !item.assignment);
+  return result;
 }
 
 /**

@@ -26,6 +26,9 @@ import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsE
 
 import * as Navigator from 'states/Navigator.es6';
 import { trackIsCommentsAlphaEligible } from '../EntrySidebar/CommentsPanel/analytics.es6';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
+import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import { getAllForEntry } from 'data/CMA/CommentsRepo.es6';
 
 /**
  * @ngdoc type
@@ -61,6 +64,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
   const $rootScope = getModule('$rootScope');
   const entitySelector = getModule('entitySelector');
   const entityCreator = getModule('entityCreator');
+  const spaceId = spaceContext.space.getId();
 
   $scope.context = {};
   $scope.context.ready = true;
@@ -178,12 +182,14 @@ export default async function create($scope, editorData, preferences, trackLoadE
 
   getVariation(ENTRY_COMMENTS, {
     organizationId: spaceContext.getData('organization.sys.id'),
-    spaceId: spaceContext.space.getId()
+    spaceId
   }).then(isEnabled => {
-    const isMasterEnvironment = spaceContext.isMasterEnvironment();
-    $scope.shouldDisplayCommentsToggle = isMasterEnvironment && isEnabled;
     if (isEnabled) {
       trackIsCommentsAlphaEligible();
+      if (spaceContext.isMasterEnvironment()) {
+        // Comments are currently only working in the master environment.
+        initComments($scope, spaceId, entityInfo.id);
+      }
     }
   });
 
@@ -206,4 +212,29 @@ export default async function create($scope, editorData, preferences, trackLoadE
       WidgetLocations.LOCATION_ENTRY_EDITOR
     )
   };
+}
+
+function initComments($scope, spaceId, entityId) {
+  // Showing the count is low-priority so we can defer fetching it
+  if (window.requestIdleCallback !== undefined) {
+    window.requestIdleCallback(maybeFetchCommentsCount);
+  } else {
+    const sensibleDelay = 1000;
+    setTimeout(maybeFetchCommentsCount, sensibleDelay);
+  }
+
+  $scope.shouldDisplayCommentsToggle = true;
+  $scope.emitter.on(SidebarEventTypes.UPDATED_COMMENTS_COUNT, setCommentsCount);
+
+  async function maybeFetchCommentsCount() {
+    if ($scope.commentsCount === undefined) {
+      const endpoint = createSpaceEndpoint(spaceId);
+      const { items: comments } = await getAllForEntry(endpoint, entityId);
+      setCommentsCount(comments.length);
+    }
+  }
+
+  function setCommentsCount(commentsCount) {
+    $scope.commentsCount = commentsCount;
+  }
 }

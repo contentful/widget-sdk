@@ -4,18 +4,24 @@ import { render, within, fireEvent, cleanup } from '@testing-library/react';
 
 import CommentsPanel from './CommentsPanel.es6';
 import { useCommentsFetcher, useCommentCreator } from './hooks.es6';
+import { remove as removeComment } from 'data/CMA/CommentsRepo.es6';
+import flushPromises from '../../../../../test/helpers/flushPromises';
 
 const mockAuthor = { firstName: 'John', lastName: 'Doe', avatarUrl: '0.jpeg', sys: { id: 'abc' } };
 
 jest.mock('ng/$q', () => ({}), { virtual: true });
 jest.mock('services/TokenStore.es6', () => ({
   getSpace: jest.fn(),
-  getUserSync: jest.fn()
+  getUserSync: jest.fn().mockReturnValue({ sys: { id: 'abc' } })
 }));
 jest.mock('./hooks.es6', () => ({
   useCommentsFetcher: jest.fn(),
   useCommentCreator: jest.fn().mockReturnValue([{}, jest.fn()])
 }));
+jest.mock('data/CMA/CommentsRepo.es6', () => ({
+  remove: jest.fn()
+}));
+
 const commentMeta = {
   createdBy: mockAuthor,
   space: { sys: { id: '123' } },
@@ -34,7 +40,7 @@ const mockReply = {
   sys: { id: '7', parent: { sys: { id: '1' } }, ...commentMeta }
 };
 
-const setData = (withReply = false) => {
+const setComments = (withReply = false) => {
   const comments = withReply ? [...mockComments, mockReply] : mockComments;
   useCommentsFetcher.mockReturnValue({ isLoading: false, error: null, data: comments });
 };
@@ -51,7 +57,8 @@ const defaultProps = {
   spaceId: 'a',
   entryId: 'b',
   environmentId: 'c',
-  isVisible: true
+  isVisible: true,
+  onCommentsCountUpdate: jest.fn()
 };
 
 const build = (props = defaultProps) => {
@@ -116,16 +123,18 @@ describe('CommentsPanel', () => {
   });
 
   describe('loaded', () => {
-    it('renders the comments', () => {
-      setData();
+    it('renders the comments and calls comments count update callback', () => {
+      setComments();
       const { queryAllByTestId } = build();
       expect(queryAllByTestId('comments.thread')).toHaveLength(6);
+      expect(defaultProps.onCommentsCountUpdate).toHaveBeenCalledWith(6);
     });
 
-    it('renders threads', () => {
-      setData(true);
+    it('renders threads and calls comments count update callback', () => {
+      setComments(true);
       const { queryAllByTestId } = build();
       expect(queryAllByTestId('comments.thread')).toHaveLength(6);
+      expect(defaultProps.onCommentsCountUpdate).toHaveBeenCalledWith(6);
     });
   });
 
@@ -158,21 +167,50 @@ describe('CommentsPanel', () => {
       fireEvent.click(submitBtn);
     };
 
-    it('adds a new comment when the list is empty', () => {
+    it('adds a new comment when the list is empty and calls comments count update callback', () => {
       setEmpty();
       const { queryAllByTestId, queryByTestId, container } = build();
       expect(queryAllByTestId('comments.thread')).toHaveLength(0);
       addComment(container);
       expect(queryByTestId('comments.empty')).toBeNull();
       expect(queryAllByTestId('comments.thread')).toHaveLength(1);
+      expect(defaultProps.onCommentsCountUpdate).toHaveBeenCalledWith(1);
     });
 
-    it('adds a new new comment when the list has other comments', () => {
-      setData();
+    it('adds a new comment when the list has other comments and calls comments count update callback', () => {
+      setComments();
       const { queryAllByTestId, container } = build();
       expect(queryAllByTestId('comments.thread')).toHaveLength(6);
       addComment(container);
       expect(queryAllByTestId('comments.thread')).toHaveLength(7);
+      expect(defaultProps.onCommentsCountUpdate).toHaveBeenCalledWith(7);
+    });
+  });
+
+  describe('comment deleted', () => {
+    const deleteComment = (container, getByTestId) => {
+      const menu = within(container).getAllByTestId('comment.menu')[0];
+      const menuButton = within(menu).getByTestId('cf-ui-icon-button');
+      fireEvent.click(menuButton);
+
+      const remove = getByTestId('comment.menu.remove');
+      const removeButton = within(remove).getByTestId('cf-ui-dropdown-list-item-button');
+      fireEvent.click(removeButton);
+
+      removeComment.mockResolvedValue();
+
+      const confirmButton = getByTestId('cf-ui-modal-confirm-confirm-button');
+      fireEvent.click(confirmButton);
+      return flushPromises();
+    };
+
+    it('deletes a comment when the list has other comments and calls comments count update callback', async () => {
+      setComments();
+      const { getAllByTestId, container, getByTestId } = build();
+      expect(getAllByTestId('comments.thread')).toHaveLength(6);
+      await deleteComment(container, getByTestId);
+      expect(getAllByTestId('comments.thread')).toHaveLength(5);
+      expect(defaultProps.onCommentsCountUpdate).toHaveBeenCalledWith(5);
     });
   });
 });

@@ -31,6 +31,10 @@ export default class CommentsPanelContainer extends React.Component {
     });
   }
 
+  onCommentsCountUpdate = commentsCount => {
+    this.props.emitter.emit(SidebarEventTypes.UPDATED_COMMENTS_COUNT, commentsCount);
+  };
+
   componentWillUnmount() {
     this.props.emitter.emit(
       SidebarEventTypes.WIDGET_DEREGISTERED,
@@ -42,6 +46,10 @@ export default class CommentsPanelContainer extends React.Component {
 
   render() {
     const { initialized, ...panelProps } = this.state;
-    return initialized && <CommentsPanel {...panelProps} />;
+    return (
+      initialized && (
+        <CommentsPanel {...panelProps} onCommentsCountUpdate={this.onCommentsCountUpdate} />
+      )
+    );
   }
 }

@@ -2,8 +2,6 @@ import { getUserSync } from 'services/TokenStore.es6';
 import { get } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-
 export function isCommentAuthor(comment) {
   const authorId = get(comment, 'sys.createdBy.sys.id');
   const userId = get(getUserSync(), 'sys.id');
@@ -11,6 +9,7 @@ export function isCommentAuthor(comment) {
 }
 
 export function canRemoveComment(comment) {
+  const spaceContext = getModule('spaceContext');
   const isAdmin = spaceContext.getData('spaceMember.admin', false);
   return isAdmin || isCommentAuthor(comment);
 }

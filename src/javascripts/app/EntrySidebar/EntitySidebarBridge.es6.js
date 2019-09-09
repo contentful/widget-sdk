@@ -152,15 +152,11 @@ export default ({ $scope, emitter }) => {
   let commentsPanelDelistener;
 
   const initializeCommentsPanel = once(() => {
-    const {
-      entityInfo: { id }
-    } = $scope;
-
     const init = once(() => {
       // init will fetch all comments. we don't want that until
       // the comments tab is opened for the first time
       emitter.emit(SidebarEventTypes.INIT_COMMENTS_PANEL, {
-        entryId: id,
+        entryId: $scope.entityInfo.id,
         spaceId: spaceContext.getId(),
         environmentId: spaceContext.getEnvironmentId()
       });

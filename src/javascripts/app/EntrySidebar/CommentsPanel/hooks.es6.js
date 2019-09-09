@@ -17,7 +17,7 @@ import { trackCommentCreated } from './analytics.es6';
 export const useCommentsFetcher = (spaceId, entryId) => {
   // avoiding infinite loop.
   const fetch = useCallback(async () => {
-    return withMinDelay(fetchComments(spaceId, entryId));
+    return withMinDelay(fetchCommentsAndUsers(spaceId, entryId));
   }, [spaceId, entryId]);
 
   return useAsync(fetch);
@@ -60,11 +60,9 @@ async function fetchUsers(spaceId, userIds) {
  * Get all comments as well as all the users associated with the comments
  * and return the resolved items
  */
-async function fetchComments(spaceId, entryId) {
+export async function fetchCommentsAndUsers(spaceId, entryId) {
   const endpoint = createSpaceEndpoint(spaceId);
-  const { items } = await getAllForEntry(endpoint, entryId);
-  // TODO: Remove filter once we removed tasks from `/comments` endpoint.
-  const comments = items.filter(item => !item.assignment);
+  const { items: comments } = await getAllForEntry(endpoint, entryId);
   const commentCreatorIds = uniq(map(comments, 'sys.createdBy.sys.id'));
   const users = commentCreatorIds.length ? await fetchUsers(spaceId, commentCreatorIds) : [];
   const resolvedComments = resolveLinks({
