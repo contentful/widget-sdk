@@ -8,9 +8,6 @@ import { getStore } from 'TheStore/index.es6';
 import { updateUserInSegment } from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $state = getModule('$state');
-const spaceContext = getModule('spaceContext');
-
 const store = getStore();
 
 export default class WithLink extends React.Component {
@@ -22,6 +19,8 @@ export default class WithLink extends React.Component {
   };
 
   render() {
+    const $state = getModule('$state');
+    const spaceContext = getModule('spaceContext');
     const { children, trackingElementId, intercomKey } = this.props;
     const getStateParams = () => {
       const { link } = this.props;
@@ -57,7 +56,9 @@ export default class WithLink extends React.Component {
 
       await $state.go(path, params);
       // set current step after we have successfully transitioned to the new step
-      store.set(`${getStoragePrefix()}:currentStep`, { path, params });
+      if (path !== 'spaces.detail.home') {
+        store.set(`${getStoragePrefix()}:currentStep`, { path, params });
+      }
     };
     return children(move);
   }
