@@ -1,9 +1,6 @@
-import { sandbox as sinonSandbox } from 'test/helpers/sinon';
 import flushPromises from '../../../helpers/flushPromises';
 
 describe('entityEditor/StateController', () => {
-  const sinon = sinonSandbox.create();
-
   beforeEach(function() {
     this.wait = async () => {
       // TODO: Move more dependencies to use `Promise` so that we can get rid of
@@ -16,7 +13,7 @@ describe('entityEditor/StateController', () => {
     };
     this.stubs = {
       goToPreviousSlideOrExit: sinon.stub(),
-      showUnpublishedReferencesWarning: sinon.stub().resolves(true)
+      showUnpublishedReferencesWarning: sinon.stub().returns(Promise.resolve(true))
     };
 
     module('contentful/test', $provide => {
