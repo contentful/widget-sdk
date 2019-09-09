@@ -173,7 +173,6 @@ export default ({ $scope, emitter }) => {
   const deinitializeCommentsPanel = once(() => {
     commentsPanelDelistener && commentsPanelDelistener();
     commentsPanelDelistener = undefined;
-    $rootScope.$broadcast('resetPreference', 'show-comments-panel');
   });
 
   emitter.on(SidebarEventTypes.WIDGET_DEREGISTERED, name => {

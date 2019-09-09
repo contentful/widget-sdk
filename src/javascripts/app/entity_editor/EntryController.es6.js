@@ -29,6 +29,7 @@ import { trackIsCommentsAlphaEligible } from '../EntrySidebar/CommentsPanel/anal
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { getAllForEntry } from 'data/CMA/CommentsRepo.es6';
+import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles.es6';
 
 /**
  * @ngdoc type
@@ -53,8 +54,6 @@ import { getAllForEntry } from 'data/CMA/CommentsRepo.es6';
  * @param {Object} editorData
  * @param {boolean} preferences.hasInitialFocus
  * @param {boolean} preferences.showDisabledFields
- * @param {boolean} preferences.showAuxPanel
- * @param {function} preferences.toggleAuxPanel
  * @scope.requires {Data.FieldControl[]} formControls
  *   Passed to FormWidgetsController to render field controls
  */
@@ -70,6 +69,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
   $scope.context.ready = true;
   $scope.editorData = editorData;
   $scope.loadEvents = K.createStreamBus($scope);
+  $scope.sidebarToggleProps = initSidebarTogglesProps($rootScope, $scope);
 
   const editorContext = ($scope.editorContext = {});
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
@@ -227,7 +227,7 @@ function initComments($scope, spaceId, entityId) {
   $scope.emitter.on(SidebarEventTypes.UPDATED_COMMENTS_COUNT, setCommentsCount);
 
   async function maybeFetchCommentsCount() {
-    if ($scope.commentsCount === undefined) {
+    if ($scope.sidebarToggleProps.commentsToggle.commentsCount === undefined) {
       const endpoint = createSpaceEndpoint(spaceId);
       const { items: comments } = await getAllForEntry(endpoint, entityId);
       setCommentsCount(comments.length);
@@ -235,6 +235,6 @@ function initComments($scope, spaceId, entityId) {
   }
 
   function setCommentsCount(commentsCount) {
-    $scope.commentsCount = commentsCount;
+    $scope.sidebarToggleProps.commentsToggle.commentsCount = commentsCount;
   }
 }

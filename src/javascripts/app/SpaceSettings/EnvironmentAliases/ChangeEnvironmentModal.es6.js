@@ -199,7 +199,7 @@ export default function ChangeEnvironmentModal({
                 </DropdownList>
               </Dropdown>
             </Card>
-            <AnimateHeight height={aliasedEnvironment !== initialAliasedEnvironment ? 'auto' : '0'}>
+            <AnimateHeight height={aliasedEnvironment !== initialAliasedEnvironment ? 'auto' : 0}>
               <Note
                 title={`The target environment of the ${alias.sys.id} alias will be changed from`}>
                 <Paragraph className={changeEnvironmentModalStyles.changeNotice}>

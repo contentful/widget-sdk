@@ -49,6 +49,7 @@ exports[`EntrySidebar/TranslationWidgetPills should match snapshot 1`] = `
   </div>
   <TextLink
     disabled={false}
+    iconPosition="left"
     linkType="primary"
     onClick={[Function]}
     testId="change-translation"

@@ -12,7 +12,7 @@ import { keys } from 'lodash';
 import setLocaleData from 'app/entity_editor/setLocaleData.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsExperiment.es6';
-
+import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles.es6';
 import { getModule } from 'NgRegistry.es6';
 
 /**
@@ -26,6 +26,9 @@ export default async function create($scope, editorData, preferences) {
 
   const $controller = getModule('$controller');
   const spaceContext = getModule('spaceContext');
+  const $rootScope = getModule('$rootScope');
+
+  $scope.sidebarToggleProps = initSidebarTogglesProps($rootScope);
 
   const editorContext = ($scope.editorContext = {});
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
