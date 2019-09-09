@@ -1,6 +1,9 @@
+import { sandbox as sinonSandbox } from 'test/helpers/sinon';
 import flushPromises from '../../../helpers/flushPromises';
 
 describe('entityEditor/StateController', () => {
+  const sinon = sinonSandbox.create();
+
   beforeEach(function() {
     this.wait = async () => {
       // TODO: Move more dependencies to use `Promise` so that we can get rid of
