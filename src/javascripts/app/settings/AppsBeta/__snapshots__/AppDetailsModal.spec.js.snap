@@ -58,7 +58,6 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
 .emotion-14 {
   min-width: 280px;
   width: 280px;
-  min-height: 700px;
   padding-left: 1.5rem;
   margin-left: 1.5rem;
   border-left: 1px solid #d3dce0;
