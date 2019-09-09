@@ -341,6 +341,8 @@ export default class AppsListPage extends React.Component {
         app => app.id === this.props.deeplinkAppId
       );
       if (deeplinkedApp) {
+        // TODO: we could potentially track the deeplink.
+        // Use `this.props.deeplinkReferrer`.
         openDetailModal(deeplinkedApp);
       }
     }
