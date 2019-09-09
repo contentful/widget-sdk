@@ -1,3 +1,4 @@
+/* eslint-disable rulesdir/restrict-non-f36-components */
 import React from 'react';
 import PropTypes from 'prop-types';
 import escape from 'utils/escape.es6';
@@ -140,14 +141,14 @@ function SpaceEnvironmentsDeleteDialog({
         <h1>Delete environment</h1>
         <button onClick={() => CancelDialog()} className="modal-dialog__close" />
       </header>
-      <div className={styles.modalDialogContent}>
+      <div className={`modal-dialog__content ${styles.modalDialogContent}`}>
         <p>
           {`You are about to delete the environment `}
           <strong>{confirmationId}</strong>
           {`. All of the environment data, including the environment
       itself, will be deleted. This operation cannot be undone.`}
         </p>
-        <div className={styles.formField}>
+        <div className={`cfnext-form__field ${styles.formField}`}>
           <label className={styles.label}>Type the ID of the environment to confirm</label>
           <input
             data-test-id="confirmId"
