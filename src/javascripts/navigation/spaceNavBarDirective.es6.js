@@ -1,6 +1,6 @@
 import { registerFactory, registerDirective } from 'NgRegistry.es6';
 import spaceNavTemplateDef from 'navigation/SpaceNavTemplate.es6';
-import { ENVIRONMENTS_FLAG, TEAMS_IN_SPACES, APPS_BETA } from 'featureFlags.es6';
+import { ENVIRONMENTS_FLAG, TEAMS_IN_SPACES } from 'featureFlags.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
 import * as LD from 'utils/LaunchDarkly/index.es6';
@@ -16,8 +16,7 @@ const SPACE_SETTINGS_SECTIONS = [
   'roles',
   'apiKey',
   'webhooks',
-  'previews',
-  'apps'
+  'previews'
 ];
 
 export default function register() {
@@ -51,7 +50,6 @@ export default function register() {
             controller.spaceId = $stateParams.spaceId;
             controller.canNavigateTo = canNavigateTo;
             controller.makeRef = makeRef;
-            controller.appsBetaLDFlagLoaded = false;
 
             TokenStore.getOrganization(orgId).then(org => {
               controller.usageEnabled = org.pricingVersion === 'pricing_version_2';
@@ -59,10 +57,6 @@ export default function register() {
 
             LD.onFeatureFlag($scope, TEAMS_IN_SPACES, teamsInSpacesFF => {
               controller.teamsInSpacesFF = teamsInSpacesFF;
-            });
-            LD.onFeatureFlag($scope, APPS_BETA, appsBetaEnabled => {
-              controller.appsBetaEnabled = appsBetaEnabled;
-              controller.appsBetaLDFlagLoaded = true;
             });
             getOrgFeature(orgId, 'teams').then(value => {
               controller.hasOrgTeamFeature = value;

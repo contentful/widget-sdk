@@ -164,38 +164,12 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
         icon: 'nav-media',
         title: 'Media'
       },
-      /**
-       * Define three independent tiles for navigation to apps so we can
-       * display apps alpha navigation item without label if the LD flag for apps beta has
-       * not been loaded to avoid too much jitter. Add alpha label after load
-       * of ld flag has finished and evaluated to off.
-       *
-       * Beta has no flag.
-       */
       {
-        if:
-          '!nav.appsBetaLDFlagLoaded && (nav.canNavigateTo("apps") || nav.canNavigateTo("appsAlpha"))',
-        dataViewType: 'apps',
-        icon: 'nav-apps',
-        sref: '{{nav.makeRef("appsAlpha.list")}}',
-        rootSref: '{{nav.makeRef("appsAlpha")}}',
-        title: 'Apps'
-      },
-      {
-        if: 'nav.appsBetaLDFlagLoaded && nav.appsBetaEnabled && nav.canNavigateTo("apps")',
+        if: 'nav.canNavigateTo("apps")',
         dataViewType: 'apps',
         icon: 'nav-apps',
         sref: '{{nav.makeRef("apps.list")}}',
         rootSref: '{{nav.makeRef("apps")}}',
-        title: 'Apps'
-      },
-      {
-        if: 'nav.appsBetaLDFlagLoaded && !nav.appsBetaEnabled && nav.canNavigateTo("appsAlpha")',
-        dataViewType: 'apps',
-        icon: 'nav-apps',
-        label: 'alpha',
-        sref: '{{nav.makeRef("appsAlpha.list")}}',
-        rootSref: '{{nav.makeRef("appsAlpha")}}',
         title: 'Apps'
       },
       {
