@@ -281,6 +281,8 @@ export default function AppDetailsModal(props) {
   return (
     <Modal
       allowHeightOverflow
+      position="top"
+      topOffset={20}
       size={modalSize}
       title={modalTitle}
       isShown={props.isShown}
