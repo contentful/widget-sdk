@@ -69,9 +69,10 @@ export default ({ $scope, emitter }) => {
 
   const initializePublication = once(() => {
     const notifyUpdate = update => {
+      const entity = $scope.editorData.entity.data;
       emitter.emit(SidebarEventTypes.UPDATED_PUBLICATION_WIDGET, {
         ...update,
-        entity: { ...$scope.editorData.entity.data },
+        entity: entity && { ...entity }, // `undefined` after entity deletion.
         spaceId: spaceContext.space.getId(),
         environmentId: spaceContext.getEnvironmentId(),
         isMasterEnvironment: spaceContext.isMasterEnvironment(),
@@ -90,12 +91,10 @@ export default ({ $scope, emitter }) => {
     });
 
     K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
-      if (!sys.deletedAt) {
-        notifyUpdate({
-          status: $scope.state.current,
-          updatedAt: sys.updatedAt
-        });
-      }
+      notifyUpdate({
+        status: $scope.state.current,
+        updatedAt: sys.updatedAt
+      });
     });
 
     let setNotSavingTimeout;

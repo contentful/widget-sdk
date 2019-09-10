@@ -63,8 +63,17 @@ export default class PublicationWidgetContainer extends Component {
       <JobsFeatureFlag>
         {({ currentVariation }) => {
           const isJobsFeatureEnabled = currentVariation;
-          const isEntry = entity && entity.sys.type === 'Entry';
-          return isJobsFeatureEnabled && isEntry ? (
+          const isAssetOrDeletedEntry = !entity || entity.sys.type !== 'Entry';
+          return !isJobsFeatureEnabled || isAssetOrDeletedEntry ? (
+            <PublicationWidget
+              status={this.state.status}
+              primary={primary}
+              secondary={secondary}
+              revert={revert}
+              isSaving={this.state.isSaving}
+              updatedAt={this.state.updatedAt}
+            />
+          ) : (
             <JobsWidget
               spaceId={spaceId}
               environmentId={environmentId}
@@ -77,15 +86,6 @@ export default class PublicationWidgetContainer extends Component {
               revert={revert}
               isSaving={isSaving}
               updatedAt={updatedAt}
-            />
-          ) : (
-            <PublicationWidget
-              status={this.state.status}
-              primary={primary}
-              secondary={secondary}
-              revert={revert}
-              isSaving={this.state.isSaving}
-              updatedAt={this.state.updatedAt}
             />
           );
         }}
