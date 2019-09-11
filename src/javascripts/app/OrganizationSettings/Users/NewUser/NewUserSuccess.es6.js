@@ -35,7 +35,7 @@ export default function NewUserSuccess({ failures = [], successes = [], onRestar
   );
 
   return (
-    <Typography testId="new-user.success">
+    <Typography testId="new-user.done">
       <Heading>Done!</Heading>
 
       {!failures.length && (
@@ -49,6 +49,7 @@ export default function NewUserSuccess({ failures = [], successes = [], onRestar
       {successes.length > 0 && (
         <Note
           className={noteStyle}
+          testId="new-user.done.success"
           noteType="positive"
           title={`${pluralize('users', successes.length, true)} ${pluralize(
             'have',
@@ -63,6 +64,7 @@ export default function NewUserSuccess({ failures = [], successes = [], onRestar
       {failures.length > 0 && (
         <>
           <Note
+            testId="new-user.done.failed"
             className={noteStyle}
             noteType="negative"
             title={`${pluralize('users', failures.length, true)} couldn't be invited.`}>

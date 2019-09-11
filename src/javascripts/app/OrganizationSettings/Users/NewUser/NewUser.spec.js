@@ -16,6 +16,7 @@ import {
   invite,
   createOrgMembership
 } from 'access_control/OrganizationMembershipRepository.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
 
@@ -189,12 +190,20 @@ describe('NewUser', () => {
       expect(invite).toHaveBeenCalledTimes(100);
     });
 
+    it('will not submit if the confirmation dialog is not confirmed', async () => {
+      const wrapper = build();
+      ModalLauncher.open.mockResolvedValueOnce(false);
+      await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner');
+      expect(invite).not.toHaveBeenCalled();
+    });
+
     it('shows a success message', async () => {
       const wrapper = build();
-      await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner', []);
-      await wait(() => wrapper.getByTestId('new-user.success'));
-      const successState = wrapper.getByTestId('new-user.success');
+      await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner');
+      await wait(() => wrapper.getByTestId('new-user.done'));
+      const successState = wrapper.getByTestId('new-user.done.success');
       expect(successState).toBeVisible();
+      expect(invite).toHaveBeenCalledTimes(1);
     });
   });
 });
