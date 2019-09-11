@@ -4,6 +4,8 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import { getStore } from 'TheStore/index.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as UserListActions from 'access_control/Users/UserListActions.es6';
 
 import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants.es6';
 
@@ -42,9 +44,7 @@ export default function register() {
     '$scope',
     'spaceContext',
     'UserListHandler',
-    'access_control/AccessChecker',
-    'access_control/Users/UserListActions.es6',
-    ($scope, spaceContext, UserListHandler, accessChecker, UserListActions) => {
+    ($scope, spaceContext, UserListHandler) => {
       const userListHandler = UserListHandler.create();
       const actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
 

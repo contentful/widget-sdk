@@ -55,10 +55,9 @@ const detail = {
   url: '/:roleId',
   resolve: {
     role: [
-      'access_control/RoleRepository.es6',
       'spaceContext',
       '$stateParams',
-      (RoleRepository, spaceContext, $stateParams) =>
+      (spaceContext, $stateParams) =>
         RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId)
     ]
   },
