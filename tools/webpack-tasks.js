@@ -37,12 +37,10 @@ async function build(cb) {
     console.warn(info.warnings);
   }
 
-  // Removed since this causes the build on CircleCI to hang
-  // console.log(stats.toString(config.stats));
   cb();
 }
 
-function handleCompileResults(err, stats, config, { onSuccess, onError } = {}) {
+function handleCompileResults(err, stats, _config, { onSuccess, onError } = {}) {
   if (err) {
     console.error(err.stack || err);
     if (err.details) {
@@ -62,8 +60,6 @@ function handleCompileResults(err, stats, config, { onSuccess, onError } = {}) {
   if (stats.hasWarnings()) {
     console.warn(info.warnings);
   }
-
-  console.log(stats.toString(config.stats));
 }
 
 module.exports.watch = watch;
