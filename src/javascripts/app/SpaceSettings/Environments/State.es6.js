@@ -116,6 +116,8 @@ const reduce = makeReducer({
   [ReceiveResponse]: (state, result) => {
     return match(result, {
       [C.Success]: ([items, resource]) => {
+        const spaceContext = getModule('spaceContext');
+
         // Resource service gets usage on organization level for v1 orgs - see
         // https://contentful.atlassian.net/browse/MOI-144
         // This should be fixed when `feature-bv-2018-01-features-api` is turned on.

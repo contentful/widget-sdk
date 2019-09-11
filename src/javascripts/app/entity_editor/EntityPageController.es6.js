@@ -28,8 +28,6 @@ const PEEK_ANIMATION_DURATION = 200;
 export const getTimestamp = () => new Date().getTime();
 
 export default ($scope, $state) => {
-  const spaceContext = getModule('spaceContext');
-
   let topPeekingLayerIndex = -1;
   let peekedLayerIndexes = [];
   let hoveredLayerIndex;

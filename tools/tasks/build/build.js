@@ -6,8 +6,6 @@ const { bundleAppJs, bundleTestJs } = require('./js');
 const { buildMinifiedChunks, buildNonMinifiedChunks } = require('./chunks');
 const buildStyles = require('./styles');
 
-console.log(buildTestDeps);
-
 const buildTest = gulp.series(
   clean,
   gulp.parallel(

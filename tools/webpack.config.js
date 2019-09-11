@@ -98,6 +98,12 @@ module.exports = () => {
       new WebpackRequireFrom({
         methodName: 'WebpackRequireFrom_getChunkURL'
       })
+      // new webpack.ProgressPlugin({
+      //   entries: true,
+      //   modules: true,
+      //   modulesCount: 100,
+      //   profile: true
+      // })
     ].concat(
       // moment.js by default bundles all locales, we want to remove them
       // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
@@ -119,11 +125,32 @@ module.exports = () => {
     // Development:
     // We are using `cheap-module-source-map` as this allows us to see
     // errors and stack traces with Karma rather than just "Script error".
-    devtool: isDev ? 'cheap-module-source-map' : 'inline-source-map',
+    devtool: isDev ? 'cheap-module-source-map' : 'source-map',
     optimization: {
-      // we minify all JS files after concatenation in `build/js` gulp task
-      // so we don't need to uglify it here
-      minimize: !isDev
+      minimize: false,
+      chunkIds: isDev ? 'named' : false,
+      splitChunks: {
+        cacheGroups: {
+          app: {
+            name: 'main',
+            test: (_, chunks) => {
+              if (chunks[0].name === 'app.js') {
+                return false;
+              }
+
+              // If any of the chunks that would be generated contain a `src/javascripts` file,
+              // include them in this bundle.
+              if (anyChunkHasSrcJavascripts(chunks)) {
+                return true;
+              }
+
+              // Do not include anything else in this bundle.
+              return false;
+            },
+            chunks: 'all'
+          }
+        }
+      }
     },
     stats: {
       // Set the maximum number of modules to be shown
@@ -131,3 +158,15 @@ module.exports = () => {
     }
   };
 };
+
+function anyChunkHasSrcJavascripts(chunks) {
+  return Boolean(
+    chunks.find(chunk => {
+      const chunkModules = Array.from(chunk._modules);
+
+      return chunkModules.find(_module => {
+        return _module.userRequest && _module.userRequest.split('/src/javascripts/').length !== 1;
+      });
+    })
+  );
+}
