@@ -272,7 +272,9 @@ angular
       const Telemetry = await import('i13n/Telemetry.es6');
       const { loadAll: loadAllStates } = await import('states/states.es6');
       const { go } = await import('states/Navigator.es6');
-      const { init: initExtentionActivationTracking } = await import('widgets/ExtensionActivationTracking.es6');
+      const { init: initExtentionActivationTracking } = await import(
+        'widgets/ExtensionActivationTracking.es6'
+      );
 
       const { init: initDialogs } = $injector.get('dialogsInitController');
       const { setup: setupStateChangeHandlers } = $injector.get('navigation/stateChangeHandlers');
@@ -291,7 +293,6 @@ angular
       initAutoCreateNewSpace();
       initContextMenuHandler();
       initExtentionActivationTracking();
-      loadAllStates();
 
       initDialogs();
       setupStateChangeHandlers();

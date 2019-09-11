@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import { $initialize, $inject, $apply } from 'test/helpers/helpers';
 import { it } from 'test/helpers/dsl';
 
-fdescribe('entityEditor/StateController', () => {
+describe('entityEditor/StateController', () => {
   beforeEach(async function() {
     this.stubs = {
       goToPreviousSlideOrExit: sinon.stub(),
@@ -233,7 +233,7 @@ fdescribe('entityEditor/StateController', () => {
 
     describe('primary action publish', () => {
       it('publishes entity', async function() {
-        this.controller.primary.execute();
+        await this.controller.primary.execute();
 
         await flushPromises();
         $apply();
@@ -251,7 +251,7 @@ fdescribe('entityEditor/StateController', () => {
       });
 
       it('notifies on success', async function() {
-        this.controller.primary.execute();
+        await this.controller.primary.execute();
         await flushPromises();
         $apply();
 
@@ -259,7 +259,7 @@ fdescribe('entityEditor/StateController', () => {
       });
 
       it('runs the validator', async function() {
-        this.controller.primary.execute();
+        await this.controller.primary.execute();
 
         await flushPromises();
         $apply();
@@ -302,7 +302,7 @@ fdescribe('entityEditor/StateController', () => {
 
         function itTracksThePublishEventWithOrigin(eventOrigin) {
           it('tracks the publish event', async function() {
-            this.controller.primary.execute();
+            await this.controller.primary.execute();
             await flushPromises();
             $apply();
 
@@ -329,7 +329,7 @@ fdescribe('entityEditor/StateController', () => {
         });
 
         it('does not track the publish event', async function() {
-          this.controller.primary.execute();
+          await this.controller.primary.execute();
 
           await flushPromises();
           $apply();
@@ -341,7 +341,7 @@ fdescribe('entityEditor/StateController', () => {
 
       it('sends notification if validation failed', async function() {
         this.validator.run.returns(false);
-        this.controller.primary.execute();
+        await this.controller.primary.execute();
         await flushPromises();
         $apply();
 
@@ -353,7 +353,8 @@ fdescribe('entityEditor/StateController', () => {
 
       it('does not publish if validation failed', async function() {
         this.validator.run.returns(false);
-        this.controller.primary.execute();
+
+        await this.controller.primary.execute();
         await flushPromises();
         $apply();
 
@@ -362,7 +363,7 @@ fdescribe('entityEditor/StateController', () => {
 
       it('sends notification on server error', async function() {
         this.spaceEndpoint.rejects('ERROR');
-        this.controller.primary.execute();
+        await this.controller.primary.execute();
 
         await flushPromises();
         $apply();
@@ -450,9 +451,9 @@ fdescribe('entityEditor/StateController', () => {
   });
 
   describe('publication warnings', () => {
-    it('shows publication warnings before actual action', function() {
+    it('shows publication warnings before actual action', async function() {
       $apply();
-      this.controller.primary.execute();
+      await this.controller.primary.execute();
 
       sinon.assert.calledOnce(this.stubs.showUnpublishedReferencesWarning);
     });
