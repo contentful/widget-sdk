@@ -51,10 +51,13 @@ export default function SpacesAutoComplete({
       items={items}
       onChange={handleChange}
       onQueryChange={handleQueryChange}
-      placeholder="Search spaces"
+      placeholder="Choose from spaces in your organization"
       validationMessage={validationMessage}
       isLoading={isLoading}
-      disabled={disabled}>
+      width="large"
+      disabled={disabled}
+      emptyListMessage="There are no spaces to choose from"
+      noMatchesMessage="No spaces found">
       {options => options.map(option => <span key={option.sys.id}>{option.name}</span>)}
     </Autocomplete>
   );
