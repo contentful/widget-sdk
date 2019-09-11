@@ -35,6 +35,7 @@ import {
 import DialogTransformer from './transformers/Dialog.es6';
 import JobsCreateTransformer from './transformers/JobsCreate.es6';
 import JobsCancelTransformer from './transformers/JobsCancel.es6';
+import EnvironmentAliases from './transformers/EnvironmentAliases.es6';
 
 /**
  * @ngdoc module
@@ -81,6 +82,16 @@ registerGenericEvent('incoming_links:dialog_confirm');
 registerGenericEvent('incoming_links:dialog_link_click');
 registerGenericEvent('incoming_links:sidebar_link_click');
 registerGenericEvent('incoming_links:query');
+
+registerEnvironmentAliasesEvent('environment_aliases:opt_in_start');
+registerEnvironmentAliasesEvent('environment_aliases:opt_in_complete');
+registerEnvironmentAliasesEvent('environment_aliases:opt_in_step_1');
+registerEnvironmentAliasesEvent('environment_aliases:opt_in_step_2');
+registerEnvironmentAliasesEvent('environment_aliases:opt_in_step_3');
+registerEnvironmentAliasesEvent('environment_aliases:opt_in_abort_step_1');
+registerEnvironmentAliasesEvent('environment_aliases:opt_in_abort_step_2');
+registerEnvironmentAliasesEvent('environment_aliases:change_environment_open');
+registerEnvironmentAliasesEvent('environment_aliases:change_environment_abort');
 
 registerGenericEvent('usage:period_selected');
 
@@ -278,6 +289,10 @@ function registerSpaceWizardEvent(event) {
 
 function registerSSOSelfConfigurationEvent(event) {
   registerEvent(event, 'feature_sso_self_configuration', SSOSelfConfigurationTransformer);
+}
+
+function registerEnvironmentAliasesEvent(event) {
+  registerEvent(event, 'environment_aliases', EnvironmentAliases);
 }
 
 /**
