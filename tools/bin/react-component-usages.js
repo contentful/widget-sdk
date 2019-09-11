@@ -104,7 +104,12 @@ function processJsFile(filename) {
           }
         }
 
-        if (callee.name === 'reactStateWrapper' && args[0].type === 'ObjectExpression') {
+        const dynamicReactComponentUsageCalls = ['reactStateWrapper', 'conditionalIframeWrapper'];
+
+        if (
+          dynamicReactComponentUsageCalls.includes(callee.name) &&
+          args[0].type === 'ObjectExpression'
+        ) {
           const { properties } = args[0];
 
           for (const prop of properties) {
@@ -113,10 +118,18 @@ function processJsFile(filename) {
             }
           }
         }
+
+        if (callee.name === 'getReactTemplate') {
+          if (args[0].type !== 'StringLiteral') {
+            return;
+          }
+
+          names.push(args[0].value);
+        }
       }
 
       if (node.type === 'StringLiteral' && node.value.match('<react-component')) {
-        const name = getNameFromString(filename, node.value);
+        const name = getNameFromString(node.value, filename);
 
         if (!name) {
           return;
@@ -129,7 +142,7 @@ function processJsFile(filename) {
         const generatedString = generate(node).code.split('`')[1];
 
         if (generatedString.match('<react-component')) {
-          const name = getNameFromString(filename, generatedString);
+          const name = getNameFromString(generatedString, filename);
 
           if (!name) {
             return;
@@ -163,11 +176,20 @@ function findReactComponentsInJadeNode(nodes, filename) {
   const names = [];
 
   for (const node of nodes) {
+    // Look at all children of this tag
     if (node.block) {
       names.push(findReactComponentsInJadeNode(node.block.nodes, filename));
     }
 
-    if (node.name === 'react-component') {
+    if (node.val) {
+      // The jade parser sometimes thinks a tag is text. Try to parse the text as HTML
+      const name = getNameFromString(node.val, filename);
+
+      if (name) {
+        names.push(name);
+      }
+    } else if (node.name === 'react-component') {
+      // If the tag is react-component, handle it directly here
       const name = node.attrs.find(attr => attr.name === 'name').val.replace(/['"]/g, '');
 
       if (!name) {
@@ -182,7 +204,7 @@ function findReactComponentsInJadeNode(nodes, filename) {
   return _.remove(_.flatten(names), val => val);
 }
 
-function getNameFromString(filename, str) {
+function getNameFromString(str, filename) {
   const parsed = parseDOM(str);
 
   return findName(parsed, str, filename);

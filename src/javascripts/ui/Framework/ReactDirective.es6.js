@@ -17,6 +17,7 @@ import * as componentsSharedKnowledgeBaseIconKnowledgeBaseEs6 from 'components/s
 import * as uiComponentsContactUsButtonEs6 from 'ui/Components/ContactUsButton.es6';
 import * as appContentListSaveViewDialogComponentEs6 from 'app/ContentList/SaveViewDialogComponent.es6';
 import * as uiComponentsIconEs6 from 'ui/Components/Icon.es6';
+import * as componentsSharedIe11DeprecationBannerEs6 from 'components/shared/IE11DeprecationBanner.es6';
 import * as appContentModelEditorContentTypesPageEs6 from 'app/ContentModel/Editor/ContentTypesPage.es6';
 import * as appInputDialogComponentEs6 from 'app/InputDialogComponent.es6';
 import * as appOrganizationSettingsSsoSsoSetupEs6 from 'app/OrganizationSettings/SSO/SSOSetup.es6';
@@ -47,12 +48,14 @@ import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage.es6';
 import * as appSettingsLocalesRoutesLocalesListRouteEs6 from 'app/settings/locales/routes/LocalesListRoute.es6';
 import * as appSettingsLocalesRoutesLocalesNewRouteEs6 from 'app/settings/locales/routes/LocalesNewRoute.es6';
 import * as appSettingsLocalesRoutesLocalesEditRouteEs6 from 'app/settings/locales/routes/LocalesEditRoute.es6';
+import * as appWidgetsRichTextReadOnlyRichTextEditorEs6 from 'app/widgets/rich_text/ReadOnlyRichTextEditor.es6';
 import * as componentsSharedRelativeDateTimeIndexEs6 from 'components/shared/RelativeDateTime/index.es6';
 import * as appWidgetsEditorWarningPredefinedValuesEs6 from 'app/widgets/EditorWarningPredefinedValues.es6';
 import * as appWidgetsJsonJsonEditorWarningEs6 from 'app/widgets/json/JsonEditorWarning.es6';
 import * as appWidgetsLocationLocationEditorWarningEs6 from 'app/widgets/location/LocationEditorWarning.es6';
 import * as componentsFieldDialogValidationValuesEs6 from 'components/field_dialog/ValidationValues.es6';
 import * as componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6 from 'components/field_dialog/appearance/FieldDialogAppearanceTab.es6';
+import * as componentsFieldDialogRichTextOptionsEs6 from 'components/field_dialog/RichTextOptions.es6';
 import * as componentsSharedLoadingModalEs6 from 'components/shared/LoadingModal.es6';
 import * as componentsSharedStackOnboardingScreensChoiceScreenEs6 from 'components/shared/stack-onboarding/screens/ChoiceScreen.es6';
 import * as componentsSharedSpaceWizardWizardEs6 from 'components/shared/space-wizard/Wizard.es6';
@@ -67,6 +70,7 @@ import * as appJobsJobsPageLinkEs6 from 'app/jobs/JobsPageLink.es6';
 import * as componentsTabsEntryListEntryListEs6 from 'components/tabs/entry_list/EntryList.es6';
 import * as componentsTabsEntryListEmptyStatesIndexEs6 from 'components/tabs/entry_list/EmptyStates/index.es6';
 import * as componentsSharedQuickNavigationQuickNavWithFeatureFlagEs6 from 'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6';
+import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector/CreateEntity/index.es6';
 import * as componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6 from 'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6';
 import * as navigationModernStackOnboardingRelaunchEs6 from 'navigation/modernStackOnboardingRelaunch.es6';
 import * as componentsSharedUserInvitationEs6 from 'components/shared/UserInvitation.es6';
@@ -80,6 +84,7 @@ import * as componentsSharedStackOnboardingScreensGetStartedScreenEs6 from 'comp
 import * as componentsSharedStackOnboardingScreensCopyScreenEs6 from 'components/shared/stack-onboarding/screens/CopyScreen.es6';
 import * as componentsSharedStackOnboardingScreensExploreScreenEs6 from 'components/shared/stack-onboarding/screens/ExploreScreen.es6';
 import * as componentsSharedStackOnboardingScreensDeployScreenEs6 from 'components/shared/stack-onboarding/screens/DeployScreen.es6';
+import * as accountAccountViewEs6 from 'account/AccountView.es6';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -284,6 +289,7 @@ function getModule(name) {
     'ui/Components/ContactUsButton.es6': uiComponentsContactUsButtonEs6,
     'app/ContentList/SaveViewDialogComponent.es6': appContentListSaveViewDialogComponentEs6,
     'ui/Components/Icon.es6': uiComponentsIconEs6,
+    'components/shared/IE11DeprecationBanner.es6': componentsSharedIe11DeprecationBannerEs6,
     'app/ContentModel/Editor/ContentTypesPage.es6': appContentModelEditorContentTypesPageEs6,
     'app/InputDialogComponent.es6': appInputDialogComponentEs6,
     'app/OrganizationSettings/SSO/SSOSetup.es6': appOrganizationSettingsSsoSsoSetupEs6,
@@ -314,12 +320,14 @@ function getModule(name) {
     'app/settings/locales/routes/LocalesListRoute.es6': appSettingsLocalesRoutesLocalesListRouteEs6,
     'app/settings/locales/routes/LocalesNewRoute.es6': appSettingsLocalesRoutesLocalesNewRouteEs6,
     'app/settings/locales/routes/LocalesEditRoute.es6': appSettingsLocalesRoutesLocalesEditRouteEs6,
+    'app/widgets/rich_text/ReadOnlyRichTextEditor.es6': appWidgetsRichTextReadOnlyRichTextEditorEs6,
     'components/shared/RelativeDateTime/index.es6': componentsSharedRelativeDateTimeIndexEs6,
     'app/widgets/EditorWarningPredefinedValues.es6': appWidgetsEditorWarningPredefinedValuesEs6,
     'app/widgets/json/JsonEditorWarning.es6': appWidgetsJsonJsonEditorWarningEs6,
     'app/widgets/location/LocationEditorWarning.es6': appWidgetsLocationLocationEditorWarningEs6,
     'components/field_dialog/ValidationValues.es6': componentsFieldDialogValidationValuesEs6,
     'components/field_dialog/appearance/FieldDialogAppearanceTab.es6': componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6,
+    'components/field_dialog/RichTextOptions.es6': componentsFieldDialogRichTextOptionsEs6,
     'components/shared/LoadingModal.es6': componentsSharedLoadingModalEs6,
     'components/shared/stack-onboarding/screens/ChoiceScreen.es6': componentsSharedStackOnboardingScreensChoiceScreenEs6,
     'components/shared/space-wizard/Wizard.es6': componentsSharedSpaceWizardWizardEs6,
@@ -334,6 +342,7 @@ function getModule(name) {
     'components/tabs/entry_list/EntryList.es6': componentsTabsEntryListEntryListEs6,
     'components/tabs/entry_list/EmptyStates/index.es6': componentsTabsEntryListEmptyStatesIndexEs6,
     'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6': componentsSharedQuickNavigationQuickNavWithFeatureFlagEs6,
+    'search/EntitySelector/CreateEntity/index.es6': searchEntitySelectorCreateEntityIndexEs6,
     'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6': componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6,
     'navigation/modernStackOnboardingRelaunch.es6': navigationModernStackOnboardingRelaunchEs6,
     'components/shared/UserInvitation.es6': componentsSharedUserInvitationEs6,
@@ -346,7 +355,8 @@ function getModule(name) {
     'components/shared/stack-onboarding/screens/GetStartedScreen.es6': componentsSharedStackOnboardingScreensGetStartedScreenEs6,
     'components/shared/stack-onboarding/screens/CopyScreen.es6': componentsSharedStackOnboardingScreensCopyScreenEs6,
     'components/shared/stack-onboarding/screens/ExploreScreen.es6': componentsSharedStackOnboardingScreensExploreScreenEs6,
-    'components/shared/stack-onboarding/screens/DeployScreen.es6': componentsSharedStackOnboardingScreensDeployScreenEs6
+    'components/shared/stack-onboarding/screens/DeployScreen.es6': componentsSharedStackOnboardingScreensDeployScreenEs6,
+    'account/AccountView.es6': accountAccountViewEs6
   };
 
   return get(allowedModules, name, null);
