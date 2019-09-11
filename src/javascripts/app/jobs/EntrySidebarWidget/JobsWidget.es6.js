@@ -90,7 +90,7 @@ function getPublishedAt(entity) {
   }
 }
 
-export default function JobWidget({
+export default function JobsWidget({
   spaceId,
   environmentId,
   isMasterEnvironment,
@@ -101,7 +101,8 @@ export default function JobWidget({
   secondary,
   revert,
   isSaving,
-  updatedAt
+  updatedAt,
+  validator
 }) {
   const spaceContext = getModule('spaceContext');
   const [jobs, setJobs] = useState([]);
@@ -152,7 +153,10 @@ export default function JobWidget({
         Notification.error(`${entryTitle} failed to schedule`);
       }
       setIsCreatingJob(false);
-      logger.logError(error, `Entry failed to schedule`);
+      logger.logError(`Entry failed to schedule`, {
+        error,
+        message: error.message
+      });
     }
   };
 
@@ -205,6 +209,12 @@ export default function JobWidget({
         isSaving={isSaving}
         updatedAt={updatedAt}
         onScheduledPublishClick={async () => {
+          if (!validator.run()) {
+            Notification.error(
+              `Error scheduling ${entryTitle}: Validation failed. Please check the individual fields for errors.`
+            );
+            return;
+          }
           const isConfirmed = await showUnpublishedReferencesWarning({
             entity,
             spaceId,
@@ -258,7 +268,7 @@ export default function JobWidget({
   );
 }
 
-JobWidget.propTypes = {
+JobsWidget.propTypes = {
   spaceId: PropTypes.string.isRequired,
   environmentId: PropTypes.string.isRequired,
   isMasterEnvironment: PropTypes.bool.isRequired,
@@ -269,5 +279,8 @@ JobWidget.propTypes = {
   updatedAt: PropTypes.string,
   revert: CommandPropType,
   primary: CommandPropType,
-  secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired
+  secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
+  validator: PropTypes.shape({
+    run: PropTypes.func
+  }).isRequired
 };

@@ -76,6 +76,7 @@ export default ({ $scope, emitter }) => {
         environmentId: spaceContext.getEnvironmentId(),
         isMasterEnvironment: spaceContext.isMasterEnvironment(),
         userId: spaceContext.user.sys.id,
+        validator: $scope.editorContext.validator,
         commands: {
           primary: $scope.state.primary,
           secondary: $scope.state.secondary,

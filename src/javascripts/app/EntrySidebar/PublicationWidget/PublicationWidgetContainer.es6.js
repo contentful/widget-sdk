@@ -20,7 +20,8 @@ export default class PublicationWidgetContainer extends Component {
     spaceId: undefined,
     environmentId: undefined,
     userId: undefined,
-    entity: undefined
+    entity: undefined,
+    validator: undefined
   };
 
   componentDidMount() {
@@ -52,7 +53,8 @@ export default class PublicationWidgetContainer extends Component {
       userId,
       status,
       isSaving,
-      updatedAt
+      updatedAt,
+      validator
     } = this.state;
 
     const revert = get(commands, 'revertToPrevious');
@@ -77,6 +79,7 @@ export default class PublicationWidgetContainer extends Component {
               revert={revert}
               isSaving={isSaving}
               updatedAt={updatedAt}
+              validator={validator}
             />
           ) : (
             <PublicationWidget

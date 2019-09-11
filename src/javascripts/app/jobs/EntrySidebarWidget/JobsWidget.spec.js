@@ -3,7 +3,7 @@ import { render, cleanup, wait, fireEvent } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 
 import { Notification } from '@contentful/forma-36-react-components';
-import JobWidget from './JobsWidget.es6';
+import JobsWidget from './JobsWidget.es6';
 import {
   getNotCanceledJobsForEntity,
   createJob as createJobService,
@@ -24,7 +24,7 @@ jest.mock('ng/spaceContext', () => ({ entryTitle: () => 'Test' }));
 jest.mock('app/entity_editor/UnpublishedReferencesWarning/index.es6', () => ({
   showUnpublishedReferencesWarning: () => Promise.resolve(true)
 }));
-describe('<JobWidget />', () => {
+describe('<JobsWidget />', () => {
   beforeEach(() => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
@@ -61,10 +61,13 @@ describe('<JobWidget />', () => {
         }
       ],
       entity: createEntry(),
+      validator: {
+        run: jest.fn().mockReturnValueOnce(true)
+      },
       ...props
     };
 
-    return [render(<JobWidget {...resultProps} />), resultProps];
+    return [render(<JobsWidget {...resultProps} />), resultProps];
   };
 
   it('renders skeleton before <StatusButton />', async () => {
@@ -139,150 +142,163 @@ describe('<JobWidget />', () => {
     expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
   });
 
-  describe('renders an error note when the last job failed and', () => {
-    it('entry is not published', async () => {
-      const failedJob = createFailedJob({
-        scheduledAt: '2019-06-21T05:01:00.000Z'
-      });
-      getNotCanceledJobsForEntity.mockResolvedValueOnce([failedJob]);
-      const unpublishedEntry = { sys: { id: 'entryId' } };
-      const [renderResult] = build(unpublishedEntry);
-
-      await wait();
-      fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
-      expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
-      expect(renderResult.getByTestId('failed-job-note')).toBeInTheDocument();
+  it('entry is not published', async () => {
+    const failedJob = createFailedJob({
+      scheduledAt: '2019-06-21T05:01:00.000Z'
     });
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([failedJob]);
+    const unpublishedEntry = { sys: { id: 'entryId' } };
+    const [renderResult] = build(unpublishedEntry);
 
-    it('entry is published but publication date is before last failed job', async () => {
-      const failedJob = createFailedJob({
-        scheduledAt: '2019-06-21T05:01:00.000Z'
-      });
-      getNotCanceledJobsForEntity.mockResolvedValueOnce([failedJob]);
-      const publishedEntry = { sys: { id: 'entryId', publishedAt: '2019-06-21T05:00:00.000Z' } };
-      const [renderResult] = build(publishedEntry);
-
-      await wait();
-      fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
-      expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
-      expect(renderResult.getByTestId('failed-job-note')).toBeInTheDocument();
-    });
+    await wait();
+    fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
+    expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
+    expect(renderResult.getByTestId('failed-job-note')).toBeInTheDocument();
   });
 
-  describe('on new props', () => {
-    it('does not rerender if publishedAt date is the same', async () => {
-      getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
-      const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
-      const [renderResult, props] = build({ entity: publishedEntry });
-
-      await wait();
-
-      const publishedEntryWithSameDate = createEntry({
-        sys: { publishedAt: '2019-06-21T05:00:00.000Z' }
-      });
-      renderResult.rerender(<JobWidget {...props} entity={publishedEntryWithSameDate} />);
-      await wait();
-
-      expect(getNotCanceledJobsForEntity).toHaveBeenCalledTimes(1);
+  it('entry is published but publication date is before last failed job', async () => {
+    const failedJob = createFailedJob({
+      scheduledAt: '2019-06-21T05:01:00.000Z'
     });
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([failedJob]);
+    const publishedEntry = { sys: { id: 'entryId', publishedAt: '2019-06-21T05:00:00.000Z' } };
+    const [renderResult] = build(publishedEntry);
 
-    it('rerenders if publishedAt date changed', async () => {
-      getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
-      const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
-      const [renderResult, props] = build({ entity: publishedEntry });
-
-      await wait();
-
-      getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
-      const newPublishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T06:00:00.000Z' } });
-      renderResult.rerender(<JobWidget {...props} entity={newPublishedEntry} />);
-      await wait();
-
-      expect(getNotCanceledJobsForEntity).toHaveBeenCalledTimes(2);
-    });
-
-    it('shows toast when entry was successfully published on schedule', async () => {
-      getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
-      const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
-      const [renderResult, props] = build({ entity: publishedEntry });
-
-      await wait();
-
-      getNotCanceledJobsForEntity.mockResolvedValueOnce([createDoneJob()]);
-      const newPublishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T06:00:00.000Z' } });
-      renderResult.rerender(<JobWidget {...props} entity={newPublishedEntry} />);
-      await wait();
-
-      expect(getNotCanceledJobsForEntity).toHaveBeenCalledTimes(2);
-      expect(Notification.success).toHaveBeenCalledWith('Entry was successfully published.');
-    });
+    await wait();
+    fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
+    expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
+    expect(renderResult.getByTestId('failed-job-note')).toBeInTheDocument();
   });
 
-  describe('analytics', () => {
-    let job;
+  it('does not rerender if publishedAt date is the same', async () => {
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
+    const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
+    const [renderResult, props] = build({ entity: publishedEntry });
 
-    beforeEach(() => {
-      job = createPendingJob();
+    await wait();
+
+    const publishedEntryWithSameDate = createEntry({
+      sys: { publishedAt: '2019-06-21T05:00:00.000Z' }
+    });
+    renderResult.rerender(<JobsWidget {...props} entity={publishedEntryWithSameDate} />);
+    await wait();
+
+    expect(getNotCanceledJobsForEntity).toHaveBeenCalledTimes(1);
+  });
+
+  it('rerenders if publishedAt date changed', async () => {
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
+    const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
+    const [renderResult, props] = build({ entity: publishedEntry });
+
+    await wait();
+
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
+    const newPublishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T06:00:00.000Z' } });
+    renderResult.rerender(<JobsWidget {...props} entity={newPublishedEntry} />);
+    await wait();
+
+    expect(getNotCanceledJobsForEntity).toHaveBeenCalledTimes(2);
+  });
+
+  it('shows toast when entry was successfully published on schedule', async () => {
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
+    const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
+    const [renderResult, props] = build({ entity: publishedEntry });
+
+    await wait();
+
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([createDoneJob()]);
+    const newPublishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T06:00:00.000Z' } });
+    renderResult.rerender(<JobsWidget {...props} entity={newPublishedEntry} />);
+    await wait();
+
+    expect(getNotCanceledJobsForEntity).toHaveBeenCalledTimes(2);
+    expect(Notification.success).toHaveBeenCalledWith('Entry was successfully published.');
+  });
+
+  it('creates the job', async () => {
+    const job = createPendingJob();
+    const createJobSpy = jest.spyOn(JobsAnalytics, 'createJob');
+
+    createJobService.mockResolvedValueOnce(job);
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
+
+    const notPublishedEntry = createEntry();
+    const [renderResult] = build({ entity: notPublishedEntry });
+    await wait();
+    fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
+    fireEvent.click(renderResult.getByText('Schedule publication'));
+    await wait();
+    fireEvent.click(renderResult.getByTestId('schedule-publication'));
+    await wait();
+
+    expect(createJobSpy).toHaveBeenCalledTimes(1);
+    expect(createJobSpy).toHaveBeenCalledWith({
+      jobId: job.sys.id,
+      scheduledAt: job.scheduledAt
+    });
+    expect(Notification.success).toHaveBeenCalledWith('Test was scheduled successfully');
+  });
+
+  it('shows an error toast if job creation failed', async () => {
+    createJobService.mockRejectedValueOnce(new Error());
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
+
+    const notPublishedEntry = { sys: { id: 'entryId' } };
+    const [renderResult] = build({ entity: notPublishedEntry });
+    await wait();
+
+    fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
+    fireEvent.click(renderResult.getByText('Schedule publication'));
+    await wait();
+    fireEvent.click(renderResult.getByTestId('schedule-publication'));
+    await wait();
+
+    expect(Notification.error).toHaveBeenCalledWith('Test failed to schedule');
+  });
+
+  it('validates entry before scheduling', async () => {
+    const job = createPendingJob();
+    const createJobSpy = jest.spyOn(JobsAnalytics, 'createJob');
+    const runValidatorMock = jest.fn().mockReturnValueOnce(false);
+
+    createJobService.mockResolvedValueOnce(job);
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
+
+    const notPublishedEntry = createEntry();
+    const [renderResult] = build({
+      entity: notPublishedEntry,
+      validator: { run: runValidatorMock }
     });
 
-    it('creates the job', async () => {
-      const createJobSpy = jest.spyOn(JobsAnalytics, 'createJob');
+    await wait();
+    fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
+    fireEvent.click(renderResult.getByText('Schedule publication'));
+    await wait();
 
-      createJobService.mockResolvedValueOnce(job);
-      getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
+    expect(createJobSpy).not.toHaveBeenCalled();
+    expect(Notification.error).toHaveBeenCalled();
+  });
 
-      const notPublishedEntry = { sys: { id: 'entryId' } };
-      const [renderResult] = build(notPublishedEntry);
-      await wait();
-      fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
-      fireEvent.click(renderResult.getByText('Schedule publication'));
-      await wait();
-      fireEvent.click(renderResult.getByTestId('schedule-publication'));
-      await wait();
+  it('cancels the job', async () => {
+    const job = createPendingJob();
+    const cancelJobSpy = jest.spyOn(JobsAnalytics, 'cancelJob');
 
-      expect(createJobSpy).toHaveBeenCalledTimes(1);
-      expect(createJobSpy).toHaveBeenCalledWith({
-        jobId: job.sys.id,
-        scheduledAt: job.scheduledAt
-      });
-      expect(Notification.success).toHaveBeenCalledWith('Test was scheduled successfully');
-    });
+    cancelJob.mockResolvedValueOnce();
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([job]);
+    const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
+    const [renderResult] = build({ entity: publishedEntry });
+    await wait();
 
-    it('shows an error toast if job creation failed', async () => {
-      createJobService.mockRejectedValueOnce(new Error());
-      getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
+    fireEvent.click(renderResult.getByTestId('cancel-job-ddl'));
+    fireEvent.click(renderResult.getByText('Cancel Schedule'));
+    fireEvent.click(renderResult.getByTestId('confirm-job-cancellation'));
+    await wait();
 
-      const notPublishedEntry = { sys: { id: 'entryId' } };
-      const [renderResult] = build(notPublishedEntry);
-      await wait();
-
-      fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
-      fireEvent.click(renderResult.getByText('Schedule publication'));
-      await wait();
-      fireEvent.click(renderResult.getByTestId('schedule-publication'));
-      await wait();
-
-      expect(Notification.error).toHaveBeenCalledWith('Test failed to schedule');
-    });
-
-    it('cancels the job', async () => {
-      const cancelJobSpy = jest.spyOn(JobsAnalytics, 'cancelJob');
-
-      cancelJob.mockResolvedValueOnce();
-      getNotCanceledJobsForEntity.mockResolvedValueOnce([job]);
-      const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
-      const [renderResult] = build({ entity: publishedEntry });
-      await wait();
-
-      fireEvent.click(renderResult.getByTestId('cancel-job-ddl'));
-      fireEvent.click(renderResult.getByText('Cancel Schedule'));
-      fireEvent.click(renderResult.getByTestId('confirm-job-cancellation'));
-      await wait();
-
-      expect(cancelJobSpy).toHaveBeenCalledTimes(1);
-      expect(cancelJobSpy).toHaveBeenCalledWith({
-        jobId: job.sys.id
-      });
+    expect(cancelJobSpy).toHaveBeenCalledTimes(1);
+    expect(cancelJobSpy).toHaveBeenCalledWith({
+      jobId: job.sys.id
     });
   });
 });
