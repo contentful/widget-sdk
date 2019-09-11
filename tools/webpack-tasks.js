@@ -37,7 +37,8 @@ async function build(cb) {
     console.warn(info.warnings);
   }
 
-  console.log(stats.toString(config.stats));
+  // Removed since this causes the build on CircleCI to hang
+  // console.log(stats.toString(config.stats));
   cb();
 }
 
