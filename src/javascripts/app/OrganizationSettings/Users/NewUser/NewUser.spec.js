@@ -174,6 +174,18 @@ describe('NewUser', () => {
   });
 
   describe('validation passes', () => {
+    it('sends an invitation request', async () => {
+      const wrapper = build();
+      await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner', [
+        { spaceName: 'Foo', roleNames: ['Editor'] }
+      ]);
+      expect(invite).toHaveBeenCalledWith(mockOrgEndpoint, {
+        role: 'owner',
+        email: 'john.doe@enterprise.com',
+        spaceInvitations: [{ spaceId: '123', admin: false, roleIds: ['editorid'] }]
+      });
+    });
+
     it('sends requests to 100 addresses', async () => {
       const wrapper = build();
       const emails = generateAddresses(100);
@@ -181,7 +193,9 @@ describe('NewUser', () => {
         emailsValidationMessage,
         orgRoleValidationMessage,
         spaceMembershipsValidationMessage
-      } = await submitForm(wrapper, emails, 'Member');
+      } = await submitForm(wrapper, emails, 'Member', [
+        { spaceName: 'Foo', roleNames: ['Editor'] }
+      ]);
       expect([
         emailsValidationMessage,
         orgRoleValidationMessage,

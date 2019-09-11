@@ -127,7 +127,7 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
     if (!submitted) return '';
 
     if (emailList.length === 0) {
-      return 'Please enter at least one email address';
+      return 'Enter at least one email address so we can invite them to your organization';
     }
 
     if (invalidAddresses.length) {
@@ -147,7 +147,7 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
 
   const orgRoleError = useMemo(() => {
     if (submitted && !orgRole) {
-      return 'Please select a role';
+      return `Choose an organization role for the people you're inviting`;
     }
     return '';
   }, [orgRole, submitted]);
@@ -201,7 +201,7 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
 
             <fieldset>
               <Subheading element="h3" className={styles.subheading}>
-                Organization role
+                Choose an organization role
               </Subheading>
               <FieldGroup>
                 {availableOrgRoles.map(role => (
@@ -229,7 +229,7 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
 
             <fieldset>
               <Subheading element="h3" className={styles.subheading}>
-                Spaces
+                Add to spaces
               </Subheading>
               <SpaceMembershipList
                 orgId={orgId}
