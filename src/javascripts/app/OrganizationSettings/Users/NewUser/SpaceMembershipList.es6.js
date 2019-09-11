@@ -51,8 +51,9 @@ const reducer = createImmerReducer({
   },
   SPACE_REMOVED: (state, action) => {
     const spaceId = action.payload;
-    const index = state.spaceMemberships.indexOf(membership => membership.space.sys.id === spaceId);
-    state.spaceMemberships.splice(index, 1);
+    state.spaceMemberships = state.spaceMemberships.filter(
+      membership => membership.space.sys.id !== spaceId
+    );
   },
   ROLES_CHANGED: (state, action) => {
     const { spaceId, roles = [] } = action.payload;
