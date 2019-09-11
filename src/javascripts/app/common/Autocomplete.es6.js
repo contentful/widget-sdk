@@ -8,8 +8,10 @@ import {
   DropdownListItem,
   SkeletonBodyText,
   SkeletonContainer,
-  ValidationMessage
+  ValidationMessage,
+  IconButton
 } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
 
 const TOGGLED_LIST = 'TOGGLED_LIST';
 const NAVIGATED_ITEMS = 'NAVIGATED_ITEMS';
@@ -53,6 +55,21 @@ const reducer = (state, action) => {
   }
 };
 
+const styles = {
+  autocompleteInput: css({
+    display: 'flex',
+    'input::-webkit-search-cancel-button': { display: 'none' },
+    'input::-ms-clear': { display: 'none' }
+  }),
+  inputIconButton: css({
+    position: 'absolute',
+    right: 'calc(1rem * (12 / 16))',
+    top: '50%',
+    marginTop: -10,
+    zIndex: 1
+  })
+};
+
 /**
  * This component renders an input field and a dropdown list with the options
  * As a user of this component, you are responsible for passing in the list of options, always.
@@ -78,9 +95,12 @@ export default function Autocomplete({
   className,
   maxHeight,
   validationMessage,
-  isLoading = false
+  isLoading = false,
+  emptyListMessage = 'No options to choose from',
+  noMatchesMessage = 'No items found'
 }) {
   const listRef = useRef();
+  const inputRef = useRef();
   const [{ isOpen, query, highlightedItemIndex }, dispatch] = useReducer(reducer, initialState);
 
   const toggleList = isOpen => dispatch({ type: TOGGLED_LIST, payload: isOpen });
@@ -91,9 +111,9 @@ export default function Autocomplete({
     onChange(item);
   };
 
-  const handleQueryChanged = e => {
-    dispatch({ type: QUERY_CHANGED, payload: e.target.value });
-    onQueryChange(e.target.value);
+  const updateQuery = value => {
+    dispatch({ type: QUERY_CHANGED, payload: value });
+    onQueryChange(value);
   };
 
   const handleKeyDown = event => {
@@ -119,6 +139,11 @@ export default function Autocomplete({
     }
   };
 
+  const handleButtonClick = () => {
+    query ? updateQuery('') : toggleList();
+    inputRef.current.focus();
+  };
+
   // Gets the result of the children function and creates a list with components and option objects
   const options = useMemo(
     () => children(items).map((child, index) => ({ child, option: items[index] })),
@@ -128,25 +153,42 @@ export default function Autocomplete({
   return (
     <>
       <Dropdown
-        isOpen={isOpen && (items.length > 0 || isLoading)}
+        isOpen={isOpen}
         onClose={() => dispatch({ type: TOGGLED_LIST })}
         className={className}
         toggleElement={
-          <TextInput
-            className={className}
-            value={query}
-            onChange={handleQueryChanged}
-            onFocus={() => toggleList(true)}
-            onKeyDown={handleKeyDown}
-            disabled={disabled}
-            placeholder={placeholder}
-            width={width}
-            testId="autocomplete.input"
-          />
+          <div className={styles.autocompleteInput}>
+            <TextInput
+              className={className}
+              value={query}
+              onChange={e => updateQuery(e.target.value)}
+              onFocus={() => toggleList(true)}
+              onKeyDown={handleKeyDown}
+              disabled={disabled}
+              placeholder={placeholder}
+              width={width}
+              inputRef={inputRef}
+              testId="autocomplete.input"
+              type="search"
+            />
+            <IconButton
+              className={styles.inputIconButton}
+              tabIndex="-1"
+              buttonType="muted"
+              iconProps={{ icon: query ? 'Close' : 'ChevronDown' }}
+              onClick={handleButtonClick}
+              label={query ? 'Clear' : 'Show list'}
+            />
+          </div>
         }>
         {validationMessage && <ValidationMessage>{validationMessage}</ValidationMessage>}
         <DropdownList testId="autocomplete.dropdown-list" maxHeight={maxHeight}>
           <div ref={listRef}>
+            {!options.length && !isLoading && (
+              <DropdownListItem isDisabled testId="autocomplete.empty-list-message">
+                {query ? noMatchesMessage : emptyListMessage}
+              </DropdownListItem>
+            )}
             {isLoading ? (
               <OptionSkeleton />
             ) : (
@@ -182,7 +224,9 @@ Autocomplete.propTypes = {
   maxHeight: PropTypes.number,
   validationMessage: PropTypes.string,
   isLoading: PropTypes.bool,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  emptyListMessage: PropTypes.string,
+  noMatchesMessage: PropTypes.string
 };
 
 function OptionSkeleton() {
