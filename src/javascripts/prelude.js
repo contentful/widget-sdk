@@ -302,7 +302,7 @@ angular
       window.cfTelemetry = Telemetry;
       Telemetry.init();
 
-      moment.locale('en', {
+      moment.updateLocale('en', {
         calendar: {
           lastDay: '[Yesterday], LT',
           sameDay: '[Today], LT',
@@ -335,11 +335,8 @@ angular
         }
 
         const { url } = state.$$state();
-
-        const match = url.exec(
-          window.location.pathname,
-          qs.parse(window.location.search.substr(1))
-        );
+        const params = qs.parse(window.location.search.substr(1));
+        const match = url.exec(window.location.pathname, params);
 
         if (match && !matchFound) {
           matchFound = true;

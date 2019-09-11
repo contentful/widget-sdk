@@ -3,7 +3,7 @@ import flushPromises from '../../../helpers/flushPromises';
 import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
 import sinon from 'sinon';
 import { $initialize, $inject, $apply } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { beforeEach, it } from 'test/helpers/dsl';
 
 describe('entityEditor/StateController', () => {
   beforeEach(async function() {
