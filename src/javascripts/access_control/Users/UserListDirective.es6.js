@@ -1,4 +1,4 @@
-import { registerDirective, registerController, registerFactory } from 'NgRegistry.es6';
+import { registerDirective, registerController } from 'NgRegistry.es6';
 
 export default function register() {
   registerDirective('cfUserList', ['UserListController/jumpToRole', '$timeout']);
@@ -66,32 +66,6 @@ export default function register() {
       //   };
       //   $scope.context.ready = true;
       // }
-    }
-  ]);
-
-  registerFactory('UserListController/jumpToRole', [
-    '$state',
-    'spaceContext',
-    ($state, spaceContext) => {
-      let targetRoleId = null;
-
-      jump.popRoleId = popRoleId;
-      return jump;
-
-      function jump(roleId) {
-        targetRoleId = roleId;
-        if (spaceContext.isMasterEnvironment()) {
-          $state.go('spaces.detail.settings.users.list');
-        } else {
-          $state.go('spaces.detail.environment.settings.users.list');
-        }
-      }
-
-      function popRoleId() {
-        const roleId = targetRoleId;
-        targetRoleId = null;
-        return roleId;
-      }
     }
   ]);
 }

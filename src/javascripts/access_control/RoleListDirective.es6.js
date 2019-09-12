@@ -8,7 +8,6 @@ import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { getSubscriptionState } from 'account/AccountUtils.es6';
 
-import { ADMIN_ROLE_ID } from './constants.es6';
 import * as UserListHandler from './UserListHandler.es6';
 
 export default function register() {
@@ -56,7 +55,7 @@ export default function register() {
       }
 
       function jumpToAdminRoleMembers() {
-        jumpToRoleMembers(ADMIN_ROLE_ID);
+        jumpToRoleMembers('Administrator');
       }
 
       function duplicateRole(role) {

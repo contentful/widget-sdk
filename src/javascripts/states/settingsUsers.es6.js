@@ -5,6 +5,9 @@ const list = reactStateWrapper({
   title: 'Space users',
   loadingText: 'Loading users…',
   url: '',
+  params: {
+    jumpToRole: null
+  },
   componentPath: 'access_control/Users/UserList.es6'
 });
 

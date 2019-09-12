@@ -23,7 +23,7 @@ header.workbench-header
         h3 {{ role.name }}
         p(ng-if="role.description") {{ role.description }}
       .role-list__member-count
-        a(href="" ng-click="jumpToRoleMembers(role.sys.id)")
+        a(href="" ng-click="jumpToRoleMembers(role.name)")
           | {{ role.count }}&#32;
           span(ng-pluralize count="role.count" when="{1: 'member', other: 'members'}")
       button.role-list__actions.btn-inline(

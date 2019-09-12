@@ -38,7 +38,7 @@ export const angularInitRun = [
       import('services/modalDialogService.es6'),
       import('ui/command.es6'),
       import('access_control/RoleRemover.es6'),
-      import('access_control/Users/UserListDirective.es6'),
+      import('access_control/Users/jumpToRole.es6'),
       import('access_control/RoleListDirective.es6'),
       import('access_control/UserSpaceInvitationController.es6'),
       import('account/cfNewOrganizationMembership.es6'),

@@ -12,7 +12,7 @@ import { getModule } from 'NgRegistry.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 
 import UserListPresentation from './UserListPresentation.es6';
-import { VIEW_BY_NAME } from './constants.es6';
+import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants.es6';
 
 const fetch = (endpoint, space, onReady) => async () => {
   const [members, spaceMemberships, roles, users] = await Promise.all([
@@ -33,8 +33,8 @@ const fetch = (endpoint, space, onReady) => async () => {
   return { resolvedMembers };
 };
 
-const UserList = ({ onReady }) => {
-  const [selectedView, setSelectedView] = useState(VIEW_BY_NAME);
+const UserList = ({ onReady, jumpToRole }) => {
+  const [selectedView, setSelectedView] = useState(jumpToRole ? VIEW_BY_ROLE : VIEW_BY_NAME);
   const { endpoint, space, organization } = getModule('spaceContext');
   const accessChecker = getModule('access_control/AccessChecker');
   const { isLoading, error, data } = useAsync(useCallback(fetch(endpoint, space, onReady), []));
@@ -83,6 +83,8 @@ const UserList = ({ onReady }) => {
     )
     .value();
 
+  const spaceUsersCount = sortedMembers.length;
+
   return (
     <UserListPresentation
       orgId={organization.sys.id}
@@ -94,12 +96,15 @@ const UserList = ({ onReady }) => {
       openSpaceInvitationDialog={noop}
       onChangeSelectedView={setSelectedView}
       userGroups={userGroups}
+      spaceUsersCount={spaceUsersCount}
       numberOfTeamMemberships={numberOfTeamMemberships}
+      jumpToRole={jumpToRole}
     />
   );
 };
 UserList.propTypes = {
-  onReady: PropTypes.func.isRequired
+  onReady: PropTypes.func.isRequired,
+  jumpToRole: PropTypes.string
 };
 
 export default UserList;

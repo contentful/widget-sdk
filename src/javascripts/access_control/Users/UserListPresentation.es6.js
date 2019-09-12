@@ -98,7 +98,6 @@ const UserListPresentation = ({
   jumpToRole,
   numberOfTeamMemberships
 }) => {
-  const jumpToRoleId = `role-group-${jumpToRole}`;
   const roleAnchorEl = useRef(null);
   useEffect(() => {
     if (userGroups && jumpToRole && roleAnchorEl.current) {
@@ -138,7 +137,7 @@ const UserListPresentation = ({
           />
           {map(userGroups, (members, label) => (
             <div key={label} className={styles.userListGroup}>
-              <span id="scroll-to-anchor" ref={label === jumpToRoleId ? roleAnchorEl : null} />
+              <span id="scroll-to-anchor" ref={label === jumpToRole ? roleAnchorEl : null} />
               <SectionHeading element="h3">{label}</SectionHeading>
               {members.map(
                 ({
