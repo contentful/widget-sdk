@@ -1,246 +1,102 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { SectionHeading, Button, Tooltip } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import tokens from '@contentful/forma-36-tokens';
-import { css } from 'emotion';
-import pluralize from 'pluralize';
+import _, { noop, groupBy, first, map, orderBy, filter } from 'lodash';
 
-import Icon from 'ui/Components/Icon.es6';
-import ContextMenu from 'ui/Components/ContextMenu.es6';
-import DocumentTitle from 'components/shared/DocumentTitle.es6';
-import FilterPill from 'app/ContentList/Search/FilterPill.es6';
-import ValueInput from 'app/ContentList/Search/FilterValueInputs.es6';
+import { create as createMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
+import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo.es6';
+import RoleRepository from 'access_control/RoleRepository.es6';
+import { getAllUsers } from 'access_control/OrganizationMembershipRepository.es6';
+import resolveLinks from 'data/LinkResolver.es6';
+import useAsync from 'app/common/hooks/useAsync.es6';
+import { getModule } from 'NgRegistry.es6';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 
-import AddUsersToSpaceNote from './AddUsersToSpaceNote.es6';
-import { VIEW_LABELS } from './constants.es6';
+import UserListPresentation from './UserListPresentation.es6';
+import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants.es6';
 
-const styles = {
-  workbench: {
-    content: css({
-      padding: 0
-    })
-  },
-  groupSelect: css({
-    marginLeft: '67px',
-    marginTop: tokens.spacingXl,
-    display: 'inline-flex'
-  }),
-  sidebar: {
-    heading: css({
-      color: tokens.colorTextLight,
-      fontWeight: tokens.fontWeightNormal,
-      borderBottom: '1px solid #c3cfd5',
-      marginBottom: tokens.spacingXl
-    })
-  },
-  userListGroup: css({
-    margin: `${tokens.spacingXl} 0`,
-    position: 'relative',
-    borderTop: '1px solid #e5ebed',
-    h3: {
-      fontSize: tokens.fontSizeXl,
-      letterSpacing: 'inherit',
-      textTransform: 'none',
-      margin: 0,
-      display: 'inline-block',
-      position: 'absolute',
-      left: tokens.spacingM,
-      top: '-15px',
-      background: '#fff',
-      padding: `0 ${tokens.spacingS}`,
-      minWidth: '40px'
-    }
-  }),
-  user: css({
-    display: 'flex',
-    marginTop: tokens.spacingL,
-    paddingLeft: '67px',
-    paddingRight: tokens.spacingXl
-  }),
-  userName: css({
-    display: 'block',
-    margin: `${tokens.spacing2Xs} 0`
-  }),
-  notConfirmed: css({
-    fontSize: tokens.fontSizeM,
-    color: tokens.colorTextLightest
-  }),
-  userAvatar: css({
-    marginRight: tokens.spacingM
-  }),
-  userMenu: css({
-    marginLeft: 'auto',
-    height: 'fit-content'
-  })
+const fetch = (endpoint, space, onReady) => async () => {
+  const [members, spaceMemberships, roles, users] = await Promise.all([
+    createSpaceMembersRepo(endpoint).getAll(),
+    createMembershipRepo(endpoint).getAll(),
+    RoleRepository.getInstance(space).getAll(),
+    getAllUsers(endpoint)
+  ]);
+
+  const resolvedMembers = resolveLinks({
+    paths: ['roles', 'relatedMemberships', 'sys.user'],
+    includes: { Role: roles, SpaceMembership: spaceMemberships, User: users },
+    items: members
+  });
+
+  onReady();
+
+  return { resolvedMembers };
 };
 
-const scrollToRole = roleGroupEl => {
-  roleGroupEl.current.scrollIntoView({ block: 'start' });
-};
+const UserList = ({ onReady }) => {
+  const [selectedView, setSelectedView] = useState(VIEW_BY_NAME);
+  const { endpoint, space, organization } = getModule('spaceContext');
+  const accessChecker = getModule('access_control/AccessChecker');
+  const { isLoading, error, data } = useAsync(useCallback(fetch(endpoint, space, onReady), []));
+  if (isLoading || error) {
+    return null;
+  }
 
-const UserList = ({
-  canModifyUsers,
-  openSpaceInvitationDialog,
-  isInvitingUsersToSpace,
-  orgId,
-  isOwnerOrAdmin,
-  hasTeamsFeature,
-  userGroupsByView,
-  selectedView,
-  spaceUsersCount,
-  openRoleChangeDialog,
-  openRemovalConfirmationDialog,
-  onChangeSelectedView,
-  jumpToRole
-}) => {
-  const userGroups = (userGroupsByView && userGroupsByView[selectedView]) || [];
+  const { resolvedMembers } = data;
+  const sortedMembers = orderBy(
+    resolvedMembers,
+    ['sys.user.firstName', 'sys.user.lastName'],
+    ['asc', 'asc']
+  );
 
-  const jumpToRoleId = `role-group-${jumpToRole}`;
-  const roleAnchorEl = useRef(null);
-  useEffect(() => {
-    if (userGroupsByView && jumpToRole && roleAnchorEl.current) {
-      scrollToRole(roleAnchorEl);
+  let userGroups;
+  if (selectedView === VIEW_BY_NAME) {
+    userGroups = groupBy(sortedMembers, ({ sys: { user: { firstName } } }) =>
+      first(firstName.toUpperCase())
+    );
+  } else if (selectedView === VIEW_BY_ROLE) {
+    userGroups = _(sortedMembers)
+      .map(member => member.roles.map(({ name }) => ({ name, member })))
+      .flatten()
+      .groupBy('name')
+      .mapValues(roles => map(roles, 'member'))
+      .value();
+    const admins = filter(sortedMembers, 'admin');
+    if (admins.length > 0) {
+      userGroups = {
+        Administrator: admins,
+        ...userGroups
+      };
     }
-  }, [userGroupsByView, jumpToRole]);
+  }
+
+  const numberOfTeamMemberships = _(sortedMembers)
+    .keyBy('sys.id')
+    .mapValues(
+      ({ relatedMemberships }) =>
+        relatedMemberships.filter(({ sys: { linkType } }) => linkType === 'TeamSpaceMembership')
+          .length
+    )
+    .value();
 
   return (
-    <>
-      <DocumentTitle title="Users" />
-      <Workbench>
-        <Workbench.Header
-          title={`Users (${spaceUsersCount})`}
-          icon={<Icon name="page-users" scale="0.75" />}
-          actions={
-            <Button
-              buttonType="primary"
-              testId="add-users-to-space"
-              disabled={!canModifyUsers || isInvitingUsersToSpace}
-              loading={isInvitingUsersToSpace}
-              onClick={openSpaceInvitationDialog}>
-              Add users
-            </Button>
-          }
-        />
-        <Workbench.Content testId="workbench.main__content" className={styles.workbench.content}>
-          <FilterPill
-            className={styles.groupSelect}
-            filter={{
-              label: 'Group by',
-              valueInput: ValueInput.Select(
-                Object.keys(VIEW_LABELS).map(key => [key, VIEW_LABELS[key]])
-              )
-            }}
-            value={selectedView}
-            onChange={onChangeSelectedView}
-          />
-          {userGroups.map(userGroup => (
-            <div key={userGroup.id} className={styles.userListGroup}>
-              <span
-                id="scroll-to-anchor"
-                ref={userGroup.id === jumpToRoleId ? roleAnchorEl : null}
-              />
-              <SectionHeading element="h3">{userGroup.label}</SectionHeading>
-              {userGroup.users.map(user => (
-                <div key={user.id} data-test-id="user-list.item" className={styles.user}>
-                  <img className={styles.userAvatar} src={user.avatarUrl} width="50" height="50" />
-                  <div>
-                    <strong data-test-id="user-list.name" className={styles.userName}>
-                      {user.name}
-                    </strong>
-                    {!user.confirmed && (
-                      <small className={styles.notConfirmed}>This account is not confirmed</small>
-                    )}
-                    <div data-test-id="user-list.roles">{user.roleNames}</div>
-                  </div>
-                  <Tooltip
-                    targetWrapperClassName={styles.userMenu}
-                    place="left"
-                    content={
-                      user.numberOfTeamMemberships > 0
-                        ? `This user has space access through ${pluralize(
-                            'team',
-                            user.numberOfTeamMemberships,
-                            true
-                          )}`
-                        : ''
-                    }>
-                    <ContextMenu
-                      buttonProps={{
-                        'data-test-id': 'user-list.actions'
-                      }}
-                      isDisabled={!canModifyUsers || user.numberOfTeamMemberships > 0}
-                      items={[
-                        {
-                          label: 'Change role',
-                          action: () => openRoleChangeDialog(user),
-                          otherProps: {
-                            'data-ui-trigger': 'user-change-role'
-                          }
-                        },
-                        {
-                          label: 'Remove from this space',
-                          action: () => openRemovalConfirmationDialog(user),
-                          otherProps: {
-                            'data-ui-trigger': 'user-remove-from-space'
-                          }
-                        }
-                      ]}
-                    />
-                  </Tooltip>
-                </div>
-              ))}
-            </div>
-          ))}
-        </Workbench.Content>
-        <Workbench.Sidebar position="right">
-          <SectionHeading className={styles.sidebar.heading}>
-            Adding and managing users
-          </SectionHeading>
-          <AddUsersToSpaceNote
-            {...{
-              orgId,
-              isOwnerOrAdmin,
-              hasTeamsFeature
-            }}
-          />
-        </Workbench.Sidebar>
-      </Workbench>
-    </>
+    <UserListPresentation
+      orgId={organization.sys.id}
+      isOwnerOrAdmin={isOwnerOrAdmin(organization)}
+      canModifyUsers={accessChecker.canModifyUsers()}
+      selectedView={selectedView}
+      openRemovalConfirmationDialog={noop}
+      openRoleChangeDialog={noop}
+      openSpaceInvitationDialog={noop}
+      onChangeSelectedView={setSelectedView}
+      userGroups={userGroups}
+      numberOfTeamMemberships={numberOfTeamMemberships}
+    />
   );
 };
 
-export default UserList;
-
 UserList.propTypes = {
-  userGroupsByView: PropTypes.objectOf(
-    PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        label: PropTypes.string.isRequired,
-        users: PropTypes.arrayOf(
-          PropTypes.shape({
-            id: PropTypes.string.isRequired,
-            avatarUrl: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired,
-            confirmed: PropTypes.bool,
-            roleNames: PropTypes.string.isRequired,
-            numberOfTeamMemberships: PropTypes.number.isRequired
-          })
-        )
-      }).isRequired
-    ).isRequired
-  ),
-  selectedView: PropTypes.string.isRequired,
-  orgId: PropTypes.string.isRequired,
-  jumpToRole: PropTypes.string,
-  canModifyUsers: PropTypes.bool.isRequired,
-  isOwnerOrAdmin: PropTypes.bool.isRequired,
-  isInvitingUsersToSpace: PropTypes.bool,
-  hasTeamsFeature: PropTypes.bool,
-  spaceUsersCount: PropTypes.number,
-  openSpaceInvitationDialog: PropTypes.func.isRequired,
-  openRoleChangeDialog: PropTypes.func.isRequired,
-  openRemovalConfirmationDialog: PropTypes.func.isRequired,
-  onChangeSelectedView: PropTypes.func.isRequired
+  onReady: PropTypes.func.isRequired
 };
+
+export default UserList;

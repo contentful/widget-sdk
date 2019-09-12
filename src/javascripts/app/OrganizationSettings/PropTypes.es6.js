@@ -101,6 +101,18 @@ export const TeamSpaceMembership = PropTypes.shape({
   }).isRequired
 });
 
+export const SpaceMember = PropTypes.shape({
+  admin: PropTypes.bool.isRequired,
+  roles: PropTypes.arrayOf(PropTypes.oneOfType([SpaceRole, Link])).isRequired,
+  relatedMemberships: PropTypes.arrayOf(
+    PropTypes.oneOfType([SpaceMembership, TeamSpaceMembership, Link])
+  ),
+  sys: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    space: PropTypes.oneOfType([Space, Link]).isRequired
+  }).isRequired
+});
+
 export const TeamSpaceMembershipPlaceholder = PropTypes.shape({
   sys: PropTypes.shape({
     id: PropTypes.oneOf(['placeholder']).isRequired
