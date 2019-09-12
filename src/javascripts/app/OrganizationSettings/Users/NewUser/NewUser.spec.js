@@ -17,6 +17,7 @@ import {
   createOrgMembership
 } from 'access_control/OrganizationMembershipRepository.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import { getVariation } from 'LaunchDarkly.es6';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
 
@@ -82,6 +83,7 @@ describe('NewUser', () => {
     createSpaceMembershipRepo.mockReturnValue({
       invite: mockInviteToSpaceFn
     });
+    getVariation.mockResolvedValue(false);
   });
   afterEach(() => {
     mockOnReady.mockReset();
@@ -138,27 +140,6 @@ describe('NewUser', () => {
       expect(invite).not.toHaveBeenCalled();
     });
 
-    it('add to spaces', async () => {
-      const wrapper = build();
-      await submitForm(wrapper, 'expect@topass.com', 'Member', [
-        { spaceName: 'Foo', roleNames: ['Editor'] }
-      ]);
-      expect(createOrganizationEndpoint).toHaveBeenCalledWith('myorg');
-      expect(invite).toHaveBeenCalledWith(mockOrgEndpoint, {
-        role: 'member',
-        email: 'expect@topass.com',
-        spaceInvitations: [
-          {
-            admin: false,
-            roleIds: ['editorid'],
-            spaceId: '123'
-          }
-        ]
-      });
-      expect(createSpaceMembershipRepo).not.toHaveBeenCalled();
-      expect(mockInviteToSpaceFn).not.toHaveBeenCalled();
-    });
-
     it('it fails to send if a space role is not selected', async () => {
       const wrapper = build();
       const { spaceMembershipsValidationMessage } = await submitForm(
@@ -179,6 +160,7 @@ describe('NewUser', () => {
       await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner', [
         { spaceName: 'Foo', roleNames: ['Editor'] }
       ]);
+      await wait(() => wrapper.getByTestId('new-user.done'));
       expect(invite).toHaveBeenCalledWith(mockOrgEndpoint, {
         role: 'owner',
         email: 'john.doe@enterprise.com',
@@ -196,6 +178,7 @@ describe('NewUser', () => {
       } = await submitForm(wrapper, emails, 'Member', [
         { spaceName: 'Foo', roleNames: ['Editor'] }
       ]);
+      await wait(() => wrapper.getByTestId('new-user.done'));
       expect([
         emailsValidationMessage,
         orgRoleValidationMessage,
@@ -209,6 +192,28 @@ describe('NewUser', () => {
       ModalLauncher.open.mockResolvedValueOnce(false);
       await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner');
       expect(invite).not.toHaveBeenCalled();
+    });
+
+    it('add to spaces', async () => {
+      const wrapper = build();
+      await submitForm(wrapper, 'expect@topass.com', 'Member', [
+        { spaceName: 'Foo', roleNames: ['Editor'] }
+      ]);
+      await wait(() => wrapper.getByTestId('new-user.done'));
+      expect(createOrganizationEndpoint).toHaveBeenCalledWith('myorg');
+      expect(invite).toHaveBeenCalledWith(mockOrgEndpoint, {
+        role: 'member',
+        email: 'expect@topass.com',
+        spaceInvitations: [
+          {
+            admin: false,
+            roleIds: ['editorid'],
+            spaceId: '123'
+          }
+        ]
+      });
+      expect(createSpaceMembershipRepo).not.toHaveBeenCalled();
+      expect(mockInviteToSpaceFn).not.toHaveBeenCalled();
     });
 
     it('shows a success message', async () => {

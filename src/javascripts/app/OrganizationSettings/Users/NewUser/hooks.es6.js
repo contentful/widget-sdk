@@ -3,6 +3,7 @@ import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFa
 import { createOrgMembership, invite } from 'access_control/OrganizationMembershipRepository.es6';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
 import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
+import { getVariation } from 'LaunchDarkly.es6';
 
 // Add a list of users to the organization
 // If the org has Single Sign On enabled, we create the org memberships directly
@@ -11,7 +12,16 @@ import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
 export function useAddToOrg(orgId, hasSsoEnabled) {
   const fn = async (emails, role, spaceMemberships, suppressInvitation) => {
     const orgEndpoint = createOrganizationEndpoint(orgId);
+    const shouldUseNewInvitation = await getVariation(
+      'feature-bv-09-2019-new-invitation-flow-new-entity'
+    );
 
+    // use the new invitation flow using pending org memberships
+    if (shouldUseNewInvitation) {
+      return createInvitationWithPendingMembership(orgEndpoint, emails, role, spaceMemberships);
+    }
+
+    // old flow. sso + non-sso
     if (hasSsoEnabled) {
       // if the org is SSO enabled, create org memberships directly
       const { failures, successes } = await addToOrg(orgEndpoint, emails, role, suppressInvitation);
@@ -115,4 +125,33 @@ function convertSpaceMemberships(spaceMemberships) {
       roleIds: hasAdminRole ? [] : roles
     };
   });
+}
+
+// Alpha invitation flow. Under a feature flag ('feature-bv-09-2019-new-invitation-flow-new-entity')
+// Requires alpha header (x-contentful-enable-alpha-feature: pending-org-membership)
+async function createInvitationWithPendingMembership(endpoint, emails, role, spaceMemberships) {
+  const failures = [],
+    successes = [];
+  const requests = emails.map(async email => {
+    try {
+      await invite(
+        endpoint,
+        {
+          role,
+          email
+        },
+        true
+      );
+      successes.push(email);
+    } catch (e) {
+      failures.push({ email, error: e });
+    }
+  });
+  // send out all org invitations
+  await Promise.all(requests);
+
+  // add all successfuly invited members to the spaces
+  await addToSpaces(successes, spaceMemberships);
+
+  return { failures, successes };
 }

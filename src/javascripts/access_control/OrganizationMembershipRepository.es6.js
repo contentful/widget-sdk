@@ -3,8 +3,11 @@ import { uniq, identity, chunk, flatten } from 'lodash';
 
 const BATCH_LIMIT = 100;
 const USER_IDS_BATCH_LIMIT = 44;
-const ALPHA_HEADER = {
+const USER_MANAGEMENT_ALPHA_HEADER = {
   'x-contentful-enable-alpha-feature': 'organization-user-management-api'
+};
+const INVITATION_ALPHA_HEADER = {
+  'x-contentful-enable-alpha-feature': 'pending-org-membership'
 };
 
 /**
@@ -12,7 +15,13 @@ const ALPHA_HEADER = {
  * @param {endpoint} endpoint organization endpoint
  */
 export function getAllMemberships(endpoint, params) {
-  return fetchAll(endpoint, ['organization_memberships'], BATCH_LIMIT, params, ALPHA_HEADER);
+  return fetchAll(
+    endpoint,
+    ['organization_memberships'],
+    BATCH_LIMIT,
+    params,
+    USER_MANAGEMENT_ALPHA_HEADER
+  );
 }
 
 export function getAllMembershipsWithQuery(endpoint, query) {
@@ -21,7 +30,7 @@ export function getAllMembershipsWithQuery(endpoint, query) {
     ['organization_memberships'],
     BATCH_LIMIT,
     query,
-    ALPHA_HEADER
+    USER_MANAGEMENT_ALPHA_HEADER
   );
 }
 
@@ -32,7 +41,7 @@ export function getMemberships(endpoint, query) {
       path: ['organization_memberships'],
       query
     },
-    ALPHA_HEADER
+    USER_MANAGEMENT_ALPHA_HEADER
   );
 }
 
@@ -42,7 +51,7 @@ export function getMembership(endpoint, membershipId) {
       method: 'GET',
       path: ['organization_memberships', membershipId]
     },
-    ALPHA_HEADER
+    USER_MANAGEMENT_ALPHA_HEADER
   );
 }
 
@@ -52,7 +61,7 @@ export function removeMembership(endpoint, membershipId) {
       method: 'DELETE',
       path: ['organization_memberships', membershipId]
     },
-    ALPHA_HEADER
+    USER_MANAGEMENT_ALPHA_HEADER
   );
 }
 
@@ -84,7 +93,7 @@ export function getUser(endpoint, userId) {
       method: 'GET',
       path: ['users', userId]
     },
-    ALPHA_HEADER
+    USER_MANAGEMENT_ALPHA_HEADER
   );
 }
 
@@ -156,16 +165,19 @@ export function getInvitation(endpoint, invitationId, query) {
   });
 }
 
-export function invite(endpoint, { role, email, spaceInvitations }) {
-  return endpoint({
-    method: 'POST',
-    data: {
-      role,
-      email,
-      spaceInvitations
+export function invite(endpoint, { role, email, spaceInvitations }, useAlpha) {
+  return endpoint(
+    {
+      method: 'POST',
+      data: {
+        role,
+        email,
+        spaceInvitations
+      },
+      path: ['invitations']
     },
-    path: ['invitations']
-  });
+    useAlpha ? INVITATION_ALPHA_HEADER : {}
+  );
 }
 
 export function createOrgMembership(endpoint, { role, email, suppressInvitation }) {
@@ -190,7 +202,7 @@ export function updateMembership(endpoint, { id, role, version }) {
       version,
       path: ['organization_memberships', id]
     },
-    ALPHA_HEADER
+    USER_MANAGEMENT_ALPHA_HEADER
   );
 }
 
@@ -201,6 +213,6 @@ export function getSpaceMemberships(endpoint, query) {
       query,
       path: ['space_memberships']
     },
-    ALPHA_HEADER
+    USER_MANAGEMENT_ALPHA_HEADER
   );
 }
