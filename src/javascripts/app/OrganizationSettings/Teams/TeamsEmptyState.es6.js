@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import TeamsEmptyStateImage from 'svg/add-team-illustration.es6';
 import { Heading, Paragraph, Button } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import TeamDialog from './TeamDialog.es6';
 import { supportUrl } from 'Config.es6';
 import EmptyStateContainer, {
@@ -10,7 +11,8 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 
 const styles = {
-  pageWrapper: css({ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 })
+  pageWrapper: css({ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }),
+  topMargin: css({ marginTop: tokens.spacingL })
 };
 
 export default class TeamsEmptyState extends React.Component {
@@ -32,13 +34,12 @@ export default class TeamsEmptyState extends React.Component {
     return this.props.isLegacy ? (
       <>
         <Paragraph>
-          The team feature is available on our platform plans, along with detailed usage insights,
-          space environments, the user management API and more. To upgrade your space, get in touch
-          with us.
+          The team feature is available on our enterprise-grade platform plans. To add teams to your
+          plan, get in touch with us.
         </Paragraph>
         <Button
           testId="get-in-touch-button"
-          className="f36-margin-top--l"
+          className={styles.topMargin}
           href={`${supportUrl}?upgrade-teams=true`}
           target="_blank">
           Get in touch with us
@@ -51,7 +52,7 @@ export default class TeamsEmptyState extends React.Component {
     );
   }
   renderPractitionerWarning() {
-    return <>To access the team feature, talk with your organization admin. </>;
+    return <Paragraph>To access the team feature, talk with your organization admin.</Paragraph>;
   }
 
   render() {
@@ -63,10 +64,10 @@ export default class TeamsEmptyState extends React.Component {
           <div className={defaultSVGStyle}>
             <TeamsEmptyStateImage />
           </div>
-          <Heading>Come together in a team</Heading>
+          <Heading>Bring users together in a team</Heading>
           <Paragraph>
-            The team feature brings greater visibility to the web app. Everyone in a team can see
-            members of their team.
+            Group people together by space roles or a shared project. Team members can see other
+            people in their team and collaborate with more visibility.
           </Paragraph>
           {isAdmin ? this.renderAdminWarning() : this.renderPractitionerWarning()}
         </EmptyStateContainer>

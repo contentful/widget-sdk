@@ -125,7 +125,6 @@ export default function register() {
         },
         {
           title: 'Teams',
-          label: 'new',
           sref: 'account.organizations.teams({orgId: nav.orgId})',
           rootSref: 'account.organizations.teams',
           inheritUrlParams: false,
