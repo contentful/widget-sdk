@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import _, { noop, groupBy, first, map, orderBy, filter } from 'lodash';
+import _, { noop, groupBy, first, map, orderBy, filter, get } from 'lodash';
 
 import { create as createMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
 import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo.es6';
@@ -12,7 +12,7 @@ import { getModule } from 'NgRegistry.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 
 import UserListPresentation from './UserListPresentation.es6';
-import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants.es6';
+import { VIEW_BY_NAME } from './constants.es6';
 
 const fetch = (endpoint, space, onReady) => async () => {
   const [members, spaceMemberships, roles, users] = await Promise.all([
@@ -38,24 +38,21 @@ const UserList = ({ onReady }) => {
   const { endpoint, space, organization } = getModule('spaceContext');
   const accessChecker = getModule('access_control/AccessChecker');
   const { isLoading, error, data } = useAsync(useCallback(fetch(endpoint, space, onReady), []));
-  if (isLoading || error) {
-    return null;
-  }
 
-  const { resolvedMembers } = data;
-  const sortedMembers = orderBy(
-    resolvedMembers,
-    ['sys.user.firstName', 'sys.user.lastName'],
-    ['asc', 'asc']
+  const resolvedMembers = get(data, 'resolvedMembers', []);
+  const sortedMembers = useMemo(
+    () => orderBy(resolvedMembers, ['sys.user.firstName', 'sys.user.lastName'], ['asc', 'asc']),
+    [resolvedMembers]
   );
 
-  let userGroups;
-  if (selectedView === VIEW_BY_NAME) {
-    userGroups = groupBy(sortedMembers, ({ sys: { user: { firstName } } }) =>
-      first(firstName.toUpperCase())
-    );
-  } else if (selectedView === VIEW_BY_ROLE) {
-    userGroups = _(sortedMembers)
+  const usersByName = useMemo(
+    () =>
+      groupBy(sortedMembers, ({ sys: { user: { firstName } } }) => first(firstName.toUpperCase())),
+    [sortedMembers]
+  );
+
+  const usersByRole = useMemo(() => {
+    let userGroups = _(sortedMembers)
       .map(member => member.roles.map(({ name }) => ({ name, member })))
       .flatten()
       .groupBy('name')
@@ -68,7 +65,14 @@ const UserList = ({ onReady }) => {
         ...userGroups
       };
     }
+    return userGroups;
+  }, [sortedMembers]);
+
+  if (isLoading || error) {
+    return null;
   }
+
+  const userGroups = selectedView === VIEW_BY_NAME ? usersByName : usersByRole;
 
   const numberOfTeamMemberships = _(sortedMembers)
     .keyBy('sys.id')
@@ -94,7 +98,6 @@ const UserList = ({ onReady }) => {
     />
   );
 };
-
 UserList.propTypes = {
   onReady: PropTypes.func.isRequired
 };
