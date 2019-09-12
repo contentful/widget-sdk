@@ -38,6 +38,7 @@ const ENTITY_PLURALS = {
  */
 export function go(state) {
   const $state = getModule('$state');
+
   return $state.go(state.path.join('.'), state.params, state.options);
 }
 

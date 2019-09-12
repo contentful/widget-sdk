@@ -103,7 +103,7 @@ window.libs = [
   ['@contentful/sharejs/lib/types/json', require('@contentful/sharejs/lib/types/json')],
   ['@contentful/sharejs/lib/types/json-api', require('@contentful/sharejs/lib/types/json-api')],
   ['element-resize-detector', require('element-resize-detector')],
-  ['node-html-encoder', require('node-html-encoder')],
+  ['js-htmlencode', require('js-htmlencode')],
   ['rtl-detect', require('rtl-detect')],
   ['tti-polyfill', require('tti-polyfill')],
   ['@contentful/field-editor-single-line', require('@contentful/field-editor-single-line')],

@@ -92,7 +92,6 @@ angular
       $locationProvider.hashPrefix('!!!');
     }
   ])
-
   .config([
     '$compileProvider',
     $compileProvider => {
@@ -243,7 +242,6 @@ angular
     $stateProvider => {
       $stateProvider.decorator('parent', function(internalStateObj, parentFn) {
         // This fn is called by StateBuilder each time a state is registered
-
         // The first arg is the internal state. Capture it and add an accessor to public state object.
         internalStateObj.self.$$state = function() {
           return internalStateObj;

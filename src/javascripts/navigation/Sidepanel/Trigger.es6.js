@@ -28,13 +28,18 @@ export default class Trigger extends React.Component {
   };
 
   async UNSAFE_componentWillMount() {
-    const [{ navState$, NavStates }, accessChecker] = await Promise.all([
+    const [{ navState$, NavStates }, accessChecker, TokenStore] = await Promise.all([
       import('navigation/NavState.es6'),
-      import('access_control/AccessChecker/index.es6')
+      import('access_control/AccessChecker/index.es6'),
+      import('services/TokenStore.es6')
     ]);
 
     this.offNavState = navState$.onValue(navState => {
       this.setState({ navState });
+    });
+
+    this.offOrganizations = TokenStore.organizations$.onValue(organizations => {
+      this.setState({ showOrganization: organizations.length > 1 });
     });
 
     this.setState({
@@ -47,6 +52,7 @@ export default class Trigger extends React.Component {
 
   componentWillUnmount() {
     this.offNavState();
+    this.offOrganizations();
   }
 
   render() {

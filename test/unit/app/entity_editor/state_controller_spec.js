@@ -119,7 +119,7 @@ describe('entityEditor/StateController', () => {
     });
 
     it('makes delete request', async function() {
-      this.controller.delete.execute();
+      await this.controller.delete.execute();
       $apply();
 
       sinon.assert.calledWith(
@@ -133,7 +133,7 @@ describe('entityEditor/StateController', () => {
     });
 
     it('sends success notification', async function() {
-      this.controller.delete.execute();
+      await this.controller.delete.execute();
 
       $apply();
 
@@ -142,13 +142,13 @@ describe('entityEditor/StateController', () => {
 
     it('sends failure notification with API error', async function() {
       this.spaceEndpoint.rejects('ERROR');
-      this.controller.delete.execute();
+      await this.controller.delete.execute();
       $apply();
       this.assertErrorNotification('delete', 'ERROR');
     });
 
     it('navigates to the previous slide-in entity or closes the current state as a fallback', async function() {
-      this.controller.delete.execute();
+      await this.controller.delete.execute();
       $apply();
       sinon.assert.calledOnceWith(this.stubs.goToPreviousSlideOrExit, 'delete');
     });
@@ -182,8 +182,8 @@ describe('entityEditor/StateController', () => {
         this.action = this.controller.secondary[0];
       });
 
-      it('unpublishes and archives the entity', function() {
-        this.action.execute();
+      it('unpublishes and archives the entity', async function() {
+        await this.action.execute();
         $apply();
 
         sinon.assert.calledWith(
@@ -210,8 +210,8 @@ describe('entityEditor/StateController', () => {
         this.action = this.controller.secondary[1];
       });
 
-      it('unpublishes the entity', function() {
-        this.action.execute();
+      it('unpublishes the entity', async function() {
+        await this.action.execute();
         $apply();
 
         sinon.assert.calledWith(
@@ -382,7 +382,7 @@ describe('entityEditor/StateController', () => {
       });
 
       it('archives entity', async function() {
-        this.action.execute();
+        await this.action.execute();
         $apply();
 
         sinon.assert.calledWith(
@@ -396,7 +396,7 @@ describe('entityEditor/StateController', () => {
       });
 
       it('notifies on success', async function() {
-        this.action.execute();
+        await this.action.execute();
         $apply();
 
         this.assertSuccessNotification('archive');
@@ -404,7 +404,7 @@ describe('entityEditor/StateController', () => {
 
       it('notifies on failure', async function() {
         this.spaceEndpoint.rejects('ERROR');
-        this.action.execute();
+        await this.action.execute();
         $apply();
 
         this.assertErrorNotification('archive', 'ERROR');

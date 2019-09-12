@@ -10,6 +10,11 @@ import * as logger from 'services/logger.es6';
 import localeStore from 'services/localeStore.es6';
 import { trackEntryView } from 'app/entity_editor/Tracking.es6';
 
+import setupNoShareJsCmaFakeRequestsExperiment from 'app/entity_editor/NoShareJsCmaFakeRequestsExperiment.es6';
+import initDocErrorHandler from 'app/entity_editor/DocumentErrorHandler.es6';
+import * as Validator from 'app/entity_editor/Validator.es6';
+import { buildFieldsApi } from 'app/entity_editor/dataFields.es6';
+
 export default function register() {
   /**
    * @ngdoc directive
@@ -188,21 +193,7 @@ export default function register() {
     '$scope',
     '$controller',
     'spaceContext',
-    'app/entity_editor/dataFields.es6',
-    'app/entity_editor/Validator.es6',
-    'app/entity_editor/DocumentErrorHandler.es6',
-    'services/localeStore.es6',
-    'app/entity_editor/NoShareJsCmaFakeRequestsExperiment.es6',
-    function(
-      $scope,
-      $controller,
-      spaceContext,
-      { buildFieldsApi },
-      Validator,
-      { default: initDocErrorHandler },
-      { default: localeStore },
-      { default: setupNoShareJsCmaFakeRequestsExperiment }
-    ) {
+    function($scope, $controller, spaceContext) {
       const editorData = $scope.editorData;
       const entityInfo = (this.entityInfo = editorData.entityInfo);
       const notify = makeNotify('Entry', () => '“' + $scope.title + '”');

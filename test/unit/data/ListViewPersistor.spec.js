@@ -2,14 +2,19 @@ import sinon from 'sinon';
 import { $initialize, $inject } from 'test/helpers/helpers';
 
 describe('ListViewPersistor', () => {
-  let store, $location, qs;
+  let store, $location, getQueryStringStub, qs;
   afterEach(() => {
-    store = $location = qs = null;
+    store = $location = getQueryStringStub = qs = null;
   });
 
   const STORE_KEY = 'lastFilterQueryString.entries.SPACE_ID';
 
   beforeEach(async function() {
+    getQueryStringStub = sinon.stub();
+
+    this.system.set('utils/location', {
+      getQueryString: getQueryStringStub
+    });
     const ListViewPersistor = (await this.system.import('data/ListViewPersistor.es6')).default;
     store = (await this.system.import('TheStore/index.es6')).getStore();
 
@@ -27,7 +32,7 @@ describe('ListViewPersistor', () => {
 
   describe('#read', () => {
     it('reads data from query string by default', () => {
-      $location.search.returns({ fromSearch: true });
+      getQueryStringStub.returns({ fromSearch: true });
       expect(qs.read().fromSearch).toBe(true);
     });
 
@@ -37,12 +42,12 @@ describe('ListViewPersistor', () => {
     });
 
     it('restores nested structure', () => {
-      $location.search.returns({ 'x.y': true });
+      getQueryStringStub.returns({ 'x.y': true });
       expect(qs.read().x.y).toBe(true);
     });
 
     it('handles boolean fields', () => {
-      $location.search.returns({ contentTypeHidden: 'false' });
+      getQueryStringStub.returns({ contentTypeHidden: 'false' });
       expect(qs.read().contentTypeHidden).toBe(false);
     });
   });

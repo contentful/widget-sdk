@@ -6,6 +6,4 @@
   This services helps us to mock window object without using $window.
 */
 
-// debugger;
-
 export default window;
