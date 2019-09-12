@@ -8,8 +8,6 @@ import VersionsWidget from './VersionsWidget.es6';
 import spaceContextMocked from 'ng/spaceContext';
 import SidebarEventTypes from '../SidebarEventTypes.es6';
 
-jest.mock('ng/$q', () => ({}), { virtual: true });
-
 jest.mock('ng/spaceContext', () => ({
   cma: {
     getEntrySnapshots: jest.fn()

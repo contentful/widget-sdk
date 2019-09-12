@@ -6,6 +6,7 @@ import createSampleSpace from './CreateSampleSpace.es6';
 import seeThinkDoFeatureModalTemplate from './SeeThinkDoTemplate.es6';
 import { organizations$ } from 'services/TokenStore.es6';
 import { getModule } from 'NgRegistry.es6';
+import { getSpaceAutoCreatedKey } from './getSpaceAutoCreatedKey.es6';
 
 import {
   getFirstOwnedOrgWithoutSpaces,
@@ -14,8 +15,6 @@ import {
   getCurrOrg,
   isUserOrgCreator
 } from 'data/User/index.es6';
-
-const $stateParams = getModule('$stateParams');
 
 import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 
@@ -81,14 +80,14 @@ export function init() {
           // we swallow all errors, so auto creation modal will always have green mark
           newSpace = await createSampleSpace(org, 'the example app', template).then(
             newSpace => {
-              store.set(getKey(user, 'success'), true);
+              store.set(getSpaceAutoCreatedKey(user, 'success'), true);
 
               return newSpace;
             },
             () => {
               // serialize the fact that auto space creation failed to localStorage
               // to power any behaviour to work around the failure
-              store.set(getKey(user, 'failure'), true);
+              store.set(getSpaceAutoCreatedKey(user, 'failure'), true);
             }
           );
 
@@ -98,7 +97,7 @@ export function init() {
       }
 
       function markOnboarding(action = 'success') {
-        store.set(getKey(user, action), true);
+        store.set(getSpaceAutoCreatedKey(user, action), true);
       }
     });
 }
@@ -113,6 +112,7 @@ function qualifyUser(user, spacesByOrg) {
 }
 
 function currentUserIsCurrentOrgCreator(user) {
+  const $stateParams = getModule('$stateParams');
   const orgId = $stateParams.orgId;
   const orgs = getValue(organizations$);
   const currOrg = getCurrOrg(orgs, orgId);
@@ -121,14 +121,8 @@ function currentUserIsCurrentOrgCreator(user) {
 }
 
 function attemptedSpaceAutoCreation(user) {
-  return store.get(getKey(user, 'success')) || store.get(getKey(user, 'failure'));
-}
-
-export function getKey(user, action) {
-  const prefix = `ctfl:${user.sys.id}`;
-
-  if (action === 'success') {
-    return `${prefix}:spaceAutoCreated`;
-  }
-  return `${prefix}:spaceAutoCreationFailed`;
+  return (
+    store.get(getSpaceAutoCreatedKey(user, 'success')) ||
+    store.get(getSpaceAutoCreatedKey(user, 'failure'))
+  );
 }

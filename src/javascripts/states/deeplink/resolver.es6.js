@@ -1,4 +1,3 @@
-import { runTask } from 'utils/Concurrent.es6';
 import {
   getSpaceInfo,
   getOrg,
@@ -11,8 +10,6 @@ import { getStoragePrefix } from 'components/shared/auto_create_new_space/Create
 import { getStore } from 'TheStore/index.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
-
-const store = getStore();
 
 const ONBOARDING_ERROR = 'modern onboarding space id does not exist';
 
@@ -59,6 +56,8 @@ function resolveParams(link, params) {
       'install-extension': resolveInstallExtension,
       'webhook-template': resolveWebhookTemplate,
       apps: resolveApps,
+      // todo: remove experimental app deeplinks
+      'apps-experimental': resolveAppsExperimental,
       home: makeSpaceScopedPathResolver({ spaceScopedPath: ['spaces', 'detail', 'home'] }),
       'general-settings': makeSpaceScopedPathResolver({
         spaceScopedPath: ['spaces', 'detail', 'settings', 'space']
@@ -124,94 +123,90 @@ function makeSpaceScopedPathResolver({ spaceScopedPath }) {
     throw new Error('A space scoped path must be nested under "spaces"');
   }
 
-  return () =>
-    runTask(function*() {
-      const { space, spaceId } = yield* getSpaceInfo();
-      const spaceContext = getModule('spaceContext');
-      yield spaceContext.resetWithSpace(space);
-      return {
-        path: spaceScopedPath,
-        params: { spaceId }
-      };
-    });
+  return async function() {
+    const { space, spaceId } = await getSpaceInfo();
+    const spaceContext = getModule('spaceContext');
+    await spaceContext.resetWithSpace(space);
+    return {
+      path: spaceScopedPath,
+      params: { spaceId }
+    };
+  };
 }
 
 function createOnboardingScreenResolver(screen) {
-  return () =>
-    runTask(function*() {
-      const spaceId = yield* getOnboardingSpaceId();
+  return async function() {
+    const store = getStore();
 
-      if (spaceId) {
-        const currentStepKey = `${getStoragePrefix()}:currentStep`;
-        // we set current step flag in local storage, so if we click "skip"
-        // and resume the flow later, it opens the same step
-        store.set(currentStepKey, {
-          path: `spaces.detail.onboarding.${screen}`,
-          params: { spaceId }
-        });
-        return {
-          path: ['spaces', 'detail', 'onboarding', screen],
-          params: { spaceId }
-        };
-      } else {
-        throw new Error(ONBOARDING_ERROR);
-      }
-    });
+    const spaceId = await getOnboardingSpaceId();
+
+    if (spaceId) {
+      const currentStepKey = `${getStoragePrefix()}:currentStep`;
+      // we set current step flag in local storage, so if we click "skip"
+      // and resume the flow later, it opens the same step
+      store.set(currentStepKey, {
+        path: `spaces.detail.onboarding.${screen}`,
+        params: { spaceId }
+      });
+      return {
+        path: ['spaces', 'detail', 'onboarding', screen],
+        params: { spaceId }
+      };
+    } else {
+      throw new Error(ONBOARDING_ERROR);
+    }
+  };
 }
 
 // resolve API page
 // in case we have no keys, we show page there
 // users can add a new key
-function resolveApi() {
-  return runTask(function*() {
-    const { space, spaceId } = yield* getSpaceInfo();
-    const spaceContext = getModule('spaceContext');
-    yield spaceContext.resetWithSpace(space);
+async function resolveApi() {
+  const { space, spaceId } = await getSpaceInfo();
+  const spaceContext = getModule('spaceContext');
+  await spaceContext.resetWithSpace(space);
 
-    // we need to set up space first, so accesses will be
-    // updated for this specific space
-    const hasAccess = checkSpaceApiAccess();
+  // we need to set up space first, so accesses will be
+  // updated for this specific space
+  const hasAccess = checkSpaceApiAccess();
 
-    if (!hasAccess) {
-      throw new Error('user is not authorized');
-    }
+  if (!hasAccess) {
+    throw new Error('user is not authorized');
+  }
 
-    const apiKeys = yield spaceContext.apiKeyRepo.getAll();
+  const apiKeys = await spaceContext.apiKeyRepo.getAll();
 
-    if (!apiKeys || apiKeys.length === 0) {
-      return {
-        path: ['spaces', 'detail', 'api', 'keys', 'list'],
-        params: { spaceId }
-      };
-    }
-
+  if (!apiKeys || apiKeys.length === 0) {
     return {
-      path: ['spaces', 'detail', 'api', 'keys', 'detail'],
-      params: {
-        spaceId,
-        apiKeyId: apiKeys[0].sys.id
-      }
+      path: ['spaces', 'detail', 'api', 'keys', 'list'],
+      params: { spaceId }
     };
-  });
+  }
+
+  return {
+    path: ['spaces', 'detail', 'api', 'keys', 'detail'],
+    params: {
+      spaceId,
+      apiKeyId: apiKeys[0].sys.id
+    }
+  };
 }
 
-function resolveInstallExtension({ url, referrer }) {
-  return runTask(function*() {
-    if (!url) {
-      throw new Error(`Extension URL was not specified in the link you've used.`);
+async function resolveInstallExtension({ url, referrer }) {
+  if (!url) {
+    throw new Error(`Extension URL was not specified in the link you've used.`);
+  }
+  const { space, spaceId } = await getSpaceInfo();
+  const spaceContext = getModule('spaceContext');
+  await spaceContext.resetWithSpace(space);
+  return {
+    path: ['spaces', 'detail', 'settings', 'extensions', 'list'],
+    params: {
+      spaceId,
+      extensionUrl: url,
+      referrer: referrer ? `deeplink-${referrer}` : 'deeplink'
     }
-    const { space, spaceId } = yield* getSpaceInfo();
-    const spaceContext = getModule('spaceContext');
-    yield spaceContext.resetWithSpace(space);
-    return {
-      path: ['spaces', 'detail', 'settings', 'extensions', 'list'],
-      params: {
-        spaceId,
-        extensionUrl: url,
-        referrer: referrer ? `deeplink-${referrer}` : 'deeplink'
-      }
-    };
-  });
+  };
 }
 
 /**
@@ -236,32 +231,46 @@ function resolveInstallExtension({ url, referrer }) {
  * elasticsearch-index-entries
  * jira-create-task
  */
-function resolveWebhookTemplate({ id, referrer }) {
-  return runTask(function*() {
-    if (!id) {
-      throw new Error(`Webhook Template ID was not specified in the URL you've used.`);
-    }
-    const { spaceId } = yield* getSpaceInfo();
-    return {
-      path: ['spaces', 'detail', 'settings', 'webhooks', 'list'],
-      params: { spaceId, templateId: id, referrer: referrer ? `deeplink-${referrer}` : 'deeplink' }
-    };
-  });
+async function resolveWebhookTemplate({ id, referrer }) {
+  if (!id) {
+    throw new Error(`Webhook Template ID was not specified in the URL you've used.`);
+  }
+  const { spaceId } = await getSpaceInfo();
+  return {
+    path: ['spaces', 'detail', 'settings', 'webhooks', 'list'],
+    params: { spaceId, templateId: id, referrer: referrer ? `deeplink-${referrer}` : 'deeplink' }
+  };
 }
 
-function resolveApps({ id, referrer }) {
-  return runTask(function*() {
-    const { spaceId } = yield* getSpaceInfo();
+async function resolveAppsExperimental({ id, referrer }) {
+  const { spaceId } = await getSpaceInfo();
 
-    return {
-      path: ['spaces', 'detail', 'apps', 'list'],
-      params: {
-        spaceId,
-        appId: id,
-        referrer: referrer ? `deeplink-${referrer}` : 'deeplink'
-      }
-    };
-  });
+  return {
+    path: ['spaces', 'detail', 'environment', 'apps', 'list'],
+    params: {
+      spaceId,
+      environmentId: 'master',
+      appId: id,
+      referrer: referrer ? `deeplink-${referrer}` : 'deeplink'
+    },
+    deeplinkOptions: {
+      selectSpace: true,
+      selectEnvironment: true
+    }
+  };
+}
+
+async function resolveApps({ id, referrer }) {
+  const { spaceId } = await getSpaceInfo();
+
+  return {
+    path: ['spaces', 'detail', 'apps', 'list'],
+    params: {
+      spaceId,
+      appId: id,
+      referrer: referrer ? `deeplink-${referrer}` : 'deeplink'
+    }
+  };
 }
 
 function makeOrgScopedPathResolver({ orgScopedPath, pathSuffix = null }) {
@@ -273,40 +282,37 @@ function makeOrgScopedPathResolver({ orgScopedPath, pathSuffix = null }) {
     throw new Error('An org scoped path must contain "organizations"');
   }
 
-  return () =>
-    runTask(function*() {
-      const { orgId } = yield* getOrg();
-      const params = pathSuffix === null ? { orgId } : { orgId, pathSuffix };
+  return async function() {
+    const { orgId } = await getOrg();
+    const params = pathSuffix === null ? { orgId } : { orgId, pathSuffix };
 
-      return yield* applyOrgAccess(orgId, {
-        path: orgScopedPath,
-        params
-      });
+    return await applyOrgAccess(orgId, {
+      path: orgScopedPath,
+      params
     });
+  };
 }
 
-function resolveSubscriptions() {
-  return runTask(function*() {
-    const { orgId, org } = yield* getOrg();
+async function resolveSubscriptions() {
+  const { orgId, org } = await getOrg();
 
-    const hasNewPricing = !isLegacyOrganization(org);
+  const hasNewPricing = !isLegacyOrganization(org);
 
-    return yield* applyOrgAccess(orgId, {
-      path: ['account', 'organizations', hasNewPricing ? 'subscription_new' : 'subscription'],
-      params: {
-        orgId,
-        // dummy pathsuffix since we don't want to redirect
-        // to purchase page
-        pathSuffix: ''
-      }
-    });
+  return applyOrgAccess(orgId, {
+    path: ['account', 'organizations', hasNewPricing ? 'subscription_new' : 'subscription'],
+    params: {
+      orgId,
+      // dummy pathsuffix since we don't want to redirect
+      // to purchase page
+      pathSuffix: ''
+    }
   });
 }
 
 // return result only if user has access to organization settings
-function* applyOrgAccess(orgId, successResult) {
+async function applyOrgAccess(orgId, successResult) {
   // user should be owner or admin to access this section
-  const hasAccess = yield* checkOrgAccess(orgId);
+  const hasAccess = await checkOrgAccess(orgId);
 
   if (!hasAccess) {
     throw new Error('user is not authorized');

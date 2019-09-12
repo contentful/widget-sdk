@@ -2,10 +2,37 @@ import { Notification } from '@contentful/forma-36-react-components';
 import accountState from './account.es6';
 import spacesState from 'states/Spaces.es6';
 import homeState from 'states/Home.es6';
-import deeplinkState from 'states/Deeplink.es6';
+import DeeplinkPage from 'states/deeplink/DeeplinkPage.es6';
 import userInvitationState from 'states/UserInvitationState.es6';
 
 import { getModule } from 'NgRegistry.es6';
+
+/**
+ * @description deeplink route to point users to certain sections,
+ * without knowing some details (e.g. navigate to API keys sections,
+ * but without specifying their spaceId)
+ *
+ * Sometimes customer support has to describe "click here and there",
+ * in order to explain how to get to some page. This is hard for every-
+ * one, both for us and for customers, and this route should solve this
+ * exact problem. It infers all parameters from previous usage, or just
+ * picks the first one (e.g. first space from all available)
+ *
+ * @usage
+ * https://app.contentful.com/deeplink?link=api
+ */
+
+const deeplinkState = {
+  name: 'deeplink',
+  url: '/deeplink',
+  component: DeeplinkPage,
+  mapInjectedToProps: [
+    '$location',
+    $location => ({
+      searchParams: $location.search()
+    })
+  ]
+};
 
 /**
  * Imports all the root states and and adds them to the router.

@@ -9,7 +9,6 @@ import flushPromises from '../../../../../test/helpers/flushPromises';
 
 const mockAuthor = { firstName: 'John', lastName: 'Doe', avatarUrl: '0.jpeg', sys: { id: 'abc' } };
 
-jest.mock('ng/$q', () => ({}), { virtual: true });
 jest.mock('services/TokenStore.es6', () => ({
   getSpace: jest.fn(),
   getUserSync: jest.fn().mockReturnValue({ sys: { id: 'abc' } })

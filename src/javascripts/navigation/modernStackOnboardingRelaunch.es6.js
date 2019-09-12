@@ -2,7 +2,7 @@ import React from 'react';
 import WithLink from 'components/shared/stack-onboarding/components/WithLink.es6';
 
 import { getStore } from 'TheStore/index.es6';
-import { getKey } from 'components/shared/auto_create_new_space/index.es6';
+import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import {
   MODERN_STACK_ONBOARDING_COMPLETE_EVENT,
@@ -14,14 +14,13 @@ import {
 import Icon from 'ui/Components/Icon.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $rootScope = getModule('$rootScope');
-const spaceContext = getModule('spaceContext');
-
 const store = getStore();
 
 export default class Relaunch extends React.Component {
   state = { flag: false };
   async componentDidMount() {
+    const $rootScope = getModule('$rootScope');
+
     const flag = await getCurrentVariation(MODERN_STACK_ONBOARDING_FEATURE_FLAG);
 
     // since this component is rendered when the onboarding begins, we need to ask it to update
@@ -46,7 +45,8 @@ export default class Relaunch extends React.Component {
     this.unsubscribeFromSpaceContext && this.unsubscribeFromSpaceContext();
   }
   render() {
-    const spaceAutoCreationFailed = store.get(getKey(getUser(), 'failure'));
+    const spaceContext = getModule('spaceContext');
+    const spaceAutoCreationFailed = store.get(getSpaceAutoCreatedKey(getUser(), 'failure'));
     const currentSpace = spaceContext.space;
     const { flag } = this.state;
 
