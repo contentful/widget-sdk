@@ -43,6 +43,9 @@ const styles = {
   }),
   description: css({
     marginBottom: tokens.spacingS
+  }),
+  tableHeaderCell: css({
+    whiteSpace: 'nowrap'
   })
 };
 
@@ -220,8 +223,8 @@ export default class JobsTable extends Component {
             <TableRow>
               <TableCell className={styles.scheduledTimeTableHeader}>Scheduled Time</TableCell>
               <TableCell>Name</TableCell>
-              <TableCell>Content Type</TableCell>
-              <TableCell>Scheduled By</TableCell>
+              <TableCell className={styles.tableHeaderCell}>Content Type</TableCell>
+              <TableCell className={styles.tableHeaderCell}>Scheduled By</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>

@@ -111,7 +111,7 @@ export const getFirst7SnapshotsOfDefaultEntry = {
   }
 };
 
-export const queryForDefaultEntryInsideEnvironment ={
+export const queryForDefaultEntryInsideEnvironment = {
   willFindIt() {
     cy.addInteraction({
       provider: 'entries',
@@ -136,6 +136,31 @@ export const queryForDefaultEntryInsideEnvironment ={
   }
 };
 
+export const queryForDefaultEntryWithoutEnvironment = {
+  willFindIt() {
+    cy.addInteraction({
+      provider: 'entries',
+      state: States.SEVERAL,
+      // TODO: Is this description accurate?
+      uponReceiving: `a query for the entry "${defaultEntryId}"  in space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${defaultSpaceId}/entries`,
+        headers: defaultHeader,
+        query: {
+          'sys.id[in]': defaultEntryId // TODO: Is this the correct query?
+        }
+      },
+      willRespondWith: {
+        status: 200,
+        body: severalEntriesResponseBody // TODO: This looks wrong (the response contains three entries)
+      }
+    }).as('queryForDefaultEntryWithoutEnvironment');
+
+    return '@queryForDefaultEntryWithoutEnvironment';
+  }
+};
+
 export const createAnEntryInDefaultSpace = {
   willSucceed() {
     cy.addInteraction({
@@ -155,4 +180,4 @@ export const createAnEntryInDefaultSpace = {
 
     return '@createAnEntryInDefaultSpace';
   }
-}
+};

@@ -21,7 +21,10 @@ import { getEntityData } from './EntityService.es6';
 const styles = {
   entryListItem: css({
     cursor: 'pointer',
-    marginBottom: 0
+    marginBottom: 0,
+    h1: {
+      lineHeight: 'inherit'
+    }
   }),
   skeleton: css({
     marginTop: tokens.spacingS
@@ -34,24 +37,29 @@ const styles = {
   })
 };
 
-export default function WrappedEntityListItem({ entity, internalLocaleCode, onClick }) {
+export default function WrappedEntityListItem({
+  entity,
+  internalLocaleCode,
+  onClick,
+  contentType
+}) {
   const getEntityDataFn = useCallback(() => {
     return getEntityData(entity, internalLocaleCode);
   }, [entity, internalLocaleCode]);
 
   const { isLoading, data: entityData } = useAsync(getEntityDataFn);
-
   return isLoading ? (
     <EntityListItemSkeleton />
   ) : (
     <EntityStateLink key={entity.sys.id} entity={entity}>
-      {({ _, getHref }) => {
+      {({ onClick: onClickGoToEntry, getHref }) => {
         return (
           <EntityListItem
             className={styles.entryListItem}
-            onClick={onClick}
+            onClick={e => (onClick ? onClick(e, entity) : onClickGoToEntry(e, entity))}
             key={entity.sys.id}
             title={entityData.title || 'Untitled'}
+            contentType={contentType}
             thumbnailUrl={
               entityData.file
                 ? `${AssetUrlService.transformHostname(entityData.file.url)}?w=46&h=46&fit=thumb`
@@ -60,7 +68,7 @@ export default function WrappedEntityListItem({ entity, internalLocaleCode, onCl
             thumbnailAltText={entityData.title}
             description={entityData.description}
             status={entityData.status}
-            href={getHref()}
+            href={onClick && getHref()}
           />
         );
       }}
@@ -70,8 +78,9 @@ export default function WrappedEntityListItem({ entity, internalLocaleCode, onCl
 
 WrappedEntityListItem.propTypes = {
   entity: PropTypes.object.isRequired,
-  onClick: PropTypes.func.isRequired,
-  internalLocaleCode: PropTypes.string.isRequired
+  onClick: PropTypes.func,
+  internalLocaleCode: PropTypes.string,
+  contentType: PropTypes.string
 };
 
 function EntityListItemSkeleton() {

@@ -2,16 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import _ from 'lodash';
-import {
-  ModalConfirm,
-  List,
-  ListItem,
-  Paragraph,
-  EntityList
-} from '@contentful/forma-36-react-components';
+import { ModalConfirm, List, ListItem, Paragraph } from '@contentful/forma-36-react-components';
+import WrappedEntityList from 'app/common/WrappedEntityList/index.es6';
 import tokens from '@contentful/forma-36-tokens';
 import * as slideInNavigator from 'navigation/SlideInNavigator/index.es6';
-import WrappedEntityListItem from './WrappedEntityListItem.es6';
 import localeStore from 'services/localeStore.es6';
 
 const humaniseEntityType = (type, references) => {
@@ -109,19 +103,11 @@ class UnpublishedReferencesConfirm extends Component {
           {fieldInfo}
           {references.length > 1 ? ` - ${referenceMessage}` : ''}
         </div>
-
-        <EntityList>
-          {references.map(entity => {
-            return (
-              <WrappedEntityListItem
-                key={entity.sys.id}
-                entity={entity}
-                internalLocaleCode={field.internalLocaleCode}
-                onClick={e => this.onEntityListClick(e, entity)}
-              />
-            );
-          })}
-        </EntityList>
+        <WrappedEntityList
+          entities={references}
+          internalLocaleCode={field.internalLocaleCode}
+          onEntityClick={(e, entity) => this.onEntityListClick(e, entity)}
+        />
       </div>
     );
   }

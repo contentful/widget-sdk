@@ -1,17 +1,12 @@
 import { uniq } from 'lodash';
 import * as JobsService from '../DataManagement/JobsService.es6';
+import _ from 'lodash';
+import * as EntityResolver from 'data/CMA/EntityResolver.es6';
+import { getModule } from 'NgRegistry.es6';
 
-function getEntriesWithIds(endpoint, ids) {
-  return endpoint(
-    {
-      method: 'GET',
-      path: ['entries'],
-      query: {
-        'sys.id[in]': uniq(ids).join(',')
-      }
-    },
-    { 'X-Contentful-Skip-Transformation': true }
-  );
+function getEntriesWithIds(ids) {
+  const spaceContext = getModule('spaceContext');
+  return EntityResolver.fetchForType(spaceContext, 'Entry', ids);
 }
 
 function getUsers(endpoint, ids) {
@@ -45,13 +40,13 @@ export async function getJobsData(spaceEndpoint, query) {
   const userIds = jobs.map(j => j.sys.scheduledBy.sys.id);
 
   const [entriesCollection, usersCollection] = await Promise.all([
-    getEntriesWithIds(spaceEndpoint, entryIds),
+    getEntriesWithIds(entryIds),
     getUsers(spaceEndpoint, userIds)
   ]);
 
   return {
     jobs,
-    entries: entriesCollection.items,
+    entries: entriesCollection,
     users: usersCollection.items
   };
 }

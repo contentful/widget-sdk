@@ -3,7 +3,7 @@ import { defaultSpaceId } from '../../../util/requests';
 import { getAllPublicContentTypesInDefaultSpace } from '../../../interactions/content_types';
 import { queryAllJobsForDefaultSpace } from '../../../interactions/jobs';
 import { severalJobsResponse } from '../../../fixtures/responses/jobs-several';
-import { queryForDefaultEntryInsideEnvironment } from '../../../interactions/entries';
+import { queryForDefaultEntryWithoutEnvironment } from '../../../interactions/entries';
 import { queryForDefaultUserDetails } from '../../../interactions/users';
 import { FeatureFlag } from '../../../util/featureFlag';
 
@@ -39,7 +39,7 @@ describe('Jobs page', () => {
         .should('be.visible')
         .find('svg')
         .should('be.visible')
-        .getByTestId('cf-ui-heading')
+        .getByTestId('jobs-state-message-heading')
         .should('contain', 'Nothing is scheduled');
     });
   });
@@ -61,7 +61,7 @@ describe('Jobs page', () => {
       });
       const slowInteractions = [
         queryAllJobsForDefaultSpace.willFindSeveral(),
-        queryForDefaultEntryInsideEnvironment.willFindIt(),
+        queryForDefaultEntryWithoutEnvironment.willFindIt(),
         queryForDefaultUserDetails.willFindTheUserDetails()
       ];
 
@@ -72,9 +72,9 @@ describe('Jobs page', () => {
       });
     });
     it('renders list of jobs', () => {
-      cy.getByTestId('jobs-table')
+      cy.getByTestId('scheduled-jobs-date-group')
         .should('be.visible')
-        .getAllByTestId('scheduled-job')
+        .getAllByTestId('cf-ui-entity-list-item')
         .should('have.length', severalJobsResponse.items.length);
     });
   });

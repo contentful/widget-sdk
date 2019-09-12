@@ -31,7 +31,9 @@ export default class JobsStateMessage extends Component {
     return (
       <div className={styles.container} {...otherProps}>
         <MediaEmptyStateIllustration className={styles.illustration} />
-        <Heading className={styles.heading}>{title}</Heading>
+        <Heading className={styles.heading} testId="jobs-state-message-heading">
+          {title}
+        </Heading>
         <Paragraph>{text}</Paragraph>
       </div>
     );

@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import Workbench from 'app/common/Workbench.es6';
 import { css } from 'emotion';
 import {
   SkeletonContainer,
   SkeletonText,
   Tabs,
   Tab,
-  TabPanel,
-  Tag
+  TabPanel
 } from '@contentful/forma-36-react-components';
+import Icon from 'ui/Components/Icon.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import JobsTable from './JobsTable.es6';
 
@@ -23,6 +23,7 @@ import * as EndpointFactory from 'data/EndpointFactory.es6';
 import { getJobsData } from './JobsListService.es6';
 import JobsEmptyStateMessage from './JobsEmptyStateMessage.es6';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage.es6';
+import JobsSchedule from './JobsSchedule.es6';
 
 function normalizeCollection(items) {
   return _.fromPairs(items.map(i => [i.sys.id, i]));
@@ -62,12 +63,10 @@ const JobsFetcher = createFetcherComponent(
 
 const JobsListShell = props => (
   <Workbench>
-    <Workbench.Header>
-      <Workbench.Icon icon="schedule-calendar" scale="1" />
-      <Workbench.Title className={styles.workbenchTitle}>Scheduled Content</Workbench.Title>
-      <Tag className={styles.alphaTag}>ALPHA</Tag>
-    </Workbench.Header>
-    <Workbench.Content className={styles.workbenchContent}>
+    <Workbench.Header
+      icon={<Icon name="schedule-calendar" scale={0.75} />}
+      title="Scheduled Content"></Workbench.Header>
+    <Workbench.Content type="text" className={styles.workbenchContent}>
       <div>{props.children}</div>
     </Workbench.Content>
   </Workbench>
@@ -75,11 +74,9 @@ const JobsListShell = props => (
 
 const ItemSkeleton = props => (
   <React.Fragment>
-    <SkeletonText offsetTop={props.baseTop} offsetLeft="1%" lineHeight={8} width="18%" />
-    <SkeletonText offsetTop={props.baseTop} offsetLeft="21%" lineHeight={8} width="18%" />
-    <SkeletonText offsetTop={props.baseTop} offsetLeft="41%" lineHeight={8} width="18%" />
-    <SkeletonText offsetTop={props.baseTop} offsetLeft="61%" lineHeight={8} width="18%" />
-    <SkeletonText offsetTop={props.baseTop} offsetLeft="81%" lineHeight={8} width="18%" />
+    <SkeletonText offsetTop={props.baseTop + 32.5} offsetLeft={0} lineHeight={20} width="15%" />
+    <SkeletonText offsetTop={props.baseTop} offsetLeft="20%" lineHeight={40} width="80%" />
+    <SkeletonText offsetTop={props.baseTop + 50} offsetLeft="20%" lineHeight={40} width="80%" />
   </React.Fragment>
 );
 ItemSkeleton.propTypes = {
@@ -88,11 +85,11 @@ ItemSkeleton.propTypes = {
 
 export const JobsListPageLoading = () => {
   return (
-    <SkeletonContainer svgWidth="100%" svgHeight={200} ariaLabel="Loading jobs list...">
-      <SkeletonText offsetTop={0} offsetLeft={0} lineHeight={40} width="100%" />
-      <ItemSkeleton baseTop={60} />
-      <ItemSkeleton baseTop={90} />
-      <ItemSkeleton baseTop={120} />
+    <SkeletonContainer svgWidth="100%" svgHeight={300} ariaLabel="Loading jobs list...">
+      <SkeletonText offsetTop={20} offsetLeft={0} lineHeight={20} width="100%" />
+      <ItemSkeleton baseTop={50} />
+      <SkeletonText offsetTop={170} offsetLeft={0} lineHeight={20} width="100%" />
+      <ItemSkeleton baseTop={200} />
     </SkeletonContainer>
   );
 };
@@ -158,7 +155,7 @@ export default class JobsListPage extends Component {
   }
 
   renderTabNavigation = () => (
-    <Tabs>
+    <Tabs withDivider>
       {Object.keys(this.tabs).map(key => (
         <Tab
           key={key}
@@ -203,9 +200,15 @@ export default class JobsListPage extends Component {
                 );
               }
 
-              return (
+              return activeTab !== 'erroredJobs' ? (
+                <JobsSchedule
+                  jobs={jobs}
+                  entriesData={entries}
+                  usersData={users}
+                  contentTypesData={contentTypes}
+                />
+              ) : (
                 <JobsTable
-                  showStatusTransition={activeTab === 'scheduledJobs'}
                   description={this.tabs[activeTab].description}
                   jobs={jobs}
                   entriesData={entries}
