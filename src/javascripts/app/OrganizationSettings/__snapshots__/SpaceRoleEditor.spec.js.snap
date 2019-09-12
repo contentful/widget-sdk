@@ -50,7 +50,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
         testId="space-role-editor.button"
         type="button"
       >
-        Select a role
+        Select a space role
       </Button>
     }
   >
@@ -89,7 +89,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
               <span
                 className="Button__Button__label___3tcOj"
               >
-                Select a role
+                Select a space role
               </span>
               <Icon
                 color="secondary"
@@ -235,7 +235,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
         testId="space-role-editor.button"
         type="button"
       >
-        Select a role
+        Select a space role
       </Button>
     }
   >
@@ -274,7 +274,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
               <span
                 className="Button__Button__label___3tcOj"
               >
-                Select a role
+                Select a space role
               </span>
               <Icon
                 color="secondary"
@@ -373,7 +373,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                 <span
                   class="Button__Button__label___3tcOj"
                 >
-                  Select a role
+                  Select a space role
                 </span>
                 <svg
                   class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"

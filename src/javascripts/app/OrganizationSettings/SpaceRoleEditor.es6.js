@@ -110,7 +110,7 @@ class SpaceRoleEditor extends React.Component {
 
     let rolesSummary;
     if (selectedNames.length === 0) {
-      rolesSummary = 'Select a role';
+      rolesSummary = 'Select a space role';
     }
     if (selectedNames.length === 1) {
       rolesSummary = selectedNames[0];

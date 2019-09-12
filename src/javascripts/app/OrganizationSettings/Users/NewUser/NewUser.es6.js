@@ -10,7 +10,9 @@ import {
   RadioButtonField,
   Form,
   ValidationMessage,
-  CheckboxField
+  CheckboxField,
+  ModalConfirm,
+  Typography
 } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import pluralize from 'pluralize';
@@ -22,6 +24,7 @@ import NewUserSuccess from './NewUserSuccess.es6';
 import NewUserProgress from './NewUserProgress.es6';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 const styles = {
   subheading: css({
@@ -93,13 +96,18 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
     dispatch({ type: 'ROLE_CHANGED', payload: value });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     dispatch({ type: 'SUBMITTED' });
 
     if (emailList.length === 0 || invalidAddresses.length || !orgRole) return;
     if (spaceMemberships.length && spaceMemberships.some(membership => !membership.roles.length))
       return;
 
+    if (!spaceMemberships.length) {
+      // if no spaces were selected, display a confirmation dialog
+      const confirmed = await confirmNoSpaces(emailList.length);
+      if (!confirmed) return;
+    }
     addToOrg(emailList, orgRole, spaceMemberships, suppressInvitation);
   };
 
@@ -119,7 +127,7 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
     if (!submitted) return '';
 
     if (emailList.length === 0) {
-      return 'Please enter at least one email address';
+      return 'Enter at least one email address so we can invite them to your organization';
     }
 
     if (invalidAddresses.length) {
@@ -139,7 +147,7 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
 
   const orgRoleError = useMemo(() => {
     if (submitted && !orgRole) {
-      return 'Please select a role';
+      return `Choose an organization role for the people you're inviting`;
     }
     return '';
   }, [orgRole, submitted]);
@@ -193,7 +201,7 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
 
             <fieldset>
               <Subheading element="h3" className={styles.subheading}>
-                Role
+                Choose an organization role
               </Subheading>
               <FieldGroup>
                 {availableOrgRoles.map(role => (
@@ -221,7 +229,7 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
 
             <fieldset>
               <Subheading element="h3" className={styles.subheading}>
-                Spaces
+                Add to spaces
               </Subheading>
               <SpaceMembershipList
                 orgId={orgId}
@@ -266,3 +274,27 @@ NewUser.propTypes = {
   hasSsoEnabled: PropTypes.bool.isRequired,
   isOwner: PropTypes.bool.isRequired
 };
+
+async function confirmNoSpaces(count) {
+  return ModalLauncher.open(({ isShown, onClose }) => (
+    <ModalConfirm
+      isShown={isShown}
+      title="Invite without access to a space"
+      onConfirm={() => {
+        onClose(true);
+      }}
+      onCancel={() => {
+        onClose(false);
+      }}
+      confirmLabel="Send invitations anyway"
+      testId="new-user.no-spaces-confirmation">
+      <Typography>
+        <Paragraph>
+          Are you sure you want to invite {count > 1 ? `${count} users` : 'this user'} without
+          access to a space?
+        </Paragraph>
+        <Paragraph>{`Users without access to a space can't create or edit content, but you can always add them to spaces later.`}</Paragraph>
+      </Typography>
+    </ModalConfirm>
+  ));
+}
