@@ -35,7 +35,7 @@ export { Action, State };
 export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) {
   const applyAction = makeApply(spaceEndpoint);
 
-  const state$ = sys$.map(getState);
+  const state$ = sys$.map(getState).skipDuplicates();
   let currentState;
   state$.onValue(state => {
     currentState = state;
@@ -46,47 +46,57 @@ export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) 
   sys$.onEnd(stateChangeBus.end);
 
   const inProgressBus = K.createPropertyBus(false);
-  const inProgress$ = inProgressBus.property;
+  const inProgress$ = inProgressBus.property.skipDuplicates();
 
   return { apply, stateChange$, state$, inProgress$ };
 
-  function apply(action) {
+  async function apply(action) {
     const previousState = currentState;
     inProgressBus.set(true);
-    return applyAction(action, getData())
-      .then(data => {
-        // Deleting does not return any data.
-        if (data && data.sys) {
-          setSys(data.sys);
-          stateChangeBus.emit({
-            from: previousState,
-            to: getState(data.sys)
-          });
 
-          const nextState = getState(data.sys);
-          const statesMap = {
-            [State.Archived()]: 'archived',
-            [State.Published()]: 'published'
-          };
+    let data;
+    try {
+      data = await applyAction(action, getData());
+    } catch (error) {
+      inProgressBus.set(false);
+      throw error;
+    }
 
-          // Document#docEventsBus doesn't emit changes of the document
-          // status so we have to listen to those here.
-          if (statesMap[nextState]) {
-            docStateChangeBus.set({ name: statesMap[nextState], p: ['sys'] });
-          } else if (previousState === State.Archived()) {
-            docStateChangeBus.set({ name: 'unarchived', p: ['sys'] });
-          } else if (
-            previousState === State.Published() ||
-            // When an entry is published, changed and then unpublished, it goes to Draft state.
-            (previousState === State.Changed() && nextState === State.Draft())
-          ) {
-            docStateChangeBus.set({ name: 'unpublished', p: ['sys'] });
-          }
-        }
-        return data;
-      })
-      .finally(() => {
-        inProgressBus.set(false);
+    // Deleting does not return any data.
+    if (data && data.sys) {
+      update(data.sys, previousState);
+    }
+    inProgressBus.set(false);
+    return data;
+  }
+
+  function update(newSys, previousState) {
+    const nextState = getState(newSys);
+    const statesMap = {
+      [State.Archived()]: 'archived',
+      [State.Published()]: 'published'
+    };
+
+    setSys(newSys);
+
+    if (previousState !== nextState) {
+      stateChangeBus.emit({
+        from: previousState,
+        to: nextState
       });
+    }
+    // Document#docEventsBus doesn't emit changes of the document
+    // status so we have to listen to those here.
+    if (statesMap[nextState]) {
+      docStateChangeBus.set({ name: statesMap[nextState], p: ['sys'] });
+    } else if (previousState === State.Archived()) {
+      docStateChangeBus.set({ name: 'unarchived', p: ['sys'] });
+    } else if (
+      previousState === State.Published() ||
+      // When an entry is published, changed and then unpublished, it goes to Draft state.
+      (previousState === State.Changed() && nextState === State.Draft())
+    ) {
+      docStateChangeBus.set({ name: 'unpublished', p: ['sys'] });
+    }
   }
 }
