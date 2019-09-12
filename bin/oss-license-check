@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euf -o pipefail
 
-PACKAGELIST=( 
+PACKAGELIST=(
 	colors@0.6.0-1
 	flexbuffer@0.0.6
 	get-document@1.0.0
@@ -14,7 +14,6 @@ PACKAGELIST=(
 	@typeform/embed@0.6.1
 	cycle@1.0.3
 	filestack-loader@3.0.4
-	node-html-encoder@0.0.2
 	node-jsx@0.13.3)
 
 PKG_OUTPUT=$(echo ${PACKAGELIST[@]}| sed 's/ /;/g')
