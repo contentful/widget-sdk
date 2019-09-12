@@ -87,7 +87,7 @@ window.libs = [
   ['pluralize', require('pluralize')],
   ['prop-types', require('prop-types')],
   ['qs', require('qs')],
-  ['node-html-encoder', require('node-html-encoder')],
+  ['js-htmlencode', require('js-htmlencode')],
   ['moment', require('moment')],
   ['moment-timezone', require('moment-timezone')],
   ['react', require('react')],

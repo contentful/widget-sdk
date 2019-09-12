@@ -1,6 +1,3 @@
-import htmlEncoder from 'node-html-encoder';
+import { htmlEncode, htmlDecode } from 'js-htmlencode';
 
-const encoder = htmlEncoder.Encoder();
-
-export const htmlEncode = encoder.htmlEncode.bind(encoder);
-export const htmlDecode = encoder.htmlDecode.bind(encoder);
+export { htmlEncode, htmlDecode };
