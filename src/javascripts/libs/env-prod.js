@@ -120,7 +120,6 @@ window.libs = [
   ['mitt', require('mitt')],
   ['react-player', require('react-player')],
   ['react-sortable-hoc', require('react-sortable-hoc')],
-  ['@typeform/embed', require('@typeform/embed/dist/embed')],
   ['emotion', require('emotion')],
   ['immer', require('immer')],
   ['fclone', require('fclone')],
