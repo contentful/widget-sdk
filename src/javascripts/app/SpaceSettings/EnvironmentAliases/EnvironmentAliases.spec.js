@@ -82,7 +82,8 @@ describe('EnvironmentAliases', () => {
 
     const environmentaliases = getByTestId('environmentaliases.wrapper');
     expect(environmentaliases).toBeInTheDocument();
-    expect(environmentaliases.innerHTML).toContain('Supercharge your Environments with Aliases');
+
+    expect(getByTestId('environmentaliases.start-opt-in')).toBeInTheDocument();
 
     getByTestId('environmentaliases.start-opt-in').click();
 

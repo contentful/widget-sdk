@@ -13,17 +13,20 @@ import {
   Modal,
   Dropdown,
   Notification,
-  Paragraph
+  Paragraph,
+  Note
 } from '@contentful/forma-36-react-components';
 import * as logger from 'services/logger.es6';
 import EnvironmentDetails from 'app/common/EnvironmentDetails.es6';
 import { handleChangeEnvironment } from './Utils.es6';
 import { aliasStyles } from './SharedStyles.es6';
-import { spacingM } from '@contentful/forma-36-tokens';
+import { spacingM, spacingXs } from '@contentful/forma-36-tokens';
 import {
   changeEnvironmentAbort,
   changeEnvironmentConfirm
 } from 'analytics/events/EnvironmentAliases.es6';
+import { CodeFragment } from 'ui/Content.es6';
+import AnimateHeight from 'react-animate-height';
 
 const changeEnvironmentModalStyles = {
   dropdown: css({
@@ -50,6 +53,12 @@ const changeEnvironmentModalStyles = {
   }),
   subHeader: css({
     marginTop: spacingM
+  }),
+  changeNotice: css({
+    paddingTop: spacingXs,
+    '& > span': {
+      verticalAlign: 'middle'
+    }
   })
 };
 
@@ -98,12 +107,12 @@ export default function ChangeEnvironmentModal({
       setModalOpen(false);
       setTimeout(() => window.location.reload(), 1000);
       Notification.success(
-        `Your "${alias.sys.id}" Alias is now pointing towards the environment "${aliasedEnvironment}"`
+        `Your "${alias.sys.id}" alias is now pointing towards the environment "${aliasedEnvironment}"`
       );
     } catch (err) {
       logger.logError('Aliases - changeEnvironment exception', err);
       Notification.error(
-        `There was an error pointing your "${alias.sys.id}" Alias towards the environment "${aliasedEnvironment}"`
+        `There was an error pointing your "${alias.sys.id}" alias towards the environment "${aliasedEnvironment}"`
       );
     } finally {
       setLoading(false);
@@ -112,7 +121,7 @@ export default function ChangeEnvironmentModal({
 
   return (
     <Modal
-      title="Point Master Alias to another Environment"
+      title={`Change target environment of the ${alias.sys.id} alias`}
       onClose={() => {
         changeEnvironmentAbort();
         setAliasedEnvironment(initialAliasedEnvironment);
@@ -127,7 +136,6 @@ export default function ChangeEnvironmentModal({
         <React.Fragment>
           <Modal.Header title={title} onClose={onClose} />
           <Modal.Content testId="changeenvironmentmodal.content">
-            <Paragraph>{`Select the new environment you would like your "${alias.sys.id}" Alias to point to:`}</Paragraph>
             <Card className={aliasStyles.card}>
               <div className={changeEnvironmentModalStyles.header}>
                 <EnvironmentDetails
@@ -139,7 +147,7 @@ export default function ChangeEnvironmentModal({
                   showAliasedTo={false}
                   hasCopy={false}></EnvironmentDetails>
               </div>
-              <Paragraph>Current Environment:</Paragraph>
+              <Paragraph>Current environment:</Paragraph>
               <Table className={aliasStyles.body}>
                 <TableBody>
                   <TableRow className={aliasStyles.row}>
@@ -154,7 +162,7 @@ export default function ChangeEnvironmentModal({
                   </TableRow>
                 </TableBody>
               </Table>
-              <Paragraph className={changeEnvironmentModalStyles.subHeader}>Switch to:</Paragraph>
+              <Paragraph className={changeEnvironmentModalStyles.subHeader}>Change to:</Paragraph>
               <Dropdown
                 isOpen={dropDownOpen}
                 className={changeEnvironmentModalStyles.dropdown}
@@ -191,11 +199,18 @@ export default function ChangeEnvironmentModal({
                 </DropdownList>
               </Dropdown>
             </Card>
-            {aliasedEnvironment !== initialAliasedEnvironment && (
-              <Paragraph>
-                {`The environment serving production content will be changed to "${aliasedEnvironment}"!`}
-              </Paragraph>
-            )}
+            <AnimateHeight height={aliasedEnvironment !== initialAliasedEnvironment ? 'auto' : '0'}>
+              <Note
+                title={`The target environment of the ${alias.sys.id} alias will be changed from`}>
+                <Paragraph className={changeEnvironmentModalStyles.changeNotice}>
+                  <CodeFragment>{id}</CodeFragment>
+                  <span>
+                    <em> to </em>
+                  </span>
+                  <CodeFragment>{aliasedEnvironment}</CodeFragment>
+                </Paragraph>
+              </Note>
+            </AnimateHeight>
           </Modal.Content>
           <Modal.Controls>
             <Button

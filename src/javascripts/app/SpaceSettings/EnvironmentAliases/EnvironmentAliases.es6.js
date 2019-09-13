@@ -68,7 +68,7 @@ function EnvironmentAlias({
   alias
 }) {
   const changeEnvironment = () => {
-    changeEnvironmentOpen()
+    changeEnvironmentOpen();
     setModalOpen(true);
   };
   const content = (
@@ -161,6 +161,12 @@ const aliasesStyles = {
     borderRadius: '3px',
     color: tokens.colorWhite,
     backgroundColor: tokens.colorPrimary
+  }),
+  header: css({
+    marginBottom: tokens.spacingM
+  }),
+  paragraph: css({
+    margin: `${tokens.spacingM} 0`
   })
 };
 
@@ -222,17 +228,22 @@ export default function EnvironmentAliases(props) {
           <div>
             <Tag className={aliasesStyles.tag}>ALPHA</Tag>
           </div>
-          <Heading element="h2">Supercharge your Environments with Aliases</Heading>
+          <Heading className={aliasesStyles.header} element="h2">
+            Introducing environment aliases
+          </Heading>
           <Paragraph>
-            We&apos;ve just launched Aliases, which allow you to make any Environment your
-            production Environment. Easily roll-out updates, and just as easily roll them back.
+            Environment aliases allow you to choose which environment serves your production
+            content. Quickly roll out updates, and just as easily roll them back.
+          </Paragraph>
+          <Paragraph className={aliasesStyles.paragraph}>
+            Go ahead and set up the environment alias for your master environment.
           </Paragraph>
           <span className={aliasesStyles.buttonBar}>
             <Button
               testId="environmentaliases.start-opt-in"
               className={aliasesStyles.button}
               onClick={startOptIn}>
-              Create first Alias
+              Set up your first alias
             </Button>
             <ExternalTextLink href="https://www.contentful.com/developers/docs/concepts/environment-aliases/">
               Learn more

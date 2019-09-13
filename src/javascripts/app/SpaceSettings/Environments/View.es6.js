@@ -304,10 +304,19 @@ DeleteButton.propTypes = {
 };
 
 const sidebarStyles = {
-  subHeader: css({
+  subHeaderFirst: css({
     fontSize: tokens.fontSizeM,
     paddingBottom: tokens.spacingXs,
     color: tokens.colorTextDark
+  }),
+  subHeader: css({
+    fontSize: tokens.fontSizeM,
+    paddingTop: tokens.spacingL,
+    paddingBottom: tokens.spacingXs,
+    color: tokens.colorTextDark
+  }),
+  paragraph: css({
+    marginBottom: tokens.spacingM
   })
 };
 
@@ -361,11 +370,10 @@ function Sidebar({
       <Heading element="h2" className="entity-sidebar__heading">
         Documentation
       </Heading>
-      {aliasesEnabled && <Paragraph className={sidebarStyles.subHeader}>Environment</Paragraph>}
+      <Paragraph className={sidebarStyles.subHeaderFirst}>Environment</Paragraph>
       <div className="entity-sidebar__text-profile">
         <Paragraph>
-          Environments allow you to modify the data in your space without affecting the data in your
-          master environment.
+          Environments allow you to develop and test changes to data in isolation.
         </Paragraph>
         <Paragraph>
           <span>Read more in the </span>
@@ -380,8 +388,8 @@ function Sidebar({
           <Paragraph className={sidebarStyles.subHeader}>Environment Aliases</Paragraph>
           <div className="entity-sidebar__text-profile">
             <Paragraph>
-              Anim ea labore duis voluptate. Enim excepteur est anim Lorem excepteur. Pariatur
-              occaecat ad mollit sunt consequat aliquip ad consequat sit aute.
+              An environment alias allows you to access and modify the data of an environment
+              through a different static identifier.
             </Paragraph>
             <Paragraph>
               <span>Read more in the </span>

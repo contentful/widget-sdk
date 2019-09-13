@@ -8,7 +8,7 @@ const setStep = jest.fn();
 
 jest.mock('moment', () => ({
   __esModule: true,
-  default: () => ({ fromNow: () => 'a few seconds ago' })
+  default: () => ({ fromNow: () => 'a few seconds ago', format: () => 'formatted' })
 }));
 
 const getComponent = (props = {}) => {
@@ -30,8 +30,12 @@ describe('OptIn', () => {
     const { getByTestId } = render(component);
     const btn = getByTestId('button.to-third-step');
     expect(btn).toBeDisabled();
+    fireEvent.change(getByTestId('input'), { target: { value: 'master' } });
+    expect(btn).toBeDisabled();
     fireEvent.change(getByTestId('input'), { target: { value: 'new environmentid' } });
+    expect(btn).toBeDisabled();
+    fireEvent.click(getByTestId('checkbox.disclaimer'));
     btn.click();
-    await wait(() => expect(setStep).toHaveBeenCalledWith(STEPS.THIRD_CHANGE_ENV));
+    await wait(() => expect(setStep).toHaveBeenLastCalledWith(STEPS.THIRD_CHANGE_ENV));
   });
 });
