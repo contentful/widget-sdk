@@ -343,7 +343,7 @@ export default class AppsListPage extends React.Component {
   }
 
   openDeeplinkedAppDetails() {
-    if (this.props.deeplinkAppId) {
+    if (this.props.deeplinkAppId && !this.state.appsFeatureDisabled) {
       const apps = this.state.installedApps.concat(this.state.availableApps);
       const deeplinkedApp = apps.find(app => app.id === this.props.deeplinkAppId);
 
