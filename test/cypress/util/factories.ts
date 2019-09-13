@@ -1,7 +1,7 @@
 import { getTokenForUser } from '../interactions/token';
 import { getAllEnforcementsForDefaultSpace } from '../interactions/enforcements';
 import { getAllPublicContentTypesInDefaultSpace } from '../interactions/content_types';
-import { queryFirst101EnvironmentsInDefaultSpace, queryFirst101AliasesInDefaultSpace } from '../interactions/environments';
+import { queryFirst101EnvironmentsInDefaultSpace } from '../interactions/environments';
 import { queryFirst100LocalesOfDefaultSpace } from '../interactions/locales';
 
 type DefaultHandlers = {
@@ -9,7 +9,6 @@ type DefaultHandlers = {
   enforcementsResponse: Function;
   publicContentTypesResponse: Function;
   environmentResponse: Function;
-  environmentAliasResponse: Function;
   localeResponse: Function;
 };
 
@@ -18,7 +17,6 @@ const defaultHandlers: DefaultHandlers = {
   enforcementsResponse: getAllEnforcementsForDefaultSpace.willReturnNone,
   publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnNone,
   environmentResponse: queryFirst101EnvironmentsInDefaultSpace.willFindOne,
-  environmentAliasResponse: queryFirst101AliasesInDefaultSpace.willReturnNone,
   localeResponse: queryFirst100LocalesOfDefaultSpace.willFindOne
 };
 
@@ -34,7 +32,6 @@ export function defaultRequestsMock(customHandlers: Partial<DefaultHandlers> = {
     handlers.enforcementsResponse(),
     handlers.publicContentTypesResponse(),
     handlers.environmentResponse(),
-    handlers.environmentAliasResponse(),
     handlers.localeResponse()
   ];
 }
