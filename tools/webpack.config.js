@@ -98,12 +98,6 @@ module.exports = () => {
       new WebpackRequireFrom({
         methodName: 'WebpackRequireFrom_getChunkURL'
       })
-      // new webpack.ProgressPlugin({
-      //   entries: true,
-      //   modules: true,
-      //   modulesCount: 100,
-      //   profile: true
-      // })
     ].concat(
       // moment.js by default bundles all locales, we want to remove them
       // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
@@ -125,7 +119,7 @@ module.exports = () => {
     // Development:
     // We are using `cheap-module-source-map` as this allows us to see
     // errors and stack traces with Karma rather than just "Script error".
-    devtool: isDev ? 'cheap-module-source-map' : 'source-map',
+    devtool: isDev ? 'cheap-module-source-map' : 'inline-source-map',
     optimization: {
       minimize: false,
       chunkIds: isDev ? 'named' : false,

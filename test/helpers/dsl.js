@@ -12,33 +12,12 @@ export const xit = createCoroutineTestFactory(jasmineDsl.xit);
 export const beforeEach = createHookFactory(jasmineDsl.beforeEach);
 export const afterEach = createHookFactory(jasmineDsl.afterEach);
 
-// _.extend(window, createDsl(window.jasmine.getEnv()));
-//
-// function createDsl(jasmineDsl) {
-//   return {
-//     it: createCoroutineTestFactory(jasmineDsl.it),
-//     fit: createCoroutineTestFactory(jasmineDsl.fit),
-//     xit: createCoroutineTestFactory(jasmineDsl.xit),
-//
-//     beforeEach: createHookFactory(jasmineDsl.beforeEach),
-//     afterEach: createHookFactory(jasmineDsl.afterEach)
-//   };
-// }
-
-// _.extend(window, createDsl(window.jasmine.getEnv()));
-//
-// function createDsl(jasmineDsl) {
-//   return {
-//   };
-// }
-
 function createHookFactory(defineHook) {
   return runner => {
     defineHook(function(done) {
       Promise.resolve()
         .then(() => {
           const result = runner.call(this);
-          // const $_apply = $apply.bind(this);
           if (isGenerator(result)) {
             return runGenerator(result, $apply);
           }
@@ -63,7 +42,6 @@ function createCoroutineTestFactory(testFactory) {
     }
 
     return testFactory(desc, function(done) {
-      // const $apply = $_apply.bind(this);
       before = before || _.noop;
       const setup = this.setup || (() => Promise.resolve());
       return Promise.resolve(before.call(this))
