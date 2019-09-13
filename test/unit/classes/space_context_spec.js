@@ -139,6 +139,31 @@ describe('spaceContext', () => {
       expect(this.spaceContext.environments).toEqual([master, staging]);
     });
 
+    it('sets `aliases` property if aliases are enabled', async function() {
+      this.ProductCatalog.getSpaceFeature.resolves(true);
+      const alias = {
+        name: 'master',
+        sys: {
+          id: 'master'
+        },
+        environment: 'prod-1'
+      };
+      const aliases = [alias];
+      Object.assign(this.mockSpaceEndpoint.stores.environment_aliases, aliases);
+
+      await this.reset();
+
+      expect(this.spaceContext.aliases).toEqual(aliases);
+    });
+
+    it('sets `aliases` property to empty array if aliases are not enabled', async function() {
+      this.ProductCatalog.getSpaceFeature.resolves(false);
+
+      await this.reset();
+
+      expect(this.spaceContext.aliases).toEqual([]);
+    });
+
     it('sets `environmentMeta` property if environments are enabled', function*() {
       const master = {
         name: 'master',
