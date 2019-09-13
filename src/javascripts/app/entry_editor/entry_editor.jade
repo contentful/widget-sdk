@@ -1,5 +1,3 @@
-include ../entity_editor/entity_editor.mixins.jade
-
 react-component(
   name="components/shared/DocumentTitle.es6"
   props="{title: [title, 'Content']}"
@@ -38,9 +36,15 @@ react-component(
           hr
           div(role="menuitem" ui-command="actions.toggleDisabledFields")
             | {{command.label()}}
-
-        +editor-info-toggle
-        +entry-comments-toggle
+        react-component(
+          name="app/entity_editor/EntityAuxToggle.es6"
+          props="sidebarToggleProps.auxToggle"
+        )
+        react-component(
+          ng-if="shouldDisplayCommentsToggle"
+          name="app/entity_editor/EntityCommentsToggle.es6"
+          props="sidebarToggleProps.commentsToggle"
+        )
 
     .workbench-main
       .workbench-main__content.sticky-parent

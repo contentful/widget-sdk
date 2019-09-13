@@ -1324,6 +1324,7 @@ pre,
   }
   .btn--has-alpha-button-label {
     position: relative;
+    overflow: visible;
   }
   .btn__alpha-button-label {
     position: absolute;

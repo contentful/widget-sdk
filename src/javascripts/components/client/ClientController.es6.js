@@ -43,22 +43,8 @@ export default function register() {
       // TODO remove this eventually. All components should access it as a service
       $scope.spaceContext = spaceContext;
 
-      // TODO this does not belong here. We should move it to the
-      // controller that actually uses it
       $scope.preferences = {
-        showDisabledFields: false,
-        showAuxPanel: false,
-        showCommentsPanel: false,
-        toggleAuxPanel: function() {
-          $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
-          $scope.preferences.showCommentsPanel = false;
-          broadcastPrefs($scope);
-        },
-        toggleCommentsPanel: () => {
-          $scope.preferences.showAuxPanel = false;
-          $scope.preferences.showCommentsPanel = !$scope.preferences.showCommentsPanel;
-          broadcastPrefs($scope);
-        }
+        showDisabledFields: false
       };
 
       $scope.$watchCollection(
@@ -74,17 +60,6 @@ export default function register() {
       onValueScope($scope, TokenStore.user$, handleUser);
 
       $scope.showCreateSpaceDialog = CreateSpace.showDialog;
-
-      $rootScope.$on('resetPreference', (_, name) => {
-        if (name === 'show-comments-panel') {
-          $scope.preferences.showCommentsPanel = false;
-        }
-      });
-
-      function broadcastPrefs($scope) {
-        $rootScope.$broadcast('show-aux-panel', $scope.preferences.showAuxPanel);
-        $rootScope.$broadcast('show-comments-panel', $scope.preferences.showCommentsPanel);
-      }
 
       function pickSerializable(location) {
         return pick(location, [

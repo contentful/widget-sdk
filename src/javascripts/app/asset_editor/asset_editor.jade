@@ -1,5 +1,3 @@
-include ../entity_editor/entity_editor.mixins.jade
-
 react-component(
   name="components/shared/DocumentTitle.es6"
   props="{title: [title, 'Media']}"
@@ -22,7 +20,10 @@ div.asset-editor.workbench
         data-test-id="trigger-delete-modal"
         ui-command="state.delete")
         | Delete
-      +editor-info-toggle
+      react-component(
+        name="app/entity_editor/EntityAuxToggle.es6"
+        props="sidebarToggleProps.auxToggle"
+      )
 
   .workbench-main
     .workbench-main__content

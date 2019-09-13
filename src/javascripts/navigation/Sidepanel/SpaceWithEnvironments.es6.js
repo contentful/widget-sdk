@@ -8,9 +8,9 @@ import { getModule } from 'NgRegistry.es6';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel.es6';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-const spaceContext = getModule('spaceContext');
 
 function EnvironmentList({ environments = [], isCurrSpace, currentEnvId, goToSpace, space }) {
+  const spaceContext = getModule('spaceContext');
   return (
     <ul>
       {environments
@@ -104,6 +104,8 @@ export default class SpaceWithEnvironments extends React.Component {
   };
 
   toggleEnvironmentList = async () => {
+    const spaceContext = getModule('spaceContext');
+
     if (this.isOpened()) {
       this.props.setOpenedSpaceId(null);
       return;
@@ -180,7 +182,7 @@ export default class SpaceWithEnvironments extends React.Component {
             }
           />
         </div>
-        <AnimateHeight height={isOpened ? 'auto' : '0'}>
+        <AnimateHeight height={isOpened ? 'auto' : 0}>
           <EnvironmentList
             environments={this.state.environments}
             goToSpace={goToSpace}
