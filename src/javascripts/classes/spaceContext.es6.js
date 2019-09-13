@@ -38,6 +38,7 @@ import * as EnforcementsService from 'services/EnforcementsService.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as Auth from 'Authentication.es6';
 import * as Config from 'Config.es6';
+import { ENVIRONMENT_ALIASING } from '../featureFlags.es6';
 
 const MASTER_ENVIRONMENT_ID = 'master';
 
@@ -606,7 +607,7 @@ export default function register() {
        * @returns {Promise}
        */
       function setupAliases(spaceContext) {
-        getSpaceFeature(spaceContext.space.getId(), 'environment_aliasing').then(aliasesEnabled => {
+        getSpaceFeature(spaceContext.space.getId(), ENVIRONMENT_ALIASING).then(aliasesEnabled => {
           if (aliasesEnabled) {
             return createAliasesRepo(spaceContext.endpoint)
               .getAll()
