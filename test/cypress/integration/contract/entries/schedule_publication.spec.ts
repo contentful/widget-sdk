@@ -6,6 +6,7 @@ import {
 } from '../../../interactions/content_types';
 import {
   getDefaultEntry,
+  validateAnEntryValidResponse,
   queryLinksToDefaultEntry,
   getFirst7SnapshotsOfDefaultEntry
 } from '../../../interactions/entries';
@@ -37,7 +38,8 @@ describe('Schedule Publication', () => {
     it('submits the new scheduled publication and then re-fetch the list of scheduled publications', () => {
       cy.resetAllFakeServers();
 
-      const interaction = createScheduledPublicationForDefaultSpace.willSucceed()
+      const validateAnEntryInteraction = validateAnEntryValidResponse.willSucceed()
+      const scheduledPubinteraction = createScheduledPublicationForDefaultSpace.willSucceed()
 
       cy.getByTestId('change-state-menu-trigger').click();
       cy.getByTestId('schedule-publication').click();
@@ -48,7 +50,8 @@ describe('Schedule Publication', () => {
         .first()
         .click();
 
-      cy.wait(interaction);
+      cy.wait(validateAnEntryInteraction);
+      cy.wait(scheduledPubinteraction);
       cy.getByTestId('scheduled-item').should('have.length', 1);
       cy.getByTestId('change-state-published').should('be.disabled');
     });

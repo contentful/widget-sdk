@@ -186,6 +186,22 @@ APIClient.prototype.publishEntry = function(data, version) {
   return this._setResourceFlag('entries', data, 'published', version);
 };
 
+APIClient.prototype.validateEntry = function(data, version) {
+  const id = getId(data);
+  version = version || getVersion(data);
+  return this._request(
+    {
+      method: 'PUT',
+      path: ['entries', id, 'published'],
+      version
+    },
+    {
+      'x-contentful-validate-only': 'true',
+      'x-contentful-enable-alpha-feature': 'entry-validation'
+    }
+  );
+};
+
 APIClient.prototype.publishContentType = function(data, version) {
   return this._setResourceFlag('content_types', data, 'published', version);
 };

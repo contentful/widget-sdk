@@ -1,11 +1,18 @@
 import React from 'react';
 import { render, cleanup, fireEvent, wait, getByText } from '@testing-library/react';
+import { Notification } from '@contentful/forma-36-react-components';
+
 import 'jest-dom/extend-expect';
 import * as DateMocks from 'DateMocks';
 import JobDialog from './index.es6';
 import moment from 'moment';
 
 import * as JobsAnalytics from 'app/jobs/Analytics/JobsAnalytics.es6';
+import APIClient from 'data/APIClient.es6';
+
+jest.mock('data/APIClient.es6', () =>
+  jest.fn().mockImplementation(() => ({ validateEntry: jest.fn().mockReturnValue() }))
+);
 
 describe('JobDialog', () => {
   let dateNowSpy;
@@ -21,6 +28,11 @@ describe('JobDialog', () => {
 
   const build = () => {
     const props = {
+      spaceId: 'spaceId',
+      environmentId: 'environmentId',
+      entity: {},
+      validator: { setApiResponseErrors() {} },
+      entryTitle: 'Test',
       onCreate: jest.fn(),
       onCancel: jest.fn(),
       isSubmitting: false
@@ -137,6 +149,23 @@ describe('JobDialog', () => {
 
       expect(createDialogCloseSpy).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('shows the validation message', async () => {
+    jest.spyOn(Notification, 'error').mockImplementation(() => {});
+    APIClient.mockReset().mockImplementation(() => ({
+      validateEntry() {
+        throw new Error('Invalid entity');
+      }
+    }));
+
+    const [renderResult] = build();
+
+    await schedulePublication(renderResult);
+
+    expect(Notification.error).toHaveBeenCalledWith(
+      'Error scheduling Test: Validation failed. Please check the individual fields for errors.'
+    );
   });
 });
 

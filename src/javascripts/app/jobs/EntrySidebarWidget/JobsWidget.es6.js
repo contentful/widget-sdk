@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import * as _ from 'lodash';
 import moment from 'moment';
 import { css } from 'emotion';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.es6';
@@ -196,6 +197,7 @@ export default function JobsWidget({
       Notification.success('Entry was successfully published.');
     }
   }, [showToast]);
+
   return (
     <ErrorHandler>
       <StatusWidget
@@ -215,6 +217,7 @@ export default function JobsWidget({
             );
             return;
           }
+
           const isConfirmed = await showUnpublishedReferencesWarning({
             entity,
             spaceId,
@@ -222,6 +225,7 @@ export default function JobsWidget({
             confirmLabel: 'Schedule anyway',
             modalTitle: 'Are you sure you want to schedule this entry to publish?'
           });
+
           if (isConfirmed) {
             setIsDialogShown(true);
           }
@@ -253,6 +257,11 @@ export default function JobsWidget({
           )}
           {isDialogShown && (
             <JobDialog
+              spaceId={spaceId}
+              environmentId={environmentId}
+              entity={entity}
+              validator={validator}
+              entryTitle={entryTitle}
               onCreate={newJob => {
                 handleCreate(newJob);
               }}
@@ -281,6 +290,7 @@ JobsWidget.propTypes = {
   primary: CommandPropType,
   secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
   validator: PropTypes.shape({
-    run: PropTypes.func
+    run: PropTypes.func,
+    setApiResponseErrors: PropTypes.func
   }).isRequired
 };

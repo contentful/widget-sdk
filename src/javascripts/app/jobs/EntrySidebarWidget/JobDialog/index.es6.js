@@ -10,8 +10,11 @@ import {
   Form,
   SelectField,
   Option,
-  Note
+  Note,
+  Notification
 } from '@contentful/forma-36-react-components';
+import * as EndpointFactory from 'data/EndpointFactory.es6';
+import APIClient from 'data/APIClient.es6';
 
 import { getTimezoneOptions } from './Timezones.es6';
 import { createDialogClose, createDialogOpen } from 'app/jobs/Analytics/JobsAnalytics.es6';
@@ -68,7 +71,16 @@ function usePreviousDate(dateTimeOffset) {
   return ref.current;
 }
 
-function JobDialog({ onCreate, onCancel, isSubmitting }) {
+function JobDialog({
+  onCreate,
+  onCancel,
+  isSubmitting,
+  entity,
+  validator,
+  entryTitle,
+  spaceId,
+  environmentId
+}) {
   const now = moment(Date.now());
   const suggestedDate = now.add(1, 'hours').startOf('hour');
 
@@ -110,6 +122,9 @@ function JobDialog({ onCreate, onCancel, isSubmitting }) {
       validateForm();
     }
   }, [time, date, utcOffset, prevTimeAndDate, validateForm]);
+
+  const endpoint = EndpointFactory.createSpaceEndpoint(spaceId, environmentId);
+  const client = new APIClient(endpoint);
 
   return (
     <Modal
@@ -187,7 +202,17 @@ function JobDialog({ onCreate, onCancel, isSubmitting }) {
               loading={isSubmitting}
               disabled={isSubmitting}
               onClick={() => {
-                validateForm(() => {
+                validateForm(async () => {
+                  try {
+                    await client.validateEntry(entity);
+                  } catch (e) {
+                    validator.setApiResponseErrors(e);
+                    Notification.error(
+                      `Error scheduling ${entryTitle}: Validation failed. Please check the individual fields for errors.`
+                    );
+                    return;
+                  }
+
                   onCreate({
                     scheduledAt: formatScheduledAtDate({ date, time, utcOffset })
                   });
@@ -206,6 +231,14 @@ function JobDialog({ onCreate, onCancel, isSubmitting }) {
 }
 
 JobDialog.propTypes = {
+  spaceId: PropTypes.string.isRequired,
+  environmentId: PropTypes.string.isRequired,
+  entity: PropTypes.object.isRequired,
+  validator: PropTypes.shape({
+    run: PropTypes.func,
+    setApiResponseErrors: PropTypes.func
+  }).isRequired,
+  entryTitle: PropTypes.string.isRequired,
   onCreate: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   isSubmitting: PropTypes.bool.isRequired

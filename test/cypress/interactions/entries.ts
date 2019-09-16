@@ -181,3 +181,23 @@ export const createAnEntryInDefaultSpace = {
     return '@createAnEntryInDefaultSpace';
   }
 };
+
+export const validateAnEntryValidResponse = {
+  willSucceed() {
+    cy.addInteraction({
+      provider: 'entries',
+      state: States.NONE,
+      uponReceiving: `a request to validate an entry in "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'PUT',
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/published`,
+        headers: defaultHeader
+      },
+      willRespondWith: {
+        status: 200
+      }
+    }).as('createAnEntryInDefaultSpace');
+
+    return '@createAnEntryInDefaultSpace';
+  }
+};
