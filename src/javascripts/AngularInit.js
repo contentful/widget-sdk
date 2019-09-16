@@ -43,8 +43,9 @@ export const angularInitRun = [
       { default: servicesModalDialogServiceEs6 },
       { default: uiCommandEs6 },
       { default: accessControlRoleRemoverEs6 },
+      { default: searchListQueryEs6 },
+      { default: searchEntitySelectorEntitySelectorEs6 },
       { default: accessControlUsersUserListDirectiveEs6 },
-      { default: accessControlRoleListController },
       { default: accessControlRoleListDirectiveEs6 },
       { default: accessControlUserSpaceInvitationControllerEs6 },
       { default: accountCfNewOrganizationMembershipEs6 },
@@ -57,8 +58,6 @@ export const angularInitRun = [
       { default: appContentModelEditorContentTypeEditorControllerEs6 },
       { default: appApiApiKeyListApiKeyListDirectiveEs6 },
       { default: appEntityEditorEntityHelpersEs6 },
-      { default: searchListQueryEs6 },
-      { default: searchEntitySelectorEntitySelectorEs6 },
       { default: componentsAppContainerEntityCreatorEs6 },
       { default: appAssetEditorCfAssetEditorDirectiveEs6 },
       { default: appEntityEditorBulkEditorCfBulkEditorDirectiveEs6 },
@@ -79,14 +78,12 @@ export const angularInitRun = [
       { default: appSnapshotsCfSnapshotPresenterEs6 },
       { default: appSnapshotsCfSnapshotSelectorEs6 },
       { default: appSnapshotsSnapshotComparatorEs6 },
-      { default: appWidgetsFileEditorController },
       { default: appWidgetsCfBooleanEditorDirectiveEs6 },
       { default: appWidgetsCfCheckboxEditorDirectiveEs6 },
       { default: appWidgetsCfFileEditorDirectiveEs6 },
       { default: appWidgetsCfListInputEditorDirectiveEs6 },
       { default: appWidgetsCfRatingEditorDirectiveEs6 },
       { default: appWidgetsDatetimeCfEntryDatetimeEditorDirectiveEs6 },
-      { default: appWidgetsJsonJsonEditorController },
       { default: appWidgetsJsonCfJsonEditorCodeEditorDirectiveEs6 },
       { default: appWidgetsJsonCfJsonEditorDirectiveEs6 },
       { default: appWidgetsLinkEntityLinkDirectivesEs6 },
@@ -95,9 +92,7 @@ export const angularInitRun = [
       { default: appWidgetsNumberCfNumberEditorDirectiveEs6 },
       { default: appWidgetsRadioCfRadioEditorDirectiveEs6 },
       { default: appWidgetsSharedCfEditorCharacterInfoDirectiveEs6 },
-      { default: appWidgetsSlugSlugEditorController },
       { default: appWidgetsSlugCfSlugEditorDirectiveEs6 },
-      { default: appWidgetsUrlUrlEditorController },
       { default: appWidgetsUrlCfUrlEditorDirectiveEs6 },
       { default: classesEntityListCacheEs6 },
       { default: componentsCreateEntryButtonButtonDirectiveEs6 },
@@ -178,8 +173,9 @@ export const angularInitRun = [
       import('services/modalDialogService.es6'),
       import('ui/command.es6'),
       import('access_control/RoleRemover.es6'),
+      import('search/listQuery.es6'),
+      import('search/EntitySelector/entitySelector.es6'),
       import('access_control/Users/UserListDirective.es6'),
-      import('access_control/RoleListController'),
       import('access_control/RoleListDirective.es6'),
       import('access_control/UserSpaceInvitationController.es6'),
       import('account/cfNewOrganizationMembership.es6'),
@@ -192,8 +188,6 @@ export const angularInitRun = [
       import('app/ContentModel/Editor/contentTypeEditorController.es6'),
       import('app/api/api_key_list/apiKeyListDirective.es6'),
       import('app/entity_editor/entityHelpers.es6'),
-      import('search/listQuery.es6'),
-      import('search/EntitySelector/entitySelector.es6'),
       import('components/app_container/entityCreator.es6'),
       import('app/asset_editor/cfAssetEditorDirective.es6'),
       import('app/entity_editor/bulk_editor/cfBulkEditorDirective.es6'),
@@ -214,14 +208,12 @@ export const angularInitRun = [
       import('app/snapshots/cfSnapshotPresenter.es6'),
       import('app/snapshots/cfSnapshotSelector.es6'),
       import('app/snapshots/snapshotComparator.es6'),
-      import('app/widgets/FileEditorController'),
       import('app/widgets/cfBooleanEditorDirective.es6'),
       import('app/widgets/cfCheckboxEditorDirective.es6'),
       import('app/widgets/cfFileEditorDirective.es6'),
       import('app/widgets/cfListInputEditorDirective.es6'),
       import('app/widgets/cfRatingEditorDirective.es6'),
       import('app/widgets/datetime/cfEntryDatetimeEditorDirective.es6'),
-      import('app/widgets/json/JsonEditorController'),
       import('app/widgets/json/cfJsonEditorCodeEditorDirective.es6'),
       import('app/widgets/json/cfJsonEditorDirective.es6'),
       import('app/widgets/link/entityLinkDirectives.es6'),
@@ -230,9 +222,7 @@ export const angularInitRun = [
       import('app/widgets/number/cfNumberEditorDirective.es6'),
       import('app/widgets/radio/cfRadioEditorDirective.es6'),
       import('app/widgets/shared/cfEditorCharacterInfoDirective.es6'),
-      import('app/widgets/slug/SlugEditorController'),
       import('app/widgets/slug/cfSlugEditorDirective.es6'),
-      import('app/widgets/url/UrlEditorController'),
       import('app/widgets/url/cfUrlEditorDirective.es6'),
       import('classes/entityListCache.es6'),
       import('components/CreateEntryButton/buttonDirective.es6'),
@@ -314,8 +304,9 @@ export const angularInitRun = [
     servicesModalDialogServiceEs6();
     uiCommandEs6();
     accessControlRoleRemoverEs6();
+    searchListQueryEs6();
+    searchEntitySelectorEntitySelectorEs6();
     accessControlUsersUserListDirectiveEs6();
-    accessControlRoleListController();
     accessControlRoleListDirectiveEs6();
     accessControlUserSpaceInvitationControllerEs6();
     accountCfNewOrganizationMembershipEs6();
@@ -328,8 +319,6 @@ export const angularInitRun = [
     appContentModelEditorContentTypeEditorControllerEs6();
     appApiApiKeyListApiKeyListDirectiveEs6();
     appEntityEditorEntityHelpersEs6();
-    searchListQueryEs6();
-    searchEntitySelectorEntitySelectorEs6();
     componentsAppContainerEntityCreatorEs6();
     appAssetEditorCfAssetEditorDirectiveEs6();
     appEntityEditorBulkEditorCfBulkEditorDirectiveEs6();
@@ -350,14 +339,12 @@ export const angularInitRun = [
     appSnapshotsCfSnapshotPresenterEs6();
     appSnapshotsCfSnapshotSelectorEs6();
     appSnapshotsSnapshotComparatorEs6();
-    appWidgetsFileEditorController();
     appWidgetsCfBooleanEditorDirectiveEs6();
     appWidgetsCfCheckboxEditorDirectiveEs6();
     appWidgetsCfFileEditorDirectiveEs6();
     appWidgetsCfListInputEditorDirectiveEs6();
     appWidgetsCfRatingEditorDirectiveEs6();
     appWidgetsDatetimeCfEntryDatetimeEditorDirectiveEs6();
-    appWidgetsJsonJsonEditorController();
     appWidgetsJsonCfJsonEditorCodeEditorDirectiveEs6();
     appWidgetsJsonCfJsonEditorDirectiveEs6();
     appWidgetsLinkEntityLinkDirectivesEs6();
@@ -366,9 +353,7 @@ export const angularInitRun = [
     appWidgetsNumberCfNumberEditorDirectiveEs6();
     appWidgetsRadioCfRadioEditorDirectiveEs6();
     appWidgetsSharedCfEditorCharacterInfoDirectiveEs6();
-    appWidgetsSlugSlugEditorController();
     appWidgetsSlugCfSlugEditorDirectiveEs6();
-    appWidgetsUrlUrlEditorController();
     appWidgetsUrlCfUrlEditorDirectiveEs6();
     classesEntityListCacheEs6();
     componentsCreateEntryButtonButtonDirectiveEs6();

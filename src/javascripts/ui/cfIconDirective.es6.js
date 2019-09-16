@@ -186,7 +186,6 @@ import svgPageUsersEs6 from 'svg/page-users.es6';
 import svgPaywallPlanplusEs6 from 'svg/paywall-planplus.es6';
 import svgPenIllustrationEs6 from 'svg/pen-illustration.es6';
 import svgPhpEs6 from 'svg/php.es6';
-import svgPlugEs6 from 'svg/plug.es6';
 import svgPlus2Es6 from 'svg/plus-2.es6';
 import svgPlusEs6 from 'svg/plus.es6';
 import svgPreviewWidgetEs6 from 'svg/preview-widget.es6';
@@ -410,7 +409,6 @@ const SVGs = {
   'paywall-planplus': svgPaywallPlanplusEs6,
   'pen-illustration': svgPenIllustrationEs6,
   php: svgPhpEs6,
-  plug: svgPlugEs6,
   'plus-2': svgPlus2Es6,
   plus: svgPlusEs6,
   'preview-widget': svgPreviewWidgetEs6,
