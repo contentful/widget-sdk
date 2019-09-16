@@ -37,7 +37,11 @@ export default class RelativeDateTime extends Component {
     const date = moment(this.props.value);
     const dateDiffString = diffString(date, moment());
 
-    return <time className={this.props.className}>{dateDiffString}</time>;
+    return (
+      <time className={this.props.className} title={dateDiffString}>
+        {dateDiffString}
+      </time>
+    );
   }
 }
 

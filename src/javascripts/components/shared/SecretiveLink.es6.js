@@ -7,7 +7,7 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   secretiveLink: css({
-    display: 'block',
+    display: 'inline-flex',
     width: '100%',
     color: tokens.colorTextMid,
     textDecoration: 'none',
@@ -15,7 +15,8 @@ const styles = {
       width: 'inherit'
     },
     '&:link': {
-      textDecoration: 'none'
+      textDecoration: 'none',
+      display: 'inline-flex'
     },
     '&:focus': {
       outline: 'none',
