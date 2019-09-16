@@ -31,7 +31,7 @@ describe('cfCheckboxEditor directive', () => {
         cfWidgetApi: { field: this.fieldApi }
       }
     );
-    const alert = el.find('[role=alert]');
+    const alert = el.find('[data-test-id="cf-ui-note"]');
     expect(alert.text()).toMatch('The widget failed to initialize');
   });
 

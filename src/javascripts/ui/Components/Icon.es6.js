@@ -49,7 +49,6 @@ import StackOverviewIcon from 'svg/infographic.es6';
 import RelaunchOnboardingIcon from 'svg/icon-onboarding-relaunch.es6';
 import SpaceDiagram from 'svg/space-diagram.es6';
 import ErrorIcon from 'svg/error.es6';
-import PlugIcon from 'svg/plug.es6';
 import Checkmark from 'svg/checkmark.es6';
 import Edit from 'svg/edit.es6';
 import CheckboxWidget from 'svg/checkbox-widget.es6';
@@ -143,7 +142,6 @@ const SVGs = {
   'relaunch-onboarding': RelaunchOnboardingIcon,
   'space-diagram': SpaceDiagram,
   error: ErrorIcon,
-  plug: PlugIcon,
   checkmark: Checkmark,
   edit: Edit,
   'checkbox-widget': CheckboxWidget,

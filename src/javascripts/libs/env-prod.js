@@ -32,6 +32,7 @@ window.libs = [
   ['@contentful/field-editor-shared', require('@contentful/field-editor-shared')],
   ['@contentful/field-editor-single-line', require('@contentful/field-editor-single-line')],
   ['@contentful/field-editor-multiple-line', require('@contentful/field-editor-multiple-line')],
+  ['@contentful/field-editor-dropdown', require('@contentful/field-editor-dropdown')],
 
   ['@contentful/asn1js', require('@contentful/asn1js')],
   ['@contentful/forma-36-react-components', require('@contentful/forma-36-react-components')],

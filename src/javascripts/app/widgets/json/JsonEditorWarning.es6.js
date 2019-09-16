@@ -1,11 +1,6 @@
 import React from 'react';
-import EditorWarning from '../EditorWarning.es6';
-import { Paragraph } from '@contentful/forma-36-react-components';
+import { Note } from '@contentful/forma-36-react-components';
 
 export default function JsonEditorWarning() {
-  return (
-    <EditorWarning>
-      <Paragraph>The widget failed to initialize.</Paragraph>
-    </EditorWarning>
-  );
+  return <Note noteType="warning">The widget failed to initialize.</Note>;
 }

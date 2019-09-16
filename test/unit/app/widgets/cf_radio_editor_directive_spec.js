@@ -92,7 +92,7 @@ describe('cfRadioEditor Directive', () => {
   it('shows warning when there are no predefined values', function() {
     fieldApi.validations = [];
     const el = this.compile();
-    const alert = el.find('[role=alert]');
+    const alert = el.find('[data-test-id="cf-ui-note"]');
     expect(alert.text()).toMatch('The widget failed to initialize');
   });
 

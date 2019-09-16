@@ -1,14 +1,11 @@
 import React from 'react';
-import { Paragraph } from '@contentful/forma-36-react-components';
-import EditorWarning from './EditorWarning.es6';
+import { Note } from '@contentful/forma-36-react-components';
 
 export default function EditorWarningPredefinedValues(props) {
   return (
-    <EditorWarning {...props}>
-      <Paragraph>
-        The widget failed to initialize. You can fix the problem by providing predefined values
-        under the validations tab in the field settings.
-      </Paragraph>
-    </EditorWarning>
+    <Note noteType="warning" {...props}>
+      The widget failed to initialize. You can fix the problem by providing predefined values under
+      the validations tab in the field settings.
+    </Note>
   );
 }

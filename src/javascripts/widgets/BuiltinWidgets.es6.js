@@ -10,7 +10,7 @@ import LinkEditor, {
 import TagEditorField from 'app/widgets/TagEditor/TagEditorField.es6';
 import { SingleLineEditor } from '@contentful/field-editor-single-line';
 import { MultipleLineEditor } from '@contentful/field-editor-multiple-line';
-import DropdownEditor from 'app/widgets/dropdown/DropdownEditor.es6';
+import { DropdownEditor } from '@contentful/field-editor-dropdown';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);

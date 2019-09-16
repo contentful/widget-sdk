@@ -251,7 +251,7 @@ describe('LocationEditor integration', () => {
       const LazyLoader = this.$inject('utils/LazyLoader.es6');
       LazyLoader.get.defers();
       const el = this.compile();
-      const alertSelector = '[role=alert]' + '[data-error-code=field-editor-initialization]';
+      const alertSelector = '[data-test-id="field-editor-initialization"]';
 
       expect(el.find(alertSelector).length).toEqual(0);
 
