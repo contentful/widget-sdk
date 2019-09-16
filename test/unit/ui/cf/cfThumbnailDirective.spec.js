@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import $ from 'jquery';
-import { $initialize, $inject } from 'test/helpers/helpers';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('cfThumbnailDirective', () => {
   beforeEach(async function() {

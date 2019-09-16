@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import { sortBy, map, max } from 'lodash';
-import { $initialize, $inject } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize, $inject } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 const VERSION_MISMATCH_ERROR = { status: 409 };
 const UNPROCESSABLE_ERROR = { status: 500 };

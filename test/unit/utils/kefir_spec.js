@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import * as K from 'utils/kefir.es6';
-import * as KMock from 'test/helpers/mocks/kefir';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
+import * as KMock from 'test/utils/kefir';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('utils/kefir.es6', () => {
   beforeEach(async function() {

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { $initialize, $compile } from 'test/helpers/helpers';
+import { $initialize, $compile } from 'test/utils/ng';
 
 describe('cfSnapshotPresenter', () => {
   beforeEach(async function() {

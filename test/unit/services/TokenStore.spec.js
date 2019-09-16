@@ -1,8 +1,8 @@
 import sinon from 'sinon';
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('Token store service', () => {
   beforeEach(async function() {

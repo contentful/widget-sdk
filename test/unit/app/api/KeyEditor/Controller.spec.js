@@ -1,7 +1,7 @@
 import ReactTestUtils from 'react-dom/test-utils';
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('app/api/KeyEditor/Controller.es6', () => {
   beforeEach(async function() {

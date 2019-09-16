@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('cfValidateForm directive', () => {
   beforeEach(async function() {

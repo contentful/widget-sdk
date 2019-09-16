@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import sinon from 'sinon';
-import { $initialize, $compile, $apply, $inject } from 'test/helpers/helpers';
+import { $initialize, $compile, $apply, $inject } from 'test/utils/ng';
 
 describe('cfRadioEditor Directive', () => {
   let fieldApi;

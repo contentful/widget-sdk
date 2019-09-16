@@ -1,6 +1,6 @@
 import sinon from 'sinon';
-import * as K from 'test/helpers/mocks/kefir';
-import { $initialize } from 'test/helpers/helpers';
+import * as K from 'test/utils/kefir';
+import { $initialize } from 'test/utils/ng';
 
 describe('CreateModernOnboarding service', function() {
   beforeEach(async function() {

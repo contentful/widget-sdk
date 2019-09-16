@@ -2,8 +2,8 @@ import React from 'react';
 import { observeResize } from 'ui/ResizeDetector.es6';
 import _ from 'lodash';
 import $ from 'jquery';
-import { createUI } from 'test/helpers/DOM';
-import { $wait } from 'test/helpers/helpers';
+import { createUI } from 'test/utils/dom';
+import { $wait } from 'test/utils/ng';
 
 describe('ui/ResizeDetector.es6', () => {
   beforeEach(function() {

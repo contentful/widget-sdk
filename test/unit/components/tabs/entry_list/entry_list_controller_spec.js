@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import _ from 'lodash';
-import { $initialize, $inject, $apply, $removeControllers } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply, $removeControllers } from 'test/utils/ng';
 
 describe('Entry List Controller', () => {
   let scope, spaceContext, ListQuery;

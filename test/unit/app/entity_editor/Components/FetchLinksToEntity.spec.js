@@ -4,7 +4,7 @@ import { mount } from 'enzyme';
 import sinon from 'sinon';
 import { EntityType } from 'app/entity_editor/Components/constants.es6';
 
-import flushPromises from 'test/helpers/flushPromises';
+import flushPromises from 'test/utils/flushPromises';
 
 describe('FetchLinksToEntity', () => {
   const defaultProps = {

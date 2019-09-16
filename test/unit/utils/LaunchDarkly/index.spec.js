@@ -1,5 +1,5 @@
-import * as K from 'test/helpers/mocks/kefir';
-import * as sinon from 'test/helpers/sinon';
+import * as K from 'test/utils/kefir';
+import sinon from 'sinon';
 import moment from 'moment';
 import { update, push } from 'utils/Collections.es6';
 

@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import React from 'react';
 import { mount } from 'enzyme';
 
-import { $initialize, $inject } from 'test/helpers/helpers';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('connectToWidgetAPI', () => {
   beforeEach(async function() {

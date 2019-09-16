@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { $inject, $compile, $apply, $initialize } from 'test/helpers/helpers';
+import { $inject, $compile, $apply, $initialize } from 'test/utils/ng';
 
 describe('Role List Directive', () => {
   beforeEach(async function() {

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
-import { beforeEach, it } from 'test/helpers/dsl';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { beforeEach, it } from 'test/utils/dsl';
 
 // TODO merge this with directive tests
 describe('API Key List Controller', () => {

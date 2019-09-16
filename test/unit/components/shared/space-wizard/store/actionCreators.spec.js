@@ -1,6 +1,6 @@
 import sinon from 'sinon';
-import { $initialize } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('Space Wizard action creators', function() {
   beforeEach(async function() {

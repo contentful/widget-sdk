@@ -1,4 +1,4 @@
-import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 
 describe('cfLoaders', () => {
   beforeEach(async function() {

@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 
 describe('uiCommand directive element', () => {
   beforeEach(async function() {

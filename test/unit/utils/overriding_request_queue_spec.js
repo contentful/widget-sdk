@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import _ from 'lodash';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('overridingRequestQueue', () => {
   beforeEach(async function() {

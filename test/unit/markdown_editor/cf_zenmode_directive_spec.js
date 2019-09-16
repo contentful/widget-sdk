@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import _ from 'lodash';
-import { $initialize, $compile } from 'test/helpers/helpers';
+import { $initialize, $compile } from 'test/utils/ng';
 
 describe('cfZenmode', () => {
   let editor;

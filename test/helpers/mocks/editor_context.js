@@ -1,5 +1,5 @@
-import * as sinon from 'test/helpers/sinon';
-import * as K from 'test/helpers/mocks/kefir';
+import sinon from 'sinon';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 import * as Focus from 'app/entity_editor/Focus.es6';
 

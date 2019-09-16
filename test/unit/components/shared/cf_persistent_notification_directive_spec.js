@@ -1,6 +1,6 @@
 import sinon from 'sinon';
-import { $initialize, $inject, $compile, $wait } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize, $inject, $compile, $wait } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('cfPersistentNotification Directive', () => {
   let element, scope;

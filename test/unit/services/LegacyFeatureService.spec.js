@@ -1,7 +1,7 @@
 import sinon from 'sinon';
-import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
+import createMockSpaceEndpoint from 'test/utils/createSpaceEndpointMock';
 import { set } from 'lodash';
-import { it } from 'test/helpers/dsl';
+import { it } from 'test/utils/dsl';
 
 describe('Legacy Feature Service', () => {
   beforeEach(async function() {

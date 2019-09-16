@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import _ from 'lodash';
-import { $initialize, $inject } from 'test/helpers/helpers';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('Promised loader service', () => {
   let loader, stubs, $rootScope, $q;

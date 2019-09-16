@@ -1,6 +1,6 @@
 import { identity } from 'lodash';
 import sinon from 'sinon';
-import { $initialize, $compile, $apply } from 'test/helpers/helpers';
+import { $initialize, $compile, $apply } from 'test/utils/ng';
 
 describe('cfWidgetRenderer Directive', () => {
   beforeEach(async function() {

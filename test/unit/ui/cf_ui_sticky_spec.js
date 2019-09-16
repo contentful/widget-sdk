@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { $initialize, $compile } from 'test/helpers/helpers';
+import { $initialize, $compile } from 'test/utils/ng';
 
 describe('cfUiSticky directive', () => {
   beforeEach(async function() {

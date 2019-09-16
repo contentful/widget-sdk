@@ -1,9 +1,9 @@
-import flushPromises from '../../../helpers/flushPromises';
+import flushPromises from 'test/utils/flushPromises';
 
-import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
+import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
 import sinon from 'sinon';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
-import { beforeEach, it } from 'test/helpers/dsl';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { beforeEach, it } from 'test/utils/dsl';
 
 describe('entityEditor/StateController', () => {
   beforeEach(async function() {

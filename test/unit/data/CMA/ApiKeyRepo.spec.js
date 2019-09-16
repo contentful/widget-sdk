@@ -1,8 +1,8 @@
-import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
+import createMockSpaceEndpoint from 'test/utils/createSpaceEndpointMock';
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initialize } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('data/CMA/ApiKeyRepo.es6', () => {
   beforeEach(async function() {

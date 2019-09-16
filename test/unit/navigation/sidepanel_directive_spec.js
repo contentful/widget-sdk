@@ -1,14 +1,8 @@
 import sinon from 'sinon';
-import * as K from 'test/helpers/mocks/kefir';
-import * as DOM from 'test/helpers/DOM';
+import * as K from 'test/utils/kefir';
+import * as DOM from 'test/utils/dom';
 import $ from 'jquery';
-import {
-  $initialize,
-  $apply,
-  $flush,
-  $compileWith,
-  $waitForControllerLoaded
-} from 'test/helpers/helpers';
+import { $initialize, $apply, $flush, $compileWith, $waitForControllerLoaded } from 'test/utils/ng';
 
 describe('cfNavSidepanel directive', () => {
   let NavStates;

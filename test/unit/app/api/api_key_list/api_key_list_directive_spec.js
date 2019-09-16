@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { $initialize, $inject, $apply, $compile } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply, $compile } from 'test/utils/ng';
 
 describe('The ApiKey list directive', () => {
   beforeEach(async function() {

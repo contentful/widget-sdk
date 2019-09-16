@@ -1,4 +1,4 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 
 describe('data/StreamHashSet.es6', () => {

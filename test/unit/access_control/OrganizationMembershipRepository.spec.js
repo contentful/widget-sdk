@@ -1,6 +1,6 @@
 import { times } from 'lodash';
 import sinon from 'sinon';
-import { it } from 'test/helpers/dsl';
+import { it } from 'test/utils/dsl';
 
 describe('access_control/OrganizationMembershipRepository.es6', () => {
   beforeEach(async function() {

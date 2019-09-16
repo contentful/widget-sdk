@@ -1,7 +1,5 @@
-'use strict';
-
 import { runTask } from 'utils/Concurrent.es6';
-import { $apply } from 'test/helpers/helpers';
+import { $apply } from 'test/utils/ng';
 import _ from 'lodash';
 
 const jasmineDsl = window.jasmine.getEnv();

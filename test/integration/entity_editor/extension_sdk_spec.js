@@ -1,11 +1,11 @@
 import sinon from 'sinon';
-import * as K from 'test/helpers/mocks/kefir';
-import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
+import * as K from 'test/utils/kefir';
+import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
 import _ from 'lodash';
 import $ from 'jquery';
 import APIClient from 'data/APIClient.es6';
-import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 // TODO: This integration suite should be removed.
 // We want to drop Web App dependency on the SDK.

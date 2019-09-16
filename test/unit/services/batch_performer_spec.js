@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('Batch performer service', () => {
   const ENTITY_API = ['publish', 'unpublish', 'archive', 'unarchive', 'delete'];

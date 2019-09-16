@@ -8,12 +8,68 @@ import { actionOrigin } from 'app/widgets/rich_text/plugins/shared/PluginApi.es6
 import { document, block, inline, text } from 'app/widgets/rich_text/helpers/nodeFactory.es6';
 
 import sinon from 'sinon';
-import { $initialize, $inject } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize, $inject } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
-import { getWithId } from 'test/helpers/rich_text_editor/helpers';
-import { stubAll, setupWidgetApi, createSandbox, ENTRY } from 'test/helpers/rich_text_editor/setup';
-import flushPromises from '../../../helpers/flushPromises';
+import flushPromises from 'test/utils/flushPromises';
+
+export const ENTRY = {
+  sys: {
+    type: 'Entry',
+    id: 'testid2',
+    contentType: {
+      sys: {
+        id: 'ct-id'
+      }
+    }
+  }
+};
+
+const getWithId = (wrapper, testId) => wrapper.find(`[data-test-id="${testId}"]`).first();
+
+const stubAll = async ({ isolatedSystem }) => {
+  // TODO: Instead of stubbing all kind of services, stub `buildWidgetApi.es6`!
+  isolatedSystem.set('directives/thumbnailHelpers.es6', {});
+  isolatedSystem.set('search/EntitySelector/Config.es6', {
+    newConfigFromRichTextField: sinon.stub().returns({})
+  });
+  isolatedSystem.set('app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6', {
+    LINK_TYPES: {}
+  });
+  isolatedSystem.set('utils/LaunchDarkly/index.es6', {
+    onFeatureFlag: sinon.stub(),
+    getCurrentVariation: sinon.stub()
+  });
+  isolatedSystem.set('detect-browser', {
+    detect: () => ({ name: 'chrome' })
+  });
+
+  isolatedSystem.set('access_control/AccessChecker/index.es6', {
+    getSectionVisibility: sinon.stub().returns({
+      asset: true,
+      entry: true
+    })
+  });
+
+  isolatedSystem.set('analytics/Analytics.es6', {
+    track: sinon.stub()
+  });
+};
+
+const setupWidgetApi = (mockApi, mockDocument) => {
+  const widgetApi = mockApi.create();
+  widgetApi.fieldProperties.isDisabled$.set(false);
+  widgetApi.fieldProperties.value$.set(mockDocument);
+
+  return widgetApi;
+};
+
+const createSandbox = window => {
+  const el = window.document.createElement('div');
+  el.className = 'sticky-parent';
+  window.document.body.appendChild(el);
+  return el;
+};
 
 const triggerToolbarIcon = async (wrapper, iconName) => {
   await flushPromises();

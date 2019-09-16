@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('cfFieldErrorsFor', () => {
   beforeEach(async function() {

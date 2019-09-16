@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 import sinon from 'sinon';
-import { it } from 'test/helpers/dsl';
+import { it } from 'test/utils/dsl';
 
 describe('Tracking versioning', () => {
   const data = {

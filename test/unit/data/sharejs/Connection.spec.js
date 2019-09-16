@@ -1,8 +1,8 @@
 import sinon from 'sinon';
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
-import { $initialize, $apply, $inject } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize, $apply, $inject } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('data/sharejs/Connection.es6', () => {
   beforeEach(async function() {

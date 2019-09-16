@@ -1,8 +1,9 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
+import { stubAll } from 'test/utils/sinon';
 import _ from 'lodash';
-import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import createMockSpaceEndpoint from 'test/utils/createSpaceEndpointMock';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('spaceContext', () => {
   beforeEach(async function() {
@@ -224,7 +225,7 @@ describe('spaceContext', () => {
         isMasterEnvironment: true,
         aliasId: undefined
       });
-    })
+    });
 
     it('always returns an array for the `environments` property even if there are no environments', function() {
       this.LD._setFlag('feature-dv-11-2017-environments', false);
@@ -495,7 +496,7 @@ describe('spaceContext', () => {
   describe('#displayedFieldForType()', () => {
     beforeEach(async function() {
       const CTRepo = await this.system.import('data/ContentTypeRepo/Published.es6');
-      this.spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
+      this.spaceContext.publishedCTs = stubAll(CTRepo.create());
     });
 
     it('returns the field', function() {
@@ -556,7 +557,7 @@ describe('spaceContext', () => {
       };
 
       const CTRepo = await this.system.import('data/ContentTypeRepo/Published.es6');
-      this.spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
+      this.spaceContext.publishedCTs = stubAll(CTRepo.create());
       this.spaceContext.publishedCTs.get.withArgs('CTID').returns(this.ct);
     });
 

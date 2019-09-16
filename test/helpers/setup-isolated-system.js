@@ -1,6 +1,5 @@
 /* global SystemJS */
 
-import $q from 'test/helpers/$q';
 import _ from 'lodash';
 
 /*
@@ -16,9 +15,6 @@ beforeEach(function() {
   // Register each existing module onto our blank system canvas
   window.testRegistry.forEach(args => registerInIsolatedSystem(isolatedSystem, args));
   window.libs.forEach(args => registerLibrary(isolatedSystem, args));
-
-  // Also register special helper $q
-  registerInIsolatedSystem(isolatedSystem, ['test/helpers/$q', [], createRegistrationWrapper($q)]);
 
   this.__originalSystem = window.SystemJS;
 
@@ -91,15 +87,4 @@ function registerInIsolatedSystem(isolatedSystem, item) {
       setters: [$export]
     }));
   }
-}
-
-function createRegistrationWrapper(exports) {
-  return export_ => {
-    // const exports = moduleObj;
-    export_(Object.assign({ default: exports }, exports));
-    return {
-      setters: [],
-      execute: function() {}
-    };
-  };
 }

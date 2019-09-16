@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { $inject, $apply, $initialize } from 'test/helpers/helpers';
+import { $inject, $apply, $initialize } from 'test/utils/ng';
 
 describe('Role List Controller', () => {
   beforeEach(async function() {

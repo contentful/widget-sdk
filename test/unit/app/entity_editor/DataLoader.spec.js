@@ -1,8 +1,8 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initialize, $inject } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize, $inject } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('app/entity_editor/DataLoader.es6', () => {
   beforeEach(async function() {

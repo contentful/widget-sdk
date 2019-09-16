@@ -37,11 +37,13 @@ import * as appApiKeyEditorContactUsEs6 from 'app/api/KeyEditor/ContactUs.es6';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle.es6';
 import * as appApiApiKeyListApiKeyListEs6 from 'app/api/api_key_list/ApiKeyList.es6';
 import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Components/BackNav/index.es6';
+import * as appEntityEditorEntityAuxToggleEs6 from 'app/entity_editor/EntityAuxToggle.es6';
 import * as appEntityEditorStatusNotificationEs6 from 'app/entity_editor/StatusNotification.es6';
 import * as appEntrySidebarEntrySidebarEs6 from 'app/EntrySidebar/EntrySidebar.es6';
 import * as widgetsWidgetRenderWarningEs6 from 'widgets/WidgetRenderWarning.es6';
 import * as widgetsExtensionIFrameRendererEs6 from 'widgets/ExtensionIFrameRenderer.es6';
 import * as appEntityEditorCollaboratorsIndexEs6 from 'app/entity_editor/Collaborators/index.es6';
+import * as appEntityEditorEntityCommentsToggleEs6 from 'app/entity_editor/EntityCommentsToggle.es6';
 import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_editor/CustomEditorExtensionRenderer.es6';
 import * as componentsTabsNoLocalizedFieldsAdviceIndexEs6 from 'components/tabs/NoLocalizedFieldsAdvice/index.es6';
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage.es6';
@@ -309,11 +311,13 @@ function getModule(name) {
     'components/shared/DocumentTitle.es6': componentsSharedDocumentTitleEs6,
     'app/api/api_key_list/ApiKeyList.es6': appApiApiKeyListApiKeyListEs6,
     'app/entity_editor/Components/BackNav/index.es6': appEntityEditorComponentsBackNavIndexEs6,
+    'app/entity_editor/EntityAuxToggle.es6': appEntityEditorEntityAuxToggleEs6,
     'app/entity_editor/StatusNotification.es6': appEntityEditorStatusNotificationEs6,
     'app/EntrySidebar/EntrySidebar.es6': appEntrySidebarEntrySidebarEs6,
     'widgets/WidgetRenderWarning.es6': widgetsWidgetRenderWarningEs6,
     'widgets/ExtensionIFrameRenderer.es6': widgetsExtensionIFrameRendererEs6,
     'app/entity_editor/Collaborators/index.es6': appEntityEditorCollaboratorsIndexEs6,
+    'app/entity_editor/EntityCommentsToggle.es6': appEntityEditorEntityCommentsToggleEs6,
     'app/entry_editor/CustomEditorExtensionRenderer.es6': appEntryEditorCustomEditorExtensionRendererEs6,
     'components/tabs/NoLocalizedFieldsAdvice/index.es6': componentsTabsNoLocalizedFieldsAdviceIndexEs6,
     'app/home/SpaceHomePage.es6': appHomeSpaceHomePageEs6,

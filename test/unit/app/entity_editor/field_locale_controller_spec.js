@@ -1,6 +1,6 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import sinon from 'sinon';
-import { $inject, $initialize, $apply } from 'test/helpers/helpers';
+import { $inject, $initialize, $apply } from 'test/utils/ng';
 
 describe('FieldLocaleController', () => {
   beforeEach(async function() {

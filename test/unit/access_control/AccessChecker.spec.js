@@ -1,8 +1,8 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 import sinon from 'sinon';
-import { it } from 'test/helpers/dsl';
-import { $initialize } from 'test/helpers/helpers';
+import { it } from 'test/utils/dsl';
+import { $initialize } from 'test/utils/ng';
 
 describe('Access Checker', () => {
   let enforcements, OrganizationRoles, TokenStore, ac, changeSpace;

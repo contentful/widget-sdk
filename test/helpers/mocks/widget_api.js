@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import _ from 'lodash';
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 
 angular
   .module('contentful/mocks')

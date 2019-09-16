@@ -1,7 +1,6 @@
-import { setCheckbox } from 'test/helpers/DOM';
+import { setCheckbox } from 'test/utils/dom';
 import sinon from 'sinon';
-import { $compile, $initialize, $apply } from 'test/helpers/helpers';
-import $q from 'test/helpers/$q';
+import { $compile, $initialize, $apply, $q } from 'test/utils/ng';
 
 // TODO Rewrite this with the new actor based test DSL.
 describe('AddFieldDialogController', () => {

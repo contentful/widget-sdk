@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { $initialize } from 'test/helpers/helpers';
+import { $initialize } from 'test/utils/ng';
 
 describe('account/UrlSyncHelper.es6', () => {
   beforeEach(async function() {

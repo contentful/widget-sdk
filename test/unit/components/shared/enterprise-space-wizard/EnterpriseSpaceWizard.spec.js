@@ -1,7 +1,7 @@
 import React from 'react';
 import sinon from 'sinon';
 import { mount } from 'enzyme';
-import { $initialize } from 'test/helpers/helpers';
+import { $initialize } from 'test/utils/ng';
 
 describe('Enterprise Space Wizard', () => {
   beforeEach(async function() {

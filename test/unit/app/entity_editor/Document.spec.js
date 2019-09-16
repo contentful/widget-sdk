@@ -1,10 +1,10 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 import sinon from 'sinon';
 import { deepFreeze } from 'utils/Freeze.es6';
-import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
-import { $inject, $initialize, $apply } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
+import { $inject, $initialize, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('entityEditor/Document', () => {
   beforeEach(async function() {

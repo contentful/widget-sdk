@@ -1,6 +1,6 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import sinon from 'sinon';
-import { $initialize, $inject } from 'test/helpers/helpers';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('app/entity_editor/Validator.es6', () => {
   beforeEach(async function() {

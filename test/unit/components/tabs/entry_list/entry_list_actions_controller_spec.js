@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 
-import { $initialize, $inject } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize, $inject } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('Entry List Actions Controller', () => {
   let scope, stubs, ComponentLibrary;

@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import { cloneDeep } from 'lodash';
-import { it } from 'test/helpers/dsl';
+import { it } from 'test/utils/dsl';
 
 describe('Enforcements Service', function() {
   beforeEach(async function() {

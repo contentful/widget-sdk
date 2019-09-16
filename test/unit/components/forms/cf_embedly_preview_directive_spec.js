@@ -1,6 +1,5 @@
 import _ from 'lodash';
-import $q from 'test/helpers/$q';
-import { $initialize, $inject, $apply, $compile } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply, $compile, $q } from 'test/utils/ng';
 
 describe('cfEmbedlyPreview Directive', () => {
   let deferredEmbedlyResponse;

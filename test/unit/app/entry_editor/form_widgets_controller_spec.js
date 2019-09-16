@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('FormWidgetsController#widgets', () => {
   beforeEach(async function() {

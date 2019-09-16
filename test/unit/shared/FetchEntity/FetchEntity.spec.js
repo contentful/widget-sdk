@@ -1,9 +1,9 @@
 import sinon from 'sinon';
-import flushPromises from 'test/helpers/flushPromises';
+import flushPromises from 'test/utils/flushPromises';
 import React from 'react';
 import { mount } from 'enzyme';
-import { $initialize } from 'test/helpers/helpers';
-import { beforeEach, it } from 'test/helpers/dsl';
+import { $initialize } from 'test/utils/ng';
+import { beforeEach, it } from 'test/utils/dsl';
 
 const sandbox = sinon.sandbox.create();
 

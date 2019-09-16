@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initialize, $inject } from 'test/helpers/helpers';
-import { beforeEach, it } from 'test/helpers/dsl';
+import { $initialize, $inject } from 'test/utils/ng';
+import { beforeEach, it } from 'test/utils/dsl';
 
 describe('EntityHelpers', () => {
   const REWRITTEN_URL = 'http://rewritten.url/file.txt';

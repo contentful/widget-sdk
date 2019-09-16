@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-import { $apply, $initialize } from 'test/helpers/helpers';
+import { $apply, $initialize } from 'test/utils/ng';
 
 describe('bugsnag', () => {
   beforeEach(async function() {

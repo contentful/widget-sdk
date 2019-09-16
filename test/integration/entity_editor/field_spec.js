@@ -1,9 +1,9 @@
 import sinon from 'sinon';
 import $ from 'jquery';
-import * as DOM from 'test/helpers/DOM';
+import * as DOM from 'test/utils/dom';
 import { forEach, clone } from 'lodash';
-import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
-import { $initialize, $inject, $compile, $apply, $removeDirectives } from 'test/helpers/helpers';
+import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
+import { $initialize, $inject, $compile, $apply, $removeDirectives } from 'test/utils/ng';
 
 /**
  * Tests the integration of the 'cfEntityField' directive with

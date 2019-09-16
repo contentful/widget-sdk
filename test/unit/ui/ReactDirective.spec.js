@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 
 describe('ReactDirective', () => {
   beforeEach(async function() {

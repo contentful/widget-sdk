@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { $initialize } from 'test/helpers/helpers';
+import { $initialize } from 'test/utils/ng';
 
 describe('markdown actions', function() {
   beforeEach(async function() {

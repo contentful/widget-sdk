@@ -1,7 +1,7 @@
 import sinon from 'sinon';
-import * as K from 'test/helpers/mocks/kefir';
-import { $initialize, $apply, $wait } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import * as K from 'test/utils/kefir';
+import { $initialize, $apply, $wait } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('AutoCreateNewSpace/index', () => {
   beforeEach(async function() {

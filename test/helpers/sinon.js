@@ -1,21 +1,9 @@
 import sinon from 'sinon';
-import $q from 'test/helpers/$q';
+import { $q } from 'test/utils/ng';
 
-// TODO Global 'sinon' is deprecated but still used by a lot of test
-// files.
-
-// window.sinon = sinon;
-
-export const stub = sinon.stub;
-export const spy = sinon.spy;
-export const assert = sinon.assert;
-export const match = sinon.match;
-export const useFakeTimers = sinon.useFakeTimers;
-export const sandbox = sinon.sandbox;
-
-assert.calledOnceWith = (spy, ...args) => {
-  assert.calledOnce(spy);
-  assert.calledWith(spy, ...args);
+sinon.assert.calledOnceWith = (spy, ...args) => {
+  sinon.assert.calledOnce(spy);
+  sinon.assert.calledWith(spy, ...args);
 };
 
 // We need to call the $q methods lazily because the angular injector
@@ -35,13 +23,3 @@ sinon.stub.defers = function() {
   this.reject = deferred.reject.bind(deferred);
   return this;
 };
-
-export function stubAll(object) {
-  /* eslint prefer-const: off */
-  for (let key in object) {
-    if (typeof object[key] === 'function') {
-      sinon.stub(object, key);
-    }
-  }
-  return object;
-}

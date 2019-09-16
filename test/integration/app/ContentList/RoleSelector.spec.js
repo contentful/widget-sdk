@@ -1,9 +1,9 @@
-import * as DOM from 'test/helpers/DOM';
-import createSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
+import * as DOM from 'test/utils/dom';
+import createSpaceEndpoint from 'test/utils/createSpaceEndpointMock';
 import sinon from 'sinon';
 import $ from 'jquery';
-import { $initialize, $wait } from 'test/helpers/helpers';
-import { beforeEach, it } from 'test/helpers/dsl';
+import { $initialize, $wait } from 'test/utils/ng';
+import { beforeEach, it } from 'test/utils/dsl';
 
 describe('app/RoleSelector', () => {
   beforeEach(async function() {

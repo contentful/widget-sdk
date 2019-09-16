@@ -1,4 +1,4 @@
-import { $initialize } from 'test/helpers/helpers';
+import { $initialize } from 'test/utils/ng';
 import sinon from 'sinon';
 
 describe('Gatekeeper Message Handler', () => {

@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import { assign } from 'utils/Collections.es6';
-import { $initialize, $inject } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize, $inject } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('data/Endpoint.es6', () => {
   const baseUrl = '//test.io';

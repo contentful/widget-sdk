@@ -1,5 +1,5 @@
-import * as sinon from 'test/helpers/sinon';
-import * as K from 'test/helpers/mocks/kefir';
+import sinon from 'sinon';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 import { create as createResourceState } from 'data/document/ResourceStateManager.es6';
 

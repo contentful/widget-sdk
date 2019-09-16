@@ -1,6 +1,6 @@
 import sinon from 'sinon';
-import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('cfFileEditor Directive', () => {
   beforeEach(async function() {

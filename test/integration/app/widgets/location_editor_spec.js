@@ -1,8 +1,8 @@
 import sinon from 'sinon';
 import _ from 'lodash';
 import $ from 'jquery';
-import { $initialize, $compile, $apply } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $initialize, $compile, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('LocationEditor integration', () => {
   beforeEach(async function() {

@@ -6,10 +6,6 @@
  * It also patches the Karma.start() function to load all test modules.
  */
 
-//   const jq = window.libs.find(([name]) => name === 'jquery')[1];
-//
-//   window.jQuery = window.$ = jq;
-
 (() => {
   // Will hold a list of all module IDs that define test cases
   const testModules = [];
@@ -117,18 +113,22 @@
       configure({ adapter: new Adapter() });
 
       await SystemJS.import('test/helpers/setup-isolated-system');
-      await SystemJS.import('test/helpers/dsl');
-      await SystemJS.import('test/helpers/hooks');
+      await SystemJS.import('test/utils/dsl');
+
+      await SystemJS.import('test/helpers/leaked-dom-elements');
       await SystemJS.import('test/helpers/sinon');
-      await SystemJS.import('test/helpers/matchers');
-      await SystemJS.import('test/helpers/contentful_mocks');
+      await SystemJS.import('test/helpers/jasmine-matchers');
+
+      await SystemJS.import('test/helpers/systemjs-mocks');
+
+      await SystemJS.import('test/helpers/mocks/index');
       await SystemJS.import('test/helpers/mocks/entity_editor_document');
       await SystemJS.import('test/helpers/mocks/editor_context');
       await SystemJS.import('test/helpers/mocks/cf_stub');
       await SystemJS.import('test/helpers/mocks/space_context');
       await SystemJS.import('test/helpers/mocks/ot_doc');
       await SystemJS.import('test/helpers/mocks/widget_api');
-      await SystemJS.import('test/helpers/application');
+
       await SystemJS.import('prelude');
       await Promise.all(testModules.map(name => SystemJS.import(name)));
 

@@ -10,7 +10,6 @@ export const $inject = function(serviceName) {
     });
 
     return module;
-    // return this.$injector.get(serviceName);
   } catch (e) {
     // eslint-disable-next-line
     console.error(`Couldn't inject ${serviceName}`);
@@ -136,3 +135,52 @@ export const $waitForControllerLoaded = async function($scope) {
 
   return $waitForControllerLoaded($scope);
 };
+
+/**
+ * This function acts as an adapter for angular’s $q service.
+ *
+ * It uses the `$q` instance from the current test cases angular
+ * injector. This means you need to $initialize() first.
+ *
+ * This allows application ES6 modules that import `$q` to be imported
+ * as ES6 modules in tests.
+ *
+ * ~~~js
+ * import { $q, $initialize } from 'test/utils/ng'
+ * import * as C from ' utils/Concurent'
+ *
+ * describe(function () {
+ *   beforeEach(async function () {
+ *     await $initialize();
+ *   })
+ *
+ *   it('works', function () {
+ *     $q.resolve()
+ *     // ...
+ *   })
+ * })
+ * ~~~
+ */
+
+export const $q = (...args) => {
+  return get$q()(...args);
+};
+
+$q.resolve = wrap$q('resolve');
+$q.reject = wrap$q('reject');
+$q.defer = wrap$q('defer');
+$q.all = wrap$q('all');
+
+function wrap$q(method) {
+  return (...args) => get$q()[method](...args);
+}
+
+function get$q() {
+  const $q = $inject('$q');
+
+  if (!$q) {
+    throw new Error('$q called in non-Angular context');
+  }
+
+  return $q;
+}

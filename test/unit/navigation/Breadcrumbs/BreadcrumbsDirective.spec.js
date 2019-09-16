@@ -1,7 +1,7 @@
 import { constant, range } from 'lodash';
 import sinon from 'sinon';
-import { $initialize, $flush, $compile } from 'test/helpers/helpers';
-import * as DOM from 'test/helpers/DOM';
+import { $initialize, $flush, $compile } from 'test/utils/ng';
+import * as DOM from 'test/utils/dom';
 
 describe('cfBreadcrumbsDirective spec', () => {
   beforeEach(async function() {

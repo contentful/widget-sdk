@@ -1,4 +1,4 @@
-import { $initialize, $compile } from 'test/helpers/helpers';
+import { $initialize, $compile } from 'test/utils/ng';
 
 describe('cfFieldAlert Directive', () => {
   beforeEach(async function() {

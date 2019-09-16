@@ -1,8 +1,8 @@
 import sinon from 'sinon';
-import * as K from 'test/helpers/mocks/kefir';
-import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
+import * as K from 'test/utils/kefir';
+import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
 import _ from 'lodash';
-import { $initialize, $inject, $apply, $compile } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply, $compile } from 'test/utils/ng';
 
 describe('bulk editor', () => {
   beforeEach(async function() {

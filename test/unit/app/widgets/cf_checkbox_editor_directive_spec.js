@@ -1,7 +1,7 @@
-import { setCheckbox } from 'test/helpers/DOM';
+import { setCheckbox } from 'test/utils/dom';
 import sinon from 'sinon';
 import $ from 'jquery';
-import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 
 describe('cfCheckboxEditor directive', () => {
   beforeEach(async function() {

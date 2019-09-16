@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { $initialize, $inject } from 'test/helpers/helpers';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('Asset List Actions Controller', () => {
   let scope, stubs, ComponentLibrary;

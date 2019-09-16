@@ -16,6 +16,7 @@ const filesNeededToRunTests = [
     served: true,
     included: false
   },
+  'test/utils/**/*.js',
   'test/helpers/**/*.js'
 ];
 
@@ -61,6 +62,7 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'test/helpers/**/*.js': ['babelTest', 'sourcemap'],
+      'test/utils/**/*.js': ['babelTest', 'sourcemap'],
       'test/integration/**/*.js': ['babelTest', 'sourcemap'],
       'test/unit/**/*.js': ['babelTest', 'sourcemap'],
       'src/javascripts/**/*.js': ['babelTest', 'sourcemap'],

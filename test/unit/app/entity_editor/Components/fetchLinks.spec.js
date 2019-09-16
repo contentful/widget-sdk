@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import sinon from 'sinon';
 import { EntityType } from 'app/entity_editor/Components/constants.es6';
-import { beforeEach, it } from 'test/helpers/dsl';
+import { beforeEach, it } from 'test/utils/dsl';
 
 describe('fetchLinks', () => {
   beforeEach(async function() {

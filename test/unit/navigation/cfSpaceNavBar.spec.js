@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import sinon from 'sinon';
-import { $initialize, $inject } from 'test/helpers/helpers';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('Space nav bar directive', () => {
   let container, scope, spaceContext;

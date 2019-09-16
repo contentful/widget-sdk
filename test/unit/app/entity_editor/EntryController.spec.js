@@ -1,8 +1,8 @@
 import * as K from 'utils/kefir.es6';
 import _ from 'lodash';
 import sinon from 'sinon';
-import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
-import { $initialize, $inject, $apply, $removeControllers } from 'test/helpers/helpers';
+import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
+import { $initialize, $inject, $apply, $removeControllers } from 'test/utils/ng';
 
 describe('Entry Editor Controller', function() {
   this.user = { firstName: 'John', lastName: 'Doe', sys: { id: '123' } };

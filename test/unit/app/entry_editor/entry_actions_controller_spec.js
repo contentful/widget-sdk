@@ -1,7 +1,7 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('Entry Actions Controller', () => {
   beforeEach(async function() {

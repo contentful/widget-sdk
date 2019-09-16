@@ -1,5 +1,5 @@
 import { toArray } from 'lodash';
-import { $inject } from 'test/helpers/helpers';
+import { $inject } from 'test/utils/ng';
 
 beforeEach(function() {
   this._angularElements = [];

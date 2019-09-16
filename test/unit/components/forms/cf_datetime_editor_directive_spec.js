@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import $ from 'jquery';
-import { $initialize, $inject } from 'test/helpers/helpers';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('DateTime Editor', () => {
   let moment;

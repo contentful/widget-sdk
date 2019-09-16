@@ -1,9 +1,9 @@
 import { cloneDeep } from 'lodash';
 
-import * as sinon from 'test/helpers/sinon';
-import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
-import { $initialize } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import sinon from 'sinon';
+import createMockSpaceEndpoint from 'test/utils/createSpaceEndpointMock';
+import { $initialize } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('data/UiConfig/Store.es6', () => {
   beforeEach(async function() {

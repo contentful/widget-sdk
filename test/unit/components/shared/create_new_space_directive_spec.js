@@ -1,6 +1,6 @@
-import { createMockProperty } from 'test/helpers/mocks/kefir';
+import { createMockProperty } from 'test/utils/kefir';
 import sinon from 'sinon';
-import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 
 describe('cfCreateNewSpace directive', () => {
   let element, $scope, $rootScope, controller, stubs, $q;

@@ -1,5 +1,5 @@
-import * as K from 'test/helpers/mocks/kefir';
-import { $initialize, $apply } from 'test/helpers/helpers';
+import * as K from 'test/utils/kefir';
+import { $initialize, $apply } from 'test/utils/ng';
 
 describe('Markdown preview', () => {
   beforeEach(async function() {

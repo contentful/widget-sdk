@@ -1,8 +1,8 @@
 import sinon from 'sinon';
-import * as K from 'test/helpers/mocks/kefir';
-import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
-import { $initialize, $inject } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import * as K from 'test/utils/kefir';
+import createMockSpaceEndpoint from 'test/utils/createSpaceEndpointMock';
+import { $initialize, $inject } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('data/document/ResourceStateManager.es6', () => {
   beforeEach(async function() {

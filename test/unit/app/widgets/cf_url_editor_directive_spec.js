@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initialize, $compile, $inject, $apply } from 'test/helpers/helpers';
-import { beforeEach, it } from 'test/helpers/dsl';
+import { $initialize, $compile, $inject, $apply } from 'test/utils/ng';
+import { beforeEach, it } from 'test/utils/dsl';
 
 describe('cfUrlEditor directive', () => {
   beforeEach(async function() {

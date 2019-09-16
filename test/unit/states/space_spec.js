@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { $initialize, $apply, $inject } from 'test/helpers/helpers';
+import { $initialize, $apply, $inject } from 'test/utils/ng';
 
 describe('states/spaces', () => {
   beforeEach(async function() {

@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
+import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
 
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('Asset List Controller', () => {
   let scope, spaceContext, stubs, $q, getAssets, ComponentLibrary;

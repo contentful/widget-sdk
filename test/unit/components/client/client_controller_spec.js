@@ -1,6 +1,6 @@
 import sinon from 'sinon';
-import * as K from 'test/helpers/mocks/kefir';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
+import * as K from 'test/utils/kefir';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('Client Controller', () => {
   let scope;

@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import _ from 'lodash';
 import moment from 'moment';
-import { $initialize, $inject, $compile, $apply } from 'test/helpers/helpers';
+import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 
 describe('Datetime Editor', () => {
   beforeEach(async function() {

@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import _ from 'lodash';
-import { $initialize } from 'test/helpers/helpers';
+import { $initialize } from 'test/utils/ng';
 
 describe('Space Template creation service', () => {
   let spaceTemplateCreator, creator, stubs, spaceContext, enrichTemplate;

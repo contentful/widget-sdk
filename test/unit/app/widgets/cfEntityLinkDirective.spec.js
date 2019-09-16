@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initialize, $apply, $inject, $compile } from 'test/helpers/helpers';
+import { $initialize, $apply, $inject, $compile } from 'test/utils/ng';
 
 describe('cfEntityLink directive', () => {
   beforeEach(async function() {

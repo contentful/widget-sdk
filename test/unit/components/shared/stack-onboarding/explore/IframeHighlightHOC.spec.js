@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initialize } from 'test/helpers/helpers';
+import { $initialize } from 'test/utils/ng';
 
 import { shallow } from 'enzyme';
 

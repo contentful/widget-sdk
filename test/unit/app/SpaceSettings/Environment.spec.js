@@ -1,8 +1,8 @@
-import * as DOM from 'test/helpers/DOM';
+import * as DOM from 'test/utils/dom';
 import $ from 'jquery';
 import sinon from 'sinon';
-import { $inject, $initialize, $compileWith, $wait } from 'test/helpers/helpers';
-import { it } from 'test/helpers/dsl';
+import { $inject, $initialize, $compileWith, $wait } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 let spaceContext;
 

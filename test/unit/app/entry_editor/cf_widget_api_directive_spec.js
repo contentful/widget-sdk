@@ -1,8 +1,8 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 import sinon from 'sinon';
-import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
-import { $initialize, $inject, $apply } from 'test/helpers/helpers';
+import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('cfWidgetApi directive', () => {
   beforeEach(async function() {
