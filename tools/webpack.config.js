@@ -46,7 +46,7 @@ module.exports = () => {
 
       // Dependency file, generated for tests (systemJs does not handle require statements
       // at all, making some dependency handling particularly challenging)
-      'dependencies.js': ['./test/dependencies.js']
+      'dependencies.js': ['./build/dependencies-pre.js']
     },
     output: {
       filename: '[name]',

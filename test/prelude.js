@@ -117,7 +117,6 @@
       configure({ adapter: new Adapter() });
 
       await SystemJS.import('test/helpers/setup-isolated-system');
-      await SystemJS.import('test/helpers/init_setup');
       await SystemJS.import('test/helpers/dsl');
       await SystemJS.import('test/helpers/hooks');
       await SystemJS.import('test/helpers/sinon');

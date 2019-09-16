@@ -1,41 +1,44 @@
 #!/usr/bin/env node
 
-// TODO
-
 const fs = require('fs');
 const path = require('path');
 const babel = require('@babel/core');
 const _ = require('lodash');
 
 const { createBabelOptions } = require('../app-babel-options');
+const createWebpackConfig = require('../webpack.config');
 const rootPath = path.resolve(__dirname, '..', '..');
 const srcPath = path.resolve(rootPath, 'src', 'javascripts');
-// const pkgJsonPath = path.resolve(rootPath, 'package.json');
-// const pkgJsonRaw = fs.readFileSync(pkgJsonPath).toString();
-// const { dependencies: appDeps } = JSON.parse(pkgJsonRaw);
-// const appDepsList = Object.keys(appDeps);
-
 const depNames = recursiveRead(srcPath);
 
-const testDepNames = [
-  'angular-mocks',
-  'enzyme',
-  'enzyme-adapter-react-16',
-  'react-dom/test-utils',
-  'sinon'
-];
+function generate() {
+  const testDepNames = [
+    'angular-mocks',
+    'enzyme',
+    'enzyme-adapter-react-16',
+    'react-dom/test-utils',
+    'sinon'
+  ];
 
-const stringifiedDeps = `
+  const stringifiedDeps = `
+window.jQuery = window.$ = require('jquery');
+
 window.libs = [
-  ${depNames.concat(testDepNames).map(depName => {
-    return `\n\t['${depName}', require('${depName}')]`;
-  })}
+${depNames
+  .concat(testDepNames)
+  .map(depName => {
+    return `  ['${depName}', require('${depName}')]`;
+  })
+  .join(',\n')}
 ];
 `;
 
-const depsFilePath = path.resolve(rootPath, 'test', 'dependencies.js');
+  ensureBuildDirExists();
 
-fs.writeFileSync(depsFilePath, stringifiedDeps);
+  const depsFilePath = path.resolve(rootPath, 'build', 'dependencies-pre.js');
+
+  fs.writeFileSync(depsFilePath, stringifiedDeps);
+}
 
 /*
   Recursively read through directory `p`, and determine
@@ -49,9 +52,11 @@ function recursiveRead(p) {
     const resolved = path.resolve(p, name);
     const isJsFile = resolved.endsWith('.js');
     const isSpecFile = isJsFile && resolved.endsWith('.spec.js');
+    const isMocksDir = resolved.endsWith('__mocks__');
+    const isTestsDir = resolved.endsWith('__test__');
 
     // Ignore .spec.js files
-    if (isSpecFile) {
+    if (isSpecFile || isMocksDir || isTestsDir) {
       return;
     }
 
@@ -89,17 +94,20 @@ function determineDependencies(p) {
   const imports = [];
 
   babel.traverse(ast, {
-    enter: ({ node }) => {
-      if (node.type === 'ImportDeclaration') {
-        const value = node.source.value;
-        // const realImport = value.split('/')[0];
+    enter: ({ node, parent }) => {
+      let value;
 
-        try {
-          require.resolve(value);
-        } catch (e) {
+      if (node.type === 'ImportDeclaration') {
+        value = node.source.value;
+      } else if (node.type === 'Import') {
+        if (parent.arguments.length !== 1) {
           return;
         }
 
+        value = parent.arguments[0].value;
+      }
+
+      if (isExternalImport(value)) {
         imports.push(value);
       }
     }
@@ -108,12 +116,31 @@ function determineDependencies(p) {
   return imports;
 }
 
-// function isRealFile(filename) {
-//   const resolved = path.resolve(srcPath, `${filename}.js`);
-//
-//   if (fs.existsSync(resolved)) {
-//     return true;
-//   }
-//
-//   return false;
-// }
+function isExternalImport(importName) {
+  try {
+    require.resolve(importName);
+
+    return true;
+  } catch (e) {
+    // pass
+  }
+
+  // If it wasn't resolved via `require`, then we also check if it is aliased in Webpack
+  const conf = createWebpackConfig();
+
+  if (conf.resolve && conf.resolve.alias[importName]) {
+    return true;
+  }
+
+  return false;
+}
+
+function ensureBuildDirExists() {
+  fs.mkdirSync(path.resolve(rootPath, 'build'),  { recursive: true });
+}
+
+module.exports = generate;
+
+if (require.main === module) {
+  generate();
+}

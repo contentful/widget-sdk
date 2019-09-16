@@ -1,6 +1,7 @@
 const { promisify } = require('util');
 const webpack = require('webpack');
 const createWebpackConfig = require('./webpack.config');
+const generateTestDependencies = require('./bin/generate_dependency_file');
 
 function watch(done, callbacks) {
   // we don't wait until JS is bundles to not to block
@@ -20,6 +21,9 @@ function watch(done, callbacks) {
 }
 
 async function buildTestDeps(cb) {
+  // Generate the dependencies file first
+  generateTestDependencies();
+
   const config = createWebpackConfig();
 
   delete config.entry['app.js'];
