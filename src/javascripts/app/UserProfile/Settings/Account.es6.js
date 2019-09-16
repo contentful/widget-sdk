@@ -1,128 +1,113 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
   Heading,
-  Icon,
+  IconButton,
   Modal,
-  Paragraph,
-  Typography,
   SkeletonContainer,
   SkeletonImage,
-  SkeletonBodyText
+  SkeletonBodyText,
+  Button,
+  Typography
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
+import useAsync from 'app/common/hooks/useAsync.es6';
+import { fetchUserData } from './AccountService.es6';
+import IdentitiesSection from './IdentitiesSection.es6';
 
 const styles = {
   spaceLeft: css({
     marginLeft: tokens.spacingXs,
     cursor: 'pointer'
   }),
-  accountDetailsSection: css({
-    display: 'flex',
-    '> img': {
-      height: '100px',
-      borderRadius: '50%',
-      marginRight: tokens.spacingXl
-    },
-    '> * + *': {
-      marginRight: tokens.spacingXs
-    }
+  paddingS: css({ padding: tokens.spacingS }),
+  accountImage: css({
+    height: '68px',
+    width: '68px',
+    marginTop: tokens.spacing2Xs,
+    borderRadius: '50%'
   }),
-  userDetails: css({
+  flexContainer: css({
+    display: 'flex',
+    flexWrap: 'nowrap'
+  }),
+  column: css({
     display: 'flex',
     flexDirection: 'column'
+  }),
+  flexGrow1: css({
+    flexGrow: 1
+  }),
+  paddingLeftL: css({
+    paddingLeft: tokens.spacingL
+  }),
+  paddingTopS: css({
+    paddingTop: tokens.spacingS
+  }),
+  name: css({
+    fontWeight: tokens.fontWeightMedium,
+    fontSize: tokens.fontSizeL,
+    marginBottom: tokens.spacing2Xs
+  }),
+  email: css({
+    marginTop: tokens.spacingXs,
+    color: tokens.colorTextMid
+  }),
+  password: css({
+    fontWeight: tokens.fontWeightMedium,
+    fontSize: tokens.fontSizeL,
+    marginTop: tokens.spacingM
   })
 };
 
 export default function AccountDetailsContainer() {
-  const [userAccountData, setUserAccountData] = React.useState({});
-  const [isLoadingUserAccountData, setIsLoadingUserAccountData] = React.useState(true);
-
-  // to mimic data loading
-  React.useEffect(() => {
-    setTimeout(() => {
-      setUserAccountData({
-        firstName: 'Joseph Gordon',
-        lastName: 'Lewitt',
-        profileImageUrl: 'https://avatars3.githubusercontent.com/u/635512?v=4',
-        email: 'jgw@wat.omg',
-        identities: []
-      });
-
-      setIsLoadingUserAccountData(false);
-    }, 3000);
+  const getUserData = useCallback(async () => {
+    return await fetchUserData();
   }, []);
 
-  return (
-    <Typography>
-      <Heading>Account</Heading>
-      {isLoadingUserAccountData ? (
-        <AccountDetailsSkeleton />
-      ) : (
-        <AccountDetails data={userAccountData} />
-      )}
-    </Typography>
-  );
+  const { isLoading, data: userAccountData } = useAsync(getUserData);
+
+  return isLoading ? <AccountDetailsSkeleton /> : <AccountDetails data={userAccountData} />;
 }
 
 function AccountDetails({ data }) {
-  const { firstName, lastName, profileImageUrl, email } = data;
-
-  const [showUserNameEditModal, setShowUserNameEditModal] = React.useState(false);
-  const [showUserEmailEditModal, setShowUserEmailEditModal] = React.useState(false);
+  const { firstName, lastName, avatarUrl, email, identities } = data;
+  const [showModal, setShowModal] = React.useState(false);
 
   return (
-    <section className={styles.accountDetailsSection}>
-      <img alt={`${firstName}'s profile image`} src={profileImageUrl} />
+    <div className={styles.paddingS}>
+      <section className={styles.flexContainer}>
+        <div className={cx(styles.column, styles.flexGrow1)}>
+          <Heading>Account</Heading>
+          <div className={cx(styles.flexContainer, styles.paddingTopS)}>
+            <img
+              className={styles.accountImage}
+              alt={`${firstName}'s profile image`}
+              src={avatarUrl}
+            />
+            <Typography className={cx(styles.column, styles.paddingLeftL)}>
+              <span className={styles.name}>{firstName}</span>
+              <span className={styles.name}>{lastName}</span>
+              <span className={styles.email}>{email}</span>
+              <span className={styles.password}>********</span>
+            </Typography>
+          </div>
+        </div>
 
-      <div className={styles.userDetails}>
-        <Typography>
-          <Paragraph>
-            {firstName} {lastName}{' '}
-            <Icon
-              icon="Edit"
-              size="small"
-              color="primary"
-              className={styles.spaceLeft}
-              onClick={() => setShowUserNameEditModal(true)}
-            />
-            <Modal
-              title="Edit user name"
-              shouldCloseOnEscapePress={true}
-              shouldCloseOnOverlayClick={true}
-              isShown={showUserNameEditModal}
-              onClose={() => setShowUserNameEditModal(false)}>
-              <Typography>
-                <Heading>Boop</Heading>
-              </Typography>
-            </Modal>
-          </Paragraph>
-        </Typography>
-        <Typography>
-          <Paragraph>
-            {email}{' '}
-            <Icon
-              icon="Edit"
-              size="small"
-              color="primary"
-              className={styles.spaceLeft}
-              onClick={() => setShowUserEmailEditModal(true)}
-            />
-            <Modal
-              title="Edit user email"
-              shouldCloseOnEscapePress={true}
-              shouldCloseOnOverlayClick={true}
-              isShown={showUserEmailEditModal}
-              onClose={() => setShowUserEmailEditModal(false)}>
-              <Typography>
-                <Heading>Email and stuff</Heading>
-              </Typography>
-            </Modal>
-          </Paragraph>
-        </Typography>
-      </div>
-    </section>
+        <div className={styles.column}>
+          <IconButton
+            label="Edit user account details"
+            iconProps={{ icon: 'Edit' }}
+            buttonType="muted"
+            onClick={() => setShowModal(true)}
+            testId="edit-user-account-details"
+          />
+          <AccountEditorModal showModal={showModal} setShowModal={setShowModal} />
+        </div>
+      </section>
+      <IdentitiesSection userIdentities={identities} />
+    </div>
   );
 }
 
@@ -130,9 +115,41 @@ AccountDetails.propTypes = {
   data: PropTypes.shape({
     firstName: PropTypes.string,
     lastName: PropTypes.string,
-    profileImageUrl: PropTypes.string,
-    email: PropTypes.string
+    avatarUrl: PropTypes.string,
+    email: PropTypes.string,
+    identities: PropTypes.array
   }).isRequired
+};
+
+function AccountEditorModal({ showModal, setShowModal }) {
+  return (
+    <Modal
+      title="Edit account details"
+      shouldCloseOnEscapePress={true}
+      shouldCloseOnOverlayClick={true}
+      isShown={showModal}
+      onClose={() => setShowModal(false)}>
+      {({ title, onClose }) => (
+        <>
+          <Modal.Header title={title} onClose={onClose} />
+          <Modal.Content>EDIT ACCOUNT</Modal.Content>
+          <Modal.Controls>
+            <Button onClick={onClose} buttonType="positive">
+              Confirm
+            </Button>
+            <Button onClick={onClose} buttonType="muted">
+              Close
+            </Button>
+          </Modal.Controls>
+        </>
+      )}
+    </Modal>
+  );
+}
+
+AccountEditorModal.propTypes = {
+  showModal: PropTypes.bool.isRequired,
+  setShowModal: PropTypes.func.isRequired
 };
 
 function AccountDetailsSkeleton() {
