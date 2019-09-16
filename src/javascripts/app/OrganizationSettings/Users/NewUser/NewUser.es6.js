@@ -17,7 +17,7 @@ import {
 import Workbench from 'app/common/Workbench.es6';
 import pluralize from 'pluralize';
 import { orgRoles } from 'utils/MembershipUtils.es6';
-import { useAddToOrg } from './hooks.es6';
+import { useAddToOrg } from './NewUserHooks.es6';
 import { isValidEmail, parseList } from 'utils/StringUtils.es6';
 import SpaceMembershipList from './SpaceMembershipList.es6';
 import NewUserSuccess from './NewUserSuccess.es6';
