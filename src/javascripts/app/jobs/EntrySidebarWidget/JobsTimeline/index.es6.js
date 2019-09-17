@@ -4,7 +4,8 @@ import cn from 'classnames';
 import { css } from 'emotion';
 
 import Job from './Job.es6';
-import { TextLink, Tag } from '@contentful/forma-36-react-components';
+import { TextLink, Tag, Subheading, List } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 
 import { JobsStateLink } from 'app/jobs/JobsPageLink.es6';
 
@@ -14,17 +15,20 @@ const styles = {
   }),
   alphaTag: css({
     marginLeft: 'auto'
+  }),
+  jobList: css({
+    marginBottom: tokens.spacingM
   })
 };
 
 const JobsTimeline = ({ isMasterEnvironment, jobs, onCancel, isReadOnly }) => (
   <div>
     <header className="entity-sidebar__header">
-      <h2 className={cn(styles.alphaSideBarHeading, 'entity-sidebar__heading')}>
+      <Subheading className={cn(styles.alphaSideBarHeading, 'entity-sidebar__heading')}>
         Schedule <Tag className={styles.alphaTag}>Alpha</Tag>
-      </h2>
+      </Subheading>
     </header>
-    <ul>
+    <List className={styles.jobList}>
       {jobs.map(job => (
         <Job
           id={job.sys.id}
@@ -36,10 +40,10 @@ const JobsTimeline = ({ isMasterEnvironment, jobs, onCancel, isReadOnly }) => (
           isReadOnly={isReadOnly}
         />
       ))}
-    </ul>
+    </List>
     <JobsStateLink isMasterEnvironment={isMasterEnvironment}>
       {({ getHref }) => (
-        <TextLink linkType="muted" className="f36-margin-top--m" href={getHref()}>
+        <TextLink linkType="muted" href={getHref()}>
           View all scheduled entries
         </TextLink>
       )}
