@@ -76,7 +76,7 @@ function AccountDetails({ data }) {
   const [showModal, setShowModal] = React.useState(false);
 
   return (
-    <div className={styles.paddingS}>
+    <div data-test-id="user-account-data" className={styles.paddingS}>
       <section className={styles.flexContainer}>
         <div className={cx(styles.column, styles.flexGrow1)}>
           <Heading>Account</Heading>
