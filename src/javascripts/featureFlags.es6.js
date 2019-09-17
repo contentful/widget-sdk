@@ -16,3 +16,4 @@ export const ENTITY_EDITOR_CMA_EXPERIMENT =
 
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';
+export const ENVIRONMENT_ALIASING = 'environment_aliasing';

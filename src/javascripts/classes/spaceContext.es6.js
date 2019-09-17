@@ -13,6 +13,7 @@ import * as EntityFieldValueHelpers from './EntityFieldValueHelpers.es6';
 import createContentPreview from 'services/contentPreview.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import createExtensionDefinitionLoader from 'app/settings/AppsBeta/ExtensionDefinitionLoader.es6';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 
 import { createExtensionLoader } from 'widgets/ExtensionLoader.es6';
 import createCachedAppConfig from 'app/settings/apps/CachedAppConfig.es6';
@@ -37,6 +38,7 @@ import * as EnforcementsService from 'services/EnforcementsService.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as Auth from 'Authentication.es6';
 import * as Config from 'Config.es6';
+import { ENVIRONMENT_ALIASING } from '../featureFlags.es6';
 
 const MASTER_ENVIRONMENT_ID = 'master';
 
@@ -605,11 +607,17 @@ export default function register() {
        * @returns {Promise}
        */
       function setupAliases(spaceContext) {
-        return createAliasesRepo(spaceContext.endpoint)
-          .getAll()
-          .then(aliases => {
-            spaceContext.aliases = deepFreeze(aliases);
-          });
+        getSpaceFeature(spaceContext.space.getId(), ENVIRONMENT_ALIASING).then(aliasesEnabled => {
+          if (aliasesEnabled) {
+            return createAliasesRepo(spaceContext.endpoint)
+              .getAll()
+              .then(aliases => {
+                spaceContext.aliases = deepFreeze(aliases);
+              });
+          }
+          spaceContext.aliases = [];
+          return;
+        });
       }
 
       /**
