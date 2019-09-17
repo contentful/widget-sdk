@@ -80,6 +80,11 @@ registerSchema({
 });
 
 registerSchema({
+  name: 'environment_aliases',
+  version: '1-0-0'
+});
+
+registerSchema({
   name: 'experiment',
   version: '1-0-2'
 });
