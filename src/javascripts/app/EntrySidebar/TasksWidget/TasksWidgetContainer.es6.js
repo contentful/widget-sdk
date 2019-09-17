@@ -13,7 +13,7 @@ import { createTasksStoreInteractor } from './TasksInteractor.es6';
 import createTaskPermissionChecker, {
   createProhibitive as createProhibitiveTaskPermissionChecker
 } from './TaskPermissionChecker.es6';
-import { onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util.es6';
+import { isOpenTask, onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util.es6';
 import TaskList from './View/TaskList.es6';
 import { Tag, Paragraph } from '@contentful/forma-36-react-components';
 import { trackIsTasksAlphaEligible } from './analytics.es6';
@@ -97,8 +97,19 @@ export class TasksWidgetContainer extends Component {
   fetchTasks(tasksStore) {
     this.offTasksFetching = onStoreFetchingStatusChange(tasksStore, status => {
       this.setState({ tasksFetchingStatus: status });
+      this.handleTasksFetchingUpdate(status);
     });
   }
+
+  handleTasksFetchingUpdate = ({ data: tasks }) => {
+    const { emitter } = this.props;
+    if (tasks) {
+      const openTasksCount = tasks.filter(isOpenTask).length;
+      emitter.emit(SidebarEventTypes.SET_PUBLICATION_BLOCKING, {
+        openTasks: openTasksCount > 0 ? buildPublicationBlockingWarning(openTasksCount) : false
+      });
+    }
+  };
 
   async fetchUsers(usersCache) {
     this.offUsersFetching = onPromiseFetchingStatusChange(usersCache.getAll(), status => {
@@ -140,4 +151,9 @@ export class TasksWidgetContainer extends Component {
       </EntrySidebarWidget>
     );
   }
+}
+
+function buildPublicationBlockingWarning(openTasksCount) {
+  const intro = openTasksCount === 1 ? 'There is a pending task' : 'There are pending tasks';
+  return `${intro} preventing this entry from being published`;
 }

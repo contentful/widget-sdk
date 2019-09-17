@@ -1,16 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from '@contentful/forma-36-react-components';
+import { Icon, Paragraph } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
-export default function ActionRestrictedNote({ actionName }) {
+const styles = {
+  actionRestrictionNote: css({
+    color: tokens.colorTextLight,
+    marginTop: tokens.spacingXs
+  })
+};
+
+export default function ActionRestrictedNote({ actionName, reason }) {
   return (
-    <p className="f36-color--text-light f36-margin-top--xs" data-test-id="action-restriction-note">
+    <Paragraph className={styles.actionRestrictionNote} data-test-id="action-restriction-note">
       <Icon icon="Lock" color="muted" className="action-restricted__icon" />
-      You do not have permission to {actionName.toLowerCase()}.
-    </p>
+      {reason ? reason : `You do not have permission to ${actionName.toLowerCase()}`}
+    </Paragraph>
   );
 }
 
 ActionRestrictedNote.propTypes = {
-  actionName: PropTypes.string.isRequired
+  actionName: PropTypes.string,
+  reason: PropTypes.string
 };

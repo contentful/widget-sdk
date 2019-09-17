@@ -91,6 +91,9 @@ function getPublishedAt(entity) {
   }
 }
 
+export const PUBLICATION_BLOCKED_BY_JOBS_WARNING =
+  'This entry is already scheduled to be published';
+
 export default function JobsWidget({
   spaceId,
   environmentId,
@@ -103,7 +106,8 @@ export default function JobsWidget({
   revert,
   isSaving,
   updatedAt,
-  validator
+  validator,
+  publicationBlockedReason
 }) {
   const spaceContext = getModule('spaceContext');
   const [jobs, setJobs] = useState([]);
@@ -192,6 +196,11 @@ export default function JobsWidget({
   const lastJob = jobs[0];
   const prevLastJob = usePrevious(lastJob);
   const showToast = shouldShowSuccessToast(prevLastJob, lastJob, entity);
+
+  const finalPublicationBlockedReason = hasScheduledActions
+    ? PUBLICATION_BLOCKED_BY_JOBS_WARNING
+    : publicationBlockedReason;
+
   useEffect(() => {
     if (showToast) {
       Notification.success('Entry was successfully published.');
@@ -232,6 +241,7 @@ export default function JobsWidget({
         }}
         isScheduledPublishDisabled={Boolean(error)}
         isDisabled={hasScheduledActions || isLoading}
+        publicationBlockedReason={finalPublicationBlockedReason}
       />
       {isLoading && (
         <SkeletonContainer data-test-id="jobs-skeleton" className={styles.jobsSkeleton}>
@@ -292,5 +302,6 @@ JobsWidget.propTypes = {
   validator: PropTypes.shape({
     run: PropTypes.func,
     setApiResponseErrors: PropTypes.func
-  }).isRequired
+  }).isRequired,
+  publicationBlockedReason: PropTypes.string
 };

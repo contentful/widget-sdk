@@ -222,7 +222,37 @@ describe('<StatusWidget />', () => {
     expect(selectors.publishBtn(renderResult)).toBeDisabled();
     expect(selectors.actionRestrictionNote(renderResult)).toBeInTheDocument();
     expect(selectors.actionRestrictionNote(renderResult).textContent).toBe(
-      'You do not have permission to publish.'
+      'You do not have permission to publish'
+    );
+  });
+
+  it('shows the action restrtiction note if publishingBlocked tasks', () => {
+    const stubs = {
+      onPublishClick: jest.fn()
+    };
+    const { renderResult } = renderWidget({
+      status: 'draft',
+      updatedAt: '2018-01-14T15:15:49.230Z',
+      primary: createCommand({
+        isDisabled: () => true,
+        label: 'Publish',
+        targetStateId: 'published',
+        execute: stubs.onPublishClick
+      }),
+      secondary: [
+        createCommand({
+          label: 'Archive',
+          targetStateId: 'archived'
+        })
+      ],
+      publicationBlockedReason: 'The publication has been blocked'
+    });
+
+    expect(selectors.publishBtn(renderResult)).toBeInTheDocument();
+    expect(selectors.publishBtn(renderResult)).toBeDisabled();
+    expect(selectors.actionRestrictionNote(renderResult)).toBeInTheDocument();
+    expect(selectors.actionRestrictionNote(renderResult).textContent).toBe(
+      'The publication has been blocked'
     );
   });
 });

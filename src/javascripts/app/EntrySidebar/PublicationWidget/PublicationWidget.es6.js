@@ -7,13 +7,22 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem,
-  Icon
+  Icon,
+  Paragraph,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
 import CommandPropType from 'app/entity_editor/CommandPropType.es6';
+
+const styles = {
+  actionRestrictionNote: css({
+    color: tokens.colorTextLight,
+    marginTop: tokens.spacingXs
+  })
+};
 
 const StatusBadge = ({ status }) => (
   <div
@@ -37,15 +46,16 @@ StatusBadge.propTypes = {
   status: PropTypes.string.isRequired
 };
 
-const ActionRestrictedNote = ({ actionName }) => (
-  <p className="f36-color--text-light f36-margin-top--xs" data-test-id="action-restriction-note">
+const ActionRestrictedNote = ({ actionName, reason }) => (
+  <Paragraph className={styles.actionRestrictionNote} data-test-id="action-restriction-note">
     <Icon icon="Lock" color="muted" className="action-restricted__icon" />
-    You do not have permission to {actionName.toLowerCase()}.
-  </p>
+    {reason ? reason : `You do not have permission to ${actionName.toLowerCase()}`}
+  </Paragraph>
 );
 
 ActionRestrictedNote.propTypes = {
-  actionName: PropTypes.string.isRequired
+  actionName: PropTypes.string,
+  reason: PropTypes.string
 };
 
 const RestrictedAction = ({ actionName }) => (
@@ -72,6 +82,7 @@ export default class PublicationWidget extends React.PureComponent {
     revert: CommandPropType,
     primary: CommandPropType,
     secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
+    publicationBlockedReason: PropTypes.string,
 
     spaceId: PropTypes.string,
     environmentId: PropTypes.string,
@@ -84,8 +95,19 @@ export default class PublicationWidget extends React.PureComponent {
   };
 
   render() {
-    const { primary, status, secondary, isSaving, updatedAt, revert } = this.props;
+    const {
+      primary,
+      status,
+      secondary,
+      isSaving,
+      updatedAt,
+      revert,
+      publicationBlockedReason
+    } = this.props;
     const secondaryActionsDisabled = every(secondary || [], action => action.isDisabled());
+    const isPrimaryPublishBlocked =
+      primary && primary.targetStateId === 'published' && !!publicationBlockedReason;
+
     return (
       <EntrySidebarWidget title="Status">
         <StatusBadge status={status} />
@@ -96,7 +118,7 @@ export default class PublicationWidget extends React.PureComponent {
                 <Button
                   isFullWidth
                   buttonType="positive"
-                  disabled={primary.isDisabled()}
+                  disabled={primary.isDisabled() || isPrimaryPublishBlocked}
                   loading={primary.inProgress()}
                   testId={`change-state-${primary.targetStateId}`}
                   onClick={() => {
@@ -153,7 +175,11 @@ export default class PublicationWidget extends React.PureComponent {
               </DropdownList>
             </Dropdown>
           </div>
-          {primary && primary.isRestricted() && <ActionRestrictedNote actionName={primary.label} />}
+          {primary && primary.isRestricted() ? (
+            <ActionRestrictedNote actionName={primary.label} />
+          ) : (
+            isPrimaryPublishBlocked && <ActionRestrictedNote reason={publicationBlockedReason} />
+          )}
         </div>
         <div className="entity-sidebar__status-more">
           {updatedAt && (
@@ -169,12 +195,12 @@ export default class PublicationWidget extends React.PureComponent {
             </div>
           )}
           {revert && revert.isAvailable() && (
-            <button
+            <TextLink
               className="entity-sidebar__revert btn-link"
               data-test-id="discard-changed-button"
               onClick={() => revert.execute()}>
               Discard changes
-            </button>
+            </TextLink>
           )}
         </div>
       </EntrySidebarWidget>

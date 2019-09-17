@@ -3,7 +3,7 @@ import { render, cleanup, wait, fireEvent } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 
 import { Notification } from '@contentful/forma-36-react-components';
-import JobsWidget from './JobsWidget.es6';
+import { default as JobsWidget, PUBLICATION_BLOCKED_BY_JOBS_WARNING } from './JobsWidget.es6';
 import {
   getNotCanceledJobsForEntity,
   createJob as createJobService,
@@ -117,6 +117,9 @@ describe('<JobsWidget />', () => {
     await wait();
     expect(renderResult.getByTestId('change-state-menu-trigger')).toBeDisabled();
     expect(renderResult.getByTestId('change-state-published')).toBeDisabled();
+    expect(renderResult.getByTestId('action-restriction-note').textContent).toBe(
+      PUBLICATION_BLOCKED_BY_JOBS_WARNING
+    );
   });
 
   it('does not render scheduled publication cta if primary action is not allowed', async () => {

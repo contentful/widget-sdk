@@ -48,7 +48,8 @@ export default class StatusWidget extends React.PureComponent {
     secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
     onScheduledPublishClick: PropTypes.func.isRequired,
     isScheduledPublishDisabled: PropTypes.bool.isRequired,
-    isDisabled: PropTypes.bool.isRequired
+    isDisabled: PropTypes.bool.isRequired,
+    publicationBlockedReason: PropTypes.string
   };
 
   state = {
@@ -65,7 +66,9 @@ export default class StatusWidget extends React.PureComponent {
       <DropdownListItem
         className={styles.scheduleListItem}
         testId="schedule-publication"
-        isDisabled={this.props.primary.targetStateId !== 'published'}
+        isDisabled={
+          this.props.primary.targetStateId !== 'published' || !!this.props.publicationBlockedReason
+        }
         onClick={() => {
           this.props.onScheduledPublishClick();
           this.setState({ isOpenDropdown: false });
@@ -83,7 +86,16 @@ export default class StatusWidget extends React.PureComponent {
   };
 
   render() {
-    const { primary, status, secondary, isSaving, updatedAt, revert, isDisabled } = this.props;
+    const {
+      primary,
+      status,
+      secondary,
+      isSaving,
+      updatedAt,
+      revert,
+      isDisabled,
+      publicationBlockedReason
+    } = this.props;
     const secondaryActionsDisabled =
       every(secondary || [], action => action.isDisabled()) && !this.canSchedule();
     return (
@@ -99,7 +111,11 @@ export default class StatusWidget extends React.PureComponent {
                 <Button
                   isFullWidth
                   buttonType="positive"
-                  disabled={primary.isDisabled() || isDisabled}
+                  disabled={
+                    primary.isDisabled() ||
+                    isDisabled ||
+                    (primary.targetStateId === 'published' && !!publicationBlockedReason)
+                  }
                   loading={primary.inProgress()}
                   testId={`change-state-${primary.targetStateId}`}
                   onClick={() => {
@@ -157,7 +173,12 @@ export default class StatusWidget extends React.PureComponent {
               </DropdownList>
             </Dropdown>
           </div>
-          {primary && primary.isRestricted() && <ActionRestrictedNote actionName={primary.label} />}
+          {primary && primary.isRestricted() ? (
+            <ActionRestrictedNote actionName={primary.label} />
+          ) : (
+            primary.targetStateId === 'published' &&
+            publicationBlockedReason && <ActionRestrictedNote reason={publicationBlockedReason} />
+          )}
         </div>
         <div className="entity-sidebar__status-more">
           {updatedAt && (

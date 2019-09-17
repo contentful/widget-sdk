@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { get } from 'lodash';
+import { get, values, omitBy, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes.es6';
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
@@ -29,6 +29,10 @@ export default class PublicationWidgetContainer extends Component {
       SidebarEventTypes.UPDATED_PUBLICATION_WIDGET,
       this.onUpdatePublicationWidget
     );
+    this.props.emitter.on(
+      SidebarEventTypes.SET_PUBLICATION_BLOCKING,
+      this.onUpdatePublicationBlocking
+    );
     this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.PUBLICATION);
   }
 
@@ -37,10 +41,26 @@ export default class PublicationWidgetContainer extends Component {
       SidebarEventTypes.UPDATED_PUBLICATION_WIDGET,
       this.onUpdatePublicationWidget
     );
+    this.props.emitter.off(
+      SidebarEventTypes.SET_PUBLICATION_BLOCKING,
+      this.onUpdatePublicationBlocking
+    );
   }
 
   onUpdatePublicationWidget = update => {
     this.setState({ ...update });
+  };
+
+  onUpdatePublicationBlocking = publicationBlockedReasons => {
+    this.setState(prevState => ({
+      publicationBlockedReasons: omitBy(
+        {
+          ...prevState.publicationBlockedReasons,
+          ...publicationBlockedReasons
+        },
+        isEmpty
+      )
+    }));
   };
 
   render() {
@@ -54,12 +74,14 @@ export default class PublicationWidgetContainer extends Component {
       status,
       isSaving,
       updatedAt,
-      validator
+      validator,
+      publicationBlockedReasons
     } = this.state;
 
     const revert = get(commands, 'revertToPrevious');
     const primary = get(commands, 'primary');
     const secondary = get(commands, 'secondary', []);
+    const publicationBlockedReason = values(publicationBlockedReasons)[0];
 
     return (
       <JobsFeatureFlag>
@@ -74,6 +96,7 @@ export default class PublicationWidgetContainer extends Component {
               revert={revert}
               isSaving={this.state.isSaving}
               updatedAt={this.state.updatedAt}
+              publicationBlockedReason={publicationBlockedReason}
             />
           ) : (
             <JobsWidget
@@ -89,6 +112,7 @@ export default class PublicationWidgetContainer extends Component {
               isSaving={isSaving}
               updatedAt={updatedAt}
               validator={validator}
+              publicationBlockedReason={publicationBlockedReason}
             />
           );
         }}

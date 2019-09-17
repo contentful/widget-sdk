@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { memoize } from 'lodash';
-import pluralize from 'pluralize';
+import { isOpenTask } from '../util.es6';
 import {
   UserSelectorViewData,
   createSpaceUserSelectorViewData,
@@ -165,10 +165,13 @@ function getPendingTasksMessage(tasks) {
     return 'No tasks have been defined yet.';
   }
   const count = getPendingTasksCount(tasks);
-  const are = count !== 1 ? 'are' : 'is';
-  return `There ${are} ${pluralize('pending task', count, true)}.`;
+  return count === 0
+    ? 'There are no pending tasks'
+    : count === 1
+    ? 'There is 1 pending task'
+    : `There are ${count} pending tasks`;
 }
 
 function getPendingTasksCount(tasks) {
-  return tasks.filter(task => task.assignment.status === 'open').length;
+  return tasks.filter(isOpenTask).length;
 }
