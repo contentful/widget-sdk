@@ -197,7 +197,8 @@ APIClient.prototype.validateEntry = function(data, version) {
     },
     {
       'x-contentful-validate-only': 'true',
-      'x-contentful-enable-alpha-feature': 'entry-validation'
+      'x-contentful-enable-alpha-feature': 'entry-validation',
+      'x-contentful-skip-transformation': 'true'
     }
   );
 };
