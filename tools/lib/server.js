@@ -96,7 +96,9 @@ function createServer(configName, getBuild) {
     const docIndex = sendIndex(P.join(publicDir, 'docs'));
 
     const app = express();
-    const config = createWebpackConfig(['app.js']);
+    const config = createWebpackConfig();
+
+    delete config.entry['dependencies.js'];
 
     const compiler = webpack(config);
     const webpackDevMiddleware = middleware(compiler, {

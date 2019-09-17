@@ -70,12 +70,10 @@ console.log(exceptions.map(exc => topLevelImportString(exc)).join('\n'));
 console.log(`\n\n\n\n----------------\n\n\n\n`);
 console.log(exceptions.map(exc => callString(exc)).join('\n'));
 console.log(`\n\n\n\n----------------\n\n\n\n`);
-console.log(`const [
-    ${list.map(item => `{ default: ${genDepName(item)} }`).join(',\n')}
-  ] = await Promise.all([
+console.log(`const modules = await Promise.all([
   ${list.map(item => asyncImportString(item)).join(',\n')}
 ])`);
-console.log(list.map(item => callString(item)).join('\n'));
+console.log('modules.forEach(module => module.default())');
 
 /*
   Recursively read through directory `p`, and determine

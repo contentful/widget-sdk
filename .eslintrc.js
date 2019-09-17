@@ -142,7 +142,7 @@ module.exports = {
         'rulesdir/restrict-angular-require': 'error',
         'rulesdir/restrict-forma-css-in-react-components': 'warn',
         'rulesdir/restrict-non-f36-components': 'warn',
-        'rulesdir/enforce-getModule-call-inside-fn': 'warn',
+        'rulesdir/enforce-getModule-call-inside-fn': 'error',
         'rulesdir/restrict-inline-styles': 'error'
       },
       globals: {
