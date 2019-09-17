@@ -9,7 +9,7 @@ export async function fetchUserData() {
   });
 }
 
-export async function updateUserData({ version, ...data }) {
+export async function updateUserData({ version, data }) {
   return await usersEndpoint({
     method: 'PUT',
     data,

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Heading,
@@ -8,12 +8,13 @@ import {
   SkeletonImage,
   SkeletonBodyText,
   Button,
-  Typography
+  Typography,
+  TextInput
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
 import useAsync from 'app/common/hooks/useAsync.es6';
-import { fetchUserData } from './AccountService.es6';
+import { fetchUserData, updateUserData } from './AccountService.es6';
 import IdentitiesSection from './IdentitiesSection.es6';
 
 const styles = {
@@ -72,7 +73,14 @@ export default function AccountDetailsContainer() {
 }
 
 function AccountDetails({ data }) {
-  const { firstName, lastName, avatarUrl, email, identities } = data;
+  const {
+    firstName,
+    lastName,
+    avatarUrl,
+    email,
+    identities,
+    sys: { version }
+  } = data;
   const [showModal, setShowModal] = React.useState(false);
 
   return (
@@ -103,7 +111,7 @@ function AccountDetails({ data }) {
             onClick={() => setShowModal(true)}
             testId="edit-user-account-details"
           />
-          <AccountEditorModal showModal={showModal} setShowModal={setShowModal} />
+          <AccountEditorModal version={version} showModal={showModal} setShowModal={setShowModal} />
         </div>
       </section>
       <IdentitiesSection userIdentities={identities} />
@@ -117,24 +125,54 @@ AccountDetails.propTypes = {
     lastName: PropTypes.string,
     avatarUrl: PropTypes.string,
     email: PropTypes.string,
-    identities: PropTypes.array
+    identities: PropTypes.array,
+    sys: PropTypes.shape({ version: PropTypes.number })
   }).isRequired
 };
 
-function AccountEditorModal({ showModal, setShowModal }) {
+// {
+//   "firstName": "Free",
+//   "lastName": "Bloggs",
+//   "email": "fred@example.com",
+//   "password": "jfhf6373",
+//   "currentPassword": "password",
+//   "logAnalyticsFeature": false
+// }
+
+function AccountEditorModal({ version, showModal, setShowModal }) {
+  const [password, setNewPasswordState] = useState('');
+  const [currentPassword, setCurrentPasswordState] = useState('');
+
+  const submitForm = ({ password, currentPassword }) => {
+    updateUserData({ version, data: { password, currentPassword } });
+    setShowModal(false);
+  };
+
   return (
     <Modal
       title="Edit account details"
       shouldCloseOnEscapePress={true}
       shouldCloseOnOverlayClick={true}
       isShown={showModal}
-      onClose={() => setShowModal(false)}>
-      {({ title, onClose }) => (
+      onClose={() => setShowModal(false)}
+      onConfirm={() => submitForm({ password, currentPassword })}>
+      {({ title, onClose, onConfirm }) => (
         <>
           <Modal.Header title={title} onClose={onClose} />
-          <Modal.Content>EDIT ACCOUNT</Modal.Content>
+          <Modal.Content>
+            current password
+            <TextInput
+              value={currentPassword}
+              onChange={({ target: { value } }) => setCurrentPasswordState(value)}
+            />
+            new password
+            <TextInput
+              value={password}
+              onChange={({ target: { value } }) => setNewPasswordState(value)}
+            />
+          </Modal.Content>
           <Modal.Controls>
-            <Button onClick={onClose} buttonType="positive">
+            <Button onClick={onConfirm} buttonType="positive">
               Confirm
             </Button>
             <Button onClick={onClose} buttonType="muted">
@@ -149,7 +187,8 @@ function AccountEditorModal({ showModal, setShowModal }) {
 
 AccountEditorModal.propTypes = {
   showModal: PropTypes.bool.isRequired,
-  setShowModal: PropTypes.func.isRequired
+  setShowModal: PropTypes.func.isRequired,
+  version: PropTypes.number.isRequired
 };
 
 function AccountDetailsSkeleton() {
