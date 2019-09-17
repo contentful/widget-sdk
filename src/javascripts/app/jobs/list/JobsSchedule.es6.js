@@ -60,7 +60,11 @@ TimeGroup.propTypes = {
 };
 
 function formatDate(date) {
-  switch (moment().diff(date, 'days')) {
+  switch (
+    moment()
+      .startOf('day')
+      .diff(moment(date).startOf('day'), 'days')
+  ) {
     case 0:
       return `Today, ${moment(date).format('MMM Do, YYYY')}`;
     case -1:
