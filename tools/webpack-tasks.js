@@ -26,9 +26,6 @@ async function buildTestDeps(cb) {
 
   const config = createWebpackConfig();
 
-  delete config.entry['app.js'];
-  delete config.optimization.splitChunks;
-
   const compiler = webpack(config);
   const stats = await promisify(compiler.run.bind(compiler))();
 

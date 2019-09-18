@@ -32,29 +32,27 @@ module.exports = () => {
   const isProd = currentEnv === 'production';
   const isTest = currentEnv === 'test';
 
-  return {
-    entry: Object.assign(
-      {},
-      {
-        // Main app bundle, with vendor files such as bcsocker and jquery-shim
-        'app.js': [
-          './vendor/jquery-shim.js',
+  const appEntry = {
+    // Main app bundle, with vendor files such as bcsocker and jquery-shim
+    'app.js': [
+      './vendor/jquery-shim.js',
 
-          // Custom jQuery UI build: see the file for version and contents
-          './vendor/jquery-ui/jquery-ui.js',
-          './node_modules/bootstrap/js/tooltip.js',
-          './vendor/bcsocket-shim.js',
-          './src/javascripts/prelude.js'
-        ]
-      },
-      isTest
-        ? {
-            // Dependency file, generated for tests (systemJs does not handle require statements
-            // at all, making some dependency handling particularly challenging)
-            'dependencies.js': ['./build/dependencies-pre.js']
-          }
-        : {}
-    ),
+      // Custom jQuery UI build: see the file for version and contents
+      './vendor/jquery-ui/jquery-ui.js',
+      './node_modules/bootstrap/js/tooltip.js',
+      './vendor/bcsocket-shim.js',
+      './src/javascripts/prelude.js'
+    ]
+  };
+
+  const testDepEntry = {
+    // Dependency file, generated for tests (systemJs does not handle require statements
+    // at all, making some dependency handling particularly challenging)
+    'dependencies.js': ['./build/dependencies-pre.js']
+  };
+
+  return {
+    entry: Object.assign({}, !isTest ? appEntry : {}, isTest ? testDepEntry : {}),
     output: {
       filename: '[name]',
       path: P.resolve(__dirname, '..', 'public', 'app'),
@@ -131,26 +129,29 @@ module.exports = () => {
       minimize: false,
       chunkIds: isDev ? 'named' : false,
       splitChunks: {
-        cacheGroups: {
-          app: {
-            name: 'main',
-            test: (_, chunks) => {
-              if (chunks[0].name === 'app.js') {
-                return false;
-              }
+        // TODO: Make this a bit cleaner
+        cacheGroups: !isTest
+          ? {
+              app: {
+                name: 'main',
+                test: (_, chunks) => {
+                  if (chunks[0].name === 'app.js') {
+                    return false;
+                  }
 
-              // If any of the chunks that would be generated contain a `src/javascripts` file,
-              // include them in this bundle.
-              if (anyChunkHasSrcJavascripts(chunks)) {
-                return true;
-              }
+                  // If any of the chunks that would be generated contain a `src/javascripts` file,
+                  // include them in this bundle.
+                  if (anyChunkHasSrcJavascripts(chunks)) {
+                    return true;
+                  }
 
-              // Do not include anything else in this bundle.
-              return false;
-            },
-            chunks: 'all'
-          }
-        }
+                  // Do not include anything else in this bundle.
+                  return false;
+                },
+                chunks: 'all'
+              }
+            }
+          : {}
       }
     },
     stats: {
