@@ -7,7 +7,6 @@ import ErrorHandler from 'components/shared/ErrorHandlerComponent.es6';
 import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
 import * as FeatureFlagKey from 'featureFlags.es6';
 import { createTaskListViewData } from './ViewData/TaskViewData.es6';
-import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { createTasksStoreForEntry } from './TasksStore.es6';
 import { createTasksStoreInteractor } from './TasksInteractor.es6';
 import createTaskPermissionChecker, {
@@ -60,12 +59,11 @@ export class TasksWidgetContainer extends Component {
   }
 
   onUpdateTasksWidget = async update => {
-    const { spaceId, envId, entityInfo, users, currentUser, isSpaceAdmin } = update;
-    const endpoint = createSpaceEndpoint(spaceId, envId);
+    const { endpoint, entityInfo, users, currentUser, isSpaceAdmin } = update;
     const tasksStore = createTasksStoreForEntry(endpoint, entityInfo.id);
 
     // TODO: Replace this whole component with a react independent controller.
-    //  Do not pass setState but a more abstract store.
+    //  Do not pass setState but a dedicated, react independent store.
     const tasksInteractor = createTasksStoreInteractor(
       tasksStore,
       val => this.setState(val),
