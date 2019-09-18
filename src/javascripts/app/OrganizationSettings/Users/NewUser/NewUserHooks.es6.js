@@ -3,6 +3,7 @@ import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFa
 import { createOrgMembership, invite } from 'access_control/OrganizationMembershipRepository.es6';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
 import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
+import { PENDING_ORG_MEMBERSHIPS } from 'featureFlags.es6';
 import { getVariation } from 'LaunchDarkly.es6';
 
 // Add a list of users to the organization
@@ -12,9 +13,7 @@ import { getVariation } from 'LaunchDarkly.es6';
 export function useAddToOrg(orgId, hasSsoEnabled, onProgress = () => {}) {
   const fn = async (emails, role, spaceMemberships, suppressInvitation) => {
     const orgEndpoint = createOrganizationEndpoint(orgId);
-    const shouldUseNewInvitation = await getVariation(
-      'feature-bv-09-2019-new-invitation-flow-new-entity'
-    );
+    const shouldUseNewInvitation = await getVariation(PENDING_ORG_MEMBERSHIPS);
 
     // use the new invitation flow using pending org memberships
     // this new process will also cover SSO
