@@ -336,11 +336,10 @@ describe('Teams in space page', () => {
           withRequest: {
             method: 'DELETE',
             path: `/spaces/${defaultSpaceId}/team_space_memberships/TSM1`,
-            headers: defaultHeader
+            headers: teamHeaders
           },
           willRespondWith: {
-            status: 200,
-            body: { ...membership1, sys: { version: 1, ...membership1.sys }, admin: false, roles: [role1] }
+            status: 204
           }
         }).as(removeTeamInteraction);
 
