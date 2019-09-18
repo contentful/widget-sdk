@@ -52,8 +52,6 @@ async function buildTestDeps(cb) {
 async function build(cb) {
   const config = createWebpackConfig();
 
-  delete config.entry['dependencies.js'];
-
   const compiler = webpack(config);
   const stats = await promisify(compiler.run.bind(compiler))();
 

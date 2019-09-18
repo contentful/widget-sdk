@@ -30,24 +30,31 @@ module.exports = () => {
   const currentEnv = process.env.NODE_ENV;
   const isDev = /^(dev|development)$/.test(currentEnv) || !currentEnv;
   const isProd = currentEnv === 'production';
+  const isTest = currentEnv === 'test';
 
   return {
-    entry: {
-      // Main app bundle, with vendor files such as bcsocker and jquery-shim
-      'app.js': [
-        './vendor/jquery-shim.js',
+    entry: Object.assign(
+      {},
+      {
+        // Main app bundle, with vendor files such as bcsocker and jquery-shim
+        'app.js': [
+          './vendor/jquery-shim.js',
 
-        // Custom jQuery UI build: see the file for version and contents
-        './vendor/jquery-ui/jquery-ui.js',
-        './node_modules/bootstrap/js/tooltip.js',
-        './vendor/bcsocket-shim.js',
-        './src/javascripts/prelude.js'
-      ],
-
-      // Dependency file, generated for tests (systemJs does not handle require statements
-      // at all, making some dependency handling particularly challenging)
-      'dependencies.js': ['./build/dependencies-pre.js']
-    },
+          // Custom jQuery UI build: see the file for version and contents
+          './vendor/jquery-ui/jquery-ui.js',
+          './node_modules/bootstrap/js/tooltip.js',
+          './vendor/bcsocket-shim.js',
+          './src/javascripts/prelude.js'
+        ]
+      },
+      isTest
+        ? {
+            // Dependency file, generated for tests (systemJs does not handle require statements
+            // at all, making some dependency handling particularly challenging)
+            'dependencies.js': ['./build/dependencies-pre.js']
+          }
+        : {}
+    ),
     output: {
       filename: '[name]',
       path: P.resolve(__dirname, '..', 'public', 'app'),
